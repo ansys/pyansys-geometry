@@ -57,7 +57,6 @@ class Direction(BaseEntity):
         if not isinstance(x, (int, float)):
             raise ValueError("The parameter 'x' should be a float or an integer value")
         self._x = x
-        self._update_message()
 
     @property
     def y(self):
