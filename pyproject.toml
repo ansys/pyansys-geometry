@@ -1,0 +1,65 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+# Check https://python-poetry.org/docs/pyproject/ for all available sections
+name = "ansys-geometry-core"
+version = "0.1.dev0"
+description = "A python wrapper for Ansys Geometry Service"
+license = "MIT"
+authors = ["ANSYS, Inc. <ansys.support@ansys.com>"]
+maintainers = ["PyAnsys developers <pyansys.maintainers@ansys.com>"]
+readme = "README.rst"
+repository = "https://github.com/pyansys/pygeometry"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+packages = [
+    { include = "ansys", from = "src" },
+]
+
+[tool.poetry.dependencies]
+python = ">=3.7,<4.0"
+importlib-metadata = {version = "^4.0", python = "<3.8"}
+
+# Optional dependencies
+Sphinx = {version = "==5.1.1", optional = true}
+numpydoc = {version = "==1.4.0", optional = true}
+ansys-sphinx-theme = {version = "==0.5.2", optional = true}
+sphinx-copybutton = {version = "==0.5", optional = true}
+pytest = {version = "==7.1.2", optional = true}
+pytest-cov = {version = "==3.0.0", optional = true}
+
+[tool.poetry.extras]
+test = ["pytest","pytest-cov"]
+docs = ["Sphinx", "sphinx-copybutton", "numpydoc", "ansys-sphinx-theme"]
+
+[tool.black]
+line-length = 100
+
+[tool.isort]
+profile = "black"
+force_sort_within_sections = true
+line_length = 100
+default_section = "THIRDPARTY"
+src_paths = ["doc", "src", "tests"]
+
+[tool.coverage.run]
+source = ["ansys.geometry"]
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.pytest.ini_options]
+minversion = "7.1"
+addopts = "-ra --cov=ansys.geometry --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term -vv"
+testpaths = [
+    "tests",
+]
