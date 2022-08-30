@@ -6,20 +6,20 @@ PyGeometry
    :target: https://docs.pyansys.com/
    :alt: PyAnsys
 
-.. |python| image:: https://img.shields.io/pypi/pyversions/pygeometry-pygeometry?logo=pypi
-   :target: https://pypi.org/project/pygeometry-pygeometry/
+.. |python| image:: https://img.shields.io/pypi/pyversions/ansys-geometry-core?logo=pypi
+   :target: https://pypi.org/project/ansys-geometry-core/
    :alt: Python
 
-.. |pypi| image:: https://img.shields.io/pypi/v/pygeometry-pygeometry.svg?logo=python&logoColor=white
-   :target: https://pypi.org/project/pygeometry-pygeometry
+.. |pypi| image:: https://img.shields.io/pypi/v/ansys-geometry-core.svg?logo=python&logoColor=white
+   :target: https://pypi.org/project/ansys-geometry-core
    :alt: PyPI
 
-.. |codecov| image:: https://codecov.io/gh/pyansys/pygeometry-pygeometry/branch/main/graph/badge.svg
-   :target: https://codecov.io/gh/pyansys/pygeometry-pygeometry
+.. |codecov| image:: https://codecov.io/gh/pyansys/ansys-geometry-core/branch/main/graph/badge.svg
+   :target: https://codecov.io/gh/pyansys/pygeometry
    :alt: Codecov
 
-.. |GH-CI| image:: https://github.com/pyansys/pygeometry-pygeometry/actions/workflows/ci_cd.yml/badge.svg
-   :target: https://github.com/pyansys/pygeometry-pygeometry/actions/workflows/ci_cd.yml
+.. |GH-CI| image:: https://github.com/pyansys/pygeometry/actions/workflows/ci_cd.yml/badge.svg
+   :target: https://github.com/pyansys/pygeometry/actions/workflows/ci_cd.yml
    :alt: GH-CI
 
 .. |MIT| image:: https://img.shields.io/badge/License-MIT-yellow.svg
@@ -53,7 +53,7 @@ Then, you can simply execute:
 
 .. code:: bash
 
-    poetry run python -m pip install ansys-geometry-pygeometry
+    poetry run python -m pip install ansys-geometry-core
     
 For developers
 ^^^^^^^^^^^^^^
@@ -100,7 +100,7 @@ need to follow these steps:
 
     .. code:: bash
     
-        poetry run python -m pip install ansys-geometry-pygeometry
+        poetry run python -m pip install ansys-geometry-core
         
     #. Finally, verify your development installation by running:
 
