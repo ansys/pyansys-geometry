@@ -26,6 +26,7 @@ html_theme_options = {
 
 # Sphinx extensions
 extensions = [
+    "autoapi.extension",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "numpydoc",
@@ -79,3 +80,16 @@ source_suffix = ".rst"
 
 # The master toctree document.
 master_doc = "index"
+
+# Configuration for Sphinx autoapi
+autoapi_type = "python"
+autoapi_dirs = ["../../src/"]
+autoapi_options = [
+    "members",
+    "undoc-members",
+    "show-inheritance",
+    "show-module-summary",
+    "special-members",
+]
+autoapi_template_dir = "_autoapi_templates"
+exclude_patterns = ["_autoapi_templates/index.rst"]
