@@ -37,7 +37,7 @@ A Python wrapper for Ansys Geometry Service.
 How to install
 --------------
 
-At least three installation modes are provided: user, developer and offline.
+Three installation modes are provided: user, developer and offline.
 
 For users
 ^^^^^^^^^
