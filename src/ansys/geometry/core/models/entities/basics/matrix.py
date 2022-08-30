@@ -23,26 +23,26 @@ class Matrix(BaseEntity):
 
     Examples
     --------
-    Create a matrix from a 1D numpy array.
+    Create a matrix from a 1D Numpy array.
 
-    >>> from ansys.discovery.models.geometry import Matrix
+    >>> from ansys.geometry.core.models import Matrix
     >>> value = np.array([0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 2])
     >>> matrix = Matrix(value)
     >>> matrix
-    <ansys.discovery.models.geometry.matrix.Matrix object at 0x000001ECB8C9F040>
+    <ansys.geometry.core.models.entities.basics.matrix.Matrix object at 0x000002252CE6E050>
     >>> matrix.matrix
     array([[0, 1, 1, 0],
             [1, 1, 0, 1],
             [0, 1, 1, 0],
             [1, 1, 1, 2]])
 
-    Create a Matrix from Numpy matrix.
+    Create a Matrix from 2D Numpy array.
 
-    >>> from ansys.discovery.models.geometry import Matrix
+    >>> from ansys.geometry.core.models import Matrix
     >>> value = np.array([[0, 1, 1, 0], [1, 1, 0, 1], [0, 1, 1, 0], [1, 1, 1, 2]])
     >>> matrix = Matrix(value)
     >>> matrix
-    <ansys.discovery.models.geometry.matrix.Matrix object at 0x000001ECB8C9F730>
+    <ansys.geometry.core.models.entities.basics.matrix.Matrix object at 0x000002252CE6E230>
     >>> matrix.matrix
     array([[0, 1, 1, 0],
             [1, 1, 0, 1],
@@ -66,7 +66,7 @@ class Matrix(BaseEntity):
         >>> value = np.array([[0, 1, 1, 0], [1, 1, 0, 1], [0, 1, 1, 0], [1, 1, 1, 2]])
         >>> matrix = Matrix(value)
         >>> matrix
-        <ansys.discovery.models.geometry.matrix.Matrix object at 0x000001ECB8C9F730>
+        <ansys.geometry.core.models.entities.basics.matrix.Matrix object at 0x000002252CE6E230>
         >>> matrix.matrix
         array([[0, 1, 1, 0],
                 [1, 1, 0, 1],
@@ -112,21 +112,21 @@ class Matrix(BaseEntity):
         >>> value = np.matrix([[0, 1, 1, 0], [1, 1, 0, 1], [0, 1, 1, 0], [1, 1, 1, 2]])
         >>> matrix = Matrix(value)
         >>> matrix
-        <ansys.discovery.models.geometry.matrix.Matrix object at 0x000001ECB8C9F730>
+        <ansys.geometry.core.models.entities.basics.matrix.Matrix object at 0x000002252CE6E230>
         >>> matrix.matrix
-        matrix([[0, 1, 1, 0],
-        [1, 1, 0, 1],
-        [0, 1, 1, 0],
-        [1, 1, 1, 2]])
+        array([[0, 1, 1, 0],
+            [1, 1, 0, 1],
+            [0, 1, 1, 0],
+            [1, 1, 1, 2]])
 
         Replace 1st row and 2nd column with new value equals to 10.
 
         >>> matrix.replace(1, 2, 10)
         >>> matrix.matrix
-        matrix([[ 0,  1,  1,  0],
-        [ 1,  1, 10,  1],
-        [ 0,  1,  1,  0],
-        [ 1,  1,  1,  2]]
+        array([[ 0,  0,  0,  1],
+               [ 0,  1, 10,  1],
+               [ 0,  0,  1,  1],
+               [ 1,  1,  1,  5]])
         """
         if not all(isinstance(value, (int, float)) for value in [x, y]):
             raise ValueError("The parameters 'x' and 'y' should be an integer")

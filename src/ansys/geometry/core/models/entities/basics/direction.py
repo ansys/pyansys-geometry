@@ -18,12 +18,12 @@ class Direction(BaseEntity):
     --------
     Create a direction.
 
-    >>> from ansys.discovery.models.geometry import Direction
+    >>> from ansys.geometry.core.models import Direction
     >>> x = Direction (1, 0, 0)
     >>> y = Direction (1, 1, 0)
     >>> z = Direction (0, 1, 1)
     >>> x
-    <ansys.discovery.models.geometry.direction.Direction object at 0x0000028DE1FBA140>
+    <ansys.geometry.core.models.entities.basics.direction.Direction object at 0x000002252CE24D00>
     """
 
     def __init__(self, x, y, z):
@@ -42,7 +42,7 @@ class Direction(BaseEntity):
         --------
         Create a direction.
 
-        >>> from ansys.discovery.models.geometry import Direction
+        >>> from ansys.geometry.core.models import Direction
         >>> axis = Direction (1, 1, 0)
 
         Change the x-axis direction value.
@@ -67,7 +67,7 @@ class Direction(BaseEntity):
         --------
         Create a direction.
 
-        >>> from ansys.discovery.models.geometry import Direction
+        >>> from ansys.geometry.core.models import Direction
         >>> axis = Direction (1, 1, 0)
 
         Change the y-axis direction value.
@@ -91,7 +91,7 @@ class Direction(BaseEntity):
         --------
         Create a direction.
 
-        >>> from ansys.discovery.models.geometry import Direction
+        >>> from ansys.geometry.core.models import Direction
         >>> axis = Direction (1, 1, 0)
 
         Change the z-axis direction value
