@@ -1,4 +1,4 @@
-"""This module provides access and interaction with the PyDiscovery Matrix object."""
+"""This module provides access and interaction with the PyGeometry Matrix object."""
 import numpy as np
 
 from ansys.geometry.core.models.entities.core import BaseEntity
