@@ -1,14 +1,11 @@
-"""
-This module provides access and interaction with the PyDiscovery Matrix object.
-This Matrix object is a wrapper to the gRPC Matrix message.
-"""
+"""This module provides access and interaction with the PyDiscovery Matrix object."""
 import numpy as np
 
 from ansys.geometry.core.models.entities.core import BaseEntity
 
 
 class Matrix(BaseEntity):
-    """Provides access to create an homogeneous 3D transformation matrix in Ansys Discovery.
+    """Provides access to create an homogeneous 3D transformation matrix.
 
         - The matrix is a pre-multiplication transformation.
         - The rotation is in m00->m22 and contains no scaling in its leading diagonal.
@@ -54,12 +51,12 @@ class Matrix(BaseEntity):
     """
 
     def __init__(self, matrix):
-        """The matrix constructor."""
+        """Matrix constructor."""
         self._matrix = self._check_input_matrix(matrix)
 
     @property
     def matrix(self):
-        """Returns the 3D transformation matrix.
+        """Return the 3D transformation matrix.
 
         Examples
         --------
@@ -92,7 +89,6 @@ class Matrix(BaseEntity):
     def matrix(self, matrix):
         """Set the 3D transformation matrix."""
         self._matrix = self._check_input_matrix(matrix)
-
 
     def replace(self, x, y, new_value):
         """Replace the single element in the matrix.
@@ -141,7 +137,6 @@ class Matrix(BaseEntity):
 
     def _check_input_matrix(self, value):
         """Sanity check function to determine if the value passed to the Matrix is acceptable."""
-
         if isinstance(value, np.ndarray):
 
             if value.ndim == 1 and value.size == 16:
@@ -152,11 +147,10 @@ class Matrix(BaseEntity):
 
             else:
                 raise ValueError(
-                    "The array input to the Matrix should only be an 1D array of shape (16,) or a 2D array of shape (4,4)."
+                    "The array input to the Matrix should only be an 1D array of shape (16,) or a 2D array of shape (4,4)."  # noqa : E501
                 )
 
         else:
             raise ValueError(
-                "The input to the Matrix should only be an 1D array of shape (16,) or a 2D array of shape (4,4)."
+                "The input to the Matrix should only be an 1D array of shape (16,) or a 2D array of shape (4,4)."  # noqa : E501
             )
-

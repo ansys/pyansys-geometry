@@ -1,12 +1,9 @@
-"""
-This module provides access and interaction with the PyDiscovery Point object.
-This Point object is a wrapper to the gRPC Point message.
-"""
+"""This module provides access and interaction with the PyGeometry Point object."""
 
 from ansys.geometry.core.models.entities.core import BaseEntity
 
 
-class Point(BaseEntity):
+class Point3d(BaseEntity):
     """Provides for creating a point in Discovery or SpaceClaim.
 
     Parameters
@@ -22,14 +19,14 @@ class Point(BaseEntity):
     --------
     Create a 3D point.
 
-    >>> from ansys.discovery.models import geometry
-    >>> point = geometry.Point(1,2,3)
+    >>> from ansys.geometry.core.models import Point3d
+    >>> point = Point3d(1,2,3)
     >>> point
-    <ansys.discovery.models.geometry.point.Point object at 0x0000028DE2057A60>
+    <ansys.geometry.core.models.entities.basics.point3d.Point3d object at 0x00000216D05049A0>
     """
 
     def __init__(self, x, y, z):
-        """The Point constructor."""
+        """Point constructor."""
         if not all(isinstance(value, (int, float)) for value in [x, y, z]):
             raise ValueError("The parameters 'x', 'y' and 'z' should be integer or float")
 
@@ -39,18 +36,18 @@ class Point(BaseEntity):
 
     @property
     def x(self):
-        """Returns the x-coordinate value.
+        """Return the x-coordinate value.
 
         Examples
         --------
         Create a 3D point.
 
-        >>> from ansys.discovery.models import geometry
-        >>> point = geometry.Point(1,2,3)
+        >>> from ansys.geometry.core.models import Point3d
+        >>> point = Point3d(1,2,3)
 
         Change the x-coordinate value.
 
-        >>> point.x = 8
+        >>> point.x = 5
         """
         return self._x
 
@@ -63,14 +60,14 @@ class Point(BaseEntity):
 
     @property
     def y(self):
-        """Returns the y-coordinate value.
+        """Return the y-coordinate value.
 
         Examples
         --------
         Create a 3D point.
 
-        >>> from ansys.discovery.models import geometry
-        >>> point = geometry.Point(1,2,3)
+        >>> from ansys.geometry.core.models import Point3d
+        >>> point = Point3d(1,2,3)
 
         Change the y-coordinate value.
 
@@ -87,14 +84,14 @@ class Point(BaseEntity):
 
     @property
     def z(self):
-        """Returns the x-coordinate value.
+        """Return the x-coordinate value.
 
         Examples
         --------
         Create a 3D point.
 
-        >>> from ansys.discovery.models import geometry
-        >>> point = geometry.Point(1,2,3)
+        >>> from ansys.geometry.core.models import Point3d
+        >>> point = Point3d(1,2,3)
 
         Change the z-coordinate value.
 
@@ -108,4 +105,3 @@ class Point(BaseEntity):
         if not isinstance(z, (int, float)):
             raise ValueError("The parameter 'z' should be a float or an integer value")
         self._z = z
-

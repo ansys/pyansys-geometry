@@ -1,12 +1,9 @@
-"""
-This module provides access and interaction with the PyDiscovery Direction object.
-This Direction object is a wrapper to the gRPC Direction message.
-"""
+"""This module provides access and interaction with the PyGeometry Direction object."""
 from ansys.geometry.core.models.entities.core import BaseEntity
 
+
 class Direction(BaseEntity):
-    """Provides access to the 3D direction of the x, y, and z axes in
-    Discovery or SpaceClaim.
+    """Provides access to the 3D direction of the x, y, and z axes.
 
     Parameters
     ----------
@@ -30,7 +27,7 @@ class Direction(BaseEntity):
     """
 
     def __init__(self, x, y, z):
-        """The direction constructor."""
+        """Direction constructor."""
         if not all(isinstance(value, (int, float)) for value in [x, y, z]):
             raise ValueError("The parameters 'x', 'y' and 'z' should be integer or float")
         self._x = x
@@ -39,7 +36,7 @@ class Direction(BaseEntity):
 
     @property
     def x(self):
-        """Returns the x-axis direction value.
+        """Return the x-axis direction value.
 
         Examples
         --------
@@ -64,7 +61,7 @@ class Direction(BaseEntity):
 
     @property
     def y(self):
-        """Returns the y-axis direction value.
+        """Return the y-axis direction value.
 
         Examples
         --------
@@ -88,7 +85,7 @@ class Direction(BaseEntity):
 
     @property
     def z(self):
-        """Returns the z-axis direction value.
+        """Return the z-axis direction value.
 
         Examples
         --------
@@ -109,5 +106,3 @@ class Direction(BaseEntity):
         if not isinstance(z, (int, float)):
             raise ValueError("The parameter 'z' should be a float or an integer value")
         self._z = z
-    
-
