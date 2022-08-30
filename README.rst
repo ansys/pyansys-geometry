@@ -37,7 +37,7 @@ A Python wrapper for Ansys Geometry Service.
 How to install
 --------------
 
-At least two installation modes are provided: user and developer.
+Three installation modes are provided: user, developer and offline.
 
 For users
 ^^^^^^^^^
@@ -86,14 +86,11 @@ need to follow these steps:
         # Activate it in Windows Powershell
         .venv\Scripts\Activate.ps1
 
-#. Make sure you have the latest required build system and doc, testing, and CI tools:
+#. Make sure you have the latest required build system tools:
 
     .. code:: bash
 
         python -m pip install -U pip poetry tox
-        python -m pip install -r requirements/requirements_build.txt
-        python -m pip install -r requirements/requirements_doc.txt
-        python -m pip install -r requirements/requirements_tests.txt
 
 
 #. Install the project in editable mode:
@@ -102,12 +99,34 @@ need to follow these steps:
     
         poetry run python -m pip install ansys-geometry-core
         
-    #. Finally, verify your development installation by running:
+#. Finally, verify your development installation by running:
 
     .. code:: bash
         
         tox
 
+Offline mode installation
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you lack an internet connection on your installation machine (or you do not have access to the
+private PyPi package), the recommended way of installing PyGeometry is downloading the wheelhouse
+archive from the `Releases Page <https://github.com/pyansys/pygeometry/releases>`_ for your
+corresponding machine architecture.
+
+Each wheelhouse archive contains all the Python wheels necessary to install PyGeometry from scratch on Windows,
+Linux, and MacOS from Python 3.7 to 3.10. You can install this on an isolated system with a fresh Python
+installation or on a virtual environment.
+
+For example, on Linux with Python 3.7, unzip the wheelhouse archive and install it with the following:
+
+.. code:: bash
+
+    unzip ansys-geometry-core-v0.1.dev0-wheelhouse-Linux-3.7.zip wheelhouse
+    pip install ansys-geometry-core -f wheelhouse --no-index --upgrade --ignore-installed
+
+If you're on Windows with Python 3.9, unzip to a wheelhouse directory and install using the same command as above.
+
+Consider installing using a `virtual environment <https://docs.python.org/3/library/venv.html>`_.
 
 How to testing
 --------------
