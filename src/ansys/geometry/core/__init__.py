@@ -1,7 +1,6 @@
 """
 PyGeometry.
 
-
 A Python wrapper for Ansys Geometry Service.
 """
 
