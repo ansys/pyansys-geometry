@@ -86,14 +86,11 @@ need to follow these steps:
         # Activate it in Windows Powershell
         .venv\Scripts\Activate.ps1
 
-#. Make sure you have the latest required build system and doc, testing, and CI tools:
+#. Make sure you have the latest required build system tools:
 
     .. code:: bash
 
         python -m pip install -U pip poetry tox
-        python -m pip install -r requirements/requirements_build.txt
-        python -m pip install -r requirements/requirements_doc.txt
-        python -m pip install -r requirements/requirements_tests.txt
 
 
 #. Install the project in editable mode:
@@ -102,7 +99,7 @@ need to follow these steps:
     
         poetry run python -m pip install ansys-geometry-core
         
-    #. Finally, verify your development installation by running:
+#. Finally, verify your development installation by running:
 
     .. code:: bash
         
