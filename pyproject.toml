@@ -28,6 +28,7 @@ packages = [
 [tool.poetry.dependencies]
 python = ">=3.7,<4.0"
 importlib-metadata = {version = "^4.0", python = "<3.8"}
+numpy = {version = "1.21.6", python = "==3.7"}
 
 # Optional dependencies
 Sphinx = {version = "==5.1.1", optional = true}
@@ -38,7 +39,7 @@ pytest = {version = "==7.1.2", optional = true}
 pytest-cov = {version = "==3.0.0", optional = true}
 
 [tool.poetry.extras]
-test = ["pytest","pytest-cov"]
+test = ["pytest","pytest-cov","numpy"]
 docs = ["Sphinx", "sphinx-copybutton", "numpydoc", "ansys-sphinx-theme"]
 
 [tool.black]

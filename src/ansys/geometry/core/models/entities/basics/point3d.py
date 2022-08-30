@@ -33,6 +33,24 @@ class Point3d(BaseEntity):
         self._x = x
         self._y = y
         self._z = z
+        self._msg = None
+
+    @classmethod
+    def _from_message(cls, value):
+        """Provide constructor for obtaining the ``Point`` object from its related gRPC message.
+
+        Parameters
+        ----------
+        value : gRPC Point message.
+            gRPC message to transform to a ``Point`` object.
+
+        Returns
+        -------
+        Point : ansys.geometry.models.entities.basics.point.Point
+            The ``Point`` object.
+
+        """
+        return Point3d(value.x, value.y, value.z)
 
     @property
     def x(self):
@@ -57,6 +75,7 @@ class Point3d(BaseEntity):
         if not isinstance(x, (int, float)):
             raise ValueError("The parameter 'x' should be a float or an integer value")
         self._x = x
+        self._update_message()
 
     @property
     def y(self):
@@ -81,6 +100,7 @@ class Point3d(BaseEntity):
         if not isinstance(y, (int, float)):
             raise ValueError("The parameter 'y' should be a float or an integer value")
         self._y = y
+        self._update_message()
 
     @property
     def z(self):
@@ -105,3 +125,8 @@ class Point3d(BaseEntity):
         if not isinstance(z, (int, float)):
             raise ValueError("The parameter 'z' should be a float or an integer value")
         self._z = z
+        self._update_message()
+
+    def _update_message(self):
+        """Update the gRPC Point message."""
+        self._msg = None

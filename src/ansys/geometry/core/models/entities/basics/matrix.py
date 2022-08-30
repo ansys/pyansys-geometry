@@ -53,6 +53,44 @@ class Matrix(BaseEntity):
     def __init__(self, matrix):
         """Matrix constructor."""
         self._matrix = self._check_input_matrix(matrix)
+        self._msg = None
+
+    @classmethod
+    def _from_message(cls, value):
+        """Provide constructor for obtaining the ``Matrix`` object from its related gRPC message.
+
+        Parameters
+        ----------
+        value : gRPC Matrix message.
+            gRPC message to transform to a ``Matrix`` object.
+
+        Returns
+        -------
+        Matrix : ansys.geometry.models.entities.basics.matrix
+            The Matrix object.
+
+        """
+        value_matrix = np.array(
+            [
+                value.m00,
+                value.m01,
+                value.m02,
+                value.m03,
+                value.m10,
+                value.m11,
+                value.m12,
+                value.m13,
+                value.m20,
+                value.m21,
+                value.m22,
+                value.m23,
+                value.m30,
+                value.m31,
+                value.m32,
+                value.m33,
+            ]
+        ).reshape(4, 4)
+        return Matrix(value_matrix)
 
     @property
     def matrix(self):
@@ -89,6 +127,7 @@ class Matrix(BaseEntity):
     def matrix(self, matrix):
         """Set the 3D transformation matrix."""
         self._matrix = self._check_input_matrix(matrix)
+        self._update_message()
 
     def replace(self, x, y, new_value):
         """Replace the single element in the matrix.
@@ -134,6 +173,7 @@ class Matrix(BaseEntity):
             raise ValueError("The parameter 'new_value' can only be a float")
 
         self._matrix[x, y] = new_value
+        self._update_message()
 
     def _check_input_matrix(self, value):
         """Sanity check function to determine if the value passed to the Matrix is acceptable."""
@@ -154,3 +194,7 @@ class Matrix(BaseEntity):
             raise ValueError(
                 "The input to the Matrix should only be an 1D array of shape (16,) or a 2D array of shape (4,4)."  # noqa : E501
             )
+
+    def _update_message(self):
+        """Update the gRPC Matrix message."""
+        self._msg = None

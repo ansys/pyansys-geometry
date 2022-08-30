@@ -4,7 +4,7 @@ Module containing the BaseEntity class.
 This is the base class for the entire abstraction layer for models in PyGeometry.
 """
 
-from abc import ABC
+from abc import ABC, abstractmethod
 
 
 class BaseEntity(ABC):
@@ -20,4 +20,15 @@ class BaseEntity(ABC):
 
     def __init__(self):
         """Abstract BaseEntity class constructor."""
-        pass
+        self._msg = None
+
+    @abstractmethod
+    def _update_message(self):
+        """Abstract method for updating the gRPC message."""
+        raise NotImplementedError("This operation is not implemented")
+
+    @classmethod
+    @abstractmethod
+    def _from_message(cls, value):
+        """Abstract method to obtain the pythonic object from its related gRPC message."""
+        raise NotImplementedError("This operation is not implemented")
