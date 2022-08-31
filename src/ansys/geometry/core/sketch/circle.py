@@ -1,7 +1,7 @@
 """``CircleSketch`` class module."""
 
 from ansys.geometry.core.primitives.direction import Direction
-from ansys.geometry.core.primitives.point3D import Point3D
+from ansys.geometry.core.primitives.point import Point3D
 from ansys.geometry.core.sketch.curve import SketchCurve
 
 
