@@ -54,6 +54,17 @@ class Direction3D(np.ndarray):
         """Returns the Z component of the direction."""
         return self[2]
 
+    def __eq__(self, other: object) -> bool:
+        """Equals operator for ``Direction3D``."""
+        if not isinstance(other, Direction3D):
+            raise ValueError(f"Comparison of {self} against {other} is not possible.")
+
+        return np.array_equal(self, other)
+
+    def __ne__(self, other) -> bool:
+        """Not equals operator for ``Direction3D``."""
+        return not self.__eq__(other)
+
 
 class Direction2D(np.ndarray):
     """
@@ -101,3 +112,14 @@ class Direction2D(np.ndarray):
     def uy(self):
         """Returns the Y component of the direction."""
         return self[1]
+
+    def __eq__(self, other: object) -> bool:
+        """Equals operator for ``Direction2D``."""
+        if not isinstance(other, Direction2D):
+            raise ValueError(f"Comparison of {self} against {other} is not possible.")
+
+        return np.array_equal(self, other)
+
+    def __ne__(self, other) -> bool:
+        """Not equals operator for ``Direction2D``."""
+        return not self.__eq__(other)

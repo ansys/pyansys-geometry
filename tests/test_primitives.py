@@ -1,6 +1,8 @@
 import pytest
 
 from ansys.geometry.core.primitives import Point2D, Point3D
+from ansys.geometry.core.primitives.direction import Direction3D
+from ansys.geometry.core.primitives.torus import Torus
 
 
 def test_point3d():
@@ -116,3 +118,24 @@ def test_point2d_errors():
     with pytest.raises(ValueError, match="Comparison of"):
         point_3d = Point3D([1, 4, 4])
         assert point == point_3d
+
+
+def test_torus():
+    """Simple test to create a ``Torus``."""
+
+    # Create two Torus objects
+    origin = Point3D([42, 99, 13])
+    t_1 = Torus(origin, Direction3D([12, 31, 99]), Direction3D([25, 39, 82]), 50, 100)
+    t_1_duplicate = Torus(origin, Direction3D([12, 31, 99]), Direction3D([25, 39, 82]), 50, 100)
+    t_2 = Torus(Point3D([5, 8, 9]), Direction3D([55, 16, 73]), Direction3D([23, 67, 45]), 10, 88)
+
+    # Check that the equals operator works
+    assert t_1 == t_1_duplicate
+    assert t_1 != t_2
+
+    # Check component definition
+    assert t_1.origin.x == origin.x
+    assert t_1.origin.y == origin.y
+    assert t_1.origin.z == origin.z
+    assert t_1.major_radius == 50
+    assert t_1.minor_radius == 100
