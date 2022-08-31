@@ -8,11 +8,11 @@ class Direction3D(np.ndarray):
 
     Parameters
     ----------
-    *args : np.ndarray, int, float, List[int], List[float]
-        The direction arguments, either as a np.ndarray, individually or as a list.
+    input : np.ndarray, List[int], List[float]
+        The direction arguments, either as a np.ndarray, or as a list.
     """
 
-    def __new__(cls, *args):
+    def __new__(cls, input):
         """Constructor for ``Direction3D``."""
 
         # TODO: Once Vector3D is available, just inherit from it
@@ -21,12 +21,7 @@ class Direction3D(np.ndarray):
         #
         # But in the meantime...
         #
-        if len(args) == 1:
-            obj = np.asarray(args[0]).view(cls)
-        elif len(args) == 3:
-            obj = np.asarray(args).view(cls)
-        else:
-            obj = None
+        obj = np.asarray(input).view(cls)
 
         if obj is None or len(obj) != 3:
             raise ValueError("Direction3D must have three coordinates.")
@@ -61,11 +56,11 @@ class Direction2D(np.ndarray):
 
     Parameters
     ----------
-    *args : np.ndarray, int, float, List[int], List[float]
-        The direction arguments, either as a np.ndarray, individually or as a list.
+    input : np.ndarray, List[int], List[float]
+        The direction arguments, either as a np.ndarray, or as a list.
     """
 
-    def __new__(cls, *args):
+    def __new__(cls, input):
         """Constructor for ``Direction2D``."""
 
         # TODO: Once Vector2D is available, just inherit from it
@@ -74,12 +69,7 @@ class Direction2D(np.ndarray):
         #
         # But in the meantime...
         #
-        if len(args) == 1:
-            obj = np.asarray(args[0]).view(cls)
-        elif len(args) == 2:
-            obj = np.asarray(args).view(cls)
-        else:
-            obj = None
+        obj = np.asarray(input).view(cls)
 
         if obj is None or len(obj) != 2:
             raise ValueError("Direction2D must have two coordinates.")

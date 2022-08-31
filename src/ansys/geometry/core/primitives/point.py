@@ -6,17 +6,17 @@ import numpy as np
 class Point3D(np.ndarray):
     """
     Provides Point3D geometry primitive representation.
+
+    Parameters
+    ----------
+    input : np.ndarray, List[int], List[float]
+        The direction arguments, either as a np.ndarray, or as a list.
     """
 
-    def __new__(cls, *args):
+    def __new__(cls, input):
         """Constructor for ``Point3D``."""
 
-        if len(args) == 1:
-            obj = np.asarray(args[0]).view(cls)
-        elif len(args) == 3:
-            obj = np.asarray(args).view(cls)
-        else:
-            obj = None
+        obj = np.asarray(input).view(cls)
 
         if obj is None or len(obj) != 3:
             raise ValueError("Point3D must have three coordinates.")
@@ -64,12 +64,12 @@ class Point3D(np.ndarray):
             raise ValueError("The parameter 'z' should be a float or an integer value.")
         self[2] = z
 
-    def __eq__(self, __o: object) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Equals operator for ``Point3D``."""
-        if not isinstance(__o, Point3D):
-            raise ValueError(f"Comparison of {self} against {__o} is not possible.")
+        if not isinstance(other, Point3D):
+            raise ValueError(f"Comparison of {self} against {other} is not possible.")
 
-        return np.array_equal(self, __o)
+        return np.array_equal(self, other)
 
     def __ne__(self, other) -> bool:
         """Not equals operator for ``Point3D``."""
@@ -79,17 +79,17 @@ class Point3D(np.ndarray):
 class Point2D(np.ndarray):
     """
     Provides Point2D geometry primitive representation.
+
+    Parameters
+    ----------
+    input : np.ndarray, List[int], List[float]
+        The direction arguments, either as a np.ndarray, or as a list.
     """
 
-    def __new__(cls, *args):
+    def __new__(cls, input):
         """Constructor for ``Point2D``."""
 
-        if len(args) == 1:
-            obj = np.asarray(args[0]).view(cls)
-        elif len(args) == 2:
-            obj = np.asarray(args).view(cls)
-        else:
-            obj = None
+        obj = np.asarray(input).view(cls)
 
         if obj is None or len(obj) != 2:
             raise ValueError("Point2D must have two coordinates.")
@@ -125,12 +125,12 @@ class Point2D(np.ndarray):
             raise ValueError("The parameter 'y' should be a float or an integer value.")
         self[1] = y
 
-    def __eq__(self, __o: object) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Equals operator for ``Point2D``."""
-        if not isinstance(__o, Point2D):
-            raise ValueError(f"Comparison of {self} against {__o} is not possible.")
+        if not isinstance(other, Point2D):
+            raise ValueError(f"Comparison of {self} against {other} is not possible.")
 
-        return np.array_equal(self, __o)
+        return np.array_equal(self, other)
 
     def __ne__(self, other) -> bool:
         """Not equals operator for ``Point2D``."""

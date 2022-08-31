@@ -7,9 +7,9 @@ def test_point3d():
     """Simple test to create a ``Point3D``."""
 
     # Create two Point3D objects
-    p_1 = Point3D(0, 1, 3)
+    p_1 = Point3D([0, 1, 3])
     p_1_copy = Point3D([0, 1, 3])
-    p_2 = Point3D(0, 4, 7)
+    p_2 = Point3D([0, 4, 7])
 
     # Check that the equals operator works
     assert p_1 == p_1_copy
@@ -34,9 +34,9 @@ def test_point2d():
     """Simple test to create a ``Point2D``."""
 
     # Create two Point2D objects
-    p_1 = Point2D(0, 1)
+    p_1 = Point2D([0, 1])
     p_1_copy = Point2D([0, 1])
-    p_2 = Point2D(0, 4)
+    p_2 = Point2D([0, 4])
 
     # Check that the equals operator works
     assert p_1 == p_1_copy
@@ -59,16 +59,13 @@ def test_point3d_errors():
     """Testing multiple ``Point3D`` errors."""
 
     with pytest.raises(ValueError, match="Point3D must have three coordinates."):
-        Point3D(1, 4)
-
-    with pytest.raises(ValueError, match="Point3D must have three coordinates."):
         Point3D([1, 4])
 
     with pytest.raises(ValueError, match="The input parameters should be integer or float."):
         Point3D(["a", "b", "c"])
 
     # Create a point
-    point = Point3D(1, 4, 4)
+    point = Point3D([1, 4, 4])
 
     # Test setter error checks
     with pytest.raises(
@@ -88,24 +85,21 @@ def test_point3d_errors():
 
     # Build a Point2D and try to compare against it
     with pytest.raises(ValueError, match="Comparison of"):
-        point_2d = Point2D(1, 4)
+        point_2d = Point2D([1, 4])
         assert point == point_2d
 
 
 def test_point2d_errors():
     """Testing multiple ``Point2D`` errors."""
 
-    with pytest.raises(ValueError, match="Point2D must have three coordinates."):
-        Point2D(1, 4, 4)
-
-    with pytest.raises(ValueError, match="Point2D must have three coordinates."):
+    with pytest.raises(ValueError, match="Point2D must have two coordinates."):
         Point2D([1, 4, 4])
 
     with pytest.raises(ValueError, match="The input parameters should be integer or float."):
         Point2D(["a", "b"])
 
     # Create a point
-    point = Point2D(1, 4)
+    point = Point2D([1, 4])
 
     # Test setter error checks
     with pytest.raises(
@@ -120,5 +114,5 @@ def test_point2d_errors():
 
     # Build a Point3D and try to compare against it
     with pytest.raises(ValueError, match="Comparison of"):
-        point_3d = Point3D(1, 4, 4)
+        point_3d = Point3D([1, 4, 4])
         assert point == point_3d
