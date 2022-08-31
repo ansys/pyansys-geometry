@@ -232,4 +232,3 @@ def test_unit_vector_2d():
     v3 = UnitVector2D([2, 1])
     assert abs(round(v3.x, 3) - 0.894) <= DOUBLE_EPS
     assert abs(round(v3.y, 3) - 0.447) <= DOUBLE_EPS
-
