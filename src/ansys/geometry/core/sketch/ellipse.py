@@ -16,7 +16,7 @@ class EllipseSketch(SketchCurve):
     def from_axes(cls, a, b, origin=None, resolution=150):
         """Create an ellipse from its semi-major and semi-minor axes."""
         # Assert that the curve is an ellipse and not a parabola or hyperbola
-        ecc = (a ** 2 - b ** 2) ** 0.5 / a
+        ecc = (a**2 - b**2) ** 0.5 / a
         if ecc >= 1:
             raise ValueError("The curve defined is not an ellipse.")
 
