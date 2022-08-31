@@ -10,14 +10,41 @@ class Vector3D(np.ndarray):
     the use of the __array_finalize__ method to allow subclasses to clean up
     after the creation of views and new instances from templates."""
 
-    def __new__(cls, input_array):
+    def __new__(cls, *args):
 
-        vector = np.asarray(input_array).view(cls)
+        vector = np.asarray(args).view(cls)
 
         if len(vector) != 3:
             raise ValueError("Vector3D must have three coordinates.")
 
+        if not all(isinstance(arg, (int, float)) for arg in args):
+            raise ValueError("The parameters of 'input_array' should be integer or float.")
+
         return vector
+
+    @property
+    def x(self) -> float:
+        return self[0]
+
+    @x.setter
+    def x(self, value: float) -> None:
+        self[0] = value
+
+    @property
+    def y(self) -> float:
+        return self[1]
+
+    @y.setter
+    def y(self, value: float) -> None:
+        self[1] = value
+
+    @property
+    def z(self) -> float:
+        return self[2]
+
+    @z.setter
+    def z(self, value: float) -> None:
+        self[2] = value
 
     @property
     def norm(self):
