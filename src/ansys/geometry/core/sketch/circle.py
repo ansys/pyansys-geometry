@@ -16,7 +16,7 @@ class CircleSketch(SketchCurve):
     dir_x: Direction
         X-plane direction.
     dir_y: Direction
-        Y-plane direaction.
+        Y-plane direction.
     radius: float
         Circle radius.
     """
