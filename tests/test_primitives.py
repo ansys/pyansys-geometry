@@ -202,6 +202,23 @@ def test_vector2d():
     assert abs(round(v1_n.y, 3) - 0.447) <= DOUBLE_EPS
 
 
+def test_unit_vector_3d():
+    """Simple test to create a ``UnitVector3D``."""
+
+    # Create UnitVector3D objects from Vector3D
+    v1 = Vector3D([0, 1, 3])
+    v2 = UnitVector3D(v1)
+    assert abs(round(v2.x, 3) - 0.0) <= DOUBLE_EPS
+    assert abs(round(v2.y, 3) - 0.316) <= DOUBLE_EPS
+    assert abs(round(v2.z, 3) - 0.949) <= DOUBLE_EPS
+
+    # Create UnitVector3D objects from np.ndarray
+    v3 = UnitVector3D([1, 2, 3])
+    assert abs(round(v3.x, 3) - 0.267) <= DOUBLE_EPS
+    assert abs(round(v3.y, 3) - 0.535) <= DOUBLE_EPS
+    assert abs(round(v3.z, 3) - 0.802) <= DOUBLE_EPS
+
+
 def test_unit_vector_2d():
     """Simple test to create a ``UnitVector2D``."""
 
@@ -216,19 +233,3 @@ def test_unit_vector_2d():
     assert abs(round(v3.x, 3) - 0.894) <= DOUBLE_EPS
     assert abs(round(v3.y, 3) - 0.447) <= DOUBLE_EPS
 
-
-def test_unit_vector_3d():
-    """Simple test to create a ``UnitVector2D``."""
-
-    # Create UnitVector3D objects from Vector3D
-    v1 = Vector3D([0, 1, 3])
-    v2 = UnitVector3D(v1)
-    assert abs(round(v2.x, 3) - 0.0) <= DOUBLE_EPS
-    assert abs(round(v2.y, 3) - 0.316) <= DOUBLE_EPS
-    assert abs(round(v2.z, 3) - 0.949) <= DOUBLE_EPS
-
-    # Create UnitVector3D objects from np.ndarray
-    v3 = UnitVector3D([1, 2, 3])
-    assert abs(round(v3.x, 3) - 0.267) <= DOUBLE_EPS
-    assert abs(round(v3.y, 3) - 0.535) <= DOUBLE_EPS
-    assert abs(round(v3.z, 3) - 0.802) <= DOUBLE_EPS
