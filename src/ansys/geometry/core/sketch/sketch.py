@@ -18,7 +18,12 @@ class Sketch:
             []
         )  # SketchCurve[] maintaining reference to all sketch curves within the current sketch
 
-    def circle(self, origin: Point3D, radius: float):
+    @property
+    def sketch_curves(self):
+        """Returns the sketched curves."""
+        return self._sketch_curves
+
+    def circle(self, origin: Point3D, radius: float) -> CircleSketch:
         """
         Add a circle sketch object to the sketch plane.
 
@@ -44,7 +49,7 @@ class Sketch:
         # return the object created
         return self._sketch_curves[-1]
 
-    def line(self, point_1: Point3D, point_2: Point3D):
+    def line(self, point_1: Point3D, point_2: Point3D) -> LineSketch:
         """
         Add a line segment sketch object to the sketch plane.
 
@@ -57,8 +62,8 @@ class Sketch:
 
         Returns
         -------
-        Sketch
-            Updated Sketch object.
+        LineSketch
+            LineSketch object added to the sketch.
         """
         line = LineSketch(point_1, point_2)
 
