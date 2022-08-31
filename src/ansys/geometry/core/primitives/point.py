@@ -9,6 +9,7 @@ class Point3D(np.ndarray):
     """
 
     def __new__(cls, *args):
+        """Constructor for ``Point3D``."""
 
         if len(args) == 1:
             obj = np.asarray(args[0]).view(cls)
@@ -81,6 +82,7 @@ class Point2D(np.ndarray):
     """
 
     def __new__(cls, *args):
+        """Constructor for ``Point2D``."""
 
         if len(args) == 1:
             obj = np.asarray(args[0]).view(cls)
