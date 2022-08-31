@@ -31,8 +31,8 @@ class Sketch:
 
         Returns
         -------
-        Sketch
-            Updated Sketch object.
+        CircleSketch
+            CircleSketch object added to the sketch.
         """
 
         circle = CircleSketch(origin, Direction(0, 1), Direction(0, 1), radius)
@@ -41,8 +41,8 @@ class Sketch:
 
         # TODO: save circle creation to history tracking object
 
-        # return self to enable fluent-style api
-        return self
+        # return the object created
+        return self._sketch_curves[-1]
 
     def line(self, point_1: Point3D, point_2: Point3D):
         """
@@ -66,5 +66,5 @@ class Sketch:
 
         # TODO: save line creation to history tracking object
 
-        # return self to enable fluent-style api
-        return self
+        # return the object created
+        return self._sketch_curves[-1]
