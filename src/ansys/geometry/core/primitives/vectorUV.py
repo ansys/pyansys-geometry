@@ -4,9 +4,9 @@ import numpy as np
 class VectorUV(np.ndarray):
     """A two-dimensional vector with Cartesian coordinates."""
 
-    def __new__(cls, *args):
+    def __new__(cls, array_input):
 
-        vector = np.asarray(args).view(cls)
+        vector = np.asarray(array_input).view(cls)
 
         if len(vector) != 2:
             raise ValueError("VectorUV must have two coordinates.")
@@ -14,7 +14,7 @@ class VectorUV(np.ndarray):
         if not np.issubdtype(vector.dtype, np.number) or not all(
             isinstance(data, (int, float)) for data in vector.data
         ):
-            raise ValueError("The parameters of 'input_array' should be integer or float.")
+            raise ValueError("The parameters of 'array_input' should be integer or float.")
 
         return vector
 

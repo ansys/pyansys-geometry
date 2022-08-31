@@ -4,9 +4,9 @@ import numpy as np
 class Vector3D(np.ndarray):
     """Provides Vector3D"""
 
-    def __new__(cls, *args):
+    def __new__(cls, array_input):
 
-        vector = np.asarray(args).view(cls)
+        vector = np.asarray(array_input).view(cls)
 
         if len(vector) != 3:
             raise ValueError("Vector3D must have three coordinates.")
@@ -14,7 +14,7 @@ class Vector3D(np.ndarray):
         if not np.issubdtype(vector.dtype, np.number) or not all(
             isinstance(data, (int, float)) for data in vector.data
         ):
-            raise ValueError("The parameters of 'input_array' should be integer or float.")
+            raise ValueError("The parameters of 'array_inputs' should be integer or float.")
 
         return vector
 
@@ -54,6 +54,3 @@ class Vector3D(np.ndarray):
 
     def cross(self, v: "Vector3D") -> "Vector3D":
         return Vector3D(np.cross(self, v))
-
-    def dot(self, v: "Vector3D") -> float:
-        return np.dot(self, v)
