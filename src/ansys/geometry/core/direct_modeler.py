@@ -1,5 +1,6 @@
 from logging import Logger
 
+
 class DirectModeler:
     """
     Provides DirectModeler class for building CAD designs.
@@ -13,9 +14,5 @@ class DirectModeler:
         Client-side logging resource.
     """
 
-    def __init__(
-        self,
-        logger: Logger
-    ):
+    def __init__(self, logger: Logger):
         self._logger = logger
-    

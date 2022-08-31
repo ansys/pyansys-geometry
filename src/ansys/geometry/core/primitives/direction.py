@@ -10,10 +10,6 @@ class Direction:
         V.
     """
 
-    def __init__(
-        self,
-        u: float,
-        v: float
-    ):
+    def __init__(self, u: float, v: float):
         self._u = u
         self._v = v
