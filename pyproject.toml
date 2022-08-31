@@ -31,16 +31,16 @@ importlib-metadata = {version = "^4.0", python = "<3.8"}
 numpy = {version = "1.21.6", python = "==3.7"}
 
 # Optional dependencies
-Sphinx = {version = "==5.1.1", optional = true}
-numpydoc = {version = "==1.4.0", optional = true}
 ansys-sphinx-theme = {version = "==0.5.2", optional = true}
-sphinx-copybutton = {version = "==0.5", optional = true}
+numpydoc = {version = "==1.4.0", optional = true}
 pytest = {version = "==7.1.2", optional = true}
 pytest-cov = {version = "==3.0.0", optional = true}
+Sphinx = {version = "==5.1.1", optional = true}
+sphinx-autoapi = {version = "==1.9.0", optional = true}
+sphinx-copybutton = {version = "==0.5", optional = true}
 
-[tool.poetry.extras]
-test = ["pytest","pytest-cov","numpy"]
-docs = ["Sphinx", "sphinx-copybutton", "numpydoc", "ansys-sphinx-theme"]
+test = ["pytest","pytest-cov"]
+docs = ["ansys-sphinx-theme", "numpydoc", "Sphinx", "sphinx-autoapi", "sphinx-copybutton"]
 
 [tool.black]
 line-length = 100
