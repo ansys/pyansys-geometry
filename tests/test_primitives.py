@@ -1,6 +1,6 @@
 import pytest
 
-from ansys.geometry.core.primitives import Point2D, Point3D
+from ansys.geometry.core.primitives import Point2D, Point3D, Vector2D, Vector3D
 
 
 def test_point3d():
@@ -116,3 +116,55 @@ def test_point2d_errors():
     with pytest.raises(ValueError, match="Comparison of"):
         point_3d = Point3D([1, 4, 4])
         assert point == point_3d
+
+
+def test_vector_2d():
+    """Simple test to create a ``Vector3D``."""
+
+    # Create two Point3D objects
+    v1 = Vector3D([0, 1, 3])
+    v1_copy = Vector3D([0, 1, 3])
+    v2 = Vector3D([0, 4, 7])
+
+    # Check that the equals operator works
+    assert v1 == v1_copy
+    assert v1 != v2
+
+    # Check its X, Y, Z components
+    assert v1.x == 0
+    assert v1.y == 1
+    assert v1.z == 3
+
+    # Check that the setter works properly in v1_copy
+    v1_copy.x = 3
+    v1_copy.y = 3
+    v1_copy.z = 3
+
+    # Check that the equals operator works (v1 and v1_copy should no longer be equal)
+    assert v1 != v1_copy
+    assert v1 != v2
+
+
+def test_vector2d():
+    """Simple test to create a ``Vector2D``."""
+
+    # Create two Vector2D objects
+    v_1 = Vector2D([0, 1])
+    v_1_copy = Vector2D([0, 1])
+    v_2 = Vector2D([0, 4])
+
+    # Check that the equals operator works
+    assert v_1 == v_1_copy
+    assert v_1 != v_2
+
+    # Check its X, Y, Z components
+    assert v_1.x == 0
+    assert v_1.y == 1
+
+    # Check that the setter works properly in v_1_copy
+    v_1_copy.x = 3
+    v_1_copy.y = 3
+
+    # Check that the equals operator works (v_1 and v_1_copy should no longer be equal)
+    assert v_1 != v_1_copy
+    assert v_1 != v_2

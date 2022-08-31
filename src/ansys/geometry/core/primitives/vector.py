@@ -74,12 +74,15 @@ class Vector3D(np.ndarray):
         """Return cross product of Vector3D"""
         return Vector3D(np.cross(self, v))
 
-    def __eq__(self, other):
-        """Returns True if Vector3D points are the same, else False"""
-        return self == other
+    def __eq__(self, other: object) -> bool:
+        """Equals operator for ``Vector3D``."""
+        if not isinstance(other, Vector3D):
+            raise ValueError(f"Comparison of {self} against {other} is not possible.")
 
-    def __ne__(self, other):
-        """Returns True if the Vector3D points are not the same, else False"""
+        return np.array_equal(self, other)
+
+    def __ne__(self, other) -> bool:
+        """Not equals operator for ``Vector3D``."""
         return not self.__eq__(other)
 
 
@@ -139,12 +142,15 @@ class Vector2D(np.ndarray):
         """Return a normalized version of the vector"""
         return self / self.norm
 
-    def __eq__(self, other):
-        """Returns True vectors points are the same (same length and same direction), else False"""
-        return self == other.point()
+    def __eq__(self, other: object) -> bool:
+        """Equals operator for ``Vector2D``."""
+        if not isinstance(other, Vector2D):
+            raise ValueError(f"Comparison of {self} against {other} is not possible.")
 
-    def __ne__(self, other):
-        """Returns True if the vectors pointing are not the same, else False"""
+        return np.array_equal(self, other)
+
+    def __ne__(self, other) -> bool:
+        """Not equals operator for ``Vector2D``."""
         return not self.__eq__(other)
 
 
