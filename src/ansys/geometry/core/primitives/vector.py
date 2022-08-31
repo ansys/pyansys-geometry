@@ -7,8 +7,8 @@ class Vector3D(np.ndarray):
 
     Parameters
     ----------
-    input : np.ndarray
-        One dimensional numpy.ndarray with shape(2,)
+    input : np.ndarray or list
+        One dimensional numpy.ndarray with shape(3,)
     """
 
     def __new__(cls, input):
