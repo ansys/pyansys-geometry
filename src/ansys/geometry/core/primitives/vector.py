@@ -61,7 +61,7 @@ class Vector3D(np.ndarray):
 
     @property
     def norm(self):
-        return  np.linalg.norm(self)
+        return np.linalg.norm(self)
 
     def normalize(self):
         """Return a normalized version of the ``Vector3D``"""
