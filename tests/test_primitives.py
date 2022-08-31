@@ -267,6 +267,11 @@ def test_vector3d_errors():
         v2 = Vector2D([1, 2])
         assert v1 == v2
 
+    # Try to normalize a 0-value vector
+    with pytest.raises(ValueError, match="The norm of the Vector3D is not valid."):
+        v2 = Vector3D([0, 0, 0])
+        v2.normalize()
+
 
 def test_vector2d_errors():
     """Testing multiple ``Vector2D`` errors."""
@@ -295,3 +300,8 @@ def test_vector2d_errors():
     with pytest.raises(ValueError, match="Comparison of"):
         v2 = Vector3D([1, 5, 6])
         assert v1 == v2
+
+    # Try to normalize a 0-value vector
+    with pytest.raises(ValueError, match="The norm of the Vector2D is not valid."):
+        v2 = Vector2D([0, 0])
+        v2.normalize()
