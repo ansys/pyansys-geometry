@@ -118,10 +118,10 @@ def test_point2d_errors():
         assert point == point_3d
 
 
-def test_vector_2d():
+def test_vector3d():
     """Simple test to create a ``Vector3D``."""
 
-    # Create two Point3D objects
+    # Create two Vector3D objects
     v1 = Vector3D([0, 1, 3])
     v1_copy = Vector3D([0, 1, 3])
     v2 = Vector3D([0, 4, 7])
