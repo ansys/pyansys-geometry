@@ -25,14 +25,9 @@ def test_point3d():
     p_1_copy.y = 3
     p_1_copy.z = 3
 
-    # Check that the equals operator works (p_1 and p_1_copy shouuld no longer be equal)
+    # Check that the equals operator works (p_1 and p_1_copy should no longer be equal)
     assert p_1 != p_1_copy
     assert p_1 != p_2
-
-    # Build a Point2D and try to compare against it
-    with pytest.raises(ValueError, match="Comparison of"):
-        point_2d = Point2D(1, 4)
-        assert p_1 == point_2d
 
 
 def test_point2d():
@@ -55,18 +50,12 @@ def test_point2d():
     p_1_copy.x = 3
     p_1_copy.y = 3
 
-    # Check that the equals operator works (p_1 and p_1_copy shouuld no longer be equal)
+    # Check that the equals operator works (p_1 and p_1_copy should no longer be equal)
     assert p_1 != p_1_copy
     assert p_1 != p_2
 
-    # Build a Point3D and try to compare against it
-    with pytest.raises(ValueError, match="Comparison of"):
-        point_3d = Point3D(1, 4, 4)
-        assert p_1 == point_3d
-
-
 def test_point3d_errors():
-    """Testing multiple ``Point3D`` errors"""
+    """Testing multiple ``Point3D`` errors."""
 
     with pytest.raises(ValueError, match="Point3D must have three coordinates."):
         Point3D(1, 4)
@@ -96,9 +85,14 @@ def test_point3d_errors():
     ):
         point.z = "a"
 
+    # Build a Point2D and try to compare against it
+    with pytest.raises(ValueError, match="Comparison of"):
+        point_2d = Point2D(1, 4)
+        assert point == point_2d
+
 
 def test_point2d_errors():
-    """Testing multiple ``Point2D`` errors"""
+    """Testing multiple ``Point2D`` errors."""
 
     with pytest.raises(ValueError, match="Point2D must have three coordinates."):
         Point2D(1, 4, 4)
@@ -122,3 +116,8 @@ def test_point2d_errors():
         ValueError, match="The parameter 'y' should be a float or an integer value."
     ):
         point.y = "a"
+
+    # Build a Point3D and try to compare against it
+    with pytest.raises(ValueError, match="Comparison of"):
+        point_3d = Point3D(1, 4, 4)
+        assert point == point_3d
