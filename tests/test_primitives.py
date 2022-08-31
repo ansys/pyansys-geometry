@@ -1,13 +1,13 @@
-from ansys.geometry.core.primitives import Point
+from ansys.geometry.core.primitives import Point3D
 
 
-def test_Point():
-    """Simple test to create a ``Point``."""
+def test_point3d():
+    """Simple test to create a ``Point3D``."""
 
-    # Create two Point objects
-    p_1 = Point(0, 1, 3)
-    p_1_copy = Point(0, 1, 3)
-    p_2 = Point(0, 4, 7)
+    # Create two Point3D objects
+    p_1 = Point3D(0, 1, 3)
+    p_1_copy = Point3D(0, 1, 3)
+    p_2 = Point3D(0, 4, 7)
 
     # Check that the equals operator works
     assert p_1 == p_1_copy

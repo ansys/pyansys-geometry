@@ -1,9 +1,9 @@
-"""``Point`` class module."""
+"""``Point3D`` class module."""
 
 
-class Point:
+class Point3D:
     """
-    Provides Point geometry primitive representation.
+    Provides Point3D geometry primitive representation.
 
     Parameters
     ----------
@@ -16,7 +16,7 @@ class Point:
     """
 
     def __init__(self, x: float, y: float, z: float):
-        """Constructor method for ``Point``."""
+        """Constructor method for ``Point3D``."""
         if not all(isinstance(value, (int, float)) for value in [x, y, z]):
             raise ValueError("The parameters 'x', 'y' and 'z' should be integer or float.")
 
@@ -61,8 +61,8 @@ class Point:
         self._z = z
 
     def __eq__(self, __o: object) -> bool:
-        """Equals operator for ``Point``."""
-        if not isinstance(__o, Point):
+        """Equals operator for ``Point3D``."""
+        if not isinstance(__o, Point3D):
             raise ValueError(f"Comparison of {self} against {__o} is not possible.")
         tolerance = 1e-5
 
