@@ -2,7 +2,13 @@ import numpy as np
 
 
 class VectorUV(np.ndarray):
-    """A two-dimensional vector with Cartesian coordinates."""
+    """A two-dimensional vector with Cartesian coordinates.
+
+    Parameters
+    ----------
+    array_input : np.ndarray
+        One dimensional numpy.ndarray with shape(2,)
+    """
 
     def __new__(cls, array_input):
 
@@ -20,18 +26,22 @@ class VectorUV(np.ndarray):
 
     @property
     def x(self) -> float:
+        """Returns X coordinate of VectorUV"""
         return self[0]
 
     @x.setter
     def x(self, value: float) -> None:
+        """Set X coordinate of VectorUV"""
         self[0] = value
 
     @property
     def y(self) -> float:
+        """Returns Y coordinate of VectorUV"""
         return self[1]
 
     @y.setter
     def y(self, value: float) -> None:
+        """Set Y coordinate of VectorUV"""
         self[1] = value
 
     @property
@@ -42,4 +52,5 @@ class VectorUV(np.ndarray):
         return norm
 
     def normalize(self):
+        """Return a normalized version of the vector"""
         return self / self.norm
