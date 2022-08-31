@@ -1,3 +1,6 @@
+"""``Direction`` class module."""
+
+
 class Direction:
     """
     Provides unit vector direction geometry primitive representation.
@@ -11,5 +14,6 @@ class Direction:
     """
 
     def __init__(self, u: float, v: float):
+        """Constructor method for ``Direction``."""
         self._u = u
         self._v = v

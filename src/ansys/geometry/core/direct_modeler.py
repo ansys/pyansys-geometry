@@ -1,3 +1,6 @@
+"""``DirectModeler`` class module."""
+
+
 class DirectModeler:
     """
     Provides DirectModeler class for building CAD designs.
