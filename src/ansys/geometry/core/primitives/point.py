@@ -92,7 +92,7 @@ class Point2D(np.ndarray):
             obj = None
 
         if obj is None or len(obj) != 2:
-            raise ValueError("Point2D must have three coordinates.")
+            raise ValueError("Point2D must have two coordinates.")
 
         if not np.issubdtype(obj.dtype, np.number) or not all(
             isinstance(value, (int, float)) for value in obj.data
