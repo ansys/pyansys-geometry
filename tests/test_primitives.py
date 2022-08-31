@@ -2,6 +2,7 @@ from numpy import finfo as np_finfo
 import pytest
 
 from ansys.geometry.core.primitives import (
+    Cylinder,
     Point2D,
     Point3D,
     UnitVector2D,
@@ -305,3 +306,23 @@ def test_vector2d_errors():
     with pytest.raises(ValueError, match="The norm of the Vector2D is not valid."):
         v2 = Vector2D([0, 0])
         v2.normalize()
+
+
+def test_cylinder():
+    """Simple test to create a ``Cylinder``."""
+
+    # Create two Cylinder objects
+    origin = Point3D([42, 99, 13])
+    c_1 = Cylinder(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), 100)
+    c_1_duplicate = Cylinder(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), 100)
+    c_2 = Cylinder(Point3D([5, 8, 9]), Vector3D([55, 16, 73]), Vector3D([23, 67, 45]), 88)
+
+    # Check that the equals operator works
+    assert c_1 == c_1_duplicate
+    assert c_1 != c_2
+
+    # Check component definition
+    assert c_1.origin.x == origin.x
+    assert c_1.origin.y == origin.y
+    assert c_1.origin.z == origin.z
+    assert c_1.radius == 50
