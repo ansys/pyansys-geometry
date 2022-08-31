@@ -7,15 +7,14 @@ class Vector3D(np.ndarray):
 
     Parameters
     ----------
-    array_input : np.ndarray or list
+    input : np.ndarray or list
         * One dimensional numpy.ndarray with shape(3,)
-        * One dimensional numpy.ndarray with shape(2,)
     """
 
-    def __new__(cls, array_input):
+    def __new__(cls, input):
         """Constructor for Vector3D"""
 
-        Vector3D = np.asarray(array_input).view(cls)
+        Vector3D = np.asarray(input).view(cls)
 
         if len(Vector3D) != 3:
             raise ValueError("Vector3D must have three coordinates.")
@@ -23,38 +22,41 @@ class Vector3D(np.ndarray):
         if not np.issubdtype(Vector3D.dtype, np.number) or not all(
             isinstance(data, (int, float)) for data in Vector3D.data
         ):
-            raise ValueError("The parameters of 'array_inputs' should be integer or float.")
+            raise ValueError("The parameters of 'inputs' should be integer or float.")
 
         return Vector3D
 
     @property
     def x(self) -> float:
-        """Returns X coordinate of Vector3D"""
+        """X coordinate of Vector3D"""
         return self[0]
 
     @x.setter
-    def x(self, value: float) -> None:
-        """Set X coordinate of Vector3D"""
+    def x(self, value) -> None:
+        if not isinstance(value, (int, float)):
+            raise ValueError("The parameter 'x' should be a float or an integer value.")
         self[0] = value
 
     @property
     def y(self) -> float:
-        """Returns Y coordinate of Vector3D"""
+        """Y coordinate of Vector3D"""
         return self[1]
 
     @y.setter
-    def y(self, value: float) -> None:
-        """Set Y coordinate of Vector3D"""
+    def y(self, value) -> None:
+        if not isinstance(value, (int, float)):
+            raise ValueError("The parameter 'y' should be a float or an integer value.")
         self[1] = value
 
     @property
     def z(self) -> float:
-        """Returns Z coordinate of Vector3D"""
+        """Z coordinate of Vector3D"""
         return self[2]
 
     @z.setter
-    def z(self, value: float) -> None:
-        """Set Z coordinate of Vector3D"""
+    def z(self, value) -> None:
+        if not isinstance(value, (int, float)):
+            raise ValueError("The parameter 'z' should be a float or an integer value.")
         self[2] = value
 
     @property
@@ -86,13 +88,13 @@ class Vector2D(np.ndarray):
 
     Parameters
     ----------
-    array_input : np.ndarray
+    input : np.ndarray
         One dimensional numpy.ndarray with shape(2,)
     """
 
-    def __new__(cls, array_input):
+    def __new__(cls, input):
 
-        vector = np.asarray(array_input).view(cls)
+        vector = np.asarray(input).view(cls)
 
         if len(vector) != 2:
             raise ValueError("VectorUV must have two coordinates.")
@@ -100,28 +102,30 @@ class Vector2D(np.ndarray):
         if not np.issubdtype(vector.dtype, np.number) or not all(
             isinstance(data, (int, float)) for data in vector.data
         ):
-            raise ValueError("The parameters of 'array_input' should be integer or float.")
+            raise ValueError("The parameters of 'input' should be integer or float.")
 
         return vector
 
     @property
     def x(self) -> float:
-        """Returns X coordinate of VectorUV"""
+        """X coordinate of VectorUV"""
         return self[0]
 
     @x.setter
-    def x(self, value: float) -> None:
-        """Set X coordinate of VectorUV"""
+    def x(self, value) -> None:
+        if not isinstance(value, (int, float)):
+            raise ValueError("The parameter 'x' should be a float or an integer value.")
         self[0] = value
 
     @property
     def y(self) -> float:
-        """Returns Y coordinate of VectorUV"""
+        """Y coordinate of VectorUV"""
         return self[1]
 
     @y.setter
-    def y(self, value: float) -> None:
-        """Set Y coordinate of VectorUV"""
+    def y(self, value) -> None:
+        if not isinstance(value, (int, float)):
+            raise ValueError("The parameter 'y' should be a float or an integer value.")
         self[1] = value
 
     @property
@@ -145,16 +149,16 @@ class Vector2D(np.ndarray):
 
 
 class UnitVector3D(Vector3D):
-    def __init__(self, array):
-        self._value = Vector3D(array)
+    def __init__(self, input):
+        self._value = Vector3D(input)
 
     def __call__(self):
         return self._value.normalize()
 
 
 class UnitVector2D(Vector2D):
-    def __init__(self, array):
-        self._value = Vector2D(array)
+    def __init__(self, input):
+        self._value = Vector2D(input)
 
     def __call__(self):
         return self._value.normalize()
