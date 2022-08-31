@@ -1,6 +1,9 @@
+from numpy import finfo as np_finfo
 import pytest
 
 from ansys.geometry.core.primitives import Point2D, Point3D, Vector2D, Vector3D
+
+DOUBLE_EPS = np_finfo(float).eps
 
 
 def test_point3d():
@@ -143,6 +146,21 @@ def test_vector3d():
     # Check that the equals operator works (v1 and v1_copy should no longer be equal)
     assert v1 != v1_copy
     assert v1 != v2
+
+    # Check the norm value of vector v1
+    assert abs(round(v1.norm, 3) - 3.162) <= DOUBLE_EPS
+
+    # Check the normalization value of v1
+    v1_n = v1.normalize()
+    assert abs(round(v1_n.x, 3) - 0.0) <= DOUBLE_EPS
+    assert abs(round(v1_n.y, 3) - 0.316) <= DOUBLE_EPS
+    assert abs(round(v1_n.z, 3) - 0.949) <= DOUBLE_EPS
+
+    # Check the cross product value of v1 with v2
+    v_cross = v1.cross(v2)
+    assert v_cross.x == -5
+    assert v_cross.y == 0
+    assert v_cross.z == 0
 
 
 def test_vector2d():
