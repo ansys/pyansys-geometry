@@ -182,7 +182,7 @@ def test_vector2d():
     assert v_1 == v_1_copy
     assert v_1 != v_2
 
-    # Check its X, Y, Z components
+    # Check its X, Y components
     assert v_1.x == 2
     assert v_1.y == 1
 
