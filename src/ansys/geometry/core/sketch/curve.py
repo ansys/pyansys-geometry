@@ -20,7 +20,7 @@ class SketchCurve:
 
     @property
     def points(self):
-        """Return a list of ``Point2D`` instances defining the sketch
+        """Return a list of ``Point2D`` instances defining the sketch.
 
         Returns
         -------
