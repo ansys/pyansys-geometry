@@ -28,7 +28,7 @@ class Vector3D(np.ndarray):
 
     @property
     def x(self) -> float:
-        """Returns X coordinate of Vector3D"""
+        """X coordinate of Vector3D"""
         return self[0]
 
     @x.setter
