@@ -7,11 +7,11 @@ class Point3D:
 
     Parameters
     ----------
-    x: float
+    x: int, float
         X plane component value.
-    y: float
+    y: int, float
         Y plane component value.
-    z: float
+    z: int, float
         Z plane component value.
     """
 
