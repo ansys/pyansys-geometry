@@ -54,6 +54,7 @@ def test_point2d():
     assert p_1 != p_1_copy
     assert p_1 != p_2
 
+
 def test_point3d_errors():
     """Testing multiple ``Point3D`` errors."""
 
