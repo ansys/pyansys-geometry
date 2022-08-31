@@ -59,3 +59,18 @@ class Point3D:
         if not isinstance(z, (int, float)):
             raise ValueError("The parameter 'z' should be a float or an integer value.")
         self._z = z
+
+    def __eq__(self, __o: object) -> bool:
+        """Equals operator for ``Point3D``."""
+        if not isinstance(__o, Point3D):
+            raise ValueError(f"Comparison of {self} against {__o} is not possible.")
+        tolerance = 1e-5
+
+        if (
+            (abs(self.x - __o.x) < tolerance)
+            and (abs(self.y - __o.y) < tolerance)
+            and (abs(self.z - __o.z) < tolerance)
+        ):
+            return True
+        else:
+            return False
