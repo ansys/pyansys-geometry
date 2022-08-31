@@ -79,16 +79,23 @@ def test_point3d_errors():
 
     # Create a point
     point = Point3D(1, 4, 4)
-    
+
     # Test setter error checks
-    with pytest.raises(ValueError, match="The parameter 'x' should be a float or an integer value."):
+    with pytest.raises(
+        ValueError, match="The parameter 'x' should be a float or an integer value."
+    ):
         point.x = "a"
 
-    with pytest.raises(ValueError, match="The parameter 'y' should be a float or an integer value."):
+    with pytest.raises(
+        ValueError, match="The parameter 'y' should be a float or an integer value."
+    ):
         point.y = "a"
-        
-    with pytest.raises(ValueError, match="The parameter 'z' should be a float or an integer value."):
+
+    with pytest.raises(
+        ValueError, match="The parameter 'z' should be a float or an integer value."
+    ):
         point.z = "a"
+
 
 def test_point2d_errors():
     """Testing multiple ``Point2D`` errors"""
@@ -104,10 +111,14 @@ def test_point2d_errors():
 
     # Create a point
     point = Point2D(1, 4)
-    
+
     # Test setter error checks
-    with pytest.raises(ValueError, match="The parameter 'x' should be a float or an integer value."):
+    with pytest.raises(
+        ValueError, match="The parameter 'x' should be a float or an integer value."
+    ):
         point.x = "a"
 
-    with pytest.raises(ValueError, match="The parameter 'y' should be a float or an integer value."):
+    with pytest.raises(
+        ValueError, match="The parameter 'y' should be a float or an integer value."
+    ):
         point.y = "a"
