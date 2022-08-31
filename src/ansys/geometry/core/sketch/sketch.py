@@ -1,5 +1,3 @@
-from logging import Logger
-
 from ansys.geometry.core.primitives.direction import Direction
 from ansys.geometry.core.primitives.point3D import Point3D
 from ansys.geometry.core.sketch.circle_sketch import CircleSketch
@@ -9,16 +7,10 @@ from ansys.geometry.core.sketch.line_sketch import LineSketch
 class Sketch:
     """
     Provides Sketch class for building 2D sketch elements.
-
-    Parameters
-    ----------
-    logger : Logger
-        Client-side logging resource.
     """
 
-    def __init__(self, logger: Logger):
+    def __init__(self):
         """Sketch constructor"""
-        self._logger = logger
         self._sketch_curves = (
             []
         )  # SketchCurve[] maintaining reference to all sketch curves within the current sketch
