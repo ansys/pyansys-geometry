@@ -325,4 +325,4 @@ def test_cylinder():
     assert c_1.origin.x == origin.x
     assert c_1.origin.y == origin.y
     assert c_1.origin.z == origin.z
-    assert c_1.radius == 50
+    assert c_1.radius == 100
