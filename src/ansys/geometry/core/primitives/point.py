@@ -1,4 +1,4 @@
-"""``Point3D`` class module."""
+"""``Point3D`` and ``Point2D`` class module."""
 
 import numpy as np
 
@@ -66,4 +66,58 @@ class Point3D(np.ndarray):
 
     def __ne__(self, other) -> bool:
         """Not equals operator for ``Point3D``."""
+        return not self.__eq__(other)
+
+
+class Point2D(np.ndarray):
+    """
+    Provides Point2D geometry primitive representation.
+    """
+
+    def __new__(cls, *args):
+
+        if (len(args) == 1) or (len(args) == 2):
+            obj = np.asarray(args).view(cls)
+
+        if len(obj) != 2:
+            raise ValueError("Point2D must have three coordinates.")
+
+        if not all(isinstance(value, (int, float)) for value in args):
+            raise ValueError("The parameters of 'input_array' should be integer or float.")
+
+        return obj
+
+    @property
+    def x(self):
+        """Returns the X plane component value."""
+        return self[0]
+
+    @x.setter
+    def x(self, x):
+        """Set the X plane component value."""
+        if not isinstance(x, (int, float)):
+            raise ValueError("The parameter 'x' should be a float or an integer value.")
+        self[0] = x
+
+    @property
+    def y(self):
+        """Returns the Y plane component value."""
+        return self[1]
+
+    @y.setter
+    def y(self, y):
+        """Set the Y plane component value."""
+        if not isinstance(y, (int, float)):
+            raise ValueError("The parameter 'y' should be a float or an integer value.")
+        self[1] = y
+
+    def __eq__(self, __o: object) -> bool:
+        """Equals operator for ``Point2D``."""
+        if not isinstance(__o, Point2D):
+            raise ValueError(f"Comparison of {self} against {__o} is not possible.")
+
+        return np.array_equal(self, __o)
+
+    def __ne__(self, other) -> bool:
+        """Not equals operator for ``Point2D``."""
         return not self.__eq__(other)
