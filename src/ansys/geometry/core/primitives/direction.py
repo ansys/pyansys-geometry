@@ -32,7 +32,12 @@ class Direction3D(np.ndarray):
             raise ValueError("The input parameters should be integer or float.")
 
         # Once we know we have a Vector3D... normalize!
-        return obj / np.linalg.norm(obj)
+        norm = np.linalg.norm(obj)
+        
+        if (norm > 0):
+            return obj / np.linalg.norm(obj)
+        else:
+            raise ValueError("The norm of the input Vector3D is not valid.")
 
     @property
     def ux(self):
@@ -80,7 +85,12 @@ class Direction2D(np.ndarray):
             raise ValueError("The input parameters should be integer or float.")
 
         # Once we know we have a Vector2D... normalize!
-        return obj / np.linalg.norm(obj)
+        norm = np.linalg.norm(obj)
+
+        if (norm > 0):
+            return obj / np.linalg.norm(obj)
+        else:
+            raise ValueError("The norm of the input Vector2D is not valid.")
 
     @property
     def ux(self):
