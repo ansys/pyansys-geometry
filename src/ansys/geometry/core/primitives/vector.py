@@ -3,16 +3,16 @@ import numpy as np
 
 
 class Vector3D(np.ndarray):
-    """Provides Vector3D class.
+    """A three-dimensional vector with Cartesian coordinates.
 
     Parameters
     ----------
-    input : np.ndarray or list
-        * One dimensional numpy.ndarray with shape(3,)
+    input : np.ndarray
+        One dimensional numpy.ndarray with shape(2,)
     """
 
     def __new__(cls, input):
-        """Constructor for Vector3D"""
+        """Constructor for ``Vector3D``"""
 
         Vector3D = np.asarray(input).view(cls)
 
@@ -28,7 +28,7 @@ class Vector3D(np.ndarray):
 
     @property
     def x(self) -> float:
-        """X coordinate of Vector3D"""
+        """X coordinate of ``Vector3D``"""
         return self[0]
 
     @x.setter
@@ -39,7 +39,7 @@ class Vector3D(np.ndarray):
 
     @property
     def y(self) -> float:
-        """Y coordinate of Vector3D"""
+        """Y coordinate of ``Vector3D``"""
         return self[1]
 
     @y.setter
@@ -50,7 +50,7 @@ class Vector3D(np.ndarray):
 
     @property
     def z(self) -> float:
-        """Z coordinate of Vector3D"""
+        """Z coordinate of ``Vector3D``"""
         return self[2]
 
     @z.setter
@@ -61,14 +61,15 @@ class Vector3D(np.ndarray):
 
     @property
     def norm(self):
-        norm = np.linalg.norm(self)
-        if norm == 0:
-            raise ValueError("The norm of the input Vector3D is not valid.")
-        return norm
+        return  np.linalg.norm(self)
 
     def normalize(self):
-        """Return a normalized version of the Vector3D"""
-        return self / self.norm
+        """Return a normalized version of the ``Vector3D``"""
+        norm = self.norm
+        if norm > 0:
+            return self / norm
+        else:
+            raise ValueError("The norm of the Vector3D is not valid.")
 
     def cross(self, v: "Vector3D") -> "Vector3D":
         """Return cross product of Vector3D"""
@@ -100,7 +101,7 @@ class Vector2D(np.ndarray):
         vector = np.asarray(input).view(cls)
 
         if len(vector) != 2:
-            raise ValueError("VectorUV must have two coordinates.")
+            raise ValueError("Vector2D must have two coordinates.")
 
         if not np.issubdtype(vector.dtype, np.number) or not all(
             isinstance(data, (int, float)) for data in vector.data
@@ -111,7 +112,7 @@ class Vector2D(np.ndarray):
 
     @property
     def x(self) -> float:
-        """X coordinate of VectorUV"""
+        """X coordinate of ``Vector2D``"""
         return self[0]
 
     @x.setter
@@ -122,7 +123,7 @@ class Vector2D(np.ndarray):
 
     @property
     def y(self) -> float:
-        """Y coordinate of VectorUV"""
+        """Y coordinate of ``Vector2D``"""
         return self[1]
 
     @y.setter
@@ -133,14 +134,15 @@ class Vector2D(np.ndarray):
 
     @property
     def norm(self):
-        norm = np.linalg.norm(self)
-        if norm == 0:
-            raise ValueError("The norm of the input Vector2D is not valid.")
-        return norm
+        return np.linalg.norm(self)
 
     def normalize(self):
-        """Return a normalized version of the vector"""
-        return self / self.norm
+        """Return a normalized version of the ``Vector2D``"""
+        norm = self.norm
+        if norm > 0:
+            return self / norm
+        else:
+            raise ValueError("The norm of the Vector2D is not valid.")
 
     def __eq__(self, other: object) -> bool:
         """Equals operator for ``Vector2D``."""
@@ -165,7 +167,8 @@ class UnitVector3D(Vector3D):
     """
 
     def __init__(self, input):
-        self._value = Vector3D(input)
+        super().__init__(input)
+        self = self.normalize()
 
     def __call__(self):
         return self._value.normalize()
