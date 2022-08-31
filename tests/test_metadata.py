@@ -13,4 +13,3 @@ def test_pkg_version():
     read_version = importlib_metadata.version("ansys-geometry-core")
 
     assert __version__ == read_version
-
