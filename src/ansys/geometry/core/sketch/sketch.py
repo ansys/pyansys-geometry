@@ -1,7 +1,7 @@
 """``Sketch`` class module."""
 
 
-from ansys.geometry.core.primitives.direction import Direction
+from ansys.geometry.core.primitives.direction import Direction2D
 from ansys.geometry.core.primitives.point import Point3D
 from ansys.geometry.core.sketch.circle import CircleSketch
 from ansys.geometry.core.sketch.line import LineSketch
@@ -40,7 +40,7 @@ class Sketch:
             CircleSketch object added to the sketch.
         """
 
-        circle = CircleSketch(origin, Direction(0, 1), Direction(0, 1), radius)
+        circle = CircleSketch(origin, Direction2D(0, 1), Direction2D(0, 1), radius)
 
         self._sketch_curves.append(circle)
 
