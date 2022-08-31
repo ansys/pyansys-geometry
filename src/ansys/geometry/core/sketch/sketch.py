@@ -1,8 +1,8 @@
 """``Sketch`` class module."""
 
 
-from ansys.geometry.core.primitives.vector import UnitVector2D
 from ansys.geometry.core.primitives.point import Point3D
+from ansys.geometry.core.primitives.vector import UnitVector2D
 from ansys.geometry.core.sketch.circle import CircleSketch
 from ansys.geometry.core.sketch.line import LineSketch
 
