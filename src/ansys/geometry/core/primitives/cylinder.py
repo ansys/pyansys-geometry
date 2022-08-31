@@ -1,6 +1,7 @@
 """``Cylinder`` class module."""
 
-from ansys.geometry.core.primitives import Point3D, Vector3D
+from ansys.geometry.core.primitives.point import Point3D
+from ansys.geometry.core.primitives.vector import Vector3D
 
 
 class Cylinder:
