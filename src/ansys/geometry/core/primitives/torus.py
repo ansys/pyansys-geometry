@@ -6,7 +6,7 @@ from ansys.geometry.core.primitives.point import Point3D
 
 class Torus:
     """
-    Provides ``Torus`` representation within a sketch environment.
+    Provides 3D ``Torus`` representation.
 
     Parameters
     ----------
@@ -16,9 +16,9 @@ class Torus:
         X-plane direction.
     dir_y: Direction
         Y-plane direction.
-    majorRadius: float
+    major_radius: float
         Major radius of ``Torus``.
-    minorRadius: float
+    minor_radius: float
         Minor radius of ``Torus``.
     """
 
@@ -27,15 +27,15 @@ class Torus:
         origin: Point3D,
         dir_x: Direction2D,
         dir_y: Direction2D,
-        majorRadius: float,
-        minorRadius: float,
+        major_radius: float,
+        minor_radius: float,
     ):
         """Constructor method for ``Torus``."""
         self._origin = origin
         self._dir_x = dir_x
         self._dir_y = dir_y
-        self._majorRadius = majorRadius
-        self._minorRadius = minorRadius
+        self._major_radius = major_radius
+        self._minor_radius = minor_radius
 
     @property
     def origin(self):
@@ -45,12 +45,12 @@ class Torus:
     @property
     def major_radius(self):
         """Return the major radius of the ``Torus``."""
-        return self._majorRadius
+        return self._major_radius
 
     @property
     def minor_radius(self):
         """Return the minor radius of the ``Torus``."""
-        return self._minorRadius
+        return self._minor_radius
 
     def __eq__(self, other: object) -> bool:
         """Equals operator for ``Torus``."""
