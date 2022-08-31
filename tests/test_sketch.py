@@ -10,8 +10,8 @@ def test_create_line():
     sketch = Sketch()
 
     # Create a LineSketch from two Point3D objects
-    p_1 = Point3D(0, 1, 3)
-    p_2 = Point3D(0, 4, 7)
+    p_1 = Point3D([0, 1, 3])
+    p_2 = Point3D([0, 4, 7])
     line = sketch.line(p_1, p_2)
 
     # Check that the line has been created properly
