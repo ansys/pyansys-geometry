@@ -10,14 +10,20 @@ class Point3D(np.ndarray):
 
     def __new__(cls, *args):
 
-        if (len(args) == 1) or (len(args) == 3):
+        if len(args) == 1:
+            obj = np.asarray(args[0]).view(cls)
+        elif len(args) == 3:
             obj = np.asarray(args).view(cls)
+        else:
+            obj = None
 
-        if len(obj) != 3:
+        if obj is None or len(obj) != 3:
             raise ValueError("Point3D must have three coordinates.")
 
-        if not all(isinstance(value, (int, float)) for value in args):
-            raise ValueError("The parameters of 'input_array' should be integer or float.")
+        if not np.issubdtype(obj.dtype, np.number) or not all(
+            isinstance(value, (int, float)) for value in obj.data
+        ):
+            raise ValueError("The input parameters should be integer or float.")
 
         return obj
 
@@ -76,14 +82,20 @@ class Point2D(np.ndarray):
 
     def __new__(cls, *args):
 
-        if (len(args) == 1) or (len(args) == 2):
+        if len(args) == 1:
+            obj = np.asarray(args[0]).view(cls)
+        elif len(args) == 2:
             obj = np.asarray(args).view(cls)
+        else:
+            obj = None
 
-        if len(obj) != 2:
+        if obj is None or len(obj) != 2:
             raise ValueError("Point2D must have three coordinates.")
 
-        if not all(isinstance(value, (int, float)) for value in args):
-            raise ValueError("The parameters of 'input_array' should be integer or float.")
+        if not np.issubdtype(obj.dtype, np.number) or not all(
+            isinstance(value, (int, float)) for value in obj.data
+        ):
+            raise ValueError("The input parameters should be integer or float.")
 
         return obj
 
