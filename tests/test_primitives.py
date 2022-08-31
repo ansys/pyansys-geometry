@@ -4,6 +4,7 @@ import pytest
 from ansys.geometry.core.primitives import (
     Point2D,
     Point3D,
+    Sphere,
     UnitVector2D,
     UnitVector3D,
     Vector2D,
@@ -305,3 +306,23 @@ def test_vector2d_errors():
     with pytest.raises(ValueError, match="The norm of the Vector2D is not valid."):
         v2 = Vector2D([0, 0])
         v2.normalize()
+
+
+def test_sphere():
+    """Simple test to create a ``Sphere``."""
+
+    # Create two Sphere objects
+    origin = Point3D([42, 99, 13])
+    s_1 = Sphere(origin, 100)
+    s_1_duplicate = Sphere(origin, 100)
+    s_2 = Sphere(Point3D([5, 8, 9]), 88)
+
+    # Check that the equals operator works
+    assert s_1 == s_1_duplicate
+    assert s_1 != s_2
+
+    # Check component definition
+    assert s_1.origin.x == origin.x
+    assert s_1.origin.y == origin.y
+    assert s_1.origin.z == origin.z
+    assert s_1.radius == 100
