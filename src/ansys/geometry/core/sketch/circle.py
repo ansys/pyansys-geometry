@@ -1,6 +1,6 @@
 """``CircleSketch`` class module."""
 
-from ansys.geometry.core.primitives.direction import Direction2D
+from ansys.geometry.core.primitives.vector import UnitVector2D
 from ansys.geometry.core.primitives.point import Point3D
 from ansys.geometry.core.sketch.curve import SketchCurve
 
@@ -21,7 +21,7 @@ class CircleSketch(SketchCurve):
         Circle radius.
     """
 
-    def __init__(self, origin: Point3D, dir_x: Direction2D, dir_y: Direction2D, radius: float):
+    def __init__(self, origin: Point3D, dir_x: UnitVector2D, dir_y: UnitVector2D, radius: float):
         """Constructor method for ``CircleSketch``."""
         self._origin = origin
         self._dir_x = dir_x
