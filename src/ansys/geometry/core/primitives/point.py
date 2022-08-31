@@ -2,16 +2,17 @@
 
 import numpy as np
 
+
 class Point3D(np.ndarray):
     """
     Provides Point3D geometry primitive representation.
     """
 
     def __new__(cls, *args):
-        
+
         if (len(args) == 1) or (len(args) == 3):
             obj = np.asarray(args).view(cls)
-            
+
         if len(obj) != 3:
             raise ValueError("Point3D must have three coordinates.")
 
@@ -62,7 +63,7 @@ class Point3D(np.ndarray):
             raise ValueError(f"Comparison of {self} against {__o} is not possible.")
 
         return np.array_equal(self, __o)
-    
+
     def __ne__(self, other) -> bool:
         """Not equals operator for ``Point3D``."""
         return not self.__eq__(other)
