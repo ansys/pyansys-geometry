@@ -4,6 +4,7 @@ import pytest
 from ansys.geometry.core.primitives import (
     Point2D,
     Point3D,
+    Torus,
     UnitVector2D,
     UnitVector3D,
     Vector2D,
@@ -305,3 +306,24 @@ def test_vector2d_errors():
     with pytest.raises(ValueError, match="The norm of the Vector2D is not valid."):
         v2 = Vector2D([0, 0])
         v2.normalize()
+
+
+def test_torus():
+    """Simple test to create a ``Torus``."""
+
+    # Create two Torus objects
+    origin = Point3D([42, 99, 13])
+    t_1 = Torus(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), 50, 100)
+    t_1_duplicate = Torus(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), 50, 100)
+    t_2 = Torus(Point3D([5, 8, 9]), Vector3D([55, 16, 73]), Vector3D([23, 67, 45]), 10, 88)
+
+    # Check that the equals operator works
+    assert t_1 == t_1_duplicate
+    assert t_1 != t_2
+
+    # Check component definition
+    assert t_1.origin.x == origin.x
+    assert t_1.origin.y == origin.y
+    assert t_1.origin.z == origin.z
+    assert t_1.major_radius == 50
+    assert t_1.minor_radius == 100

@@ -1,7 +1,7 @@
 """``Torus`` class module."""
 
-from ansys.geometry.core.primitives.direction import Direction2D
 from ansys.geometry.core.primitives.point import Point3D
+from ansys.geometry.core.primitives.vector import Vector3D
 
 
 class Torus:
@@ -12,9 +12,9 @@ class Torus:
     ----------
     origin : Point3D
         Centered origin of the ``Torus``.
-    dir_x: Direction
+    direction_x: Vector3D
         X-plane direction.
-    dir_y: Direction
+    direction_y: Vector3D
         Y-plane direction.
     major_radius: float
         Major radius of ``Torus``.
@@ -25,15 +25,15 @@ class Torus:
     def __init__(
         self,
         origin: Point3D,
-        dir_x: Direction2D,
-        dir_y: Direction2D,
+        direction_x: Vector3D,
+        direction_y: Vector3D,
         major_radius: float,
         minor_radius: float,
     ):
         """Constructor method for ``Torus``."""
         self._origin = origin
-        self._dir_x = dir_x
-        self._dir_y = dir_y
+        self._direction_x = direction_x
+        self._direction_y = direction_y
         self._major_radius = major_radius
         self._minor_radius = minor_radius
 
@@ -61,8 +61,8 @@ class Torus:
             self.origin.__eq__(other.origin)
             and self.major_radius.__eq__(other.major_radius)
             and self.minor_radius.__eq__(other.minor_radius)
-            and self._dir_x.__eq__(other._dir_x)
-            and self._dir_y.__eq__(other._dir_y)
+            and self._direction_x.__eq__(other._direction_x)
+            and self._direction_y.__eq__(other._direction_y)
         )
 
     def __ne__(self, other) -> bool:
