@@ -2,13 +2,7 @@ import numpy as np
 
 
 class Vector3D(np.ndarray):
-    """Subclassing ndarray and casting an existing ndarray as a given subclass
-    View casting is the standard ndarray mechanism by which you take an ndarray of any subclass,
-    and return a view of the array as another (specified) subclass
-    The first is the use of the ndarray.__new__ method for the main work of object initialization,
-    rather then the more usual __init__ method. The second is
-    the use of the __array_finalize__ method to allow subclasses to clean up
-    after the creation of views and new instances from templates."""
+    """Provides Vector3D"""
 
     def __new__(cls, *args):
 
@@ -17,7 +11,9 @@ class Vector3D(np.ndarray):
         if len(vector) != 3:
             raise ValueError("Vector3D must have three coordinates.")
 
-        if not all(isinstance(arg, (int, float)) for arg in args):
+        if not np.issubdtype(vector.dtype, np.number) or not all(
+            isinstance(data, (int, float)) for data in vector.data
+        ):
             raise ValueError("The parameters of 'input_array' should be integer or float.")
 
         return vector
