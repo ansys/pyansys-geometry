@@ -166,12 +166,9 @@ class UnitVector3D(Vector3D):
         * Vector3D
     """
 
-    def __init__(self, input):
-        super().__init__(input)
-        self = self.normalize()
-
-    def __call__(self):
-        return self._value.normalize()
+    def __new__(cls, input):
+        obj = Vector3D(input)
+        return obj.normalize()
 
 
 class UnitVector2D(Vector2D):
@@ -184,8 +181,6 @@ class UnitVector2D(Vector2D):
         * Vector2D
     """
 
-    def __init__(self, input):
-        self._value = Vector2D(input)
-
-    def __call__(self):
-        return self._value.normalize()
+    def __new__(cls, input):
+        obj = Vector2D(input)
+        return obj.normalize()
