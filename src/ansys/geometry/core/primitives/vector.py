@@ -63,7 +63,7 @@ class Vector3D(np.ndarray):
     def norm(self):
         norm = np.linalg.norm(self)
         if norm == 0:
-            norm = np.finfo(self.dtype).eps
+            raise ValueError("The norm of the input Vector3D is not valid.")
         return norm
 
     def normalize(self):
@@ -132,7 +132,7 @@ class Vector2D(np.ndarray):
     def norm(self):
         norm = np.linalg.norm(self)
         if norm == 0:
-            norm = np.finfo(self.dtype).eps
+            raise ValueError("The norm of the input Vector2D is not valid.")
         return norm
 
     def normalize(self):
@@ -149,6 +149,15 @@ class Vector2D(np.ndarray):
 
 
 class UnitVector3D(Vector3D):
+    """A three-dimensional ``UnitVector`` class.
+
+    Parameters
+    ----------
+    input : np.ndarray, ``Vector3D``
+        * One dimensional numpy.ndarray with shape(3,)
+        * Vector3D
+    """
+
     def __init__(self, input):
         self._value = Vector3D(input)
 
@@ -157,6 +166,15 @@ class UnitVector3D(Vector3D):
 
 
 class UnitVector2D(Vector2D):
+    """A two-dimensional ``UnitVector`` with Cartesian coordinates.
+
+    Parameters
+    ----------
+    input : np.ndarray, Vector2D
+        * One dimensional numpy.ndarray with shape(2,)
+        * Vector2D
+    """
+
     def __init__(self, input):
         self._value = Vector2D(input)
 
