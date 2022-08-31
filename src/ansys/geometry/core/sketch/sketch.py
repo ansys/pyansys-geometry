@@ -51,9 +51,9 @@ class Sketch:
         Parameters
         ----------
         point_1 : Point3D
-            Starting point of the segment.
+            Start of the line segment.
         point_2 : Point3D
-            Ending point of the segment.
+            End of the line segment.
 
         Returns
         -------
