@@ -33,27 +33,24 @@ class Vector3D(np.ndarray):
 
     @x.setter
     def x(self, value: float) -> None:
-        """Set X coordinate of Vector3D"""
         self[0] = value
 
     @property
     def y(self) -> float:
-        """Returns Y coordinate of Vector3D"""
+        """Y coordinate of Vector3D"""
         return self[1]
 
     @y.setter
     def y(self, value: float) -> None:
-        """Set Y coordinate of Vector3D"""
         self[1] = value
 
     @property
     def z(self) -> float:
-        """Returns Z coordinate of Vector3D"""
+        """Z coordinate of Vector3D"""
         return self[2]
 
     @z.setter
     def z(self, value: float) -> None:
-        """Set Z coordinate of Vector3D"""
         self[2] = value
 
     @property

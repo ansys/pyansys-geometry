@@ -31,7 +31,6 @@ class VectorUV(np.ndarray):
 
     @x.setter
     def x(self, value: float) -> None:
-        """Set X coordinate of VectorUV"""
         self[0] = value
 
     @property
@@ -41,7 +40,6 @@ class VectorUV(np.ndarray):
 
     @y.setter
     def y(self, value: float) -> None:
-        """Set Y coordinate of VectorUV"""
         self[1] = value
 
     @property
