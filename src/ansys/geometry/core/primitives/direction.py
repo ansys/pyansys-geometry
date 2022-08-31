@@ -33,8 +33,8 @@ class Direction3D(np.ndarray):
 
         # Once we know we have a Vector3D... normalize!
         norm = np.linalg.norm(obj)
-        
-        if (norm > 0):
+
+        if norm > 0:
             return obj / np.linalg.norm(obj)
         else:
             raise ValueError("The norm of the input Vector3D is not valid.")
@@ -87,7 +87,7 @@ class Direction2D(np.ndarray):
         # Once we know we have a Vector2D... normalize!
         norm = np.linalg.norm(obj)
 
-        if (norm > 0):
+        if norm > 0:
             return obj / np.linalg.norm(obj)
         else:
             raise ValueError("The norm of the input Vector2D is not valid.")
