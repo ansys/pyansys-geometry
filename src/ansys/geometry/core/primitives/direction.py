@@ -89,7 +89,7 @@ class Direction2D(np.ndarray):
         ):
             raise ValueError("The input parameters should be integer or float.")
 
-        # Once we know we have a Vector3D... normalize!
+        # Once we know we have a Vector2D... normalize!
         return obj / np.linalg.norm(obj)
 
     @property
