@@ -20,7 +20,7 @@ repos:
   hooks:
   - id: codespell
 
-# To be activated after qucik dev cycles
+# To be activated after quick dev cycles
 #
 # - repo: https://github.com/pycqa/pydocstyle
 #   rev: 6.1.1
