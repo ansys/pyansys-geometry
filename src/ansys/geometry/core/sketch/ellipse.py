@@ -24,6 +24,134 @@ class EllipseSketch(SketchCurve):
         """
         super().__init__(points, origin)
 
+    @property
+    def semimajor_axis(self) -> float:
+        """Return the semi-major axis of the ellipse.
+
+        Returns
+        -------
+        float
+            Semi-major axis of the ellipse.
+
+        """
+        return self._semimajor_axis
+
+    @property
+    def a(self) -> float:
+        """Return the semi-major axis of the ellipse.
+
+        Returns
+        -------
+        float
+            Semi-major axis of the ellipse.
+
+        """
+        return self.semimajor_axis
+
+    @property
+    def semiminor_axis(self) -> float:
+        """Return the semi-minor axis of the ellipse.
+
+        Returns
+        -------
+        float
+            Semi-major axis of the ellipse.
+
+        """
+        return self._semiminor_axis
+
+    @property
+    def b(self) -> float:
+        """Return the semi-minor axis of the ellipse.
+
+        Returns
+        -------
+        float
+            Semi-major axis of the ellipse.
+
+        """
+        return self.semiminor_axis
+
+    @property
+    def eccentricity(self) -> float:
+        """Return the eccentricity of the ellipse.
+
+        Returns
+        -------
+        float
+            Eccentricity of the ellipse.
+
+        """
+        return (self.a**2 - self.b**2) ** 0.5 / self.a
+
+    @property
+    def ecc(self) -> float:
+        """Return the eccentricity of the ellipse.
+
+        Returns
+        -------
+        float
+            Eccentricity of the ellipse.
+
+        """
+        return self.eccentricity
+
+    @property
+    def linear_eccentricity(self) -> float:
+        """Return the linear eccentricity of the ellipse.
+
+        Returns
+        -------
+        float
+            Eccentricity of the ellipse.
+
+        Notes
+        -----
+        The linear eccentricity is the distance from the center to the focus.
+
+        """
+        return (self.a**2 - self.b**2) ** 0.5
+
+    @property
+    def c(self) -> float:
+        """Return the linear eccentricity of the ellipse.
+
+        Returns
+        -------
+        float
+            Eccentricity of the ellipse.
+
+        Notes
+        -----
+        The linear eccentricity is the distance from the center to the focus.
+
+        """
+        return self.linear_eccentricity
+
+    @property
+    def semilatus_rectum(self) -> float:
+        """Return the semi-latus rectum of the ellipse.
+
+        Returns
+        -------
+        float
+            Semi-latus rectum of the ellipse.
+
+        """
+        return self.b**2 / a
+
+    @property
+    def l(self) -> float:
+        """Return the semi-latus rectum of the ellipse.
+
+        Returns
+        -------
+        float
+            Semi-latus rectum of the ellipse.
+
+        """
+        return self.semilatus_rectum
+
     @classmethod
     def from_axes(
         cls,
@@ -61,6 +189,9 @@ class EllipseSketch(SketchCurve):
         x_coords = origin.x + a * np.cos(theta)
         y_coords = origin.y + b * np.sin(theta)
 
-        # Generate all the point instances
+        # Generate all the point instances and the ellipse
         points = [Point2D([x, y]) for x, y in zip(x_coords, y_coords)]
-        return cls(points, origin)
+        ellipse = cls(points, origin)
+        ellipse._semimajor_axis = a
+        ellipse._semiminor_axis = b
+        return ellipse
