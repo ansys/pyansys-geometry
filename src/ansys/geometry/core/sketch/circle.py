@@ -25,6 +25,28 @@ class CircleSketch(SketchCurve):
         super().__init__(points, origin)
         self._radius = np.linalg.norm(origin - points[0])
 
+    @property
+    def radius(self) -> float:
+        """Return the radius of the circle.
+
+        Returns
+        -------
+        float
+            The radius of the circle.
+        """
+        return self._radius
+
+    @property
+    def r(self) -> float:
+        """Return the radius of the circle.
+
+        Returns
+        -------
+        float
+            The radius of the circle.
+        """
+        return self.radius
+
     @classmethod
     def from_radius(
         cls,
@@ -56,9 +78,6 @@ class CircleSketch(SketchCurve):
 
         # Generate all the point instances
         points = [Point2D([x, y]) for x, y in zip(x_coords, y_coords)]
-        return cls(points, origin)
-
-    @property
-    def radius(self):
-        """Return the radius of the circle."""
-        return self._radius
+        circle = cls(points, origin)
+        circle._radius = radius
+        return circle
