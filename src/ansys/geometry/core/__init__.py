@@ -15,3 +15,6 @@ from pint import UnitRegistry
 
 UNITS = UnitRegistry()
 """Unit manager."""
+
+UNIT_LENGTH = UNITS.meter
+"""Default unit length for PyGeometry."""

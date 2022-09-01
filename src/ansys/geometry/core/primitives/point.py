@@ -5,7 +5,7 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core import UNITS
+from ansys.geometry.core import UNIT_LENGTH, UNITS
 
 DEFAULT_POINT3D = [None, None, None]
 """Default value for ``Point3D``"""
@@ -23,25 +23,31 @@ class Point3D(np.ndarray):
     input : Union[np.ndarray, List[Union[float, int, None]]], optional
         The direction arguments, either as a np.ndarray, or as a list.
         By default, ``DEFAULT_POINT3D``.
-    units : Unit, optional
-        Units employed to define the Point3D values, by default ``UNITS.meter``
+    unit : Unit, optional
+        Units employed to define the Point3D values, by default ``UNIT_LENGTH``
     """
 
     def __new__(
         cls,
         input: Optional[Union[np.ndarray, List[Union[float, int, None]]]] = DEFAULT_POINT3D,
-        units: Optional[Unit] = UNITS.meter,
+        unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Constructor for ``Point3D``."""
 
         # Transform to numpy.ndarray
-        obj = np.asarray([(elem * units).to_base_units().magnitude for elem in input]).view(cls)
-        obj._units = units
-        _, obj._base_units = UNITS.get_base_units(units)
+        obj = np.asarray([(elem * unit).to_base_units().magnitude for elem in input]).view(cls)
+        obj._unit = unit
+        _, obj._base_unit = UNITS.get_base_units(unit)
 
         # Check that the size is as expected
         if obj is None or len(obj) != 3:
             raise ValueError("Point3D must have three coordinates.")
+
+        # Check that units provided (if any) are compatible
+        if unit.is_compatible_with(UNIT_LENGTH.dimensionality):
+            raise TypeError(
+                f"The parameter 'unit' should be a {UNIT_LENGTH.dimensionality} Quantity."
+            )
 
         # Check if we are dealing with the default value
         if input is DEFAULT_POINT3D:
@@ -59,51 +65,54 @@ class Point3D(np.ndarray):
     @property
     def x(self) -> Union[float, int, None]:
         """Returns the X plane component value."""
-        return UNITS.convert(self[0], self._base_units, self._units)
+        return UNITS.convert(self[0], self._base_unit, self._unit)
 
     @x.setter
     def x(self, x: Union[float, int]) -> None:
         """Set the X plane component value."""
         if not isinstance(x, (int, float)):
             raise TypeError("The parameter 'x' should be a float or an integer value.")
-        self[0] = (x * self._units).to_base_units().magnitude
+        self[0] = (x * self._unit).to_base_units().magnitude
 
     @property
     def y(self) -> Union[float, int, None]:
         """Returns the Y plane component value."""
-        return UNITS.convert(self[1], self._base_units, self._units)
+        return UNITS.convert(self[1], self._base_unit, self._unit)
 
     @y.setter
     def y(self, y: Union[float, int]) -> None:
         """Set the Y plane component value."""
         if not isinstance(y, (int, float)):
             raise TypeError("The parameter 'y' should be a float or an integer value.")
-        self[1] = (y * self._units).to_base_units().magnitude
+        self[1] = (y * self._unit).to_base_units().magnitude
 
     @property
     def z(self) -> Union[float, int, None]:
         """Returns the Z plane component value."""
-        return UNITS.convert(self[2], self._base_units, self._units)
+        return UNITS.convert(self[2], self._base_unit, self._unit)
 
     @z.setter
     def z(self, z: Union[float, int]) -> None:
         """Set the Z plane component value."""
         if not isinstance(z, (int, float)):
             raise TypeError("The parameter 'z' should be a float or an integer value.")
-        self[2] = (z * self._units).to_base_units().magnitude
+        self[2] = (z * self._unit).to_base_units().magnitude
 
     @property
-    def units(self) -> Unit:
-        """Returns the units of the object."""
-        return self._units
+    def unit(self) -> Unit:
+        """Returns the unit of the object."""
+        return self._unit
 
-    @units.setter
-    def units(self, units: Unit) -> None:
-        """Sets the units of the object."""
-        if not isinstance(units, Unit):
-            raise TypeError("The parameter 'units' should be a pint.Unit object.")
-        self._units = units
-        _, self._base_units = UNITS.get_base_units(units)
+    @unit.setter
+    def unit(self, unit: Unit) -> None:
+        """Sets the unit of the object."""
+        if not isinstance(unit, Unit):
+            raise TypeError("The parameter 'unit' should be a pint.Unit object.")
+        elif unit.is_compatible_with(UNIT_LENGTH.dimensionality):
+            raise TypeError(
+                f"The parameter 'unit' should be a {UNIT_LENGTH.dimensionality} Quantity."
+            )
+        self._unit = unit
 
     def __eq__(self, other: "Point3D") -> bool:
         """Equals operator for ``Point3D``."""
@@ -128,21 +137,21 @@ class Point2D(np.ndarray):
     input : Union[np.ndarray, List[Union[float, int, None]]], optional
         The direction arguments, either as a np.ndarray, or as a list.
         By default, ``DEFAULT_POINT3D``.
-    units : Unit, optional
-        Units employed to define the Point3D values, by default ``UNITS.meter``
+    unit : Unit, optional
+        Units employed to define the Point3D values, by default ``UNIT_LENGTH``
     """
 
     def __new__(
         cls,
         input: Optional[Union[np.ndarray, List[Union[float, int, None]]]] = DEFAULT_POINT2D,
-        units: Optional[Unit] = UNITS.meter,
+        unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Constructor for ``Point2D``."""
 
         # Transform to numpy.ndarray
-        obj = np.asarray([(elem * units).to_base_units().magnitude for elem in input]).view(cls)
-        obj._units = units
-        _, obj._base_units = UNITS.get_base_units(units)
+        obj = np.asarray([(elem * unit).to_base_units().magnitude for elem in input]).view(cls)
+        obj._unit = unit
+        _, obj._base_unit = UNITS.get_base_units(unit)
 
         # Check that the size is as expected
         if obj is None or len(obj) != 2:
@@ -151,6 +160,12 @@ class Point2D(np.ndarray):
         # Check if we are dealing with the default value
         if input is DEFAULT_POINT2D:
             return obj
+
+        # Check that units provided (if any) are compatible
+        if unit.is_compatible_with(UNIT_LENGTH.dimensionality):
+            raise TypeError(
+                f"The parameter 'unit' should be a {UNIT_LENGTH.dimensionality} Quantity."
+            )
 
         # If we are not dealing with the default value... check the inputs
         if not np.issubdtype(obj.dtype, np.number) or not all(
@@ -164,39 +179,42 @@ class Point2D(np.ndarray):
     @property
     def x(self) -> Union[float, int, None]:
         """Returns the X plane component value."""
-        return UNITS.convert(self[0], self._base_units, self._units)
+        return UNITS.convert(self[0], self._base_unit, self._unit)
 
     @x.setter
     def x(self, x: Union[float, int]) -> None:
         """Set the X plane component value."""
         if not isinstance(x, (int, float)):
             raise TypeError("The parameter 'x' should be a float or an integer value.")
-        self[0] = (x * self._units).to_base_units().magnitude
+        self[0] = (x * self._unit).to_base_units().magnitude
 
     @property
     def y(self) -> Union[float, int, None]:
         """Returns the Y plane component value."""
-        return UNITS.convert(self[1], self._base_units, self._units)
+        return UNITS.convert(self[1], self._base_unit, self._unit)
 
     @y.setter
     def y(self, y: Union[float, int]) -> None:
         """Set the Y plane component value."""
         if not isinstance(y, (int, float)):
             raise TypeError("The parameter 'y' should be a float or an integer value.")
-        self[1] = (y * self._units).to_base_units().magnitude
+        self[1] = (y * self._unit).to_base_units().magnitude
 
     @property
-    def units(self) -> Unit:
-        """Returns the units of the object."""
-        return self._units
+    def unit(self) -> Unit:
+        """Returns the unit of the object."""
+        return self._unit
 
-    @units.setter
-    def units(self, units: Unit) -> None:
-        """Sets the units of the object."""
-        if not isinstance(units, Unit):
-            raise TypeError("The parameter 'units' should be a pint.Unit object.")
-        self._units = units
-        _, self._base_units = UNITS.get_base_units(units)
+    @unit.setter
+    def unit(self, unit: Unit) -> None:
+        """Sets the unit of the object."""
+        if not isinstance(unit, Unit):
+            raise TypeError("The parameter 'unit' should be a pint.Unit object.")
+        elif unit.is_compatible_with(UNIT_LENGTH.dimensionality):
+            raise TypeError(
+                f"The parameter 'unit' should be a {UNIT_LENGTH.dimensionality} Quantity."
+            )
+        self._unit = unit
 
     def __eq__(self, other: "Point2D") -> bool:
         """Equals operator for ``Point2D``."""
