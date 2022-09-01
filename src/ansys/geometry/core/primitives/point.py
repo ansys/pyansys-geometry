@@ -1,6 +1,6 @@
 """``Point3D`` and ``Point2D`` class module."""
 
-from typing import List, Union
+from typing import List, Optional, Union
 
 import numpy as np
 from pint import Unit
@@ -29,8 +29,8 @@ class Point3D(np.ndarray):
 
     def __new__(
         cls,
-        input: Union[np.ndarray, List[Union[float, int, None]]] = DEFAULT_POINT3D,
-        units: Unit = UNITS.meter,
+        input: Optional[Union[np.ndarray, List[Union[float, int, None]]]] = DEFAULT_POINT3D,
+        units: Optional[Unit] = UNITS.meter,
     ):
         """Constructor for ``Point3D``."""
 
@@ -134,8 +134,8 @@ class Point2D(np.ndarray):
 
     def __new__(
         cls,
-        input: Union[np.ndarray, List[Union[float, int, None]]] = DEFAULT_POINT2D,
-        units: Unit = UNITS.meter,
+        input: Optional[Union[np.ndarray, List[Union[float, int, None]]]] = DEFAULT_POINT2D,
+        units: Optional[Unit] = UNITS.meter,
     ):
         """Constructor for ``Point2D``."""
 

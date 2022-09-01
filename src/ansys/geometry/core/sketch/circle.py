@@ -1,5 +1,5 @@
 """``CircleSketch`` class module."""
-from typing import Optional, Union
+from typing import Optional, Sequence, Union
 
 import numpy as np
 
@@ -10,7 +10,7 @@ from ansys.geometry.core.sketch.curve import SketchCurve
 class CircleSketch(SketchCurve):
     """Provides circle representation within a sketch environment."""
 
-    def __init__(self, points: list[Point2D], origin: Point2D):
+    def __init__(self, points: Sequence[Point2D], origin: Point2D):
         """Initialize an instance of ``CircleSketch``.
 
         Parameters
