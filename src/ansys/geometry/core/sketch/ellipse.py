@@ -25,7 +25,7 @@ class EllipseSketch(SketchCurve):
         super().__init__(points, origin)
 
     @property
-    def semimajor_axis(self) -> float:
+    def semi_major_axis(self) -> float:
         """Return the semi-major axis of the ellipse.
 
         Returns
@@ -34,7 +34,7 @@ class EllipseSketch(SketchCurve):
             Semi-major axis of the ellipse.
 
         """
-        return self._semimajor_axis
+        return self._semi_major_axis
 
     @property
     def a(self) -> float:
@@ -46,19 +46,19 @@ class EllipseSketch(SketchCurve):
             Semi-major axis of the ellipse.
 
         """
-        return self.semimajor_axis
+        return self.semi_major_axis
 
     @property
-    def semiminor_axis(self) -> float:
+    def semi_minor_axis(self) -> float:
         """Return the semi-minor axis of the ellipse.
 
         Returns
         -------
         float
-            Semi-major axis of the ellipse.
+            Semi-minor axis of the ellipse.
 
         """
-        return self._semiminor_axis
+        return self._semi_minor_axis
 
     @property
     def b(self) -> float:
@@ -67,10 +67,10 @@ class EllipseSketch(SketchCurve):
         Returns
         -------
         float
-            Semi-major axis of the ellipse.
+            Semi-minor axis of the ellipse.
 
         """
-        return self.semiminor_axis
+        return self.semi_minor_axis
 
     @property
     def eccentricity(self) -> float:
@@ -119,7 +119,7 @@ class EllipseSketch(SketchCurve):
         Returns
         -------
         float
-            Eccentricity of the ellipse.
+            Linear eccentricity of the ellipse.
 
         Notes
         -----
@@ -129,7 +129,7 @@ class EllipseSketch(SketchCurve):
         return self.linear_eccentricity
 
     @property
-    def semilatus_rectum(self) -> float:
+    def semi_latus_rectum(self) -> float:
         """Return the semi-latus rectum of the ellipse.
 
         Returns
@@ -192,6 +192,34 @@ class EllipseSketch(SketchCurve):
         # Generate all the point instances and the ellipse
         points = [Point2D([x, y]) for x, y in zip(x_coords, y_coords)]
         ellipse = cls(points, origin)
-        ellipse._semimajor_axis = a
-        ellipse._semiminor_axis = b
+        ellipse._semi_major_axis = a
+        ellipse._semi_minor_axis = b
         return ellipse
+
+    @classmethod
+    def from_focii_and_point(
+        self,
+        f1: Point2D,
+        f2: Point2D,
+        p: Point2D,
+        center: Optional[Point2D] = Point2D([0, 0]),
+        resolution: Optional[int] = 150,
+    ):
+        """Create an ellipse from its focii and a point.
+
+        Parameters
+        ----------
+        f1 : Point2D
+            A ``Point2D`` representing the first focus of the ellipse.
+        f2 : Point2D
+            A ``Point2D`` representing the second focus of the ellipse.
+        origin : Point2D
+            A ``Point2D`` representing the origin of the ellipse.
+        resolution : int
+            Number of points to be used when generating points for the ellipse.
+
+        """
+        f1_to_p, f2_to_p = (f1 - p).norm, (f1 - p).norm
+        a = (f1_to_p + f2_to_p) / 2
+        b = (((y - origin.y) ** 2) / (1 - (x - origin.x) ** 2 / a**2)) ** 0.5
+        return self.from_axes(a, b, origin, resolution)
