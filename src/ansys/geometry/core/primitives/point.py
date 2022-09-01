@@ -41,6 +41,13 @@ class Point3D(np.ndarray):
     ):
         """Constructor for ``Point3D``."""
 
+        # Check if we are dealing with the default value
+        if input is DEFAULT_POINT3D:
+            obj = np.asarray(DEFAULT_POINT3D).view(cls)
+            obj._unit = None
+            _, obj._base_unit = UNITS.get_base_units(UNIT_LENGTH)
+            return obj
+
         # Transform to numpy.ndarray
         obj = np.asarray([(elem * unit).to_base_units().magnitude for elem in input]).view(cls)
         obj._unit = unit
@@ -52,10 +59,6 @@ class Point3D(np.ndarray):
 
         # Check that units provided (if any) are compatible
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
-
-        # Check if we are dealing with the default value
-        if input is DEFAULT_POINT3D:
-            return obj
 
         # If we are not dealing with the default value... check the inputs
         check_ndarray_is_float_int(obj, "input")
@@ -138,6 +141,13 @@ class Point2D(np.ndarray):
     ):
         """Constructor for ``Point2D``."""
 
+        # Check if we are dealing with the default value
+        if input is DEFAULT_POINT2D:
+            obj = np.asarray(DEFAULT_POINT2D).view(cls)
+            obj._unit = None
+            _, obj._base_unit = UNITS.get_base_units(UNIT_LENGTH)
+            return obj
+
         # Transform to numpy.ndarray
         obj = np.asarray([(elem * unit).to_base_units().magnitude for elem in input]).view(cls)
         obj._unit = unit
@@ -146,10 +156,6 @@ class Point2D(np.ndarray):
         # Check that the size is as expected
         if obj is None or len(obj) != 2:
             raise ValueError("Point2D must have two coordinates.")
-
-        # Check if we are dealing with the default value
-        if input is DEFAULT_POINT2D:
-            return obj
 
         # Check that units provided (if any) are compatible
         check_pint_unit_compatibility(unit, UNIT_LENGTH)

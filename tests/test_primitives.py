@@ -1,6 +1,7 @@
 from numpy import finfo as np_finfo
 import pytest
 
+from ansys.geometry.core import UNITS
 from ansys.geometry.core.primitives import (
     Point2D,
     Point3D,
@@ -15,6 +16,21 @@ DOUBLE_EPS = np_finfo(float).eps
 
 def test_point3d():
     """Simple test to create a ``Point3D``."""
+
+    # Test the null Point3D
+    p_null = Point3D()
+    assert len(p_null) == 3
+    assert all(x == None for x in p_null)
+    p_null.unit = UNITS.cm
+    p_null.x = 10
+    p_null.y = 20
+    p_null.z = 30
+    assert p_null.x == 10
+    assert p_null.y == 20
+    assert p_null.z == 30
+    assert p_null[0] == 0.1
+    assert p_null[1] == 0.2
+    assert p_null[2] == 0.3
 
     # Create two Point3D objects
     p_1 = Point3D([0, 1, 3])
@@ -42,6 +58,18 @@ def test_point3d():
 
 def test_point2d():
     """Simple test to create a ``Point2D``."""
+
+    # Test the null Point2D
+    p_null = Point2D()
+    assert len(p_null) == 2
+    assert all(x == None for x in p_null)
+    p_null.unit = UNITS.cm
+    p_null.x = 10
+    p_null.y = 20
+    assert p_null.x == 10
+    assert p_null.y == 20
+    assert p_null[0] == 0.1
+    assert p_null[1] == 0.2
 
     # Create two Point2D objects
     p_1 = Point2D([0, 1])
@@ -293,3 +321,92 @@ def test_vector2d_errors():
     with pytest.raises(ValueError, match="The norm of the Vector2D is not valid."):
         v2 = Vector2D([0, 0])
         v2.normalize()
+
+
+def test_point3D_units():
+    """``Point3D`` units testing."""
+
+    # Create a Point3D with some units
+    p_cm_to_mm = Point3D([10, 20, 30], UNITS.cm)
+
+    # Check that the units are correctly in place
+    assert p_cm_to_mm.unit == UNITS.cm
+
+    # Request for X, Y, Z and ensure they are in cm
+    assert p_cm_to_mm.x == 10
+    assert p_cm_to_mm.y == 20
+    assert p_cm_to_mm.z == 30
+
+    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
+    assert p_cm_to_mm[0] == (p_cm_to_mm.x * p_cm_to_mm.unit).to_base_units().magnitude
+    assert p_cm_to_mm[1] == (p_cm_to_mm.y * p_cm_to_mm.unit).to_base_units().magnitude
+    assert p_cm_to_mm[2] == (p_cm_to_mm.z * p_cm_to_mm.unit).to_base_units().magnitude
+
+    # Store the numpy array values
+    (raw_x, raw_y, raw_z) = p_cm_to_mm[0:3]
+
+    # Set unit to mm now... and check if the values changed
+    p_cm_to_mm.unit = UNITS.mm
+    assert p_cm_to_mm.x == 100
+    assert p_cm_to_mm.y == 200
+    assert p_cm_to_mm.z == 300
+
+    # Check that the values are still the same in the array
+    assert raw_x == p_cm_to_mm[0]
+    assert raw_y == p_cm_to_mm[1]
+    assert raw_z == p_cm_to_mm[2]
+
+    # Now change the value of a X being in millimeters
+    p_cm_to_mm.x = 20  # Basically 1/5 of original x
+    assert not raw_x == p_cm_to_mm[0]
+    assert raw_x == p_cm_to_mm[0] * 5
+
+    # Now change the value of a Y being in millimeters
+    p_cm_to_mm.y = 10  # Basically 1/20 of original y
+    assert not raw_y == p_cm_to_mm[1]
+    assert raw_y == p_cm_to_mm[1] * 20
+
+    # Now change the value of a Z being in millimeters
+    p_cm_to_mm.z = 30  # Basically 1/10 of original z
+    assert not raw_z == p_cm_to_mm[2]
+    assert raw_z == p_cm_to_mm[2] * 10
+
+
+def test_point2D_units():
+    """``Point2D`` units testing."""
+
+    # Create a Point2D with some units
+    p_cm_to_mm = Point2D([10, 20], UNITS.cm)
+
+    # Check that the units are correctly in place
+    assert p_cm_to_mm.unit == UNITS.cm
+
+    # Request for X, Y, Z and ensure they are in cm
+    assert p_cm_to_mm.x == 10
+    assert p_cm_to_mm.y == 20
+
+    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
+    assert p_cm_to_mm[0] == (p_cm_to_mm.x * p_cm_to_mm.unit).to_base_units().magnitude
+    assert p_cm_to_mm[1] == (p_cm_to_mm.y * p_cm_to_mm.unit).to_base_units().magnitude
+
+    # Store the numpy array values
+    (raw_x, raw_y) = p_cm_to_mm[0:2]
+
+    # Set unit to mm now... and check if the values changed
+    p_cm_to_mm.unit = UNITS.mm
+    assert p_cm_to_mm.x == 100
+    assert p_cm_to_mm.y == 200
+
+    # Check that the values are still the same in the array
+    assert raw_x == p_cm_to_mm[0]
+    assert raw_y == p_cm_to_mm[1]
+
+    # Now change the value of a X being in millimeters
+    p_cm_to_mm.x = 20  # Basically 1/5 of original x
+    assert not raw_x == p_cm_to_mm[0]
+    assert raw_x == p_cm_to_mm[0] * 5
+
+    # Now change the value of a Y being in millimeters
+    p_cm_to_mm.y = 10  # Basically 1/20 of original y
+    assert not raw_y == p_cm_to_mm[1]
+    assert raw_y == p_cm_to_mm[1] * 20
