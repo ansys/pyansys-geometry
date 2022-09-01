@@ -1,14 +1,18 @@
+from math import cos, sin
+
 import numpy as np
 
+from ansys.geometry.core.primitives.vector import Vector2D, Vector3D
 
-class Matrix3(np.ndarray):
+
+class Matrix33(np.ndarray):
     def __new__(cls, input):
         """Constructor for ``Point3D``."""
 
         matrix = np.asarray(input).view(cls)
 
         if matrix is None or matrix.ndim != 2 or matrix.shape != (3, 3):
-            raise ValueError("Matrix3 should only be a 2D array of shape (3,3).")
+            raise ValueError("Matrix33 should only be a 2D array of shape (3,3).")
 
         if not np.issubdtype(matrix.dtype, np.number) or not isinstance(matrix, (np.ndarray)):
             raise ValueError("The input parameters should be integer or float.")
@@ -22,14 +26,14 @@ class Matrix3(np.ndarray):
         return np.linalg.inv(self)
 
 
-class Matrix4(np.ndarray):
+class Matrix44(np.ndarray):
     def __new__(cls, input):
         """Constructor for ``Point3D``."""
 
         matrix = np.asarray(input).view(cls)
 
         if matrix is None or matrix.ndim != 2 or matrix.shape != (4, 4):
-            raise ValueError("Matrix3 shouldonly be a 2D array of shape (3,3).")
+            raise ValueError("Matrix44 shouldonly be a 2D array of shape (4,4).")
 
         if not np.issubdtype(matrix.dtype, np.number) or not isinstance(matrix, (np.ndarray)):
             raise ValueError("The input parameters should be integer or float.")
@@ -43,5 +47,38 @@ class Matrix4(np.ndarray):
         return np.linalg.inv(self)
 
 
-# from ansys.geometry.core.primitives import Matrix3
-# a = Matrix3([[1,2,3],[2,5,6],[2,5,10]])
+# from ansys.geometry.core.primitives import Matrix33
+# a = Matrix33([[1,2,3],[2,5,6],[2,5,10]])
+# b = Matrix33([[1,0,0],[0,1,0],[0,0,1]])
+class RotationMatrix(Matrix33):
+    def __new__(cls, input, theta):
+        obj = Matrix33(input)
+        rot = np.array(
+            [
+                [round(cos(theta)), -round(sin(theta)), 0],
+                [round(sin(theta)), round(cos(theta)), 0],
+                [0, 0, 1],
+            ]
+        )
+        return np.multiply(rot, obj)
+
+
+class TranslationMatrix(Matrix33):
+    def __new__(cls, input, v: Vector2D):
+        obj = Matrix33(input)
+        translate = np.array([[0, 0, v.x], [0, 0, v.y], [0, 0, 1]])
+        return np.multiply(translate, obj)
+
+
+class TranslateRotateMatrix(Matrix44):
+    def __new__(cls, input, angle, v: Vector3D):
+        obj = Matrix44(input)
+        trans_rot = np.array(
+            [
+                [0, 0, 0, v.x],
+                [0, cos(angle), -sin(angle), v.y],
+                [0, sin(angle), cos(angle), v.z],
+                [0, 0, 0, 1],
+            ]
+        )
+        return np.multiply(trans_rot, obj)
