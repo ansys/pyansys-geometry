@@ -28,7 +28,7 @@ class Point3D(np.ndarray):
     Parameters
     ----------
     input : Union[np.ndarray, List[Union[float, int, None]]], optional
-        The direction arguments, either as a np.ndarray, or as a list.
+        The direction arguments, either as a :class:`np.ndarray`, or as a list.
         By default, ``DEFAULT_POINT3D``.
     unit : Unit, optional
         Units employed to define the Point3D values, by default ``UNIT_LENGTH``
@@ -128,7 +128,7 @@ class Point2D(np.ndarray):
     Parameters
     ----------
     input : Union[np.ndarray, List[Union[float, int, None]]], optional
-        The direction arguments, either as a np.ndarray, or as a list.
+        The direction arguments, either as a :class:`np.ndarray`, or as a list.
         By default, ``DEFAULT_POINT3D``.
     unit : Unit, optional
         Units employed to define the Point3D values, by default ``UNIT_LENGTH``

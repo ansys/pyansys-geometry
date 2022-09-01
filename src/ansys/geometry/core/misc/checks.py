@@ -8,8 +8,7 @@ from pint import Unit
 
 def check_is_float_int(param: object, param_name: Optional[Union[str, None]]) -> None:
     """
-    Method for checking if the parameter provided is
-    a ``float`` or an ``int``.
+    Checks if the parameter provided is a ``float`` or an ``int``.
 
     Parameters
     ----------
@@ -33,15 +32,14 @@ def check_is_float_int(param: object, param_name: Optional[Union[str, None]]) ->
 
 def check_ndarray_is_float_int(param: np.ndarray, param_name: Optional[Union[str, None]]) -> None:
     """
-    Method for checking if the parameter provided is
-    a ``np.ndarray`` of ``float`` or ``int`` elements.
+    Checks if the :class:`np.ndarray` has ``float`` or ``int`` elements.
 
     Parameters
     ----------
     param : np.ndarray
-        ``np.ndarray`` instance to be checked.
+        :class:`np.ndarray` instance to be checked.
     param_name : str or None, optional
-        The ``np.ndarray`` instance name (if any). By default, ``None``.
+        The :class:`np.ndarray` instance name (if any). By default, ``None``.
 
     Raises
     ------
@@ -61,8 +59,7 @@ def check_ndarray_is_float_int(param: np.ndarray, param_name: Optional[Union[str
 
 def check_is_pint_unit(param: object, param_name: Optional[Union[str, None]]) -> None:
     """
-    Method for checking if the parameter provided is
-    a ``pint.Unit``.
+    Checks if the parameter provided is a :class:`pint.Unit`.
 
     Parameters
     ----------
@@ -74,7 +71,7 @@ def check_is_pint_unit(param: object, param_name: Optional[Union[str, None]]) ->
     Raises
     ------
     TypeError
-        In case the parameter is not a ``pint.Unit``.
+        In case the parameter is not a :class:`pint.Unit`.
     """
     if not isinstance(param, Unit):
         raise TypeError(
@@ -86,20 +83,19 @@ def check_is_pint_unit(param: object, param_name: Optional[Union[str, None]]) ->
 
 def check_pint_unit_compatibility(input: Unit, expected: Unit) -> None:
     """
-    Method for checking if the input ``pint.Unit`` provided is
-    compatible with the expected ``pint.Unit``.
+    Checks if the input :class:`pint.Unit` provided is compatible with the expected one.
 
     Parameters
     ----------
     input : Unit
-        The ``pint.Unit`` input.
+        The :class:`pint.Unit` input.
     expected : Unit
-        The ``pint.Unit`` expected dimensionality.
+        The :class:`pint.Unit` expected dimensionality.
 
     Raises
     ------
     TypeError
-        In case the input is not a compatible ``pint.Unit``.
+        In case the input is not a compatible :class:`pint.Unit`.
     """
     if not input.is_compatible_with(expected):
         raise TypeError(
@@ -109,8 +105,7 @@ def check_pint_unit_compatibility(input: Unit, expected: Unit) -> None:
 
 def check__eq__operation(input: object, expected: object) -> None:
     """
-    Method for checking if the input object provided is
-    of the same class as the expected one.
+    Checks if the input object provided is of the same class as the expected one.
 
     Parameters
     ----------
