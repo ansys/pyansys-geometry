@@ -1,4 +1,5 @@
 """A module containing a class for modeling ellipses."""
+from typing import Optional, Union
 
 import numpy as np
 
@@ -9,20 +10,50 @@ from ansys.geometry.core.sketch.curve import SketchCurve
 class EllipseSketch(SketchCurve):
     """A class for modelling ellipses."""
 
-    def __init__(self, points, origin):
+    def __init__(self, points: list[Point2D], origin: Point2D):
+        """Initialize an instance of ``EllipseSketch``.
+
+        Parameters
+        ----------
+        points : list[Point2D]
+            A list defining the ellipse.
+        origin : Point2D
+            A ``Point2D`` representing the origin of the ellipse.
+
+        """
         super().__init__(points, origin)
 
     @classmethod
-    def from_axes(cls, a, b, origin=None, resolution=150):
-        """Create an ellipse from its semi-major and semi-minor axes."""
+    def from_axes(
+        cls,
+        a: Union[int, float],
+        b: Union[int, float],
+        origin: Optional[Point2D] = Point2D([0, 0]),
+        resolution: Optional[int] = 150,
+    ):
+        """Create an ellipse from its semi-major and semi-minor axes.
+
+        Parameters
+        ----------
+        a : int, float
+            The semi-major axis of the ellipse.
+        b : int, float
+            The semi-minor axis of the ellipse.
+        origin : Point2D
+            A ``Point2D`` representing the origin of the ellipse.
+        resolution : int
+            Number of points to be used when generating points for the ellipse.
+
+        Returns
+        -------
+        EllipseSketch
+            An object for modelling ellipse sketches.
+
+        """
         # Assert that the curve is an ellipse and not a parabola or hyperbola
         ecc = (a**2 - b**2) ** 0.5 / a
         if ecc >= 1:
             raise ValueError("The curve defined is not an ellipse.")
-
-        # Unpack the x and y coordinates for the origin point
-        if origin is None:
-            origin = Point2D([0, 0])
 
         # Generate the points on the ellipse
         theta = np.linspace(0, 2 * np.pi, resolution)
@@ -32,8 +63,3 @@ class EllipseSketch(SketchCurve):
         # Generate all the point instances
         points = [Point2D([x, y]) for x, y in zip(x_coords, y_coords)]
         return cls(points, origin)
-
-    @classmethod
-    def from_focii_and_point(f1, f2, point, origin=None, resolution=100):
-        """Create an ellipse from its focci and a point."""
-        raise NotImplementedError
