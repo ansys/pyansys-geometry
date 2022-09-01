@@ -6,6 +6,12 @@ import numpy as np
 from pint import Unit
 
 from ansys.geometry.core import UNIT_LENGTH, UNITS
+from ansys.geometry.core.misc import (
+    check_is_float_int,
+    check_is_pint_unit,
+    check_pint_unit_compatibility,
+    check__eq__operation,
+)
 
 DEFAULT_POINT3D = [None, None, None]
 """Default value for ``Point3D``"""
@@ -44,10 +50,7 @@ class Point3D(np.ndarray):
             raise ValueError("Point3D must have three coordinates.")
 
         # Check that units provided (if any) are compatible
-        if unit.is_compatible_with(UNIT_LENGTH.dimensionality):
-            raise TypeError(
-                f"The parameter 'unit' should be a {UNIT_LENGTH.dimensionality} Quantity."
-            )
+        check_pint_unit_compatibility(unit, UNIT_LENGTH)
 
         # Check if we are dealing with the default value
         if input is DEFAULT_POINT3D:
@@ -70,8 +73,7 @@ class Point3D(np.ndarray):
     @x.setter
     def x(self, x: Union[float, int]) -> None:
         """Set the X plane component value."""
-        if not isinstance(x, (int, float)):
-            raise TypeError("The parameter 'x' should be a float or an integer value.")
+        check_is_float_int(x, "x")
         self[0] = (x * self._unit).to_base_units().magnitude
 
     @property
@@ -82,8 +84,7 @@ class Point3D(np.ndarray):
     @y.setter
     def y(self, y: Union[float, int]) -> None:
         """Set the Y plane component value."""
-        if not isinstance(y, (int, float)):
-            raise TypeError("The parameter 'y' should be a float or an integer value.")
+        check_is_float_int(y, "y")
         self[1] = (y * self._unit).to_base_units().magnitude
 
     @property
@@ -94,8 +95,7 @@ class Point3D(np.ndarray):
     @z.setter
     def z(self, z: Union[float, int]) -> None:
         """Set the Z plane component value."""
-        if not isinstance(z, (int, float)):
-            raise TypeError("The parameter 'z' should be a float or an integer value.")
+        check_is_float_int(z, "z")
         self[2] = (z * self._unit).to_base_units().magnitude
 
     @property
@@ -106,21 +106,13 @@ class Point3D(np.ndarray):
     @unit.setter
     def unit(self, unit: Unit) -> None:
         """Sets the unit of the object."""
-        if not isinstance(unit, Unit):
-            raise TypeError("The parameter 'unit' should be a pint.Unit object.")
-        elif unit.is_compatible_with(UNIT_LENGTH.dimensionality):
-            raise TypeError(
-                f"The parameter 'unit' should be a {UNIT_LENGTH.dimensionality} Quantity."
-            )
+        check_is_pint_unit(unit, "unit")
+        check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit
 
     def __eq__(self, other: "Point3D") -> bool:
         """Equals operator for ``Point3D``."""
-        if not isinstance(other, Point3D):
-            raise TypeError(
-                f"Comparison against {type(other)} is not possible. Should be of type {type(self)}"
-            )
-
+        check__eq__operation(other, self)
         return np.array_equal(self, other)
 
     def __ne__(self, other: "Point3D") -> bool:
@@ -162,10 +154,7 @@ class Point2D(np.ndarray):
             return obj
 
         # Check that units provided (if any) are compatible
-        if unit.is_compatible_with(UNIT_LENGTH.dimensionality):
-            raise TypeError(
-                f"The parameter 'unit' should be a {UNIT_LENGTH.dimensionality} Quantity."
-            )
+        check_pint_unit_compatibility(unit, UNIT_LENGTH)
 
         # If we are not dealing with the default value... check the inputs
         if not np.issubdtype(obj.dtype, np.number) or not all(
@@ -184,8 +173,7 @@ class Point2D(np.ndarray):
     @x.setter
     def x(self, x: Union[float, int]) -> None:
         """Set the X plane component value."""
-        if not isinstance(x, (int, float)):
-            raise TypeError("The parameter 'x' should be a float or an integer value.")
+        check_is_float_int(x, "x")
         self[0] = (x * self._unit).to_base_units().magnitude
 
     @property
@@ -196,8 +184,7 @@ class Point2D(np.ndarray):
     @y.setter
     def y(self, y: Union[float, int]) -> None:
         """Set the Y plane component value."""
-        if not isinstance(y, (int, float)):
-            raise TypeError("The parameter 'y' should be a float or an integer value.")
+        check_is_float_int(y, "y")
         self[1] = (y * self._unit).to_base_units().magnitude
 
     @property
@@ -208,21 +195,13 @@ class Point2D(np.ndarray):
     @unit.setter
     def unit(self, unit: Unit) -> None:
         """Sets the unit of the object."""
-        if not isinstance(unit, Unit):
-            raise TypeError("The parameter 'unit' should be a pint.Unit object.")
-        elif unit.is_compatible_with(UNIT_LENGTH.dimensionality):
-            raise TypeError(
-                f"The parameter 'unit' should be a {UNIT_LENGTH.dimensionality} Quantity."
-            )
+        check_is_pint_unit(unit, "unit")
+        check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit
 
     def __eq__(self, other: "Point2D") -> bool:
         """Equals operator for ``Point2D``."""
-        if not isinstance(other, Point2D):
-            raise TypeError(
-                f"Comparison against {type(other)} is not possible. Should be of type {type(self)}"
-            )
-
+        check__eq__operation(other, self)
         return np.array_equal(self, other)
 
     def __ne__(self, other: "Point2D") -> bool:
