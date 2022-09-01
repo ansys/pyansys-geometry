@@ -97,11 +97,11 @@ class Point3D(np.ndarray):
         """Returns the units of the object."""
         return self._units
 
-    @z.setter
+    @units.setter
     def units(self, units: Unit) -> None:
         """Sets the units of the object."""
         if not isinstance(units, Unit):
-            raise TypeError("The parameter 'unit' should be a pint.Unit object.")
+            raise TypeError("The parameter 'units' should be a pint.Unit object.")
         self._units = units
         _, self._base_units = UNITS.get_base_units(units)
 
@@ -184,6 +184,19 @@ class Point2D(np.ndarray):
         if not isinstance(y, (int, float)):
             raise TypeError("The parameter 'y' should be a float or an integer value.")
         self[1] = (y * self._units).to_base_units().magnitude
+
+    @property
+    def units(self) -> Unit:
+        """Returns the units of the object."""
+        return self._units
+
+    @units.setter
+    def units(self, units: Unit) -> None:
+        """Sets the units of the object."""
+        if not isinstance(units, Unit):
+            raise TypeError("The parameter 'units' should be a pint.Unit object.")
+        self._units = units
+        _, self._base_units = UNITS.get_base_units(units)
 
     def __eq__(self, other: "Point2D") -> bool:
         """Equals operator for ``Point2D``."""
