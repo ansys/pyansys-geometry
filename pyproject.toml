@@ -29,6 +29,7 @@ packages = [
 python = ">=3.7,<4.0"
 importlib-metadata = {version = "^4.0", python = "<3.8"}
 numpy = ">=1.20.3"
+matplotlib = ">=3.5.3"
 
 # Optional dependencies
 ansys-sphinx-theme = {version = "==0.5.2", optional = true}
