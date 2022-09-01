@@ -77,6 +77,7 @@ def check_pint_unit_compatibility(input: Unit, expected: Unit) -> None:
             f"The pint.Unit provided as input should be a {expected.dimensionality} Quantity."
         )
 
+
 def check__eq__operation(input: object, expected: object) -> None:
     """
     Method for checking if the input object provided is
@@ -94,7 +95,7 @@ def check__eq__operation(input: object, expected: object) -> None:
     TypeError
         In case they are not of the same class.
     """
-    
+
     if not isinstance(input, type(expected)):
         raise TypeError(
             f"Comparison against {type(input)} is not possible. Should be of type {type(expected)}."

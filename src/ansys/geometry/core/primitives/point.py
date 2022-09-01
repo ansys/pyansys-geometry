@@ -7,10 +7,10 @@ from pint import Unit
 
 from ansys.geometry.core import UNIT_LENGTH, UNITS
 from ansys.geometry.core.misc import (
+    check__eq__operation,
     check_is_float_int,
     check_is_pint_unit,
     check_pint_unit_compatibility,
-    check__eq__operation,
 )
 
 DEFAULT_POINT3D = [None, None, None]
