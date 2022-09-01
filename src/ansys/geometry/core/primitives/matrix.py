@@ -53,13 +53,7 @@ class Matrix44(np.ndarray):
 class RotationMatrix(Matrix33):
     def __new__(cls, input, theta):
         obj = Matrix33(input)
-        rot = np.array(
-            [
-                [round(cos(theta)), -round(sin(theta)), 0],
-                [round(sin(theta)), round(cos(theta)), 0],
-                [0, 0, 1],
-            ]
-        )
+        rot = np.array([[cos(theta), -sin(theta), 0], [sin(theta), cos(theta), 0], [0, 0, 1]])
         return np.multiply(rot, obj)
 
 
@@ -67,13 +61,13 @@ class TranslationMatrix(Matrix33):
     def __new__(cls, input, v: Vector2D):
         obj = Matrix33(input)
         translate = np.array([[0, 0, v.x], [0, 0, v.y], [0, 0, 1]])
-        return np.multiply(translate, obj)
+        return np.multiply(obj, translate)
 
 
 class TranslateRotateMatrix(Matrix44):
     def __new__(cls, input, angle, v: Vector3D):
         obj = Matrix44(input)
-        trans_rot = np.array(
+        transrot = np.array(
             [
                 [0, 0, 0, v.x],
                 [0, cos(angle), -sin(angle), v.y],
@@ -81,4 +75,4 @@ class TranslateRotateMatrix(Matrix44):
                 [0, 0, 0, 1],
             ]
         )
-        return np.multiply(trans_rot, obj)
+        return np.multiply(obj, transrot)
