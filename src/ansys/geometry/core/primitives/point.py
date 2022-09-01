@@ -5,7 +5,7 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core import UNIT_LENGTH, UNITS
+from ansys.geometry.core import UNIT_LENGTH, UNITS, Real
 from ansys.geometry.core.misc import (
     check__eq__operation,
     check_is_float_int,
@@ -27,7 +27,7 @@ class Point3D(np.ndarray):
 
     Parameters
     ----------
-    input : Union[np.ndarray, List[Union[float, int, None]]], optional
+    input : Union[np.ndarray, List[Union[Real, None]]], optional
         The direction arguments, either as a :class:`np.ndarray`, or as a list.
         By default, ``DEFAULT_POINT3D``.
     unit : Unit, optional
@@ -36,7 +36,7 @@ class Point3D(np.ndarray):
 
     def __new__(
         cls,
-        input: Optional[Union[np.ndarray, List[Union[float, int, None]]]] = DEFAULT_POINT3D,
+        input: Optional[Union[np.ndarray, List[Union[Real, None]]]] = DEFAULT_POINT3D,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Constructor for ``Point3D``."""
@@ -67,34 +67,34 @@ class Point3D(np.ndarray):
         return obj
 
     @property
-    def x(self) -> Union[float, int, None]:
+    def x(self) -> Union[Real, None]:
         """Returns the X plane component value."""
         return UNITS.convert(self[0], self._base_unit, self._unit)
 
     @x.setter
-    def x(self, x: Union[float, int]) -> None:
+    def x(self, x: Real) -> None:
         """Set the X plane component value."""
         check_is_float_int(x, "x")
         self[0] = (x * self._unit).to_base_units().magnitude
 
     @property
-    def y(self) -> Union[float, int, None]:
+    def y(self) -> Union[Real, None]:
         """Returns the Y plane component value."""
         return UNITS.convert(self[1], self._base_unit, self._unit)
 
     @y.setter
-    def y(self, y: Union[float, int]) -> None:
+    def y(self, y: Real) -> None:
         """Set the Y plane component value."""
         check_is_float_int(y, "y")
         self[1] = (y * self._unit).to_base_units().magnitude
 
     @property
-    def z(self) -> Union[float, int, None]:
+    def z(self) -> Union[Real, None]:
         """Returns the Z plane component value."""
         return UNITS.convert(self[2], self._base_unit, self._unit)
 
     @z.setter
-    def z(self, z: Union[float, int]) -> None:
+    def z(self, z: Real) -> None:
         """Set the Z plane component value."""
         check_is_float_int(z, "z")
         self[2] = (z * self._unit).to_base_units().magnitude
@@ -127,7 +127,7 @@ class Point2D(np.ndarray):
 
     Parameters
     ----------
-    input : Union[np.ndarray, List[Union[float, int, None]]], optional
+    input : Union[np.ndarray, List[Union[Real, None]]], optional
         The direction arguments, either as a :class:`np.ndarray`, or as a list.
         By default, ``DEFAULT_POINT3D``.
     unit : Unit, optional
@@ -136,7 +136,7 @@ class Point2D(np.ndarray):
 
     def __new__(
         cls,
-        input: Optional[Union[np.ndarray, List[Union[float, int, None]]]] = DEFAULT_POINT2D,
+        input: Optional[Union[np.ndarray, List[Union[Real, None]]]] = DEFAULT_POINT2D,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Constructor for ``Point2D``."""
@@ -167,23 +167,23 @@ class Point2D(np.ndarray):
         return obj
 
     @property
-    def x(self) -> Union[float, int, None]:
+    def x(self) -> Union[Real, None]:
         """Returns the X plane component value."""
         return UNITS.convert(self[0], self._base_unit, self._unit)
 
     @x.setter
-    def x(self, x: Union[float, int]) -> None:
+    def x(self, x: Real) -> None:
         """Set the X plane component value."""
         check_is_float_int(x, "x")
         self[0] = (x * self._unit).to_base_units().magnitude
 
     @property
-    def y(self) -> Union[float, int, None]:
+    def y(self) -> Union[Real, None]:
         """Returns the Y plane component value."""
         return UNITS.convert(self[1], self._base_unit, self._unit)
 
     @y.setter
-    def y(self, y: Union[float, int]) -> None:
+    def y(self, y: Real) -> None:
         """Set the Y plane component value."""
         check_is_float_int(y, "y")
         self[1] = (y * self._unit).to_base_units().magnitude

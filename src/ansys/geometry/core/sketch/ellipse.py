@@ -1,8 +1,9 @@
 """A module containing a class for modeling ellipses."""
-from typing import Optional, Union
+from typing import Optional
 
 import numpy as np
 
+from ansys.geometry.core import Real
 from ansys.geometry.core.primitives.point import Point2D
 from ansys.geometry.core.sketch.curve import SketchCurve
 
@@ -26,8 +27,8 @@ class EllipseSketch(SketchCurve):
     @classmethod
     def from_axes(
         cls,
-        a: Union[int, float],
-        b: Union[int, float],
+        a: Real,
+        b: Real,
         origin: Optional[Point2D] = Point2D([0, 0]),
         resolution: Optional[int] = 150,
     ):
