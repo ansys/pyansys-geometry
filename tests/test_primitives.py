@@ -71,7 +71,9 @@ def test_point3d_errors():
     with pytest.raises(ValueError, match="Point3D must have three coordinates."):
         Point3D([1, 4])
 
-    with pytest.raises(TypeError, match="The input parameters should be integer or float."):
+    with pytest.raises(
+        TypeError, match="The np.ndarray 'input' should contain float or integer values."
+    ):
         Point3D(["a", "b", "c"])
 
     # Create a point
@@ -99,7 +101,9 @@ def test_point2d_errors():
     with pytest.raises(ValueError, match="Point2D must have two coordinates."):
         Point2D([1, 4, 4])
 
-    with pytest.raises(TypeError, match="The input parameters should be integer or float."):
+    with pytest.raises(
+        TypeError, match="The np.ndarray 'input' should contain float or integer values."
+    ):
         Point2D(["a", "b"])
 
     # Create a point
@@ -230,30 +234,26 @@ def test_vector3d_errors():
     with pytest.raises(ValueError, match="Vector3D must have three coordinates."):
         Vector3D([1, 2])
 
-    with pytest.raises(ValueError, match="The parameters of 'inputs' should be integer or float."):
+    with pytest.raises(
+        TypeError, match="The np.ndarray 'input' should contain float or integer values."
+    ):
         Vector3D(["a", "b", "c"])
 
     # Create a Vector3D
     v1 = Vector3D([1, 2, 3])
 
     # Test setter error checks
-    with pytest.raises(
-        ValueError, match="The parameter 'x' should be a float or an integer value."
-    ):
+    with pytest.raises(TypeError, match="The parameter 'x' should be a float or an integer value."):
         v1.x = "x"
 
-    with pytest.raises(
-        ValueError, match="The parameter 'y' should be a float or an integer value."
-    ):
+    with pytest.raises(TypeError, match="The parameter 'y' should be a float or an integer value."):
         v1.y = "y"
 
-    with pytest.raises(
-        ValueError, match="The parameter 'z' should be a float or an integer value."
-    ):
+    with pytest.raises(TypeError, match="The parameter 'z' should be a float or an integer value."):
         v1.z = "z"
 
     # Build a Vector2D and try to compare against it
-    with pytest.raises(ValueError, match="Comparison of"):
+    with pytest.raises(TypeError, match="Comparison against"):
         v2 = Vector2D([1, 2])
         assert v1 == v2
 
@@ -269,25 +269,23 @@ def test_vector2d_errors():
     with pytest.raises(ValueError, match="Vector2D must have two coordinates."):
         Vector2D([1])
 
-    with pytest.raises(ValueError, match="The parameters of 'input' should be integer or float."):
+    with pytest.raises(
+        TypeError, match="The np.ndarray 'input' should contain float or integer values."
+    ):
         Vector2D(["a", "b"])
 
     # Create a Vector2D
     v1 = Vector2D([1, 2])
 
     # Test setter error checks
-    with pytest.raises(
-        ValueError, match="The parameter 'x' should be a float or an integer value."
-    ):
+    with pytest.raises(TypeError, match="The parameter 'x' should be a float or an integer value."):
         v1.x = "x"
 
-    with pytest.raises(
-        ValueError, match="The parameter 'y' should be a float or an integer value."
-    ):
+    with pytest.raises(TypeError, match="The parameter 'y' should be a float or an integer value."):
         v1.y = "y"
 
     # Build a Vector3D and try to compare against it
-    with pytest.raises(ValueError, match="Comparison of"):
+    with pytest.raises(TypeError, match="Comparison against"):
         v2 = Vector3D([1, 5, 6])
         assert v1 == v2
 

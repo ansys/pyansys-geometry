@@ -2,6 +2,7 @@
 
 from typing import Optional, Union
 
+import numpy as np
 from pint import Unit
 
 
@@ -27,6 +28,34 @@ def check_is_float_int(param: object, param_name: Optional[Union[str, None]]) ->
             f"The parameter provided should be a float or an integer value."
             if param_name is None
             else f"The parameter '{param_name}' should be a float or an integer value."
+        )
+
+
+def check_ndarray_is_float_int(param: np.ndarray, param_name: Optional[Union[str, None]]) -> None:
+    """
+    Method for checking if the parameter provided is
+    a ``np.ndarray`` of ``float`` or ``int`` elements.
+
+    Parameters
+    ----------
+    param : np.ndarray
+        ``np.ndarray`` instance to be checked.
+    param_name : str or None, optional
+        The ``np.ndarray`` instance name (if any). By default, ``None``.
+
+    Raises
+    ------
+    TypeError
+        In case the parameter is not a ``float`` or an ``int``.
+    """
+
+    if not np.issubdtype(param.dtype, np.number) or not all(
+        isinstance(data, (int, float)) for data in param.data
+    ):
+        raise TypeError(
+            f"The np.ndarray provided should contain float or integer values."
+            if param_name is None
+            else f"The np.ndarray '{param_name}' should contain float or integer values."
         )
 
 

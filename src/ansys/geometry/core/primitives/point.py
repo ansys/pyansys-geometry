@@ -10,6 +10,7 @@ from ansys.geometry.core.misc import (
     check__eq__operation,
     check_is_float_int,
     check_is_pint_unit,
+    check_ndarray_is_float_int,
     check_pint_unit_compatibility,
 )
 
@@ -57,10 +58,7 @@ class Point3D(np.ndarray):
             return obj
 
         # If we are not dealing with the default value... check the inputs
-        if not np.issubdtype(obj.dtype, np.number) or not all(
-            isinstance(value, (int, float)) for value in obj.data
-        ):
-            raise TypeError("The input parameters should be integer or float.")
+        check_ndarray_is_float_int(obj, "input")
 
         # If all checks went through, return the Point3D
         return obj
@@ -157,10 +155,7 @@ class Point2D(np.ndarray):
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
 
         # If we are not dealing with the default value... check the inputs
-        if not np.issubdtype(obj.dtype, np.number) or not all(
-            isinstance(value, (int, float)) for value in obj.data
-        ):
-            raise TypeError("The input parameters should be integer or float.")
+        check_ndarray_is_float_int(obj, "input")
 
         # If all checks went through, return the Point2D
         return obj
