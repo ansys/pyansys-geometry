@@ -71,7 +71,7 @@ def test_point3d_errors():
     with pytest.raises(ValueError, match="Point3D must have three coordinates."):
         Point3D([1, 4])
 
-    with pytest.raises(ValueError, match="The input parameters should be integer or float."):
+    with pytest.raises(TypeError, match="The input parameters should be integer or float."):
         Point3D(["a", "b", "c"])
 
     # Create a point
@@ -79,22 +79,22 @@ def test_point3d_errors():
 
     # Test setter error checks
     with pytest.raises(
-        ValueError, match="The parameter 'x' should be a float or an integer value."
+        TypeError, match="The parameter 'x' should be a float or an integer value."
     ):
         point.x = "a"
 
     with pytest.raises(
-        ValueError, match="The parameter 'y' should be a float or an integer value."
+        TypeError, match="The parameter 'y' should be a float or an integer value."
     ):
         point.y = "a"
 
     with pytest.raises(
-        ValueError, match="The parameter 'z' should be a float or an integer value."
+        TypeError, match="The parameter 'z' should be a float or an integer value."
     ):
         point.z = "a"
 
     # Build a Point2D and try to compare against it
-    with pytest.raises(ValueError, match="Comparison of"):
+    with pytest.raises(TypeError, match="Comparison against"):
         point_2d = Point2D([1, 4])
         assert point == point_2d
 
@@ -105,7 +105,7 @@ def test_point2d_errors():
     with pytest.raises(ValueError, match="Point2D must have two coordinates."):
         Point2D([1, 4, 4])
 
-    with pytest.raises(ValueError, match="The input parameters should be integer or float."):
+    with pytest.raises(TypeError, match="The input parameters should be integer or float."):
         Point2D(["a", "b"])
 
     # Create a point
@@ -113,17 +113,17 @@ def test_point2d_errors():
 
     # Test setter error checks
     with pytest.raises(
-        ValueError, match="The parameter 'x' should be a float or an integer value."
+        TypeError, match="The parameter 'x' should be a float or an integer value."
     ):
         point.x = "a"
 
     with pytest.raises(
-        ValueError, match="The parameter 'y' should be a float or an integer value."
+        TypeError, match="The parameter 'y' should be a float or an integer value."
     ):
         point.y = "a"
 
     # Build a Point3D and try to compare against it
-    with pytest.raises(ValueError, match="Comparison of"):
+    with pytest.raises(TypeError, match="Comparison against"):
         point_3d = Point3D([1, 4, 4])
         assert point == point_3d
 

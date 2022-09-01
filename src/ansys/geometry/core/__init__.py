@@ -10,3 +10,8 @@ except ModuleNotFoundError:
     import importlib_metadata
 
 __version__ = importlib_metadata.version(__name__.replace(".", "-"))
+
+from pint import UnitRegistry
+
+UNITS = UnitRegistry()
+"""Unit manager."""
