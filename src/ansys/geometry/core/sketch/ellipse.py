@@ -25,7 +25,7 @@ class EllipseSketch(SketchCurve):
         super().__init__(points, origin)
 
     @property
-    def semi_major_axis(self) -> float:
+    def semi_major_axis(self) -> Real:
         """Return the semi-major axis of the ellipse.
 
         Returns
@@ -37,7 +37,7 @@ class EllipseSketch(SketchCurve):
         return self._semi_major_axis
 
     @property
-    def a(self) -> float:
+    def a(self) -> Real:
         """Return the semi-major axis of the ellipse.
 
         Returns
@@ -49,7 +49,7 @@ class EllipseSketch(SketchCurve):
         return self.semi_major_axis
 
     @property
-    def semi_minor_axis(self) -> float:
+    def semi_minor_axis(self) -> Real:
         """Return the semi-minor axis of the ellipse.
 
         Returns
@@ -61,7 +61,7 @@ class EllipseSketch(SketchCurve):
         return self._semi_minor_axis
 
     @property
-    def b(self) -> float:
+    def b(self) -> Real:
         """Return the semi-minor axis of the ellipse.
 
         Returns
@@ -73,7 +73,7 @@ class EllipseSketch(SketchCurve):
         return self.semi_minor_axis
 
     @property
-    def eccentricity(self) -> float:
+    def eccentricity(self) -> Real:
         """Return the eccentricity of the ellipse.
 
         Returns
@@ -85,7 +85,7 @@ class EllipseSketch(SketchCurve):
         return (self.a**2 - self.b**2) ** 0.5 / self.a
 
     @property
-    def ecc(self) -> float:
+    def ecc(self) -> Real:
         """Return the eccentricity of the ellipse.
 
         Returns
@@ -97,13 +97,13 @@ class EllipseSketch(SketchCurve):
         return self.eccentricity
 
     @property
-    def linear_eccentricity(self) -> float:
+    def linear_eccentricity(self) -> Real:
         """Return the linear eccentricity of the ellipse.
 
         Returns
         -------
         float
-            Eccentricity of the ellipse.
+            Linear eccentricity of the ellipse.
 
         Notes
         -----
@@ -113,7 +113,7 @@ class EllipseSketch(SketchCurve):
         return (self.a**2 - self.b**2) ** 0.5
 
     @property
-    def c(self) -> float:
+    def c(self) -> Real:
         """Return the linear eccentricity of the ellipse.
 
         Returns
@@ -129,7 +129,7 @@ class EllipseSketch(SketchCurve):
         return self.linear_eccentricity
 
     @property
-    def semi_latus_rectum(self) -> float:
+    def semi_latus_rectum(self) -> Real:
         """Return the semi-latus rectum of the ellipse.
 
         Returns
@@ -141,7 +141,7 @@ class EllipseSketch(SketchCurve):
         return self.b**2 / a
 
     @property
-    def l(self) -> float:
+    def l(self) -> Real:
         """Return the semi-latus rectum of the ellipse.
 
         Returns
@@ -150,7 +150,7 @@ class EllipseSketch(SketchCurve):
             Semi-latus rectum of the ellipse.
 
         """
-        return self.semilatus_rectum
+        return self.semi_latus_rectum
 
     @classmethod
     def from_axes(
@@ -159,6 +159,7 @@ class EllipseSketch(SketchCurve):
         b: Real,
         origin: Optional[Point2D] = Point2D([0, 0]),
         resolution: Optional[int] = 150,
+        unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Create an ellipse from its semi-major and semi-minor axes.
 
@@ -172,6 +173,8 @@ class EllipseSketch(SketchCurve):
             A ``Point2D`` representing the origin of the ellipse.
         resolution : int
             Number of points to be used when generating points for the ellipse.
+        unit : Unit, optional
+            Units employed to define the Point3D values, by default ``UNIT_LENGTH``
 
         Returns
         -------
@@ -190,7 +193,7 @@ class EllipseSketch(SketchCurve):
         y_coords = origin.y + b * np.sin(theta)
 
         # Generate all the point instances and the ellipse
-        points = [Point2D([x, y]) for x, y in zip(x_coords, y_coords)]
+        points = [Point2D([x, y], unit) for x, y in zip(x_coords, y_coords)]
         ellipse = cls(points, origin)
         ellipse._semi_major_axis = a
         ellipse._semi_minor_axis = b
