@@ -46,8 +46,7 @@ class Matrix33(np.ndarray):
         det = np.linalg.det(self)
         if det == 0:
             raise ValueError("The determinent of matrix is zero, cannot be inversed")
-        self = np.linalg.inv(self)
-        return self
+        return np.linalg.inv(self)
 
 
 class Matrix44(np.ndarray):
@@ -60,7 +59,7 @@ class Matrix44(np.ndarray):
         By default, ``DEFAULT_MATRIX44``.
     """
 
-    def __new__(cls, input: np.ndarray = DEFAULT_MATRIX44):
+    def __new__(cls, input: Union[np.ndarray, List[Real]] = DEFAULT_MATRIX44):
         """Constructor for ``Matrix44``."""
         if input is DEFAULT_MATRIX44:
             obj = np.asarray(DEFAULT_MATRIX44).view(cls)
@@ -87,7 +86,10 @@ class Matrix44(np.ndarray):
 
         Parameters
         ----------
-        angle : The angle to be rotated"""
+        angle : Real
+            The angle in which the x-axis rotates
+        unit : Unit, optional
+           Unit for the angle, by default ``UNIT_ANGLE``"""
         if unit is not UNIT_ANGLE:
             angle = (angle * unit).to_base_units().magnitude
 
@@ -101,6 +103,14 @@ class Matrix44(np.ndarray):
         return np.matmul(self, rotation_matrix)
 
     def rotateY(self, angle, unit: Optional[Unit] = UNIT_ANGLE) -> "Matrix44":
+        """Rotate the 4x4 matrix in x axis in a counter-clockwise direction
+
+        Parameters
+        ----------
+        angle : Real
+            The angle in which the x-axis rotates
+        unit : Unit, optional
+           Unit for the angle, by default ``UNIT_ANGLE``"""
         if unit is not UNIT_ANGLE:
             angle = (angle * unit).to_base_units().magnitude
 
