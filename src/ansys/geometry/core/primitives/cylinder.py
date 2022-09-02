@@ -47,6 +47,9 @@ class Cylinder:
     ):
         """Constructor method for ``Cylinder``."""
 
+        check_type_equivalence(type(direction_x), UnitVector3D)
+        check_type_equivalence(type(direction_y), UnitVector3D)
+
         check_is_float_int(radius, "radius")
         check_is_float_int(height, "height")
 

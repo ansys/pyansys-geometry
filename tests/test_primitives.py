@@ -418,9 +418,13 @@ def test_cylinder():
 
     # Create two Cylinder objects
     origin = Point3D([42, 99, 13])
-    c_1 = Cylinder(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), 100, 200)
-    c_1_duplicate = Cylinder(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), 100, 200)
-    c_2 = Cylinder(Point3D([5, 8, 9]), Vector3D([55, 16, 73]), Vector3D([23, 67, 45]), 88, 76)
+    c_1 = Cylinder(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, 200)
+    c_1_duplicate = Cylinder(
+        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, 200
+    )
+    c_2 = Cylinder(
+        Point3D([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 76
+    )
 
     # Check that the equals operator works
     assert c_1 == c_1_duplicate
@@ -437,13 +441,13 @@ def test_cylinder():
         TypeError,
         match="The parameter 'radius' should be a float or an integer value.",
     ):
-        Cylinder(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), "A", 200)
+        Cylinder(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), "A", 200)
 
     with pytest.raises(
         TypeError,
         match="The parameter 'height' should be a float or an integer value.",
     ):
-        Cylinder(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), 100, "A")
+        Cylinder(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, "A")
 
 
 def test_cylinder_units():
@@ -456,9 +460,13 @@ def test_cylinder_units():
         TypeError,
         match="The pint.Unit provided as input should be a \[length\] quantity.",
     ):
-        Cylinder(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), 100, 200, UNITS.celsius)
+        Cylinder(
+            origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, 200, UNITS.celsius
+        )
 
-    c_1 = Cylinder(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), 100, 200, UNITS.mm)
+    c_1 = Cylinder(
+        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, 200, UNITS.mm
+    )
 
     # Verify rejection of invalid base unit type
     with pytest.raises(
