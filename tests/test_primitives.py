@@ -100,7 +100,7 @@ def test_point3d_errors():
         Point3D([1, 4])
 
     with pytest.raises(
-        TypeError, match="The np.ndarray 'input' should contain float or integer values."
+        TypeError, match="The numpy.ndarray 'input' should contain float or integer values."
     ):
         Point3D(["a", "b", "c"])
 
@@ -130,7 +130,7 @@ def test_point2d_errors():
         Point2D([1, 4, 4])
 
     with pytest.raises(
-        TypeError, match="The np.ndarray 'input' should contain float or integer values."
+        TypeError, match="The numpy.ndarray 'input' should contain float or integer values."
     ):
         Point2D(["a", "b"])
 
@@ -234,7 +234,7 @@ def test_unit_vector_3d():
     assert abs(round(v2.y, 3) - 0.316) <= DOUBLE_EPS
     assert abs(round(v2.z, 3) - 0.949) <= DOUBLE_EPS
 
-    # Create UnitVector3D objects from np.ndarray
+    # Create UnitVector3D objects from numpy.ndarray
     v3 = UnitVector3D([1, 2, 3])
     assert abs(round(v3.x, 3) - 0.267) <= DOUBLE_EPS
     assert abs(round(v3.y, 3) - 0.535) <= DOUBLE_EPS
@@ -250,7 +250,7 @@ def test_unit_vector_2d():
     assert abs(round(v2.x, 3) - 0.894) <= DOUBLE_EPS
     assert abs(round(v2.y, 3) - 0.447) <= DOUBLE_EPS
 
-    # Create UnitVector2D objects from np.ndarray
+    # Create UnitVector2D objects from numpy.ndarray
     v3 = UnitVector2D([2, 1])
     assert abs(round(v3.x, 3) - 0.894) <= DOUBLE_EPS
     assert abs(round(v3.y, 3) - 0.447) <= DOUBLE_EPS
@@ -263,7 +263,7 @@ def test_vector3d_errors():
         Vector3D([1, 2])
 
     with pytest.raises(
-        TypeError, match="The np.ndarray 'input' should contain float or integer values."
+        TypeError, match="The numpy.ndarray 'input' should contain float or integer values."
     ):
         Vector3D(["a", "b", "c"])
 
@@ -298,7 +298,7 @@ def test_vector2d_errors():
         Vector2D([1])
 
     with pytest.raises(
-        TypeError, match="The np.ndarray 'input' should contain float or integer values."
+        TypeError, match="The numpy.ndarray 'input' should contain float or integer values."
     ):
         Vector2D(["a", "b"])
 

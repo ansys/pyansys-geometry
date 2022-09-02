@@ -13,7 +13,7 @@ class Vector3D(np.ndarray):
 
     Parameters
     ----------
-    input : np.ndarray or list
+    input : numpy.ndarray or list
         One dimensional :class:`numpy.ndarray` with shape(3,)
     """
 
@@ -92,7 +92,7 @@ class Vector2D(np.ndarray):
 
     Parameters
     ----------
-    input : np.ndarray
+    input : numpy.ndarray
         One dimensional :class:`numpy.ndarray` with shape(2,)
     """
 
@@ -156,7 +156,7 @@ class UnitVector3D(Vector3D):
 
     Parameters
     ----------
-    input : np.ndarray, ``Vector3D``
+    input : numpy.ndarray, ``Vector3D``
         * One dimensional :class:`numpy.ndarray` with shape(3,)
         * Vector3D
     """
@@ -171,7 +171,7 @@ class UnitVector2D(Vector2D):
 
     Parameters
     ----------
-    input : np.ndarray, Vector2D
+    input : numpy.ndarray, Vector2D
         * One dimensional :class:`numpy.ndarray` with shape(2,)
         * Vector2D
     """
