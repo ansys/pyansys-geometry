@@ -13,7 +13,7 @@ from ansys.geometry.core.misc import (
     check_type_equivalence,
 )
 from ansys.geometry.core.primitives.point import Point3D
-from ansys.geometry.core.primitives.vector import Vector3D
+from ansys.geometry.core.primitives.vector import UnitVector3D
 
 
 class Cylinder:
@@ -24,9 +24,9 @@ class Cylinder:
     ----------
     origin : Point3D
         Origin of the ``Cylinder``.
-    direction_x : Vector3D
+    direction_x : UnitVector3D
         X-plane direction.
-    direction_y : Vector3D
+    direction_y : UnitVector3D
         Y-plane direction.
     radius : Real
         Radius of the ``Cylinder``.
@@ -39,8 +39,8 @@ class Cylinder:
     def __init__(
         self,
         origin: Point3D,
-        direction_x: Vector3D,
-        direction_y: Vector3D,
+        direction_x: UnitVector3D,
+        direction_y: UnitVector3D,
         radius: Real,
         height: Real,
         unit: Optional[Unit] = UNIT_LENGTH,
