@@ -1,3 +1,5 @@
+from io import UnsupportedOperation
+
 from numpy import finfo as np_finfo
 import pytest
 
@@ -191,6 +193,10 @@ def test_vector3d():
     assert v_cross.y == 0
     assert v_cross.z == 0
 
+    # Check that the dot and cross product overload is fine
+    assert abs(round(v1 * v2 - 25)) <= DOUBLE_EPS
+    v_cross_overload = v1 % v2
+    assert v_cross_overload == v_cross
 
 def test_vector2d():
     """Simple test to create a ``Vector2D``."""
@@ -223,6 +229,10 @@ def test_vector2d():
     assert abs(round(v1_n.x, 3) - 0.894) <= DOUBLE_EPS
     assert abs(round(v1_n.y, 3) - 0.447) <= DOUBLE_EPS
 
+    # Check that the dot product overload is fine
+    v_3 = Vector2D([2, 8])
+    v_4 = Vector2D([3, 7])
+    assert abs(round(v_3 * v_4 - 62)) <= DOUBLE_EPS
 
 def test_unit_vector_3d():
     """Simple test to create a ``UnitVector3D``."""
@@ -240,6 +250,14 @@ def test_unit_vector_3d():
     assert abs(round(v3.y, 3) - 0.535) <= DOUBLE_EPS
     assert abs(round(v3.z, 3) - 0.802) <= DOUBLE_EPS
 
+    # Check that UnitVector2D is inmutable
+    with pytest.raises(UnsupportedOperation, match="UnitVector3D is inmutable."):
+        v2.x = 3
+    with pytest.raises(UnsupportedOperation, match="UnitVector3D is inmutable."):
+        v2.y = 3
+    with pytest.raises(UnsupportedOperation, match="UnitVector3D is inmutable."):
+        v2.z = 3
+
 
 def test_unit_vector_2d():
     """Simple test to create a ``UnitVector2D``."""
@@ -254,6 +272,12 @@ def test_unit_vector_2d():
     v3 = UnitVector2D([2, 1])
     assert abs(round(v3.x, 3) - 0.894) <= DOUBLE_EPS
     assert abs(round(v3.y, 3) - 0.447) <= DOUBLE_EPS
+
+    # Check that UnitVector2D is inmutable
+    with pytest.raises(UnsupportedOperation, match="UnitVector2D is inmutable."):
+        v2.x = 3
+    with pytest.raises(UnsupportedOperation, match="UnitVector2D is inmutable."):
+        v2.y = 3
 
 
 def test_vector3d_errors():
