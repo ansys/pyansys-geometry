@@ -16,12 +16,12 @@ DEFAULT_MATRIX44 = np.identity(4)
 
 
 class Matrix33(np.ndarray):
-    """Provides Matrix 3*3 primitive representation.
+    """A 3x3 matrix for working with 2D affine transformations.
 
     Parameters
     ----------
-    input : np.ndarray, optional
-        The direction arguments, either as a :class:`np.ndarray`, or as a list.
+    input : numpy.ndarray, optional
+        The matrix arguments as a :class:`np.ndarray`.
         By default, ``DEFAULT_MATRIX33``.
     """
 
@@ -41,14 +41,25 @@ class Matrix33(np.ndarray):
 
         return obj
 
-    def inverse(self):
+    def inverse(self: "Matrix33") -> "Matrix33":
+        """Provides the inverse of the matrix"""
         det = np.linalg.det(self)
         if det == 0:
             raise ValueError("The determinent of matrix is zero, cannot be inversed")
-        return np.linalg.inv(self)
+        self = np.linalg.inv(self)
+        return self
 
 
 class Matrix44(np.ndarray):
+    """A 4x4 matrix for working with 3D affine transformations.
+
+    Parameters
+    ----------
+    input : numpy.ndarray, optional
+        The matrix arguments as a :class:`np.ndarray`.
+        By default, ``DEFAULT_MATRIX44``.
+    """
+
     def __new__(cls, input: np.ndarray = DEFAULT_MATRIX44):
         """Constructor for ``Matrix44``."""
         if input is DEFAULT_MATRIX44:
@@ -64,7 +75,7 @@ class Matrix44(np.ndarray):
 
         return obj
 
-    def inverse(self):
+    def inverse(self: "Matrix44") -> "Matrix44":
         det = np.linalg.det(self)
         if det == 0:
             raise ValueError("The determinent of matrix is zero, cannot be inversed")
