@@ -1,23 +1,27 @@
 from math import cos, sin
+from typing import Optional
 
 import numpy as np
+from pint import Unit
 
+from ansys.geometry.core import UNIT_ANGLE
+from ansys.geometry.core.misc import check_pint_unit_compatibility
 from ansys.geometry.core.primitives.vector import Vector2D, Vector3D
 
 
 class Matrix33(np.ndarray):
-    def __new__(cls, input):
+    def __new__(cls, input: np.ndarray):
         """Constructor for ``Point3D``."""
 
-        matrix = np.asarray(input).view(cls)
+        obj = np.asarray(input).view(cls)
 
-        if matrix is None or matrix.ndim != 2 or matrix.shape != (3, 3):
+        if obj is None or obj.ndim != 2 or obj.shape != (3, 3):
             raise ValueError("Matrix33 should only be a 2D array of shape (3,3).")
 
-        if not np.issubdtype(matrix.dtype, np.number) or not isinstance(matrix, (np.ndarray)):
+        if not np.issubdtype(obj.dtype, np.number) or not isinstance(obj, (np.ndarray)):
             raise ValueError("The input parameters should be integer or float.")
 
-        return matrix
+        return obj
 
     def inverse(self):
         det = np.linalg.det(self)
@@ -30,15 +34,15 @@ class Matrix44(np.ndarray):
     def __new__(cls, input):
         """Constructor for ``Point3D``."""
 
-        matrix = np.asarray(input).view(cls)
+        obj = np.asarray(input).view(cls)
 
-        if matrix is None or matrix.ndim != 2 or matrix.shape != (4, 4):
+        if obj is None or obj.ndim != 2 or obj.shape != (4, 4):
             raise ValueError("Matrix44 shouldonly be a 2D array of shape (4,4).")
 
-        if not np.issubdtype(matrix.dtype, np.number) or not isinstance(matrix, (np.ndarray)):
+        if not np.issubdtype(obj.dtype, np.number) or not isinstance(obj, (np.ndarray)):
             raise ValueError("The input parameters should be integer or float.")
 
-        return matrix
+        return obj
 
     def inverse(self):
         det = np.linalg.det(self)
@@ -46,7 +50,11 @@ class Matrix44(np.ndarray):
             raise ValueError("The determinent of matrix is zero, cannot be inversed")
         return np.linalg.inv(self)
 
-    def rotateX(self, angle):
+    def rotateX(self, angle, unit: Optional[Unit] = UNIT_ANGLE):
+        if unit is not UNIT_ANGLE:
+            angle = (angle * unit).to_base_units().magnitude
+
+        check_pint_unit_compatibility(unit, UNIT_ANGLE)
         s = sin(angle)
         c = cos(angle)
         rot = np.identity(4)
@@ -55,7 +63,11 @@ class Matrix44(np.ndarray):
         rot[2, 1] = s
         return np.matmul(self, rot)
 
-    def rotateY(self, angle):
+    def rotateY(self, angle, unit: Optional[Unit] = UNIT_ANGLE):
+        if unit is not UNIT_ANGLE:
+            angle = (angle * unit).to_base_units().magnitude
+
+        check_pint_unit_compatibility(unit, UNIT_ANGLE)
         s = sin(angle)
         c = cos(angle)
         rot = np.identity(4)
@@ -64,7 +76,11 @@ class Matrix44(np.ndarray):
         rot[1, 3] = s
         return np.matmul(self, rot)
 
-    def rotateZ(self, angle):
+    def rotateZ(self, angle, unit: Optional[Unit] = UNIT_ANGLE):
+        if unit is not UNIT_ANGLE:
+            angle = (angle * unit).to_base_units().magnitude
+
+        check_pint_unit_compatibility(unit, UNIT_ANGLE)
 
         s = sin(angle)
         c = cos(angle)
@@ -75,14 +91,15 @@ class Matrix44(np.ndarray):
         return np.matmul(self, rot)
 
 
-# from ansys.geometry.core.primitives import Matrix33
-# a = Matrix33([[1,2,3],[2,5,6],[2,5,10]])
-# b = Matrix33([[1,0,0],[0,1,0],[0,0,1]])
 class RotationMatrix(Matrix33):
-    def __new__(cls, input, theta):
+    def __new__(cls, input, angle, unit: Optional[Unit] = UNIT_ANGLE):
+        if unit is not UNIT_ANGLE:
+            angle = (angle * unit).to_base_units().magnitude
+
+        check_pint_unit_compatibility(unit, UNIT_ANGLE)
         obj = Matrix33(input)
         rotation_matrix = np.array(
-            [[cos(theta), -sin(theta), 0], [sin(theta), cos(theta), 0], [0, 0, 1]]
+            [[cos(angle), -sin(angle), 0], [sin(angle), cos(angle), 0], [0, 0, 1]]
         )
         return np.matmul(obj, rotation_matrix)
 

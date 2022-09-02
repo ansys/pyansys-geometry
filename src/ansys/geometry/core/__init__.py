@@ -26,6 +26,8 @@ UNITS = UnitRegistry()
 UNIT_LENGTH = UNITS.meter
 """Default unit length for PyGeometry."""
 
+UNIT_ANGLE = UNITS.radian
+"""Default unit angle for PyGeometry."""
 
 # Typing
 # ------------------------------------------------------------------------------
