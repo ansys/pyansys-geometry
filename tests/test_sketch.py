@@ -1,5 +1,24 @@
+import numpy as np
+
 from ansys.geometry.core.primitives import Point3D
-from ansys.geometry.core.sketch import LineSketch, Sketch
+from ansys.geometry.core.sketch import CircleSketch, EllipseSketch, LineSketch, Sketch
+
+
+def test_ellipse_from_axes():
+    """Verify constructor for ``EllipseSketch``."""
+    expected_a, expected_b = 9, 7
+    ellipse = EllipseSketch.from_axes(expected_a, expected_b)
+    np.testing.assert_allclose(ellipse.a, expected_a)
+    np.testing.assert_allclose(ellipse.b, expected_b)
+
+
+def test_ellipse_with_same_axes_is_circle_like():
+    """Verify an ellipse with zero eccentricity has same points as a circle."""
+    ellipse = EllipseSketch.from_axes(1, 1)
+    circle = CircleSketch.from_radius(1)
+    for ellipse_point, circle_point in zip(ellipse.points, circle.points):
+        np.testing.assert_allclose(ellipse_point[0], circle_point[0])
+        np.testing.assert_allclose(ellipse_point[1], circle_point[1])
 
 
 def test_create_line():
