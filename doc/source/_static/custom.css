@@ -4,3 +4,7 @@
     flex: 0 0 25%;
     max-width: 25%;
 }
+.col-xl-7 {
+    flex: 0 0 57.33333%;
+    max-width: 57.33333%;
+  }
