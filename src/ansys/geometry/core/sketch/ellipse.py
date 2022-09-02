@@ -2,8 +2,9 @@
 from typing import Optional
 
 import numpy as np
+from pint import Unit
 
-from ansys.geometry.core import Real
+from ansys.geometry.core import UNIT_LENGTH, Real
 from ansys.geometry.core.primitives.point import Point2D
 from ansys.geometry.core.sketch.curve import SketchCurve
 
@@ -207,6 +208,7 @@ class EllipseSketch(SketchCurve):
         p: Point2D,
         center: Optional[Point2D] = Point2D([0, 0]),
         resolution: Optional[int] = 150,
+        unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Create an ellipse from its focii and a point.
 
@@ -220,6 +222,8 @@ class EllipseSketch(SketchCurve):
             A ``Point2D`` representing the origin of the ellipse.
         resolution : int
             Number of points to be used when generating points for the ellipse.
+        unit : Unit, optional
+            Units employed to define the Point3D values, by default ``UNIT_LENGTH``
 
         """
         f1_to_p, f2_to_p = (f1 - p).norm, (f1 - p).norm

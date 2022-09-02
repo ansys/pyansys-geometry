@@ -2,8 +2,9 @@
 from typing import Optional, Sequence
 
 import numpy as np
+from pint import Unit
 
-from ansys.geometry.core import Real
+from ansys.geometry.core import UNIT_LENGTH, Real
 from ansys.geometry.core.primitives.point import Point2D
 from ansys.geometry.core.sketch.curve import SketchCurve
 
@@ -53,6 +54,7 @@ class CircleSketch(SketchCurve):
         radius: Real,
         origin: Optional[Point2D] = Point2D([0, 0]),
         resolution: Optional[int] = 150,
+        unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Create a circle from its radius and center.
 
@@ -64,6 +66,8 @@ class CircleSketch(SketchCurve):
             A ``Point2D`` representing the origin of the ellipse.
         resolution : int
             Number of points to be used when generating points for the ellipse.
+        unit : Unit, optional
+            Units employed to define the Point3D values, by default ``UNIT_LENGTH``
 
         Returns
         -------
@@ -77,7 +81,7 @@ class CircleSketch(SketchCurve):
         y_coords = origin.y + radius * np.sin(theta)
 
         # Generate all the point instances
-        points = [Point2D([x, y]) for x, y in zip(x_coords, y_coords)]
+        points = [Point2D([x, y], unit) for x, y in zip(x_coords, y_coords)]
         circle = cls(points, origin)
         circle._radius = radius
         return circle
