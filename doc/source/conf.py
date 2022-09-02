@@ -14,6 +14,7 @@ html_logo = logo
 html_theme = "ansys_sphinx_theme"
 html_short_title = html_title = "pygeometry"
 
+
 # specify the location of your github repo
 html_theme_options = {
     "github_url": "https://github.com/pyansys/pygeometry",
@@ -72,6 +73,10 @@ numpydoc_validation_checks = {
 
 # static path
 html_static_path = ["_static"]
+
+html_css_files = [
+    "custom.css",
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
