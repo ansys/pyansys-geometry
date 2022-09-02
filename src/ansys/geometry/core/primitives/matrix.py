@@ -81,13 +81,13 @@ class Matrix44(np.ndarray):
             raise ValueError("The determinent of matrix is zero, cannot be inversed")
         return np.linalg.inv(self)
 
-    def rotateX(self, angle: Real, unit: Optional[Unit] = UNIT_ANGLE) -> "Matrix44":
-        """Rotate the 4x4 matrix in x axis in a counter-clockwise direction
+    def rotate_x(self, angle: Real, unit: Optional[Unit] = UNIT_ANGLE) -> "Matrix44":
+        """Rotate the 4x4 matrix in X axis in a counter-clockwise direction.
 
         Parameters
         ----------
         angle : Real
-            The angle in which the x-axis rotates
+            The angle in which the X-axis rotates
         unit : Unit, optional
            Unit for the angle, by default ``UNIT_ANGLE``"""
         if unit is not UNIT_ANGLE:
@@ -102,13 +102,13 @@ class Matrix44(np.ndarray):
         rotation_matrix[2, 1] = sin_angle
         return np.matmul(self, rotation_matrix)
 
-    def rotateY(self, angle, unit: Optional[Unit] = UNIT_ANGLE) -> "Matrix44":
-        """Rotate the 4x4 matrix in x axis in a counter-clockwise direction
+    def rotate_y(self, angle, unit: Optional[Unit] = UNIT_ANGLE) -> "Matrix44":
+        """Rotate the 4x4 matrix in Y axis in a counter-clockwise direction.
 
         Parameters
         ----------
         angle : Real
-            The angle in which the x-axis rotates
+            The angle in which the Y-axis rotates
         unit : Unit, optional
            Unit for the angle, by default ``UNIT_ANGLE``"""
         if unit is not UNIT_ANGLE:
@@ -123,7 +123,15 @@ class Matrix44(np.ndarray):
         rotation_matrix[0, 2] = sin_angle
         return np.matmul(self, rotation_matrix)
 
-    def rotateZ(self, angle, unit: Optional[Unit] = UNIT_ANGLE) -> "Matrix44":
+    def rotate_z(self, angle, unit: Optional[Unit] = UNIT_ANGLE) -> "Matrix44":
+        """Rotate the 4x4 matrix in Z axis in a counter-clockwise direction.
+
+        Parameters
+        ----------
+        angle : Real
+            The angle in which the Z-axis rotates
+        unit : Unit, optional
+           Unit for the angle, by default ``UNIT_ANGLE``"""
         if unit is not UNIT_ANGLE:
             angle = (angle * unit).to_base_units().magnitude
 
@@ -139,6 +147,16 @@ class Matrix44(np.ndarray):
 
 
 class RotationMatrix(Matrix33):
+    """Rotate the 3x3 matrix in a counter-clockwise direction.
+
+    Parameters
+    ----------
+    angle : Real
+        The angle in which the object rotates
+    unit : Unit, optional
+       Unit for the angle, by default ``UNIT_ANGLE``
+    """
+
     def __new__(cls, input, angle, unit: Optional[Unit] = UNIT_ANGLE):
         if unit is not UNIT_ANGLE:
             angle = (angle * unit).to_base_units().magnitude
