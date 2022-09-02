@@ -198,6 +198,7 @@ def test_vector3d():
     v_cross_overload = v1 % v2
     assert v_cross_overload == v_cross
 
+
 def test_vector2d():
     """Simple test to create a ``Vector2D``."""
 
@@ -233,6 +234,7 @@ def test_vector2d():
     v_3 = Vector2D([2, 8])
     v_4 = Vector2D([3, 7])
     assert abs(round(v_3 * v_4 - 62)) <= DOUBLE_EPS
+
 
 def test_unit_vector_3d():
     """Simple test to create a ``UnitVector3D``."""
