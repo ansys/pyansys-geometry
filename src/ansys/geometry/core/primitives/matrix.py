@@ -50,14 +50,14 @@ class Matrix33(np.ndarray):
 
 class Matrix44(np.ndarray):
     def __new__(cls, input: np.ndarray = DEFAULT_MATRIX44):
-        """Constructor for ``Point3D``."""
+        """Constructor for ``Matrix44``."""
         if input is DEFAULT_MATRIX44:
             obj = np.asarray(DEFAULT_MATRIX44).view(cls)
 
         obj = np.asarray(input).view(cls)
 
         if obj is None or obj.ndim != 2 or obj.shape != (4, 4):
-            raise ValueError("Matrix44 shouldonly be a 2D array of shape (4,4).")
+            raise ValueError("Matrix44 should only be a 2D array of shape (4,4).")
 
         if not np.issubdtype(obj.dtype, np.number) or not isinstance(obj, (np.ndarray)):
             raise ValueError("The input parameters should be integer or float.")
