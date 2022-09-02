@@ -1,10 +1,10 @@
 @import "../ansys-sphinx-theme.css";
 
 .col-md-3 {
-    flex: 0 0 25%;
-    max-width: 25%;
+    flex: 0 0 30%;
+    max-width: 30%;
 }
 .col-xl-7 {
-    flex: 0 0 57.33333%;
-    max-width: 57.33333%;
+    flex: 0 0 53.33333%;
+    max-width: 53.33333%;
   }
