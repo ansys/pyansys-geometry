@@ -188,15 +188,15 @@ class UnitVector3D(Vector3D):
 
     @Vector3D.x.setter
     def x(self, value: Real) -> None:
-        raise UnsupportedOperation("UnitVector3D is inmutable.")
+        raise UnsupportedOperation("UnitVector3D is immutable.")
 
     @Vector3D.y.setter
     def y(self, value: Real) -> None:
-        raise UnsupportedOperation("UnitVector3D is inmutable.")
+        raise UnsupportedOperation("UnitVector3D is immutable.")
 
     @Vector3D.z.setter
     def z(self, value: Real) -> None:
-        raise UnsupportedOperation("UnitVector3D is inmutable.")
+        raise UnsupportedOperation("UnitVector3D is immutable.")
 
 
 class UnitVector2D(Vector2D):
@@ -217,8 +217,8 @@ class UnitVector2D(Vector2D):
 
     @Vector2D.x.setter
     def x(self, value: Real) -> None:
-        raise UnsupportedOperation("UnitVector2D is inmutable.")
+        raise UnsupportedOperation("UnitVector2D is immutable.")
 
     @Vector2D.y.setter
     def y(self, value: Real) -> None:
-        raise UnsupportedOperation("UnitVector2D is inmutable.")
+        raise UnsupportedOperation("UnitVector2D is immutable.")

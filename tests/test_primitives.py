@@ -252,12 +252,12 @@ def test_unit_vector_3d():
     assert abs(round(v3.y, 3) - 0.535) <= DOUBLE_EPS
     assert abs(round(v3.z, 3) - 0.802) <= DOUBLE_EPS
 
-    # Check that UnitVector2D is inmutable
-    with pytest.raises(UnsupportedOperation, match="UnitVector3D is inmutable."):
+    # Check that UnitVector2D is immutable
+    with pytest.raises(UnsupportedOperation, match="UnitVector3D is immutable."):
         v2.x = 3
-    with pytest.raises(UnsupportedOperation, match="UnitVector3D is inmutable."):
+    with pytest.raises(UnsupportedOperation, match="UnitVector3D is immutable."):
         v2.y = 3
-    with pytest.raises(UnsupportedOperation, match="UnitVector3D is inmutable."):
+    with pytest.raises(UnsupportedOperation, match="UnitVector3D is immutable."):
         v2.z = 3
 
 
@@ -275,10 +275,10 @@ def test_unit_vector_2d():
     assert abs(round(v3.x, 3) - 0.894) <= DOUBLE_EPS
     assert abs(round(v3.y, 3) - 0.447) <= DOUBLE_EPS
 
-    # Check that UnitVector2D is inmutable
-    with pytest.raises(UnsupportedOperation, match="UnitVector2D is inmutable."):
+    # Check that UnitVector2D is immutable
+    with pytest.raises(UnsupportedOperation, match="UnitVector2D is immutable."):
         v2.x = 3
-    with pytest.raises(UnsupportedOperation, match="UnitVector2D is inmutable."):
+    with pytest.raises(UnsupportedOperation, match="UnitVector2D is immutable."):
         v2.y = 3
 
 
