@@ -26,23 +26,23 @@ class CircleSketch(SketchCurve):
         self._radius = np.linalg.norm(origin - points[0])
 
     @property
-    def radius(self) -> float:
+    def radius(self) -> Real:
         """Return the radius of the circle.
 
         Returns
         -------
-        float
+        Real
             The radius of the circle.
         """
         return self._radius
 
     @property
-    def r(self) -> float:
+    def r(self) -> Real:
         """Return the radius of the circle.
 
         Returns
         -------
-        float
+        Real
             The radius of the circle.
         """
         return self.radius
@@ -58,7 +58,7 @@ class CircleSketch(SketchCurve):
 
         Parameters
         ----------
-        radius : int, float
+        radius : Real
             The radius of the circle.
         origin : Point2D
             A ``Point2D`` representing the origin of the ellipse.

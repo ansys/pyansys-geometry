@@ -30,7 +30,7 @@ class EllipseSketch(SketchCurve):
 
         Returns
         -------
-        float
+        Real
             Semi-major axis of the ellipse.
 
         """
@@ -42,7 +42,7 @@ class EllipseSketch(SketchCurve):
 
         Returns
         -------
-        float
+        Real
             Semi-major axis of the ellipse.
 
         """
@@ -54,7 +54,7 @@ class EllipseSketch(SketchCurve):
 
         Returns
         -------
-        float
+        Real
             Semi-minor axis of the ellipse.
 
         """
@@ -66,7 +66,7 @@ class EllipseSketch(SketchCurve):
 
         Returns
         -------
-        float
+        Real
             Semi-minor axis of the ellipse.
 
         """
@@ -78,7 +78,7 @@ class EllipseSketch(SketchCurve):
 
         Returns
         -------
-        float
+        Real
             Eccentricity of the ellipse.
 
         """
@@ -90,7 +90,7 @@ class EllipseSketch(SketchCurve):
 
         Returns
         -------
-        float
+        Real
             Eccentricity of the ellipse.
 
         """
@@ -102,7 +102,7 @@ class EllipseSketch(SketchCurve):
 
         Returns
         -------
-        float
+        Real
             Linear eccentricity of the ellipse.
 
         Notes
@@ -118,7 +118,7 @@ class EllipseSketch(SketchCurve):
 
         Returns
         -------
-        float
+        Real
             Linear eccentricity of the ellipse.
 
         Notes
@@ -134,7 +134,7 @@ class EllipseSketch(SketchCurve):
 
         Returns
         -------
-        float
+        Real
             Semi-latus rectum of the ellipse.
 
         """
@@ -146,7 +146,7 @@ class EllipseSketch(SketchCurve):
 
         Returns
         -------
-        float
+        Real
             Semi-latus rectum of the ellipse.
 
         """
@@ -165,9 +165,9 @@ class EllipseSketch(SketchCurve):
 
         Parameters
         ----------
-        a : int, float
+        a : Real
             The semi-major axis of the ellipse.
-        b : int, float
+        b : Real
             The semi-minor axis of the ellipse.
         origin : Point2D
             A ``Point2D`` representing the origin of the ellipse.
