@@ -1,10 +1,10 @@
 from math import cos, sin
-from typing import Optional
+from typing import List, Optional, Union
 
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core import UNIT_ANGLE
+from ansys.geometry.core import UNIT_ANGLE, Real
 from ansys.geometry.core.misc import check_pint_unit_compatibility
 from ansys.geometry.core.primitives.vector import Vector2D, Vector3D
 
@@ -20,12 +20,12 @@ class Matrix33(np.ndarray):
 
     Parameters
     ----------
-    input : numpy.ndarray, optional
+    input : Union[numpy.ndarray, List[Real]], optional
         The matrix arguments as a :class:`np.ndarray`.
         By default, ``DEFAULT_MATRIX33``.
     """
 
-    def __new__(cls, input: np.ndarray = DEFAULT_MATRIX33):
+    def __new__(cls, input: Union[np.ndarray, List[Real]] = DEFAULT_MATRIX33):
         """Constructor for ``Matrix33``."""
 
         if input is DEFAULT_MATRIX33:
@@ -42,7 +42,7 @@ class Matrix33(np.ndarray):
         return obj
 
     def inverse(self: "Matrix33") -> "Matrix33":
-        """Provides the inverse of the matrix"""
+        """Provides the inverse of 3x3 matrix"""
         det = np.linalg.det(self)
         if det == 0:
             raise ValueError("The determinent of matrix is zero, cannot be inversed")
@@ -75,39 +75,45 @@ class Matrix44(np.ndarray):
 
         return obj
 
-    def inverse(self: "Matrix44") -> "Matrix44":
+    def inverse(self) -> "Matrix44":
+        """Provides the inverse of 3x3 matrix"""
         det = np.linalg.det(self)
         if det == 0:
             raise ValueError("The determinent of matrix is zero, cannot be inversed")
         return np.linalg.inv(self)
 
-    def rotateX(self, angle, unit: Optional[Unit] = UNIT_ANGLE):
+    def rotateX(self, angle: Real, unit: Optional[Unit] = UNIT_ANGLE) -> "Matrix44":
+        """Rotate the 4x4 matrix in x axis in a counter-clockwise direction
+
+        Parameters
+        ----------
+        angle : The angle to be rotated"""
         if unit is not UNIT_ANGLE:
             angle = (angle * unit).to_base_units().magnitude
 
         check_pint_unit_compatibility(unit, UNIT_ANGLE)
-        s = round(sin(angle))
-        c = round(cos(angle))
+        sin_angle = round(sin(angle))
+        cos_angle = round(cos(angle))
         rotation_matrix = np.identity(4)
-        rotation_matrix[1, 1] = rotation_matrix[2, 2] = c
-        rotation_matrix[1, 2] = -s
-        rotation_matrix[2, 1] = s
+        rotation_matrix[1, 1] = rotation_matrix[2, 2] = cos_angle
+        rotation_matrix[1, 2] = -sin_angle
+        rotation_matrix[2, 1] = sin_angle
         return np.matmul(self, rotation_matrix)
 
-    def rotateY(self, angle, unit: Optional[Unit] = UNIT_ANGLE):
+    def rotateY(self, angle, unit: Optional[Unit] = UNIT_ANGLE) -> "Matrix44":
         if unit is not UNIT_ANGLE:
             angle = (angle * unit).to_base_units().magnitude
 
         check_pint_unit_compatibility(unit, UNIT_ANGLE)
-        s = round(sin(angle))
-        c = round(cos(angle))
+        sin_angle = round(sin(angle))
+        cos_angle = round(cos(angle))
         rotation_matrix = np.identity(4)
-        rotation_matrix[0, 0] = rotation_matrix[2, 2] = c
-        rotation_matrix[2, 0] = -s
-        rotation_matrix[0, 2] = s
+        rotation_matrix[0, 0] = rotation_matrix[2, 2] = cos_angle
+        rotation_matrix[2, 0] = -sin_angle
+        rotation_matrix[0, 2] = sin_angle
         return np.matmul(self, rotation_matrix)
 
-    def rotateZ(self, angle, unit: Optional[Unit] = UNIT_ANGLE):
+    def rotateZ(self, angle, unit: Optional[Unit] = UNIT_ANGLE) -> "Matrix44":
         if unit is not UNIT_ANGLE:
             angle = (angle * unit).to_base_units().magnitude
 
