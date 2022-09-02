@@ -77,12 +77,12 @@ class Vector3D(np.ndarray):
         """Return cross product of Vector3D"""
         return Vector3D(np.cross(self, v))
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: "Vector3D") -> bool:
         """Equals operator for ``Vector3D``."""
-        check__eq__operation(other, self)
+        check_type_operation(other, self)
         return np.array_equal(self, other)
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: "Vector3D") -> bool:
         """Not equals operator for ``Vector3D``."""
         return not self == other
 

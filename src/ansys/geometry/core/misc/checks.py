@@ -105,7 +105,7 @@ def check_pint_unit_compatibility(input: Unit, expected: Unit) -> None:
         )
 
 
-def check__eq__operation(input: object, expected: object) -> None:
+def check_type_operation(input: object, expected: object) -> None:
     """
     Checks if the input object provided is of the same class as the expected one.
 
