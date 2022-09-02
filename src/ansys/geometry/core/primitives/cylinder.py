@@ -28,9 +28,9 @@ class Cylinder:
         X-plane direction.
     direction_y : Vector3D
         Y-plane direction.
-    radius : float
+    radius : Real
         Radius of the ``Cylinder``.
-    height : float
+    height : Real
         Height of the ``Cylinder``.
     unit : Unit, optional
         Units employed to define the radius and height, by default ``UNIT_LENGTH``
