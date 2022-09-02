@@ -2,9 +2,9 @@
 import numpy as np
 
 from ansys.geometry.core.misc import (
-    check__eq__operation,
     check_is_float_int,
     check_ndarray_is_float_int,
+    check_type_equivalence,
 )
 
 
@@ -79,7 +79,7 @@ class Vector3D(np.ndarray):
 
     def __eq__(self, other: object) -> bool:
         """Equals operator for ``Vector3D``."""
-        check__eq__operation(other, self)
+        check_type_equivalence(other, self)
         return np.array_equal(self, other)
 
     def __ne__(self, other) -> bool:
@@ -143,7 +143,7 @@ class Vector2D(np.ndarray):
 
     def __eq__(self, other: "Vector2D") -> bool:
         """Equals operator for ``Vector2D``."""
-        check__eq__operation(other, self)
+        check_type_equivalence(other, self)
         return np.array_equal(self, other)
 
     def __ne__(self, other: "Vector2D") -> bool:

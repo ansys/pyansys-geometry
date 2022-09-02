@@ -119,7 +119,7 @@ def test_point3d_errors():
         point.z = "a"
 
     # Build a Point2D and try to compare against it
-    with pytest.raises(TypeError, match="Comparison against"):
+    with pytest.raises(TypeError, match=f"Provided type {Point2D} is invalid"):
         point_2d = Point2D([1, 4])
         assert point == point_2d
 
@@ -146,7 +146,7 @@ def test_point2d_errors():
         point.y = "a"
 
     # Build a Point3D and try to compare against it
-    with pytest.raises(TypeError, match="Comparison against"):
+    with pytest.raises(TypeError, match=f"Provided type {Point3D} is invalid"):
         point_3d = Point3D([1, 4, 4])
         assert point == point_3d
 
@@ -282,7 +282,7 @@ def test_vector3d_errors():
         v1.z = "z"
 
     # Build a Vector2D and try to compare against it
-    with pytest.raises(TypeError, match="Comparison against"):
+    with pytest.raises(TypeError, match=f"Provided type {Vector2D} is invalid"):
         v2 = Vector2D([1, 2])
         assert v1 == v2
 
@@ -314,7 +314,7 @@ def test_vector2d_errors():
         v1.y = "y"
 
     # Build a Vector3D and try to compare against it
-    with pytest.raises(TypeError, match="Comparison against"):
+    with pytest.raises(TypeError, match=f"Provided type {Vector3D} is invalid"):
         v2 = Vector3D([1, 5, 6])
         assert v1 == v2
 
@@ -414,20 +414,53 @@ def test_point2D_units():
 
 
 def test_cylinder():
-    """Simple test to create a ``Cylinder``."""
+    """``Cylinder`` construction and equivalency."""
 
     # Create two Cylinder objects
     origin = Point3D([42, 99, 13])
-    c_1 = Cylinder(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), 100)
-    c_1_duplicate = Cylinder(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), 100)
-    c_2 = Cylinder(Point3D([5, 8, 9]), Vector3D([55, 16, 73]), Vector3D([23, 67, 45]), 88)
+    c_1 = Cylinder(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), 100, 200)
+    c_1_duplicate = Cylinder(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), 100, 200)
+    c_2 = Cylinder(Point3D([5, 8, 9]), Vector3D([55, 16, 73]), Vector3D([23, 67, 45]), 88, 76)
 
     # Check that the equals operator works
     assert c_1 == c_1_duplicate
     assert c_1 != c_2
 
-    # Check component definition
+    # Check cylinder definition
     assert c_1.origin.x == origin.x
     assert c_1.origin.y == origin.y
     assert c_1.origin.z == origin.z
     assert c_1.radius == 100
+    assert c_1.height == 200
+
+
+def test_cylinder_units():
+    """``Cylinder`` units validation."""
+
+    origin = Point3D([42, 99, 13])
+
+    # Verify rejection of invalid base unit type
+    with pytest.raises(
+        TypeError,
+        match="The pint.Unit provided as input should be a \[length\] Quantity.",
+    ):
+        Cylinder(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), 100, 200, UNITS.celsius)
+
+    # Create a Cylinder with radius and height in mm
+    c_1 = Cylinder(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), 100, 200, UNITS.mm)
+
+    # Check that the units are correctly in place
+    assert c_1.unit == UNITS.mm
+
+    # Request for X, Y, Z and ensure they are in mm
+    assert c_1.radius == 100
+    assert c_1.height == 200
+
+    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
+    assert c_1._radius == (c_1.radius * c_1.unit).to_base_units().magnitude
+    assert c_1._height == (c_1.height * c_1.unit).to_base_units().magnitude
+
+    # Set unit to cm now... and check if the values changed
+    c_1.unit = UNITS.cm
+    assert c_1.radius == 10
+    assert c_1.height == 20

@@ -7,11 +7,11 @@ from pint import Unit
 
 from ansys.geometry.core import UNIT_LENGTH, UNITS, Real
 from ansys.geometry.core.misc import (
-    check__eq__operation,
     check_is_float_int,
     check_is_pint_unit,
     check_ndarray_is_float_int,
     check_pint_unit_compatibility,
+    check_type_equivalence,
 )
 
 DEFAULT_POINT3D = [None, None, None]
@@ -113,7 +113,7 @@ class Point3D(np.ndarray):
 
     def __eq__(self, other: "Point3D") -> bool:
         """Equals operator for ``Point3D``."""
-        check__eq__operation(other, self)
+        check_type_equivalence(other, self)
         return np.array_equal(self, other)
 
     def __ne__(self, other: "Point3D") -> bool:
@@ -202,7 +202,7 @@ class Point2D(np.ndarray):
 
     def __eq__(self, other: "Point2D") -> bool:
         """Equals operator for ``Point2D``."""
-        check__eq__operation(other, self)
+        check_type_equivalence(other, self)
         return np.array_equal(self, other)
 
     def __ne__(self, other: "Point2D") -> bool:
