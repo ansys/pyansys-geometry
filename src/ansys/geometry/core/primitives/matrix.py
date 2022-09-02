@@ -8,10 +8,28 @@ from ansys.geometry.core import UNIT_ANGLE
 from ansys.geometry.core.misc import check_pint_unit_compatibility
 from ansys.geometry.core.primitives.vector import Vector2D, Vector3D
 
+DEFAULT_MATRIX33 = np.identity(3)
+"""Default value for ``Matrix33``"""
+
+DEFAULT_MATRIX44 = np.identity(4)
+"""Default value for ``Matrix44``"""
+
 
 class Matrix33(np.ndarray):
-    def __new__(cls, input: np.ndarray):
-        """Constructor for ``Point3D``."""
+    """Provides Matrix 3*3 primitive representation.
+
+    Parameters
+    ----------
+    input : np.ndarray, optional
+        The direction arguments, either as a :class:`np.ndarray`, or as a list.
+        By default, ``DEFAULT_MATRIX33``.
+    """
+
+    def __new__(cls, input: np.ndarray = DEFAULT_MATRIX33):
+        """Constructor for ``Matrix33``."""
+
+        if input is DEFAULT_MATRIX33:
+            obj = np.asarray(DEFAULT_MATRIX33).view(cls)
 
         obj = np.asarray(input).view(cls)
 
@@ -31,8 +49,10 @@ class Matrix33(np.ndarray):
 
 
 class Matrix44(np.ndarray):
-    def __new__(cls, input):
+    def __new__(cls, input: np.ndarray = DEFAULT_MATRIX44):
         """Constructor for ``Point3D``."""
+        if input is DEFAULT_MATRIX44:
+            obj = np.asarray(DEFAULT_MATRIX44).view(cls)
 
         obj = np.asarray(input).view(cls)
 
@@ -55,26 +75,26 @@ class Matrix44(np.ndarray):
             angle = (angle * unit).to_base_units().magnitude
 
         check_pint_unit_compatibility(unit, UNIT_ANGLE)
-        s = sin(angle)
-        c = cos(angle)
-        rot = np.identity(4)
-        rot[1, 1] = rot[2, 2] = c
-        rot[1, 2] = -s
-        rot[2, 1] = s
-        return np.matmul(self, rot)
+        s = round(sin(angle))
+        c = round(cos(angle))
+        rotation_matrix = np.identity(4)
+        rotation_matrix[1, 1] = rotation_matrix[2, 2] = c
+        rotation_matrix[1, 2] = -s
+        rotation_matrix[2, 1] = s
+        return np.matmul(self, rotation_matrix)
 
     def rotateY(self, angle, unit: Optional[Unit] = UNIT_ANGLE):
         if unit is not UNIT_ANGLE:
             angle = (angle * unit).to_base_units().magnitude
 
         check_pint_unit_compatibility(unit, UNIT_ANGLE)
-        s = sin(angle)
-        c = cos(angle)
-        rot = np.identity(4)
-        rot[0, 0] = rot[3, 3] = c
-        rot[3, 1] = -s
-        rot[1, 3] = s
-        return np.matmul(self, rot)
+        s = round(sin(angle))
+        c = round(cos(angle))
+        rotation_matrix = np.identity(4)
+        rotation_matrix[0, 0] = rotation_matrix[2, 2] = c
+        rotation_matrix[2, 0] = -s
+        rotation_matrix[0, 2] = s
+        return np.matmul(self, rotation_matrix)
 
     def rotateZ(self, angle, unit: Optional[Unit] = UNIT_ANGLE):
         if unit is not UNIT_ANGLE:
@@ -82,13 +102,13 @@ class Matrix44(np.ndarray):
 
         check_pint_unit_compatibility(unit, UNIT_ANGLE)
 
-        s = sin(angle)
-        c = cos(angle)
-        rot = np.identity(4)
-        rot[0, 0] = rot[1, 1] = c
-        rot[0, 1] = -s
-        rot[1, 0] = s
-        return np.matmul(self, rot)
+        sin_angle = round(sin(angle))
+        cos_angle = round(cos(angle))
+        rotation_matrix = np.identity(4)
+        rotation_matrix[0, 0] = rotation_matrix[1, 1] = cos_angle
+        rotation_matrix[0, 1] = -sin_angle
+        rotation_matrix[1, 0] = sin_angle
+        return np.matmul(self, rotation_matrix)
 
 
 class RotationMatrix(Matrix33):
