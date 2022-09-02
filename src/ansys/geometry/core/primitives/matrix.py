@@ -170,6 +170,8 @@ class RotationMatrix(Matrix33):
 
 
 class TranslationMatrix2D(Matrix33):
+    """Translate the 3x3 matrix on 2D vector space."""
+
     def __new__(cls, input, v: Vector2D):
         obj = Matrix33(input)
         translate = np.array([[1, 0, v.x], [0, 1, v.y], [0, 0, 1]])
@@ -177,6 +179,8 @@ class TranslationMatrix2D(Matrix33):
 
 
 class TranslationMatrix3D(Matrix44):
+    """Translate the 4x4 matrix on 2D vector space."""
+
     def __new__(cls, input, v: Vector3D):
         obj = Matrix44(input)
         translate = np.array(
