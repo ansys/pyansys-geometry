@@ -1,8 +1,9 @@
 """``CircleSketch`` class module."""
-from typing import Optional, Union
+from typing import Optional, Sequence
 
 import numpy as np
 
+from ansys.geometry.core import Real
 from ansys.geometry.core.primitives.point import Point2D
 from ansys.geometry.core.sketch.curve import SketchCurve
 
@@ -10,7 +11,7 @@ from ansys.geometry.core.sketch.curve import SketchCurve
 class CircleSketch(SketchCurve):
     """Provides circle representation within a sketch environment."""
 
-    def __init__(self, points: list[Point2D], origin: Point2D):
+    def __init__(self, points: Sequence[Point2D], origin: Point2D):
         """Initialize an instance of ``CircleSketch``.
 
         Parameters
@@ -27,7 +28,7 @@ class CircleSketch(SketchCurve):
     @classmethod
     def from_radius(
         cls,
-        radius: Union[int, float],
+        radius: Real,
         origin: Optional[Point2D] = Point2D([0, 0]),
         resolution: Optional[int] = 150,
     ):
