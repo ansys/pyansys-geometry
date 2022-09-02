@@ -1,6 +1,24 @@
 """``Point3D`` and ``Point2D`` class module."""
 
+from typing import List, Optional, Union
+
 import numpy as np
+from pint import Unit
+
+from ansys.geometry.core import UNIT_LENGTH, UNITS, Real
+from ansys.geometry.core.misc import (
+    check__eq__operation,
+    check_is_float_int,
+    check_is_pint_unit,
+    check_ndarray_is_float_int,
+    check_pint_unit_compatibility,
+)
+
+DEFAULT_POINT3D = [None, None, None]
+"""Default value for ``Point3D``"""
+
+DEFAULT_POINT2D = [None, None]
+"""Default value for ``Point2D``"""
 
 
 class Point3D(np.ndarray):
@@ -9,71 +27,98 @@ class Point3D(np.ndarray):
 
     Parameters
     ----------
-    input : np.ndarray, List[int], List[float]
-        The direction arguments, either as a np.ndarray, or as a list.
+    input : Union[np.ndarray, List[Union[Real, None]]], optional
+        The direction arguments, either as a :class:`np.ndarray`, or as a list.
+        By default, ``DEFAULT_POINT3D``.
+    unit : Unit, optional
+        Units employed to define the Point3D values, by default ``UNIT_LENGTH``
     """
 
-    def __new__(cls, input):
+    def __new__(
+        cls,
+        input: Optional[Union[np.ndarray, List[Union[Real, None]]]] = DEFAULT_POINT3D,
+        unit: Optional[Unit] = UNIT_LENGTH,
+    ):
         """Constructor for ``Point3D``."""
 
-        obj = np.asarray(input).view(cls)
+        # Check if we are dealing with the default value
+        if input is DEFAULT_POINT3D:
+            obj = np.asarray(DEFAULT_POINT3D).view(cls)
+            obj._unit = None
+            _, obj._base_unit = UNITS.get_base_units(UNIT_LENGTH)
+            return obj
 
+        # Transform to numpy.ndarray
+        obj = np.asarray([(elem * unit).to_base_units().magnitude for elem in input]).view(cls)
+        obj._unit = unit
+        _, obj._base_unit = UNITS.get_base_units(unit)
+
+        # Check that the size is as expected
         if obj is None or len(obj) != 3:
             raise ValueError("Point3D must have three coordinates.")
 
-        if not np.issubdtype(obj.dtype, np.number) or not all(
-            isinstance(value, (int, float)) for value in obj.data
-        ):
-            raise ValueError("The input parameters should be integer or float.")
+        # Check that units provided (if any) are compatible
+        check_pint_unit_compatibility(unit, UNIT_LENGTH)
 
+        # If we are not dealing with the default value... check the inputs
+        check_ndarray_is_float_int(obj, "input")
+
+        # If all checks went through, return the Point3D
         return obj
 
     @property
-    def x(self):
+    def x(self) -> Union[Real, None]:
         """Returns the X plane component value."""
-        return self[0]
+        return UNITS.convert(self[0], self._base_unit, self._unit)
 
     @x.setter
-    def x(self, x):
+    def x(self, x: Real) -> None:
         """Set the X plane component value."""
-        if not isinstance(x, (int, float)):
-            raise ValueError("The parameter 'x' should be a float or an integer value.")
-        self[0] = x
+        check_is_float_int(x, "x")
+        self[0] = (x * self._unit).to_base_units().magnitude
 
     @property
-    def y(self):
+    def y(self) -> Union[Real, None]:
         """Returns the Y plane component value."""
-        return self[1]
+        return UNITS.convert(self[1], self._base_unit, self._unit)
 
     @y.setter
-    def y(self, y):
+    def y(self, y: Real) -> None:
         """Set the Y plane component value."""
-        if not isinstance(y, (int, float)):
-            raise ValueError("The parameter 'y' should be a float or an integer value.")
-        self[1] = y
+        check_is_float_int(y, "y")
+        self[1] = (y * self._unit).to_base_units().magnitude
 
     @property
-    def z(self):
+    def z(self) -> Union[Real, None]:
         """Returns the Z plane component value."""
-        return self[2]
+        return UNITS.convert(self[2], self._base_unit, self._unit)
 
     @z.setter
-    def z(self, z):
+    def z(self, z: Real) -> None:
         """Set the Z plane component value."""
-        if not isinstance(z, (int, float)):
-            raise ValueError("The parameter 'z' should be a float or an integer value.")
-        self[2] = z
+        check_is_float_int(z, "z")
+        self[2] = (z * self._unit).to_base_units().magnitude
 
-    def __eq__(self, other: object) -> bool:
+    @property
+    def unit(self) -> Unit:
+        """Returns the unit of the object."""
+        return self._unit
+
+    @unit.setter
+    def unit(self, unit: Unit) -> None:
+        """Sets the unit of the object."""
+        check_is_pint_unit(unit, "unit")
+        check_pint_unit_compatibility(unit, UNIT_LENGTH)
+        self._unit = unit
+
+    def __eq__(self, other: "Point3D") -> bool:
         """Equals operator for ``Point3D``."""
-        if not isinstance(other, Point3D):
-            raise ValueError(f"Comparison of {self} against {other} is not possible.")
-
+        check__eq__operation(other, self)
         return np.array_equal(self, other)
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: "Point3D") -> bool:
         """Not equals operator for ``Point3D``."""
-        return not self.__eq__(other)
+        return not self == other
 
 
 class Point2D(np.ndarray):
@@ -82,56 +127,84 @@ class Point2D(np.ndarray):
 
     Parameters
     ----------
-    input : np.ndarray, List[int], List[float]
-        The direction arguments, either as a np.ndarray, or as a list.
+    input : Union[np.ndarray, List[Union[Real, None]]], optional
+        The direction arguments, either as a :class:`np.ndarray`, or as a list.
+        By default, ``DEFAULT_POINT3D``.
+    unit : Unit, optional
+        Units employed to define the Point3D values, by default ``UNIT_LENGTH``
     """
 
-    def __new__(cls, input):
+    def __new__(
+        cls,
+        input: Optional[Union[np.ndarray, List[Union[Real, None]]]] = DEFAULT_POINT2D,
+        unit: Optional[Unit] = UNIT_LENGTH,
+    ):
         """Constructor for ``Point2D``."""
 
-        obj = np.asarray(input).view(cls)
+        # Check if we are dealing with the default value
+        if input is DEFAULT_POINT2D:
+            obj = np.asarray(DEFAULT_POINT2D).view(cls)
+            obj._unit = None
+            _, obj._base_unit = UNITS.get_base_units(UNIT_LENGTH)
+            return obj
 
+        # Transform to numpy.ndarray
+        obj = np.asarray([(elem * unit).to_base_units().magnitude for elem in input]).view(cls)
+        obj._unit = unit
+        _, obj._base_unit = UNITS.get_base_units(unit)
+
+        # Check that the size is as expected
         if obj is None or len(obj) != 2:
             raise ValueError("Point2D must have two coordinates.")
 
-        if not np.issubdtype(obj.dtype, np.number) or not all(
-            isinstance(value, (int, float)) for value in obj.data
-        ):
-            raise ValueError("The input parameters should be integer or float.")
+        # Check that units provided (if any) are compatible
+        check_pint_unit_compatibility(unit, UNIT_LENGTH)
 
+        # If we are not dealing with the default value... check the inputs
+        check_ndarray_is_float_int(obj, "input")
+
+        # If all checks went through, return the Point2D
         return obj
 
     @property
-    def x(self):
+    def x(self) -> Union[Real, None]:
         """Returns the X plane component value."""
-        return self[0]
+        return UNITS.convert(self[0], self._base_unit, self._unit)
 
     @x.setter
-    def x(self, x):
+    def x(self, x: Real) -> None:
         """Set the X plane component value."""
-        if not isinstance(x, (int, float)):
-            raise ValueError("The parameter 'x' should be a float or an integer value.")
-        self[0] = x
+        check_is_float_int(x, "x")
+        self[0] = (x * self._unit).to_base_units().magnitude
 
     @property
-    def y(self):
+    def y(self) -> Union[Real, None]:
         """Returns the Y plane component value."""
-        return self[1]
+        return UNITS.convert(self[1], self._base_unit, self._unit)
 
     @y.setter
-    def y(self, y):
+    def y(self, y: Real) -> None:
         """Set the Y plane component value."""
-        if not isinstance(y, (int, float)):
-            raise ValueError("The parameter 'y' should be a float or an integer value.")
-        self[1] = y
+        check_is_float_int(y, "y")
+        self[1] = (y * self._unit).to_base_units().magnitude
 
-    def __eq__(self, other: object) -> bool:
+    @property
+    def unit(self) -> Unit:
+        """Returns the unit of the object."""
+        return self._unit
+
+    @unit.setter
+    def unit(self, unit: Unit) -> None:
+        """Sets the unit of the object."""
+        check_is_pint_unit(unit, "unit")
+        check_pint_unit_compatibility(unit, UNIT_LENGTH)
+        self._unit = unit
+
+    def __eq__(self, other: "Point2D") -> bool:
         """Equals operator for ``Point2D``."""
-        if not isinstance(other, Point2D):
-            raise ValueError(f"Comparison of {self} against {other} is not possible.")
-
+        check__eq__operation(other, self)
         return np.array_equal(self, other)
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: "Point2D") -> bool:
         """Not equals operator for ``Point2D``."""
-        return not self.__eq__(other)
+        return not self == other
