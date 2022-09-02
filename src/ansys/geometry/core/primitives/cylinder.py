@@ -50,7 +50,6 @@ class Cylinder:
         check_is_float_int(radius, "radius")
         check_is_float_int(height, "height")
 
-        # Check that units provided (if any) are compatible
         check_is_pint_unit(unit, "unit")
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
 

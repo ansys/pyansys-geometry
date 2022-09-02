@@ -99,7 +99,7 @@ def check_pint_unit_compatibility(input: Unit, expected: Unit) -> None:
     """
     if not input.is_compatible_with(expected):
         raise TypeError(
-            f"The pint.Unit provided as input should be a {expected.dimensionality} Quantity."
+            f"The pint.Unit provided as input should be a {expected.dimensionality} quantity."
         )
 
 

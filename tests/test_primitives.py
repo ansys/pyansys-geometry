@@ -433,6 +433,18 @@ def test_cylinder():
     assert c_1.radius == 100
     assert c_1.height == 200
 
+    with pytest.raises(
+        TypeError,
+        match="The parameter 'radius' should be a float or an integer value.",
+    ):
+        Cylinder(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), "A", 200)
+
+    with pytest.raises(
+        TypeError,
+        match="The parameter 'height' should be a float or an integer value.",
+    ):
+        Cylinder(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), 100, "A")
+
 
 def test_cylinder_units():
     """``Cylinder`` units validation."""
@@ -442,12 +454,18 @@ def test_cylinder_units():
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
-        match="The pint.Unit provided as input should be a \[length\] Quantity.",
+        match="The pint.Unit provided as input should be a \[length\] quantity.",
     ):
         Cylinder(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), 100, 200, UNITS.celsius)
 
-    # Create a Cylinder with radius and height in mm
     c_1 = Cylinder(origin, Vector3D([12, 31, 99]), Vector3D([25, 39, 82]), 100, 200, UNITS.mm)
+
+    # Verify rejection of invalid base unit type
+    with pytest.raises(
+        TypeError,
+        match="The pint.Unit provided as input should be a \[length\] quantity.",
+    ):
+        c_1.unit = UNITS.celsius
 
     # Check that the units are correctly in place
     assert c_1.unit == UNITS.mm
