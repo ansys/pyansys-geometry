@@ -25,4 +25,3 @@ UNITS = UnitRegistry()
 
 UNIT_LENGTH = UNITS.meter
 """Default unit length for PyGeometry."""
-
