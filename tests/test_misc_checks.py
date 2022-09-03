@@ -7,12 +7,12 @@ from ansys.geometry.core.misc import (
     check_is_pint_unit,
     check_ndarray_is_float_int,
     check_pint_unit_compatibility,
-    check_type_operation,
+    check_type_equivalence,
 )
 from ansys.geometry.core.primitives import Point2D, Point3D
 
 
-def test_check_type_operation():
+def test_check_type_equivalence():
     """
     Test that the __eq__ check is working properly.
 
@@ -23,11 +23,11 @@ def test_check_type_operation():
     b_2d = Point2D([3, 4])
 
     # Check that a_2d and a_3d are not the same
-    with pytest.raises(TypeError, match="Comparison against"):
-        check_type_operation(a_2d, a_3d)
+    with pytest.raises(TypeError, match="Provided type"):
+        check_type_equivalence(a_2d, a_3d)
 
     # Check that a_2d and a_3d are not the same
-    check_type_operation(a_2d, b_2d)
+    check_type_equivalence(a_2d, b_2d)
 
 
 def test_check_pint_unit_compatibility():

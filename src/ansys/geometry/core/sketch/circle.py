@@ -16,8 +16,8 @@ class CircleSketch(SketchCurve):
 
         Parameters
         ----------
-        points : list[Point2D]
-            A list defining the ellipse.
+        points : Sequence[Point2D]
+            A list or tuple defining the circle.
         origin : Point2D
             A ``Point2D`` representing the origin of the ellipse.
 

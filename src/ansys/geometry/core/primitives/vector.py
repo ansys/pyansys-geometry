@@ -1,14 +1,14 @@
 """``Vector`` class module"""
 from io import UnsupportedOperation
-from typing import List, Union
+from typing import Union
 
 import numpy as np
 
-from ansys.geometry.core import Real
+from ansys.geometry.core import Real, RealSequence
 from ansys.geometry.core.misc import (
     check_is_float_int,
     check_ndarray_is_float_int,
-    check_type_operation,
+    check_type_equivalence,
 )
 
 
@@ -17,11 +17,11 @@ class Vector3D(np.ndarray):
 
     Parameters
     ----------
-    input : Union[numpy.ndarray, List[Real]]
+    input : Union[numpy.ndarray, RealSequence]
         One dimensional :class:`numpy.ndarray` with shape(3,)
     """
 
-    def __new__(cls, input: Union[np.ndarray, List[Real]]):
+    def __new__(cls, input: Union[np.ndarray, RealSequence]):
         """Constructor for ``Vector3D``"""
 
         obj = np.asarray(input).view(cls)
@@ -83,7 +83,7 @@ class Vector3D(np.ndarray):
 
     def __eq__(self, other: "Vector3D") -> bool:
         """Equals operator for ``Vector3D``."""
-        check_type_operation(other, self)
+        check_type_equivalence(other, self)
         return np.array_equal(self, other)
 
     def __ne__(self, other: "Vector3D") -> bool:
@@ -92,12 +92,12 @@ class Vector3D(np.ndarray):
 
     def __mul__(self, other: "Vector3D") -> Real:
         """Overload * operator with dot product."""
-        check_type_operation(other, self)
+        check_type_equivalence(other, self)
         return self.dot(other)
 
     def __mod__(self, other: "Vector3D") -> "Vector3D":
         """Overload % operator with cross product."""
-        check_type_operation(other, self)
+        check_type_equivalence(other, self)
         return self.cross(other)
 
 
@@ -106,11 +106,11 @@ class Vector2D(np.ndarray):
 
     Parameters
     ----------
-    input : Union[numpy.ndarray, List[Real]]
+    input : Union[numpy.ndarray, RealSequence]
         One dimensional :class:`numpy.ndarray` with shape(2,)
     """
 
-    def __new__(cls, input: Union[np.ndarray, List[Real]]):
+    def __new__(cls, input: Union[np.ndarray, RealSequence]):
 
         obj = np.asarray(input).view(cls)
 
@@ -157,7 +157,7 @@ class Vector2D(np.ndarray):
 
     def __eq__(self, other: "Vector2D") -> bool:
         """Equals operator for ``Vector2D``."""
-        check_type_operation(other, self)
+        check_type_equivalence(other, self)
         return np.array_equal(self, other)
 
     def __ne__(self, other: "Vector2D") -> bool:
@@ -166,7 +166,7 @@ class Vector2D(np.ndarray):
 
     def __mul__(self, other: "Vector2D") -> Real:
         """Overload * operator with dot product."""
-        check_type_operation(other, self)
+        check_type_equivalence(other, self)
         return self.dot(other)
 
 
@@ -180,7 +180,7 @@ class UnitVector3D(Vector3D):
         * Vector3D
     """
 
-    def __new__(cls, input: Union[np.ndarray, List[Real], Vector3D]):
+    def __new__(cls, input: Union[np.ndarray, RealSequence, Vector3D]):
         obj = Vector3D(input) if not isinstance(input, Vector3D) else input
         obj = obj.normalize().view(cls)
         obj.setflags(write=False)
@@ -209,7 +209,7 @@ class UnitVector2D(Vector2D):
         * Vector2D
     """
 
-    def __new__(cls, input: Union[np.ndarray, List[Real], Vector2D]):
+    def __new__(cls, input: Union[np.ndarray, RealSequence, Vector2D]):
         obj = Vector2D(input) if not isinstance(input, Vector2D) else input
         obj = obj.normalize().view(cls)
         obj.setflags(write=False)

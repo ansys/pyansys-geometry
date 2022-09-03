@@ -105,7 +105,7 @@ def check_pint_unit_compatibility(input: Unit, expected: Unit) -> None:
         )
 
 
-def check_type_operation(input: object, expected: object) -> None:
+def check_type_equivalence(input: object, expected: object) -> None:
     """
     Checks if the input object provided is of the same class as the expected one.
 
@@ -123,6 +123,4 @@ def check_type_operation(input: object, expected: object) -> None:
     """
 
     if not isinstance(input, type(expected)):
-        raise TypeError(
-            f"Comparison against {type(input)} is not possible. Should be of type {type(expected)}."
-        )
+        raise TypeError(f"Provided type {type(input)} is invalid, type {type(expected)} expected.")

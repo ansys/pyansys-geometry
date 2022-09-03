@@ -1,5 +1,5 @@
 """A module containing a class for modeling ellipses."""
-from typing import Optional
+from typing import Optional, Sequence
 
 import numpy as np
 
@@ -11,13 +11,13 @@ from ansys.geometry.core.sketch.curve import SketchCurve
 class EllipseSketch(SketchCurve):
     """A class for modelling ellipses."""
 
-    def __init__(self, points: list[Point2D], origin: Point2D):
+    def __init__(self, points: Sequence[Point2D], origin: Point2D):
         """Initialize an instance of ``EllipseSketch``.
 
         Parameters
         ----------
-        points : list[Point2D]
-            A list defining the ellipse.
+        points : Sequence[Point2D]
+            A list or tuple defining the ellipse.
         origin : Point2D
             A ``Point2D`` representing the origin of the ellipse.
 

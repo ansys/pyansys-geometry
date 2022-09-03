@@ -5,13 +5,13 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core import UNIT_LENGTH, UNITS, Real
+from ansys.geometry.core import UNIT_LENGTH, UNITS, Real, RealSequence
 from ansys.geometry.core.misc import (
     check_is_float_int,
     check_is_pint_unit,
     check_ndarray_is_float_int,
     check_pint_unit_compatibility,
-    check_type_operation,
+    check_type_equivalence,
 )
 
 DEFAULT_POINT3D = [None, None, None]
@@ -27,8 +27,8 @@ class Point3D(np.ndarray):
 
     Parameters
     ----------
-    input : Union[numpy.ndarray, List[Union[Real, None]]], optional
-        The direction arguments, either as a :class:`numpy.ndarray`, or as a list.
+    input : Union[numpy.ndarray, RealSequence, List[None]], optional
+        The direction arguments, either as a :class:`numpy.ndarray`, or as a RealSequence.
         By default, ``DEFAULT_POINT3D``.
     unit : Unit, optional
         Units employed to define the Point3D values, by default ``UNIT_LENGTH``
@@ -36,7 +36,7 @@ class Point3D(np.ndarray):
 
     def __new__(
         cls,
-        input: Optional[Union[np.ndarray, List[Union[Real, None]]]] = DEFAULT_POINT3D,
+        input: Optional[Union[np.ndarray, RealSequence, List[None]]] = DEFAULT_POINT3D,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Constructor for ``Point3D``."""
@@ -113,7 +113,7 @@ class Point3D(np.ndarray):
 
     def __eq__(self, other: "Point3D") -> bool:
         """Equals operator for ``Point3D``."""
-        check_type_operation(other, self)
+        check_type_equivalence(other, self)
         return np.array_equal(self, other)
 
     def __ne__(self, other: "Point3D") -> bool:
@@ -127,8 +127,8 @@ class Point2D(np.ndarray):
 
     Parameters
     ----------
-    input : Union[numpy.ndarray, List[Union[Real, None]]], optional
-        The direction arguments, either as a :class:`numpy.ndarray`, or as a list.
+    input : Union[numpy.ndarray, RealSequence, List[None]], optional
+        The direction arguments, either as a :class:`numpy.ndarray`, or as a RealSequence.
         By default, ``DEFAULT_POINT3D``.
     unit : Unit, optional
         Units employed to define the Point3D values, by default ``UNIT_LENGTH``
@@ -136,7 +136,7 @@ class Point2D(np.ndarray):
 
     def __new__(
         cls,
-        input: Optional[Union[np.ndarray, List[Union[Real, None]]]] = DEFAULT_POINT2D,
+        input: Optional[Union[np.ndarray, RealSequence, List[None]]] = DEFAULT_POINT2D,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Constructor for ``Point2D``."""
@@ -202,7 +202,7 @@ class Point2D(np.ndarray):
 
     def __eq__(self, other: "Point2D") -> bool:
         """Equals operator for ``Point2D``."""
-        check_type_operation(other, self)
+        check_type_equivalence(other, self)
         return np.array_equal(self, other)
 
     def __ne__(self, other: "Point2D") -> bool:

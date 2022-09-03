@@ -120,7 +120,7 @@ def test_point3d_errors():
         point.z = "a"
 
     # Build a Point2D and try to compare against it
-    with pytest.raises(TypeError, match="Comparison against"):
+    with pytest.raises(TypeError, match="Provided type"):
         point_2d = Point2D([1, 4])
         assert point == point_2d
 
@@ -147,7 +147,7 @@ def test_point2d_errors():
         point.y = "a"
 
     # Build a Point3D and try to compare against it
-    with pytest.raises(TypeError, match="Comparison against"):
+    with pytest.raises(TypeError, match="Provided type"):
         point_3d = Point3D([1, 4, 4])
         assert point == point_3d
 
@@ -307,7 +307,7 @@ def test_vector3d_errors():
         v1.z = "z"
 
     # Build a Vector2D and try to compare against it
-    with pytest.raises(TypeError, match="Comparison against"):
+    with pytest.raises(TypeError, match="Provided type"):
         v2 = Vector2D([1, 2])
         assert v1 == v2
 
@@ -339,7 +339,7 @@ def test_vector2d_errors():
         v1.y = "y"
 
     # Build a Vector3D and try to compare against it
-    with pytest.raises(TypeError, match="Comparison against"):
+    with pytest.raises(TypeError, match="Provided type"):
         v2 = Vector3D([1, 5, 6])
         assert v1 == v2
 
