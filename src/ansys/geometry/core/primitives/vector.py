@@ -4,12 +4,12 @@ from typing import Union
 
 import numpy as np
 
-from ansys.geometry.core import Real, RealSequence
 from ansys.geometry.core.misc import (
     check_is_float_int,
     check_ndarray_is_float_int,
     check_type_equivalence,
 )
+from ansys.geometry.core.typing import Real, RealSequence
 
 
 class Vector3D(np.ndarray):

@@ -5,7 +5,7 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core import UNIT_LENGTH, UNITS, Real, RealSequence
+from ansys.geometry.core import UNIT_LENGTH, UNITS
 from ansys.geometry.core.misc import (
     check_is_float_int,
     check_is_pint_unit,
@@ -13,6 +13,7 @@ from ansys.geometry.core.misc import (
     check_pint_unit_compatibility,
     check_type_equivalence,
 )
+from ansys.geometry.core.typing import Real, RealSequence
 
 DEFAULT_POINT3D = [None, None, None]
 """Default value for ``Point3D``"""

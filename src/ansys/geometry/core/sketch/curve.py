@@ -3,6 +3,7 @@
 from typing import Sequence
 
 from ansys.geometry.core.primitives.point import Point2D
+from ansys.geometry.core.typing import RealSequence
 
 
 class SketchCurve:
@@ -47,23 +48,23 @@ class SketchCurve:
         return self._origin
 
     @property
-    def x_coords(self) -> Sequence[float]:
+    def x_coords(self) -> RealSequence:
         """Returns the x-coordinates of the sketch curve.
 
         Returns
         -------
-        Sequence[float]
+        RealSequence
 
         """
         return [point.x for point in self.points]
 
     @property
-    def y_coords(self) -> Sequence[float]:
+    def y_coords(self) -> RealSequence:
         """Returns the y-coordinates of the sketch curve.
 
         Returns
         -------
-        Sequence[float]
+        RealSequence
 
         """
         return [point.y for point in self.points]
