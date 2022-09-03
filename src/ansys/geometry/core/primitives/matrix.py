@@ -44,7 +44,7 @@ class Matrix33(np.ndarray):
     def inverse(self: "Matrix33") -> "Matrix33":
         """Provides the inverse of 3x3 matrix"""
         det = np.linalg.det(self)
-        if det == 0:
+        if det <= 0:
             raise ValueError("The determinent of matrix is zero, cannot be inversed")
         return np.linalg.inv(self)
 
