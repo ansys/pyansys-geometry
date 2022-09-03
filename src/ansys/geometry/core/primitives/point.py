@@ -28,10 +28,10 @@ class Point3D(np.ndarray):
 
     Parameters
     ----------
-    input : Union[numpy.ndarray, RealSequence, List[None]], optional
+    input : Union[~numpy.ndarray, RealSequence, List[None]], optional
         The direction arguments, either as a :class:`numpy.ndarray`, or as a RealSequence.
         By default, ``DEFAULT_POINT3D``.
-    unit : Unit, optional
+    unit : ~pint.Unit, optional
         Units employed to define the Point3D values, by default ``UNIT_LENGTH``
     """
 
@@ -128,10 +128,10 @@ class Point2D(np.ndarray):
 
     Parameters
     ----------
-    input : Union[numpy.ndarray, RealSequence, List[None]], optional
+    input : Union[~numpy.ndarray, RealSequence, List[None]], optional
         The direction arguments, either as a :class:`numpy.ndarray`, or as a RealSequence.
         By default, ``DEFAULT_POINT3D``.
-    unit : Unit, optional
+    unit : ~pint.Unit, optional
         Units employed to define the Point3D values, by default ``UNIT_LENGTH``
     """
 

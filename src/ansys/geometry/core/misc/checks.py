@@ -38,7 +38,7 @@ def check_ndarray_is_float_int(
 
     Parameters
     ----------
-    param : numpy.ndarray
+    param : ~numpy.ndarray
         :class:`numpy.ndarray` instance to be checked.
     param_name : str or None, optional
         The :class:`numpy.ndarray` instance name (if any). By default, ``None``.
@@ -89,9 +89,9 @@ def check_pint_unit_compatibility(input: Unit, expected: Unit) -> None:
 
     Parameters
     ----------
-    input : Unit
+    input : ~pint.Unit
         The :class:`pint.Unit` input.
-    expected : Unit
+    expected : ~pint.Unit
         The :class:`pint.Unit` expected dimensionality.
 
     Raises
