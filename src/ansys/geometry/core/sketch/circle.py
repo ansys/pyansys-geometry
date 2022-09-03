@@ -3,9 +3,9 @@ from typing import Optional, Sequence
 
 import numpy as np
 
-from ansys.geometry.core import Real
 from ansys.geometry.core.primitives.point import Point2D
 from ansys.geometry.core.sketch.curve import SketchCurve
+from ansys.geometry.core.typing import Real
 
 
 class CircleSketch(SketchCurve):
@@ -16,8 +16,8 @@ class CircleSketch(SketchCurve):
 
         Parameters
         ----------
-        points : list[Point2D]
-            A list defining the ellipse.
+        points : Sequence[Point2D]
+            A list or tuple defining the circle.
         origin : Point2D
             A ``Point2D`` representing the origin of the ellipse.
 
