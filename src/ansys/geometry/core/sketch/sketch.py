@@ -4,7 +4,6 @@
 from ansys.geometry.core.primitives.point import Point3D
 from ansys.geometry.core.primitives.vector import UnitVector2D
 from ansys.geometry.core.sketch.circle import CircleSketch
-from ansys.geometry.core.sketch.line import LineSketch
 
 
 class Sketch:
@@ -45,31 +44,6 @@ class Sketch:
         self._sketch_curves.append(circle)
 
         # TODO: save circle creation to history tracking object
-
-        # return the object created
-        return self._sketch_curves[-1]
-
-    def line(self, point_1: Point3D, point_2: Point3D) -> LineSketch:
-        """
-        Add a line segment sketch object to the sketch plane.
-
-        Parameters
-        ----------
-        point_1 : Point3D
-            Start of the line segment.
-        point_2 : Point3D
-            End of the line segment.
-
-        Returns
-        -------
-        LineSketch
-            LineSketch object added to the sketch.
-        """
-        line = LineSketch(point_1, point_2)
-
-        self._sketch_curves.append(line)
-
-        # TODO: save line creation to history tracking object
 
         # return the object created
         return self._sketch_curves[-1]
