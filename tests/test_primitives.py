@@ -661,6 +661,33 @@ def test_matrix_44():
     assert m_1 == m_1_copy
     assert m_1 != m_2
 
+    # Check X-axis rotation of Matrix44 in pi/2 radian
+    test_matrix_x = np.asarray([[2, 0, 0, 0], [0, 0, -4, 0], [0, 3, 0, 0], [0, 0, 0, 1]])
+    m_rotate_x = m_1.rotate_x(pi / 2)
+    assert abs(m_rotate_x - test_matrix_x).all() <= DOUBLE_EPS
+
+    # Check the X-axis rotation of Matrix44 in 90 degree
+    m_rotate_x_degree = m_1.rotate_x(90, UNITS.degree)
+    assert abs(m_rotate_x_degree - test_matrix_x).all() <= DOUBLE_EPS
+
+    # Check Y-axis rotation of Matrix44 in pi/2 radian
+    test_matrix_y = np.asarray([[0, 0, 4, 0], [0, 3, 0, 0], [-2, 0, 0, 0], [0, 0, 0, 1]])
+    m_rotate_y = m_1.rotate_y(pi / 2)
+    assert abs(m_rotate_y - test_matrix_y).all() <= DOUBLE_EPS
+
+    # Check the Y-axis rotation of Matrix44 in 90 degree
+    m_rotate_y_degree = m_1.rotate_y(90, UNITS.degree)
+    assert abs(m_rotate_y_degree - test_matrix_y).all() <= DOUBLE_EPS
+
+    # Check Z-axis rotation of Matrix44 in pi/2 radian
+    test_matrix_z = np.asarray([[0, -3, 0, 0], [2, 0, 0, 0], [0, 0, 4, 0], [0, 0, 0, 1]])
+    m_rotate_z = m_1.rotate_z(pi / 2)
+    assert abs(m_rotate_z - test_matrix_z).all() <= DOUBLE_EPS
+
+    # Check the Z-axis rotation of Matrix44 in 90 degree
+    m_rotate_z_degree = m_1.rotate_z(90, UNITS.degree)
+    assert abs(m_rotate_z_degree - test_matrix_z).all() <= DOUBLE_EPS
+
 
 def test_matrix_44_errors():
     """Testing multiple ``Matrix44`` errors."""
