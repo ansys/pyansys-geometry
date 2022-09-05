@@ -103,13 +103,11 @@ class Matrix44(np.ndarray):
             angle = (angle * unit).to_base_units().magnitude
 
         check_pint_unit_compatibility(unit, UNIT_ANGLE)
-        sin_angle = round(sin(angle))
-        cos_angle = round(cos(angle))
         rotation_matrix = np.asarray(
             [
                 [1, 0, 0, 0],
-                [0, cos_angle, -sin_angle, 0],
-                [0, sin_angle, cos_angle, 0],
+                [0, cos(angle), -sin(angle), 0],
+                [0, sin(angle), cos(angle), 0],
                 [0, 0, 0, 1],
             ]
         )
@@ -128,13 +126,11 @@ class Matrix44(np.ndarray):
             angle = (angle * unit).to_base_units().magnitude
 
         check_pint_unit_compatibility(unit, UNIT_ANGLE)
-        sin_angle = round(sin(angle))
-        cos_angle = round(cos(angle))
         rotation_matrix = np.asarray(
             [
-                [cos_angle, 0, sin_angle, 0],
+                [cos(angle), 0, sin(angle), 0],
                 [0, 1, 0, 0],
-                [0, -sin_angle, cos_angle, 0],
+                [0, -sin(angle), cos(angle), 0],
                 [0, 0, 0, 1],
             ]
         )
@@ -153,13 +149,10 @@ class Matrix44(np.ndarray):
             angle = (angle * unit).to_base_units().magnitude
 
         check_pint_unit_compatibility(unit, UNIT_ANGLE)
-
-        sin_angle = round(sin(angle))
-        cos_angle = round(cos(angle))
         rotation_matrix = np.asarray(
             [
-                [cos_angle, -sin_angle, 0, 0],
-                [sin_angle, cos_angle, 0, 0],
+                [cos(angle), -sin(angle), 0, 0],
+                [sin(angle), cos(angle), 0, 0],
                 [0, 0, 1, 0],
                 [0, 0, 0, 1],
             ]
