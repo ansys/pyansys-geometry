@@ -20,6 +20,7 @@ from ansys.geometry.core.typing import Real
 class Torus:
     """
     Provides 3D ``Torus`` representation.
+
     Parameters
     ----------
     origin : Point3D

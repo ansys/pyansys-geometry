@@ -20,6 +20,7 @@ from ansys.geometry.core.typing import Real
 class Cone:
     """
     Provides 3D ``Cone`` representation.
+
     Parameters
     ----------
     origin : Point3D

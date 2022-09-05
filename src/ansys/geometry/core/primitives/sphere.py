@@ -19,6 +19,7 @@ from ansys.geometry.core.typing import Real
 class Sphere:
     """
     Provides 3D ``Sphere`` representation.
+
     Parameters
     ----------
     origin : Point3D
