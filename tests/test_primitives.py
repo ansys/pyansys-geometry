@@ -1,3 +1,5 @@
+from io import UnsupportedOperation
+
 from numpy import finfo as np_finfo
 import pytest
 
@@ -100,7 +102,7 @@ def test_point3d_errors():
         Point3D([1, 4])
 
     with pytest.raises(
-        TypeError, match="The np.ndarray 'input' should contain float or integer values."
+        TypeError, match="The numpy.ndarray 'input' should contain float or integer values."
     ):
         Point3D(["a", "b", "c"])
 
@@ -118,7 +120,7 @@ def test_point3d_errors():
         point.z = "a"
 
     # Build a Point2D and try to compare against it
-    with pytest.raises(TypeError, match="Comparison against"):
+    with pytest.raises(TypeError, match="Provided type"):
         point_2d = Point2D([1, 4])
         assert point == point_2d
 
@@ -130,7 +132,7 @@ def test_point2d_errors():
         Point2D([1, 4, 4])
 
     with pytest.raises(
-        TypeError, match="The np.ndarray 'input' should contain float or integer values."
+        TypeError, match="The numpy.ndarray 'input' should contain float or integer values."
     ):
         Point2D(["a", "b"])
 
@@ -145,7 +147,7 @@ def test_point2d_errors():
         point.y = "a"
 
     # Build a Point3D and try to compare against it
-    with pytest.raises(TypeError, match="Comparison against"):
+    with pytest.raises(TypeError, match="Provided type"):
         point_3d = Point3D([1, 4, 4])
         assert point == point_3d
 
@@ -191,6 +193,11 @@ def test_vector3d():
     assert v_cross.y == 0
     assert v_cross.z == 0
 
+    # Check that the dot and cross product overload is fine
+    assert abs(round(v1 * v2 - 25)) <= DOUBLE_EPS
+    v_cross_overload = v1 % v2
+    assert v_cross_overload == v_cross
+
 
 def test_vector2d():
     """Simple test to create a ``Vector2D``."""
@@ -223,6 +230,11 @@ def test_vector2d():
     assert abs(round(v1_n.x, 3) - 0.894) <= DOUBLE_EPS
     assert abs(round(v1_n.y, 3) - 0.447) <= DOUBLE_EPS
 
+    # Check that the dot product overload is fine
+    v_3 = Vector2D([2, 8])
+    v_4 = Vector2D([3, 7])
+    assert abs(round(v_3 * v_4 - 62)) <= DOUBLE_EPS
+
 
 def test_unit_vector_3d():
     """Simple test to create a ``UnitVector3D``."""
@@ -234,11 +246,19 @@ def test_unit_vector_3d():
     assert abs(round(v2.y, 3) - 0.316) <= DOUBLE_EPS
     assert abs(round(v2.z, 3) - 0.949) <= DOUBLE_EPS
 
-    # Create UnitVector3D objects from np.ndarray
+    # Create UnitVector3D objects from numpy.ndarray
     v3 = UnitVector3D([1, 2, 3])
     assert abs(round(v3.x, 3) - 0.267) <= DOUBLE_EPS
     assert abs(round(v3.y, 3) - 0.535) <= DOUBLE_EPS
     assert abs(round(v3.z, 3) - 0.802) <= DOUBLE_EPS
+
+    # Check that UnitVector2D is immutable
+    with pytest.raises(UnsupportedOperation, match="UnitVector3D is immutable."):
+        v2.x = 3
+    with pytest.raises(UnsupportedOperation, match="UnitVector3D is immutable."):
+        v2.y = 3
+    with pytest.raises(UnsupportedOperation, match="UnitVector3D is immutable."):
+        v2.z = 3
 
 
 def test_unit_vector_2d():
@@ -250,10 +270,16 @@ def test_unit_vector_2d():
     assert abs(round(v2.x, 3) - 0.894) <= DOUBLE_EPS
     assert abs(round(v2.y, 3) - 0.447) <= DOUBLE_EPS
 
-    # Create UnitVector2D objects from np.ndarray
+    # Create UnitVector2D objects from numpy.ndarray
     v3 = UnitVector2D([2, 1])
     assert abs(round(v3.x, 3) - 0.894) <= DOUBLE_EPS
     assert abs(round(v3.y, 3) - 0.447) <= DOUBLE_EPS
+
+    # Check that UnitVector2D is immutable
+    with pytest.raises(UnsupportedOperation, match="UnitVector2D is immutable."):
+        v2.x = 3
+    with pytest.raises(UnsupportedOperation, match="UnitVector2D is immutable."):
+        v2.y = 3
 
 
 def test_vector3d_errors():
@@ -263,7 +289,7 @@ def test_vector3d_errors():
         Vector3D([1, 2])
 
     with pytest.raises(
-        TypeError, match="The np.ndarray 'input' should contain float or integer values."
+        TypeError, match="The numpy.ndarray 'input' should contain float or integer values."
     ):
         Vector3D(["a", "b", "c"])
 
@@ -281,7 +307,7 @@ def test_vector3d_errors():
         v1.z = "z"
 
     # Build a Vector2D and try to compare against it
-    with pytest.raises(TypeError, match="Comparison against"):
+    with pytest.raises(TypeError, match="Provided type"):
         v2 = Vector2D([1, 2])
         assert v1 == v2
 
@@ -298,7 +324,7 @@ def test_vector2d_errors():
         Vector2D([1])
 
     with pytest.raises(
-        TypeError, match="The np.ndarray 'input' should contain float or integer values."
+        TypeError, match="The numpy.ndarray 'input' should contain float or integer values."
     ):
         Vector2D(["a", "b"])
 
@@ -313,7 +339,7 @@ def test_vector2d_errors():
         v1.y = "y"
 
     # Build a Vector3D and try to compare against it
-    with pytest.raises(TypeError, match="Comparison against"):
+    with pytest.raises(TypeError, match="Provided type"):
         v2 = Vector3D([1, 5, 6])
         assert v1 == v2
 

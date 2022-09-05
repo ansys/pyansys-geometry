@@ -28,11 +28,3 @@ UNIT_LENGTH = UNITS.meter
 
 UNIT_ANGLE = UNITS.radian
 """Default unit angle for PyGeometry."""
-
-# Typing
-# ------------------------------------------------------------------------------
-
-from typing import Union
-
-Real = Union[int, float]
-"""Type used to refer to both ints and floats as possible values."""

@@ -9,10 +9,10 @@ from ansys.geometry.core.misc import check_pint_unit_compatibility
 from ansys.geometry.core.primitives.vector import Vector2D, Vector3D
 
 DEFAULT_MATRIX33 = np.identity(3)
-"""Default value for ``Matrix33``"""
+"""Default value for ``Matrix33``."""
 
 DEFAULT_MATRIX44 = np.identity(4)
-"""Default value for ``Matrix44``"""
+"""Default value for ``Matrix44``."""
 
 
 class Matrix33(np.ndarray):
@@ -42,10 +42,10 @@ class Matrix33(np.ndarray):
         return obj
 
     def inverse(self: "Matrix33") -> "Matrix33":
-        """Provides the inverse of 3x3 matrix"""
+        """Provides the inverse of 3x3 matrix."""
         det = np.linalg.det(self)
-        if det == 0:
-            raise ValueError("The determinent of matrix is zero, cannot be inversed")
+        if det <= 0:
+            raise ValueError("The determinant of the matrix is zero, cannot be inversed.")
         return np.linalg.inv(self)
 
 
@@ -75,10 +75,10 @@ class Matrix44(np.ndarray):
         return obj
 
     def inverse(self) -> "Matrix44":
-        """Provides the inverse of 3x3 matrix"""
+        """Provides the inverse of 3x3 matrix."""
         det = np.linalg.det(self)
         if det == 0:
-            raise ValueError("The determinent of matrix is zero, cannot be inversed")
+            raise ValueError("The determinant of the matrix is zero, cannot be inversed.")
         return np.linalg.inv(self)
 
     def rotate_x(self, angle: Real, unit: Optional[Unit] = UNIT_ANGLE) -> "Matrix44":
@@ -87,9 +87,9 @@ class Matrix44(np.ndarray):
         Parameters
         ----------
         angle : Real
-            The angle in which the X-axis rotates
+            The angle in which the X-axis rotates.
         unit : Unit, optional
-           Unit for the angle, by default ``UNIT_ANGLE``"""
+           Unit for the angle, by default ``UNIT_ANGLE``."""
         if unit is not UNIT_ANGLE:
             angle = (angle * unit).to_base_units().magnitude
 
@@ -108,9 +108,9 @@ class Matrix44(np.ndarray):
         Parameters
         ----------
         angle : Real
-            The angle in which the Y-axis rotates
+            The angle in which the Y-axis rotates.
         unit : Unit, optional
-           Unit for the angle, by default ``UNIT_ANGLE``"""
+           Unit for the angle, by default ``UNIT_ANGLE``."""
         if unit is not UNIT_ANGLE:
             angle = (angle * unit).to_base_units().magnitude
 
@@ -129,9 +129,9 @@ class Matrix44(np.ndarray):
         Parameters
         ----------
         angle : Real
-            The angle in which the Z-axis rotates
+            The angle in which the Z-axis rotates.
         unit : Unit, optional
-           Unit for the angle, by default ``UNIT_ANGLE``"""
+           Unit for the angle, by default ``UNIT_ANGLE``."""
         if unit is not UNIT_ANGLE:
             angle = (angle * unit).to_base_units().magnitude
 
