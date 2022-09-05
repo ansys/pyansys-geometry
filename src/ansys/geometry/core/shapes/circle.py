@@ -1,38 +1,123 @@
 """``CircleSketch`` class module."""
-from typing import Optional, Sequence
+from typing import Optional
 
 import numpy as np
 
-from ansys.geometry.core.math.point import Point2D
-from ansys.geometry.core.shapes.curve import SketchCurve
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.typing import Real
 
 
-class CircleSketch(SketchCurve):
-    """Provides circle representation within a sketch environment."""
+class CircleShape(BaseShape):
+    """A class for modelling circles."""
 
-    def __init__(self, points: Sequence[Point2D], origin: Point2D):
-        """Initialize an instance of ``CircleSketch``.
+    def __init__(
+        self,
+        radius: Real,
+        origin: Point3D,
+        dir_1: Vector3D([1, 0, 0]),
+        dir_2: Vector3D([0, 1, 0]),
+    ):
+        """Initializes the circle shape.
 
         Parameters
         ----------
-        points : Sequence[Point2D]
-            A list or tuple defining the circle.
-        origin : Point2D
-            A ``Point2D`` representing the origin of the ellipse.
+        radius : Real
+            The radius of the circle.
+        origin : Point3D
+            A ``Point3D`` representing the origin of the shape.
+        dir_1 : Vector3D
+            A :class:``Vector3D`` representing the first fundamental direction
+            of the reference plane where the sape is contained.
+        dir_2 : Vector3D
+            A :class:``Vector3D`` representing the second fundamental direction
+            of the reference plane where the sape is contained.
 
         """
-        super().__init__(points, origin)
-        self._radius = np.linalg.norm(origin - points[0])
+        super().__init__(origin, dir_1, dir_2)
+        self._radius = radius
+
+    @property
+    def radius(self) -> Real:
+        """The radius of the circle.
+
+        Returns
+        -------
+        Real
+            The radius of the circle.
+
+        """
+        return self._radius
+
+    @property
+    def r(self) -> Real:
+        """The radius of the circle.
+
+        Returns
+        -------
+        Real
+            The radius of the circle.
+
+        """
+        return self.radius
+
+    @property
+    def diameter(self) -> Real:
+        """The diameter of the circle.
+
+        Returns
+        -------
+        Real
+            The diameter of the circle.
+
+        """
+        return 2 * self.r
+
+    @property
+    def d(self) -> Real:
+        """The diameter of the circle.
+
+        Returns
+        -------
+        Real
+            The diameter of the circle.
+
+        """
+        return self.diameter
+
+    @property
+    def perimeter(self) -> Real:
+        """Return the perimeter of the circle.
+
+        Returns
+        -------
+        Real
+            The perimeter of the circle.
+
+        """
+        return 2 * np.pi * self.r
+
+    @property
+    def area(self) -> Real:
+        """Return the area of the circle.
+
+        Returns
+        -------
+        Real
+            The area of the circle.
+
+        """
+        return np.pi * self.r**2
 
     @classmethod
     def from_radius(
         cls,
         radius: Real,
-        origin: Optional[Point2D] = Point2D([0, 0]),
-        resolution: Optional[int] = 150,
+        origin: Optional[Point3D] = Point3D([0, 0, 0]),
+        dir_1: Optional[Vector3D] = Vector3D([1, 0, 0]),
+        dir_2: Optional[Vector3D] = Vector3D([0, 1, 0]),
     ):
-        """Create a circle from its radius and center.
+        """Create an circle from its origin and radius.
 
         Parameters
         ----------
@@ -40,25 +125,22 @@ class CircleSketch(SketchCurve):
             The radius of the circle.
         origin : Point2D
             A ``Point2D`` representing the origin of the ellipse.
-        resolution : int
-            Number of points to be used when generating points for the ellipse.
+        dir_1 : Vector3D
+            A :class:``Vector3D`` representing the first fundamental direction
+            of the reference plane where the sape is contained.
+        dir_2 : Vector3D
+            A :class:``Vector3D`` representing the second fundamental direction
+            of the reference plane where the sape is contained.
 
         Returns
         -------
-        CircleSketch
-            An object for modelling circle sketches.
+        CircleShape
+            An object for modelling circular shapes.
 
         """
-        # Collect the coordinates of the points for the point
-        theta = np.linspace(0, 2 * np.pi, resolution)
-        x_coords = origin.x + radius * np.cos(theta)
-        y_coords = origin.y + radius * np.sin(theta)
+        # Verify that the radius is a real positive value
+        if radius <= 0:
+            raise ValueError("Radius must be a real positive value.")
 
         # Generate all the point instances
-        points = [Point2D([x, y]) for x, y in zip(x_coords, y_coords)]
-        return cls(points, origin)
-
-    @property
-    def radius(self):
-        """Return the radius of the circle."""
-        return self._radius
+        return cls(radius, origin, dir_1, dir_2)

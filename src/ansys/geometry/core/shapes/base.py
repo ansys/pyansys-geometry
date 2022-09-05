@@ -8,7 +8,7 @@ class BaseShape:
     """Provides mother class for modeling base shape objects."""
 
     def __init__(self, origin: Point3D, dir_1: Vector3D([1, 0, 0]), dir_2: Vector3D([0, 1, 0])):
-        """Initializes the sketch curve from its points.
+        """Initializes the base shape.
 
         Parameters
         ----------
@@ -104,3 +104,27 @@ class BaseShape:
 
         """
         return [point[2] for point in self._points]
+
+    @property
+    def perimeter(self) -> Real:
+        """Return the perimeter of the shape.
+
+        Returns
+        -------
+        Real
+            The perimeter of the shape.
+
+        """
+        raise NotImplementedError
+
+    @property
+    def area(self) -> Real:
+        """Return the area of the shape.
+
+        Returns
+        -------
+        Real
+            The area of the shape.
+
+        """
+        raise NotImplementedError
