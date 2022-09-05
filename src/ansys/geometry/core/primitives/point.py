@@ -50,6 +50,7 @@ class Point3D(np.ndarray):
             return obj
 
         # Transform to numpy.ndarray
+        check_is_pint_unit(unit, "unit")
         obj = np.asarray([(elem * unit).to_base_units().magnitude for elem in input]).view(cls)
         obj._unit = unit
         _, obj._base_unit = UNITS.get_base_units(unit)
@@ -115,7 +116,7 @@ class Point3D(np.ndarray):
     def __eq__(self, other: "Point3D") -> bool:
         """Equals operator for ``Point3D``."""
         check_type_equivalence(other, self)
-        return np.array_equal(self, other)
+        return np.array_equal(self, other) and self._base_unit == other._base_unit
 
     def __ne__(self, other: "Point3D") -> bool:
         """Not equals operator for ``Point3D``."""
@@ -150,6 +151,7 @@ class Point2D(np.ndarray):
             return obj
 
         # Transform to numpy.ndarray
+        check_is_pint_unit(unit, "unit")
         obj = np.asarray([(elem * unit).to_base_units().magnitude for elem in input]).view(cls)
         obj._unit = unit
         _, obj._base_unit = UNITS.get_base_units(unit)
@@ -204,7 +206,7 @@ class Point2D(np.ndarray):
     def __eq__(self, other: "Point2D") -> bool:
         """Equals operator for ``Point2D``."""
         check_type_equivalence(other, self)
-        return np.array_equal(self, other)
+        return np.array_equal(self, other) and self._base_unit == other._base_unit
 
     def __ne__(self, other: "Point2D") -> bool:
         """Not equals operator for ``Point2D``."""
