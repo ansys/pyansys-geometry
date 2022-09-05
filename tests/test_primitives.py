@@ -1,4 +1,5 @@
 from io import UnsupportedOperation
+from math import pi
 
 import numpy as np
 from numpy import finfo as np_finfo
@@ -7,14 +8,17 @@ import pytest
 from ansys.geometry.core import UNITS
 from ansys.geometry.core.primitives import (
     Matrix33,
+    Matrix44,
     Point2D,
     Point3D,
+    RotationMatrix,
+    TranslationMatrix2D,
+    TranslationMatrix3D,
     UnitVector2D,
     UnitVector3D,
     Vector2D,
     Vector3D,
 )
-from ansys.geometry.core.primitives.matrix import Matrix44
 
 DOUBLE_EPS = np_finfo(float).eps
 
@@ -496,3 +500,52 @@ def test_matrix_33_errors():
     with pytest.raises(TypeError, match="Provided type"):
         m_2 = Matrix44([[2, 0, 0, 2], [0, 3, 0, 1], [0, 0, 4, 2], [0, 0, 4, 2]])
         assert m_1 == m_2
+
+
+def test_rotation_matrix():
+    """Testing ``RotationMatrix`` to the the 3x3 matrix in a counter-clockwise direction."""
+
+    # create a Matrix33 and rotate it pi/2 radian
+    m_1 = Matrix33([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
+    rotated_matrix = RotationMatrix(m_1, pi / 2)
+
+    test_rotated_matrix = [[0, -3, 0], [2, 0, 0], [0, 0, 4]]
+    # Check the rotation matrix with test rotation matrix
+    assert abs(rotated_matrix - test_rotated_matrix).all() <= DOUBLE_EPS
+
+    # Check the units of the angle
+    rotated_matrix_2 = RotationMatrix(m_1, 90, unit=UNITS.degree)
+    assert abs(rotated_matrix_2 - test_rotated_matrix).all() <= DOUBLE_EPS
+
+    # Check the rotation matrix with 30 degree
+    rotated_matrix_3 = RotationMatrix(m_1, 30, unit=UNITS.degree)
+    test_rotated_matrix = [[1.7321, -1.5, 0], [2.5981, 0, 0], [0, 4, 0]]
+    assert abs(rotated_matrix_3 - test_rotated_matrix).all() <= DOUBLE_EPS
+
+
+def test_translational_matrix_2d():
+
+    # Create a Matrix33 for translation
+    m_1 = Matrix33([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
+    vector = Vector2D([2, 3])
+
+    # Translate the matrix by vector
+    translate = TranslationMatrix2D(m_1, vector)
+
+    # Check the translated matrix
+    test_translate = np.asarray([[2, 0, 4], [0, 3, 9], [0, 0, 4]])
+    assert np.array_equal(translate, test_translate)
+
+
+def test_translational_matrix_3d():
+
+    # Create a Matrix33 for translation
+    m_1 = Matrix44([[2, 0, 0, 0], [0, 3, 0, 0], [0, 0, 4, 0], [0, 0, 0, 1]])
+    vector = Vector3D([2, 3, 4])
+
+    # Translate the matrix by vector
+    translate = TranslationMatrix3D(m_1, vector)
+
+    # Check the translated matrix
+    test_translate = np.asarray([[2, 0, 0, 4], [0, 3, 0, 9], [0, 0, 4, 16], [0, 0, 0, 1]])
+    assert np.array_equal(translate, test_translate)

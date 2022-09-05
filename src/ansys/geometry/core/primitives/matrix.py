@@ -206,7 +206,7 @@ class RotationMatrix(Matrix33):
 
     Notes
     -----
-    The default unit of angle is radian.
+    The default unit of angle is ``radian``.
     """
 
     def __new__(cls, input, angle: Real, unit: Optional[Unit] = UNIT_ANGLE):
@@ -231,7 +231,7 @@ class TranslationMatrix2D(Matrix33):
 
 
 class TranslationMatrix3D(Matrix44):
-    """Translate the 4x4 matrix on 2D vector space."""
+    """Translate the 4x4 matrix on 3D vector space."""
 
     def __new__(cls, input, v: Vector3D):
         obj = Matrix44(input)
