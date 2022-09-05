@@ -496,6 +496,12 @@ def test_cylinder():
     ):
         c_1.height = "A"
 
+    with pytest.raises(TypeError, match=f"direction_x is invalid, type {UnitVector3D} expected."):
+        Cylinder(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
+
+    with pytest.raises(TypeError, match=f"direction_y is invalid, type {UnitVector3D} expected."):
+        Cylinder(origin, UnitVector3D([12, 31, 99]), "A", 100, 200)
+
 
 def test_cylinder_units():
     """``Cylinder`` units validation."""

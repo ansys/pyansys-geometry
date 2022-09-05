@@ -48,8 +48,11 @@ class Cylinder:
     ):
         """Constructor method for ``Cylinder``."""
 
-        check_type_equivalence(type(direction_x), UnitVector3D)
-        check_type_equivalence(type(direction_y), UnitVector3D)
+        if not isinstance(direction_x, UnitVector3D):
+            raise TypeError(f"direction_x is invalid, type {UnitVector3D} expected.")
+
+        if not isinstance(direction_y, UnitVector3D):
+            raise TypeError(f"direction_y is invalid, type {UnitVector3D} expected.")
 
         check_is_float_int(radius, "radius")
         check_is_float_int(height, "height")
@@ -69,7 +72,7 @@ class Cylinder:
         self._height = UNITS.convert(height, self._unit, self._base_unit)
 
     @property
-    def origin(self):
+    def origin(self) -> Point3D:
         """Origin of the ``Cylinder``."""
         return self._origin
 
