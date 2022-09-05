@@ -442,14 +442,16 @@ def test_point2D_units():
 
 def test_matrix_33():
     m_1 = Matrix33([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
-    m_2 = Matrix33()
+    m_1_copy = Matrix33([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
+    m_2 = Matrix33([[3, 2, 0], [1, 3, 0], [0, 6, 4]])
+    m_null = Matrix33()
 
     # Intiate a test matrix using numpy.ndarray
     test_matrix = np.array([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
-    assert test_matrix.all() == m_1.all()
+    assert np.array_equal(test_matrix, m_1)
 
     # Check the default matrix is identity matrix
-    assert m_2 == np.identity(3)
+    assert np.array_equal(np.identity(3), m_null)
 
     # Check inverse of matrix
     test_inverse = np.linalg.inv(test_matrix)
@@ -459,3 +461,7 @@ def test_matrix_33():
     # Check determinant of matrix
     det = m_1.determinant()
     assert abs(round(det, 3) - 24) <= DOUBLE_EPS
+
+    # Check that the equals operator
+    assert m_1 == m_1_copy
+    assert m_1 != m_2

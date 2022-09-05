@@ -6,6 +6,7 @@ from pint import Unit
 
 from ansys.geometry.core import UNIT_ANGLE
 from ansys.geometry.core.misc import check_pint_unit_compatibility
+from ansys.geometry.core.misc.checks import check_type_equivalence
 from ansys.geometry.core.primitives.vector import Vector2D, Vector3D
 from ansys.geometry.core.typing import Real, RealSequence
 
@@ -52,6 +53,15 @@ class Matrix33(np.ndarray):
     def determinant(self) -> float:
         """Provides the determinent of 3x3 matrix."""
         return np.linalg.det(self)
+
+    def __eq__(self, other: "Matrix33") -> bool:
+        """Equals operator for ``Matrix33``."""
+        check_type_equivalence(other, self)
+        return np.array_equal(self, other)
+
+    def __ne__(self, other: "Matrix33") -> bool:
+        """Not equals operator for ``Matrix33``."""
+        return not self == other
 
 
 class Matrix44(np.ndarray):
@@ -173,6 +183,15 @@ class Matrix44(np.ndarray):
             ]
         )
         return np.matmul(rotation_matrix, self)
+
+    def __eq__(self, other: "Matrix44") -> bool:
+        """Equals operator for ``Matrix44``."""
+        check_type_equivalence(other, self)
+        return np.array_equal(self, other)
+
+    def __ne__(self, other: "Matrix44") -> bool:
+        """Not equals operator for ``Matrix44``."""
+        return not self == other
 
 
 class RotationMatrix(Matrix33):
