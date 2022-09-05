@@ -25,3 +25,7 @@
 - name: release
   description: Anything related to an incoming release
   color: ffffff
+
+- name: PRIORITY
+  description: Issue/PR assigned with this tag must be given priority over the rest of the backlog
+  color: 7A1FCC
