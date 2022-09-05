@@ -85,7 +85,7 @@ def check_is_vector(
     from ansys.geometry.core.primitives.vector import Vector2D, Vector3D
 
     consider = (Vector3D) if only_3d else (Vector2D, Vector3D)
-    vector_type  = "Vector3D" if only_3d else "Vector3D or Vector2D"
+    vector_type = "Vector3D" if only_3d else "Vector3D or Vector2D"
     if not isinstance(param, consider):
         raise TypeError(
             f"The parameter provided should be a {vector_type} object."
