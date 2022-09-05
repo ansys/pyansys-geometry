@@ -15,4 +15,4 @@ def test_errors_line():
 
 
 def test_errors_segment():
-    """Check errors when handling a ``Line``."""
+    """Check errors when handling a ``Segment``."""
