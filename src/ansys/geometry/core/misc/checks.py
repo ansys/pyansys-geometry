@@ -6,7 +6,7 @@ import numpy as np
 from pint import Unit
 
 
-def check_is_float_int(param: object, param_name: Optional[Union[str, None]]) -> None:
+def check_is_float_int(param: object, param_name: Optional[Union[str, None]] = None) -> None:
     """
     Checks if the parameter provided is a ``float`` or an ``int``.
 
@@ -30,16 +30,18 @@ def check_is_float_int(param: object, param_name: Optional[Union[str, None]]) ->
         )
 
 
-def check_ndarray_is_float_int(param: np.ndarray, param_name: Optional[Union[str, None]]) -> None:
+def check_ndarray_is_float_int(
+    param: np.ndarray, param_name: Optional[Union[str, None]] = None
+) -> None:
     """
-    Checks if the :class:`np.ndarray` has ``float`` or ``int`` elements.
+    Checks if the :class:`numpy.ndarray` has ``float`` or ``int`` elements.
 
     Parameters
     ----------
-    param : np.ndarray
-        :class:`np.ndarray` instance to be checked.
+    param : ~numpy.ndarray
+        :class:`numpy.ndarray` instance to be checked.
     param_name : str or None, optional
-        The :class:`np.ndarray` instance name (if any). By default, ``None``.
+        The :class:`numpy.ndarray` instance name (if any). By default, ``None``.
 
     Raises
     ------
@@ -51,13 +53,13 @@ def check_ndarray_is_float_int(param: np.ndarray, param_name: Optional[Union[str
         isinstance(data, (int, float)) for data in param.data
     ):
         raise TypeError(
-            f"The np.ndarray provided should contain float or integer values."
+            f"The numpy.ndarray provided should contain float or integer values."
             if param_name is None
-            else f"The np.ndarray '{param_name}' should contain float or integer values."
+            else f"The numpy.ndarray '{param_name}' should contain float or integer values."
         )
 
 
-def check_is_pint_unit(param: object, param_name: Optional[Union[str, None]]) -> None:
+def check_is_pint_unit(param: object, param_name: Optional[Union[str, None]] = None) -> None:
     """
     Checks if the parameter provided is a :class:`pint.Unit`.
 
@@ -87,9 +89,9 @@ def check_pint_unit_compatibility(input: Unit, expected: Unit) -> None:
 
     Parameters
     ----------
-    input : Unit
+    input : ~pint.Unit
         The :class:`pint.Unit` input.
-    expected : Unit
+    expected : ~pint.Unit
         The :class:`pint.Unit` expected dimensionality.
 
     Raises

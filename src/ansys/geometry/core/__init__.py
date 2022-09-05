@@ -25,12 +25,3 @@ UNITS = UnitRegistry()
 
 UNIT_LENGTH = UNITS.meter
 """Default unit length for PyGeometry."""
-
-
-# Typing
-# ------------------------------------------------------------------------------
-
-from typing import Union
-
-Real = Union[int, float]
-"""Type used to refer to both ints and floats as possible values."""

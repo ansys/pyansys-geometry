@@ -5,7 +5,7 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core import UNIT_LENGTH, UNITS, Real
+from ansys.geometry.core import UNIT_LENGTH, UNITS
 from ansys.geometry.core.misc import (
     check_is_float_int,
     check_is_pint_unit,
@@ -13,6 +13,7 @@ from ansys.geometry.core.misc import (
     check_pint_unit_compatibility,
     check_type_equivalence,
 )
+from ansys.geometry.core.typing import Real, RealSequence
 
 DEFAULT_POINT3D = [None, None, None]
 """Default value for ``Point3D``"""
@@ -27,16 +28,16 @@ class Point3D(np.ndarray):
 
     Parameters
     ----------
-    input : Union[np.ndarray, List[Union[Real, None]]], optional
-        The direction arguments, either as a :class:`np.ndarray`, or as a list.
+    input : Union[~numpy.ndarray, RealSequence, List[None]], optional
+        The direction arguments, either as a :class:`numpy.ndarray`, or as a RealSequence.
         By default, ``DEFAULT_POINT3D``.
-    unit : Unit, optional
+    unit : ~pint.Unit, optional
         Units employed to define the Point3D values, by default ``UNIT_LENGTH``
     """
 
     def __new__(
         cls,
-        input: Optional[Union[np.ndarray, List[Union[Real, None]]]] = DEFAULT_POINT3D,
+        input: Optional[Union[np.ndarray, RealSequence, List[None]]] = DEFAULT_POINT3D,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Constructor for ``Point3D``."""
@@ -127,16 +128,16 @@ class Point2D(np.ndarray):
 
     Parameters
     ----------
-    input : Union[np.ndarray, List[Union[Real, None]]], optional
-        The direction arguments, either as a :class:`np.ndarray`, or as a list.
+    input : Union[~numpy.ndarray, RealSequence, List[None]], optional
+        The direction arguments, either as a :class:`numpy.ndarray`, or as a RealSequence.
         By default, ``DEFAULT_POINT3D``.
-    unit : Unit, optional
+    unit : ~pint.Unit, optional
         Units employed to define the Point3D values, by default ``UNIT_LENGTH``
     """
 
     def __new__(
         cls,
-        input: Optional[Union[np.ndarray, List[Union[Real, None]]]] = DEFAULT_POINT2D,
+        input: Optional[Union[np.ndarray, RealSequence, List[None]]] = DEFAULT_POINT2D,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Constructor for ``Point2D``."""
