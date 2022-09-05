@@ -1,8 +1,6 @@
 from io import UnsupportedOperation
-from math import pi
 
 import numpy as np
-from numpy import finfo as np_finfo
 import pytest
 
 from ansys.geometry.core import UNITS
@@ -21,7 +19,7 @@ from ansys.geometry.core.primitives import (
     Vector3D,
 )
 
-DOUBLE_EPS = np_finfo(float).eps
+DOUBLE_EPS = np.finfo(float).eps
 
 
 def test_point3d():
@@ -612,9 +610,9 @@ def test_matrix_33_errors():
 def test_rotation_matrix():
     """Testing ``RotationMatrix`` to the the 3x3 matrix in a counter-clockwise direction."""
 
-    # create a Matrix33 and rotate it pi/2 radian
+    # create a Matrix33 and rotate it numpy.pi/2 radian
     m_1 = Matrix33([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
-    rotated_matrix = RotationMatrix(m_1, pi / 2)
+    rotated_matrix = RotationMatrix(m_1, np.pi / 2)
 
     test_rotated_matrix = [[0, -3, 0], [2, 0, 0], [0, 0, 4]]
     # Check the rotation matrix with test rotation matrix
@@ -661,27 +659,27 @@ def test_matrix_44():
     assert m_1 == m_1_copy
     assert m_1 != m_2
 
-    # Check X-axis rotation of Matrix44 in pi/2 radian
+    # Check X-axis rotation of Matrix44 in numpy.pi/2 radian
     test_matrix_x = np.asarray([[2, 0, 0, 0], [0, 0, -4, 0], [0, 3, 0, 0], [0, 0, 0, 1]])
-    m_rotate_x = m_1.rotate_x(pi / 2)
+    m_rotate_x = m_1.rotate_x(np.pi / 2)
     assert abs(m_rotate_x - test_matrix_x).all() <= DOUBLE_EPS
 
     # Check the X-axis rotation of Matrix44 in 90 degree
     m_rotate_x_degree = m_1.rotate_x(90, UNITS.degree)
     assert abs(m_rotate_x_degree - test_matrix_x).all() <= DOUBLE_EPS
 
-    # Check Y-axis rotation of Matrix44 in pi/2 radian
+    # Check Y-axis rotation of Matrix44 in numpy.pi/2 radian
     test_matrix_y = np.asarray([[0, 0, 4, 0], [0, 3, 0, 0], [-2, 0, 0, 0], [0, 0, 0, 1]])
-    m_rotate_y = m_1.rotate_y(pi / 2)
+    m_rotate_y = m_1.rotate_y(np.pi / 2)
     assert abs(m_rotate_y - test_matrix_y).all() <= DOUBLE_EPS
 
     # Check the Y-axis rotation of Matrix44 in 90 degree
     m_rotate_y_degree = m_1.rotate_y(90, UNITS.degree)
     assert abs(m_rotate_y_degree - test_matrix_y).all() <= DOUBLE_EPS
 
-    # Check Z-axis rotation of Matrix44 in pi/2 radian
+    # Check Z-axis rotation of Matrix44 in numpy.pi/2 radian
     test_matrix_z = np.asarray([[0, -3, 0, 0], [2, 0, 0, 0], [0, 0, 4, 0], [0, 0, 0, 1]])
-    m_rotate_z = m_1.rotate_z(pi / 2)
+    m_rotate_z = m_1.rotate_z(np.pi / 2)
     assert abs(m_rotate_z - test_matrix_z).all() <= DOUBLE_EPS
 
     # Check the Z-axis rotation of Matrix44 in 90 degree
