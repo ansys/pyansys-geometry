@@ -1,10 +1,12 @@
 from io import UnsupportedOperation
 
+import numpy as np
 from numpy import finfo as np_finfo
 import pytest
 
 from ansys.geometry.core import UNITS
 from ansys.geometry.core.primitives import (
+    Matrix33,
     Point2D,
     Point3D,
     UnitVector2D,
@@ -436,3 +438,24 @@ def test_point2D_units():
     p_cm_to_mm.y = 10  # Basically 1/20 of original y
     assert not raw_y == p_cm_to_mm[1]
     assert raw_y == p_cm_to_mm[1] * 20
+
+
+def test_matrix_33():
+    m_1 = Matrix33([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
+    m_2 = Matrix33()
+
+    # Intiate a test matrix using numpy.ndarray
+    test_matrix = np.array([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
+    assert test_matrix.all() == m_1.all()
+
+    # Check the default matrix is identity matrix
+    assert m_2 == np.identity(3)
+
+    # Check inverse of matrix
+    test_inverse = np.linalg.inv(test_matrix)
+    m_3 = m_1.inverse()
+    assert abs(m_3 - test_inverse).all() <= DOUBLE_EPS
+
+    # Check determinant of matrix
+    det = m_1.determinant()
+    assert abs(round(det, 3) - 24) <= DOUBLE_EPS

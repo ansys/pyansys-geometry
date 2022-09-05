@@ -49,7 +49,7 @@ class Matrix33(np.ndarray):
             raise ValueError("The determinant of the matrix is zero, cannot be inversed.")
         return np.linalg.inv(self)
 
-    def determinant(self) -> "Matrix33":
+    def determinant(self) -> float:
         """Provides the determinent of 3x3 matrix."""
         return np.linalg.det(self)
 
@@ -86,7 +86,7 @@ class Matrix44(np.ndarray):
             raise ValueError("The determinant of the matrix is zero, cannot be inversed.")
         return np.linalg.inv(self)
 
-    def determinant(self) -> "Matrix44":
+    def determinant(self) -> float:
         """Provides the determinent of 4x4 matrix."""
         return np.linalg.det(self)
 
@@ -98,7 +98,12 @@ class Matrix44(np.ndarray):
         angle : Real
             The angle in which the X-axis rotates.
         unit : ~pint.Unit, optional
-           Unit for the angle, by default ``UNIT_ANGLE``."""
+           Unit for the angle, by default ``UNIT_ANGLE``.
+
+        Notes
+        -----
+        The default unit of angle is radian.
+        """
         if unit is not UNIT_ANGLE:
             angle = (angle * unit).to_base_units().magnitude
 
@@ -121,7 +126,12 @@ class Matrix44(np.ndarray):
         angle : Real
             The angle in which the Y-axis rotates.
         unit : ~pint.Unit, optional
-           Unit for the angle, by default ``UNIT_ANGLE``."""
+           Unit for the angle, by default ``UNIT_ANGLE``.
+
+        Notes
+        -----
+        The default unit of angle is radian.
+        """
         if unit is not UNIT_ANGLE:
             angle = (angle * unit).to_base_units().magnitude
 
@@ -144,7 +154,12 @@ class Matrix44(np.ndarray):
         angle : Real
             The angle in which the Z-axis rotates.
         unit : ~pint.Unit, optional
-           Unit for the angle, by default ``UNIT_ANGLE``."""
+           Unit for the angle, by default ``UNIT_ANGLE``.
+
+        Notes
+        -----
+        The default unit of angle is radian.
+        """
         if unit is not UNIT_ANGLE:
             angle = (angle * unit).to_base_units().magnitude
 
@@ -169,6 +184,10 @@ class RotationMatrix(Matrix33):
         The angle in which the object rotates
     unit : ~pint.Unit, optional
        Unit for the angle, by default ``UNIT_ANGLE``
+
+    Notes
+    -----
+    The default unit of angle is radian.
     """
 
     def __new__(cls, input, angle: Real, unit: Optional[Unit] = UNIT_ANGLE):
