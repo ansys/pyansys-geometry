@@ -90,10 +90,18 @@ class Vector3D(np.ndarray):
         """Not equals operator for ``Vector3D``."""
         return not self == other
 
-    def __mul__(self, other: "Vector3D") -> Real:
-        """Overload * operator with dot product."""
-        check_type_equivalence(other, self)
-        return self.dot(other)
+    def __mul__(self, other: Union["Vector3D", Real]) -> Real:
+        """Overload * operator with dot product.
+        
+        Note
+        ----
+        Also admits scalar multiplication.
+        """
+        if isinstance(other, (int, float)):
+            return np.multiply(self, other)
+        else:
+            check_type_equivalence(other, self)
+            return self.dot(other)
 
     def __mod__(self, other: "Vector3D") -> "Vector3D":
         """Overload % operator with cross product."""
@@ -165,9 +173,17 @@ class Vector2D(np.ndarray):
         return not self == other
 
     def __mul__(self, other: "Vector2D") -> Real:
-        """Overload * operator with dot product."""
-        check_type_equivalence(other, self)
-        return self.dot(other)
+        """Overload * operator with dot product.
+        
+        Note
+        ----
+        Also admits scalar multiplication.
+        """
+        if isinstance(other, (int, float)):
+            return np.multiply(self, other)
+        else:
+            check_type_equivalence(other, self)
+            return self.dot(other)
 
 
 class UnitVector3D(Vector3D):
