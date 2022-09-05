@@ -5,7 +5,7 @@ from typing import Optional
 
 from pint import Unit
 
-from ansys.geometry.core import UNIT_LENGTH, UNITS, Real
+from ansys.geometry.core import UNIT_LENGTH, UNITS
 from ansys.geometry.core.misc import (
     check_is_float_int,
     check_is_pint_unit,
@@ -14,6 +14,7 @@ from ansys.geometry.core.misc import (
 )
 from ansys.geometry.core.primitives.point import Point3D
 from ansys.geometry.core.primitives.vector import UnitVector3D
+from ansys.geometry.core.typing import Real
 
 
 class Cylinder:
@@ -33,7 +34,7 @@ class Cylinder:
     height : Real
         Height of the ``Cylinder``.
     unit : Unit, optional
-        Units employed to define the radius and height, by default ``UNIT_LENGTH``
+        Units employed to define the radius and height, by default ``UNIT_LENGTH``.
     """
 
     def __init__(
@@ -77,10 +78,22 @@ class Cylinder:
         """Radius of the ``Cylinder``."""
         return UNITS.convert(self._radius, self._base_unit, self._unit)
 
+    @radius.setter
+    def radius(self, radius: Real) -> None:
+        """Set the Radius of the ``Cylinder``."""
+        check_is_float_int(radius, "radius")
+        self._radius = UNITS.convert(radius, self._unit, self._base_unit)
+
     @property
     def height(self) -> Real:
         """Height of the ``Cylinder``."""
         return UNITS.convert(self._height, self._base_unit, self._unit)
+
+    @height.setter
+    def height(self, height: Real) -> None:
+        """Set the Height of the ``Cylinder``."""
+        check_is_float_int(height, "height")
+        self._height = UNITS.convert(height, self._unit, self._base_unit)
 
     @property
     def unit(self) -> Unit:

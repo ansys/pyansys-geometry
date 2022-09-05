@@ -463,6 +463,15 @@ def test_cylinder():
     assert c_1.radius == 100
     assert c_1.height == 200
 
+    c_1.radius = 1000
+    c_1.height = 2000
+
+    assert c_1.origin.x == origin.x
+    assert c_1.origin.y == origin.y
+    assert c_1.origin.z == origin.z
+    assert c_1.radius == 1000
+    assert c_1.height == 2000
+
     with pytest.raises(
         TypeError,
         match="The parameter 'radius' should be a float or an integer value.",
@@ -474,6 +483,18 @@ def test_cylinder():
         match="The parameter 'height' should be a float or an integer value.",
     ):
         Cylinder(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, "A")
+
+    with pytest.raises(
+        TypeError,
+        match="The parameter 'radius' should be a float or an integer value.",
+    ):
+        c_1.radius = "A"
+
+    with pytest.raises(
+        TypeError,
+        match="The parameter 'height' should be a float or an integer value.",
+    ):
+        c_1.height = "A"
 
 
 def test_cylinder_units():
