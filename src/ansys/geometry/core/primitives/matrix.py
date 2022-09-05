@@ -42,12 +42,16 @@ class Matrix33(np.ndarray):
 
         return obj
 
-    def inverse(self: "Matrix33") -> "Matrix33":
+    def inverse(self) -> "Matrix33":
         """Provides the inverse of 3x3 matrix."""
         det = np.linalg.det(self)
         if det <= 0:
             raise ValueError("The determinant of the matrix is zero, cannot be inversed.")
         return np.linalg.inv(self)
+
+    def determinant(self) -> "Matrix33":
+        """Provides the determinent of 3x3 matrix."""
+        return np.linalg.det(self)
 
 
 class Matrix44(np.ndarray):
@@ -76,11 +80,15 @@ class Matrix44(np.ndarray):
         return obj
 
     def inverse(self) -> "Matrix44":
-        """Provides the inverse of 3x3 matrix."""
+        """Provides the inverse of 4x4 matrix."""
         det = np.linalg.det(self)
         if det == 0:
             raise ValueError("The determinant of the matrix is zero, cannot be inversed.")
         return np.linalg.inv(self)
+
+    def determinant(self) -> "Matrix44":
+        """Provides the determinent of 4x4 matrix."""
+        return np.linalg.det(self)
 
     def rotate_x(self, angle: Real, unit: Optional[Unit] = UNIT_ANGLE) -> "Matrix44":
         """Rotate the 4x4 matrix in X axis in a counter-clockwise direction.
