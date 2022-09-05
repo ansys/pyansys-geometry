@@ -13,7 +13,7 @@ except ModuleNotFoundError:
     import importlib_metadata
 
 __version__ = importlib_metadata.version(__name__.replace(".", "-"))
-"""The installed version of PyGeometry"""
+"""The installed version of PyGeometry."""
 
 
 # Units
