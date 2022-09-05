@@ -523,6 +523,38 @@ def test_rotation_matrix():
     assert abs(rotated_matrix_3 - test_rotated_matrix).all() <= DOUBLE_EPS
 
 
+def test_matrix_44():
+    """Simple test to create a ``Matrix33``."""
+
+    # Create two Matrix33 objects
+    m_1 = Matrix44([[2, 0, 0, 0], [0, 3, 0, 0], [0, 0, 4, 0], [0, 0, 0, 1]])
+    m_1_copy = Matrix44([[2, 0, 0, 0], [0, 3, 0, 0], [0, 0, 4, 0], [0, 0, 0, 1]])
+    m_2 = Matrix44([[3, 2, 0, 5], [1, 3, 0, 8], [0, 6, 4, 5], [0, 0, 0, 1]])
+
+    # Create a null matrix, which is 4x4 identity matrix
+    m_null = Matrix44()
+
+    # Intiate a test matrix using numpy.ndarray
+    test_matrix = np.array([[2, 0, 0, 0], [0, 3, 0, 0], [0, 0, 4, 0], [0, 0, 0, 1]])
+    assert np.array_equal(test_matrix, m_1)
+
+    # Check the default matrix is identity matrix
+    assert np.array_equal(np.identity(4), m_null)
+
+    # Check inverse of matrix
+    test_inverse = np.linalg.inv(test_matrix)
+    m_3 = m_1.inverse()
+    assert abs(m_3 - test_inverse).all() <= DOUBLE_EPS
+
+    # Check determinant of matrix
+    det = m_1.determinant()
+    assert abs(round(det, 3) - 24) <= DOUBLE_EPS
+
+    # Check that the equals operator
+    assert m_1 == m_1_copy
+    assert m_1 != m_2
+
+
 def test_translational_matrix_2d():
 
     # Create a Matrix33 for translation
