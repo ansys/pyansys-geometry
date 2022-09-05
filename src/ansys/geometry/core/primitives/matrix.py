@@ -4,7 +4,7 @@ from typing import Optional, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core import UNIT_ANGLE, Real
+from ansys.geometry.core import UNIT_ANGLE
 from ansys.geometry.core.misc import check_pint_unit_compatibility
 from ansys.geometry.core.primitives.vector import Vector2D, Vector3D
 from ansys.geometry.core.typing import Real, RealSequence
@@ -64,7 +64,7 @@ class Matrix44(np.ndarray):
         By default, ``DEFAULT_MATRIX44``.
     """
 
-    def __new__(cls, input: Union[np.ndarray, List[Real]] = DEFAULT_MATRIX44):
+    def __new__(cls, input: Optional[Union[np.ndarray, RealSequence]] = DEFAULT_MATRIX44):
         """Constructor for ``Matrix44``."""
         if input is DEFAULT_MATRIX44:
             obj = np.asarray(DEFAULT_MATRIX44).view(cls)
@@ -97,7 +97,7 @@ class Matrix44(np.ndarray):
         ----------
         angle : Real
             The angle in which the X-axis rotates.
-        unit : Unit, optional
+        unit : ~pint.Unit, optional
            Unit for the angle, by default ``UNIT_ANGLE``."""
         if unit is not UNIT_ANGLE:
             angle = (angle * unit).to_base_units().magnitude
@@ -115,14 +115,14 @@ class Matrix44(np.ndarray):
         )
         return np.matmul(rotation_matrix, self)
 
-    def rotate_y(self, angle, unit: Optional[Unit] = UNIT_ANGLE) -> "Matrix44":
+    def rotate_y(self, angle: Real, unit: Optional[Unit] = UNIT_ANGLE) -> "Matrix44":
         """Rotate the 4x4 matrix in Y axis in a counter-clockwise direction.
 
         Parameters
         ----------
         angle : Real
             The angle in which the Y-axis rotates.
-        unit : Unit, optional
+        unit : ~pint.Unit, optional
            Unit for the angle, by default ``UNIT_ANGLE``."""
         if unit is not UNIT_ANGLE:
             angle = (angle * unit).to_base_units().magnitude
@@ -140,14 +140,14 @@ class Matrix44(np.ndarray):
         )
         return np.matmul(rotation_matrix, self)
 
-    def rotate_z(self, angle, unit: Optional[Unit] = UNIT_ANGLE) -> "Matrix44":
+    def rotate_z(self, angle: Real, unit: Optional[Unit] = UNIT_ANGLE) -> "Matrix44":
         """Rotate the 4x4 matrix in Z axis in a counter-clockwise direction.
 
         Parameters
         ----------
         angle : Real
             The angle in which the Z-axis rotates.
-        unit : Unit, optional
+        unit : ~pint.Unit, optional
            Unit for the angle, by default ``UNIT_ANGLE``."""
         if unit is not UNIT_ANGLE:
             angle = (angle * unit).to_base_units().magnitude
@@ -174,11 +174,11 @@ class RotationMatrix(Matrix33):
     ----------
     angle : Real
         The angle in which the object rotates
-    unit : Unit, optional
+    unit : ~pint.Unit, optional
        Unit for the angle, by default ``UNIT_ANGLE``
     """
 
-    def __new__(cls, input, angle, unit: Optional[Unit] = UNIT_ANGLE):
+    def __new__(cls, input, angle: Real, unit: Optional[Unit] = UNIT_ANGLE):
         if unit is not UNIT_ANGLE:
             angle = (angle * unit).to_base_units().magnitude
 
