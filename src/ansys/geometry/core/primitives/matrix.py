@@ -1,5 +1,5 @@
 from math import cos, sin
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 import numpy as np
 from pint import Unit
@@ -7,6 +7,7 @@ from pint import Unit
 from ansys.geometry.core import UNIT_ANGLE, Real
 from ansys.geometry.core.misc import check_pint_unit_compatibility
 from ansys.geometry.core.primitives.vector import Vector2D, Vector3D
+from ansys.geometry.core.typing import Real, RealSequence
 
 DEFAULT_MATRIX33 = np.identity(3)
 """Default value for ``Matrix33``."""
@@ -25,7 +26,7 @@ class Matrix33(np.ndarray):
         By default, ``DEFAULT_MATRIX33``.
     """
 
-    def __new__(cls, input: Union[np.ndarray, List[Real]] = DEFAULT_MATRIX33):
+    def __new__(cls, input: Optional[Union[np.ndarray, RealSequence]] = DEFAULT_MATRIX33):
         """Constructor for ``Matrix33``."""
 
         if input is DEFAULT_MATRIX33:
@@ -96,11 +97,15 @@ class Matrix44(np.ndarray):
         check_pint_unit_compatibility(unit, UNIT_ANGLE)
         sin_angle = round(sin(angle))
         cos_angle = round(cos(angle))
-        rotation_matrix = np.identity(4)
-        rotation_matrix[1, 1] = rotation_matrix[2, 2] = cos_angle
-        rotation_matrix[1, 2] = -sin_angle
-        rotation_matrix[2, 1] = sin_angle
-        return np.matmul(self, rotation_matrix)
+        rotation_matrix = np.asarray(
+            [
+                [1, 0, 0, 0],
+                [0, cos_angle, -sin_angle, 0],
+                [0, sin_angle, cos_angle, 0],
+                [0, 0, 0, 1],
+            ]
+        )
+        return np.matmul(rotation_matrix, self)
 
     def rotate_y(self, angle, unit: Optional[Unit] = UNIT_ANGLE) -> "Matrix44":
         """Rotate the 4x4 matrix in Y axis in a counter-clockwise direction.
@@ -117,11 +122,15 @@ class Matrix44(np.ndarray):
         check_pint_unit_compatibility(unit, UNIT_ANGLE)
         sin_angle = round(sin(angle))
         cos_angle = round(cos(angle))
-        rotation_matrix = np.identity(4)
-        rotation_matrix[0, 0] = rotation_matrix[2, 2] = cos_angle
-        rotation_matrix[2, 0] = -sin_angle
-        rotation_matrix[0, 2] = sin_angle
-        return np.matmul(self, rotation_matrix)
+        rotation_matrix = np.asarray(
+            [
+                [cos_angle, 0, sin_angle, 0],
+                [0, 1, 0, 0],
+                [0, -sin_angle, cos_angle, 0],
+                [0, 0, 0, 1],
+            ]
+        )
+        return np.matmul(rotation_matrix, self)
 
     def rotate_z(self, angle, unit: Optional[Unit] = UNIT_ANGLE) -> "Matrix44":
         """Rotate the 4x4 matrix in Z axis in a counter-clockwise direction.
@@ -139,11 +148,15 @@ class Matrix44(np.ndarray):
 
         sin_angle = round(sin(angle))
         cos_angle = round(cos(angle))
-        rotation_matrix = np.identity(4)
-        rotation_matrix[0, 0] = rotation_matrix[1, 1] = cos_angle
-        rotation_matrix[0, 1] = -sin_angle
-        rotation_matrix[1, 0] = sin_angle
-        return np.matmul(self, rotation_matrix)
+        rotation_matrix = np.asarray(
+            [
+                [cos_angle, -sin_angle, 0, 0],
+                [sin_angle, cos_angle, 0, 0],
+                [0, 0, 1, 0],
+                [0, 0, 0, 1],
+            ]
+        )
+        return np.matmul(rotation_matrix, self)
 
 
 class RotationMatrix(Matrix33):
@@ -166,7 +179,7 @@ class RotationMatrix(Matrix33):
         rotation_matrix = np.array(
             [[cos(angle), -sin(angle), 0], [sin(angle), cos(angle), 0], [0, 0, 1]]
         )
-        return np.matmul(obj, rotation_matrix)
+        return np.matmul(rotation_matrix, obj)
 
 
 class TranslationMatrix2D(Matrix33):
