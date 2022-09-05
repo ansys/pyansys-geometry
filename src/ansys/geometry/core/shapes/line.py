@@ -1,4 +1,4 @@
-"""``LineSketch`` class module."""
+"""``LineShape`` class module."""
 
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.shapes.base import BaseShape

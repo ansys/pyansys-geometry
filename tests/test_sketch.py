@@ -9,7 +9,7 @@ def test_create_line():
     # Create a Sketch object
     sketch = Sketch()
 
-    # Create a LineSketch from two Point3D objects
+    # Create a LineShape from two Point3D objects
     start_point = Point3D([0, 1, 3])
     end_point = Point3D([0, 4, 7])
     line = sketch.draw_line(start_point, end_point)

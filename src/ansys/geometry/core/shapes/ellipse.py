@@ -248,7 +248,7 @@ class EllipseShape(BaseShape):
 
         Returns
         -------
-        EllipseSketch
+        EllipseShape
             An object for modelling elliptical shapes.
 
         """

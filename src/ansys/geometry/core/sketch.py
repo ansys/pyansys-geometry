@@ -117,7 +117,7 @@ class Sketch:
         self.append_shape(ellipse)
         return ellipse
 
-    def draw_line(self, point_1: Point3D, point_2: Point3D) -> LineSketch:
+    def draw_line(self, point_1: Point3D, point_2: Point3D) -> LineShape:
         """
         Add a line segment sketch object to the sketch plane.
 

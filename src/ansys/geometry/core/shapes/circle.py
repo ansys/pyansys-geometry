@@ -1,4 +1,4 @@
-"""``CircleSketch`` class module."""
+"""``CircleShape`` class module."""
 from typing import Optional
 
 import numpy as np
