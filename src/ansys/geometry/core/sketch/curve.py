@@ -17,7 +17,7 @@ class SketchCurve:
         points : Sequence[Point2D]
             A list of points defining the sketch curve.
         origin : Point2D
-            A ``Point2D`` representing the origin of the ellipse.
+            A ``Point2D`` representing the origin of the curve.
 
         """
         self._points = points
@@ -42,7 +42,7 @@ class SketchCurve:
         Returns
         -------
         Point2D
-            A ``Point2D`` instance representing the center of the sketch curve
+            A ``Point2D`` instance representing the center of the sketch curve.
 
         """
         return self._origin
