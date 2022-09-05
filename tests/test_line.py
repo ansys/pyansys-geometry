@@ -1,9 +1,11 @@
+import pytest
+
 from ansys.geometry.core import UNIT_LENGTH, UNITS
 from ansys.geometry.core.primitives import Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.sketch.line import Line, Segment
 
 DOUBLE_EPS = 1e-14
-
+"""Numerical accuracy for ``test_line`` module"""
 
 def test_create_line():
     """Simple test to create a ``Line``."""
@@ -148,7 +150,64 @@ def test_create_segment():
 
 def test_errors_line():
     """Check errors when handling a ``Line``."""
-
-
+    with pytest.raises(TypeError, match="The parameter 'origin' should be a Point3D object."):
+        Line("a", "b")
+    with pytest.raises(ValueError, match="The numpy.ndarray 'origin' should not be a None numpy.ndarray."):
+        Line(Point3D(), "b")
+    with pytest.raises(TypeError, match="The parameter 'direction' should be a Vector3D object."):
+        Line(Point3D([10, 20, 30], unit=UNITS.meter), "b")
+    with pytest.raises(ValueError, match="The numpy.ndarray 'direction' should not be a zeroes numpy.ndarray."):
+        Line(Point3D([10, 20, 30], unit=UNITS.meter), Vector3D([0, 0, 0]))
+        
+    # Now create a line and test the setters
+    origin = Point3D([1, 2, 3], unit=UNITS.mm)
+    direction_x = UnitVector3D([1, 0, 0])
+    line = Line(origin=origin, direction=direction_x)
+    with pytest.raises(TypeError, match="The parameter 'origin' should be a Point3D object."):
+        line.origin = "a"
+    with pytest.raises(ValueError, match="The numpy.ndarray 'origin' should not be a None numpy.ndarray."):
+        line.origin = Point3D()
+    with pytest.raises(TypeError, match="The parameter 'direction' should be a Vector3D object."):
+        line.direction = "b"
+    with pytest.raises(ValueError, match="The numpy.ndarray 'direction' should not be a zeroes numpy.ndarray."):
+        line.direction = Vector3D([0, 0, 0])
+                               
 def test_errors_segment():
     """Check errors when handling a ``Segment``."""
+    with pytest.raises(TypeError, match="The parameter 'start' should be a Point3D object."):
+        Segment("a", "b")
+    with pytest.raises(ValueError, match="The numpy.ndarray 'start' should not be a None numpy.ndarray."):
+        Segment(Point3D(), "b")
+    with pytest.raises(TypeError, match="The parameter 'end' should be a Point3D object."):
+        Segment(Point3D([10, 20, 30], unit=UNITS.meter), "b")
+    with pytest.raises(ValueError, match="The numpy.ndarray 'end' should not be a None numpy.ndarray."):
+        Segment(Point3D([10, 20, 30]), Point3D())
+    with pytest.raises(ValueError, match="Parameters 'origin' and 'end' have the same values. No segment can be created."):
+        Segment(Point3D([10, 20, 30]), Point3D([10, 20, 30]))
+        
+    # Now create a segment and test the setters
+    start = Point3D([1, 2, 3], unit=UNITS.mm)
+    end = Point3D([1, 5, 9], unit=UNITS.mm)
+    segment = Segment(start, end)
+    
+    with pytest.raises(TypeError, match="The parameter 'origin' should be a Point3D object."):
+        segment.start = "a"
+    with pytest.raises(ValueError, match="The numpy.ndarray 'origin' should not be a None numpy.ndarray."):
+        segment.start = Point3D()
+    with pytest.raises(TypeError, match="The parameter 'origin' should be a Point3D object."):
+        segment.origin = "a"
+    with pytest.raises(ValueError, match="The numpy.ndarray 'origin' should not be a None numpy.ndarray."):
+        segment.origin = Point3D()
+    with pytest.raises(ValueError, match="Parameters 'origin' and 'end' have the same values. No segment can be created."):
+        segment.start = segment.end
+    with pytest.raises(ValueError, match="Parameters 'origin' and 'end' have the same values. No segment can be created."):
+        segment.origin = segment.end
+        
+    with pytest.raises(TypeError, match="The parameter 'end' should be a Point3D object."):
+        segment.end = "b"
+    with pytest.raises(ValueError, match="The numpy.ndarray 'end' should not be a None numpy.ndarray."):
+        segment.end = Point3D()
+    with pytest.raises(ValueError, match="Parameters 'origin' and 'end' have the same values. No segment can be created."):
+        segment.end = segment.start
+    with pytest.raises(ValueError, match="Segment direction is unsettable."):
+        segment.direction = "a"

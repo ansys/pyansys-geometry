@@ -169,7 +169,7 @@ class Segment(Line):
     def start(self, start) -> None:
         """Set the start of the ``Segment``."""
         # Call the parent setter
-        self.origin = start
+        Line.origin.fset(self, start)
 
         # Check segment point values and units
         self._check_invalid_segment_points()
@@ -200,3 +200,8 @@ class Segment(Line):
     @Line.direction.setter
     def direction(self, direction: Union[Vector3D, UnitVector3D]) -> None:
         raise UnsupportedOperation("Segment direction is unsettable.")
+
+    @Line.origin.setter
+    def origin(self, origin) -> None:
+        # Forcing the parent setter to go through the Segment.origin setter
+        self.start = origin
