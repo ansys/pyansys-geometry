@@ -3,8 +3,8 @@
 
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector2D
-from ansys.geometry.core.sketch.circle import CircleSketch
-from ansys.geometry.core.sketch.line import LineSketch
+from ansys.geometry.core.shapes.circle import CircleSketch
+from ansys.geometry.core.shapes.line import LineSketch
 
 
 class Sketch:

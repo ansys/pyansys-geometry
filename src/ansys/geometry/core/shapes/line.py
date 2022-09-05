@@ -1,7 +1,7 @@
 """``LineSketch`` class module."""
 
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.sketch.curve import SketchCurve
+from ansys.geometry.core.shapes.curve import SketchCurve
 
 
 class LineSketch(SketchCurve):

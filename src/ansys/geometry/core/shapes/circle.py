@@ -1,45 +1,43 @@
-"""A module containing a class for modeling ellipses."""
+"""``CircleSketch`` class module."""
 from typing import Optional, Sequence
 
 import numpy as np
 
 from ansys.geometry.core.math.point import Point2D
-from ansys.geometry.core.sketch.curve import SketchCurve
+from ansys.geometry.core.shapes.curve import SketchCurve
 from ansys.geometry.core.typing import Real
 
 
-class EllipseSketch(SketchCurve):
-    """A class for modelling ellipses."""
+class CircleSketch(SketchCurve):
+    """Provides circle representation within a sketch environment."""
 
     def __init__(self, points: Sequence[Point2D], origin: Point2D):
-        """Initialize an instance of ``EllipseSketch``.
+        """Initialize an instance of ``CircleSketch``.
 
         Parameters
         ----------
         points : Sequence[Point2D]
-            A list or tuple defining the ellipse.
+            A list or tuple defining the circle.
         origin : Point2D
             A ``Point2D`` representing the origin of the ellipse.
 
         """
         super().__init__(points, origin)
+        self._radius = np.linalg.norm(origin - points[0])
 
     @classmethod
-    def from_axes(
+    def from_radius(
         cls,
-        a: Real,
-        b: Real,
+        radius: Real,
         origin: Optional[Point2D] = Point2D([0, 0]),
         resolution: Optional[int] = 150,
     ):
-        """Create an ellipse from its semi-major and semi-minor axes.
+        """Create a circle from its radius and center.
 
         Parameters
         ----------
-        a : int, float
-            The semi-major axis of the ellipse.
-        b : int, float
-            The semi-minor axis of the ellipse.
+        radius : int, float
+            The radius of the circle.
         origin : Point2D
             A ``Point2D`` representing the origin of the ellipse.
         resolution : int
@@ -47,20 +45,20 @@ class EllipseSketch(SketchCurve):
 
         Returns
         -------
-        EllipseSketch
-            An object for modelling ellipse sketches.
+        CircleSketch
+            An object for modelling circle sketches.
 
         """
-        # Assert that the curve is an ellipse and not a parabola or hyperbola
-        ecc = (a**2 - b**2) ** 0.5 / a
-        if ecc >= 1:
-            raise ValueError("The curve defined is not an ellipse.")
-
-        # Generate the points on the ellipse
+        # Collect the coordinates of the points for the point
         theta = np.linspace(0, 2 * np.pi, resolution)
-        x_coords = origin.x + a * np.cos(theta)
-        y_coords = origin.y + b * np.sin(theta)
+        x_coords = origin.x + radius * np.cos(theta)
+        y_coords = origin.y + radius * np.sin(theta)
 
         # Generate all the point instances
         points = [Point2D([x, y]) for x, y in zip(x_coords, y_coords)]
         return cls(points, origin)
+
+    @property
+    def radius(self):
+        """Return the radius of the circle."""
+        return self._radius
