@@ -4,13 +4,15 @@ from typing import Optional, Union
 
 from pint import Unit
 
-from ansys.geometry.core import UNIT_LENGTH, UNITS
+from ansys.geometry.core import UNIT_LENGTH
 from ansys.geometry.core.misc.checks import (
+    check_is_pint_unit,
     check_is_point,
     check_is_unitvector,
     check_is_vector,
     check_ndarray_is_non_none,
     check_ndarray_is_non_zero,
+    check_pint_unit_compatibility,
 )
 from ansys.geometry.core.primitives.point import Point3D
 from ansys.geometry.core.primitives.vector import UnitVector3D, Vector3D
@@ -66,7 +68,7 @@ class Line:
     @property
     def direction(self) -> UnitVector3D:
         """Returns the direction of the ``Line``."""
-        return self._end
+        return self._direction
 
     @direction.setter
     def direction(self, direction: Union[Vector3D, UnitVector3D]) -> None:
@@ -134,11 +136,12 @@ class Segment(Line):
         Segment
             The ``Segment`` object resulting from the inputs.
         """
-        if vector_units != origin.unit:
-            vector = UNITS.convert(vector, vector_units, UNIT_LENGTH)
-            origin.unit = vector_units = UNIT_LENGTH
+        check_is_pint_unit(vector_units, "vector_units")
+        check_pint_unit_compatibility(vector_units, UNIT_LENGTH)
+        end_vec_as_point = Point3D(vector, vector_units)
+        end_vec_as_point += origin
 
-        return cls(origin, origin + vector)
+        return cls(origin, end_vec_as_point)
 
     def _check_invalid_segment_points(self):
         """Check that the origin and end points are not the same."""
