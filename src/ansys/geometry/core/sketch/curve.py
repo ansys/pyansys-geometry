@@ -2,7 +2,7 @@
 
 from typing import Sequence
 
-from ansys.geometry.core.primitives.point import Point2D
+from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.typing import RealSequence
 
 

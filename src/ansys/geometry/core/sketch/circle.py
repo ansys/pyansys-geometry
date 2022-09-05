@@ -3,7 +3,7 @@ from typing import Optional, Sequence
 
 import numpy as np
 
-from ansys.geometry.core.primitives.point import Point2D
+from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.sketch.curve import SketchCurve
 from ansys.geometry.core.typing import Real
 

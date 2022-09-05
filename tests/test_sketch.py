@@ -1,4 +1,4 @@
-from ansys.geometry.core.primitives import Point3D
+from ansys.geometry.core.math import Point3D
 from ansys.geometry.core.sketch import LineSketch, Sketch
 
 
