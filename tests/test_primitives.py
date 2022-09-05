@@ -198,6 +198,15 @@ def test_vector3d():
     v_cross_overload = v1 % v2
     assert v_cross_overload == v_cross
 
+    # Checking that scalar times vector also works
+    v1_x_3 = Vector3D([0, 3, 9])
+    assert all(
+        [
+            abs(round(v1_comp * 3 - v1_x_3_comp)) <= DOUBLE_EPS
+            for v1_comp, v1_x_3_comp in zip(v1, v1_x_3)
+        ]
+    )
+
 
 def test_vector2d():
     """Simple test to create a ``Vector2D``."""
@@ -234,6 +243,15 @@ def test_vector2d():
     v_3 = Vector2D([2, 8])
     v_4 = Vector2D([3, 7])
     assert abs(round(v_3 * v_4 - 62)) <= DOUBLE_EPS
+
+    # Checking that scalar times vector also works
+    v1_x_3 = Vector2D([6, 3])
+    assert all(
+        [
+            abs(round(v1_comp * 3 - v1_x_3_comp)) <= DOUBLE_EPS
+            for v1_comp, v1_x_3_comp in zip(v_1, v1_x_3)
+        ]
+    )
 
 
 def test_unit_vector_3d():
