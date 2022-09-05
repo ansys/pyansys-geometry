@@ -2,9 +2,10 @@
 
 
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.math.vector import UnitVector2D
-from ansys.geometry.core.shapes.circle import CircleSketch
-from ansys.geometry.core.shapes.line import LineSketch
+from ansys.geometry.core.shapes.base import BaseShape
+from ansys.geometry.core.shapes.circle import CircleShape
+from ansys.geometry.core.shapes.ellipse import EllipseShape
+from ansys.geometry.core.shapes.line import LineShape
 
 
 class Sketch:
@@ -12,44 +13,111 @@ class Sketch:
     Provides Sketch class for building 2D sketch elements.
     """
 
-    def __init__(self):
+    def __init__(
+        origin: Point3D,
+        dir_1: Vector3D([1, 0, 0]),
+        dir_2: Vector3D([0, 1, 0]),
+    ):
         """Constructor method for ``Sketch``."""
-        self._sketch_curves = (
-            []
-        )  # SketchCurve[] maintaining reference to all sketch curves within the current sketch
+        # TODO: assign a reference frame to the base shape
+        # self._frame = Frame.from_origin_and_vectors(origin, dir_1, dir_2)
+        # self._plane = self._frame.plane
+        # self._origin = self._frame.origin
+
+        # TODO: deprecate in favor of reference frame
+        if np.all(np.cross(a, a)) == 0:
+            raise ValueError("Reference vectors must be linearly independent.")
+        self._i, self._j = dir_1.normalize(), dir_2.normalize()
+        self._k = self.i.cross(self._j)
+        self._origin = origin
+
+        # Collect all shapes in a list
+        self._shapes_list = []
 
     @property
-    def sketch_curves(self):
+    def shapes_list(self):
         """Returns the sketched curves."""
-        return self._sketch_curves
+        return self._shapes_list
 
-    def circle(self, origin: Point3D, radius: float) -> CircleSketch:
-        """
-        Add a circle sketch object to the sketch plane.
+    def append_shape(self, shape: BaseShape):
+        """Appends a new shape to the list of shapes in the sketch.
 
         Parameters
         ----------
+        shape : BaseShape
+            The shape to the added to the sketch.
+
+        """
+        self.shapes_list.append(shape)
+
+    def draw_circle(
+        self,
+        radius: Real,
+        origin: Point3D,
+        dir_1: Vector3D([1, 0, 0]),
+        dir_2: Vector3D([0, 1, 0]),
+    ):
+        """Create a circle shape on the sketch.
+
+        Parameters
+        ----------
+        radius : Real
+            The radius of the circle.
         origin : Point3D
-            Origin of the circle.
-        radius : float
-            Radius of the circle
+            A ``Point3D`` representing the origin of the shape.
+        dir_1 : Vector3D
+            A :class:``Vector3D`` representing the first fundamental direction
+            of the reference plane where the shape is contained.
+        dir_2 : Vector3D
+            A :class:``Vector3D`` representing the second fundamental direction
+            of the reference plane where the shape is contained.
 
         Returns
         -------
-        CircleSketch
-            CircleSketch object added to the sketch.
+        CircleShape
+            An object representing the circle added to the sketch.
+
         """
+        circle = CircleShape(radius, origin, dir_1, dir_2)
+        self.append_shape(circle)
+        return circle
 
-        circle = CircleSketch(origin, UnitVector2D([0, 1]), UnitVector2D([0, 1]), radius)
+    def draw_ellipse(
+        self,
+        a: Real,
+        b: Real,
+        origin: Point3D,
+        dir_1: Vector3D([1, 0, 0]),
+        dir_2: Vector3D([0, 1, 0]),
+    ):
+        """Create an ellipse shape on the sketch.
 
-        self._sketch_curves.append(circle)
+        Parameters
+        ----------
+        a : Real
+            The semi-major axis of the ellipse.
+        b : Real
+            The semi-minor axis of the ellipse.
+        origin : Point3D
+            A ``Point3D`` representing the origin of the shape.
+        dir_1 : Vector3D
+            A :class:``Vector3D`` representing the first fundamental direction
+            of the reference plane where the shape is contained.
+        dir_2 : Vector3D
+            A :class:``Vector3D`` representing the second fundamental direction
+            of the reference plane where the shape is contained.
 
-        # TODO: save circle creation to history tracking object
+        Returns
+        -------
+        EllipseShape
+            An object representing the ellipse added to the sketch.
 
-        # return the object created
-        return self._sketch_curves[-1]
+        """
+        ellipse = EllipseShape(a, b, origin, dir_1, dir_2)
+        self.append_shape(ellipse)
+        return ellipse
 
-    def line(self, point_1: Point3D, point_2: Point3D) -> LineSketch:
+    def draw_line(self, point_1: Point3D, point_2: Point3D) -> LineSketch:
         """
         Add a line segment sketch object to the sketch plane.
 
@@ -62,14 +130,10 @@ class Sketch:
 
         Returns
         -------
-        LineSketch
-            LineSketch object added to the sketch.
+        LineShape
+            An object representing the line added to the sketch.
+
         """
-        line = LineSketch(point_1, point_2)
-
-        self._sketch_curves.append(line)
-
-        # TODO: save line creation to history tracking object
-
-        # return the object created
-        return self._sketch_curves[-1]
+        line = LineShape(point_1, point_2)
+        self.append_shape(line)
+        return line

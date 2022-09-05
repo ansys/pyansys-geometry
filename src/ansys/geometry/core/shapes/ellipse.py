@@ -5,6 +5,7 @@ import numpy as np
 from scipy.integrate import quad
 
 from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import Vector3D
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.typing import Real
 
