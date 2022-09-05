@@ -1,7 +1,7 @@
 """``SketchCurve`` class module."""
 
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.math.vector import Vector3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 
 
 class BaseShape:
@@ -35,17 +35,17 @@ class BaseShape:
         self._origin = origin
 
     @property
-    def i(self) -> Vector3D:
+    def i(self) -> UnitVector3D:
         """The fundamental vector along the first axis of the reference frame."""
         return self._i
 
     @property
-    def j(self) -> Vector3D:
+    def j(self) -> UnitVector:
         """The fundamental vector along the second axis of the reference frame."""
         return self._j
 
     @property
-    def k(self) -> Vector3D:
+    def k(self) -> UnitVector:
         """The fundamental vector along the third axis of the reference frame."""
         return self._k
 
