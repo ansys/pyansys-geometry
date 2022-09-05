@@ -92,7 +92,7 @@ class Vector3D(np.ndarray):
 
     def __mul__(self, other: Union["Vector3D", Real]) -> Real:
         """Overload * operator with dot product.
-        
+
         Note
         ----
         Also admits scalar multiplication.
@@ -174,7 +174,7 @@ class Vector2D(np.ndarray):
 
     def __mul__(self, other: "Vector2D") -> Real:
         """Overload * operator with dot product.
-        
+
         Note
         ----
         Also admits scalar multiplication.
