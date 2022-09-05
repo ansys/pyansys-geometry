@@ -28,8 +28,8 @@ class BaseShape:
         # self._origin = self._frame.origin
 
         # TODO: deprecate in favor of reference frame
-        if dir_1.dot(dir_2) != 0:
-            raise ValueError("Reference vectors are not orthogonal.")
+        if np.all(np.cross(a, a)) == 0:
+            raise ValueError("Reference vectors must be linearly independent.")
         self._i, self._j = dir_1.normalize(), dir_2.normalize()
         self._k = self.i.cross(self._j)
         self._origin = origin
