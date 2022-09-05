@@ -47,13 +47,13 @@ have the latest version of `pip`_. To do so, run:
 
 .. code:: bash
 
-    python -m pip install -U pip
+   python -m pip install -U pip
 
 Then, you can simply execute:
 
 .. code:: bash
 
-    poetry run python -m pip install ansys-geometry-core
+   poetry run python -m pip install ansys-geometry-core
     
 For developers
 ^^^^^^^^^^^^^^
@@ -66,44 +66,44 @@ need to follow these steps:
 
 #. Start by cloning this repository:
 
-    .. code:: bash
+   .. code:: bash
 
-        git clone https://github.com/pyansys/pygeometry
+      git clone https://github.com/pyansys/pygeometry
 
 #. Create a fresh-clean Python environment and activate it:
 
-    .. code:: bash
+   .. code:: bash
 
-        # Create a virtual environment
-        python -m venv .venv
+      # Create a virtual environment
+      python -m venv .venv
 
-        # Activate it in a POSIX system
-        source .venv/bin/activate
+      # Activate it in a POSIX system
+      source .venv/bin/activate
 
-        # Activate it in Windows CMD environment
-        .venv\Scripts\activate.bat
+      # Activate it in Windows CMD environment
+      .venv\Scripts\activate.bat
 
-        # Activate it in Windows Powershell
-        .venv\Scripts\Activate.ps1
+      # Activate it in Windows Powershell
+      .venv\Scripts\Activate.ps1
 
 #. Make sure you have the latest required build system tools:
 
-    .. code:: bash
+   .. code:: bash
 
-        python -m pip install -U pip poetry tox
+      python -m pip install -U pip poetry tox
 
 
 #. Install the project in editable mode:
 
-    .. code:: bash
+   .. code:: bash
     
-        poetry run python -m pip install ansys-geometry-core
+      poetry run python -m pip install ansys-geometry-core
         
 #. Finally, verify your development installation by running:
 
-    .. code:: bash
+   .. code:: bash
         
-        tox
+      tox
 
 Offline mode installation
 ^^^^^^^^^^^^^^^^^^^^^^^^^
