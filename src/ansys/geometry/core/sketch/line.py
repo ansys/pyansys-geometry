@@ -10,7 +10,7 @@ from ansys.geometry.core.misc.checks import (
     check_is_point,
     check_is_unitvector,
     check_is_vector,
-    check_ndarray_is_non_none,
+    check_ndarray_is_not_none,
     check_ndarray_is_non_zero,
     check_pint_unit_compatibility,
 )
@@ -39,7 +39,7 @@ class Line:
         """Constructor method for ``Line``."""
         # Perform some sanity checks
         check_is_point(origin, "origin", only_3d=True)
-        check_ndarray_is_non_none(origin, "origin")
+        check_ndarray_is_not_none(origin, "origin")
         check_is_vector(direction, "direction", only_3d=True)
         check_ndarray_is_non_zero(direction, "direction")
 
@@ -62,7 +62,7 @@ class Line:
     def origin(self, origin: Point3D) -> None:
         """Set the origin of the ``Line``."""
         check_is_point(origin, "origin", only_3d=True)
-        check_ndarray_is_non_none(origin, "origin")
+        check_ndarray_is_not_none(origin, "origin")
         self._origin = origin
 
     @property
@@ -101,9 +101,9 @@ class Segment(Line):
         """Constructor method for ``Segment``."""
         # Perform sanity checks on Point3D values given
         check_is_point(start, "start", only_3d=True)
-        check_ndarray_is_non_none(start, "start")
+        check_ndarray_is_not_none(start, "start")
         check_is_point(end, "end", only_3d=True)
-        check_ndarray_is_non_none(end, "end")
+        check_ndarray_is_not_none(end, "end")
 
         # Assign values to origin and end
         self._origin = start
@@ -187,7 +187,7 @@ class Segment(Line):
     def end(self, end) -> None:
         """Set the end of the ``Segment``."""
         check_is_point(end, "end", only_3d=True)
-        check_ndarray_is_non_none(end, "end")
+        check_ndarray_is_not_none(end, "end")
         self._end = end
 
         # Check segment point values and units

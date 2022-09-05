@@ -85,12 +85,12 @@ def check_is_vector(
     from ansys.geometry.core.primitives.vector import Vector2D, Vector3D
 
     consider = (Vector3D) if only_3d else (Vector2D, Vector3D)
-    point_type = "Vector3D" if only_3d else "Vector3D or Vector2D"
+    vector_type  = "Vector3D" if only_3d else "Vector3D or Vector2D"
     if not isinstance(param, consider):
         raise TypeError(
-            f"The parameter provided should be a {point_type} object."
+            f"The parameter provided should be a {vector_type} object."
             if param_name is None
-            else f"The parameter '{param_name}' should be a {point_type} object."
+            else f"The parameter '{param_name}' should be a {vector_type} object."
         )
 
 
@@ -117,12 +117,12 @@ def check_is_unitvector(
     from ansys.geometry.core.primitives.vector import UnitVector2D, UnitVector3D
 
     consider = (UnitVector3D) if only_3d else (UnitVector2D, UnitVector3D)
-    point_type = "UnitVector3D" if only_3d else "UnitVector3D or UnitVector2D"
+    unit_vector_type = "UnitVector3D" if only_3d else "UnitVector3D or UnitVector2D"
     if not isinstance(param, consider):
         raise TypeError(
-            f"The parameter provided should be a {point_type} object."
+            f"The parameter provided should be a {unit_vector_type} object."
             if param_name is None
-            else f"The parameter '{param_name}' should be a {point_type} object."
+            else f"The parameter '{param_name}' should be a {unit_vector_type} object."
         )
 
 
@@ -155,7 +155,7 @@ def check_ndarray_is_float_int(
         )
 
 
-def check_ndarray_is_non_none(
+def check_ndarray_is_not_none(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
     """
@@ -173,7 +173,7 @@ def check_ndarray_is_non_none(
     TypeError
         In case the :class:`numpy.ndarray` is None-valued.
     """
-    if all(value == None for value in param):
+    if all(value is None for value in param):
         raise ValueError(
             f"The numpy.ndarray provided should not be a None numpy.ndarray."
             if param_name is None
