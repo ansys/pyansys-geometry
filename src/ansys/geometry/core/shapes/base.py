@@ -2,6 +2,7 @@
 
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.typing import Real
 
 
 class BaseShape:
@@ -40,12 +41,12 @@ class BaseShape:
         return self._i
 
     @property
-    def j(self) -> UnitVector:
+    def j(self) -> UnitVector3D:
         """The fundamental vector along the second axis of the reference frame."""
         return self._j
 
     @property
-    def k(self) -> UnitVector:
+    def k(self) -> UnitVector3D:
         """The fundamental vector along the third axis of the reference frame."""
         return self._k
 
@@ -70,36 +71,36 @@ class BaseShape:
         return self.frame.from_local_to_global @ self.local_points
 
     @property
-    def x_coordinates(sefl) -> list[real]:
+    def x_coordinates(sefl) -> list[Real]:
         """Return all the x coordinates for the points of the shape.
 
         Returns
         -------
-        list[real]
+        list[Real]
             A list containing the values for the x-coordinates of the shape.
 
         """
         return [point[0] for point in self._points]
 
     @property
-    def y_coordinates(sefl) -> list[real]:
+    def y_coordinates(sefl) -> list[Real]:
         """Return all the y coordinates for the points of the shape.
 
         Returns
         -------
-        list[real]
+        list[Real]
             A list containing the values for the y-coordinates of the shape.
 
         """
         return [point[1] for point in self._points]
 
     @property
-    def z_coordinates(sefl) -> list[real]:
+    def z_coordinates(sefl) -> list[Real]:
         """Return all the y coordinates for the points of the shape.
 
         Returns
         -------
-        list[real]
+        list[Real]
             A list containing the values for the z-coordinates of the shape.
 
         """

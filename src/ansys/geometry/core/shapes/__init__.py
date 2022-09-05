@@ -1,7 +1,8 @@
 """PyGeometry sketching subpackage."""
 
-from ansys.geometry.core.shapes.circle import CircleSketch
-from ansys.geometry.core.shapes.line import LineSketch
-from ansys.geometry.core.shapes.sketch import Sketch
+from ansys.geometry.core.shapes.base import BaseShape
+from ansys.geometry.core.shapes.circle import CircleShape
+from ansys.geometry.core.shapes.ellipse import EllipseShape
+from ansys.geometry.core.shapes.line import LineShape
 
-__all__ = ["Sketch", "CircleSketch", "LineSketch"]
+__all__ = ["BaseShape", "CircleSketch", "EllipseShape", "LineSketch"]
