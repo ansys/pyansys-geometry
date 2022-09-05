@@ -6,6 +6,7 @@ import pytest
 from ansys.geometry.core import UNITS
 from ansys.geometry.core.primitives import (
     Cylinder,
+    Plane,
     Point2D,
     Point3D,
     UnitVector2D,
@@ -437,6 +438,30 @@ def test_point2D_units():
     p_cm_to_mm.y = 10  # Basically 1/20 of original y
     assert not raw_y == p_cm_to_mm[1]
     assert raw_y == p_cm_to_mm[1] * 20
+
+
+def test_plane():
+    """``Plane`` construction and equivalency."""
+
+    origin = Point3D([42, 99, 13])
+    p_1 = Plane(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]))
+    p_1_duplicate = Plane(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]))
+    p_2 = Plane(Point3D([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]))
+
+    # Check that the equals operator works
+    assert p_1 == p_1_duplicate
+    assert p_1 != p_2
+
+    # Check plane definition
+    assert p_1.origin.x == origin.x
+    assert p_1.origin.y == origin.y
+    assert p_1.origin.z == origin.z
+
+    with pytest.raises(TypeError, match=f"direction_x is invalid, type {UnitVector3D} expected."):
+        Plane(origin, "A", UnitVector3D([25, 39, 82]))
+
+    with pytest.raises(TypeError, match=f"direction_y is invalid, type {UnitVector3D} expected."):
+        Plane(origin, UnitVector3D([12, 31, 99]), "A")
 
 
 def test_cylinder():
