@@ -50,12 +50,12 @@ class BaseShape:
         return self._k
 
     @property
-    def origin(self) -> Vector3D:
+    def origin(self) -> Point3D:
         """The origin of the reference frame."""
         return origin
 
     def points(self, num_points=100) -> list[Point3D]:
-        """Returns al list containing all the points belonging to the sape.
+        """Returns a list containing all the points belonging to the shape.
 
         Parameters
         ----------
