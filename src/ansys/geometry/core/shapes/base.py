@@ -16,10 +16,10 @@ class BaseShape:
             A ``Point3D`` representing the origin of the shape.
         dir_1 : Vector3D
             A :class:``Vector3D`` representing the first fundamental direction
-            of the reference plane where the sape is contained.
+            of the reference plane where the shape is contained.
         dir_2 : Vector3D
             A :class:``Vector3D`` representing the second fundamental direction
-            of the reference plane where the sape is contained.
+            of the reference plane where the shape is contained.
 
         """
         # TODO: assign a reference frame to the base shape

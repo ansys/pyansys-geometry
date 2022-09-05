@@ -32,10 +32,10 @@ class EllipseShape(BaseShape):
             A ``Point3D`` representing the origin of the shape.
         dir_1 : Vector3D
             A :class:``Vector3D`` representing the first fundamental direction
-            of the reference plane where the sape is contained.
+            of the reference plane where the shape is contained.
         dir_2 : Vector3D
             A :class:``Vector3D`` representing the second fundamental direction
-            of the reference plane where the sape is contained.
+            of the reference plane where the shape is contained.
 
         """
         super().__init__(origin, dir_1, dir_2)
@@ -199,7 +199,7 @@ class EllipseShape(BaseShape):
         return np.pi * self.a * self.b
 
     def local_points(self, num_points=100) -> list[Point3D]:
-        """Returns al list containing all the points belonging to the sape.
+        """Returns al list containing all the points belonging to the shape.
 
         Parameters
         ----------
@@ -238,10 +238,10 @@ class EllipseShape(BaseShape):
             A ``Point2D`` representing the origin of the ellipse.
         dir_1 : Vector3D
             A :class:``Vector3D`` representing the first fundamental direction
-            of the reference plane where the sape is contained.
+            of the reference plane where the shape is contained.
         dir_2 : Vector3D
             A :class:``Vector3D`` representing the second fundamental direction
-            of the reference plane where the sape is contained.
+            of the reference plane where the shape is contained.
 
         Returns
         -------
