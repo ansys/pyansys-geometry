@@ -101,8 +101,10 @@ class EllipseShape(BaseShape):
 
         """
         ecc = (self.a**2 - self.b**2) ** 0.5 / self.a
-        if ecc >= 1:
-            raise ValueError("The curve defined is not an ellipse.")
+        if ecc == 1:
+            raise ValueError("The curve defined is a parabola not an ellipse.")
+        elif ecc > 1:
+            raise ValueError("The curve defined is an hyperbola not an ellipse.")
         return ecc
 
     @property
