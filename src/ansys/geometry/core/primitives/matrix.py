@@ -39,7 +39,7 @@ class Matrix33(np.ndarray):
             raise ValueError("Matrix33 should only be a 2D array of shape (3,3).")
 
         if not np.issubdtype(obj.dtype, np.number) or not isinstance(obj, (np.ndarray)):
-            raise ValueError("The input parameters should be integer or float.")
+            raise TypeError("The input parameters should be integer or float.")
 
         return obj
 
@@ -85,7 +85,7 @@ class Matrix44(np.ndarray):
             raise ValueError("Matrix44 should only be a 2D array of shape (4,4).")
 
         if not np.issubdtype(obj.dtype, np.number) or not isinstance(obj, (np.ndarray)):
-            raise ValueError("The input parameters should be integer or float.")
+            raise TypeError("The input parameters should be integer or float.")
 
         return obj
 

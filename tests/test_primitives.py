@@ -14,6 +14,7 @@ from ansys.geometry.core.primitives import (
     Vector2D,
     Vector3D,
 )
+from ansys.geometry.core.primitives.matrix import Matrix44
 
 DOUBLE_EPS = np_finfo(float).eps
 
@@ -441,9 +442,14 @@ def test_point2D_units():
 
 
 def test_matrix_33():
+    """Simple test to create a ``Matrix33``."""
+
+    # Create two Matrix33 objects
     m_1 = Matrix33([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
     m_1_copy = Matrix33([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
     m_2 = Matrix33([[3, 2, 0], [1, 3, 0], [0, 6, 4]])
+
+    # Create a null matrix, which is 3x3 identity matrix
     m_null = Matrix33()
 
     # Intiate a test matrix using numpy.ndarray
@@ -465,3 +471,28 @@ def test_matrix_33():
     # Check that the equals operator
     assert m_1 == m_1_copy
     assert m_1 != m_2
+
+
+def test_matrix_33_errors():
+    """Testing multiple ``Matrix33`` errors."""
+
+    with pytest.raises(ValueError) as val:
+        Matrix33([[1, 2], [1, 6]])
+        assert "Matrix33 should only be a 2D array of shape (3,3)." in str(val.value)
+
+    with pytest.raises(TypeError, match="The input parameters should be integer or float."):
+        Matrix33(([[2, 0, "a"], [0, 3, 0], [0, 0, 4]]))
+
+    # Create a Matrix33
+    m_1 = Matrix33([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
+
+    # Test inverse error with determinent is zero
+    with pytest.raises(
+        ValueError, match="The determinant of the matrix is zero, cannot be inversed."
+    ):
+        Matrix33([[1, 2, 3], [2, 5, 6], [2, 5, 3]]).inverse()
+
+    # Build a Matrix44 and try to compare against it
+    with pytest.raises(TypeError, match="Provided type"):
+        m_2 = Matrix44([[2, 0, 0, 2], [0, 3, 0, 1], [0, 0, 4, 2], [0, 0, 4, 2]])
+        assert m_1 == m_2
