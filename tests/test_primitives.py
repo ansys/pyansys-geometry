@@ -7,6 +7,7 @@ import pytest
 
 from ansys.geometry.core import UNITS
 from ansys.geometry.core.primitives import (
+    Cylinder,
     Matrix33,
     Matrix44,
     Point2D,
@@ -127,7 +128,7 @@ def test_point3d_errors():
         point.z = "a"
 
     # Build a Point2D and try to compare against it
-    with pytest.raises(TypeError, match="Provided type"):
+    with pytest.raises(TypeError, match=f"Provided type {Point2D} is invalid"):
         point_2d = Point2D([1, 4])
         assert point == point_2d
 
@@ -154,7 +155,7 @@ def test_point2d_errors():
         point.y = "a"
 
     # Build a Point3D and try to compare against it
-    with pytest.raises(TypeError, match="Provided type"):
+    with pytest.raises(TypeError, match=f"Provided type {Point3D} is invalid"):
         point_3d = Point3D([1, 4, 4])
         assert point == point_3d
 
@@ -314,7 +315,7 @@ def test_vector3d_errors():
         v1.z = "z"
 
     # Build a Vector2D and try to compare against it
-    with pytest.raises(TypeError, match="Provided type"):
+    with pytest.raises(TypeError, match=f"Provided type {Vector2D} is invalid"):
         v2 = Vector2D([1, 2])
         assert v1 == v2
 
@@ -346,7 +347,7 @@ def test_vector2d_errors():
         v1.y = "y"
 
     # Build a Vector3D and try to compare against it
-    with pytest.raises(TypeError, match="Provided type"):
+    with pytest.raises(TypeError, match=f"Provided type {Vector3D} is invalid"):
         v2 = Vector3D([1, 5, 6])
         assert v1 == v2
 
@@ -500,6 +501,112 @@ def test_matrix_33_errors():
     with pytest.raises(TypeError, match="Provided type"):
         m_2 = Matrix44([[2, 0, 0, 2], [0, 3, 0, 1], [0, 0, 4, 2], [0, 0, 4, 2]])
         assert m_1 == m_2
+
+
+def test_cylinder():
+    """``Cylinder`` construction and equivalency."""
+
+    # Create two Cylinder objects
+    origin = Point3D([42, 99, 13])
+    c_1 = Cylinder(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, 200)
+    c_1_duplicate = Cylinder(
+        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, 200
+    )
+    c_2 = Cylinder(
+        Point3D([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 76
+    )
+
+    # Check that the equals operator works
+    assert c_1 == c_1_duplicate
+    assert c_1 != c_2
+
+    # Check cylinder definition
+    assert c_1.origin.x == origin.x
+    assert c_1.origin.y == origin.y
+    assert c_1.origin.z == origin.z
+    assert c_1.radius == 100
+    assert c_1.height == 200
+
+    c_1.radius = 1000
+    c_1.height = 2000
+
+    assert c_1.origin.x == origin.x
+    assert c_1.origin.y == origin.y
+    assert c_1.origin.z == origin.z
+    assert c_1.radius == 1000
+    assert c_1.height == 2000
+
+    with pytest.raises(
+        TypeError,
+        match="The parameter 'radius' should be a float or an integer value.",
+    ):
+        Cylinder(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), "A", 200)
+
+    with pytest.raises(
+        TypeError,
+        match="The parameter 'height' should be a float or an integer value.",
+    ):
+        Cylinder(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, "A")
+
+    with pytest.raises(
+        TypeError,
+        match="The parameter 'radius' should be a float or an integer value.",
+    ):
+        c_1.radius = "A"
+
+    with pytest.raises(
+        TypeError,
+        match="The parameter 'height' should be a float or an integer value.",
+    ):
+        c_1.height = "A"
+
+    with pytest.raises(TypeError, match=f"direction_x is invalid, type {UnitVector3D} expected."):
+        Cylinder(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
+
+    with pytest.raises(TypeError, match=f"direction_y is invalid, type {UnitVector3D} expected."):
+        Cylinder(origin, UnitVector3D([12, 31, 99]), "A", 100, 200)
+
+
+def test_cylinder_units():
+    """``Cylinder`` units validation."""
+
+    origin = Point3D([42, 99, 13])
+
+    # Verify rejection of invalid base unit type
+    with pytest.raises(
+        TypeError,
+        match="The pint.Unit provided as input should be a \[length\] quantity.",
+    ):
+        Cylinder(
+            origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, 200, UNITS.celsius
+        )
+
+    c_1 = Cylinder(
+        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, 200, UNITS.mm
+    )
+
+    # Verify rejection of invalid base unit type
+    with pytest.raises(
+        TypeError,
+        match="The pint.Unit provided as input should be a \[length\] quantity.",
+    ):
+        c_1.unit = UNITS.celsius
+
+    # Check that the units are correctly in place
+    assert c_1.unit == UNITS.mm
+
+    # Request for X, Y, Z and ensure they are in mm
+    assert c_1.radius == 100
+    assert c_1.height == 200
+
+    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
+    assert c_1._radius == (c_1.radius * c_1.unit).to_base_units().magnitude
+    assert c_1._height == (c_1.height * c_1.unit).to_base_units().magnitude
+
+    # Set unit to cm now... and check if the values changed
+    c_1.unit = UNITS.cm
+    assert c_1.radius == 10
+    assert c_1.height == 20
 
 
 def test_rotation_matrix():
