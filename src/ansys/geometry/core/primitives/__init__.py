@@ -25,4 +25,3 @@ __all__ = [
     "TranslationMatrix2D",
     "TranslationMatrix3D",
 ]
-
