@@ -1,3 +1,5 @@
+import math
+
 from ansys.geometry.core.accuracy import Accuracy
 
 
@@ -64,3 +66,13 @@ def test_within_tolerance():
     # due to absolute tolerance
     assert not Accuracy.is_within_tolerance(5, 6, 0, 1)
     assert Accuracy.is_within_tolerance(5, 6, 0, 1.1)
+
+    # test for infinity
+    assert not Accuracy.is_within_tolerance(math.inf, math.inf, 1, 2)
+    assert not Accuracy.is_within_tolerance(-math.inf, -math.inf, 1, 2)
+    assert not Accuracy.is_within_tolerance(math.inf, 10, 1, 2)
+    assert not Accuracy.is_within_tolerance(10, math.inf, 1, 2)
+    assert not Accuracy.is_within_tolerance(-math.inf, 10, 1, 2)
+    assert not Accuracy.is_within_tolerance(10, -math.inf, 1, 2)
+    assert not Accuracy.is_within_tolerance(math.inf, -math.inf, 1, 2)
+    assert not Accuracy.is_within_tolerance(-math.inf, math.inf, 1, 2)

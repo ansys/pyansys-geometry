@@ -1,39 +1,42 @@
 """``Accuracy`` class module."""
 
-LENGTH_ACCURACY = 1e-8
-ANGLE_ACCURACY = 1e-6
-
 
 import math
+
+LENGTH_ACCURACY = 1e-8
+"""SpaceClaim constant for decimal accuracy in length comparisons."""
+
+ANGLE_ACCURACY = 1e-6
+"""SpaceClaim constant for decimal accuracy in angle comparisons."""
 
 
 class Accuracy:
     """
-    Provides accuracy evaluations for actions such as equivalency evaluations.
+    Provides decimal precision evaluations for actions such as equivalency.
     """
 
     def length_is_zero(length: float) -> bool:
-        """Returns True if length is within length accuracy of exact zero."""
+        """Returns ``True`` if length is within length accuracy of exact zero."""
         return length <= LENGTH_ACCURACY and length >= -LENGTH_ACCURACY
 
     def length_is_negative(length: float) -> bool:
-        """Returns True if length is below a negative length accuracy."""
+        """Returns ``True`` if length is below a negative length accuracy."""
         return length < -LENGTH_ACCURACY
 
     def length_is_positive(length: float) -> bool:
-        """Returns True if length is above a positive length accuracy."""
+        """Returns ``True`` if length is above a positive length accuracy."""
         return length > LENGTH_ACCURACY
 
     def angle_is_zero(angle: float) -> bool:
-        """Returns True if length is within angle accuracy of exact zero."""
+        """Returns ``True`` if length is within angle accuracy of exact zero."""
         return abs(angle) < ANGLE_ACCURACY
 
     def angle_is_negative(angle: float) -> bool:
-        """Returns True if angle is below a negative angle accuracy."""
+        """Returns ``True`` if angle is below a negative angle accuracy."""
         return angle <= -ANGLE_ACCURACY
 
     def angle_is_positive(angle: float) -> bool:
-        """Returns True if angle is above a positive angle accuracy."""
+        """Returns ``True`` if angle is above a positive angle accuracy."""
         return angle >= ANGLE_ACCURACY
 
     def is_within_tolerance(
