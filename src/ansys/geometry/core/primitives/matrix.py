@@ -1,3 +1,4 @@
+"""``Matrix`` Class Module."""
 from math import cos, sin
 from typing import Optional, Union
 
@@ -11,10 +12,10 @@ from ansys.geometry.core.primitives.vector import Vector2D, Vector3D
 from ansys.geometry.core.typing import Real, RealSequence
 
 DEFAULT_MATRIX33 = np.identity(3)
-"""Default value for ``Matrix33``."""
+"""Default value of 3x3 identity matrix for ``Matrix33``."""
 
 DEFAULT_MATRIX44 = np.identity(4)
-"""Default value for ``Matrix44``."""
+"""Default value of 4x4 identity matrix for ``Matrix44``."""
 
 
 class Matrix33(np.ndarray):
@@ -202,6 +203,11 @@ class RotationMatrix(Matrix33):
     unit : ~pint.Unit, optional
        Unit for the angle, by default ``UNIT_ANGLE``
 
+    Returns
+    -------
+    Matrix33
+        The Rotated 3x3 Matrix
+
     Notes
     -----
     The default unit of angle is ``radian``.
@@ -220,16 +226,44 @@ class RotationMatrix(Matrix33):
 
 
 class TranslationMatrix2D(Matrix33):
-    """Translate the 3x3 matrix on 2D vector space."""
+    """Translate the 3x3 matrix on 2D vector space.
 
-    def __new__(cls, input, v: Vector2D):
+    Parameters
+    ----------
+    input : ``Matrix33`` or numpy.ndarray
+        A :class:``Matrix33`` or the matrix arguments as a :class:`np.ndarray`.
+    vector : ``Vector2D``
+        A :class:``Vector2D`` representing the translation vector in
+        which the matrix to get translate
+
+    Returns
+    -------
+    Matrix33
+        The translated matrix
+    """
+
+    def __new__(cls, input, vector: Vector2D):
         obj = Matrix33(input)
-        translate = np.array([[1, 0, v.x], [0, 1, v.y], [0, 0, 1]])
+        translate = np.array([[1, 0, vector.x], [0, 1, vector.y], [0, 0, 1]])
         return np.matmul(obj, translate)
 
 
 class TranslationMatrix3D(Matrix44):
-    """Translate the 4x4 matrix on 3D vector space."""
+    """Translate the 4x4 matrix on 3D vector space.
+
+    Parameters
+    ----------
+    input : ``Matrix44`` or numpy.ndarray
+        A :class:`Matrix44` or the matrix arguments as a :class:`np.ndarray`.
+    vector : ``Vector3D``
+        A :class:`Vector3D` representing the translation vector in
+        which the matrix to get translate
+
+    Returns
+    -------
+    Matrix44
+        The translated matrix
+    """
 
     def __new__(cls, input, v: Vector3D):
         obj = Matrix44(input)
