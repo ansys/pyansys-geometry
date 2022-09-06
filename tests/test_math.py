@@ -472,7 +472,7 @@ def test_matrix():
 
 
 def test_matrix_errors():
-    """Testing multiple ``Matrix33`` errors."""
+    """Testing multiple ``Matrix`` errors."""
 
     with pytest.raises(
         TypeError, match="The numpy.ndarray provided should contain float or integer values."
