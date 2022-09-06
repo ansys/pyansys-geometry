@@ -726,7 +726,7 @@ def test_translational_matrix_2d():
     translate = TranslationMatrix2D(m_1, vector)
 
     # Check the translated matrix
-    test_translate = np.asarray([[2, 0, 4], [0, 3, 9], [0, 0, 4]])
+    test_translate = np.asarray([[2, 0, 8], [0, 3, 12], [0, 0, 4]])
     assert np.array_equal(translate, test_translate)
 
 
@@ -740,5 +740,5 @@ def test_translational_matrix_3d():
     translate = TranslationMatrix3D(m_1, vector)
 
     # Check the translated matrix
-    test_translate = np.asarray([[2, 0, 0, 4], [0, 3, 0, 9], [0, 0, 4, 16], [0, 0, 0, 1]])
+    test_translate = np.asarray([[2, 0, 0, 2], [0, 3, 0, 3], [0, 0, 4, 4], [0, 0, 0, 1]])
     assert np.array_equal(translate, test_translate)

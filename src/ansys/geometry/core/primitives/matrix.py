@@ -183,6 +183,17 @@ class Matrix44(np.ndarray):
         )
         return np.matmul(rotation_matrix, self)
 
+    def scale(self, v: Vector3D):
+        scalar_matrix = np.array(
+            [
+                [v.x, 0, 0, 0],
+                [0, v.y, 0, 0],
+                [0, 0, v.z, 0],
+                [0, 0, 0, 1],
+            ]
+        )
+        return np.matmul(scalar_matrix, self)
+
     def __eq__(self, other: "Matrix44") -> bool:
         """Equals operator for ``Matrix44``."""
         check_type_equivalence(other, self)
@@ -245,7 +256,7 @@ class TranslationMatrix2D(Matrix33):
     def __new__(cls, input, vector: Vector2D):
         obj = Matrix33(input)
         translate = np.array([[1, 0, vector.x], [0, 1, vector.y], [0, 0, 1]])
-        return np.matmul(obj, translate)
+        return np.matmul(translate, obj)
 
 
 class TranslationMatrix3D(Matrix44):
@@ -275,4 +286,4 @@ class TranslationMatrix3D(Matrix44):
                 [0, 0, 0, 1],
             ]
         )
-        return np.matmul(obj, translate)
+        return np.matmul(translate, obj)
