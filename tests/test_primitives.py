@@ -8,6 +8,8 @@ from ansys.geometry.core.primitives import (
     Cylinder,
     Point2D,
     Point3D,
+    QuantityVector2D,
+    QuantityVector3D,
     UnitVector2D,
     UnitVector3D,
     Vector2D,
@@ -543,3 +545,130 @@ def test_cylinder_units():
     c_1.unit = UNITS.cm
     assert c_1.radius == 10
     assert c_1.height == 20
+
+
+def test_quantity_vector_3d():
+    """Simple tests to create ``QuantityVector3D``."""
+
+    # Define the tolerance for the QuantityVector3D tests
+    TOLERANCE = 5e-15
+
+    # Create QuantityVector3D from a Vector3D
+    vec = Vector3D([1, 2, 3])
+    quantity_vec = QuantityVector3D(vec, UNITS.mm)
+    assert abs(quantity_vec.x - vec.x) <= TOLERANCE
+    assert abs(quantity_vec.y - vec.y) <= TOLERANCE
+    assert abs(quantity_vec.z - vec.z) <= TOLERANCE
+    assert quantity_vec.unit == UNITS.mm
+    assert abs(quantity_vec.norm - vec.norm) <= TOLERANCE
+
+    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
+    assert quantity_vec[0] == (quantity_vec.x * quantity_vec.unit).to_base_units().magnitude
+    assert quantity_vec[1] == (quantity_vec.y * quantity_vec.unit).to_base_units().magnitude
+    assert quantity_vec[2] == (quantity_vec.z * quantity_vec.unit).to_base_units().magnitude
+
+    # Change the values using the setters
+    vec_end_mm = Vector3D([70, 80, 90])
+    vec_end_cm = Vector3D([7, 8, 9])
+    quantity_vec.unit = UNITS.mm
+    quantity_vec.x = 70
+    quantity_vec.y = 80
+    quantity_vec.z = 90
+    assert abs(quantity_vec.x - vec_end_mm.x) <= TOLERANCE
+    assert abs(quantity_vec.y - vec_end_mm.y) <= TOLERANCE
+    assert abs(quantity_vec.z - vec_end_mm.z) <= TOLERANCE
+    assert quantity_vec.unit == UNITS.mm
+    assert abs(quantity_vec.norm - vec_end_mm.norm) <= TOLERANCE
+    assert quantity_vec[0] == (quantity_vec.x * quantity_vec.unit).to_base_units().magnitude
+    assert quantity_vec[1] == (quantity_vec.y * quantity_vec.unit).to_base_units().magnitude
+    assert quantity_vec[2] == (quantity_vec.z * quantity_vec.unit).to_base_units().magnitude
+
+    # Change back to cm and check that the values are modified according to units
+    quantity_vec.unit = UNITS.cm
+    assert abs(quantity_vec.x - vec_end_cm.x) <= TOLERANCE
+    assert abs(quantity_vec.y - vec_end_cm.y) <= TOLERANCE
+    assert abs(quantity_vec.z - vec_end_cm.z) <= TOLERANCE
+    assert quantity_vec.unit == UNITS.cm
+
+    # Check that two quantity vectors with the same input vector
+    # and different units are not the same
+    quantity_vec_cm = QuantityVector3D([1, 2, 3], UNITS.cm)
+    quantity_vec_mm_eq = QuantityVector3D([10, 20, 30], UNITS.mm)
+    quantity_vec_mm_ne = QuantityVector3D([1, 2, 3], UNITS.mm)
+    assert quantity_vec_cm != quantity_vec_mm_ne
+    assert quantity_vec_cm == quantity_vec_mm_eq
+
+    # Let's do some vector operations with the below
+    quantity_vec_a = QuantityVector3D([1, 2, 3], UNITS.cm)
+    quantity_vec_b = QuantityVector3D([70, 0, 10], UNITS.mm)
+    dot_a_b = quantity_vec_a * quantity_vec_b
+    assert dot_a_b == 0.001
+
+    cross_a_x_b = quantity_vec_a % quantity_vec_b  # Resulting vector: [2, 20, -14] cm
+    assert abs(cross_a_x_b.x - 2) <= TOLERANCE
+    assert abs(cross_a_x_b.y - 20) <= TOLERANCE
+    assert abs(cross_a_x_b.z - (-14)) <= TOLERANCE
+    assert cross_a_x_b.unit == UNITS.cm
+
+    normalized_b = quantity_vec_b.normalize()
+    vec_b_normalized = Vector3D([70, 0, 10]).normalize()
+    assert abs(normalized_b.x - vec_b_normalized.x) <= TOLERANCE
+    assert abs(normalized_b.y - vec_b_normalized.y) <= TOLERANCE
+    assert abs(normalized_b.z - vec_b_normalized.z) <= TOLERANCE
+
+
+def test_quantity_vector_2d():
+    """Simple tests to create ``QuantityVector2D``."""
+
+    # Define the tolerance for the QuantityVector2D tests
+    TOLERANCE = 5e-15
+
+    # Create QuantityVector2D from a Vector3D
+    vec = Vector2D([1, 2])
+    quantity_vec = QuantityVector2D(vec, UNITS.mm)
+    assert abs(quantity_vec.x - vec.x) <= TOLERANCE
+    assert abs(quantity_vec.y - vec.y) <= TOLERANCE
+    assert quantity_vec.unit == UNITS.mm
+    assert abs(quantity_vec.norm - vec.norm) <= TOLERANCE
+
+    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
+    assert quantity_vec[0] == (quantity_vec.x * quantity_vec.unit).to_base_units().magnitude
+    assert quantity_vec[1] == (quantity_vec.y * quantity_vec.unit).to_base_units().magnitude
+
+    # Change the values using the setters
+    vec_end_mm = Vector2D([70, 80])
+    vec_end_cm = Vector2D([7, 8])
+    quantity_vec.unit = UNITS.mm
+    quantity_vec.x = 70
+    quantity_vec.y = 80
+    assert abs(quantity_vec.x - vec_end_mm.x) <= TOLERANCE
+    assert abs(quantity_vec.y - vec_end_mm.y) <= TOLERANCE
+    assert quantity_vec.unit == UNITS.mm
+    assert abs(quantity_vec.norm - vec_end_mm.norm) <= TOLERANCE
+    assert quantity_vec[0] == (quantity_vec.x * quantity_vec.unit).to_base_units().magnitude
+    assert quantity_vec[1] == (quantity_vec.y * quantity_vec.unit).to_base_units().magnitude
+
+    # Change back to cm and check that the values are modified according to units
+    quantity_vec.unit = UNITS.cm
+    assert abs(quantity_vec.x - vec_end_cm.x) <= TOLERANCE
+    assert abs(quantity_vec.y - vec_end_cm.y) <= TOLERANCE
+    assert quantity_vec.unit == UNITS.cm
+
+    # Check that two quantity vectors with the same input vector
+    # and different units are not the same
+    quantity_vec_cm = QuantityVector2D([1, 2], UNITS.cm)
+    quantity_vec_mm_eq = QuantityVector2D([10, 20], UNITS.mm)
+    quantity_vec_mm_ne = QuantityVector2D([1, 2], UNITS.mm)
+    assert quantity_vec_cm != quantity_vec_mm_ne
+    assert quantity_vec_cm == quantity_vec_mm_eq
+
+    # Let's do some vector operations with the below
+    quantity_vec_a = QuantityVector2D([1, 2], UNITS.cm)
+    quantity_vec_b = QuantityVector2D([70, 10], UNITS.mm)
+    dot_a_b = quantity_vec_a * quantity_vec_b
+    assert round(dot_a_b, 4) == 0.0009
+
+    normalized_b = quantity_vec_b.normalize()
+    vec_b_normalized = Vector2D([70, 10]).normalize()
+    assert abs(normalized_b.x - vec_b_normalized.x) <= TOLERANCE
+    assert abs(normalized_b.y - vec_b_normalized.y) <= TOLERANCE
