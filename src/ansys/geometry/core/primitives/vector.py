@@ -273,7 +273,7 @@ class QuantityVector3D(Vector3D):
         """Z coordinate of ``QuantityVector3D``."""
         return UNITS.convert(Vector3D.z.fget(self), self._base_unit, self._unit)
 
-    @x.setter
+    @z.setter
     def z(self, z: Real) -> None:
         """Set Z coordinate of ``QuantityVector3D``."""
         check_is_float_int(z, "z")
@@ -298,7 +298,7 @@ class QuantityVector3D(Vector3D):
 
     def normalize(self) -> "QuantityVector3D":
         """Return a normalized version of the ``QuantityVector3D``"""
-        vec = Vector3D.normalize(self).view(self.__class__)
+        vec = Vector3D.normalize(self).view(QuantityVector3D)
         vec._unit = self._unit
         vec._base_unit = self._base_unit
         return vec
@@ -306,7 +306,12 @@ class QuantityVector3D(Vector3D):
     def cross(self, v: "QuantityVector3D") -> "QuantityVector3D":
         """Return cross product of ``QuantityVector3D``"""
         check_pint_unit_compatibility(v._base_unit, self._base_unit)
-        vec = Vector3D.cross(self, v).view(self.__class__)
+        vec = Vector3D.cross(self, v).view(QuantityVector3D)
+
+        # At this point, data is stored as base_unit^2
+        factor, _ = UNITS.get_base_units(self._unit)
+        vec /= factor
+
         vec._unit = self._unit
         vec._base_unit = self._base_unit
         return vec
@@ -326,7 +331,7 @@ class QuantityVector3D(Vector3D):
         check_pint_unit_compatibility(other._base_unit, self._base_unit)
         return self.dot(other)
 
-    def __mod__(self, other: "Vector3D") -> "Vector3D":
+    def __mod__(self, other: "QuantityVector3D") -> "QuantityVector3D":
         """Overload % operator with cross product."""
         check_type_equivalence(other, self)
         check_pint_unit_compatibility(other._base_unit, self._base_unit)
@@ -392,7 +397,7 @@ class QuantityVector2D(Vector2D):
 
     def normalize(self) -> "QuantityVector2D":
         """Return a normalized version of the ``QuantityVector2D``"""
-        vec = Vector2D.normalize(self).view(self.__class__)
+        vec = Vector2D.normalize(self).view(QuantityVector2D)
         vec._unit = self._unit
         vec._base_unit = self._base_unit
         return vec
