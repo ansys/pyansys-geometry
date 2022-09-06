@@ -549,29 +549,54 @@ def test_cylinder_units():
 
 
 def test_matrix():
+    """Simple test to create a ``Matrix``."""
+
     # Create two matrix objects
-    m_1 = Matrix([[2, 0, 0, 5], [0, 3, 0, 8], [0, 0, 4, 10]])
-    m_1_copy = Matrix([[2, 0, 0, 5], [0, 3, 0, 8], [0, 0, 4, 10]])
+    m_1 = Matrix([[2, 5], [0, 8]])
+    m_1_copy = Matrix([[2, 5], [0, 8]])
     m_2 = Matrix([[3, 2, 0], [1, 3, 0], [0, 6, 4]])
 
-    test_matrix = np.array([[2, 0, 0, 5], [0, 3, 0, 8], [0, 0, 4, 10]])
+    # Intiate a test matrix using numpy.ndarray
+    test_matrix = np.array([[2, 5], [0, 8]])
+
+    # Check inverse of matrix
     m_3 = m_1.inverse()
     test_inverse = np.linalg.inv(test_matrix)
     assert abs(m_3 - test_inverse).all() <= DOUBLE_EPS
 
+    # Check determinant of matrix
     det = m_1.determinant()
+    assert abs(round(det, 3) - 16) <= DOUBLE_EPS
+
     # Check that the equals operator
     assert m_1 == m_1_copy
     assert m_1 != m_2
 
 
+def test_matrix_errors():
+    """Testing multiple ``Matrix33`` errors."""
+
+    with pytest.raises(
+        TypeError, match="The numpy.ndarray provided should contain float or integer values."
+    ):
+        Matrix(([[2, 0, "a"], [0, 3, 0], [0, 0, 4]]))
+
+    # Test inverse error with determinent is zero
+    with pytest.raises(
+        ValueError, match="The determinant of the matrix is zero, cannot be inversed."
+    ):
+        Matrix([[1, 2, 3], [2, 5, 6], [2, 5, 3]]).inverse()
+
+    # Test determinent error of nxm matrix
+    with pytest.raises(ValueError, match="The determinant is only defined for square matrices."):
+        Matrix([[1, 2, 3, 4], [2, 5, 6, 5], [2, 5, 3, 10]]).determinant()
+
+
 def test_matrix_33():
     """Simple test to create a ``Matrix33``."""
 
-    # Create two Matrix33 objects
+    # Create a Matrix33 objects
     m_1 = Matrix33([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
-    m_1_copy = Matrix33([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
-    m_2 = Matrix33([[3, 2, 0], [1, 3, 0], [0, 6, 4]])
 
     # Create a null matrix, which is 3x3 identity matrix
     m_null = Matrix33()
@@ -592,31 +617,9 @@ def test_matrix_33():
     det = m_1.determinant()
     assert abs(round(det, 3) - 24) <= DOUBLE_EPS
 
-    # Check that the equals operator
-    assert m_1 == m_1_copy
-    assert m_1 != m_2
-
-
-def test_matrix_33_errors():
-    """Testing multiple ``Matrix33`` errors."""
-
     with pytest.raises(ValueError) as val:
         Matrix33([[1, 2], [1, 6]])
         assert "Matrix33 should only be a 2D array of shape (3,3)." in str(val.value)
-
-    with pytest.raises(
-        TypeError, match="The numpy.ndarray provided should contain float or integer values."
-    ):
-        Matrix33(([[2, 0, "a"], [0, 3, 0], [0, 0, 4]]))
-
-    # Create a Matrix33
-    m_1 = Matrix33([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
-
-    # Test inverse error with determinent is zero
-    with pytest.raises(
-        ValueError, match="The determinant of the matrix is zero, cannot be inversed."
-    ):
-        Matrix33([[1, 2, 3], [2, 5, 6], [2, 5, 3]]).inverse()
 
     # Build a Matrix44 and try to compare against it
     with pytest.raises(TypeError, match="Provided type"):
@@ -629,8 +632,6 @@ def test_matrix_44():
 
     # Create two Matrix44 objects
     m_1 = Matrix44([[2, 0, 0, 0], [0, 3, 0, 0], [0, 0, 4, 0], [0, 0, 0, 1]])
-    m_1_copy = Matrix44([[2, 0, 0, 0], [0, 3, 0, 0], [0, 0, 4, 0], [0, 0, 0, 1]])
-    m_2 = Matrix44([[3, 2, 0, 5], [1, 3, 0, 8], [0, 6, 4, 5], [0, 0, 0, 1]])
 
     # Create a null matrix, which is 4x4 identity matrix
     m_null = Matrix44()
@@ -651,31 +652,10 @@ def test_matrix_44():
     det = m_1.determinant()
     assert abs(round(det, 3) - 24) <= DOUBLE_EPS
 
-    # Check that the equals operator
-    assert m_1 == m_1_copy
-    assert m_1 != m_2
-
-
-def test_matrix_44_errors():
-    """Testing multiple ``Matrix44`` errors."""
-
+    # Check error with other than 4x4 matrix
     with pytest.raises(ValueError) as val:
         Matrix44([[1, 2], [1, 6]])
         assert "Matrix44 should only be a 2D array of shape (4,4)." in str(val.value)
-
-    with pytest.raises(
-        TypeError, match="The numpy.ndarray provided should contain float or integer values."
-    ):
-        Matrix44(([[2, 0, "a", 0], [1, 0, 3, 0], [0, 0, 4, 10], [5, 6, 2, 0]]))
-
-    # Create a Matrix44
-    m_1 = Matrix44([[2, 0, 0, 0], [0, 3, 0, 0], [0, 0, 4, 0], [0, 0, 0, 1]])
-
-    # Test inverse error with determinent is zero
-    with pytest.raises(
-        ValueError, match="The determinant of the matrix is zero, cannot be inversed."
-    ):
-        Matrix44([[1, 0, 3, 0], [2, 0, 6, 0], [2, 0, 3, 0], [0, 0, 0, 1]]).inverse()
 
     # Build a Matrix44 and try to compare against it
     with pytest.raises(TypeError, match="Provided type"):

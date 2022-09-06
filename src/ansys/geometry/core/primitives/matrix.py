@@ -35,6 +35,8 @@ class Matrix(np.ndarray):
 
     def determinant(self) -> float:
         """Provides the determinant of the matrix."""
+        if self.shape[0] != self.shape[1]:
+            raise ValueError("The determinant is only defined for square matrices.")
         return np.linalg.det(self)
 
     def inverse(self) -> "Matrix":
