@@ -4,7 +4,7 @@ from typing import Optional
 import numpy as np
 
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.math.vector import Vector3D
+from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.typing import Real
 
@@ -16,8 +16,8 @@ class CircleShape(BaseShape):
         self,
         radius: Real,
         origin: Point3D,
-        dir_1: Vector3D([1, 0, 0]),
-        dir_2: Vector3D([0, 1, 0]),
+        dir_1: UnitVector3D([1, 0, 0]),
+        dir_2: UnitVector3D([0, 1, 0]),
     ):
         """Initializes the circle shape.
 
@@ -27,11 +27,11 @@ class CircleShape(BaseShape):
             The radius of the circle.
         origin : Point3D
             A :class:``Point3D`` representing the origin of the shape.
-        dir_1 : Vector3D
-            A :class:``Vector3D`` representing the first fundamental direction
+        dir_1 : UnitVector3D
+            A :class:``UnitVector3D`` representing the first fundamental direction
             of the reference plane where the shape is contained.
-        dir_2 : Vector3D
-            A :class:``Vector3D`` representing the second fundamental direction
+        dir_2 : UnitVector3D
+            A :class:``UnitVector3D`` representing the second fundamental direction
             of the reference plane where the shape is contained.
 
         """
@@ -115,8 +115,8 @@ class CircleShape(BaseShape):
         cls,
         radius: Real,
         origin: Optional[Point3D] = Point3D([0, 0, 0]),
-        dir_1: Optional[Vector3D] = Vector3D([1, 0, 0]),
-        dir_2: Optional[Vector3D] = Vector3D([0, 1, 0]),
+        dir_1: Optional[UnitVector3D] = UnitVector3D([1, 0, 0]),
+        dir_2: Optional[UnitVector3D] = UnitVector3D([0, 1, 0]),
     ):
         """Create an circle from its origin and radius.
 
@@ -126,11 +126,11 @@ class CircleShape(BaseShape):
             The radius of the circle.
         origin : Point3D
             A :class:``Point3D`` representing the origin of the ellipse.
-        dir_1 : Vector3D
-            A :class:``Vector3D`` representing the first fundamental direction
+        dir_1 : UnitVector3D
+            A :class:``UnitVector3D`` representing the first fundamental direction
             of the reference plane where the shape is contained.
-        dir_2 : Vector3D
-            A :class:``Vector3D`` representing the second fundamental direction
+        dir_2 : UnitVector3D
+            A :class:``UnitVector3D`` representing the second fundamental direction
             of the reference plane where the shape is contained.
 
         Returns

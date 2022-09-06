@@ -3,24 +3,26 @@
 from typing import Optional
 
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.typing import Real
 
 
 class BaseShape:
     """Provides mother class for modeling base shape objects."""
 
-    def __init__(self, origin: Point3D, dir_1: Vector3D([1, 0, 0]), dir_2: Vector3D([0, 1, 0])):
+    def __init__(
+        self, origin: Point3D, dir_1: UnitVector3D([1, 0, 0]), dir_2: UnitVector3D([0, 1, 0])
+    ):
         """Initializes the base shape.
 
         Parameters
         ----------
         origin : Point3D
             A :class:``Point3D`` representing the origin of the shape.
-        dir_1 : Vector3D
+        dir_1 : UnitVector3D
             A :class:``Vector3D`` representing the first fundamental direction
             of the reference plane where the shape is contained.
-        dir_2 : Vector3D
+        dir_2 : UnitVector3D
             A :class:``Vector3D`` representing the second fundamental direction
             of the reference plane where the shape is contained.
 
@@ -32,7 +34,7 @@ class BaseShape:
 
         # TODO: deprecate in favor of reference frame
         # TODO @RobPasMue: implement checks to input arguments
-        
+
         if np.all(np.cross(a, a)) == 0:
             raise ValueError("Reference vectors must be linearly independent.")
         self._i, self._j = dir_1.normalize(), dir_2.normalize()
@@ -59,7 +61,7 @@ class BaseShape:
         """The origin of the reference frame."""
         return origin
 
-    def points(self, num_points : Optional[int] =100) -> list[Point3D]:
+    def points(self, num_points: Optional[int] = 100) -> list[Point3D]:
         """Returns a list containing all the points belonging to the shape.
 
         Parameters
