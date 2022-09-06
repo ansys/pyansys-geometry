@@ -26,7 +26,7 @@ class CircleShape(BaseShape):
         radius : Real
             The radius of the circle.
         origin : Point3D
-            A ``Point3D`` representing the origin of the shape.
+            A :class:``Point3D`` representing the origin of the shape.
         dir_1 : Vector3D
             A :class:``Vector3D`` representing the first fundamental direction
             of the reference plane where the shape is contained.
@@ -122,10 +122,10 @@ class CircleShape(BaseShape):
 
         Parameters
         ----------
-        radius : int, float
+        radius : Real
             The radius of the circle.
         origin : Point3D
-            A ``Point3D`` representing the origin of the ellipse.
+            A :class:``Point3D`` representing the origin of the ellipse.
         dir_1 : Vector3D
             A :class:``Vector3D`` representing the first fundamental direction
             of the reference plane where the shape is contained.

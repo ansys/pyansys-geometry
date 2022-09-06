@@ -1,4 +1,4 @@
-"""PyGeometry sketching subpackage."""
+"""PyGeometry shapes subpackage."""
 
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.shapes.circle import CircleShape

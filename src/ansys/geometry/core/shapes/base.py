@@ -1,4 +1,6 @@
-"""``SketchCurve`` class module."""
+"""``BaseShape`` class module."""
+
+from typing import Optional
 
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
@@ -14,7 +16,7 @@ class BaseShape:
         Parameters
         ----------
         origin : Point3D
-            A ``Point3D`` representing the origin of the shape.
+            A :class:``Point3D`` representing the origin of the shape.
         dir_1 : Vector3D
             A :class:``Vector3D`` representing the first fundamental direction
             of the reference plane where the shape is contained.
@@ -29,6 +31,8 @@ class BaseShape:
         # self._origin = self._frame.origin
 
         # TODO: deprecate in favor of reference frame
+        # TODO @RobPasMue: implement checks to input arguments
+        
         if np.all(np.cross(a, a)) == 0:
             raise ValueError("Reference vectors must be linearly independent.")
         self._i, self._j = dir_1.normalize(), dir_2.normalize()
@@ -55,7 +59,7 @@ class BaseShape:
         """The origin of the reference frame."""
         return origin
 
-    def points(self, num_points=100) -> list[Point3D]:
+    def points(self, num_points : Optional[int] =100) -> list[Point3D]:
         """Returns a list containing all the points belonging to the shape.
 
         Parameters

@@ -30,7 +30,7 @@ class EllipseShape(BaseShape):
         b : Real
             The semi-minor axis of the ellipse.
         origin : Point3D
-            A ``Point3D`` representing the origin of the shape.
+            A :class:``Point3D`` representing the origin of the shape.
         dir_1 : Vector3D
             A :class:``Vector3D`` representing the first fundamental direction
             of the reference plane where the shape is contained.
@@ -238,7 +238,7 @@ class EllipseShape(BaseShape):
         b : int, float
             The semi-minor axis of the ellipse.
         origin : Point2D
-            A ``Point2D`` representing the origin of the ellipse.
+            A :class:``Point2D`` representing the origin of the ellipse.
         dir_1 : Vector3D
             A :class:``Vector3D`` representing the first fundamental direction
             of the reference plane where the shape is contained.
