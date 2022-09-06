@@ -1,13 +1,7 @@
 """PyGeometry primitives subpackage."""
 
 from ansys.geometry.core.primitives.cylinder import Cylinder
-from ansys.geometry.core.primitives.matrix import (
-    Matrix33,
-    Matrix44,
-    RotationMatrix,
-    TranslationMatrix2D,
-    TranslationMatrix3D,
-)
+from ansys.geometry.core.primitives.matrix import Matrix, Matrix33, Matrix44
 from ansys.geometry.core.primitives.point import Point2D, Point3D
 from ansys.geometry.core.primitives.vector import UnitVector2D, UnitVector3D, Vector2D, Vector3D
 
@@ -21,7 +15,5 @@ __all__ = [
     "Vector3D",
     "Matrix33",
     "Matrix44",
-    "RotationMatrix",
-    "TranslationMatrix2D",
-    "TranslationMatrix3D",
+    "Matrix",
 ]
