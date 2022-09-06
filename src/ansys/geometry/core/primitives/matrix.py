@@ -95,11 +95,10 @@ class Matrix44(Matrix):
 
     def __new__(cls, input: Optional[Union[np.ndarray, RealSequence, Matrix]] = DEFAULT_MATRIX44):
         """Constructor for ``Matrix44``."""
-        if input is DEFAULT_MATRIX44:
-            obj = Matrix(DEFAULT_MATRIX44).view(cls)
-            return obj
 
         obj = Matrix(input).view(cls)
+        if input is DEFAULT_MATRIX44:
+            return obj
 
         if obj.shape != (4, 4):
             raise ValueError("Matrix44 should only be a 2D array of shape (4,4).")
