@@ -10,9 +10,6 @@ from ansys.geometry.core.primitives import (
     Matrix44,
     Point2D,
     Point3D,
-    RotationMatrix,
-    TranslationMatrix2D,
-    TranslationMatrix3D,
     UnitVector2D,
     UnitVector3D,
     Vector2D,
@@ -609,27 +606,6 @@ def test_matrix_33_errors():
         assert m_1 == m_2
 
 
-def test_rotation_matrix():
-    """Testing ``RotationMatrix`` to the the 3x3 matrix in a counter-clockwise direction."""
-
-    # create a Matrix33 and rotate it numpy.pi/2 radian
-    m_1 = Matrix33([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
-    rotated_matrix = RotationMatrix(m_1, np.pi / 2)
-
-    test_rotated_matrix = [[0, -3, 0], [2, 0, 0], [0, 0, 4]]
-    # Check the rotation matrix with test rotation matrix
-    assert abs(rotated_matrix - test_rotated_matrix).all() <= DOUBLE_EPS
-
-    # Check the units of the angle
-    rotated_matrix_2 = RotationMatrix(m_1, 90, unit=UNITS.degree)
-    assert abs(rotated_matrix_2 - test_rotated_matrix).all() <= DOUBLE_EPS
-
-    # Check the rotation matrix with 30 degree
-    rotated_matrix_3 = RotationMatrix(m_1, 30, unit=UNITS.degree)
-    test_rotated_matrix = [[1.7321, -1.5, 0], [2.5981, 0, 0], [0, 4, 0]]
-    assert abs(rotated_matrix_3 - test_rotated_matrix).all() <= DOUBLE_EPS
-
-
 def test_matrix_44():
     """Simple test to create a ``Matrix44``."""
 
@@ -661,33 +637,6 @@ def test_matrix_44():
     assert m_1 == m_1_copy
     assert m_1 != m_2
 
-    # Check X-axis rotation of Matrix44 in numpy.pi/2 radian
-    test_matrix_x = np.asarray([[2, 0, 0, 0], [0, 0, -4, 0], [0, 3, 0, 0], [0, 0, 0, 1]])
-    m_rotate_x = m_1.rotate_x(np.pi / 2)
-    assert abs(m_rotate_x - test_matrix_x).all() <= DOUBLE_EPS
-
-    # Check the X-axis rotation of Matrix44 in 90 degree
-    m_rotate_x_degree = m_1.rotate_x(90, UNITS.degree)
-    assert abs(m_rotate_x_degree - test_matrix_x).all() <= DOUBLE_EPS
-
-    # Check Y-axis rotation of Matrix44 in numpy.pi/2 radian
-    test_matrix_y = np.asarray([[0, 0, 4, 0], [0, 3, 0, 0], [-2, 0, 0, 0], [0, 0, 0, 1]])
-    m_rotate_y = m_1.rotate_y(np.pi / 2)
-    assert abs(m_rotate_y - test_matrix_y).all() <= DOUBLE_EPS
-
-    # Check the Y-axis rotation of Matrix44 in 90 degree
-    m_rotate_y_degree = m_1.rotate_y(90, UNITS.degree)
-    assert abs(m_rotate_y_degree - test_matrix_y).all() <= DOUBLE_EPS
-
-    # Check Z-axis rotation of Matrix44 in numpy.pi/2 radian
-    test_matrix_z = np.asarray([[0, -3, 0, 0], [2, 0, 0, 0], [0, 0, 4, 0], [0, 0, 0, 1]])
-    m_rotate_z = m_1.rotate_z(np.pi / 2)
-    assert abs(m_rotate_z - test_matrix_z).all() <= DOUBLE_EPS
-
-    # Check the Z-axis rotation of Matrix44 in 90 degree
-    m_rotate_z_degree = m_1.rotate_z(90, UNITS.degree)
-    assert abs(m_rotate_z_degree - test_matrix_z).all() <= DOUBLE_EPS
-
 
 def test_matrix_44_errors():
     """Testing multiple ``Matrix44`` errors."""
@@ -714,31 +663,3 @@ def test_matrix_44_errors():
     with pytest.raises(TypeError, match="Provided type"):
         m_2 = Matrix33([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
         assert m_1 == m_2
-
-
-def test_translational_matrix_2d():
-
-    # Create a Matrix33 for translation
-    m_1 = Matrix33([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
-    vector = Vector2D([2, 3])
-
-    # Translate the matrix by vector
-    translate = TranslationMatrix2D(m_1, vector)
-
-    # Check the translated matrix
-    test_translate = np.asarray([[2, 0, 8], [0, 3, 12], [0, 0, 4]])
-    assert np.array_equal(translate, test_translate)
-
-
-def test_translational_matrix_3d():
-
-    # Create a Matrix33 for translation
-    m_1 = Matrix44([[2, 0, 0, 0], [0, 3, 0, 0], [0, 0, 4, 0], [0, 0, 0, 1]])
-    vector = Vector3D([2, 3, 4])
-
-    # Translate the matrix by vector
-    translate = TranslationMatrix3D(m_1, vector)
-
-    # Check the translated matrix
-    test_translate = np.asarray([[2, 0, 0, 2], [0, 3, 0, 3], [0, 0, 4, 4], [0, 0, 0, 1]])
-    assert np.array_equal(translate, test_translate)

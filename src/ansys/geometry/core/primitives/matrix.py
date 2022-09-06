@@ -20,11 +20,19 @@ class Matrix(np.ndarray):
         if obj is None or obj.ndim != 2:
             raise ValueError("Matrix44 should only be a 2D array")
         check_ndarray_is_float_int(obj)
+
         return obj
 
     def determinant(self) -> float:
         """Provides the determinent of the matrix."""
         return np.linalg.det(self)
+
+    def inverse(self) -> "Matrix":
+        """Provides the inverse of the matrix."""
+        det = np.linalg.det(self)
+        if det <= 0:
+            raise ValueError("The determinant of the matrix is zero, cannot be inversed.")
+        return np.linalg.inv(self)
 
     def __mul__(self, other: "Matrix") -> "Matrix":
         """Provides the multiplication of the matrix."""
@@ -67,7 +75,7 @@ class Matrix33(Matrix):
         return obj
 
 
-class Matrix44(np.ndarray):
+class Matrix44(Matrix):
     """A 4x4 matrix for working with 3D affine transformations.
 
     Parameters
