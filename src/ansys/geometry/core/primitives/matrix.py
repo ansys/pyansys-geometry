@@ -4,7 +4,7 @@ from typing import Optional, Union
 import numpy as np
 
 from ansys.geometry.core.misc.checks import check_ndarray_is_float_int, check_type_equivalence
-from ansys.geometry.core.typing import RealSequence
+from ansys.geometry.core.typing import Real, RealSequence
 
 DEFAULT_MATRIX33 = np.identity(3)
 """Default value of 3x3 identity matrix for ``Matrix33``."""
@@ -33,7 +33,7 @@ class Matrix(np.ndarray):
 
         return obj
 
-    def determinant(self) -> float:
+    def determinant(self) -> Real:
         """Provides the determinant of the matrix."""
         if self.shape[0] != self.shape[1]:
             raise ValueError("The determinant is only defined for square matrices.")
