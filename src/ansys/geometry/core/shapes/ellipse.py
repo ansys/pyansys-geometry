@@ -201,7 +201,7 @@ class EllipseShape(BaseShape):
         """
         return np.pi * self.a * self.b
 
-    def local_points(self, num_points=100) -> list[Point3D]:
+    def local_points(self, num_points: Optional[int] = 100) -> list[Point3D]:
         """Returns al list containing all the points belonging to the shape.
 
         Parameters
@@ -216,7 +216,8 @@ class EllipseShape(BaseShape):
 
         """
         theta = np.linspace(0, 2 * np.pi, num_points)
-        x_local, y_local = self.a * np.cos(theta), self.b * np.sin(theta)
+        x_local = self.a * np.cos(theta)
+        y_local = self.b * np.sin(theta)
         z_local = np.zeros(num_points)
         return [x_local, y_local, z_local]
 

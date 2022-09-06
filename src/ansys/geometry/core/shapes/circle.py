@@ -110,6 +110,28 @@ class CircleShape(BaseShape):
         """
         return np.pi * self.r**2
 
+    def local_points(self, num_points: Optional[int] = 100) -> list[Point3D]:
+        """Returns a list containing all the points belonging to the shape.
+
+        Points are given in the local space.
+
+        Parameters
+        ----------
+        num_points : int
+            Desired number of points belonging to the shape.
+
+        Returns
+        -------
+        list[Point3D]
+            A list of points representing the shape.
+
+        """
+        theta = np.linspace(0, 2 * np.pi, num_points)
+        x_local = self.r * np.cos(theta)
+        y_local = self.r * np.sin(theta)
+        z_local = np.zeros(num_points)
+        return [x_local, y_local, z_local]
+
     @classmethod
     def from_radius(
         cls,
