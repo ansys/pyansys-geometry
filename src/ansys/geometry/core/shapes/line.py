@@ -10,13 +10,13 @@ class LineShape:
 
     Parameters
     ----------
-    point_1: Point3D
+    start_point: Point3D
         Start of the line segment.
-    point_2: Point3D
+    end_point: Point3D
         End of the line segment.
     """
 
-    def __init__(self, point_1: Point3D, point_2: Point3D):
+    def __init__(self, start_point: Point3D, end_point: Point3D):
         """Initialize a line shape.
 
         Parameters
@@ -28,7 +28,7 @@ class LineShape:
 
         """
         # Verify both points are not the same
-        if point_1 == point_2:
+        if start_point == end_point:
             raise ValueError("Start and end points must be different.")
         self._start_point, self._end_point = (start_point, end_point)
 

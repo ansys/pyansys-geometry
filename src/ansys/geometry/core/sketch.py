@@ -1,9 +1,7 @@
 """``Sketch`` class module."""
 
-import numpy as np
-
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.shapes.circle import CircleShape
 from ansys.geometry.core.shapes.ellipse import EllipseShape
@@ -17,6 +15,7 @@ class Sketch:
     """
 
     def __init__(
+        self,
         origin: Point3D = Point3D([0, 0, 0]),
         dir_1: UnitVector3D = UnitVector3D([1, 0, 0]),
         dir_2: UnitVector3D = UnitVector3D([0, 1, 0]),
@@ -28,10 +27,10 @@ class Sketch:
         # self._origin = self._frame.origin
 
         # TODO: deprecate in favor of reference frame
-        if np.all(dir_1.cross(dir_2)) == 0:
+        if dir_1.cross(dir_2) == Vector3D([0, 0, 0]):
             raise ValueError("Reference vectors must be linearly independent.")
         self._i, self._j = dir_1.normalize(), dir_2.normalize()
-        self._k = self.i.cross(self._j)
+        self._k = self._i.cross(self._j)
         self._origin = origin
 
         # Collect all shapes in a list
@@ -57,8 +56,8 @@ class Sketch:
         self,
         radius: Real,
         origin: Point3D,
-        dir_1: UnitVector3D([1, 0, 0]),
-        dir_2: UnitVector3D([0, 1, 0]),
+        dir_1: UnitVector3D = UnitVector3D([1, 0, 0]),
+        dir_2: UnitVector3D = UnitVector3D([0, 1, 0]),
     ):
         """Create a circle shape on the sketch.
 
@@ -90,8 +89,8 @@ class Sketch:
         a: Real,
         b: Real,
         origin: Point3D,
-        dir_1: UnitVector3D([1, 0, 0]),
-        dir_2: UnitVector3D([0, 1, 0]),
+        dir_1: UnitVector3D = UnitVector3D([1, 0, 0]),
+        dir_2: UnitVector3D = UnitVector3D([0, 1, 0]),
     ):
         """Create an ellipse shape on the sketch.
 

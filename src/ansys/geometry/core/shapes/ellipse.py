@@ -162,7 +162,7 @@ class EllipseShape(BaseShape):
             Semi-latus rectum of the ellipse.
 
         """
-        return self.b**2 / a
+        return self.b**2 / self.a
 
     @property
     def l(self) -> Real:
@@ -186,8 +186,12 @@ class EllipseShape(BaseShape):
             The perimeter of the ellipse.
 
         """
-        integrand = lambda theta: (1 - np.exp(2) * np.sin(theta) ** 2) ** 0.5
-        p = 4 * self.a * quad(integrand, 0, np.pi / 2)
+
+        def integrand(theta, ecc):
+            return np.sqrt(1 - (ecc * np.sin(theta)) ** 2)
+
+        I, _ = quad(integrand, 0, np.pi / 2, args=(self.ecc,))
+        return 4 * self.a * I
 
     @property
     def area(self) -> Real:
