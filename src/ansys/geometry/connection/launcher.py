@@ -7,7 +7,7 @@ from ansys.geometry.core.direct_modeler import DirectModeler
 
 
 def connect_geometry_direct_modeler(endpoint: str) -> DirectModeler:
-    """Start DirectModeler locally.
+    """Initialize a DirectModeler connected to target endpoint.
 
     Parameters
     ----------
