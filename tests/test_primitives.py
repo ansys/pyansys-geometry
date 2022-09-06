@@ -589,7 +589,9 @@ def test_matrix_33_errors():
         Matrix33([[1, 2], [1, 6]])
         assert "Matrix33 should only be a 2D array of shape (3,3)." in str(val.value)
 
-    with pytest.raises(TypeError, match="The input parameters should be integer or float."):
+    with pytest.raises(
+        TypeError, match="The numpy.ndarray provided should contain float or integer values."
+    ):
         Matrix33(([[2, 0, "a"], [0, 3, 0], [0, 0, 4]]))
 
     # Create a Matrix33
@@ -694,7 +696,9 @@ def test_matrix_44_errors():
         Matrix44([[1, 2], [1, 6]])
         assert "Matrix44 should only be a 2D array of shape (4,4)." in str(val.value)
 
-    with pytest.raises(TypeError, match="The input parameters should be integer or float."):
+    with pytest.raises(
+        TypeError, match="The numpy.ndarray provided should contain float or integer values."
+    ):
         Matrix44(([[2, 0, "a", 0], [1, 0, 3, 0], [0, 0, 4, 10], [5, 6, 2, 0]]))
 
     # Create a Matrix44

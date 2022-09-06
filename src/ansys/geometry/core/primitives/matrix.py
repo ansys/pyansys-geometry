@@ -6,7 +6,7 @@ from pint import Unit
 
 from ansys.geometry.core import UNIT_ANGLE
 from ansys.geometry.core.misc import check_pint_unit_compatibility
-from ansys.geometry.core.misc.checks import check_type_equivalence
+from ansys.geometry.core.misc.checks import check_ndarray_is_float_int, check_type_equivalence
 from ansys.geometry.core.primitives.vector import Vector2D, Vector3D
 from ansys.geometry.core.typing import Real, RealSequence
 
@@ -38,8 +38,7 @@ class Matrix33(np.ndarray):
         if obj is None or obj.ndim != 2 or obj.shape != (3, 3):
             raise ValueError("Matrix33 should only be a 2D array of shape (3,3).")
 
-        if not np.issubdtype(obj.dtype, np.number) or not isinstance(obj, (np.ndarray)):
-            raise TypeError("The input parameters should be integer or float.")
+        check_ndarray_is_float_int(obj)
 
         return obj
 
@@ -84,8 +83,7 @@ class Matrix44(np.ndarray):
         if obj is None or obj.ndim != 2 or obj.shape != (4, 4):
             raise ValueError("Matrix44 should only be a 2D array of shape (4,4).")
 
-        if not np.issubdtype(obj.dtype, np.number) or not isinstance(obj, (np.ndarray)):
-            raise TypeError("The input parameters should be integer or float.")
+        check_ndarray_is_float_int(obj)
 
         return obj
 
