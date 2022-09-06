@@ -66,7 +66,7 @@ class BaseShape:
     @property
     def origin(self) -> Point3D:
         """The origin of the reference frame."""
-        return origin
+        return self._origin
 
     def points(self, num_points: Optional[int] = 100) -> list[Point3D]:
         """Returns a list containing all the points belonging to the shape.
@@ -84,7 +84,7 @@ class BaseShape:
         return self.frame.from_local_to_global @ self.local_points
 
     @property
-    def x_coordinates(sefl) -> list[Real]:
+    def x_coordinates(self) -> list[Real]:
         """Return all the x coordinates for the points of the shape.
 
         Returns
@@ -96,7 +96,7 @@ class BaseShape:
         return [point[0] for point in self._points]
 
     @property
-    def y_coordinates(sefl) -> list[Real]:
+    def y_coordinates(self) -> list[Real]:
         """Return all the y coordinates for the points of the shape.
 
         Returns
@@ -108,7 +108,7 @@ class BaseShape:
         return [point[1] for point in self._points]
 
     @property
-    def z_coordinates(sefl) -> list[Real]:
+    def z_coordinates(self) -> list[Real]:
         """Return all the y coordinates for the points of the shape.
 
         Returns
