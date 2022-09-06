@@ -1,4 +1,4 @@
-"""``Matrix`` Class Module."""
+"""``Matrix`` class Module."""
 from typing import Optional, Union
 
 import numpy as np
@@ -14,7 +14,7 @@ DEFAULT_MATRIX44 = np.identity(4)
 
 
 class Matrix(np.ndarray):
-    """Provide Matrix primitive representation
+    """Provide Matrix primitive representation.
 
     Parameters
     ----------
@@ -61,11 +61,11 @@ class Matrix(np.ndarray):
 
 
 class Matrix33(Matrix):
-    """Provides  3x3 matrix primitive representation.
+    """Provides 3x3 matrix primitive representation.
 
     Parameters
     ----------
-    input : Union[numpy.ndarray, List[Real]], optional
+    input : Union[numpy.ndarray,  RealSequence, Matrix], optional
         The matrix arguments as a :class:`np.ndarray`.
         By default, ``DEFAULT_MATRIX33``.
     """
@@ -88,7 +88,7 @@ class Matrix44(Matrix):
 
     Parameters
     ----------
-    input : numpy.ndarray, optional
+    input : Union[numpy.ndarray,  RealSequence, Matrix], optional
         The matrix arguments as a :class:`np.ndarray`.
         By default, ``DEFAULT_MATRIX44``.
     """

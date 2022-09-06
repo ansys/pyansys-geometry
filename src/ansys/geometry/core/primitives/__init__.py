@@ -7,13 +7,13 @@ from ansys.geometry.core.primitives.vector import UnitVector2D, UnitVector3D, Ve
 
 __all__ = [
     "Cylinder",
+    "Matrix",
+    "Matrix33",
+    "Matrix44",
     "Point2D",
     "Point3D",
     "UnitVector2D",
     "UnitVector3D",
     "Vector2D",
     "Vector3D",
-    "Matrix33",
-    "Matrix44",
-    "Matrix",
 ]
