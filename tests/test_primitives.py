@@ -583,7 +583,7 @@ def test_matrix_errors():
 
     # Test inverse error with determinent is zero
     with pytest.raises(
-        ValueError, match="The matrix cannot be inverted because its determinant is zero."
+        ValueError, match="The matrix cannot be inversed because its determinant is zero."
     ):
         Matrix([[1, 2, 3], [2, 5, 6], [2, 5, 3]]).inverse()
 

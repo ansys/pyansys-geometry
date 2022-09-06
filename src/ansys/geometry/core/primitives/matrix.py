@@ -41,13 +41,15 @@ class Matrix(np.ndarray):
 
     def inverse(self) -> "Matrix":
         """Provides the inverse of the matrix."""
-        det = np.linalg.det(self)
+        det = self.determinant()
         if det <= 0:
             raise ValueError("The matrix cannot be inversed because its determinant is zero.")
         return np.linalg.inv(self)
 
     def __mul__(self, other: "Matrix") -> "Matrix":
         """Provides the multiplication of the matrix."""
+        if self.shape[1] != other.shape[0]:
+            raise ValueError(f"The matrices dimensions {self.shape[1]} not equal {other.shape[0]}")
         return np.matmul(self, other)
 
     def __eq__(self, other: "Matrix") -> bool:
