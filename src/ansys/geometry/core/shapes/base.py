@@ -156,7 +156,7 @@ class BaseShape:
         raise self._is_closed
 
     @property
-    def is_closed(self) -> bool:
+    def is_open(self) -> bool:
         """Assert whether the shape is closed or not.
 
         Returns
