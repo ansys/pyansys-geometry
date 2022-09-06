@@ -27,14 +27,14 @@ class Matrix(np.ndarray):
         obj = np.asarray(input).view(cls)
 
         if obj is None or obj.ndim != 2:
-            raise ValueError("Matrix44 should only be a 2D array")
+            raise ValueError("Matrix should only be a 2D array")
 
         check_ndarray_is_float_int(obj)
 
         return obj
 
     def determinant(self) -> float:
-        """Provides the determinent of the matrix."""
+        """Provides the determinant of the matrix."""
         return np.linalg.det(self)
 
     def inverse(self) -> "Matrix":
@@ -71,11 +71,9 @@ class Matrix33(Matrix):
     def __new__(cls, input: Optional[Union[np.ndarray, RealSequence, Matrix]] = DEFAULT_MATRIX33):
         """Constructor for ``Matrix33``."""
 
-        if input is DEFAULT_MATRIX33:
-            obj = Matrix(DEFAULT_MATRIX33).view(cls)
-            return obj
-
         obj = Matrix(input).view(cls)
+        if input is DEFAULT_MATRIX33:
+            return obj
 
         if obj.shape != (3, 3):
             raise ValueError("Matrix33 should only be a 2D array of shape (3,3).")
