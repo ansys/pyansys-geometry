@@ -18,13 +18,14 @@ class Matrix(np.ndarray):
 
     Parameters
     ----------
-    input : Union[numpy.ndarray, List[Real]]
+    input : Union[~numpy.ndarray, RealSequence]
         The matrix arguments as a :class:`np.ndarray`.
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence]):
         """Constructor for ``Matrix``."""
         obj = np.asarray(input).view(cls)
+        obj.setflags(write=False)
 
         if obj is None or obj.ndim != 2:
             raise ValueError("Matrix should only be a 2D array")
@@ -65,7 +66,7 @@ class Matrix33(Matrix):
 
     Parameters
     ----------
-    input : Union[numpy.ndarray,  RealSequence, Matrix], optional
+    input : Union[~numpy.ndarray, RealSequence, Matrix], optional
         The matrix arguments as a :class:`np.ndarray`.
         By default, ``DEFAULT_MATRIX33``.
     """
@@ -84,11 +85,11 @@ class Matrix33(Matrix):
 
 
 class Matrix44(Matrix):
-    """Provides  4x4 matrix primitive representation.
+    """Provides 4x4 matrix primitive representation.
 
     Parameters
     ----------
-    input : Union[numpy.ndarray,  RealSequence, Matrix], optional
+    input : Union[~numpy.ndarray, RealSequence, Matrix], optional
         The matrix arguments as a :class:`np.ndarray`.
         By default, ``DEFAULT_MATRIX44``.
     """
