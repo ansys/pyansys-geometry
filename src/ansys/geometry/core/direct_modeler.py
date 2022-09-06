@@ -25,7 +25,7 @@ class DirectModeler:
         self._designs = []
 
     def create_design(self) -> Design:
-        """Initializes a new service with the connected client"""
+        """Initializes a new service with the connected client."""
 
         design = self._grpc_client.create_design()
         self._designs.append(design)
