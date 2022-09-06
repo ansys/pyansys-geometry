@@ -3,7 +3,7 @@
 from typing import Optional
 
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.typing import Real
 
 
