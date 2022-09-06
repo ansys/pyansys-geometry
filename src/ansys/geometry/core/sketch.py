@@ -1,7 +1,7 @@
 """``Sketch`` class module."""
 
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.shapes.circle import CircleShape
 from ansys.geometry.core.shapes.ellipse import EllipseShape
@@ -27,7 +27,7 @@ class Sketch:
         # self._origin = self._frame.origin
 
         # TODO: deprecate in favor of reference frame
-        if dir_1.cross(dir_2) == UnitVector3D([0, 0, 0]):
+        if dir_1.cross(dir_2) == Vector3D([0, 0, 0]):
             raise ValueError("Reference vectors must be linearly independent.")
         self._i, self._j = dir_1, dir_2
         self._k = self._i.cross(self._j)
