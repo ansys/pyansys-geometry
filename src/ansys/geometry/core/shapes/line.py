@@ -1,10 +1,9 @@
 """``LineShape`` class module."""
 
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.shapes.base import BaseShape
 
 
-class LineShape(BaseShape):
+class LineShape:
     """
     Provides Line representation within a sketch environment.
 
@@ -30,7 +29,6 @@ class LineShape(BaseShape):
         # Verify both points are not the same
         if point_1 == point_2:
             raise ValueError("Start and end points must be different.")
-        super().__init__(start_point, end_point - start_point, TODO)
         self._start_point, self._end_point = (start_point, end_point)
 
     @property
