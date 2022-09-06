@@ -4,11 +4,14 @@ import numpy as np
 import pytest
 
 from ansys.geometry.core import UNITS
+
 from ansys.geometry.core.primitives import (
     Cylinder,
     Matrix,
     Matrix33,
     Matrix44,
+
+from ansys.geometry.core.math import (
     Point2D,
     Point3D,
     UnitVector2D,
@@ -16,6 +19,7 @@ from ansys.geometry.core.primitives import (
     Vector2D,
     Vector3D,
 )
+from ansys.geometry.core.primitives import Cylinder
 
 DOUBLE_EPS = np.finfo(float).eps
 

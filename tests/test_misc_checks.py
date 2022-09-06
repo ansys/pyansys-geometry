@@ -2,6 +2,7 @@ import numpy as np
 import pytest
 
 from ansys.geometry.core import UNITS
+from ansys.geometry.core.math import Point2D, Point3D
 from ansys.geometry.core.misc import (
     check_is_float_int,
     check_is_pint_unit,
@@ -9,7 +10,6 @@ from ansys.geometry.core.misc import (
     check_pint_unit_compatibility,
     check_type_equivalence,
 )
-from ansys.geometry.core.primitives import Point2D, Point3D
 
 
 def test_check_type_equivalence():
