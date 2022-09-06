@@ -11,7 +11,11 @@ class BaseShape:
     """Provides mother class for modeling base shape objects."""
 
     def __init__(
-        self, origin: Point3D, dir_1: UnitVector3D([1, 0, 0]), dir_2: UnitVector3D([0, 1, 0])
+        self,
+        origin: Point3D,
+        dir_1: UnitVector3D([1, 0, 0]),
+        dir_2: UnitVector3D([0, 1, 0]),
+        is_closed: Optional[bool] = False,
     ):
         """Initializes the base shape.
 
@@ -25,6 +29,8 @@ class BaseShape:
         dir_2 : UnitVector3D
             A :class:``Vector3D`` representing the second fundamental direction
             of the reference plane where the shape is contained.
+        is_closed: Optional[bool]
+            A boolean variable to define whether the shape is an open or closed.
 
         """
         # TODO: assign a reference frame to the base shape
@@ -40,6 +46,7 @@ class BaseShape:
         self._i, self._j = dir_1.normalize(), dir_2.normalize()
         self._k = self.i.cross(self._j)
         self._origin = origin
+        self._is_closed = is_closed
 
     @property
     def i(self) -> UnitVector3D:
@@ -135,3 +142,27 @@ class BaseShape:
 
         """
         raise NotImplementedError
+
+    @property
+    def is_closed(self) -> bool:
+        """Assert whether the shape is closed or not.
+
+        Returns
+        -------
+        bool
+            ``True`` is the shape is closed, ``False`` otherwise.
+
+        """
+        raise self._is_closed
+
+    @property
+    def is_closed(self) -> bool:
+        """Assert whether the shape is closed or not.
+
+        Returns
+        -------
+        bool
+            ``True`` is the shape is closed, ``False`` otherwise.
+
+        """
+        return not self.is_closed

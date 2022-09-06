@@ -35,7 +35,7 @@ class CircleShape(BaseShape):
             of the reference plane where the shape is contained.
 
         """
-        super().__init__(origin, dir_1, dir_2)
+        super().__init__(origin, dir_1, dir_2, is_closed=True)
         self._radius = radius
 
     @property

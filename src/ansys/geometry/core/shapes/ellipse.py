@@ -39,7 +39,7 @@ class EllipseShape(BaseShape):
             of the reference plane where the shape is contained.
 
         """
-        super().__init__(origin, dir_1, dir_2)
+        super().__init__(origin, dir_1, dir_2, is_closed=True)
         self._semi_major_axis = a
         self._semi_minor_axis = b
 
