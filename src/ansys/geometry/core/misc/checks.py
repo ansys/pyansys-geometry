@@ -48,9 +48,10 @@ def check_ndarray_is_float_int(
     TypeError
         In case the parameter is not a ``float`` or an ``int``.
     """
+    param_data = np.ravel(param)
 
     if not np.issubdtype(param.dtype, np.number) or not all(
-        isinstance(data, (int, float)) for data in param.data
+        isinstance(data, (int, float)) for data in param_data.data
     ):
         raise TypeError(
             f"The numpy.ndarray provided should contain float or integer values."
