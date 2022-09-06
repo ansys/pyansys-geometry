@@ -4,10 +4,10 @@
 import math
 
 LENGTH_ACCURACY = 1e-8
-"""SpaceClaim constant for decimal accuracy in length comparisons."""
+"""Constant for decimal accuracy in length comparisons."""
 
 ANGLE_ACCURACY = 1e-6
-"""SpaceClaim constant for decimal accuracy in angle comparisons."""
+"""Constant for decimal accuracy in angle comparisons."""
 
 
 class Accuracy:
