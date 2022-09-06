@@ -16,7 +16,7 @@ class Sketch:
     """
 
     def __init__(
-        origin: Point3D,
+        origin: Point3D([0, 0, 0]),
         dir_1: UnitVector3D([1, 0, 0]),
         dir_2: UnitVector3D([0, 1, 0]),
     ):
