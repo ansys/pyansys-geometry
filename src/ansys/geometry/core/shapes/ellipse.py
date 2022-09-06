@@ -238,9 +238,9 @@ class EllipseShape(BaseShape):
 
         Parameters
         ----------
-        a : int, float
+        a : Real
             The semi-major axis of the ellipse.
-        b : int, float
+        b : Real
             The semi-minor axis of the ellipse.
         origin : Point2D
             A :class:``Point2D`` representing the origin of the ellipse.

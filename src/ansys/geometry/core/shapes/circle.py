@@ -140,7 +140,7 @@ class CircleShape(BaseShape):
         dir_1: Optional[UnitVector3D] = UnitVector3D([1, 0, 0]),
         dir_2: Optional[UnitVector3D] = UnitVector3D([0, 1, 0]),
     ):
-        """Create an circle from its origin and radius.
+        """Create a circle from its origin and radius.
 
         Parameters
         ----------

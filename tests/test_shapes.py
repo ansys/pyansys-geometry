@@ -57,23 +57,3 @@ def test_create_ellipse():
         [0, 0, 0, 0, 0],
     ]
     assert_allclose(ellipse.local_points(num_points=5), five_local_points, atol=1e-5, rtol=1e-7)
-
-
-def test_create_line():
-    """Test line shape creation in a sketch."""
-
-    # Create a Sketch object
-    sketch = Sketch()
-
-    # Draw a line in previous sketch
-    start_point = Point3D([0, 1, 3], u.m)
-    end_point = Point3D([0, 4, 7], u.m)
-    line = sketch.draw_line(start_point, end_point)
-
-    # Check that the line has been created properly
-    assert_allclose(line.start_point.x, start_point.x)
-    assert_allclose(line.start_point.y, start_point.y)
-    assert_allclose(line.start_point.z, start_point.z)
-    assert_allclose(line.end_point.x, end_point.x)
-    assert_allclose(line.end_point.y, end_point.y)
-    assert_allclose(line.end_point.z, end_point.z)

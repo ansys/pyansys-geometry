@@ -30,7 +30,7 @@ class BaseShape:
             A :class:``Vector3D`` representing the second fundamental direction
             of the reference plane where the shape is contained.
         is_closed: Optional[bool]
-            A boolean variable to define whether the shape is an open or closed.
+            A boolean variable to define whether the shape is open or closed.
 
         """
         # TODO: assign a reference frame to the base shape
@@ -41,9 +41,9 @@ class BaseShape:
         # TODO: deprecate in favor of reference frame
         # TODO @RobPasMue: implement checks to input arguments
 
-        if dir_1.cross(dir_2) == Vector3D([0, 0, 0]):
+        if dir_1.cross(dir_2) == UnitVector3D([0, 0, 0]):
             raise ValueError("Reference vectors must be linearly independent.")
-        self._i, self._j = dir_1.normalize(), dir_2.normalize()
+        self._i, self._j = dir_1, dir_2
         self._k = self.i.cross(self._j)
         self._origin = origin
         self._is_closed = is_closed
@@ -150,19 +150,19 @@ class BaseShape:
         Returns
         -------
         bool
-            ``True`` is the shape is closed, ``False`` otherwise.
+            ``True`` if the shape is closed, ``False`` otherwise.
 
         """
         raise self._is_closed
 
     @property
     def is_open(self) -> bool:
-        """Assert whether the shape is closed or not.
+        """Assert whether the shape is open or not.
 
         Returns
         -------
         bool
-            ``True`` is the shape is closed, ``False`` otherwise.
+            ``True`` if the shape is open, ``False`` otherwise.
 
         """
         return not self.is_closed
