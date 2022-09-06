@@ -568,9 +568,14 @@ def test_matrix():
     det = m_1.determinant()
     assert abs(round(det, 3) - 16) <= DOUBLE_EPS
 
-    # Check that the equals operator
+    # Check the equals operator
     assert m_1 == m_1_copy
     assert m_1 != m_2
+
+    # Check the multiply operator
+    m_4 = Matrix([[2, 5, 3], [0, 8, 3]])
+    test_multiply = np.array([[2, 5, 3], [0, 8, 3]])
+    assert np.array_equal((m_1 * m_4), np.matmul(test_matrix, test_multiply))
 
 
 def test_matrix_errors():
@@ -590,6 +595,13 @@ def test_matrix_errors():
     # Test determinent error of nxm matrix
     with pytest.raises(ValueError, match="The determinant is only defined for square matrices."):
         Matrix([[1, 2, 3, 4], [2, 5, 6, 5], [2, 5, 3, 10]]).determinant()
+
+    m_1 = Matrix([[2, 5], [0, 8]])
+    m_2 = Matrix([[2, 5, 6], [0, 8, 6], [1, 2, 3]])
+
+    # Test multiply operator with mismatched dimensions.
+    with pytest.raises(ValueError, match="The matrices dimensions 2 and 3 are not multipliable."):
+        m_1 * m_2
 
 
 def test_matrix_33():

@@ -50,7 +50,9 @@ class Matrix(np.ndarray):
     def __mul__(self, other: "Matrix") -> "Matrix":
         """Provides the multiplication of the matrix."""
         if self.shape[1] != other.shape[0]:
-            raise ValueError(f"The matrices dimensions {self.shape[1]} not equal {other.shape[0]}")
+            raise ValueError(
+                f"The matrices dimensions {self.shape[1]} and {other.shape[0]} are not multipliable."  # noqa : E501
+            )
         return np.matmul(self, other)
 
     def __eq__(self, other: "Matrix") -> bool:
