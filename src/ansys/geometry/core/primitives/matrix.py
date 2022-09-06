@@ -43,7 +43,7 @@ class Matrix(np.ndarray):
         """Provides the inverse of the matrix."""
         det = np.linalg.det(self)
         if det <= 0:
-            raise ValueError("The determinant of the matrix is zero, cannot be inversed.")
+            raise ValueError("The matrix cannot be inversed because its determinant is zero.")
         return np.linalg.inv(self)
 
     def __mul__(self, other: "Matrix") -> "Matrix":
