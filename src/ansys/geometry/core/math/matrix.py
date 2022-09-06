@@ -53,7 +53,7 @@ class Matrix(np.ndarray):
             raise ValueError(
                 f"The matrices dimensions {self.shape[1]} and {other.shape[0]} are not multipliable."  # noqa : E501
             )
-        return np.matmul(self, other)
+        return Matrix(np.matmul(self, other))
 
     def __eq__(self, other: "Matrix") -> bool:
         """Equals operator for ``Matrix``."""
