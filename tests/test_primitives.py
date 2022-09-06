@@ -6,6 +6,7 @@ import pytest
 from ansys.geometry.core import UNITS
 from ansys.geometry.core.primitives import (
     Cylinder,
+    Matrix,
     Matrix33,
     Matrix44,
     Point2D,
@@ -545,6 +546,23 @@ def test_cylinder_units():
     c_1.unit = UNITS.cm
     assert c_1.radius == 10
     assert c_1.height == 20
+
+
+def test_matrix():
+    # Create two matrix objects
+    m_1 = Matrix([[2, 0, 0, 5], [0, 3, 0, 8], [0, 0, 4, 10]])
+    m_1_copy = Matrix([[2, 0, 0, 5], [0, 3, 0, 8], [0, 0, 4, 10]])
+    m_2 = Matrix([[3, 2, 0], [1, 3, 0], [0, 6, 4]])
+
+    test_matrix = np.array([[2, 0, 0, 5], [0, 3, 0, 8], [0, 0, 4, 10]])
+    m_3 = m_1.inverse()
+    test_inverse = np.linalg.inv(test_matrix)
+    assert abs(m_3 - test_inverse).all() <= DOUBLE_EPS
+
+    det = m_1.determinant()
+    # Check that the equals operator
+    assert m_1 == m_1_copy
+    assert m_1 != m_2
 
 
 def test_matrix_33():
