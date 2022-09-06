@@ -466,12 +466,13 @@ def test_cylinder():
     assert c_1.radius == 100
     assert c_1.height == 200
 
+    c_1.origin = Point3D([42, 88, 99])
     c_1.radius = 1000
     c_1.height = 2000
 
-    assert c_1.origin.x == origin.x
-    assert c_1.origin.y == origin.y
-    assert c_1.origin.z == origin.z
+    assert c_1.origin.x == 42
+    assert c_1.origin.y == 88
+    assert c_1.origin.z == 99
     assert c_1.radius == 1000
     assert c_1.height == 2000
 
@@ -567,12 +568,17 @@ def test_sphere():
     assert s_1.origin.z == origin.z
     assert s_1.radius == 100
 
+    s_1.origin = Point3D([42, 88, 99])
     s_1.radius = 1000
 
-    assert s_1.origin.x == origin.x
-    assert s_1.origin.y == origin.y
-    assert s_1.origin.z == origin.z
+    assert s_1.origin.x == 42
+    assert s_1.origin.y == 88
+    assert s_1.origin.z == 99
     assert s_1.radius == 1000
+
+    s_2.origin = Point3D([42, 88, 99])
+    s_2.radius = 1000
+    assert s_1 == s_2
 
     with pytest.raises(
         TypeError,
@@ -644,12 +650,13 @@ def test_cone():
     assert c_1.radius == 100
     assert c_1.half_angle == 0.78539816
 
+    c_1.origin = Point3D([42, 88, 99])
     c_1.radius = 1000
     c_1.half_angle = 0.78539816
 
-    assert c_1.origin.x == origin.x
-    assert c_1.origin.y == origin.y
-    assert c_1.origin.z == origin.z
+    assert c_1.origin.x == 42
+    assert c_1.origin.y == 88
+    assert c_1.origin.z == 99
     assert c_1.radius == 1000
     assert c_1.half_angle == 0.78539816
 

@@ -1,6 +1,7 @@
 """``Cone`` class module."""
 
 
+import math
 from typing import Optional
 
 from pint import Unit
@@ -13,7 +14,7 @@ from ansys.geometry.core.misc import (
     check_type_equivalence,
 )
 from ansys.geometry.core.primitives.point import Point3D
-from ansys.geometry.core.primitives.vector import UnitVector3D
+from ansys.geometry.core.primitives.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.typing import Real
 
 
@@ -29,10 +30,10 @@ class Cone:
         X-plane direction.
     direction_y: UnitVector3D
         Y-plane direction.
-    radius: float
+    radius: Real
         Radius of ``Cone``.
-    half_angle: float
-        Angle determine upward angle of ``Cone``.
+    half_angle: Real
+        Half angle of the apex, determining the upward angle.
     length_unit : Unit, optional
         Units employed to define the radius, by default ``UNIT_LENGTH``.
     angle_unit : Unit, optional
@@ -50,6 +51,9 @@ class Cone:
         angle_unit: Optional[Unit] = UNIT_ANGLE,
     ):
         """Constructor method for ``Cone``."""
+
+        if not isinstance(origin, Point3D):
+            raise TypeError(f"origin is invalid, type {Point3D} expected.")
 
         if not isinstance(direction_x, UnitVector3D):
             raise TypeError(f"direction_x is invalid, type {UnitVector3D} expected.")
@@ -85,6 +89,12 @@ class Cone:
         """Origin of the ``Cone``."""
         return self._origin
 
+    @origin.setter
+    def origin(self, origin: Point3D) -> None:
+        if not isinstance(origin, Point3D):
+            raise TypeError(f"origin is invalid, type {Point3D} expected.")
+        self._origin = origin
+
     @property
     def radius(self) -> Real:
         """Radius of the ``Cone``."""
@@ -92,41 +102,37 @@ class Cone:
 
     @radius.setter
     def radius(self, radius: Real) -> None:
-        """Set the Radius of the ``Cone``."""
         check_is_float_int(radius, "radius")
         self._radius = UNITS.convert(radius, self._length_unit, self._base_length_unit)
 
     @property
     def half_angle(self) -> Real:
-        """Half Angle of the ``Cone``."""
+        """Half angle of the apex."""
         return UNITS.convert(self._half_angle, self._base_angle_unit, self._angle_unit)
 
     @half_angle.setter
     def half_angle(self, half_angle: Real) -> None:
-        """Set the Half Angle of the ``Cone``."""
         check_is_float_int(half_angle, "half_angle")
         self._half_angle = UNITS.convert(half_angle, self._angle_unit, self._base_angle_unit)
 
     @property
     def length_unit(self) -> Unit:
-        """Unit of the Radius."""
+        """Unit of the radius."""
         return self._length_unit
 
     @length_unit.setter
     def length_unit(self, length_unit: Unit) -> None:
-        """Sets the unit of the object."""
         check_is_pint_unit(length_unit, "length_unit")
         check_pint_unit_compatibility(length_unit, UNIT_LENGTH)
         self._length_unit = length_unit
 
     @property
     def angle_unit(self) -> Unit:
-        """Unit of the Half Radius."""
+        """Unit of the angle."""
         return self._angle_unit
 
     @angle_unit.setter
     def angle_unit(self, angle_unit: Unit) -> None:
-        """Sets the unit of the object."""
         check_is_pint_unit(angle_unit, "angle_unit")
         check_pint_unit_compatibility(angle_unit, UNIT_ANGLE)
         self._angle_unit = angle_unit
@@ -142,6 +148,11 @@ class Cone:
             and self._direction_x == other._direction_x
             and self._direction_y == other._direction_y
         )
+
+    @classmethod
+    def calculate_apex(origin: Point3D, radius: Real, half_angle: Real, direction_z: Vector3D):
+        apex_parameter = -abs(radius) / math.tan(half_angle)
+        return origin + apex_parameter * direction_z
 
     def __ne__(self, other) -> bool:
         """Not equals operator for ``Cone``."""

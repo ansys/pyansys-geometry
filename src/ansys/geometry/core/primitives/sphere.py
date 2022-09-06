@@ -24,7 +24,7 @@ class Sphere:
     ----------
     origin : Point3D
         Centered origin of the ``Sphere``.
-    radius: float
+    radius: Real
         Radius of ``Sphere``.
     unit : Unit, optional
         Units employed to define the radius and height, by default ``UNIT_LENGTH``.
@@ -37,6 +37,9 @@ class Sphere:
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Constructor method for ``Sphere``."""
+
+        if not isinstance(origin, Point3D):
+            raise TypeError(f"origin is invalid, type {Point3D} expected.")
 
         check_is_float_int(radius, "radius")
 
@@ -56,6 +59,12 @@ class Sphere:
         """Origin of the ``Sphere``."""
         return self._origin
 
+    @origin.setter
+    def origin(self, origin: Point3D) -> None:
+        if not isinstance(origin, Point3D):
+            raise TypeError(f"origin is invalid, type {Point3D} expected.")
+        self._origin = origin
+
     @property
     def radius(self) -> Real:
         """Radius of the ``Sphere``."""
@@ -63,7 +72,6 @@ class Sphere:
 
     @radius.setter
     def radius(self, radius: Real) -> None:
-        """Set the Radius of the ``Sphere``."""
         check_is_float_int(radius, "radius")
         self._radius = UNITS.convert(radius, self._unit, self._base_unit)
 
@@ -74,7 +82,6 @@ class Sphere:
 
     @unit.setter
     def unit(self, unit: Unit) -> None:
-        """Sets the unit of the object."""
         check_is_pint_unit(unit, "unit")
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit

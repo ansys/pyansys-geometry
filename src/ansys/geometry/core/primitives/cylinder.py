@@ -48,6 +48,9 @@ class Cylinder:
     ):
         """Constructor method for ``Cylinder``."""
 
+        if not isinstance(origin, Point3D):
+            raise TypeError(f"origin is invalid, type {Point3D} expected.")
+
         if not isinstance(direction_x, UnitVector3D):
             raise TypeError(f"direction_x is invalid, type {UnitVector3D} expected.")
 
@@ -75,6 +78,12 @@ class Cylinder:
     def origin(self) -> Point3D:
         """Origin of the ``Cylinder``."""
         return self._origin
+
+    @origin.setter
+    def origin(self, origin: Point3D) -> None:
+        if not isinstance(origin, Point3D):
+            raise TypeError(f"origin is invalid, type {Point3D} expected.")
+        self._origin = origin
 
     @property
     def radius(self) -> Real:

@@ -29,9 +29,9 @@ class Torus:
         X-plane direction.
     direction_y: UnitVector3D
         Y-plane direction.
-    semi_major_radius: float
+    semi_major_radius: Real
         Major radius of ``Torus``.
-    semi_minor_radius: float
+    semi_minor_radius: Real
         Minor radius of ``Torus``.
     unit : Unit, optional
         Units employed to define the radius and minor_radius, by default ``UNIT_LENGTH``.
@@ -47,6 +47,9 @@ class Torus:
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Constructor method for ``Torus``."""
+
+        if not isinstance(origin, Point3D):
+            raise TypeError(f"origin is invalid, type {Point3D} expected.")
 
         if not isinstance(direction_x, UnitVector3D):
             raise TypeError(f"direction_x is invalid, type {UnitVector3D} expected.")
@@ -76,36 +79,39 @@ class Torus:
         """Origin of the ``Torus``."""
         return self._origin
 
+    @origin.setter
+    def origin(self, origin: Point3D) -> None:
+        if not isinstance(origin, Point3D):
+            raise TypeError(f"origin is invalid, type {Point3D} expected.")
+        self._origin = origin
+
     @property
     def semi_major_radius(self) -> Real:
-        """Semi-major Radius of the ``Torus``."""
+        """Semi-major radius of the ``Torus``."""
         return UNITS.convert(self._semi_major_radius, self._base_unit, self._unit)
 
     @semi_major_radius.setter
     def semi_major_radius(self, semi_major_radius: Real) -> None:
-        """Set the Semi-major Radius of the ``Torus``."""
         check_is_float_int(semi_major_radius, "semi_major_radius")
         self._semi_major_radius = UNITS.convert(semi_major_radius, self._unit, self._base_unit)
 
     @property
     def semi_minor_radius(self) -> Real:
-        """Semi-minor Radius of the ``Torus``."""
+        """Semi-minor radius of the ``Torus``."""
         return UNITS.convert(self._semi_minor_radius, self._base_unit, self._unit)
 
     @semi_minor_radius.setter
     def semi_minor_radius(self, semi_minor_radius: Real) -> None:
-        """Set the Semi-minor Radius of the ``Torus``."""
         check_is_float_int(semi_minor_radius, "semi_minor_radius")
         self._semi_minor_radius = UNITS.convert(semi_minor_radius, self._unit, self._base_unit)
 
     @property
     def unit(self) -> Unit:
-        """Unit of the Semi-major Radius and Semi-minor Radius."""
+        """Unit of the semi-major radius and semi-minor radius."""
         return self._unit
 
     @unit.setter
     def unit(self, unit: Unit) -> None:
-        """Sets the unit of the object."""
         check_is_pint_unit(unit, "unit")
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit
