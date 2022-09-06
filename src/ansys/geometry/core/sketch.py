@@ -1,5 +1,6 @@
 """``Sketch`` class module."""
 
+import numpy as np
 
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
@@ -16,9 +17,9 @@ class Sketch:
     """
 
     def __init__(
-        origin: Point3D([0, 0, 0]),
-        dir_1: UnitVector3D([1, 0, 0]),
-        dir_2: UnitVector3D([0, 1, 0]),
+        origin: Point3D = Point3D([0, 0, 0]),
+        dir_1: UnitVector3D = UnitVector3D([1, 0, 0]),
+        dir_2: UnitVector3D = UnitVector3D([0, 1, 0]),
     ):
         """Constructor method for ``Sketch``."""
         # TODO: assign a reference frame to the base shape
@@ -27,7 +28,7 @@ class Sketch:
         # self._origin = self._frame.origin
 
         # TODO: deprecate in favor of reference frame
-        if np.all(np.cross(a, a)) == 0:
+        if np.all(dir_1.cross(dir_2)) == 0:
             raise ValueError("Reference vectors must be linearly independent.")
         self._i, self._j = dir_1.normalize(), dir_2.normalize()
         self._k = self.i.cross(self._j)
