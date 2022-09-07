@@ -81,7 +81,7 @@ def test_create_polygon():
     square = sketch.draw_polygon(radius, sides, origin)
 
     # Check attributes are expected ones
-    side_length = 2 * radius * np.tan(180 / sides)  # 2.0 m
+    side_length = 2 * radius * np.tan(np.pi / sides)  # 2.0 m
     assert_allclose(square.r, radius)
     assert square.n == 4
     assert_allclose(square.length, side_length)
@@ -89,9 +89,9 @@ def test_create_polygon():
     assert_allclose(square.area, 4.0 * u.m**2)
 
     # Check points are expected ones
-    five_local_points = [
+    local_vertices = [
         [1.41421356, 0, -1.4142135, 0, 1.4142135],
         [0, 1.41421356, 0, -1.41421356, 0],
         [0, 0, 0, 0, 0],
     ]
-    assert_allclose(square.local_points(num_points=5), five_local_points, atol=1e-5, rtol=1e-7)
+    assert_allclose(square.local_points(), local_vertices, atol=1e-5, rtol=1e-7)
