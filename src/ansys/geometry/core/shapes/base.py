@@ -15,7 +15,7 @@ from ansys.geometry.core.typing import Real
 
 
 class BaseShape:
-    """Provides mother class for modeling base shape objects.
+    """Provides base class for modeling shapes.
 
     Parameters
     ----------

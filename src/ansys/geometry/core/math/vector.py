@@ -411,7 +411,7 @@ class QuantityVector2D(Vector2D):
 
     @property
     def base_unit(self) -> Unit:
-        """Returns the base unit of the ``QuantityVector3D``."""
+        """Returns the base unit of the ``QuantityVector2D``."""
         return self._base_unit
 
     @unit.setter
