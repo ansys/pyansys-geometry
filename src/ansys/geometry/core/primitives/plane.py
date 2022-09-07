@@ -49,4 +49,4 @@ class Plane:
 
     def __ne__(self, other) -> bool:
         """Not equals operator for ``Plane``."""
-        return not self.__eq__(other)
+        return not self == other
