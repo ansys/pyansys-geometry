@@ -325,6 +325,7 @@ def test_check_is_unitvector():
     check_is_unitvector(UnitVector2D([1, 2]))
     check_is_unitvector(UnitVector3D([1, 2, 3]))
 
+
 def test_check_ndarray_is_non_zero():
     # Create several arrays
     arr_strs = np.asarray(["a", "b", "c"])
@@ -340,7 +341,7 @@ def test_check_ndarray_is_non_zero():
     with pytest.raises(
         ValueError, match="The numpy.ndarray 'arr_1d' should not be a zeroes numpy.ndarray."
     ):
-        check_ndarray_is_non_zero(arr_1d, 'arr_1d')
+        check_ndarray_is_non_zero(arr_1d, "arr_1d")
 
     with pytest.raises(
         ValueError, match="The numpy.ndarray provided should not be a zeroes numpy.ndarray."
@@ -350,6 +351,7 @@ def test_check_ndarray_is_non_zero():
     # This raises no error
     check_ndarray_is_non_zero(arr_num)
     check_ndarray_is_non_zero(arr_strs)
+
 
 def test_check_ndarray_is_not_none():
     # Create several arrays
@@ -366,7 +368,7 @@ def test_check_ndarray_is_not_none():
     with pytest.raises(
         ValueError, match="The numpy.ndarray 'arr_1d' should not be a None numpy.ndarray."
     ):
-        check_ndarray_is_not_none(arr_1d, 'arr_1d')
+        check_ndarray_is_not_none(arr_1d, "arr_1d")
 
     with pytest.raises(
         ValueError, match="The numpy.ndarray provided should not be a None numpy.ndarray."
