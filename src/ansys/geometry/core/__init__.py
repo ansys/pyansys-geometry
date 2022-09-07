@@ -9,7 +9,7 @@ A Python wrapper for Ansys Geometry Service.
 
 try:
     import importlib.metadata as importlib_metadata
-except ModuleNotFoundError:
+except ModuleNotFoundError:  # pragma: no cover
     import importlib_metadata
 
 __version__ = importlib_metadata.version(__name__.replace(".", "-"))
@@ -24,4 +24,7 @@ UNITS = UnitRegistry()
 """Unit manager."""
 
 UNIT_LENGTH = UNITS.meter
-"""Default unit length for PyGeometry."""
+"""Default length unit for PyGeometry."""
+
+UNIT_ANGLE = UNITS.radian
+"""Default angle unit for PyGeometry."""
