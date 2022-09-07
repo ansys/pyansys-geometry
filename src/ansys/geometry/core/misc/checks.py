@@ -126,6 +126,38 @@ def check_is_unitvector(
         )
 
 
+def check_is_quantityvector(
+    param: object, param_name: Optional[Union[str, None]] = None, only_3d: bool = False
+) -> None:
+    """
+    Checks if the parameter provided is a ``QuantityVector3D`` or ``QuantityVector2D``.
+
+    Parameters
+    ----------
+    param : object
+        Object instance to be checked.
+    param_name : str or None, optional
+        The object instance name (if any). By default, ``None``.
+    only_3d : bool
+        Only consider ``UnitVector3D`` for checking.
+
+    Raises
+    ------
+    TypeError
+        In case the parameter is not a ``QuantityVector3D`` or a ``QuantityVector2D``.
+    """
+    from ansys.geometry.core.math.vector import QuantityVector2D, QuantityVector3D
+
+    consider = (QuantityVector3D) if only_3d else (QuantityVector2D, QuantityVector3D)
+    quantity_vector_type = "QuantityVector3D" if only_3d else "QuantityVector3D or QuantityVector2D"
+    if not isinstance(param, consider):
+        raise TypeError(
+            f"The parameter provided should be a {quantity_vector_type} object."
+            if param_name is None
+            else f"The parameter '{param_name}' should be a {quantity_vector_type} object."
+        )
+
+
 def check_ndarray_is_float_int(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
@@ -171,7 +203,7 @@ def check_ndarray_is_not_none(
 
     Raises
     ------
-    TypeError
+    ValueError
         In case the :class:`numpy.ndarray` is None-valued.
     """
     if all(value is None for value in param):
@@ -197,7 +229,7 @@ def check_ndarray_is_non_zero(
 
     Raises
     ------
-    TypeError
+    ValueError
         In case the :class:`numpy.ndarray` is zero-valued.
     """
     if all(value == 0 for value in param):
