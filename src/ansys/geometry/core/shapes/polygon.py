@@ -6,7 +6,6 @@ import numpy as np
 
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
-from ansys.geometry.core.misc.checks import check_is_float_int
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.typing import Real
 
@@ -45,7 +44,6 @@ class PolygonShape(BaseShape):
         # Verify that the radius is a real positive value
         if radius <= 0:
             raise ValueError("Radius must be a real positive value.")
-        check_is_float_int(radius, "radius")
         self._radius = radius
         # Verify that the number of sides is valid with preferred range
         if sides < 3 or sides > 64:
@@ -114,12 +112,12 @@ class PolygonShape(BaseShape):
 
     @property
     def outer_radius(self) -> Real:
-        """The outer_radius of the polygon.
+        """The outer radius of the polygon.
 
         Returns
         -------
         int
-            The outer_radius of the polygon.
+            The outer radius of the polygon.
 
         """
         return self.r / np.cos(np.pi / self.n)
@@ -149,19 +147,14 @@ class PolygonShape(BaseShape):
         return (self.r * self.perimeter) / 2
 
     def local_points(self) -> List[Point3D]:
-        """Returns a list containing all the points belonging to the shape.
+        """Returns a list containing all the vertices of the polygon.
 
-        Points are given in the local space.
-
-        Parameters
-        ----------
-        num_points : int
-            Desired number of points belonging to the shape.
+        vertex points are given in the local space.
 
         Returns
         -------
         list[Point3D]
-            A list of points representing the shape.
+            A list of vertices representing the shape.
 
         """
         theta = np.linspace(0, 2 * np.pi, self.n + 1)
