@@ -1,5 +1,5 @@
 """``CircleShape`` class module."""
-from typing import Optional
+from typing import List, Optional
 
 import numpy as np
 
@@ -110,7 +110,7 @@ class CircleShape(BaseShape):
         """
         return np.pi * self.r**2
 
-    def local_points(self, num_points: Optional[int] = 100) -> list[Point3D]:
+    def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
         """Returns a list containing all the points belonging to the shape.
 
         Points are given in the local space.

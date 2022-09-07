@@ -1,5 +1,5 @@
 """A module containing a class for modeling ellipses."""
-from typing import Optional
+from typing import List, Optional
 
 import numpy as np
 from scipy.integrate import quad
@@ -205,7 +205,7 @@ class EllipseShape(BaseShape):
         """
         return np.pi * self.a * self.b
 
-    def local_points(self, num_points: Optional[int] = 100) -> list[Point3D]:
+    def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
         """Returns al list containing all the points belonging to the shape.
 
         Parameters
@@ -215,7 +215,7 @@ class EllipseShape(BaseShape):
 
         Returns
         -------
-        list[Point3D]
+        List[Point3D]
             A list of points representing the shape.
 
         """
