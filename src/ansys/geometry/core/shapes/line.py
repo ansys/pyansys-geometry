@@ -1,5 +1,9 @@
 """``LineShape`` class module."""
 
+from typing import List, Optional
+
+import numpy as np
+
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 
@@ -68,7 +72,7 @@ class LineShape:
         """
         return (self.end_point - self.start_point).normalize()
 
-    def local_points(self, num_points=100) -> list[Point3D]:
+    def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
         """Returns al list containing all the points belonging to the shape.
 
         Parameters
@@ -78,7 +82,7 @@ class LineShape:
 
         Returns
         -------
-        list[Point3D]
+        List[Point3D]
             A list of points representing the shape.
 
         """
