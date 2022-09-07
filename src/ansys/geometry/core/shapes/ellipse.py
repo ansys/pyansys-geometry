@@ -18,8 +18,8 @@ class EllipseShape(BaseShape):
         a: Real,
         b: Real,
         origin: Point3D,
-        dir_1: UnitVector3D([1, 0, 0]),
-        dir_2: UnitVector3D([0, 1, 0]),
+        dir_1: Optional[UnitVector3D] = UnitVector3D([1, 0, 0]),
+        dir_2: Optional[UnitVector3D] = UnitVector3D([0, 1, 0]),
     ):
         """Initializes the ellipse shape.
 
@@ -31,13 +31,14 @@ class EllipseShape(BaseShape):
             The semi-minor axis of the ellipse.
         origin : Point3D
             A :class:`Point3D` representing the origin of the shape.
-        dir_1 : UnitVector3D
+        dir_1 : Optional[UnitVector3D]
             A :class:`UnitVector3D` representing the first fundamental direction
             of the reference plane where the shape is contained.
-        dir_2 : UnitVector3D
+            By default, [1, 0, 0].
+        dir_2 : Optional[UnitVector3D]
             A :class:`UnitVector3D` representing the second fundamental direction
             of the reference plane where the shape is contained.
-
+            By default, [0, 1, 0].
         """
         super().__init__(origin, dir_1, dir_2, is_closed=True)
         self._semi_major_axis = a
@@ -51,7 +52,6 @@ class EllipseShape(BaseShape):
         -------
         Real
             Semi-major axis of the ellipse.
-
         """
         return self._semi_major_axis
 
@@ -63,7 +63,6 @@ class EllipseShape(BaseShape):
         -------
         Real
             Semi-major axis of the ellipse.
-
         """
         return self.semi_major_axis
 
@@ -75,7 +74,6 @@ class EllipseShape(BaseShape):
         -------
         Real
             Semi-minor axis of the ellipse.
-
         """
         return self._semi_minor_axis
 
@@ -87,7 +85,6 @@ class EllipseShape(BaseShape):
         -------
         Real
             Semi-minor axis of the ellipse.
-
         """
         return self.semi_minor_axis
 
@@ -99,7 +96,6 @@ class EllipseShape(BaseShape):
         -------
         Real
             Eccentricity of the ellipse.
-
         """
         ecc = (self.a**2 - self.b**2) ** 0.5 / self.a
         if ecc == 1:
@@ -116,7 +112,6 @@ class EllipseShape(BaseShape):
         -------
         Real
             Eccentricity of the ellipse.
-
         """
         return self.eccentricity
 
@@ -132,7 +127,6 @@ class EllipseShape(BaseShape):
         Notes
         -----
         The linear eccentricity is the distance from the center to the focus.
-
         """
         return (self.a**2 - self.b**2) ** 0.5
 
@@ -148,7 +142,6 @@ class EllipseShape(BaseShape):
         Notes
         -----
         The linear eccentricity is the distance from the center to the focus.
-
         """
         return self.linear_eccentricity
 
@@ -160,7 +153,6 @@ class EllipseShape(BaseShape):
         -------
         Real
             Semi-latus rectum of the ellipse.
-
         """
         return self.b**2 / self.a
 
@@ -172,7 +164,6 @@ class EllipseShape(BaseShape):
         -------
         Real
             Semi-latus rectum of the ellipse.
-
         """
         return self.semi_latus_rectum
 
@@ -184,7 +175,6 @@ class EllipseShape(BaseShape):
         -------
         Real
             The perimeter of the ellipse.
-
         """
 
         def integrand(theta, ecc):
@@ -201,12 +191,11 @@ class EllipseShape(BaseShape):
         -------
         Real
             The area of the ellipse.
-
         """
         return np.pi * self.a * self.b
 
     def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
-        """Returns al list containing all the points belonging to the shape.
+        """Returns a list containing all the points belonging to the shape.
 
         Parameters
         ----------
@@ -217,7 +206,6 @@ class EllipseShape(BaseShape):
         -------
         List[Point3D]
             A list of points representing the shape.
-
         """
         theta = np.linspace(0, 2 * np.pi, num_points)
         x_local = self.a * np.cos(theta)
@@ -242,20 +230,22 @@ class EllipseShape(BaseShape):
             The semi-major axis of the ellipse.
         b : Real
             The semi-minor axis of the ellipse.
-        origin : Point3D
+        origin : Optional[Point3D]
             A :class:`Point3D` representing the origin of the ellipse.
-        dir_1 : UnitVector3D
+            By default, [0, 0, 0].
+        dir_1 : Optional[UnitVector3D]
             A :class:`UnitVector3D` representing the first fundamental direction
             of the reference plane where the shape is contained.
-        dir_2 : UnitVector3D
+            By default, [1, 0, 0].
+        dir_2 : Optional[UnitVector3D]
             A :class:`UnitVector3D` representing the second fundamental direction
             of the reference plane where the shape is contained.
+            By default, [0, 1, 0].
 
         Returns
         -------
         EllipseShape
             An object for modelling elliptical shapes.
-
         """
         # Ensure that the semi-major axis is equal or larger than the minor one
         if a < b:

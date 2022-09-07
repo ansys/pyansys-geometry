@@ -13,8 +13,8 @@ class BaseShape:
     def __init__(
         self,
         origin: Point3D,
-        dir_1: UnitVector3D([1, 0, 0]),
-        dir_2: UnitVector3D([0, 1, 0]),
+        dir_1: Optional[UnitVector3D] = UnitVector3D([1, 0, 0]),
+        dir_2: Optional[UnitVector3D] = UnitVector3D([0, 1, 0]),
         is_closed: Optional[bool] = False,
     ):
         """Initializes the base shape.
@@ -23,14 +23,17 @@ class BaseShape:
         ----------
         origin : Point3D
             A :class:`Point3D` representing the origin of the shape.
-        dir_1 : UnitVector3D
-            A :class:`Vector3D` representing the first fundamental direction
+        dir_1 : Optional[UnitVector3D]
+            A :class:`UnitVector3D` representing the first fundamental direction
             of the reference plane where the shape is contained.
-        dir_2 : UnitVector3D
-            A :class:`Vector3D` representing the second fundamental direction
+            By default, [1, 0, 0].
+        dir_2 : Optional[UnitVector3D]
+            A :class:`UnitVector3D` representing the second fundamental direction
             of the reference plane where the shape is contained.
+            By default, [0, 1, 0].
         is_closed: Optional[bool]
             A boolean variable to define whether the shape is open or closed.
+            By default, ``False``.
 
         """
         # TODO: assign a reference frame to the base shape
@@ -47,6 +50,9 @@ class BaseShape:
         self._k = self.i.cross(self._j)
         self._origin = origin
         self._is_closed = is_closed
+        
+        # UnitVectors are already immutable, but Points not. Fix them.
+        self._origin.setflags(write=False)
 
     @property
     def i(self) -> UnitVector3D:

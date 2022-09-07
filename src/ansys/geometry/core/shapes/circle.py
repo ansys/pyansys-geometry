@@ -16,8 +16,8 @@ class CircleShape(BaseShape):
         self,
         radius: Real,
         origin: Point3D,
-        dir_1: UnitVector3D([1, 0, 0]),
-        dir_2: UnitVector3D([0, 1, 0]),
+        dir_1: Optional[UnitVector3D] = UnitVector3D([1, 0, 0]),
+        dir_2: Optional[UnitVector3D] = UnitVector3D([0, 1, 0]),
     ):
         """Initializes the circle shape.
 
@@ -30,10 +30,11 @@ class CircleShape(BaseShape):
         dir_1 : UnitVector3D
             A :class:`UnitVector3D` representing the first fundamental direction
             of the reference plane where the shape is contained.
+            By default, [1, 0, 0].
         dir_2 : UnitVector3D
             A :class:`UnitVector3D` representing the second fundamental direction
             of the reference plane where the shape is contained.
-
+            By default, [0, 1, 0].
         """
         super().__init__(origin, dir_1, dir_2, is_closed=True)
         self._radius = radius
@@ -46,7 +47,6 @@ class CircleShape(BaseShape):
         -------
         Real
             The radius of the circle.
-
         """
         return self._radius
 
@@ -58,7 +58,6 @@ class CircleShape(BaseShape):
         -------
         Real
             The radius of the circle.
-
         """
         return self.radius
 
@@ -70,7 +69,6 @@ class CircleShape(BaseShape):
         -------
         Real
             The diameter of the circle.
-
         """
         return 2 * self.r
 
@@ -82,7 +80,6 @@ class CircleShape(BaseShape):
         -------
         Real
             The diameter of the circle.
-
         """
         return self.diameter
 
@@ -94,7 +91,6 @@ class CircleShape(BaseShape):
         -------
         Real
             The perimeter of the circle.
-
         """
         return 2 * np.pi * self.r
 
@@ -106,7 +102,6 @@ class CircleShape(BaseShape):
         -------
         Real
             The area of the circle.
-
         """
         return np.pi * self.r**2
 
@@ -124,7 +119,6 @@ class CircleShape(BaseShape):
         -------
         List[Point3D]
             A list of points representing the shape.
-
         """
         theta = np.linspace(0, 2 * np.pi, num_points)
         x_local = self.r * np.cos(theta)
@@ -148,18 +142,19 @@ class CircleShape(BaseShape):
             The radius of the circle.
         origin : Point3D
             A :class:`Point3D` representing the origin of the ellipse.
-        dir_1 : UnitVector3D
+        dir_1 : Optional[UnitVector3D]
             A :class:`UnitVector3D` representing the first fundamental direction
             of the reference plane where the shape is contained.
-        dir_2 : UnitVector3D
+            By default, [1, 0, 0].
+        dir_2 : Optional[UnitVector3D]
             A :class:`UnitVector3D` representing the second fundamental direction
             of the reference plane where the shape is contained.
+            By default, [0, 1, 0].
 
         Returns
         -------
         CircleShape
             An object for modelling circular shapes.
-
         """
         # Verify that the radius is a real positive value
         if radius <= 0:
