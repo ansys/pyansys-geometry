@@ -6,13 +6,13 @@ from typing import Optional
 from pint import Unit
 
 from ansys.geometry.core import UNIT_LENGTH, UNITS
+from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.misc import (
     check_is_float_int,
     check_is_pint_unit,
     check_pint_unit_compatibility,
     check_type_equivalence,
 )
-from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.typing import Real
 
 
