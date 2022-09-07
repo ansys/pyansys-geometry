@@ -13,8 +13,8 @@ from ansys.geometry.core.misc import (
     check_pint_unit_compatibility,
     check_type_equivalence,
 )
-from ansys.geometry.core.primitives.point import Point3D
-from ansys.geometry.core.primitives.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.typing import Real
 
 
@@ -52,6 +52,7 @@ class Cone:
     ):
         """Constructor method for ``Cone``."""
 
+        # TODO: use general checks in ansys.geometry.core.misc.checks module
         if not isinstance(origin, Point3D):
             raise TypeError(f"origin is invalid, type {Point3D} expected.")
 

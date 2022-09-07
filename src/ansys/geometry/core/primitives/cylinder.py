@@ -48,6 +48,7 @@ class Cylinder:
     ):
         """Constructor method for ``Cylinder``."""
 
+        # TODO: use general checks in ansys.geometry.core.misc.checks module
         if not isinstance(origin, Point3D):
             raise TypeError(f"origin is invalid, type {Point3D} expected.")
 
