@@ -41,13 +41,12 @@ class PolygonShape(BaseShape):
         """
         super().__init__(origin, dir_1, dir_2, is_closed=True)
 
-        # Verify that the radius is a real positive value
         if radius <= 0:
             raise ValueError("Radius must be a real positive value.")
         self._radius = radius
         # Verify that the number of sides is valid with preferred range
         if sides < 3 or sides > 64:
-            raise ValueError("The number of sides to construct polygon should between 3 and 64.")
+            raise ValueError("The number of sides to construct a polygon should between 3 and 64.")
         self._sides = sides
 
     @property
@@ -63,20 +62,8 @@ class PolygonShape(BaseShape):
         return self._radius
 
     @property
-    def r(self) -> Real:
-        """The inradius(apothem) of the polygon.
-
-        Returns
-        -------
-        Real
-            The inradius(apothem) of the polygon.
-
-        """
-        return self.radius
-
-    @property
-    def sides(self) -> int:
-        """The sides of the polygon.
+    def n_sides(self) -> int:
+        """The number of sides of the polygon.
 
         Returns
         -------
@@ -85,18 +72,6 @@ class PolygonShape(BaseShape):
 
         """
         return self._sides
-
-    @property
-    def n(self) -> int:
-        """The sides of the polygon.
-
-        Returns
-        -------
-        int
-            The sides of the polygon.
-
-        """
-        return self.sides
 
     @property
     def length(self) -> Real:
