@@ -206,5 +206,5 @@ class PolygonShape(BaseShape):
         if radius <= 0:
             raise ValueError("Radius must be a real positive value.")
 
-        # Generate all the point instances
+        # Generate the Polygon instance
         return cls(radius, sides, origin, dir_1, dir_2)
