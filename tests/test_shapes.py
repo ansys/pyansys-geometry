@@ -76,22 +76,6 @@ def test_create_line_no_sketch():
     assert line_2.direction == direction_x
     assert line_2.origin == origin
 
-    # Test line_3 - Modify the direction
-    direction_y = UnitVector3D([0, 1, 0])
-    direction_y_vector3D = Vector3D([0, 45, 0])  # Equivalent (as a UnitVector3D) to "direction_y"
-    line_3 = LineShape(origin=origin, direction=direction_x)
-    line_3.direction = direction_y_vector3D
-    assert line_3.direction == direction_y
-    assert line_3.origin == origin
-
-    # Test line_4 - Modify the origin
-    origin_4 = Point3D([3, 2, 1], unit=UNITS.mm)
-    line_4 = LineShape(origin=origin, direction=direction_x)
-    line_4.origin = origin_4
-    assert line_4.direction == direction_x
-    assert line_4.origin != origin
-    assert line_4.origin == origin_4
-
 
 def test_create_segment_no_sketch():
     """Simple test to create a ``Segment`` (w/o a Sketch object)."""
@@ -167,49 +151,9 @@ def test_create_segment_no_sketch():
     assert_allclose(segment_3.end.z, 0.09)
     assert segment_3.end.unit == UNIT_LENGTH
 
-    # Test segment_4 - Modify the origin
-    start_4 = Point3D([10, 20, 30], unit=UNITS.mm)
-    end_4 = Point3D([10, 50, 90], unit=UNITS.mm)
-    unit_vector_4 = UnitVector3D(end_4 - start_4)
-    new_start_4 = Point3D([-1, 2, 3], unit=UNITS.cm)
-    new_unit_vector_4 = UnitVector3D(end_4 - new_start_4)
-
-    segment_4 = SegmentShape(start_4, end_4)
-    assert segment_4.start == start_4
-    assert segment_4.end == end_4
-    assert segment_4.direction == unit_vector_4
-
-    segment_4.start = new_start_4
-    assert segment_4.start == new_start_4
-    assert segment_4.end == end_4
-    assert segment_4.direction == new_unit_vector_4
-
-    # Test segment_5 - Modify the end
-    start_5 = Point3D([10, 20, 30], unit=UNITS.mm)
-    end_5 = Point3D([10, 50, 90], unit=UNITS.mm)
-    unit_vector_5 = UnitVector3D(end_5 - start_5)
-    new_end_5 = Point3D([-1, 5, 9], unit=UNITS.cm)
-    new_unit_vector_5 = UnitVector3D(new_end_5 - start_5)
-
-    segment_5 = SegmentShape(start_5, end_5)
-    assert segment_5.start == start_5
-    assert segment_5.end == end_5
-    assert segment_5.direction == unit_vector_5
-
-    segment_5.end = new_end_5
-    assert segment_5.start == start_5
-    assert segment_5.end == new_end_5
-    assert segment_5.direction == new_unit_vector_5
-
 
 def test_errors_line():
     """Check errors when handling a ``Line``."""
-    with pytest.raises(TypeError, match="The parameter 'origin' should be a Point3D object."):
-        LineShape("a", "b")
-    with pytest.raises(
-        ValueError, match="The numpy.ndarray 'origin' should not be a None numpy.ndarray."
-    ):
-        LineShape(Point3D(), "b")
     with pytest.raises(TypeError, match="The parameter 'direction' should be a Vector3D object."):
         LineShape(Point3D([10, 20, 30], unit=UNITS.meter), "b")
     with pytest.raises(
@@ -217,22 +161,12 @@ def test_errors_line():
     ):
         LineShape(Point3D([10, 20, 30], unit=UNITS.meter), Vector3D([0, 0, 0]))
 
-    # Now create a line and test the setters
-    origin = Point3D([1, 2, 3], unit=UNITS.mm)
-    direction_x = UnitVector3D([1, 0, 0])
-    line = LineShape(origin=origin, direction=direction_x)
     with pytest.raises(TypeError, match="The parameter 'origin' should be a Point3D object."):
-        line.origin = "a"
+        LineShape("a", Vector3D([1, 0, 0]))
     with pytest.raises(
         ValueError, match="The numpy.ndarray 'origin' should not be a None numpy.ndarray."
     ):
-        line.origin = Point3D()
-    with pytest.raises(TypeError, match="The parameter 'direction' should be a Vector3D object."):
-        line.direction = "b"
-    with pytest.raises(
-        ValueError, match="The numpy.ndarray 'direction' should not be a zeroes numpy.ndarray."
-    ):
-        line.direction = Vector3D([0, 0, 0])
+        LineShape(Point3D(), Vector3D([1, 0, 0]))
 
 
 def test_errors_segment():
@@ -254,45 +188,3 @@ def test_errors_segment():
         match="Parameters 'origin' and 'end' have the same values. No segment can be created.",
     ):
         SegmentShape(Point3D([10, 20, 30]), Point3D([10, 20, 30]))
-
-    # Now create a segment and test the setters
-    start = Point3D([1, 2, 3], unit=UNITS.mm)
-    end = Point3D([1, 5, 9], unit=UNITS.mm)
-    segment = SegmentShape(start, end)
-
-    with pytest.raises(TypeError, match="The parameter 'origin' should be a Point3D object."):
-        segment.start = "a"
-    with pytest.raises(
-        ValueError, match="The numpy.ndarray 'origin' should not be a None numpy.ndarray."
-    ):
-        segment.start = Point3D()
-    with pytest.raises(TypeError, match="The parameter 'origin' should be a Point3D object."):
-        segment.origin = "a"
-    with pytest.raises(
-        ValueError, match="The numpy.ndarray 'origin' should not be a None numpy.ndarray."
-    ):
-        segment.origin = Point3D()
-    with pytest.raises(
-        ValueError,
-        match="Parameters 'origin' and 'end' have the same values. No segment can be created.",
-    ):
-        segment.start = segment.end
-    with pytest.raises(
-        ValueError,
-        match="Parameters 'origin' and 'end' have the same values. No segment can be created.",
-    ):
-        segment.origin = segment.end
-
-    with pytest.raises(TypeError, match="The parameter 'end' should be a Point3D object."):
-        segment.end = "b"
-    with pytest.raises(
-        ValueError, match="The numpy.ndarray 'end' should not be a None numpy.ndarray."
-    ):
-        segment.end = Point3D()
-    with pytest.raises(
-        ValueError,
-        match="Parameters 'origin' and 'end' have the same values. No segment can be created.",
-    ):
-        segment.end = segment.start
-    with pytest.raises(ValueError, match="Segment direction is unsettable."):
-        segment.direction = "a"
