@@ -98,7 +98,7 @@ def test_create_polygon():
     assert_allclose(square.local_points(), local_vertices, atol=1e-5, rtol=1e-7)
 
     with pytest.raises(
-        ValueError, match="The number of sides to construct polygon should between 3 and 64."
+        ValueError, match="The number of sides to construct a polygon should between 3 and 64."
     ):
         radius, sides, origin = 1 * u.m, 2, Point3D([0, 0, 0], u.m)
         sketch.draw_polygon(radius, sides, origin)
