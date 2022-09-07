@@ -63,10 +63,14 @@ def test_cylinder():
     ):
         c_1.height = "A"
 
-    with pytest.raises(TypeError, match=f"direction_x is invalid, type {UnitVector3D} expected."):
+    with pytest.raises(
+        TypeError, match=f"Provided type {str} is invalid, type {UnitVector3D} expected."
+    ):
         Cylinder(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
 
-    with pytest.raises(TypeError, match=f"direction_y is invalid, type {UnitVector3D} expected."):
+    with pytest.raises(
+        TypeError, match=f"Provided type {str} is invalid, type {UnitVector3D} expected."
+    ):
         Cylinder(origin, UnitVector3D([12, 31, 99]), "A", 100, 200)
 
 
@@ -247,10 +251,14 @@ def test_cone():
     ):
         c_1.half_angle = "A"
 
-    with pytest.raises(TypeError, match=f"direction_x is invalid, type {UnitVector3D} expected."):
+    with pytest.raises(
+        TypeError, match=f"Provided type {str} is invalid, type {UnitVector3D} expected."
+    ):
         Cone(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
 
-    with pytest.raises(TypeError, match=f"direction_y is invalid, type {UnitVector3D} expected."):
+    with pytest.raises(
+        TypeError, match=f"Provided type {str} is invalid, type {UnitVector3D} expected."
+    ):
         Cone(origin, UnitVector3D([12, 31, 99]), "A", 100, 200)
 
 
@@ -377,10 +385,14 @@ def test_torus():
     ):
         t_1.semi_minor_radius = "A"
 
-    with pytest.raises(TypeError, match=f"direction_x is invalid, type {UnitVector3D} expected."):
+    with pytest.raises(
+        TypeError, match=f"Provided type {str} is invalid, type {UnitVector3D} expected."
+    ):
         Torus(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
 
-    with pytest.raises(TypeError, match=f"direction_y is invalid, type {UnitVector3D} expected."):
+    with pytest.raises(
+        TypeError, match=f"Provided type {str} is invalid, type {UnitVector3D} expected."
+    ):
         Torus(origin, UnitVector3D([12, 31, 99]), "A", 100, 200)
 
 

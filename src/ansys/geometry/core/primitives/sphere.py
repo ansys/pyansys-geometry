@@ -11,6 +11,7 @@ from ansys.geometry.core.misc import (
     check_is_float_int,
     check_is_pint_unit,
     check_pint_unit_compatibility,
+    check_type,
     check_type_equivalence,
 )
 from ansys.geometry.core.typing import Real
@@ -38,9 +39,7 @@ class Sphere:
     ):
         """Constructor method for ``Sphere``."""
 
-        # TODO: use general checks in ansys.geometry.core.misc.checks module
-        if not isinstance(origin, Point3D):
-            raise TypeError(f"origin is invalid, type {Point3D} expected.")
+        check_type(origin, Point3D)
 
         check_is_float_int(radius, "radius")
 

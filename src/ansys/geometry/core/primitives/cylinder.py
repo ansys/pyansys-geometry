@@ -6,12 +6,12 @@ from typing import Optional
 from pint import Unit
 
 from ansys.geometry.core import UNIT_LENGTH, UNITS
-from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.misc import (
     check_is_float_int,
     check_is_pint_unit,
     check_pint_unit_compatibility,
+    check_type,
     check_type_equivalence,
 )
 from ansys.geometry.core.typing import Real
@@ -48,15 +48,9 @@ class Cylinder:
     ):
         """Constructor method for ``Cylinder``."""
 
-        # TODO: use general checks in ansys.geometry.core.misc.checks module
-        if not isinstance(origin, Point3D):
-            raise TypeError(f"origin is invalid, type {Point3D} expected.")
-
-        if not isinstance(direction_x, UnitVector3D):
-            raise TypeError(f"direction_x is invalid, type {UnitVector3D} expected.")
-
-        if not isinstance(direction_y, UnitVector3D):
-            raise TypeError(f"direction_y is invalid, type {UnitVector3D} expected.")
+        check_type(origin, Point3D)
+        check_type(direction_x, UnitVector3D)
+        check_type(direction_y, UnitVector3D)
 
         check_is_float_int(radius, "radius")
         check_is_float_int(height, "height")

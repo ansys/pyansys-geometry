@@ -125,3 +125,24 @@ def check_type_equivalence(input: object, expected: object) -> None:
 
     if not isinstance(input, type(expected)):
         raise TypeError(f"Provided type {type(input)} is invalid, type {type(expected)} expected.")
+
+
+def check_type(input: object, expected_type: type) -> None:
+    """
+    Checks if the input object provided is of the same class as the expected one.
+
+    Parameters
+    ----------
+    input : object
+        Input object for class type evaluation.
+    expected_type : type
+        Expected type.
+
+    Raises
+    ------
+    TypeError
+        In case object does not match expected type.
+    """
+
+    if not isinstance(input, expected_type):
+        raise TypeError(f"Provided type {type(input)} is invalid, type {expected_type} expected.")
