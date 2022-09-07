@@ -139,7 +139,7 @@ def check_is_quantityvector(
     param_name : str or None, optional
         The object instance name (if any). By default, ``None``.
     only_3d : bool
-        Only consider ``UnitVector3D`` for checking.
+        Only consider ``QuantityVector3D`` for checking.
 
     Raises
     ------
