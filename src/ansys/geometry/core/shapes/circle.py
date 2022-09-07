@@ -11,7 +11,7 @@ from ansys.geometry.core.typing import Real
 
 
 class CircleShape(BaseShape):
-    """A class for modelling circles.
+    """A class for modeling circles.
 
     Parameters
     ----------
@@ -156,7 +156,7 @@ class CircleShape(BaseShape):
         Returns
         -------
         CircleShape
-            An object for modelling circular shapes.
+            An object for modeling circular shapes.
         """
         # Verify that the radius is a real positive value
         if radius <= 0:
