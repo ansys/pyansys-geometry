@@ -23,3 +23,12 @@ __all__ = [
     "Vector2D",
     "Vector3D",
 ]
+
+UNIT_VECTOR_X = UnitVector3D([1, 0, 0])
+"""Unit vector in the cartesian traditional X direction. """
+
+UNIT_VECTOR_Y = UnitVector3D([0, 1, 0])
+"""Unit vector in the cartesian traditional Y direction. """
+
+UNIT_VECTOR_Z = UnitVector3D([0, 0, 1])
+"""Unit vector in the cartesian traditional Z direction. """
