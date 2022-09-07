@@ -3,6 +3,7 @@ from typing import List, Optional
 
 import numpy as np
 
+from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.shapes.base import BaseShape
@@ -10,33 +11,33 @@ from ansys.geometry.core.typing import Real
 
 
 class CircleShape(BaseShape):
-    """A class for modelling circles."""
+    """A class for modelling circles.
+
+    Parameters
+    ----------
+    radius : Real
+        The radius of the circle.
+    origin : Point3D
+        A :class:`Point3D` representing the origin of the shape.
+    dir_1 : Optional[UnitVector3D]
+        A :class:`UnitVector3D` representing the first fundamental direction
+        of the reference plane where the shape is contained.
+        By default, ``UNIT_VECTOR_X``.
+    dir_2 : Optional[UnitVector3D]
+        A :class:`UnitVector3D` representing the second fundamental direction
+        of the reference plane where the shape is contained.
+        By default, ``UNIT_VECTOR_Y``.
+    """
 
     def __init__(
         self,
         radius: Real,
         origin: Point3D,
-        dir_1: Optional[UnitVector3D] = UnitVector3D([1, 0, 0]),
-        dir_2: Optional[UnitVector3D] = UnitVector3D([0, 1, 0]),
+        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
     ):
-        """Initializes the circle shape.
-
-        Parameters
-        ----------
-        radius : Real
-            The radius of the circle.
-        origin : Point3D
-            A :class:`Point3D` representing the origin of the shape.
-        dir_1 : UnitVector3D
-            A :class:`UnitVector3D` representing the first fundamental direction
-            of the reference plane where the shape is contained.
-            By default, [1, 0, 0].
-        dir_2 : UnitVector3D
-            A :class:`UnitVector3D` representing the second fundamental direction
-            of the reference plane where the shape is contained.
-            By default, [0, 1, 0].
-        """
-        super().__init__(origin, dir_1, dir_2, is_closed=True)
+        """Initializes the circle shape."""
+        super().__init__(origin, dir_1=dir_1, dir_2=dir_2, is_closed=True)
         self._radius = radius
 
     @property
@@ -131,8 +132,8 @@ class CircleShape(BaseShape):
         cls,
         radius: Real,
         origin: Optional[Point3D] = Point3D([0, 0, 0]),
-        dir_1: Optional[UnitVector3D] = UnitVector3D([1, 0, 0]),
-        dir_2: Optional[UnitVector3D] = UnitVector3D([0, 1, 0]),
+        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
     ):
         """Create a circle from its origin and radius.
 
@@ -140,16 +141,17 @@ class CircleShape(BaseShape):
         ----------
         radius : Real
             The radius of the circle.
-        origin : Point3D
+        origin : Optional[Point3D]
             A :class:`Point3D` representing the origin of the ellipse.
+            By default, [0, 0, 0].
         dir_1 : Optional[UnitVector3D]
             A :class:`UnitVector3D` representing the first fundamental direction
             of the reference plane where the shape is contained.
-            By default, [1, 0, 0].
+            By default, ``UNIT_VECTOR_X``.
         dir_2 : Optional[UnitVector3D]
             A :class:`UnitVector3D` representing the second fundamental direction
             of the reference plane where the shape is contained.
-            By default, [0, 1, 0].
+            By default, ``UNIT_VECTOR_Y``.
 
         Returns
         -------
@@ -161,4 +163,4 @@ class CircleShape(BaseShape):
             raise ValueError("Radius must be a real positive value.")
 
         # Generate all the point instances
-        return cls(radius, origin, dir_1, dir_2)
+        return cls(radius, origin, dir_1=dir_1, dir_2=dir_2)

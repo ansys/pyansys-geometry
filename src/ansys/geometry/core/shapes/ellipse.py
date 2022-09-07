@@ -4,6 +4,7 @@ from typing import List, Optional
 import numpy as np
 from scipy.integrate import quad
 
+from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.shapes.base import BaseShape
@@ -11,36 +12,36 @@ from ansys.geometry.core.typing import Real
 
 
 class EllipseShape(BaseShape):
-    """A class for modelling ellipses."""
+    """A class for modelling ellipses.
+
+    Parameters
+    ----------
+    a : Real
+        The semi-major axis of the ellipse.
+    b : Real
+        The semi-minor axis of the ellipse.
+    origin : Point3D
+        A :class:`Point3D` representing the origin of the shape.
+    dir_1 : Optional[UnitVector3D]
+        A :class:`UnitVector3D` representing the first fundamental direction
+        of the reference plane where the shape is contained.
+        By default, ``UNIT_VECTOR_X``.
+    dir_2 : Optional[UnitVector3D]
+        A :class:`UnitVector3D` representing the second fundamental direction
+        of the reference plane where the shape is contained.
+        By default, ``UNIT_VECTOR_Y``.
+    """
 
     def __init__(
         self,
         a: Real,
         b: Real,
         origin: Point3D,
-        dir_1: Optional[UnitVector3D] = UnitVector3D([1, 0, 0]),
-        dir_2: Optional[UnitVector3D] = UnitVector3D([0, 1, 0]),
+        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
     ):
-        """Initializes the ellipse shape.
-
-        Parameters
-        ----------
-        a : Real
-            The semi-major axis of the ellipse.
-        b : Real
-            The semi-minor axis of the ellipse.
-        origin : Point3D
-            A :class:`Point3D` representing the origin of the shape.
-        dir_1 : Optional[UnitVector3D]
-            A :class:`UnitVector3D` representing the first fundamental direction
-            of the reference plane where the shape is contained.
-            By default, [1, 0, 0].
-        dir_2 : Optional[UnitVector3D]
-            A :class:`UnitVector3D` representing the second fundamental direction
-            of the reference plane where the shape is contained.
-            By default, [0, 1, 0].
-        """
-        super().__init__(origin, dir_1, dir_2, is_closed=True)
+        """Initializes the ellipse shape."""
+        super().__init__(origin, dir_1=dir_1, dir_2=dir_2, is_closed=True)
         self._semi_major_axis = a
         self._semi_minor_axis = b
 
@@ -219,8 +220,8 @@ class EllipseShape(BaseShape):
         a: Real,
         b: Real,
         origin: Optional[Point3D] = Point3D([0, 0, 0]),
-        dir_1: Optional[UnitVector3D] = UnitVector3D([1, 0, 0]),
-        dir_2: Optional[UnitVector3D] = UnitVector3D([0, 1, 0]),
+        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
     ):
         """Create an ellipse from its semi-major and semi-minor axes.
 
@@ -236,11 +237,11 @@ class EllipseShape(BaseShape):
         dir_1 : Optional[UnitVector3D]
             A :class:`UnitVector3D` representing the first fundamental direction
             of the reference plane where the shape is contained.
-            By default, [1, 0, 0].
+            By default, ``UNIT_VECTOR_X``.
         dir_2 : Optional[UnitVector3D]
             A :class:`UnitVector3D` representing the second fundamental direction
             of the reference plane where the shape is contained.
-            By default, [0, 1, 0].
+            By default, ``UNIT_VECTOR_Y``.
 
         Returns
         -------
@@ -250,4 +251,4 @@ class EllipseShape(BaseShape):
         # Ensure that the semi-major axis is equal or larger than the minor one
         if a < b:
             raise ValueError("Semi-major axis cannot be shorter than semi-minor axis.")
-        return cls(a, b, origin, dir_1, dir_2)
+        return cls(a, b, origin, dir_1=dir_1, dir_2=dir_2)
