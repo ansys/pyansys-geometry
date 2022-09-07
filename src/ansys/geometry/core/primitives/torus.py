@@ -1,14 +1,14 @@
 """``Torus`` class module."""
 
+from typing import List, Optional, Union
 
-from typing import Optional
-
+import numpy as np
 from pint import Unit
 
 from ansys.geometry.core import UNIT_LENGTH, UNITS
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc import (
     check_is_float_int,
     check_is_pint_unit,
@@ -16,7 +16,7 @@ from ansys.geometry.core.misc import (
     check_type,
     check_type_equivalence,
 )
-from ansys.geometry.core.typing import Real
+from ansys.geometry.core.typing import Real, RealSequence
 
 
 class Torus:
@@ -25,11 +25,11 @@ class Torus:
 
     Parameters
     ----------
-    origin : Point3D
+    origin : Union[~numpy.ndarray, RealSequence, Point3D],
         Centered origin of the ``Torus``.
-    direction_x: UnitVector3D
+    direction_x: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         X-plane direction.
-    direction_y: UnitVector3D
+    direction_y: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         Y-plane direction.
     semi_major_radius: Real
         Major radius of ``Torus``.
@@ -41,18 +41,18 @@ class Torus:
 
     def __init__(
         self,
-        origin: Point3D,
-        direction_x: UnitVector3D,
-        direction_y: UnitVector3D,
+        origin: Union[np.ndarray, RealSequence, Point3D],
+        direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D],
+        direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D],
         semi_major_radius: Real,
         semi_minor_radius: Real,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Constructor method for ``Torus``."""
 
-        check_type(origin, Point3D)
-        check_type(direction_x, UnitVector3D)
-        check_type(direction_y, UnitVector3D)
+        check_type(origin, (np.ndarray, List, Point3D))
+        check_type(direction_x, (np.ndarray, List, UnitVector3D, Vector3D))
+        check_type(direction_y, (np.ndarray, List, UnitVector3D, Vector3D))
 
         check_is_float_int(semi_major_radius, "semi_major_radius")
         check_is_float_int(semi_minor_radius, "semi_minor_radius")
@@ -63,9 +63,13 @@ class Torus:
         self._unit = unit
         _, self._base_unit = UNITS.get_base_units(unit)
 
-        self._origin = origin
-        self._direction_x = direction_x
-        self._direction_y = direction_y
+        self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
+        self._direction_x = (
+            UnitVector3D(direction_x) if not isinstance(direction_x, UnitVector3D) else direction_x
+        )
+        self._direction_y = (
+            UnitVector3D(direction_y) if not isinstance(direction_y, UnitVector3D) else direction_y
+        )
 
         # Store values in base unit
         self._semi_major_radius = UNITS.convert(semi_major_radius, self._unit, self._base_unit)

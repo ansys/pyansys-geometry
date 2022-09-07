@@ -1,8 +1,9 @@
 """``Sphere`` class module."""
 
 
-from typing import Optional
+from typing import List, Optional, Union
 
+import numpy as np
 from pint import Unit
 
 from ansys.geometry.core import UNIT_LENGTH, UNITS
@@ -14,7 +15,7 @@ from ansys.geometry.core.misc import (
     check_type,
     check_type_equivalence,
 )
-from ansys.geometry.core.typing import Real
+from ansys.geometry.core.typing import Real, RealSequence
 
 
 class Sphere:
@@ -23,7 +24,7 @@ class Sphere:
 
     Parameters
     ----------
-    origin : Point3D
+    origin : Union[~numpy.ndarray, RealSequence, Point3D]
         Centered origin of the ``Sphere``.
     radius: Real
         Radius of ``Sphere``.
@@ -33,13 +34,13 @@ class Sphere:
 
     def __init__(
         self,
-        origin: Point3D,
+        origin: Union[np.ndarray, RealSequence, Point3D],
         radius: Real,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Constructor method for ``Sphere``."""
 
-        check_type(origin, Point3D)
+        check_type(origin, (np.ndarray, List, Point3D))
 
         check_is_float_int(radius, "radius")
 
@@ -49,7 +50,7 @@ class Sphere:
         self._unit = unit
         _, self._base_unit = UNITS.get_base_units(unit)
 
-        self._origin = origin
+        self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
 
         # Store values in base unit
         self._radius = UNITS.convert(radius, self._unit, self._base_unit)

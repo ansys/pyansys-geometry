@@ -8,8 +8,27 @@ from ansys.geometry.core.misc import (
     check_is_pint_unit,
     check_ndarray_is_float_int,
     check_pint_unit_compatibility,
+    check_type,
     check_type_equivalence,
 )
+
+
+def test_check_type():
+    """
+    Test that the __eq__ check is working properly.
+
+    Both objects must be of the same type to be compared.
+    """
+    a_2d = Point2D([1, 2])
+
+    check_type(a_2d, Point2D)
+    check_type(a_2d, (Point2D, Point3D))
+
+    with pytest.raises(TypeError, match="Provided type"):
+        check_type(a_2d, int)
+
+    with pytest.raises(TypeError, match="Provided type"):
+        check_type(a_2d, (int, float))
 
 
 def test_check_type_equivalence():

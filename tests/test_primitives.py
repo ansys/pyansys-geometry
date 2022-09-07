@@ -17,10 +17,12 @@ def test_cylinder():
     c_2 = Cylinder(
         Point3D([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 76
     )
+    c_with_array_definitions = Cylinder([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 76)
 
     # Check that the equals operator works
     assert c_1 == c_1_duplicate
     assert c_1 != c_2
+    assert c_2 == c_with_array_definitions
 
     # Check cylinder definition
     assert c_1.origin.x == origin.x
@@ -63,14 +65,10 @@ def test_cylinder():
     ):
         c_1.height = "A"
 
-    with pytest.raises(
-        TypeError, match=f"Provided type {str} is invalid, type {UnitVector3D} expected."
-    ):
+    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
         Cylinder(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
 
-    with pytest.raises(
-        TypeError, match=f"Provided type {str} is invalid, type {UnitVector3D} expected."
-    ):
+    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
         Cylinder(origin, UnitVector3D([12, 31, 99]), "A", 100, 200)
 
 
@@ -124,10 +122,12 @@ def test_sphere():
     s_1 = Sphere(origin, 100)
     s_1_duplicate = Sphere(origin, 100)
     s_2 = Sphere(Point3D([5, 8, 9]), 88)
+    s_with_array_definitions = Sphere([5, 8, 9], 88)
 
     # Check that the equals operator works
     assert s_1 == s_1_duplicate
     assert s_1 != s_2
+    assert s_2 == s_with_array_definitions
 
     # Check sphere definition
     assert s_1.origin.x == origin.x
@@ -205,10 +205,12 @@ def test_cone():
         origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, 0.78539816
     )
     c_2 = Cone(Point3D([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 0.65)
+    c_with_array_definitions = Cone([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 0.65)
 
     # Check that the equals operator works
     assert c_1 == c_1_duplicate
     assert c_1 != c_2
+    assert c_2 == c_with_array_definitions
 
     # Check cone definition
     assert c_1.origin.x == origin.x
@@ -251,14 +253,10 @@ def test_cone():
     ):
         c_1.half_angle = "A"
 
-    with pytest.raises(
-        TypeError, match=f"Provided type {str} is invalid, type {UnitVector3D} expected."
-    ):
+    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
         Cone(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
 
-    with pytest.raises(
-        TypeError, match=f"Provided type {str} is invalid, type {UnitVector3D} expected."
-    ):
+    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
         Cone(origin, UnitVector3D([12, 31, 99]), "A", 100, 200)
 
 
@@ -340,10 +338,12 @@ def test_torus():
     t_1 = Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, 200)
     t_1_duplicate = Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, 200)
     t_2 = Torus(Point3D([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 76)
+    t_with_array_definitions = Torus([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 76)
 
     # Check that the equals operator works
     assert t_1 == t_1_duplicate
     assert t_1 != t_2
+    assert t_2 == t_with_array_definitions
 
     # Check cylinder definition
     assert t_1.origin.x == origin.x
@@ -385,14 +385,10 @@ def test_torus():
     ):
         t_1.semi_minor_radius = "A"
 
-    with pytest.raises(
-        TypeError, match=f"Provided type {str} is invalid, type {UnitVector3D} expected."
-    ):
+    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
         Torus(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
 
-    with pytest.raises(
-        TypeError, match=f"Provided type {str} is invalid, type {UnitVector3D} expected."
-    ):
+    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
         Torus(origin, UnitVector3D([12, 31, 99]), "A", 100, 200)
 
 
