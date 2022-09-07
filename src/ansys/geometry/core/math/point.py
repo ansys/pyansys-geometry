@@ -49,6 +49,10 @@ class Point3D(np.ndarray):
             _, obj._base_unit = UNITS.get_base_units(UNIT_LENGTH)
             return obj
 
+        # Check that units provided (if any) are compatible
+        check_is_pint_unit(unit, "unit")
+        check_pint_unit_compatibility(unit, UNIT_LENGTH)
+
         # Transform to numpy.ndarray
         obj = np.asarray([(elem * unit).to_base_units().magnitude for elem in input]).view(cls)
         obj._unit = unit
@@ -57,9 +61,6 @@ class Point3D(np.ndarray):
         # Check that the size is as expected
         if obj is None or len(obj) != 3:
             raise ValueError("Point3D must have three coordinates.")
-
-        # Check that units provided (if any) are compatible
-        check_pint_unit_compatibility(unit, UNIT_LENGTH)
 
         # If we are not dealing with the default value... check the inputs
         check_ndarray_is_float_int(obj, "input")
@@ -149,6 +150,10 @@ class Point2D(np.ndarray):
             _, obj._base_unit = UNITS.get_base_units(UNIT_LENGTH)
             return obj
 
+        # Check that units provided (if any) are compatible
+        check_is_pint_unit(unit, "unit")
+        check_pint_unit_compatibility(unit, UNIT_LENGTH)
+
         # Transform to numpy.ndarray
         obj = np.asarray([(elem * unit).to_base_units().magnitude for elem in input]).view(cls)
         obj._unit = unit
@@ -157,9 +162,6 @@ class Point2D(np.ndarray):
         # Check that the size is as expected
         if obj is None or len(obj) != 2:
             raise ValueError("Point2D must have two coordinates.")
-
-        # Check that units provided (if any) are compatible
-        check_pint_unit_compatibility(unit, UNIT_LENGTH)
 
         # If we are not dealing with the default value... check the inputs
         check_ndarray_is_float_int(obj, "input")

@@ -3,10 +3,14 @@ from io import UnsupportedOperation
 from typing import Union
 
 import numpy as np
+from pint import Unit
 
+from ansys.geometry.core import UNITS
 from ansys.geometry.core.misc import (
     check_is_float_int,
+    check_is_pint_unit,
     check_ndarray_is_float_int,
+    check_pint_unit_compatibility,
     check_type_equivalence,
 )
 from ansys.geometry.core.typing import Real, RealSequence
@@ -238,3 +242,193 @@ class UnitVector2D(Vector2D):
     @Vector2D.y.setter
     def y(self, value: Real) -> None:
         raise UnsupportedOperation("UnitVector2D is immutable.")
+
+
+class QuantityVector3D(Vector3D):
+    def __new__(cls, vector: Union[np.ndarray, RealSequence, Vector3D], unit: Unit):
+        """Constructor for ``QuantityVector3D``."""
+
+        # Transform to base units
+        check_is_pint_unit(unit, "unit")
+        vector_base_units = [(elem * unit).to_base_units().magnitude for elem in vector]
+
+        # Build the Vector3D object
+        obj = Vector3D(vector_base_units)
+        obj = obj.view(cls)
+
+        # Store the units
+        obj._unit = unit
+        _, obj._base_unit = UNITS.get_base_units(unit)
+
+        return obj
+
+    @property
+    def x(self) -> Real:
+        """X coordinate of ``QuantityVector3D``."""
+        return UNITS.convert(Vector3D.x.fget(self), self._base_unit, self._unit)
+
+    @x.setter
+    def x(self, x: Real) -> None:
+        """Set X coordinate of ``QuantityVector3D``."""
+        check_is_float_int(x, "x")
+        Vector3D.x.fset(self, (x * self._unit).to_base_units().magnitude)
+
+    @property
+    def y(self) -> Real:
+        """Y coordinate of ``QuantityVector3D``."""
+        return UNITS.convert(Vector3D.y.fget(self), self._base_unit, self._unit)
+
+    @y.setter
+    def y(self, y: Real) -> None:
+        """Set Y coordinate of ``QuantityVector3D``."""
+        check_is_float_int(y, "y")
+        Vector3D.y.fset(self, (y * self._unit).to_base_units().magnitude)
+
+    @property
+    def z(self) -> Real:
+        """Z coordinate of ``QuantityVector3D``."""
+        return UNITS.convert(Vector3D.z.fget(self), self._base_unit, self._unit)
+
+    @z.setter
+    def z(self, z: Real) -> None:
+        """Set Z coordinate of ``QuantityVector3D``."""
+        check_is_float_int(z, "z")
+        Vector3D.z.fset(self, (z * self._unit).to_base_units().magnitude)
+
+    @property
+    def norm(self) -> float:
+        """Norm of ``QuantityVector3D``."""
+        return UNITS.convert(Vector3D.norm.fget(self), self._base_unit, self._unit)
+
+    @property
+    def unit(self) -> Unit:
+        """Returns the unit of the ``QuantityVector3D``."""
+        return self._unit
+
+    @unit.setter
+    def unit(self, unit: Unit) -> None:
+        """Sets the unit of the ``QuantityVector3D``."""
+        check_is_pint_unit(unit, "unit")
+        check_pint_unit_compatibility(unit, self._base_unit)
+        self._unit = unit
+
+    def normalize(self) -> "QuantityVector3D":
+        """Return a normalized version of the ``QuantityVector3D``"""
+        vec = Vector3D.normalize(self).view(QuantityVector3D)
+        vec._unit = self._unit
+        vec._base_unit = self._base_unit
+        return vec
+
+    def cross(self, v: "QuantityVector3D") -> "QuantityVector3D":
+        """Return cross product of ``QuantityVector3D``"""
+        check_pint_unit_compatibility(v._base_unit, self._base_unit)
+        vec = Vector3D.cross(self, v).view(QuantityVector3D)
+
+        # At this point, data is stored as base_unit^2
+        factor, _ = UNITS.get_base_units(self._unit)
+        vec /= factor
+
+        vec._unit = self._unit
+        vec._base_unit = self._base_unit
+        return vec
+
+    def __eq__(self, other: "QuantityVector3D") -> bool:
+        """Equals operator for ``QuantityVector3D``."""
+        check_type_equivalence(other, self)
+        return np.array_equal(self, other) and self._base_unit == other._base_unit
+
+    def __ne__(self, other: "QuantityVector3D") -> bool:
+        """Not equals operator for ``QuantityVector3D``."""
+        return not self == other
+
+    def __mul__(self, other: "QuantityVector3D") -> Real:
+        """Overload * operator with dot product."""
+        check_type_equivalence(other, self)
+        check_pint_unit_compatibility(other._base_unit, self._base_unit)
+        return self.dot(other)
+
+    def __mod__(self, other: "QuantityVector3D") -> "QuantityVector3D":
+        """Overload % operator with cross product."""
+        check_type_equivalence(other, self)
+        check_pint_unit_compatibility(other._base_unit, self._base_unit)
+        return self.cross(other)
+
+
+class QuantityVector2D(Vector2D):
+    def __new__(cls, vector: Union[np.ndarray, RealSequence, Vector3D], unit: Unit):
+        """Constructor for ``QuantityVector2D``."""
+
+        # Transform to base units
+        check_is_pint_unit(unit, "unit")
+        vector_base_units = [(elem * unit).to_base_units().magnitude for elem in vector]
+
+        # Build the Vector2D object
+        obj = Vector2D(vector_base_units)
+        obj = obj.view(cls)
+
+        # Store the units
+        obj._unit = unit
+        _, obj._base_unit = UNITS.get_base_units(unit)
+
+        return obj
+
+    @property
+    def x(self) -> Real:
+        """X coordinate of ``QuantityVector2D``."""
+        return UNITS.convert(Vector2D.x.fget(self), self._base_unit, self._unit)
+
+    @x.setter
+    def x(self, x: Real) -> None:
+        """Set X coordinate of ``QuantityVector2D``."""
+        check_is_float_int(x, "x")
+        Vector2D.x.fset(self, (x * self._unit).to_base_units().magnitude)
+
+    @property
+    def y(self) -> Real:
+        """Y coordinate of ``QuantityVector2D``."""
+        return UNITS.convert(Vector2D.y.fget(self), self._base_unit, self._unit)
+
+    @y.setter
+    def y(self, y: Real) -> None:
+        """Set Y coordinate of ``QuantityVector2D``."""
+        check_is_float_int(y, "y")
+        Vector2D.y.fset(self, (y * self._unit).to_base_units().magnitude)
+
+    @property
+    def norm(self) -> float:
+        """Norm of ``QuantityVector2D``."""
+        return UNITS.convert(Vector2D.norm.fget(self), self._base_unit, self._unit)
+
+    @property
+    def unit(self) -> Unit:
+        """Returns the unit of the ``QuantityVector2D``."""
+        return self._unit
+
+    @unit.setter
+    def unit(self, unit: Unit) -> None:
+        """Sets the unit of the ``QuantityVector2D``."""
+        check_is_pint_unit(unit, "unit")
+        check_pint_unit_compatibility(unit, self._base_unit)
+        self._unit = unit
+
+    def normalize(self) -> "QuantityVector2D":
+        """Return a normalized version of the ``QuantityVector2D``"""
+        vec = Vector2D.normalize(self).view(QuantityVector2D)
+        vec._unit = self._unit
+        vec._base_unit = self._base_unit
+        return vec
+
+    def __eq__(self, other: "QuantityVector2D") -> bool:
+        """Equals operator for ``QuantityVector2D``."""
+        check_type_equivalence(other, self)
+        return np.array_equal(self, other) and self._base_unit == other._base_unit
+
+    def __ne__(self, other: "QuantityVector2D") -> bool:
+        """Not equals operator for ``QuantityVector2D``."""
+        return not self == other
+
+    def __mul__(self, other: "QuantityVector2D") -> Real:
+        """Overload * operator with dot product."""
+        check_type_equivalence(other, self)
+        check_pint_unit_compatibility(other._base_unit, self._base_unit)
+        return self.dot(other)
