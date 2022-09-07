@@ -154,7 +154,7 @@ class Sketch:
         Parameters
         ----------
         radius : Real
-            The inradius of the polygon.
+            The inradius(apothem) of the polygon.
         sides : int
             Number of sides of the polygon.
         origin : Point3D

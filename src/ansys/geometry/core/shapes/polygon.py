@@ -11,7 +11,7 @@ from ansys.geometry.core.typing import Real
 
 
 class PolygonShape(BaseShape):
-    """A class for modelling polygon."""
+    """A class for modeling polygon."""
 
     def __init__(
         self,
@@ -40,29 +40,37 @@ class PolygonShape(BaseShape):
 
         """
         super().__init__(origin, dir_1, dir_2, is_closed=True)
+
+        # Verify that the radius is a real positive value
+        if radius <= 0:
+            raise ValueError("Radius must be a real positive value.")
         self._radius = radius
+
+        # Verify that the number of sides is valid with preferred range
+        if sides < 2 or sides > 64:
+            raise ValueError("The number of sides to construct polygon should between 3 and 64.")
         self._sides = sides
 
     @property
     def radius(self) -> Real:
-        """The radius of the polygon.
+        """The inradius(apothem) of the polygon.
 
         Returns
         -------
         Real
-            The radius of the polygon.
+            The inradius(apothem) of the polygon.
 
         """
         return self._radius
 
     @property
     def r(self) -> Real:
-        """The radius of the polygon.
+        """The inradius(apothem) of the polygon.
 
         Returns
         -------
         Real
-            The radius of the polygon.
+            The inradius(apothem) of the polygon.
 
         """
         return self.radius
@@ -104,6 +112,18 @@ class PolygonShape(BaseShape):
         return 2 * self.r * np.tan(np.pi / self.n)
 
     @property
+    def outer_radius(self) -> Real:
+        """The outer_radius of the polygon.
+
+        Returns
+        -------
+        int
+            The outer_radius of the polygon.
+
+        """
+        return self.r / np.cos(np.pi / self.n)
+
+    @property
     def perimeter(self) -> Real:
         """Return the perimeter of the polygon.
 
@@ -127,7 +147,7 @@ class PolygonShape(BaseShape):
         """
         return (self.r * self.perimeter) / 2
 
-    def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
+    def local_points(self) -> List[Point3D]:
         """Returns a list containing all the points belonging to the shape.
 
         Points are given in the local space.
@@ -143,10 +163,10 @@ class PolygonShape(BaseShape):
             A list of points representing the shape.
 
         """
-        theta = np.linspace(0, 2 * np.pi, num_points)
-        x_local = self.r * np.cos(theta)
-        y_local = self.r * np.sin(theta)
-        z_local = np.zeros(num_points)
+        theta = np.linspace(0, 2 * np.pi, self.n + 1)
+        x_local = self.outer_radius * np.cos(theta)
+        y_local = self.outer_radius * np.sin(theta)
+        z_local = np.zeros(self.n)
         return [x_local, y_local, z_local]
 
     @classmethod

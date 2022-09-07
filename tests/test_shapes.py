@@ -65,7 +65,7 @@ def test_create_polygon():
     # Create a Sketch instance
     sketch = Sketch()
 
-    # Draw a polygon in previous sketch
+    # Draw a pentagon in previous sketch
     radius, sides, origin = 1 * u.m, 5, Point3D([0, 0, 0], u.m)
     pentagon = sketch.draw_polygon(radius, sides, origin)
 
@@ -76,16 +76,8 @@ def test_create_polygon():
     assert_allclose(pentagon.length, side_length)
     assert_allclose(pentagon.perimeter, sides * side_length)
 
-    # Check points are expected ones
-    five_local_points = [
-        [1, 0, -1, 0, 1],
-        [0, 1, 0, -1, 0],
-        [0, 0, 0, 0, 0],
-    ]
-    assert_allclose(pentagon.local_points(num_points=5), five_local_points, atol=1e-5, rtol=1e-7)
-
     # Draw a square in previous sketch
-    radius, sides, origin = 1 * u.m, 5, Point3D([0, 0, 0], u.m)
+    radius, sides, origin = 1 * u.m, 4, Point3D([0, 0, 0], u.m)
     square = sketch.draw_polygon(radius, sides, origin)
 
     # Check attributes are expected ones
@@ -95,3 +87,11 @@ def test_create_polygon():
     assert_allclose(square.length, side_length)
     assert_allclose(square.perimeter, sides * side_length)
     assert_allclose(square.area, 4.0 * u.m**2)
+
+    # Check points are expected ones
+    five_local_points = [
+        [1.41421356, 0, -1.4142135, 0, 1.4142135],
+        [0, 1.41421356, 0, -1.41421356, 0],
+        [0, 0, 0, 0, 0],
+    ]
+    assert_allclose(square.local_points(num_points=5), five_local_points, atol=1e-5, rtol=1e-7)
