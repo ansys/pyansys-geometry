@@ -236,9 +236,9 @@ def check_ndarray_is_non_zero(
     param_data = np.ravel(param)
     if all(value == 0 for value in param_data):
         raise ValueError(
-            f"The numpy.ndarray provided should not be a zeroes numpy.ndarray."
+            f"The numpy.ndarray provided should not be a numpy.ndarray of zeros."
             if param_name is None
-            else f"The numpy.ndarray '{param_name}' should not be a zeroes numpy.ndarray."
+            else f"The numpy.ndarray '{param_name}' should not be a numpy.ndarray of zeros."
         )
 
 

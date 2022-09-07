@@ -157,7 +157,7 @@ def test_errors_line():
     with pytest.raises(TypeError, match="The parameter 'direction' should be a Vector3D object."):
         LineShape(Point3D([10, 20, 30], unit=UNITS.meter), "b")
     with pytest.raises(
-        ValueError, match="The numpy.ndarray 'direction' should not be a zeroes numpy.ndarray."
+        ValueError, match="The numpy.ndarray 'direction' should not be a numpy.ndarray of zeros."
     ):
         LineShape(Point3D([10, 20, 30], unit=UNITS.meter), Vector3D([0, 0, 0]))
 

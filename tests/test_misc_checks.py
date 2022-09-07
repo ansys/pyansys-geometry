@@ -334,17 +334,17 @@ def test_check_ndarray_is_non_zero():
     arr_2d = np.asarray([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
 
     with pytest.raises(
-        ValueError, match="The numpy.ndarray provided should not be a zeroes numpy.ndarray."
+        ValueError, match="The numpy.ndarray provided should not be a numpy.ndarray of zeros."
     ):
         check_ndarray_is_non_zero(arr_1d)
 
     with pytest.raises(
-        ValueError, match="The numpy.ndarray 'arr_1d' should not be a zeroes numpy.ndarray."
+        ValueError, match="The numpy.ndarray 'arr_1d' should not be a numpy.ndarray of zeros."
     ):
         check_ndarray_is_non_zero(arr_1d, "arr_1d")
 
     with pytest.raises(
-        ValueError, match="The numpy.ndarray provided should not be a zeroes numpy.ndarray."
+        ValueError, match="The numpy.ndarray provided should not be a numpy.ndarray of zeros."
     ):
         check_ndarray_is_non_zero(arr_2d)
 
