@@ -602,6 +602,8 @@ def test_quantity_vector_3d():
     assert abs(quantity_vec.z - vec.z) <= TOLERANCE
     assert quantity_vec.unit == UNITS.mm
     assert abs(quantity_vec.norm - vec.norm) <= TOLERANCE
+    _, base_unit = UNITS.get_base_units(UNITS.mm)
+    assert quantity_vec.base_unit == base_unit
 
     # Check that the actual values are in base units (i.e. UNIT_LENGTH)
     assert quantity_vec[0] == (quantity_vec.x * quantity_vec.unit).to_base_units().magnitude
@@ -671,6 +673,8 @@ def test_quantity_vector_2d():
     assert abs(quantity_vec.y - vec.y) <= TOLERANCE
     assert quantity_vec.unit == UNITS.mm
     assert abs(quantity_vec.norm - vec.norm) <= TOLERANCE
+    _, base_unit = UNITS.get_base_units(UNITS.mm)
+    assert quantity_vec.base_unit == base_unit
 
     # Check that the actual values are in base units (i.e. UNIT_LENGTH)
     assert quantity_vec[0] == (quantity_vec.x * quantity_vec.unit).to_base_units().magnitude
