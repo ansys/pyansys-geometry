@@ -206,7 +206,8 @@ def check_ndarray_is_not_none(
     ValueError
         In case the :class:`numpy.ndarray` is None-valued.
     """
-    if all(value is None for value in param):
+    param_data = np.ravel(param)
+    if all(value is None for value in param_data):
         raise ValueError(
             f"The numpy.ndarray provided should not be a None numpy.ndarray."
             if param_name is None
@@ -232,7 +233,8 @@ def check_ndarray_is_non_zero(
     ValueError
         In case the :class:`numpy.ndarray` is zero-valued.
     """
-    if all(value == 0 for value in param):
+    param_data = np.ravel(param)
+    if all(value == 0 for value in param_data):
         raise ValueError(
             f"The numpy.ndarray provided should not be a zeroes numpy.ndarray."
             if param_name is None
