@@ -6,6 +6,7 @@ import numpy as np
 
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc.checks import check_is_float_int
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.typing import Real
 
@@ -44,8 +45,8 @@ class PolygonShape(BaseShape):
         # Verify that the radius is a real positive value
         if radius <= 0:
             raise ValueError("Radius must be a real positive value.")
+        check_is_float_int(radius, "radius")
         self._radius = radius
-
         # Verify that the number of sides is valid with preferred range
         if sides < 3 or sides > 64:
             raise ValueError("The number of sides to construct polygon should between 3 and 64.")
