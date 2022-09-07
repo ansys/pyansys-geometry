@@ -6,6 +6,7 @@ from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.shapes.circle import CircleShape
 from ansys.geometry.core.shapes.ellipse import EllipseShape
 from ansys.geometry.core.shapes.line import LineShape
+from ansys.geometry.core.shapes.polygon import PolygonShape
 from ansys.geometry.core.typing import Real
 
 
@@ -139,3 +140,38 @@ class Sketch:
         line = LineShape(point_1, point_2)
         self.append_shape(line)
         return line
+
+    def draw_polygon(
+        self,
+        radius: Real,
+        sides: int,
+        origin: Point3D,
+        dir_1: UnitVector3D = UnitVector3D([1, 0, 0]),
+        dir_2: UnitVector3D = UnitVector3D([0, 1, 0]),
+    ):
+        """Create a polygon shape on the sketch.
+
+        Parameters
+        ----------
+        radius : Real
+            The inradius of the polygon.
+        sides : int
+            Number of sides of the polygon.
+        origin : Point3D
+            A :class:``Point3D`` representing the origin of the ellipse.
+        dir_1 : UnitVector3D
+            A :class:``UnitVector3D`` representing the first fundamental direction
+            of the reference plane where the shape is contained.
+        dir_2 : UnitVector3D
+            A :class:``UnitVector3D`` representing the second fundamental direction
+            of the reference plane where the shape is contained.
+
+        Returns
+        -------
+        PolygonShape
+            An object for modelling polygonal shapes.
+
+        """
+        polygon = PolygonShape(radius, sides, origin, dir_1, dir_2)
+        self.append_shape(polygon)
+        return polygon

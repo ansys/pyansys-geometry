@@ -57,3 +57,29 @@ def test_create_ellipse():
         [0, 0, 0, 0, 0],
     ]
     assert_allclose(ellipse.local_points(num_points=5), five_local_points, atol=1e-5, rtol=1e-7)
+
+
+def test_create_polygon():
+    """Test polygon shape creation in a sketch."""
+
+    # Create a Sketch instance
+    sketch = Sketch()
+
+    # Draw a polygon in previous sketch
+    radius, sides, origin = 1 * u.m, 5, Point3D([0, 0, 0], u.m)
+    pentagon = sketch.draw_polygon(radius, sides, origin)
+
+    # Check attributes are expected ones
+    side_length = 2 * radius * np.tan(180 / sides)
+    assert_allclose(pentagon.r, radius)
+    assert pentagon.n == 5
+    assert_allclose(pentagon.length, side_length)
+    assert_allclose(pentagon.perimeter, sides * side_length)
+
+    # Check points are expected ones
+    five_local_points = [
+        [1, 0, -1, 0, 1],
+        [0, 1, 0, -1, 0],
+        [0, 0, 0, 0, 0],
+    ]
+    assert_allclose(pentagon.local_points(num_points=5), five_local_points, atol=1e-5, rtol=1e-7)
