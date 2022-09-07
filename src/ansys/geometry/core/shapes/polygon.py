@@ -47,7 +47,7 @@ class PolygonShape(BaseShape):
         self._radius = radius
 
         # Verify that the number of sides is valid with preferred range
-        if sides < 2 or sides > 64:
+        if sides < 3 or sides > 64:
             raise ValueError("The number of sides to construct polygon should between 3 and 64.")
         self._sides = sides
 
@@ -166,7 +166,7 @@ class PolygonShape(BaseShape):
         theta = np.linspace(0, 2 * np.pi, self.n + 1)
         x_local = self.outer_radius * np.cos(theta)
         y_local = self.outer_radius * np.sin(theta)
-        z_local = np.zeros(self.n)
+        z_local = np.zeros(self.n + 1)
         return [x_local, y_local, z_local]
 
     @classmethod
