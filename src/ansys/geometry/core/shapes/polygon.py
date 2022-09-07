@@ -47,7 +47,7 @@ class PolygonShape(BaseShape):
         # Verify that the number of sides is valid with preferred range
         if sides < 3 or sides > 64:
             raise ValueError("The number of sides to construct a polygon should between 3 and 64.")
-        self._sides = sides
+        self._n_sides = sides
 
     @property
     def radius(self) -> Real:
@@ -71,7 +71,7 @@ class PolygonShape(BaseShape):
             The sides of the polygon.
 
         """
-        return self._sides
+        return self._n_sides
 
     @property
     def length(self) -> Real:
@@ -83,7 +83,7 @@ class PolygonShape(BaseShape):
             The side length of the polygon.
 
         """
-        return 2 * self.r * np.tan(np.pi / self.n)
+        return 2 * self.radius * np.tan(np.pi / self.n_sides)
 
     @property
     def outer_radius(self) -> Real:
@@ -95,7 +95,7 @@ class PolygonShape(BaseShape):
             The outer radius of the polygon.
 
         """
-        return self.r / np.cos(np.pi / self.n)
+        return self.radius / np.cos(np.pi / self.n_sides)
 
     @property
     def perimeter(self) -> Real:
@@ -107,7 +107,7 @@ class PolygonShape(BaseShape):
             The perimeter of the polygon.
 
         """
-        return self.n * self.length
+        return self.n_sides * self.length
 
     @property
     def area(self) -> Real:
@@ -119,7 +119,7 @@ class PolygonShape(BaseShape):
             The area of the polygon.
 
         """
-        return (self.r * self.perimeter) / 2
+        return (self.radius * self.perimeter) / 2
 
     def local_points(self) -> List[Point3D]:
         """Returns a list containing all the vertices of the polygon.
@@ -132,10 +132,10 @@ class PolygonShape(BaseShape):
             A list of vertices representing the shape.
 
         """
-        theta = np.linspace(0, 2 * np.pi, self.n + 1)
+        theta = np.linspace(0, 2 * np.pi, self.n_sides + 1)
         x_local = self.outer_radius * np.cos(theta)
         y_local = self.outer_radius * np.sin(theta)
-        z_local = np.zeros(self.n + 1)
+        z_local = np.zeros(self.n_sides + 1)
         return [x_local, y_local, z_local]
 
     @classmethod
