@@ -70,7 +70,7 @@ def test_create_polygon():
     pentagon = sketch.draw_polygon(radius, sides, origin)
 
     # Check attributes are expected ones
-    side_length = 2 * radius * np.tan(180 / sides)
+    side_length = 2 * radius * np.tan(np.pi / sides)
     assert_allclose(pentagon.r, radius)
     assert pentagon.n == 5
     assert_allclose(pentagon.length, side_length)
@@ -83,3 +83,15 @@ def test_create_polygon():
         [0, 0, 0, 0, 0],
     ]
     assert_allclose(pentagon.local_points(num_points=5), five_local_points, atol=1e-5, rtol=1e-7)
+
+    # Draw a square in previous sketch
+    radius, sides, origin = 1 * u.m, 5, Point3D([0, 0, 0], u.m)
+    square = sketch.draw_polygon(radius, sides, origin)
+
+    # Check attributes are expected ones
+    side_length = 2 * radius * np.tan(180 / sides)  # 2.0 m
+    assert_allclose(square.r, radius)
+    assert square.n == 4
+    assert_allclose(square.length, side_length)
+    assert_allclose(square.perimeter, sides * side_length)
+    assert_allclose(square.area, 4.0 * u.m**2)

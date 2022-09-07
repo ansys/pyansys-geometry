@@ -92,18 +92,6 @@ class PolygonShape(BaseShape):
         return self.sides
 
     @property
-    def outer_radius(self):
-        """The side length of the polygon.
-
-        Returns
-        -------
-        int
-            The side length of the polygon.
-
-        """
-        return self.r / (np.cos(180 / self.n))
-
-    @property
     def length(self) -> Real:
         """The side length of the polygon.
 
@@ -113,7 +101,7 @@ class PolygonShape(BaseShape):
             The side length of the polygon.
 
         """
-        return 2 * self.r * np.tan(180 / self.n)
+        return 2 * self.r * np.tan(np.pi / self.n)
 
     @property
     def perimeter(self) -> Real:
