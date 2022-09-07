@@ -1,7 +1,6 @@
 """``Cone`` class module."""
 
 
-import math
 from typing import List, Optional, Union
 
 import numpy as np
@@ -148,11 +147,6 @@ class Cone:
             and self._direction_x == other._direction_x
             and self._direction_y == other._direction_y
         )
-
-    @classmethod
-    def calculate_apex(origin: Point3D, radius: Real, half_angle: Real, direction_z: Vector3D):
-        apex_parameter = -abs(radius) / math.tan(half_angle)
-        return origin + apex_parameter * direction_z
 
     def __ne__(self, other) -> bool:
         """Not equals operator for ``Cone``."""
