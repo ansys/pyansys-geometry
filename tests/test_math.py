@@ -201,7 +201,6 @@ def test_vector3d():
     v_cross_overload = v1 % v2
     assert v_cross_overload == v_cross
 
-
     # Checking that scalar times vector also works
     v1_x_3 = Vector3D([0, 3, 9])
     assert all(
@@ -247,7 +246,6 @@ def test_vector2d():
     v_3 = Vector2D([2, 8])
     v_4 = Vector2D([3, 7])
     assert abs(round(v_3 * v_4 - 62)) <= DOUBLE_EPS
-
 
     # Checking that scalar times vector also works
     v1_x_3 = Vector2D([6, 3])

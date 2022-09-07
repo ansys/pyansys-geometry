@@ -50,7 +50,7 @@ def check_is_point(
     TypeError
         In case the parameter is not a ``Point3D`` or a ``Point2D``.
     """
-    from ansys.geometry.core.primitives.point import Point2D, Point3D
+    from ansys.geometry.core.math.point import Point2D, Point3D
 
     consider = (Point3D) if only_3d else (Point2D, Point3D)
     point_type = "Point3D" if only_3d else "Point3D or Point2D"
@@ -82,7 +82,7 @@ def check_is_vector(
     TypeError
         In case the parameter is not a ``Vector3D`` or a ``Vector2D``.
     """
-    from ansys.geometry.core.primitives.vector import Vector2D, Vector3D
+    from ansys.geometry.core.math.vector import Vector2D, Vector3D
 
     consider = (Vector3D) if only_3d else (Vector2D, Vector3D)
     vector_type = "Vector3D" if only_3d else "Vector3D or Vector2D"
@@ -114,7 +114,7 @@ def check_is_unitvector(
     TypeError
         In case the parameter is not a ``UnitVector3D`` or a ``UnitVector2D``.
     """
-    from ansys.geometry.core.primitives.vector import UnitVector2D, UnitVector3D
+    from ansys.geometry.core.math.vector import UnitVector2D, UnitVector3D
 
     consider = (UnitVector3D) if only_3d else (UnitVector2D, UnitVector3D)
     unit_vector_type = "UnitVector3D" if only_3d else "UnitVector3D or UnitVector2D"

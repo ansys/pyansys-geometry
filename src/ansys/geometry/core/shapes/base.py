@@ -1,6 +1,6 @@
 """``BaseShape`` class module."""
 
-from typing import Optional
+from typing import List, Optional
 
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
@@ -66,9 +66,9 @@ class BaseShape:
     @property
     def origin(self) -> Point3D:
         """The origin of the reference frame."""
-        return origin
+        return self._origin
 
-    def points(self, num_points: Optional[int] = 100) -> list[Point3D]:
+    def points(self, num_points: Optional[int] = 100) -> List[Point3D]:
         """Returns a list containing all the points belonging to the shape.
 
         Parameters
@@ -78,42 +78,42 @@ class BaseShape:
 
         Returns
         -------
-        list[Point3D]
+        List[Point3D]
             A list of points representing the shape.
         """
         return self.frame.from_local_to_global @ self.local_points
 
     @property
-    def x_coordinates(sefl) -> list[Real]:
+    def x_coordinates(self) -> List[Real]:
         """Return all the x coordinates for the points of the shape.
 
         Returns
         -------
-        list[Real]
+        List[Real]
             A list containing the values for the x-coordinates of the shape.
 
         """
         return [point[0] for point in self._points]
 
     @property
-    def y_coordinates(sefl) -> list[Real]:
+    def y_coordinates(self) -> List[Real]:
         """Return all the y coordinates for the points of the shape.
 
         Returns
         -------
-        list[Real]
+        List[Real]
             A list containing the values for the y-coordinates of the shape.
 
         """
         return [point[1] for point in self._points]
 
     @property
-    def z_coordinates(sefl) -> list[Real]:
+    def z_coordinates(self) -> List[Real]:
         """Return all the y coordinates for the points of the shape.
 
         Returns
         -------
-        list[Real]
+        List[Real]
             A list containing the values for the z-coordinates of the shape.
 
         """
