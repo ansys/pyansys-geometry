@@ -312,6 +312,11 @@ class QuantityVector3D(Vector3D):
         check_pint_unit_compatibility(unit, self._base_unit)
         self._unit = unit
 
+    @property
+    def base_unit(self) -> Unit:
+        """Returns the base unit of the ``QuantityVector3D``."""
+        return self._base_unit
+
     def normalize(self) -> "QuantityVector3D":
         """Return a normalized version of the ``QuantityVector3D``"""
         vec = Vector3D.normalize(self).view(QuantityVector3D)
@@ -403,6 +408,11 @@ class QuantityVector2D(Vector2D):
     def unit(self) -> Unit:
         """Returns the unit of the ``QuantityVector2D``."""
         return self._unit
+
+    @property
+    def base_unit(self) -> Unit:
+        """Returns the base unit of the ``QuantityVector3D``."""
+        return self._base_unit
 
     @unit.setter
     def unit(self, unit: Unit) -> None:
