@@ -1,28 +1,31 @@
 """``Line`` and ``Segment`` class module."""
-from io import UnsupportedOperation
-from typing import Optional, Union
+from typing import List, Optional, Union
 
+import numpy as np
 from pint import Unit
 
 from ansys.geometry.core import UNIT_LENGTH
+from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.math.vector import QuantityVector3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc.checks import (
     check_is_pint_unit,
     check_is_point,
+    check_is_quantityvector,
     check_is_unitvector,
     check_is_vector,
     check_ndarray_is_non_zero,
     check_ndarray_is_not_none,
     check_pint_unit_compatibility,
 )
+from ansys.geometry.core.shapes.base import BaseShape
 
 # TODO: Line at the moment is not a BaseShape...
 
 
-class LineShape:
+class LineShape(BaseShape):
     """
-    Create a Line shape.
+    Provides Line representation within a sketch environment.
 
     Parameters
     ----------
@@ -30,13 +33,33 @@ class LineShape:
         Origin of the line.
     direction: Union[Vector3D, UnitVector3D]
         Direction of the line.
+    dir_1 : Optional[UnitVector3D]
+        A :class:`UnitVector3D` representing the first fundamental direction
+        of the reference plane where the shape is contained.
+        By default, ``UNIT_VECTOR_X``.
+    dir_2 : Optional[UnitVector3D]
+        A :class:`UnitVector3D` representing the second fundamental direction
+        of the reference plane where the shape is contained.
+        By default, ``UNIT_VECTOR_Y``.
+
+    Note
+    ----
+    The way in which the Sketching plane for the line is defined, is such that
+    we first check if our direction is linearly dependent of ``dir_1`` and ``dir_2``.
+    If ``True`` then we can define our BaseShape with ``dir_1`` and ``dir_2``. Otherwise,
+    it will be necessary to define the baseShape using the LineShape direction and another
+    one of the directions. ``dir_1`` will be selected in this case.
     """
 
-    def __init__(self, origin: Point3D, direction: Union[Vector3D, UnitVector3D]):
-        """Constructor method for ``Line``."""
+    def __init__(
+        self,
+        origin: Point3D,
+        direction: Union[Vector3D, UnitVector3D],
+        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
+    ):
+        """Initializes the line shape."""
         # Perform some sanity checks
-        check_is_point(origin, "origin", only_3d=True)
-        check_ndarray_is_not_none(origin, "origin")
         check_is_vector(direction, "direction", only_3d=True)
         check_ndarray_is_non_zero(direction, "direction")
 
@@ -47,39 +70,69 @@ class LineShape:
             direction = UnitVector3D(direction)
 
         # Store instance attributes
-        self._origin = origin
         self._direction = direction
 
-    @property
-    def origin(self) -> Point3D:
-        """Returns the origin of the ``Line``."""
-        return self._origin
-
-    @origin.setter
-    def origin(self, origin: Point3D) -> None:
-        """Set the origin of the ``Line``."""
-        check_is_point(origin, "origin", only_3d=True)
-        check_ndarray_is_not_none(origin, "origin")
-        self._origin = origin
+        # Call base ctor. Directions used are based on linear dependency and orthogonality.
+        if self._is_linearly_dependent(direction, dir_1, dir_2):
+            super().__init__(origin, dir_1=dir_1, dir_2=dir_2, is_closed=False)
+        elif direction.cross(dir_1) != Vector3D([0, 0, 0]):
+            super().__init__(origin, dir_1=direction, dir_2=dir_2, is_closed=False)
+        else:
+            super().__init__(origin, dir_1=direction, dir_2=dir_2, is_closed=False)
 
     @property
     def direction(self) -> UnitVector3D:
-        """Returns the direction of the ``Line``."""
+        """Returns the direction of the line."""
         return self._direction
 
-    @direction.setter
-    def direction(self, direction: Union[Vector3D, UnitVector3D]) -> None:
-        """Set the direction of the ``Line``."""
-        check_is_vector(direction, "direction", only_3d=True)
-        check_ndarray_is_non_zero(direction, "direction")
+    def _is_linearly_dependent(
+        self, direction: UnitVector3D, dir_1: UnitVector3D, dir_2: UnitVector3D
+    ) -> bool:
+        """Private method for checking if the provided directions are linearly dependent.
 
-        # If a Vector3D was provided, we should store a UnitVector3D
-        try:
-            check_is_unitvector(direction, "direction", only_3d=True)
-        except TypeError:
-            direction = UnitVector3D(direction)
+        Parameters
+        ----------
+        direction : UnitVector3D
+            The line's direction vector as a :class:`UnitVector3D`.
+        dir_1 : UnitVector3D
+            A :class:`UnitVector3D` representing the first fundamental direction
+            of the reference plane where the shape is contained.
+        dir_2 : UnitVector3D
+            A :class:`UnitVector3D` representing the second fundamental direction
+            of the reference plane where the shape is contained.
 
-        self._direction = direction
+        Returns
+        -------
+        bool
+            ``True`` if the three are linearly dependent, ``False`` otherwise.
+        """
+        # Check if direction is linearly dependent or not from dir_1 and dir_2
+        mat = np.array([direction, dir_1, dir_2])
+        (lambdas, _) = np.linalg.eig(mat.T)
+        return True if any(np.isclose(lambdas, 0.0)) else False
+
+    def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
+        """
+        Returns a list containing all the points belonging to the shape.
+
+        Parameters
+        ----------
+        num_points : int
+            Desired number of points belonging to the shape.
+
+        Returns
+        -------
+        List[Point3D]
+            A list of points representing the shape.
+        """
+        line_start = self.origin - self.direction * int(num_points / 2)
+        if num_points % 2 == 0:
+            line_end = self.origin + self.direction * (int(num_points / 2) - 1)
+        else:
+            line_end = self.origin + self.direction * (int(num_points / 2))
+
+        alpha = np.linspace(line_start, line_end, num_points)
+        return line_start + alpha * self.direction
 
 
 class SegmentShape(LineShape):
@@ -92,9 +145,23 @@ class SegmentShape(LineShape):
         Start of the line segment.
     end: Point3D
         End of the line segment.
+    dir_1 : Optional[UnitVector3D]
+        A :class:`UnitVector3D` representing the first fundamental direction
+        of the reference plane where the shape is contained.
+        By default, ``UNIT_VECTOR_X``.
+    dir_2 : Optional[UnitVector3D]
+        A :class:`UnitVector3D` representing the second fundamental direction
+        of the reference plane where the shape is contained.
+        By default, ``UNIT_VECTOR_Y``.
     """
 
-    def __init__(self, start: Point3D, end: Point3D):
+    def __init__(
+        self,
+        start: Point3D,
+        end: Point3D,
+        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
+    ):
         """Constructor method for ``Segment``."""
         # Perform sanity checks on Point3D values given
         check_is_point(start, "start", only_3d=True)
@@ -102,7 +169,7 @@ class SegmentShape(LineShape):
         check_is_point(end, "end", only_3d=True)
         check_ndarray_is_not_none(end, "end")
 
-        # Assign values to origin and end
+        # Assign values to start and end
         self._origin = start
         self._end = end
 
@@ -111,11 +178,19 @@ class SegmentShape(LineShape):
         self._rebase_point_units()
 
         # Build the direction vector
-        self._direction = UnitVector3D(end - start)
+        direction = UnitVector3D(end - start)
+
+        # Call the super ctor (i.e. LineShape).
+        super().__init__(start, direction, dir_1=dir_1, dir_2=dir_2)
 
     @classmethod
     def from_origin_and_vector(
-        cls, origin: Point3D, vector: Vector3D, vector_units: Optional[Unit] = UNIT_LENGTH
+        cls,
+        origin: Point3D,
+        vector: Vector3D,
+        vector_units: Optional[Unit] = UNIT_LENGTH,
+        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
     ):
         """Create a ``Segment`` from an origin and a vector.
 
@@ -127,6 +202,14 @@ class SegmentShape(LineShape):
             Vector defining the line segment.
         vector_units : Optional[Unit], optional
             The length units of the vector, by default ``UNIT_LENGTH``.
+        dir_1 : Optional[UnitVector3D]
+            A :class:`UnitVector3D` representing the first fundamental direction
+            of the reference plane where the shape is contained.
+            By default, ``UNIT_VECTOR_X``.
+        dir_2 : Optional[UnitVector3D]
+            A :class:`UnitVector3D` representing the second fundamental direction
+            of the reference plane where the shape is contained.
+            By default, ``UNIT_VECTOR_Y``.
 
         Returns
         -------
@@ -138,7 +221,46 @@ class SegmentShape(LineShape):
         end_vec_as_point = Point3D(vector, vector_units)
         end_vec_as_point += origin
 
-        return cls(origin, end_vec_as_point)
+        return cls(origin, end_vec_as_point, dir_1=dir_1, dir_2=dir_2)
+
+    @classmethod
+    def from_origin_and_quantity_vector(
+        cls,
+        origin: Point3D,
+        quantity_vector: QuantityVector3D,
+        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
+    ):
+        """Create a ``Segment`` from an origin and a vector.
+
+        Parameters
+        ----------
+        origin : Point3D
+            Start of the line segment.
+        quantity_vector : QuantityVector3D
+            QuantityVector defining the line segment (with units).
+        dir_1 : Optional[UnitVector3D]
+            A :class:`UnitVector3D` representing the first fundamental direction
+            of the reference plane where the shape is contained.
+            By default, ``UNIT_VECTOR_X``.
+        dir_2 : Optional[UnitVector3D]
+            A :class:`UnitVector3D` representing the second fundamental direction
+            of the reference plane where the shape is contained.
+            By default, ``UNIT_VECTOR_Y``.
+
+        Returns
+        -------
+        Segment
+            The ``Segment`` object resulting from the inputs.
+        """
+        check_is_quantityvector(quantity_vector)
+        return SegmentShape.from_origin_and_vector(
+            origin=origin,
+            vector=quantity_vector,
+            vector_units=quantity_vector.base_unit,
+            dir_1=dir_1,
+            dir_2=dir_2,
+        )
 
     def _check_invalid_segment_points(self):
         """Check that the origin and end points are not the same."""
@@ -162,43 +284,24 @@ class SegmentShape(LineShape):
         """Returns the start of the ``Segment``."""
         return self.origin
 
-    @start.setter
-    def start(self, start) -> None:
-        """Set the start of the ``Segment``."""
-        # Call the parent setter
-        LineShape.origin.fset(self, start)
-
-        # Check segment point values and units
-        self._check_invalid_segment_points()
-        self._rebase_point_units()
-
-        # Recalculate direction
-        self._direction = UnitVector3D(self.end - self.origin)
-
     @property
     def end(self) -> Point3D:
         """Returns the end of the ``Segment``."""
         return self._end
 
-    @end.setter
-    def end(self, end) -> None:
-        """Set the end of the ``Segment``."""
-        check_is_point(end, "end", only_3d=True)
-        check_ndarray_is_not_none(end, "end")
-        self._end = end
+    def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
+        """
+        Returns a list containing all the points belonging to the shape.
 
-        # Check segment point values and units
-        self._check_invalid_segment_points()
-        self._rebase_point_units()
+        Parameters
+        ----------
+        num_points : int
+            Desired number of points belonging to the shape.
 
-        # Recalculate direction
-        self._direction = UnitVector3D(self.end - self.origin)
-
-    @LineShape.direction.setter
-    def direction(self, direction: Union[Vector3D, UnitVector3D]) -> None:
-        raise UnsupportedOperation("Segment direction is unsettable.")
-
-    @LineShape.origin.setter
-    def origin(self, origin) -> None:
-        # Forcing the parent setter to go through the Segment.origin setter
-        self.start = origin
+        Returns
+        -------
+        List[Point3D]
+            A list of points representing the shape.
+        """
+        alpha = np.linspace(self.start, self.end, num_points)
+        return self.start_point + alpha * self.direction
