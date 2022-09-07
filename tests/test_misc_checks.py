@@ -154,7 +154,6 @@ def test_check_is_point():
     # Create several arrays
     arr_strs = np.asarray(["a", "b", "c"])
     arr_num = np.asarray([1, 2, 3])
-    vector_2d = Vector2D([1, 2])
 
     with pytest.raises(
         TypeError, match="The parameter provided should be a Point3D or Point2D object."
@@ -167,7 +166,7 @@ def test_check_is_point():
     with pytest.raises(
         TypeError, match="The parameter provided should be a Point3D or Point2D object."
     ):
-        check_is_point(vector_2d)
+        check_is_point(Vector2D([1, 2]))
 
     with pytest.raises(TypeError, match="The parameter provided should be a Point3D object."):
         check_is_point(Point2D(), only_3d=True)
@@ -187,7 +186,6 @@ def test_check_is_vector():
     # Create several arrays
     arr_strs = np.asarray(["a", "b", "c"])
     arr_num = np.asarray([1, 2, 3])
-    point_2d = Point2D([1, 2])
 
     with pytest.raises(
         TypeError, match="The parameter provided should be a Vector3D or Vector2D object."
@@ -200,7 +198,7 @@ def test_check_is_vector():
     with pytest.raises(
         TypeError, match="The parameter provided should be a Vector3D or Vector2D object."
     ):
-        check_is_vector(point_2d)
+        check_is_vector(Point2D([1, 2]))
 
     with pytest.raises(TypeError, match="The parameter provided should be a Vector3D object."):
         check_is_vector(Vector2D([1, 0]), only_3d=True)
@@ -222,7 +220,6 @@ def test_check_is_quantityvector():
     # Create several arrays
     arr_strs = np.asarray(["a", "b", "c"])
     arr_num = np.asarray([1, 2, 3])
-    point_2d = Point2D([1, 2])
 
     with pytest.raises(
         TypeError,
@@ -239,7 +236,7 @@ def test_check_is_quantityvector():
         TypeError,
         match="The parameter provided should be a QuantityVector3D or QuantityVector2D object.",
     ):
-        check_is_quantityvector(point_2d)
+        check_is_quantityvector(Point2D([1, 2]))
 
     with pytest.raises(
         TypeError, match="The parameter provided should be a QuantityVector3D object."
@@ -283,7 +280,6 @@ def test_check_is_unitvector():
     # Create several arrays
     arr_strs = np.asarray(["a", "b", "c"])
     arr_num = np.asarray([1, 2, 3])
-    point_2d = Point2D([1, 2])
 
     with pytest.raises(
         TypeError, match="The parameter provided should be a UnitVector3D or UnitVector2D object."
@@ -296,7 +292,7 @@ def test_check_is_unitvector():
     with pytest.raises(
         TypeError, match="The parameter provided should be a UnitVector3D or UnitVector2D object."
     ):
-        check_is_unitvector(point_2d)
+        check_is_unitvector(Point2D([1, 2]))
 
     with pytest.raises(TypeError, match="The parameter provided should be a UnitVector3D object."):
         check_is_unitvector(UnitVector2D([1, 0]), only_3d=True)
