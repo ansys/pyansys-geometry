@@ -66,12 +66,12 @@ class Sketch:
         radius : Real
             The radius of the circle.
         origin : Point3D
-            A ``Point3D`` representing the origin of the shape.
+            A :class:`Point3D` representing the origin of the shape.
         dir_1 : UnitVector3D
-            A :class:``UnitVector3D`` representing the first fundamental direction
+            A :class:`UnitVector3D` representing the first fundamental direction
             of the reference plane where the shape is contained.
         dir_2 : UnitVector3D
-            A :class:``UnitVector3D`` representing the second fundamental direction
+            A :class:`UnitVector3D` representing the second fundamental direction
             of the reference plane where the shape is contained.
 
         Returns
@@ -101,12 +101,12 @@ class Sketch:
         b : Real
             The semi-minor axis of the ellipse.
         origin : Point3D
-            A ``Point3D`` representing the origin of the shape.
+            A :class:`Point3D` representing the origin of the shape.
         dir_1 : UnitVector3D
-            A :class:``UnitVector3D`` representing the first fundamental direction
+            A :class:`UnitVector3D` representing the first fundamental direction
             of the reference plane where the shape is contained.
         dir_2 : UnitVector3D
-            A :class:``UnitVector3D`` representing the second fundamental direction
+            A :class:`UnitVector3D` representing the second fundamental direction
             of the reference plane where the shape is contained.
 
         Returns

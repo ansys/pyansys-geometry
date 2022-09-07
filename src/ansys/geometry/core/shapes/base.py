@@ -22,12 +22,12 @@ class BaseShape:
         Parameters
         ----------
         origin : Point3D
-            A :class:``Point3D`` representing the origin of the shape.
+            A :class:`Point3D` representing the origin of the shape.
         dir_1 : UnitVector3D
-            A :class:``Vector3D`` representing the first fundamental direction
+            A :class:`Vector3D` representing the first fundamental direction
             of the reference plane where the shape is contained.
         dir_2 : UnitVector3D
-            A :class:``Vector3D`` representing the second fundamental direction
+            A :class:`Vector3D` representing the second fundamental direction
             of the reference plane where the shape is contained.
         is_closed: Optional[bool]
             A boolean variable to define whether the shape is open or closed.
