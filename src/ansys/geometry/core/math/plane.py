@@ -1,7 +1,7 @@
 """``Plane`` class module."""
 
-from ansys.geometry.core.primitives.point import Point3D
-from ansys.geometry.core.primitives.vector import UnitVector3D
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D
 
 
 class Plane:
