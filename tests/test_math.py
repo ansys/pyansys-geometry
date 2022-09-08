@@ -5,6 +5,9 @@ import pytest
 
 from ansys.geometry.core import UNITS
 from ansys.geometry.core.math import (
+    UNIT_VECTOR_X,
+    UNIT_VECTOR_Y,
+    UNIT_VECTOR_Z,
     ZERO_VECTOR3D,
     Frame,
     Matrix,
@@ -742,6 +745,7 @@ def test_frame():
     f_1_duplicate = Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
     f_2 = Frame(Point3D([5, 8, 9]), UnitVector3D([1, 1, 1]), UnitVector3D([0, -1, 1]))
     f_with_array_definitions = Frame([5, 8, 9], [1, 1, 1], [0, -1, 1])
+    f_defaults = Frame()
 
     assert f_1 == f_1_duplicate
     assert f_1 != f_2
@@ -750,6 +754,13 @@ def test_frame():
     assert f_1.origin.x == origin.x
     assert f_1.origin.y == origin.y
     assert f_1.origin.z == origin.z
+
+    assert f_defaults.origin.x == 0
+    assert f_defaults.origin.y == 0
+    assert f_defaults.origin.z == 0
+    assert f_defaults.direction_x == UNIT_VECTOR_X
+    assert f_defaults.direction_y == UNIT_VECTOR_Y
+    assert f_defaults.direction_z == UNIT_VECTOR_Z
 
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
         Frame(origin, "A", UnitVector3D([25, 39, 82]))
@@ -769,6 +780,7 @@ def test_plane():
     p_1_duplicate = Plane(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
     p_2 = Plane(Point3D([5, 8, 9]), UnitVector3D([1, 1, 1]), UnitVector3D([0, -1, 1]))
     p_with_array_definitions = Plane([5, 8, 9], [1, 1, 1], [0, -1, 1])
+    p_defaults = Plane()
 
     assert p_1 == p_1_duplicate
     assert p_1 != p_2
@@ -777,6 +789,13 @@ def test_plane():
     assert p_1.origin.x == origin.x
     assert p_1.origin.y == origin.y
     assert p_1.origin.z == origin.z
+
+    assert p_defaults.origin.x == 0
+    assert p_defaults.origin.y == 0
+    assert p_defaults.origin.z == 0
+    assert p_defaults.direction_x == UNIT_VECTOR_X
+    assert p_defaults.direction_y == UNIT_VECTOR_Y
+    assert p_defaults.direction_z == UNIT_VECTOR_Z
 
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
         Plane(origin, "A", UnitVector3D([25, 39, 82]))

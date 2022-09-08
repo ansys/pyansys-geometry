@@ -75,6 +75,7 @@ class Vector3D(np.ndarray):
         return np.linalg.norm(self)
 
     def is_perpendicular_to(self, other_vector: "Vector3D") -> bool:
+        """Verifies if the two ``Vector3D`` instances are perpendicular."""
         if self.is_zero or other_vector.is_zero:
             return False
 
@@ -83,6 +84,7 @@ class Vector3D(np.ndarray):
 
     @property
     def is_zero(self) -> bool:
+        """Confirms whether all components of ``Vector3D`` are zero."""
         return self.x == 0 and self.y == 0 and self.z == 0
 
     def normalize(self) -> "Vector3D":

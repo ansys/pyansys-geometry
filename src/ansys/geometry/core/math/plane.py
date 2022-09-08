@@ -16,19 +16,19 @@ class Plane(Frame):
 
     Parameters
     ----------
-    origin : Union[~numpy.ndarray, RealSequence, Point3D]
-        Centered origin of the ``Frame``.
-    direction_x: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
-        X-plane direction.
-    direction_y: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
-        Y-plane direction.
+    origin : Optional[Union[~numpy.ndarray, RealSequence, Point3D]]
+        Centered origin of the ``Frame``. By default, cartesian origin.
+    direction_x: Optional[Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]]
+        X-axis direction. By default, ``UNIT_VECTOR_X``
+    direction_y: Optional[Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]]
+        Y-axis direction. By default, ``UNIT_VECTOR_Y``
     """
 
     def __init__(
         self,
-        origin: Union[np.ndarray, RealSequence, Point3D],
-        direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D],
-        direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D],
+        origin: Union[np.ndarray, RealSequence, Point3D] = [0, 0, 0],
+        direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = [1, 0, 0],
+        direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = [0, 1, 0],
     ):
         """Constructor method for ``Plane``."""
         super().__init__(origin, direction_x, direction_y)
