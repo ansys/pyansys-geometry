@@ -6,10 +6,9 @@ from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.checks import (
-    check_is_point,
-    check_is_unitvector,
     check_ndarray_is_non_zero,
     check_ndarray_is_not_none,
+    check_type,
 )
 from ansys.geometry.core.typing import Real
 
@@ -43,11 +42,11 @@ class BaseShape:
     ):
         """Initializes the base shape."""
 
-        check_is_point(origin, "origin", only_3d=True)
+        check_type(origin, Point3D)
         check_ndarray_is_not_none(origin, "origin")
-        check_is_unitvector(dir_1, "dir_1", only_3d=True)
+        check_type(dir_1, UnitVector3D)
         check_ndarray_is_non_zero(dir_1, "dir_1")
-        check_is_unitvector(dir_2, "dir_2", only_3d=True)
+        check_type(dir_2, UnitVector3D)
         check_ndarray_is_non_zero(dir_2, "dir_2")
 
         # TODO: assign a reference frame to the base shape
