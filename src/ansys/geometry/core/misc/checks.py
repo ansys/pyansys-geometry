@@ -1,6 +1,6 @@
 """Checking common functions."""
 
-from typing import Optional, Union
+from typing import Optional, Union, Tuple
 
 import numpy as np
 from pint import Unit
@@ -127,7 +127,7 @@ def check_type_equivalence(input: object, expected: object) -> None:
         raise TypeError(f"Provided type {type(input)} is invalid, type {type(expected)} expected.")
 
 
-def check_type(input: object, expected_type: Union[type, tuple[type, ...]]) -> None:
+def check_type(input: object, expected_type: Union[type, Tuple[type, ...]]) -> None:
     """
     Checks if the input object provided is of the same class as the expected one.
 
@@ -135,7 +135,7 @@ def check_type(input: object, expected_type: Union[type, tuple[type, ...]]) -> N
     ----------
     input : object
         Input object for class type evaluation.
-    expected_type : Union[type, tuple[type, ...]]
+    expected_type : Union[type, Tuple[type, ...]]
         One or more types to compare against.
 
     Raises
