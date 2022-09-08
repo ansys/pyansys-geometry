@@ -367,48 +367,48 @@ def test_torus():
     assert t_1.origin.x == origin.x
     assert t_1.origin.y == origin.y
     assert t_1.origin.z == origin.z
-    assert t_1.semi_major_radius == 100
-    assert t_1.semi_minor_radius == 200
+    assert t_1.major_radius == 100
+    assert t_1.minor_radius == 200
 
-    t_1.semi_major_radius = 1000
-    t_1.semi_minor_radius = 2000
+    t_1.major_radius = 1000
+    t_1.minor_radius = 2000
 
     assert t_1.origin.x == origin.x
     assert t_1.origin.y == origin.y
     assert t_1.origin.z == origin.z
-    assert t_1.semi_major_radius == 1000
-    assert t_1.semi_minor_radius == 2000
+    assert t_1.major_radius == 1000
+    assert t_1.minor_radius == 2000
 
     t_1.origin = new_origin = Point3D([42, 88, 99])
     assert t_1.origin.x == new_origin.x
     assert t_1.origin.y == new_origin.y
     assert t_1.origin.z == new_origin.z
-    assert t_1.semi_major_radius == 1000
-    assert t_1.semi_minor_radius == 2000
+    assert t_1.major_radius == 1000
+    assert t_1.minor_radius == 2000
 
     with pytest.raises(
         TypeError,
-        match="The parameter 'semi_major_radius' should be a float or an integer value.",
+        match="The parameter 'major_radius' should be a float or an integer value.",
     ):
         Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), "A", 200)
 
     with pytest.raises(
         TypeError,
-        match="The parameter 'semi_minor_radius' should be a float or an integer value.",
+        match="The parameter 'minor_radius' should be a float or an integer value.",
     ):
         Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, "A")
 
     with pytest.raises(
         TypeError,
-        match="The parameter 'semi_major_radius' should be a float or an integer value.",
+        match="The parameter 'major_radius' should be a float or an integer value.",
     ):
-        t_1.semi_major_radius = "A"
+        t_1.major_radius = "A"
 
     with pytest.raises(
         TypeError,
-        match="The parameter 'semi_minor_radius' should be a float or an integer value.",
+        match="The parameter 'minor_radius' should be a float or an integer value.",
     ):
-        t_1.semi_minor_radius = "A"
+        t_1.minor_radius = "A"
 
     with pytest.raises(
         TypeError,
@@ -450,14 +450,14 @@ def test_torus_units():
     assert t_1.unit == UNITS.mm
 
     # Request for radius/height and ensure they are in mm
-    assert t_1.semi_major_radius == 100
-    assert t_1.semi_minor_radius == 200
+    assert t_1.major_radius == 100
+    assert t_1.minor_radius == 200
 
     # Check that the actual values are in base units (i.e. UNIT_LENGTH)
-    assert t_1._semi_major_radius == (t_1.semi_major_radius * t_1.unit).to_base_units().magnitude
-    assert t_1._semi_minor_radius == (t_1.semi_minor_radius * t_1.unit).to_base_units().magnitude
+    assert t_1._major_radius == (t_1.major_radius * t_1.unit).to_base_units().magnitude
+    assert t_1._minor_radius == (t_1.minor_radius * t_1.unit).to_base_units().magnitude
 
     # Set unit to cm now... and check if the values changed
     t_1.unit = UNITS.cm
-    assert t_1.semi_major_radius == 10
-    assert t_1.semi_minor_radius == 20
+    assert t_1.major_radius == 10
+    assert t_1.minor_radius == 20

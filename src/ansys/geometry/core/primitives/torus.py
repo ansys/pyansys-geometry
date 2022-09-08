@@ -29,9 +29,9 @@ class Torus:
         X-plane direction.
     direction_y: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         Y-plane direction.
-    semi_major_radius: Real
+    major_radius: Real
         Major radius of ``Torus``.
-    semi_minor_radius: Real
+    minor_radius: Real
         Minor radius of ``Torus``.
     unit : Unit, optional
         Units employed to define the radius and minor_radius, by default ``UNIT_LENGTH``.
@@ -42,8 +42,8 @@ class Torus:
         origin: Union[np.ndarray, RealSequence, Point3D],
         direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D],
         direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D],
-        semi_major_radius: Real,
-        semi_minor_radius: Real,
+        major_radius: Real,
+        minor_radius: Real,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Constructor method for ``Torus``."""
@@ -52,8 +52,8 @@ class Torus:
         check_type(direction_x, (np.ndarray, List, UnitVector3D, Vector3D))
         check_type(direction_y, (np.ndarray, List, UnitVector3D, Vector3D))
 
-        check_is_float_int(semi_major_radius, "semi_major_radius")
-        check_is_float_int(semi_minor_radius, "semi_minor_radius")
+        check_is_float_int(major_radius, "major_radius")
+        check_is_float_int(minor_radius, "minor_radius")
 
         check_is_pint_unit(unit, "unit")
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
@@ -70,8 +70,8 @@ class Torus:
         )
 
         # Store values in base unit
-        self._semi_major_radius = UNITS.convert(semi_major_radius, self._unit, self._base_unit)
-        self._semi_minor_radius = UNITS.convert(semi_minor_radius, self._unit, self._base_unit)
+        self._major_radius = UNITS.convert(major_radius, self._unit, self._base_unit)
+        self._minor_radius = UNITS.convert(minor_radius, self._unit, self._base_unit)
 
     @property
     def origin(self) -> Point3D:
@@ -85,24 +85,24 @@ class Torus:
         self._origin = origin
 
     @property
-    def semi_major_radius(self) -> Real:
+    def major_radius(self) -> Real:
         """Semi-major radius of the ``Torus``."""
-        return UNITS.convert(self._semi_major_radius, self._base_unit, self._unit)
+        return UNITS.convert(self._major_radius, self._base_unit, self._unit)
 
-    @semi_major_radius.setter
-    def semi_major_radius(self, semi_major_radius: Real) -> None:
-        check_is_float_int(semi_major_radius, "semi_major_radius")
-        self._semi_major_radius = UNITS.convert(semi_major_radius, self._unit, self._base_unit)
+    @major_radius.setter
+    def major_radius(self, major_radius: Real) -> None:
+        check_is_float_int(major_radius, "major_radius")
+        self._major_radius = UNITS.convert(major_radius, self._unit, self._base_unit)
 
     @property
-    def semi_minor_radius(self) -> Real:
+    def minor_radius(self) -> Real:
         """Semi-minor radius of the ``Torus``."""
-        return UNITS.convert(self._semi_minor_radius, self._base_unit, self._unit)
+        return UNITS.convert(self._minor_radius, self._base_unit, self._unit)
 
-    @semi_minor_radius.setter
-    def semi_minor_radius(self, semi_minor_radius: Real) -> None:
-        check_is_float_int(semi_minor_radius, "semi_minor_radius")
-        self._semi_minor_radius = UNITS.convert(semi_minor_radius, self._unit, self._base_unit)
+    @minor_radius.setter
+    def minor_radius(self, minor_radius: Real) -> None:
+        check_is_float_int(minor_radius, "minor_radius")
+        self._minor_radius = UNITS.convert(minor_radius, self._unit, self._base_unit)
 
     @property
     def unit(self) -> Unit:
@@ -121,8 +121,8 @@ class Torus:
 
         return (
             self._origin == other.origin
-            and self._semi_major_radius == other.semi_major_radius
-            and self._semi_minor_radius == other.semi_minor_radius
+            and self._major_radius == other.major_radius
+            and self._minor_radius == other.minor_radius
             and self._direction_x == other._direction_x
             and self._direction_y == other._direction_y
         )
