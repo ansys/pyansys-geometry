@@ -184,7 +184,7 @@ def test_errors_line():
     with pytest.raises(TypeError, match="Provided type"):
         Line("a", Vector3D([1, 0, 0]))
     with pytest.raises(
-        ValueError, match="The numpy.ndarray 'origin' should not be a None numpy.ndarray."
+        ValueError, match="The numpy.ndarray 'origin' should not be an Inf numpy.ndarray."
     ):
         Line(Point3D(), Vector3D([1, 0, 0]))
 
@@ -194,13 +194,13 @@ def test_errors_segment():
     with pytest.raises(TypeError, match="Provided type"):
         Segment("a", "b")
     with pytest.raises(
-        ValueError, match="The numpy.ndarray 'start' should not be a None numpy.ndarray."
+        ValueError, match="The numpy.ndarray 'start' should not be an Inf numpy.ndarray."
     ):
         Segment(Point3D(), "b")
     with pytest.raises(TypeError, match="Provided type"):
         Segment(Point3D([10, 20, 30], unit=UNITS.meter), "b")
     with pytest.raises(
-        ValueError, match="The numpy.ndarray 'end' should not be a None numpy.ndarray."
+        ValueError, match="The numpy.ndarray 'end' should not be an Inf numpy.ndarray."
     ):
         Segment(Point3D([10, 20, 30]), Point3D())
     with pytest.raises(

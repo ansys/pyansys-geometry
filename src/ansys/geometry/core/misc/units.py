@@ -1,5 +1,7 @@
 """``Units`` module for PyGeometry."""
 
+from typing import Optional, Union
+
 from pint import Quantity, Unit, UnitRegistry
 
 from ansys.geometry.core.misc.checks import check_is_pint_unit, check_pint_unit_compatibility
@@ -22,11 +24,18 @@ class PhysicalQuantity:
     ----------
     unit : ~pint.Unit
         The units to be considered for our class
+    expected_dimensions : ~pint.Unit
+        The units containing the dimensionality of the ``PhysicalQuantity``.
+        By default, None.
     """
 
-    def __init__(self, unit: Unit):
+    def __init__(self, unit: Unit, expected_dimensions: Optional[Union[Unit, None]] = None):
         """Constructor for ``PhysicalQuantity``."""
         check_is_pint_unit(unit, "unit")
+        if expected_dimensions:
+            check_is_pint_unit(expected_dimensions, "expected_dimensions")
+            check_pint_unit_compatibility(unit, expected_dimensions)
+
         self._unit = unit
         _, self._base_unit = UNITS.get_base_units(unit)
 

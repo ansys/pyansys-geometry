@@ -87,6 +87,32 @@ def check_ndarray_is_not_none(
         )
 
 
+def check_ndarray_is_all_inf(
+    param: np.ndarray, param_name: Optional[Union[str, None]] = None
+) -> None:
+    """
+    Checks if the :class:`numpy.ndarray` is all Inf-valued.
+
+    Parameters
+    ----------
+    param : ~numpy.ndarray
+        :class:`numpy.ndarray` instance to be checked.
+    param_name : str or None, optional
+        The :class:`numpy.ndarray` instance name (if any). By default, ``None``.
+
+    Raises
+    ------
+    ValueError
+        In case the :class:`numpy.ndarray` is all Inf-valued.
+    """
+    if np.isinf(param).all():
+        raise ValueError(
+            f"The numpy.ndarray provided should not be an Inf numpy.ndarray."
+            if param_name is None
+            else f"The numpy.ndarray '{param_name}' should not be an Inf numpy.ndarray."
+        )
+
+
 def check_ndarray_is_non_zero(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:

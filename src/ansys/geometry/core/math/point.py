@@ -1,6 +1,6 @@
 """``Point3D`` and ``Point2D`` class module."""
 
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 import numpy as np
 from pint import Unit
@@ -9,27 +9,69 @@ from ansys.geometry.core.misc import (
     UNIT_LENGTH,
     UNITS,
     check_is_float_int,
-    check_is_pint_unit,
     check_ndarray_is_float_int,
-    check_pint_unit_compatibility,
     check_type_equivalence,
 )
+from ansys.geometry.core.misc.units import PhysicalQuantity
 from ansys.geometry.core.typing import Real, RealSequence
 
-DEFAULT_POINT3D = [None, None, None]
+DEFAULT_POINT3D = [np.Inf, np.Inf, np.Inf]
 """Default value for ``Point3D``"""
 
-DEFAULT_POINT2D = [None, None]
+DEFAULT_POINT2D = [np.Inf, np.Inf]
 """Default value for ``Point2D``"""
 
 
-class Point3D(np.ndarray):
+class Point(np.ndarray, PhysicalQuantity):
+    """
+    Provides Point geometry primitive representation.
+
+    Parameters
+    ----------
+    input : Union[~numpy.ndarray, RealSequence]
+        The direction arguments, either as a :class:`numpy.ndarray`, or as a RealSequence.
+    unit : ~pint.Unit, optional
+        Units employed to define the Point3D values, by default ``UNIT_LENGTH``
+    """
+
+    def __new__(
+        cls,
+        input: Union[np.ndarray, RealSequence],
+        unit: Optional[Unit] = UNIT_LENGTH,
+    ):
+        """Constructor for ``Point``."""
+        # Build an empty np.ndarray object
+        return np.zeros(len(input)).view(cls)
+
+    def __init__(self, input: Union[np.ndarray, RealSequence], unit: Optional[Unit] = UNIT_LENGTH):
+        # Call the PhysicalQuantity ctor
+        super().__init__(unit, expected_dimensions=UNIT_LENGTH)
+
+        # Check the inputs
+        check_ndarray_is_float_int(input, "input") if isinstance(
+            input, np.ndarray
+        ) else check_ndarray_is_float_int(np.asarray(input), "input")
+
+        # Store values
+        self.flat = [(elem * self.unit).to_base_units().magnitude for elem in input]
+
+    def __eq__(self, other: "Point") -> bool:
+        """Equals operator for ``Point``."""
+        check_type_equivalence(other, self)
+        return np.array_equal(self, other)
+
+    def __ne__(self, other: "Point") -> bool:
+        """Not equals operator for ``Point``."""
+        return not self == other
+
+
+class Point3D(Point):
     """
     Provides Point3D geometry primitive representation.
 
     Parameters
     ----------
-    input : Union[~numpy.ndarray, RealSequence, List[None]], optional
+    input : Union[~numpy.ndarray, RealSequence], optional
         The direction arguments, either as a :class:`numpy.ndarray`, or as a RealSequence.
         By default, ``DEFAULT_POINT3D``.
     unit : ~pint.Unit, optional
@@ -38,36 +80,23 @@ class Point3D(np.ndarray):
 
     def __new__(
         cls,
-        input: Optional[Union[np.ndarray, RealSequence, List[None]]] = DEFAULT_POINT3D,
+        input: Optional[Union[np.ndarray, RealSequence]] = DEFAULT_POINT3D,
+        unit: Optional[Unit] = UNIT_LENGTH,
+    ):
+        return super().__new__(Point3D, input, unit)
+
+    def __init__(
+        self,
+        input: Optional[Union[np.ndarray, RealSequence]] = DEFAULT_POINT3D,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Constructor for ``Point3D``."""
-
-        # Check if we are dealing with the default value
-        if input is DEFAULT_POINT3D:
-            obj = np.asarray(DEFAULT_POINT3D).view(cls)
-            obj._unit = None
-            _, obj._base_unit = UNITS.get_base_units(UNIT_LENGTH)
-            return obj
-
-        # Check that units provided (if any) are compatible
-        check_is_pint_unit(unit, "unit")
-        check_pint_unit_compatibility(unit, UNIT_LENGTH)
-
-        # Transform to numpy.ndarray
-        obj = np.asarray([(elem * unit).to_base_units().magnitude for elem in input]).view(cls)
-        obj._unit = unit
-        _, obj._base_unit = UNITS.get_base_units(unit)
+        # Call the Point ctor.
+        super().__init__(input, unit)
 
         # Check that the size is as expected
-        if obj is None or len(obj) != 3:
+        if len(self) != 3:
             raise ValueError("Point3D must have three coordinates.")
-
-        # If we are not dealing with the default value... check the inputs
-        check_ndarray_is_float_int(obj, "input")
-
-        # If all checks went through, return the Point3D
-        return obj
 
     @property
     def x(self) -> Union[Real, None]:
@@ -102,40 +131,14 @@ class Point3D(np.ndarray):
         check_is_float_int(z, "z")
         self[2] = (z * self._unit).to_base_units().magnitude
 
-    @property
-    def unit(self) -> Unit:
-        """Returns the unit of the object."""
-        return self._unit
 
-    @unit.setter
-    def unit(self, unit: Unit) -> None:
-        """Sets the unit of the object."""
-        check_is_pint_unit(unit, "unit")
-        check_pint_unit_compatibility(unit, UNIT_LENGTH)
-        self._unit = unit
-
-    @property
-    def base_unit(self) -> Unit:
-        """Returns the base unit of the object."""
-        return self._base_unit
-
-    def __eq__(self, other: "Point3D") -> bool:
-        """Equals operator for ``Point3D``."""
-        check_type_equivalence(other, self)
-        return np.array_equal(self, other)
-
-    def __ne__(self, other: "Point3D") -> bool:
-        """Not equals operator for ``Point3D``."""
-        return not self == other
-
-
-class Point2D(np.ndarray):
+class Point2D(Point):
     """
     Provides Point2D geometry primitive representation.
 
     Parameters
     ----------
-    input : Union[~numpy.ndarray, RealSequence, List[None]], optional
+    input : Union[~numpy.ndarray, RealSequence], optional
         The direction arguments, either as a :class:`numpy.ndarray`, or as a RealSequence.
         By default, ``DEFAULT_POINT3D``.
     unit : ~pint.Unit, optional
@@ -144,36 +147,23 @@ class Point2D(np.ndarray):
 
     def __new__(
         cls,
-        input: Optional[Union[np.ndarray, RealSequence, List[None]]] = DEFAULT_POINT2D,
+        input: Optional[Union[np.ndarray, RealSequence]] = DEFAULT_POINT2D,
+        unit: Optional[Unit] = UNIT_LENGTH,
+    ):
+        return super().__new__(Point2D, input, unit)
+
+    def __init__(
+        self,
+        input: Optional[Union[np.ndarray, RealSequence]] = DEFAULT_POINT2D,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Constructor for ``Point2D``."""
-
-        # Check if we are dealing with the default value
-        if input is DEFAULT_POINT2D:
-            obj = np.asarray(DEFAULT_POINT2D).view(cls)
-            obj._unit = None
-            _, obj._base_unit = UNITS.get_base_units(UNIT_LENGTH)
-            return obj
-
-        # Check that units provided (if any) are compatible
-        check_is_pint_unit(unit, "unit")
-        check_pint_unit_compatibility(unit, UNIT_LENGTH)
-
-        # Transform to numpy.ndarray
-        obj = np.asarray([(elem * unit).to_base_units().magnitude for elem in input]).view(cls)
-        obj._unit = unit
-        _, obj._base_unit = UNITS.get_base_units(unit)
+        # Call the Point ctor.
+        super().__init__(input, unit)
 
         # Check that the size is as expected
-        if obj is None or len(obj) != 2:
+        if len(self) != 2:
             raise ValueError("Point2D must have two coordinates.")
-
-        # If we are not dealing with the default value... check the inputs
-        check_ndarray_is_float_int(obj, "input")
-
-        # If all checks went through, return the Point2D
-        return obj
 
     @property
     def x(self) -> Union[Real, None]:
@@ -196,24 +186,3 @@ class Point2D(np.ndarray):
         """Set the Y plane component value."""
         check_is_float_int(y, "y")
         self[1] = (y * self._unit).to_base_units().magnitude
-
-    @property
-    def unit(self) -> Unit:
-        """Returns the unit of the object."""
-        return self._unit
-
-    @unit.setter
-    def unit(self, unit: Unit) -> None:
-        """Sets the unit of the object."""
-        check_is_pint_unit(unit, "unit")
-        check_pint_unit_compatibility(unit, UNIT_LENGTH)
-        self._unit = unit
-
-    def __eq__(self, other: "Point2D") -> bool:
-        """Equals operator for ``Point2D``."""
-        check_type_equivalence(other, self)
-        return np.array_equal(self, other)
-
-    def __ne__(self, other: "Point2D") -> bool:
-        """Not equals operator for ``Point2D``."""
-        return not self == other

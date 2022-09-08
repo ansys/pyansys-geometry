@@ -17,6 +17,7 @@ from ansys.geometry.core.math import (
     Vector2D,
     Vector3D,
 )
+from ansys.geometry.core.math.point import Point
 from ansys.geometry.core.misc import UNITS
 
 DOUBLE_EPS = np.finfo(float).eps
@@ -25,20 +26,20 @@ DOUBLE_EPS = np.finfo(float).eps
 def test_point3d():
     """Simple test to create a ``Point3D``."""
 
-    # Test the null Point3D
-    p_null = Point3D()
-    assert len(p_null) == 3
-    assert all(x == None for x in p_null)
-    p_null.unit = UNITS.cm
-    p_null.x = 10
-    p_null.y = 20
-    p_null.z = 30
-    assert p_null.x == 10
-    assert p_null.y == 20
-    assert p_null.z == 30
-    assert p_null[0] == 0.1
-    assert p_null[1] == 0.2
-    assert p_null[2] == 0.3
+    # Test the default Point3D
+    p_default = Point3D()
+    assert len(p_default) == 3
+    assert all(x == np.Inf for x in p_default)
+    p_default.unit = UNITS.cm
+    p_default.x = 10
+    p_default.y = 20
+    p_default.z = 30
+    assert p_default.x == 10
+    assert p_default.y == 20
+    assert p_default.z == 30
+    assert p_default[0] == 0.1
+    assert p_default[1] == 0.2
+    assert p_default[2] == 0.3
 
     # Create two Point3D objects
     p_1 = Point3D([0, 1, 3])
@@ -68,16 +69,16 @@ def test_point2d():
     """Simple test to create a ``Point2D``."""
 
     # Test the null Point2D
-    p_null = Point2D()
-    assert len(p_null) == 2
-    assert all(x == None for x in p_null)
-    p_null.unit = UNITS.cm
-    p_null.x = 10
-    p_null.y = 20
-    assert p_null.x == 10
-    assert p_null.y == 20
-    assert p_null[0] == 0.1
-    assert p_null[1] == 0.2
+    p_default = Point2D()
+    assert len(p_default) == 2
+    assert all(x == np.Inf for x in p_default)
+    p_default.unit = UNITS.cm
+    p_default.x = 10
+    p_default.y = 20
+    assert p_default.x == 10
+    assert p_default.y == 20
+    assert p_default[0] == 0.1
+    assert p_default[1] == 0.2
 
     # Create two Point2D objects
     p_1 = Point2D([0, 1])
@@ -718,3 +719,7 @@ def test_quantity_vector_2d():
     vec_b_normalized = Vector2D([70, 10]).normalize()
     assert abs(normalized_b.x - vec_b_normalized.x) <= TOLERANCE
     assert abs(normalized_b.y - vec_b_normalized.y) <= TOLERANCE
+
+
+def test_point():
+    a = Point([1, 2, 3, 4, 5])

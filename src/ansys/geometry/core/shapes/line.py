@@ -10,14 +10,12 @@ from ansys.geometry.core.math.vector import QuantityVector3D, UnitVector3D, Vect
 from ansys.geometry.core.misc import UNIT_LENGTH, UNITS
 from ansys.geometry.core.misc.checks import (
     check_is_pint_unit,
+    check_ndarray_is_all_inf,
     check_ndarray_is_non_zero,
-    check_ndarray_is_not_none,
     check_pint_unit_compatibility,
     check_type,
 )
 from ansys.geometry.core.shapes.base import BaseShape
-
-# TODO: Line at the moment is not a BaseShape...
 
 
 class Line(BaseShape):
@@ -155,9 +153,9 @@ class Segment(Line):
         """Constructor method for ``Segment``."""
         # Perform sanity checks on Point3D values given
         check_type(start, Point3D)
-        check_ndarray_is_not_none(start, "start")
+        check_ndarray_is_all_inf(start, "start")
         check_type(end, Point3D)
-        check_ndarray_is_not_none(end, "end")
+        check_ndarray_is_all_inf(end, "end")
 
         # Assign values to start and end
         self._origin = start
