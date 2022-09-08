@@ -32,6 +32,7 @@ class Polygon(BaseShape):
             Number of sides of the polygon.
         origin : Point3D
             A :class:``Point3D`` representing the origin of the shape.
+            By default, [0, 0, 0].
         dir_1 : UnitVector3D
             A :class:``UnitVector3D`` representing the first fundamental direction
             of the reference plane where the shape is contained.
@@ -41,7 +42,7 @@ class Polygon(BaseShape):
             of the reference plane where the shape is contained.
             By default, ``UNIT_VECTOR_Y``.
         """
-        super().__init__(origin, dir_1, dir_2, is_closed=True)
+        super().__init__(origin, dir_1=dir_1, dir_2=dir_2, is_closed=True)
 
         if radius <= 0:
             raise ValueError("Radius must be a real positive value.")
@@ -161,6 +162,7 @@ class Polygon(BaseShape):
             Number of sides of the polygon.
         origin : Point3D
             A :class:``Point3D`` representing the origin of the polygon.
+            By default, [0, 0, 0].
         dir_1 : UnitVector3D
             A :class:``UnitVector3D`` representing the first fundamental direction
             of the reference plane where the shape is contained.
@@ -179,4 +181,4 @@ class Polygon(BaseShape):
             raise ValueError("Radius must be a real positive value.")
 
         # Generate the Polygon instance
-        return cls(radius, sides, origin, dir_1, dir_2)
+        return cls(radius, sides, origin, dir_1=dir_1, dir_2=dir_2)

@@ -38,6 +38,8 @@ class Circle(BaseShape):
     ):
         """Initializes the circle shape."""
         super().__init__(origin, dir_1=dir_1, dir_2=dir_2, is_closed=True)
+        if radius <= 0:
+            raise ValueError("Radius must be a real positive value.")
         self._radius = radius
 
     @property
