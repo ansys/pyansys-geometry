@@ -757,8 +757,8 @@ def test_quantity_vector_2d():
     assert abs(normalized_b.y - vec_b_normalized.y) <= TOLERANCE
 
     # Create a QuantityVector2D from 2 points
-    point_a = Point2D([1, 2, 3], UNITS.cm)
-    point_b = Point2D([1, 6, 3], UNITS.cm)
+    point_a = Point2D([1, 2], UNITS.cm)
+    point_b = Point2D([1, 6], UNITS.cm)
     quantity_vector_from_points = QuantityVector2D.from_points(point_a, point_b)
     quantity_vector_from_points.x == 0
     quantity_vector_from_points.y == 4
