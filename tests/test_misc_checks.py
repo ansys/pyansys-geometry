@@ -3,27 +3,34 @@ import pytest
 
 from ansys.geometry.core import UNITS
 from ansys.geometry.core.math import Point2D, Point3D
-from ansys.geometry.core.math.vector import (
-    QuantityVector2D,
-    QuantityVector3D,
-    UnitVector2D,
-    UnitVector3D,
-    Vector2D,
-    Vector3D,
-)
 from ansys.geometry.core.misc import (
     check_is_float_int,
     check_is_pint_unit,
-    check_is_point,
-    check_is_quantityvector,
-    check_is_unitvector,
-    check_is_vector,
     check_ndarray_is_float_int,
     check_ndarray_is_non_zero,
     check_ndarray_is_not_none,
     check_pint_unit_compatibility,
+    check_type,
     check_type_equivalence,
 )
+
+
+def test_check_type():
+    """
+    Test that the __eq__ check is working properly.
+
+    Both objects must be of the same type to be compared.
+    """
+    a_2d = Point2D([1, 2])
+
+    check_type(a_2d, Point2D)
+    check_type(a_2d, (Point2D, Point3D))
+
+    with pytest.raises(TypeError, match="Provided type"):
+        check_type(a_2d, int)
+
+    with pytest.raises(TypeError, match="Provided type"):
+        check_type(a_2d, (int, float))
 
 
 def test_check_type_equivalence():
@@ -144,182 +151,6 @@ def test_check_is_float_int():
     # This raises no error
     check_is_float_int(num_int)
     check_is_float_int(num_float)
-
-
-def test_check_is_point():
-    """
-    Test that the input object is a ``Point2D`` or ``Point3D``.
-    """
-
-    # Create several arrays
-    arr_strs = np.asarray(["a", "b", "c"])
-    arr_num = np.asarray([1, 2, 3])
-
-    with pytest.raises(
-        TypeError, match="The parameter provided should be a Point3D or Point2D object."
-    ):
-        check_is_point(arr_strs)
-
-    with pytest.raises(TypeError, match="The parameter 'arr_num' should be a Point3D object."):
-        check_is_point(arr_num, "arr_num", only_3d=True)
-
-    with pytest.raises(
-        TypeError, match="The parameter provided should be a Point3D or Point2D object."
-    ):
-        check_is_point(Vector2D([1, 2]))
-
-    with pytest.raises(TypeError, match="The parameter provided should be a Point3D object."):
-        check_is_point(Point2D(), only_3d=True)
-
-    # This raises no error
-    check_is_point(Point3D())
-    check_is_point(Point2D())
-    check_is_point(Point3D([1, 2, 3]))
-    check_is_point(Point2D([1, 2]))
-
-
-def test_check_is_vector():
-    """
-    Test that the input object is a ``Vector2D`` or ``Vector3D``.
-    """
-
-    # Create several arrays
-    arr_strs = np.asarray(["a", "b", "c"])
-    arr_num = np.asarray([1, 2, 3])
-
-    with pytest.raises(
-        TypeError, match="The parameter provided should be a Vector3D or Vector2D object."
-    ):
-        check_is_vector(arr_strs)
-
-    with pytest.raises(TypeError, match="The parameter 'arr_num' should be a Vector3D object."):
-        check_is_vector(arr_num, "arr_num", only_3d=True)
-
-    with pytest.raises(
-        TypeError, match="The parameter provided should be a Vector3D or Vector2D object."
-    ):
-        check_is_vector(Point2D([1, 2]))
-
-    with pytest.raises(TypeError, match="The parameter provided should be a Vector3D object."):
-        check_is_vector(Vector2D([1, 0]), only_3d=True)
-
-    # This raises no error
-    check_is_vector(Vector2D([1, 2]))
-    check_is_vector(UnitVector2D([1, 2]))
-    check_is_vector(QuantityVector2D([1, 2], UNITS.mm))
-    check_is_vector(Vector3D([1, 2, 3]))
-    check_is_vector(UnitVector3D([1, 2, 3]))
-    check_is_vector(QuantityVector3D([1, 2, 3], UNITS.mm))
-
-
-def test_check_is_quantityvector():
-    """
-    Test that the input object is a ``QuantityVector2D`` or ``QuantityVector3D``.
-    """
-
-    # Create several arrays
-    arr_strs = np.asarray(["a", "b", "c"])
-    arr_num = np.asarray([1, 2, 3])
-
-    with pytest.raises(
-        TypeError,
-        match="The parameter provided should be a QuantityVector3D or QuantityVector2D object.",
-    ):
-        check_is_quantityvector(arr_strs)
-
-    with pytest.raises(
-        TypeError, match="The parameter 'arr_num' should be a QuantityVector3D object."
-    ):
-        check_is_quantityvector(arr_num, "arr_num", only_3d=True)
-
-    with pytest.raises(
-        TypeError,
-        match="The parameter provided should be a QuantityVector3D or QuantityVector2D object.",
-    ):
-        check_is_quantityvector(Point2D([1, 2]))
-
-    with pytest.raises(
-        TypeError, match="The parameter provided should be a QuantityVector3D object."
-    ):
-        check_is_quantityvector(QuantityVector2D([1, 0], UNITS.mm), only_3d=True)
-
-    with pytest.raises(
-        TypeError,
-        match="The parameter provided should be a QuantityVector3D or QuantityVector2D object.",
-    ):
-        check_is_quantityvector(Vector2D([1, 2]))
-
-    with pytest.raises(
-        TypeError,
-        match="The parameter provided should be a QuantityVector3D or QuantityVector2D object.",
-    ):
-        check_is_quantityvector(UnitVector2D([1, 2]))
-
-    with pytest.raises(
-        TypeError,
-        match="The parameter provided should be a QuantityVector3D or QuantityVector2D object.",
-    ):
-        check_is_quantityvector(Vector3D([1, 2, 3]))
-
-    with pytest.raises(
-        TypeError,
-        match="The parameter provided should be a QuantityVector3D or QuantityVector2D object.",
-    ):
-        check_is_quantityvector(UnitVector3D([1, 2, 3]))
-
-    # This raises no error
-    check_is_quantityvector(QuantityVector2D([1, 2], UNITS.mm))
-    check_is_quantityvector(QuantityVector3D([1, 2, 3], UNITS.mm))
-
-
-def test_check_is_unitvector():
-    """
-    Test that the input object is a ``UnitVector2D`` or ``UnitVector3D``.
-    """
-
-    # Create several arrays
-    arr_strs = np.asarray(["a", "b", "c"])
-    arr_num = np.asarray([1, 2, 3])
-
-    with pytest.raises(
-        TypeError, match="The parameter provided should be a UnitVector3D or UnitVector2D object."
-    ):
-        check_is_unitvector(arr_strs)
-
-    with pytest.raises(TypeError, match="The parameter 'arr_num' should be a UnitVector3D object."):
-        check_is_unitvector(arr_num, "arr_num", only_3d=True)
-
-    with pytest.raises(
-        TypeError, match="The parameter provided should be a UnitVector3D or UnitVector2D object."
-    ):
-        check_is_unitvector(Point2D([1, 2]))
-
-    with pytest.raises(TypeError, match="The parameter provided should be a UnitVector3D object."):
-        check_is_unitvector(UnitVector2D([1, 0]), only_3d=True)
-
-    with pytest.raises(
-        TypeError, match="The parameter provided should be a UnitVector3D or UnitVector2D object."
-    ):
-        check_is_unitvector(Vector2D([1, 2]))
-
-    with pytest.raises(
-        TypeError, match="The parameter provided should be a UnitVector3D or UnitVector2D object."
-    ):
-        check_is_unitvector(QuantityVector2D([1, 2], UNITS.mm))
-
-    with pytest.raises(
-        TypeError, match="The parameter provided should be a UnitVector3D or UnitVector2D object."
-    ):
-        check_is_unitvector(Vector3D([1, 2, 3]))
-
-    with pytest.raises(
-        TypeError, match="The parameter provided should be a UnitVector3D or UnitVector2D object."
-    ):
-        check_is_unitvector(QuantityVector3D([1, 2, 3], UNITS.mm))
-
-    # This raises no error
-    check_is_unitvector(UnitVector2D([1, 2]))
-    check_is_unitvector(UnitVector3D([1, 2, 3]))
 
 
 def test_check_ndarray_is_non_zero():

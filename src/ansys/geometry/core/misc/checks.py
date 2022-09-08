@@ -1,6 +1,6 @@
 """Checking common functions."""
 
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 
 import numpy as np
 from pint import Unit
@@ -27,134 +27,6 @@ def check_is_float_int(param: object, param_name: Optional[Union[str, None]] = N
             f"The parameter provided should be a float or an integer value."
             if param_name is None
             else f"The parameter '{param_name}' should be a float or an integer value."
-        )
-
-
-def check_is_point(
-    param: object, param_name: Optional[Union[str, None]] = None, only_3d: bool = False
-) -> None:
-    """
-    Checks if the parameter provided is a ``Point3D`` or ``Point2D``.
-
-    Parameters
-    ----------
-    param : object
-        Object instance to be checked.
-    param_name : str or None, optional
-        The object instance name (if any). By default, ``None``.
-    only_3d : bool
-        Only consider ``Point3D`` for checking.
-
-    Raises
-    ------
-    TypeError
-        In case the parameter is not a ``Point3D`` or a ``Point2D``.
-    """
-    from ansys.geometry.core.math.point import Point2D, Point3D
-
-    consider = (Point3D) if only_3d else (Point2D, Point3D)
-    point_type = "Point3D" if only_3d else "Point3D or Point2D"
-    if not isinstance(param, consider):
-        raise TypeError(
-            f"The parameter provided should be a {point_type} object."
-            if param_name is None
-            else f"The parameter '{param_name}' should be a {point_type} object."
-        )
-
-
-def check_is_vector(
-    param: object, param_name: Optional[Union[str, None]] = None, only_3d: bool = False
-) -> None:
-    """
-    Checks if the parameter provided is a ``Vector3D`` or ``Vector2D``.
-
-    Parameters
-    ----------
-    param : object
-        Object instance to be checked.
-    param_name : str or None, optional
-        The object instance name (if any). By default, ``None``.
-    only_3d : bool
-        Only consider ``Vector3D`` for checking.
-
-    Raises
-    ------
-    TypeError
-        In case the parameter is not a ``Vector3D`` or a ``Vector2D``.
-    """
-    from ansys.geometry.core.math.vector import Vector2D, Vector3D
-
-    consider = (Vector3D) if only_3d else (Vector2D, Vector3D)
-    vector_type = "Vector3D" if only_3d else "Vector3D or Vector2D"
-    if not isinstance(param, consider):
-        raise TypeError(
-            f"The parameter provided should be a {vector_type} object."
-            if param_name is None
-            else f"The parameter '{param_name}' should be a {vector_type} object."
-        )
-
-
-def check_is_unitvector(
-    param: object, param_name: Optional[Union[str, None]] = None, only_3d: bool = False
-) -> None:
-    """
-    Checks if the parameter provided is a ``UnitVector3D`` or ``UnitVector2D``.
-
-    Parameters
-    ----------
-    param : object
-        Object instance to be checked.
-    param_name : str or None, optional
-        The object instance name (if any). By default, ``None``.
-    only_3d : bool
-        Only consider ``UnitVector3D`` for checking.
-
-    Raises
-    ------
-    TypeError
-        In case the parameter is not a ``UnitVector3D`` or a ``UnitVector2D``.
-    """
-    from ansys.geometry.core.math.vector import UnitVector2D, UnitVector3D
-
-    consider = (UnitVector3D) if only_3d else (UnitVector2D, UnitVector3D)
-    unit_vector_type = "UnitVector3D" if only_3d else "UnitVector3D or UnitVector2D"
-    if not isinstance(param, consider):
-        raise TypeError(
-            f"The parameter provided should be a {unit_vector_type} object."
-            if param_name is None
-            else f"The parameter '{param_name}' should be a {unit_vector_type} object."
-        )
-
-
-def check_is_quantityvector(
-    param: object, param_name: Optional[Union[str, None]] = None, only_3d: bool = False
-) -> None:
-    """
-    Checks if the parameter provided is a ``QuantityVector3D`` or ``QuantityVector2D``.
-
-    Parameters
-    ----------
-    param : object
-        Object instance to be checked.
-    param_name : str or None, optional
-        The object instance name (if any). By default, ``None``.
-    only_3d : bool
-        Only consider ``QuantityVector3D`` for checking.
-
-    Raises
-    ------
-    TypeError
-        In case the parameter is not a ``QuantityVector3D`` or a ``QuantityVector2D``.
-    """
-    from ansys.geometry.core.math.vector import QuantityVector2D, QuantityVector3D
-
-    consider = (QuantityVector3D) if only_3d else (QuantityVector2D, QuantityVector3D)
-    quantity_vector_type = "QuantityVector3D" if only_3d else "QuantityVector3D or QuantityVector2D"
-    if not isinstance(param, consider):
-        raise TypeError(
-            f"The parameter provided should be a {quantity_vector_type} object."
-            if param_name is None
-            else f"The parameter '{param_name}' should be a {quantity_vector_type} object."
         )
 
 
@@ -307,3 +179,24 @@ def check_type_equivalence(input: object, expected: object) -> None:
 
     if not isinstance(input, type(expected)):
         raise TypeError(f"Provided type {type(input)} is invalid, type {type(expected)} expected.")
+
+
+def check_type(input: object, expected_type: Union[type, Tuple[type, ...]]) -> None:
+    """
+    Checks if the input object provided is of the same class as the expected one.
+
+    Parameters
+    ----------
+    input : object
+        Input object for class type evaluation.
+    expected_type : Union[type, Tuple[type, ...]]
+        One or more types to compare against.
+
+    Raises
+    ------
+    TypeError
+        In case object does not match expected type.
+    """
+
+    if not isinstance(input, expected_type):
+        raise TypeError(f"Provided type {type(input)} is invalid, type {expected_type} expected.")
