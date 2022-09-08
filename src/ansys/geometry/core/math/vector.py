@@ -94,15 +94,23 @@ class Vector3D(np.ndarray):
         """Not equals operator for ``Vector3D``."""
         return not self == other
 
-    def __mul__(self, other: "Vector3D") -> Real:
-        """Overload * operator with dot product."""
-        check_type_equivalence(other, self)
-        return self.dot(other)
+    def __mul__(self, other: Union["Vector3D", Real]) -> Union["Vector3D", Real]:
+        """Overload * operator with dot product.
+
+        Note
+        ----
+        Also admits scalar multiplication.
+        """
+        if isinstance(other, (int, float)):
+            return np.multiply(self, other).view(self.__class__)
+        else:
+            check_type_equivalence(other, self)
+            return self.dot(other)
 
     def __mod__(self, other: "Vector3D") -> "Vector3D":
         """Overload % operator with cross product."""
         check_type_equivalence(other, self)
-        return self.cross(other)
+        return self.cross(other).view(self.__class__)
 
 
 class Vector2D(np.ndarray):
@@ -168,10 +176,18 @@ class Vector2D(np.ndarray):
         """Not equals operator for ``Vector2D``."""
         return not self == other
 
-    def __mul__(self, other: "Vector2D") -> Real:
-        """Overload * operator with dot product."""
-        check_type_equivalence(other, self)
-        return self.dot(other)
+    def __mul__(self, other: Union["Vector2D", Real]) -> Union["Vector2D", Real]:
+        """Overload * operator with dot product.
+
+        Note
+        ----
+        Also admits scalar multiplication.
+        """
+        if isinstance(other, (int, float)):
+            return np.multiply(self, other).view(self.__class__)
+        else:
+            check_type_equivalence(other, self)
+            return self.dot(other)
 
 
 class UnitVector3D(Vector3D):
@@ -296,6 +312,11 @@ class QuantityVector3D(Vector3D):
         check_pint_unit_compatibility(unit, self._base_unit)
         self._unit = unit
 
+    @property
+    def base_unit(self) -> Unit:
+        """Returns the base unit of the ``QuantityVector3D``."""
+        return self._base_unit
+
     def normalize(self) -> "QuantityVector3D":
         """Return a normalized version of the ``QuantityVector3D``"""
         vec = Vector3D.normalize(self).view(QuantityVector3D)
@@ -387,6 +408,11 @@ class QuantityVector2D(Vector2D):
     def unit(self) -> Unit:
         """Returns the unit of the ``QuantityVector2D``."""
         return self._unit
+
+    @property
+    def base_unit(self) -> Unit:
+        """Returns the base unit of the ``QuantityVector2D``."""
+        return self._base_unit
 
     @unit.setter
     def unit(self, unit: Unit) -> None:

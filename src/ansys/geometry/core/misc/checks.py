@@ -30,6 +30,134 @@ def check_is_float_int(param: object, param_name: Optional[Union[str, None]] = N
         )
 
 
+def check_is_point(
+    param: object, param_name: Optional[Union[str, None]] = None, only_3d: bool = False
+) -> None:
+    """
+    Checks if the parameter provided is a ``Point3D`` or ``Point2D``.
+
+    Parameters
+    ----------
+    param : object
+        Object instance to be checked.
+    param_name : str or None, optional
+        The object instance name (if any). By default, ``None``.
+    only_3d : bool
+        Only consider ``Point3D`` for checking.
+
+    Raises
+    ------
+    TypeError
+        In case the parameter is not a ``Point3D`` or a ``Point2D``.
+    """
+    from ansys.geometry.core.math.point import Point2D, Point3D
+
+    consider = (Point3D) if only_3d else (Point2D, Point3D)
+    point_type = "Point3D" if only_3d else "Point3D or Point2D"
+    if not isinstance(param, consider):
+        raise TypeError(
+            f"The parameter provided should be a {point_type} object."
+            if param_name is None
+            else f"The parameter '{param_name}' should be a {point_type} object."
+        )
+
+
+def check_is_vector(
+    param: object, param_name: Optional[Union[str, None]] = None, only_3d: bool = False
+) -> None:
+    """
+    Checks if the parameter provided is a ``Vector3D`` or ``Vector2D``.
+
+    Parameters
+    ----------
+    param : object
+        Object instance to be checked.
+    param_name : str or None, optional
+        The object instance name (if any). By default, ``None``.
+    only_3d : bool
+        Only consider ``Vector3D`` for checking.
+
+    Raises
+    ------
+    TypeError
+        In case the parameter is not a ``Vector3D`` or a ``Vector2D``.
+    """
+    from ansys.geometry.core.math.vector import Vector2D, Vector3D
+
+    consider = (Vector3D) if only_3d else (Vector2D, Vector3D)
+    vector_type = "Vector3D" if only_3d else "Vector3D or Vector2D"
+    if not isinstance(param, consider):
+        raise TypeError(
+            f"The parameter provided should be a {vector_type} object."
+            if param_name is None
+            else f"The parameter '{param_name}' should be a {vector_type} object."
+        )
+
+
+def check_is_unitvector(
+    param: object, param_name: Optional[Union[str, None]] = None, only_3d: bool = False
+) -> None:
+    """
+    Checks if the parameter provided is a ``UnitVector3D`` or ``UnitVector2D``.
+
+    Parameters
+    ----------
+    param : object
+        Object instance to be checked.
+    param_name : str or None, optional
+        The object instance name (if any). By default, ``None``.
+    only_3d : bool
+        Only consider ``UnitVector3D`` for checking.
+
+    Raises
+    ------
+    TypeError
+        In case the parameter is not a ``UnitVector3D`` or a ``UnitVector2D``.
+    """
+    from ansys.geometry.core.math.vector import UnitVector2D, UnitVector3D
+
+    consider = (UnitVector3D) if only_3d else (UnitVector2D, UnitVector3D)
+    unit_vector_type = "UnitVector3D" if only_3d else "UnitVector3D or UnitVector2D"
+    if not isinstance(param, consider):
+        raise TypeError(
+            f"The parameter provided should be a {unit_vector_type} object."
+            if param_name is None
+            else f"The parameter '{param_name}' should be a {unit_vector_type} object."
+        )
+
+
+def check_is_quantityvector(
+    param: object, param_name: Optional[Union[str, None]] = None, only_3d: bool = False
+) -> None:
+    """
+    Checks if the parameter provided is a ``QuantityVector3D`` or ``QuantityVector2D``.
+
+    Parameters
+    ----------
+    param : object
+        Object instance to be checked.
+    param_name : str or None, optional
+        The object instance name (if any). By default, ``None``.
+    only_3d : bool
+        Only consider ``QuantityVector3D`` for checking.
+
+    Raises
+    ------
+    TypeError
+        In case the parameter is not a ``QuantityVector3D`` or a ``QuantityVector2D``.
+    """
+    from ansys.geometry.core.math.vector import QuantityVector2D, QuantityVector3D
+
+    consider = (QuantityVector3D) if only_3d else (QuantityVector2D, QuantityVector3D)
+    quantity_vector_type = "QuantityVector3D" if only_3d else "QuantityVector3D or QuantityVector2D"
+    if not isinstance(param, consider):
+        raise TypeError(
+            f"The parameter provided should be a {quantity_vector_type} object."
+            if param_name is None
+            else f"The parameter '{param_name}' should be a {quantity_vector_type} object."
+        )
+
+
 def check_ndarray_is_float_int(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
@@ -57,6 +185,60 @@ def check_ndarray_is_float_int(
             f"The numpy.ndarray provided should contain float or integer values."
             if param_name is None
             else f"The numpy.ndarray '{param_name}' should contain float or integer values."
+        )
+
+
+def check_ndarray_is_not_none(
+    param: np.ndarray, param_name: Optional[Union[str, None]] = None
+) -> None:
+    """
+    Checks if the :class:`numpy.ndarray` is not None-valued.
+
+    Parameters
+    ----------
+    param : ~numpy.ndarray
+        :class:`numpy.ndarray` instance to be checked.
+    param_name : str or None, optional
+        The :class:`numpy.ndarray` instance name (if any). By default, ``None``.
+
+    Raises
+    ------
+    ValueError
+        In case the :class:`numpy.ndarray` is None-valued.
+    """
+    param_data = np.ravel(param)
+    if all(value is None for value in param_data):
+        raise ValueError(
+            f"The numpy.ndarray provided should not be a None numpy.ndarray."
+            if param_name is None
+            else f"The numpy.ndarray '{param_name}' should not be a None numpy.ndarray."
+        )
+
+
+def check_ndarray_is_non_zero(
+    param: np.ndarray, param_name: Optional[Union[str, None]] = None
+) -> None:
+    """
+    Checks if the :class:`numpy.ndarray` is not zero-valued.
+
+    Parameters
+    ----------
+    param : ~numpy.ndarray
+        :class:`numpy.ndarray` instance to be checked.
+    param_name : str or None, optional
+        The :class:`numpy.ndarray` instance name (if any). By default, ``None``.
+
+    Raises
+    ------
+    ValueError
+        In case the :class:`numpy.ndarray` is zero-valued.
+    """
+    param_data = np.ravel(param)
+    if all(value == 0 for value in param_data):
+        raise ValueError(
+            f"The numpy.ndarray provided should not be a numpy.ndarray of zeros."
+            if param_name is None
+            else f"The numpy.ndarray '{param_name}' should not be a numpy.ndarray of zeros."
         )
 
 
