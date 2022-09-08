@@ -12,50 +12,50 @@ from ansys.geometry.core.typing import Real
 
 
 class Polygon(BaseShape):
-    """A class for modeling polygon."""
+    """A class for modeling polygon.
+
+    Parameters
+    ----------
+    radius : Real
+        The inradius(apothem) of the polygon.
+    sides : int
+        Number of sides of the polygon.
+    origin : Point3D
+        A :class:``Point3D`` representing the origin of the shape.
+        By default, [0, 0, 0].
+    dir_1 : UnitVector3D
+        A :class:``UnitVector3D`` representing the first fundamental direction
+        of the reference plane where the shape is contained.
+        By default, ``UNIT_VECTOR_X``.
+    dir_2 : UnitVector3D
+        A :class:``UnitVector3D`` representing the second fundamental direction
+        of the reference plane where the shape is contained.
+        By default, ``UNIT_VECTOR_Y``.
+    """
 
     def __init__(
         self,
-        radius: Real,
+        inner_radius: Real,
         sides: int,
         origin: Point3D,
         dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
         dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
     ):
-        """Initializes the polygon shape.
-
-        Parameters
-        ----------
-        radius : Real
-            The inradius(apothem) of the polygon.
-        sides : int
-            Number of sides of the polygon.
-        origin : Point3D
-            A :class:``Point3D`` representing the origin of the shape.
-            By default, [0, 0, 0].
-        dir_1 : UnitVector3D
-            A :class:``UnitVector3D`` representing the first fundamental direction
-            of the reference plane where the shape is contained.
-            By default, ``UNIT_VECTOR_X``.
-        dir_2 : UnitVector3D
-            A :class:``UnitVector3D`` representing the second fundamental direction
-            of the reference plane where the shape is contained.
-            By default, ``UNIT_VECTOR_Y``.
-        """
+        """Initializes the polygon shape."""
         super().__init__(origin, dir_1=dir_1, dir_2=dir_2, is_closed=True)
 
-        if radius <= 0:
+        if inner_radius <= 0:
             raise ValueError("Radius must be a real positive value.")
-        self._radius = radius
+        self._radius = inner_radius
         # Verify that the number of sides is valid with preferred range
-        if sides < 3 or sides > 64:
-            raise ValueError(
-                "The number of sides to construct a polygon should be between 3 and 64."
-            )
+        if sides < 3:
+            raise ValueError("The minimum number of sides to construct a polygon should be 3.")
+        # TODO : raise warning if the number of sides greater than 64
+        # it cannot be handled server side
         self._n_sides = sides
 
     @property
-    def radius(self) -> Real:
+    def inner_radius(self) -> Real:
         """The inradius(apothem) of the polygon.
 
         Returns
@@ -88,7 +88,7 @@ class Polygon(BaseShape):
             The side length of the polygon.
 
         """
-        return 2 * self.radius * np.tan(np.pi / self.n_sides)
+        return 2 * self.inner_radius * np.tan(np.pi / self.n_sides)
 
     @property
     def outer_radius(self) -> Real:
@@ -100,7 +100,7 @@ class Polygon(BaseShape):
             The outer radius of the polygon.
 
         """
-        return self.radius / np.cos(np.pi / self.n_sides)
+        return self.inner_radius / np.cos(np.pi / self.n_sides)
 
     @property
     def perimeter(self) -> Real:
@@ -124,7 +124,7 @@ class Polygon(BaseShape):
             The area of the polygon.
 
         """
-        return (self.radius * self.perimeter) / 2
+        return (self.inner_radius * self.perimeter) / 2
 
     def local_points(self) -> List[Point3D]:
         """Returns a list containing all the vertices of the polygon.
@@ -142,43 +142,3 @@ class Polygon(BaseShape):
         y_local = self.outer_radius * np.sin(theta)
         z_local = np.zeros(self.n_sides + 1)
         return [x_local, y_local, z_local]
-
-    @classmethod
-    def from_radius(
-        cls,
-        radius: Real,
-        sides: int,
-        origin: Optional[Point3D] = Point3D([0, 0, 0]),
-        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
-    ):
-        """Create a polygon from its origin, inradius(apothem) and number of sides.
-
-        Parameters
-        ----------
-        radius : Real
-            The inradius(apothem) of the polygon.
-        sides : int
-            Number of sides of the polygon.
-        origin : Point3D
-            A :class:``Point3D`` representing the origin of the polygon.
-            By default, [0, 0, 0].
-        dir_1 : UnitVector3D
-            A :class:``UnitVector3D`` representing the first fundamental direction
-            of the reference plane where the shape is contained.
-        dir_2 : UnitVector3D
-            A :class:``UnitVector3D`` representing the second fundamental direction
-            of the reference plane where the shape is contained.
-
-        Returns
-        -------
-        PolygonShape
-            An object for modelling polygonal shapes.
-
-        """
-        # Verify that the radius is a real positive value
-        if radius <= 0:
-            raise ValueError("Radius must be a real positive value.")
-
-        # Generate the Polygon instance
-        return cls(radius, sides, origin, dir_1=dir_1, dir_2=dir_2)
