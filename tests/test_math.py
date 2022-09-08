@@ -270,7 +270,7 @@ def test_vector2d():
     # Create a vector2D from 2 points
     point_a = Point2D([1, 2], UNITS.cm)
     point_b = Point2D([1, 6], UNITS.cm)
-    vector_from_points = Vector3D.from_points(point_a, point_b)
+    vector_from_points = Vector2D.from_points(point_a, point_b)
     vector_from_points.x == 0
     vector_from_points.y == 4
 
