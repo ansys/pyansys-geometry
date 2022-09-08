@@ -1,6 +1,6 @@
 """Checking common functions."""
 
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 
 import numpy as np
 from pint import Unit
@@ -57,6 +57,60 @@ def check_ndarray_is_float_int(
             f"The numpy.ndarray provided should contain float or integer values."
             if param_name is None
             else f"The numpy.ndarray '{param_name}' should contain float or integer values."
+        )
+
+
+def check_ndarray_is_not_none(
+    param: np.ndarray, param_name: Optional[Union[str, None]] = None
+) -> None:
+    """
+    Checks if the :class:`numpy.ndarray` is not None-valued.
+
+    Parameters
+    ----------
+    param : ~numpy.ndarray
+        :class:`numpy.ndarray` instance to be checked.
+    param_name : str or None, optional
+        The :class:`numpy.ndarray` instance name (if any). By default, ``None``.
+
+    Raises
+    ------
+    ValueError
+        In case the :class:`numpy.ndarray` is None-valued.
+    """
+    param_data = np.ravel(param)
+    if all(value is None for value in param_data):
+        raise ValueError(
+            f"The numpy.ndarray provided should not be a None numpy.ndarray."
+            if param_name is None
+            else f"The numpy.ndarray '{param_name}' should not be a None numpy.ndarray."
+        )
+
+
+def check_ndarray_is_non_zero(
+    param: np.ndarray, param_name: Optional[Union[str, None]] = None
+) -> None:
+    """
+    Checks if the :class:`numpy.ndarray` is not zero-valued.
+
+    Parameters
+    ----------
+    param : ~numpy.ndarray
+        :class:`numpy.ndarray` instance to be checked.
+    param_name : str or None, optional
+        The :class:`numpy.ndarray` instance name (if any). By default, ``None``.
+
+    Raises
+    ------
+    ValueError
+        In case the :class:`numpy.ndarray` is zero-valued.
+    """
+    param_data = np.ravel(param)
+    if all(value == 0 for value in param_data):
+        raise ValueError(
+            f"The numpy.ndarray provided should not be a numpy.ndarray of zeros."
+            if param_name is None
+            else f"The numpy.ndarray '{param_name}' should not be a numpy.ndarray of zeros."
         )
 
 
@@ -125,3 +179,24 @@ def check_type_equivalence(input: object, expected: object) -> None:
 
     if not isinstance(input, type(expected)):
         raise TypeError(f"Provided type {type(input)} is invalid, type {type(expected)} expected.")
+
+
+def check_type(input: object, expected_type: Union[type, Tuple[type, ...]]) -> None:
+    """
+    Checks if the input object provided is of the same class as the expected one.
+
+    Parameters
+    ----------
+    input : object
+        Input object for class type evaluation.
+    expected_type : Union[type, Tuple[type, ...]]
+        One or more types to compare against.
+
+    Raises
+    ------
+    TypeError
+        In case object does not match expected type.
+    """
+
+    if not isinstance(input, expected_type):
+        raise TypeError(f"Provided type {type(input)} is invalid, type {expected_type} expected.")

@@ -7,9 +7,30 @@ from ansys.geometry.core.misc import (
     check_is_float_int,
     check_is_pint_unit,
     check_ndarray_is_float_int,
+    check_ndarray_is_non_zero,
+    check_ndarray_is_not_none,
     check_pint_unit_compatibility,
+    check_type,
     check_type_equivalence,
 )
+
+
+def test_check_type():
+    """
+    Test that the __eq__ check is working properly.
+
+    Both objects must be of the same type to be compared.
+    """
+    a_2d = Point2D([1, 2])
+
+    check_type(a_2d, Point2D)
+    check_type(a_2d, (Point2D, Point3D))
+
+    with pytest.raises(TypeError, match="Provided type"):
+        check_type(a_2d, int)
+
+    with pytest.raises(TypeError, match="Provided type"):
+        check_type(a_2d, (int, float))
 
 
 def test_check_type_equivalence():
@@ -130,3 +151,57 @@ def test_check_is_float_int():
     # This raises no error
     check_is_float_int(num_int)
     check_is_float_int(num_float)
+
+
+def test_check_ndarray_is_non_zero():
+    # Create several arrays
+    arr_strs = np.asarray(["a", "b", "c"])
+    arr_num = np.asarray([1, 2, 3])
+    arr_1d = np.asarray([0, 0, 0])
+    arr_2d = np.asarray([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
+
+    with pytest.raises(
+        ValueError, match="The numpy.ndarray provided should not be a numpy.ndarray of zeros."
+    ):
+        check_ndarray_is_non_zero(arr_1d)
+
+    with pytest.raises(
+        ValueError, match="The numpy.ndarray 'arr_1d' should not be a numpy.ndarray of zeros."
+    ):
+        check_ndarray_is_non_zero(arr_1d, "arr_1d")
+
+    with pytest.raises(
+        ValueError, match="The numpy.ndarray provided should not be a numpy.ndarray of zeros."
+    ):
+        check_ndarray_is_non_zero(arr_2d)
+
+    # This raises no error
+    check_ndarray_is_non_zero(arr_num)
+    check_ndarray_is_non_zero(arr_strs)
+
+
+def test_check_ndarray_is_not_none():
+    # Create several arrays
+    arr_strs = np.asarray(["a", "b", "c"])
+    arr_num = np.asarray([1, 2, 3])
+    arr_1d = np.asarray([None, None, None])
+    arr_2d = np.asarray([[None, None, None], [None, None, None], [None, None, None]])
+
+    with pytest.raises(
+        ValueError, match="The numpy.ndarray provided should not be a None numpy.ndarray."
+    ):
+        check_ndarray_is_not_none(arr_1d)
+
+    with pytest.raises(
+        ValueError, match="The numpy.ndarray 'arr_1d' should not be a None numpy.ndarray."
+    ):
+        check_ndarray_is_not_none(arr_1d, "arr_1d")
+
+    with pytest.raises(
+        ValueError, match="The numpy.ndarray provided should not be a None numpy.ndarray."
+    ):
+        check_ndarray_is_not_none(arr_2d)
+
+    # This raises no error
+    check_ndarray_is_not_none(arr_num)
+    check_ndarray_is_not_none(arr_strs)
