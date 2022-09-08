@@ -93,7 +93,12 @@ def test_cylinder_units():
         match="The pint.Unit provided as input should be a \[length\] quantity.",
     ):
         Cylinder(
-            origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), radius, height, UNITS.celsius
+            origin,
+            UnitVector3D([12, 31, 99]),
+            UnitVector3D([25, 39, 82]),
+            radius,
+            height,
+            UNITS.celsius,
         )
 
     c_1 = Cylinder(
@@ -212,6 +217,7 @@ def test_sphere_units():
     s_1.unit = new_unit = UNITS.cm
     assert s_1.radius == UNITS.convert(radius, unit, new_unit)
 
+
 def test_cone():
     """``Cone`` construction and equivalency."""
 
@@ -299,7 +305,12 @@ def test_cone_units():
         match="The pint.Unit provided as input should be a \[length\] quantity.",
     ):
         Cone(
-            origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), radius, half_angle, UNITS.celsius
+            origin,
+            UnitVector3D([12, 31, 99]),
+            UnitVector3D([25, 39, 82]),
+            radius,
+            half_angle,
+            UNITS.celsius,
         )
 
     with pytest.raises(
@@ -353,9 +364,10 @@ def test_cone_units():
 
     # Change units to and check if the values changed
     c_1.length_unit = new_unit_radius = UNITS.cm
-    c_1.angle_unit = new_unit_angle =UNITS.radian
+    c_1.angle_unit = new_unit_angle = UNITS.radian
     assert c_1.radius == UNITS.convert(radius, unit_radius, new_unit_radius)
     assert c_1.half_angle == UNITS.convert(half_angle, unit_angle, new_unit_angle)
+
 
 def test_torus():
     """``Torus`` construction and equivalency."""
@@ -364,8 +376,12 @@ def test_torus():
     origin = Point3D([42, 99, 13])
     major_radius = 200
     minor_radius = 100
-    t_1 = Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), major_radius, minor_radius)
-    t_1_duplicate = Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), major_radius, minor_radius)
+    t_1 = Torus(
+        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), major_radius, minor_radius
+    )
+    t_1_duplicate = Torus(
+        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), major_radius, minor_radius
+    )
     t_2 = Torus(Point3D([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 76)
     t_with_array_definitions = Torus([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 76)
 
@@ -448,10 +464,22 @@ def test_torus_units():
         match="The pint.Unit provided as input should be a \[length\] quantity.",
     ):
         Torus(
-            origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), major_radius, minor_radius, UNITS.celsius
+            origin,
+            UnitVector3D([12, 31, 99]),
+            UnitVector3D([25, 39, 82]),
+            major_radius,
+            minor_radius,
+            UNITS.celsius,
         )
 
-    t_1 = Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), major_radius, minor_radius, unit)
+    t_1 = Torus(
+        origin,
+        UnitVector3D([12, 31, 99]),
+        UnitVector3D([25, 39, 82]),
+        major_radius,
+        minor_radius,
+        unit,
+    )
 
     # Verify rejection of invalid base unit type
     with pytest.raises(
