@@ -6,10 +6,13 @@ from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y, ZERO_VECTOR3D
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.shapes.base import BaseShape
+
+from ansys.geometry.core.shapes.arc import Arc
 from ansys.geometry.core.shapes.circle import Circle
 from ansys.geometry.core.shapes.ellipse import Ellipse
 from ansys.geometry.core.shapes.line import Line, Segment
 from ansys.geometry.core.shapes.polygon import Polygon
+
 from ansys.geometry.core.typing import Real
 
 
@@ -198,6 +201,7 @@ class Sketch:
         self.append_shape(line)
         return line
 
+<<<<<<< HEAD
     def draw_polygon(
         self,
         radius: Real,
@@ -232,3 +236,32 @@ class Sketch:
         polygon = Polygon(radius, sides, origin, dir_1=dir_1, dir_2=dir_2)
         self.append_shape(polygon)
         return polygon
+=======
+    def draw_arc(
+        self,
+        center: Point3D,
+        start_point: Point3D,
+        end_point: Point3D,
+        axis_direction: Vector3D([0, 0, 1]),
+    ):
+        """Create a circle shape on the sketch.
+
+        Parameters
+        ----------
+        center : Point3D
+            A :class:``Point3D`` representing the center of the arc.
+        start_point : Point3D
+            A :class:``Point3D`` representing the start of the shape.
+        end_points : Point3D
+            A :class:``Point3D`` representing the end of the shape.
+
+        Returns
+        -------
+        ArcShape
+            An object representing the arc added to the sketch.
+
+        """
+        arc = ArcShape(center, start_point, end_point)
+        self.append_shape(arc)
+        return arc
+>>>>>>> 1f49d86 (Add arc shape.)
