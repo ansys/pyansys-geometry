@@ -12,16 +12,16 @@ from ansys.geometry.core.typing import RealSequence
 
 class Frame:
     """
-    Provides primitive representation of a 2D plane in 3D space.
+    Provides primitive representation of a frame (an origin and three fundamental directions).
 
     Parameters
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D]
         Centered origin of the ``Frame``.
     direction_x: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
-        X-plane direction.
+        X-axis direction.
     direction_y: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
-        Y-plane direction.
+        Y-axis direction.
     """
 
     def __init__(
@@ -53,26 +53,26 @@ class Frame:
         self._direction_z = UnitVector3D(self._direction_x % self._direction_y)
 
     @property
-    def origin(self):
+    def origin(self) -> Point3D:
         """Return the origin of the ``Frame``."""
         return self._origin
 
     @property
-    def direction_x(self):
-        """Return the direction_x of the ``Frame``."""
-        return self._direction_z
+    def direction_x(self) -> UnitVector3D:
+        """Return the X-axis direction of the ``Frame``."""
+        return self._direction_x
 
     @property
-    def direction_y(self):
-        """Return the direction_y of the ``Frame``."""
+    def direction_y(self) -> UnitVector3D:
+        """Return the Y-axis direction of the ``Frame``."""
         return self._direction_y
 
     @property
-    def direction_z(self):
-        """Return the direction_z of the ``Frame``."""
+    def direction_z(self) -> UnitVector3D:
+        """Return the Z-axis direction of the ``Frame``."""
         return self._direction_z
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: "Frame") -> bool:
         """Equals operator for ``Frame``."""
         check_type_equivalence(other, self)
 
@@ -83,6 +83,6 @@ class Frame:
             and self._direction_z == other._direction_z
         )
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: "Frame") -> bool:
         """Not equals operator for ``Frame``."""
         return not self == other
