@@ -119,10 +119,9 @@ class Vector3D(np.ndarray):
 
         Parameters
         ----------
-
         point_a : Point3D
             A :class:`Point3D` representing the first point.
-        point_a : Point3D
+        point_b : Point3D
             A :class:`Point3D` representing the second point.
 
         Returns
@@ -221,10 +220,9 @@ class Vector2D(np.ndarray):
 
         Parameters
         ----------
-
         point_a : Point2D
             A :class:`Point2D` representing the first point.
-        point_a : Point2D
+        point_b : Point2D
             A :class:`Point2D` representing the second point.
 
         Returns
@@ -412,10 +410,9 @@ class QuantityVector3D(Vector3D):
 
         Parameters
         ----------
-
         point_a : Point3D
             A :class:`Point3D` representing the first point.
-        point_a : Point3D
+        point_b : Point3D
             A :class:`Point3D` representing the second point.
 
         Returns
@@ -522,10 +519,9 @@ class QuantityVector2D(Vector2D):
 
         Parameters
         ----------
-
         point_a : Point2D
             A :class:`Point2D` representing the first point.
-        point_a : Point2D
+        point_b : Point2D
             A :class:`Point2D` representing the second point.
 
         Returns
