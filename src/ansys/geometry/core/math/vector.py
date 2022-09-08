@@ -6,6 +6,7 @@ import numpy as np
 from pint import Unit
 
 from ansys.geometry.core import UNITS
+from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.misc import (
     check_is_float_int,
     check_is_pint_unit,
@@ -112,6 +113,31 @@ class Vector3D(np.ndarray):
         check_type_equivalence(other, self)
         return self.cross(other).view(self.__class__)
 
+    @classmethod
+    def from_points(point_a: Point3D, point_b: Point3D):
+        """Create a ``Vector3D`` from two distinct ``Point3D``.
+
+        Parameters
+        ----------
+
+        point_a : Point3D
+            A :class:`Point3D` representing the first point.
+        point_a : Point3D
+            A :class:`Point3D` representing the second point.
+
+        Returns
+        -------
+        Vector3D
+            A ``Vector3D`` from ``point_a`` to ``point_b``.
+        """
+        if point_a == point_b:
+            raise ValueError("The two points cannot have the exact same coordinates.")
+
+        x = point_b[0] - point_a[0]
+        y = point_b[1] - point_a[1]
+        z = point_b[2] - point_a[2]
+        return Vector3D([x, y, z])
+
 
 class Vector2D(np.ndarray):
     """A two-dimensional vector with Cartesian coordinates.
@@ -188,6 +214,28 @@ class Vector2D(np.ndarray):
         else:
             check_type_equivalence(other, self)
             return self.dot(other)
+
+    @classmethod
+    def from_points(point_a: Point2D, point_b: Point2D):
+        """Create a ``Vector2D`` from two distinct ``Point2D``.
+
+        Parameters
+        ----------
+
+        point_a : Point2D
+            A :class:`Point2D` representing the first point.
+        point_a : Point2D
+            A :class:`Point2D` representing the second point.
+
+        Returns
+        -------
+        Vector2D
+            A ``Vecto2D`` from ``point_a`` to ``point_b``.
+        """
+        if point_a == point_b:
+            raise ValueError("The two points cannot have the exact same coordinates.")
+
+        return Vector2D([point_b[0] - point_a[0], point_b[1] - point_a[1]])
 
 
 class UnitVector3D(Vector3D):
@@ -358,6 +406,31 @@ class QuantityVector3D(Vector3D):
         check_pint_unit_compatibility(other._base_unit, self._base_unit)
         return self.cross(other)
 
+    @classmethod
+    def from_points(point_a: Point3D, point_b: Point3D):
+        """Create a ``QuantityVector3D`` from two distinct ``Point3D``.
+
+        Parameters
+        ----------
+
+        point_a : Point3D
+            A :class:`Point3D` representing the first point.
+        point_a : Point3D
+            A :class:`Point3D` representing the second point.
+
+        Returns
+        -------
+        QuantityVector3D
+            A ``QuantityVector3D`` from ``point_a`` to ``point_b``.
+        """
+        if point_a == point_b:
+            raise ValueError("The two points cannot have the exact same coordinates.")
+
+        x = point_b[0] - point_a[0]
+        y = point_b[1] - point_a[1]
+        z = point_b[2] - point_a[2]
+        return QuantityVector3D([x, y, z], point_a.unit)
+
 
 class QuantityVector2D(Vector2D):
     def __new__(cls, vector: Union[np.ndarray, RealSequence, Vector3D], unit: Unit):
@@ -442,3 +515,25 @@ class QuantityVector2D(Vector2D):
         check_type_equivalence(other, self)
         check_pint_unit_compatibility(other._base_unit, self._base_unit)
         return self.dot(other)
+
+    @classmethod
+    def from_points(point_a: Point2D, point_b: Point2D):
+        """Create a ``QuantityVector2D`` from two distinct ``Point2D``.
+
+        Parameters
+        ----------
+
+        point_a : Point2D
+            A :class:`Point2D` representing the first point.
+        point_a : Point2D
+            A :class:`Point2D` representing the second point.
+
+        Returns
+        -------
+        QuantityVector2D
+            A ``QuantityVector2D`` from ``point_a`` to ``point_b``.
+        """
+        if point_a == point_b:
+            raise ValueError("The two points cannot have the exact same coordinates.")
+
+        return QuantityVector3D([point_b[0] - point_a[0], point_b[1] - point_a[1]], point_a.unit)
