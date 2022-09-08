@@ -91,12 +91,11 @@ def test_create_polygon():
     assert_allclose(square.area, 4.0 * UNITS.m**2)
 
     # Check points are expected ones
-    local_vertices = [
-        [1.41421356, 0, -1.4142135, 0, 1.4142135],
-        [0, 1.41421356, 0, -1.41421356, 0],
-        [0, 0, 0, 0, 0],
-    ]
-    assert_allclose(square.local_points(), local_vertices, atol=1e-5, rtol=1e-7)
+    point_1 = Point3D([1.41421356, 0, 0])
+    point_2 = Point3D([-1.41421356, 0, 0])
+    local_points = square.local_points()
+    assert_allclose(local_points[0], point_1)
+    assert local_points[3] == point_2
 
     with pytest.raises(
         ValueError, match="The minimum number of sides to construct a polygon should be 3."

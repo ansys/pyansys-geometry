@@ -138,7 +138,7 @@ class Polygon(BaseShape):
 
         """
         theta = np.linspace(0, 2 * np.pi, self.n_sides + 1)
-        x_local = self.outer_radius * np.cos(theta)
-        y_local = self.outer_radius * np.sin(theta)
-        z_local = np.zeros(self.n_sides + 1)
-        return [x_local, y_local, z_local]
+        return [
+            Point3D([self.outer_radius * np.cos(ang), self.outer_radius * np.sin(ang), 0.0])
+            for ang in theta
+        ]
