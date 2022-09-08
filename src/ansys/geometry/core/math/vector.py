@@ -532,4 +532,4 @@ class QuantityVector2D(Vector2D):
         if point_a == point_b:
             raise ValueError("The two points cannot have the exact same coordinates.")
 
-        return QuantityVector3D([point_b[0] - point_a[0], point_b[1] - point_a[1]], point_a.unit)
+        return QuantityVector2D([point_b[0] - point_a[0], point_b[1] - point_a[1]], point_a.unit)
