@@ -65,6 +65,12 @@ def test_cylinder():
     ):
         c_1.height = "A"
 
+    with pytest.raises(
+        TypeError,
+        match="origin is invalid, type",
+    ):
+        c_1.origin = "A"
+
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
         Cylinder(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
 
@@ -159,6 +165,12 @@ def test_sphere():
     ):
         s_1.radius = "A"
 
+    with pytest.raises(
+        TypeError,
+        match="origin is invalid, type",
+    ):
+        s_1.origin = "A"
+
 
 def test_sphere_units():
     """``Sphere`` units validation."""
@@ -252,6 +264,12 @@ def test_cone():
         match="The parameter 'half_angle' should be a float or an integer value.",
     ):
         c_1.half_angle = "A"
+
+    with pytest.raises(
+        TypeError,
+        match="origin is invalid, type",
+    ):
+        c_1.origin = "A"
 
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
         Cone(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
@@ -361,6 +379,13 @@ def test_torus():
     assert t_1.semi_major_radius == 1000
     assert t_1.semi_minor_radius == 2000
 
+    t_1.origin = new_origin = Point3D([42, 88, 99])
+    assert t_1.origin.x == new_origin.x
+    assert t_1.origin.y == new_origin.y
+    assert t_1.origin.z == new_origin.z
+    assert t_1.semi_major_radius == 1000
+    assert t_1.semi_minor_radius == 2000
+
     with pytest.raises(
         TypeError,
         match="The parameter 'semi_major_radius' should be a float or an integer value.",
@@ -384,6 +409,12 @@ def test_torus():
         match="The parameter 'semi_minor_radius' should be a float or an integer value.",
     ):
         t_1.semi_minor_radius = "A"
+
+    with pytest.raises(
+        TypeError,
+        match="origin is invalid, type",
+    ):
+        t_1.origin = "A"
 
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
         Torus(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
