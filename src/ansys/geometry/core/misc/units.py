@@ -14,16 +14,17 @@ UNIT_ANGLE = UNITS.radian
 """Default angle unit for PyGeometry."""
 
 
-class PhysicalQuantity():
+class PhysicalQuantity:
     """Base class to handle units homogeneously throughout PyGeometry.
-    
+
     Parameters
     ----------
     unit : Unit
         The units to be considered for our class
     """
+
     def __init__(self, unit: Unit):
-        """Constructor for ``PhysicalQuantity``. """
+        """Constructor for ``PhysicalQuantity``."""
         self._unit = unit
 
     @property
