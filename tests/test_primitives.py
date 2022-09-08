@@ -2,7 +2,7 @@ import pytest
 
 from ansys.geometry.core import UNITS
 from ansys.geometry.core.math import Point3D, UnitVector3D
-from ansys.geometry.core.primitives import Cone, Cylinder, Sphere, Torus
+from ansys.geometry.core.primitives import Cone, Cone, Cylinder, Sphere, Torus, Sphere, Torus
 
 
 def test_cylinder():
@@ -20,10 +20,12 @@ def test_cylinder():
         Point3D([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 76
     )
     c_with_array_definitions = Cylinder([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 76)
+    c_with_array_definitions = Cylinder([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 76)
 
     # Check that the equals operator works
     assert c_1 == c_1_duplicate
     assert c_1 != c_2
+    assert c_2 == c_with_array_definitions
     assert c_2 == c_with_array_definitions
 
     # Check cylinder definition
