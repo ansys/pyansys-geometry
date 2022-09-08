@@ -2,51 +2,73 @@
 
 from typing import List, Optional
 
+from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc.checks import (
+    check_is_point,
+    check_is_unitvector,
+    check_ndarray_is_non_zero,
+    check_ndarray_is_not_none,
+)
 from ansys.geometry.core.typing import Real
 
 
 class BaseShape:
-    """Provides mother class for modeling base shape objects."""
+    """Provides base class for modeling shapes.
+
+    Parameters
+    ----------
+    origin : Point3D
+        A :class:`Point3D` representing the origin of the shape.
+    dir_1 : Optional[UnitVector3D]
+        A :class:`UnitVector3D` representing the first fundamental direction
+        of the reference plane where the shape is contained.
+        By default, ``UNIT_VECTOR_X``.
+    dir_2 : Optional[UnitVector3D]
+        A :class:`UnitVector3D` representing the second fundamental direction
+        of the reference plane where the shape is contained.
+        By default, ``UNIT_VECTOR_Y``.
+    is_closed: Optional[bool]
+        A boolean variable to define whether the shape is open or closed.
+        By default, ``False``.
+    """
 
     def __init__(
         self,
         origin: Point3D,
-        dir_1: UnitVector3D([1, 0, 0]),
-        dir_2: UnitVector3D([0, 1, 0]),
+        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
         is_closed: Optional[bool] = False,
     ):
-        """Initializes the base shape.
+        """Initializes the base shape."""
 
-        Parameters
-        ----------
-        origin : Point3D
-            A :class:``Point3D`` representing the origin of the shape.
-        dir_1 : UnitVector3D
-            A :class:``Vector3D`` representing the first fundamental direction
-            of the reference plane where the shape is contained.
-        dir_2 : UnitVector3D
-            A :class:``Vector3D`` representing the second fundamental direction
-            of the reference plane where the shape is contained.
-        is_closed: Optional[bool]
-            A boolean variable to define whether the shape is open or closed.
+        check_is_point(origin, "origin", only_3d=True)
+        check_ndarray_is_not_none(origin, "origin")
+        check_is_unitvector(dir_1, "dir_1", only_3d=True)
+        check_ndarray_is_non_zero(dir_1, "dir_1")
+        check_is_unitvector(dir_2, "dir_2", only_3d=True)
+        check_ndarray_is_non_zero(dir_2, "dir_2")
 
-        """
         # TODO: assign a reference frame to the base shape
         # self._frame = Frame.from_origin_and_vectors(origin, dir_1, dir_2)
         # self._plane = self._frame.plane
         # self._origin = self._frame.origin
 
         # TODO: deprecate in favor of reference frame
-        # TODO @RobPasMue: implement checks to input arguments
-
-        if dir_1.cross(dir_2) == Vector3D([0, 0, 0]):
+        # Check that the two direction vectors are linearly independent
+        try:
+            check_ndarray_is_non_zero(dir_1.cross(dir_2))
+        except ValueError:
             raise ValueError("Reference vectors must be linearly independent.")
+
         self._i, self._j = dir_1, dir_2
-        self._k = self.i.cross(self._j)
+        self._k = UnitVector3D(self.i.cross(self._j))
         self._origin = origin
         self._is_closed = is_closed
+
+        # UnitVectors are already immutable, but Points not. Fix them.
+        self._origin.setflags(write=False)
 
     @property
     def i(self) -> UnitVector3D:
@@ -129,7 +151,10 @@ class BaseShape:
             The perimeter of the shape.
 
         """
-        raise NotImplementedError
+        if self.is_open:
+            raise AttributeError("No perimeter can be computed for open BaseShape objects.")
+        else:
+            raise NotImplementedError
 
     @property
     def area(self) -> Real:
@@ -141,7 +166,10 @@ class BaseShape:
             The area of the shape.
 
         """
-        raise NotImplementedError
+        if self.is_open:
+            raise AttributeError("No area can be computed for open BaseShape objects.")
+        else:
+            raise NotImplementedError
 
     @property
     def is_closed(self) -> bool:

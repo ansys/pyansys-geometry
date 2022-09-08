@@ -113,6 +113,11 @@ class Point3D(np.ndarray):
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit
 
+    @property
+    def base_unit(self) -> Unit:
+        """Returns the base unit of the object."""
+        return self._base_unit
+
     def __eq__(self, other: "Point3D") -> bool:
         """Equals operator for ``Point3D``."""
         check_type_equivalence(other, self)

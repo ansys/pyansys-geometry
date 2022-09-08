@@ -5,6 +5,7 @@ import pytest
 
 from ansys.geometry.core import UNITS
 from ansys.geometry.core.math import (
+    ZERO_VECTOR3D,
     Matrix,
     Matrix33,
     Matrix44,
@@ -203,6 +204,15 @@ def test_vector3d():
     v_cross_overload = v1 % v2
     assert v_cross_overload == v_cross
 
+    # Checking that scalar times vector also works
+    v1_x_3 = Vector3D([0, 3, 9])
+    assert all(
+        [
+            abs(round(v1_comp * 3 - v1_x_3_comp)) <= DOUBLE_EPS
+            for v1_comp, v1_x_3_comp in zip(v1, v1_x_3)
+        ]
+    )
+
 
 def test_vector2d():
     """Simple test to create a ``Vector2D``."""
@@ -239,6 +249,15 @@ def test_vector2d():
     v_3 = Vector2D([2, 8])
     v_4 = Vector2D([3, 7])
     assert abs(round(v_3 * v_4 - 62)) <= DOUBLE_EPS
+
+    # Checking that scalar times vector also works
+    v1_x_3 = Vector2D([6, 3])
+    assert all(
+        [
+            abs(round(v1_comp * 3 - v1_x_3_comp)) <= DOUBLE_EPS
+            for v1_comp, v1_x_3_comp in zip(v_1, v1_x_3)
+        ]
+    )
 
 
 def test_unit_vector_3d():
@@ -318,7 +337,7 @@ def test_vector3d_errors():
 
     # Try to normalize a 0-value vector
     with pytest.raises(ValueError, match="The norm of the Vector3D is not valid."):
-        v2 = Vector3D([0, 0, 0])
+        v2 = ZERO_VECTOR3D
         v2.normalize()
 
 
@@ -584,6 +603,8 @@ def test_quantity_vector_3d():
     assert abs(quantity_vec.z - vec.z) <= TOLERANCE
     assert quantity_vec.unit == UNITS.mm
     assert abs(quantity_vec.norm - vec.norm) <= TOLERANCE
+    _, base_unit = UNITS.get_base_units(UNITS.mm)
+    assert quantity_vec.base_unit == base_unit
 
     # Check that the actual values are in base units (i.e. UNIT_LENGTH)
     assert quantity_vec[0] == (quantity_vec.x * quantity_vec.unit).to_base_units().magnitude
@@ -653,6 +674,8 @@ def test_quantity_vector_2d():
     assert abs(quantity_vec.y - vec.y) <= TOLERANCE
     assert quantity_vec.unit == UNITS.mm
     assert abs(quantity_vec.norm - vec.norm) <= TOLERANCE
+    _, base_unit = UNITS.get_base_units(UNITS.mm)
+    assert quantity_vec.base_unit == base_unit
 
     # Check that the actual values are in base units (i.e. UNIT_LENGTH)
     assert quantity_vec[0] == (quantity_vec.x * quantity_vec.unit).to_base_units().magnitude
