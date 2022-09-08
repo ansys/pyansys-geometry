@@ -4,10 +4,10 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core import UNIT_LENGTH, UNITS
 from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import QuantityVector3D, UnitVector3D, Vector3D
+from ansys.geometry.core.misc import UNIT_LENGTH, UNITS
 from ansys.geometry.core.misc.checks import (
     check_is_pint_unit,
     check_ndarray_is_non_zero,

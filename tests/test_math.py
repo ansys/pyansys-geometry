@@ -3,7 +3,6 @@ from io import UnsupportedOperation
 import numpy as np
 import pytest
 
-from ansys.geometry.core import UNITS
 from ansys.geometry.core.math import (
     ZERO_VECTOR3D,
     Matrix,
@@ -18,6 +17,7 @@ from ansys.geometry.core.math import (
     Vector2D,
     Vector3D,
 )
+from ansys.geometry.core.misc import UNITS
 
 DOUBLE_EPS = np.finfo(float).eps
 

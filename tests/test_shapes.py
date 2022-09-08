@@ -2,8 +2,8 @@ import numpy as np
 from numpy.testing import assert_allclose
 import pytest
 
-from ansys.geometry.core import UNIT_LENGTH, UNITS
 from ansys.geometry.core.math import ZERO_VECTOR3D, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.misc import UNIT_LENGTH, UNITS
 from ansys.geometry.core.shapes.line import Line, Segment
 from ansys.geometry.core.sketch import Sketch
 

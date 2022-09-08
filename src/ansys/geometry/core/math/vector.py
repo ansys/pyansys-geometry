@@ -5,8 +5,8 @@ from typing import Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core import UNITS
 from ansys.geometry.core.misc import (
+    UNITS,
     check_is_float_int,
     check_is_pint_unit,
     check_ndarray_is_float_int,

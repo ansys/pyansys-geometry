@@ -1,7 +1,7 @@
 import pytest
 
-from ansys.geometry.core import UNITS
 from ansys.geometry.core.math import Point3D, UnitVector3D
+from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.primitives import Cone, Cylinder, Sphere, Torus
 
 

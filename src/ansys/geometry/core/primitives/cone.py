@@ -6,9 +6,11 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core import UNIT_ANGLE, UNIT_LENGTH, UNITS
 from ansys.geometry.core.math import Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import (
+    UNIT_ANGLE,
+    UNIT_LENGTH,
+    UNITS,
     check_is_float_int,
     check_is_pint_unit,
     check_pint_unit_compatibility,

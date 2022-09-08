@@ -1,9 +1,9 @@
 import numpy as np
 import pytest
 
-from ansys.geometry.core import UNITS
 from ansys.geometry.core.math import Point2D, Point3D
 from ansys.geometry.core.misc import (
+    UNITS,
     check_is_float_int,
     check_is_pint_unit,
     check_ndarray_is_float_int,
