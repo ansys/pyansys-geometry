@@ -288,7 +288,7 @@ def test_unit_vector_3d():
     assert abs(round(v3.z, 3) - 0.802) <= DOUBLE_EPS
 
     assert UnitVector3D([1, 1, 1]).is_perpendicular_to(UnitVector3D([1, 1, -1])) == False
-    assert Vector3D([1, 1, 1]).is_perpendicular_to(Vector3D([0, -1, 1])) == True
+    assert UnitVector3D([1, 1, 1]).is_perpendicular_to(UnitVector3D([0, -1, 1])) == True
 
     # Check that UnitVector2D is immutable
     with pytest.raises(UnsupportedOperation, match="UnitVector3D is immutable."):
