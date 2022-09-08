@@ -20,7 +20,7 @@ class PhysicalQuantity:
 
     Parameters
     ----------
-    unit : Unit
+    unit : ~pint.Unit
         The units to be considered for our class
     """
 
@@ -57,7 +57,7 @@ class PhysicalQuantity:
 
         Returns
         -------
-        Quantity
+        ~pint.Quantity
             The physical quantity the number represents.
         """
         return (input * self.base_unit).ito(self.unit)
