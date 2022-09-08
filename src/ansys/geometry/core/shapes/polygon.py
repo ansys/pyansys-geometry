@@ -156,7 +156,7 @@ class PolygonShape(BaseShape):
         sides : int
             Number of sides of the polygon.
         origin : Point3D
-            A :class:``Point3D`` representing the origin of the ellipse.
+            A :class:``Point3D`` representing the origin of the polygon.
         dir_1 : UnitVector3D
             A :class:``UnitVector3D`` representing the first fundamental direction
             of the reference plane where the shape is contained.
