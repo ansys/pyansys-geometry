@@ -1,6 +1,6 @@
 """Checking common functions."""
 
-from typing import Optional, Union, Tuple
+from typing import Optional, Tuple, Union
 
 import numpy as np
 from pint import Unit
