@@ -201,14 +201,14 @@ def test_vector3d():
     assert v_cross.y == 0
     assert v_cross.z == 0
 
-    assert Vector3D([1, 0, 0]).is_perpendicular_to(Vector3D([0, 1, 0])) == True
-    assert Vector3D([1, 0, 0]).is_perpendicular_to(Vector3D([0, 0, 1])) == True
-    assert Vector3D([1, 0, 0]).is_perpendicular_to(Vector3D([1, 1, 1])) == False
-    assert Vector3D([1, 0, 0]).is_perpendicular_to(Vector3D([-1, 0, 0])) == False
-    assert Vector3D([1, 1, 1]).is_perpendicular_to(Vector3D([0, -1, 1])) == True
+    assert Vector3D([1, 0, 0]).is_perpendicular_to(Vector3D([0, 1, 0]))
+    assert Vector3D([1, 0, 0]).is_perpendicular_to(Vector3D([0, 0, 1]))
+    assert not Vector3D([1, 0, 0]).is_perpendicular_to(Vector3D([1, 1, 1]))
+    assert not Vector3D([1, 0, 0]).is_perpendicular_to(Vector3D([-1, 0, 0]))
+    assert Vector3D([1, 1, 1]).is_perpendicular_to(Vector3D([0, -1, 1])) 
 
-    assert Vector3D([0, 0, 0]).is_zero == True
-    assert Vector3D([0, 1, 0]).is_zero == False
+    assert Vector3D([0, 0, 0]).is_zero 
+    assert not Vector3D([0, 1, 0]).is_zero
 
     # Check that the dot and cross product overload is fine
     assert abs(round(v1 * v2 - 25)) <= DOUBLE_EPS
@@ -287,8 +287,8 @@ def test_unit_vector_3d():
     assert abs(round(v3.y, 3) - 0.535) <= DOUBLE_EPS
     assert abs(round(v3.z, 3) - 0.802) <= DOUBLE_EPS
 
-    assert UnitVector3D([1, 1, 1]).is_perpendicular_to(UnitVector3D([1, 1, -1])) == False
-    assert UnitVector3D([1, 1, 1]).is_perpendicular_to(UnitVector3D([0, -1, 1])) == True
+    assert not UnitVector3D([1, 1, 1]).is_perpendicular_to(UnitVector3D([1, 1, -1]))
+    assert UnitVector3D([1, 1, 1]).is_perpendicular_to(UnitVector3D([0, -1, 1]))
 
     # Check that UnitVector2D is immutable
     with pytest.raises(UnsupportedOperation, match="UnitVector3D is immutable."):
