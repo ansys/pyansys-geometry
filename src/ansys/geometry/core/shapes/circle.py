@@ -38,6 +38,8 @@ class Circle(BaseShape):
     ):
         """Initializes the circle shape."""
         super().__init__(origin, dir_1=dir_1, dir_2=dir_2, is_closed=True)
+        if radius <= 0:
+            raise ValueError("Radius must be a real positive value.")
         self._radius = radius
 
     @property
@@ -52,17 +54,6 @@ class Circle(BaseShape):
         return self._radius
 
     @property
-    def r(self) -> Real:
-        """The radius of the circle.
-
-        Returns
-        -------
-        Real
-            The radius of the circle.
-        """
-        return self.radius
-
-    @property
     def diameter(self) -> Real:
         """The diameter of the circle.
 
@@ -71,18 +62,7 @@ class Circle(BaseShape):
         Real
             The diameter of the circle.
         """
-        return 2 * self.r
-
-    @property
-    def d(self) -> Real:
-        """The diameter of the circle.
-
-        Returns
-        -------
-        Real
-            The diameter of the circle.
-        """
-        return self.diameter
+        return 2 * self.radius
 
     @property
     def perimeter(self) -> Real:
@@ -93,7 +73,7 @@ class Circle(BaseShape):
         Real
             The perimeter of the circle.
         """
-        return 2 * np.pi * self.r
+        return 2 * np.pi * self.radius
 
     @property
     def area(self) -> Real:
@@ -104,7 +84,7 @@ class Circle(BaseShape):
         Real
             The area of the circle.
         """
-        return np.pi * self.r**2
+        return np.pi * self.radius**2
 
     def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
         """Returns a list containing all the points belonging to the shape.
@@ -122,10 +102,9 @@ class Circle(BaseShape):
             A list of points representing the shape.
         """
         theta = np.linspace(0, 2 * np.pi, num_points)
-        x_local = self.r * np.cos(theta)
-        y_local = self.r * np.sin(theta)
-        z_local = np.zeros(num_points)
-        return [x_local, y_local, z_local]
+        return [
+            Point3D([self.radius * np.cos(ang), self.radius * np.sin(ang), 0.0]) for ang in theta
+        ]
 
     @classmethod
     def from_radius(
