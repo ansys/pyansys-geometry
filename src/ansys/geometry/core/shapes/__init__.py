@@ -6,4 +6,4 @@ from ansys.geometry.core.shapes.ellipse import Ellipse
 from ansys.geometry.core.shapes.line import Line, Segment
 from ansys.geometry.core.shapes.polygon import Polygon
 
-__all__ = ["BaseShape", "Circle", "Ellipse", "Line", "Segment", "Polygon"]
+__all__ = ["BaseShape", "Circle", "Ellipse", "Line", "Polygon", "Segment"]

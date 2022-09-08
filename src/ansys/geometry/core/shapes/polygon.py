@@ -12,7 +12,7 @@ from ansys.geometry.core.typing import Real
 
 
 class Polygon(BaseShape):
-    """A class for modeling polygon."""
+    """A class for modeling regular polygons."""
 
     def __init__(
         self,
@@ -152,7 +152,7 @@ class Polygon(BaseShape):
         dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
         dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
     ):
-        """Create a polygon from its origin, inradius(apothem) and number of sides.
+        """Create a regular polygon from its origin, inradius(apothem) and number of sides.
 
         Parameters
         ----------
@@ -176,9 +176,5 @@ class Polygon(BaseShape):
             An object for modelling polygonal shapes.
 
         """
-        # Verify that the radius is a real positive value
-        if radius <= 0:
-            raise ValueError("Radius must be a real positive value.")
-
         # Generate the Polygon instance
         return cls(radius, sides, origin, dir_1=dir_1, dir_2=dir_2)
