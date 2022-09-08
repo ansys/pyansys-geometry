@@ -3,7 +3,6 @@
 from pint import Quantity, Unit, UnitRegistry
 
 from ansys.geometry.core.misc.checks import (
-    check_is_float_int,
     check_is_pint_unit,
     check_pint_unit_compatibility,
 )
