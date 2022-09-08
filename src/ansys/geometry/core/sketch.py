@@ -229,6 +229,6 @@ class Sketch:
             An object for modelling polygonal shapes.
 
         """
-        polygon = Polygon(radius, sides, origin, dir_1, dir_2)
+        polygon = Polygon(radius, sides, origin, dir_1=dir_1, dir_2=dir_2)
         self.append_shape(polygon)
         return polygon
