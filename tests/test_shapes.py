@@ -25,12 +25,9 @@ def test_create_circle():
     assert_allclose(circle.perimeter, 2 * np.pi * radius)
 
     # Check points are expected ones
-    five_local_points = [
-        [1, 0, -1, 0, 1],
-        [0, 1, 0, -1, 0],
-        [0, 0, 0, 0, 0],
-    ]
-    assert_allclose(circle.local_points(num_points=5), five_local_points, atol=1e-5, rtol=1e-7)
+    local_points = circle.local_points(num_points=5)
+    assert local_points[0] == Point3D([1, 0, 0])
+    assert local_points[2] == Point3D([-1, 0, 0])
 
 
 def test_create_ellipse():
@@ -53,12 +50,9 @@ def test_create_ellipse():
     assert_allclose(ellipse.perimeter, 9.6884482205477 * UNITS.m)
 
     # Check points are expected ones
-    five_local_points = [
-        [2, 0, -2, 0, 2],
-        [0, 1, 0, -1, 0],
-        [0, 0, 0, 0, 0],
-    ]
-    assert_allclose(ellipse.local_points(num_points=5), five_local_points, atol=1e-5, rtol=1e-7)
+    local_points = ellipse.local_points(num_points=5)
+    assert local_points[0] == Point3D([2, 0, 0])
+    assert local_points[2] == Point3D([-2, 0, 0])
 
 
 def test_create_polygon():
@@ -94,7 +88,7 @@ def test_create_polygon():
     point_1 = Point3D([1.41421356, 0, 0])
     point_2 = Point3D([-1.41421356, 0, 0])
     local_points = square.local_points()
-    assert_allclose(local_points[0], point_1)
+    assert local_points[0] == point_1
     assert local_points[3] == point_2
 
     with pytest.raises(

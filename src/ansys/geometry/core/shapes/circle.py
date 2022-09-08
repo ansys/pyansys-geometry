@@ -102,10 +102,9 @@ class Circle(BaseShape):
             A list of points representing the shape.
         """
         theta = np.linspace(0, 2 * np.pi, num_points)
-        x_local = self.radius * np.cos(theta)
-        y_local = self.radius * np.sin(theta)
-        z_local = np.zeros(num_points)
-        return [x_local, y_local, z_local]
+        return [
+            Point3D([self.radius * np.cos(ang), self.radius * np.sin(ang), 0.0]) for ang in theta
+        ]
 
     @classmethod
     def from_radius(

@@ -150,10 +150,10 @@ class Ellipse(BaseShape):
             A list of points representing the shape.
         """
         theta = np.linspace(0, 2 * np.pi, num_points)
-        x_local = self.semi_major_axis * np.cos(theta)
-        y_local = self.semi_minor_axis * np.sin(theta)
-        z_local = np.zeros(num_points)
-        return [x_local, y_local, z_local]
+        return [
+            Point3D([self.semi_major_axis * np.cos(ang), self.semi_minor_axis * np.sin(ang), 0.0])
+            for ang in theta
+        ]
 
     @classmethod
     def from_axes(
