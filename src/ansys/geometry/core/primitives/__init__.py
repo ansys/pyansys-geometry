@@ -1,5 +1,13 @@
 """PyGeometry primitives subpackage."""
 
+from ansys.geometry.core.primitives.cone import Cone
 from ansys.geometry.core.primitives.cylinder import Cylinder
+from ansys.geometry.core.primitives.sphere import Sphere
+from ansys.geometry.core.primitives.torus import Torus
 
-__all__ = ["Cylinder"]
+__all__ = [
+    "Cone",
+    "Cylinder",
+    "Sphere",
+    "Torus",
+]

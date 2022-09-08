@@ -10,13 +10,10 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import QuantityVector3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc.checks import (
     check_is_pint_unit,
-    check_is_point,
-    check_is_quantityvector,
-    check_is_unitvector,
-    check_is_vector,
     check_ndarray_is_non_zero,
     check_ndarray_is_not_none,
     check_pint_unit_compatibility,
+    check_type,
 )
 from ansys.geometry.core.shapes.base import BaseShape
 
@@ -60,12 +57,12 @@ class Line(BaseShape):
     ):
         """Initializes the line shape."""
         # Perform some sanity checks
-        check_is_vector(direction, "direction", only_3d=True)
+        check_type(direction, Vector3D)
         check_ndarray_is_non_zero(direction, "direction")
 
         # If a Vector3D was provided, we should store a UnitVector3D
         try:
-            check_is_unitvector(direction, "direction", only_3d=True)
+            check_type(direction, UnitVector3D)
         except TypeError:
             direction = UnitVector3D(direction)
 
@@ -157,9 +154,9 @@ class Segment(Line):
     ):
         """Constructor method for ``Segment``."""
         # Perform sanity checks on Point3D values given
-        check_is_point(start, "start", only_3d=True)
+        check_type(start, Point3D)
         check_ndarray_is_not_none(start, "start")
-        check_is_point(end, "end", only_3d=True)
+        check_type(end, Point3D)
         check_ndarray_is_not_none(end, "end")
 
         # Assign values to start and end
@@ -246,7 +243,7 @@ class Segment(Line):
         Segment
             The ``Segment`` object resulting from the inputs.
         """
-        check_is_quantityvector(quantity_vector)
+        check_type(quantity_vector, QuantityVector3D)
         return Segment.from_origin_and_vector(
             origin=origin,
             vector=quantity_vector,

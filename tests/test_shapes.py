@@ -174,14 +174,14 @@ def test_create_segment_no_sketch():
 
 def test_errors_line():
     """Check errors when handling a ``Line``."""
-    with pytest.raises(TypeError, match="The parameter 'direction' should be a Vector3D object."):
+    with pytest.raises(TypeError, match="Provided type"):
         Line(Point3D([10, 20, 30], unit=UNITS.meter), "b")
     with pytest.raises(
         ValueError, match="The numpy.ndarray 'direction' should not be a numpy.ndarray of zeros."
     ):
         Line(Point3D([10, 20, 30], unit=UNITS.meter), ZERO_VECTOR3D)
 
-    with pytest.raises(TypeError, match="The parameter 'origin' should be a Point3D object."):
+    with pytest.raises(TypeError, match="Provided type"):
         Line("a", Vector3D([1, 0, 0]))
     with pytest.raises(
         ValueError, match="The numpy.ndarray 'origin' should not be a None numpy.ndarray."
@@ -191,13 +191,13 @@ def test_errors_line():
 
 def test_errors_segment():
     """Check errors when handling a ``Segment``."""
-    with pytest.raises(TypeError, match="The parameter 'start' should be a Point3D object."):
+    with pytest.raises(TypeError, match="Provided type"):
         Segment("a", "b")
     with pytest.raises(
         ValueError, match="The numpy.ndarray 'start' should not be a None numpy.ndarray."
     ):
         Segment(Point3D(), "b")
-    with pytest.raises(TypeError, match="The parameter 'end' should be a Point3D object."):
+    with pytest.raises(TypeError, match="Provided type"):
         Segment(Point3D([10, 20, 30], unit=UNITS.meter), "b")
     with pytest.raises(
         ValueError, match="The numpy.ndarray 'end' should not be a None numpy.ndarray."
