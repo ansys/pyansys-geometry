@@ -6,7 +6,7 @@ import numpy as np
 
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.checks import check_type
+from ansys.geometry.core.misc.checks import check_type, check_type_equivalence
 from ansys.geometry.core.typing import RealSequence
 
 
@@ -74,8 +74,7 @@ class Frame:
 
     def __eq__(self, other: object) -> bool:
         """Equals operator for ``Frame``."""
-        if not isinstance(other, Frame):
-            raise ValueError(f"Comparison of {self} against {other} is not possible.")
+        check_type_equivalence(other, self)
 
         return (
             self.origin == other.origin
