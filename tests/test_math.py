@@ -205,9 +205,9 @@ def test_vector3d():
     assert Vector3D([1, 0, 0]).is_perpendicular_to(Vector3D([0, 0, 1]))
     assert not Vector3D([1, 0, 0]).is_perpendicular_to(Vector3D([1, 1, 1]))
     assert not Vector3D([1, 0, 0]).is_perpendicular_to(Vector3D([-1, 0, 0]))
-    assert Vector3D([1, 1, 1]).is_perpendicular_to(Vector3D([0, -1, 1])) 
+    assert Vector3D([1, 1, 1]).is_perpendicular_to(Vector3D([0, -1, 1]))
 
-    assert Vector3D([0, 0, 0]).is_zero 
+    assert Vector3D([0, 0, 0]).is_zero
     assert not Vector3D([0, 1, 0]).is_zero
 
     # Check that the dot and cross product overload is fine
