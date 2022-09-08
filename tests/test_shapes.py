@@ -7,6 +7,8 @@ from ansys.geometry.core.math import ZERO_VECTOR3D, Point3D, UnitVector3D, Vecto
 from ansys.geometry.core.shapes.line import Line, Segment
 from ansys.geometry.core.sketch import Sketch
 
+DOUBLE_EPS = np.finfo(float).eps
+
 
 def test_create_circle():
     """Test circle shape creation in a sketch."""
@@ -26,8 +28,8 @@ def test_create_circle():
 
     # Check points are expected ones
     local_points = circle.local_points(num_points=5)
-    assert local_points[0] == Point3D([1, 0, 0])
-    assert local_points[2] == Point3D([-1, 0, 0])
+    assert abs(all(local_points[0] - Point3D([1, 0, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[2] - Point3D([-1, 0, 0]))) <= DOUBLE_EPS
 
 
 def test_create_ellipse():
@@ -51,8 +53,8 @@ def test_create_ellipse():
 
     # Check points are expected ones
     local_points = ellipse.local_points(num_points=5)
-    assert local_points[0] == Point3D([2, 0, 0])
-    assert local_points[2] == Point3D([-2, 0, 0])
+    assert abs(all(local_points[0] - Point3D([2, 0, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[2] - Point3D([-2, 0, 0]))) <= DOUBLE_EPS
 
 
 def test_create_polygon():
@@ -85,11 +87,9 @@ def test_create_polygon():
     assert_allclose(square.area, 4.0 * UNITS.m**2)
 
     # Check points are expected ones
-    point_1 = Point3D([1.41421356, 0, 0])
-    point_2 = Point3D([-1.41421356, 0, 0])
     local_points = square.local_points()
-    assert local_points[0] == point_1
-    assert local_points[3] == point_2
+    assert abs(all(local_points[0] - Point3D([1.41421356, 0, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[2] - Point3D([-1.41421356, 0, 0]))) <= DOUBLE_EPS
 
     with pytest.raises(
         ValueError, match="The minimum number of sides to construct a polygon should be 3."
