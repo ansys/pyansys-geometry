@@ -76,12 +76,6 @@ def test_create_line_no_sketch():
     assert line_2.direction == direction_x
     assert line_2.origin == origin
 
-    # Test line_3 - Create a line using a Point3D and a Vector3D
-    direction_x_vector3D = Vector3D([45, 0, 0])  # Equivalent (as a UnitVector3D) to "direction_x"
-    line_2 = Line(origin=origin, direction=direction_x_vector3D)
-    assert line_2.direction == direction_x
-    assert line_2.origin == origin
-
     # From test 1, get the local points
     local_points_even = line.local_points(num_points=80)
     local_points_odd = line.local_points(num_points=81)
