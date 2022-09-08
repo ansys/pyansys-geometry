@@ -214,8 +214,8 @@ def test_vector3d():
     )
 
     # Create a vector3D from 2 points
-    point_a = Point3D([1, 2, 3], UNITS.cm)
-    point_b = Point3D([1, 6, 3], UNITS.cm)
+    point_a = Point3D([1, 2, 3])
+    point_b = Point3D([1, 6, 3])
     vector_from_points = Vector3D.from_points(point_a, point_b)
     vector_from_points.x == 0
     vector_from_points.y == 4
@@ -268,8 +268,8 @@ def test_vector2d():
     )
 
     # Create a vector2D from 2 points
-    point_a = Point2D([1, 2], UNITS.cm)
-    point_b = Point2D([1, 6], UNITS.cm)
+    point_a = Point2D([1, 2])
+    point_b = Point2D([1, 6])
     vector_from_points = Vector2D.from_points(point_a, point_b)
     vector_from_points.x == 0
     vector_from_points.y == 4

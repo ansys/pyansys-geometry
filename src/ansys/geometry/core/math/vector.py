@@ -114,7 +114,7 @@ class Vector3D(np.ndarray):
         return self.cross(other).view(self.__class__)
 
     @classmethod
-    def from_points(point_a: Point3D, point_b: Point3D):
+    def from_points(cls, point_a: Point3D, point_b: Point3D):
         """Create a ``Vector3D`` from two distinct ``Point3D``.
 
         Parameters
@@ -215,7 +215,7 @@ class Vector2D(np.ndarray):
             return self.dot(other)
 
     @classmethod
-    def from_points(point_a: Point2D, point_b: Point2D):
+    def from_points(cls, point_a: Point2D, point_b: Point2D):
         """Create a ``Vector2D`` from two distinct ``Point2D``.
 
         Parameters
@@ -405,7 +405,7 @@ class QuantityVector3D(Vector3D):
         return self.cross(other)
 
     @classmethod
-    def from_points(point_a: Point3D, point_b: Point3D):
+    def from_points(cls, point_a: Point3D, point_b: Point3D):
         """Create a ``QuantityVector3D`` from two distinct ``Point3D``.
 
         Parameters
@@ -514,7 +514,7 @@ class QuantityVector2D(Vector2D):
         return self.dot(other)
 
     @classmethod
-    def from_points(point_a: Point2D, point_b: Point2D):
+    def from_points(cls, point_a: Point2D, point_b: Point2D):
         """Create a ``QuantityVector2D`` from two distinct ``Point2D``.
 
         Parameters
