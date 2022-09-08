@@ -735,7 +735,7 @@ def test_quantity_vector_2d():
 
 
 def test_frame():
-    """``Plane`` construction and equivalency."""
+    """``Frame`` construction and equivalency."""
 
     origin = Point3D([42, 99, 13])
     f_1 = Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
