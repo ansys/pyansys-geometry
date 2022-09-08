@@ -12,11 +12,11 @@ from ansys.geometry.core.typing import Real
 
 
 class Polygon(BaseShape):
-    """A class for modeling regular polygon.
+    """A class for modeling polygon.
 
     Parameters
     ----------
-    inner_radius : Real
+    radius : Real
         The inradius(apothem) of the polygon.
     sides : int
         Number of sides of the polygon.
@@ -46,7 +46,7 @@ class Polygon(BaseShape):
 
         if inner_radius <= 0:
             raise ValueError("Radius must be a real positive value.")
-        self._inner_radius = inner_radius
+        self._radius = inner_radius
         # Verify that the number of sides is valid with preferred range
         if sides < 3:
             raise ValueError("The minimum number of sides to construct a polygon should be 3.")
@@ -64,7 +64,7 @@ class Polygon(BaseShape):
             The inradius(apothem) of the polygon.
 
         """
-        return self._inner_radius
+        return self._radius
 
     @property
     def n_sides(self) -> int:
