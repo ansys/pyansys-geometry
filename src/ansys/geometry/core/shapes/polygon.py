@@ -4,13 +4,14 @@ from typing import List, Optional
 
 import numpy as np
 
+from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.typing import Real
 
 
-class PolygonShape(BaseShape):
+class Polygon(BaseShape):
     """A class for modeling polygon."""
 
     def __init__(
@@ -18,8 +19,8 @@ class PolygonShape(BaseShape):
         radius: Real,
         sides: int,
         origin: Point3D,
-        dir_1: UnitVector3D([1, 0, 0]),
-        dir_2: UnitVector3D([0, 1, 0]),
+        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
     ):
         """Initializes the polygon shape.
 
@@ -34,10 +35,11 @@ class PolygonShape(BaseShape):
         dir_1 : UnitVector3D
             A :class:``UnitVector3D`` representing the first fundamental direction
             of the reference plane where the shape is contained.
+            By default, ``UNIT_VECTOR_X``.
         dir_2 : UnitVector3D
             A :class:``UnitVector3D`` representing the second fundamental direction
             of the reference plane where the shape is contained.
-
+            By default, ``UNIT_VECTOR_Y``.
         """
         super().__init__(origin, dir_1, dir_2, is_closed=True)
 
@@ -46,7 +48,9 @@ class PolygonShape(BaseShape):
         self._radius = radius
         # Verify that the number of sides is valid with preferred range
         if sides < 3 or sides > 64:
-            raise ValueError("The number of sides to construct a polygon should between 3 and 64.")
+            raise ValueError(
+                "The number of sides to construct a polygon should be between 3 and 64."
+            )
         self._n_sides = sides
 
     @property
@@ -144,8 +148,8 @@ class PolygonShape(BaseShape):
         radius: Real,
         sides: int,
         origin: Optional[Point3D] = Point3D([0, 0, 0]),
-        dir_1: Optional[UnitVector3D] = UnitVector3D([1, 0, 0]),
-        dir_2: Optional[UnitVector3D] = UnitVector3D([0, 1, 0]),
+        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
     ):
         """Create a polygon from its origin, inradius(apothem) and number of sides.
 

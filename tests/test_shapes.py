@@ -19,8 +19,8 @@ def test_create_circle():
     circle = sketch.draw_circle(radius, origin)
 
     # Check attributes are expected ones
-    assert_allclose(circle.r, radius)
-    assert_allclose(circle.d, 2 * radius)
+    assert_allclose(circle.radius, radius)
+    assert_allclose(circle.diameter, 2 * radius)
     assert_allclose(circle.area, np.pi * radius**2)
     assert_allclose(circle.perimeter, 2 * np.pi * radius)
 
@@ -45,11 +45,11 @@ def test_create_ellipse():
     ellipse = sketch.draw_ellipse(a, b, origin)
 
     # Check attributes are expected ones
-    assert_allclose(ellipse.a, a)
-    assert_allclose(ellipse.b, b)
-    assert_allclose(ellipse.ecc, ecc)
-    assert_allclose(ellipse.c, np.sqrt(a**2 - b**2))
-    assert_allclose(ellipse.l, b**2 / a)
+    assert_allclose(ellipse.semi_major_axis, a)
+    assert_allclose(ellipse.semi_minor_axis, b)
+    assert_allclose(ellipse.eccentricity, ecc)
+    assert_allclose(ellipse.linear_eccentricity, np.sqrt(a**2 - b**2))
+    assert_allclose(ellipse.semi_latus_rectum, b**2 / a)
     assert_allclose(ellipse.perimeter, 9.6884482205477 * UNITS.m)
 
     # Check points are expected ones
@@ -68,7 +68,7 @@ def test_create_polygon():
     sketch = Sketch()
 
     # Draw a pentagon in previous sketch
-    radius, sides, origin = 1 * u.m, 5, Point3D([0, 0, 0], u.m)
+    radius, sides, origin = 1 * UNITS.m, 5, Point3D([0, 0, 0], UNITS.m)
     pentagon = sketch.draw_polygon(radius, sides, origin)
 
     # Check attributes are expected ones
@@ -79,7 +79,7 @@ def test_create_polygon():
     assert_allclose(pentagon.perimeter, sides * side_length)
 
     # Draw a square in previous sketch
-    radius, sides, origin = 1 * u.m, 4, Point3D([0, 0, 0], u.m)
+    radius, sides, origin = 1 * UNITS.m, 4, Point3D([0, 0, 0], UNITS.m)
     square = sketch.draw_polygon(radius, sides, origin)
 
     # Check attributes are expected ones
@@ -88,7 +88,7 @@ def test_create_polygon():
     assert square.n_sides == 4
     assert_allclose(square.length, side_length)
     assert_allclose(square.perimeter, sides * side_length)
-    assert_allclose(square.area, 4.0 * u.m**2)
+    assert_allclose(square.area, 4.0 * UNITS.m**2)
 
     # Check points are expected ones
     local_vertices = [
@@ -99,15 +99,16 @@ def test_create_polygon():
     assert_allclose(square.local_points(), local_vertices, atol=1e-5, rtol=1e-7)
 
     with pytest.raises(
-        ValueError, match="The number of sides to construct a polygon should between 3 and 64."
+        ValueError, match="The number of sides to construct a polygon should be between 3 and 64."
     ):
-        radius, sides, origin = 1 * u.m, 2, Point3D([0, 0, 0], u.m)
+        radius, sides, origin = 1 * UNITS.m, 2, Point3D([0, 0, 0], UNITS.m)
         sketch.draw_polygon(radius, sides, origin)
 
     with pytest.raises(ValueError, match="Radius must be a real positive value."):
-        radius, sides, origin = -1 * u.m, 6, Point3D([0, 0, 0], u.m)
+        radius, sides, origin = -1 * UNITS.m, 6, Point3D([0, 0, 0], UNITS.m)
         sketch.draw_polygon(radius, sides, origin)
-=======
+
+
 def test_create_line_no_sketch():
     """Simple test to create a ``Line`` (w/o a Sketch object)."""
     # Test line - Create a line using a Point3D and a Vector3D
@@ -255,4 +256,3 @@ def test_errors_segment():
         match="Parameters 'origin' and 'end' have the same values. No segment can be created.",
     ):
         Segment(Point3D([10, 20, 30]), Point3D([10, 20, 30]))
-

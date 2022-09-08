@@ -6,11 +6,10 @@ from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y, ZERO_VECTOR3D
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.shapes.base import BaseShape
-from ansys.geometry.core.shapes.polygon import PolygonShape
 from ansys.geometry.core.shapes.circle import Circle
 from ansys.geometry.core.shapes.ellipse import Ellipse
 from ansys.geometry.core.shapes.line import Line, Segment
-
+from ansys.geometry.core.shapes.polygon import Polygon
 from ansys.geometry.core.typing import Real
 
 
@@ -230,6 +229,6 @@ class Sketch:
             An object for modelling polygonal shapes.
 
         """
-        polygon = PolygonShape(radius, sides, origin, dir_1, dir_2)
+        polygon = Polygon(radius, sides, origin, dir_1, dir_2)
         self.append_shape(polygon)
         return polygon
