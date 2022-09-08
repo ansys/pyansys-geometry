@@ -4,7 +4,7 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core import UNIT_LENGTH
+from ansys.geometry.core import UNIT_LENGTH, UNITS
 from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import QuantityVector3D, UnitVector3D, Vector3D
@@ -23,7 +23,7 @@ from ansys.geometry.core.shapes.base import BaseShape
 # TODO: Line at the moment is not a BaseShape...
 
 
-class LineShape(BaseShape):
+class Line(BaseShape):
     """
     Provides Line representation within a sketch environment.
 
@@ -47,8 +47,8 @@ class LineShape(BaseShape):
     The way in which the Sketching plane for the line is defined, is such that
     we first check if our direction is linearly dependent of ``dir_1`` and ``dir_2``.
     If ``True`` then we can define our BaseShape with ``dir_1`` and ``dir_2``. Otherwise,
-    it will be necessary to define the baseShape using the LineShape direction and another
-    one of the directions. ``dir_1`` will be selected in this case.
+    it will be necessary to define the BaseShape using the Line direction and another
+    one of the directions. ``dir_2`` will be selected in this case.
     """
 
     def __init__(
@@ -75,8 +75,6 @@ class LineShape(BaseShape):
         # Call base ctor. Directions used are based on linear dependency and orthogonality.
         if self._is_linearly_dependent(direction, dir_1, dir_2):
             super().__init__(origin, dir_1=dir_1, dir_2=dir_2, is_closed=False)
-        elif direction.cross(dir_1) != Vector3D([0, 0, 0]):
-            super().__init__(origin, dir_1=direction, dir_2=dir_2, is_closed=False)
         else:
             super().__init__(origin, dir_1=direction, dir_2=dir_2, is_closed=False)
 
@@ -125,17 +123,12 @@ class LineShape(BaseShape):
         List[Point3D]
             A list of points representing the shape.
         """
-        line_start = self.origin - self.direction * int(num_points / 2)
-        if num_points % 2 == 0:
-            line_end = self.origin + self.direction * (int(num_points / 2) - 1)
-        else:
-            line_end = self.origin + self.direction * (int(num_points / 2))
-
-        alpha = np.linspace(line_start, line_end, num_points)
-        return line_start + alpha * self.direction
+        quantified_dir = UNITS.convert(self.direction, self.origin.unit, self.origin.base_unit)
+        line_start = self.origin - quantified_dir * int(num_points / 2)
+        return [line_start + delta * quantified_dir for delta in range(0, num_points)]
 
 
-class SegmentShape(LineShape):
+class Segment(Line):
     """
     Provides Segment representation of a Line.
 
@@ -180,7 +173,7 @@ class SegmentShape(LineShape):
         # Build the direction vector
         direction = UnitVector3D(end - start)
 
-        # Call the super ctor (i.e. LineShape).
+        # Call the super ctor (i.e. Line).
         super().__init__(start, direction, dir_1=dir_1, dir_2=dir_2)
 
     @classmethod
@@ -254,7 +247,7 @@ class SegmentShape(LineShape):
             The ``Segment`` object resulting from the inputs.
         """
         check_is_quantityvector(quantity_vector)
-        return SegmentShape.from_origin_and_vector(
+        return Segment.from_origin_and_vector(
             origin=origin,
             vector=quantity_vector,
             vector_units=quantity_vector.base_unit,
@@ -303,5 +296,5 @@ class SegmentShape(LineShape):
         List[Point3D]
             A list of points representing the shape.
         """
-        alpha = np.linspace(self.start, self.end, num_points)
-        return self.start_point + alpha * self.direction
+        delta_segm = (self.end - self.start) / (num_points - 1)
+        return [self.start + delta * delta_segm for delta in range(0, num_points)]

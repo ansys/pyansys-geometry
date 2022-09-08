@@ -2,13 +2,13 @@
 
 from typing import Optional, Union
 
-from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
+from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y, ZERO_VECTOR3D
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.shapes.base import BaseShape
-from ansys.geometry.core.shapes.circle import CircleShape
-from ansys.geometry.core.shapes.ellipse import EllipseShape
-from ansys.geometry.core.shapes.line import LineShape, SegmentShape
+from ansys.geometry.core.shapes.circle import Circle
+from ansys.geometry.core.shapes.ellipse import Ellipse
+from ansys.geometry.core.shapes.line import Line, Segment
 from ansys.geometry.core.typing import Real
 
 
@@ -32,7 +32,7 @@ class Sketch:
         # TODO: deprecate in favor of reference frame
         # TODO: we should be checking that all added shapes belong to the same plane
         # defined by the origin and the two fundamental directions. For another PR.
-        if dir_1.cross(dir_2) == Vector3D([0, 0, 0]):
+        if dir_1.cross(dir_2) == ZERO_VECTOR3D:
             raise ValueError("Reference vectors must be linearly independent.")
         self._i, self._j = dir_1, dir_2
         self._k = self._i.cross(self._j)
@@ -82,11 +82,11 @@ class Sketch:
             By default, ``UNIT_VECTOR_Y``.
         Returns
         -------
-        CircleShape
+        Circle
             An object representing the circle added to the sketch.
 
         """
-        circle = CircleShape(radius, origin, dir_1, dir_2)
+        circle = Circle(radius, origin, dir_1, dir_2)
         self.append_shape(circle)
         return circle
 
@@ -119,11 +119,11 @@ class Sketch:
 
         Returns
         -------
-        EllipseShape
+        Ellipse
             An object representing the ellipse added to the sketch.
 
         """
-        ellipse = EllipseShape(a, b, origin, dir_1, dir_2)
+        ellipse = Ellipse(a, b, origin, dir_1, dir_2)
         self.append_shape(ellipse)
         return ellipse
 
@@ -133,7 +133,7 @@ class Sketch:
         end: Point3D,
         dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
         dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
-    ) -> SegmentShape:
+    ) -> Segment:
         """
         Add a segment sketch object to the sketch plane.
 
@@ -154,11 +154,11 @@ class Sketch:
 
         Returns
         -------
-        SegmentShape
+        Segment
             An object representing the segment added to the sketch.
 
         """
-        segment = SegmentShape(start, end, dir_1=dir_1, dir_2=dir_2)
+        segment = Segment(start, end, dir_1=dir_1, dir_2=dir_2)
         self.append_shape(segment)
         return segment
 
@@ -168,7 +168,7 @@ class Sketch:
         direction: Union[Vector3D, UnitVector3D],
         dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
         dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
-    ) -> LineShape:
+    ) -> Line:
         """
         Add a line sketch object to the sketch plane.
 
@@ -189,10 +189,10 @@ class Sketch:
 
         Returns
         -------
-        LineShape
+        Line
             An object representing the line added to the sketch.
 
         """
-        line = LineShape(origin, direction, dir_1=dir_1, dir_2=dir_2)
+        line = Line(origin, direction, dir_1=dir_1, dir_2=dir_2)
         self.append_shape(line)
         return line

@@ -1,4 +1,4 @@
-"""``CircleShape`` class module."""
+"""``Circle`` class module."""
 from typing import List, Optional
 
 import numpy as np
@@ -10,7 +10,7 @@ from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.typing import Real
 
 
-class CircleShape(BaseShape):
+class Circle(BaseShape):
     """A class for modeling circles.
 
     Parameters
@@ -155,7 +155,7 @@ class CircleShape(BaseShape):
 
         Returns
         -------
-        CircleShape
+        Circle
             An object for modeling circular shapes.
         """
         # Verify that the radius is a real positive value

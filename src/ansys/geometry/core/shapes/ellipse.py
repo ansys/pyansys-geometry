@@ -11,7 +11,7 @@ from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.typing import Real
 
 
-class EllipseShape(BaseShape):
+class Ellipse(BaseShape):
     """A class for modeling ellipses.
 
     Parameters
@@ -245,7 +245,7 @@ class EllipseShape(BaseShape):
 
         Returns
         -------
-        EllipseShape
+        Ellipse
             An object for modeling elliptical shapes.
         """
         # Ensure that the semi-major axis is equal or larger than the minor one

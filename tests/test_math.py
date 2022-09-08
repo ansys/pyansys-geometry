@@ -5,6 +5,7 @@ import pytest
 
 from ansys.geometry.core import UNITS
 from ansys.geometry.core.math import (
+    ZERO_VECTOR3D,
     Matrix,
     Matrix33,
     Matrix44,
@@ -336,7 +337,7 @@ def test_vector3d_errors():
 
     # Try to normalize a 0-value vector
     with pytest.raises(ValueError, match="The norm of the Vector3D is not valid."):
-        v2 = Vector3D([0, 0, 0])
+        v2 = ZERO_VECTOR3D
         v2.normalize()
 
 
