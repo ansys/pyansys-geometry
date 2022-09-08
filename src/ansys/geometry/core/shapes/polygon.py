@@ -124,7 +124,7 @@ class PolygonShape(BaseShape):
     def local_points(self) -> List[Point3D]:
         """Returns a list containing all the vertices of the polygon.
 
-        vertex points are given in the local space.
+        Vertices are given in the local space.
 
         Returns
         -------
