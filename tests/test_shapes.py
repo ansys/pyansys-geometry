@@ -81,7 +81,7 @@ def test_create_line_no_sketch():
     line_2 = Line(origin=origin, direction=direction_x_vector3D)
     assert line_2.direction == direction_x
     assert line_2.origin == origin
-    
+
     # From test 1, get the local points
     local_points_even = line.local_points(num_points=80)
     local_points_odd = line.local_points(num_points=81)
@@ -91,7 +91,7 @@ def test_create_line_no_sketch():
     assert local_points_odd[0] == Point3D([-39, 2, 3], unit=UNITS.mm)
     assert local_points_odd[-1] == Point3D([41, 2, 3], unit=UNITS.mm)
     assert len(local_points_odd) == 81
-    
+
 
 def test_create_segment_no_sketch():
     """Simple test to create a ``Segment`` (w/o a Sketch object)."""
@@ -176,7 +176,7 @@ def test_create_segment_no_sketch():
     assert local_points_odd[0] == start
     assert local_points_odd[-1] == end
     assert len(local_points_odd) == 81
-    
+
 
 def test_errors_line():
     """Check errors when handling a ``Line``."""
