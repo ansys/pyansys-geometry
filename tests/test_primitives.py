@@ -1,6 +1,6 @@
 import pytest
 
-from ansys.geometry.core.math import Point, UnitVector3D
+from ansys.geometry.core.math import Point, UnitVector
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.primitives import Cone, Cylinder, Sphere, Torus
 
@@ -12,11 +12,11 @@ def test_cylinder():
     origin = Point([42, 99, 13])
     radius = 100
     height = 200
-    c_1 = Cylinder(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), radius, height)
+    c_1 = Cylinder(origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), radius, height)
     c_1_duplicate = Cylinder(
-        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), radius, height
+        origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), radius, height
     )
-    c_2 = Cylinder(Point([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 76)
+    c_2 = Cylinder(Point([5, 8, 9]), UnitVector([55, 16, 73]), UnitVector([23, 67, 45]), 88, 76)
     c_with_array_definitions = Cylinder([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 76)
 
     # Check that the equals operator works
@@ -45,13 +45,13 @@ def test_cylinder():
         TypeError,
         match="The parameter 'radius' should be a float or an integer value.",
     ):
-        Cylinder(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), "A", 200)
+        Cylinder(origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), "A", 200)
 
     with pytest.raises(
         TypeError,
         match="The parameter 'height' should be a float or an integer value.",
     ):
-        Cylinder(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, "A")
+        Cylinder(origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), 100, "A")
 
     with pytest.raises(
         TypeError,
@@ -72,10 +72,10 @@ def test_cylinder():
         c_1.origin = "A"
 
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
-        Cylinder(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
+        Cylinder(origin, "A", UnitVector([25, 39, 82]), 100, 200)
 
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
-        Cylinder(origin, UnitVector3D([12, 31, 99]), "A", 100, 200)
+        Cylinder(origin, UnitVector([12, 31, 99]), "A", 100, 200)
 
 
 def test_cylinder_units():
@@ -92,15 +92,15 @@ def test_cylinder_units():
     ):
         Cylinder(
             origin,
-            UnitVector3D([12, 31, 99]),
-            UnitVector3D([25, 39, 82]),
+            UnitVector([12, 31, 99]),
+            UnitVector([25, 39, 82]),
             radius,
             height,
             UNITS.celsius,
         )
 
     c_1 = Cylinder(
-        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), radius, height, unit
+        origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), radius, height, unit
     )
 
     # Verify rejection of invalid base unit type
@@ -223,11 +223,11 @@ def test_cone():
     origin = Point([42, 99, 13])
     radius = 100
     half_angle = 0.78539816
-    c_1 = Cone(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), radius, half_angle)
+    c_1 = Cone(origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), radius, half_angle)
     c_1_duplicate = Cone(
-        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), radius, half_angle
+        origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), radius, half_angle
     )
-    c_2 = Cone(Point([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 0.65)
+    c_2 = Cone(Point([5, 8, 9]), UnitVector([55, 16, 73]), UnitVector([23, 67, 45]), 88, 0.65)
     c_with_array_definitions = Cone([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 0.65)
 
     # Check that the equals operator works
@@ -256,13 +256,13 @@ def test_cone():
         TypeError,
         match="The parameter 'radius' should be a float or an integer value.",
     ):
-        Cone(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), "A", 200)
+        Cone(origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), "A", 200)
 
     with pytest.raises(
         TypeError,
         match="The parameter 'half_angle' should be a float or an integer value.",
     ):
-        Cone(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, "A")
+        Cone(origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), 100, "A")
 
     with pytest.raises(
         TypeError,
@@ -283,10 +283,10 @@ def test_cone():
         c_1.origin = "A"
 
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
-        Cone(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
+        Cone(origin, "A", UnitVector([25, 39, 82]), 100, 200)
 
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
-        Cone(origin, UnitVector3D([12, 31, 99]), "A", 100, 200)
+        Cone(origin, UnitVector([12, 31, 99]), "A", 100, 200)
 
 
 def test_cone_units():
@@ -304,8 +304,8 @@ def test_cone_units():
     ):
         Cone(
             origin,
-            UnitVector3D([12, 31, 99]),
-            UnitVector3D([25, 39, 82]),
+            UnitVector([12, 31, 99]),
+            UnitVector([25, 39, 82]),
             radius,
             half_angle,
             UNITS.celsius,
@@ -317,8 +317,8 @@ def test_cone_units():
     ):
         Cone(
             origin,
-            UnitVector3D([12, 31, 99]),
-            UnitVector3D([25, 39, 82]),
+            UnitVector([12, 31, 99]),
+            UnitVector([25, 39, 82]),
             radius,
             half_angle,
             unit_radius,
@@ -327,8 +327,8 @@ def test_cone_units():
 
     c_1 = Cone(
         origin,
-        UnitVector3D([12, 31, 99]),
-        UnitVector3D([25, 39, 82]),
+        UnitVector([12, 31, 99]),
+        UnitVector([25, 39, 82]),
         radius,
         half_angle,
         unit_radius,
@@ -375,12 +375,12 @@ def test_torus():
     major_radius = 200
     minor_radius = 100
     t_1 = Torus(
-        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), major_radius, minor_radius
+        origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), major_radius, minor_radius
     )
     t_1_duplicate = Torus(
-        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), major_radius, minor_radius
+        origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), major_radius, minor_radius
     )
-    t_2 = Torus(Point([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 76)
+    t_2 = Torus(Point([5, 8, 9]), UnitVector([55, 16, 73]), UnitVector([23, 67, 45]), 88, 76)
     t_with_array_definitions = Torus([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 76)
 
     # Check that the equals operator works
@@ -415,13 +415,13 @@ def test_torus():
         TypeError,
         match="The parameter 'major_radius' should be a float or an integer value.",
     ):
-        Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), "A", 200)
+        Torus(origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), "A", 200)
 
     with pytest.raises(
         TypeError,
         match="The parameter 'minor_radius' should be a float or an integer value.",
     ):
-        Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, "A")
+        Torus(origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), 100, "A")
 
     with pytest.raises(
         TypeError,
@@ -442,10 +442,10 @@ def test_torus():
         t_1.origin = "A"
 
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
-        Torus(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
+        Torus(origin, "A", UnitVector([25, 39, 82]), 100, 200)
 
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
-        Torus(origin, UnitVector3D([12, 31, 99]), "A", 100, 200)
+        Torus(origin, UnitVector([12, 31, 99]), "A", 100, 200)
 
 
 def test_torus_units():
@@ -463,8 +463,8 @@ def test_torus_units():
     ):
         Torus(
             origin,
-            UnitVector3D([12, 31, 99]),
-            UnitVector3D([25, 39, 82]),
+            UnitVector([12, 31, 99]),
+            UnitVector([25, 39, 82]),
             major_radius,
             minor_radius,
             UNITS.celsius,
@@ -472,8 +472,8 @@ def test_torus_units():
 
     t_1 = Torus(
         origin,
-        UnitVector3D([12, 31, 99]),
-        UnitVector3D([25, 39, 82]),
+        UnitVector([12, 31, 99]),
+        UnitVector([25, 39, 82]),
         major_radius,
         minor_radius,
         unit,
