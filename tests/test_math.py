@@ -235,6 +235,14 @@ def test_vector3d():
     vector_from_points.y == 4
     vector_from_points.z == 0
 
+    # Create a vector3D from 2 points
+    point_a = Point3D([1, 2, 3], UNITS.mm)
+    point_b = Point3D([1, 6, 3], UNITS.cm)
+    vector_from_points = Vector3D.from_points(point_a, point_b)
+    vector_from_points.x == 9
+    vector_from_points.y == 58
+    vector_from_points.z == 27
+
 
 def test_vector2d():
     """Simple test to create a ``Vector2D``."""
@@ -287,6 +295,13 @@ def test_vector2d():
     vector_from_points = Vector2D.from_points(point_a, point_b)
     vector_from_points.x == 0
     vector_from_points.y == 4
+
+    # Create a vector2D from 2 points
+    point_a = Point2D([1, 2], UNITS.mm)
+    point_b = Point2D([1, 6], UNITS.cm)
+    vector_from_points = Vector2D.from_points(point_a, point_b)
+    vector_from_points.x == 9
+    vector_from_points.y == 58
 
 
 def test_unit_vector_3d():
@@ -713,6 +728,16 @@ def test_quantity_vector_3d():
     quantity_vector_from_points.x == 0
     quantity_vector_from_points.y == 4
     quantity_vector_from_points.z == 0
+
+    with pytest.raises(
+        TypeError, match="Provided type np.array is invalid, type Point3D expected."
+    ):
+        QuantityVector3D.from_points(np.array([2, 5, 8]), point_b)
+
+    # with pytest.raises(
+    #     TypeError, match="Provided type np.array is invalid, type Point3D expected."
+    # ):
+    #     QuantityVector3D.from_points(point_a, np.array([2, 5, 8]))
 
 
 def test_quantity_vector_2d():

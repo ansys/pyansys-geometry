@@ -201,17 +201,17 @@ class Point2D(np.ndarray):
         """Returns the unit of the object."""
         return self._unit
 
-    @property
-    def base_unit(self) -> Unit:
-        """Returns the base unit of the object."""
-        return self._base_unit
-
     @unit.setter
     def unit(self, unit: Unit) -> None:
         """Sets the unit of the object."""
         check_is_pint_unit(unit, "unit")
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit
+
+    @property
+    def base_unit(self) -> Unit:
+        """Returns the base unit of the object."""
+        return self._base_unit
 
     def __eq__(self, other: "Point2D") -> bool:
         """Equals operator for ``Point2D``."""
