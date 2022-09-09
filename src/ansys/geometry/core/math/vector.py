@@ -6,15 +6,16 @@ import numpy as np
 from pint import Unit
 
 from ansys.geometry.core import UNITS
+from ansys.geometry.core.accuracy import Accuracy
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.misc import (
     check_is_float_int,
     check_is_pint_unit,
     check_ndarray_is_float_int,
     check_pint_unit_compatibility,
+    check_type,
     check_type_equivalence,
 )
-from ansys.geometry.core.misc.checks import check_type
 from ansys.geometry.core.typing import Real, RealSequence
 
 
@@ -74,6 +75,19 @@ class Vector3D(np.ndarray):
     @property
     def norm(self) -> float:
         return np.linalg.norm(self)
+
+    def is_perpendicular_to(self, other_vector: "Vector3D") -> bool:
+        """Verifies if the two ``Vector3D`` instances are perpendicular."""
+        if self.is_zero or other_vector.is_zero:
+            return False
+
+        angle_is_zero = Accuracy.angle_is_zero(self * other_vector)
+        return angle_is_zero
+
+    @property
+    def is_zero(self) -> bool:
+        """Confirms whether all components of ``Vector3D`` are zero."""
+        return self.x == 0 and self.y == 0 and self.z == 0
 
     def normalize(self) -> "Vector3D":
         """Return a normalized version of the ``Vector3D``"""
