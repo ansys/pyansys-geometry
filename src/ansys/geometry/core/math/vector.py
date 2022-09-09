@@ -34,17 +34,24 @@ class Vector(np.ndarray):
         obj = np.asarray(input).view(cls)
 
         # Check that the size is as expected
+        obj = Vector._set_vector_dimensions(obj)
+
+        # Check the input data
+        check_ndarray_is_float_int(obj, "input")
+
+        return obj
+
+    @classmethod
+    def _set_vector_dimensions(cls, obj: "Vector") -> "Vector":
+        # Check that the size is as expected
         if len(obj) == 2:
             obj._is_3d = False
         elif len(obj) == 3:
             obj._is_3d = True
         else:
             raise ValueError(
-                "Vector class can only receive 2 or 3 arguments, creating a 2D or 3D vectors, respectively."  # noqa: E501
+                "Vector class can only receive 2 or 3 arguments, creating a 2D or 3D vector, respectively."  # noqa: E501
             )
-
-        # Check the input data
-        check_ndarray_is_float_int(obj, "input")
 
         return obj
 
@@ -128,7 +135,7 @@ class Vector(np.ndarray):
         """Return a normalized version of the ``Vector``."""
         norm = self.norm
         if norm > 0:
-            return self / norm
+            return Vector(self / norm)
         else:
             raise ValueError("The norm of the Vector is not valid.")
 
@@ -181,10 +188,10 @@ class Vector(np.ndarray):
 
         Parameters
         ----------
-        point_a : Point3D
-            A :class:`Point3D` representing the first point.
-        point_b : Point3D
-            A :class:`Point3D` representing the second point.
+        point_a : Point
+            A :class:`Point` representing the first point.
+        point_b : Point
+            A :class:`Point` representing the second point.
 
         Returns
         -------
@@ -209,6 +216,7 @@ class UnitVector(Vector):
     def __new__(cls, input: Union[np.ndarray, RealSequence, Vector]):
         obj = Vector(input) if not isinstance(input, Vector) else input
         obj = obj.normalize().view(cls)
+        obj = Vector._set_vector_dimensions(obj)
         obj.setflags(write=False)
         return obj
 
@@ -229,7 +237,7 @@ class QuantityVector(Vector, PhysicalQuantity):
     def __new__(cls, vector: Union[np.ndarray, RealSequence, Vector], unit: Unit):
         """Constructor for ``QuantityVector``."""
         # Build an empty np.ndarray object
-        return np.zeros(len(input)).view(cls)
+        return np.zeros(len(vector)).view(cls)
 
     def __init__(
         self,
@@ -240,9 +248,9 @@ class QuantityVector(Vector, PhysicalQuantity):
         super().__init__(unit, expected_dimensions=None)
 
         # Check the inputs
-        check_ndarray_is_float_int(vector, "input") if isinstance(
+        check_ndarray_is_float_int(vector, "vector") if isinstance(
             vector, np.ndarray
-        ) else check_ndarray_is_float_int(np.asarray(vector), "input")
+        ) else check_ndarray_is_float_int(np.asarray(vector), "vector")
 
         # Check dimensions
         if len(vector) == 2:
@@ -251,7 +259,7 @@ class QuantityVector(Vector, PhysicalQuantity):
             self._is_3d = True
         else:
             raise ValueError(
-                "Point class can only receive 2 or 3 arguments, creating a 2D or 3D point, respectively."  # noqa: E501
+                "Vector class can only receive 2 or 3 arguments, creating a 2D or 3D vector, respectively."  # noqa: E501
             )
 
         # Store values
@@ -302,7 +310,11 @@ class QuantityVector(Vector, PhysicalQuantity):
         This will return a simple ``Vector`` class. Units will
         be lost since they no longer hold any meaning.
         """
-        return Vector(Vector.normalize(self))
+        norm = self.norm.to_base_units().magnitude
+        if norm > 0:
+            return Vector(self / norm)
+        else:
+            raise ValueError("The norm of the Vector is not valid.")
 
     @only_for_3d
     def cross(self, v: "QuantityVector") -> "QuantityVector":
@@ -346,7 +358,7 @@ class QuantityVector(Vector, PhysicalQuantity):
         ----------
         point_a : Point
             A :class:`Point` representing the first point.
-        point_b : Point3D
+        point_b : Point
             A :class:`Point` representing the second point.
 
         Returns

@@ -173,6 +173,9 @@ def test_point_units():
 def test_vector():
     """Simple test to create a ``Vector``."""
 
+    # Define the tolerance for the QuantityVector tests
+    TOLERANCE = 5e-15
+
     # Create two Vector objects
     v1 = Vector([0, 1, 3])
     v1_copy = Vector([0, 1, 3])
@@ -216,6 +219,8 @@ def test_vector():
     assert not Vector([1, 0, 0]).is_perpendicular_to(Vector([1, 1, 1]))
     assert not Vector([1, 0, 0]).is_perpendicular_to(Vector([-1, 0, 0]))
     assert Vector([1, 1, 1]).is_perpendicular_to(Vector([0, -1, 1]))
+    assert not Vector([0, 0, 0]).is_perpendicular_to(Vector([0, -1, 1]))
+    assert not Vector([0, -1, 1]).is_perpendicular_to(Vector([0, 0, 0]))
 
     assert Vector([0, 0, 0]).is_zero
     assert not Vector([0, 1, 0]).is_zero
@@ -234,35 +239,36 @@ def test_vector():
         ]
     )
 
-    # Create a vector3D from 2 points
+    # Create a 3D vector from 2 points
     point_a = Point([1, 2, 3])
     point_b = Point([1, 6, 3])
     vector_from_points = Vector.from_points(point_a, point_b)
-    vector_from_points.x == 0
-    vector_from_points.y == 4
-    vector_from_points.z == 0
+    assert vector_from_points.x == 0
+    assert vector_from_points.y == 4
+    assert vector_from_points.z == 0
 
-    # Create a vector3D from 2 points
+    # Create a 3D vector from 2 points
     point_a = Point([1, 2, 3], UNITS.mm)
     point_b = Point([1, 6, 3], UNITS.cm)
     vector_from_points = Vector.from_points(point_a, point_b)
-    vector_from_points.x == 9
-    vector_from_points.y == 58
-    vector_from_points.z == 27
+    assert abs(vector_from_points.x - 0.009) <= DOUBLE_EPS
+    assert abs(vector_from_points.y - 0.058) <= DOUBLE_EPS
+    assert abs(vector_from_points.z - 0.027) <= DOUBLE_EPS
 
     # Create a 2D vector from 2 points
     point_a = Point([1, 2])
     point_b = Point([1, 6])
     vector_from_points = Vector.from_points(point_a, point_b)
-    vector_from_points.x == 0
-    vector_from_points.y == 4
+    assert vector_from_points.x == 0
+    assert vector_from_points.y == 4
 
-    # Create a vector2D from 2 points
+    # Create a 2D vector from 2 points
     point_a = Point([1, 2], UNITS.mm)
     point_b = Point([1, 6], UNITS.cm)
+
     vector_from_points = Vector.from_points(point_a, point_b)
-    vector_from_points.x == 9
-    vector_from_points.y == 58
+    assert abs(vector_from_points.x - 0.009) <= DOUBLE_EPS
+    assert abs(vector_from_points.y - 0.058) <= DOUBLE_EPS
 
 
 def test_unit_vector():
@@ -302,40 +308,40 @@ def test_quantity_vector():
     # Create QuantityVector from a Vector
     vec = Vector([1, 2, 3])
     quantity_vec = QuantityVector(vec, UNITS.mm)
-    assert abs(quantity_vec.x - vec.x) <= TOLERANCE
-    assert abs(quantity_vec.y - vec.y) <= TOLERANCE
-    assert abs(quantity_vec.z - vec.z) <= TOLERANCE
+    assert abs(quantity_vec.x.magnitude - vec.x) <= TOLERANCE
+    assert abs(quantity_vec.y.magnitude - vec.y) <= TOLERANCE
+    assert abs(quantity_vec.z.magnitude - vec.z) <= TOLERANCE
     assert quantity_vec.unit == UNITS.mm
-    assert abs(quantity_vec.norm - vec.norm) <= TOLERANCE
+    assert abs(quantity_vec.norm.magnitude - vec.norm) <= TOLERANCE
     _, base_unit = UNITS.get_base_units(UNITS.mm)
     assert quantity_vec.base_unit == base_unit
 
     # Check that the actual values are in base units (i.e. UNIT_LENGTH)
-    assert quantity_vec[0] == (quantity_vec.x * quantity_vec.unit).to_base_units().magnitude
-    assert quantity_vec[1] == (quantity_vec.y * quantity_vec.unit).to_base_units().magnitude
-    assert quantity_vec[2] == (quantity_vec.z * quantity_vec.unit).to_base_units().magnitude
+    assert quantity_vec[0] == (quantity_vec.x).to_base_units().magnitude
+    assert quantity_vec[1] == (quantity_vec.y).to_base_units().magnitude
+    assert quantity_vec[2] == (quantity_vec.z).to_base_units().magnitude
 
     # Change the values using the setters
     vec_end_mm = Vector([70, 80, 90])
     vec_end_cm = Vector([7, 8, 9])
     quantity_vec.unit = UNITS.mm
-    quantity_vec.x = 70
-    quantity_vec.y = 80
-    quantity_vec.z = 90
-    assert abs(quantity_vec.x - vec_end_mm.x) <= TOLERANCE
-    assert abs(quantity_vec.y - vec_end_mm.y) <= TOLERANCE
-    assert abs(quantity_vec.z - vec_end_mm.z) <= TOLERANCE
+    quantity_vec.x = 70 * quantity_vec.unit
+    quantity_vec.y = 80 * quantity_vec.unit
+    quantity_vec.z = 90 * quantity_vec.unit
+    assert abs(quantity_vec.x.magnitude - vec_end_mm.x) <= TOLERANCE
+    assert abs(quantity_vec.y.magnitude - vec_end_mm.y) <= TOLERANCE
+    assert abs(quantity_vec.z.magnitude - vec_end_mm.z) <= TOLERANCE
     assert quantity_vec.unit == UNITS.mm
-    assert abs(quantity_vec.norm - vec_end_mm.norm) <= TOLERANCE
-    assert quantity_vec[0] == (quantity_vec.x * quantity_vec.unit).to_base_units().magnitude
-    assert quantity_vec[1] == (quantity_vec.y * quantity_vec.unit).to_base_units().magnitude
-    assert quantity_vec[2] == (quantity_vec.z * quantity_vec.unit).to_base_units().magnitude
+    assert abs(quantity_vec.norm.magnitude - vec_end_mm.norm) <= TOLERANCE
+    assert quantity_vec[0] == (quantity_vec.x).to_base_units().magnitude
+    assert quantity_vec[1] == (quantity_vec.y).to_base_units().magnitude
+    assert quantity_vec[2] == (quantity_vec.z).to_base_units().magnitude
 
     # Change back to cm and check that the values are modified according to units
     quantity_vec.unit = UNITS.cm
-    assert abs(quantity_vec.x - vec_end_cm.x) <= TOLERANCE
-    assert abs(quantity_vec.y - vec_end_cm.y) <= TOLERANCE
-    assert abs(quantity_vec.z - vec_end_cm.z) <= TOLERANCE
+    assert abs(quantity_vec.x.magnitude - vec_end_cm.x) <= TOLERANCE
+    assert abs(quantity_vec.y.magnitude - vec_end_cm.y) <= TOLERANCE
+    assert abs(quantity_vec.z.magnitude - vec_end_cm.z) <= TOLERANCE
     assert quantity_vec.unit == UNITS.cm
 
     # Check that two quantity vectors with the same input vector
@@ -353,9 +359,10 @@ def test_quantity_vector():
     assert dot_a_b == 0.001
 
     cross_a_x_b = quantity_vec_a % quantity_vec_b  # Resulting vector: [2, 20, -14] cm
-    assert abs(cross_a_x_b.x - 2) <= TOLERANCE
-    assert abs(cross_a_x_b.y - 20) <= TOLERANCE
-    assert abs(cross_a_x_b.z - (-14)) <= TOLERANCE
+    cross_result = QuantityVector([2, 20, -14], UNITS.cm)
+    assert abs(cross_a_x_b.x.magnitude - cross_result.x.to_base_units().magnitude) <= TOLERANCE
+    assert abs(cross_a_x_b.y.magnitude - cross_result.y.to_base_units().magnitude) <= TOLERANCE
+    assert abs(cross_a_x_b.z.magnitude - cross_result.z.to_base_units().magnitude) <= TOLERANCE
     assert cross_a_x_b.unit == UNITS.cm
 
     normalized_b = quantity_vec_b.normalize()
@@ -368,9 +375,9 @@ def test_quantity_vector():
     point_a = Point([1, 2, 3], UNITS.cm)
     point_b = Point([1, 6, 3], UNITS.cm)
     quantity_vector_from_points = QuantityVector.from_points(point_a, point_b)
-    quantity_vector_from_points.x == 0
-    quantity_vector_from_points.y == 4
-    quantity_vector_from_points.z == 0
+    assert abs(quantity_vector_from_points.x.m - (0 * UNITS.cm).to_base_units().m) <= TOLERANCE
+    assert abs(quantity_vector_from_points.y.m - (4 * UNITS.cm).to_base_units().m) <= TOLERANCE
+    assert abs(quantity_vector_from_points.z.m - (0 * UNITS.cm).to_base_units().m) <= TOLERANCE
 
     with pytest.raises(
         TypeError,
@@ -388,17 +395,18 @@ def test_quantity_vector():
     point_a = Point([1, 2], UNITS.cm)
     point_b = Point([1, 6], UNITS.cm)
     quantity_vector_from_points = QuantityVector.from_points(point_a, point_b)
-    quantity_vector_from_points.x == 0
-    quantity_vector_from_points.y == 4
-    quantity_vector_from_points.unit == UNITS.cm
+    assert abs(quantity_vector_from_points.x.m - (0 * UNITS.cm).to_base_units().m) <= TOLERANCE
+    assert abs(quantity_vector_from_points.y.m - (4 * UNITS.cm).to_base_units().m) <= TOLERANCE
+    assert quantity_vector_from_points.unit == point_a.base_unit
 
     # Create a 2D QuantityVector from 2 points with different units
     point_a = Point([1, 2], UNITS.dm)
     point_b = Point([1, 6], UNITS.cm)
     quantity_vector_from_points = QuantityVector.from_points(point_a, point_b)
-    quantity_vector_from_points.x == 9
-    quantity_vector_from_points.y == 14
-    quantity_vector_from_points.unit == UNITS.cm
+    assert abs(quantity_vector_from_points.x.m - (-9 * UNITS.cm).to_base_units().m) <= TOLERANCE
+    assert abs(quantity_vector_from_points.y.m - (-14 * UNITS.cm).to_base_units().m) <= TOLERANCE
+    assert quantity_vector_from_points.unit == point_a.base_unit
+    assert quantity_vector_from_points.is_2d
 
     with pytest.raises(
         TypeError,
@@ -416,8 +424,17 @@ def test_quantity_vector():
 def test_vector_errors():
     """Testing multiple ``Vector`` errors."""
 
-    with pytest.raises(ValueError, match="Vector must have three coordinates."):
-        Vector([1, 2])
+    with pytest.raises(
+        ValueError,
+        match="Vector class can only receive 2 or 3 arguments, creating a 2D or 3D vector, respectively.",  # noqa: E501
+    ):
+        Vector([1])
+
+    with pytest.raises(
+        ValueError,
+        match="Vector class can only receive 2 or 3 arguments, creating a 2D or 3D vector, respectively.",  # noqa: E501
+    ):
+        Vector([1, 2, 3, 4])
 
     with pytest.raises(
         TypeError, match="The numpy.ndarray 'input' should contain float or integer values."
@@ -438,14 +455,40 @@ def test_vector_errors():
         v1.z = "z"
 
     # Build a 2D Vector and try to compare against it
-    with pytest.raises(TypeError, match=f"Provided type {Vector} is invalid"):
-        v2 = Vector([1, 2])
-        assert v1 == v2
+    v2 = Vector([1, 2])
+    assert not v1 == v2
 
     # Try to normalize a 0-value vector
     with pytest.raises(ValueError, match="The norm of the Vector is not valid."):
         v2 = ZERO_VECTOR3D
         v2.normalize()
+
+    # Having V1 and V2 - let's try to do a cross product
+    v2 = Vector([1, 2])
+    with pytest.raises(ValueError, match="Invalid Vector dimensions for cross product."):
+        v1 % v2
+
+    # Having V1 and V2 - let's try to do a dot product
+    with pytest.raises(ValueError, match="Invalid Vector dimensions for dot product."):
+        v1 * v2
+
+    with pytest.raises(
+        ValueError,
+        match="Vector class can only receive 2 or 3 arguments, creating a 2D or 3D vector, respectively.",  # noqa: E501
+    ):
+        QuantityVector([1], UNITS.cm)
+
+    with pytest.raises(
+        ValueError,
+        match="Vector class can only receive 2 or 3 arguments, creating a 2D or 3D vector, respectively.",  # noqa: E501
+    ):
+        QuantityVector([1, 2, 3, 4], UNITS.cm)
+
+    with pytest.raises(
+        ValueError,
+        match="The norm of the Vector is not valid.",
+    ):
+        QuantityVector(ZERO_VECTOR3D, UNITS.cm).normalize()
 
 
 def test_matrix():
