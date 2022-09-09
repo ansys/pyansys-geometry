@@ -6,7 +6,7 @@ from pint import Unit
 
 from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
 from ansys.geometry.core.math.point import Point
-from ansys.geometry.core.math.vector import QuantityVector3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math.vector import QuantityVector, UnitVector, Vector
 from ansys.geometry.core.misc import UNIT_LENGTH, UNITS
 from ansys.geometry.core.misc.checks import (
     check_ndarray_is_all_inf,
@@ -25,14 +25,14 @@ class Line(BaseShape):
     ----------
     origin: Point
         Origin of the line.
-    direction: Union[Vector3D, UnitVector3D]
+    direction: Union[Vector, UnitVector]
         Direction of the line.
-    dir_1 : Optional[UnitVector3D]
-        A :class:`UnitVector3D` representing the first fundamental direction
+    dir_1 : Optional[UnitVector]
+        A :class:`UnitVector` representing the first fundamental direction
         of the reference plane where the shape is contained.
         By default, ``UNIT_VECTOR_X``.
-    dir_2 : Optional[UnitVector3D]
-        A :class:`UnitVector3D` representing the second fundamental direction
+    dir_2 : Optional[UnitVector]
+        A :class:`UnitVector` representing the second fundamental direction
         of the reference plane where the shape is contained.
         By default, ``UNIT_VECTOR_Y``.
 
@@ -48,20 +48,20 @@ class Line(BaseShape):
     def __init__(
         self,
         origin: Point,
-        direction: Union[Vector3D, UnitVector3D],
-        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
+        direction: Union[Vector, UnitVector],
+        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
     ):
         """Initializes the line shape."""
         # Perform some sanity checks
-        check_type(direction, Vector3D)
+        check_type(direction, Vector)
         check_ndarray_is_non_zero(direction, "direction")
 
-        # If a Vector3D was provided, we should store a UnitVector3D
+        # If a Vector was provided, we should store a UnitVector
         try:
-            check_type(direction, UnitVector3D)
+            check_type(direction, UnitVector)
         except TypeError:
-            direction = UnitVector3D(direction)
+            direction = UnitVector(direction)
 
         # Store instance attributes
         self._direction = direction
@@ -73,24 +73,24 @@ class Line(BaseShape):
             super().__init__(origin, dir_1=direction, dir_2=dir_2, is_closed=False)
 
     @property
-    def direction(self) -> UnitVector3D:
+    def direction(self) -> UnitVector:
         """Returns the direction of the line."""
         return self._direction
 
     def _is_linearly_dependent(
-        self, direction: UnitVector3D, dir_1: UnitVector3D, dir_2: UnitVector3D
+        self, direction: UnitVector, dir_1: UnitVector, dir_2: UnitVector
     ) -> bool:
         """Private method for checking if the provided directions are linearly dependent.
 
         Parameters
         ----------
-        direction : UnitVector3D
-            The line's direction vector as a :class:`UnitVector3D`.
-        dir_1 : UnitVector3D
-            A :class:`UnitVector3D` representing the first fundamental direction
+        direction : UnitVector
+            The line's direction vector as a :class:`UnitVector`.
+        dir_1 : UnitVector
+            A :class:`UnitVector` representing the first fundamental direction
             of the reference plane where the shape is contained.
-        dir_2 : UnitVector3D
-            A :class:`UnitVector3D` representing the second fundamental direction
+        dir_2 : UnitVector
+            A :class:`UnitVector` representing the second fundamental direction
             of the reference plane where the shape is contained.
 
         Returns
@@ -132,12 +132,12 @@ class Segment(Line):
         Start of the line segment.
     end: Point
         End of the line segment.
-    dir_1 : Optional[UnitVector3D]
-        A :class:`UnitVector3D` representing the first fundamental direction
+    dir_1 : Optional[UnitVector]
+        A :class:`UnitVector` representing the first fundamental direction
         of the reference plane where the shape is contained.
         By default, ``UNIT_VECTOR_X``.
-    dir_2 : Optional[UnitVector3D]
-        A :class:`UnitVector3D` representing the second fundamental direction
+    dir_2 : Optional[UnitVector]
+        A :class:`UnitVector` representing the second fundamental direction
         of the reference plane where the shape is contained.
         By default, ``UNIT_VECTOR_Y``.
     """
@@ -146,8 +146,8 @@ class Segment(Line):
         self,
         start: Point,
         end: Point,
-        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
+        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
     ):
         """Constructor method for ``Segment``."""
         # Perform sanity checks on Point values given
@@ -165,7 +165,7 @@ class Segment(Line):
         self._rebase_point_units()
 
         # Build the direction vector
-        direction = UnitVector3D(end - start)
+        direction = UnitVector(end - start)
 
         # Call the super ctor (i.e. Line).
         super().__init__(start, direction, dir_1=dir_1, dir_2=dir_2)
@@ -174,10 +174,10 @@ class Segment(Line):
     def from_origin_and_vector(
         cls,
         origin: Point,
-        vector: Vector3D,
+        vector: Vector,
         vector_units: Optional[Unit] = UNIT_LENGTH,
-        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
+        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
     ):
         """Create a ``Segment`` from an origin and a vector.
 
@@ -185,16 +185,16 @@ class Segment(Line):
         ----------
         origin : Point
             Start of the line segment.
-        vector : Vector3D
+        vector : Vector
             Vector defining the line segment.
         vector_units : Optional[Unit], optional
             The length units of the vector, by default ``UNIT_LENGTH``.
-        dir_1 : Optional[UnitVector3D]
-            A :class:`UnitVector3D` representing the first fundamental direction
+        dir_1 : Optional[UnitVector]
+            A :class:`UnitVector` representing the first fundamental direction
             of the reference plane where the shape is contained.
             By default, ``UNIT_VECTOR_X``.
-        dir_2 : Optional[UnitVector3D]
-            A :class:`UnitVector3D` representing the second fundamental direction
+        dir_2 : Optional[UnitVector]
+            A :class:`UnitVector` representing the second fundamental direction
             of the reference plane where the shape is contained.
             By default, ``UNIT_VECTOR_Y``.
 
@@ -214,9 +214,9 @@ class Segment(Line):
     def from_origin_and_quantity_vector(
         cls,
         origin: Point,
-        quantity_vector: QuantityVector3D,
-        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
+        quantity_vector: QuantityVector,
+        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
     ):
         """Create a ``Segment`` from an origin and a vector.
 
@@ -224,14 +224,14 @@ class Segment(Line):
         ----------
         origin : Point
             Start of the line segment.
-        quantity_vector : QuantityVector3D
+        quantity_vector : QuantityVector
             QuantityVector defining the line segment (with units).
-        dir_1 : Optional[UnitVector3D]
-            A :class:`UnitVector3D` representing the first fundamental direction
+        dir_1 : Optional[UnitVector]
+            A :class:`UnitVector` representing the first fundamental direction
             of the reference plane where the shape is contained.
             By default, ``UNIT_VECTOR_X``.
-        dir_2 : Optional[UnitVector3D]
-            A :class:`UnitVector3D` representing the second fundamental direction
+        dir_2 : Optional[UnitVector]
+            A :class:`UnitVector` representing the second fundamental direction
             of the reference plane where the shape is contained.
             By default, ``UNIT_VECTOR_Y``.
 
@@ -240,7 +240,7 @@ class Segment(Line):
         Segment
             The ``Segment`` object resulting from the inputs.
         """
-        check_type(quantity_vector, QuantityVector3D)
+        check_type(quantity_vector, QuantityVector)
         return Segment.from_origin_and_vector(
             origin=origin,
             vector=quantity_vector,

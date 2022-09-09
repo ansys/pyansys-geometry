@@ -4,7 +4,7 @@ from typing import Optional, Union
 
 from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y, ZERO_VECTOR3D
 from ansys.geometry.core.math.point import Point
-from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.math.vector import UnitVector, Vector
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.shapes.circle import Circle
 from ansys.geometry.core.shapes.ellipse import Ellipse
@@ -21,8 +21,8 @@ class Sketch:
     def __init__(
         self,
         origin: Optional[Point] = Point([0, 0, 0]),
-        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
+        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
     ):
         """Constructor method for ``Sketch``."""
         # TODO: assign a reference frame to the base shape
@@ -62,8 +62,8 @@ class Sketch:
         self,
         radius: Real,
         origin: Point,
-        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
+        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
     ):
         """Create a circle shape on the sketch.
 
@@ -73,12 +73,12 @@ class Sketch:
             The radius of the circle.
         origin : Point
             A :class:`Point` representing the origin of the shape.
-        dir_1 : Optional[UnitVector3D]
-            A :class:`UnitVector3D` representing the first fundamental direction
+        dir_1 : Optional[UnitVector]
+            A :class:`UnitVector` representing the first fundamental direction
             of the reference plane where the shape is contained.
             By default, ``UNIT_VECTOR_X``.
-        dir_2 : Optional[UnitVector3D]
-            A :class:`UnitVector3D` representing the second fundamental direction
+        dir_2 : Optional[UnitVector]
+            A :class:`UnitVector` representing the second fundamental direction
             of the reference plane where the shape is contained.
             By default, ``UNIT_VECTOR_Y``.
         Returns
@@ -96,8 +96,8 @@ class Sketch:
         a: Real,
         b: Real,
         origin: Point,
-        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
+        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
     ):
         """Create an ellipse shape on the sketch.
 
@@ -109,12 +109,12 @@ class Sketch:
             The semi-minor axis of the ellipse.
         origin : Point
             A :class:`Point` representing the origin of the shape.
-        dir_1 : Optional[UnitVector3D]
-            A :class:`UnitVector3D` representing the first fundamental direction
+        dir_1 : Optional[UnitVector]
+            A :class:`UnitVector` representing the first fundamental direction
             of the reference plane where the shape is contained.
             By default, ``UNIT_VECTOR_X``.
-        dir_2 : Optional[UnitVector3D]
-            A :class:`UnitVector3D` representing the second fundamental direction
+        dir_2 : Optional[UnitVector]
+            A :class:`UnitVector` representing the second fundamental direction
             of the reference plane where the shape is contained.
             By default, ``UNIT_VECTOR_Y``.
 
@@ -132,8 +132,8 @@ class Sketch:
         self,
         start: Point,
         end: Point,
-        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
+        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
     ) -> Segment:
         """
         Add a segment sketch object to the sketch plane.
@@ -144,12 +144,12 @@ class Sketch:
             Start of the line segment.
         end : Point
             End of the line segment.
-        dir_1 : Optional[UnitVector3D]
-            A :class:`UnitVector3D` representing the first fundamental direction
+        dir_1 : Optional[UnitVector]
+            A :class:`UnitVector` representing the first fundamental direction
             of the reference plane where the shape is contained.
             By default, ``UNIT_VECTOR_X``.
-        dir_2 : Optional[UnitVector3D]
-            A :class:`UnitVector3D` representing the second fundamental direction
+        dir_2 : Optional[UnitVector]
+            A :class:`UnitVector` representing the second fundamental direction
             of the reference plane where the shape is contained.
             By default, ``UNIT_VECTOR_Y``.
 
@@ -166,9 +166,9 @@ class Sketch:
     def draw_line(
         self,
         origin: Point,
-        direction: Union[Vector3D, UnitVector3D],
-        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
+        direction: Union[Vector, UnitVector],
+        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
     ) -> Line:
         """
         Add a line sketch object to the sketch plane.
@@ -177,14 +177,14 @@ class Sketch:
         ----------
         origin : Point
             Origin of the line.
-        direction: Union[Vector3D, UnitVector3D]
+        direction: Union[Vector, UnitVector]
             Direction of the line.
-        dir_1 : Optional[UnitVector3D]
-            A :class:`UnitVector3D` representing the first fundamental direction
+        dir_1 : Optional[UnitVector]
+            A :class:`UnitVector` representing the first fundamental direction
             of the reference plane where the shape is contained.
             By default, ``UNIT_VECTOR_X``.
-        dir_2 : Optional[UnitVector3D]
-            A :class:`UnitVector3D` representing the second fundamental direction
+        dir_2 : Optional[UnitVector]
+            A :class:`UnitVector` representing the second fundamental direction
             of the reference plane where the shape is contained.
             By default, ``UNIT_VECTOR_Y``.
 
@@ -203,8 +203,8 @@ class Sketch:
         radius: Real,
         sides: int,
         origin: Point,
-        dir_1: UnitVector3D = UnitVector3D([1, 0, 0]),
-        dir_2: UnitVector3D = UnitVector3D([0, 1, 0]),
+        dir_1: UnitVector = UnitVector([1, 0, 0]),
+        dir_2: UnitVector = UnitVector([0, 1, 0]),
     ):
         """Create a polygon shape on the sketch.
 
@@ -216,11 +216,11 @@ class Sketch:
             Number of sides of the polygon.
         origin : Point
             A :class:``Point`` representing the origin of the polygon.
-        dir_1 : UnitVector3D
-            A :class:``UnitVector3D`` representing the first fundamental direction
+        dir_1 : UnitVector
+            A :class:``UnitVector`` representing the first fundamental direction
             of the reference plane where the shape is contained.
-        dir_2 : UnitVector3D
-            A :class:``UnitVector3D`` representing the second fundamental direction
+        dir_2 : UnitVector
+            A :class:``UnitVector`` representing the second fundamental direction
             of the reference plane where the shape is contained.
 
         Returns

@@ -5,7 +5,7 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core.math import Point, UnitVector3D, Vector3D
+from ansys.geometry.core.math import Point, UnitVector, Vector
 from ansys.geometry.core.misc import (
     UNIT_LENGTH,
     UNITS,
@@ -25,9 +25,9 @@ class Cylinder:
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point]
         Origin of the ``Cylinder``.
-    direction_x : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+    direction_x : Union[~numpy.ndarray, RealSequence, UnitVector, Vector]
         X-plane direction.
-    direction_y : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+    direction_y : Union[~numpy.ndarray, RealSequence, UnitVector, Vector]
         Y-plane direction.
     radius : Real
         Radius of the ``Cylinder``.
@@ -40,8 +40,8 @@ class Cylinder:
     def __init__(
         self,
         origin: Union[np.ndarray, RealSequence, Point],
-        direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D],
-        direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D],
+        direction_x: Union[np.ndarray, RealSequence, UnitVector, Vector],
+        direction_y: Union[np.ndarray, RealSequence, UnitVector, Vector],
         radius: Real,
         height: Real,
         unit: Optional[Unit] = UNIT_LENGTH,
@@ -49,8 +49,8 @@ class Cylinder:
         """Constructor method for ``Cylinder``."""
 
         check_type(origin, (np.ndarray, List, Point))
-        check_type(direction_x, (np.ndarray, List, UnitVector3D, Vector3D))
-        check_type(direction_y, (np.ndarray, List, UnitVector3D, Vector3D))
+        check_type(direction_x, (np.ndarray, List, UnitVector, Vector))
+        check_type(direction_y, (np.ndarray, List, UnitVector, Vector))
 
         check_is_float_int(radius, "radius")
         check_is_float_int(height, "height")
@@ -63,10 +63,10 @@ class Cylinder:
 
         self._origin = Point(origin) if not isinstance(origin, Point) else origin
         self._direction_x = (
-            UnitVector3D(direction_x) if not isinstance(direction_x, UnitVector3D) else direction_x
+            UnitVector(direction_x) if not isinstance(direction_x, UnitVector) else direction_x
         )
         self._direction_y = (
-            UnitVector3D(direction_y) if not isinstance(direction_y, UnitVector3D) else direction_y
+            UnitVector(direction_y) if not isinstance(direction_y, UnitVector) else direction_y
         )
 
         # Store values in base unit

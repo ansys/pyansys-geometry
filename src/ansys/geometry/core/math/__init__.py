@@ -13,12 +13,9 @@ from ansys.geometry.core.math.matrix import Matrix, Matrix33, Matrix44
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point
 from ansys.geometry.core.math.vector import (
-    QuantityVector2D,
-    QuantityVector3D,
-    UnitVector2D,
-    UnitVector3D,
-    Vector2D,
-    Vector3D,
+    QuantityVector,
+    UnitVector,
+    Vector,
 )
 
 __all__ = [
@@ -33,10 +30,7 @@ __all__ = [
     "Matrix44",
     "Plane",
     "Point",
-    "QuantityVector2D",
-    "QuantityVector3D",
-    "UnitVector2D",
-    "UnitVector3D",
-    "Vector2D",
-    "Vector3D",
+    "QuantityVector",
+    "UnitVector",
+    "Vector",
 ]

@@ -5,7 +5,7 @@ import numpy as np
 
 from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
 from ansys.geometry.core.math.point import Point
-from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.math.vector import UnitVector
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.typing import Real
 
@@ -19,12 +19,12 @@ class Circle(BaseShape):
         The radius of the circle.
     origin : Point
         A :class:`Point` representing the origin of the shape.
-    dir_1 : Optional[UnitVector3D]
-        A :class:`UnitVector3D` representing the first fundamental direction
+    dir_1 : Optional[UnitVector]
+        A :class:`UnitVector` representing the first fundamental direction
         of the reference plane where the shape is contained.
         By default, ``UNIT_VECTOR_X``.
-    dir_2 : Optional[UnitVector3D]
-        A :class:`UnitVector3D` representing the second fundamental direction
+    dir_2 : Optional[UnitVector]
+        A :class:`UnitVector` representing the second fundamental direction
         of the reference plane where the shape is contained.
         By default, ``UNIT_VECTOR_Y``.
     """
@@ -33,8 +33,8 @@ class Circle(BaseShape):
         self,
         radius: Real,
         origin: Point,
-        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
+        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
     ):
         """Initializes the circle shape."""
         super().__init__(origin, dir_1=dir_1, dir_2=dir_2, is_closed=True)
@@ -109,8 +109,8 @@ class Circle(BaseShape):
         cls,
         radius: Real,
         origin: Optional[Point] = Point([0, 0, 0]),
-        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
+        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
     ):
         """Create a circle from its origin and radius.
 
@@ -121,12 +121,12 @@ class Circle(BaseShape):
         origin : Optional[Point]
             A :class:`Point` representing the origin of the ellipse.
             By default, [0, 0, 0].
-        dir_1 : Optional[UnitVector3D]
-            A :class:`UnitVector3D` representing the first fundamental direction
+        dir_1 : Optional[UnitVector]
+            A :class:`UnitVector` representing the first fundamental direction
             of the reference plane where the shape is contained.
             By default, ``UNIT_VECTOR_X``.
-        dir_2 : Optional[UnitVector3D]
-            A :class:`UnitVector3D` representing the second fundamental direction
+        dir_2 : Optional[UnitVector]
+            A :class:`UnitVector` representing the second fundamental direction
             of the reference plane where the shape is contained.
             By default, ``UNIT_VECTOR_Y``.
 
