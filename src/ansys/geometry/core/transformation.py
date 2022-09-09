@@ -3,6 +3,7 @@ from typing import Optional, Union
 import numpy as np
 from scipy.spatial.transform import Rotation as spatial_rot
 
+from ansys.geometry.core.math import Vector3D
 from ansys.geometry.core.misc.checks import check_ndarray_is_float_int
 from ansys.geometry.core.typing import Real
 
@@ -31,3 +32,17 @@ class Rotation(np.ndarray):
         rotated_obj = spatial_rot.from_euler(obj._axis, obj._angle)
         obj_rot = rotated_obj.apply(obj)
         return obj_rot.view(obj_type)
+
+
+class Translation(np.ndarray):
+    def __new__(cls, input: object, v: Vector3D):
+        obj = np.asarray(input).view(cls)
+        translate = np.array(
+            [
+                [1, 0, 0, v.x],
+                [0, 1, 0, v.y],
+                [0, 0, 1, v.z],
+                [0, 0, 0, 1],
+            ]
+        )
+        return np.multiply(translate, obj)
