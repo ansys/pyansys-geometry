@@ -99,9 +99,7 @@ def test_cylinder_units():
             UNITS.celsius,
         )
 
-    c_1 = Cylinder(
-        origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), radius, height, unit
-    )
+    c_1 = Cylinder(origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), radius, height, unit)
 
     # Verify rejection of invalid base unit type
     with pytest.raises(

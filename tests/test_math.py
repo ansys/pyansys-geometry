@@ -234,6 +234,7 @@ def test_vector():
         ]
     )
 
+
 def test_unit_vector():
     """Simple test to create a ``UnitVector``."""
 
@@ -260,6 +261,7 @@ def test_unit_vector():
         v2.y = 3
     with pytest.raises(UnsupportedOperation, match="UnitVector is immutable."):
         v2.z = 3
+
 
 def test_quantity_vector():
     """Simple tests to create ``QuantityVector``."""
@@ -332,6 +334,7 @@ def test_quantity_vector():
     assert abs(normalized_b.y - vec_b_normalized.y) <= TOLERANCE
     assert abs(normalized_b.z - vec_b_normalized.z) <= TOLERANCE
 
+
 def test_vector_errors():
     """Testing multiple ``Vector`` errors."""
 
@@ -365,6 +368,7 @@ def test_vector_errors():
     with pytest.raises(ValueError, match="The norm of the Vector is not valid."):
         v2 = ZERO_VECTOR3D
         v2.normalize()
+
 
 def test_matrix():
     """Simple test to create a ``Matrix``."""

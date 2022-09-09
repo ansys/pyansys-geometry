@@ -6,13 +6,12 @@ import numpy as np
 from pint import Quantity, Unit
 
 from ansys.geometry.core.misc import (
-    UNITS,
     Accuracy,
     check_is_float_int,
     check_ndarray_is_float_int,
     check_pint_unit_compatibility,
     check_type_equivalence,
-    only_for_3d
+    only_for_3d,
 )
 from ansys.geometry.core.misc.units import PhysicalQuantity
 from ansys.geometry.core.typing import Real, RealSequence
@@ -170,6 +169,7 @@ class Vector(np.ndarray):
         """Overload % operator with cross product."""
         return self.cross(other)
 
+
 class UnitVector(Vector):
     """A 2-/3-dimensional ``UnitVector`` class.
 
@@ -198,12 +198,13 @@ class UnitVector(Vector):
     def z(self, value: Real) -> None:
         raise UnsupportedOperation("UnitVector is immutable.")
 
+
 class QuantityVector(Vector, PhysicalQuantity):
     def __new__(cls, vector: Union[np.ndarray, RealSequence, Vector], unit: Unit):
         """Constructor for ``QuantityVector``."""
         # Build an empty np.ndarray object
         return np.zeros(len(input)).view(cls)
-        
+
     def __init__(
         self,
         vector: Union[np.ndarray, RealSequence, Vector],
@@ -269,7 +270,7 @@ class QuantityVector(Vector, PhysicalQuantity):
 
     def normalize(self) -> Vector:
         """Return a normalized version of the ``QuantityVector``.
-        
+
         Notes
         -----
         This will return a simple ``Vector`` class. Units will
@@ -280,7 +281,7 @@ class QuantityVector(Vector, PhysicalQuantity):
     @only_for_3d
     def cross(self, v: "QuantityVector") -> "QuantityVector":
         """Return cross product of ``QuantityVector``.
-        
+
         Notes
         -----
         ``QuantityVector`` returned will hold the same units as self.
@@ -294,7 +295,7 @@ class QuantityVector(Vector, PhysicalQuantity):
     def __eq__(self, other: "QuantityVector") -> bool:
         """Equals operator for ``QuantityVector``."""
         check_type_equivalence(other, self)
-        return self.base_unit == other.base_unit and Vector.__eq__(self,other)
+        return self.base_unit == other.base_unit and Vector.__eq__(self, other)
 
     def __ne__(self, other: "QuantityVector") -> bool:
         """Not equals operator for ``QuantityVector``."""
@@ -303,8 +304,8 @@ class QuantityVector(Vector, PhysicalQuantity):
     def __mul__(self, other: Union["QuantityVector", Real]) -> Union["QuantityVector", Real]:
         """Overload * operator with dot product."""
         if isinstance(other, QuantityVector):
-            check_pint_unit_compatibility(other._base_unit, self._base_unit) 
-        return Vector.__mul__(self,other)
+            check_pint_unit_compatibility(other._base_unit, self._base_unit)
+        return Vector.__mul__(self, other)
 
     @only_for_3d
     def __mod__(self, other: "QuantityVector") -> "QuantityVector":
