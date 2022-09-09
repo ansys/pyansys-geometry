@@ -731,15 +731,13 @@ def test_quantity_vector_3d():
 
     with pytest.raises(
         TypeError,
-        match="""Provided type <class 'numpy.ndarray'> is invalid,
-        type <class 'ansys.geometry.core.math.point.Point3D'> expected.""",
+        match="Provided type <class 'numpy.ndarray'> is invalid",
     ):
         QuantityVector3D.from_points(np.array([2, 5, 8]), point_b)
 
     with pytest.raises(
         TypeError,
-        match="""Provided type <class 'numpy.ndarray'> is invalid,
-        type <class 'ansys.geometry.core.math.point.Point3D'> expected.""",
+        match="Provided type <class 'numpy.ndarray'> is invalid",
     ):
         QuantityVector3D.from_points(point_a, np.array([2, 5, 8]))
 
@@ -820,15 +818,13 @@ def test_quantity_vector_2d():
 
     with pytest.raises(
         TypeError,
-        match="""Provided type <class 'numpy.ndarray'> is invalid,
-        type <class 'ansys.geometry.core.math.point.Point2D'> expected.""",
+        match="Provided type <class 'numpy.ndarray'> is invalid",
     ):
         QuantityVector2D.from_points(np.array([2, 5]), point_b)
 
     with pytest.raises(
         TypeError,
-        match="""Provided type <class 'numpy.ndarray'> is invalid,
-        type <class 'ansys.geometry.core.math.point.Point2D'> expected.""",
+        match="Provided type <class 'numpy.ndarray'> is invalid",
     ):
         QuantityVector2D.from_points(point_a, np.array([2, 5]))
 
