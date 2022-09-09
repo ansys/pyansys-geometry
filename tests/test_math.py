@@ -14,12 +14,9 @@ from ansys.geometry.core.math import (
     Matrix44,
     Plane,
     Point,
-    QuantityVector2D,
-    QuantityVector3D,
-    UnitVector2D,
-    UnitVector3D,
-    Vector2D,
-    Vector3D,
+    QuantityVector,
+    UnitVector,
+    Vector,
 )
 from ansys.geometry.core.misc import UNITS
 
@@ -173,13 +170,13 @@ def test_point_units():
     assert raw_z == p_cm_to_mm[2] * 10
 
 
-def test_vector3d():
-    """Simple test to create a ``Vector3D``."""
+def test_vector():
+    """Simple test to create a ``Vector``."""
 
-    # Create two Vector3D objects
-    v1 = Vector3D([0, 1, 3])
-    v1_copy = Vector3D([0, 1, 3])
-    v2 = Vector3D([0, 4, 7])
+    # Create two Vector objects
+    v1 = Vector([0, 1, 3])
+    v1_copy = Vector([0, 1, 3])
+    v2 = Vector([0, 4, 7])
 
     # Check that the equals operator works
     assert v1 == v1_copy
@@ -214,14 +211,14 @@ def test_vector3d():
     assert v_cross.y == 0
     assert v_cross.z == 0
 
-    assert Vector3D([1, 0, 0]).is_perpendicular_to(Vector3D([0, 1, 0]))
-    assert Vector3D([1, 0, 0]).is_perpendicular_to(Vector3D([0, 0, 1]))
-    assert not Vector3D([1, 0, 0]).is_perpendicular_to(Vector3D([1, 1, 1]))
-    assert not Vector3D([1, 0, 0]).is_perpendicular_to(Vector3D([-1, 0, 0]))
-    assert Vector3D([1, 1, 1]).is_perpendicular_to(Vector3D([0, -1, 1]))
+    assert Vector([1, 0, 0]).is_perpendicular_to(Vector([0, 1, 0]))
+    assert Vector([1, 0, 0]).is_perpendicular_to(Vector([0, 0, 1]))
+    assert not Vector([1, 0, 0]).is_perpendicular_to(Vector([1, 1, 1]))
+    assert not Vector([1, 0, 0]).is_perpendicular_to(Vector([-1, 0, 0]))
+    assert Vector([1, 1, 1]).is_perpendicular_to(Vector([0, -1, 1]))
 
-    assert Vector3D([0, 0, 0]).is_zero
-    assert not Vector3D([0, 1, 0]).is_zero
+    assert Vector([0, 0, 0]).is_zero
+    assert not Vector([0, 1, 0]).is_zero
 
     # Check that the dot and cross product overload is fine
     assert abs(round(v1 * v2 - 25)) <= DOUBLE_EPS
@@ -229,7 +226,7 @@ def test_vector3d():
     assert v_cross_overload == v_cross
 
     # Checking that scalar times vector also works
-    v1_x_3 = Vector3D([0, 3, 9])
+    v1_x_3 = Vector([0, 3, 9])
     assert all(
         [
             abs(round(v1_comp * 3 - v1_x_3_comp)) <= DOUBLE_EPS
@@ -237,115 +234,117 @@ def test_vector3d():
         ]
     )
 
+def test_unit_vector():
+    """Simple test to create a ``UnitVector``."""
 
-def test_vector2d():
-    """Simple test to create a ``Vector2D``."""
-
-    # Create two Vector2D objects
-    v_1 = Vector2D([2, 1])
-    v_1_copy = Vector2D([2, 1])
-    v_2 = Vector2D([0, 4])
-
-    # Check that the equals operator works
-    assert v_1 == v_1_copy
-    assert v_1 != v_2
-
-    # Check its X, Y components
-    assert v_1.x == 2
-    assert v_1.y == 1
-
-    # Check that the setter works properly in v_1_copy
-    v_1_copy.x = 3
-    v_1_copy.y = 3
-
-    # Check that the equals operator works (v_1 and v_1_copy should no longer be equal)
-    assert v_1 != v_1_copy
-    assert v_1 != v_2
-
-    # Check the norm value of vector v1
-    assert abs(round(v_1.norm, 3) - 2.236) <= DOUBLE_EPS
-
-    v1_n = v_1.normalize()
-    assert abs(round(v1_n.x, 3) - 0.894) <= DOUBLE_EPS
-    assert abs(round(v1_n.y, 3) - 0.447) <= DOUBLE_EPS
-
-    # Check that the dot product overload is fine
-    v_3 = Vector2D([2, 8])
-    v_4 = Vector2D([3, 7])
-    assert abs(round(v_3 * v_4 - 62)) <= DOUBLE_EPS
-
-    # Checking that scalar times vector also works
-    v1_x_3 = Vector2D([6, 3])
-    assert all(
-        [
-            abs(round(v1_comp * 3 - v1_x_3_comp)) <= DOUBLE_EPS
-            for v1_comp, v1_x_3_comp in zip(v_1, v1_x_3)
-        ]
-    )
-
-
-def test_unit_vector_3d():
-    """Simple test to create a ``UnitVector3D``."""
-
-    # Create UnitVector3D objects from Vector3D
-    v1 = Vector3D([0, 1, 3])
-    v2 = UnitVector3D(v1)
+    # Create UnitVector objects from Vector
+    v1 = Vector([0, 1, 3])
+    v2 = UnitVector(v1)
     assert abs(round(v2.x, 3) - 0.0) <= DOUBLE_EPS
     assert abs(round(v2.y, 3) - 0.316) <= DOUBLE_EPS
     assert abs(round(v2.z, 3) - 0.949) <= DOUBLE_EPS
 
-    # Create UnitVector3D objects from numpy.ndarray
-    v3 = UnitVector3D([1, 2, 3])
+    # Create UnitVector objects from numpy.ndarray
+    v3 = UnitVector([1, 2, 3])
     assert abs(round(v3.x, 3) - 0.267) <= DOUBLE_EPS
     assert abs(round(v3.y, 3) - 0.535) <= DOUBLE_EPS
     assert abs(round(v3.z, 3) - 0.802) <= DOUBLE_EPS
 
-    assert not UnitVector3D([1, 1, 1]).is_perpendicular_to(UnitVector3D([1, 1, -1]))
-    assert UnitVector3D([1, 1, 1]).is_perpendicular_to(UnitVector3D([0, -1, 1]))
+    assert not UnitVector([1, 1, 1]).is_perpendicular_to(UnitVector([1, 1, -1]))
+    assert UnitVector([1, 1, 1]).is_perpendicular_to(UnitVector([0, -1, 1]))
 
     # Check that UnitVector2D is immutable
-    with pytest.raises(UnsupportedOperation, match="UnitVector3D is immutable."):
+    with pytest.raises(UnsupportedOperation, match="UnitVector is immutable."):
         v2.x = 3
-    with pytest.raises(UnsupportedOperation, match="UnitVector3D is immutable."):
+    with pytest.raises(UnsupportedOperation, match="UnitVector is immutable."):
         v2.y = 3
-    with pytest.raises(UnsupportedOperation, match="UnitVector3D is immutable."):
+    with pytest.raises(UnsupportedOperation, match="UnitVector is immutable."):
         v2.z = 3
 
+def test_quantity_vector():
+    """Simple tests to create ``QuantityVector``."""
 
-def test_unit_vector_2d():
-    """Simple test to create a ``UnitVector2D``."""
+    # Define the tolerance for the QuantityVector tests
+    TOLERANCE = 5e-15
 
-    # Create UnitVector2D objects from Vector2D
-    v1 = Vector2D([2, 1])
-    v2 = UnitVector2D(v1)
-    assert abs(round(v2.x, 3) - 0.894) <= DOUBLE_EPS
-    assert abs(round(v2.y, 3) - 0.447) <= DOUBLE_EPS
+    # Create QuantityVector from a Vector
+    vec = Vector([1, 2, 3])
+    quantity_vec = QuantityVector(vec, UNITS.mm)
+    assert abs(quantity_vec.x - vec.x) <= TOLERANCE
+    assert abs(quantity_vec.y - vec.y) <= TOLERANCE
+    assert abs(quantity_vec.z - vec.z) <= TOLERANCE
+    assert quantity_vec.unit == UNITS.mm
+    assert abs(quantity_vec.norm - vec.norm) <= TOLERANCE
+    _, base_unit = UNITS.get_base_units(UNITS.mm)
+    assert quantity_vec.base_unit == base_unit
 
-    # Create UnitVector2D objects from numpy.ndarray
-    v3 = UnitVector2D([2, 1])
-    assert abs(round(v3.x, 3) - 0.894) <= DOUBLE_EPS
-    assert abs(round(v3.y, 3) - 0.447) <= DOUBLE_EPS
+    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
+    assert quantity_vec[0] == (quantity_vec.x * quantity_vec.unit).to_base_units().magnitude
+    assert quantity_vec[1] == (quantity_vec.y * quantity_vec.unit).to_base_units().magnitude
+    assert quantity_vec[2] == (quantity_vec.z * quantity_vec.unit).to_base_units().magnitude
 
-    # Check that UnitVector2D is immutable
-    with pytest.raises(UnsupportedOperation, match="UnitVector2D is immutable."):
-        v2.x = 3
-    with pytest.raises(UnsupportedOperation, match="UnitVector2D is immutable."):
-        v2.y = 3
+    # Change the values using the setters
+    vec_end_mm = Vector([70, 80, 90])
+    vec_end_cm = Vector([7, 8, 9])
+    quantity_vec.unit = UNITS.mm
+    quantity_vec.x = 70
+    quantity_vec.y = 80
+    quantity_vec.z = 90
+    assert abs(quantity_vec.x - vec_end_mm.x) <= TOLERANCE
+    assert abs(quantity_vec.y - vec_end_mm.y) <= TOLERANCE
+    assert abs(quantity_vec.z - vec_end_mm.z) <= TOLERANCE
+    assert quantity_vec.unit == UNITS.mm
+    assert abs(quantity_vec.norm - vec_end_mm.norm) <= TOLERANCE
+    assert quantity_vec[0] == (quantity_vec.x * quantity_vec.unit).to_base_units().magnitude
+    assert quantity_vec[1] == (quantity_vec.y * quantity_vec.unit).to_base_units().magnitude
+    assert quantity_vec[2] == (quantity_vec.z * quantity_vec.unit).to_base_units().magnitude
 
+    # Change back to cm and check that the values are modified according to units
+    quantity_vec.unit = UNITS.cm
+    assert abs(quantity_vec.x - vec_end_cm.x) <= TOLERANCE
+    assert abs(quantity_vec.y - vec_end_cm.y) <= TOLERANCE
+    assert abs(quantity_vec.z - vec_end_cm.z) <= TOLERANCE
+    assert quantity_vec.unit == UNITS.cm
 
-def test_vector3d_errors():
-    """Testing multiple ``Vector3D`` errors."""
+    # Check that two quantity vectors with the same input vector
+    # and different units are not the same
+    quantity_vec_cm = QuantityVector([1, 2, 3], UNITS.cm)
+    quantity_vec_mm_eq = QuantityVector([10, 20, 30], UNITS.mm)
+    quantity_vec_mm_ne = QuantityVector([1, 2, 3], UNITS.mm)
+    assert quantity_vec_cm != quantity_vec_mm_ne
+    assert quantity_vec_cm == quantity_vec_mm_eq
 
-    with pytest.raises(ValueError, match="Vector3D must have three coordinates."):
-        Vector3D([1, 2])
+    # Let's do some vector operations with the below
+    quantity_vec_a = QuantityVector([1, 2, 3], UNITS.cm)
+    quantity_vec_b = QuantityVector([70, 0, 10], UNITS.mm)
+    dot_a_b = quantity_vec_a * quantity_vec_b
+    assert dot_a_b == 0.001
+
+    cross_a_x_b = quantity_vec_a % quantity_vec_b  # Resulting vector: [2, 20, -14] cm
+    assert abs(cross_a_x_b.x - 2) <= TOLERANCE
+    assert abs(cross_a_x_b.y - 20) <= TOLERANCE
+    assert abs(cross_a_x_b.z - (-14)) <= TOLERANCE
+    assert cross_a_x_b.unit == UNITS.cm
+
+    normalized_b = quantity_vec_b.normalize()
+    vec_b_normalized = Vector([70, 0, 10]).normalize()
+    assert abs(normalized_b.x - vec_b_normalized.x) <= TOLERANCE
+    assert abs(normalized_b.y - vec_b_normalized.y) <= TOLERANCE
+    assert abs(normalized_b.z - vec_b_normalized.z) <= TOLERANCE
+
+def test_vector_errors():
+    """Testing multiple ``Vector`` errors."""
+
+    with pytest.raises(ValueError, match="Vector must have three coordinates."):
+        Vector([1, 2])
 
     with pytest.raises(
         TypeError, match="The numpy.ndarray 'input' should contain float or integer values."
     ):
-        Vector3D(["a", "b", "c"])
+        Vector(["a", "b", "c"])
 
-    # Create a Vector3D
-    v1 = Vector3D([1, 2, 3])
+    # Create a Vector
+    v1 = Vector([1, 2, 3])
 
     # Test setter error checks
     with pytest.raises(TypeError, match="The parameter 'x' should be a float or an integer value."):
@@ -357,48 +356,15 @@ def test_vector3d_errors():
     with pytest.raises(TypeError, match="The parameter 'z' should be a float or an integer value."):
         v1.z = "z"
 
-    # Build a Vector2D and try to compare against it
-    with pytest.raises(TypeError, match=f"Provided type {Vector2D} is invalid"):
-        v2 = Vector2D([1, 2])
+    # Build a 2D Vector and try to compare against it
+    with pytest.raises(TypeError, match=f"Provided type {Vector} is invalid"):
+        v2 = Vector([1, 2])
         assert v1 == v2
 
     # Try to normalize a 0-value vector
-    with pytest.raises(ValueError, match="The norm of the Vector3D is not valid."):
+    with pytest.raises(ValueError, match="The norm of the Vector is not valid."):
         v2 = ZERO_VECTOR3D
         v2.normalize()
-
-
-def test_vector2d_errors():
-    """Testing multiple ``Vector2D`` errors."""
-
-    with pytest.raises(ValueError, match="Vector2D must have two coordinates."):
-        Vector2D([1])
-
-    with pytest.raises(
-        TypeError, match="The numpy.ndarray 'input' should contain float or integer values."
-    ):
-        Vector2D(["a", "b"])
-
-    # Create a Vector2D
-    v1 = Vector2D([1, 2])
-
-    # Test setter error checks
-    with pytest.raises(TypeError, match="The parameter 'x' should be a float or an integer value."):
-        v1.x = "x"
-
-    with pytest.raises(TypeError, match="The parameter 'y' should be a float or an integer value."):
-        v1.y = "y"
-
-    # Build a Vector3D and try to compare against it
-    with pytest.raises(TypeError, match=f"Provided type {Vector3D} is invalid"):
-        v2 = Vector3D([1, 5, 6])
-        assert v1 == v2
-
-    # Try to normalize a 0-value vector
-    with pytest.raises(ValueError, match="The norm of the Vector2D is not valid."):
-        v2 = Vector2D([0, 0])
-        v2.normalize()
-
 
 def test_matrix():
     """Simple test to create a ``Matrix``."""
@@ -527,144 +493,13 @@ def test_matrix_44():
         assert m_1 == m_2
 
 
-def test_quantity_vector_3d():
-    """Simple tests to create ``QuantityVector3D``."""
-
-    # Define the tolerance for the QuantityVector3D tests
-    TOLERANCE = 5e-15
-
-    # Create QuantityVector3D from a Vector3D
-    vec = Vector3D([1, 2, 3])
-    quantity_vec = QuantityVector3D(vec, UNITS.mm)
-    assert abs(quantity_vec.x - vec.x) <= TOLERANCE
-    assert abs(quantity_vec.y - vec.y) <= TOLERANCE
-    assert abs(quantity_vec.z - vec.z) <= TOLERANCE
-    assert quantity_vec.unit == UNITS.mm
-    assert abs(quantity_vec.norm - vec.norm) <= TOLERANCE
-    _, base_unit = UNITS.get_base_units(UNITS.mm)
-    assert quantity_vec.base_unit == base_unit
-
-    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
-    assert quantity_vec[0] == (quantity_vec.x * quantity_vec.unit).to_base_units().magnitude
-    assert quantity_vec[1] == (quantity_vec.y * quantity_vec.unit).to_base_units().magnitude
-    assert quantity_vec[2] == (quantity_vec.z * quantity_vec.unit).to_base_units().magnitude
-
-    # Change the values using the setters
-    vec_end_mm = Vector3D([70, 80, 90])
-    vec_end_cm = Vector3D([7, 8, 9])
-    quantity_vec.unit = UNITS.mm
-    quantity_vec.x = 70
-    quantity_vec.y = 80
-    quantity_vec.z = 90
-    assert abs(quantity_vec.x - vec_end_mm.x) <= TOLERANCE
-    assert abs(quantity_vec.y - vec_end_mm.y) <= TOLERANCE
-    assert abs(quantity_vec.z - vec_end_mm.z) <= TOLERANCE
-    assert quantity_vec.unit == UNITS.mm
-    assert abs(quantity_vec.norm - vec_end_mm.norm) <= TOLERANCE
-    assert quantity_vec[0] == (quantity_vec.x * quantity_vec.unit).to_base_units().magnitude
-    assert quantity_vec[1] == (quantity_vec.y * quantity_vec.unit).to_base_units().magnitude
-    assert quantity_vec[2] == (quantity_vec.z * quantity_vec.unit).to_base_units().magnitude
-
-    # Change back to cm and check that the values are modified according to units
-    quantity_vec.unit = UNITS.cm
-    assert abs(quantity_vec.x - vec_end_cm.x) <= TOLERANCE
-    assert abs(quantity_vec.y - vec_end_cm.y) <= TOLERANCE
-    assert abs(quantity_vec.z - vec_end_cm.z) <= TOLERANCE
-    assert quantity_vec.unit == UNITS.cm
-
-    # Check that two quantity vectors with the same input vector
-    # and different units are not the same
-    quantity_vec_cm = QuantityVector3D([1, 2, 3], UNITS.cm)
-    quantity_vec_mm_eq = QuantityVector3D([10, 20, 30], UNITS.mm)
-    quantity_vec_mm_ne = QuantityVector3D([1, 2, 3], UNITS.mm)
-    assert quantity_vec_cm != quantity_vec_mm_ne
-    assert quantity_vec_cm == quantity_vec_mm_eq
-
-    # Let's do some vector operations with the below
-    quantity_vec_a = QuantityVector3D([1, 2, 3], UNITS.cm)
-    quantity_vec_b = QuantityVector3D([70, 0, 10], UNITS.mm)
-    dot_a_b = quantity_vec_a * quantity_vec_b
-    assert dot_a_b == 0.001
-
-    cross_a_x_b = quantity_vec_a % quantity_vec_b  # Resulting vector: [2, 20, -14] cm
-    assert abs(cross_a_x_b.x - 2) <= TOLERANCE
-    assert abs(cross_a_x_b.y - 20) <= TOLERANCE
-    assert abs(cross_a_x_b.z - (-14)) <= TOLERANCE
-    assert cross_a_x_b.unit == UNITS.cm
-
-    normalized_b = quantity_vec_b.normalize()
-    vec_b_normalized = Vector3D([70, 0, 10]).normalize()
-    assert abs(normalized_b.x - vec_b_normalized.x) <= TOLERANCE
-    assert abs(normalized_b.y - vec_b_normalized.y) <= TOLERANCE
-    assert abs(normalized_b.z - vec_b_normalized.z) <= TOLERANCE
-
-
-def test_quantity_vector_2d():
-    """Simple tests to create ``QuantityVector2D``."""
-
-    # Define the tolerance for the QuantityVector2D tests
-    TOLERANCE = 5e-15
-
-    # Create QuantityVector2D from a Vector3D
-    vec = Vector2D([1, 2])
-    quantity_vec = QuantityVector2D(vec, UNITS.mm)
-    assert abs(quantity_vec.x - vec.x) <= TOLERANCE
-    assert abs(quantity_vec.y - vec.y) <= TOLERANCE
-    assert quantity_vec.unit == UNITS.mm
-    assert abs(quantity_vec.norm - vec.norm) <= TOLERANCE
-    _, base_unit = UNITS.get_base_units(UNITS.mm)
-    assert quantity_vec.base_unit == base_unit
-
-    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
-    assert quantity_vec[0] == (quantity_vec.x * quantity_vec.unit).to_base_units().magnitude
-    assert quantity_vec[1] == (quantity_vec.y * quantity_vec.unit).to_base_units().magnitude
-
-    # Change the values using the setters
-    vec_end_mm = Vector2D([70, 80])
-    vec_end_cm = Vector2D([7, 8])
-    quantity_vec.unit = UNITS.mm
-    quantity_vec.x = 70
-    quantity_vec.y = 80
-    assert abs(quantity_vec.x - vec_end_mm.x) <= TOLERANCE
-    assert abs(quantity_vec.y - vec_end_mm.y) <= TOLERANCE
-    assert quantity_vec.unit == UNITS.mm
-    assert abs(quantity_vec.norm - vec_end_mm.norm) <= TOLERANCE
-    assert quantity_vec[0] == (quantity_vec.x * quantity_vec.unit).to_base_units().magnitude
-    assert quantity_vec[1] == (quantity_vec.y * quantity_vec.unit).to_base_units().magnitude
-
-    # Change back to cm and check that the values are modified according to units
-    quantity_vec.unit = UNITS.cm
-    assert abs(quantity_vec.x - vec_end_cm.x) <= TOLERANCE
-    assert abs(quantity_vec.y - vec_end_cm.y) <= TOLERANCE
-    assert quantity_vec.unit == UNITS.cm
-
-    # Check that two quantity vectors with the same input vector
-    # and different units are not the same
-    quantity_vec_cm = QuantityVector2D([1, 2], UNITS.cm)
-    quantity_vec_mm_eq = QuantityVector2D([10, 20], UNITS.mm)
-    quantity_vec_mm_ne = QuantityVector2D([1, 2], UNITS.mm)
-    assert quantity_vec_cm != quantity_vec_mm_ne
-    assert quantity_vec_cm == quantity_vec_mm_eq
-
-    # Let's do some vector operations with the below
-    quantity_vec_a = QuantityVector2D([1, 2], UNITS.cm)
-    quantity_vec_b = QuantityVector2D([70, 10], UNITS.mm)
-    dot_a_b = quantity_vec_a * quantity_vec_b
-    assert round(dot_a_b, 4) == 0.0009
-
-    normalized_b = quantity_vec_b.normalize()
-    vec_b_normalized = Vector2D([70, 10]).normalize()
-    assert abs(normalized_b.x - vec_b_normalized.x) <= TOLERANCE
-    assert abs(normalized_b.y - vec_b_normalized.y) <= TOLERANCE
-
-
 def test_frame():
     """``Frame`` construction and equivalency."""
 
     origin = Point([42, 99, 13])
-    f_1 = Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
-    f_1_duplicate = Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
-    f_2 = Frame(Point([5, 8, 9]), UnitVector3D([1, 1, 1]), UnitVector3D([0, -1, 1]))
+    f_1 = Frame(origin, UnitVector([1, 0, 0]), UnitVector([0, 1, 0]))
+    f_1_duplicate = Frame(origin, UnitVector([1, 0, 0]), UnitVector([0, 1, 0]))
+    f_2 = Frame(Point([5, 8, 9]), UnitVector([1, 1, 1]), UnitVector([0, -1, 1]))
     f_with_array_definitions = Frame([5, 8, 9], [1, 1, 1], [0, -1, 1])
     f_defaults = Frame()
 
@@ -684,22 +519,22 @@ def test_frame():
     assert f_defaults.direction_z == UNIT_VECTOR_Z
 
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
-        Frame(origin, "A", UnitVector3D([25, 39, 82]))
+        Frame(origin, "A", UnitVector([25, 39, 82]))
 
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
-        Frame(origin, UnitVector3D([12, 31, 99]), "A")
+        Frame(origin, UnitVector([12, 31, 99]), "A")
 
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
-        Frame("A", UnitVector3D([12, 31, 99]), UnitVector3D([23, 67, 45]))
+        Frame("A", UnitVector([12, 31, 99]), UnitVector([23, 67, 45]))
 
 
 def test_plane():
     """``Plane`` construction and equivalency."""
 
     origin = Point([42, 99, 13])
-    p_1 = Plane(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
-    p_1_duplicate = Plane(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
-    p_2 = Plane(Point([5, 8, 9]), UnitVector3D([1, 1, 1]), UnitVector3D([0, -1, 1]))
+    p_1 = Plane(origin, UnitVector([1, 0, 0]), UnitVector([0, 1, 0]))
+    p_1_duplicate = Plane(origin, UnitVector([1, 0, 0]), UnitVector([0, 1, 0]))
+    p_2 = Plane(Point([5, 8, 9]), UnitVector([1, 1, 1]), UnitVector([0, -1, 1]))
     p_with_array_definitions = Plane([5, 8, 9], [1, 1, 1], [0, -1, 1])
     p_defaults = Plane()
 
@@ -719,10 +554,10 @@ def test_plane():
     assert p_defaults.direction_z == UNIT_VECTOR_Z
 
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
-        Plane(origin, "A", UnitVector3D([25, 39, 82]))
+        Plane(origin, "A", UnitVector([25, 39, 82]))
 
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
-        Plane(origin, UnitVector3D([12, 31, 99]), "A")
+        Plane(origin, UnitVector([12, 31, 99]), "A")
 
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
-        Plane("A", UnitVector3D([12, 31, 99]), UnitVector3D([23, 67, 45]))
+        Plane("A", UnitVector([12, 31, 99]), UnitVector([23, 67, 45]))
