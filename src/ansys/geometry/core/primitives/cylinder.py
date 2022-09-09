@@ -5,12 +5,11 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core.math import Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math import Point, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import (
     UNIT_LENGTH,
     UNITS,
     check_is_float_int,
-    check_is_pint_unit,
     check_pint_unit_compatibility,
     check_type,
     check_type_equivalence,
@@ -24,7 +23,7 @@ class Cylinder:
 
     Parameters
     ----------
-    origin : Union[~numpy.ndarray, RealSequence, Point3D]
+    origin : Union[~numpy.ndarray, RealSequence, Point]
         Origin of the ``Cylinder``.
     direction_x : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         X-plane direction.
@@ -40,7 +39,7 @@ class Cylinder:
 
     def __init__(
         self,
-        origin: Union[np.ndarray, RealSequence, Point3D],
+        origin: Union[np.ndarray, RealSequence, Point],
         direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D],
         direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D],
         radius: Real,
@@ -49,20 +48,20 @@ class Cylinder:
     ):
         """Constructor method for ``Cylinder``."""
 
-        check_type(origin, (np.ndarray, List, Point3D))
+        check_type(origin, (np.ndarray, List, Point))
         check_type(direction_x, (np.ndarray, List, UnitVector3D, Vector3D))
         check_type(direction_y, (np.ndarray, List, UnitVector3D, Vector3D))
 
         check_is_float_int(radius, "radius")
         check_is_float_int(height, "height")
 
-        check_is_pint_unit(unit, "unit")
+        check_type(unit, Unit)
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
 
         self._unit = unit
         _, self._base_unit = UNITS.get_base_units(unit)
 
-        self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
+        self._origin = Point(origin) if not isinstance(origin, Point) else origin
         self._direction_x = (
             UnitVector3D(direction_x) if not isinstance(direction_x, UnitVector3D) else direction_x
         )
@@ -75,14 +74,14 @@ class Cylinder:
         self._height = UNITS.convert(height, self._unit, self._base_unit)
 
     @property
-    def origin(self) -> Point3D:
+    def origin(self) -> Point:
         """Origin of the ``Cylinder``."""
         return self._origin
 
     @origin.setter
-    def origin(self, origin: Point3D) -> None:
-        if not isinstance(origin, Point3D):
-            raise TypeError(f"origin is invalid, type {Point3D} expected.")
+    def origin(self, origin: Point) -> None:
+        if not isinstance(origin, Point):
+            raise TypeError(f"origin is invalid, type {Point} expected.")
         self._origin = origin
 
     @property
@@ -115,7 +114,7 @@ class Cylinder:
     @unit.setter
     def unit(self, unit: Unit) -> None:
         """Sets the unit of the object."""
-        check_is_pint_unit(unit, "unit")
+        check_type(unit, Unit)
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit
 

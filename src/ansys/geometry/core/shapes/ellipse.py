@@ -5,7 +5,7 @@ import numpy as np
 from scipy.integrate import quad
 
 from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
-from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.point import Point
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.typing import Real
@@ -20,8 +20,8 @@ class Ellipse(BaseShape):
         The semi-major axis of the ellipse.
     b : Real
         The semi-minor axis of the ellipse.
-    origin : Point3D
-        A :class:`Point3D` representing the origin of the shape.
+    origin : Point
+        A :class:`Point` representing the origin of the shape.
     dir_1 : Optional[UnitVector3D]
         A :class:`UnitVector3D` representing the first fundamental direction
         of the reference plane where the shape is contained.
@@ -36,7 +36,7 @@ class Ellipse(BaseShape):
         self,
         a: Real,
         b: Real,
-        origin: Point3D,
+        origin: Point,
         dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
         dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
     ):
@@ -136,7 +136,7 @@ class Ellipse(BaseShape):
         """
         return np.pi * self.semi_major_axis * self.semi_minor_axis
 
-    def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
+    def local_points(self, num_points: Optional[int] = 100) -> List[Point]:
         """Returns a list containing all the points belonging to the shape.
 
         Parameters
@@ -146,12 +146,12 @@ class Ellipse(BaseShape):
 
         Returns
         -------
-        List[Point3D]
+        List[Point]
             A list of points representing the shape.
         """
         theta = np.linspace(0, 2 * np.pi, num_points)
         return [
-            Point3D([self.semi_major_axis * np.cos(ang), self.semi_minor_axis * np.sin(ang), 0.0])
+            Point([self.semi_major_axis * np.cos(ang), self.semi_minor_axis * np.sin(ang), 0.0])
             for ang in theta
         ]
 
@@ -160,7 +160,7 @@ class Ellipse(BaseShape):
         cls,
         a: Real,
         b: Real,
-        origin: Optional[Point3D] = Point3D([0, 0, 0]),
+        origin: Optional[Point] = Point([0, 0, 0]),
         dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
         dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
     ):
@@ -172,8 +172,8 @@ class Ellipse(BaseShape):
             The semi-major axis of the ellipse.
         b : Real
             The semi-minor axis of the ellipse.
-        origin : Optional[Point3D]
-            A :class:`Point3D` representing the origin of the ellipse.
+        origin : Optional[Point]
+            A :class:`Point` representing the origin of the ellipse.
             By default, [0, 0, 0].
         dir_1 : Optional[UnitVector3D]
             A :class:`UnitVector3D` representing the first fundamental direction

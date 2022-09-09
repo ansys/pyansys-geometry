@@ -9,11 +9,11 @@ from ansys.geometry.core.misc import (
     UNITS,
     Accuracy,
     check_is_float_int,
-    check_is_pint_unit,
     check_ndarray_is_float_int,
     check_pint_unit_compatibility,
     check_type_equivalence,
 )
+from ansys.geometry.core.misc.checks import check_type
 from ansys.geometry.core.typing import Real, RealSequence
 
 
@@ -263,7 +263,7 @@ class QuantityVector3D(Vector3D):
         """Constructor for ``QuantityVector3D``."""
 
         # Transform to base units
-        check_is_pint_unit(unit, "unit")
+        check_type(unit, Unit)
         vector_base_units = [(elem * unit).to_base_units().magnitude for elem in vector]
 
         # Build the Vector3D object
@@ -322,7 +322,7 @@ class QuantityVector3D(Vector3D):
     @unit.setter
     def unit(self, unit: Unit) -> None:
         """Sets the unit of the ``QuantityVector3D``."""
-        check_is_pint_unit(unit, "unit")
+        check_type(unit, Unit)
         check_pint_unit_compatibility(unit, self._base_unit)
         self._unit = unit
 
@@ -378,7 +378,7 @@ class QuantityVector2D(Vector2D):
         """Constructor for ``QuantityVector2D``."""
 
         # Transform to base units
-        check_is_pint_unit(unit, "unit")
+        check_type(unit, Unit)
         vector_base_units = [(elem * unit).to_base_units().magnitude for elem in vector]
 
         # Build the Vector2D object
@@ -431,7 +431,7 @@ class QuantityVector2D(Vector2D):
     @unit.setter
     def unit(self, unit: Unit) -> None:
         """Sets the unit of the ``QuantityVector2D``."""
-        check_is_pint_unit(unit, "unit")
+        check_type(unit, Unit)
         check_pint_unit_compatibility(unit, self._base_unit)
         self._unit = unit
 

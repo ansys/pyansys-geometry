@@ -4,7 +4,7 @@ from typing import List, Union
 
 import numpy as np
 
-from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.point import Point
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.checks import check_type, check_type_equivalence
 from ansys.geometry.core.typing import RealSequence
@@ -16,7 +16,7 @@ class Frame:
 
     Parameters
     ----------
-    origin : Optional[Union[~numpy.ndarray, RealSequence, Point3D]]
+    origin : Optional[Union[~numpy.ndarray, RealSequence, Point]]
         Centered origin of the ``Frame``. By default, cartesian origin.
     direction_x: Optional[Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]]
         X-axis direction. By default, ``UNIT_VECTOR_X``
@@ -26,17 +26,17 @@ class Frame:
 
     def __init__(
         self,
-        origin: Union[np.ndarray, RealSequence, Point3D] = [0, 0, 0],
+        origin: Union[np.ndarray, RealSequence, Point] = [0, 0, 0],
         direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = [1, 0, 0],
         direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = [0, 1, 0],
     ):
         """Constructor method for ``Frame``."""
 
-        check_type(origin, (np.ndarray, List, Point3D))
+        check_type(origin, (np.ndarray, List, Point))
         check_type(direction_x, (np.ndarray, List, UnitVector3D, Vector3D))
         check_type(direction_y, (np.ndarray, List, UnitVector3D, Vector3D))
 
-        self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
+        self._origin = Point(origin) if not isinstance(origin, Point) else origin
         self._direction_x = (
             UnitVector3D(direction_x) if not isinstance(direction_x, UnitVector3D) else direction_x
         )
@@ -53,7 +53,7 @@ class Frame:
         self._direction_z = UnitVector3D(self._direction_x % self._direction_y)
 
     @property
-    def origin(self) -> Point3D:
+    def origin(self) -> Point:
         """Return the origin of the ``Frame``."""
         return self._origin
 

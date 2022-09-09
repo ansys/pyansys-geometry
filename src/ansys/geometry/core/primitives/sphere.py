@@ -6,12 +6,11 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.point import Point
 from ansys.geometry.core.misc import (
     UNIT_LENGTH,
     UNITS,
     check_is_float_int,
-    check_is_pint_unit,
     check_pint_unit_compatibility,
     check_type,
     check_type_equivalence,
@@ -25,7 +24,7 @@ class Sphere:
 
     Parameters
     ----------
-    origin : Union[~numpy.ndarray, RealSequence, Point3D]
+    origin : Union[~numpy.ndarray, RealSequence, Point]
         Centered origin of the ``Sphere``.
     radius: Real
         Radius of ``Sphere``.
@@ -35,36 +34,36 @@ class Sphere:
 
     def __init__(
         self,
-        origin: Union[np.ndarray, RealSequence, Point3D],
+        origin: Union[np.ndarray, RealSequence, Point],
         radius: Real,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Constructor method for ``Sphere``."""
 
-        check_type(origin, (np.ndarray, List, Point3D))
+        check_type(origin, (np.ndarray, List, Point))
 
         check_is_float_int(radius, "radius")
 
-        check_is_pint_unit(unit, "unit")
+        check_type(unit, Unit)
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
 
         self._unit = unit
         _, self._base_unit = UNITS.get_base_units(unit)
 
-        self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
+        self._origin = Point(origin) if not isinstance(origin, Point) else origin
 
         # Store values in base unit
         self._radius = UNITS.convert(radius, self._unit, self._base_unit)
 
     @property
-    def origin(self) -> Point3D:
+    def origin(self) -> Point:
         """Origin of the ``Sphere``."""
         return self._origin
 
     @origin.setter
-    def origin(self, origin: Point3D) -> None:
-        if not isinstance(origin, Point3D):
-            raise TypeError(f"origin is invalid, type {Point3D} expected.")
+    def origin(self, origin: Point) -> None:
+        if not isinstance(origin, Point):
+            raise TypeError(f"origin is invalid, type {Point} expected.")
         self._origin = origin
 
     @property
@@ -84,7 +83,7 @@ class Sphere:
 
     @unit.setter
     def unit(self, unit: Unit) -> None:
-        check_is_pint_unit(unit, "unit")
+        check_type(unit, Unit)
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit
 

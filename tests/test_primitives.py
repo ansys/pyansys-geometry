@@ -1,6 +1,6 @@
 import pytest
 
-from ansys.geometry.core.math import Point3D, UnitVector3D
+from ansys.geometry.core.math import Point, UnitVector3D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.primitives import Cone, Cylinder, Sphere, Torus
 
@@ -9,16 +9,14 @@ def test_cylinder():
     """``Cylinder`` construction and equivalency."""
 
     # Create two Cylinder objects
-    origin = Point3D([42, 99, 13])
+    origin = Point([42, 99, 13])
     radius = 100
     height = 200
     c_1 = Cylinder(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), radius, height)
     c_1_duplicate = Cylinder(
         origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), radius, height
     )
-    c_2 = Cylinder(
-        Point3D([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 76
-    )
+    c_2 = Cylinder(Point([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 76)
     c_with_array_definitions = Cylinder([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 76)
 
     # Check that the equals operator works
@@ -33,7 +31,7 @@ def test_cylinder():
     assert c_1.radius == radius
     assert c_1.height == height
 
-    c_1.origin = new_origin = Point3D([42, 88, 99])
+    c_1.origin = new_origin = Point([42, 88, 99])
     c_1.radius = new_radius = 1000
     c_1.height = new_height = 2000
 
@@ -83,14 +81,14 @@ def test_cylinder():
 def test_cylinder_units():
     """``Cylinder`` units validation."""
 
-    origin = Point3D([42, 99, 13])
+    origin = Point([42, 99, 13])
     radius = 100
     height = 200
     unit = UNITS.mm
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
-        match="The pint.Unit provided as input should be a \[length\] quantity.",
+        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
     ):
         Cylinder(
             origin,
@@ -108,7 +106,7 @@ def test_cylinder_units():
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
-        match="The pint.Unit provided as input should be a \[length\] quantity.",
+        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
     ):
         c_1.unit = UNITS.celsius
 
@@ -133,11 +131,11 @@ def test_sphere():
     """``Sphere`` construction and equivalency."""
 
     # Create two Sphere objects
-    origin = Point3D([42, 99, 13])
+    origin = Point([42, 99, 13])
     radius = 100
     s_1 = Sphere(origin, 100)
     s_1_duplicate = Sphere(origin, 100)
-    s_2 = Sphere(Point3D([5, 8, 9]), 88)
+    s_2 = Sphere(Point([5, 8, 9]), 88)
     s_with_array_definitions = Sphere([5, 8, 9], 88)
 
     # Check that the equals operator works
@@ -151,7 +149,7 @@ def test_sphere():
     assert s_1.origin.z == origin.z
     assert s_1.radius == radius
 
-    s_1.origin = new_origin = Point3D([42, 88, 99])
+    s_1.origin = new_origin = Point([42, 88, 99])
     s_1.radius = new_radius = 1000
 
     assert s_1.origin.x == new_origin.x
@@ -185,13 +183,13 @@ def test_sphere():
 def test_sphere_units():
     """``Sphere`` units validation."""
 
-    origin = Point3D([42, 99, 13])
+    origin = Point([42, 99, 13])
     radius = 100
     unit = UNITS.mm
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
-        match="The pint.Unit provided as input should be a \[length\] quantity.",
+        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
     ):
         Sphere(origin, radius, UNITS.celsius)
 
@@ -200,7 +198,7 @@ def test_sphere_units():
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
-        match="The pint.Unit provided as input should be a \[length\] quantity.",
+        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
     ):
         s_1.unit = UNITS.celsius
 
@@ -222,14 +220,14 @@ def test_cone():
     """``Cone`` construction and equivalency."""
 
     # Create two Cone objects
-    origin = Point3D([42, 99, 13])
+    origin = Point([42, 99, 13])
     radius = 100
     half_angle = 0.78539816
     c_1 = Cone(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), radius, half_angle)
     c_1_duplicate = Cone(
         origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), radius, half_angle
     )
-    c_2 = Cone(Point3D([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 0.65)
+    c_2 = Cone(Point([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 0.65)
     c_with_array_definitions = Cone([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 0.65)
 
     # Check that the equals operator works
@@ -244,7 +242,7 @@ def test_cone():
     assert c_1.radius == radius
     assert c_1.half_angle == half_angle
 
-    c_1.origin = new_origin = Point3D([42, 88, 99])
+    c_1.origin = new_origin = Point([42, 88, 99])
     c_1.radius = new_radius = 1000
     c_1.half_angle = new_half_angle = 0.78539816
 
@@ -294,7 +292,7 @@ def test_cone():
 def test_cone_units():
     """``Cone`` units validation."""
 
-    origin = Point3D([42, 99, 13])
+    origin = Point([42, 99, 13])
     radius = 100
     half_angle = 45
     unit_radius = UNITS.mm
@@ -302,7 +300,7 @@ def test_cone_units():
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
-        match="The pint.Unit provided as input should be a \[length\] quantity.",
+        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
     ):
         Cone(
             origin,
@@ -340,13 +338,13 @@ def test_cone_units():
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
-        match="The pint.Unit provided as input should be a \[length\] quantity.",
+        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
     ):
         c_1.length_unit = UNITS.celsius
 
     with pytest.raises(
         TypeError,
-        match="The pint.Unit provided as input should be a dimensionless quantity.",
+        match=r"The pint.Unit provided as input should be a dimensionless quantity.",
     ):
         c_1.angle_unit = UNITS.celsius
 
@@ -373,7 +371,7 @@ def test_torus():
     """``Torus`` construction and equivalency."""
 
     # Create two Torus objects
-    origin = Point3D([42, 99, 13])
+    origin = Point([42, 99, 13])
     major_radius = 200
     minor_radius = 100
     t_1 = Torus(
@@ -382,7 +380,7 @@ def test_torus():
     t_1_duplicate = Torus(
         origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), major_radius, minor_radius
     )
-    t_2 = Torus(Point3D([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 76)
+    t_2 = Torus(Point([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 76)
     t_with_array_definitions = Torus([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 76)
 
     # Check that the equals operator works
@@ -406,7 +404,7 @@ def test_torus():
     assert t_1.major_radius == new_major_radius
     assert t_1.minor_radius == new_minor_radius
 
-    t_1.origin = new_origin = Point3D([42, 88, 99])
+    t_1.origin = new_origin = Point([42, 88, 99])
     assert t_1.origin.x == new_origin.x
     assert t_1.origin.y == new_origin.y
     assert t_1.origin.z == new_origin.z
@@ -453,7 +451,7 @@ def test_torus():
 def test_torus_units():
     """``Torus`` units validation."""
 
-    origin = Point3D([42, 99, 13])
+    origin = Point([42, 99, 13])
     major_radius = 200
     minor_radius = 100
     unit = UNITS.mm
@@ -461,7 +459,7 @@ def test_torus_units():
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
-        match="The pint.Unit provided as input should be a \[length\] quantity.",
+        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
     ):
         Torus(
             origin,
@@ -484,7 +482,7 @@ def test_torus_units():
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
-        match="The pint.Unit provided as input should be a \[length\] quantity.",
+        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
     ):
         t_1.unit = UNITS.celsius
 

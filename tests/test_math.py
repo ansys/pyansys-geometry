@@ -13,8 +13,7 @@ from ansys.geometry.core.math import (
     Matrix33,
     Matrix44,
     Plane,
-    Point2D,
-    Point3D,
+    Point,
     QuantityVector2D,
     QuantityVector3D,
     UnitVector2D,
@@ -27,140 +26,151 @@ from ansys.geometry.core.misc import UNITS
 DOUBLE_EPS = np.finfo(float).eps
 
 
-def test_point3d():
-    """Simple test to create a ``Point3D``."""
+def test_point():
+    """Simple test to create a ``Point``."""
 
-    # Test the default Point3D
-    p_default = Point3D()
+    # Test the default Point
+    p_default = Point()
     assert len(p_default) == 3
     assert all(x == np.Inf for x in p_default)
+    assert p_default.is_3d
+    assert not p_default.is_2d
     p_default.unit = UNITS.cm
-    p_default.x = 10
-    p_default.y = 20
-    p_default.z = 30
-    assert p_default.x == 10
-    assert p_default.y == 20
-    assert p_default.z == 30
-    assert p_default[0] == 0.1
-    assert p_default[1] == 0.2
-    assert p_default[2] == 0.3
+    p_default.x = new_x = 10 * UNITS.cm
+    p_default.y = new_y = 20 * UNITS.cm
+    p_default.z = new_z = 30 * UNITS.cm
+    assert p_default.x == new_x
+    assert p_default.y == new_y
+    assert p_default.z == new_z
+    assert p_default[0] == new_x.to_base_units().magnitude
+    assert p_default[1] == new_y.to_base_units().magnitude
+    assert p_default[2] == new_z.to_base_units().magnitude
 
-    # Create two Point3D objects
-    p_1 = Point3D([0, 1, 3])
-    p_1_copy = Point3D([0, 1, 3])
-    p_2 = Point3D([0, 4, 7])
+    # Create two Point objects
+    p_1 = Point([0, 1, 3], UNITS.cm)
+    p_1_copy = Point([0, 1, 3], UNITS.cm)
+    p_2 = Point([0, 4, 7], UNITS.cm)
 
     # Check that the equals operator works
     assert p_1 == p_1_copy
     assert p_1 != p_2
 
     # Check its X, Y, Z components
-    assert p_1.x == 0
-    assert p_1.y == 1
-    assert p_1.z == 3
+    assert p_1.x == 0 * UNITS.cm
+    assert p_1.y == 1 * UNITS.cm
+    assert p_1.z == 3 * UNITS.cm
 
     # Check that the setter works properly in p_1_copy
-    p_1_copy.x = 3
-    p_1_copy.y = 3
-    p_1_copy.z = 3
+    p_1_copy.x = p_1_copy.y = p_1_copy.z = 3 * UNITS.cm
 
     # Check that the equals operator works (p_1 and p_1_copy should no longer be equal)
     assert p_1 != p_1_copy
     assert p_1 != p_2
 
-
-def test_point2d():
-    """Simple test to create a ``Point2D``."""
-
-    # Test the null Point2D
-    p_default = Point2D()
-    assert len(p_default) == 2
-    assert all(x == np.Inf for x in p_default)
-    p_default.unit = UNITS.cm
-    p_default.x = 10
-    p_default.y = 20
-    assert p_default.x == 10
-    assert p_default.y == 20
-    assert p_default[0] == 0.1
-    assert p_default[1] == 0.2
-
-    # Create two Point2D objects
-    p_1 = Point2D([0, 1])
-    p_1_copy = Point2D([0, 1])
-    p_2 = Point2D([0, 4])
-
-    # Check that the equals operator works
-    assert p_1 == p_1_copy
-    assert p_1 != p_2
-
-    # Check its X, Y, Z components
-    assert p_1.x == 0
-    assert p_1.y == 1
-
-    # Check that the setter works properly in p_1_copy
-    p_1_copy.x = 3
-    p_1_copy.y = 3
-
-    # Check that the equals operator works (p_1 and p_1_copy should no longer be equal)
-    assert p_1 != p_1_copy
-    assert p_1 != p_2
+    # Create a 2D Point
+    point_2d = Point([1, 2], UNITS.cm)
+    assert point_2d.x == 1 * UNITS.cm
+    assert point_2d.y == 2 * UNITS.cm
+    assert point_2d.unit == UNITS.cm
+    _, base_unit = UNITS.get_base_units(UNITS.cm)
+    assert point_2d.base_unit == base_unit
+    assert point_2d.is_2d
+    assert not point_2d.is_3d
 
 
-def test_point3d_errors():
-    """Testing multiple ``Point3D`` errors."""
+def test_point_errors():
+    """Testing multiple ``Point`` errors."""
 
-    with pytest.raises(ValueError, match="Point3D must have three coordinates."):
-        Point3D([1, 4])
+    with pytest.raises(
+        ValueError,
+        match="Point class can only receive 2 or 3 arguments, creating a 2D or 3D point, respectively.",  # noqa: E501
+    ):
+        Point([1, 4, 3, 5])
+
+    with pytest.raises(
+        ValueError,
+        match="Point class can only receive 2 or 3 arguments, creating a 2D or 3D point, respectively.",  # noqa: E501
+    ):
+        Point([1])
 
     with pytest.raises(
         TypeError, match="The numpy.ndarray 'input' should contain float or integer values."
     ):
-        Point3D(["a", "b", "c"])
+        Point(["a", "b", "c"])
 
     # Create a point
-    point = Point3D([1, 4, 4])
+    point = Point([1, 4, 4])
 
     # Test setter error checks
-    with pytest.raises(TypeError, match="The parameter 'x' should be a float or an integer value."):
+    with pytest.raises(TypeError, match="Provided type"):
         point.x = "a"
 
-    with pytest.raises(TypeError, match="The parameter 'y' should be a float or an integer value."):
+    with pytest.raises(TypeError, match="Provided type"):
         point.y = "a"
 
-    with pytest.raises(TypeError, match="The parameter 'z' should be a float or an integer value."):
+    with pytest.raises(TypeError, match="Provided type"):
         point.z = "a"
 
-    # Build a Point2D and try to compare against it
-    with pytest.raises(TypeError, match=f"Provided type {Point2D} is invalid"):
-        point_2d = Point2D([1, 4])
-        assert point == point_2d
-
-
-def test_point2d_errors():
-    """Testing multiple ``Point2D`` errors."""
-
-    with pytest.raises(ValueError, match="Point2D must have two coordinates."):
-        Point2D([1, 4, 4])
-
     with pytest.raises(
-        TypeError, match="The numpy.ndarray 'input' should contain float or integer values."
+        TypeError, match=r"The pint.Unit provided as input should be a \[length\] quantity."
     ):
-        Point2D(["a", "b"])
+        point.z = 10 * UNITS.degrees
 
-    # Create a point
-    point = Point2D([1, 4])
+    # Build a 2D Point and try to compare against it
+    point_2d = Point([1, 4])
+    assert not point == point_2d
 
-    # Test setter error checks
-    with pytest.raises(TypeError, match="The parameter 'x' should be a float or an integer value."):
-        point.x = "a"
+    with pytest.raises(ValueError, match="Instance is not 3D. Z component not accessible."):
+        point_2d.z = 10 * UNITS.cm
 
-    with pytest.raises(TypeError, match="The parameter 'y' should be a float or an integer value."):
-        point.y = "a"
 
-    # Build a Point3D and try to compare against it
-    with pytest.raises(TypeError, match=f"Provided type {Point3D} is invalid"):
-        point_3d = Point3D([1, 4, 4])
-        assert point == point_3d
+def test_point_units():
+    """``Point`` units testing."""
+
+    # Create a Point with some units
+    p_cm_to_mm = Point([10, 20, 30], UNITS.cm)
+
+    # Check that the units are correctly in place
+    assert p_cm_to_mm.unit == UNITS.cm
+
+    # Request for X, Y, Z and ensure they are in cm
+    assert p_cm_to_mm.x == 10 * UNITS.cm
+    assert p_cm_to_mm.y == 20 * UNITS.cm
+    assert p_cm_to_mm.z == 30 * UNITS.cm
+
+    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
+    assert p_cm_to_mm[0] == p_cm_to_mm.x.to_base_units().magnitude
+    assert p_cm_to_mm[1] == p_cm_to_mm.y.to_base_units().magnitude
+    assert p_cm_to_mm[2] == p_cm_to_mm.z.to_base_units().magnitude
+
+    # Store the numpy array values
+    (raw_x, raw_y, raw_z) = p_cm_to_mm[0:3]
+
+    # Set unit to mm now... and check if the values changed
+    p_cm_to_mm.unit = UNITS.mm
+    assert p_cm_to_mm.x == 100 * UNITS.mm
+    assert p_cm_to_mm.y == 200 * UNITS.mm
+    assert p_cm_to_mm.z == 300 * UNITS.mm
+
+    # Check that the values are still the same in the array
+    assert raw_x == p_cm_to_mm[0]
+    assert raw_y == p_cm_to_mm[1]
+    assert raw_z == p_cm_to_mm[2]
+
+    # Now change the value of a X being in millimeters
+    p_cm_to_mm.x = 20 * p_cm_to_mm.unit  # Basically 1/5 of original x
+    assert not raw_x == p_cm_to_mm[0]
+    assert raw_x == p_cm_to_mm[0] * 5
+
+    # Now change the value of a Y being in millimeters
+    p_cm_to_mm.y = 10 * p_cm_to_mm.unit  # Basically 1/20 of original y
+    assert not raw_y == p_cm_to_mm[1]
+    assert raw_y == p_cm_to_mm[1] * 20
+
+    # Now change the value of a Z being in millimeters
+    p_cm_to_mm.z = 30 * p_cm_to_mm.unit  # Basically 1/10 of original z
+    assert not raw_z == p_cm_to_mm[2]
+    assert raw_z == p_cm_to_mm[2] * 10
 
 
 def test_vector3d():
@@ -388,95 +398,6 @@ def test_vector2d_errors():
     with pytest.raises(ValueError, match="The norm of the Vector2D is not valid."):
         v2 = Vector2D([0, 0])
         v2.normalize()
-
-
-def test_point3D_units():
-    """``Point3D`` units testing."""
-
-    # Create a Point3D with some units
-    p_cm_to_mm = Point3D([10, 20, 30], UNITS.cm)
-
-    # Check that the units are correctly in place
-    assert p_cm_to_mm.unit == UNITS.cm
-
-    # Request for X, Y, Z and ensure they are in cm
-    assert p_cm_to_mm.x == 10
-    assert p_cm_to_mm.y == 20
-    assert p_cm_to_mm.z == 30
-
-    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
-    assert p_cm_to_mm[0] == (p_cm_to_mm.x * p_cm_to_mm.unit).to_base_units().magnitude
-    assert p_cm_to_mm[1] == (p_cm_to_mm.y * p_cm_to_mm.unit).to_base_units().magnitude
-    assert p_cm_to_mm[2] == (p_cm_to_mm.z * p_cm_to_mm.unit).to_base_units().magnitude
-
-    # Store the numpy array values
-    (raw_x, raw_y, raw_z) = p_cm_to_mm[0:3]
-
-    # Set unit to mm now... and check if the values changed
-    p_cm_to_mm.unit = UNITS.mm
-    assert p_cm_to_mm.x == 100
-    assert p_cm_to_mm.y == 200
-    assert p_cm_to_mm.z == 300
-
-    # Check that the values are still the same in the array
-    assert raw_x == p_cm_to_mm[0]
-    assert raw_y == p_cm_to_mm[1]
-    assert raw_z == p_cm_to_mm[2]
-
-    # Now change the value of a X being in millimeters
-    p_cm_to_mm.x = 20  # Basically 1/5 of original x
-    assert not raw_x == p_cm_to_mm[0]
-    assert raw_x == p_cm_to_mm[0] * 5
-
-    # Now change the value of a Y being in millimeters
-    p_cm_to_mm.y = 10  # Basically 1/20 of original y
-    assert not raw_y == p_cm_to_mm[1]
-    assert raw_y == p_cm_to_mm[1] * 20
-
-    # Now change the value of a Z being in millimeters
-    p_cm_to_mm.z = 30  # Basically 1/10 of original z
-    assert not raw_z == p_cm_to_mm[2]
-    assert raw_z == p_cm_to_mm[2] * 10
-
-
-def test_point2D_units():
-    """``Point2D`` units testing."""
-
-    # Create a Point2D with some units
-    p_cm_to_mm = Point2D([10, 20], UNITS.cm)
-
-    # Check that the units are correctly in place
-    assert p_cm_to_mm.unit == UNITS.cm
-
-    # Request for X, Y, Z and ensure they are in cm
-    assert p_cm_to_mm.x == 10
-    assert p_cm_to_mm.y == 20
-
-    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
-    assert p_cm_to_mm[0] == (p_cm_to_mm.x * p_cm_to_mm.unit).to_base_units().magnitude
-    assert p_cm_to_mm[1] == (p_cm_to_mm.y * p_cm_to_mm.unit).to_base_units().magnitude
-
-    # Store the numpy array values
-    (raw_x, raw_y) = p_cm_to_mm[0:2]
-
-    # Set unit to mm now... and check if the values changed
-    p_cm_to_mm.unit = UNITS.mm
-    assert p_cm_to_mm.x == 100
-    assert p_cm_to_mm.y == 200
-
-    # Check that the values are still the same in the array
-    assert raw_x == p_cm_to_mm[0]
-    assert raw_y == p_cm_to_mm[1]
-
-    # Now change the value of a X being in millimeters
-    p_cm_to_mm.x = 20  # Basically 1/5 of original x
-    assert not raw_x == p_cm_to_mm[0]
-    assert raw_x == p_cm_to_mm[0] * 5
-
-    # Now change the value of a Y being in millimeters
-    p_cm_to_mm.y = 10  # Basically 1/20 of original y
-    assert not raw_y == p_cm_to_mm[1]
-    assert raw_y == p_cm_to_mm[1] * 20
 
 
 def test_matrix():
@@ -740,10 +661,10 @@ def test_quantity_vector_2d():
 def test_frame():
     """``Frame`` construction and equivalency."""
 
-    origin = Point3D([42, 99, 13])
+    origin = Point([42, 99, 13])
     f_1 = Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
     f_1_duplicate = Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
-    f_2 = Frame(Point3D([5, 8, 9]), UnitVector3D([1, 1, 1]), UnitVector3D([0, -1, 1]))
+    f_2 = Frame(Point([5, 8, 9]), UnitVector3D([1, 1, 1]), UnitVector3D([0, -1, 1]))
     f_with_array_definitions = Frame([5, 8, 9], [1, 1, 1], [0, -1, 1])
     f_defaults = Frame()
 
@@ -775,10 +696,10 @@ def test_frame():
 def test_plane():
     """``Plane`` construction and equivalency."""
 
-    origin = Point3D([42, 99, 13])
+    origin = Point([42, 99, 13])
     p_1 = Plane(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
     p_1_duplicate = Plane(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
-    p_2 = Plane(Point3D([5, 8, 9]), UnitVector3D([1, 1, 1]), UnitVector3D([0, -1, 1]))
+    p_2 = Plane(Point([5, 8, 9]), UnitVector3D([1, 1, 1]), UnitVector3D([0, -1, 1]))
     p_with_array_definitions = Plane([5, 8, 9], [1, 1, 1], [0, -1, 1])
     p_defaults = Plane()
 

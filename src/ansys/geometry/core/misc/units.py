@@ -4,7 +4,7 @@ from typing import Optional, Union
 
 from pint import Quantity, Unit, UnitRegistry
 
-from ansys.geometry.core.misc.checks import check_is_pint_unit, check_pint_unit_compatibility
+from ansys.geometry.core.misc.checks import check_pint_unit_compatibility, check_type
 from ansys.geometry.core.typing import Real
 
 UNITS = UnitRegistry()
@@ -31,9 +31,9 @@ class PhysicalQuantity:
 
     def __init__(self, unit: Unit, expected_dimensions: Optional[Union[Unit, None]] = None):
         """Constructor for ``PhysicalQuantity``."""
-        check_is_pint_unit(unit, "unit")
+        check_type(unit, Unit)
         if expected_dimensions:
-            check_is_pint_unit(expected_dimensions, "expected_dimensions")
+            check_type(expected_dimensions, Unit)
             check_pint_unit_compatibility(unit, expected_dimensions)
 
         self._unit = unit
@@ -47,7 +47,7 @@ class PhysicalQuantity:
     @unit.setter
     def unit(self, unit: Unit) -> None:
         """Sets the unit of the object."""
-        check_is_pint_unit(unit, "unit")
+        check_type(unit, Unit)
         check_pint_unit_compatibility(unit, self._base_unit)
         self._unit = unit
 
@@ -56,17 +56,35 @@ class PhysicalQuantity:
         """Returns the base unit of the object."""
         return self._base_unit
 
-    def __get_quantity(self, input: Real) -> Quantity:
+    def _get_quantity(self, input: Real) -> Quantity:
         """Returns input value as a ~:class:`pint.Quantity`.
 
         Parameters
         ----------
         input : Real
-            The number to be expressed as a quantity
+            The number to be expressed as a quantity.
 
         Returns
         -------
         ~pint.Quantity
             The physical quantity the number represents.
         """
-        return (input * self.base_unit).ito(self.unit)
+        return (input * self.base_unit).to(self.unit)
+
+    def _base_units_magnitude(self, input: Quantity) -> Real:
+        """Returns input's :class:`pint.Quantity` magnitude
+        in base units.
+
+        Parameters
+        ----------
+        input : ~pint.Quantity
+            The :class:`pint.Quantity` to be processed.
+
+        Returns
+        -------
+        Real
+            The input's magnitude in base units.
+        """
+        check_type(input, Quantity)
+        check_pint_unit_compatibility(input.units, self._base_unit)
+        return input.m_as(self._base_unit)

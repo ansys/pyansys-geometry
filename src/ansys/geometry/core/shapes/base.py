@@ -3,7 +3,7 @@
 from typing import List, Optional
 
 from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
-from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.point import Point
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.checks import (
     check_ndarray_is_all_inf,
@@ -18,8 +18,8 @@ class BaseShape:
 
     Parameters
     ----------
-    origin : Point3D
-        A :class:`Point3D` representing the origin of the shape.
+    origin : Point
+        A :class:`Point` representing the origin of the shape.
     dir_1 : Optional[UnitVector3D]
         A :class:`UnitVector3D` representing the first fundamental direction
         of the reference plane where the shape is contained.
@@ -35,14 +35,14 @@ class BaseShape:
 
     def __init__(
         self,
-        origin: Point3D,
+        origin: Point,
         dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
         dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
         is_closed: Optional[bool] = False,
     ):
         """Initializes the base shape."""
 
-        check_type(origin, Point3D)
+        check_type(origin, Point)
         check_ndarray_is_all_inf(origin, "origin")
         check_type(dir_1, UnitVector3D)
         check_ndarray_is_non_zero(dir_1, "dir_1")
@@ -85,11 +85,11 @@ class BaseShape:
         return self._k
 
     @property
-    def origin(self) -> Point3D:
+    def origin(self) -> Point:
         """The origin of the reference frame."""
         return self._origin
 
-    def points(self, num_points: Optional[int] = 100) -> List[Point3D]:
+    def points(self, num_points: Optional[int] = 100) -> List[Point]:
         """Returns a list containing all the points belonging to the shape.
 
         Parameters
@@ -99,7 +99,7 @@ class BaseShape:
 
         Returns
         -------
-        List[Point3D]
+        List[Point]
             A list of points representing the shape.
         """
         return self.frame.from_local_to_global @ self.local_points

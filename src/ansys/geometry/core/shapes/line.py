@@ -5,11 +5,10 @@ import numpy as np
 from pint import Unit
 
 from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
-from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.point import Point
 from ansys.geometry.core.math.vector import QuantityVector3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNIT_LENGTH, UNITS
 from ansys.geometry.core.misc.checks import (
-    check_is_pint_unit,
     check_ndarray_is_all_inf,
     check_ndarray_is_non_zero,
     check_pint_unit_compatibility,
@@ -24,7 +23,7 @@ class Line(BaseShape):
 
     Parameters
     ----------
-    origin: Point3D
+    origin: Point
         Origin of the line.
     direction: Union[Vector3D, UnitVector3D]
         Direction of the line.
@@ -48,7 +47,7 @@ class Line(BaseShape):
 
     def __init__(
         self,
-        origin: Point3D,
+        origin: Point,
         direction: Union[Vector3D, UnitVector3D],
         dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
         dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
@@ -104,7 +103,7 @@ class Line(BaseShape):
         (lambdas, _) = np.linalg.eig(mat.T)
         return True if any(np.isclose(lambdas, 0.0)) else False
 
-    def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
+    def local_points(self, num_points: Optional[int] = 100) -> List[Point]:
         """
         Returns a list containing all the points belonging to the shape.
 
@@ -115,12 +114,12 @@ class Line(BaseShape):
 
         Returns
         -------
-        List[Point3D]
+        List[Point]
             A list of points representing the shape.
         """
         quantified_dir = UNITS.convert(self.direction, self.origin.unit, self.origin.base_unit)
         line_start = self.origin - quantified_dir * int(num_points / 2)
-        return [line_start + delta * quantified_dir for delta in range(0, num_points)]
+        return [Point(line_start + delta * quantified_dir) for delta in range(0, num_points)]
 
 
 class Segment(Line):
@@ -129,9 +128,9 @@ class Segment(Line):
 
     Parameters
     ----------
-    start: Point3D
+    start: Point
         Start of the line segment.
-    end: Point3D
+    end: Point
         End of the line segment.
     dir_1 : Optional[UnitVector3D]
         A :class:`UnitVector3D` representing the first fundamental direction
@@ -145,16 +144,16 @@ class Segment(Line):
 
     def __init__(
         self,
-        start: Point3D,
-        end: Point3D,
+        start: Point,
+        end: Point,
         dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
         dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
     ):
         """Constructor method for ``Segment``."""
-        # Perform sanity checks on Point3D values given
-        check_type(start, Point3D)
+        # Perform sanity checks on Point values given
+        check_type(start, Point)
         check_ndarray_is_all_inf(start, "start")
-        check_type(end, Point3D)
+        check_type(end, Point)
         check_ndarray_is_all_inf(end, "end")
 
         # Assign values to start and end
@@ -174,7 +173,7 @@ class Segment(Line):
     @classmethod
     def from_origin_and_vector(
         cls,
-        origin: Point3D,
+        origin: Point,
         vector: Vector3D,
         vector_units: Optional[Unit] = UNIT_LENGTH,
         dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
@@ -184,7 +183,7 @@ class Segment(Line):
 
         Parameters
         ----------
-        origin : Point3D
+        origin : Point
             Start of the line segment.
         vector : Vector3D
             Vector defining the line segment.
@@ -204,9 +203,9 @@ class Segment(Line):
         Segment
             The ``Segment`` object resulting from the inputs.
         """
-        check_is_pint_unit(vector_units, "vector_units")
+        check_type(vector_units, Unit)
         check_pint_unit_compatibility(vector_units, UNIT_LENGTH)
-        end_vec_as_point = Point3D(vector, vector_units)
+        end_vec_as_point = Point(vector, vector_units)
         end_vec_as_point += origin
 
         return cls(origin, end_vec_as_point, dir_1=dir_1, dir_2=dir_2)
@@ -214,7 +213,7 @@ class Segment(Line):
     @classmethod
     def from_origin_and_quantity_vector(
         cls,
-        origin: Point3D,
+        origin: Point,
         quantity_vector: QuantityVector3D,
         dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
         dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
@@ -223,7 +222,7 @@ class Segment(Line):
 
         Parameters
         ----------
-        origin : Point3D
+        origin : Point
             Start of the line segment.
         quantity_vector : QuantityVector3D
             QuantityVector defining the line segment (with units).
@@ -268,16 +267,16 @@ class Segment(Line):
             self._origin.unit = self._end.unit = UNIT_LENGTH
 
     @property
-    def start(self) -> Point3D:
+    def start(self) -> Point:
         """Returns the start of the ``Segment``."""
         return self.origin
 
     @property
-    def end(self) -> Point3D:
+    def end(self) -> Point:
         """Returns the end of the ``Segment``."""
         return self._end
 
-    def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
+    def local_points(self, num_points: Optional[int] = 100) -> List[Point]:
         """
         Returns a list containing all the points belonging to the shape.
 
@@ -288,8 +287,8 @@ class Segment(Line):
 
         Returns
         -------
-        List[Point3D]
+        List[Point]
             A list of points representing the shape.
         """
         delta_segm = (self.end - self.start) / (num_points - 1)
-        return [self.start + delta * delta_segm for delta in range(0, num_points)]
+        return [Point(self.start + delta * delta_segm) for delta in range(0, num_points)]
