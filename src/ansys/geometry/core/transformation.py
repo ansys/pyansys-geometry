@@ -7,20 +7,27 @@ from ansys.geometry.core.misc.checks import check_ndarray_is_float_int
 from ansys.geometry.core.typing import Real
 
 
-class Rotation:
+class Rotation(np.ndarray):
     def __new__(
         cls, input: object, angle: Union[Real, np.ndarray], axis: Optional[str] = "x"
     ) -> object:
         """Constructor for ``Rotation``."""
         obj = np.asarray(input).view(cls)
         check_ndarray_is_float_int(obj)
-        type = type(obj)
+        ang = np.asarray(angle).view(cls)
+        obj_type = type(input)
         if len(axis) > 3:
-            raise ValueError("The rotation is possible only in three dimensions at a time")
-        if len(axis) != len(angle) + 1:
+            raise ValueError(
+                f"Expected axis specification to be a string of up to 3 characters, got{axis}"
+            )
+        if ang.ndim == 0 and len(axis) != 1:
             raise ValueError("Axis and angle are not matching")
-        obj._angle = angle
+        if ang.ndim == 1 and len(axis) != ang.shape[0]:
+            raise ValueError("Axis and angle are not matching")
+        if ang.ndim >= 2 and len(axis) != ang.shape[1]:
+            raise ValueError("Axis and angle are not matching")
+        obj._angle = ang
         obj._axis = axis
         rotated_obj = spatial_rot.from_euler(obj._axis, obj._angle)
         obj_rot = rotated_obj.apply(obj)
-        return obj_rot.view(type)
+        return obj_rot.view(obj_type)
