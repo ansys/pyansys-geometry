@@ -234,6 +234,36 @@ def test_vector():
         ]
     )
 
+    # Create a vector3D from 2 points
+    point_a = Point([1, 2, 3])
+    point_b = Point([1, 6, 3])
+    vector_from_points = Vector.from_points(point_a, point_b)
+    vector_from_points.x == 0
+    vector_from_points.y == 4
+    vector_from_points.z == 0
+
+    # Create a vector3D from 2 points
+    point_a = Point([1, 2, 3], UNITS.mm)
+    point_b = Point([1, 6, 3], UNITS.cm)
+    vector_from_points = Vector.from_points(point_a, point_b)
+    vector_from_points.x == 9
+    vector_from_points.y == 58
+    vector_from_points.z == 27
+
+    # Create a 2D vector from 2 points
+    point_a = Point([1, 2])
+    point_b = Point([1, 6])
+    vector_from_points = Vector.from_points(point_a, point_b)
+    vector_from_points.x == 0
+    vector_from_points.y == 4
+
+    # Create a vector2D from 2 points
+    point_a = Point([1, 2], UNITS.mm)
+    point_b = Point([1, 6], UNITS.cm)
+    vector_from_points = Vector.from_points(point_a, point_b)
+    vector_from_points.x == 9
+    vector_from_points.y == 58
+
 
 def test_unit_vector():
     """Simple test to create a ``UnitVector``."""
@@ -333,6 +363,54 @@ def test_quantity_vector():
     assert abs(normalized_b.x - vec_b_normalized.x) <= TOLERANCE
     assert abs(normalized_b.y - vec_b_normalized.y) <= TOLERANCE
     assert abs(normalized_b.z - vec_b_normalized.z) <= TOLERANCE
+
+    # Create a QuantityVector3D from 2 points
+    point_a = Point([1, 2, 3], UNITS.cm)
+    point_b = Point([1, 6, 3], UNITS.cm)
+    quantity_vector_from_points = QuantityVector.from_points(point_a, point_b)
+    quantity_vector_from_points.x == 0
+    quantity_vector_from_points.y == 4
+    quantity_vector_from_points.z == 0
+
+    with pytest.raises(
+        TypeError,
+        match="Provided type <class 'numpy.ndarray'> is invalid",
+    ):
+        QuantityVector.from_points(np.array([2, 5, 8]), point_b)
+
+    with pytest.raises(
+        TypeError,
+        match="Provided type <class 'numpy.ndarray'> is invalid",
+    ):
+        QuantityVector.from_points(point_a, np.array([2, 5, 8]))
+
+    # Create a 2D QuantityVector from 2 points with same units
+    point_a = Point([1, 2], UNITS.cm)
+    point_b = Point([1, 6], UNITS.cm)
+    quantity_vector_from_points = QuantityVector.from_points(point_a, point_b)
+    quantity_vector_from_points.x == 0
+    quantity_vector_from_points.y == 4
+    quantity_vector_from_points.unit == UNITS.cm
+
+    # Create a 2D QuantityVector from 2 points with different units
+    point_a = Point([1, 2], UNITS.dm)
+    point_b = Point([1, 6], UNITS.cm)
+    quantity_vector_from_points = QuantityVector.from_points(point_a, point_b)
+    quantity_vector_from_points.x == 9
+    quantity_vector_from_points.y == 14
+    quantity_vector_from_points.unit == UNITS.cm
+
+    with pytest.raises(
+        TypeError,
+        match="Provided type <class 'numpy.ndarray'> is invalid",
+    ):
+        QuantityVector.from_points(np.array([2, 5]), point_b)
+
+    with pytest.raises(
+        TypeError,
+        match="Provided type <class 'numpy.ndarray'> is invalid",
+    ):
+        QuantityVector.from_points(point_a, np.array([2, 5]))
 
 
 def test_vector_errors():

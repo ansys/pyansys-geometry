@@ -5,11 +5,13 @@ from typing import Union
 import numpy as np
 from pint import Quantity, Unit
 
+from ansys.geometry.core.math.point import Point
 from ansys.geometry.core.misc import (
     Accuracy,
     check_is_float_int,
     check_ndarray_is_float_int,
     check_pint_unit_compatibility,
+    check_type,
     check_type_equivalence,
     only_for_3d,
 )
@@ -169,6 +171,30 @@ class Vector(np.ndarray):
         """Overload % operator with cross product."""
         return self.cross(other)
 
+    @classmethod
+    def from_points(
+        cls,
+        point_a: Union[np.ndarray, RealSequence, Point],
+        point_b: Union[np.ndarray, RealSequence, Point],
+    ):
+        """Create a ``Vector3D`` from two distinct ``Point``.
+
+        Parameters
+        ----------
+        point_a : Point3D
+            A :class:`Point3D` representing the first point.
+        point_b : Point3D
+            A :class:`Point3D` representing the second point.
+
+        Returns
+        -------
+        Vector3D
+            A ``Vector3D`` from ``point_a`` to ``point_b``.
+        """
+        check_type(point_a, (Point, np.ndarray, list))
+        check_type(point_b, (Point, np.ndarray, list))
+        return Vector(point_b - point_a)
+
 
 class UnitVector(Vector):
     """A 2-/3-dimensional ``UnitVector`` class.
@@ -311,3 +337,23 @@ class QuantityVector(Vector, PhysicalQuantity):
     def __mod__(self, other: "QuantityVector") -> "QuantityVector":
         """Overload % operator with cross product."""
         return self.cross(other)
+
+    @classmethod
+    def from_points(cls, point_a: Point, point_b: Point):
+        """Create a ``QuantityVector`` from two distinct ``Point``.
+
+        Parameters
+        ----------
+        point_a : Point
+            A :class:`Point` representing the first point.
+        point_b : Point3D
+            A :class:`Point` representing the second point.
+
+        Returns
+        -------
+        QuantityVector
+            A ``QuantityVector`` from ``point_a`` to ``point_b``.
+        """
+        check_type(point_a, Point)
+        check_type(point_b, Point)
+        return QuantityVector(Vector.from_points(point_a, point_b), point_a.base_unit)
