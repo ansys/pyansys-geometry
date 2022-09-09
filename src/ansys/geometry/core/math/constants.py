@@ -1,7 +1,7 @@
 """Mathematical constants for PyGeometry"""
 
+from ansys.geometry.core.math.point import DEFAULT_POINT_VALUES, Point
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.math.point import Point, DEFAULT_POINT_VALUES
 
 DEFAULT_POINT = Point(DEFAULT_POINT_VALUES)
 """Default value for a 3D ``Point``."""
