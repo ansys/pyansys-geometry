@@ -5,14 +5,12 @@ from typing import Optional, Union
 from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y, ZERO_VECTOR3D
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.shapes.base import BaseShape
-
 from ansys.geometry.core.shapes.arc import Arc
+from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.shapes.circle import Circle
 from ansys.geometry.core.shapes.ellipse import Ellipse
 from ansys.geometry.core.shapes.line import Line, Segment
 from ansys.geometry.core.shapes.polygon import Polygon
-
 from ansys.geometry.core.typing import Real
 
 
@@ -201,7 +199,6 @@ class Sketch:
         self.append_shape(line)
         return line
 
-<<<<<<< HEAD
     def draw_polygon(
         self,
         radius: Real,
@@ -236,7 +233,7 @@ class Sketch:
         polygon = Polygon(radius, sides, origin, dir_1=dir_1, dir_2=dir_2)
         self.append_shape(polygon)
         return polygon
-=======
+
     def draw_arc(
         self,
         center: Point3D,
@@ -261,7 +258,6 @@ class Sketch:
             An object representing the arc added to the sketch.
 
         """
-        arc = ArcShape(center, start_point, end_point)
+        arc = Arc(center, start_point, end_point)
         self.append_shape(arc)
         return arc
->>>>>>> 1f49d86 (Add arc shape.)
