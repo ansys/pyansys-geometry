@@ -14,6 +14,7 @@ from ansys.geometry.core.misc import (
     check_pint_unit_compatibility,
     check_type_equivalence,
 )
+from ansys.geometry.core.misc.checks import check_type
 from ansys.geometry.core.typing import Real, RealSequence
 
 
@@ -114,7 +115,11 @@ class Vector3D(np.ndarray):
         return self.cross(other).view(self.__class__)
 
     @classmethod
-    def from_points(cls, point_a: Point3D, point_b: Point3D):
+    def from_points(
+        cls,
+        point_a: Union[np.ndarray, RealSequence, Point3D],
+        point_b: Union[np.ndarray, RealSequence, Point3D],
+    ):
         """Create a ``Vector3D`` from two distinct ``Point3D``.
 
         Parameters
@@ -215,7 +220,11 @@ class Vector2D(np.ndarray):
             return self.dot(other)
 
     @classmethod
-    def from_points(cls, point_a: Point2D, point_b: Point2D):
+    def from_points(
+        cls,
+        point_a: Union[np.ndarray, RealSequence, Point2D],
+        point_b: Union[np.ndarray, RealSequence, Point2D],
+    ):
         """Create a ``Vector2D`` from two distinct ``Point2D``.
 
         Parameters
@@ -420,13 +429,17 @@ class QuantityVector3D(Vector3D):
         QuantityVector3D
             A ``QuantityVector3D`` from ``point_a`` to ``point_b``.
         """
+
+        check_type(point_a, Point3D)
+        check_type(point_b, Point3D)
+
         if point_a == point_b:
             raise ValueError("The two points cannot have the exact same coordinates.")
 
         x = point_b[0] - point_a[0]
         y = point_b[1] - point_a[1]
         z = point_b[2] - point_a[2]
-        return QuantityVector3D([x, y, z], point_a.unit)
+        return QuantityVector3D([x, y, z], point_a.base_unit)
 
 
 class QuantityVector2D(Vector2D):
@@ -529,7 +542,13 @@ class QuantityVector2D(Vector2D):
         QuantityVector2D
             A ``QuantityVector2D`` from ``point_a`` to ``point_b``.
         """
+
+        check_type(point_a, Point2D)
+        check_type(point_b, Point2D)
+
         if point_a == point_b:
             raise ValueError("The two points cannot have the exact same coordinates.")
 
-        return QuantityVector2D([point_b[0] - point_a[0], point_b[1] - point_a[1]], point_a.unit)
+        return QuantityVector2D(
+            [point_b[0] - point_a[0], point_b[1] - point_a[1]], point_a.base_unit
+        )
