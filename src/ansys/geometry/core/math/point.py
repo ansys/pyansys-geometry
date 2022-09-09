@@ -201,6 +201,11 @@ class Point2D(np.ndarray):
         """Returns the unit of the object."""
         return self._unit
 
+    @property
+    def base_unit(self) -> Unit:
+        """Returns the base unit of the object."""
+        return self._base_unit
+
     @unit.setter
     def unit(self, unit: Unit) -> None:
         """Sets the unit of the object."""
