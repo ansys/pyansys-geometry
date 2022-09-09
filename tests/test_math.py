@@ -227,6 +227,22 @@ def test_vector3d():
         ]
     )
 
+    # Create a vector3D from 2 points
+    point_a = Point3D([1, 2, 3])
+    point_b = Point3D([1, 6, 3])
+    vector_from_points = Vector3D.from_points(point_a, point_b)
+    vector_from_points.x == 0
+    vector_from_points.y == 4
+    vector_from_points.z == 0
+
+    # Create a vector3D from 2 points
+    point_a = Point3D([1, 2, 3], UNITS.mm)
+    point_b = Point3D([1, 6, 3], UNITS.cm)
+    vector_from_points = Vector3D.from_points(point_a, point_b)
+    vector_from_points.x == 9
+    vector_from_points.y == 58
+    vector_from_points.z == 27
+
 
 def test_vector2d():
     """Simple test to create a ``Vector2D``."""
@@ -272,6 +288,20 @@ def test_vector2d():
             for v1_comp, v1_x_3_comp in zip(v_1, v1_x_3)
         ]
     )
+
+    # Create a vector2D from 2 points
+    point_a = Point2D([1, 2])
+    point_b = Point2D([1, 6])
+    vector_from_points = Vector2D.from_points(point_a, point_b)
+    vector_from_points.x == 0
+    vector_from_points.y == 4
+
+    # Create a vector2D from 2 points
+    point_a = Point2D([1, 2], UNITS.mm)
+    point_b = Point2D([1, 6], UNITS.cm)
+    vector_from_points = Vector2D.from_points(point_a, point_b)
+    vector_from_points.x == 9
+    vector_from_points.y == 58
 
 
 def test_unit_vector_3d():
@@ -357,6 +387,13 @@ def test_vector3d_errors():
         v2 = ZERO_VECTOR3D
         v2.normalize()
 
+    # Try to create a vector from two identical points.
+    with pytest.raises(
+        ValueError,
+        match="The two points cannot have the exact same coordinates.",
+    ):
+        Vector3D.from_points(Point3D([10, 20, 30]), Point3D([10, 20, 30]))
+
 
 def test_vector2d_errors():
     """Testing multiple ``Vector2D`` errors."""
@@ -388,6 +425,13 @@ def test_vector2d_errors():
     with pytest.raises(ValueError, match="The norm of the Vector2D is not valid."):
         v2 = Vector2D([0, 0])
         v2.normalize()
+
+    # Try to create a vector from two identical points.
+    with pytest.raises(
+        ValueError,
+        match="The two points cannot have the exact same coordinates.",
+    ):
+        Vector2D.from_points(Point2D([10, 20]), Point2D([10, 20]))
 
 
 def test_point3D_units():
@@ -677,6 +721,26 @@ def test_quantity_vector_3d():
     assert abs(normalized_b.y - vec_b_normalized.y) <= TOLERANCE
     assert abs(normalized_b.z - vec_b_normalized.z) <= TOLERANCE
 
+    # Create a QuantityVector3D from 2 points
+    point_a = Point3D([1, 2, 3], UNITS.cm)
+    point_b = Point3D([1, 6, 3], UNITS.cm)
+    quantity_vector_from_points = QuantityVector3D.from_points(point_a, point_b)
+    quantity_vector_from_points.x == 0
+    quantity_vector_from_points.y == 4
+    quantity_vector_from_points.z == 0
+
+    with pytest.raises(
+        TypeError,
+        match="Provided type <class 'numpy.ndarray'> is invalid",
+    ):
+        QuantityVector3D.from_points(np.array([2, 5, 8]), point_b)
+
+    with pytest.raises(
+        TypeError,
+        match="Provided type <class 'numpy.ndarray'> is invalid",
+    ):
+        QuantityVector3D.from_points(point_a, np.array([2, 5, 8]))
+
 
 def test_quantity_vector_2d():
     """Simple tests to create ``QuantityVector2D``."""
@@ -735,6 +799,34 @@ def test_quantity_vector_2d():
     vec_b_normalized = Vector2D([70, 10]).normalize()
     assert abs(normalized_b.x - vec_b_normalized.x) <= TOLERANCE
     assert abs(normalized_b.y - vec_b_normalized.y) <= TOLERANCE
+
+    # Create a QuantityVector2D from 2 points with same units
+    point_a = Point2D([1, 2], UNITS.cm)
+    point_b = Point2D([1, 6], UNITS.cm)
+    quantity_vector_from_points = QuantityVector2D.from_points(point_a, point_b)
+    quantity_vector_from_points.x == 0
+    quantity_vector_from_points.y == 4
+    quantity_vector_from_points.unit == UNITS.cm
+
+    # Create a QuantityVector2D from 2 points with different units
+    point_a = Point2D([1, 2], UNITS.dm)
+    point_b = Point2D([1, 6], UNITS.cm)
+    quantity_vector_from_points = QuantityVector2D.from_points(point_a, point_b)
+    quantity_vector_from_points.x == 9
+    quantity_vector_from_points.y == 14
+    quantity_vector_from_points.unit == UNITS.cm
+
+    with pytest.raises(
+        TypeError,
+        match="Provided type <class 'numpy.ndarray'> is invalid",
+    ):
+        QuantityVector2D.from_points(np.array([2, 5]), point_b)
+
+    with pytest.raises(
+        TypeError,
+        match="Provided type <class 'numpy.ndarray'> is invalid",
+    ):
+        QuantityVector2D.from_points(point_a, np.array([2, 5]))
 
 
 def test_frame():

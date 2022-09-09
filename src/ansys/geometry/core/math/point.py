@@ -208,6 +208,11 @@ class Point2D(np.ndarray):
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit
 
+    @property
+    def base_unit(self) -> Unit:
+        """Returns the base unit of the object."""
+        return self._base_unit
+
     def __eq__(self, other: "Point2D") -> bool:
         """Equals operator for ``Point2D``."""
         check_type_equivalence(other, self)
