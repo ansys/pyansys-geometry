@@ -48,7 +48,7 @@ class Point(np.ndarray, PhysicalQuantity):
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
         # Call the PhysicalQuantity ctor
-        super(PhysicalQuantity, self).__init__(unit, expected_dimensions=UNIT_LENGTH)
+        super().__init__(unit, expected_dimensions=UNIT_LENGTH)
 
         # Check the inputs
         check_ndarray_is_float_int(input, "input") if isinstance(
