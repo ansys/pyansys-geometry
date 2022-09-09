@@ -4,6 +4,7 @@ import numpy as np
 from scipy.spatial.transform import Rotation as spatial_rot
 
 from ansys.geometry.core.math import Vector3D
+from ansys.geometry.core.math.vector import Vector2D
 from ansys.geometry.core.misc.checks import check_ndarray_is_float_int
 from ansys.geometry.core.typing import Real
 
@@ -35,7 +36,7 @@ class Rotation(np.ndarray):
 
 
 class Translation(np.ndarray):
-    def __new__(cls, input: object, v: Vector3D):
+    def __new__(cls, input: object, v: Union[Vector2D, Vector3D]):
         obj = np.asarray(input).view(cls)
         translate = np.array(
             [
@@ -46,3 +47,17 @@ class Translation(np.ndarray):
             ]
         )
         return np.multiply(translate, obj)
+
+
+class Scale(np.ndarray):
+    def __new__(cls, input: object, v: Vector3D):
+        obj = np.asarray(input).view(cls)
+        scalar_matrix = np.array(
+            [
+                [v.x, 0, 0, 0],
+                [0, v.y, 0, 0],
+                [0, 0, v.z, 0],
+                [0, 0, 0, 1],
+            ]
+        )
+        return np.matmul(scalar_matrix, input)
