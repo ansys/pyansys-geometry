@@ -128,8 +128,8 @@ If you're on Windows with Python 3.9, unzip to a wheelhouse directory and instal
 
 Consider installing using a `virtual environment <https://docs.python.org/3/library/venv.html>`_.
 
-How to testing
---------------
+Testing
+-------
 
 This project takes advantage of `tox`_. This tool allows to automate common
 development tasks (similar to Makefile) but it is oriented towards Python

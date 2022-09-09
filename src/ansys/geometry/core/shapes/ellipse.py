@@ -57,17 +57,6 @@ class Ellipse(BaseShape):
         return self._semi_major_axis
 
     @property
-    def a(self) -> Real:
-        """Return the semi-major axis of the ellipse.
-
-        Returns
-        -------
-        Real
-            Semi-major axis of the ellipse.
-        """
-        return self.semi_major_axis
-
-    @property
     def semi_minor_axis(self) -> Real:
         """Return the semi-minor axis of the ellipse.
 
@@ -79,17 +68,6 @@ class Ellipse(BaseShape):
         return self._semi_minor_axis
 
     @property
-    def b(self) -> Real:
-        """Return the semi-minor axis of the ellipse.
-
-        Returns
-        -------
-        Real
-            Semi-minor axis of the ellipse.
-        """
-        return self.semi_minor_axis
-
-    @property
     def eccentricity(self) -> Real:
         """Return the eccentricity of the ellipse.
 
@@ -98,23 +76,12 @@ class Ellipse(BaseShape):
         Real
             Eccentricity of the ellipse.
         """
-        ecc = (self.a**2 - self.b**2) ** 0.5 / self.a
+        ecc = (self.semi_major_axis**2 - self.semi_minor_axis**2) ** 0.5 / self.semi_major_axis
         if ecc == 1:
             raise ValueError("The curve defined is a parabola not an ellipse.")
         elif ecc > 1:
             raise ValueError("The curve defined is an hyperbola not an ellipse.")
         return ecc
-
-    @property
-    def ecc(self) -> Real:
-        """Return the eccentricity of the ellipse.
-
-        Returns
-        -------
-        Real
-            Eccentricity of the ellipse.
-        """
-        return self.eccentricity
 
     @property
     def linear_eccentricity(self) -> Real:
@@ -129,22 +96,7 @@ class Ellipse(BaseShape):
         -----
         The linear eccentricity is the distance from the center to the focus.
         """
-        return (self.a**2 - self.b**2) ** 0.5
-
-    @property
-    def c(self) -> Real:
-        """Return the linear eccentricity of the ellipse.
-
-        Returns
-        -------
-        Real
-            Linear eccentricity of the ellipse.
-
-        Notes
-        -----
-        The linear eccentricity is the distance from the center to the focus.
-        """
-        return self.linear_eccentricity
+        return (self.semi_major_axis**2 - self.semi_minor_axis**2) ** 0.5
 
     @property
     def semi_latus_rectum(self) -> Real:
@@ -155,18 +107,7 @@ class Ellipse(BaseShape):
         Real
             Semi-latus rectum of the ellipse.
         """
-        return self.b**2 / self.a
-
-    @property
-    def l(self) -> Real:
-        """Return the semi-latus rectum of the ellipse.
-
-        Returns
-        -------
-        Real
-            Semi-latus rectum of the ellipse.
-        """
-        return self.semi_latus_rectum
+        return self.semi_minor_axis**2 / self.semi_major_axis
 
     @property
     def perimeter(self) -> Real:
@@ -181,8 +122,8 @@ class Ellipse(BaseShape):
         def integrand(theta, ecc):
             return np.sqrt(1 - (ecc * np.sin(theta)) ** 2)
 
-        I, _ = quad(integrand, 0, np.pi / 2, args=(self.ecc,))
-        return 4 * self.a * I
+        I, _ = quad(integrand, 0, np.pi / 2, args=(self.eccentricity,))
+        return 4 * self.semi_major_axis * I
 
     @property
     def area(self) -> Real:
@@ -193,7 +134,7 @@ class Ellipse(BaseShape):
         Real
             The area of the ellipse.
         """
-        return np.pi * self.a * self.b
+        return np.pi * self.semi_major_axis * self.semi_minor_axis
 
     def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
         """Returns a list containing all the points belonging to the shape.
@@ -209,10 +150,10 @@ class Ellipse(BaseShape):
             A list of points representing the shape.
         """
         theta = np.linspace(0, 2 * np.pi, num_points)
-        x_local = self.a * np.cos(theta)
-        y_local = self.b * np.sin(theta)
-        z_local = np.zeros(num_points)
-        return [x_local, y_local, z_local]
+        return [
+            Point3D([self.semi_major_axis * np.cos(ang), self.semi_minor_axis * np.sin(ang), 0.0])
+            for ang in theta
+        ]
 
     @classmethod
     def from_axes(

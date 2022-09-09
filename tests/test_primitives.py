@@ -20,12 +20,10 @@ def test_cylinder():
         Point3D([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 76
     )
     c_with_array_definitions = Cylinder([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 76)
-    c_with_array_definitions = Cylinder([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 76)
 
     # Check that the equals operator works
     assert c_1 == c_1_duplicate
     assert c_1 != c_2
-    assert c_2 == c_with_array_definitions
     assert c_2 == c_with_array_definitions
 
     # Check cylinder definition
