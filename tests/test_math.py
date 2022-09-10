@@ -29,7 +29,7 @@ def test_point():
     # Test the default Point
     p_default = Point()
     assert len(p_default) == 3
-    assert all(x == np.Inf for x in p_default)
+    assert np.isnan(p_default).all()
     assert p_default.is_3d
     assert not p_default.is_2d
     p_default.unit = UNITS.cm

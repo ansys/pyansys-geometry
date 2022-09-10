@@ -86,11 +86,11 @@ def check_ndarray_is_not_none(
         )
 
 
-def check_ndarray_is_all_inf(
+def check_ndarray_is_all_nan(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
     """
-    Checks if the :class:`numpy.ndarray` is all Inf-valued.
+    Checks if the :class:`numpy.ndarray` is all nan-valued.
 
     Parameters
     ----------
@@ -102,13 +102,13 @@ def check_ndarray_is_all_inf(
     Raises
     ------
     ValueError
-        In case the :class:`numpy.ndarray` is all Inf-valued.
+        In case the :class:`numpy.ndarray` is all nan-valued.
     """
-    if np.isinf(param).all():
+    if np.isnan(param).all():
         raise ValueError(
-            f"The numpy.ndarray provided should not be an Inf numpy.ndarray."
+            f"The numpy.ndarray provided should not be a nan numpy.ndarray."
             if param_name is None
-            else f"The numpy.ndarray '{param_name}' should not be an Inf numpy.ndarray."
+            else f"The numpy.ndarray '{param_name}' should not be a nan numpy.ndarray."
         )
 
 

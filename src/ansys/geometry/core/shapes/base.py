@@ -6,7 +6,7 @@ from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
 from ansys.geometry.core.math.point import Point
 from ansys.geometry.core.math.vector import UnitVector
 from ansys.geometry.core.misc.checks import (
-    check_ndarray_is_all_inf,
+    check_ndarray_is_all_nan,
     check_ndarray_is_non_zero,
     check_type,
 )
@@ -43,7 +43,7 @@ class BaseShape:
         """Initializes the base shape."""
 
         check_type(origin, Point)
-        check_ndarray_is_all_inf(origin, "origin")
+        check_ndarray_is_all_nan(origin, "origin")
         check_type(dir_1, UnitVector)
         check_ndarray_is_non_zero(dir_1, "dir_1")
         check_type(dir_2, UnitVector)

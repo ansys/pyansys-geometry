@@ -9,7 +9,7 @@ from ansys.geometry.core.math.point import Point
 from ansys.geometry.core.math.vector import QuantityVector, UnitVector, Vector
 from ansys.geometry.core.misc import UNIT_LENGTH, UNITS
 from ansys.geometry.core.misc.checks import (
-    check_ndarray_is_all_inf,
+    check_ndarray_is_all_nan,
     check_ndarray_is_non_zero,
     check_pint_unit_compatibility,
     check_type,
@@ -152,9 +152,9 @@ class Segment(Line):
         """Constructor method for ``Segment``."""
         # Perform sanity checks on Point values given
         check_type(start, Point)
-        check_ndarray_is_all_inf(start, "start")
+        check_ndarray_is_all_nan(start, "start")
         check_type(end, Point)
-        check_ndarray_is_all_inf(end, "end")
+        check_ndarray_is_all_nan(end, "end")
 
         # Assign values to start and end
         self._origin = start

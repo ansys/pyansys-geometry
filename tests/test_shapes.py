@@ -225,7 +225,7 @@ def test_errors_line():
     with pytest.raises(TypeError, match="Provided type"):
         Line("a", Vector([1, 0, 0]))
     with pytest.raises(
-        ValueError, match="The numpy.ndarray 'origin' should not be an Inf numpy.ndarray."
+        ValueError, match="The numpy.ndarray 'origin' should not be a nan numpy.ndarray."
     ):
         Line(Point(), Vector([1, 0, 0]))
 
@@ -235,13 +235,13 @@ def test_errors_segment():
     with pytest.raises(TypeError, match="Provided type"):
         Segment("a", "b")
     with pytest.raises(
-        ValueError, match="The numpy.ndarray 'start' should not be an Inf numpy.ndarray."
+        ValueError, match="The numpy.ndarray 'start' should not be a nan numpy.ndarray."
     ):
         Segment(Point(), "b")
     with pytest.raises(TypeError, match="Provided type"):
         Segment(Point([10, 20, 30], unit=UNITS.meter), "b")
     with pytest.raises(
-        ValueError, match="The numpy.ndarray 'end' should not be an Inf numpy.ndarray."
+        ValueError, match="The numpy.ndarray 'end' should not be a nan numpy.ndarray."
     ):
         Segment(Point([10, 20, 30]), Point())
     with pytest.raises(

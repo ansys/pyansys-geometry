@@ -14,7 +14,7 @@ from ansys.geometry.core.misc import (
 from ansys.geometry.core.misc.units import PhysicalQuantity
 from ansys.geometry.core.typing import RealSequence
 
-DEFAULT_POINT_VALUES = [np.Inf, np.Inf, np.Inf]
+DEFAULT_POINT_VALUES = [np.nan, np.nan, np.nan]
 """Default values for a ``Point``."""
 
 
@@ -28,7 +28,7 @@ class Point(np.ndarray, PhysicalQuantity):
     ----------
     input : Union[~numpy.ndarray, RealSequence], optional
         The direction arguments, either as a :class:`numpy.ndarray`, or as a RealSequence.
-        By default, ``[np.Inf, np.Inf, np.Inf]``.
+        By default, ``[np.nan, np.nan, np.nan]``.
     unit : ~pint.Unit, optional
         Units employed to define the Point values, by default ``UNIT_LENGTH``.
     """

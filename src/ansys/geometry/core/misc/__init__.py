@@ -2,7 +2,7 @@
 from ansys.geometry.core.misc.accuracy import Accuracy
 from ansys.geometry.core.misc.checks import (
     check_is_float_int,
-    check_ndarray_is_all_inf,
+    check_ndarray_is_all_nan,
     check_ndarray_is_float_int,
     check_ndarray_is_non_zero,
     check_ndarray_is_not_none,
@@ -16,7 +16,7 @@ from ansys.geometry.core.misc.units import UNIT_ANGLE, UNIT_LENGTH, UNITS, Physi
 __all__ = [
     "Accuracy",
     "check_is_float_int",
-    "check_ndarray_is_all_inf",
+    "check_ndarray_is_all_nan",
     "check_ndarray_is_float_int",
     "check_ndarray_is_not_none",
     "check_ndarray_is_non_zero",
