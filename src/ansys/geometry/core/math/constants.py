@@ -1,4 +1,4 @@
-"""Mathematical constants for PyGeometry"""
+"""Mathematical constants for PyGeometry."""
 
 from ansys.geometry.core.math.point import DEFAULT_POINT_VALUES, Point
 from ansys.geometry.core.math.vector import UnitVector, Vector
