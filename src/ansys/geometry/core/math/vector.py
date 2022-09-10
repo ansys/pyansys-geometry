@@ -25,7 +25,7 @@ class Vector(np.ndarray):
     Parameters
     ----------
     input : Union[~numpy.ndarray, RealSequence]
-        2-/3-dimensional :class:`numpy.ndarray` with shape(X,)
+        2-/3-dimensional :class:`numpy.ndarray` with shape(X,).
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence]):
