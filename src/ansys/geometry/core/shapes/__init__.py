@@ -1,8 +1,9 @@
 """PyGeometry shapes subpackage."""
 
 from ansys.geometry.core.shapes.base import BaseShape
-from ansys.geometry.core.shapes.circle import CircleShape
-from ansys.geometry.core.shapes.ellipse import EllipseShape
-from ansys.geometry.core.shapes.line import LineShape
+from ansys.geometry.core.shapes.circle import Circle
+from ansys.geometry.core.shapes.ellipse import Ellipse
+from ansys.geometry.core.shapes.line import Line, Segment
+from ansys.geometry.core.shapes.polygon import Polygon
 
-__all__ = ["BaseShape", "CircleShape", "EllipseShape", "LineShape"]
+__all__ = ["BaseShape", "Circle", "Ellipse", "Line", "Polygon", "Segment"]

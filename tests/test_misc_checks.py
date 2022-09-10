@@ -1,15 +1,34 @@
 import numpy as np
 import pytest
 
-from ansys.geometry.core import UNITS
-from ansys.geometry.core.math import Point2D, Point3D
+from ansys.geometry.core.math import Point
 from ansys.geometry.core.misc import (
+    UNITS,
     check_is_float_int,
-    check_is_pint_unit,
     check_ndarray_is_float_int,
+    check_ndarray_is_non_zero,
+    check_ndarray_is_not_none,
     check_pint_unit_compatibility,
+    check_type,
     check_type_equivalence,
 )
+
+
+def test_check_type():
+    """
+    Test that the __eq__ check is working properly.
+
+    Both objects must be of the same type to be compared.
+    """
+    a_2d = Point([1, 2])
+
+    check_type(a_2d, Point)
+
+    with pytest.raises(TypeError, match="Provided type"):
+        check_type(a_2d, int)
+
+    with pytest.raises(TypeError, match="Provided type"):
+        check_type(a_2d, (int, float))
 
 
 def test_check_type_equivalence():
@@ -18,15 +37,13 @@ def test_check_type_equivalence():
 
     Both objects must be of the same type to be compared.
     """
-    a_2d = Point2D([1, 2])
-    a_3d = Point3D([1, 2, 0])
-    b_2d = Point2D([3, 4])
+    a_2d = Point([1, 2])
+    b_2d = Point([3, 4])
 
-    # Check that a_2d and a_3d are not the same
+    # Check that a_2d and 3 are not the same
     with pytest.raises(TypeError, match="Provided type"):
-        check_type_equivalence(a_2d, a_3d)
+        check_type_equivalence(3, a_2d)
 
-    # Check that a_2d and a_3d are not the same
     check_type_equivalence(a_2d, b_2d)
 
 
@@ -46,28 +63,6 @@ def test_check_pint_unit_compatibility():
 
     # Check that length_1 and length_2 are not of the same dimensionality
     check_pint_unit_compatibility(length_1, length_2)
-
-
-def test_check_is_pint_unit():
-    """
-    Test that the :class:`pint.Unit` type check is working properly.
-
-    The object provided must be a :class:`pint.Unit`.
-    """
-    pint_unit = UNITS.meter
-    not_a_pint_unit = "myUnit"
-
-    # Check that not_a_pint_unit is not a pint.Unit object
-    with pytest.raises(TypeError, match="The parameter 'unit' should be a pint.Unit object."):
-        check_is_pint_unit(not_a_pint_unit)
-
-    with pytest.raises(
-        TypeError, match="The parameter 'not_a_pint_unit' should be a pint.Unit object."
-    ):
-        check_is_pint_unit(not_a_pint_unit, "not_a_pint_unit")
-
-    # Check that pint_unit is indeed a pint.Unit
-    check_is_pint_unit(pint_unit)
 
 
 def test_check_ndarray_is_float_int():
@@ -130,3 +125,57 @@ def test_check_is_float_int():
     # This raises no error
     check_is_float_int(num_int)
     check_is_float_int(num_float)
+
+
+def test_check_ndarray_is_non_zero():
+    # Create several arrays
+    arr_strs = np.asarray(["a", "b", "c"])
+    arr_num = np.asarray([1, 2, 3])
+    arr_1d = np.asarray([0, 0, 0])
+    arr_2d = np.asarray([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
+
+    with pytest.raises(
+        ValueError, match="The numpy.ndarray provided should not be a numpy.ndarray of zeros."
+    ):
+        check_ndarray_is_non_zero(arr_1d)
+
+    with pytest.raises(
+        ValueError, match="The numpy.ndarray 'arr_1d' should not be a numpy.ndarray of zeros."
+    ):
+        check_ndarray_is_non_zero(arr_1d, "arr_1d")
+
+    with pytest.raises(
+        ValueError, match="The numpy.ndarray provided should not be a numpy.ndarray of zeros."
+    ):
+        check_ndarray_is_non_zero(arr_2d)
+
+    # This raises no error
+    check_ndarray_is_non_zero(arr_num)
+    check_ndarray_is_non_zero(arr_strs)
+
+
+def test_check_ndarray_is_not_none():
+    # Create several arrays
+    arr_strs = np.asarray(["a", "b", "c"])
+    arr_num = np.asarray([1, 2, 3])
+    arr_1d = np.asarray([None, None, None])
+    arr_2d = np.asarray([[None, None, None], [None, None, None], [None, None, None]])
+
+    with pytest.raises(
+        ValueError, match="The numpy.ndarray provided should not be a None numpy.ndarray."
+    ):
+        check_ndarray_is_not_none(arr_1d)
+
+    with pytest.raises(
+        ValueError, match="The numpy.ndarray 'arr_1d' should not be a None numpy.ndarray."
+    ):
+        check_ndarray_is_not_none(arr_1d, "arr_1d")
+
+    with pytest.raises(
+        ValueError, match="The numpy.ndarray provided should not be a None numpy.ndarray."
+    ):
+        check_ndarray_is_not_none(arr_2d)
+
+    # This raises no error
+    check_ndarray_is_not_none(arr_num)
+    check_ndarray_is_not_none(arr_strs)

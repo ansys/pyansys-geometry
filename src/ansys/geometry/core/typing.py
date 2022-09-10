@@ -10,8 +10,8 @@ Real = Union[int, float]
 RealSequence = Union[np.ndarray, Sequence[Real]]
 """Type used to refer to Real types as a Sequence.
 
-Note
-----
+Notes
+-----
 :class:`numpy.ndarrays` are also accepted, since they are
 the overlaying data structure behind most PyGeometry objects.
 """

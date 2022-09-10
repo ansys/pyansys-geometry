@@ -1,488 +1,57 @@
-from io import UnsupportedOperation
-
-from numpy import finfo as np_finfo
 import pytest
 
-from ansys.geometry.core import UNITS
-from ansys.geometry.core.math import (
-    Point2D,
-    Point3D,
-    UnitVector2D,
-    UnitVector3D,
-    Vector2D,
-    Vector3D,
-)
-from ansys.geometry.core.primitives import Cylinder
-
-DOUBLE_EPS = np_finfo(float).eps
-
-
-def test_point3d():
-    """Simple test to create a ``Point3D``."""
-
-    # Test the null Point3D
-    p_null = Point3D()
-    assert len(p_null) == 3
-    assert all(x == None for x in p_null)
-    p_null.unit = UNITS.cm
-    p_null.x = 10
-    p_null.y = 20
-    p_null.z = 30
-    assert p_null.x == 10
-    assert p_null.y == 20
-    assert p_null.z == 30
-    assert p_null[0] == 0.1
-    assert p_null[1] == 0.2
-    assert p_null[2] == 0.3
-
-    # Create two Point3D objects
-    p_1 = Point3D([0, 1, 3])
-    p_1_copy = Point3D([0, 1, 3])
-    p_2 = Point3D([0, 4, 7])
-
-    # Check that the equals operator works
-    assert p_1 == p_1_copy
-    assert p_1 != p_2
-
-    # Check its X, Y, Z components
-    assert p_1.x == 0
-    assert p_1.y == 1
-    assert p_1.z == 3
-
-    # Check that the setter works properly in p_1_copy
-    p_1_copy.x = 3
-    p_1_copy.y = 3
-    p_1_copy.z = 3
-
-    # Check that the equals operator works (p_1 and p_1_copy should no longer be equal)
-    assert p_1 != p_1_copy
-    assert p_1 != p_2
-
-
-def test_point2d():
-    """Simple test to create a ``Point2D``."""
-
-    # Test the null Point2D
-    p_null = Point2D()
-    assert len(p_null) == 2
-    assert all(x == None for x in p_null)
-    p_null.unit = UNITS.cm
-    p_null.x = 10
-    p_null.y = 20
-    assert p_null.x == 10
-    assert p_null.y == 20
-    assert p_null[0] == 0.1
-    assert p_null[1] == 0.2
-
-    # Create two Point2D objects
-    p_1 = Point2D([0, 1])
-    p_1_copy = Point2D([0, 1])
-    p_2 = Point2D([0, 4])
-
-    # Check that the equals operator works
-    assert p_1 == p_1_copy
-    assert p_1 != p_2
-
-    # Check its X, Y, Z components
-    assert p_1.x == 0
-    assert p_1.y == 1
-
-    # Check that the setter works properly in p_1_copy
-    p_1_copy.x = 3
-    p_1_copy.y = 3
-
-    # Check that the equals operator works (p_1 and p_1_copy should no longer be equal)
-    assert p_1 != p_1_copy
-    assert p_1 != p_2
-
-
-def test_point3d_errors():
-    """Testing multiple ``Point3D`` errors."""
-
-    with pytest.raises(ValueError, match="Point3D must have three coordinates."):
-        Point3D([1, 4])
-
-    with pytest.raises(
-        TypeError, match="The numpy.ndarray 'input' should contain float or integer values."
-    ):
-        Point3D(["a", "b", "c"])
-
-    # Create a point
-    point = Point3D([1, 4, 4])
-
-    # Test setter error checks
-    with pytest.raises(TypeError, match="The parameter 'x' should be a float or an integer value."):
-        point.x = "a"
-
-    with pytest.raises(TypeError, match="The parameter 'y' should be a float or an integer value."):
-        point.y = "a"
-
-    with pytest.raises(TypeError, match="The parameter 'z' should be a float or an integer value."):
-        point.z = "a"
-
-    # Build a Point2D and try to compare against it
-    with pytest.raises(TypeError, match=f"Provided type {Point2D} is invalid"):
-        point_2d = Point2D([1, 4])
-        assert point == point_2d
-
-
-def test_point2d_errors():
-    """Testing multiple ``Point2D`` errors."""
-
-    with pytest.raises(ValueError, match="Point2D must have two coordinates."):
-        Point2D([1, 4, 4])
-
-    with pytest.raises(
-        TypeError, match="The numpy.ndarray 'input' should contain float or integer values."
-    ):
-        Point2D(["a", "b"])
-
-    # Create a point
-    point = Point2D([1, 4])
-
-    # Test setter error checks
-    with pytest.raises(TypeError, match="The parameter 'x' should be a float or an integer value."):
-        point.x = "a"
-
-    with pytest.raises(TypeError, match="The parameter 'y' should be a float or an integer value."):
-        point.y = "a"
-
-    # Build a Point3D and try to compare against it
-    with pytest.raises(TypeError, match=f"Provided type {Point3D} is invalid"):
-        point_3d = Point3D([1, 4, 4])
-        assert point == point_3d
-
-
-def test_vector3d():
-    """Simple test to create a ``Vector3D``."""
-
-    # Create two Vector3D objects
-    v1 = Vector3D([0, 1, 3])
-    v1_copy = Vector3D([0, 1, 3])
-    v2 = Vector3D([0, 4, 7])
-
-    # Check that the equals operator works
-    assert v1 == v1_copy
-    assert v1 != v2
-
-    # Check its X, Y, Z components
-    assert v1.x == 0
-    assert v1.y == 1
-    assert v1.z == 3
-
-    # Check that the setter works properly in v1_copy
-    v1_copy.x = 3
-    v1_copy.y = 3
-    v1_copy.z = 3
-
-    # Check that the equals operator works (v1 and v1_copy should no longer be equal)
-    assert v1 != v1_copy
-    assert v1 != v2
-
-    # Check the norm value of vector v1
-    assert abs(round(v1.norm, 3) - 3.162) <= DOUBLE_EPS
-
-    # Check the normalization value of v1
-    v1_n = v1.normalize()
-    assert abs(round(v1_n.x, 3) - 0.0) <= DOUBLE_EPS
-    assert abs(round(v1_n.y, 3) - 0.316) <= DOUBLE_EPS
-    assert abs(round(v1_n.z, 3) - 0.949) <= DOUBLE_EPS
-
-    # Check the cross product value of v1 with v2
-    v_cross = v1.cross(v2)
-    assert v_cross.x == -5
-    assert v_cross.y == 0
-    assert v_cross.z == 0
-
-    # Check that the dot and cross product overload is fine
-    assert abs(round(v1 * v2 - 25)) <= DOUBLE_EPS
-    v_cross_overload = v1 % v2
-    assert v_cross_overload == v_cross
-
-
-def test_vector2d():
-    """Simple test to create a ``Vector2D``."""
-
-    # Create two Vector2D objects
-    v_1 = Vector2D([2, 1])
-    v_1_copy = Vector2D([2, 1])
-    v_2 = Vector2D([0, 4])
-
-    # Check that the equals operator works
-    assert v_1 == v_1_copy
-    assert v_1 != v_2
-
-    # Check its X, Y components
-    assert v_1.x == 2
-    assert v_1.y == 1
-
-    # Check that the setter works properly in v_1_copy
-    v_1_copy.x = 3
-    v_1_copy.y = 3
-
-    # Check that the equals operator works (v_1 and v_1_copy should no longer be equal)
-    assert v_1 != v_1_copy
-    assert v_1 != v_2
-
-    # Check the norm value of vector v1
-    assert abs(round(v_1.norm, 3) - 2.236) <= DOUBLE_EPS
-
-    v1_n = v_1.normalize()
-    assert abs(round(v1_n.x, 3) - 0.894) <= DOUBLE_EPS
-    assert abs(round(v1_n.y, 3) - 0.447) <= DOUBLE_EPS
-
-    # Check that the dot product overload is fine
-    v_3 = Vector2D([2, 8])
-    v_4 = Vector2D([3, 7])
-    assert abs(round(v_3 * v_4 - 62)) <= DOUBLE_EPS
-
-
-def test_unit_vector_3d():
-    """Simple test to create a ``UnitVector3D``."""
-
-    # Create UnitVector3D objects from Vector3D
-    v1 = Vector3D([0, 1, 3])
-    v2 = UnitVector3D(v1)
-    assert abs(round(v2.x, 3) - 0.0) <= DOUBLE_EPS
-    assert abs(round(v2.y, 3) - 0.316) <= DOUBLE_EPS
-    assert abs(round(v2.z, 3) - 0.949) <= DOUBLE_EPS
-
-    # Create UnitVector3D objects from numpy.ndarray
-    v3 = UnitVector3D([1, 2, 3])
-    assert abs(round(v3.x, 3) - 0.267) <= DOUBLE_EPS
-    assert abs(round(v3.y, 3) - 0.535) <= DOUBLE_EPS
-    assert abs(round(v3.z, 3) - 0.802) <= DOUBLE_EPS
-
-    # Check that UnitVector2D is immutable
-    with pytest.raises(UnsupportedOperation, match="UnitVector3D is immutable."):
-        v2.x = 3
-    with pytest.raises(UnsupportedOperation, match="UnitVector3D is immutable."):
-        v2.y = 3
-    with pytest.raises(UnsupportedOperation, match="UnitVector3D is immutable."):
-        v2.z = 3
-
-
-def test_unit_vector_2d():
-    """Simple test to create a ``UnitVector2D``."""
-
-    # Create UnitVector2D objects from Vector2D
-    v1 = Vector2D([2, 1])
-    v2 = UnitVector2D(v1)
-    assert abs(round(v2.x, 3) - 0.894) <= DOUBLE_EPS
-    assert abs(round(v2.y, 3) - 0.447) <= DOUBLE_EPS
-
-    # Create UnitVector2D objects from numpy.ndarray
-    v3 = UnitVector2D([2, 1])
-    assert abs(round(v3.x, 3) - 0.894) <= DOUBLE_EPS
-    assert abs(round(v3.y, 3) - 0.447) <= DOUBLE_EPS
-
-    # Check that UnitVector2D is immutable
-    with pytest.raises(UnsupportedOperation, match="UnitVector2D is immutable."):
-        v2.x = 3
-    with pytest.raises(UnsupportedOperation, match="UnitVector2D is immutable."):
-        v2.y = 3
-
-
-def test_vector3d_errors():
-    """Testing multiple ``Vector3D`` errors."""
-
-    with pytest.raises(ValueError, match="Vector3D must have three coordinates."):
-        Vector3D([1, 2])
-
-    with pytest.raises(
-        TypeError, match="The numpy.ndarray 'input' should contain float or integer values."
-    ):
-        Vector3D(["a", "b", "c"])
-
-    # Create a Vector3D
-    v1 = Vector3D([1, 2, 3])
-
-    # Test setter error checks
-    with pytest.raises(TypeError, match="The parameter 'x' should be a float or an integer value."):
-        v1.x = "x"
-
-    with pytest.raises(TypeError, match="The parameter 'y' should be a float or an integer value."):
-        v1.y = "y"
-
-    with pytest.raises(TypeError, match="The parameter 'z' should be a float or an integer value."):
-        v1.z = "z"
-
-    # Build a Vector2D and try to compare against it
-    with pytest.raises(TypeError, match=f"Provided type {Vector2D} is invalid"):
-        v2 = Vector2D([1, 2])
-        assert v1 == v2
-
-    # Try to normalize a 0-value vector
-    with pytest.raises(ValueError, match="The norm of the Vector3D is not valid."):
-        v2 = Vector3D([0, 0, 0])
-        v2.normalize()
-
-
-def test_vector2d_errors():
-    """Testing multiple ``Vector2D`` errors."""
-
-    with pytest.raises(ValueError, match="Vector2D must have two coordinates."):
-        Vector2D([1])
-
-    with pytest.raises(
-        TypeError, match="The numpy.ndarray 'input' should contain float or integer values."
-    ):
-        Vector2D(["a", "b"])
-
-    # Create a Vector2D
-    v1 = Vector2D([1, 2])
-
-    # Test setter error checks
-    with pytest.raises(TypeError, match="The parameter 'x' should be a float or an integer value."):
-        v1.x = "x"
-
-    with pytest.raises(TypeError, match="The parameter 'y' should be a float or an integer value."):
-        v1.y = "y"
-
-    # Build a Vector3D and try to compare against it
-    with pytest.raises(TypeError, match=f"Provided type {Vector3D} is invalid"):
-        v2 = Vector3D([1, 5, 6])
-        assert v1 == v2
-
-    # Try to normalize a 0-value vector
-    with pytest.raises(ValueError, match="The norm of the Vector2D is not valid."):
-        v2 = Vector2D([0, 0])
-        v2.normalize()
-
-
-def test_point3D_units():
-    """``Point3D`` units testing."""
-
-    # Create a Point3D with some units
-    p_cm_to_mm = Point3D([10, 20, 30], UNITS.cm)
-
-    # Check that the units are correctly in place
-    assert p_cm_to_mm.unit == UNITS.cm
-
-    # Request for X, Y, Z and ensure they are in cm
-    assert p_cm_to_mm.x == 10
-    assert p_cm_to_mm.y == 20
-    assert p_cm_to_mm.z == 30
-
-    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
-    assert p_cm_to_mm[0] == (p_cm_to_mm.x * p_cm_to_mm.unit).to_base_units().magnitude
-    assert p_cm_to_mm[1] == (p_cm_to_mm.y * p_cm_to_mm.unit).to_base_units().magnitude
-    assert p_cm_to_mm[2] == (p_cm_to_mm.z * p_cm_to_mm.unit).to_base_units().magnitude
-
-    # Store the numpy array values
-    (raw_x, raw_y, raw_z) = p_cm_to_mm[0:3]
-
-    # Set unit to mm now... and check if the values changed
-    p_cm_to_mm.unit = UNITS.mm
-    assert p_cm_to_mm.x == 100
-    assert p_cm_to_mm.y == 200
-    assert p_cm_to_mm.z == 300
-
-    # Check that the values are still the same in the array
-    assert raw_x == p_cm_to_mm[0]
-    assert raw_y == p_cm_to_mm[1]
-    assert raw_z == p_cm_to_mm[2]
-
-    # Now change the value of a X being in millimeters
-    p_cm_to_mm.x = 20  # Basically 1/5 of original x
-    assert not raw_x == p_cm_to_mm[0]
-    assert raw_x == p_cm_to_mm[0] * 5
-
-    # Now change the value of a Y being in millimeters
-    p_cm_to_mm.y = 10  # Basically 1/20 of original y
-    assert not raw_y == p_cm_to_mm[1]
-    assert raw_y == p_cm_to_mm[1] * 20
-
-    # Now change the value of a Z being in millimeters
-    p_cm_to_mm.z = 30  # Basically 1/10 of original z
-    assert not raw_z == p_cm_to_mm[2]
-    assert raw_z == p_cm_to_mm[2] * 10
-
-
-def test_point2D_units():
-    """``Point2D`` units testing."""
-
-    # Create a Point2D with some units
-    p_cm_to_mm = Point2D([10, 20], UNITS.cm)
-
-    # Check that the units are correctly in place
-    assert p_cm_to_mm.unit == UNITS.cm
-
-    # Request for X, Y, Z and ensure they are in cm
-    assert p_cm_to_mm.x == 10
-    assert p_cm_to_mm.y == 20
-
-    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
-    assert p_cm_to_mm[0] == (p_cm_to_mm.x * p_cm_to_mm.unit).to_base_units().magnitude
-    assert p_cm_to_mm[1] == (p_cm_to_mm.y * p_cm_to_mm.unit).to_base_units().magnitude
-
-    # Store the numpy array values
-    (raw_x, raw_y) = p_cm_to_mm[0:2]
-
-    # Set unit to mm now... and check if the values changed
-    p_cm_to_mm.unit = UNITS.mm
-    assert p_cm_to_mm.x == 100
-    assert p_cm_to_mm.y == 200
-
-    # Check that the values are still the same in the array
-    assert raw_x == p_cm_to_mm[0]
-    assert raw_y == p_cm_to_mm[1]
-
-    # Now change the value of a X being in millimeters
-    p_cm_to_mm.x = 20  # Basically 1/5 of original x
-    assert not raw_x == p_cm_to_mm[0]
-    assert raw_x == p_cm_to_mm[0] * 5
-
-    # Now change the value of a Y being in millimeters
-    p_cm_to_mm.y = 10  # Basically 1/20 of original y
-    assert not raw_y == p_cm_to_mm[1]
-    assert raw_y == p_cm_to_mm[1] * 20
+from ansys.geometry.core.math import Point, UnitVector
+from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.primitives import Cone, Cylinder, Sphere, Torus
 
 
 def test_cylinder():
     """``Cylinder`` construction and equivalency."""
 
     # Create two Cylinder objects
-    origin = Point3D([42, 99, 13])
-    c_1 = Cylinder(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, 200)
+    origin = Point([42, 99, 13])
+    radius = 100
+    height = 200
+    c_1 = Cylinder(origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), radius, height)
     c_1_duplicate = Cylinder(
-        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, 200
+        origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), radius, height
     )
-    c_2 = Cylinder(
-        Point3D([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 76
-    )
+    c_2 = Cylinder(Point([5, 8, 9]), UnitVector([55, 16, 73]), UnitVector([23, 67, 45]), 88, 76)
+    c_with_array_definitions = Cylinder([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 76)
 
     # Check that the equals operator works
     assert c_1 == c_1_duplicate
     assert c_1 != c_2
+    assert c_2 == c_with_array_definitions
 
     # Check cylinder definition
     assert c_1.origin.x == origin.x
     assert c_1.origin.y == origin.y
     assert c_1.origin.z == origin.z
-    assert c_1.radius == 100
-    assert c_1.height == 200
+    assert c_1.radius == radius
+    assert c_1.height == height
 
-    c_1.radius = 1000
-    c_1.height = 2000
+    c_1.origin = new_origin = Point([42, 88, 99])
+    c_1.radius = new_radius = 1000
+    c_1.height = new_height = 2000
 
-    assert c_1.origin.x == origin.x
-    assert c_1.origin.y == origin.y
-    assert c_1.origin.z == origin.z
-    assert c_1.radius == 1000
-    assert c_1.height == 2000
+    assert c_1.origin.x == new_origin.x
+    assert c_1.origin.y == new_origin.y
+    assert c_1.origin.z == new_origin.z
+    assert c_1.radius == new_radius
+    assert c_1.height == new_height
 
     with pytest.raises(
         TypeError,
         match="The parameter 'radius' should be a float or an integer value.",
     ):
-        Cylinder(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), "A", 200)
+        Cylinder(origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), "A", 200)
 
     with pytest.raises(
         TypeError,
         match="The parameter 'height' should be a float or an integer value.",
     ):
-        Cylinder(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, "A")
+        Cylinder(origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), 100, "A")
 
     with pytest.raises(
         TypeError,
@@ -496,50 +65,438 @@ def test_cylinder():
     ):
         c_1.height = "A"
 
-    with pytest.raises(TypeError, match=f"direction_x is invalid, type {UnitVector3D} expected."):
-        Cylinder(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
+    with pytest.raises(
+        TypeError,
+        match="origin is invalid, type",
+    ):
+        c_1.origin = "A"
 
-    with pytest.raises(TypeError, match=f"direction_y is invalid, type {UnitVector3D} expected."):
-        Cylinder(origin, UnitVector3D([12, 31, 99]), "A", 100, 200)
+    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
+        Cylinder(origin, "A", UnitVector([25, 39, 82]), 100, 200)
+
+    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
+        Cylinder(origin, UnitVector([12, 31, 99]), "A", 100, 200)
 
 
 def test_cylinder_units():
     """``Cylinder`` units validation."""
 
-    origin = Point3D([42, 99, 13])
-
+    origin = Point([42, 99, 13])
+    radius = 100
+    height = 200
+    unit = UNITS.mm
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
-        match="The pint.Unit provided as input should be a \[length\] quantity.",
+        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
     ):
         Cylinder(
-            origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, 200, UNITS.celsius
+            origin,
+            UnitVector([12, 31, 99]),
+            UnitVector([25, 39, 82]),
+            radius,
+            height,
+            UNITS.celsius,
         )
 
-    c_1 = Cylinder(
-        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, 200, UNITS.mm
-    )
+    c_1 = Cylinder(origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), radius, height, unit)
 
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
-        match="The pint.Unit provided as input should be a \[length\] quantity.",
+        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
     ):
         c_1.unit = UNITS.celsius
 
     # Check that the units are correctly in place
-    assert c_1.unit == UNITS.mm
+    assert c_1.unit == unit
 
-    # Request for X, Y, Z and ensure they are in mm
-    assert c_1.radius == 100
-    assert c_1.height == 200
+    # Request for radius/height and ensure they are in mm
+    assert c_1.radius == radius
+    assert c_1.height == height
 
     # Check that the actual values are in base units (i.e. UNIT_LENGTH)
     assert c_1._radius == (c_1.radius * c_1.unit).to_base_units().magnitude
     assert c_1._height == (c_1.height * c_1.unit).to_base_units().magnitude
 
     # Set unit to cm now... and check if the values changed
-    c_1.unit = UNITS.cm
-    assert c_1.radius == 10
-    assert c_1.height == 20
+    c_1.unit = new_unit = UNITS.cm
+    assert c_1.radius == UNITS.convert(radius, unit, new_unit)
+    assert c_1.height == UNITS.convert(height, unit, new_unit)
+
+
+def test_sphere():
+    """``Sphere`` construction and equivalency."""
+
+    # Create two Sphere objects
+    origin = Point([42, 99, 13])
+    radius = 100
+    s_1 = Sphere(origin, 100)
+    s_1_duplicate = Sphere(origin, 100)
+    s_2 = Sphere(Point([5, 8, 9]), 88)
+    s_with_array_definitions = Sphere([5, 8, 9], 88)
+
+    # Check that the equals operator works
+    assert s_1 == s_1_duplicate
+    assert s_1 != s_2
+    assert s_2 == s_with_array_definitions
+
+    # Check sphere definition
+    assert s_1.origin.x == origin.x
+    assert s_1.origin.y == origin.y
+    assert s_1.origin.z == origin.z
+    assert s_1.radius == radius
+
+    s_1.origin = new_origin = Point([42, 88, 99])
+    s_1.radius = new_radius = 1000
+
+    assert s_1.origin.x == new_origin.x
+    assert s_1.origin.y == new_origin.y
+    assert s_1.origin.z == new_origin.z
+    assert s_1.radius == new_radius
+
+    s_2.origin = new_origin
+    s_2.radius = new_radius
+    assert s_1 == s_2
+
+    with pytest.raises(
+        TypeError,
+        match="The parameter 'radius' should be a float or an integer value.",
+    ):
+        Sphere(origin, "A")
+
+    with pytest.raises(
+        TypeError,
+        match="The parameter 'radius' should be a float or an integer value.",
+    ):
+        s_1.radius = "A"
+
+    with pytest.raises(
+        TypeError,
+        match="origin is invalid, type",
+    ):
+        s_1.origin = "A"
+
+
+def test_sphere_units():
+    """``Sphere`` units validation."""
+
+    origin = Point([42, 99, 13])
+    radius = 100
+    unit = UNITS.mm
+    # Verify rejection of invalid base unit type
+    with pytest.raises(
+        TypeError,
+        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
+    ):
+        Sphere(origin, radius, UNITS.celsius)
+
+    s_1 = Sphere(origin, radius, unit)
+
+    # Verify rejection of invalid base unit type
+    with pytest.raises(
+        TypeError,
+        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
+    ):
+        s_1.unit = UNITS.celsius
+
+    # Check that the units are correctly in place
+    assert s_1.unit == unit
+
+    # Request for radius and ensure in mm
+    assert s_1.radius == radius
+
+    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
+    assert s_1._radius == (s_1.radius * s_1.unit).to_base_units().magnitude
+
+    # Set unit to cm now... and check if the values changed
+    s_1.unit = new_unit = UNITS.cm
+    assert s_1.radius == UNITS.convert(radius, unit, new_unit)
+
+
+def test_cone():
+    """``Cone`` construction and equivalency."""
+
+    # Create two Cone objects
+    origin = Point([42, 99, 13])
+    radius = 100
+    half_angle = 0.78539816
+    c_1 = Cone(origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), radius, half_angle)
+    c_1_duplicate = Cone(
+        origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), radius, half_angle
+    )
+    c_2 = Cone(Point([5, 8, 9]), UnitVector([55, 16, 73]), UnitVector([23, 67, 45]), 88, 0.65)
+    c_with_array_definitions = Cone([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 0.65)
+
+    # Check that the equals operator works
+    assert c_1 == c_1_duplicate
+    assert c_1 != c_2
+    assert c_2 == c_with_array_definitions
+
+    # Check cone definition
+    assert c_1.origin.x == origin.x
+    assert c_1.origin.y == origin.y
+    assert c_1.origin.z == origin.z
+    assert c_1.radius == radius
+    assert c_1.half_angle == half_angle
+
+    c_1.origin = new_origin = Point([42, 88, 99])
+    c_1.radius = new_radius = 1000
+    c_1.half_angle = new_half_angle = 0.78539816
+
+    assert c_1.origin.x == new_origin.x
+    assert c_1.origin.y == new_origin.y
+    assert c_1.origin.z == new_origin.z
+    assert c_1.radius == new_radius
+    assert c_1.half_angle == new_half_angle
+
+    with pytest.raises(
+        TypeError,
+        match="The parameter 'radius' should be a float or an integer value.",
+    ):
+        Cone(origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), "A", 200)
+
+    with pytest.raises(
+        TypeError,
+        match="The parameter 'half_angle' should be a float or an integer value.",
+    ):
+        Cone(origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), 100, "A")
+
+    with pytest.raises(
+        TypeError,
+        match="The parameter 'radius' should be a float or an integer value.",
+    ):
+        c_1.radius = "A"
+
+    with pytest.raises(
+        TypeError,
+        match="The parameter 'half_angle' should be a float or an integer value.",
+    ):
+        c_1.half_angle = "A"
+
+    with pytest.raises(
+        TypeError,
+        match="origin is invalid, type",
+    ):
+        c_1.origin = "A"
+
+    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
+        Cone(origin, "A", UnitVector([25, 39, 82]), 100, 200)
+
+    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
+        Cone(origin, UnitVector([12, 31, 99]), "A", 100, 200)
+
+
+def test_cone_units():
+    """``Cone`` units validation."""
+
+    origin = Point([42, 99, 13])
+    radius = 100
+    half_angle = 45
+    unit_radius = UNITS.mm
+    unit_angle = UNITS.degree
+    # Verify rejection of invalid base unit type
+    with pytest.raises(
+        TypeError,
+        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
+    ):
+        Cone(
+            origin,
+            UnitVector([12, 31, 99]),
+            UnitVector([25, 39, 82]),
+            radius,
+            half_angle,
+            UNITS.celsius,
+        )
+
+    with pytest.raises(
+        TypeError,
+        match="The pint.Unit provided as input should be a dimensionless quantity.",
+    ):
+        Cone(
+            origin,
+            UnitVector([12, 31, 99]),
+            UnitVector([25, 39, 82]),
+            radius,
+            half_angle,
+            unit_radius,
+            UNITS.celsius,
+        )
+
+    c_1 = Cone(
+        origin,
+        UnitVector([12, 31, 99]),
+        UnitVector([25, 39, 82]),
+        radius,
+        half_angle,
+        unit_radius,
+        unit_angle,
+    )
+
+    # Verify rejection of invalid base unit type
+    with pytest.raises(
+        TypeError,
+        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
+    ):
+        c_1.length_unit = UNITS.celsius
+
+    with pytest.raises(
+        TypeError,
+        match=r"The pint.Unit provided as input should be a dimensionless quantity.",
+    ):
+        c_1.angle_unit = UNITS.celsius
+
+    # Check that the units are correctly in place
+    assert c_1.length_unit == unit_radius
+    assert c_1.angle_unit == unit_angle
+
+    # Request for radius and half angle are in expected units
+    assert c_1.radius == radius
+    assert c_1.half_angle == half_angle
+
+    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
+    assert c_1._radius == (c_1.radius * c_1.length_unit).to_base_units().magnitude
+    assert c_1._half_angle == (c_1.half_angle * c_1.angle_unit).to_base_units().magnitude
+
+    # Change units to and check if the values changed
+    c_1.length_unit = new_unit_radius = UNITS.cm
+    c_1.angle_unit = new_unit_angle = UNITS.radian
+    assert c_1.radius == UNITS.convert(radius, unit_radius, new_unit_radius)
+    assert c_1.half_angle == UNITS.convert(half_angle, unit_angle, new_unit_angle)
+
+
+def test_torus():
+    """``Torus`` construction and equivalency."""
+
+    # Create two Torus objects
+    origin = Point([42, 99, 13])
+    major_radius = 200
+    minor_radius = 100
+    t_1 = Torus(
+        origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), major_radius, minor_radius
+    )
+    t_1_duplicate = Torus(
+        origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), major_radius, minor_radius
+    )
+    t_2 = Torus(Point([5, 8, 9]), UnitVector([55, 16, 73]), UnitVector([23, 67, 45]), 88, 76)
+    t_with_array_definitions = Torus([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 76)
+
+    # Check that the equals operator works
+    assert t_1 == t_1_duplicate
+    assert t_1 != t_2
+    assert t_2 == t_with_array_definitions
+
+    # Check cylinder definition
+    assert t_1.origin.x == origin.x
+    assert t_1.origin.y == origin.y
+    assert t_1.origin.z == origin.z
+    assert t_1.major_radius == major_radius
+    assert t_1.minor_radius == minor_radius
+
+    t_1.major_radius = new_major_radius = 2000
+    t_1.minor_radius = new_minor_radius = 1000
+
+    assert t_1.origin.x == origin.x
+    assert t_1.origin.y == origin.y
+    assert t_1.origin.z == origin.z
+    assert t_1.major_radius == new_major_radius
+    assert t_1.minor_radius == new_minor_radius
+
+    t_1.origin = new_origin = Point([42, 88, 99])
+    assert t_1.origin.x == new_origin.x
+    assert t_1.origin.y == new_origin.y
+    assert t_1.origin.z == new_origin.z
+    assert t_1.major_radius == new_major_radius
+    assert t_1.minor_radius == new_minor_radius
+
+    with pytest.raises(
+        TypeError,
+        match="The parameter 'major_radius' should be a float or an integer value.",
+    ):
+        Torus(origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), "A", 200)
+
+    with pytest.raises(
+        TypeError,
+        match="The parameter 'minor_radius' should be a float or an integer value.",
+    ):
+        Torus(origin, UnitVector([12, 31, 99]), UnitVector([25, 39, 82]), 100, "A")
+
+    with pytest.raises(
+        TypeError,
+        match="The parameter 'major_radius' should be a float or an integer value.",
+    ):
+        t_1.major_radius = "A"
+
+    with pytest.raises(
+        TypeError,
+        match="The parameter 'minor_radius' should be a float or an integer value.",
+    ):
+        t_1.minor_radius = "A"
+
+    with pytest.raises(
+        TypeError,
+        match="origin is invalid, type",
+    ):
+        t_1.origin = "A"
+
+    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
+        Torus(origin, "A", UnitVector([25, 39, 82]), 100, 200)
+
+    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
+        Torus(origin, UnitVector([12, 31, 99]), "A", 100, 200)
+
+
+def test_torus_units():
+    """``Torus`` units validation."""
+
+    origin = Point([42, 99, 13])
+    major_radius = 200
+    minor_radius = 100
+    unit = UNITS.mm
+
+    # Verify rejection of invalid base unit type
+    with pytest.raises(
+        TypeError,
+        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
+    ):
+        Torus(
+            origin,
+            UnitVector([12, 31, 99]),
+            UnitVector([25, 39, 82]),
+            major_radius,
+            minor_radius,
+            UNITS.celsius,
+        )
+
+    t_1 = Torus(
+        origin,
+        UnitVector([12, 31, 99]),
+        UnitVector([25, 39, 82]),
+        major_radius,
+        minor_radius,
+        unit,
+    )
+
+    # Verify rejection of invalid base unit type
+    with pytest.raises(
+        TypeError,
+        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
+    ):
+        t_1.unit = UNITS.celsius
+
+    # Check that the units are correctly in place
+    assert t_1.unit == unit
+
+    # Request for radius/height and ensure they are in mm
+    assert t_1.major_radius == major_radius
+    assert t_1.minor_radius == minor_radius
+
+    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
+    assert t_1._major_radius == (t_1.major_radius * t_1.unit).to_base_units().magnitude
+    assert t_1._minor_radius == (t_1.minor_radius * t_1.unit).to_base_units().magnitude
+
+    # Set unit to cm now... and check if the values changed
+    t_1.unit = new_unit = UNITS.cm
+    assert t_1.major_radius == UNITS.convert(major_radius, unit, new_unit)
+    assert t_1.minor_radius == UNITS.convert(minor_radius, unit, new_unit)
+    assert t_1.unit == new_unit
