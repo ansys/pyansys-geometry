@@ -23,7 +23,7 @@ class PhysicalQuantity:
     Parameters
     ----------
     unit : ~pint.Unit
-        The units to be considered for our class
+        The units to be considered for our class.
     expected_dimensions : ~pint.Unit
         The units containing the dimensionality of the ``PhysicalQuantity``.
         By default, None.
