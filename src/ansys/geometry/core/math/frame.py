@@ -3,6 +3,7 @@
 from typing import List, Union
 
 import numpy as np
+from ansys.geometry.core.math.constants import UNIT_VECTOR_X, UNIT_VECTOR_Y, ZERO_POINT3D
 
 from ansys.geometry.core.math.point import Point
 from ansys.geometry.core.math.vector import UnitVector, Vector
@@ -26,9 +27,9 @@ class Frame:
 
     def __init__(
         self,
-        origin: Union[np.ndarray, RealSequence, Point] = [0, 0, 0],
-        direction_x: Union[np.ndarray, RealSequence, UnitVector, Vector] = [1, 0, 0],
-        direction_y: Union[np.ndarray, RealSequence, UnitVector, Vector] = [0, 1, 0],
+        origin: Union[np.ndarray, RealSequence, Point] = ZERO_POINT3D,
+        direction_x: Union[np.ndarray, RealSequence, UnitVector, Vector] = UNIT_VECTOR_X,
+        direction_y: Union[np.ndarray, RealSequence, UnitVector, Vector] = UNIT_VECTOR_Y,
     ):
         """Constructor method for ``Frame``."""
 
