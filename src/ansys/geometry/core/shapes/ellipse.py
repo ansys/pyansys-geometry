@@ -1,10 +1,12 @@
 """A module containing a class for modeling ellipses."""
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import numpy as np
+from pint import Quantity
 from scipy.integrate import quad
 
-from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y, Point, UnitVector
+from ansys.geometry.core.math import Plane, Point
+from ansys.geometry.core.misc import Distance, check_type
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.typing import Real
 
@@ -14,56 +16,64 @@ class Ellipse(BaseShape):
 
     Parameters
     ----------
-    a : Real
+    plane : Plane
+        A :class:`Plane` representing the planar surface where the shape is contained.
+    semi_major_axis : Union[Quantity, Distance]
         The semi-major axis of the ellipse.
-    b : Real
+    semi_minor_axis : Union[Quantity, Distance]
         The semi-minor axis of the ellipse.
-    origin : Point
-        A :class:`Point` representing the origin of the shape.
-    dir_1 : Optional[UnitVector]
-        A :class:`UnitVector` representing the first fundamental direction
-        of the reference plane where the shape is contained.
-        By default, ``UNIT_VECTOR_X``.
-    dir_2 : Optional[UnitVector]
-        A :class:`UnitVector` representing the second fundamental direction
-        of the reference plane where the shape is contained.
-        By default, ``UNIT_VECTOR_Y``.
     """
 
     def __init__(
         self,
-        a: Real,
-        b: Real,
-        origin: Point,
-        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
+        plane: Plane,
+        semi_major_axis: Union[Quantity, Distance],
+        semi_minor_axis: Union[Quantity, Distance],
     ):
         """Initializes the ellipse shape."""
-        super().__init__(origin, dir_1=dir_1, dir_2=dir_2, is_closed=True)
-        self._semi_major_axis = a
-        self._semi_minor_axis = b
+        super().__init__(plane, is_closed=True)
+        check_type(semi_major_axis, (Quantity, Distance))
+        check_type(semi_minor_axis, (Quantity, Distance))
+        self._semi_major_axis = (
+            semi_major_axis if isinstance(Distance) else Distance(semi_major_axis)
+        )
+        self._semi_minor_axis = (
+            semi_minor_axis if isinstance(Distance) else Distance(semi_minor_axis)
+        )
+        if self._semi_major_axis.value.m_as(self._semi_major_axis.base_unit) <= 0:
+            raise ValueError("Semi-major axis must be a real positive value.")
+        if self._semi_minor_axis.value.m_as(self._semi_minor_axis.base_unit) <= 0:
+            raise ValueError("Semi-minor axis must be a real positive value.")
+
+        # Align both units if misaligned
+        if self._semi_major_axis.unit != self._semi_minor_axis.unit:
+            self._semi_minor_axis.unit = self._semi_major_axis.unit
+
+        # Ensure that the semi-major axis is equal or larger than the minor one
+        if self._semi_major_axis.value.m < self._semi_minor_axis.value.m:
+            raise ValueError("Semi-major axis cannot be shorter than semi-minor axis.")
 
     @property
-    def semi_major_axis(self) -> Real:
+    def semi_major_axis(self) -> Quantity:
         """Return the semi-major axis of the ellipse.
 
         Returns
         -------
-        Real
+        Quantity
             Semi-major axis of the ellipse.
         """
-        return self._semi_major_axis
+        return self._semi_major_axis.value
 
     @property
-    def semi_minor_axis(self) -> Real:
+    def semi_minor_axis(self) -> Quantity:
         """Return the semi-minor axis of the ellipse.
 
         Returns
         -------
-        Real
+        Quantity
             Semi-minor axis of the ellipse.
         """
-        return self._semi_minor_axis
+        return self._semi_minor_axis.value
 
     @property
     def eccentricity(self) -> Real:
@@ -74,7 +84,9 @@ class Ellipse(BaseShape):
         Real
             Eccentricity of the ellipse.
         """
-        ecc = (self.semi_major_axis**2 - self.semi_minor_axis**2) ** 0.5 / self.semi_major_axis
+        ecc = (
+            self.semi_major_axis.m**2 - self.semi_minor_axis.m**2
+        ) ** 0.5 / self.semi_major_axis.m
         if ecc == 1:
             raise ValueError("The curve defined is a parabola not an ellipse.")
         elif ecc > 1:
@@ -94,26 +106,26 @@ class Ellipse(BaseShape):
         -----
         The linear eccentricity is the distance from the center to the focus.
         """
-        return (self.semi_major_axis**2 - self.semi_minor_axis**2) ** 0.5
+        return (self.semi_major_axis.m**2 - self.semi_minor_axis.m**2) ** 0.5
 
     @property
-    def semi_latus_rectum(self) -> Real:
+    def semi_latus_rectum(self) -> Quantity:
         """Return the semi-latus rectum of the ellipse.
 
         Returns
         -------
-        Real
+        Quantity
             Semi-latus rectum of the ellipse.
         """
         return self.semi_minor_axis**2 / self.semi_major_axis
 
     @property
-    def perimeter(self) -> Real:
+    def perimeter(self) -> Quantity:
         """Return the perimeter of the ellipse.
 
         Returns
         -------
-        Real
+        Quantity
             The perimeter of the ellipse.
         """
 
@@ -129,7 +141,7 @@ class Ellipse(BaseShape):
 
         Returns
         -------
-        Real
+        Quantity
             The area of the ellipse.
         """
         return np.pi * self.semi_major_axis * self.semi_minor_axis
@@ -149,45 +161,35 @@ class Ellipse(BaseShape):
         """
         theta = np.linspace(0, 2 * np.pi, num_points)
         return [
-            Point([self.semi_major_axis * np.cos(ang), self.semi_minor_axis * np.sin(ang), 0.0])
+            Point(
+                [self.semi_major_axis.m * np.cos(ang), self.semi_minor_axis.m * np.sin(ang), 0.0],
+                unit=self.semi_major_axis.units,
+            )
             for ang in theta
         ]
 
     @classmethod
     def from_axes(
         cls,
-        a: Real,
-        b: Real,
-        origin: Optional[Point] = Point([0, 0, 0]),
-        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
+        semi_major_axis: Union[Quantity, Distance],
+        semi_minor_axis: Union[Quantity, Distance],
+        plane: Optional[Plane] = Plane(),
     ):
         """Create an ellipse from its semi-major and semi-minor axes.
 
         Parameters
         ----------
-        a : Real
+        semi_major_axis : Union[Quantity, Distance]
             The semi-major axis of the ellipse.
-        b : Real
+        semi_minor_axis : Union[Quantity, Distance]
             The semi-minor axis of the ellipse.
-        origin : Optional[Point]
-            A :class:`Point` representing the origin of the ellipse.
-            By default, [0, 0, 0].
-        dir_1 : Optional[UnitVector]
-            A :class:`UnitVector` representing the first fundamental direction
-            of the reference plane where the shape is contained.
-            By default, ``UNIT_VECTOR_X``.
-        dir_2 : Optional[UnitVector]
-            A :class:`UnitVector` representing the second fundamental direction
-            of the reference plane where the shape is contained.
-            By default, ``UNIT_VECTOR_Y``.
+        plane : Plane, optional
+            A :class:`Plane` representing the planar surface where the shape is contained.
+            By default, the base XY-Plane.
 
         Returns
         -------
         Ellipse
             An object for modeling elliptical shapes.
         """
-        # Ensure that the semi-major axis is equal or larger than the minor one
-        if a < b:
-            raise ValueError("Semi-major axis cannot be shorter than semi-minor axis.")
-        return cls(a, b, origin, dir_1=dir_1, dir_2=dir_2)
+        return cls(plane, semi_major_axis, semi_minor_axis)
