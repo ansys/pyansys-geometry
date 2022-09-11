@@ -1,8 +1,8 @@
 from io import UnsupportedOperation
 
 import numpy as np
-import pytest
 from pint import Quantity
+import pytest
 
 from ansys.geometry.core.math import (
     UNIT_VECTOR_X,

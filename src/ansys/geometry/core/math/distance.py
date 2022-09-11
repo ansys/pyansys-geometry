@@ -4,9 +4,10 @@ from typing import Optional, Union
 
 from pint import Quantity, Unit
 
-from ansys.geometry.core.misc.units import UNIT_LENGTH, PhysicalQuantity
 from ansys.geometry.core.misc.checks import check_is_float_int
+from ansys.geometry.core.misc.units import UNIT_LENGTH, PhysicalQuantity
 from ansys.geometry.core.typing import Real
+
 
 class Distance(PhysicalQuantity):
     """PhysicalQuantity subclass for holding a distance.
@@ -28,19 +29,19 @@ class Distance(PhysicalQuantity):
         else:
             check_is_float_int(value, "value")
             value = Quantity(value, unit)
-        
+
         # Call the PhysicalQuantity ctor.
         super().__init__(unit, expected_dimensions=UNIT_LENGTH)
-        
+
         # Store the value
         self._value = self._base_units_magnitude(value)
-        
+
     @property
     def value(self) -> Quantity:
         """Get the value of the distance."""
         return self._get_quantity(self._value)
-    
+
     @value.setter
-    def value(self, value : Quantity) -> None:
+    def value(self, value: Quantity) -> None:
         """Set the distance value."""
         self._value = self._base_units_magnitude(value)
