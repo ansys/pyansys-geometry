@@ -3,8 +3,8 @@
 from typing import List, Union
 
 import numpy as np
-from ansys.geometry.core.math.constants import UNIT_VECTOR_X, UNIT_VECTOR_Y, ZERO_POINT3D
 
+from ansys.geometry.core.math.constants import UNIT_VECTOR_X, UNIT_VECTOR_Y, ZERO_POINT3D
 from ansys.geometry.core.math.point import Point
 from ansys.geometry.core.math.vector import UnitVector, Vector
 from ansys.geometry.core.misc import check_type, check_type_equivalence
