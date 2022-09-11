@@ -1,7 +1,8 @@
-
 from pint import Quantity
 import pytest
-from ansys.geometry.core.misc import UNITS, Distance, UNIT_LENGTH
+
+from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
+
 
 def test_distance():
     """Simple test function to check the correct functioning of ``Distance``."""

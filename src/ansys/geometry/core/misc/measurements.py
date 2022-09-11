@@ -29,7 +29,7 @@ class Measurement(PhysicalQuantity):
         If ~pint.Unit.meter is given, the dimension extracted will be ``[length]``.
     """
 
-    def __init__(self, value: Union[Real, Quantity], unit:Unit, dimensions:Unit):
+    def __init__(self, value: Union[Real, Quantity], unit: Unit, dimensions: Unit):
         """Constructor for ``Measurement``."""
         # Check the input
         if isinstance(value, Quantity):
@@ -55,6 +55,7 @@ class Measurement(PhysicalQuantity):
         """Set the measurement value."""
         self._value = self._base_units_magnitude(value)
 
+
 class Distance(Measurement):
     """``Measurement`` subclass for holding a distance.
 
@@ -65,9 +66,12 @@ class Distance(Measurement):
     unit : ~pint.Unit
         The units to be considered for the given measurement.
     """
+
     def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = UNIT_LENGTH):
         """Constructor for ``Distance``."""
+        # Delegates in Measurement ctor. forcing expected dimensions.
         super().__init__(value, unit, UNIT_LENGTH)
+
 
 class Angle(Measurement):
     """``Measurement`` subclass for holding an angle.
@@ -79,6 +83,7 @@ class Angle(Measurement):
     unit : ~pint.Unit
         The units to be considered for the given measurement.
     """
+
     def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = UNIT_ANGLE):
         """Constructor for ``Angle``."""
         # Delegates in Measurement ctor. forcing expected dimensions.
