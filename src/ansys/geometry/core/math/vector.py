@@ -8,6 +8,7 @@ from pint import Quantity, Unit
 from ansys.geometry.core.math.point import Point
 from ansys.geometry.core.misc import (
     Accuracy,
+    PhysicalQuantity,
     check_is_float_int,
     check_ndarray_is_float_int,
     check_pint_unit_compatibility,
@@ -15,7 +16,6 @@ from ansys.geometry.core.misc import (
     check_type_equivalence,
     only_for_3d,
 )
-from ansys.geometry.core.misc.units import PhysicalQuantity
 from ansys.geometry.core.typing import Real, RealSequence
 
 

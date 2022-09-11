@@ -2,14 +2,8 @@
 
 from typing import List, Optional
 
-from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
-from ansys.geometry.core.math.point import Point
-from ansys.geometry.core.math.vector import UnitVector
-from ansys.geometry.core.misc.checks import (
-    check_ndarray_is_all_nan,
-    check_ndarray_is_non_zero,
-    check_type,
-)
+from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y, Point, UnitVector
+from ansys.geometry.core.misc import check_ndarray_is_all_nan, check_ndarray_is_non_zero, check_type
 from ansys.geometry.core.typing import Real
 
 

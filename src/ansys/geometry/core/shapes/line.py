@@ -4,11 +4,17 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
-from ansys.geometry.core.math.point import Point
-from ansys.geometry.core.math.vector import QuantityVector, UnitVector, Vector
-from ansys.geometry.core.misc import UNIT_LENGTH, UNITS
-from ansys.geometry.core.misc.checks import (
+from ansys.geometry.core.math import (
+    UNIT_VECTOR_X,
+    UNIT_VECTOR_Y,
+    Point,
+    QuantityVector,
+    UnitVector,
+    Vector,
+)
+from ansys.geometry.core.misc import (
+    UNIT_LENGTH,
+    UNITS,
     check_ndarray_is_all_nan,
     check_ndarray_is_non_zero,
     check_pint_unit_compatibility,

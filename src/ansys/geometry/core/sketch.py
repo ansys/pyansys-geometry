@@ -2,14 +2,15 @@
 
 from typing import Optional, Union
 
-from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y, ZERO_VECTOR3D
-from ansys.geometry.core.math.point import Point
-from ansys.geometry.core.math.vector import UnitVector, Vector
-from ansys.geometry.core.shapes.base import BaseShape
-from ansys.geometry.core.shapes.circle import Circle
-from ansys.geometry.core.shapes.ellipse import Ellipse
-from ansys.geometry.core.shapes.line import Line, Segment
-from ansys.geometry.core.shapes.polygon import Polygon
+from ansys.geometry.core.math import (
+    UNIT_VECTOR_X,
+    UNIT_VECTOR_Y,
+    ZERO_VECTOR3D,
+    Point,
+    UnitVector,
+    Vector,
+)
+from ansys.geometry.core.shapes import BaseShape, Circle, Ellipse, Line, Polygon, Segment
 from ansys.geometry.core.typing import Real
 
 

@@ -4,9 +4,7 @@ from typing import List, Optional
 import numpy as np
 from scipy.integrate import quad
 
-from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
-from ansys.geometry.core.math.point import Point
-from ansys.geometry.core.math.vector import UnitVector
+from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y, Point, UnitVector
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.typing import Real
 

@@ -6,7 +6,7 @@ import numpy as np
 
 from ansys.geometry.core.math.point import Point
 from ansys.geometry.core.math.vector import UnitVector, Vector
-from ansys.geometry.core.misc.checks import check_type, check_type_equivalence
+from ansys.geometry.core.misc import check_type, check_type_equivalence
 from ansys.geometry.core.typing import RealSequence
 
 
