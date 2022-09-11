@@ -1,6 +1,4 @@
 """PyGeometry math subpackage."""
-import numpy as np
-
 from ansys.geometry.core.math.constants import (
     DEFAULT_POINT,
     UNIT_VECTOR_X,
@@ -8,7 +6,6 @@ from ansys.geometry.core.math.constants import (
     UNIT_VECTOR_Z,
     ZERO_VECTOR3D,
 )
-from ansys.geometry.core.math.distance import Distance
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix, Matrix33, Matrix44
 from ansys.geometry.core.math.plane import Plane
@@ -21,7 +18,6 @@ __all__ = [
     "UNIT_VECTOR_Y",
     "UNIT_VECTOR_Z",
     "ZERO_VECTOR3D",
-    "Distance",
     "Frame",
     "Matrix",
     "Matrix33",
