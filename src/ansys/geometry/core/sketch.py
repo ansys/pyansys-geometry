@@ -244,12 +244,12 @@ class Sketch:
 
         Parameters
         ----------
-        center : Point3D
-            A :class:``Point3D`` representing the center of the arc.
-        start_point : Point3D
-            A :class:``Point3D`` representing the start of the shape.
-        end_points : Point3D
-            A :class:``Point3D`` representing the end of the shape.
+        center : Point
+            A :class:``Point`` representing the center of the arc.
+        start_point : Point
+            A :class:``Point`` representing the start of the shape.
+        end_points : Point
+            A :class:``Point`` representing the end of the shape.
 
         Returns
         -------
