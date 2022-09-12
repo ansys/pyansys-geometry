@@ -1,6 +1,6 @@
 import numpy as np
 
-from ansys.geometry.core.math import Matrix33, Vector
+from ansys.geometry.core.math import Matrix33, Point, Vector
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.transformation import Rotation, Translation
 
@@ -26,6 +26,6 @@ def test_transformation_rotation():
 
 
 def test_translation():
-    v_1 = Vector([1, 2, 3])
-    v_2 = Vector([1, 1, 1])
-    trans = Translation(v_1, v_2)
+    point = Point([1, 2, 3])
+    v = Vector([1, 1, 1])
+    trans = Translation(point, v)

@@ -62,7 +62,7 @@ class Translation(np.ndarray):
                     [0, 0, 1],
                 ]
             )
-        return np.matmul(translate, obj)[:-1]
+        return type(input)(np.matmul(translate, obj)[:-1])
 
 
 class Scale(np.ndarray):
@@ -86,4 +86,4 @@ class Scale(np.ndarray):
                     [0, 0, 1],
                 ]
             )
-        return np.matmul(scalar_matrix, input)[:-1]
+        return type(input)(np.matmul(scalar_matrix, input)[:-1])
