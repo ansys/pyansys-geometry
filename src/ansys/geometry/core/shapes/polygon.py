@@ -1,50 +1,44 @@
 """``Polygon`` class module."""
 
-from typing import List, Optional
+from typing import List, Union
 
 import numpy as np
+from pint import Quantity
 
-from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y, Point, UnitVector
+from ansys.geometry.core.math import Plane, Point
+from ansys.geometry.core.misc import Distance, check_type
 from ansys.geometry.core.shapes.base import BaseShape
-from ansys.geometry.core.typing import Real
 
 
 class Polygon(BaseShape):
-    """A class for modeling polygon.
+    """A class for modeling regular polygon.
 
     Parameters
     ----------
-    radius : Real
+    plane : Plane
+        A :class:`Plane` representing the planar surface where the shape is contained.
+    inner_radius : Union[Quantity, Distance]
         The inradius(apothem) of the polygon.
     sides : int
         Number of sides of the polygon.
-    origin : Point
-        A :class:``Point`` representing the origin of the shape.
-        By default, [0, 0, 0].
-    dir_1 : UnitVector
-        A :class:``UnitVector`` representing the first fundamental direction
-        of the reference plane where the shape is contained.
-        By default, ``UNIT_VECTOR_X``.
-    dir_2 : UnitVector
-        A :class:``UnitVector`` representing the second fundamental direction
-        of the reference plane where the shape is contained.
-        By default, ``UNIT_VECTOR_Y``.
     """
 
     def __init__(
         self,
-        inner_radius: Real,
+        plane: Plane,
+        inner_radius: Union[Quantity, Distance],
         sides: int,
-        origin: Point,
-        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
     ):
         """Initializes the polygon shape."""
-        super().__init__(origin, dir_1=dir_1, dir_2=dir_2, is_closed=True)
+        # Call the BaseShape ctor.
+        super().__init__(plane, is_closed=True)
 
-        if inner_radius <= 0:
+        # Check that the radius value is positive
+        check_type(inner_radius, (Quantity, Distance))
+        self._inner_radius = inner_radius if isinstance(Distance) else Distance(inner_radius)
+        if self._inner_radius.value.m_as(inner_radius.base_unit) <= 0:
             raise ValueError("Radius must be a real positive value.")
-        self._radius = inner_radius
+
         # Verify that the number of sides is valid with preferred range
         if sides < 3:
             raise ValueError("The minimum number of sides to construct a polygon should be 3.")
@@ -53,16 +47,16 @@ class Polygon(BaseShape):
         self._n_sides = sides
 
     @property
-    def inner_radius(self) -> Real:
+    def inner_radius(self) -> Quantity:
         """The inradius(apothem) of the polygon.
 
         Returns
         -------
-        Real
+        Quantity
             The inradius(apothem) of the polygon.
 
         """
-        return self._radius
+        return self._inner_radius.value
 
     @property
     def n_sides(self) -> int:
@@ -77,48 +71,48 @@ class Polygon(BaseShape):
         return self._n_sides
 
     @property
-    def length(self) -> Real:
+    def length(self) -> Quantity:
         """The side length of the polygon.
 
         Returns
         -------
-        int
+        Quantity
             The side length of the polygon.
 
         """
         return 2 * self.inner_radius * np.tan(np.pi / self.n_sides)
 
     @property
-    def outer_radius(self) -> Real:
+    def outer_radius(self) -> Quantity:
         """The outer radius of the polygon.
 
         Returns
         -------
-        int
+        Quantity
             The outer radius of the polygon.
 
         """
         return self.inner_radius / np.cos(np.pi / self.n_sides)
 
     @property
-    def perimeter(self) -> Real:
+    def perimeter(self) -> Quantity:
         """Return the perimeter of the polygon.
 
         Returns
         -------
-        Real
+        Quantity
             The perimeter of the polygon.
 
         """
         return self.n_sides * self.length
 
     @property
-    def area(self) -> Real:
+    def area(self) -> Quantity:
         """Return the area of the polygon.
 
         Returns
         -------
-        Real
+        Quantity
             The area of the polygon.
 
         """
@@ -137,6 +131,9 @@ class Polygon(BaseShape):
         """
         theta = np.linspace(0, 2 * np.pi, self.n_sides + 1)
         return [
-            Point([self.outer_radius * np.cos(ang), self.outer_radius * np.sin(ang), 0.0])
+            Point(
+                [self.outer_radius.m * np.cos(ang), self.outer_radius.m * np.sin(ang), 0.0],
+                unit=self.outer_radius.units,
+            )
             for ang in theta
         ]
