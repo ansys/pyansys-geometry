@@ -14,6 +14,7 @@ UNIT_LENGTH = UNITS.meter
 UNIT_ANGLE = UNITS.radian
 """Default angle unit for PyGeometry."""
 
+
 class Measurement(PhysicalQuantity):
     """``PhysicalQuantity`` subclass for holding a measurement.
 
