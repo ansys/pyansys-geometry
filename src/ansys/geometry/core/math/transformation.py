@@ -29,7 +29,7 @@ class Rotation(np.ndarray):
     angle : Union[~numpy.ndarray, Real]
         Angle determining the rotation.
     axis : str
-        The order of axis of rotation
+        The order of axis of rotation.
     unit : Unit, optional
         Units employed to define the angle of rotation,
         by default ``UNIT_ANGLE``.
