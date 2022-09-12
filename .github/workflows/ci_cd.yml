@@ -106,7 +106,7 @@ jobs:
           path: '*.zip'
           retention-days: 7
 
-  unit_tests:
+  unit-tests:
     name: Unit tests and coverage
     needs: [smoke-tests]
     runs-on: ubuntu-latest
@@ -139,7 +139,7 @@ jobs:
       # - name: Upload coverage to Codecov
       #   uses: codecov/codecov-action@v3
 
-  integration_tests:
+  integration-tests:
     name: Integration tests
     runs-on: [self-hosted, pygeometry]
 
@@ -207,7 +207,7 @@ jobs:
 
   package:
     name: Package library
-    needs: [tests, docs]
+    needs: [unit-tests, integration-tests, docs]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
