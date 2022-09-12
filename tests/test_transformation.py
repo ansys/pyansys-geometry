@@ -1,6 +1,6 @@
 import numpy as np
 
-from ansys.geometry.core.math import Matrix33, Point, Vector
+from ansys.geometry.core.math import Matrix33, Matrix44, Point, Vector
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.transformation import Rotation, Scaling, Translation
 
@@ -43,6 +43,20 @@ def test_transformation_translation():
     trans = Translation(point, v)
     assert trans == Point([2, 3, 4])
 
+    # Test matrix translation
+    m_1 = Matrix33()
+    v_1 = Vector([5, 6])
+    trans_matrix = Translation(m_1, v_1)
+    test_matrix = Matrix33([[1.0, 0.0, 5.0], [0.0, 1.0, 6.0], [0.0, 0.0, 1.0]])
+    assert abs(trans_matrix - test_matrix).all() <= DOUBLE_EPS
+    m_2 = Matrix44()
+    v_2 = Vector([5, 6, 7])
+    trans_matrix = Translation(m_2, v_2)
+    test_matrix = Matrix44(
+        [[1.0, 0.0, 0, 5.0], [0.0, 1.0, 0, 6.0], [0.0, 0.0, 1.0, 7], [0, 0, 0, 1]]
+    )
+    assert abs(trans_matrix - test_matrix).all() <= DOUBLE_EPS
+
 
 def test_transformation_scalar():
     """Simple test for scaling"""
@@ -50,3 +64,10 @@ def test_transformation_scalar():
     v = Vector([1, 1 / 2, 1 / 3])
     scale = Scaling(point, v)
     assert scale == Point([1, 1, 1])
+
+    # Test matrix translation
+    m = Matrix33()
+    v = Vector([5, 6])
+    scale_matrix = Scaling(m, v)
+    test_matrix = Matrix33([[5.0, 0.0, 0.0], [0.0, 6.0, 0.0], [0.0, 0.0, 1.0]])
+    assert abs(scale_matrix - test_matrix).all() <= DOUBLE_EPS

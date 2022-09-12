@@ -5,7 +5,7 @@ import numpy as np
 from pint import Unit
 from scipy.spatial.transform import Rotation as spatial_rotation
 
-from ansys.geometry.core.math import Vector
+from ansys.geometry.core.math import Matrix, Matrix33, Matrix44, Vector
 from ansys.geometry.core.misc import (
     UNIT_ANGLE,
     UNITS,
@@ -13,11 +13,10 @@ from ansys.geometry.core.misc import (
     check_pint_unit_compatibility,
     check_type,
 )
-from ansys.geometry.core.misc.units import PhysicalQuantity
 from ansys.geometry.core.typing import Real
 
 
-class Rotation(np.ndarray, PhysicalQuantity):
+class Rotation(np.ndarray):
     """Provides rotation for the object. Rotations in 3-D can be
     represented by a sequence of 3 rotations around a sequence of
     axes.
@@ -89,8 +88,10 @@ class Translation(np.ndarray):
     """
 
     def __new__(cls, input: object, vector: Vector):
+        """Constructor for ``Translation``."""
         obj = np.asarray(input).view(cls)
-        obj = np.append(obj, [1])
+        if not isinstance(input, (Matrix, Matrix33, Matrix44)):
+            obj = np.append(obj, [1])
         if vector._is_3d == True:
             translate = np.array(
                 [
@@ -108,7 +109,9 @@ class Translation(np.ndarray):
                     [0, 0, 1],
                 ]
             )
-        return type(input)(np.matmul(translate, obj)[:-1])
+        if not isinstance(input, (Matrix, Matrix33, Matrix44)):
+            return type(input)(np.matmul(translate, obj)[:-1])
+        return type(input)(np.matmul(translate, obj))
 
 
 class Scaling(np.ndarray):
@@ -125,8 +128,10 @@ class Scaling(np.ndarray):
     """
 
     def __new__(cls, input: object, vector: Vector):
+        """Constructor for ``Scaling``."""
         obj = np.asarray(input).view(cls)
-        obj = np.append(obj, [1])
+        if not isinstance(input, (Matrix, Matrix33, Matrix44)):
+            obj = np.append(obj, [1])
         if vector._is_3d == True:
             scalar_matrix = np.array(
                 [
@@ -144,4 +149,6 @@ class Scaling(np.ndarray):
                     [0, 0, 1],
                 ]
             )
-        return type(input)(np.matmul(scalar_matrix, obj)[:-1])
+        if not isinstance(input, (Matrix, Matrix33, Matrix44)):
+            return type(input)(np.matmul(scalar_matrix, obj)[:-1])
+        return type(input)(np.matmul(scalar_matrix, obj))
