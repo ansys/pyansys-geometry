@@ -3,7 +3,7 @@ from typing import List, Optional
 
 import numpy as np
 
-from ansys.geometry.core.math import Point, vector
+from ansys.geometry.core.math import Point, Vector
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.typing import Real
 
