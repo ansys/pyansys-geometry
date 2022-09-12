@@ -115,7 +115,12 @@ def test_ellipse_errors():
     with pytest.raises(
         TypeError, match=r"The pint.Unit provided as input should be a \[length\] quantity."
     ):
-        Ellipse(xy_plane, Point([10, 20, 0]), Quantity(1, UNITS.fahrenheit), Quantity(56, UNITS.fahrenheit))
+        Ellipse(
+            xy_plane,
+            Point([10, 20, 0]),
+            Quantity(1, UNITS.fahrenheit),
+            Quantity(56, UNITS.fahrenheit),
+        )
 
     with pytest.raises(
         TypeError, match=r"The pint.Unit provided as input should be a \[length\] quantity."
@@ -126,16 +131,37 @@ def test_ellipse_errors():
         Ellipse(xy_plane, Point([0, 0, 1]), -1 * UNITS.m, -3 * UNITS.m)
 
     with pytest.raises(ValueError, match="Semi-major axis must be a real positive value."):
-        Ellipse(xy_plane, Point([10, 20, 0]), -1 * UNITS.m, -3 * UNITS.m,)
+        Ellipse(
+            xy_plane,
+            Point([10, 20, 0]),
+            -1 * UNITS.m,
+            -3 * UNITS.m,
+        )
 
     with pytest.raises(ValueError, match="Semi-minor axis must be a real positive value."):
-        Ellipse(xy_plane, Point([10, 20, 0]), 1 * UNITS.m, -3 * UNITS.m,)
+        Ellipse(
+            xy_plane,
+            Point([10, 20, 0]),
+            1 * UNITS.m,
+            -3 * UNITS.m,
+        )
 
     with pytest.raises(ValueError, match="Semi-major axis cannot be shorter than semi-minor axis."):
-        Ellipse(xy_plane, Point([10, 20, 0]), 1 * UNITS.m, 3 * UNITS.m,)
+        Ellipse(
+            xy_plane,
+            Point([10, 20, 0]),
+            1 * UNITS.m,
+            3 * UNITS.m,
+        )
 
-    ellipse = Ellipse(xy_plane, Point([10, 20, 0]), 3 * UNITS.m, 100 * UNITS.cm,)
-    
+    ellipse = Ellipse(
+        xy_plane,
+        Point([10, 20, 0]),
+        3 * UNITS.m,
+        100 * UNITS.cm,
+    )
+
+
 def test_create_polygon():
     """Test polygon shape creation in a sketch."""
 
