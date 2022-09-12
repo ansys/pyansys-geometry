@@ -35,10 +35,10 @@ class Ellipse(BaseShape):
         check_type(semi_major_axis, (Quantity, Distance))
         check_type(semi_minor_axis, (Quantity, Distance))
         self._semi_major_axis = (
-            semi_major_axis if isinstance(Distance) else Distance(semi_major_axis)
+            semi_major_axis if isinstance(semi_major_axis, Distance) else Distance(semi_major_axis)
         )
         self._semi_minor_axis = (
-            semi_minor_axis if isinstance(Distance) else Distance(semi_minor_axis)
+            semi_minor_axis if isinstance(semi_minor_axis, Distance) else Distance(semi_minor_axis)
         )
         if self._semi_major_axis.value.m_as(self._semi_major_axis.base_unit) <= 0:
             raise ValueError("Semi-major axis must be a real positive value.")
@@ -94,19 +94,19 @@ class Ellipse(BaseShape):
         return ecc
 
     @property
-    def linear_eccentricity(self) -> Real:
+    def linear_eccentricity(self) -> Quantity:
         """Return the linear eccentricity of the ellipse.
 
         Returns
         -------
-        Real
+        Quantity
             Linear eccentricity of the ellipse.
 
         Notes
         -----
         The linear eccentricity is the distance from the center to the focus.
         """
-        return (self.semi_major_axis.m**2 - self.semi_minor_axis.m**2) ** 0.5
+        return (self.semi_major_axis**2 - self.semi_minor_axis**2) ** 0.5
 
     @property
     def semi_latus_rectum(self) -> Quantity:
@@ -136,7 +136,7 @@ class Ellipse(BaseShape):
         return 4 * self.semi_major_axis * I
 
     @property
-    def area(self) -> Real:
+    def area(self) -> Quantity:
         """Return the area of the ellipse.
 
         Returns
