@@ -169,8 +169,8 @@ def test_create_polygon():
     sketch = Sketch()
 
     # Draw a pentagon in previous sketch
-    radius, sides, origin = (1 * UNITS.m).magnitude, 5, Point([0, 0, 0], UNITS.m)
-    pentagon = sketch.draw_polygon(radius, sides, origin)
+    radius, sides, center = (1 * UNITS.m), 5, Point([0, 0, 0], UNITS.m)
+    pentagon = sketch.draw_polygon(center, radius, sides)
 
     # Check attributes are expected ones
     side_length = 2 * radius * np.tan(np.pi / sides)
@@ -180,8 +180,8 @@ def test_create_polygon():
     assert_allclose(pentagon.perimeter, sides * side_length)
 
     # Draw a square in previous sketch
-    radius, sides, origin = (1 * UNITS.m).magnitude, 4, Point([0, 0, 0], UNITS.m)
-    square = sketch.draw_polygon(radius, sides, origin)
+    radius, sides, center = (1 * UNITS.m), 4, Point([0, 0, 0], UNITS.m)
+    square = sketch.draw_polygon(center, radius, sides)
 
     # Check attributes are expected ones
     side_length = 2 * radius * np.tan(np.pi / sides)  # 2.0 m
@@ -199,12 +199,12 @@ def test_create_polygon():
     with pytest.raises(
         ValueError, match="The minimum number of sides to construct a polygon should be 3."
     ):
-        radius, sides, origin = (1 * UNITS.m).magnitude, 2, Point([0, 0, 0], UNITS.m)
-        sketch.draw_polygon(radius, sides, origin)
+        radius, sides, center = (1 * UNITS.m), 2, Point([0, 0, 0], UNITS.m)
+        sketch.draw_polygon(center, radius, sides)
 
     with pytest.raises(ValueError, match="Radius must be a real positive value."):
-        radius, sides, origin = (-1 * UNITS.m).magnitude, 6, Point([0, 0, 0], UNITS.m)
-        sketch.draw_polygon(radius, sides, origin)
+        radius, sides, center = (-1 * UNITS.m), 6, Point([0, 0, 0], UNITS.m)
+        sketch.draw_polygon(center, radius, sides)
 
 
 def test_create_line_no_sketch():

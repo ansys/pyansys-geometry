@@ -138,7 +138,7 @@ class Sketch:
         self.append_shape(line)
         return line
 
-    def draw_polygon(self, inner_radius: Union[Vector, UnitVector], sides: int):
+    def draw_polygon(self, center: Point, inner_radius: Union[Vector, UnitVector], sides: int):
         """Create a polygon shape on the sketch.
 
         Parameters
@@ -156,6 +156,6 @@ class Sketch:
             An object for modelling polygonal shapes.
 
         """
-        polygon = Polygon(self._plane, inner_radius, sides)
+        polygon = Polygon(self._plane, center, inner_radius, sides)
         self.append_shape(polygon)
         return polygon

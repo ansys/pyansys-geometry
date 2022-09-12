@@ -46,7 +46,7 @@ class Polygon(BaseShape):
         self._inner_radius = (
             inner_radius if isinstance(inner_radius, Distance) else Distance(inner_radius)
         )
-        if self._inner_radius.value.m_as(inner_radius.base_unit) <= 0:
+        if self._inner_radius.value <= 0:
             raise ValueError("Radius must be a real positive value.")
 
         # Verify that the number of sides is valid with preferred range
@@ -153,7 +153,11 @@ class Polygon(BaseShape):
         theta = np.linspace(0, 2 * np.pi, self.n_sides + 1)
         return [
             Point(
-                [self.outer_radius.m * np.cos(ang), self.outer_radius.m * np.sin(ang), 0.0],
+                [
+                    self.center.x.to(self.outer_radius.units).m + self.outer_radius.m * np.cos(ang),
+                    self.center.y.to(self.outer_radius.units).m + self.outer_radius.m * np.sin(ang),
+                    self.center.z.to(self.outer_radius.units).m,
+                ],
                 unit=self.outer_radius.units,
             )
             for ang in theta
