@@ -27,7 +27,7 @@ class Rotation(np.ndarray):
     input : object
         Input object for rotation.
     angle : Union[~numpy.ndarray, Real]
-        Angle determining the rotation
+        Angle determining the rotation.
     axis : str
         The order of axis of rotation
     unit : Unit, optional
