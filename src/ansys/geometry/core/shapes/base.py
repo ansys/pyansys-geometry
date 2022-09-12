@@ -3,11 +3,11 @@
 from typing import List, Optional
 
 from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
-from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.math.point import Point
+from ansys.geometry.core.math.vector import UnitVector
 from ansys.geometry.core.misc.checks import (
+    check_ndarray_is_all_nan,
     check_ndarray_is_non_zero,
-    check_ndarray_is_not_none,
     check_type,
 )
 from ansys.geometry.core.typing import Real
@@ -18,14 +18,14 @@ class BaseShape:
 
     Parameters
     ----------
-    origin : Point3D
-        A :class:`Point3D` representing the origin of the shape.
-    dir_1 : Optional[UnitVector3D]
-        A :class:`UnitVector3D` representing the first fundamental direction
+    origin : Point
+        A :class:`Point` representing the origin of the shape.
+    dir_1 : Optional[UnitVector]
+        A :class:`UnitVector` representing the first fundamental direction
         of the reference plane where the shape is contained.
         By default, ``UNIT_VECTOR_X``.
-    dir_2 : Optional[UnitVector3D]
-        A :class:`UnitVector3D` representing the second fundamental direction
+    dir_2 : Optional[UnitVector]
+        A :class:`UnitVector` representing the second fundamental direction
         of the reference plane where the shape is contained.
         By default, ``UNIT_VECTOR_Y``.
     is_closed: Optional[bool]
@@ -35,18 +35,18 @@ class BaseShape:
 
     def __init__(
         self,
-        origin: Point3D,
-        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
+        origin: Point,
+        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
         is_closed: Optional[bool] = False,
     ):
         """Initializes the base shape."""
 
-        check_type(origin, Point3D)
-        check_ndarray_is_not_none(origin, "origin")
-        check_type(dir_1, UnitVector3D)
+        check_type(origin, Point)
+        check_ndarray_is_all_nan(origin, "origin")
+        check_type(dir_1, UnitVector)
         check_ndarray_is_non_zero(dir_1, "dir_1")
-        check_type(dir_2, UnitVector3D)
+        check_type(dir_2, UnitVector)
         check_ndarray_is_non_zero(dir_2, "dir_2")
 
         # TODO: assign a reference frame to the base shape
@@ -62,7 +62,7 @@ class BaseShape:
             raise ValueError("Reference vectors must be linearly independent.")
 
         self._i, self._j = dir_1, dir_2
-        self._k = UnitVector3D(self.i.cross(self._j))
+        self._k = UnitVector(self.i.cross(self._j))
         self._origin = origin
         self._is_closed = is_closed
 
@@ -70,26 +70,26 @@ class BaseShape:
         self._origin.setflags(write=False)
 
     @property
-    def i(self) -> UnitVector3D:
+    def i(self) -> UnitVector:
         """The fundamental vector along the first axis of the reference frame."""
         return self._i
 
     @property
-    def j(self) -> UnitVector3D:
+    def j(self) -> UnitVector:
         """The fundamental vector along the second axis of the reference frame."""
         return self._j
 
     @property
-    def k(self) -> UnitVector3D:
+    def k(self) -> UnitVector:
         """The fundamental vector along the third axis of the reference frame."""
         return self._k
 
     @property
-    def origin(self) -> Point3D:
+    def origin(self) -> Point:
         """The origin of the reference frame."""
         return self._origin
 
-    def points(self, num_points: Optional[int] = 100) -> List[Point3D]:
+    def points(self, num_points: Optional[int] = 100) -> List[Point]:
         """Returns a list containing all the points belonging to the shape.
 
         Parameters
@@ -99,7 +99,7 @@ class BaseShape:
 
         Returns
         -------
-        List[Point3D]
+        List[Point]
             A list of points representing the shape.
         """
         return self.frame.from_local_to_global @ self.local_points

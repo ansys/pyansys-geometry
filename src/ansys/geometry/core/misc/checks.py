@@ -1,6 +1,5 @@
 """Checking common functions."""
-
-from typing import Optional, Tuple, Union
+from typing import Any, Optional, Tuple, Union
 
 import numpy as np
 from pint import Unit
@@ -87,6 +86,32 @@ def check_ndarray_is_not_none(
         )
 
 
+def check_ndarray_is_all_nan(
+    param: np.ndarray, param_name: Optional[Union[str, None]] = None
+) -> None:
+    """
+    Checks if the :class:`numpy.ndarray` is all nan-valued.
+
+    Parameters
+    ----------
+    param : ~numpy.ndarray
+        :class:`numpy.ndarray` instance to be checked.
+    param_name : str or None, optional
+        The :class:`numpy.ndarray` instance name (if any). By default, ``None``.
+
+    Raises
+    ------
+    ValueError
+        In case the :class:`numpy.ndarray` is all nan-valued.
+    """
+    if np.isnan(param).all():
+        raise ValueError(
+            f"The numpy.ndarray provided should not be a nan numpy.ndarray."
+            if param_name is None
+            else f"The numpy.ndarray '{param_name}' should not be a nan numpy.ndarray."
+        )
+
+
 def check_ndarray_is_non_zero(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
@@ -111,30 +136,6 @@ def check_ndarray_is_non_zero(
             f"The numpy.ndarray provided should not be a numpy.ndarray of zeros."
             if param_name is None
             else f"The numpy.ndarray '{param_name}' should not be a numpy.ndarray of zeros."
-        )
-
-
-def check_is_pint_unit(param: object, param_name: Optional[Union[str, None]] = None) -> None:
-    """
-    Checks if the parameter provided is a :class:`pint.Unit`.
-
-    Parameters
-    ----------
-    param : object
-        Object instance to be checked.
-    param_name : str or None, optional
-        The object instance name (if any). By default, ``None``.
-
-    Raises
-    ------
-    TypeError
-        In case the parameter is not a :class:`pint.Unit`.
-    """
-    if not isinstance(param, Unit):
-        raise TypeError(
-            "The parameter 'unit' should be a pint.Unit object."
-            if param_name is None
-            else f"The parameter '{param_name}' should be a pint.Unit object."
         )
 
 
@@ -200,3 +201,21 @@ def check_type(input: object, expected_type: Union[type, Tuple[type, ...]]) -> N
 
     if not isinstance(input, expected_type):
         raise TypeError(f"Provided type {type(input)} is invalid, type {expected_type} expected.")
+
+
+def only_for_3d(func):
+    """Class decorator for checking if an object is 3D or not.
+
+    Notes
+    -----
+    To use this decorator it is necessary to call it on top of a
+    class method, and the class should have an ``is_3d`` property.
+    """
+
+    def wrapper(*args) -> Any:
+        if not args[0].is_3d:
+            raise ValueError("Instance is not 3D. Z component not accessible.")
+
+        return func(*args)
+
+    return wrapper
