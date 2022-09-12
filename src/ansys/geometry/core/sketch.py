@@ -38,11 +38,13 @@ class Sketch:
         """
         self.shapes_list.append(shape)
 
-    def draw_circle(self, radius: Union[Quantity, Distance]):
+    def draw_circle(self, center: Point, radius: Union[Quantity, Distance]):
         """Create a circle shape on the sketch.
 
         Parameters
         ----------
+        center: Point
+            A :class:`Point` representing the center of the circle.
         radius : Union[Quantity, Distance]
             The radius of the circle.
 
@@ -52,7 +54,7 @@ class Sketch:
             An object representing the circle added to the sketch.
 
         """
-        circle = Circle(self._plane, radius)
+        circle = Circle(self._plane, center, radius)
         self.append_shape(circle)
         return circle
 

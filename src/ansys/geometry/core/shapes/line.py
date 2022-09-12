@@ -85,12 +85,7 @@ class Line(BaseShape):
             Returns ``True`` if the line defined is contained in the plane.
         """
         # First check if the point is contained in the plane
-        plane_eq = (
-            self.k.x * (self.start.x - self.origin.x)
-            + self.k.y * (self.start.y - self.origin.y)
-            + self.k.z * (self.start.z - self.origin.z)
-        )
-        if np.is_close(plane_eq.magnitude, 0.0):
+        if not self._plane.is_point_contained(self._start):
             return False
 
         # Then, check if direction is linearly dependent or not from

@@ -35,7 +35,9 @@ class Polygon(BaseShape):
 
         # Check that the radius value is positive
         check_type(inner_radius, (Quantity, Distance))
-        self._inner_radius = inner_radius if isinstance(Distance) else Distance(inner_radius)
+        self._inner_radius = (
+            inner_radius if isinstance(inner_radius, Distance) else Distance(inner_radius)
+        )
         if self._inner_radius.value.m_as(inner_radius.base_unit) <= 0:
             raise ValueError("Radius must be a real positive value.")
 

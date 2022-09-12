@@ -16,6 +16,8 @@ class Circle(BaseShape):
     ----------
     plane : Plane
         A :class:`Plane` representing the planar surface where the shape is contained.
+    center: Point
+        A :class:`Point` representing the center of the circle.
     radius : Union[Quantity, Distance]
         The radius of the circle.
     """
@@ -23,14 +25,32 @@ class Circle(BaseShape):
     def __init__(
         self,
         plane: Plane,
+        center: Point,
         radius: Union[Quantity, Distance],
     ):
         """Initializes the circle shape."""
         super().__init__(plane, is_closed=True)
+
+        check_type(center, Point)
+        self._center = center
+        if not self.plane.is_point_contained(center):
+            raise ValueError("Center must be contained in the plane.")
+
         check_type(radius, (Quantity, Distance))
-        self._radius = radius if isinstance(Distance) else Distance(radius)
-        if self._radius.value.m_as(radius.base_unit) <= 0:
+        self._radius = radius if isinstance(radius, Distance) else Distance(radius)
+        if self._radius.value <= 0:
             raise ValueError("Radius must be a real positive value.")
+
+    @property
+    def center(self) -> Point:
+        """The center of the circle.
+
+        Returns
+        -------
+        Point
+            The center of the circle.
+        """
+        return self._center
 
     @property
     def radius(self) -> Quantity:
@@ -95,17 +115,21 @@ class Circle(BaseShape):
         return [
             Point(
                 [self.radius.m * np.cos(ang), self.radius.m * np.sin(ang), 0.0],
-                unit=self.radius.unit,
+                unit=self.radius.units,
             )
             for ang in theta
         ]
 
     @classmethod
-    def from_radius(cls, radius: Union[Quantity, Distance], plane: Optional[Plane] = Plane()):
-        """Create a circle from its and radius.
+    def from_center_and_radius(
+        cls, center: Point, radius: Union[Quantity, Distance], plane: Optional[Plane] = Plane()
+    ):
+        """Create a circle from its center and radius.
 
         Parameters
         ----------
+        center: Point
+            A :class:`Point` representing the center of the circle.
         radius : Real
             The radius of the circle.
         plane : Plane, optional
@@ -117,4 +141,4 @@ class Circle(BaseShape):
         Circle
             An object for modeling circular shapes.
         """
-        return cls(plane, radius)
+        return cls(plane, center, radius)

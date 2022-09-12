@@ -33,24 +33,29 @@ class BaseShape:
         self._is_closed = is_closed
 
     @property
+    def plane(self) -> Plane:
+        """The Plane in which the shape is contained."""
+        return self._plane
+
+    @property
     def i(self) -> UnitVector:
         """The fundamental vector along the first axis of the reference frame."""
-        return self._plane.direction_x
+        return self.plane.direction_x
 
     @property
     def j(self) -> UnitVector:
         """The fundamental vector along the second axis of the reference frame."""
-        return self._plane.direction_y
+        return self.plane.direction_y
 
     @property
     def k(self) -> UnitVector:
         """The fundamental vector along the third axis of the reference frame."""
-        return self._plane.direction_z
+        return self.plane.direction_z
 
     @property
     def origin(self) -> Point:
         """The origin of the reference frame."""
-        return self._plane.origin
+        return self.plane.origin
 
     def points(self, num_points: Optional[int] = 100) -> List[Point]:
         """Returns a list containing all the points belonging to the shape.
@@ -65,7 +70,7 @@ class BaseShape:
         List[Point]
             A list of points representing the shape.
         """
-        return self.frame.from_local_to_global @ self.local_points
+        return self.plane.from_local_to_global @ self.local_points
 
     @property
     def x_coordinates(self) -> List[Real]:
