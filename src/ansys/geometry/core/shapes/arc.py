@@ -81,12 +81,12 @@ class Arc(BaseShape):
 
     @property
     def angle(self) -> Real:
-        """The angle of the circle.
+        """The angle of the arc.
 
         Returns
         -------
         Real
-            The angle of the circle.
+            The angle of the arc.
 
         """
 
