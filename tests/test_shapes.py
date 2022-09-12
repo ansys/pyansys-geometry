@@ -2,9 +2,9 @@ import numpy as np
 from numpy.testing import assert_allclose
 import pytest
 
-from ansys.geometry.core.math import ZERO_VECTOR3D, Point, UnitVector, Vector
+from ansys.geometry.core.math import ZERO_VECTOR3D, Plane, Point, UnitVector, Vector
 from ansys.geometry.core.misc import UNIT_LENGTH, UNITS
-from ansys.geometry.core.shapes.line import Line, Segment
+from ansys.geometry.core.shapes import Circle, Line, Segment
 from ansys.geometry.core.sketch import Sketch
 
 DOUBLE_EPS = np.finfo(float).eps
@@ -17,19 +17,52 @@ def test_create_circle():
     sketch = Sketch()
 
     # Draw a circle in previous sketch
-    radius, origin = (1 * UNITS.m).magnitude, Point([0, 0, 0], UNITS.m)
-    circle = sketch.draw_circle(radius, origin)
+    center, radius = (
+        Point([0, 0, 0], UNITS.m),
+        (1 * UNITS.m),
+    )
+    circle = sketch.draw_circle(center, radius)
 
     # Check attributes are expected ones
-    assert_allclose(circle.radius, radius)
-    assert_allclose(circle.diameter, 2 * radius)
-    assert_allclose(circle.area, np.pi * radius**2)
-    assert_allclose(circle.perimeter, 2 * np.pi * radius)
+    assert circle.center == center
+    assert circle.radius == radius
+    assert circle.diameter == 2 * radius
+    assert circle.area == np.pi * radius**2
+    assert circle.perimeter == 2 * np.pi * radius
 
     # Check points are expected ones
     local_points = circle.local_points(num_points=5)
     assert abs(all(local_points[0] - Point([1, 0, 0]))) <= DOUBLE_EPS
     assert abs(all(local_points[2] - Point([-1, 0, 0]))) <= DOUBLE_EPS
+
+    # Use the class method to build a circle
+    center_2, radius_2 = Point([10, 20, 0], UNITS.mm), (10 * UNITS.mm)
+    circle_from_center_and_radius = Circle.from_center_and_radius(center_2, radius_2)
+    assert circle_from_center_and_radius.center == center_2
+    assert circle_from_center_and_radius.radius == radius_2
+    assert circle_from_center_and_radius.diameter == 2 * radius_2
+    assert circle_from_center_and_radius.area == np.pi * radius_2**2
+    assert circle_from_center_and_radius.perimeter == 2 * np.pi * radius_2
+
+    local_points_2 = circle_from_center_and_radius.local_points(num_points=5)
+    assert abs(all(local_points_2[0] - Point([10, 20, 0], UNITS.mm))) <= DOUBLE_EPS
+    assert abs(all(local_points_2[2] - Point([-10, 20, 0], UNITS.mm))) <= DOUBLE_EPS
+
+
+def test_circle_errors():
+    """Test various circle instantiation errors."""
+    xy_plane = Plane()
+
+    with pytest.raises(ValueError, match="Center must be contained in the plane."):
+        Circle(xy_plane, Point([0, 0, 1]), 1 * UNITS.fahrenheit)
+
+    with pytest.raises(
+        TypeError, match=r"The pint.Unit provided as input should be a \[length\] quantity."
+    ):
+        Circle(xy_plane, Point([10, 20, 0]), 1 * UNITS.fahrenheit)
+
+    with pytest.raises(ValueError, match="Radius must be a real positive value."):
+        Circle(xy_plane, Point([10, 20, 0]), -10 * UNITS.mm)
 
 
 def test_create_ellipse():
