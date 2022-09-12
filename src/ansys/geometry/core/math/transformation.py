@@ -5,7 +5,8 @@ import numpy as np
 from pint import Unit
 from scipy.spatial.transform import Rotation as spatial_rotation
 
-from ansys.geometry.core.math import Matrix, Matrix33, Matrix44, Vector
+from ansys.geometry.core.math.matrix import Matrix, Matrix33, Matrix44
+from ansys.geometry.core.math.vector import Vector
 from ansys.geometry.core.misc import (
     UNIT_ANGLE,
     UNITS,
