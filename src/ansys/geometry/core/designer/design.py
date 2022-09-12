@@ -1,6 +1,6 @@
 """``Design`` class module."""
 
-from ansys.geometry.core.design_assembly.assembly import Assembly
+from ansys.geometry.core.designer.assembly import Assembly
 
 
 class Design:

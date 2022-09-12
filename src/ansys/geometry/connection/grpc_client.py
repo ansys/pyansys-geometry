@@ -4,7 +4,7 @@ import grpc
 
 from ansys.api.geometry.designs_pb2 import NewDesignRequest
 from ansys.api.geometry.designs_pb2_grpc import DesignsStub
-from ansys.geometry.core.design_assembly.design import Design
+from ansys.geometry.core.designer.design import Design
 
 # Maximum size for gRPC message
 MAX_MESSAGE_LENGTH = 100 * 1024 * 1024
