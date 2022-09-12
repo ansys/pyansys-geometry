@@ -64,9 +64,9 @@ class Rotation(np.ndarray, PhysicalQuantity):
         if ang.ndim >= 2 and len(axis) != ang.shape[1]:
             raise ValueError("Axis and angle are not matching")
         if ang.ndim == 0:
-            obj._angle = (ang * unit).to_base_units().magnitude
+            obj._angle = (ang * obj._unit).to_base_units().magnitude
         else:
-            obj._angle = [(angs * unit).to_base_units().magnitude for angs in ang]
+            obj._angle = [(angs * obj._unit).to_base_units().magnitude for angs in ang]
 
         obj._axis = axis
         obj_type = type(input)
