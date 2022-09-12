@@ -4,6 +4,7 @@ from typing import List, Optional
 import numpy as np
 
 from ansys.geometry.core.math import Point, Vector
+from ansys.geometry.core.math.vector import UnitVector
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.typing import Real
 
@@ -44,8 +45,8 @@ class Arc(BaseShape):
 
         super().__init__(
             origin,
-            dir_1=self._start_vector / self._start_vector.norm,
-            dir_2=self._end_vector / self._end_vector.norm,
+            dir_1=UnitVector(self._start_vector / self._start_vector.norm),
+            dir_2=UnitVector(self._end_vector / self._end_vector.norm),
         )
 
         self._radius = self._start_vector.norm
