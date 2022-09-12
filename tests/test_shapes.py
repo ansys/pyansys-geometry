@@ -4,6 +4,7 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core.math import ZERO_VECTOR3D, Plane, Point, UnitVector, Vector
+from ansys.geometry.core.math.constants import UNIT_VECTOR_Y, UNIT_VECTOR_Z
 from ansys.geometry.core.misc import UNIT_LENGTH, UNITS
 from ansys.geometry.core.shapes import Circle, Ellipse, Line, Segment
 from ansys.geometry.core.sketch import Sketch
@@ -174,10 +175,10 @@ def test_create_polygon():
 
     # Check attributes are expected ones
     side_length = 2 * radius * np.tan(np.pi / sides)
-    assert_allclose(pentagon.inner_radius, radius)
+    assert pentagon.inner_radius == radius
     assert pentagon.n_sides == 5
-    assert_allclose(pentagon.length, side_length)
-    assert_allclose(pentagon.perimeter, sides * side_length)
+    assert pentagon.length == side_length
+    assert pentagon.perimeter == sides * side_length
 
     # Draw a square in previous sketch
     radius, sides, center = (1 * UNITS.m), 4, Point([0, 0, 0], UNITS.m)
@@ -185,11 +186,11 @@ def test_create_polygon():
 
     # Check attributes are expected ones
     side_length = 2 * radius * np.tan(np.pi / sides)  # 2.0 m
-    assert_allclose(square.inner_radius, radius)
+    assert square.inner_radius == radius
     assert square.n_sides == 4
-    assert_allclose(square.length, side_length)
-    assert_allclose(square.perimeter, sides * side_length)
-    assert_allclose(square.area, 4.0 * UNITS.m**2)
+    assert square.length == side_length
+    assert square.perimeter == sides * side_length
+    assert square.area == 4.0 * UNITS.m**2
 
     # Check points are expected ones
     local_points = square.local_points()
@@ -209,16 +210,19 @@ def test_create_polygon():
 
 def test_create_line_no_sketch():
     """Simple test to create a ``Line`` (w/o a Sketch object)."""
+    origin = Point([1, 2, 3], unit=UNITS.mm)
+    xy_plane = Plane(origin=origin)
+    
     # Test line - Create a line using a Point and a Vector
     origin = Point([1, 2, 3], unit=UNITS.mm)
     direction_x = UnitVector([1, 0, 0])
-    line = Line(origin=origin, direction=direction_x)
+    line = Line(xy_plane, start=origin, direction=direction_x)
     assert line.direction == direction_x
     assert line.origin == origin
 
     # Test line_2 - Create a line using a Point and a Vector
     direction_x_vector3D = Vector([45, 0, 0])  # Equivalent (as a UnitVector) to "direction_x"
-    line_2 = Line(origin=origin, direction=direction_x_vector3D)
+    line_2 = Line(xy_plane, start=origin, direction=direction_x_vector3D)
     assert line_2.direction == direction_x
     assert line_2.origin == origin
 
@@ -240,34 +244,37 @@ def test_create_segment_no_sketch():
     start = Point([1, 2, 3], unit=UNITS.mm)
     end = Point([1, 5, 9], unit=UNITS.mm)
     unit_vector = UnitVector(end - start)
-    segment = Segment(start, end)
+    yz_plane = Plane(Point([1, 2, 3], unit=UNITS.mm), UNIT_VECTOR_Y, UNIT_VECTOR_Z)
+    
+    
+    segment = Segment(yz_plane, start, end)
     assert segment.start == start
     assert segment.end == end
     assert segment.direction == unit_vector
-    assert_allclose(segment.start.x, 1)
-    assert_allclose(segment.start.y, 2)
-    assert_allclose(segment.start.z, 3)
+    assert segment.start.x == start.x
+    assert segment.start.y == start.y
+    assert segment.start.z == start.z
     assert segment.start.unit == UNITS.mm
-    assert_allclose(segment.end.x, 1)
-    assert_allclose(segment.end.y, 5)
-    assert_allclose(segment.end.z, 9)
+    assert segment.end.x == end.x
+    assert segment.end.y == end.y
+    assert segment.end.z == end.z
     assert segment.end.unit == UNITS.mm
 
     # Test segment_2 - Create a segment using a Point and a vector
     start_2 = Point([1, 2, 3], unit=UNITS.mm)
     end_2 = Point([1, 5, 9], unit=UNITS.mm)
     vector_2 = Vector(end_2 - start_2)
-    segment_2 = Segment.from_origin_and_vector(start_2, vector_2, vector_units=UNITS.meter)
+    segment_2 = Segment.from_start_point_and_vector(start_2, vector_2, vector_units=UNITS.meter, plane = yz_plane)
     assert segment_2.start == start
     assert segment_2.end == end
     assert segment_2.direction == unit_vector
-    assert_allclose(segment_2.start.x, 0.001)
-    assert_allclose(segment_2.start.y, 0.002)
-    assert_allclose(segment_2.start.z, 0.003)
+    assert segment_2.start.x == start_2.x
+    assert segment_2.start.y == start_2.y
+    assert segment_2.start.z == start_2.z
     assert segment_2.start.unit == UNIT_LENGTH
-    assert_allclose(segment_2.end.x, 0.001)
-    assert_allclose(segment_2.end.y, 0.005)
-    assert_allclose(segment_2.end.z, 0.009)
+    assert segment_2.end.x == end_2.x
+    assert segment_2.end.y == end_2.y
+    assert segment_2.end.z == end_2.z
     assert segment_2.end.unit == UNIT_LENGTH
 
     # Test segment_2b - Create a segment using a Point and a vector (same units as the point)
@@ -275,36 +282,36 @@ def test_create_segment_no_sketch():
     end_2b = Point([1, 5, 9], unit=UNITS.mm)
     vector_2b = Vector(end_2b - start_2b)
     vector_2b = vector_2b * 1e3  # The vector would be in meters --> convert to mm
-    segment_2b = Segment.from_origin_and_vector(start_2b, vector_2b, vector_units=UNITS.mm)
+    segment_2b = Segment.from_start_point_and_vector(start_2b, vector_2b, vector_units=UNITS.mm, plane = yz_plane)
     assert segment_2b.start == start
     assert segment_2b.end == end
     assert segment_2b.direction == unit_vector
-    assert_allclose(segment_2b.start.x, 1)
-    assert_allclose(segment_2b.start.y, 2)
-    assert_allclose(segment_2b.start.z, 3)
+    assert segment_2b.start.x == start_2b.x
+    assert segment_2b.start.y == start_2b.y
+    assert segment_2b.start.z == start_2b.z
     assert segment_2b.start.unit == UNITS.mm
-    assert_allclose(segment_2b.end.x, 1)
-    assert_allclose(segment_2b.end.y, 5)
-    assert_allclose(segment_2b.end.z, 9)
+    assert segment_2b.end.x == end_2b.x
+    assert segment_2b.end.y == end_2b.y
+    assert segment_2b.end.z == end_2b.z
     assert segment_2b.end.unit == UNITS.mm
 
     # Test segment_3 - Create a segment using two Point objects (in different units)
     start_3 = Point([1, 2, 3], unit=UNITS.mm)
-    end_3 = Point([1, 5, 9], unit=UNITS.cm)  # Point([10, 50, 90], unit=UNITS.mm)
+    end_3 = Point([0.1, 5, 9], unit=UNITS.cm)  # Point([10, 50, 90], unit=UNITS.mm)
     unit_vector_3 = UnitVector(end_3 - start_3)
-    segment_3 = Segment(start_3, end_3)
+    segment_3 = Segment(yz_plane, start_3, end_3)
     assert segment_3.start == start_3
     assert segment_3.end == end_3
     assert segment_3.direction == unit_vector_3
     assert unit_vector != unit_vector_3
     assert end != end_3
-    assert_allclose(segment_3.start.x, 0.001)
-    assert_allclose(segment_3.start.y, 0.002)
-    assert_allclose(segment_3.start.z, 0.003)
+    assert segment_3.start.x == start_3.x
+    assert segment_3.start.y == start_3.y
+    assert segment_3.start.z == start_3.z
     assert segment_3.start.unit == UNIT_LENGTH
-    assert_allclose(segment_3.end.x, 0.01)
-    assert_allclose(segment_3.end.y, 0.05)
-    assert_allclose(segment_3.end.z, 0.09)
+    assert segment_3.end.x == end_3.x
+    assert segment_3.end.y == end_3.y
+    assert segment_3.end.z == end_3.z
     assert segment_3.end.unit == UNIT_LENGTH
 
     # From test 1, get the local points
@@ -320,37 +327,40 @@ def test_create_segment_no_sketch():
 
 def test_errors_line():
     """Check errors when handling a ``Line``."""
+    plane = Plane()
+    
     with pytest.raises(TypeError, match="Provided type"):
-        Line(Point([10, 20, 30], unit=UNITS.meter), "b")
+        Line(plane, Point([10, 20, 30], unit=UNITS.meter), "b")
     with pytest.raises(
         ValueError, match="The numpy.ndarray 'direction' should not be a numpy.ndarray of zeros."
     ):
-        Line(Point([10, 20, 30], unit=UNITS.meter), ZERO_VECTOR3D)
+        Line(plane, Point([10, 20, 30], unit=UNITS.meter), ZERO_VECTOR3D)
 
     with pytest.raises(TypeError, match="Provided type"):
-        Line("a", Vector([1, 0, 0]))
+        Line(plane, "a", Vector([1, 0, 0]))
     with pytest.raises(
-        ValueError, match="The numpy.ndarray 'origin' should not be a nan numpy.ndarray."
+        ValueError, match="The numpy.ndarray 'start' should not be a nan numpy.ndarray."
     ):
-        Line(Point(), Vector([1, 0, 0]))
+        Line(plane, Point(), Vector([1, 0, 0]))
 
 
 def test_errors_segment():
     """Check errors when handling a ``Segment``."""
+    plane = Plane()
     with pytest.raises(TypeError, match="Provided type"):
-        Segment("a", "b")
+        Segment(plane, "a", "b")
     with pytest.raises(
         ValueError, match="The numpy.ndarray 'start' should not be a nan numpy.ndarray."
     ):
-        Segment(Point(), "b")
+        Segment(plane, Point(), "b")
     with pytest.raises(TypeError, match="Provided type"):
-        Segment(Point([10, 20, 30], unit=UNITS.meter), "b")
+        Segment(plane, Point([10, 20, 30], unit=UNITS.meter), "b")
     with pytest.raises(
         ValueError, match="The numpy.ndarray 'end' should not be a nan numpy.ndarray."
     ):
-        Segment(Point([10, 20, 30]), Point())
+        Segment(plane, Point([10, 20, 30]), Point())
     with pytest.raises(
         ValueError,
-        match="Parameters 'origin' and 'end' have the same values. No segment can be created.",
+        match="Parameters 'start' and 'end' have the same values. No segment can be created.",
     ):
-        Segment(Point([10, 20, 30]), Point([10, 20, 30]))
+        Segment(plane, Point([10, 20, 30]), Point([10, 20, 30]))
