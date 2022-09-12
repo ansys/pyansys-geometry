@@ -3,7 +3,7 @@ from typing import List, Optional
 
 import numpy as np
 
-from ansys.geometry.core.math import Point3D, vector
+from ansys.geometry.core.math import Point, vector
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.typing import Real
 
@@ -13,20 +13,20 @@ class Arc(BaseShape):
 
     def __init__(
         self,
-        origin: Point3D,
-        start_point: Point3D,
-        end_point: Point3D,
+        origin: Point,
+        start_point: Point,
+        end_point: Point,
     ):
         """Initializes the arc shape.
 
         Parameters
         ----------
-        origin : Point3D
-            A :class:``Point3D`` representing the center of the arc.
-        start_point : Point3D
-            A :class:``Point3D`` representing the start of the arc.
-        end_points : Point3D
-            A :class:``Point3D`` representing the end of the arc.
+        origin : Point
+            A :class:``Point`` representing the center of the arc.
+        start_point : Point
+            A :class:``Point`` representing the start of the arc.
+        end_points : Point
+            A :class:``Point`` representing the end of the arc.
 
         """
         # Verify both points are not the same
@@ -39,29 +39,29 @@ class Arc(BaseShape):
 
         self._origin, self._start_point, self._end_point = (origin, start_point, end_point)
 
-        self._start_vector = vector.Vector3D.from_points(self._origin, self._start_point)
-        self._end_vector = vector.Vector3D.from_points(self._origin, self._end_point)
+        self._start_vector = vector.Vector.from_points(self._origin, self._start_point)
+        self._end_vector = vector.Vector.from_points(self._origin, self._end_point)
         self._radius = self._start_vector.norm
 
     @property
-    def start_point(self) -> Point3D:
+    def start_point(self) -> Point:
         """Return the start of the arc line.
 
         Returns
         -------
-        Point3D
+        Point
             Starting point of the arc line.
 
         """
         return self._start_point
 
     @property
-    def end_point(self) -> Point3D:
+    def end_point(self) -> Point:
         """Return the end of the arc line.
 
         Returns
         -------
-        Point3D
+        Point
             Ending point of the arc line.
 
         """
@@ -117,7 +117,7 @@ class Arc(BaseShape):
         """
         return self.radius**2 * self.angle / 2
 
-    def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
+    def local_points(self, num_points: Optional[int] = 100) -> List[Point]:
         """Returns al list containing all the points belonging to the shape.
 
         Parameters
@@ -127,12 +127,18 @@ class Arc(BaseShape):
 
         Returns
         -------
-        List[Point3D]
+        List[Point]
             A list of points representing the shape.
 
         """
         theta = np.linspace(0, self.angle, num_points)
-        x_local = self.radius * np.cos(theta) + self.origin[0]
-        y_local = self.radius * np.sin(theta) + self.origin[1]
-        z_local = np.zeros(num_points) + self.origin[2]
-        return [x_local, y_local, z_local]
+        return [
+            Point(
+                [
+                    self.radius * np.cos(ang) + self.origin[0],
+                    self.radius * np.sin(ang) + self.origin[1],
+                    self.origin[2],
+                ]
+            )
+            for ang in theta
+        ]
