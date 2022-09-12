@@ -17,6 +17,8 @@ class Polygon(BaseShape):
     ----------
     plane : Plane
         A :class:`Plane` representing the planar surface where the shape is contained.
+    center: Point
+        A :class:`Point` representing the center of the circle.
     inner_radius : Union[Quantity, Distance]
         The inradius(apothem) of the polygon.
     sides : int
@@ -26,6 +28,7 @@ class Polygon(BaseShape):
     def __init__(
         self,
         plane: Plane,
+        center: Point,
         inner_radius: Union[Quantity, Distance],
         sides: int,
     ):
@@ -33,7 +36,12 @@ class Polygon(BaseShape):
         # Call the BaseShape ctor.
         super().__init__(plane, is_closed=True)
 
-        # Check that the radius value is positive
+        # Check the inputs
+        check_type(center, Point)
+        self._center = center
+        if not self.plane.is_point_contained(center):
+            raise ValueError("Center must be contained in the plane.")
+
         check_type(inner_radius, (Quantity, Distance))
         self._inner_radius = (
             inner_radius if isinstance(inner_radius, Distance) else Distance(inner_radius)
@@ -47,6 +55,17 @@ class Polygon(BaseShape):
         # TODO : raise warning if the number of sides greater than 64
         # it cannot be handled server side
         self._n_sides = sides
+
+    @property
+    def center(self) -> Point:
+        """The center of the polygon.
+
+        Returns
+        -------
+        Point
+            The center of the polygon.
+        """
+        return self._center
 
     @property
     def inner_radius(self) -> Quantity:

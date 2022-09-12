@@ -62,6 +62,13 @@ class Ellipse(BaseShape):
 
     @property
     def center(self) -> Point:
+        """The center of the ellipse.
+
+        Returns
+        -------
+        Point
+            The center of the ellipse.
+        """
         return self._center
 
     @property
