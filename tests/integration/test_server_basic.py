@@ -1,0 +1,4 @@
+"""
+Test basic server connection.
+
+"""
