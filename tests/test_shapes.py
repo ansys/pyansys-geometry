@@ -1,5 +1,4 @@
 import numpy as np
-from numpy.testing import assert_allclose
 from pint import Quantity
 import pytest
 
@@ -212,7 +211,7 @@ def test_create_line_no_sketch():
     """Simple test to create a ``Line`` (w/o a Sketch object)."""
     origin = Point([1, 2, 3], unit=UNITS.mm)
     xy_plane = Plane(origin=origin)
-    
+
     # Test line - Create a line using a Point and a Vector
     origin = Point([1, 2, 3], unit=UNITS.mm)
     direction_x = UnitVector([1, 0, 0])
@@ -245,8 +244,7 @@ def test_create_segment_no_sketch():
     end = Point([1, 5, 9], unit=UNITS.mm)
     unit_vector = UnitVector(end - start)
     yz_plane = Plane(Point([1, 2, 3], unit=UNITS.mm), UNIT_VECTOR_Y, UNIT_VECTOR_Z)
-    
-    
+
     segment = Segment(yz_plane, start, end)
     assert segment.start == start
     assert segment.end == end
@@ -264,7 +262,9 @@ def test_create_segment_no_sketch():
     start_2 = Point([1, 2, 3], unit=UNITS.mm)
     end_2 = Point([1, 5, 9], unit=UNITS.mm)
     vector_2 = Vector(end_2 - start_2)
-    segment_2 = Segment.from_start_point_and_vector(start_2, vector_2, vector_units=UNITS.meter, plane = yz_plane)
+    segment_2 = Segment.from_start_point_and_vector(
+        start_2, vector_2, vector_units=UNITS.meter, plane=yz_plane
+    )
     assert segment_2.start == start
     assert segment_2.end == end
     assert segment_2.direction == unit_vector
@@ -282,7 +282,9 @@ def test_create_segment_no_sketch():
     end_2b = Point([1, 5, 9], unit=UNITS.mm)
     vector_2b = Vector(end_2b - start_2b)
     vector_2b = vector_2b * 1e3  # The vector would be in meters --> convert to mm
-    segment_2b = Segment.from_start_point_and_vector(start_2b, vector_2b, vector_units=UNITS.mm, plane = yz_plane)
+    segment_2b = Segment.from_start_point_and_vector(
+        start_2b, vector_2b, vector_units=UNITS.mm, plane=yz_plane
+    )
     assert segment_2b.start == start
     assert segment_2b.end == end
     assert segment_2b.direction == unit_vector
@@ -328,7 +330,7 @@ def test_create_segment_no_sketch():
 def test_errors_line():
     """Check errors when handling a ``Line``."""
     plane = Plane()
-    
+
     with pytest.raises(TypeError, match="Provided type"):
         Line(plane, Point([10, 20, 30], unit=UNITS.meter), "b")
     with pytest.raises(
