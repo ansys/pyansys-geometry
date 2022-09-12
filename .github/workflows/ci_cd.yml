@@ -139,13 +139,9 @@ jobs:
       # - name: Upload coverage to Codecov
       #   uses: codecov/codecov-action@v3
 
-  #  needs: [smoke-tests]
   integration_tests:
-    name: Integration Tests
-    runs-on: [pygeometry]
-    env:
-      GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest
-      GEO_PORT: 50051
+    name: Integration tests
+    runs-on: [self-hosted, pygeometry]
 
     steps:
       - uses: actions/checkout@v3
@@ -174,6 +170,9 @@ jobs:
 
       - name: Start geometry core docker image
         run: docker run --name geo -p $GEO_PORT:50051 $GEO_IMAGE > log.txt &
+        env:
+          GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest
+          GEO_PORT: 50051
 
   docs:
     name: Documentation
