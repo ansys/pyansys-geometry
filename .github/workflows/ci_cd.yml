@@ -139,11 +139,11 @@ jobs:
       # - name: Upload coverage to Codecov
       #   uses: codecov/codecov-action@v3
 
+  #  needs: [smoke-tests]
   integration_tests:
     name: Integration Tests
-    needs: [smoke-tests]
     runs-on: [pygeometry]
-    env : |
+    env:
       GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest
       GEO_PORT: 50051
 
