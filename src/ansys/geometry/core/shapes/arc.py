@@ -29,9 +29,6 @@ class Arc(BaseShape):
             A :class:``Point`` representing the end of the arc.
 
         """
-
-        super().__init__(origin, dir_1=dir_1, dir_2=dir_2, is_closed=True)
-
         # Verify both points are not the same
         if start_point == end_point:
             raise ValueError("Start and end points must be different.")
@@ -48,7 +45,7 @@ class Arc(BaseShape):
         super().__init__(
             origin,
             dir_1=self._start_vector / self._start_vector.norm,
-            dir_2=self._end_vector // self._end_vector.norm,
+            dir_2=self._end_vector / self._end_vector.norm,
         )
 
         self._radius = self._start_vector.norm
@@ -79,12 +76,12 @@ class Arc(BaseShape):
 
     @property
     def radius(self) -> Real:
-        """The radius of the circle.
+        """The radius of the arc.
 
         Returns
         -------
         Real
-            The radius of the circle.
+            The radius of the arc.
 
         """
         return self._radius
