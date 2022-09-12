@@ -9,7 +9,7 @@ from ansys.geometry.core.typing import Real
 
 
 class Arc(BaseShape):
-    """A class for modelling arcs."""
+    """A class for modeling arcs."""
 
     def __init__(
         self,
