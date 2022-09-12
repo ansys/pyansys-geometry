@@ -68,12 +68,22 @@ class Translation(np.ndarray):
 class Scale(np.ndarray):
     def __new__(cls, input: object, v: Vector):
         obj = np.asarray(input).view(cls)
-        scalar_matrix = np.array(
-            [
-                [v.x, 0, 0, 0],
-                [0, v.y, 0, 0],
-                [0, 0, v.z, 0],
-                [0, 0, 0, 1],
-            ]
-        )
-        return np.matmul(scalar_matrix, input)
+        obj = np.append(obj, [1])
+        if v._is_3d == True:
+            scalar_matrix = np.array(
+                [
+                    [v.x, 0, 0, 0],
+                    [0, v.y, 0, 0],
+                    [0, 0, v.z, 0],
+                    [0, 0, 0, 1],
+                ]
+            )
+        else:
+            scalar_matrix = np.array(
+                [
+                    [v.x, 0, 0],
+                    [0, v.y, 0],
+                    [0, 0, 1],
+                ]
+            )
+        return np.matmul(scalar_matrix, input)[:-1]
