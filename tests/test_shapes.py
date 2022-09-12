@@ -366,3 +366,27 @@ def test_errors_segment():
         match="Parameters 'start' and 'end' have the same values. No segment can be created.",
     ):
         Segment(plane, Point([10, 20, 30]), Point([10, 20, 30]))
+
+
+def test_create_arc():
+    """Test arc shape creation in a sketch."""
+
+    # Create a Sketch instance
+    sketch = Sketch()
+
+    # Draw an arc in previous sketch
+    origin = Point([1, 1, 0], unit=UNITS.meter)
+    start_point = Point([1, 3, 0], unit=UNITS.meter)
+    end_point = Point([3, 1, 0], unit=UNITS.meter)
+    arc = sketch.draw_arc(origin, start_point, end_point)
+
+    # Check attributes are expected ones
+    assert_allclose(arc.radius, 2)
+    assert_allclose(arc.sector_area, np.pi)
+    assert_allclose(arc.length, 2 * np.pi**2)
+
+    # Check points are expected ones
+    local_points = arc.local_points(num_points=5)
+    assert abs(all(local_points[0] - Point([3, 1, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[1] - Point([2.8477, 1.7653, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[4] - Point([1, 3, 0]))) <= DOUBLE_EPS

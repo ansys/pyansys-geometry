@@ -6,7 +6,8 @@ from pint import Quantity
 
 from ansys.geometry.core.math import Plane, Point, UnitVector, Vector
 from ansys.geometry.core.misc import Distance
-from ansys.geometry.core.shapes import BaseShape, Circle, Ellipse, Line, Polygon, Segment
+from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Line, Polygon, Segment
+
 
 
 class Sketch:
@@ -159,3 +160,30 @@ class Sketch:
         polygon = Polygon(self._plane, center, inner_radius, sides)
         self.append_shape(polygon)
         return polygon
+
+    def draw_arc(
+        self,
+        center: Point,
+        start_point: Point,
+        end_point: Point,
+    ):
+        """Create an arc shape on the sketch.
+
+        Parameters
+        ----------
+        center : Point
+            A :class:``Point`` representing the center of the arc.
+        start_point : Point
+            A :class:``Point`` representing the start of the shape.
+        end_points : Point
+            A :class:``Point`` representing the end of the shape.
+
+        Returns
+        -------
+        Arc
+            An object representing the arc added to the sketch.
+
+        """
+        arc = Arc(center, start_point, end_point)
+        self.append_shape(arc)
+        return arc
