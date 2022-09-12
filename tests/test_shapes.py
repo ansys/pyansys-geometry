@@ -1,10 +1,11 @@
 import numpy as np
 from numpy.testing import assert_allclose
+from pint import Quantity
 import pytest
 
 from ansys.geometry.core.math import ZERO_VECTOR3D, Plane, Point, UnitVector, Vector
 from ansys.geometry.core.misc import UNIT_LENGTH, UNITS
-from ansys.geometry.core.shapes import Circle, Line, Segment
+from ansys.geometry.core.shapes import Circle, Ellipse, Line, Segment
 from ansys.geometry.core.sketch import Sketch
 
 DOUBLE_EPS = np.finfo(float).eps
@@ -72,24 +73,69 @@ def test_create_ellipse():
     sketch = Sketch()
 
     # Draw a circle in previous sketch
-    a, b, origin = (2 * UNITS.m).magnitude, (1 * UNITS.m).magnitude, Point([0, 0, 0], UNITS.m)
-    ecc = np.sqrt(1 - (b / a) ** 2)
-    ellipse = sketch.draw_ellipse(a, b, origin)
+    semi_major, semi_minor, origin = 2 * UNITS.m, 1 * UNITS.m, Point([0, 0, 0], UNITS.m)
+    ecc = np.sqrt(1 - (semi_minor / semi_major) ** 2)
+    ellipse = sketch.draw_ellipse(origin, semi_major, semi_minor)
 
     # Check attributes are expected ones
-    assert_allclose(ellipse.semi_major_axis, a)
-    assert_allclose(ellipse.semi_minor_axis, b)
-    assert_allclose(ellipse.eccentricity, ecc)
-    assert_allclose(ellipse.linear_eccentricity, np.sqrt(a**2 - b**2))
-    assert_allclose(ellipse.semi_latus_rectum, b**2 / a)
-    assert_allclose(ellipse.perimeter, 9.6884482205477 * UNITS.m)
+    assert ellipse.semi_major_axis == semi_major
+    assert ellipse.semi_minor_axis == semi_minor
+    assert abs(ellipse.eccentricity - ecc.m) <= DOUBLE_EPS
+    assert ellipse.linear_eccentricity == np.sqrt(semi_major**2 - semi_minor**2)
+    assert ellipse.semi_latus_rectum == semi_minor**2 / semi_major
+    assert abs((ellipse.perimeter - 9.6884482205477 * UNITS.m).m) <= 5e-14
+    assert abs((ellipse.area - 6.28318530717959 * UNITS.m * UNITS.m).m) <= 5e-14
 
     # Check points are expected ones
     local_points = ellipse.local_points(num_points=5)
     assert abs(all(local_points[0] - Point([2, 0, 0]))) <= DOUBLE_EPS
     assert abs(all(local_points[2] - Point([-2, 0, 0]))) <= DOUBLE_EPS
 
+    # Use the class method to build an ellipse
+    semi_major_2, semi_minor_2, center_2 = 5 * UNITS.mm, 4 * UNITS.mm, Point([10, 20, 0], UNITS.mm)
+    ecc_2 = np.sqrt(1 - (semi_minor_2 / semi_major_2) ** 2)
+    ellipse_from_axes = Ellipse.from_axes(center_2, semi_major_2, semi_minor_2)
+    assert ellipse_from_axes.semi_major_axis == semi_major_2
+    assert ellipse_from_axes.semi_minor_axis == semi_minor_2
+    assert abs(ellipse_from_axes.eccentricity - ecc_2.m) <= DOUBLE_EPS
+    assert ellipse_from_axes.linear_eccentricity == np.sqrt(semi_major_2**2 - semi_minor_2**2)
+    assert ellipse_from_axes.semi_latus_rectum == semi_minor_2**2 / semi_major_2
+    assert abs((ellipse_from_axes.perimeter - 28.36166788897449 * UNITS.mm).m) <= 5e-14
+    assert abs((ellipse_from_axes.area - 62.8318530717959 * UNITS.mm * UNITS.mm).m) <= 5e-14
 
+    local_points_2 = ellipse_from_axes.local_points(num_points=5)
+    assert abs(all(local_points_2[0] - Point([10, 20, 0], UNITS.mm))) <= DOUBLE_EPS
+    assert abs(all(local_points_2[2] - Point([-10, 20, 0], UNITS.mm))) <= DOUBLE_EPS
+
+
+def test_ellipse_errors():
+    """Test various circle instantiation errors."""
+    xy_plane = Plane()
+
+    with pytest.raises(
+        TypeError, match=r"The pint.Unit provided as input should be a \[length\] quantity."
+    ):
+        Ellipse(xy_plane, Point([10, 20, 0]), Quantity(1, UNITS.fahrenheit), Quantity(56, UNITS.fahrenheit))
+
+    with pytest.raises(
+        TypeError, match=r"The pint.Unit provided as input should be a \[length\] quantity."
+    ):
+        Ellipse(xy_plane, Point([10, 20, 0]), 1 * UNITS.m, Quantity(56, UNITS.fahrenheit))
+
+    with pytest.raises(ValueError, match="Center must be contained in the plane."):
+        Ellipse(xy_plane, Point([0, 0, 1]), -1 * UNITS.m, -3 * UNITS.m)
+
+    with pytest.raises(ValueError, match="Semi-major axis must be a real positive value."):
+        Ellipse(xy_plane, Point([10, 20, 0]), -1 * UNITS.m, -3 * UNITS.m,)
+
+    with pytest.raises(ValueError, match="Semi-minor axis must be a real positive value."):
+        Ellipse(xy_plane, Point([10, 20, 0]), 1 * UNITS.m, -3 * UNITS.m,)
+
+    with pytest.raises(ValueError, match="Semi-major axis cannot be shorter than semi-minor axis."):
+        Ellipse(xy_plane, Point([10, 20, 0]), 1 * UNITS.m, 3 * UNITS.m,)
+
+    ellipse = Ellipse(xy_plane, Point([10, 20, 0]), 3 * UNITS.m, 100 * UNITS.cm,)
+    
 def test_create_polygon():
     """Test polygon shape creation in a sketch."""
 

@@ -18,6 +18,8 @@ class Ellipse(BaseShape):
     ----------
     plane : Plane
         A :class:`Plane` representing the planar surface where the shape is contained.
+    center: Point
+        A :class:`Point` representing the center of the ellipse.
     semi_major_axis : Union[Quantity, Distance]
         The semi-major axis of the ellipse.
     semi_minor_axis : Union[Quantity, Distance]
@@ -27,19 +29,24 @@ class Ellipse(BaseShape):
     def __init__(
         self,
         plane: Plane,
+        center: Point,
         semi_major_axis: Union[Quantity, Distance],
         semi_minor_axis: Union[Quantity, Distance],
     ):
         """Initializes the ellipse shape."""
         super().__init__(plane, is_closed=True)
+        check_type(center, Point)
         check_type(semi_major_axis, (Quantity, Distance))
         check_type(semi_minor_axis, (Quantity, Distance))
+        self._center = center
         self._semi_major_axis = (
             semi_major_axis if isinstance(semi_major_axis, Distance) else Distance(semi_major_axis)
         )
         self._semi_minor_axis = (
             semi_minor_axis if isinstance(semi_minor_axis, Distance) else Distance(semi_minor_axis)
         )
+        if not self.plane.is_point_contained(center):
+            raise ValueError("Center must be contained in the plane.")
         if self._semi_major_axis.value.m_as(self._semi_major_axis.base_unit) <= 0:
             raise ValueError("Semi-major axis must be a real positive value.")
         if self._semi_minor_axis.value.m_as(self._semi_minor_axis.base_unit) <= 0:
@@ -52,6 +59,10 @@ class Ellipse(BaseShape):
         # Ensure that the semi-major axis is equal or larger than the minor one
         if self._semi_major_axis.value.m < self._semi_minor_axis.value.m:
             raise ValueError("Semi-major axis cannot be shorter than semi-minor axis.")
+
+    @property
+    def center(self) -> Point:
+        return self._center
 
     @property
     def semi_major_axis(self) -> Quantity:
@@ -162,7 +173,13 @@ class Ellipse(BaseShape):
         theta = np.linspace(0, 2 * np.pi, num_points)
         return [
             Point(
-                [self.semi_major_axis.m * np.cos(ang), self.semi_minor_axis.m * np.sin(ang), 0.0],
+                [
+                    self.center.x.to(self.semi_major_axis.units).m
+                    + self.semi_major_axis.m * np.cos(ang),
+                    self.center.y.to(self.semi_major_axis.units).m
+                    + self.semi_minor_axis.m * np.sin(ang),
+                    self.center.z.to(self.semi_major_axis.units).m,
+                ],
                 unit=self.semi_major_axis.units,
             )
             for ang in theta
@@ -171,6 +188,7 @@ class Ellipse(BaseShape):
     @classmethod
     def from_axes(
         cls,
+        center: Point,
         semi_major_axis: Union[Quantity, Distance],
         semi_minor_axis: Union[Quantity, Distance],
         plane: Optional[Plane] = Plane(),
@@ -179,6 +197,8 @@ class Ellipse(BaseShape):
 
         Parameters
         ----------
+        center: Point
+            A :class:`Point` representing the center of the ellipse.
         semi_major_axis : Union[Quantity, Distance]
             The semi-major axis of the ellipse.
         semi_minor_axis : Union[Quantity, Distance]
@@ -192,4 +212,4 @@ class Ellipse(BaseShape):
         Ellipse
             An object for modeling elliptical shapes.
         """
-        return cls(plane, semi_major_axis, semi_minor_axis)
+        return cls(plane, center, semi_major_axis, semi_minor_axis)

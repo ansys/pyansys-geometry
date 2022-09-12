@@ -60,6 +60,7 @@ class Sketch:
 
     def draw_ellipse(
         self,
+        center: Point,
         semi_major_axis: Union[Quantity, Distance],
         semi_minor_axis: Union[Quantity, Distance],
     ):
@@ -67,6 +68,8 @@ class Sketch:
 
         Parameters
         ----------
+        center: Point
+            A :class:`Point` representing the center of the ellipse.
         semi_major_axis : Union[Quantity, Distance]
             The semi-major axis of the ellipse.
         semi_minor_axis : Union[Quantity, Distance]
@@ -78,7 +81,7 @@ class Sketch:
             An object representing the ellipse added to the sketch.
 
         """
-        ellipse = Ellipse(self._plane, semi_major_axis, semi_minor_axis)
+        ellipse = Ellipse(self._plane, center, semi_major_axis, semi_minor_axis)
         self.append_shape(ellipse)
         return ellipse
 
