@@ -1,7 +1,7 @@
-from typing import Optional, Union
+from typing import Union
 
 import numpy as np
-from scipy.spatial.transform import Rotation as spatial_rot
+from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Vector3D
 from ansys.geometry.core.math.vector import Vector2D
@@ -10,9 +10,7 @@ from ansys.geometry.core.typing import Real
 
 
 class Rotation(np.ndarray):
-    def __new__(
-        cls, input: object, angle: Union[Real, np.ndarray], axis: Optional[str] = "x"
-    ) -> object:
+    def __new__(cls, input: object, angle: Union[Real, np.ndarray], axis: str) -> object:
         """Constructor for ``Rotation``."""
         obj = np.asarray(input).view(cls)
         check_ndarray_is_float_int(obj)
@@ -30,7 +28,7 @@ class Rotation(np.ndarray):
             raise ValueError("Axis and angle are not matching")
         obj._angle = ang
         obj._axis = axis
-        rotated_obj = spatial_rot.from_euler(obj._axis, obj._angle)
+        rotated_obj = spatial_rotation.from_euler(obj._axis, obj._angle)
         obj_rot = rotated_obj.apply(obj)
         return obj_rot.view(obj_type)
 
