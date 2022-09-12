@@ -14,13 +14,6 @@ UNIT_LENGTH = UNITS.meter
 UNIT_ANGLE = UNITS.radian
 """Default angle unit for PyGeometry."""
 
-UNIT_AREA = UNIT_LENGTH * UNIT_LENGTH
-"""Default area unit for PyGeometry."""
-
-UNIT_VOLUME = UNIT_AREA * UNIT_LENGTH
-"""Default volume unit for PyGeometry."""
-
-
 class Measurement(PhysicalQuantity):
     """``PhysicalQuantity`` subclass for holding a measurement.
 
@@ -94,37 +87,3 @@ class Angle(Measurement):
         """Constructor for ``Angle``."""
         # Delegates in Measurement ctor. forcing expected dimensions.
         super().__init__(value, unit, UNIT_ANGLE)
-
-
-class Area(Measurement):
-    """``Measurement`` subclass for holding an area.
-
-    Parameters
-    ----------
-    value : Union[Real, Quantity]
-        The value of the area to be considered.
-    unit : ~pint.Unit
-        The units to be considered for the given measurement.
-    """
-
-    def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = UNIT_AREA):
-        """Constructor for ``Area``."""
-        # Delegates in Measurement ctor. forcing expected dimensions.
-        super().__init__(value, unit, UNIT_AREA)
-
-
-class Volume(Measurement):
-    """``Measurement`` subclass for holding a volume.
-
-    Parameters
-    ----------
-    value : Union[Real, Quantity]
-        The value of the volume to be considered.
-    unit : ~pint.Unit
-        The units to be considered for the given measurement.
-    """
-
-    def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = UNIT_VOLUME):
-        """Constructor for ``Volume``."""
-        # Delegates in Measurement ctor. forcing expected dimensions.
-        super().__init__(value, unit, UNIT_VOLUME)
