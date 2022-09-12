@@ -43,7 +43,7 @@ class Line(BaseShape):
     ):
         """Initializes the line shape."""
         # Call the BaseShape ctor.
-        super().__init__(plane, is_closed=True)
+        super().__init__(plane, is_closed=False)
 
         # Perform some sanity checks
         check_type(direction, Vector)
