@@ -1,6 +1,6 @@
 import math
 
-from ansys.geometry.core.accuracy import Accuracy
+from ansys.geometry.core.misc.accuracy import Accuracy
 
 
 def test_length():

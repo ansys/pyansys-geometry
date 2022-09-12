@@ -5,8 +5,8 @@ from typing import List, Optional
 import numpy as np
 
 from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
-from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.math.point import Point
+from ansys.geometry.core.math.vector import UnitVector
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.typing import Real
 
@@ -20,15 +20,15 @@ class Polygon(BaseShape):
         The inradius(apothem) of the polygon.
     sides : int
         Number of sides of the polygon.
-    origin : Point3D
-        A :class:``Point3D`` representing the origin of the shape.
+    origin : Point
+        A :class:``Point`` representing the origin of the shape.
         By default, [0, 0, 0].
-    dir_1 : UnitVector3D
-        A :class:``UnitVector3D`` representing the first fundamental direction
+    dir_1 : UnitVector
+        A :class:``UnitVector`` representing the first fundamental direction
         of the reference plane where the shape is contained.
         By default, ``UNIT_VECTOR_X``.
-    dir_2 : UnitVector3D
-        A :class:``UnitVector3D`` representing the second fundamental direction
+    dir_2 : UnitVector
+        A :class:``UnitVector`` representing the second fundamental direction
         of the reference plane where the shape is contained.
         By default, ``UNIT_VECTOR_Y``.
     """
@@ -37,9 +37,9 @@ class Polygon(BaseShape):
         self,
         inner_radius: Real,
         sides: int,
-        origin: Point3D,
-        dir_1: Optional[UnitVector3D] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector3D] = UNIT_VECTOR_Y,
+        origin: Point,
+        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
+        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
     ):
         """Initializes the polygon shape."""
         super().__init__(origin, dir_1=dir_1, dir_2=dir_2, is_closed=True)
@@ -126,19 +126,19 @@ class Polygon(BaseShape):
         """
         return (self.inner_radius * self.perimeter) / 2
 
-    def local_points(self) -> List[Point3D]:
+    def local_points(self) -> List[Point]:
         """Returns a list containing all the vertices of the polygon.
 
         Vertices are given in the local space.
 
         Returns
         -------
-        list[Point3D]
+        list[Point]
             A list of vertices representing the shape.
 
         """
         theta = np.linspace(0, 2 * np.pi, self.n_sides + 1)
         return [
-            Point3D([self.outer_radius * np.cos(ang), self.outer_radius * np.sin(ang), 0.0])
+            Point([self.outer_radius * np.cos(ang), self.outer_radius * np.sin(ang), 0.0])
             for ang in theta
         ]
