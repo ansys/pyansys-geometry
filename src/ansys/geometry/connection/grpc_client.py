@@ -2,8 +2,8 @@
 
 import grpc
 
-from ansys.geometry.connection.temporary_stubs.designs_pb2 import NewDesignRequest
-from ansys.geometry.connection.temporary_stubs.designs_pb2_grpc import DesignsStub
+from ansys.api.geometry.designs_pb2 import NewDesignRequest
+from ansys.api.geometry.designs_pb2_grpc import DesignsStub
 from ansys.geometry.core.design_assembly.design import Design
 
 # Maximum size for gRPC message
