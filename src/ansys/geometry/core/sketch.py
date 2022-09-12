@@ -3,7 +3,7 @@
 from typing import Optional, Union
 
 from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y, ZERO_VECTOR3D
-from ansys.geometry.core.math.point import Point, Point3D
+from ansys.geometry.core.math.point import Point
 from ansys.geometry.core.math.vector import UnitVector, Vector
 from ansys.geometry.core.shapes.arc import Arc
 from ansys.geometry.core.shapes.base import BaseShape
@@ -236,9 +236,9 @@ class Sketch:
 
     def draw_arc(
         self,
-        center: Point3D,
-        start_point: Point3D,
-        end_point: Point3D,
+        center: Point,
+        start_point: Point,
+        end_point: Point,
     ):
         """Create an arc shape on the sketch.
 
