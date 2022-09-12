@@ -8,7 +8,7 @@ from ansys.geometry.core.math.constants import UNIT_VECTOR_X, UNIT_VECTOR_Y, ZER
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.point import Point
 from ansys.geometry.core.math.vector import UnitVector, Vector
-from ansys.geometry.core.misc.checks import check_type
+from ansys.geometry.core.misc.checks import check_type, check_type_equivalence
 from ansys.geometry.core.typing import RealSequence
 
 
@@ -61,3 +61,17 @@ class Plane(Frame):
 
         # If plane equation is equal to 0, your point is contained
         return True if np.isclose(plane_eq, 0.0) else False
+
+    def __eq__(self, other: "Plane") -> bool:
+        """Equals operator for ``Plane``."""
+        check_type_equivalence(other, self)
+        return (
+            self.origin == other.origin
+            and self.direction_x == other.direction_x
+            and self.direction_y == other.direction_y
+            and self.direction_z == other.direction_z
+        )
+
+    def __ne__(self, other: "Plane") -> bool:
+        """Not equals operator for ``Plane``."""
+        return not self == other

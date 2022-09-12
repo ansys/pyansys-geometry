@@ -36,7 +36,10 @@ class Sketch:
             The shape to the added to the sketch.
 
         """
-        self.shapes_list.append(shape)
+        if self._plane == shape.plane:
+            self.shapes_list.append(shape)
+        else:
+            raise ValueError("The provided shape does not belong to the same plane as the Sketch.")
 
     def draw_circle(self, center: Point, radius: Union[Quantity, Distance]):
         """Create a circle shape on the sketch.
@@ -140,6 +143,8 @@ class Sketch:
 
         Parameters
         ----------
+        center: Point
+            A :class:`Point` representing the center of the circle.
         inner_radius : Union[Quantity, Distance]
             The inradius(apothem) of the polygon.
         sides : int
