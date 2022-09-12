@@ -239,9 +239,8 @@ class Sketch:
         center: Point3D,
         start_point: Point3D,
         end_point: Point3D,
-        axis_direction: Vector3D([0, 0, 1]),
     ):
-        """Create a circle shape on the sketch.
+        """Create an arc shape on the sketch.
 
         Parameters
         ----------
@@ -254,7 +253,7 @@ class Sketch:
 
         Returns
         -------
-        ArcShape
+        Arc
             An object representing the arc added to the sketch.
 
         """

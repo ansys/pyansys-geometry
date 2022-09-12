@@ -250,6 +250,7 @@ def test_errors_segment():
     ):
         Segment(Point3D([10, 20, 30]), Point3D([10, 20, 30]))
 
+
 def test_create_arc():
     """Test arc shape creation in a sketch."""
 
@@ -257,21 +258,18 @@ def test_create_arc():
     sketch = Sketch()
 
     # Draw an arc in previous sketch
-    origin = Point3D([1, 1, 0], u.m)
-    start_point = Point3D([1, 3, 0], u.m)
-    end_point = Point3D([3, 1, 0], u.m)
-    arc = sketch.draw_arc(radius, origin)
+    origin = Point3D([1, 1, 0], unit=UNITS.meter)
+    start_point = Point3D([1, 3, 0], unit=UNITS.meter)
+    end_point = Point3D([3, 1, 0], unit=UNITS.meter)
+    arc = sketch.draw_arc(origin, start_point, end_point)
 
     # Check attributes are expected ones
-    assert_allclose(arc.radius, radius)
-    assert_allclose(arc.sector_area, np.pi * radius**2)
-    assert_allclose(arc.length, 2 * np.pi * radius)
+    assert_allclose(arc.radius, 2)
+    assert_allclose(arc.sector_area, np.pi)
+    assert_allclose(arc.length, 2 * np.pi**2)
 
     # Check points are expected ones
-    five_local_points = [
-        [1, 0, -1, 0, 1],
-        [0, 1, 0, -1, 0],
-        [0, 0, 0, 0, 0],
-    ]
-    assert_allclose(arc.local_points(num_points=5), five_local_points, atol=1e-5, rtol=1e-7)
-
+    local_points = arc.local_points(num_points=5)
+    assert abs(all(local_points[0] - Point3D([3, 1, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[1] - Point3D([2.8477, 1.7653, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[4] - Point3D([1, 3, 0]))) <= DOUBLE_EPS

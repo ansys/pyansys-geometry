@@ -3,7 +3,7 @@ from typing import List, Optional
 
 import numpy as np
 
-from ansys.geometry.core.math import Point3D, Vector3D
+from ansys.geometry.core.math import Point3D, vector
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.typing import Real
 
@@ -13,7 +13,7 @@ class Arc(BaseShape):
 
     def __init__(
         self,
-        center: Point3D,
+        origin: Point3D,
         start_point: Point3D,
         end_point: Point3D,
     ):
@@ -21,7 +21,7 @@ class Arc(BaseShape):
 
         Parameters
         ----------
-        center : Point3D
+        origin : Point3D
             A :class:``Point3D`` representing the center of the arc.
         start_point : Point3D
             A :class:``Point3D`` representing the start of the arc.
@@ -32,15 +32,16 @@ class Arc(BaseShape):
         # Verify both points are not the same
         if start_point == end_point:
             raise ValueError("Start and end points must be different.")
-        if center == start_point:
+        if origin == start_point:
             raise ValueError("Center and start points must be different.")
-        if center == end_point:
+        if origin == end_point:
             raise ValueError("Center and end points must be different.")
 
-        self._center, self._start_point, self._end_point = (center, start_point, end_point)
-        self._axis_direction = self._axis_direction
-        self._radius = vector_from_points(self.center, self.start_point).norm()
+        self._origin, self._start_point, self._end_point = (origin, start_point, end_point)
 
+        self._start_vector = vector.Vector3D.from_points(self._origin, self._start_point)
+        self._end_vector = vector.Vector3D.from_points(self._origin, self._end_point)
+        self._radius = self._start_vector.norm
 
     @property
     def start_point(self) -> Point3D:
@@ -88,9 +89,8 @@ class Arc(BaseShape):
             The angle of the circle.
 
         """
-        start_vector = vector_from_points(self.center, self.start_point)
-        end_vector = vector_from_points(self.center, self.end_point)
-        self._angle = start_vector * end_vector
+
+        self._angle = np.arccos(self._start_vector * self._end_vector / self.radius**2)
         return self._angle
 
     @property
@@ -115,7 +115,7 @@ class Arc(BaseShape):
             The area of the sector of the arc.
 
         """
-        return self.radius**2 * self.angle/2
+        return self.radius**2 * self.angle / 2
 
     def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
         """Returns al list containing all the points belonging to the shape.
@@ -132,14 +132,7 @@ class Arc(BaseShape):
 
         """
         theta = np.linspace(0, self.angle, num_points)
-        x_local = self.radius * np.cos(theta)
-        y_local = self.radius * np.sin(theta)
-        z_local = np.zeros(num_points)
+        x_local = self.radius * np.cos(theta) + self.origin[0]
+        y_local = self.radius * np.sin(theta) + self.origin[1]
+        z_local = np.zeros(num_points) + self.origin[2]
         return [x_local, y_local, z_local]
-
-
-def vector_from_points(point_a:Point3D, point_b:Point3D) -> Vector3D:
-    x = point_b[0]-point_a[0]
-    y = point_b[1]-point_a[1]
-    z = point_b[2]-point_a[2]
-    return Vector3D([x, y, z])
