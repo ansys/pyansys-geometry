@@ -1,4 +1,4 @@
-"""``DirectModeler`` class module."""
+"""``Modeler`` class module."""
 import grpc
 
 from .connection import DEFAULT_HOST, DEFAULT_PORT, GrpcClient
