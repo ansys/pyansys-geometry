@@ -11,7 +11,8 @@ from ansys.geometry.core.misc.checks import (
     check_type_equivalence,
     only_for_3d,
 )
-from ansys.geometry.core.misc.units import UNIT_ANGLE, UNIT_LENGTH, UNITS, PhysicalQuantity
+from ansys.geometry.core.misc.measurements import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance
+from ansys.geometry.core.misc.units import UNITS, PhysicalQuantity
 
 __all__ = [
     "Accuracy",
@@ -25,6 +26,8 @@ __all__ = [
     "check_type_equivalence",
     "only_for_3d",
     "PhysicalQuantity",
+    "Angle",
+    "Distance",
     "UNIT_ANGLE",
     "UNIT_LENGTH",
     "UNITS",

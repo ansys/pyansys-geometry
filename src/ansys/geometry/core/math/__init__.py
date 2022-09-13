@@ -1,6 +1,4 @@
 """PyGeometry math subpackage."""
-import numpy as np
-
 from ansys.geometry.core.math.constants import (
     DEFAULT_POINT,
     UNIT_VECTOR_X,
