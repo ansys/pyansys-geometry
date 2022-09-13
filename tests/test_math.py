@@ -725,6 +725,17 @@ def test_transformation_rotation():
     assert abs(rot_point - test_point).all() <= DOUBLE_EPS
     assert abs(rot_point_rad - test_point).all() <= DOUBLE_EPS
 
+    with pytest.raises(
+        ValueError, match="Expected axis specification to be a string of up to 3 characters"
+    ):
+        rot_x = Rotation(v_1, np.pi / 2, "xyzx")
+
+    with pytest.raises(ValueError, match="Axis and angle are not matching"):
+        rot_x = Rotation(v_1, [np.pi / 2, np.pi / 2, np.pi / 2], "xy")
+
+    with pytest.raises(ValueError, match="Axis and angle are not matching"):
+        rot_x = Rotation(v_1, [np.pi / 2], "xy")
+
 
 def test_transformation_translation():
     """Simple test for translation."""
