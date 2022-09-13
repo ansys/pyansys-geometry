@@ -692,7 +692,7 @@ def test_plane():
 
 
 def test_transformation_rotation():
-    """Simple test to test rotation"""
+    """Simple test to test rotation."""
     v_1 = Vector([1, 2, 3])
     rot_x = Rotation(v_1, np.pi / 2, "x")
     test_vector = Vector([1, -3, 2])
@@ -721,7 +721,7 @@ def test_transformation_rotation():
 
 
 def test_transformation_translation():
-    """Simple test for translation"""
+    """Simple test for translation."""
     point = Point([1, 2, 3])
     v = Vector([1, 1, 1])
     trans = Translation(point, v)
@@ -743,7 +743,7 @@ def test_transformation_translation():
 
 
 def test_transformation_scalar():
-    """Simple test for scaling"""
+    """Simple test for scaling."""
     point = Point([1, 2, 3])
     v = Vector([1, 1 / 2, 1 / 3])
     scale = Scaling(point, v)
