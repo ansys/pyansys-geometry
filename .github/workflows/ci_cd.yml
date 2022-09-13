@@ -226,7 +226,7 @@ jobs:
           cache: 'pip'
           cache-dependency-path: 'pyproject.toml'
 
-      - name: Install ansys-mechanical-core
+      - name: Install ansys-geometry-core
         run: |
           pip install build
           python -m build
