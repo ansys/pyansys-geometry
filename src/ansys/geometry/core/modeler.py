@@ -21,7 +21,7 @@ class Modeler:
         channel: grpc.Channel = None,
         timeout=60,
     ):
-        """Constructor method for ``DirectModeler``."""
+        """Constructor method for ``Modeler``."""
         self._client = GrpcClient(host, port, channel, timeout=timeout)
 
         # Design[] maintaining references to all designs within the modeler workspace
