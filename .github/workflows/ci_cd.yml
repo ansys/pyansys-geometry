@@ -144,7 +144,7 @@ jobs:
     name: Integration tests
     runs-on: [self-hosted, pygeometry]
     env:
-      ANSYS_GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest
+      ANSRV_GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest
       ANSRV_GEO_PORT: 700
       GEO_CONT_NAME: ans_geo
 
@@ -181,9 +181,9 @@ jobs:
       - name: Stop the geometry service
         if: always()
         run: |
-          docker stop $CONT_NAME
-          docker logs $CONT_NAME
-          run: docker rm $CONT_NAME        
+          docker stop $GEO_CONT_NAME
+          docker logs $GEO_CONT_NAME
+          run: docker rm $GEO_CONT_NAME        
           
   docs:
     name: Documentation

@@ -27,8 +27,8 @@ def wait_until_healthy(channel: grpc.Channel, timeout: float):
     channel : grpc.Channel
         Channel to wait until established and healthy.
     timeout : float
-        Timeout in seconds. One attempt will be made each 100 milliseconds until
-        timeout is exceeded.
+        Timeout in seconds. One attempt will be made each 100 milliseconds
+        until the timeout is exceeded.
 
     Raises
     ------
@@ -48,7 +48,9 @@ def wait_until_healthy(channel: grpc.Channel, timeout: float):
             continue
     else:
         target_str = channel._channel.target().decode()
-        raise TimeoutError("Channel health check to target '{target_str}' timed out.")
+        raise TimeoutError(
+            "Channel health check to target '{target_str}' timed out after " f"{timeout} seconds."
+        )
 
 
 class GrpcClient:
