@@ -9,10 +9,10 @@ Typical use:
    python -c "from ansys.geometry.core.connection import validate; validate()"
 
 """
-from . import client
+from . import GrpcClient
 
 
 def validate():  # pragma: no cover
     """Create the a client using the default settings and it."""
-    print(client())
+    print(GrpcClient())
     # TODO: consider adding additional server stat reporting
