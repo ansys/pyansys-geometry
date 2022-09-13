@@ -6,7 +6,7 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core.math.point import Point
+from ansys.geometry.core.math import Point
 from ansys.geometry.core.misc import (
     UNIT_LENGTH,
     UNITS,

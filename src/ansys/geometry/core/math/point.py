@@ -7,11 +7,11 @@ from pint import Quantity, Unit
 
 from ansys.geometry.core.misc import (
     UNIT_LENGTH,
+    PhysicalQuantity,
     check_ndarray_is_float_int,
     check_type_equivalence,
     only_for_3d,
 )
-from ansys.geometry.core.misc.units import PhysicalQuantity
 from ansys.geometry.core.typing import RealSequence
 
 DEFAULT_POINT_VALUES = [np.nan, np.nan, np.nan]

@@ -4,11 +4,10 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core.math import UNIT_VECTOR_X, UNIT_VECTOR_Y
-from ansys.geometry.core.math.point import Point
-from ansys.geometry.core.math.vector import QuantityVector, UnitVector, Vector
-from ansys.geometry.core.misc import UNIT_LENGTH, UNITS
-from ansys.geometry.core.misc.checks import (
+from ansys.geometry.core.math import Plane, Point, QuantityVector, UnitVector, Vector
+from ansys.geometry.core.misc import (
+    UNIT_LENGTH,
+    UNITS,
     check_ndarray_is_all_nan,
     check_ndarray_is_non_zero,
     check_pint_unit_compatibility,
@@ -23,39 +22,34 @@ class Line(BaseShape):
 
     Parameters
     ----------
-    origin: Point
-        Origin of the line.
+    plane : Plane
+        A :class:`Plane` representing the planar surface where the shape is contained.
+    start: Point
+        Starting point of the line.
     direction: Union[Vector, UnitVector]
         Direction of the line.
-    dir_1 : Optional[UnitVector]
-        A :class:`UnitVector` representing the first fundamental direction
-        of the reference plane where the shape is contained.
-        By default, ``UNIT_VECTOR_X``.
-    dir_2 : Optional[UnitVector]
-        A :class:`UnitVector` representing the second fundamental direction
-        of the reference plane where the shape is contained.
-        By default, ``UNIT_VECTOR_Y``.
 
     Note
     ----
-    The way in which the Sketching plane for the line is defined, is such that
-    we first check if our direction is linearly dependent of ``dir_1`` and ``dir_2``.
-    If ``True`` then we can define our BaseShape with ``dir_1`` and ``dir_2``. Otherwise,
-    it will be necessary to define the BaseShape using the Line direction and another
-    one of the directions. ``dir_2`` will be selected in this case.
+    The proposed line should be contained inside the given plane. Otherwise,
+    the construction of this object will not be possible (it will raise an error).
     """
 
     def __init__(
         self,
-        origin: Point,
+        plane: Plane,
+        start: Point,
         direction: Union[Vector, UnitVector],
-        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
     ):
         """Initializes the line shape."""
+        # Call the BaseShape ctor.
+        super().__init__(plane, is_closed=False)
+
         # Perform some sanity checks
         check_type(direction, Vector)
+        check_type(start, Point)
         check_ndarray_is_non_zero(direction, "direction")
+        check_ndarray_is_all_nan(start, "start")
 
         # If a Vector was provided, we should store a UnitVector
         try:
@@ -65,41 +59,38 @@ class Line(BaseShape):
 
         # Store instance attributes
         self._direction = direction
+        self._start = start
 
-        # Call base ctor. Directions used are based on linear dependency and orthogonality.
-        if self._is_linearly_dependent(direction, dir_1, dir_2):
-            super().__init__(origin, dir_1=dir_1, dir_2=dir_2, is_closed=False)
-        else:
-            super().__init__(origin, dir_1=direction, dir_2=dir_2, is_closed=False)
+        # Check if the line definition is consistent with the provided plane
+        if not self.__is_contained_in_plane():
+            raise ValueError("The provided line definition is not contained in the plane.")
 
     @property
     def direction(self) -> UnitVector:
         """Returns the direction of the line."""
         return self._direction
 
-    def _is_linearly_dependent(
-        self, direction: UnitVector, dir_1: UnitVector, dir_2: UnitVector
-    ) -> bool:
-        """Private method for checking if the provided directions are linearly dependent.
+    @property
+    def start(self) -> Point:
+        """Returns the starting point of the line."""
+        return self._start
 
-        Parameters
-        ----------
-        direction : UnitVector
-            The line's direction vector as a :class:`UnitVector`.
-        dir_1 : UnitVector
-            A :class:`UnitVector` representing the first fundamental direction
-            of the reference plane where the shape is contained.
-        dir_2 : UnitVector
-            A :class:`UnitVector` representing the second fundamental direction
-            of the reference plane where the shape is contained.
+    def __is_contained_in_plane(self) -> bool:
+        """Private method for checking if the line definition is contained in
+        the plane provided
 
         Returns
         -------
         bool
-            ``True`` if the three are linearly dependent, ``False`` otherwise.
+            Returns ``True`` if the line defined is contained in the plane.
         """
-        # Check if direction is linearly dependent or not from dir_1 and dir_2
-        mat = np.array([direction, dir_1, dir_2])
+        # First check if the point is contained in the plane
+        if not self._plane.is_point_contained(self._start):
+            return False
+
+        # Then, check if direction is linearly dependent or not from
+        # i and j (the vectors defining your plane)
+        mat = np.array([self.direction, self.i, self.j])
         (lambdas, _) = np.linalg.eig(mat.T)
         return True if any(np.isclose(lambdas, 0.0)) else False
 
@@ -117,8 +108,8 @@ class Line(BaseShape):
         List[Point]
             A list of points representing the shape.
         """
-        quantified_dir = UNITS.convert(self.direction, self.origin.unit, self.origin.base_unit)
-        line_start = self.origin - quantified_dir * int(num_points / 2)
+        quantified_dir = UNITS.convert(self.direction, self.start.unit, self.start.base_unit)
+        line_start = self.start - quantified_dir * int(num_points / 2)
         return [Point(line_start + delta * quantified_dir) for delta in range(0, num_points)]
 
 
@@ -128,26 +119,19 @@ class Segment(Line):
 
     Parameters
     ----------
+    plane : Plane
+        A :class:`Plane` representing the planar surface where the shape is contained.
     start: Point
         Start of the line segment.
     end: Point
         End of the line segment.
-    dir_1 : Optional[UnitVector]
-        A :class:`UnitVector` representing the first fundamental direction
-        of the reference plane where the shape is contained.
-        By default, ``UNIT_VECTOR_X``.
-    dir_2 : Optional[UnitVector]
-        A :class:`UnitVector` representing the second fundamental direction
-        of the reference plane where the shape is contained.
-        By default, ``UNIT_VECTOR_Y``.
     """
 
     def __init__(
         self,
+        plane: Plane,
         start: Point,
         end: Point,
-        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
     ):
         """Constructor method for ``Segment``."""
         # Perform sanity checks on Point values given
@@ -157,46 +141,44 @@ class Segment(Line):
         check_ndarray_is_all_nan(end, "end")
 
         # Assign values to start and end
-        self._origin = start
+        self._start = start
         self._end = end
 
         # Check segment points values and units
-        self._check_invalid_segment_points()
-        self._rebase_point_units()
+        self.__check_invalid_segment_points()
+        self.__rebase_point_units()
 
         # Build the direction vector
         direction = UnitVector(end - start)
 
         # Call the super ctor (i.e. Line).
-        super().__init__(start, direction, dir_1=dir_1, dir_2=dir_2)
+        super().__init__(plane, start, direction)
+
+    @property
+    def end(self) -> Point:
+        """Returns the end of the ``Segment``."""
+        return self._end
 
     @classmethod
-    def from_origin_and_vector(
+    def from_start_point_and_vector(
         cls,
-        origin: Point,
+        start: Point,
         vector: Vector,
         vector_units: Optional[Unit] = UNIT_LENGTH,
-        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
+        plane: Optional[Plane] = Plane(),
     ):
-        """Create a ``Segment`` from an origin and a vector.
+        """Create a ``Segment`` from a starting ``Point`` and a vector.
 
         Parameters
         ----------
-        origin : Point
+        start : Point
             Start of the line segment.
         vector : Vector
             Vector defining the line segment.
-        vector_units : Optional[Unit], optional
+        vector_units : ~pint.Unit, optional
             The length units of the vector, by default ``UNIT_LENGTH``.
-        dir_1 : Optional[UnitVector]
-            A :class:`UnitVector` representing the first fundamental direction
-            of the reference plane where the shape is contained.
-            By default, ``UNIT_VECTOR_X``.
-        dir_2 : Optional[UnitVector]
-            A :class:`UnitVector` representing the second fundamental direction
-            of the reference plane where the shape is contained.
-            By default, ``UNIT_VECTOR_Y``.
+        plane : Plane, optional
+            A :class:`Plane` representing the planar surface where the shape is contained.
 
         Returns
         -------
@@ -206,34 +188,28 @@ class Segment(Line):
         check_type(vector_units, Unit)
         check_pint_unit_compatibility(vector_units, UNIT_LENGTH)
         end_vec_as_point = Point(vector, vector_units)
-        end_vec_as_point += origin
+        end_vec_as_point += start
 
-        return cls(origin, end_vec_as_point, dir_1=dir_1, dir_2=dir_2)
+        return cls(plane, start, end_vec_as_point)
 
     @classmethod
-    def from_origin_and_quantity_vector(
+    def from_start_point_and_quantity_vector(
         cls,
-        origin: Point,
+        start: Point,
         quantity_vector: QuantityVector,
-        dir_1: Optional[UnitVector] = UNIT_VECTOR_X,
-        dir_2: Optional[UnitVector] = UNIT_VECTOR_Y,
+        plane: Optional[Plane] = Plane(),
     ):
-        """Create a ``Segment`` from an origin and a vector.
+        """Create a ``Segment`` from a starting ``Point`` and a vector.
 
         Parameters
         ----------
-        origin : Point
+        start : Point
             Start of the line segment.
         quantity_vector : QuantityVector
             QuantityVector defining the line segment (with units).
-        dir_1 : Optional[UnitVector]
-            A :class:`UnitVector` representing the first fundamental direction
-            of the reference plane where the shape is contained.
-            By default, ``UNIT_VECTOR_X``.
-        dir_2 : Optional[UnitVector]
-            A :class:`UnitVector` representing the second fundamental direction
-            of the reference plane where the shape is contained.
-            By default, ``UNIT_VECTOR_Y``.
+        plane : Plane, optional
+            A :class:`Plane` representing the planar surface where the shape is contained.
+            By default, the base XY-Plane.
 
         Returns
         -------
@@ -241,40 +217,29 @@ class Segment(Line):
             The ``Segment`` object resulting from the inputs.
         """
         check_type(quantity_vector, QuantityVector)
-        return Segment.from_origin_and_vector(
-            origin=origin,
+        return Segment.from_start_point_and_vector(
+            start=start,
             vector=quantity_vector,
             vector_units=quantity_vector.base_unit,
-            dir_1=dir_1,
-            dir_2=dir_2,
+            plane=plane,
         )
 
-    def _check_invalid_segment_points(self):
-        """Check that the origin and end points are not the same."""
-        if self._origin == self._end:
+    def __check_invalid_segment_points(self):
+        """Check that the start and end points are not the same."""
+        if self._start == self._end:
             raise ValueError(
-                "Parameters 'origin' and 'end' have the same values. No segment can be created."
+                "Parameters 'start' and 'end' have the same values. No segment can be created."
             )
 
-    def _rebase_point_units(self):
-        """Check that the origin and end points are in the same units.
+    def __rebase_point_units(self):
+        """Check that the start and end points are in the same units.
 
         Note
         ----
         If they are not, they will be rebased to ``UNIT_LENGTH``.
         """
-        if not self._origin.unit == self._end.unit:
-            self._origin.unit = self._end.unit = UNIT_LENGTH
-
-    @property
-    def start(self) -> Point:
-        """Returns the start of the ``Segment``."""
-        return self.origin
-
-    @property
-    def end(self) -> Point:
-        """Returns the end of the ``Segment``."""
-        return self._end
+        if not self._start.unit == self._end.unit:
+            self._start.unit = self._end.unit = UNIT_LENGTH
 
     def local_points(self, num_points: Optional[int] = 100) -> List[Point]:
         """
