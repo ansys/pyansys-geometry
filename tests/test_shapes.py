@@ -2,10 +2,11 @@ import numpy as np
 from pint import Quantity
 import pytest
 
-from ansys.geometry.core.math import ZERO_VECTOR3D, Plane, Point, UnitVector, Vector
-from ansys.geometry.core.math.constants import UNIT_VECTOR_Y, UNIT_VECTOR_Z
+from ansys.geometry.core.math import ZERO_VECTOR3D, Plane, Point, QuantityVector, UnitVector, Vector
+from ansys.geometry.core.math.constants import UNIT_VECTOR_X, UNIT_VECTOR_Y, UNIT_VECTOR_Z
 from ansys.geometry.core.misc import UNIT_LENGTH, UNITS
 from ansys.geometry.core.shapes import Circle, Ellipse, Line, Segment
+from ansys.geometry.core.shapes.polygon import Polygon
 from ansys.geometry.core.sketch import Sketch
 
 DOUBLE_EPS = np.finfo(float).eps
@@ -206,9 +207,20 @@ def test_create_polygon():
         radius, sides, center = (-1 * UNITS.m), 6, Point([0, 0, 0], UNITS.m)
         sketch.draw_polygon(center, radius, sides)
 
+    with pytest.raises(ValueError, match="Center must be contained in the plane."):
+        xy_plane = Plane()
+        Polygon(xy_plane, Point([1, 2, 3]), radius, sides)
 
-def test_create_line_no_sketch():
-    """Simple test to create a ``Line`` (w/o a Sketch object)."""
+    with pytest.raises(
+        ValueError, match="The provided shape does not belong to the same plane as the Sketch."
+    ):
+        yz_plane = Plane(Point([1, 2, 3]), UNIT_VECTOR_Y, UNIT_VECTOR_Z)
+        polygon = Polygon(yz_plane, Point([1, 2, 3]), 3 * UNITS.cm, sides)
+        sketch.append_shape(polygon)
+
+
+def test_create_line():
+    """Simple test to create a ``Line``."""
     origin = Point([1, 2, 3], unit=UNITS.mm)
     xy_plane = Plane(origin=origin)
 
@@ -235,9 +247,18 @@ def test_create_line_no_sketch():
     assert local_points_odd[-1] == Point([41, 2, 3], unit=UNITS.mm)
     assert len(local_points_odd) == 81
 
+    # Try adding a simple line with the sketcher
+    sketch = Sketch()
+    start_sketch_line = Point([23, 45, 0], UNITS.cm)
+    dir_sketch_line = UNIT_VECTOR_X
+    line_sketch = sketch.draw_line(start_sketch_line, dir_sketch_line)
+    assert line_sketch.start == start_sketch_line
+    assert line_sketch.direction == dir_sketch_line
+    assert line_sketch.start.unit == start_sketch_line.unit
 
-def test_create_segment_no_sketch():
-    """Simple test to create a ``Segment`` (w/o a Sketch object)."""
+
+def test_create_segment():
+    """Simple test to create a ``Segment``."""
 
     # Test segment - Create a segment using two Point objects
     start = Point([1, 2, 3], unit=UNITS.mm)
@@ -281,21 +302,21 @@ def test_create_segment_no_sketch():
     start_2b = Point([1, 2, 3], unit=UNITS.mm)
     end_2b = Point([1, 5, 9], unit=UNITS.mm)
     vector_2b = Vector(end_2b - start_2b)
-    vector_2b = vector_2b * 1e3  # The vector would be in meters --> convert to mm
-    segment_2b = Segment.from_start_point_and_vector(
-        start_2b, vector_2b, vector_units=UNITS.mm, plane=yz_plane
-    )
+    vector_2b = QuantityVector(
+        vector_2b * 1e3, UNITS.mm
+    )  # The vector would be in meters --> convert to mm
+    segment_2b = Segment.from_start_point_and_quantity_vector(start_2b, vector_2b, plane=yz_plane)
     assert segment_2b.start == start
     assert segment_2b.end == end
     assert segment_2b.direction == unit_vector
     assert segment_2b.start.x == start_2b.x
     assert segment_2b.start.y == start_2b.y
     assert segment_2b.start.z == start_2b.z
-    assert segment_2b.start.unit == UNITS.mm
+    assert segment_2b.start.unit == UNITS.m
     assert segment_2b.end.x == end_2b.x
     assert segment_2b.end.y == end_2b.y
     assert segment_2b.end.z == end_2b.z
-    assert segment_2b.end.unit == UNITS.mm
+    assert segment_2b.end.unit == UNITS.m
 
     # Test segment_3 - Create a segment using two Point objects (in different units)
     start_3 = Point([1, 2, 3], unit=UNITS.mm)
@@ -326,6 +347,17 @@ def test_create_segment_no_sketch():
     assert local_points_odd[-1] == end
     assert len(local_points_odd) == 81
 
+    # Try adding a simple segment with the sketcher
+    sketch = Sketch()
+    start_sketch, end_sketch = Point([23, 45, 0], UNITS.cm), Point([67, 32, 0], UNITS.cm)
+    dir_sketch = UnitVector(end_sketch - start_sketch)
+    segment_sketch = sketch.draw_segment(start_sketch, end_sketch)
+    assert segment_sketch.start == start_sketch
+    assert segment_sketch.end == end_sketch
+    assert segment_sketch.direction == dir_sketch
+    assert segment_sketch.start.unit == start_sketch.unit
+    assert segment_sketch.end.unit == end_sketch.unit
+
 
 def test_errors_line():
     """Check errors when handling a ``Line``."""
@@ -344,6 +376,14 @@ def test_errors_line():
         ValueError, match="The numpy.ndarray 'start' should not be a nan numpy.ndarray."
     ):
         Line(plane, Point(), Vector([1, 0, 0]))
+    with pytest.raises(
+        ValueError, match="The provided line definition is not contained in the plane."
+    ):
+        Line(plane, Point([0, 0, 0]), Vector([0, 0, 1]))
+    with pytest.raises(
+        ValueError, match="The provided line definition is not contained in the plane."
+    ):
+        Line(plane, Point([0, 0, 1]), Vector([1, 0, 0]))
 
 
 def test_errors_segment():
