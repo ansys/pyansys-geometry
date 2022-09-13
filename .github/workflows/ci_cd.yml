@@ -182,7 +182,7 @@ jobs:
         if: always()
         run: |
           docker stop $CONT_NAME
-          docker log $CONT_NAME
+          docker logs $CONT_NAME
           run: docker rm $CONT_NAME        
           
   docs:
