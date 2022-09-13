@@ -18,9 +18,10 @@ from ansys.geometry.core.typing import Real
 
 
 class Rotation(np.ndarray):
-    """Provides rotation for the object. Rotations in 3-D can be
-    represented by a sequence of 3 rotations around a sequence of
-    axes.
+    """Provides rotation for the object.
+
+    Rotations in 3-D can be represented by a sequence
+    of 3 rotations around a sequence of axes.
 
     Parameters
     ----------
@@ -76,8 +77,9 @@ class Rotation(np.ndarray):
 
 
 class Translation(np.ndarray):
-    """Provides a translation in a geometric transformation that shifts
-    every point of a figure, shape or space by the same distance in a
+    """Provides a translation in a geometric transformation.
+
+    Shifts every point of a figure, shape or space by the same distance in a
     given direction.
 
     Parameters
@@ -91,8 +93,10 @@ class Translation(np.ndarray):
     def __new__(cls, input: object, vector: Vector):
         """Constructor for ``Translation``."""
         obj = np.asarray(input).view(cls)
+        check_ndarray_is_float_int(obj)
         if not isinstance(input, (Matrix, Matrix33, Matrix44)):
             obj = np.append(obj, [1])
+        check_type(vector, Vector)
         if vector._is_3d == True:
             translate = np.array(
                 [
@@ -116,7 +120,8 @@ class Translation(np.ndarray):
 
 
 class Scaling(np.ndarray):
-    """Provides a scaling in a geometric transformation that
+    """Provides a scaling in a geometric transformation.
+
     enlarges (increases) or shrinks (diminishes)
     objects by a scale factor that is the same in all directions.
 
@@ -131,6 +136,8 @@ class Scaling(np.ndarray):
     def __new__(cls, input: object, vector: Vector):
         """Constructor for ``Scaling``."""
         obj = np.asarray(input).view(cls)
+        check_ndarray_is_float_int(obj)
+        check_type(vector, Vector)
         if not isinstance(input, (Matrix, Matrix33, Matrix44)):
             obj = np.append(obj, [1])
         if vector._is_3d == True:
