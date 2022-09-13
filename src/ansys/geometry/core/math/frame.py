@@ -12,10 +12,6 @@ from ansys.geometry.core.misc import check_type, check_type_equivalence
 from ansys.geometry.core.typing import RealSequence
 
 
-def get_angle_between_vectors(a, b):
-    return np.arctan2(a.cross(b), a.dot(b)).norm
-
-
 class Frame:
     """
     Provides primitive representation of a frame (an origin and three fundamental directions).

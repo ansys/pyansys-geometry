@@ -20,7 +20,6 @@ The following guide provides a quick insight on the capabilities of ``PyGeometry
 Start by importing the fundamental objects:
 
 ```{code-cell} ipython3
-
 from ansys.geometry.core.misc.units import UNITS as u
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.plotting.plotter import Plotter
@@ -30,13 +29,13 @@ from ansys.geometry.core.plotting.plotter import Plotter
 
 ``Sketches`` are the fundamental objects for drawing basic shapes like lines, segments, circles, ellipses, arcs, and polygons.
 
-An ``Sketch`` instance is created by defining a drawing plane. This plane is declared by using a point and two fundamental directions that need to be orthogonal: 
+An ``Sketch`` instance is created by defining a drawing plane. This plane is declared by using a point and two fundamental directions that need to be orthogonal:
 
 ```{code-cell} ipython3
 from ansys.geometry.core.math import Plane, Point, UnitVector
 ```
 
-In the following lines, a plane is defined and used to create a new sketch: 
+In the following lines, a plane is defined and used to create a new sketch:
 
 ```{code-cell} ipython3
 # Define the origin point of the plane
@@ -62,16 +61,18 @@ Circles can be drawn in a sketch by specifying their center and radius.
 
 ```{code-cell} ipython3
 circle = sketch.draw_circle(Point([2, 1, 1]), radius=30 * u.cm)
+circle.plot()
 ```
 
 ### Drawing an ellipse
 
-Ellipses can be drawn in a sketch by specifying their center, semi-major axis and semi-minor axis. 
+Ellipses can be drawn in a sketch by specifying their center, semi-major axis and semi-minor axis.
 
 ```{code-cell} ipython3
 ellipse = sketch.draw_ellipse(
     origin, semi_major_axis=2*u.m, semi_minor_axis=1*u.m
 )
+ellipse.plot()
 ```
 
 ### Drawing a polygon
@@ -81,6 +82,7 @@ Regular polygons can be drawn by passing the center, their radius and their desi
 pentagon = sketch.draw_polygon(
     origin, inner_radius=3*u.m, sides=5
 )
+pentagon.plot()
 ```
 
 ### Drawing an arc
@@ -90,6 +92,7 @@ For drawing arcs of circumference, a center, starting, and ending points are req
 ```{code-cell} ipython3
 start_point, end_point = Point([2, 1, 1], unit=u.m), Point([0, 1, 1], unit=u.meter)
 arc = sketch.draw_arc(Point([1.5, 1, 1]), start_point, end_point)
+arc.plot()
 ```
 
 ## Plotting the sketch

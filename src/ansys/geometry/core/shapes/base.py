@@ -6,6 +6,7 @@ from pint import Quantity
 
 from ansys.geometry.core.math import Plane, Point, UnitVector
 from ansys.geometry.core.misc import check_type
+from ansys.geometry.core.plotting.plotter import Plotter
 from ansys.geometry.core.typing import Real
 
 
@@ -161,3 +162,8 @@ class BaseShape:
 
         """
         return not self.is_closed
+
+    def plot(self, num_points=100):
+        pl = Plotter(num_points=num_points)
+        pl.plot_shape(self)
+        pl.scene.show(jupyter_backend="panel")
