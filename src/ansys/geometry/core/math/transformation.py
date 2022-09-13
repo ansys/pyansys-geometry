@@ -5,7 +5,8 @@ import numpy as np
 from pint import Unit
 from scipy.spatial.transform import Rotation as spatial_rotation
 
-from ansys.geometry.core.math import Matrix, Point
+from ansys.geometry.core.math.matrix import Matrix
+from ansys.geometry.core.math.point import Point
 from ansys.geometry.core.math.vector import Vector
 from ansys.geometry.core.misc import (
     UNIT_ANGLE,
@@ -14,7 +15,7 @@ from ansys.geometry.core.misc import (
     check_pint_unit_compatibility,
     check_type,
 )
-from ansys.geometry.core.typing import Real
+from ansys.geometry.core.typing import Real, RealSequence
 
 
 class Rotation(np.ndarray):
@@ -45,7 +46,7 @@ class Rotation(np.ndarray):
 
     def __new__(
         cls,
-        input: Union([np.ndarray, list, Point, Vector, Matrix]),
+        input: Union[np.ndarray, RealSequence, Point, Vector, Matrix],
         angle: Union[Real, np.ndarray],
         axis: str,
         unit: Optional[Unit] = UNIT_ANGLE,
@@ -97,7 +98,7 @@ class Translation(np.ndarray):
         A :class:`Vector` representing the translating direction.
     """
 
-    def __new__(cls, input: Union([np.ndarray, list, Point, Vector, Matrix]), vector: Vector):
+    def __new__(cls, input: Union[np.ndarray, RealSequence, Point, Vector, Matrix], vector: Vector):
         """Constructor for ``Translation``."""
         obj = np.asarray(input).view(cls)
         check_ndarray_is_float_int(obj)
@@ -140,7 +141,7 @@ class Scaling(np.ndarray):
         A :class:`Vector` representing the Scaling direction.
     """
 
-    def __new__(cls, input: Union([np.ndarray, list, Point, Vector, Matrix]), vector: Vector):
+    def __new__(cls, input: Union[np.ndarray, RealSequence, Point, Vector, Matrix], vector: Vector):
         """Constructor for ``Scaling``."""
         obj = np.asarray(input).view(cls)
         check_ndarray_is_float_int(obj)
