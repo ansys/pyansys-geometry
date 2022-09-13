@@ -171,7 +171,6 @@ jobs:
           password: ${{ secrets.PACKAGE_DOWNLOAD_PAT }}
 
       - name: Start geometry service and verify start
-        shell: pwsh
         run: |
           docker run -d --name $CONT_NAME -p $GEO_PORT:50051 $GEO_IMAGE
           python -c "from ansys.geometry.core.connection import validate; validate()"
