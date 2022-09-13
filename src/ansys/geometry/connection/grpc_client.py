@@ -1,7 +1,7 @@
 """Provides a wrapped abstraction of the gRPC proto API definition and stubs."""
 
-from ansys.api.geometry.v0.designs_pb2 import NewDesignRequest
-from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
+# from ansys.api.geometry.v0.designs_pb2 import NewDesignRequest
+# from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
 import grpc
 
 from ansys.geometry.core.designer.design import Design
@@ -30,9 +30,9 @@ class GrpcClient:
                 "Error: no endpoint or channel has been defined for the connection."
             )
 
-        self._design_stub = DesignsStub(self._channel)
+        # self._design_stub = DesignsStub(self._channel)
 
     def create_design(self) -> Design:
-        new_design = self._design_stub.New(NewDesignRequest())
+        # new_design = self._design_stub.New(NewDesignRequest())
 
-        return Design(new_design.id)
+        # return Design(new_design.id)
