@@ -47,7 +47,8 @@ def wait_until_healthy(channel: grpc.Channel, timeout: float):
         except _InactiveRpcError:
             continue
     else:
-        raise TimeoutError("Health check timed out.")
+        target_str = channel._channel.target().decode()
+        raise TimeoutError("Channel health check to target '{target_str}' timed out.")
 
 
 class GrpcClient:
