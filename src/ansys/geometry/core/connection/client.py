@@ -49,7 +49,7 @@ def wait_until_healthy(channel: grpc.Channel, timeout: float):
     else:
         target_str = channel._channel.target().decode()
         raise TimeoutError(
-            "Channel health check to target '{target_str}' timed out after {timeout} seconds."
+            f"Channel health check to target '{target_str}' timed out after {timeout} seconds."
         )
 
 
