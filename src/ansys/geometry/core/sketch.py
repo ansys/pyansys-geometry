@@ -184,6 +184,6 @@ class Sketch:
             An object representing the arc added to the sketch.
 
         """
-        arc = Arc(center, start_point, end_point)
+        arc = Arc(self._plane, center, start_point, end_point)
         self.append_shape(arc)
         return arc

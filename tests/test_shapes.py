@@ -381,9 +381,9 @@ def test_create_arc():
     arc = sketch.draw_arc(origin, start_point, end_point)
 
     # Check attributes are expected ones
-    assert_allclose(arc.radius, 2)
-    assert_allclose(arc.sector_area, np.pi)
-    assert_allclose(arc.length, 2 * np.pi**2)
+    assert arc.radius == 2 * UNITS.meter
+    assert arc.sector_area == Quantity(np.pi, UNITS.meter * UNITS.meter)
+    assert arc.length == 2 * np.pi**2 * UNITS.meter
 
     # Check points are expected ones
     local_points = arc.local_points(num_points=5)
