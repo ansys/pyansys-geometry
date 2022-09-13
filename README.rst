@@ -31,7 +31,31 @@ PyGeometry
    :alt: Black
 
 
-A Python wrapper for Ansys Geometry Service.
+A Python client library for the Ansys Geometry Service.
+
+Usage
+-----
+
+First, start the service locally. If you have docker installed and have
+`authenticated to ghcr.io
+<https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry>`_,
+you can start the geometry service locally using ``docker`` with:
+
+.. code:: bash
+
+   docker run --name ans_geo -e -p 50051:50051 ghcr.io/pyansys/pygeometry:latest
+
+Next, connect to the service with:
+
+.. code:: python
+   
+   >>> from ansys.geometry.core import Modeler
+   >>> modeler = Modeler()
+
+By default ``Modeler`` will connect to ``127.0.0.1`` (``'localhost'``) at the
+port 50051. You can change this by modifying the ``host`` and ``port``
+parameters of ``Modeler``, but note that you will have to also modify this in
+your ``docker run`` command by changing ``<HOST-PORT>-50051``.
 
 
 How to install
