@@ -37,7 +37,7 @@ class Rotation(np.ndarray):
 
     axis : str
         The sequence of axes for rotations. Up to 3 characters. The order 'zyx' represents
-        counterclockwise rotation and 'xyz' represents cockwise rotation.
+        counterclockwise rotation.
     unit : Unit, optional
         Units employed to define the angle of rotation,
         by default ``UNIT_ANGLE``.
