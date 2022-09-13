@@ -5,7 +5,7 @@ import numpy as np
 from pint import Unit
 from scipy.spatial.transform import Rotation as spatial_rotation
 
-from ansys.geometry.core.math.matrix import Matrix, Matrix33, Matrix44
+from ansys.geometry.core.math import Matrix, Point
 from ansys.geometry.core.math.vector import Vector
 from ansys.geometry.core.misc import (
     UNIT_ANGLE,
@@ -45,7 +45,7 @@ class Rotation(np.ndarray):
 
     def __new__(
         cls,
-        input: object,
+        input: Union([np.ndarray, list, Point, Vector, Matrix]),
         angle: Union[Real, np.ndarray],
         axis: str,
         unit: Optional[Unit] = UNIT_ANGLE,
@@ -97,11 +97,11 @@ class Translation(np.ndarray):
         A :class:`Vector` representing the translating direction.
     """
 
-    def __new__(cls, input: object, vector: Vector):
+    def __new__(cls, input: Union([np.ndarray, list, Point, Vector, Matrix]), vector: Vector):
         """Constructor for ``Translation``."""
         obj = np.asarray(input).view(cls)
         check_ndarray_is_float_int(obj)
-        if not isinstance(input, (Matrix, Matrix33, Matrix44)):
+        if not isinstance(input, Matrix):
             obj = np.append(obj, [1])
         check_type(vector, Vector)
         if vector._is_3d == True:
@@ -121,7 +121,7 @@ class Translation(np.ndarray):
                     [0, 0, 1],
                 ]
             )
-        if not isinstance(input, (Matrix, Matrix33, Matrix44)):
+        if not isinstance(input, (Matrix)):
             return type(input)(np.matmul(translate, obj)[:-1])
         return type(input)(np.matmul(translate, obj))
 
@@ -140,12 +140,12 @@ class Scaling(np.ndarray):
         A :class:`Vector` representing the Scaling direction.
     """
 
-    def __new__(cls, input: object, vector: Vector):
+    def __new__(cls, input: Union([np.ndarray, list, Point, Vector, Matrix]), vector: Vector):
         """Constructor for ``Scaling``."""
         obj = np.asarray(input).view(cls)
         check_ndarray_is_float_int(obj)
         check_type(vector, Vector)
-        if not isinstance(input, (Matrix, Matrix33, Matrix44)):
+        if not isinstance(input, Matrix):
             obj = np.append(obj, [1])
         if vector._is_3d == True:
             scalar_matrix = np.array(
@@ -164,6 +164,6 @@ class Scaling(np.ndarray):
                     [0, 0, 1],
                 ]
             )
-        if not isinstance(input, (Matrix, Matrix33, Matrix44)):
+        if not isinstance(input, Matrix):
             return type(input)(np.matmul(scalar_matrix, obj)[:-1])
         return type(input)(np.matmul(scalar_matrix, obj))
