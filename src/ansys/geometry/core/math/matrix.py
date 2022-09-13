@@ -3,7 +3,7 @@ from typing import Optional, Union
 
 import numpy as np
 
-from ansys.geometry.core.misc.checks import check_ndarray_is_float_int, check_type_equivalence
+from ansys.geometry.core.misc import check_ndarray_is_float_int, check_type_equivalence
 from ansys.geometry.core.typing import Real, RealSequence
 
 DEFAULT_MATRIX33 = np.identity(3)

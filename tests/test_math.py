@@ -686,3 +686,9 @@ def test_plane():
 
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
         Plane("A", UnitVector([12, 31, 99]), UnitVector([23, 67, 45]))
+
+    assert p_1.is_point_contained(Point([42, 99, 13]))
+    assert not p_1.is_point_contained(Point([42, 99, 14]))
+
+    with pytest.raises(ValueError, match="The point provided should be 3D."):
+        p_1.is_point_contained(Point([42, 99]))
