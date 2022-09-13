@@ -158,9 +158,6 @@ jobs:
           pip install --upgrade build
           pip install .[test]
 
-      - name: Integration Testing
-        run: pytest tests/integration -v
-
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
@@ -174,6 +171,14 @@ jobs:
           GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest
           GEO_PORT: 50051
 
+      - name: Integration Testing
+        run: pytest tests/integration -v
+
+      - name: Stop geometry core docker image
+        if: always()
+        run: |
+          docker stop $(docker ps -a -q)
+          docker rm $(docker ps -a -q)
   docs:
     name: Documentation
     runs-on: ubuntu-latest
