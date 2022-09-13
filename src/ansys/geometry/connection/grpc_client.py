@@ -2,6 +2,7 @@
 
 # from ansys.api.geometry.v0.designs_pb2 import NewDesignRequest
 # from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
+
 import grpc
 
 from ansys.geometry.core.designer.design import Design
@@ -36,3 +37,4 @@ class GrpcClient:
         # new_design = self._design_stub.New(NewDesignRequest())
 
         # return Design(new_design.id)
+        return None
