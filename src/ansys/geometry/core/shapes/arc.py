@@ -5,18 +5,15 @@ import numpy as np
 from pint import Quantity
 
 from ansys.geometry.core.math import Plane, Point, QuantityVector
-from ansys.geometry.core.misc import check_type, Distance
-from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.misc import UNITS, Distance, check_type
 from ansys.geometry.core.shapes.base import BaseShape
-from ansys.geometry.core.typing import Real
-
 
 class Arc(BaseShape):
     """A class for modeling arcs."""
 
     def __init__(
         self,
-        plane: Plane, 
+        plane: Plane,
         origin: Point,
         start_point: Point,
         end_point: Point,
@@ -105,7 +102,9 @@ class Arc(BaseShape):
 
         """
 
-        self._angle = np.arccos(self._start_vector * self._end_vector / self.radius.to_base_units().m**2)
+        self._angle = np.arccos(
+            self._start_vector * self._end_vector / self.radius.to_base_units().m ** 2
+        )
         return Quantity(self._angle, UNITS.radian)
 
     @property
@@ -153,7 +152,8 @@ class Arc(BaseShape):
                     self.origin.x.to(self.radius.units).m + self.radius.m * np.cos(ang),
                     self.origin.y.to(self.radius.units).m + self.radius.m * np.sin(ang),
                     self.origin.z.to(self.radius.units).m,
-                ], unit=self.radius.units
+                ],
+                unit=self.radius.units,
             )
             for ang in theta
         ]

@@ -9,7 +9,6 @@ from ansys.geometry.core.misc import Distance
 from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Line, Polygon, Segment
 
 
-
 class Sketch:
     """
     Provides Sketch class for building 2D sketch elements.
