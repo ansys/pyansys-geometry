@@ -1,6 +1,7 @@
 """``DirectModeler`` class module."""
 
-from ansys.geometry.connection.grpc_client import GrpcClient
+from ansys.geometry.core.connection.client import GrpcClient
+
 from ansys.geometry.core.designer.design import Design
 
 

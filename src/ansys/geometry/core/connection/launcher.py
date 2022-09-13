@@ -2,8 +2,8 @@
 
 import grpc
 
-from ansys.geometry.connection.grpc_client import GrpcClient
-from ansys.geometry.core.direct_modeler import DirectModeler
+from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.modeler import DirectModeler
 
 
 def connect_geometry_direct_modeler(endpoint: str) -> DirectModeler:
