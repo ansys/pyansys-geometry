@@ -136,6 +136,10 @@ class Arc(BaseShape):
 
         """
 
+        self._angle = np.arctan2(
+            (self._start_vector.cross(self._end_vector)).norm.m,
+            (self._start_vector.dot(self._end_vector)),
+        )
         return Quantity(self._angle, UNITS.radian)
 
     @property
@@ -176,7 +180,14 @@ class Arc(BaseShape):
             A list of points representing the shape.
 
         """
-        theta = np.linspace(0, self.angle.m, num_points)
+        local_start_vector = (self.plane.global_to_local @ self._start_vector).tolist()
+
+        start_angle = np.arctan2(
+            (Vector(local_start_vector).cross(Vector([1, 0, 0]))).norm,
+            Vector(local_start_vector).dot(Vector([1, 0, 0])),
+        )
+
+        theta = np.linspace(start_angle, start_angle + self.angle.m, num_points)
         return [
             Point(
                 [

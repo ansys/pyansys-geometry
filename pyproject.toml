@@ -34,6 +34,12 @@ secondary = true
 [tool.poetry.dependencies]
 python = ">=3.7,<4.0"
 Pint = ">=0.18"
+grpcio = ">=1.35.0"
+protobuf = "<=3.20.0"
+googleapis-common-protos = ">=1.52.0"
+google-api-python-client = ">=1.7.11"
+scipy = ">=1.7.3"
+pyvista = ">=0.36.1"
 ansys-api-geometry = {version = "~0.1.dev0", allow-prereleases = true, source = "privatepypi"}
 google-api-python-client = ">=1.7.11"
 googleapis-common-protos = ">=1.52.0"

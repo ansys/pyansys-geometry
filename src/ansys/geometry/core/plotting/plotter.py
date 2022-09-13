@@ -2,6 +2,7 @@
 
 import numpy as np
 import pyvista as pv
+from pyvista.plotting.tools import create_axes_marker
 
 
 class Plotter:
@@ -27,13 +28,12 @@ class Plotter:
         # Create the scene and assign the background
         self._scene = scene
         scene.set_background(**background_opts)
-        scene.add_axes(box=True)
+        view_box = scene.add_axes(line_width=5, box=True)
 
         # Show origin axes
-        axes = pv.Axes(show_actor=True, actor_scale=2.0, line_width=5.0)
-        axes.origin = (0, 0, 0)
-        axes.actor.GetProperty().SetColor(0, 0, 0)
-        scene.add_actor(axes.actor)
+        axes = create_axes_marker()
+        axes.AxisLabelsOff()
+        scene.add_actor(axes)
 
         # Create the fundamental XY plane
         plane = pv.Plane(i_size=10, j_size=10)
@@ -88,18 +88,34 @@ class Plotter:
 
         """
         # Create an Axes actor
-        axes = pv.Axes(show_actor=True, actor_scale=2.0, line_width=5.0)
-        axes.actor.GetProperty().SetColor(0, 0, 0)
+        axes = create_axes_marker()
+        axes.AxisLabelsOff()
+        axes.SetConeRadius(0.2)
 
         # Transpose the frame matrix to fix rotation sense in VTK
-        arr = np.vstack((frame.matrix, frame.origin)).T
+        arr = np.vstack((frame.global_to_local, frame.origin)).T
         arr = np.vstack((arr, [0, 0, 0, 1]))
 
         # Apply matrix transformation to the actor
-        axes.actor.SetUserMatrix(pv.vtkmatrix_from_array(arr))
+        axes.SetUserMatrix(pv.vtkmatrix_from_array(arr))
 
         # Render the actor in the scene
-        self.scene.add_actor(axes.actor)
+        self.scene.add_actor(axes)
+
+    def plot_plane(self, plane):
+        """Plot desired plane into the scene.
+
+        Parameters
+        ----------
+        plane : Plane
+            The ``Plane`` instance to be rendered in the scene.
+
+        """
+        # Create a plane for showing the plane
+        plane_mesh = pv.Plane(
+            center=plane.origin, direction=plane.direction_z, i_size=10, j_size=10
+        )
+        self.scene.add_mesh(plane_mesh, color="blue", opacity=0.1)
 
     def plot_shape(self, shape):
         """Plot desired shape into the scene.
@@ -112,10 +128,10 @@ class Plotter:
         """
         # Generate the points and the lines
         try:
-            points = shape.local_points(self._num_points)
+            points = shape.points(self._num_points)
         # Avoid error if a polygon shape is passed
         except TypeError:
-            points = shape.local_points()
+            points = shape.points()
         lines = np.hstack([[2, ith, ith + 1] for ith in range(0, len(points) - 1)])
 
         # Plot those into the scene
@@ -126,15 +142,28 @@ class Plotter:
         self.scene.add_mesh(mesh_points, color="red")
         self.scene.add_mesh(mesh_line, color="black", line_width=3, point_size=20)
 
-    def plot_sketch(self, sketch):
+    def plot_sketch(self, sketch, show_plane=False, show_frame=False):
         """Plot desired sktch into the scene.
 
         Parameters
         ----------
         sketch : Sketch
             The ``Sketch`` instance to be rendered in the scene.
+        show_plane : bool
+            If ``True``, it renders the sketch plane in the scene.
+        show_frame : bool
+            If ``Frame``, it renders the sketch plane in the scene.
 
         """
+        # Show the sketch plane if required
+        if show_plane:
+            self.plot_plane(sketch._plane)
+
+        # Show the sketch plane if required
+        if show_frame:
+            self.plot_frame(sketch._plane)
+
+        # Draw each one of the shapes in the sketch
         for shape in sketch.shapes_list:
             self.plot_shape(shape)
 

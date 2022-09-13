@@ -153,11 +153,7 @@ class Polygon(BaseShape):
         theta = np.linspace(0, 2 * np.pi, self.n_sides + 1)
         return [
             Point(
-                [
-                    self.center.x.to(self.outer_radius.units).m + self.outer_radius.m * np.cos(ang),
-                    self.center.y.to(self.outer_radius.units).m + self.outer_radius.m * np.sin(ang),
-                    self.center.z.to(self.outer_radius.units).m,
-                ],
+                [self.outer_radius.m * np.cos(ang), self.outer_radius.m * np.sin(ang), 0],
                 unit=self.outer_radius.units,
             )
             for ang in theta

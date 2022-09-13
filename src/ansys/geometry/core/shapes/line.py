@@ -112,6 +112,21 @@ class Line(BaseShape):
         line_start = self.start - quantified_dir * int(num_points / 2)
         return [Point(line_start + delta * quantified_dir) for delta in range(0, num_points)]
 
+    def points(self, num_points: Optional[int] = 100) -> List[Point]:
+        """Returns a list containing all the points belonging to the shape.
+
+        Parameters
+        ----------
+        num_points : int
+            Desired number of points belonging to the shape.
+
+        Returns
+        -------
+        List[Point]
+            A list of points representing the shape.
+        """
+        return self.local_points(num_points)
+
 
 class Segment(Line):
     """
@@ -257,3 +272,18 @@ class Segment(Line):
         """
         delta_segm = (self.end - self.start) / (num_points - 1)
         return [Point(self.start + delta * delta_segm) for delta in range(0, num_points)]
+
+    def points(self, num_points: Optional[int] = 100) -> List[Point]:
+        """Returns a list containing all the points belonging to the shape.
+
+        Parameters
+        ----------
+        num_points : int
+            Desired number of points belonging to the shape.
+
+        Returns
+        -------
+        List[Point]
+            A list of points representing the shape.
+        """
+        return self.local_points(num_points)

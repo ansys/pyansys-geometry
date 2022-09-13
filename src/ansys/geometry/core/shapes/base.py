@@ -52,11 +52,6 @@ class BaseShape:
         """The fundamental vector along the third axis of the reference frame."""
         return self.plane.direction_z
 
-    @property
-    def origin(self) -> Point:
-        """The origin of the reference frame."""
-        return self.plane.origin
-
     def points(self, num_points: Optional[int] = 100) -> List[Point]:
         """Returns a list containing all the points belonging to the shape.
 
