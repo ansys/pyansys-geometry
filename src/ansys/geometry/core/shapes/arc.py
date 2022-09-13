@@ -8,6 +8,7 @@ from ansys.geometry.core.math import Plane, Point, QuantityVector
 from ansys.geometry.core.misc import UNITS, Distance, check_type
 from ansys.geometry.core.shapes.base import BaseShape
 
+
 class Arc(BaseShape):
     """A class for modeling arcs."""
 
