@@ -69,7 +69,6 @@ force_sort_within_sections = true
 line_length = 100
 default_section = "THIRDPARTY"
 src_paths = ["doc", "src", "tests"]
-skip = ["src/ansys/api/geometry/**"]
 
 [tool.coverage.run]
 source = ["ansys.geometry"]
