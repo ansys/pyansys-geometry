@@ -1,11 +1,12 @@
 """Provides a wrapped abstraction of the gRPC proto API definition and stubs."""
 
-# from ansys.api.geometry.v0.designs_pb2 import NewDesignRequest
-# from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
-
+from ansys.api.geometry.v0.board_pb2 import CreateExtrudedDesignBodyRequest
+from ansys.api.geometry.v0.board_pb2_grpc import BoardStub
 import grpc
+from pint import Quantity
 
-from ansys.geometry.core.designer.design import Design
+from ansys.geometry.core.designer.component import Component
+from ansys.geometry.core.sketch import Sketch
 
 # Maximum size for gRPC message
 MAX_MESSAGE_LENGTH = 100 * 1024 * 1024
@@ -31,10 +32,20 @@ class GrpcClient:
                 "Error: no endpoint or channel has been defined for the connection."
             )
 
-        # self._design_stub = DesignsStub(self._channel)
+        self._board_stub = BoardStub(self._channel)
 
-    def create_design(self) -> Design:
-        # new_design = self._design_stub.New(NewDesignRequest())
+    @property
+    def channel(self):
+        return self._channel
 
-        # return Design(new_design.id)
-        return None
+    def extrude(self, name: str, component: Component, sketch: Sketch, distance: Quantity):
+
+        extrusion_request = CreateExtrudedDesignBodyRequest(
+            distance=distance.m,
+            parent=component.id,
+            plane=sketch._plane,
+            geometries=sketch,
+            name=name,
+        )
+
+        extrusion_response = self._board_stub.CreateExtrudedDesignBody(extrusion_request)
