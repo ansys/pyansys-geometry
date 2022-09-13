@@ -33,6 +33,9 @@ extensions = [
     "numpydoc",
     "sphinx.ext.intersphinx",
     "sphinx_copybutton",
+    "nbsphinx",
+    "sphinx_gallery.load_style",
+    "myst_parser",
 ]
 
 # Intersphinx mapping
@@ -82,7 +85,11 @@ html_css_files = [
 templates_path = ["_templates"]
 
 # The suffix(es) of source filenames.
-source_suffix = ".rst"
+source_suffix = {
+    ".rst": "restructuredtext",
+    ".mystnb": "jupyter_notebook",
+    ".md": "markdown",
+}
 
 # The master toctree document.
 master_doc = "index"
@@ -101,3 +108,9 @@ autoapi_template_dir = "_autoapi_templates"
 suppress_warnings = ["autoapi.python_import_resolution"]
 exclude_patterns = ["_autoapi_templates/index.rst"]
 autoapi_python_use_implicit_namespaces = True
+
+# Examples gallery customization
+nbsphinx_execute = "always"
+nbsphinx_custom_formats = {
+    ".mystnb": ["jupytext.reads", {"fmt": "mystnb"}],
+}
