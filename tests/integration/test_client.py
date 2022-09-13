@@ -1,19 +1,16 @@
 """
-Test basic server connection.
+Test basic client connection.
 """
-import os
-
 import pytest
 
-from ansys.geometry.core import Modeler
+from ansys.geometry.core.connection import GrpcClient
 
 
 @pytest.fixture()
 def client(modeler):
-    return Modeler(
-        host=os.environ.get("ANSYS_GEO_HOST", "127.0.0.1"),
-        port=os.environ.get("ANSYS_GEO_PORT", 50051),
-    )._client
+    # this uses DEFAULT_HOST and DEFAULT_PORT which are set by environment
+    # variables in the workflow
+    return GrpcClient()
 
 
 def test_client_init(client):

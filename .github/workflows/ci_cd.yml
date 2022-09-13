@@ -144,9 +144,9 @@ jobs:
     name: Integration tests
     runs-on: [self-hosted, pygeometry]
     env:
-      GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest
-      GEO_PORT: 604
-      CONT_NAME: ans_geo
+      ANSYS_GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest
+      ANSRV_GEO_PORT: 700
+      GEO_CONT_NAME: ans_geo
 
     steps:
       - uses: actions/checkout@v3
@@ -172,7 +172,7 @@ jobs:
 
       - name: Start geometry service and verify start
         run: |
-          docker run -d --name $CONT_NAME -p $GEO_PORT:50051 $GEO_IMAGE
+          docker run -d --name $GEO_CONT_NAME -p $ANSRV_GEO_PORT:50051 $ANSRV_GEO_IMAGE
           python -c "from ansys.geometry.core.connection import validate; validate()"
 
       - name: Integration Testing

@@ -1,8 +1,8 @@
 """``DirectModeler`` class module."""
 import grpc
 
-from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.designer.design import Design
+from .connection import DEFAULT_HOST, DEFAULT_PORT, GrpcClient
+from .designer.design import Design
 
 
 class Modeler:
@@ -15,7 +15,11 @@ class Modeler:
     """
 
     def __init__(
-        self, host: str = "localhost", port: int = 50051, channel: grpc.Channel = None, timeout=60
+        self,
+        host: str = DEFAULT_HOST,
+        port: int = DEFAULT_PORT,
+        channel: grpc.Channel = None,
+        timeout=60,
     ):
         """Constructor method for ``DirectModeler``."""
         self._client = GrpcClient(host, port, channel, timeout=timeout)

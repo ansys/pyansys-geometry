@@ -4,12 +4,10 @@ localhost:50051.
 
 If you wish to override these defaults, set the following environment variables.
 
-- export ANSYS_GEO_HOST=127.0.0.1
-- export ANSYS_GEO_PORT=50051
+- export ANSRV_GEO_HOST=127.0.0.1
+- export ANSRV_GEO_PORT=50051
 
 """
-import os
-
 import pytest
 
 from ansys.geometry.core import Modeler
@@ -17,9 +15,9 @@ from ansys.geometry.core import Modeler
 
 @pytest.fixture(scope="session")
 def modeler():
-    yield Modeler(
-        host=os.environ.get("ANSYS_GEO_HOST", "127.0.0.1"),
-        port=os.environ.get("ANSYS_GEO_PORT", 50051),
-    )
+    modeler = Modeler()
+    yield modeler
 
     # TODO: check cleanup on exit
+    # modeler.exit()
+    # assert modeler._client.closed

@@ -57,17 +57,33 @@ port 50051. You can change this by modifying the ``host`` and ``port``
 parameters of ``Modeler``, but note that you will have to also modify this in
 your ``docker run`` command by changing ``<HOST-PORT>-50051``.
 
+If you wish to modify the defaults, modify the following environment variables:
+
+If on Linux/Mac OS:
+
+.. code::
+
+   export ANSRV_GEO_HOST=127.0.0.1
+   export ANSRV_GEO_PORT=50051
+
+Or Windows:
+
+.. code::
+
+   SET ANSRV_GEO_HOST=127.0.0.1
+   SET ANSRV_GEO_PORT=50051
+
 
 How to install
 --------------
 
-Three installation modes are provided: user, developer and offline.
+We have three modes of installation: user, developer and offline.
 
 For users
 ^^^^^^^^^
 
-In order to install PyGeometry, make sure you
-have the latest version of `pip`_. To do so, run:
+In order to install PyGeometry, make sure you have the latest version of
+`pip`_. To do so, run:
 
 .. code:: bash
 
@@ -78,6 +94,7 @@ Then, you can simply execute:
 .. code:: bash
 
    poetry run python -m pip install ansys-geometry-core
+
     
 For developers
 ^^^^^^^^^^^^^^

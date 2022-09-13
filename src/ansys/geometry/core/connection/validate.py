@@ -1,16 +1,18 @@
 """
 Perform a connection validation check. This method is only used for testing the
-default docker service on GitHub.
+default docker service on GitHub and can safely be skipped within testing.
+
+Typical use:
+
+.. code:: python
+
+   python -c "from ansys.geometry.core.connection import validate; validate()"
+
 """
-import os
-
-from ..modeler import Modeler
+from . import client
 
 
-def validate():
-    """Create the modeler using the default settings and print the modeler."""
-    modeler = Modeler(
-        host=os.environ.get("ANSYS_GEO_HOST", "127.0.0.1"),
-        port=os.environ.get("ANSYS_GEO_PORT", 50051),
-    )
-    print(modeler)
+def validate():  # pragma: no cover
+    """Create the a client using the default settings and it."""
+    print(client())
+    # TODO: consider adding additional server stat reporting

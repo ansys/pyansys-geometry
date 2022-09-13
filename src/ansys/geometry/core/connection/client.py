@@ -9,6 +9,8 @@ from grpc.health.v1 import health_pb2, health_pb2_grpc
 
 from ansys.geometry.core.designer.design import Design
 
+from .defaults import DEFAULT_HOST, DEFAULT_PORT
+
 LOG = logging.getLogger(__name__)
 LOG.setLevel("CRITICAL")
 
@@ -59,11 +61,14 @@ class GrpcClient:
     """
 
     def __init__(
-        self, host: str = "localhost", port: int = 50051, channel: grpc.Channel = None, timeout=60
+        self,
+        host: str = DEFAULT_HOST,
+        port: int = DEFAULT_PORT,
+        channel: grpc.Channel = None,
+        timeout=60,
     ):
         """Initialize the ``GrpcClient`` object."""
         self._closed = False
-
         if channel:
             # Used for PyPIM when directly providing a channel
             if not isinstance(grpc_client, grpc.Channel):
@@ -117,6 +122,17 @@ class GrpcClient:
         """Close the channel."""
         self._closed = True
         self._channel.close()
+
+    def target(self) -> str:
+        """Return the target of the channel."""
+        if self._closed:
+            return ""
+        return channel._channel.target().decode()
+
+    @property
+    def channel(self) -> grpc.Channel:
+        """The gRPC channel of this client."""
+        return self._channel
 
     def create_design(self) -> Design:
         pass
