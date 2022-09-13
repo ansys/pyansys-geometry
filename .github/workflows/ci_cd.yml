@@ -172,7 +172,7 @@ jobs:
 
       - name: Start geometry service and verify start
         run: |
-          docker run -d --name $GEO_CONT_NAME -p $ANSRV_GEO_PORT:50051 $ANSRV_GEO_IMAGE
+          docker run -d --name $env:$GEO_CONT_NAME -p $env:$ANSRV_GEO_PORT:50051 $env:$ANSRV_GEO_IMAGE
           python -c "from ansys.geometry.core.connection import validate; validate()"
 
       - name: Integration Testing
@@ -181,9 +181,9 @@ jobs:
       - name: Stop the geometry service
         if: always()
         run: |
-          docker stop $GEO_CONT_NAME
-          docker logs $GEO_CONT_NAME
-          run: docker rm $GEO_CONT_NAME        
+          docker stop $env:$GEO_CONT_NAME
+          docker logs $env:$GEO_CONT_NAME
+          run: docker rm $env:$GEO_CONT_NAME
           
   docs:
     name: Documentation
