@@ -28,12 +28,12 @@ class Rotation(np.ndarray):
     input : object
         Input object for rotation.
     angle : Union[~numpy.ndarray, Real]
-        Angle determining the rotation.it can be:
+        Angle determining the rotation. It can be:
 
-        - a single value
-        - array_like with shape (N,), where each angle[i] corresponds to a single rotation
-        - array_like with shape (N, 1), where each angle[i, 0]
-           corresponds to a single rotation
+        * a single value
+        * ``array_like`` with shape (N,), where each angle[i] corresponds to a single rotation
+        * ``array_like`` with shape (N, 1), where each angle[i, 0]
+          corresponds to a single rotation
 
     axis : str
         The sequence of axes for rotations. Up to 3 characters. The order 'zyx' represents
