@@ -1,4 +1,4 @@
-"""``DirectModeler`` class module."""
+"""``Modeler`` class module."""
 import grpc
 
 from ansys.geometry.core.connection.client import GrpcClient
