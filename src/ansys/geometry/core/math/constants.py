@@ -18,6 +18,9 @@ UNIT_VECTOR_Z = UnitVector([0, 0, 1])
 ZERO_VECTOR3D = Vector([0, 0, 0])
 """Zero-valued Vector object."""
 
+ZERO_POINT3D = Point([0, 0, 0])
+"""Zero-valued Point object."""
+
 # Define the numpy.ndarrays as read-only - just for the sake of being "safe"
 DEFAULT_POINT.setflags(write=False)
 UNIT_VECTOR_X.setflags(write=False)
