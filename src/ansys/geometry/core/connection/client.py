@@ -4,7 +4,6 @@
 import os
 import time
 
-from ansys.api.geometry.v0.board_pb2_grpc import BoardStub
 import grpc
 from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
@@ -86,8 +85,6 @@ class GrpcClient:
 
         # do not finish initialization until channel is healthy
         wait_until_healthy(self._channel, timeout)
-
-        self._board_stub = BoardStub(self._channel)
 
     @property
     def channel(self):
