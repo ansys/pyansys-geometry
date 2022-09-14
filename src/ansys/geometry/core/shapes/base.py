@@ -2,10 +2,10 @@
 
 from typing import List, Optional
 
-from pint import Quantity
+from pint import Quantity, Unit
 
 from ansys.geometry.core.math import Plane, Point, Rotation, Scaling, Translation, UnitVector
-from ansys.geometry.core.misc import check_type
+from ansys.geometry.core.misc import UNIT_ANGLE, check_type
 from ansys.geometry.core.typing import Real
 
 
@@ -162,11 +162,58 @@ class BaseShape:
         """
         return not self.is_closed
 
-    def rotate(self, origin, angle, axis):
-        return Rotation(origin, angle, axis)
+    def rotate(self, center, angle, axis, unit: Optional[Unit] = UNIT_ANGLE) -> Point:
+        """Return the rotated shape in the given axis at given angle.
 
-    def translate(self, origin, vector):
-        return Translation(origin, vector)
+        Parameters
+        ----------
+        center : Point
+            The center of the base shape
+        angle : Union[~numpy.ndarray, Real]
+            Angle determining the rotation.
+        axis : str
+            Axis of rotation
+        unit : Unit, optional
+            Units employed to define the angle of rotation,
+            by default ``UNIT_ANGLE``.
 
-    def scale(self, point, vector):
+        Returns
+        -------
+        Point
+            The rotated center point of shape
+        """
+        return Rotation(center, angle, axis, unit)
+
+    def translate(self, center, vector) -> Point:
+        """Return the translated shape in the the given ``Vector``.
+
+        Parameter
+        ---------
+        center: Pint
+            the center of the shape to gets translated
+        vector : Vector
+            A :class:`Vector` representing the translating direction.
+
+        Returns
+        -------
+        Point
+            The translated point
+        """
+        return Translation(center, vector)
+
+    def scale(self, point, vector) -> Point:
+        """Return the scaled shape in the the given ``Vector``.
+
+        Parameter
+        ---------
+        input : Point
+            The value of shape to gets scaled
+        vector : Vector
+            A :class:`Vector` representing the Scaling direction.
+
+        Returns
+        -------
+        Point
+            The scaled point
+        """
         return Scaling(point, vector)

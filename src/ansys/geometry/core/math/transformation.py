@@ -26,7 +26,7 @@ class Rotation(np.ndarray):
 
     Parameters
     ----------
-    input : object
+    input : Union[~numpy.ndarray, RealSequence, Point, Vector, Matrix]
         Input object for rotation.
     angle : Union[~numpy.ndarray, Real]
         Angle determining the rotation. It can be:
@@ -92,7 +92,7 @@ class Translation(np.ndarray):
 
     Parameters
     ----------
-    input : object
+    input : Union[~numpy.ndarray, RealSequence, Point, Vector, Matrix]
         Input object for translation.
     vector : Vector
         A :class:`Vector` representing the translating direction.
@@ -135,7 +135,7 @@ class Scaling(np.ndarray):
 
     Parameters
     ----------
-    input : object
+    input : Union[~numpy.ndarray, RealSequence, Point, Vector, Matrix]
         Input object for scaling.
     vector : Vector
         A :class:`Vector` representing the Scaling direction.
