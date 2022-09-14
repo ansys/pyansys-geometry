@@ -178,6 +178,7 @@ jobs:
 
       - name: Start geometry service and verify start
         run: |
+          .\.venv\Scripts\Activate.ps1
           $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
           docker run --detach --name $env:GEO_CONT_NAME -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE -d
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
