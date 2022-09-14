@@ -79,7 +79,7 @@ jobs:
 
       - name: Install packages for building
         run: |
-          pip install --upgrade build
+          pip install --upgrade build wheel
           pip install .
 
       - name: Smoke test
