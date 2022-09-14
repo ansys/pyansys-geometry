@@ -66,6 +66,11 @@ class Line(BaseShape):
             raise ValueError("The provided line definition is not contained in the plane.")
 
     @property
+    def origin(self) -> Point:
+        """The origin property."""
+        return self._start
+
+    @property
     def direction(self) -> UnitVector:
         """Returns the direction of the line."""
         return self._direction
