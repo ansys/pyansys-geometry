@@ -215,7 +215,7 @@ jobs:
 
       - name: Install packages for documentation build
         run: |
-          sudo apt-get install xvfb
+          sudo apt-get install xvfb pandoc
           pip install --upgrade build
           pip install .[docs]
 
