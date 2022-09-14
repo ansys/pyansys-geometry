@@ -158,3 +158,40 @@ class Polygon(BaseShape):
             )
             for ang in theta
         ]
+
+    def plot(
+        self,
+        show_points: Optional[bool] = None,
+        plotting_options_points: Optional[dict] = None,
+        plotting_options_lines: Optional[dict] = None,
+    ):
+        """Plot the shape with the desired number of points.
+
+        Parameters
+        ----------
+        show_points : bool, Optional
+            If ``True``, points belonging to the shape are rendered.
+        plotting_options_points : dict, optional
+            A dictionary containing parameters accepted by
+            :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
+            rendering of the points.
+        plotting_options_lines : dict, optional
+            A dictionary containing parameters accepted by
+            :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
+            rendering of the lines.
+
+        Notes
+        -----
+        This method overrides the ``BaseShape.plot`` method, as regular polygons
+        resolution is not controlled by the number of points when rendering
+        those in the scene.
+
+        """
+        pl = Plotter()
+        pl.plot_shape(
+            self,
+            show_points=show_points,
+            plotting_options_points=plotting_options_points,
+            plotting_options_lines=plotting_options_lines,
+        )
+        pl.show(jupyter_backend="panel")

@@ -163,7 +163,36 @@ class BaseShape:
         """
         return not self.is_closed
 
-    def plot(self, num_points=100):
+    def plot(
+        self,
+        show_points: Optional[bool] = None,
+        plotting_options_points: Optional[dict] = None,
+        plotting_options_lines: Optional[dict] = None,
+        num_points: Optional[int] = 100,
+    ):
+        """Plot the shape with the desired number of points.
+
+        Parameters
+        ----------
+        num_points : int, optional
+            Desired number of points to be used for rendering the shape.
+        show_points : bool, Optional
+            If ``True``, points belonging to the shape are rendered.
+        plotting_options_points : dict, optional
+            A dictionary containing parameters accepted by
+            :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
+            rendering of the points.
+        plotting_options_lines : dict, optional
+            A dictionary containing parameters accepted by
+            :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
+            rendering of the lines.
+
+        """
         pl = Plotter(num_points=num_points)
-        pl.plot_shape(self)
-        pl.scene.show(jupyter_backend="panel")
+        pl.plot_shape(
+            self,
+            show_points=show_points,
+            plotting_options_points=plotting_options_points,
+            plotting_options_lines=plotting_options_lines,
+        )
+        pl.show(jupyter_backend="panel")

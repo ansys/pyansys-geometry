@@ -1,20 +1,36 @@
 """A module containing a class for plotting various PyGeometry objects."""
+import sys
+from typing import Optional
 
 import numpy as np
 import pyvista as pv
+from pyvista import Plotter
 from pyvista.plotting.tools import create_axes_marker
+
+from ansys.geometry.core.math.frame import Frame
+from ansys.geometry.core.math.plane import Plane
+from ansys.geometry.core.sketch.base import BaseShape
 
 
 class Plotter:
     """A class devoted to plotting sketches and bodies."""
 
-    def __init__(self, scene=None, background_opts=None, num_points=100):
+    def __init__(
+        self,
+        scene: Optional[Plotter] = None,
+        background_opts: Optional[dict] = None,
+        num_points: Optional[int] = 100,
+    ):
         """Initializes the plotter.
 
         Parameters
         ----------
         scene : ~pyvista.Plotter, optional
-            A scene for rendering the desired objects.
+            A scene instance for rendering the desired objects.
+        background_opts : dict, optional
+            A dictionary containing the desired background and top colors.
+        num_points : int, optional
+            Desired number of points to be used when rendering shapes.
 
         """
         # Generate custom scene if none was provided
@@ -30,9 +46,8 @@ class Plotter:
         scene.set_background(**background_opts)
         view_box = scene.add_axes(line_width=5, box=True)
 
-        # Show origin axes
-        axes = create_axes_marker()
-        axes.AxisLabelsOff()
+        # Show origin axes without labels
+        axes = create_axes_marker(labels_off=True)
         scene.add_actor(axes)
 
         # Create the fundamental XY plane
@@ -43,7 +58,7 @@ class Plotter:
         self._num_points = num_points
 
     @property
-    def scene(self):
+    def scene(self) -> Plotter:
         """Return the rendering scene object.
 
         Returns
@@ -78,21 +93,27 @@ class Plotter:
         """View the scene from the ZY plane."""
         self.scene.view_zy()
 
-    def plot_frame(self, frame):
+    def plot_frame(self, frame: Frame, plotting_options: Optional[dict] = None):
         """Plot desired frame into the scene.
 
         Parameters
         ----------
         frame : Frame
             The ``Frame`` instance to be rendered in the scene.
+        plotting_options : dict, optional
+            A dictionary containing parameters accepted by
+            :class:`pyvista.plotting.tools.create_axes_marker` for customizing
+            the frame rendering in the scene.
 
         """
-        # Create an Axes actor
-        axes = create_axes_marker()
-        axes.AxisLabelsOff()
-        axes.SetConeRadius(0.2)
+        # Use default plotting options if required
+        if plotting_options is None:
+            plotting_options = dict(labels_off=True, cone_radius=0.2)
 
-        # Transpose the frame matrix to fix rotation sense in VTK
+        # Create the axes actor
+        axes = create_axes_marker(**plotting_options)
+
+        # Transpose the matrix for fixing rotation sense in VTK
         arr = np.vstack((frame.global_to_local, frame.origin)).T
         arr = np.vstack((arr, [0, 0, 0, 1]))
 
@@ -102,30 +123,71 @@ class Plotter:
         # Render the actor in the scene
         self.scene.add_actor(axes)
 
-    def plot_plane(self, plane):
+    def plot_plane(
+        self,
+        plane: Plane,
+        plane_options: Optional[dict] = None,
+        plotting_options: Optional[dict] = None,
+    ):
         """Plot desired plane into the scene.
 
         Parameters
         ----------
         plane : Plane
             The ``Plane`` instance to be rendered in the scene.
+        plane_options : dict, optional
+            A dictionary containing parameters accepted by
+            :class:`pyvista.Plane` for customizing the mesh representing the
+            plane.
+        plotting_options : dict, optional
+            A dictionary containing parameters accepted by
+            :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
+            rendering of the plane.
 
         """
-        # Create a plane for showing the plane
-        plane_mesh = pv.Plane(
-            center=plane.origin, direction=plane.direction_z, i_size=10, j_size=10
-        )
-        self.scene.add_mesh(plane_mesh, color="blue", opacity=0.1)
+        # Impose default plane options if required
+        if plane_options is None:
+            plane_options = dict(i_size=10, j_size=10)
 
-    def plot_shape(self, shape):
+        # Create a plane for showing the plane
+        plane_mesh = pv.Plane(center=plane.origin, direction=plane.direction_z, **plane_options)
+
+        # Render the plane in the scene
+        if not plotting_options:
+            plotting_options = dict(color="blue", opacity=0.1)
+
+        # Render the plane in the mesh with desired plotting options
+        self.scene.add_mesh(plane_mesh, **plotting_options)
+
+    def plot_shape(
+        self,
+        shape: BaseShape,
+        show_points: Optional[bool] = True,
+        plotting_options_points: Optional[dict] = None,
+        plotting_options_lines: Optional[dict] = None,
+    ):
         """Plot desired shape into the scene.
 
         Parameters
         ----------
-        shape : Shape
-            The ``Shape`` instance to be rendered in the scene.
+        shape : BaseShape
+            The ``BaseShape`` instance to be rendered in the scene.
+        show_points : bool, Optional
+            If ``True``, points belonging to the shape are rendered.
+        plotting_options_points : dict, optional
+            A dictionary containing parameters accepted by
+            :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
+            rendering of the points.
+        plotting_options_lines : dict, optional
+            A dictionary containing parameters accepted by
+            :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
+            rendering of the lines.
 
         """
+        # Verify no user contradictions input when plotting points
+        if show_points is False and plotting_options_points is not None:
+            raise ValueError("Use 'show_points=True' for rendering shape points.")
+
         # Generate the points and the lines
         try:
             points = shape.points(self._num_points)
@@ -134,13 +196,21 @@ class Plotter:
             points = shape.points()
         lines = np.hstack([[2, ith, ith + 1] for ith in range(0, len(points) - 1)])
 
-        # Plot those into the scene
-        mesh_points = pv.PointSet(points)
+        # Generate the mesh for the points and the lines
+        if show_points:
+            mesh_points = pv.PointSet(points)
         mesh_line = pv.PolyData(points, lines=lines)
 
-        # Add those to the scene
-        self.scene.add_mesh(mesh_points, color="red")
-        self.scene.add_mesh(mesh_line, color="black", line_width=3, point_size=20)
+        # Render points if required with desired rendering options
+        if show_points:
+            if plotting_options_points is None:
+                plotting_options_points = dict(color="red")
+            self.scene.add_mesh(mesh_points, **plotting_options_points)
+
+        # Render lines in the scene with desired rendering options
+        if plotting_options_lines is None:
+            plotting_options_lines = dict(color="black", line_width=3)
+        self.scene.add_mesh(mesh_line, **plotting_options_lines)
 
     def plot_sketch(self, sketch, show_plane=False, show_frame=False):
         """Plot desired sktch into the scene.
@@ -167,12 +237,22 @@ class Plotter:
         for shape in sketch.shapes_list:
             self.plot_shape(shape)
 
-    def plot_body(self):
-        # Request data on server side
-        # Body =(upon request)= vertices, faces and colors
-        # Use PolyData
-        raise NotImplementedError
+    def show(self, backend_jupyter: Optional[str] = None):
+        """Display the rendered scene in the screen.
 
-    def show(self):
-        """Display the rendered scene in the screen."""
-        self.scene.show()
+        Parameters
+        ----------
+        backend_jupyter : str, optional
+            Desired ``pyvista`` jupyter backend.
+
+        Notes
+        -----
+        Refer to https://docs.pyvista.org/user-guide/jupyter/index.html for more
+        information about supported Jupyter backends.
+
+        """
+        # Verify that user is using a notebook if a backend is provided
+        if "ipykernel" in sys.modules and backend_jupyter is not None:
+            raise ValueError("Jupyter backend is only valid when running in notebooks.")
+
+        self.scene.show(backend_jupyter=backend_jupyter)
