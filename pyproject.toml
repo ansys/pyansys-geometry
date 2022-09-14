@@ -33,16 +33,17 @@ secondary = true
 
 [tool.poetry.dependencies]
 python = ">=3.7,<4.0"
-importlib-metadata = {version = "^4.0", python = "<3.8"}
-six = ">=1.16.0"
-numpy = ">=1.20.3"
 Pint = ">=0.18"
-grpcio = ">=1.35.0"
-protobuf = "<=3.20.0"
-googleapis-common-protos = ">=1.52.0"
-google-api-python-client = ">=1.7.11"
-scipy = ">=1.7.3"
 ansys-api-geometry = {version = "~0.1.dev0", allow-prereleases = true, source = "privatepypi"}
+google-api-python-client = ">=1.7.11"
+googleapis-common-protos = ">=1.52.0"
+grpcio = ">=1.35.0"
+grpcio-health-checking = ">=1.45.0"
+importlib-metadata = {version = "^4.0", python = "<3.8"}
+numpy = ">=1.20.3"
+protobuf = "<=3.20.0"
+scipy = ">=1.7.3"
+six = ">=1.16.0"
 
 # Optional dependencies
 ansys-sphinx-theme = {version = "==0.5.2", optional = true}

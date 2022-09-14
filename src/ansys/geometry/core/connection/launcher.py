@@ -1,34 +1,26 @@
 """Module for connecting to geometry service instances."""
 
-import grpc
-
-from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.modeler import DirectModeler
+from ansys.geometry.core.modeler import Modeler
 
 
-def connect_geometry_direct_modeler(endpoint: str) -> DirectModeler:
-    """Initialize a DirectModeler connected to target endpoint.
-
-    Parameters
-    ----------
-    endpoint : str
-        Fully qualified server address for the connection.
+def launch_modeler() -> Modeler:
+    """Start or the pygeometry modeler.
 
     Returns
     -------
-    ansys.geometry.core.DirectModeler
+    ansys.geometry.core.Modeler
         Pythonic interface for geometry modeling.
 
     Examples
     --------
-    Connect to existing direct modeler geometry service.
+    Launch the ansys geometry service.
 
-    >>> from ansys.geometry.connection.launcher import connect_geometry_direct_modeler
-    >>> direct_modeler = connect_geometry_direct_modeler("localhost:50051")
+    >>> from ansys.geometry.core import launch_modeler
+    >>> modeler = launch_modeler()
     """
+    # This needs a local installation of the geometry service or PyPIM to
+    # work. Neither is integrated, we can consider adding it later.
 
-    grpc_channel = grpc.insecure_channel(endpoint)
+    # Another alternative is running docker locally from this method.
 
-    direct_modeler = DirectModeler(GrpcClient(grpc_channel))
-
-    return direct_modeler
+    raise NotImplementedError("Not yet implemented")
