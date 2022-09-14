@@ -1,5 +1,4 @@
 """A module containing a class for plotting various PyGeometry objects."""
-import sys
 from typing import Optional
 
 import numpy as np
@@ -237,7 +236,7 @@ class Plotter:
         for shape in sketch.shapes_list:
             self.plot_shape(shape)
 
-    def show(self, backend_jupyter: Optional[str] = None):
+    def show(self, jupyter_backend: Optional[str] = None):
         """Display the rendered scene in the screen.
 
         Parameters
@@ -251,8 +250,4 @@ class Plotter:
         information about supported Jupyter backends.
 
         """
-        # Verify that user is using a notebook if a backend is provided
-        if "ipykernel" in sys.modules and backend_jupyter is not None:
-            raise ValueError("Jupyter backend is only valid when running in notebooks.")
-
-        self.scene.show(backend_jupyter=backend_jupyter)
+        self.scene.show(jupyter_backend=jupyter_backend)
