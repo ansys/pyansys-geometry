@@ -1,5 +1,4 @@
 """Provides a wrapped abstraction of the gRPC proto API definition and stubs."""
-import logging
 import os
 import time
 
@@ -10,9 +9,6 @@ from grpc.health.v1 import health_pb2, health_pb2_grpc
 from ansys.geometry.core.designer.design import Design
 
 from .defaults import DEFAULT_HOST, DEFAULT_PORT
-
-LOG = logging.getLogger(__name__)
-LOG.setLevel("CRITICAL")
 
 # Default 256 MB message length
 MAX_MESSAGE_LENGTH = int(os.environ.get("PYGEOMETRY_MAX_MESSAGE_LENGTH", 256 * 1024**2))
