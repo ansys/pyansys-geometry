@@ -158,8 +158,14 @@ jobs:
           cache: 'pip'
           cache-dependency-path: 'pyproject.toml'
 
+      - name: Create Python venv
+        run: |
+          python -m venv .venv
+          .\.venv\Scripts\Activate.ps1
+
       - name: Install packages for testing
         run: |
+          .\.venv\Scripts\Activate.ps1
           pip install --upgrade build
           pip install .[test]
 
@@ -177,7 +183,9 @@ jobs:
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Integration Testing
-        run: pytest tests/integration -v
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          pytest tests/integration -v
 
       - name: Stop the geometry service
         if: always()

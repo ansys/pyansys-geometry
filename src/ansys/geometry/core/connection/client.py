@@ -78,7 +78,6 @@ class GrpcClient:
             self._target = str(channel)
         else:
             self._target = f"{host}:{port}"
-            1 / 0
             self._channel = grpc.insecure_channel(
                 self._target,
                 options=[
