@@ -1,8 +1,8 @@
 """``Modeler`` class module."""
-import grpc
+from grpc import Channel
 
-from .connection import DEFAULT_HOST, DEFAULT_PORT, GrpcClient
-from .designer.design import Design
+from ansys.geometry.core.connection import DEFAULT_HOST, DEFAULT_PORT, GrpcClient
+from ansys.geometry.core.designer import Design
 
 
 class Modeler:
@@ -18,7 +18,7 @@ class Modeler:
         self,
         host: str = DEFAULT_HOST,
         port: int = DEFAULT_PORT,
-        channel: grpc.Channel = None,
+        channel: Channel = None,
         timeout=60,
     ):
         """Constructor method for ``Modeler``."""
