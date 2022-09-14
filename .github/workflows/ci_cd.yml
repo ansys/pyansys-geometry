@@ -215,12 +215,13 @@ jobs:
 
       - name: Install packages for documentation build
         run: |
+          sudo apt-get install xvfb
           pip install --upgrade build
           pip install .[docs]
 
       - name: Build the documentation
         run: |
-          make -C doc html
+          xvfb-run make -C doc html
 
       - name: Upload HTML documentation
         uses: actions/upload-artifact@v3
