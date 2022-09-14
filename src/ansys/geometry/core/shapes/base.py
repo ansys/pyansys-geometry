@@ -6,7 +6,6 @@ from pint import Quantity
 
 from ansys.geometry.core.math import Plane, Point, UnitVector
 from ansys.geometry.core.misc import check_type
-from ansys.geometry.core.plotting.plotter import Plotter
 from ansys.geometry.core.typing import Real
 
 
@@ -188,6 +187,8 @@ class BaseShape:
             rendering of the lines.
 
         """
+        from ansys.geometry.core.plotting.plotter import Plotter
+
         pl = Plotter(num_points=num_points)
         pl.plot_shape(
             self,

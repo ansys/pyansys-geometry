@@ -1,6 +1,6 @@
 """``Polygon`` class module."""
 
-from typing import List, Union
+from typing import List, Optional, Union
 
 import numpy as np
 from pint import Quantity
@@ -187,6 +187,8 @@ class Polygon(BaseShape):
         those in the scene.
 
         """
+        from ansys.geometry.core.plotting.plotter import Plotter
+
         pl = Plotter()
         pl.plot_shape(
             self,

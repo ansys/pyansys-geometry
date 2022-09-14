@@ -9,7 +9,7 @@ from pyvista.plotting.tools import create_axes_marker
 
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
-from ansys.geometry.core.sketch.base import BaseShape
+from ansys.geometry.core.shapes.base import BaseShape
 
 
 class Plotter:
