@@ -4,12 +4,10 @@
 import os
 import time
 
-from ansys.api.geometry.v0.board_pb2 import CreateExtrudedDesignBodyRequest
 from ansys.api.geometry.v0.board_pb2_grpc import BoardStub
 import grpc
 from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
-from pint import Quantity
 
 from .defaults import DEFAULT_HOST, DEFAULT_PORT
 
