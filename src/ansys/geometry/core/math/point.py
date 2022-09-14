@@ -5,6 +5,7 @@ from typing import Optional, Union
 import numpy as np
 from pint import Quantity, Unit
 
+from ansys.geometry.core.math.vector import Vector
 from ansys.geometry.core.misc import (
     UNIT_LENGTH,
     PhysicalQuantity,
@@ -80,6 +81,12 @@ class Point(np.ndarray, PhysicalQuantity):
     def __set_value(self, input: Quantity, idx: int) -> None:
         """General setter method for ``Point`` class."""
         self[idx] = self._base_units_magnitude(input)
+
+    def __sub__(self, point: "Point"):
+        return Vector([(self.x - point.x).m, (self.y - point.y).m, (self.z - point.z).m])
+
+    def __add__(self, point: "Point"):
+        return Vector([(self.x + point.x).m, (self.y + point.y).m, (self.z + point.z).m])
 
     @property
     def is_3d(self) -> bool:

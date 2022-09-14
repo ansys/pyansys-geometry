@@ -129,6 +129,7 @@ class Vector(np.ndarray):
     @property
     def is_zero(self) -> bool:
         """Confirms whether all components of the ``Vector`` are zero."""
+        # TODO incorporate length accuracy in comparison
         return all([comp == 0 for comp in self])
 
     def normalize(self) -> "Vector":

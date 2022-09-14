@@ -4,10 +4,14 @@
 from io import UnsupportedOperation
 from typing import Union
 
-from ansys.api.geometry.v0.board_pb2 import CreateComponentRequest
+from ansys.api.geometry.v0.board_pb2 import CreateComponentRequest, CreateExtrudedDesignBodyRequest
 from ansys.api.geometry.v0.board_pb2_grpc import BoardStub
+from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.conversions import Conversions
+from ansys.geometry.core.designer.body import Body
+from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -59,5 +63,15 @@ class Component:
     def add_component(self, name: str):
         self._components.append(Component(name, self, self._grpc_client))
 
-    def extrude_profile(self, name: str, sketch: Sketch):
-        return None
+    def extrude_profile(self, name: str, sketch: Sketch, distance: Quantity):
+        extrusion_request = CreateExtrudedDesignBodyRequest(
+            distance=distance.m_as(UNITS.m),
+            parent=self.id,
+            plane=Conversions.plane_to_grpc_plane(sketch._plane),
+            geometries=Conversions.sketch_shapes_to_grpc_geometries(sketch.shapes_list),
+            name=name,
+        )
+
+        extrusion_response = self._board_stub.CreateExtrudedDesignBody(extrusion_request)
+
+        self._bodies.append(Body(extrusion_response.id, name, self))
