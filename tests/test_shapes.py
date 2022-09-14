@@ -190,7 +190,7 @@ def test_create_polygon():
     assert square.n_sides == 4
     assert square.length == side_length
     assert square.perimeter == sides * side_length
-    assert square.area == 4.0 * UNITS.m**2
+    assert abs((square.area - 4 * UNITS.m * UNITS.m).m ** 2) <= DOUBLE_EPS
 
     # Check points are expected ones
     local_points = square.local_points()
