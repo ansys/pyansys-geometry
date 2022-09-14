@@ -15,7 +15,7 @@ LOG = logging.getLogger(__name__)
 LOG.setLevel("CRITICAL")
 
 # Default 256 MB message length
-MAX_MESSAGE_LENGTH = int(os.environ.get("PYMAPDL_MAX_MESSAGE_LENGTH", 256 * 1024**2))
+MAX_MESSAGE_LENGTH = int(os.environ.get("PYGEOMETRY_MAX_MESSAGE_LENGTH", 256 * 1024**2))
 
 
 def wait_until_healthy(channel: grpc.Channel, timeout: float):
