@@ -52,8 +52,8 @@ class Arc(BaseShape):
             raise ValueError("Arc end point must be contained in the plane.")
 
         self._center, self._start_point, self._end_point = (center, start_point, end_point)
-        self._start_vector = QuantityVector.from_points(self._origin, self._start_point)
-        self._end_vector = QuantityVector.from_points(self._origin, self._end_point)
+        self._start_vector = QuantityVector.from_points(self._center, self._start_point)
+        self._end_vector = QuantityVector.from_points(self._center, self._end_point)
         self._radius = Distance(self._start_vector.norm)
 
     @property
