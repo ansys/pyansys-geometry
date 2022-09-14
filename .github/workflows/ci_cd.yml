@@ -142,6 +142,7 @@ jobs:
 
   integration-tests:
     name: Integration tests
+    needs: [smoke-tests]
     runs-on: [self-hosted, pygeometry]
     env:
       ANSRV_GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest
@@ -228,7 +229,7 @@ jobs:
 
   package:
     name: Package library
-    needs: [unit-tests, docs]
+    needs: [unit-tests, integration-tests, docs]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
