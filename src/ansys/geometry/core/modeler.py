@@ -1,25 +1,28 @@
-"""``DirectModeler`` class module."""
+"""``Modeler`` class module."""
+import grpc
 
-from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.designer.design import Design
+from .connection import DEFAULT_HOST, DEFAULT_PORT, GrpcClient
+from .designer.design import Design
 
 
-class DirectModeler:
+class Modeler:
     """
-    Provides DirectModeler class for building CAD designs.
+    Provides a modeler class for building CAD.
 
     Should have methods like:
     AddDesign(...) - Adds a new design that is synchronized to the server
 
     """
 
-    def __init__(self, grpc_client: GrpcClient):
-        """Constructor method for ``DirectModeler``."""
-
-        if not isinstance(grpc_client, GrpcClient):
-            raise TypeError(f"{GrpcClient} expected to maintain geometry service synchronization.")
-
-        self._grpc_client = grpc_client
+    def __init__(
+        self,
+        host: str = DEFAULT_HOST,
+        port: int = DEFAULT_PORT,
+        channel: grpc.Channel = None,
+        timeout=60,
+    ):
+        """Constructor method for ``Modeler``."""
+        self._client = GrpcClient(host, port, channel, timeout=timeout)
 
         # Design[] maintaining references to all designs within the modeler workspace
         self._designs = []
@@ -29,3 +32,11 @@ class DirectModeler:
 
         design = self._grpc_client.create_design()
         self._designs.append(design)
+
+    def __repr__(self):
+        """String representation of the modeler."""
+        lines = []
+        lines.append(f"Ansys Geometry Modeler ({hex(id(self))})")
+        lines.append("")
+        lines.append(str(self._client))
+        return "\n".join(lines)
