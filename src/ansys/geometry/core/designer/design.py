@@ -1,6 +1,7 @@
 """``Design`` class module."""
 
-from ansys.api.geometry.v0.board_pb2 import AddMaterialToDocumentRequest, Empty, MaterialProperty
+from ansys.api.geometry.v0.board_pb2 import AddMaterialToDocumentRequest, Empty
+from ansys.api.geometry.v0.board_pb2 import MaterialProperty as GRPCMaterialProperty
 from ansys.api.geometry.v0.board_pb2_grpc import BoardStub
 
 from ansys.geometry.core.connection.client import GrpcClient
@@ -30,9 +31,9 @@ class Design:
         # TODO: add name to design
         new_design = self._design_stub.New(Empty())
 
-        self._id = new_design.id
-        self._root_component = Component(new_design.root_component.name, None, self._grpc_client)
-        self._root_component.id = new_design.root_component.id
+        self._id = new_design.moniker
+        self._root_component = Component("new_design.name", None, self._grpc_client)
+        self._root_component.id = self._id
         self._materials = []
 
     # TODO: allow for list of materials
@@ -40,13 +41,16 @@ class Design:
         # TODO: Add design id to the request
         self._design_stub.AddMaterialToDocument(
             AddMaterialToDocumentRequest(
-                material._display_name,
-                0,  # TODO remove 0 density when proto updates
-                [
-                    MaterialProperty(
-                        mat.id, mat.display_name, mat.quantity.m, mat.quantity.units.format_babel()
+                name=material._display_name,
+                density=0.0,  # TODO remove 0 density when proto updates
+                materialProperties=[
+                    GRPCMaterialProperty(
+                        id=property.id,
+                        displayName=property.display_name,
+                        value=property.quantity.m,
+                        units=None,  # units=format(mat.quantity.units)
                     )
-                    for mat in material._properties
+                    for property in material.properties
                 ],
             )
         )
