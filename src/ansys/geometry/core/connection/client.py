@@ -8,7 +8,7 @@ from ansys.api.geometry.v0.board_pb2 import CreateExtrudedDesignBodyRequest
 from ansys.api.geometry.v0.board_pb2_grpc import BoardStub
 import grpc
 from grpc._channel import _InactiveRpcError
-from grpc.health.v1 import health_pb2, health_pb2_grpc
+from grpc_health.v1 import health_pb2, health_pb2_grpc
 from pint import Quantity
 
 from ansys.geometry.core.designer import Design
@@ -77,10 +77,8 @@ class GrpcClient:
         self._closed = False
         if channel:
             # Used for PyPIM when directly providing a channel
-            if not isinstance(grpc_client, grpc.Channel):
-                raise TypeError(
-                    f"Expected a grpc.Channel for `grpc_client`, got {type(GrpcClient)}"
-                )
+            if not isinstance(channel, grpc.Channel):
+                raise TypeError(f"Expected a grpc.Channel for `grpc_client`, got {type(channel)}")
             self._channel = channel
             self._target = str(channel)
         else:
@@ -148,7 +146,7 @@ class GrpcClient:
         """Return the target of the channel."""
         if self._closed:
             return ""
-        return self._channel.target().decode()
+        return self._channel._channel.target().decode()
 
     @property
     def channel(self) -> grpc.Channel:
