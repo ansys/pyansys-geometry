@@ -14,5 +14,4 @@ except ModuleNotFoundError:  # pragma: no cover
 
 __version__ = importlib_metadata.version(__name__.replace(".", "-"))
 
-from .connection import launch_modeler
 from .modeler import Modeler
