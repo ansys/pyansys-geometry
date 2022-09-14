@@ -192,6 +192,25 @@ class Ellipse(BaseShape):
             for ang in theta
         ]
 
+    def rotate(self, angle, axis):
+        self._center = super().rotate(self.center, angle, axis)
+
+    def translate(self, vector):
+        self._center = super().translate(self.center, vector)
+
+    def scale(self, vector):
+        point = Point(
+            [
+                self.semi_major_axis.m,
+                self.semi_minor_axis.m,
+                0,
+            ],
+            unit=self.semi_major_axis.units,
+        )
+        radius = super().scale(point, vector)
+        self._semi_major_axis.value = radius.x
+        self._semi_minor_axis.value = radius.y
+
     @classmethod
     def from_axes(
         cls,

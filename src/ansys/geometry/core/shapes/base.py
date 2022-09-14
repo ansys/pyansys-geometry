@@ -4,7 +4,7 @@ from typing import List, Optional
 
 from pint import Quantity
 
-from ansys.geometry.core.math import Plane, Point, UnitVector
+from ansys.geometry.core.math import Plane, Point, Rotation, Scaling, Translation, UnitVector
 from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
 
@@ -161,3 +161,12 @@ class BaseShape:
 
         """
         return not self.is_closed
+
+    def rotate(self, origin, angle, axis):
+        return Rotation(origin, angle, axis)
+
+    def translate(self, origin, vector):
+        return Translation(origin, vector)
+
+    def scale(self, point, vector):
+        return Scaling(point, vector)

@@ -124,6 +124,24 @@ class Circle(BaseShape):
             for ang in theta
         ]
 
+    def rotate(self, angle, axis):
+        self._center = super().rotate(self.center, angle, axis)
+
+    def translate(self, vector):
+        self._center = super().translate(self.center, vector)
+
+    def scale(self, vector):
+        point = Point(
+            [
+                self.radius.m,
+                0,
+                0,
+            ],
+            unit=self.radius.units,
+        )
+        radius = super().scale(point, vector)
+        self._radius.value = radius.x
+
     @classmethod
     def from_center_and_radius(
         cls, center: Point, radius: Union[Quantity, Distance], plane: Optional[Plane] = Plane()
