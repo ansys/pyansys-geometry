@@ -4,7 +4,7 @@ from ansys.geometry.core.modeler import Modeler
 
 
 def launch_modeler() -> Modeler:
-    """Start or the pygeometry modeler.
+    """Start the PyGeometry modeler.
 
     Returns
     -------

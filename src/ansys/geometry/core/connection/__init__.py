@@ -2,5 +2,5 @@
 
 import os
 
-from .client import GrpcClient
-from .defaults import DEFAULT_HOST, DEFAULT_PORT
+from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
