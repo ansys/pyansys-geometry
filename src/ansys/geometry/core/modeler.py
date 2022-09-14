@@ -3,15 +3,28 @@ from grpc import Channel
 
 from ansys.geometry.core.connection import DEFAULT_HOST, DEFAULT_PORT, GrpcClient
 from ansys.geometry.core.designer import Design
+from ansys.geometry.core.misc import check_type
 
 
 class Modeler:
     """
-    Provides a modeler class for building CAD.
+    Provides a modeler class for interacting with an open session of
+    the Geometry service.
 
-    Should have methods like:
-    AddDesign(...) - Adds a new design that is synchronized to the server
-
+    Parameters
+    ----------
+    host : str, optional
+        Host where the server is running.
+        By default, ``DEFAULT_HOST``.
+    port : Union[str, int], optional
+        Port number where the server is running.
+        By default, ``DEFAULT_PORT``.
+    channel : ~grpc.Channel, optional
+        gRPC channel for server communication.
+        By default, ``None``.
+    timeout : Real, optional
+        Timeout in seconds to achieve the connection.
+        By default, 60 seconds.
     """
 
     def __init__(
@@ -27,11 +40,23 @@ class Modeler:
         # Design[] maintaining references to all designs within the modeler workspace
         self._designs = []
 
-    def create_design(self) -> Design:
-        """Initializes a new design with the connected client."""
+    def create_design(self, name: str) -> Design:
+        """Initializes a new design with the connected client.
 
-        design = self._grpc_client.create_design()
+        Parameters
+        ----------
+        name : str
+            Name assigned to the design.
+
+        Returns
+        -------
+        Design
+            Design object created on the server.
+        """
+        check_type(name, str)
+        design = Design(name, self._client)
         self._designs.append(design)
+        return self._designs[-1]
 
     def __repr__(self):
         """String representation of the modeler."""

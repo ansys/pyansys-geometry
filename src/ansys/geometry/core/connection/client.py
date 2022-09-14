@@ -2,12 +2,15 @@
 
 import os
 import time
+from typing import Optional, Union
 
 from grpc import Channel, insecure_channel
 from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
 
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
+from ansys.geometry.core.misc import check_type
+from ansys.geometry.core.typing import Real
 
 # Default 256 MB message length
 MAX_MESSAGE_LENGTH = int(os.environ.get("PYGEOMETRY_MAX_MESSAGE_LENGTH", 256 * 1024**2))
@@ -54,23 +57,36 @@ class GrpcClient:
 
     Parameters
     ----------
-    channel : ~grpc.Channel
+    host : str, optional
+        Host where the server is running.
+        By default, ``DEFAULT_HOST``.
+    port : Union[str, int], optional
+        Port number where the server is running.
+        By default, ``DEFAULT_PORT``.
+    channel : ~grpc.Channel, optional
         gRPC channel for server communication.
+        By default, ``None``.
+    timeout : Real, optional
+        Timeout in seconds to achieve the connection.
+        By default, 60 seconds.
     """
 
     def __init__(
         self,
-        host: str = DEFAULT_HOST,
-        port: int = DEFAULT_PORT,
-        channel: Channel = None,
-        timeout=60,
+        host: Optional[str] = DEFAULT_HOST,
+        port: Union[str, int] = DEFAULT_PORT,
+        channel: Optional[Channel] = None,
+        timeout: Optional[Real] = 60,
     ):
         """Initialize the ``GrpcClient`` object."""
+        check_type(host, str)
+        check_type(port, (str, int))
+        check_type(timeout, (int, float))
+
         self._closed = False
         if channel:
             # Used for PyPIM when directly providing a channel
-            if not isinstance(channel, Channel):
-                raise TypeError(f"Expected a Channel for `grpc_client`, got {type(channel)}")
+            check_type(channel, Channel)
             self._channel = channel
             self._target = str(channel)
         else:
@@ -86,7 +102,8 @@ class GrpcClient:
         wait_until_healthy(self._channel, timeout)
 
     @property
-    def channel(self):
+    def channel(self) -> Channel:
+        """The gRPC channel of this client."""
         return self._channel
 
     @property
@@ -99,7 +116,7 @@ class GrpcClient:
         try:
             out = health_stub.Check(request, timeout=0.1)
             return out.status is health_pb2.HealthCheckResponse.SERVING
-        except _InactiveRpcError:
+        except _InactiveRpcError:  # pragma: no cover
             return False
 
     def __repr__(self) -> str:
@@ -112,7 +129,7 @@ class GrpcClient:
         elif self.healthy:
             lines.append(f"  Connection: Healthy")
         else:
-            lines.append(f"  Connection: Unhealthy")
+            lines.append(f"  Connection: Unhealthy")  # pragma: no cover
         return "\n".join(lines)
 
     def close(self):
@@ -125,8 +142,3 @@ class GrpcClient:
         if self._closed:
             return ""
         return self._channel._channel.target().decode()
-
-    @property
-    def channel(self) -> Channel:
-        """The gRPC channel of this client."""
-        return self._channel
