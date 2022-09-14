@@ -112,6 +112,15 @@ class Line(BaseShape):
         line_start = self.start - quantified_dir * int(num_points / 2)
         return [Point(line_start + delta * quantified_dir) for delta in range(0, num_points)]
 
+    def rotate(self, angle, axis):
+        self._start = super().rotate(self.start, angle, axis)
+
+    def translate(self, vector):
+        self._start = super().translate(self.start, vector)
+
+    def scale(self, vector):
+        self._direction = super().scale(self.direction, vector)
+
 
 class Segment(Line):
     """
@@ -257,3 +266,15 @@ class Segment(Line):
         """
         delta_segm = (self.end - self.start) / (num_points - 1)
         return [Point(self.start + delta * delta_segm) for delta in range(0, num_points)]
+
+    def rotate(self, angle, axis):
+        self._start = super().rotate(self.start, angle, axis)
+        self._end = super().rotate(self.end, angle, axis)
+
+    def translate(self, vector):
+        self._start = super().translate(self.start, vector)
+        self._end = super().translate(self.end, vector)
+
+    def scale(self, vector):
+        self._start = super().scale(self.start, vector)
+        self._end = super().scale(self.start, vector)

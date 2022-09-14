@@ -162,3 +162,21 @@ class Polygon(BaseShape):
             )
             for ang in theta
         ]
+
+    def rotate(self, angle, axis):
+        self._center = super().rotate(self.center, angle, axis)
+
+    def translate(self, vector):
+        self._center = super().translate(self.center, vector)
+
+    def scale(self, vector):
+        point = Point(
+            [
+                self._inner_radius.value,
+                0,
+                0,
+            ],
+            unit=self._inner_radius.unit,
+        )
+        radius = super().scale(point, vector)
+        self._inner_radius.value = radius.x
