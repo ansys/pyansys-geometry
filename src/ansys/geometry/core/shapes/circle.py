@@ -115,9 +115,9 @@ class Circle(BaseShape):
         return [
             Point(
                 [
-                    self.radius.m * np.cos(ang),
-                    self.radius.m * np.sin(ang),
-                    0,
+                    self.center.x.to(self.radius.units).m + self.radius.m * np.cos(ang),
+                    self.center.y.to(self.radius.units).m + self.radius.m * np.sin(ang),
+                    self.center.z.to(self.radius.units).m,
                 ],
                 unit=self.radius.units,
             )

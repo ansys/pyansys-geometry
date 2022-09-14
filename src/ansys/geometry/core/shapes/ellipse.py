@@ -180,7 +180,13 @@ class Ellipse(BaseShape):
         theta = np.linspace(0, 2 * np.pi, num_points)
         return [
             Point(
-                [self.semi_major_axis.m * np.cos(ang), self.semi_minor_axis.m * np.sin(ang), 0],
+                [
+                    self.center.x.to(self.semi_major_axis.units).m
+                    + self.semi_major_axis.m * np.cos(ang),
+                    self.center.y.to(self.semi_major_axis.units).m
+                    + self.semi_minor_axis.m * np.sin(ang),
+                    self.center.z.to(self.semi_major_axis.units).m,
+                ],
                 unit=self.semi_major_axis.units,
             )
             for ang in theta
