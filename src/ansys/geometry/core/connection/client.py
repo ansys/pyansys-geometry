@@ -11,10 +11,6 @@ from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
 from pint import Quantity
 
-from ansys.geometry.core.designer import Design
-from ansys.geometry.core.designer.component import Component
-from ansys.geometry.core.sketch import Sketch
-
 from .defaults import DEFAULT_HOST, DEFAULT_PORT
 
 # Default 256 MB message length
@@ -99,18 +95,6 @@ class GrpcClient:
     def channel(self):
         return self._channel
 
-    def extrude(self, name: str, component: Component, sketch: Sketch, distance: Quantity):
-
-        extrusion_request = CreateExtrudedDesignBodyRequest(
-            distance=distance.m,
-            parent=component.id,
-            plane=sketch._plane,
-            geometries=sketch,
-            name=name,
-        )
-
-        extrusion_response = self._board_stub.CreateExtrudedDesignBody(extrusion_request)
-
     @property
     def healthy(self) -> bool:
         """Return if the client channel if healthy."""
@@ -152,10 +136,3 @@ class GrpcClient:
     def channel(self) -> grpc.Channel:
         """The gRPC channel of this client."""
         return self._channel
-
-    def create_design(self) -> Design:
-        pass
-        # new_design = self._design_stub.New(NewDesignRequest())
-
-        # return Design(new_design.id)
-        # return None
