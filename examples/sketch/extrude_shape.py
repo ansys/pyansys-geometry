@@ -10,7 +10,7 @@ sketch = Sketch()
 
 sketch.draw_circle(Point([10, 10, 0], UNITS.mm), Distance(10, UNITS.mm))
 
-modeler = Modeler(host="0.0.0.0", port=50051)
+modeler = Modeler(host="localhost", port=50051)
 
 design = modeler.create_design("ExtrudeProfile")
 

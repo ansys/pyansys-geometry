@@ -5,7 +5,6 @@ import time
 from typing import Optional, Union
 
 import grpc
-from grpc import Channel, insecure_channel
 from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
 
@@ -17,7 +16,7 @@ from ansys.geometry.core.typing import Real
 MAX_MESSAGE_LENGTH = int(os.environ.get("PYGEOMETRY_MAX_MESSAGE_LENGTH", 256 * 1024**2))
 
 
-def wait_until_healthy(channel: Channel, timeout: float):
+def wait_until_healthy(channel: grpc.Channel, timeout: float):
     """
     Wait until a channel is healthy before returning.
 
@@ -76,7 +75,7 @@ class GrpcClient:
         self,
         host: Optional[str] = DEFAULT_HOST,
         port: Union[str, int] = DEFAULT_PORT,
-        channel: Optional[Channel] = None,
+        channel: Optional[grpc.Channel] = None,
         timeout: Optional[Real] = 60,
     ):
         """Initialize the ``GrpcClient`` object."""
@@ -87,12 +86,12 @@ class GrpcClient:
         self._closed = False
         if channel:
             # Used for PyPIM when directly providing a channel
-            check_type(channel, Channel)
+            check_type(channel, grpc.Channel)
             self._channel = channel
             self._target = str(channel)
         else:
             self._target = f"{host}:{port}"
-            self._channel = insecure_channel(
+            self._channel = grpc.insecure_channel(
                 self._target,
                 options=[
                     ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
@@ -103,7 +102,7 @@ class GrpcClient:
         wait_until_healthy(self._channel, timeout)
 
     @property
-    def channel(self) -> Channel:
+    def channel(self) -> grpc.Channel:
         """The gRPC channel of this client."""
         return self._channel
 
@@ -143,7 +142,3 @@ class GrpcClient:
         if self._closed:
             return ""
         return self._channel._channel.target().decode()
-
-    def channel(self) -> grpc.Channel:
-        """The gRPC channel of this client."""
-        return self._channel
