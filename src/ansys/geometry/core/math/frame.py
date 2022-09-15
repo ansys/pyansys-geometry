@@ -5,6 +5,7 @@ from typing import List, Union
 import numpy as np
 
 from ansys.geometry.core.math.constants import UNIT_VECTOR_X, UNIT_VECTOR_Y, ZERO_POINT3D
+from ansys.geometry.core.math.matrix import Matrix33
 from ansys.geometry.core.math.point import Point
 from ansys.geometry.core.math.vector import UnitVector, Vector
 from ansys.geometry.core.misc import check_type, check_type_equivalence
@@ -72,6 +73,40 @@ class Frame:
     def direction_z(self) -> UnitVector:
         """Return the Z-axis direction of the ``Frame``."""
         return self._direction_z
+
+    @property
+    def global_to_local(self) -> Matrix33:
+        """Return the global to local space transformation matrix.
+
+        Returns
+        -------
+        Matrix33
+            A 3x3 matrix representing the transformation from local to global
+            coordinate space.
+
+        """
+        return Matrix33(
+            np.array(
+                [
+                    self.direction_x.tolist(),
+                    self.direction_y.tolist(),
+                    self.direction_z.tolist(),
+                ]
+            )
+        )
+
+    @property
+    def local_to_global(self) -> Matrix33:
+        """Return the local to global space transformation matrix.
+
+        Returns
+        -------
+        Matrix33
+            A 3x3 matrix representing the transformation from global to local
+            coordinate space.
+
+        """
+        return self.global_to_local.T
 
     def __eq__(self, other: "Frame") -> bool:
         """Equals operator for ``Frame``."""
