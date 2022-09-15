@@ -1,4 +1,4 @@
-"""``Conversions`` class module."""
+"""``Conversions`` module."""
 
 from typing import List
 
