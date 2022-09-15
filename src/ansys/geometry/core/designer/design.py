@@ -63,7 +63,19 @@ class Design:
         )
         self._materials.append(material)
 
-    def add_component(self, name: str):
+    def add_component(self, name: str) -> Component:
+        """Creates a new component nested under the design within the assembly.
+
+        Parameters
+        ----------
+        name : str
+            A user-defined label assigned to the new component.
+
+        Returns
+        -------
+        Component
+            A newly created component with no children in the design assembly.
+        """
         self._root_component.add_component(name)
 
     def extrude_sketch(self, name: str, sketch: Sketch, distance: Quantity) -> Body:
@@ -77,8 +89,20 @@ class Design:
             The two-dimensional sketch source for extrusion.
         distance : Quantity
             The distance to extrude the solid body.
+
+        Returns
+        -------
+        Body
+            A newly created body created from the extruded profile.
         """
         return self._root_component.extrude_profile(name, sketch, distance)
 
-    def save(self, file_location: str):
+    def save(self, file_location: str) -> None:
+        """Saves a design to disk on the active geometry server instance.
+
+        Parameters
+        ----------
+        file_location : str
+            Full path of the location on disk where the file should be saved.
+        """
         self._design_stub.SaveAs(SaveAsDocumentRequest(filepath=file_location))
