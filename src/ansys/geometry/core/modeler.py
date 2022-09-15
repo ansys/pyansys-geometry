@@ -1,4 +1,6 @@
 """``Modeler`` class module."""
+from typing import Union
+
 from grpc import Channel
 
 from ansys.geometry.core.connection import DEFAULT_HOST, DEFAULT_PORT, GrpcClient
@@ -30,7 +32,7 @@ class Modeler:
     def __init__(
         self,
         host: str = DEFAULT_HOST,
-        port: int = DEFAULT_PORT,
+        port: Union[str, int] = DEFAULT_PORT,
         channel: Channel = None,
         timeout=60,
     ):

@@ -50,7 +50,7 @@ class Design:
                     name=material._display_name,
                     materialProperties=[
                         GRPCMaterialProperty(
-                            id=property.id,
+                            id=property.type.value,
                             displayName=property.display_name,
                             value=property.quantity.m,
                             units=format(property.quantity.units),

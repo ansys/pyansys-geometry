@@ -1,6 +1,20 @@
 """``MaterialProperty`` class module."""
 
+from enum import Enum
+
 from pint import Quantity
+
+
+class MaterialPropertyType(Enum):
+    """Enum holding the possible values for ``MaterialProperty`` objects."""
+
+    DENSITY = "Density"
+    ELASTIC_MODULUS = "ElasticModulus"
+    POISSON_RATIO = "PoissonsRatio"
+    SHEAR_MODULUS = "ShearModulus"
+    SPECIFIC_HEAT = "SpecificHeat"
+    TENSILE_STRENGTH = "TensileStrength"
+    THERMAL_CONDUCTIVITY = "ThermalConductivity"
 
 
 class MaterialProperty:
@@ -9,8 +23,8 @@ class MaterialProperty:
 
     Parameters
     ----------
-    id : str
-        User-defined identifier.
+    type : MaterialPropertyType
+        ``MaterialPropertyType`` value.
     display_name: str
         User-defined display name.
     quantity: ~pint.Quantity
@@ -19,19 +33,19 @@ class MaterialProperty:
 
     def __init__(
         self,
-        id: str,
+        type: MaterialPropertyType,
         display_name: str,
         quantity: Quantity,
     ):
         """Constructor method for ``Material Property``."""
-        self._id = id
+        self._type = type
         self._display_name = display_name
         self._quantity = quantity
 
     @property
-    def id(self) -> str:
+    def type(self) -> MaterialPropertyType:
         """Id of the ``MaterialProperty``."""
-        return self._id
+        return self._type
 
     @property
     def display_name(self) -> str:
