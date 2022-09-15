@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from ansys.api.geometry.v0.bodies_pb2 import SetAssignedMaterialRequest
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 
-from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.materials import Material
 
 if TYPE_CHECKING:

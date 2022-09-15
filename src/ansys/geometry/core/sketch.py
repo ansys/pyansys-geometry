@@ -61,7 +61,6 @@ class Sketch:
             An object representing the circle added to the sketch.
 
         """
-
         circle = Circle(self._plane, center, radius)
         self.append_shape(circle)
         return circle
