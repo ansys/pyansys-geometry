@@ -9,6 +9,7 @@ from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialPro
 from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.sketch import Sketch
@@ -65,7 +66,7 @@ class Design:
     def add_component(self, name: str):
         self._root_component.add_component(name)
 
-    def extrude_sketch(self, name: str, sketch: Sketch, distance: Quantity):
+    def extrude_sketch(self, name: str, sketch: Sketch, distance: Quantity) -> Body:
         """Creates a solid body by extruding the given profile up to the given distance.
 
         Parameters

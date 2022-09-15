@@ -85,7 +85,7 @@ class Component:
         """
         self._components.append(Component(name, self, self._grpc_client))
 
-    def extrude_profile(self, name: str, sketch: Sketch, distance: Quantity):
+    def extrude_profile(self, name: str, sketch: Sketch, distance: Quantity) -> Body:
         """Creates a solid body by extruding the given profile up to the given distance.
 
         The resulting body created is nested under this component within the design assembly.
@@ -110,3 +110,4 @@ class Component:
         extrusion_response = self._bodies_stub.CreateExtrudedBody(extrusion_request)
 
         self._bodies.append(Body(extrusion_response.id, name, self, self._grpc_client))
+        return self._bodies[-1]
