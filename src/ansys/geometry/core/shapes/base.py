@@ -2,10 +2,10 @@
 
 from typing import List, Optional
 
-from pint import Quantity, Unit
+from pint import Quantity
 
-from ansys.geometry.core.math import Plane, Point, Rotation, Scaling, Translation, UnitVector
-from ansys.geometry.core.misc import UNIT_ANGLE, check_type
+from ansys.geometry.core.math import Plane, Point, UnitVector
+from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
 
 
@@ -162,7 +162,7 @@ class BaseShape:
         """
         return not self.is_closed
 
-    def rotate(self, center, angle, axis, unit: Optional[Unit] = UNIT_ANGLE) -> Point:
+    def rotate(self, center, angle, axis) -> Point:
         """Return the rotated shape in the given axis at given angle.
 
         Parameters
@@ -182,7 +182,7 @@ class BaseShape:
         Point
             The rotated center point of shape
         """
-        return Rotation(center, angle, axis, unit)
+        raise NotImplementedError
 
     def translate(self, center, vector) -> Point:
         """Return the translated shape in the the given ``Vector``.
@@ -199,7 +199,7 @@ class BaseShape:
         Point
             The translated point
         """
-        return Translation(center, vector)
+        raise NotImplementedError
 
     def scale(self, point, vector) -> Point:
         """Return the scaled shape in the the given ``Vector``.
@@ -216,4 +216,4 @@ class BaseShape:
         Point
             The scaled point
         """
-        return Scaling(point, vector)
+        raise NotImplementedError

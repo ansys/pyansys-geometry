@@ -37,6 +37,14 @@ def test_create_circle():
     assert abs(all(local_points[0] - Point([1, 0, 0]))) <= DOUBLE_EPS
     assert abs(all(local_points[2] - Point([-1, 0, 0]))) <= DOUBLE_EPS
 
+    # Check circle transformations
+    circle.translate(Vector([5, 6, 0]))
+    assert circle.center == Point([5, 6, 0], UNITS.m)
+    circle.rotate(np.pi / 2, "x")
+    assert abs(circle.center - Point([5, 0, 6], UNITS.m)).all() <= DOUBLE_EPS
+    circle.scale(Vector([10, 0, 0]))
+    circle.radius == 10 * UNITS.m
+
     # Use the class method to build a circle
     center_2, radius_2 = Point([10, 20, 0], UNITS.mm), (10 * UNITS.mm)
     circle_from_center_and_radius = Circle.from_center_and_radius(center_2, radius_2)

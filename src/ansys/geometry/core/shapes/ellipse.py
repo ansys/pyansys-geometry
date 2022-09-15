@@ -5,7 +5,7 @@ import numpy as np
 from pint import Quantity
 from scipy.integrate import quad
 
-from ansys.geometry.core.math import Plane, Point
+from ansys.geometry.core.math import Plane, Point, rotated_object, scaled_object, translated_object
 from ansys.geometry.core.misc import Distance, check_type
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.typing import Real
@@ -193,10 +193,10 @@ class Ellipse(BaseShape):
         ]
 
     def rotate(self, angle, axis):
-        self._center = super().rotate(self.center, angle, axis)
+        self._center = rotated_object(self.center, angle, axis)
 
     def translate(self, vector):
-        self._center = super().translate(self.center, vector)
+        self._center = translated_object(self.center, vector)
 
     def scale(self, vector):
         point = Point(
@@ -207,9 +207,9 @@ class Ellipse(BaseShape):
             ],
             unit=self.semi_major_axis.units,
         )
-        radius = super().scale(point, vector)
-        self._semi_major_axis.value = radius.x
-        self._semi_minor_axis.value = radius.y
+        scaled_radius = scaled_object(point, vector)
+        self._semi_major_axis.value = scaled_radius.x
+        self._semi_minor_axis.value = scaled_radius.y
 
     @classmethod
     def from_axes(

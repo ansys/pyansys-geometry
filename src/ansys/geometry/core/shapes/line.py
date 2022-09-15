@@ -4,7 +4,16 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core.math import Plane, Point, QuantityVector, UnitVector, Vector
+from ansys.geometry.core.math import (
+    Plane,
+    Point,
+    QuantityVector,
+    UnitVector,
+    Vector,
+    rotated_object,
+    scaled_object,
+    translated_object,
+)
 from ansys.geometry.core.misc import (
     UNIT_LENGTH,
     UNITS,
@@ -113,13 +122,13 @@ class Line(BaseShape):
         return [Point(line_start + delta * quantified_dir) for delta in range(0, num_points)]
 
     def rotate(self, angle, axis):
-        self._start = super().rotate(self.start, angle, axis)
+        self._start = rotated_object(self.start, angle, axis)
 
     def translate(self, vector):
-        self._start = super().translate(self.start, vector)
+        self._start = translated_object(self.start, vector)
 
     def scale(self, vector):
-        self._direction = super().scale(self.direction, vector)
+        self._direction = scaled_object(self.direction, vector)
 
 
 class Segment(Line):
@@ -268,13 +277,13 @@ class Segment(Line):
         return [Point(self.start + delta * delta_segm) for delta in range(0, num_points)]
 
     def rotate(self, angle, axis):
-        self._start = super().rotate(self.start, angle, axis)
-        self._end = super().rotate(self.end, angle, axis)
+        self._start = rotated_object(self.start, angle, axis)
+        self._end = rotated_object(self.end, angle, axis)
 
     def translate(self, vector):
-        self._start = super().translate(self.start, vector)
-        self._end = super().translate(self.end, vector)
+        self._start = translated_object(self.start, vector)
+        self._end = translated_object(self.end, vector)
 
     def scale(self, vector):
-        self._start = super().scale(self.start, vector)
-        self._end = super().scale(self.start, vector)
+        self._start = scaled_object(self.start, vector)
+        self._end = scaled_object(self.start, vector)

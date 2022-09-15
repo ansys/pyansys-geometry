@@ -4,7 +4,14 @@ from typing import List, Optional
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math import Plane, Point, QuantityVector
+from ansys.geometry.core.math import (
+    Plane,
+    Point,
+    QuantityVector,
+    rotated_object,
+    scaled_object,
+    translated_object,
+)
 from ansys.geometry.core.misc import UNITS, Distance, check_type
 from ansys.geometry.core.shapes.base import BaseShape
 
@@ -171,10 +178,10 @@ class Arc(BaseShape):
         ]
 
     def rotate(self, angle, axis):
-        self._center = super().rotate(self.center, angle, axis)
+        self._center = rotated_object(self.center, angle, axis)
 
     def translate(self, vector):
-        self._center = super().translate(self.center, vector)
+        self._center = translated_object(self.center, vector)
 
     def scale(self, vector):
         point = Point(
@@ -185,5 +192,5 @@ class Arc(BaseShape):
             ],
             unit=self.radius.units,
         )
-        radius = super().scale(point, vector)
-        self._radius.value = radius.x
+        scaled_radius = scaled_object(point, vector)
+        self._radius.value = scaled_radius.x

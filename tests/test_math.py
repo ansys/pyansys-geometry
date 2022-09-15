@@ -15,11 +15,11 @@ from ansys.geometry.core.math import (
     Plane,
     Point,
     QuantityVector,
-    Rotation,
-    Scaling,
-    Translation,
     UnitVector,
     Vector,
+    rotated_object,
+    scaled_object,
+    translated_object,
 )
 from ansys.geometry.core.misc import UNITS
 
@@ -700,27 +700,27 @@ def test_plane():
 def test_transformation_rotation():
     """Simple test to test rotation."""
     v_1 = Vector([1, 2, 3])
-    rot_x = Rotation(v_1, np.pi / 2, "x")
+    rot_x = rotated_object(v_1, np.pi / 2, "x")
     test_vector = Vector([1, -3, 2])
     assert round(rot_x.x) - test_vector.x <= DOUBLE_EPS
     assert round(rot_x.y) - test_vector.y <= DOUBLE_EPS
     assert round(rot_x.z) - test_vector.z <= DOUBLE_EPS
 
-    # Rotation along x axis in degree
-    rot_x_degree = Rotation(v_1, 90 * UNITS.degree, "x")
+    # rotated_object along x axis in degree
+    rot_x_degree = rotated_object(v_1, 90 * UNITS.degree, "x")
     assert round(rot_x_degree.x) - test_vector.x <= DOUBLE_EPS
     assert round(rot_x_degree.y) - test_vector.y <= DOUBLE_EPS
     assert round(rot_x_degree.z) - test_vector.z <= DOUBLE_EPS
 
     # Test matrix in x = 90, y = 90
     m = Matrix33()
-    rot_matrix_xy = Rotation(m, [np.pi / 2, 90 * UNITS.degree], "xy")
+    rot_matrix_xy = rotated_object(m, [np.pi / 2, 90 * UNITS.degree], "xy")
     test = Matrix33([[0, 0, -1], [1, 0, 0], [0, -1, 0]])
     assert abs(rot_matrix_xy - test).all() <= DOUBLE_EPS
 
     point = Point([6, 2, 3])
-    rot_point = Rotation(point, 60 * UNITS.degree, "x")
-    rot_point_rad = Rotation(point, np.pi / 3 * UNITS.radian, "x")
+    rot_point = rotated_object(point, 60 * UNITS.degree, "x")
+    rot_point_rad = rotated_object(point, np.pi / 3 * UNITS.radian, "x")
     test_point = Point([6, -1.5020666, 3.27777302])
     assert abs(rot_point - test_point).all() <= DOUBLE_EPS
     assert abs(rot_point_rad - test_point).all() <= DOUBLE_EPS
@@ -728,35 +728,35 @@ def test_transformation_rotation():
     with pytest.raises(
         ValueError, match="Expected axis specification to be a string of up to 3 characters"
     ):
-        rot_x = Rotation(v_1, np.pi / 2 * UNITS.radian, "xyzx")
+        rot_x = rotated_object(v_1, np.pi / 2 * UNITS.radian, "xyzx")
 
     with pytest.raises(ValueError, match="Axis and angle are not matching"):
-        rot_x = Rotation(
+        rot_x = rotated_object(
             v_1,
             [np.pi / 2 * UNITS.radian, np.pi / 2 * UNITS.radian, np.pi / 2 * UNITS.radian],
             "xy",
         )
 
     with pytest.raises(ValueError, match="Axis and angle are not matching"):
-        rot_x = Rotation(v_1, [np.pi / 2 * UNITS.radian], "xy")
+        rot_x = rotated_object(v_1, [np.pi / 2 * UNITS.radian], "xy")
 
 
 def test_transformation_translation():
-    """Simple test for translation."""
+    """Simple test for translated_object."""
     point = Point([1, 2, 3])
     v = Vector([1, 1, 1])
-    trans = Translation(point, v)
+    trans = translated_object(point, v)
     assert trans == Point([2, 3, 4])
 
-    # Test matrix translation
+    # Test matrix translated_object
     m_1 = Matrix33()
     v_1 = Vector([5, 6])
-    trans_matrix = Translation(m_1, v_1)
+    trans_matrix = translated_object(m_1, v_1)
     test_matrix = Matrix33([[1.0, 0.0, 5.0], [0.0, 1.0, 6.0], [0.0, 0.0, 1.0]])
     assert abs(trans_matrix - test_matrix).all() <= DOUBLE_EPS
     m_2 = Matrix44()
     v_2 = Vector([5, 6, 7])
-    trans_matrix = Translation(m_2, v_2)
+    trans_matrix = translated_object(m_2, v_2)
     test_matrix = Matrix44(
         [[1.0, 0.0, 0, 5.0], [0.0, 1.0, 0, 6.0], [0.0, 0.0, 1.0, 7], [0, 0, 0, 1]]
     )
@@ -764,15 +764,15 @@ def test_transformation_translation():
 
 
 def test_transformation_scalar():
-    """Simple test for scaling."""
+    """Simple test for scaled_object."""
     point = Point([1, 2, 3])
     v = Vector([1, 1 / 2, 1 / 3])
-    scale = Scaling(point, v)
+    scale = scaled_object(point, v)
     assert scale == Point([1, 1, 1])
 
-    # Test matrix translation
+    # Test matrix translated_object
     m = Matrix33()
     v = Vector([5, 6])
-    scale_matrix = Scaling(m, v)
+    scale_matrix = scaled_object(m, v)
     test_matrix = Matrix33([[5.0, 0.0, 0.0], [0.0, 6.0, 0.0], [0.0, 0.0, 1.0]])
     assert abs(scale_matrix - test_matrix).all() <= DOUBLE_EPS
