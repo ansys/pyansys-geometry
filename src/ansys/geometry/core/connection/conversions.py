@@ -19,10 +19,32 @@ from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Polygon,
 
 
 def vector_to_direction(vector: Vector) -> GRPCDirection:
+    """Marshals a Vector class to an ansys.api.geometry vector gRPC transfer model.
+
+    Parameters
+    ----------
+    vector : Vector
+        Source vector data.
+
+    Returns
+    -------
+    ansys.api.geometry.v0 Direction model
+    """
     return GRPCDirection(x=vector.x, y=vector.y, z=vector.z)
 
 
 def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
+    """Marshals a Plane class to an ansys.api.geometry plane gRPC transfer model.
+
+    Parameters
+    ----------
+    plan : Plane
+        Source plane data.
+
+    Returns
+    -------
+    ansys.api.geometry.v0 Plane model, units in meters
+    """
     return GRPCPlane(
         frame=GRPCFrame(
             origin=point_to_grpc_point(plane.origin),
@@ -33,6 +55,17 @@ def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
 
 
 def sketch_shapes_to_grpc_geometries(shapes: List[BaseShape]) -> Geometries:
+    """Marshals a list of shapes to an ansys.api.geometry geometries gRPC transfer model.
+
+    Parameters
+    ----------
+    shapes : List[BaseShape]
+        Source shape data.
+
+    Returns
+    -------
+    ansys.api.geometry.v0 Geometries model, units in meters
+    """
     geometries = Geometries()
     for shape in shapes:
         if isinstance(shape, Circle):
@@ -50,7 +83,17 @@ def sketch_shapes_to_grpc_geometries(shapes: List[BaseShape]) -> Geometries:
 
 
 def arc_to_grpc_arc(arc: Arc) -> GRPCArc:
-    """Returns a grpc arc with default units of m."""
+    """Marshals an Arc to an ansys.api.geometry arc gRPC transfer model.
+
+    Parameters
+    ----------
+    arc : Arc
+        Source arc data.
+
+    Returns
+    -------
+    ansys.api.geometry.v0 Arc model, units in meters
+    """
     return GRPCArc(
         center=point_to_grpc_point(arc.origin),
         start=point_to_grpc_point(arc.start_point),
@@ -59,7 +102,17 @@ def arc_to_grpc_arc(arc: Arc) -> GRPCArc:
 
 
 def ellipse_to_grpc_ellipse(ellipse: Ellipse) -> GRPCEllipse:
-    """Returns a grpc ellipse with default units of m."""
+    """Marshals an ellipse to an ansys.api.geometry ellipse gRPC transfer model.
+
+    Parameters
+    ----------
+    ellipse : Ellipse
+        Source ellipse data.
+
+    Returns
+    -------
+    ansys.api.geometry.v0 Ellipse model, units in meters
+    """
     return GRPCEllipse(
         center=point_to_grpc_point(ellipse.origin),
         majorradius=ellipse.semi_major_axis.m_as(UNITS.m),
@@ -68,7 +121,17 @@ def ellipse_to_grpc_ellipse(ellipse: Ellipse) -> GRPCEllipse:
 
 
 def circle_to_grpc_circle(circle: Circle) -> GRPCCircle:
-    """Returns a grpc circle with default units of m."""
+    """Marshals a cicle to an ansys.api.geometry circle gRPC transfer model.
+
+    Parameters
+    ----------
+    circle : Circle
+        Source circle data.
+
+    Returns
+    -------
+    ansys.api.geometry.v0 Circle model, units in meters
+    """
     return GRPCCircle(
         center=point_to_grpc_point(circle.origin),
         radius=circle.radius.m_as(UNITS.m),
@@ -76,7 +139,17 @@ def circle_to_grpc_circle(circle: Circle) -> GRPCCircle:
 
 
 def point_to_grpc_point(point: Point) -> GRPCPoint:
-    """Returns a grpc point with default units of m."""
+    """Marshals a point to an ansys.api.geometry point gRPC transfer model.
+
+    Parameters
+    ----------
+    point : Point
+        Source point data.
+
+    Returns
+    -------
+    ansys.api.geometry.v0 Point model, units in meters
+    """
     return GRPCPoint(
         x=point.x.m_as(UNITS.m),
         y=point.y.m_as(UNITS.m),
@@ -85,7 +158,17 @@ def point_to_grpc_point(point: Point) -> GRPCPoint:
 
 
 def polygon_to_grpc_polygon(polygon: Polygon) -> GRPCPolygon:
-    """Returns a grpc polygon with default units of m."""
+    """Marshals a polygon to an ansys.api.geometry polygon gRPC transfer model.
+
+    Parameters
+    ----------
+    polygon : Polygon
+        Source polygon data.
+
+    Returns
+    -------
+    ansys.api.geometry.v0 Polygon model, units in meters
+    """
     return GRPCPolygon(
         center=point_to_grpc_point(polygon.origin),
         radius=polygon.inner_radius.m_as(UNITS.m),
@@ -94,7 +177,17 @@ def polygon_to_grpc_polygon(polygon: Polygon) -> GRPCPolygon:
 
 
 def segment_to_grpc_line(line: Segment) -> GRPCLine:
-    """Returns a grpc line with default units of m."""
+    """Marshals a Segment to an ansys.api.geometry line gRPC transfer model.
+
+    Parameters
+    ----------
+    segment : Segment
+        Source segment data.
+
+    Returns
+    -------
+    ansys.api.geometry.v0 Line model, units in meters
+    """
     return GRPCLine(
         start=point_to_grpc_point(line.start),
         end=point_to_grpc_point(line.end),
