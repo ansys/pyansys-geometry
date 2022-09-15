@@ -51,9 +51,7 @@ class Rotation(np.ndarray):
             raise ValueError(
                 f"Expected axis specification to be a string of up to 3 characters, got {axis}"
             )
-        if ang.ndim == 0 and len(axis) != 1:
-            raise ValueError("Axis and angle are not matching")
-        if ang.ndim == 1 and len(axis) != ang.shape[0]:
+        if (ang.ndim == 0 and len(axis) != 1) or (ang.ndim == 1 and len(axis) != ang.shape[0]):
             raise ValueError("Axis and angle are not matching")
         if ang.ndim == 0:
             obj._angle = Angle(angle)._value

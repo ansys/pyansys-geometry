@@ -700,7 +700,7 @@ def test_plane():
 def test_transformation_rotation():
     """Simple test to test rotation."""
     v_1 = Vector([1, 2, 3])
-    rot_x = Rotation(v_1, np.pi / 2 * UNITS.radian, "x")
+    rot_x = Rotation(v_1, np.pi / 2, "x")
     test_vector = Vector([1, -3, 2])
     assert round(rot_x.x) - test_vector.x <= DOUBLE_EPS
     assert round(rot_x.y) - test_vector.y <= DOUBLE_EPS
@@ -714,7 +714,7 @@ def test_transformation_rotation():
 
     # Test matrix in x = 90, y = 90
     m = Matrix33()
-    rot_matrix_xy = Rotation(m, [np.pi / 2 * UNITS.radian, np.pi / 2 * UNITS.radian], "xy")
+    rot_matrix_xy = Rotation(m, [np.pi / 2, 90 * UNITS.degree], "xy")
     test = Matrix33([[0, 0, -1], [1, 0, 0], [0, -1, 0]])
     assert abs(rot_matrix_xy - test).all() <= DOUBLE_EPS
 
