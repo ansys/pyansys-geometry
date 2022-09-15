@@ -80,4 +80,4 @@ class Design:
         return self._root_component.extrude_profile(name, sketch, distance)
 
     def save(self, file_location: str):
-        self._design_stub.SaveAs(SaveAsDocumentRequest(file_location))
+        self._design_stub.SaveAs(SaveAsDocumentRequest(filepath=file_location))

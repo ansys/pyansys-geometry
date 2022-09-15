@@ -10,7 +10,11 @@ from ansys.api.geometry.v0.components_pb2 import CreateComponentRequest
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
 from pint import Quantity
 
-from ansys.geometry.core.connection import Conversions, GrpcClient
+from ansys.geometry.core.connection import (
+    GrpcClient,
+    plane_to_grpc_plane,
+    sketch_shapes_to_grpc_geometries,
+)
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
@@ -98,11 +102,11 @@ class Component:
         extrusion_request = CreateExtrudedBodyRequest(
             distance=distance.m_as(UNITS.m),
             parent=self.id,
-            plane=Conversions.plane_to_grpc_plane(sketch._plane),
-            geometries=Conversions.sketch_shapes_to_grpc_geometries(sketch.shapes_list),
+            plane=plane_to_grpc_plane(sketch._plane),
+            geometries=sketch_shapes_to_grpc_geometries(sketch.shapes_list),
             name=name,
         )
 
         extrusion_response = self._bodies_stub.CreateExtrudedBody(extrusion_request)
 
-        self._bodies.append(Body(extrusion_response.id, name, self))
+        self._bodies.append(Body(extrusion_response.id, name, self, self._grpc_client))
