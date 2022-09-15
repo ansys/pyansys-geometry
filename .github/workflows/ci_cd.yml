@@ -178,7 +178,7 @@ jobs:
           password: ${{ secrets.PACKAGE_DOWNLOAD_PAT }}
 
       - name: Download Geometry service container (if needed)
-        run: docker pull $env:GEO_CONT_NAME
+        run: docker pull $env:ANSRV_GEO_IMAGE
 
       - name: Start geometry service and verify start
         run: |
