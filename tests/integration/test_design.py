@@ -5,7 +5,7 @@ from pint import Quantity
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import Point
-from ansys.geometry.core.misc import Distance, UNITS
+from ansys.geometry.core.misc import UNITS, Distance
 from ansys.geometry.core.sketch import Sketch
 
 
