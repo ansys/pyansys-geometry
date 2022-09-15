@@ -43,4 +43,4 @@ def test_client_close(client: GrpcClient):
     assert client._closed
     assert not client.healthy
     assert "Closed" in str(client)
-    assert client.target() is ""
+    assert client.target() == ""

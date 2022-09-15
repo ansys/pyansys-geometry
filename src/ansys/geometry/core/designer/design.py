@@ -33,11 +33,10 @@ class Design:
         self._design_stub = DesignsStub(self._grpc_client.channel)
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
 
-        # TODO: add name to design
         new_design = self._design_stub.New(NewDesignRequest(name=name))
 
-        self._id = new_design.moniker
-        self._root_component = Component("new_design.name", None, self._grpc_client)
+        self._id = new_design.id
+        self._root_component = Component(new_design.name, None, self._grpc_client)
         self._root_component.id = self._id
         self._materials = []
 
