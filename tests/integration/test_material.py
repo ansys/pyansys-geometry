@@ -11,7 +11,7 @@ from ansys.geometry.core.misc import UNITS
 @pytest.mark.skip(reason="Test failing")
 def test_material_creation():
     """Test the creation of a material on a design."""
-    modeler = Modeler(host="localhost", port=652)
+    modeler = Modeler()
 
     design = modeler.create_design("my_design")
 
