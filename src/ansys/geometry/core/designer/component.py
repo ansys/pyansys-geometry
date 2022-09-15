@@ -15,7 +15,7 @@ from ansys.geometry.core.connection import (
     plane_to_grpc_plane,
     sketch_shapes_to_grpc_geometries,
 )
-from ansys.geometry.core.designer.body import Body, Component
+from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 
@@ -75,7 +75,7 @@ class Component:
         """Name of the ``Component``."""
         return self._name
 
-    def add_component(self, name: str) -> Component:
+    def add_component(self, name: str) -> "Component":
         """Creates a new component nested under this component within the design assembly.
 
         Parameters
