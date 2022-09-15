@@ -1,16 +1,19 @@
-from ansys.geometry.core import launch_modeler
+from pint import Quantity
+
+from ansys.geometry.core import Modeler
 from ansys.geometry.core.math import Point
 from ansys.geometry.core.misc.measurements import Distance
+from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.sketch import Sketch
-
-modeler = launch_modeler()
-
-design = modeler.create_design()
 
 sketch = Sketch()
 
-sketch.draw_circle(Point(0, 0), Distance(10))
+sketch.draw_circle(Point([10, 10, 0], UNITS.mm), Distance(10, UNITS.mm))
 
-design.extrude_sketch("Just a circle", sketch, 100)
+modeler = Modeler(host="0.0.0.0", port=50051)
 
-design.save()
+design = modeler.create_design("ExtrudeProfile")
+
+design.extrude_sketch("JustACircle", sketch, Quantity(10, UNITS.mm))
+
+design.save("C:/ExtrudeProfile.scdocx")

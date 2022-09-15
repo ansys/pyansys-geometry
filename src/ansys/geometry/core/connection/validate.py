@@ -13,6 +13,6 @@ from ansys.geometry.core.connection.client import GrpcClient
 
 
 def validate():  # pragma: no cover
-    """Create the a client using the default settings and it."""
+    """Create a client using the default settings and it."""
     print(GrpcClient())
     # TODO: consider adding additional server stat reporting

@@ -16,15 +16,16 @@ from ansys.geometry.core.sketch import Sketch
 
 class Design:
     """
-    Provides Design class for organizing 3D geometry design projects.
+    Provides a Design for organizing geometry assemblies.
 
-    Synchronizes to a server.
+    Synchronizes to a supporting geometry service instance.
 
     Parameters
     ----------
-    id : str
-        An identifier defined by the source geometry service.
-
+    name : str
+        A user-defined label for the design.
+    grpc_client : GrpcClient
+        An active supporting geometry service instance for design modeling.
     """
 
     def __init__(self, name: str, grpc_client: GrpcClient):
@@ -65,6 +66,17 @@ class Design:
         self._root_component.add_component(name)
 
     def extrude_sketch(self, name: str, sketch: Sketch, distance: Quantity):
+        """Creates a solid body by extruding the given profile up to the given distance.
+
+        Parameters
+        ----------
+        name : str
+            A user-defined label assigned to the resulting solid body.
+        sketch : Sketch
+            The two-dimensional sketch source for extrusion.
+        distance : Quantity
+            The distance to extrude the solid body.
+        """
         return self._root_component.extrude_profile(name, sketch, distance)
 
     def save(self, file_location: str):

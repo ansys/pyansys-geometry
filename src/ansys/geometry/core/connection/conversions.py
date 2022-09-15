@@ -46,11 +46,11 @@ class Conversions:
             elif isinstance(shape, Segment):
                 geometries.lines.add(Conversions.segment_to_grpc_line(shape))
             elif isinstance(shape, Arc):
-                geometries.arcs.add(shape)
+                geometries.arcs.add(Conversions.arc_to_grpc_arc(shape))
             elif isinstance(shape, Ellipse):
-                geometries.ellipses.add(shape)
+                geometries.ellipses.add(Conversions.ellipse_to_grpc_ellipse(shape))
             elif isinstance(shape, Polygon):
-                geometries.polygons.add(shape)
+                geometries.polygons.add(Conversions.polygon_to_grpc_polygon(shape))
 
     @classmethod
     def arc_to_grpc_arc(arc: Arc) -> GRPCArc:

@@ -20,7 +20,16 @@ class Component:
     """
     Provides class for organizing design bodies.
 
-    Synchronizes to a server.
+    Synchronizes to a design within a supporting geometry service instance.
+
+    Parameters
+    ----------
+    name : str
+        A user-defined label for the design.
+    parent_component : Component
+        The parent component to nest the new component under within the design assembly.
+    grpc_client : GrpcClient
+        An active supporting geometry service instance for design modeling.
     """
 
     def __init__(
@@ -63,9 +72,29 @@ class Component:
         return self._name
 
     def add_component(self, name: str):
+        """Creates a new component nested under this component within the design assembly.
+
+        Parameters
+        ----------
+        name : str
+            A user-defined label assigned to the new component.
+        """
         self._components.append(Component(name, self, self._grpc_client))
 
     def extrude_profile(self, name: str, sketch: Sketch, distance: Quantity):
+        """Creates a solid body by extruding the given profile up to the given distance.
+
+        The resulting body created is nested under this component within the design assembly.
+
+        Parameters
+        ----------
+        name : str
+            A user-defined label assigned to the resulting solid body.
+        sketch : Sketch
+            The two-dimensional sketch source for extrusion.
+        distance : Quantity
+            The distance to extrude the solid body.
+        """
         extrusion_request = CreateExtrudedBodyRequest(
             distance=distance.m_as(UNITS.m),
             parent=self.id,
