@@ -18,7 +18,7 @@ from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Polygon, Segment
 
 
-def unit_vector_to_direction(unit_vector: UnitVector) -> GRPCDirection:
+def unit_vector_to_grpc_direction(unit_vector: UnitVector) -> GRPCDirection:
     """Marshals a Vector class to an ansys.api.geometry vector gRPC transfer model.
 
     Parameters
@@ -48,8 +48,8 @@ def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
     return GRPCPlane(
         frame=GRPCFrame(
             origin=point_to_grpc_point(plane.origin),
-            dir_x=unit_vector_to_direction(plane.direction_x),
-            dir_y=unit_vector_to_direction(plane.direction_y),
+            dir_x=unit_vector_to_grpc_direction(plane.direction_x),
+            dir_y=unit_vector_to_grpc_direction(plane.direction_y),
         )
     )
 

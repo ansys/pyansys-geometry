@@ -11,7 +11,7 @@ from pint import Quantity
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     sketch_shapes_to_grpc_geometries,
-    unit_vector_to_direction,
+    unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
@@ -144,7 +144,7 @@ class Body:
             ProjectCurvesRequest(
                 body=self._id,
                 curves=sketch_shapes_to_grpc_geometries(sketch.shapes_list),
-                direction=unit_vector_to_direction(direction),
+                direction=unit_vector_to_grpc_direction(direction),
                 closestFace=closest_face,
             )
         )
