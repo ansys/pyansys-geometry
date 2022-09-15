@@ -4,11 +4,21 @@ from typing import TYPE_CHECKING, List
 
 from ansys.api.geometry.v0.bodies_pb2 import BodyIdentifier, SetAssignedMaterialRequest
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
-import numpy as np
+from ansys.api.geometry.v0.commands_pb2 import ImprintCurvesRequest, ProjectCurvesRequest
+from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
+from pint import Quantity
 
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.connection.conversions import (
+    sketch_shapes_to_grpc_geometries,
+    unit_vector_to_direction,
+)
+from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.materials import Material
+from ansys.geometry.core.math import Vector
+from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.sketch import Sketch
 
 if TYPE_CHECKING:
     from ansys.geometry.core.designer.component import Component
@@ -40,16 +50,17 @@ class Body:
         self._parent_component = parent_component
         self._grpc_client = grpc_client
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
-        self._volume = np.nan
-        self._edges = []
+        self._commands_stub = CommandsStub(self._grpc_client.channel)
+        self._volume = Quantity(0, None)
+        self._faces = []
 
     @property
-    def volume(self) -> float:
+    def volume(self) -> Quantity:
         """Calculated volume of the face."""
-        if self._volume == np.nan:
+        if self._volume.m == 0:
             volume_response = self._bodies_stub.GetVolume(BodyIdentifier(id=self._id))
-            self._volume = volume_response.volume
-        return self._area
+            self._volume = Quantity(volume_response.volume, (UNITS.m * UNITS.m * UNITS.m))
+        return self._volume
 
     def assign_material(self, material: Material) -> None:
         """Sets the provided material against the design in the active geometry service instance.
@@ -71,12 +82,76 @@ class Body:
         ----------
         List[Face]
         """
-        if self._edges.count == 0:
+        if len(self._faces) == 0:
             grpc_faces = self._bodies_stub.GetFaces(BodyIdentifier(id=self._id))
 
-            self._edges = [
+            self._faces = [
                 Face(grpc_face.id, grpc_face.surface_type, self, self._grpc_client)
-                for grpc_face in grpc_faces
+                for grpc_face in grpc_faces.faces
             ]
 
-        return self._edges
+        return self._faces
+
+    def imprint_curves(self, faces: List[Face], sketch: Sketch) -> List[Edge]:
+        """Imprints all of the specified geometries onto the specified faces of the body.
+
+        Parameters
+        ----------
+        faces: List[Face]
+            Specific faces to imprint the curves of the sketch.
+        sketch: Sketch
+            All of the curves to imprint on the faces.
+
+        Returns
+        -------
+        List[Edge]
+            All of the impacted edges from the imprint operation.
+        """
+        # TODO: Verify that each of the faces provided are part of this body
+        imprint_response = self._commands_stub.ImprintCurves(
+            ImprintCurvesRequest(
+                body=self._id,
+                curves=sketch_shapes_to_grpc_geometries(sketch.shapes_list),
+                faces=[face._id for face in faces],
+            )
+        )
+
+        new_edges = [
+            Edge(grpc_edge.id, grpc_edge.curve_type, self, self._grpc_client)
+            for grpc_edge in imprint_response.edges
+        ]
+
+        return new_edges
+
+    def project_curves(self, direction: Vector, sketch: Sketch, closest_face: bool) -> List[Face]:
+        """Projects all of the specified geometries onto the body.
+
+        Parameters
+        ----------
+        direction: UnitVector
+            Establishes the direction of the projection.
+        sketch: Sketch
+            All of the curves to project on the body.
+        closest_face: bool
+            Signifies whether to target the closest face with the projection.
+
+        Returns
+        -------
+        List[Face]
+            All of the faces from the project curves operation.
+        """
+        project_response = self._commands_stub.ProjectCurves(
+            ProjectCurvesRequest(
+                body=self._id,
+                curves=sketch_shapes_to_grpc_geometries(sketch.shapes_list),
+                direction=unit_vector_to_direction(direction),
+                closestFace=closest_face,
+            )
+        )
+
+        projected_faces = [
+            Face(grpc_face.id, grpc_face.surface_type, self, self._grpc_client)
+            for grpc_face in project_response.faces
+        ]
+
+        return projected_faces

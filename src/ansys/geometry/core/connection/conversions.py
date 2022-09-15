@@ -13,24 +13,24 @@ from ansys.api.geometry.v0.models_pb2 import Plane as GRPCPlane
 from ansys.api.geometry.v0.models_pb2 import Point as GRPCPoint
 from ansys.api.geometry.v0.models_pb2 import Polygon as GRPCPolygon
 
-from ansys.geometry.core.math import Plane, Point, Vector
-from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.math import Plane, Point, UnitVector
+from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Polygon, Segment
 
 
-def vector_to_direction(vector: Vector) -> GRPCDirection:
+def unit_vector_to_direction(unit_vector: UnitVector) -> GRPCDirection:
     """Marshals a Vector class to an ansys.api.geometry vector gRPC transfer model.
 
     Parameters
     ----------
-    vector : Vector
+    unit_vector : UnitVector
         Source vector data.
 
     Returns
     -------
     ansys.api.geometry.v0 Direction model
     """
-    return GRPCDirection(x=vector.x, y=vector.y, z=vector.z)
+    return GRPCDirection(x=unit_vector.x, y=unit_vector.y, z=unit_vector.z)
 
 
 def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
@@ -48,8 +48,8 @@ def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
     return GRPCPlane(
         frame=GRPCFrame(
             origin=point_to_grpc_point(plane.origin),
-            dir_x=vector_to_direction(plane.direction_x),
-            dir_y=vector_to_direction(plane.direction_y),
+            dir_x=unit_vector_to_direction(plane.direction_x),
+            dir_y=unit_vector_to_direction(plane.direction_y),
         )
     )
 
@@ -114,9 +114,9 @@ def ellipse_to_grpc_ellipse(ellipse: Ellipse) -> GRPCEllipse:
     ansys.api.geometry.v0 Ellipse model, units in meters
     """
     return GRPCEllipse(
-        center=point_to_grpc_point(ellipse.origin),
-        majorradius=ellipse.semi_major_axis.m_as(UNITS.m),
-        minorradius=ellipse.semi_minor_axis.m_as(UNITS.m),
+        center=point_to_grpc_point(ellipse.center),
+        majorradius=ellipse.semi_major_axis.m_as(SERVER_UNIT_LENGTH),
+        minorradius=ellipse.semi_minor_axis.m_as(SERVER_UNIT_LENGTH),
     )
 
 
@@ -133,8 +133,8 @@ def circle_to_grpc_circle(circle: Circle) -> GRPCCircle:
     ansys.api.geometry.v0 Circle model, units in meters
     """
     return GRPCCircle(
-        center=point_to_grpc_point(circle.origin),
-        radius=circle.radius.m_as(UNITS.m),
+        center=point_to_grpc_point(circle.center),
+        radius=circle.radius.m_as(SERVER_UNIT_LENGTH),
     )
 
 
@@ -151,9 +151,9 @@ def point_to_grpc_point(point: Point) -> GRPCPoint:
     ansys.api.geometry.v0 Point model, units in meters
     """
     return GRPCPoint(
-        x=point.x.m_as(UNITS.m),
-        y=point.y.m_as(UNITS.m),
-        z=point.z.m_as(UNITS.m),
+        x=point.x.m_as(SERVER_UNIT_LENGTH),
+        y=point.y.m_as(SERVER_UNIT_LENGTH),
+        z=point.z.m_as(SERVER_UNIT_LENGTH),
     )
 
 
@@ -171,7 +171,7 @@ def polygon_to_grpc_polygon(polygon: Polygon) -> GRPCPolygon:
     """
     return GRPCPolygon(
         center=point_to_grpc_point(polygon.origin),
-        radius=polygon.inner_radius.m_as(UNITS.m),
+        radius=polygon.inner_radius.m_as(SERVER_UNIT_LENGTH),
         numberofsides=polygon.n_sides,
     )
 

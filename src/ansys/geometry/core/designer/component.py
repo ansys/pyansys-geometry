@@ -16,7 +16,7 @@ from ansys.geometry.core.connection import (
     sketch_shapes_to_grpc_geometries,
 )
 from ansys.geometry.core.designer.body import Body
-from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -91,7 +91,7 @@ class Component:
         self._components.append(Component(name, self, self._grpc_client))
         return self._components[-1]
 
-    def extrude_profile(self, name: str, sketch: Sketch, distance: Quantity) -> Body:
+    def extrude_profile(self, name: str, sketch: Sketch, distance: Quantity) -> "Body":
         """Creates a solid body by extruding the given profile up to the given distance.
 
         The resulting body created is nested under this component within the design assembly.
@@ -106,7 +106,7 @@ class Component:
             The distance to extrude the solid body.
         """
         extrusion_request = CreateExtrudedBodyRequest(
-            distance=distance.m_as(UNITS.m),
+            distance=distance.m_as(SERVER_UNIT_LENGTH),
             parent=self.id,
             plane=plane_to_grpc_plane(sketch._plane),
             geometries=sketch_shapes_to_grpc_geometries(sketch.shapes_list),

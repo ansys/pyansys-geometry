@@ -2,13 +2,11 @@
 
 from typing import Optional, Union
 
-import numpy as np
 from pint import Quantity
 
 from ansys.geometry.core.math import Plane, Point, UnitVector, Vector
 from ansys.geometry.core.misc import Distance
 from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Line, Polygon, Segment
-from ansys.geometry.core.typing import RealSequence
 
 
 class Sketch:
@@ -43,9 +41,7 @@ class Sketch:
         else:
             raise ValueError("The provided shape does not belong to the same plane as the Sketch.")
 
-    def draw_circle(
-        self, center: Union[np.ndarray, RealSequence, Point], radius: Union[Quantity, Distance]
-    ):
+    def draw_circle(self, center: Point, radius: Union[Quantity, Distance]):
         """Create a circle shape on the sketch.
 
         Parameters

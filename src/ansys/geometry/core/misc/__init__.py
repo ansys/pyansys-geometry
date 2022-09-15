@@ -11,7 +11,13 @@ from ansys.geometry.core.misc.checks import (
     check_type_equivalence,
     only_for_3d,
 )
-from ansys.geometry.core.misc.measurements import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance
+from ansys.geometry.core.misc.measurements import (
+    SERVER_UNIT_LENGTH,
+    UNIT_ANGLE,
+    UNIT_LENGTH,
+    Angle,
+    Distance,
+)
 from ansys.geometry.core.misc.units import UNITS, PhysicalQuantity
 
 __all__ = [
@@ -28,6 +34,7 @@ __all__ = [
     "PhysicalQuantity",
     "Angle",
     "Distance",
+    "SERVER_UNIT_LENGTH",
     "UNIT_ANGLE",
     "UNIT_LENGTH",
     "UNITS",
