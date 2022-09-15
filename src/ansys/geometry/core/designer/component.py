@@ -15,7 +15,7 @@ from ansys.geometry.core.connection import (
     plane_to_grpc_plane,
     sketch_shapes_to_grpc_geometries,
 )
-from ansys.geometry.core.designer.body import Body
+from ansys.geometry.core.designer.body import Body, Component
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 
@@ -75,15 +75,21 @@ class Component:
         """Name of the ``Component``."""
         return self._name
 
-    def add_component(self, name: str):
+    def add_component(self, name: str) -> Component:
         """Creates a new component nested under this component within the design assembly.
 
         Parameters
         ----------
         name : str
             A user-defined label assigned to the new component.
+
+        Returns
+        -------
+        Component
+            A newly created component with no children in the design assembly.
         """
         self._components.append(Component(name, self, self._grpc_client))
+        return self._components[-1]
 
     def extrude_profile(self, name: str, sketch: Sketch, distance: Quantity) -> Body:
         """Creates a solid body by extruding the given profile up to the given distance.
