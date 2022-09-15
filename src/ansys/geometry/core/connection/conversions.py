@@ -19,7 +19,7 @@ from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Polygon,
 
 
 def unit_vector_to_grpc_direction(unit_vector: UnitVector) -> GRPCDirection:
-    """Marshals a Vector class to an ansys.api.geometry vector gRPC transfer model.
+    """Marshals a :class:`UnitVector` class to an ansys.api.geometry vector gRPC transfer model.
 
     Parameters
     ----------
@@ -34,7 +34,7 @@ def unit_vector_to_grpc_direction(unit_vector: UnitVector) -> GRPCDirection:
 
 
 def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
-    """Marshals a Plane class to an ansys.api.geometry plane gRPC transfer model.
+    """Marshals a :class:`Plane` class to an ansys.api.geometry plane gRPC transfer model.
 
     Parameters
     ----------
@@ -55,7 +55,7 @@ def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
 
 
 def sketch_shapes_to_grpc_geometries(shapes: List[BaseShape]) -> Geometries:
-    """Marshals a list of shapes to an ansys.api.geometry geometries gRPC transfer model.
+    """Marshals a list of :class:`BaseShape` to an ansys.api.geometry geometries gRPC transfer model.
 
     Parameters
     ----------
@@ -83,7 +83,7 @@ def sketch_shapes_to_grpc_geometries(shapes: List[BaseShape]) -> Geometries:
 
 
 def arc_to_grpc_arc(arc: Arc) -> GRPCArc:
-    """Marshals an Arc to an ansys.api.geometry arc gRPC transfer model.
+    """Marshals an :class:`Arc` to an ansys.api.geometry arc gRPC transfer model.
 
     Parameters
     ----------
@@ -102,7 +102,7 @@ def arc_to_grpc_arc(arc: Arc) -> GRPCArc:
 
 
 def ellipse_to_grpc_ellipse(ellipse: Ellipse) -> GRPCEllipse:
-    """Marshals an ellipse to an ansys.api.geometry ellipse gRPC transfer model.
+    """Marshals an :class:`Ellipse` to an ansys.api.geometry ellipse gRPC transfer model.
 
     Parameters
     ----------
@@ -121,7 +121,7 @@ def ellipse_to_grpc_ellipse(ellipse: Ellipse) -> GRPCEllipse:
 
 
 def circle_to_grpc_circle(circle: Circle) -> GRPCCircle:
-    """Marshals a cicle to an ansys.api.geometry circle gRPC transfer model.
+    """Marshals a :class:`Circle` to an ansys.api.geometry circle gRPC transfer model.
 
     Parameters
     ----------
@@ -139,7 +139,7 @@ def circle_to_grpc_circle(circle: Circle) -> GRPCCircle:
 
 
 def point_to_grpc_point(point: Point) -> GRPCPoint:
-    """Marshals a point to an ansys.api.geometry point gRPC transfer model.
+    """Marshals a :class:`Point` to an ansys.api.geometry point gRPC transfer model.
 
     Parameters
     ----------
@@ -158,7 +158,7 @@ def point_to_grpc_point(point: Point) -> GRPCPoint:
 
 
 def polygon_to_grpc_polygon(polygon: Polygon) -> GRPCPolygon:
-    """Marshals a polygon to an ansys.api.geometry polygon gRPC transfer model.
+    """Marshals a :class:`Polygon` to an ansys.api.geometry polygon gRPC transfer model.
 
     Parameters
     ----------
@@ -177,7 +177,7 @@ def polygon_to_grpc_polygon(polygon: Polygon) -> GRPCPolygon:
 
 
 def segment_to_grpc_line(line: Segment) -> GRPCLine:
-    """Marshals a Segment to an ansys.api.geometry line gRPC transfer model.
+    """Marshals a :class:`Segment` to an ansys.api.geometry line gRPC transfer model.
 
     Parameters
     ----------
