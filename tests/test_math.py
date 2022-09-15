@@ -700,27 +700,27 @@ def test_plane():
 def test_transformation_rotation():
     """Simple test to test rotation."""
     v_1 = Vector([1, 2, 3])
-    rot_x = Rotation(v_1, np.pi / 2, "x")
+    rot_x = Rotation(v_1, np.pi / 2 * UNITS.radian, "x")
     test_vector = Vector([1, -3, 2])
     assert round(rot_x.x) - test_vector.x <= DOUBLE_EPS
     assert round(rot_x.y) - test_vector.y <= DOUBLE_EPS
     assert round(rot_x.z) - test_vector.z <= DOUBLE_EPS
 
     # Rotation along x axis in degree
-    rot_x_degree = Rotation(v_1, 90, "x", unit=UNITS.degree)
+    rot_x_degree = Rotation(v_1, 90 * UNITS.degree, "x")
     assert round(rot_x_degree.x) - test_vector.x <= DOUBLE_EPS
     assert round(rot_x_degree.y) - test_vector.y <= DOUBLE_EPS
     assert round(rot_x_degree.z) - test_vector.z <= DOUBLE_EPS
 
     # Test matrix in x = 90, y = 90
     m = Matrix33()
-    rot_matrix_xy = Rotation(m, [np.pi / 2, np.pi / 2], "xy")
+    rot_matrix_xy = Rotation(m, [np.pi / 2 * UNITS.radian, np.pi / 2 * UNITS.radian], "xy")
     test = Matrix33([[0, 0, -1], [1, 0, 0], [0, -1, 0]])
     assert abs(rot_matrix_xy - test).all() <= DOUBLE_EPS
 
     point = Point([6, 2, 3])
-    rot_point = Rotation(point, 60, "x", unit=UNITS.degree)
-    rot_point_rad = Rotation(point, np.pi / 3, "x")
+    rot_point = Rotation(point, 60 * UNITS.degree, "x")
+    rot_point_rad = Rotation(point, np.pi / 3 * UNITS.radian, "x")
     test_point = Point([6, -1.5020666, 3.27777302])
     assert abs(rot_point - test_point).all() <= DOUBLE_EPS
     assert abs(rot_point_rad - test_point).all() <= DOUBLE_EPS
@@ -728,13 +728,17 @@ def test_transformation_rotation():
     with pytest.raises(
         ValueError, match="Expected axis specification to be a string of up to 3 characters"
     ):
-        rot_x = Rotation(v_1, np.pi / 2, "xyzx")
+        rot_x = Rotation(v_1, np.pi / 2 * UNITS.radian, "xyzx")
 
     with pytest.raises(ValueError, match="Axis and angle are not matching"):
-        rot_x = Rotation(v_1, [np.pi / 2, np.pi / 2, np.pi / 2], "xy")
+        rot_x = Rotation(
+            v_1,
+            [np.pi / 2 * UNITS.radian, np.pi / 2 * UNITS.radian, np.pi / 2 * UNITS.radian],
+            "xy",
+        )
 
     with pytest.raises(ValueError, match="Axis and angle are not matching"):
-        rot_x = Rotation(v_1, [np.pi / 2], "xy")
+        rot_x = Rotation(v_1, [np.pi / 2 * UNITS.radian], "xy")
 
 
 def test_transformation_translation():

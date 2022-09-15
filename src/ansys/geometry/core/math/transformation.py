@@ -1,21 +1,15 @@
 """``Transformation`` module."""
-from typing import Optional, Union
+from typing import Union
 
 import numpy as np
-from pint import Unit
+from pint import Quantity
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math.matrix import Matrix
 from ansys.geometry.core.math.point import Point
 from ansys.geometry.core.math.vector import Vector
-from ansys.geometry.core.misc import (
-    UNIT_ANGLE,
-    UNITS,
-    check_ndarray_is_float_int,
-    check_pint_unit_compatibility,
-    check_type,
-)
-from ansys.geometry.core.typing import Real, RealSequence
+from ansys.geometry.core.misc import Angle, check_ndarray_is_float_int, check_type
+from ansys.geometry.core.typing import RealSequence
 
 
 class Rotation(np.ndarray):
@@ -33,8 +27,6 @@ class Rotation(np.ndarray):
 
         * a single value
         * ``array_like`` with shape (N,), where each angle[i] corresponds to a single rotation
-        * ``array_like`` with shape (N, 1), where each angle[i, 0]
-          corresponds to a single rotation
 
     axis : str
         The sequence of axes for rotations. Up to 3 characters. The order 'zyx' represents
@@ -47,19 +39,12 @@ class Rotation(np.ndarray):
     def __new__(
         cls,
         input: Union[np.ndarray, RealSequence, Point, Vector, Matrix],
-        angle: Union[Real, np.ndarray],
+        angle: Union[Quantity, Angle, RealSequence],
         axis: str,
-        unit: Optional[Unit] = UNIT_ANGLE,
     ) -> object:
         """Constructor for ``Rotation``."""
         obj = np.asarray(input).view(cls)
         check_ndarray_is_float_int(obj)
-
-        check_type(unit, Unit)
-        check_pint_unit_compatibility(unit, UNIT_ANGLE)
-
-        obj._unit = unit
-        _, obj._base_unit = UNITS.get_base_units(unit)
 
         ang = np.asarray(angle).view(cls)
         if len(axis) > 3:
@@ -70,12 +55,10 @@ class Rotation(np.ndarray):
             raise ValueError("Axis and angle are not matching")
         if ang.ndim == 1 and len(axis) != ang.shape[0]:
             raise ValueError("Axis and angle are not matching")
-        if ang.ndim >= 2 and len(axis) != ang.shape[1]:
-            raise ValueError("Axis and angle are not matching")
         if ang.ndim == 0:
-            obj._angle = (ang * obj._unit).to_base_units().magnitude
+            obj._angle = Angle(angle)._value
         else:
-            obj._angle = [(angs * obj._unit).to_base_units().magnitude for angs in ang]
+            obj._angle = [Angle(angs)._value for angs in angle]
 
         obj._axis = axis
         obj_type = type(input)
