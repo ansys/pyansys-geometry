@@ -2,22 +2,20 @@
 
 from typing import List
 
-from ansys.api.geometry.v0.board_pb2 import Arc as GRPCArc
-from ansys.api.geometry.v0.board_pb2 import Circle as GRPCCircle
-from ansys.api.geometry.v0.board_pb2 import Direction as GRPCDirection
-from ansys.api.geometry.v0.board_pb2 import Ellipse as GRPCEllipse
-from ansys.api.geometry.v0.board_pb2 import Frame as GRPCFrame
-from ansys.api.geometry.v0.board_pb2 import Geometries
-from ansys.api.geometry.v0.board_pb2 import Line as GRPCLine
-from ansys.api.geometry.v0.board_pb2 import Plane as GRPCPlane
-from ansys.api.geometry.v0.board_pb2 import Point as GRPCPoint
-from ansys.api.geometry.v0.board_pb2 import Polygon as GRPCPolygon
+from ansys.api.geometry.v0.models_pb2 import Arc as GRPCArc
+from ansys.api.geometry.v0.models_pb2 import Circle as GRPCCircle
+from ansys.api.geometry.v0.models_pb2 import Direction as GRPCDirection
+from ansys.api.geometry.v0.models_pb2 import Ellipse as GRPCEllipse
+from ansys.api.geometry.v0.models_pb2 import Frame as GRPCFrame
+from ansys.api.geometry.v0.models_pb2 import Geometries
+from ansys.api.geometry.v0.models_pb2 import Line as GRPCLine
+from ansys.api.geometry.v0.models_pb2 import Plane as GRPCPlane
+from ansys.api.geometry.v0.models_pb2 import Point as GRPCPoint
+from ansys.api.geometry.v0.models_pb2 import Polygon as GRPCPolygon
 
-from ansys.geometry.core.math import Point, vector
-from ansys.geometry.core.math.plane import Plane
-from ansys.geometry.core.misc.units import UNITS
-from ansys.geometry.core.shapes import Arc, Circle, Ellipse, Polygon, Segment
-from ansys.geometry.core.shapes.base import BaseShape
+from ansys.geometry.core.math import Plane, Point, Vector
+from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Polygon, Segment
 
 
 class Conversions:
@@ -26,7 +24,7 @@ class Conversions:
     """
 
     @classmethod
-    def vector_to_direction(vector: vector.Vector) -> GRPCDirection:
+    def vector_to_direction(vector: Vector) -> GRPCDirection:
         return GRPCDirection(x=vector.x, y=vector.y, z=vector.z)
 
     @classmethod

@@ -5,6 +5,7 @@ from typing import List, Optional
 from pint import Quantity
 
 from ansys.geometry.core.materials.property import MaterialProperty
+from ansys.geometry.core.misc import check_type
 
 
 class Material:
@@ -15,18 +16,26 @@ class Material:
     ----------
     display_name: str
         User-defined display name.
-    properties: Optional[List[MaterialProperty]]
-        Material properties.
+    density: ~pint.Quantity
+        Material density.
+    additional_properties: Optional[List[MaterialProperty]]
+        Additional material properties. By default, ``[]``.
     """
 
     def __init__(
         self,
         display_name: str,
-        properties: Optional[List[MaterialProperty]] = [],
+        density: Quantity,
+        additional_properties: Optional[List[MaterialProperty]] = [],
     ):
         """Constructor method for ``Material``."""
         self._display_name = display_name
-        self._properties = properties
+        check_type(density, Quantity)
+        self._density = MaterialProperty("density", display_name, density)
+
+        # Add the density to the properties list
+        additional_properties.append(self._density)
+        self._properties = additional_properties
 
     @property
     def properties(self) -> List[MaterialProperty]:

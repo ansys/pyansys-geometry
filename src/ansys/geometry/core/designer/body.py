@@ -1,7 +1,9 @@
 """``Body`` class module."""
 
+from typing import TYPE_CHECKING
 
-from ansys.geometry.core.designer.component import Component
+if TYPE_CHECKING:
+    from ansys.geometry.core.designer.component import Component
 
 
 class Body:
@@ -11,7 +13,7 @@ class Body:
     Synchronizes to a server.
     """
 
-    def __init__(self, id: str, name: str, parent_component: Component):
+    def __init__(self, id: str, name: str, parent_component: "Component"):
         """Constructor method for ``Body``."""
 
         self._id = id

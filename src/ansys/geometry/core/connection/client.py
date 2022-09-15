@@ -10,7 +10,6 @@ from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
 
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
-from ansys.geometry.core.designer import Design
 from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
 
@@ -145,13 +144,6 @@ class GrpcClient:
             return ""
         return self._channel._channel.target().decode()
 
-        new_design = self._design_stub.New(NewDesignRequest()) @ property
-
     def channel(self) -> grpc.Channel:
         """The gRPC channel of this client."""
         return self._channel
-
-    def create_design(self) -> Design:
-        new_design = self._design_stub.New(NewDesignRequest())
-
-        # return Design(new_design.id)        new_design = self._design_stub.New(NewDesignRequest())
