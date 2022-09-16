@@ -1,6 +1,5 @@
 """``Vector`` class module"""
 from io import UnsupportedOperation
-import math
 from typing import Union
 
 import numpy as np
@@ -153,7 +152,7 @@ class Vector(np.ndarray):
             if cosine > 0.0:
                 return Quantity(0, UNIT_ANGLE)
             else:
-                return Quantity(math.pi, UNIT_ANGLE)
+                return Quantity(np.pi, UNIT_ANGLE)
         else:
             return Quantity(math.atan2(sine, cosine), UNIT_ANGLE)
 

@@ -14,8 +14,7 @@ from ansys.geometry.core.connection.conversions import (
 )
 from ansys.geometry.core.math import Plane, Point, UnitVector
 from ansys.geometry.core.misc.units import UNITS
-from ansys.geometry.core.shapes import Circle, Ellipse, Polygon, Segment
-from ansys.geometry.core.shapes.arc import Arc
+from ansys.geometry.core.shapes import Arc, Circle, Ellipse, Polygon, Segment
 
 
 def test_wait_until_healthy():

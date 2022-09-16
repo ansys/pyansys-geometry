@@ -18,7 +18,7 @@ from ansys.geometry.core.sketch import Sketch
 
 class Design:
     """
-    Provides a Design for organizing geometry assemblies.
+    Provides a ``Design`` for organizing geometry assemblies.
 
     Synchronizes to a supporting geometry service instance.
 
