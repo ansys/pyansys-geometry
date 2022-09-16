@@ -16,7 +16,7 @@ from ansys.geometry.core.connection import (
     sketch_shapes_to_grpc_geometries,
 )
 from ansys.geometry.core.designer.body import Body
-from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
+from ansys.geometry.core.misc import SERVER_UNIT_LENGTH, check_pint_unit_compatibility, check_type
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -40,6 +40,11 @@ class Component:
         self, name: str, parent_component: Union["Component", None], grpc_client: GrpcClient
     ):
         """Constructor method for ``Component``."""
+        # Sanity checks
+        check_type(grpc_client, GrpcClient)
+        check_type(name, str)
+        check_type(parent_component, (Component, type(None)))
+
         self._grpc_client = grpc_client
         self._component_stub = ComponentsStub(self._grpc_client.channel)
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
@@ -65,7 +70,14 @@ class Component:
 
     @id.setter
     def id(self, id: str) -> None:
+        """Sets the id of the ``Component``.
+
+        Notes
+        -----
+        Only valid for root component.
+        """
         if self._parent_component is None:
+            check_type(id, str)
             self._id = id
         else:
             raise UnsupportedOperation("Component id setter cannot be accessed.")
@@ -88,6 +100,7 @@ class Component:
         Component
             A newly created component with no children in the design assembly.
         """
+        check_type(name, str)
         self._components.append(Component(name, self, self._grpc_client))
         return self._components[-1]
 
@@ -105,6 +118,13 @@ class Component:
         distance : Quantity
             The distance to extrude the solid body.
         """
+        # Sanity checks on inputs
+        check_type(name, str)
+        check_type(sketch, Sketch)
+        check_type(distance, Quantity)
+        check_pint_unit_compatibility(distance, SERVER_UNIT_LENGTH)
+
+        # Perform extrusion request
         extrusion_request = CreateExtrudedBodyRequest(
             distance=distance.m_as(SERVER_UNIT_LENGTH),
             parent=self.id,

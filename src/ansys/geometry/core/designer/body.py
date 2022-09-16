@@ -8,16 +8,16 @@ from ansys.api.geometry.v0.commands_pb2 import ImprintCurvesRequest, ProjectCurv
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from pint import Quantity
 
-from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.connection.conversions import (
+from ansys.geometry.core.connection import (
+    GrpcClient,
     sketch_shapes_to_grpc_geometries,
     unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.materials import Material
-from ansys.geometry.core.math import Vector
-from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.math import UnitVector
+from ansys.geometry.core.misc import SERVER_UNIT_VOLUME, check_type
 from ansys.geometry.core.sketch import Sketch
 
 if TYPE_CHECKING:
@@ -44,6 +44,10 @@ class Body:
 
     def __init__(self, id: str, name: str, parent_component: "Component", grpc_client: GrpcClient):
         """Constructor method for ``Body``."""
+        # Sanity checks - cannot check Component due to circular import issues
+        check_type(id, str)
+        check_type(name, str)
+        check_type(grpc_client, GrpcClient)
 
         self._id = id
         self._name = name
@@ -51,46 +55,41 @@ class Body:
         self._grpc_client = grpc_client
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
-        self._volume = Quantity(0, None)
-        self._faces = []
 
     @property
     def volume(self) -> Quantity:
-        """Calculated volume of the face."""
-        if self._volume.m == 0:
-            volume_response = self._bodies_stub.GetVolume(BodyIdentifier(id=self._id))
-            self._volume = Quantity(volume_response.volume, (UNITS.m * UNITS.m * UNITS.m))
-        return self._volume
+        """Calculated volume of the body."""
+        volume_response = self._bodies_stub.GetVolume(BodyIdentifier(id=self._id))
+        return Quantity(volume_response.volume, SERVER_UNIT_VOLUME)
 
     def assign_material(self, material: Material) -> None:
-        """Sets the provided material against the design in the active geometry service instance.
+        """Sets the provided material against the design in the active geometry
+        service instance.
 
         Parameters
         ----------
         material : Material
             Source material data.
         """
+        check_type(material, Material)
         self._bodies_stub.SetAssignedMaterial(
             SetAssignedMaterialRequest(id=self._id, material=material._display_name)
         )
 
     @property
     def faces(self) -> List[Face]:
-        """Lazy-loads all of the faces within the body.
+        """Loads all of the faces within the body.
 
         Returns
         ----------
         List[Face]
         """
-        if len(self._faces) == 0:
-            grpc_faces = self._bodies_stub.GetFaces(BodyIdentifier(id=self._id))
+        grpc_faces = self._bodies_stub.GetFaces(BodyIdentifier(id=self._id))
 
-            self._faces = [
-                Face(grpc_face.id, grpc_face.surface_type, self, self._grpc_client)
-                for grpc_face in grpc_faces.faces
-            ]
-
-        return self._faces
+        return [
+            Face(grpc_face.id, grpc_face.surface_type, self, self._grpc_client)
+            for grpc_face in grpc_faces.faces
+        ]
 
     def imprint_curves(self, faces: List[Face], sketch: Sketch) -> List[Edge]:
         """Imprints all of the specified geometries onto the specified faces of the body.
@@ -107,7 +106,23 @@ class Body:
         List[Edge]
             All of the impacted edges from the imprint operation.
         """
-        # TODO: Verify that each of the faces provided are part of this body
+        # Sanity checks
+        check_type(faces, (list, tuple))
+        for face in faces:
+            check_type(face, Face)
+        check_type(sketch, Sketch)
+
+        # Verify that each of the faces provided are part of this body
+        body_faces = self.faces
+        for provided_face in faces:
+            is_found = False
+            for body_face in body_faces:
+                if provided_face.id == body_face.id:
+                    is_found = True
+                    break
+            if not is_found:
+                raise ValueError(f"Face with id {provided_face.id} is not part of this body.")
+
         imprint_response = self._commands_stub.ImprintCurves(
             ImprintCurvesRequest(
                 body=self._id,
@@ -123,7 +138,9 @@ class Body:
 
         return new_edges
 
-    def project_curves(self, direction: Vector, sketch: Sketch, closest_face: bool) -> List[Face]:
+    def project_curves(
+        self, direction: UnitVector, sketch: Sketch, closest_face: bool
+    ) -> List[Face]:
         """Projects all of the specified geometries onto the body.
 
         Parameters
@@ -140,6 +157,11 @@ class Body:
         List[Face]
             All of the faces from the project curves operation.
         """
+        # Sanity checks
+        check_type(direction, UnitVector)
+        check_type(sketch, Sketch)
+        check_type(closest_face, bool)
+
         project_response = self._commands_stub.ProjectCurves(
             ProjectCurvesRequest(
                 body=self._id,

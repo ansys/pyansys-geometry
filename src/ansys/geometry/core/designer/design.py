@@ -12,6 +12,7 @@ from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.materials import Material
+from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -31,6 +32,10 @@ class Design:
 
     def __init__(self, name: str, grpc_client: GrpcClient):
         """Constructor method for ``Design``."""
+        # Sanity checks
+        check_type(name, str)
+        check_type(grpc_client, GrpcClient)
+
         self._grpc_client = grpc_client
         self._design_stub = DesignsStub(self._grpc_client.channel)
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
@@ -44,6 +49,16 @@ class Design:
 
     # TODO: allow for list of materials
     def add_material(self, material: Material) -> None:
+        """Adds a ``Material`` to the ``Design``
+
+        Parameters
+        ----------
+        material : Material
+            ``Material`` to be added.
+        """
+        # Sanity check
+        check_type(material, Material)
+
         # TODO: Add design id to the request
         self._materials_stub.AddMaterialToDocument(
             AddMaterialToDocumentRequest(
@@ -105,4 +120,7 @@ class Design:
         file_location : str
             Full path of the location on disk where the file should be saved.
         """
+        # Sanity checks on inputs
+        check_type(file_location, str)
+
         self._design_stub.SaveAs(SaveAsDocumentRequest(filepath=file_location))

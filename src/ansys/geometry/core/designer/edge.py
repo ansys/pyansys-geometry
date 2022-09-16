@@ -5,15 +5,18 @@ from typing import TYPE_CHECKING
 
 from ansys.api.geometry.v0.edges_pb2 import EdgeIdentifier
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
-import numpy as np
+from pint import Quantity
 
-from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 
 if TYPE_CHECKING:
     from ansys.geometry.core.designer.body import Body
 
 
 class CurveType(Enum):
+    """Enum holding the possible values for curve types by the geometry service."""
+
     CURVETYPE_UNKNOWN = 0
     CURVETYPE_LINE = 1
     CURVETYPE_CIRCLE = 2
@@ -41,22 +44,23 @@ class Edge:
     """
 
     def __init__(self, id: str, curve_type: CurveType, body: "Body", grpc_client: GrpcClient):
-        """Constructor method for ``Face``."""
-
+        """Constructor method for ``Edge``."""
         self._id = id
         self._curve_type = curve_type
         self._body = body
         self._grpc_client = grpc_client
-        self._length = np.nan
         self._edges_stub = EdgesStub(grpc_client.channel)
 
     @property
-    def length(self) -> float:
+    def id(self) -> str:
+        """ID of the edge."""
+        return self._id
+
+    @property
+    def length(self) -> Quantity:
         """Calculated length of the edge."""
-        if self._length == np.nan:
-            length_response = self._edges_stub.GetEdgeLength(EdgeIdentifier(id=self._id))
-            self._length = length_response.length
-        return self._length
+        length_response = self._edges_stub.GetEdgeLength(EdgeIdentifier(id=self._id))
+        return Quantity(length_response.length, SERVER_UNIT_LENGTH)
 
     @property
     def curve_type(self) -> CurveType:

@@ -12,7 +12,9 @@ from ansys.geometry.core.misc.checks import (
     only_for_3d,
 )
 from ansys.geometry.core.misc.measurements import (
+    SERVER_UNIT_AREA,
     SERVER_UNIT_LENGTH,
+    SERVER_UNIT_VOLUME,
     UNIT_ANGLE,
     UNIT_LENGTH,
     Angle,
@@ -34,7 +36,9 @@ __all__ = [
     "PhysicalQuantity",
     "Angle",
     "Distance",
+    "SERVER_UNIT_AREA",
     "SERVER_UNIT_LENGTH",
+    "SERVER_UNIT_VOLUME",
     "UNIT_ANGLE",
     "UNIT_LENGTH",
     "UNITS",
