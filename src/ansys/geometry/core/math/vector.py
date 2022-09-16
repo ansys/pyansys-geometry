@@ -154,7 +154,7 @@ class Vector(np.ndarray):
             else:
                 return Quantity(np.pi, UNIT_ANGLE)
         else:
-            return Quantity(math.atan2(sine, cosine), UNIT_ANGLE)
+            return Quantity(np.arctan2(sine, cosine), UNIT_ANGLE)
 
     @only_for_3d
     def cross(self, v: "Vector") -> "Vector":

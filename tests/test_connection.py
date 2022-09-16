@@ -130,6 +130,7 @@ def test_arc_message_conversion():
         Point([30, 400, 1000], UNITS.mm),
         Point([500, 600, 1000], UNITS.mm),
         Point([900, 800, 1000], UNITS.mm),
+        UnitVector([0, 0, 1]),
     )
     grpc_arc_message = arc_to_grpc_arc(arc)
 
