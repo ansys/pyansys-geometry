@@ -325,7 +325,13 @@ def test_quantity_vector():
     assert quantity_vec.base_unit == base_unit
 
     # Check the magnitude
-    assert quantity_vec.magnitude == 3.7416573867739413
+    assert quantity_vec.magnitude == np.sqrt(
+        (
+            quantity_vec.x * quantity_vec.x
+            + quantity_vec.y * quantity_vec.y
+            + quantity_vec.z * quantity_vec.z
+        ).m
+    )
     assert quantity_vec.norm.m == quantity_vec.magnitude
 
     # Check that the actual values are in base units (i.e. UNIT_LENGTH)
