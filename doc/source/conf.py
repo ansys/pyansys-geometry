@@ -98,5 +98,6 @@ autoapi_options = [
     "special-members",
 ]
 autoapi_template_dir = "_autoapi_templates"
+suppress_warnings = ["autoapi.python_import_resolution"]
 exclude_patterns = ["_autoapi_templates/index.rst"]
 autoapi_python_use_implicit_namespaces = True

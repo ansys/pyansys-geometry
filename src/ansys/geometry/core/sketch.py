@@ -160,12 +160,7 @@ class Sketch:
         self.append_shape(polygon)
         return polygon
 
-    def draw_arc(
-        self,
-        center: Point,
-        start_point: Point,
-        end_point: Point,
-    ):
+    def draw_arc(self, center: Point, start_point: Point, end_point: Point, axis: UnitVector):
         """Create an arc shape on the sketch.
 
         Parameters
@@ -174,8 +169,10 @@ class Sketch:
             A :class:``Point`` representing the center of the arc.
         start_point : Point
             A :class:``Point`` representing the start of the shape.
-        end_points : Point
+        end_point : Point
             A :class:``Point`` representing the end of the shape.
+        axis : UnitVector
+            A :class:``UnitVector`` determining the rotation direction of the arc.
 
         Returns
         -------
@@ -183,6 +180,6 @@ class Sketch:
             An object representing the arc added to the sketch.
 
         """
-        arc = Arc(self._plane, center, start_point, end_point)
+        arc = Arc(self._plane, center, start_point, end_point, axis)
         self.append_shape(arc)
         return arc

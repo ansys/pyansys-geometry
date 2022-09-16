@@ -177,6 +177,9 @@ jobs:
           username: ${{ secrets.GH_USERNAME }}
           password: ${{ secrets.PACKAGE_DOWNLOAD_PAT }}
 
+      - name: Download Geometry service container (if needed)
+        run: docker pull $env:ANSRV_GEO_IMAGE
+
       - name: Start geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1

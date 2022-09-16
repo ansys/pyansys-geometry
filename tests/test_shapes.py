@@ -190,7 +190,7 @@ def test_create_polygon():
     assert square.n_sides == 4
     assert square.length == side_length
     assert square.perimeter == sides * side_length
-    assert abs(square.area.m - 4.0) <= DOUBLE_EPS
+    assert abs(square.area.m - 4.0) <= 1e-15
 
     # Check points are expected ones
     local_points = square.local_points()
@@ -418,15 +418,22 @@ def test_create_arc():
     origin = Point([1, 1, 0], unit=UNITS.meter)
     start_point = Point([1, 3, 0], unit=UNITS.meter)
     end_point = Point([3, 1, 0], unit=UNITS.meter)
-    arc = sketch.draw_arc(origin, start_point, end_point)
+    arc_clockwise = sketch.draw_arc(origin, start_point, end_point, UnitVector([0, 0, -1]))
+    arc_counterclockwise = sketch.draw_arc(origin, start_point, end_point, UNIT_VECTOR_Z)
 
     # Check attributes are expected ones
-    assert arc.radius == 2 * UNITS.meter
-    assert arc.sector_area == Quantity(np.pi, UNITS.meter * UNITS.meter)
-    assert arc.length == 2 * np.pi**2 * UNITS.meter
+    assert arc_clockwise.radius == 2 * UNITS.meter
+    assert arc_clockwise.sector_area == Quantity(np.pi, UNITS.meter * UNITS.meter)
+    assert arc_clockwise.length == np.pi * UNITS.meter
+    assert (
+        arc_counterclockwise.length
+        == 2 * np.pi * arc_counterclockwise.radius - arc_clockwise.length
+    )
+    assert arc_clockwise.axis == UnitVector([0, 0, -1])
+    assert arc_counterclockwise.axis == UNIT_VECTOR_Z
 
     # Check points are expected ones
-    local_points = arc.local_points(num_points=5)
+    local_points = arc_clockwise.local_points(num_points=5)
     assert abs(all(local_points[0] - Point([3, 1, 0]))) <= DOUBLE_EPS
     assert abs(all(local_points[1] - Point([2.8477, 1.7653, 0]))) <= DOUBLE_EPS
     assert abs(all(local_points[4] - Point([1, 3, 0]))) <= DOUBLE_EPS

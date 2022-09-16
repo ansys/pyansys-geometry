@@ -208,6 +208,12 @@ def test_vector():
     assert abs(round(v1_n.y, 3) - 0.316) <= DOUBLE_EPS
     assert abs(round(v1_n.z, 3) - 0.949) <= DOUBLE_EPS
 
+    # Check the magnitude
+    assert v1.magnitude == 3.1622776601683795
+    assert v2.magnitude == 8.06225774829855
+
+    assert (Vector([1, 0, 0])).get_angle_between(Vector([1, 1, 0])) == np.pi / 4
+
     # Check the cross product value of v1 with v2
     v_cross = v1.cross(v2)
     assert v_cross.x == -5
@@ -290,6 +296,8 @@ def test_unit_vector():
     assert not UnitVector([1, 1, 1]).is_perpendicular_to(UnitVector([1, 1, -1]))
     assert UnitVector([1, 1, 1]).is_perpendicular_to(UnitVector([0, -1, 1]))
 
+    assert UNIT_VECTOR_X.get_angle_between(UNIT_VECTOR_Y) == np.pi / 2
+
     # Check that UnitVector2D is immutable
     with pytest.raises(UnsupportedOperation, match="UnitVector is immutable."):
         v2.x = 3
@@ -315,6 +323,10 @@ def test_quantity_vector():
     assert abs(quantity_vec.norm.magnitude - vec.norm) <= TOLERANCE
     _, base_unit = UNITS.get_base_units(UNITS.mm)
     assert quantity_vec.base_unit == base_unit
+
+    # Check the magnitude
+    assert quantity_vec.magnitude == pytest.approx(3.7416573867739413, rel=1e-7, abs=1e-8)
+    assert quantity_vec.norm.m == quantity_vec.magnitude
 
     # Check that the actual values are in base units (i.e. UNIT_LENGTH)
     assert quantity_vec[0] == (quantity_vec.x).to_base_units().magnitude

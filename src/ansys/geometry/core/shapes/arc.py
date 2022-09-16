@@ -1,11 +1,13 @@
 """``ArcSketch`` class module."""
+
 from typing import List, Optional
 
 import numpy as np
 from pint import Quantity
 
 from ansys.geometry.core.math import Plane, Point, QuantityVector
-from ansys.geometry.core.misc import UNITS, Distance, check_type
+from ansys.geometry.core.math.vector import UnitVector
+from ansys.geometry.core.misc import UNITS, check_type
 from ansys.geometry.core.shapes.base import BaseShape
 
 
@@ -13,11 +15,7 @@ class Arc(BaseShape):
     """A class for modeling arcs."""
 
     def __init__(
-        self,
-        plane: Plane,
-        origin: Point,
-        start_point: Point,
-        end_point: Point,
+        self, plane: Plane, center: Point, start_point: Point, end_point: Point, axis: UnitVector
     ):
         """Initializes the arc shape.
 
@@ -25,36 +23,49 @@ class Arc(BaseShape):
         ----------
         plane : Plane
             A :class:`Plane` representing the planar surface where the shape is contained.
-        origin : Point
+        center : Point
             A :class:``Point`` representing the center of the arc.
         start_point : Point
             A :class:``Point`` representing the start of the arc.
         end_points : Point
             A :class:``Point`` representing the end of the arc.
+        axis : Vector
+            A :class:``UnitVector`` determining the rotation direction of the arc.
 
         """
         super().__init__(plane, is_closed=False)
         # Verify points
-        check_type(origin, Point)
+        check_type(center, Point)
         check_type(start_point, Point)
         check_type(end_point, Point)
         if start_point == end_point:
             raise ValueError("Start and end points must be different.")
-        if origin == start_point:
+        if center == start_point:
             raise ValueError("Center and start points must be different.")
-        if origin == end_point:
+        if center == end_point:
             raise ValueError("Center and end points must be different.")
-        if not self._plane.is_point_contained(origin):
+        if not self._plane.is_point_contained(center):
             raise ValueError("Center point must be contained in the plane.")
         if not self._plane.is_point_contained(start_point):
             raise ValueError("Arc start point must be contained in the plane.")
         if not self._plane.is_point_contained(end_point):
             raise ValueError("Arc end point must be contained in the plane.")
 
-        self._origin, self._start_point, self._end_point = (origin, start_point, end_point)
-        self._start_vector = QuantityVector.from_points(self._origin, self._start_point)
-        self._end_vector = QuantityVector.from_points(self._origin, self._end_point)
-        self._radius = Distance(self._start_vector.norm)
+        self._center, self._start_point, self._end_point = (center, start_point, end_point)
+        self._axis = axis
+
+        to_start_vector = QuantityVector.from_points(self._start_point, self._center)
+        self._radius = to_start_vector.norm
+
+        if not self._radius.m > 0:
+            raise ValueError("Point configuration does not yield a positive length arc radius.")
+
+        direction_x = UnitVector(to_start_vector.normalize())
+        direction_y = UnitVector((axis % direction_x).normalize())
+        to_end_vector = UnitVector.from_points(self._end_point, self._center)
+        self._angle = np.arctan2(direction_y * to_end_vector, direction_x * to_end_vector)
+        if self._angle < 0:
+            self._angle = (2 * np.pi) + self._angle
 
     @property
     def start_point(self) -> Point:
@@ -90,7 +101,31 @@ class Arc(BaseShape):
             The radius of the arc.
 
         """
-        return self._radius.value
+        return self._radius
+
+    @property
+    def center_point(self) -> Point:
+        """The center of the arc.
+
+        Returns
+        -------
+        Point
+            The center of the arc.
+
+        """
+        return self._center
+
+    @property
+    def axis(self) -> UnitVector:
+        """The axis determining arc rotation.
+
+        Returns
+        -------
+        UnitVector
+            The axis determining arc rotation.
+
+        """
+        return self._axis
 
     @property
     def angle(self) -> Quantity:
@@ -103,9 +138,6 @@ class Arc(BaseShape):
 
         """
 
-        self._angle = np.arccos(
-            self._start_vector * self._end_vector / self.radius.to_base_units().m ** 2
-        )
         return Quantity(self._angle, UNITS.radian)
 
     @property
@@ -118,7 +150,7 @@ class Arc(BaseShape):
             The length of the arc.
 
         """
-        return 2 * np.pi * self.radius * self.angle.m
+        return 2 * np.pi * self.radius * (self.angle.m / (2 * np.pi))
 
     @property
     def sector_area(self) -> Quantity:
@@ -150,9 +182,9 @@ class Arc(BaseShape):
         return [
             Point(
                 [
-                    self.origin.x.to(self.radius.units).m + self.radius.m * np.cos(ang),
-                    self.origin.y.to(self.radius.units).m + self.radius.m * np.sin(ang),
-                    self.origin.z.to(self.radius.units).m,
+                    self.center_point.x.to(self.radius.units).m + self.radius.m * np.cos(ang),
+                    self.center_point.y.to(self.radius.units).m + self.radius.m * np.sin(ang),
+                    self.center_point.z.to(self.radius.units).m,
                 ],
                 unit=self.radius.units,
             )

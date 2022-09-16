@@ -14,6 +14,15 @@ UNIT_LENGTH = UNITS.meter
 UNIT_ANGLE = UNITS.radian
 """Default angle unit for PyGeometry."""
 
+SERVER_UNIT_LENGTH = UNITS.meter
+"""Default length unit for supporting geometry services for gRPC messages."""
+
+SERVER_UNIT_AREA = SERVER_UNIT_LENGTH * SERVER_UNIT_LENGTH
+"""Default area unit for supporting geometry services for gRPC messages."""
+
+SERVER_UNIT_VOLUME = SERVER_UNIT_AREA * SERVER_UNIT_LENGTH
+"""Default volume unit for supporting geometry services for gRPC messages."""
+
 
 class Measurement(PhysicalQuantity):
     """``PhysicalQuantity`` subclass for holding a measurement.

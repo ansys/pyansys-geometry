@@ -16,6 +16,7 @@ from ansys.geometry.core.misc import (
     check_type_equivalence,
     only_for_3d,
 )
+from ansys.geometry.core.misc.measurements import UNIT_ANGLE
 from ansys.geometry.core.typing import Real, RealSequence
 
 
@@ -129,6 +130,7 @@ class Vector(np.ndarray):
     @property
     def is_zero(self) -> bool:
         """Confirms whether all components of the ``Vector`` are zero."""
+        # TODO incorporate length accuracy in comparison
         return all([comp == 0 for comp in self])
 
     def normalize(self) -> "Vector":
@@ -138,6 +140,21 @@ class Vector(np.ndarray):
             return Vector(self / norm)
         else:
             raise ValueError("The norm of the Vector is not valid.")
+
+    def get_angle_between(self, v: "Vector") -> Quantity:
+        if v.is_zero or self.is_zero:
+            raise ValueError("Both vectors cannot be zero.")
+
+        sine = (self % v).magnitude
+        cosine = self * v
+
+        if Accuracy.angle_is_zero(sine):
+            if cosine > 0.0:
+                return Quantity(0, UNIT_ANGLE)
+            else:
+                return Quantity(np.pi, UNIT_ANGLE)
+        else:
+            return Quantity(np.arctan2(sine, cosine), UNIT_ANGLE)
 
     @only_for_3d
     def cross(self, v: "Vector") -> "Vector":
@@ -172,6 +189,10 @@ class Vector(np.ndarray):
                 return self.dot(other)
             else:
                 raise ValueError("Invalid Vector dimensions for dot product.")
+
+    @property
+    def magnitude(self) -> float:
+        return self.norm
 
     @only_for_3d
     def __mod__(self, other: "Vector") -> "Vector":
@@ -231,6 +252,30 @@ class UnitVector(Vector):
     @Vector.z.setter
     def z(self, value: Real) -> None:
         raise UnsupportedOperation("UnitVector is immutable.")
+
+    @classmethod
+    def from_points(
+        cls,
+        point_a: Union[np.ndarray, RealSequence, Point],
+        point_b: Union[np.ndarray, RealSequence, Point],
+    ):
+        """Create a ``UnitVector`` from two distinct ``Point``.
+
+        Parameters
+        ----------
+        point_a : Point
+            A :class:`Point` representing the first point.
+        point_b : Point
+            A :class:`Point` representing the second point.
+
+        Returns
+        -------
+        UnitVector
+            A ``UnitVector`` from ``point_a`` to ``point_b``.
+        """
+        check_type(point_a, (Point, np.ndarray, list))
+        check_type(point_b, (Point, np.ndarray, list))
+        return UnitVector(point_b - point_a)
 
 
 class QuantityVector(Vector, PhysicalQuantity):
@@ -301,6 +346,10 @@ class QuantityVector(Vector, PhysicalQuantity):
     def norm(self) -> Quantity:
         """Norm of ``QuantityVector``."""
         return self._get_quantity(Vector.norm.fget(self))
+
+    @property
+    def magnitude(self) -> float:
+        return self.norm.m
 
     def normalize(self) -> Vector:
         """Return a normalized version of the ``QuantityVector``.
