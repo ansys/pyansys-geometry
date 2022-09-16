@@ -1,6 +1,5 @@
 """``ArcSketch`` class module."""
 
-import math
 from typing import List, Optional
 
 import numpy as np
@@ -64,9 +63,9 @@ class Arc(BaseShape):
         direction_x = UnitVector(to_start_vector.normalize())
         direction_y = UnitVector((axis % direction_x).normalize())
         to_end_vector = UnitVector.from_points(self._end_point, self._center)
-        self._angle = math.atan2(direction_y * to_end_vector, direction_x * to_end_vector)
+        self._angle = np.arctan2(direction_y * to_end_vector, direction_x * to_end_vector)
         if self._angle < 0:
-            self._angle = (2 * math.pi) + self._angle
+            self._angle = (2 * np.pi) + self._angle
 
     @property
     def start_point(self) -> Point:
