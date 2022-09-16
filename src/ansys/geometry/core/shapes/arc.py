@@ -126,7 +126,7 @@ class Arc(BaseShape):
             The axis determining arc rotation.
 
         """
-        return self._center
+        return self._axis
 
     @property
     def angle(self) -> Quantity:

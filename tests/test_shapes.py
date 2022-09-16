@@ -429,6 +429,8 @@ def test_create_arc():
         arc_counterclockwise.length
         == 2 * np.pi * arc_counterclockwise.radius - arc_clockwise.length
     )
+    assert arc_clockwise.axis == UnitVector([0, 0, -1])
+    assert arc_counterclockwise.axis == UNIT_VECTOR_Z
 
     # Check points are expected ones
     local_points = arc_clockwise.local_points(num_points=5)
