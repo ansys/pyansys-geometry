@@ -325,6 +325,10 @@ def test_quantity_vector():
     _, base_unit = UNITS.get_base_units(UNITS.mm)
     assert quantity_vec.base_unit == base_unit
 
+    # Check the magnitude
+    assert quantity_vec.magnitude == 3.7416573867739413
+    assert quantity_vec.norm.m == quantity_vec.magnitude
+
     # Check that the actual values are in base units (i.e. UNIT_LENGTH)
     assert quantity_vec[0] == (quantity_vec.x).to_base_units().magnitude
     assert quantity_vec[1] == (quantity_vec.y).to_base_units().magnitude

@@ -1,12 +1,14 @@
 """``ArcSketch`` class module."""
 
+import math
 from typing import List, Optional
 
 import numpy as np
 from pint import Quantity
 
 from ansys.geometry.core.math import Plane, Point, QuantityVector
-from ansys.geometry.core.misc import UNITS, Distance, check_type
+from ansys.geometry.core.math.vector import UnitVector
+from ansys.geometry.core.misc import UNITS, check_type
 from ansys.geometry.core.shapes.base import BaseShape
 
 
@@ -14,11 +16,7 @@ class Arc(BaseShape):
     """A class for modeling arcs."""
 
     def __init__(
-        self,
-        plane: Plane,
-        center: Point,
-        start_point: Point,
-        end_point: Point,
+        self, plane: Plane, center: Point, start_point: Point, end_point: Point, axis: UnitVector
     ):
         """Initializes the arc shape.
 
@@ -32,6 +30,8 @@ class Arc(BaseShape):
             A :class:``Point`` representing the start of the arc.
         end_points : Point
             A :class:``Point`` representing the end of the arc.
+        axis : Vector
+            A :class:``UnitVector`` determining the rotation direction of the arc.
 
         """
         super().__init__(plane, is_closed=False)
@@ -53,9 +53,20 @@ class Arc(BaseShape):
             raise ValueError("Arc end point must be contained in the plane.")
 
         self._center, self._start_point, self._end_point = (center, start_point, end_point)
-        self._start_vector = QuantityVector.from_points(self._center, self._start_point)
-        self._end_vector = QuantityVector.from_points(self._center, self._end_point)
-        self._radius = Distance(self._start_vector.norm)
+        self._axis = axis
+
+        to_start_vector = QuantityVector.from_points(self._start_point, self._center)
+        self._radius = to_start_vector.norm
+
+        if not self._radius.m > 0:
+            raise ValueError("Point configuration does not yield a positive length arc radius.")
+
+        direction_x = UnitVector(to_start_vector.normalize())
+        direction_y = UnitVector((axis % direction_x).normalize())
+        to_end_vector = UnitVector.from_points(self._end_point, self._center)
+        self._angle = math.atan2(direction_y * to_end_vector, direction_x * to_end_vector)
+        if self._angle < 0:
+            self._angle = (2 * math.pi) + self._angle
 
     @property
     def start_point(self) -> Point:
@@ -91,16 +102,28 @@ class Arc(BaseShape):
             The radius of the arc.
 
         """
-        return self._radius.value
+        return self._radius
 
     @property
-    def center(self) -> Point:
+    def center_point(self) -> Point:
         """The center of the arc.
 
         Returns
         -------
         Point
             The center of the arc.
+
+        """
+        return self._center
+
+    @property
+    def axis(self) -> UnitVector:
+        """The axis determining arc rotation.
+
+        Returns
+        -------
+        UnitVector
+            The axis determining arc rotation.
 
         """
         return self._center
@@ -116,9 +139,6 @@ class Arc(BaseShape):
 
         """
 
-        self._angle = np.arccos(
-            self._start_vector * self._end_vector / self.radius.to_base_units().m ** 2
-        )
         return Quantity(self._angle, UNITS.radian)
 
     @property
@@ -131,7 +151,7 @@ class Arc(BaseShape):
             The length of the arc.
 
         """
-        return 2 * np.pi * self.radius * self.angle.m
+        return 2 * np.pi * self.radius * (self.angle.m / (2 * np.pi))
 
     @property
     def sector_area(self) -> Quantity:
@@ -163,9 +183,9 @@ class Arc(BaseShape):
         return [
             Point(
                 [
-                    self.center.x.to(self.radius.units).m + self.radius.m * np.cos(ang),
-                    self.center.y.to(self.radius.units).m + self.radius.m * np.sin(ang),
-                    self.center.z.to(self.radius.units).m,
+                    self.center_point.x.to(self.radius.units).m + self.radius.m * np.cos(ang),
+                    self.center_point.y.to(self.radius.units).m + self.radius.m * np.sin(ang),
+                    self.center_point.z.to(self.radius.units).m,
                 ],
                 unit=self.radius.units,
             )

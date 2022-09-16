@@ -136,6 +136,8 @@ class Body:
             for grpc_edge in imprint_response.edges
         ]
 
+        # TODO: Critical to get back faces and edges from server to synchronize body
+        # TODO: Request gRPC signature update to return faces and edges impacted
         return new_edges
 
     def project_curves(
