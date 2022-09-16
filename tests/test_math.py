@@ -1,4 +1,5 @@
 from io import UnsupportedOperation
+import math as pymath
 
 import numpy as np
 import pytest
@@ -208,6 +209,12 @@ def test_vector():
     assert abs(round(v1_n.y, 3) - 0.316) <= DOUBLE_EPS
     assert abs(round(v1_n.z, 3) - 0.949) <= DOUBLE_EPS
 
+    # Check the magnitude
+    assert v1.magnitude == 3.1622776601683795
+    assert v2.magnitude == 8.06225774829855
+
+    assert (Vector([1, 0, 0])).get_angle_between(Vector([1, 1, 0])) == pymath.pi / 4
+
     # Check the cross product value of v1 with v2
     v_cross = v1.cross(v2)
     assert v_cross.x == -5
@@ -289,6 +296,8 @@ def test_unit_vector():
 
     assert not UnitVector([1, 1, 1]).is_perpendicular_to(UnitVector([1, 1, -1]))
     assert UnitVector([1, 1, 1]).is_perpendicular_to(UnitVector([0, -1, 1]))
+
+    assert UNIT_VECTOR_X.get_angle_between(UNIT_VECTOR_Y) == pymath.pi / 2
 
     # Check that UnitVector2D is immutable
     with pytest.raises(UnsupportedOperation, match="UnitVector is immutable."):

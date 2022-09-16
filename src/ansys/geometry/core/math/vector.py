@@ -1,5 +1,6 @@
 """``Vector`` class module"""
 from io import UnsupportedOperation
+import math
 from typing import Union
 
 import numpy as np
@@ -16,6 +17,7 @@ from ansys.geometry.core.misc import (
     check_type_equivalence,
     only_for_3d,
 )
+from ansys.geometry.core.misc.measurements import UNIT_ANGLE
 from ansys.geometry.core.typing import Real, RealSequence
 
 
@@ -140,6 +142,21 @@ class Vector(np.ndarray):
         else:
             raise ValueError("The norm of the Vector is not valid.")
 
+    def get_angle_between(self, v: "Vector") -> Quantity:
+        if v.is_zero or self.is_zero:
+            raise ValueError("Both vectors cannot be zero.")
+
+        sine = (self % v).magnitude
+        cosine = self * v
+
+        if Accuracy.angle_is_zero(sine):
+            if cosine > 0.0:
+                return Quantity(0, UNIT_ANGLE)
+            else:
+                return Quantity(math.pi, UNIT_ANGLE)
+        else:
+            return Quantity(math.atan2(sine, cosine), UNIT_ANGLE)
+
     @only_for_3d
     def cross(self, v: "Vector") -> "Vector":
         """Return cross product of 3D Vector objects"""
@@ -173,6 +190,13 @@ class Vector(np.ndarray):
                 return self.dot(other)
             else:
                 raise ValueError("Invalid Vector dimensions for dot product.")
+
+    @property
+    def magnitude(self) -> float:
+        if self.is_3d:
+            return math.sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
+        else:
+            return math.sqrt(self.x * self.x + self.y * self.y)
 
     @only_for_3d
     def __mod__(self, other: "Vector") -> "Vector":

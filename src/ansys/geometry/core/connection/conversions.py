@@ -96,9 +96,10 @@ def arc_to_grpc_arc(arc: Arc) -> GRPCArc:
     Geometry Service gRPC Arc message, units in meters.
     """
     return GRPCArc(
-        center=point_to_grpc_point(arc.origin),
+        center=point_to_grpc_point(arc.center),
         start=point_to_grpc_point(arc.start_point),
         end=point_to_grpc_point(arc.end_point),
+        axis=unit_vector_to_grpc_direction(arc.plane.direction_z),
     )
 
 
@@ -134,8 +135,7 @@ def circle_to_grpc_circle(circle: Circle) -> GRPCCircle:
     Geometry Service gRPC Circle message, units in meters.
     """
     return GRPCCircle(
-        center=point_to_grpc_point(circle.center),
-        radius=circle.radius.m_as(SERVER_UNIT_LENGTH),
+        center=point_to_grpc_point(circle.center), radius=circle.radius.m_as(SERVER_UNIT_LENGTH)
     )
 
 

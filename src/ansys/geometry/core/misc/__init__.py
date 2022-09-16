@@ -1,5 +1,5 @@
 """PyGeometry misc subpackage."""
-from ansys.geometry.core.misc.accuracy import Accuracy
+from ansys.geometry.core.misc.accuracy import ANGLE_ACCURACY, LENGTH_ACCURACY, Accuracy
 from ansys.geometry.core.misc.checks import (
     check_is_float_int,
     check_ndarray_is_all_nan,
@@ -24,6 +24,8 @@ from ansys.geometry.core.misc.units import UNITS, PhysicalQuantity
 
 __all__ = [
     "Accuracy",
+    "Angle",
+    "ANGLE_ACCURACY",
     "check_is_float_int",
     "check_ndarray_is_all_nan",
     "check_ndarray_is_float_int",
@@ -32,10 +34,10 @@ __all__ = [
     "check_pint_unit_compatibility",
     "check_type",
     "check_type_equivalence",
+    "Distance",
+    "LENGTH_ACCURACY",
     "only_for_3d",
     "PhysicalQuantity",
-    "Angle",
-    "Distance",
     "SERVER_UNIT_AREA",
     "SERVER_UNIT_LENGTH",
     "SERVER_UNIT_VOLUME",

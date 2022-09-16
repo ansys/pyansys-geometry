@@ -1,4 +1,5 @@
 """``ArcSketch`` class module."""
+
 from typing import List, Optional
 
 import numpy as np
@@ -15,7 +16,7 @@ class Arc(BaseShape):
     def __init__(
         self,
         plane: Plane,
-        origin: Point,
+        center: Point,
         start_point: Point,
         end_point: Point,
     ):
@@ -25,7 +26,7 @@ class Arc(BaseShape):
         ----------
         plane : Plane
             A :class:`Plane` representing the planar surface where the shape is contained.
-        origin : Point
+        center : Point
             A :class:``Point`` representing the center of the arc.
         start_point : Point
             A :class:``Point`` representing the start of the arc.
@@ -35,25 +36,25 @@ class Arc(BaseShape):
         """
         super().__init__(plane, is_closed=False)
         # Verify points
-        check_type(origin, Point)
+        check_type(center, Point)
         check_type(start_point, Point)
         check_type(end_point, Point)
         if start_point == end_point:
             raise ValueError("Start and end points must be different.")
-        if origin == start_point:
+        if center == start_point:
             raise ValueError("Center and start points must be different.")
-        if origin == end_point:
+        if center == end_point:
             raise ValueError("Center and end points must be different.")
-        if not self._plane.is_point_contained(origin):
+        if not self._plane.is_point_contained(center):
             raise ValueError("Center point must be contained in the plane.")
         if not self._plane.is_point_contained(start_point):
             raise ValueError("Arc start point must be contained in the plane.")
         if not self._plane.is_point_contained(end_point):
             raise ValueError("Arc end point must be contained in the plane.")
 
-        self._origin, self._start_point, self._end_point = (origin, start_point, end_point)
-        self._start_vector = QuantityVector.from_points(self._origin, self._start_point)
-        self._end_vector = QuantityVector.from_points(self._origin, self._end_point)
+        self._center, self._start_point, self._end_point = (center, start_point, end_point)
+        self._start_vector = QuantityVector.from_points(self._center, self._start_point)
+        self._end_vector = QuantityVector.from_points(self._center, self._end_point)
         self._radius = Distance(self._start_vector.norm)
 
     @property
@@ -91,6 +92,18 @@ class Arc(BaseShape):
 
         """
         return self._radius.value
+
+    @property
+    def center(self) -> Point:
+        """The center of the arc.
+
+        Returns
+        -------
+        Point
+            The center of the arc.
+
+        """
+        return self._center
 
     @property
     def angle(self) -> Quantity:
@@ -150,9 +163,9 @@ class Arc(BaseShape):
         return [
             Point(
                 [
-                    self.origin.x.to(self.radius.units).m + self.radius.m * np.cos(ang),
-                    self.origin.y.to(self.radius.units).m + self.radius.m * np.sin(ang),
-                    self.origin.z.to(self.radius.units).m,
+                    self.center.x.to(self.radius.units).m + self.radius.m * np.cos(ang),
+                    self.center.y.to(self.radius.units).m + self.radius.m * np.sin(ang),
+                    self.center.z.to(self.radius.units).m,
                 ],
                 unit=self.radius.units,
             )
