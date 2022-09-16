@@ -19,7 +19,7 @@ from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Polygon,
 
 
 def unit_vector_to_grpc_direction(unit_vector: UnitVector) -> GRPCDirection:
-    """Marshals a :class:`UnitVector` class to an ansys.api.geometry vector gRPC transfer model.
+    """Marshals a :class:`UnitVector` to a UnitVector gRPC message of the Geometry Service.
 
     Parameters
     ----------
@@ -28,13 +28,13 @@ def unit_vector_to_grpc_direction(unit_vector: UnitVector) -> GRPCDirection:
 
     Returns
     -------
-    ansys.api.geometry.v0 Direction model
+    Geometry Service gRPC Direction message.
     """
     return GRPCDirection(x=unit_vector.x, y=unit_vector.y, z=unit_vector.z)
 
 
 def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
-    """Marshals a :class:`Plane` class to an ansys.api.geometry plane gRPC transfer model.
+    """Marshals a :class:`Plane` to a Plane gRPC message of the Geometry Service.
 
     Parameters
     ----------
@@ -43,7 +43,7 @@ def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
 
     Returns
     -------
-    ansys.api.geometry.v0 Plane model, units in meters
+    Geometry Service gRPC Plane message, units in meters.
     """
     return GRPCPlane(
         frame=GRPCFrame(
@@ -55,7 +55,8 @@ def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
 
 
 def sketch_shapes_to_grpc_geometries(shapes: List[BaseShape]) -> Geometries:
-    """Marshals a list of :class:`BaseShape` to an ansys.api.geometry geometries gRPC transfer model.
+    """Marshals a list of :class:`BaseShape` to a Geometries gRPC message of
+    the Geometry Service.
 
     Parameters
     ----------
@@ -64,7 +65,7 @@ def sketch_shapes_to_grpc_geometries(shapes: List[BaseShape]) -> Geometries:
 
     Returns
     -------
-    ansys.api.geometry.v0 Geometries model, units in meters
+    Geometry Service gRPC Geometries message, units in meters.
     """
     geometries = Geometries()
     for shape in shapes:
@@ -83,7 +84,7 @@ def sketch_shapes_to_grpc_geometries(shapes: List[BaseShape]) -> Geometries:
 
 
 def arc_to_grpc_arc(arc: Arc) -> GRPCArc:
-    """Marshals an :class:`Arc` to an ansys.api.geometry arc gRPC transfer model.
+    """Marshals an :class:`Arc` to an Arc gRPC message of the Geometry Service.
 
     Parameters
     ----------
@@ -92,7 +93,7 @@ def arc_to_grpc_arc(arc: Arc) -> GRPCArc:
 
     Returns
     -------
-    ansys.api.geometry.v0 Arc model, units in meters
+    Geometry Service gRPC Arc message, units in meters.
     """
     return GRPCArc(
         center=point_to_grpc_point(arc.origin),
@@ -102,7 +103,7 @@ def arc_to_grpc_arc(arc: Arc) -> GRPCArc:
 
 
 def ellipse_to_grpc_ellipse(ellipse: Ellipse) -> GRPCEllipse:
-    """Marshals an :class:`Ellipse` to an ansys.api.geometry ellipse gRPC transfer model.
+    """Marshals an :class:`Ellipse` to an Ellipse gRPC message of the Geometry Service.
 
     Parameters
     ----------
@@ -111,7 +112,7 @@ def ellipse_to_grpc_ellipse(ellipse: Ellipse) -> GRPCEllipse:
 
     Returns
     -------
-    ansys.api.geometry.v0 Ellipse model, units in meters
+    Geometry Service gRPC Ellipse message, units in meters.
     """
     return GRPCEllipse(
         center=point_to_grpc_point(ellipse.center),
@@ -121,7 +122,7 @@ def ellipse_to_grpc_ellipse(ellipse: Ellipse) -> GRPCEllipse:
 
 
 def circle_to_grpc_circle(circle: Circle) -> GRPCCircle:
-    """Marshals a :class:`Circle` to an ansys.api.geometry circle gRPC transfer model.
+    """Marshals a :class:`Circle` to a Circle gRPC message of the Geometry Service.
 
     Parameters
     ----------
@@ -130,7 +131,7 @@ def circle_to_grpc_circle(circle: Circle) -> GRPCCircle:
 
     Returns
     -------
-    ansys.api.geometry.v0 Circle model, units in meters
+    Geometry Service gRPC Circle message, units in meters.
     """
     return GRPCCircle(
         center=point_to_grpc_point(circle.center),
@@ -139,7 +140,7 @@ def circle_to_grpc_circle(circle: Circle) -> GRPCCircle:
 
 
 def point_to_grpc_point(point: Point) -> GRPCPoint:
-    """Marshals a :class:`Point` to an ansys.api.geometry point gRPC transfer model.
+    """Marshals a :class:`Point` to a Point gRPC message of the Geometry Service.
 
     Parameters
     ----------
@@ -148,7 +149,7 @@ def point_to_grpc_point(point: Point) -> GRPCPoint:
 
     Returns
     -------
-    ansys.api.geometry.v0 Point model, units in meters
+    Geometry Service gRPC Point message, units in meters.
     """
     return GRPCPoint(
         x=point.x.m_as(SERVER_UNIT_LENGTH),
@@ -158,7 +159,7 @@ def point_to_grpc_point(point: Point) -> GRPCPoint:
 
 
 def polygon_to_grpc_polygon(polygon: Polygon) -> GRPCPolygon:
-    """Marshals a :class:`Polygon` to an ansys.api.geometry polygon gRPC transfer model.
+    """Marshals a :class:`Polygon` to a Polygon gRPC message of the Geometry Service.
 
     Parameters
     ----------
@@ -167,7 +168,7 @@ def polygon_to_grpc_polygon(polygon: Polygon) -> GRPCPolygon:
 
     Returns
     -------
-    ansys.api.geometry.v0 Polygon model, units in meters
+    Geometry Service gRPC Polygon message, units in meters.
     """
     return GRPCPolygon(
         center=point_to_grpc_point(polygon.origin),
@@ -177,7 +178,7 @@ def polygon_to_grpc_polygon(polygon: Polygon) -> GRPCPolygon:
 
 
 def segment_to_grpc_line(line: Segment) -> GRPCLine:
-    """Marshals a :class:`Segment` to an ansys.api.geometry line gRPC transfer model.
+    """Marshals a :class:`Segment` to a Line gRPC message of the Geometry Service.
 
     Parameters
     ----------
@@ -186,7 +187,7 @@ def segment_to_grpc_line(line: Segment) -> GRPCLine:
 
     Returns
     -------
-    ansys.api.geometry.v0 Line model, units in meters
+    Geometry Service gRPC Line message, units in meters.
     """
     return GRPCLine(
         start=point_to_grpc_point(line.start),
