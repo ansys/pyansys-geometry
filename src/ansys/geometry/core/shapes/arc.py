@@ -14,9 +14,7 @@ from ansys.geometry.core.shapes.base import BaseShape
 class Arc(BaseShape):
     """A class for modeling arcs."""
 
-    def __init__(
-        self, plane: Plane, center: Point, start_point: Point, end_point: Point, axis: UnitVector
-    ):
+    def __init__(self, plane: Plane, center: Point, start: Point, end: Point, axis: UnitVector):
         """Initializes the arc shape.
 
         Parameters
@@ -25,9 +23,9 @@ class Arc(BaseShape):
             A :class:`Plane` representing the planar surface where the shape is contained.
         center : Point
             A :class:``Point`` representing the center of the arc.
-        start_point : Point
+        start: Point
             A :class:``Point`` representing the start of the arc.
-        end_points : Point
+        end : Point
             A :class:``Point`` representing the end of the arc.
         axis : Vector
             A :class:``UnitVector`` determining the rotation direction of the arc.
@@ -36,25 +34,25 @@ class Arc(BaseShape):
         super().__init__(plane, is_closed=False)
         # Verify points
         check_type(center, Point)
-        check_type(start_point, Point)
-        check_type(end_point, Point)
-        if start_point == end_point:
+        check_type(start, Point)
+        check_type(end, Point)
+        if start == end:
             raise ValueError("Start and end points must be different.")
-        if center == start_point:
+        if center == start:
             raise ValueError("Center and start points must be different.")
-        if center == end_point:
+        if center == end:
             raise ValueError("Center and end points must be different.")
         if not self._plane.is_point_contained(center):
             raise ValueError("Center point must be contained in the plane.")
-        if not self._plane.is_point_contained(start_point):
+        if not self._plane.is_point_contained(start):
             raise ValueError("Arc start point must be contained in the plane.")
-        if not self._plane.is_point_contained(end_point):
+        if not self._plane.is_point_contained(end):
             raise ValueError("Arc end point must be contained in the plane.")
 
-        self._center, self._start_point, self._end_point = (center, start_point, end_point)
+        self._center, self._start, self._end = center, start, end
         self._axis = axis
 
-        to_start_vector = QuantityVector.from_points(self._start_point, self._center)
+        to_start_vector = QuantityVector.from_points(self._start, self._center)
         self._radius = to_start_vector.norm
 
         if not self._radius.m > 0:
@@ -62,13 +60,13 @@ class Arc(BaseShape):
 
         direction_x = UnitVector(to_start_vector.normalize())
         direction_y = UnitVector((axis % direction_x).normalize())
-        to_end_vector = UnitVector.from_points(self._end_point, self._center)
+        to_end_vector = UnitVector.from_points(self._end, self._center)
         self._angle = np.arctan2(direction_y * to_end_vector, direction_x * to_end_vector)
         if self._angle < 0:
             self._angle = (2 * np.pi) + self._angle
 
     @property
-    def start_point(self) -> Point:
+    def start(self) -> Point:
         """Return the start of the arc line.
 
         Returns
@@ -77,10 +75,10 @@ class Arc(BaseShape):
             Starting point of the arc line.
 
         """
-        return self._start_point
+        return self._start
 
     @property
-    def end_point(self) -> Point:
+    def end(self) -> Point:
         """Return the end of the arc line.
 
         Returns
@@ -89,7 +87,7 @@ class Arc(BaseShape):
             Ending point of the arc line.
 
         """
-        return self._end_point
+        return self._end
 
     @property
     def radius(self) -> Quantity:
@@ -104,7 +102,7 @@ class Arc(BaseShape):
         return self._radius
 
     @property
-    def center_point(self) -> Point:
+    def center(self) -> Point:
         """The center of the arc.
 
         Returns
@@ -182,9 +180,9 @@ class Arc(BaseShape):
         return [
             Point(
                 [
-                    self.center_point.x.to(self.radius.units).m + self.radius.m * np.cos(ang),
-                    self.center_point.y.to(self.radius.units).m + self.radius.m * np.sin(ang),
-                    self.center_point.z.to(self.radius.units).m,
+                    self.center.x.to(self.radius.units).m + self.radius.m * np.cos(ang),
+                    self.center.y.to(self.radius.units).m + self.radius.m * np.sin(ang),
+                    self.center.z.to(self.radius.units).m,
                 ],
                 unit=self.radius.units,
             )
