@@ -148,6 +148,11 @@ class Design:
             All faces that should be included in the named selection.
         edges : List[Edge]
             All edges that should be included in the named selection.
+
+        Returns
+        -------
+        NamedSelection
+            A newly created named selection maintaining references to all target entities.
         """
         check_type(name, str)
 
