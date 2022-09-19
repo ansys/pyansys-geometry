@@ -1,10 +1,9 @@
 """``Component`` class module."""
 
 
-from io import UnsupportedOperation
 from typing import Union
 
-from ansys.api.geometry.v0.bodies_pb2 import CreateExtrudedBodyRequest
+from ansys.api.geometry.v0.bodies_pb2 import CreateExtrudedBodyRequest, CreatePlanarBodyRequest
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.components_pb2 import CreateComponentRequest
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
@@ -53,8 +52,8 @@ class Component:
             new_component = self._component_stub.CreateComponent(
                 CreateComponentRequest(display_name=name, parent=parent_component.id)
             )
-            self._id = new_component.id
-            self._name = new_component.name
+            self._id = new_component.component.id
+            self._name = new_component.component.display_name
         else:
             self._name = name
             self._id = None
@@ -67,20 +66,6 @@ class Component:
     def id(self) -> str:
         """Id of the ``Component``."""
         return self._id
-
-    @id.setter
-    def id(self, id: str) -> None:
-        """Sets the id of the ``Component``.
-
-        Notes
-        -----
-        Only valid for root component.
-        """
-        if self._parent_component is None:
-            check_type(id, str)
-            self._id = id
-        else:
-            raise UnsupportedOperation("Component id setter cannot be accessed.")
 
     @property
     def name(self) -> str:
@@ -104,8 +89,8 @@ class Component:
         self._components.append(Component(name, self, self._grpc_client))
         return self._components[-1]
 
-    def extrude_profile(self, name: str, sketch: Sketch, distance: Quantity) -> "Body":
-        """Creates a solid body by extruding the given profile up to the given distance.
+    def extrude_sketch(self, name: str, sketch: Sketch, distance: Quantity) -> "Body":
+        """Creates a solid body by extruding the given sketch profile up to the given distance.
 
         The resulting body created is nested under this component within the design assembly.
 
@@ -127,7 +112,7 @@ class Component:
         # Perform extrusion request
         extrusion_request = CreateExtrudedBodyRequest(
             distance=distance.m_as(SERVER_UNIT_LENGTH),
-            parent=self.id,
+            parent=self._id,
             plane=plane_to_grpc_plane(sketch._plane),
             geometries=sketch_shapes_to_grpc_geometries(sketch.shapes_list),
             name=name,
@@ -136,4 +121,33 @@ class Component:
         extrusion_response = self._bodies_stub.CreateExtrudedBody(extrusion_request)
 
         self._bodies.append(Body(extrusion_response.id, name, self, self._grpc_client))
+        return self._bodies[-1]
+
+    def generate_surface(self, name: str, sketch: Sketch) -> "Body":
+        """Creates a surface body with the given sketch profile.
+
+        The resulting body created is nested under this component within the design assembly.
+
+        Parameters
+        ----------
+        name : str
+            A user-defined label assigned to the resulting solid body.
+        sketch : Sketch
+            The two-dimensional sketch source for extrusion.
+        """
+        # Sanity checks on inputs
+        check_type(name, str)
+        check_type(sketch, Sketch)
+
+        # Perform planar body request
+        planar_body_request = CreatePlanarBodyRequest(
+            parent=self._id,
+            plane=plane_to_grpc_plane(sketch._plane),
+            geometries=sketch_shapes_to_grpc_geometries(sketch.shapes_list),
+            name=name,
+        )
+
+        planar_body_response = self._bodies_stub.CreatePlanarBody(planar_body_request)
+
+        self._bodies.append(Body(planar_body_response.id, name, self, self._grpc_client))
         return self._bodies[-1]
