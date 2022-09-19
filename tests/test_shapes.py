@@ -32,10 +32,15 @@ def test_create_circle():
     assert circle.area == np.pi * radius**2
     assert circle.perimeter == 2 * np.pi * radius
 
-    # Check points are expected ones
+    # Check local points are expected ones
     local_points = circle.local_points(num_points=5)
     assert abs(all(local_points[0] - Point([1, 0, 0]))) <= DOUBLE_EPS
     assert abs(all(local_points[2] - Point([-1, 0, 0]))) <= DOUBLE_EPS
+
+    # Check global points are expected ones
+    global_points = circle.points(num_points=5)
+    assert abs(all(global_points[0] - Point([1, 0, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[2] - Point([-1, 0, 0]))) <= DOUBLE_EPS
 
     # Use the class method to build a circle
     center_2, radius_2 = Point([10, 20, 0], UNITS.mm), (10 * UNITS.mm)
@@ -87,10 +92,15 @@ def test_create_ellipse():
     assert abs((ellipse.perimeter - 9.6884482205477 * UNITS.m).m) <= 5e-14
     assert abs((ellipse.area - 6.28318530717959 * UNITS.m * UNITS.m).m) <= 5e-14
 
-    # Check points are expected ones
+    # Check local points are expected ones
     local_points = ellipse.local_points(num_points=5)
     assert abs(all(local_points[0] - Point([2, 0, 0]))) <= DOUBLE_EPS
     assert abs(all(local_points[2] - Point([-2, 0, 0]))) <= DOUBLE_EPS
+
+    # Check global points are expected ones
+    global_points = ellipse.points(num_points=5)
+    assert abs(all(global_points[0] - Point([2, 0, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[2] - Point([-2, 0, 0]))) <= DOUBLE_EPS
 
     # Use the class method to build an ellipse
     semi_major_2, semi_minor_2, center_2 = 5 * UNITS.mm, 4 * UNITS.mm, Point([10, 20, 0], UNITS.mm)
@@ -192,10 +202,15 @@ def test_create_polygon():
     assert square.perimeter == sides * side_length
     assert abs(square.area.m - 4.0) <= 1e-15
 
-    # Check points are expected ones
+    # Check local points are expected ones
     local_points = square.local_points()
     assert abs(all(local_points[0] - Point([1.41421356, 0, 0]))) <= DOUBLE_EPS
     assert abs(all(local_points[2] - Point([-1.41421356, 0, 0]))) <= DOUBLE_EPS
+
+    # Check global points are expected ones
+    global_points = square.points()
+    assert abs(all(global_points[0] - Point([1.41421356, 0, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[2] - Point([-1.41421356, 0, 0]))) <= DOUBLE_EPS
 
     with pytest.raises(
         ValueError, match="The minimum number of sides to construct a polygon should be 3."
@@ -416,10 +431,10 @@ def test_create_arc():
 
     # Draw an arc in previous sketch
     origin = Point([1, 1, 0], unit=UNITS.meter)
-    start_point = Point([1, 3, 0], unit=UNITS.meter)
-    end_point = Point([3, 1, 0], unit=UNITS.meter)
-    arc_clockwise = sketch.draw_arc(origin, start_point, end_point, UnitVector([0, 0, -1]))
-    arc_counterclockwise = sketch.draw_arc(origin, start_point, end_point, UNIT_VECTOR_Z)
+    start = Point([1, 3, 0], unit=UNITS.meter)
+    end = Point([3, 1, 0], unit=UNITS.meter)
+    arc_clockwise = sketch.draw_arc(origin, start, end, UnitVector([0, 0, -1]))
+    arc_counterclockwise = sketch.draw_arc(origin, start, end, UNIT_VECTOR_Z)
 
     # Check attributes are expected ones
     assert arc_clockwise.radius == 2 * UNITS.meter
@@ -432,8 +447,14 @@ def test_create_arc():
     assert arc_clockwise.axis == UnitVector([0, 0, -1])
     assert arc_counterclockwise.axis == UNIT_VECTOR_Z
 
-    # Check points are expected ones
+    # Check local points are expected ones
     local_points = arc_clockwise.local_points(num_points=5)
     assert abs(all(local_points[0] - Point([3, 1, 0]))) <= DOUBLE_EPS
     assert abs(all(local_points[1] - Point([2.8477, 1.7653, 0]))) <= DOUBLE_EPS
     assert abs(all(local_points[4] - Point([1, 3, 0]))) <= DOUBLE_EPS
+
+    # Check global points are expected ones
+    global_points = arc_clockwise.points(num_points=5)
+    assert abs(all(global_points[0] - Point([3, 1, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[1] - Point([2.8477, 1.7653, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[4] - Point([1, 3, 0]))) <= DOUBLE_EPS

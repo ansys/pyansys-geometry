@@ -96,9 +96,9 @@ def arc_to_grpc_arc(arc: Arc) -> GRPCArc:
     Geometry Service gRPC Arc message, units in meters.
     """
     return GRPCArc(
-        center=point_to_grpc_point(arc.center_point),
-        start=point_to_grpc_point(arc.start_point),
-        end=point_to_grpc_point(arc.end_point),
+        center=point_to_grpc_point(arc.center),
+        start=point_to_grpc_point(arc.start),
+        end=point_to_grpc_point(arc.end),
         axis=unit_vector_to_grpc_direction(arc.axis),
     )
 
