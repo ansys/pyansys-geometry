@@ -131,9 +131,9 @@ class Component:
         Parameters
         ----------
         name : str
-            A user-defined label assigned to the resulting solid body.
+            A user-defined label assigned to the resulting surface body.
         sketch : Sketch
-            The two-dimensional sketch source for extrusion.
+            The two-dimensional sketch source for surface definition.
         """
         # Sanity checks on inputs
         check_type(name, str)
