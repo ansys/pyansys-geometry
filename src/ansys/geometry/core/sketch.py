@@ -6,7 +6,17 @@ from pint import Quantity
 
 from ansys.geometry.core.math import Plane, Point, UnitVector, Vector
 from ansys.geometry.core.misc import Distance
-from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Line, Polygon, Segment
+from ansys.geometry.core.shapes import (
+    Arc,
+    BaseShape,
+    Box,
+    Circle,
+    Ellipse,
+    Line,
+    Pill,
+    Polygon,
+    Segment,
+)
 
 
 class Sketch:
@@ -40,6 +50,57 @@ class Sketch:
             self.shapes_list.append(shape)
         else:
             raise ValueError("The provided shape does not belong to the same plane as the Sketch.")
+
+    def draw_box(
+        self, center: Point, width: Union[Quantity, Distance], height: Union[Quantity, Distance]
+    ):
+        """Create a box shape on the sketch.
+
+        Parameters
+        ----------
+        center: Point
+            A :class:`Point` representing the center of the box.
+        width : Union[Quantity, Distance]
+            The width of the box.
+        height : Union[Quantity, Distance]
+            The height of the box.
+
+        Returns
+        -------
+        Box
+            An object representing the box added to the sketch.
+
+        """
+        box = Box(self._plane, center, width, height)
+        self.append_shape(box)
+        return box
+
+    def draw_pill(
+        self,
+        center: Point,
+        width: Union[Quantity, Distance],
+        height: Union[Quantity, Distance],
+    ):
+        """Create a pill shape on the sketch.
+
+        Parameters
+        ----------
+        center: Point
+            A :class:`Point` representing the center of the pill.
+        width : Union[Quantity, Distance]
+            The width of the box.
+        height : Union[Quantity, Distance]
+            The height of the box.
+
+        Returns
+        -------
+        Pill
+            An object representing the pill added to the sketch.
+
+        """
+        pill = Pill(self._plane, center, width, height)
+        self.append_shape(pill)
+        return pill
 
     def draw_circle(self, center: Point, radius: Union[Quantity, Distance]):
         """Create a circle shape on the sketch.
