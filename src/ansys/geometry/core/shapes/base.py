@@ -70,7 +70,12 @@ class BaseShape:
         List[Point]
             A list of points representing the shape.
         """
-        return self.plane.from_local_to_global @ self.local_points
+        try:
+            local_points = self.local_points(num_points)
+        except TypeError:
+            local_points = self.local_points()
+
+        return [(self.plane.origin + self.plane.local_to_global @ point) for point in local_points]
 
     @property
     def x_coordinates(self) -> List[Real]:
