@@ -57,6 +57,11 @@ class Body:
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 
     @property
+    def id(self) -> str:
+        """Service defined unique identifier."""
+        return self._id
+
+    @property
     def volume(self) -> Quantity:
         """Calculated volume of the body."""
         volume_response = self._bodies_stub.GetVolume(BodyIdentifier(id=self._id))
