@@ -99,7 +99,7 @@ arc.plot()
 
 ## Plotting the sketch
 
-Plotting capabilities are provided through the ``Plotter`` class. This class allows to plot different ``PyGeometry`` objects. The visualization backend used by ``PyGeometry`` is based in ``PyVista``.
+Plotting capabilities are provided through the ``Plotter`` class. This class allows to plot different ``PyGeometry`` objects. The visualization backend used by ``PyGeometry`` is based on ``PyVista``.
 
 For plotting the sketch, the ``plot_sketch`` method is used. It accepts a ``Sketch`` instance and some extra arguments to further customize the visualization of the sketch. These arguments include showing the plane of the sketch and its frame.
 
