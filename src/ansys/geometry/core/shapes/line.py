@@ -95,7 +95,7 @@ class Line(BaseShape):
 
         # Then, check if direction is linearly dependent or not from
         # i and j (the vectors defining your plane)
-        mat = np.array([self.direction, self.i, self.j])
+        mat = np.array([self.direction, self.plane.direction_x, self.plane.direction_y])
         (lambdas, _) = np.linalg.eig(mat.T)
         return True if any(np.isclose(lambdas, 0.0)) else False
 

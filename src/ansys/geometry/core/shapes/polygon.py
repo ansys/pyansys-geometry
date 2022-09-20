@@ -151,12 +151,17 @@ class Polygon(BaseShape):
 
         """
         theta = np.linspace(0, 2 * np.pi, self.n_sides + 1)
+        center_from_plane_origin = Point(
+            self.plane.global_to_local @ (self.center - self.plane.origin), self.center.unit
+        )
         return [
             Point(
                 [
-                    self.center.x.to(self.outer_radius.units).m + self.outer_radius.m * np.cos(ang),
-                    self.center.y.to(self.outer_radius.units).m + self.outer_radius.m * np.sin(ang),
-                    self.center.z.to(self.outer_radius.units).m,
+                    center_from_plane_origin.x.to(self.outer_radius.units).m
+                    + self.outer_radius.m * np.cos(ang),
+                    center_from_plane_origin.y.to(self.outer_radius.units).m
+                    + self.outer_radius.m * np.sin(ang),
+                    center_from_plane_origin.z.to(self.outer_radius.units).m,
                 ],
                 unit=self.outer_radius.units,
             )
