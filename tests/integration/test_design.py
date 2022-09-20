@@ -156,3 +156,30 @@ def test_component_body(modeler: Modeler):
 
 def test_named_selections(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection``."""
+
+    # Create your design on the server side
+    design_name = "NamedSelection_Test"
+    design = modeler.create_design(design_name)
+
+    # Create 2 Sketch objects and draw a circle and a polygon (all client side)
+    sketch_1 = Sketch()
+    sketch_1.draw_circle(Point([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm))
+    sketch_2 = Sketch()
+    sketch_2.draw_polygon(Point([-30, -30, 0], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+
+    # Build 2 independent components and bodies
+    circle_comp = design.add_component("CircleComponent")
+    body_circle_comp = circle_comp.extrude_sketch("Circle", sketch_1, Quantity(50, UNITS.mm))
+    polygon_comp = design.add_component("PolygonComponent")
+    body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch_2, Quantity(30, UNITS.mm))
+
+    # Create the NamedSelection
+    design.create_named_selection(
+        "OnlyCircle", [body_circle_comp], body_circle_comp.faces, body_circle_comp.faces[0].edges
+    )
+    design.create_named_selection(
+        "OnlyPolygon",
+        [body_polygon_comp],
+        body_polygon_comp.faces,
+        body_polygon_comp.faces[0].edges,
+    )
