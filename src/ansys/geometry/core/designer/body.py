@@ -40,41 +40,48 @@ class Body:
         The parent component to nest the new component under within the design assembly.
     grpc_client : GrpcClient
         An active supporting geometry service instance for design modeling.
+    is_surface : bool, optional
+        Boolean indicating whether the ``Body`` is in fact a surface or an actual
+        3D object (with volume). By default, ``False``.
     """
 
-    def __init__(self, id: str, name: str, parent_component: "Component", grpc_client: GrpcClient):
+    def __init__(
+        self,
+        id: str,
+        name: str,
+        parent_component: "Component",
+        grpc_client: GrpcClient,
+        is_surface: bool = False,
+    ):
         """Constructor method for ``Body``."""
         # Sanity checks - cannot check Component due to circular import issues
         check_type(id, str)
         check_type(name, str)
         check_type(grpc_client, GrpcClient)
+        check_type(is_surface, bool)
 
         self._id = id
         self._name = name
         self._parent_component = parent_component
         self._grpc_client = grpc_client
+        self._is_surface = is_surface
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 
     @property
-    def volume(self) -> Quantity:
-        """Calculated volume of the body."""
-        volume_response = self._bodies_stub.GetVolume(BodyIdentifier(id=self._id))
-        return Quantity(volume_response.volume, SERVER_UNIT_VOLUME)
+    def id(self) -> str:
+        """Id of the ``Body``."""
+        return self._id
 
-    def assign_material(self, material: Material) -> None:
-        """Sets the provided material against the design in the active geometry
-        service instance.
+    @property
+    def name(self) -> str:
+        """Name of the ``Body``."""
+        return self._name
 
-        Parameters
-        ----------
-        material : Material
-            Source material data.
-        """
-        check_type(material, Material)
-        self._bodies_stub.SetAssignedMaterial(
-            SetAssignedMaterialRequest(id=self._id, material=material._display_name)
-        )
+    @property
+    def is_surface(self) -> bool:
+        """Returns ``True`` if the ``Body`` object is a planar body."""
+        return self._name
 
     @property
     def faces(self) -> List[Face]:
@@ -90,6 +97,35 @@ class Body:
             Face(grpc_face.id, grpc_face.surface_type, self, self._grpc_client)
             for grpc_face in grpc_faces.faces
         ]
+
+    @property
+    def volume(self) -> Quantity:
+        """Calculated volume of the body.
+
+        Notes
+        -----
+        When dealing with a planar surface, a value of 0 is returned as a volume.
+        """
+        if self.is_surface:
+            # TODO : maybe raise an error?
+            return Quantity(0, SERVER_UNIT_VOLUME)
+        else:
+            volume_response = self._bodies_stub.GetVolume(BodyIdentifier(id=self._id))
+            return Quantity(volume_response.volume, SERVER_UNIT_VOLUME)
+
+    def assign_material(self, material: Material) -> None:
+        """Sets the provided material against the design in the active geometry
+        service instance.
+
+        Parameters
+        ----------
+        material : Material
+            Source material data.
+        """
+        check_type(material, Material)
+        self._bodies_stub.SetAssignedMaterial(
+            SetAssignedMaterialRequest(id=self._id, material=material._display_name)
+        )
 
     def imprint_curves(self, faces: List[Face], sketch: Sketch) -> List[Edge]:
         """Imprints all of the specified geometries onto the specified faces of the body.

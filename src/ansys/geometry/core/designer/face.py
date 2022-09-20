@@ -15,6 +15,8 @@ if TYPE_CHECKING:
 
 
 class SurfaceType(Enum):
+    """Enum holding the possible values for surface types by the geometry service."""
+
     SURFACETYPE_UNKNOWN = 0
     SURFACETYPE_PLANE = 1
     SURFACETYPE_CYLINDER = 2

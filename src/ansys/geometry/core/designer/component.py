@@ -89,7 +89,7 @@ class Component:
         self._components.append(Component(name, self, self._grpc_client))
         return self._components[-1]
 
-    def extrude_sketch(self, name: str, sketch: Sketch, distance: Quantity) -> "Body":
+    def extrude_sketch(self, name: str, sketch: Sketch, distance: Quantity) -> Body:
         """Creates a solid body by extruding the given sketch profile up to the given distance.
 
         The resulting body created is nested under this component within the design assembly.
@@ -102,6 +102,11 @@ class Component:
             The two-dimensional sketch source for extrusion.
         distance : Quantity
             The distance to extrude the solid body.
+
+        Returns
+        -------
+        Body
+            Extruded ``Body`` object from the given ``Sketch``.
         """
         # Sanity checks on inputs
         check_type(name, str)
@@ -110,20 +115,20 @@ class Component:
         check_pint_unit_compatibility(distance, SERVER_UNIT_LENGTH)
 
         # Perform extrusion request
-        extrusion_request = CreateExtrudedBodyRequest(
+        request = CreateExtrudedBodyRequest(
             distance=distance.m_as(SERVER_UNIT_LENGTH),
-            parent=self._id,
+            parent=self.id,
             plane=plane_to_grpc_plane(sketch._plane),
             geometries=sketch_shapes_to_grpc_geometries(sketch.shapes_list),
             name=name,
         )
 
-        extrusion_response = self._bodies_stub.CreateExtrudedBody(extrusion_request)
+        response = self._bodies_stub.CreateExtrudedBody(request)
 
-        self._bodies.append(Body(extrusion_response.id, name, self, self._grpc_client))
+        self._bodies.append(Body(response.id, name, self, self._grpc_client, is_surface=False))
         return self._bodies[-1]
 
-    def generate_surface(self, name: str, sketch: Sketch) -> "Body":
+    def create_surface(self, name: str, sketch: Sketch) -> Body:
         """Creates a surface body with the given sketch profile.
 
         The resulting body created is nested under this component within the design assembly.
@@ -134,20 +139,24 @@ class Component:
             A user-defined label assigned to the resulting surface body.
         sketch : Sketch
             The two-dimensional sketch source for surface definition.
+
+        Returns
+        -------
+        Body
+            ``Body`` object (as a planar surface) from the given ``Sketch``.
         """
         # Sanity checks on inputs
         check_type(name, str)
         check_type(sketch, Sketch)
 
         # Perform planar body request
-        planar_body_request = CreatePlanarBodyRequest(
+        request = CreatePlanarBodyRequest(
             parent=self._id,
             plane=plane_to_grpc_plane(sketch._plane),
             geometries=sketch_shapes_to_grpc_geometries(sketch.shapes_list),
             name=name,
         )
+        response = self._bodies_stub.CreatePlanarBody(request)
 
-        planar_body_response = self._bodies_stub.CreatePlanarBody(planar_body_request)
-
-        self._bodies.append(Body(planar_body_response.id, name, self, self._grpc_client))
+        self._bodies.append(Body(response.id, name, self, self._grpc_client, is_surface=True))
         return self._bodies[-1]
