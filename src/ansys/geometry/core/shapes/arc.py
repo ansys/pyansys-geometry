@@ -6,7 +6,7 @@ import numpy as np
 from pint import Quantity
 
 from ansys.geometry.core.math import Plane, Point, QuantityVector
-from ansys.geometry.core.math.vector import UnitVector
+from ansys.geometry.core.math.vector import UnitVector, Vector
 from ansys.geometry.core.misc import UNITS, check_type
 from ansys.geometry.core.shapes.base import BaseShape
 
@@ -136,10 +136,6 @@ class Arc(BaseShape):
 
         """
 
-        self._angle = np.arctan2(
-            (self._start_vector.cross(self._end_vector)).norm.m,
-            (self._start_vector.dot(self._end_vector)),
-        )
         return Quantity(self._angle, UNITS.radian)
 
     @property
@@ -180,7 +176,8 @@ class Arc(BaseShape):
             A list of points representing the shape.
 
         """
-        local_start_vector = (self.plane.global_to_local @ self._start_vector).tolist()
+        start_vector = self.start - self.center
+        local_start_vector = (self.plane.global_to_local @ start_vector).tolist()
 
         start_angle = np.arctan2(
             (Vector(local_start_vector).cross(Vector([1, 0, 0]))).norm,
