@@ -48,6 +48,16 @@ class Design(Component):
         self._materials = []
         self._named_selections = []
 
+    @property
+    def materials(self) -> List[Material]:
+        """List of available ``Material`` objects for our ``Design``."""
+        return self._materials
+
+    @property
+    def named_selections(self) -> List[NamedSelection]:
+        """List of available ``NamedSelection`` objects for our ``Design``."""
+        return self._named_selections
+
     # TODO: allow for list of materials
     def add_material(self, material: Material) -> None:
         """Adds a ``Material`` to the ``Design``
@@ -72,7 +82,7 @@ class Design(Component):
                             value=property.quantity.m,
                             units=format(property.quantity.units),
                         )
-                        for property in material.properties
+                        for property in material.properties.values()
                     ],
                 )
             )
@@ -113,8 +123,6 @@ class Design(Component):
         NamedSelection
             A newly created named selection maintaining references to all target entities.
         """
-        check_type(name, str)
-
         self._named_selections.append(NamedSelection(name, self._grpc_client, bodies, faces, edges))
         return self._named_selections[-1]
 
@@ -129,11 +137,11 @@ class Design(Component):
         check_type(named_selection, Union[NamedSelection, str])
 
         removal_id = named_selection.id if not isinstance(named_selection, str) else named_selection
-
         named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
         named_selections_stub.Delete(NamedSelectionIdentifier(id=removal_id))
 
         try:
             self._named_selections.remove(removal_id)
         except ValueError:
-            pass  # if the value is not in the list, not an issue to handle as asking to remove
+            # TODO: throw warning informing that the requested NamedSelection does not exist
+            pass
