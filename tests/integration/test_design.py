@@ -19,20 +19,54 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
     sketch.draw_circle(Point([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm))
 
     # Create your design on the server side
-    design = modeler.create_design("ExtrudeProfile")
+    design_name = "ExtrudeProfile"
+    design = modeler.create_design(design_name)
+    assert design.name == design_name
+    assert design.id is not None
 
     # Add a material to your design
+    density = Quantity(125, 1000 * UNITS.kg / (UNITS.m * UNITS.m * UNITS.m))
+    poisson_ratio = Quantity(0.33, UNITS.dimensionless)
+    tensile_strength = Quantity(45)
     material = Material(
         "steel",
-        Quantity(125, 1000 * UNITS.kg / (UNITS.m * UNITS.m * UNITS.m)),
-        [
-            MaterialProperty(
-                MaterialPropertyType.POISSON_RATIO, "myPoisson", Quantity(0.33, UNITS.dimensionless)
-            )
-        ],
+        density,
+        [MaterialProperty(MaterialPropertyType.POISSON_RATIO, "myPoisson", poisson_ratio)],
     )
     material.add_property(MaterialPropertyType.TENSILE_STRENGTH, "myTensile", Quantity(45))
     design.add_material(material)
+
+    assert len(design.materials) == 1
+    assert len(design.materials[0].properties) == 3
+    assert (
+        design.materials[0].properties[MaterialPropertyType.DENSITY].type
+        == MaterialPropertyType.DENSITY
+    )
+    assert design.materials[0].properties[MaterialPropertyType.DENSITY].display_name == "steel"
+    assert design.materials[0].properties[MaterialPropertyType.DENSITY].quantity == density
+    assert (
+        design.materials[0].properties[MaterialPropertyType.POISSON_RATIO].type
+        == MaterialPropertyType.POISSON_RATIO
+    )
+    assert (
+        design.materials[0].properties[MaterialPropertyType.POISSON_RATIO].display_name
+        == "myPoisson"
+    )
+    assert (
+        design.materials[0].properties[MaterialPropertyType.POISSON_RATIO].quantity == poisson_ratio
+    )
+    assert (
+        design.materials[0].properties[MaterialPropertyType.TENSILE_STRENGTH].type
+        == MaterialPropertyType.TENSILE_STRENGTH
+    )
+    assert (
+        design.materials[0].properties[MaterialPropertyType.TENSILE_STRENGTH].display_name
+        == "myTensile"
+    )
+    assert (
+        design.materials[0].properties[MaterialPropertyType.TENSILE_STRENGTH].quantity
+        == tensile_strength
+    )
 
     # Extrude the sketch to create a Body
     body = design.extrude_sketch("JustACircle", sketch, Quantity(10, UNITS.mm))
@@ -103,3 +137,7 @@ def test_component_body(modeler: Modeler):
     assert len(planar_component._bodies) == 1
     assert len(design._components) == 1
     assert len(design._bodies) == 1
+
+
+def test_named_selections():
+    """Test for verifying the correct creation of ``NamedSelection``."""
