@@ -1,6 +1,6 @@
 """``Design`` class module."""
 
-from typing import List, Union
+from typing import List, Optional, Union
 
 from ansys.api.geometry.v0.designs_pb2 import NewDesignRequest, SaveAsDocumentRequest
 from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
@@ -41,12 +41,13 @@ class Design(Component):
 
         self._design_stub = DesignsStub(self._grpc_client.channel)
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
+        self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
 
         new_design = self._design_stub.New(NewDesignRequest(name=name))
         self._id = new_design.id
 
         self._materials = []
-        self._named_selections = []
+        self._named_selections = {}
 
     @property
     def materials(self) -> List[Material]:
@@ -56,7 +57,7 @@ class Design(Component):
     @property
     def named_selections(self) -> List[NamedSelection]:
         """List of available ``NamedSelection`` objects for our ``Design``."""
-        return self._named_selections
+        return list(self._named_selections.values())
 
     # TODO: allow for list of materials
     def add_material(self, material: Material) -> None:
@@ -103,7 +104,11 @@ class Design(Component):
         self._design_stub.SaveAs(SaveAsDocumentRequest(filepath=file_location))
 
     def create_named_selection(
-        self, name: str, bodies: List[Body], faces: List[Face], edges: List[Edge]
+        self,
+        name: str,
+        bodies: Optional[List[Body]] = [],
+        faces: Optional[List[Face]] = [],
+        edges: Optional[List[Edge]] = [],
     ) -> NamedSelection:
         """Creates a named selection on the active geometry server instance.
 
@@ -111,20 +116,26 @@ class Design(Component):
         ----------
         name : str
             A user-defined name for the named selection.
-        bodies : List[Body]
+        bodies : List[Body], optional
             All bodies that should be included in the named selection.
-        faces : List[Face]
+            By default, ``[]``.
+        faces : List[Face], optional
             All faces that should be included in the named selection.
-        edges : List[Edge]
+            By default, ``[]``.
+        edges : List[Edge], optional
             All edges that should be included in the named selection.
+            By default, ``[]``.
 
         Returns
         -------
         NamedSelection
             A newly created named selection maintaining references to all target entities.
         """
-        self._named_selections.append(NamedSelection(name, self._grpc_client, bodies, faces, edges))
-        return self._named_selections[-1]
+        named_selection = NamedSelection(
+            name, self._grpc_client, bodies=bodies, faces=faces, edges=edges
+        )
+        self._named_selections[named_selection.name] = named_selection
+        return self._named_selections[named_selection.name]
 
     def delete_named_selection(self, named_selection: Union[NamedSelection, str]) -> None:
         """Removes a named selection on the active geometry server instance.
@@ -132,16 +143,18 @@ class Design(Component):
         Parameters
         ----------
         named_selection : Union[NamedSelection, str]
-            A named selection id or instance that should be deleted.
+            A named selection name or instance that should be deleted.
         """
         check_type(named_selection, Union[NamedSelection, str])
 
-        removal_id = named_selection.id if not isinstance(named_selection, str) else named_selection
-        named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
-        named_selections_stub.Delete(NamedSelectionIdentifier(id=removal_id))
+        removal_name = (
+            named_selection.name if not isinstance(named_selection, str) else named_selection
+        )
+        # TODO : even though "id" is requested, we should pass the name - change protos
+        self._named_selections_stub.Delete(NamedSelectionIdentifier(id=removal_name))
 
         try:
-            self._named_selections.remove(removal_id)
-        except ValueError:
+            self._named_selections.pop(removal_name)
+        except KeyError:
             # TODO: throw warning informing that the requested NamedSelection does not exist
             pass

@@ -54,16 +54,29 @@ class NamedSelection:
 
         self._grpc_client = grpc_client
         self._named_selections_stub = NamedSelectionsStub(grpc_client.channel)
-        named_selection_request = CreateNamedSelectionRequest(name=name)
 
-        self._face_ids = [face.id for face in faces]
-        self._edge_ids = [edge.id for edge in edges]
-        self._body_ids = [body.id for body in bodies]
+        # All ids should be unique - no duplicated values
+        ids = set()
 
-        named_selection_request.members.extend(self._face_ids)
-        named_selection_request.members.extend(self._edge_ids)
-        named_selection_request.members.extend(self._body_ids)
+        # Loop over bodies
+        for body in bodies:
+            ids.add(body.id)
+            for body_face in body.faces:
+                ids.add(body_face.id)
+                for body_face_edge in body_face.edges:
+                    ids.add(body_face_edge.id)
 
+        # Loop over bodies
+        for face in faces:
+            ids.add(face.id)
+            for face_edge in face.edges:
+                ids.add(face_edge.id)
+
+        # Loop over edges
+        for edge in edges:
+            ids.add(edge.id)
+
+        named_selection_request = CreateNamedSelectionRequest(name=name, members=ids)
         new_named_selection = self._named_selections_stub.CreateNamedSelection(
             named_selection_request
         )
@@ -72,5 +85,10 @@ class NamedSelection:
 
     @property
     def id(self) -> str:
-        """ID of the named-selection."""
+        """ID of the ``NamedSelection``."""
         return self._id
+
+    @property
+    def name(self) -> str:
+        """Name of the ``NamedSelection``."""
+        return self._name

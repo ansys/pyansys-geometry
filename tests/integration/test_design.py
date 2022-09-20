@@ -84,7 +84,7 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
     # TODO: Not possible to save to file from a container (CI/CD)
     #       Use download approach when available.
     #
-    # design.save("C:/ExtrudeProfile.scdocx")
+    # design.save(r"C:\temp\shared_volume\MyFile2.scdocx")
 
 
 def test_component_body(modeler: Modeler):
@@ -174,12 +174,33 @@ def test_named_selections(modeler: Modeler):
     body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch_2, Quantity(30, UNITS.mm))
 
     # Create the NamedSelection
-    design.create_named_selection(
-        "OnlyCircle", [body_circle_comp], body_circle_comp.faces, body_circle_comp.faces[0].edges
-    )
+    design.create_named_selection("OnlyCircle", bodies=[body_circle_comp])
     design.create_named_selection(
         "OnlyPolygon",
-        [body_polygon_comp],
-        body_polygon_comp.faces,
-        body_polygon_comp.faces[0].edges,
+        bodies=[body_polygon_comp],
+        faces=body_polygon_comp.faces,
+        edges=body_polygon_comp.faces[0].edges,
     )
+    design.create_named_selection("CircleAndPolygon", bodies=[body_circle_comp, body_polygon_comp])
+    dupl_named_selection = design.create_named_selection(
+        "CircleAndPolygon_2", bodies=[body_circle_comp, body_polygon_comp]
+    )
+
+    # Check that the named selections are available
+    assert len(design.named_selections) == 4
+    assert all(entry.id is not None for entry in design.named_selections)
+    assert design.named_selections[0].name == "OnlyCircle"
+    assert design.named_selections[1].name == "OnlyPolygon"
+    assert design.named_selections[2].name == "CircleAndPolygon"
+    assert design.named_selections[3].name == "CircleAndPolygon_2"
+
+    # Try deleting a non-existing named selection
+    design.delete_named_selection("MyInventedNamedSelection")
+    assert len(design.named_selections) == 4
+
+    # Now, let's delete the duplicated entry CircleAndPolygon_2
+    design.delete_named_selection(dupl_named_selection)
+    assert len(design.named_selections) == 3
+    assert design.named_selections[0].name == "OnlyCircle"
+    assert design.named_selections[1].name == "OnlyPolygon"
+    assert design.named_selections[2].name == "CircleAndPolygon"
