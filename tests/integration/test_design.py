@@ -49,7 +49,10 @@ def test_component_body(modeler: Modeler):
     """Test the different ``Component`` and ``Body`` creation methods."""
 
     # Create your design on the server side
-    design = modeler.create_design("ComponentBody_Test")
+    design_name = "ComponentBody_Test"
+    design = modeler.create_design(design_name)
+    assert design.name == design_name
+    assert design.id is not None
 
     # Create a simple sketch of a Polygon (specifically a Pentagon)
     sketch = Sketch()

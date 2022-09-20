@@ -39,11 +39,6 @@ class Design(Component):
 
         self._materials = []
 
-    @property
-    def name(self) -> str:
-        """Name of the ``Design``."""
-        return self._name
-
     # TODO: allow for list of materials
     def add_material(self, material: Material) -> None:
         """Adds a ``Material`` to the ``Design``
