@@ -57,6 +57,7 @@ Different shapes can be drawn in the sketch through their corresponding ``draw``
 +++
 
 ### Drawing a circle
+
 Circles can be drawn in a sketch by specifying their center and radius.
 
 ```{code-cell} ipython3
@@ -76,6 +77,7 @@ ellipse.plot()
 ```
 
 ### Drawing a polygon
+
 Regular polygons can be drawn by passing the center, their radius and their desired number of sides.
 
 ```{code-cell} ipython3
