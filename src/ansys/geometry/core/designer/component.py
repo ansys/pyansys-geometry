@@ -1,7 +1,7 @@
 """``Component`` class module."""
 
 
-from typing import Union
+from typing import List, Union
 
 from ansys.api.geometry.v0.bodies_pb2 import CreateExtrudedBodyRequest, CreatePlanarBodyRequest
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
@@ -71,6 +71,21 @@ class Component:
     def name(self) -> str:
         """Name of the ``Component``."""
         return self._name
+
+    @property
+    def components(self) -> List["Component"]:
+        """``Component`` objects inside of the ``Component``."""
+        return self._components
+
+    @property
+    def bodies(self) -> List[Body]:
+        """``Body`` objects inside of the ``Component``."""
+        return self._bodies
+
+    @property
+    def parent_component(self) -> Union["Component", None]:
+        """Parent of the ``Component``."""
+        return self._parent_component
 
     def add_component(self, name: str) -> "Component":
         """Creates a new component nested under this component within the design assembly.

@@ -23,6 +23,11 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
     design = modeler.create_design(design_name)
     assert design.name == design_name
     assert design.id is not None
+    assert design.parent_component is None
+    assert len(design.components) == 0
+    assert len(design.bodies) == 0
+    assert len(design.materials) == 0
+    assert len(design.named_selections) == 0
 
     # Add a material to your design
     density = Quantity(125, 1000 * UNITS.kg / (UNITS.m * UNITS.m * UNITS.m))
@@ -70,6 +75,8 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
 
     # Extrude the sketch to create a Body
     body = design.extrude_sketch("JustACircle", sketch, Quantity(10, UNITS.mm))
+    assert len(design.components) == 0
+    assert len(design.bodies) == 1
 
     # Assign a material to a Body
     body.assign_material(material)
@@ -88,6 +95,11 @@ def test_component_body(modeler: Modeler):
     design = modeler.create_design(design_name)
     assert design.name == design_name
     assert design.id is not None
+    assert design.parent_component is None
+    assert len(design.components) == 0
+    assert len(design.bodies) == 0
+    assert len(design.materials) == 0
+    assert len(design.named_selections) == 0
 
     # Create a simple sketch of a Polygon (specifically a Pentagon)
     sketch = Sketch()
@@ -109,8 +121,8 @@ def test_component_body(modeler: Modeler):
         assert body.volume == pentagon.area * distance_extruded_body
     except (_InactiveRpcError):
         pass
-    assert len(design._components) == 0
-    assert len(design._bodies) == 1
+    assert len(design.components) == 0
+    assert len(design.bodies) == 1
 
     # We have created this body on the base component. Let's add a new component
     # and add a planar surface to it
@@ -133,11 +145,14 @@ def test_component_body(modeler: Modeler):
     assert planar_body.is_surface is True
     assert len(planar_body.faces) == 1  # top + bottom merged into a single face
     assert planar_body.volume == 0.0
-    assert len(planar_component._components) == 0
-    assert len(planar_component._bodies) == 1
-    assert len(design._components) == 1
-    assert len(design._bodies) == 1
+    assert len(planar_component.components) == 0
+    assert len(planar_component.bodies) == 1
+    assert len(design.components) == 1
+    assert len(design.bodies) == 1
+
+    # Check that the planar component belongs to the design
+    assert planar_component.parent_component.id == design.id
 
 
-def test_named_selections():
+def test_named_selections(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection``."""
