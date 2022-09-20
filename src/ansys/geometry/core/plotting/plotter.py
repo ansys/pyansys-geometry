@@ -212,7 +212,7 @@ class Plotter:
         self.scene.add_mesh(mesh_line, **plotting_options_lines)
 
     def plot_sketch(self, sketch, show_plane=False, show_frame=False) -> None:
-        """Plot desired sktch into the scene.
+        """Plot desired sketch into the scene.
 
         Parameters
         ----------
