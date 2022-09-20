@@ -11,12 +11,12 @@ from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialPro
 from ansys.api.geometry.v0.namedselections_pb2 import NamedSelectionIdentifier
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 
-
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
-from ansys.geometry.core.designer.named_selection import NamedSelection
+from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.materials import Material
 from ansys.geometry.core.misc import check_type
 
