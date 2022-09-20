@@ -130,7 +130,7 @@ class Line(BaseShape):
         List[Point]
             A list of points representing the shape.
         """
-        return self.local_points(num_points)
+        return self.plane.origin + self.local_points(num_points)
 
 
 class Segment(Line):
