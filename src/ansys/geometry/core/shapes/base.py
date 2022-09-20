@@ -4,7 +4,7 @@ from typing import List, Optional
 
 from pint import Quantity
 
-from ansys.geometry.core.math import Plane, Point, UnitVector
+from ansys.geometry.core.math import Plane, Point
 from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
 
@@ -36,21 +36,6 @@ class BaseShape:
     def plane(self) -> Plane:
         """The Plane in which the shape is contained."""
         return self._plane
-
-    @property
-    def i(self) -> UnitVector:
-        """The fundamental vector along the first axis of the reference frame."""
-        return self.plane.direction_x
-
-    @property
-    def j(self) -> UnitVector:
-        """The fundamental vector along the second axis of the reference frame."""
-        return self.plane.direction_y
-
-    @property
-    def k(self) -> UnitVector:
-        """The fundamental vector along the third axis of the reference frame."""
-        return self.plane.direction_z
 
     def points(self, num_points: Optional[int] = 100) -> List[Point]:
         """Returns a list containing all the points belonging to the shape.
