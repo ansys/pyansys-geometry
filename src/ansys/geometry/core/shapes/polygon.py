@@ -170,7 +170,7 @@ class Polygon(BaseShape):
 
     def plot(
         self,
-        show_points: Optional[bool] = None,
+        show_points: Optional[bool] = True,
         plotting_options_points: Optional[dict] = None,
         plotting_options_lines: Optional[dict] = None,
     ) -> None:
