@@ -75,6 +75,17 @@ class Line(BaseShape):
         """Returns the starting point of the line."""
         return self._start
 
+    @property
+    def components(self) -> List["BaseShape"]:
+        """Returns a list containing all simple geometries forming the shape.
+
+        Returns
+        -------
+        List[BaseShape]
+            A list of component geometries forming the shape.
+        """
+        return [self]
+
     def __is_contained_in_plane(self) -> bool:
         """Private method for checking if the line definition is contained in
         the plane provided
@@ -158,6 +169,17 @@ class Segment(Line):
     def end(self) -> Point:
         """Returns the end of the ``Segment``."""
         return self._end
+
+    @property
+    def components(self) -> List["BaseShape"]:
+        """Returns a list containing all simple geometries forming the shape.
+
+        Returns
+        -------
+        List[BaseShape]
+            A list of component geometries forming the shape.
+        """
+        return [self]
 
     @classmethod
     def from_start_point_and_vector(

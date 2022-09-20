@@ -162,6 +162,17 @@ class Arc(BaseShape):
         """
         return self.radius**2 * self.angle.m / 2
 
+    @property
+    def components(self) -> List["BaseShape"]:
+        """Returns a list containing all simple geometries forming the shape.
+
+        Returns
+        -------
+        List[BaseShape]
+            A list of component geometries forming the shape.
+        """
+        return [self]
+
     def local_points(self, num_points: Optional[int] = 100) -> List[Point]:
         """Returns al list containing all the points belonging to the shape.
 

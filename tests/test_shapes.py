@@ -4,7 +4,7 @@ import pytest
 
 from ansys.geometry.core.math import ZERO_VECTOR3D, Plane, Point, QuantityVector, UnitVector, Vector
 from ansys.geometry.core.math.constants import UNIT_VECTOR_X, UNIT_VECTOR_Y, UNIT_VECTOR_Z
-from ansys.geometry.core.misc import UNIT_LENGTH, UNITS
+from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
 from ansys.geometry.core.shapes import Circle, Ellipse, Line, Segment
 from ansys.geometry.core.shapes.polygon import Polygon
 from ansys.geometry.core.sketch import Sketch
@@ -54,6 +54,9 @@ def test_create_circle():
     local_points_2 = circle_from_center_and_radius.local_points(num_points=5)
     assert abs(all(local_points_2[0] - Point([10, 20, 0], UNITS.mm))) <= DOUBLE_EPS
     assert abs(all(local_points_2[2] - Point([-10, 20, 0], UNITS.mm))) <= DOUBLE_EPS
+
+    assert len(circle.components) == 1
+    assert circle.components[0] == circle
 
 
 def test_circle_errors():
@@ -117,6 +120,9 @@ def test_create_ellipse():
     local_points_2 = ellipse_from_axes.local_points(num_points=5)
     assert abs(all(local_points_2[0] - Point([10, 20, 0], UNITS.mm))) <= DOUBLE_EPS
     assert abs(all(local_points_2[2] - Point([-10, 20, 0], UNITS.mm))) <= DOUBLE_EPS
+
+    assert len(ellipse.components) == 1
+    assert ellipse.components[0] == ellipse
 
 
 def test_ellipse_errors():
@@ -233,6 +239,9 @@ def test_create_polygon():
         polygon = Polygon(yz_plane, Point([1, 2, 3]), 3 * UNITS.cm, sides)
         sketch.append_shape(polygon)
 
+    assert len(pentagon.components) == 1
+    assert pentagon.components[0] == pentagon
+
 
 def test_create_line():
     """Simple test to create a ``Line``."""
@@ -270,6 +279,9 @@ def test_create_line():
     assert line_sketch.start == start_sketch_line
     assert line_sketch.direction == dir_sketch_line
     assert line_sketch.start.unit == start_sketch_line.unit
+
+    assert len(line.components) == 1
+    assert line.components[0] == line
 
 
 def test_create_segment():
@@ -373,6 +385,9 @@ def test_create_segment():
     assert segment_sketch.start.unit == start_sketch.unit
     assert segment_sketch.end.unit == end_sketch.unit
 
+    assert len(segment.components) == 1
+    assert segment.components[0] == segment
+
 
 def test_errors_line():
     """Check errors when handling a ``Line``."""
@@ -458,3 +473,74 @@ def test_create_arc():
     assert abs(all(global_points[0] - Point([3, 1, 0]))) <= DOUBLE_EPS
     assert abs(all(global_points[1] - Point([2.8477, 1.7653, 0]))) <= DOUBLE_EPS
     assert abs(all(global_points[4] - Point([1, 3, 0]))) <= DOUBLE_EPS
+
+    assert len(arc_clockwise.components) == 1
+    assert arc_clockwise.components[0] == arc_clockwise
+
+
+def test_create_slot():
+    """Test slot shape creation in a sketch."""
+
+    # Create a Sketch instance
+    sketch = Sketch()
+
+    # Draw an arc in previous sketch
+    origin = Point([1, 1, 0], unit=UNITS.meter)
+    width = Distance(4, unit=UNITS.meter)
+    height = Distance(2, unit=UNITS.meter)
+    slot = sketch.draw_slot(origin, width, height)
+
+    # Check attributes are expected ones
+    assert slot.area == 10
+
+    # Check local points are expected ones
+    local_points = slot.local_points(num_points=5)
+    assert abs(all(local_points[0] - Point([3, 1, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[1] - Point([2.8477, 1.7653, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[4] - Point([1, 3, 0]))) <= DOUBLE_EPS
+
+    # Check global points are expected ones
+    global_points = slot.points(num_points=5)
+    assert abs(all(global_points[0] - Point([3, 1, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[1] - Point([2.8477, 1.7653, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[4] - Point([1, 3, 0]))) <= DOUBLE_EPS
+
+    assert len(slot.components) == 4
+    assert isinstance(slot.components[0], Segment)
+    assert isinstance(slot.components[0], Segment)
+    assert isinstance(slot.components[0], Segment)
+
+
+def test_create_box():
+    """Test box shape creation in a sketch."""
+
+    # Create a Sketch instance
+    sketch = Sketch()
+
+    # Draw an arc in previous sketch
+    origin = Point([1, 1, 0], unit=UNITS.meter)
+    width = Distance(4, unit=UNITS.meter)
+    height = Distance(2, unit=UNITS.meter)
+    box = sketch.draw_box(origin, width, height)
+
+    # Check attributes are expected ones
+    assert box.area == 8
+    assert box.perimeter == 12
+
+    # Check local points are expected ones
+    local_points = box.local_points(num_points=5)
+    assert abs(all(local_points[0] - Point([3, 1, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[1] - Point([2.8477, 1.7653, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[4] - Point([1, 3, 0]))) <= DOUBLE_EPS
+
+    # Check global points are expected ones
+    global_points = box.points(num_points=5)
+    assert abs(all(global_points[0] - Point([3, 1, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[1] - Point([2.8477, 1.7653, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[4] - Point([1, 3, 0]))) <= DOUBLE_EPS
+
+    assert len(box.components) == 4
+    assert isinstance(box.components[0], Segment)
+    assert isinstance(box.components[1], Segment)
+    assert isinstance(box.components[2], Segment)
+    assert isinstance(box.components[3], Segment)

@@ -6,8 +6,8 @@ from ansys.geometry.core.shapes.box import Box
 from ansys.geometry.core.shapes.circle import Circle
 from ansys.geometry.core.shapes.ellipse import Ellipse
 from ansys.geometry.core.shapes.line import Line, Segment
-from ansys.geometry.core.shapes.pill import Pill
 from ansys.geometry.core.shapes.polygon import Polygon
+from ansys.geometry.core.shapes.slot import Slot
 
 __all__ = [
     "Arc",
@@ -16,7 +16,7 @@ __all__ = [
     "Circle",
     "Ellipse",
     "Line",
-    "Pill",
     "Polygon",
     "Segment",
+    "Slot",
 ]

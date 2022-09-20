@@ -13,9 +13,9 @@ from ansys.geometry.core.shapes import (
     Circle,
     Ellipse,
     Line,
-    Pill,
     Polygon,
     Segment,
+    Slot,
 )
 
 
@@ -75,18 +75,18 @@ class Sketch:
         self.append_shape(box)
         return box
 
-    def draw_pill(
+    def draw_slot(
         self,
         center: Point,
         width: Union[Quantity, Distance],
         height: Union[Quantity, Distance],
     ):
-        """Create a pill shape on the sketch.
+        """Create a slot shape on the sketch.
 
         Parameters
         ----------
         center: Point
-            A :class:`Point` representing the center of the pill.
+            A :class:`Point` representing the center of the slot.
         width : Union[Quantity, Distance]
             The width of the box.
         height : Union[Quantity, Distance]
@@ -94,13 +94,13 @@ class Sketch:
 
         Returns
         -------
-        Pill
-            An object representing the pill added to the sketch.
+        Slot
+            An object representing the slot added to the sketch.
 
         """
-        pill = Pill(self._plane, center, width, height)
-        self.append_shape(pill)
-        return pill
+        slot = Slot(self._plane, center, width, height)
+        self.append_shape(slot)
+        return slot
 
     def draw_circle(self, center: Point, radius: Union[Quantity, Distance]):
         """Create a circle shape on the sketch.

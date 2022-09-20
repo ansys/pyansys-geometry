@@ -139,6 +139,17 @@ class Polygon(BaseShape):
         """
         return (self.inner_radius * self.perimeter) / 2
 
+    @property
+    def components(self) -> List["BaseShape"]:
+        """Returns a list containing all components required to generate the shape.
+
+        Returns
+        -------
+        List[BaseShape]
+            A list of component geometries forming the shape.
+        """
+        return [self]
+
     def local_points(self) -> List[Point]:
         """Returns a list containing all the vertices of the polygon.
 
