@@ -21,7 +21,7 @@ from ansys.geometry.core.misc import SERVER_UNIT_VOLUME, check_type
 from ansys.geometry.core.sketch import Sketch
 
 if TYPE_CHECKING:
-    from ansys.geometry.core.designer.component import Component
+    from ansys.geometry.core.designer.component import Component  # pragma: no cover
 
 
 class Body:
@@ -81,7 +81,7 @@ class Body:
     @property
     def is_surface(self) -> bool:
         """Returns ``True`` if the ``Body`` object is a planar body."""
-        return self._name
+        return self._is_surface
 
     @property
     def faces(self) -> List[Face]:

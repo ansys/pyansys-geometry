@@ -1,11 +1,12 @@
 """Test design interaction."""
 
+from grpc._channel import _InactiveRpcError
 from pint import Quantity
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import Point
-from ansys.geometry.core.misc import UNITS, Distance
+from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -15,7 +16,7 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
 
     # Create a Sketch and draw a circle (all client side)
     sketch = Sketch()
-    sketch.draw_circle(Point([10, 10, 0], UNITS.mm), Distance(10, UNITS.mm))
+    sketch.draw_circle(Point([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm))
 
     # Create your design on the server side
     design = modeler.create_design("ExtrudeProfile")
@@ -42,3 +43,59 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
     # Not possible to save to file from a container (CI/CD)
     #
     # design.save("C:/ExtrudeProfile.scdocx")
+
+
+def test_component_body(modeler: Modeler):
+    """Test the different ``Component`` and ``Body`` creation methods."""
+
+    # Create your design on the server side
+    design = modeler.create_design("ComponentBody_Test")
+
+    # Create a simple sketch of a Polygon (specifically a Pentagon)
+    sketch = Sketch()
+    pentagon = sketch.draw_polygon(Point([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+
+    # In the "root/base" Component (i.e. Design object) let's extrude the sketch
+    name_extruded_body = "ExtrudedPolygon"
+    distance_extruded_body = Quantity(50, UNITS.mm)
+    body = design.extrude_sketch(
+        name=name_extruded_body, sketch=sketch, distance=distance_extruded_body
+    )
+
+    assert body.name == name_extruded_body
+    assert body.id is not None
+    assert body.is_surface is False
+    assert len(body.faces) == 7  # 5 sides + top + bottom
+    # TODO: GetVolume is not implemented on server side yet
+    try:
+        assert body.volume == pentagon.area * distance_extruded_body
+    except (_InactiveRpcError):
+        pass
+    assert len(design._components) == 0
+    assert len(design._bodies) == 1
+
+    # We have created this body on the base component. Let's add a new component
+    # and add a planar surface to it
+    planar_component_name = "PlanarBody_Component"
+    planar_component = design.add_component(planar_component_name)
+    assert planar_component.id is not None
+    # TODO: server side is not assigning the name properly... returning empty for now.
+    # assert planar_component.name == planar_component_name
+    assert planar_component.name == ""
+
+    planar_sketch = Sketch()
+    planar_sketch.draw_ellipse(
+        Point([50, 50, 0], UNITS.mm), Quantity(30, UNITS.mm), Quantity(10, UNITS.mm)
+    )
+    planar_component_surface_name = "PlanarBody_Component_Surface"
+    planar_body = planar_component.create_surface(planar_component_surface_name, planar_sketch)
+
+    assert planar_body.name == planar_component_surface_name
+    assert planar_body.id is not None
+    assert planar_body.is_surface is True
+    assert len(planar_body.faces) == 1  # top + bottom merged into a single face
+    assert planar_body.volume == 0.0
+    assert len(planar_component._components) == 0
+    assert len(planar_component._bodies) == 1
+    assert len(design._components) == 1
+    assert len(design._bodies) == 1

@@ -85,7 +85,6 @@ class Component:
         Component
             A newly created component with no children in the design assembly.
         """
-        check_type(name, str)
         self._components.append(Component(name, self, self._grpc_client))
         return self._components[-1]
 
