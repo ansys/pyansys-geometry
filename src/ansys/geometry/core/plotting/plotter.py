@@ -195,16 +195,16 @@ class Plotter:
             points = shape.points()
         lines = np.hstack([[2, ith, ith + 1] for ith in range(0, len(points) - 1)])
 
-        # Generate the mesh for the points and the lines
         if show_points:
+            # Generate the mesh for the points and the lines
             mesh_points = pv.PointSet(points)
-        mesh_line = pv.PolyData(points, lines=lines)
 
-        # Render points if required with desired rendering options
-        if show_points:
+            # Render points if required with desired rendering options
             if plotting_options_points is None:
                 plotting_options_points = dict(color="red")
             self.scene.add_mesh(mesh_points, **plotting_options_points)
+            
+         mesh_line = pv.PolyData(points, lines=lines)
 
         # Render lines in the scene with desired rendering options
         if plotting_options_lines is None:
