@@ -29,7 +29,7 @@ from ansys.geometry.core.plotting.plotter import Plotter
 
 ``Sketches`` are the fundamental objects for drawing basic shapes like lines, segments, circles, ellipses, arcs, and polygons.
 
-An ``Sketch`` instance is created by defining a drawing plane. This plane is declared by using a point and two fundamental directions that need to be orthogonal:
+A ``Sketch`` instance is created by defining a drawing plane. This plane is declared by a point and two fundamental orthogonal directions:
 
 ```{code-cell} ipython3
 from ansys.geometry.core.math import Plane, Point, UnitVector
@@ -52,13 +52,13 @@ sketch = Sketch(plane)
 
 ## Drawing shapes in the sketch
 
-Different shapes can be drawn in the sketch through their corresponding ``draw`` methods.
+Different shapes can be drawn in the sketch using the corresponding ``draw`` methods.
 
 +++
 
 ### Drawing a circle
 
-Circles can be drawn in a sketch by specifying their center and radius.
+Circles can be drawn in a sketch by specifying the center and radius.
 
 ```{code-cell} ipython3
 circle = sketch.draw_circle(Point([2, 1, 1]), radius=30 * u.cm)
@@ -67,7 +67,7 @@ circle.plot()
 
 ### Drawing an ellipse
 
-Ellipses can be drawn in a sketch by specifying their center, semi-major axis and semi-minor axis.
+Ellipses can be drawn in a sketch by specifying the center, semi-major axis and semi-minor axis.
 
 ```{code-cell} ipython3
 ellipse = sketch.draw_ellipse(
@@ -78,7 +78,7 @@ ellipse.plot()
 
 ### Drawing a polygon
 
-Regular polygons can be drawn by passing the center, their radius and their desired number of sides.
+Regular polygons can be drawn by passing the center, radius and the desired number of sides.
 
 ```{code-cell} ipython3
 pentagon = sketch.draw_polygon(
@@ -89,7 +89,7 @@ pentagon.plot()
 
 ### Drawing an arc
 
-For drawing arcs of circumference, a center, starting, and ending points are required.
+For drawing arcs of circumference, a center, starting and ending points are required.
 
 ```{code-cell} ipython3
 start_point, end_point = Point([2, 1, 1], unit=u.m), Point([0, 1, 1], unit=u.meter)
@@ -99,9 +99,9 @@ arc.plot()
 
 ## Plotting the sketch
 
-Plotting capabilities are provided trhough the ``Plotter`` class. This class allows to plot different ``PyGeometry`` objects. The visualization backend used by ``PyGeometry`` is based in ``PyVista``.
+Plotting capabilities are provided through the ``Plotter`` class. This class allows to plot different ``PyGeometry`` objects. The visualization backend used by ``PyGeometry`` is based in ``PyVista``.
 
-For plotting the sketch, the ``plot_sketch`` method is used. It acceps a ``Sketch`` instance and some extra arguments to further customize the visualization of the sketch. These arguments include showing the plane of the sketch and its frame.
+For plotting the sketch, the ``plot_sketch`` method is used. It accepts a ``Sketch`` instance and some extra arguments to further customize the visualization of the sketch. These arguments include showing the plane of the sketch and its frame.
 
 ```{code-cell} ipython3
 # Plot the sketch in the whole scene
