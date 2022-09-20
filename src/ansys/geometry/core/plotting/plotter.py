@@ -203,8 +203,8 @@ class Plotter:
             if plotting_options_points is None:
                 plotting_options_points = dict(color="red")
             self.scene.add_mesh(mesh_points, **plotting_options_points)
-            
-         mesh_line = pv.PolyData(points, lines=lines)
+
+        mesh_line = pv.PolyData(points, lines=lines)
 
         # Render lines in the scene with desired rendering options
         if plotting_options_lines is None:
