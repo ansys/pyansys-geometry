@@ -68,31 +68,31 @@ class Plotter:
         """
         return self._scene
 
-    def view_xy(self):
+    def view_xy(self) -> None:
         """View the scene from the XY plane."""
         self.scene.view_xy()
 
-    def view_xz(self):
+    def view_xz(self) -> None:
         """View the scene from the XZ plane."""
         self.scene.view_xz()
 
-    def view_yx(self):
+    def view_yx(self) -> None:
         """View the scene from the YX plane."""
         self.scene.view_yx()
 
-    def view_yz(self):
+    def view_yz(self) -> None:
         """View the scene from the YZ plane."""
         self.scene.view_yz()
 
-    def view_zx(self):
+    def view_zx(self) -> None:
         """View the scene from the ZX plane."""
         self.scene.view_zx()
 
-    def view_zy(self):
+    def view_zy(self) -> None:
         """View the scene from the ZY plane."""
         self.scene.view_zy()
 
-    def plot_frame(self, frame: Frame, plotting_options: Optional[dict] = None):
+    def plot_frame(self, frame: Frame, plotting_options: Optional[dict] = None) -> None:
         """Plot desired frame into the scene.
 
         Parameters
@@ -127,7 +127,7 @@ class Plotter:
         plane: Plane,
         plane_options: Optional[dict] = None,
         plotting_options: Optional[dict] = None,
-    ):
+    ) -> None:
         """Plot desired plane into the scene.
 
         Parameters
@@ -164,7 +164,7 @@ class Plotter:
         show_points: Optional[bool] = True,
         plotting_options_points: Optional[dict] = None,
         plotting_options_lines: Optional[dict] = None,
-    ):
+    ) -> None:
         """Plot desired shape into the scene.
 
         Parameters
@@ -211,7 +211,7 @@ class Plotter:
             plotting_options_lines = dict(color="black", line_width=3)
         self.scene.add_mesh(mesh_line, **plotting_options_lines)
 
-    def plot_sketch(self, sketch, show_plane=False, show_frame=False):
+    def plot_sketch(self, sketch, show_plane=False, show_frame=False) -> None:
         """Plot desired sktch into the scene.
 
         Parameters
@@ -236,7 +236,7 @@ class Plotter:
         for shape in sketch.shapes_list:
             self.plot_shape(shape)
 
-    def show(self, jupyter_backend: Optional[str] = None):
+    def show(self, jupyter_backend: Optional[str] = None) -> None:
         """Display the rendered scene in the screen.
 
         Parameters
