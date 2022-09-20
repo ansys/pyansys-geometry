@@ -160,7 +160,7 @@ class BaseShape:
         ----------
         num_points : int, optional
             Desired number of points to be used for rendering the shape.
-        show_points : bool, Optional
+        show_points : bool, optional
             If ``True``, points belonging to the shape are rendered.
         plotting_options_points : dict, optional
             A dictionary containing parameters accepted by

@@ -283,7 +283,7 @@ class Segment(Line):
 
         Parameters
         ----------
-        num_points : int
+        num_points : int, optional
             Desired number of points belonging to the shape.
 
         Returns
