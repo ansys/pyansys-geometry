@@ -40,7 +40,8 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
     # Assign a material to a Body
     body.assign_material(material)
 
-    # Not possible to save to file from a container (CI/CD)
+    # TODO: Not possible to save to file from a container (CI/CD)
+    #       Use download approach when available.
     #
     # design.save("C:/ExtrudeProfile.scdocx")
 
