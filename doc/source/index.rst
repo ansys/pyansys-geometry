@@ -11,6 +11,6 @@
 
    getting_started
    user_guide
-   examples/index
+   examples
    autoapi/index
    contributing

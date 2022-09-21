@@ -123,12 +123,17 @@ class Circle(BaseShape):
             A list of points representing the shape.
         """
         theta = np.linspace(0, 2 * np.pi, num_points)
+        center_from_plane_origin = Point(
+            self.plane.global_to_local @ (self.center - self.plane.origin), self.center.unit
+        )
         return [
             Point(
                 [
-                    self.center.x.to(self.radius.units).m + self.radius.m * np.cos(ang),
-                    self.center.y.to(self.radius.units).m + self.radius.m * np.sin(ang),
-                    self.center.z.to(self.radius.units).m,
+                    center_from_plane_origin.x.to(self.radius.units).m
+                    + self.radius.m * np.cos(ang),
+                    center_from_plane_origin.y.to(self.radius.units).m
+                    + self.radius.m * np.sin(ang),
+                    center_from_plane_origin.z.to(self.radius.units).m,
                 ],
                 unit=self.radius.units,
             )

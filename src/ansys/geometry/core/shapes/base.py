@@ -4,7 +4,7 @@ from typing import List, Optional
 
 from pint import Quantity
 
-from ansys.geometry.core.math import Plane, Point, UnitVector
+from ansys.geometry.core.math import Plane, Point
 from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
 
@@ -36,26 +36,6 @@ class BaseShape:
     def plane(self) -> Plane:
         """The Plane in which the shape is contained."""
         return self._plane
-
-    @property
-    def i(self) -> UnitVector:
-        """The fundamental vector along the first axis of the reference frame."""
-        return self.plane.direction_x
-
-    @property
-    def j(self) -> UnitVector:
-        """The fundamental vector along the second axis of the reference frame."""
-        return self.plane.direction_y
-
-    @property
-    def k(self) -> UnitVector:
-        """The fundamental vector along the third axis of the reference frame."""
-        return self.plane.direction_z
-
-    @property
-    def origin(self) -> Point:
-        """The origin of the reference frame."""
-        return self.plane.origin
 
     def points(self, num_points: Optional[int] = 100) -> List[Point]:
         """Returns a list containing all the points belonging to the shape.
@@ -177,3 +157,39 @@ class BaseShape:
 
         """
         return not self.is_closed
+
+    def plot(
+        self,
+        show_points: Optional[bool] = True,
+        plotting_options_points: Optional[dict] = None,
+        plotting_options_lines: Optional[dict] = None,
+        num_points: Optional[int] = 100,
+    ) -> None:
+        """Plot the shape with the desired number of points.
+
+        Parameters
+        ----------
+        num_points : int, optional
+            Desired number of points to be used for rendering the shape.
+        show_points : bool, optional
+            If ``True``, points belonging to the shape are rendered.
+        plotting_options_points : dict, optional
+            A dictionary containing parameters accepted by
+            :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
+            rendering of the points.
+        plotting_options_lines : dict, optional
+            A dictionary containing parameters accepted by
+            :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
+            rendering of the lines.
+
+        """
+        from ansys.geometry.core.plotting.plotter import Plotter
+
+        pl = Plotter(num_points=num_points)
+        pl.plot_shape(
+            self,
+            show_points=show_points,
+            plotting_options_points=plotting_options_points,
+            plotting_options_lines=plotting_options_lines,
+        )
+        pl.show(jupyter_backend="panel")

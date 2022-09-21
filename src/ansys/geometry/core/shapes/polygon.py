@@ -1,6 +1,6 @@
 """``Polygon`` class module."""
 
-from typing import List, Union
+from typing import List, Optional, Union
 
 import numpy as np
 from pint import Quantity
@@ -162,14 +162,58 @@ class Polygon(BaseShape):
 
         """
         theta = np.linspace(0, 2 * np.pi, self.n_sides + 1)
+        center_from_plane_origin = Point(
+            self.plane.global_to_local @ (self.center - self.plane.origin), self.center.unit
+        )
         return [
             Point(
                 [
-                    self.center.x.to(self.outer_radius.units).m + self.outer_radius.m * np.cos(ang),
-                    self.center.y.to(self.outer_radius.units).m + self.outer_radius.m * np.sin(ang),
-                    self.center.z.to(self.outer_radius.units).m,
+                    center_from_plane_origin.x.to(self.outer_radius.units).m
+                    + self.outer_radius.m * np.cos(ang),
+                    center_from_plane_origin.y.to(self.outer_radius.units).m
+                    + self.outer_radius.m * np.sin(ang),
+                    center_from_plane_origin.z.to(self.outer_radius.units).m,
                 ],
                 unit=self.outer_radius.units,
             )
             for ang in theta
         ]
+
+    def plot(
+        self,
+        show_points: Optional[bool] = True,
+        plotting_options_points: Optional[dict] = None,
+        plotting_options_lines: Optional[dict] = None,
+    ) -> None:
+        """Plot the shape with the desired number of points.
+
+        Parameters
+        ----------
+        show_points : bool, Optional
+            If ``True``, points belonging to the shape are rendered.
+        plotting_options_points : dict, optional
+            A dictionary containing parameters accepted by
+            :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
+            rendering of the points.
+        plotting_options_lines : dict, optional
+            A dictionary containing parameters accepted by
+            :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
+            rendering of the lines.
+
+        Notes
+        -----
+        This method overrides the ``BaseShape.plot`` method, as regular polygons
+        resolution is not controlled by the number of points when rendering
+        those in the scene.
+
+        """
+        from ansys.geometry.core.plotting.plotter import Plotter
+
+        pl = Plotter()
+        pl.plot_shape(
+            self,
+            show_points=show_points,
+            plotting_options_points=plotting_options_points,
+            plotting_options_lines=plotting_options_lines,
+        )
+        pl.show(jupyter_backend="panel")

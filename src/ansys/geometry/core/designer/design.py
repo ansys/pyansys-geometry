@@ -1,22 +1,27 @@
 """``Design`` class module."""
 
+from typing import List, Optional, Union
+
 from ansys.api.geometry.v0.designs_pb2 import NewDesignRequest, SaveAsDocumentRequest
 from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.materials_pb2 import AddMaterialToDocumentRequest
 from ansys.api.geometry.v0.materials_pb2_grpc import MaterialsStub
 from ansys.api.geometry.v0.models_pb2 import Material as GRPCMaterial
 from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialProperty
-from pint import Quantity
+from ansys.api.geometry.v0.namedselections_pb2 import NamedSelectionIdentifier
+from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.component import Component
+from ansys.geometry.core.designer.edge import Edge
+from ansys.geometry.core.designer.face import Face
+from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.materials import Material
 from ansys.geometry.core.misc import check_type
-from ansys.geometry.core.sketch import Sketch
 
 
-class Design:
+class Design(Component):
     """
     Provides a ``Design`` for organizing geometry assemblies.
 
@@ -32,20 +37,27 @@ class Design:
 
     def __init__(self, name: str, grpc_client: GrpcClient):
         """Constructor method for ``Design``."""
-        # Sanity checks
-        check_type(name, str)
-        check_type(grpc_client, GrpcClient)
+        super().__init__(name, None, grpc_client)
 
-        self._grpc_client = grpc_client
         self._design_stub = DesignsStub(self._grpc_client.channel)
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
+        self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
 
         new_design = self._design_stub.New(NewDesignRequest(name=name))
-
         self._id = new_design.id
-        self._root_component = Component(new_design.name, None, self._grpc_client)
-        self._root_component.id = self._id
+
         self._materials = []
+        self._named_selections = {}
+
+    @property
+    def materials(self) -> List[Material]:
+        """List of available ``Material`` objects for our ``Design``."""
+        return self._materials
+
+    @property
+    def named_selections(self) -> List[NamedSelection]:
+        """List of available ``NamedSelection`` objects for our ``Design``."""
+        return list(self._named_selections.values())
 
     # TODO: allow for list of materials
     def add_material(self, material: Material) -> None:
@@ -71,46 +83,12 @@ class Design:
                             value=property.quantity.m,
                             units=format(property.quantity.units),
                         )
-                        for property in material.properties
+                        for property in material.properties.values()
                     ],
                 )
             )
         )
         self._materials.append(material)
-
-    def add_component(self, name: str) -> Component:
-        """Creates a new component nested under the design within the assembly.
-
-        Parameters
-        ----------
-        name : str
-            A user-defined label assigned to the new component.
-
-        Returns
-        -------
-        Component
-            A newly created component with no children in the design assembly.
-        """
-        self._root_component.add_component(name)
-
-    def extrude_sketch(self, name: str, sketch: Sketch, distance: Quantity) -> Body:
-        """Creates a solid body by extruding the given profile up to the given distance.
-
-        Parameters
-        ----------
-        name : str
-            A user-defined label assigned to the resulting solid body.
-        sketch : Sketch
-            The two-dimensional sketch source for extrusion.
-        distance : Quantity
-            The distance to extrude the solid body.
-
-        Returns
-        -------
-        Body
-            A newly created body created from the extruded profile.
-        """
-        return self._root_component.extrude_profile(name, sketch, distance)
 
     def save(self, file_location: str) -> None:
         """Saves a design to disk on the active geometry server instance.
@@ -124,3 +102,59 @@ class Design:
         check_type(file_location, str)
 
         self._design_stub.SaveAs(SaveAsDocumentRequest(filepath=file_location))
+
+    def create_named_selection(
+        self,
+        name: str,
+        bodies: Optional[List[Body]] = [],
+        faces: Optional[List[Face]] = [],
+        edges: Optional[List[Edge]] = [],
+    ) -> NamedSelection:
+        """Creates a named selection on the active geometry server instance.
+
+        Parameters
+        ----------
+        name : str
+            A user-defined name for the named selection.
+        bodies : List[Body], optional
+            All bodies that should be included in the named selection.
+            By default, ``[]``.
+        faces : List[Face], optional
+            All faces that should be included in the named selection.
+            By default, ``[]``.
+        edges : List[Edge], optional
+            All edges that should be included in the named selection.
+            By default, ``[]``.
+
+        Returns
+        -------
+        NamedSelection
+            A newly created named selection maintaining references to all target entities.
+        """
+        named_selection = NamedSelection(
+            name, self._grpc_client, bodies=bodies, faces=faces, edges=edges
+        )
+        self._named_selections[named_selection.name] = named_selection
+        return self._named_selections[named_selection.name]
+
+    def delete_named_selection(self, named_selection: Union[NamedSelection, str]) -> None:
+        """Removes a named selection on the active geometry server instance.
+
+        Parameters
+        ----------
+        named_selection : Union[NamedSelection, str]
+            A named selection name or instance that should be deleted.
+        """
+        check_type(named_selection, (NamedSelection, str))
+
+        removal_name = (
+            named_selection.name if not isinstance(named_selection, str) else named_selection
+        )
+        # TODO : even though "id" is requested, we should pass the name - change protos
+        self._named_selections_stub.Delete(NamedSelectionIdentifier(id=removal_name))
+
+        try:
+            self._named_selections.pop(removal_name)
+        except KeyError:
+            # TODO: throw warning informing that the requested NamedSelection does not exist
+            pass

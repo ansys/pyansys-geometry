@@ -172,7 +172,7 @@ def polygon_to_grpc_polygon(polygon: Polygon) -> GRPCPolygon:
     Geometry Service gRPC Polygon message, units in meters.
     """
     return GRPCPolygon(
-        center=point_to_grpc_point(polygon.origin),
+        center=point_to_grpc_point(polygon.center),
         radius=polygon.inner_radius.m_as(SERVER_UNIT_LENGTH),
         numberofsides=polygon.n_sides,
     )
