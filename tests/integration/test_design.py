@@ -4,6 +4,7 @@ from grpc._channel import _InactiveRpcError
 from pint import Quantity
 
 from ansys.geometry.core import Modeler
+from ansys.geometry.core.designer import CurveType, SurfaceType
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import Point
 from ansys.geometry.core.misc import UNITS
@@ -175,12 +176,7 @@ def test_named_selections(modeler: Modeler):
 
     # Create the NamedSelection
     design.create_named_selection("OnlyCircle", bodies=[body_circle_comp])
-    design.create_named_selection(
-        "OnlyPolygon",
-        bodies=[body_polygon_comp],
-        faces=body_polygon_comp.faces,
-        edges=body_polygon_comp.faces[0].edges,
-    )
+    design.create_named_selection("OnlyPolygon", bodies=[body_polygon_comp])
     design.create_named_selection("CircleAndPolygon", bodies=[body_circle_comp, body_polygon_comp])
     dupl_named_selection = design.create_named_selection(
         "CircleAndPolygon_2", bodies=[body_circle_comp, body_polygon_comp]
@@ -204,3 +200,38 @@ def test_named_selections(modeler: Modeler):
     assert design.named_selections[0].name == "OnlyCircle"
     assert design.named_selections[1].name == "OnlyPolygon"
     assert design.named_selections[2].name == "CircleAndPolygon"
+
+
+def test_faces_edges(modeler: Modeler):
+    """Test for verifying the correct creation and
+    usage of ``Face`` and ``Edge`` objects."""
+
+    # Create your design on the server side
+    design_name = "FacesEdges_Test"
+    design = modeler.create_design(design_name)
+
+    # Create a Sketch object and draw apolygon (all client side)
+    sketch = Sketch()
+    polygon = sketch.draw_polygon(Point([-30, -30, 0], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+
+    # Build independent components and bodies
+    polygon_comp = design.add_component("PolygonComponent")
+    body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch, Quantity(30, UNITS.mm))
+
+    # Get all its faces
+    faces = body_polygon_comp.faces
+    assert len(faces) == 7  # top + bottom + sides
+    assert all(face.id is not None for face in faces)
+    # TODO: may be at some point these might change to planar?
+    assert all(face.surface_type == SurfaceType.SURFACETYPE_UNKNOWN for face in faces)
+    assert all(face.area > 0.0 for face in faces)
+    assert abs(faces[0].area.to_base_units().m - polygon.area.to_base_units().m) <= 1e-15
+
+    # Now, from one of the lids (i.e. 0) get all edges
+    edges = faces[0].edges
+    assert len(edges) == 5  # pentagon
+    assert all(edge.id is not None for edge in edges)
+    # TODO: may be at some point these might change to planar?
+    assert all(edge.curve_type == CurveType.CURVETYPE_UNKNOWN for edge in edges)
+    assert all(edge.length > 0.0 for edge in edges)
+    assert abs(edges[0].length.to_base_units().m - polygon.length.to_base_units().m) <= 1e-15
