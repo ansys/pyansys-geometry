@@ -231,7 +231,7 @@ def test_faces_edges(modeler: Modeler):
     edges = faces[0].edges
     assert len(edges) == 5  # pentagon
     assert all(edge.id is not None for edge in edges)
-    # TODO: may be at some point these might change to planar?
+    # TODO: may be at some point these might change to line?
     assert all(edge.curve_type == CurveType.CURVETYPE_UNKNOWN for edge in edges)
     assert all(edge.length > 0.0 for edge in edges)
     assert abs(edges[0].length.to_base_units().m - polygon.length.to_base_units().m) <= 1e-15
