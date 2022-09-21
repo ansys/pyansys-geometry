@@ -15,6 +15,8 @@ from ansys.geometry.core.connection import (
     sketch_shapes_to_grpc_geometries,
 )
 from ansys.geometry.core.designer.body import Body
+from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
+from ansys.geometry.core.math import Frame
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH, check_pint_unit_compatibility, check_type
 from ansys.geometry.core.sketch import Sketch
 
@@ -28,7 +30,7 @@ class Component:
     Parameters
     ----------
     name : str
-        A user-defined label for the design.
+        A user-defined label for the component.
     parent_component : Component
         The parent component to nest the new component under within the design assembly.
     grpc_client : GrpcClient
@@ -60,6 +62,7 @@ class Component:
 
         self._components = []
         self._bodies = []
+        self._coordinate_systems = []
         self._parent_component = parent_component
 
     @property
@@ -81,6 +84,11 @@ class Component:
     def bodies(self) -> List[Body]:
         """``Body`` objects inside of the ``Component``."""
         return self._bodies
+
+    @property
+    def coordinate_systems(self) -> List[CoordinateSystem]:
+        """``CoordinateSystem`` objects inside of the ``Component``."""
+        return self._coordinate_systems
 
     @property
     def parent_component(self) -> Union["Component", None]:
@@ -174,3 +182,28 @@ class Component:
 
         self._bodies.append(Body(response.id, name, self, self._grpc_client, is_surface=True))
         return self._bodies[-1]
+
+    def create_coordinate_system(self, name: str, frame: Frame) -> CoordinateSystem:
+        """Creates a coordinate system.
+
+        The resulting coordinate system created is nested under this component
+        within the design assembly.
+
+        Parameters
+        ----------
+        name : str
+            A user-defined label for the coordinate system.
+        frame : Frame
+            The frame defining the coordinate system bounds.
+
+        Returns
+        -------
+        CoordinateSystem
+            ``CoordinateSystem`` object.
+        """
+        # Sanity checks on inputs
+        check_type(name, str)
+        check_type(frame, Frame)
+
+        self._coordinate_systems.append(CoordinateSystem(name, frame, self, self._grpc_client))
+        return self._coordinate_systems[-1]

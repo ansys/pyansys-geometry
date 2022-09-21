@@ -6,7 +6,7 @@ from pint import Quantity
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.designer import CurveType, SurfaceType
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
-from ansys.geometry.core.math import Point
+from ansys.geometry.core.math import Frame, Point, UnitVector
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 
@@ -235,3 +235,39 @@ def test_faces_edges(modeler: Modeler):
     assert all(edge.curve_type == CurveType.CURVETYPE_UNKNOWN for edge in edges)
     assert all(edge.length > 0.0 for edge in edges)
     assert abs(edges[0].length.to_base_units().m - polygon.length.to_base_units().m) <= 1e-15
+
+
+def test_coordinate_system_creation(modeler: Modeler):
+    """Test for verifying the correct creation of ``CoordinateSystem``."""
+
+    # Create your design on the server side
+    design_name = "CoordinateSystem_Test"
+    design = modeler.create_design(design_name)
+
+    # Build 2 independent components and bodies
+    nested_comp = design.add_component("NestedComponent")
+
+    frame1 = Frame(Point([10, 200, 3000], UNITS.mm), UnitVector([1, 1, 0]), UnitVector([1, -1, 0]))
+
+    frame2 = Frame(Point([40, 80, 120], UNITS.mm), UnitVector([0, -1, 1]), UnitVector([0, 1, 1]))
+
+    # Create the CoordinateSystem
+    design.create_coordinate_system("DesignCS1", frame1)
+    nested_comp.create_coordinate_system("CompCS1", frame1)
+    nested_comp.create_coordinate_system("CompCS2", frame2)
+
+    # Check that the named selections are available
+    assert len(design.coordinate_systems) == 1
+    assert all(entry.id is not None for entry in design.coordinate_systems)
+    design_cs = design.coordinate_systems[0]
+    assert design_cs.name == "DesignCS1"
+    assert design_cs.frame == frame1
+
+    assert len(nested_comp.coordinate_systems) == 1
+    assert all(entry.id is not None for entry in nested_comp.coordinate_systems)
+    nested_comp_cs1 = nested_comp.coordinate_systems[0]
+    nested_comp_cs2 = nested_comp.coordinate_systems[1]
+    assert nested_comp_cs1.name == "CompCS1"
+    assert nested_comp_cs1.frame == frame1
+    assert nested_comp_cs2.name == "CompCS2"
+    assert nested_comp_cs2.frame == frame2

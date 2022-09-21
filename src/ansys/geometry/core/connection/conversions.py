@@ -13,7 +13,7 @@ from ansys.api.geometry.v0.models_pb2 import Plane as GRPCPlane
 from ansys.api.geometry.v0.models_pb2 import Point as GRPCPoint
 from ansys.api.geometry.v0.models_pb2 import Polygon as GRPCPolygon
 
-from ansys.geometry.core.math import Plane, Point, UnitVector
+from ansys.geometry.core.math import Frame, Plane, Point, UnitVector
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Polygon, Segment
 
@@ -33,12 +33,31 @@ def unit_vector_to_grpc_direction(unit_vector: UnitVector) -> GRPCDirection:
     return GRPCDirection(x=unit_vector.x, y=unit_vector.y, z=unit_vector.z)
 
 
+def frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
+    """Marshals a :class:`Frame` to a Frame gRPC message of the Geometry Service.
+
+    Parameters
+    ----------
+    plan : Frame
+        Source frame data.
+
+    Returns
+    -------
+    Geometry Service gRPC Frame message, units in meters.
+    """
+    return GRPCFrame(
+        origin=point_to_grpc_point(frame.origin),
+        dir_x=unit_vector_to_grpc_direction(frame.direction_x),
+        dir_y=unit_vector_to_grpc_direction(frame.direction_y),
+    )
+
+
 def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
     """Marshals a :class:`Plane` to a Plane gRPC message of the Geometry Service.
 
     Parameters
     ----------
-    plan : Plane
+    plane : Plane
         Source plane data.
 
     Returns
