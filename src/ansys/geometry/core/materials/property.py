@@ -1,10 +1,11 @@
 """``MaterialProperty`` class module."""
 
-from enum import Enum
+from enum import Enum, unique
 
 from pint import Quantity
 
 
+@unique
 class MaterialPropertyType(Enum):
     """Enum holding the possible values for ``MaterialProperty`` objects."""
 

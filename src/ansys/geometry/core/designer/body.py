@@ -14,7 +14,7 @@ from ansys.geometry.core.connection import (
     unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.designer.edge import Edge
-from ansys.geometry.core.designer.face import Face
+from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.materials import Material
 from ansys.geometry.core.math import UnitVector
 from ansys.geometry.core.misc import SERVER_UNIT_VOLUME, check_type
@@ -94,7 +94,7 @@ class Body:
         grpc_faces = self._bodies_stub.GetFaces(BodyIdentifier(id=self._id))
 
         return [
-            Face(grpc_face.id, grpc_face.surface_type, self, self._grpc_client)
+            Face(grpc_face.id, SurfaceType(grpc_face.surface_type), self, self._grpc_client)
             for grpc_face in grpc_faces.faces
         ]
 

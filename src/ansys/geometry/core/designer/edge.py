@@ -1,6 +1,6 @@
 """``Face`` class module."""
 
-from enum import Enum
+from enum import Enum, unique
 from typing import TYPE_CHECKING
 
 from ansys.api.geometry.v0.edges_pb2 import EdgeIdentifier
@@ -11,9 +11,10 @@ from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 
 if TYPE_CHECKING:
-    from ansys.geometry.core.designer.body import Body
+    from ansys.geometry.core.designer.body import Body  # pragma: no cover
 
 
+@unique
 class CurveType(Enum):
     """Enum holding the possible values for curve types by the geometry service."""
 
