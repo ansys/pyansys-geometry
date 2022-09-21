@@ -5,7 +5,6 @@ from typing import List
 from ansys.api.geometry.v0.models_pb2 import Arc as GRPCArc
 from ansys.api.geometry.v0.models_pb2 import Circle as GRPCCircle
 from ansys.api.geometry.v0.models_pb2 import Direction as GRPCDirection
-from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
 from ansys.api.geometry.v0.models_pb2 import Ellipse as GRPCEllipse
 from ansys.api.geometry.v0.models_pb2 import Frame as GRPCFrame
 from ansys.api.geometry.v0.models_pb2 import Geometries
@@ -14,7 +13,6 @@ from ansys.api.geometry.v0.models_pb2 import Plane as GRPCPlane
 from ansys.api.geometry.v0.models_pb2 import Point as GRPCPoint
 from ansys.api.geometry.v0.models_pb2 import Polygon as GRPCPolygon
 
-from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.math import Plane, Point, UnitVector
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Polygon, Segment
@@ -195,19 +193,3 @@ def segment_to_grpc_line(line: Segment) -> GRPCLine:
         start=point_to_grpc_point(line.start),
         end=point_to_grpc_point(line.end),
     )
-
-
-def grpc_edge_to_edge(self, edge_grpc: GRPCEdge) -> Edge:
-    """Transform a of gRPC Edge messages into an actual ``Edge`` object.
-
-    Parameters
-    ----------
-    edges_grpc : GRPCEdge
-        A gRPC message of type Edge.
-
-    Returns
-    -------
-    Edge
-        ``Edge`` object obtained from gRPC message.
-    """
-    return Edge(edge_grpc.id, edge_grpc.curve_type, self._body, self._grpc_client)
