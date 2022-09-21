@@ -39,11 +39,18 @@ class NamedSelection:
         self,
         name: str,
         grpc_client: GrpcClient,
-        bodies: Optional[List[Body]] = [],
-        faces: Optional[List[Face]] = [],
-        edges: Optional[List[Edge]] = [],
+        bodies: Optional[List[Body]] = None,
+        faces: Optional[List[Face]] = None,
+        edges: Optional[List[Edge]] = None,
     ):
         """Constructor method for ``NamedSelection``."""
+
+        if bodies is None:
+            bodies = []
+        if faces is None:
+            faces = []
+        if edges is None:
+            edges = []
         # Sanity checks
         check_type(name, str)
         check_type(grpc_client, GrpcClient)
