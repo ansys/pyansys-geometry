@@ -145,7 +145,7 @@ class Design(Component):
         named_selection : Union[NamedSelection, str]
             A named selection name or instance that should be deleted.
         """
-        check_type(named_selection, Union[NamedSelection, str])
+        check_type(named_selection, (NamedSelection, str))
 
         removal_name = (
             named_selection.name if not isinstance(named_selection, str) else named_selection
