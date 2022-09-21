@@ -58,23 +58,10 @@ class NamedSelection:
         # All ids should be unique - no duplicated values
         ids = set()
 
-        # Loop over bodies
-        for body in bodies:
-            ids.add(body.id)
-            for body_face in body.faces:
-                ids.add(body_face.id)
-                for body_face_edge in body_face.edges:
-                    ids.add(body_face_edge.id)
-
-        # Loop over bodies
-        for face in faces:
-            ids.add(face.id)
-            for face_edge in face.edges:
-                ids.add(face_edge.id)
-
-        # Loop over edges
-        for edge in edges:
-            ids.add(edge.id)
+        # Loop over bodies, faces and edges
+        [ids.add(body.id) for body in bodies]
+        [ids.add(face.id) for face in faces]
+        [ids.add(edge.id) for edge in edges]
 
         named_selection_request = CreateNamedSelectionRequest(name=name, members=ids)
         new_named_selection = self._named_selections_stub.CreateNamedSelection(

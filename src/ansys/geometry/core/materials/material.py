@@ -1,6 +1,6 @@
 """``Material`` class module."""
 
-from typing import List, Optional, Dict
+from typing import Dict, List, Optional
 
 from pint import Quantity
 

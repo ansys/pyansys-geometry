@@ -4,6 +4,7 @@ import os
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
+    grpc_edge_to_edge,
     plane_to_grpc_plane,
     sketch_shapes_to_grpc_geometries,
     unit_vector_to_grpc_direction,
