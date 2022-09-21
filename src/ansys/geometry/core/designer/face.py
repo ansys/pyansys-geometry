@@ -1,19 +1,22 @@
 """``Face`` class module."""
 
-from enum import Enum
-from typing import TYPE_CHECKING
+from enum import Enum, unique
+from typing import TYPE_CHECKING, List
 
 from ansys.api.geometry.v0.faces_pb2 import FaceIdentifier
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
+from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
 from pint import Quantity
 
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.misc import SERVER_UNIT_AREA
 
 if TYPE_CHECKING:
-    from ansys.geometry.core.designer.body import Body
+    from ansys.geometry.core.designer.body import Body  # pragma: no cover
 
 
+@unique
 class SurfaceType(Enum):
     """Enum holding the possible values for surface types by the geometry service."""
 
@@ -69,3 +72,29 @@ class Face:
     def surface_type(self) -> SurfaceType:
         """Surface type of the face."""
         return self._surface_type
+
+    @property
+    def edges(self) -> List[Edge]:
+        """Get all ``Edge`` objects of our ``Face``."""
+        edges_response = self._faces_stub.GetFaceEdges(FaceIdentifier(id=self._id))
+        return self.__grpc_edges_to_edges(edges_response.edges)
+
+    def __grpc_edges_to_edges(self, edges_grpc: List[GRPCEdge]) -> List[Edge]:
+        """Transform a list of gRPC Edge messages into actual ``Edge`` objects.
+
+        Parameters
+        ----------
+        edges_grpc : List[GRPCEdge]
+            A list of gRPC messages of type Edge.
+
+        Returns
+        -------
+        List[Edge]
+            ``Edge`` objects obtained from gRPC messages.
+        """
+        edges = []
+        for edge_grpc in edges_grpc:
+            edges.append(
+                Edge(edge_grpc.id, CurveType(edge_grpc.curve_type), self._body, self._grpc_client)
+            )
+        return edges

@@ -1,6 +1,6 @@
 """``Material`` class module."""
 
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from pint import Quantity
 
@@ -35,10 +35,12 @@ class Material:
 
         # Add the density to the properties list
         additional_properties.append(self._density)
-        self._properties = additional_properties
+        self._properties = {}
+        for property in additional_properties:
+            self._properties[property.type] = property
 
     @property
-    def properties(self) -> List[MaterialProperty]:
+    def properties(self) -> Dict[MaterialPropertyType, MaterialProperty]:
         """Return the list of properties."""
         return self._properties
 
@@ -56,4 +58,5 @@ class Material:
         quantity: ~pint.Quantity
             Value and unit.
         """
-        self._properties.append(MaterialProperty(type, display_name, quantity))
+        property = MaterialProperty(type, display_name, quantity)
+        self._properties[property.type] = property
