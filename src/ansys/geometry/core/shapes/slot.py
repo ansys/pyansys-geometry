@@ -48,36 +48,54 @@ class Slot(BaseShape):
         self._width = width if isinstance(width, Distance) else Distance(width, center.unit)
         if self._width.value <= 0:
             raise ValueError("Width must be a real positive value.")
+        width_magnitude = self._width.value.m_as(center.unit)
 
         self._height = height if isinstance(height, Distance) else Distance(height, center.unit)
         if self._height.value <= 0:
             raise ValueError("Height must be a real positive value.")
+        height_magnitude = self._height.value.m_as(center.unit)
 
         slot_body_corner_1 = Point(
-            center.x - self._width / 2, center.y + self._height / 2, center.unit
+            [
+                center.x.m - width_magnitude / 2,
+                center.y.m + height_magnitude / 2,
+            ],
+            center.unit,
         )
         slot_body_corner_2 = Point(
-            center.x + self._width / 2, center.y + self._height / 2, center.unit
+            [
+                center.x.m + width_magnitude / 2,
+                center.y.m + height_magnitude / 2,
+            ],
+            center.unit,
         )
         slot_body_corner_3 = Point(
-            center.x + self._width / 2, center.y - self._height / 2, center.unit
+            [
+                center.x.m + width_magnitude / 2,
+                center.y.m - height_magnitude / 2,
+            ],
+            center.unit,
         )
         slot_body_corner_4 = Point(
-            center.x - self._width / 2, center.y - self._height / 2, center.unit
+            [
+                center.x.m - width_magnitude / 2,
+                center.y.m - height_magnitude / 2,
+            ],
+            center.unit,
         )
 
-        self._segment1 = Segment(slot_body_corner_1, slot_body_corner_2)
+        self._segment1 = Segment(plane, slot_body_corner_1, slot_body_corner_2)
         self._arc1 = Arc(
             plane,
-            Point(center.x + self._width / 2, center.y, center.unit),
+            Point([center.x.m + width_magnitude / 2, center.y.m], center.unit),
             slot_body_corner_3,
             slot_body_corner_2,
             plane.direction_z,
         )
-        self._segment2 = Segment(slot_body_corner_3, slot_body_corner_4)
+        self._segment2 = Segment(plane, slot_body_corner_3, slot_body_corner_4)
         self._arc2 = Arc(
             plane,
-            Point(center.x - self._width / 2, center.y, center.unit),
+            Point([center.x.m - width_magnitude / 2, center.y.m], center.unit),
             slot_body_corner_1,
             slot_body_corner_4,
             plane.direction_z,

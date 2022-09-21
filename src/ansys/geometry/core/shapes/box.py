@@ -59,15 +59,15 @@ class Box(BaseShape):
         if self._height.value <= 0:
             raise ValueError("Height must be a real positive value.")
 
-        corner_1 = Point(center.x - self._width / 2, center.y + self._height / 2, center.unit)
-        corner_2 = Point(center.x + self._width / 2, center.y + self._height / 2, center.unit)
-        corner_3 = Point(center.x + self._width / 2, center.y - self._height / 2, center.unit)
-        corner_4 = Point(center.x - self._width / 2, center.y - self._height / 2, center.unit)
+        corner_1 = Point([center.x - self._width / 2, center.y + self._height / 2], center.unit)
+        corner_2 = Point([center.x + self._width / 2, center.y + self._height / 2], center.unit)
+        corner_3 = Point([center.x + self._width / 2, center.y - self._height / 2], center.unit)
+        corner_4 = Point([center.x - self._width / 2, center.y - self._height / 2], center.unit)
 
-        self._segment1 = Segment(corner_1, corner_2)
-        self._segment2 = Segment(corner_2, corner_3)
-        self._segment3 = Segment(corner_3, corner_4)
-        self._segment4 = Segment(corner_4, corner_1)
+        self._segment1 = Segment(plane, corner_1, corner_2)
+        self._segment2 = Segment(plane, corner_2, corner_3)
+        self._segment3 = Segment(plane, corner_3, corner_4)
+        self._segment4 = Segment(plane, corner_4, corner_1)
 
     @property
     def center(self) -> Point:
