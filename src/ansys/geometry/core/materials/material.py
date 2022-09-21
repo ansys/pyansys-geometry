@@ -1,6 +1,6 @@
 """``Material`` class module."""
 
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from pint import Quantity
 
@@ -40,7 +40,7 @@ class Material:
             self._properties[property.type] = property
 
     @property
-    def properties(self) -> dict[MaterialPropertyType, MaterialProperty]:
+    def properties(self) -> Dict[MaterialPropertyType, MaterialProperty]:
         """Return the list of properties."""
         return self._properties
 
