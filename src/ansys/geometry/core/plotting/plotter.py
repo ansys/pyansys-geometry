@@ -1,5 +1,5 @@
 """A module containing a class for plotting various PyGeometry objects."""
-from typing import Optional
+from typing import Dict, Optional
 
 import numpy as np
 import pyvista as pv
@@ -17,7 +17,7 @@ class Plotter:
     def __init__(
         self,
         scene: Optional[Plotter] = None,
-        background_opts: Optional[dict] = None,
+        background_opts: Optional[Dict] = None,
         num_points: Optional[int] = 100,
     ):
         """Initializes the plotter.
@@ -92,7 +92,7 @@ class Plotter:
         """View the scene from the ZY plane."""
         self.scene.view_zy()
 
-    def plot_frame(self, frame: Frame, plotting_options: Optional[dict] = None) -> None:
+    def plot_frame(self, frame: Frame, plotting_options: Optional[Dict] = None) -> None:
         """Plot desired frame into the scene.
 
         Parameters
@@ -125,8 +125,8 @@ class Plotter:
     def plot_plane(
         self,
         plane: Plane,
-        plane_options: Optional[dict] = None,
-        plotting_options: Optional[dict] = None,
+        plane_options: Optional[Dict] = None,
+        plotting_options: Optional[Dict] = None,
     ) -> None:
         """Plot desired plane into the scene.
 
@@ -162,8 +162,8 @@ class Plotter:
         self,
         shape: BaseShape,
         show_points: Optional[bool] = True,
-        plotting_options_points: Optional[dict] = None,
-        plotting_options_lines: Optional[dict] = None,
+        plotting_options_points: Optional[Dict] = None,
+        plotting_options_lines: Optional[Dict] = None,
     ) -> None:
         """Plot desired shape into the scene.
 
