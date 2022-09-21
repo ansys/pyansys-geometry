@@ -66,6 +66,11 @@ class Line(BaseShape):
             raise ValueError("The provided line definition is not contained in the plane.")
 
     @property
+    def origin(self) -> Point:
+        """The origin property."""
+        return self._start
+
+    @property
     def direction(self) -> UnitVector:
         """Returns the direction of the line."""
         return self._direction
@@ -90,7 +95,7 @@ class Line(BaseShape):
 
         # Then, check if direction is linearly dependent or not from
         # i and j (the vectors defining your plane)
-        mat = np.array([self.direction, self.i, self.j])
+        mat = np.array([self.direction, self.plane.direction_x, self.plane.direction_y])
         (lambdas, _) = np.linalg.eig(mat.T)
         return True if any(np.isclose(lambdas, 0.0)) else False
 
@@ -111,6 +116,21 @@ class Line(BaseShape):
         quantified_dir = UNITS.convert(self.direction, self.start.unit, self.start.base_unit)
         line_start = self.start - quantified_dir * int(num_points / 2)
         return [Point(line_start + delta * quantified_dir) for delta in range(0, num_points)]
+
+    def points(self, num_points: Optional[int] = 100) -> List[Point]:
+        """Returns a list containing all the points belonging to the shape.
+
+        Parameters
+        ----------
+        num_points : int
+            Desired number of points belonging to the shape.
+
+        Returns
+        -------
+        List[Point]
+            A list of points representing the shape.
+        """
+        return self.plane.origin + self.local_points(num_points)
 
 
 class Segment(Line):
@@ -257,3 +277,18 @@ class Segment(Line):
         """
         delta_segm = (self.end - self.start) / (num_points - 1)
         return [Point(self.start + delta * delta_segm) for delta in range(0, num_points)]
+
+    def points(self, num_points: Optional[int] = 100) -> List[Point]:
+        """Returns a list containing all the points belonging to the shape.
+
+        Parameters
+        ----------
+        num_points : int, optional
+            Desired number of points belonging to the shape.
+
+        Returns
+        -------
+        List[Point]
+            A list of points representing the shape.
+        """
+        return self.local_points(num_points)

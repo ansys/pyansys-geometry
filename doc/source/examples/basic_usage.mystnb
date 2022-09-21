@@ -1,0 +1,121 @@
+---
+jupytext:
+  text_representation:
+    extension: .mystnb
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.14.1
+kernelspec:
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
+---
+
+# Basic usage
+
+The following guide provides a quick insight on the capabilities of ``PyGeometry`` and how to use those.
+
++++
+
+Start by importing the fundamental objects:
+
+```{code-cell} ipython3
+from ansys.geometry.core.misc.units import UNITS as u
+from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.plotting.plotter import Plotter
+```
+
+## Creating a new sketch
+
+``Sketches`` are the fundamental objects for drawing basic shapes like lines, segments, circles, ellipses, arcs, and polygons.
+
+A ``Sketch`` instance is created by defining a drawing plane. This plane is declared by a point and two fundamental orthogonal directions:
+
+```{code-cell} ipython3
+from ansys.geometry.core.math import Plane, Point, UnitVector
+```
+
+In the following lines, a plane is defined and used to create a new sketch:
+
+```{code-cell} ipython3
+# Define the origin point of the plane
+origin = Point([1, 1, 1])
+
+# Create a plane located in previous point with desired fundamental directions
+plane = Plane(
+    origin, direction_x=[1, 0, 0], direction_y=[0, -1, 1]
+)
+
+# Instantiate a new sketch object from previous plane
+sketch = Sketch(plane)
+```
+
+## Drawing shapes in the sketch
+
+Different shapes can be drawn in the sketch using the corresponding ``draw`` methods.
+
++++
+
+### Drawing a circle
+
+Circles can be drawn in a sketch by specifying the center and radius.
+
+```{code-cell} ipython3
+circle = sketch.draw_circle(Point([2, 1, 1]), radius=30 * u.cm)
+circle.plot()
+```
+
+### Drawing an ellipse
+
+Ellipses can be drawn in a sketch by specifying the center, semi-major axis and semi-minor axis.
+
+```{code-cell} ipython3
+ellipse = sketch.draw_ellipse(
+    origin, semi_major_axis=2*u.m, semi_minor_axis=1*u.m
+)
+ellipse.plot()
+```
+
+### Drawing a polygon
+
+Regular polygons can be drawn by passing the center, radius and the desired number of sides.
+
+```{code-cell} ipython3
+pentagon = sketch.draw_polygon(
+    origin, inner_radius=3*u.m, sides=5
+)
+pentagon.plot()
+```
+
+### Drawing an arc
+
+For drawing arcs of circumference, a center, starting and ending points are required.
+
+```{code-cell} ipython3
+start_point, end_point = Point([2, 1, 1], unit=u.m), Point([0, 1, 1], unit=u.meter)
+arc = sketch.draw_arc(Point([1.5, 1, 1]), start_point, end_point, UnitVector((0, 0, 1)))
+arc.plot()
+```
+
+### Drawing a segment
+
+Segments can be drawn in a sketch by specifying its starting and ending points:
+
+```{code-cell} ipython3
+start_point, end_point = Point([2, 1, 1], unit=u.m), Point([0, 1, 1], unit=u.meter)
+segment = sketch.draw_segment(start_point, end_point)
+segment.plot()
+```
+
+## Plotting the sketch
+
+Plotting capabilities are provided through the ``Plotter`` class. This class allows to plot different ``PyGeometry`` objects. The visualization backend used by ``PyGeometry`` is based on ``PyVista``.
+
+For plotting the sketch, the ``plot_sketch`` method is used. It accepts a ``Sketch`` instance and some extra arguments to further customize the visualization of the sketch. These arguments include showing the plane of the sketch and its frame.
+
+```{code-cell} ipython3
+# Plot the sketch in the whole scene
+pl = Plotter()
+pl.plot_sketch(sketch, show_plane=True, show_frame=True)
+pl.scene.show(jupyter_backend="panel")
+```

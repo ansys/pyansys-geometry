@@ -178,14 +178,17 @@ class Ellipse(BaseShape):
             A list of points representing the shape.
         """
         theta = np.linspace(0, 2 * np.pi, num_points)
+        center_from_plane_origin = Point(
+            self.plane.global_to_local @ (self.center - self.plane.origin), self.center.unit
+        )
         return [
             Point(
                 [
-                    self.center.x.to(self.semi_major_axis.units).m
+                    center_from_plane_origin.x.to(self.semi_major_axis.units).m
                     + self.semi_major_axis.m * np.cos(ang),
-                    self.center.y.to(self.semi_major_axis.units).m
+                    center_from_plane_origin.y.to(self.semi_major_axis.units).m
                     + self.semi_minor_axis.m * np.sin(ang),
-                    self.center.z.to(self.semi_major_axis.units).m,
+                    center_from_plane_origin.z.to(self.semi_major_axis.units).m,
                 ],
                 unit=self.semi_major_axis.units,
             )
