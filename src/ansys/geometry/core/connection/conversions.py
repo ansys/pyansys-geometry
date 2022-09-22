@@ -13,7 +13,7 @@ from ansys.api.geometry.v0.models_pb2 import Plane as GRPCPlane
 from ansys.api.geometry.v0.models_pb2 import Point as GRPCPoint
 from ansys.api.geometry.v0.models_pb2 import Polygon as GRPCPolygon
 
-from ansys.geometry.core.math import Plane, Point, UnitVector
+from ansys.geometry.core.math import Frame, Plane, Point, UnitVector
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Polygon, Segment
 
@@ -28,9 +28,30 @@ def unit_vector_to_grpc_direction(unit_vector: UnitVector) -> GRPCDirection:
 
     Returns
     -------
-    Geometry Service gRPC Direction message.
+    GRPCDirection
+        Geometry Service gRPC Direction message.
     """
     return GRPCDirection(x=unit_vector.x, y=unit_vector.y, z=unit_vector.z)
+
+
+def frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
+    """Marshals a :class:`Frame` to a Frame gRPC message of the Geometry Service.
+
+    Parameters
+    ----------
+    frame : Frame
+        Source frame data.
+
+    Returns
+    -------
+    GRPCFrame
+        Geometry Service gRPC Frame message. Frame origin units in meters.
+    """
+    return GRPCFrame(
+        origin=point_to_grpc_point(frame.origin),
+        dir_x=unit_vector_to_grpc_direction(frame.direction_x),
+        dir_y=unit_vector_to_grpc_direction(frame.direction_y),
+    )
 
 
 def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
@@ -38,12 +59,13 @@ def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
 
     Parameters
     ----------
-    plan : Plane
+    plane : Plane
         Source plane data.
 
     Returns
     -------
-    Geometry Service gRPC Plane message, units in meters.
+    GRPCPlane
+        Geometry Service gRPC Plane message, units in meters.
     """
     return GRPCPlane(
         frame=GRPCFrame(
@@ -65,7 +87,8 @@ def sketch_shapes_to_grpc_geometries(shapes: List[BaseShape]) -> Geometries:
 
     Returns
     -------
-    Geometry Service gRPC Geometries message, units in meters.
+    Geometries
+        Geometry Service gRPC Geometries message, units in meters.
     """
     geometries = Geometries()
     for shape in shapes:
@@ -93,7 +116,8 @@ def arc_to_grpc_arc(arc: Arc) -> GRPCArc:
 
     Returns
     -------
-    Geometry Service gRPC Arc message, units in meters.
+    GRPCArc
+        Geometry Service gRPC Arc message, units in meters.
     """
     return GRPCArc(
         center=point_to_grpc_point(arc.center),
@@ -113,7 +137,8 @@ def ellipse_to_grpc_ellipse(ellipse: Ellipse) -> GRPCEllipse:
 
     Returns
     -------
-    Geometry Service gRPC Ellipse message, units in meters.
+    GRPCEllipse
+        Geometry Service gRPC Ellipse message, units in meters.
     """
     return GRPCEllipse(
         center=point_to_grpc_point(ellipse.center),
@@ -132,7 +157,8 @@ def circle_to_grpc_circle(circle: Circle) -> GRPCCircle:
 
     Returns
     -------
-    Geometry Service gRPC Circle message, units in meters.
+    GRPCCircle
+        Geometry Service gRPC Circle message, units in meters.
     """
     return GRPCCircle(
         center=point_to_grpc_point(circle.center), radius=circle.radius.m_as(SERVER_UNIT_LENGTH)
@@ -149,7 +175,8 @@ def point_to_grpc_point(point: Point) -> GRPCPoint:
 
     Returns
     -------
-    Geometry Service gRPC Point message, units in meters.
+    GRPCPoint
+        Geometry Service gRPC Point message, units in meters.
     """
     return GRPCPoint(
         x=point.x.m_as(SERVER_UNIT_LENGTH),
@@ -168,7 +195,8 @@ def polygon_to_grpc_polygon(polygon: Polygon) -> GRPCPolygon:
 
     Returns
     -------
-    Geometry Service gRPC Polygon message, units in meters.
+    GRPCPolygon
+        Geometry Service gRPC Polygon message, units in meters.
     """
     return GRPCPolygon(
         center=point_to_grpc_point(polygon.center),
@@ -187,7 +215,8 @@ def segment_to_grpc_line(line: Segment) -> GRPCLine:
 
     Returns
     -------
-    Geometry Service gRPC Line message, units in meters.
+    GRPCLine
+        Geometry Service gRPC Line message, units in meters.
     """
     return GRPCLine(
         start=point_to_grpc_point(line.start),
