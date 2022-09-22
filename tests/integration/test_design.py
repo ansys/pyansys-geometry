@@ -119,7 +119,9 @@ def test_component_body(modeler: Modeler):
     assert len(body.faces) == 7  # 5 sides + top + bottom
     # TODO: GetVolume is not implemented on server side yet
     try:
-        assert body.volume == pentagon.area * distance_extruded_body
+        # All are in mm
+        expected_vol = pentagon.area.m * distance_extruded_body.m
+        assert body.volume.m == expected_vol
     except (_InactiveRpcError):
         pass
     assert len(design.components) == 0
