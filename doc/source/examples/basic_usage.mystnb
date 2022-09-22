@@ -97,6 +97,24 @@ arc = sketch.draw_arc(Point([1.5, 1, 1]), start_point, end_point, UnitVector((0,
 arc.plot()
 ```
 
+### Drawing a slot
+
+For drawing slots with a center, width, and height.
+
+```{code-cell} ipython3
+slot = sketch.draw_slot(Point([2, 0, 2]), 3, 4)
+slot.plot()
+```
+
+### Drawing a box
+
+For drawing boxes with a center, width, and height.
+
+```{code-cell} ipython3
+box = sketch.draw_box(Point([2, 0, 2]), 4, 5)
+box.plot()
+```
+
 ### Drawing a segment
 
 Segments can be drawn in a sketch by specifying its starting and ending points:

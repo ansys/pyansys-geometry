@@ -482,13 +482,16 @@ def test_create_slot():
     """Test slot shape creation in a sketch."""
 
     # Create a Sketch instance
-    sketch = Sketch()
+    sketch = Sketch(Plane([1, 2, 0]))
 
     # Draw an arc in previous sketch
-    origin = Point([1, 1, 0], unit=UNITS.meter)
+    center = Point([2, 3, 0], unit=UNITS.meter)
     width = Distance(4, unit=UNITS.meter)
     height = Distance(2, unit=UNITS.meter)
-    slot = sketch.draw_slot(origin, width, height)
+    slot = sketch.draw_slot(center, width, height)
+
+    # Validate Real inputs accepted
+    sketch.draw_slot(center, 88, 888)
 
     # Check attributes are expected ones
     area = slot.area
@@ -500,11 +503,11 @@ def test_create_slot():
 
     # Check local points are expected ones
     local_points = slot.local_points(num_points=10)
-    assert abs(all(local_points[0] - Point([-1, 2, 0]))) <= DOUBLE_EPS
-    assert abs(all(local_points[1] - Point([1, 2, 0]))) <= DOUBLE_EPS
-    assert abs(all(local_points[2] - Point([3.0, 0.0, 0.0]))) <= DOUBLE_EPS
-    assert abs(all(local_points[3] - Point([1.0, 0.0, 0.0]))) <= DOUBLE_EPS
-    assert abs(all(local_points[4] - Point([3.0, 2.0, 0.0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[0] - Point([0, 4, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[1] - Point([2, 4, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[2] - Point([4, 2, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[3] - Point([2, 2, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[4] - Point([3, 2, 0]))) <= DOUBLE_EPS
     assert abs(all(local_points[5] - Point([2.1339746, 1.5, 0]))) <= DOUBLE_EPS
     assert abs(all(local_points[6] - Point([2.1339746, 0.5, 0]))) <= DOUBLE_EPS
     assert abs(all(local_points[7] - Point([-1.0, 2.0, 0.0]))) <= DOUBLE_EPS
@@ -513,22 +516,28 @@ def test_create_slot():
 
     # Check global points are expected ones
     global_points = slot.points(num_points=10)
-    assert abs(all(global_points[0] - Point([-1, 2, 0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[1] - Point([1, 2, 0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[2] - Point([3.0, 0.0, 0.0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[3] - Point([1.0, 0.0, 0.0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[4] - Point([3.0, 2.0, 0.0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[5] - Point([2.1339746, 1.5, 0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[6] - Point([2.1339746, 0.5, 0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[7] - Point([-1.0, 2.0, 0.0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[8] - Point([-1.8660254, 1.5, 0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[9] - Point([-1.8660254, 0.5, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[0] - Point([1, 6, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[1] - Point([3, 6, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[2] - Point([5, 4, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[3] - Point([3, 4, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[4] - Point([4, 4, 0.0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[5] - Point([3.1339746, 3.5, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[6] - Point([3.1339746, 2.5, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[7] - Point([1.11022302e-16, 4, 0.0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[8] - Point([-0.8660254, 3.5, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[9] - Point([-0.8660254, 2.5, 0]))) <= DOUBLE_EPS
 
     assert len(slot.components) == 4
     assert isinstance(slot.components[0], Segment)
     assert isinstance(slot.components[1], Arc)
     assert isinstance(slot.components[2], Segment)
     assert isinstance(slot.components[3], Arc)
+
+    tilted_plane = Plane(Point([1, 1, 0]), direction_x=[1, 0, 0], direction_y=[0, -1, 1])
+    tilted_sketch = Sketch(tilted_plane)
+    tilted_slot = tilted_sketch.draw_slot(Point([2, 0, 1]), width, height)
+    assert tilted_slot.area.m == pytest.approx(11.141592653589793, rel=1e-7, abs=1e-8)
+    assert tilted_slot.perimeter.m == pytest.approx(14.283185307179586, rel=1e-7, abs=1e-8)
 
 
 def test_create_box():
@@ -537,11 +546,14 @@ def test_create_box():
     # Create a Sketch instance
     sketch = Sketch()
 
-    # Draw an arc in previous sketch
-    origin = Point([1, 1, 0], unit=UNITS.meter)
+    # Draw a box in previous sketch
+    center = Point([3, 1, 0], unit=UNITS.meter)
     width = Distance(4, unit=UNITS.meter)
     height = Distance(2, unit=UNITS.meter)
-    box = sketch.draw_box(origin, width, height)
+    box = sketch.draw_box(center, width, height)
+
+    # Validate Real inputs accepted
+    sketch.draw_box(center, 88, 888)
 
     # Check attributes are expected ones
     area = box.area
@@ -570,3 +582,7 @@ def test_create_box():
     assert isinstance(box.components[1], Segment)
     assert isinstance(box.components[2], Segment)
     assert isinstance(box.components[3], Segment)
+
+    tilted_plane = Plane(Point([1, 1, 0]), direction_x=[1, 0, 0], direction_y=[0, -1, 1])
+    tilted_sketch = Sketch(tilted_plane)
+    tilted_box = tilted_sketch.draw_box(center, width, height)

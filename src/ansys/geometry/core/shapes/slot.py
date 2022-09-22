@@ -1,6 +1,5 @@
 """``Slot`` class module."""
 import math
-from numbers import Real
 from typing import List, Optional, Union
 
 import numpy as np
@@ -11,6 +10,7 @@ from ansys.geometry.core.misc import Distance, check_type
 from ansys.geometry.core.shapes.arc import Arc
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.shapes.line import Segment
+from ansys.geometry.core.typing import Real
 
 
 class Slot(BaseShape):
@@ -22,9 +22,9 @@ class Slot(BaseShape):
         A :class:`Plane` representing the planar surface where the shape is contained.
     center: Point
         A :class:`Point` representing the center of the slot.
-    width : Union[Quantity, Distance]
+    width : Union[Quantity, Distance, Real]
         The width of the slot main body.
-    height : Union[Quantity, Distance]
+    height : Union[Quantity, Distance, Real]
         The height of the slot.
     """
 
@@ -43,8 +43,8 @@ class Slot(BaseShape):
         if not self.plane.is_point_contained(center):
             raise ValueError("Center must be contained in the plane.")
 
-        check_type(width, (Quantity, Distance, Real))
-        check_type(height, (Quantity, Distance, Real))
+        check_type(width, (Quantity, Distance, int, float))
+        check_type(height, (Quantity, Distance, int, float))
 
         self._width = width if isinstance(width, Distance) else Distance(width, center.unit)
         if self._width.value <= 0:
@@ -56,27 +56,84 @@ class Slot(BaseShape):
             raise ValueError("Height must be a real positive value.")
         height_magnitude = self._height.value.m_as(center.unit)
 
+        global_center = Point(
+            self.plane.global_to_local @ (center - self.plane.origin), center.unit
+        )
+
         slot_body_corner_1 = Point(
-            [center.x.m - width_magnitude / 2, center.y.m + height_magnitude / 2, center.z.m],
+            self.plane.origin
+            + self.plane.local_to_global
+            @ Point(
+                [
+                    global_center.x.m - width_magnitude / 2,
+                    global_center.y.m + height_magnitude / 2,
+                    global_center.z.m,
+                ],
+                center.unit,
+            ),
             center.unit,
         )
         slot_body_corner_2 = Point(
-            [center.x.m + width_magnitude / 2, center.y.m + height_magnitude / 2, center.z.m],
+            self.plane.origin
+            + self.plane.local_to_global
+            @ Point(
+                [
+                    global_center.x.m + width_magnitude / 2,
+                    global_center.y.m + height_magnitude / 2,
+                    global_center.z.m,
+                ],
+                center.unit,
+            ),
             center.unit,
         )
         slot_body_corner_3 = Point(
-            [center.x.m + width_magnitude / 2, center.y.m - height_magnitude / 2, center.z.m],
+            self.plane.origin
+            + self.plane.local_to_global
+            @ Point(
+                [
+                    global_center.x.m + width_magnitude / 2,
+                    global_center.y.m - height_magnitude / 2,
+                    global_center.z.m,
+                ],
+                center.unit,
+            ),
             center.unit,
         )
         slot_body_corner_4 = Point(
-            [center.x.m - width_magnitude / 2, center.y.m - height_magnitude / 2, center.z.m],
+            self.plane.origin
+            + self.plane.local_to_global
+            @ Point(
+                [
+                    global_center.x.m - width_magnitude / 2,
+                    global_center.y.m - height_magnitude / 2,
+                    global_center.z.m,
+                ],
+                center.unit,
+            ),
             center.unit,
         )
-
+        arc_1_center = Point(
+            self.plane.origin
+            + self.plane.local_to_global
+            @ Point(
+                [global_center.x.m + width_magnitude / 2, global_center.y.m, global_center.z.m],
+                center.unit,
+            ),
+            center.unit,
+        )
+        arc_2_center = Point(
+            self.plane.origin
+            + self.plane.local_to_global
+            @ Point(
+                [global_center.x.m - width_magnitude / 2, global_center.y.m, global_center.z.m],
+                center.unit,
+            ),
+            center.unit,
+        )
         self._segment1 = Segment(plane, slot_body_corner_1, slot_body_corner_2)
         self._arc1 = Arc(
             plane,
-            Point([center.x.m + width_magnitude / 2, center.y.m, center.z.m], center.unit),
+            arc_1_center,
             slot_body_corner_3,
             slot_body_corner_2,
             plane.direction_z,
@@ -84,7 +141,7 @@ class Slot(BaseShape):
         self._segment2 = Segment(plane, slot_body_corner_3, slot_body_corner_4)
         self._arc2 = Arc(
             plane,
-            Point([center.x.m - width_magnitude / 2, center.y.m, center.z.m], center.unit),
+            arc_2_center,
             slot_body_corner_1,
             slot_body_corner_4,
             plane.direction_z,

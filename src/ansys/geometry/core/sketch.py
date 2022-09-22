@@ -17,6 +17,7 @@ from ansys.geometry.core.shapes import (
     Segment,
     Slot,
 )
+from ansys.geometry.core.typing import Real
 
 
 class Sketch:
@@ -52,7 +53,10 @@ class Sketch:
             raise ValueError("The provided shape does not belong to the same plane as the Sketch.")
 
     def draw_box(
-        self, center: Point, width: Union[Quantity, Distance], height: Union[Quantity, Distance]
+        self,
+        center: Point,
+        width: Union[Quantity, Distance, Real],
+        height: Union[Quantity, Distance, Real],
     ):
         """Create a box shape on the sketch.
 
@@ -60,16 +64,15 @@ class Sketch:
         ----------
         center: Point
             A :class:`Point` representing the center of the box.
-        width : Union[Quantity, Distance]
+        width : Union[Quantity, Distance, Real]
             The width of the box.
-        height : Union[Quantity, Distance]
+        height : Union[Quantity, Distance, Real]
             The height of the box.
 
         Returns
         -------
         Box
             An object representing the box added to the sketch.
-
         """
         box = Box(self._plane, center, width, height)
         self.append_shape(box)
@@ -78,8 +81,8 @@ class Sketch:
     def draw_slot(
         self,
         center: Point,
-        width: Union[Quantity, Distance],
-        height: Union[Quantity, Distance],
+        width: Union[Quantity, Distance, Real],
+        height: Union[Quantity, Distance, Real],
     ):
         """Create a slot shape on the sketch.
 
@@ -87,16 +90,15 @@ class Sketch:
         ----------
         center: Point
             A :class:`Point` representing the center of the slot.
-        width : Union[Quantity, Distance]
+        width : Union[Quantity, Distance, Real]
             The width of the box.
-        height : Union[Quantity, Distance]
+        height : Union[Quantity, Distance, Real]
             The height of the box.
 
         Returns
         -------
         Slot
             An object representing the slot added to the sketch.
-
         """
         slot = Slot(self._plane, center, width, height)
         self.append_shape(slot)

@@ -8,6 +8,7 @@ from ansys.geometry.core.math import Plane, Point
 from ansys.geometry.core.misc import Distance, check_type
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.shapes.line import Segment
+from ansys.geometry.core.typing import Real
 
 
 class Box(BaseShape):
@@ -19,9 +20,9 @@ class Box(BaseShape):
         A :class:`Plane` representing the planar surface where the shape is contained.
     center: Point
         A :class:`Point` representing the center of the box.
-    width : Union[Quantity, Distance]
+    width : Union[Quantity, Distance, Real]
         The width of the box.
-    height : Union[Quantity, Distance]
+    height : Union[Quantity, Distance, Real]
         The height of the box.
     """
 
@@ -29,8 +30,8 @@ class Box(BaseShape):
         self,
         plane: Plane,
         center: Point,
-        width: Union[Quantity, Distance],
-        height: Union[Quantity, Distance],
+        width: Union[Quantity, Distance, Real],
+        height: Union[Quantity, Distance, Real],
     ):
         """Initializes the box shape."""
         super().__init__(plane, is_closed=True)
@@ -40,8 +41,8 @@ class Box(BaseShape):
         if not self.plane.is_point_contained(center):
             raise ValueError("Center must be contained in the plane.")
 
-        check_type(width, (Quantity, Distance))
-        check_type(height, (Quantity, Distance))
+        check_type(width, (Quantity, Distance, int, float))
+        check_type(height, (Quantity, Distance, int, float))
 
         self._width = width if isinstance(width, Distance) else Distance(width, center.unit)
         if self._width.value <= 0:
@@ -53,20 +54,60 @@ class Box(BaseShape):
             raise ValueError("Height must be a real positive value.")
         height_magnitude = self._height.value.m_as(center.unit)
 
+        global_center = Point(
+            self.plane.global_to_local @ (center - self.plane.origin), center.unit
+        )
+
         corner_1 = Point(
-            [center.x.m - width_magnitude / 2, center.y.m + height_magnitude / 2, center.z.m],
+            self.plane.origin
+            + self.plane.local_to_global
+            @ Point(
+                [
+                    global_center.x.m - width_magnitude / 2,
+                    global_center.y.m + height_magnitude / 2,
+                    global_center.z.m,
+                ],
+                center.unit,
+            ),
             center.unit,
         )
         corner_2 = Point(
-            [center.x.m + width_magnitude / 2, center.y.m + height_magnitude / 2, center.z.m],
+            self.plane.origin
+            + self.plane.local_to_global
+            @ Point(
+                [
+                    global_center.x.m + width_magnitude / 2,
+                    global_center.y.m + height_magnitude / 2,
+                    global_center.z.m,
+                ],
+                center.unit,
+            ),
             center.unit,
         )
         corner_3 = Point(
-            [center.x.m + width_magnitude / 2, center.y.m - height_magnitude / 2, center.z.m],
+            self.plane.origin
+            + self.plane.local_to_global
+            @ Point(
+                [
+                    global_center.x.m + width_magnitude / 2,
+                    global_center.y.m - height_magnitude / 2,
+                    global_center.z.m,
+                ],
+                center.unit,
+            ),
             center.unit,
         )
         corner_4 = Point(
-            [center.x.m - width_magnitude / 2, center.y.m - height_magnitude / 2, center.z.m],
+            self.plane.origin
+            + self.plane.local_to_global
+            @ Point(
+                [
+                    global_center.x.m - width_magnitude / 2,
+                    global_center.y.m - height_magnitude / 2,
+                    global_center.z.m,
+                ],
+                center.unit,
+            ),
             center.unit,
         )
 
