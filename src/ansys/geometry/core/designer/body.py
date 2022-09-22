@@ -65,6 +65,7 @@ class Body:
         self._parent_component = parent_component
         self._grpc_client = grpc_client
         self._is_surface = is_surface
+        self._is_alive = True
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 
@@ -97,6 +98,11 @@ class Body:
             Face(grpc_face.id, SurfaceType(grpc_face.surface_type), self, self._grpc_client)
             for grpc_face in grpc_faces.faces
         ]
+
+    @property
+    def is_alive(self) -> bool:
+        """Boolean indicating whether the body is still alive on the server side."""
+        return self._is_alive
 
     @property
     def volume(self) -> Quantity:
