@@ -7,12 +7,14 @@ from ansys.geometry.core.connection.conversions import (
     arc_to_grpc_arc,
     circle_to_grpc_circle,
     ellipse_to_grpc_ellipse,
+    frame_to_grpc_frame,
+    plane_to_grpc_plane,
     point_to_grpc_point,
     polygon_to_grpc_polygon,
     segment_to_grpc_line,
     unit_vector_to_grpc_direction,
 )
-from ansys.geometry.core.math import Plane, Point, UnitVector
+from ansys.geometry.core.math import Frame, Plane, Point, UnitVector
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.shapes import Arc, Circle, Ellipse, Polygon, Segment
 
@@ -149,3 +151,41 @@ def test_arc_message_conversion():
     assert grpc_arc_message.axis.x == 0
     assert grpc_arc_message.axis.y == 0
     assert grpc_arc_message.axis.z == 1
+
+
+def test_plane_message_conversion():
+    """Test conversion between :class:`Plane` and expected gRPC message type."""
+    plane = Plane(Point([10, 200, 3000], UNITS.mm), UnitVector([1, 1, 0]), UnitVector([1, -1, 0]))
+    grpc_plane_message = plane_to_grpc_plane(plane)
+
+    assert grpc_plane_message.frame.origin.x == 0.01
+    assert grpc_plane_message.frame.origin.y == 0.2
+    assert grpc_plane_message.frame.origin.z == 3.0
+
+    assert grpc_plane_message.frame.dir_x.x == pytest.approx(0.7071067811865475, rel=1e-7, abs=1e-8)
+    assert grpc_plane_message.frame.dir_x.y == pytest.approx(0.7071067811865475, rel=1e-7, abs=1e-8)
+    assert grpc_plane_message.frame.dir_x.z == 0.0
+
+    assert grpc_plane_message.frame.dir_y.x == pytest.approx(0.7071067811865475, rel=1e-7, abs=1e-8)
+    assert grpc_plane_message.frame.dir_y.y == pytest.approx(
+        -0.7071067811865475, rel=1e-7, abs=1e-8
+    )
+    assert grpc_plane_message.frame.dir_y.z == 0.0
+
+
+def test_frame_message_conversion():
+    """Test conversion between :class:`Frame` and expected gRPC message type."""
+    frame = Frame(Point([10, 200, 3000], UNITS.mm), UnitVector([1, 1, 0]), UnitVector([1, -1, 0]))
+    grpc_frame_message = frame_to_grpc_frame(frame)
+
+    assert grpc_frame_message.origin.x == 0.01
+    assert grpc_frame_message.origin.y == 0.2
+    assert grpc_frame_message.origin.z == 3.0
+
+    assert grpc_frame_message.dir_x.x == pytest.approx(0.7071067811865475, rel=1e-7, abs=1e-8)
+    assert grpc_frame_message.dir_x.y == pytest.approx(0.7071067811865475, rel=1e-7, abs=1e-8)
+    assert grpc_frame_message.dir_x.z == 0.0
+
+    assert grpc_frame_message.dir_y.x == pytest.approx(0.7071067811865475, rel=1e-7, abs=1e-8)
+    assert grpc_frame_message.dir_y.y == pytest.approx(-0.7071067811865475, rel=1e-7, abs=1e-8)
+    assert grpc_frame_message.dir_y.z == 0.0

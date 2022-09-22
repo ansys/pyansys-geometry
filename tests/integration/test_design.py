@@ -7,7 +7,7 @@ import pytest
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.designer import CurveType, SurfaceType
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
-from ansys.geometry.core.math import Point
+from ansys.geometry.core.math import Frame, Point, UnitVector
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 
@@ -87,6 +87,17 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
     #       Use download approach when available.
     #
     # design.save(r"C:\temp\shared_volume\MyFile2.scdocx")
+
+
+def test_modeler(modeler: Modeler):
+    """Test the ``Modeler`` methods."""
+
+    # Get the modeler's string representation and check it
+    repr = str(modeler)
+    assert "Ansys Geometry Modeler (" in repr
+
+    design = modeler.create_design("MyNewDesign")
+    assert design is not None
 
 
 def test_component_body(modeler: Modeler):
@@ -234,6 +245,71 @@ def test_faces_edges(modeler: Modeler):
     assert all(edge.curve_type == CurveType.CURVETYPE_UNKNOWN for edge in edges)
     assert all(edge.length > 0.0 for edge in edges)
     assert abs(edges[0].length.to_base_units().m - polygon.length.to_base_units().m) <= 1e-15
+
+
+def test_coordinate_system_creation(modeler: Modeler):
+    """Test for verifying the correct creation of ``CoordinateSystem``."""
+
+    # Create your design on the server side
+    design = modeler.create_design("CoordinateSystem_Test")
+
+    # Build independent component
+    nested_comp = design.add_component("NestedComponent")
+
+    frame1 = Frame(Point([10, 200, 3000], UNITS.mm), UnitVector([1, 1, 0]), UnitVector([1, -1, 0]))
+    frame2 = Frame(Point([40, 80, 120], UNITS.mm), UnitVector([0, -1, 1]), UnitVector([0, 1, 1]))
+
+    # Create the CoordinateSystem
+    design.create_coordinate_system("DesignCS1", frame1)
+    nested_comp.create_coordinate_system("CompCS1", frame1)
+    nested_comp.create_coordinate_system("CompCS2", frame2)
+
+    # Check that the named selections are available
+    assert len(design.coordinate_systems) == 1
+    assert all(entry.id is not None for entry in design.coordinate_systems)
+    design_cs = design.coordinate_systems[0]
+    assert design_cs.name == "DesignCS1"
+    assert design_cs.frame.origin == frame1.origin
+    for dir, dir_ref in zip(
+        [design_cs.frame.direction_x, design_cs.frame.direction_y, design_cs.frame.direction_z],
+        [frame1.direction_x, frame1.direction_y, frame1.direction_z],
+    ):
+        assert dir.x == pytest.approx(dir_ref.x, rel=1e-8, abs=1e-14)
+        assert dir.y == pytest.approx(dir_ref.y, rel=1e-8, abs=1e-14)
+        assert dir.z == pytest.approx(dir_ref.z, rel=1e-8, abs=1e-14)
+    assert design_cs.parent_component.id == design.id
+
+    assert len(nested_comp.coordinate_systems) == 2
+    assert all(entry.id is not None for entry in nested_comp.coordinate_systems)
+    nested_comp_cs1 = nested_comp.coordinate_systems[0]
+    nested_comp_cs2 = nested_comp.coordinate_systems[1]
+    assert nested_comp_cs1.name == "CompCS1"
+    for dir, dir_ref in zip(
+        [
+            nested_comp_cs1.frame.direction_x,
+            nested_comp_cs1.frame.direction_y,
+            nested_comp_cs1.frame.direction_z,
+        ],
+        [frame1.direction_x, frame1.direction_y, frame1.direction_z],
+    ):
+        assert dir.x == pytest.approx(dir_ref.x, rel=1e-8, abs=1e-14)
+        assert dir.y == pytest.approx(dir_ref.y, rel=1e-8, abs=1e-14)
+        assert dir.z == pytest.approx(dir_ref.z, rel=1e-8, abs=1e-14)
+    assert nested_comp_cs1.parent_component.id == nested_comp.id
+
+    assert nested_comp_cs2.name == "CompCS2"
+    for dir, dir_ref in zip(
+        [
+            nested_comp_cs2.frame.direction_x,
+            nested_comp_cs2.frame.direction_y,
+            nested_comp_cs2.frame.direction_z,
+        ],
+        [frame2.direction_x, frame2.direction_y, frame2.direction_z],
+    ):
+        assert dir.x == pytest.approx(dir_ref.x, rel=1e-8, abs=1e-14)
+        assert dir.y == pytest.approx(dir_ref.y, rel=1e-8, abs=1e-14)
+        assert dir.z == pytest.approx(dir_ref.z, rel=1e-8, abs=1e-14)
+    assert nested_comp_cs2.parent_component.id == nested_comp.id
 
 
 def test_delete_body_component(modeler: Modeler):
