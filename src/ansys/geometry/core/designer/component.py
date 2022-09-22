@@ -206,16 +206,16 @@ class Component:
         check_type(component, (Component, str))
 
         id = component.id if not isinstance(component, str) else component
-        component = self.search_component(id)
+        component_requested = self.search_component(id)
 
-        if component:
+        if component_requested:
             # If the component belongs to this component (or nested components)
             # call the server deletion mechanism
-            self._component_stub.Delete(ComponentIdentifier(id=id))
+            self._component_stub.DeleteComponent(ComponentIdentifier(id=id))
 
             # If the component was deleted from the server side... "kill" it
             # on the client side
-            self._kill_component_on_client()
+            component_requested._kill_component_on_client()
         else:
             # TODO: throw warning informing that the requested component does not exist
             pass
@@ -236,16 +236,16 @@ class Component:
         check_type(body, (Body, str))
 
         id = body.id if not isinstance(body, str) else body
-        body = self.search_body(id)
+        body_requested = self.search_body(id)
 
-        if body:
+        if body_requested:
             # If the body belongs to this component (or nested components)
             # call the server deletion mechanism
             self._bodies_stub.Delete(BodyIdentifier(id=id))
 
             # If the body was deleted from the server side... "kill" it
             # on the client side
-            body._is_alive = False
+            body_requested._is_alive = False
         else:
             # TODO: throw warning informing that the requested body does not exist
             pass
