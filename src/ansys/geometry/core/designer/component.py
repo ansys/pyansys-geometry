@@ -15,7 +15,7 @@ from ansys.geometry.core.connection import (
     sketch_shapes_to_grpc_geometries,
 )
 from ansys.geometry.core.designer.body import Body
-from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
+from ansys.geometry.core.designer.coordinatesystem import CoordinateSystem
 from ansys.geometry.core.math import Frame
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH, check_pint_unit_compatibility, check_type
 from ansys.geometry.core.sketch import Sketch
