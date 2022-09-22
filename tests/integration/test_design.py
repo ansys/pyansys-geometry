@@ -253,8 +253,7 @@ def test_coordinate_system_creation(modeler: Modeler):
     """Test for verifying the correct creation of ``CoordinateSystem``."""
 
     # Create your design on the server side
-    design_name = "CoordinateSystem_Test"
-    design = modeler.create_design(design_name)
+    design = modeler.create_design("CoordinateSystem_Test")
 
     # Build independent component
     nested_comp = design.add_component("NestedComponent")
