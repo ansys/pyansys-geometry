@@ -297,8 +297,14 @@ class Segment(Line):
         List[Point]
             A list of points representing the shape.
         """
-        delta_segm = (self.end - self.start) / (num_points - 1)
-        return [Point(self.start + delta * delta_segm) for delta in range(0, num_points)]
+        start = Point(
+            self.plane.global_to_local @ (self.start - self.plane.origin), self.start.unit
+        )
+
+        end = Point(self.plane.global_to_local @ (self.end - self.plane.origin), self.end.unit)
+
+        delta_segm = (end - start) / (num_points - 1)
+        return [Point(start + delta * delta_segm) for delta in range(0, num_points)]
 
     def points(self, num_points: Optional[int] = 100) -> List[Point]:
         """Returns a list containing all the points belonging to the shape.

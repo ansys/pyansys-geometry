@@ -5,7 +5,7 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math import Plane, Point
+from ansys.geometry.core.math import Plane, Point, UnitVector
 from ansys.geometry.core.misc import Distance, check_type
 from ansys.geometry.core.shapes.arc import Arc
 from ansys.geometry.core.shapes.base import BaseShape
@@ -130,22 +130,22 @@ class Slot(BaseShape):
             ),
             center.unit,
         )
-        self._segment1 = Segment(plane, slot_body_corner_1, slot_body_corner_2)
         self._arc1 = Arc(
             plane,
             arc_1_center,
-            slot_body_corner_3,
             slot_body_corner_2,
+            slot_body_corner_3,
             plane.direction_z,
         )
-        self._segment2 = Segment(plane, slot_body_corner_3, slot_body_corner_4)
         self._arc2 = Arc(
             plane,
             arc_2_center,
-            slot_body_corner_1,
             slot_body_corner_4,
-            plane.direction_z,
+            slot_body_corner_1,
+            UnitVector([-plane.direction_z.x, -plane.direction_z.y, -plane.direction_z.z]),
         )
+        self._segment1 = Segment(plane, slot_body_corner_1, slot_body_corner_2)
+        self._segment2 = Segment(plane, slot_body_corner_3, slot_body_corner_4)
 
     @property
     def center(self) -> Point:
@@ -247,7 +247,7 @@ class Slot(BaseShape):
         arc_2_points.pop()
         points = []
         points.extend(segment_1_points)
-        points.extend(segment_2_points)
         points.extend(arc_1_points)
+        points.extend(segment_2_points)
         points.extend(arc_2_points)
         return points
