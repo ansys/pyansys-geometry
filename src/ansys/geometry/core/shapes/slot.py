@@ -1,4 +1,5 @@
 """``Slot`` class module."""
+import math
 from numbers import Real
 from typing import List, Optional, Union
 
@@ -13,7 +14,7 @@ from ansys.geometry.core.shapes.line import Segment
 
 
 class Slot(BaseShape):
-    """A class for modeling 2D slot shaped.
+    """A class for modeling 2D slot shape.
 
     Parameters
     ----------
@@ -56,38 +57,26 @@ class Slot(BaseShape):
         height_magnitude = self._height.value.m_as(center.unit)
 
         slot_body_corner_1 = Point(
-            [
-                center.x.m - width_magnitude / 2,
-                center.y.m + height_magnitude / 2,
-            ],
+            [center.x.m - width_magnitude / 2, center.y.m + height_magnitude / 2, center.z.m],
             center.unit,
         )
         slot_body_corner_2 = Point(
-            [
-                center.x.m + width_magnitude / 2,
-                center.y.m + height_magnitude / 2,
-            ],
+            [center.x.m + width_magnitude / 2, center.y.m + height_magnitude / 2, center.z.m],
             center.unit,
         )
         slot_body_corner_3 = Point(
-            [
-                center.x.m + width_magnitude / 2,
-                center.y.m - height_magnitude / 2,
-            ],
+            [center.x.m + width_magnitude / 2, center.y.m - height_magnitude / 2, center.z.m],
             center.unit,
         )
         slot_body_corner_4 = Point(
-            [
-                center.x.m - width_magnitude / 2,
-                center.y.m - height_magnitude / 2,
-            ],
+            [center.x.m - width_magnitude / 2, center.y.m - height_magnitude / 2, center.z.m],
             center.unit,
         )
 
         self._segment1 = Segment(plane, slot_body_corner_1, slot_body_corner_2)
         self._arc1 = Arc(
             plane,
-            Point([center.x.m + width_magnitude / 2, center.y.m], center.unit),
+            Point([center.x.m + width_magnitude / 2, center.y.m, center.z.m], center.unit),
             slot_body_corner_3,
             slot_body_corner_2,
             plane.direction_z,
@@ -95,7 +84,7 @@ class Slot(BaseShape):
         self._segment2 = Segment(plane, slot_body_corner_3, slot_body_corner_4)
         self._arc2 = Arc(
             plane,
-            Point([center.x.m - width_magnitude / 2, center.y.m], center.unit),
+            Point([center.x.m - width_magnitude / 2, center.y.m, center.z.m], center.unit),
             slot_body_corner_1,
             slot_body_corner_4,
             plane.direction_z,
@@ -143,7 +132,7 @@ class Slot(BaseShape):
         Quantity
             The perimeter of the slot.
         """
-        return 2 * np.pi * (self._height / 2) + 2 * self._width
+        return 2 * np.pi * (self._height.value / 2) + 2 * self._width.value
 
     @property
     def area(self) -> Quantity:
@@ -154,7 +143,7 @@ class Slot(BaseShape):
         Quantity
             The area of the slot.
         """
-        return np.pi * (self._height / 2) ** 2 + self._width * self._height
+        return np.pi * (self._height.value / 2) ** 2 + self._width.value * self._height.value
 
     @property
     def components(self) -> List["BaseShape"]:
@@ -175,16 +164,33 @@ class Slot(BaseShape):
         Parameters
         ----------
         num_points : int
-            Desired number of points belonging to the shape.
+            Desired number of points belonging to the shape. Minimum of 8 required.
 
         Returns
         -------
         List[Point]
             A list of points representing the shape.
         """
+        if num_points < 10:
+            num_points = 10
+
+        points_per_segment = math.floor(self._width.value.m / self.perimeter.m * num_points)
+        points_per_arc = math.floor((num_points - 2 * points_per_segment) / 2)
+
+        # Utilize component point creation but pop to avoid endpoint duplication
+        segment_1_points = self._segment1.local_points(points_per_segment + 1)
+        segment_1_points.pop()
+        segment_2_points = self._segment2.local_points(points_per_segment + 1)
+        segment_2_points.pop()
+        arc_1_points = self._arc1.local_points(points_per_arc + 1)
+        arc_1_points.pop()
+        arc_2_points = self._arc2.local_points(
+            num_points - 2 * points_per_segment - points_per_arc + 1
+        )
+        arc_2_points.pop()
         points = []
-        points.extend(self._segment1.local_points(np.floor(num_points / 4)))
-        points.extend(self._arc1.local_points(np.floor(num_points / 4)))
-        points.extend(self._segment2.local_points(np.floor(num_points / 4)))
-        points.extend(self._arc2.local_points(np.floor(num_points / 4)))
+        points.extend(segment_1_points)
+        points.extend(segment_2_points)
+        points.extend(arc_1_points)
+        points.extend(arc_2_points)
         return points

@@ -5,7 +5,7 @@ import pytest
 from ansys.geometry.core.math import ZERO_VECTOR3D, Plane, Point, QuantityVector, UnitVector, Vector
 from ansys.geometry.core.math.constants import UNIT_VECTOR_X, UNIT_VECTOR_Y, UNIT_VECTOR_Z
 from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
-from ansys.geometry.core.shapes import Circle, Ellipse, Line, Segment
+from ansys.geometry.core.shapes import Arc, Circle, Ellipse, Line, Segment
 from ansys.geometry.core.shapes.polygon import Polygon
 from ansys.geometry.core.sketch import Sketch
 
@@ -491,24 +491,44 @@ def test_create_slot():
     slot = sketch.draw_slot(origin, width, height)
 
     # Check attributes are expected ones
-    assert slot.area == 10
+    area = slot.area
+    assert area.m == pytest.approx(11.141592653589793, rel=1e-7, abs=1e-8)
+    assert area.units == UNITS.m * UNITS.m
+    perimeter = slot.perimeter
+    assert perimeter.m == pytest.approx(14.283185307179586, rel=1e-7, abs=1e-8)
+    assert perimeter.units == UNITS.m
 
     # Check local points are expected ones
-    local_points = slot.local_points(num_points=5)
-    assert abs(all(local_points[0] - Point([3, 1, 0]))) <= DOUBLE_EPS
-    assert abs(all(local_points[1] - Point([2.8477, 1.7653, 0]))) <= DOUBLE_EPS
-    assert abs(all(local_points[4] - Point([1, 3, 0]))) <= DOUBLE_EPS
+    local_points = slot.local_points(num_points=10)
+    assert abs(all(local_points[0] - Point([-1, 2, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[1] - Point([1, 2, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[2] - Point([3.0, 0.0, 0.0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[3] - Point([1.0, 0.0, 0.0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[4] - Point([3.0, 2.0, 0.0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[5] - Point([2.1339746, 1.5, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[6] - Point([2.1339746, 0.5, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[7] - Point([-1.0, 2.0, 0.0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[8] - Point([-1.8660254, 1.5, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[9] - Point([-1.8660254, 0.5, 0]))) <= DOUBLE_EPS
 
     # Check global points are expected ones
-    global_points = slot.points(num_points=5)
-    assert abs(all(global_points[0] - Point([3, 1, 0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[1] - Point([2.8477, 1.7653, 0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[4] - Point([1, 3, 0]))) <= DOUBLE_EPS
+    global_points = slot.points(num_points=10)
+    assert abs(all(global_points[0] - Point([-1, 2, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[1] - Point([1, 2, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[2] - Point([3.0, 0.0, 0.0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[3] - Point([1.0, 0.0, 0.0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[4] - Point([3.0, 2.0, 0.0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[5] - Point([2.1339746, 1.5, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[6] - Point([2.1339746, 0.5, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[7] - Point([-1.0, 2.0, 0.0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[8] - Point([-1.8660254, 1.5, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[9] - Point([-1.8660254, 0.5, 0]))) <= DOUBLE_EPS
 
     assert len(slot.components) == 4
     assert isinstance(slot.components[0], Segment)
-    assert isinstance(slot.components[0], Segment)
-    assert isinstance(slot.components[0], Segment)
+    assert isinstance(slot.components[1], Arc)
+    assert isinstance(slot.components[2], Segment)
+    assert isinstance(slot.components[3], Arc)
 
 
 def test_create_box():
@@ -524,20 +544,26 @@ def test_create_box():
     box = sketch.draw_box(origin, width, height)
 
     # Check attributes are expected ones
-    assert box.area == 8
-    assert box.perimeter == 12
+    area = box.area
+    assert area.m == 8
+    assert area.units == UNITS.m * UNITS.m
+    perimeter = box.perimeter
+    assert perimeter.m == 12
+    assert perimeter.units == UNITS.m
 
     # Check local points are expected ones
-    local_points = box.local_points(num_points=5)
-    assert abs(all(local_points[0] - Point([3, 1, 0]))) <= DOUBLE_EPS
-    assert abs(all(local_points[1] - Point([2.8477, 1.7653, 0]))) <= DOUBLE_EPS
-    assert abs(all(local_points[4] - Point([1, 3, 0]))) <= DOUBLE_EPS
+    local_points = box.local_points(num_points=4)
+    assert abs(all(local_points[0] - Point([-1, 2, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[1] - Point([3, 2, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[2] - Point([3, 0, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[3] - Point([-1, 0, 0]))) <= DOUBLE_EPS
 
     # Check global points are expected ones
-    global_points = box.points(num_points=5)
-    assert abs(all(global_points[0] - Point([3, 1, 0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[1] - Point([2.8477, 1.7653, 0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[4] - Point([1, 3, 0]))) <= DOUBLE_EPS
+    global_points = box.points(num_points=4)
+    assert abs(all(global_points[0] - Point([-1, 2, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[1] - Point([3, 2, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[2] - Point([3, 0, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[3] - Point([-1, 0, 0]))) <= DOUBLE_EPS
 
     assert len(box.components) == 4
     assert isinstance(box.components[0], Segment)

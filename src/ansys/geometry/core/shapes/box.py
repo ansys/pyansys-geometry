@@ -1,7 +1,7 @@
 """``Box`` class module."""
+import math
 from typing import List, Optional, Union
 
-import numpy as np
 from pint import Quantity
 
 from ansys.geometry.core.math import Plane, Point
@@ -43,31 +43,37 @@ class Box(BaseShape):
         check_type(width, (Quantity, Distance))
         check_type(height, (Quantity, Distance))
 
-        self._width = (
-            width.value.m_as(center.unit)
-            if isinstance(width, Distance)
-            else Distance(width).value.m_as(center.unit)
-        )
+        self._width = width if isinstance(width, Distance) else Distance(width, center.unit)
         if self._width.value <= 0:
             raise ValueError("Width must be a real positive value.")
+        width_magnitude = self._width.value.m_as(center.unit)
 
-        self._height = (
-            height.value.m_as(center.unit)
-            if isinstance(height, Distance)
-            else Distance(height).value.m_as(center.unit)
-        )
+        self._height = height if isinstance(height, Distance) else Distance(height, center.unit)
         if self._height.value <= 0:
             raise ValueError("Height must be a real positive value.")
+        height_magnitude = self._height.value.m_as(center.unit)
 
-        corner_1 = Point([center.x - self._width / 2, center.y + self._height / 2], center.unit)
-        corner_2 = Point([center.x + self._width / 2, center.y + self._height / 2], center.unit)
-        corner_3 = Point([center.x + self._width / 2, center.y - self._height / 2], center.unit)
-        corner_4 = Point([center.x - self._width / 2, center.y - self._height / 2], center.unit)
+        corner_1 = Point(
+            [center.x.m - width_magnitude / 2, center.y.m + height_magnitude / 2, center.z.m],
+            center.unit,
+        )
+        corner_2 = Point(
+            [center.x.m + width_magnitude / 2, center.y.m + height_magnitude / 2, center.z.m],
+            center.unit,
+        )
+        corner_3 = Point(
+            [center.x.m + width_magnitude / 2, center.y.m - height_magnitude / 2, center.z.m],
+            center.unit,
+        )
+        corner_4 = Point(
+            [center.x.m - width_magnitude / 2, center.y.m - height_magnitude / 2, center.z.m],
+            center.unit,
+        )
 
-        self._segment1 = Segment(plane, corner_1, corner_2)
-        self._segment2 = Segment(plane, corner_2, corner_3)
-        self._segment3 = Segment(plane, corner_3, corner_4)
-        self._segment4 = Segment(plane, corner_4, corner_1)
+        self._width_segment1 = Segment(plane, corner_1, corner_2)
+        self._height_segment1 = Segment(plane, corner_2, corner_3)
+        self._width_segment2 = Segment(plane, corner_3, corner_4)
+        self._height_segment2 = Segment(plane, corner_4, corner_1)
 
     @property
     def center(self) -> Point:
@@ -111,7 +117,7 @@ class Box(BaseShape):
         Quantity
             The perimeter of the box.
         """
-        return 2 * self._width + 2 * self._height
+        return 2 * self.width + 2 * self.height
 
     @property
     def area(self) -> Quantity:
@@ -122,7 +128,7 @@ class Box(BaseShape):
         Quantity
             The area of the box.
         """
-        return self._width * self._height
+        return self.width * self.height
 
     @property
     def components(self) -> List["BaseShape"]:
@@ -133,7 +139,12 @@ class Box(BaseShape):
         List[BaseShape]
             A list of component geometries forming the shape.
         """
-        return [self._segment1, self._segment2, self._segment3, self._segment4]
+        return [
+            self._width_segment1,
+            self._height_segment1,
+            self._width_segment2,
+            self._height_segment2,
+        ]
 
     def local_points(self, num_points: Optional[int] = 100) -> List[Point]:
         """Returns a list containing all the points belonging to the shape.
@@ -151,8 +162,26 @@ class Box(BaseShape):
             A list of points representing the shape.
         """
         points = []
-        points.extend(self._segment1.local_points(np.floor(num_points / 4)))
-        points.extend(self._segment2.local_points(np.floor(num_points / 4)))
-        points.extend(self._segment3.local_points(np.floor(num_points / 4)))
-        points.extend(self._segment4.local_points(np.floor(num_points / 4)))
+
+        if num_points < 4:
+            num_points = 4
+
+        points_per_width_segment = math.floor(self._width.value.m / self.perimeter.m * num_points)
+        points_per_height_segment = math.floor((num_points - points_per_width_segment * 2) / 2)
+
+        # Utilize component point creation but pop to avoid endpoint duplication
+        segment_1_points = self._width_segment1.local_points(points_per_width_segment + 1)
+        segment_1_points.pop()
+        segment_2_points = self._height_segment1.local_points(points_per_height_segment + 1)
+        segment_2_points.pop()
+        segment_3_points = self._width_segment2.local_points(points_per_width_segment + 1)
+        segment_3_points.pop()
+        segment_4_points = self._height_segment2.local_points(
+            num_points - 2 * points_per_width_segment - points_per_height_segment + 1
+        )
+        segment_4_points.pop()
+        points.extend(segment_1_points)
+        points.extend(segment_2_points)
+        points.extend(segment_3_points)
+        points.extend(segment_4_points)
         return points
