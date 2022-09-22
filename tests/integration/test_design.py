@@ -91,13 +91,14 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
 
 def test_modeler(modeler: Modeler):
     """Test the ``Modeler`` methods."""
-    
+
     # Get the modeler's string representation and check it
     repr = str(modeler)
     assert "Ansys Geometry Modeler (" in repr
-    
+
     design = modeler.create_design("MyNewDesign")
     assert design is not None
+
 
 def test_component_body(modeler: Modeler):
     """Test the different ``Component`` and ``Body`` creation methods."""

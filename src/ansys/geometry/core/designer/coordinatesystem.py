@@ -33,7 +33,9 @@ class CoordinateSystem:
         An active supporting geometry service instance for design modeling.
     """
 
-    def __init__(self, name: str, frame: Frame, parent_component: "Component", grpc_client: GrpcClient):
+    def __init__(
+        self, name: str, frame: Frame, parent_component: "Component", grpc_client: GrpcClient
+    ):
         """Constructor method for ``CoordinateSystem``."""
 
         self._parent_component = parent_component
@@ -88,7 +90,7 @@ class CoordinateSystem:
     def frame(self) -> Frame:
         """Frame of the coordinate system."""
         return self._frame
-    
+
     @property
     def parent_component(self) -> "Component":
         """Parent component of the coordinate system."""
