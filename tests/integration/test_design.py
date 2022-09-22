@@ -312,3 +312,57 @@ def test_coordinate_system_creation(modeler: Modeler):
         assert dir.y == pytest.approx(dir_ref.y, rel=1e-8, abs=1e-14)
         assert dir.z == pytest.approx(dir_ref.z, rel=1e-8, abs=1e-14)
     assert nested_comp_cs2.parent_component.id == nested_comp.id
+
+
+def test_single_body_translation(modeler: Modeler):
+    """Test for verifying the correct translation of a ``Body``."""
+
+    # Create your design on the server side
+    design = modeler.create_design("SingleBodyTranslation_Test")
+
+    # Create 2 Sketch objects and draw a circle and a polygon (all client side)
+    sketch_1 = Sketch()
+    sketch_1.draw_circle(Point([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm))
+    sketch_2 = Sketch()
+    sketch_2.draw_polygon(Point([-30, -30, 0], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+
+    # Build 2 independent components and bodies
+    circle_comp = design.add_component("CircleComponent")
+    body_circle_comp = circle_comp.extrude_sketch("Circle", sketch_1, Quantity(50, UNITS.mm))
+    polygon_comp = design.add_component("PolygonComponent")
+    body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch_2, Quantity(30, UNITS.mm))
+
+    body_circle_comp.translate(UnitVector([1, -1, 1]), Quantity(48, UNITS.mm))
+    body_polygon_comp.translate(UnitVector([-1, 1, -1]), Quantity(88, UNITS.mm))
+
+    # TODO Find a way to validate the translation
+    # * Likely requires synchronization with the server for bounds
+
+
+def test_bodies_translation(modeler: Modeler):
+    """Test for verifying the correct translation of many ``Body``."""
+
+    # Create your design on the server side
+    design = modeler.create_design("MultipleBodyTranslation_Test")
+
+    # Create 2 Sketch objects and draw a circle and a polygon (all client side)
+    sketch_1 = Sketch()
+    sketch_1.draw_circle(Point([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm))
+    sketch_2 = Sketch()
+    sketch_2.draw_polygon(Point([-30, -30, 0], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+
+    # Build 2 independent components and bodies
+    circle_comp = design.add_component("CircleComponent")
+    body_circle_comp = circle_comp.extrude_sketch("Circle", sketch_1, Quantity(50, UNITS.mm))
+    polygon_comp = design.add_component("PolygonComponent")
+    body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch_2, Quantity(30, UNITS.mm))
+
+    design.translate_bodies(
+        [body_circle_comp, body_polygon_comp], UnitVector([1, 0, 0]), Quantity(48, UNITS.mm)
+    )
+    design.translate_bodies(
+        [body_circle_comp, body_polygon_comp], UnitVector([0, -1, 1]), Quantity(88, UNITS.mm)
+    )
+
+    # TODO Find a way to validate the translation
+    # * Likely requires synchronization with the server for bounds

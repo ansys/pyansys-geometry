@@ -1,6 +1,6 @@
 """``Body`` class module."""
 
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Union
 
 from ansys.api.geometry.v0.bodies_pb2 import (
     BodyIdentifier,
@@ -24,6 +24,7 @@ from ansys.geometry.core.math import UnitVector
 from ansys.geometry.core.misc import (
     SERVER_UNIT_LENGTH,
     SERVER_UNIT_VOLUME,
+    Distance,
     check_pint_unit_compatibility,
     check_type,
 )
@@ -225,14 +226,37 @@ class Body:
 
         return projected_faces
 
-    def translate(self, direction: UnitVector, distance: Quantity):
+    def translate(self, direction: UnitVector, distance: Union[Quantity, Distance]) -> None:
+        """Translates the geometry body in the direction specified by the given distance.
+
+        Parameters
+        ----------
+        direction: UnitVector
+            The direction of the translation.
+        distance: Union[Quantity, Distance]
+            The magnitude of the translation.
+
+        Returns
+        -------
+        None
+        """
         check_type(direction, UnitVector)
-        check_type(distance, Quantity)
+        check_type(distance, (Quantity, Distance))
         check_pint_unit_compatibility(distance, SERVER_UNIT_LENGTH)
-        self._bodies_stub.Translate(
-            TranslateRequest(
-                id=self._id,
-                direction=unit_vector_to_grpc_direction(direction),
-                distance=distance.m_as(SERVER_UNIT_LENGTH),
-            )
+
+        magnitude = (
+            distance.m_as(SERVER_UNIT_LENGTH)
+            if not isinstance(distance, Distance)
+            else distance.value.m_as(SERVER_UNIT_LENGTH)
         )
+
+        # TODO Wait for proto update so bodies is repeated string
+        translation_request = TranslateRequest(
+            direction=unit_vector_to_grpc_direction(direction),
+            distance=magnitude,
+        )
+
+        translation_request.bodies.append(self.id)
+        self._bodies_stub.Translate(translation_request)
+
+        # TODO Consider what needs to be invalidated client-side after server-side modifications.

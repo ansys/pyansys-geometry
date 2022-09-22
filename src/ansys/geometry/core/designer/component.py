@@ -3,7 +3,11 @@
 
 from typing import List, Union
 
-from ansys.api.geometry.v0.bodies_pb2 import CreateExtrudedBodyRequest, CreatePlanarBodyRequest
+from ansys.api.geometry.v0.bodies_pb2 import (
+    CreateExtrudedBodyRequest,
+    CreatePlanarBodyRequest,
+    TranslateRequest,
+)
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.components_pb2 import CreateComponentRequest
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
@@ -13,11 +17,17 @@ from ansys.geometry.core.connection import (
     GrpcClient,
     plane_to_grpc_plane,
     sketch_shapes_to_grpc_geometries,
+    unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.coordinatesystem import CoordinateSystem
-from ansys.geometry.core.math import Frame
-from ansys.geometry.core.misc import SERVER_UNIT_LENGTH, check_pint_unit_compatibility, check_type
+from ansys.geometry.core.math import Frame, UnitVector
+from ansys.geometry.core.misc import (
+    SERVER_UNIT_LENGTH,
+    Distance,
+    check_pint_unit_compatibility,
+    check_type,
+)
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -207,3 +217,43 @@ class Component:
 
         self._coordinate_systems.append(CoordinateSystem(name, frame, self, self._grpc_client))
         return self._coordinate_systems[-1]
+
+    def translate_bodies(
+        self, bodies: List[Body], direction: UnitVector, distance: Union[Quantity, Distance]
+    ) -> None:
+        """Translates the geometry bodies in the direction specified by the given distance.
+
+        Parameters
+        ----------
+        bodies: List[Body]
+            A list of bodies to translate by the same distance.
+        direction: UnitVector
+            The direction of the translation.
+        distance: Union[Quantity, Distance]
+            The magnitude of the translation.
+
+        Returns
+        -------
+        None
+        """
+        check_type(direction, UnitVector)
+        check_type(distance, (Quantity, Distance))
+        check_pint_unit_compatibility(distance, SERVER_UNIT_LENGTH)
+
+        magnitude = (
+            distance.m_as(SERVER_UNIT_LENGTH)
+            if not isinstance(distance, Distance)
+            else distance.value.m_as(SERVER_UNIT_LENGTH)
+        )
+
+        # TODO Wait for proto update so bodies is repeated string
+        translation_request = TranslateRequest(
+            direction=unit_vector_to_grpc_direction(direction),
+            distance=magnitude,
+        )
+
+        for body in bodies:
+            translation_request.bodies.append(body.id)
+        self._bodies_stub.Translate(translation_request)
+
+        # TODO Consider what needs to be invalidated client-side after server-side modifications.
