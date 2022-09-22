@@ -27,22 +27,22 @@ class CoordinateSystem:
         A user-defined label for the coordinate system.
     frame : Frame
         The frame defining the coordinate system bounds.
-    component : Component
+    parent_component : Component
         The parent component the coordinate system is assigned against.
     grpc_client : GrpcClient
         An active supporting geometry service instance for design modeling.
     """
 
-    def __init__(self, name: str, frame: Frame, component: "Component", grpc_client: GrpcClient):
+    def __init__(self, name: str, frame: Frame, parent_component: "Component", grpc_client: GrpcClient):
         """Constructor method for ``CoordinateSystem``."""
 
-        self._component = component
+        self._parent_component = parent_component
         self._grpc_client = grpc_client
         self._coordinate_systems_stub = CoordinateSystemsStub(grpc_client.channel)
 
         new_coordinate_system = self._coordinate_systems_stub.CreateCoordinateSystem(
             CreateCoordinateSystemRequest(
-                parent=component.id,
+                parent=parent_component.id,
                 coordinate_system=cs(display_name=name, frame=frame_to_grpc_frame(frame)),
             )
         )
@@ -52,24 +52,24 @@ class CoordinateSystem:
         self._frame = Frame(
             Point(
                 [
-                    new_coordinate_system.origin.x,
-                    new_coordinate_system.origin.y,
-                    new_coordinate_system.origin.z,
+                    new_coordinate_system.frame.origin.x,
+                    new_coordinate_system.frame.origin.y,
+                    new_coordinate_system.frame.origin.z,
                 ],
                 SERVER_UNIT_LENGTH,
             ),
             UnitVector(
                 [
-                    new_coordinate_system.dir_x.x,
-                    new_coordinate_system.dir_x.y,
-                    new_coordinate_system.dir_x.z,
+                    new_coordinate_system.frame.dir_x.x,
+                    new_coordinate_system.frame.dir_x.y,
+                    new_coordinate_system.frame.dir_x.z,
                 ]
             ),
             UnitVector(
                 [
-                    new_coordinate_system.dir_y.x,
-                    new_coordinate_system.dir_y.y,
-                    new_coordinate_system.dir_y.z,
+                    new_coordinate_system.frame.dir_y.x,
+                    new_coordinate_system.frame.dir_y.y,
+                    new_coordinate_system.frame.dir_y.z,
                 ]
             ),
         )
@@ -88,3 +88,8 @@ class CoordinateSystem:
     def frame(self) -> Frame:
         """Frame of the coordinate system."""
         return self._frame
+    
+    @property
+    def parent_component(self) -> "Component":
+        """Parent component of the coordinate system."""
+        return self._parent_component
