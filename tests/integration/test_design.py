@@ -161,8 +161,7 @@ def test_named_selections(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection``."""
 
     # Create your design on the server side
-    design_name = "NamedSelection_Test"
-    design = modeler.create_design(design_name)
+    design = modeler.create_design("NamedSelection_Test")
 
     # Create 2 Sketch objects and draw a circle and a polygon (all client side)
     sketch_1 = Sketch()
@@ -209,10 +208,9 @@ def test_faces_edges(modeler: Modeler):
     usage of ``Face`` and ``Edge`` objects."""
 
     # Create your design on the server side
-    design_name = "FacesEdges_Test"
-    design = modeler.create_design(design_name)
+    design = modeler.create_design("FacesEdges_Test")
 
-    # Create a Sketch object and draw apolygon (all client side)
+    # Create a Sketch object and draw a polygon (all client side)
     sketch = Sketch()
     polygon = sketch.draw_polygon(Point([-30, -30, 0], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
 
@@ -237,3 +235,104 @@ def test_faces_edges(modeler: Modeler):
     assert all(edge.curve_type == CurveType.CURVETYPE_UNKNOWN for edge in edges)
     assert all(edge.length > 0.0 for edge in edges)
     assert abs(edges[0].length.to_base_units().m - polygon.length.to_base_units().m) <= 1e-15
+
+
+def test_delete_body_component(modeler: Modeler):
+    """Test for verifying the deletion of ``Component`` and ``Body`` objects."""
+
+    # Create your design on the server side
+    design = modeler.create_design("Deletion_Test")
+
+    # Create a Sketch object and draw a circle (all client side)
+    sketch = Sketch()
+    sketch.draw_circle(Point([-30, -30, 0], UNITS.mm), Quantity(10, UNITS.mm))
+    distance = Quantity(30, UNITS.mm)
+
+    #  The following component hierarchy is made
+    #
+    #           |---> comp_1 ---|---> nested_1_comp_1 ---> nested_1_nested_1_comp_1
+    #           |               |
+    #           |               |---> nested_2_comp_1
+    #           |
+    # DESIGN ---|---> comp_2 -------> nested_1_comp_2
+    #           |
+    #           |
+    #           |---> comp_3
+    #
+    #
+    # Now, only "comp_3", "nested_2_comp_1" and "nested_1_nested_1_comp_1"
+    # will have a body associated...
+    #
+    #
+
+    # Create the components
+    comp_1 = design.add_component("Component_1")
+    comp_2 = design.add_component("Component_2")
+    comp_3 = design.add_component("Component_3")
+    nested_1_comp_1 = comp_1.add_component("Nested_1_Component_1")
+    nested_1_nested_1_comp_1 = nested_1_comp_1.add_component("Nested_1_Nested_1_Component_1")
+    nested_2_comp_1 = comp_1.add_component("Nested_2_Component_1")
+    nested_1_comp_2 = comp_2.add_component("Nested_1_Component_2")
+
+    # Create the bodies
+    body_1 = comp_3.extrude_sketch(name="comp_3_circle", sketch=sketch, distance=distance)
+    body_2 = nested_2_comp_1.extrude_sketch(
+        name="nested_2_comp_1_circle", sketch=sketch, distance=distance
+    )
+    body_3 = nested_1_nested_1_comp_1.extrude_sketch(
+        name="nested_1_nested_1_comp_1_circle", sketch=sketch, distance=distance
+    )
+
+    # Let's start by doing something impossible - trying to delete body_1 from comp_1
+    comp_1.delete_body(body_1)
+
+    # Check that all the underlying objects are still alive
+    assert comp_1.is_alive
+    assert comp_1.components[0].is_alive
+    assert comp_1.components[0].components[0].is_alive
+    assert comp_1.components[0].components[0].bodies[0].is_alive
+    assert comp_1.components[1].is_alive
+    assert comp_1.components[1].bodies[0].is_alive
+    assert comp_2.is_alive
+    assert comp_2.components[0].is_alive
+    assert comp_3.is_alive
+    assert comp_3.bodies[0].is_alive
+
+    # Do the same checks but calling them from the design object
+    assert design.components[0].is_alive
+    assert design.components[0].components[0].is_alive
+    assert design.components[0].components[0].components[0].is_alive
+    assert design.components[0].components[0].components[0].bodies[0].is_alive
+    assert design.components[0].components[1].is_alive
+    assert design.components[0].components[1].bodies[0].is_alive
+    assert design.components[1].is_alive
+    assert design.components[1].components[0].is_alive
+    assert design.components[2].is_alive
+    assert design.components[2].bodies[0].is_alive
+
+    # Let's do another impossible thing - trying to delete comp_3 from comp_1
+    comp_1.delete_component(comp_3)
+
+    # Check that all the underlying objects are still alive
+    assert comp_1.is_alive
+    assert comp_1.components[0].is_alive
+    assert comp_1.components[0].components[0].is_alive
+    assert comp_1.components[0].components[0].bodies[0].is_alive
+    assert comp_1.components[1].is_alive
+    assert comp_1.components[1].bodies[0].is_alive
+    assert comp_2.is_alive
+    assert comp_2.components[0].is_alive
+    assert comp_3.is_alive
+    assert comp_3.bodies[0].is_alive
+
+    # Do the same checks but calling them from the design object
+    assert design.components[0].is_alive
+    assert design.components[0].components[0].is_alive
+    assert design.components[0].components[0].components[0].is_alive
+    assert design.components[0].components[0].components[0].bodies[0].is_alive
+    assert design.components[0].components[1].is_alive
+    assert design.components[0].components[1].bodies[0].is_alive
+    assert design.components[1].is_alive
+    assert design.components[1].components[0].is_alive
+    assert design.components[2].is_alive
+    assert design.components[2].bodies[0].is_alive

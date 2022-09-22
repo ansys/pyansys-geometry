@@ -57,7 +57,12 @@ class Component:
                 CreateComponentRequest(display_name=name, parent=parent_component.id)
             )
             self._id = new_component.component.id
-            self._name = new_component.component.display_name
+            #
+            # TODO : the CreateComponentRequest returns back an empty string instead of
+            #        the name... use the given name for now. When implemented, reactivate.
+            #
+            # self._name = new_component.component.display_name
+            self._name = name
         else:
             self._name = name
             self._id = None
