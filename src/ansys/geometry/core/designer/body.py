@@ -2,7 +2,11 @@
 
 from typing import TYPE_CHECKING, List
 
-from ansys.api.geometry.v0.bodies_pb2 import BodyIdentifier, SetAssignedMaterialRequest, TranslateRequest
+from ansys.api.geometry.v0.bodies_pb2 import (
+    BodyIdentifier,
+    SetAssignedMaterialRequest,
+    TranslateRequest,
+)
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import ImprintCurvesRequest, ProjectCurvesRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
@@ -17,7 +21,12 @@ from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.materials import Material
 from ansys.geometry.core.math import UnitVector
-from ansys.geometry.core.misc import SERVER_UNIT_VOLUME, check_type, SERVER_UNIT_LENGTH, check_pint_unit_compatibility
+from ansys.geometry.core.misc import (
+    SERVER_UNIT_LENGTH,
+    SERVER_UNIT_VOLUME,
+    check_pint_unit_compatibility,
+    check_type,
+)
 from ansys.geometry.core.sketch import Sketch
 
 if TYPE_CHECKING:
@@ -220,8 +229,10 @@ class Body:
         check_type(direction, UnitVector)
         check_type(distance, Quantity)
         check_pint_unit_compatibility(distance, SERVER_UNIT_LENGTH)
-        self._bodies_stub.Translate(TranslateRequest(
-            id=self._id,
-            direction=unit_vector_to_grpc_direction(direction),
-            distance = distance.m_as(SERVER_UNIT_LENGTH),
-            ))
+        self._bodies_stub.Translate(
+            TranslateRequest(
+                id=self._id,
+                direction=unit_vector_to_grpc_direction(direction),
+                distance=distance.m_as(SERVER_UNIT_LENGTH),
+            )
+        )
