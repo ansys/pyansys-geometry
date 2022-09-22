@@ -1,4 +1,4 @@
-"""``Face`` class module."""
+"""``Edge`` class module."""
 
 from enum import Enum, unique
 from typing import TYPE_CHECKING

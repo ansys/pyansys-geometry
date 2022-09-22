@@ -1,0 +1,77 @@
+name: Nightly Server test - Latest build
+on:
+  workflow_dispatch:
+  schedule: # UTC at 0300
+    - cron: "0 3 * * *"
+
+env:
+  MAIN_PYTHON_VERSION: '3.9' # use python3.9, self-hosted has an issue with 3.10
+  PIP_EXTRA_INDEX_URL: 'https://${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  all-tests:
+    name: Run all tests against
+    runs-on: [self-hosted, pygeometry]
+    env:
+      ANSRV_GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest-unstable
+      ANSRV_GEO_PORT: 710
+      GEO_CONT_NAME: ans_geo_nightly
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: 'pyproject.toml'
+
+      - name: Create Python venv
+        run: |
+          python -m venv .venv
+          .\.venv\Scripts\Activate.ps1
+
+      - name: Install packages for testing
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          pip install --upgrade build
+          pip install .[test]
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GH_USERNAME }}
+          password: ${{ secrets.PACKAGE_DOWNLOAD_PAT }}
+
+      - name: Download Geometry service container (if needed)
+        run: docker pull $env:ANSRV_GEO_IMAGE
+
+      - name: Start geometry service and verify start
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
+          docker run --detach --name $env:GEO_CONT_NAME -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE
+          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+
+      - name: Run PyGeometry tests
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          pytest -v
+
+      - name: Stop the geometry service
+        if: always()
+        run: |
+          docker stop $env:GEO_CONT_NAME
+          docker logs $env:GEO_CONT_NAME
+          docker rm $env:GEO_CONT_NAME
+
+      - name: Clean all Docker dangling images
+        if: always()
+        run: docker image prune -f
