@@ -278,6 +278,11 @@ class Component:
     ) -> None:
         """Translates the geometry bodies in the direction specified by the given distance.
 
+        Notes
+        -----
+        If the body does not belong to this component (or its children), it
+        will not be translated.
+
         Parameters
         ----------
         bodies: List[Body]
