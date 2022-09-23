@@ -14,7 +14,14 @@ from ansys.geometry.core.shapes.base import BaseShape
 class Arc(BaseShape):
     """A class for modeling arcs."""
 
-    def __init__(self, plane: Plane, center: Point, start: Point, end: Point, axis: UnitVector):
+    def __init__(
+        self,
+        plane: Plane,
+        center: Point,
+        start: Point,
+        end: Point,
+        axis: Optional[UnitVector] = None,
+    ):
         """Initializes the arc shape.
 
         Parameters
@@ -27,9 +34,11 @@ class Arc(BaseShape):
             A :class:``Point`` representing the start of the arc.
         end : Point
             A :class:``Point`` representing the end of the arc.
-        axis : Vector
+        axis : Optional[UnitVector]
             A :class:``UnitVector`` determining the rotation direction of the arc.
-
+            It is expected to be orthogonal to the provided plane.
+            +z for counter-clockwise rotation. -z for clockwise rotation.
+            If not provided, the default will be counter-clockwise rotation.
         """
         super().__init__(plane, is_closed=False)
         # Verify points
@@ -48,6 +57,15 @@ class Arc(BaseShape):
             raise ValueError("Arc start point must be contained in the plane.")
         if not self._plane.is_point_contained(end):
             raise ValueError("Arc end point must be contained in the plane.")
+
+        if isinstance(axis, UnitVector):
+            neg_direction_z = UnitVector(
+                [-plane.direction_z.x, -plane.direction_z.y, -plane.direction_z.z]
+            )
+            if not (axis == self._plane.direction_z or axis == neg_direction_z):
+                raise ValueError("Axis must be either the +z or -z of the provided plane.")
+        else:
+            axis = plane.direction_z
 
         self._center, self._start, self._end = center, start, end
         self._axis = axis
@@ -185,30 +203,44 @@ class Arc(BaseShape):
         -------
         List[Point]
             A list of points representing the shape.
-
         """
+        use_counter_clockwise_rotation = self._axis == self._plane.direction_z
         start_vector = self.start - self.center
         local_start_vector = (self.plane.global_to_local @ start_vector).tolist()
-
         start_angle = np.arctan2(
             (Vector(local_start_vector).cross(Vector([1, 0, 0]))).norm,
             Vector(local_start_vector).dot(Vector([1, 0, 0])),
         )
-
         theta = np.linspace(start_angle, start_angle + self.angle.m, num_points)
         center_from_plane_origin = Point(
             self.plane.global_to_local @ (self.center - self.plane.origin), self.center.unit
         )
-        return [
-            Point(
-                [
-                    center_from_plane_origin.x.to(self.radius.units).m
-                    + self.radius.m * np.cos(ang),
-                    center_from_plane_origin.y.to(self.radius.units).m
-                    + self.radius.m * np.sin(ang),
-                    center_from_plane_origin.z.to(self.radius.units).m,
-                ],
-                unit=self.radius.units,
-            )
-            for ang in theta
-        ]
+
+        if use_counter_clockwise_rotation:
+            return [
+                Point(
+                    [
+                        center_from_plane_origin.x.to(self.radius.units).m
+                        - self.radius.m * np.cos(ang),
+                        center_from_plane_origin.y.to(self.radius.units).m
+                        - self.radius.m * np.sin(ang),
+                        center_from_plane_origin.z.to(self.radius.units).m,
+                    ],
+                    unit=self.radius.units,
+                )
+                for ang in theta
+            ]
+        else:
+            return [
+                Point(
+                    [
+                        center_from_plane_origin.x.to(self.radius.units).m
+                        + self.radius.m * np.cos(ang),
+                        center_from_plane_origin.y.to(self.radius.units).m
+                        + self.radius.m * np.sin(ang),
+                        center_from_plane_origin.z.to(self.radius.units).m,
+                    ],
+                    unit=self.radius.units,
+                )
+                for ang in theta
+            ]

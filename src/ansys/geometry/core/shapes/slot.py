@@ -133,8 +133,8 @@ class Slot(BaseShape):
         self._arc1 = Arc(
             plane,
             arc_1_center,
-            slot_body_corner_2,
             slot_body_corner_3,
+            slot_body_corner_2,
             plane.direction_z,
         )
         self._arc2 = Arc(
@@ -234,20 +234,13 @@ class Slot(BaseShape):
         points_per_segment = math.floor(self._width.value.m / self.perimeter.m * num_points)
         points_per_arc = math.floor((num_points - 2 * points_per_segment) / 2)
 
-        # Utilize component point creation but pop to avoid endpoint duplication
-        segment_1_points = self._segment1.local_points(points_per_segment + 1)
-        segment_1_points.pop()
-        segment_2_points = self._segment2.local_points(points_per_segment + 1)
-        segment_2_points.pop()
-        arc_1_points = self._arc1.local_points(points_per_arc + 1)
-        arc_1_points.pop()
-        arc_2_points = self._arc2.local_points(
-            num_points - 2 * points_per_segment - points_per_arc + 1
-        )
-        arc_2_points.pop()
+        segment_1_points = self._segment1.local_points(points_per_segment)
+        segment_2_points = self._segment2.local_points(points_per_segment)
+        arc_1_points = self._arc1.local_points(points_per_arc)
+        arc_2_points = self._arc2.local_points(num_points - 2 * points_per_segment - points_per_arc)
         points = []
-        points.extend(segment_1_points)
-        points.extend(arc_1_points)
         points.extend(segment_2_points)
+        points.extend(arc_1_points)
+        points.extend(segment_1_points)
         points.extend(arc_2_points)
         return points
