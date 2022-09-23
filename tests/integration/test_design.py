@@ -331,17 +331,14 @@ def test_single_body_translation(modeler: Modeler):
     body_circle_comp = circle_comp.extrude_sketch("Circle", sketch_1, Quantity(50, UNITS.mm))
     polygon_comp = design.add_component("PolygonComponent")
     body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch_2, Quantity(30, UNITS.mm))
-    design.save("c://add")
 
     body_circle_comp.translate(UnitVector([1, 0, 0]), Quantity(50, UNITS.mm))
     body_polygon_comp.translate(UnitVector([-1, 1, -1]), Quantity(88, UNITS.mm))
-    design.save("C:\\advanced")
 
     # TODO Find a way to validate the translation
     # * Likely requires synchronization with the server for bounds
 
 
-@pytest.mark.skip("mproper")
 def test_bodies_translation(modeler: Modeler):
     """Test for verifying the correct translation of many ``Body``."""
 

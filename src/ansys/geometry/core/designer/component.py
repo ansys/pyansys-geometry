@@ -247,13 +247,13 @@ class Component:
         )
 
         # TODO Wait for proto update so bodies is repeated string
-        translation_request = TranslateRequest(
-            direction=unit_vector_to_grpc_direction(direction),
-            distance=magnitude,
-        )
-
         for body in bodies:
-            translation_request.bodies.append(body.id)
-        self._bodies_stub.Translate(translation_request)
+            translation_request = TranslateRequest(
+                id=body.id,
+                direction=unit_vector_to_grpc_direction(direction),
+                distance=magnitude,
+            )
+
+            self._bodies_stub.Translate(translation_request)
 
         # TODO Consider what needs to be invalidated client-side after server-side modifications.
