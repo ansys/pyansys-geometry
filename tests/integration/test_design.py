@@ -5,7 +5,7 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core.designer import CurveType, SurfaceType
+from ansys.geometry.core.designer import CurveType, SharedTopologyType, SurfaceType
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import Frame, Point, UnitVector
 from ansys.geometry.core.misc import UNITS
@@ -313,7 +313,12 @@ def test_coordinate_system_creation(modeler: Modeler):
 
 
 def test_delete_body_component(modeler: Modeler):
-    """Test for verifying the deletion of ``Component`` and ``Body`` objects."""
+    """Test for verifying the deletion of ``Component`` and ``Body`` objects.
+
+    Notes
+    -----
+    Requires storing scdocx file and checking manually (for now).
+    """
 
     # Create your design on the server side
     design = modeler.create_design("Deletion_Test")
@@ -517,3 +522,35 @@ def test_delete_body_component(modeler: Modeler):
     # Try deleting the Design object itself - this is forbidden
     with pytest.raises(ValueError, match="The Design object itself cannot be deleted."):
         design.delete_component(design)
+
+
+def test_shared_topology(modeler: Modeler):
+    """Test for checking the correct setting of shared topology on the server.
+
+    Notes
+    -----
+    Requires storing scdocx file and checking manually (for now).
+    """
+    # Create your design on the server side
+    design = modeler.create_design("SharedTopology_Test")
+
+    # Create a Sketch object and draw a circle (all client side)
+    sketch = Sketch()
+    sketch.draw_circle(Point([-30, -30, 0], UNITS.mm), Quantity(10, UNITS.mm))
+    distance = Quantity(30, UNITS.mm)
+
+    # Create a component
+    comp_1 = design.add_component("Component_1")
+    comp_1.extrude_sketch(name="Body_1", sketch=sketch, distance=distance)
+
+    # Now that the component is created, let's try to assign a SharedTopology
+    assert comp_1.shared_topology is None
+
+    # Set the shared topology
+    comp_1.set_shared_topology(SharedTopologyType.SHARETYPE_SHARE)
+    assert comp_1.shared_topology == SharedTopologyType.SHARETYPE_SHARE
+
+    # Try to assign it to the entire design
+    assert design.shared_topology is None
+    with pytest.raises(ValueError, match="The Design object itself cannot have a shared topology."):
+        design.set_shared_topology(SharedTopologyType.SHARETYPE_NONE)

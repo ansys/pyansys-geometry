@@ -13,7 +13,7 @@ from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.designer.body import Body
-from ansys.geometry.core.designer.component import Component
+from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.selection import NamedSelection
@@ -171,6 +171,11 @@ class Design(Component):
         ----------
         id : Union[Component, str]
             The name of the component or instance that should be deleted.
+
+        Raises
+        ------
+        ValueError
+            ``Design`` itself cannot be deleted.
         """
         check_type(component, (Component, str))
         id = component.id if not isinstance(component, str) else component
@@ -178,3 +183,18 @@ class Design(Component):
             raise ValueError("The Design object itself cannot be deleted.")
         else:
             return super().delete_component(component)
+
+    def set_shared_topology(self, share_type: SharedTopologyType) -> None:
+        """Defines the shared topology to be applied to the component.
+
+        Parameters
+        ----------
+        share_type : SharedTopologyType
+            The shared topology type to be assigned to the component.
+
+        Raises
+        ------
+        ValueError
+            Shared topology does not apply on ``Design``.
+        """
+        raise ValueError("The Design object itself cannot have a shared topology.")

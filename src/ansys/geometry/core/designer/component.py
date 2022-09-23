@@ -1,6 +1,7 @@
 """``Component`` class module."""
 
 
+from enum import Enum, unique
 from typing import List, Union
 
 from ansys.api.geometry.v0.bodies_pb2 import (
@@ -9,7 +10,11 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     CreatePlanarBodyRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
-from ansys.api.geometry.v0.components_pb2 import ComponentIdentifier, CreateComponentRequest
+from ansys.api.geometry.v0.components_pb2 import (
+    ComponentIdentifier,
+    CreateComponentRequest,
+    SetComponentSharedTopologyRequest,
+)
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
 from pint import Quantity
 
@@ -23,6 +28,16 @@ from ansys.geometry.core.designer.coordinatesystem import CoordinateSystem
 from ansys.geometry.core.math import Frame
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH, check_pint_unit_compatibility, check_type
 from ansys.geometry.core.sketch import Sketch
+
+
+@unique
+class SharedTopologyType(Enum):
+    """Enum holding the possible values for component shared topologies by the geometry service."""
+
+    SHARETYPE_NONE = 0
+    SHARETYPE_SHARE = 1
+    SHARETYPE_MERGE = 2
+    SHARETYPE_GROUPS = 3
 
 
 class Component:
@@ -74,6 +89,7 @@ class Component:
         self._coordinate_systems = []
         self._parent_component = parent_component
         self._is_alive = True
+        self._shared_topology = None
 
     @property
     def id(self) -> str:
@@ -110,6 +126,16 @@ class Component:
         """Boolean indicating whether the component is still alive on the server side."""
         return self._is_alive
 
+    @property
+    def shared_topology(self) -> Union[SharedTopologyType, None]:
+        """Indicates the SharedTopology type of the component (if any).
+
+        Notes
+        -----
+        If no shared topology has been set it will return ``None``.
+        """
+        return self._shared_topology
+
     def add_component(self, name: str) -> "Component":
         """Creates a new component nested under this component within the design assembly.
 
@@ -125,6 +151,25 @@ class Component:
         """
         self._components.append(Component(name, self, self._grpc_client))
         return self._components[-1]
+
+    def set_shared_topology(self, share_type: SharedTopologyType) -> None:
+        """Defines the shared topology to be applied to the component.
+
+        Parameters
+        ----------
+        share_type : SharedTopologyType
+            The shared topology type to be assigned to the component.
+        """
+        # Sanity checks on inputs
+        check_type(share_type, SharedTopologyType)
+
+        # Set the SharedTopologyType on the server
+        self._component_stub.SetComponentSharedTopology(
+            SetComponentSharedTopologyRequest(component=self.id, shareType=share_type.value)
+        )
+
+        # Store the SharedTopologyType set on the client
+        self._shared_topology = share_type
 
     def extrude_sketch(self, name: str, sketch: Sketch, distance: Quantity) -> Body:
         """Creates a solid body by extruding the given sketch profile up to the given distance.
