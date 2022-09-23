@@ -179,15 +179,22 @@ class Box(BaseShape):
         """
         points = []
 
+        # require at least 4 points
         if num_points < 4:
             num_points = 4
+
+        num_points = num_points + 4
 
         points_per_width_segment = math.floor(self._width.value.m / self.perimeter.m * num_points)
         points_per_height_segment = math.floor((num_points - points_per_width_segment * 2) / 2)
 
+        # Utilize individual component point creation but pop to avoid endpoint duplication
         segment_1_points = self._width_segment1.local_points(points_per_width_segment)
+        segment_1_points.pop()
         segment_2_points = self._height_segment1.local_points(points_per_height_segment)
+        segment_2_points.pop()
         segment_3_points = self._width_segment2.local_points(points_per_width_segment)
+        segment_3_points.pop()
         segment_4_points = self._height_segment2.local_points(
             num_points - 2 * points_per_width_segment - points_per_height_segment
         )
