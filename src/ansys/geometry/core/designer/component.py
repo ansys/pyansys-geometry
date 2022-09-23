@@ -25,8 +25,13 @@ from ansys.geometry.core.connection import (
 )
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.coordinatesystem import CoordinateSystem
-from ansys.geometry.core.math import Frame
-from ansys.geometry.core.misc import SERVER_UNIT_LENGTH, check_pint_unit_compatibility, check_type
+from ansys.geometry.core.math import Frame, UnitVector
+from ansys.geometry.core.misc import (
+    SERVER_UNIT_LENGTH,
+    Distance,
+    check_pint_unit_compatibility,
+    check_type,
+)
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -267,6 +272,42 @@ class Component:
 
         self._coordinate_systems.append(CoordinateSystem(name, frame, self, self._grpc_client))
         return self._coordinate_systems[-1]
+
+    def translate_bodies(
+        self, bodies: List[Body], direction: UnitVector, distance: Union[Quantity, Distance]
+    ) -> None:
+        """Translates the geometry bodies in the direction specified by the given distance.
+
+        Notes
+        -----
+        If the body does not belong to this component (or its children), it
+        will not be translated.
+
+        Parameters
+        ----------
+        bodies: List[Body]
+            A list of bodies to translate by the same distance.
+        direction: UnitVector
+            The direction of the translation.
+        distance: Union[Quantity, Distance]
+            The magnitude of the translation.
+
+        Returns
+        -------
+        None
+        """
+
+        check_type(bodies, list)
+        [check_type(body, Body) for body in bodies]
+
+        # TODO : Wait for proto update so bodies is repeated string
+        for body in bodies:
+            body_requested = self.search_body(body.id)
+            if body_requested:
+                body_requested.translate(direction, distance)
+            else:
+                # TODO : .... Warning
+                pass
 
     def delete_component(self, component: Union["Component", str]) -> None:
         """Deletes an existing component (itself or its children).

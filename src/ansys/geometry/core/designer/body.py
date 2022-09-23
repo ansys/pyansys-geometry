@@ -1,8 +1,12 @@
 """``Body`` class module."""
 
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Union
 
-from ansys.api.geometry.v0.bodies_pb2 import BodyIdentifier, SetAssignedMaterialRequest
+from ansys.api.geometry.v0.bodies_pb2 import (
+    BodyIdentifier,
+    SetAssignedMaterialRequest,
+    TranslateRequest,
+)
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import ImprintCurvesRequest, ProjectCurvesRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
@@ -17,7 +21,13 @@ from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.materials import Material
 from ansys.geometry.core.math import UnitVector
-from ansys.geometry.core.misc import SERVER_UNIT_VOLUME, check_type
+from ansys.geometry.core.misc import (
+    SERVER_UNIT_LENGTH,
+    SERVER_UNIT_VOLUME,
+    Distance,
+    check_pint_unit_compatibility,
+    check_type,
+)
 from ansys.geometry.core.sketch import Sketch
 
 if TYPE_CHECKING:
@@ -221,3 +231,34 @@ class Body:
         ]
 
         return projected_faces
+
+    def translate(self, direction: UnitVector, distance: Union[Quantity, Distance]) -> None:
+        """Translates the geometry body in the direction specified by the given distance.
+
+        Parameters
+        ----------
+        direction: UnitVector
+            The direction of the translation.
+        distance: Union[Quantity, Distance]
+            The magnitude of the translation.
+
+        Returns
+        -------
+        None
+        """
+        check_type(direction, UnitVector)
+        check_type(distance, (Quantity, Distance))
+        check_pint_unit_compatibility(distance, SERVER_UNIT_LENGTH)
+
+        magnitude = (
+            distance.m_as(SERVER_UNIT_LENGTH)
+            if not isinstance(distance, Distance)
+            else distance.value.m_as(SERVER_UNIT_LENGTH)
+        )
+
+        translation_request = TranslateRequest(
+            id=self.id,
+            direction=unit_vector_to_grpc_direction(direction),
+            distance=magnitude,
+        )
+        self._bodies_stub.Translate(translation_request)
