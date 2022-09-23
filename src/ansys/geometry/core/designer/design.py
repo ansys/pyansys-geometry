@@ -158,3 +158,23 @@ class Design(Component):
         except KeyError:
             # TODO: throw warning informing that the requested NamedSelection does not exist
             pass
+
+    def delete_component(self, component: Union["Component", str]) -> None:
+        """Deletes an existing component (itself or its children).
+
+        Notes
+        -----
+        If the component is not this component (or its children), it
+        will not be deleted.
+
+        Parameters
+        ----------
+        id : Union[Component, str]
+            The name of the component or instance that should be deleted.
+        """
+        check_type(component, (Component, str))
+        id = component.id if not isinstance(component, str) else component
+        if id == self.id:
+            raise ValueError("The Design object itself cannot be deleted.")
+        else:
+            return super().delete_component(component)
