@@ -171,6 +171,11 @@ class Design(Component):
         ----------
         id : Union[Component, str]
             The name of the component or instance that should be deleted.
+
+        Raises
+        ------
+        ValueError
+            ``Design`` itself cannot be deleted.
         """
         check_type(component, (Component, str))
         id = component.id if not isinstance(component, str) else component
@@ -186,5 +191,10 @@ class Design(Component):
         ----------
         share_type : SharedTopologyType
             The shared topology type to be assigned to the component.
+
+        Raises
+        ------
+        ValueError
+            Shared topology does not apply on ``Design``.
         """
         raise ValueError("The Design object itself cannot have a shared topology.")
