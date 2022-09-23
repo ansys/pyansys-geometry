@@ -130,7 +130,7 @@ class Body:
         """
         check_type(material, Material)
         self._bodies_stub.SetAssignedMaterial(
-            SetAssignedMaterialRequest(id=self._id, material=material._display_name)
+            SetAssignedMaterialRequest(id=self._id, material=material.name)
         )
 
     def imprint_curves(self, faces: List[Face], sketch: Sketch) -> List[Edge]:

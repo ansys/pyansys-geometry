@@ -75,11 +75,11 @@ class Design(Component):
         self._materials_stub.AddMaterialToDocument(
             AddMaterialToDocumentRequest(
                 material=GRPCMaterial(
-                    name=material._display_name,
+                    name=material.name,
                     materialProperties=[
                         GRPCMaterialProperty(
                             id=property.type.value,
-                            displayName=property.display_name,
+                            displayName=property.name,
                             value=property.quantity.m,
                             units=format(property.quantity.units),
                         )

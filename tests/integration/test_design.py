@@ -49,16 +49,14 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
         design.materials[0].properties[MaterialPropertyType.DENSITY].type
         == MaterialPropertyType.DENSITY
     )
-    assert design.materials[0].properties[MaterialPropertyType.DENSITY].display_name == "steel"
+    assert design.materials[0].name == "steel"
+    assert design.materials[0].properties[MaterialPropertyType.DENSITY].name == "Density"
     assert design.materials[0].properties[MaterialPropertyType.DENSITY].quantity == density
     assert (
         design.materials[0].properties[MaterialPropertyType.POISSON_RATIO].type
         == MaterialPropertyType.POISSON_RATIO
     )
-    assert (
-        design.materials[0].properties[MaterialPropertyType.POISSON_RATIO].display_name
-        == "myPoisson"
-    )
+    assert design.materials[0].properties[MaterialPropertyType.POISSON_RATIO].name == "myPoisson"
     assert (
         design.materials[0].properties[MaterialPropertyType.POISSON_RATIO].quantity == poisson_ratio
     )
@@ -66,10 +64,7 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
         design.materials[0].properties[MaterialPropertyType.TENSILE_STRENGTH].type
         == MaterialPropertyType.TENSILE_STRENGTH
     )
-    assert (
-        design.materials[0].properties[MaterialPropertyType.TENSILE_STRENGTH].display_name
-        == "myTensile"
-    )
+    assert design.materials[0].properties[MaterialPropertyType.TENSILE_STRENGTH].name == "myTensile"
     assert (
         design.materials[0].properties[MaterialPropertyType.TENSILE_STRENGTH].quantity
         == tensile_strength
@@ -132,8 +127,8 @@ def test_component_body(modeler: Modeler):
     # TODO: GetVolume is not implemented on server side yet
     try:
         # All are in mm
-        expected_vol = pentagon.area.m * distance_extruded_body.m
-        assert body.volume.m == expected_vol
+        expected_vol = pentagon.area.m * distance_extruded_body.m * 1e-9  # factor to m**3
+        assert body.volume.m == pytest.approx(expected_vol)
     except (_InactiveRpcError):
         pass
     assert len(design.components) == 0
