@@ -2,10 +2,12 @@
 import math
 from typing import List, Optional, Union
 
-from pint import Quantity
+from pint import Quantity, Unit
+from scipy.spatial.transform import Rotation as spatial_rotation
 
-from ansys.geometry.core.math import Plane, Point
-from ansys.geometry.core.misc import Distance, check_type
+from ansys.geometry.core.math import Matrix33, Plane, Point
+from ansys.geometry.core.misc import Angle, Distance, check_type
+from ansys.geometry.core.misc.measurements import UNIT_ANGLE
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.shapes.line import Segment
 from ansys.geometry.core.typing import Real
@@ -24,6 +26,8 @@ class Box(BaseShape):
         The width of the box.
     height : Union[Quantity, Distance, Real]
         The height of the box.
+    angle : Optional[Union[Quantity, Angle, Real]]
+        The placement angle for orientation alignment.
     """
 
     def __init__(
@@ -32,6 +36,7 @@ class Box(BaseShape):
         center: Point,
         width: Union[Quantity, Distance, Real],
         height: Union[Quantity, Distance, Real],
+        angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
         """Initializes the box shape."""
         super().__init__(plane, is_closed=True)
@@ -43,6 +48,16 @@ class Box(BaseShape):
 
         check_type(width, (Quantity, Distance, int, float))
         check_type(height, (Quantity, Distance, int, float))
+
+        if isinstance(angle, (int, float)):
+            angle = Angle(angle, UNIT_ANGLE)
+        angle = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
+
+        rotation = Matrix33(
+            spatial_rotation.from_euler(
+                "xyz", [0, 0, angle.value.m_as(UNIT_ANGLE)], degrees=False
+            ).as_matrix()
+        )
 
         self._width = width if isinstance(width, Distance) else Distance(width, center.unit)
         if self._width.value <= 0:
@@ -58,57 +73,17 @@ class Box(BaseShape):
             self.plane.global_to_local @ (center - self.plane.origin), center.unit
         )
 
-        corner_1 = Point(
-            self.plane.origin
-            + self.plane.local_to_global
-            @ Point(
-                [
-                    global_center.x.m - width_magnitude / 2,
-                    global_center.y.m + height_magnitude / 2,
-                    global_center.z.m,
-                ],
-                center.unit,
-            ),
-            center.unit,
+        corner_1 = self.create_point(
+            -width_magnitude / 2, height_magnitude / 2, global_center, center.unit, rotation
         )
-        corner_2 = Point(
-            self.plane.origin
-            + self.plane.local_to_global
-            @ Point(
-                [
-                    global_center.x.m + width_magnitude / 2,
-                    global_center.y.m + height_magnitude / 2,
-                    global_center.z.m,
-                ],
-                center.unit,
-            ),
-            center.unit,
+        corner_2 = self.create_point(
+            width_magnitude / 2, height_magnitude / 2, global_center, center.unit, rotation
         )
-        corner_3 = Point(
-            self.plane.origin
-            + self.plane.local_to_global
-            @ Point(
-                [
-                    global_center.x.m + width_magnitude / 2,
-                    global_center.y.m - height_magnitude / 2,
-                    global_center.z.m,
-                ],
-                center.unit,
-            ),
-            center.unit,
+        corner_3 = self.create_point(
+            width_magnitude / 2, -height_magnitude / 2, global_center, center.unit, rotation
         )
-        corner_4 = Point(
-            self.plane.origin
-            + self.plane.local_to_global
-            @ Point(
-                [
-                    global_center.x.m - width_magnitude / 2,
-                    global_center.y.m - height_magnitude / 2,
-                    global_center.z.m,
-                ],
-                center.unit,
-            ),
-            center.unit,
+        corner_4 = self.create_point(
+            -width_magnitude / 2, -height_magnitude / 2, global_center, center.unit, rotation
         )
 
         self._width_segment1 = Segment(plane, corner_1, corner_2)
@@ -210,19 +185,25 @@ class Box(BaseShape):
         points_per_width_segment = math.floor(self._width.value.m / self.perimeter.m * num_points)
         points_per_height_segment = math.floor((num_points - points_per_width_segment * 2) / 2)
 
-        # Utilize component point creation but pop to avoid endpoint duplication
-        segment_1_points = self._width_segment1.local_points(points_per_width_segment + 1)
-        segment_1_points.pop()
-        segment_2_points = self._height_segment1.local_points(points_per_height_segment + 1)
-        segment_2_points.pop()
-        segment_3_points = self._width_segment2.local_points(points_per_width_segment + 1)
-        segment_3_points.pop()
+        segment_1_points = self._width_segment1.local_points(points_per_width_segment)
+        segment_2_points = self._height_segment1.local_points(points_per_height_segment)
+        segment_3_points = self._width_segment2.local_points(points_per_width_segment)
         segment_4_points = self._height_segment2.local_points(
-            num_points - 2 * points_per_width_segment - points_per_height_segment + 1
+            num_points - 2 * points_per_width_segment - points_per_height_segment
         )
-        segment_4_points.pop()
         points.extend(segment_1_points)
         points.extend(segment_2_points)
         points.extend(segment_3_points)
         points.extend(segment_4_points)
         return points
+
+    def create_point(
+        self, x_offset: Real, y_offset: Real, reference: Point, unit: Unit, rotation: Matrix33
+    ) -> Point:
+        point = Point([x_offset, y_offset, 0])
+        rotated_point = Point(Point(rotation @ point, unit), unit)
+        transformed_point = Point(
+            (self._plane.local_to_global @ (rotated_point + reference)) + self._plane.origin, unit
+        )
+
+        return transformed_point

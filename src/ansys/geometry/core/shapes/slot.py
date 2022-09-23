@@ -3,10 +3,12 @@ import math
 from typing import List, Optional, Union
 
 import numpy as np
-from pint import Quantity
+from pint import Quantity, Unit
+from scipy.spatial.transform import Rotation as spatial_rotation
 
-from ansys.geometry.core.math import Plane, Point, UnitVector
-from ansys.geometry.core.misc import Distance, check_type
+from ansys.geometry.core.math import Matrix33, Plane, Point, UnitVector
+from ansys.geometry.core.misc import Angle, Distance, check_type
+from ansys.geometry.core.misc.measurements import UNIT_ANGLE
 from ansys.geometry.core.shapes.arc import Arc
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.shapes.line import Segment
@@ -26,6 +28,8 @@ class Slot(BaseShape):
         The width of the slot main body.
     height : Union[Quantity, Distance, Real]
         The height of the slot.
+    angle : Optional[Union[Quantity, Angle, Real]]
+        The placement angle for orientation alignment.
     """
 
     def __init__(
@@ -34,6 +38,7 @@ class Slot(BaseShape):
         center: Point,
         width: Union[Quantity, Distance, Real],
         height: Union[Quantity, Distance, Real],
+        angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
         """Initializes the slot shape."""
         super().__init__(plane, is_closed=True)
@@ -45,6 +50,17 @@ class Slot(BaseShape):
 
         check_type(width, (Quantity, Distance, int, float))
         check_type(height, (Quantity, Distance, int, float))
+        check_type(angle, (Quantity, Angle, int, float))
+
+        if isinstance(angle, (int, float)):
+            angle = Angle(angle, UNIT_ANGLE)
+        angle = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
+
+        rotation = Matrix33(
+            spatial_rotation.from_euler(
+                "xyz", [0, 0, angle.value.m_as(UNIT_ANGLE)], degrees=False
+            ).as_matrix()
+        )
 
         self._width = width if isinstance(width, Distance) else Distance(width, center.unit)
         if self._width.value <= 0:
@@ -57,79 +73,28 @@ class Slot(BaseShape):
         height_magnitude = self._height.value.m_as(center.unit)
 
         global_center = Point(
-            self.plane.global_to_local @ (center - self.plane.origin), center.unit
+            (center - self.plane.origin) @ self.plane.local_to_global, center.unit
         )
 
-        slot_body_corner_1 = Point(
-            self.plane.origin
-            + self.plane.local_to_global
-            @ Point(
-                [
-                    global_center.x.m - width_magnitude / 2,
-                    global_center.y.m + height_magnitude / 2,
-                    global_center.z.m,
-                ],
-                center.unit,
-            ),
-            center.unit,
+        slot_body_corner_1 = self.create_point(
+            -width_magnitude / 2, height_magnitude / 2, global_center, center.unit, rotation
         )
-        slot_body_corner_2 = Point(
-            self.plane.origin
-            + self.plane.local_to_global
-            @ Point(
-                [
-                    global_center.x.m + width_magnitude / 2,
-                    global_center.y.m + height_magnitude / 2,
-                    global_center.z.m,
-                ],
-                center.unit,
-            ),
-            center.unit,
+        slot_body_corner_2 = self.create_point(
+            width_magnitude / 2, height_magnitude / 2, global_center, center.unit, rotation
         )
-        slot_body_corner_3 = Point(
-            self.plane.origin
-            + self.plane.local_to_global
-            @ Point(
-                [
-                    global_center.x.m + width_magnitude / 2,
-                    global_center.y.m - height_magnitude / 2,
-                    global_center.z.m,
-                ],
-                center.unit,
-            ),
-            center.unit,
+        slot_body_corner_3 = self.create_point(
+            width_magnitude / 2, -height_magnitude / 2, global_center, center.unit, rotation
         )
-        slot_body_corner_4 = Point(
-            self.plane.origin
-            + self.plane.local_to_global
-            @ Point(
-                [
-                    global_center.x.m - width_magnitude / 2,
-                    global_center.y.m - height_magnitude / 2,
-                    global_center.z.m,
-                ],
-                center.unit,
-            ),
-            center.unit,
+        slot_body_corner_4 = self.create_point(
+            -width_magnitude / 2, -height_magnitude / 2, global_center, center.unit, rotation
         )
-        arc_1_center = Point(
-            self.plane.origin
-            + self.plane.local_to_global
-            @ Point(
-                [global_center.x.m + width_magnitude / 2, global_center.y.m, global_center.z.m],
-                center.unit,
-            ),
-            center.unit,
+        arc_1_center = self.create_point(
+            width_magnitude / 2, 0, global_center, center.unit, rotation
         )
-        arc_2_center = Point(
-            self.plane.origin
-            + self.plane.local_to_global
-            @ Point(
-                [global_center.x.m - width_magnitude / 2, global_center.y.m, global_center.z.m],
-                center.unit,
-            ),
-            center.unit,
+        arc_2_center = self.create_point(
+            -width_magnitude / 2, 0, global_center, center.unit, rotation
         )
+
         self._arc1 = Arc(
             plane,
             arc_1_center,
@@ -244,3 +209,14 @@ class Slot(BaseShape):
         points.extend(segment_1_points)
         points.extend(arc_2_points)
         return points
+
+    def create_point(
+        self, x_offset: Real, y_offset: Real, reference: Point, unit: Unit, rotation: Matrix33
+    ) -> Point:
+        point = Point([x_offset, y_offset, 0])
+        rotated_point = Point(Point(rotation @ point, unit), unit)
+        transformed_point = Point(
+            (self._plane.local_to_global @ (rotated_point + reference)) + self._plane.origin, unit
+        )
+
+        return transformed_point

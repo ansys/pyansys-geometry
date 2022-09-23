@@ -5,7 +5,7 @@ from typing import Optional, Union
 from pint import Quantity
 
 from ansys.geometry.core.math import Plane, Point, UnitVector, Vector
-from ansys.geometry.core.misc import Distance
+from ansys.geometry.core.misc import Angle, Distance
 from ansys.geometry.core.shapes import (
     Arc,
     BaseShape,
@@ -57,6 +57,7 @@ class Sketch:
         center: Point,
         width: Union[Quantity, Distance, Real],
         height: Union[Quantity, Distance, Real],
+        angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
         """Create a box shape on the sketch.
 
@@ -68,13 +69,15 @@ class Sketch:
             The width of the box.
         height : Union[Quantity, Distance, Real]
             The height of the box.
+        angle : Optional[Union[Quantity, Real]]
+            The placement angle for orientation alignment.
 
         Returns
         -------
         Box
             An object representing the box added to the sketch.
         """
-        box = Box(self._plane, center, width, height)
+        box = Box(self._plane, center, width, height, angle)
         self.append_shape(box)
         return box
 
@@ -83,6 +86,7 @@ class Sketch:
         center: Point,
         width: Union[Quantity, Distance, Real],
         height: Union[Quantity, Distance, Real],
+        angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
         """Create a slot shape on the sketch.
 
@@ -91,16 +95,18 @@ class Sketch:
         center: Point
             A :class:`Point` representing the center of the slot.
         width : Union[Quantity, Distance, Real]
-            The width of the box.
+            The width of the slot.
         height : Union[Quantity, Distance, Real]
-            The height of the box.
+            The height of the slot.
+        angle : Optional[Union[Quantity, Angle, Real]]
+            The placement angle for orientation alignment.
 
         Returns
         -------
         Slot
             An object representing the slot added to the sketch.
         """
-        slot = Slot(self._plane, center, width, height)
+        slot = Slot(self._plane, center, width, height, angle)
         self.append_shape(slot)
         return slot
 
