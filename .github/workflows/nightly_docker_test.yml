@@ -15,7 +15,7 @@ concurrency:
 jobs:
 
   all-tests:
-    name: Run all tests against
+    name: Run all tests against server
     runs-on: [self-hosted, pygeometry]
     env:
       ANSRV_GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest-unstable
