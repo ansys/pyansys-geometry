@@ -127,8 +127,8 @@ def test_component_body(modeler: Modeler):
     # TODO: GetVolume is not implemented on server side yet
     try:
         # All are in mm
-        expected_vol = pentagon.area.m * distance_extruded_body.m
-        assert body.volume.m == expected_vol
+        expected_vol = pentagon.area.m * distance_extruded_body.m * 1e-9 # factor to m**3
+        assert body.volume.m == pytest.approx(expected_vol)
     except (_InactiveRpcError):
         pass
     assert len(design.components) == 0
