@@ -223,7 +223,7 @@ class Sketch:
         self.append_shape(polygon)
         return polygon
 
-    def draw_arc(self, center: Point, start: Point, end: Point, axis: UnitVector):
+    def draw_arc(self, center: Point, start: Point, end: Point, axis: Optional[UnitVector] = None):
         """Create an arc shape on the sketch.
 
         Parameters
@@ -234,8 +234,11 @@ class Sketch:
             A :class:``Point`` representing the start of the shape.
         end : Point
             A :class:``Point`` representing the end of the shape.
-        axis : UnitVector
+        axis : Optional[UnitVector]
             A :class:``UnitVector`` determining the rotation direction of the arc.
+            It is expected to be orthogonal to the provided plane.
+            +z for counter-clockwise rotation. -z for clockwise rotation.
+            If not provided, the default will be counter-clockwise rotation.
 
         Returns
         -------
