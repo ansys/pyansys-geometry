@@ -256,12 +256,9 @@ class Body:
             else distance.value.m_as(SERVER_UNIT_LENGTH)
         )
 
-        # TODO Wait for proto update so bodies is repeated string
         translation_request = TranslateRequest(
             id=self.id,
             direction=unit_vector_to_grpc_direction(direction),
             distance=magnitude,
         )
         self._bodies_stub.Translate(translation_request)
-
-        # TODO Consider what needs to be invalidated client-side after server-side modifications.

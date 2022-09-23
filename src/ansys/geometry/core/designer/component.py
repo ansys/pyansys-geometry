@@ -295,6 +295,7 @@ class Component:
         check_type(bodies, list)
         [check_type(body, Body) for body in bodies]
 
+        # TODO : Wait for proto update so bodies is repeated string
         for body in bodies:
             body_requested = self.search_body(body.id)
             if body_requested:
