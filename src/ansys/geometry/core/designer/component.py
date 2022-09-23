@@ -89,6 +89,7 @@ class Component:
         self._coordinate_systems = []
         self._parent_component = parent_component
         self._is_alive = True
+        self._shared_topology = None
 
     @property
     def id(self) -> str:
@@ -124,6 +125,16 @@ class Component:
     def is_alive(self) -> bool:
         """Boolean indicating whether the component is still alive on the server side."""
         return self._is_alive
+    
+    @property
+    def shared_topology(self) -> Union[SharedTopologyType, None]:
+        """Indicates the SharedTopology type of the component (if any).
+        
+        Notes
+        -----
+        If no shared topology has been set it will return ``None``.
+        """
+        return self._shared_topology
 
     def add_component(self, name: str) -> "Component":
         """Creates a new component nested under this component within the design assembly.
@@ -152,9 +163,13 @@ class Component:
         # Sanity checks on inputs
         check_type(share_type, SharedTopologyType)
 
+        # Set the SharedTopologyType on the server
         self._component_stub.SetComponentSharedTopology(
             SetComponentSharedTopologyRequest(component=self.id, shareType=share_type.value)
         )
+        
+        # Store the SharedTopologyType set on the client
+        self._shared_topology = share_type
 
     def extrude_sketch(self, name: str, sketch: Sketch, distance: Quantity) -> Body:
         """Creates a solid body by extruding the given sketch profile up to the given distance.
