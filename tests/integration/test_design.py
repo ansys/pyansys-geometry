@@ -364,7 +364,8 @@ def test_bodies_translation(modeler: Modeler):
 
     # TODO Find a way to validate the translation
     # * Likely requires synchronization with the server for bounds
-=======
+
+
 def test_delete_body_component(modeler: Modeler):
     """Test for verifying the deletion of ``Component`` and ``Body`` objects.
 

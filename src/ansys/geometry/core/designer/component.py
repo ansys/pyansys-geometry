@@ -5,10 +5,10 @@ from enum import Enum, unique
 from typing import List, Union
 
 from ansys.api.geometry.v0.bodies_pb2 import (
+    BodyIdentifier,
     CreateExtrudedBodyRequest,
     CreatePlanarBodyRequest,
     TranslateRequest,
-    BodyIdentifier,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.components_pb2 import (
