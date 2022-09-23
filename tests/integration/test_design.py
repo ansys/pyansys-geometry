@@ -313,7 +313,12 @@ def test_coordinate_system_creation(modeler: Modeler):
 
 
 def test_single_body_translation(modeler: Modeler):
-    """Test for verifying the correct translation of a ``Body``."""
+    """Test for verifying the correct translation of a ``Body``.
+
+    Notes
+    -----
+    Requires storing scdocx file and checking manually (for now).
+    """
 
     # Create your design on the server side
     design = modeler.create_design("SingleBodyTranslation_Test")
@@ -333,12 +338,14 @@ def test_single_body_translation(modeler: Modeler):
     body_circle_comp.translate(UnitVector([1, 0, 0]), Quantity(50, UNITS.mm))
     body_polygon_comp.translate(UnitVector([-1, 1, -1]), Quantity(88, UNITS.mm))
 
-    # TODO Find a way to validate the translation
-    # * Likely requires synchronization with the server for bounds
-
 
 def test_bodies_translation(modeler: Modeler):
-    """Test for verifying the correct translation of many ``Body``."""
+    """Test for verifying the correct translation of list of ``Body``.
+
+    Notes
+    -----
+    Requires storing scdocx file and checking manually (for now).
+    """
 
     # Create your design on the server side
     design = modeler.create_design("MultipleBodyTranslation_Test")
@@ -361,9 +368,6 @@ def test_bodies_translation(modeler: Modeler):
     design.translate_bodies(
         [body_circle_comp, body_polygon_comp], UnitVector([0, -1, 1]), Quantity(88, UNITS.mm)
     )
-
-    # TODO Find a way to validate the translation
-    # * Likely requires synchronization with the server for bounds
 
 
 def test_delete_body_component(modeler: Modeler):
