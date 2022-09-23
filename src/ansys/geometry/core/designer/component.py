@@ -125,11 +125,11 @@ class Component:
     def is_alive(self) -> bool:
         """Boolean indicating whether the component is still alive on the server side."""
         return self._is_alive
-    
+
     @property
     def shared_topology(self) -> Union[SharedTopologyType, None]:
         """Indicates the SharedTopology type of the component (if any).
-        
+
         Notes
         -----
         If no shared topology has been set it will return ``None``.
@@ -167,7 +167,7 @@ class Component:
         self._component_stub.SetComponentSharedTopology(
             SetComponentSharedTopologyRequest(component=self.id, shareType=share_type.value)
         )
-        
+
         # Store the SharedTopologyType set on the client
         self._shared_topology = share_type
 
