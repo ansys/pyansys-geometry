@@ -5,7 +5,7 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core.designer import CurveType, SurfaceType
+from ansys.geometry.core.designer import CurveType, SharedTopologyType, SurfaceType
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import Frame, Point, UnitVector
 from ansys.geometry.core.misc import UNITS
@@ -49,16 +49,14 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
         design.materials[0].properties[MaterialPropertyType.DENSITY].type
         == MaterialPropertyType.DENSITY
     )
-    assert design.materials[0].properties[MaterialPropertyType.DENSITY].display_name == "steel"
+    assert design.materials[0].name == "steel"
+    assert design.materials[0].properties[MaterialPropertyType.DENSITY].name == "Density"
     assert design.materials[0].properties[MaterialPropertyType.DENSITY].quantity == density
     assert (
         design.materials[0].properties[MaterialPropertyType.POISSON_RATIO].type
         == MaterialPropertyType.POISSON_RATIO
     )
-    assert (
-        design.materials[0].properties[MaterialPropertyType.POISSON_RATIO].display_name
-        == "myPoisson"
-    )
+    assert design.materials[0].properties[MaterialPropertyType.POISSON_RATIO].name == "myPoisson"
     assert (
         design.materials[0].properties[MaterialPropertyType.POISSON_RATIO].quantity == poisson_ratio
     )
@@ -66,10 +64,7 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
         design.materials[0].properties[MaterialPropertyType.TENSILE_STRENGTH].type
         == MaterialPropertyType.TENSILE_STRENGTH
     )
-    assert (
-        design.materials[0].properties[MaterialPropertyType.TENSILE_STRENGTH].display_name
-        == "myTensile"
-    )
+    assert design.materials[0].properties[MaterialPropertyType.TENSILE_STRENGTH].name == "myTensile"
     assert (
         design.materials[0].properties[MaterialPropertyType.TENSILE_STRENGTH].quantity
         == tensile_strength
@@ -133,8 +128,8 @@ def test_component_body(modeler: Modeler):
     # TODO: GetVolume is not implemented on server side yet
     try:
         # All are in mm
-        expected_vol = pentagon.area.m * distance_extruded_body.m
-        assert body.volume.m == expected_vol
+        expected_vol = pentagon.area.m * distance_extruded_body.m * 1e-9  # factor to m**3
+        assert body.volume.m == pytest.approx(expected_vol)
     except (_InactiveRpcError):
         pass
     assert len(design.components) == 0
@@ -314,7 +309,12 @@ def test_coordinate_system_creation(modeler: Modeler):
 
 
 def test_delete_body_component(modeler: Modeler):
-    """Test for verifying the deletion of ``Component`` and ``Body`` objects."""
+    """Test for verifying the deletion of ``Component`` and ``Body`` objects.
+
+    Notes
+    -----
+    Requires storing scdocx file and checking manually (for now).
+    """
 
     # Create your design on the server side
     design = modeler.create_design("Deletion_Test")
@@ -518,3 +518,35 @@ def test_delete_body_component(modeler: Modeler):
     # Try deleting the Design object itself - this is forbidden
     with pytest.raises(ValueError, match="The Design object itself cannot be deleted."):
         design.delete_component(design)
+
+
+def test_shared_topology(modeler: Modeler):
+    """Test for checking the correct setting of shared topology on the server.
+
+    Notes
+    -----
+    Requires storing scdocx file and checking manually (for now).
+    """
+    # Create your design on the server side
+    design = modeler.create_design("SharedTopology_Test")
+
+    # Create a Sketch object and draw a circle (all client side)
+    sketch = Sketch()
+    sketch.draw_circle(Point([-30, -30, 0], UNITS.mm), Quantity(10, UNITS.mm))
+    distance = Quantity(30, UNITS.mm)
+
+    # Create a component
+    comp_1 = design.add_component("Component_1")
+    comp_1.extrude_sketch(name="Body_1", sketch=sketch, distance=distance)
+
+    # Now that the component is created, let's try to assign a SharedTopology
+    assert comp_1.shared_topology is None
+
+    # Set the shared topology
+    comp_1.set_shared_topology(SharedTopologyType.SHARETYPE_SHARE)
+    assert comp_1.shared_topology == SharedTopologyType.SHARETYPE_SHARE
+
+    # Try to assign it to the entire design
+    assert design.shared_topology is None
+    with pytest.raises(ValueError, match="The Design object itself cannot have a shared topology."):
+        design.set_shared_topology(SharedTopologyType.SHARETYPE_NONE)

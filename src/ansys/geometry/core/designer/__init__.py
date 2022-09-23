@@ -1,7 +1,7 @@
 """PyGeometry design subpackage."""
 
 from ansys.geometry.core.designer.body import Body
-from ansys.geometry.core.designer.component import Component
+from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
@@ -15,5 +15,6 @@ __all__ = [
     "Edge",
     "Face",
     "NamedSelection",
+    "SharedTopologyType",
     "SurfaceType",
 ]
