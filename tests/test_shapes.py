@@ -365,13 +365,32 @@ def test_create_segment():
     assert segment_3.end.unit == UNIT_LENGTH
 
     # From test 1, get the local points
+    expected_local_start = Point([0, 0, 0], unit=UNITS.mm)
+    expected_local_end = Point([3, 6, 0], unit=UNITS.mm)
+
     local_points_even = segment.local_points(num_points=80)
     local_points_odd = segment.local_points(num_points=81)
-    assert local_points_even[0] == start
-    assert local_points_even[-1] == end
+    assert local_points_even[0] == expected_local_start
+    assert local_points_even[-1].x.m == pytest.approx(
+        expected_local_end.x.m_as(UNIT_LENGTH), rel=1e-6, abs=1e-8
+    )
+    assert local_points_even[-1].y.m == pytest.approx(
+        expected_local_end.y.m_as(UNIT_LENGTH), rel=1e-6, abs=1e-8
+    )
+    assert local_points_even[-1].z.m == pytest.approx(
+        expected_local_end.z.m_as(UNIT_LENGTH), rel=1e-6, abs=1e-8
+    )
     assert len(local_points_even) == 80
-    assert local_points_odd[0] == start
-    assert local_points_odd[-1] == end
+    assert local_points_odd[0] == expected_local_start
+    assert local_points_odd[-1].x.m == pytest.approx(
+        expected_local_end.x.m_as(UNIT_LENGTH), rel=1e-6, abs=1e-8
+    )
+    assert local_points_odd[-1].y.m == pytest.approx(
+        expected_local_end.y.m_as(UNIT_LENGTH), rel=1e-6, abs=1e-8
+    )
+    assert local_points_odd[-1].z.m == pytest.approx(
+        expected_local_end.z.m_as(UNIT_LENGTH), rel=1e-6, abs=1e-8
+    )
     assert len(local_points_odd) == 81
 
     # Try adding a simple segment with the sketcher

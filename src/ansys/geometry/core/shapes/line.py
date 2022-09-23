@@ -297,14 +297,37 @@ class Segment(Line):
         List[Point]
             A list of points representing the shape.
         """
-        start = Point(
-            self.plane.global_to_local @ (self.start - self.plane.origin), self.start.unit
+        start_unit_length = Point(
+            self.plane.global_to_local @ (self.start - self.plane.origin), UNIT_LENGTH
+        )
+        start_with_accurate_units = Point(
+            [
+                start_unit_length.x.m_as(self.start.unit),
+                start_unit_length.y.m_as(self.start.unit),
+                start_unit_length.z.m_as(self.start.unit),
+            ],
+            self.start.unit,
         )
 
-        end = Point(self.plane.global_to_local @ (self.end - self.plane.origin), self.end.unit)
+        end_unit_length = Point(
+            self.plane.global_to_local @ (self.end - self.plane.origin), UNIT_LENGTH
+        )
+        end_with_accurate_units = Point(
+            [
+                end_unit_length.x.m_as(self.end.unit),
+                end_unit_length.y.m_as(self.end.unit),
+                end_unit_length.z.m_as(self.end.unit),
+            ],
+            self.start.unit,
+        )
 
-        delta_segm = (end - start) / (num_points - 1)
-        return [Point(start + delta * delta_segm) for delta in range(0, num_points)]
+        delta_segm = Point(
+            (end_with_accurate_units - start_with_accurate_units) / (num_points - 1), UNIT_LENGTH
+        )
+        return [
+            Point(start_with_accurate_units + delta * delta_segm, UNIT_LENGTH)
+            for delta in range(0, num_points)
+        ]
 
     def points(self, num_points: Optional[int] = 100) -> List[Point]:
         """Returns a list containing all the points belonging to the shape.
