@@ -14,7 +14,7 @@ class Material:
 
     Parameters
     ----------
-    display_name: str
+    name: str
         User-defined display name.
     density: ~pint.Quantity
         Material density.
@@ -24,14 +24,14 @@ class Material:
 
     def __init__(
         self,
-        display_name: str,
+        name: str,
         density: Quantity,
         additional_properties: Optional[List[MaterialProperty]] = [],
     ):
         """Constructor method for ``Material``."""
-        self._display_name = display_name
+        self._name = name
         check_type(density, Quantity)
-        self._density = MaterialProperty(MaterialPropertyType.DENSITY, display_name, density)
+        self._density = MaterialProperty(MaterialPropertyType.DENSITY, "Density", density)
 
         # Add the density to the properties list
         additional_properties.append(self._density)
@@ -44,19 +44,22 @@ class Material:
         """Return the list of properties."""
         return self._properties
 
-    def add_property(
-        self, type: MaterialPropertyType, display_name: str, quantity: Quantity
-    ) -> None:
+    @property
+    def name(self) -> str:
+        """Name assigned to the ``Material``."""
+        return self._name
+
+    def add_property(self, type: MaterialPropertyType, name: str, quantity: Quantity) -> None:
         """Add a ``MaterialProperty`` to the ``Material``.
 
         Parameters
         ----------
         type : MaterialPropertyType
             ``MaterialPropertyType`` value.
-        display_name: str
+        name: str
             User-defined display name.
         quantity: ~pint.Quantity
             Value and unit.
         """
-        property = MaterialProperty(type, display_name, quantity)
+        property = MaterialProperty(type, name, quantity)
         self._properties[property.type] = property
