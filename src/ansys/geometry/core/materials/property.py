@@ -26,7 +26,7 @@ class MaterialProperty:
     ----------
     type : MaterialPropertyType
         ``MaterialPropertyType`` value.
-    display_name: str
+    name: str
         User-defined display name.
     quantity: ~pint.Quantity
         Value and unit.
@@ -35,12 +35,12 @@ class MaterialProperty:
     def __init__(
         self,
         type: MaterialPropertyType,
-        display_name: str,
+        name: str,
         quantity: Quantity,
     ):
         """Constructor method for ``Material Property``."""
         self._type = type
-        self._display_name = display_name
+        self._name = name
         self._quantity = quantity
 
     @property
@@ -49,9 +49,9 @@ class MaterialProperty:
         return self._type
 
     @property
-    def display_name(self) -> str:
+    def name(self) -> str:
         """Display name of the ``MaterialProperty``."""
-        return self._display_name
+        return self._name
 
     @property
     def quantity(self) -> Quantity:

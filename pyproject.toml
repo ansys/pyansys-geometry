@@ -71,7 +71,21 @@ Pint = {version = "==0.19.2", python = ">3.8"}
 
 [tool.poetry.extras]
 test = ["pytest","pytest-cov"]
-docs = ["ansys-sphinx-theme", "numpydoc", "Sphinx", "sphinx-autoapi", "sphinx-copybutton"]
+docs = [
+    "ansys-sphinx-theme",
+    "jupytext",
+    "myst-parser",
+    "nbsphinx",
+    "nbconvert",
+    "notebook",
+    "numpydoc",
+    "Sphinx",
+    "sphinx-autoapi",
+    "sphinx-copybutton",
+    "sphinx-gallery",
+    "ipyvtklink",
+    "panel",
+]
 
 [tool.black]
 line-length = 100
