@@ -93,7 +93,7 @@ For drawing arcs of circumference, a center, starting and ending points are requ
 
 ```{code-cell} ipython3
 start_point, end_point = Point([2, 1, 1], unit=u.m), Point([0, 1, 1], unit=u.meter)
-arc = sketch.draw_arc(Point([1.5, 1, 1]), start_point, end_point))
+arc = sketch.draw_arc(Point([1.5, 1, 1]), start_point, end_point)
 arc.plot()
 ```
 
