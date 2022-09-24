@@ -135,6 +135,7 @@ class Sketch:
         center: Point,
         semi_major_axis: Union[Quantity, Distance],
         semi_minor_axis: Union[Quantity, Distance],
+        angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
         """Create an ellipse shape on the sketch.
 
@@ -146,6 +147,8 @@ class Sketch:
             The semi-major axis of the ellipse.
         semi_minor_axis : Union[Quantity, Distance]
             The semi-minor axis of the ellipse.
+        angle : Optional[Union[Quantity, Angle, Real]]
+            The placement angle for orientation alignment.
 
         Returns
         -------
@@ -153,7 +156,7 @@ class Sketch:
             An object representing the ellipse added to the sketch.
 
         """
-        ellipse = Ellipse(self._plane, center, semi_major_axis, semi_minor_axis)
+        ellipse = Ellipse(self._plane, center, semi_major_axis, semi_minor_axis, angle)
         self.append_shape(ellipse)
         return ellipse
 
@@ -207,7 +210,13 @@ class Sketch:
         self.append_shape(line)
         return line
 
-    def draw_polygon(self, center: Point, inner_radius: Union[Vector, UnitVector], sides: int):
+    def draw_polygon(
+        self,
+        center: Point,
+        inner_radius: Union[Vector, UnitVector],
+        sides: int,
+        angle: Optional[Union[Quantity, Angle, Real]] = 0,
+    ):
         """Create a polygon shape on the sketch.
 
         Parameters
@@ -218,6 +227,8 @@ class Sketch:
             The inradius(apothem) of the polygon.
         sides : int
             Number of sides of the polygon.
+        angle : Optional[Union[Quantity, Angle, Real]]
+            The placement angle for orientation alignment.
 
         Returns
         -------
@@ -225,7 +236,7 @@ class Sketch:
             An object for modelling polygonal shapes.
 
         """
-        polygon = Polygon(self._plane, center, inner_radius, sides)
+        polygon = Polygon(self._plane, center, inner_radius, sides, angle)
         self.append_shape(polygon)
         return polygon
 

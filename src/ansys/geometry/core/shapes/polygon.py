@@ -6,8 +6,10 @@ import numpy as np
 from pint import Quantity
 
 from ansys.geometry.core.math import Plane, Point
-from ansys.geometry.core.misc import Distance, check_type
+from ansys.geometry.core.misc import Angle, Distance, check_type
+from ansys.geometry.core.misc.measurements import UNIT_ANGLE
 from ansys.geometry.core.shapes.base import BaseShape
+from ansys.geometry.core.typing import Real
 
 
 class Polygon(BaseShape):
@@ -23,6 +25,8 @@ class Polygon(BaseShape):
         The inradius(apothem) of the polygon.
     sides : int
         Number of sides of the polygon.
+    angle : Optional[Union[Quantity, Angle, Real]]
+        The placement angle for orientation alignment.
     """
 
     def __init__(
@@ -31,6 +35,7 @@ class Polygon(BaseShape):
         center: Point,
         inner_radius: Union[Quantity, Distance],
         sides: int,
+        angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
         """Initializes the polygon shape."""
         # Call the BaseShape ctor.
@@ -48,6 +53,10 @@ class Polygon(BaseShape):
         )
         if self._inner_radius.value <= 0:
             raise ValueError("Radius must be a real positive value.")
+
+        if isinstance(angle, (int, float)):
+            angle = Angle(angle, UNIT_ANGLE)
+        self._angle_offset = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
 
         # Verify that the number of sides is valid with preferred range
         if sides < 3:
@@ -161,7 +170,10 @@ class Polygon(BaseShape):
             A list of vertices representing the shape.
 
         """
-        theta = np.linspace(0, 2 * np.pi, self.n_sides + 1)
+        angle_offset_radians = +self._angle_offset.value.m_as(UNIT_ANGLE)
+        theta = np.linspace(
+            0 + angle_offset_radians, 2 * np.pi + angle_offset_radians, self.n_sides + 1
+        )
         center_from_plane_origin = Point(
             self.plane.global_to_local @ (self.center - self.plane.origin), self.center.unit
         )
