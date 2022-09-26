@@ -158,7 +158,9 @@ class Body:
             SetAssignedMaterialRequest(id=self._id, material=material.name)
         )
 
-    def imprint_curves(self, faces: List[Face], sketch: Sketch) -> List[Edge]:
+    def imprint_curves(
+        self, faces: List[Face], sketch: Sketch
+    ) -> tuple[edges : List[Edge], faces : List[Face]]:
         """Imprints all of the specified geometries onto the specified faces of the body.
 
         Parameters
@@ -203,9 +205,12 @@ class Body:
             for grpc_edge in imprint_response.edges
         ]
 
-        # TODO: Critical to get back faces and edges from server to synchronize body
-        # TODO: Request gRPC signature update to return faces and edges impacted
-        return new_edges
+        new_faces = [
+            Face(grpc_face.id, grpc_face.surface_type, self, self._grpc_client)
+            for grpc_face in imprint_response.faces
+        ]
+
+        return (new_edges, new_faces)
 
     def project_curves(
         self, direction: UnitVector, sketch: Sketch, closest_face: bool
