@@ -17,7 +17,7 @@ from ansys.geometry.core.connection import (
     sketch_shapes_to_grpc_geometries,
     unit_vector_to_grpc_direction,
 )
-from ansys.geometry.core.designer.edge import Edge
+from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.materials import Material
 from ansys.geometry.core.math import UnitVector
@@ -107,6 +107,21 @@ class Body:
         return [
             Face(grpc_face.id, SurfaceType(grpc_face.surface_type), self, self._grpc_client)
             for grpc_face in grpc_faces.faces
+        ]
+
+    @property
+    def edges(self) -> List[Edge]:
+        """Loads all of the edges within the body.
+
+        Returns
+        ----------
+        List[Edge]
+        """
+        grpc_edges = self._bodies_stub.GetEdges(BodyIdentifier(id=self._id))
+
+        return [
+            Edge(grpc_edge.id, CurveType(grpc_edge.curve_type), self._body, self._grpc_client)
+            for grpc_edge in grpc_edges.edges
         ]
 
     @property
@@ -256,9 +271,10 @@ class Body:
             else distance.value.m_as(SERVER_UNIT_LENGTH)
         )
 
-        translation_request = TranslateRequest(
-            id=self.id,
-            direction=unit_vector_to_grpc_direction(direction),
-            distance=magnitude,
+        self._bodies_stub.Translate(
+            TranslateRequest(
+                bodies=[self.id],
+                direction=unit_vector_to_grpc_direction(direction),
+                distance=magnitude,
+            )
         )
-        self._bodies_stub.Translate(translation_request)

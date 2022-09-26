@@ -6,6 +6,7 @@ from ansys.api.geometry.v0.designs_pb2 import NewDesignRequest, SaveAsDocumentRe
 from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.materials_pb2 import AddMaterialToDocumentRequest
 from ansys.api.geometry.v0.materials_pb2_grpc import MaterialsStub
+from ansys.api.geometry.v0.models_pb2 import Empty
 from ansys.api.geometry.v0.models_pb2 import Material as GRPCMaterial
 from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialProperty
 from ansys.api.geometry.v0.namedselections_pb2 import NamedSelectionIdentifier
@@ -103,6 +104,35 @@ class Design(Component):
 
         self._design_stub.SaveAs(SaveAsDocumentRequest(filepath=file_location))
 
+    def download(self, file_location: str, as_stream: Optional[bool] = False) -> None:
+        """Downloads a design from the active geometry server instance.
+
+        Parameters
+        ----------
+        file_location : str
+            Full path of the location on disk where the file should be saved.
+        as_stream : bool, optional
+            Boolean indicating whether we should use the gRPC stream functionality
+            or the single message approach. By default, ``False``
+        """
+        # Sanity checks on inputs
+        check_type(file_location, str)
+
+        # Process response (as stream or single file)
+        received_bytes = bytes()
+        if as_stream:
+            response_iterator = self._design_stub.DownloadFileStream(Empty())
+            for response in response_iterator:
+                received_bytes += response.chunk
+        else:
+            response = self._design_stub.DownloadFileStream(Empty())
+            received_bytes += response.data
+
+        # Write to file
+        downloaded_file = open(file_location, "wb")
+        downloaded_file.write(received_bytes)
+        downloaded_file.close()
+
     def create_named_selection(
         self,
         name: str,
@@ -150,8 +180,7 @@ class Design(Component):
         removal_name = (
             named_selection.name if not isinstance(named_selection, str) else named_selection
         )
-        # TODO : even though "id" is requested, we should pass the name - change protos
-        self._named_selections_stub.Delete(NamedSelectionIdentifier(id=removal_name))
+        self._named_selections_stub.Delete(NamedSelectionIdentifier(name=removal_name))
 
         try:
             self._named_selections.pop(removal_name)
