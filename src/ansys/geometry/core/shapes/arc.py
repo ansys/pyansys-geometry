@@ -29,13 +29,13 @@ class Arc(BaseShape):
         plane : Plane
             A :class:`Plane` representing the planar surface where the shape is contained.
         center : Point
-            A :class:``Point`` representing the center of the arc.
+            A :class:`Point` representing the center of the arc.
         start: Point
-            A :class:``Point`` representing the start of the arc.
+            A :class:`Point` representing the start of the arc.
         end : Point
-            A :class:``Point`` representing the end of the arc.
+            A :class:`Point` representing the end of the arc.
         axis : Optional[UnitVector]
-            A :class:``UnitVector`` determining the rotation direction of the arc.
+            A :class:`UnitVector` determining the rotation direction of the arc.
             It is expected to be orthogonal to the provided plane.
             +z for counter-clockwise rotation. -z for clockwise rotation.
             If not provided, the default will be counter-clockwise rotation.

@@ -52,16 +52,6 @@ class Slot(BaseShape):
         check_type(height, (Quantity, Distance, int, float))
         check_type(angle, (Quantity, Angle, int, float))
 
-        if isinstance(angle, (int, float)):
-            angle = Angle(angle, UNIT_ANGLE)
-        angle = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
-
-        rotation = Matrix33(
-            spatial_rotation.from_euler(
-                "xyz", [0, 0, angle.value.m_as(UNIT_ANGLE)], degrees=False
-            ).as_matrix()
-        )
-
         self._width = width if isinstance(width, Distance) else Distance(width, center.unit)
         if self._width.value <= 0:
             raise ValueError("Width must be a real positive value.")
@@ -72,12 +62,25 @@ class Slot(BaseShape):
             raise ValueError("Height must be a real positive value.")
         height_magnitude = self._height.value.m_as(center.unit)
 
+        if height_magnitude > width_magnitude:
+            raise ValueError("Width must be greater than height.")
+
+        if isinstance(angle, (int, float)):
+            angle = Angle(angle, UNIT_ANGLE)
+        angle = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
+
+        rotation = Matrix33(
+            spatial_rotation.from_euler(
+                "xyz", [0, 0, angle.value.m_as(UNIT_ANGLE)], degrees=False
+            ).as_matrix()
+        )
+
         global_center = Point(
-            (center - self.plane.origin) @ self.plane.local_to_global, center.unit
+            (center - self.plane.origin) @ self.plane.local_to_global, center.base_unit
         )
 
         half_h = height_magnitude / 2
-        half_w = width_magnitude / 2
+        half_w = (width_magnitude - height_magnitude) / 2
         offset_u = center.unit
         slot_corner_1 = self.__slot_ref_point(-half_w, half_h, global_center, offset_u, rotation)
         slot_corner_2 = self.__slot_ref_point(half_w, half_h, global_center, offset_u, rotation)
