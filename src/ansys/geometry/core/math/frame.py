@@ -81,7 +81,7 @@ class Frame:
         Returns
         -------
         Matrix33
-            A 3x3 matrix representing the transformation from local to global
+            A 3x3 matrix representing the transformation from global to local
             coordinate space.
 
         """
@@ -102,7 +102,7 @@ class Frame:
         Returns
         -------
         Matrix33
-            A 3x3 matrix representing the transformation from global to local
+            A 3x3 matrix representing the transformation from local to global
             coordinate space.
 
         """
