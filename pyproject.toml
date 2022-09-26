@@ -41,7 +41,7 @@ grpcio-health-checking = ">=1.45.0"
 importlib-metadata = {version = "^4.0", python = "<3.8"}
 numpy = ">=1.20.3"
 Pint = ">=0.18"
-protobuf = "<=3.20.0"
+protobuf = "~=3.20.2"
 pyvista = ">=0.36.1"
 scipy = ">=1.7.3"
 six = ">=1.16.0"
