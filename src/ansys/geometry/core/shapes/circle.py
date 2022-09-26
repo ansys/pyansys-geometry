@@ -96,6 +96,17 @@ class Circle(BaseShape):
         """
         return np.pi * self.radius**2
 
+    @property
+    def components(self) -> List["BaseShape"]:
+        """Returns a list containing all simple geometries forming the shape.
+
+        Returns
+        -------
+        List[BaseShape]
+            A list of component geometries forming the shape.
+        """
+        return [self]
+
     def local_points(self, num_points: Optional[int] = 100) -> List[Point]:
         """Returns a list containing all the points belonging to the shape.
 

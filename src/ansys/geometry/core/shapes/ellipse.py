@@ -6,7 +6,8 @@ from pint import Quantity
 from scipy.integrate import quad
 
 from ansys.geometry.core.math import Plane, Point
-from ansys.geometry.core.misc import Distance, check_type
+from ansys.geometry.core.misc import Angle, Distance, check_type
+from ansys.geometry.core.misc.measurements import UNIT_ANGLE
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.typing import Real
 
@@ -24,6 +25,8 @@ class Ellipse(BaseShape):
         The semi-major axis of the ellipse.
     semi_minor_axis : Union[Quantity, Distance]
         The semi-minor axis of the ellipse.
+    angle : Optional[Union[Quantity, Angle, Real]]
+        The placement angle for orientation alignment.
     """
 
     def __init__(
@@ -32,6 +35,7 @@ class Ellipse(BaseShape):
         center: Point,
         semi_major_axis: Union[Quantity, Distance],
         semi_minor_axis: Union[Quantity, Distance],
+        angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
         """Initializes the ellipse shape."""
         super().__init__(plane, is_closed=True)
@@ -51,6 +55,10 @@ class Ellipse(BaseShape):
             raise ValueError("Semi-major axis must be a real positive value.")
         if self._semi_minor_axis.value.m_as(self._semi_minor_axis.base_unit) <= 0:
             raise ValueError("Semi-minor axis must be a real positive value.")
+
+        if isinstance(angle, (int, float)):
+            angle = Angle(angle, UNIT_ANGLE)
+        self._angle_offset = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
 
         # Align both units if misaligned
         if self._semi_major_axis.unit != self._semi_minor_axis.unit:
@@ -164,6 +172,17 @@ class Ellipse(BaseShape):
         """
         return np.pi * self.semi_major_axis * self.semi_minor_axis
 
+    @property
+    def components(self) -> List["BaseShape"]:
+        """Returns a list containing all simple geometries forming the shape.
+
+        Returns
+        -------
+        List[BaseShape]
+            A list of component geometries forming the shape.
+        """
+        return [self]
+
     def local_points(self, num_points: Optional[int] = 100) -> List[Point]:
         """Returns a list containing all the points belonging to the shape.
 
@@ -177,23 +196,35 @@ class Ellipse(BaseShape):
         List[Point]
             A list of points representing the shape.
         """
+        angle_cos = np.cos(self._angle_offset.value.m_as(UNIT_ANGLE))
+        angle_sin = np.sin(self._angle_offset.value.m_as(UNIT_ANGLE))
+        offset_factor = np.arctan2(
+            -self.semi_major_axis.m * angle_sin, self.semi_minor_axis.m * angle_cos
+        )
         theta = np.linspace(0, 2 * np.pi, num_points)
         center_from_plane_origin = Point(
             self.plane.global_to_local @ (self.center - self.plane.origin), self.center.unit
         )
-        return [
-            Point(
-                [
-                    center_from_plane_origin.x.to(self.semi_major_axis.units).m
-                    + self.semi_major_axis.m * np.cos(ang),
-                    center_from_plane_origin.y.to(self.semi_major_axis.units).m
-                    + self.semi_minor_axis.m * np.sin(ang),
-                    center_from_plane_origin.z.to(self.semi_major_axis.units).m,
-                ],
-                unit=self.semi_major_axis.units,
+
+        points = []
+        for ang in theta:
+            angle_plus_offset_cos = np.cos(ang + offset_factor)
+            angle_plus_offset_sin = np.sin(ang + offset_factor)
+            points.append(
+                Point(
+                    [
+                        center_from_plane_origin.x.to(self.semi_major_axis.units).m
+                        + self.semi_major_axis.m * angle_plus_offset_cos * angle_cos
+                        - self.semi_minor_axis.m * angle_plus_offset_sin * angle_sin,
+                        center_from_plane_origin.y.to(self.semi_major_axis.units).m
+                        + self.semi_major_axis.m * angle_plus_offset_cos * angle_sin
+                        + self.semi_minor_axis.m * angle_plus_offset_sin * angle_cos,
+                        center_from_plane_origin.z.to(self.semi_major_axis.units).m,
+                    ],
+                    unit=self.semi_major_axis.units,
+                )
             )
-            for ang in theta
-        ]
+        return points
 
     @classmethod
     def from_axes(

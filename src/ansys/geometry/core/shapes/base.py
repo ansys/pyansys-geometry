@@ -58,6 +58,17 @@ class BaseShape:
         return [(self.plane.origin + self.plane.local_to_global @ point) for point in local_points]
 
     @property
+    def components(self) -> List["BaseShape"]:
+        """Returns a list containing all simple geometries forming the shape.
+
+        Returns
+        -------
+        List[BaseShape]
+            A list of component geometries forming the shape.
+        """
+        raise NotImplementedError("Each shape must provide this definition.")
+
+    @property
     def x_coordinates(self) -> List[Real]:
         """Return all the x coordinates for the points of the shape.
 
