@@ -510,7 +510,7 @@ def test_create_slot():
     slot = sketch.draw_slot(center, width, height)
 
     # Validate Real inputs accepted
-    sketch.draw_slot(center, 88, 888)
+    sketch.draw_slot(center, 888, 88)
 
     # Check attributes are expected ones
     area = slot.area

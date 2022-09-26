@@ -102,7 +102,7 @@ arc.plot()
 For drawing slots with a center, width, and height.
 
 ```{code-cell} ipython3
-slot = sketch.draw_slot(Point([2, 0, 2]), 3, 4)
+slot = sketch.draw_slot(Point([2, 0, 2]), 4, 3)
 slot.plot()
 ```
 
