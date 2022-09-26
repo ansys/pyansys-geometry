@@ -158,9 +158,7 @@ class Body:
             SetAssignedMaterialRequest(id=self._id, material=material.name)
         )
 
-    def imprint_curves(
-        self, faces: List[Face], sketch: Sketch
-    ) -> tuple[edges : List[Edge], faces : List[Face]]:
+    def imprint_curves(self, faces: List[Face], sketch: Sketch) -> tuple[List[Edge], List[Face]]:
         """Imprints all of the specified geometries onto the specified faces of the body.
 
         Parameters
