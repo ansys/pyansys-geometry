@@ -6,7 +6,7 @@ from pint import Quantity, Unit
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Matrix33, Plane, Point
-from ansys.geometry.core.misc import Angle, Distance, check_type, UNIT_ANGLE
+from ansys.geometry.core.misc import UNIT_ANGLE, Angle, Distance, check_type
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.shapes.line import Segment
 from ansys.geometry.core.typing import Real
