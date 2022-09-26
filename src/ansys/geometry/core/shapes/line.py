@@ -80,6 +80,17 @@ class Line(BaseShape):
         """Returns the starting point of the line."""
         return self._start
 
+    @property
+    def components(self) -> List["BaseShape"]:
+        """Returns a list containing all simple geometries forming the shape.
+
+        Returns
+        -------
+        List[BaseShape]
+            A list of component geometries forming the shape.
+        """
+        return [self]
+
     def __is_contained_in_plane(self) -> bool:
         """Private method for checking if the line definition is contained in
         the plane provided
@@ -179,6 +190,17 @@ class Segment(Line):
         """Returns the end of the ``Segment``."""
         return self._end
 
+    @property
+    def components(self) -> List["BaseShape"]:
+        """Returns a list containing all simple geometries forming the shape.
+
+        Returns
+        -------
+        List[BaseShape]
+            A list of component geometries forming the shape.
+        """
+        return [self]
+
     @classmethod
     def from_start_point_and_vector(
         cls,
@@ -275,8 +297,37 @@ class Segment(Line):
         List[Point]
             A list of points representing the shape.
         """
-        delta_segm = (self.end - self.start) / (num_points - 1)
-        return [Point(self.start + delta * delta_segm) for delta in range(0, num_points)]
+        start_unit_length = Point(
+            self.plane.global_to_local @ (self.start - self.plane.origin), UNIT_LENGTH
+        )
+        start_with_accurate_units = Point(
+            [
+                start_unit_length.x.m_as(self.start.unit),
+                start_unit_length.y.m_as(self.start.unit),
+                start_unit_length.z.m_as(self.start.unit),
+            ],
+            self.start.unit,
+        )
+
+        end_unit_length = Point(
+            self.plane.global_to_local @ (self.end - self.plane.origin), UNIT_LENGTH
+        )
+        end_with_accurate_units = Point(
+            [
+                end_unit_length.x.m_as(self.start.unit),
+                end_unit_length.y.m_as(self.start.unit),
+                end_unit_length.z.m_as(self.start.unit),
+            ],
+            self.start.unit,
+        )
+
+        delta_segm = Point(
+            (end_with_accurate_units - start_with_accurate_units) / (num_points - 1), UNIT_LENGTH
+        )
+        return [
+            Point(start_with_accurate_units + delta * delta_segm, UNIT_LENGTH)
+            for delta in range(0, num_points)
+        ]
 
     def points(self, num_points: Optional[int] = 100) -> List[Point]:
         """Returns a list containing all the points belonging to the shape.

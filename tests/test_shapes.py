@@ -4,8 +4,8 @@ import pytest
 
 from ansys.geometry.core.math import ZERO_VECTOR3D, Plane, Point, QuantityVector, UnitVector, Vector
 from ansys.geometry.core.math.constants import UNIT_VECTOR_X, UNIT_VECTOR_Y, UNIT_VECTOR_Z
-from ansys.geometry.core.misc import UNIT_LENGTH, UNITS
-from ansys.geometry.core.shapes import Circle, Ellipse, Line, Segment
+from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
+from ansys.geometry.core.shapes import Arc, Circle, Ellipse, Line, Segment
 from ansys.geometry.core.shapes.polygon import Polygon
 from ansys.geometry.core.sketch import Sketch
 
@@ -54,6 +54,9 @@ def test_create_circle():
     local_points_2 = circle_from_center_and_radius.local_points(num_points=5)
     assert abs(all(local_points_2[0] - Point([10, 20, 0], UNITS.mm))) <= DOUBLE_EPS
     assert abs(all(local_points_2[2] - Point([-10, 20, 0], UNITS.mm))) <= DOUBLE_EPS
+
+    assert len(circle.components) == 1
+    assert circle.components[0] == circle
 
 
 def test_circle_errors():
@@ -117,6 +120,9 @@ def test_create_ellipse():
     local_points_2 = ellipse_from_axes.local_points(num_points=5)
     assert abs(all(local_points_2[0] - Point([10, 20, 0], UNITS.mm))) <= DOUBLE_EPS
     assert abs(all(local_points_2[2] - Point([-10, 20, 0], UNITS.mm))) <= DOUBLE_EPS
+
+    assert len(ellipse.components) == 1
+    assert ellipse.components[0] == ellipse
 
 
 def test_ellipse_errors():
@@ -233,6 +239,9 @@ def test_create_polygon():
         polygon = Polygon(yz_plane, Point([1, 2, 3]), 3 * UNITS.cm, sides)
         sketch.append_shape(polygon)
 
+    assert len(pentagon.components) == 1
+    assert pentagon.components[0] == pentagon
+
 
 def test_create_line():
     """Simple test to create a ``Line``."""
@@ -270,6 +279,9 @@ def test_create_line():
     assert line_sketch.start == start_sketch_line
     assert line_sketch.direction == dir_sketch_line
     assert line_sketch.start.unit == start_sketch_line.unit
+
+    assert len(line.components) == 1
+    assert line.components[0] == line
 
 
 def test_create_segment():
@@ -353,13 +365,32 @@ def test_create_segment():
     assert segment_3.end.unit == UNIT_LENGTH
 
     # From test 1, get the local points
+    expected_local_start = Point([0, 0, 0], unit=UNITS.mm)
+    expected_local_end = Point([3, 6, 0], unit=UNITS.mm)
+
     local_points_even = segment.local_points(num_points=80)
     local_points_odd = segment.local_points(num_points=81)
-    assert local_points_even[0] == start
-    assert local_points_even[-1] == end
+    assert local_points_even[0] == expected_local_start
+    assert local_points_even[-1].x.m == pytest.approx(
+        expected_local_end.x.m_as(UNIT_LENGTH), rel=1e-6, abs=1e-8
+    )
+    assert local_points_even[-1].y.m == pytest.approx(
+        expected_local_end.y.m_as(UNIT_LENGTH), rel=1e-6, abs=1e-8
+    )
+    assert local_points_even[-1].z.m == pytest.approx(
+        expected_local_end.z.m_as(UNIT_LENGTH), rel=1e-6, abs=1e-8
+    )
     assert len(local_points_even) == 80
-    assert local_points_odd[0] == start
-    assert local_points_odd[-1] == end
+    assert local_points_odd[0] == expected_local_start
+    assert local_points_odd[-1].x.m == pytest.approx(
+        expected_local_end.x.m_as(UNIT_LENGTH), rel=1e-6, abs=1e-8
+    )
+    assert local_points_odd[-1].y.m == pytest.approx(
+        expected_local_end.y.m_as(UNIT_LENGTH), rel=1e-6, abs=1e-8
+    )
+    assert local_points_odd[-1].z.m == pytest.approx(
+        expected_local_end.z.m_as(UNIT_LENGTH), rel=1e-6, abs=1e-8
+    )
     assert len(local_points_odd) == 81
 
     # Try adding a simple segment with the sketcher
@@ -372,6 +403,9 @@ def test_create_segment():
     assert segment_sketch.direction == dir_sketch
     assert segment_sketch.start.unit == start_sketch.unit
     assert segment_sketch.end.unit == end_sketch.unit
+
+    assert len(segment.components) == 1
+    assert segment.components[0] == segment
 
 
 def test_errors_line():
@@ -458,3 +492,116 @@ def test_create_arc():
     assert abs(all(global_points[0] - Point([3, 1, 0]))) <= DOUBLE_EPS
     assert abs(all(global_points[1] - Point([2.8477, 1.7653, 0]))) <= DOUBLE_EPS
     assert abs(all(global_points[4] - Point([1, 3, 0]))) <= DOUBLE_EPS
+
+    assert len(arc_clockwise.components) == 1
+    assert arc_clockwise.components[0] == arc_clockwise
+
+
+def test_create_slot():
+    """Test slot shape creation in a sketch."""
+
+    # Create a Sketch instance
+    sketch = Sketch(Plane([1, 2, 0]))
+
+    # Draw an arc in previous sketch
+    center = Point([2, 3, 0], unit=UNITS.meter)
+    width = Distance(4, unit=UNITS.meter)
+    height = Distance(2, unit=UNITS.meter)
+    slot = sketch.draw_slot(center, width, height)
+
+    # Validate Real inputs accepted
+    sketch.draw_slot(center, 88, 888)
+
+    # Check attributes are expected ones
+    area = slot.area
+    assert area.m == pytest.approx(11.141592653589793, rel=1e-7, abs=1e-8)
+    assert area.units == UNITS.m * UNITS.m
+    perimeter = slot.perimeter
+    assert perimeter.m == pytest.approx(14.283185307179586, rel=1e-7, abs=1e-8)
+    assert perimeter.units == UNITS.m
+
+    # Check local points are expected ones
+    local_points = slot.local_points(num_points=10)
+    assert abs(all(local_points[0] - Point([0, 4, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[1] - Point([2, 4, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[2] - Point([4, 2, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[3] - Point([2, 2, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[4] - Point([3, 2, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[5] - Point([2.1339746, 1.5, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[6] - Point([2.1339746, 0.5, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[7] - Point([-1.0, 2.0, 0.0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[8] - Point([-1.8660254, 1.5, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[9] - Point([-1.8660254, 0.5, 0]))) <= DOUBLE_EPS
+
+    # Check global points are expected ones
+    global_points = slot.points(num_points=10)
+    assert abs(all(global_points[0] - Point([1, 6, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[1] - Point([3, 6, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[2] - Point([5, 4, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[3] - Point([3, 4, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[4] - Point([4, 4, 0.0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[5] - Point([3.1339746, 3.5, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[6] - Point([3.1339746, 2.5, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[7] - Point([1.11022302e-16, 4, 0.0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[8] - Point([-0.8660254, 3.5, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[9] - Point([-0.8660254, 2.5, 0]))) <= DOUBLE_EPS
+
+    assert len(slot.components) == 4
+    assert isinstance(slot.components[0], Segment)
+    assert isinstance(slot.components[1], Arc)
+    assert isinstance(slot.components[2], Segment)
+    assert isinstance(slot.components[3], Arc)
+
+    tilted_plane = Plane(Point([1, 1, 0]), direction_x=[1, 0, 0], direction_y=[0, -1, 1])
+    tilted_sketch = Sketch(tilted_plane)
+    tilted_slot = tilted_sketch.draw_slot(Point([2, 0, 1]), width, height)
+    assert tilted_slot.area.m == pytest.approx(11.141592653589793, rel=1e-7, abs=1e-8)
+    assert tilted_slot.perimeter.m == pytest.approx(14.283185307179586, rel=1e-7, abs=1e-8)
+
+
+def test_create_box():
+    """Test box shape creation in a sketch."""
+
+    # Create a Sketch instance
+    sketch = Sketch()
+
+    # Draw a box in previous sketch
+    center = Point([3, 1, 0], unit=UNITS.meter)
+    width = Distance(4, unit=UNITS.meter)
+    height = Distance(2, unit=UNITS.meter)
+    box = sketch.draw_box(center, width, height)
+
+    # Validate Real inputs accepted
+    sketch.draw_box(center, 88, 888)
+
+    # Check attributes are expected ones
+    area = box.area
+    assert area.m == 8
+    assert area.units == UNITS.m * UNITS.m
+    perimeter = box.perimeter
+    assert perimeter.m == 12
+    assert perimeter.units == UNITS.m
+
+    # Check local points are expected ones
+    local_points = box.local_points(num_points=4)
+    assert abs(all(local_points[0] - Point([-1, 2, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[1] - Point([3, 2, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[2] - Point([3, 0, 0]))) <= DOUBLE_EPS
+    assert abs(all(local_points[3] - Point([-1, 0, 0]))) <= DOUBLE_EPS
+
+    # Check global points are expected ones
+    global_points = box.points(num_points=4)
+    assert abs(all(global_points[0] - Point([-1, 2, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[1] - Point([3, 2, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[2] - Point([3, 0, 0]))) <= DOUBLE_EPS
+    assert abs(all(global_points[3] - Point([-1, 0, 0]))) <= DOUBLE_EPS
+
+    assert len(box.components) == 4
+    assert isinstance(box.components[0], Segment)
+    assert isinstance(box.components[1], Segment)
+    assert isinstance(box.components[2], Segment)
+    assert isinstance(box.components[3], Segment)
+
+    tilted_plane = Plane(Point([1, 1, 0]), direction_x=[1, 0, 0], direction_y=[0, -1, 1])
+    tilted_sketch = Sketch(tilted_plane)
+    tilted_box = tilted_sketch.draw_box(center, width, height)
