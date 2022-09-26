@@ -6,8 +6,7 @@ from pint import Quantity, Unit
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Matrix33, Plane, Point
-from ansys.geometry.core.misc import Angle, Distance, check_type
-from ansys.geometry.core.misc.measurements import UNIT_ANGLE
+from ansys.geometry.core.misc import Angle, Distance, check_type, UNIT_ANGLE
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.shapes.line import Segment
 from ansys.geometry.core.typing import Real
@@ -53,6 +52,7 @@ class Box(BaseShape):
             angle = Angle(angle, UNIT_ANGLE)
         angle = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
 
+        # TODO : Once the transformation module is available this should be adapted...
         rotation = Matrix33(
             spatial_rotation.from_euler(
                 "xyz", [0, 0, angle.value.m_as(UNIT_ANGLE)], degrees=False

@@ -314,9 +314,9 @@ class Segment(Line):
         )
         end_with_accurate_units = Point(
             [
-                end_unit_length.x.m_as(self.end.unit),
-                end_unit_length.y.m_as(self.end.unit),
-                end_unit_length.z.m_as(self.end.unit),
+                end_unit_length.x.m_as(self.start.unit),
+                end_unit_length.y.m_as(self.start.unit),
+                end_unit_length.z.m_as(self.start.unit),
             ],
             self.start.unit,
         )

@@ -204,7 +204,7 @@ class Arc(BaseShape):
         List[Point]
             A list of points representing the shape.
         """
-        use_counter_clockwise_rotation = self._axis == self._plane.direction_z
+        use_counter_clockwise_rotation = True if self._axis == self._plane.direction_z else False
         start_vector = self.start - self.center
         local_start_vector = (self.plane.global_to_local @ start_vector).tolist()
         start_angle = np.arctan2(
