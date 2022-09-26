@@ -3,11 +3,11 @@
 from pathlib import Path
 from typing import List, Optional, Union
 
+from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.designs_pb2 import NewDesignRequest, SaveAsDocumentRequest
 from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.materials_pb2 import AddMaterialToDocumentRequest
 from ansys.api.geometry.v0.materials_pb2_grpc import MaterialsStub
-from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.models_pb2 import Empty
 from ansys.api.geometry.v0.models_pb2 import Material as GRPCMaterial
 from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialProperty

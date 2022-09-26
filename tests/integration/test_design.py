@@ -632,7 +632,7 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     file_stream = tmp_path_factory.mktemp("scdoc_files") / "cylinder.scdocx"
     design.download(file, as_stream=False)
     design.download(file_stream, as_stream=True)
-    
+
     # Check that both files exist
     assert file.exists()
     assert file_stream.exists()
