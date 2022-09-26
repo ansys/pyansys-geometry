@@ -1,11 +1,13 @@
 """``Design`` class module."""
 
+from pathlib import Path
 from typing import List, Optional, Union
 
 from ansys.api.geometry.v0.designs_pb2 import NewDesignRequest, SaveAsDocumentRequest
 from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.materials_pb2 import AddMaterialToDocumentRequest
 from ansys.api.geometry.v0.materials_pb2_grpc import MaterialsStub
+from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.models_pb2 import Empty
 from ansys.api.geometry.v0.models_pb2 import Material as GRPCMaterial
 from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialProperty
@@ -41,6 +43,7 @@ class Design(Component):
         super().__init__(name, None, grpc_client)
 
         self._design_stub = DesignsStub(self._grpc_client.channel)
+        self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
         self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
 
@@ -104,28 +107,28 @@ class Design(Component):
 
         self._design_stub.SaveAs(SaveAsDocumentRequest(filepath=file_location))
 
-    def download(self, file_location: str, as_stream: Optional[bool] = False) -> None:
+    def download(self, file_location: Path, as_stream: Optional[bool] = False) -> None:
         """Downloads a design from the active geometry server instance.
 
         Parameters
         ----------
-        file_location : str
+        file_location : Path
             Full path of the location on disk where the file should be saved.
         as_stream : bool, optional
             Boolean indicating whether we should use the gRPC stream functionality
             or the single message approach. By default, ``False``
         """
         # Sanity checks on inputs
-        check_type(file_location, str)
+        check_type(file_location, Path)
 
         # Process response (as stream or single file)
         received_bytes = bytes()
         if as_stream:
-            response_iterator = self._design_stub.DownloadFileStream(Empty())
+            response_iterator = self._commands_stub.DownloadFileStream(Empty())
             for response in response_iterator:
                 received_bytes += response.chunk
         else:
-            response = self._design_stub.DownloadFileStream(Empty())
+            response = self._commands_stub.DownloadFile(Empty())
             received_bytes += response.data
 
         # Write to file

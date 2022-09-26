@@ -120,7 +120,7 @@ class Body:
         grpc_edges = self._bodies_stub.GetEdges(BodyIdentifier(id=self._id))
 
         return [
-            Edge(grpc_edge.id, CurveType(grpc_edge.curve_type), self._body, self._grpc_client)
+            Edge(grpc_edge.id, CurveType(grpc_edge.curve_type), self, self._grpc_client)
             for grpc_edge in grpc_edges.edges
         ]
 
