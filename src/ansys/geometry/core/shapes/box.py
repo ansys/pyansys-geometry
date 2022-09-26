@@ -70,21 +70,16 @@ class Box(BaseShape):
         height_magnitude = self._height.value.m_as(center.unit)
 
         global_center = Point(
-            self.plane.global_to_local @ (center - self.plane.origin), center.unit
+            self.plane.global_to_local @ (center - self.plane.origin), center.base_unit
         )
 
-        corner_1 = self.create_point(
-            -width_magnitude / 2, height_magnitude / 2, global_center, center.unit, rotation
-        )
-        corner_2 = self.create_point(
-            width_magnitude / 2, height_magnitude / 2, global_center, center.unit, rotation
-        )
-        corner_3 = self.create_point(
-            width_magnitude / 2, -height_magnitude / 2, global_center, center.unit, rotation
-        )
-        corner_4 = self.create_point(
-            -width_magnitude / 2, -height_magnitude / 2, global_center, center.unit, rotation
-        )
+        half_h = height_magnitude / 2
+        half_w = width_magnitude / 2
+        offset_u = center.unit
+        corner_1 = self.__box_ref_point(-half_w, half_h, global_center, offset_u, rotation)
+        corner_2 = self.__box_ref_point(half_w, half_h, global_center, offset_u, rotation)
+        corner_3 = self.__box_ref_point(half_w, -half_h, global_center, offset_u, rotation)
+        corner_4 = self.__box_ref_point(-half_w, -half_h, global_center, offset_u, rotation)
 
         self._width_segment1 = Segment(plane, corner_1, corner_2)
         self._height_segment1 = Segment(plane, corner_2, corner_3)
@@ -204,13 +199,33 @@ class Box(BaseShape):
         points.extend(segment_4_points)
         return points
 
-    def create_point(
+    def __box_ref_point(
         self, x_offset: Real, y_offset: Real, reference: Point, unit: Unit, rotation: Matrix33
     ) -> Point:
-        point = Point([x_offset, y_offset, 0])
-        rotated_point = Point(Point(rotation @ point, unit), unit)
+        """Private method for creating the box reference points from a given X/Y offset and a box center.
+
+        Parameters
+        ----------
+        x_offset : Real
+            The X axis offset from the box center.
+        y_offset : Real
+            The Y axis offset from the box center.
+        reference : Point
+            The center of the box.
+        unit : Unit
+            The units employed for defining the X/Y offsets.
+        rotation : Matrix33
+            The rotation matrix for the box orientation.
+
+        Returns
+        -------
+        Point
+            The reference point requested of the box (in the global coordinate system).
+        """
+        rotated_point = Point(rotation @ [x_offset, y_offset, 0], unit)
         transformed_point = Point(
-            (self._plane.local_to_global @ (rotated_point + reference)) + self._plane.origin, unit
+            (self._plane.local_to_global @ (rotated_point + reference)) + self._plane.origin,
+            rotated_point.base_unit,
         )
 
         return transformed_point

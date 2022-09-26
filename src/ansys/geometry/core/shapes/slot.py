@@ -76,41 +76,32 @@ class Slot(BaseShape):
             (center - self.plane.origin) @ self.plane.local_to_global, center.unit
         )
 
-        slot_body_corner_1 = self.create_point(
-            -width_magnitude / 2, height_magnitude / 2, global_center, center.unit, rotation
-        )
-        slot_body_corner_2 = self.create_point(
-            width_magnitude / 2, height_magnitude / 2, global_center, center.unit, rotation
-        )
-        slot_body_corner_3 = self.create_point(
-            width_magnitude / 2, -height_magnitude / 2, global_center, center.unit, rotation
-        )
-        slot_body_corner_4 = self.create_point(
-            -width_magnitude / 2, -height_magnitude / 2, global_center, center.unit, rotation
-        )
-        arc_1_center = self.create_point(
-            width_magnitude / 2, 0, global_center, center.unit, rotation
-        )
-        arc_2_center = self.create_point(
-            -width_magnitude / 2, 0, global_center, center.unit, rotation
-        )
+        half_h = height_magnitude / 2
+        half_w = width_magnitude / 2
+        offset_u = center.unit
+        slot_corner_1 = self.__slot_ref_point(-half_w, half_h, global_center, offset_u, rotation)
+        slot_corner_2 = self.__slot_ref_point(half_w, half_h, global_center, offset_u, rotation)
+        slot_corner_3 = self.__slot_ref_point(half_w, -half_h, global_center, offset_u, rotation)
+        slot_corner_4 = self.__slot_ref_point(-half_w, -half_h, global_center, offset_u, rotation)
+        arc_1_center = self.__slot_ref_point(half_w, 0, global_center, offset_u, rotation)
+        arc_2_center = self.__slot_ref_point(-half_w, 0, global_center, offset_u, rotation)
 
         self._arc1 = Arc(
             plane,
             arc_1_center,
-            slot_body_corner_3,
-            slot_body_corner_2,
+            slot_corner_3,
+            slot_corner_2,
             plane.direction_z,
         )
         self._arc2 = Arc(
             plane,
             arc_2_center,
-            slot_body_corner_4,
-            slot_body_corner_1,
+            slot_corner_4,
+            slot_corner_1,
             UnitVector([-plane.direction_z.x, -plane.direction_z.y, -plane.direction_z.z]),
         )
-        self._segment1 = Segment(plane, slot_body_corner_1, slot_body_corner_2)
-        self._segment2 = Segment(plane, slot_body_corner_3, slot_body_corner_4)
+        self._segment1 = Segment(plane, slot_corner_1, slot_corner_2)
+        self._segment2 = Segment(plane, slot_corner_3, slot_corner_4)
 
     @property
     def center(self) -> Point:
@@ -210,13 +201,33 @@ class Slot(BaseShape):
         points.extend(arc_2_points)
         return points
 
-    def create_point(
+    def __slot_ref_point(
         self, x_offset: Real, y_offset: Real, reference: Point, unit: Unit, rotation: Matrix33
     ) -> Point:
-        point = Point([x_offset, y_offset, 0])
-        rotated_point = Point(Point(rotation @ point, unit), unit)
+        """Private method for creating the slot reference points from a given X/Y offset and its center.
+
+        Parameters
+        ----------
+        x_offset : Real
+            The X axis offset from the slot center.
+        y_offset : Real
+            The Y axis offset from the slot center.
+        reference : Point
+            The center of the slot.
+        unit : Unit
+            The units employed for defining the X/Y offsets.
+        rotation : Matrix33
+            The rotation matrix for the slot orientation.
+
+        Returns
+        -------
+        Point
+            The reference point requested of the slot (in the global coordinate system).
+        """
+        rotated_point = Point(rotation @ [x_offset, y_offset, 0], unit)
         transformed_point = Point(
-            (self._plane.local_to_global @ (rotated_point + reference)) + self._plane.origin, unit
+            (self._plane.local_to_global @ (rotated_point + reference)) + self._plane.origin,
+            rotated_point.base_unit,
         )
 
         return transformed_point
