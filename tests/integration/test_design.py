@@ -108,6 +108,7 @@ def test_component_body(modeler: Modeler):
     assert len(design.bodies) == 0
     assert len(design.materials) == 0
     assert len(design.named_selections) == 0
+    assert len(design.coordinate_systems) == 0
 
     # Create a simple sketch of a Polygon (specifically a Pentagon)
     sketch = Sketch()

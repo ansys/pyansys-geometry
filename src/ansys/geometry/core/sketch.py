@@ -5,8 +5,19 @@ from typing import Optional, Union
 from pint import Quantity
 
 from ansys.geometry.core.math import Plane, Point, UnitVector, Vector
-from ansys.geometry.core.misc import Distance
-from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Line, Polygon, Segment
+from ansys.geometry.core.misc import Angle, Distance
+from ansys.geometry.core.shapes import (
+    Arc,
+    BaseShape,
+    Box,
+    Circle,
+    Ellipse,
+    Line,
+    Polygon,
+    Segment,
+    Slot,
+)
+from ansys.geometry.core.typing import Real
 
 
 class Sketch:
@@ -41,6 +52,64 @@ class Sketch:
         else:
             raise ValueError("The provided shape does not belong to the same plane as the Sketch.")
 
+    def draw_box(
+        self,
+        center: Point,
+        width: Union[Quantity, Distance, Real],
+        height: Union[Quantity, Distance, Real],
+        angle: Optional[Union[Quantity, Angle, Real]] = 0,
+    ):
+        """Create a box shape on the sketch.
+
+        Parameters
+        ----------
+        center: Point
+            A :class:`Point` representing the center of the box.
+        width : Union[Quantity, Distance, Real]
+            The width of the box.
+        height : Union[Quantity, Distance, Real]
+            The height of the box.
+        angle : Optional[Union[Quantity, Real]]
+            The placement angle for orientation alignment.
+
+        Returns
+        -------
+        Box
+            An object representing the box added to the sketch.
+        """
+        box = Box(self._plane, center, width, height, angle)
+        self.append_shape(box)
+        return box
+
+    def draw_slot(
+        self,
+        center: Point,
+        width: Union[Quantity, Distance, Real],
+        height: Union[Quantity, Distance, Real],
+        angle: Optional[Union[Quantity, Angle, Real]] = 0,
+    ):
+        """Create a slot shape on the sketch.
+
+        Parameters
+        ----------
+        center: Point
+            A :class:`Point` representing the center of the slot.
+        width : Union[Quantity, Distance, Real]
+            The width of the slot.
+        height : Union[Quantity, Distance, Real]
+            The height of the slot.
+        angle : Optional[Union[Quantity, Angle, Real]]
+            The placement angle for orientation alignment.
+
+        Returns
+        -------
+        Slot
+            An object representing the slot added to the sketch.
+        """
+        slot = Slot(self._plane, center, width, height, angle)
+        self.append_shape(slot)
+        return slot
+
     def draw_circle(self, center: Point, radius: Union[Quantity, Distance]):
         """Create a circle shape on the sketch.
 
@@ -66,6 +135,7 @@ class Sketch:
         center: Point,
         semi_major_axis: Union[Quantity, Distance],
         semi_minor_axis: Union[Quantity, Distance],
+        angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
         """Create an ellipse shape on the sketch.
 
@@ -77,6 +147,8 @@ class Sketch:
             The semi-major axis of the ellipse.
         semi_minor_axis : Union[Quantity, Distance]
             The semi-minor axis of the ellipse.
+        angle : Optional[Union[Quantity, Angle, Real]]
+            The placement angle for orientation alignment.
 
         Returns
         -------
@@ -84,7 +156,7 @@ class Sketch:
             An object representing the ellipse added to the sketch.
 
         """
-        ellipse = Ellipse(self._plane, center, semi_major_axis, semi_minor_axis)
+        ellipse = Ellipse(self._plane, center, semi_major_axis, semi_minor_axis, angle)
         self.append_shape(ellipse)
         return ellipse
 
@@ -138,7 +210,13 @@ class Sketch:
         self.append_shape(line)
         return line
 
-    def draw_polygon(self, center: Point, inner_radius: Union[Vector, UnitVector], sides: int):
+    def draw_polygon(
+        self,
+        center: Point,
+        inner_radius: Union[Vector, UnitVector],
+        sides: int,
+        angle: Optional[Union[Quantity, Angle, Real]] = 0,
+    ):
         """Create a polygon shape on the sketch.
 
         Parameters
@@ -149,6 +227,8 @@ class Sketch:
             The inradius(apothem) of the polygon.
         sides : int
             Number of sides of the polygon.
+        angle : Optional[Union[Quantity, Angle, Real]]
+            The placement angle for orientation alignment.
 
         Returns
         -------
@@ -156,11 +236,11 @@ class Sketch:
             An object for modelling polygonal shapes.
 
         """
-        polygon = Polygon(self._plane, center, inner_radius, sides)
+        polygon = Polygon(self._plane, center, inner_radius, sides, angle)
         self.append_shape(polygon)
         return polygon
 
-    def draw_arc(self, center: Point, start: Point, end: Point, axis: UnitVector):
+    def draw_arc(self, center: Point, start: Point, end: Point, axis: Optional[UnitVector] = None):
         """Create an arc shape on the sketch.
 
         Parameters
@@ -171,8 +251,11 @@ class Sketch:
             A :class:``Point`` representing the start of the shape.
         end : Point
             A :class:``Point`` representing the end of the shape.
-        axis : UnitVector
+        axis : Optional[UnitVector]
             A :class:``UnitVector`` determining the rotation direction of the arc.
+            It is expected to be orthogonal to the provided plane.
+            +z for counter-clockwise rotation. -z for clockwise rotation.
+            If not provided, the default will be counter-clockwise rotation.
 
         Returns
         -------

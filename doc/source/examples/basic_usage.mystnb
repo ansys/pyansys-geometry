@@ -93,8 +93,26 @@ For drawing arcs of circumference, a center, starting and ending points are requ
 
 ```{code-cell} ipython3
 start_point, end_point = Point([2, 1, 1], unit=u.m), Point([0, 1, 1], unit=u.meter)
-arc = sketch.draw_arc(Point([1.5, 1, 1]), start_point, end_point, UnitVector((0, 0, 1)))
+arc = sketch.draw_arc(Point([1.5, 1, 1]), start_point, end_point)
 arc.plot()
+```
+
+### Drawing a slot
+
+For drawing slots with a center, width, and height.
+
+```{code-cell} ipython3
+slot = sketch.draw_slot(Point([2, 0, 2]), 3, 4)
+slot.plot()
+```
+
+### Drawing a box
+
+For drawing boxes with a center, width, and height.
+
+```{code-cell} ipython3
+box = sketch.draw_box(Point([2, 0, 2]), 4, 5)
+box.plot()
 ```
 
 ### Drawing a segment

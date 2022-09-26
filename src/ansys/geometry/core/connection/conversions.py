@@ -92,16 +92,17 @@ def sketch_shapes_to_grpc_geometries(shapes: List[BaseShape]) -> Geometries:
     """
     geometries = Geometries()
     for shape in shapes:
-        if isinstance(shape, Circle):
-            geometries.circles.append(circle_to_grpc_circle(shape))
-        elif isinstance(shape, Segment):
-            geometries.lines.append(segment_to_grpc_line(shape))
-        elif isinstance(shape, Arc):
-            geometries.arcs.append(arc_to_grpc_arc(shape))
-        elif isinstance(shape, Ellipse):
-            geometries.ellipses.append(ellipse_to_grpc_ellipse(shape))
-        elif isinstance(shape, Polygon):
-            geometries.polygons.append(polygon_to_grpc_polygon(shape))
+        for component_shape in shape.components:
+            if isinstance(component_shape, Circle):
+                geometries.circles.append(circle_to_grpc_circle(component_shape))
+            elif isinstance(component_shape, Segment):
+                geometries.lines.append(segment_to_grpc_line(component_shape))
+            elif isinstance(component_shape, Arc):
+                geometries.arcs.append(arc_to_grpc_arc(component_shape))
+            elif isinstance(component_shape, Ellipse):
+                geometries.ellipses.append(ellipse_to_grpc_ellipse(component_shape))
+            elif isinstance(component_shape, Polygon):
+                geometries.polygons.append(polygon_to_grpc_polygon(component_shape))
 
     return geometries
 
