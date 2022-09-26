@@ -8,6 +8,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     BodyIdentifier,
     CreateExtrudedBodyRequest,
     CreatePlanarBodyRequest,
+    TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.components_pb2 import (
@@ -22,6 +23,7 @@ from ansys.geometry.core.connection import (
     GrpcClient,
     plane_to_grpc_plane,
     sketch_shapes_to_grpc_geometries,
+    unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.coordinatesystem import CoordinateSystem
@@ -299,15 +301,32 @@ class Component:
 
         check_type(bodies, list)
         [check_type(body, Body) for body in bodies]
+        check_type(direction, UnitVector)
+        check_type(distance, (Quantity, Distance))
+        check_pint_unit_compatibility(distance, SERVER_UNIT_LENGTH)
+        body_ids_found = []
 
-        # TODO : Wait for proto update so bodies is repeated string
         for body in bodies:
             body_requested = self.search_body(body.id)
             if body_requested:
-                body_requested.translate(direction, distance)
+                body_ids_found.append(body_requested.id)
             else:
                 # TODO : .... Warning
                 pass
+
+        magnitude = (
+            distance.m_as(SERVER_UNIT_LENGTH)
+            if not isinstance(distance, Distance)
+            else distance.value.m_as(SERVER_UNIT_LENGTH)
+        )
+
+        self._bodies_stub.Translate(
+            TranslateRequest(
+                bodies=body_ids_found,
+                direction=unit_vector_to_grpc_direction(direction),
+                distance=magnitude,
+            )
+        )
 
     def delete_component(self, component: Union["Component", str]) -> None:
         """Deletes an existing component (itself or its children).

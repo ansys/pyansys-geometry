@@ -134,6 +134,7 @@ def test_component_body(modeler: Modeler):
         pass
     assert len(design.components) == 0
     assert len(design.bodies) == 1
+    assert len(body.edges) == 15  # 5 top + 5 bottom + 5 sides
 
     # We have created this body on the base component. Let's add a new component
     # and add a planar surface to it
@@ -158,6 +159,9 @@ def test_component_body(modeler: Modeler):
     assert len(planar_component.bodies) == 1
     assert len(design.components) == 1
     assert len(design.bodies) == 1
+    assert (
+        len(planar_body.edges) == 1
+    )  # top + bottom merged into a single face + ellipse is a single curve
 
     # Check that the planar component belongs to the design
     assert planar_component.parent_component.id == design.id
@@ -608,3 +612,27 @@ def test_bodies_translation(modeler: Modeler):
     design.translate_bodies(
         [body_circle_comp, body_polygon_comp], UnitVector([0, -1, 1]), Quantity(88, UNITS.mm)
     )
+
+
+def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Test for downloading a design in multiple modes and verifying the correct download."""
+
+    # Create your design on the server side
+    design = modeler.create_design("MultipleBodyTranslation_Test")
+
+    # Create a Sketch object and draw a circle
+    sketch = Sketch()
+    sketch.draw_circle(Point([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm))
+
+    # Extrude the sketch
+    design.extrude_sketch(name="MyCylinder", sketch=sketch, distance=Quantity(50, UNITS.mm))
+
+    # Download the design
+    file = tmp_path_factory.mktemp("scdoc_files") / "cylinder.scdocx"
+    file_stream = tmp_path_factory.mktemp("scdoc_files") / "cylinder.scdocx"
+    design.download(file, as_stream=False)
+    design.download(file_stream, as_stream=True)
+
+    # Check that both files exist
+    assert file.exists()
+    assert file_stream.exists()
