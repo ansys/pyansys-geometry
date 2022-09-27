@@ -3,6 +3,8 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING, List
 
+from ansys.api.geometry.v0.edges_pb2 import EdgeIdentifier
+from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.api.geometry.v0.faces_pb2 import (
     FaceIdentifier,
     GetFaceLoopsRequest,
@@ -62,30 +64,49 @@ class FaceLoop:
         The minimum point of the bounding box containing the loop.
     max_bbox : Point
         The maximum point of the bounding box containing the loop.
+    edges : List[Edge]
+        The edges contained in the loop.
     """
 
-    def __init__(self, type: FaceLoopType, length: Quantity, min_bbox: Point, max_bbox: Point):
+    def __init__(
+        self,
+        type: FaceLoopType,
+        length: Quantity,
+        min_bbox: Point,
+        max_bbox: Point,
+        edges: List[Edge],
+    ):
 
         self._type = type
         self._length = length
         self._min_bbox = min_bbox
         self._max_bbox = max_bbox
+        self._edges = edges
 
     @property
     def type(self) -> FaceLoopType:
+        """Type of face loop."""
         return self._type
 
     @property
     def length(self) -> Quantity:
+        """Length of the loop."""
         return self._length
 
     @property
     def min_bbox(self) -> Point:
+        """Minimum point of the bounding box containing the loop."""
         return self._min_bbox
 
     @property
     def max_bbox(self) -> Point:
+        """Maximum point of the bounding box containing the loop."""
         return self._max_bbox
+
+    @property
+    def edges(self) -> List[Edge]:
+        """Edges contained the loop."""
+        return self._edges
 
 
 class Face:
@@ -114,6 +135,7 @@ class Face:
         self._body = body
         self._grpc_client = grpc_client
         self._faces_stub = FacesStub(grpc_client.channel)
+        self._edges_stub = EdgesStub(grpc_client.channel)
 
     @property
     def id(self) -> str:
@@ -169,7 +191,13 @@ class Face:
                 ],
                 SERVER_UNIT_LENGTH,
             )
-            loops.append(FaceLoop(type=type, length=length, min_bbox=min, max_bbox=max))
+            grpc_edges = [
+                self._edges_stub.GetEdge(EdgeIdentifier(id=edge_id)) for edge_id in grpc_loop.edges
+            ]
+            edges = self.__grpc_edges_to_edges(grpc_edges)
+            loops.append(
+                FaceLoop(type=type, length=length, min_bbox=min, max_bbox=max, edges=edges)
+            )
 
         return loops
 

@@ -247,6 +247,7 @@ def test_faces_edges(modeler: Modeler):
     assert loops[0].length is not None  # TODO : To be tested properly at some point
     assert loops[0].min_bbox is not None  # TODO : To be tested properly at some point
     assert loops[0].max_bbox is not None  # TODO : To be tested properly at some point
+    assert len(loops[0].edges) == 5  # TODO : To be tested properly at some point
 
     # Now, from one of the lids (i.e. 0 - bottom) get all edges
     edges = faces[0].edges
