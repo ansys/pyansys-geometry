@@ -1,6 +1,6 @@
 """``Body`` class module."""
 
-from typing import TYPE_CHECKING, List, Union
+from typing import TYPE_CHECKING, List, Tuple, Union
 
 from ansys.api.geometry.v0.bodies_pb2 import (
     BodyIdentifier,
@@ -158,7 +158,7 @@ class Body:
             SetAssignedMaterialRequest(id=self._id, material=material.name)
         )
 
-    def imprint_curves(self, faces: List[Face], sketch: Sketch) -> tuple[List[Edge], List[Face]]:
+    def imprint_curves(self, faces: List[Face], sketch: Sketch) -> Tuple[List[Edge], List[Face]]:
         """Imprints all of the specified geometries onto the specified faces of the body.
 
         Parameters
@@ -170,8 +170,8 @@ class Body:
 
         Returns
         -------
-        List[Edge]
-            All of the impacted edges from the imprint operation.
+        Tuple[List[Edge], List[Face]]
+            All of the impacted edges and faces from the imprint operation.
         """
         # Sanity checks
         check_type(faces, (list, tuple))
