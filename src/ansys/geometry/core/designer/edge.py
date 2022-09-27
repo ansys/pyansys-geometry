@@ -72,10 +72,10 @@ class Edge:
     @property
     def faces(self) -> List["Face"]:
         """Get the ``Face`` objects that contain this ``Edge``."""
-        from ansys.geometry.core.designer.face import Face
+        from ansys.geometry.core.designer.face import Face, SurfaceType
 
         grpc_faces = self._edges_stub.GetEdgeFaces(EdgeIdentifier(id=self.id)).faces
         return [
-            Face(grpc_face.id, grpc_face.surface_type, self._body, self._grpc_client)
+            Face(grpc_face.id, SurfaceType(grpc_face.surface_type), self._body, self._grpc_client)
             for grpc_face in grpc_faces
         ]

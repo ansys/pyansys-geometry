@@ -6,8 +6,10 @@ import pytest
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.designer import CurveType, SharedTopologyType, SurfaceType
+from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import Frame, Point, UnitVector
+from ansys.geometry.core.math.constants import UNIT_VECTOR_Z
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 
@@ -237,7 +239,16 @@ def test_faces_edges(modeler: Modeler):
     assert all(face.area > 0.0 for face in faces)
     assert abs(faces[0].area.to_base_units().m - polygon.area.to_base_units().m) <= 1e-15
 
-    # Now, from one of the lids (i.e. 0) get all edges
+    assert faces[0].normal == UnitVector(-UNIT_VECTOR_Z)  # Bottom
+    assert faces[1].normal == UNIT_VECTOR_Z  # Top
+    loops = faces[0].loops
+    assert len(loops) == 1
+    assert loops[0].type == FaceLoopType.OUTER_LOOP
+    assert loops[0].length is not None  # TODO : To be tested properly at some point
+    assert loops[0].min_bbox is not None  # TODO : To be tested properly at some point
+    assert loops[0].max_bbox is not None  # TODO : To be tested properly at some point
+
+    # Now, from one of the lids (i.e. 0 - bottom) get all edges
     edges = faces[0].edges
     assert len(edges) == 5  # pentagon
     assert all(edge.id is not None for edge in edges)
@@ -245,6 +256,13 @@ def test_faces_edges(modeler: Modeler):
     assert all(edge.curve_type == CurveType.CURVETYPE_UNKNOWN for edge in edges)
     assert all(edge.length > 0.0 for edge in edges)
     assert abs(edges[0].length.to_base_units().m - polygon.length.to_base_units().m) <= 1e-15
+
+    # Get the faces to which the edge belongs
+    faces_of_edge = edges[0].faces
+    assert len(faces_of_edge) == 2
+    assert any(
+        [face.id == faces[0].id for face in faces_of_edge]
+    )  # The bottom face must be one of them
 
 
 def test_coordinate_system_creation(modeler: Modeler):
