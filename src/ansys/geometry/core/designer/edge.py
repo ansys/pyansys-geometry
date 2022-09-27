@@ -1,7 +1,7 @@
 """``Edge`` class module."""
 
 from enum import Enum, unique
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from ansys.api.geometry.v0.edges_pb2 import EdgeIdentifier
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
@@ -12,6 +12,7 @@ from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 
 if TYPE_CHECKING:
     from ansys.geometry.core.designer.body import Body  # pragma: no cover
+    from ansys.geometry.core.designer.face import Face  # pragma: no cover
 
 
 @unique
@@ -60,10 +61,21 @@ class Edge:
     @property
     def length(self) -> Quantity:
         """Calculated length of the edge."""
-        length_response = self._edges_stub.GetEdgeLength(EdgeIdentifier(id=self._id))
+        length_response = self._edges_stub.GetEdgeLength(EdgeIdentifier(id=self.id))
         return Quantity(length_response.length, SERVER_UNIT_LENGTH)
 
     @property
     def curve_type(self) -> CurveType:
         """Curve type of the edge."""
         return self._curve_type
+
+    @property
+    def faces(self) -> List["Face"]:
+        """Get the ``Face`` objects that contain this ``Edge``."""
+        from ansys.geometry.core.designer.face import Face
+
+        grpc_faces = self._edges_stub.GetEdgeFaces(EdgeIdentifier(id=self.id)).faces
+        return [
+            Face(grpc_face.id, grpc_face.surface_type, self._body, self._grpc_client)
+            for grpc_face in grpc_faces
+        ]
