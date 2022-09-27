@@ -105,7 +105,7 @@ class FaceLoop:
 
     @property
     def edges(self) -> List[Edge]:
-        """Edges contained the loop."""
+        """Edges contained in the loop."""
         return self._edges
 
 
