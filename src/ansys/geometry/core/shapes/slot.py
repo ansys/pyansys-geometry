@@ -148,7 +148,7 @@ class Slot(BaseShape):
         Quantity
             The perimeter of the slot.
         """
-        return 2 * np.pi * (self._height.value / 2) + 2 * (self._width.value - self._height.value)
+        return np.pi * self._height.value + 2 * (self._width.value - self._height.value)
 
     @property
     def area(self) -> Quantity:
