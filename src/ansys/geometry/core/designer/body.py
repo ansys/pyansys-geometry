@@ -1,6 +1,6 @@
 """``Body`` class module."""
 
-from typing import TYPE_CHECKING, List, Union
+from typing import TYPE_CHECKING, List, Tuple, Union
 
 from ansys.api.geometry.v0.bodies_pb2 import (
     BodyIdentifier,
@@ -158,7 +158,7 @@ class Body:
             SetAssignedMaterialRequest(id=self._id, material=material.name)
         )
 
-    def imprint_curves(self, faces: List[Face], sketch: Sketch) -> List[Edge]:
+    def imprint_curves(self, faces: List[Face], sketch: Sketch) -> Tuple[List[Edge], List[Face]]:
         """Imprints all of the specified geometries onto the specified faces of the body.
 
         Parameters
@@ -170,8 +170,8 @@ class Body:
 
         Returns
         -------
-        List[Edge]
-            All of the impacted edges from the imprint operation.
+        Tuple[List[Edge], List[Face]]
+            All of the impacted edges and faces from the imprint operation.
         """
         # Sanity checks
         check_type(faces, (list, tuple))
@@ -203,9 +203,12 @@ class Body:
             for grpc_edge in imprint_response.edges
         ]
 
-        # TODO: Critical to get back faces and edges from server to synchronize body
-        # TODO: Request gRPC signature update to return faces and edges impacted
-        return new_edges
+        new_faces = [
+            Face(grpc_face.id, grpc_face.surface_type, self, self._grpc_client)
+            for grpc_face in imprint_response.faces
+        ]
+
+        return (new_edges, new_faces)
 
     def project_curves(
         self, direction: UnitVector, sketch: Sketch, closest_face: bool
