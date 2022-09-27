@@ -514,10 +514,10 @@ def test_create_slot():
 
     # Check attributes are expected ones
     area = slot.area
-    assert area.m == pytest.approx(11.141592653589793, rel=1e-7, abs=1e-8)
+    assert area.m == pytest.approx(7.141592653589793, rel=1e-7, abs=1e-8)
     assert area.units == UNITS.m * UNITS.m
     perimeter = slot.perimeter
-    assert perimeter.m == pytest.approx(14.283185307179586, rel=1e-7, abs=1e-8)
+    assert perimeter.m == pytest.approx(10.283185307179586, rel=1e-7, abs=1e-8)
     assert perimeter.units == UNITS.m
 
     # Check local points are expected ones
@@ -555,8 +555,8 @@ def test_create_slot():
     tilted_plane = Plane(Point([1, 1, 0]), direction_x=[1, 0, 0], direction_y=[0, -1, 1])
     tilted_sketch = Sketch(tilted_plane)
     tilted_slot = tilted_sketch.draw_slot(Point([2, 0, 1]), width, height)
-    assert tilted_slot.area.m == pytest.approx(11.141592653589793, rel=1e-7, abs=1e-8)
-    assert tilted_slot.perimeter.m == pytest.approx(14.283185307179586, rel=1e-7, abs=1e-8)
+    assert tilted_slot.area.m == pytest.approx(7.141592653589793, rel=1e-7, abs=1e-8)
+    assert tilted_slot.perimeter.m == pytest.approx(10.283185307179586, rel=1e-7, abs=1e-8)
 
 
 def test_create_box():
