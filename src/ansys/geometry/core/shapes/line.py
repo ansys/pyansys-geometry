@@ -29,8 +29,8 @@ class Line(BaseShape):
     direction: Union[Vector, UnitVector]
         Direction of the line.
 
-    Note
-    ----
+    Notes
+    -----
     The proposed line should be contained inside the given plane. Otherwise,
     the construction of this object will not be possible (it will raise an error).
     """
@@ -127,21 +127,6 @@ class Line(BaseShape):
         quantified_dir = UNITS.convert(self.direction, self.start.unit, self.start.base_unit)
         line_start = self.start - quantified_dir * int(num_points / 2)
         return [Point(line_start + delta * quantified_dir) for delta in range(0, num_points)]
-
-    def points(self, num_points: Optional[int] = 100) -> List[Point]:
-        """Returns a list containing all the points belonging to the shape.
-
-        Parameters
-        ----------
-        num_points : int
-            Desired number of points belonging to the shape.
-
-        Returns
-        -------
-        List[Point]
-            A list of points representing the shape.
-        """
-        return self.plane.origin + self.local_points(num_points)
 
 
 class Segment(Line):
@@ -276,8 +261,8 @@ class Segment(Line):
     def __rebase_point_units(self):
         """Check that the start and end points are in the same units.
 
-        Note
-        ----
+        Notes
+        -----
         If they are not, they will be rebased to ``UNIT_LENGTH``.
         """
         if not self._start.unit == self._end.unit:
@@ -328,18 +313,3 @@ class Segment(Line):
             Point(start_with_accurate_units + delta * delta_segm, UNIT_LENGTH)
             for delta in range(0, num_points)
         ]
-
-    def points(self, num_points: Optional[int] = 100) -> List[Point]:
-        """Returns a list containing all the points belonging to the shape.
-
-        Parameters
-        ----------
-        num_points : int, optional
-            Desired number of points belonging to the shape.
-
-        Returns
-        -------
-        List[Point]
-            A list of points representing the shape.
-        """
-        return self.local_points(num_points)
