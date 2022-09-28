@@ -10,6 +10,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import ImprintCurvesRequest, ProjectCurvesRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
+from grpc._channel import _InactiveRpcError
 from pint import Quantity
 
 from ansys.geometry.core.connection import (
@@ -80,6 +81,11 @@ class Body:
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 
     @property
+    def _identifier(self) -> BodyIdentifier:
+        """gRPC body identifier of this body."""
+        return BodyIdentifier(id=self._id)
+
+    @property
     def id(self) -> str:
         """Id of the ``Body``."""
         return self._id
@@ -102,8 +108,7 @@ class Body:
         ----------
         List[Face]
         """
-        grpc_faces = self._bodies_stub.GetFaces(BodyIdentifier(id=self._id))
-
+        grpc_faces = self._bodies_stub.GetFaces(self._identifier)
         return [
             Face(grpc_face.id, SurfaceType(grpc_face.surface_type), self, self._grpc_client)
             for grpc_face in grpc_faces.faces
@@ -117,7 +122,7 @@ class Body:
         ----------
         List[Edge]
         """
-        grpc_edges = self._bodies_stub.GetEdges(BodyIdentifier(id=self._id))
+        grpc_edges = self._bodies_stub.GetEdges(self._identifier)
 
         return [
             Edge(grpc_edge.id, CurveType(grpc_edge.curve_type), self, self._grpc_client)
@@ -141,7 +146,7 @@ class Body:
             # TODO : maybe raise an error?
             return Quantity(0, SERVER_UNIT_VOLUME)
         else:
-            volume_response = self._bodies_stub.GetVolume(BodyIdentifier(id=self._id))
+            volume_response = self._bodies_stub.GetVolume(self._identifier)
             return Quantity(volume_response.volume, SERVER_UNIT_VOLUME)
 
     def assign_material(self, material: Material) -> None:
@@ -281,3 +286,82 @@ class Body:
                 distance=magnitude,
             )
         )
+
+    def tessellate(self, merge: bool = False) -> Union["pyvista.PolyData", "pyvista.MultiBlock"]:
+        """Tessellate the body and return the geometry as triangles.
+
+        Parameters
+        ----------
+        merge : bool, default: False
+            Merge the multi-body into a single mesh. Enable this if you wish to
+            merge wish to have the individual faces of the tessellation. This
+            preserves the number of triangles and only merges the topology.
+
+        Returns
+        -------
+        pyvista.PolyData, pyvista.MultiBlock
+            Merged :class:`pyvista.PolyData` if ``merge=True`` or composite dataset.
+
+        Examples
+        --------
+        Extrude a box centered at the origin to create rectangular body and
+        tessellate it.
+
+        >>> from ansys.geometry.core.misc.units import UNITS as u
+        >>> from ansys.geometry.core.sketch import Sketch
+        >>> from ansys.geometry.core.math import Plane, Point, UnitVector
+        >>> from ansys.geometry.core import Modeler
+        >>> modeler = Modeler()
+        >>> origin = Point([0, 0, 0])
+        >>> plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 0, 1])
+        >>> sketch = Sketch(plane)
+        >>> box = sketch.draw_box(Point([2, 0, 2]), 4, 4)
+        >>> design = modeler.create_design("my-design")
+        >>> mycomp = design.add_component("my-comp")
+        >>> body = mycomp.extrude_sketch("my-sketch", sketch, 1 * u.m)
+        >>> blocks = body.tessellate()
+        >>> blocks
+        >>> MultiBlock (0x7f94ec757460)
+             N Blocks:	6
+             X Bounds:	0.000, 4.000
+             Y Bounds:	-1.000, 0.000
+             Z Bounds:	-0.500, 4.500
+
+        Merge the body.
+
+        >>> mesh = body.tessellate(merge=True)
+        >>> mesh
+        PolyData (0x7f94ec75f3a0)
+          N Cells:	12
+          N Points:	24
+          X Bounds:	0.000e+00, 4.000e+00
+          Y Bounds:	-1.000e+00, 0.000e+00
+          Z Bounds:	-5.000e-01, 4.500e+00
+          N Arrays:	0
+
+
+        """
+        import pyvista as pv
+
+        from .tessellate import tess_to_pd
+
+        try:
+            resp = self._bodies_stub.GetBodyTessellation(self._identifier)
+        except _InactiveRpcError as err:
+
+            raise RuntimeWarning("Unable to tessellate. Body is possibly not closed")
+
+        pdata = [tess_to_pd(tess) for tess in resp.face_tessellation.values()]
+        comp = pv.MultiBlock(pdata)
+        if merge:
+            ugrid = comp.combine()
+            return pv.PolyData(ugrid.points, ugrid.cells, n_faces=ugrid.n_cells)
+        return comp
+
+    def plot(self, merge=merge, **kwargs):
+        """Plot the body."""
+        from ansys.geometry.core.plotting.plotter import Plotter
+
+        pl = Plotter()
+        pl.add_body(self, merge=merge, **kwargs)
+        pl.show()

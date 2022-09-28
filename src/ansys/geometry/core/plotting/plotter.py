@@ -1,4 +1,5 @@
 """A module containing a class for plotting various PyGeometry objects."""
+from threading import Thread
 from typing import Dict, Optional
 
 import numpy as np
@@ -236,7 +237,70 @@ class Plotter:
         for shape in sketch.shapes_list:
             self.plot_shape(shape)
 
-    def show(self, jupyter_backend: Optional[str] = None) -> None:
+    def add_body(self, body, merge=False, **kwargs):
+        """Add a body to the scene.
+
+        Parameters
+        ----------
+        body : ansys.geometry.core.designer.Body
+            Body to add to the scene.
+
+        merge : bool, default: False
+            Merge the multi-body into a single mesh. Enable this if you wish to
+            merge wish to have the individual faces of the tessellation. This
+            preserves the number of triangles and only merges the topology.
+
+        **kwargs : dict, optional
+            Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
+            for allowable keyword arguments.
+
+        """
+        kwargs.setdefault("smooth_shading", True)
+        self.scene.add_mesh(body.tessellate(merge=merge), **kwargs)
+
+    def add_component(self, component, merge=False, **kwargs):
+        """Add a component to the scene.
+
+        Parameters
+        ----------
+        component : ansys.geometry.core.designer.Component
+            Component to add to the scene.
+
+        merge : bool, default: False
+            Merge the multi-body into a single mesh. Enable this if you wish to
+            merge wish to have the individual faces of the tessellation. This
+            preserves the number of triangles and only merges the topology.
+
+        **kwargs : dict, optional
+            Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
+            for allowable keyword arguments.
+
+        """
+
+        # TODO: This will is quite slow because we're executing many individual
+        # requests. Would be must more efficient to stream back many
+        # tessellations and include their body association in the metadata.
+        #
+        # A temporary workaround is to fire off many threads to tessellate the
+        # geometry. This assumes tessellation is thread safe on the server,
+        # which it appears to be.
+
+        datasets = []
+
+        def get_tessellation(body):
+            datasets.append(body.tessellate(merge=merge))
+
+        threads = []
+        for body in component.bodies:
+            thread = Thread(target=get_tessellation, args=(body,))
+            thread.start()
+            threads.append(thread)
+
+        [thread.join() for thread in threads]
+
+        self.scene.add_mesh(pv.MultiBlock(datasets), **kwargs)
+
+    def show(self, jupyter_backend: Optional[str] = None, **kwargs) -> None:
         """Display the rendered scene in the screen.
 
         Parameters
@@ -244,10 +308,19 @@ class Plotter:
         backend_jupyter : str, optional
             Desired ``pyvista`` jupyter backend.
 
+        **kwargs : dict, optional
+            Plotting keyword arguments. See :func:`pyvista.Plotter.show` for
+            all available options.
+
         Notes
         -----
         Refer to https://docs.pyvista.org/user-guide/jupyter/index.html for more
         information about supported Jupyter backends.
 
         """
-        self.scene.show(jupyter_backend=jupyter_backend)
+        # Conditionally set the jupyter backend as not all users will be within
+        # a notebook environment to avoid a pyvista warning
+        if self.scene.notebook and jupyter_backend is None:
+            jupyter_backend = "panel"
+
+        self.scene.show(jupyter_backend=jupyter_backend, **kwargs)

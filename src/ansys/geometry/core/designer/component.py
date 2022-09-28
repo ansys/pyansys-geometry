@@ -451,6 +451,64 @@ class Component:
         # If you reached this point... this means that no body was found!
         return None
 
+    def __repr__(self):
+        """Representation of the component."""
+        lines = [f"ansys.geometry.core.designer.Component {hex(id(self))}"]
+        lines.append(f"  Exists               : {self.is_alive}")
+        lines.append(f"  N Bodies             : {len(self.bodies)}")
+        lines.append(f"  N Components         : {len(self.components)}")
+        lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
+
+        return "\n".join(lines)
+
+    def plot(self, merge=False, **kwargs):
+        """Plot the component.
+
+        Parameters
+        ----------
+        merge : bool
+            Merge the individual
+
+        Examples
+        --------
+        Create 25 small cylinders in a grid-like pattern on the XY plane and
+        plot them. Make the cylinders look metallic by enabling physically
+        based rendering with ``pbr=True``.
+
+        >>> from ansys.geometry.core.misc.units import UNITS as u
+        >>> from ansys.geometry.core.sketch import Sketch
+        >>> from ansys.geometry.core.math import Plane, Point, UnitVector
+        >>> from ansys.geometry.core import Modeler
+        >>> import numpy as np
+        >>> modeler = Modeler()
+        >>> origin = Point([0, 0, 0])
+        >>> plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
+        >>> design = modeler.create_design("my-design")
+        >>> mycomp = design.add_component("my-comp")
+        >>> n = 5
+        >>> xx, yy = np.meshgrid(
+        ...     np.linspace(-4, 4, n),
+        ...     np.linspace(-4, 4, n),
+        ... )
+        >>> for x, y in zip(xx.ravel(), yy.ravel()):
+        ...     sketch = Sketch(plane)
+        ...     sketch.draw_circle(Point([x, y, 0]), 0.2*u.m)
+        ...     mycomp.extrude_sketch(f"body-{x}-{y}", sketch, 1 * u.m)
+        >>> mycomp
+        ansys.geometry.core.designer.Component 0x7f45c3396370
+          Exists               : True
+          N Bodies             : 25
+          N Components         : 0
+          N Coordinate Systems : 0
+        >>> mycomp.plot(pbr=True, metallic=1.0)
+
+        """
+        from ansys.geometry.core.plotting.plotter import Plotter
+
+        pl = Plotter()
+        pl.add_component(self, **kwargs)
+        pl.show()
+
     def _kill_component_on_client(self) -> None:
         """Sets the ``is_alive`` property of nested components and bodies to ``False``.
 
