@@ -305,6 +305,11 @@ def test_faces_edges(modeler: Modeler):
         [face.id == faces[0].id for face in faces_of_edge]
     )  # The bottom face must be one of them
 
+    evaluation_point = faces[0].evaluate(1, 2)
+    assert evaluation_point.x.m == 1
+    assert evaluation_point.y.m == 2
+    assert evaluation_point.z.m == 0
+
 
 def test_coordinate_system_creation(modeler: Modeler):
     """Test for verifying the correct creation of ``CoordinateSystem``."""

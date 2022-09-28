@@ -3,10 +3,10 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING, List
 
-from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.edges_pb2 import EdgeIdentifier
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.api.geometry.v0.faces_pb2 import (
+    EvaluateFaceRequest,
     FaceIdentifier,
     GetFaceLoopsRequest,
     GetFaceNormalRequest,
@@ -136,7 +136,6 @@ class Face:
         self._grpc_client = grpc_client
         self._faces_stub = FacesStub(grpc_client.channel)
         self._edges_stub = EdgesStub(grpc_client.channel)
-        self._bodies_stub = BodiesStub(self._grpc_client.channel)
 
     @property
     def id(self) -> str:
@@ -206,6 +205,28 @@ class Face:
             )
 
         return loops
+
+    def evaluate(self, u: float, v: float) -> Point:
+        request = EvaluateFaceRequest(face=self.id, u=u, v=v)
+        """Projects against the face to find the intersection point.
+
+        Parameters
+        ----------
+        u : float
+            U directional component.
+        v : float
+            V directional component.
+
+        Returns
+        -------
+        Point
+            The point the projection intersects the face.
+        """
+        evaluation = self._faces_stub.EvaluateFace(request)
+
+        return Point(
+            [evaluation.point.x, evaluation.point.y, evaluation.point.z], SERVER_UNIT_LENGTH
+        )
 
     def __grpc_edges_to_edges(self, edges_grpc: List[GRPCEdge]) -> List[Edge]:
         """Transform a list of gRPC Edge messages into actual ``Edge`` objects.
