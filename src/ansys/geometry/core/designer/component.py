@@ -461,14 +461,19 @@ class Component:
 
         return "\n".join(lines)
 
-    def plot(self, merge=False, **kwargs):
+    def plot(self, merge : Optional[bool] =False, **kwargs : Optional[dict]) -> None:
         """Plot the component.
 
         Parameters
         ----------
-        merge : bool
-            Merge the individual
-
+        merge : bool, optional
+            Merge the body into a single mesh. Enable this if you wish to
+            merge the individual faces of the tessellation. This preserves
+            the number of triangles and only merges the topology.
+            By default, ``False``.
+        **kwargs : dict, optional
+            Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
+            for allowable keyword arguments.
         Examples
         --------
         Create 25 small cylinders in a grid-like pattern on the XY plane and

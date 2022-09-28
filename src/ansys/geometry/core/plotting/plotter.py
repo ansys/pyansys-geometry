@@ -237,7 +237,7 @@ class Plotter:
         for shape in sketch.shapes_list:
             self.plot_shape(shape)
 
-    def add_body(self, body, merge=False, **kwargs):
+    def add_body(self, body : Body, merge : Optional[bool]=False, **kwargs : Optional[dict]) -> None:
         """Add a body to the scene.
 
         Parameters
@@ -296,7 +296,7 @@ class Plotter:
 
         self.scene.add_mesh(pv.MultiBlock(datasets), **kwargs)
 
-    def show(self, jupyter_backend: Optional[str] = None, **kwargs) -> None:
+    def show(self, jupyter_backend: Optional[str] = None, **kwargs : Optional[dict]) -> None:
         """Display the rendered scene in the screen.
 
         Parameters

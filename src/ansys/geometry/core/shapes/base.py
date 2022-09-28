@@ -164,7 +164,7 @@ class BaseShape:
         plotting_options_points: Optional[dict] = None,
         plotting_options_lines: Optional[dict] = None,
         num_points: Optional[int] = 100,
-        **kwargs,
+        **kwargs : Optional[dict],
     ) -> None:
         """Plot the shape with the desired number of points.
 

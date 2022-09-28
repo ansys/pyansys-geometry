@@ -287,15 +287,16 @@ class Body:
             )
         )
 
-    def tessellate(self, merge: bool = False) -> Union["pyvista.PolyData", "pyvista.MultiBlock"]:
+    def tessellate(self, merge: Optional[bool] = False) -> Union["pyvista.PolyData", "pyvista.MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
         Parameters
         ----------
-        merge : bool, default: False
-            Merge the multi-body into a single mesh. Enable this if you wish to
-            merge wish to have the individual faces of the tessellation. This
-            preserves the number of triangles and only merges the topology.
+        merge : bool, optional
+            Merge the body into a single mesh. Enable this if you wish to
+            merge the individual faces of the tessellation. This preserves
+            the number of triangles and only merges the topology.
+            By default, ``False``.
 
         Returns
         -------
@@ -348,7 +349,6 @@ class Body:
         try:
             resp = self._bodies_stub.GetBodyTessellation(self._identifier)
         except _InactiveRpcError as err:
-
             raise RuntimeWarning("Unable to tessellate. Body is possibly not closed")
 
         pdata = [tess_to_pd(tess) for tess in resp.face_tessellation.values()]
@@ -358,15 +358,16 @@ class Body:
             return pv.PolyData(ugrid.points, ugrid.cells, n_faces=ugrid.n_cells)
         return comp
 
-    def plot(self, merge=False, **kwargs):
+    def plot(self, merge : Optional[bool] = False, **kwargs : Optional[dict]) -> None:
         """Plot the body.
 
         Parameters
         ----------
-        merge : bool, default: False
+        merge : bool, optional
             Merge the body into a single mesh. Enable this if you wish to
-            merge wish to have the individual faces of the tessellation. This
-            preserves the number of triangles and only merges the topology.
+            merge the individual faces of the tessellation. This preserves
+            the number of triangles and only merges the topology.
+            By default, ``False``.
         **kwargs : dict, optional
             Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
             for allowable keyword arguments.
