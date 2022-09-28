@@ -12,6 +12,7 @@ from ansys.api.geometry.v0.models_pb2 import Line as GRPCLine
 from ansys.api.geometry.v0.models_pb2 import Plane as GRPCPlane
 from ansys.api.geometry.v0.models_pb2 import Point as GRPCPoint
 from ansys.api.geometry.v0.models_pb2 import Polygon as GRPCPolygon
+from ansys.api.geometry.v0.models_pb2 import Tessellation
 
 from ansys.geometry.core.math import Frame, Plane, Point, UnitVector
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
@@ -223,3 +224,12 @@ def segment_to_grpc_line(line: Segment) -> GRPCLine:
         start=point_to_grpc_point(line.start),
         end=point_to_grpc_point(line.end),
     )
+
+
+def tess_to_pd(tess: Tessellation) -> "pyvista.PolyData":
+    """Convert a ansys.api.geometry.Tessellation to a pyvista.PolyData."""
+    # lazy imports here to improve initial load
+    import numpy as np
+    import pyvista as pv
+
+    return pv.PolyData(np.array(tess.vertices).reshape(-1, 3), tess.faces)

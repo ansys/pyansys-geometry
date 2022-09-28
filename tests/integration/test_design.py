@@ -634,6 +634,7 @@ def test_bodies_translation(modeler: Modeler):
     )
 
 
+@pytest.mark.skip(reason="Container missing tessellation libraries.")
 def test_tessellation(modeler):
     origin = Point([0, 0, 0])
     plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])

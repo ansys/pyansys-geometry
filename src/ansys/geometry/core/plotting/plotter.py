@@ -7,6 +7,7 @@ import pyvista as pv
 from pyvista import Plotter
 from pyvista.plotting.tools import create_axes_marker
 
+from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.shapes.base import BaseShape
@@ -237,7 +238,7 @@ class Plotter:
         for shape in sketch.shapes_list:
             self.plot_shape(shape)
 
-    def add_body(self, body : Body, merge : Optional[bool]=False, **kwargs : Optional[dict]) -> None:
+    def add_body(self, body: Body, merge: Optional[bool] = False, **kwargs: Optional[dict]) -> None:
         """Add a body to the scene.
 
         Parameters
@@ -296,7 +297,7 @@ class Plotter:
 
         self.scene.add_mesh(pv.MultiBlock(datasets), **kwargs)
 
-    def show(self, jupyter_backend: Optional[str] = None, **kwargs : Optional[dict]) -> None:
+    def show(self, jupyter_backend: Optional[str] = None, **kwargs: Optional[dict]) -> None:
         """Display the rendered scene in the screen.
 
         Parameters

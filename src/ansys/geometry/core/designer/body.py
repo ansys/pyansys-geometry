@@ -1,6 +1,6 @@
 """``Body`` class module."""
 
-from typing import TYPE_CHECKING, List, Tuple, Union
+from typing import TYPE_CHECKING, List, Optional, Tuple, Union
 
 from ansys.api.geometry.v0.bodies_pb2 import (
     BodyIdentifier,
@@ -18,6 +18,7 @@ from ansys.geometry.core.connection import (
     sketch_shapes_to_grpc_geometries,
     unit_vector_to_grpc_direction,
 )
+from ansys.geometry.core.connection.conversions import tess_to_pd
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.materials import Material
@@ -287,7 +288,9 @@ class Body:
             )
         )
 
-    def tessellate(self, merge: Optional[bool] = False) -> Union["pyvista.PolyData", "pyvista.MultiBlock"]:
+    def tessellate(
+        self, merge: Optional[bool] = False
+    ) -> Union["pyvista.PolyData", "pyvista.MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
         Parameters
@@ -342,9 +345,8 @@ class Body:
 
 
         """
+        # lazy import here to improve initial module load time
         import pyvista as pv
-
-        from .tessellate import tess_to_pd
 
         try:
             resp = self._bodies_stub.GetBodyTessellation(self._identifier)
@@ -358,7 +360,7 @@ class Body:
             return pv.PolyData(ugrid.points, ugrid.cells, n_faces=ugrid.n_cells)
         return comp
 
-    def plot(self, merge : Optional[bool] = False, **kwargs : Optional[dict]) -> None:
+    def plot(self, merge: Optional[bool] = False, **kwargs: Optional[dict]) -> None:
         """Plot the body.
 
         Parameters

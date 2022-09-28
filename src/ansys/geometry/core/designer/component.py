@@ -2,7 +2,7 @@
 
 
 from enum import Enum, unique
-from typing import List, Union
+from typing import List, Optional, Union
 
 from ansys.api.geometry.v0.bodies_pb2 import (
     BodyIdentifier,
@@ -461,7 +461,7 @@ class Component:
 
         return "\n".join(lines)
 
-    def plot(self, merge : Optional[bool] =False, **kwargs : Optional[dict]) -> None:
+    def plot(self, merge: Optional[bool] = False, **kwargs: Optional[dict]) -> None:
         """Plot the component.
 
         Parameters
