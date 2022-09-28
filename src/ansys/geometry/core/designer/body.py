@@ -99,7 +99,7 @@ class Body:
         """Loads all of the faces within the body.
 
         Returns
-        ----------
+        -------
         List[Face]
         """
         grpc_faces = self._bodies_stub.GetFaces(BodyIdentifier(id=self._id))
@@ -114,7 +114,7 @@ class Body:
         """Loads all of the edges within the body.
 
         Returns
-        ----------
+        -------
         List[Edge]
         """
         grpc_edges = self._bodies_stub.GetEdges(BodyIdentifier(id=self._id))
