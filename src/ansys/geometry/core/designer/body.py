@@ -358,8 +358,20 @@ class Body:
             return pv.PolyData(ugrid.points, ugrid.cells, n_faces=ugrid.n_cells)
         return comp
 
-    def plot(self, merge=merge, **kwargs):
-        """Plot the body."""
+    def plot(self, merge=False, **kwargs):
+        """Plot the body.
+
+        Parameters
+        ----------
+        merge : bool, default: False
+            Merge the body into a single mesh. Enable this if you wish to
+            merge wish to have the individual faces of the tessellation. This
+            preserves the number of triangles and only merges the topology.
+        **kwargs : dict, optional
+            Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
+            for allowable keyword arguments.
+
+        """
         from ansys.geometry.core.plotting.plotter import Plotter
 
         pl = Plotter()

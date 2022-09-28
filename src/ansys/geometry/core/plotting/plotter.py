@@ -244,12 +244,10 @@ class Plotter:
         ----------
         body : ansys.geometry.core.designer.Body
             Body to add to the scene.
-
         merge : bool, default: False
-            Merge the multi-body into a single mesh. Enable this if you wish to
+            Merge the body into a single mesh. Enable this if you wish to
             merge wish to have the individual faces of the tessellation. This
             preserves the number of triangles and only merges the topology.
-
         **kwargs : dict, optional
             Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
             for allowable keyword arguments.
@@ -265,12 +263,10 @@ class Plotter:
         ----------
         component : ansys.geometry.core.designer.Component
             Component to add to the scene.
-
         merge : bool, default: False
-            Merge the multi-body into a single mesh. Enable this if you wish to
-            merge wish to have the individual faces of the tessellation. This
-            preserves the number of triangles and only merges the topology.
-
+            Each body into a single mesh. Enable this if you wish to merge wish
+            to have the individual faces of the tessellation. This preserves
+            the number of triangles and only merges the topology.
         **kwargs : dict, optional
             Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
             for allowable keyword arguments.
