@@ -177,8 +177,8 @@ class Vector(np.ndarray):
     def __mul__(self, other: Union["Vector", Real]) -> Union["Vector", Real]:
         """Overload * operator with dot product.
 
-        Note
-        ----
+        Notes
+        -----
         Also admits scalar multiplication.
         """
         if isinstance(other, (int, float)):
