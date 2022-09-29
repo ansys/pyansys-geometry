@@ -204,7 +204,6 @@ jobs:
           docker logs $env:GEO_CONT_NAME
           docker rm $env:GEO_CONT_NAME
 
-
   docs:
     name: Documentation
     runs-on: ubuntu-latest
