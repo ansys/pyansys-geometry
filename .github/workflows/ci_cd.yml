@@ -129,7 +129,7 @@ jobs:
           pip install .[test]
 
       - name: Unit Testing and coverage
-        run: pytest -v --ignore=tests/integration --cov-config=.ci\.coveragerc
+        run: pytest -v --ignore=tests/integration
 
       - name: Rename .coverage file
         run: mv .coverage .coverage.NoIntegrationTests
@@ -193,7 +193,7 @@ jobs:
       - name: Integration Testing
         run: |
           .\.venv\Scripts\Activate.ps1
-          pytest tests/integration -v --cov-config=.ci\.coveragerc
+          pytest tests/integration -v
 
       - name: Rename .coverage file
         run: mv .coverage .coverage.IntegrationTests
