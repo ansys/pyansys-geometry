@@ -14,4 +14,17 @@ except ModuleNotFoundError:  # pragma: no cover
 
 __version__ = importlib_metadata.version(__name__.replace(".", "-"))
 
+# Logger
+# ------------------------------------------------------------------------------
+
+import logging
+
+from ansys.geometry.core.logger import Logger
+
+LOG = Logger(level=logging.INFO, to_file=False, to_stdout=True)
+LOG.debug("Loaded logging module as LOG")
+
+# Ease import statements
+# ------------------------------------------------------------------------------
+
 from ansys.geometry.core.modeler import Modeler
