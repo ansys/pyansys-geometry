@@ -1,7 +1,7 @@
 """``Component`` class module."""
 
-
 from enum import Enum, unique
+from threading import Thread
 from typing import List, Optional, Union
 
 from ansys.api.geometry.v0.bodies_pb2 import (
@@ -461,19 +461,25 @@ class Component:
 
         return "\n".join(lines)
 
-    def plot(self, merge: Optional[bool] = False, **kwargs: Optional[dict]) -> None:
-        """Plot the component.
+    def plot(
+        self, merge_component: bool = False, merge_bodies: bool = False, **kwargs: Optional[dict]
+    ) -> None:
+        """Plot this component.
 
         Parameters
         ----------
-        merge : bool, optional
-            Merge the body into a single mesh. Enable this if you wish to
-            merge the individual faces of the tessellation. This preserves
-            the number of triangles and only merges the topology.
-            By default, ``False``.
+        merge_component : bool, default: False
+            Merge this component into a single dataset. This effectively
+            combines all the individual bodies into a single dataset without
+            any hierarchy.
+        merge_bodies : bool, default: False
+            Merge each body into a single dataset. This effectively combines
+            all the faces of each individual body into a single dataset
+            without.
         **kwargs : dict, optional
             Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
             for allowable keyword arguments.
+
         Examples
         --------
         Create 25 small cylinders in a grid-like pattern on the XY plane and
@@ -511,7 +517,7 @@ class Component:
         from ansys.geometry.core.plotting.plotter import Plotter
 
         pl = Plotter()
-        pl.add_component(self, **kwargs)
+        pl.add_component(self, merge_bodies=merge_bodies, merge_component=merge_component, **kwargs)
         pl.show()
 
     def _kill_component_on_client(self) -> None:
@@ -532,3 +538,74 @@ class Component:
 
         # Kill itself
         self._is_alive = False
+
+    def tessellate(self, merge_component: bool = False, merge_bodies: bool = False):
+        """Tessellate this component.
+
+        Parameters
+        ----------
+        merge_component : bool, default: False
+            Merge this component into a single dataset. This effectively
+            combines all the individual bodies into a single dataset without
+            any hierarchy.
+        merge_bodies : bool, default: False
+            Merge each body into a single dataset. This effectively combines
+            all the faces of each individual body into a single dataset
+            without separating faces.
+
+        Returns
+        -------
+        pyvista.PolyData, pyvista.MultiBlock
+            Merged :class:`pyvista.PolyData` if ``merge_component=True`` or
+            composite dataset.
+
+        Examples
+        --------
+        Create two stacked bodies and return the tessellation as two merged bodies.
+
+        >>> from ansys.geometry.core.sketch import Sketch
+        >>> from ansys.geometry.core import Modeler
+        >>> from ansys.geometry.core.math import Point, Plane
+        >>> from ansys.geometry.core.misc import UNITS
+        >>> from ansys.geometry.core.plotting.plotter import Plotter
+        >>> modeler = Modeler("10.54.0.72", "50051")
+        >>> sketch_1 = Sketch()
+        >>> box = sketch_1.draw_box(Point([10, 10, 0]), width=10, height=5)
+        >>> circle = sketch_1.draw_circle(Point([0, 0, 0]), radius=25 * UNITS.m)
+        >>> design = modeler.create_design("MyDesign")
+        >>> comp = design.add_component("MyComponent")
+        >>> body = comp.extrude_sketch("MyBody", sketch=sketch_1, distance=10 * UNITS.m)
+        >>> sketch_2 = Sketch(Plane([0, 0, 10]))
+        >>> box = sketch_2.draw_box(Point([10, 10, 10]), width=10, height=5)
+        >>> circle = sketch_2.draw_circle(Point([0, 0, 10]), radius=25 * UNITS.m)
+        >>> body = comp.extrude_sketch("MyBody", sketch=sketch_2, distance=10 * UNITS.m)
+        >>> dataset = comp.tessellate(merge_bodies=True)
+        >>> dataset
+        MultiBlock (0x7ff6bcb511e0)
+          N Blocks:     2
+          X Bounds:     -25.000, 25.000
+          Y Bounds:     -24.991, 24.991
+          Z Bounds:     0.000, 20.000
+
+        """
+        import pyvista as pv
+
+        datasets = []
+
+        def get_tessellation(body):
+            datasets.append(body.tessellate(merge=merge_bodies))
+
+        threads = []
+        for body in self.bodies:
+            thread = Thread(target=get_tessellation, args=(body,))
+            thread.start()
+            threads.append(thread)
+
+        [thread.join() for thread in threads]
+
+        blocks = pv.MultiBlock(datasets)
+        if merge_component:
+            ugrid = blocks.combine()
+            # convert to polydata as it's slightly faster than extract surface
+            return pv.PolyData(ugrid.points, ugrid.cells, n_faces=ugrid.n_cells)
+        return blocks

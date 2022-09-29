@@ -348,6 +348,11 @@ class Body:
         # lazy import here to improve initial module load time
         import pyvista as pv
 
+        if not self.is_alive:
+            if merge:
+                return pv.PolyData()
+            return pv.MultiBlock()
+
         try:
             resp = self._bodies_stub.GetBodyTessellation(self._identifier)
         except _InactiveRpcError as err:
@@ -373,6 +378,34 @@ class Body:
         **kwargs : dict, optional
             Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
             for allowable keyword arguments.
+
+        Returns
+        -------
+        pyvista.PolyData, pyvista.MultiBlock
+            Merged :class:`pyvista.PolyData` if ``merge=True`` or composite dataset.
+
+        Examples
+        --------
+        Extrude a box centered at the origin to create rectangular body and
+        plot it.
+
+        >>> from ansys.geometry.core.misc.units import UNITS as u
+        >>> from ansys.geometry.core.sketch import Sketch
+        >>> from ansys.geometry.core.math import Plane, Point, UnitVector
+        >>> from ansys.geometry.core import Modeler
+        >>> modeler = Modeler()
+        >>> origin = Point([0, 0, 0])
+        >>> plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 0, 1])
+        >>> sketch = Sketch(plane)
+        >>> box = sketch.draw_box(Point([2, 0, 2]), 4, 4)
+        >>> design = modeler.create_design("my-design")
+        >>> mycomp = design.add_component("my-comp")
+        >>> body = mycomp.extrude_sketch("my-sketch", sketch, 1 * u.m)
+        >>> body.plot()
+
+        Plot the body and color each face individually.
+
+        >>> body.plot(multi_colors=True)
 
         """
         from ansys.geometry.core.plotting.plotter import Plotter

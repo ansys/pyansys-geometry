@@ -1,5 +1,4 @@
 """A module containing a class for plotting various PyGeometry objects."""
-from threading import Thread
 from typing import Dict, Optional
 
 import numpy as np
@@ -20,7 +19,7 @@ class Plotter:
         self,
         scene: Optional[Plotter] = None,
         background_opts: Optional[Dict] = None,
-        num_points: Optional[int] = 100,
+        num_points: int = 100,
     ):
         """Initializes the plotter.
 
@@ -31,7 +30,8 @@ class Plotter:
         background_opts : dict, optional
             A dictionary containing the desired background and top colors.
         num_points : int, optional
-            Desired number of points to be used for rendering the shapes. Default is 100.
+            Desired number of points to be used for rendering the
+            shapes. Default is 100.
 
         """
         # Generate custom scene if none was provided
@@ -46,14 +46,6 @@ class Plotter:
         self._scene = scene
         scene.set_background(**background_opts)
         view_box = scene.add_axes(line_width=5, box=True)
-
-        # Show origin axes without labels
-        axes = create_axes_marker(labels_off=True)
-        scene.add_actor(axes)
-
-        # Create the fundamental XY plane
-        plane = pv.Plane(i_size=10, j_size=10)
-        scene.add_mesh(plane, color="white", show_edges=True, opacity=0.1)
 
         # Save the desired number of points
         self._num_points = num_points
@@ -257,47 +249,44 @@ class Plotter:
         kwargs.setdefault("smooth_shading", True)
         self.scene.add_mesh(body.tessellate(merge=merge), **kwargs)
 
-    def add_component(self, component, merge=False, **kwargs):
+    def add_component(
+        self, component, merge_component: bool = False, merge_bodies: bool = False, **kwargs
+    ):
         """Add a component to the scene.
 
         Parameters
         ----------
         component : ansys.geometry.core.designer.Component
             Component to add to the scene.
-        merge : bool, default: False
-            Each body into a single mesh. Enable this if you wish to merge wish
-            to have the individual faces of the tessellation. This preserves
-            the number of triangles and only merges the topology.
+        merge_component : bool, default: False
+            Merge this component into a single dataset. This effectively
+            combines all the individual bodies into a single dataset without
+            any hierarchy.
+        merge_bodies : bool, default: False
+            Merge each body into a single dataset. This effectively combines
+            all the faces of each individual body into a single dataset
+            without.
         **kwargs : dict, optional
             Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
             for allowable keyword arguments.
 
         """
+        dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
+        kwargs.setdefault("smooth_shading", True)
+        self.scene.add_mesh(dataset, **kwargs)
 
-        # TODO: This will is quite slow because we're executing many individual
-        # requests. Would be must more efficient to stream back many
-        # tessellations and include their body association in the metadata.
-        #
-        # A temporary workaround is to fire off many threads to tessellate the
-        # geometry. This assumes tessellation is thread safe on the server,
-        # which it appears to be.
+    def add_design(self, design, merge_design=False, merge_components=False, **kwargs):
+        dataset = design.tessellate(merge_design, merge_components)
+        kwargs.setdefault("smooth_shading", True)
+        self.scene.add_mesh(dataset, **kwargs)
 
-        datasets = []
-
-        def get_tessellation(body):
-            datasets.append(body.tessellate(merge=merge))
-
-        threads = []
-        for body in component.bodies:
-            thread = Thread(target=get_tessellation, args=(body,))
-            thread.start()
-            threads.append(thread)
-
-        [thread.join() for thread in threads]
-
-        self.scene.add_mesh(pv.MultiBlock(datasets), **kwargs)
-
-    def show(self, jupyter_backend: Optional[str] = None, **kwargs: Optional[dict]) -> None:
+    def show(
+        self,
+        show_axes_at_origin=True,
+        show_plane: bool = True,
+        jupyter_backend: Optional[str] = None,
+        **kwargs: Optional[dict]
+    ) -> None:
         """Display the rendered scene in the screen.
 
         Parameters
@@ -315,6 +304,22 @@ class Plotter:
         information about supported Jupyter backends.
 
         """
+        # computue the scaling
+        bounds = self.scene.renderer.bounds
+        x_length, y_length = bounds[1] - bounds[0], bounds[3] - bounds[2]
+        sfac = max(x_length, y_length)
+
+        # # Show origin axes without labels
+        # if show_axes_at_origin:
+        #     axes = create_axes_marker(labels_off=True)
+        #     self.scene.add_actor(axes)
+
+        # Create the fundamental XY plane
+        if show_plane:
+            # self.scene.bounds
+            plane = pv.Plane(i_size=sfac * 1.3, j_size=sfac * 1.3)
+            self.scene.add_mesh(plane, color="white", show_edges=True, opacity=0.1)
+
         # Conditionally set the jupyter backend as not all users will be within
         # a notebook environment to avoid a pyvista warning
         if self.scene.notebook and jupyter_backend is None:

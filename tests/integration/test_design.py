@@ -3,13 +3,12 @@
 from grpc._channel import _InactiveRpcError
 from pint import Quantity
 import pytest
-import pyvista as pv
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.designer import CurveType, SharedTopologyType, SurfaceType
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
-from ansys.geometry.core.math import Frame, Plane, Point, UnitVector
+from ansys.geometry.core.math import Frame, Point, UnitVector
 from ansys.geometry.core.math.constants import UNIT_VECTOR_Z
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
@@ -632,26 +631,6 @@ def test_bodies_translation(modeler: Modeler):
     design.translate_bodies(
         [body_circle_comp, body_polygon_comp], UnitVector([0, -1, 1]), Quantity(88, UNITS.mm)
     )
-
-
-@pytest.mark.skip(reason="Container missing tessellation libraries.")
-def test_tessellation(modeler):
-    origin = Point([0, 0, 0])
-    plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
-    sketch = Sketch(plane)
-    box = sketch.draw_box(Point([0, 0, 0]), 4, 4)
-
-    design = modeler.create_design("my-design")
-    mycomp = design.add_component("my-comp")
-    body = mycomp.extrude_sketch("body0", sketch, 1 * UNITS.m)
-
-    block = body.tessellate(merge=False)
-    assert isinstance(block, pv.MultiBlock)
-    assert block.bounds == [-2.0, 2.0, -2.0, 2.0, 0.0, 1.0]
-
-    mesh = body.tessellate(merge=True)
-    assert isinstance(mesh, pv.PolyData)
-    assert mesh.bounds == (-2.0, 2.0, -2.0, 2.0, 0.0, 1.0)
 
 
 def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
