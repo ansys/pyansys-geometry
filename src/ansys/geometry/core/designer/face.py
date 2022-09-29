@@ -17,8 +17,7 @@ from pint import Quantity
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.math import Point, UnitVector
-from ansys.geometry.core.misc import SERVER_UNIT_AREA
-from ansys.geometry.core.misc.measurements import SERVER_UNIT_LENGTH
+from ansys.geometry.core.misc import SERVER_UNIT_AREA, SERVER_UNIT_LENGTH
 
 if TYPE_CHECKING:
     from ansys.geometry.core.designer.body import Body  # pragma: no cover
@@ -141,6 +140,11 @@ class Face:
     def id(self) -> str:
         """ID of the face."""
         return self._id
+
+    @property
+    def body(self) -> "Body":
+        """The body to which the face belongs."""
+        return self._body
 
     @property
     def area(self) -> Quantity:

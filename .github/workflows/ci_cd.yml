@@ -11,6 +11,7 @@ on:
 env:
   MAIN_PYTHON_VERSION: '3.10'
   PACKAGE_NAME: 'ansys-geometry-core'
+  # TODO : PIP_EXTRA_INDEX_URL should be deleted once the private dependencies are removed
   PIP_EXTRA_INDEX_URL: 'https://${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/'
 
 concurrency:
@@ -37,7 +38,6 @@ jobs:
 
       - name: Run pre-commit
         run: pre-commit run --all-files --show-diff-on-failure
-
 
   docs-style:
     name: Documentation Style Check
@@ -107,41 +107,8 @@ jobs:
           path: '*.zip'
           retention-days: 7
 
-  unit-tests:
-    name: Unit tests and coverage
-    needs: [smoke-tests]
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
-
-      - name: Install packages for testing
-        run: |
-          pip install --upgrade build
-          pip install .[test]
-
-      - name: Unit Testing and coverage
-        run: pytest -v --ignore=tests/integration
-
-      - name: Upload Coverage Results
-        uses: actions/upload-artifact@v3
-        with:
-          name: HTML-Coverage
-          path: .cov/html
-          retention-days: 7
-
-      # - name: Upload coverage to Codecov
-      #   uses: codecov/codecov-action@v3
-
-  integration-tests:
-    name: Integration tests
+  testing:
+    name: Testing and coverage
     needs: [smoke-tests]
     runs-on: [self-hosted, pygeometry]
     env:
@@ -156,8 +123,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.9' # use python3.9, self-hosted has an issue with 3.10
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
+          # TODO : This should be activated once the private dependencies are removed
+          #        pip install process installs them again even if they are on cache
+          # cache: 'pip'
+          # cache-dependency-path: 'pyproject.toml'
 
       - name: Create Python venv
         run: |
@@ -188,9 +157,21 @@ jobs:
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Integration Testing
+        # TODO : Once the container is available on Linux we should be able to run it as
+        #        a service, allowing to remove this stage
         run: |
           .\.venv\Scripts\Activate.ps1
-          pytest tests/integration -v
+          pytest -v
+
+      - name: Upload Coverage Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: HTML-Coverage
+          path: .cov/html
+          retention-days: 7
+
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v3
 
       - name: Stop the geometry service
         if: always()
@@ -198,7 +179,7 @@ jobs:
           docker stop $env:GEO_CONT_NAME
           docker logs $env:GEO_CONT_NAME
           docker rm $env:GEO_CONT_NAME
-          
+
   docs:
     name: Documentation
     runs-on: ubuntu-latest
@@ -230,10 +211,9 @@ jobs:
           path: doc/_build/html
           retention-days: 7
 
-
   package:
     name: Package library
-    needs: [unit-tests, integration-tests, docs]
+    needs: [testing, docs]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
