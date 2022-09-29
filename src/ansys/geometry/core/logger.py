@@ -79,7 +79,7 @@ Every time an instance of :class:`Modeler <ansys.geometry.core.modeler.Modeler>`
 is created, a logger is created and stored in ``LOG._instances``. This field is a
 dictionary where the key is the name of the created logger.
 
-These instance loggers inheritate the ``PyGeometry_global`` output handlers and
+These instance loggers inherit the ``PyGeometry_global`` output handlers and
 logging level unless otherwise specified. The way this logger works is very
 similar to the global logger. If you want to add a file handler, you can use
 the :func:`log_to_file() <PyGeometryCustomAdapter.log_to_file>` method. If you want
@@ -93,7 +93,7 @@ You can use this logger like this:
     >>> modeler = Modeler()
     >>> modeler._log.info('This is a useful message')
 
-    INFO - GRPC_127.0.0.1:50056 -  <ipython-input-19-f09bb2d8785c> - <module> - This is a useful message
+    INFO - GRPC_127.0.0.1:50056 -  <...> - <module> - This is a useful message
 
 
 Other loggers
