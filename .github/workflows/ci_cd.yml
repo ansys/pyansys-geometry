@@ -11,6 +11,7 @@ on:
 env:
   MAIN_PYTHON_VERSION: '3.10'
   PACKAGE_NAME: 'ansys-geometry-core'
+  # TODO : PIP_EXTRA_INDEX_URL should be deleted once the private dependencies are removed
   PIP_EXTRA_INDEX_URL: 'https://${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/'
 
 concurrency:
@@ -29,8 +30,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
+          # TODO : This should be activated once the private dependencies are removed
+          #        pip install process installs them again even if they are on cache
+          # cache: 'pip'
+          # cache-dependency-path: 'pyproject.toml'
 
       - name: Install pre-commit
         run: pip install pre-commit
@@ -74,8 +77,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
+          # TODO : This should be activated once the private dependencies are removed
+          #        pip install process installs them again even if they are on cache
+          # cache: 'pip'
+          # cache-dependency-path: 'pyproject.toml'
 
       - name: Install packages for building
         run: |
@@ -119,8 +124,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
+          # TODO : This should be activated once the private dependencies are removed
+          #        pip install process installs them again even if they are on cache
+          # cache: 'pip'
+          # cache-dependency-path: 'pyproject.toml'
 
       - name: Install packages for testing
         run: |
@@ -156,8 +163,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.9' # use python3.9, self-hosted has an issue with 3.10
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
+          # TODO : This should be activated once the private dependencies are removed
+          #        pip install process installs them again even if they are on cache
+          # cache: 'pip'
+          # cache-dependency-path: 'pyproject.toml'
 
       - name: Create Python venv
         run: |
@@ -220,6 +229,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          # TODO : This should be activated once the private dependencies are removed
+          #        pip install process installs them again even if they are on cache
+          # cache: 'pip'
+          # cache-dependency-path: 'pyproject.toml'
 
       - uses: actions/download-artifact@v3
         with:
@@ -266,8 +279,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
+          # TODO : This should be activated once the private dependencies are removed
+          #        pip install process installs them again even if they are on cache
+          # cache: 'pip'
+          # cache-dependency-path: 'pyproject.toml'
 
       - name: Install packages for documentation build
         run: |
@@ -298,8 +313,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
+          # TODO : This should be activated once the private dependencies are removed
+          #        pip install process installs them again even if they are on cache
+          # cache: 'pip'
+          # cache-dependency-path: 'pyproject.toml'
 
       - name: Install ansys-geometry-core
         run: |
@@ -329,8 +346,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
+          # TODO : This should be activated once the private dependencies are removed
+          #        pip install process installs them again even if they are on cache
+          # cache: 'pip'
+          # cache-dependency-path: 'pyproject.toml'
 
       - uses: actions/download-artifact@v3
 
