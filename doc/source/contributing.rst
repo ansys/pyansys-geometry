@@ -12,7 +12,7 @@ contribute to PyGeometry.
 The following contribution information is specific to PyGeometry.
 
 Cloning the PyGeometry repository
-----------------------------------
+---------------------------------
 
 Run this code to clone and install the latest version of PyGeometry in development mode:
 
@@ -45,7 +45,7 @@ Documentation for the latest stable release of PyGeometry is hosted at
 `PyGeometry Documentation <https://geometry.docs.pyansys.com>`_.
 
 Documentation for the latest development version, which tracks the
-``main`` branch, is hosted at  `Development PyGeometry Documentation <https://dev.geometry.docs.pyansys.com/>`_.
+``main`` branch, is hosted at `Development PyGeometry Documentation <https://dev.geometry.docs.pyansys.com/>`_.
 This version is automatically kept up to date via GitHub actions.
 
 Code style
