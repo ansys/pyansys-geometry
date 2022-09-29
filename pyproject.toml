@@ -99,6 +99,7 @@ src_paths = ["doc", "src", "tests"]
 
 [tool.coverage.run]
 source = ["ansys.geometry"]
+relative_files = true
 
 [tool.coverage.report]
 show_missing = true
