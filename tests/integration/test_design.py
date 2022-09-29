@@ -86,6 +86,46 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
     # design.save(r"C:\temp\shared_volume\MyFile2.scdocx")
 
 
+def test_face_to_body_creation(modeler: Modeler):
+    """Test in charge of validating the extrusion of an existing face."""
+
+    # Create a Sketch and draw a circle (all client side)
+    sketch = Sketch()
+    sketch.draw_box(Point([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
+
+    # Create your design on the server side
+    design_name = "BoxExtrusions"
+    design = modeler.create_design(design_name)
+
+    # Extrude the sketch to create a Body
+    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.mm))
+
+    assert len(design.components) == 0
+    assert len(design.bodies) == 1
+
+    longer_body = design.extrude_face(
+        "LongerBoxFromFace", box_body.faces[0], Quantity(20, UNITS.mm)
+    )
+
+    assert len(design.components) == 0
+    assert len(design.bodies) == 2
+    assert longer_body.volume.m == pytest.approx(Quantity(2e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    nested_component = design.add_component("NestedComponent")
+    surface_body = nested_component.create_surface_from_face(
+        "SurfaceFromFace", longer_body.faces[2]
+    )
+
+    assert len(design.components) == 1
+    assert len(design.bodies) == 2
+    assert len(nested_component.components) == 0
+    assert len(nested_component.bodies) == 1
+    assert surface_body.volume.m == Quantity(0, UNITS.m**3).m
+    assert surface_body.faces[0].area.m == pytest.approx(
+        Quantity(2e-4, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )
+
+
 def test_modeler(modeler: Modeler):
     """Test the ``Modeler`` methods."""
 
