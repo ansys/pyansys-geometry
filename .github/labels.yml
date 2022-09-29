@@ -29,3 +29,7 @@
 - name: PRIORITY
   description: Issue/PR assigned with this tag must be given priority over the rest of the backlog
   color: 7A1FCC
+
+- name: testing
+  description: Anything related to tests
+  color: BFE4D6
