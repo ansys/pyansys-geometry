@@ -107,31 +107,8 @@ jobs:
           path: '*.zip'
           retention-days: 7
 
-  unit-tests:
-    name: Unit tests
-    needs: [smoke-tests]
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
-
-      - name: Install packages for testing
-        run: |
-          pip install --upgrade build
-          pip install .[test]
-
-      - name: Unit Testing and coverage
-        run: pytest -v --ignore=tests/integration
-
-  integration-tests:
-    name: Integration tests and coverage
+  testing:
+    name: Testing and coverage
     needs: [smoke-tests]
     runs-on: [self-hosted, pygeometry]
     env:
@@ -236,7 +213,7 @@ jobs:
 
   package:
     name: Package library
-    needs: [unit-tests, integration-tests, docs]
+    needs: [testing, docs]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
