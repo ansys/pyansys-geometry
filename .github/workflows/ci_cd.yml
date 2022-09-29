@@ -108,7 +108,7 @@ jobs:
           retention-days: 7
 
   unit-tests:
-    name: Unit tests and coverage
+    name: Unit tests
     needs: [smoke-tests]
     runs-on: ubuntu-latest
 
@@ -131,7 +131,7 @@ jobs:
         run: pytest -v --ignore=tests/integration
 
   integration-tests:
-    name: Integration tests
+    name: Integration tests and coverage
     needs: [smoke-tests]
     runs-on: [self-hosted, pygeometry]
     env:
