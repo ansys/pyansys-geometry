@@ -130,15 +130,15 @@ jobs:
       - name: Unit Testing and coverage
         run: pytest -v --ignore=tests/integration
 
-      - name: Upload Coverage Results
+      - name: Rename .coverage file
+        run: mv .coverage .coverage.NoIntegrationTests
+
+      - name: Upload .coverage file
         uses: actions/upload-artifact@v3
         with:
-          name: HTML-Coverage
-          path: .cov/html
+          name: Coverage-No-Integration
+          path: .coverage.NoIntegrationTests
           retention-days: 7
-
-      # - name: Upload coverage to Codecov
-      #   uses: codecov/codecov-action@v3
 
   integration-tests:
     name: Integration tests
@@ -192,13 +192,69 @@ jobs:
           .\.venv\Scripts\Activate.ps1
           pytest tests/integration -v
 
+      - name: Rename .coverage file
+        run: mv .coverage .coverage.IntegrationTests
+
+      - name: Upload .coverage file
+        uses: actions/upload-artifact@v3
+        with:
+          name: Coverage-Integration
+          path: .coverage.IntegrationTests
+          retention-days: 7
+
       - name: Stop the geometry service
         if: always()
         run: |
           docker stop $env:GEO_CONT_NAME
           docker logs $env:GEO_CONT_NAME
           docker rm $env:GEO_CONT_NAME
-          
+
+  coverage:
+    name: Coverage results
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests]
+    steps:
+      - uses: actions/checkout@v3 
+
+      - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: Coverage-No-Integration
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: Coverage-Integration
+
+      - name: Display structure of downloaded files
+        run: ls -R
+      
+      - name: Install coverage tool
+        run: pip install coverage
+      
+      - name: Combine coverage files
+        run: |
+          coverage combine .coverage.IntegrationTests .coverage.NoIntegrationTests
+          coverage report
+      
+      - name: Generate XML and HTML files
+        run: |
+          coverage xml -o .cov/coverage.xml
+          coverage html -d .cov/html
+
+      - name: Upload coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: Coverage-Results
+          path: .cov
+          retention-days: 7
+
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v3
+
   docs:
     name: Documentation
     runs-on: ubuntu-latest
