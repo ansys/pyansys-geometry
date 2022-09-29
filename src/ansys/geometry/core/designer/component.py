@@ -6,6 +6,8 @@ from typing import List, Optional, Union
 
 from ansys.api.geometry.v0.bodies_pb2 import (
     BodyIdentifier,
+    CreateBodyFromFaceRequest,
+    CreateExtrudedBodyFromFaceProfileRequest,
     CreateExtrudedBodyRequest,
     CreatePlanarBodyRequest,
     TranslateRequest,
@@ -27,6 +29,7 @@ from ansys.geometry.core.connection import (
 )
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.coordinatesystem import CoordinateSystem
+from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.math import Frame, UnitVector
 from ansys.geometry.core.misc import (
     SERVER_UNIT_LENGTH,
@@ -178,7 +181,9 @@ class Component:
         # Store the SharedTopologyType set on the client
         self._shared_topology = share_type
 
-    def extrude_sketch(self, name: str, sketch: Sketch, distance: Quantity) -> Body:
+    def extrude_sketch(
+        self, name: str, sketch: Sketch, distance: Union[Quantity, Distance]
+    ) -> Body:
         """Creates a solid body by extruding the given sketch profile up to the given distance.
 
         The resulting body created is nested under this component within the design assembly.
@@ -189,7 +194,7 @@ class Component:
             A user-defined label assigned to the resulting solid body.
         sketch : Sketch
             The two-dimensional sketch source for extrusion.
-        distance : Quantity
+        distance : Union[Quantity, Distance]
             The distance to extrude the solid body.
 
         Returns
@@ -200,8 +205,9 @@ class Component:
         # Sanity checks on inputs
         check_type(name, str)
         check_type(sketch, Sketch)
-        check_type(distance, Quantity)
-        check_pint_unit_compatibility(distance, SERVER_UNIT_LENGTH)
+        check_type(distance, (Quantity, Distance))
+        extrude_distance = distance if isinstance(distance, Quantity) else distance.value
+        check_pint_unit_compatibility(extrude_distance.units, SERVER_UNIT_LENGTH)
 
         # Perform extrusion request
         request = CreateExtrudedBodyRequest(
@@ -213,6 +219,49 @@ class Component:
         )
 
         response = self._bodies_stub.CreateExtrudedBody(request)
+
+        self._bodies.append(Body(response.id, name, self, self._grpc_client, is_surface=False))
+        return self._bodies[-1]
+
+    def extrude_face(self, name: str, face: Face, distance: Union[Quantity, Distance]) -> Body:
+        """Extrudes the face profile by the given distance to create a new solid body.
+        There are no modifications against the body containing the source face.
+
+        Notes
+        -----
+        The source face can be anywhere within the design component hierarchy, and
+        therefore there is no validation requiring the face is nested under the
+        target component where the new body will be created.
+
+        Parameters
+        ----------
+        name : str
+            A user-defined label assigned to the resulting solid body.
+        face : Face
+            The target face to use as the source for the new surface.
+        distance : Union[Quantity, Distance]
+            The distance to extrude the solid body.
+
+        Returns
+        -------
+        Body
+            Extruded solid ``Body`` object.
+        """
+        # Sanity checks on inputs
+        check_type(name, str)
+        check_type(distance, (Quantity, Distance))
+        extrude_distance = distance if isinstance(distance, Quantity) else distance.value
+        check_pint_unit_compatibility(extrude_distance.units, SERVER_UNIT_LENGTH)
+
+        # Take the face source directly. No need to verify the source of the face.
+        request = CreateExtrudedBodyFromFaceProfileRequest(
+            distance=distance.m_as(SERVER_UNIT_LENGTH),
+            parent=self.id,
+            face=face.id,
+            name=name,
+        )
+
+        response = self._bodies_stub.CreateExtrudedBodyFromFaceProfile(request)
 
         self._bodies.append(Body(response.id, name, self, self._grpc_client, is_surface=False))
         return self._bodies[-1]
@@ -246,6 +295,42 @@ class Component:
             name=name,
         )
         response = self._bodies_stub.CreatePlanarBody(request)
+
+        self._bodies.append(Body(response.id, name, self, self._grpc_client, is_surface=True))
+        return self._bodies[-1]
+
+    def create_surface_from_face(self, name: str, face: Face) -> Body:
+        """Creates a new surface body based upon the provided face.
+
+        Notes
+        -----
+        The source face can be anywhere within the design component hierarchy, and
+        therefore there is no validation requiring the face is nested under the
+        target component where the new body will be created.
+
+        Parameters
+        ----------
+        name : str
+            A user-defined label assigned to the resulting surface body.
+        face : Face
+            The target face to use as the source for the new surface.
+
+        Returns
+        -------
+        Body
+            Surface ``Body`` object.
+        """
+        # Sanity checks on inputs
+        check_type(name, str)
+
+        # Take the face source directly. No need to verify the source of the face.
+        request = CreateBodyFromFaceRequest(
+            parent=self.id,
+            face=face.id,
+            name=name,
+        )
+
+        response = self._bodies_stub.CreateBodyFromFace(request)
 
         self._bodies.append(Body(response.id, name, self, self._grpc_client, is_surface=True))
         return self._bodies[-1]
