@@ -245,8 +245,11 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -a
       
-      - name: Install coverage tool
-        run: pip install coverage[toml]
+      - name: Install coverage tool and ansys-geometry-core
+        run: |
+          pip install --upgrade build wheel
+          pip install .
+          pip install coverage[toml]
       
       - name: Combine coverage files
         run: |
