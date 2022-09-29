@@ -6,3 +6,5 @@ maintenance:
 - pyproject.toml
 dependencies:
 - requirements/*
+testing:
+- tests/*
