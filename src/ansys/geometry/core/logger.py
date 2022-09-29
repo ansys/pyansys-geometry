@@ -532,7 +532,9 @@ class Logger:
             count_ += 1
             new_name = name + "_" + str(count_)
 
-        self._instances[new_name] = self._add_modeler_instance_logger(new_name, modeler_instance, level)
+        self._instances[new_name] = self._add_modeler_instance_logger(
+            new_name, modeler_instance, level
+        )
         return self._instances[new_name]
 
     def __getitem__(self, key):
