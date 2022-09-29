@@ -20,7 +20,7 @@ Run this code to clone and install the latest version of PyGeometry in developme
 
     git clone https://github.com/pyansys/pygeometry
     cd pygeometry
-    pip install pip -U
+    python -m pip install --upgrade pip
     pip install -e .
 
 
@@ -72,3 +72,6 @@ This way, it's not possible for you to push code that fails the style checks. Fo
   isort....................................................................Passed
   flake8...................................................................Passed
   codespell................................................................Passed
+  check for merge conflicts................................................Passed
+  debug statements (python)................................................Passed
+  Validate GitHub Workflows................................................Passed
