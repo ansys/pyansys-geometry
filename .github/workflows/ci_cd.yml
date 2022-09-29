@@ -243,10 +243,10 @@ jobs:
           name: Coverage-Integration
 
       - name: Display structure of downloaded files
-        run: ls -R
+        run: ls -a
       
       - name: Install coverage tool
-        run: pip install coverage
+        run: pip install coverage[toml]
       
       - name: Combine coverage files
         run: |
