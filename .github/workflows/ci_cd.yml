@@ -58,59 +58,59 @@ jobs:
           fail_on_error: true
           vale_flags: "--config=doc/.vale.ini"
 
-  smoke-tests:
-    name: Build and Smoke tests
-    runs-on: ${{ matrix.os }}
-    needs: [style]
-    strategy:
-      matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
-        python-version: ['3.7', '3.8', '3.9', '3.10']
-      fail-fast: false
+  # smoke-tests:
+  #   name: Build and Smoke tests
+  #   runs-on: ${{ matrix.os }}
+  #   needs: [style]
+  #   strategy:
+  #     matrix:
+  #       os: [windows-latest, ubuntu-latest, macos-latest]
+  #       python-version: ['3.7', '3.8', '3.9', '3.10']
+  #     fail-fast: false
 
-    steps:
-      - uses: actions/checkout@v3
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
+  #     - name: Set up Python ${{ matrix.python-version }}
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: ${{ matrix.python-version }}
+  #         cache: 'pip'
+  #         cache-dependency-path: 'pyproject.toml'
 
-      - name: Install packages for building
-        run: |
-          pip install --upgrade build wheel
-          pip install .
+  #     - name: Install packages for building
+  #       run: |
+  #         pip install --upgrade build wheel
+  #         pip install .
 
-      - name: Smoke test
-        run: python -c "from ansys.geometry.core import __version__; print(__version__)"
+  #     - name: Smoke test
+  #       run: python -c "from ansys.geometry.core import __version__; print(__version__)"
 
-      - name: Store version
-        run: |
-          echo "::set-output name=PYGEOM_VERSION::$(python -c "from ansys.geometry.core import __version__; print(__version__)")"
-        id: version
+  #     - name: Store version
+  #       run: |
+  #         echo "::set-output name=PYGEOM_VERSION::$(python -c "from ansys.geometry.core import __version__; print(__version__)")"
+  #       id: version
 
-      - name: Generate wheelhouse
-        run: |
-          pip wheel . -w wheelhouse
+  #     - name: Generate wheelhouse
+  #       run: |
+  #         pip wheel . -w wheelhouse
 
-      - name: Zip wheelhouse
-        uses: vimtor/action-zip@v1
-        with:
-          files: wheelhouse
-          dest: ${{ env.PACKAGE_NAME }}-v${{ steps.version.outputs.PYGEOM_VERSION }}-wheelhouse-${{ runner.os }}-${{ matrix.python-version }}.zip
+  #     - name: Zip wheelhouse
+  #       uses: vimtor/action-zip@v1
+  #       with:
+  #         files: wheelhouse
+  #         dest: ${{ env.PACKAGE_NAME }}-v${{ steps.version.outputs.PYGEOM_VERSION }}-wheelhouse-${{ runner.os }}-${{ matrix.python-version }}.zip
 
-      - name: Upload Wheelhouse
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.PACKAGE_NAME }}-v${{ steps.version.outputs.PYGEOM_VERSION }}-wheelhouse-${{ runner.os }}-${{ matrix.python-version }}
-          path: '*.zip'
-          retention-days: 7
+  #     - name: Upload Wheelhouse
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: ${{ env.PACKAGE_NAME }}-v${{ steps.version.outputs.PYGEOM_VERSION }}-wheelhouse-${{ runner.os }}-${{ matrix.python-version }}
+  #         path: '*.zip'
+  #         retention-days: 7
 
   unit-tests:
     name: Unit tests and coverage
-    needs: [smoke-tests]
+    # needs: [smoke-tests]
     runs-on: ubuntu-latest
 
     steps:
@@ -129,7 +129,7 @@ jobs:
           pip install .[test]
 
       - name: Unit Testing and coverage
-        run: pytest -v --ignore=tests/integration
+        run: pytest -v --ignore=tests/integration --cov-config=.ci\.coveragerc
 
       - name: Rename .coverage file
         run: mv .coverage .coverage.NoIntegrationTests
@@ -143,7 +143,7 @@ jobs:
 
   integration-tests:
     name: Integration tests
-    needs: [smoke-tests]
+    # needs: [smoke-tests]
     runs-on: [self-hosted, pygeometry]
     env:
       ANSRV_GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest
@@ -193,7 +193,7 @@ jobs:
       - name: Integration Testing
         run: |
           .\.venv\Scripts\Activate.ps1
-          pytest tests/integration -v
+          pytest tests/integration -v --cov-config=.ci\.coveragerc
 
       - name: Rename .coverage file
         run: mv .coverage .coverage.IntegrationTests
