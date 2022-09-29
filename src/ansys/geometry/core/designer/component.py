@@ -224,7 +224,14 @@ class Component:
         return self._bodies[-1]
 
     def extrude_face(self, name: str, face: Face, distance: Union[Quantity, Distance]) -> Body:
-        """Extrudes the face by the given distance to create a solid body.
+        """Extrudes the face profile by the given distance to create a new solid body.
+        There are no modifications against the body containing the source face.
+
+        Notes
+        -----
+        The source face can be anywhere within the design component hierarchy, and
+        therefore there is no validation requiring the face is nested under the
+        target component where the new body will be created.
 
         Parameters
         ----------
@@ -294,6 +301,12 @@ class Component:
 
     def create_surface_from_face(self, name: str, face: Face) -> Body:
         """Creates a new surface body based upon the provided face.
+
+        Notes
+        -----
+        The source face can be anywhere within the design component hierarchy, and
+        therefore there is no validation requiring the face is nested under the
+        target component where the new body will be created.
 
         Parameters
         ----------
