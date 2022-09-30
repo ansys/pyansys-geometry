@@ -261,7 +261,7 @@ def test_named_selections(modeler: Modeler):
     assert design.named_selections[0].name == "OnlyCircle"
     assert design.named_selections[1].name == "OnlyPolygon"
     assert design.named_selections[2].name == "CircleAndPolygon"
-    
+
     # Test also that you can create a named selection out of faces only
     design.create_named_selection("OnlyPolygonFaces", faces=body_polygon_comp.faces)
     assert len(design.named_selections) == 4
@@ -299,11 +299,11 @@ def test_faces_edges(modeler: Modeler):
     # Get the normal to some of the faces
     assert faces[0].normal == UnitVector(-UNIT_VECTOR_Z)  # Bottom
     assert faces[1].normal == UNIT_VECTOR_Z  # Top
-    
+
     # Get the central point of some of the surfaces
     assert faces[0].central_point == Point([-30, -30, 0], UNITS.mm)
     assert faces[1].central_point == Point([-30, -30, 30], UNITS.mm)
-    
+
     loops = faces[0].loops
     assert len(loops) == 1
     assert loops[0].type == FaceLoopType.OUTER_LOOP
@@ -718,7 +718,7 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     # Check that both files exist
     assert file.exists()
     assert file_stream.exists()
-    
+
     # Check that we can also save it (even if it is not accessible on the server)
     file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
     design.save(file_location=file_save)
