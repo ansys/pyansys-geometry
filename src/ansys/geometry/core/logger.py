@@ -114,7 +114,7 @@ import weakref
 from ansys.geometry.core.misc.checks import check_type
 
 if TYPE_CHECKING:
-    from ansys.geometry.core.connection.client import GrpcClient
+    from ansys.geometry.core.connection.client import GrpcClient  # pragma: no cover
 
 ## Default configuration
 LOG_LEVEL = logging.DEBUG
@@ -175,7 +175,7 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
         if extra is not None:
             self.extra = weakref.proxy(extra)
         else:
-            self.extra = None
+            self.extra = None  # pragma: no cover
         self.file_handler = logger.file_handler
         self.std_out_handler = logger.std_out_handler
 

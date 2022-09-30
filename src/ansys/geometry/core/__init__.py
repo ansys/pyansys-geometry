@@ -21,7 +21,7 @@ import logging
 
 from ansys.geometry.core.logger import Logger
 
-LOG = Logger(level=logging.INFO, to_file=False, to_stdout=True)
+LOG = Logger(level=logging.ERROR, to_file=False, to_stdout=True)
 LOG.debug("Loaded logging module as LOG")
 
 # Ease import statements

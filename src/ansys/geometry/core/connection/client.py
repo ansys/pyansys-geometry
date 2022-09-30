@@ -93,6 +93,8 @@ class GrpcClient:
         check_type(host, str)
         check_type(port, (str, int))
         check_type(timeout, (int, float))
+        check_type(logging_level, int)
+        check_type(logging_file, (Path, str, type(None)))
 
         self._closed = False
         if channel:
