@@ -1,6 +1,5 @@
 """``Design`` class module."""
 
-from pathlib import Path
 from typing import List, Optional, Union
 
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
@@ -100,26 +99,26 @@ class Design(Component):
         Parameters
         ----------
         file_location : str
-            Full path of the location on disk where the file should be saved.
+            Location on disk where the file should be saved.
         """
         # Sanity checks on inputs
         check_type(file_location, str)
 
         self._design_stub.SaveAs(SaveAsDocumentRequest(filepath=file_location))
 
-    def download(self, file_location: Path, as_stream: Optional[bool] = False) -> None:
+    def download(self, file_location: str, as_stream: Optional[bool] = False) -> None:
         """Downloads a design from the active geometry server instance.
 
         Parameters
         ----------
-        file_location : Path
+        file_location : str
             Full path of the location on disk where the file should be saved.
         as_stream : bool, optional
             Boolean indicating whether we should use the gRPC stream functionality
             or the single message approach. By default, ``False``
         """
         # Sanity checks on inputs
-        check_type(file_location, Path)
+        check_type(file_location, str)
 
         # Process response (as stream or single file)
         received_bytes = bytes()
