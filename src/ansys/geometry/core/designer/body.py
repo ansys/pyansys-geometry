@@ -307,7 +307,7 @@ class Body:
 
         Examples
         --------
-        Extrude a box centered at the origin to create rectangular body and
+        Extrude a box centered at the origin to create a rectangular body and
         tessellate it.
 
         >>> from ansys.geometry.core.misc.units import UNITS as u
