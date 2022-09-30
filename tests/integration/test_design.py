@@ -297,12 +297,12 @@ def test_faces_edges(modeler: Modeler):
     assert all(face.body.id == body_polygon_comp.id for face in faces)
 
     # Get the normal to some of the faces
-    assert faces[0].normal == UnitVector(-UNIT_VECTOR_Z)  # Bottom
-    assert faces[1].normal == UNIT_VECTOR_Z  # Top
+    assert faces[0].face_normal() == UnitVector(-UNIT_VECTOR_Z)  # Bottom
+    assert faces[1].face_normal() == UNIT_VECTOR_Z  # Top
 
     # Get the central point of some of the surfaces
-    assert faces[0].central_point == Point([-30, -30, 0], UNITS.mm)
-    assert faces[1].central_point == Point([-30, -30, 30], UNITS.mm)
+    assert faces[0].face_point(u=-0.03, v=-0.03) == Point([-30, -30, 0], UNITS.mm)
+    assert faces[1].face_point(u=-0.03, v=-0.03) == Point([-30, -30, 30], UNITS.mm)
 
     loops = faces[0].loops
     assert len(loops) == 1
@@ -722,3 +722,20 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     # Check that we can also save it (even if it is not accessible on the server)
     file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
     design.save(file_location=file_save)
+
+
+def test_slot_extrusion(modeler: Modeler):
+    """Test the extrusion of a slot."""
+    # Create your design on the server side
+    design = modeler.create_design("ExtrudeSlot")
+
+    # Create a Sketch object and draw a slot
+    sketch = Sketch()
+    sketch.draw_slot(Point([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm))
+
+    # Extrude the sketch
+    body = design.extrude_sketch(name="MySlot", sketch=sketch, distance=Quantity(50, UNITS.mm))
+
+    # A slot has 6 faces and 12 edges
+    assert len(body.faces) == 6
+    assert len(body.edges) == 12
