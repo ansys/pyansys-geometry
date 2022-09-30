@@ -177,7 +177,7 @@ def test_global_logger_format(fake_record: Callable):
         level=deflogging.DEBUG,
         extra={"instance_name": "172.1.1.1"},
     )
-    assert re.findall("(?:[0-9]{1,3}\.){3}[0-9]{1,3}", log)
+    assert re.findall(r"(?:[0-9]{1,3}.){3}[0-9]{1,3}", log)
     assert "DEBUG" in log
     assert "This is a message" in log
 

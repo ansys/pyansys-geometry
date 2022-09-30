@@ -31,7 +31,7 @@ def test_instance_logger_format(modeler: Modeler, fake_record: Callable):
         level=deflogging.DEBUG,
         extra={"instance_name": "172.1.1.1"},
     )
-    assert re.findall("(?:[0-9]{1,3}\.){3}[0-9]{1,3}", log)
+    assert re.findall(r"(?:[0-9]{1,3}.){3}[0-9]{1,3}", log)
     assert "DEBUG" in log
     assert "This is a message" in log
 
