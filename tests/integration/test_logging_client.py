@@ -6,9 +6,10 @@ from typing import Callable
 
 import pytest
 
-from ansys.geometry.core import Modeler, LOG  # Global logger
+from ansys.geometry.core import LOG, Modeler  # Global logger
 
-def test_instance_logger_format(modeler: Modeler, fake_record : Callable):
+
+def test_instance_logger_format(modeler: Modeler, fake_record: Callable):
     """Test for checking the instance logger formatter aspect."""
     # Since we cannot read the format of our logger, because pytest just dont show the console output or
     # if it does, it formats the logger with its own formatter, we are going to check the logger handlers
@@ -36,7 +37,7 @@ def test_log_instance_name(modeler: Modeler):
     LOG[modeler.client.get_name()] == modeler.client.log
 
 
-def test_instance_log_to_file(tmp_path_factory : pytest.TempPathFactory, modeler: Modeler):
+def test_instance_log_to_file(tmp_path_factory: pytest.TempPathFactory, modeler: Modeler):
     """
     Testing writing to log file.
 

@@ -3,6 +3,7 @@ import logging as deflogging  # Default logging
 
 import pytest
 
+
 @pytest.fixture
 def fake_record():
     def inner_fake_record(
@@ -70,4 +71,5 @@ def fake_record():
         )
         handler = logger.handlers[handler_index]
         return handler.format(record)
+
     return inner_fake_record

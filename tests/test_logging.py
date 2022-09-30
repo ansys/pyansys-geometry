@@ -1,7 +1,7 @@
 """"Testing of log module."""
-from typing import Callable
 import logging as deflogging  # Default logging
 import re
+from typing import Callable
 
 import pytest
 
@@ -14,6 +14,7 @@ import ansys.geometry.core.logger as logger
 # - caplog: for testing logging printing.
 
 LOG_LEVELS = {"CRITICAL": 50, "ERROR": 40, "WARNING": 30, "INFO": 20, "DEBUG": 10}
+
 
 def test_stdout_reading(capfd):
     """Test for checking simple standard output reading by pytest
@@ -152,7 +153,7 @@ def test_global_logger_debug_levels(caplog):
                     )
 
 
-def test_global_logger_format(fake_record : Callable):
+def test_global_logger_format(fake_record: Callable):
     """Test for checking the global logger formatter aspect."""
     # Since we cannot read the format of our logger, because pytest just dont show the console output or
     # if it does, it formats the logger with its own formatter, we are going to check the logger handlers
@@ -173,6 +174,7 @@ def test_global_logger_format(fake_record : Callable):
     assert re.findall("(?:[0-9]{1,3}\.){3}[0-9]{1,3}", log)
     assert "DEBUG" in log
     assert "This is a message" in log
+
 
 def test_global_methods(caplog):
     """Testing global logger methods for printing out different log messages,
@@ -215,7 +217,7 @@ def test_global_methods(caplog):
     LOG.std_out_handler.setLevel("INFO")
 
 
-def test_log_to_file(tmp_path_factory : pytest.TempPathFactory):
+def test_log_to_file(tmp_path_factory: pytest.TempPathFactory):
     """
     Testing writing to log file.
 
