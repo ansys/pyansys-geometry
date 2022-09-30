@@ -625,7 +625,7 @@ class Component:
         for comp in self._components:
             if not comp.is_alive:
                 continue
-            blocks_list.extend(comp.tessellate(merge_bodies=merge_bodies))
+            blocks_list.append(comp.tessellate(merge_bodies=merge_bodies))
 
         # Transform the list of MultiBlock objects into a single MultiBlock
         blocks = pv.MultiBlock(blocks_list)
