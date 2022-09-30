@@ -16,7 +16,7 @@ import ansys.geometry.core.logger as logger
 LOG_LEVELS = {"CRITICAL": 50, "ERROR": 40, "WARNING": 30, "INFO": 20, "DEBUG": 10}
 
 
-def test_stdout_reading(capfd):
+def test_stdout_reading(capfd: pytest.CaptureFixture):
     """Test for checking simple standard output reading by pytest
 
     Parameters
@@ -31,7 +31,7 @@ def test_stdout_reading(capfd):
     assert out == "This is a test\n"
 
 
-def test_only_logger(caplog):
+def test_only_logger(caplog: pytest.LogCaptureFixture):
     """Test for checking that the logging capabilities are working fine
     in the Python version installed.
 
@@ -65,7 +65,7 @@ def test_global_logger_has_handlers():
     assert LOG.file_handler or LOG.std_out_handler  # at least a handler is not empty
 
 
-def test_global_logger_logging(caplog):
+def test_global_logger_logging(caplog: pytest.LogCaptureFixture):
     """Testing the global PyDiscovery logger capabilities. Forcing minimum
     logging level to Debug, adding a message with different logging levels,
     checking the output and restoring to original level.
@@ -95,7 +95,7 @@ def test_global_logger_level_mode():
     assert LOG.logger.level == logger.ERROR
 
 
-def test_global_logger_exception_handling(caplog):
+def test_global_logger_exception_handling(caplog: pytest.LogCaptureFixture):
     """Test for checking that Errors are also raised in the logger as
     ERROR type.
 
@@ -117,7 +117,7 @@ def test_global_logger_exception_handling(caplog):
             assert exc in caplog.text
 
 
-def test_global_logger_debug_levels(caplog):
+def test_global_logger_debug_levels(caplog: pytest.LogCaptureFixture):
     """Testing for all the possible logging level that the output is
     recorded properly for each type of msg.
 
@@ -154,7 +154,13 @@ def test_global_logger_debug_levels(caplog):
 
 
 def test_global_logger_format(fake_record: Callable):
-    """Test for checking the global logger formatter aspect."""
+    """Test for checking the global logger formatter aspect.
+
+    Parameters
+    ----------
+    fake_record : Callable
+        Fake record function.
+    """
     # Since we cannot read the format of our logger, because pytest just dont show the console
     # output or if it does, it formats the logger with its own formatter, we are going to check
     # the logger handlers and output by faking a record.
@@ -176,7 +182,7 @@ def test_global_logger_format(fake_record: Callable):
     assert "This is a message" in log
 
 
-def test_global_methods(caplog):
+def test_global_methods(caplog: pytest.LogCaptureFixture):
     """Testing global logger methods for printing out different log messages,
     from DEBUG to CRITICAL.
 

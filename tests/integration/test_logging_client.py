@@ -9,7 +9,15 @@ from ansys.geometry.core import LOG, Modeler  # Global logger
 
 
 def test_instance_logger_format(modeler: Modeler, fake_record: Callable):
-    """Test for checking the instance logger formatter aspect."""
+    """Test for checking the instance logger formatter aspect.
+
+    Parameters
+    ----------
+    modeler : ansys.geometry.core.modeler.Modeler
+        The client to be used for the tests.
+    fake_record : Callable
+        Fake record function.
+    """
     # Since we cannot read the format of our logger, because pytest just dont show the console
     # output or if it does, it formats the logger with its own formatter, we are going to check
     # the logger handlers and output by faking a record.
@@ -31,6 +39,11 @@ def test_instance_logger_format(modeler: Modeler, fake_record: Callable):
 def test_log_instance_name(modeler: Modeler):
     """Test for verifying access to specific logging instance by
     providing the client name.
+
+    Parameters
+    ----------
+    modeler : ansys.geometry.core.modeler.Modeler
+        The client to be used for the tests.
     """
     # Verify we can access via an instance name
     LOG[modeler.client.get_name()] == modeler.client.log
@@ -44,10 +57,10 @@ def test_instance_log_to_file(tmp_path_factory: pytest.TempPathFactory, modeler:
 
     Parameters
     ----------
-    discovery_client : ansys.discovery.core.discovery.Discovery
-        The client to be used for the tests.
-    tmpdir : pytest.TempdirFactory
+    tmp_path_factory : pytest.TempPathFactory
         Fixture for accessing a temporal directory (erased after test execution).
+    modeler : ansys.geometry.core.modeler.Modeler
+        The client to be used for the tests.
     """
     file_path = tmp_path_factory.mktemp("log_files") / "instance.log"
     file_msg_error = "This is a error message"
