@@ -84,7 +84,7 @@ class Body:
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 
     @property
-    def _identifier(self) -> BodyIdentifier:
+    def _grpc_id(self) -> BodyIdentifier:
         """gRPC body identifier of this body."""
         return BodyIdentifier(id=self._id)
 
@@ -111,7 +111,7 @@ class Body:
         -------
         List[Face]
         """
-        grpc_faces = self._bodies_stub.GetFaces(self._identifier)
+        grpc_faces = self._bodies_stub.GetFaces(self._grpc_id)
         return [
             Face(grpc_face.id, SurfaceType(grpc_face.surface_type), self, self._grpc_client)
             for grpc_face in grpc_faces.faces
@@ -125,7 +125,7 @@ class Body:
         -------
         List[Edge]
         """
-        grpc_edges = self._bodies_stub.GetEdges(self._identifier)
+        grpc_edges = self._bodies_stub.GetEdges(self._grpc_id)
         return [
             Edge(grpc_edge.id, CurveType(grpc_edge.curve_type), self, self._grpc_client)
             for grpc_edge in grpc_edges.edges
@@ -148,7 +148,7 @@ class Body:
             # TODO : maybe raise an error?
             return Quantity(0, SERVER_UNIT_VOLUME)
         else:
-            volume_response = self._bodies_stub.GetVolume(self._identifier)
+            volume_response = self._bodies_stub.GetVolume(self._grpc_id)
             return Quantity(volume_response.volume, SERVER_UNIT_VOLUME)
 
     def assign_material(self, material: Material) -> None:
@@ -351,7 +351,7 @@ class Body:
             return pv.PolyData() if merge else pv.MultiBlock()
 
         try:
-            resp = self._bodies_stub.GetBodyTessellation(self._identifier)
+            resp = self._bodies_stub.GetBodyTessellation(self._grpc_id)
         except _InactiveRpcError as err:
             raise RuntimeWarning("Unable to tessellate. Body is possibly not closed")
 

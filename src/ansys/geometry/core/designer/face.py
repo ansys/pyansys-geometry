@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, List
 from ansys.api.geometry.v0.edges_pb2 import EdgeIdentifier
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.api.geometry.v0.faces_pb2 import (
+    EvaluateFaceRequest,
     FaceIdentifier,
     GetFaceLoopsRequest,
     GetFaceNormalRequest,
@@ -142,6 +143,11 @@ class Face:
         return self._id
 
     @property
+    def _grpc_id(self) -> FaceIdentifier:
+        """gRPC face identifier."""
+        return FaceIdentifier(id=self._id)
+
+    @property
     def body(self) -> "Body":
         """The body to which the face belongs."""
         return self._body
@@ -149,7 +155,7 @@ class Face:
     @property
     def area(self) -> Quantity:
         """Calculated area of the face."""
-        area_response = self._faces_stub.GetFaceArea(FaceIdentifier(id=self.id))
+        area_response = self._faces_stub.GetFaceArea(self._grpc_id)
         return Quantity(area_response.area, SERVER_UNIT_AREA)
 
     @property
@@ -160,7 +166,7 @@ class Face:
     @property
     def edges(self) -> List[Edge]:
         """Get all ``Edge`` objects of our ``Face``."""
-        edges_response = self._faces_stub.GetFaceEdges(FaceIdentifier(id=self.id))
+        edges_response = self._faces_stub.GetFaceEdges(self._grpc_id)
         return self.__grpc_edges_to_edges(edges_response.edges)
 
     @property
@@ -170,6 +176,20 @@ class Face:
             GetFaceNormalRequest(id=self.id, u=0.5, v=0.5)
         ).direction
         return UnitVector([response.x, response.y, response.z])
+
+    @property
+    def central_point(self) -> Point:
+        """Returns the central point of the ``Face``.
+
+        Notes
+        -----
+        For planar surfaces this concept is easy to understand. However,
+        it is also applicable for any other types of surfaces.
+        """
+        response = self._faces_stub.EvaluateFace(
+            EvaluateFaceRequest(face=self.id, u=0.5, v=0.5)
+        ).point
+        return Point([response.x, response.y, response.z], SERVER_UNIT_LENGTH)
 
     @property
     def loops(self) -> List[FaceLoop]:

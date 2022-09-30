@@ -208,6 +208,14 @@ def test_component_body(modeler: Modeler):
     # Check that the planar component belongs to the design
     assert planar_component.parent_component.id == design.id
 
+    # Let's test the repr method for a component
+    comp_str = repr(planar_component)
+    assert "ansys.geometry.core.designer.Component" in comp_str
+    assert "Exists               : True" in comp_str
+    assert "N Bodies             : 1" in comp_str
+    assert "N Components         : 0" in comp_str
+    assert "N Coordinate Systems : 0" in comp_str
+
 
 def test_named_selections(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection``."""
@@ -253,6 +261,14 @@ def test_named_selections(modeler: Modeler):
     assert design.named_selections[0].name == "OnlyCircle"
     assert design.named_selections[1].name == "OnlyPolygon"
     assert design.named_selections[2].name == "CircleAndPolygon"
+    
+    # Test also that you can create a named selection out of faces only
+    design.create_named_selection("OnlyPolygonFaces", faces=body_polygon_comp.faces)
+    assert len(design.named_selections) == 4
+    assert design.named_selections[0].name == "OnlyCircle"
+    assert design.named_selections[1].name == "OnlyPolygon"
+    assert design.named_selections[2].name == "CircleAndPolygon"
+    assert design.named_selections[3].name == "OnlyPolygonFaces"
 
 
 def test_faces_edges(modeler: Modeler):
@@ -278,9 +294,16 @@ def test_faces_edges(modeler: Modeler):
     assert all(face.surface_type == SurfaceType.SURFACETYPE_UNKNOWN for face in faces)
     assert all(face.area > 0.0 for face in faces)
     assert abs(faces[0].area.to_base_units().m - polygon.area.to_base_units().m) <= 1e-15
+    assert all(face.body.id == body_polygon_comp.id for face in faces)
 
+    # Get the normal to some of the faces
     assert faces[0].normal == UnitVector(-UNIT_VECTOR_Z)  # Bottom
     assert faces[1].normal == UNIT_VECTOR_Z  # Top
+    
+    # Get the central point of some of the surfaces
+    assert faces[0].central_point == Point([-30, -30, 0], UNITS.mm)
+    assert faces[1].central_point == Point([-30, -30, 30], UNITS.mm)
+    
     loops = faces[0].loops
     assert len(loops) == 1
     assert loops[0].type == FaceLoopType.OUTER_LOOP
@@ -687,11 +710,15 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     design.extrude_sketch(name="MyCylinder", sketch=sketch, distance=Quantity(50, UNITS.mm))
 
     # Download the design
-    file = tmp_path_factory.mktemp("scdoc_files") / "cylinder.scdocx"
-    file_stream = tmp_path_factory.mktemp("scdoc_files") / "cylinder.scdocx"
+    file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.scdocx"
+    file_stream = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder_stream.scdocx"
     design.download(file, as_stream=False)
     design.download(file_stream, as_stream=True)
 
     # Check that both files exist
     assert file.exists()
     assert file_stream.exists()
+    
+    # Check that we can also save it (even if it is not accessible on the server)
+    file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
+    design.save(file_location=file_save)

@@ -59,9 +59,14 @@ class Edge:
         return self._id
 
     @property
+    def _grpc_id(self) -> EdgeIdentifier:
+        """gRPC edge identifier."""
+        return EdgeIdentifier(id=self._id)
+
+    @property
     def length(self) -> Quantity:
         """Calculated length of the edge."""
-        length_response = self._edges_stub.GetEdgeLength(EdgeIdentifier(id=self.id))
+        length_response = self._edges_stub.GetEdgeLength(self._grpc_id)
         return Quantity(length_response.length, SERVER_UNIT_LENGTH)
 
     @property
@@ -74,7 +79,7 @@ class Edge:
         """Get the ``Face`` objects that contain this ``Edge``."""
         from ansys.geometry.core.designer.face import Face, SurfaceType
 
-        grpc_faces = self._edges_stub.GetEdgeFaces(EdgeIdentifier(id=self.id)).faces
+        grpc_faces = self._edges_stub.GetEdgeFaces(self._grpc_id).faces
         return [
             Face(grpc_face.id, SurfaceType(grpc_face.surface_type), self._body, self._grpc_client)
             for grpc_face in grpc_faces
