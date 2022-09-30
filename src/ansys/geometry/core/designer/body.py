@@ -320,8 +320,8 @@ class Body:
         >>> sketch = Sketch(plane)
         >>> box = sketch.draw_box(Point([2, 0, 2]), 4, 4)
         >>> design = modeler.create_design("my-design")
-        >>> mycomp = design.add_component("my-comp")
-        >>> body = mycomp.extrude_sketch("my-sketch", sketch, 1 * u.m)
+        >>> my_comp = design.add_component("my-comp")
+        >>> body = my_comp.extrude_sketch("my-sketch", sketch, 1 * u.m)
         >>> blocks = body.tessellate()
         >>> blocks
         >>> MultiBlock (0x7f94ec757460)
