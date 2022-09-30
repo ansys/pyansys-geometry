@@ -5,10 +5,10 @@ import numpy as np
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
 
-from ansys.geometry.core.designer.body import Body
-from ansys.geometry.core.math.frame import Frame
-from ansys.geometry.core.math.plane import Plane
-from ansys.geometry.core.shapes.base import BaseShape
+from ansys.geometry.core.designer import Body, Component
+from ansys.geometry.core.math import Frame, Plane
+from ansys.geometry.core.shapes import BaseShape
+from ansys.geometry.core.sketch import Sketch
 
 
 class Plotter:
@@ -203,7 +203,9 @@ class Plotter:
             plotting_options_lines = dict(color="black", line_width=3)
         self.scene.add_mesh(mesh_line, **plotting_options_lines)
 
-    def plot_sketch(self, sketch, show_plane=False, show_frame=False) -> None:
+    def plot_sketch(
+        self, sketch: Sketch, show_plane: bool = False, show_frame: bool = False
+    ) -> None:
         """Plot desired sketch into the scene.
 
         Parameters
@@ -248,8 +250,12 @@ class Plotter:
         self.scene.add_mesh(body.tessellate(merge=merge), **kwargs)
 
     def add_component(
-        self, component, merge_component: bool = False, merge_bodies: bool = False, **kwargs
-    ):
+        self,
+        component: Component,
+        merge_component: bool = False,
+        merge_bodies: bool = False,
+        **kwargs
+    ) -> None:
         """Add a component to the scene.
 
         Parameters
@@ -275,7 +281,7 @@ class Plotter:
 
     def show(
         self,
-        show_axes_at_origin=True,
+        show_axes_at_origin: bool = True,
         show_plane: bool = True,
         jupyter_backend: Optional[str] = None,
         **kwargs: Optional[dict]
