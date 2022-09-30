@@ -3,7 +3,6 @@ from typing import Dict, Optional
 
 import numpy as np
 import pyvista as pv
-from pyvista import Plotter
 from pyvista.plotting.tools import create_axes_marker
 
 from ansys.geometry.core.designer.body import Body
@@ -17,7 +16,7 @@ class Plotter:
 
     def __init__(
         self,
-        scene: Optional[Plotter] = None,
+        scene: Optional[pv.Plotter] = None,
         background_opts: Optional[Dict] = None,
         num_points: int = 100,
     ):
@@ -30,8 +29,7 @@ class Plotter:
         background_opts : dict, optional
             A dictionary containing the desired background and top colors.
         num_points : int, optional
-            Desired number of points to be used for rendering the
-            shapes. Default is 100.
+            Desired number of points to be used for rendering the shapes. Default is 100.
 
         """
         # Generate custom scene if none was provided
@@ -51,7 +49,7 @@ class Plotter:
         self._num_points = num_points
 
     @property
-    def scene(self) -> Plotter:
+    def scene(self) -> pv.Plotter:
         """Return the rendering scene object.
 
         Returns
@@ -272,11 +270,6 @@ class Plotter:
 
         """
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
-        kwargs.setdefault("smooth_shading", True)
-        self.scene.add_mesh(dataset, **kwargs)
-
-    def add_design(self, design, merge_design=False, merge_components=False, **kwargs):
-        dataset = design.tessellate(merge_design, merge_components)
         kwargs.setdefault("smooth_shading", True)
         self.scene.add_mesh(dataset, **kwargs)
 

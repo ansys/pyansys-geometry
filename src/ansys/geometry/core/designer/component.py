@@ -2,7 +2,7 @@
 
 from enum import Enum, unique
 from threading import Thread
-from typing import List, Optional, Union
+from typing import TYPE_CHECKING, List, Optional, Union
 
 from ansys.api.geometry.v0.bodies_pb2 import (
     BodyIdentifier,
@@ -38,6 +38,9 @@ from ansys.geometry.core.misc import (
     check_type,
 )
 from ansys.geometry.core.sketch import Sketch
+
+if TYPE_CHECKING:
+    from pyvista import MultiBlock, PolyData
 
 
 @unique
@@ -84,12 +87,7 @@ class Component:
                 CreateComponentRequest(display_name=name, parent=parent_component.id)
             )
             self._id = new_component.component.id
-            #
-            # TODO : the CreateComponentRequest returns back an empty string instead of
-            #        the name... use the given name for now. When implemented, reactivate.
-            #
-            # self._name = new_component.component.display_name
-            self._name = name
+            self._name = new_component.component.display_name
         else:
             self._name = name
             self._id = None
@@ -536,15 +534,105 @@ class Component:
         # If you reached this point... this means that no body was found!
         return None
 
-    def __repr__(self):
-        """Representation of the component."""
-        lines = [f"ansys.geometry.core.designer.Component {hex(id(self))}"]
-        lines.append(f"  Exists               : {self.is_alive}")
-        lines.append(f"  N Bodies             : {len(self.bodies)}")
-        lines.append(f"  N Components         : {len(self.components)}")
-        lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
+    def _kill_component_on_client(self) -> None:
+        """Sets the ``is_alive`` property of nested components and bodies to ``False``.
 
-        return "\n".join(lines)
+        Notes
+        -----
+        Only to be used by the ``delete_component`` method and itself (this method
+        is recursive)."""
+
+        # Kill all its bodies
+        for body in self.bodies:
+            body._is_alive = False
+
+        # Now, go to the nested components and kill them as well
+        for component in self.components:
+            component._kill_component_on_client()
+
+        # Kill itself
+        self._is_alive = False
+
+    def tessellate(
+        self, merge_component: bool = False, merge_bodies: bool = False
+    ) -> Union["PolyData", "MultiBlock"]:
+        """Tessellate this component.
+
+        Parameters
+        ----------
+        merge_component : bool, default: False
+            Merge this component into a single dataset. This effectively
+            combines all the individual bodies into a single dataset without
+            any hierarchy.
+        merge_bodies : bool, default: False
+            Merge each body into a single dataset. This effectively combines
+            all the faces of each individual body into a single dataset
+            without separating faces.
+
+        Returns
+        -------
+        ~pyvista.PolyData, ~pyvista.MultiBlock
+            Merged :class:`pyvista.PolyData` if ``merge_component=True`` or
+            composite dataset.
+
+        Examples
+        --------
+        Create two stacked bodies and return the tessellation as two merged bodies.
+
+        >>> from ansys.geometry.core.sketch import Sketch
+        >>> from ansys.geometry.core import Modeler
+        >>> from ansys.geometry.core.math import Point, Plane
+        >>> from ansys.geometry.core.misc import UNITS
+        >>> from ansys.geometry.core.plotting.plotter import Plotter
+        >>> modeler = Modeler("10.54.0.72", "50051")
+        >>> sketch_1 = Sketch()
+        >>> box = sketch_1.draw_box(Point([10, 10, 0]), width=10, height=5)
+        >>> circle = sketch_1.draw_circle(Point([0, 0, 0]), radius=25 * UNITS.m)
+        >>> design = modeler.create_design("MyDesign")
+        >>> comp = design.add_component("MyComponent")
+        >>> body = comp.extrude_sketch("MyBody", sketch=sketch_1, distance=10 * UNITS.m)
+        >>> sketch_2 = Sketch(Plane([0, 0, 10]))
+        >>> box = sketch_2.draw_box(Point([10, 10, 10]), width=10, height=5)
+        >>> circle = sketch_2.draw_circle(Point([0, 0, 10]), radius=25 * UNITS.m)
+        >>> body = comp.extrude_sketch("MyBody", sketch=sketch_2, distance=10 * UNITS.m)
+        >>> dataset = comp.tessellate(merge_bodies=True)
+        >>> dataset
+        MultiBlock (0x7ff6bcb511e0)
+          N Blocks:     2
+          X Bounds:     -25.000, 25.000
+          Y Bounds:     -24.991, 24.991
+          Z Bounds:     0.000, 20.000
+
+        """
+        import pyvista as pv
+
+        datasets = []
+
+        def get_tessellation(body: Body):
+            datasets.append(body.tessellate(merge=merge_bodies))
+
+        # Tessellate the bodies in this component
+        threads = []
+        for body in self.bodies:
+            thread = Thread(target=get_tessellation, args=(body,))
+            thread.start()
+            threads.append(thread)
+        [thread.join() for thread in threads]
+        blocks_list = [pv.MultiBlock(datasets)]
+
+        # Now, go recursively inside its subcomponents (with no arguments) and
+        # merge the PolyData obtained into our blocks
+        for comp in self._components:
+            blocks_list.extend(comp.tessellate(merge_bodies=merge_bodies))
+
+        # Transform the list of MultiBlock objects into a single MultiBlock
+        blocks = pv.MultiBlock(blocks_list)
+
+        if merge_component:
+            ugrid = blocks.combine()
+            # convert to polydata as it's slightly faster than extract surface
+            return pv.PolyData(ugrid.points, ugrid.cells, n_faces=ugrid.n_cells)
+        return blocks
 
     def plot(
         self, merge_component: bool = False, merge_bodies: bool = False, **kwargs: Optional[dict]
@@ -599,98 +687,18 @@ class Component:
         >>> mycomp.plot(pbr=True, metallic=1.0)
 
         """
-        from ansys.geometry.core.plotting.plotter import Plotter
+        from ansys.geometry.core.plotting import Plotter
 
         pl = Plotter()
         pl.add_component(self, merge_bodies=merge_bodies, merge_component=merge_component, **kwargs)
         pl.show()
 
-    def _kill_component_on_client(self) -> None:
-        """Sets the ``is_alive`` property of nested components and bodies to ``False``.
+    def __repr__(self) -> str:
+        """Representation of the component."""
+        lines = [f"ansys.geometry.core.designer.Component {hex(id(self))}"]
+        lines.append(f"  Exists               : {self.is_alive}")
+        lines.append(f"  N Bodies             : {len(self.bodies)}")
+        lines.append(f"  N Components         : {len(self.components)}")
+        lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
 
-        Notes
-        -----
-        Only to be used by the ``delete_component`` method and itself (this method
-        is recursive)."""
-
-        # Kill all its bodies
-        for body in self.bodies:
-            body._is_alive = False
-
-        # Now, go to the nested components and kill them as well
-        for component in self.components:
-            component._kill_component_on_client()
-
-        # Kill itself
-        self._is_alive = False
-
-    def tessellate(self, merge_component: bool = False, merge_bodies: bool = False):
-        """Tessellate this component.
-
-        Parameters
-        ----------
-        merge_component : bool, default: False
-            Merge this component into a single dataset. This effectively
-            combines all the individual bodies into a single dataset without
-            any hierarchy.
-        merge_bodies : bool, default: False
-            Merge each body into a single dataset. This effectively combines
-            all the faces of each individual body into a single dataset
-            without separating faces.
-
-        Returns
-        -------
-        pyvista.PolyData, pyvista.MultiBlock
-            Merged :class:`pyvista.PolyData` if ``merge_component=True`` or
-            composite dataset.
-
-        Examples
-        --------
-        Create two stacked bodies and return the tessellation as two merged bodies.
-
-        >>> from ansys.geometry.core.sketch import Sketch
-        >>> from ansys.geometry.core import Modeler
-        >>> from ansys.geometry.core.math import Point, Plane
-        >>> from ansys.geometry.core.misc import UNITS
-        >>> from ansys.geometry.core.plotting.plotter import Plotter
-        >>> modeler = Modeler("10.54.0.72", "50051")
-        >>> sketch_1 = Sketch()
-        >>> box = sketch_1.draw_box(Point([10, 10, 0]), width=10, height=5)
-        >>> circle = sketch_1.draw_circle(Point([0, 0, 0]), radius=25 * UNITS.m)
-        >>> design = modeler.create_design("MyDesign")
-        >>> comp = design.add_component("MyComponent")
-        >>> body = comp.extrude_sketch("MyBody", sketch=sketch_1, distance=10 * UNITS.m)
-        >>> sketch_2 = Sketch(Plane([0, 0, 10]))
-        >>> box = sketch_2.draw_box(Point([10, 10, 10]), width=10, height=5)
-        >>> circle = sketch_2.draw_circle(Point([0, 0, 10]), radius=25 * UNITS.m)
-        >>> body = comp.extrude_sketch("MyBody", sketch=sketch_2, distance=10 * UNITS.m)
-        >>> dataset = comp.tessellate(merge_bodies=True)
-        >>> dataset
-        MultiBlock (0x7ff6bcb511e0)
-          N Blocks:     2
-          X Bounds:     -25.000, 25.000
-          Y Bounds:     -24.991, 24.991
-          Z Bounds:     0.000, 20.000
-
-        """
-        import pyvista as pv
-
-        datasets = []
-
-        def get_tessellation(body):
-            datasets.append(body.tessellate(merge=merge_bodies))
-
-        threads = []
-        for body in self.bodies:
-            thread = Thread(target=get_tessellation, args=(body,))
-            thread.start()
-            threads.append(thread)
-
-        [thread.join() for thread in threads]
-
-        blocks = pv.MultiBlock(datasets)
-        if merge_component:
-            ugrid = blocks.combine()
-            # convert to polydata as it's slightly faster than extract surface
-            return pv.PolyData(ugrid.points, ugrid.cells, n_faces=ugrid.n_cells)
-        return blocks
+        return "\n".join(lines)

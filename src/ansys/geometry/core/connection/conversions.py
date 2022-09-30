@@ -1,6 +1,6 @@
 """``Conversions`` module."""
 
-from typing import List
+from typing import TYPE_CHECKING, List
 
 from ansys.api.geometry.v0.models_pb2 import Arc as GRPCArc
 from ansys.api.geometry.v0.models_pb2 import Circle as GRPCCircle
@@ -17,6 +17,9 @@ from ansys.api.geometry.v0.models_pb2 import Tessellation
 from ansys.geometry.core.math import Frame, Plane, Point, UnitVector
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Polygon, Segment
+
+if TYPE_CHECKING:
+    from pyvista import PolyData
 
 
 def unit_vector_to_grpc_direction(unit_vector: UnitVector) -> GRPCDirection:
@@ -226,8 +229,8 @@ def segment_to_grpc_line(line: Segment) -> GRPCLine:
     )
 
 
-def tess_to_pd(tess: Tessellation) -> "pyvista.PolyData":
-    """Convert a ansys.api.geometry.Tessellation to a pyvista.PolyData."""
+def tess_to_pd(tess: Tessellation) -> "PolyData":
+    """Convert a ansys.api.geometry.Tessellation to a :class:`pyvista.PolyData`."""
     # lazy imports here to improve initial load
     import numpy as np
     import pyvista as pv

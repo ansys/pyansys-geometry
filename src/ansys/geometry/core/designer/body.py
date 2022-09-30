@@ -16,9 +16,9 @@ from pint import Quantity
 from ansys.geometry.core.connection import (
     GrpcClient,
     sketch_shapes_to_grpc_geometries,
+    tess_to_pd,
     unit_vector_to_grpc_direction,
 )
-from ansys.geometry.core.connection.conversions import tess_to_pd
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.materials import Material
@@ -33,6 +33,8 @@ from ansys.geometry.core.misc import (
 from ansys.geometry.core.sketch import Sketch
 
 if TYPE_CHECKING:
+    from pyvista import MultiBlock, PolyData  # pragma: no cover
+
     from ansys.geometry.core.designer.component import Component  # pragma: no cover
 
 
@@ -124,7 +126,6 @@ class Body:
         List[Edge]
         """
         grpc_edges = self._bodies_stub.GetEdges(self._identifier)
-
         return [
             Edge(grpc_edge.id, CurveType(grpc_edge.curve_type), self, self._grpc_client)
             for grpc_edge in grpc_edges.edges
@@ -288,9 +289,7 @@ class Body:
             )
         )
 
-    def tessellate(
-        self, merge: Optional[bool] = False
-    ) -> Union["pyvista.PolyData", "pyvista.MultiBlock"]:
+    def tessellate(self, merge: Optional[bool] = False) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
         Parameters
@@ -303,7 +302,7 @@ class Body:
 
         Returns
         -------
-        pyvista.PolyData, pyvista.MultiBlock
+        ~pyvista.PolyData, ~pyvista.MultiBlock
             Merged :class:`pyvista.PolyData` if ``merge=True`` or composite dataset.
 
         Examples
@@ -349,9 +348,7 @@ class Body:
         import pyvista as pv
 
         if not self.is_alive:
-            if merge:
-                return pv.PolyData()
-            return pv.MultiBlock()
+            return pv.PolyData() if merge else pv.MultiBlock()
 
         try:
             resp = self._bodies_stub.GetBodyTessellation(self._identifier)
@@ -379,11 +376,6 @@ class Body:
             Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
             for allowable keyword arguments.
 
-        Returns
-        -------
-        pyvista.PolyData, pyvista.MultiBlock
-            Merged :class:`pyvista.PolyData` if ``merge=True`` or composite dataset.
-
         Examples
         --------
         Extrude a box centered at the origin to create rectangular body and
@@ -408,7 +400,8 @@ class Body:
         >>> body.plot(multi_colors=True)
 
         """
-        from ansys.geometry.core.plotting.plotter import Plotter
+        # lazy import here to improve initial module load time
+        from ansys.geometry.core.plotting import Plotter
 
         pl = Plotter()
         pl.add_body(self, merge=merge, **kwargs)
