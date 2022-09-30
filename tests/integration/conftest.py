@@ -9,8 +9,11 @@ If you wish to override these defaults, set the following environment variables.
 
 """
 import pytest
+import pyvista as pv
 
 from ansys.geometry.core import Modeler
+
+pv.OFF_SCREEN = True
 
 
 @pytest.fixture(scope="session")
