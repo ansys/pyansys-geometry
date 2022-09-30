@@ -170,28 +170,6 @@ class Face:
         return self.__grpc_edges_to_edges(edges_response.edges)
 
     @property
-    def normal(self) -> UnitVector:
-        """Normal direction to the ``Face``."""
-        response = self._faces_stub.GetFaceNormal(
-            GetFaceNormalRequest(id=self.id, u=0.5, v=0.5)
-        ).direction
-        return UnitVector([response.x, response.y, response.z])
-
-    @property
-    def central_point(self) -> Point:
-        """Returns the central point of the ``Face``.
-
-        Notes
-        -----
-        For planar surfaces this concept is easy to understand. However,
-        it is also applicable for any other types of surfaces.
-        """
-        response = self._faces_stub.EvaluateFace(
-            EvaluateFaceRequest(face=self.id, u=0.5, v=0.5)
-        ).point
-        return Point([response.x, response.y, response.z], SERVER_UNIT_LENGTH)
-
-    @property
     def loops(self) -> List[FaceLoop]:
         """Face loops of the ``Face``."""
         grpc_loops = self._faces_stub.GetFaceLoops(GetFaceLoopsRequest(face=self.id)).loops
@@ -224,6 +202,64 @@ class Face:
             )
 
         return loops
+
+    def face_normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector:
+        """Normal direction to the ``Face`` evaluated at certain UV coordinates.
+
+        Notes
+        -----
+        In order to properly use this API, please consider that you must
+        handle UV coordinates and thus know how these relate to on the
+        underlying Geometry Service. It is an advanced API for Geometry
+        experts only.
+
+        Parameters
+        ----------
+        u : float
+            First coordinate of the 2D representation of a surface in UV space.
+            By default, 0.5 (i.e. the center of the surface)
+        v : float
+            Second coordinate of the 2D representation of a surface in UV space.
+            By default, 0.5 (i.e. the center of the surface)
+
+        Returns
+        -------
+        UnitVector
+            The :class:`UnitVector` object evaluated at the given U and V coordinates.
+            This :class:`UnitVector` will be perpendicular to the surface at that
+            given UV coordinates.
+        """
+        response = self._faces_stub.GetFaceNormal(
+            GetFaceNormalRequest(id=self.id, u=u, v=v)
+        ).direction
+        return UnitVector([response.x, response.y, response.z])
+
+    def face_point(self, u: float = 0.5, v: float = 0.5) -> Point:
+        """Returns a point of the ``Face`` evaluated with UV coordinates.
+
+        Notes
+        -----
+        In order to properly use this API, please consider that you must
+        handle UV coordinates and thus know how these relate to on the
+        underlying Geometry Service. It is an advanced API for Geometry
+        experts only.
+
+        Parameters
+        ----------
+        u : float
+            First coordinate of the 2D representation of a surface in UV space.
+            By default, 0.5.
+        v : float
+            Second coordinate of the 2D representation of a surface in UV space.
+            By default, 0.5.
+
+        Returns
+        -------
+        Point
+            The :class:`Point` object evaluated at the given U and V coordinates.
+        """
+        response = self._faces_stub.EvaluateFace(EvaluateFaceRequest(face=self.id, u=u, v=v)).point
+        return Point([response.x, response.y, response.z], SERVER_UNIT_LENGTH)
 
     def __grpc_edges_to_edges(self, edges_grpc: List[GRPCEdge]) -> List[Edge]:
         """Transform a list of gRPC Edge messages into actual ``Edge`` objects.
