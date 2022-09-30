@@ -623,6 +623,8 @@ class Component:
         # Now, go recursively inside its subcomponents (with no arguments) and
         # merge the PolyData obtained into our blocks
         for comp in self._components:
+            if not comp.is_alive:
+                continue
             blocks_list.extend(comp.tessellate(merge_bodies=merge_bodies))
 
         # Transform the list of MultiBlock objects into a single MultiBlock
