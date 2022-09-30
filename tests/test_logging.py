@@ -155,9 +155,9 @@ def test_global_logger_debug_levels(caplog):
 
 def test_global_logger_format(fake_record: Callable):
     """Test for checking the global logger formatter aspect."""
-    # Since we cannot read the format of our logger, because pytest just dont show the console output or
-    # if it does, it formats the logger with its own formatter, we are going to check the logger handlers
-    # and output by faking a record.
+    # Since we cannot read the format of our logger, because pytest just dont show the console
+    # output or if it does, it formats the logger with its own formatter, we are going to check
+    # the logger handlers and output by faking a record.
     # This method is not super robust, since we are input fake data to ``logging.makeRecord``.
     # There are things such as filename or class that we cannot evaluate without going
     # into the code.
