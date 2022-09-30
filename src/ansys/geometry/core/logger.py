@@ -108,7 +108,13 @@ from copy import copy
 from datetime import datetime
 import logging
 import sys
+from typing import TYPE_CHECKING, Optional
 import weakref
+
+from ansys.geometry.core.misc.checks import check_type
+
+if TYPE_CHECKING:
+    from ansys.geometry.core.connection.client import GrpcClient
 
 ## Default configuration
 LOG_LEVEL = logging.DEBUG
@@ -181,7 +187,7 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
         ] = self.extra.get_name()  # here self.extra is the argument pass to the log records.
         return msg, kwargs
 
-    def log_to_file(self, filename=FILE_NAME, level=LOG_LEVEL):
+    def log_to_file(self, filename: str = FILE_NAME, level: int = LOG_LEVEL):
         """Add a file handler to the logger.
 
         Parameters
@@ -458,7 +464,7 @@ class Logger:
         logger.propagate = True
         return logger
 
-    def add_child_logger(self, sufix, level=None):
+    def add_child_logger(self, sufix: str, level: Optional[str] = None):
         """Add a child logger to the main logger.
 
         This logger is more general than an instance logger, which is designed to
@@ -483,21 +489,9 @@ class Logger:
         self._instances[name] = self._make_child_logger(self, name, level)
         return self._instances[name]
 
-    def _add_modeler_instance_logger(self, name, modeler_instance, level):
-        if isinstance(name, str):
-            instance_logger = PyGeometryCustomAdapter(
-                self._make_child_logger(name, level), modeler_instance
-            )
-        elif isinstance(name, None):
-            instance_logger = PyGeometryCustomAdapter(
-                self._make_child_logger("NO_NAMED_YET", level), modeler_instance
-            )
-        else:
-            raise ValueError("You can only input 'str' classes to this method.")
-
-        return instance_logger
-
-    def add_instance_logger(self, name, modeler_instance, level=None):
+    def add_instance_logger(
+        self, name: str, client_instance: "GrpcClient", level: Optional[int] = None
+    ) -> PyGeometryCustomAdapter:
         """Add a logger for a Geometry Service instance.
 
         The Geometry Service instance logger is a logger with an adapter that adds
@@ -509,32 +503,33 @@ class Logger:
         ----------
         name : str
             Name for the new instance logger.
-        modeler_instance : ansys.geometry.core.modeler.Modeler
-            Geometry Service instance object, which should contain the ``name`` attribute.
-        level : int
+        client_instance : GrpcClient
+            Geometry Service GrpcClient object, which should contain the ``get_name`` method.
+        level : int, optional
             Level of logging. The default is ``None``.
 
         Returns
         -------
-        ansys.geometry.core.logging.PyGeometryCustomAdapter
+        PyGeometryCustomAdapter
             Logger adapter customized to add Geometry Service information to the
-            logs.  You can use this class to log events in the same
+            logs. You can use this class to log events in the same
             way you would with the ``Logger`` class.
-
-        Raises
-        ------
-        Exception
-            You can only input a string as the ``name``.
         """
+        from ansys.geometry.core.connection.client import GrpcClient
+
+        check_type(name, str)
+        check_type(client_instance, GrpcClient)
+
         count_ = 0
         new_name = name
         while new_name in logging.root.manager.__dict__.keys():
             count_ += 1
-            new_name = name + "_" + str(count_)
+            new_name = f"{name}_{count_}"
 
-        self._instances[new_name] = self._add_modeler_instance_logger(
-            new_name, modeler_instance, level
+        self._instances[new_name] = PyGeometryCustomAdapter(
+            self._make_child_logger(name, level), client_instance
         )
+
         return self._instances[new_name]
 
     def __getitem__(self, key):
