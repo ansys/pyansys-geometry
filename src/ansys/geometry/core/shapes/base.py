@@ -164,6 +164,7 @@ class BaseShape:
         plotting_options_points: Optional[dict] = None,
         plotting_options_lines: Optional[dict] = None,
         num_points: Optional[int] = 100,
+        **kwargs: Optional[dict],
     ) -> None:
         """Plot the shape with the desired number of points.
 
@@ -181,7 +182,6 @@ class BaseShape:
             A dictionary containing parameters accepted by
             :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
             rendering of the lines.
-
         """
         from ansys.geometry.core.plotting.plotter import Plotter
 
@@ -192,4 +192,5 @@ class BaseShape:
             plotting_options_points=plotting_options_points,
             plotting_options_lines=plotting_options_lines,
         )
-        pl.show(jupyter_backend="panel")
+
+        pl.show(**kwargs)

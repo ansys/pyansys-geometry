@@ -1,6 +1,6 @@
 """``Conversions`` module."""
 
-from typing import List
+from typing import TYPE_CHECKING, List
 
 from ansys.api.geometry.v0.models_pb2 import Arc as GRPCArc
 from ansys.api.geometry.v0.models_pb2 import Circle as GRPCCircle
@@ -12,10 +12,14 @@ from ansys.api.geometry.v0.models_pb2 import Line as GRPCLine
 from ansys.api.geometry.v0.models_pb2 import Plane as GRPCPlane
 from ansys.api.geometry.v0.models_pb2 import Point as GRPCPoint
 from ansys.api.geometry.v0.models_pb2 import Polygon as GRPCPolygon
+from ansys.api.geometry.v0.models_pb2 import Tessellation
 
 from ansys.geometry.core.math import Frame, Plane, Point, UnitVector
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Polygon, Segment
+
+if TYPE_CHECKING:
+    from pyvista import PolyData
 
 
 def unit_vector_to_grpc_direction(unit_vector: UnitVector) -> GRPCDirection:
@@ -223,3 +227,12 @@ def segment_to_grpc_line(line: Segment) -> GRPCLine:
         start=point_to_grpc_point(line.start),
         end=point_to_grpc_point(line.end),
     )
+
+
+def tess_to_pd(tess: Tessellation) -> "PolyData":
+    """Convert a ansys.api.geometry.Tessellation to a :class:`pyvista.PolyData`."""
+    # lazy imports here to improve initial load
+    import numpy as np
+    import pyvista as pv
+
+    return pv.PolyData(np.array(tess.vertices).reshape(-1, 3), tess.faces)

@@ -3,12 +3,12 @@ from typing import Dict, Optional
 
 import numpy as np
 import pyvista as pv
-from pyvista import Plotter
 from pyvista.plotting.tools import create_axes_marker
 
-from ansys.geometry.core.math.frame import Frame
-from ansys.geometry.core.math.plane import Plane
-from ansys.geometry.core.shapes.base import BaseShape
+from ansys.geometry.core.designer import Body, Component
+from ansys.geometry.core.math import Frame, Plane
+from ansys.geometry.core.shapes import BaseShape
+from ansys.geometry.core.sketch import Sketch
 
 
 class Plotter:
@@ -16,9 +16,9 @@ class Plotter:
 
     def __init__(
         self,
-        scene: Optional[Plotter] = None,
+        scene: Optional[pv.Plotter] = None,
         background_opts: Optional[Dict] = None,
-        num_points: Optional[int] = 100,
+        num_points: int = 100,
     ):
         """Initializes the plotter.
 
@@ -45,19 +45,11 @@ class Plotter:
         scene.set_background(**background_opts)
         view_box = scene.add_axes(line_width=5, box=True)
 
-        # Show origin axes without labels
-        axes = create_axes_marker(labels_off=True)
-        scene.add_actor(axes)
-
-        # Create the fundamental XY plane
-        plane = pv.Plane(i_size=10, j_size=10)
-        scene.add_mesh(plane, color="white", show_edges=True, opacity=0.1)
-
         # Save the desired number of points
         self._num_points = num_points
 
     @property
-    def scene(self) -> Plotter:
+    def scene(self) -> pv.Plotter:
         """Return the rendering scene object.
 
         Returns
@@ -211,7 +203,9 @@ class Plotter:
             plotting_options_lines = dict(color="black", line_width=3)
         self.scene.add_mesh(mesh_line, **plotting_options_lines)
 
-    def plot_sketch(self, sketch, show_plane=False, show_frame=False) -> None:
+    def plot_sketch(
+        self, sketch: Sketch, show_plane: bool = False, show_frame: bool = False
+    ) -> None:
         """Plot desired sketch into the scene.
 
         Parameters
@@ -236,7 +230,62 @@ class Plotter:
         for shape in sketch.shapes_list:
             self.plot_shape(shape)
 
-    def show(self, jupyter_backend: Optional[str] = None) -> None:
+    def add_body(self, body: Body, merge: Optional[bool] = False, **kwargs: Optional[dict]) -> None:
+        """Add a body to the scene.
+
+        Parameters
+        ----------
+        body : ansys.geometry.core.designer.Body
+            Body to add to the scene.
+        merge : bool, default: False
+            Merge the body into a single mesh. Enable this if you wish to
+            merge wish to have the individual faces of the tessellation. This
+            preserves the number of triangles and only merges the topology.
+        **kwargs : dict, optional
+            Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
+            for allowable keyword arguments.
+
+        """
+        kwargs.setdefault("smooth_shading", True)
+        self.scene.add_mesh(body.tessellate(merge=merge), **kwargs)
+
+    def add_component(
+        self,
+        component: Component,
+        merge_component: bool = False,
+        merge_bodies: bool = False,
+        **kwargs
+    ) -> None:
+        """Add a component to the scene.
+
+        Parameters
+        ----------
+        component : ansys.geometry.core.designer.Component
+            Component to add to the scene.
+        merge_component : bool, default: False
+            Merge this component into a single dataset. This effectively
+            combines all the individual bodies into a single dataset without
+            any hierarchy.
+        merge_bodies : bool, default: False
+            Merge each body into a single dataset. This effectively combines
+            all the faces of each individual body into a single dataset
+            without.
+        **kwargs : dict, optional
+            Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
+            for allowable keyword arguments.
+
+        """
+        dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
+        kwargs.setdefault("smooth_shading", True)
+        self.scene.add_mesh(dataset, **kwargs)
+
+    def show(
+        self,
+        show_axes_at_origin: bool = True,
+        show_plane: bool = True,
+        jupyter_backend: Optional[str] = None,
+        **kwargs: Optional[dict]
+    ) -> None:
         """Display the rendered scene in the screen.
 
         Parameters
@@ -244,10 +293,35 @@ class Plotter:
         backend_jupyter : str, optional
             Desired ``pyvista`` jupyter backend.
 
+        **kwargs : dict, optional
+            Plotting keyword arguments. See :func:`pyvista.Plotter.show` for
+            all available options.
+
         Notes
         -----
         Refer to https://docs.pyvista.org/user-guide/jupyter/index.html for more
         information about supported Jupyter backends.
 
         """
-        self.scene.show(jupyter_backend=jupyter_backend)
+        # computue the scaling
+        bounds = self.scene.renderer.bounds
+        x_length, y_length = bounds[1] - bounds[0], bounds[3] - bounds[2]
+        sfac = max(x_length, y_length)
+
+        # # Show origin axes without labels
+        # if show_axes_at_origin:
+        #     axes = create_axes_marker(labels_off=True)
+        #     self.scene.add_actor(axes)
+
+        # Create the fundamental XY plane
+        if show_plane:
+            # self.scene.bounds
+            plane = pv.Plane(i_size=sfac * 1.3, j_size=sfac * 1.3)
+            self.scene.add_mesh(plane, color="white", show_edges=True, opacity=0.1)
+
+        # Conditionally set the jupyter backend as not all users will be within
+        # a notebook environment to avoid a pyvista warning
+        if self.scene.notebook and jupyter_backend is None:
+            jupyter_backend = "panel"
+
+        self.scene.show(jupyter_backend=jupyter_backend, **kwargs)
