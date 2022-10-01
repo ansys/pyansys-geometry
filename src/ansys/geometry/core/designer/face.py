@@ -209,7 +209,7 @@ class Face:
         Notes
         -----
         In order to properly use this API, please consider that you must
-        handle UV coordinates and thus know how these relate to on the
+        handle UV coordinates and thus know how these relate to the
         underlying Geometry Service. It is an advanced API for Geometry
         experts only.
 
