@@ -3,6 +3,12 @@ import logging as deflogging  # Default logging
 
 import pytest
 
+# Define default pytest logging level to DEBUG and stdout
+from ansys.geometry.core import LOG
+
+LOG.setLevel(level="DEBUG")
+LOG.log_to_stdout()
+
 
 @pytest.fixture
 def fake_record():

@@ -68,6 +68,7 @@ class Edge:
     @protect_grpc
     def length(self) -> Quantity:
         """Calculated length of the edge."""
+        self._grpc_client.log.debug("Requesting edge length from server.")
         length_response = self._edges_stub.GetEdgeLength(self._grpc_id)
         return Quantity(length_response.length, SERVER_UNIT_LENGTH)
 
@@ -82,6 +83,7 @@ class Edge:
         """Get the ``Face`` objects that contain this ``Edge``."""
         from ansys.geometry.core.designer.face import Face, SurfaceType
 
+        self._grpc_client.log.debug("Requesting edge faces from server.")
         grpc_faces = self._edges_stub.GetEdgeFaces(self._grpc_id).faces
         return [
             Face(grpc_face.id, SurfaceType(grpc_face.surface_type), self._body, self._grpc_client)

@@ -55,6 +55,8 @@ class Design(Component):
         self._materials = []
         self._named_selections = {}
 
+        self._grpc_client.log.debug("Design object instantiated successfully.")
+
     @property
     def materials(self) -> List[Material]:
         """List of available ``Material`` objects for our ``Design``."""
@@ -97,6 +99,8 @@ class Design(Component):
         )
         self._materials.append(material)
 
+        self._grpc_client.log.debug(f"Material {material.name} successfully added to design.")
+
     @protect_grpc
     def save(self, file_location: Union[Path, str]) -> None:
         """Saves a design to disk on the active geometry server instance.
@@ -112,6 +116,8 @@ class Design(Component):
         check_type(file_location, str)
 
         self._design_stub.SaveAs(SaveAsDocumentRequest(filepath=file_location))
+
+        self._grpc_client.log.debug(f"Design successfully saved at location {file_location}.")
 
     @protect_grpc
     def download(self, file_location: Union[Path, str], as_stream: Optional[bool] = False) -> None:
@@ -133,10 +139,12 @@ class Design(Component):
         # Process response (as stream or single file)
         received_bytes = bytes()
         if as_stream:
+            self._grpc_client.log.debug("Downloading design using stream mechanism.")
             response_iterator = self._commands_stub.DownloadFileStream(Empty())
             for response in response_iterator:
                 received_bytes += response.chunk
         else:
+            self._grpc_client.log.debug("Downloading design using single-message mechanism.")
             response = self._commands_stub.DownloadFile(Empty())
             received_bytes += response.data
 
@@ -144,6 +152,8 @@ class Design(Component):
         downloaded_file = open(file_location, "wb")
         downloaded_file.write(received_bytes)
         downloaded_file.close()
+
+        self._grpc_client.log.debug(f"Design successfully downloaded at location {file_location}.")
 
     def create_named_selection(
         self,
@@ -177,6 +187,9 @@ class Design(Component):
             name, self._grpc_client, bodies=bodies, faces=faces, edges=edges
         )
         self._named_selections[named_selection.name] = named_selection
+
+        self._grpc_client.log.debug(f"Named selection {named_selection.name} successfully created.")
+
         return self._named_selections[named_selection.name]
 
     @protect_grpc
@@ -197,8 +210,14 @@ class Design(Component):
 
         try:
             self._named_selections.pop(removal_name)
+            self._grpc_client.log.debug(
+                f"Named selection {named_selection.name} successfully deleted."
+            )
         except KeyError:
-            # TODO: throw warning informing that the requested NamedSelection does not exist
+            self._grpc_client.log.warning(
+                f"Attempted named selection deletion failed, with name {removal_name}."
+                + " Ignoring request."
+            )
             pass
 
     def delete_component(self, component: Union["Component", str]) -> None:

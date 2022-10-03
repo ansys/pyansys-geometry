@@ -112,6 +112,7 @@ class Body:
         -------
         List[Face]
         """
+        self._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
         grpc_faces = self._bodies_stub.GetFaces(self._grpc_id)
         return [
             Face(grpc_face.id, SurfaceType(grpc_face.surface_type), self, self._grpc_client)
@@ -127,6 +128,7 @@ class Body:
         -------
         List[Edge]
         """
+        self._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
         grpc_edges = self._bodies_stub.GetEdges(self._grpc_id)
         return [
             Edge(grpc_edge.id, CurveType(grpc_edge.curve_type), self, self._grpc_client)
@@ -151,6 +153,7 @@ class Body:
             self._grpc_client.log.debug("Dealing with planar surface. Returning 0 volume.")
             return Quantity(0, SERVER_UNIT_VOLUME)
         else:
+            self._grpc_client.log.debug(f"Retrieving volume for body {self.id} from server.")
             volume_response = self._bodies_stub.GetVolume(self._grpc_id)
             return Quantity(volume_response.volume, SERVER_UNIT_VOLUME)
 
@@ -165,6 +168,7 @@ class Body:
             Source material data.
         """
         check_type(material, Material)
+        self._grpc_client.log.debug(f"Assigning body {self.id} material {material.name}.")
         self._bodies_stub.SetAssignedMaterial(
             SetAssignedMaterialRequest(id=self._id, material=material.name)
         )
@@ -202,6 +206,10 @@ class Body:
             if not is_found:
                 raise ValueError(f"Face with id {provided_face.id} is not part of this body.")
 
+        self._grpc_client.log.debug(
+            f"Imprinting curves provided on {self.id} "
+            + f"for faces {[face.id for face in faces]}."
+        )
         imprint_response = self._commands_stub.ImprintCurves(
             ImprintCurvesRequest(
                 body=self._id,
@@ -247,6 +255,8 @@ class Body:
         check_type(sketch, Sketch)
         check_type(closest_face, bool)
 
+        self._grpc_client.log.debug(f"Projecting curves provided on {self.id}.")
+
         project_response = self._commands_stub.ProjectCurves(
             ProjectCurvesRequest(
                 body=self._id,
@@ -287,6 +297,8 @@ class Body:
             if not isinstance(distance, Distance)
             else distance.value.m_as(SERVER_UNIT_LENGTH)
         )
+
+        self._grpc_client.log.debug(f"Translating body {self.id}.")
 
         self._bodies_stub.Translate(
             TranslateRequest(
@@ -357,6 +369,8 @@ class Body:
 
         if not self.is_alive:
             return pv.PolyData() if merge else pv.MultiBlock()
+
+        self._grpc_client.log.debug(f"Requesting tesseleation for body {self.id}.")
 
         resp = self._bodies_stub.GetBodyTessellation(self._grpc_id)
 

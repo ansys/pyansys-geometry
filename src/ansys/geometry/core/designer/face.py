@@ -157,6 +157,7 @@ class Face:
     @protect_grpc
     def area(self) -> Quantity:
         """Calculated area of the face."""
+        self._grpc_client.log.debug("Requesting face area from server.")
         area_response = self._faces_stub.GetFaceArea(self._grpc_id)
         return Quantity(area_response.area, SERVER_UNIT_AREA)
 
@@ -169,6 +170,7 @@ class Face:
     @protect_grpc
     def edges(self) -> List[Edge]:
         """Get all ``Edge`` objects of our ``Face``."""
+        self._grpc_client.log.debug("Requesting face edges from server.")
         edges_response = self._faces_stub.GetFaceEdges(self._grpc_id)
         return self.__grpc_edges_to_edges(edges_response.edges)
 
@@ -176,6 +178,7 @@ class Face:
     @protect_grpc
     def loops(self) -> List[FaceLoop]:
         """Face loops of the ``Face``."""
+        self._grpc_client.log.debug("Requesting face loops from server.")
         grpc_loops = self._faces_stub.GetFaceLoops(GetFaceLoopsRequest(face=self.id)).loops
         loops = []
         for grpc_loop in grpc_loops:
@@ -234,6 +237,7 @@ class Face:
             This :class:`UnitVector` will be perpendicular to the surface at that
             given UV coordinates.
         """
+        self._grpc_client.log.debug(f"Requesting face normal from server with (u,v)=({u},{v}).")
         response = self._faces_stub.GetFaceNormal(
             GetFaceNormalRequest(id=self.id, u=u, v=v)
         ).direction
@@ -264,6 +268,7 @@ class Face:
         Point
             The :class:`Point` object evaluated at the given U and V coordinates.
         """
+        self._grpc_client.log.debug(f"Requesting face point from server with (u,v)=({u},{v}).")
         response = self._faces_stub.EvaluateFace(EvaluateFaceRequest(face=self.id, u=u, v=v)).point
         return Point([response.x, response.y, response.z], SERVER_UNIT_LENGTH)
 

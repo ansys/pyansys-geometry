@@ -44,6 +44,7 @@ class CoordinateSystem:
         self._grpc_client = grpc_client
         self._coordinate_systems_stub = CoordinateSystemsStub(grpc_client.channel)
 
+        self._grpc_client.log.debug("Requesting creation of Coordinate System.")
         new_coordinate_system = self._coordinate_systems_stub.CreateCoordinateSystem(
             CreateCoordinateSystemRequest(
                 parent=parent_component.id,

@@ -175,6 +175,9 @@ class Component:
         check_type(share_type, SharedTopologyType)
 
         # Set the SharedTopologyType on the server
+        self._grpc_client.log.debug(
+            f"Setting shared topology type {share_type.value} on {self.id}."
+        )
         self._component_stub.SetComponentSharedTopology(
             SetComponentSharedTopologyRequest(component=self.id, shareType=share_type.value)
         )
@@ -220,6 +223,7 @@ class Component:
             name=name,
         )
 
+        self._grpc_client.log.debug(f"Extruding sketch provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBody(request)
 
         self._bodies.append(Body(response.id, name, self, self._grpc_client, is_surface=False))
@@ -264,6 +268,7 @@ class Component:
             name=name,
         )
 
+        self._grpc_client.log.debug(f"Extruding from face provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBodyFromFaceProfile(request)
 
         self._bodies.append(Body(response.id, name, self, self._grpc_client, is_surface=False))
@@ -297,6 +302,10 @@ class Component:
             plane=plane_to_grpc_plane(sketch._plane),
             geometries=sketch_shapes_to_grpc_geometries(sketch.shapes_list),
             name=name,
+        )
+
+        self._grpc_client.log.debug(
+            f"Creating planar surface from sketch provided on {self.id}. Creating body..."
         )
         response = self._bodies_stub.CreatePlanarBody(request)
 
@@ -335,6 +344,9 @@ class Component:
             name=name,
         )
 
+        self._grpc_client.log.debug(
+            f"Creating planar surface from face provided on {self.id}. Creating body..."
+        )
         response = self._bodies_stub.CreateBodyFromFace(request)
 
         self._bodies.append(Body(response.id, name, self, self._grpc_client, is_surface=True))
@@ -414,6 +426,7 @@ class Component:
             else distance.value.m_as(SERVER_UNIT_LENGTH)
         )
 
+        self._grpc_client.log.debug(f"Translating {body_ids_found}...")
         self._bodies_stub.Translate(
             TranslateRequest(
                 bodies=body_ids_found,
@@ -449,6 +462,7 @@ class Component:
             # If the component was deleted from the server side... "kill" it
             # on the client side
             component_requested._kill_component_on_client()
+            self._grpc_client.log.debug(f"Component {component_requested.id} has been deleted.")
         else:
             self._grpc_client.log.warning(
                 f"Component {id} not found in this component (or sub-components)."
@@ -483,6 +497,7 @@ class Component:
             # If the body was deleted from the server side... "kill" it
             # on the client side
             body_requested._is_alive = False
+            self._grpc_client.log.debug(f"Body {body_requested.id} has been deleted.")
         else:
             self._grpc_client.log.warning(
                 f"Body {id} not found in this component (or sub-components)."
