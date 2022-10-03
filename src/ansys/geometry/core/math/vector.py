@@ -250,16 +250,12 @@ class Vector2D(np.ndarray):
         if v.is_zero or self.is_zero:
             raise ValueError("Both vectors cannot be zero.")
 
-        sine = (self % v).magnitude
-        cosine = self * v
+        angle = np.arctan2(v.y * self.x - v.x * self.y, v.x * self.x + v.y * self.y)
 
-        if Accuracy.angle_is_zero(sine):
-            if cosine > 0.0:
-                return Quantity(0, UNIT_ANGLE)
-            else:
-                return Quantity(np.pi, UNIT_ANGLE)
-        else:
-            return Quantity(np.arctan2(sine, cosine), UNIT_ANGLE)
+        if angle < 0:
+            angle = angle + np.pi
+
+        return Quantity(angle, UNIT_ANGLE)
 
     def __eq__(self, other: "Vector2D") -> bool:
         """Equals operator for ``Vector2D``."""
@@ -278,7 +274,7 @@ class Vector2D(np.ndarray):
         Also admits scalar multiplication.
         """
         if isinstance(other, (int, float)):
-            return Vector3D(np.multiply(self, other))
+            return Vector2D(np.multiply(self, other))
         else:
             check_type_equivalence(other, self)
             return self.dot(other)
@@ -309,7 +305,7 @@ class Vector2D(np.ndarray):
         """
         check_type(point_a, (Point2D, np.ndarray, list))
         check_type(point_b, (Point2D, np.ndarray, list))
-        return Vector3D(point_b - point_a)
+        return Vector2D(point_b - point_a)
 
 
 class UnitVector3D(Vector3D):

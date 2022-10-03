@@ -19,6 +19,7 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector3D,
 )
+from ansys.geometry.core.math.vector import Vector2D
 from ansys.geometry.core.misc import UNITS
 
 DOUBLE_EPS = np.finfo(float).eps
@@ -250,11 +251,8 @@ def test_point3D_units():
     assert raw_z == p_cm_to_mm[2] * 10
 
 
-def test_vector3d():
+def test_vector3D():
     """Simple test to create ``Vector3D``."""
-
-    # Define the tolerance for the QuantityVector tests
-    TOLERANCE = 5e-15
 
     # Create two Vector3D objects
     v1 = Vector3D([0, 1, 3])
@@ -341,18 +339,69 @@ def test_vector3d():
     assert abs(vector_from_points.y - 0.058) <= DOUBLE_EPS
     assert abs(vector_from_points.z - 0.027) <= DOUBLE_EPS
 
+
+def test_vector2D():
+    """Simple test to create ``Vector2D``."""
+
+    # Create two Vector2D objects
+    v1 = Vector2D([0, 1])
+    v1_copy = Vector2D([0, 1])
+    v2 = Vector2D([0, 4])
+
+    # Check that the equals operator works
+    assert v1 == v1_copy
+    assert v1 != v2
+
+    # Check its X, Y components
+    assert v1.x == 0
+    assert v1.y == 1
+
+    # Check that the setter works properly in v1_copy
+    v1_copy.x = 3
+    v1_copy.y = 3
+
+    # Check that the equals operator works (v1 and v1_copy should no longer be equal)
+    assert v1 != v1_copy
+    assert v1 != v2
+
+    # Check the norm value of vector v1
+    assert abs(round(v1.norm, 3) - 1) <= DOUBLE_EPS
+
+    # Check the normalization value of v1
+    v1_n = v1.normalize()
+    assert abs(round(v1_n.x, 3) - 0.0) <= DOUBLE_EPS
+    assert abs(round(v1_n.y, 3) - 1) <= DOUBLE_EPS
+
+    # Check the magnitude
+    assert v1.magnitude == 1
+    assert v2.magnitude == 4
+
+    assert (Vector2D([1, 0])).get_angle_between(Vector2D([1, 1])) == np.pi / 4
+
+    assert Vector2D([1, 0]).is_perpendicular_to(Vector2D([0, 1]))
+    assert not Vector2D([1, 0]).is_perpendicular_to(Vector2D([1, 1]))
+    assert not Vector2D([1, 0]).is_perpendicular_to(Vector2D([-1, 0]))
+
+    assert Vector2D([0, 0]).is_zero
+    assert not Vector2D([0, 1]).is_zero
+
+    # Check that the dot product overload is fine
+    assert abs(round(v1 * v2 - 4)) <= DOUBLE_EPS
+
+    # Checking that scalar times vector also works
+    assert abs(round((v1 * 3 - Vector2D([0, 3])).magnitude)) <= DOUBLE_EPS
+
     # Create a 2D vector from 2 points
     point_a = Point2D([1, 2])
     point_b = Point2D([1, 6])
-    vector_from_points = Vector3D.from_points(point_a, point_b)
+    vector_from_points = Vector2D.from_points(point_a, point_b)
     assert vector_from_points.x == 0
     assert vector_from_points.y == 4
 
     # Create a 2D vector from 2 points
     point_a = Point2D([1, 2], UNITS.mm)
     point_b = Point2D([1, 6], UNITS.cm)
-
-    vector_from_points = Vector3D.from_points(point_a, point_b)
+    vector_from_points = Vector2D.from_points(point_a, point_b)
     assert abs(vector_from_points.x - 0.009) <= DOUBLE_EPS
     assert abs(vector_from_points.y - 0.058) <= DOUBLE_EPS
 
