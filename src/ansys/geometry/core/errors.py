@@ -29,7 +29,7 @@ class GeometryExitedError(RuntimeError):
 
     def __init__(self, msg="Geometry Service has exited."):
         """Initializer for ``GeometryExitedError``."""
-        RuntimeError.__init__(self, msg)
+        RuntimeError.__init__(self, msg)  # pragma: no cover
 
 
 # handler for protect_grpc
@@ -75,7 +75,7 @@ def protect_grpc(func):
         # Capture gRPC exceptions
         try:
             out = func(*args, **kwargs)
-        except (_InactiveRpcError, _MultiThreadedRendezvous) as error:
+        except (_InactiveRpcError, _MultiThreadedRendezvous) as error:  # pragma: no cover
             raise GeometryExitedError(
                 f"Geometry Service connection terminated: {error.details()}"
             ) from None

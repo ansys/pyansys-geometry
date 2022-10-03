@@ -10,7 +10,6 @@ from ansys.api.geometry.v0.bodies_pb2 import (
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import ImprintCurvesRequest, ProjectCurvesRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from grpc._channel import _InactiveRpcError
 from pint import Quantity
 
 from ansys.geometry.core.connection import (
@@ -21,6 +20,7 @@ from ansys.geometry.core.connection import (
 )
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
+from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials import Material
 from ansys.geometry.core.math import UnitVector
 from ansys.geometry.core.misc import (
@@ -104,6 +104,7 @@ class Body:
         return self._is_surface
 
     @property
+    @protect_grpc
     def faces(self) -> List[Face]:
         """Loads all of the faces within the body.
 
@@ -118,6 +119,7 @@ class Body:
         ]
 
     @property
+    @protect_grpc
     def edges(self) -> List[Edge]:
         """Loads all of the edges within the body.
 
@@ -137,6 +139,7 @@ class Body:
         return self._is_alive
 
     @property
+    @protect_grpc
     def volume(self) -> Quantity:
         """Calculated volume of the body.
 
@@ -145,12 +148,13 @@ class Body:
         When dealing with a planar surface, a value of 0 is returned as a volume.
         """
         if self.is_surface:
-            # TODO : maybe raise an error?
+            self._grpc_client.log.debug("Dealing with planar surface. Returning 0 volume.")
             return Quantity(0, SERVER_UNIT_VOLUME)
         else:
             volume_response = self._bodies_stub.GetVolume(self._grpc_id)
             return Quantity(volume_response.volume, SERVER_UNIT_VOLUME)
 
+    @protect_grpc
     def assign_material(self, material: Material) -> None:
         """Sets the provided material against the design in the active geometry
         service instance.
@@ -165,6 +169,7 @@ class Body:
             SetAssignedMaterialRequest(id=self._id, material=material.name)
         )
 
+    @protect_grpc
     def imprint_curves(self, faces: List[Face], sketch: Sketch) -> Tuple[List[Edge], List[Face]]:
         """Imprints all of the specified geometries onto the specified faces of the body.
 
@@ -217,6 +222,7 @@ class Body:
 
         return (new_edges, new_faces)
 
+    @protect_grpc
     def project_curves(
         self, direction: UnitVector, sketch: Sketch, closest_face: bool
     ) -> List[Face]:
@@ -257,6 +263,7 @@ class Body:
 
         return projected_faces
 
+    @protect_grpc
     def translate(self, direction: UnitVector, distance: Union[Quantity, Distance]) -> None:
         """Translates the geometry body in the direction specified by the given distance.
 
@@ -289,6 +296,7 @@ class Body:
             )
         )
 
+    @protect_grpc
     def tessellate(self, merge: Optional[bool] = False) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
@@ -350,10 +358,7 @@ class Body:
         if not self.is_alive:
             return pv.PolyData() if merge else pv.MultiBlock()
 
-        try:
-            resp = self._bodies_stub.GetBodyTessellation(self._grpc_id)
-        except _InactiveRpcError as err:
-            raise RuntimeWarning("Unable to tessellate. Body is possibly not closed")
+        resp = self._bodies_stub.GetBodyTessellation(self._grpc_id)
 
         pdata = [tess_to_pd(tess) for tess in resp.face_tessellation.values()]
         comp = pv.MultiBlock(pdata)

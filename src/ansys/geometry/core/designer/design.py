@@ -20,6 +20,7 @@ from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.selection import NamedSelection
+from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials import Material
 from ansys.geometry.core.misc import check_type
 
@@ -38,6 +39,7 @@ class Design(Component):
         An active supporting geometry service instance for design modeling.
     """
 
+    @protect_grpc
     def __init__(self, name: str, grpc_client: GrpcClient):
         """Constructor method for ``Design``."""
         super().__init__(name, None, grpc_client)
@@ -64,6 +66,7 @@ class Design(Component):
         return list(self._named_selections.values())
 
     # TODO: allow for list of materials
+    @protect_grpc
     def add_material(self, material: Material) -> None:
         """Adds a ``Material`` to the ``Design``
 
@@ -94,6 +97,7 @@ class Design(Component):
         )
         self._materials.append(material)
 
+    @protect_grpc
     def save(self, file_location: Union[Path, str]) -> None:
         """Saves a design to disk on the active geometry server instance.
 
@@ -109,6 +113,7 @@ class Design(Component):
 
         self._design_stub.SaveAs(SaveAsDocumentRequest(filepath=file_location))
 
+    @protect_grpc
     def download(self, file_location: Union[Path, str], as_stream: Optional[bool] = False) -> None:
         """Downloads a design from the active geometry server instance.
 
@@ -174,6 +179,7 @@ class Design(Component):
         self._named_selections[named_selection.name] = named_selection
         return self._named_selections[named_selection.name]
 
+    @protect_grpc
     def delete_named_selection(self, named_selection: Union[NamedSelection, str]) -> None:
         """Removes a named selection on the active geometry server instance.
 

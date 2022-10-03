@@ -8,6 +8,7 @@ from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from pint import Quantity
 
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 
 if TYPE_CHECKING:
@@ -64,6 +65,7 @@ class Edge:
         return EdgeIdentifier(id=self._id)
 
     @property
+    @protect_grpc
     def length(self) -> Quantity:
         """Calculated length of the edge."""
         length_response = self._edges_stub.GetEdgeLength(self._grpc_id)
@@ -75,6 +77,7 @@ class Edge:
         return self._curve_type
 
     @property
+    @protect_grpc
     def faces(self) -> List["Face"]:
         """Get the ``Face`` objects that contain this ``Edge``."""
         from ansys.geometry.core.designer.face import Face, SurfaceType

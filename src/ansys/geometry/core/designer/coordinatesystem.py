@@ -8,6 +8,7 @@ from ansys.api.geometry.v0.models_pb2 import CoordinateSystem as cs
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.conversions import frame_to_grpc_frame
+from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import Frame, Point, UnitVector
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 
@@ -33,6 +34,7 @@ class CoordinateSystem:
         An active supporting geometry service instance for design modeling.
     """
 
+    @protect_grpc
     def __init__(
         self, name: str, frame: Frame, parent_component: "Component", grpc_client: GrpcClient
     ):

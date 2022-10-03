@@ -9,6 +9,7 @@ from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
+from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc import check_type
 
 
@@ -35,6 +36,7 @@ class NamedSelection:
         All edges that should be included in the named selection.
     """
 
+    @protect_grpc
     def __init__(
         self,
         name: str,

@@ -30,6 +30,7 @@ from ansys.geometry.core.connection import (
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.coordinatesystem import CoordinateSystem
 from ansys.geometry.core.designer.face import Face
+from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import Frame, UnitVector
 from ansys.geometry.core.misc import (
     SERVER_UNIT_LENGTH,
@@ -69,6 +70,7 @@ class Component:
         An active supporting geometry service instance for design modeling.
     """
 
+    @protect_grpc
     def __init__(
         self, name: str, parent_component: Union["Component", None], grpc_client: GrpcClient
     ):
@@ -160,6 +162,7 @@ class Component:
         self._components.append(Component(name, self, self._grpc_client))
         return self._components[-1]
 
+    @protect_grpc
     def set_shared_topology(self, share_type: SharedTopologyType) -> None:
         """Defines the shared topology to be applied to the component.
 
@@ -179,6 +182,7 @@ class Component:
         # Store the SharedTopologyType set on the client
         self._shared_topology = share_type
 
+    @protect_grpc
     def extrude_sketch(
         self, name: str, sketch: Sketch, distance: Union[Quantity, Distance]
     ) -> Body:
@@ -221,6 +225,7 @@ class Component:
         self._bodies.append(Body(response.id, name, self, self._grpc_client, is_surface=False))
         return self._bodies[-1]
 
+    @protect_grpc
     def extrude_face(self, name: str, face: Face, distance: Union[Quantity, Distance]) -> Body:
         """Extrudes the face profile by the given distance to create a new solid body.
         There are no modifications against the body containing the source face.
@@ -264,6 +269,7 @@ class Component:
         self._bodies.append(Body(response.id, name, self, self._grpc_client, is_surface=False))
         return self._bodies[-1]
 
+    @protect_grpc
     def create_surface(self, name: str, sketch: Sketch) -> Body:
         """Creates a surface body with the given sketch profile.
 
@@ -297,6 +303,7 @@ class Component:
         self._bodies.append(Body(response.id, name, self, self._grpc_client, is_surface=True))
         return self._bodies[-1]
 
+    @protect_grpc
     def create_surface_from_face(self, name: str, face: Face) -> Body:
         """Creates a new surface body based upon the provided face.
 
@@ -358,6 +365,7 @@ class Component:
         self._coordinate_systems.append(CoordinateSystem(name, frame, self, self._grpc_client))
         return self._coordinate_systems[-1]
 
+    @protect_grpc
     def translate_bodies(
         self, bodies: List[Body], direction: UnitVector, distance: Union[Quantity, Distance]
     ) -> None:
@@ -394,7 +402,10 @@ class Component:
             if body_requested:
                 body_ids_found.append(body_requested.id)
             else:
-                # TODO : .... Warning
+                self._grpc_client.log.warning(
+                    f"Body with id {body.id} and name {body.name} not found in this "
+                    + "component (or sub-components). Ignoring translation request."
+                )
                 pass
 
         magnitude = (
@@ -411,6 +422,7 @@ class Component:
             )
         )
 
+    @protect_grpc
     def delete_component(self, component: Union["Component", str]) -> None:
         """Deletes an existing component (itself or its children).
 
@@ -438,9 +450,13 @@ class Component:
             # on the client side
             component_requested._kill_component_on_client()
         else:
-            # TODO: throw warning informing that the requested component does not exist
+            self._grpc_client.log.warning(
+                f"Component {id} not found in this component (or sub-components)."
+                + " Ignoring deletion request."
+            )
             pass
 
+    @protect_grpc
     def delete_body(self, body: Union[Body, str]) -> None:
         """Deletes an existing body belonging to this component (or its children).
 
@@ -468,7 +484,10 @@ class Component:
             # on the client side
             body_requested._is_alive = False
         else:
-            # TODO: throw warning informing that the requested body does not exist
+            self._grpc_client.log.warning(
+                f"Body {id} not found in this component (or sub-components)."
+                + " Ignoring deletion request."
+            )
             pass
 
     def search_component(self, id: str) -> "Component":

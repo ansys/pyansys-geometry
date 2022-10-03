@@ -17,6 +17,7 @@ from pint import Quantity
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.designer.edge import CurveType, Edge
+from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import Point, UnitVector
 from ansys.geometry.core.misc import SERVER_UNIT_AREA, SERVER_UNIT_LENGTH
 
@@ -153,6 +154,7 @@ class Face:
         return self._body
 
     @property
+    @protect_grpc
     def area(self) -> Quantity:
         """Calculated area of the face."""
         area_response = self._faces_stub.GetFaceArea(self._grpc_id)
@@ -164,12 +166,14 @@ class Face:
         return self._surface_type
 
     @property
+    @protect_grpc
     def edges(self) -> List[Edge]:
         """Get all ``Edge`` objects of our ``Face``."""
         edges_response = self._faces_stub.GetFaceEdges(self._grpc_id)
         return self.__grpc_edges_to_edges(edges_response.edges)
 
     @property
+    @protect_grpc
     def loops(self) -> List[FaceLoop]:
         """Face loops of the ``Face``."""
         grpc_loops = self._faces_stub.GetFaceLoops(GetFaceLoopsRequest(face=self.id)).loops
@@ -203,6 +207,7 @@ class Face:
 
         return loops
 
+    @protect_grpc
     def face_normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector:
         """Normal direction to the ``Face`` evaluated at certain UV coordinates.
 
@@ -234,6 +239,7 @@ class Face:
         ).direction
         return UnitVector([response.x, response.y, response.z])
 
+    @protect_grpc
     def face_point(self, u: float = 0.5, v: float = 0.5) -> Point:
         """Returns a point of the ``Face`` evaluated with UV coordinates.
 
