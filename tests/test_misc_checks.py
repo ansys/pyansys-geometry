@@ -20,7 +20,7 @@ def test_check_type():
 
     Both objects must be of the same type to be compared.
     """
-    a_2d = Point3D([1, 2])
+    a_2d = Point3D([1, 2, 0])
 
     check_type(a_2d, Point3D)
 
@@ -37,8 +37,8 @@ def test_check_type_equivalence():
 
     Both objects must be of the same type to be compared.
     """
-    a_2d = Point3D([1, 2])
-    b_2d = Point3D([3, 4])
+    a_2d = Point3D([1, 2, 0])
+    b_2d = Point3D([3, 4, 0])
 
     # Check that a_2d and 3 are not the same
     with pytest.raises(TypeError, match="Provided type"):
