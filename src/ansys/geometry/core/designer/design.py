@@ -143,9 +143,9 @@ class Design(Component):
     def create_named_selection(
         self,
         name: str,
-        bodies: Optional[List[Body]] = [],
-        faces: Optional[List[Face]] = [],
-        edges: Optional[List[Edge]] = [],
+        bodies: Optional[List[Body]] = None,
+        faces: Optional[List[Face]] = None,
+        edges: Optional[List[Edge]] = None,
     ) -> NamedSelection:
         """Creates a named selection on the active geometry server instance.
 
@@ -155,13 +155,13 @@ class Design(Component):
             A user-defined name for the named selection.
         bodies : List[Body], optional
             All bodies that should be included in the named selection.
-            By default, ``[]``.
+            By default, ``None``.
         faces : List[Face], optional
             All faces that should be included in the named selection.
-            By default, ``[]``.
+            By default, ``None``.
         edges : List[Edge], optional
             All edges that should be included in the named selection.
-            By default, ``[]``.
+            By default, ``None``.
 
         Returns
         -------

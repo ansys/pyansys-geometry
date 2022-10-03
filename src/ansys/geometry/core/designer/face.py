@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, List
 from ansys.api.geometry.v0.edges_pb2 import EdgeIdentifier
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.api.geometry.v0.faces_pb2 import (
+    EvaluateFaceRequest,
     FaceIdentifier,
     GetFaceLoopsRequest,
     GetFaceNormalRequest,
@@ -142,6 +143,11 @@ class Face:
         return self._id
 
     @property
+    def _grpc_id(self) -> FaceIdentifier:
+        """gRPC face identifier."""
+        return FaceIdentifier(id=self._id)
+
+    @property
     def body(self) -> "Body":
         """The body to which the face belongs."""
         return self._body
@@ -149,7 +155,7 @@ class Face:
     @property
     def area(self) -> Quantity:
         """Calculated area of the face."""
-        area_response = self._faces_stub.GetFaceArea(FaceIdentifier(id=self.id))
+        area_response = self._faces_stub.GetFaceArea(self._grpc_id)
         return Quantity(area_response.area, SERVER_UNIT_AREA)
 
     @property
@@ -160,16 +166,8 @@ class Face:
     @property
     def edges(self) -> List[Edge]:
         """Get all ``Edge`` objects of our ``Face``."""
-        edges_response = self._faces_stub.GetFaceEdges(FaceIdentifier(id=self.id))
+        edges_response = self._faces_stub.GetFaceEdges(self._grpc_id)
         return self.__grpc_edges_to_edges(edges_response.edges)
-
-    @property
-    def normal(self) -> UnitVector:
-        """Normal direction to the ``Face``."""
-        response = self._faces_stub.GetFaceNormal(
-            GetFaceNormalRequest(id=self.id, u=0.5, v=0.5)
-        ).direction
-        return UnitVector([response.x, response.y, response.z])
 
     @property
     def loops(self) -> List[FaceLoop]:
@@ -204,6 +202,64 @@ class Face:
             )
 
         return loops
+
+    def face_normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector:
+        """Normal direction to the ``Face`` evaluated at certain UV coordinates.
+
+        Notes
+        -----
+        In order to properly use this API, please consider that you must
+        handle UV coordinates and thus know how these relate to the
+        underlying Geometry Service. It is an advanced API for Geometry
+        experts only.
+
+        Parameters
+        ----------
+        u : float
+            First coordinate of the 2D representation of a surface in UV space.
+            By default, 0.5 (i.e. the center of the surface)
+        v : float
+            Second coordinate of the 2D representation of a surface in UV space.
+            By default, 0.5 (i.e. the center of the surface)
+
+        Returns
+        -------
+        UnitVector
+            The :class:`UnitVector` object evaluated at the given U and V coordinates.
+            This :class:`UnitVector` will be perpendicular to the surface at that
+            given UV coordinates.
+        """
+        response = self._faces_stub.GetFaceNormal(
+            GetFaceNormalRequest(id=self.id, u=u, v=v)
+        ).direction
+        return UnitVector([response.x, response.y, response.z])
+
+    def face_point(self, u: float = 0.5, v: float = 0.5) -> Point:
+        """Returns a point of the ``Face`` evaluated with UV coordinates.
+
+        Notes
+        -----
+        In order to properly use this API, please consider that you must
+        handle UV coordinates and thus know how these relate to the
+        underlying Geometry Service. It is an advanced API for Geometry
+        experts only.
+
+        Parameters
+        ----------
+        u : float
+            First coordinate of the 2D representation of a surface in UV space.
+            By default, 0.5.
+        v : float
+            Second coordinate of the 2D representation of a surface in UV space.
+            By default, 0.5.
+
+        Returns
+        -------
+        Point
+            The :class:`Point` object evaluated at the given U and V coordinates.
+        """
+        response = self._faces_stub.EvaluateFace(EvaluateFaceRequest(face=self.id, u=u, v=v)).point
+        return Point([response.x, response.y, response.z], SERVER_UNIT_LENGTH)
 
     def __grpc_edges_to_edges(self, edges_grpc: List[GRPCEdge]) -> List[Edge]:
         """Transform a list of gRPC Edge messages into actual ``Edge`` objects.

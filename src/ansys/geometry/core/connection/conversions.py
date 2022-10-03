@@ -19,7 +19,7 @@ from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Polygon, Segment
 
 if TYPE_CHECKING:
-    from pyvista import PolyData
+    from pyvista import PolyData  # pragma: no cover
 
 
 def unit_vector_to_grpc_direction(unit_vector: UnitVector) -> GRPCDirection:

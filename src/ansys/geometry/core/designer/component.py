@@ -40,7 +40,7 @@ from ansys.geometry.core.misc import (
 from ansys.geometry.core.sketch import Sketch
 
 if TYPE_CHECKING:
-    from pyvista import MultiBlock, PolyData
+    from pyvista import MultiBlock, PolyData  # pragma: no cover
 
 
 @unique
