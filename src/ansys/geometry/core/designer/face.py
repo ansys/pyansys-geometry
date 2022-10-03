@@ -17,7 +17,7 @@ from pint import Quantity
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.designer.edge import CurveType, Edge
-from ansys.geometry.core.math import Point, UnitVector
+from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.misc import SERVER_UNIT_AREA, SERVER_UNIT_LENGTH
 
 if TYPE_CHECKING:
@@ -72,8 +72,8 @@ class FaceLoop:
         self,
         type: FaceLoopType,
         length: Quantity,
-        min_bbox: Point,
-        max_bbox: Point,
+        min_bbox: Point3D,
+        max_bbox: Point3D,
         edges: List[Edge],
     ):
 
@@ -94,12 +94,12 @@ class FaceLoop:
         return self._length
 
     @property
-    def min_bbox(self) -> Point:
+    def min_bbox(self) -> Point3D:
         """Minimum point of the bounding box containing the loop."""
         return self._min_bbox
 
     @property
-    def max_bbox(self) -> Point:
+    def max_bbox(self) -> Point3D:
         """Maximum point of the bounding box containing the loop."""
         return self._max_bbox
 
@@ -177,7 +177,7 @@ class Face:
         for grpc_loop in grpc_loops:
             type = FaceLoopType(grpc_loop.type)
             length = Quantity(grpc_loop.length, SERVER_UNIT_LENGTH)
-            min = Point(
+            min = Point3D(
                 [
                     grpc_loop.boundingBox.min.x,
                     grpc_loop.boundingBox.min.y,
@@ -185,7 +185,7 @@ class Face:
                 ],
                 SERVER_UNIT_LENGTH,
             )
-            max = Point(
+            max = Point3D(
                 [
                     grpc_loop.boundingBox.max.x,
                     grpc_loop.boundingBox.max.y,
@@ -203,7 +203,7 @@ class Face:
 
         return loops
 
-    def face_normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector:
+    def face_normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:
         """Normal direction to the ``Face`` evaluated at certain UV coordinates.
 
         Notes
@@ -232,9 +232,9 @@ class Face:
         response = self._faces_stub.GetFaceNormal(
             GetFaceNormalRequest(id=self.id, u=u, v=v)
         ).direction
-        return UnitVector([response.x, response.y, response.z])
+        return UnitVector3D([response.x, response.y, response.z])
 
-    def face_point(self, u: float = 0.5, v: float = 0.5) -> Point:
+    def face_point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
         """Returns a point of the ``Face`` evaluated with UV coordinates.
 
         Notes
@@ -259,7 +259,7 @@ class Face:
             The :class:`Point` object evaluated at the given U and V coordinates.
         """
         response = self._faces_stub.EvaluateFace(EvaluateFaceRequest(face=self.id, u=u, v=v)).point
-        return Point([response.x, response.y, response.z], SERVER_UNIT_LENGTH)
+        return Point3D([response.x, response.y, response.z], SERVER_UNIT_LENGTH)
 
     def __grpc_edges_to_edges(self, edges_grpc: List[GRPCEdge]) -> List[Edge]:
         """Transform a list of gRPC Edge messages into actual ``Edge`` objects.

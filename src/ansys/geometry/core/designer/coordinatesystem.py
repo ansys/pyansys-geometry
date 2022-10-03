@@ -8,7 +8,7 @@ from ansys.api.geometry.v0.models_pb2 import CoordinateSystem as cs
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.conversions import frame_to_grpc_frame
-from ansys.geometry.core.math import Frame, Point, UnitVector
+from ansys.geometry.core.math import Frame, Point3D, UnitVector3D
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 
 if TYPE_CHECKING:
@@ -52,7 +52,7 @@ class CoordinateSystem:
         self._id = new_coordinate_system.id
         self._name = new_coordinate_system.display_name
         self._frame = Frame(
-            Point(
+            Point3D(
                 [
                     new_coordinate_system.frame.origin.x,
                     new_coordinate_system.frame.origin.y,
@@ -60,14 +60,14 @@ class CoordinateSystem:
                 ],
                 SERVER_UNIT_LENGTH,
             ),
-            UnitVector(
+            UnitVector3D(
                 [
                     new_coordinate_system.frame.dir_x.x,
                     new_coordinate_system.frame.dir_x.y,
                     new_coordinate_system.frame.dir_x.z,
                 ]
             ),
-            UnitVector(
+            UnitVector3D(
                 [
                     new_coordinate_system.frame.dir_y.x,
                     new_coordinate_system.frame.dir_y.y,

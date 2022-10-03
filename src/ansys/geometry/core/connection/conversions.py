@@ -14,7 +14,7 @@ from ansys.api.geometry.v0.models_pb2 import Point as GRPCPoint
 from ansys.api.geometry.v0.models_pb2 import Polygon as GRPCPolygon
 from ansys.api.geometry.v0.models_pb2 import Tessellation
 
-from ansys.geometry.core.math import Frame, Plane, Point, UnitVector
+from ansys.geometry.core.math import Frame, Plane, Point3D, UnitVector3D
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Polygon, Segment
 
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from pyvista import PolyData  # pragma: no cover
 
 
-def unit_vector_to_grpc_direction(unit_vector: UnitVector) -> GRPCDirection:
+def unit_vector_to_grpc_direction(unit_vector: UnitVector3D) -> GRPCDirection:
     """Marshals a :class:`UnitVector` to a UnitVector gRPC message of the Geometry Service.
 
     Parameters
@@ -170,7 +170,7 @@ def circle_to_grpc_circle(circle: Circle) -> GRPCCircle:
     )
 
 
-def point_to_grpc_point(point: Point) -> GRPCPoint:
+def point_to_grpc_point(point: Point3D) -> GRPCPoint:
     """Marshals a :class:`Point` to a Point gRPC message of the Geometry Service.
 
     Parameters

@@ -4,7 +4,7 @@ from typing import Optional, Union
 
 from pint import Quantity
 
-from ansys.geometry.core.math import Plane, Point, UnitVector, Vector
+from ansys.geometry.core.math import Plane, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import Angle, Distance
 from ansys.geometry.core.shapes import (
     Arc,
@@ -54,7 +54,7 @@ class Sketch:
 
     def draw_box(
         self,
-        center: Point,
+        center: Point3D,
         width: Union[Quantity, Distance, Real],
         height: Union[Quantity, Distance, Real],
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
@@ -83,7 +83,7 @@ class Sketch:
 
     def draw_slot(
         self,
-        center: Point,
+        center: Point3D,
         width: Union[Quantity, Distance, Real],
         height: Union[Quantity, Distance, Real],
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
@@ -110,7 +110,7 @@ class Sketch:
         self.append_shape(slot)
         return slot
 
-    def draw_circle(self, center: Point, radius: Union[Quantity, Distance]):
+    def draw_circle(self, center: Point3D, radius: Union[Quantity, Distance]):
         """Create a circle shape on the sketch.
 
         Parameters
@@ -132,7 +132,7 @@ class Sketch:
 
     def draw_ellipse(
         self,
-        center: Point,
+        center: Point3D,
         semi_major_axis: Union[Quantity, Distance],
         semi_minor_axis: Union[Quantity, Distance],
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
@@ -162,8 +162,8 @@ class Sketch:
 
     def draw_segment(
         self,
-        start: Point,
-        end: Point,
+        start: Point3D,
+        end: Point3D,
     ) -> Segment:
         """
         Add a segment sketch object to the sketch plane.
@@ -187,8 +187,8 @@ class Sketch:
 
     def draw_line(
         self,
-        start: Point,
-        direction: Union[Vector, UnitVector],
+        start: Point3D,
+        direction: Union[Vector3D, UnitVector3D],
     ) -> Line:
         """
         Add a line sketch object to the sketch plane.
@@ -212,8 +212,8 @@ class Sketch:
 
     def draw_polygon(
         self,
-        center: Point,
-        inner_radius: Union[Vector, UnitVector],
+        center: Point3D,
+        inner_radius: Union[Vector3D, UnitVector3D],
         sides: int,
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
@@ -240,7 +240,9 @@ class Sketch:
         self.append_shape(polygon)
         return polygon
 
-    def draw_arc(self, center: Point, start: Point, end: Point, axis: Optional[UnitVector] = None):
+    def draw_arc(
+        self, center: Point3D, start: Point3D, end: Point3D, axis: Optional[UnitVector3D] = None
+    ):
         """Create an arc shape on the sketch.
 
         Parameters

@@ -22,7 +22,7 @@ from ansys.geometry.core.connection import (
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.materials import Material
-from ansys.geometry.core.math import UnitVector
+from ansys.geometry.core.math import UnitVector3D
 from ansys.geometry.core.misc import (
     SERVER_UNIT_LENGTH,
     SERVER_UNIT_VOLUME,
@@ -218,7 +218,7 @@ class Body:
         return (new_edges, new_faces)
 
     def project_curves(
-        self, direction: UnitVector, sketch: Sketch, closest_face: bool
+        self, direction: UnitVector3D, sketch: Sketch, closest_face: bool
     ) -> List[Face]:
         """Projects all of the specified geometries onto the body.
 
@@ -237,7 +237,7 @@ class Body:
             All of the faces from the project curves operation.
         """
         # Sanity checks
-        check_type(direction, UnitVector)
+        check_type(direction, UnitVector3D)
         check_type(sketch, Sketch)
         check_type(closest_face, bool)
 
@@ -257,7 +257,7 @@ class Body:
 
         return projected_faces
 
-    def translate(self, direction: UnitVector, distance: Union[Quantity, Distance]) -> None:
+    def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance]) -> None:
         """Translates the geometry body in the direction specified by the given distance.
 
         Parameters
@@ -271,7 +271,7 @@ class Body:
         -------
         None
         """
-        check_type(direction, UnitVector)
+        check_type(direction, UnitVector3D)
         check_type(distance, (Quantity, Distance))
         check_pint_unit_compatibility(distance, SERVER_UNIT_LENGTH)
 

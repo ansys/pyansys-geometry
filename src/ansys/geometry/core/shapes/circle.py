@@ -4,7 +4,7 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math import Plane, Point
+from ansys.geometry.core.math import Plane, Point3D
 from ansys.geometry.core.misc import Distance, check_type
 from ansys.geometry.core.shapes.base import BaseShape
 
@@ -25,13 +25,13 @@ class Circle(BaseShape):
     def __init__(
         self,
         plane: Plane,
-        center: Point,
+        center: Point3D,
         radius: Union[Quantity, Distance],
     ):
         """Initializes the circle shape."""
         super().__init__(plane, is_closed=True)
 
-        check_type(center, Point)
+        check_type(center, Point3D)
         self._center = center
         if not self.plane.is_point_contained(center):
             raise ValueError("Center must be contained in the plane.")
@@ -42,7 +42,7 @@ class Circle(BaseShape):
             raise ValueError("Radius must be a real positive value.")
 
     @property
-    def center(self) -> Point:
+    def center(self) -> Point3D:
         """The center of the circle.
 
         Returns
@@ -107,7 +107,7 @@ class Circle(BaseShape):
         """
         return [self]
 
-    def local_points(self, num_points: Optional[int] = 100) -> List[Point]:
+    def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
         """Returns a list containing all the points belonging to the shape.
 
         Points are given in the local space.
@@ -123,11 +123,11 @@ class Circle(BaseShape):
             A list of points representing the shape.
         """
         theta = np.linspace(0, 2 * np.pi, num_points)
-        center_from_plane_origin = Point(
+        center_from_plane_origin = Point3D(
             self.plane.global_to_local @ (self.center - self.plane.origin), self.center.unit
         )
         return [
-            Point(
+            Point3D(
                 [
                     center_from_plane_origin.x.to(self.radius.units).m
                     + self.radius.m * np.cos(ang),
@@ -142,7 +142,7 @@ class Circle(BaseShape):
 
     @classmethod
     def from_center_and_radius(
-        cls, center: Point, radius: Union[Quantity, Distance], plane: Optional[Plane] = Plane()
+        cls, center: Point3D, radius: Union[Quantity, Distance], plane: Optional[Plane] = Plane()
     ):
         """Create a circle from its center and radius.
 

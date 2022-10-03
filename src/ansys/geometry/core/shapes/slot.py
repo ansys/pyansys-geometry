@@ -6,7 +6,7 @@ import numpy as np
 from pint import Quantity, Unit
 from scipy.spatial.transform import Rotation as spatial_rotation
 
-from ansys.geometry.core.math import Matrix33, Plane, Point, UnitVector
+from ansys.geometry.core.math import Matrix33, Plane, Point3D, UnitVector3D
 from ansys.geometry.core.misc import Angle, Distance, check_type
 from ansys.geometry.core.misc.measurements import UNIT_ANGLE
 from ansys.geometry.core.shapes.arc import Arc
@@ -35,7 +35,7 @@ class Slot(BaseShape):
     def __init__(
         self,
         plane: Plane,
-        center: Point,
+        center: Point3D,
         width: Union[Quantity, Distance, Real],
         height: Union[Quantity, Distance, Real],
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
@@ -43,7 +43,7 @@ class Slot(BaseShape):
         """Initializes the slot shape."""
         super().__init__(plane, is_closed=True)
 
-        check_type(center, Point)
+        check_type(center, Point3D)
         self._center = center
         if not self.plane.is_point_contained(center):
             raise ValueError("Center must be contained in the plane.")
@@ -75,7 +75,7 @@ class Slot(BaseShape):
             ).as_matrix()
         )
 
-        global_center = Point(
+        global_center = Point3D(
             (center - self.plane.origin) @ self.plane.local_to_global, center.base_unit
         )
 
@@ -101,13 +101,13 @@ class Slot(BaseShape):
             arc_2_center,
             slot_corner_4,
             slot_corner_1,
-            UnitVector([-plane.direction_z.x, -plane.direction_z.y, -plane.direction_z.z]),
+            UnitVector3D([-plane.direction_z.x, -plane.direction_z.y, -plane.direction_z.z]),
         )
         self._segment1 = Segment(plane, slot_corner_1, slot_corner_2)
         self._segment2 = Segment(plane, slot_corner_3, slot_corner_4)
 
     @property
-    def center(self) -> Point:
+    def center(self) -> Point3D:
         """The center of the slot.
 
         Returns
@@ -175,7 +175,7 @@ class Slot(BaseShape):
         """
         return [self._segment1, self._arc1, self._segment2, self._arc2]
 
-    def local_points(self, num_points: Optional[int] = 100) -> List[Point]:
+    def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
         """Returns a list containing all the points belonging to the shape.
 
         Points are given in the local space.
@@ -208,8 +208,8 @@ class Slot(BaseShape):
         return points
 
     def __slot_ref_point(
-        self, x_offset: Real, y_offset: Real, reference: Point, unit: Unit, rotation: Matrix33
-    ) -> Point:
+        self, x_offset: Real, y_offset: Real, reference: Point3D, unit: Unit, rotation: Matrix33
+    ) -> Point3D:
         """Private method for creating the slot reference points from a given X/Y offset and its center.
 
         Parameters
@@ -230,8 +230,8 @@ class Slot(BaseShape):
         Point
             The reference point requested of the slot (in the global coordinate system).
         """
-        rotated_point = Point(rotation @ [x_offset, y_offset, 0], unit)
-        transformed_point = Point(
+        rotated_point = Point3D(rotation @ [x_offset, y_offset, 0], unit)
+        transformed_point = Point3D(
             (self._plane.local_to_global @ (rotated_point + reference)) + self._plane.origin,
             rotated_point.base_unit,
         )

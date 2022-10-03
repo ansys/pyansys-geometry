@@ -5,7 +5,7 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math import Plane, Point
+from ansys.geometry.core.math import Plane, Point3D
 from ansys.geometry.core.misc import Angle, Distance, check_type
 from ansys.geometry.core.misc.measurements import UNIT_ANGLE
 from ansys.geometry.core.shapes.base import BaseShape
@@ -32,7 +32,7 @@ class Polygon(BaseShape):
     def __init__(
         self,
         plane: Plane,
-        center: Point,
+        center: Point3D,
         inner_radius: Union[Quantity, Distance],
         sides: int,
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
@@ -42,7 +42,7 @@ class Polygon(BaseShape):
         super().__init__(plane, is_closed=True)
 
         # Check the inputs
-        check_type(center, Point)
+        check_type(center, Point3D)
         self._center = center
         if not self.plane.is_point_contained(center):
             raise ValueError("Center must be contained in the plane.")
@@ -66,7 +66,7 @@ class Polygon(BaseShape):
         self._n_sides = sides
 
     @property
-    def center(self) -> Point:
+    def center(self) -> Point3D:
         """The center of the polygon.
 
         Returns
@@ -159,7 +159,7 @@ class Polygon(BaseShape):
         """
         return [self]
 
-    def local_points(self) -> List[Point]:
+    def local_points(self) -> List[Point3D]:
         """Returns a list containing all the vertices of the polygon.
 
         Vertices are given in the local space.
@@ -174,11 +174,11 @@ class Polygon(BaseShape):
         theta = np.linspace(
             0 + angle_offset_radians, 2 * np.pi + angle_offset_radians, self.n_sides + 1
         )
-        center_from_plane_origin = Point(
+        center_from_plane_origin = Point3D(
             self.plane.global_to_local @ (self.center - self.plane.origin), self.center.unit
         )
         return [
-            Point(
+            Point3D(
                 [
                     center_from_plane_origin.x.to(self.outer_radius.units).m
                     + self.outer_radius.m * np.cos(ang),

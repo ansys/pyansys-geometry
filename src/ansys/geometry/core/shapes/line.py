@@ -4,7 +4,7 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core.math import Plane, Point, QuantityVector, UnitVector, Vector
+from ansys.geometry.core.math import Plane, Point3D, QuantityVector3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import (
     UNIT_LENGTH,
     UNITS,
@@ -38,24 +38,24 @@ class Line(BaseShape):
     def __init__(
         self,
         plane: Plane,
-        start: Point,
-        direction: Union[Vector, UnitVector],
+        start: Point3D,
+        direction: Union[Vector3D, UnitVector3D],
     ):
         """Initializes the line shape."""
         # Call the BaseShape ctor.
         super().__init__(plane, is_closed=False)
 
         # Perform some sanity checks
-        check_type(direction, Vector)
-        check_type(start, Point)
+        check_type(direction, Vector3D)
+        check_type(start, Point3D)
         check_ndarray_is_non_zero(direction, "direction")
         check_ndarray_is_all_nan(start, "start")
 
         # If a Vector was provided, we should store a UnitVector
         try:
-            check_type(direction, UnitVector)
+            check_type(direction, UnitVector3D)
         except TypeError:
-            direction = UnitVector(direction)
+            direction = UnitVector3D(direction)
 
         # Store instance attributes
         self._direction = direction
@@ -66,17 +66,17 @@ class Line(BaseShape):
             raise ValueError("The provided line definition is not contained in the plane.")
 
     @property
-    def origin(self) -> Point:
+    def origin(self) -> Point3D:
         """The origin property."""
         return self._start
 
     @property
-    def direction(self) -> UnitVector:
+    def direction(self) -> UnitVector3D:
         """Returns the direction of the line."""
         return self._direction
 
     @property
-    def start(self) -> Point:
+    def start(self) -> Point3D:
         """Returns the starting point of the line."""
         return self._start
 
@@ -110,7 +110,7 @@ class Line(BaseShape):
         (lambdas, _) = np.linalg.eig(mat.T)
         return True if any(np.isclose(lambdas, 0.0)) else False
 
-    def local_points(self, num_points: Optional[int] = 100) -> List[Point]:
+    def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
         """
         Returns a list containing all the points belonging to the shape.
 
@@ -126,7 +126,7 @@ class Line(BaseShape):
         """
         quantified_dir = UNITS.convert(self.direction, self.start.unit, self.start.base_unit)
         line_start = self.start - quantified_dir * int(num_points / 2)
-        return [Point(line_start + delta * quantified_dir) for delta in range(0, num_points)]
+        return [Point3D(line_start + delta * quantified_dir) for delta in range(0, num_points)]
 
 
 class Segment(Line):
@@ -146,14 +146,14 @@ class Segment(Line):
     def __init__(
         self,
         plane: Plane,
-        start: Point,
-        end: Point,
+        start: Point3D,
+        end: Point3D,
     ):
         """Constructor method for ``Segment``."""
         # Perform sanity checks on Point values given
-        check_type(start, Point)
+        check_type(start, Point3D)
         check_ndarray_is_all_nan(start, "start")
-        check_type(end, Point)
+        check_type(end, Point3D)
         check_ndarray_is_all_nan(end, "end")
 
         # Assign values to start and end
@@ -165,13 +165,13 @@ class Segment(Line):
         self.__rebase_point_units()
 
         # Build the direction vector
-        direction = UnitVector(end - start)
+        direction = UnitVector3D(end - start)
 
         # Call the super ctor (i.e. Line).
         super().__init__(plane, start, direction)
 
     @property
-    def end(self) -> Point:
+    def end(self) -> Point3D:
         """Returns the end of the ``Segment``."""
         return self._end
 
@@ -189,8 +189,8 @@ class Segment(Line):
     @classmethod
     def from_start_point_and_vector(
         cls,
-        start: Point,
-        vector: Vector,
+        start: Point3D,
+        vector: Vector3D,
         vector_units: Optional[Unit] = UNIT_LENGTH,
         plane: Optional[Plane] = Plane(),
     ):
@@ -214,7 +214,7 @@ class Segment(Line):
         """
         check_type(vector_units, Unit)
         check_pint_unit_compatibility(vector_units, UNIT_LENGTH)
-        end_vec_as_point = Point(vector, vector_units)
+        end_vec_as_point = Point3D(vector, vector_units)
         end_vec_as_point += start
 
         return cls(plane, start, end_vec_as_point)
@@ -222,8 +222,8 @@ class Segment(Line):
     @classmethod
     def from_start_point_and_quantity_vector(
         cls,
-        start: Point,
-        quantity_vector: QuantityVector,
+        start: Point3D,
+        quantity_vector: QuantityVector3D,
         plane: Optional[Plane] = Plane(),
     ):
         """Create a ``Segment`` from a starting ``Point`` and a vector.
@@ -243,7 +243,7 @@ class Segment(Line):
         Segment
             The ``Segment`` object resulting from the inputs.
         """
-        check_type(quantity_vector, QuantityVector)
+        check_type(quantity_vector, QuantityVector3D)
         return Segment.from_start_point_and_vector(
             start=start,
             vector=quantity_vector,
@@ -268,7 +268,7 @@ class Segment(Line):
         if not self._start.unit == self._end.unit:
             self._start.unit = self._end.unit = UNIT_LENGTH
 
-    def local_points(self, num_points: Optional[int] = 100) -> List[Point]:
+    def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
         """
         Returns a list containing all the points belonging to the shape.
 
@@ -282,10 +282,10 @@ class Segment(Line):
         List[Point]
             A list of points representing the shape.
         """
-        start_unit_length = Point(
+        start_unit_length = Point3D(
             self.plane.global_to_local @ (self.start - self.plane.origin), UNIT_LENGTH
         )
-        start_with_accurate_units = Point(
+        start_with_accurate_units = Point3D(
             [
                 start_unit_length.x.m_as(self.start.unit),
                 start_unit_length.y.m_as(self.start.unit),
@@ -294,10 +294,10 @@ class Segment(Line):
             self.start.unit,
         )
 
-        end_unit_length = Point(
+        end_unit_length = Point3D(
             self.plane.global_to_local @ (self.end - self.plane.origin), UNIT_LENGTH
         )
-        end_with_accurate_units = Point(
+        end_with_accurate_units = Point3D(
             [
                 end_unit_length.x.m_as(self.start.unit),
                 end_unit_length.y.m_as(self.start.unit),
@@ -306,10 +306,10 @@ class Segment(Line):
             self.start.unit,
         )
 
-        delta_segm = Point(
+        delta_segm = Point3D(
             (end_with_accurate_units - start_with_accurate_units) / (num_points - 1), UNIT_LENGTH
         )
         return [
-            Point(start_with_accurate_units + delta * delta_segm, UNIT_LENGTH)
+            Point3D(start_with_accurate_units + delta * delta_segm, UNIT_LENGTH)
             for delta in range(0, num_points)
         ]

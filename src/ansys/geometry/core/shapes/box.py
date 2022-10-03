@@ -5,7 +5,7 @@ from typing import List, Optional, Union
 from pint import Quantity, Unit
 from scipy.spatial.transform import Rotation as spatial_rotation
 
-from ansys.geometry.core.math import Matrix33, Plane, Point
+from ansys.geometry.core.math import Matrix33, Plane, Point3D
 from ansys.geometry.core.misc import UNIT_ANGLE, Angle, Distance, check_type
 from ansys.geometry.core.shapes.base import BaseShape
 from ansys.geometry.core.shapes.line import Segment
@@ -32,7 +32,7 @@ class Box(BaseShape):
     def __init__(
         self,
         plane: Plane,
-        center: Point,
+        center: Point3D,
         width: Union[Quantity, Distance, Real],
         height: Union[Quantity, Distance, Real],
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
@@ -40,7 +40,7 @@ class Box(BaseShape):
         """Initializes the box shape."""
         super().__init__(plane, is_closed=True)
 
-        check_type(center, Point)
+        check_type(center, Point3D)
         self._center = center
         if not self.plane.is_point_contained(center):
             raise ValueError("Center must be contained in the plane.")
@@ -69,7 +69,7 @@ class Box(BaseShape):
             raise ValueError("Height must be a real positive value.")
         height_magnitude = self._height.value.m_as(center.unit)
 
-        global_center = Point(
+        global_center = Point3D(
             self.plane.global_to_local @ (center - self.plane.origin), center.base_unit
         )
 
@@ -87,7 +87,7 @@ class Box(BaseShape):
         self._height_segment2 = Segment(plane, corner_4, corner_1)
 
     @property
-    def center(self) -> Point:
+    def center(self) -> Point3D:
         """The center of the box.
 
         Returns
@@ -157,7 +157,7 @@ class Box(BaseShape):
             self._height_segment2,
         ]
 
-    def local_points(self, num_points: Optional[int] = 100) -> List[Point]:
+    def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
         """Returns a list containing all the points belonging to the shape.
 
         Points are given in the local space.
@@ -200,8 +200,8 @@ class Box(BaseShape):
         return points
 
     def __box_ref_point(
-        self, x_offset: Real, y_offset: Real, reference: Point, unit: Unit, rotation: Matrix33
-    ) -> Point:
+        self, x_offset: Real, y_offset: Real, reference: Point3D, unit: Unit, rotation: Matrix33
+    ) -> Point3D:
         """Private method for creating the box reference points from a given X/Y offset and a box center.
 
         Parameters
@@ -222,8 +222,8 @@ class Box(BaseShape):
         Point
             The reference point requested of the box (in the global coordinate system).
         """
-        rotated_point = Point(rotation @ [x_offset, y_offset, 0], unit)
-        transformed_point = Point(
+        rotated_point = Point3D(rotation @ [x_offset, y_offset, 0], unit)
+        transformed_point = Point3D(
             (self._plane.local_to_global @ (rotated_point + reference)) + self._plane.origin,
             rotated_point.base_unit,
         )

@@ -30,7 +30,7 @@ from ansys.geometry.core.connection import (
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.coordinatesystem import CoordinateSystem
 from ansys.geometry.core.designer.face import Face
-from ansys.geometry.core.math import Frame, UnitVector
+from ansys.geometry.core.math import Frame, UnitVector3D
 from ansys.geometry.core.misc import (
     SERVER_UNIT_LENGTH,
     Distance,
@@ -359,7 +359,7 @@ class Component:
         return self._coordinate_systems[-1]
 
     def translate_bodies(
-        self, bodies: List[Body], direction: UnitVector, distance: Union[Quantity, Distance]
+        self, bodies: List[Body], direction: UnitVector3D, distance: Union[Quantity, Distance]
     ) -> None:
         """Translates the geometry bodies in the direction specified by the given distance.
 
@@ -384,7 +384,7 @@ class Component:
 
         check_type(bodies, list)
         [check_type(body, Body) for body in bodies]
-        check_type(direction, UnitVector)
+        check_type(direction, UnitVector3D)
         check_type(distance, (Quantity, Distance))
         check_pint_unit_compatibility(distance, SERVER_UNIT_LENGTH)
         body_ids_found = []
