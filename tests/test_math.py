@@ -547,7 +547,6 @@ def test_quantity_vector():
     assert abs(quantity_vector_from_points.x.m - (-9 * UNITS.cm).to_base_units().m) <= TOLERANCE
     assert abs(quantity_vector_from_points.y.m - (-14 * UNITS.cm).to_base_units().m) <= TOLERANCE
     assert quantity_vector_from_points.unit == point_a.base_unit
-    assert quantity_vector_from_points.is_2d
 
     with pytest.raises(
         TypeError,
@@ -831,5 +830,5 @@ def test_plane():
     assert p_1.is_point_contained(Point3D([42, 99, 13]))
     assert not p_1.is_point_contained(Point3D([42, 99, 14]))
 
-    with pytest.raises(ValueError, match="The point provided should be 3D."):
-        p_1.is_point_contained(Point3D([42, 99]))
+    with pytest.raises(TypeError, match=f"Provided type {Point2D} is invalid"):
+        p_1.is_point_contained(Point2D([42, 99]))

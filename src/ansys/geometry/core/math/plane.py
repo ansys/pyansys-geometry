@@ -49,8 +49,6 @@ class Plane(Frame):
             Returns ``True`` if contained in the plane.
         """
         check_type(point, Point3D)
-        if point.is_2d:
-            raise ValueError("The point provided should be 3D.")
 
         # Compute the plane equation A*(x-x0) + B*(y-y0) + C*(z-z0)
         plane_eq = (
