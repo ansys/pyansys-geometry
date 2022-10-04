@@ -769,7 +769,7 @@ def test_project_and_imprint_curves(modeler: Modeler):
     # bottom face (closest one), i.e. the first one.
     assert faces[0].id == body_faces[0].id
 
-    # If we know drew our curves on a higher plane, the upper face should be selected
+    # If we now draw our curves on a higher plane, the upper face should be selected
     imprint_sketch_2 = Sketch(plane=Plane(Point([0, 0, 60], UNITS.mm)))
     imprint_sketch_2.draw_slot(
         Point([10, 10, 60], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
