@@ -141,7 +141,9 @@ class Plotter:
             plane_options = dict(i_size=10, j_size=10)
 
         # Create a plane for showing the plane
-        plane_mesh = pv.Plane(center=plane.origin, direction=plane.direction_z, **plane_options)
+        plane_mesh = pv.Plane(
+            center=plane.origin.tolist(), direction=plane.direction_z.tolist(), **plane_options
+        )
 
         # Render the plane in the scene
         if not plotting_options:

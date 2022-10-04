@@ -83,7 +83,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
         """Add operation for ``Point2D``."""
         from ansys.geometry.core.math.vector import Vector2D
 
-        check_type(other, (Point2D, Vector2D, np.ndarray))
+        check_type(other, (Point2D, Vector2D))
         point = Point2D(np.add(self, other), self.base_unit)
         point.unit = self.unit
         return point
@@ -92,7 +92,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
         """Subtraction operation for ``Point2D``."""
         from ansys.geometry.core.math.vector import Vector2D
 
-        check_type(other, (Point2D, Vector2D, np.ndarray))
+        check_type(other, (Point2D, Vector2D))
         point = Point2D(np.subtract(self, other), self.base_unit)
         point.unit = self.unit
         return point
@@ -173,7 +173,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
         """Add operation for ``Point3D``."""
         from ansys.geometry.core.math.vector import Vector3D
 
-        check_type(other, (Point3D, Vector3D, np.ndarray))
+        check_type(other, (Point3D, Vector3D))
         point = Point3D(np.add(self, other), self.base_unit)
         point.unit = self.unit
         return point
@@ -182,7 +182,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
         """Subtraction operation for ``Point3D``."""
         from ansys.geometry.core.math.vector import Vector3D
 
-        check_type(other, (Point3D, Vector3D, np.ndarray))
+        check_type(other, (Point3D, Vector3D))
         point = Point3D(np.subtract(self, other), self.base_unit)
         point.unit = self.unit
         return point
