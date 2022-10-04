@@ -1,6 +1,6 @@
 """``Point`` class module."""
 
-from typing import Optional, Union
+from typing import TYPE_CHECKING, Optional, Union
 
 import numpy as np
 from pint import Quantity, Unit
@@ -9,6 +9,7 @@ from ansys.geometry.core.misc import (
     UNIT_LENGTH,
     PhysicalQuantity,
     check_ndarray_is_float_int,
+    check_type,
     check_type_equivalence,
 )
 from ansys.geometry.core.typing import RealSequence
@@ -18,6 +19,9 @@ DEFAULT_POINT2D_VALUES = [np.nan, np.nan]
 
 DEFAULT_POINT3D_VALUES = [np.nan, np.nan, np.nan]
 """Default values for a ``Point3D``."""
+
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.math.vector import Vector2D, Vector3D
 
 
 class Point2D(np.ndarray, PhysicalQuantity):
@@ -74,6 +78,24 @@ class Point2D(np.ndarray, PhysicalQuantity):
     def __set_value(self, input: Quantity, idx: int) -> None:
         """General setter method for ``Point2D`` class."""
         self[idx] = self._base_units_magnitude(input)
+
+    def __add__(self, other: Union["Point2D", "Vector2D"]) -> "Point2D":
+        """Add operation for ``Point2D``"""
+        from ansys.geometry.core.math.vector import Vector2D
+
+        check_type(other, (Point2D, Vector2D))
+        point = Point2D(np.add(self, other), self.base_unit)
+        point.unit = self.unit
+        return point
+
+    def __sub__(self, other: "Point2D") -> "Point2D":
+        """Subtraction operation for ``Point2D``."""
+        from ansys.geometry.core.math.vector import Vector2D
+
+        check_type(other, (Point2D, Vector2D))
+        point = Point2D(np.subtract(self, other), self.base_unit)
+        point.unit = self.unit
+        return point
 
     @property
     def x(self) -> Quantity:
@@ -146,6 +168,24 @@ class Point3D(np.ndarray, PhysicalQuantity):
     def __ne__(self, other: "Point3D") -> bool:
         """Not equals operator for ``Point3D``."""
         return not self == other
+
+    def __add__(self, other: Union["Point3D", "Vector3D"]) -> "Point2D":
+        """Add operation for ``Point3D``"""
+        from ansys.geometry.core.math.vector import Vector3D
+
+        check_type(other, (Point3D, Vector3D))
+        point = Point3D(np.add(self, other), self.base_unit)
+        point.unit = self.unit
+        return point
+
+    def __sub__(self, other: Union["Point3D", "Vector3D"]) -> "Point3D":
+        """Subtraction operation for ``Point3D``."""
+        from ansys.geometry.core.math.vector import Vector3D
+
+        check_type(other, (Point3D, Vector3D))
+        point = Point3D(np.subtract(self, other), self.base_unit)
+        point.unit = self.unit
+        return point
 
     def __set_value(self, input: Quantity, idx: int) -> None:
         """General setter method for ``Point3D`` class."""

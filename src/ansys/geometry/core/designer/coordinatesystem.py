@@ -11,8 +11,8 @@ from ansys.geometry.core.connection.conversions import frame_to_grpc_frame
 from ansys.geometry.core.math import Frame, Point3D, UnitVector3D
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 
-if TYPE_CHECKING:
-    from ansys.geometry.core.designer.component import Component  # pragma: no cover
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.designer.component import Component
 
 
 class CoordinateSystem:

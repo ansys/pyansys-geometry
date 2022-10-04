@@ -75,7 +75,19 @@ class Vector3D(np.ndarray):
 
     @property
     def norm(self) -> float:
+        """The norm of the vector."""
         return np.linalg.norm(self)
+
+    @property
+    def magnitude(self) -> float:
+        """The norm of the vector."""
+        return self.norm
+
+    @property
+    def is_zero(self) -> bool:
+        """Confirms whether all components of the ``Vector3D`` are zero."""
+        # TODO incorporate length accuracy in comparison
+        return all([comp == 0 for comp in self])
 
     def is_perpendicular_to(self, other_vector: "Vector3D") -> bool:
         """Verifies if the two ``Vector3D`` instances are perpendicular."""
@@ -84,12 +96,6 @@ class Vector3D(np.ndarray):
 
         angle_is_zero = Accuracy.angle_is_zero(self * other_vector)
         return angle_is_zero
-
-    @property
-    def is_zero(self) -> bool:
-        """Confirms whether all components of the ``Vector3D`` are zero."""
-        # TODO incorporate length accuracy in comparison
-        return all([comp == 0 for comp in self])
 
     def normalize(self) -> "Vector3D":
         """Return a normalized version of the ``Vector3D``."""
@@ -100,6 +106,18 @@ class Vector3D(np.ndarray):
             raise ValueError("The norm of the Vector3D is not valid.")
 
     def get_angle_between(self, v: "Vector3D") -> Quantity:
+        """Method for getting the angle between two ``Vector3D`` objects.
+
+        Parameters
+        ----------
+        v : Vector3D
+            The other vector to compute the angle with.
+
+        Returns
+        -------
+        Quantity
+            The angle between both vectors.
+        """
         if v.is_zero or self.is_zero:
             raise ValueError("Both vectors cannot be zero.")
 
@@ -141,13 +159,19 @@ class Vector3D(np.ndarray):
             check_type_equivalence(other, self)
             return self.dot(other)
 
-    @property
-    def magnitude(self) -> float:
-        return self.norm
-
     def __mod__(self, other: "Vector3D") -> "Vector3D":
         """Overload % operator with cross product."""
         return self.cross(other)
+
+    def __add__(self, other: "Vector3D") -> "Vector3D":
+        """Addition operation overload for ``Vector3D`` objects."""
+        check_type_equivalence(other, self)
+        return Vector3D(np.add(self, other))
+
+    def __sub__(self, other: "Vector3D") -> "Vector3D":
+        """Subtraction operation overload for ``Vector3D`` objects."""
+        check_type_equivalence(other, self)
+        return Vector3D(np.subtract(self, other))
 
     @classmethod
     def from_points(
@@ -163,6 +187,11 @@ class Vector3D(np.ndarray):
             A :class:`Point3D` representing the first point.
         point_b : Point3D
             A :class:`Point3D` representing the second point.
+
+        Notes
+        -----
+        The resulting ``Vector3D`` is expressed in `Point3D``
+        base units, no matter what.
 
         Returns
         -------
@@ -221,7 +250,18 @@ class Vector2D(np.ndarray):
 
     @property
     def norm(self) -> float:
+        """The norm of the vector."""
         return np.linalg.norm(self)
+
+    @property
+    def magnitude(self) -> float:
+        """The norm of the vector."""
+        return self.norm
+
+    @property
+    def is_zero(self) -> bool:
+        """Confirms whether all components of the ``Vector2D`` are zero."""
+        return all([comp == 0 for comp in self])
 
     def is_perpendicular_to(self, other_vector: "Vector2D") -> bool:
         """Verifies if the two ``Vector2D`` instances are perpendicular."""
@@ -230,11 +270,6 @@ class Vector2D(np.ndarray):
 
         angle_is_zero = Accuracy.angle_is_zero(self * other_vector)
         return angle_is_zero
-
-    @property
-    def is_zero(self) -> bool:
-        """Confirms whether all components of the ``Vector2D`` are zero."""
-        return all([comp == 0 for comp in self])
 
     def normalize(self) -> "Vector2D":
         """Return a normalized version of the ``Vector2D``."""
@@ -245,6 +280,18 @@ class Vector2D(np.ndarray):
             raise ValueError("The norm of the Vector2D is not valid.")
 
     def get_angle_between(self, v: "Vector2D") -> Quantity:
+        """Method for getting the angle between two ``Vector2D`` objects.
+
+        Parameters
+        ----------
+        v : Vector2D
+            The other vector to compute the angle with.
+
+        Returns
+        -------
+        Quantity
+            The angle between both vectors.
+        """
         if v.is_zero or self.is_zero:
             raise ValueError("Both vectors cannot be zero.")
 
@@ -277,9 +324,15 @@ class Vector2D(np.ndarray):
             check_type_equivalence(other, self)
             return self.dot(other)
 
-    @property
-    def magnitude(self) -> float:
-        return self.norm
+    def __add__(self, other: "Vector2D") -> "Vector2D":
+        """Addition operation overload for ``Vector2D`` objects."""
+        check_type_equivalence(other, self)
+        return Vector2D(np.add(self, other))
+
+    def __sub__(self, other: "Vector2D") -> "Vector2D":
+        """Subtraction operation overload for ``Vector2D`` objects."""
+        check_type_equivalence(other, self)
+        return Vector2D(np.subtract(self, other))
 
     @classmethod
     def from_points(
@@ -296,6 +349,11 @@ class Vector2D(np.ndarray):
         point_b : Point2D
             A :class:`Point2D` representing the second point.
 
+        Notes
+        -----
+        The resulting ``Vector2D`` is expressed in `Point2D``
+        base units, no matter what.
+
         Returns
         -------
         Vector2D
@@ -307,7 +365,7 @@ class Vector2D(np.ndarray):
 
 
 class UnitVector3D(Vector3D):
-    """A 2-/3-dimensional ``UnitVector3D`` class.
+    """A 3-dimensional unit vector class.
 
     Parameters
     ----------
@@ -354,9 +412,7 @@ class UnitVector3D(Vector3D):
         UnitVector3D
             A ``UnitVector3D`` from ``point_a`` to ``point_b``.
         """
-        check_type(point_a, (Point3D, np.ndarray, list))
-        check_type(point_b, (Point3D, np.ndarray, list))
-        return UnitVector3D(point_b - point_a)
+        return UnitVector3D(Vector3D.from_points(point_b, point_a))
 
 
 class UnitVector2D(Vector2D):
@@ -403,6 +459,4 @@ class UnitVector2D(Vector2D):
         UnitVector2D
             A ``UnitVector2D`` from ``point_a`` to ``point_b``.
         """
-        check_type(point_a, (Point2D, np.ndarray, list))
-        check_type(point_b, (Point2D, np.ndarray, list))
-        return UnitVector2D(point_b - point_a)
+        return UnitVector2D(Vector2D.from_points(point_b, point_a))

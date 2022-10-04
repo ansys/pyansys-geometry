@@ -18,8 +18,8 @@ from ansys.geometry.core.math import Frame, Plane, Point3D, UnitVector3D
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Polygon, Segment
 
-if TYPE_CHECKING:
-    from pyvista import PolyData  # pragma: no cover
+if TYPE_CHECKING:  # pragma: no cover
+    from pyvista import PolyData
 
 
 def unit_vector_to_grpc_direction(unit_vector: UnitVector3D) -> GRPCDirection:

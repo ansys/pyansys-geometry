@@ -753,34 +753,36 @@ def test_project_and_imprint_curves(modeler: Modeler):
     # Create a Sketch object and draw a couple of slots
     imprint_sketch = Sketch()
     imprint_sketch.draw_slot(
-        Point([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
+        Point3D([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
     )
     imprint_sketch.draw_slot(
-        Point([50, 50, 0], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
+        Point3D([50, 50, 0], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
     )
 
     # Extrude the sketch
     sketch = Sketch()
-    sketch.draw_box(Point([0, 0, 0], UNITS.mm), Quantity(150, UNITS.mm), Quantity(150, UNITS.mm))
+    sketch.draw_box(Point3D([0, 0, 0], UNITS.mm), Quantity(150, UNITS.mm), Quantity(150, UNITS.mm))
     body = design.extrude_sketch(name="MyBox", sketch=sketch, distance=Quantity(50, UNITS.mm))
     body_faces = body.faces
 
     # Project the curves on the box
-    faces = body.project_curves(direction=UNIT_VECTOR_Z, sketch=imprint_sketch, closest_face=True)
+    faces = body.project_curves(direction=UNITVECTOR3D_Z, sketch=imprint_sketch, closest_face=True)
     assert len(faces) == 1
     # With the previous dir, the curves will be imprinted on the
     # bottom face (closest one), i.e. the first one.
     assert faces[0].id == body_faces[0].id
 
     # If we now draw our curves on a higher plane, the upper face should be selected
-    imprint_sketch_2 = Sketch(plane=Plane(Point([0, 0, 50], UNITS.mm)))
+    imprint_sketch_2 = Sketch(plane=Plane(Point3D([0, 0, 50], UNITS.mm)))
     imprint_sketch_2.draw_slot(
-        Point([10, 10, 50], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
+        Point3D([10, 10, 50], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
     )
     imprint_sketch_2.draw_slot(
-        Point([50, 50, 50], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
+        Point3D([50, 50, 50], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
     )
-    faces = body.project_curves(direction=UNIT_VECTOR_Z, sketch=imprint_sketch_2, closest_face=True)
+    faces = body.project_curves(
+        direction=UNITVECTOR3D_Z, sketch=imprint_sketch_2, closest_face=True
+    )
     assert len(faces) == 1
     # With the previous dir, the curves will be imprinted on the
     # top face (closest one), i.e. the first one.
@@ -788,7 +790,7 @@ def test_project_and_imprint_curves(modeler: Modeler):
 
     # Now, let's try projecting only a single curve (i.e. one of the slots only)
     faces = body.project_curves(
-        direction=UNIT_VECTOR_Z, sketch=imprint_sketch_2, closest_face=True, only_one_curve=True
+        direction=UNITVECTOR3D_Z, sketch=imprint_sketch_2, closest_face=True, only_one_curve=True
     )
     assert len(faces) == 1
     # With the previous dir, the curves will be imprinted on the

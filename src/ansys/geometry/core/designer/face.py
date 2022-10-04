@@ -20,8 +20,8 @@ from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.misc import SERVER_UNIT_AREA, SERVER_UNIT_LENGTH
 
-if TYPE_CHECKING:
-    from ansys.geometry.core.designer.body import Body  # pragma: no cover
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.designer.body import Body
 
 
 @unique
