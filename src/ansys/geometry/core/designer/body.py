@@ -238,6 +238,12 @@ class Body:
             Projects only one curve of the entire sketch provided. If ``True``, then
             the first curve is projected. By default, ``False``.
 
+        Notes
+        -----
+        The ``only_one_curve`` boolean allows to optimize the server call, since
+        projecting curves is an expensive operation. This reduces the workload on the
+        server side.
+
         Returns
         -------
         List[Face]

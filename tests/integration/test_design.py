@@ -770,12 +770,12 @@ def test_project_and_imprint_curves(modeler: Modeler):
     assert faces[0].id == body_faces[0].id
 
     # If we now draw our curves on a higher plane, the upper face should be selected
-    imprint_sketch_2 = Sketch(plane=Plane(Point([0, 0, 60], UNITS.mm)))
+    imprint_sketch_2 = Sketch(plane=Plane(Point([0, 0, 50], UNITS.mm)))
     imprint_sketch_2.draw_slot(
-        Point([10, 10, 60], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
+        Point([10, 10, 50], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
     )
     imprint_sketch_2.draw_slot(
-        Point([50, 50, 60], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
+        Point([50, 50, 50], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
     )
     faces = body.project_curves(direction=UNIT_VECTOR_Z, sketch=imprint_sketch_2, closest_face=True)
     assert len(faces) == 1
@@ -797,5 +797,5 @@ def test_project_and_imprint_curves(modeler: Modeler):
     # It should generate two additional faces to our box = 6 + 2
     _, new_faces = body.imprint_curves(faces=faces, sketch=imprint_sketch_2)
 
-    # TODO : for some reason, tis response is always empty... to be checked
-    # assert len(new_faces) == 8
+    assert len(new_faces) == 2
+    assert len(body.faces) == 8
