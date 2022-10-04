@@ -76,6 +76,7 @@ class GrpcClient:
         host: Optional[str] = DEFAULT_HOST,
         port: Union[str, int] = DEFAULT_PORT,
         channel: Optional[grpc.Channel] = None,
+        remote_instance: Optional[bool] = None,
         timeout: Optional[Real] = 60,
     ):
         """Initialize the ``GrpcClient`` object."""
@@ -84,6 +85,7 @@ class GrpcClient:
         check_type(timeout, (int, float))
 
         self._closed = False
+        self._remote_instance = remote_instance
         if channel:
             # Used for PyPIM when directly providing a channel
             check_type(channel, grpc.Channel)
@@ -135,6 +137,8 @@ class GrpcClient:
     def close(self):
         """Close the channel."""
         self._closed = True
+        if self._remote_instance:
+            self._remote_instance = False
         self._channel.close()
 
     def target(self) -> str:

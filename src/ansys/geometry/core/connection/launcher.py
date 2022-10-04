@@ -2,6 +2,15 @@
 
 from ansys.geometry.core.modeler import Modeler
 
+try:
+    import ansys.platform.instancemanagement as pypim
+
+    _HAS_PIM = True
+except ModuleNotFoundError:  # pragma: no cover
+    _HAS_PIM = False
+
+from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
+
 
 def launch_modeler() -> Modeler:
     """Start the PyGeometry modeler.
@@ -23,4 +32,47 @@ def launch_modeler() -> Modeler:
 
     # Another alternative is running docker locally from this method.
 
+    # Start pygeometry with PyPIM if the environment is configured for it
+    # and the user did not pass a directive on how to launch it.
+    if pypim.is_configured():
+        # LOG.info("Starting MAPDL remotely. The startup configuration will be ignored.")
+        return launch_remote_modeler()
+
     raise NotImplementedError("Not yet implemented")
+
+
+def launch_remote_modeler(
+    version=None,
+) -> Modeler:
+    """Start geometry remotely using the product instance management API.
+    When calling this method, you need to ensure that you are in an
+    environment where PyPIM is configured.This can be verified with
+    :func:`pypim.is_configured <ansys.platform.instancemanagement.is_configured>`.
+
+    Parameters
+    ----------
+    version : str, optional
+        The geometry version to run, in the 3 digits format, such as "212".
+        If unspecified, the version will be chosen by the server.
+
+    Returns
+    -------
+    ansys.geometry.core.modeler.Modeler
+        An instance of geometry.
+    """
+    if not _HAS_PIM:  # pragma: no cover
+        raise ModuleNotFoundError(
+            "The package 'ansys-platform-instancemanagement' is required to use this function."
+        )
+
+    pim = pypim.connect()
+    instance = pim.create_instance(
+        product_name="discovery-geometry", product_version=version
+    )  # product name
+    instance.wait_for_ready()
+    channel = instance.build_grpc_channel(
+        options=[
+            ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
+        ]
+    )
+    return Modeler(channel=channel, remote_instance=instance)

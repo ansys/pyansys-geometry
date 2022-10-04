@@ -27,6 +27,10 @@ class Modeler:
     timeout : Real, optional
         Timeout in seconds to achieve the connection.
         By default, 60 seconds.
+    remote_instance : ansys.platform.instancemanagement.Instance
+        The corresponding remote instance when geometry is launched through
+        PyPIM. This instance will be deleted when calling
+        :func:`GrpcClient.close <ansys.mapdl.core.Mapdl.exit>`.
     """
 
     def __init__(
@@ -35,9 +39,10 @@ class Modeler:
         port: Union[str, int] = DEFAULT_PORT,
         channel: Channel = None,
         timeout=60,
+        remote_instance=None,
     ):
         """Constructor method for ``Modeler``."""
-        self._client = GrpcClient(host, port, channel, timeout=timeout)
+        self._client = GrpcClient(host, port, channel, remote_instance, timeout=timeout)
 
         # Design[] maintaining references to all designs within the modeler workspace
         self._designs = []
