@@ -268,14 +268,17 @@ class Body:
         check_type(sketch, Sketch)
         check_type(closest_face, bool)
 
+        if only_one_curve and len(sketch.shapes_list) > 0:
+            curves = [sketch.shapes_list[0]]
+        else:
+            curves = sketch.shapes_list
+
         self._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 
         project_response = self._commands_stub.ProjectCurves(
             ProjectCurvesRequest(
                 body=self._id,
-                curves=sketch_shapes_to_grpc_geometries(
-                    sketch.shapes_list if not only_one_curve else [sketch.shapes_list[0]]
-                ),
+                curves=sketch_shapes_to_grpc_geometries(curves),
                 direction=unit_vector_to_grpc_direction(direction),
                 closestFace=closest_face,
             )
