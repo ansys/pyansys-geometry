@@ -117,40 +117,45 @@ def test_global_logger_exception_handling(caplog: pytest.LogCaptureFixture):
             assert exc in caplog.text
 
 
-def test_global_logger_debug_levels(caplog: pytest.LogCaptureFixture):
-    """Testing for all the possible logging level that the output is
-    recorded properly for each type of msg.
-
-    Parameters
-    ----------
-    caplog : pytest.LogCaptureFixture
-        Fixture for capturing logs.
-    """
-
-    for each_level in [
+@pytest.mark.parametrize(
+    "level",
+    [
         deflogging.DEBUG,
         deflogging.INFO,
         deflogging.WARN,
         deflogging.ERROR,
         deflogging.CRITICAL,
-    ]:
-        with caplog.at_level(each_level, LOG.logger.name):  # changing root logger level:
-            for each_log_name, each_log_number in LOG_LEVELS.items():
-                msg = f"This is a message of type {each_log_name}."
-                LOG.logger.log(each_log_number, msg)
-                # Make sure we are using the right logger, the right level and message.
-                if each_log_number >= each_level:
-                    assert caplog.record_tuples[-1] == (
-                        "PyGeometry_global",
-                        each_log_number,
-                        msg,
-                    )
-                else:
-                    assert caplog.record_tuples[-1] != (
-                        "PyGeometry_global",
-                        each_log_number,
-                        msg,
-                    )
+    ],
+)
+def test_global_logger_debug_levels(level: int, caplog: pytest.LogCaptureFixture):
+    """Testing for all the possible logging level that the output is
+    recorded properly for each type of msg.
+
+    Parameters
+    ----------
+    level : int
+        The logging level specified from the parametrization.
+    caplog : pytest.LogCaptureFixture
+        Fixture for capturing logs.
+    """
+
+    with caplog.at_level(level, LOG.logger.name):  # changing root logger level:
+        for each_log_name, each_log_number in LOG_LEVELS.items():
+            msg = f"This is a message of type {each_log_name}."
+            LOG.logger.log(each_log_number, msg)
+            # Make sure we are using the right logger, the right level and message.
+            if each_log_number >= level:
+                assert caplog.record_tuples[-1] == (
+                    "PyGeometry_global",
+                    each_log_number,
+                    msg,
+                )
+            else:
+                assert caplog.record_tuples[-1] != (
+                    "PyGeometry_global",
+                    each_log_number,
+                    msg,
+                )
 
 
 def test_global_logger_format(fake_record: Callable):
