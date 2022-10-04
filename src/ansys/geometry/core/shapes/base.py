@@ -55,7 +55,10 @@ class BaseShape:
         except TypeError:
             local_points = self.local_points()
 
-        return [(self.plane.origin + self.plane.local_to_global @ point) for point in local_points]
+        return [
+            (self.plane.origin + Point3D(self.plane.local_to_global @ point, point.base_unit))
+            for point in local_points
+        ]
 
     @property
     def components(self) -> List["BaseShape"]:
