@@ -9,6 +9,7 @@ from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import Frame, Point, UnitVector
 from ansys.geometry.core.math.constants import UNIT_VECTOR_Z
+from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 
@@ -739,3 +740,62 @@ def test_slot_extrusion(modeler: Modeler):
     # A slot has 6 faces and 12 edges
     assert len(body.faces) == 6
     assert len(body.edges) == 12
+
+
+def test_project_and_imprint_curves(modeler: Modeler):
+    """Test the projection of a set of curves on a body."""
+    # Create your design on the server side
+    design = modeler.create_design("ExtrudeSlot")
+
+    # Create a Sketch object and draw a couple of slots
+    imprint_sketch = Sketch()
+    imprint_sketch.draw_slot(
+        Point([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
+    )
+    imprint_sketch.draw_slot(
+        Point([50, 50, 0], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
+    )
+
+    # Extrude the sketch
+    sketch = Sketch()
+    sketch.draw_box(Point([0, 0, 0], UNITS.mm), Quantity(150, UNITS.mm), Quantity(150, UNITS.mm))
+    body = design.extrude_sketch(name="MyBox", sketch=sketch, distance=Quantity(50, UNITS.mm))
+    body_faces = body.faces
+
+    # Project the curves on the box
+    faces = body.project_curves(direction=UNIT_VECTOR_Z, sketch=imprint_sketch, closest_face=True)
+    assert len(faces) == 1
+    # With the previous dir, the curves will be imprinted on the
+    # bottom face (closest one), i.e. the first one.
+    assert faces[0].id == body_faces[0].id
+
+    # If we now draw our curves on a higher plane, the upper face should be selected
+    imprint_sketch_2 = Sketch(plane=Plane(Point([0, 0, 50], UNITS.mm)))
+    imprint_sketch_2.draw_slot(
+        Point([10, 10, 50], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
+    )
+    imprint_sketch_2.draw_slot(
+        Point([50, 50, 50], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
+    )
+    faces = body.project_curves(direction=UNIT_VECTOR_Z, sketch=imprint_sketch_2, closest_face=True)
+    assert len(faces) == 1
+    # With the previous dir, the curves will be imprinted on the
+    # top face (closest one), i.e. the first one.
+    assert faces[0].id == body_faces[1].id
+
+    # Now, let's try projecting only a single curve (i.e. one of the slots only)
+    faces = body.project_curves(
+        direction=UNIT_VECTOR_Z, sketch=imprint_sketch_2, closest_face=True, only_one_curve=True
+    )
+    assert len(faces) == 1
+    # With the previous dir, the curves will be imprinted on the
+    # top face (closest one), i.e. the first one.
+    assert faces[0].id == body_faces[1].id
+
+    # Now once the previous curves have been projected, let's try imprinting our sketch
+    #
+    # It should generate two additional faces to our box = 6 + 2
+    _, new_faces = body.imprint_curves(faces=faces, sketch=imprint_sketch_2)
+
+    assert len(new_faces) == 2
+    assert len(body.faces) == 8
