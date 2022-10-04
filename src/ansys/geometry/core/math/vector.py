@@ -412,7 +412,7 @@ class UnitVector3D(Vector3D):
         UnitVector3D
             A ``UnitVector3D`` from ``point_a`` to ``point_b``.
         """
-        return UnitVector3D(Vector3D.from_points(point_b, point_a))
+        return UnitVector3D(Vector3D.from_points(point_a, point_b))
 
 
 class UnitVector2D(Vector2D):
@@ -459,4 +459,4 @@ class UnitVector2D(Vector2D):
         UnitVector2D
             A ``UnitVector2D`` from ``point_a`` to ``point_b``.
         """
-        return UnitVector2D(Vector2D.from_points(point_b, point_a))
+        return UnitVector2D(Vector2D.from_points(point_a, point_b))
