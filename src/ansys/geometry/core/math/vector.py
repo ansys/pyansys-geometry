@@ -3,15 +3,13 @@ from io import UnsupportedOperation
 from typing import Union
 
 import numpy as np
-from pint import Quantity, Unit
+from pint import Quantity
 
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.misc import (
     Accuracy,
-    PhysicalQuantity,
     check_is_float_int,
     check_ndarray_is_float_int,
-    check_pint_unit_compatibility,
     check_type,
     check_type_equivalence,
 )
@@ -326,15 +324,15 @@ class UnitVector3D(Vector3D):
 
     @Vector3D.x.setter
     def x(self, value: Real) -> None:
-        raise UnsupportedOperation("UnitVector is immutable.")
+        raise UnsupportedOperation("UnitVector3D is immutable.")
 
     @Vector3D.y.setter
     def y(self, value: Real) -> None:
-        raise UnsupportedOperation("UnitVector is immutable.")
+        raise UnsupportedOperation("UnitVector3D is immutable.")
 
     @Vector3D.z.setter
     def z(self, value: Real) -> None:
-        raise UnsupportedOperation("UnitVector is immutable.")
+        raise UnsupportedOperation("UnitVector3D is immutable.")
 
     @classmethod
     def from_points(
@@ -379,11 +377,11 @@ class UnitVector2D(Vector2D):
 
     @Vector2D.x.setter
     def x(self, value: Real) -> None:
-        raise UnsupportedOperation("UnitVector is immutable.")
+        raise UnsupportedOperation("UnitVector2D is immutable.")
 
     @Vector2D.y.setter
     def y(self, value: Real) -> None:
-        raise UnsupportedOperation("UnitVector is immutable.")
+        raise UnsupportedOperation("UnitVector2D is immutable.")
 
     @classmethod
     def from_points(
@@ -408,230 +406,3 @@ class UnitVector2D(Vector2D):
         check_type(point_a, (Point2D, np.ndarray, list))
         check_type(point_b, (Point2D, np.ndarray, list))
         return UnitVector2D(point_b - point_a)
-
-
-class QuantityVector3D(Vector3D, PhysicalQuantity):
-    def __init__(
-        self,
-        vector: Union[np.ndarray, RealSequence, Vector3D],
-        unit: Unit,
-    ):
-        # Call the PhysicalQuantity ctor
-        super().__init__(unit, expected_dimensions=None)
-
-        # Check the inputs
-        check_ndarray_is_float_int(vector, "vector") if isinstance(
-            vector, np.ndarray
-        ) else check_ndarray_is_float_int(np.asarray(vector), "vector")
-
-        # Check dimensions
-        if len(vector) != 2:
-            raise ValueError("QuantityVector3D class must receive 3 arguments.")  # noqa: E501
-
-        # Store values
-        self.flat = [(elem * self.unit).to_base_units().magnitude for elem in vector]
-
-    @property
-    def x(self) -> Quantity:
-        """X coordinate of ``QuantityVector3D``."""
-        return self._get_quantity(Vector3D.x.fget(self))
-
-    @x.setter
-    def x(self, x: Quantity) -> None:
-        """Set X coordinate of ``QuantityVector3D``."""
-        Vector3D.x.fset(self, self._base_units_magnitude(x))
-
-    @property
-    def y(self) -> Quantity:
-        """Y coordinate of ``QuantityVector3D``."""
-        return self._get_quantity(Vector3D.y.fget(self))
-
-    @y.setter
-    def y(self, y: Quantity) -> None:
-        """Set Y coordinate of ``QuantityVector3D``."""
-        Vector3D.y.fset(self, self._base_units_magnitude(y))
-
-    @property
-    def z(self) -> Quantity:
-        """Z coordinate of ``QuantityVector3D``."""
-        return self._get_quantity(Vector3D.z.fget(self))
-
-    @z.setter
-    def z(self, z: Quantity) -> None:
-        """Set Z coordinate of ``QuantityVector3D``."""
-        Vector3D.z.fset(self, self._base_units_magnitude(z))
-
-    @property
-    def norm(self) -> Quantity:
-        """Norm of ``QuantityVector3D``."""
-        return self._get_quantity(Vector3D.norm.fget(self))
-
-    @property
-    def magnitude(self) -> float:
-        return self.norm.m
-
-    def normalize(self) -> Vector3D:
-        """Return a normalized version of the ``QuantityVector3D``.
-
-        Notes
-        -----
-        This will return a simple ``Vector3D`` class. Units will
-        be lost since they no longer hold any meaning.
-        """
-        norm = self.norm.to_base_units().magnitude
-        if norm > 0:
-            return Vector3D(self / norm)
-        else:
-            raise ValueError("The norm of the QuantityVector3D is not valid.")
-
-    def cross(self, v: "QuantityVector3D") -> "QuantityVector3D":
-        """Return cross product of ``QuantityVector3D``.
-
-        Notes
-        -----
-        ``QuantityVector3D`` returned will hold the same units as self.
-        """
-        check_type_equivalence(v, self)
-        check_pint_unit_compatibility(v.base_unit, self.base_unit)
-        vec = QuantityVector3D(Vector3D.cross(self, v), self.base_unit)
-        vec.unit = self.unit
-        return vec
-
-    def __eq__(self, other: "QuantityVector3D") -> bool:
-        """Equals operator for ``QuantityVector3D``."""
-        check_type_equivalence(other, self)
-        return self.base_unit == other.base_unit and Vector3D.__eq__(self, other)
-
-    def __ne__(self, other: "QuantityVector3D") -> bool:
-        """Not equals operator for ``QuantityVector3D``."""
-        return not self == other
-
-    def __mul__(self, other: Union["QuantityVector3D", Real]) -> Union["QuantityVector3D", Real]:
-        """Overload * operator with dot product."""
-        if isinstance(other, QuantityVector3D):
-            check_pint_unit_compatibility(other._base_unit, self._base_unit)
-        return Vector3D.__mul__(self, other)
-
-    def __mod__(self, other: "QuantityVector3D") -> "QuantityVector3D":
-        """Overload % operator with cross product."""
-        return self.cross(other)
-
-    @classmethod
-    def from_points(cls, point_a: Point3D, point_b: Point3D):
-        """Create a ``QuantityVector3D`` from two distinct ``Point3D``.
-
-        Parameters
-        ----------
-        point_a : Point3D
-            A :class:`Point3D` representing the first point.
-        point_b : Point3D
-            A :class:`Point3D` representing the second point.
-
-        Returns
-        -------
-        QuantityVector3D
-            A ``QuantityVector3D`` from ``point_a`` to ``point_b``.
-        """
-        check_type(point_a, Point3D)
-        check_type(point_b, Point3D)
-        return QuantityVector3D(Vector3D.from_points(point_a, point_b), point_a.base_unit)
-
-
-class QuantityVector2D(Vector2D, PhysicalQuantity):
-    def __init__(
-        self,
-        vector: Union[np.ndarray, RealSequence, Vector2D],
-        unit: Unit,
-    ):
-        # Call the PhysicalQuantity ctor
-        super().__init__(unit, expected_dimensions=None)
-
-        # Check the inputs
-        check_ndarray_is_float_int(vector, "vector") if isinstance(
-            vector, np.ndarray
-        ) else check_ndarray_is_float_int(np.asarray(vector), "vector")
-
-        # Check dimensions
-        if len(vector) != 2:
-            raise ValueError("QuantityVector2D class must receive 2 arguments.")  # noqa: E501
-
-        # Store values
-        self.flat = [(elem * self.unit).to_base_units().magnitude for elem in vector]
-
-    @property
-    def x(self) -> Quantity:
-        """X coordinate of ``QuantityVector2D``."""
-        return self._get_quantity(Vector2D.x.fget(self))
-
-    @x.setter
-    def x(self, x: Quantity) -> None:
-        """Set X coordinate of ``QuantityVector2D``."""
-        Vector2D.x.fset(self, self._base_units_magnitude(x))
-
-    @property
-    def y(self) -> Quantity:
-        """Y coordinate of ``QuantityVector2D``."""
-        return self._get_quantity(Vector2D.y.fget(self))
-
-    @y.setter
-    def y(self, y: Quantity) -> None:
-        """Set Y coordinate of ``QuantityVector2D``."""
-        Vector2D.y.fset(self, self._base_units_magnitude(y))
-
-    @property
-    def norm(self) -> Quantity:
-        """Norm of ``QuantityVector2D``."""
-        return self._get_quantity(Vector2D.norm.fget(self))
-
-    @property
-    def magnitude(self) -> float:
-        return self.norm.m
-
-    def normalize(self) -> Vector2D:
-        """Return a normalized version of the ``QuantityVector2D``.
-
-        Notes
-        -----
-        This will return a simple ``Vector2D`` class. Units will
-        be lost since they no longer hold any meaning.
-        """
-        norm = self.norm.to_base_units().magnitude
-        if norm > 0:
-            return Vector2D(self / norm)
-        else:
-            raise ValueError("The norm of the Vector2D is not valid.")
-
-    def __eq__(self, other: "QuantityVector2D") -> bool:
-        """Equals operator for ``QuantityVector2D``."""
-        check_type_equivalence(other, self)
-        return self.base_unit == other.base_unit and Vector2D.__eq__(self, other)
-
-    def __ne__(self, other: "QuantityVector2D") -> bool:
-        """Not equals operator for ``QuantityVector2D``."""
-        return not self == other
-
-    def __mul__(self, other: Union["QuantityVector2D", Real]) -> Union["QuantityVector2D", Real]:
-        """Overload * operator with dot product."""
-        if isinstance(other, QuantityVector2D):
-            check_pint_unit_compatibility(other._base_unit, self._base_unit)
-        return Vector2D.__mul__(self, other)
-
-    @classmethod
-    def from_points(cls, point_a: Point2D, point_b: Point2D):
-        """Create a ``QuantityVector2D`` from two distinct ``Point2D``.
-
-        Parameters
-        ----------
-        point_a : Point2D
-            A :class:`Point2D` representing the first point.
-        point_b : Point2D
-            A :class:`Point2D` representing the second point.
-
-        Returns
-        -------
-        QuantityVector2D
-            A ``QuantityVector2D`` from ``point_a`` to ``point_b``.
-        """
-        check_type(point_a, Point2D)
-        check_type(point_b, Point2D)
-        return QuantityVector2D(Vector2D.from_points(point_a, point_b), point_a.base_unit)

@@ -5,7 +5,7 @@ from typing import List, Optional
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math import Plane, Point3D, QuantityVector3D
+from ansys.geometry.core.math import Plane, Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNITS, check_type
 from ansys.geometry.core.shapes.base import BaseShape
@@ -70,7 +70,7 @@ class Arc(BaseShape):
         self._center, self._start, self._end = center, start, end
         self._axis = axis
 
-        to_start_vector = QuantityVector3D.from_points(self._start, self._center)
+        to_start_vector = Vector3D.from_points(self._start, self._center)
         self._radius = to_start_vector.norm
 
         if not self._radius.m > 0:

@@ -2,14 +2,7 @@ import numpy as np
 from pint import Quantity
 import pytest
 
-from ansys.geometry.core.math import (
-    ZERO_VECTOR3D,
-    Plane,
-    Point3D,
-    QuantityVector3D,
-    UnitVector3D,
-    Vector3D,
-)
+from ansys.geometry.core.math import ZERO_VECTOR3D, Plane, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, UNITVECTOR3D_Z
 from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
 from ansys.geometry.core.shapes import Arc, Circle, Ellipse, Line, Segment
@@ -340,9 +333,7 @@ def test_create_segment():
     start_2b = Point3D([1, 2, 3], unit=UNITS.mm)
     end_2b = Point3D([1, 5, 9], unit=UNITS.mm)
     vector_2b = Vector3D(end_2b - start_2b)
-    vector_2b = QuantityVector3D(
-        vector_2b * 1e3, UNITS.mm
-    )  # The vector would be in meters --> convert to mm
+    vector_2b = Vector3D(vector_2b * 1e3)  # The vector would be in meters --> convert to mm
     segment_2b = Segment.from_start_point_and_quantity_vector(start_2b, vector_2b, plane=yz_plane)
     assert segment_2b.start == start
     assert segment_2b.end == end

@@ -4,7 +4,7 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core.math import Plane, Point3D, QuantityVector3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math import Plane, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import (
     UNIT_LENGTH,
     UNITS,
@@ -220,10 +220,10 @@ class Segment(Line):
         return cls(plane, start, end_vec_as_point)
 
     @classmethod
-    def from_start_point_and_quantity_vector(
+    def from_start_point_and_vector(
         cls,
         start: Point3D,
-        quantity_vector: QuantityVector3D,
+        vector: Vector3D,
         plane: Optional[Plane] = Plane(),
     ):
         """Create a ``Segment`` from a starting ``Point`` and a vector.
@@ -232,8 +232,8 @@ class Segment(Line):
         ----------
         start : Point
             Start of the line segment.
-        quantity_vector : QuantityVector
-            QuantityVector defining the line segment (with units).
+        vector : Vector
+            Vector defining the line segment (with units presumed identical to start).
         plane : Plane, optional
             A :class:`Plane` representing the planar surface where the shape is contained.
             By default, the base XY-Plane.
@@ -243,11 +243,11 @@ class Segment(Line):
         Segment
             The ``Segment`` object resulting from the inputs.
         """
-        check_type(quantity_vector, QuantityVector3D)
+        check_type(vector, Vector3D)
         return Segment.from_start_point_and_vector(
             start=start,
-            vector=quantity_vector,
-            vector_units=quantity_vector.base_unit,
+            vector=vector,
+            vector_units=start.unit,
             plane=plane,
         )
 
