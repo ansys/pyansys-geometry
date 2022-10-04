@@ -80,7 +80,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
         self[idx] = self._base_units_magnitude(input)
 
     def __add__(self, other: Union["Point2D", "Vector2D"]) -> "Point2D":
-        """Add operation for ``Point2D``"""
+        """Add operation for ``Point2D``."""
         from ansys.geometry.core.math.vector import Vector2D
 
         check_type(other, (Point2D, Vector2D))
@@ -170,7 +170,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
         return not self == other
 
     def __add__(self, other: Union["Point3D", "Vector3D"]) -> "Point3D":
-        """Add operation for ``Point3D``"""
+        """Add operation for ``Point3D``."""
         from ansys.geometry.core.math.vector import Vector3D
 
         check_type(other, (Point3D, Vector3D))
