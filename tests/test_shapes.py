@@ -468,11 +468,11 @@ def test_create_arc():
     sketch = Sketch()
 
     # Draw an arc in previous sketch
-    origin = Point3D([1, 1, 0], unit=UNITS.meter)
+    center = Point3D([1, 1, 0], unit=UNITS.meter)
     start = Point3D([1, 3, 0], unit=UNITS.meter)
     end = Point3D([3, 1, 0], unit=UNITS.meter)
-    arc_clockwise = sketch.draw_arc(origin, start, end, UnitVector3D([0, 0, -1]))
-    arc_counterclockwise = sketch.draw_arc(origin, start, end, UNITVECTOR3D_Z)
+    arc_clockwise = sketch.draw_arc(center, start, end, UnitVector3D([0, 0, -1]))
+    arc_counterclockwise = sketch.draw_arc(center, start, end, UNITVECTOR3D_Z)
 
     # Check attributes are expected ones
     assert arc_clockwise.radius == 2 * UNITS.meter
