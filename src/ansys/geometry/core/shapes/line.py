@@ -219,38 +219,6 @@ class Segment(Line):
 
         return cls(plane, start, end_vec_as_point)
 
-    @classmethod
-    def from_start_point_and_vector(
-        cls,
-        start: Point3D,
-        vector: Vector3D,
-        plane: Optional[Plane] = Plane(),
-    ):
-        """Create a ``Segment`` from a starting ``Point`` and a vector.
-
-        Parameters
-        ----------
-        start : Point
-            Start of the line segment.
-        vector : Vector
-            Vector defining the line segment (with units presumed identical to start).
-        plane : Plane, optional
-            A :class:`Plane` representing the planar surface where the shape is contained.
-            By default, the base XY-Plane.
-
-        Returns
-        -------
-        Segment
-            The ``Segment`` object resulting from the inputs.
-        """
-        check_type(vector, Vector3D)
-        return Segment.from_start_point_and_vector(
-            start=start,
-            vector=vector,
-            vector_units=start.unit,
-            plane=plane,
-        )
-
     def __check_invalid_segment_points(self):
         """Check that the start and end points are not the same."""
         if self._start == self._end:

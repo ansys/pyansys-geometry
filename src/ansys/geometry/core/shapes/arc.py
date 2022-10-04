@@ -71,7 +71,7 @@ class Arc(BaseShape):
         self._axis = axis
 
         to_start_vector = Vector3D.from_points(self._start, self._center)
-        self._radius = to_start_vector.norm
+        self._radius = Quantity(to_start_vector.norm, self._start.base_unit)
 
         if not self._radius.m > 0:
             raise ValueError("Point configuration does not yield a positive length arc radius.")

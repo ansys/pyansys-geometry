@@ -334,18 +334,20 @@ def test_create_segment():
     end_2b = Point3D([1, 5, 9], unit=UNITS.mm)
     vector_2b = Vector3D(end_2b - start_2b)
     vector_2b = Vector3D(vector_2b * 1e3)  # The vector would be in meters --> convert to mm
-    segment_2b = Segment.from_start_point_and_quantity_vector(start_2b, vector_2b, plane=yz_plane)
+    segment_2b = Segment.from_start_point_and_vector(
+        start_2b, vector_2b, vector_units=UNITS.mm, plane=yz_plane
+    )
     assert segment_2b.start == start
     assert segment_2b.end == end
     assert segment_2b.direction == unit_vector
     assert segment_2b.start.x == start_2b.x
     assert segment_2b.start.y == start_2b.y
     assert segment_2b.start.z == start_2b.z
-    assert segment_2b.start.unit == UNITS.m
+    assert segment_2b.start.unit == UNITS.mm
     assert segment_2b.end.x == end_2b.x
     assert segment_2b.end.y == end_2b.y
     assert segment_2b.end.z == end_2b.z
-    assert segment_2b.end.unit == UNITS.m
+    assert segment_2b.end.unit == UNITS.mm
 
     # Test segment_3 - Create a segment using two Point objects (in different units)
     start_3 = Point3D([1, 2, 3], unit=UNITS.mm)
