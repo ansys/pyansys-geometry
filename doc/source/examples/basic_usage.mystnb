@@ -39,7 +39,7 @@ In the following lines, a plane is defined and used to create a new sketch:
 
 ```{code-cell} ipython3
 # Define the origin point of the plane
-origin = Point([1, 1, 1])
+origin = Point3D([1, 1, 1])
 
 # Create a plane located in previous point with desired fundamental directions
 plane = Plane(
@@ -61,7 +61,7 @@ Different shapes can be drawn in the sketch using the corresponding ``draw`` met
 Circles can be drawn in a sketch by specifying the center and radius.
 
 ```{code-cell} ipython3
-circle = sketch.draw_circle(Point([2, 1, 1]), radius=30 * u.cm)
+circle = sketch.draw_circle(Point3D([2, 1, 1]), radius=30 * u.cm)
 circle.plot()
 ```
 
@@ -92,8 +92,8 @@ pentagon.plot()
 For drawing arcs of circumference, a center, starting and ending points are required.
 
 ```{code-cell} ipython3
-start_point, end_point = Point([2, 1, 1], unit=u.m), Point([0, 1, 1], unit=u.meter)
-arc = sketch.draw_arc(Point([1.5, 1, 1]), start_point, end_point)
+start_point, end_point = Point3D([2, 1, 1], unit=u.m), Point3D([0, 1, 1], unit=u.meter)
+arc = sketch.draw_arc(Point3D([1.5, 1, 1]), start_point, end_point)
 arc.plot()
 ```
 
@@ -102,7 +102,7 @@ arc.plot()
 For drawing slots with a center, width, and height.
 
 ```{code-cell} ipython3
-slot = sketch.draw_slot(Point([2, 0, 2]), 4, 3)
+slot = sketch.draw_slot(Point3D([2, 0, 2]), 4, 3)
 slot.plot()
 ```
 
@@ -111,7 +111,7 @@ slot.plot()
 For drawing boxes with a center, width, and height.
 
 ```{code-cell} ipython3
-box = sketch.draw_box(Point([2, 0, 2]), 4, 5)
+box = sketch.draw_box(Point3D([2, 0, 2]), 4, 5)
 box.plot()
 ```
 
@@ -120,7 +120,7 @@ box.plot()
 Segments can be drawn in a sketch by specifying its starting and ending points:
 
 ```{code-cell} ipython3
-start_point, end_point = Point([2, 1, 1], unit=u.m), Point([0, 1, 1], unit=u.meter)
+start_point, end_point = Point3D([2, 1, 1], unit=u.m), Point3D([0, 1, 1], unit=u.meter)
 segment = sketch.draw_segment(start_point, end_point)
 segment.plot()
 ```

@@ -351,7 +351,7 @@ def test_create_segment():
 
     # Test segment_3 - Create a segment using two Point objects (in different units)
     start_3 = Point3D([1, 2, 3], unit=UNITS.mm)
-    end_3 = Point3D([0.1, 5, 9], unit=UNITS.cm)  # Point([10, 50, 90], unit=UNITS.mm)
+    end_3 = Point3D([0.1, 5, 9], unit=UNITS.cm)  # Point3D([10, 50, 90], unit=UNITS.mm)
     unit_vector_3 = UnitVector3D(end_3 - start_3)
     segment_3 = Segment(yz_plane, start_3, end_3)
     assert segment_3.start == start_3
