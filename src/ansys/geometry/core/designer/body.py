@@ -255,7 +255,7 @@ class Body:
         check_type(sketch, Sketch)
         check_type(closest_face, bool)
 
-        self._grpc_client.log.debug(f"Projecting curves provided on {self.id}.")
+        self._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 
         project_response = self._commands_stub.ProjectCurves(
             ProjectCurvesRequest(
