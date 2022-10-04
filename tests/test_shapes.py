@@ -477,7 +477,8 @@ def test_create_arc():
     # Check attributes are expected ones
     assert arc_clockwise.radius == 2 * UNITS.meter
     assert arc_clockwise.sector_area == Quantity(
-        np.pi * (2 * 2) * (arc_clockwise.angle.m / (2 * np.pi)), UNITS.meter * UNITS.meter
+        np.pi * (arc_clockwise.radius.m**2) * (arc_clockwise.angle.m / (2 * np.pi)),
+        UNITS.meter * UNITS.meter,
     )
     assert arc_clockwise.length == (arc_clockwise.radius.m * arc_clockwise.angle.m) * UNITS.meter
     assert (
