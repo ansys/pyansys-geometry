@@ -169,7 +169,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
         """Not equals operator for ``Point3D``."""
         return not self == other
 
-    def __add__(self, other: Union["Point3D", "Vector3D"]) -> "Point2D":
+    def __add__(self, other: Union["Point3D", "Vector3D"]) -> "Point3D":
         """Add operation for ``Point3D``"""
         from ansys.geometry.core.math.vector import Vector3D
 
