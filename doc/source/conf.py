@@ -1,7 +1,7 @@
 """Sphinx documentation configuration file."""
 from datetime import datetime
 
-from ansys_sphinx_theme import pyansys_logo_black as logo
+from ansys_sphinx_theme import ansys_favicon, pyansys_logo_black
 
 # Project information
 project = "ansys-geometry-core"
@@ -10,7 +10,7 @@ author = "ANSYS, Inc."
 release = version = "0.1.dev0"
 
 # Select desired logo, theme, and declare the html title
-html_logo = logo
+html_logo = pyansys_logo_black
 html_theme = "ansys_sphinx_theme"
 html_short_title = html_title = "PyGeometry"
 
@@ -81,6 +81,8 @@ html_static_path = ["_static"]
 html_css_files = [
     "custom.css",
 ]
+
+html_favicon = ansys_favicon
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
