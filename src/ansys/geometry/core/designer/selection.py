@@ -73,7 +73,7 @@ class NamedSelection:
         [ids.add(edge.id) for edge in edges]
 
         named_selection_request = CreateNamedSelectionRequest(name=name, members=ids)
-        self._grpc_client.log.debug("Requesting creation of Named selection.")
+        self._grpc_client.log.debug("Requesting creation of named selection.")
         new_named_selection = self._named_selections_stub.CreateNamedSelection(
             named_selection_request
         )
