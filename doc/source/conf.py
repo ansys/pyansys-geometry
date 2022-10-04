@@ -29,6 +29,7 @@ html_theme_options = {
 extensions = [
     "autoapi.extension",
     "sphinx.ext.autodoc",
+    "sphinx_autodoc_typehints",
     "sphinx.ext.autosummary",
     "numpydoc",
     "sphinx.ext.intersphinx",
@@ -117,3 +118,6 @@ nbsphinx_custom_formats = {
 nbsphinx_thumbnails = {
     "examples/basic_usage": "_static/thumbnails/basic_usage.png",
 }
+
+typehints_defaults = "comma"
+simplify_optional_unions = False
