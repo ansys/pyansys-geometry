@@ -218,18 +218,31 @@ class Body:
         return (new_edges, new_faces)
 
     def project_curves(
-        self, direction: UnitVector3D, sketch: Sketch, closest_face: bool
+        self,
+        direction: UnitVector3D,
+        sketch: Sketch,
+        closest_face: bool,
+        only_one_curve: Optional[bool] = False,
     ) -> List[Face]:
         """Projects all of the specified geometries onto the body.
 
         Parameters
         ----------
-        direction: UnitVector
+        direction: UnitVector3D
             Establishes the direction of the projection.
         sketch: Sketch
             All of the curves to project on the body.
         closest_face: bool
             Signifies whether to target the closest face with the projection.
+        only_one_curve: bool, optional
+            Projects only one curve of the entire sketch provided. If ``True``, then
+            the first curve is projected. By default, ``False``.
+
+        Notes
+        -----
+        The ``only_one_curve`` boolean allows to optimize the server call, since
+        projecting curves is an expensive operation. This reduces the workload on the
+        server side.
 
         Returns
         -------
@@ -244,7 +257,9 @@ class Body:
         project_response = self._commands_stub.ProjectCurves(
             ProjectCurvesRequest(
                 body=self._id,
-                curves=sketch_shapes_to_grpc_geometries(sketch.shapes_list),
+                curves=sketch_shapes_to_grpc_geometries(
+                    sketch.shapes_list if not only_one_curve else [sketch.shapes_list[0]]
+                ),
                 direction=unit_vector_to_grpc_direction(direction),
                 closestFace=closest_face,
             )
