@@ -121,7 +121,7 @@ class Line(BaseShape):
 
         Returns
         -------
-        List[Point]
+        List[Point3D]
             A list of points representing the shape.
         """
         quantified_dir = UNITS.convert(self.direction, self.start.unit, self.start.base_unit)
@@ -137,9 +137,9 @@ class Segment(Line):
     ----------
     plane : Plane
         A :class:`Plane` representing the planar surface where the shape is contained.
-    start: Point
+    start: Point3D
         Start of the line segment.
-    end: Point
+    end: Point3D
         End of the line segment.
     """
 
@@ -198,9 +198,9 @@ class Segment(Line):
 
         Parameters
         ----------
-        start : Point
+        start : Point3D
             Start of the line segment.
-        vector : Vector
+        vector : Vector3D
             Vector defining the line segment.
         vector_units : ~pint.Unit, optional
             The length units of the vector, by default ``UNIT_LENGTH``.
@@ -247,7 +247,7 @@ class Segment(Line):
 
         Returns
         -------
-        List[Point]
+        List[Point3D]
             A list of points representing the shape.
         """
         start_unit_length = Point3D(

@@ -171,11 +171,11 @@ def circle_to_grpc_circle(circle: Circle) -> GRPCCircle:
 
 
 def point_to_grpc_point(point: Point3D) -> GRPCPoint:
-    """Marshals a :class:`Point` to a Point gRPC message of the Geometry Service.
+    """Marshals a :class:`Point3D` to a Point gRPC message of the Geometry Service.
 
     Parameters
     ----------
-    point : Point
+    point : Point3D
         Source point data.
 
     Returns

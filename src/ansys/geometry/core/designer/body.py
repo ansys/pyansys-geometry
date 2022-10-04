@@ -312,7 +312,7 @@ class Body:
 
         >>> from ansys.geometry.core.misc.units import UNITS as u
         >>> from ansys.geometry.core.sketch import Sketch
-        >>> from ansys.geometry.core.math import Plane, Point, UnitVector
+        >>> from ansys.geometry.core.math import Plane, Point3D, UnitVector
         >>> from ansys.geometry.core import Modeler
         >>> modeler = Modeler()
         >>> origin = Point3D([0, 0, 0])

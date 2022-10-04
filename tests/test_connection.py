@@ -106,7 +106,7 @@ def test_polygon_message_conversion():
 
 
 def test_point_message_conversion():
-    """Test conversion between :class:`Point` and expected gRPC message type."""
+    """Test conversion between :class:`Point3D` and expected gRPC message type."""
     point = Point3D([10, 100, 1000], UNITS.mm)
     grpc_point_message = point_to_grpc_point(point)
 

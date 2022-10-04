@@ -47,7 +47,7 @@ class BaseShape:
 
         Returns
         -------
-        List[Point]
+        List[Point3D]
             A list of points representing the shape.
         """
         try:

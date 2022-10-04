@@ -502,7 +502,7 @@ def test_vector3D_errors():
 
 
 def test_vector2D_errors():
-    """Testing multiple ``Vector`` errors."""
+    """Testing multiple ``Vector2D`` errors."""
 
     with pytest.raises(
         ValueError,

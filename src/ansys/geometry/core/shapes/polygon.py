@@ -19,8 +19,8 @@ class Polygon(BaseShape):
     ----------
     plane : Plane
         A :class:`Plane` representing the planar surface where the shape is contained.
-    center: Point
-        A :class:`Point` representing the center of the circle.
+    center: Point3D
+        A :class:`Point3D` representing the center of the circle.
     inner_radius : Union[Quantity, Distance]
         The inradius(apothem) of the polygon.
     sides : int
@@ -71,7 +71,7 @@ class Polygon(BaseShape):
 
         Returns
         -------
-        Point
+        Point3D
             The center of the polygon.
         """
         return self._center
@@ -166,7 +166,7 @@ class Polygon(BaseShape):
 
         Returns
         -------
-        list[Point]
+        list[Point3D]
             A list of vertices representing the shape.
 
         """

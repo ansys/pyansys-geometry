@@ -63,8 +63,8 @@ class Sketch:
 
         Parameters
         ----------
-        center: Point
-            A :class:`Point` representing the center of the box.
+        center: Point3D
+            A :class:`Point3D` representing the center of the box.
         width : Union[Quantity, Distance, Real]
             The width of the box.
         height : Union[Quantity, Distance, Real]
@@ -92,8 +92,8 @@ class Sketch:
 
         Parameters
         ----------
-        center: Point
-            A :class:`Point` representing the center of the slot.
+        center: Point3D
+            A :class:`Point3D` representing the center of the slot.
         width : Union[Quantity, Distance, Real]
             The width of the slot.
         height : Union[Quantity, Distance, Real]
@@ -115,8 +115,8 @@ class Sketch:
 
         Parameters
         ----------
-        center: Point
-            A :class:`Point` representing the center of the circle.
+        center: Point3D
+            A :class:`Point3D` representing the center of the circle.
         radius : Union[Quantity, Distance]
             The radius of the circle.
 
@@ -141,8 +141,8 @@ class Sketch:
 
         Parameters
         ----------
-        center: Point
-            A :class:`Point` representing the center of the ellipse.
+        center: Point3D
+            A :class:`Point3D` representing the center of the ellipse.
         semi_major_axis : Union[Quantity, Distance]
             The semi-major axis of the ellipse.
         semi_minor_axis : Union[Quantity, Distance]
@@ -170,9 +170,9 @@ class Sketch:
 
         Parameters
         ----------
-        start : Point
+        start : Point3D
             Start of the line segment.
-        end : Point
+        end : Point3D
             End of the line segment.
 
         Returns
@@ -195,7 +195,7 @@ class Sketch:
 
         Parameters
         ----------
-        start : Point
+        start : Point3D
             Origin/start of the line.
         direction: Union[Vector, UnitVector]
             Direction of the line.
@@ -221,8 +221,8 @@ class Sketch:
 
         Parameters
         ----------
-        center: Point
-            A :class:`Point` representing the center of the circle.
+        center: Point3D
+            A :class:`Point3D` representing the center of the circle.
         inner_radius : Union[Quantity, Distance]
             The inradius(apothem) of the polygon.
         sides : int
@@ -247,12 +247,12 @@ class Sketch:
 
         Parameters
         ----------
-        center : Point
-            A :class:``Point`` representing the center of the arc.
-        start : Point
-            A :class:``Point`` representing the start of the shape.
-        end : Point
-            A :class:``Point`` representing the end of the shape.
+        center : Point3D
+            A :class:``Point3D`` representing the center of the arc.
+        start : Point3D
+            A :class:``Point3D`` representing the start of the shape.
+        end : Point3D
+            A :class:``Point3D`` representing the end of the shape.
         axis : Optional[UnitVector]
             A :class:``UnitVector`` determining the rotation direction of the arc.
             It is expected to be orthogonal to the provided plane.

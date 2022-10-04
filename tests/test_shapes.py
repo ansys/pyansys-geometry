@@ -291,7 +291,7 @@ def test_create_line():
 def test_create_segment():
     """Simple test to create a ``Segment``."""
 
-    # Test segment - Create a segment using two Point objects
+    # Test segment - Create a segment using two Point3D objects
     start = Point3D([1, 2, 3], unit=UNITS.mm)
     end = Point3D([1, 5, 9], unit=UNITS.mm)
     unit_vector = UnitVector3D(end - start)
@@ -329,7 +329,7 @@ def test_create_segment():
     assert segment_2.end.z == end_2.z
     assert segment_2.end.unit == UNIT_LENGTH
 
-    # Test segment_2b - Create a segment using a Point and a vector (same units as the point)
+    # Test segment_2b - Create a segment using a Point3D and a vector (same units as the point)
     start_2b = Point3D([1, 2, 3], unit=UNITS.mm)
     end_2b = Point3D([1, 5, 9], unit=UNITS.mm)
     vector_2b = Vector3D(end_2b - start_2b)

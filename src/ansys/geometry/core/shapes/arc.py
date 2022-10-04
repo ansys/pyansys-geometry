@@ -28,12 +28,12 @@ class Arc(BaseShape):
         ----------
         plane : Plane
             A :class:`Plane` representing the planar surface where the shape is contained.
-        center : Point
-            A :class:`Point` representing the center of the arc.
-        start: Point
-            A :class:`Point` representing the start of the arc.
-        end : Point
-            A :class:`Point` representing the end of the arc.
+        center : Point3D
+            A :class:`Point3D` representing the center of the arc.
+        start: Point3D
+            A :class:`Point3D` representing the start of the arc.
+        end : Point3D
+            A :class:`Point3D` representing the end of the arc.
         axis : Optional[UnitVector]
             A :class:`UnitVector` determining the rotation direction of the arc.
             It is expected to be orthogonal to the provided plane.
@@ -89,7 +89,7 @@ class Arc(BaseShape):
 
         Returns
         -------
-        Point
+        Point3D
             Starting point of the arc line.
 
         """
@@ -101,7 +101,7 @@ class Arc(BaseShape):
 
         Returns
         -------
-        Point
+        Point3D
             Ending point of the arc line.
 
         """
@@ -125,7 +125,7 @@ class Arc(BaseShape):
 
         Returns
         -------
-        Point
+        Point3D
             The center of the arc.
 
         """
@@ -201,7 +201,7 @@ class Arc(BaseShape):
 
         Returns
         -------
-        List[Point]
+        List[Point3D]
             A list of points representing the shape.
         """
         use_counter_clockwise_rotation = True if self._axis == self._plane.direction_z else False

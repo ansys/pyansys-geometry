@@ -20,9 +20,9 @@ class Plane(Frame):
     ----------
     origin : Optional[Union[~numpy.ndarray, RealSequence, Point]]
         Centered origin of the ``Frame``. By default, cartesian origin.
-    direction_x: Optional[Union[~numpy.ndarray, RealSequence, UnitVector, Vector]]
+    direction_x: Optional[Union[~numpy.ndarray, RealSequence, UnitVector, Vector3D]]
         X-axis direction. By default, ``UNITVECTOR3D_X``
-    direction_y: Optional[Union[~numpy.ndarray, RealSequence, UnitVector, Vector]]
+    direction_y: Optional[Union[~numpy.ndarray, RealSequence, UnitVector, Vector3D]]
         Y-axis direction. By default, ``UNITVECTOR3D_Y``
     """
 
@@ -36,12 +36,12 @@ class Plane(Frame):
         super().__init__(origin, direction_x, direction_y)
 
     def is_point_contained(self, point: Point3D) -> bool:
-        """Method for checking if a Point is contained in the plane.
+        """Method for checking if a Point3D is contained in the plane.
 
         Parameters
         ----------
-        point : Point
-            The :class:`Point` to be checked.
+        point : Point3D
+            The :class:`Point3D` to be checked.
 
         Returns
         -------

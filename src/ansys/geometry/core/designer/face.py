@@ -60,9 +60,9 @@ class FaceLoop:
         The type of loop defined.
     length : Quantity
         The length of the loop.
-    min_bbox : Point
+    min_bbox : Point3D
         The minimum point of the bounding box containing the loop.
-    max_bbox : Point
+    max_bbox : Point3D
         The maximum point of the bounding box containing the loop.
     edges : List[Edge]
         The edges contained in the loop.
@@ -256,7 +256,7 @@ class Face:
         Returns
         -------
         Point
-            The :class:`Point` object evaluated at the given U and V coordinates.
+            The :class:`Point3D` object evaluated at the given U and V coordinates.
         """
         response = self._faces_stub.EvaluateFace(EvaluateFaceRequest(face=self.id, u=u, v=v)).point
         return Point3D([response.x, response.y, response.z], SERVER_UNIT_LENGTH)

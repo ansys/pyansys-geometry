@@ -19,8 +19,8 @@ class Box(BaseShape):
     ----------
     plane : Plane
         A :class:`Plane` representing the planar surface where the shape is contained.
-    center: Point
-        A :class:`Point` representing the center of the box.
+    center: Point3D
+        A :class:`Point3D` representing the center of the box.
     width : Union[Quantity, Distance, Real]
         The width of the box.
     height : Union[Quantity, Distance, Real]
@@ -92,7 +92,7 @@ class Box(BaseShape):
 
         Returns
         -------
-        Point
+        Point3D
             The center of the box.
         """
         return self._center
@@ -169,7 +169,7 @@ class Box(BaseShape):
 
         Returns
         -------
-        List[Point]
+        List[Point3D]
             A list of points representing the shape.
         """
         points = []
@@ -210,7 +210,7 @@ class Box(BaseShape):
             The X axis offset from the box center.
         y_offset : Real
             The Y axis offset from the box center.
-        reference : Point
+        reference : Point3D
             The center of the box.
         unit : Unit
             The units employed for defining the X/Y offsets.
@@ -219,7 +219,7 @@ class Box(BaseShape):
 
         Returns
         -------
-        Point
+        Point3D
             The reference point requested of the box (in the global coordinate system).
         """
         rotated_point = Point3D(rotation @ [x_offset, y_offset, 0], unit)

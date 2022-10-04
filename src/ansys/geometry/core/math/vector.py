@@ -215,7 +215,7 @@ class Vector2D(np.ndarray):
 
     @y.setter
     def y(self, value: Real) -> None:
-        """Sets the Y coordinate of ``Vector``."""
+        """Sets the Y coordinate of ``Vector2D``."""
         check_is_float_int(value, "y")
         self[1] = value
 
@@ -292,9 +292,9 @@ class Vector2D(np.ndarray):
         Parameters
         ----------
         point_a : Point2D
-            A :class:`Point` representing the first point.
+            A :class:`Point2D` representing the first point.
         point_b : Point2D
-            A :class:`Point` representing the second point.
+            A :class:`Point2D` representing the second point.
 
         Returns
         -------

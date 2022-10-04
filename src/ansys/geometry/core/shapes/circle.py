@@ -16,8 +16,8 @@ class Circle(BaseShape):
     ----------
     plane : Plane
         A :class:`Plane` representing the planar surface where the shape is contained.
-    center: Point
-        A :class:`Point` representing the center of the circle.
+    center: Point3D
+        A :class:`Point3D` representing the center of the circle.
     radius : Union[Quantity, Distance]
         The radius of the circle.
     """
@@ -47,7 +47,7 @@ class Circle(BaseShape):
 
         Returns
         -------
-        Point
+        Point3D
             The center of the circle.
         """
         return self._center
@@ -119,7 +119,7 @@ class Circle(BaseShape):
 
         Returns
         -------
-        List[Point]
+        List[Point3D]
             A list of points representing the shape.
         """
         theta = np.linspace(0, 2 * np.pi, num_points)
@@ -148,8 +148,8 @@ class Circle(BaseShape):
 
         Parameters
         ----------
-        center: Point
-            A :class:`Point` representing the center of the circle.
+        center: Point3D
+            A :class:`Point3D` representing the center of the circle.
         radius : Real
             The radius of the circle.
         plane : Plane, optional

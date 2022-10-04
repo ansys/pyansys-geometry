@@ -27,9 +27,9 @@ class Cone:
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point]
         Centered origin of the ``Cone``.
-    direction_x: Union[~numpy.ndarray, RealSequence, UnitVector, Vector]
+    direction_x: Union[~numpy.ndarray, RealSequence, UnitVector, Vector3D]
         X-plane direction.
-    direction_y: Union[~numpy.ndarray, RealSequence, UnitVector, Vector]
+    direction_y: Union[~numpy.ndarray, RealSequence, UnitVector, Vector3D]
         Y-plane direction.
     radius: Real
         Radius of ``Cone``.

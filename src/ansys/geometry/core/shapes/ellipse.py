@@ -19,8 +19,8 @@ class Ellipse(BaseShape):
     ----------
     plane : Plane
         A :class:`Plane` representing the planar surface where the shape is contained.
-    center: Point
-        A :class:`Point` representing the center of the ellipse.
+    center: Point3D
+        A :class:`Point3D` representing the center of the ellipse.
     semi_major_axis : Union[Quantity, Distance]
         The semi-major axis of the ellipse.
     semi_minor_axis : Union[Quantity, Distance]
@@ -74,7 +74,7 @@ class Ellipse(BaseShape):
 
         Returns
         -------
-        Point
+        Point3D
             The center of the ellipse.
         """
         return self._center
@@ -193,7 +193,7 @@ class Ellipse(BaseShape):
 
         Returns
         -------
-        List[Point]
+        List[Point3D]
             A list of points representing the shape.
         """
         angle_cos = np.cos(self._angle_offset.value.m_as(UNIT_ANGLE))
@@ -238,8 +238,8 @@ class Ellipse(BaseShape):
 
         Parameters
         ----------
-        center: Point
-            A :class:`Point` representing the center of the ellipse.
+        center: Point3D
+            A :class:`Point3D` representing the center of the ellipse.
         semi_major_axis : Union[Quantity, Distance]
             The semi-major axis of the ellipse.
         semi_minor_axis : Union[Quantity, Distance]

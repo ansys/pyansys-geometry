@@ -22,8 +22,8 @@ class Slot(BaseShape):
     ----------
     plane : Plane
         A :class:`Plane` representing the planar surface where the shape is contained.
-    center: Point
-        A :class:`Point` representing the center of the slot.
+    center: Point3D
+        A :class:`Point3D` representing the center of the slot.
     width : Union[Quantity, Distance, Real]
         The width of the slot main body.
     height : Union[Quantity, Distance, Real]
@@ -112,7 +112,7 @@ class Slot(BaseShape):
 
         Returns
         -------
-        Point
+        Point3D
             The center of the slot.
         """
         return self._center
@@ -187,7 +187,7 @@ class Slot(BaseShape):
 
         Returns
         -------
-        List[Point]
+        List[Point3D]
             A list of points representing the shape.
         """
         if num_points < 10:
@@ -218,7 +218,7 @@ class Slot(BaseShape):
             The X axis offset from the slot center.
         y_offset : Real
             The Y axis offset from the slot center.
-        reference : Point
+        reference : Point3D
             The center of the slot.
         unit : Unit
             The units employed for defining the X/Y offsets.
@@ -227,7 +227,7 @@ class Slot(BaseShape):
 
         Returns
         -------
-        Point
+        Point3D
             The reference point requested of the slot (in the global coordinate system).
         """
         rotated_point = Point3D(rotation @ [x_offset, y_offset, 0], unit)
