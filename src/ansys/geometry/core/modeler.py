@@ -1,5 +1,7 @@
 """``Modeler`` class module."""
-from typing import Union
+import logging
+from pathlib import Path
+from typing import Optional, Union
 
 from grpc import Channel
 
@@ -27,6 +29,11 @@ class Modeler:
     timeout : Real, optional
         Timeout in seconds to achieve the connection.
         By default, 60 seconds.
+    logging_level : int, optional
+        The logging level to be applied to the client.
+        By default, ``INFO``.
+    logging_file : Optional[str, Path]
+        The file to output the log, if requested. By default, ``None``.
     """
 
     def __init__(
@@ -35,12 +42,26 @@ class Modeler:
         port: Union[str, int] = DEFAULT_PORT,
         channel: Channel = None,
         timeout=60,
+        logging_level: Optional[int] = logging.INFO,
+        logging_file: Optional[Union[Path, str]] = None,
     ):
         """Constructor method for ``Modeler``."""
-        self._client = GrpcClient(host, port, channel, timeout=timeout)
+        self._client = GrpcClient(
+            host=host,
+            port=port,
+            channel=channel,
+            timeout=timeout,
+            logging_level=logging_level,
+            logging_file=logging_file,
+        )
 
         # Design[] maintaining references to all designs within the modeler workspace
         self._designs = []
+
+    @property
+    def client(self) -> GrpcClient:
+        """The ``Modeler`` instance client."""
+        return self._client
 
     def create_design(self, name: str) -> Design:
         """Initializes a new design with the connected client.

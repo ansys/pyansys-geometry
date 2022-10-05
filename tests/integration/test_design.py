@@ -1,6 +1,5 @@
 """Test design interaction."""
 
-from grpc._channel import _InactiveRpcError
 from pint import Quantity
 import pytest
 
@@ -167,13 +166,8 @@ def test_component_body(modeler: Modeler):
     assert body.id is not None
     assert body.is_surface is False
     assert len(body.faces) == 7  # 5 sides + top + bottom
-    # TODO: GetVolume is not implemented on server side yet
-    try:
-        # All are in mm
-        expected_vol = pentagon.area.m * distance_extruded_body.m * 1e-9  # factor to m**3
-        assert body.volume.m == pytest.approx(expected_vol)
-    except (_InactiveRpcError):
-        pass
+    expected_vol = pentagon.area.m * distance_extruded_body.m * 1e-9  # In mm -factor to m**3
+    assert body.volume.m == pytest.approx(expected_vol)
     assert len(design.components) == 0
     assert len(design.bodies) == 1
     assert len(body.edges) == 15  # 5 top + 5 bottom + 5 sides
@@ -697,6 +691,12 @@ def test_bodies_translation(modeler: Modeler):
     )
     design.translate_bodies(
         [body_circle_comp, body_polygon_comp], UnitVector3D([0, -1, 1]), Quantity(88, UNITS.mm)
+    )
+
+    # Try translating a body that does not belong to this component - no error thrown,
+    # but no operation performed either.
+    circle_comp.translate_bodies(
+        [body_polygon_comp], UnitVector([0, -1, 1]), Quantity(88, UNITS.mm)
     )
 
 
