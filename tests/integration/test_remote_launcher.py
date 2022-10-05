@@ -10,8 +10,16 @@ from ansys.geometry.core.connection.launcher import launch_modeler
 
 
 def test_launch_remote_instance(monkeypatch, modeler: Modeler):
-    # Create a mock pypim pretenting it is configured and returning
-    # a channel to an already running pygeometrry
+    """Test to create a mock pypim pretenting it is configured and returning
+    a channel to an already running PyGeometry.
+
+    Parameters
+    ----------
+    modeler : ansys.geometry.core.modeler.Modeler
+        The client to be used for the tests.
+    monkeypatch : pytest.monkeypatch
+        The fixture for safely patching and mocking functionality in tests
+    """
     mock_instance = pypim.Instance(
         definition_name="definitions/fake-geometry",
         name="instances/fake-geometry",
