@@ -1,5 +1,6 @@
 """Module for connecting to geometry service instances."""
 
+from ansys.geometry.core import LOG as logger
 from ansys.geometry.core.modeler import Modeler
 
 try:
@@ -35,7 +36,9 @@ def launch_modeler() -> Modeler:
     # Start pygeometry with PyPIM if the environment is configured for it
     # and the user did not pass a directive on how to launch it.
     if pypim.is_configured():
-        # LOG.info("Starting MAPDL remotely. The startup configuration will be ignored.")
+        logger.info(
+            "Starting Geometry service remotely. The startup configuration will be ignored."
+        )
         return launch_remote_modeler()
 
     raise NotImplementedError("Not yet implemented")

@@ -17,10 +17,10 @@ def test_launch_remote_instance(monkeypatch, modeler: Modeler):
         name="instances/fake-geometry",
         ready=True,
         status_message=None,
-        services={"grpc": pypim.Service(uri=modeler._client._target, headers={})},
+        services={"grpc": pypim.Service(uri=modeler.client._target, headers={})},
     )
     pim_channel = insecure_channel(
-        modeler._client._target,
+        modeler.client._target,
         options=[
             ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
         ],
@@ -57,7 +57,7 @@ def test_launch_remote_instance(monkeypatch, modeler: Modeler):
     )
 
     # And it kept track of the instance to be able to delete it
-    assert modeler._client._remote_instance == mock_instance
+    assert modeler.client._remote_instance == mock_instance
 
     # And it connected using the channel created by PyPIM
-    assert modeler._client.channel == pim_channel
+    assert modeler.client.channel == pim_channel
