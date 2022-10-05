@@ -119,7 +119,7 @@ class Vector3D(np.ndarray):
             The angle between both vectors.
         """
         if v.is_zero or self.is_zero:
-            raise ValueError("Both vectors cannot be zero.")
+            raise ValueError("Vectors cannot be zero-valued.")
 
         sine = (self % v).magnitude
         cosine = self * v
@@ -301,12 +301,12 @@ class Vector2D(np.ndarray):
             The angle between both vectors.
         """
         if v.is_zero or self.is_zero:
-            raise ValueError("Both vectors cannot be zero.")
+            raise ValueError("Vectors cannot be zero-valued.")
 
         angle = np.arctan2(v.y * self.x - v.x * self.y, v.x * self.x + v.y * self.y)
 
         if angle < 0:
-            angle = angle + np.pi
+            angle = angle + 2 * np.pi
 
         return Quantity(angle, UNIT_ANGLE)
 

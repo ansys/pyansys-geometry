@@ -18,7 +18,7 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector3D,
 )
-from ansys.geometry.core.math.constants import UNITVECTOR2D_X, UNITVECTOR2D_Y
+from ansys.geometry.core.math.constants import UNITVECTOR2D_X, UNITVECTOR2D_Y, ZERO_VECTOR2D
 from ansys.geometry.core.math.vector import UnitVector2D, Vector2D
 from ansys.geometry.core.misc import UNITS
 
@@ -339,6 +339,22 @@ def test_vector3D():
     assert abs(vector_from_points.y - 0.058) <= DOUBLE_EPS
     assert abs(vector_from_points.z - 0.027) <= DOUBLE_EPS
 
+    # Compute the angle of two vectors when they are parallel
+    pos_x = UNITVECTOR3D_X
+    neg_x = -UNITVECTOR3D_X
+    ang_pi = pos_x.get_angle_between(neg_x)
+    ang_0 = pos_x.get_angle_between(pos_x)
+    assert ang_pi.m == np.pi
+    assert ang_0.m == 0
+
+    # Add two vectors
+    vec_res = pos_x + neg_x
+    assert vec_res == ZERO_VECTOR3D
+
+    # Subtract two vectors
+    vec_res = pos_x - neg_x
+    assert vec_res == (UNITVECTOR3D_X + UNITVECTOR3D_X)
+
 
 def test_vector2D():
     """Simple test to create ``Vector2D``."""
@@ -377,10 +393,12 @@ def test_vector2D():
     assert v2.magnitude == 4
 
     assert (Vector2D([1, 0])).get_angle_between(Vector2D([1, 1])) == np.pi / 4
+    assert (Vector2D([1, 1])).get_angle_between(Vector2D([1, 0])) == 7 * np.pi / 4
 
     assert Vector2D([1, 0]).is_perpendicular_to(Vector2D([0, 1]))
     assert not Vector2D([1, 0]).is_perpendicular_to(Vector2D([1, 1]))
     assert not Vector2D([1, 0]).is_perpendicular_to(Vector2D([-1, 0]))
+    assert not Vector2D([0, 0]).is_perpendicular_to(Vector2D([-1, 0]))
 
     assert Vector2D([0, 0]).is_zero
     assert not Vector2D([0, 1]).is_zero
@@ -404,6 +422,17 @@ def test_vector2D():
     vector_from_points = Vector2D.from_points(point_a, point_b)
     assert abs(vector_from_points.x - 0.009) <= DOUBLE_EPS
     assert abs(vector_from_points.y - 0.058) <= DOUBLE_EPS
+
+    # Add two vectors
+    # Compute the angle of two vectors when they are parallel
+    pos_x = UNITVECTOR2D_X
+    neg_x = -UNITVECTOR2D_X
+    vec_res = pos_x + neg_x
+    assert vec_res == ZERO_VECTOR2D
+
+    # Subtract two vectors
+    vec_res = pos_x - neg_x
+    assert vec_res == (UNITVECTOR2D_X + UNITVECTOR2D_X)
 
 
 def test_unitvector3D():
@@ -435,6 +464,13 @@ def test_unitvector3D():
     with pytest.raises(UnsupportedOperation, match="UnitVector3D is immutable."):
         v2.z = 3
 
+    point_a = Point3D([1, 2, 7])
+    point_b = Point3D([1, 2, 5])
+    vector_from_points = UnitVector3D.from_points(point_a, point_b)
+    assert vector_from_points.x == 0
+    assert vector_from_points.y == 0
+    assert vector_from_points.z == -1
+
 
 def test_unitvector2D():
     """Simple test to create a ``UnitVector2D``."""
@@ -460,6 +496,12 @@ def test_unitvector2D():
         v2.x = 3
     with pytest.raises(UnsupportedOperation, match="UnitVector2D is immutable."):
         v2.y = 3
+
+    point_a = Point2D([1, 2])
+    point_b = Point2D([1, 5])
+    vector_from_points = UnitVector2D.from_points(point_a, point_b)
+    assert vector_from_points.x == 0
+    assert vector_from_points.y == 1
 
 
 def test_vector3D_errors():
@@ -500,6 +542,11 @@ def test_vector3D_errors():
         v2 = ZERO_VECTOR3D
         v2.normalize()
 
+    # Try to get the angle of two vectors when one of them is 0-valued
+    with pytest.raises(ValueError, match="Vectors cannot be zero-valued."):
+        v2 = ZERO_VECTOR3D
+        v1.get_angle_between(v2)
+
 
 def test_vector2D_errors():
     """Testing multiple ``Vector2D`` errors."""
@@ -530,6 +577,16 @@ def test_vector2D_errors():
 
     with pytest.raises(TypeError, match="The parameter 'y' should be a float or an integer value."):
         v1.y = "y"
+
+    # Try to normalize a 0-value vector
+    with pytest.raises(ValueError, match="The norm of the Vector2D is not valid."):
+        v2 = ZERO_VECTOR2D
+        v2.normalize()
+
+    # Try to get the angle of two vectors when one of them is 0-valued
+    with pytest.raises(ValueError, match="Vectors cannot be zero-valued."):
+        v2 = ZERO_VECTOR2D
+        v1.get_angle_between(v2)
 
 
 def test_matrix():
