@@ -34,7 +34,7 @@ class Modeler:
     remote_instance : ansys.platform.instancemanagement.Instance
         The corresponding remote instance when geometry is launched through
         PyPIM. This instance will be deleted when calling
-        :func:`GrpcClient.close <ansys.mapdl.core.Mapdl.exit>`.
+        :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`.
     """
 
     def __init__(
