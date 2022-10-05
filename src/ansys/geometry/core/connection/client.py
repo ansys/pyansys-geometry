@@ -1,6 +1,8 @@
 """Provides a wrapped abstraction of the gRPC proto API definition and stubs."""
 
+import logging
 import os
+from pathlib import Path
 import time
 from typing import TYPE_CHECKING, Optional, Union
 
@@ -8,7 +10,9 @@ import grpc
 from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
 
+from ansys.geometry.core import LOG as logger
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
+from ansys.geometry.core.logger import PyGeometryCustomAdapter
 from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
 
@@ -76,6 +80,11 @@ class GrpcClient:
     timeout : Real, optional
         Timeout in seconds to achieve the connection.
         By default, 60 seconds.
+    logging_level : int, optional
+        The logging level to be applied to the client.
+        By default, ``INFO``.
+    logging_file : Optional[str, Path]
+        The file to output the log, if requested. By default, ``None``.
     """
 
     def __init__(
@@ -85,11 +94,15 @@ class GrpcClient:
         channel: Optional[grpc.Channel] = None,
         remote_instance: Optional["Instance"] = None,
         timeout: Optional[Real] = 60,
+        logging_level: Optional[int] = logging.INFO,
+        logging_file: Optional[Union[Path, str]] = None,
     ):
         """Initialize the ``GrpcClient`` object."""
         check_type(host, str)
         check_type(port, (str, int))
         check_type(timeout, (int, float))
+        check_type(logging_level, int)
+        check_type(logging_file, (Path, str, type(None)))
 
         self._closed = False
         self._remote_instance = remote_instance
@@ -110,10 +123,24 @@ class GrpcClient:
         # do not finish initialization until channel is healthy
         wait_until_healthy(self._channel, timeout)
 
+        # once connection with the client is established, create a logger
+        self._log = logger.add_instance_logger(
+            name=self._target, client_instance=self, level=logging_level
+        )
+        if logging_file:
+            if isinstance(logging_file, Path):
+                logging_file = str(logging_file)
+            self._log.log_to_file(filename=logging_file, level=logging_level)
+
     @property
     def channel(self) -> grpc.Channel:
         """The gRPC channel of this client."""
         return self._channel
+
+    @property
+    def log(self) -> PyGeometryCustomAdapter:
+        """The specific instance logger."""
+        return self._log
 
     @property
     def healthy(self) -> bool:
@@ -153,3 +180,7 @@ class GrpcClient:
         if self._closed:
             return ""
         return self._channel._channel.target().decode()
+
+    def get_name(self) -> str:
+        """The target name of the connection."""
+        return self._target

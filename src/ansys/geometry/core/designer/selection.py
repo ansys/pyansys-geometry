@@ -9,6 +9,7 @@ from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
+from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc import check_type
 
 
@@ -35,6 +36,7 @@ class NamedSelection:
         All edges that should be included in the named selection.
     """
 
+    @protect_grpc
     def __init__(
         self,
         name: str,
@@ -71,6 +73,7 @@ class NamedSelection:
         [ids.add(edge.id) for edge in edges]
 
         named_selection_request = CreateNamedSelectionRequest(name=name, members=ids)
+        self._grpc_client.log.debug("Requesting creation of named selection.")
         new_named_selection = self._named_selections_stub.CreateNamedSelection(
             named_selection_request
         )

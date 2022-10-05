@@ -1,4 +1,6 @@
 """``Modeler`` class module."""
+import logging
+from pathlib import Path
 from typing import TYPE_CHECKING, Optional, Union
 
 from grpc import Channel
@@ -35,6 +37,11 @@ class Modeler:
         The corresponding remote instance when geometry is launched through
         PyPIM. This instance will be deleted when calling
         :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`.
+    logging_level : int, optional
+        The logging level to be applied to the client.
+        By default, ``INFO``.
+    logging_file : Optional[str, Path]
+        The file to output the log, if requested. By default, ``None``.
     """
 
     def __init__(
@@ -44,12 +51,27 @@ class Modeler:
         channel: Optional[Channel] = None,
         remote_instance: Optional["Instance"] = None,
         timeout: Optional[Real] = 60,
+        logging_level: Optional[int] = logging.INFO,
+        logging_file: Optional[Union[Path, str]] = None,
     ):
         """Constructor method for ``Modeler``."""
-        self._client = GrpcClient(host, port, channel, remote_instance, timeout=timeout)
+        self._client = GrpcClient(
+            host=host,
+            port=port,
+            channel=channel,
+            remote_instance=remote_instance,
+            timeout=timeout,
+            logging_level=logging_level,
+            logging_file=logging_file,
+        )
 
         # Design[] maintaining references to all designs within the modeler workspace
         self._designs = []
+
+    @property
+    def client(self) -> GrpcClient:
+        """The ``Modeler`` instance client."""
+        return self._client
 
     def create_design(self, name: str) -> Design:
         """Initializes a new design with the connected client.
