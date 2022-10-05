@@ -47,9 +47,9 @@ def launch_modeler() -> Modeler:
 def launch_remote_modeler(
     version=None,
 ) -> Modeler:
-    """Start geometry remotely using the product instance management API.
+    """Start Geometry Service remotely using the product instance management API.
     When calling this method, you need to ensure that you are in an
-    environment where PyPIM is configured.This can be verified with
+    environment where PyPIM is configured. This can be verified with
     :func:`pypim.is_configured <ansys.platform.instancemanagement.is_configured>`.
 
     Parameters
