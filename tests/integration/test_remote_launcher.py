@@ -51,7 +51,7 @@ def test_launch_remote_instance(monkeypatch, modeler: Modeler):
 
     modeler = launch_modeler()
 
-    # Assert: pygeometry went through the pypim workflow
+    # Assert: PyGeometry went through the PyPIM workflow
     assert mock_is_configured.called
     assert mock_connect.called
     mock_client.create_instance.assert_called_with(
