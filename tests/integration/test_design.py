@@ -696,7 +696,7 @@ def test_bodies_translation(modeler: Modeler):
     # Try translating a body that does not belong to this component - no error thrown,
     # but no operation performed either.
     circle_comp.translate_bodies(
-        [body_polygon_comp], UnitVector([0, -1, 1]), Quantity(88, UNITS.mm)
+        [body_polygon_comp], UnitVector3D([0, -1, 1]), Quantity(88, UNITS.mm)
     )
 
 
