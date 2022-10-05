@@ -24,7 +24,7 @@ class Sphere:
 
     Parameters
     ----------
-    origin : Union[~numpy.ndarray, RealSequence, Point]
+    origin : Union[~numpy.ndarray, RealSequence, Point3D]
         Centered origin of the ``Sphere``.
     radius: Real
         Radius of ``Sphere``.

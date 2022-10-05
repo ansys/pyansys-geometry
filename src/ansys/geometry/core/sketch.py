@@ -197,7 +197,7 @@ class Sketch:
         ----------
         start : Point3D
             Origin/start of the line.
-        direction: Union[Vector, UnitVector]
+        direction: Union[Vector3D, UnitVector3D]
             Direction of the line.
 
         Returns
@@ -253,8 +253,8 @@ class Sketch:
             A :class:``Point3D`` representing the start of the shape.
         end : Point3D
             A :class:``Point3D`` representing the end of the shape.
-        axis : Optional[UnitVector]
-            A :class:``UnitVector`` determining the rotation direction of the arc.
+        axis : Optional[UnitVector3D]
+            A :class:``UnitVector3D`` determining the rotation direction of the arc.
             It is expected to be orthogonal to the provided plane.
             +z for counter-clockwise rotation. -z for clockwise rotation.
             If not provided, the default will be counter-clockwise rotation.

@@ -116,7 +116,7 @@ def test_point_message_conversion():
 
 
 def test_unit_vector_message_conversion():
-    """Test conversion between :class:`UnitVector` and expected gRPC message type."""
+    """Test conversion between :class:`UnitVector3D` and expected gRPC message type."""
     unit_vector = UnitVector3D([1, 1, 1])
     grpc_unit_vector_message = unit_vector_to_grpc_direction(unit_vector)
 

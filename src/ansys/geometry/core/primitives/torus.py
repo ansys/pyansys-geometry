@@ -23,11 +23,11 @@ class Torus:
 
     Parameters
     ----------
-    origin : Union[~numpy.ndarray, RealSequence, Point],
+    origin : Union[~numpy.ndarray, RealSequence, Point3D],
         Centered origin of the ``Torus``.
-    direction_x: Union[~numpy.ndarray, RealSequence, UnitVector, Vector3D]
+    direction_x: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         X-plane direction.
-    direction_y: Union[~numpy.ndarray, RealSequence, UnitVector, Vector3D]
+    direction_y: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         Y-plane direction.
     major_radius: Real
         Major radius of ``Torus``.

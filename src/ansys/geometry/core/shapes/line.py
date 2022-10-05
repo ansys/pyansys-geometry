@@ -26,7 +26,7 @@ class Line(BaseShape):
         A :class:`Plane` representing the planar surface where the shape is contained.
     start: Point
         Starting point of the line.
-    direction: Union[Vector, UnitVector]
+    direction: Union[Vector, UnitVector3D]
         Direction of the line.
 
     Notes
@@ -51,7 +51,7 @@ class Line(BaseShape):
         check_ndarray_is_non_zero(direction, "direction")
         check_ndarray_is_all_nan(start, "start")
 
-        # If a Vector was provided, we should store a UnitVector
+        # If a Vector3D was provided, we should store a UnitVector3D
         try:
             check_type(direction, UnitVector3D)
         except TypeError:
@@ -194,7 +194,7 @@ class Segment(Line):
         vector_units: Optional[Unit] = UNIT_LENGTH,
         plane: Optional[Plane] = Plane(),
     ):
-        """Create a ``Segment`` from a starting ``Point`` and a vector.
+        """Create a ``Segment`` from a starting ``Point3D`` and a ``Vector3D``.
 
         Parameters
         ----------

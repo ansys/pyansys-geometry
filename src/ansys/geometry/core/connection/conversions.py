@@ -23,11 +23,11 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 def unit_vector_to_grpc_direction(unit_vector: UnitVector3D) -> GRPCDirection:
-    """Marshals a :class:`UnitVector` to a UnitVector gRPC message of the Geometry Service.
+    """Marshals a :class:`UnitVector3D` to a UnitVector gRPC message of the Geometry Service.
 
     Parameters
     ----------
-    unit_vector : UnitVector
+    unit_vector : UnitVector3D
         Source vector data.
 
     Returns

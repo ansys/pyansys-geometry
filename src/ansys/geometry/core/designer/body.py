@@ -297,7 +297,7 @@ class Body:
 
         Parameters
         ----------
-        direction: UnitVector
+        direction: UnitVector3D
             The direction of the translation.
         distance: Union[Quantity, Distance]
             The magnitude of the translation.
@@ -350,7 +350,7 @@ class Body:
 
         >>> from ansys.geometry.core.misc.units import UNITS as u
         >>> from ansys.geometry.core.sketch import Sketch
-        >>> from ansys.geometry.core.math import Plane, Point3D, UnitVector
+        >>> from ansys.geometry.core.math import Plane, Point3D, UnitVector3D
         >>> from ansys.geometry.core import Modeler
         >>> modeler = Modeler()
         >>> origin = Point3D([0, 0, 0])
@@ -420,7 +420,7 @@ class Body:
 
         >>> from ansys.geometry.core.misc.units import UNITS as u
         >>> from ansys.geometry.core.sketch import Sketch
-        >>> from ansys.geometry.core.math import Plane, Point3D, UnitVector
+        >>> from ansys.geometry.core.math import Plane, Point3D, UnitVector3D
         >>> from ansys.geometry.core import Modeler
         >>> modeler = Modeler()
         >>> origin = Point3D([0, 0, 0])

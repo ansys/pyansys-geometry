@@ -1,4 +1,4 @@
-"""``Point`` class module."""
+"""``Point`` classes module."""
 
 from typing import TYPE_CHECKING, Optional, Union
 

@@ -1,4 +1,4 @@
-"""``Vector`` class module"""
+"""``Vector`` classes module"""
 from io import UnsupportedOperation
 from typing import Union
 

@@ -232,9 +232,9 @@ class Face:
 
         Returns
         -------
-        UnitVector
-            The :class:`UnitVector` object evaluated at the given U and V coordinates.
-            This :class:`UnitVector` will be perpendicular to the surface at that
+        UnitVector3D
+            The :class:`UnitVector3D` object evaluated at the given U and V coordinates.
+            This :class:`UnitVector3D` will be perpendicular to the surface at that
             given UV coordinates.
         """
         self._grpc_client.log.debug(f"Requesting face normal from server with (u,v)=({u},{v}).")
