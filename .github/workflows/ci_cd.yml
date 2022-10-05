@@ -156,12 +156,19 @@ jobs:
           docker run --detach --name $env:GEO_CONT_NAME -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
-      - name: Integration Testing
+      - name: Testing
         # TODO : Once the container is available on Linux we should be able to run it as
         #        a service, allowing to remove this stage
         run: |
           .\.venv\Scripts\Activate.ps1
           pytest -v
+
+      - name: Upload integration test logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: Integration-Test-Logs
+          path: tests/integration/logs
+          retention-days: 7  
 
       - name: Upload Coverage Results
         uses: actions/upload-artifact@v3
