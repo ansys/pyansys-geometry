@@ -18,7 +18,7 @@ def test_instance_logger_format(modeler: Modeler, fake_record: Callable):
     fake_record : Callable
         Fake record function.
     """
-    # Since we cannot read the format of our logger, because pytest just dont show the console
+    # Since we cannot read the format of our logger, because pytest just does not show the console
     # output or if it does, it formats the logger with its own formatter, we are going to check
     # the logger handlers and output by faking a record.
     # This method is not super robust, since we are input fake data to ``logging.makeRecord``.
