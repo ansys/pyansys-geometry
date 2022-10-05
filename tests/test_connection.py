@@ -14,7 +14,7 @@ from ansys.geometry.core.connection.conversions import (
     segment_to_grpc_line,
     unit_vector_to_grpc_direction,
 )
-from ansys.geometry.core.math import Frame, Plane, Point, UnitVector
+from ansys.geometry.core.math import Frame, Plane, Point3D, UnitVector3D
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.shapes import Arc, Circle, Ellipse, Polygon, Segment
 
@@ -42,8 +42,8 @@ def test_invalid_inputs():
 def test_circle_message_conversion():
     """Test conversion between :class:`Circle` and expected gRPC message type."""
     circle = Circle(
-        Plane(Point([10, 100, 1000], UNITS.mm)),
-        Point([10, 100, 1000], UNITS.mm),
+        Plane(Point3D([10, 100, 1000], UNITS.mm)),
+        Point3D([10, 100, 1000], UNITS.mm),
         Quantity(300, UNITS.mm),
     )
     grpc_circle_message = circle_to_grpc_circle(circle)
@@ -57,8 +57,8 @@ def test_circle_message_conversion():
 def test_ellipse_message_conversion():
     """Test conversion between :class:`Ellipse` and expected gRPC message type."""
     ellipse = Ellipse(
-        Plane(Point([10, 100, 1000], UNITS.mm)),
-        Point([10, 100, 1000], UNITS.mm),
+        Plane(Point3D([10, 100, 1000], UNITS.mm)),
+        Point3D([10, 100, 1000], UNITS.mm),
         Quantity(300, UNITS.mm),
         Quantity(50, UNITS.mm),
     )
@@ -74,9 +74,9 @@ def test_ellipse_message_conversion():
 def test_segment_message_conversion():
     """Test conversion between :class:`Segment` and expected gRPC message type."""
     segment = Segment(
-        Plane(Point([10, 100, 1000], UNITS.mm)),
-        Point([30, 400, 1000], UNITS.mm),
-        Point([500, 600, 1000], UNITS.mm),
+        Plane(Point3D([10, 100, 1000], UNITS.mm)),
+        Point3D([30, 400, 1000], UNITS.mm),
+        Point3D([500, 600, 1000], UNITS.mm),
     )
     grpc_line_message = segment_to_grpc_line(segment)
 
@@ -91,8 +91,8 @@ def test_segment_message_conversion():
 def test_polygon_message_conversion():
     """Test conversion between :class:`Polygon` and expected gRPC message type."""
     polygon = Polygon(
-        Plane(Point([10, 100, 1000], UNITS.mm)),
-        Point([10, 100, 1000], UNITS.mm),
+        Plane(Point3D([10, 100, 1000], UNITS.mm)),
+        Point3D([10, 100, 1000], UNITS.mm),
         Quantity(300, UNITS.mm),
         5,
     )
@@ -106,8 +106,8 @@ def test_polygon_message_conversion():
 
 
 def test_point_message_conversion():
-    """Test conversion between :class:`Point` and expected gRPC message type."""
-    point = Point([10, 100, 1000], UNITS.mm)
+    """Test conversion between :class:`Point3D` and expected gRPC message type."""
+    point = Point3D([10, 100, 1000], UNITS.mm)
     grpc_point_message = point_to_grpc_point(point)
 
     assert grpc_point_message.x == 0.01
@@ -116,8 +116,8 @@ def test_point_message_conversion():
 
 
 def test_unit_vector_message_conversion():
-    """Test conversion between :class:`UnitVector` and expected gRPC message type."""
-    unit_vector = UnitVector([1, 1, 1])
+    """Test conversion between :class:`UnitVector3D` and expected gRPC message type."""
+    unit_vector = UnitVector3D([1, 1, 1])
     grpc_unit_vector_message = unit_vector_to_grpc_direction(unit_vector)
 
     assert grpc_unit_vector_message.x == 0.5773502691896258
@@ -128,11 +128,11 @@ def test_unit_vector_message_conversion():
 def test_arc_message_conversion():
     """Test conversion between :class:`Arc` and expected gRPC message type."""
     arc = Arc(
-        Plane(Point([10, 100, 1000], UNITS.mm)),
-        Point([30, 400, 1000], UNITS.mm),
-        Point([500, 600, 1000], UNITS.mm),
-        Point([900, 800, 1000], UNITS.mm),
-        UnitVector([0, 0, 1]),
+        Plane(Point3D([10, 100, 1000], UNITS.mm)),
+        Point3D([30, 400, 1000], UNITS.mm),
+        Point3D([500, 600, 1000], UNITS.mm),
+        Point3D([900, 800, 1000], UNITS.mm),
+        UnitVector3D([0, 0, 1]),
     )
     grpc_arc_message = arc_to_grpc_arc(arc)
 
@@ -155,7 +155,9 @@ def test_arc_message_conversion():
 
 def test_plane_message_conversion():
     """Test conversion between :class:`Plane` and expected gRPC message type."""
-    plane = Plane(Point([10, 200, 3000], UNITS.mm), UnitVector([1, 1, 0]), UnitVector([1, -1, 0]))
+    plane = Plane(
+        Point3D([10, 200, 3000], UNITS.mm), UnitVector3D([1, 1, 0]), UnitVector3D([1, -1, 0])
+    )
     grpc_plane_message = plane_to_grpc_plane(plane)
 
     assert grpc_plane_message.frame.origin.x == 0.01
@@ -175,7 +177,9 @@ def test_plane_message_conversion():
 
 def test_frame_message_conversion():
     """Test conversion between :class:`Frame` and expected gRPC message type."""
-    frame = Frame(Point([10, 200, 3000], UNITS.mm), UnitVector([1, 1, 0]), UnitVector([1, -1, 0]))
+    frame = Frame(
+        Point3D([10, 200, 3000], UNITS.mm), UnitVector3D([1, 1, 0]), UnitVector3D([1, -1, 0])
+    )
     grpc_frame_message = frame_to_grpc_frame(frame)
 
     assert grpc_frame_message.origin.x == 0.01

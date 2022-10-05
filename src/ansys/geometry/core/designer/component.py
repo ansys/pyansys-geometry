@@ -31,7 +31,7 @@ from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.coordinatesystem import CoordinateSystem
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.math import Frame, UnitVector
+from ansys.geometry.core.math import Frame, UnitVector3D
 from ansys.geometry.core.misc import (
     SERVER_UNIT_LENGTH,
     Distance,
@@ -40,8 +40,8 @@ from ansys.geometry.core.misc import (
 )
 from ansys.geometry.core.sketch import Sketch
 
-if TYPE_CHECKING:
-    from pyvista import MultiBlock, PolyData  # pragma: no cover
+if TYPE_CHECKING:  # pragma: no cover
+    from pyvista import MultiBlock, PolyData
 
 
 @unique
@@ -379,7 +379,7 @@ class Component:
 
     @protect_grpc
     def translate_bodies(
-        self, bodies: List[Body], direction: UnitVector, distance: Union[Quantity, Distance]
+        self, bodies: List[Body], direction: UnitVector3D, distance: Union[Quantity, Distance]
     ) -> None:
         """Translates the geometry bodies in the direction specified by the given distance.
 
@@ -392,7 +392,7 @@ class Component:
         ----------
         bodies: List[Body]
             A list of bodies to translate by the same distance.
-        direction: UnitVector
+        direction: UnitVector3D
             The direction of the translation.
         distance: Union[Quantity, Distance]
             The magnitude of the translation.
@@ -404,7 +404,7 @@ class Component:
 
         check_type(bodies, list)
         [check_type(body, Body) for body in bodies]
-        check_type(direction, UnitVector)
+        check_type(direction, UnitVector3D)
         check_type(distance, (Quantity, Distance))
         check_pint_unit_compatibility(distance, SERVER_UNIT_LENGTH)
         body_ids_found = []
@@ -615,19 +615,19 @@ class Component:
 
         >>> from ansys.geometry.core.sketch import Sketch
         >>> from ansys.geometry.core import Modeler
-        >>> from ansys.geometry.core.math import Point, Plane
+        >>> from ansys.geometry.core.math import Point3D, Plane
         >>> from ansys.geometry.core.misc import UNITS
         >>> from ansys.geometry.core.plotting.plotter import Plotter
         >>> modeler = Modeler("10.54.0.72", "50051")
         >>> sketch_1 = Sketch()
-        >>> box = sketch_1.draw_box(Point([10, 10, 0]), width=10, height=5)
-        >>> circle = sketch_1.draw_circle(Point([0, 0, 0]), radius=25 * UNITS.m)
+        >>> box = sketch_1.draw_box(Point3D([10, 10, 0]), width=10, height=5)
+        >>> circle = sketch_1.draw_circle(Point3D([0, 0, 0]), radius=25 * UNITS.m)
         >>> design = modeler.create_design("MyDesign")
         >>> comp = design.add_component("MyComponent")
         >>> body = comp.extrude_sketch("MyBody", sketch=sketch_1, distance=10 * UNITS.m)
         >>> sketch_2 = Sketch(Plane([0, 0, 10]))
-        >>> box = sketch_2.draw_box(Point([10, 10, 10]), width=10, height=5)
-        >>> circle = sketch_2.draw_circle(Point([0, 0, 10]), radius=25 * UNITS.m)
+        >>> box = sketch_2.draw_box(Point3D([10, 10, 10]), width=10, height=5)
+        >>> circle = sketch_2.draw_circle(Point3D([0, 0, 10]), radius=25 * UNITS.m)
         >>> body = comp.extrude_sketch("MyBody", sketch=sketch_2, distance=10 * UNITS.m)
         >>> dataset = comp.tessellate(merge_bodies=True)
         >>> dataset
@@ -697,11 +697,11 @@ class Component:
 
         >>> from ansys.geometry.core.misc.units import UNITS as u
         >>> from ansys.geometry.core.sketch import Sketch
-        >>> from ansys.geometry.core.math import Plane, Point, UnitVector
+        >>> from ansys.geometry.core.math import Plane, Point3D, UnitVector3D
         >>> from ansys.geometry.core import Modeler
         >>> import numpy as np
         >>> modeler = Modeler()
-        >>> origin = Point([0, 0, 0])
+        >>> origin = Point3D([0, 0, 0])
         >>> plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
         >>> design = modeler.create_design("my-design")
         >>> mycomp = design.add_component("my-comp")
@@ -712,7 +712,7 @@ class Component:
         ... )
         >>> for x, y in zip(xx.ravel(), yy.ravel()):
         ...     sketch = Sketch(plane)
-        ...     sketch.draw_circle(Point([x, y, 0]), 0.2*u.m)
+        ...     sketch.draw_circle(Point3D([x, y, 0]), 0.2*u.m)
         ...     mycomp.extrude_sketch(f"body-{x}-{y}", sketch, 1 * u.m)
         >>> mycomp
         ansys.geometry.core.designer.Component 0x7f45c3396370

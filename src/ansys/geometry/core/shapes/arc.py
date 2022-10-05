@@ -5,8 +5,8 @@ from typing import List, Optional
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math import Plane, Point, QuantityVector
-from ansys.geometry.core.math.vector import UnitVector, Vector
+from ansys.geometry.core.math import Plane, Point3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNITS, check_type
 from ansys.geometry.core.shapes.base import BaseShape
 
@@ -17,10 +17,10 @@ class Arc(BaseShape):
     def __init__(
         self,
         plane: Plane,
-        center: Point,
-        start: Point,
-        end: Point,
-        axis: Optional[UnitVector] = None,
+        center: Point3D,
+        start: Point3D,
+        end: Point3D,
+        axis: Optional[UnitVector3D] = None,
     ):
         """Initializes the arc shape.
 
@@ -28,23 +28,23 @@ class Arc(BaseShape):
         ----------
         plane : Plane
             A :class:`Plane` representing the planar surface where the shape is contained.
-        center : Point
-            A :class:`Point` representing the center of the arc.
-        start: Point
-            A :class:`Point` representing the start of the arc.
-        end : Point
-            A :class:`Point` representing the end of the arc.
-        axis : Optional[UnitVector]
-            A :class:`UnitVector` determining the rotation direction of the arc.
+        center : Point3D
+            A :class:`Point3D` representing the center of the arc.
+        start: Point3D
+            A :class:`Point3D` representing the start of the arc.
+        end : Point3D
+            A :class:`Point3D` representing the end of the arc.
+        axis : Optional[UnitVector3D]
+            A :class:`UnitVector3D` determining the rotation direction of the arc.
             It is expected to be orthogonal to the provided plane.
             +z for counter-clockwise rotation. -z for clockwise rotation.
             If not provided, the default will be counter-clockwise rotation.
         """
         super().__init__(plane, is_closed=False)
         # Verify points
-        check_type(center, Point)
-        check_type(start, Point)
-        check_type(end, Point)
+        check_type(center, Point3D)
+        check_type(start, Point3D)
+        check_type(end, Point3D)
         if start == end:
             raise ValueError("Start and end points must be different.")
         if center == start:
@@ -58,8 +58,8 @@ class Arc(BaseShape):
         if not self._plane.is_point_contained(end):
             raise ValueError("Arc end point must be contained in the plane.")
 
-        if isinstance(axis, UnitVector):
-            neg_direction_z = UnitVector(
+        if isinstance(axis, UnitVector3D):
+            neg_direction_z = UnitVector3D(
                 [-plane.direction_z.x, -plane.direction_z.y, -plane.direction_z.z]
             )
             if not (axis == self._plane.direction_z or axis == neg_direction_z):
@@ -70,38 +70,38 @@ class Arc(BaseShape):
         self._center, self._start, self._end = center, start, end
         self._axis = axis
 
-        to_start_vector = QuantityVector.from_points(self._start, self._center)
-        self._radius = to_start_vector.norm
+        to_start_vector = Vector3D.from_points(self._start, self._center)
+        self._radius = Quantity(to_start_vector.norm, self._start.base_unit)
 
         if not self._radius.m > 0:
             raise ValueError("Point configuration does not yield a positive length arc radius.")
 
-        direction_x = UnitVector(to_start_vector.normalize())
-        direction_y = UnitVector((axis % direction_x).normalize())
-        to_end_vector = UnitVector.from_points(self._end, self._center)
+        direction_x = UnitVector3D(to_start_vector.normalize())
+        direction_y = UnitVector3D((axis % direction_x).normalize())
+        to_end_vector = UnitVector3D.from_points(self._end, self._center)
         self._angle = np.arctan2(direction_y * to_end_vector, direction_x * to_end_vector)
         if self._angle < 0:
             self._angle = (2 * np.pi) + self._angle
 
     @property
-    def start(self) -> Point:
+    def start(self) -> Point3D:
         """Return the start of the arc line.
 
         Returns
         -------
-        Point
+        Point3D
             Starting point of the arc line.
 
         """
         return self._start
 
     @property
-    def end(self) -> Point:
+    def end(self) -> Point3D:
         """Return the end of the arc line.
 
         Returns
         -------
-        Point
+        Point3D
             Ending point of the arc line.
 
         """
@@ -120,24 +120,24 @@ class Arc(BaseShape):
         return self._radius
 
     @property
-    def center(self) -> Point:
+    def center(self) -> Point3D:
         """The center of the arc.
 
         Returns
         -------
-        Point
+        Point3D
             The center of the arc.
 
         """
         return self._center
 
     @property
-    def axis(self) -> UnitVector:
+    def axis(self) -> UnitVector3D:
         """The axis determining arc rotation.
 
         Returns
         -------
-        UnitVector
+        UnitVector3D
             The axis determining arc rotation.
 
         """
@@ -191,7 +191,7 @@ class Arc(BaseShape):
         """
         return [self]
 
-    def local_points(self, num_points: Optional[int] = 100) -> List[Point]:
+    def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
         """Returns al list containing all the points belonging to the shape.
 
         Parameters
@@ -201,24 +201,24 @@ class Arc(BaseShape):
 
         Returns
         -------
-        List[Point]
+        List[Point3D]
             A list of points representing the shape.
         """
         use_counter_clockwise_rotation = True if self._axis == self._plane.direction_z else False
         start_vector = self.start - self.center
         local_start_vector = (self.plane.global_to_local @ start_vector).tolist()
         start_angle = np.arctan2(
-            (Vector(local_start_vector).cross(Vector([1, 0, 0]))).norm,
-            Vector(local_start_vector).dot(Vector([1, 0, 0])),
+            (Vector3D(local_start_vector).cross(Vector3D([1, 0, 0]))).norm,
+            Vector3D(local_start_vector).dot(Vector3D([1, 0, 0])),
         )
         theta = np.linspace(start_angle, start_angle + self.angle.m, num_points)
-        center_from_plane_origin = Point(
+        center_from_plane_origin = Point3D(
             self.plane.global_to_local @ (self.center - self.plane.origin), self.center.unit
         )
 
         if use_counter_clockwise_rotation:
             return [
-                Point(
+                Point3D(
                     [
                         center_from_plane_origin.x.to(self.radius.units).m
                         - self.radius.m * np.cos(ang),
@@ -232,7 +232,7 @@ class Arc(BaseShape):
             ]
         else:
             return [
-                Point(
+                Point3D(
                     [
                         center_from_plane_origin.x.to(self.radius.units).m
                         + self.radius.m * np.cos(ang),

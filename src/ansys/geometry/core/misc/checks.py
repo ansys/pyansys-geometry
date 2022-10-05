@@ -1,5 +1,5 @@
 """Checking common functions."""
-from typing import Any, Optional, Tuple, Union
+from typing import Optional, Tuple, Union
 
 import numpy as np
 from pint import Unit
@@ -201,21 +201,3 @@ def check_type(input: object, expected_type: Union[type, Tuple[type, ...]]) -> N
 
     if not isinstance(input, expected_type):
         raise TypeError(f"Provided type {type(input)} is invalid, type {expected_type} expected.")
-
-
-def only_for_3d(func):
-    """Class decorator for checking if an object is 3D or not.
-
-    Notes
-    -----
-    To use this decorator it is necessary to call it on top of a
-    class method, and the class should have an ``is_3d`` property.
-    """
-
-    def wrapper(*args) -> Any:
-        if not args[0].is_3d:
-            raise ValueError("Instance is not 3D. Z component not accessible.")
-
-        return func(*args)
-
-    return wrapper
