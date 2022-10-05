@@ -4,7 +4,7 @@ from typing import Optional, Union
 
 from pint import Quantity
 
-from ansys.geometry.core.math import Plane, Point, UnitVector, Vector
+from ansys.geometry.core.math import Plane, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import Angle, Distance
 from ansys.geometry.core.shapes import (
     Arc,
@@ -54,7 +54,7 @@ class Sketch:
 
     def draw_box(
         self,
-        center: Point,
+        center: Point3D,
         width: Union[Quantity, Distance, Real],
         height: Union[Quantity, Distance, Real],
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
@@ -63,8 +63,8 @@ class Sketch:
 
         Parameters
         ----------
-        center: Point
-            A :class:`Point` representing the center of the box.
+        center: Point3D
+            A :class:`Point3D` representing the center of the box.
         width : Union[Quantity, Distance, Real]
             The width of the box.
         height : Union[Quantity, Distance, Real]
@@ -83,7 +83,7 @@ class Sketch:
 
     def draw_slot(
         self,
-        center: Point,
+        center: Point3D,
         width: Union[Quantity, Distance, Real],
         height: Union[Quantity, Distance, Real],
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
@@ -92,8 +92,8 @@ class Sketch:
 
         Parameters
         ----------
-        center: Point
-            A :class:`Point` representing the center of the slot.
+        center: Point3D
+            A :class:`Point3D` representing the center of the slot.
         width : Union[Quantity, Distance, Real]
             The width of the slot.
         height : Union[Quantity, Distance, Real]
@@ -110,13 +110,13 @@ class Sketch:
         self.append_shape(slot)
         return slot
 
-    def draw_circle(self, center: Point, radius: Union[Quantity, Distance]):
+    def draw_circle(self, center: Point3D, radius: Union[Quantity, Distance]):
         """Create a circle shape on the sketch.
 
         Parameters
         ----------
-        center: Point
-            A :class:`Point` representing the center of the circle.
+        center: Point3D
+            A :class:`Point3D` representing the center of the circle.
         radius : Union[Quantity, Distance]
             The radius of the circle.
 
@@ -132,7 +132,7 @@ class Sketch:
 
     def draw_ellipse(
         self,
-        center: Point,
+        center: Point3D,
         semi_major_axis: Union[Quantity, Distance],
         semi_minor_axis: Union[Quantity, Distance],
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
@@ -141,8 +141,8 @@ class Sketch:
 
         Parameters
         ----------
-        center: Point
-            A :class:`Point` representing the center of the ellipse.
+        center: Point3D
+            A :class:`Point3D` representing the center of the ellipse.
         semi_major_axis : Union[Quantity, Distance]
             The semi-major axis of the ellipse.
         semi_minor_axis : Union[Quantity, Distance]
@@ -162,17 +162,17 @@ class Sketch:
 
     def draw_segment(
         self,
-        start: Point,
-        end: Point,
+        start: Point3D,
+        end: Point3D,
     ) -> Segment:
         """
         Add a segment sketch object to the sketch plane.
 
         Parameters
         ----------
-        start : Point
+        start : Point3D
             Start of the line segment.
-        end : Point
+        end : Point3D
             End of the line segment.
 
         Returns
@@ -187,17 +187,17 @@ class Sketch:
 
     def draw_line(
         self,
-        start: Point,
-        direction: Union[Vector, UnitVector],
+        start: Point3D,
+        direction: Union[Vector3D, UnitVector3D],
     ) -> Line:
         """
         Add a line sketch object to the sketch plane.
 
         Parameters
         ----------
-        start : Point
+        start : Point3D
             Origin/start of the line.
-        direction: Union[Vector, UnitVector]
+        direction: Union[Vector3D, UnitVector3D]
             Direction of the line.
 
         Returns
@@ -212,8 +212,8 @@ class Sketch:
 
     def draw_polygon(
         self,
-        center: Point,
-        inner_radius: Union[Vector, UnitVector],
+        center: Point3D,
+        inner_radius: Union[Vector3D, UnitVector3D],
         sides: int,
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
@@ -221,8 +221,8 @@ class Sketch:
 
         Parameters
         ----------
-        center: Point
-            A :class:`Point` representing the center of the circle.
+        center: Point3D
+            A :class:`Point3D` representing the center of the circle.
         inner_radius : Union[Quantity, Distance]
             The inradius(apothem) of the polygon.
         sides : int
@@ -240,19 +240,21 @@ class Sketch:
         self.append_shape(polygon)
         return polygon
 
-    def draw_arc(self, center: Point, start: Point, end: Point, axis: Optional[UnitVector] = None):
+    def draw_arc(
+        self, center: Point3D, start: Point3D, end: Point3D, axis: Optional[UnitVector3D] = None
+    ):
         """Create an arc shape on the sketch.
 
         Parameters
         ----------
-        center : Point
-            A :class:``Point`` representing the center of the arc.
-        start : Point
-            A :class:``Point`` representing the start of the shape.
-        end : Point
-            A :class:``Point`` representing the end of the shape.
-        axis : Optional[UnitVector]
-            A :class:``UnitVector`` determining the rotation direction of the arc.
+        center : Point3D
+            A :class:``Point3D`` representing the center of the arc.
+        start : Point3D
+            A :class:``Point3D`` representing the start of the shape.
+        end : Point3D
+            A :class:``Point3D`` representing the end of the shape.
+        axis : Optional[UnitVector3D]
+            A :class:``UnitVector3D`` determining the rotation direction of the arc.
             It is expected to be orthogonal to the provided plane.
             +z for counter-clockwise rotation. -z for clockwise rotation.
             If not provided, the default will be counter-clockwise rotation.

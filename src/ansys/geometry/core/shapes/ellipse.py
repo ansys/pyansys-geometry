@@ -5,7 +5,7 @@ import numpy as np
 from pint import Quantity
 from scipy.integrate import quad
 
-from ansys.geometry.core.math import Plane, Point
+from ansys.geometry.core.math import Plane, Point3D
 from ansys.geometry.core.misc import Angle, Distance, check_type
 from ansys.geometry.core.misc.measurements import UNIT_ANGLE
 from ansys.geometry.core.shapes.base import BaseShape
@@ -19,8 +19,8 @@ class Ellipse(BaseShape):
     ----------
     plane : Plane
         A :class:`Plane` representing the planar surface where the shape is contained.
-    center: Point
-        A :class:`Point` representing the center of the ellipse.
+    center: Point3D
+        A :class:`Point3D` representing the center of the ellipse.
     semi_major_axis : Union[Quantity, Distance]
         The semi-major axis of the ellipse.
     semi_minor_axis : Union[Quantity, Distance]
@@ -32,14 +32,14 @@ class Ellipse(BaseShape):
     def __init__(
         self,
         plane: Plane,
-        center: Point,
+        center: Point3D,
         semi_major_axis: Union[Quantity, Distance],
         semi_minor_axis: Union[Quantity, Distance],
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
         """Initializes the ellipse shape."""
         super().__init__(plane, is_closed=True)
-        check_type(center, Point)
+        check_type(center, Point3D)
         check_type(semi_major_axis, (Quantity, Distance))
         check_type(semi_minor_axis, (Quantity, Distance))
         self._center = center
@@ -69,12 +69,12 @@ class Ellipse(BaseShape):
             raise ValueError("Semi-major axis cannot be shorter than semi-minor axis.")
 
     @property
-    def center(self) -> Point:
+    def center(self) -> Point3D:
         """The center of the ellipse.
 
         Returns
         -------
-        Point
+        Point3D
             The center of the ellipse.
         """
         return self._center
@@ -183,7 +183,7 @@ class Ellipse(BaseShape):
         """
         return [self]
 
-    def local_points(self, num_points: Optional[int] = 100) -> List[Point]:
+    def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
         """Returns a list containing all the points belonging to the shape.
 
         Parameters
@@ -193,7 +193,7 @@ class Ellipse(BaseShape):
 
         Returns
         -------
-        List[Point]
+        List[Point3D]
             A list of points representing the shape.
         """
         angle_cos = np.cos(self._angle_offset.value.m_as(UNIT_ANGLE))
@@ -202,7 +202,7 @@ class Ellipse(BaseShape):
             -self.semi_major_axis.m * angle_sin, self.semi_minor_axis.m * angle_cos
         )
         theta = np.linspace(0, 2 * np.pi, num_points)
-        center_from_plane_origin = Point(
+        center_from_plane_origin = Point3D(
             self.plane.global_to_local @ (self.center - self.plane.origin), self.center.unit
         )
 
@@ -211,7 +211,7 @@ class Ellipse(BaseShape):
             angle_plus_offset_cos = np.cos(ang + offset_factor)
             angle_plus_offset_sin = np.sin(ang + offset_factor)
             points.append(
-                Point(
+                Point3D(
                     [
                         center_from_plane_origin.x.to(self.semi_major_axis.units).m
                         + self.semi_major_axis.m * angle_plus_offset_cos * angle_cos
@@ -229,7 +229,7 @@ class Ellipse(BaseShape):
     @classmethod
     def from_axes(
         cls,
-        center: Point,
+        center: Point3D,
         semi_major_axis: Union[Quantity, Distance],
         semi_minor_axis: Union[Quantity, Distance],
         plane: Optional[Plane] = Plane(),
@@ -238,8 +238,8 @@ class Ellipse(BaseShape):
 
         Parameters
         ----------
-        center: Point
-            A :class:`Point` representing the center of the ellipse.
+        center: Point3D
+            A :class:`Point3D` representing the center of the ellipse.
         semi_major_axis : Union[Quantity, Distance]
             The semi-major axis of the ellipse.
         semi_minor_axis : Union[Quantity, Distance]
