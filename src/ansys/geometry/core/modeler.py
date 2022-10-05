@@ -10,7 +10,7 @@ from ansys.geometry.core.designer import Design
 from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
 
-if TYPE_CHECKING:
+if TYPE_CHECKING: # pragma: no cover
     from ansys.platform.instancemanagement import Instance
 
 
@@ -34,8 +34,8 @@ class Modeler:
         Timeout in seconds to achieve the connection.
         By default, 60 seconds.
     remote_instance : ansys.platform.instancemanagement.Instance
-        The corresponding remote instance when geometry is launched through
-        PyPIM. This instance will be deleted when calling
+        The corresponding remote instance when the Geometry Service
+        is launched through PyPIM. This instance will be deleted when calling
         :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`.
     logging_level : int, optional
         The logging level to be applied to the client.

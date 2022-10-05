@@ -10,8 +10,8 @@ from ansys.geometry.core.connection.launcher import launch_modeler
 
 
 def test_launch_remote_instance(monkeypatch, modeler: Modeler):
-    # Create a mock pypim pretenting it is configured and returning
-    # a channel to an already running pygeometrry
+    # Create a mock PyPIM pretending it is configured and returning
+    # a channel to an already running PyGeometry client
     mock_instance = pypim.Instance(
         definition_name="definitions/fake-geometry",
         name="instances/fake-geometry",
@@ -43,7 +43,7 @@ def test_launch_remote_instance(monkeypatch, modeler: Modeler):
 
     modeler = launch_modeler()
 
-    # Assert: pygeometry went through the pypim workflow
+    # Assert: PyGeometry went through the PyPIM workflow
     assert mock_is_configured.called
     assert mock_connect.called
     mock_client.create_instance.assert_called_with(

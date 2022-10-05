@@ -33,7 +33,7 @@ def launch_modeler() -> Modeler:
 
     # Another alternative is running docker locally from this method.
 
-    # Start pygeometry with PyPIM if the environment is configured for it
+    # Start PyGeometry with PyPIM if the environment is configured for it
     # and the user did not pass a directive on how to launch it.
     if pypim.is_configured():
         logger.info(
@@ -47,7 +47,7 @@ def launch_modeler() -> Modeler:
 def launch_remote_modeler(
     version=None,
 ) -> Modeler:
-    """Start Geometry Service remotely using the product instance management API.
+    """Start the Geometry Service remotely using the product instance management API.
     When calling this method, you need to ensure that you are in an
     environment where PyPIM is configured. This can be verified with
     :func:`pypim.is_configured <ansys.platform.instancemanagement.is_configured>`.
@@ -55,13 +55,13 @@ def launch_remote_modeler(
     Parameters
     ----------
     version : str, optional
-        The geometry version to run, in the 3 digits format, such as "212".
+        The Geometry Service version to run, in the 3 digits format, such as "212".
         If unspecified, the version will be chosen by the server.
 
     Returns
     -------
     ansys.geometry.core.modeler.Modeler
-        An instance of geometry.
+        An instance of the Geometry Service.
     """
     if not _HAS_PIM:  # pragma: no cover
         raise ModuleNotFoundError(
@@ -71,7 +71,7 @@ def launch_remote_modeler(
     pim = pypim.connect()
     instance = pim.create_instance(
         product_name="discovery-geometry", product_version=version
-    )  # product name
+    )
     instance.wait_for_ready()
     channel = instance.build_grpc_channel(
         options=[

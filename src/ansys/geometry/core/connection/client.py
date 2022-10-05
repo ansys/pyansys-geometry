@@ -16,7 +16,7 @@ from ansys.geometry.core.logger import PyGeometryCustomAdapter
 from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
 
-if TYPE_CHECKING:
+if TYPE_CHECKING: # pragma: no cover
     from ansys.platform.instancemanagement import Instance
 
 # Default 256 MB message length
@@ -74,9 +74,9 @@ class GrpcClient:
         gRPC channel for server communication.
         By default, ``None``.
     remote_instance : ansys.platform.instancemanagement.Instance
-        The corresponding remote instance when geometry is launched through
-        PyPIM. This instance will be deleted when calling
-        :func:`GrpcClient.close <ansys.mapdl.core.Mapdl.exit>`.
+        The corresponding remote instance when the Geometry Service
+        is launched through PyPIM. This instance will be deleted when calling
+        :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`.
     timeout : Real, optional
         Timeout in seconds to achieve the connection.
         By default, 60 seconds.
@@ -169,7 +169,13 @@ class GrpcClient:
         return "\n".join(lines)
 
     def close(self):
-        """Close the channel."""
+        """Close the channel.
+        
+        Notes
+        -----
+        If an instance of the Geometry Service was started using
+        PyPIM, this instance will be deleted.
+        """
         if self._remote_instance:
             self._remote_instance.delete()
         self._closed = True
