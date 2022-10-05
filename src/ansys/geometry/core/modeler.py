@@ -10,7 +10,7 @@ from ansys.geometry.core.designer import Design
 from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
 
-if TYPE_CHECKING: # pragma: no cover
+if TYPE_CHECKING:  # pragma: no cover
     from ansys.platform.instancemanagement import Instance
 
 

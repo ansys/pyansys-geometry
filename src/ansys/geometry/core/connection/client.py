@@ -16,7 +16,7 @@ from ansys.geometry.core.logger import PyGeometryCustomAdapter
 from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
 
-if TYPE_CHECKING: # pragma: no cover
+if TYPE_CHECKING:  # pragma: no cover
     from ansys.platform.instancemanagement import Instance
 
 # Default 256 MB message length
@@ -170,7 +170,7 @@ class GrpcClient:
 
     def close(self):
         """Close the channel.
-        
+
         Notes
         -----
         If an instance of the Geometry Service was started using
