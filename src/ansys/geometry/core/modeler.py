@@ -1,11 +1,15 @@
 """``Modeler`` class module."""
-from typing import Union
+from typing import TYPE_CHECKING, Optional, Union
 
 from grpc import Channel
 
 from ansys.geometry.core.connection import DEFAULT_HOST, DEFAULT_PORT, GrpcClient
 from ansys.geometry.core.designer import Design
 from ansys.geometry.core.misc import check_type
+from ansys.geometry.core.typing import Real
+
+if TYPE_CHECKING:
+    from ansys.platform.instancemanagement import Instance
 
 
 class Modeler:
@@ -37,9 +41,9 @@ class Modeler:
         self,
         host: str = DEFAULT_HOST,
         port: Union[str, int] = DEFAULT_PORT,
-        channel: Channel = None,
-        timeout=60,
-        remote_instance=None,
+        channel: Optional[Channel] = None,
+        remote_instance: Optional["Instance"] = None,
+        timeout: Optional[Real] = 60,
     ):
         """Constructor method for ``Modeler``."""
         self._client = GrpcClient(host, port, channel, remote_instance, timeout=timeout)

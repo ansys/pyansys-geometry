@@ -5,7 +5,6 @@ import ansys.platform.instancemanagement as pypim
 from grpc import insecure_channel
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core.connection import DEFAULT_HOST, DEFAULT_PORT
 from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
 from ansys.geometry.core.connection.launcher import launch_modeler
 
@@ -13,7 +12,6 @@ from ansys.geometry.core.connection.launcher import launch_modeler
 def test_launch_remote_instance(monkeypatch, modeler: Modeler):
     # Create a mock pypim pretenting it is configured and returning
     # a channel to an already running pygeometrry
-    target = f"{DEFAULT_HOST}:{DEFAULT_PORT}"
     mock_instance = pypim.Instance(
         definition_name="definitions/fake-geometry",
         name="instances/fake-geometry",
@@ -62,4 +60,4 @@ def test_launch_remote_instance(monkeypatch, modeler: Modeler):
     assert modeler._client._remote_instance == mock_instance
 
     # And it connected using the channel created by PyPIM
-    assert modeler._client._channel == pim_channel
+    assert modeler._client.channel == pim_channel

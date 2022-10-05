@@ -2,7 +2,7 @@
 
 import os
 import time
-from typing import Optional, Union
+from typing import TYPE_CHECKING, Optional, Union
 
 import grpc
 from grpc._channel import _InactiveRpcError
@@ -11,6 +11,9 @@ from grpc_health.v1 import health_pb2, health_pb2_grpc
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
 from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
+
+if TYPE_CHECKING:
+    from ansys.platform.instancemanagement import Instance
 
 # Default 256 MB message length
 MAX_MESSAGE_LENGTH = int(os.environ.get("PYGEOMETRY_MAX_MESSAGE_LENGTH", 256 * 1024**2))
@@ -66,6 +69,10 @@ class GrpcClient:
     channel : ~grpc.Channel, optional
         gRPC channel for server communication.
         By default, ``None``.
+    remote_instance : ansys.platform.instancemanagement.Instance
+        The corresponding remote instance when geometry is launched through
+        PyPIM. This instance will be deleted when calling
+        :func:`GrpcClient.close <ansys.mapdl.core.Mapdl.exit>`.
     timeout : Real, optional
         Timeout in seconds to achieve the connection.
         By default, 60 seconds.
@@ -76,7 +83,7 @@ class GrpcClient:
         host: Optional[str] = DEFAULT_HOST,
         port: Union[str, int] = DEFAULT_PORT,
         channel: Optional[grpc.Channel] = None,
-        remote_instance: Optional[bool] = None,
+        remote_instance: Optional["Instance"] = None,
         timeout: Optional[Real] = 60,
     ):
         """Initialize the ``GrpcClient`` object."""
@@ -136,9 +143,9 @@ class GrpcClient:
 
     def close(self):
         """Close the channel."""
-        self._closed = True
         if self._remote_instance:
-            self._remote_instance = False
+            self._remote_instance.delete()
+        self._closed = True
         self._channel.close()
 
     def target(self) -> str:
