@@ -733,3 +733,114 @@ def test_plane():
 
     with pytest.raises(TypeError, match=f"Provided type {Point2D} is invalid"):
         p_1.is_point_contained(Point2D([42, 99]))
+
+
+def test_add_sub_point_3d():
+    """Test for adding/subtracting Point3D/2D objects"""
+
+    # Point3D (and Vector3D)
+    # =======================================================================
+
+    # Let's create two reference points
+    a_3d = Point3D([23, 43, 53], UNITS.mm)
+    b_3d = Point3D([1, 3, 7], UNITS.dm)
+    c_add_3d = Point3D([123, 343, 753], UNITS.mm)
+    a_sub_b_3d = Point3D([-77, -257, -647], UNITS.mm)
+    b_sub_a_3d = -a_sub_b_3d
+
+    # Check that the add operation is equal to the ref value
+    # and that the units are the same as "a_3d" (first value in add operation)
+    c_add_mm_3d = a_3d + b_3d
+    assert np.allclose(c_add_mm_3d, c_add_3d)
+    assert c_add_mm_3d.unit == a_3d.unit
+
+    # Let's add them the other way around
+    c_add_dm_3d = b_3d + a_3d
+    assert np.allclose(c_add_dm_3d, c_add_3d)
+    assert c_add_dm_3d.unit == b_3d.unit
+
+    # Let's do subtraction operations now with two points
+    a_sub_b_mm_3d = a_3d - b_3d
+    assert np.allclose(a_sub_b_mm_3d, a_sub_b_3d)
+    assert a_sub_b_mm_3d.unit == a_3d.unit
+
+    # Let's add them the other way around
+    b_sub_a_dm_3d = b_3d - a_3d
+    assert np.allclose(b_sub_a_dm_3d, b_sub_a_3d)
+    assert b_sub_a_dm_3d.unit == b_3d.unit
+
+    # Let's try adding a vector now. Vectors are always added as base units.
+    vector_3d = Vector3D([1, 2, 3])
+    d_3d = a_3d + vector_3d
+    d_3d_ref = Point3D([1.023, 2.043, 3.053], UNITS.m)
+
+    assert np.allclose(d_3d, d_3d_ref)
+    assert d_3d.unit == a_3d.unit
+
+    # Let's try adding it the other way around
+    e_3d = vector_3d + a_3d
+    assert np.allclose(e_3d, d_3d_ref)
+    assert e_3d.unit == a_3d.unit
+
+    # Let's try subtracting a vector to a point now
+    a_sub_vec_3d = a_3d - vector_3d
+    a_sub_vec_3d_ref = Point3D([-977, -1957, -2947], UNITS.mm)
+    assert np.allclose(a_sub_vec_3d, a_sub_vec_3d_ref)
+    assert a_sub_vec_3d.unit == a_3d.unit
+
+    # Point2D (and Vector2D)
+    # =======================================================================
+
+    # Let's create two reference points
+    a_2d = Point2D([23, 43], UNITS.mm)
+    b_2d = Point2D([1, 3], UNITS.dm)
+    c_add_2d = Point2D([123, 343], UNITS.mm)
+    a_sub_b_2d = Point2D([-77, -257], UNITS.mm)
+    b_sub_a_2d = -a_sub_b_2d
+
+    # Check that the add operation is equal to the ref value
+    # and that the units are the same as "a_2d" (first value in add operation)
+    c_add_mm_2d = a_2d + b_2d
+    assert np.allclose(c_add_mm_2d, c_add_2d)
+    assert c_add_mm_2d.unit == a_2d.unit
+
+    # Let's add them the other way around
+    c_add_dm_2d = b_2d + a_2d
+    assert np.allclose(c_add_dm_2d, c_add_2d)
+    assert c_add_dm_2d.unit == b_2d.unit
+
+    # Let's do subtraction operations now with two points
+    a_sub_b_mm_2d = a_2d - b_2d
+    assert np.allclose(a_sub_b_mm_2d, a_sub_b_2d)
+    assert a_sub_b_mm_2d.unit == a_2d.unit
+
+    # Let's add them the other way around
+    b_sub_a_dm_2d = b_2d - a_2d
+    assert np.allclose(b_sub_a_dm_2d, b_sub_a_2d)
+    assert b_sub_a_dm_2d.unit == b_2d.unit
+
+    # Let's try adding a vector now. Vectors are always added as base units.
+    vector_2d = Vector2D([1, 2])
+    d_2d = a_2d + vector_2d
+    d_2d_ref = Point2D([1.023, 2.043], UNITS.m)
+
+    assert np.allclose(d_2d, d_2d_ref)
+    assert d_2d.unit == a_2d.unit
+
+    # Let's try adding it the other way around
+    e_2d = vector_2d + a_2d
+    assert np.allclose(e_2d, d_2d_ref)
+    assert e_2d.unit == a_2d.unit
+
+    # Let's try subtracting a vector to a point now
+    a_sub_vec_2d = a_2d - vector_2d
+    a_sub_vec_2d_ref = Point2D([-977, -1957], UNITS.mm)
+    assert np.allclose(a_sub_vec_2d, a_sub_vec_2d_ref)
+    assert a_sub_vec_2d.unit == a_2d.unit
+
+    # Let's try some errors when adding invalid objects to Vectors
+    with pytest.raises(NotImplementedError, match="Vector2D addition"):
+        vector_2d + "a"
+
+    with pytest.raises(NotImplementedError, match="Vector3D addition"):
+        vector_3d + "a"

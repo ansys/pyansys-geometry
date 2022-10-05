@@ -163,9 +163,17 @@ class Vector3D(np.ndarray):
         """Overload % operator with cross product."""
         return self.cross(other)
 
-    def __add__(self, other: "Vector3D") -> "Vector3D":
+    def __add__(self, other: Union["Vector3D", Point3D]) -> Union["Vector3D", Point3D]:
         """Addition operation overload for ``Vector3D`` objects."""
-        check_type_equivalence(other, self)
+        try:
+            check_type_equivalence(other, self)
+        except TypeError:
+            if isinstance(other, Point3D):
+                return other + self
+            else:
+                raise NotImplementedError(
+                    f"Vector3D addition operation not implemented for {type(other)}"
+                )
         return Vector3D(np.add(self, other))
 
     def __sub__(self, other: "Vector3D") -> "Vector3D":
@@ -324,9 +332,17 @@ class Vector2D(np.ndarray):
             check_type_equivalence(other, self)
             return self.dot(other)
 
-    def __add__(self, other: "Vector2D") -> "Vector2D":
+    def __add__(self, other: Union["Vector2D", Point2D]) -> Union["Vector2D", Point2D]:
         """Addition operation overload for ``Vector2D`` objects."""
-        check_type_equivalence(other, self)
+        try:
+            check_type_equivalence(other, self)
+        except TypeError:
+            if isinstance(other, Point2D):
+                return other + self
+            else:
+                raise NotImplementedError(
+                    f"Vector2D addition operation not implemented for {type(other)}"
+                )
         return Vector2D(np.add(self, other))
 
     def __sub__(self, other: "Vector2D") -> "Vector2D":
