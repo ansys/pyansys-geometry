@@ -793,7 +793,7 @@ def test_plane():
 
 
 def test_add_sub_point_3d():
-    """Test for adding/subtracting Point3D/2D objects"""
+    """Test for adding/subtracting Point3D/2D objects."""
 
     # Point3D (and Vector3D)
     # =======================================================================
@@ -901,3 +901,43 @@ def test_add_sub_point_3d():
 
     with pytest.raises(NotImplementedError, match="Vector3D addition"):
         vector_3d + "a"
+
+
+@pytest.mark.parametrize(
+    "a,b_ref",
+    [
+        (Point2D([3, 4], UNITS.cm), Point2D([9, 12], UNITS.cm)),
+        (Point3D([3, 4, 5], UNITS.cm), Point3D([9, 12, 15], UNITS.cm)),
+    ],
+)
+def test_mult_operator_point(a, b_ref):
+    """Testing the multiplication operator for Point objects."""
+
+    b = 3 * a
+    assert np.allclose(b, b_ref)
+    assert b.unit
+    assert a.unit.is_compatible_with(b.unit)
+    assert a.unit.dimensionality == b.unit.dimensionality
+
+    b_2 = a * 3
+    assert np.allclose(b_2, b_ref)
+    assert b_2.unit
+    assert a.unit.is_compatible_with(b_2.unit)
+    assert a.unit.dimensionality == b_2.unit.dimensionality
+
+
+@pytest.mark.parametrize(
+    "a,b_ref",
+    [
+        (Point2D([9, 12], UNITS.cm), Point2D([3, 4], UNITS.cm)),
+        (Point3D([9, 12, 15], UNITS.cm), Point3D([3, 4, 5], UNITS.cm)),
+    ],
+)
+def test_div_operator_point(a, b_ref):
+    """Testing the division operator for Point objects."""
+
+    b = a / 3
+    assert np.allclose(b, b_ref)
+    assert b.unit
+    assert a.unit.is_compatible_with(b.unit)
+    assert a.unit.dimensionality == b.unit.dimensionality
