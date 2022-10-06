@@ -1,8 +1,6 @@
 """``Material`` class module."""
 
-from audioop import add
-from tabnanny import check
-from typing import Dict, Sequence, Optional, Sequence
+from typing import Dict, Optional, Sequence
 
 from pint import Quantity
 
