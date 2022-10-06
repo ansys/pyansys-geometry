@@ -212,7 +212,8 @@ class Slot(BaseShape):
     def __slot_ref_point(
         self, x_offset: Real, y_offset: Real, reference: Point3D, unit: Unit, rotation: Matrix33
     ) -> Point3D:
-        """Private method for creating the slot reference points from a given X/Y offset and its center.
+        """Private method for creating the slot reference points from a given X/Y offset
+        and its center.
 
         Parameters
         ----------
