@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from ansys.geometry.core.math import Point
+from ansys.geometry.core.math import Point3D
 from ansys.geometry.core.misc import (
     UNITS,
     check_is_float_int,
@@ -20,9 +20,9 @@ def test_check_type():
 
     Both objects must be of the same type to be compared.
     """
-    a_2d = Point([1, 2])
+    a_2d = Point3D([1, 2, 0])
 
-    check_type(a_2d, Point)
+    check_type(a_2d, Point3D)
 
     with pytest.raises(TypeError, match="Provided type"):
         check_type(a_2d, int)
@@ -37,8 +37,8 @@ def test_check_type_equivalence():
 
     Both objects must be of the same type to be compared.
     """
-    a_2d = Point([1, 2])
-    b_2d = Point([3, 4])
+    a_2d = Point3D([1, 2, 0])
+    b_2d = Point3D([3, 4, 0])
 
     # Check that a_2d and 3 are not the same
     with pytest.raises(TypeError, match="Provided type"):

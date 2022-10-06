@@ -4,7 +4,7 @@ from typing import List, Optional
 
 from pint import Quantity
 
-from ansys.geometry.core.math import Plane, Point
+from ansys.geometry.core.math import Plane, Point3D
 from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
 
@@ -37,7 +37,7 @@ class BaseShape:
         """The Plane in which the shape is contained."""
         return self._plane
 
-    def points(self, num_points: Optional[int] = 100) -> List[Point]:
+    def points(self, num_points: Optional[int] = 100) -> List[Point3D]:
         """Returns a list containing all the points belonging to the shape.
 
         Parameters
@@ -47,7 +47,7 @@ class BaseShape:
 
         Returns
         -------
-        List[Point]
+        List[Point3D]
             A list of points representing the shape.
         """
         try:
@@ -55,7 +55,10 @@ class BaseShape:
         except TypeError:
             local_points = self.local_points()
 
-        return [(self.plane.origin + self.plane.local_to_global @ point) for point in local_points]
+        return [
+            (self.plane.origin + Point3D(self.plane.local_to_global @ point, point.base_unit))
+            for point in local_points
+        ]
 
     @property
     def components(self) -> List["BaseShape"]:

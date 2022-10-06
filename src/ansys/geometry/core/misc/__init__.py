@@ -9,7 +9,6 @@ from ansys.geometry.core.misc.checks import (
     check_pint_unit_compatibility,
     check_type,
     check_type_equivalence,
-    only_for_3d,
 )
 from ansys.geometry.core.misc.measurements import (
     SERVER_UNIT_AREA,
@@ -36,7 +35,6 @@ __all__ = [
     "check_type_equivalence",
     "Distance",
     "LENGTH_ACCURACY",
-    "only_for_3d",
     "PhysicalQuantity",
     "SERVER_UNIT_AREA",
     "SERVER_UNIT_LENGTH",

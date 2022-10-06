@@ -6,7 +6,7 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core.math import Point
+from ansys.geometry.core.math import Point3D
 from ansys.geometry.core.misc import (
     UNIT_LENGTH,
     UNITS,
@@ -24,7 +24,7 @@ class Sphere:
 
     Parameters
     ----------
-    origin : Union[~numpy.ndarray, RealSequence, Point]
+    origin : Union[~numpy.ndarray, RealSequence, Point3D]
         Centered origin of the ``Sphere``.
     radius: Real
         Radius of ``Sphere``.
@@ -34,13 +34,13 @@ class Sphere:
 
     def __init__(
         self,
-        origin: Union[np.ndarray, RealSequence, Point],
+        origin: Union[np.ndarray, RealSequence, Point3D],
         radius: Real,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
         """Constructor method for ``Sphere``."""
 
-        check_type(origin, (np.ndarray, List, Point))
+        check_type(origin, (np.ndarray, List, Point3D))
 
         check_is_float_int(radius, "radius")
 
@@ -50,20 +50,20 @@ class Sphere:
         self._unit = unit
         _, self._base_unit = UNITS.get_base_units(unit)
 
-        self._origin = Point(origin) if not isinstance(origin, Point) else origin
+        self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
 
         # Store values in base unit
         self._radius = UNITS.convert(radius, self._unit, self._base_unit)
 
     @property
-    def origin(self) -> Point:
+    def origin(self) -> Point3D:
         """Origin of the ``Sphere``."""
         return self._origin
 
     @origin.setter
-    def origin(self, origin: Point) -> None:
-        if not isinstance(origin, Point):
-            raise TypeError(f"origin is invalid, type {Point} expected.")
+    def origin(self, origin: Point3D) -> None:
+        if not isinstance(origin, Point3D):
+            raise TypeError(f"origin is invalid, type {Point3D} expected.")
         self._origin = origin
 
     @property

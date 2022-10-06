@@ -11,9 +11,9 @@ from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 
-if TYPE_CHECKING:
-    from ansys.geometry.core.designer.body import Body  # pragma: no cover
-    from ansys.geometry.core.designer.face import Face  # pragma: no cover
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.designer.body import Body
+    from ansys.geometry.core.designer.face import Face
 
 
 @unique

@@ -22,7 +22,7 @@ from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials import Material
-from ansys.geometry.core.math import UnitVector
+from ansys.geometry.core.math import UnitVector3D
 from ansys.geometry.core.misc import (
     SERVER_UNIT_LENGTH,
     SERVER_UNIT_VOLUME,
@@ -32,10 +32,10 @@ from ansys.geometry.core.misc import (
 )
 from ansys.geometry.core.sketch import Sketch
 
-if TYPE_CHECKING:
-    from pyvista import MultiBlock, PolyData  # pragma: no cover
+if TYPE_CHECKING:  # pragma: no cover
+    from pyvista import MultiBlock, PolyData
 
-    from ansys.geometry.core.designer.component import Component  # pragma: no cover
+    from ansys.geometry.core.designer.component import Component
 
 
 class Body:
@@ -233,7 +233,7 @@ class Body:
     @protect_grpc
     def project_curves(
         self,
-        direction: UnitVector,
+        direction: UnitVector3D,
         sketch: Sketch,
         closest_face: bool,
         only_one_curve: Optional[bool] = False,
@@ -242,7 +242,7 @@ class Body:
 
         Parameters
         ----------
-        direction: UnitVector
+        direction: UnitVector3D
             Establishes the direction of the projection.
         sketch: Sketch
             All of the curves to project on the body.
@@ -264,7 +264,7 @@ class Body:
             All of the faces from the project curves operation.
         """
         # Sanity checks
-        check_type(direction, UnitVector)
+        check_type(direction, UnitVector3D)
         check_type(sketch, Sketch)
         check_type(closest_face, bool)
 
@@ -292,12 +292,12 @@ class Body:
         return projected_faces
 
     @protect_grpc
-    def translate(self, direction: UnitVector, distance: Union[Quantity, Distance]) -> None:
+    def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance]) -> None:
         """Translates the geometry body in the direction specified by the given distance.
 
         Parameters
         ----------
-        direction: UnitVector
+        direction: UnitVector3D
             The direction of the translation.
         distance: Union[Quantity, Distance]
             The magnitude of the translation.
@@ -306,7 +306,7 @@ class Body:
         -------
         None
         """
-        check_type(direction, UnitVector)
+        check_type(direction, UnitVector3D)
         check_type(distance, (Quantity, Distance))
         check_pint_unit_compatibility(distance, SERVER_UNIT_LENGTH)
 
@@ -350,13 +350,13 @@ class Body:
 
         >>> from ansys.geometry.core.misc.units import UNITS as u
         >>> from ansys.geometry.core.sketch import Sketch
-        >>> from ansys.geometry.core.math import Plane, Point, UnitVector
+        >>> from ansys.geometry.core.math import Plane, Point3D, UnitVector3D
         >>> from ansys.geometry.core import Modeler
         >>> modeler = Modeler()
-        >>> origin = Point([0, 0, 0])
+        >>> origin = Point3D([0, 0, 0])
         >>> plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 0, 1])
         >>> sketch = Sketch(plane)
-        >>> box = sketch.draw_box(Point([2, 0, 2]), 4, 4)
+        >>> box = sketch.draw_box(Point3D([2, 0, 2]), 4, 4)
         >>> design = modeler.create_design("my-design")
         >>> my_comp = design.add_component("my-comp")
         >>> body = my_comp.extrude_sketch("my-sketch", sketch, 1 * u.m)
@@ -420,13 +420,13 @@ class Body:
 
         >>> from ansys.geometry.core.misc.units import UNITS as u
         >>> from ansys.geometry.core.sketch import Sketch
-        >>> from ansys.geometry.core.math import Plane, Point, UnitVector
+        >>> from ansys.geometry.core.math import Plane, Point3D, UnitVector3D
         >>> from ansys.geometry.core import Modeler
         >>> modeler = Modeler()
-        >>> origin = Point([0, 0, 0])
+        >>> origin = Point3D([0, 0, 0])
         >>> plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 0, 1])
         >>> sketch = Sketch(plane)
-        >>> box = sketch.draw_box(Point([2, 0, 2]), 4, 4)
+        >>> box = sketch.draw_box(Point3D([2, 0, 2]), 4, 4)
         >>> design = modeler.create_design("my-design")
         >>> mycomp = design.add_component("my-comp")
         >>> body = mycomp.extrude_sketch("my-sketch", sketch, 1 * u.m)
