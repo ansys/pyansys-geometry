@@ -150,7 +150,7 @@ class Circle(BaseShape):
 
         Parameters
         ----------
-        center: Point3D
+        center : Point3D
             A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
             representing the center of the circle.
         radius : Real

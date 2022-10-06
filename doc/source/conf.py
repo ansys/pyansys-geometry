@@ -48,8 +48,7 @@ intersphinx_mapping = {
     "pyvista": ("https://docs.pyvista.org/", None),
     # kept here as an example
     # "matplotlib": ("https://matplotlib.org/stable", None),
-    # "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
-    # "grpc": ("https://grpc.github.io/grpc/python/", None),
+    "grpc": ("https://grpc.github.io/grpc/python/", None),
 }
 
 # numpydoc configuration

@@ -20,7 +20,7 @@ class Ellipse(BaseShape):
     plane : Plane
         A :class:`Plane <ansys.geometry.core.math.plane.Plane>` representing
         the planar surface where the shape is contained.
-    center: Point3D
+    center : Point3D
         A :class:`Point3D <ansys.geometry.core.math.point.Point3D>` representing
         the center of the ellipse.
     semi_major_axis : Union[Quantity, Distance]
@@ -240,7 +240,7 @@ class Ellipse(BaseShape):
 
         Parameters
         ----------
-        center: Point3D
+        center : Point3D
             A :class:`Point3D <ansys.geometry.core.math.point.Point3D>` representing the
             center of the ellipse.
         semi_major_axis : Union[Quantity, Distance]

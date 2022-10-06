@@ -20,7 +20,7 @@ class Polygon(BaseShape):
     plane : Plane
         A :class:`Plane <ansys.geometry.core.math.plane.Plane>` representing the
         planar surface where the shape is contained.
-    center: Point3D
+    center : Point3D
         A :class:`Point3D <ansys.geometry.core.math.point.Point3D>` representing the
         center of the circle.
     inner_radius : Union[Quantity, Distance]

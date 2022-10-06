@@ -22,7 +22,7 @@ class Arc(BaseShape):
     center : Point3D
         A :class:`Point3D <ansys.geometry.core.math.point.Point3D>` representing the
         center of the arc.
-    start: Point3D
+    start : Point3D
         A :class:`Point3D <ansys.geometry.core.math.point.Point3D>` representing the
         start of the arc.
     end : Point3D

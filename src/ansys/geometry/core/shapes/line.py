@@ -25,10 +25,10 @@ class Line(BaseShape):
     plane : Plane
         A :class:`Plane <ansys.geometry.core.math.plane.Plane>` representing the
         planar surface where the shape is contained.
-    start: Point3D
+    start : Point3D
         A :class:`Point3D <ansys.geometry.core.math.point.Point3D>` representing
         starting point of the line.
-    direction: Union[Vector, UnitVector3D]
+    direction : Union[Vector, UnitVector3D]
         Direction of the line.
 
     Notes
@@ -140,9 +140,9 @@ class Segment(Line):
     plane : Plane
         A :class:`Plane <ansys.geometry.core.math.plane.Plane>` representing the
         planar surface where the shape is contained.
-    start: Point3D
+    start : Point3D
         Start of the line segment.
-    end: Point3D
+    end : Point3D
         End of the line segment.
     """
 

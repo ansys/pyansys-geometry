@@ -70,7 +70,7 @@ class GrpcClient:
     channel : ~grpc.Channel, optional
         gRPC channel for server communication.
         By default, ``None``.
-    timeout : Real, optional
+    timeout : Real , optional
         Timeout in seconds to achieve the connection.
         By default, 60 seconds.
     logging_level : int, optional
