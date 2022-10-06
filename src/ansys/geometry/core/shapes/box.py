@@ -202,7 +202,8 @@ class Box(BaseShape):
     def __box_ref_point(
         self, x_offset: Real, y_offset: Real, reference: Point3D, unit: Unit, rotation: Matrix33
     ) -> Point3D:
-        """Private method for creating the box reference points from a given X/Y offset and a box center.
+        """Private method for creating the box reference points from a given X/Y offset and
+        a box center.
 
         Parameters
         ----------
