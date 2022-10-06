@@ -7,6 +7,7 @@ from pint import Quantity, Unit
 
 from ansys.geometry.core.misc import (
     UNIT_LENGTH,
+    UNITS,
     PhysicalQuantity,
     check_ndarray_is_float_int,
     check_type,
@@ -117,6 +118,24 @@ class Point2D(np.ndarray, PhysicalQuantity):
         """Set the Y plane component value."""
         self.__set_value(y, 1)
 
+    @PhysicalQuantity.unit.getter
+    def unit(self) -> Unit:
+        """Returns the unit of the object."""
+        try:
+            return PhysicalQuantity.unit.fget(self)
+        except AttributeError:
+            self._unit = UNIT_LENGTH
+            return self.unit
+
+    @PhysicalQuantity.base_unit.getter
+    def base_unit(self) -> Unit:
+        """Returns the base unit of the object."""
+        try:
+            return PhysicalQuantity.base_unit.fget(self)
+        except AttributeError:
+            self._base_unit = UNITS.get_base_units(UNIT_LENGTH)[1]
+            return self.base_unit
+
 
 class Point3D(np.ndarray, PhysicalQuantity):
     """
@@ -220,3 +239,21 @@ class Point3D(np.ndarray, PhysicalQuantity):
     def z(self, z: Quantity) -> None:
         """Set the Z plane component value."""
         self.__set_value(z, 2)
+
+    @PhysicalQuantity.unit.getter
+    def unit(self) -> Unit:
+        """Returns the unit of the object."""
+        try:
+            return PhysicalQuantity.unit.fget(self)
+        except AttributeError:
+            self._unit = UNIT_LENGTH
+            return self.unit
+
+    @PhysicalQuantity.base_unit.getter
+    def base_unit(self) -> Unit:
+        """Returns the base unit of the object."""
+        try:
+            return PhysicalQuantity.base_unit.fget(self)
+        except AttributeError:
+            self._base_unit = UNITS.get_base_units(UNIT_LENGTH)[1]
+            return self.base_unit
