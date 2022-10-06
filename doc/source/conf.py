@@ -46,10 +46,10 @@ intersphinx_mapping = {
     "numpy": ("https://numpy.org/devdocs", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
     "pyvista": ("https://docs.pyvista.org/", None),
+    "grpc": ("https://grpc.github.io/grpc/python/", None),
     # kept here as an example
     # "matplotlib": ("https://matplotlib.org/stable", None),
     # "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
-    # "grpc": ("https://grpc.github.io/grpc/python/", None),
 }
 
 # numpydoc configuration
