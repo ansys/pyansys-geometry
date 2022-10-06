@@ -234,8 +234,8 @@ jobs:
 
       - name: Install ansys-geometry-core
         run: |
-          pip install poetry
-          poetry build
+          pip install build
+          python -m build
           pip install dist/*.whl
 
       - name: Check package
