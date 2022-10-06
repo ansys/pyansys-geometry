@@ -15,9 +15,11 @@ class Circle(BaseShape):
     Parameters
     ----------
     plane : Plane
-        A :class:`Plane` representing the planar surface where the shape is contained.
+        A :class:`Plane <ansys.geometry.core.math.plane.Plane>` representing the
+        planar surface where the shape is contained.
     center: Point3D
-        A :class:`Point3D` representing the center of the circle.
+        A :class:`Point3D <ansys.geometry.core.math.point.Point3D>` representing
+        the center of the circle.
     radius : Union[Quantity, Distance]
         The radius of the circle.
     """
@@ -149,11 +151,13 @@ class Circle(BaseShape):
         Parameters
         ----------
         center: Point3D
-            A :class:`Point3D` representing the center of the circle.
+            A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+            representing the center of the circle.
         radius : Real
             The radius of the circle.
         plane : Plane, optional
-            A :class:`Plane` representing the planar surface where the shape is contained.
+            A :class:`Plane <ansys.geometry.core.math.plane.Plane>`
+            representing the planar surface where the shape is contained.
             By default, the base XY-Plane.
 
         Returns

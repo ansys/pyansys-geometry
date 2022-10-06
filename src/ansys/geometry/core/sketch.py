@@ -63,8 +63,9 @@ class Sketch:
 
         Parameters
         ----------
-        center: Point3D
-            A :class:`Point3D` representing the center of the box.
+        center : Point3D
+            A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+            representing the center of the box.
         width : Union[Quantity, Distance, Real]
             The width of the box.
         height : Union[Quantity, Distance, Real]
@@ -93,7 +94,8 @@ class Sketch:
         Parameters
         ----------
         center: Point3D
-            A :class:`Point3D` representing the center of the slot.
+            A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+            representing the center of the slot.
         width : Union[Quantity, Distance, Real]
             The width of the slot.
         height : Union[Quantity, Distance, Real]
@@ -116,7 +118,8 @@ class Sketch:
         Parameters
         ----------
         center: Point3D
-            A :class:`Point3D` representing the center of the circle.
+            A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+            representing the center of the circle.
         radius : Union[Quantity, Distance]
             The radius of the circle.
 
@@ -142,7 +145,8 @@ class Sketch:
         Parameters
         ----------
         center: Point3D
-            A :class:`Point3D` representing the center of the ellipse.
+            A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+            representing the center of the ellipse.
         semi_major_axis : Union[Quantity, Distance]
             The semi-major axis of the ellipse.
         semi_minor_axis : Union[Quantity, Distance]
@@ -197,7 +201,7 @@ class Sketch:
         ----------
         start : Point3D
             Origin/start of the line.
-        direction: Union[Vector3D, UnitVector3D]
+        direction : Union[Vector3D, UnitVector3D]
             Direction of the line.
 
         Returns
@@ -222,7 +226,8 @@ class Sketch:
         Parameters
         ----------
         center: Point3D
-            A :class:`Point3D` representing the center of the circle.
+            A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+            representing the center of the circle.
         inner_radius : Union[Quantity, Distance]
             The inradius(apothem) of the polygon.
         sides : int
@@ -248,13 +253,17 @@ class Sketch:
         Parameters
         ----------
         center : Point3D
-            A :class:``Point3D`` representing the center of the arc.
+            A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+            representing the center of the arc.
         start : Point3D
-            A :class:``Point3D`` representing the start of the shape.
+            A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+            representing the start of the shape.
         end : Point3D
-            A :class:``Point3D`` representing the end of the shape.
+            A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+            representing the end of the shape.
         axis : Optional[UnitVector3D]
-            A :class:``UnitVector3D`` determining the rotation direction of the arc.
+            A :class:`UnitVector3D <ansys.geometry.core.math.vector.unitVector3D>`
+            determining the rotation direction of the arc.
             It is expected to be orthogonal to the provided plane.
             +z for counter-clockwise rotation. -z for clockwise rotation.
             If not provided, the default will be counter-clockwise rotation.

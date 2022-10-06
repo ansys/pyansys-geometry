@@ -23,7 +23,7 @@ class Vector3D(np.ndarray):
     Parameters
     ----------
     input : Union[~numpy.ndarray, RealSequence]
-        3-dimensional :class:`numpy.ndarray` with shape(X,).
+        3-dimensional :class:`numpy.ndarray <numpy.ndarray>` with shape(X,).
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence]):
@@ -192,9 +192,11 @@ class Vector3D(np.ndarray):
         Parameters
         ----------
         point_a : Point3D
-            A :class:`Point3D` representing the first point.
+            A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+            representing the first point.
         point_b : Point3D
-            A :class:`Point3D` representing the second point.
+            A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+            representing the second point.
 
         Notes
         -----
@@ -217,7 +219,7 @@ class Vector2D(np.ndarray):
     Parameters
     ----------
     input : Union[~numpy.ndarray, RealSequence]
-        2-dimensional :class:`numpy.ndarray` with shape(X,).
+        2-dimensional :class:`numpy.ndarray <numpy.ndarray>` with shape(X,).
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence]):
@@ -361,9 +363,11 @@ class Vector2D(np.ndarray):
         Parameters
         ----------
         point_a : Point2D
-            A :class:`Point2D` representing the first point.
+            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+            representing the first point.
         point_b : Point2D
-            A :class:`Point2D` representing the second point.
+            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+            representing the second point.
 
         Notes
         -----
@@ -386,7 +390,7 @@ class UnitVector3D(Vector3D):
     Parameters
     ----------
     input : ~numpy.ndarray, ``Vector3D``
-        * One dimensional :class:`numpy.ndarray` with shape(X,)
+        * One dimensional :class:`numpy.ndarray <numpy.ndarray>` with shape(X,)
         * Vector3D
     """
 
@@ -419,9 +423,11 @@ class UnitVector3D(Vector3D):
         Parameters
         ----------
         point_a : Point3D
-            A :class:`Point3D` representing the first point.
+            A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+            representing the first point.
         point_b : Point3D
-            A :class:`Point3D` representing the second point.
+            A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+            representing the second point.
 
         Returns
         -------
@@ -437,7 +443,7 @@ class UnitVector2D(Vector2D):
     Parameters
     ----------
     input : ~numpy.ndarray, ``Vector2D``
-        * One dimensional :class:`numpy.ndarray` with shape(X,)
+        * One dimensional :class:`numpy.ndarray <numpy.ndarray>` with shape(X,)
         * Vector2D
     """
 
@@ -466,9 +472,11 @@ class UnitVector2D(Vector2D):
         Parameters
         ----------
         point_a : Point2D
-            A :class:`Point2D` representing the first point.
+            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+            representing the first point.
         point_b : Point2D
-            A :class:`Point2D` representing the second point.
+            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+            representing the second point.
 
         Returns
         -------

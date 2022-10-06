@@ -31,7 +31,8 @@ class Point2D(np.ndarray, PhysicalQuantity):
     Parameters
     ----------
     input : Union[~numpy.ndarray, RealSequence], optional
-        The direction arguments, either as a :class:`numpy.ndarray`, or as a RealSequence.
+        The direction arguments, either as a :class:`numpy.ndarray <numpy.ndarray>` ,
+        or as a RealSequence.
         By default, ``[np.nan, np.nan, np.nan]``.
     unit : ~pint.Unit, optional
         Units employed to define the Point2D values, by default ``UNIT_LENGTH``.
@@ -125,7 +126,8 @@ class Point3D(np.ndarray, PhysicalQuantity):
     Parameters
     ----------
     input : Union[~numpy.ndarray, RealSequence], optional
-        The direction arguments, either as a :class:`numpy.ndarray`, or as a RealSequence.
+        The direction arguments, either as a :class:`numpy.ndarray <numpy.ndarray>` ,
+        or as a RealSequence.
         By default, ``[np.nan, np.nan, np.nan]``.
     unit : ~pint.Unit, optional
         Units employed to define the Point3D values, by default ``UNIT_LENGTH``.

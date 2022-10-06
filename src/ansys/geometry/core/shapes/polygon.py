@@ -18,9 +18,11 @@ class Polygon(BaseShape):
     Parameters
     ----------
     plane : Plane
-        A :class:`Plane` representing the planar surface where the shape is contained.
+        A :class:`Plane <ansys.geometry.core.math.plane.Plane>` representing the
+        planar surface where the shape is contained.
     center: Point3D
-        A :class:`Point3D` representing the center of the circle.
+        A :class:`Point3D <ansys.geometry.core.math.point.Point3D>` representing the
+        center of the circle.
     inner_radius : Union[Quantity, Distance]
         The inradius(apothem) of the polygon.
     sides : int
