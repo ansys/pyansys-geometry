@@ -50,7 +50,6 @@ intersphinx_mapping = {
     # kept here as an example
     # "matplotlib": ("https://matplotlib.org/stable", None),
     "pypim": ("https://pypim.docs.pyansys.com/", None),
-    "pygeometry": ("https://geometry.docs.pyansys.com/", None),
 }
 
 # numpydoc configuration
