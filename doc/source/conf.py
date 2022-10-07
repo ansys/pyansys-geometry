@@ -49,7 +49,8 @@ intersphinx_mapping = {
     "grpc": ("https://grpc.github.io/grpc/python/", None),
     # kept here as an example
     # "matplotlib": ("https://matplotlib.org/stable", None),
-    "grpc": ("https://grpc.github.io/grpc/python/", None),
+    "pypim": ("https://pypim.docs.pyansys.com/", None),
+    "pygeometry": ("https://geometry.docs.pyansys.com/", None),
 }
 
 # numpydoc configuration
