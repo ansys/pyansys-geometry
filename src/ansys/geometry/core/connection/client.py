@@ -4,7 +4,7 @@ import logging
 import os
 from pathlib import Path
 import time
-from typing import Optional, Union
+from typing import TYPE_CHECKING, Optional, Union
 
 import grpc
 from grpc._channel import _InactiveRpcError
@@ -15,6 +15,9 @@ from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
 from ansys.geometry.core.logger import PyGeometryCustomAdapter
 from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
+
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.platform.instancemanagement import Instance
 
 # Default 256 MB message length
 MAX_MESSAGE_LENGTH = int(os.environ.get("PYGEOMETRY_MAX_MESSAGE_LENGTH", 256 * 1024**2))
@@ -70,6 +73,10 @@ class GrpcClient:
     channel : ~grpc.Channel, optional
         gRPC channel for server communication.
         By default, ``None``.
+    remote_instance : ansys.platform.instancemanagement.Instance
+        The corresponding remote instance when the Geometry Service
+        is launched through PyPIM. This instance will be deleted when calling
+        :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`.
     timeout : Real, optional
         Timeout in seconds to achieve the connection.
         By default, 60 seconds.
@@ -85,6 +92,7 @@ class GrpcClient:
         host: Optional[str] = DEFAULT_HOST,
         port: Union[str, int] = DEFAULT_PORT,
         channel: Optional[grpc.Channel] = None,
+        remote_instance: Optional["Instance"] = None,
         timeout: Optional[Real] = 60,
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
@@ -97,6 +105,7 @@ class GrpcClient:
         check_type(logging_file, (Path, str, type(None)))
 
         self._closed = False
+        self._remote_instance = remote_instance
         if channel:
             # Used for PyPIM when directly providing a channel
             check_type(channel, grpc.Channel)
@@ -160,7 +169,15 @@ class GrpcClient:
         return "\n".join(lines)
 
     def close(self):
-        """Close the channel."""
+        """Close the channel.
+
+        Notes
+        -----
+        If an instance of the Geometry Service was started using
+        PyPIM, this instance will be deleted.
+        """
+        if self._remote_instance:
+            self._remote_instance.delete()
         self._closed = True
         self._channel.close()
 

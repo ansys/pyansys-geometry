@@ -1,6 +1,6 @@
 """``Material`` class module."""
 
-from typing import Dict, List, Optional
+from typing import Dict, Optional, Sequence
 
 from pint import Quantity
 
@@ -18,7 +18,7 @@ class Material:
         User-defined display name.
     density: ~pint.Quantity
         Material density.
-    additional_properties: Optional[List[MaterialProperty]]
+    additional_properties: Optional[Sequence[MaterialProperty]]
         Additional material properties. By default, ``[]``.
     """
 
@@ -26,12 +26,17 @@ class Material:
         self,
         name: str,
         density: Quantity,
-        additional_properties: Optional[List[MaterialProperty]] = [],
+        additional_properties: Optional[Sequence[MaterialProperty]] = None,
     ):
         """Constructor method for ``Material``."""
         self._name = name
         check_type(density, Quantity)
         self._density = MaterialProperty(MaterialPropertyType.DENSITY, "Density", density)
+        if not additional_properties:
+            additional_properties = []
+        else:
+            check_type(additional_properties, (list, tuple, set))
+            [check_type(prop, MaterialProperty) for prop in additional_properties]
 
         # Add the density to the properties list
         additional_properties.append(self._density)

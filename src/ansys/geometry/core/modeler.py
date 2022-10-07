@@ -1,13 +1,17 @@
 """``Modeler`` class module."""
 import logging
 from pathlib import Path
-from typing import Optional, Union
+from typing import TYPE_CHECKING, Optional, Union
 
 from grpc import Channel
 
 from ansys.geometry.core.connection import DEFAULT_HOST, DEFAULT_PORT, GrpcClient
 from ansys.geometry.core.designer import Design
 from ansys.geometry.core.misc import check_type
+from ansys.geometry.core.typing import Real
+
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.platform.instancemanagement import Instance
 
 
 class Modeler:
@@ -29,6 +33,10 @@ class Modeler:
     timeout : Real, optional
         Timeout in seconds to achieve the connection.
         By default, 60 seconds.
+    remote_instance : ansys.platform.instancemanagement.Instance
+        The corresponding remote instance when the Geometry Service
+        is launched through PyPIM. This instance will be deleted when calling
+        :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`.
     logging_level : int, optional
         The logging level to be applied to the client.
         By default, ``INFO``.
@@ -40,8 +48,9 @@ class Modeler:
         self,
         host: str = DEFAULT_HOST,
         port: Union[str, int] = DEFAULT_PORT,
-        channel: Channel = None,
-        timeout=60,
+        channel: Optional[Channel] = None,
+        remote_instance: Optional["Instance"] = None,
+        timeout: Optional[Real] = 60,
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
     ):
@@ -50,6 +59,7 @@ class Modeler:
             host=host,
             port=port,
             channel=channel,
+            remote_instance=remote_instance,
             timeout=timeout,
             logging_level=logging_level,
             logging_file=logging_file,
