@@ -915,35 +915,39 @@ def test_bounding_box_expands_and_evaluates_bounds_comparisons():
     point4X = -100
     point4Y = 100
 
-    bounding_box.add_point(point1X, point1Y)
+    bounding_box.add_point_components(point1X, point1Y)
     assert 1 == bounding_box.x_min
     assert 1 == bounding_box.x_max
     assert 5 == bounding_box.y_min
     assert 5 == bounding_box.y_max
 
-    bounding_box.add_point(point2X, point2Y)
+    bounding_box.add_point_components(point2X, point2Y)
     assert -4 == bounding_box.x_min
     assert 1 == bounding_box.x_max
     assert -2 == bounding_box.y_min
     assert 5 == bounding_box.y_max
 
-    bounding_box.add_point(point3X, point3Y)
+    bounding_box.add_point_components(point3X, point3Y)
     assert -4 == bounding_box.x_min
     assert 7 == bounding_box.x_max
     assert -2 == bounding_box.y_min
     assert 8 == bounding_box.y_max
 
-    bounding_box.add_point(point4X, point4Y)
+    bounding_box.add_point(Point2D([point4X, point4Y]))
     assert -100 == bounding_box.x_min
     assert 7 == bounding_box.x_max
     assert -2 == bounding_box.y_min
     assert 100 == bounding_box.y_max
 
     bounding_box2 = BoundingBox2D(0, 10, 0, 10)
-    assert bounding_box2.contains_point(5, 5)
-    assert not bounding_box2.contains_point(100, 100)
-    assert bounding_box.contains_point(Point2D([3, 4]))
-    assert not bounding_box.contains_point(Point2D([3, 14]))
+    assert bounding_box2.contains_point_components(5, 5)
+    assert not bounding_box2.contains_point_components(100, 100)
+    assert bounding_box2.contains_point(Point2D([3, 4]))
+    assert not bounding_box2.contains_point(Point2D([3, 14]))
+
+    bounding_box2.add_points([Point2D([-100, -100]), Point2D([100, 100])])
+    assert bounding_box2.contains_point(Point2D([100, -100]))
+    assert bounding_box2.contains_point(Point2D([-100, 100]))
 
 
 @pytest.mark.parametrize(
