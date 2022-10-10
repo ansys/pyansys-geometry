@@ -10,6 +10,7 @@ from ansys.geometry.core.sketch.edge import SketchEdge
 
 class SketchFace:
     """Provides base class for modeling closed 2D sketches.
+
     Parameters
     ----------
     edges : List[SketchEdge]
@@ -23,10 +24,12 @@ class SketchFace:
 
     def points(self, plane: Plane, num_points: Optional[int] = 100) -> List[Point2D]:
         """Returns a list containing all the points belonging to the shape.
+
         Parameters
         ----------
         num_points : int
             Desired number of points belonging to the shape.
+
         Returns
         -------
         List[Point2D]
@@ -44,6 +47,7 @@ class SketchFace:
 
     def local_points(self) -> List[Point2D]:
         """Generates a sampled list of points along the edges forming the face.
+
         Returns
         -------
         List[Point2D]
@@ -54,6 +58,7 @@ class SketchFace:
     @property
     def edges(self) -> List[SketchEdge]:
         """Returns a list containing all edges forming the face.
+
         Returns
         -------
         List[SketchEdge]
@@ -64,6 +69,7 @@ class SketchFace:
     @property
     def perimeter(self) -> Quantity:
         """Return the perimeter of the face.
+
         Returns
         -------
         Quantity
