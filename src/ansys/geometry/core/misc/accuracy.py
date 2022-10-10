@@ -17,6 +17,33 @@ class Accuracy:
     Provides decimal precision evaluations for actions such as equivalency.
     """
 
+    def length_is_equal(comparison_length: Real, reference_length: Real) -> bool:
+        """
+        Returns ``True`` if comparison_length is equal to reference_length;
+        within length accuracy.
+        """
+        return Accuracy.is_within_tolerance(
+            comparison_length, reference_length, LENGTH_ACCURACY, LENGTH_ACCURACY
+        )
+
+    def length_is_greater_than_or_equal(comparison_length: Real, reference_length: Real) -> bool:
+        """
+        Returns ``True`` if comparison_length is greater than reference_length;
+        within length accuracy.
+        """
+        return comparison_length > reference_length or Accuracy.length_is_equal(
+            comparison_length, reference_length
+        )
+
+    def length_is_less_than_or_equal(comparison_length: Real, reference_length: Real) -> bool:
+        """
+        Returns ``True`` if comparison_length is less than reference_length;
+        within length accuracy.
+        """
+        return comparison_length < reference_length or Accuracy.length_is_equal(
+            comparison_length, reference_length
+        )
+
     def length_is_zero(length: Real) -> bool:
         """Returns ``True`` if length is within length accuracy of exact zero."""
         return length <= LENGTH_ACCURACY and length >= -LENGTH_ACCURACY

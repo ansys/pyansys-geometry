@@ -5,6 +5,7 @@ from typing import List
 
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc import check_is_float_int, check_type_equivalence
+from ansys.geometry.core.misc.accuracy import Accuracy
 from ansys.geometry.core.misc.measurements import UNIT_LENGTH
 from ansys.geometry.core.typing import Real
 
@@ -89,27 +90,68 @@ class BoundingBox2D:
         return self._y_max
 
     def add_point(self, point: Point2D) -> None:
+        """Extends the ranges of the bounding box to include the point;
+        only if point is outside current bounds.
+
+        Parameters
+        ----------
+        point : Point2D
+            The point to be included within the bounds.
+        """
         self.add_point_components(point.x.m_as(UNIT_LENGTH), point.y.m_as(UNIT_LENGTH))
 
     def add_point_components(self, x: Real, y: Real) -> None:
+        """Extends the ranges of the bounding box to include the point component x/y values;
+        only if point components are outside current bounds.
+
+        Parameters
+        ----------
+        x : Real
+            The point x component to be included within the bounds.
+        y : Real
+            The point y component to be included within the bounds.
+        """
         self._x_min = x if x < self._x_min else self._x_min
         self._x_max = x if x > self._x_max else self._x_max
         self._y_min = y if y < self._y_min else self._y_min
         self._y_max = y if y > self._y_max else self._y_max
 
     def add_points(self, points: List[Point2D]) -> None:
+        """Extends the ranges of the bounding box to include all provided points.
+
+        Parameters
+        ----------
+        points : List[Point2D]
+            The list of points to be included within the bounds.
+        """
         for point in points:
             self.add_point(point)
 
     def contains_point(self, point: Point2D) -> bool:
+        """Evaluates whether a provided point lies within the current x/y ranges of the bounds.
+
+        Parameters
+        ----------
+        point : Point2D
+            The point to be compared against the bounds.
+        """
         return self.contains_point_components(point.x.m_as(UNIT_LENGTH), point.y.m_as(UNIT_LENGTH))
 
     def contains_point_components(self, x: Real, y: Real) -> bool:
+        """Evaluates whether the point components are within the current x/y ranges of the bounds.
+
+        Parameters
+        ----------
+        x : Real
+            The point x component to be compared against the bounds.
+        y : Real
+            The point y component to be compared against the bounds.
+        """
         return (
-            not (x < self._x_min)
-            and not (y < self._y_min)
-            and not (x > self._x_max)
-            and not (y > self._y_max)
+            Accuracy.length_is_greater_than_or_equal(x, self._x_min)
+            and Accuracy.length_is_greater_than_or_equal(y, self._y_min)
+            and Accuracy.length_is_less_than_or_equal(x, self._x_max)
+            and Accuracy.length_is_less_than_or_equal(y, self._y_max)
         )
 
     def __eq__(self, other: "BoundingBox2D") -> bool:
