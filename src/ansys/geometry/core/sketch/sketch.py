@@ -1,10 +1,14 @@
 """``Sketch`` class module."""
 
-from typing import Optional, Union
+from typing import Dict, List, Optional, Union
 
+from multimethod import multimethod
 from pint import Quantity
 
 from ansys.geometry.core.math import Plane, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math.constants import ZERO_POINT2D
+from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.math.vector import Vector2D
 from ansys.geometry.core.misc import Angle, Distance
 from ansys.geometry.core.shapes import (
     Arc,
@@ -17,13 +21,25 @@ from ansys.geometry.core.shapes import (
     Segment,
     Slot,
 )
+from ansys.geometry.core.sketch.edge import SketchEdge
+from ansys.geometry.core.sketch.face import SketchFace
+from ansys.geometry.core.sketch.segment import SketchSegment
 from ansys.geometry.core.typing import Real
+
+SketchObject = Union[SketchEdge, SketchFace]
 
 
 class Sketch:
     """
     Provides Sketch class for building 2D sketch elements.
     """
+
+    _faces: List[SketchFace]
+    _edges: List[SketchEdge]
+
+    _currentSketchContext: List[SketchObject]
+
+    _tags: Dict[str, List[SketchObject]]
 
     def __init__(
         self,
@@ -33,10 +49,41 @@ class Sketch:
         self._plane = plane
         self._shapes_list = []
 
+        self._faces = []
+        self._edges = []
+        self._currentSketchContext = []
+
+        # data structure to track tagging individual
+        # sketch objects and collections of sketch objects
+        self._tags = {}
+
+    @property
+    def edges(self) -> List[SketchEdge]:
+        """
+        Returns all independently sketched edges.
+
+        Returns
+        -------
+        List[SketchEdge]
+            Sketched edges that are not assigned to a face.
+        """
+
+        return self._edges
+
     @property
     def shapes_list(self):
         """Returns the sketched curves."""
         return self._shapes_list
+
+    def get(self, tag: str) -> List[SketchObject]:
+        """Returns the list of shapes that were tagged by the provided label.
+
+        Parameters
+        ----------
+        tag : str
+            The tag to query against.
+        """
+        return self._tags[tag]
 
     def append_shape(self, shape: BaseShape):
         """Appends a new shape to the list of shapes in the sketch.
@@ -268,3 +315,128 @@ class Sketch:
         arc = Arc(self._plane, center, start, end, axis)
         self.append_shape(arc)
         return arc
+
+    def edge(self, edge: SketchEdge, tag: Optional[str] = None) -> "Sketch":
+        """
+        Add a SketchEdge to the sketch.
+
+        Parameters
+        ----------
+        edge : SketchEdge
+            A edge to add to the sketch.
+        tag : Optional[str]
+            A user-defined label identifying this specific edge.
+
+        Returns
+        -------
+        Sketch
+            The revised sketch state ready for further sketch actions.
+        """
+        self._edges.append(edge)
+
+        if tag:
+            self._tag([edge], tag)
+
+        return self
+
+    @multimethod
+    def segment(self, start: Point2D, end: Point2D, tag: Optional[str] = None) -> "Sketch":
+        """
+        Add a segment sketch object to the sketch plane.
+
+        Parameters
+        ----------
+        start : Point2D
+            Start of the line segment.
+        end : Point2D
+            End of the line segment.
+
+        Returns
+        -------
+        Sketch
+            The revised sketch state ready for further sketch actions.
+        """
+        segment = SketchSegment(start, end)
+        return self.edge(segment, tag)
+
+    @segment.register
+    def segment(self, end: Point2D, tag: Optional[str] = None) -> "Sketch":
+        """
+        Add a segment sketch object to the sketch plane.
+
+        Parameters
+        end : Point2D
+            End of the line segment.
+
+        Returns
+        -------
+        Sketch
+            The revised sketch state ready for further sketch actions.
+        """
+        segment = SketchSegment(self._lastSinglePointContext(), end)
+
+        return self.edge(segment, tag)
+
+    @segment.register
+    def segment(self, start: Point2D, vector: Vector2D, tag: Optional[str] = None):
+        """Sketching a ``Segment`` from a starting ``Point2D`` and a ``Vector2D``.
+
+        Parameters
+        ----------
+        start : Point2D
+            Start of the line segment.
+        vector : Vector2D
+            Vector defining the line segment.
+
+        Returns
+        -------
+        Sketch
+            The revised sketch state ready for further sketch actions.
+        """
+        end_vec_as_point = Point2D(vector, start.unit)
+        end_vec_as_point += start
+
+        return self.segment(start, end_vec_as_point, tag)
+
+    @segment.register
+    def segment(self, vector: Vector2D, tag: Optional[str] = None):
+        """Sketching a ``Segment`` from a ``Vector2D``.
+
+        Parameters
+        ----------
+        vector : Vector2D
+            Vector defining the line segment.
+
+        Returns
+        -------
+        Sketch
+            The revised sketch state ready for further sketch actions.
+        """
+        start = self._lastSinglePointContext()
+
+        return self.segment(start, vector, tag)
+
+    def _lastSinglePointContext(self) -> Point2D:
+        """
+        Gets the last reference point from historical context.
+
+        Note
+        ----
+        If no single point context available, ``ZERO_POINT2D`` returned by default.
+        """
+        if not self._edges or len(self._edges) == 0:
+            return ZERO_POINT2D
+
+        return self._edges[-1].end
+
+    def _tag(self, sketch_collection: List[SketchObject], tag: str) -> None:
+        """
+        Adds a tag for a collection of sketch objects.
+
+        Parameters
+        sketch_collection : List[SketchObject]
+            The sketch objects to tag.
+        tag : str
+            The tag to assign against the sketch objects.
+        """
+        self._tags[tag] = sketch_collection
