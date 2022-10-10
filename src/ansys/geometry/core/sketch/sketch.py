@@ -365,7 +365,7 @@ class Sketch:
     @segment.register
     def segment(self, end: Point2D, tag: Optional[str] = None) -> "Sketch":
         """
-        Add a segment sketch object to the sketch plane.
+        Add a segment sketch object to the sketch plane from previous edge ending.
 
         Parameters
         end : Point2D
@@ -472,7 +472,7 @@ class Sketch:
         tag: Optional[str] = None,
     ) -> "Sketch":
         """
-        Add an arc sketch object to the sketch plane.
+        Add an arc sketch object to the sketch plane from previous edge ending.
 
         Parameters
         ----------
