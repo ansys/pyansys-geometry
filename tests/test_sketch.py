@@ -1,3 +1,5 @@
+import numpy as np
+
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.math.constants import ZERO_POINT2D
 from ansys.geometry.core.math.vector import Vector2D
@@ -65,3 +67,43 @@ def test_sketch_segment_edge_creation():
     segment6_retrieved = sketch.get("Segment6")
     assert len(segment6_retrieved) == 1
     assert segment6_retrieved[0] == sketch.edges[5]
+
+
+def test_sketch_arc_edge_creation():
+    """Test SketchArc SketchEdge sketching."""
+
+    # Create a Sketch instance
+    sketch = Sketch()
+
+    # fluent api has 0, 0 origin as default start position
+    assert len(sketch.edges) == 0
+    sketch.arc(Point2D([3, 3]), Point2D([3, 0]), False, "Arc1")
+    assert len(sketch.edges) == 1
+    assert sketch.edges[0].start == ZERO_POINT2D
+    assert sketch.edges[0].end == Point2D([3, 3])
+    assert sketch.edges[0].angle == np.pi / 2
+
+    # fluent api keeps last edge endpoint as context for new edge
+    sketch.arc(Point2D([0, 0]), Point2D([3, 0]), negative_angle=True, tag="Arc2")
+    assert len(sketch.edges) == 2
+    assert sketch.edges[1].start == Point2D([3, 3])
+    assert sketch.edges[1].end == Point2D([0, 0])
+    assert sketch.edges[1].angle == 1.5 * np.pi
+
+    sketch.arc(Point2D([10, 10]), Point2D([10, -10]), Point2D([10, 0]), tag="Arc3")
+    assert len(sketch.edges) == 3
+    assert sketch.edges[2].start == Point2D([10, 10])
+    assert sketch.edges[2].end == Point2D([10, -10])
+    assert sketch.edges[2].angle == np.pi
+
+    arc1_retrieved = sketch.get("Arc1")
+    assert len(arc1_retrieved) == 1
+    assert arc1_retrieved[0] == sketch.edges[0]
+
+    arc2_retrieved = sketch.get("Arc2")
+    assert len(arc2_retrieved) == 1
+    assert arc2_retrieved[0] == sketch.edges[1]
+
+    arc3_retrieved = sketch.get("Arc3")
+    assert len(arc3_retrieved) == 1
+    assert arc3_retrieved[0] == sketch.edges[2]

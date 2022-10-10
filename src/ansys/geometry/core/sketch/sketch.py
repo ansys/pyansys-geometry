@@ -21,6 +21,7 @@ from ansys.geometry.core.shapes import (
     Segment,
     Slot,
 )
+from ansys.geometry.core.sketch.arc import SketchArc
 from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import SketchSegment
@@ -324,7 +325,7 @@ class Sketch:
         ----------
         edge : SketchEdge
             A edge to add to the sketch.
-        tag : Optional[str]
+        tag : str, optional
             A user-defined label identifying this specific edge.
 
         Returns
@@ -350,6 +351,8 @@ class Sketch:
             Start of the line segment.
         end : Point2D
             End of the line segment.
+        tag: str, optional
+            A user-defined label identifying this specific edge.
 
         Returns
         -------
@@ -367,6 +370,8 @@ class Sketch:
         Parameters
         end : Point2D
             End of the line segment.
+        tag: str, optional
+            A user-defined label identifying this specific edge.
 
         Returns
         -------
@@ -387,6 +392,8 @@ class Sketch:
             Start of the line segment.
         vector : Vector2D
             Vector defining the line segment.
+        tag: str, optional
+            A user-defined label identifying this specific edge.
 
         Returns
         -------
@@ -406,6 +413,8 @@ class Sketch:
         ----------
         vector : Vector2D
             Vector defining the line segment.
+        tag: str, optional
+            A user-defined label identifying this specific edge.
 
         Returns
         -------
@@ -415,6 +424,80 @@ class Sketch:
         start = self._lastSinglePointContext()
 
         return self.segment(start, vector, tag)
+
+    @multimethod
+    def arc(
+        self,
+        start: Point2D,
+        end: Point2D,
+        center: Point2D,
+        negative_angle: Optional[bool] = False,
+        tag: Optional[str] = None,
+    ) -> "Sketch":
+        """
+        Add an arc sketch object to the sketch plane.
+
+        Parameters
+        ----------
+        start : Point2D
+            Start of the arc.
+        end : Point2D
+            End of the arc.
+        center : Point2D
+            Center of the arc.
+        negative_angle : bool, optional
+            By default the arc spans the shortest angular sector between
+            ``start`` and ``end``.
+
+            By setting this to ``True``, the longest angular sector is
+            used instead (i.e. the negative coterminal angle to the
+            shortest one).
+        tag: str, optional
+            A user-defined label identifying this specific edge.
+
+        Returns
+        -------
+        Sketch
+            The revised sketch state ready for further sketch actions.
+        """
+        arc = SketchArc(center, start, end, negative_angle)
+        return self.edge(arc, tag)
+
+    @arc.register
+    def arc(
+        self,
+        end: Point2D,
+        center: Point2D,
+        negative_angle: Optional[bool] = False,
+        tag: Optional[str] = None,
+    ) -> "Sketch":
+        """
+        Add an arc sketch object to the sketch plane.
+
+        Parameters
+        ----------
+        end : Point2D
+            End of the arc.
+        center : Point2D
+            Center of the arc.
+        negative_angle : bool, optional
+            By default the arc spans the shortest angular sector between
+            ``start`` and ``end``.
+
+            By setting this to ``True``, the longest angular sector is
+            used instead (i.e. the negative coterminal angle to the
+            shortest one).
+        tag: str, optional
+            A user-defined label identifying this specific edge.
+
+        Returns
+        -------
+        Sketch
+            The revised sketch state ready for further sketch actions.
+        """
+        start = self._lastSinglePointContext()
+        arc = SketchArc(center, start, end, negative_angle)
+        return self.edge(arc, tag)
 
     def _lastSinglePointContext(self) -> Point2D:
         """
