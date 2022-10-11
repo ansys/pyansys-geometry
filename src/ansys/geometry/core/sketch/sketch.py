@@ -3,7 +3,9 @@
 from typing import Dict, List, Optional, Union
 
 from multimethod import multimethod
+import numpy as np
 from pint import Quantity
+import pyvista as pv
 
 from ansys.geometry.core.math import Plane, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.math.constants import ZERO_POINT2D
@@ -525,3 +527,57 @@ class Sketch:
             The tag to assign against the sketch objects.
         """
         self._tags[tag] = sketch_collection
+
+    def plot(
+        self,
+        **kwargs: Optional[dict],
+    ):
+        """Plot a sketch to the scene.
+
+        Parameters
+        ----------
+        **kwargs : dict, optional
+            Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
+            for allowable keyword arguments.
+
+        """
+        from ansys.geometry.core.plotting.plotter import Plotter
+
+        sketches = []
+        pl = Plotter()
+        for edge in self.edges:
+            edge_points = [
+                Point3D([edge_point.x.m, edge_point.y.m, 0], edge_point.unit)
+                for edge_point in [edge.start, edge.end]
+            ]
+            transformed_point = [
+                Point3D(self._plane.local_to_global @ point, point.base_unit)
+                for point in edge_points
+            ]
+            if isinstance(edge, SketchArc):
+                center = (
+                    Point3D(
+                        self._plane.local_to_global @ Point3D([edge.center.x.m, edge.center.y.m, 0])
+                    ),
+                )
+                if not np.isclose(
+                    np.linalg.norm(np.array(transformed_point[0]) - np.array(center)),
+                    np.linalg.norm(np.array(transformed_point[1]) - np.array(center)),
+                ):
+                    raise ValueError(
+                        "The starting and ending point of the arc are not equidistant from center"
+                    )
+                pv_plot = pv.CircularArc(
+                    transformed_point[0],
+                    transformed_point[1],
+                    Point3D(
+                        self._plane.local_to_global @ Point3D([edge.center.x.m, edge.center.y.m, 0])
+                    ),
+                )
+            elif isinstance(edge, SketchSegment):
+                pv_plot = pv.Line(transformed_point[0], transformed_point[1])
+            else:
+                raise ValueError("The sketch cannot be plotted")
+            sketches.append(pv_plot)
+        pl.add_sketch(sketches, **kwargs)
+        pl.show()

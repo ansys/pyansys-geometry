@@ -281,6 +281,18 @@ class Plotter:
         kwargs.setdefault("smooth_shading", True)
         self.scene.add_mesh(dataset, **kwargs)
 
+    def add_sketch(self, sketches: Sketch, **kwargs) -> None:
+        """Add a sketches to the scene.
+
+        Parameters
+        ----------
+        **kwargs : dict, optional
+            Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
+            for allowable keyword arguments.
+        """
+        for sketch in sketches:
+            self.scene.add_mesh(sketch, **kwargs)
+
     def show(
         self,
         show_axes_at_origin: bool = True,
