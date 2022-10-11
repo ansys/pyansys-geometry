@@ -1,4 +1,4 @@
-"""``Segment`` class module."""
+"""``SketchSegment`` class module."""
 
 import numpy as np
 from pint import Quantity
@@ -15,9 +15,9 @@ class SketchSegment(SketchEdge):
 
     Parameters
     ----------
-    start: Point2D
+    start : Point2D
         Start of the line segment.
-    end: Point2D
+    end : Point2D
         End of the line segment.
     """
 

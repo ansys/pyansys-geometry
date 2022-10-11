@@ -368,9 +368,10 @@ class Sketch:
         Add a segment sketch object to the sketch plane from previous edge ending.
 
         Parameters
+        ----------
         end : Point2D
             End of the line segment.
-        tag: str, optional
+        tag : str, optional
             A user-defined label identifying this specific edge.
 
         Returns
@@ -392,7 +393,7 @@ class Sketch:
             Start of the line segment.
         vector : Vector2D
             Vector defining the line segment.
-        tag: str, optional
+        tag : str, optional
             A user-defined label identifying this specific edge.
 
         Returns
@@ -503,8 +504,8 @@ class Sketch:
         """
         Gets the last reference point from historical context.
 
-        Note
-        ----
+        Notes
+        -----
         If no single point context available, ``ZERO_POINT2D`` returned by default.
         """
         if not self._edges or len(self._edges) == 0:
@@ -517,6 +518,7 @@ class Sketch:
         Adds a tag for a collection of sketch objects.
 
         Parameters
+        ----------
         sketch_collection : List[SketchObject]
             The sketch objects to tag.
         tag : str
