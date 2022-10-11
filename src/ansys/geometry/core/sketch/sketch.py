@@ -37,7 +37,7 @@ class Sketch:
     _faces: List[SketchFace]
     _edges: List[SketchEdge]
 
-    _currentSketchContext: List[SketchObject]
+    _current_sketch_context: List[SketchObject]
 
     _tags: Dict[str, List[SketchObject]]
 
@@ -51,7 +51,7 @@ class Sketch:
 
         self._faces = []
         self._edges = []
-        self._currentSketchContext = []
+        self._current_sketch_context = []
 
         # data structure to track tagging individual
         # sketch objects and collections of sketch objects
@@ -381,7 +381,7 @@ class Sketch:
         The starting point of the created edge is based upon the current context
         of the sketch, such as the end point of a previously added edge.
         """
-        segment = SketchSegment(self._lastSinglePointContext(), end)
+        segment = SketchSegment(self._single_point_context_reference(), end)
 
         return self.edge(segment, tag)
 
@@ -440,7 +440,7 @@ class Sketch:
         Vector magnitude determines segment endpoint.
         Vector magnitude assumed to use the same unit as the starting point in the previous context.
         """
-        start = self._lastSinglePointContext()
+        start = self._single_point_context_reference()
 
         return self.segment_from_point_and_vector(start, vector, tag)
 
@@ -517,11 +517,11 @@ class Sketch:
         The starting point of the created edge is based upon the current context
         of the sketch, such as the end point of a previously added edge.
         """
-        start = self._lastSinglePointContext()
+        start = self._single_point_context_reference()
         arc = SketchArc(center, start, end, negative_angle)
         return self.edge(arc, tag)
 
-    def _lastSinglePointContext(self) -> Point2D:
+    def _single_point_context_reference(self) -> Point2D:
         """
         Gets the last reference point from historical context.
 
