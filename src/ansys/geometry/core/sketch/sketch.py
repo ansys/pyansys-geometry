@@ -2,7 +2,6 @@
 
 from typing import Dict, List, Optional, Union
 
-from multimethod import multimethod
 import numpy as np
 from pint import Quantity
 import pyvista as pv
@@ -40,7 +39,7 @@ class Sketch:
     _faces: List[SketchFace]
     _edges: List[SketchEdge]
 
-    _currentSketchContext: List[SketchObject]
+    _current_sketch_context: List[SketchObject]
 
     _tags: Dict[str, List[SketchObject]]
 
@@ -54,7 +53,7 @@ class Sketch:
 
         self._faces = []
         self._edges = []
-        self._currentSketchContext = []
+        self._current_sketch_context = []
 
         # data structure to track tagging individual
         # sketch objects and collections of sketch objects
@@ -342,7 +341,6 @@ class Sketch:
 
         return self
 
-    @multimethod
     def segment(self, start: Point2D, end: Point2D, tag: Optional[str] = None) -> "Sketch":
         """
         Add a segment sketch object to the sketch plane.
@@ -364,10 +362,9 @@ class Sketch:
         segment = SketchSegment(start, end)
         return self.edge(segment, tag)
 
-    @segment.register
-    def segment(self, end: Point2D, tag: Optional[str] = None) -> "Sketch":
+    def segment_to_point(self, end: Point2D, tag: Optional[str] = None) -> "Sketch":
         """
-        Add a segment sketch object to the sketch plane from previous edge ending.
+        Add a segment to the sketch plane starting from previous edge end point.
 
         Parameters
         ----------
@@ -380,21 +377,29 @@ class Sketch:
         -------
         Sketch
             The revised sketch state ready for further sketch actions.
+
+        Notes
+        -----
+        The starting point of the created edge is based upon the current context
+        of the sketch, such as the end point of a previously added edge.
         """
-        segment = SketchSegment(self._lastSinglePointContext(), end)
+        segment = SketchSegment(self._single_point_context_reference(), end)
 
         return self.edge(segment, tag)
 
-    @segment.register
-    def segment(self, start: Point2D, vector: Vector2D, tag: Optional[str] = None):
-        """Sketching a ``Segment`` from a starting ``Point2D`` and a ``Vector2D``.
+    def segment_from_point_and_vector(
+        self, start: Point2D, vector: Vector2D, tag: Optional[str] = None
+    ):
+        """
+        Add a segment to the sketch starting from a provided starting point.
 
         Parameters
         ----------
         start : Point2D
             Start of the line segment.
         vector : Vector2D
-            Vector defining the line segment.
+            Vector defining the line segment. Vector magnitude determines segment endpoint.
+            Vector magnitude assumed to be in the same unit as the starting point.
         tag : str, optional
             A user-defined label identifying this specific edge.
 
@@ -402,15 +407,20 @@ class Sketch:
         -------
         Sketch
             The revised sketch state ready for further sketch actions.
+
+        Notes
+        -----
+        Vector magnitude determines segment endpoint.
+        Vector magnitude assumed to use the same unit as the starting point.
         """
         end_vec_as_point = Point2D(vector, start.unit)
         end_vec_as_point += start
 
         return self.segment(start, end_vec_as_point, tag)
 
-    @segment.register
-    def segment(self, vector: Vector2D, tag: Optional[str] = None):
-        """Sketching a ``Segment`` from a ``Vector2D``.
+    def segment_from_vector(self, vector: Vector2D, tag: Optional[str] = None):
+        """
+        Add a segment to the sketch starting from previous edge end point.
 
         Parameters
         ----------
@@ -423,12 +433,19 @@ class Sketch:
         -------
         Sketch
             The revised sketch state ready for further sketch actions.
+
+        Notes
+        -----
+        The starting point of the created edge is based upon the current context
+        of the sketch, such as the end point of a previously added edge.
+
+        Vector magnitude determines segment endpoint.
+        Vector magnitude assumed to use the same unit as the starting point in the previous context.
         """
-        start = self._lastSinglePointContext()
+        start = self._single_point_context_reference()
 
-        return self.segment(start, vector, tag)
+        return self.segment_from_point_and_vector(start, vector, tag)
 
-    @multimethod
     def arc(
         self,
         start: Point2D,
@@ -438,7 +455,7 @@ class Sketch:
         tag: Optional[str] = None,
     ) -> "Sketch":
         """
-        Add an arc sketch object to the sketch plane.
+        Add an arc object to the sketch plane.
 
         Parameters
         ----------
@@ -466,8 +483,7 @@ class Sketch:
         arc = SketchArc(center, start, end, negative_angle)
         return self.edge(arc, tag)
 
-    @arc.register
-    def arc(
+    def arc_to_point(
         self,
         end: Point2D,
         center: Point2D,
@@ -475,7 +491,7 @@ class Sketch:
         tag: Optional[str] = None,
     ) -> "Sketch":
         """
-        Add an arc sketch object to the sketch plane from previous edge ending.
+        Add an arc to the sketch starting from previous edge end point.
 
         Parameters
         ----------
@@ -497,12 +513,17 @@ class Sketch:
         -------
         Sketch
             The revised sketch state ready for further sketch actions.
+
+        Notes
+        -----
+        The starting point of the created edge is based upon the current context
+        of the sketch, such as the end point of a previously added edge.
         """
-        start = self._lastSinglePointContext()
+        start = self._single_point_context_reference()
         arc = SketchArc(center, start, end, negative_angle)
         return self.edge(arc, tag)
 
-    def _lastSinglePointContext(self) -> Point2D:
+    def _single_point_context_reference(self) -> Point2D:
         """
         Gets the last reference point from historical context.
 
