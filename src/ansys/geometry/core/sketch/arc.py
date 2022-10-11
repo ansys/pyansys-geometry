@@ -55,6 +55,14 @@ class SketchArc(SketchEdge):
         if center == end:
             raise ValueError("Center and end points must be different.")
 
+        if not np.isclose(
+            np.linalg.norm(np.array(start - center)),
+            np.linalg.norm(np.array(end - center)),
+        ):
+            raise ValueError(
+                "The start and end points of the arc are not equidistant from center point."
+            )
+
         self._center, self._start, self._end = center, start, end
         start3D = Point3D([self._start.x.m, self._start.y.m, 0], self._start.unit)
         end3D = Point3D([self._end.x.m, self._end.y.m, 0], self._end.unit)
@@ -77,6 +85,8 @@ class SketchArc(SketchEdge):
             self._positive_rotation_axis = False
         else:
             self._positive_rotation_axis = True
+
+        self._negative_angle = negative_angle
 
     @property
     def start(self) -> Point2D:
@@ -132,6 +142,18 @@ class SketchArc(SketchEdge):
             The center of the arc.
         """
         return self._center
+
+    @property
+    def negative_angle(self) -> bool:
+        """The arc setting determining angle target.
+
+        Returns
+        -------
+        bool
+            If ``True``, the longest angular sector is used.
+            If ``False``, the shortest angular sector is used.
+        """
+        return self._negative_angle
 
     @property
     def angle(self) -> Quantity:

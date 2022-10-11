@@ -752,6 +752,32 @@ def test_frame():
         Frame("A", UnitVector3D([12, 31, 99]), UnitVector3D([23, 67, 45]))
 
 
+def test_frame_global_to_local_point_transformation():
+    """``Frame`` transform_point_global_to_local implementation tests."""
+    origin = Point3D([42, 99, 13])
+    frame_xy = Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
+    transformed_xy_origin = frame_xy.transform_point2D_global_to_local(Point2D([0, 0]))
+    assert transformed_xy_origin == origin
+
+    frame_xz = Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 0, 1]))
+    transformed_xz = frame_xz.transform_point2D_global_to_local(Point2D([0, 12]))
+    assert transformed_xz == Point3D([42, 99, 25])
+
+    frame_tilted = Frame(Point3D([0, 0, 0]), UnitVector3D([1, 1, 1]), UnitVector3D([0, -1, 1]))
+    transformed_tilted = frame_tilted.transform_point2D_global_to_local(Point2D([0, 10]))
+    assert transformed_tilted == Point3D([0, -7.071067811865475, 7.071067811865475])
+
+    assert transformed_xy_origin == origin
+
+    frame_xz = Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 0, 1]))
+    transformed_xz = frame_xz.transform_point2D_global_to_local(Point2D([0, 12]))
+    assert transformed_xz == Point3D([42, 99, 25])
+
+    frame_tilted = Frame(Point3D([0, 0, 0]), UnitVector3D([1, 1, 1]), UnitVector3D([0, -1, 1]))
+    transformed_tilted = frame_tilted.transform_point2D_global_to_local(Point2D([0, 10]))
+    assert transformed_tilted == Point3D([0, -7.071067811865475, 7.071067811865475])
+
+
 def test_plane():
     """``Plane`` construction and equivalency."""
 

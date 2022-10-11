@@ -76,7 +76,7 @@ class Slot(BaseShape):
         )
 
         global_center = Point3D(
-            (center - self.plane.origin) @ self.plane.local_to_global, center.base_unit
+            (center - self.plane.origin) @ self.plane.local_to_global_rotation, center.base_unit
         )
 
         half_h = height_magnitude / 2
@@ -233,7 +233,8 @@ class Slot(BaseShape):
         """
         rotated_point = Point3D(rotation @ [x_offset, y_offset, 0], unit)
         transformed_point = Point3D(
-            (self._plane.local_to_global @ (rotated_point + reference)) + self._plane.origin,
+            (self._plane.local_to_global_rotation @ (rotated_point + reference))
+            + self._plane.origin,
             rotated_point.base_unit,
         )
 

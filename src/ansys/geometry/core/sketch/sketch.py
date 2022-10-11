@@ -2,12 +2,12 @@
 
 from typing import Dict, List, Optional, Union
 
-import numpy as np
 from pint import Quantity
 import pyvista as pv
 
 from ansys.geometry.core.math import Plane, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.math.constants import ZERO_POINT2D
+from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.math.vector import Vector2D
 from ansys.geometry.core.misc import Angle, Distance
@@ -26,6 +26,8 @@ from ansys.geometry.core.sketch.arc import SketchArc
 from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import SketchSegment
+from ansys.geometry.core.sketch.trapezoid import Trapezoid
+from ansys.geometry.core.sketch.triangle import Triangle
 from ansys.geometry.core.typing import Real
 
 SketchObject = Union[SketchEdge, SketchFace]
@@ -318,6 +320,29 @@ class Sketch:
         self.append_shape(arc)
         return arc
 
+    def face(self, face: SketchFace, tag: Optional[str] = None) -> "Sketch":
+        """
+        Add a SketchFace to the sketch.
+
+        Parameters
+        ----------
+        face : SketchFace
+            A face to add to the sketch.
+        tag : str, optional
+            A user-defined label identifying this specific face.
+
+        Returns
+        -------
+        Sketch
+            The revised sketch state ready for further sketch actions.
+        """
+        self._faces.append(face)
+
+        if tag:
+            self._tag([face], tag)
+
+        return self
+
     def edge(self, edge: SketchEdge, tag: Optional[str] = None) -> "Sketch":
         """
         Add a SketchEdge to the sketch.
@@ -523,6 +548,75 @@ class Sketch:
         arc = SketchArc(center, start, end, negative_angle)
         return self.edge(arc, tag)
 
+    def triangle(
+        self,
+        point1: Point2D,
+        point2: Point2D,
+        point3: Point2D,
+        tag: Optional[str] = None,
+    ) -> "Sketch":
+        """
+        Add a triangle to the using the explicit vertex points provided.
+
+        Parameters
+        ----------
+        point1: Point2D
+            A :class:`Point2D` representing the a triangle vertex.
+        point2: Point2D
+            A :class:`Point2D` representing the a triangle vertex.
+        point3: Point2D
+            A :class:`Point2D` representing the a triangle vertex.
+        tag: str, optional
+            A user-defined label identifying this specific edge.
+
+        Returns
+        -------
+        Sketch
+            The revised sketch state ready for further sketch actions.
+        """
+        triangle = Triangle(point1, point2, point3)
+        return self.face(triangle, tag)
+
+    def trapezoid(
+        self,
+        width: Union[Quantity, Distance, Real],
+        height: Union[Quantity, Distance, Real],
+        slant_angle: Union[Quantity, Angle, Real],
+        nonsymmetrical_slant_angle: Optional[Union[Quantity, Angle, Real]] = None,
+        center: Optional[Point2D] = ZERO_POINT2D,
+        angle: Optional[Union[Quantity, Angle, Real]] = 0,
+        tag: Optional[str] = None,
+    ) -> "Sketch":
+        """
+        Add a triangle to the using the explicit vertex points provided.
+
+        Parameters
+        ----------
+        width : Union[Quantity, Distance, Real]
+            The width of the slot main body.
+        height : Union[Quantity, Distance, Real]
+            The height of the slot.
+        slant_angle : Union[Quantity, Angle, Real]
+            The angle for trapezoid generation.
+        nonsymmetrical_slant_angle : Optional[Union[Quantity, Angle, Real]]
+            Enables asymmetrical slant angles on each side of the trapezoid.
+            If not defined, the trapezoid will be symmetrical.
+        center: Optional[Point2D]
+            A :class:`Point2D` representing the center of the trapezoid.
+            Defaults to (0, 0)
+        angle : Optional[Union[Quantity, Angle, Real]]
+            The placement angle for orientation alignment.
+        tag: str, optional
+            A user-defined label identifying this specific edge.
+
+        Returns
+        -------
+        Sketch
+            The revised sketch state ready for further sketch actions.
+        """
+        trapezoid = Trapezoid(width, height, slant_angle, nonsymmetrical_slant_angle, center, angle)
+        return self.face(trapezoid, tag)
+
     def _single_point_context_reference(self) -> Point2D:
         """
         Gets the last reference point from historical context.
@@ -564,41 +658,80 @@ class Sketch:
         """
         from ansys.geometry.core.plotting.plotter import Plotter
 
-        sketches = []
+        sketches_polydata = []
         pl = Plotter()
         for edge in self.edges:
-            edge_points = [
-                Point3D([edge_point.x.m, edge_point.y.m, 0], edge_point.unit)
-                for edge_point in [edge.start, edge.end]
-            ]
-            transformed_point = [
-                Point3D(self._plane.local_to_global @ point, point.base_unit)
-                for point in edge_points
-            ]
+
             if isinstance(edge, SketchArc):
-                center = (
-                    Point3D(
-                        self._plane.local_to_global @ Point3D([edge.center.x.m, edge.center.y.m, 0])
-                    ),
-                )
-                if not np.isclose(
-                    np.linalg.norm(np.array(transformed_point[0]) - np.array(center)),
-                    np.linalg.norm(np.array(transformed_point[1]) - np.array(center)),
-                ):
-                    raise ValueError(
-                        "The starting and ending point of the arc are not equidistant from center"
-                    )
+                # pyvista CircularArc does not have a plane input to use for the sketch,
+                # so must sketch in x/y plane and then transform
                 pv_plot = pv.CircularArc(
-                    transformed_point[0],
-                    transformed_point[1],
-                    Point3D(
-                        self._plane.local_to_global @ Point3D([edge.center.x.m, edge.center.y.m, 0])
-                    ),
+                    [
+                        edge.start.x.m_as(edge.start.base_unit),
+                        edge.start.y.m_as(edge.start.base_unit),
+                        0,
+                    ],
+                    [edge.end.x.m_as(edge.end.base_unit), edge.end.y.m_as(edge.end.base_unit), 0],
+                    [
+                        edge.center.x.m_as(edge.center.base_unit),
+                        edge.center.y.m_as(edge.center.base_unit),
+                        0,
+                    ],
+                    negative=edge.negative_angle,
                 )
+                transformation = Matrix44(
+                    [
+                        [
+                            self._plane._global_to_local_rotation.T[0, 0],
+                            self._plane._global_to_local_rotation.T[0, 1],
+                            self._plane._global_to_local_rotation.T[0, 2],
+                            self._plane.origin.x.m_as(edge.start.base_unit),
+                        ],
+                        [
+                            self._plane._global_to_local_rotation.T[1, 0],
+                            self._plane._global_to_local_rotation.T[1, 1],
+                            self._plane._global_to_local_rotation.T[1, 2],
+                            self._plane.origin.y.m_as(edge.start.base_unit),
+                        ],
+                        [
+                            self._plane._global_to_local_rotation.T[2, 0],
+                            self._plane._global_to_local_rotation.T[2, 1],
+                            self._plane._global_to_local_rotation.T[2, 2],
+                            self._plane.origin.z.m_as(edge.start.base_unit),
+                        ],
+                        [0, 0, 0, 1],
+                    ]
+                )
+                pv_plot.transform(transformation)
             elif isinstance(edge, SketchSegment):
-                pv_plot = pv.Line(transformed_point[0], transformed_point[1])
+                transformed_start = self._plane.transform_point2D_global_to_local(edge.start)
+                transformed_end = self._plane.transform_point2D_global_to_local(edge.end)
+                pv_plot = pv.Line(transformed_start, transformed_end)
             else:
                 raise ValueError("The sketch cannot be plotted")
-            sketches.append(pv_plot)
-        pl.add_sketch(sketches, **kwargs)
+            sketches_polydata.append(pv_plot)
+
+        for face in self._faces:
+            if isinstance(face, Triangle):
+                pv_plot = pv.Triangle(
+                    [
+                        self._plane.transform_point2D_global_to_local(face.point1),
+                        self._plane.transform_point2D_global_to_local(face.point2),
+                        self._plane.transform_point2D_global_to_local(face.point3),
+                    ]
+                )
+            elif isinstance(face, Trapezoid):
+                pv_plot = pv.Rectangle(
+                    [
+                        self._plane.transform_point2D_global_to_local(face._point1),
+                        self._plane.transform_point2D_global_to_local(face._point2),
+                        self._plane.transform_point2D_global_to_local(face._point3),
+                        self._plane.transform_point2D_global_to_local(face._point4),
+                    ]
+                )
+            else:
+                raise ValueError("The sketch cannot be plotted")
+            sketches_polydata.append(pv_plot)
+
+        pl.add_polydata(sketches_polydata, **kwargs)
         pl.show()
