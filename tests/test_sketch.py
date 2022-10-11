@@ -14,13 +14,15 @@ def test_sketch_segment_edge_creation():
 
     # fluent api has 0, 0 origin as default start position
     assert len(sketch.edges) == 0
-    sketch.segment(Point2D([2, 3]), "Segment1")
+    sketch.segment_to_point(Point2D([2, 3]), "Segment1")
     assert len(sketch.edges) == 1
     assert sketch.edges[0].start == ZERO_POINT2D
     assert sketch.edges[0].end == Point2D([2, 3])
 
     # fluent api keeps last edge endpoint as context for new edge
-    sketch.segment(Point2D([3, 3]), "Segment2").segment(Point2D([3, 2]), "Segment3")
+    sketch.segment_to_point(Point2D([3, 3]), "Segment2").segment_to_point(
+        Point2D([3, 2]), "Segment3"
+    )
     assert len(sketch.edges) == 3
     assert sketch.edges[1].start == Point2D([2, 3])
     assert sketch.edges[1].end == Point2D([3, 3])
@@ -34,12 +36,12 @@ def test_sketch_segment_edge_creation():
     assert sketch.edges[3].end == Point2D([2, 0])
 
     # sketch api allows segment defined by vector magnitude
-    sketch.segment(Point2D([2, 0]), Vector2D([-1, 1]), "Segment5")
+    sketch.segment_from_point_and_vector(Point2D([2, 0]), Vector2D([-1, 1]), "Segment5")
     assert len(sketch.edges) == 5
     assert sketch.edges[4].start == Point2D([2, 0])
     assert sketch.edges[4].end == Point2D([1, 1])
 
-    sketch.segment(Vector2D([-1, -1]), "Segment6")
+    sketch.segment_from_vector(Vector2D([-1, -1]), "Segment6")
     assert len(sketch.edges) == 6
     assert sketch.edges[5].start == Point2D([1, 1])
     assert sketch.edges[5].end == Point2D([0, 0])
@@ -77,14 +79,14 @@ def test_sketch_arc_edge_creation():
 
     # fluent api has 0, 0 origin as default start position
     assert len(sketch.edges) == 0
-    sketch.arc(Point2D([3, 3]), Point2D([3, 0]), False, "Arc1")
+    sketch.arc_to_point(Point2D([3, 3]), Point2D([3, 0]), False, "Arc1")
     assert len(sketch.edges) == 1
     assert sketch.edges[0].start == ZERO_POINT2D
     assert sketch.edges[0].end == Point2D([3, 3])
     assert sketch.edges[0].angle == np.pi / 2
 
     # fluent api keeps last edge endpoint as context for new edge
-    sketch.arc(Point2D([0, 0]), Point2D([3, 0]), negative_angle=True, tag="Arc2")
+    sketch.arc_to_point(Point2D([0, 0]), Point2D([3, 0]), negative_angle=True, tag="Arc2")
     assert len(sketch.edges) == 2
     assert sketch.edges[1].start == Point2D([3, 3])
     assert sketch.edges[1].end == Point2D([0, 0])
