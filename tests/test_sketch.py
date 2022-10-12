@@ -85,7 +85,7 @@ def test_sketch_arc_edge_creation():
     # Create a Sketch instance
     sketch = Sketch()
 
-    # fluent api has 0, 0 origin as default start position
+    # fluent API has (0, 0) origin as default start position
     assert len(sketch.edges) == 0
     sketch.arc_to_point(Point2D([3, 3]), Point2D([3, 0]), False, "Arc1")
     assert len(sketch.edges) == 1

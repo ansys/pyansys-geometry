@@ -286,7 +286,7 @@ class Sketch:
         Parameters
         ----------
         center: Point3D
-            A :class:`Point3D` representing the center of the circle.
+            A :class:`Point3D` representing the center of the polygon.
         inner_radius : Union[Quantity, Distance]
             The inradius(apothem) of the polygon.
         sides : int
