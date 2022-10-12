@@ -79,7 +79,7 @@ class Trapezoid(SketchFace):
         )
 
         if nonsymmetrical_slant_angle == None:
-            nonsymmetrical_slant_angle = Angle(np.pi - slant_angle.value.m, UNIT_ANGLE)
+            nonsymmetrical_slant_angle = slant_angle
         else:
             if isinstance(nonsymmetrical_slant_angle, (int, float)):
                 nonsymmetrical_slant_angle = Angle(nonsymmetrical_slant_angle, UNIT_ANGLE)
@@ -97,21 +97,20 @@ class Trapezoid(SketchFace):
 
         half_h = height_magnitude / 2
         half_w = width_magnitude / 2
-
-        rotated_point_1 = rotation @ [center.x.m - half_w, center.y.m - half_h, 0]
-        rotated_point_2 = rotation @ [center.x.m + half_w, center.y.m - half_h, 0]
-        rotated_point_3 = rotation @ [
+        rotated_point_1 = rotation @ [
             center.x.m - half_w + height_magnitude / np.tan(slant_angle.value.m_as(UNIT_ANGLE)),
-            center.y.m + half_h,
+            center.y.m - half_h,
             0,
         ]
-        rotated_point_4 = rotation @ [
+        rotated_point_2 = rotation @ [
             center.x.m
             + half_w
-            - height_magnitude / np.tan(nonsymmetrical_slant_angle.value.m_as(UNIT_ANGLE)),
-            center.y.m + half_h,
+            + height_magnitude / np.tan(nonsymmetrical_slant_angle.value.m_as(UNIT_ANGLE)),
+            center.y.m - half_h,
             0,
         ]
+        rotated_point_3 = rotation @ [center.x.m + half_w, center.y.m + half_h, 0]
+        rotated_point_4 = rotation @ [center.x.m - half_w, center.y.m + half_h, 0]
 
         self._point1 = Point2D([rotated_point_1[0], rotated_point_1[1]], center.unit)
         self._point2 = Point2D([rotated_point_2[0], rotated_point_2[1]], center.unit)
