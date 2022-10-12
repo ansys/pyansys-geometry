@@ -111,15 +111,6 @@ class Frame:
         return self._global_to_local_rotation.T
 
     def transform_point2D_global_to_local(self, point: Point2D) -> Point3D:
-        """Return the global to local space transformation of ``Point2D ``.
-
-        Returns
-        -------
-        Point3D
-            A :class:`Point3D` representing the transformed 2D point in
-            global to local coordinate space.
-
-        """
         three_dimensional_representation = Point3D(
             [point.x.m_as(point.base_unit), point.y.m_as(point.base_unit), 0], point.base_unit
         )
@@ -129,15 +120,6 @@ class Frame:
         )
 
     def transform_point3D_global_to_local(self, point: Point3D) -> Point3D:
-        """Return the local to global space transformation of ``Point2D ``.
-
-        Returns
-        -------
-        Point3D
-            A :class:`Point3D` representing the transformed 2D point in
-            local to global coordinate space.
-
-        """
         transformed_point = self._global_to_local_rotation.T @ (point)
         return self._origin + Point3D(transformed_point, point.base_unit)
 

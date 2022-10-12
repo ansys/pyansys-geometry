@@ -77,12 +77,12 @@ class Sketch:
     @property
     def faces(self) -> List[SketchFace]:
         """
-        Returns all independently sketched edges.
+        Returns all independently sketched faces.
 
         Returns
         -------
-        List[SketchEdge]
-            Sketched edges that are not assigned to a face.
+        List[Sketchface]
+            list of sketched faces.
         """
 
         return self._faces
@@ -724,7 +724,7 @@ class Sketch:
                 raise ValueError("The sketch cannot be plotted")
             sketches_polydata.append(pv_plot)
 
-        for face in self._faces:
+        for face in self.faces:
             if isinstance(face, Triangle):
                 pv_plot = pv.Triangle(
                     [

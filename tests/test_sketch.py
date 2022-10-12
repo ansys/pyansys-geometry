@@ -19,6 +19,7 @@ def test_sketch_segment_edge_creation():
     assert len(sketch.edges) == 1
     assert sketch.edges[0].start == ZERO_POINT2D
     assert sketch.edges[0].end == Point2D([2, 3])
+    assert sketch.edges[0].length.m == pytest.approx(3.60555128, rel=1e-7, abs=1e-8)
 
     # fluent api keeps last edge endpoint as context for new edge
     sketch.segment_to_point(Point2D([3, 3]), "Segment2").segment_to_point(
@@ -71,6 +72,12 @@ def test_sketch_segment_edge_creation():
     assert len(segment6_retrieved) == 1
     assert segment6_retrieved[0] == sketch.edges[5]
 
+    with pytest.raises(
+        ValueError,
+        match="Parameters 'start' and 'end' have the same values. No segment can be created.",
+    ):
+        sketch.segment(Point2D([3, 2]), Point2D([3, 2]), "Segment4")
+
 
 def test_sketch_arc_edge_creation():
     """Test SketchArc SketchEdge sketching."""
@@ -118,6 +125,7 @@ def test_sketch_triangle_face_creation():
     # Create a Sketch instance
     sketch = Sketch()
 
+    # Create the sketch face with triangle
     sketch.triangle(Point2D([10, 10]), Point2D([2, 1]), Point2D([10, -10]), tag="triangle1")
     assert len(sketch.faces) == 1
     assert sketch.faces[0].point1 == Point2D([10, 10])
@@ -139,12 +147,13 @@ def test_sketch_triangle_face_creation():
     assert triangle2_retrieved[0] == sketch.faces[1]
 
 
-def test_sketch_trapizoidal_face_creation():
-    """Test Trapizoidal Sketchface sketching."""
+def test_sketch_trapezoidal_face_creation():
+    """Test Trapezoidal Sketchface sketching."""
 
     # Create a Sketch instance
     sketch = Sketch()
 
+    # Create the sketch face with trapezoid
     sketch.trapezoid(10, 8, np.pi / 4, np.pi / 8, Point2D([10, -10]), tag="trapezoid1")
     assert len(sketch.faces) == 1
     assert sketch.faces[0].width.m == 10
