@@ -79,7 +79,7 @@ class Trapezoid(SketchFace):
         )
 
         if nonsymmetrical_slant_angle == None:
-            nonsymmetrical_slant_angle = slant_angle
+            nonsymmetrical_slant_angle = Angle(np.pi - slant_angle.value.m, UNIT_ANGLE)
         else:
             if isinstance(nonsymmetrical_slant_angle, (int, float)):
                 nonsymmetrical_slant_angle = Angle(nonsymmetrical_slant_angle, UNIT_ANGLE)
