@@ -21,9 +21,9 @@ class Trapezoid(SketchFace):
     Parameters
     ----------
     width : Union[Quantity, Distance, Real]
-        The width of the slot main body.
+        The width of the trapezoid.
     height : Union[Quantity, Distance, Real]
-        The height of the slot.
+        The height of the trapezoid.
     slant_angle : Union[Quantity, Angle, Real]
         The angle for trapezoid generation.
     nonsymmetrical_slant_angle : Optional[Union[Quantity, Angle, Real]]
@@ -45,7 +45,7 @@ class Trapezoid(SketchFace):
         center: Optional[Point2D] = ZERO_POINT2D,
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
-        """Initializes the slot shape."""
+        """Initializes the trapezoid shape."""
         super().__init__()
 
         check_type(center, Point2D)
