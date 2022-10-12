@@ -12,14 +12,12 @@ class SketchFace:
 
     Parameters
     ----------
-    edges : List[SketchEdge]
-        All of the connected edges forming the face.
     """
 
-    def __init__(self, edges: List[SketchEdge] = []):
+    def __init__(self):
         """Initializes the ``SketchFace``."""
 
-        self._edges = edges
+        self._edges = []
 
     @property
     def edges(self) -> List[SketchEdge]:
