@@ -7,7 +7,6 @@ import pyvista as pv
 
 from ansys.geometry.core.math import Plane, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.math.constants import ZERO_POINT2D
-from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.math.vector import Vector2D
 from ansys.geometry.core.misc import Angle, Distance
@@ -692,30 +691,7 @@ class Sketch:
                     ],
                     negative=edge.negative_angle,
                 )
-                transformation = Matrix44(
-                    [
-                        [
-                            self._plane._global_to_local_rotation.T[0, 0],
-                            self._plane._global_to_local_rotation.T[0, 1],
-                            self._plane._global_to_local_rotation.T[0, 2],
-                            self._plane.origin.x.m_as(edge.start.base_unit),
-                        ],
-                        [
-                            self._plane._global_to_local_rotation.T[1, 0],
-                            self._plane._global_to_local_rotation.T[1, 1],
-                            self._plane._global_to_local_rotation.T[1, 2],
-                            self._plane.origin.y.m_as(edge.start.base_unit),
-                        ],
-                        [
-                            self._plane._global_to_local_rotation.T[2, 0],
-                            self._plane._global_to_local_rotation.T[2, 1],
-                            self._plane._global_to_local_rotation.T[2, 2],
-                            self._plane.origin.z.m_as(edge.start.base_unit),
-                        ],
-                        [0, 0, 0, 1],
-                    ]
-                )
-                pv_plot.transform(transformation)
+                pv_plot.transform(self._plane.transformation_matrix)
             elif isinstance(edge, SketchSegment):
                 transformed_start = self._plane.transform_point2D_global_to_local(edge.start)
                 transformed_end = self._plane.transform_point2D_global_to_local(edge.end)
@@ -734,6 +710,7 @@ class Sketch:
                     ]
                 )
             elif isinstance(face, Trapezoid):
+                # pyvista rectangle does not have validation or restrictions
                 pv_plot = pv.Rectangle(
                     [
                         self._plane.transform_point2D_global_to_local(face._point1),

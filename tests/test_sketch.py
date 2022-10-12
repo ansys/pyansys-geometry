@@ -175,12 +175,12 @@ def test_sketch_trapezoidal_face_creation():
     assert trapezoid2_retrieved[0] == sketch.faces[1]
 
     # Test the trapezoid errors
+    with pytest.raises(ValueError, match="Width must be a real positive value."):
+        sketch.trapezoid(
+            0, 10, np.pi / 8, np.pi / 16, Point2D([10, -10]), np.pi / 2, tag="trapezoid3"
+        )
+
     with pytest.raises(ValueError, match="Height must be a real positive value."):
         sketch.trapezoid(
             10, -10, np.pi / 8, np.pi / 16, Point2D([10, -10]), np.pi / 2, tag="trapezoid3"
-        )
-
-    with pytest.raises(ValueError, match="Width must be greater than height."):
-        sketch.trapezoid(
-            5, 10, np.pi / 8, np.pi / 16, Point2D([10, -10]), np.pi / 2, tag="trapezoid3"
         )
