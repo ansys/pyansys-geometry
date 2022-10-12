@@ -65,9 +65,6 @@ class Trapezoid(SketchFace):
             raise ValueError("Height must be a real positive value.")
         height_magnitude = self._height.value.m_as(center.unit)
 
-        if height_magnitude > width_magnitude:
-            raise ValueError("Width must be greater than height.")
-
         if isinstance(angle, (int, float)):
             angle = Angle(angle, UNIT_ANGLE)
         angle = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
@@ -97,20 +94,20 @@ class Trapezoid(SketchFace):
 
         half_h = height_magnitude / 2
         half_w = width_magnitude / 2
-        rotated_point_1 = rotation @ [
+        rotated_point_1 = rotation @ [center.x.m - half_w, center.y.m - half_h, 0]
+        rotated_point_2 = rotation @ [center.x.m + half_w, center.y.m - half_h, 0]
+        rotated_point_3 = rotation @ [
             center.x.m - half_w + height_magnitude / np.tan(slant_angle.value.m_as(UNIT_ANGLE)),
-            center.y.m - half_h,
+            center.y.m + half_h,
             0,
         ]
-        rotated_point_2 = rotation @ [
+        rotated_point_4 = rotation @ [
             center.x.m
             + half_w
-            + height_magnitude / np.tan(nonsymmetrical_slant_angle.value.m_as(UNIT_ANGLE)),
-            center.y.m - half_h,
+            - height_magnitude / np.tan(nonsymmetrical_slant_angle.value.m_as(UNIT_ANGLE)),
+            center.y.m + half_h,
             0,
         ]
-        rotated_point_3 = rotation @ [center.x.m + half_w, center.y.m + half_h, 0]
-        rotated_point_4 = rotation @ [center.x.m - half_w, center.y.m + half_h, 0]
 
         self._point1 = Point2D([rotated_point_1[0], rotated_point_1[1]], center.unit)
         self._point2 = Point2D([rotated_point_2[0], rotated_point_2[1]], center.unit)
@@ -118,9 +115,9 @@ class Trapezoid(SketchFace):
         self._point4 = Point2D([rotated_point_4[0], rotated_point_4[1]], center.unit)
 
         self._segment1 = SketchSegment(self._point1, self._point2)
-        self._segment2 = SketchSegment(self._point2, self._point4)
-        self._segment3 = SketchSegment(self._point4, self._point3)
-        self._segment4 = SketchSegment(self._point3, self._point1)
+        self._segment2 = SketchSegment(self._point2, self._point3)
+        self._segment3 = SketchSegment(self._point3, self._point4)
+        self._segment4 = SketchSegment(self._point4, self._point1)
 
         self._edges.append(self._segment1)
         self._edges.append(self._segment2)

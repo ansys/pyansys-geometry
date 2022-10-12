@@ -30,7 +30,7 @@ class SketchFace:
         List[SketchEdge]
             A list of component edges forming the face.
         """
-        raise NotImplementedError("Each face must provide this definition.")
+        return self._edges
 
     @property
     def perimeter(self) -> Quantity:
