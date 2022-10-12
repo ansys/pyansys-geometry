@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.math.constants import ZERO_POINT2D
@@ -109,3 +110,73 @@ def test_sketch_arc_edge_creation():
     arc3_retrieved = sketch.get("Arc3")
     assert len(arc3_retrieved) == 1
     assert arc3_retrieved[0] == sketch.edges[2]
+
+
+def test_sketch_triangle_face_creation():
+    """Test Triangle SketchFace sketching."""
+
+    # Create a Sketch instance
+    sketch = Sketch()
+
+    sketch.triangle(Point2D([10, 10]), Point2D([2, 1]), Point2D([10, -10]), tag="triangle1")
+    assert len(sketch.faces) == 1
+    assert sketch.faces[0].point1 == Point2D([10, 10])
+    assert sketch.faces[0].point2 == Point2D([2, 1])
+    assert sketch.faces[0].point3 == Point2D([10, -10])
+
+    sketch.triangle(Point2D([-10, 10]), Point2D([5, 6]), Point2D([-10, -10]), tag="triangle2")
+    assert len(sketch.faces) == 2
+    assert sketch.faces[1].point1 == Point2D([-10, 10])
+    assert sketch.faces[1].point2 == Point2D([5, 6])
+    assert sketch.faces[1].point3 == Point2D([-10, -10])
+
+    triangle1_retrieved = sketch.get("triangle1")
+    assert len(triangle1_retrieved) == 1
+    assert triangle1_retrieved[0] == sketch.faces[0]
+
+    triangle2_retrieved = sketch.get("triangle2")
+    assert len(triangle2_retrieved) == 1
+    assert triangle2_retrieved[0] == sketch.faces[1]
+
+
+def test_sketch_trapizoidal_face_creation():
+    """Test Trapizoidal Sketchface sketching."""
+
+    # Create a Sketch instance
+    sketch = Sketch()
+
+    sketch.trapezoid(10, 8, np.pi / 4, np.pi / 8, Point2D([10, -10]), tag="trapezoid1")
+    assert len(sketch.faces) == 1
+    assert sketch.faces[0].width.m == 10
+    assert sketch.faces[0].height.m == 8
+    assert sketch.faces[0].center == Point2D([10, -10])
+
+    sketch.trapezoid(20, 10, np.pi / 8, np.pi / 16, Point2D([10, -10]), np.pi / 2, tag="trapezoid2")
+    assert len(sketch.faces) == 2
+    assert sketch.faces[1].width.m == 20
+    assert sketch.faces[1].height.m == 10
+    assert sketch.faces[1].center == Point2D([10, -10])
+
+    trapezoid1_retrieved = sketch.get("trapezoid1")
+    assert len(trapezoid1_retrieved) == 1
+    assert trapezoid1_retrieved[0] == sketch.faces[0]
+
+    trapezoid2_retrieved = sketch.get("trapezoid2")
+    assert len(trapezoid2_retrieved) == 1
+    assert trapezoid2_retrieved[0] == sketch.faces[1]
+
+    # Test the trapezoid errors
+    with pytest.raises(ValueError, match="Width must be a real positive value."):
+        sketch.trapezoid(
+            0, 10, np.pi / 8, np.pi / 16, Point2D([10, -10]), np.pi / 2, tag="trapezoid3"
+        )
+
+    with pytest.raises(ValueError, match="Height must be a real positive value."):
+        sketch.trapezoid(
+            10, -10, np.pi / 8, np.pi / 16, Point2D([10, -10]), np.pi / 2, tag="trapezoid3"
+        )
+
+    with pytest.raises(ValueError, match="Width must be greater than height."):
+        sketch.trapezoid(
+            5, 10, np.pi / 8, np.pi / 16, Point2D([10, -10]), np.pi / 2, tag="trapezoid3"
+        )

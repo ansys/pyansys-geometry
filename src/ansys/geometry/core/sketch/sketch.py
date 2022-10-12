@@ -75,6 +75,19 @@ class Sketch:
         return self._edges
 
     @property
+    def faces(self) -> List[SketchFace]:
+        """
+        Returns all independently sketched edges.
+
+        Returns
+        -------
+        List[SketchEdge]
+            Sketched edges that are not assigned to a face.
+        """
+
+        return self._faces
+
+    @property
     def shapes_list(self):
         """Returns the sketched curves."""
         return self._shapes_list
