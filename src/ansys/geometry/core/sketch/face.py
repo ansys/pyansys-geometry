@@ -8,11 +8,7 @@ from ansys.geometry.core.sketch.edge import SketchEdge
 
 
 class SketchFace:
-    """Provides base class for modeling closed 2D sketches.
-
-    Parameters
-    ----------
-    """
+    """Provides base class for modeling closed 2D sketches."""
 
     def __init__(self):
         """Initializes the ``SketchFace``."""
