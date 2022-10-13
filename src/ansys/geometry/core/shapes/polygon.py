@@ -22,7 +22,7 @@ class Polygon(BaseShape):
         planar surface where the shape is contained.
     center : Point3D
         A :class:`Point3D <ansys.geometry.core.math.point.Point3D>` representing the
-        center of the circle.
+        center of the polygon.
     inner_radius : Union[Quantity, Distance]
         The inradius(apothem) of the polygon.
     sides : int

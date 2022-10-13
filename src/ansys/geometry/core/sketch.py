@@ -227,7 +227,7 @@ class Sketch:
         ----------
         center: Point3D
             A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
-            representing the center of the circle.
+            representing the center of the polygon.
         inner_radius : Union[Quantity, Distance]
             The inradius(apothem) of the polygon.
         sides : int
@@ -257,10 +257,10 @@ class Sketch:
             representing the center of the arc.
         start : Point3D
             A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
-            representing the start of the shape.
+            representing the start of the arc.
         end : Point3D
             A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
-            representing the end of the shape.
+            representing the end of the arc.
         axis : Optional[UnitVector3D]
             A :class:`UnitVector3D <ansys.geometry.core.math.vector.unitVector3D>`
             determining the rotation direction of the arc.
