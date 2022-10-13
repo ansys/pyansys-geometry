@@ -302,7 +302,9 @@ class Component:
         request = CreatePlanarBodyRequest(
             parent=self._id,
             plane=plane_to_grpc_plane(sketch._plane),
-            geometries=sketch_shapes_to_grpc_geometries(sketch.shapes_list),
+            geometries=sketch_shapes_to_grpc_geometries(
+                sketch._plane, sketch.edges, sketch.faces, sketch.shapes_list
+            ),
             name=name,
         )
 

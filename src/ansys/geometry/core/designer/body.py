@@ -18,6 +18,7 @@ from ansys.geometry.core.connection import (
     tess_to_pd,
     unit_vector_to_grpc_direction,
 )
+from ansys.geometry.core.connection.conversions import one_profile_shape_to_grpc_geometries
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.errors import protect_grpc
@@ -213,7 +214,9 @@ class Body:
         imprint_response = self._commands_stub.ImprintCurves(
             ImprintCurvesRequest(
                 body=self._id,
-                curves=sketch_shapes_to_grpc_geometries(sketch.shapes_list),
+                curves=sketch_shapes_to_grpc_geometries(
+                    sketch._plane, sketch.edges, sketch.faces, sketch.shapes_list
+                ),
                 faces=[face._id for face in faces],
             )
         )
@@ -268,17 +271,21 @@ class Body:
         check_type(sketch, Sketch)
         check_type(closest_face, bool)
 
-        if only_one_curve and len(sketch.shapes_list) > 0:
-            curves = [sketch.shapes_list[0]]
+        if only_one_curve:
+            curves = one_profile_shape_to_grpc_geometries(
+                sketch._plane, sketch.edges, sketch.faces, curves
+            )
         else:
-            curves = sketch.shapes_list
+            curves = sketch_shapes_to_grpc_geometries(
+                sketch._plane, sketch.edges, sketch.faces, curves
+            )
 
         self._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 
         project_response = self._commands_stub.ProjectCurves(
             ProjectCurvesRequest(
                 body=self._id,
-                curves=sketch_shapes_to_grpc_geometries(curves),
+                curves=curves,
                 direction=unit_vector_to_grpc_direction(direction),
                 closestFace=closest_face,
             )

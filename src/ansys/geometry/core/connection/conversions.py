@@ -109,8 +109,76 @@ def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
     )
 
 
+def one_profile_shape_to_grpc_geometries(
+    plane: Plane,
+    edges: List[SketchEdge],
+    faces: List[SketchFace],
+    shapes: List[BaseShape],
+) -> Geometries:
+    """Marshals a list of :class:`SketchEdge` and :class:`SketchFace`to
+    a Geometries gRPC message of the Geometry Service.
+
+    Parameters
+    ----------
+    plane : Plane
+        The plane to position the 2D sketches.
+    edges : List[SketchEdge]
+        Source edge data.
+    faces : List[SketchFace]
+        Source face data.
+    shapes : List[BaseShape]
+        Source shape data.
+
+    Returns
+    -------
+    Geometries
+        Geometry Service gRPC Geometries message, units in meters.
+    """
+    geometries = Geometries()
+
+    if len(edges) > 0:
+        converted_sketch_edges = sketch_edges_to_grpc_geometries(plane, [edges[0]])
+        geometries.lines.extend(converted_sketch_edges[0])
+        geometries.arcs.extend(converted_sketch_edges[1])
+
+    if len(edges) == 0 and len(faces) > 0:
+        for face in faces:
+            if isinstance(face, SketchCircle):
+                geometries.circles.append(sketch_circle_to_grpc_circle(face, plane))
+                break
+            if isinstance(face, Triangle) or isinstance(face, Trapezoid):
+                converted_face_edges = sketch_edges_to_grpc_geometries(plane, face.edges)
+                geometries.lines.extend(converted_face_edges[0])
+                geometries.arcs.extend(converted_face_edges[1])
+                break
+
+    if len(edges) == 0 and len(faces) == 0:
+        for shape in shapes:
+            for component_shape in shape.components:
+                if isinstance(component_shape, Circle):
+                    geometries.circles.append(circle_to_grpc_circle(component_shape))
+                    break
+                elif isinstance(component_shape, Segment):
+                    geometries.lines.append(segment_to_grpc_line(component_shape))
+                    break
+                elif isinstance(component_shape, Arc):
+                    geometries.arcs.append(arc_to_grpc_arc(component_shape))
+                    break
+                elif isinstance(component_shape, Ellipse):
+                    geometries.ellipses.append(ellipse_to_grpc_ellipse(component_shape))
+                    break
+                elif isinstance(component_shape, Polygon):
+                    geometries.polygons.append(polygon_to_grpc_polygon(component_shape))
+                    break
+
+    return geometries
+
+
 def sketch_shapes_to_grpc_geometries(
-    plane: Plane, edges: List[SketchEdge], faces: List[SketchFace], shapes: List[BaseShape]
+    plane: Plane,
+    edges: List[SketchEdge],
+    faces: List[SketchFace],
+    shapes: List[BaseShape],
 ) -> Geometries:
     """Marshals a list of :class:`BaseShape` to a Geometries gRPC message of
     the Geometry Service.
