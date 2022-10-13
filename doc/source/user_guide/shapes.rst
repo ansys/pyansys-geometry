@@ -1,12 +1,12 @@
-PyGeometry Math and Sketch concepts
+PyGeometry math and sketch concepts
 ***********************************
 
 PyGeometry math objects
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-PyGeometry math subpackage consists of the the primitive representation of the basic geometric
+PyGeometry math sub-package consists of the primitive representation of the basic geometric
 objects such as `Point`, `Vector`, `Matrix` along with Units by making use of 
-Python package called `Pint <https://github.com/hgrecco/pint>_ ` in order to 
+Python package called `Pint <https://github.com/hgrecco/pint>_ ` to 
 operate and manipulate physical quantities.
 
 Sketch
@@ -19,11 +19,11 @@ PyGeometry Sketch contains two fundamental constructs:
 * Faces - a set of edges that enclose a surface represents closed shapes such as circle, triangle and so on.
 
 To get initialize the sketch, first you can specify the :ref:`Plane <ansys.geometry.core.math.plane.Plane>` which
-represent a plane in space, from which other pyGeometry objects can be located. They have a origin and a coordinate system.
-Most methods that create an object will be relative to the current plane.
+represent a plane in space, from which other PyGeometry objects can be located. They have a origin and a coordinate system.
+Most methods that create an object is be relative to the current plane.
 The default work plane XY plane with (0,0) as origin. You can create 2D objects in the plane and 
-PyGeometry will convert it to the global coordinate system, so that
-the 2D features will be located as expected. 
+PyGeometry then convert it to the global coordinate system, so that
+the 2D features executes as expected. 
 
 See :ref:`Plane <ansys.geometry.core.math.plane.Plane>` for further details.
 
@@ -34,7 +34,7 @@ You can initialize the sketch by:
     from ansys.geometry.core.sketch.Sketch
     sketch = Sketch()
 
-The sketch can be cconstruct by using different approaches.
+The sketch can be construct by using different approaches.
 
 Fluent based approach
 ======================
@@ -50,7 +50,7 @@ edges to use as a reference start point for additional objects.
     )
     sketch.plot()
 
-you will also able to get the sketch with a newly created sketch objects with user-defined labels.
+It is also able to get the sketch with a newly created sketch objects with user-defined labels.
 
 .. code:: python
     

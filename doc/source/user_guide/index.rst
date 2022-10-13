@@ -1,10 +1,10 @@
 .. _ref_user_guide:
 
 ==========
-User Guide
+User guide
 ==========
 This guide provides a general overview of the basics and usage of the
-Pygeometry library.
+PyGeometry library.
 
 .. toctree::
    :maxdepth: 1
@@ -18,9 +18,9 @@ PyGeometry basic overview
 
 The :class:`Modelar() <ansys.geometry.core.modelar.Modelar()>` method
 within the ``ansys-geometry-core`` library creates an instance of
-Geometry service. By default ``Modeler`` will connect to ``127.0.0.1`` 
+Geometry service. By default ``Modeler`` connects to ``127.0.0.1`` 
 (``'localhost'``) at the port 50051. You can change this by modifying
-the ``host`` and ``port`` parameters of ``Modeler``, but note that you will 
+the ``host`` and ``port`` parameters of ``Modeler``, but note that you
 have to also modify this in your ``docker run`` command by changing ``<HOST-PORT>-50051``.
 
 Now, you can start the service with:

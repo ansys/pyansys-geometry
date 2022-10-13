@@ -1,7 +1,7 @@
-PyGeometry design Subpackage
-****************************
+PyGeometry designer
+*******************
 
-Design subpackage provides a ``Design`` for organizing geometry assemblies and synchronizes to
+Design sub-package provides a ``Design`` for organizing geometry assemblies and synchronizes to
 a supporting geometry service instance.*
 
 Defining the model
@@ -39,7 +39,7 @@ You can add the data structure and property for individual materials.
 Create bodies by extruding the sketch
 -------------------------------------
 
-Projects all of the specified geometries onto the body. ypou can extrude the sketch from the bodies.
+Projects all of the specified geometries onto the body. You can extrude the sketch from the bodies.
 
 .. code:: python
 
