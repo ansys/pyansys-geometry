@@ -22,9 +22,9 @@ from ansys.geometry.core.math import Frame, Plane, Point3D, UnitVector3D
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.shapes import Arc, Circle, Ellipse, Polygon, Segment
-from ansys.geometry.core.sketch.arc import SketchArc
-from ansys.geometry.core.sketch.circle import SketchCircle
-from ansys.geometry.core.sketch.segment import SketchSegment
+from ansys.geometry.core.sketch.arc import Arc
+from ansys.geometry.core.sketch.circle import Circle
+from ansys.geometry.core.sketch.segment import Segment
 
 
 def test_wait_until_healthy():
@@ -63,8 +63,8 @@ def test_circle_message_conversion():
 
 
 def test_sketchcircle_message_conversion():
-    """Test conversion between :class:`SketchCircle` and expected gRPC message type."""
-    circle = SketchCircle(
+    """Test conversion between :class:`Circle` and expected gRPC message type."""
+    circle = Circle(
         Point2D([10, 100], UNITS.mm),
         Quantity(300, UNITS.mm),
     )
@@ -96,8 +96,8 @@ def test_ellipse_message_conversion():
 
 
 def test_sketchsegment_message_conversion():
-    """Test conversion between :class:`SketchSegment` and expected gRPC message type."""
-    segment = SketchSegment(
+    """Test conversion between :class:`Segment` and expected gRPC message type."""
+    segment = Segment(
         Point2D([30, 400], UNITS.mm),
         Point2D([500, 600], UNITS.mm),
     )
@@ -206,8 +206,8 @@ def test_arc_message_conversion():
 
 
 def test_sketcharc_message_conversion():
-    """Test conversion between :class:`SketchArc` and expected gRPC message type."""
-    arc = SketchArc(
+    """Test conversion between :class:`Arc` and expected gRPC message type."""
+    arc = Arc(
         Point2D([500, 600], UNITS.mm),
         Point2D([100, 400], UNITS.mm),
         Point2D([900, 800], UNITS.mm),
@@ -230,7 +230,7 @@ def test_sketcharc_message_conversion():
     assert grpc_arc_message.axis.y == 0
     assert grpc_arc_message.axis.z == 1
 
-    arc2 = SketchArc(
+    arc2 = Arc(
         Point2D([600, 700], UNITS.mm),
         Point2D([200, 500], UNITS.mm),
         Point2D([1000, 900], UNITS.mm),

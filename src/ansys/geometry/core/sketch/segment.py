@@ -1,4 +1,4 @@
-"""``SketchSegment`` class module."""
+"""``Segment`` class module."""
 
 import numpy as np
 from pint import Quantity
@@ -9,7 +9,7 @@ from ansys.geometry.core.misc.checks import check_type_equivalence
 from ansys.geometry.core.sketch.edge import SketchEdge
 
 
-class SketchSegment(SketchEdge):
+class Segment(SketchEdge):
     """
     Provides Segment representation of a Line.
 
@@ -26,7 +26,7 @@ class SketchSegment(SketchEdge):
         start: Point2D,
         end: Point2D,
     ):
-        """Constructor method for ``SketchSegment``."""
+        """Constructor method for ``Segment``."""
         super().__init__()
 
         # Perform sanity checks on Point values given
@@ -50,44 +50,44 @@ class SketchSegment(SketchEdge):
 
     @property
     def start(self) -> Point2D:
-        """Returns the start of the ``SketchSegment``.
+        """Returns the start of the ``Segment``.
 
         Returns
         -------
         Point2D
-            The start point of the ``SketchSegment``.
+            The start point of the ``Segment``.
         """
         return self._start
 
     @property
     def end(self) -> Point2D:
-        """Returns the end of the ``SketchSegment``.
+        """Returns the end of the ``Segment``.
 
         Returns
         -------
         Point2D
-            The end point of the ``SketchSegment``.
+            The end point of the ``Segment``.
         """
         return self._end
 
     @property
     def length(self) -> Quantity:
-        """Return the length of the ``SketchSegment``.
+        """Return the length of the ``Segment``.
 
         Returns
         -------
         Quantity
-            The length of the ``SketchSegment``.
+            The length of the ``Segment``.
         """
         return np.sqrt(
             np.square(self._end.x - self._start.x) + np.square(self._end.y - self._start.y)
         )
 
-    def __eq__(self, other: "SketchSegment") -> bool:
-        """Equals operator for ``SketchSegment``."""
+    def __eq__(self, other: "Segment") -> bool:
+        """Equals operator for ``Segment``."""
         check_type_equivalence(other, self)
         return self.start == other.start and self.end == other.end
 
-    def __ne__(self, other: "SketchSegment") -> bool:
-        """Not equals operator for ``SketchSegment``."""
+    def __ne__(self, other: "Segment") -> bool:
+        """Not equals operator for ``Segment``."""
         return not self == other

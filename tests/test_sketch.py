@@ -8,7 +8,7 @@ from ansys.geometry.core.sketch.sketch import Sketch
 
 
 def test_sketch_segment_edge_creation():
-    """Test SketchSegment SketchEdge sketching."""
+    """Test Segment SketchEdge sketching."""
 
     # Create a Sketch instance
     sketch = Sketch()
@@ -80,7 +80,7 @@ def test_sketch_segment_edge_creation():
 
 
 def test_sketch_arc_edge_creation():
-    """Test SketchArc SketchEdge sketching."""
+    """Test Arc SketchEdge sketching."""
 
     # Create a Sketch instance
     sketch = Sketch()

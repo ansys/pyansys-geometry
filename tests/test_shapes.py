@@ -4,6 +4,7 @@ import pytest
 
 from ansys.geometry.core.math import ZERO_VECTOR3D, Plane, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, UNITVECTOR3D_Z
+from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
 from ansys.geometry.core.shapes import Arc, Circle, Ellipse, Line, Segment
 from ansys.geometry.core.shapes.polygon import Polygon
@@ -20,10 +21,10 @@ def test_create_circle():
 
     # Draw a circle in previous sketch
     center, radius = (
-        Point3D([0, 0, 0], UNITS.m),
+        Point2D([0, 0], UNITS.m),
         (1 * UNITS.m),
     )
-    circle = sketch.draw_circle(center, radius)
+    circle = sketch.circle(center, radius)
 
     # Check attributes are expected ones
     assert circle.center == center
@@ -82,9 +83,9 @@ def test_create_ellipse():
     sketch = Sketch()
 
     # Draw a circle in previous sketch
-    semi_major, semi_minor, origin = 2 * UNITS.m, 1 * UNITS.m, Point3D([0, 0, 0], UNITS.m)
+    semi_major, semi_minor, origin = 2 * UNITS.m, 1 * UNITS.m, Point2D([0, 0], UNITS.m)
     ecc = np.sqrt(1 - (semi_minor / semi_major) ** 2)
-    ellipse = sketch.draw_ellipse(origin, semi_major, semi_minor)
+    ellipse = sketch.ellipse(origin, semi_major, semi_minor)
 
     # Check attributes are expected ones
     assert ellipse.semi_major_axis == semi_major
@@ -190,8 +191,8 @@ def test_create_polygon():
     sketch = Sketch()
 
     # Draw a pentagon in previous sketch
-    radius, sides, center = (1 * UNITS.m), 5, Point3D([0, 0, 0], UNITS.m)
-    pentagon = sketch.draw_polygon(center, radius, sides)
+    radius, sides, center = (1 * UNITS.m), 5, Point2D([0, 0], UNITS.m)
+    pentagon = sketch.polygon(center, radius, sides)
 
     # Check attributes are expected ones
     side_length = 2 * radius * np.tan(np.pi / sides)
@@ -201,8 +202,8 @@ def test_create_polygon():
     assert pentagon.perimeter == sides * side_length
 
     # Draw a square in previous sketch
-    radius, sides, center = (1 * UNITS.m), 4, Point3D([0, 0, 0], UNITS.m)
-    square = sketch.draw_polygon(center, radius, sides)
+    radius, sides, center = (1 * UNITS.m), 4, Point2D([0, 0], UNITS.m)
+    square = sketch.polygon(center, radius, sides)
 
     # Check attributes are expected ones
     side_length = 2 * radius * np.tan(np.pi / sides)  # 2.0 m
@@ -225,12 +226,12 @@ def test_create_polygon():
     with pytest.raises(
         ValueError, match="The minimum number of sides to construct a polygon should be 3."
     ):
-        radius, sides, center = (1 * UNITS.m), 2, Point3D([0, 0, 0], UNITS.m)
-        sketch.draw_polygon(center, radius, sides)
+        radius, sides, center = (1 * UNITS.m), 2, Point2D([0, 0], UNITS.m)
+        sketch.polygon(center, radius, sides)
 
     with pytest.raises(ValueError, match="Radius must be a real positive value."):
-        radius, sides, center = (-1 * UNITS.m), 6, Point3D([0, 0, 0], UNITS.m)
-        sketch.draw_polygon(center, radius, sides)
+        radius, sides, center = (-1 * UNITS.m), 6, Point2D([0, 0], UNITS.m)
+        sketch.polygon(center, radius, sides)
 
     with pytest.raises(ValueError, match="Center must be contained in the plane."):
         xy_plane = Plane()
@@ -277,9 +278,9 @@ def test_create_line():
 
     # Try adding a simple line with the sketcher
     sketch = Sketch()
-    start_sketch_line = Point3D([23, 45, 0], UNITS.cm)
+    start_sketch_line = Point2D([23, 45], UNITS.cm)
     dir_sketch_line = UNITVECTOR3D_X
-    line_sketch = sketch.draw_line(start_sketch_line, dir_sketch_line)
+    line_sketch = sketch.line(start_sketch_line, dir_sketch_line)
     assert line_sketch.start == start_sketch_line
     assert line_sketch.direction == dir_sketch_line
     assert line_sketch.start.unit == start_sketch_line.unit
@@ -399,9 +400,9 @@ def test_create_segment():
 
     # Try adding a simple segment with the sketcher
     sketch = Sketch()
-    start_sketch, end_sketch = Point3D([23, 45, 0], UNITS.cm), Point3D([67, 32, 0], UNITS.cm)
+    start_sketch, end_sketch = Point2D([23, 45], UNITS.cm), Point2D([67, 32], UNITS.cm)
     dir_sketch = UnitVector3D(end_sketch - start_sketch)
-    segment_sketch = sketch.draw_segment(start_sketch, end_sketch)
+    segment_sketch = sketch.segment(start_sketch, end_sketch)
     assert segment_sketch.start == start_sketch
     assert segment_sketch.end == end_sketch
     assert segment_sketch.direction == dir_sketch
@@ -468,11 +469,11 @@ def test_create_arc():
     sketch = Sketch()
 
     # Draw an arc in previous sketch
-    center = Point3D([1, 1, 0], unit=UNITS.meter)
-    start = Point3D([1, 3, 0], unit=UNITS.meter)
-    end = Point3D([3, 1, 0], unit=UNITS.meter)
-    arc_clockwise = sketch.draw_arc(center, start, end, UnitVector3D([0, 0, -1]))
-    arc_counterclockwise = sketch.draw_arc(center, start, end, UNITVECTOR3D_Z)
+    center = Point2D([1, 1], unit=UNITS.meter)
+    start = Point2D([1, 3], unit=UNITS.meter)
+    end = Point2D([3, 1], unit=UNITS.meter)
+    arc_clockwise = sketch.arc(center, start, end, UnitVector3D([0, 0, -1]))
+    arc_counterclockwise = sketch.arc(center, start, end, UNITVECTOR3D_Z)
 
     # Check attributes are expected ones
     assert arc_clockwise.radius == 2 * UNITS.meter
@@ -508,13 +509,13 @@ def test_create_slot():
     sketch = Sketch(Plane([1, 2, 0]))
 
     # Draw an arc in previous sketch
-    center = Point3D([2, 3, 0], unit=UNITS.meter)
+    center = Point2D([2, 3], unit=UNITS.meter)
     width = Distance(4, unit=UNITS.meter)
     height = Distance(2, unit=UNITS.meter)
-    slot = sketch.draw_slot(center, width, height)
+    slot = sketch.slot(center, width, height)
 
     # Validate Real inputs accepted
-    sketch.draw_slot(center, 888, 88)
+    sketch.slot(center, 888, 88)
 
     # Check attributes are expected ones
     area = slot.area
@@ -558,7 +559,7 @@ def test_create_slot():
 
     tilted_plane = Plane(Point3D([1, 1, 0]), direction_x=[1, 0, 0], direction_y=[0, -1, 1])
     tilted_sketch = Sketch(tilted_plane)
-    tilted_slot = tilted_sketch.draw_slot(Point3D([2, 0, 1]), width, height)
+    tilted_slot = tilted_sketch.slot(Point2D([2, 0]), width, height)
     assert tilted_slot.area.m == pytest.approx(7.141592653589793, rel=1e-7, abs=1e-8)
     assert tilted_slot.perimeter.m == pytest.approx(10.283185307179586, rel=1e-7, abs=1e-8)
 
@@ -570,13 +571,13 @@ def test_create_box():
     sketch = Sketch()
 
     # Draw a box in previous sketch
-    center = Point3D([3, 1, 0], unit=UNITS.meter)
+    center = Point2D([3, 1], unit=UNITS.meter)
     width = Distance(4, unit=UNITS.meter)
     height = Distance(2, unit=UNITS.meter)
-    box = sketch.draw_box(center, width, height)
+    box = sketch.box(center, width, height)
 
     # Validate Real inputs accepted
-    sketch.draw_box(center, 88, 888)
+    sketch.box(center, 88, 888)
 
     # Check attributes are expected ones
     area = box.area
@@ -606,6 +607,6 @@ def test_create_box():
     assert isinstance(box.components[2], Segment)
     assert isinstance(box.components[3], Segment)
 
-    tilted_plane = Plane(Point3D([1, 1, 0]), direction_x=[1, 0, 0], direction_y=[0, -1, 1])
+    tilted_plane = Plane(Point2D([1, 1]), direction_x=[1, 0, 0], direction_y=[0, -1, 1])
     tilted_sketch = Sketch(tilted_plane)
-    tilted_box = tilted_sketch.draw_box(center, width, height)
+    tilted_box = tilted_sketch.box(center, width, height)

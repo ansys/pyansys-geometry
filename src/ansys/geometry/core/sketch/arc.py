@@ -1,4 +1,4 @@
-"""``SketchArc`` class module."""
+"""``Arc`` class module."""
 
 from typing import Optional
 
@@ -14,7 +14,7 @@ from ansys.geometry.core.misc.checks import check_type_equivalence
 from ansys.geometry.core.sketch.edge import SketchEdge
 
 
-class SketchArc(SketchEdge):
+class Arc(SketchEdge):
     """A class for modeling arcs."""
 
     def __init__(
@@ -190,8 +190,8 @@ class SketchArc(SketchEdge):
         """
         return self.radius**2 * self.angle.m / 2
 
-    def __eq__(self, other: "SketchArc") -> bool:
-        """Equals operator for ``SketchArc``."""
+    def __eq__(self, other: "Arc") -> bool:
+        """Equals operator for ``Arc``."""
         check_type_equivalence(other, self)
         return (
             self.start == other.start
@@ -200,6 +200,6 @@ class SketchArc(SketchEdge):
             and self._angle == other._angle
         )
 
-    def __ne__(self, other: "SketchArc") -> bool:
-        """Not equals operator for ``SketchArc``."""
+    def __ne__(self, other: "Arc") -> bool:
+        """Not equals operator for ``Arc``."""
         return not self == other

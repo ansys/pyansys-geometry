@@ -18,11 +18,11 @@ from ansys.geometry.core.math import Frame, Plane, Point3D, UnitVector3D
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Polygon, Segment
-from ansys.geometry.core.sketch.arc import SketchArc
-from ansys.geometry.core.sketch.circle import SketchCircle
+from ansys.geometry.core.sketch.arc import Arc
+from ansys.geometry.core.sketch.circle import Circle
 from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.sketch.face import SketchFace
-from ansys.geometry.core.sketch.segment import SketchSegment
+from ansys.geometry.core.sketch.segment import Segment
 from ansys.geometry.core.sketch.trapezoid import Trapezoid
 from ansys.geometry.core.sketch.triangle import Triangle
 from ansys.geometry.core.typing import Real
@@ -143,7 +143,7 @@ def one_profile_shape_to_grpc_geometries(
 
     if len(edges) == 0 and len(faces) > 0:
         for face in faces:
-            if isinstance(face, SketchCircle):
+            if isinstance(face, Circle):
                 geometries.circles.append(sketch_circle_to_grpc_circle(face, plane))
                 break
             if isinstance(face, Triangle) or isinstance(face, Trapezoid):
@@ -206,7 +206,7 @@ def sketch_shapes_to_grpc_geometries(
     geometries.arcs.extend(converted_sketch_edges[1])
 
     for face in faces:
-        if isinstance(face, SketchCircle):
+        if isinstance(face, Circle):
             geometries.circles.append(sketch_circle_to_grpc_circle(face, plane))
         if isinstance(face, Triangle) or isinstance(face, Trapezoid):
             converted_face_edges = sketch_edges_to_grpc_geometries(plane, face.edges)
@@ -250,9 +250,9 @@ def sketch_edges_to_grpc_geometries(
     arcs = []
     segments = []
     for edge in edges:
-        if isinstance(edge, SketchSegment):
+        if isinstance(edge, Segment):
             segments.append(sketch_segment_to_grpc_line(edge, plane))
-        elif isinstance(edge, SketchArc):
+        elif isinstance(edge, Arc):
             arcs.append(sketch_arc_to_grpc_arc(edge, plane))
 
     return (segments, arcs)
@@ -279,12 +279,12 @@ def arc_to_grpc_arc(arc: Arc) -> GRPCArc:
     )
 
 
-def sketch_arc_to_grpc_arc(arc: SketchArc, plane: Plane) -> GRPCArc:
-    """Marshals an :class:`SketchArc` to an Arc gRPC message of the Geometry Service.
+def sketch_arc_to_grpc_arc(arc: Arc, plane: Plane) -> GRPCArc:
+    """Marshals an :class:`Arc` to an Arc gRPC message of the Geometry Service.
 
     Parameters
     ----------
-    arc : SketchArc
+    arc : Arc
         Source arc data.
     plane : Plane
         The plane to position the arc within.
@@ -348,14 +348,14 @@ def circle_to_grpc_circle(circle: Circle) -> GRPCCircle:
     )
 
 
-def sketch_circle_to_grpc_circle(circle: SketchCircle, plane: Plane) -> GRPCCircle:
+def sketch_circle_to_grpc_circle(circle: Circle, plane: Plane) -> GRPCCircle:
     """
-    Marshals a :class:`SketchCircle`
+    Marshals a :class:`Circle`
     to a Circle gRPC message of the Geometry Service.
 
     Parameters
     ----------
-    circle : SketchCircle
+    circle : Circle
         Source circle data.
     plane : Plane
         The plane to position the 2D circle.
@@ -455,12 +455,12 @@ def segment_to_grpc_line(line: Segment) -> GRPCLine:
     )
 
 
-def sketch_segment_to_grpc_line(segment: SketchSegment, plane: Plane) -> GRPCLine:
-    """Marshals a :class:`SketchSegment` to a Line gRPC message of the Geometry Service.
+def sketch_segment_to_grpc_line(segment: Segment, plane: Plane) -> GRPCLine:
+    """Marshals a :class:`Segment` to a Line gRPC message of the Geometry Service.
 
     Parameters
     ----------
-    segment : SketchSegment
+    segment : Segment
         Source segment data.
 
     Returns

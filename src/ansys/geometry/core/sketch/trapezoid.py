@@ -11,7 +11,7 @@ from ansys.geometry.core.math.constants import ZERO_POINT2D
 from ansys.geometry.core.misc import Angle, Distance, check_type
 from ansys.geometry.core.misc.measurements import UNIT_ANGLE
 from ansys.geometry.core.sketch.face import SketchFace
-from ansys.geometry.core.sketch.segment import SketchSegment
+from ansys.geometry.core.sketch.segment import Segment
 from ansys.geometry.core.typing import Real
 
 
@@ -114,10 +114,10 @@ class Trapezoid(SketchFace):
         self._point3 = Point2D([rotated_point_3[0], rotated_point_3[1]], center.unit)
         self._point4 = Point2D([rotated_point_4[0], rotated_point_4[1]], center.unit)
 
-        self._segment1 = SketchSegment(self._point1, self._point2)
-        self._segment2 = SketchSegment(self._point2, self._point3)
-        self._segment3 = SketchSegment(self._point3, self._point4)
-        self._segment4 = SketchSegment(self._point4, self._point1)
+        self._segment1 = Segment(self._point1, self._point2)
+        self._segment2 = Segment(self._point2, self._point3)
+        self._segment3 = Segment(self._point3, self._point4)
+        self._segment4 = Segment(self._point4, self._point1)
 
         self._edges.append(self._segment1)
         self._edges.append(self._segment2)

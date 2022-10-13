@@ -1,4 +1,4 @@
-"""``SketchCircle`` class module."""
+"""``Circle`` class module."""
 from typing import Union
 
 import numpy as np
@@ -9,7 +9,7 @@ from ansys.geometry.core.misc import Distance, check_type
 from ansys.geometry.core.sketch.face import SketchFace
 
 
-class SketchCircle(SketchFace):
+class Circle(SketchFace):
     """A sketch class for modeling circles.
 
     Parameters

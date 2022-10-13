@@ -5,22 +5,20 @@ from typing import List, Optional, Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math import Plane, Point3D
+from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import Angle, Distance, check_type
 from ansys.geometry.core.misc.measurements import UNIT_ANGLE
-from ansys.geometry.core.shapes.base import BaseShape
+from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
 
 
-class Polygon(BaseShape):
+class Polygon(SketchFace):
     """A class for modeling regular polygon.
 
     Parameters
     ----------
-    plane : Plane
-        A :class:`Plane` representing the planar surface where the shape is contained.
-    center: Point3D
-        A :class:`Point3D` representing the center of the circle.
+    center: Point2D
+        A :class:`Point2D` representing the center of the circle.
     inner_radius : Union[Quantity, Distance]
         The inradius(apothem) of the polygon.
     sides : int
@@ -31,21 +29,17 @@ class Polygon(BaseShape):
 
     def __init__(
         self,
-        plane: Plane,
-        center: Point3D,
+        center: Point2D,
         inner_radius: Union[Quantity, Distance],
         sides: int,
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
         """Initializes the polygon shape."""
-        # Call the BaseShape ctor.
-        super().__init__(plane, is_closed=True)
+        super().__init__()
 
         # Check the inputs
-        check_type(center, Point3D)
+        check_type(center, Point2D)
         self._center = center
-        if not self.plane.is_point_contained(center):
-            raise ValueError("Center must be contained in the plane.")
 
         check_type(inner_radius, (Quantity, Distance))
         self._inner_radius = (
@@ -61,17 +55,15 @@ class Polygon(BaseShape):
         # Verify that the number of sides is valid with preferred range
         if sides < 3:
             raise ValueError("The minimum number of sides to construct a polygon should be 3.")
-        # TODO : raise warning if the number of sides greater than 64
-        # it cannot be handled server side
         self._n_sides = sides
 
     @property
-    def center(self) -> Point3D:
+    def center(self) -> Point2D:
         """The center of the polygon.
 
         Returns
         -------
-        Point3D
+        Point2D
             The center of the polygon.
         """
         return self._center
@@ -159,14 +151,14 @@ class Polygon(BaseShape):
         """
         return [self]
 
-    def local_points(self) -> List[Point3D]:
+    def local_points(self) -> List[Point2D]:
         """Returns a list containing all the vertices of the polygon.
 
         Vertices are given in the local space.
 
         Returns
         -------
-        list[Point3D]
+        list[Point2D]
             A list of vertices representing the shape.
 
         """
@@ -174,12 +166,12 @@ class Polygon(BaseShape):
         theta = np.linspace(
             0 + angle_offset_radians, 2 * np.pi + angle_offset_radians, self.n_sides + 1
         )
-        center_from_plane_origin = Point3D(
+        center_from_plane_origin = Point2D(
             self.plane.global_to_local_rotation @ (self.center - self.plane.origin),
             self.center.unit,
         )
         return [
-            Point3D(
+            Point2D(
                 [
                     center_from_plane_origin.x.to(self.outer_radius.units).m
                     + self.outer_radius.m * np.cos(ang),

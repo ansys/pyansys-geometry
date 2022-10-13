@@ -7,10 +7,11 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.designer import CurveType, SharedTopologyType, SurfaceType
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
-from ansys.geometry.core.math import Frame, Plane, Point3D, UnitVector3D
+from ansys.geometry.core.math import Frame, Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_Z
+from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc import UNITS
-from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.sketch.sketch import Sketch
 
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):
@@ -19,7 +20,7 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
 
     # Create a Sketch and draw a circle (all client side)
     sketch = Sketch()
-    sketch.draw_circle(Point3D([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm))
+    sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
 
     # Create your design on the server side
     design_name = "ExtrudeProfile"
@@ -90,7 +91,7 @@ def test_face_to_body_creation(modeler: Modeler):
 
     # Create a Sketch and draw a circle (all client side)
     sketch = Sketch()
-    sketch.draw_box(Point3D([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
+    sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
 
     # Create your design on the server side
     design_name = "BoxExtrusions"
@@ -153,7 +154,7 @@ def test_component_body(modeler: Modeler):
 
     # Create a simple sketch of a Polygon (specifically a Pentagon)
     sketch = Sketch()
-    pentagon = sketch.draw_polygon(Point3D([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+    pentagon = sketch.polygon(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
 
     # In the "root/base" Component (i.e. Design object) let's extrude the sketch
     name_extruded_body = "ExtrudedPolygon"
@@ -180,8 +181,8 @@ def test_component_body(modeler: Modeler):
     assert planar_component.name == planar_component_name
 
     planar_sketch = Sketch()
-    planar_sketch.draw_ellipse(
-        Point3D([50, 50, 0], UNITS.mm), Quantity(30, UNITS.mm), Quantity(10, UNITS.mm)
+    planar_sketch.ellipse(
+        Point2D([50, 50], UNITS.mm), Quantity(30, UNITS.mm), Quantity(10, UNITS.mm)
     )
     planar_component_surface_name = "PlanarBody_Component_Surface"
     planar_body = planar_component.create_surface(planar_component_surface_name, planar_sketch)
@@ -219,9 +220,9 @@ def test_named_selections(modeler: Modeler):
 
     # Create 2 Sketch objects and draw a circle and a polygon (all client side)
     sketch_1 = Sketch()
-    sketch_1.draw_circle(Point3D([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm))
+    sketch_1.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
     sketch_2 = Sketch()
-    sketch_2.draw_polygon(Point3D([-30, -30, 0], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+    sketch_2.polygon(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
 
     # Build 2 independent components and bodies
     circle_comp = design.add_component("CircleComponent")
@@ -274,7 +275,7 @@ def test_faces_edges(modeler: Modeler):
 
     # Create a Sketch object and draw a polygon (all client side)
     sketch = Sketch()
-    polygon = sketch.draw_polygon(Point3D([-30, -30, 0], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+    polygon = sketch.polygon(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
 
     # Build independent components and bodies
     polygon_comp = design.add_component("PolygonComponent")
@@ -405,7 +406,7 @@ def test_delete_body_component(modeler: Modeler):
 
     # Create a Sketch object and draw a circle (all client side)
     sketch = Sketch()
-    sketch.draw_circle(Point3D([-30, -30, 0], UNITS.mm), Quantity(10, UNITS.mm))
+    sketch.circle(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm))
     distance = Quantity(30, UNITS.mm)
 
     #  The following component hierarchy is made
@@ -616,7 +617,7 @@ def test_shared_topology(modeler: Modeler):
 
     # Create a Sketch object and draw a circle (all client side)
     sketch = Sketch()
-    sketch.draw_circle(Point3D([-30, -30, 0], UNITS.mm), Quantity(10, UNITS.mm))
+    sketch.circle(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm))
     distance = Quantity(30, UNITS.mm)
 
     # Create a component
@@ -649,9 +650,9 @@ def test_single_body_translation(modeler: Modeler):
 
     # Create 2 Sketch objects and draw a circle and a polygon (all client side)
     sketch_1 = Sketch()
-    sketch_1.draw_circle(Point3D([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm))
+    sketch_1.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
     sketch_2 = Sketch()
-    sketch_2.draw_polygon(Point3D([-30, -30, 0], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+    sketch_2.polygon(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
 
     # Build 2 independent components and bodies
     circle_comp = design.add_component("CircleComponent")
@@ -676,9 +677,9 @@ def test_bodies_translation(modeler: Modeler):
 
     # Create 2 Sketch objects and draw a circle and a polygon (all client side)
     sketch_1 = Sketch()
-    sketch_1.draw_circle(Point3D([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm))
+    sketch_1.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
     sketch_2 = Sketch()
-    sketch_2.draw_polygon(Point3D([-30, -30, 0], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+    sketch_2.polygon(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
 
     # Build 2 independent components and bodies
     circle_comp = design.add_component("CircleComponent")
@@ -708,7 +709,7 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
 
     # Create a Sketch object and draw a circle
     sketch = Sketch()
-    sketch.draw_circle(Point3D([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm))
+    sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
 
     # Extrude the sketch
     design.extrude_sketch(name="MyCylinder", sketch=sketch, distance=Quantity(50, UNITS.mm))
@@ -752,16 +753,12 @@ def test_project_and_imprint_curves(modeler: Modeler):
 
     # Create a Sketch object and draw a couple of slots
     imprint_sketch = Sketch()
-    imprint_sketch.draw_slot(
-        Point3D([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
-    )
-    imprint_sketch.draw_slot(
-        Point3D([50, 50, 0], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
-    )
+    imprint_sketch.slot(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm))
+    imprint_sketch.slot(Point2D([50, 50], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm))
 
     # Extrude the sketch
     sketch = Sketch()
-    sketch.draw_box(Point3D([0, 0, 0], UNITS.mm), Quantity(150, UNITS.mm), Quantity(150, UNITS.mm))
+    sketch.box(Point2D([0, 0], UNITS.mm), Quantity(150, UNITS.mm), Quantity(150, UNITS.mm))
     body = design.extrude_sketch(name="MyBox", sketch=sketch, distance=Quantity(50, UNITS.mm))
     body_faces = body.faces
 
@@ -774,11 +771,11 @@ def test_project_and_imprint_curves(modeler: Modeler):
 
     # If we now draw our curves on a higher plane, the upper face should be selected
     imprint_sketch_2 = Sketch(plane=Plane(Point3D([0, 0, 50], UNITS.mm)))
-    imprint_sketch_2.draw_slot(
-        Point3D([10, 10, 50], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
+    imprint_sketch_2.slot(
+        Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
     )
-    imprint_sketch_2.draw_slot(
-        Point3D([50, 50, 50], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
+    imprint_sketch_2.slot(
+        Point2D([50, 50], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
     )
     faces = body.project_curves(
         direction=UNITVECTOR3D_Z, sketch=imprint_sketch_2, closest_face=True
