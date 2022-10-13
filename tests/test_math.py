@@ -18,6 +18,7 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector3D,
 )
+from ansys.geometry.core.math.bounding_box import BoundingBox2D
 from ansys.geometry.core.math.constants import UNITVECTOR2D_X, UNITVECTOR2D_Y, ZERO_VECTOR2D
 from ansys.geometry.core.math.vector import UnitVector2D, Vector2D
 from ansys.geometry.core.misc import UNITS
@@ -741,6 +742,10 @@ def test_frame():
     assert f_defaults.direction_y == UNITVECTOR3D_Y
     assert f_defaults.direction_z == UNITVECTOR3D_Z
 
+    # Test transformation matrix of frame
+    transformed_matrix = Matrix44([[1, 0, 0, 42.0], [0, 1, 0, 99], [0, 0, 1, 13], [0, 0, 0, 1]])
+    assert np.array_equal(f_1.transformation_matrix, transformed_matrix)
+
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
         Frame(origin, "A", UnitVector3D([25, 39, 82]))
 
@@ -749,6 +754,32 @@ def test_frame():
 
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
         Frame("A", UnitVector3D([12, 31, 99]), UnitVector3D([23, 67, 45]))
+
+
+def test_frame_global_to_local_point_transformation():
+    """``Frame`` transform_point_global_to_local implementation tests."""
+    origin = Point3D([42, 99, 13])
+    frame_xy = Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
+    transformed_xy_origin = frame_xy.transform_point2D_global_to_local(Point2D([0, 0]))
+    assert transformed_xy_origin == origin
+
+    frame_xz = Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 0, 1]))
+    transformed_xz = frame_xz.transform_point2D_global_to_local(Point2D([0, 12]))
+    assert transformed_xz == Point3D([42, 99, 25])
+
+    frame_tilted = Frame(Point3D([0, 0, 0]), UnitVector3D([1, 1, 1]), UnitVector3D([0, -1, 1]))
+    transformed_tilted = frame_tilted.transform_point2D_global_to_local(Point2D([0, 10]))
+    assert transformed_tilted == Point3D([0, -7.071067811865475, 7.071067811865475])
+
+    assert transformed_xy_origin == origin
+
+    frame_xz = Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 0, 1]))
+    transformed_xz = frame_xz.transform_point2D_global_to_local(Point2D([0, 12]))
+    assert transformed_xz == Point3D([42, 99, 25])
+
+    frame_tilted = Frame(Point3D([0, 0, 0]), UnitVector3D([1, 1, 1]), UnitVector3D([0, -1, 1]))
+    transformed_tilted = frame_tilted.transform_point2D_global_to_local(Point2D([0, 10]))
+    assert transformed_tilted == Point3D([0, -7.071067811865475, 7.071067811865475])
 
 
 def test_plane():
@@ -871,7 +902,7 @@ def test_add_sub_point_3d():
     assert np.allclose(a_sub_b_mm_2d, a_sub_b_2d)
     assert a_sub_b_mm_2d.unit == a_2d.unit
 
-    # Let's add them the other way around
+    # Let's subtract them the other way around
     b_sub_a_dm_2d = b_2d - a_2d
     assert np.allclose(b_sub_a_dm_2d, b_sub_a_2d)
     assert b_sub_a_dm_2d.unit == b_2d.unit
@@ -901,6 +932,52 @@ def test_add_sub_point_3d():
 
     with pytest.raises(NotImplementedError, match="Vector3D addition"):
         vector_3d + "a"
+
+
+def test_bounding_box_expands_and_evaluates_bounds_comparisons():
+    bounding_box = BoundingBox2D()
+    point1X = 1
+    point1Y = 5
+    point2X = -4
+    point2Y = -2
+    point3X = 7
+    point3Y = 8
+    point4X = -100
+    point4Y = 100
+
+    bounding_box.add_point_components(point1X, point1Y)
+    assert 1 == bounding_box.x_min
+    assert 1 == bounding_box.x_max
+    assert 5 == bounding_box.y_min
+    assert 5 == bounding_box.y_max
+
+    bounding_box.add_point_components(point2X, point2Y)
+    assert -4 == bounding_box.x_min
+    assert 1 == bounding_box.x_max
+    assert -2 == bounding_box.y_min
+    assert 5 == bounding_box.y_max
+
+    bounding_box.add_point_components(point3X, point3Y)
+    assert -4 == bounding_box.x_min
+    assert 7 == bounding_box.x_max
+    assert -2 == bounding_box.y_min
+    assert 8 == bounding_box.y_max
+
+    bounding_box.add_point(Point2D([point4X, point4Y]))
+    assert -100 == bounding_box.x_min
+    assert 7 == bounding_box.x_max
+    assert -2 == bounding_box.y_min
+    assert 100 == bounding_box.y_max
+
+    bounding_box2 = BoundingBox2D(0, 10, 0, 10)
+    assert bounding_box2.contains_point_components(5, 5)
+    assert not bounding_box2.contains_point_components(100, 100)
+    assert bounding_box2.contains_point(Point2D([3, 4]))
+    assert not bounding_box2.contains_point(Point2D([3, 14]))
+
+    bounding_box2.add_points([Point2D([-100, -100]), Point2D([100, 100])])
+    assert bounding_box2.contains_point(Point2D([100, -100]))
+    assert bounding_box2.contains_point(Point2D([-100, 100]))
 
 
 @pytest.mark.parametrize(

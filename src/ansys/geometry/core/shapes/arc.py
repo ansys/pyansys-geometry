@@ -206,14 +206,15 @@ class Arc(BaseShape):
         """
         use_counter_clockwise_rotation = True if self._axis == self._plane.direction_z else False
         start_vector = self.start - self.center
-        local_start_vector = (self.plane.global_to_local @ start_vector).tolist()
+        local_start_vector = (self.plane.global_to_local_rotation @ start_vector).tolist()
         start_angle = np.arctan2(
             (Vector3D(local_start_vector).cross(Vector3D([1, 0, 0]))).norm,
             Vector3D(local_start_vector).dot(Vector3D([1, 0, 0])),
         )
         theta = np.linspace(start_angle, start_angle + self.angle.m, num_points)
         center_from_plane_origin = Point3D(
-            self.plane.global_to_local @ (self.center - self.plane.origin), self.center.unit
+            self.plane.global_to_local_rotation @ (self.center - self.plane.origin),
+            self.center.unit,
         )
 
         if use_counter_clockwise_rotation:

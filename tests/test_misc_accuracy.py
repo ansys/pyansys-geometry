@@ -76,3 +76,37 @@ def test_within_tolerance():
     assert not Accuracy.is_within_tolerance(10, -math.inf, 1, 2)
     assert not Accuracy.is_within_tolerance(math.inf, -math.inf, 1, 2)
     assert not Accuracy.is_within_tolerance(-math.inf, math.inf, 1, 2)
+
+
+def test_length_reference_equality():
+    """Determine effective length accuracy comparisons."""
+
+    assert not Accuracy.length_is_equal(5, 10)
+    assert not Accuracy.length_is_equal(5 + 1e-7, 5)
+    assert not Accuracy.length_is_equal(5 - 1e-7, 5)
+    assert Accuracy.length_is_equal(5, 5)
+    assert Accuracy.length_is_equal(5 + 1e-9, 5)
+    assert Accuracy.length_is_equal(5 - 1e-9, 5)
+    assert Accuracy.length_is_equal(5 + 1e-8, 5)
+    assert Accuracy.length_is_equal(5 - 1e-8, 5)
+
+    assert not Accuracy.length_is_less_than_or_equal(10, 5)
+    assert not Accuracy.length_is_less_than_or_equal(5 + 1e-7, 5)
+    assert Accuracy.length_is_less_than_or_equal(5 + 1e-8, 5)
+    assert Accuracy.length_is_less_than_or_equal(5, 5)
+    assert Accuracy.length_is_less_than_or_equal(5, 10)
+    assert Accuracy.length_is_less_than_or_equal(0, 5)
+    assert Accuracy.length_is_less_than_or_equal(5 - 1e-7, 5)
+    assert Accuracy.length_is_less_than_or_equal(5 + 1e-10, 5)
+    assert Accuracy.length_is_less_than_or_equal(5 + 1e-9, 5)
+    assert Accuracy.length_is_less_than_or_equal(5 - 1e-9, 5)
+
+    assert not Accuracy.length_is_greater_than_or_equal(-10, -5)
+    assert not Accuracy.length_is_greater_than_or_equal(-5 - 1e-7, -5)
+    assert Accuracy.length_is_greater_than_or_equal(-5 - 1e-8, -5)
+    assert Accuracy.length_is_greater_than_or_equal(-5, -10)
+    assert Accuracy.length_is_greater_than_or_equal(-5, -5)
+    assert Accuracy.length_is_greater_than_or_equal(-5 + 1e-7, -5)
+    assert Accuracy.length_is_greater_than_or_equal(-5 - 1e-10, -5)
+    assert Accuracy.length_is_greater_than_or_equal(-5 - 1e-9, -5)
+    assert Accuracy.length_is_greater_than_or_equal(-5 + 1e-9, -5)

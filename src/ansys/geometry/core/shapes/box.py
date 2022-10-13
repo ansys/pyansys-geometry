@@ -70,7 +70,7 @@ class Box(BaseShape):
         height_magnitude = self._height.value.m_as(center.unit)
 
         global_center = Point3D(
-            self.plane.global_to_local @ (center - self.plane.origin), center.base_unit
+            self.plane.global_to_local_rotation @ (center - self.plane.origin), center.base_unit
         )
 
         half_h = height_magnitude / 2
@@ -225,7 +225,8 @@ class Box(BaseShape):
         """
         rotated_point = Point3D(rotation @ [x_offset, y_offset, 0], unit)
         transformed_point = Point3D(
-            (self._plane.local_to_global @ (rotated_point + reference)) + self._plane.origin,
+            (self._plane.local_to_global_rotation @ (rotated_point + reference))
+            + self._plane.origin,
             rotated_point.base_unit,
         )
 

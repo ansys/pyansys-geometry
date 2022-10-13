@@ -124,7 +124,8 @@ class Circle(BaseShape):
         """
         theta = np.linspace(0, 2 * np.pi, num_points)
         center_from_plane_origin = Point3D(
-            self.plane.global_to_local @ (self.center - self.plane.origin), self.center.unit
+            self.plane.global_to_local_rotation @ (self.center - self.plane.origin),
+            self.center.unit,
         )
         return [
             Point3D(
