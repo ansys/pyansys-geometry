@@ -1,8 +1,8 @@
 Math and Sketch
-===============
+***************
 
 PyGeometry math objects
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 PyGeometry math subpackage consists of the the primitive representation of the basic geometric
 objects such as `Point`, `Vector`, `Matrix` along with Units by making use of 
@@ -10,7 +10,7 @@ Python package called :ref:`Pint <https://github.com/hgrecco/pint> ` in order to
 operate and manipulate physical quantities.
 
 Sketch
-------
+~~~~~~
 
 In PyGeometry, a `Sketch` is class providing for building 2D basic shape elements.
 PyGeometry Sketch contains two fundamental constructs:
@@ -34,6 +34,40 @@ You can initialize the sketch by:
     from ansys.geometry.core.sketch.Sketch
     sketch = Sketch()
 
-You can start sketching the 
+The sketch can be cconstruct by using different approaches.
+
+Fluent based approach
+======================
+
+One of the key features of this approach is keeping an active context based upon the previously created 
+edges to use as a reference start point for additional objects.
+
+
+.. code:: python
+    
+    sketch.segment_to_point(Point2D([3, 3]), "Segment2").segment_to_point(
+        Point2D([3, 2]), "Segment3"
+    )
+    sketch.plot()
+
+you will also able to get the sketch with a newly created sketch objects with user-defined labels.
+
+.. code:: python
+    
+    sketch.get("<tag>")
+
+.. jupyter-execute::
+    :hide-code:
+
+    from ansys.geometry.core.sketch import Sketch   
+    sketch = Sketch()
+    sketch.segment_to_point(Point2D([3, 3]), "Segment2").segment_to_point(
+        Point2D([3, 2]), "Segment3"
+    )
+    sketch.plot()
+
+Fluent based approach
+======================
+
 
 
