@@ -14,6 +14,7 @@ from ansys.geometry.core.connection.conversions import (
     polygon_to_grpc_polygon,
     segment_to_grpc_line,
     sketch_arc_to_grpc_arc,
+    sketch_circle_to_grpc_circle,
     sketch_segment_to_grpc_line,
     unit_vector_to_grpc_direction,
 )
@@ -22,6 +23,7 @@ from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.shapes import Arc, Circle, Ellipse, Polygon, Segment
 from ansys.geometry.core.sketch.arc import SketchArc
+from ansys.geometry.core.sketch.circle import SketchCircle
 from ansys.geometry.core.sketch.segment import SketchSegment
 
 
@@ -60,6 +62,22 @@ def test_circle_message_conversion():
     assert grpc_circle_message.radius == 0.3
 
 
+def test_sketchcircle_message_conversion():
+    """Test conversion between :class:`SketchCircle` and expected gRPC message type."""
+    circle = SketchCircle(
+        Point2D([10, 100], UNITS.mm),
+        Quantity(300, UNITS.mm),
+    )
+    grpc_circle_message = sketch_circle_to_grpc_circle(
+        circle, Plane(Point3D([10, 100, 1000], UNITS.mm))
+    )
+
+    assert grpc_circle_message.center.x == 0.02
+    assert grpc_circle_message.center.y == 0.2
+    assert grpc_circle_message.center.z == 1.0
+    assert grpc_circle_message.radius == 0.3
+
+
 def test_ellipse_message_conversion():
     """Test conversion between :class:`Ellipse` and expected gRPC message type."""
     ellipse = Ellipse(
@@ -77,8 +95,8 @@ def test_ellipse_message_conversion():
     assert grpc_ellipse_message.minorradius == 0.05
 
 
-def test_segment_message_conversion():
-    """Test conversion between :class:`Segment` and expected gRPC message type."""
+def test_sketchsegment_message_conversion():
+    """Test conversion between :class:`SketchSegment` and expected gRPC message type."""
     segment = SketchSegment(
         Point2D([30, 400], UNITS.mm),
         Point2D([500, 600], UNITS.mm),
@@ -95,8 +113,8 @@ def test_segment_message_conversion():
     assert grpc_line_message.end.z == 1.0
 
 
-def test_sketchsegment_message_conversion():
-    """Test conversion between :class:`SketchSegment` and expected gRPC message type."""
+def test_segment_message_conversion():
+    """Test conversion between :class:`Segment` and expected gRPC message type."""
     segment = Segment(
         Plane(Point3D([10, 100, 1000], UNITS.mm)),
         Point3D([30, 400, 1000], UNITS.mm),

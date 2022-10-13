@@ -10,6 +10,7 @@ from ansys.geometry.core.math.constants import ZERO_POINT2D
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.math.vector import Vector2D
 from ansys.geometry.core.misc import Angle, Distance
+from ansys.geometry.core.misc.measurements import UNIT_LENGTH
 from ansys.geometry.core.shapes import (
     Arc,
     BaseShape,
@@ -22,6 +23,7 @@ from ansys.geometry.core.shapes import (
     Slot,
 )
 from ansys.geometry.core.sketch.arc import SketchArc
+from ansys.geometry.core.sketch.circle import SketchCircle
 from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import SketchSegment
@@ -629,6 +631,32 @@ class Sketch:
         trapezoid = Trapezoid(width, height, slant_angle, nonsymmetrical_slant_angle, center, angle)
         return self.face(trapezoid, tag)
 
+    def circle(
+        self,
+        center: Point2D,
+        radius: Union[Quantity, Distance],
+        tag: Optional[str] = None,
+    ) -> "Sketch":
+        """
+            Add a triangle to the using the explicit vertex points provided.
+
+            Parameters
+            ----------
+            center: Point2D
+            A :class:`Point2D` representing the center of the circle.
+        radius : Union[Quantity, Distance]
+            The radius of the circle.
+            tag: str, optional
+                A user-defined label identifying this specific edge.
+
+            Returns
+            -------
+            Sketch
+                The revised sketch state ready for further sketch actions.
+        """
+        circle = SketchCircle(center, radius)
+        return self.face(circle, tag)
+
     def _single_point_context_reference(self) -> Point2D:
         """
         Gets the last reference point from historical context.
@@ -677,7 +705,7 @@ class Sketch:
             if isinstance(edge, SketchArc):
                 # pyvista CircularArc does not have a plane input to use for the sketch,
                 # so must sketch in x/y plane and then transform
-                pv_plot = pv.CircularArc(
+                arc = pv.CircularArc(
                     [
                         edge.start.x.m_as(edge.start.base_unit),
                         edge.start.y.m_as(edge.start.base_unit),
@@ -691,27 +719,36 @@ class Sketch:
                     ],
                     negative=edge.negative_angle,
                 )
-                pv_plot.transform(self._plane.transformation_matrix)
+                arc.transform(self._plane.transformation_matrix)
+                sketches_polydata.append(arc)
             elif isinstance(edge, SketchSegment):
                 transformed_start = self._plane.transform_point2D_global_to_local(edge.start)
                 transformed_end = self._plane.transform_point2D_global_to_local(edge.end)
-                pv_plot = pv.Line(transformed_start, transformed_end)
+                segment = pv.Line(transformed_start, transformed_end)
+                sketches_polydata.append(segment)
             else:
                 raise ValueError("The sketch cannot be plotted")
-            sketches_polydata.append(pv_plot)
 
         for face in self.faces:
-            if isinstance(face, Triangle):
-                pv_plot = pv.Triangle(
+            if isinstance(face, SketchCircle):
+                circle = pv.Circle(face.radius.m_as(UNIT_LENGTH))
+                circle.translate(
+                    [face.center.x.m_as(UNIT_LENGTH), face.center.y.m_as(UNIT_LENGTH), 0]
+                )
+                circle.transform(self._plane.transformation_matrix)
+                sketches_polydata.append(circle)
+            elif isinstance(face, Triangle):
+                triangle = pv.Triangle(
                     [
                         self._plane.transform_point2D_global_to_local(face.point1),
                         self._plane.transform_point2D_global_to_local(face.point2),
                         self._plane.transform_point2D_global_to_local(face.point3),
                     ]
                 )
+                sketches_polydata.append(triangle)
             elif isinstance(face, Trapezoid):
                 # pyvista rectangle does not have validation or restrictions
-                pv_plot = pv.Rectangle(
+                trapezoid = pv.Rectangle(
                     [
                         self._plane.transform_point2D_global_to_local(face._point1),
                         self._plane.transform_point2D_global_to_local(face._point2),
@@ -719,9 +756,7 @@ class Sketch:
                         self._plane.transform_point2D_global_to_local(face._point4),
                     ]
                 )
-            else:
-                raise ValueError("The sketch cannot be plotted")
-            sketches_polydata.append(pv_plot)
+                sketches_polydata.append(trapezoid)
 
         pl.add_polydata(sketches_polydata, **kwargs)
         pl.show()

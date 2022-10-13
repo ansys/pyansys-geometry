@@ -19,6 +19,7 @@ from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Polygon, Segment
 from ansys.geometry.core.sketch.arc import SketchArc
+from ansys.geometry.core.sketch.circle import SketchCircle
 from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import SketchSegment
@@ -137,6 +138,8 @@ def sketch_shapes_to_grpc_geometries(
     geometries.arcs.extend(converted_sketch_edges[1])
 
     for face in faces:
+        if isinstance(face, SketchCircle):
+            geometries.circles.append(sketch_circle_to_grpc_circle(face, plane))
         if isinstance(face, Triangle) or isinstance(face, Trapezoid):
             converted_face_edges = sketch_edges_to_grpc_geometries(plane, face.edges)
             geometries.lines.extend(converted_face_edges[0])
@@ -274,6 +277,27 @@ def circle_to_grpc_circle(circle: Circle) -> GRPCCircle:
     """
     return GRPCCircle(
         center=point_to_grpc_point(circle.center), radius=circle.radius.m_as(SERVER_UNIT_LENGTH)
+    )
+
+
+def sketch_circle_to_grpc_circle(circle: SketchCircle, plane: Plane) -> GRPCCircle:
+    """Marshals a :class:`SketchCircle` to a Circle gRPC message of the Geometry Service.
+
+    Parameters
+    ----------
+    circle : SketchCircle
+        Source circle data.
+    plane : Plane
+        The plane to position the 2D circle.
+
+    Returns
+    -------
+    GRPCCircle
+        Geometry Service gRPC Circle message, units in meters.
+    """
+    return GRPCCircle(
+        center=point2D_to_grpc_point(plane, circle.center),
+        radius=circle.radius.m_as(SERVER_UNIT_LENGTH),
     )
 
 
