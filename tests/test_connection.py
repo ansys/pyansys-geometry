@@ -87,11 +87,11 @@ def test_segment_message_conversion():
         segment, Plane(Point3D([10, 100, 1000], UNITS.mm))
     )
 
-    assert grpc_line_message.start.x == 0.03
-    assert grpc_line_message.start.y == 0.4
+    assert grpc_line_message.start.x == 0.04
+    assert grpc_line_message.start.y == 0.5
     assert grpc_line_message.start.z == 1.0
-    assert grpc_line_message.end.x == 0.5
-    assert grpc_line_message.end.y == 0.6
+    assert grpc_line_message.end.x == 0.51
+    assert grpc_line_message.end.y == pytest.approx(0.7000000000000001, 1e-8, 1e-8)
     assert grpc_line_message.end.z == 1.0
 
 

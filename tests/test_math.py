@@ -742,6 +742,10 @@ def test_frame():
     assert f_defaults.direction_y == UNITVECTOR3D_Y
     assert f_defaults.direction_z == UNITVECTOR3D_Z
 
+    # Test transformation matrix of frame
+    transformed_matrix = Matrix44([[1, 0, 0, 42.0], [0, 1, 0, 99], [0, 0, 1, 13], [0, 0, 0, 1]])
+    assert np.array_equal(f_1.transformation_matrix, transformed_matrix)
+
     with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
         Frame(origin, "A", UnitVector3D([25, 39, 82]))
 
