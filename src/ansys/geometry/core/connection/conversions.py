@@ -115,7 +115,7 @@ def one_profile_shape_to_grpc_geometries(
     faces: List[SketchFace],
     shapes: List[BaseShape],
 ) -> Geometries:
-    """Marshals a list of :class:`SketchEdge` and :class:`SketchFace`to
+    """Marshals a list of :class:`SketchEdge` and :class:`SketchFace` to
     a Geometries gRPC message of the Geometry Service.
 
     Parameters

@@ -273,11 +273,11 @@ class Body:
 
         if only_one_curve:
             curves = one_profile_shape_to_grpc_geometries(
-                sketch._plane, sketch.edges, sketch.faces, curves
+                sketch._plane, sketch.edges, sketch.faces, sketch.shapes_list
             )
         else:
             curves = sketch_shapes_to_grpc_geometries(
-                sketch._plane, sketch.edges, sketch.faces, curves
+                sketch._plane, sketch.edges, sketch.faces, sketch.shapes_list
             )
 
         self._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
