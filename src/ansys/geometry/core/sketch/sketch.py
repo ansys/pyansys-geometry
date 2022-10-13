@@ -638,21 +638,21 @@ class Sketch:
         tag: Optional[str] = None,
     ) -> "Sketch":
         """
-            Add a triangle to the using the explicit vertex points provided.
+        Add a circle to the plane at the provided center.
 
-            Parameters
-            ----------
-            center: Point2D
+        Parameters
+        ----------
+        center: Point2D
             A :class:`Point2D` representing the center of the circle.
         radius : Union[Quantity, Distance]
             The radius of the circle.
-            tag: str, optional
-                A user-defined label identifying this specific edge.
+        tag: str, optional
+            A user-defined label identifying this specific edge.
 
-            Returns
-            -------
-            Sketch
-                The revised sketch state ready for further sketch actions.
+        Returns
+        -------
+        Sketch
+            The revised sketch state ready for further sketch actions.
         """
         circle = SketchCircle(center, radius)
         return self.face(circle, tag)
