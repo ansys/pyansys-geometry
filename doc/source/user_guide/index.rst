@@ -11,8 +11,6 @@ Pygeometry library.
    :hidden:
 
    shapes
-   plotting
-   
    designer
 
 PyGeometry basic overview
