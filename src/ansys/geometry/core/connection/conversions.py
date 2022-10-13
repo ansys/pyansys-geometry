@@ -350,7 +350,7 @@ def circle_to_grpc_circle(circle: Circle) -> GRPCCircle:
 
 def sketch_circle_to_grpc_circle(circle: SketchCircle, plane: Plane) -> GRPCCircle:
     """
-    Marshals a :class:`SketchCircle <ansys.geometry.core.sketch.circle.SketchCircle>`
+    Marshals a :class:`SketchCircle`
     to a Circle gRPC message of the Geometry Service.
 
     Parameters
@@ -393,7 +393,7 @@ def point_to_grpc_point(point: Point3D) -> GRPCPoint:
 
 def point2D_to_grpc_point(plane: Plane, point2d: Point2D) -> GRPCPoint:
     """
-    Marshals a :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+    Marshals a :class:`Point2D`
     to a Point gRPC message of the Geometry Service.
 
     Parameters
