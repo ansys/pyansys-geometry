@@ -1,12 +1,12 @@
-Math and Sketch
-***************
+PyGeometry Math and Sketch concepts
+***********************************
 
 PyGeometry math objects
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 PyGeometry math subpackage consists of the the primitive representation of the basic geometric
 objects such as `Point`, `Vector`, `Matrix` along with Units by making use of 
-Python package called :ref:`Pint <https://github.com/hgrecco/pint> ` in order to 
+Python package called `Pint <https://github.com/hgrecco/pint>_ ` in order to 
 operate and manipulate physical quantities.
 
 Sketch
@@ -16,7 +16,7 @@ In PyGeometry, a `Sketch` is class providing for building 2D basic shape element
 PyGeometry Sketch contains two fundamental constructs:
 
 * Edges -  a connection between two or more Point2D along a particular path represents open shapes such as arc, lines.
-* faces - a set of edges that enclose a surface represents closed shapes such as circle, triangle and so on.
+* Faces - a set of edges that enclose a surface represents closed shapes such as circle, triangle and so on.
 
 To get initialize the sketch, first you can specify the :ref:`Plane <ansys.geometry.core.math.plane.Plane>` which
 represent a plane in space, from which other pyGeometry objects can be located. They have a origin and a coordinate system.
@@ -59,15 +59,31 @@ you will also able to get the sketch with a newly created sketch objects with us
 .. jupyter-execute::
     :hide-code:
 
-    from ansys.geometry.core.sketch import Sketch   
+    from ansys.geometry.core.sketch import Sketch
+    from ansys.geometry.core.math import Point2D   
     sketch = Sketch()
     sketch.segment_to_point(Point2D([3, 3]), "Segment2").segment_to_point(
         Point2D([3, 2]), "Segment3"
     )
     sketch.plot()
 
-Fluent based approach
-======================
+Elements based approach
+=======================
 
+You can start creating multiple elements and combine all together with edges or faces in the single plane.
 
+.. code:: python
 
+    sketch.trapezoid(10, 8, np.pi / 4, np.pi / 8, Point2D([10, -10]), tag="trapezoid1")
+    sketch.plot()
+    
+.. jupyter-execute::
+    :hide-code:
+
+    from ansys.geometry.core.sketch import Sketch
+    from ansys.geometry.core.math import Point2D   
+    sketch = Sketch()
+    sketch.trapezoid(10, 8, np.pi / 4, np.pi / 8, Point2D([10, -10]), tag="trapezoid1")
+    sketch.plot()
+
+For further details and get familiarize with different sketch shapes, refer :ref:`sketch <ansys.geometry.core.math.sketch.Sketch>`

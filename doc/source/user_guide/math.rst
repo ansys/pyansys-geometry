@@ -1,2 +1,0 @@
-PyGeometry math overview
-========================

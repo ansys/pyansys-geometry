@@ -10,9 +10,9 @@ Pygeometry library.
    :maxdepth: 1
    :hidden:
 
-   math
-   plotting
    shapes
+   plotting
+   
    designer
 
 PyGeometry basic overview

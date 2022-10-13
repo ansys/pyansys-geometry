@@ -1,2 +1,0 @@
-Interactive plotting
-====================
