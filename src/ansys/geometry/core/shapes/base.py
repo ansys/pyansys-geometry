@@ -15,8 +15,9 @@ class BaseShape:
     Parameters
     ----------
     plane : Plane
-        A :class:`Plane` representing the planar surface where the shape is contained.
-    is_closed: Optional[bool]
+        A :class:`Plane <ansys.geometry.core.math.plane.Plane>` representing
+        the planar surface where the shape is contained.
+    is_closed : Optional[bool]
         A boolean variable to define whether the shape is open or closed.
         By default, ``False``.
     """

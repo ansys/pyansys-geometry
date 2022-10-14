@@ -33,14 +33,14 @@ def check_ndarray_is_float_int(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
     """
-    Checks if the :class:`numpy.ndarray` has ``float`` or ``int`` elements.
+    Checks if the :class:`numpy.ndarray <numpy.ndarray>` has ``float`` or ``int`` elements.
 
     Parameters
     ----------
     param : ~numpy.ndarray
-        :class:`numpy.ndarray` instance to be checked.
+        :class:`numpy.ndarray <numpy.ndarray>` instance to be checked.
     param_name : str or None, optional
-        The :class:`numpy.ndarray` instance name (if any). By default, ``None``.
+        The :class:`numpy.ndarray <numpy.ndarray>` instance name (if any). By default, ``None``.
 
     Raises
     ------
@@ -63,19 +63,19 @@ def check_ndarray_is_not_none(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
     """
-    Checks if the :class:`numpy.ndarray` is not None-valued.
+    Checks if the :class:`numpy.ndarray <numpy.ndarray>` is not None-valued.
 
     Parameters
     ----------
     param : ~numpy.ndarray
-        :class:`numpy.ndarray` instance to be checked.
+        :class:`numpy.ndarray <numpy.ndarray>` instance to be checked.
     param_name : str or None, optional
-        The :class:`numpy.ndarray` instance name (if any). By default, ``None``.
+        The :class:`numpy.ndarray <numpy.ndarray>` instance name (if any). By default, ``None``.
 
     Raises
     ------
     ValueError
-        In case the :class:`numpy.ndarray` is None-valued.
+        In case the :class:`numpy.ndarray <numpy.ndarray>` is None-valued.
     """
     param_data = np.ravel(param)
     if all(value is None for value in param_data):
@@ -90,19 +90,19 @@ def check_ndarray_is_all_nan(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
     """
-    Checks if the :class:`numpy.ndarray` is all nan-valued.
+    Checks if the :class:`numpy.ndarray <numpy.ndarray>` is all nan-valued.
 
     Parameters
     ----------
     param : ~numpy.ndarray
-        :class:`numpy.ndarray` instance to be checked.
+        :class:`numpy.ndarray <numpy.ndarray>` instance to be checked.
     param_name : str or None, optional
-        The :class:`numpy.ndarray` instance name (if any). By default, ``None``.
+        The :class:`numpy.ndarray <numpy.ndarray>` instance name (if any). By default, ``None``.
 
     Raises
     ------
     ValueError
-        In case the :class:`numpy.ndarray` is all nan-valued.
+        In case the :class:`numpy.ndarray <numpy.ndarray>` is all nan-valued.
     """
     if np.isnan(param).all():
         raise ValueError(
@@ -116,19 +116,19 @@ def check_ndarray_is_non_zero(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
     """
-    Checks if the :class:`numpy.ndarray` is not zero-valued.
+    Checks if the :class:`numpy.ndarray <numpy.ndarray>` is not zero-valued.
 
     Parameters
     ----------
     param : ~numpy.ndarray
-        :class:`numpy.ndarray` instance to be checked.
+        :class:`numpy.ndarray <numpy.ndarray>` instance to be checked.
     param_name : str or None, optional
-        The :class:`numpy.ndarray` instance name (if any). By default, ``None``.
+        The :class:`numpy.ndarray <numpy.ndarray>` instance name (if any). By default, ``None``.
 
     Raises
     ------
     ValueError
-        In case the :class:`numpy.ndarray` is zero-valued.
+        In case the :class:`numpy.ndarray <numpy.ndarray>` is zero-valued.
     """
     param_data = np.ravel(param)
     if all(value == 0 for value in param_data):

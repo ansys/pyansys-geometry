@@ -12,7 +12,29 @@ from ansys.geometry.core.shapes.base import BaseShape
 
 
 class Arc(BaseShape):
-    """A class for modeling arcs."""
+    """A class for modeling arcs.
+
+    Parameters
+    ----------
+    plane : Plane
+        A :class:`Plane <ansys.geometry.core.math.plane.Plane>` representing the
+        planar surface where the shape is contained.
+    center : Point3D
+        A :class:`Point3D <ansys.geometry.core.math.point.Point3D>` representing the
+        center of the arc.
+    start : Point3D
+        A :class:`Point3D <ansys.geometry.core.math.point.Point3D>` representing the
+        start of the arc.
+    end : Point3D
+        A :class:`Point3D <ansys.geometry.core.math.point.Point3D>` representing the
+        end of the arc.
+    axis : Optional[UnitVector3D]
+        A :class:`UnitVector3D <ansys.geometry.core.math.vector.UnitVector3D>` determining
+        the rotation direction of the arc.
+        It is expected to be orthogonal to the provided plane.
+        +z for counter-clockwise rotation. -z for clockwise rotation.
+        If not provided, the default will be counter-clockwise rotation.
+    """
 
     def __init__(
         self,
@@ -22,24 +44,8 @@ class Arc(BaseShape):
         end: Point3D,
         axis: Optional[UnitVector3D] = None,
     ):
-        """Initializes the arc shape.
+        """Initializes the arc shape."""
 
-        Parameters
-        ----------
-        plane : Plane
-            A :class:`Plane` representing the planar surface where the shape is contained.
-        center : Point3D
-            A :class:`Point3D` representing the center of the arc.
-        start: Point3D
-            A :class:`Point3D` representing the start of the arc.
-        end : Point3D
-            A :class:`Point3D` representing the end of the arc.
-        axis : Optional[UnitVector3D]
-            A :class:`UnitVector3D` determining the rotation direction of the arc.
-            It is expected to be orthogonal to the provided plane.
-            +z for counter-clockwise rotation. -z for clockwise rotation.
-            If not provided, the default will be counter-clockwise rotation.
-        """
         super().__init__(plane, is_closed=False)
         # Verify points
         check_type(center, Point3D)
