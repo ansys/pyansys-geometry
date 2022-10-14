@@ -323,7 +323,7 @@ jobs:
 
       - name: Deploy documentation to pygeometry-dev-docs repository
         if: github.ref == 'refs/heads/main'
-        uses: JamesIves/github-pages-deploy-action@v4.4.0
+        uses: JamesIves/github-pages-deploy-action@v4.4.1
         with:
           repository-name: pyansys/pygeometry-dev-docs
           token: ${{ steps.get_workflow_token.outputs.token }}
@@ -334,7 +334,7 @@ jobs:
 
       - name: Deploy documentation to pygeometry-docs repository
         if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-        uses: JamesIves/github-pages-deploy-action@v4
+        uses: JamesIves/github-pages-deploy-action@v4.4.1
         with:
           repository-name: pyansys/pygeometry-docs
           token: ${{ steps.get_workflow_token.outputs.token }}
