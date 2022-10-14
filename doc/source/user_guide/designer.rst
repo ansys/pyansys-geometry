@@ -1,12 +1,11 @@
-PyGeometry designer
-*******************
+Designer
+********
 
 Design sub-package provides a ``Design`` for organizing geometry assemblies and synchronizes to
 a supporting geometry service instance.
 
 Defining the model
 ------------------
-
 .. code:: python
 
     # Create a Sketch and draw a circle (all client side)
@@ -58,8 +57,7 @@ There are no modifications against the body containing the source face.
         "LongerCircleFace", body.faces[0], Quantity(20, UNITS.mm)
     )
 
-
-Addition to it it is also possible to translate, tessellate and project curves in the bodies.
+Design bodies are also possible to translate, tessellate and project curves in the bodies.
 
 * :class:`Body() <ansys.geometry.core.designer.body.Body>`
 * :class:`Component() <ansys.geometry.core.designer.component.Component>`

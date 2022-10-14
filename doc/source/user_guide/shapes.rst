@@ -1,18 +1,7 @@
-.. _ref_pygeometry_math_and_sketching_concept:
-
-PyGeometry math and sketch concepts
-***********************************
-
-PyGeometry math objects
-~~~~~~~~~~~~~~~~~~~~~~~
-
-PyGeometry math sub-package consists of the primitive representation of the basic geometric
-objects such as `Point`, `Vector`, `Matrix` along with Units by making use of the
-Python package called `Pint <https://github.com/hgrecco/pint>`_ to 
-operate and manipulate physical quantities.
+.. _ref_sketch:
 
 Sketch
-~~~~~~
+*******
 
 In PyGeometry, a `Sketch` is class providing for building 2D basic shape elements.
 PyGeometry Sketch contains two fundamental constructs:
@@ -21,13 +10,7 @@ PyGeometry Sketch contains two fundamental constructs:
 * Faces - a set of edges that enclose a surface represents closed shapes such as circle, triangle and so on.
 
 To get initialize the sketch, first you can specify the :class:`Plane() <ansys.geometry.core.math.plane.Plane>` which
-represent a plane in space, from which other PyGeometry objects can be located. They have a origin and a coordinate system.
-Most methods that create an object is be relative to the current plane.
-The default work plane XY plane with (0,0) as origin. You can create 2D objects in the plane and 
-PyGeometry then convert it to the global coordinate system, so that
-the 2D features executes as expected. 
-
-See :class:`Plane() <ansys.geometry.core.math.plane.Plane>` for further details.
+represent a plane in space, from which other PyGeometry objects can be located.
 
 You can initialize the sketch by:
 
