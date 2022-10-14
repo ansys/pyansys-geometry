@@ -2,16 +2,13 @@
 
 from typing import Dict, List, Optional, Union
 
-import numpy as np
 from pint import Quantity
-import pyvista as pv
 
 from ansys.geometry.core.math import Plane, UnitVector3D, Vector3D
 from ansys.geometry.core.math.constants import ZERO_POINT2D
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.math.vector import Vector2D
 from ansys.geometry.core.misc import Angle, Distance
-from ansys.geometry.core.misc.measurements import UNIT_LENGTH
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.box import Box
 from ansys.geometry.core.sketch.circle import Circle
@@ -46,7 +43,6 @@ class Sketch:
     ):
         """Constructor method for ``Sketch``."""
         self._plane = plane
-        self._shapes_list = []
 
         self._faces = []
         self._edges = []
@@ -81,11 +77,6 @@ class Sketch:
         """
 
         return self._faces
-
-    @property
-    def shapes_list(self):
-        """Returns the sketched curves."""
-        return self._shapes_list
 
     def get(self, tag: str) -> List[SketchObject]:
         """Returns the list of shapes that were tagged by the provided label.
@@ -576,7 +567,26 @@ class Sketch:
         self,
         **kwargs: Optional[dict],
     ):
-        """Plot a sketch to the scene.
+        """Plot all objects of the sketch to the scene.
+
+        Parameters
+        ----------
+        **kwargs : dict, optional
+            Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
+            for allowable keyword arguments.
+
+        """
+        from ansys.geometry.core.plotting.plotter import Plotter
+
+        pl = Plotter()
+        pl.add_polydata(self.sketch_polydata(), **kwargs)
+        pl.show()
+
+    def plot_selection(
+        self,
+        **kwargs: Optional[dict],
+    ):
+        """Plot the current selection to the scene.
 
         Parameters
         ----------
@@ -589,111 +599,34 @@ class Sketch:
 
         sketches_polydata = []
         pl = Plotter()
-        for edge in self.edges:
-            if isinstance(edge, Arc):
-                sketches_polydata.append(self._generate_arc_polydata(edge))
-            elif isinstance(edge, Segment):
-                sketches_polydata.append(self._generate_segment_polydata(edge))
-            else:
-                raise ValueError("The sketch cannot be plotted")
-
-        for face in self.faces:
-            if isinstance(face, Circle):
-                circle = pv.Circle(face.radius.m_as(UNIT_LENGTH))
-                circle.translate(
-                    [face.center.x.m_as(UNIT_LENGTH), face.center.y.m_as(UNIT_LENGTH), 0]
-                )
-                circle.transform(self._plane.transformation_matrix)
-                sketches_polydata.append(circle)
-            if isinstance(face, Ellipse):
-                # TODO: Replace with core pyvista ellipse implementation when released
-                points = np.zeros((100, 3))
-                theta = np.linspace(0.0, 2.0 * np.pi, 100)
-                points[:, 0] = face.semi_major_axis * np.cos(theta)
-                points[:, 1] = face.semi_minor_axis * np.sin(theta)
-                cells = np.array([np.append(np.array([100]), np.arange(100))])
-                ellipse = pv.wrap(pv.PolyData(points, cells))
-                ellipse.translate(
-                    [face.center.x.m_as(UNIT_LENGTH), face.center.y.m_as(UNIT_LENGTH), 0]
-                )
-                ellipse.transform(self._plane.transformation_matrix)
-                sketches_polydata.append(ellipse)
-            elif isinstance(face, Triangle):
-                triangle = pv.Triangle(
-                    [
-                        self._plane.transform_point2D_global_to_local(face.point1),
-                        self._plane.transform_point2D_global_to_local(face.point2),
-                        self._plane.transform_point2D_global_to_local(face.point3),
-                    ]
-                )
-                sketches_polydata.append(triangle)
-            elif isinstance(face, Trapezoid):
-                # pyvista rectangle does not have validation or restrictions
-                trapezoid = pv.Rectangle(
-                    [
-                        self._plane.transform_point2D_global_to_local(face._point1),
-                        self._plane.transform_point2D_global_to_local(face._point2),
-                        self._plane.transform_point2D_global_to_local(face._point3),
-                        self._plane.transform_point2D_global_to_local(face._point4),
-                    ]
-                )
-                sketches_polydata.append(trapezoid)
-            elif isinstance(face, Box):
-                box = pv.Rectangle(
-                    [
-                        self._plane.transform_point2D_global_to_local(face._corner_1),
-                        self._plane.transform_point2D_global_to_local(face._corner_2),
-                        self._plane.transform_point2D_global_to_local(face._corner_3),
-                        self._plane.transform_point2D_global_to_local(face._corner_4),
-                    ]
-                )
-                sketches_polydata.append(box)
-            elif isinstance(face, Slot):
-                sketches_polydata.append(
-                    pv.merge(
-                        [
-                            self._generate_segment_polydata(face._segment1),
-                            self._generate_arc_polydata(face._arc2),
-                            self._generate_segment_polydata(face._segment2),
-                            self._generate_arc_polydata(face._arc1),
-                        ]
-                    )
-                )
-            elif isinstance(face, Polygon):
-                polygon = pv.Polygon(
-                    self._plane.transform_point2D_global_to_local(face.center),
-                    face.inner_radius,
-                    n_sides=face.n_sides,
-                    normal=self._plane.direction_z,
-                )
-                sketches_polydata.append(polygon)
-            else:
-                raise ValueError("The sketch cannot be plotted")
+        sketches_polydata.extend(
+            [
+                edge.visualization_polydata.transform(self._plane.transformation_matrix)
+                for edge in self._current_sketch_context
+            ]
+        )
 
         pl.add_polydata(sketches_polydata, **kwargs)
         pl.show()
 
-    def _generate_arc_polydata(self, arc: Arc) -> pv.PolyData:
-        # pyvista CircularArc does not have a plane input to use for the sketch,
-        # so must sketch in x/y plane and then transform
-        arc = pv.CircularArc(
+    def sketch_polydata(self):
+        """
+        Returns PolyData configuration for all
+        objects of the sketch to the scene.
+        """
+        sketches_polydata = []
+        sketches_polydata.extend(
             [
-                arc.start.x.m_as(arc.start.base_unit),
-                arc.start.y.m_as(arc.start.base_unit),
-                0,
-            ],
-            [arc.end.x.m_as(arc.end.base_unit), arc.end.y.m_as(arc.end.base_unit), 0],
-            [
-                arc.center.x.m_as(arc.center.base_unit),
-                arc.center.y.m_as(arc.center.base_unit),
-                0,
-            ],
-            negative=arc.negative_angle,
+                edge.visualization_polydata.transform(self._plane.transformation_matrix)
+                for edge in self.edges
+            ]
         )
-        arc.transform(self._plane.transformation_matrix)
-        return arc
 
-    def _generate_segment_polydata(self, segment: Segment) -> pv.PolyData:
-        transformed_start = self._plane.transform_point2D_global_to_local(segment.start)
-        transformed_end = self._plane.transform_point2D_global_to_local(segment.end)
-        return pv.Line(transformed_start, transformed_end)
+        sketches_polydata.extend(
+            [
+                face.visualization_polydata.transform(self._plane.transformation_matrix)
+                for face in self.faces
+            ]
+        )
+
+        return sketches_polydata

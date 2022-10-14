@@ -1,13 +1,14 @@
 """``Polygon`` class module."""
 
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 import numpy as np
 from pint import Quantity
+import pyvista as pv
 
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import Angle, Distance, check_type
-from ansys.geometry.core.misc.measurements import UNIT_ANGLE
+from ansys.geometry.core.misc.measurements import UNIT_ANGLE, UNIT_LENGTH
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
 
@@ -141,84 +142,20 @@ class Polygon(SketchFace):
         return (self.inner_radius * self.perimeter) / 2
 
     @property
-    def components(self) -> List["BaseShape"]:
-        """Returns a list containing all components required to generate the shape.
+    def visualization_polydata(self) -> pv.PolyData:
+        """
+        Return the vtk polydata representation for PyVista visualization.
+
+        The representation lies in the X/Y plane within
+        the standard global cartesian coordinate system.
 
         Returns
         -------
-        List[BaseShape]
-            A list of component geometries forming the shape.
+        pyvista.PolyData
+            The vtk pyvista.Polydata configuration.
         """
-        return [self]
-
-    def local_points(self) -> List[Point2D]:
-        """Returns a list containing all the vertices of the polygon.
-
-        Vertices are given in the local space.
-
-        Returns
-        -------
-        list[Point2D]
-            A list of vertices representing the shape.
-
-        """
-        angle_offset_radians = +self._angle_offset.value.m_as(UNIT_ANGLE)
-        theta = np.linspace(
-            0 + angle_offset_radians, 2 * np.pi + angle_offset_radians, self.n_sides + 1
+        return pv.Polygon(
+            [self.center.x.m_as(UNIT_LENGTH), self.center.y.m_as(UNIT_LENGTH), 0],
+            self.inner_radius,
+            n_sides=self.n_sides,
         )
-        center_from_plane_origin = Point2D(
-            self.plane.global_to_local_rotation @ (self.center - self.plane.origin),
-            self.center.unit,
-        )
-        return [
-            Point2D(
-                [
-                    center_from_plane_origin.x.to(self.outer_radius.units).m
-                    + self.outer_radius.m * np.cos(ang),
-                    center_from_plane_origin.y.to(self.outer_radius.units).m
-                    + self.outer_radius.m * np.sin(ang),
-                    center_from_plane_origin.z.to(self.outer_radius.units).m,
-                ],
-                unit=self.outer_radius.units,
-            )
-            for ang in theta
-        ]
-
-    def plot(
-        self,
-        show_points: Optional[bool] = True,
-        plotting_options_points: Optional[dict] = None,
-        plotting_options_lines: Optional[dict] = None,
-    ) -> None:
-        """Plot the shape with the desired number of points.
-
-        Parameters
-        ----------
-        show_points : bool, Optional
-            If ``True``, points belonging to the shape are rendered.
-        plotting_options_points : dict, optional
-            A dictionary containing parameters accepted by
-            :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
-            rendering of the points.
-        plotting_options_lines : dict, optional
-            A dictionary containing parameters accepted by
-            :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
-            rendering of the lines.
-
-        Notes
-        -----
-        This method overrides the ``BaseShape.plot`` method, as regular polygons
-        resolution is not controlled by the number of points when rendering
-        those in the scene.
-
-        """
-        from ansys.geometry.core.plotting.plotter import Plotter
-
-        pl = Plotter()
-        pl.plot_shape(
-            self,
-            show_points=show_points,
-            plotting_options_points=plotting_options_points,
-            plotting_options_lines=plotting_options_lines,
-        )
-        pl.show(jupyter_backend="panel")

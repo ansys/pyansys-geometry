@@ -4,11 +4,12 @@ from typing import Optional, Union
 
 import numpy as np
 from pint import Quantity
+import pyvista as pv
 from scipy.integrate import quad
 
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import Angle, Distance, check_type
-from ansys.geometry.core.misc.measurements import UNIT_ANGLE
+from ansys.geometry.core.misc.measurements import UNIT_ANGLE, UNIT_LENGTH
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
 
@@ -169,3 +170,27 @@ class Ellipse(SketchFace):
             The area of the ellipse.
         """
         return np.pi * self.semi_major_axis * self.semi_minor_axis
+
+    @property
+    def visualization_polydata(self) -> pv.PolyData:
+        """
+        Return the vtk polydata representation for PyVista visualization.
+
+        The representation lies in the X/Y plane within
+        the standard global cartesian coordinate system.
+
+        Returns
+        -------
+        pyvista.PolyData
+            The vtk pyvista.Polydata configuration.
+        """
+        # TODO: Replace with core pyvista ellipse implementation when released
+        points = np.zeros((100, 3))
+        theta = np.linspace(0.0, 2.0 * np.pi, 100)
+        points[:, 0] = self.semi_major_axis * np.cos(theta)
+        points[:, 1] = self.semi_minor_axis * np.sin(theta)
+        cells = np.array([np.append(np.array([100]), np.arange(100))])
+        ellipse = pv.wrap(pv.PolyData(points, cells))
+        return ellipse.translate(
+            [self.center.x.m_as(UNIT_LENGTH), self.center.y.m_as(UNIT_LENGTH), 0]
+        )

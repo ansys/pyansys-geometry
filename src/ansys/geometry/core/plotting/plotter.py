@@ -7,7 +7,6 @@ from pyvista.plotting.tools import create_axes_marker
 
 from ansys.geometry.core.designer import Body, Component
 from ansys.geometry.core.math import Frame, Plane
-from ansys.geometry.core.shapes import BaseShape
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -152,61 +151,12 @@ class Plotter:
         # Render the plane in the mesh with desired plotting options
         self.scene.add_mesh(plane_mesh, **plotting_options)
 
-    def plot_shape(
-        self,
-        shape: BaseShape,
-        show_points: Optional[bool] = True,
-        plotting_options_points: Optional[Dict] = None,
-        plotting_options_lines: Optional[Dict] = None,
-    ) -> None:
-        """Plot desired shape into the scene.
-
-        Parameters
-        ----------
-        shape : BaseShape
-            The ``BaseShape`` instance to be rendered in the scene.
-        show_points : bool, Optional
-            If ``True``, points belonging to the shape are rendered.
-        plotting_options_points : dict, optional
-            A dictionary containing parameters accepted by
-            :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
-            rendering of the points.
-        plotting_options_lines : dict, optional
-            A dictionary containing parameters accepted by
-            :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
-            rendering of the lines.
-
-        """
-        # Verify no user contradictions input when plotting points
-        if show_points is False and plotting_options_points is not None:
-            raise ValueError("Use 'show_points=True' for rendering shape points.")
-
-        # Generate the points and the lines
-        try:
-            points = shape.points(self._num_points)
-        # Avoid error if a polygon shape is passed
-        except TypeError:
-            points = shape.points()
-        lines = np.hstack([[2, ith, ith + 1] for ith in range(0, len(points) - 1)])
-
-        if show_points:
-            # Generate the mesh for the points and the lines
-            mesh_points = pv.PointSet(points)
-
-            # Render points if required with desired rendering options
-            if plotting_options_points is None:
-                plotting_options_points = dict(color="red")
-            self.scene.add_mesh(mesh_points, **plotting_options_points)
-
-        mesh_line = pv.PolyData(points, lines=lines)
-
-        # Render lines in the scene with desired rendering options
-        if plotting_options_lines is None:
-            plotting_options_lines = dict(color="black", line_width=3)
-        self.scene.add_mesh(mesh_line, **plotting_options_lines)
-
     def plot_sketch(
-        self, sketch: Sketch, show_plane: bool = False, show_frame: bool = False
+        self,
+        sketch: Sketch,
+        show_plane: bool = False,
+        show_frame: bool = False,
+        **kwargs: Optional[dict]
     ) -> None:
         """Plot desired sketch into the scene.
 
@@ -218,7 +168,9 @@ class Plotter:
             If ``True``, it renders the sketch plane in the scene.
         show_frame : bool
             If ``Frame``, it renders the sketch plane in the scene.
-
+        **kwargs : dict, optional
+            Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
+            for allowable keyword arguments.
         """
         # Show the sketch plane if required
         if show_plane:
@@ -228,9 +180,7 @@ class Plotter:
         if show_frame:
             self.plot_frame(sketch._plane)
 
-        # Draw each one of the shapes in the sketch
-        for shape in sketch.shapes_list:
-            self.plot_shape(shape)
+        self.add_polydata(sketch.sketch_polydata(), **kwargs)
 
     def add_body(self, body: Body, merge: Optional[bool] = False, **kwargs: Optional[dict]) -> None:
         """Add a body to the scene.
@@ -246,7 +196,6 @@ class Plotter:
         **kwargs : dict, optional
             Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
             for allowable keyword arguments.
-
         """
         kwargs.setdefault("smooth_shading", True)
         self.scene.add_mesh(body.tessellate(merge=merge), **kwargs)
@@ -275,7 +224,6 @@ class Plotter:
         **kwargs : dict, optional
             Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
             for allowable keyword arguments.
-
         """
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
         kwargs.setdefault("smooth_shading", True)

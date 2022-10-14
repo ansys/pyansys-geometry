@@ -17,14 +17,13 @@ from ansys.api.geometry.v0.models_pb2 import Tessellation
 from ansys.geometry.core.math import Frame, Plane, Point3D, UnitVector3D
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
-from ansys.geometry.core.shapes import Arc, BaseShape, Circle, Ellipse, Polygon, Segment
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.circle import Circle
 from ansys.geometry.core.sketch.edge import SketchEdge
+from ansys.geometry.core.sketch.ellipse import Ellipse
 from ansys.geometry.core.sketch.face import SketchFace
+from ansys.geometry.core.sketch.polygon import Polygon
 from ansys.geometry.core.sketch.segment import Segment
-from ansys.geometry.core.sketch.trapezoid import Trapezoid
-from ansys.geometry.core.sketch.triangle import Triangle
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -81,7 +80,7 @@ def frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
         Geometry Service gRPC Frame message. Frame origin units in meters.
     """
     return GRPCFrame(
-        origin=point_to_grpc_point(frame.origin),
+        origin=point3D_to_grpc_point(frame.origin),
         dir_x=unit_vector_to_grpc_direction(frame.direction_x),
         dir_y=unit_vector_to_grpc_direction(frame.direction_y),
     )
@@ -102,7 +101,7 @@ def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
     """
     return GRPCPlane(
         frame=GRPCFrame(
-            origin=point_to_grpc_point(plane.origin),
+            origin=point3D_to_grpc_point(plane.origin),
             dir_x=unit_vector_to_grpc_direction(plane.direction_x),
             dir_y=unit_vector_to_grpc_direction(plane.direction_y),
         )
@@ -113,10 +112,10 @@ def one_profile_shape_to_grpc_geometries(
     plane: Plane,
     edges: List[SketchEdge],
     faces: List[SketchFace],
-    shapes: List[BaseShape],
 ) -> Geometries:
-    """Marshals a list of :class:`SketchEdge` and :class:`SketchFace` to
-    a Geometries gRPC message of the Geometry Service.
+    """
+    Marshals a list of :class:`SketchEdge` and :class:`SketchFace`
+    to a Geometries gRPC message of the Geometry Service.
 
     Parameters
     ----------
@@ -126,8 +125,6 @@ def one_profile_shape_to_grpc_geometries(
         Source edge data.
     faces : List[SketchFace]
         Source face data.
-    shapes : List[BaseShape]
-        Source shape data.
 
     Returns
     -------
@@ -142,34 +139,16 @@ def one_profile_shape_to_grpc_geometries(
         geometries.arcs.extend(converted_sketch_edges[1])
 
     if len(edges) == 0 and len(faces) > 0:
-        for face in faces:
-            if isinstance(face, Circle):
-                geometries.circles.append(sketch_circle_to_grpc_circle(face, plane))
-                break
-            if isinstance(face, Triangle) or isinstance(face, Trapezoid):
-                converted_face_edges = sketch_edges_to_grpc_geometries(plane, face.edges)
-                geometries.lines.extend(converted_face_edges[0])
-                geometries.arcs.extend(converted_face_edges[1])
-                break
-
-    if len(edges) == 0 and len(faces) == 0:
-        for shape in shapes:
-            for component_shape in shape.components:
-                if isinstance(component_shape, Circle):
-                    geometries.circles.append(circle_to_grpc_circle(component_shape))
-                    break
-                elif isinstance(component_shape, Segment):
-                    geometries.lines.append(segment_to_grpc_line(component_shape))
-                    break
-                elif isinstance(component_shape, Arc):
-                    geometries.arcs.append(arc_to_grpc_arc(component_shape))
-                    break
-                elif isinstance(component_shape, Ellipse):
-                    geometries.ellipses.append(ellipse_to_grpc_ellipse(component_shape))
-                    break
-                elif isinstance(component_shape, Polygon):
-                    geometries.polygons.append(polygon_to_grpc_polygon(component_shape))
-                    break
+        if isinstance(faces[0], Circle):
+            geometries.circles.append(sketch_circle_to_grpc_circle(faces[0], plane))
+        if isinstance(faces[0], Ellipse):
+            geometries.circles.append(sketch_ellipse_to_grpc_ellipse(faces[0], plane))
+        if isinstance(faces[0], Polygon):
+            geometries.circles.append(sketch_polygon_to_grpc_polygon(faces[0], plane))
+        else:
+            converted_face_edges = sketch_edges_to_grpc_geometries(plane, faces[0].edges)
+            geometries.lines.extend(converted_face_edges[0])
+            geometries.arcs.extend(converted_face_edges[1])
 
     return geometries
 
@@ -178,10 +157,10 @@ def sketch_shapes_to_grpc_geometries(
     plane: Plane,
     edges: List[SketchEdge],
     faces: List[SketchFace],
-    shapes: List[BaseShape],
 ) -> Geometries:
-    """Marshals a list of :class:`BaseShape` to a Geometries gRPC message of
-    the Geometry Service.
+    """
+    Marshals a list of :class:`SketchEdge` and :class:`SketchFace`
+    to a Geometries gRPC message of the Geometry Service.
 
     Parameters
     ----------
@@ -201,46 +180,38 @@ def sketch_shapes_to_grpc_geometries(
     """
     geometries = Geometries()
 
-    converted_sketch_edges = sketch_edges_to_grpc_geometries(plane, edges)
+    converted_sketch_edges = sketch_edges_to_grpc_geometries(edges, plane)
     geometries.lines.extend(converted_sketch_edges[0])
     geometries.arcs.extend(converted_sketch_edges[1])
 
     for face in faces:
         if isinstance(face, Circle):
             geometries.circles.append(sketch_circle_to_grpc_circle(face, plane))
-        if isinstance(face, Triangle) or isinstance(face, Trapezoid):
-            converted_face_edges = sketch_edges_to_grpc_geometries(plane, face.edges)
+        if isinstance(face, Ellipse):
+            geometries.circles.append(sketch_ellipse_to_grpc_ellipse(face, plane))
+        if isinstance(face, Polygon):
+            geometries.circles.append(sketch_polygon_to_grpc_polygon(face, plane))
+        else:
+            converted_face_edges = sketch_edges_to_grpc_geometries(face.edges, plane)
             geometries.lines.extend(converted_face_edges[0])
             geometries.arcs.extend(converted_face_edges[1])
-
-    for shape in shapes:
-        for component_shape in shape.components:
-            if isinstance(component_shape, Circle):
-                geometries.circles.append(circle_to_grpc_circle(component_shape))
-            elif isinstance(component_shape, Segment):
-                geometries.lines.append(segment_to_grpc_line(component_shape))
-            elif isinstance(component_shape, Arc):
-                geometries.arcs.append(arc_to_grpc_arc(component_shape))
-            elif isinstance(component_shape, Ellipse):
-                geometries.ellipses.append(ellipse_to_grpc_ellipse(component_shape))
-            elif isinstance(component_shape, Polygon):
-                geometries.polygons.append(polygon_to_grpc_polygon(component_shape))
 
     return geometries
 
 
 def sketch_edges_to_grpc_geometries(
-    plane: Plane, edges: List[SketchEdge]
+    edges: List[SketchEdge],
+    plane: Plane,
 ) -> Tuple[List[GRPCLine], List[GRPCArc]]:
     """Marshals a list of :class:`SketchEdge` to a Geometries gRPC message of
     the Geometry Service.
 
     Parameters
     ----------
-    plane : Plane
-        The plane to position the 2D sketches.
     edges : List[SketchEdge]
         Source edge data.
+    plane : Plane
+        The plane to position the 2D sketches.
 
     Returns
     -------
@@ -256,27 +227,6 @@ def sketch_edges_to_grpc_geometries(
             arcs.append(sketch_arc_to_grpc_arc(edge, plane))
 
     return (segments, arcs)
-
-
-def arc_to_grpc_arc(arc: Arc) -> GRPCArc:
-    """Marshals an :class:`Arc` to an Arc gRPC message of the Geometry Service.
-
-    Parameters
-    ----------
-    arc : Arc
-        Source arc data.
-
-    Returns
-    -------
-    GRPCArc
-        Geometry Service gRPC Arc message, units in meters.
-    """
-    return GRPCArc(
-        center=point_to_grpc_point(arc.center),
-        start=point_to_grpc_point(arc.start),
-        end=point_to_grpc_point(arc.end),
-        axis=unit_vector_to_grpc_direction(arc.axis),
-    )
 
 
 def sketch_arc_to_grpc_arc(arc: Arc, plane: Plane) -> GRPCArc:
@@ -310,7 +260,7 @@ def sketch_arc_to_grpc_arc(arc: Arc, plane: Plane) -> GRPCArc:
     )
 
 
-def ellipse_to_grpc_ellipse(ellipse: Ellipse) -> GRPCEllipse:
+def sketch_ellipse_to_grpc_ellipse(ellipse: Ellipse, plane: Plane) -> GRPCEllipse:
     """Marshals an :class:`Ellipse` to an Ellipse gRPC message of the Geometry Service.
 
     Parameters
@@ -324,27 +274,9 @@ def ellipse_to_grpc_ellipse(ellipse: Ellipse) -> GRPCEllipse:
         Geometry Service gRPC Ellipse message, units in meters.
     """
     return GRPCEllipse(
-        center=point_to_grpc_point(ellipse.center),
+        center=point2D_to_grpc_point(plane, ellipse.center),
         majorradius=ellipse.semi_major_axis.m_as(SERVER_UNIT_LENGTH),
         minorradius=ellipse.semi_minor_axis.m_as(SERVER_UNIT_LENGTH),
-    )
-
-
-def circle_to_grpc_circle(circle: Circle) -> GRPCCircle:
-    """Marshals a :class:`Circle` to a Circle gRPC message of the Geometry Service.
-
-    Parameters
-    ----------
-    circle : Circle
-        Source circle data.
-
-    Returns
-    -------
-    GRPCCircle
-        Geometry Service gRPC Circle message, units in meters.
-    """
-    return GRPCCircle(
-        center=point_to_grpc_point(circle.center), radius=circle.radius.m_as(SERVER_UNIT_LENGTH)
     )
 
 
@@ -371,7 +303,7 @@ def sketch_circle_to_grpc_circle(circle: Circle, plane: Plane) -> GRPCCircle:
     )
 
 
-def point_to_grpc_point(point: Point3D) -> GRPCPoint:
+def point3D_to_grpc_point(point: Point3D) -> GRPCPoint:
     """Marshals a :class:`Point3D` to a Point gRPC message of the Geometry Service.
 
     Parameters
@@ -416,7 +348,7 @@ def point2D_to_grpc_point(plane: Plane, point2d: Point2D) -> GRPCPoint:
     )
 
 
-def polygon_to_grpc_polygon(polygon: Polygon) -> GRPCPolygon:
+def sketch_polygon_to_grpc_polygon(polygon: Polygon, plane: Plane) -> GRPCPolygon:
     """Marshals a :class:`Polygon` to a Polygon gRPC message of the Geometry Service.
 
     Parameters
@@ -430,28 +362,9 @@ def polygon_to_grpc_polygon(polygon: Polygon) -> GRPCPolygon:
         Geometry Service gRPC Polygon message, units in meters.
     """
     return GRPCPolygon(
-        center=point_to_grpc_point(polygon.center),
+        center=point2D_to_grpc_point(plane, polygon.center),
         radius=polygon.inner_radius.m_as(SERVER_UNIT_LENGTH),
         numberofsides=polygon.n_sides,
-    )
-
-
-def segment_to_grpc_line(line: Segment) -> GRPCLine:
-    """Marshals a :class:`Segment` to a Line gRPC message of the Geometry Service.
-
-    Parameters
-    ----------
-    segment : Segment
-        Source segment data.
-
-    Returns
-    -------
-    GRPCLine
-        Geometry Service gRPC Line message, units in meters.
-    """
-    return GRPCLine(
-        start=point_to_grpc_point(line.start),
-        end=point_to_grpc_point(line.end),
     )
 
 

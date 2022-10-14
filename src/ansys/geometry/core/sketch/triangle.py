@@ -1,7 +1,10 @@
 """``Triangle`` class module."""
 
+import pyvista as pv
+
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import check_type
+from ansys.geometry.core.misc.measurements import UNIT_LENGTH
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import Segment
 
@@ -66,3 +69,24 @@ class Triangle(SketchFace):
             Triangle vertex 3.
         """
         return self._point3
+
+    @property
+    def visualization_polydata(self) -> pv.PolyData:
+        """
+        Return the vtk polydata representation for PyVista visualization.
+
+        The representation lies in the X/Y plane within
+        the standard global cartesian coordinate system.
+
+        Returns
+        -------
+        pyvista.PolyData
+            The vtk pyvista.Polydata configuration.
+        """
+        return pv.Triangle(
+            [
+                [self.point1.x.m_as(UNIT_LENGTH), self.point1.y.m_as(UNIT_LENGTH), 0],
+                [self.point2.x.m_as(UNIT_LENGTH), self.point2.y.m_as(UNIT_LENGTH), 0],
+                [self.point3.x.m_as(UNIT_LENGTH), self.point3.y.m_as(UNIT_LENGTH), 0],
+            ]
+        )

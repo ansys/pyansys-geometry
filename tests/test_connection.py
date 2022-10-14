@@ -10,11 +10,11 @@ from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
     plane_to_grpc_plane,
     point2D_to_grpc_point,
-    point_to_grpc_point,
-    polygon_to_grpc_polygon,
+    point3D_to_grpc_point,
     segment_to_grpc_line,
     sketch_arc_to_grpc_arc,
     sketch_circle_to_grpc_circle,
+    sketch_polygon_to_grpc_polygon,
     sketch_segment_to_grpc_line,
     unit_vector_to_grpc_direction,
 )
@@ -138,7 +138,7 @@ def test_polygon_message_conversion():
         Quantity(300, UNITS.mm),
         5,
     )
-    grpc_polygon_message = polygon_to_grpc_polygon(polygon)
+    grpc_polygon_message = sketch_polygon_to_grpc_polygon(polygon)
 
     assert grpc_polygon_message.center.x == 0.01
     assert grpc_polygon_message.center.y == 0.1
@@ -150,7 +150,7 @@ def test_polygon_message_conversion():
 def test_point_message_conversion():
     """Test conversion between :class:`Point3D` and expected gRPC message type."""
     point = Point3D([10, 100, 1000], UNITS.mm)
-    grpc_point_message = point_to_grpc_point(point)
+    grpc_point_message = point3D_to_grpc_point(point)
 
     assert grpc_point_message.x == 0.01
     assert grpc_point_message.y == 0.1

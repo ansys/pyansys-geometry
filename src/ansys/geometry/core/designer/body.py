@@ -214,9 +214,7 @@ class Body:
         imprint_response = self._commands_stub.ImprintCurves(
             ImprintCurvesRequest(
                 body=self._id,
-                curves=sketch_shapes_to_grpc_geometries(
-                    sketch._plane, sketch.edges, sketch.faces, sketch.shapes_list
-                ),
+                curves=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
                 faces=[face._id for face in faces],
             )
         )
@@ -272,13 +270,9 @@ class Body:
         check_type(closest_face, bool)
 
         if only_one_curve:
-            curves = one_profile_shape_to_grpc_geometries(
-                sketch._plane, sketch.edges, sketch.faces, sketch.shapes_list
-            )
+            curves = one_profile_shape_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces)
         else:
-            curves = sketch_shapes_to_grpc_geometries(
-                sketch._plane, sketch.edges, sketch.faces, sketch.shapes_list
-            )
+            curves = sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces)
 
         self._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 

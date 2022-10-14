@@ -3,6 +3,7 @@ from typing import Optional, Union
 
 import numpy as np
 from pint import Quantity
+import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Matrix33, Point2D
@@ -161,4 +162,26 @@ class Slot(SketchFace):
         return (
             np.pi * (self._height.value / 2) ** 2
             + (self._width.value - self._height.value) * self._height.value
+        )
+
+    @property
+    def visualization_polydata(self) -> pv.PolyData:
+        """
+        Return the vtk polydata representation for PyVista visualization.
+
+        The representation lies in the X/Y plane within
+        the standard global cartesian coordinate system.
+
+        Returns
+        -------
+        pyvista.PolyData
+            The vtk pyvista.Polydata configuration.
+        """
+        return pv.merge(
+            [
+                self._segment1.visualization_polydata,
+                self._arc2.visualization_polydata,
+                self._segment2.visualization_polydata,
+                self._arc1.visualization_polydata,
+            ]
         )

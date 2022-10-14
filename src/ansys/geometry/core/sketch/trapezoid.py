@@ -4,12 +4,13 @@ from typing import Optional, Union
 
 import numpy as np
 from pint import Quantity
+import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Matrix33, Point2D
 from ansys.geometry.core.math.constants import ZERO_POINT2D
 from ansys.geometry.core.misc import Angle, Distance, check_type
-from ansys.geometry.core.misc.measurements import UNIT_ANGLE
+from ansys.geometry.core.misc.measurements import UNIT_ANGLE, UNIT_LENGTH
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import Segment
 from ansys.geometry.core.typing import Real
@@ -156,3 +157,25 @@ class Trapezoid(SketchFace):
             The height of the trapezoid.
         """
         return self._height.value
+
+    @property
+    def visualization_polydata(self) -> pv.PolyData:
+        """
+        Return the vtk polydata representation for PyVista visualization.
+
+        The representation lies in the X/Y plane within
+        the standard global cartesian coordinate system.
+
+        Returns
+        -------
+        pyvista.PolyData
+            The vtk pyvista.Polydata configuration.
+        """
+        return pv.Rectangle(
+            [
+                [self.point1.x.m_as(UNIT_LENGTH), self.point1.y.m_as(UNIT_LENGTH), 0],
+                [self.point2.x.m_as(UNIT_LENGTH), self.point2.y.m_as(UNIT_LENGTH), 0],
+                [self.point3.x.m_as(UNIT_LENGTH), self.point3.y.m_as(UNIT_LENGTH), 0],
+                [self.point4.x.m_as(UNIT_LENGTH), self.point4.y.m_as(UNIT_LENGTH), 0],
+            ]
+        )

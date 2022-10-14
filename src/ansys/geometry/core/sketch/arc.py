@@ -4,6 +4,7 @@ from typing import Optional
 
 import numpy as np
 from pint import Quantity
+import pyvista as pv
 
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_Z
@@ -189,6 +190,34 @@ class Arc(SketchEdge):
             The area of the sector of the arc.
         """
         return self.radius**2 * self.angle.m / 2
+
+    @property
+    def visualization_polydata(self) -> pv.PolyData:
+        """
+        Returns the vtk polydata representation for PyVista visualization.
+
+        The representation lies in the X/Y plane within
+        the standard global cartesian coordinate system.
+
+        Returns
+        -------
+        pyvista.PolyData
+            The vtk pyvista.Polydata configuration.
+        """
+        return pv.CircularArc(
+            [
+                self.start.x.m_as(self.start.base_unit),
+                self.start.y.m_as(self.start.base_unit),
+                0,
+            ],
+            [self.end.x.m_as(self.end.base_unit), self.end.y.m_as(self.end.base_unit), 0],
+            [
+                self.center.x.m_as(self.center.base_unit),
+                self.center.y.m_as(self.center.base_unit),
+                0,
+            ],
+            negative=self.negative_angle,
+        )
 
     def __eq__(self, other: "Arc") -> bool:
         """Equals operator for ``Arc``."""

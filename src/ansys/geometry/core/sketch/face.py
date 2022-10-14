@@ -3,6 +3,7 @@
 from typing import List
 
 from pint import Quantity
+import pyvista as pv
 
 from ansys.geometry.core.sketch.edge import SketchEdge
 
@@ -28,7 +29,7 @@ class SketchFace:
 
     @property
     def perimeter(self) -> Quantity:
-        """Return the perimeter of the face.
+        """Returns the perimeter of the face.
 
         Returns
         -------
@@ -39,3 +40,19 @@ class SketchFace:
         for edge in self._edges:
             perimeter += edge.length
         return perimeter
+
+    @property
+    def visualization_polydata(self) -> pv.PolyData:
+        """
+        Return the vtk polydata representation for PyVista visualization.
+
+        The representation lies in the X/Y plane within
+        the standard global cartesian coordinate system.
+
+        Returns
+        -------
+        pyvista.PolyData
+            The vtk pyvista.Polydata configuration.
+        """
+        meshes = [edge.visualization_polydata for edge in self.edges]
+        return pv.merge(meshes)

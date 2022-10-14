@@ -2,10 +2,12 @@
 from typing import Optional, Union
 
 from pint import Quantity
+import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Matrix33, Point2D
 from ansys.geometry.core.misc import UNIT_ANGLE, Angle, Distance, check_type
+from ansys.geometry.core.misc.measurements import UNIT_LENGTH
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import Segment
 from ansys.geometry.core.typing import Real
@@ -138,3 +140,25 @@ class Box(SketchFace):
             The area of the box.
         """
         return self.width * self.height
+
+    @property
+    def visualization_polydata(self) -> pv.PolyData:
+        """
+        Return the vtk polydata representation for PyVista visualization.
+
+        The representation lies in the X/Y plane within
+        the standard global cartesian coordinate system.
+
+        Returns
+        -------
+        pyvista.PolyData
+            The vtk pyvista.Polydata configuration.
+        """
+        return pv.Rectangle(
+            [
+                [self._corner_1.x.m_as(UNIT_LENGTH), self._corner_1.y.m_as(UNIT_LENGTH), 0],
+                [self._corner_2.x.m_as(UNIT_LENGTH), self._corner_2.y.m_as(UNIT_LENGTH), 0],
+                [self._corner_3.x.m_as(UNIT_LENGTH), self._corner_3.y.m_as(UNIT_LENGTH), 0],
+                [self._corner_4.x.m_as(UNIT_LENGTH), self._corner_4.y.m_as(UNIT_LENGTH), 0],
+            ]
+        )

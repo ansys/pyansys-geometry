@@ -2,6 +2,7 @@
 
 import numpy as np
 from pint import Quantity
+import pyvista as pv
 
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import UNIT_LENGTH, check_ndarray_is_all_nan, check_type
@@ -81,6 +82,28 @@ class Segment(SketchEdge):
         """
         return np.sqrt(
             np.square(self._end.x - self._start.x) + np.square(self._end.y - self._start.y)
+        )
+
+    @property
+    def visualization_polydata(self) -> pv.PolyData:
+        """
+        Returns the vtk polydata representation for PyVista visualization.
+
+        The representation lies in the X/Y plane within
+        the standard global cartesian coordinate system.
+
+        Returns
+        -------
+        pyvista.PolyData
+            The vtk pyvista.Polydata configuration.
+        """
+        return pv.Line(
+            [
+                self.start.x.m_as(self.start.base_unit),
+                self.start.y.m_as(self.start.base_unit),
+                0,
+            ],
+            [self.end.x.m_as(self.end.base_unit), self.end.y.m_as(self.end.base_unit), 0],
         )
 
     def __eq__(self, other: "Segment") -> bool:
