@@ -31,9 +31,10 @@ Plane concept
 The plane class provides primitive representation of a 2D plane in 3D space. 
 It has an origin and a coordinate system.
 Most methods that create an object is be relative to the current plane.
-The default work plane XY plane with (0,0) as origin. You can create 2D objects in the plane and 
+The default working plane is XY with (0,0) as origin. You can create 2D objects in the plane and 
 PyGeometry then convert it to the global coordinate system, so that
-the 2D features executes as expected.
+the 2D feature executes as expected.
+
 .. code:: python
 
     origin = Point3D([42, 99, 13])
