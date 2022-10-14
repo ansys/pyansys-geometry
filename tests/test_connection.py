@@ -48,7 +48,7 @@ def test_invalid_inputs():
 
 
 def test_circle_message_conversion():
-    """Test conversion between  :class:`Circle <ansys.geometry.core.shapes.circle.Circle>`
+    """Test conversion between :class:`Circle <ansys.geometry.core.shapes.circle.Circle>`
     and expected gRPC message type."""
     circle = Circle(
         Plane(Point3D([10, 100, 1000], UNITS.mm)),
@@ -134,7 +134,7 @@ def test_segment_message_conversion():
 
 
 def test_polygon_message_conversion():
-    """Test conversion between  :class:`Polygon <ansys.geometry.core.shapes.polygon.Polygon>`
+    """Test conversion between :class:`Polygon <ansys.geometry.core.shapes.polygon.Polygon>`
     and expected gRPC message type."""
     polygon = Polygon(
         Plane(Point3D([10, 100, 1000], UNITS.mm)),
@@ -184,7 +184,7 @@ def test_unit_vector_message_conversion():
 
 
 def test_arc_message_conversion():
-    """Test conversion between  :class:`Arc <ansys.geometry.core.shapes.arc.Arc>`
+    """Test conversion between :class:`Arc <ansys.geometry.core.shapes.arc.Arc>`
     and expected gRPC message type."""
     arc = Arc(
         Plane(Point3D([10, 100, 1000], UNITS.mm)),
