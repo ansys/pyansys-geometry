@@ -733,7 +733,8 @@ class Sketch:
             if isinstance(face, SketchCircle):
                 circle = pv.Circle(face.radius.m_as(UNIT_LENGTH))
                 circle.translate(
-                    [face.center.x.m_as(UNIT_LENGTH), face.center.y.m_as(UNIT_LENGTH), 0]
+                    [face.center.x.m_as(UNIT_LENGTH), face.center.y.m_as(UNIT_LENGTH), 0],
+                    inplace=True,
                 )
                 circle.transform(self._plane.transformation_matrix)
                 sketches_polydata.append(circle)

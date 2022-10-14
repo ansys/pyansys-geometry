@@ -23,8 +23,8 @@ PyGeometry is a python wrapper for Ansys Geometry Services. The key features of 
 * Fluent based API for clean and easy code
 * Build in examples
 
-Simple example
-===============
+Simple interactive example
+==========================
 
 1. start the geometry instance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,10 +53,10 @@ by initializing the :ref:`Sketch <ref_sketch>` and :ref:`Primitives <ref_primiti
     from ansys.geometry.core.math import Plane, Point3D, Point2D
     from ansys.geometry.core.misc import UNITS
     from ansys.geometry.core.sketch import Sketch   
-    origin = Point3D([10, 10, 0])
+    origin = Point3D([0, 0, 10])
     plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
     sketch = Sketch(plane)
-    sketch.triangle(Point2D([-10, 10]), Point2D([5, 6]), Point2D([-10, -10]), tag="triangle2")
+    sketch.circle(Point2D([1, 1]), 30*UNITS.m)
     sketch.plot()
 
 .. jupyter-execute::
@@ -65,9 +65,9 @@ by initializing the :ref:`Sketch <ref_sketch>` and :ref:`Primitives <ref_primiti
     from ansys.geometry.core.math import Plane, Point3D, Point2D
     from ansys.geometry.core.misc import UNITS
     from ansys.geometry.core.sketch import Sketch   
-    origin = Point3D([10, 10, 0])
+    origin = Point3D([0, 0, 10])
     plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
     sketch = Sketch(plane)
-    sketch.triangle(Point2D([-10, 10]), Point2D([5, 6]), Point2D([-10, -10]), tag="triangle2")
+    sketch.circle(Point2D([1, 1]), 30*UNITS.m)
     sketch.plot()
 
