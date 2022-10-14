@@ -188,9 +188,9 @@ def sketch_shapes_to_grpc_geometries(
         if isinstance(face, Circle):
             geometries.circles.append(sketch_circle_to_grpc_circle(face, plane))
         if isinstance(face, Ellipse):
-            geometries.circles.append(sketch_ellipse_to_grpc_ellipse(face, plane))
+            geometries.ellipses.append(sketch_ellipse_to_grpc_ellipse(face, plane))
         if isinstance(face, Polygon):
-            geometries.circles.append(sketch_polygon_to_grpc_polygon(face, plane))
+            geometries.polygons.append(sketch_polygon_to_grpc_polygon(face, plane))
         else:
             converted_face_edges = sketch_edges_to_grpc_geometries(face.edges, plane)
             geometries.lines.extend(converted_face_edges[0])
