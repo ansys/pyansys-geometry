@@ -177,7 +177,8 @@ class Polygon(BaseShape):
             0 + angle_offset_radians, 2 * np.pi + angle_offset_radians, self.n_sides + 1
         )
         center_from_plane_origin = Point3D(
-            self.plane.global_to_local @ (self.center - self.plane.origin), self.center.unit
+            self.plane.global_to_local_rotation @ (self.center - self.plane.origin),
+            self.center.unit,
         )
         return [
             Point3D(

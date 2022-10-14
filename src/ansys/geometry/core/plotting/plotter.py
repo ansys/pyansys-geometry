@@ -1,5 +1,5 @@
 """A module containing a class for plotting various PyGeometry objects."""
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 import numpy as np
 import pyvista as pv
@@ -105,7 +105,7 @@ class Plotter:
         axes = create_axes_marker(**plotting_options)
 
         # Transpose the matrix for fixing rotation sense in VTK
-        arr = np.vstack((frame.global_to_local, frame.origin)).T
+        arr = np.vstack((frame.global_to_local_rotation, frame.origin)).T
         arr = np.vstack((arr, [0, 0, 0, 1]))
 
         # Apply matrix transformation to the actor
@@ -280,6 +280,20 @@ class Plotter:
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
         kwargs.setdefault("smooth_shading", True)
         self.scene.add_mesh(dataset, **kwargs)
+
+    def add_polydata(self, polydata_entries: List[pv.PolyData], **kwargs) -> None:
+        """Add a sketches to the scene.
+
+        Parameters
+        ----------
+        polydata : pyvista.PolyData
+            pyvista PolyData to add to the scene.
+        **kwargs : dict, optional
+            Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
+            for allowable keyword arguments.
+        """
+        for polydata in polydata_entries:
+            self.scene.add_mesh(polydata, **kwargs)
 
     def show(
         self,

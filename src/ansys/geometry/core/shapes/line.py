@@ -255,7 +255,7 @@ class Segment(Line):
             A list of points representing the shape.
         """
         start_unit_length = Point3D(
-            self.plane.global_to_local @ (self.start - self.plane.origin), UNIT_LENGTH
+            self.plane.global_to_local_rotation @ (self.start - self.plane.origin), UNIT_LENGTH
         )
         start_with_accurate_units = Point3D(
             [
@@ -267,7 +267,7 @@ class Segment(Line):
         )
 
         end_unit_length = Point3D(
-            self.plane.global_to_local @ (self.end - self.plane.origin), UNIT_LENGTH
+            self.plane.global_to_local_rotation @ (self.end - self.plane.origin), UNIT_LENGTH
         )
         end_with_accurate_units = Point3D(
             [

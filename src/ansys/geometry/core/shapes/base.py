@@ -57,7 +57,10 @@ class BaseShape:
             local_points = self.local_points()
 
         return [
-            (self.plane.origin + Point3D(self.plane.local_to_global @ point, point.base_unit))
+            (
+                self.plane.origin
+                + Point3D(self.plane.local_to_global_rotation @ point, point.base_unit)
+            )
             for point in local_points
         ]
 
