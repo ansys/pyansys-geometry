@@ -154,7 +154,7 @@ def test_component_body(modeler: Modeler):
 
     # Create a simple sketch of a Polygon (specifically a Pentagon)
     sketch = Sketch()
-    pentagon = sketch.polygon(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+    sketch.polygon(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
 
     # In the "root/base" Component (i.e. Design object) let's extrude the sketch
     name_extruded_body = "ExtrudedPolygon"
@@ -167,7 +167,7 @@ def test_component_body(modeler: Modeler):
     assert body.id is not None
     assert body.is_surface is False
     assert len(body.faces) == 7  # 5 sides + top + bottom
-    expected_vol = pentagon.area.m * distance_extruded_body.m * 1e-9  # In mm -factor to m**3
+    expected_vol = sketch.faces[0].area.m * distance_extruded_body.m * 1e-9  # In mm -factor to m**3
     assert body.volume.m == pytest.approx(expected_vol)
     assert len(design.components) == 0
     assert len(design.bodies) == 1
@@ -275,7 +275,7 @@ def test_faces_edges(modeler: Modeler):
 
     # Create a Sketch object and draw a polygon (all client side)
     sketch = Sketch()
-    polygon = sketch.polygon(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+    sketch.polygon(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
 
     # Build independent components and bodies
     polygon_comp = design.add_component("PolygonComponent")
@@ -288,7 +288,7 @@ def test_faces_edges(modeler: Modeler):
     # TODO: may be at some point these might change to planar?
     assert all(face.surface_type == SurfaceType.SURFACETYPE_UNKNOWN for face in faces)
     assert all(face.area > 0.0 for face in faces)
-    assert abs(faces[0].area.to_base_units().m - polygon.area.to_base_units().m) <= 1e-15
+    assert abs(faces[0].area.to_base_units().m - sketch.faces[0].area.to_base_units().m) <= 1e-15
     assert all(face.body.id == body_polygon_comp.id for face in faces)
 
     # Get the normal to some of the faces
@@ -314,7 +314,9 @@ def test_faces_edges(modeler: Modeler):
     # TODO: may be at some point these might change to line?
     assert all(edge.curve_type == CurveType.CURVETYPE_UNKNOWN for edge in edges)
     assert all(edge.length > 0.0 for edge in edges)
-    assert abs(edges[0].length.to_base_units().m - polygon.length.to_base_units().m) <= 1e-15
+    assert (
+        abs(edges[0].length.to_base_units().m - sketch.faces[0].length.to_base_units().m) <= 1e-15
+    )
 
     # Get the faces to which the edge belongs
     faces_of_edge = edges[0].faces
@@ -736,7 +738,7 @@ def test_slot_extrusion(modeler: Modeler):
 
     # Create a Sketch object and draw a slot
     sketch = Sketch()
-    sketch.draw_slot(Point3D([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm))
+    sketch.slot(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm))
 
     # Extrude the sketch
     body = design.extrude_sketch(name="MySlot", sketch=sketch, distance=Quantity(50, UNITS.mm))
