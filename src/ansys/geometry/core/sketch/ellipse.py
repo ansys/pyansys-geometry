@@ -192,5 +192,5 @@ class Ellipse(SketchFace):
         cells = np.array([np.append(np.array([100]), np.arange(100))])
         ellipse = pv.wrap(pv.PolyData(points, cells))
         return ellipse.translate(
-            [self.center.x.m_as(UNIT_LENGTH), self.center.y.m_as(UNIT_LENGTH), 0]
+            [self.center.x.m_as(UNIT_LENGTH), self.center.y.m_as(UNIT_LENGTH), 0], inplace=True
         )

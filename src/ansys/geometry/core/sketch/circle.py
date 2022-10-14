@@ -108,5 +108,5 @@ class Circle(SketchFace):
         """
         circle = pv.Circle(self.radius.m_as(UNIT_LENGTH))
         return circle.translate(
-            [self.center.x.m_as(UNIT_LENGTH), self.center.y.m_as(UNIT_LENGTH), 0]
+            [self.center.x.m_as(UNIT_LENGTH), self.center.y.m_as(UNIT_LENGTH), 0], inplace=True
         )
