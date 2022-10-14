@@ -3,11 +3,11 @@
 Sketch
 *******
 
-In PyGeometry, a `Sketch` is class providing for building 2D basic shape elements.
+In PyGeometry, a `Sketch` is a class used to build 2D basic shape elements.
 PyGeometry Sketch contains two fundamental constructs:
 
-* Edges -  a connection between two or more Point2D along a particular path represents open shapes such as arc, lines.
-* Faces - a set of edges that enclose a surface represents closed shapes such as circle, triangle and so on.
+* Edges -  a connection between two or more Point2D along a particular path. It represents open shapes such as arc, lines.
+* Faces - a set of edges that enclose a surface representing closed shapes such as circle, triangle and so on.
 
 To get initialize the sketch, first you can specify the :class:`Plane() <ansys.geometry.core.math.plane>` which
 represent a plane in space, from which other PyGeometry objects can be located.
@@ -19,7 +19,7 @@ You can initialize the sketch by:
     from ansys.geometry.core.sketch.Sketch
     sketch = Sketch()
 
-The sketch can be construct by using different approaches.
+The sketch can be constructed using different approaches.
 
 Fluent based approach (Fluent API)
 ==================================

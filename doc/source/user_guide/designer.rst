@@ -9,7 +9,7 @@ Defining the model
 
 .. code:: python
 
-    # Create a Sketch and draw a circle (all client side)
+    # Create a Sketch and draw a circle (from the client)
     sketch = Sketch()
     sketch.draw_circle(Point3D([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm))
 
@@ -39,7 +39,7 @@ You can add the data structure and property for individual materials.
 Create bodies by extruding the sketch
 -------------------------------------
 
-Projects all of the specified geometries onto the body. You can Create a solid body by
+Projects all of the specified geometries onto the body. You can create a solid body by
 extruding the given sketch profile up to the given distance.
 
 .. code:: python
@@ -66,7 +66,7 @@ Design bodies are also possible to translate, tessellate and project curves in t
 Download and save design
 ------------------------
 
-The PyGeometry allows to save and download the design to disk on the active geometry server instance.
+With PyGeometry you can save and download the design onto the disk of the active geometry server instance.
 
 .. code:: python
 
