@@ -18,9 +18,11 @@ class Box(BaseShape):
     Parameters
     ----------
     plane : Plane
-        A :class:`Plane` representing the planar surface where the shape is contained.
-    center: Point3D
-        A :class:`Point3D` representing the center of the box.
+        A :class:`Plane <ansys.geometry.core.math.plane.Plane>` representing
+        the planar surface where the shape is contained.
+    center : Point3D
+        A :class:`Point3D <ansys.geometry.core.math.point.Point3D` representing
+        the center of the box.
     width : Union[Quantity, Distance, Real]
         The width of the box.
     height : Union[Quantity, Distance, Real]

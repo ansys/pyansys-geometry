@@ -12,6 +12,6 @@ RealSequence = Union[np.ndarray, Sequence[Real]]
 
 Notes
 -----
-:class:`numpy.ndarrays` are also accepted, since they are
+:class:`numpy.ndarrays <numpy.ndarray>` are also accepted, since they are
 the overlaying data structure behind most PyGeometry objects.
 """
