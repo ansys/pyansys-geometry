@@ -5,8 +5,10 @@ from typing import Optional, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
+from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Point2D
+from ansys.geometry.core.math.matrix import Matrix33, Matrix44
 from ansys.geometry.core.misc import Angle, Distance, check_type
 from ansys.geometry.core.misc.measurements import UNIT_ANGLE, UNIT_LENGTH
 from ansys.geometry.core.sketch.face import SketchFace
@@ -154,8 +156,39 @@ class Polygon(SketchFace):
         pyvista.PolyData
             The vtk pyvista.Polydata configuration.
         """
+
+        rotation = Matrix33(
+            spatial_rotation.from_euler(
+                "xyz", [0, 0, self._angle_offset.value.m_as(UNIT_ANGLE)], degrees=False
+            ).as_matrix()
+        )
+
+        transformation_matrix = Matrix44(
+            [
+                [
+                    rotation[0, 0],
+                    rotation[0, 1],
+                    rotation[0, 2],
+                    0,
+                ],
+                [
+                    rotation[1, 0],
+                    rotation[1, 1],
+                    rotation[1, 2],
+                    0,
+                ],
+                [
+                    rotation[2, 0],
+                    rotation[2, 1],
+                    rotation[2, 2],
+                    0,
+                ],
+                [0, 0, 0, 1],
+            ]
+        )
+
         return pv.Polygon(
             [self.center.x.m_as(UNIT_LENGTH), self.center.y.m_as(UNIT_LENGTH), 0],
             self.inner_radius.m_as(UNIT_LENGTH),
             n_sides=self.n_sides,
-        )
+        ).transform(transformation_matrix)

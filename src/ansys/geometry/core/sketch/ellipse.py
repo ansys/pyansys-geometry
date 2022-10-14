@@ -6,8 +6,10 @@ import numpy as np
 from pint import Quantity
 import pyvista as pv
 from scipy.integrate import quad
+from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Point2D
+from ansys.geometry.core.math.matrix import Matrix33, Matrix44
 from ansys.geometry.core.misc import Angle, Distance, check_type
 from ansys.geometry.core.misc.measurements import UNIT_ANGLE, UNIT_LENGTH
 from ansys.geometry.core.sketch.face import SketchFace
@@ -184,13 +186,40 @@ class Ellipse(SketchFace):
         pyvista.PolyData
             The vtk pyvista.Polydata configuration.
         """
+        rotation = Matrix33(
+            spatial_rotation.from_euler(
+                "xyz", [0, 0, self._angle_offset.value.m_as(UNIT_ANGLE)], degrees=False
+            ).as_matrix()
+        )
+
+        transformation_matrix = Matrix44(
+            [
+                [
+                    rotation[0, 0],
+                    rotation[0, 1],
+                    rotation[0, 2],
+                    self.center.x.m_as(UNIT_LENGTH),
+                ],
+                [
+                    rotation[1, 0],
+                    rotation[1, 1],
+                    rotation[1, 2],
+                    self.center.y.m_as(UNIT_LENGTH),
+                ],
+                [
+                    rotation[2, 0],
+                    rotation[2, 1],
+                    rotation[2, 2],
+                    0,
+                ],
+                [0, 0, 0, 1],
+            ]
+        )
+
         # TODO: Replace with core pyvista ellipse implementation when released
         points = np.zeros((100, 3))
         theta = np.linspace(0.0, 2.0 * np.pi, 100)
-        points[:, 0] = self.semi_major_axis.m * np.cos(theta)
-        points[:, 1] = self.semi_minor_axis.m * np.sin(theta)
+        points[:, 0] = self.semi_major_axis.m_as(UNIT_LENGTH) * np.cos(theta)
+        points[:, 1] = self.semi_minor_axis.m_as(UNIT_LENGTH) * np.sin(theta)
         cells = np.array([np.append(np.array([100]), np.arange(100))])
-        ellipse = pv.wrap(pv.PolyData(points, cells))
-        return ellipse.translate(
-            [self.center.x.m_as(UNIT_LENGTH), self.center.y.m_as(UNIT_LENGTH), 0], inplace=True
-        )
+        return pv.wrap(pv.PolyData(points, cells)).transform(transformation_matrix)
