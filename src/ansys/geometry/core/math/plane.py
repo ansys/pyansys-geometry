@@ -41,7 +41,7 @@ class Plane(Frame):
         Parameters
         ----------
         point : Point3D
-            The :class:`Point3D` to be checked.
+            The :class:`Point3D <ansys.geometry.core.math.point.Point3D>` to be checked.
 
         Returns
         -------

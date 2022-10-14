@@ -26,7 +26,7 @@ class Sphere:
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D]
         Centered origin of the ``Sphere``.
-    radius: Real
+    radius : Real
         Radius of ``Sphere``.
     unit : Unit, optional
         Units employed to define the radius and height, by default ``UNIT_LENGTH``.
