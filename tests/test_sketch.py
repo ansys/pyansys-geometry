@@ -402,68 +402,6 @@ def test_polygon_instance():
 def test_slot_instance():
     """Test slot instance."""
 
-    # Create a Sketch instance
-    sketch = Sketch(Plane([1, 2, 0]))
-
-    # Draw an arc in previous sketch
-    center = Point2D([2, 3], unit=UNITS.meter)
-    width = Distance(4, unit=UNITS.meter)
-    height = Distance(2, unit=UNITS.meter)
-    slot = sketch.slot(center, width, height)
-
-    # Validate Real inputs accepted
-    sketch.slot(center, 888, 88)
-
-    # Check attributes are expected ones
-    area = slot.area
-    assert area.m == pytest.approx(7.141592653589793, rel=1e-7, abs=1e-8)
-    assert area.units == UNITS.m * UNITS.m
-    perimeter = slot.perimeter
-    assert perimeter.m == pytest.approx(10.283185307179586, rel=1e-7, abs=1e-8)
-    assert perimeter.units == UNITS.m
-
-    # Check local points are expected ones
-    local_points = slot.local_points(num_points=10)
-    assert abs(all(local_points[0] - Point3D([0, 4, 0]))) <= DOUBLE_EPS
-    assert abs(all(local_points[1] - Point3D([2, 4, 0]))) <= DOUBLE_EPS
-    assert abs(all(local_points[2] - Point3D([4, 2, 0]))) <= DOUBLE_EPS
-    assert abs(all(local_points[3] - Point3D([2, 2, 0]))) <= DOUBLE_EPS
-    assert abs(all(local_points[4] - Point3D([3, 2, 0]))) <= DOUBLE_EPS
-    assert abs(all(local_points[5] - Point3D([2.1339746, 1.5, 0]))) <= DOUBLE_EPS
-    assert abs(all(local_points[6] - Point3D([2.1339746, 0.5, 0]))) <= DOUBLE_EPS
-    assert abs(all(local_points[7] - Point3D([-1.0, 2.0, 0.0]))) <= DOUBLE_EPS
-    assert abs(all(local_points[8] - Point3D([-1.8660254, 1.5, 0]))) <= DOUBLE_EPS
-    assert abs(all(local_points[9] - Point3D([-1.8660254, 0.5, 0]))) <= DOUBLE_EPS
-
-    # Check global points are expected ones
-    global_points = slot.points(num_points=10)
-    assert abs(all(global_points[0] - Point3D([1, 6, 0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[1] - Point3D([3, 6, 0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[2] - Point3D([5, 4, 0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[3] - Point3D([3, 4, 0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[4] - Point3D([4, 4, 0.0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[5] - Point3D([3.1339746, 3.5, 0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[6] - Point3D([3.1339746, 2.5, 0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[7] - Point3D([1.11022302e-16, 4, 0.0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[8] - Point3D([-0.8660254, 3.5, 0]))) <= DOUBLE_EPS
-    assert abs(all(global_points[9] - Point3D([-0.8660254, 2.5, 0]))) <= DOUBLE_EPS
-
-    assert len(slot.components) == 4
-    assert isinstance(slot.components[0], Segment)
-    assert isinstance(slot.components[1], Arc)
-    assert isinstance(slot.components[2], Segment)
-    assert isinstance(slot.components[3], Arc)
-
-    tilted_plane = Plane(Point3D([1, 1, 0]), direction_x=[1, 0, 0], direction_y=[0, -1, 1])
-    tilted_sketch = Sketch(tilted_plane)
-    tilted_slot = tilted_sketch.slot(Point2D([2, 0]), width, height)
-    assert tilted_slot.area.m == pytest.approx(7.141592653589793, rel=1e-7, abs=1e-8)
-    assert tilted_slot.perimeter.m == pytest.approx(10.283185307179586, rel=1e-7, abs=1e-8)
-
-
-def test_slot_instance():
-    """Test slot instance."""
-
     center = Point2D([2, 3], unit=UNITS.meter)
     width = Distance(4, unit=UNITS.meter)
     height = Distance(2, unit=UNITS.meter)
