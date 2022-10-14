@@ -549,6 +549,17 @@ class Sketch:
         polygon = Polygon(center, inner_radius, sides, angle)
         return self.face(polygon, tag)
 
+    def tag(self, tag: str) -> None:
+        """
+        Adds a tag for the active selection of sketch objects.
+
+        Parameters
+        ----------
+        tag : str
+            The tag to assign against the sketch objects.
+        """
+        self._tags[tag] = self._current_sketch_context
+
     def _single_point_context_reference(self) -> Point2D:
         """
         Gets the last reference point from historical context.

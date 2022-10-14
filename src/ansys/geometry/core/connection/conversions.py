@@ -134,7 +134,7 @@ def one_profile_shape_to_grpc_geometries(
     geometries = Geometries()
 
     if len(edges) > 0:
-        converted_sketch_edges = sketch_edges_to_grpc_geometries(plane, [edges[0]])
+        converted_sketch_edges = sketch_edges_to_grpc_geometries([edges[0], plane])
         geometries.lines.extend(converted_sketch_edges[0])
         geometries.arcs.extend(converted_sketch_edges[1])
 
@@ -146,7 +146,7 @@ def one_profile_shape_to_grpc_geometries(
         if isinstance(faces[0], Polygon):
             geometries.circles.append(sketch_polygon_to_grpc_polygon(faces[0], plane))
         else:
-            converted_face_edges = sketch_edges_to_grpc_geometries(plane, faces[0].edges)
+            converted_face_edges = sketch_edges_to_grpc_geometries(faces[0].edges, plane)
             geometries.lines.extend(converted_face_edges[0])
             geometries.arcs.extend(converted_face_edges[1])
 
