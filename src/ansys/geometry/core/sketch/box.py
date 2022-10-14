@@ -66,15 +66,15 @@ class Box(SketchFace):
 
         half_h = height_magnitude / 2
         half_w = width_magnitude / 2
-        corner_1 = rotation @ [center.x.m - half_w, center.y.m + half_h, 0]
-        corner_2 = rotation @ [center.x.m + half_w, center.y.m + half_h, 0]
-        corner_3 = rotation @ [center.x.m + half_w, center.y.m - half_h, 0]
-        corner_4 = rotation @ [center.x.m - half_w, center.y.m - half_h, 0]
+        corner_1 = rotation @ [-half_w, half_h, 0]
+        corner_2 = rotation @ [half_w, half_h, 0]
+        corner_3 = rotation @ [half_w, -half_h, 0]
+        corner_4 = rotation @ [-half_w, -half_h, 0]
 
-        self._corner_1 = Point2D([corner_1[0], corner_1[1]], center.unit)
-        self._corner_2 = Point2D([corner_2[0], corner_2[1]], center.unit)
-        self._corner_3 = Point2D([corner_3[0], corner_3[1]], center.unit)
-        self._corner_4 = Point2D([corner_4[0], corner_4[1]], center.unit)
+        self._corner_1 = Point2D([center.x.m + corner_1[0], center.y.m + corner_1[1]], center.unit)
+        self._corner_2 = Point2D([center.x.m + corner_2[0], center.y.m + corner_2[1]], center.unit)
+        self._corner_3 = Point2D([center.x.m + corner_3[0], center.y.m + corner_3[1]], center.unit)
+        self._corner_4 = Point2D([center.x.m + corner_4[0], center.y.m + corner_4[1]], center.unit)
 
         self._width_segment1 = Segment(self._corner_1, self._corner_2)
         self._height_segment1 = Segment(self._corner_2, self._corner_3)

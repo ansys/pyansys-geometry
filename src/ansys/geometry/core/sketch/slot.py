@@ -42,8 +42,6 @@ class Slot(SketchFace):
 
         check_type(center, Point2D)
         self._center = center
-        if not self.plane.is_point_contained(center):
-            raise ValueError("Center must be contained in the plane.")
 
         check_type(width, (Quantity, Distance, int, float))
         check_type(height, (Quantity, Distance, int, float))
@@ -74,32 +72,42 @@ class Slot(SketchFace):
 
         half_h = height_magnitude / 2
         half_w = width_magnitude / 2
-        slot_corner_1 = rotation @ [center.x.m - half_w, center.y.m + half_h, 0]
-        slot_corner_2 = rotation @ [center.x.m + half_w, center.y.m + half_h, 0]
-        slot_corner_3 = rotation @ [center.x.m + half_w, center.y.m - half_h, 0]
-        slot_corner_4 = rotation @ [center.x.m - half_w, center.y.m - half_h, 0]
-        arc_1_center = rotation @ [half_w, 0, 0]
-        arc_2_center = rotation @ [-half_w, 0, 0]
+        rotated_corner_1 = rotation @ [-half_w, half_h, 0]
+        rotated_corner_2 = rotation @ [half_w, half_h, 0]
+        rotated_corner_3 = rotation @ [half_w, -half_h, 0]
+        rotated_corner_4 = rotation @ [-half_w, -half_h, 0]
+        rotated_arc_1_center = rotation @ [half_w, 0, 0]
+        rotated_arc_2_center = rotation @ [-half_w, 0, 0]
 
-        self._slot_corner_1 = Point2D([slot_corner_1[0], slot_corner_1[1]], center.unit)
-        self._slot_corner_2 = Point2D([slot_corner_2[0], slot_corner_2[1]], center.unit)
-        self._slot_corner_3 = Point2D([slot_corner_3[0], slot_corner_3[1]], center.unit)
-        self._slot_corner_4 = Point2D([slot_corner_4[0], slot_corner_4[1]], center.unit)
-        self._arc_1_center = Point2D([arc_1_center[0], arc_1_center[1]], center.unit)
-        self._arc_2_center = Point2D([arc_2_center[0], arc_2_center[1]], center.unit)
-
-        self._arc1 = Arc(
-            arc_1_center,
-            slot_corner_3,
-            slot_corner_2,
+        self._slot_corner_1 = Point2D(
+            [center.x.m + rotated_corner_1[0], center.y.m + rotated_corner_1[1]], center.unit
         )
+        self._slot_corner_2 = Point2D(
+            [center.x.m + rotated_corner_2[0], center.y.m + rotated_corner_2[1]], center.unit
+        )
+        self._slot_corner_3 = Point2D(
+            [center.x.m + rotated_corner_3[0], center.y.m + rotated_corner_3[1]], center.unit
+        )
+        self._slot_corner_4 = Point2D(
+            [center.x.m + rotated_corner_4[0], center.y.m + rotated_corner_4[1]], center.unit
+        )
+        self._arc_1_center = Point2D(
+            [center.x.m + rotated_arc_1_center[0], center.y.m + rotated_arc_1_center[1]],
+            center.unit,
+        )
+        self._arc_2_center = Point2D(
+            [center.x.m + rotated_arc_2_center[0], center.y.m + rotated_arc_2_center[1]],
+            center.unit,
+        )
+
+        self._arc1 = Arc(self._arc_1_center, self._slot_corner_3, self._slot_corner_2, True)
         self._arc2 = Arc(
-            arc_2_center,
-            slot_corner_1,
-            slot_corner_4,
+            self._arc_2_center,
+            self._slot_corner_1,
+            self._slot_corner_4,
         )
-        self._segment1 = Segment(slot_corner_2, slot_corner_1)
-        self._segment2 = Segment(slot_corner_4, slot_corner_3)
+        self._segment1 = Segment(self._slot_corner_2, self._slot_corner_1)
+        self._segment2 = Segment(self._slot_corner_4, self._slot_corner_3)
 
         self._edges.append(self._segment1)
         self._edges.append(self._arc2)

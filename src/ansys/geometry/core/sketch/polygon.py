@@ -156,10 +156,10 @@ class Polygon(SketchFace):
         pyvista.PolyData
             The vtk pyvista.Polydata configuration.
         """
-
+        # Compensate z orientation by -np.pi / 2 to match geometry service polygon processing
         rotation = Matrix33(
             spatial_rotation.from_euler(
-                "xyz", [0, 0, self._angle_offset.value.m_as(UNIT_ANGLE)], degrees=False
+                "xyz", [0, 0, -np.pi / 2 + self._angle_offset.value.m_as(UNIT_ANGLE)], degrees=False
             ).as_matrix()
         )
 
@@ -169,13 +169,13 @@ class Polygon(SketchFace):
                     rotation[0, 0],
                     rotation[0, 1],
                     rotation[0, 2],
-                    0,
+                    self.center.x.m_as(UNIT_LENGTH),
                 ],
                 [
                     rotation[1, 0],
                     rotation[1, 1],
                     rotation[1, 2],
-                    0,
+                    self.center.y.m_as(UNIT_LENGTH),
                 ],
                 [
                     rotation[2, 0],
@@ -188,7 +188,6 @@ class Polygon(SketchFace):
         )
 
         return pv.Polygon(
-            [self.center.x.m_as(UNIT_LENGTH), self.center.y.m_as(UNIT_LENGTH), 0],
-            self.inner_radius.m_as(UNIT_LENGTH),
+            radius=self.inner_radius.m_as(UNIT_LENGTH),
             n_sides=self.n_sides,
         ).transform(transformation_matrix)
