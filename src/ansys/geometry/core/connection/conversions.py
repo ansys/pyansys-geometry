@@ -32,7 +32,8 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 def unit_vector_to_grpc_direction(unit_vector: UnitVector3D) -> GRPCDirection:
-    """Marshals a :class:`UnitVector3D` to a UnitVector gRPC message of the Geometry Service.
+    """Marshals a :class:`UnitVector3D <ansys.geometry.core.math.vector.UnitVector3D>` to
+    a UnitVector gRPC message of the Geometry Service.
 
     Parameters
     ----------
@@ -68,7 +69,8 @@ def vector_components_to_grpc_direction(x: Real, y: Real, z: Real) -> GRPCDirect
 
 
 def frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
-    """Marshals a :class:`Frame` to a Frame gRPC message of the Geometry Service.
+    """Marshals a :class:`Frame <ansys.geometry.core.math.frame.Frame>` to a Frame
+    gRPC message of the Geometry Service.
 
     Parameters
     ----------
@@ -88,7 +90,8 @@ def frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
 
 
 def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
-    """Marshals a :class:`Plane` to a Plane gRPC message of the Geometry Service.
+    """Marshals a :class:`Plane <ansys.geometry.math.plane.Plane>` to a Plane
+    gRPC message of the Geometry Service.
 
     Parameters
     ----------
@@ -259,7 +262,8 @@ def sketch_edges_to_grpc_geometries(
 
 
 def arc_to_grpc_arc(arc: Arc) -> GRPCArc:
-    """Marshals an :class:`Arc` to an Arc gRPC message of the Geometry Service.
+    """Marshals an :class:`Arc <ansys.geometry.core.shapes.arc.Arc>` to an Arc
+    gRPC message of the Geometry Service.
 
     Parameters
     ----------
@@ -311,7 +315,8 @@ def sketch_arc_to_grpc_arc(arc: SketchArc, plane: Plane) -> GRPCArc:
 
 
 def ellipse_to_grpc_ellipse(ellipse: Ellipse) -> GRPCEllipse:
-    """Marshals an :class:`Ellipse` to an Ellipse gRPC message of the Geometry Service.
+    """Marshals an :class:`Ellipse <ansys.geometry.core.shapes.ellipse.Ellipse>` to
+    an Ellipse gRPC message of the Geometry Service.
 
     Parameters
     ----------
@@ -331,7 +336,8 @@ def ellipse_to_grpc_ellipse(ellipse: Ellipse) -> GRPCEllipse:
 
 
 def circle_to_grpc_circle(circle: Circle) -> GRPCCircle:
-    """Marshals a :class:`Circle` to a Circle gRPC message of the Geometry Service.
+    """Marshals a :class:`Circle <ansys.geometry.core.shapes.circle.Circle>` to
+    a Circle gRPC message of the Geometry Service.
 
     Parameters
     ----------
@@ -372,7 +378,8 @@ def sketch_circle_to_grpc_circle(circle: SketchCircle, plane: Plane) -> GRPCCirc
 
 
 def point_to_grpc_point(point: Point3D) -> GRPCPoint:
-    """Marshals a :class:`Point3D` to a Point gRPC message of the Geometry Service.
+    """Marshals a :class:`Point3D <ansys.geometry.core.math.point.Point3D>` to
+    a Point gRPC message of the Geometry Service.
 
     Parameters
     ----------
@@ -417,7 +424,8 @@ def point2D_to_grpc_point(plane: Plane, point2d: Point2D) -> GRPCPoint:
 
 
 def polygon_to_grpc_polygon(polygon: Polygon) -> GRPCPolygon:
-    """Marshals a :class:`Polygon` to a Polygon gRPC message of the Geometry Service.
+    """Marshals a :class:`Polygon <ansys.geometry.core.shapes.polygon.Polygon>` to
+    a Polygon gRPC message of the Geometry Service.
 
     Parameters
     ----------
@@ -437,7 +445,8 @@ def polygon_to_grpc_polygon(polygon: Polygon) -> GRPCPolygon:
 
 
 def segment_to_grpc_line(line: Segment) -> GRPCLine:
-    """Marshals a :class:`Segment` to a Line gRPC message of the Geometry Service.
+    """Marshals a :class:`Segment <ansys.geometry.core.shapes.line.Segment>` to
+    a Line gRPC message of the Geometry Service.
 
     Parameters
     ----------
