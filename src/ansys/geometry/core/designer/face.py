@@ -233,8 +233,10 @@ class Face:
         Returns
         -------
         UnitVector3D
-            The :class:`UnitVector3D` object evaluated at the given U and V coordinates.
-            This :class:`UnitVector3D` will be perpendicular to the surface at that
+            The :class:`UnitVector3D <ansys.geometry.core.math.vector.unitVector3D>`
+            object evaluated at the given U and V coordinates.
+            This :class:`UnitVector3D <ansys.geometry.core.math.vector.unitVector3D>`
+            will be perpendicular to the surface at that
             given UV coordinates.
         """
         self._grpc_client.log.debug(f"Requesting face normal from server with (u,v)=({u},{v}).")
@@ -266,7 +268,8 @@ class Face:
         Returns
         -------
         Point
-            The :class:`Point3D` object evaluated at the given U and V coordinates.
+            The :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+            object evaluated at the given U and V coordinates.
         """
         self._grpc_client.log.debug(f"Requesting face point from server with (u,v)=({u},{v}).")
         response = self._faces_stub.EvaluateFace(EvaluateFaceRequest(face=self.id, u=u, v=v)).point

@@ -67,9 +67,10 @@ def test_check_pint_unit_compatibility():
 
 def test_check_ndarray_is_float_int():
     """
-    Test that :class:`numpy.ndarray` object contains ``float`` or ``int`` values only.
+    Test that :class:`numpy.ndarray <numpy.ndarray>` object
+    contains ``float`` or ``int`` values only.
 
-    The object provided must be a :class:`numpy.ndarray`.
+    The object provided must be a :class:`numpy.ndarray <numpy.ndarray>`.
     """
 
     # Create several arrays

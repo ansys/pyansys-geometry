@@ -27,13 +27,13 @@ class Cone:
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D]
         Centered origin of the ``Cone``.
-    direction_x: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+    direction_x : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         X-plane direction.
-    direction_y: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+    direction_y : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         Y-plane direction.
-    radius: Real
+    radius : Real
         Radius of ``Cone``.
-    half_angle: Real
+    half_angle : Real
         Half angle of the apex, determining the upward angle.
     length_unit : Unit, optional
         Units employed to define the radius, by default ``UNIT_LENGTH``.
