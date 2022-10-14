@@ -2,7 +2,7 @@ PyGeometry designer
 *******************
 
 Design sub-package provides a ``Design`` for organizing geometry assemblies and synchronizes to
-a supporting geometry service instance.*
+a supporting geometry service instance.
 
 Defining the model
 ------------------
@@ -39,8 +39,39 @@ You can add the data structure and property for individual materials.
 Create bodies by extruding the sketch
 -------------------------------------
 
-Projects all of the specified geometries onto the body. You can extrude the sketch from the bodies.
+Projects all of the specified geometries onto the body. You can Create a solid body by
+extruding the given sketch profile up to the given distance.
 
 .. code:: python
 
     body = design.extrude_sketch("JustACircle", sketch, Quantity(10, UNITS.mm))
+
+Create bodies by extruding the face
+-----------------------------------
+
+It is also possible to extrude the face profile by the given distance to create a new solid body.
+There are no modifications against the body containing the source face.
+
+.. code:: python
+    
+    longer_body = design.extrude_face(
+        "LongerCircleFace", body.faces[0], Quantity(20, UNITS.mm)
+    )
+
+
+Addition to it it is also possible to translate, tessellate and project curves in the bodies.
+
+* :class:`Body() <ansys.geometry.core.designer.body.Body>`
+* :class:`Component() <ansys.geometry.core.designer.component.Component>`
+
+Download and save design
+------------------------
+
+The PyGeometry allows to save and download the design to disk on the active geometry server instance.
+
+.. code:: python
+
+    file = "path/to/download"
+    design.download(file, as_stream=False)
+
+* :class:`Design() <ansys.geometry.core.designer.design.Design>`

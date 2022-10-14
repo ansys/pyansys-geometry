@@ -32,7 +32,7 @@ Now, you can start the service with:
 
 
 Geometry service is now active and you can start creating the geometry model 
-by initializing the :ref:`Basic sketching shapes`.
+by initializing the :ref:`PyGeometry math and sketch concepts <ref_pygeometry_math_and_sketching_concept_>`.
 
 .. code:: python
 
