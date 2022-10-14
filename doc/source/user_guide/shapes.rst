@@ -22,7 +22,7 @@ PyGeometry Sketch contains two fundamental constructs:
 
 To get initialize the sketch, first you can specify the :class:`Plane() <ansys.geometry.core.math.plane.Plane>` which
 represent a plane in space, from which other PyGeometry objects can be located. They have a origin and a coordinate system.
-Most methods that create an object is be relative to the current plane.
+Most methods that create an object are relative to the current plane.
 The default work plane XY plane with (0,0) as origin. You can create 2D objects in the plane and 
 PyGeometry then convert it to the global coordinate system, so that
 the 2D features executes as expected. 
