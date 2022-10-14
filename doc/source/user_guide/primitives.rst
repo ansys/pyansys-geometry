@@ -22,8 +22,8 @@ The base values of the PyGeometry is as follows:
 | UNIT_ANGLE        | radian  |
 +-------------------+---------+ 
 
-* :class:`Accuracy() <ansys.geometry.core.misc.accuracy.Accuracy>`
-* :class:`Measurements() <ansys.geometry.core.misc.measurements.Measurement>`
+* :class:`Accuracy() <ansys.geometry.core.misc.accuracy>`
+* :class:`Measurements() <ansys.geometry.core.misc.measurements>`
 
 Plane concept
 -------------
@@ -39,4 +39,4 @@ the 2D features executes as expected.
     origin = Point3D([42, 99, 13])
     plane = Plane(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
 
-See :class:`Plane() <ansys.geometry.core.math.plane.Plane>` for further details.
+See :class:`Plane() <ansys.geometry.core.math.plane>` for further details.

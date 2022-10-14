@@ -6,6 +6,7 @@ a supporting geometry service instance.
 
 Defining the model
 ------------------
+
 .. code:: python
 
     # Create a Sketch and draw a circle (all client side)
@@ -59,8 +60,8 @@ There are no modifications against the body containing the source face.
 
 Design bodies are also possible to translate, tessellate and project curves in the bodies.
 
-* :class:`Body() <ansys.geometry.core.designer.body.Body>`
-* :class:`Component() <ansys.geometry.core.designer.component.Component>`
+* :class:`Body() <ansys.geometry.core.designer.body>`
+* :class:`Component() <ansys.geometry.core.designer.component>`
 
 Download and save design
 ------------------------
@@ -72,4 +73,4 @@ The PyGeometry allows to save and download the design to disk on the active geom
     file = "path/to/download"
     design.download(file, as_stream=False)
 
-* :class:`Design() <ansys.geometry.core.designer.design.Design>`
+* :class:`Design() <ansys.geometry.core.designer.design>`

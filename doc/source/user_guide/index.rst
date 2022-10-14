@@ -29,7 +29,7 @@ Simple example
 1. start the geometry instance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The :class:`Modelar()<ansys.geometry.core.modelar.Modelar()>` method
+The :class:`Modelar()<ansys.geometry.core.modelar>` method
 within the ``ansys-geometry-core`` library creates an instance of
 Geometry service. By default ``Modeler`` connects to ``127.0.0.1`` 
 (``'localhost'``) at the port 50051. You can change this by modifying
@@ -42,8 +42,9 @@ Now, you can start the service with:
     >>> from ansys.geometry.core import Modeler
     >>> modeler = Modeler()
 
-2. create geometry models
+1. create geometry models
 ~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Geometry service is now active and you can start creating the geometry model 
 by initializing the :ref:`Sketch <ref_sketch>` and :ref:`Primitives <ref_primitives>`.
 
