@@ -156,6 +156,6 @@ class Polygon(SketchFace):
         """
         return pv.Polygon(
             [self.center.x.m_as(UNIT_LENGTH), self.center.y.m_as(UNIT_LENGTH), 0],
-            self.inner_radius,
+            self.inner_radius.m_as(UNIT_LENGTH),
             n_sides=self.n_sides,
         )

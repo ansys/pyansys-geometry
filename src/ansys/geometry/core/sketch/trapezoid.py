@@ -173,9 +173,9 @@ class Trapezoid(SketchFace):
         """
         return pv.Rectangle(
             [
-                [self.point1.x.m_as(UNIT_LENGTH), self.point1.y.m_as(UNIT_LENGTH), 0],
-                [self.point2.x.m_as(UNIT_LENGTH), self.point2.y.m_as(UNIT_LENGTH), 0],
-                [self.point3.x.m_as(UNIT_LENGTH), self.point3.y.m_as(UNIT_LENGTH), 0],
-                [self.point4.x.m_as(UNIT_LENGTH), self.point4.y.m_as(UNIT_LENGTH), 0],
+                [self._point1.x.m_as(UNIT_LENGTH), self._point1.y.m_as(UNIT_LENGTH), 0],
+                [self._point2.x.m_as(UNIT_LENGTH), self._point2.y.m_as(UNIT_LENGTH), 0],
+                [self._point3.x.m_as(UNIT_LENGTH), self._point3.y.m_as(UNIT_LENGTH), 0],
+                [self._point4.x.m_as(UNIT_LENGTH), self._point4.y.m_as(UNIT_LENGTH), 0],
             ]
         )

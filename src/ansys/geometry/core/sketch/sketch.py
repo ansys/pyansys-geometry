@@ -439,7 +439,7 @@ class Sketch:
         Sketch
             The revised sketch state ready for further sketch actions.
         """
-        box = Box(self._plane, center, width, height, angle)
+        box = Box(center, width, height, angle)
         return self.face(box, tag)
 
     def slot(
@@ -470,7 +470,7 @@ class Sketch:
         Slot
             An object representing the slot added to the sketch.
         """
-        slot = Slot(self._plane, center, width, height, angle)
+        slot = Slot(center, width, height, angle)
         return self.face(slot, tag)
 
     def ellipse(
@@ -502,7 +502,7 @@ class Sketch:
             An object representing the ellipse added to the sketch.
 
         """
-        ellipse = Ellipse(self._plane, center, semi_major_axis, semi_minor_axis, angle)
+        ellipse = Ellipse(center, semi_major_axis, semi_minor_axis, angle)
         return self.face(ellipse, tag)
 
     def polygon(
@@ -534,7 +534,7 @@ class Sketch:
             An object for modelling polygonal shapes.
 
         """
-        polygon = Polygon(self._plane, center, inner_radius, sides, angle)
+        polygon = Polygon(center, inner_radius, sides, angle)
         return self.face(polygon, tag)
 
     def _single_point_context_reference(self) -> Point2D:
