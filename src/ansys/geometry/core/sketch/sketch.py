@@ -134,6 +134,18 @@ class Sketch:
 
         return self
 
+    def select(self, *tags: str) -> "Sketch":
+        """
+        Add all objects to current context that match the provided tags.
+        """
+
+        self._current_sketch_context = []
+
+        for tag in tags:
+            self._current_sketch_context.extend(self._tags[tag])
+
+        return self
+
     def segment(self, start: Point2D, end: Point2D, tag: Optional[str] = None) -> "Sketch":
         """
         Add a segment sketch object to the sketch plane.
@@ -601,8 +613,8 @@ class Sketch:
         pl = Plotter()
         sketches_polydata.extend(
             [
-                edge.visualization_polydata.transform(self._plane.transformation_matrix)
-                for edge in self._current_sketch_context
+                sketch_item.visualization_polydata.transform(self._plane.transformation_matrix)
+                for sketch_item in self._current_sketch_context
             ]
         )
 
