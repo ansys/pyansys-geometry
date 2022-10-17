@@ -60,9 +60,8 @@ by initializing the :ref:`Sketch <ref_sketch>` and :ref:`Primitives <ref_primiti
 
     # Create the sketch
     sketch = Sketch(plane)
-    sketch.circle(Point2D([1, 1]), 30*UNITS.m, tag="Circle")
-    sketch.select("Circle")
-    sketch.plot_selection()
+    sketch.circle(Point2D([1, 1]), 30*UNITS.m)
+    sketch.plot()
 
 .. jupyter-execute::
     :hide-code:
@@ -73,7 +72,6 @@ by initializing the :ref:`Sketch <ref_sketch>` and :ref:`Primitives <ref_primiti
     origin = Point3D([0, 0, 10])
     plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
     sketch = Sketch(plane)
-    sketch.circle(Point2D([1, 1]), 30*UNITS.m, tag="Circle")
-    sketch.select("Circle")
-    sketch.plot_selection()
+    sketch.circle(Point2D([1, 1]), 30*UNITS.m)
+    sketch.plot()
 
