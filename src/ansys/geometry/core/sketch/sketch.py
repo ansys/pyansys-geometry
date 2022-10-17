@@ -622,6 +622,7 @@ class Sketch:
 
         sketches_polydata = []
         pl = Plotter()
+
         sketches_polydata.extend(
             [
                 sketch_item.visualization_polydata.transform(self._plane.transformation_matrix)
