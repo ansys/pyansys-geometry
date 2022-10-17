@@ -5,5 +5,5 @@ API
 Direct API
 Fluent API
 Geometry Service
-Geometry
+Geometry models
 PyGeometry
