@@ -28,17 +28,20 @@ Install the PyGeometry image
 
    docker run --name ans_geo -e -p 50051:50051 ghcr.io/pyansys/pygeometry:latest
 
-Connect to the PyGeometry Service
----------------------------------
+
+Connect to Geometry Service
+---------------------------
+
+After starting the geometry service using ``docker``, connect to the service with:
 
 .. code:: python
    
    >>> from ansys.geometry.core import Modeler
    >>> modeler = Modeler()
 
-By default ``Modeler`` will connect to ``127.0.0.1`` (``'localhost'``) at the
+By default ``Modeler`` connects to ``127.0.0.1`` (``'localhost'``) at the
 port 50051. You can change this by modifying the ``host`` and ``port``
-parameters of ``Modeler``, but note that you will have to also modify this in
+parameters of ``Modeler``, but you have to also modify this in
 your ``docker run`` command by changing ``<HOST-PORT>-50051``.
 
 If you wish to modify the defaults, modify the following environment variables:

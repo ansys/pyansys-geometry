@@ -9,16 +9,20 @@ PyGeometry is supported on Python versions 3.7+.
 Package dependencies
 --------------------
 
-PyGeometry dependencies are automatically checked when packages are installed. The following projects are required dependencies of PyGeometry:
+PyGeometry dependencies are automatically checked when packages are installed.
+The following projects are required dependencies of PyGeometry:
 
-ansys-api-geometry is the gRPC code generated from protobuf files.
-NumPy https://pypi.org/project/numpy/ - NumPy arrays provide a core foundation for data array access for PyGeometry.
-Pint https://pypi.org/project/Pint/  - Pint uses for the measurement units.
-pyvista https://pypi.org/project/pyvista/ - PyVista used for interactive 3D plotting.
-scipy https://pypi.org/project/scipy/ - For geometric transformations.
+* `ansys-api-geometry` - The gRPC code generated from Protobuf files.
+* `NumPy <https://pypi.org/project/numpy/>`_ - NumPy arrays provide a core foundation for data array access for PyGeometry.
+* `Pint <https://pypi.org/project/Pint/>`_ - Pint uses for the measurement units.
+* `PyVista <https://pypi.org/project/pyvista/>`_ - PyVista used for interactive 3D plotting.
+* `Scipy <https://pypi.org/project/scipy/>`_ - For geometric transformations.
+
+Installing PyGeometry
+=====================
 
 Python module
-^^^^^^^^^^^^^
+-------------
 
 In order to install PyGeometry, make sure you have the latest version of
 `pip`_. To do so, run:
@@ -48,7 +52,7 @@ You can verify your development installation by running:
       tox
 
 Offline mode installation
-^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------
 
 If you lack an internet connection on your installation machine (or you do not have access to the
 private PyPi package), the recommended way of installing PyGeometry is downloading the wheelhouse
@@ -66,14 +70,14 @@ For example, on Linux with Python 3.7, unzip the wheelhouse archive and install 
     unzip ansys-geometry-core-v0.1.dev0-wheelhouse-Linux-3.7.zip wheelhouse
     pip install ansys-geometry-core -f wheelhouse --no-index --upgrade --ignore-installed
 
-If you're on Windows with Python 3.9, unzip to a wheelhouse directory and install using the same command as above.
+If you're on Windows with Python 3.9, unzip to a wheelhouse directory and install using the same command as preceding.
 
 Consider installing using a `virtual environment <https://docs.python.org/3/library/venv.html>`_.
 
 Verify your installation
 ------------------------
 
-Check the `Modelar()` connection by:
+Check the :class:`Modeler() <ansys.geometry.core.modelar>` connection by:
 
 .. code:: python
 
@@ -86,6 +90,9 @@ Check the `Modelar()` connection by:
     Ansys Geometry Modeler Client (0x205c5c16e00)
     Target:     localhost:652
     Connection: Healthy
+
+If you see a response from the server, you are  ready to get started using PyGeometry as a service.
+For details regarding the PyGeometry interface, see :ref:`user guide <ref_user_guide>`.
 
 .. LINKS AND REFERENCES
 .. _pip: https://pypi.org/project/pip/
