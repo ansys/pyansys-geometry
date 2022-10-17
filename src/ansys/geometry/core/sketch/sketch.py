@@ -4,10 +4,7 @@ from typing import Dict, List, Optional, Union
 
 from pint import Quantity
 
-from ansys.geometry.core.math import Plane, UnitVector3D, Vector3D
-from ansys.geometry.core.math.constants import ZERO_POINT2D
-from ansys.geometry.core.math.point import Point2D
-from ansys.geometry.core.math.vector import Vector2D
+from ansys.geometry.core.math import ZERO_POINT2D, Plane, Point2D, Vector2D
 from ansys.geometry.core.misc import Angle, Distance
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.box import Box
@@ -520,7 +517,7 @@ class Sketch:
     def polygon(
         self,
         center: Point2D,
-        inner_radius: Union[Vector3D, UnitVector3D],
+        inner_radius: Union[Quantity, Distance],
         sides: int,
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         tag: Optional[str] = None,
