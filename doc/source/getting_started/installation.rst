@@ -11,8 +11,8 @@ The following projects are required dependencies of PyGeometry:
 
 * `ansys-api-geometry` - The gRPC code generated from Protobuf files.
 * `NumPy <https://pypi.org/project/numpy/>`_ - NumPy arrays provide a core foundation for data array access for PyGeometry.
-* `Pint <https://pypi.org/project/Pint/>`_ - Pint uses for the measurement units.
-* `PyVista <https://pypi.org/project/pyvista/>`_ - PyVista used for interactive 3D plotting.
+* `Pint <https://pypi.org/project/Pint/>`_ - Pint is used for the measurement units.
+* `PyVista <https://pypi.org/project/pyvista/>`_ - PyVista is used for interactive 3D plotting.
 * `Scipy <https://pypi.org/project/scipy/>`_ - For geometric transformations.
 
 PyPI
