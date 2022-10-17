@@ -1,4 +1,9 @@
 ANSYS
 Ansys
 ansys
+API
+Direct API
+Fluent API
+Geometry Service
+Geometry models
 PyGeometry
