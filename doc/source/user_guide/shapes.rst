@@ -21,7 +21,7 @@ You can initialize the sketch by:
 
 The sketch can be constructed using different approaches.
 
-Fluent based approach (Fluent API)
+Fluent-based approach (Fluent API)
 ==================================
 
 One of the key features of this approach is keeping an active context based upon the previously created 
@@ -55,10 +55,10 @@ It is also able to get a desired shape of the sketch object by taking advantage 
     )
     sketch.plot()
 
-Elements based approach (Direct API)
-====================================
+Element-based approach (Direct API)
+===================================
 
-You can also create multiple elements independently and combine them all together in the single plane.
+You can also create multiple elements independently and combine them all together in a single plane.
 
 .. code:: python
 
@@ -74,4 +74,4 @@ You can also create multiple elements independently and combine them all togethe
     sketch.triangle(Point2D([-10, 10]), Point2D([5, 6]), Point2D([-10, -10]), tag="triangle2")
     sketch.plot()
 
-For further details and familiarizing with different sketch shapes, refer to :class:`Sketch() <ansys.geometry.core.sketch>`
+For further details and familiarizing with different sketch shapes, refer to :class:`Sketch() <ansys.geometry.core.sketch>`.
