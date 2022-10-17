@@ -1,11 +1,11 @@
-Geometry Service using docker
+Geometry Service using Docker
 =============================
 
 Install the PyGeometry image
 ----------------------------
 
-#. Using your GitHub credentials, download the docker image in the `PyGeometry <https://github.com/pyansys/pygeometry>`_ repository.
-#. If you have docker installed, use a GitHub personal access token (PAT) with packages read permission to authorize docker 
+#. Using your GitHub credentials, download the Docker image in the `PyGeometry <https://github.com/pyansys/pygeometry>`_ repository.
+#. If you have Docker installed, use a GitHub personal access token (PAT) with packages read permission to authorize Docker 
    to access this repository. For more information,
    see `creating a personal access token <https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token>`_.
 
