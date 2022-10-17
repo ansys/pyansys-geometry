@@ -9,7 +9,7 @@ PyGeometry Sketch contains two fundamental constructs:
 * Edges - a connection between two or more Point2D along a particular path. It represents open shapes such as arc, lines.
 * Faces - a set of edges that enclose a surface representing closed shapes such as circle, triangle and so on.
 
-To get initialize the sketch, first you can specify the :class:`Plane() <ansys.geometry.core.math.plane>` which
+To initialize the sketch, first you can specify the :class:`Plane() <ansys.geometry.core.math.plane>` which
 represents a plane in space, from which other PyGeometry objects can be located.
 
 You can initialize the sketch by:
