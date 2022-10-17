@@ -46,6 +46,13 @@ your ``docker run`` command by changing ``<HOST-PORT>-50051``.
 
 If you wish to modify the defaults, modify the following environment variables:
 
+Directly from ``Modeler`` function:
+
+.. code:: python
+   
+   >>> from ansys.geometry.core import Modeler
+   >>> modeler = Modeler(host="127.0.0.1", port=50051)
+
 If on Linux/Mac OS:
 
 .. code::
