@@ -26,7 +26,7 @@ PyGeometry is a Python wrapper for the Ansys Geometry Service. The key features 
 Simple interactive example
 ==========================
 
-1. start the geometry instance
+#. Start the geometry instance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The :class:`Modeler() <ansys.geometry.core.modelar>` class
