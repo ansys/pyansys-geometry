@@ -1,5 +1,5 @@
-PyGeometry service using docker
-===============================
+Geometry service using docker
+=============================
 
 Install the PyGeometry image
 ----------------------------
@@ -24,15 +24,15 @@ Install the PyGeometry image
 
 #. Launch the Geometry Service locally using ``docker`` with:
 
-.. code:: bash
+   .. code:: bash
 
-   docker run --name ans_geo -e -p 50051:50051 ghcr.io/pyansys/pygeometry:latest
+      docker run --name ans_geo -e -p 50051:50051 ghcr.io/pyansys/pygeometry:latest
 
 
 Connect to Geometry Service
 ---------------------------
 
-After starting the geometry service using ``docker``, connect to the service with:
+After launching, connect to the service with:
 
 .. code:: python
    

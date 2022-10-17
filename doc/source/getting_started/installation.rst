@@ -1,14 +1,11 @@
 Installation
 ############
 
-Dependencies
-============
-
-PyGeometry is supported on Python versions 3.7+. 
-
 Package dependencies
 --------------------
 
+PyGeometry is supported on Python versions 3.7+. Previous versions of Python are
+no longer support as outlined `here <https://python3statement.org/>`_. 
 PyGeometry dependencies are automatically checked when packages are installed.
 The following projects are required dependencies of PyGeometry:
 
@@ -18,24 +15,21 @@ The following projects are required dependencies of PyGeometry:
 * `PyVista <https://pypi.org/project/pyvista/>`_ - PyVista used for interactive 3D plotting.
 * `Scipy <https://pypi.org/project/scipy/>`_ - For geometric transformations.
 
-Installing PyGeometry
-=====================
-
-Python module
--------------
+PyPI
+----
 
 In order to install PyGeometry, make sure you have the latest version of
 `pip`_. To do so, run:
 
-.. code:: bash
+   .. code:: bash
 
-   python -m pip install -U pip
+      python -m pip install -U pip
 
 Then, you can simply execute:
 
-.. code:: bash
+   .. code:: bash
 
-   poetry run python -m pip install ansys-geometry-core
+      poetry run python -m pip install ansys-geometry-core
 
 Alternatively, install the latest from `PyGeometry`_ GitHub via:
 
@@ -77,7 +71,7 @@ Consider installing using a `virtual environment <https://docs.python.org/3/libr
 Verify your installation
 ------------------------
 
-Check the :class:`Modeler() <ansys.geometry.core.modelar>` connection by:
+Check the :class:`Modeler() <ansys.geometry.core.modelar()>` connection by:
 
 .. code:: python
 
@@ -91,7 +85,7 @@ Check the :class:`Modeler() <ansys.geometry.core.modelar>` connection by:
     Target:     localhost:652
     Connection: Healthy
 
-If you see a response from the server, you are  ready to get started using PyGeometry as a service.
+If you see a response from the server, you are ready to get started using PyGeometry as a service.
 For details regarding the PyGeometry interface, see :ref:`user guide <ref_user_guide>`.
 
 .. LINKS AND REFERENCES

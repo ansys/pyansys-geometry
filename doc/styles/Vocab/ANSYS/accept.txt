@@ -10,3 +10,5 @@ PyGeometry
 api
 Protobuf
 Scipy
+PyPI
+PyPi
