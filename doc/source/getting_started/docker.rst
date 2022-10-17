@@ -1,4 +1,4 @@
-Geometry service using docker
+Geometry Service using docker
 =============================
 
 Install the PyGeometry image
