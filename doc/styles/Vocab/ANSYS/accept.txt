@@ -1,7 +1,8 @@
 ANSYS
 Ansys
 ansys
-PyGeometry
-Fluent API
-Direct API
 API
+Direct API
+Fluent API
+Geometry Service
+PyGeometry

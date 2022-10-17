@@ -3,14 +3,14 @@
 Sketch
 *******
 
-In PyGeometry, a `Sketch` is a class used to build 2D basic shape elements.
+In PyGeometry, a :class:`Sketch() <ansys.geometry.core.sketch>` is a class used to build 2D basic shape elements.
 PyGeometry Sketch contains two fundamental constructs:
 
-* Edges -  a connection between two or more Point2D along a particular path. It represents open shapes such as arc, lines.
+* Edges - a connection between two or more Point2D along a particular path. It represents open shapes such as arc, lines.
 * Faces - a set of edges that enclose a surface representing closed shapes such as circle, triangle and so on.
 
 To get initialize the sketch, first you can specify the :class:`Plane() <ansys.geometry.core.math.plane>` which
-represent a plane in space, from which other PyGeometry objects can be located.
+represents a plane in space, from which other PyGeometry objects can be located.
 
 You can initialize the sketch by:
 
@@ -35,10 +35,10 @@ edges to use as a reference start point for additional objects.
     )
     sketch.plot()
 
-Here sketch has been created on with its origin, subsequently calls segment methods which takes the first segment 
-edges to use as a reference start point for the second segment.  
+The sketch has been created with its origin as a starting point. Subsequent calls create segments,
+which take as a starting point the last point of the previous edge.  
 
-It is also able to get the sketch with a newly created sketch objects with user-defined labels.
+It is also able to get a desired shape of the sketch object by taking advantage of the user-defined labels.
 
 .. code:: python
     
@@ -58,7 +58,7 @@ It is also able to get the sketch with a newly created sketch objects with user-
 Elements based approach (Direct API)
 ====================================
 
-You can start creating multiple elements and combine all together with edges or faces in the single plane.
+You can also create multiple elements independently and combine them all together in the single plane.
 
 .. code:: python
 
@@ -74,4 +74,4 @@ You can start creating multiple elements and combine all together with edges or 
     sketch.triangle(Point2D([-10, 10]), Point2D([5, 6]), Point2D([-10, -10]), tag="triangle2")
     sketch.plot()
 
-For further details and get familiarize with different sketch shapes, refer :class:`Sketch() <ansys.geometry.core.sketch>`
+For further details and familiarizing with different sketch shapes, refer to :class:`Sketch() <ansys.geometry.core.sketch>`

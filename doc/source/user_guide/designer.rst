@@ -2,7 +2,7 @@ Designer
 ********
 
 Design sub-package provides a ``Design`` for organizing geometry assemblies and synchronizes to
-a supporting geometry service instance.
+a supporting Geometry Service instance.
 
 Defining the model
 ------------------
@@ -40,7 +40,7 @@ Create bodies by extruding the sketch
 -------------------------------------
 
 Projects all of the specified geometries onto the body. You can create a solid body by
-extruding the given sketch profile up to the given distance.
+extruding the given sketch profile by a given distance.
 
 .. code:: python
 
@@ -49,7 +49,7 @@ extruding the given sketch profile up to the given distance.
 Create bodies by extruding the face
 -----------------------------------
 
-It is also possible to extrude the face profile by the given distance to create a new solid body.
+It is also possible to extrude a face profile by a given distance to create a new solid body.
 There are no modifications against the body containing the source face.
 
 .. code:: python
@@ -58,7 +58,7 @@ There are no modifications against the body containing the source face.
         "LongerCircleFace", body.faces[0], Quantity(20, UNITS.mm)
     )
 
-Design bodies are also possible to translate, tessellate, and project curves in the bodies.
+Design bodies can also be translated, tessellated, and curves can be projected onto them.
 
 * :class:`Body() <ansys.geometry.core.designer.body>`
 * :class:`Component() <ansys.geometry.core.designer.component>`
@@ -66,7 +66,7 @@ Design bodies are also possible to translate, tessellate, and project curves in 
 Download and save design
 ------------------------
 
-With PyGeometry you can save and download the design onto the disk of the active geometry server instance.
+With PyGeometry you can save to disk or download the design of the active Geometry Server instance.
 
 .. code:: python
 
