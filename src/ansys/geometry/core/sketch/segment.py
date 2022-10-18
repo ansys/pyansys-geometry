@@ -5,8 +5,12 @@ from pint import Quantity
 import pyvista as pv
 
 from ansys.geometry.core.math import Point2D
-from ansys.geometry.core.misc import UNIT_LENGTH, check_ndarray_is_all_nan, check_type
-from ansys.geometry.core.misc.checks import check_type_equivalence
+from ansys.geometry.core.misc import (
+    UNIT_LENGTH,
+    check_ndarray_is_all_nan,
+    check_type,
+    check_type_equivalence,
+)
 from ansys.geometry.core.sketch.edge import SketchEdge
 
 
@@ -99,11 +103,11 @@ class Segment(SketchEdge):
         """
         return pv.Line(
             [
-                self.start.x.m_as(self.start.base_unit),
-                self.start.y.m_as(self.start.base_unit),
+                self.start.x.m_as(UNIT_LENGTH),
+                self.start.y.m_as(UNIT_LENGTH),
                 0,
             ],
-            [self.end.x.m_as(self.end.base_unit), self.end.y.m_as(self.end.base_unit), 0],
+            [self.end.x.m_as(UNIT_LENGTH), self.end.y.m_as(UNIT_LENGTH), 0],
         )
 
     def __eq__(self, other: "Segment") -> bool:

@@ -8,10 +8,8 @@ import pyvista as pv
 from scipy.integrate import quad
 from scipy.spatial.transform import Rotation as spatial_rotation
 
-from ansys.geometry.core.math import Point2D
-from ansys.geometry.core.math.matrix import Matrix33, Matrix44
-from ansys.geometry.core.misc import Angle, Distance, check_type
-from ansys.geometry.core.misc.measurements import UNIT_ANGLE, UNIT_LENGTH
+from ansys.geometry.core.math import Matrix33, Matrix44, Point2D
+from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance, check_type
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
 
@@ -40,10 +38,11 @@ class Ellipse(SketchFace):
     ):
         """Initializes the ellipse shape."""
         super().__init__()
-        check_type(center, Point2D)
 
+        check_type(center, Point2D)
         check_type(semi_major_axis, (Quantity, Distance))
         check_type(semi_minor_axis, (Quantity, Distance))
+
         self._center = center
         self._semi_major_axis = (
             semi_major_axis if isinstance(semi_major_axis, Distance) else Distance(semi_major_axis)

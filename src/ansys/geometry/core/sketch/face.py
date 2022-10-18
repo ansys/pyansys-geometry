@@ -13,7 +13,7 @@ class SketchFace:
 
     def __init__(self):
         """Initializes the ``SketchFace``."""
-
+        # TODO: What about the circular faces? Circle, Ellipse are not making use of this...
         self._edges = []
 
     @property

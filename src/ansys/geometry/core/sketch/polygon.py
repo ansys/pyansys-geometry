@@ -7,10 +7,8 @@ from pint import Quantity
 import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
-from ansys.geometry.core.math import Point2D
-from ansys.geometry.core.math.matrix import Matrix33, Matrix44
-from ansys.geometry.core.misc import Angle, Distance, check_type
-from ansys.geometry.core.misc.measurements import UNIT_ANGLE, UNIT_LENGTH
+from ansys.geometry.core.math import Matrix33, Matrix44, Point2D
+from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance, check_type
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
 
@@ -157,6 +155,10 @@ class Polygon(SketchFace):
             The vtk pyvista.Polydata configuration.
         """
         # Compensate z orientation by -np.pi / 2 to match geometry service polygon processing
+        # TODO : are we sure that the specific vertex we are targeting is the one matching the
+        #        previous compensation angle? We could be rotating a different vertex for some
+        #        reason... Anyway, it's a regular polygon, everything will look the same.
+        #
         rotation = Matrix33(
             spatial_rotation.from_euler(
                 "xyz", [0, 0, -np.pi / 2 + self._angle_offset.value.m_as(UNIT_ANGLE)], degrees=False

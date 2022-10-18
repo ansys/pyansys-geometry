@@ -7,10 +7,8 @@ from pint import Quantity
 import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
-from ansys.geometry.core.math import Matrix33, Point2D
-from ansys.geometry.core.math.constants import ZERO_POINT2D
-from ansys.geometry.core.misc import Angle, Distance, check_type
-from ansys.geometry.core.misc.measurements import UNIT_ANGLE, UNIT_LENGTH
+from ansys.geometry.core.math import ZERO_POINT2D, Matrix33, Point2D
+from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance, check_type
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import Segment
 from ansys.geometry.core.typing import Real
@@ -32,9 +30,15 @@ class Trapezoid(SketchFace):
         If not defined, the trapezoid will be symmetrical.
     center: Optional[Point2D]
         A :class:`Point2D` representing the center of the trapezoid.
-        Defaults to (0, 0)
+        Defaults to (0, 0).
     angle : Optional[Union[Quantity, Angle, Real]]
         The placement angle for orientation alignment.
+
+    Notes
+    -----
+    If a ``nonsymmetrical_slant_angle`` is defined, the ``slant_angle`` will
+    be applied to the left-most angle, whereas the ``nonsymmetrical_slant_angle``
+    will be applied to the right-most angle.
     """
 
     def __init__(
@@ -171,6 +175,8 @@ class Trapezoid(SketchFace):
         pyvista.PolyData
             The vtk pyvista.Polydata configuration.
         """
+        # TODO: Really, a rectangle???... This should be modified on PyVista... It doesn't make
+        #       any sense that a trapezoid can be a rectangle...
         return pv.Rectangle(
             [
                 [self._point1.x.m_as(UNIT_LENGTH), self._point1.y.m_as(UNIT_LENGTH), 0],

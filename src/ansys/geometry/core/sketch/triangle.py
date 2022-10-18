@@ -3,8 +3,7 @@
 import pyvista as pv
 
 from ansys.geometry.core.math import Point2D
-from ansys.geometry.core.misc import check_type
-from ansys.geometry.core.misc.measurements import UNIT_LENGTH
+from ansys.geometry.core.misc import UNIT_LENGTH, check_type
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import Segment
 
@@ -29,6 +28,7 @@ class Triangle(SketchFace):
         check_type(point1, Point2D)
         check_type(point2, Point2D)
         check_type(point3, Point2D)
+
         self._point1 = point1
         self._point2 = point2
         self._point3 = point3

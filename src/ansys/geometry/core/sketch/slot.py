@@ -7,8 +7,7 @@ import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Matrix33, Point2D
-from ansys.geometry.core.misc import Angle, Distance, check_type
-from ansys.geometry.core.misc.measurements import UNIT_ANGLE
+from ansys.geometry.core.misc import UNIT_ANGLE, Angle, Distance, check_type
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import Segment
@@ -72,40 +71,36 @@ class Slot(SketchFace):
 
         half_h = height_magnitude / 2
         half_w = width_magnitude / 2
-        rotated_corner_1 = rotation @ [-half_w, half_h, 0]
-        rotated_corner_2 = rotation @ [half_w, half_h, 0]
-        rotated_corner_3 = rotation @ [half_w, -half_h, 0]
-        rotated_corner_4 = rotation @ [-half_w, -half_h, 0]
-        rotated_arc_1_center = rotation @ [half_w, 0, 0]
-        rotated_arc_2_center = rotation @ [-half_w, 0, 0]
+        corner_1 = rotation @ [-half_w, half_h, 0]
+        corner_2 = rotation @ [half_w, half_h, 0]
+        corner_3 = rotation @ [half_w, -half_h, 0]
+        corner_4 = rotation @ [-half_w, -half_h, 0]
+        arc_1_center = rotation @ [half_w, 0, 0]
+        arc_2_center = rotation @ [-half_w, 0, 0]
 
         self._slot_corner_1 = Point2D(
-            [center.x.m + rotated_corner_1[0], center.y.m + rotated_corner_1[1]], center.unit
+            [center.x.m + corner_1[0], center.y.m + corner_1[1]], center.unit
         )
         self._slot_corner_2 = Point2D(
-            [center.x.m + rotated_corner_2[0], center.y.m + rotated_corner_2[1]], center.unit
+            [center.x.m + corner_2[0], center.y.m + corner_2[1]], center.unit
         )
         self._slot_corner_3 = Point2D(
-            [center.x.m + rotated_corner_3[0], center.y.m + rotated_corner_3[1]], center.unit
+            [center.x.m + corner_3[0], center.y.m + corner_3[1]], center.unit
         )
         self._slot_corner_4 = Point2D(
-            [center.x.m + rotated_corner_4[0], center.y.m + rotated_corner_4[1]], center.unit
+            [center.x.m + corner_4[0], center.y.m + corner_4[1]], center.unit
         )
         self._arc_1_center = Point2D(
-            [center.x.m + rotated_arc_1_center[0], center.y.m + rotated_arc_1_center[1]],
+            [center.x.m + arc_1_center[0], center.y.m + arc_1_center[1]],
             center.unit,
         )
         self._arc_2_center = Point2D(
-            [center.x.m + rotated_arc_2_center[0], center.y.m + rotated_arc_2_center[1]],
+            [center.x.m + arc_2_center[0], center.y.m + arc_2_center[1]],
             center.unit,
         )
 
-        self._arc1 = Arc(self._arc_1_center, self._slot_corner_3, self._slot_corner_2, True)
-        self._arc2 = Arc(
-            self._arc_2_center,
-            self._slot_corner_1,
-            self._slot_corner_4,
-        )
+        self._arc1 = Arc(self._arc_1_center, self._slot_corner_3, self._slot_corner_2)
+        self._arc2 = Arc(self._arc_2_center, self._slot_corner_1, self._slot_corner_4)
         self._segment1 = Segment(self._slot_corner_2, self._slot_corner_1)
         self._segment2 = Segment(self._slot_corner_4, self._slot_corner_3)
 

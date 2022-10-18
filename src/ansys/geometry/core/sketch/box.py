@@ -6,8 +6,7 @@ import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Matrix33, Point2D
-from ansys.geometry.core.misc import UNIT_ANGLE, Angle, Distance, check_type
-from ansys.geometry.core.misc.measurements import UNIT_LENGTH
+from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance, check_type
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import Segment
 from ansys.geometry.core.typing import Real

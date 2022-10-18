@@ -7,7 +7,7 @@ from pint import Quantity
 import pyvista as pv
 
 from ansys.geometry.core.math import Point2D, Vector2D
-from ansys.geometry.core.misc import UNITS, check_type, check_type_equivalence
+from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, check_type, check_type_equivalence
 from ansys.geometry.core.sketch.edge import SketchEdge
 
 
@@ -193,14 +193,14 @@ class Arc(SketchEdge):
 
         return pv.CircularArc(
             [
-                self.start.x.m_as(self.start.base_unit),
-                self.start.y.m_as(self.start.base_unit),
+                self.start.x.m_as(UNIT_LENGTH),
+                self.start.y.m_as(UNIT_LENGTH),
                 0,
             ],
-            [self.end.x.m_as(self.end.base_unit), self.end.y.m_as(self.end.base_unit), 0],
+            [self.end.x.m_as(UNIT_LENGTH), self.end.y.m_as(UNIT_LENGTH), 0],
             [
-                self.center.x.m_as(self.center.base_unit),
-                self.center.y.m_as(self.center.base_unit),
+                self.center.x.m_as(UNIT_LENGTH),
+                self.center.y.m_as(UNIT_LENGTH),
                 0,
             ],
             negative=pv_negative,
