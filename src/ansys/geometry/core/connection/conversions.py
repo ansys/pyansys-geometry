@@ -1,6 +1,6 @@
 """``Conversions`` module."""
 
-from typing import TYPE_CHECKING, List, Tuple
+from typing import TYPE_CHECKING, List, Optional, Tuple
 
 from ansys.api.geometry.v0.models_pb2 import Arc as GRPCArc
 from ansys.api.geometry.v0.models_pb2 import Circle as GRPCCircle
@@ -88,55 +88,11 @@ def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
     )
 
 
-def one_profile_shape_to_grpc_geometries(
-    plane: Plane,
-    edges: List[SketchEdge],
-    faces: List[SketchFace],
-) -> Geometries:
-    """
-    Marshals a list of :class:`SketchEdge` and :class:`SketchFace`
-    to a Geometries gRPC message of the Geometry Service.
-
-    Parameters
-    ----------
-    plane : Plane
-        The plane to position the 2D sketches.
-    edges : List[SketchEdge]
-        Source edge data.
-    faces : List[SketchFace]
-        Source face data.
-
-    Returns
-    -------
-    Geometries
-        Geometry Service gRPC Geometries message, units in meters.
-    """
-    geometries = Geometries()
-
-    if len(edges) > 0:
-        converted_sketch_edges = sketch_edges_to_grpc_geometries([edges[0], plane])
-        geometries.lines.extend(converted_sketch_edges[0])
-        geometries.arcs.extend(converted_sketch_edges[1])
-
-    if len(edges) == 0 and len(faces) > 0:
-        if isinstance(faces[0], Circle):
-            geometries.circles.append(sketch_circle_to_grpc_circle(faces[0], plane))
-        if isinstance(faces[0], Ellipse):
-            geometries.ellipses.append(sketch_ellipse_to_grpc_ellipse(faces[0], plane))
-        if isinstance(faces[0], Polygon):
-            geometries.polygons.append(sketch_polygon_to_grpc_polygon(faces[0], plane))
-        else:
-            converted_face_edges = sketch_edges_to_grpc_geometries(faces[0].edges, plane)
-            geometries.lines.extend(converted_face_edges[0])
-            geometries.arcs.extend(converted_face_edges[1])
-
-    return geometries
-
-
 def sketch_shapes_to_grpc_geometries(
     plane: Plane,
     edges: List[SketchEdge],
     faces: List[SketchFace],
+    only_one_curve: Optional[bool] = False,
 ) -> Geometries:
     """
     Marshals a list of :class:`SketchEdge` and :class:`SketchFace`
@@ -152,6 +108,9 @@ def sketch_shapes_to_grpc_geometries(
         Source face data.
     shapes : List[BaseShape]
         Source shape data.
+    only_one_curve : Optional[bool]
+        Indicates that we only want to project one curve of the whole
+        set of geometries, for performance enhancement. By default, ``False``.
 
     Returns
     -------
@@ -176,7 +135,22 @@ def sketch_shapes_to_grpc_geometries(
             geometries.lines.extend(converted_face_edges[0])
             geometries.arcs.extend(converted_face_edges[1])
 
-    return geometries
+    if only_one_curve:
+        one_curve_geometry = Geometries()
+        if len(geometries.lines) > 0:
+            one_curve_geometry.lines.append(geometries.lines[0])
+        elif len(geometries.arcs) > 0:
+            one_curve_geometry.arcs.append(geometries.arcs[0])
+        elif len(geometries.circles) > 0:
+            one_curve_geometry.circles.append(geometries.circles[0])
+        elif len(geometries.ellipses) > 0:
+            one_curve_geometry.ellipses.append(geometries.ellipses[0])
+        elif len(geometries.polygons) > 0:
+            one_curve_geometry.polygons.append(geometries.polygons[0])
+        return one_curve_geometry
+
+    else:
+        return geometries
 
 
 def sketch_edges_to_grpc_geometries(

@@ -18,7 +18,6 @@ from ansys.geometry.core.connection import (
     tess_to_pd,
     unit_vector_to_grpc_direction,
 )
-from ansys.geometry.core.connection.conversions import one_profile_shape_to_grpc_geometries
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.errors import protect_grpc
@@ -251,7 +250,7 @@ class Body:
             Signifies whether to target the closest face with the projection.
         only_one_curve: bool, optional
             Projects only one curve of the entire sketch provided. If ``True``, then
-            the first curve is projected. By default, ``False``.
+            only one curve is projected. By default, ``False``.
 
         Notes
         -----
@@ -269,10 +268,9 @@ class Body:
         check_type(sketch, Sketch)
         check_type(closest_face, bool)
 
-        if only_one_curve:
-            curves = one_profile_shape_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces)
-        else:
-            curves = sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces)
+        curves = sketch_shapes_to_grpc_geometries(
+            sketch._plane, sketch.edges, sketch.faces, only_one_curve=only_one_curve
+        )
 
         self._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 
