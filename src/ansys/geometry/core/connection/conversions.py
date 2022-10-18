@@ -14,17 +14,17 @@ from ansys.api.geometry.v0.models_pb2 import Point as GRPCPoint
 from ansys.api.geometry.v0.models_pb2 import Polygon as GRPCPolygon
 from ansys.api.geometry.v0.models_pb2 import Tessellation
 
-from ansys.geometry.core.math import Frame, Plane, Point3D, UnitVector3D
-from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.math import Frame, Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
-from ansys.geometry.core.sketch.arc import Arc
-from ansys.geometry.core.sketch.circle import Circle
-from ansys.geometry.core.sketch.edge import SketchEdge
-from ansys.geometry.core.sketch.ellipse import Ellipse
-from ansys.geometry.core.sketch.face import SketchFace
-from ansys.geometry.core.sketch.polygon import Polygon
-from ansys.geometry.core.sketch.segment import Segment
-from ansys.geometry.core.typing import Real
+from ansys.geometry.core.sketch import (
+    Arc,
+    Circle,
+    Ellipse,
+    Polygon,
+    Segment,
+    SketchEdge,
+    SketchFace,
+)
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import PolyData
@@ -43,27 +43,7 @@ def unit_vector_to_grpc_direction(unit_vector: UnitVector3D) -> GRPCDirection:
     GRPCDirection
         Geometry Service gRPC Direction message.
     """
-    return vector_components_to_grpc_direction(unit_vector.x, unit_vector.y, unit_vector.z)
-
-
-def vector_components_to_grpc_direction(x: Real, y: Real, z: Real) -> GRPCDirection:
-    """Marshals vector components to Direction gRPC message of the Geometry Service.
-
-    Parameters
-    ----------
-    x : Real
-        Source vector x component.
-    y : Real
-        Source vector y component.
-    z : Real
-        Source vector z component.
-
-    Returns
-    -------
-    GRPCDirection
-        Geometry Service gRPC Direction message.
-    """
-    return GRPCDirection(x=x, y=y, z=z)
+    return GRPCDirection(x=unit_vector.x, y=unit_vector.y, z=unit_vector.z)
 
 
 def frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
@@ -246,10 +226,8 @@ def sketch_arc_to_grpc_arc(arc: Arc, plane: Plane) -> GRPCArc:
     """
     axis = (
         unit_vector_to_grpc_direction(plane.direction_z)
-        if arc.positive_rotation_axis
-        else vector_components_to_grpc_direction(
-            -plane.direction_z.x, -plane.direction_z.y, -plane.direction_z.z
-        )
+        if not arc.is_clockwise
+        else unit_vector_to_grpc_direction(-plane.direction_z)
     )
 
     return GRPCArc(

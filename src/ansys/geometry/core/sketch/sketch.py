@@ -253,7 +253,7 @@ class Sketch:
         start: Point2D,
         end: Point2D,
         center: Point2D,
-        negative_angle: Optional[bool] = False,
+        clockwise: Optional[bool] = False,
         tag: Optional[str] = None,
     ) -> "Sketch":
         """
@@ -267,13 +267,10 @@ class Sketch:
             End of the arc.
         center : Point2D
             Center of the arc.
-        negative_angle : bool, optional
-            By default the arc spans the shortest angular sector between
-            ``start`` and ``end``.
-
-            By setting this to ``True``, the longest angular sector is
-            used instead (i.e. the negative coterminal angle to the
-            shortest one).
+        clockwise : bool, optional
+            By default the arc spans the counter-clockwise angle between
+            ``start`` and ``end``. By setting this to ``True``, the clockwise
+            angle is used instead.
         tag: str, optional
             A user-defined label identifying this specific edge.
 
@@ -282,14 +279,14 @@ class Sketch:
         Sketch
             The revised sketch state ready for further sketch actions.
         """
-        arc = Arc(center, start, end, negative_angle)
+        arc = Arc(center, start, end, clockwise)
         return self.edge(arc, tag)
 
     def arc_to_point(
         self,
         end: Point2D,
         center: Point2D,
-        negative_angle: Optional[bool] = False,
+        clockwise: Optional[bool] = False,
         tag: Optional[str] = None,
     ) -> "Sketch":
         """
@@ -301,13 +298,10 @@ class Sketch:
             End of the arc.
         center : Point2D
             Center of the arc.
-        negative_angle : bool, optional
-            By default the arc spans the shortest angular sector between
-            ``start`` and ``end``.
-
-            By setting this to ``True``, the longest angular sector is
-            used instead (i.e. the negative coterminal angle to the
-            shortest one).
+        clockwise : bool, optional
+            By default the arc spans the counter-clockwise angle between
+            ``start`` and ``end``. By setting this to ``True``, the clockwise
+            angle is used instead.
         tag: str, optional
             A user-defined label identifying this specific edge.
 
@@ -322,7 +316,7 @@ class Sketch:
         of the sketch, such as the end point of a previously added edge.
         """
         start = self._single_point_context_reference()
-        arc = Arc(center, start, end, negative_angle)
+        arc = Arc(center, start, end, clockwise)
         return self.edge(arc, tag)
 
     def triangle(

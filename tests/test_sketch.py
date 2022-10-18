@@ -118,19 +118,42 @@ def test_sketch_arc_edge():
     sketch = Sketch()
 
     # fluent API has (0, 0) origin as default start position
+    #
+    #                       ^
+    #                       |
+    #                       |
+    #                       |        (3,3)
+    #                       |---------E
+    #                       |         |
+    #                       |         |
+    #                       |         |
+    #                 (0,0) S---------O------------->
+    #                                  (3,0)
+    #
+    #
+    # Since positive angle is ALWAYS counterclockwise, this will lead to a 270deg
+    # angle starting on S and ending on E. This is also PI * 3 / 2 in rads
+    #
     assert len(sketch.edges) == 0
     sketch.arc_to_point(Point2D([3, 3]), Point2D([3, 0]), False, "Arc1")
     assert len(sketch.edges) == 1
     assert sketch.edges[0].start == ZERO_POINT2D
     assert sketch.edges[0].end == Point2D([3, 3])
-    assert sketch.edges[0].angle == np.pi / 2
+    assert sketch.edges[0].angle == np.pi * 3 / 2
 
-    # fluent api keeps last edge endpoint as context for new edge
-    sketch.arc_to_point(Point2D([0, 0]), Point2D([3, 0]), negative_angle=True, tag="Arc2")
+    # Fluent api keeps last edge endpoint as context for new edge
+    #
+    #
+    # In this case, following the previous drawing, we are going from E to S with center
+    # at O again. This would lead to a 90 deg angle, but since we are going with a
+    # clockwise sense of rotation, it will lead to 270 degs again.
+    #
+    #
+    sketch.arc_to_point(Point2D([0, 0]), Point2D([3, 0]), clockwise=True, tag="Arc2")
     assert len(sketch.edges) == 2
     assert sketch.edges[1].start == Point2D([3, 3])
     assert sketch.edges[1].end == Point2D([0, 0])
-    assert sketch.edges[1].angle == 1.5 * np.pi
+    assert sketch.edges[1].angle == np.pi * 3 / 2
 
     sketch.arc(Point2D([10, 10]), Point2D([10, -10]), Point2D([10, 0]), tag="Arc3")
     assert len(sketch.edges) == 3

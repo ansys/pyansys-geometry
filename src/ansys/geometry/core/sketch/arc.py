@@ -6,12 +6,8 @@ import numpy as np
 from pint import Quantity
 import pyvista as pv
 
-from ansys.geometry.core.math import Point2D
-from ansys.geometry.core.math.constants import UNITVECTOR3D_Z
-from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc import UNITS, check_type
-from ansys.geometry.core.misc.checks import check_type_equivalence
+from ansys.geometry.core.math import Point2D, Vector2D
+from ansys.geometry.core.misc import UNITS, check_type, check_type_equivalence
 from ansys.geometry.core.sketch.edge import SketchEdge
 
 
@@ -23,7 +19,7 @@ class Arc(SketchEdge):
         center: Point2D,
         start: Point2D,
         end: Point2D,
-        negative_angle: Optional[bool] = False,
+        clockwise: Optional[bool] = False,
     ):
         """Initializes the arc shape.
 
@@ -35,13 +31,10 @@ class Arc(SketchEdge):
             A :class:`Point2D` representing the start of the arc.
         end : Point2D
             A :class:`Point2D` representing the end of the arc.
-        negative_angle : bool, optional
-            By default the arc spans the shortest angular sector between
-            ``start`` and ``end``.
-
-            By setting this to ``True``, the longest angular sector is
-            used instead (i.e. the negative coterminal angle to the
-            shortest one).
+        clockwise : bool, optional
+            By default the arc spans the counter-clockwise angle between
+            ``start`` and ``end``. By setting this to ``True``, the clockwise
+            angle is used instead.
         """
         super().__init__()
 
@@ -64,30 +57,27 @@ class Arc(SketchEdge):
                 "The start and end points of the arc are not equidistant from center point."
             )
 
+        # Store the main three points of the arc
         self._center, self._start, self._end = center, start, end
-        start3D = Point3D([self._start.x.m, self._start.y.m, 0], self._start.unit)
-        end3D = Point3D([self._end.x.m, self._end.y.m, 0], self._end.unit)
-        center3D = Point3D([self._center.x.m, self._center.y.m, 0], self._center.unit)
-        to_start_vector = Vector3D.from_points(start3D, center3D)
-        self._radius = Quantity(to_start_vector.norm, self._start.base_unit)
 
+        # Compute the vectors from the center to the start and end points
+        to_start_vector = Vector2D.from_points(start, center)
+        to_end_vector = Vector2D.from_points(end, center)
+
+        # Compute the radius of the arc
+        self._radius = Quantity(to_start_vector.norm, self._start.base_unit)
         if not self._radius.m > 0:
             raise ValueError("Point configuration does not yield a positive length arc radius.")
 
-        direction_x = UnitVector3D(to_start_vector.normalize())
-        direction_y = UnitVector3D((UNITVECTOR3D_Z % direction_x).normalize())
-        to_end_vector = UnitVector3D.from_points(end3D, center3D)
-        self._angle = np.arctan2(direction_y * to_end_vector, direction_x * to_end_vector)
+        # Compute the angle of the arc (always counter-clockwise at this point)
+        self._angle = to_start_vector.get_angle_between(to_end_vector)
         if self._angle < 0:
             self._angle = (2 * np.pi) + self._angle
 
-        if (self._angle > np.pi and not negative_angle) or (self._angle < np.pi and negative_angle):
+        # Check if the clockwise direction is desired... and recompute angle
+        self._clockwise = clockwise
+        if clockwise:
             self._angle = (2 * np.pi) - self._angle
-            self._positive_rotation_axis = False
-        else:
-            self._positive_rotation_axis = True
-
-        self._negative_angle = negative_angle
 
     @property
     def start(self) -> Point2D:
@@ -145,18 +135,6 @@ class Arc(SketchEdge):
         return self._center
 
     @property
-    def negative_angle(self) -> bool:
-        """The arc setting determining angle target.
-
-        Returns
-        -------
-        bool
-            If ``True``, the longest angular sector is used.
-            If ``False``, the shortest angular sector is used.
-        """
-        return self._negative_angle
-
-    @property
     def angle(self) -> Quantity:
         """The angle of the arc.
 
@@ -169,16 +147,17 @@ class Arc(SketchEdge):
         return Quantity(self._angle, UNITS.radian)
 
     @property
-    def positive_rotation_axis(self) -> bool:
-        """Indication for the axis of rotation direction.
+    def is_clockwise(self) -> bool:
+        """Indication for the sense of rotation of the angle.
 
         Returns
         -------
         bool
-            ``True`` if the axis of rotation is the positive z-axis.
+            ``True`` if the sense of rotation is clockwise.
+            ``False`` if it is counter-clockwise.
         """
 
-        return self._positive_rotation_axis
+        return self._clockwise
 
     @property
     def sector_area(self) -> Quantity:
@@ -204,6 +183,14 @@ class Arc(SketchEdge):
         pyvista.PolyData
             The vtk pyvista.Polydata configuration.
         """
+
+        if self.is_clockwise and self.angle > np.pi:
+            pv_negative = True
+        elif not self.is_clockwise and self.angle < np.pi:
+            pv_negative = True
+        else:
+            pv_negative = False
+
         return pv.CircularArc(
             [
                 self.start.x.m_as(self.start.base_unit),
@@ -216,7 +203,7 @@ class Arc(SketchEdge):
                 self.center.y.m_as(self.center.base_unit),
                 0,
             ],
-            negative=self.negative_angle,
+            negative=pv_negative,
         )
 
     def __eq__(self, other: "Arc") -> bool:
@@ -226,7 +213,7 @@ class Arc(SketchEdge):
             self.start == other.start
             and self.end == other.end
             and self.center == other.center
-            and self._angle == other._angle
+            and self.angle == other.angle
         )
 
     def __ne__(self, other: "Arc") -> bool:
