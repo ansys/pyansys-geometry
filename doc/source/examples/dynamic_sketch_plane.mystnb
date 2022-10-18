@@ -1,0 +1,95 @@
+---
+jupytext:
+  text_representation:
+    extension: .mystnb
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.14.1
+kernelspec:
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
+---
+
+# Dynamic Sketch Plane
+
+The sketch is a lightweight two-dimensional modeler driven primarily by client-side execution.
+
+At any point, the current state of a sketch can be used for operations such as extruding a body,
+projecting a profile, or imprinting curves.
+
+The sketch is designed as an effective fluent-style API with all operations receiving 2D configurations.
+
+For easy reuse of sketches across different regions of your design, a sketch can be moved around the
+global coordinate system by modifying the plane defining the current sketch location.
+
+For this example, a multi-layer PCB is created from many extrusions of the same sketch, creating unique
+design bodies for each layer.
+
++++
+
+Start by importing the fundamental objects:
+
+```{code-cell} ipython3
+from pint import Quantity
+
+from ansys.geometry.core import Modeler
+from ansys.geometry.core.math.constants import UNITVECTOR3D_Z
+from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.misc.units import UNITS
+from ansys.geometry.core.sketch.sketch import Sketch
+```
+
+## Defining a ``Sketch`` profile for the PCB
+
+``Sketch`` planes can be created, modified and plotted independent of supporting 
+geometry service instances.
+
+A ``Sketch`` outline of individual ``Segment`` and ``Arc`` objects is created with two
+circular through-hole attachments points added within the profile boundary to maintain a
+single, closed sketch face.
+
+```{code-cell} ipython3
+sketch = Sketch()
+
+(
+    sketch.segment(Point2D([0, 0]), Point2D([40, 1], unit=UNITS.mm), "LowerEdge")
+    .arc_to_point(
+        Point2D([41.5, 2.5], unit=UNITS.mm),
+        Point2D([40, 2.5], unit=UNITS.mm),
+        tag="SupportedCorner",
+    )
+    .segment_to_point(Point2D([41.5, 5], unit=UNITS.mm))
+    .arc_to_point(Point2D([43, 6.5], unit=UNITS.mm), Point2D([43, 5], unit=UNITS.mm), True)
+    .segment_to_point(Point2D([55, 6.5], unit=UNITS.mm))
+    .arc_to_point(Point2D([56.5, 8], unit=UNITS.mm), Point2D([55, 8], unit=UNITS.mm))
+    .segment_to_point(Point2D([56.5, 35], unit=UNITS.mm))
+    .arc_to_point(Point2D([55, 36.5], unit=UNITS.mm), Point2D([55, 35], unit=UNITS.mm))
+    .segment_to_point(Point2D([0, 36.5], unit=UNITS.mm))
+    .segment_to_point(Point2D([0, 0]))
+    .circle(Point2D([4, 4], UNITS.mm), Quantity(1.5, UNITS.mm), "Anchor1")
+    .circle(Point2D([51, 34.5], UNITS.mm), Quantity(1.5, UNITS.mm), "Anchor2")
+)
+
+sketch.plot()
+```
+
+A server connection is established and the single sketch profile is used to extrude 
+the board profile at multiple z-offsets. A named selection is then created from the 
+resulting list of layer bodies.
+
+```{code-cell} ipython3
+sketch.plot()
+
+modeler = Modeler()
+design = modeler.create_design("ExtrudedBoardProfile")
+
+layers = []
+layer_thickness = Quantity(0.20, UNITS.mm)
+for layer_index in range(10):
+    layers.append(design.extrude_sketch(f"BoardLayer{layer_index}", sketch, layer_thickness))
+    sketch.translate_sketch_plane_by_distance(UNITVECTOR3D_Z, layer_thickness)
+
+board_named_selection = design.create_named_selection("FullBoard", bodies=layers)
+design.plot()
+```

@@ -4,7 +4,9 @@ import pytest
 
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.math.constants import ZERO_POINT2D
-from ansys.geometry.core.math.vector import Vector2D
+from ansys.geometry.core.math.plane import Plane
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector2D, Vector3D
 from ansys.geometry.core.misc.measurements import UNIT_LENGTH, Distance
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.sketch.box import Box
@@ -455,3 +457,55 @@ def test_box_instance():
     assert box.area.units == UNITS.m * UNITS.m
     assert box.perimeter.m == 12
     assert box.perimeter.units == UNITS.m
+
+
+def test_sketch_plane_translation():
+    """Test all methods for sketch plane translation."""
+
+    sketch = Sketch(Plane(Point3D([0, 0, 0], UNITS.mm)))
+
+    sketch.translate_sketch_plane(Vector3D([10, 20, 30]))
+
+    assert sketch.plane.origin == Point3D([10, 20, 30])
+    assert sketch.plane.origin.unit == UNITS.mm
+
+    sketch.translate_sketch_plane_by_distance(UnitVector3D([0, 0, 1]), Distance(10, UNITS.cm))
+
+    assert sketch.plane.origin == Point3D([10, 20, 30.1])
+    assert sketch.plane.origin.unit == UNITS.mm
+
+    sketch.translate_sketch_plane_by_distance(UnitVector3D([1, 1, 1]), Distance(10, UNITS.cm))
+
+    assert sketch.plane.origin == Point3D(
+        [10.05773502691896259, 20.05773502691896259, 30.15773502691896259]
+    )
+    assert sketch.plane.origin.unit == UNITS.mm
+
+    previous_origin = sketch.plane.origin
+    sketch.translate_sketch_plane_by_offset()
+
+    assert sketch.plane.origin == previous_origin
+    assert sketch.plane.origin.unit == UNITS.mm
+
+    sketch.translate_sketch_plane_by_offset(x=Distance(10, UNITS.m))
+    sketch.translate_sketch_plane_by_offset(y=Distance(20, UNITS.m))
+    sketch.translate_sketch_plane_by_offset(z=Distance(30, UNITS.m))
+
+    assert sketch.plane.origin == Point3D(
+        [20.05773502691896259, 40.05773502691896259, 60.15773502691896259]
+    )
+    assert sketch.plane.origin.unit == UNITS.mm
+
+    sketch.translate_sketch_plane_by_offset(
+        Quantity(10, UNITS.mm), Quantity(20, UNITS.mm), Quantity(30, UNITS.mm)
+    )
+
+    assert sketch.plane.origin == Point3D(
+        [20.06773502691896259, 40.07773502691896259, 60.18773502691896259]
+    )
+    assert sketch.plane.origin.unit == UNITS.mm
+
+    sketch.plane = Plane(Point3D([10, 100, 1000], UNITS.cm))
+
+    assert sketch.plane.origin == Point3D([0.1, 1, 10])
+    assert sketch.plane.origin.unit == UNITS.cm

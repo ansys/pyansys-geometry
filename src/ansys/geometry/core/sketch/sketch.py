@@ -5,7 +5,9 @@ from typing import Dict, List, Optional, Union
 from pint import Quantity
 
 from ansys.geometry.core.math import ZERO_POINT2D, Plane, Point2D, Vector2D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc import Angle, Distance, check_type
+from ansys.geometry.core.misc.measurements import UNIT_LENGTH
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.box import Box
 from ansys.geometry.core.sketch.circle import Circle
@@ -50,6 +52,31 @@ class Sketch:
         self._tags = {}
 
     @property
+    def plane(self) -> Plane:
+        """
+        Returns sketch plane configuration.
+
+        Returns
+        -------
+        Plane
+            The sketch planar orientation.
+        """
+
+        return self._plane
+
+    @plane.setter
+    def plane(self, revised_plane: Plane) -> None:
+        """
+        Sets the sketch plane configuration.
+
+        Parameters
+        ----------
+        Plane
+            The updated sketch planar orientation.
+        """
+        self._plane = revised_plane
+
+    @property
     def edges(self) -> List[SketchEdge]:
         """
         Returns all independently sketched edges.
@@ -74,6 +101,96 @@ class Sketch:
         """
 
         return self._faces
+
+    def translate_sketch_plane(self, translation: Vector3D) -> "Sketch":
+        """
+        Convenience method to translate the active sketch plane origin location.
+
+        Parameters
+        ----------
+        translation : Vector3D
+            The vector defining the translation, expecting values in meters.
+
+        Returns
+        -------
+        Sketch
+            The revised sketch state ready for further sketch actions.
+        """
+        self._plane = Plane(
+            self._plane.origin + translation, self._plane.direction_x, self._plane.direction_y
+        )
+        return self
+
+    def translate_sketch_plane_by_offset(
+        self,
+        x: Union[Quantity, Distance] = Quantity(0, UNIT_LENGTH),
+        y: Union[Quantity, Distance] = Quantity(0, UNIT_LENGTH),
+        z: Union[Quantity, Distance] = Quantity(0, UNIT_LENGTH),
+    ) -> "Sketch":
+        """
+        Convenience method to translate the active sketch plane origin location.
+
+        Parameters
+        ----------
+        x : Union[Quantity, Distance], default: Quantity(0, UNIT_LENGTH)
+            The amount to translate the origin the x-direction.
+        y : Union[Quantity, Distance], default: Quantity(0, UNIT_LENGTH)
+            The amount to translate the origin the y-direction.
+        z : Union[Quantity, Distance], default: Quantity(0, UNIT_LENGTH)
+            The amount to translate the origin the z-direction.
+
+        Returns
+        -------
+        Sketch
+            The revised sketch state ready for further sketch actions.
+        """
+        x_magnitude = (
+            x.m_as(UNIT_LENGTH) if not isinstance(x, Distance) else x.value.m_as(UNIT_LENGTH)
+        )
+
+        y_magnitude = (
+            y.m_as(UNIT_LENGTH) if not isinstance(y, Distance) else y.value.m_as(UNIT_LENGTH)
+        )
+
+        z_magnitude = (
+            z.m_as(UNIT_LENGTH) if not isinstance(z, Distance) else z.value.m_as(UNIT_LENGTH)
+        )
+        translation = Vector3D([x_magnitude, y_magnitude, z_magnitude])
+        self._plane = Plane(
+            self._plane.origin + translation, self._plane.direction_x, self._plane.direction_y
+        )
+        return self
+
+    def translate_sketch_plane_by_distance(
+        self, direction: UnitVector3D, distance: Union[Quantity, Distance]
+    ) -> "Sketch":
+        """
+        Convenience method to translate the active sketch plane origin location.
+
+        Parameters
+        ----------
+        direction : UnitVector3D
+            The direction the origin should be translated.
+        distance : Union[Quantity, Distance]
+            The distance to translate the origin.
+
+        Returns
+        -------
+        Sketch
+            The revised sketch state ready for further sketch actions.
+        """
+        magnitude = (
+            distance.m_as(UNIT_LENGTH)
+            if not isinstance(distance, Distance)
+            else distance.value.m_as(UNIT_LENGTH)
+        )
+        translation = Vector3D(
+            [direction.x * magnitude, direction.y * magnitude, direction.z * magnitude]
+        )
+        self._plane = Plane(
+            self._plane.origin + translation, self._plane.direction_x, self._plane.direction_y
+        )
+        return self
 
     def get(self, tag: str) -> List[SketchObject]:
         """Returns the list of shapes that were tagged by the provided label.
