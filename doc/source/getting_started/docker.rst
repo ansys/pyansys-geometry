@@ -44,25 +44,32 @@ port 50051. You can change this by modifying the ``host`` and ``port``
 parameters of ``Modeler``, but you have to also modify this in
 your ``docker run`` command by changing ``<HOST-PORT>-50051``.
 
-If you wish to modify the defaults, modify the following environment variables:
+If you wish to modify the defaults, modify variables with:
 
-Directly from ``Modeler`` function:
+.. tab-set:: 
 
-.. code:: python
-   
-   >>> from ansys.geometry.core import Modeler
-   >>> modeler = Modeler(host="127.0.0.1", port=50051)
+    .. tab-item:: Environment variables
 
-If on Linux/Mac OS:
+        .. tab-set::
 
-.. code::
+            .. tab-item:: Linux/Mac
 
-   export ANSRV_GEO_HOST=127.0.0.1
-   export ANSRV_GEO_PORT=50051
+                .. code-block:: bash
 
-Or Windows:
+                    export ANSRV_GEO_HOST=127.0.0.1
+                    export ANSRV_GEO_PORT=50051
 
-.. code::
+            .. tab-item:: Windows
 
-   SET ANSRV_GEO_HOST=127.0.0.1
-   SET ANSRV_GEO_PORT=50051
+                .. code-block:: bash
+
+                    SET ANSRV_GEO_HOST=127.0.0.1
+                    SET ANSRV_GEO_PORT=50051
+
+    .. tab-item:: Modeler function
+
+        .. code-block:: python
+
+            >>> from ansys.geometry.core import Modeler
+            >>> modeler = Modeler(host="127.0.0.1", port=50051) 
+      

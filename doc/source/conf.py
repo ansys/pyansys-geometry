@@ -38,6 +38,7 @@ extensions = [
     "sphinx_gallery.load_style",
     "myst_parser",
     "jupyter_sphinx",
+    "sphinx_design",
 ]
 
 # Intersphinx mapping

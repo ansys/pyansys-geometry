@@ -67,6 +67,7 @@ ipyvtklink = {version = "*", optional = true}
 panel = {version = "*", optional = true}
 jupyter_sphinx= {version = "0.4.0", optional = true}
 sphinx-autodoc-typehints = {version = "==1.19.1", optional = true}
+sphinx_design= {version = "==0.3.0", optional = true}
 
 [tool.poetry.dev-dependencies]
 numpy = {version = "==1.23.2", python = ">3.8"}
@@ -88,6 +89,7 @@ docs = [
     "sphinx-gallery",
     "ipyvtklink",
     "panel",
+    "sphinx_design"
 ]
 
 [tool.black]
