@@ -66,6 +66,9 @@ def test_instance_log_to_file(tmp_path_factory: pytest.TempPathFactory, modeler:
     file_msg_error = "This is a error message"
     file_msg_debug = "This is a debug message"
 
+    prev_level = modeler.client.log.logger.getEffectiveLevel()
+    modeler.client.log.logger.setLevel("ERROR")
+
     if not modeler.client.log.file_handler:
         modeler.client.log.log_to_file(file_path)
     else:
@@ -96,3 +99,5 @@ def test_instance_log_to_file(tmp_path_factory: pytest.TempPathFactory, modeler:
         text = "".join(fid.readlines())
 
     assert file_msg_debug in text
+
+    modeler.client.log.logger.setLevel(prev_level)

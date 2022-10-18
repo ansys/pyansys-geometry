@@ -3,6 +3,7 @@ from unittest.mock import create_autospec
 
 import ansys.platform.instancemanagement as pypim
 from grpc import insecure_channel
+import pytest
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
@@ -69,3 +70,9 @@ def test_launch_remote_instance(monkeypatch, modeler: Modeler):
 
     # And it connected using the channel created by PyPIM
     assert modeler.client.channel == pim_channel
+
+
+def test_launch_remote_instance_error():
+    """Check that when PyPIM is not configures, launch_modeler raises an error."""
+    with pytest.raises(NotImplementedError, match="Not yet implemented."):
+        launch_modeler()

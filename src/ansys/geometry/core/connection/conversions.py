@@ -60,7 +60,7 @@ def frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
         Geometry Service gRPC Frame message. Frame origin units in meters.
     """
     return GRPCFrame(
-        origin=point3D_to_grpc_point(frame.origin),
+        origin=point3d_to_grpc_point(frame.origin),
         dir_x=unit_vector_to_grpc_direction(frame.direction_x),
         dir_y=unit_vector_to_grpc_direction(frame.direction_y),
     )
@@ -81,7 +81,7 @@ def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
     """
     return GRPCPlane(
         frame=GRPCFrame(
-            origin=point3D_to_grpc_point(plane.origin),
+            origin=point3d_to_grpc_point(plane.origin),
             dir_x=unit_vector_to_grpc_direction(plane.direction_x),
             dir_y=unit_vector_to_grpc_direction(plane.direction_y),
         )
@@ -231,9 +231,9 @@ def sketch_arc_to_grpc_arc(arc: Arc, plane: Plane) -> GRPCArc:
     )
 
     return GRPCArc(
-        center=point2D_to_grpc_point(plane, arc.center),
-        start=point2D_to_grpc_point(plane, arc.start),
-        end=point2D_to_grpc_point(plane, arc.end),
+        center=point2d_to_grpc_point(plane, arc.center),
+        start=point2d_to_grpc_point(plane, arc.start),
+        end=point2d_to_grpc_point(plane, arc.end),
         axis=axis,
     )
 
@@ -252,7 +252,7 @@ def sketch_ellipse_to_grpc_ellipse(ellipse: Ellipse, plane: Plane) -> GRPCEllips
         Geometry Service gRPC Ellipse message, units in meters.
     """
     return GRPCEllipse(
-        center=point2D_to_grpc_point(plane, ellipse.center),
+        center=point2d_to_grpc_point(plane, ellipse.center),
         majorradius=ellipse.semi_major_axis.m_as(SERVER_UNIT_LENGTH),
         minorradius=ellipse.semi_minor_axis.m_as(SERVER_UNIT_LENGTH),
     )
@@ -276,12 +276,12 @@ def sketch_circle_to_grpc_circle(circle: Circle, plane: Plane) -> GRPCCircle:
         Geometry Service gRPC Circle message, units in meters.
     """
     return GRPCCircle(
-        center=point2D_to_grpc_point(plane, circle.center),
+        center=point2d_to_grpc_point(plane, circle.center),
         radius=circle.radius.m_as(SERVER_UNIT_LENGTH),
     )
 
 
-def point3D_to_grpc_point(point: Point3D) -> GRPCPoint:
+def point3d_to_grpc_point(point: Point3D) -> GRPCPoint:
     """Marshals a :class:`Point3D` to a Point gRPC message of the Geometry Service.
 
     Parameters
@@ -301,7 +301,7 @@ def point3D_to_grpc_point(point: Point3D) -> GRPCPoint:
     )
 
 
-def point2D_to_grpc_point(plane: Plane, point2d: Point2D) -> GRPCPoint:
+def point2d_to_grpc_point(plane: Plane, point2d: Point2D) -> GRPCPoint:
     """
     Marshals a :class:`Point2D`
     to a Point gRPC message of the Geometry Service.
@@ -318,7 +318,7 @@ def point2D_to_grpc_point(plane: Plane, point2d: Point2D) -> GRPCPoint:
     GRPCPoint
         Geometry Service gRPC Point message, units in meters.
     """
-    point3d = plane.transform_point2D_global_to_local(point2d)
+    point3d = plane.transform_point2d_local_to_global(point2d)
     return GRPCPoint(
         x=point3d.x.m_as(SERVER_UNIT_LENGTH),
         y=point3d.y.m_as(SERVER_UNIT_LENGTH),
@@ -340,7 +340,7 @@ def sketch_polygon_to_grpc_polygon(polygon: Polygon, plane: Plane) -> GRPCPolygo
         Geometry Service gRPC Polygon message, units in meters.
     """
     return GRPCPolygon(
-        center=point2D_to_grpc_point(plane, polygon.center),
+        center=point2d_to_grpc_point(plane, polygon.center),
         radius=polygon.inner_radius.m_as(SERVER_UNIT_LENGTH),
         numberofsides=polygon.n_sides,
     )
@@ -360,8 +360,8 @@ def sketch_segment_to_grpc_line(segment: Segment, plane: Plane) -> GRPCLine:
         Geometry Service gRPC Line message, units in meters.
     """
     return GRPCLine(
-        start=point2D_to_grpc_point(plane, segment.start),
-        end=point2D_to_grpc_point(plane, segment.end),
+        start=point2d_to_grpc_point(plane, segment.start),
+        end=point2d_to_grpc_point(plane, segment.end),
     )
 
 

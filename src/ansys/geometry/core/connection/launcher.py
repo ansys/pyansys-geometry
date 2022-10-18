@@ -41,7 +41,7 @@ def launch_modeler() -> Modeler:
         )
         return launch_remote_modeler()
 
-    raise NotImplementedError("Not yet implemented")
+    raise NotImplementedError("Not yet implemented.")
 
 
 def launch_remote_modeler(

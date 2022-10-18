@@ -8,6 +8,7 @@ If you wish to override these defaults, set the following environment variables.
 - export ANSRV_GEO_PORT=50051
 
 """
+import logging
 import os
 
 import pytest
@@ -20,7 +21,6 @@ pv.OFF_SCREEN = True
 
 @pytest.fixture(scope="session")
 def modeler():
-    modeler = Modeler()
 
     # Log to file
     log_file_path = os.path.join(
@@ -32,7 +32,7 @@ def modeler():
     except OSError:
         pass
 
-    modeler.client.log.log_to_file(filename=log_file_path)
+    modeler = Modeler(logging_level=logging.DEBUG, logging_file=log_file_path)
 
     yield modeler
 

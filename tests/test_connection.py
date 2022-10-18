@@ -6,8 +6,8 @@ from ansys.geometry.core.connection.client import GrpcClient, wait_until_healthy
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
     plane_to_grpc_plane,
-    point2D_to_grpc_point,
-    point3D_to_grpc_point,
+    point2d_to_grpc_point,
+    point3d_to_grpc_point,
     sketch_arc_to_grpc_arc,
     sketch_circle_to_grpc_circle,
     sketch_ellipse_to_grpc_ellipse,
@@ -123,7 +123,7 @@ def test_point3d_message_conversion():
     """Test conversion between :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
     and expected gRPC message type."""
     point = Point3D([10, 100, 1000], UNITS.mm)
-    grpc_point_message = point3D_to_grpc_point(point)
+    grpc_point_message = point3d_to_grpc_point(point)
 
     assert grpc_point_message.x == 0.01
     assert grpc_point_message.y == 0.1
@@ -133,7 +133,7 @@ def test_point3d_message_conversion():
 def test_point2d_message_conversion():
     """Test conversion between :class:`Point2D` and expected gRPC message type."""
     point = Point2D([10, 100], UNITS.mm)
-    grpc_point_message = point2D_to_grpc_point(Plane(Point3D([10, 100, 1000], UNITS.mm)), point)
+    grpc_point_message = point2d_to_grpc_point(Plane(Point3D([10, 100, 1000], UNITS.mm)), point)
 
     assert grpc_point_message.x == 0.02
     assert grpc_point_message.y == 0.2

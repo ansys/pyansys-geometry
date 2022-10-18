@@ -177,7 +177,7 @@ class GrpcClient:
         PyPIM, this instance will be deleted.
         """
         if self._remote_instance:
-            self._remote_instance.delete()
+            self._remote_instance.delete()  # pragma: no cover
         self._closed = True
         self._channel.close()
 
