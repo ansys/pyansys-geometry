@@ -185,10 +185,10 @@ class Arc(SketchEdge):
         """
 
         if np.isclose(self.angle, np.pi):
-            if self.is_clockwise:
-                pv_negative = False
-            else:
-                pv_negative = True
+            # TODO : PyVista hack... Maybe worth implementing something in PyVista...
+            #        A user should be able to define clockwise/counterclockwise sense of
+            #        rotation...
+            return self.__arc_pyvista_hack()
         elif self.angle > np.pi:
             pv_negative = True
 
@@ -223,3 +223,64 @@ class Arc(SketchEdge):
     def __ne__(self, other: "Arc") -> bool:
         """Not equals operator for ``Arc``."""
         return not self == other
+
+    def __arc_pyvista_hack(self):
+        """
+        Hack for close to PI arcs. PyVista does not consider know
+        clockwise/counterclockwise senses of rotation. It only understands
+        longest and shortest angle, which complicates things in the boundary...
+
+        This means that we need to divide the arc in two, so that it is properly
+        defined based on the known sense of rotation.
+
+        Returns
+        -------
+        pyvista.PolyData
+            The vtk pyvista.Polydata configuration.
+        """
+        # Define the arc mid point
+        if not self.is_clockwise:
+            rot_matrix = np.array([[0, -1], [1, 0]])  # 90 degs rot matrix
+        else:
+            rot_matrix = np.array([[0, 1], [-1, 0]])  # -90 degs rot matrix
+        center_to_start = Vector2D.from_points(self.center, self.start)
+        center_to_mid = rot_matrix @ center_to_start
+        mid_point2d = Point2D(
+            [
+                center_to_mid[0] + self.center.x.to_base_units().m,
+                center_to_mid[1] + self.center.y.to_base_units().m,
+            ],
+            self.center.base_unit,
+        )
+
+        # Define auxiliary lists for PyVista containing the start, mid, end and center points
+        mid_point = [
+            mid_point2d.x.m_as(UNIT_LENGTH),
+            mid_point2d.y.m_as(UNIT_LENGTH),
+            0,
+        ]
+        start_point = [
+            self.start.x.m_as(UNIT_LENGTH),
+            self.start.y.m_as(UNIT_LENGTH),
+            0,
+        ]
+        end_point = [self.end.x.m_as(UNIT_LENGTH), self.end.y.m_as(UNIT_LENGTH), 0]
+        center_point = [
+            self.center.x.m_as(UNIT_LENGTH),
+            self.center.y.m_as(UNIT_LENGTH),
+            0,
+        ]
+
+        # Compute the two independent arcs
+        arc_sub1 = pv.CircularArc(
+            start_point,
+            mid_point,
+            center_point,
+        )
+        arc_sub2 = pv.CircularArc(
+            mid_point,
+            end_point,
+            center_point,
+        )
+
+        return arc_sub1 + arc_sub2
