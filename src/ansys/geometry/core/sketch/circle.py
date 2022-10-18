@@ -1,15 +1,16 @@
-"""``SketchCircle`` class module."""
+"""``Circle`` class module."""
 from typing import Union
 
 import numpy as np
 from pint import Quantity
+import pyvista as pv
 
 from ansys.geometry.core.math import Point2D
-from ansys.geometry.core.misc import Distance, check_type
+from ansys.geometry.core.misc import UNIT_LENGTH, Distance, check_type
 from ansys.geometry.core.sketch.face import SketchFace
 
 
-class SketchCircle(SketchFace):
+class Circle(SketchFace):
     """A sketch class for modeling circles.
 
     Parameters
@@ -90,3 +91,21 @@ class SketchCircle(SketchFace):
             The area of the circle.
         """
         return np.pi * self.radius**2
+
+    @property
+    def visualization_polydata(self) -> pv.PolyData:
+        """
+        Return the vtk polydata representation for PyVista visualization.
+
+        The representation lies in the X/Y plane within
+        the standard global cartesian coordinate system.
+
+        Returns
+        -------
+        pyvista.PolyData
+            The vtk pyvista.Polydata configuration.
+        """
+        circle = pv.Circle(self.radius.m_as(UNIT_LENGTH))
+        return circle.translate(
+            [self.center.x.m_as(UNIT_LENGTH), self.center.y.m_as(UNIT_LENGTH), 0], inplace=True
+        )

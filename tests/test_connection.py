@@ -4,27 +4,20 @@ import pytest
 
 from ansys.geometry.core.connection.client import GrpcClient, wait_until_healthy
 from ansys.geometry.core.connection.conversions import (
-    arc_to_grpc_arc,
-    circle_to_grpc_circle,
-    ellipse_to_grpc_ellipse,
     frame_to_grpc_frame,
     plane_to_grpc_plane,
-    point2D_to_grpc_point,
-    point_to_grpc_point,
-    polygon_to_grpc_polygon,
-    segment_to_grpc_line,
+    point2d_to_grpc_point,
+    point3d_to_grpc_point,
     sketch_arc_to_grpc_arc,
     sketch_circle_to_grpc_circle,
+    sketch_ellipse_to_grpc_ellipse,
+    sketch_polygon_to_grpc_polygon,
     sketch_segment_to_grpc_line,
     unit_vector_to_grpc_direction,
 )
-from ansys.geometry.core.math import Frame, Plane, Point3D, UnitVector3D
-from ansys.geometry.core.math.point import Point2D
-from ansys.geometry.core.misc.units import UNITS
-from ansys.geometry.core.shapes import Arc, Circle, Ellipse, Polygon, Segment
-from ansys.geometry.core.sketch.arc import SketchArc
-from ansys.geometry.core.sketch.circle import SketchCircle
-from ansys.geometry.core.sketch.segment import SketchSegment
+from ansys.geometry.core.math import Frame, Plane, Point2D, Point3D, UnitVector3D
+from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.sketch import Arc, Circle, Ellipse, Polygon, Segment
 
 
 def test_wait_until_healthy():
@@ -48,24 +41,9 @@ def test_invalid_inputs():
 
 
 def test_circle_message_conversion():
-    """Test conversion between :class:`Circle <ansys.geometry.core.shapes.circle.Circle>`
+    """Test conversion between :class:`Circle <ansys.geometry.core.sketch.circle.Circle>`
     and expected gRPC message type."""
     circle = Circle(
-        Plane(Point3D([10, 100, 1000], UNITS.mm)),
-        Point3D([10, 100, 1000], UNITS.mm),
-        Quantity(300, UNITS.mm),
-    )
-    grpc_circle_message = circle_to_grpc_circle(circle)
-
-    assert grpc_circle_message.center.x == 0.01
-    assert grpc_circle_message.center.y == 0.1
-    assert grpc_circle_message.center.z == 1.0
-    assert grpc_circle_message.radius == 0.3
-
-
-def test_sketchcircle_message_conversion():
-    """Test conversion between :class:`SketchCircle` and expected gRPC message type."""
-    circle = SketchCircle(
         Point2D([10, 100], UNITS.mm),
         Quantity(300, UNITS.mm),
     )
@@ -80,26 +58,28 @@ def test_sketchcircle_message_conversion():
 
 
 def test_ellipse_message_conversion():
-    """Test conversion between :class:`Ellipse <ansys.geometry.core.shapes.ellipse.Ellipse>`
+    """Test conversion between :class:`Ellipse <ansys.geometry.core.sketch.ellipse.Ellipse>`
     and expected gRPC message type."""
     ellipse = Ellipse(
-        Plane(Point3D([10, 100, 1000], UNITS.mm)),
-        Point3D([10, 100, 1000], UNITS.mm),
+        Point2D([10, 100], UNITS.mm),
         Quantity(300, UNITS.mm),
         Quantity(50, UNITS.mm),
     )
-    grpc_ellipse_message = ellipse_to_grpc_ellipse(ellipse)
+    grpc_ellipse_message = sketch_ellipse_to_grpc_ellipse(
+        ellipse, Plane(Point3D([10, 100, 1000], UNITS.mm))
+    )
 
-    assert grpc_ellipse_message.center.x == 0.01
-    assert grpc_ellipse_message.center.y == 0.1
+    assert grpc_ellipse_message.center.x == 0.02
+    assert grpc_ellipse_message.center.y == 0.2
     assert grpc_ellipse_message.center.z == 1.0
     assert grpc_ellipse_message.majorradius == 0.3
     assert grpc_ellipse_message.minorradius == 0.05
 
 
-def test_sketchsegment_message_conversion():
-    """Test conversion between :class:`SketchSegment` and expected gRPC message type."""
-    segment = SketchSegment(
+def test_segment_message_conversion():
+    """Test conversion between :class:`Segment <ansys.geometry.core.sketch.segment.Segment>`
+    and expected gRPC message type."""
+    segment = Segment(
         Point2D([30, 400], UNITS.mm),
         Point2D([500, 600], UNITS.mm),
     )
@@ -115,47 +95,30 @@ def test_sketchsegment_message_conversion():
     assert grpc_line_message.end.z == 1.0
 
 
-def test_segment_message_conversion():
-    """Test conversion between :class:`Segment <ansys.geometry.core.shapes.segment.Segment>`
-    and expected gRPC message type."""
-    segment = Segment(
-        Plane(Point3D([10, 100, 1000], UNITS.mm)),
-        Point3D([30, 400, 1000], UNITS.mm),
-        Point3D([500, 600, 1000], UNITS.mm),
-    )
-    grpc_line_message = segment_to_grpc_line(segment)
-
-    assert grpc_line_message.start.x == 0.03
-    assert grpc_line_message.start.y == 0.4
-    assert grpc_line_message.start.z == 1.0
-    assert grpc_line_message.end.x == 0.5
-    assert grpc_line_message.end.y == 0.6
-    assert grpc_line_message.end.z == 1.0
-
-
 def test_polygon_message_conversion():
-    """Test conversion between :class:`Polygon <ansys.geometry.core.shapes.polygon.Polygon>`
+    """Test conversion between :class:`Polygon <ansys.geometry.core.sketch.polygon.Polygon>`
     and expected gRPC message type."""
     polygon = Polygon(
-        Plane(Point3D([10, 100, 1000], UNITS.mm)),
-        Point3D([10, 100, 1000], UNITS.mm),
+        Point2D([10, 100], UNITS.mm),
         Quantity(300, UNITS.mm),
         5,
     )
-    grpc_polygon_message = polygon_to_grpc_polygon(polygon)
+    grpc_polygon_message = sketch_polygon_to_grpc_polygon(
+        polygon, Plane(Point3D([10, 100, 1000], UNITS.mm))
+    )
 
-    assert grpc_polygon_message.center.x == 0.01
-    assert grpc_polygon_message.center.y == 0.1
+    assert grpc_polygon_message.center.x == 0.02
+    assert grpc_polygon_message.center.y == 0.2
     assert grpc_polygon_message.center.z == 1.0
     assert grpc_polygon_message.radius == 0.3
     assert grpc_polygon_message.numberofsides == 5
 
 
-def test_point_message_conversion():
+def test_point3d_message_conversion():
     """Test conversion between :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
     and expected gRPC message type."""
     point = Point3D([10, 100, 1000], UNITS.mm)
-    grpc_point_message = point_to_grpc_point(point)
+    grpc_point_message = point3d_to_grpc_point(point)
 
     assert grpc_point_message.x == 0.01
     assert grpc_point_message.y == 0.1
@@ -165,7 +128,7 @@ def test_point_message_conversion():
 def test_point2d_message_conversion():
     """Test conversion between :class:`Point2D` and expected gRPC message type."""
     point = Point2D([10, 100], UNITS.mm)
-    grpc_point_message = point2D_to_grpc_point(Plane(Point3D([10, 100, 1000], UNITS.mm)), point)
+    grpc_point_message = point2d_to_grpc_point(Plane(Point3D([10, 100, 1000], UNITS.mm)), point)
 
     assert grpc_point_message.x == 0.02
     assert grpc_point_message.y == 0.2
@@ -184,37 +147,9 @@ def test_unit_vector_message_conversion():
 
 
 def test_arc_message_conversion():
-    """Test conversion between :class:`Arc <ansys.geometry.core.shapes.arc.Arc>`
+    """Test conversion between :class:`Arc <ansys.geometry.core.sketch.arc.Arc>`
     and expected gRPC message type."""
     arc = Arc(
-        Plane(Point3D([10, 100, 1000], UNITS.mm)),
-        Point3D([30, 400, 1000], UNITS.mm),
-        Point3D([500, 600, 1000], UNITS.mm),
-        Point3D([900, 800, 1000], UNITS.mm),
-        UnitVector3D([0, 0, 1]),
-    )
-    grpc_arc_message = arc_to_grpc_arc(arc)
-
-    assert grpc_arc_message.center.x == 0.03
-    assert grpc_arc_message.center.y == 0.4
-    assert grpc_arc_message.center.z == 1.0
-
-    assert grpc_arc_message.start.x == 0.5
-    assert grpc_arc_message.start.y == 0.6
-    assert grpc_arc_message.start.z == 1.0
-
-    assert grpc_arc_message.end.x == 0.9
-    assert grpc_arc_message.end.y == 0.8
-    assert grpc_arc_message.end.z == 1.0
-
-    assert grpc_arc_message.axis.x == 0
-    assert grpc_arc_message.axis.y == 0
-    assert grpc_arc_message.axis.z == 1
-
-
-def test_sketcharc_message_conversion():
-    """Test conversion between :class:`SketchArc` and expected gRPC message type."""
-    arc = SketchArc(
         Point2D([500, 600], UNITS.mm),
         Point2D([100, 400], UNITS.mm),
         Point2D([900, 800], UNITS.mm),
@@ -237,7 +172,7 @@ def test_sketcharc_message_conversion():
     assert grpc_arc_message.axis.y == 0
     assert grpc_arc_message.axis.z == 1
 
-    arc2 = SketchArc(
+    arc2 = Arc(
         Point2D([600, 700], UNITS.mm),
         Point2D([200, 500], UNITS.mm),
         Point2D([1000, 900], UNITS.mm),

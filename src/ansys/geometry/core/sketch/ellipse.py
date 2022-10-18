@@ -1,28 +1,26 @@
-"""A module containing a class for modeling ellipses."""
-from typing import List, Optional, Union
+"""``Ellipse`` class module."""
+
+from typing import Optional, Union
 
 import numpy as np
 from pint import Quantity
+import pyvista as pv
 from scipy.integrate import quad
+from scipy.spatial.transform import Rotation as spatial_rotation
 
-from ansys.geometry.core.math import Plane, Point3D
-from ansys.geometry.core.misc import Angle, Distance, check_type
-from ansys.geometry.core.misc.measurements import UNIT_ANGLE
-from ansys.geometry.core.shapes.base import BaseShape
+from ansys.geometry.core.math import Matrix33, Matrix44, Point2D
+from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance, check_type
+from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
 
 
-class Ellipse(BaseShape):
+class Ellipse(SketchFace):
     """A class for modeling ellipses.
 
     Parameters
     ----------
-    plane : Plane
-        A :class:`Plane <ansys.geometry.core.math.plane.Plane>` representing
-        the planar surface where the shape is contained.
-    center : Point3D
-        A :class:`Point3D <ansys.geometry.core.math.point.Point3D>` representing
-        the center of the ellipse.
+    center: Point2D
+        A :class:`Point2D` representing the center of the ellipse.
     semi_major_axis : Union[Quantity, Distance]
         The semi-major axis of the ellipse.
     semi_minor_axis : Union[Quantity, Distance]
@@ -33,17 +31,18 @@ class Ellipse(BaseShape):
 
     def __init__(
         self,
-        plane: Plane,
-        center: Point3D,
+        center: Point2D,
         semi_major_axis: Union[Quantity, Distance],
         semi_minor_axis: Union[Quantity, Distance],
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
         """Initializes the ellipse shape."""
-        super().__init__(plane, is_closed=True)
-        check_type(center, Point3D)
+        super().__init__()
+
+        check_type(center, Point2D)
         check_type(semi_major_axis, (Quantity, Distance))
         check_type(semi_minor_axis, (Quantity, Distance))
+
         self._center = center
         self._semi_major_axis = (
             semi_major_axis if isinstance(semi_major_axis, Distance) else Distance(semi_major_axis)
@@ -51,8 +50,7 @@ class Ellipse(BaseShape):
         self._semi_minor_axis = (
             semi_minor_axis if isinstance(semi_minor_axis, Distance) else Distance(semi_minor_axis)
         )
-        if not self.plane.is_point_contained(center):
-            raise ValueError("Center must be contained in the plane.")
+
         if self._semi_major_axis.value.m_as(self._semi_major_axis.base_unit) <= 0:
             raise ValueError("Semi-major axis must be a real positive value.")
         if self._semi_minor_axis.value.m_as(self._semi_minor_axis.base_unit) <= 0:
@@ -71,12 +69,12 @@ class Ellipse(BaseShape):
             raise ValueError("Semi-major axis cannot be shorter than semi-minor axis.")
 
     @property
-    def center(self) -> Point3D:
+    def center(self) -> Point2D:
         """The center of the ellipse.
 
         Returns
         -------
-        Point3D
+        Point2D
             The center of the ellipse.
         """
         return self._center
@@ -175,87 +173,52 @@ class Ellipse(BaseShape):
         return np.pi * self.semi_major_axis * self.semi_minor_axis
 
     @property
-    def components(self) -> List["BaseShape"]:
-        """Returns a list containing all simple geometries forming the shape.
+    def visualization_polydata(self) -> pv.PolyData:
+        """
+        Return the vtk polydata representation for PyVista visualization.
+
+        The representation lies in the X/Y plane within
+        the standard global cartesian coordinate system.
 
         Returns
         -------
-        List[BaseShape]
-            A list of component geometries forming the shape.
+        pyvista.PolyData
+            The vtk pyvista.Polydata configuration.
         """
-        return [self]
-
-    def local_points(self, num_points: Optional[int] = 100) -> List[Point3D]:
-        """Returns a list containing all the points belonging to the shape.
-
-        Parameters
-        ----------
-        num_points : int
-            Desired number of points belonging to the shape.
-
-        Returns
-        -------
-        List[Point3D]
-            A list of points representing the shape.
-        """
-        angle_cos = np.cos(self._angle_offset.value.m_as(UNIT_ANGLE))
-        angle_sin = np.sin(self._angle_offset.value.m_as(UNIT_ANGLE))
-        offset_factor = np.arctan2(
-            -self.semi_major_axis.m * angle_sin, self.semi_minor_axis.m * angle_cos
-        )
-        theta = np.linspace(0, 2 * np.pi, num_points)
-        center_from_plane_origin = Point3D(
-            self.plane.global_to_local_rotation @ (self.center - self.plane.origin),
-            self.center.unit,
+        rotation = Matrix33(
+            spatial_rotation.from_euler(
+                "xyz", [0, 0, self._angle_offset.value.m_as(UNIT_ANGLE)], degrees=False
+            ).as_matrix()
         )
 
-        points = []
-        for ang in theta:
-            angle_plus_offset_cos = np.cos(ang + offset_factor)
-            angle_plus_offset_sin = np.sin(ang + offset_factor)
-            points.append(
-                Point3D(
-                    [
-                        center_from_plane_origin.x.to(self.semi_major_axis.units).m
-                        + self.semi_major_axis.m * angle_plus_offset_cos * angle_cos
-                        - self.semi_minor_axis.m * angle_plus_offset_sin * angle_sin,
-                        center_from_plane_origin.y.to(self.semi_major_axis.units).m
-                        + self.semi_major_axis.m * angle_plus_offset_cos * angle_sin
-                        + self.semi_minor_axis.m * angle_plus_offset_sin * angle_cos,
-                        center_from_plane_origin.z.to(self.semi_major_axis.units).m,
-                    ],
-                    unit=self.semi_major_axis.units,
-                )
-            )
-        return points
+        transformation_matrix = Matrix44(
+            [
+                [
+                    rotation[0, 0],
+                    rotation[0, 1],
+                    rotation[0, 2],
+                    self.center.x.m_as(UNIT_LENGTH),
+                ],
+                [
+                    rotation[1, 0],
+                    rotation[1, 1],
+                    rotation[1, 2],
+                    self.center.y.m_as(UNIT_LENGTH),
+                ],
+                [
+                    rotation[2, 0],
+                    rotation[2, 1],
+                    rotation[2, 2],
+                    0,
+                ],
+                [0, 0, 0, 1],
+            ]
+        )
 
-    @classmethod
-    def from_axes(
-        cls,
-        center: Point3D,
-        semi_major_axis: Union[Quantity, Distance],
-        semi_minor_axis: Union[Quantity, Distance],
-        plane: Optional[Plane] = Plane(),
-    ):
-        """Create an ellipse from its semi-major and semi-minor axes.
-
-        Parameters
-        ----------
-        center : Point3D
-            A :class:`Point3D <ansys.geometry.core.math.point.Point3D>` representing the
-            center of the ellipse.
-        semi_major_axis : Union[Quantity, Distance]
-            The semi-major axis of the ellipse.
-        semi_minor_axis : Union[Quantity, Distance]
-            The semi-minor axis of the ellipse.
-        plane : Plane, optional
-            A :class:`Plane <ansys.geometry.core.math.plane.Plane>` representing the
-            planar surface where the shape is contained.
-            By default, the base XY-Plane.
-
-        Returns
-        -------
-        Ellipse
-            An object for modeling elliptical shapes.
-        """
-        return cls(plane, center, semi_major_axis, semi_minor_axis)
+        # TODO: Replace with core pyvista ellipse implementation when released
+        points = np.zeros((100, 3))
+        theta = np.linspace(0.0, 2.0 * np.pi, 100)
+        points[:, 0] = self.semi_major_axis.m_as(UNIT_LENGTH) * np.cos(theta)
+        points[:, 1] = self.semi_minor_axis.m_as(UNIT_LENGTH) * np.sin(theta)
+        cells = np.array([np.append(np.array([100]), np.arange(100))])
+        return pv.wrap(pv.PolyData(points, cells)).transform(transformation_matrix)

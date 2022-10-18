@@ -4,9 +4,12 @@ import sys
 from typing import List
 
 from ansys.geometry.core.math.point import Point2D
-from ansys.geometry.core.misc import check_is_float_int, check_type_equivalence
-from ansys.geometry.core.misc.accuracy import Accuracy
-from ansys.geometry.core.misc.measurements import UNIT_LENGTH
+from ansys.geometry.core.misc import (
+    UNIT_LENGTH,
+    Accuracy,
+    check_is_float_int,
+    check_type_equivalence,
+)
 from ansys.geometry.core.typing import Real
 
 
@@ -134,6 +137,11 @@ class BoundingBox2D:
         ----------
         point : Point2D
             The point to be compared against the bounds.
+
+        Returns
+        -------
+        bool
+            ``True`` if the point is contained in the bounding box. Otherwise, ``False``.
         """
         return self.contains_point_components(point.x.m_as(UNIT_LENGTH), point.y.m_as(UNIT_LENGTH))
 
@@ -146,6 +154,11 @@ class BoundingBox2D:
             The point x component to be compared against the bounds.
         y : Real
             The point y component to be compared against the bounds.
+
+        Returns
+        -------
+        bool
+            ``True`` if the components are contained in the bounding box. Otherwise, ``False``.
         """
         return (
             Accuracy.length_is_greater_than_or_equal(x, self._x_min)

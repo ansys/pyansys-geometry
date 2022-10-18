@@ -4,10 +4,14 @@ import numpy as np
 import pytest
 
 from ansys.geometry.core.math import (
+    UNITVECTOR2D_X,
+    UNITVECTOR2D_Y,
     UNITVECTOR3D_X,
     UNITVECTOR3D_Y,
     UNITVECTOR3D_Z,
+    ZERO_VECTOR2D,
     ZERO_VECTOR3D,
+    BoundingBox2D,
     Frame,
     Matrix,
     Matrix33,
@@ -15,12 +19,11 @@ from ansys.geometry.core.math import (
     Plane,
     Point2D,
     Point3D,
+    UnitVector2D,
     UnitVector3D,
+    Vector2D,
     Vector3D,
 )
-from ansys.geometry.core.math.bounding_box import BoundingBox2D
-from ansys.geometry.core.math.constants import UNITVECTOR2D_X, UNITVECTOR2D_Y, ZERO_VECTOR2D
-from ansys.geometry.core.math.vector import UnitVector2D, Vector2D
 from ansys.geometry.core.misc import UNITS
 
 DOUBLE_EPS = np.finfo(float).eps
@@ -163,7 +166,7 @@ def test_point_errors():
         point2D.y = 10 * UNITS.degrees
 
 
-def test_point2D_units():
+def test_point2d_units():
     """``Point2D`` units testing."""
 
     # Create a Point2D with some units
@@ -203,7 +206,7 @@ def test_point2D_units():
     assert raw_y == p_cm_to_mm[1] * 20
 
 
-def test_point3D_units():
+def test_point3d_units():
     """``Point3D`` units testing."""
 
     # Create a Point with some units
@@ -756,29 +759,29 @@ def test_frame():
         Frame("A", UnitVector3D([12, 31, 99]), UnitVector3D([23, 67, 45]))
 
 
-def test_frame_global_to_local_point_transformation():
+def test_frame_local_to_global_point_transformation():
     """``Frame`` transform_point_global_to_local implementation tests."""
     origin = Point3D([42, 99, 13])
     frame_xy = Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
-    transformed_xy_origin = frame_xy.transform_point2D_global_to_local(Point2D([0, 0]))
+    transformed_xy_origin = frame_xy.transform_point2d_local_to_global(Point2D([0, 0]))
     assert transformed_xy_origin == origin
 
     frame_xz = Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 0, 1]))
-    transformed_xz = frame_xz.transform_point2D_global_to_local(Point2D([0, 12]))
+    transformed_xz = frame_xz.transform_point2d_local_to_global(Point2D([0, 12]))
     assert transformed_xz == Point3D([42, 99, 25])
 
     frame_tilted = Frame(Point3D([0, 0, 0]), UnitVector3D([1, 1, 1]), UnitVector3D([0, -1, 1]))
-    transformed_tilted = frame_tilted.transform_point2D_global_to_local(Point2D([0, 10]))
+    transformed_tilted = frame_tilted.transform_point2d_local_to_global(Point2D([0, 10]))
     assert transformed_tilted == Point3D([0, -7.071067811865475, 7.071067811865475])
 
     assert transformed_xy_origin == origin
 
     frame_xz = Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 0, 1]))
-    transformed_xz = frame_xz.transform_point2D_global_to_local(Point2D([0, 12]))
+    transformed_xz = frame_xz.transform_point2d_local_to_global(Point2D([0, 12]))
     assert transformed_xz == Point3D([42, 99, 25])
 
     frame_tilted = Frame(Point3D([0, 0, 0]), UnitVector3D([1, 1, 1]), UnitVector3D([0, -1, 1]))
-    transformed_tilted = frame_tilted.transform_point2D_global_to_local(Point2D([0, 10]))
+    transformed_tilted = frame_tilted.transform_point2d_local_to_global(Point2D([0, 10]))
     assert transformed_tilted == Point3D([0, -7.071067811865475, 7.071067811865475])
 
 
@@ -823,7 +826,7 @@ def test_plane():
         p_1.is_point_contained(Point2D([42, 99]))
 
 
-def test_add_sub_point_3d():
+def test_add_sub_point():
     """Test for adding/subtracting Point3D/2D objects."""
 
     # Point3D (and Vector3D)

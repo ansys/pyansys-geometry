@@ -7,13 +7,13 @@ from pint import Quantity
 
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.misc import (
+    UNIT_ANGLE,
     Accuracy,
     check_is_float_int,
     check_ndarray_is_float_int,
     check_type,
     check_type_equivalence,
 )
-from ansys.geometry.core.misc.measurements import UNIT_ANGLE
 from ansys.geometry.core.typing import Real, RealSequence
 
 

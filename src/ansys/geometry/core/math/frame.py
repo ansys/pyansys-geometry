@@ -54,7 +54,7 @@ class Frame:
 
         self._direction_z = UnitVector3D(self._direction_x % self._direction_y)
 
-        self._directional_rotation_matrix = Matrix33(
+        self._rotation_matrix = Matrix33(
             np.array(
                 [
                     self.direction_x.tolist(),
@@ -67,22 +67,22 @@ class Frame:
         self._transformation_matrix = Matrix44(
             [
                 [
-                    self._directional_rotation_matrix.T[0, 0],
-                    self._directional_rotation_matrix.T[0, 1],
-                    self._directional_rotation_matrix.T[0, 2],
-                    self.origin.x.m_as(self._origin.base_unit),
+                    self.direction_x.x,
+                    self.direction_y.x,
+                    self.direction_z.x,
+                    self.origin.x.to_base_units().m,
                 ],
                 [
-                    self._directional_rotation_matrix.T[1, 0],
-                    self._directional_rotation_matrix.T[1, 1],
-                    self._directional_rotation_matrix.T[1, 2],
-                    self.origin.y.m_as(self._origin.base_unit),
+                    self.direction_x.y,
+                    self.direction_y.y,
+                    self.direction_z.y,
+                    self.origin.y.to_base_units().m,
                 ],
                 [
-                    self._directional_rotation_matrix.T[2, 0],
-                    self._directional_rotation_matrix.T[2, 1],
-                    self._directional_rotation_matrix.T[2, 2],
-                    self.origin.z.m_as(self._origin.base_unit),
+                    self.direction_x.z,
+                    self.direction_y.z,
+                    self.direction_z.z,
+                    self.origin.z.to_base_units().m,
                 ],
                 [0, 0, 0, 1],
             ]
@@ -119,7 +119,7 @@ class Frame:
             coordinate space excluding origin translation.
 
         """
-        return self._directional_rotation_matrix
+        return self._rotation_matrix
 
     @property
     def local_to_global_rotation(self) -> Matrix33:
@@ -132,7 +132,7 @@ class Frame:
             coordinate space.
 
         """
-        return self._directional_rotation_matrix.T
+        return self._rotation_matrix.T
 
     @property
     def transformation_matrix(self) -> Matrix44:
@@ -146,18 +146,26 @@ class Frame:
         """
         return self._transformation_matrix
 
-    def transform_point2D_global_to_local(self, point: Point2D) -> Point3D:
-        three_dimensional_representation = Point3D(
-            [point.x.m_as(point.base_unit), point.y.m_as(point.base_unit), 0], point.base_unit
-        )
+    def transform_point2d_local_to_global(self, point: Point2D) -> Point3D:
+        """Expresses a local, plane-contained ``Point2D`` object in the global
+        coordinate system, and thus it is represented as a ``Point3D``.
 
-        return self._origin + Point3D(
-            self._directional_rotation_matrix.T @ three_dimensional_representation, point.base_unit
-        )
+        Parameters
+        ----------
+        point : Point2D
+            The ``Point2D`` local object to be expressed in global coordinates.
 
-    def transform_point3D_global_to_local(self, point: Point3D) -> Point3D:
-        transformed_point = self._directional_rotation_matrix.T @ (point)
-        return self._origin + Point3D(transformed_point, point.base_unit)
+        Returns
+        -------
+        Point3D
+            The global coordinates ``Point3D`` object.
+        """
+        local_point_as_3d = Point3D(
+            [point.x.to_base_units().m, point.y.to_base_units().m, 0], point.base_unit
+        )
+        return self.origin + Point3D(
+            self.local_to_global_rotation @ local_point_as_3d, point.base_unit
+        )
 
     def __eq__(self, other: "Frame") -> bool:
         """Equals operator for ``Frame``."""
@@ -165,9 +173,9 @@ class Frame:
 
         return (
             self.origin == other.origin
-            and self._direction_x == other._direction_x
-            and self._direction_y == other._direction_y
-            and self._direction_z == other._direction_z
+            and self.direction_x == other.direction_x
+            and self.direction_y == other.direction_y
+            and self.direction_z == other.direction_z
         )
 
     def __ne__(self, other: "Frame") -> bool:

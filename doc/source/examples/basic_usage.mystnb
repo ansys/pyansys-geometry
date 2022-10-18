@@ -32,7 +32,7 @@ from ansys.geometry.core.plotting.plotter import Plotter
 A ``Sketch`` instance is created by defining a drawing plane. This plane is declared by a point and two fundamental orthogonal directions:
 
 ```{code-cell} ipython3
-from ansys.geometry.core.math import Plane, Point3D
+from ansys.geometry.core.math import Plane, Point2D, Point3D
 ```
 
 In the following lines, a plane is defined and used to create a new sketch:
@@ -61,8 +61,9 @@ Different shapes can be drawn in the sketch using the corresponding ``draw`` met
 Circles can be drawn in a sketch by specifying the center and radius.
 
 ```{code-cell} ipython3
-circle = sketch.draw_circle(Point3D([2, 1, 1]), radius=30 * u.cm)
-circle.plot()
+sketch.circle(Point2D([2, 1]), radius=30 * u.cm, tag="Circle")
+sketch.select("Circle")
+sketch.plot_selection()
 ```
 
 ### Drawing an ellipse
@@ -70,10 +71,11 @@ circle.plot()
 Ellipses can be drawn in a sketch by specifying the center, semi-major axis and semi-minor axis.
 
 ```{code-cell} ipython3
-ellipse = sketch.draw_ellipse(
-    origin, semi_major_axis=2*u.m, semi_minor_axis=1*u.m
+sketch.ellipse(
+    Point2D([1, 1]), semi_major_axis=2*u.m, semi_minor_axis=1*u.m, tag="Ellipse"
 )
-ellipse.plot()
+sketch.select("Ellipse")
+sketch.plot_selection()
 ```
 
 ### Drawing a polygon
@@ -81,10 +83,11 @@ ellipse.plot()
 Regular polygons can be drawn by passing the center, radius and the desired number of sides.
 
 ```{code-cell} ipython3
-pentagon = sketch.draw_polygon(
-    origin, inner_radius=3*u.m, sides=5
+sketch.polygon(
+    Point2D([1, 1]), inner_radius=3*u.m, sides=5, tag="Polygon"
 )
-pentagon.plot()
+sketch.select("Polygon")
+sketch.plot_selection()
 ```
 
 ### Drawing an arc
@@ -92,9 +95,10 @@ pentagon.plot()
 For drawing arcs of circumference, a center, starting and ending points are required.
 
 ```{code-cell} ipython3
-start_point, end_point = Point3D([2, 1, 1], unit=u.m), Point3D([0, 1, 1], unit=u.meter)
-arc = sketch.draw_arc(Point3D([1.5, 1, 1]), start_point, end_point)
-arc.plot()
+start_point, end_point = Point2D([2, 1], unit=u.m), Point2D([0, 1], unit=u.meter)
+sketch.arc(start_point, end_point, Point2D([1,1]), tag="Arc")
+sketch.select("Arc")
+sketch.plot_selection()
 ```
 
 ### Drawing a slot
@@ -102,8 +106,9 @@ arc.plot()
 For drawing slots with a center, width, and height.
 
 ```{code-cell} ipython3
-slot = sketch.draw_slot(Point3D([2, 0, 2]), 4, 3)
-slot.plot()
+sketch.slot(Point2D([2, 0]), 4, 3, tag="Slot")
+sketch.select("Slot")
+sketch.plot_selection()
 ```
 
 ### Drawing a box
@@ -111,8 +116,9 @@ slot.plot()
 For drawing boxes with a center, width, and height.
 
 ```{code-cell} ipython3
-box = sketch.draw_box(Point3D([2, 0, 2]), 4, 5)
-box.plot()
+sketch.box(Point2D([2, 0]), 4, 5, tag="Box")
+sketch.select("Box")
+sketch.plot_selection()
 ```
 
 ### Drawing a segment
@@ -120,9 +126,10 @@ box.plot()
 Segments can be drawn in a sketch by specifying its starting and ending points:
 
 ```{code-cell} ipython3
-start_point, end_point = Point3D([2, 1, 1], unit=u.m), Point3D([0, 1, 1], unit=u.meter)
-segment = sketch.draw_segment(start_point, end_point)
-segment.plot()
+start_point, end_point = Point2D([2, 1], unit=u.m), Point2D([0, 1], unit=u.meter)
+sketch.segment(start_point, end_point, "Segment")
+sketch.select("Segment")
+sketch.plot_selection()
 ```
 
 ## Plotting the sketch

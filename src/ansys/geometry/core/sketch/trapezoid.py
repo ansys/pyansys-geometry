@@ -4,14 +4,13 @@ from typing import Optional, Union
 
 import numpy as np
 from pint import Quantity
+import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
-from ansys.geometry.core.math import Matrix33, Point2D
-from ansys.geometry.core.math.constants import ZERO_POINT2D
-from ansys.geometry.core.misc import Angle, Distance, check_type
-from ansys.geometry.core.misc.measurements import UNIT_ANGLE
+from ansys.geometry.core.math import ZERO_POINT2D, Matrix33, Point2D
+from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance, check_type
 from ansys.geometry.core.sketch.face import SketchFace
-from ansys.geometry.core.sketch.segment import SketchSegment
+from ansys.geometry.core.sketch.segment import Segment
 from ansys.geometry.core.typing import Real
 
 
@@ -31,9 +30,15 @@ class Trapezoid(SketchFace):
         If not defined, the trapezoid will be symmetrical.
     center: Optional[Point2D]
         A :class:`Point2D` representing the center of the trapezoid.
-        Defaults to (0, 0)
+        Defaults to (0, 0).
     angle : Optional[Union[Quantity, Angle, Real]]
         The placement angle for orientation alignment.
+
+    Notes
+    -----
+    If a ``nonsymmetrical_slant_angle`` is defined, the ``slant_angle`` will
+    be applied to the left-most angle, whereas the ``nonsymmetrical_slant_angle``
+    will be applied to the right-most angle.
     """
 
     def __init__(
@@ -114,10 +119,10 @@ class Trapezoid(SketchFace):
         self._point3 = Point2D([rotated_point_3[0], rotated_point_3[1]], center.unit)
         self._point4 = Point2D([rotated_point_4[0], rotated_point_4[1]], center.unit)
 
-        self._segment1 = SketchSegment(self._point1, self._point2)
-        self._segment2 = SketchSegment(self._point2, self._point3)
-        self._segment3 = SketchSegment(self._point3, self._point4)
-        self._segment4 = SketchSegment(self._point4, self._point1)
+        self._segment1 = Segment(self._point1, self._point2)
+        self._segment2 = Segment(self._point2, self._point3)
+        self._segment3 = Segment(self._point3, self._point4)
+        self._segment4 = Segment(self._point4, self._point1)
 
         self._edges.append(self._segment1)
         self._edges.append(self._segment2)
@@ -156,3 +161,27 @@ class Trapezoid(SketchFace):
             The height of the trapezoid.
         """
         return self._height.value
+
+    @property
+    def visualization_polydata(self) -> pv.PolyData:
+        """
+        Return the vtk polydata representation for PyVista visualization.
+
+        The representation lies in the X/Y plane within
+        the standard global cartesian coordinate system.
+
+        Returns
+        -------
+        pyvista.PolyData
+            The vtk pyvista.Polydata configuration.
+        """
+        # TODO: Really, a rectangle???... This should be modified on PyVista... It doesn't make
+        #       any sense that a trapezoid can be a rectangle...
+        return pv.Rectangle(
+            [
+                [self._point1.x.m_as(UNIT_LENGTH), self._point1.y.m_as(UNIT_LENGTH), 0],
+                [self._point2.x.m_as(UNIT_LENGTH), self._point2.y.m_as(UNIT_LENGTH), 0],
+                [self._point3.x.m_as(UNIT_LENGTH), self._point3.y.m_as(UNIT_LENGTH), 0],
+                [self._point4.x.m_as(UNIT_LENGTH), self._point4.y.m_as(UNIT_LENGTH), 0],
+            ]
+        )

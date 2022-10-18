@@ -18,7 +18,6 @@ from ansys.geometry.core.connection import (
     tess_to_pd,
     unit_vector_to_grpc_direction,
 )
-from ansys.geometry.core.connection.conversions import one_profile_shape_to_grpc_geometries
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.errors import protect_grpc
@@ -214,9 +213,7 @@ class Body:
         imprint_response = self._commands_stub.ImprintCurves(
             ImprintCurvesRequest(
                 body=self._id,
-                curves=sketch_shapes_to_grpc_geometries(
-                    sketch._plane, sketch.edges, sketch.faces, sketch.shapes_list
-                ),
+                curves=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
                 faces=[face._id for face in faces],
             )
         )
@@ -253,7 +250,7 @@ class Body:
             Signifies whether to target the closest face with the projection.
         only_one_curve: bool, optional
             Projects only one curve of the entire sketch provided. If ``True``, then
-            the first curve is projected. By default, ``False``.
+            only one curve is projected. By default, ``False``.
 
         Notes
         -----
@@ -271,14 +268,9 @@ class Body:
         check_type(sketch, Sketch)
         check_type(closest_face, bool)
 
-        if only_one_curve:
-            curves = one_profile_shape_to_grpc_geometries(
-                sketch._plane, sketch.edges, sketch.faces, sketch.shapes_list
-            )
-        else:
-            curves = sketch_shapes_to_grpc_geometries(
-                sketch._plane, sketch.edges, sketch.faces, sketch.shapes_list
-            )
+        curves = sketch_shapes_to_grpc_geometries(
+            sketch._plane, sketch.edges, sketch.faces, only_one_curve=only_one_curve
+        )
 
         self._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 
@@ -357,13 +349,13 @@ class Body:
 
         >>> from ansys.geometry.core.misc.units import UNITS as u
         >>> from ansys.geometry.core.sketch import Sketch
-        >>> from ansys.geometry.core.math import Plane, Point3D, UnitVector3D
+        >>> from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
         >>> from ansys.geometry.core import Modeler
         >>> modeler = Modeler()
         >>> origin = Point3D([0, 0, 0])
         >>> plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 0, 1])
         >>> sketch = Sketch(plane)
-        >>> box = sketch.draw_box(Point3D([2, 0, 2]), 4, 4)
+        >>> box = sketch.box(Point2D([2, 0]), 4, 4)
         >>> design = modeler.create_design("my-design")
         >>> my_comp = design.add_component("my-comp")
         >>> body = my_comp.extrude_sketch("my-sketch", sketch, 1 * u.m)
@@ -427,13 +419,13 @@ class Body:
 
         >>> from ansys.geometry.core.misc.units import UNITS as u
         >>> from ansys.geometry.core.sketch import Sketch
-        >>> from ansys.geometry.core.math import Plane, Point3D, UnitVector3D
+        >>> from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
         >>> from ansys.geometry.core import Modeler
         >>> modeler = Modeler()
         >>> origin = Point3D([0, 0, 0])
         >>> plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 0, 1])
         >>> sketch = Sketch(plane)
-        >>> box = sketch.draw_box(Point3D([2, 0, 2]), 4, 4)
+        >>> box = sketch.box(Point2D([2, 0]), 4, 4)
         >>> design = modeler.create_design("my-design")
         >>> mycomp = design.add_component("my-comp")
         >>> body = mycomp.extrude_sketch("my-sketch", sketch, 1 * u.m)
