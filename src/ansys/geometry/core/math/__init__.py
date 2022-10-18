@@ -1,4 +1,5 @@
 """PyGeometry math subpackage."""
+from ansys.geometry.core.math.bbox import BoundingBox2D
 from ansys.geometry.core.math.constants import (
     DEFAULT_POINT2D,
     DEFAULT_POINT3D,
@@ -31,6 +32,7 @@ __all__ = [
     "ZERO_POINT3D",
     "ZERO_VECTOR2D",
     "ZERO_VECTOR3D",
+    "BoundingBox2D",
     "Frame",
     "Matrix",
     "Matrix33",

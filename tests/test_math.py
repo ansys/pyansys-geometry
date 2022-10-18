@@ -4,10 +4,14 @@ import numpy as np
 import pytest
 
 from ansys.geometry.core.math import (
+    UNITVECTOR2D_X,
+    UNITVECTOR2D_Y,
     UNITVECTOR3D_X,
     UNITVECTOR3D_Y,
     UNITVECTOR3D_Z,
+    ZERO_VECTOR2D,
     ZERO_VECTOR3D,
+    BoundingBox2D,
     Frame,
     Matrix,
     Matrix33,
@@ -15,12 +19,11 @@ from ansys.geometry.core.math import (
     Plane,
     Point2D,
     Point3D,
+    UnitVector2D,
     UnitVector3D,
+    Vector2D,
     Vector3D,
 )
-from ansys.geometry.core.math.bounding_box import BoundingBox2D
-from ansys.geometry.core.math.constants import UNITVECTOR2D_X, UNITVECTOR2D_Y, ZERO_VECTOR2D
-from ansys.geometry.core.math.vector import UnitVector2D, Vector2D
 from ansys.geometry.core.misc import UNITS
 
 DOUBLE_EPS = np.finfo(float).eps

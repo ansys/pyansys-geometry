@@ -4,9 +4,12 @@ import sys
 from typing import List
 
 from ansys.geometry.core.math.point import Point2D
-from ansys.geometry.core.misc import check_is_float_int, check_type_equivalence
-from ansys.geometry.core.misc.accuracy import Accuracy
-from ansys.geometry.core.misc.measurements import UNIT_LENGTH
+from ansys.geometry.core.misc import (
+    UNIT_LENGTH,
+    Accuracy,
+    check_is_float_int,
+    check_type_equivalence,
+)
 from ansys.geometry.core.typing import Real
 
 
