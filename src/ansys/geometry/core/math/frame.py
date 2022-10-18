@@ -5,7 +5,7 @@ from typing import List, Union
 import numpy as np
 
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, ZERO_POINT3D
-from ansys.geometry.core.math.matrix import Matrix33
+from ansys.geometry.core.math.matrix import Matrix33, Matrix44
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc import check_type, check_type_equivalence
@@ -64,6 +64,30 @@ class Frame:
             )
         )
 
+        self._transformation_matrix = Matrix44(
+            [
+                [
+                    self.direction_x.x,
+                    self.direction_y.x,
+                    self.direction_z.x,
+                    self.origin.x.to_base_units().m,
+                ],
+                [
+                    self.direction_x.y,
+                    self.direction_y.y,
+                    self.direction_z.y,
+                    self.origin.y.to_base_units().m,
+                ],
+                [
+                    self.direction_x.z,
+                    self.direction_y.z,
+                    self.direction_z.z,
+                    self.origin.z.to_base_units().m,
+                ],
+                [0, 0, 0, 1],
+            ]
+        )
+
     @property
     def origin(self) -> Point3D:
         """Return the origin of the ``Frame``."""
@@ -109,6 +133,18 @@ class Frame:
 
         """
         return self._rotation_matrix.T
+
+    @property
+    def transformation_matrix(self) -> Matrix44:
+        """Returns the full 4x4 transformation matrix.
+
+        Returns
+        -------
+        Matrix44
+            A 4x4 matrix representing the transformation from global to local
+            coordinate space.
+        """
+        return self._transformation_matrix
 
     def transform_point2d_local_to_global(self, point: Point2D) -> Point3D:
         """Expresses a local, plane-contained ``Point2D`` object in the global
