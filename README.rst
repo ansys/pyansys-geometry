@@ -150,7 +150,7 @@ Offline mode installation
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you lack an internet connection on your installation machine (or you do not have access to the
-private PyPI package), the recommended way of installing PyGeometry is downloading the wheelhouse
+private Ansys PyPI packages repository), the recommended way of installing PyGeometry is downloading the wheelhouse
 archive from the `Releases Page <https://github.com/pyansys/pygeometry/releases>`_ for your
 corresponding machine architecture.
 
