@@ -89,6 +89,8 @@ docs = [
     "sphinx-gallery",
     "ipyvtklink",
     "panel",
+    "jupyter_sphinx",
+    "sphinx-autodoc-typehints",
     "sphinx_design"
 ]
 
