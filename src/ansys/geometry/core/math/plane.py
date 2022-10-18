@@ -8,7 +8,7 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, Z
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.checks import check_type, check_type_equivalence
+from ansys.geometry.core.misc import check_type, check_type_equivalence
 from ansys.geometry.core.typing import RealSequence
 
 

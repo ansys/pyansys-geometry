@@ -17,3 +17,11 @@ Default HOST port used.
 By default it will search for the env variable ANSRV_GEO_PORT
 and if it does not exist, it will fallback to ``50051``.
 """
+
+MAX_MESSAGE_LENGTH = int(os.environ.get("PYGEOMETRY_MAX_MESSAGE_LENGTH", 256 * 1024**2))
+"""
+Default gRPC message length.
+
+By default it will search for the env variable PYGEOMETRY_MAX_MESSAGE_LENGTH
+and if it does not exist, it will fallback to ``256Mb``.
+"""

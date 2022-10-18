@@ -1,7 +1,6 @@
 """Provides a wrapped abstraction of the gRPC proto API definition and stubs."""
 
 import logging
-import os
 from pathlib import Path
 import time
 from typing import TYPE_CHECKING, Optional, Union
@@ -11,16 +10,13 @@ from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
 
 from ansys.geometry.core import LOG as logger
-from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
+from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
 from ansys.geometry.core.logger import PyGeometryCustomAdapter
 from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.platform.instancemanagement import Instance
-
-# Default 256 MB message length
-MAX_MESSAGE_LENGTH = int(os.environ.get("PYGEOMETRY_MAX_MESSAGE_LENGTH", 256 * 1024**2))
 
 
 def wait_until_healthy(channel: grpc.Channel, timeout: float):
