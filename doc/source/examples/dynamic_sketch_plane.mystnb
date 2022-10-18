@@ -56,11 +56,7 @@ sketch = Sketch()
 
 (
     sketch.segment(Point2D([0, 0]), Point2D([40, 1], unit=UNITS.mm), "LowerEdge")
-      .arc_to_point(
-          Point2D([41.5, 2.5], unit=UNITS.mm),
-          Point2D([40, 2.5], unit=UNITS.mm),
-          tag="SupportedCorner",
-      )
+      .arc_to_point(Point2D([41.5, 2.5], unit=UNITS.mm), Point2D([40, 2.5], unit=UNITS.mm), tag="SupportedCorner")
       .segment_to_point(Point2D([41.5, 5], unit=UNITS.mm))
       .arc_to_point(Point2D([43, 6.5], unit=UNITS.mm), Point2D([43, 5], unit=UNITS.mm), True)
       .segment_to_point(Point2D([55, 6.5], unit=UNITS.mm))
