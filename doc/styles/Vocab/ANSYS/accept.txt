@@ -7,3 +7,7 @@ Fluent API
 Geometry Service
 Geometry models
 PyGeometry
+api
+Protobuf
+Scipy
+PyPI
