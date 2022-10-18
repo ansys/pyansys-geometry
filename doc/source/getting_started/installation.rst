@@ -7,7 +7,7 @@ Package dependencies
 PyGeometry is supported on Python versions 3.7+. Previous versions of Python are
 no longer support as outlined `here <https://python3statement.org/>`_. 
 PyGeometry dependencies are automatically checked when packages are installed.
-The following projects are required dependencies of PyGeometry:
+The following projects are required dependencies for PyGeometry:
 
 * `ansys-api-geometry` - The gRPC code generated from Protobuf files.
 * `NumPy <https://pypi.org/project/numpy/>`_ - NumPy arrays provide a core foundation for data array access for PyGeometry.
@@ -86,7 +86,7 @@ Check the :class:`Modeler() <ansys.geometry.core.modelar()>` connection by:
     Connection: Healthy
 
 If you see a response from the server, you are ready to get started using PyGeometry as a service.
-For details regarding the PyGeometry interface, see :ref:`user guide <ref_user_guide>`.
+For more details regarding the PyGeometry interface, see :ref:`user guide <ref_user_guide>`.
 
 .. LINKS AND REFERENCES
 .. _pip: https://pypi.org/project/pip/
