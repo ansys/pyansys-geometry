@@ -72,11 +72,11 @@ class Slot(SketchFace):
         half_h = height_magnitude / 2
         half_w = width_magnitude / 2
         corner_1 = rotation @ [-half_w, half_h, 0]
-        corner_2 = rotation @ [half_w, half_h, 0]
+        corner_2 = rotation @ [-half_w, -half_h, 0]
         corner_3 = rotation @ [half_w, -half_h, 0]
-        corner_4 = rotation @ [-half_w, -half_h, 0]
-        arc_1_center = rotation @ [half_w, 0, 0]
-        arc_2_center = rotation @ [-half_w, 0, 0]
+        corner_4 = rotation @ [half_w, half_h, 0]
+        arc_1_center = rotation @ [-half_w, 0, 0]
+        arc_2_center = rotation @ [half_w, 0, 0]
 
         self._slot_corner_1 = Point2D(
             [center.x.m + corner_1[0], center.y.m + corner_1[1]], center.unit
@@ -99,15 +99,15 @@ class Slot(SketchFace):
             center.unit,
         )
 
-        self._arc1 = Arc(self._arc_1_center, self._slot_corner_3, self._slot_corner_2)
-        self._arc2 = Arc(self._arc_2_center, self._slot_corner_1, self._slot_corner_4)
-        self._segment1 = Segment(self._slot_corner_2, self._slot_corner_1)
-        self._segment2 = Segment(self._slot_corner_4, self._slot_corner_3)
+        self._arc1 = Arc(self._arc_1_center, self._slot_corner_1, self._slot_corner_2)
+        self._segment1 = Segment(self._slot_corner_2, self._slot_corner_3)
+        self._arc2 = Arc(self._arc_2_center, self._slot_corner_3, self._slot_corner_4)
+        self._segment2 = Segment(self._slot_corner_4, self._slot_corner_1)
 
+        self._edges.append(self._arc1)
         self._edges.append(self._segment1)
         self._edges.append(self._arc2)
         self._edges.append(self._segment2)
-        self._edges.append(self._arc1)
 
     @property
     def center(self) -> Point2D:

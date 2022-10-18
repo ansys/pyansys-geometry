@@ -184,10 +184,14 @@ class Arc(SketchEdge):
             The vtk pyvista.Polydata configuration.
         """
 
-        if self.is_clockwise and self.angle > np.pi:
+        if np.isclose(self.angle, np.pi):
+            if self.is_clockwise:
+                pv_negative = False
+            else:
+                pv_negative = True
+        elif self.angle > np.pi:
             pv_negative = True
-        elif not self.is_clockwise and self.angle < np.pi:
-            pv_negative = True
+
         else:
             pv_negative = False
 
