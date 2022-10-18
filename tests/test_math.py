@@ -823,7 +823,7 @@ def test_plane():
         p_1.is_point_contained(Point2D([42, 99]))
 
 
-def test_add_sub_point_3d():
+def test_add_sub_point():
     """Test for adding/subtracting Point3D/2D objects."""
 
     # Point3D (and Vector3D)

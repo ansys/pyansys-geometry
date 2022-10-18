@@ -5,7 +5,7 @@ from typing import Dict, List, Optional, Union
 from pint import Quantity
 
 from ansys.geometry.core.math import ZERO_POINT2D, Plane, Point2D, Vector2D
-from ansys.geometry.core.misc import Angle, Distance
+from ansys.geometry.core.misc import Angle, Distance, check_type
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.box import Box
 from ansys.geometry.core.sketch.circle import Circle
@@ -20,6 +20,7 @@ from ansys.geometry.core.sketch.triangle import Triangle
 from ansys.geometry.core.typing import Real
 
 SketchObject = Union[SketchEdge, SketchFace]
+"""Type used to refer to both SketchEdge and SketchFace as possible values."""
 
 
 class Sketch:
@@ -27,11 +28,10 @@ class Sketch:
     Provides Sketch class for building 2D sketch elements.
     """
 
+    # Types of the class instance private attributes
     _faces: List[SketchFace]
     _edges: List[SketchEdge]
-
     _current_sketch_context: List[SketchObject]
-
     _tags: Dict[str, List[SketchObject]]
 
     def __init__(
@@ -101,6 +101,7 @@ class Sketch:
         Sketch
             The revised sketch state ready for further sketch actions.
         """
+        check_type(face, SketchFace)
         self._faces.append(face)
 
         if tag:
@@ -124,6 +125,7 @@ class Sketch:
         Sketch
             The revised sketch state ready for further sketch actions.
         """
+        check_type(edge, SketchEdge)
         self._edges.append(edge)
 
         if tag:
@@ -216,9 +218,9 @@ class Sketch:
         Vector magnitude assumed to use the same unit as the starting point.
         """
         end_vec_as_point = Point2D(vector, start.unit)
-        end_vec_as_point += start
+        end = start + end_vec_as_point
 
-        return self.segment(start, end_vec_as_point, tag)
+        return self.segment(start, end, tag)
 
     def segment_from_vector(self, vector: Vector2D, tag: Optional[str] = None):
         """
