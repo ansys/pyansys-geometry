@@ -20,7 +20,8 @@ class Slot(SketchFace):
     Parameters
     ----------
     center: Point2D
-        A :class:`Point2D` representing the center of the slot.
+        A :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+        representing the center of the slot.
     width : Union[Quantity, Distance, Real]
         The width of the slot main body.
     height : Union[Quantity, Distance, Real]

@@ -15,14 +15,9 @@ from ansys.geometry.core.connection.conversions import (
     sketch_segment_to_grpc_line,
     unit_vector_to_grpc_direction,
 )
-from ansys.geometry.core.math import Frame, Plane, Point3D, UnitVector3D
-from ansys.geometry.core.math.point import Point2D
-from ansys.geometry.core.misc.units import UNITS
-from ansys.geometry.core.sketch.arc import Arc
-from ansys.geometry.core.sketch.circle import Circle
-from ansys.geometry.core.sketch.ellipse import Ellipse
-from ansys.geometry.core.sketch.polygon import Polygon
-from ansys.geometry.core.sketch.segment import Segment
+from ansys.geometry.core.math import Frame, Plane, Point2D, Point3D, UnitVector3D
+from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.sketch import Arc, Circle, Ellipse, Polygon, Segment
 
 
 def test_wait_until_healthy():
@@ -151,7 +146,7 @@ def test_unit_vector_message_conversion():
     assert grpc_unit_vector_message.z == 0.5773502691896258
 
 
-def test_sketcharc_message_conversion():
+def test_arc_message_conversion():
     """Test conversion between :class:`Arc <ansys.geometry.core.sketch.arc.Arc>`
     and expected gRPC message type."""
     arc = Arc(

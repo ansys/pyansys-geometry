@@ -7,11 +7,9 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.designer import CurveType, SharedTopologyType, SurfaceType
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
-from ansys.geometry.core.math import Frame, Plane, Point2D, Point3D, UnitVector3D
-from ansys.geometry.core.math.constants import UNITVECTOR3D_Z
-from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.math import UNITVECTOR3D_Z, Frame, Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import UNITS
-from ansys.geometry.core.sketch.sketch import Sketch
+from ansys.geometry.core.sketch import Sketch
 
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):

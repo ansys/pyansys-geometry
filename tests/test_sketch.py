@@ -131,7 +131,7 @@ def test_sketch_arc_edge():
     #                                  (3,0)
     #
     #
-    # Since positive angle is ALWAYS counterclockwise, this will lead to a 270deg
+    # Since angle is counterclockwise by default, this will lead to a 270deg
     # angle starting on S and ending on E. This is also PI * 3 / 2 in rads
     #
     assert len(sketch.edges) == 0
@@ -145,9 +145,7 @@ def test_sketch_arc_edge():
     #
     #
     # In this case, following the previous drawing, we are going from E to S with center
-    # at O again. This would lead to a 90 deg angle, but since we are going with a
-    # clockwise sense of rotation, it will lead to 270 degs again.
-    #
+    # at 'O' again, but in clockwise direction. This will lead to 270 degs (PI * 3 / 2 in rads).
     #
     sketch.arc_to_point(Point2D([0, 0]), Point2D([3, 0]), clockwise=True, tag="Arc2")
     assert len(sketch.edges) == 2
