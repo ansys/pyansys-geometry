@@ -42,12 +42,14 @@ from ansys.geometry.core.sketch.sketch import Sketch
 
 ## Defining a ``Sketch`` profile for the PCB
 
-``Sketch`` planes can be created, modified and plotted independent of supporting 
+``Sketch`` instances can be created, modified and plotted independent of supporting 
 geometry service instances.
 
 A ``Sketch`` outline of individual ``Segment`` and ``Arc`` objects is created with two
-circular through-hole attachments points added within the profile boundary to maintain a
+circular through-hole attachment points added within the profile boundary to maintain a
 single, closed sketch face.
+
+A single sketch instance can be used for multiple design operations.
 
 ```{code-cell} ipython3
 sketch = Sketch()
@@ -74,9 +76,15 @@ sketch = Sketch()
 sketch.plot()
 ```
 
+## Extruding multiple bodies with a single sketch
+
 A server connection is established and the single sketch profile is used to extrude 
 the board profile at multiple z-offsets. A named selection is then created from the 
 resulting list of layer bodies.
+
+Notice that translating the sketch plane prior to extrusion is more effective than 
+creating a design body on the supporting server and then translating the body on the
+server. The result is 10 server calls instead of 20.
 
 ```{code-cell} ipython3
 sketch.plot()
