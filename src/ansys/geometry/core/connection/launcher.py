@@ -69,7 +69,7 @@ def launch_remote_modeler(
         )
 
     pim = pypim.connect()
-    instance = pim.create_instance(product_name="discovery-geometry", product_version=version)
+    instance = pim.create_instance(product_name="geometry", product_version=version)
     instance.wait_for_ready()
     channel = instance.build_grpc_channel(
         options=[

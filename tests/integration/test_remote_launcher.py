@@ -55,9 +55,7 @@ def test_launch_remote_instance(monkeypatch, modeler: Modeler):
     # Assert: PyGeometry went through the PyPIM workflow
     assert mock_is_configured.called
     assert mock_connect.called
-    mock_client.create_instance.assert_called_with(
-        product_name="discovery-geometry", product_version=None
-    )
+    mock_client.create_instance.assert_called_with(product_name="geometry", product_version=None)
     assert mock_instance.wait_for_ready.called
     mock_instance.build_grpc_channel.assert_called_with(
         options=[
