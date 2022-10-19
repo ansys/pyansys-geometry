@@ -95,12 +95,12 @@ class Polygon(SketchFace):
 
     @property
     def angle(self) -> Angle:
-        """Return the orientation angle of the ellipse.
+        """Return the orientation angle of the polygon.
 
         Returns
         -------
         Quantity
-            Orientation angle the ellipse.
+            Orientation angle the polygon.
         """
         return self._angle_offset
 
