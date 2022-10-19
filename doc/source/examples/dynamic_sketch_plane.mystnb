@@ -82,8 +82,6 @@ creating a design body on the supporting server and then translating the body on
 server. The result is 10 server calls instead of 20.
 
 ```{code-cell} ipython3
-sketch.plot()
-
 modeler = Modeler()
 design = modeler.create_design("ExtrudedBoardProfile")
 
