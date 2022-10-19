@@ -2,20 +2,17 @@ import numpy as np
 from pint import Quantity
 import pytest
 
-from ansys.geometry.core.math import Point2D
-from ansys.geometry.core.math.constants import ZERO_POINT2D
-from ansys.geometry.core.math.plane import Plane
-from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.math.vector import UnitVector3D, Vector2D, Vector3D
-from ansys.geometry.core.misc.measurements import UNIT_LENGTH, Distance
-from ansys.geometry.core.misc.units import UNITS
-from ansys.geometry.core.sketch.box import Box
-from ansys.geometry.core.sketch.circle import Circle
-from ansys.geometry.core.sketch.ellipse import Ellipse
-from ansys.geometry.core.sketch.polygon import Polygon
-from ansys.geometry.core.sketch.segment import Segment
-from ansys.geometry.core.sketch.sketch import Sketch
-from ansys.geometry.core.sketch.slot import Slot
+from ansys.geometry.core.math import (
+    ZERO_POINT2D,
+    Plane,
+    Point2D,
+    Point3D,
+    UnitVector3D,
+    Vector2D,
+    Vector3D,
+)
+from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
+from ansys.geometry.core.sketch import Box, Circle, Ellipse, Polygon, Segment, Sketch, Slot
 
 DOUBLE_EPS = np.finfo(float).eps
 
