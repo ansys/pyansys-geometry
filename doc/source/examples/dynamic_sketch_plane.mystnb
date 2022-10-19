@@ -34,10 +34,9 @@ Start by importing the fundamental objects:
 from pint import Quantity
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core.math.constants import UNITVECTOR3D_Z
-from ansys.geometry.core.math.point import Point2D
-from ansys.geometry.core.misc.units import UNITS
-from ansys.geometry.core.sketch.sketch import Sketch
+from ansys.geometry.core.math import UNITVECTOR3D_Z, Point2D
+from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.sketch import Sketch
 ```
 
 ## Defining a ``Sketch`` profile for the PCB
@@ -64,7 +63,7 @@ sketch = Sketch()
       .segment_to_point(Point2D([56.5, 35], unit=UNITS.mm))
       .arc_to_point(Point2D([55, 36.5], unit=UNITS.mm), Point2D([55, 35], unit=UNITS.mm))
       .segment_to_point(Point2D([0, 36.5], unit=UNITS.mm))
-      .segment_to_point(Point2D([0, 0]))
+      .segment_to_point(Point2D([0, 0], unit=UNITS.mm))
       .circle(Point2D([4, 4], UNITS.mm), Quantity(1.5, UNITS.mm), "Anchor1")
       .circle(Point2D([51, 34.5], UNITS.mm), Quantity(1.5, UNITS.mm), "Anchor2")
 )
@@ -75,7 +74,7 @@ sketch.plot()
 ## Extruding multiple bodies with a single sketch
 
 A server connection is established and the single sketch profile is used to extrude 
-the board profile at multiple z-offsets. A named selection is then created from the 
+the board profile at multiple Z-offsets. A named selection is then created from the 
 resulting list of layer bodies.
 
 Notice that translating the sketch plane prior to extrusion is more effective than 
@@ -91,7 +90,7 @@ design = modeler.create_design("ExtrudedBoardProfile")
 layers = []
 layer_thickness = Quantity(0.20, UNITS.mm)
 for layer_index in range(10):
-    layers.append(design.extrude_sketch(f"BoardLayer{layer_index}", sketch, layer_thickness))
+    layers.append(design.extrude_sketch(f"BoardLayer_{layer_index}", sketch, layer_thickness))
     sketch.translate_sketch_plane_by_distance(UNITVECTOR3D_Z, layer_thickness)
 
 board_named_selection = design.create_named_selection("FullBoard", bodies=layers)
