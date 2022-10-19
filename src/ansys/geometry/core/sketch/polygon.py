@@ -100,7 +100,7 @@ class Polygon(SketchFace):
         Returns
         -------
         Quantity
-            Orientation angle the polygon.
+            Orientation angle of the polygon.
         """
         return self._angle_offset
 

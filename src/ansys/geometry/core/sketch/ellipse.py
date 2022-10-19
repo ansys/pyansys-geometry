@@ -108,7 +108,7 @@ class Ellipse(SketchFace):
         Returns
         -------
         Quantity
-            Orientation angle the ellipse.
+            Orientation angle of the ellipse.
         """
         return self._angle_offset
 
