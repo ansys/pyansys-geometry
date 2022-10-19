@@ -90,8 +90,7 @@ jobs:
 
       - name: Store version
         run: |
-          echo "::set-output name=PYGEOM_VERSION::$(python -c "from ansys.geometry.core import __version__; print(__version__)")"
-        id: version
+          echo "PYGEOM_VERSION=$(python -c "from ansys.geometry.core import __version__; print(__version__)")" >> $GITHUB_ENV
 
       - name: Generate wheelhouse
         run: |
@@ -101,12 +100,12 @@ jobs:
         uses: vimtor/action-zip@v1
         with:
           files: wheelhouse
-          dest: ${{ env.PACKAGE_NAME }}-v${{ steps.version.outputs.PYGEOM_VERSION }}-wheelhouse-${{ runner.os }}-${{ matrix.python-version }}.zip
+          dest: ${{ env.PACKAGE_NAME }}-v${{ env.PYGEOM_VERSION }}-wheelhouse-${{ runner.os }}-${{ matrix.python-version }}.zip
 
       - name: Upload Wheelhouse
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.PACKAGE_NAME }}-v${{ steps.version.outputs.PYGEOM_VERSION }}-wheelhouse-${{ runner.os }}-${{ matrix.python-version }}
+          name: ${{ env.PACKAGE_NAME }}-v${{ env.PYGEOM_VERSION }}-wheelhouse-${{ runner.os }}-${{ matrix.python-version }}
           path: '*.zip'
           retention-days: 7
 
