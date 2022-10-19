@@ -71,13 +71,13 @@ class Slot(SketchFace):
         )
 
         half_h = height_magnitude / 2
-        half_w = width_magnitude / 2
-        corner_1 = rotation @ [-half_w, half_h, 0]
-        corner_2 = rotation @ [-half_w, -half_h, 0]
-        corner_3 = rotation @ [half_w, -half_h, 0]
-        corner_4 = rotation @ [half_w, half_h, 0]
-        arc_1_center = rotation @ [-half_w, 0, 0]
-        arc_2_center = rotation @ [half_w, 0, 0]
+        half_box_w = (width_magnitude - height_magnitude) / 2
+        corner_1 = rotation @ [-half_box_w, half_h, 0]
+        corner_2 = rotation @ [-half_box_w, -half_h, 0]
+        corner_3 = rotation @ [half_box_w, -half_h, 0]
+        corner_4 = rotation @ [half_box_w, half_h, 0]
+        arc_1_center = rotation @ [-half_box_w, 0, 0]
+        arc_2_center = rotation @ [half_box_w, 0, 0]
 
         self._slot_corner_1 = Point2D(
             [center.x.m + corner_1[0], center.y.m + corner_1[1]], center.unit
