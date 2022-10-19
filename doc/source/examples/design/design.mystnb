@@ -1,0 +1,58 @@
+---
+jupytext:
+  text_representation:
+    extension: .mystnb
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.14.1
+kernelspec:
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
+---
+
+# Extruded rectangular plate
+
+The box is located in the center of the plate, with the default origin of a sketch plane (origin at (0,0,0)).
+The outer plate is extruded with equal radius holes at four corners of the plate.
+The projection is at the center of the face. The default projection depth is through the entire part.
+
++++
+import the fundamental objects:
+
+```{code-cell} ipython3 
+import numpy as np
+from pint import Quantity
+
+from ansys.geometry.core import Modeler
+from ansys.geometry.core.math import Plane, Point3D, Point2D
+from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.sketch import Sketch
+```
+
+## Defining a ``Sketch`` profile for the PCB
+
+```{code-cell} ipython3 
+sketch = Sketch()
+(sketch.segment(Point2D([-4, 5], unit=UNITS.m), Point2D([4, 5], unit=UNITS.m))
+    .segment_to_point(Point2D([4, -5], unit=UNITS.m))
+    .segment_to_point(Point2D([-4, -5], unit=UNITS.m))
+    .segment_to_point(Point2D([-4, 5], unit=UNITS.m))
+    .box(Point2D([0,0], unit=UNITS.m), Quantity(3, UNITS.m), Quantity(3, UNITS.m))
+    .circle(Point2D([3, 4], unit=UNITS.m), Quantity(0.5, UNITS.m))
+    .circle(Point2D([-3, -4], unit=UNITS.m), Quantity(0.5, UNITS.m))
+    .circle(Point2D([-3, 4], unit=UNITS.m), Quantity(0.5, UNITS.m))
+    .circle(Point2D([3, -4], unit=UNITS.m), Quantity(0.5, UNITS.m))
+)
+```
+
+```{code-cell} ipython3 
+modeler = Modeler()
+design = modeler.create_design("ExtrudedPlate")
+layers= []
+layer_thickness = Quantity(2, UNITS.m)
+for layer_index in range(4):
+    layers.append(design.extrude_sketch(f"PlateLayer_{layer_index}", sketch, layer_thickness))
+board_named_selection = design.create_named_selection("Full", bodies=layers)
+design.plot(color = "gold")
+```

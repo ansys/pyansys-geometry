@@ -3,6 +3,8 @@ Examples
 
 All examples are collected in this page.
 
-.. nbgallery::
+.. toctree::
+    :hidden:
+    :maxdepth: 3
 
-    examples/basic_usage.mystnb
+    examples/README

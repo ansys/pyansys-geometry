@@ -120,7 +120,7 @@ nbsphinx_custom_formats = {
     ".mystnb": ["jupytext.reads", {"fmt": "mystnb"}],
 }
 nbsphinx_thumbnails = {
-    "examples/basic_usage": "_static/thumbnails/basic_usage.png",
+    "examples/basic/basic_usage": "_static/thumbnails/basic_usage.png",
 }
 
 typehints_defaults = "comma"
