@@ -30,7 +30,10 @@ from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 ```
 
-## Defining a ``Sketch`` profile for the PCB
+## Defining a ``Sketch`` profile for the proposed design
+
+The profile required 4 segment which constitute the body, a box on the center and
+a circle at four corners.
 
 ```{code-cell} ipython3 
 sketch = Sketch()
@@ -46,13 +49,17 @@ sketch = Sketch()
 )
 ```
 
-```{code-cell} ipython3 
+## Creating the design and plot
+
+Create a design with a name and extrude the four segments with desired thickness.
+
+```{code-cell} ipython3
 modeler = Modeler()
 design = modeler.create_design("ExtrudedPlate")
 layers= []
 layer_thickness = Quantity(2, UNITS.m)
 for layer_index in range(4):
     layers.append(design.extrude_sketch(f"PlateLayer_{layer_index}", sketch, layer_thickness))
-board_named_selection = design.create_named_selection("Full", bodies=layers)
+board_named_selection = design.create_named_selection("Plate", bodies=layers)
 design.plot(color = "gold")
 ```
