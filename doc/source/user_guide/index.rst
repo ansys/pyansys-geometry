@@ -27,8 +27,10 @@ PyGeometry is a Python wrapper for the Ansys Geometry Service. The key features 
 Simple interactive example
 ==========================
 
-1. Start the geometry instance
-------------------------------
+<!-- vale off -->
+1. Start the Geometry Service instance
+--------------------------------------
+<!-- vale on -->
 
 The :class:`Modeler() <ansys.geometry.core.modeler()>` class
 within the ``ansys-geometry-core`` library creates an instance of
@@ -43,8 +45,10 @@ Now, you can start the service with:
     >>> from ansys.geometry.core import Modeler
     >>> modeler = Modeler()
 
+<!-- vale off -->
 2. Create Geometry models
 -------------------------
+<!-- vale on -->
 
 The Geometry Service is now active and you can start creating the geometry model 
 by initializing the :ref:`Sketch <ref_sketch>` and :ref:`Primitives <ref_primitives>`.
