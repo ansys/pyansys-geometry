@@ -78,9 +78,6 @@ design.plot()
 
 ## Cross Component Targets
 
-The component is simply an organization mechanism. The following creates a component nested_component
-under the previously created component.
-
 Surfaces from any body across the entire design can be used a reference for creating new design bodies.
 
 This example extrudes a cylinder from the surface body assigned to the child component.
