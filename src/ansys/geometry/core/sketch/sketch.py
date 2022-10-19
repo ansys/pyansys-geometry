@@ -146,6 +146,9 @@ class Sketch:
         check_type(x, (Distance, Quantity))
         check_type(y, (Distance, Quantity))
         check_type(z, (Distance, Quantity))
+        check_type(x, (Distance, Quantity))
+        check_type(y, (Distance, Quantity))
+        check_type(z, (Distance, Quantity))
         x_magnitude = (
             x.m_as(UNIT_LENGTH) if not isinstance(x, Distance) else x.value.m_as(UNIT_LENGTH)
         )
@@ -178,6 +181,8 @@ class Sketch:
         Sketch
             The revised sketch state ready for further sketch actions.
         """
+        check_type(direction, UnitVector3D)
+        check_type(distance, (Distance, Quantity))
         check_type(direction, UnitVector3D)
         check_type(distance, (Distance, Quantity))
         magnitude = (
