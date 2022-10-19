@@ -71,7 +71,7 @@ Consider installing using a `virtual environment <https://docs.python.org/3/libr
 Verify your installation
 ------------------------
 
-Check the :class:`Modeler() <ansys.geometry.core.modelar()>` connection by:
+Check the :class:`Modeler() <ansys.geometry.core.modeler()>` connection by:
 
 .. code:: python
 
