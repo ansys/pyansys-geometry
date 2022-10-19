@@ -171,9 +171,9 @@ class Design(Component):
         file_location : Union[Path, str]
             Location on disk where the file should be saved.
         export_text_format : bool, default: False
-            Boolean indicating whether to request binary format.
-            True will request text format, false will request binary format.
-            By default, ``False``
+            Boolean indicating whether to request in binary format or in text format.
+            ``True`` will request text format, ``False`` will request binary format.
+            By default, ``False``.
         """
         if isinstance(file_location, Path):
             file_location = str(file_location)
