@@ -4,13 +4,18 @@ from pathlib import Path
 from typing import List, Optional, Union
 
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.designs_pb2 import NewDesignRequest, SaveAsDocumentRequest
+from ansys.api.geometry.v0.designs_pb2 import (
+    ExportDesignRequest,
+    NewDesignRequest,
+    SaveAsDocumentRequest,
+)
 from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.materials_pb2 import AddMaterialToDocumentRequest
 from ansys.api.geometry.v0.materials_pb2_grpc import MaterialsStub
 from ansys.api.geometry.v0.models_pb2 import Empty
 from ansys.api.geometry.v0.models_pb2 import Material as GRPCMaterial
 from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialProperty
+from ansys.api.geometry.v0.models_pb2 import PartExportFormat
 from ansys.api.geometry.v0.namedselections_pb2 import NamedSelectionIdentifier
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 
@@ -127,8 +132,8 @@ class Design(Component):
         ----------
         file_location : Union[Path, str]
             Location on disk where the file should be saved.
-        as_stream : bool, optional
-            Boolean indicating whether we should use the gRPC stream functionality
+        as_stream : bool, Default: False
+            Boolean indicating whether to use the gRPC stream functionality
             or the single message approach. By default, ``False``
         """
         # Sanity checks on inputs
@@ -147,6 +152,45 @@ class Design(Component):
             self._grpc_client.log.debug("Downloading design using single-message mechanism.")
             response = self._commands_stub.DownloadFile(Empty())
             received_bytes += response.data
+
+        # Write to file
+        downloaded_file = open(file_location, "wb")
+        downloaded_file.write(received_bytes)
+        downloaded_file.close()
+
+        self._grpc_client.log.debug(f"Design successfully downloaded at location {file_location}.")
+
+    @protect_grpc
+    def export_parasolid(
+        self, file_location: Union[Path, str], export_text_format: bool = False
+    ) -> None:
+        """Downloads a design in parasolid format from the active geometry server instance.
+
+        Parameters
+        ----------
+        file_location : Union[Path, str]
+            Location on disk where the file should be saved.
+        export_text_format : bool, default: False
+            Boolean indicating whether to request binary format.
+            True will request text format, false will request binary format.
+            By default, ``False``
+        """
+        if isinstance(file_location, Path):
+            file_location = str(file_location)
+        check_type(file_location, str)
+
+        self._grpc_client.log.debug("Downloading design parasolid using single-message mechanism.")
+
+        # Process response as single file
+        received_bytes = bytes()
+        response = self._design_stub.ExportDesign(
+            ExportDesignRequest(
+                format=PartExportFormat.PARTEXPORTFORMAT_PARASOLID_TEXT
+                if export_text_format
+                else PartExportFormat.PARTEXPORTFORMAT_PARASOLID_BINARY
+            )
+        )
+        received_bytes += response.data
 
         # Write to file
         downloaded_file = open(file_location, "wb")

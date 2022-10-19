@@ -1,4 +1,5 @@
 import grpc
+import numpy as np
 from pint import Quantity
 import pytest
 
@@ -16,7 +17,7 @@ from ansys.geometry.core.connection.conversions import (
     unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.math import Frame, Plane, Point2D, Point3D, UnitVector3D
-from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.misc import UNITS, Angle
 from ansys.geometry.core.sketch import Arc, Circle, Ellipse, Polygon, Segment
 
 
@@ -74,6 +75,24 @@ def test_ellipse_message_conversion():
     assert grpc_ellipse_message.center.z == 1.0
     assert grpc_ellipse_message.majorradius == 0.3
     assert grpc_ellipse_message.minorradius == 0.05
+    assert grpc_ellipse_message.angle == 0
+
+    rotated_ellipse = Ellipse(
+        Point2D([10, 100], UNITS.mm),
+        Quantity(300, UNITS.mm),
+        Quantity(50, UNITS.mm),
+        angle=Angle(45, UNITS.degrees),
+    )
+    rotated_grpc_ellipse_message = sketch_ellipse_to_grpc_ellipse(
+        rotated_ellipse, Plane(Point3D([10, 100, 1000], UNITS.mm))
+    )
+
+    assert rotated_grpc_ellipse_message.center.x == 0.02
+    assert rotated_grpc_ellipse_message.center.y == 0.2
+    assert rotated_grpc_ellipse_message.center.z == 1.0
+    assert rotated_grpc_ellipse_message.majorradius == 0.3
+    assert rotated_grpc_ellipse_message.minorradius == 0.05
+    assert rotated_grpc_ellipse_message.angle == np.pi / 4
 
 
 def test_segment_message_conversion():
@@ -112,6 +131,21 @@ def test_polygon_message_conversion():
     assert grpc_polygon_message.center.z == 1.0
     assert grpc_polygon_message.radius == 0.3
     assert grpc_polygon_message.numberofsides == 5
+    assert grpc_polygon_message.angle == 0
+
+    rotated_polygon = Polygon(
+        Point2D([10, 100], UNITS.mm), Quantity(300, UNITS.mm), 5, angle=Angle(45, UNITS.degrees)
+    )
+    rotated_grpc_polygon_message = sketch_polygon_to_grpc_polygon(
+        rotated_polygon, Plane(Point3D([10, 100, 1000], UNITS.mm))
+    )
+
+    assert rotated_grpc_polygon_message.center.x == 0.02
+    assert rotated_grpc_polygon_message.center.y == 0.2
+    assert rotated_grpc_polygon_message.center.z == 1.0
+    assert rotated_grpc_polygon_message.radius == 0.3
+    assert rotated_grpc_polygon_message.numberofsides == 5
+    assert rotated_grpc_polygon_message.angle == np.pi / 4
 
 
 def test_point3d_message_conversion():

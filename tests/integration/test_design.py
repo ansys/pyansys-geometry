@@ -728,6 +728,14 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
     design.save(file_location=file_save)
 
+    # Check for parasolid exports
+    binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
+    text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder_stream.x_t"
+    design.export_parasolid(binary_parasolid_file, export_text_format=False)
+    design.export_parasolid(text_parasolid_file, export_text_format=True)
+    assert binary_parasolid_file.exists()
+    assert text_parasolid_file.exists()
+
 
 def test_slot_extrusion(modeler: Modeler):
     """Test the extrusion of a slot."""

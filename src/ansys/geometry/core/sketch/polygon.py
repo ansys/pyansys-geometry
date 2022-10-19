@@ -94,6 +94,17 @@ class Polygon(SketchFace):
         return self._n_sides
 
     @property
+    def angle(self) -> Angle:
+        """Return the orientation angle of the ellipse.
+
+        Returns
+        -------
+        Quantity
+            Orientation angle the ellipse.
+        """
+        return self._angle_offset
+
+    @property
     def length(self) -> Quantity:
         """The side length of the polygon.
 
