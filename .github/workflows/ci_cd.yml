@@ -212,7 +212,7 @@ jobs:
           .\.venv\Scripts\Activate.ps1
           pip install --upgrade build
           pip install .[docs]
-          pip install https://github.com/pyvista/pyvista-wheels/raw/main/vtk-osmesa-9.1.0-cp39-cp39-linux_x86_64.whl --ignore-installed
+          pip install https://github.com/pyvista/pyvista-wheels/raw/main/vtk-9.1.0.dev0-cp310-cp310-win_amd64.whl --ignore-installed
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
