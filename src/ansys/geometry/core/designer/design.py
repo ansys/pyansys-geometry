@@ -162,7 +162,7 @@ class Design(Component):
 
     @protect_grpc
     def export_parasolid(
-        self, file_location: Union[Path, str], export_text_format: Optional[bool] = False) -> None:
+        self, file_location: Union[Path, str], export_text_format: Optional[bool] = False
     ) -> None:
         """Downloads a design in parasolid format from the active geometry server instance.
 
