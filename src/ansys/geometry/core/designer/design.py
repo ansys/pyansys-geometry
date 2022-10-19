@@ -133,7 +133,7 @@ class Design(Component):
         file_location : Union[Path, str]
             Location on disk where the file should be saved.
         as_stream : bool, Default: False
-            Boolean indicating whether to use the gRPC stream functionality
+            Boolean indicating whether to use the gRPC stream functionality.
             or the single message approach. By default, ``False``
         """
         # Sanity checks on inputs
@@ -162,7 +162,7 @@ class Design(Component):
 
     @protect_grpc
     def export_parasolid(
-        self, file_location: Union[Path, str], export_text_format: bool = False
+        self, file_location: Union[Path, str], export_text_format: Optional[bool] = False) -> None:
     ) -> None:
         """Downloads a design in parasolid format from the active geometry server instance.
 
