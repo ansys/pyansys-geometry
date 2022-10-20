@@ -16,9 +16,9 @@ kernelspec:
 Multiple bodies can be created from a single sketch by extruding the same sketch in different planes.
 
 The sketch is designed as an effective fluent-style API with all operations receiving 2D configurations.
-to know more about the fluent API, see [Fluent based API in Sketch](../../user_guide/shapes.rst)
+To know more about the fluent API, see [Fluent based API in Sketch](../../user_guide/shapes.rst)
 
-In this example, a box is located in the center of the plate, with the default origin of a sketch plane (origin at (0,0,0)).
+In this example, a box is located in the center of the plate, with the default origin of a sketch plane (origin at (0, 0, 0)).
 Four holes of equal radius are sketched at the corners of the plate.
 The plate is then extruded, leading to the generation of the requested body.
 The projection is at the center of the face. The default projection depth is through the entire part.
@@ -61,9 +61,9 @@ sketch = Sketch()
 ## Creating the design by extruding sketch
 
 A server connection is established and the single sketch profile is used to extrude 
-the board profile at multiple Z-offsets. A named selection is then created from the 
+the base component at Z axis. A named selection is then created from the 
 resulting list of bodies.
-The design is going to extrude the four segments with desired thickness, resulting in four server calls.
+The design is going to extrude the four segments with desired thickness, just in three server calls.
 
 ```{code-cell} ipython3
 modeler = Modeler()
