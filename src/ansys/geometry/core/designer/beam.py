@@ -2,6 +2,9 @@
 
 from typing import TYPE_CHECKING, List, Union
 
+import numpy as np
+from pint import Quantity
+
 from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
     UNITVECTOR3D_Y,
@@ -109,7 +112,7 @@ class BeamCircularProfile(BeamProfile):
 
 class Beam:
     """
-    Solid body representation with an assigned 2D cross-section.
+    Simplified solid body representation with an assigned 2D cross-section.
 
     Synchronizes to a design within a supporting geometry service instance.
 
@@ -126,7 +129,7 @@ class Beam:
     profile : BeamProfile
         The beam profile used to create the Beam.
     parent_component : Component
-        The parent component to nest the new component under within the design assembly.
+        The parent component to nest the new beam under within the design assembly.
     """
 
     def __init__(
