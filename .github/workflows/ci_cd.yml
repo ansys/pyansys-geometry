@@ -61,12 +61,60 @@ jobs:
           vale_flags: "--config=doc/.vale.ini"
 
   smoke-tests:
-    name: Build and Smoke tests
-    runs-on: ${{ matrix.os }}
+    name: Build and Smoke tests (Ubuntu only)
+    runs-on: ubuntu-latest
     needs: [style]
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        python-version: ['3.7', '3.8', '3.9', '3.10']
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: 'pyproject.toml'
+
+      - name: Install packages for building
+        run: |
+          pip install --upgrade build wheel
+          pip install .
+
+      - name: Smoke test
+        run: python -c "from ansys.geometry.core import __version__; print(__version__)"
+
+      - name: Store version
+        run: |
+          echo "PYGEOM_VERSION=$(python -c "from ansys.geometry.core import __version__; print(__version__)")" >> $GITHUB_ENV
+
+      - name: Generate wheelhouse
+        run: |
+          pip wheel . -w wheelhouse
+
+      - name: Zip wheelhouse
+        uses: vimtor/action-zip@v1
+        with:
+          files: wheelhouse
+          dest: ${{ env.PACKAGE_NAME }}-v${{ env.PYGEOM_VERSION }}-wheelhouse-${{ runner.os }}-${{ matrix.python-version }}.zip
+
+      - name: Upload Wheelhouse
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.PACKAGE_NAME }}-v${{ env.PYGEOM_VERSION }}-wheelhouse-${{ runner.os }}-${{ matrix.python-version }}
+          path: '*.zip'
+          retention-days: 7
+
+  remaining-smoke-tests:
+    name: Build and Smoke tests (Windows, macOS)
+    runs-on: ${{ matrix.os }}
+    needs: [smoke-tests]
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
         python-version: ['3.7', '3.8', '3.9', '3.10']
       fail-fast: false
 
@@ -251,7 +299,7 @@ jobs:
 
   package:
     name: Package library
-    needs: [testing, docs]
+    needs: [testing, docs, remaining-smoke-tests]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
