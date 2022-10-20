@@ -18,3 +18,4 @@ Service based examples
 .. nbgallery::
 
     examples/design/plate_with_hole.mystnb
+    examples/dynamic_sketch_plane.mystnb
