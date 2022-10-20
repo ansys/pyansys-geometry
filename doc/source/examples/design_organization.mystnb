@@ -18,7 +18,7 @@ All of the solid and surface bodies within the design can be organized within a 
 The top-level design node and each component node can have one or more bodies assigned and one or more components assigned.
 
 There are several design operations that result with a new body created within the design. Each of these operations
-requires the user to specify which node of the design tree the new body should be organized under.
+require the user to specify which node of the design tree the new body should be organized under.
 
 +++
 
@@ -27,9 +27,8 @@ Start by importing the fundamental objects:
 ```{code-cell} ipython3
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.math import UNITVECTOR3D_X, Point2D
-from ansys.geometry.core.misc.measurements import Distance
-from ansys.geometry.core.misc.units import UNITS
-from ansys.geometry.core.sketch.sketch import Sketch
+from ansys.geometry.core.misc import UNITS, Distance
+from ansys.geometry.core.sketch import Sketch
 ```
 
 ## Design organization
@@ -43,19 +42,15 @@ modeler = Modeler()
 design = modeler.create_design("DesignHierarchyExample")
 
 circle_sketch = Sketch()
-
 circle_sketch.circle(Point2D([10, 10], UNITS.mm), Distance(10, UNITS.mm))
 
-cylinder_10mm_body = design.extrude_sketch("10mmCylinder", circle_sketch, Distance(10, UNITS.mm))
-
-circle_sketch.translate_sketch_plane_by_distance(UNITVECTOR3D_X, Distance(-25, UNITS.mm))
+cylinder_body = design.extrude_sketch("10mmCylinder", circle_sketch, Distance(10, UNITS.mm))
 
 slot_sketch = Sketch()
 slot_sketch.slot(Point2D([40, 10], UNITS.mm), Distance(20, UNITS.mm), Distance(10, UNITS.mm))
 
 nested_component = design.add_component("NestedComponent")
-
-nested_component.extrude_sketch("SlotExtrusion", slot_sketch, Distance(20, UNITS.mm))
+slot_body = nested_component.extrude_sketch("SlotExtrusion", slot_sketch, Distance(20, UNITS.mm))
 
 design.plot()
 ```
@@ -70,7 +65,7 @@ used sketch.
 
 double_nested_component = nested_component.add_component("DoubleNestedComponent")
 
-circle_surface_body = double_nested_component.create_surface("CirclarSurfaceBody", circle_sketch)
+circle_surface_body = double_nested_component.create_surface("CircularSurfaceBody", circle_sketch)
 circle_surface_body.translate(UNITVECTOR3D_X, Distance(-10, UNITS.mm))
 
 design.plot()
@@ -78,14 +73,14 @@ design.plot()
 
 ## Cross Component Targets
 
-Surfaces from any body across the entire design can be used a reference for creating new design bodies.
+Surfaces from any body across the entire design can be used as a reference for creating new design bodies.
 
 This example extrudes a cylinder from the surface body assigned to the child component.
 
 ```{code-cell} ipython3
 
-cylinder_30mm_body = nested_component.extrude_face("CylinderFromFace", circle_surface_body.faces[0], Distance(30, UNITS.mm))
-cylinder_30mm_body.translate(UNITVECTOR3D_X, Distance(-25, UNITS.mm))
+cylinder_from_face = nested_component.extrude_face("CylinderFromFace", circle_surface_body.faces[0], Distance(30, UNITS.mm))
+cylinder_from_face.translate(UNITVECTOR3D_X, Distance(-25, UNITS.mm))
 
 design.plot()
 ```
