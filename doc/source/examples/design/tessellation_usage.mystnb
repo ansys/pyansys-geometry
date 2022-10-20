@@ -45,7 +45,7 @@ design = modeler.create_design("TessellationDesign")
 comp = design.add_component("TessellationComponent")
 body = comp.extrude_sketch("FirstBody", sketch=sketch_1, distance=10 * UNITS.m)
 
-# Create the second body in a plane with different origin.
+# Create the second body in a plane with different origin
 sketch_2 = Sketch(Plane([0, 0, 10]))
 box = sketch_2.box(Point2D(
     [10, 10], unit=UNITS.m), width=Quantity(10, UNITS.m), height=Quantity(5, UNITS.m)
@@ -59,7 +59,7 @@ dataset = comp.tessellate(merge_bodies=True)
 dataset
 ```
 
-## Plot the tessellation as two merged bodies.
+## Plot the tessellation as two merged bodies
 ```{code-cell} ipython3
 comp.plot(merge_bodies=True)
 ```

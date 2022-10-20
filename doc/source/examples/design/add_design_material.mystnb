@@ -28,7 +28,7 @@ from ansys.geometry.core.math import UNITVECTOR3D_Z, Frame, Plane, Point2D, Poin
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 ```
-## Defining the ``Sketch``.
+## Defining the ``Sketch``
 
 Create a basic ``circle`` sketch instance with radius 10mm in the default plane.
 
@@ -37,7 +37,7 @@ sketch = Sketch()
 sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
 ```
 
-## Initiate the design in the server.
+## Initiate the design in the server
 
 A server connection is established and a design has been initiated.
 ```{code-cell} ipython3
@@ -46,7 +46,7 @@ design_name = "ExtrudeProfile"
 design = modeler.create_design(design_name)
 ```
 
-## Add materials to the design.
+## Add materials to the design
 
 Adding materials and its property to the design.
 ```{code-cell} ipython3
@@ -61,7 +61,7 @@ material = Material(
 material.add_property(MaterialPropertyType.TENSILE_STRENGTH, "TensileProp", Quantity(45))
 design.add_material(material)
 ```
-## Extrude the body from the sketch.
+## Extrude the body from the sketch
 
 Extrude the sketch to create the body and assign a material to it.
 

@@ -27,17 +27,18 @@ import numpy as np
 from pint import Quantity
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core.math import Plane, Point3D, Point2D
+from ansys.geometry.core.math import Plane, Point3D, Point2D, UnitVector3D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 ```
 
 ## Defining a ``Sketch`` profile for the proposed design
 
-The profile requires four ``Segments`` which constitute the outer limits of the design, a ``Box`` on the center and
-a ``Circle`` at four corners.
+The profile requires four ``Segments`` which constitute the outer limits of the design,
+a ``Box`` on the center and a ``Circle`` at four corners.
 
-A single sketch instance can be used for multiple design operations.
+A single sketch instance can be used for multiple design operations such as extruding a body,
+projecting a profile, or imprinting curves.
 
 ```{code-cell} ipython3 
 sketch = Sketch()
@@ -53,7 +54,7 @@ sketch = Sketch()
 )
 ```
 
-## Creating the design and plot
+## Creating the design by extruding sketch
 
 A server connection is established and the single sketch profile is used to extrude 
 the board profile at multiple Z-offsets. A named selection is then created from the 
@@ -72,3 +73,48 @@ for layer_index in range(4):
 board_named_selection = design.create_named_selection("Plate", bodies=layers)
 design.plot()
 ```
+
+## Add new component with planar surface
+
+We have created plate as base component and Let's add a new component with a planar surface to it.
+For that, create an instance ``sketch``, create surface in the design with that sketch.
+For the sketch, we are creating an ellipse keeping the origin of the plane as center.
+
+```{code-cell} ipython3
+# Add components to the design
+planar_component = design.add_component("PlanarComponent")
+
+# Initiate ``Sketch`` to create the planar surface.
+planar_sketch = Sketch()
+planar_sketch.ellipse(
+        Point2D([0, 0], UNITS.m), Quantity(1, UNITS.m), Quantity(0.5, UNITS.m)
+    )
+
+planar_body = planar_component.create_surface("PlanarComponentSurface", planar_sketch)
+
+comp_str = repr(planar_component)
+design.plot()
+```
+
+## Extrude from face to create body
+
+It is possible to extrude the face profile by the given distance to create a new solid body. 
+There are no modifications against the body containing the source face.
+
+```{code-cell} ipython3
+longer_body = design.extrude_face(
+        "LongerEllipseFace", planar_body.faces[0], Quantity(5, UNITS.m)
+    )
+design.plot()
+```
+## Translate the body with in the plane
+
+By using the translate method, we can move the body to direction specified by the given distance.
+It is also possible to move a sketch around the global coordinate system. see example
+[Dynamic Sketch Plane](dynamic_sketch_plane.mystnb).
+
+```{code-cell} ipython3
+longer_body.translate(UnitVector3D([1, 0, 0]), Quantity(4, UNITS.m))
+design.plot()
+```
+
