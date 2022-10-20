@@ -2,7 +2,7 @@
 
 from enum import Enum, unique
 from threading import Thread
-from typing import TYPE_CHECKING, List, Optional, Union
+from typing import TYPE_CHECKING, List, Optional, Tuple, Union
 
 from ansys.api.geometry.v0.bodies_pb2 import (
     BodyIdentifier,
@@ -13,12 +13,15 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
+from ansys.api.geometry.v0.commands_pb2 import CreateBeamBodyLinesRequest
+from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.components_pb2 import (
     ComponentIdentifier,
     CreateComponentRequest,
     SetComponentSharedTopologyRequest,
 )
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
+from ansys.api.geometry.v0.models_pb2 import Line
 from pint import Quantity
 
 from ansys.geometry.core.connection import (
@@ -27,11 +30,13 @@ from ansys.geometry.core.connection import (
     sketch_shapes_to_grpc_geometries,
     unit_vector_to_grpc_direction,
 )
+from ansys.geometry.core.connection.conversions import point3d_to_grpc_point
+from ansys.geometry.core.designer.beam import Beam, BeamProfile
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.coordinatesystem import CoordinateSystem
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.math import Frame, UnitVector3D
+from ansys.geometry.core.math import Frame, Point3D, UnitVector3D
 from ansys.geometry.core.misc import (
     SERVER_UNIT_LENGTH,
     Distance,
@@ -70,6 +75,12 @@ class Component:
         An active supporting geometry service instance for design modeling.
     """
 
+    # Types of the class instance private attributes
+    _components: List["Component"]
+    _bodies: List[Body]
+    _beams: List[Beam]
+    _coordinate_systems: List[CoordinateSystem]
+
     @protect_grpc
     def __init__(
         self, name: str, parent_component: Union["Component", None], grpc_client: GrpcClient
@@ -83,6 +94,7 @@ class Component:
         self._grpc_client = grpc_client
         self._component_stub = ComponentsStub(self._grpc_client.channel)
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
+        self._commands_stub = CommandsStub(self._grpc_client.channel)
 
         if parent_component:
             new_component = self._component_stub.CreateComponent(
@@ -96,6 +108,7 @@ class Component:
 
         self._components = []
         self._bodies = []
+        self._beams = []
         self._coordinate_systems = []
         self._parent_component = parent_component
         self._is_alive = True
@@ -434,6 +447,68 @@ class Component:
                 distance=magnitude,
             )
         )
+
+    @protect_grpc
+    def create_beams(
+        self, segments: List[Tuple[Point3D, Point3D]], profile: BeamProfile
+    ) -> List[Beam]:
+        """
+        Adds a list of new ``Beam`` entities under the component.
+
+        Synchronizes to a design within a supporting geometry service instance.
+
+        Parameters
+        ----------
+        segments : List[Tuple[Point3D, Point3D]]
+            List of start/end pairs, each specifying a single line segment.
+        profile : BeamProfile
+            The beam profile used to create the Beam.
+        """
+
+        request = CreateBeamBodyLinesRequest(parent=self.id, profile=profile.id)
+
+        for segment in segments:
+            request.lines.append(
+                Line(start=point3d_to_grpc_point(segment[0]), end=point3d_to_grpc_point(segment[1]))
+            )
+
+        self._grpc_client.log.debug(f"Creating beams on {self.id}...")
+        response = self._commands_stub.CreateBeamBodyLines(request)
+        self._grpc_client.log.debug(f"Beams successfully created.")
+
+        new_beams = []
+        for index in range(len(response.ids)):
+            new_beams.append(
+                Beam(response.ids[index], segments[index][0], segments[index][1], profile, self)
+            )
+
+        self._beams.extend(new_beams)
+        return new_beams
+
+    @protect_grpc
+    def create_beam(
+        self, segment_start: Point3D, segment_end: Point3D, profile: BeamProfile
+    ) -> Beam:
+        """
+        Adds a new ``Beam`` under the component.
+
+        Synchronizes to a design within a supporting geometry service instance.
+
+        Parameters
+        ----------
+        segment_start : Point3D
+            The start of the beam line segment.
+        segment_end : Point3D
+            The end of the beam line segment.
+        profile : BeamProfile
+            The beam profile used to create the Beam.
+        """
+        beams = self.create_beams(
+            [(segment_start, segment_end)],
+            profile,
+        )
+
+        return beams[0]
 
     @protect_grpc
     def delete_component(self, component: Union["Component", str]) -> None:

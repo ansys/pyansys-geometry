@@ -4,6 +4,7 @@ from enum import Enum
 from pathlib import Path
 from typing import List, Optional, Union
 
+from ansys.api.geometry.v0.commands_pb2 import CreateBeamCircularProfileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.designs_pb2 import (
     ExportDesignRequest,
@@ -19,8 +20,12 @@ from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialPro
 from ansys.api.geometry.v0.models_pb2 import PartExportFormat
 from ansys.api.geometry.v0.namedselections_pb2 import NamedSelectionIdentifier
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
+import numpy as np
+from pint import Quantity
 
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.connection.conversions import plane_to_grpc_plane, point3d_to_grpc_point
+from ansys.geometry.core.designer.beam import BeamCircularProfile, BeamProfile
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.edge import Edge
@@ -28,7 +33,18 @@ from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials import Material
+from ansys.geometry.core.math import (
+    UNITVECTOR3D_X,
+    UNITVECTOR3D_Y,
+    ZERO_POINT3D,
+    Plane,
+    Point3D,
+    UnitVector3D,
+    Vector3D,
+)
 from ansys.geometry.core.misc import check_type
+from ansys.geometry.core.misc.measurements import SERVER_UNIT_LENGTH, Distance
+from ansys.geometry.core.typing import RealSequence
 
 
 class DesignFileFormat(Enum):
@@ -54,6 +70,11 @@ class Design(Component):
         An active supporting geometry service instance for design modeling.
     """
 
+    # Types of the class instance private attributes
+    _materials: List[Material]
+    _named_selections: List[NamedSelection]
+    _beam_profiles: List[BeamProfile]
+
     @protect_grpc
     def __init__(self, name: str, grpc_client: GrpcClient):
         """Constructor method for ``Design``."""
@@ -69,6 +90,7 @@ class Design(Component):
 
         self._materials = []
         self._named_selections = {}
+        self._beam_profiles = {}
 
         self._grpc_client.log.debug("Design object instantiated successfully.")
 
@@ -303,3 +325,68 @@ class Design(Component):
             Shared topology does not apply on ``Design``.
         """
         raise ValueError("The Design object itself cannot have a shared topology.")
+
+    @protect_grpc
+    def create_beam_circular_profile(
+        self,
+        name: str,
+        radius: Union[Quantity, Distance],
+        center: Union[np.ndarray, RealSequence, Point3D] = ZERO_POINT3D,
+        direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
+        direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Y,
+    ) -> BeamCircularProfile:
+        """
+        Creates a new ``BeamCircularProfile`` under the design for future
+        creation of ``Beam`` entities.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label identifying the ``BeamCircularProfile``
+        radius : Real
+            Radius of the ``BeamCircularProfile``.
+        center : Union[~numpy.ndarray, RealSequence, Point3D]
+            Center of the ``BeamCircularProfile``.
+        direction_x : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+            X-plane direction.
+        direction_y : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+            Y-plane direction.
+        """
+        check_type(name, str)
+        check_type(radius, (Quantity, Distance))
+        check_type(center, Point3D)
+        check_type(direction_x, (np.ndarray, List, UnitVector3D, Vector3D))
+        check_type(direction_y, (np.ndarray, List, UnitVector3D, Vector3D))
+
+        direction_x_unit_vector = (
+            UnitVector3D(direction_x) if not isinstance(direction_x, UnitVector3D) else direction_x
+        )
+        direction_y_unit_vector = (
+            UnitVector3D(direction_y) if not isinstance(direction_y, UnitVector3D) else direction_y
+        )
+
+        radius_distance = radius if isinstance(radius, Distance) else Distance(radius)
+        if radius_distance.value <= 0:
+            raise ValueError("Radius must be a real positive value.")
+
+        request = CreateBeamCircularProfileRequest(
+            origin=point3d_to_grpc_point(center),
+            radius=radius_distance.value.m_as(SERVER_UNIT_LENGTH),
+            plane=plane_to_grpc_plane(
+                Plane(center, direction_x_unit_vector, direction_y_unit_vector)
+            ),
+            name=name,
+        )
+
+        self._grpc_client.log.debug(f"Creating beam circular profile on {self.id}...")
+        response = self._commands_stub.CreateBeamCircularProfile(request)
+        beam_circular_profile = BeamCircularProfile(
+            response.id, name, center, direction_x_unit_vector, direction_y_unit_vector
+        )
+        self._beam_profiles[beam_circular_profile.name] = beam_circular_profile
+
+        self._grpc_client.log.debug(
+            f"Beam circular profile {beam_circular_profile.name} successfully created."
+        )
+
+        return self._named_selections[beam_circular_profile.name]
