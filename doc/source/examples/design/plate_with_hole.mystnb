@@ -62,19 +62,16 @@ sketch = Sketch()
 
 A server connection is established and the single sketch profile is used to extrude 
 the board profile at multiple Z-offsets. A named selection is then created from the 
-resulting list of layer bodies.
+resulting list of bodies.
 The design is going to extrude the four segments with desired thickness, resulting in four server calls.
 
 ```{code-cell} ipython3
 modeler = Modeler()
 design = modeler.create_design("ExtrudedPlate")
 
-layers= []
-layer_thickness = Quantity(2, UNITS.m)
-for layer_index in range(4):
-    layers.append(design.extrude_sketch(f"PlateLayer_{layer_index}", sketch, layer_thickness))
+body = design.extrude_sketch(f"PlateLayer", sketch, Quantity(2, UNITS.m))
 
-board_named_selection = design.create_named_selection("Plate", bodies=layers)
+board_named_selection = design.create_named_selection("Plate", bodies=[body])
 design.plot()
 ```
 

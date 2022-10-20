@@ -30,9 +30,9 @@ from ansys.geometry.core.plotting.plotter import Plotter
 
 ## Creating the design
 
-Create the basic sketches to be tessellate, and extrude the sketch in required plane.
+Create the basic sketches to be tessellated, and extrude the sketch in the required plane.
 [Extruded rectangular plate with multiple bodies](plate_with_hole.mystnb)
-contains the working example of creating component and extruding sketch in a design.
+contains the working example of creating a component and extruding sketch the in ``design``.
 
 Here is a typical situation where two bodies of different sketch plane
 and merge each body into a single dataset.
