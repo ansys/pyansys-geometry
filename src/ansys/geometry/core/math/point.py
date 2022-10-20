@@ -68,7 +68,8 @@ class Point2D(np.ndarray, PhysicalQuantity):
             raise ValueError("Point2D class must receive 2 arguments.")  # noqa: E501
 
         # Store values
-        self.flat = [(elem * self.unit).to_base_units().magnitude for elem in input]
+        self._quantities = [Quantity(elem, units=unit) for elem in input]
+        self.flat = [elem.to_base_units().m for elem in self._quantities]
 
     def __eq__(self, other: "Point2D") -> bool:
         """Equals operator for ``Point2D``."""
@@ -82,6 +83,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
     def __set_value(self, input: Quantity, idx: int) -> None:
         """General setter method for ``Point2D`` class."""
         self[idx] = self._base_units_magnitude(input)
+        self._quantities[idx] = input.to(self.unit)
 
     def __add__(self, other: Union["Point2D", "Vector2D"]) -> "Point2D":
         """Add operation for ``Point2D``."""
@@ -91,6 +93,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
         point = np.add(self, other).view(Point2D)
         point._unit = self.unit
         point._base_unit = self.base_unit
+        point._quantities = [np.nan, np.nan]
         return point
 
     def __sub__(self, other: "Point2D") -> "Point2D":
@@ -101,12 +104,15 @@ class Point2D(np.ndarray, PhysicalQuantity):
         point = np.subtract(self, other).view(Point2D)
         point._unit = self.unit
         point._base_unit = self.base_unit
+        point._quantities = [np.nan, np.nan]
         return point
 
     @property
     def x(self) -> Quantity:
         """Returns the X plane component value."""
-        return self._get_quantity(self[0])
+        if self._quantities[0] is np.nan:
+            self._quantities[0] = Quantity(self[0], units=self.base_unit).to(self.unit)
+        return self._quantities[0]
 
     @x.setter
     def x(self, x: Quantity) -> None:
@@ -116,7 +122,9 @@ class Point2D(np.ndarray, PhysicalQuantity):
     @property
     def y(self) -> Quantity:
         """Returns the Y plane component value."""
-        return self._get_quantity(self[1])
+        if self._quantities[1] is np.nan:
+            self._quantities[1] = Quantity(self[1], units=self.base_unit).to(self.unit)
+        return self._quantities[1]
 
     @y.setter
     def y(self, y: Quantity) -> None:
@@ -183,7 +191,8 @@ class Point3D(np.ndarray, PhysicalQuantity):
             raise ValueError("Point3D class must receive 3 arguments.")  # noqa: E501
 
         # Store values
-        self.flat = [(elem * self.unit).to_base_units().magnitude for elem in input]
+        self._quantities = [Quantity(elem, units=unit) for elem in input]
+        self.flat = [elem.to_base_units().m for elem in self._quantities]
 
     def __eq__(self, other: "Point3D") -> bool:
         """Equals operator for ``Point3D``."""
@@ -202,6 +211,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
         point = np.add(self, other).view(Point3D)
         point._unit = self.unit
         point._base_unit = self.base_unit
+        point._quantities = [np.nan, np.nan, np.nan]
         return point
 
     def __sub__(self, other: Union["Point3D", "Vector3D"]) -> "Point3D":
@@ -212,16 +222,20 @@ class Point3D(np.ndarray, PhysicalQuantity):
         point = np.subtract(self, other).view(Point3D)
         point._unit = self.unit
         point._base_unit = self.base_unit
+        point._quantities = [np.nan, np.nan, np.nan]
         return point
 
     def __set_value(self, input: Quantity, idx: int) -> None:
         """General setter method for ``Point3D`` class."""
         self[idx] = self._base_units_magnitude(input)
+        self._quantities[idx] = input.to(self.unit)
 
     @property
     def x(self) -> Quantity:
         """Returns the X plane component value."""
-        return self._get_quantity(self[0])
+        if self._quantities[0] is np.nan:
+            self._quantities[0] = Quantity(self[0], units=self.base_unit).to(self.unit)
+        return self._quantities[0]
 
     @x.setter
     def x(self, x: Quantity) -> None:
@@ -231,7 +245,9 @@ class Point3D(np.ndarray, PhysicalQuantity):
     @property
     def y(self) -> Quantity:
         """Returns the Y plane component value."""
-        return self._get_quantity(self[1])
+        if self._quantities[1] is np.nan:
+            self._quantities[1] = Quantity(self[1], units=self.base_unit).to(self.unit)
+        return self._quantities[1]
 
     @y.setter
     def y(self, y: Quantity) -> None:
@@ -241,7 +257,9 @@ class Point3D(np.ndarray, PhysicalQuantity):
     @property
     def z(self) -> Quantity:
         """Returns the Z plane component value."""
-        return self._get_quantity(self[2])
+        if self._quantities[2] is np.nan:
+            self._quantities[2] = Quantity(self[2], units=self.base_unit).to(self.unit)
+        return self._quantities[2]
 
     @z.setter
     def z(self, z: Quantity) -> None:
