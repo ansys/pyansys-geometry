@@ -6,7 +6,7 @@ All examples are collected in this page.
 Math and sketch examples
 ------------------------
 This section demonstrates the math operations on geometric objects
-and sketching basic sketch objects in PyGeometry.
+and basic sketching capabilities in PyGeometry.
 
 .. nbgallery::
 

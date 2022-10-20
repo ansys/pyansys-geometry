@@ -12,7 +12,7 @@ kernelspec:
 ---
 # Single body with material assignment
 
-In PyGeometry ``body`` represents solids and surfaces organized within the design assembly.
+In PyGeometry, a ``Body`` represents solids or surfaces organized within the ``Design`` assembly.
 The current state of ``sketch``, which is a client side execution cab be used for the operations of
 the geometric design assembly. Geometric Service also provides data structure to create individual materials 
 and its properties.
@@ -30,14 +30,15 @@ from ansys.geometry.core.sketch import Sketch
 ```
 ## Defining the ``Sketch``.
 
-Create a basic ``circle`` sketch instance with radius 10mm in default plane.
+Create a basic ``circle`` sketch instance with radius 10mm in the default plane.
 
 ```{code-cell} ipython3
 sketch = Sketch()
 sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
 ```
 
-## Initiate the design in server.
+## Initiate the design in the server.
+
 A server connection is established and a design has been initiated.
 ```{code-cell} ipython3
 modeler = Modeler()
@@ -46,6 +47,7 @@ design = modeler.create_design(design_name)
 ```
 
 ## Add materials to the design.
+
 Adding materials and its property to the design.
 ```{code-cell} ipython3
 density = Quantity(125, 10 * UNITS.kg / (UNITS.m * UNITS.m * UNITS.m))
@@ -59,9 +61,9 @@ material = Material(
 material.add_property(MaterialPropertyType.TENSILE_STRENGTH, "TensileProp", Quantity(45))
 design.add_material(material)
 ```
-## extrude the body from single sketch.
+## Extrude the body from the sketch.
 
-Extrude the sketch to create body and add material to the body.
+Extrude the sketch to create the body and assign a material to it.
 
 ```{code-cell} ipython3
 # Extrude the sketch to create a Body
