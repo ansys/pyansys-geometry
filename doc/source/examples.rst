@@ -22,4 +22,4 @@ This section demonstrates service based operations on PyGeometry.
     examples/design/add_design_material.mystnb
     examples/design/plate_with_hole.mystnb
     examples/design/dynamic_sketch_plane.mystnb
-    examples/design/tesselation_usage.mystnb
+    examples/design/tessellation_usage.mystnb
