@@ -4,7 +4,12 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core.designer import CurveType, SharedTopologyType, SurfaceType
+from ansys.geometry.core.designer import (
+    CurveType,
+    DesignFileFormat,
+    SharedTopologyType,
+    SurfaceType,
+)
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import UNITVECTOR3D_Z, Frame, Plane, Point2D, Point3D, UnitVector3D
@@ -731,10 +736,15 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     # Check for parasolid exports
     binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
     text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder_stream.x_t"
-    design.export_parasolid(binary_parasolid_file, export_text_format=False)
-    design.export_parasolid(text_parasolid_file, export_text_format=True)
+    design.download(binary_parasolid_file, format=DesignFileFormat.PARASOLID_BIN, as_stream=True)
+    design.download(text_parasolid_file, format=DesignFileFormat.PARASOLID_TEXT)
     assert binary_parasolid_file.exists()
     assert text_parasolid_file.exists()
+
+    # Check also the invalid format is not supported - no download performed
+    invalid_file = tmp_path_factory.mktemp("scdoc_files_download") / "invalid.file"
+    design.download(invalid_file, format=DesignFileFormat.INVALID, as_stream=True)
+    assert not invalid_file.exists()
 
 
 def test_slot_extrusion(modeler: Modeler):

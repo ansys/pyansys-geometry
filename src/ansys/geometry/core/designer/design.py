@@ -1,5 +1,6 @@
 """``Design`` class module."""
 
+from enum import Enum
 from pathlib import Path
 from typing import List, Optional, Union
 
@@ -28,6 +29,15 @@ from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials import Material
 from ansys.geometry.core.misc import check_type
+
+
+class DesignFileFormat(Enum):
+    """Available file formats supported by the Design class for download."""
+
+    SCDOCX = "SCDOCX", None
+    PARASOLID_TEXT = "PARASOLID_TEXT", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_TEXT
+    PARASOLID_BIN = "PARASOLID_BIN", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_BINARY
+    INVALID = "INVALID", None
 
 
 class Design(Component):
@@ -125,72 +135,62 @@ class Design(Component):
         self._grpc_client.log.debug(f"Design successfully saved at location {file_location}.")
 
     @protect_grpc
-    def download(self, file_location: Union[Path, str], as_stream: Optional[bool] = False) -> None:
+    def download(
+        self,
+        file_location: Union[Path, str],
+        format: Optional[DesignFileFormat] = DesignFileFormat.SCDOCX,
+        as_stream: Optional[bool] = False,
+    ) -> None:
         """Downloads a design from the active geometry server instance.
 
         Parameters
         ----------
         file_location : Union[Path, str]
             Location on disk where the file should be saved.
-        as_stream : bool, Default: False
-            Boolean indicating whether to use the gRPC stream functionality.
+        format : Optional[DesignFileFormat]
+            Format in which to export the design. By default, as an ``SCDOCX`` file.
+        as_stream : bool, default: False
+            Boolean indicating whether to use the gRPC stream functionality (if possible).
             or the single message approach. By default, ``False``
         """
         # Sanity checks on inputs
         if isinstance(file_location, Path):
             file_location = str(file_location)
         check_type(file_location, str)
+        check_type(format, DesignFileFormat)
+        check_type(as_stream, bool)
 
         # Process response (as stream or single file)
-        received_bytes = bytes()
-        if as_stream:
-            self._grpc_client.log.debug("Downloading design using stream mechanism.")
-            response_iterator = self._commands_stub.DownloadFileStream(Empty())
-            for response in response_iterator:
-                received_bytes += response.chunk
-        else:
-            self._grpc_client.log.debug("Downloading design using single-message mechanism.")
-            response = self._commands_stub.DownloadFile(Empty())
-            received_bytes += response.data
-
-        # Write to file
-        downloaded_file = open(file_location, "wb")
-        downloaded_file.write(received_bytes)
-        downloaded_file.close()
-
-        self._grpc_client.log.debug(f"Design successfully downloaded at location {file_location}.")
-
-    @protect_grpc
-    def export_parasolid(
-        self, file_location: Union[Path, str], export_text_format: Optional[bool] = False
-    ) -> None:
-        """Downloads a design in parasolid format from the active geometry server instance.
-
-        Parameters
-        ----------
-        file_location : Union[Path, str]
-            Location on disk where the file should be saved.
-        export_text_format : bool, default: False
-            Boolean indicating whether to request in binary format or in text format.
-            ``True`` will request text format, ``False`` will request binary format.
-            By default, ``False``.
-        """
-        if isinstance(file_location, Path):
-            file_location = str(file_location)
-        check_type(file_location, str)
-
-        self._grpc_client.log.debug("Downloading design parasolid using single-message mechanism.")
-
-        # Process response as single file
-        received_bytes = bytes()
-        response = self._design_stub.ExportDesign(
-            ExportDesignRequest(
-                format=PartExportFormat.PARTEXPORTFORMAT_PARASOLID_TEXT
-                if export_text_format
-                else PartExportFormat.PARTEXPORTFORMAT_PARASOLID_BINARY
-            )
+        stream_msg = f"Downloading design in {format.value[0]} format using stream mechanism."
+        single_msg = (
+            f"Downloading design in {format.value[0]} format using single-message mechanism."
         )
-        received_bytes += response.data
+        received_bytes = bytes()
+        if format is DesignFileFormat.SCDOCX:
+            if as_stream:
+                self._grpc_client.log.debug(stream_msg)
+                response_iterator = self._commands_stub.DownloadFileStream(Empty())
+                for response in response_iterator:
+                    received_bytes += response.chunk
+            else:
+                self._grpc_client.log.debug(single_msg)
+                response = self._commands_stub.DownloadFile(Empty())
+                received_bytes += response.data
+        elif (format is DesignFileFormat.PARASOLID_TEXT) or (
+            format is DesignFileFormat.PARASOLID_BIN
+        ):
+            if as_stream:
+                self._grpc_client.log.warning(
+                    "Streaming mechanism not supported for Parasolid format."
+                )
+            self._grpc_client.log.debug(single_msg)
+            response = self._design_stub.ExportDesign(ExportDesignRequest(format=format.value[1]))
+            received_bytes += response.data
+        else:
+            self._grpc_client.log.warning(
+                f"{format.value[0]} format requested not supported. Ignoring download request."
+            )
+            return
 
         # Write to file
         downloaded_file = open(file_location, "wb")
