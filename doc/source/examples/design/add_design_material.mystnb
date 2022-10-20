@@ -49,7 +49,9 @@ design = modeler.create_design(design_name)
 
 ## Add materials to the design
 
-Adding materials and its property to the design.
+Adding materials and its properties to the design. Additional properties of
+the material can be added at construction of the ``Material`` object or afterwards,
+as it is shown in the code snippet.
 ```{code-cell} ipython3
 density = Quantity(125, 10 * UNITS.kg / (UNITS.m * UNITS.m * UNITS.m))
 poisson_ratio = Quantity(0.33, UNITS.dimensionless)

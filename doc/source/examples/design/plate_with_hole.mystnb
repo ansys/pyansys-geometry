@@ -39,7 +39,7 @@ from ansys.geometry.core.sketch import Sketch
 ## Defining a ``Sketch`` profile for the proposed design
 
 The profile requires four ``Segments`` which constitute the outer limits of the design,
-a ``Box`` on the center and a ``Circle`` at four corners.
+a ``Box`` on the center and a ``Circle`` at its four corners.
 
 A single sketch instance can be used for multiple design operations such as extruding a body,
 projecting a profile, or imprinting curves.
@@ -77,9 +77,9 @@ design.plot()
 
 ## Add new component with planar surface
 
-We have created plate as base component and Let's add a new component with a planar surface to it.
+We have created a plate as a base component. Let's add a new component with a planar surface to it.
 For that, create an instance ``sketch``, create surface in the design with that sketch.
-For the sketch, we are creating an ellipse keeping the origin of the plane as center.
+For the sketch, we are creating an ellipse keeping the origin of the plane as its center.
 
 ```{code-cell} ipython3
 # Add components to the design
@@ -99,7 +99,7 @@ design.plot()
 
 ## Extrude from face to create body
 
-It is possible to extrude the face profile by the given distance to create a new solid body. 
+It is possible to extrude a face profile by a given distance to create a new solid body. 
 There are no modifications against the body containing the source face.
 
 ```{code-cell} ipython3
@@ -110,8 +110,8 @@ design.plot()
 ```
 ## Translate the body with in the plane
 
-By using the translate method, we can move the body to direction specified by the given distance.
-It is also possible to move a sketch around the global coordinate system. see example
+By using the translate method, we can move the body in a direction specified by a given distance.
+It is also possible to move a sketch around the global coordinate system. See example
 [Dynamic Sketch Plane](dynamic_sketch_plane.mystnb).
 
 ```{code-cell} ipython3
