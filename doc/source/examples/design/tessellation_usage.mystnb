@@ -21,21 +21,22 @@ Let's first import the fundamental objects:
 ```{code-cell} ipython3
 from pint import Quantity
 
-from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.math import Point2D, Point3D, Plane
 from ansys.geometry.core.misc import UNITS
-from ansys.geometry.core.plotting.plotter import Plotter
+from ansys.geometry.core.plotting.plotter import Plotter.
+from ansys.geometry.core.sketch import Sketch
+
 ```
 
 ## Creating the design
 
 Create the basic sketches to be tessellated, and extrude the sketch in the required plane.
 [Extruded rectangular plate with multiple bodies](plate_with_hole.mystnb)
-contains the working example of creating a component and extruding sketch the in ``design``.
+contains the working example of creating a component and extruding a sketch in the ``design``.
 
-Here is a typical situation where two bodies of different sketch plane
-and merge each body into a single dataset.
+Here is a typical situation in which two bodies, with different sketch planes,
+merge each body into a single dataset.
 This effectively combines all the faces of each individual
 body into a single dataset without separating faces.
 
@@ -65,7 +66,7 @@ circle = sketch_2.circle(
 
 body = comp.extrude_sketch("Body", sketch=sketch_2, distance=10 * UNITS.m)
 ```
-## Tessellation the component as two merged bodies
+## Tessellation of the component as two merged bodies
 
 Tessellate the component and merge each body in to a single dataset,
 This effectively combines all the faces of each individual body into a 
