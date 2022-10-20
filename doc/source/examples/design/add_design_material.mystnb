@@ -13,11 +13,12 @@ kernelspec:
 # Single body with material assignment
 
 In PyGeometry, a ``Body`` represents solids or surfaces organized within the ``Design`` assembly.
-The current state of ``sketch``, which is a client side execution cab be used for the operations of
-the geometric design assembly. Geometric Service also provides data structure to create individual materials 
-and its properties.
+The current state of ``Sketch``, which is a client-side execution, can be used for the operations of
+the geometric design assembly. The Geometry Service also provides data structures to create individual materials 
+and its properties, which are also exposed through PyGeometry.
 
-This example demonstrate how to create a single body from the extruded sketch and how to assign material to it.
+This example demonstrates how to create a single body from a sketch, by requesting its extrusion,
+and how to assign a material to it.
 
 ```{code-cell} ipython3
 from pint import Quantity
