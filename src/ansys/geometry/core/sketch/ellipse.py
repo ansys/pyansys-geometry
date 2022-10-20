@@ -102,6 +102,17 @@ class Ellipse(SketchFace):
         return self._semi_minor_axis.value
 
     @property
+    def angle(self) -> Angle:
+        """Return the orientation angle of the ellipse.
+
+        Returns
+        -------
+        Quantity
+            Orientation angle of the ellipse.
+        """
+        return self._angle_offset
+
+    @property
     def eccentricity(self) -> Real:
         """Return the eccentricity of the ellipse.
 
