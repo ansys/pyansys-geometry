@@ -160,12 +160,7 @@ class Frame:
         Point3D
             The global coordinates ``Point3D`` object.
         """
-        local_point_as_3d = Point3D(
-            [point.x.to_base_units().m, point.y.to_base_units().m, 0], point.base_unit
-        )
-        return self.origin + Point3D(
-            self.local_to_global_rotation @ local_point_as_3d, point.base_unit
-        )
+        return self.origin + Vector3D(self.local_to_global_rotation @ [point[0], point[1], 0])
 
     def __eq__(self, other: "Frame") -> bool:
         """Equals operator for ``Frame``."""

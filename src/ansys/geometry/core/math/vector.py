@@ -101,7 +101,7 @@ class Vector3D(np.ndarray):
         """Return a normalized version of the ``Vector3D``."""
         norm = self.norm
         if norm > 0:
-            return Vector3D(self / norm)
+            return (self / norm).view(Vector3D)
         else:
             raise ValueError("The norm of the Vector3D is not valid.")
 
@@ -135,7 +135,7 @@ class Vector3D(np.ndarray):
     def cross(self, v: "Vector3D") -> "Vector3D":
         """Return cross product of Vector3D objects"""
         check_type_equivalence(v, self)
-        return Vector3D(np.cross(self, v))
+        return np.cross(self, v).view(Vector3D)
 
     def __eq__(self, other: "Vector3D") -> bool:
         """Equals operator for ``Vector3D``."""
@@ -154,7 +154,7 @@ class Vector3D(np.ndarray):
         Also admits scalar multiplication.
         """
         if isinstance(other, (int, float)):
-            return Vector3D(np.multiply(self, other))
+            return np.multiply(self, other).view(Vector3D)
         else:
             check_type_equivalence(other, self)
             return self.dot(other)
@@ -179,7 +179,7 @@ class Vector3D(np.ndarray):
     def __sub__(self, other: "Vector3D") -> "Vector3D":
         """Subtraction operation overload for ``Vector3D`` objects."""
         check_type_equivalence(other, self)
-        return Vector3D(np.subtract(self, other))
+        return np.subtract(self, other).view(Vector3D)
 
     @classmethod
     def from_points(
@@ -285,7 +285,7 @@ class Vector2D(np.ndarray):
         """Return a normalized version of the ``Vector2D``."""
         norm = self.norm
         if norm > 0:
-            return Vector2D(self / norm)
+            return (self / norm).view(Vector2D)
         else:
             raise ValueError("The norm of the Vector2D is not valid.")
 
@@ -329,7 +329,7 @@ class Vector2D(np.ndarray):
         Also admits scalar multiplication.
         """
         if isinstance(other, (int, float)):
-            return Vector2D(np.multiply(self, other))
+            return np.multiply(self, other).view(Vector2D)
         else:
             check_type_equivalence(other, self)
             return self.dot(other)
@@ -350,7 +350,7 @@ class Vector2D(np.ndarray):
     def __sub__(self, other: "Vector2D") -> "Vector2D":
         """Subtraction operation overload for ``Vector2D`` objects."""
         check_type_equivalence(other, self)
-        return Vector2D(np.subtract(self, other))
+        return np.subtract(self, other).view(Vector2D)
 
     @classmethod
     def from_points(
