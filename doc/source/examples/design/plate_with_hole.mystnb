@@ -51,7 +51,10 @@ sketch = Sketch()
 
 ## Creating the design and plot
 
-Create a design with a name and extrude the four segments with desired thickness.
+A server connection is established and the single sketch profile is used to extrude 
+the board profile at multiple Z-offsets. A named selection is then created from the 
+resulting list of layer bodies.
+The design is going to extrude the four segments with desired thickness, resulting in four server calls.
 
 ```{code-cell} ipython3
 modeler = Modeler()
