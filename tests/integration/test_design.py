@@ -14,6 +14,7 @@ from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import UNITVECTOR3D_Z, Frame, Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -114,13 +115,23 @@ def test_face_to_body_creation(modeler: Modeler):
     assert len(design.bodies) == 2
     assert longer_body.volume.m == pytest.approx(Quantity(2e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8)
 
+    longest_body = design.extrude_face(
+        "LongestBoxFromFace", box_body.faces[0], Distance(30, UNITS.mm)
+    )
+
+    assert len(design.components) == 0
+    assert len(design.bodies) == 3
+    assert longest_body.volume.m == pytest.approx(
+        Quantity(3e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+
     nested_component = design.add_component("NestedComponent")
     surface_body = nested_component.create_surface_from_face(
         "SurfaceFromFace", longer_body.faces[2]
     )
 
     assert len(design.components) == 1
-    assert len(design.bodies) == 2
+    assert len(design.bodies) == 3
     assert len(nested_component.components) == 0
     assert len(nested_component.bodies) == 1
     assert surface_body.volume.m == Quantity(0, UNITS.m**3).m
@@ -665,7 +676,7 @@ def test_single_body_translation(modeler: Modeler):
     polygon_comp = design.add_component("PolygonComponent")
     body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch_2, Quantity(30, UNITS.mm))
 
-    body_circle_comp.translate(UnitVector3D([1, 0, 0]), Quantity(50, UNITS.mm))
+    body_circle_comp.translate(UnitVector3D([1, 0, 0]), Distance(50, UNITS.mm))
     body_polygon_comp.translate(UnitVector3D([-1, 1, -1]), Quantity(88, UNITS.mm))
 
 
@@ -757,7 +768,7 @@ def test_slot_extrusion(modeler: Modeler):
     sketch.slot(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm))
 
     # Extrude the sketch
-    body = design.extrude_sketch(name="MySlot", sketch=sketch, distance=Quantity(50, UNITS.mm))
+    body = design.extrude_sketch(name="MySlot", sketch=sketch, distance=Distance(50, UNITS.mm))
 
     # A slot has 6 faces and 12 edges
     assert len(body.faces) == 6

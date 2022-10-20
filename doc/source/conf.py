@@ -122,6 +122,7 @@ nbsphinx_custom_formats = {
 nbsphinx_thumbnails = {
     "examples/basic_usage": "_static/thumbnails/basic_usage.png",
     "examples/dynamic_sketch_plane": "_static/thumbnails/dynamic_sketch_plane.png",
+    "examples/design_organization": "_static/thumbnails/design_organization.png",
 }
 
 typehints_defaults = "comma"
