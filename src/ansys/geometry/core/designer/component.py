@@ -730,11 +730,14 @@ class Component:
         pl.show()
 
     def __repr__(self) -> str:
-        """Representation of the component."""
+        """String representation of the component."""
+        alive_bodies = [1 if body.is_alive else 0 for body in self.bodies]
+        alive_comps = [1 if comp.is_alive else 0 for comp in self.components]
         lines = [f"ansys.geometry.core.designer.Component {hex(id(self))}"]
+        lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Exists               : {self.is_alive}")
-        lines.append(f"  N Bodies             : {len(self.bodies)}")
-        lines.append(f"  N Components         : {len(self.components)}")
+        lines.append(f"  Parent component     : {self.parent_component.name}")
+        lines.append(f"  N Bodies             : {sum(alive_bodies)}")
+        lines.append(f"  N Components         : {sum(alive_comps)}")
         lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
-
         return "\n".join(lines)

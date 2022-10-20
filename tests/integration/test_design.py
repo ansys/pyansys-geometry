@@ -397,6 +397,16 @@ def test_coordinate_system_creation(modeler: Modeler):
         assert dir.z == pytest.approx(dir_ref.z, rel=1e-8, abs=1e-14)
     assert nested_comp_cs2.parent_component.id == nested_comp.id
 
+    # Let's check the representation of the coordinate system
+    nested_comp_cs1_str = str(nested_comp_cs1)
+    assert "ansys.geometry.core.designer.CoordinateSystem" in nested_comp_cs1_str
+    assert "  Name                 : CompCS1" in nested_comp_cs1_str
+    assert "  Parent component     : NestedComponent" in nested_comp_cs1_str
+    assert "  Frame origin         : [0.01,0.2,3.0] in meters" in nested_comp_cs1_str
+    assert "  Frame X-direction    : " in nested_comp_cs1_str
+    assert "  Frame Y-direction    : " in nested_comp_cs1_str
+    assert "  Frame Z-direction    : " in nested_comp_cs1_str
+
 
 def test_delete_body_component(modeler: Modeler):
     """Test for verifying the deletion of ``Component`` and ``Body`` objects.
@@ -608,6 +618,32 @@ def test_delete_body_component(modeler: Modeler):
     # Try deleting the Design object itself - this is forbidden
     with pytest.raises(ValueError, match="The Design object itself cannot be deleted."):
         design.delete_component(design)
+
+    # Let's try out the representation methods
+    design_str = str(design)
+    assert "ansys.geometry.core.designer.Design" in design_str
+    assert "Name                 : Deletion_Test" in design_str
+    assert "N Bodies             : 0" in design_str
+    assert "N Components         : 0" in design_str
+    assert "N Coordinate Systems : 0" in design_str
+    assert "N Named Selections   : 0" in design_str
+    assert "N Materials          : 0" in design_str
+
+    comp_1_str = str(comp_1)
+    assert "ansys.geometry.core.designer.Component" in comp_1_str
+    assert "Name                 : Component_1" in comp_1_str
+    assert "Exists               : False" in comp_1_str
+    assert "Parent component     : Deletion_Test" in comp_1_str
+    assert "N Bodies             : 0" in comp_1_str
+    assert "N Components         : 0" in comp_1_str
+    assert "N Coordinate Systems : 0" in comp_1_str
+
+    body_1_str = str(body_1)
+    assert "ansys.geometry.core.designer.Body" in body_1_str
+    assert "Name                 : comp_3_circle" in body_1_str
+    assert "Exists               : False" in body_1_str
+    assert "Surface body         : False" in body_1_str
+    assert "Parent component     : Component_3" in body_1_str
 
 
 def test_shared_topology(modeler: Modeler):
