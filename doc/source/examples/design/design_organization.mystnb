@@ -75,7 +75,7 @@ used sketch.
 double_nested_component = nested_component.add_component("DoubleNestedComponent")
 
 circle_surface_body = double_nested_component.create_surface("CircularSurfaceBody", circle_sketch)
-circle_surface_body.translate(UNITVECTOR3D_X, Distance(-10, UNITS.mm))
+circle_surface_body.translate(UNITVECTOR3D_X, Distance(-35, UNITS.mm))
 
 design.plot()
 ```
