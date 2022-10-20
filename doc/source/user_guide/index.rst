@@ -19,17 +19,20 @@ PyGeometry basic overview
 =========================
 
 PyGeometry is a Python wrapper for the Ansys Geometry Service. The key features of PyGeometry are:
-* Ability to use the library along side other Python libraries
+
+* Ability to use the library alongside other Python libraries
 * Fluent based API for clean and easy coding experience
 * Built-in examples
 
 Simple interactive example
 ==========================
 
-#. Start the geometry instance
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<!-- vale off -->
+1. Start the Geometry Service instance
+--------------------------------------
+<!-- vale on -->
 
-The :class:`Modeler() <ansys.geometry.core.modelar>` class
+The :class:`Modeler() <ansys.geometry.core.modeler()>` class
 within the ``ansys-geometry-core`` library creates an instance of
 the Geometry Service. By default ``Modeler`` connects to ``127.0.0.1`` 
 (``'localhost'``) at the port 50051. You can change this by modifying
@@ -38,12 +41,14 @@ have to also modify this in your ``docker run`` command by changing ``<HOST-PORT
 Now, you can start the service with:
 
 .. code:: python
-
+    
     >>> from ansys.geometry.core import Modeler
     >>> modeler = Modeler()
 
-#. Create Geometry models
-~~~~~~~~~~~~~~~~~~~~~~~~~
+<!-- vale off -->
+2. Create Geometry models
+-------------------------
+<!-- vale on -->
 
 The Geometry Service is now active and you can start creating the geometry model 
 by initializing the :ref:`Sketch <ref_sketch>` and :ref:`Primitives <ref_primitives>`.
