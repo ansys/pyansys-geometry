@@ -16,7 +16,7 @@ kernelspec:
 Create two stacked bodies and return the tessellation as two merged bodies.
 
 +++
-import the fundamental objects:
+Let's first import the fundamental objects:
 
 ```{code-cell} ipython3
 from pint import Quantity
@@ -30,7 +30,16 @@ from ansys.geometry.core.plotting.plotter import Plotter
 
 ## Creating the design
 
-```{code-cell} ipython3 
+Create the basic sketches to be tessellate, and extrude the sketch in required plane.
+[Extruded rectangular plate with multiple bodies](plate_with_hole.mystnb)
+contains the working example of creating component and extruding sketch in a design.
+
+Here is a typical situation where two bodies of different sketch plane
+and merge each body into a single dataset.
+This effectively combines all the faces of each individual
+body into a single dataset without separating faces.
+
+```{code-cell} ipython3
 modeler = Modeler()
 
 sketch_1 = Sketch()
@@ -43,7 +52,7 @@ circle = sketch_1.circle(
 
 design = modeler.create_design("TessellationDesign")
 comp = design.add_component("TessellationComponent")
-body = comp.extrude_sketch("FirstBody", sketch=sketch_1, distance=10 * UNITS.m)
+body = comp.extrude_sketch("Body", sketch=sketch_1, distance=10 * UNITS.m)
 
 # Create the second body in a plane with different origin
 sketch_2 = Sketch(Plane([0, 0, 10]))
@@ -54,12 +63,37 @@ circle = sketch_2.circle(
     Point2D([0, 10], unit=UNITS.m), radius=Quantity(25, UNITS.m)
 )
 
-body = comp.extrude_sketch("SecondBody", sketch=sketch_2, distance=10 * UNITS.m)
+body = comp.extrude_sketch("Body", sketch=sketch_2, distance=10 * UNITS.m)
+```
+## Tessellation the component as two merged bodies
+
+Tessellate the component and merge each body in to a single dataset,
+This effectively combines all the faces of each individual body into a 
+single dataset without separating faces.
+
+```{code-cell} ipython3
 dataset = comp.tessellate(merge_bodies=True)
 dataset
 ```
+If you want tessellate the body and return the geometry as triangles, single body tessellation is also possible with
+merge the body into a single mesh, if you wish to merge the individual faces of the tessellation.
+This preserves the number of triangles and only merges the topology. By default, False.
 
-## Plot the tessellation as two merged bodies
+Without merging the body:
+
 ```{code-cell} ipython3
-comp.plot(merge_bodies=True)
+dataset = body.tessellate()
+dataset
+```
+Merge the body:
+
+```{code-cell} ipython3
+mesh = body.tessellate(merge=True)
+mesh
+```
+
+And finally plot to see the design.
+
+```{code-cell} ipython3
+design.plot()
 ```
