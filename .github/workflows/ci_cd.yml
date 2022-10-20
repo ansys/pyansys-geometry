@@ -299,7 +299,7 @@ jobs:
 
   package:
     name: Package library
-    needs: [testing, docs]
+    needs: [testing, docs, remaining-smoke-tests]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
