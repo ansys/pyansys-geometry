@@ -2,13 +2,16 @@
 
 from typing import Optional, Union
 
-from pint import Quantity, Unit, UnitRegistry
+from pint import Quantity, Unit, UnitRegistry, set_application_registry
 
 from ansys.geometry.core.misc.checks import check_pint_unit_compatibility, check_type
 from ansys.geometry.core.typing import Real
 
 UNITS = UnitRegistry()
 """Unit manager."""
+
+# This forces pint to set the previous UnitRegistry as the one to be used
+set_application_registry(UNITS)
 
 
 class PhysicalQuantity:
@@ -63,7 +66,7 @@ class PhysicalQuantity:
         ~pint.Quantity
             The physical quantity the number represents.
         """
-        return (input * self.base_unit).to(self.unit)
+        return Quantity(input, units=self.base_unit).to(self.unit)
 
     def _base_units_magnitude(self, input: Quantity) -> Real:
         """Returns input's :class:`pint.Quantity` magnitude
@@ -81,4 +84,4 @@ class PhysicalQuantity:
         """
         check_type(input, Quantity)
         check_pint_unit_compatibility(input.units, self._base_unit)
-        return input.m_as(self._base_unit)
+        return input.to_base_units().m

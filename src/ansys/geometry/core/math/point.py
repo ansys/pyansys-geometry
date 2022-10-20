@@ -24,6 +24,8 @@ DEFAULT_POINT3D_VALUES = [np.nan, np.nan, np.nan]
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.math.vector import Vector2D, Vector3D
 
+BASE_UNIT_LENGTH = UNITS.get_base_units(UNIT_LENGTH)[1]
+
 
 class Point2D(np.ndarray, PhysicalQuantity):
     """
@@ -86,8 +88,9 @@ class Point2D(np.ndarray, PhysicalQuantity):
         from ansys.geometry.core.math.vector import Vector2D
 
         check_type(other, (Point2D, Vector2D))
-        point = Point2D(np.add(self, other), self.base_unit)
-        point.unit = self.unit
+        point = np.add(self, other).view(Point2D)
+        point._unit = self.unit
+        point._base_unit = self.base_unit
         return point
 
     def __sub__(self, other: "Point2D") -> "Point2D":
@@ -95,8 +98,9 @@ class Point2D(np.ndarray, PhysicalQuantity):
         from ansys.geometry.core.math.vector import Vector2D
 
         check_type(other, (Point2D, Vector2D))
-        point = Point2D(np.subtract(self, other), self.base_unit)
-        point.unit = self.unit
+        point = np.subtract(self, other).view(Point2D)
+        point._unit = self.unit
+        point._base_unit = self.base_unit
         return point
 
     @property
@@ -122,20 +126,20 @@ class Point2D(np.ndarray, PhysicalQuantity):
     @PhysicalQuantity.unit.getter
     def unit(self) -> Unit:
         """Returns the unit of the object."""
-        try:
-            return PhysicalQuantity.unit.fget(self)
-        except AttributeError:
+        if hasattr(self, "_unit"):
+            return self._unit
+        else:
             self._unit = UNIT_LENGTH
-            return self.unit
+            return self._unit
 
     @PhysicalQuantity.base_unit.getter
     def base_unit(self) -> Unit:
         """Returns the base unit of the object."""
-        try:
-            return PhysicalQuantity.base_unit.fget(self)
-        except AttributeError:
-            self._base_unit = UNITS.get_base_units(UNIT_LENGTH)[1]
-            return self.base_unit
+        if hasattr(self, "_base_unit"):
+            return self._base_unit
+        else:
+            self._base_unit = BASE_UNIT_LENGTH
+            return self._base_unit
 
 
 class Point3D(np.ndarray, PhysicalQuantity):
@@ -195,8 +199,9 @@ class Point3D(np.ndarray, PhysicalQuantity):
         from ansys.geometry.core.math.vector import Vector3D
 
         check_type(other, (Point3D, Vector3D))
-        point = Point3D(np.add(self, other), self.base_unit)
-        point.unit = self.unit
+        point = np.add(self, other).view(Point3D)
+        point._unit = self.unit
+        point._base_unit = self.base_unit
         return point
 
     def __sub__(self, other: Union["Point3D", "Vector3D"]) -> "Point3D":
@@ -204,8 +209,9 @@ class Point3D(np.ndarray, PhysicalQuantity):
         from ansys.geometry.core.math.vector import Vector3D
 
         check_type(other, (Point3D, Vector3D))
-        point = Point3D(np.subtract(self, other), self.base_unit)
-        point.unit = self.unit
+        point = np.subtract(self, other).view(Point3D)
+        point._unit = self.unit
+        point._base_unit = self.base_unit
         return point
 
     def __set_value(self, input: Quantity, idx: int) -> None:
@@ -245,17 +251,17 @@ class Point3D(np.ndarray, PhysicalQuantity):
     @PhysicalQuantity.unit.getter
     def unit(self) -> Unit:
         """Returns the unit of the object."""
-        try:
-            return PhysicalQuantity.unit.fget(self)
-        except AttributeError:
+        if hasattr(self, "_unit"):
+            return self._unit
+        else:
             self._unit = UNIT_LENGTH
-            return self.unit
+            return self._unit
 
     @PhysicalQuantity.base_unit.getter
     def base_unit(self) -> Unit:
         """Returns the base unit of the object."""
-        try:
-            return PhysicalQuantity.base_unit.fget(self)
-        except AttributeError:
-            self._base_unit = UNITS.get_base_units(UNIT_LENGTH)[1]
-            return self.base_unit
+        if hasattr(self, "_base_unit"):
+            return self._base_unit
+        else:
+            self._base_unit = BASE_UNIT_LENGTH
+            return self._base_unit
