@@ -19,3 +19,4 @@ Service based examples
 
     examples/design/plate_with_hole.mystnb
     examples/design/dynamic_sketch_plane.mystnb
+    examples/design/tesselation_usage.mystnb
