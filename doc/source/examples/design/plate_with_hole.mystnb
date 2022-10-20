@@ -59,10 +59,12 @@ The design is going to extrude the four segments with desired thickness, resulti
 ```{code-cell} ipython3
 modeler = Modeler()
 design = modeler.create_design("ExtrudedPlate")
+
 layers= []
 layer_thickness = Quantity(2, UNITS.m)
 for layer_index in range(4):
     layers.append(design.extrude_sketch(f"PlateLayer_{layer_index}", sketch, layer_thickness))
+
 board_named_selection = design.create_named_selection("Plate", bodies=layers)
-design.plot(color = "gold")
+design.plot()
 ```
