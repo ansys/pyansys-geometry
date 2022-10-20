@@ -11,8 +11,9 @@ kernelspec:
   name: python3
 ---
 
-# Extruded rectangular plate
+# Extruded rectangular plate with multiple bodies
 
+Multiple bodies can be created from a single sketch by extruding the same sketch by layers. 
 The box is located in the center of the plate, with the default origin of a sketch plane (origin at (0,0,0)).
 The outer plate is extruded with equal radius holes at four corners of the plate.
 The projection is at the center of the face. The default projection depth is through the entire part.
@@ -32,8 +33,10 @@ from ansys.geometry.core.sketch import Sketch
 
 ## Defining a ``Sketch`` profile for the proposed design
 
-The profile required 4 segment which constitute the body, a box on the center and
-a circle at four corners.
+The profile required four ``Segment`` which constitute the outer body of the design, a `Box`` on the center and
+a ``Circle`` at four corners.
+
+A single sketch instance can be used for multiple design operations.
 
 ```{code-cell} ipython3 
 sketch = Sketch()

@@ -1,0 +1,74 @@
+---
+jupytext:
+  text_representation:
+    extension: .mystnb
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.14.1
+kernelspec:
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
+---
+# Single body with material assignment
+
+In PyGeometry ``body`` represents solids and surfaces organized within the design assembly.
+The current state of ``sketch``, which is a client side execution cab be used for the operations of
+the geometric design assembly. Geometric Service also provides data structure to create individual materials 
+and its properties.
+
+This example demonstrate how to create a single body from the extruded sketch and how to assign material to it.
+
+```{code-cell} ipython3
+from pint import Quantity
+
+from ansys.geometry.core import Modeler
+from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
+from ansys.geometry.core.math import UNITVECTOR3D_Z, Frame, Plane, Point2D, Point3D, UnitVector3D
+from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.sketch import Sketch
+```
+## Defining the ``Sketch``.
+
+Create a basic ``circle`` sketch instance with radius 10mm in default plane.
+
+```{code-cell} ipython3
+sketch = Sketch()
+sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
+```
+
+## Initiate the design in server.
+A server connection is established and a design has been initiated.
+```{code-cell} ipython3
+modeler = Modeler()
+design_name = "ExtrudeProfile"
+design = modeler.create_design(design_name)
+```
+
+## Add materials to the design.
+Adding materials and its property to the design.
+```{code-cell} ipython3
+density = Quantity(125, 10 * UNITS.kg / (UNITS.m * UNITS.m * UNITS.m))
+poisson_ratio = Quantity(0.33, UNITS.dimensionless)
+tensile_strength = Quantity(45)
+material = Material(
+    "steel",
+    density,
+    [MaterialProperty(MaterialPropertyType.POISSON_RATIO, "PoissonRatio", poisson_ratio)],
+)
+material.add_property(MaterialPropertyType.TENSILE_STRENGTH, "TensileProp", Quantity(45))
+design.add_material(material)
+```
+## extrude the body from single sketch.
+
+Extrude the sketch to create body and add material to the body.
+
+```{code-cell} ipython3
+# Extrude the sketch to create a Body
+body = design.extrude_sketch("SingleBody", sketch, Quantity(10, UNITS.mm))
+
+# Assign a material to a Body
+body.assign_material(material)
+
+body.plot()
+```
