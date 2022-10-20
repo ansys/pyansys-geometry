@@ -16,6 +16,7 @@ from ansys.api.geometry.v0.models_pb2 import Tessellation
 
 from ansys.geometry.core.math import Frame, Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
+from ansys.geometry.core.misc.measurements import UNIT_ANGLE
 from ansys.geometry.core.sketch import (
     Arc,
     Circle,
@@ -229,6 +230,7 @@ def sketch_ellipse_to_grpc_ellipse(ellipse: Ellipse, plane: Plane) -> GRPCEllips
         center=point2d_to_grpc_point(plane, ellipse.center),
         majorradius=ellipse.semi_major_axis.m_as(SERVER_UNIT_LENGTH),
         minorradius=ellipse.semi_minor_axis.m_as(SERVER_UNIT_LENGTH),
+        angle=ellipse.angle.value.m_as(UNIT_ANGLE),
     )
 
 
@@ -317,6 +319,7 @@ def sketch_polygon_to_grpc_polygon(polygon: Polygon, plane: Plane) -> GRPCPolygo
         center=point2d_to_grpc_point(plane, polygon.center),
         radius=polygon.inner_radius.m_as(SERVER_UNIT_LENGTH),
         numberofsides=polygon.n_sides,
+        angle=polygon.angle.value.m_as(UNIT_ANGLE),
     )
 
 
