@@ -13,7 +13,7 @@ kernelspec:
 
 # Design Organization
 
-The ``Design`` instance creates a new design project within the remote geometry service to
+The ``Design`` instance creates a new design project within the remote Geometry Service to
 complete all CAD modeling against.
 
 All of the solid and surface bodies within each design can be organized within a customizable
@@ -82,7 +82,7 @@ design.plot()
 
 ## Cross Component Targets
 
-Surfaces from any body across the entire design can be used as a reference for creating new design bodies.
+Surfaces from any body across the entire design can be used as a reference for creating new bodies.
 
 This example extrudes a cylinder from the surface body assigned to the child component.
 
