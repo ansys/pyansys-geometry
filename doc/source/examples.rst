@@ -18,4 +18,3 @@ Service based examples
 .. nbgallery::
 
     examples/design/plate_with_hole.mystnb
-
