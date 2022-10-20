@@ -216,7 +216,7 @@ class Component:
 
         # Perform extrusion request
         request = CreateExtrudedBodyRequest(
-            distance=distance.m_as(SERVER_UNIT_LENGTH),
+            distance=extrude_distance.m_as(SERVER_UNIT_LENGTH),
             parent=self.id,
             plane=plane_to_grpc_plane(sketch._plane),
             geometries=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
@@ -262,7 +262,7 @@ class Component:
 
         # Take the face source directly. No need to verify the source of the face.
         request = CreateExtrudedBodyFromFaceProfileRequest(
-            distance=distance.m_as(SERVER_UNIT_LENGTH),
+            distance=extrude_distance.m_as(SERVER_UNIT_LENGTH),
             parent=self.id,
             face=face.id,
             name=name,
