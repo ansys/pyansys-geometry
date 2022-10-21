@@ -76,9 +76,9 @@ single dataset without separating faces.
 dataset = comp.tessellate(merge_bodies=True)
 dataset
 ```
-If you want tessellate the body and return the geometry as triangles, single body tessellation is also possible.
+If you want to tessellate the body and return the geometry as triangles, single body tessellation is also possible.
 If you wish to merge the individual faces of the tessellation, enable the
-merge the body into a single mesh.
+``merge`` option so that the body is rendered into a single mesh.
 This preserves the number of triangles and only merges the topology.
 
 Without merging the body:
