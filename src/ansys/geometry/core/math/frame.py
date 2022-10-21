@@ -50,7 +50,7 @@ class Frame:
         self._origin.setflags(write=False)
 
         if not self._direction_x.is_perpendicular_to(self._direction_y):
-            raise ValueError("Direction x and direction y must be perpendicular")
+            raise ValueError("Direction x and direction y must be perpendicular.")
 
         self._direction_z = UnitVector3D(self._direction_x % self._direction_y)
 

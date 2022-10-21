@@ -13,8 +13,9 @@ from ansys.geometry.core.designer import (
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import UNITVECTOR3D_Z, Frame, Plane, Point2D, Point3D, UnitVector3D
+from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y
 from ansys.geometry.core.misc import UNITS
-from ansys.geometry.core.misc.measurements import Distance
+from ansys.geometry.core.misc.measurements import UNIT_LENGTH, Distance
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -866,3 +867,68 @@ def test_project_and_imprint_curves(modeler: Modeler):
 
     assert len(new_faces) == 2
     assert len(body.faces) == 8
+
+
+def test_beams(modeler: Modeler):
+    """Test beam creation."""
+    # Create your design on the server side
+    design = modeler.create_design("BeamCreation")
+
+    circle_profile_1 = design.create_beam_circular_profile(
+        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
+    )
+
+    assert circle_profile_1.id is not None
+    assert circle_profile_1.center == Point3D([0, 0, 0])
+    assert circle_profile_1.radius.value.m_as(UNIT_LENGTH) == 0.01
+    assert circle_profile_1.direction_x == UNITVECTOR3D_X
+    assert circle_profile_1.direction_y == UNITVECTOR3D_Y
+
+    circle_profile_2 = design.create_beam_circular_profile(
+        "CircleProfile2",
+        Distance(20, UNITS.mm),
+        Point3D([10, 20, 30], UNITS.mm),
+        UnitVector3D([1, 1, 1]),
+        UnitVector3D([0, -1, 1]),
+    )
+
+    assert circle_profile_2.id is not None
+    assert circle_profile_2.id is not circle_profile_1.id
+
+    with pytest.raises(ValueError, match="Radius must be a real positive value."):
+        design.create_beam_circular_profile(
+            "InvalidProfileRadius",
+            Quantity(-10, UNITS.mm),
+            Point3D([0, 0, 0]),
+            UNITVECTOR3D_X,
+            UNITVECTOR3D_Y,
+        )
+
+    with pytest.raises(ValueError, match="Direction x and direction y must be perpendicular."):
+        design.create_beam_circular_profile(
+            "InvalidUnitVectorAlignment",
+            Quantity(10, UNITS.mm),
+            Point3D([0, 0, 0]),
+            UNITVECTOR3D_X,
+            UnitVector3D([-1, -1, -1]),
+        )
+
+    beam_1 = design.create_beam(
+        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
+    )
+
+    assert beam_1.id is not None
+    assert beam_1.start == Point3D([9, 99, 999], UNITS.mm)
+    assert beam_1.end == Point3D([8, 88, 888], UNITS.mm)
+    assert beam_1.profile == circle_profile_1
+    assert beam_1.parent_component.id == design.id
+
+    nested_component = design.add_component("NestedComponent")
+
+    beam_2 = nested_component.create_beam(
+        Point3D([7, 77, 777], UNITS.mm), Point3D([6, 66, 666], UNITS.mm), circle_profile_2
+    )
+
+    assert beam_2.id is not None
+    assert beam_2.profile == circle_profile_2
+    assert beam_2.parent_component.id == nested_component.id

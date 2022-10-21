@@ -40,8 +40,9 @@ class BeamProfile:
         check_type(name, str)
 
         self._id = id
-        self._name = name @ property
+        self._name = name
 
+    @property
     def id(self) -> str:
         """Id of the ``BeamProfile``."""
         return self._id
@@ -103,11 +104,38 @@ class BeamCircularProfile(BeamProfile):
             UnitVector3D(direction_y) if not isinstance(direction_y, UnitVector3D) else direction_y
         )
 
-        # everything is fixed once built
-        self._radius.setflags(write=False)
-        self._center.setflags(write=False)
-        self._direction_x.setflags(write=False)
-        self._direction_y.setflags(write=False)
+        if not self._direction_x.is_perpendicular_to(self._direction_y):
+            raise ValueError("Direction x and direction y must be perpendicular.")
+
+    @property
+    def radius(self) -> Distance:
+        """Returns the radius of the ``BeamCircularProfile``."""
+        return self._radius
+
+    @property
+    def center(self) -> Point3D:
+        """Returns the center of the ``BeamCircularProfile``."""
+        return self._center
+
+    @property
+    def direction_x(self) -> UnitVector3D:
+        """Returns the X-axis direction of the ``BeamCircularProfile``."""
+        return self._direction_x
+
+    @property
+    def direction_y(self) -> UnitVector3D:
+        """Returns the Y-axis direction of the ``BeamCircularProfile``."""
+        return self._direction_y
+
+    def __repr__(self) -> str:
+        """String representation of the circular beam profile."""
+        lines = [f"ansys.geometry.core.designer.BeamCircularProfile {hex(id(self))}"]
+        lines.append(f"  Name                 : {self.name}")
+        lines.append(f"  Radius               : {self.radius}")
+        lines.append(f"  Center               : {self.center}")
+        lines.append(f"  Direction x          : {self.direction_x}")
+        lines.append(f"  Direction y          : {self.direction_y}")
+        return "\n".join(lines)
 
 
 class Beam:
@@ -122,9 +150,9 @@ class Beam:
         A server defined identifier for the body.
     name : str
         A user-defined label for the body.
-    segment_start : Point3D
+    start : Point3D
         The start of the beam line segment.
-    segment_end : Point3D
+    end : Point3D
         The end of the beam line segment.
     profile : BeamProfile
         The beam profile used to create the Beam.
@@ -135,25 +163,54 @@ class Beam:
     def __init__(
         self,
         id: str,
-        segment_start: Point3D,
-        segment_end: Point3D,
+        start: Point3D,
+        end: Point3D,
         profile: BeamProfile,
         parent_component: "Component",
     ):
         """Constructor method for ``Beam``."""
         # Sanity checks - cannot check Component due to circular import issues
         check_type(id, str)
-        check_type(segment_start, Point3D)
-        check_type(segment_end, Point3D)
+        check_type(start, Point3D)
+        check_type(end, Point3D)
         check_type(profile, BeamProfile)
 
         self._id = id
         self._parent_component = parent_component
-        self._segment_start = segment_start
-        self._segment_end = segment_end
+        self._start = start
+        self._end = end
         self._profile = profile
 
     @property
     def id(self) -> str:
         """Geometry Service defined Id of the ``Beam``."""
         return self._id
+
+    @property
+    def start(self) -> str:
+        """The start of the beam line segment."""
+        return self._start
+
+    @property
+    def end(self) -> str:
+        """The end of the beam line segment."""
+        return self._end
+
+    @property
+    def profile(self) -> BeamProfile:
+        """The beam profile of the beam line segment."""
+        return self._profile
+
+    @property
+    def parent_component(self) -> Union["Component", None]:
+        """Component node the ``Beam`` is under."""
+        return self._parent_component
+
+    def __repr__(self) -> str:
+        """String representation of the beam."""
+        lines = [f"ansys.geometry.core.designer.Beam {hex(id(self))}"]
+        lines.append(f"  Start                : {self.start}")
+        lines.append(f"  End                  : {self.end}")
+        lines.append(f"  Profile              : {self.profile.name}")
+        lines.append(f"  Parent component     : {self.parent_component.name}")
+        return "\n".join(lines)

@@ -476,6 +476,9 @@ class Component:
         response = self._commands_stub.CreateBeamBodyLines(request)
         self._grpc_client.log.debug(f"Beams successfully created.")
 
+        # Note: The current gRPC API simply returns a list of Ids. There is no additional
+        # information to correlate/merge against, so it is fully assumed the list is
+        # returned in order with a 1 to 1 index match to the request segments list.
         new_beams = []
         for index in range(len(response.ids)):
             new_beams.append(
@@ -486,9 +489,7 @@ class Component:
         return new_beams
 
     @protect_grpc
-    def create_beam(
-        self, segment_start: Point3D, segment_end: Point3D, profile: BeamProfile
-    ) -> Beam:
+    def create_beam(self, start: Point3D, end: Point3D, profile: BeamProfile) -> Beam:
         """
         Adds a new ``Beam`` under the component.
 
@@ -496,15 +497,15 @@ class Component:
 
         Parameters
         ----------
-        segment_start : Point3D
+        start : Point3D
             The start of the beam line segment.
-        segment_end : Point3D
+        end : Point3D
             The end of the beam line segment.
         profile : BeamProfile
             The beam profile used to create the Beam.
         """
         beams = self.create_beams(
-            [(segment_start, segment_end)],
+            [(start, end)],
             profile,
         )
 
