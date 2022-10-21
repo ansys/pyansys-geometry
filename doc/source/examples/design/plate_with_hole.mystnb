@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-# Extruded rectangular plate with multiple bodies
+# Extrude rectangular plate with multiple bodies
 
 Multiple bodies can be created from a single sketch by extruding the same sketch in different planes.
 
@@ -58,7 +58,7 @@ sketch = Sketch()
 )
 ```
 
-## Creating the design by extruding sketch
+## Create the design by extruding sketch
 
 A server connection is established and the single sketch profile is used to extrude 
 the base component at Z axis. A named selection is then created from the 
