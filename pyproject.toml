@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 # Check https://python-poetry.org/docs/pyproject/ for all available sections
 name = "ansys-geometry-core"
-version = "0.1.dev0"
+version = "0.2.dev0"
 description = "A python wrapper for Ansys Geometry Service"
 license = "MIT"
 authors = ["ANSYS, Inc. <ansys.support@ansys.com>"]
