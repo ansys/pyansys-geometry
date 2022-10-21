@@ -307,13 +307,11 @@ class Body:
         """
         check_type(direction, UnitVector3D)
         check_type(distance, (Quantity, Distance))
-        check_pint_unit_compatibility(distance, SERVER_UNIT_LENGTH)
 
-        magnitude = (
-            distance.m_as(SERVER_UNIT_LENGTH)
-            if not isinstance(distance, Distance)
-            else distance.value.m_as(SERVER_UNIT_LENGTH)
-        )
+        translate_distance = distance if isinstance(distance, Quantity) else distance.value
+        check_pint_unit_compatibility(translate_distance.units, SERVER_UNIT_LENGTH)
+
+        translation_magnitude = translate_distance.m_as(SERVER_UNIT_LENGTH)
 
         self._grpc_client.log.debug(f"Translating body {self.id}.")
 
@@ -321,7 +319,7 @@ class Body:
             TranslateRequest(
                 bodies=[self.id],
                 direction=unit_vector_to_grpc_direction(direction),
-                distance=magnitude,
+                distance=translation_magnitude,
             )
         )
 
