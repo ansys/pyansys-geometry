@@ -98,3 +98,22 @@ class CoordinateSystem:
     def parent_component(self) -> "Component":
         """Parent component of the coordinate system."""
         return self._parent_component
+
+    def __repr__(self):
+        """String representation of the coordinate system."""
+        lines = [f"ansys.geometry.core.designer.CoordinateSystem {hex(id(self))}"]
+        lines.append(f"  Name                 : {self.name}")
+        lines.append(f"  Parent component     : {self.parent_component.name}")
+        lines.append(
+            f"  Frame origin         : [{','.join([str(x) for x in self.frame.origin])}] in meters"
+        )
+        lines.append(
+            f"  Frame X-direction    : [{','.join([str(x) for x in self.frame.direction_x])}]"
+        )
+        lines.append(
+            f"  Frame Y-direction    : [{','.join([str(x) for x in self.frame.direction_y])}]"
+        )
+        lines.append(
+            f"  Frame Z-direction    : [{','.join([str(x) for x in self.frame.direction_z])}]"
+        )
+        return "\n".join(lines)
