@@ -97,8 +97,8 @@ Then, you can simply execute:
 
 .. caution::
 
-    PyGeometry is currently hosted in a private PyPi repository. You must provide the index
-    URL to the private PyPi repository:
+    PyGeometry is currently hosted in a private PyPI repository. You must provide the index
+    URL to the private PyPI repository:
 
     * Index URL: ``https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/``
 
