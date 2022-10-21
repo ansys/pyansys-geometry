@@ -120,9 +120,12 @@ nbsphinx_custom_formats = {
     ".mystnb": ["jupytext.reads", {"fmt": "mystnb"}],
 }
 nbsphinx_thumbnails = {
-    "examples/basic_usage": "_static/thumbnails/basic_usage.png",
-    "examples/dynamic_sketch_plane": "_static/thumbnails/dynamic_sketch_plane.png",
-    "examples/design_organization": "_static/thumbnails/design_organization.png",
+    "examples/basic/basic_usage": "_static/thumbnails/basic_usage.png",
+    "examples/design/dynamic_sketch_plane": "_static/thumbnails/dynamic_sketch_plane.png",
+    "examples/design/add_design_material": "_static/thumbnails/add_design_material.png",
+    "examples/design/plate_with_hole": "_static/thumbnails/plate_with_hole.png",
+    "examples/design/tessellation_usage": "_static/thumbnails/tessellation_usage.png",
+    "examples/design/design_organization": "_static/thumbnails/design_organization.png",
 }
 
 typehints_defaults = "comma"

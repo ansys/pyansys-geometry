@@ -1,0 +1,121 @@
+---
+jupytext:
+  text_representation:
+    extension: .mystnb
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.14.1
+kernelspec:
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
+---
+
+# Extrude rectangular plate with multiple bodies
+
+Multiple bodies can be created from a single sketch by extruding the same sketch in different planes.
+
+The sketch is designed as an effective fluent-style API with all operations receiving 2D configurations.
+To know more about the fluent API, see [Fluent based API in Sketch](../../user_guide/shapes.rst)
+
+In this example, a box is located in the center of the plate, with the default origin of a sketch plane (origin at (0, 0, 0)).
+Four holes of equal radius are sketched at the corners of the plate.
+The plate is then extruded, leading to the generation of the requested body.
+The projection is at the center of the face. The default projection depth is through the entire part.
+
++++
+First, let us import the fundamental objects:
+
+```{code-cell} ipython3 
+import numpy as np
+from pint import Quantity
+
+from ansys.geometry.core import Modeler
+from ansys.geometry.core.math import Plane, Point3D, Point2D, UnitVector3D
+from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.sketch import Sketch
+```
+
+## Defining a ``Sketch`` profile for the proposed design
+
+The profile requires four ``Segments`` which constitute the outer limits of the design,
+a ``Box`` on the center and a ``Circle`` at its four corners.
+
+A single sketch instance can be used for multiple design operations such as extruding a body,
+projecting a profile, or imprinting curves.
+
+```{code-cell} ipython3 
+sketch = Sketch()
+(sketch.segment(Point2D([-4, 5], unit=UNITS.m), Point2D([4, 5], unit=UNITS.m))
+    .segment_to_point(Point2D([4, -5], unit=UNITS.m))
+    .segment_to_point(Point2D([-4, -5], unit=UNITS.m))
+    .segment_to_point(Point2D([-4, 5], unit=UNITS.m))
+    .box(Point2D([0,0], unit=UNITS.m), Quantity(3, UNITS.m), Quantity(3, UNITS.m))
+    .circle(Point2D([3, 4], unit=UNITS.m), Quantity(0.5, UNITS.m))
+    .circle(Point2D([-3, -4], unit=UNITS.m), Quantity(0.5, UNITS.m))
+    .circle(Point2D([-3, 4], unit=UNITS.m), Quantity(0.5, UNITS.m))
+    .circle(Point2D([3, -4], unit=UNITS.m), Quantity(0.5, UNITS.m))
+)
+```
+
+## Create the design by extruding sketch
+
+A server connection is established and the single sketch profile is used to extrude 
+the base component at Z axis. A named selection is then created from the 
+resulting list of bodies.
+The design is going to extrude the four segments with desired thickness, just in three server calls.
+
+```{code-cell} ipython3
+modeler = Modeler()
+design = modeler.create_design("ExtrudedPlate")
+
+body = design.extrude_sketch(f"PlateLayer", sketch, Quantity(2, UNITS.m))
+
+board_named_selection = design.create_named_selection("Plate", bodies=[body])
+design.plot()
+```
+
+## Add new component with planar surface
+
+We have created a plate as a base component. Let's add a new component with a planar surface to it.
+For that, create an instance ``sketch``, and create a surface in the design with that sketch.
+For the sketch, we are creating an ellipse keeping the origin of the plane as its center.
+
+```{code-cell} ipython3
+# Add components to the design
+planar_component = design.add_component("PlanarComponent")
+
+# Initiate ``Sketch`` to create the planar surface.
+planar_sketch = Sketch()
+planar_sketch.ellipse(
+        Point2D([0, 0], UNITS.m), Quantity(1, UNITS.m), Quantity(0.5, UNITS.m)
+    )
+
+planar_body = planar_component.create_surface("PlanarComponentSurface", planar_sketch)
+
+comp_str = repr(planar_component)
+design.plot()
+```
+
+## Extrude from face to create body
+
+It is possible to extrude a face profile by a given distance to create a new solid body. 
+There are no modifications against the body containing the source face.
+
+```{code-cell} ipython3
+longer_body = design.extrude_face(
+        "LongerEllipseFace", planar_body.faces[0], Quantity(5, UNITS.m)
+    )
+design.plot()
+```
+## Translate the body with in the plane
+
+By using the translate method, we can move the body in a direction specified by a given distance.
+It is also possible to move a sketch around the global coordinate system. See example
+[Dynamic Sketch Plane](dynamic_sketch_plane.mystnb).
+
+```{code-cell} ipython3
+longer_body.translate(UnitVector3D([1, 0, 0]), Quantity(4, UNITS.m))
+design.plot()
+```
+
