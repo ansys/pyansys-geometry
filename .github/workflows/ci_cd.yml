@@ -339,8 +339,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
 
       - uses: actions/download-artifact@v3
 
