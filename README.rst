@@ -95,7 +95,21 @@ Then, you can simply execute:
 
    poetry run python -m pip install ansys-geometry-core
 
-    
+.. caution::
+
+    PyGeometry is currently hosted in a private PyPi repository. You must provide the index
+    URL to the private PyPi repository:
+
+    * Index URL: ``https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/``
+
+    If you don't have access to this package registry, email `pyansys.support@ansys.com <pyansys.support@ansys.com>`_
+    to request access. We will provide you a read-only token to be inserted in ``${PRIVATE_PYPI_ACCESS_TOKEN}``.
+    Once you have it, run the following command:
+
+    .. code:: bash
+
+        pip install ansys-geometry-core --index-url=https://${PRIVATE_PYPI_ACCESS_TOKEN}@pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/
+
 For developers
 ^^^^^^^^^^^^^^
 
