@@ -715,11 +715,13 @@ class Component:
         ...     sketch.circle(Point2D([x, y]), 0.2*u.m)
         ...     mycomp.extrude_sketch(f"body-{x}-{y}", sketch, 1 * u.m)
         >>> mycomp
-        ansys.geometry.core.designer.Component 0x7f45c3396370
-          Exists               : True
-          N Bodies             : 25
-          N Components         : 0
-          N Coordinate Systems : 0
+        ansys.geometry.core.designer.Component 0x2203cc9ec50
+            Name                 : my-comp
+            Exists               : True
+            Parent component     : my-design
+            N Bodies             : 25
+            N Components         : 0
+            N Coordinate Systems : 0
         >>> mycomp.plot(pbr=True, metallic=1.0)
 
         """
