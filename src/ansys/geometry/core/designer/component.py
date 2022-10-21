@@ -715,11 +715,13 @@ class Component:
         ...     sketch.circle(Point2D([x, y]), 0.2*u.m)
         ...     mycomp.extrude_sketch(f"body-{x}-{y}", sketch, 1 * u.m)
         >>> mycomp
-        ansys.geometry.core.designer.Component 0x7f45c3396370
-          Exists               : True
-          N Bodies             : 25
-          N Components         : 0
-          N Coordinate Systems : 0
+        ansys.geometry.core.designer.Component 0x2203cc9ec50
+            Name                 : my-comp
+            Exists               : True
+            Parent component     : my-design
+            N Bodies             : 25
+            N Components         : 0
+            N Coordinate Systems : 0
         >>> mycomp.plot(pbr=True, metallic=1.0)
 
         """
@@ -730,11 +732,14 @@ class Component:
         pl.show()
 
     def __repr__(self) -> str:
-        """Representation of the component."""
+        """String representation of the component."""
+        alive_bodies = [1 if body.is_alive else 0 for body in self.bodies]
+        alive_comps = [1 if comp.is_alive else 0 for comp in self.components]
         lines = [f"ansys.geometry.core.designer.Component {hex(id(self))}"]
+        lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Exists               : {self.is_alive}")
-        lines.append(f"  N Bodies             : {len(self.bodies)}")
-        lines.append(f"  N Components         : {len(self.components)}")
+        lines.append(f"  Parent component     : {self.parent_component.name}")
+        lines.append(f"  N Bodies             : {sum(alive_bodies)}")
+        lines.append(f"  N Components         : {sum(alive_comps)}")
         lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
-
         return "\n".join(lines)

@@ -440,3 +440,12 @@ class Body:
         pl = Plotter()
         pl.add_body(self, merge=merge, **kwargs)
         pl.show()
+
+    def __repr__(self) -> str:
+        """String representation of the body."""
+        lines = [f"ansys.geometry.core.designer.Body {hex(id(self))}"]
+        lines.append(f"  Name                 : {self.name}")
+        lines.append(f"  Exists               : {self.is_alive}")
+        lines.append(f"  Surface body         : {self.is_surface}")
+        lines.append(f"  Parent component     : {self._parent_component.name}")
+        return "\n".join(lines)
