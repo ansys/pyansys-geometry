@@ -390,3 +390,17 @@ class Design(Component):
         )
 
         return self._named_selections[beam_circular_profile.name]
+
+    def __repr__(self):
+        """String representation of the design."""
+        alive_bodies = [1 if body.is_alive else 0 for body in self.bodies]
+        alive_comps = [1 if comp.is_alive else 0 for comp in self.components]
+        lines = [f"ansys.geometry.core.designer.Design {hex(id(self))}"]
+        lines.append(f"  Name                 : {self.name}")
+        lines.append(f"  N Bodies             : {sum(alive_bodies)}")
+        lines.append(f"  N Components         : {sum(alive_comps)}")
+        lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
+        lines.append(f"  N Named Selections   : {len(self.named_selections)}")
+        lines.append(f"  N Materials          : {len(self.materials)}")
+        return "\n".join(lines)
+
