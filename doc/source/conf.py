@@ -7,7 +7,7 @@ from ansys_sphinx_theme import ansys_favicon, pyansys_logo_black
 project = "ansys-geometry-core"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc."
-release = version = "0.1.dev0"
+release = version = "0.1.0"
 
 # Select desired logo, theme, and declare the html title
 html_logo = pyansys_logo_black
