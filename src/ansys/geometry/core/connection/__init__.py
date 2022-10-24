@@ -1,7 +1,5 @@
 """PyGeometry connection subpackage."""
 
-import os
-
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     plane_to_grpc_plane,
