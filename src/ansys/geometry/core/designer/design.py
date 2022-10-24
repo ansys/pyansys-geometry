@@ -327,7 +327,7 @@ class Design(Component):
         raise ValueError("The Design object itself cannot have a shared topology.")
 
     @protect_grpc
-    def create_beam_circular_profile(
+    def add_beam_circular_profile(
         self,
         name: str,
         radius: Union[Quantity, Distance],

@@ -12,10 +12,17 @@ from ansys.geometry.core.designer import (
 )
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
-from ansys.geometry.core.math import UNITVECTOR3D_Z, Frame, Plane, Point2D, Point3D, UnitVector3D
-from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y
-from ansys.geometry.core.misc import UNITS
-from ansys.geometry.core.misc.measurements import UNIT_LENGTH, Distance
+from ansys.geometry.core.math import (
+    UNITVECTOR3D_X,
+    UNITVECTOR3D_Y,
+    UNITVECTOR3D_Z,
+    Frame,
+    Plane,
+    Point2D,
+    Point3D,
+    UnitVector3D,
+)
+from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -874,7 +881,7 @@ def test_beams(modeler: Modeler):
     # Create your design on the server side
     design = modeler.create_design("BeamCreation")
 
-    circle_profile_1 = design.create_beam_circular_profile(
+    circle_profile_1 = design.add_beam_circular_profile(
         "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
     )
 
@@ -884,7 +891,7 @@ def test_beams(modeler: Modeler):
     assert circle_profile_1.direction_x == UNITVECTOR3D_X
     assert circle_profile_1.direction_y == UNITVECTOR3D_Y
 
-    circle_profile_2 = design.create_beam_circular_profile(
+    circle_profile_2 = design.add_beam_circular_profile(
         "CircleProfile2",
         Distance(20, UNITS.mm),
         Point3D([10, 20, 30], UNITS.mm),
@@ -896,7 +903,7 @@ def test_beams(modeler: Modeler):
     assert circle_profile_2.id is not circle_profile_1.id
 
     with pytest.raises(ValueError, match="Radius must be a real positive value."):
-        design.create_beam_circular_profile(
+        design.add_beam_circular_profile(
             "InvalidProfileRadius",
             Quantity(-10, UNITS.mm),
             Point3D([0, 0, 0]),
@@ -905,7 +912,7 @@ def test_beams(modeler: Modeler):
         )
 
     with pytest.raises(ValueError, match="Direction x and direction y must be perpendicular."):
-        design.create_beam_circular_profile(
+        design.add_beam_circular_profile(
             "InvalidUnitVectorAlignment",
             Quantity(10, UNITS.mm),
             Point3D([0, 0, 0]),

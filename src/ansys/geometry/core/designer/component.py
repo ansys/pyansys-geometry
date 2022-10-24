@@ -504,11 +504,7 @@ class Component:
         profile : BeamProfile
             The beam profile used to create the Beam.
         """
-        beams = self.create_beams(
-            [(start, end)],
-            profile,
-        )
-
+        beams = self.create_beams([(start, end)], profile)
         return beams[0]
 
     @protect_grpc
