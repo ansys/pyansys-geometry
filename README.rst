@@ -43,7 +43,7 @@ you can start the geometry service locally using ``docker`` with:
 
 .. code:: bash
 
-   docker run --name ans_geo -e -p 50051:50051 ghcr.io/pyansys/pygeometry:latest
+   docker run --name ans_geo -p 50051:50051 ghcr.io/pyansys/pygeometry:latest
 
 Next, connect to the service with:
 
