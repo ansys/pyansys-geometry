@@ -63,11 +63,13 @@ jobs:
   smoke-tests:
     name: Build and Smoke tests (Ubuntu only)
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
     needs: [style]
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.7', '3.8', '3.9', '3.10']
+        experimental: [false]
         include:
             - python-version: '3.11'
               experimental: true
@@ -114,12 +116,14 @@ jobs:
   remaining-smoke-tests:
     name: Build and Smoke tests (Windows, macOS)
     runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
     needs: [smoke-tests]
     strategy:
       fail-fast: false
       matrix:
         os: [windows-latest, macos-latest]
-        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.7', '3.8', '3.9', '3.10']
+        experimental: [false]
         include:
             - python-version: '3.11'
               experimental: true
