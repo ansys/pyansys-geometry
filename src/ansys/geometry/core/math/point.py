@@ -1,7 +1,7 @@
 """``Point`` classes module."""
 
-from typing import TYPE_CHECKING, Optional, Union
-
+from beartype import beartype
+from beartype.typing import TYPE_CHECKING, Optional, Union
 import numpy as np
 from pint import Quantity, Unit
 
@@ -11,7 +11,6 @@ from ansys.geometry.core.misc import (
     PhysicalQuantity,
     check_ndarray_is_float_int,
     check_type,
-    check_type_equivalence,
 )
 from ansys.geometry.core.typing import RealSequence
 
@@ -71,15 +70,16 @@ class Point2D(np.ndarray, PhysicalQuantity):
         self._quantities = [Quantity(elem, units=unit) for elem in input]
         self.flat = [elem.to_base_units().m for elem in self._quantities]
 
+    @beartype
     def __eq__(self, other: "Point2D") -> bool:
         """Equals operator for ``Point2D``."""
-        check_type_equivalence(other, self)
         return np.array_equal(self, other)
 
     def __ne__(self, other: "Point2D") -> bool:
         """Not equals operator for ``Point2D``."""
         return not self == other
 
+    @beartype
     def __set_value(self, input: Quantity, idx: int) -> None:
         """General setter method for ``Point2D`` class."""
         self[idx] = self._base_units_magnitude(input)
@@ -194,9 +194,9 @@ class Point3D(np.ndarray, PhysicalQuantity):
         self._quantities = [Quantity(elem, units=unit) for elem in input]
         self.flat = [elem.to_base_units().m for elem in self._quantities]
 
+    @beartype
     def __eq__(self, other: "Point3D") -> bool:
         """Equals operator for ``Point3D``."""
-        check_type_equivalence(other, self)
         return np.array_equal(self, other)
 
     def __ne__(self, other: "Point3D") -> bool:
@@ -225,6 +225,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
         point._quantities = [np.nan, np.nan, np.nan]
         return point
 
+    @beartype
     def __set_value(self, input: Quantity, idx: int) -> None:
         """General setter method for ``Point3D`` class."""
         self[idx] = self._base_units_magnitude(input)

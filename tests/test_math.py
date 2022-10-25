@@ -1,5 +1,6 @@
 from io import UnsupportedOperation
 
+from beartype.roar import BeartypeCallHintParamViolation
 import numpy as np
 import pytest
 
@@ -136,13 +137,13 @@ def test_point_errors():
     point3D = Point3D([1, 4, 4])
 
     # Test setter error checks
-    with pytest.raises(TypeError, match="Provided type"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         point3D.x = "a"
 
-    with pytest.raises(TypeError, match="Provided type"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         point3D.y = "a"
 
-    with pytest.raises(TypeError, match="Provided type"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         point3D.z = "a"
 
     with pytest.raises(
@@ -154,10 +155,10 @@ def test_point_errors():
     point2D = Point2D([1, 4])
 
     # Test setter error checks
-    with pytest.raises(TypeError, match="Provided type"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         point2D.x = "a"
 
-    with pytest.raises(TypeError, match="Provided type"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         point2D.y = "a"
 
     with pytest.raises(
