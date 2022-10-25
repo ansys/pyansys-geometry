@@ -533,13 +533,13 @@ def test_vector3D_errors():
     v1 = Vector3D([1, 2, 3])
 
     # Test setter error checks
-    with pytest.raises(TypeError, match="The parameter 'x' should be a float or an integer value."):
+    with pytest.raises(BeartypeCallHintParamViolation):
         v1.x = "x"
 
-    with pytest.raises(TypeError, match="The parameter 'y' should be a float or an integer value."):
+    with pytest.raises(BeartypeCallHintParamViolation):
         v1.y = "y"
 
-    with pytest.raises(TypeError, match="The parameter 'z' should be a float or an integer value."):
+    with pytest.raises(BeartypeCallHintParamViolation):
         v1.z = "z"
 
     # Try to normalize a 0-value vector
@@ -577,10 +577,10 @@ def test_vector2D_errors():
     v1 = Vector2D([1, 2])
 
     # Test setter error checks
-    with pytest.raises(TypeError, match="The parameter 'x' should be a float or an integer value."):
+    with pytest.raises(BeartypeCallHintParamViolation):
         v1.x = "x"
 
-    with pytest.raises(TypeError, match="The parameter 'y' should be a float or an integer value."):
+    with pytest.raises(BeartypeCallHintParamViolation):
         v1.y = "y"
 
     # Try to normalize a 0-value vector
@@ -931,10 +931,10 @@ def test_add_sub_point():
     assert a_sub_vec_2d.unit == a_2d.unit
 
     # Let's try some errors when adding invalid objects to Vectors
-    with pytest.raises(NotImplementedError, match="Vector2D addition"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         vector_2d + "a"
 
-    with pytest.raises(NotImplementedError, match="Vector3D addition"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         vector_3d + "a"
 
 

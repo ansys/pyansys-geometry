@@ -31,8 +31,9 @@ class Accuracy:
         Returns ``True`` if comparison_length is greater than reference_length;
         within length accuracy.
         """
-        return comparison_length > reference_length or Accuracy.length_is_equal(
-            comparison_length, reference_length
+        return bool(
+            comparison_length > reference_length
+            or Accuracy.length_is_equal(comparison_length, reference_length)
         )
 
     def length_is_less_than_or_equal(comparison_length: Real, reference_length: Real) -> bool:
@@ -40,33 +41,34 @@ class Accuracy:
         Returns ``True`` if comparison_length is less than reference_length;
         within length accuracy.
         """
-        return comparison_length < reference_length or Accuracy.length_is_equal(
-            comparison_length, reference_length
+        return bool(
+            comparison_length < reference_length
+            or Accuracy.length_is_equal(comparison_length, reference_length)
         )
 
     def length_is_zero(length: Real) -> bool:
         """Returns ``True`` if length is within length accuracy of exact zero."""
-        return length <= LENGTH_ACCURACY and length >= -LENGTH_ACCURACY
+        return bool(length <= LENGTH_ACCURACY and length >= -LENGTH_ACCURACY)
 
     def length_is_negative(length: Real) -> bool:
         """Returns ``True`` if length is below a negative length accuracy."""
-        return length < -LENGTH_ACCURACY
+        return bool(length < -LENGTH_ACCURACY)
 
     def length_is_positive(length: Real) -> bool:
         """Returns ``True`` if length is above a positive length accuracy."""
-        return length > LENGTH_ACCURACY
+        return bool(length > LENGTH_ACCURACY)
 
     def angle_is_zero(angle: Real) -> bool:
         """Returns ``True`` if length is within angle accuracy of exact zero."""
-        return abs(angle) < ANGLE_ACCURACY
+        return bool(abs(angle) < ANGLE_ACCURACY)
 
     def angle_is_negative(angle: Real) -> bool:
         """Returns ``True`` if angle is below a negative angle accuracy."""
-        return angle <= -ANGLE_ACCURACY
+        return bool(angle <= -ANGLE_ACCURACY)
 
     def angle_is_positive(angle: Real) -> bool:
         """Returns ``True`` if angle is above a positive angle accuracy."""
-        return angle >= ANGLE_ACCURACY
+        return bool(angle >= ANGLE_ACCURACY)
 
     def is_within_tolerance(
         a: Real, b: Real, relative_tolerance: Real, absolute_tolerance: Real
@@ -82,6 +84,6 @@ class Accuracy:
                 return False
 
         difference = abs(a - b)
-        return difference < absolute_tolerance or difference <= relative_tolerance * 0.5 * abs(
-            a + b
+        return bool(
+            difference < absolute_tolerance or difference <= relative_tolerance * 0.5 * abs(a + b)
         )
