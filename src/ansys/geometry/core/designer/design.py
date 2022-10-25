@@ -104,6 +104,11 @@ class Design(Component):
         """List of available ``NamedSelection`` objects for our ``Design``."""
         return list(self._named_selections.values())
 
+    @property
+    def beam_profiles(self) -> List[BeamProfile]:
+        """List of available ``BeamProfile`` objects for our ``Design``."""
+        return list(self._beam_profiles.values())
+
     # TODO: allow for list of materials
     @protect_grpc
     def add_material(self, material: Material) -> None:
@@ -358,41 +363,32 @@ class Design(Component):
         check_type(direction_x, (np.ndarray, List, UnitVector3D, Vector3D))
         check_type(direction_y, (np.ndarray, List, UnitVector3D, Vector3D))
 
-        direction_x_unit_vector = (
-            UnitVector3D(direction_x) if not isinstance(direction_x, UnitVector3D) else direction_x
-        )
-        direction_y_unit_vector = (
-            UnitVector3D(direction_y) if not isinstance(direction_y, UnitVector3D) else direction_y
-        )
+        dir_x = direction_x if isinstance(direction_x, UnitVector3D) else UnitVector3D(direction_x)
+        dir_y = direction_y if isinstance(direction_y, UnitVector3D) else UnitVector3D(direction_y)
+        radius = radius if isinstance(radius, Distance) else Distance(radius)
 
-        radius_distance = radius if isinstance(radius, Distance) else Distance(radius)
-        if radius_distance.value <= 0:
+        if radius.value <= 0:
             raise ValueError("Radius must be a real positive value.")
 
-        if not direction_x_unit_vector.is_perpendicular_to(direction_y_unit_vector):
+        if not dir_x.is_perpendicular_to(dir_y):
             raise ValueError("Direction x and direction y must be perpendicular.")
 
         request = CreateBeamCircularProfileRequest(
             origin=point3d_to_grpc_point(center),
-            radius=radius_distance.value.m_as(SERVER_UNIT_LENGTH),
-            plane=plane_to_grpc_plane(
-                Plane(center, direction_x_unit_vector, direction_y_unit_vector)
-            ),
+            radius=radius.value.m_as(SERVER_UNIT_LENGTH),
+            plane=plane_to_grpc_plane(Plane(center, dir_x, dir_y)),
             name=name,
         )
 
         self._grpc_client.log.debug(f"Creating beam circular profile on {self.id}...")
+
         response = self._commands_stub.CreateBeamCircularProfile(request)
-        beam_circular_profile = BeamCircularProfile(
-            response.id, name, radius, center, direction_x_unit_vector, direction_y_unit_vector
-        )
-        self._beam_profiles[beam_circular_profile.name] = beam_circular_profile
+        profile = BeamCircularProfile(response.id, name, radius, center, dir_x, dir_y)
+        self._beam_profiles[profile.name] = profile
 
-        self._grpc_client.log.debug(
-            f"Beam circular profile {beam_circular_profile.name} successfully created."
-        )
+        self._grpc_client.log.debug(f"Beam circular profile {profile.name} successfully created.")
 
-        return self._beam_profiles[beam_circular_profile.name]
+        return self._beam_profiles[profile.name]
 
     def __repr__(self):
         """String representation of the design."""
@@ -405,4 +401,5 @@ class Design(Component):
         lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
         lines.append(f"  N Named Selections   : {len(self.named_selections)}")
         lines.append(f"  N Materials          : {len(self.materials)}")
+        lines.append(f"  N Beam Profiles      : {len(self.beam_profiles)}")
         return "\n".join(lines)

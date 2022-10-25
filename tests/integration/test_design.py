@@ -647,6 +647,7 @@ def test_delete_body_component(modeler: Modeler):
     assert "N Coordinate Systems : 0" in design_str
     assert "N Named Selections   : 0" in design_str
     assert "N Materials          : 0" in design_str
+    assert "N Beam Profiles      : 0" in design_str
 
     comp_1_str = str(comp_1)
     assert "ansys.geometry.core.designer.Component" in comp_1_str
@@ -654,6 +655,7 @@ def test_delete_body_component(modeler: Modeler):
     assert "Exists               : False" in comp_1_str
     assert "Parent component     : Deletion_Test" in comp_1_str
     assert "N Bodies             : 0" in comp_1_str
+    assert "N Beams              : 0" in comp_1_str
     assert "N Components         : 0" in comp_1_str
     assert "N Coordinate Systems : 0" in comp_1_str
 
@@ -929,6 +931,22 @@ def test_beams(modeler: Modeler):
     assert beam_1.end == Point3D([8, 88, 888], UNITS.mm)
     assert beam_1.profile == circle_profile_1
     assert beam_1.parent_component.id == design.id
+    assert len(design.beams) == 1
+    assert design.beams[0] == beam_1
+
+    beam_1_str = str(beam_1)
+    assert "ansys.geometry.core.designer.Beam" in beam_1_str
+    assert "  Start                : [0.009" in beam_1_str
+    assert "  End                  : [0.008" in beam_1_str
+    assert "  Parent component     : BeamCreation" in beam_1_str
+    assert "  Beam Profile info" in beam_1_str
+    assert "  -----------------" in beam_1_str
+    assert "ansys.geometry.core.designer.BeamCircularProfile " in beam_1_str
+    assert "  Name                 : CircleProfile1" in beam_1_str
+    assert "  Radius               : 10.0 millimeter" in beam_1_str
+    assert "  Center               : [0.0,0.0,0.0] in meters" in beam_1_str
+    assert "  Direction x          : [1.0,0.0,0.0]" in beam_1_str
+    assert "  Direction y          : [0.0,1.0,0.0]" in beam_1_str
 
     nested_component = design.add_component("NestedComponent")
 
@@ -939,3 +957,5 @@ def test_beams(modeler: Modeler):
     assert beam_2.id is not None
     assert beam_2.profile == circle_profile_2
     assert beam_2.parent_component.id == nested_component.id
+    assert len(nested_component.beams) == 1
+    assert nested_component.beams[0] == beam_2

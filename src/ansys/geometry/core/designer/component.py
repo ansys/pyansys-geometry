@@ -135,6 +135,11 @@ class Component:
         return self._bodies
 
     @property
+    def beams(self) -> List[Beam]:
+        """``Beam`` objects inside of the ``Component``."""
+        return self._beams
+
+    @property
     def coordinate_systems(self) -> List[CoordinateSystem]:
         """``CoordinateSystem`` objects inside of the ``Component``."""
         return self._coordinate_systems
@@ -480,15 +485,15 @@ class Component:
         # information to correlate/merge against, so it is fully assumed the list is
         # returned in order with a 1 to 1 index match to the request segments list.
         new_beams = []
-        for index in range(len(response.ids)):
+        n_beams = len(response.ids)
+        for index in range(n_beams):
             new_beams.append(
                 Beam(response.ids[index], segments[index][0], segments[index][1], profile, self)
             )
 
         self._beams.extend(new_beams)
-        return new_beams
+        return self._beams[-n_beams:]
 
-    @protect_grpc
     def create_beam(self, start: Point3D, end: Point3D, profile: BeamProfile) -> Beam:
         """
         Adds a new ``Beam`` under the component.
@@ -504,8 +509,7 @@ class Component:
         profile : BeamProfile
             The beam profile used to create the Beam.
         """
-        beams = self.create_beams([(start, end)], profile)
-        return beams[0]
+        return self.create_beams([(start, end)], profile)[0]
 
     @protect_grpc
     def delete_component(self, component: Union["Component", str]) -> None:
@@ -812,6 +816,7 @@ class Component:
         lines.append(f"  Exists               : {self.is_alive}")
         lines.append(f"  Parent component     : {self.parent_component.name}")
         lines.append(f"  N Bodies             : {sum(alive_bodies)}")
+        lines.append(f"  N Beams              : {len(self.beams)}")
         lines.append(f"  N Components         : {sum(alive_comps)}")
         lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
         return "\n".join(lines)

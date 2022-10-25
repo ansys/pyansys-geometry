@@ -1,20 +1,9 @@
 """``Beam`` class module."""
 
-from typing import TYPE_CHECKING, List, Union
+from typing import TYPE_CHECKING, Union
 
-import numpy as np
-from pint import Quantity
-
-from ansys.geometry.core.math import (
-    UNITVECTOR3D_X,
-    UNITVECTOR3D_Y,
-    ZERO_POINT3D,
-    Point3D,
-    UnitVector3D,
-    Vector3D,
-)
+from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.misc import Distance, check_type
-from ansys.geometry.core.typing import RealSequence
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.component import Component
@@ -32,6 +21,12 @@ class BeamProfile:
         A server defined identifier for the beam profile.
     name : str
         A user-defined label for the beam profile.
+
+    Notes
+    -----
+    ``BeamProfile`` objects are expected to be created from the ``Design`` object.
+    This means that users are not expected to instantiate their own ``BeamProfile``. They
+    should call the specific ``Design`` API for the ``BeamProfile`` desired.
     """
 
     def __init__(self, id: str, name: str):
@@ -65,47 +60,39 @@ class BeamCircularProfile(BeamProfile):
         A server defined identifier for the beam profile.
     name : str
         A user-defined label for the beam profile.
-    radius : Union[Quantity, Distance]
+    radius : Distance
         The radius of the circle.
     center: Point3D
         A :class:`Point3D` representing the center of the circle.
-    direction_x: Optional[Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]]
-        X-axis direction. By default, ``UNITVECTOR3D_X``.
-    direction_y: Optional[Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]]
-        Y-axis direction. By default, ``UNITVECTOR3D_Y``.
+    direction_x: UnitVector3D
+        X-axis direction.
+    direction_y: UnitVector3D
+        Y-axis direction.
+
+    Notes
+    -----
+    ``BeamProfile`` objects are expected to be created from the ``Design`` object.
+    This means that users are not expected to instantiate their own ``BeamProfile``. They
+    should call the specific ``Design`` API for the ``BeamProfile`` desired.
     """
 
     def __init__(
         self,
         id: str,
         name: str,
-        radius: Union[Quantity, Distance],
-        center: Union[np.ndarray, RealSequence, Point3D] = ZERO_POINT3D,
-        direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
-        direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Y,
+        radius: Distance,
+        center: Point3D,
+        direction_x: UnitVector3D,
+        direction_y: UnitVector3D,
     ):
         """Constructor method for ``BeamCircularProfile``."""
         super().__init__(id, name)
 
-        check_type(radius, (Quantity, Distance))
-        check_type(center, (np.ndarray, List, Point3D))
-        check_type(direction_x, (np.ndarray, List, UnitVector3D, Vector3D))
-        check_type(direction_y, (np.ndarray, List, UnitVector3D, Vector3D))
-
-        self._radius = radius if isinstance(radius, Distance) else Distance(radius)
-        if self._radius.value <= 0:
-            raise ValueError("Radius must be a real positive value.")
-
-        self._center = Point3D(center) if not isinstance(center, Point3D) else center
-        self._direction_x = (
-            UnitVector3D(direction_x) if not isinstance(direction_x, UnitVector3D) else direction_x
-        )
-        self._direction_y = (
-            UnitVector3D(direction_y) if not isinstance(direction_y, UnitVector3D) else direction_y
-        )
-
-        if not self._direction_x.is_perpendicular_to(self._direction_y):
-            raise ValueError("Direction x and direction y must be perpendicular.")
+        # Store specific BeamCircularProfile variables
+        self._radius = radius
+        self._center = center
+        self._dir_x = direction_x
+        self._dir_y = direction_y
 
     @property
     def radius(self) -> Distance:
@@ -120,21 +107,23 @@ class BeamCircularProfile(BeamProfile):
     @property
     def direction_x(self) -> UnitVector3D:
         """Returns the X-axis direction of the ``BeamCircularProfile``."""
-        return self._direction_x
+        return self._dir_x
 
     @property
     def direction_y(self) -> UnitVector3D:
         """Returns the Y-axis direction of the ``BeamCircularProfile``."""
-        return self._direction_y
+        return self._dir_y
 
     def __repr__(self) -> str:
         """String representation of the circular beam profile."""
         lines = [f"ansys.geometry.core.designer.BeamCircularProfile {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
-        lines.append(f"  Radius               : {self.radius}")
-        lines.append(f"  Center               : {self.center}")
-        lines.append(f"  Direction x          : {self.direction_x}")
-        lines.append(f"  Direction y          : {self.direction_y}")
+        lines.append(f"  Radius               : {str(self.radius.value)}")
+        lines.append(
+            f"  Center               : [{','.join([str(x) for x in self.center])}] in meters"
+        )
+        lines.append(f"  Direction x          : [{','.join([str(x) for x in self.direction_x])}]")
+        lines.append(f"  Direction y          : [{','.join([str(x) for x in self.direction_y])}]")
         return "\n".join(lines)
 
 
@@ -187,12 +176,12 @@ class Beam:
         return self._id
 
     @property
-    def start(self) -> str:
+    def start(self) -> Point3D:
         """The start of the beam line segment."""
         return self._start
 
     @property
-    def end(self) -> str:
+    def end(self) -> Point3D:
         """The end of the beam line segment."""
         return self._end
 
@@ -209,8 +198,10 @@ class Beam:
     def __repr__(self) -> str:
         """String representation of the beam."""
         lines = [f"ansys.geometry.core.designer.Beam {hex(id(self))}"]
-        lines.append(f"  Start                : {self.start}")
-        lines.append(f"  End                  : {self.end}")
-        lines.append(f"  Profile              : {self.profile.name}")
+        lines.append(
+            f"  Start                : [{','.join([str(x) for x in self.start])}] in meters"
+        )
+        lines.append(f"  End                  : [{','.join([str(x) for x in self.end])}] in meters")
         lines.append(f"  Parent component     : {self.parent_component.name}")
+        lines.extend(["\n", "  Beam Profile info", "  -----------------", str(self.profile)])
         return "\n".join(lines)
