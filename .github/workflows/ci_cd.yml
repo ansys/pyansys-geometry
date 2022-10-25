@@ -208,6 +208,8 @@ jobs:
         run: |
           .\.venv\Scripts\Activate.ps1
           pytest -v
+          pytest -v
+          pytest -v
 
       - name: Upload integration test logs
         uses: actions/upload-artifact@v3
