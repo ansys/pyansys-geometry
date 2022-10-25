@@ -126,7 +126,10 @@ jobs:
         experimental: [false]
         include:
             - python-version: '3.11'
-              os: [windows-latest, macos-latest]
+              os: windows-latest
+              experimental: true
+            - python-version: '3.11'
+              os: macos-latest
               experimental: true
 
     steps:
