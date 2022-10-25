@@ -12,18 +12,3 @@ from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.sketch.slot import Slot
 from ansys.geometry.core.sketch.trapezoid import Trapezoid
 from ansys.geometry.core.sketch.triangle import Triangle
-
-__all__ = [
-    "Arc",
-    "Box",
-    "Circle",
-    "Ellipse",
-    "Polygon",
-    "Segment",
-    "Sketch",
-    "SketchEdge",
-    "SketchFace",
-    "Slot",
-    "Trapezoid",
-    "Triangle",
-]

@@ -1,5 +1,3 @@
-"""A sub-package containing plotting related classes and utilities."""
+"""PyGeometry plotting subpackage."""
 
 from ansys.geometry.core.plotting.plotter import Plotter
-
-__all__ = ["Plotter"]
