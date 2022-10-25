@@ -42,8 +42,7 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector3D,
 )
-from ansys.geometry.core.misc import check_type
-from ansys.geometry.core.misc.measurements import SERVER_UNIT_LENGTH, Distance
+from ansys.geometry.core.misc import SERVER_UNIT_LENGTH, Distance, check_type
 from ansys.geometry.core.typing import RealSequence
 
 
