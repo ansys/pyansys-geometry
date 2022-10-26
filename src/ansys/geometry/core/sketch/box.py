@@ -1,6 +1,5 @@
 """``Box`` class module."""
-from typing import Optional, Union
-
+from beartype.typing import Optional, Union
 from pint import Quantity
 import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation

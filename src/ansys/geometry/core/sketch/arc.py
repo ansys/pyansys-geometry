@@ -1,7 +1,6 @@
 """``Arc`` class module."""
 
-from typing import Optional
-
+from beartype.typing import Optional
 import numpy as np
 from pint import Quantity
 import pyvista as pv

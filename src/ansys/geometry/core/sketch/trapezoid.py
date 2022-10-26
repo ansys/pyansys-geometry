@@ -1,7 +1,6 @@
 """``Trapezoid`` class module."""
 
-from typing import Optional, Union
-
+from beartype.typing import Optional, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv

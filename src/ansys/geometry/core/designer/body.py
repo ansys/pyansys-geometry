@@ -1,7 +1,5 @@
 """``Body`` class module."""
 
-from typing import TYPE_CHECKING, List, Optional, Tuple, Union
-
 from ansys.api.geometry.v0.bodies_pb2 import (
     BodyIdentifier,
     SetAssignedMaterialRequest,
@@ -10,6 +8,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import ImprintCurvesRequest, ProjectCurvesRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
+from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
 
 from ansys.geometry.core.connection import (

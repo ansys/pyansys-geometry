@@ -1,7 +1,6 @@
 """``Sketch`` class module."""
 
-from typing import Dict, List, Optional, Union
-
+from beartype.typing import Dict, List, Optional, Union
 from pint import Quantity
 
 from ansys.geometry.core.math import ZERO_POINT2D, Plane, Point2D, UnitVector3D, Vector2D, Vector3D

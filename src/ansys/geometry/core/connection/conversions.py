@@ -1,7 +1,5 @@
 """``Conversions`` module."""
 
-from typing import TYPE_CHECKING, List, Optional, Tuple
-
 from ansys.api.geometry.v0.models_pb2 import Arc as GRPCArc
 from ansys.api.geometry.v0.models_pb2 import Circle as GRPCCircle
 from ansys.api.geometry.v0.models_pb2 import Direction as GRPCDirection
@@ -13,6 +11,7 @@ from ansys.api.geometry.v0.models_pb2 import Plane as GRPCPlane
 from ansys.api.geometry.v0.models_pb2 import Point as GRPCPoint
 from ansys.api.geometry.v0.models_pb2 import Polygon as GRPCPolygon
 from ansys.api.geometry.v0.models_pb2 import Tessellation
+from beartype.typing import TYPE_CHECKING, List, Optional, Tuple
 
 from ansys.geometry.core.math import Frame, Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH

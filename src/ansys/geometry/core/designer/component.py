@@ -2,7 +2,6 @@
 
 from enum import Enum, unique
 from threading import Thread
-from typing import TYPE_CHECKING, List, Optional, Union
 
 from ansys.api.geometry.v0.bodies_pb2 import (
     BodyIdentifier,
@@ -19,6 +18,7 @@ from ansys.api.geometry.v0.components_pb2 import (
     SetComponentSharedTopologyRequest,
 )
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
+from beartype.typing import TYPE_CHECKING, List, Optional, Union
 from pint import Quantity
 
 from ansys.geometry.core.connection import (

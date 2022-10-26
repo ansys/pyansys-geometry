@@ -1,9 +1,8 @@
 """``NamedSelection`` class module."""
 
-from typing import List, Optional
-
 from ansys.api.geometry.v0.namedselections_pb2 import CreateNamedSelectionRequest
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
+from beartype.typing import List, Optional
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.designer.body import Body

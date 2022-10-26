@@ -1,6 +1,5 @@
 """``Circle`` class module."""
-from typing import Union
-
+from beartype.typing import Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv

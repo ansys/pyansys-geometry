@@ -2,7 +2,6 @@
 
 from enum import Enum
 from pathlib import Path
-from typing import List, Optional, Union
 
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.designs_pb2 import (
@@ -19,6 +18,7 @@ from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialPro
 from ansys.api.geometry.v0.models_pb2 import PartExportFormat
 from ansys.api.geometry.v0.namedselections_pb2 import NamedSelectionIdentifier
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
+from beartype.typing import List, Optional, Union
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.designer.body import Body

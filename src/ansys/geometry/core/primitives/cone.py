@@ -1,8 +1,7 @@
 """``Cone`` class module."""
 
 
-from typing import List, Optional, Union
-
+from beartype.typing import List, Optional, Union
 import numpy as np
 from pint import Unit
 
