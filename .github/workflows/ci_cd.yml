@@ -11,8 +11,8 @@ on:
 env:
   MAIN_PYTHON_VERSION: '3.10'
   PACKAGE_NAME: 'ansys-geometry-core'
-  # TODO : PIP_EXTRA_INDEX_URL should be deleted once the private dependencies are removed
-  PIP_EXTRA_INDEX_URL: 'https://${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/'
+  # TODO : PRIVATE_PYPI_INDEX_URL should be deleted once the private dependencies are removed
+  PRIVATE_PYPI_INDEX_URL: 'https://${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/'
   ANSRV_GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest
   ANSRV_GEO_PORT: 700
   GEO_CONT_NAME: ans_geo
@@ -82,6 +82,7 @@ jobs:
       - name: Install packages for building
         run: |
           pip install --upgrade build wheel
+          pip install ansys-api-geometry==0.1.0 --index-url ${{ env.PRIVATE_PYPI_INDEX_URL }}
           pip install .
 
       - name: Smoke test
@@ -131,6 +132,7 @@ jobs:
       - name: Install packages for building
         run: |
           pip install --upgrade build wheel
+          pip install ansys-api-geometry==0.1.0 --index-url ${{ env.PRIVATE_PYPI_INDEX_URL }}
           pip install .
 
       - name: Smoke test
@@ -183,6 +185,7 @@ jobs:
         run: |
           .\.venv\Scripts\Activate.ps1
           pip install --upgrade build
+          pip install ansys-api-geometry==0.1.0 --index-url ${{ env.PRIVATE_PYPI_INDEX_URL }}
           pip install .[test]
 
       - name: Login to GitHub Container Registry
@@ -258,6 +261,7 @@ jobs:
         run: |
           .\.venv\Scripts\Activate.ps1
           pip install --upgrade build
+          pip install ansys-api-geometry==0.1.0 --index-url ${{ env.PRIVATE_PYPI_INDEX_URL }}
           pip install .[docs]
 
       - name: Login to GitHub Container Registry
@@ -314,6 +318,7 @@ jobs:
       - name: Install ansys-geometry-core
         run: |
           pip install build
+          pip install ansys-api-geometry==0.1.0 --index-url ${{ env.PRIVATE_PYPI_INDEX_URL }}
           python -m build
           pip install dist/*.whl
 
