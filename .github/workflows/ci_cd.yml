@@ -94,7 +94,8 @@ jobs:
 
       - name: Generate wheelhouse
         run: |
-          pip wheel . -w wheelhouse --index-url ${{ env.PRIVATE_PYPI_INDEX_URL }}
+          pip wheel ansys-api-geometry==0.1.0 -w wheelhouse --index-url ${{ env.PRIVATE_PYPI_INDEX_URL }}
+          pip wheel . -w wheelhouse
 
       - name: Zip wheelhouse
         uses: vimtor/action-zip@v1
@@ -144,7 +145,8 @@ jobs:
 
       - name: Generate wheelhouse
         run: |
-          pip wheel . -w wheelhouse --index-url ${{ env.PRIVATE_PYPI_INDEX_URL }}
+          pip wheel ansys-api-geometry==0.1.0 -w wheelhouse --index-url ${{ env.PRIVATE_PYPI_INDEX_URL }}
+          pip wheel . -w wheelhouse
 
       - name: Zip wheelhouse
         uses: vimtor/action-zip@v1
