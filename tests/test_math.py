@@ -319,6 +319,10 @@ def test_vector3D():
     v_cross_overload = v1 % v2
     assert v_cross_overload == v_cross
 
+    # Check as well that vector * scalar also works
+    assert Vector3D([5, 5, 5]) == Vector3D([1, 1, 1]) * 5
+    assert Vector3D([5, 5, 5]) == 5 * Vector3D([1, 1, 1])
+
     # Checking that scalar times vector also works
     v1_x_3 = Vector3D([0, 3, 9])
     assert all(
@@ -623,6 +627,10 @@ def test_matrix():
     test_multiply = np.array([[2, 5, 3], [0, 8, 3]])
     assert np.array_equal((m_1 * m_4), np.matmul(test_matrix, test_multiply))
 
+    # Check invalid size
+    with pytest.raises(ValueError, match="Matrix should only be a 2D array."):
+        Matrix([None, None, None, None, None])
+
 
 def test_matrix_errors():
     """Testing multiple ``Matrix`` errors."""
@@ -680,7 +688,7 @@ def test_matrix_33():
         assert "Matrix33 should only be a 2D array of shape (3,3)." in str(val.value)
 
     # Build a Matrix44 and try to compare against it
-    with pytest.raises(TypeError, match="Provided type"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         m_2 = Matrix44([[2, 0, 0, 2], [0, 3, 0, 1], [0, 0, 4, 2], [0, 0, 4, 2]])
         assert m_1 == m_2
 
@@ -716,7 +724,7 @@ def test_matrix_44():
         assert "Matrix44 should only be a 2D array of shape (4,4)." in str(val.value)
 
     # Build a Matrix44 and try to compare against it
-    with pytest.raises(TypeError, match="Provided type"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         m_2 = Matrix33([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
         assert m_1 == m_2
 
@@ -750,13 +758,16 @@ def test_frame():
     transformed_matrix = Matrix44([[1, 0, 0, 42.0], [0, 1, 0, 99], [0, 0, 1, 13], [0, 0, 0, 1]])
     assert np.array_equal(f_1.transformation_matrix, transformed_matrix)
 
-    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
+    with pytest.raises(ValueError, match="Direction x and direction y must be perpendicular."):
+        Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([1, 1, 0]))
+
+    with pytest.raises(BeartypeCallHintParamViolation):
         Frame(origin, "A", UnitVector3D([25, 39, 82]))
 
-    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         Frame(origin, UnitVector3D([12, 31, 99]), "A")
 
-    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         Frame("A", UnitVector3D([12, 31, 99]), UnitVector3D([23, 67, 45]))
 
 
@@ -766,6 +777,26 @@ def test_frame_local_to_global_point_transformation():
     frame_xy = Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
     transformed_xy_origin = frame_xy.transform_point2d_local_to_global(Point2D([0, 0]))
     assert transformed_xy_origin == origin
+
+    global_to_local_mat = Matrix33(
+        [UNITVECTOR3D_X.tolist(), UNITVECTOR3D_Y.tolist(), UNITVECTOR3D_Z.tolist()]
+    )
+    transformation_mat = Matrix44(
+        [
+            UNITVECTOR3D_X.tolist() + [0],
+            UNITVECTOR3D_Y.tolist() + [0],
+            UNITVECTOR3D_Z.tolist() + [0],
+            origin.tolist() + [1],
+        ]
+    ).T
+    assert frame_xy.global_to_local_rotation == global_to_local_mat
+    assert frame_xy.local_to_global_rotation == global_to_local_mat.T
+
+    # In this case, since the rotation is an identity matrix, they will be identical
+    assert not frame_xy.local_to_global_rotation != global_to_local_mat
+
+    assert frame_xy.transformation_matrix == transformation_mat
+    assert frame_xy.transformation_matrix != transformation_mat.T
 
     frame_xz = Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 0, 1]))
     transformed_xz = frame_xz.transform_point2d_local_to_global(Point2D([0, 12]))
@@ -811,19 +842,19 @@ def test_plane():
     assert p_defaults.direction_y == UNITVECTOR3D_Y
     assert p_defaults.direction_z == UNITVECTOR3D_Z
 
-    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         Plane(origin, "A", UnitVector3D([25, 39, 82]))
 
-    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         Plane(origin, UnitVector3D([12, 31, 99]), "A")
 
-    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         Plane("A", UnitVector3D([12, 31, 99]), UnitVector3D([23, 67, 45]))
 
     assert p_1.is_point_contained(Point3D([42, 99, 13]))
     assert not p_1.is_point_contained(Point3D([42, 99, 14]))
 
-    with pytest.raises(TypeError, match=f"Provided type {Point2D} is invalid"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         p_1.is_point_contained(Point2D([42, 99]))
 
 
@@ -895,6 +926,8 @@ def test_add_sub_point():
     c_add_mm_2d = a_2d + b_2d
     assert np.allclose(c_add_mm_2d, c_add_2d)
     assert c_add_mm_2d.unit == a_2d.unit
+    assert c_add_mm_2d.x == c_add_2d.x
+    assert c_add_mm_2d.y == c_add_2d.y
 
     # Let's add them the other way around
     c_add_dm_2d = b_2d + a_2d
@@ -982,6 +1015,10 @@ def test_bounding_box_expands_and_evaluates_bounds_comparisons():
     bounding_box2.add_points([Point2D([-100, -100]), Point2D([100, 100])])
     assert bounding_box2.contains_point(Point2D([100, -100]))
     assert bounding_box2.contains_point(Point2D([-100, 100]))
+
+    copy_bbox_1 = BoundingBox2D(x_min=-100, x_max=7, y_min=-2, y_max=100)
+    assert copy_bbox_1 == bounding_box
+    assert copy_bbox_1 != bounding_box2
 
 
 @pytest.mark.parametrize(
