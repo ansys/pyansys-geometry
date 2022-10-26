@@ -16,6 +16,11 @@ html_short_title = html_title = "PyGeometry"
 
 
 # specify the location of your github repo
+html_context = {
+    "github_user": "pyansys",
+    "github_repo": "pygeometry",
+    "github_version": "main",
+}
 html_theme_options = {
     "github_url": "https://github.com/pyansys/pygeometry",
     "show_prev_next": False,
