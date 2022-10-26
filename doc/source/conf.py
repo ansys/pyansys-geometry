@@ -14,8 +14,13 @@ html_logo = pyansys_logo_black
 html_theme = "ansys_sphinx_theme"
 html_short_title = html_title = "PyGeometry"
 
-
 # specify the location of your github repo
+html_context = {
+    "github_user": "pyansys",
+    "github_repo": "pygeometry",
+    "github_version": "main",
+    "conf_py_path": "/doc/source/",
+}
 html_theme_options = {
     "github_url": "https://github.com/pyansys/pygeometry",
     "show_prev_next": False,
