@@ -63,7 +63,8 @@ class BeamCircularProfile(BeamProfile):
     radius : Distance
         The radius of the circle.
     center: Point3D
-        A :class:`Point3D <ansys.geometry.core.math.point.Point3D>` representing the center of the circle.
+        A :class:`Point3D <ansys.geometry.core.math.point.Point3D>` representing
+        the center of the circle.
     direction_x: UnitVector3D
         X-axis direction.
     direction_y: UnitVector3D
