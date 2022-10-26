@@ -19,7 +19,7 @@ html_context = {
     "github_user": "pyansys",
     "github_repo": "pygeometry",
     "github_version": "main",
-    "conf_py_path": "/doc/source/",
+    "doc_path": "doc/source",
 }
 html_theme_options = {
     "github_url": "https://github.com/pyansys/pygeometry",
