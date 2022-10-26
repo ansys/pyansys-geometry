@@ -11,8 +11,6 @@ on:
 env:
   MAIN_PYTHON_VERSION: '3.10'
   PACKAGE_NAME: 'ansys-geometry-core'
-  # TODO : PIP_EXTRA_INDEX_URL should be deleted once the private dependencies are removed
-  PIP_EXTRA_INDEX_URL: 'https://${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/'
   ANSRV_GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest
   ANSRV_GEO_PORT: 700
   GEO_CONT_NAME: ans_geo
@@ -169,10 +167,8 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.9' # use python3.9, self-hosted has an issue with 3.10
-          # TODO : This should be activated once the private dependencies are removed
-          #        pip install process installs them again even if they are on cache
-          # cache: 'pip'
-          # cache-dependency-path: 'pyproject.toml'
+          cache: 'pip'
+          cache-dependency-path: 'pyproject.toml'
 
       - name: Create Python venv
         run: |
@@ -244,10 +240,8 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.9' # use python3.9, self-hosted has an issue with 3.10
-          # TODO : This should be activated once the private dependencies are removed
-          #        pip install process installs them again even if they are on cache
-          # cache: 'pip'
-          # cache-dependency-path: 'pyproject.toml'
+          cache: 'pip'
+          cache-dependency-path: 'pyproject.toml'
 
       - name: Create Python venv
         run: |

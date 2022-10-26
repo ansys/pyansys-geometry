@@ -7,8 +7,6 @@ updates:
     labels:
       - "maintenance"
       - "dependencies"
-    ignore:
-      - dependency-name: "ansys-api-geometry"
 
   - package-ecosystem: "github-actions"
     directory: "/"
