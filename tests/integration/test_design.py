@@ -12,9 +12,17 @@ from ansys.geometry.core.designer import (
 )
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
-from ansys.geometry.core.math import UNITVECTOR3D_Z, Frame, Plane, Point2D, Point3D, UnitVector3D
-from ansys.geometry.core.misc import UNITS
-from ansys.geometry.core.misc.measurements import Distance
+from ansys.geometry.core.math import (
+    UNITVECTOR3D_X,
+    UNITVECTOR3D_Y,
+    UNITVECTOR3D_Z,
+    Frame,
+    Plane,
+    Point2D,
+    Point3D,
+    UnitVector3D,
+)
+from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -639,6 +647,7 @@ def test_delete_body_component(modeler: Modeler):
     assert "N Coordinate Systems : 0" in design_str
     assert "N Named Selections   : 0" in design_str
     assert "N Materials          : 0" in design_str
+    assert "N Beam Profiles      : 0" in design_str
 
     comp_1_str = str(comp_1)
     assert "ansys.geometry.core.designer.Component" in comp_1_str
@@ -646,6 +655,7 @@ def test_delete_body_component(modeler: Modeler):
     assert "Exists               : False" in comp_1_str
     assert "Parent component     : Deletion_Test" in comp_1_str
     assert "N Bodies             : 0" in comp_1_str
+    assert "N Beams              : 0" in comp_1_str
     assert "N Components         : 0" in comp_1_str
     assert "N Coordinate Systems : 0" in comp_1_str
 
@@ -866,3 +876,86 @@ def test_project_and_imprint_curves(modeler: Modeler):
 
     assert len(new_faces) == 2
     assert len(body.faces) == 8
+
+
+def test_beams(modeler: Modeler):
+    """Test beam creation."""
+    # Create your design on the server side
+    design = modeler.create_design("BeamCreation")
+
+    circle_profile_1 = design.add_beam_circular_profile(
+        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
+    )
+
+    assert circle_profile_1.id is not None
+    assert circle_profile_1.center == Point3D([0, 0, 0])
+    assert circle_profile_1.radius.value.m_as(UNIT_LENGTH) == 0.01
+    assert circle_profile_1.direction_x == UNITVECTOR3D_X
+    assert circle_profile_1.direction_y == UNITVECTOR3D_Y
+
+    circle_profile_2 = design.add_beam_circular_profile(
+        "CircleProfile2",
+        Distance(20, UNITS.mm),
+        Point3D([10, 20, 30], UNITS.mm),
+        UnitVector3D([1, 1, 1]),
+        UnitVector3D([0, -1, 1]),
+    )
+
+    assert circle_profile_2.id is not None
+    assert circle_profile_2.id is not circle_profile_1.id
+
+    with pytest.raises(ValueError, match="Radius must be a real positive value."):
+        design.add_beam_circular_profile(
+            "InvalidProfileRadius",
+            Quantity(-10, UNITS.mm),
+            Point3D([0, 0, 0]),
+            UNITVECTOR3D_X,
+            UNITVECTOR3D_Y,
+        )
+
+    with pytest.raises(ValueError, match="Direction x and direction y must be perpendicular."):
+        design.add_beam_circular_profile(
+            "InvalidUnitVectorAlignment",
+            Quantity(10, UNITS.mm),
+            Point3D([0, 0, 0]),
+            UNITVECTOR3D_X,
+            UnitVector3D([-1, -1, -1]),
+        )
+
+    beam_1 = design.create_beam(
+        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
+    )
+
+    assert beam_1.id is not None
+    assert beam_1.start == Point3D([9, 99, 999], UNITS.mm)
+    assert beam_1.end == Point3D([8, 88, 888], UNITS.mm)
+    assert beam_1.profile == circle_profile_1
+    assert beam_1.parent_component.id == design.id
+    assert len(design.beams) == 1
+    assert design.beams[0] == beam_1
+
+    beam_1_str = str(beam_1)
+    assert "ansys.geometry.core.designer.Beam" in beam_1_str
+    assert "  Start                : [0.009" in beam_1_str
+    assert "  End                  : [0.008" in beam_1_str
+    assert "  Parent component     : BeamCreation" in beam_1_str
+    assert "  Beam Profile info" in beam_1_str
+    assert "  -----------------" in beam_1_str
+    assert "ansys.geometry.core.designer.BeamCircularProfile " in beam_1_str
+    assert "  Name                 : CircleProfile1" in beam_1_str
+    assert "  Radius               : 10.0 millimeter" in beam_1_str
+    assert "  Center               : [0.0,0.0,0.0] in meters" in beam_1_str
+    assert "  Direction x          : [1.0,0.0,0.0]" in beam_1_str
+    assert "  Direction y          : [0.0,1.0,0.0]" in beam_1_str
+
+    nested_component = design.add_component("NestedComponent")
+
+    beam_2 = nested_component.create_beam(
+        Point3D([7, 77, 777], UNITS.mm), Point3D([6, 66, 666], UNITS.mm), circle_profile_2
+    )
+
+    assert beam_2.id is not None
+    assert beam_2.profile == circle_profile_2
+    assert beam_2.parent_component.id == nested_component.id
+    assert len(nested_component.beams) == 1
+    assert nested_component.beams[0] == beam_2
