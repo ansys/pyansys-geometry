@@ -20,8 +20,17 @@ html_theme_options = {
     "github_url": "https://github.com/pyansys/pygeometry",
     "show_prev_next": False,
     "show_breadcrumbs": True,
+    "collapse_navigation": True,
+    "use_edit_page_button": True,
     "additional_breadcrumbs": [
         ("PyAnsys", "https://docs.pyansys.com/"),
+    ],
+    "icon_links": [
+        {
+            "name": "Support",
+            "url": "https://github.com/pyansys/pygeometry/discussions",
+            "icon": "fa fa-comment fa-fw",
+        },
     ],
 }
 
