@@ -1,18 +1,12 @@
 """``Torus`` class module."""
 
-from beartype.typing import List, Optional, Union
+from beartype import beartype
+from beartype.typing import Optional, Union
 import numpy as np
 from pint import Unit
 
 from ansys.geometry.core.math import Point3D, UnitVector3D, Vector3D
-from ansys.geometry.core.misc import (
-    UNIT_LENGTH,
-    UNITS,
-    check_is_float_int,
-    check_pint_unit_compatibility,
-    check_type,
-    check_type_equivalence,
-)
+from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, check_pint_unit_compatibility
 from ansys.geometry.core.typing import Real, RealSequence
 
 
@@ -36,6 +30,7 @@ class Torus:
         Units employed to define the radius and minor_radius, by default ``UNIT_LENGTH``.
     """
 
+    @beartype
     def __init__(
         self,
         origin: Union[np.ndarray, RealSequence, Point3D],
@@ -47,16 +42,7 @@ class Torus:
     ):
         """Constructor method for ``Torus``."""
 
-        check_type(origin, (np.ndarray, List, Point3D))
-        check_type(direction_x, (np.ndarray, List, UnitVector3D, Vector3D))
-        check_type(direction_y, (np.ndarray, List, UnitVector3D, Vector3D))
-
-        check_is_float_int(major_radius, "major_radius")
-        check_is_float_int(minor_radius, "minor_radius")
-
-        check_type(unit, Unit)
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
-
         self._unit = unit
         _, self._base_unit = UNITS.get_base_units(unit)
 
@@ -78,9 +64,8 @@ class Torus:
         return self._origin
 
     @origin.setter
+    @beartype
     def origin(self, origin: Point3D) -> None:
-        if not isinstance(origin, Point3D):
-            raise TypeError(f"origin is invalid, type {Point3D} expected.")
         self._origin = origin
 
     @property
@@ -89,8 +74,8 @@ class Torus:
         return UNITS.convert(self._major_radius, self._base_unit, self._unit)
 
     @major_radius.setter
+    @beartype
     def major_radius(self, major_radius: Real) -> None:
-        check_is_float_int(major_radius, "major_radius")
         self._major_radius = UNITS.convert(major_radius, self._unit, self._base_unit)
 
     @property
@@ -99,8 +84,8 @@ class Torus:
         return UNITS.convert(self._minor_radius, self._base_unit, self._unit)
 
     @minor_radius.setter
+    @beartype
     def minor_radius(self, minor_radius: Real) -> None:
-        check_is_float_int(minor_radius, "minor_radius")
         self._minor_radius = UNITS.convert(minor_radius, self._unit, self._base_unit)
 
     @property
@@ -109,15 +94,14 @@ class Torus:
         return self._unit
 
     @unit.setter
+    @beartype
     def unit(self, unit: Unit) -> None:
-        check_type(unit, Unit)
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit
 
+    @beartype
     def __eq__(self, other: object) -> bool:
         """Equals operator for ``Torus``."""
-        check_type_equivalence(other, self)
-
         return (
             self._origin == other.origin
             and self._major_radius == other.major_radius

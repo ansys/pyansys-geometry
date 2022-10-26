@@ -1,19 +1,12 @@
 """``Sphere`` class module."""
 
-
-from beartype.typing import List, Optional, Union
+from beartype import beartype
+from beartype.typing import Optional, Union
 import numpy as np
 from pint import Unit
 
 from ansys.geometry.core.math import Point3D
-from ansys.geometry.core.misc import (
-    UNIT_LENGTH,
-    UNITS,
-    check_is_float_int,
-    check_pint_unit_compatibility,
-    check_type,
-    check_type_equivalence,
-)
+from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, check_pint_unit_compatibility
 from ansys.geometry.core.typing import Real, RealSequence
 
 
@@ -31,6 +24,7 @@ class Sphere:
         Units employed to define the radius and height, by default ``UNIT_LENGTH``.
     """
 
+    @beartype
     def __init__(
         self,
         origin: Union[np.ndarray, RealSequence, Point3D],
@@ -39,13 +33,7 @@ class Sphere:
     ):
         """Constructor method for ``Sphere``."""
 
-        check_type(origin, (np.ndarray, List, Point3D))
-
-        check_is_float_int(radius, "radius")
-
-        check_type(unit, Unit)
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
-
         self._unit = unit
         _, self._base_unit = UNITS.get_base_units(unit)
 
@@ -60,9 +48,8 @@ class Sphere:
         return self._origin
 
     @origin.setter
+    @beartype
     def origin(self, origin: Point3D) -> None:
-        if not isinstance(origin, Point3D):
-            raise TypeError(f"origin is invalid, type {Point3D} expected.")
         self._origin = origin
 
     @property
@@ -71,8 +58,8 @@ class Sphere:
         return UNITS.convert(self._radius, self._base_unit, self._unit)
 
     @radius.setter
+    @beartype
     def radius(self, radius: Real) -> None:
-        check_is_float_int(radius, "radius")
         self._radius = UNITS.convert(radius, self._unit, self._base_unit)
 
     @property
@@ -81,15 +68,14 @@ class Sphere:
         return self._unit
 
     @unit.setter
+    @beartype
     def unit(self, unit: Unit) -> None:
-        check_type(unit, Unit)
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit
 
+    @beartype
     def __eq__(self, other: object) -> bool:
         """Equals operator for ``Sphere``."""
-        check_type_equivalence(other, self)
-
         return self._origin == other.origin and self._radius == other.radius
 
     def __ne__(self, other) -> bool:
