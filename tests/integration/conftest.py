@@ -10,6 +10,7 @@ If you wish to override these defaults, set the following environment variables.
 """
 import logging
 import os
+from pathlib import Path
 
 import pytest
 import pyvista as pv
@@ -22,9 +23,11 @@ pv.OFF_SCREEN = True
 @pytest.fixture(scope="session")
 def modeler():
 
-    # Log to file
-    log_file_path = os.path.join(
-        os.path.dirname(os.path.realpath(__file__)), "logs", "integration_tests_logs.txt"
+    # Log to file - accepts str or Path objects, Path is passed for testing/coverage purposes.
+    log_file_path = Path(
+        os.path.join(
+            os.path.dirname(os.path.realpath(__file__)), "logs", "integration_tests_logs.txt"
+        )
     )
 
     try:
