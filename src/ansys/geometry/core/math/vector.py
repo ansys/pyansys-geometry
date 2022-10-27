@@ -1,7 +1,7 @@
 """``Vector`` classes module"""
 from io import UnsupportedOperation
 
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import Union
 import numpy as np
 from pint import Quantity
@@ -40,7 +40,7 @@ class Vector3D(np.ndarray):
         return self[0]
 
     @x.setter
-    @beartype
+    @check_input_types
     def x(self, value: Real) -> None:
         """Sets the Y coordinate of ``Vector3D``."""
         self[0] = value
@@ -51,7 +51,7 @@ class Vector3D(np.ndarray):
         return self[1]
 
     @y.setter
-    @beartype
+    @check_input_types
     def y(self, value: Real) -> None:
         """Sets the Y coordinate of ``Vector3D``."""
         self[1] = value
@@ -62,7 +62,7 @@ class Vector3D(np.ndarray):
         return self[2]
 
     @z.setter
-    @beartype
+    @check_input_types
     def z(self, value: Real) -> None:
         """Sets the Z coordinate of ``Vector3D``."""
         self[2] = value
@@ -82,7 +82,7 @@ class Vector3D(np.ndarray):
         """Confirms whether all components of the ``Vector3D`` are zero."""
         return all([comp == 0 for comp in self])
 
-    @beartype
+    @check_input_types
     def is_perpendicular_to(self, other_vector: "Vector3D") -> bool:
         """Verifies if the two ``Vector3D`` instances are perpendicular."""
         if self.is_zero or other_vector.is_zero:
@@ -98,7 +98,7 @@ class Vector3D(np.ndarray):
         else:
             raise ValueError("The norm of the Vector3D is not valid.")
 
-    @beartype
+    @check_input_types
     def get_angle_between(self, v: "Vector3D") -> Quantity:
         """Method for getting the angle between two ``Vector3D`` objects.
 
@@ -126,12 +126,12 @@ class Vector3D(np.ndarray):
         else:
             return Quantity(np.arctan2(sine, cosine), UNIT_ANGLE)
 
-    @beartype
+    @check_input_types
     def cross(self, v: "Vector3D") -> "Vector3D":
         """Return cross product of Vector3D objects"""
         return np.cross(self, v).view(Vector3D)
 
-    @beartype
+    @check_input_types
     def __eq__(self, other: "Vector3D") -> bool:
         """Equals operator for ``Vector3D``."""
         return np.array_equal(self, other)
@@ -140,7 +140,7 @@ class Vector3D(np.ndarray):
         """Not equals operator for ``Vector3D``."""
         return not self == other
 
-    @beartype
+    @check_input_types
     def __mul__(self, other: Union["Vector3D", Real]) -> Union["Vector3D", Real]:
         """Overload * operator with dot product.
 
@@ -157,7 +157,7 @@ class Vector3D(np.ndarray):
         """Overload % operator with cross product."""
         return self.cross(other)
 
-    @beartype
+    @check_input_types
     def __add__(self, other: Union["Vector3D", Point3D]) -> Union["Vector3D", Point3D]:
         """Addition operation overload for ``Vector3D`` objects."""
         if isinstance(other, Point3D):
@@ -165,13 +165,13 @@ class Vector3D(np.ndarray):
         else:
             return Vector3D(np.add(self, other))
 
-    @beartype
+    @check_input_types
     def __sub__(self, other: "Vector3D") -> "Vector3D":
         """Subtraction operation overload for ``Vector3D`` objects."""
         return np.subtract(self, other).view(Vector3D)
 
     @classmethod
-    @beartype
+    @check_input_types
     def from_points(
         cls,
         point_a: Union[np.ndarray, RealSequence, Point3D],
@@ -230,7 +230,7 @@ class Vector2D(np.ndarray):
         return self[0]
 
     @x.setter
-    @beartype
+    @check_input_types
     def x(self, value: Real) -> None:
         """Sets the X coordinate of ``Vector2D``."""
         self[0] = value
@@ -241,7 +241,7 @@ class Vector2D(np.ndarray):
         return self[1]
 
     @y.setter
-    @beartype
+    @check_input_types
     def y(self, value: Real) -> None:
         """Sets the Y coordinate of ``Vector2D``."""
         self[1] = value
@@ -261,7 +261,7 @@ class Vector2D(np.ndarray):
         """Confirms whether all components of the ``Vector2D`` are zero."""
         return all([comp == 0 for comp in self])
 
-    @beartype
+    @check_input_types
     def is_perpendicular_to(self, other_vector: "Vector2D") -> bool:
         """Verifies if the two ``Vector2D`` instances are perpendicular."""
         if self.is_zero or other_vector.is_zero:
@@ -277,7 +277,7 @@ class Vector2D(np.ndarray):
         else:
             raise ValueError("The norm of the Vector2D is not valid.")
 
-    @beartype
+    @check_input_types
     def get_angle_between(self, v: "Vector2D") -> Quantity:
         """Method for getting the angle between two ``Vector2D`` objects.
 
@@ -301,7 +301,7 @@ class Vector2D(np.ndarray):
 
         return Quantity(angle, UNIT_ANGLE)
 
-    @beartype
+    @check_input_types
     def __eq__(self, other: "Vector2D") -> bool:
         """Equals operator for ``Vector2D``."""
         return np.array_equal(self, other)
@@ -310,7 +310,7 @@ class Vector2D(np.ndarray):
         """Not equals operator for ``Vector2D``."""
         return not self == other
 
-    @beartype
+    @check_input_types
     def __mul__(self, other: Union["Vector2D", Real]) -> Union["Vector2D", Real]:
         """Overload * operator with dot product.
 
@@ -323,7 +323,7 @@ class Vector2D(np.ndarray):
         else:
             return self.dot(other)
 
-    @beartype
+    @check_input_types
     def __add__(self, other: Union["Vector2D", Point2D]) -> Union["Vector2D", Point2D]:
         """Addition operation overload for ``Vector2D`` objects."""
         if isinstance(other, Point2D):
@@ -331,13 +331,13 @@ class Vector2D(np.ndarray):
         else:
             return Vector2D(np.add(self, other))
 
-    @beartype
+    @check_input_types
     def __sub__(self, other: "Vector2D") -> "Vector2D":
         """Subtraction operation overload for ``Vector2D`` objects."""
         return np.subtract(self, other).view(Vector2D)
 
     @classmethod
-    @beartype
+    @check_input_types
     def from_points(
         cls,
         point_a: Union[np.ndarray, RealSequence, Point2D],

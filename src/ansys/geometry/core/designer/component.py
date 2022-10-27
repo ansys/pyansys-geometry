@@ -21,7 +21,7 @@ from ansys.api.geometry.v0.components_pb2 import (
 )
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
 from ansys.api.geometry.v0.models_pb2 import Line
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
 
@@ -78,7 +78,7 @@ class Component:
     _coordinate_systems: List[CoordinateSystem]
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def __init__(self, name: str, parent_component: Optional["Component"], grpc_client: GrpcClient):
         """Constructor method for ``Component``."""
         self._grpc_client = grpc_client
@@ -154,7 +154,7 @@ class Component:
         """
         return self._shared_topology
 
-    @beartype
+    @check_input_types
     def add_component(self, name: str) -> "Component":
         """Creates a new component nested under this component within the design assembly.
 
@@ -172,7 +172,7 @@ class Component:
         return self._components[-1]
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def set_shared_topology(self, share_type: SharedTopologyType) -> None:
         """Defines the shared topology to be applied to the component.
 
@@ -193,7 +193,7 @@ class Component:
         self._shared_topology = share_type
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def extrude_sketch(
         self, name: str, sketch: Sketch, distance: Union[Quantity, Distance]
     ) -> Body:
@@ -235,7 +235,7 @@ class Component:
         return self._bodies[-1]
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def extrude_face(self, name: str, face: Face, distance: Union[Quantity, Distance]) -> Body:
         """Extrudes the face profile by the given distance to create a new solid body.
         There are no modifications against the body containing the source face.
@@ -279,7 +279,7 @@ class Component:
         return self._bodies[-1]
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def create_surface(self, name: str, sketch: Sketch) -> Body:
         """Creates a surface body with the given sketch profile.
 
@@ -314,7 +314,7 @@ class Component:
         return self._bodies[-1]
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def create_surface_from_face(self, name: str, face: Face) -> Body:
         """Creates a new surface body based upon the provided face.
 
@@ -351,7 +351,7 @@ class Component:
         self._bodies.append(Body(response.id, name, self, self._grpc_client, is_surface=True))
         return self._bodies[-1]
 
-    @beartype
+    @check_input_types
     def create_coordinate_system(self, name: str, frame: Frame) -> CoordinateSystem:
         """Creates a coordinate system.
 
@@ -374,7 +374,7 @@ class Component:
         return self._coordinate_systems[-1]
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def translate_bodies(
         self, bodies: List[Body], direction: UnitVector3D, distance: Union[Quantity, Distance]
     ) -> None:
@@ -428,7 +428,7 @@ class Component:
         )
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def create_beams(
         self, segments: List[Tuple[Point3D, Point3D]], profile: BeamProfile
     ) -> List[Beam]:
@@ -487,7 +487,7 @@ class Component:
         return self.create_beams([(start, end)], profile)[0]
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def delete_component(self, component: Union["Component", str]) -> None:
         """Deletes an existing component (itself or its children).
 
@@ -521,7 +521,7 @@ class Component:
             pass
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def delete_body(self, body: Union[Body, str]) -> None:
         """Deletes an existing body belonging to this component (or its children).
 
@@ -554,7 +554,7 @@ class Component:
             )
             pass
 
-    @beartype
+    @check_input_types
     def search_component(self, id: str) -> Union["Component", None]:
         """Recursive search on available nested components.
 
@@ -582,7 +582,7 @@ class Component:
         # If you reached this point... this means that no component was found!
         return None
 
-    @beartype
+    @check_input_types
     def search_body(self, id: str) -> Union[Body, None]:
         """Recursive search on available bodies in component and nested components.
 

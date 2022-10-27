@@ -1,6 +1,6 @@
 """``Torus`` class module."""
 
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
 import numpy as np
 from pint import Unit
@@ -30,7 +30,7 @@ class Torus:
         Units employed to define the radius and minor_radius, by default ``UNIT_LENGTH``.
     """
 
-    @beartype
+    @check_input_types
     def __init__(
         self,
         origin: Union[np.ndarray, RealSequence, Point3D],
@@ -64,7 +64,7 @@ class Torus:
         return self._origin
 
     @origin.setter
-    @beartype
+    @check_input_types
     def origin(self, origin: Point3D) -> None:
         self._origin = origin
 
@@ -74,7 +74,7 @@ class Torus:
         return UNITS.convert(self._major_radius, self._base_unit, self._unit)
 
     @major_radius.setter
-    @beartype
+    @check_input_types
     def major_radius(self, major_radius: Real) -> None:
         self._major_radius = UNITS.convert(major_radius, self._unit, self._base_unit)
 
@@ -84,7 +84,7 @@ class Torus:
         return UNITS.convert(self._minor_radius, self._base_unit, self._unit)
 
     @minor_radius.setter
-    @beartype
+    @check_input_types
     def minor_radius(self, minor_radius: Real) -> None:
         self._minor_radius = UNITS.convert(minor_radius, self._unit, self._base_unit)
 
@@ -94,12 +94,12 @@ class Torus:
         return self._unit
 
     @unit.setter
-    @beartype
+    @check_input_types
     def unit(self, unit: Unit) -> None:
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit
 
-    @beartype
+    @check_input_types
     def __eq__(self, other: object) -> bool:
         """Equals operator for ``Torus``."""
         return (

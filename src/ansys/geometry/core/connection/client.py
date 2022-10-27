@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 import time
 
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
 import grpc
 from grpc._channel import _InactiveRpcError
@@ -85,7 +85,7 @@ class GrpcClient:
         The file to output the log, if requested. By default, ``None``.
     """
 
-    @beartype
+    @check_input_types
     def __init__(
         self,
         host: Optional[str] = DEFAULT_HOST,

@@ -1,6 +1,6 @@
 """``Plane`` class module."""
 
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import Union
 import numpy as np
 
@@ -34,7 +34,7 @@ class Plane(Frame):
         """Constructor method for ``Plane``."""
         super().__init__(origin, direction_x, direction_y)
 
-    @beartype
+    @check_input_types
     def is_point_contained(self, point: Point3D) -> bool:
         """Method for checking if a Point3D is contained in the plane.
 
@@ -59,7 +59,7 @@ class Plane(Frame):
         # If plane equation is equal to 0, your point is contained
         return True if np.isclose(plane_eq, 0.0) else False
 
-    @beartype
+    @check_input_types
     def __eq__(self, other: "Plane") -> bool:
         """Equals operator for ``Plane``."""
         return (

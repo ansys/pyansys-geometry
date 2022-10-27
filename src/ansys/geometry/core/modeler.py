@@ -2,7 +2,7 @@
 import logging
 from pathlib import Path
 
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, Optional, Union
 from grpc import Channel
 
@@ -73,7 +73,7 @@ class Modeler:
         """The ``Modeler`` instance client."""
         return self._client
 
-    @beartype
+    @check_input_types
     def create_design(self, name: str) -> Design:
         """Initializes a new design with the connected client.
 

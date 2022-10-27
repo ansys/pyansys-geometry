@@ -1,7 +1,7 @@
 """``Cone`` class module."""
 
 
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
 import numpy as np
 from pint import Unit
@@ -33,7 +33,7 @@ class Cone:
         Units employed to define the half_angle, by default ``UNIT_ANGLE``.
     """
 
-    @beartype
+    @check_input_types
     def __init__(
         self,
         origin: Union[np.ndarray, RealSequence, Point3D],
@@ -72,7 +72,7 @@ class Cone:
         return self._origin
 
     @origin.setter
-    @beartype
+    @check_input_types
     def origin(self, origin: Point3D) -> None:
         self._origin = origin
 
@@ -82,7 +82,7 @@ class Cone:
         return UNITS.convert(self._radius, self._base_length_unit, self._length_unit)
 
     @radius.setter
-    @beartype
+    @check_input_types
     def radius(self, radius: Real) -> None:
         self._radius = UNITS.convert(radius, self._length_unit, self._base_length_unit)
 
@@ -92,7 +92,7 @@ class Cone:
         return UNITS.convert(self._half_angle, self._base_angle_unit, self._angle_unit)
 
     @half_angle.setter
-    @beartype
+    @check_input_types
     def half_angle(self, half_angle: Real) -> None:
         self._half_angle = UNITS.convert(half_angle, self._angle_unit, self._base_angle_unit)
 
@@ -102,7 +102,7 @@ class Cone:
         return self._length_unit
 
     @length_unit.setter
-    @beartype
+    @check_input_types
     def length_unit(self, length_unit: Unit) -> None:
         check_pint_unit_compatibility(length_unit, UNIT_LENGTH)
         self._length_unit = length_unit
@@ -113,12 +113,12 @@ class Cone:
         return self._angle_unit
 
     @angle_unit.setter
-    @beartype
+    @check_input_types
     def angle_unit(self, angle_unit: Unit) -> None:
         check_pint_unit_compatibility(angle_unit, UNIT_ANGLE)
         self._angle_unit = angle_unit
 
-    @beartype
+    @check_input_types
     def __eq__(self, other: object) -> bool:
         """Equals operator for ``Cone``."""
         return (

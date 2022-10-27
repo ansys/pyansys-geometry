@@ -2,7 +2,7 @@
 
 from ansys.api.geometry.v0.namedselections_pb2 import CreateNamedSelectionRequest
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import List, Optional
 
 from ansys.geometry.core.connection import GrpcClient
@@ -36,7 +36,7 @@ class NamedSelection:
     """
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def __init__(
         self,
         name: str,

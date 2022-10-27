@@ -1,6 +1,6 @@
 """``Trapezoid`` class module."""
 
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
 import numpy as np
 from pint import Quantity
@@ -41,7 +41,7 @@ class Trapezoid(SketchFace):
     will be applied to the right-most angle.
     """
 
-    @beartype
+    @check_input_types
     def __init__(
         self,
         width: Union[Quantity, Distance, Real],

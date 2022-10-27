@@ -1,6 +1,6 @@
 """``Sphere`` class module."""
 
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
 import numpy as np
 from pint import Unit
@@ -24,7 +24,7 @@ class Sphere:
         Units employed to define the radius and height, by default ``UNIT_LENGTH``.
     """
 
-    @beartype
+    @check_input_types
     def __init__(
         self,
         origin: Union[np.ndarray, RealSequence, Point3D],
@@ -48,7 +48,7 @@ class Sphere:
         return self._origin
 
     @origin.setter
-    @beartype
+    @check_input_types
     def origin(self, origin: Point3D) -> None:
         self._origin = origin
 
@@ -58,7 +58,7 @@ class Sphere:
         return UNITS.convert(self._radius, self._base_unit, self._unit)
 
     @radius.setter
-    @beartype
+    @check_input_types
     def radius(self, radius: Real) -> None:
         self._radius = UNITS.convert(radius, self._unit, self._base_unit)
 
@@ -68,12 +68,12 @@ class Sphere:
         return self._unit
 
     @unit.setter
-    @beartype
+    @check_input_types
     def unit(self, unit: Unit) -> None:
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit
 
-    @beartype
+    @check_input_types
     def __eq__(self, other: object) -> bool:
         """Equals operator for ``Sphere``."""
         return self._origin == other.origin and self._radius == other.radius

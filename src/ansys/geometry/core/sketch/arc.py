@@ -1,6 +1,6 @@
 """``Arc`` class module."""
 
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import Optional
 import numpy as np
 from pint import Quantity
@@ -14,7 +14,7 @@ from ansys.geometry.core.sketch.edge import SketchEdge
 class Arc(SketchEdge):
     """A class for modeling arcs."""
 
-    @beartype
+    @check_input_types
     def __init__(
         self,
         center: Point2D,
@@ -206,7 +206,7 @@ class Arc(SketchEdge):
             negative=pv_negative,
         )
 
-    @beartype
+    @check_input_types
     def __eq__(self, other: "Arc") -> bool:
         """Equals operator for ``Arc``."""
         return bool(

@@ -1,6 +1,6 @@
 """``Box`` class module."""
 
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
 from pint import Quantity
 import pyvista as pv
@@ -28,7 +28,7 @@ class Box(SketchFace):
         The placement angle for orientation alignment.
     """
 
-    @beartype
+    @check_input_types
     def __init__(
         self,
         center: Point2D,

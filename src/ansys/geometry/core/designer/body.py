@@ -8,7 +8,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import ImprintCurvesRequest, ProjectCurvesRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
 
@@ -160,7 +160,7 @@ class Body:
             return Quantity(volume_response.volume, SERVER_UNIT_VOLUME)
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def assign_material(self, material: Material) -> None:
         """Sets the provided material against the design in the active geometry
         service instance.
@@ -176,7 +176,7 @@ class Body:
         )
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def imprint_curves(self, faces: List[Face], sketch: Sketch) -> Tuple[List[Edge], List[Face]]:
         """Imprints all of the specified geometries onto the specified faces of the body.
 
@@ -228,7 +228,7 @@ class Body:
         return (new_edges, new_faces)
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def project_curves(
         self,
         direction: UnitVector3D,
@@ -284,7 +284,7 @@ class Body:
         return projected_faces
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance]) -> None:
         """Translates the geometry body in the direction specified by the given distance.
 

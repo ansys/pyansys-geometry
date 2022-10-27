@@ -1,6 +1,6 @@
 """``Triangle`` class module."""
 
-from beartype import beartype
+from beartype import beartype as check_input_types
 import pyvista as pv
 
 from ansys.geometry.core.math import Point2D
@@ -22,7 +22,7 @@ class Triangle(SketchFace):
         A :class:`Point2D` representing the a triangle vertex.
     """
 
-    @beartype
+    @check_input_types
     def __init__(self, point1: Point2D, point2: Point2D, point3: Point2D):
         """Initializes the triangle shape."""
         super().__init__()

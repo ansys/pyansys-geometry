@@ -1,6 +1,6 @@
 """Module for connecting to geometry service instances."""
 
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import Optional
 
 from ansys.geometry.core import LOG as logger
@@ -47,7 +47,7 @@ def launch_modeler() -> Modeler:
     raise NotImplementedError("Not yet implemented.")
 
 
-@beartype
+@check_input_types
 def launch_remote_modeler(
     version: Optional[str] = None,
 ) -> Modeler:

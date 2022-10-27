@@ -1,6 +1,6 @@
 """``Units`` module for PyGeometry."""
 
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import Optional
 from pint import Quantity, Unit, UnitRegistry, set_application_registry
 
@@ -26,7 +26,7 @@ class PhysicalQuantity:
         By default, None.
     """
 
-    @beartype
+    @check_input_types
     def __init__(self, unit: Unit, expected_dimensions: Optional[Unit] = None):
         """Constructor for ``PhysicalQuantity``."""
         if expected_dimensions:
@@ -41,7 +41,7 @@ class PhysicalQuantity:
         return self._unit
 
     @unit.setter
-    @beartype
+    @check_input_types
     def unit(self, unit: Unit) -> None:
         """Sets the unit of the object."""
         check_pint_unit_compatibility(unit, self._base_unit)
@@ -67,7 +67,7 @@ class PhysicalQuantity:
         """
         return Quantity(input, units=self.base_unit).to(self.unit)
 
-    @beartype
+    @check_input_types
     def _base_units_magnitude(self, input: Quantity) -> Real:
         """Returns input's :class:`pint.Quantity` magnitude
         in base units.

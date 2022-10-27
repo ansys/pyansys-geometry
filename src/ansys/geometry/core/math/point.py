@@ -1,6 +1,6 @@
 """``Point`` classes module."""
 
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, Optional, Union
 import numpy as np
 from pint import Quantity, Unit
@@ -70,7 +70,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
         self._quantities = [Quantity(elem, units=unit) for elem in input]
         self.flat = [elem.to_base_units().m for elem in self._quantities]
 
-    @beartype
+    @check_input_types
     def __eq__(self, other: "Point2D") -> bool:
         """Equals operator for ``Point2D``."""
         return np.array_equal(self, other)
@@ -79,7 +79,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
         """Not equals operator for ``Point2D``."""
         return not self == other
 
-    @beartype
+    @check_input_types
     def __set_value(self, input: Quantity, idx: int) -> None:
         """General setter method for ``Point2D`` class."""
         self[idx] = self._base_units_magnitude(input)
@@ -194,7 +194,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
         self._quantities = [Quantity(elem, units=unit) for elem in input]
         self.flat = [elem.to_base_units().m for elem in self._quantities]
 
-    @beartype
+    @check_input_types
     def __eq__(self, other: "Point3D") -> bool:
         """Equals operator for ``Point3D``."""
         return np.array_equal(self, other)
@@ -225,7 +225,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
         point._quantities = [np.nan, np.nan, np.nan]
         return point
 
-    @beartype
+    @check_input_types
     def __set_value(self, input: Quantity, idx: int) -> None:
         """General setter method for ``Point3D`` class."""
         self[idx] = self._base_units_magnitude(input)

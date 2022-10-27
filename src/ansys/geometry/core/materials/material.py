@@ -1,6 +1,6 @@
 """``Material`` class module."""
 
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import Dict, Optional, Sequence
 from pint import Quantity
 
@@ -21,7 +21,7 @@ class Material:
         Additional material properties. By default, ``[]``.
     """
 
-    @beartype
+    @check_input_types
     def __init__(
         self,
         name: str,
@@ -50,7 +50,7 @@ class Material:
         """Name assigned to the ``Material``."""
         return self._name
 
-    @beartype
+    @check_input_types
     def add_property(self, type: MaterialPropertyType, name: str, quantity: Quantity) -> None:
         """Add a ``MaterialProperty`` to the ``Material``.
 

@@ -1,6 +1,6 @@
 """``Segment`` class module."""
 
-from beartype import beartype
+from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity
 import pyvista as pv
@@ -22,7 +22,7 @@ class Segment(SketchEdge):
         End of the line segment.
     """
 
-    @beartype
+    @check_input_types
     def __init__(
         self,
         start: Point2D,
@@ -105,7 +105,7 @@ class Segment(SketchEdge):
             [self.end.x.m_as(UNIT_LENGTH), self.end.y.m_as(UNIT_LENGTH), 0],
         )
 
-    @beartype
+    @check_input_types
     def __eq__(self, other: "Segment") -> bool:
         """Equals operator for ``Segment``."""
         return self.start == other.start and self.end == other.end

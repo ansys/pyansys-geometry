@@ -1,6 +1,6 @@
 """``Frame`` class module."""
 
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import Union
 import numpy as np
 
@@ -25,7 +25,7 @@ class Frame:
         Y-axis direction. By default, ``UNITVECTOR3D_Y``.
     """
 
-    @beartype
+    @check_input_types
     def __init__(
         self,
         origin: Union[np.ndarray, RealSequence, Point3D] = ZERO_POINT3D,
@@ -141,7 +141,7 @@ class Frame:
         """
         return self._transformation_matrix
 
-    @beartype
+    @check_input_types
     def transform_point2d_local_to_global(self, point: Point2D) -> Point3D:
         """Expresses a local, plane-contained ``Point2D`` object in the global
         coordinate system, and thus it is represented as a ``Point3D``.
@@ -158,7 +158,7 @@ class Frame:
         """
         return self.origin + Vector3D(self.local_to_global_rotation @ [point[0], point[1], 0])
 
-    @beartype
+    @check_input_types
     def __eq__(self, other: "Frame") -> bool:
         """Equals operator for ``Frame``."""
         return (

@@ -19,7 +19,7 @@ from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialPro
 from ansys.api.geometry.v0.models_pb2 import PartExportFormat
 from ansys.api.geometry.v0.namedselections_pb2 import NamedSelectionIdentifier
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import List, Optional, Union
 import numpy as np
 from pint import Quantity
@@ -76,7 +76,7 @@ class Design(Component):
     _beam_profiles: List[BeamProfile]
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def __init__(self, name: str, grpc_client: GrpcClient):
         """Constructor method for ``Design``."""
         super().__init__(name, None, grpc_client)
@@ -112,7 +112,7 @@ class Design(Component):
 
     # TODO: allow for list of materials
     @protect_grpc
-    @beartype
+    @check_input_types
     def add_material(self, material: Material) -> None:
         """Adds a ``Material`` to the ``Design``
 
@@ -143,7 +143,7 @@ class Design(Component):
         self._grpc_client.log.debug(f"Material {material.name} successfully added to design.")
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def save(self, file_location: Union[Path, str]) -> None:
         """Saves a design to disk on the active geometry server instance.
 
@@ -160,7 +160,7 @@ class Design(Component):
         self._grpc_client.log.debug(f"Design successfully saved at location {file_location}.")
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def download(
         self,
         file_location: Union[Path, str],
@@ -222,7 +222,7 @@ class Design(Component):
 
         self._grpc_client.log.debug(f"Design successfully downloaded at location {file_location}.")
 
-    @beartype
+    @check_input_types
     def create_named_selection(
         self,
         name: str,
@@ -261,7 +261,7 @@ class Design(Component):
         return self._named_selections[named_selection.name]
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def delete_named_selection(self, named_selection: Union[NamedSelection, str]) -> None:
         """Removes a named selection on the active geometry server instance.
 
@@ -285,7 +285,7 @@ class Design(Component):
             )
             pass
 
-    @beartype
+    @check_input_types
     def delete_component(self, component: Union["Component", str]) -> None:
         """Deletes an existing component (itself or its children).
 
@@ -326,7 +326,7 @@ class Design(Component):
         raise ValueError("The Design object itself cannot have a shared topology.")
 
     @protect_grpc
-    @beartype
+    @check_input_types
     def add_beam_circular_profile(
         self,
         name: str,

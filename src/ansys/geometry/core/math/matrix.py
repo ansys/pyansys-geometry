@@ -1,5 +1,5 @@
 """``Matrix`` class module."""
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
 import numpy as np
 
@@ -47,7 +47,7 @@ class Matrix(np.ndarray):
             raise ValueError("The matrix cannot be inversed because its determinant is zero.")
         return np.linalg.inv(self)
 
-    @beartype
+    @check_input_types
     def __mul__(self, other: "Matrix") -> "Matrix":
         """Provides the multiplication of the matrix."""
         if self.shape[1] != other.shape[0]:
@@ -56,7 +56,7 @@ class Matrix(np.ndarray):
             )
         return Matrix(np.matmul(self, other))
 
-    @beartype
+    @check_input_types
     def __eq__(self, other: "Matrix") -> bool:
         """Equals operator for ``Matrix``."""
         return np.array_equal(self, other)
@@ -88,7 +88,7 @@ class Matrix33(Matrix):
 
         return obj
 
-    @beartype
+    @check_input_types
     def __eq__(self, other: "Matrix33") -> bool:
         """Equals operator for ``Matrix33``."""
         return np.array_equal(self, other)
@@ -120,7 +120,7 @@ class Matrix44(Matrix):
 
         return obj
 
-    @beartype
+    @check_input_types
     def __eq__(self, other: "Matrix44") -> bool:
         """Equals operator for ``Matrix44``."""
         return np.array_equal(self, other)

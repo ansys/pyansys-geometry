@@ -1,6 +1,6 @@
 """``Cylinder`` class module."""
 
-from beartype import beartype
+from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
 import numpy as np
 from pint import Unit
@@ -30,7 +30,7 @@ class Cylinder:
         Units employed to define the radius and height, by default ``UNIT_LENGTH``.
     """
 
-    @beartype
+    @check_input_types
     def __init__(
         self,
         origin: Union[np.ndarray, RealSequence, Point3D],
@@ -64,7 +64,7 @@ class Cylinder:
         return self._origin
 
     @origin.setter
-    @beartype
+    @check_input_types
     def origin(self, origin: Point3D) -> None:
         self._origin = origin
 
@@ -74,7 +74,7 @@ class Cylinder:
         return UNITS.convert(self._radius, self._base_unit, self._unit)
 
     @radius.setter
-    @beartype
+    @check_input_types
     def radius(self, radius: Real) -> None:
         """Set the Radius of the ``Cylinder``."""
         self._radius = UNITS.convert(radius, self._unit, self._base_unit)
@@ -85,7 +85,7 @@ class Cylinder:
         return UNITS.convert(self._height, self._base_unit, self._unit)
 
     @height.setter
-    @beartype
+    @check_input_types
     def height(self, height: Real) -> None:
         """Set the Height of the ``Cylinder``."""
         self._height = UNITS.convert(height, self._unit, self._base_unit)
@@ -96,13 +96,13 @@ class Cylinder:
         return self._unit
 
     @unit.setter
-    @beartype
+    @check_input_types
     def unit(self, unit: Unit) -> None:
         """Sets the unit of the object."""
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit
 
-    @beartype
+    @check_input_types
     def __eq__(self, other: object) -> bool:
         """Equals operator for ``Cylinder``."""
         return (
