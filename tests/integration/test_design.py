@@ -420,6 +420,7 @@ def test_coordinate_system_creation(modeler: Modeler):
     nested_comp_cs1_str = str(nested_comp_cs1)
     assert "ansys.geometry.core.designer.CoordinateSystem" in nested_comp_cs1_str
     assert "  Name                 : CompCS1" in nested_comp_cs1_str
+    assert "  Exists               : True" in nested_comp_cs1_str
     assert "  Parent component     : NestedComponent" in nested_comp_cs1_str
     assert "  Frame origin         : [0.01,0.2,3.0] in meters" in nested_comp_cs1_str
     assert "  Frame X-direction    : " in nested_comp_cs1_str
@@ -936,6 +937,7 @@ def test_beams(modeler: Modeler):
 
     beam_1_str = str(beam_1)
     assert "ansys.geometry.core.designer.Beam" in beam_1_str
+    assert "  Exists               : True" in beam_1_str
     assert "  Start                : [0.009" in beam_1_str
     assert "  End                  : [0.008" in beam_1_str
     assert "  Parent component     : BeamCreation" in beam_1_str

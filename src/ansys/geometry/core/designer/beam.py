@@ -170,6 +170,7 @@ class Beam:
         self._start = start
         self._end = end
         self._profile = profile
+        self._is_alive = True
 
     @property
     def id(self) -> str:
@@ -196,9 +197,15 @@ class Beam:
         """Component node the ``Beam`` is under."""
         return self._parent_component
 
+    @property
+    def is_alive(self) -> bool:
+        """Boolean indicating whether the beam is still alive on the server side."""
+        return self._is_alive
+
     def __repr__(self) -> str:
         """String representation of the beam."""
         lines = [f"ansys.geometry.core.designer.Beam {hex(id(self))}"]
+        lines.append(f"  Exists               : {self.is_alive}")
         lines.append(
             f"  Start                : [{','.join([str(x) for x in self.start])}] in meters"
         )

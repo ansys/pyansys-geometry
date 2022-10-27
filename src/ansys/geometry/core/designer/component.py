@@ -581,6 +581,43 @@ class Component:
             )
             pass
 
+    @protect_grpc
+    def delete_beam(self, beam: Union[Beam, str]) -> None:
+        """Deletes an existing beam belonging to this component (or its children).
+
+        Notes
+        -----
+        If the beam does not belong to this component (or its children), it
+        will not be deleted.
+
+        Parameters
+        ----------
+        id : Union[Beam, str]
+            The name of the beam or instance that should be deleted.
+        """
+        id = beam.id if not isinstance(beam, str) else beam
+        beam_requested = self.search_beam(id)
+
+        if beam_requested:
+            # If the beam belongs to this component (or nested components)
+            # call the server deletion mechanism
+            #
+            # Server-side, the same deletion request has to be performed
+            # as for deleting a Body
+            #
+            self._bodies_stub.Delete(BodyIdentifier(id=id))
+
+            # If the beam was deleted from the server side... "kill" it
+            # on the client side
+            beam_requested._is_alive = False
+            self._grpc_client.log.debug(f"Beam {beam_requested.id} has been deleted.")
+        else:
+            self._grpc_client.log.warning(
+                f"Beam {id} not found in this component (or sub-components)."
+                + " Ignoring deletion request."
+            )
+            pass
+
     def search_component(self, id: str) -> "Component":
         """Recursive search on available nested components.
 
@@ -644,17 +681,49 @@ class Component:
         # If you reached this point... this means that no body was found!
         return None
 
+    def search_beam(self, id: str) -> Union[Body, None]:
+        """Recursive search on available bodies in component and nested components.
+
+        Parameters
+        ----------
+        id : str
+            The ``Beam`` ID we are searching for.
+
+        Returns
+        -------
+        Union[Body, None]
+            The ``Beam`` with the requested ID. If not found, it will return ``None``.
+        """
+
+        # Sanity check on input
+        check_type(id, str)
+
+        # Search in component's beams
+        for beam in self.beams:
+            if beam.id == id and beam.is_alive:
+                return beam
+
+        # If no luck, search on nested components
+        result = None
+        for component in self.components:
+            result = component.search_beam(id)
+            if result:
+                return result
+
+        # If you reached this point... this means that no beam was found!
+        return None
+
     def _kill_component_on_client(self) -> None:
-        """Sets the ``is_alive`` property of nested components and bodies to ``False``.
+        """Sets the ``is_alive`` property of nested objects to ``False``.
 
         Notes
         -----
         Only to be used by the ``delete_component`` method and itself (this method
         is recursive)."""
 
-        # Kill all its bodies
-        for body in self.bodies:
-            body._is_alive = False
+        # Kill all its bodies, beams and coordinate systems
+        for elem in [*self.bodies, *self.beams, *self._coordinate_systems]:
+            elem._is_alive = False
 
         # Now, go to the nested components and kill them as well
         for component in self.components:
@@ -810,13 +879,15 @@ class Component:
     def __repr__(self) -> str:
         """String representation of the component."""
         alive_bodies = [1 if body.is_alive else 0 for body in self.bodies]
+        alive_beams = [1 if beam.is_alive else 0 for beam in self.beams]
+        alive_coords = [1 if cs.is_alive else 0 for cs in self.coordinate_systems]
         alive_comps = [1 if comp.is_alive else 0 for comp in self.components]
         lines = [f"ansys.geometry.core.designer.Component {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Exists               : {self.is_alive}")
         lines.append(f"  Parent component     : {self.parent_component.name}")
         lines.append(f"  N Bodies             : {sum(alive_bodies)}")
-        lines.append(f"  N Beams              : {len(self.beams)}")
+        lines.append(f"  N Beams              : {sum(alive_beams)}")
+        lines.append(f"  N Coordinate Systems : {sum(alive_coords)}")
         lines.append(f"  N Components         : {sum(alive_comps)}")
-        lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
         return "\n".join(lines)
