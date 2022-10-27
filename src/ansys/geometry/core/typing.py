@@ -1,10 +1,9 @@
 """Typing module for PyGeometry."""
 
-from typing import Sequence, Union
-
+from beartype.typing import Sequence, Union
 import numpy as np
 
-Real = Union[int, float]
+Real = Union[int, float, np.integer, np.floating]
 """Type used to refer to both ints and floats as possible values."""
 
 RealSequence = Union[np.ndarray, Sequence[Real]]

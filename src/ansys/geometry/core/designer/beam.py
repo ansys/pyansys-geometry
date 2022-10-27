@@ -1,6 +1,6 @@
 """``Beam`` class module."""
 
-from typing import TYPE_CHECKING, Union
+from beartype.typing import TYPE_CHECKING, Union
 
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.misc import Distance, check_type
@@ -31,9 +31,6 @@ class BeamProfile:
 
     def __init__(self, id: str, name: str):
         """Constructor method for ``BeamProfile``."""
-        check_type(id, str)
-        check_type(name, str)
-
         self._id = id
         self._name = name
 
@@ -159,17 +156,19 @@ class Beam:
         parent_component: "Component",
     ):
         """Constructor method for ``Beam``."""
-        # Sanity checks - cannot check Component due to circular import issues
+        from ansys.geometry.core.designer.component import Component
+
         check_type(id, str)
         check_type(start, Point3D)
         check_type(end, Point3D)
         check_type(profile, BeamProfile)
+        check_type(parent_component, Component)
 
         self._id = id
-        self._parent_component = parent_component
         self._start = start
         self._end = end
         self._profile = profile
+        self._parent_component = parent_component
         self._is_alive = True
 
     @property

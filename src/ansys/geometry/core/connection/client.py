@@ -3,8 +3,9 @@
 import logging
 from pathlib import Path
 import time
-from typing import TYPE_CHECKING, Optional, Union
 
+from beartype import beartype as check_input_types
+from beartype.typing import Optional, Union
 import grpc
 from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
@@ -12,11 +13,12 @@ from grpc_health.v1 import health_pb2, health_pb2_grpc
 from ansys.geometry.core import LOG as logger
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
 from ansys.geometry.core.logger import PyGeometryCustomAdapter
-from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
 
-if TYPE_CHECKING:  # pragma: no cover
+try:
     from ansys.platform.instancemanagement import Instance
+except ModuleNotFoundError:  # pragma: no cover
+    pass
 
 
 def wait_until_healthy(channel: grpc.Channel, timeout: float):
@@ -83,6 +85,7 @@ class GrpcClient:
         The file to output the log, if requested. By default, ``None``.
     """
 
+    @check_input_types
     def __init__(
         self,
         host: Optional[str] = DEFAULT_HOST,
@@ -94,17 +97,10 @@ class GrpcClient:
         logging_file: Optional[Union[Path, str]] = None,
     ):
         """Initialize the ``GrpcClient`` object."""
-        check_type(host, str)
-        check_type(port, (str, int))
-        check_type(timeout, (int, float))
-        check_type(logging_level, int)
-        check_type(logging_file, (Path, str, type(None)))
-
         self._closed = False
         self._remote_instance = remote_instance
         if channel:
             # Used for PyPIM when directly providing a channel
-            check_type(channel, grpc.Channel)
             self._channel = channel
             self._target = str(channel)
         else:

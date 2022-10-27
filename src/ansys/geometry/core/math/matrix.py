@@ -1,9 +1,9 @@
 """``Matrix`` class module."""
-from typing import Optional, Union
-
+from beartype import beartype as check_input_types
+from beartype.typing import Optional, Union
 import numpy as np
 
-from ansys.geometry.core.misc import check_ndarray_is_float_int, check_type_equivalence
+from ansys.geometry.core.misc import check_ndarray_is_float_int
 from ansys.geometry.core.typing import Real, RealSequence
 
 DEFAULT_MATRIX33 = np.identity(3)
@@ -28,7 +28,7 @@ class Matrix(np.ndarray):
         obj.setflags(write=False)
 
         if obj is None or obj.ndim != 2:
-            raise ValueError("Matrix should only be a 2D array")
+            raise ValueError("Matrix should only be a 2D array.")
 
         check_ndarray_is_float_int(obj)
 
@@ -47,6 +47,7 @@ class Matrix(np.ndarray):
             raise ValueError("The matrix cannot be inversed because its determinant is zero.")
         return np.linalg.inv(self)
 
+    @check_input_types
     def __mul__(self, other: "Matrix") -> "Matrix":
         """Provides the multiplication of the matrix."""
         if self.shape[1] != other.shape[0]:
@@ -55,9 +56,9 @@ class Matrix(np.ndarray):
             )
         return Matrix(np.matmul(self, other))
 
+    @check_input_types
     def __eq__(self, other: "Matrix") -> bool:
         """Equals operator for ``Matrix``."""
-        check_type_equivalence(other, self)
         return np.array_equal(self, other)
 
     def __ne__(self, other: "Matrix") -> bool:
@@ -87,6 +88,15 @@ class Matrix33(Matrix):
 
         return obj
 
+    @check_input_types
+    def __eq__(self, other: "Matrix33") -> bool:
+        """Equals operator for ``Matrix33``."""
+        return np.array_equal(self, other)
+
+    def __ne__(self, other: "Matrix33") -> bool:
+        """Not equals operator for ``Matrix33``."""
+        return not self == other
+
 
 class Matrix44(Matrix):
     """Provides 4x4 matrix primitive representation.
@@ -109,3 +119,12 @@ class Matrix44(Matrix):
             raise ValueError("Matrix44 should only be a 2D array of shape (4,4).")
 
         return obj
+
+    @check_input_types
+    def __eq__(self, other: "Matrix44") -> bool:
+        """Equals operator for ``Matrix44``."""
+        return np.array_equal(self, other)
+
+    def __ne__(self, other: "Matrix44") -> bool:
+        """Not equals operator for ``Matrix44``."""
+        return not self == other

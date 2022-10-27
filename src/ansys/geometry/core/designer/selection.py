@@ -1,16 +1,15 @@
 """``NamedSelection`` class module."""
 
-from typing import List, Optional
-
 from ansys.api.geometry.v0.namedselections_pb2 import CreateNamedSelectionRequest
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
+from beartype import beartype as check_input_types
+from beartype.typing import List, Optional
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.misc import check_type
 
 
 class NamedSelection:
@@ -37,6 +36,7 @@ class NamedSelection:
     """
 
     @protect_grpc
+    @check_input_types
     def __init__(
         self,
         name: str,
@@ -53,13 +53,6 @@ class NamedSelection:
             faces = []
         if edges is None:
             edges = []
-        # Sanity checks
-        check_type(name, str)
-        check_type(grpc_client, GrpcClient)
-        for seq_object, type_object in zip([bodies, faces, edges], [Body, Face, Edge]):
-            check_type(seq_object, (list, tuple))
-            for object in seq_object:
-                check_type(object, type_object)
 
         self._grpc_client = grpc_client
         self._named_selections_stub = NamedSelectionsStub(grpc_client.channel)

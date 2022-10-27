@@ -1,19 +1,20 @@
 """``Arc`` class module."""
 
-from typing import Optional
-
+from beartype import beartype as check_input_types
+from beartype.typing import Optional
 import numpy as np
 from pint import Quantity
 import pyvista as pv
 
 from ansys.geometry.core.math import Point2D, Vector2D
-from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, check_type, check_type_equivalence
+from ansys.geometry.core.misc import UNIT_LENGTH, UNITS
 from ansys.geometry.core.sketch.edge import SketchEdge
 
 
 class Arc(SketchEdge):
     """A class for modeling arcs."""
 
+    @check_input_types
     def __init__(
         self,
         center: Point2D,
@@ -37,11 +38,6 @@ class Arc(SketchEdge):
             angle is used instead.
         """
         super().__init__()
-
-        check_type(center, Point2D)
-        check_type(start, Point2D)
-        check_type(end, Point2D)
-
         if start == end:
             raise ValueError("Start and end points must be different.")
         if center == start:
@@ -210,10 +206,10 @@ class Arc(SketchEdge):
             negative=pv_negative,
         )
 
+    @check_input_types
     def __eq__(self, other: "Arc") -> bool:
         """Equals operator for ``Arc``."""
-        check_type_equivalence(other, self)
-        return (
+        return bool(
             self.start == other.start
             and self.end == other.end
             and self.center == other.center

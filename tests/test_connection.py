@@ -1,3 +1,4 @@
+from beartype.roar import BeartypeCallHintParamViolation
 import grpc
 import numpy as np
 from pint import Quantity
@@ -31,13 +32,13 @@ def test_wait_until_healthy():
 
 def test_invalid_inputs():
     """Test checking that the input provided is a channel."""
-    with pytest.raises(TypeError, match="Provided type"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         GrpcClient(host=123)
-    with pytest.raises(TypeError, match="Provided type"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         GrpcClient(port=None)
-    with pytest.raises(TypeError, match="Provided type"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         GrpcClient(channel="a")
-    with pytest.raises(TypeError, match="Provided type"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         GrpcClient(timeout="a")
 
 

@@ -1,7 +1,6 @@
 """Module holding various measurement-related classes."""
 
-from typing import Optional, Union
-
+from beartype.typing import Optional, Union
 from pint import Quantity, Unit
 
 from ansys.geometry.core.misc.checks import check_is_float_int

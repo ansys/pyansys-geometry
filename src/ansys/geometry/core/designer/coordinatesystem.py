@@ -1,10 +1,9 @@
 """``CoordinateSystem`` class module."""
 
-from typing import TYPE_CHECKING
-
 from ansys.api.geometry.v0.coordinatesystems_pb2 import CreateCoordinateSystemRequest
 from ansys.api.geometry.v0.coordinatesystems_pb2_grpc import CoordinateSystemsStub
 from ansys.api.geometry.v0.models_pb2 import CoordinateSystem as cs
+from beartype.typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.conversions import frame_to_grpc_frame
