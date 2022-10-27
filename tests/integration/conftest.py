@@ -24,11 +24,7 @@ pv.OFF_SCREEN = True
 def modeler():
 
     # Log to file - accepts str or Path objects, Path is passed for testing/coverage purposes.
-    log_file_path = Path(
-        os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), "logs", "integration_tests_logs.txt"
-        )
-    )
+    log_file_path = Path(__file__).absolute().parent / "logs" / "integration_tests_logs.txt"
 
     try:
         os.remove(log_file_path)
