@@ -63,10 +63,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     needs: [style]
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
         python-version: ['3.7', '3.8', '3.9', '3.10']
-      fail-fast: false
 
     steps:
       - uses: actions/checkout@v3
@@ -111,11 +111,12 @@ jobs:
     name: Build and Smoke tests (macOS)
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     runs-on: macos-latest
-    needs: [smoke-tests]
+    needs: [style]
     strategy:
+      fail-fast: false
       matrix:
         python-version: ['3.7', '3.8', '3.9', '3.10']
-      fail-fast: false
+      
 
     steps:
       - uses: actions/checkout@v3
