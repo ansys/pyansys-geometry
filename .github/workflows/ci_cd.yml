@@ -59,7 +59,7 @@ jobs:
           vale_flags: "--config=doc/.vale.ini"
 
   smoke-tests:
-    name: Build and Smoke tests (${{ matrix.os }})
+    name: Build and Smoke tests
     runs-on: ubuntu-latest
     needs: [style]
     strategy:
