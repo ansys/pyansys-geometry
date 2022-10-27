@@ -28,3 +28,4 @@ LOG.debug("Loaded logging module as LOG")
 # ------------------------------------------------------------------------------
 
 from ansys.geometry.core.modeler import Modeler
+from ansys.geometry.core.connection import launch_modeler
