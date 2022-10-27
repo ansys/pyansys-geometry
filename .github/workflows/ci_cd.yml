@@ -109,6 +109,7 @@ jobs:
 
   macos-build:
     name: Build and Smoke tests (macOS)
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     runs-on: macos-latest
     needs: [smoke-tests]
     strategy:
