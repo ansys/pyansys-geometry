@@ -1,11 +1,11 @@
 """``Sketch`` class module."""
 
-from typing import Dict, List, Optional, Union
-
+from beartype import beartype as check_input_types
+from beartype.typing import Dict, List, Optional, Union
 from pint import Quantity
 
 from ansys.geometry.core.math import ZERO_POINT2D, Plane, Point2D, UnitVector3D, Vector2D, Vector3D
-from ansys.geometry.core.misc import UNIT_LENGTH, Angle, Distance, check_type
+from ansys.geometry.core.misc import UNIT_LENGTH, Angle, Distance
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.box import Box
 from ansys.geometry.core.sketch.circle import Circle
@@ -34,6 +34,7 @@ class Sketch:
     _current_sketch_context: List[SketchObject]
     _tags: Dict[str, List[SketchObject]]
 
+    @check_input_types
     def __init__(
         self,
         plane: Optional[Plane] = Plane(),
@@ -63,6 +64,7 @@ class Sketch:
         return self._plane
 
     @plane.setter
+    @check_input_types
     def plane(self, plane: Plane) -> None:
         """
         Sets the sketch plane configuration.
@@ -100,6 +102,7 @@ class Sketch:
 
         return self._faces
 
+    @check_input_types
     def translate_sketch_plane(self, translation: Vector3D) -> "Sketch":
         """
         Convenience method to translate the active sketch plane origin location.
@@ -114,12 +117,12 @@ class Sketch:
         Sketch
             The revised sketch state ready for further sketch actions.
         """
-        check_type(translation, Vector3D)
         self.plane = Plane(
             self.plane.origin + translation, self.plane.direction_x, self.plane.direction_y
         )
         return self
 
+    @check_input_types
     def translate_sketch_plane_by_offset(
         self,
         x: Union[Quantity, Distance] = Quantity(0, UNIT_LENGTH),
@@ -143,9 +146,6 @@ class Sketch:
         Sketch
             The revised sketch state ready for further sketch actions.
         """
-        check_type(x, (Distance, Quantity))
-        check_type(y, (Distance, Quantity))
-        check_type(z, (Distance, Quantity))
         x_magnitude = (
             x.m_as(UNIT_LENGTH) if not isinstance(x, Distance) else x.value.m_as(UNIT_LENGTH)
         )
@@ -160,6 +160,7 @@ class Sketch:
         translation = Vector3D([x_magnitude, y_magnitude, z_magnitude])
         return self.translate_sketch_plane(translation)
 
+    @check_input_types
     def translate_sketch_plane_by_distance(
         self, direction: UnitVector3D, distance: Union[Quantity, Distance]
     ) -> "Sketch":
@@ -178,8 +179,6 @@ class Sketch:
         Sketch
             The revised sketch state ready for further sketch actions.
         """
-        check_type(direction, UnitVector3D)
-        check_type(distance, (Distance, Quantity))
         magnitude = (
             distance.m_as(UNIT_LENGTH)
             if not isinstance(distance, Distance)
@@ -190,6 +189,7 @@ class Sketch:
         )
         return self.translate_sketch_plane(translation)
 
+    @check_input_types
     def get(self, tag: str) -> List[SketchObject]:
         """Returns the list of shapes that were tagged by the provided label.
 
@@ -200,6 +200,7 @@ class Sketch:
         """
         return self._tags[tag]
 
+    @check_input_types
     def face(self, face: SketchFace, tag: Optional[str] = None) -> "Sketch":
         """
         Add a SketchFace to the sketch.
@@ -216,14 +217,13 @@ class Sketch:
         Sketch
             The revised sketch state ready for further sketch actions.
         """
-        check_type(face, SketchFace)
         self._faces.append(face)
-
         if tag:
             self._tag([face], tag)
 
         return self
 
+    @check_input_types
     def edge(self, edge: SketchEdge, tag: Optional[str] = None) -> "Sketch":
         """
         Add a SketchEdge to the sketch.
@@ -240,14 +240,13 @@ class Sketch:
         Sketch
             The revised sketch state ready for further sketch actions.
         """
-        check_type(edge, SketchEdge)
         self._edges.append(edge)
-
         if tag:
             self._tag([edge], tag)
 
         return self
 
+    @check_input_types
     def select(self, *tags: str) -> "Sketch":
         """
         Add all objects to current context that match the provided tags.
@@ -303,9 +302,9 @@ class Sketch:
         of the sketch, such as the end point of a previously added edge.
         """
         segment = Segment(self._single_point_context_reference(), end)
-
         return self.edge(segment, tag)
 
+    @check_input_types
     def segment_from_point_and_vector(
         self, start: Point2D, vector: Vector2D, tag: Optional[str] = None
     ):
@@ -337,6 +336,7 @@ class Sketch:
 
         return self.segment(start, end, tag)
 
+    @check_input_types
     def segment_from_vector(self, vector: Vector2D, tag: Optional[str] = None):
         """
         Add a segment to the sketch starting from previous edge end point.
@@ -362,7 +362,6 @@ class Sketch:
         Vector magnitude assumed to use the same unit as the starting point in the previous context.
         """
         start = self._single_point_context_reference()
-
         return self.segment_from_point_and_vector(start, vector, tag)
 
     def arc(
@@ -399,6 +398,7 @@ class Sketch:
         arc = Arc(center, start, end, clockwise)
         return self.edge(arc, tag)
 
+    @check_input_types
     def arc_to_point(
         self,
         end: Point2D,
@@ -657,6 +657,7 @@ class Sketch:
         polygon = Polygon(center, inner_radius, sides, angle)
         return self.face(polygon, tag)
 
+    @check_input_types
     def tag(self, tag: str) -> None:
         """
         Adds a tag for the active selection of sketch objects.

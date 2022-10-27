@@ -1,14 +1,14 @@
 """``Trapezoid`` class module."""
 
-from typing import Optional, Union
-
+from beartype import beartype as check_input_types
+from beartype.typing import Optional, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import ZERO_POINT2D, Matrix33, Point2D
-from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance, check_type
+from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import Segment
 from ansys.geometry.core.typing import Real
@@ -41,6 +41,7 @@ class Trapezoid(SketchFace):
     will be applied to the right-most angle.
     """
 
+    @check_input_types
     def __init__(
         self,
         width: Union[Quantity, Distance, Real],
@@ -53,13 +54,7 @@ class Trapezoid(SketchFace):
         """Initializes the trapezoid shape."""
         super().__init__()
 
-        check_type(center, Point2D)
         self._center = center
-
-        check_type(width, (Quantity, Distance, int, float))
-        check_type(height, (Quantity, Distance, int, float))
-        check_type(angle, (Quantity, Angle, int, float))
-
         self._width = width if isinstance(width, Distance) else Distance(width, center.unit)
         if self._width.value <= 0:
             raise ValueError("Width must be a real positive value.")

@@ -1,6 +1,5 @@
 """A module containing a class for plotting various PyGeometry objects."""
-from typing import Dict, List, Optional
-
+from beartype.typing import Dict, List, Optional
 import numpy as np
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker

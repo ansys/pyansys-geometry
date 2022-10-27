@@ -1,3 +1,4 @@
+from beartype.roar import BeartypeCallHintParamViolation
 import numpy as np
 from pint import Quantity
 import pytest
@@ -19,14 +20,14 @@ DOUBLE_EPS = np.finfo(float).eps
 
 def test_errors_segment():
     """Check errors when handling a ``Segment``."""
-    with pytest.raises(TypeError, match="Provided type"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         Segment("a", "b")
+    with pytest.raises(BeartypeCallHintParamViolation):
+        Segment(Point2D([10, 20], unit=UNITS.meter), "b")
     with pytest.raises(
         ValueError, match="The numpy.ndarray 'start' should not be a nan numpy.ndarray."
     ):
-        Segment(Point2D(), "b")
-    with pytest.raises(TypeError, match="Provided type"):
-        Segment(Point2D([10, 20], unit=UNITS.meter), "b")
+        Segment(Point2D(), Point2D())
     with pytest.raises(
         ValueError, match="The numpy.ndarray 'end' should not be a nan numpy.ndarray."
     ):

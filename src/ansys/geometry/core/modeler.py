@@ -1,13 +1,13 @@
 """``Modeler`` class module."""
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional, Union
 
+from beartype import beartype as check_input_types
+from beartype.typing import TYPE_CHECKING, Optional, Union
 from grpc import Channel
 
 from ansys.geometry.core.connection import DEFAULT_HOST, DEFAULT_PORT, GrpcClient
 from ansys.geometry.core.designer import Design
-from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -73,6 +73,7 @@ class Modeler:
         """The ``Modeler`` instance client."""
         return self._client
 
+    @check_input_types
     def create_design(self, name: str) -> Design:
         """Initializes a new design with the connected client.
 
@@ -86,7 +87,6 @@ class Modeler:
         Design
             Design object created on the server.
         """
-        check_type(name, str)
         design = Design(name, self._client)
         self._designs.append(design)
         return self._designs[-1]

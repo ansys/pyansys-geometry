@@ -1,3 +1,4 @@
+from beartype.roar import BeartypeCallHintParamViolation
 import pytest
 
 from ansys.geometry.core.math import Point3D, UnitVector3D
@@ -43,40 +44,25 @@ def test_cylinder():
     assert c_1.radius == new_radius
     assert c_1.height == new_height
 
-    with pytest.raises(
-        TypeError,
-        match="The parameter 'radius' should be a float or an integer value.",
-    ):
+    with pytest.raises(BeartypeCallHintParamViolation):
         Cylinder(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), "A", 200)
 
-    with pytest.raises(
-        TypeError,
-        match="The parameter 'height' should be a float or an integer value.",
-    ):
+    with pytest.raises(BeartypeCallHintParamViolation):
         Cylinder(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, "A")
 
-    with pytest.raises(
-        TypeError,
-        match="The parameter 'radius' should be a float or an integer value.",
-    ):
+    with pytest.raises(BeartypeCallHintParamViolation):
         c_1.radius = "A"
 
-    with pytest.raises(
-        TypeError,
-        match="The parameter 'height' should be a float or an integer value.",
-    ):
+    with pytest.raises(BeartypeCallHintParamViolation):
         c_1.height = "A"
 
-    with pytest.raises(
-        TypeError,
-        match="origin is invalid, type",
-    ):
+    with pytest.raises(BeartypeCallHintParamViolation):
         c_1.origin = "A"
 
-    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         Cylinder(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
 
-    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         Cylinder(origin, UnitVector3D([12, 31, 99]), "A", 100, 200)
 
 
@@ -163,22 +149,13 @@ def test_sphere():
     s_2.radius = new_radius
     assert s_1 == s_2
 
-    with pytest.raises(
-        TypeError,
-        match="The parameter 'radius' should be a float or an integer value.",
-    ):
+    with pytest.raises(BeartypeCallHintParamViolation):
         Sphere(origin, "A")
 
-    with pytest.raises(
-        TypeError,
-        match="The parameter 'radius' should be a float or an integer value.",
-    ):
+    with pytest.raises(BeartypeCallHintParamViolation):
         s_1.radius = "A"
 
-    with pytest.raises(
-        TypeError,
-        match="origin is invalid, type",
-    ):
+    with pytest.raises(BeartypeCallHintParamViolation):
         s_1.origin = "A"
 
 
@@ -254,40 +231,25 @@ def test_cone():
     assert c_1.radius == new_radius
     assert c_1.half_angle == new_half_angle
 
-    with pytest.raises(
-        TypeError,
-        match="The parameter 'radius' should be a float or an integer value.",
-    ):
+    with pytest.raises(BeartypeCallHintParamViolation):
         Cone(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), "A", 200)
 
-    with pytest.raises(
-        TypeError,
-        match="The parameter 'half_angle' should be a float or an integer value.",
-    ):
+    with pytest.raises(BeartypeCallHintParamViolation):
         Cone(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, "A")
 
-    with pytest.raises(
-        TypeError,
-        match="The parameter 'radius' should be a float or an integer value.",
-    ):
+    with pytest.raises(BeartypeCallHintParamViolation):
         c_1.radius = "A"
 
-    with pytest.raises(
-        TypeError,
-        match="The parameter 'half_angle' should be a float or an integer value.",
-    ):
+    with pytest.raises(BeartypeCallHintParamViolation):
         c_1.half_angle = "A"
 
-    with pytest.raises(
-        TypeError,
-        match="origin is invalid, type",
-    ):
+    with pytest.raises(BeartypeCallHintParamViolation):
         c_1.origin = "A"
 
-    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         Cone(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
 
-    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         Cone(origin, UnitVector3D([12, 31, 99]), "A", 100, 200)
 
 
@@ -413,40 +375,25 @@ def test_torus():
     assert t_1.major_radius == new_major_radius
     assert t_1.minor_radius == new_minor_radius
 
-    with pytest.raises(
-        TypeError,
-        match="The parameter 'major_radius' should be a float or an integer value.",
-    ):
+    with pytest.raises(BeartypeCallHintParamViolation):
         Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), "A", 200)
 
-    with pytest.raises(
-        TypeError,
-        match="The parameter 'minor_radius' should be a float or an integer value.",
-    ):
+    with pytest.raises(BeartypeCallHintParamViolation):
         Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, "A")
 
-    with pytest.raises(
-        TypeError,
-        match="The parameter 'major_radius' should be a float or an integer value.",
-    ):
+    with pytest.raises(BeartypeCallHintParamViolation):
         t_1.major_radius = "A"
 
-    with pytest.raises(
-        TypeError,
-        match="The parameter 'minor_radius' should be a float or an integer value.",
-    ):
+    with pytest.raises(BeartypeCallHintParamViolation):
         t_1.minor_radius = "A"
 
-    with pytest.raises(
-        TypeError,
-        match="origin is invalid, type",
-    ):
+    with pytest.raises(BeartypeCallHintParamViolation):
         t_1.origin = "A"
 
-    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         Torus(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
 
-    with pytest.raises(TypeError, match=f"Provided type {str} is invalid,"):
+    with pytest.raises(BeartypeCallHintParamViolation):
         Torus(origin, UnitVector3D([12, 31, 99]), "A", 100, 200)
 
 
