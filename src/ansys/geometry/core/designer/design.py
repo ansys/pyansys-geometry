@@ -19,6 +19,7 @@ from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialPro
 from ansys.api.geometry.v0.models_pb2 import PartExportFormat
 from ansys.api.geometry.v0.namedselections_pb2 import NamedSelectionIdentifier
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
+from beartype import beartype
 from beartype.typing import List, Optional, Union
 import numpy as np
 from pint import Quantity
@@ -42,7 +43,7 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector3D,
 )
-from ansys.geometry.core.misc import SERVER_UNIT_LENGTH, Distance, check_type
+from ansys.geometry.core.misc import SERVER_UNIT_LENGTH, Distance
 from ansys.geometry.core.typing import RealSequence
 
 
@@ -75,6 +76,7 @@ class Design(Component):
     _beam_profiles: List[BeamProfile]
 
     @protect_grpc
+    @beartype
     def __init__(self, name: str, grpc_client: GrpcClient):
         """Constructor method for ``Design``."""
         super().__init__(name, None, grpc_client)
@@ -110,6 +112,7 @@ class Design(Component):
 
     # TODO: allow for list of materials
     @protect_grpc
+    @beartype
     def add_material(self, material: Material) -> None:
         """Adds a ``Material`` to the ``Design``
 
@@ -118,9 +121,6 @@ class Design(Component):
         material : Material
             ``Material`` to be added.
         """
-        # Sanity check
-        check_type(material, Material)
-
         # TODO: Add design id to the request
         self._materials_stub.AddMaterialToDocument(
             AddMaterialToDocumentRequest(
@@ -143,6 +143,7 @@ class Design(Component):
         self._grpc_client.log.debug(f"Material {material.name} successfully added to design.")
 
     @protect_grpc
+    @beartype
     def save(self, file_location: Union[Path, str]) -> None:
         """Saves a design to disk on the active geometry server instance.
 
@@ -154,13 +155,12 @@ class Design(Component):
         # Sanity checks on inputs
         if isinstance(file_location, Path):
             file_location = str(file_location)
-        check_type(file_location, str)
 
         self._design_stub.SaveAs(SaveAsDocumentRequest(filepath=file_location))
-
         self._grpc_client.log.debug(f"Design successfully saved at location {file_location}.")
 
     @protect_grpc
+    @beartype
     def download(
         self,
         file_location: Union[Path, str],
@@ -182,9 +182,6 @@ class Design(Component):
         # Sanity checks on inputs
         if isinstance(file_location, Path):
             file_location = str(file_location)
-        check_type(file_location, str)
-        check_type(format, DesignFileFormat)
-        check_type(as_stream, bool)
 
         # Process response (as stream or single file)
         stream_msg = f"Downloading design in {format.value[0]} format using stream mechanism."
@@ -225,6 +222,7 @@ class Design(Component):
 
         self._grpc_client.log.debug(f"Design successfully downloaded at location {file_location}.")
 
+    @beartype
     def create_named_selection(
         self,
         name: str,
@@ -263,6 +261,7 @@ class Design(Component):
         return self._named_selections[named_selection.name]
 
     @protect_grpc
+    @beartype
     def delete_named_selection(self, named_selection: Union[NamedSelection, str]) -> None:
         """Removes a named selection on the active geometry server instance.
 
@@ -271,8 +270,6 @@ class Design(Component):
         named_selection : Union[NamedSelection, str]
             A named selection name or instance that should be deleted.
         """
-        check_type(named_selection, (NamedSelection, str))
-
         removal_name = (
             named_selection.name if not isinstance(named_selection, str) else named_selection
         )
@@ -288,6 +285,7 @@ class Design(Component):
             )
             pass
 
+    @beartype
     def delete_component(self, component: Union["Component", str]) -> None:
         """Deletes an existing component (itself or its children).
 
@@ -306,7 +304,6 @@ class Design(Component):
         ValueError
             ``Design`` itself cannot be deleted.
         """
-        check_type(component, (Component, str))
         id = component.id if not isinstance(component, str) else component
         if id == self.id:
             raise ValueError("The Design object itself cannot be deleted.")
@@ -329,6 +326,7 @@ class Design(Component):
         raise ValueError("The Design object itself cannot have a shared topology.")
 
     @protect_grpc
+    @beartype
     def add_beam_circular_profile(
         self,
         name: str,
@@ -354,12 +352,6 @@ class Design(Component):
         direction_y : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
             Y-plane direction.
         """
-        check_type(name, str)
-        check_type(radius, (Quantity, Distance))
-        check_type(center, Point3D)
-        check_type(direction_x, (np.ndarray, List, UnitVector3D, Vector3D))
-        check_type(direction_y, (np.ndarray, List, UnitVector3D, Vector3D))
-
         dir_x = direction_x if isinstance(direction_x, UnitVector3D) else UnitVector3D(direction_x)
         dir_y = direction_y if isinstance(direction_y, UnitVector3D) else UnitVector3D(direction_y)
         radius = radius if isinstance(radius, Distance) else Distance(radius)

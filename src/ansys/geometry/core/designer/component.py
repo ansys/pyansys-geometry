@@ -21,6 +21,7 @@ from ansys.api.geometry.v0.components_pb2 import (
 )
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
 from ansys.api.geometry.v0.models_pb2 import Line
+from beartype import beartype
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
 
@@ -37,12 +38,7 @@ from ansys.geometry.core.designer.coordinatesystem import CoordinateSystem
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import Frame, Point3D, UnitVector3D
-from ansys.geometry.core.misc import (
-    SERVER_UNIT_LENGTH,
-    Distance,
-    check_pint_unit_compatibility,
-    check_type,
-)
+from ansys.geometry.core.misc import SERVER_UNIT_LENGTH, Distance, check_pint_unit_compatibility
 from ansys.geometry.core.sketch import Sketch
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -82,15 +78,9 @@ class Component:
     _coordinate_systems: List[CoordinateSystem]
 
     @protect_grpc
-    def __init__(
-        self, name: str, parent_component: Union["Component", None], grpc_client: GrpcClient
-    ):
+    @beartype
+    def __init__(self, name: str, parent_component: Optional["Component"], grpc_client: GrpcClient):
         """Constructor method for ``Component``."""
-        # Sanity checks
-        check_type(grpc_client, GrpcClient)
-        check_type(name, str)
-        check_type(parent_component, (Component, type(None)))
-
         self._grpc_client = grpc_client
         self._component_stub = ComponentsStub(self._grpc_client.channel)
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
@@ -164,6 +154,7 @@ class Component:
         """
         return self._shared_topology
 
+    @beartype
     def add_component(self, name: str) -> "Component":
         """Creates a new component nested under this component within the design assembly.
 
@@ -181,6 +172,7 @@ class Component:
         return self._components[-1]
 
     @protect_grpc
+    @beartype
     def set_shared_topology(self, share_type: SharedTopologyType) -> None:
         """Defines the shared topology to be applied to the component.
 
@@ -189,9 +181,6 @@ class Component:
         share_type : SharedTopologyType
             The shared topology type to be assigned to the component.
         """
-        # Sanity checks on inputs
-        check_type(share_type, SharedTopologyType)
-
         # Set the SharedTopologyType on the server
         self._grpc_client.log.debug(
             f"Setting shared topology type {share_type.value} on {self.id}."
@@ -204,6 +193,7 @@ class Component:
         self._shared_topology = share_type
 
     @protect_grpc
+    @beartype
     def extrude_sketch(
         self, name: str, sketch: Sketch, distance: Union[Quantity, Distance]
     ) -> Body:
@@ -226,9 +216,6 @@ class Component:
             Extruded ``Body`` object from the given ``Sketch``.
         """
         # Sanity checks on inputs
-        check_type(name, str)
-        check_type(sketch, Sketch)
-        check_type(distance, (Quantity, Distance))
         extrude_distance = distance if isinstance(distance, Quantity) else distance.value
         check_pint_unit_compatibility(extrude_distance.units, SERVER_UNIT_LENGTH)
 
@@ -248,6 +235,7 @@ class Component:
         return self._bodies[-1]
 
     @protect_grpc
+    @beartype
     def extrude_face(self, name: str, face: Face, distance: Union[Quantity, Distance]) -> Body:
         """Extrudes the face profile by the given distance to create a new solid body.
         There are no modifications against the body containing the source face.
@@ -273,8 +261,6 @@ class Component:
             Extruded solid ``Body`` object.
         """
         # Sanity checks on inputs
-        check_type(name, str)
-        check_type(distance, (Quantity, Distance))
         extrude_distance = distance if isinstance(distance, Quantity) else distance.value
         check_pint_unit_compatibility(extrude_distance.units, SERVER_UNIT_LENGTH)
 
@@ -293,6 +279,7 @@ class Component:
         return self._bodies[-1]
 
     @protect_grpc
+    @beartype
     def create_surface(self, name: str, sketch: Sketch) -> Body:
         """Creates a surface body with the given sketch profile.
 
@@ -310,10 +297,6 @@ class Component:
         Body
             ``Body`` object (as a planar surface) from the given ``Sketch``.
         """
-        # Sanity checks on inputs
-        check_type(name, str)
-        check_type(sketch, Sketch)
-
         # Perform planar body request
         request = CreatePlanarBodyRequest(
             parent=self._id,
@@ -331,6 +314,7 @@ class Component:
         return self._bodies[-1]
 
     @protect_grpc
+    @beartype
     def create_surface_from_face(self, name: str, face: Face) -> Body:
         """Creates a new surface body based upon the provided face.
 
@@ -352,9 +336,6 @@ class Component:
         Body
             Surface ``Body`` object.
         """
-        # Sanity checks on inputs
-        check_type(name, str)
-
         # Take the face source directly. No need to verify the source of the face.
         request = CreateBodyFromFaceRequest(
             parent=self.id,
@@ -370,6 +351,7 @@ class Component:
         self._bodies.append(Body(response.id, name, self, self._grpc_client, is_surface=True))
         return self._bodies[-1]
 
+    @beartype
     def create_coordinate_system(self, name: str, frame: Frame) -> CoordinateSystem:
         """Creates a coordinate system.
 
@@ -388,14 +370,11 @@ class Component:
         CoordinateSystem
             ``CoordinateSystem`` object.
         """
-        # Sanity checks on inputs
-        check_type(name, str)
-        check_type(frame, Frame)
-
         self._coordinate_systems.append(CoordinateSystem(name, frame, self, self._grpc_client))
         return self._coordinate_systems[-1]
 
     @protect_grpc
+    @beartype
     def translate_bodies(
         self, bodies: List[Body], direction: UnitVector3D, distance: Union[Quantity, Distance]
     ) -> None:
@@ -419,11 +398,6 @@ class Component:
         -------
         None
         """
-
-        check_type(bodies, list)
-        [check_type(body, Body) for body in bodies]
-        check_type(direction, UnitVector3D)
-        check_type(distance, (Quantity, Distance))
         check_pint_unit_compatibility(distance, SERVER_UNIT_LENGTH)
         body_ids_found = []
 
@@ -454,6 +428,7 @@ class Component:
         )
 
     @protect_grpc
+    @beartype
     def create_beams(
         self, segments: List[Tuple[Point3D, Point3D]], profile: BeamProfile
     ) -> List[Beam]:
@@ -512,6 +487,7 @@ class Component:
         return self.create_beams([(start, end)], profile)[0]
 
     @protect_grpc
+    @beartype
     def delete_component(self, component: Union["Component", str]) -> None:
         """Deletes an existing component (itself or its children).
 
@@ -525,8 +501,6 @@ class Component:
         id : Union[Component, str]
             The name of the component or instance that should be deleted.
         """
-        check_type(component, (Component, str))
-
         id = component.id if not isinstance(component, str) else component
         component_requested = self.search_component(id)
 
@@ -547,6 +521,7 @@ class Component:
             pass
 
     @protect_grpc
+    @beartype
     def delete_body(self, body: Union[Body, str]) -> None:
         """Deletes an existing body belonging to this component (or its children).
 
@@ -560,8 +535,6 @@ class Component:
         id : Union[Body, str]
             The name of the body or instance that should be deleted.
         """
-        check_type(body, (Body, str))
-
         id = body.id if not isinstance(body, str) else body
         body_requested = self.search_body(id)
 
@@ -581,7 +554,8 @@ class Component:
             )
             pass
 
-    def search_component(self, id: str) -> "Component":
+    @beartype
+    def search_component(self, id: str) -> Union["Component", None]:
         """Recursive search on available nested components.
 
         Parameters
@@ -594,10 +568,6 @@ class Component:
         Component
             The ``Component`` with the requested ID. If not found, it will return ``None``.
         """
-
-        # Sanity check on input
-        check_type(id, str)
-
         # Check if the requested component is this one
         if self.id == id and self.is_alive:
             return self
@@ -612,7 +582,8 @@ class Component:
         # If you reached this point... this means that no component was found!
         return None
 
-    def search_body(self, id: str) -> Body:
+    @beartype
+    def search_body(self, id: str) -> Union[Body, None]:
         """Recursive search on available bodies in component and nested components.
 
         Parameters
@@ -625,10 +596,6 @@ class Component:
         Body
             The ``Body`` with the requested ID. If not found, it will return ``None``.
         """
-
-        # Sanity check on input
-        check_type(id, str)
-
         # Search in component's bodies
         for body in self.bodies:
             if body.id == id and body.is_alive:
