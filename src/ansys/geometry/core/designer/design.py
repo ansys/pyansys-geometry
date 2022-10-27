@@ -280,9 +280,7 @@ class Design(Component):
 
         try:
             self._named_selections.pop(removal_name)
-            self._grpc_client.log.debug(
-                f"Named selection {named_selection.name} successfully deleted."
-            )
+            self._grpc_client.log.debug(f"Named selection {removal_name} successfully deleted.")
         except KeyError:
             self._grpc_client.log.warning(
                 f"Attempted named selection deletion failed, with name {removal_name}."
