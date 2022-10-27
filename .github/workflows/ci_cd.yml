@@ -167,8 +167,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.9' # use python3.9, self-hosted has an issue with 3.10
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
 
       - name: Create Python venv
         run: |
@@ -240,8 +238,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.9' # use python3.9, self-hosted has an issue with 3.10
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
 
       - name: Create Python venv
         run: |
