@@ -1,11 +1,13 @@
 """``Circle`` class module."""
+
+from beartype import beartype
 from beartype.typing import Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
 
 from ansys.geometry.core.math import Point2D
-from ansys.geometry.core.misc import UNIT_LENGTH, Distance, check_type
+from ansys.geometry.core.misc import UNIT_LENGTH, Distance
 from ansys.geometry.core.sketch.face import SketchFace
 
 
@@ -20,6 +22,7 @@ class Circle(SketchFace):
         The radius of the circle.
     """
 
+    @beartype
     def __init__(
         self,
         center: Point2D,
@@ -28,10 +31,7 @@ class Circle(SketchFace):
         """Initializes the circle shape."""
         super().__init__()
 
-        check_type(center, Point2D)
         self._center = center
-
-        check_type(radius, (Quantity, Distance))
         self._radius = radius if isinstance(radius, Distance) else Distance(radius)
         if self._radius.value <= 0:
             raise ValueError("Radius must be a real positive value.")

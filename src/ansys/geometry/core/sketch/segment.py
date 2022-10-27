@@ -1,16 +1,12 @@
 """``Segment`` class module."""
 
+from beartype import beartype
 import numpy as np
 from pint import Quantity
 import pyvista as pv
 
 from ansys.geometry.core.math import Point2D
-from ansys.geometry.core.misc import (
-    UNIT_LENGTH,
-    check_ndarray_is_all_nan,
-    check_type,
-    check_type_equivalence,
-)
+from ansys.geometry.core.misc import UNIT_LENGTH, check_ndarray_is_all_nan
 from ansys.geometry.core.sketch.edge import SketchEdge
 
 
@@ -26,6 +22,7 @@ class Segment(SketchEdge):
         End of the line segment.
     """
 
+    @beartype
     def __init__(
         self,
         start: Point2D,
@@ -35,9 +32,7 @@ class Segment(SketchEdge):
         super().__init__()
 
         # Perform sanity checks on Point values given
-        check_type(start, Point2D)
         check_ndarray_is_all_nan(start, "start")
-        check_type(end, Point2D)
         check_ndarray_is_all_nan(end, "end")
 
         # Assign values to start and end
@@ -110,9 +105,9 @@ class Segment(SketchEdge):
             [self.end.x.m_as(UNIT_LENGTH), self.end.y.m_as(UNIT_LENGTH), 0],
         )
 
+    @beartype
     def __eq__(self, other: "Segment") -> bool:
         """Equals operator for ``Segment``."""
-        check_type_equivalence(other, self)
         return self.start == other.start and self.end == other.end
 
     def __ne__(self, other: "Segment") -> bool:

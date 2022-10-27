@@ -1,5 +1,6 @@
 """``Ellipse`` class module."""
 
+from beartype import beartype
 from beartype.typing import Optional, Union
 import numpy as np
 from pint import Quantity
@@ -8,7 +9,7 @@ from scipy.integrate import quad
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Matrix33, Matrix44, Point2D
-from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance, check_type
+from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
 
@@ -28,6 +29,7 @@ class Ellipse(SketchFace):
         The placement angle for orientation alignment.
     """
 
+    @beartype
     def __init__(
         self,
         center: Point2D,
@@ -37,10 +39,6 @@ class Ellipse(SketchFace):
     ):
         """Initializes the ellipse shape."""
         super().__init__()
-
-        check_type(center, Point2D)
-        check_type(semi_major_axis, (Quantity, Distance))
-        check_type(semi_minor_axis, (Quantity, Distance))
 
         self._center = center
         self._semi_major_axis = (
