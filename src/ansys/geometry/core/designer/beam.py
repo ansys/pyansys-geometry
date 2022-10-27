@@ -1,6 +1,6 @@
 """``Beam`` class module."""
 
-from typing import TYPE_CHECKING, Union
+from beartype.typing import TYPE_CHECKING, Union
 
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.misc import Distance, check_type
