@@ -3,6 +3,7 @@
 from enum import Enum
 from pathlib import Path
 
+from ansys.api.geometry.v0.commands_pb2 import CreateBeamCircularProfileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.designs_pb2 import (
     ExportDesignRequest,
@@ -19,8 +20,12 @@ from ansys.api.geometry.v0.models_pb2 import PartExportFormat
 from ansys.api.geometry.v0.namedselections_pb2 import NamedSelectionIdentifier
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from beartype.typing import List, Optional, Union
+import numpy as np
+from pint import Quantity
 
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.connection.conversions import plane_to_grpc_plane, point3d_to_grpc_point
+from ansys.geometry.core.designer.beam import BeamCircularProfile, BeamProfile
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.edge import Edge
@@ -28,7 +33,17 @@ from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials import Material
-from ansys.geometry.core.misc import check_type
+from ansys.geometry.core.math import (
+    UNITVECTOR3D_X,
+    UNITVECTOR3D_Y,
+    ZERO_POINT3D,
+    Plane,
+    Point3D,
+    UnitVector3D,
+    Vector3D,
+)
+from ansys.geometry.core.misc import SERVER_UNIT_LENGTH, Distance, check_type
+from ansys.geometry.core.typing import RealSequence
 
 
 class DesignFileFormat(Enum):
@@ -54,6 +69,11 @@ class Design(Component):
         An active supporting geometry service instance for design modeling.
     """
 
+    # Types of the class instance private attributes
+    _materials: List[Material]
+    _named_selections: List[NamedSelection]
+    _beam_profiles: List[BeamProfile]
+
     @protect_grpc
     def __init__(self, name: str, grpc_client: GrpcClient):
         """Constructor method for ``Design``."""
@@ -69,6 +89,7 @@ class Design(Component):
 
         self._materials = []
         self._named_selections = {}
+        self._beam_profiles = {}
 
         self._grpc_client.log.debug("Design object instantiated successfully.")
 
@@ -81,6 +102,11 @@ class Design(Component):
     def named_selections(self) -> List[NamedSelection]:
         """List of available ``NamedSelection`` objects for our ``Design``."""
         return list(self._named_selections.values())
+
+    @property
+    def beam_profiles(self) -> List[BeamProfile]:
+        """List of available ``BeamProfile`` objects for our ``Design``."""
+        return list(self._beam_profiles.values())
 
     # TODO: allow for list of materials
     @protect_grpc
@@ -254,9 +280,7 @@ class Design(Component):
 
         try:
             self._named_selections.pop(removal_name)
-            self._grpc_client.log.debug(
-                f"Named selection {named_selection.name} successfully deleted."
-            )
+            self._grpc_client.log.debug(f"Named selection {removal_name} successfully deleted.")
         except KeyError:
             self._grpc_client.log.warning(
                 f"Attempted named selection deletion failed, with name {removal_name}."
@@ -304,6 +328,65 @@ class Design(Component):
         """
         raise ValueError("The Design object itself cannot have a shared topology.")
 
+    @protect_grpc
+    def add_beam_circular_profile(
+        self,
+        name: str,
+        radius: Union[Quantity, Distance],
+        center: Union[np.ndarray, RealSequence, Point3D] = ZERO_POINT3D,
+        direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
+        direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Y,
+    ) -> BeamCircularProfile:
+        """
+        Creates a new ``BeamCircularProfile`` under the design for future
+        creation of ``Beam`` entities.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label identifying the ``BeamCircularProfile``
+        radius : Real
+            Radius of the ``BeamCircularProfile``.
+        center : Union[~numpy.ndarray, RealSequence, Point3D]
+            Center of the ``BeamCircularProfile``.
+        direction_x : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+            X-plane direction.
+        direction_y : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+            Y-plane direction.
+        """
+        check_type(name, str)
+        check_type(radius, (Quantity, Distance))
+        check_type(center, Point3D)
+        check_type(direction_x, (np.ndarray, List, UnitVector3D, Vector3D))
+        check_type(direction_y, (np.ndarray, List, UnitVector3D, Vector3D))
+
+        dir_x = direction_x if isinstance(direction_x, UnitVector3D) else UnitVector3D(direction_x)
+        dir_y = direction_y if isinstance(direction_y, UnitVector3D) else UnitVector3D(direction_y)
+        radius = radius if isinstance(radius, Distance) else Distance(radius)
+
+        if radius.value <= 0:
+            raise ValueError("Radius must be a real positive value.")
+
+        if not dir_x.is_perpendicular_to(dir_y):
+            raise ValueError("Direction x and direction y must be perpendicular.")
+
+        request = CreateBeamCircularProfileRequest(
+            origin=point3d_to_grpc_point(center),
+            radius=radius.value.m_as(SERVER_UNIT_LENGTH),
+            plane=plane_to_grpc_plane(Plane(center, dir_x, dir_y)),
+            name=name,
+        )
+
+        self._grpc_client.log.debug(f"Creating beam circular profile on {self.id}...")
+
+        response = self._commands_stub.CreateBeamCircularProfile(request)
+        profile = BeamCircularProfile(response.id, name, radius, center, dir_x, dir_y)
+        self._beam_profiles[profile.name] = profile
+
+        self._grpc_client.log.debug(f"Beam circular profile {profile.name} successfully created.")
+
+        return self._beam_profiles[profile.name]
+
     def __repr__(self):
         """String representation of the design."""
         alive_bodies = [1 if body.is_alive else 0 for body in self.bodies]
@@ -315,4 +398,5 @@ class Design(Component):
         lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
         lines.append(f"  N Named Selections   : {len(self.named_selections)}")
         lines.append(f"  N Materials          : {len(self.materials)}")
+        lines.append(f"  N Beam Profiles      : {len(self.beam_profiles)}")
         return "\n".join(lines)
