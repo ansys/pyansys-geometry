@@ -193,9 +193,9 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
 
         Parameters
         ----------
-        filename : str, default: pygeometry.log"
+        filename : str, default: "pygeometry.log"
             Name of the file to write log messages to.
-        level : str, default: 10
+        level : int, default: 10
             Level of logging. The default is ``10``, in which case the
             ``logging.DEBUG`` level is used.
         """
@@ -401,7 +401,7 @@ class Logger:
 
         Parameters
         ----------
-        level : int, default: 0
+        level : int, default: 10
             Level of logging. The default is ``10``, in which case the
             ``logging.DEBUG`` level is used.
         """
@@ -560,8 +560,9 @@ def addfile_handler(logger, filename=FILE_NAME, level=LOG_LEVEL, write_headers=F
         Logger to add the file handler to.
     filename : str, default: "pygeometry.log"
         Name of the output file.
-    level : int, default: LOG_LEVEL
-        Level of logging.
+    level : int, default: 10
+        Level of logging. The default is ``10``, in which case the
+        ``logging.DEBUG`` level is used.
     write_headers : bool, default: False
         Whether to write the headers to the file.
 
@@ -597,7 +598,7 @@ def add_stdout_handler(logger, level=LOG_LEVEL, write_headers=False):
     ----------
     logger : logging.Logger or logging.Logger
         Logger to add the file handler to.
-    level : in, default: 10
+    level : int, default: 10
         Level of logging. The default is ``10``, in which case the
            ``logging.DEBUG`` level is used.
     write_headers : bool, default: False

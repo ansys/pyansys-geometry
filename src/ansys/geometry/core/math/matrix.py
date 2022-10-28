@@ -71,7 +71,7 @@ class Matrix33(Matrix):
 
     Parameters
     ----------
-    input : Union[~numpy.ndarray, RealSequence, Matrix], default: DEFAULT_MATRIX33``
+    input : Union[~numpy.ndarray, RealSequence, Matrix], default: DEFAULT_MATRIX33
         The matrix arguments as a :class:`np.ndarray <numpy.ndarray>` .
     """
 

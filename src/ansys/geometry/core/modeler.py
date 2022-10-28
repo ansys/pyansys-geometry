@@ -21,7 +21,7 @@ class Modeler:
 
     Parameters
     ----------
-    host : str,  ``DEFAULT_HOST``
+    host : str,  default: DEFAULT_HOST
         Host where the server is running.
     port : Union[str, int], default: DEFAULT_PORT
         Port number where the server is running.
@@ -36,7 +36,7 @@ class Modeler:
     logging_level : int, default: INFO
         The logging level to be applied to the client.
         By default, ``INFO``.
-    logging_file : Optional[str, Path]
+    logging_file : str or Path, default: None
         The file to output the log, if requested.
     """
 
