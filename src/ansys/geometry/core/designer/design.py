@@ -175,9 +175,9 @@ class Design(Component):
             Location on disk where the file should be saved.
         format : Optional[DesignFileFormat]
             Format in which to export the design. By default, as an ``SCDOCX`` file.
-        as_stream : bool, default: False
+        as_stream : bool, default: ``False``
             Boolean indicating whether to use the gRPC stream functionality (if possible).
-            or the single message approach. By default, ``False``
+            or the single message approach.
         """
         # Sanity checks on inputs
         if isinstance(file_location, Path):

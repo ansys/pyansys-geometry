@@ -391,12 +391,12 @@ class Body:
 
         Parameters
         ----------
-        merge : bool,  default: ``False``
+        merge : bool, default: ``False``
             Merge the body into a single mesh. Enable this if you wish to
             merge the individual faces of the tessellation. This preserves
             the number of triangles and only merges the topology.
             By default, ``False``.
-        **kwargs : dict,  default: ``None``
+        **kwargs : dict, default: ``None``
             Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
             for allowable keyword arguments.
 

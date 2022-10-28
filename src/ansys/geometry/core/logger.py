@@ -341,8 +341,7 @@ class Logger:
             Level of logging as defined in the ``logging`` package. The default
             is ``10``, in which case the ``logging.DEBUG`` level is used.
         to_file : bool, default: ``False``
-            Whether to write log messages to a file. The default is ``False``.
-        to_stdout : bool, default: ``True``
+            Whether to write log messages to a file.
             Whether to write log messages to the standard output (stdout).
         filename : str, default: ```"pygeometry.log"``
            Name of the file to write log messages to.
@@ -474,7 +473,7 @@ class Logger:
         sufix : str
             Name of the child logger.
         level : str, default: ``None``
-            Level of logging. The default is ``None``.
+            Level of logging.
 
         Returns
         -------
@@ -502,7 +501,7 @@ class Logger:
         client_instance : GrpcClient
             Geometry Service GrpcClient object, which should contain the ``get_name`` method.
         level : int, default: ``None``
-            Level of logging. The default is ``None``.
+            Level of logging.
 
         Returns
         -------
@@ -564,7 +563,7 @@ def addfile_handler(logger, filename=FILE_NAME, level=LOG_LEVEL, write_headers=F
     level : int, default: ``LOG_LEVEL`
         Level of logging.
     write_headers : bool, default: ``False``
-        Whether to write the headers to the file. The default is ``False``.
+        Whether to write the headers to the file.
 
     Returns
     -------
@@ -602,7 +601,7 @@ def add_stdout_handler(logger, level=LOG_LEVEL, write_headers=False):
         Level of logging. The default is ``10``, in which case the
            ``logging.DEBUG`` level is used.
     write_headers : bool, default: ``False``
-        Whether to write headers to the file. The default is ``False``.
+        Whether to write headers to the file.
 
     Returns
     -------

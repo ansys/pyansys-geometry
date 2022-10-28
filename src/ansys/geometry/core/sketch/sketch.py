@@ -582,7 +582,7 @@ class Sketch:
             The height of the slot.
         angle : Optional[Union[Quantity, Angle, Real]]
             The placement angle for orientation alignment.
-        tag : str, optional
+        tag : str, default: ``None``
             A user-defined label identifying this specific edge.
 
         Returns

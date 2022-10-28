@@ -89,7 +89,7 @@ class Plotter:
         ----------
         frame : Frame
             The ``Frame`` instance to be rendered in the scene.
-        plotting_options : dict, optional`
+        plotting_options : dict, default: ``None``
             A dictionary containing parameters accepted by
             :class:`pyvista.plotting.tools.create_axes_marker` for customizing
             the frame rendering in the scene.

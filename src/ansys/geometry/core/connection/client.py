@@ -76,7 +76,7 @@ class GrpcClient:
         Timeout in seconds to achieve the connection.
     logging_level : int, default: ``INFO``
         The logging level to be applied to the client.
-    logging_file : Optional[str, Path],  default:  ``None``
+    logging_file : Optional[str, Path]
         The file to output the log, if requested.
     """
 
