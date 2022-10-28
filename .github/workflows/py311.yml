@@ -4,6 +4,9 @@ on:
   schedule: # UTC at 0200 on Sundays
     - cron: "0 2 * * 0"
 
+env:
+  PACKAGE_NAME: 'ansys-geometry-core'
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
