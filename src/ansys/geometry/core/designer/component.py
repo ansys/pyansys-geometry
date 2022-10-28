@@ -728,7 +728,7 @@ class Component:
             Merge each body into a single dataset. This effectively combines
             all the faces of each individual body into a single dataset
             without.
-        **kwargs : dict, optional
+        **kwargs : dict, default: ``None``
             Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
             for allowable keyword arguments.
 

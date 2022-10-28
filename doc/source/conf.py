@@ -113,6 +113,10 @@ source_suffix = {
 # The master toctree document.
 master_doc = "index"
 
+
+typehints_defaults = "comma"
+simplify_optional_unions = False
+
 # Configuration for Sphinx autoapi
 autoapi_type = "python"
 autoapi_dirs = ["../../src/ansys"]
@@ -141,6 +145,3 @@ nbsphinx_thumbnails = {
     "examples/design/tessellation_usage": "_static/thumbnails/tessellation_usage.png",
     "examples/design/design_organization": "_static/thumbnails/design_organization.png",
 }
-
-typehints_defaults = "comma"
-simplify_optional_unions = False

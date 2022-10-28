@@ -58,7 +58,7 @@ def launch_remote_modeler(
 
     Parameters
     ----------
-    version : str, optional
+    version : str,  default: ``None``
         The Geometry Service version to run, in the 3 digits format, such as "212".
         If unspecified, the version will be chosen by the server.
 

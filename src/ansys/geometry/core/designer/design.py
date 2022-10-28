@@ -236,15 +236,12 @@ class Design(Component):
         ----------
         name : str
             A user-defined name for the named selection.
-        bodies : List[Body], optional
+        bodies : List[Body], default: ``None``
             All bodies that should be included in the named selection.
-            By default, ``None``.
-        faces : List[Face], optional
+        faces : List[Face], default: ``None``
             All faces that should be included in the named selection.
-            By default, ``None``.
-        edges : List[Edge], optional
+        edges : List[Edge], default: ``None``
             All edges that should be included in the named selection.
-            By default, ``None``.
 
         Returns
         -------

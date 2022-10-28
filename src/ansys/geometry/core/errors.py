@@ -23,8 +23,8 @@ class GeometryExitedError(RuntimeError):
 
     Parameters
     ----------
-    msg : str, optional
-        Message to raise. The default is ``"Geometry Service has exited."``.
+    msg : str, default: ``"Geometry Service has exited."``
+        Message to raise.
     """
 
     def __init__(self, msg="Geometry Service has exited."):
