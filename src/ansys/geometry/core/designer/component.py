@@ -12,7 +12,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
-from ansys.api.geometry.v0.commands_pb2 import CreateBeamBodyLinesRequest
+from ansys.api.geometry.v0.commands_pb2 import CreateBeamBodyLinesRequest, EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.components_pb2 import (
     ComponentIdentifier,
@@ -579,7 +579,7 @@ class Component:
             # Server-side, the same deletion request has to be performed
             # as for deleting a Body
             #
-            self._bodies_stub.Delete(BodyIdentifier(id=id))
+            self._commands_stub.DeleteBeam(EntityIdentifier(id=id))
 
             # If the beam was deleted from the server side... "kill" it
             # on the client side

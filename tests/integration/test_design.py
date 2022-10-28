@@ -986,3 +986,12 @@ def test_beams(modeler: Modeler):
     assert not nested_component.beams[0].is_alive
     assert not beam_1.is_alive
     assert not design.beams[0].is_alive
+
+    # Now, let's try deleting the beam profiles!
+    assert len(design.beam_profiles) == 2
+    design.delete_beam_profile("MyInventedBeamProfile")
+    assert len(design.beam_profiles) == 2
+    design.delete_beam_profile(circle_profile_1)
+    assert len(design.beam_profiles) == 1
+    design.delete_beam_profile(circle_profile_2)
+    assert len(design.beam_profiles) == 0

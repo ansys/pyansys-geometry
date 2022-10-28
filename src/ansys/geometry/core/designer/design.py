@@ -3,7 +3,7 @@
 from enum import Enum
 from pathlib import Path
 
-from ansys.api.geometry.v0.commands_pb2 import CreateBeamCircularProfileRequest
+from ansys.api.geometry.v0.commands_pb2 import CreateBeamCircularProfileRequest, EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.designs_pb2 import (
     ExportDesignRequest,
@@ -20,7 +20,7 @@ from ansys.api.geometry.v0.models_pb2 import PartExportFormat
 from ansys.api.geometry.v0.namedselections_pb2 import NamedSelectionIdentifier
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from beartype import beartype as check_input_types
-from beartype.typing import List, Optional, Union
+from beartype.typing import Dict, List, Optional, Union
 import numpy as np
 from pint import Quantity
 
@@ -72,8 +72,8 @@ class Design(Component):
 
     # Types of the class instance private attributes
     _materials: List[Material]
-    _named_selections: List[NamedSelection]
-    _beam_profiles: List[BeamProfile]
+    _named_selections: Dict[NamedSelection]
+    _beam_profiles: Dict[BeamProfile]
 
     @protect_grpc
     @check_input_types
@@ -273,17 +273,18 @@ class Design(Component):
         removal_name = (
             named_selection.name if not isinstance(named_selection, str) else named_selection
         )
-        self._named_selections_stub.Delete(NamedSelectionIdentifier(name=removal_name))
+        self._grpc_client.log.debug(f"Named selection {removal_name} deletion request received.")
+        removal_obj = self._named_selections.get(removal_name, None)
 
-        try:
+        if removal_obj:
+            self._named_selections_stub.Delete(NamedSelectionIdentifier(name=removal_name))
             self._named_selections.pop(removal_name)
             self._grpc_client.log.debug(f"Named selection {removal_name} successfully deleted.")
-        except KeyError:
+        else:
             self._grpc_client.log.warning(
                 f"Attempted named selection deletion failed, with name {removal_name}."
                 + " Ignoring request."
             )
-            pass
 
     @check_input_types
     def delete_component(self, component: Union["Component", str]) -> None:
@@ -378,6 +379,30 @@ class Design(Component):
         self._grpc_client.log.debug(f"Beam circular profile {profile.name} successfully created.")
 
         return self._beam_profiles[profile.name]
+
+    @protect_grpc
+    @check_input_types
+    def delete_beam_profile(self, beam_profile: Union[BeamProfile, str]) -> None:
+        """Removes a beam profile on the active geometry server instance.
+
+        Parameters
+        ----------
+        beam_profile : Union[BeamProfile, str]
+            A beam profile name or instance that should be deleted.
+        """
+        removal_name = beam_profile.name if not isinstance(beam_profile, str) else beam_profile
+        self._grpc_client.log.debug(f"Beam profile {removal_name} deletion request received.")
+        removal_obj = self._beam_profiles.get(removal_name, None)
+
+        if removal_obj:
+            self._commands_stub.DeleteBeamProfile(EntityIdentifier(id=removal_name))
+            self._beam_profiles.pop(removal_name)
+            self._grpc_client.log.debug(f"Beam profile {removal_name} successfully deleted.")
+        else:
+            self._grpc_client.log.warning(
+                f"Attempted beam profile deletion failed, with name {removal_name}."
+                + " Ignoring request."
+            )
 
     def __repr__(self):
         """String representation of the design."""
