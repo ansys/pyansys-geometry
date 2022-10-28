@@ -556,7 +556,7 @@ def addfile_handler(logger, filename=FILE_NAME, level=LOG_LEVEL, write_headers=F
 
     Parameters
     ----------
-    logger : logging.Logger or logging.Logger
+    logger : logging.Logger
         Logger to add the file handler to.
     filename : str, default: "pygeometry.log"
         Name of the output file.
@@ -595,7 +595,7 @@ def add_stdout_handler(logger, level=LOG_LEVEL, write_headers=False):
 
     Parameters
     ----------
-    logger : logging.Logger or logging.Logger
+    logger : logging.Logger
         Logger to add the file handler to.
     level : in, default: 10
         Level of logging. The default is ``10``, in which case the
