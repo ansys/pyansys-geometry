@@ -12,13 +12,17 @@ kernelspec:
 ---
 # Single body with material assignment
 
-In PyGeometry, a ``Body`` represents solids or surfaces organized within the ``Design`` assembly.
-The current state of ``Sketch``, which is a client-side execution, can be used for the operations of
-the geometric design assembly. The Geometry Service also provides data structures to create individual materials 
-and its properties, which are also exposed through PyGeometry.
+In PyGeometry, a `body` represents solids or surfaces organized within the ``Design`` assembly.
+The current state of `sketch`, which is a client-side execution, can be used for the operations of
+the geometric design assembly. The Geometry service also provides data structures to create individual
+materials and their properties, which are also exposed through PyGeometry.
 
-This example demonstrates how to create a single body from a sketch, by requesting its extrusion,
-and how to assign a material to it.
+This example demonstrates how to create a single body from a sketch by requesting its extrusion. It then
+shows how to assign a material to this body.
+
+## Perform required imports
+
+Start by performing required imports.
 
 ```{code-cell} ipython3
 from pint import Quantity
@@ -29,9 +33,9 @@ from ansys.geometry.core.math import UNITVECTOR3D_Z, Frame, Plane, Point2D, Poin
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 ```
-## Defining the ``Sketch``
+## Define the sketch
 
-Create a basic ``circle`` sketch instance with radius 10mm in the default plane.
+Create a sketch instance and insert a circle with a radius of 10 millimeters in the default plane.
 
 ```{code-cell} ipython3
 sketch = Sketch()
@@ -40,7 +44,8 @@ sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
 
 ## Initiate the design in the server
 
-A server connection is established and a design has been initiated.
+Establish a server connection and initiate a design.
+
 ```{code-cell} ipython3
 modeler = Modeler()
 design_name = "ExtrudeProfile"
@@ -49,9 +54,10 @@ design = modeler.create_design(design_name)
 
 ## Add materials to the design
 
-Adding materials and its properties to the design. Additional properties of
-the material can be added at construction of the ``Material`` object or afterwards,
-as it is shown in the code snippet.
+Add materials and their properties to the design. You can add material properties when
+creating the ``Material`` object or afterward after it is created. The following code
+shows material properties being added after creation of the ``Material`` object.
+
 ```{code-cell} ipython3
 density = Quantity(125, 10 * UNITS.kg / (UNITS.m * UNITS.m * UNITS.m))
 poisson_ratio = Quantity(0.33, UNITS.dimensionless)
@@ -64,15 +70,15 @@ material = Material(
 material.add_property(MaterialPropertyType.TENSILE_STRENGTH, "TensileProp", Quantity(45))
 design.add_material(material)
 ```
-## Extrude the body from the sketch
+## Extrude the sketch to create the body
 
-Extrude the sketch to create the body and assign a material to it.
+Extrude the sketch to create the body and then assign a material to it.
 
 ```{code-cell} ipython3
-# Extrude the sketch to create a Body
+# Extrude the sketch to create the body
 body = design.extrude_sketch("SingleBody", sketch, Quantity(10, UNITS.mm))
 
-# Assign a material to a Body
+# Assign a material to the body
 body.assign_material(material)
 
 body.plot()

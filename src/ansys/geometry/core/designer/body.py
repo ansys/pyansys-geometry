@@ -1,4 +1,4 @@
-"""``Body`` class module."""
+"""Provides the ``Body`` class module."""
 
 from ansys.api.geometry.v0.bodies_pb2 import (
     BodyIdentifier,
@@ -42,21 +42,21 @@ class Body:
     """
     Represents solids and surfaces organized within the design assembly.
 
-    Synchronizes to a design within a supporting geometry service instance.
+    Solids and surfaces synchronize to a design within a supporting Geometry service instance.
 
     Parameters
     ----------
     id : str
-        A server defined identifier for the body.
+        Server-defined ID for the body.
     name : str
-        A user-defined label for the body.
+        User-defined label for the body.
     parent_component : Component
-        The parent component to nest the new component under within the design assembly.
+        Parent component to nest the new component under within the design assembly.
     grpc_client : GrpcClient
-        An active supporting geometry service instance for design modeling.
+        Active supporting Geometry service instance for design modeling.
     is_surface : bool, optional
-        Boolean indicating whether the ``Body`` is in fact a surface or an actual
-        3D object (with volume). By default, ``False``.
+        Whether the ``Body`` is in fact a surface or an actual
+        3D object (with volume). The default is ``False``.
     """
 
     def __init__(
@@ -87,28 +87,28 @@ class Body:
 
     @property
     def _grpc_id(self) -> BodyIdentifier:
-        """gRPC body identifier of this body."""
+        """gRPC body identifier for this body."""
         return BodyIdentifier(id=self._id)
 
     @property
     def id(self) -> str:
-        """Id of the ``Body``."""
+        """ID of the body."""
         return self._id
 
     @property
     def name(self) -> str:
-        """Name of the ``Body``."""
+        """Name of the body."""
         return self._name
 
     @property
     def is_surface(self) -> bool:
-        """Returns ``True`` if the ``Body`` object is a planar body."""
+        """Check if the body is a planar body."""
         return self._is_surface
 
     @property
     @protect_grpc
     def faces(self) -> List[Face]:
-        """Loads all of the faces within the body.
+        """All faces within the body.
 
         Returns
         -------
@@ -124,7 +124,7 @@ class Body:
     @property
     @protect_grpc
     def edges(self) -> List[Edge]:
-        """Loads all of the edges within the body.
+        """All edges within the body.
 
         Returns
         -------
@@ -139,7 +139,7 @@ class Body:
 
     @property
     def is_alive(self) -> bool:
-        """Boolean indicating whether the body is still alive on the server side."""
+        """Check if the body is still alive on the server side."""
         return self._is_alive
 
     @property
@@ -149,10 +149,10 @@ class Body:
 
         Notes
         -----
-        When dealing with a planar surface, a value of 0 is returned as a volume.
+        When dealing with a planar surface, a value of ``0`` is returned as a volume.
         """
         if self.is_surface:
-            self._grpc_client.log.debug("Dealing with planar surface. Returning 0 volume.")
+            self._grpc_client.log.debug("Dealing with planar surface. Returning 0 as the volume.")
             return Quantity(0, SERVER_UNIT_VOLUME)
         else:
             self._grpc_client.log.debug(f"Retrieving volume for body {self.id} from server.")
@@ -162,8 +162,7 @@ class Body:
     @protect_grpc
     @check_input_types
     def assign_material(self, material: Material) -> None:
-        """Sets the provided material against the design in the active geometry
-        service instance.
+        """Assigns a material against the design in the active Geometry service instance.
 
         Parameters
         ----------
@@ -178,19 +177,19 @@ class Body:
     @protect_grpc
     @check_input_types
     def imprint_curves(self, faces: List[Face], sketch: Sketch) -> Tuple[List[Edge], List[Face]]:
-        """Imprints all of the specified geometries onto the specified faces of the body.
+        """Imprints all specified geometries onto the specified faces of the body.
 
         Parameters
         ----------
         faces: List[Face]
-            Specific faces to imprint the curves of the sketch.
+            List of faces to imprint the curves of the sketch.
         sketch: Sketch
-            All of the curves to imprint on the faces.
+            All curves to imprint on the faces.
 
         Returns
         -------
         Tuple[List[Edge], List[Face]]
-            All of the impacted edges and faces from the imprint operation.
+            All impacted edges and faces from the imprint operation.
         """
         # Verify that each of the faces provided are part of this body
         body_faces = self.faces
@@ -236,30 +235,30 @@ class Body:
         closest_face: bool,
         only_one_curve: Optional[bool] = False,
     ) -> List[Face]:
-        """Projects all of the specified geometries onto the body.
+        """Projects all specified geometries onto the body.
 
         Parameters
         ----------
         direction: UnitVector3D
             Establishes the direction of the projection.
         sketch: Sketch
-            All of the curves to project on the body.
+            All curves to project on the body.
         closest_face: bool
-            Signifies whether to target the closest face with the projection.
+            Whether to target the closest face with the projection.
         only_one_curve: bool, optional
-            Projects only one curve of the entire sketch provided. If ``True``, then
-            only one curve is projected. By default, ``False``.
+            Whether to project only one curve of the entire sketch. The
+            default is ``False``. If ``True``, only one curve is projected.
 
         Notes
         -----
-        The ``only_one_curve`` boolean allows to optimize the server call, since
+        The ``only_one_curve`` parameter allows you to optimize the server call because
         projecting curves is an expensive operation. This reduces the workload on the
         server side.
 
         Returns
         -------
         List[Face]
-            All of the faces from the project curves operation.
+            All faces from the project curves operation.
         """
         curves = sketch_shapes_to_grpc_geometries(
             sketch._plane, sketch.edges, sketch.faces, only_one_curve=only_one_curve
@@ -286,14 +285,14 @@ class Body:
     @protect_grpc
     @check_input_types
     def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance]) -> None:
-        """Translates the geometry body in the direction specified by the given distance.
+        """Translates the geometry body in the specified direction by a given distance.
 
         Parameters
         ----------
         direction: UnitVector3D
-            The direction of the translation.
+            Direction of the translation.
         distance: Union[Quantity, Distance]
-            The magnitude of the translation.
+            Magnitude of the translation.
 
         Returns
         -------
@@ -321,20 +320,19 @@ class Body:
         Parameters
         ----------
         merge : bool, optional
-            Merge the body into a single mesh. Enable this if you wish to
-            merge the individual faces of the tessellation. This preserves
-            the number of triangles and only merges the topology.
-            By default, ``False``.
+            Whether to merge the body into a single mesh. The default is ``False``.
+            If ``True``, the individual faces of the tessellation are merged. This
+            preserves the number of triangles and only merges the topology.
 
         Returns
         -------
         ~pyvista.PolyData, ~pyvista.MultiBlock
-            Merged :class:`pyvista.PolyData` if ``merge=True`` or composite dataset.
+            Merged :class:`pyvista.PolyData` if ``merge=True`` or a composite dataset.
 
         Examples
         --------
         Extrude a box centered at the origin to create a rectangular body and
-        tessellate it.
+        tessellate it:
 
         >>> from ansys.geometry.core.misc.units import UNITS as u
         >>> from ansys.geometry.core.sketch import Sketch
@@ -356,7 +354,7 @@ class Body:
              Y Bounds:	-1.000, 0.000
              Z Bounds:	-0.500, 4.500
 
-        Merge the body.
+        Merge the body:
 
         >>> mesh = body.tessellate(merge=True)
         >>> mesh
@@ -376,7 +374,7 @@ class Body:
         if not self.is_alive:
             return pv.PolyData() if merge else pv.MultiBlock()
 
-        self._grpc_client.log.debug(f"Requesting tesseleation for body {self.id}.")
+        self._grpc_client.log.debug(f"Requesting tessellation for body {self.id}.")
 
         resp = self._bodies_stub.GetBodyTessellation(self._grpc_id)
 
@@ -393,18 +391,17 @@ class Body:
         Parameters
         ----------
         merge : bool, optional
-            Merge the body into a single mesh. Enable this if you wish to
-            merge the individual faces of the tessellation. This preserves
-            the number of triangles and only merges the topology.
-            By default, ``False``.
+            Whether to merge the body into a single mesh. The default is ``False`.
+            If ``True``, the individual faces of the tessellation are merged. This
+            preserves the number of triangles and only merges the topology.
         **kwargs : dict, optional
-            Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
-            for allowable keyword arguments.
+            Keyword arguments. For allowable keyword arguments, see the
+            :func:`pyvista.Plotter.add_mesh` method.
 
         Examples
         --------
         Extrude a box centered at the origin to create rectangular body and
-        plot it.
+        plot it:
 
         >>> from ansys.geometry.core.misc.units import UNITS as u
         >>> from ansys.geometry.core.sketch import Sketch
@@ -420,7 +417,7 @@ class Body:
         >>> body = mycomp.extrude_sketch("my-sketch", sketch, 1 * u.m)
         >>> body.plot()
 
-        Plot the body and color each face individually.
+        Plot the body and color each face individually:
 
         >>> body.plot(multi_colors=True)
 

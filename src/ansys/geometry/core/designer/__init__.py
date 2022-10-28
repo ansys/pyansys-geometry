@@ -1,4 +1,4 @@
-"""PyGeometry design subpackage."""
+"""Provides the PyGeometry design subpackage."""
 
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.component import Component, SharedTopologyType

@@ -11,24 +11,26 @@ kernelspec:
   name: python3
 ---
 
-# Dynamic Sketch Plane
+# Dynamic sketch plane
 
-The sketch is a lightweight two-dimensional modeler driven primarily by client-side execution.
+The sketch is a lightweight, two-dimensional modeler driven primarily by client-side execution.
 
 At any point, the current state of a sketch can be used for operations such as extruding a body,
 projecting a profile, or imprinting curves.
 
-The sketch is designed as an effective fluent-style API with all operations receiving 2D configurations.
+The sketch is designed as an effective Fluent-style API with all operations receiving 2D configurations.
 
-For easy reuse of sketches across different regions of your design, a sketch can be moved around the
+For easy reuse of sketches across different regions of your design, you can move a sketch around the
 global coordinate system by modifying the plane defining the current sketch location.
 
-For this example, a multi-layer PCB is created from many extrusions of the same sketch, creating unique
+This example creates a multi-layer PCB from many extrusions of the same sketch, creating unique
 design bodies for each layer.
 
 +++
 
-Start by importing the fundamental objects:
+## Perform required imports
+
+Start by performing required imports.
 
 ```{code-cell} ipython3
 from pint import Quantity
@@ -39,16 +41,16 @@ from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 ```
 
-## Defining a ``Sketch`` profile for the PCB
+## Define a sketch profile for the PCB
 
-``Sketch`` instances can be created, modified and plotted independent of supporting 
-geometry service instances.
+You can create, modify, and plot ``Sketch`` instances independent of supporting 
+Geometry service instances.
 
-A ``Sketch`` outline of individual ``Segment`` and ``Arc`` objects is created with two
+Create a sketch outline of individual ``Segment`` and ``Arc`` objects with two
 circular through-hole attachment points added within the profile boundary to maintain a
 single, closed sketch face.
 
-A single sketch instance can be used for multiple design operations.
+You can use a single sketch instance for multiple design operations.
 
 ```{code-cell} ipython3
 sketch = Sketch()
@@ -71,15 +73,15 @@ sketch = Sketch()
 sketch.plot()
 ```
 
-## Extruding multiple bodies with a single sketch
+## Extrude multiple bodies with a single sketch
 
-A server connection is established and the single sketch profile is used to extrude 
-the board profile at multiple Z-offsets. A named selection is then created from the 
+Establish a server connection and use the single sketch profile to extrude 
+the board profile at multiple Z-offsets. A named selection is created from the 
 resulting list of layer bodies.
 
-Notice that translating the sketch plane prior to extrusion is more effective than 
-creating a design body on the supporting server and then translating the body on the
-server. The result is 10 server calls instead of 20.
+Note that translating the sketch plane prior to extrusion is more effective (10 server calls)
+than creating a design body on the supporting server and then translating the body on the
+server (20 server calls).
 
 ```{code-cell} ipython3
 modeler = Modeler()

@@ -1,4 +1,4 @@
-"""``Face`` class module."""
+"""Provides the ``Face`` class module."""
 
 from enum import Enum, unique
 
@@ -27,28 +27,28 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @unique
 class SurfaceType(Enum):
-    """Enum holding the possible values for surface types by the geometry service."""
+    """Provides an enum holding the possible values for surface types by the Geometry service:
 
-    SURFACETYPE_UNKNOWN = 0
-    SURFACETYPE_PLANE = 1
-    SURFACETYPE_CYLINDER = 2
-    SURFACETYPE_CONE = 3
-    SURFACETYPE_TORUS = 4
-    SURFACETYPE_SPHERE = 5
-    SURFACETYPE_NURBS = 6
-    SURFACETYPE_PROCEDURAL = 7
-
+    - SURFACETYPE_UNKNOWN = 0
+    - SURFACETYPE_PLANE = 1
+    - SURFACETYPE_CYLINDER = 2
+    - SURFACETYPE_CONE = 3
+    - SURFACETYPE_TORUS = 4
+    - SURFACETYPE_SPHERE = 5
+    - SURFACETYPE_NURBS = 6
+    - SURFACETYPE_PROCEDURAL = 7
+    """
 
 @unique
 class FaceLoopType(Enum):
-    """Enum holding the possible values for face loop types."""
-
-    INNER_LOOP = "INNER"
-    OUTER_LOOP = "OUTER"
-
+    """Provides an enum holding the possible values for face loop types:
+    
+    - INNER_LOOP = "INNER"
+    - OUTER_LOOP = "OUTER"
+    """
 
 class FaceLoop:
-    """Internal class to hold ``Face`` loops defined by the server side.
+    """Provides an internal class holding the face loops defined by the server side.
 
     Notes
     -----
@@ -58,15 +58,15 @@ class FaceLoop:
     Parameters
     ----------
     type : FaceLoopType
-        The type of loop defined.
+        Type of loop.
     length : Quantity
-        The length of the loop.
+        Length of the loop.
     min_bbox : Point3D
-        The minimum point of the bounding box containing the loop.
+        Minimum point of the bounding box containing the loop.
     max_bbox : Point3D
-        The maximum point of the bounding box containing the loop.
+        Maximum point of the bounding box containing the loop.
     edges : List[Edge]
-        The edges contained in the loop.
+        Edges contained in the loop.
     """
 
     def __init__(
@@ -86,7 +86,7 @@ class FaceLoop:
 
     @property
     def type(self) -> FaceLoopType:
-        """Type of face loop."""
+        """Type of the face loop."""
         return self._type
 
     @property
@@ -114,18 +114,18 @@ class Face:
     """
     Represents a single face of a body within the design assembly.
 
-    Synchronizes to a design within a supporting geometry service instance.
+    This class synchronizes to a design within a supporting Geometry service instance.
 
     Parameters
     ----------
     id : str
-        A server defined identifier for the body.
+        Server-defined ID for the body.
     surface_type : SurfaceType
-        Specifies what type of surface the face forms.
+        Type of surface that the face forms.
     body : Body
-        The parent body the face constructs.
+        Parent body that the face constructs.
     grpc_client : GrpcClient
-        An active supporting geometry service instance for design modeling.
+        Active supporting Geometry service instance for design modeling.
     """
 
     def __init__(self, id: str, surface_type: SurfaceType, body: "Body", grpc_client: GrpcClient):
@@ -140,17 +140,17 @@ class Face:
 
     @property
     def id(self) -> str:
-        """ID of the face."""
+        """Face ID."""
         return self._id
 
     @property
     def _grpc_id(self) -> FaceIdentifier:
-        """gRPC face identifier."""
+        """gRPC face ID."""
         return FaceIdentifier(id=self._id)
 
     @property
     def body(self) -> "Body":
-        """The body to which the face belongs."""
+        """Body that the face belongs to."""
         return self._body
 
     @property
@@ -169,7 +169,7 @@ class Face:
     @property
     @protect_grpc
     def edges(self) -> List[Edge]:
-        """Get all ``Edge`` objects of our ``Face``."""
+        """Get all edges of the face."""
         self._grpc_client.log.debug("Requesting face edges from server.")
         edges_response = self._faces_stub.GetFaceEdges(self._grpc_id)
         return self.__grpc_edges_to_edges(edges_response.edges)
@@ -177,7 +177,7 @@ class Face:
     @property
     @protect_grpc
     def loops(self) -> List[FaceLoop]:
-        """Face loops of the ``Face``."""
+        """Get all face loops of the face."""
         self._grpc_client.log.debug("Requesting face loops from server.")
         grpc_loops = self._faces_stub.GetFaceLoops(GetFaceLoopsRequest(face=self.id)).loops
         loops = []
@@ -212,23 +212,22 @@ class Face:
 
     @protect_grpc
     def face_normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:
-        """Normal direction to the ``Face`` evaluated at certain UV coordinates.
+        """Get the normal direction to the face evaluated at certain UV coordinates.
 
         Notes
         -----
-        In order to properly use this API, please consider that you must
-        handle UV coordinates and thus know how these relate to the
-        underlying Geometry Service. It is an advanced API for Geometry
-        experts only.
+        To properly use this method, you must handle UV coordinates. Thus, you must
+        know how these relate to the underlying Geometry service. It is an advanced
+        method for Geometry experts only.
 
         Parameters
         ----------
-        u : float
+        u : float, optional
             First coordinate of the 2D representation of a surface in UV space.
-            By default, 0.5 (i.e. the center of the surface)
+            The default is ``0.5``, which is the center of the surface.
         v : float
             Second coordinate of the 2D representation of a surface in UV space.
-            By default, 0.5 (i.e. the center of the surface)
+            The default is ``0.5``, which is the the center of the surface.
 
         Returns
         -------
@@ -236,8 +235,7 @@ class Face:
             The :class:`UnitVector3D <ansys.geometry.core.math.vector.unitVector3D>`
             object evaluated at the given U and V coordinates.
             This :class:`UnitVector3D <ansys.geometry.core.math.vector.unitVector3D>`
-            will be perpendicular to the surface at that
-            given UV coordinates.
+            object is perpendicular to the surface at the given UV coordinates.
         """
         self._grpc_client.log.debug(f"Requesting face normal from server with (u,v)=({u},{v}).")
         response = self._faces_stub.GetFaceNormal(
@@ -247,46 +245,45 @@ class Face:
 
     @protect_grpc
     def face_point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
-        """Returns a point of the ``Face`` evaluated with UV coordinates.
+        """Get a point of the face evaluated evaluated at certain UV coordinates.
 
         Notes
         -----
-        In order to properly use this API, please consider that you must
-        handle UV coordinates and thus know how these relate to the
-        underlying Geometry Service. It is an advanced API for Geometry
-        experts only.
+        To properly use this method, you must handle UV coordinates. Thus, you must
+        know how these relate to the underlying Geometry service. It is an advanced
+        method for Geometry experts only.
 
         Parameters
         ----------
-        u : float
+        u : float, optional
             First coordinate of the 2D representation of a surface in UV space.
-            By default, 0.5.
+            The default is ``0.5``, which is the center of the surface.
         v : float
             Second coordinate of the 2D representation of a surface in UV space.
-            By default, 0.5.
+            The default is ``0.5``, which is the the center of the surface.
 
         Returns
         -------
         Point
             The :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
-            object evaluated at the given U and V coordinates.
+            object evaluated at the given UV coordinates.
         """
         self._grpc_client.log.debug(f"Requesting face point from server with (u,v)=({u},{v}).")
         response = self._faces_stub.EvaluateFace(EvaluateFaceRequest(face=self.id, u=u, v=v)).point
         return Point3D([response.x, response.y, response.z], SERVER_UNIT_LENGTH)
 
     def __grpc_edges_to_edges(self, edges_grpc: List[GRPCEdge]) -> List[Edge]:
-        """Transform a list of gRPC Edge messages into actual ``Edge`` objects.
+        """Transform a list of gRPC edge messages into actual ``Edge`` objects.
 
         Parameters
         ----------
         edges_grpc : List[GRPCEdge]
-            A list of gRPC messages of type Edge.
+            List of gRPC messages of type ``Edge``.
 
         Returns
         -------
         List[Edge]
-            ``Edge`` objects obtained from gRPC messages.
+            ``Edge`` objects to obtain from gRPC messages.
         """
         edges = []
         for edge_grpc in edges_grpc:

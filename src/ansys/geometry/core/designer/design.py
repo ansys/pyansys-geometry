@@ -1,4 +1,4 @@
-"""``Design`` class module."""
+"""Provides the ``Design`` class module."""
 
 from enum import Enum
 from pathlib import Path
@@ -48,26 +48,27 @@ from ansys.geometry.core.typing import RealSequence
 
 
 class DesignFileFormat(Enum):
-    """Available file formats supported by the Design class for download."""
+    """Provides file formats supported by the ``Design`` class for download.
 
-    SCDOCX = "SCDOCX", None
-    PARASOLID_TEXT = "PARASOLID_TEXT", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_TEXT
-    PARASOLID_BIN = "PARASOLID_BIN", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_BINARY
-    INVALID = "INVALID", None
-
+    - SCDOCX = "SCDOCX", None
+    - PARASOLID_TEXT = "PARASOLID_TEXT", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_TEXT
+    - PARASOLID_BIN = "PARASOLID_BIN", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_BINARY
+    - INVALID = "INVALID", None
+    """
+ 
 
 class Design(Component):
     """
-    Provides a ``Design`` for organizing geometry assemblies.
+    Provides the ``Design`` class for organizing geometry assemblies.
 
-    Synchronizes to a supporting geometry service instance.
+    This class synchronizes to a supporting Geometry service instance.
 
     Parameters
     ----------
     name : str
-        A user-defined label for the design.
+        User-defined label for the design.
     grpc_client : GrpcClient
-        An active supporting geometry service instance for design modeling.
+        Active supporting Geometry service instance for design modeling.
     """
 
     # Types of the class instance private attributes
@@ -97,29 +98,29 @@ class Design(Component):
 
     @property
     def materials(self) -> List[Material]:
-        """List of available ``Material`` objects for our ``Design``."""
+        """List of materials available for the design."""
         return self._materials
 
     @property
     def named_selections(self) -> List[NamedSelection]:
-        """List of available ``NamedSelection`` objects for our ``Design``."""
+        """List of named selections available for the design."""
         return list(self._named_selections.values())
 
     @property
     def beam_profiles(self) -> List[BeamProfile]:
-        """List of available ``BeamProfile`` objects for our ``Design``."""
+        """List of beam profile available for the design."""
         return list(self._beam_profiles.values())
 
     # TODO: allow for list of materials
     @protect_grpc
     @check_input_types
     def add_material(self, material: Material) -> None:
-        """Adds a ``Material`` to the ``Design``
+        """Add a material to the design.
 
         Parameters
         ----------
         material : Material
-            ``Material`` to be added.
+            Material to add.
         """
         # TODO: Add design id to the request
         self._materials_stub.AddMaterialToDocument(
@@ -140,24 +141,24 @@ class Design(Component):
         )
         self._materials.append(material)
 
-        self._grpc_client.log.debug(f"Material {material.name} successfully added to design.")
+        self._grpc_client.log.debug(f"Material {material.name} is successfully added to design.")
 
     @protect_grpc
     @check_input_types
     def save(self, file_location: Union[Path, str]) -> None:
-        """Saves a design to disk on the active geometry server instance.
+        """Save a design to disk on the active Geometry server instance.
 
         Parameters
         ----------
         file_location : Union[Path, str]
-            Location on disk where the file should be saved.
+            Location on disk to save the file to.
         """
         # Sanity checks on inputs
         if isinstance(file_location, Path):
             file_location = str(file_location)
 
         self._design_stub.SaveAs(SaveAsDocumentRequest(filepath=file_location))
-        self._grpc_client.log.debug(f"Design successfully saved at location {file_location}.")
+        self._grpc_client.log.debug(f"Design is successfully saved at location {file_location}.")
 
     @protect_grpc
     @check_input_types
@@ -167,26 +168,26 @@ class Design(Component):
         format: Optional[DesignFileFormat] = DesignFileFormat.SCDOCX,
         as_stream: Optional[bool] = False,
     ) -> None:
-        """Downloads a design from the active geometry server instance.
+        """Download a design from the active Geometry server instance.
 
         Parameters
         ----------
         file_location : Union[Path, str]
-            Location on disk where the file should be saved.
+            Location on disk to save the file to.
         format : Optional[DesignFileFormat]
-            Format in which to export the design. By default, as an ``SCDOCX`` file.
-        as_stream : bool, default: False
-            Boolean indicating whether to use the gRPC stream functionality (if possible).
-            or the single message approach. By default, ``False``
+            Format for the file to save to. The default is an ``SCDOCX`` file.
+        as_stream : bool, optional
+            Whether to use the gRPC stream functionality (if possible). The default
+            is ``False``. If ``True``, the single-message functionality is used.
         """
         # Sanity checks on inputs
         if isinstance(file_location, Path):
             file_location = str(file_location)
 
         # Process response (as stream or single file)
-        stream_msg = f"Downloading design in {format.value[0]} format using stream mechanism."
+        stream_msg = f"Downloading design in {format.value[0]} format using the stream mechanism."
         single_msg = (
-            f"Downloading design in {format.value[0]} format using single-message mechanism."
+            f"Downloading design in {format.value[0]} format using the single-message mechanism."
         )
         received_bytes = bytes()
         if format is DesignFileFormat.SCDOCX:
@@ -204,14 +205,14 @@ class Design(Component):
         ):
             if as_stream:
                 self._grpc_client.log.warning(
-                    "Streaming mechanism not supported for Parasolid format."
+                    "Streaming mechanism is not supported for Parasolid format."
                 )
             self._grpc_client.log.debug(single_msg)
             response = self._design_stub.ExportDesign(ExportDesignRequest(format=format.value[1]))
             received_bytes += response.data
         else:
             self._grpc_client.log.warning(
-                f"{format.value[0]} format requested not supported. Ignoring download request."
+                f"{format.value[0]} format requested is not supported. Ignoring this download request."
             )
             return
 
@@ -220,7 +221,7 @@ class Design(Component):
         downloaded_file.write(received_bytes)
         downloaded_file.close()
 
-        self._grpc_client.log.debug(f"Design successfully downloaded at location {file_location}.")
+        self._grpc_client.log.debug(f"Design is successfully downloaded at location {file_location}.")
 
     @check_input_types
     def create_named_selection(
@@ -230,26 +231,26 @@ class Design(Component):
         faces: Optional[List[Face]] = None,
         edges: Optional[List[Edge]] = None,
     ) -> NamedSelection:
-        """Creates a named selection on the active geometry server instance.
+        """Create a named selection on the active Geometry server instance.
 
         Parameters
         ----------
         name : str
-            A user-defined name for the named selection.
+            User-defined name for the named selection.
         bodies : List[Body], optional
-            All bodies that should be included in the named selection.
-            By default, ``None``.
+            All bodies to include in the named selection.
+            The default is``None``.
         faces : List[Face], optional
-            All faces that should be included in the named selection.
-            By default, ``None``.
+            All faces to include in the named selection.
+            The default is ``None``.
         edges : List[Edge], optional
-            All edges that should be included in the named selection.
-            By default, ``None``.
+            All edges to include in the named selection.
+            The default is ``None``.
 
         Returns
         -------
         NamedSelection
-            A newly created named selection maintaining references to all target entities.
+            Newly created named selection maintaining references to all target entities.
         """
         named_selection = NamedSelection(
             name, self._grpc_client, bodies=bodies, faces=faces, edges=edges
@@ -263,12 +264,12 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     def delete_named_selection(self, named_selection: Union[NamedSelection, str]) -> None:
-        """Removes a named selection on the active geometry server instance.
+        """Delete a named selection on the active Geometry server instance.
 
         Parameters
         ----------
         named_selection : Union[NamedSelection, str]
-            A named selection name or instance that should be deleted.
+            Name of the named selection or instance to delete.
         """
         removal_name = (
             named_selection.name if not isinstance(named_selection, str) else named_selection
@@ -277,53 +278,53 @@ class Design(Component):
 
         try:
             self._named_selections.pop(removal_name)
-            self._grpc_client.log.debug(f"Named selection {removal_name} successfully deleted.")
+            self._grpc_client.log.debug(f"Named selection {removal_name} is successfully deleted.")
         except KeyError:
             self._grpc_client.log.warning(
                 f"Attempted named selection deletion failed, with name {removal_name}."
-                + " Ignoring request."
+                + " Ignoring this request."
             )
             pass
 
     @check_input_types
     def delete_component(self, component: Union["Component", str]) -> None:
-        """Deletes an existing component (itself or its children).
+        """Delete a component (itself or its children).
 
         Notes
         -----
         If the component is not this component (or its children), it
-        will not be deleted.
+        is not deleted.
 
         Parameters
         ----------
         id : Union[Component, str]
-            The name of the component or instance that should be deleted.
+            Name of the component or instance to delete.
 
         Raises
         ------
         ValueError
-            ``Design`` itself cannot be deleted.
+            The design itself cannot be deleted.
         """
         id = component.id if not isinstance(component, str) else component
         if id == self.id:
-            raise ValueError("The Design object itself cannot be deleted.")
+            raise ValueError("The design itself cannot be deleted.")
         else:
             return super().delete_component(component)
 
     def set_shared_topology(self, share_type: SharedTopologyType) -> None:
-        """Defines the shared topology to be applied to the component.
+        """Set the shared topology to apply to the component.
 
         Parameters
         ----------
         share_type : SharedTopologyType
-            The shared topology type to be assigned to the component.
+            Shared topology type to assign to the component.
 
         Raises
         ------
         ValueError
-            Shared topology does not apply on ``Design``.
+            Shared topology does not apply to a design.
         """
-        raise ValueError("The Design object itself cannot have a shared topology.")
+        raise ValueError("The design itself cannot have a shared topology.")
 
     @protect_grpc
     @check_input_types
@@ -336,17 +337,16 @@ class Design(Component):
         direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Y,
     ) -> BeamCircularProfile:
         """
-        Creates a new ``BeamCircularProfile`` under the design for future
-        creation of ``Beam`` entities.
+        Add a new beam circular profile under the design for the future creation of beams.
 
         Parameters
         ----------
         name : str
-            User-defined label identifying the ``BeamCircularProfile``
-        radius : Real
-            Radius of the ``BeamCircularProfile``.
+            User-defined label dfor the new beam circular profile.
+        radius : float
+            Radius of the beam circular profile.
         center : Union[~numpy.ndarray, RealSequence, Point3D]
-            Center of the ``BeamCircularProfile``.
+            Center of the beam circular profile.
         direction_x : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
             X-plane direction.
         direction_y : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
@@ -360,7 +360,7 @@ class Design(Component):
             raise ValueError("Radius must be a real positive value.")
 
         if not dir_x.is_perpendicular_to(dir_y):
-            raise ValueError("Direction x and direction y must be perpendicular.")
+            raise ValueError("Direction X and direction Y must be perpendicular.")
 
         request = CreateBeamCircularProfileRequest(
             origin=point3d_to_grpc_point(center),
@@ -369,13 +369,13 @@ class Design(Component):
             name=name,
         )
 
-        self._grpc_client.log.debug(f"Creating beam circular profile on {self.id}...")
+        self._grpc_client.log.debug(f"Creating a beam circular profile on {self.id}...")
 
         response = self._commands_stub.CreateBeamCircularProfile(request)
         profile = BeamCircularProfile(response.id, name, radius, center, dir_x, dir_y)
         self._beam_profiles[profile.name] = profile
 
-        self._grpc_client.log.debug(f"Beam circular profile {profile.name} successfully created.")
+        self._grpc_client.log.debug(f"Beam circular profile {profile.name} is successfully created.")
 
         return self._beam_profiles[profile.name]
 

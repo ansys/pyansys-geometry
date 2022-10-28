@@ -1,4 +1,4 @@
-"""``CoordinateSystem`` class module."""
+"""Provides the ``CoordinateSystem`` class module."""
 
 from ansys.api.geometry.v0.coordinatesystems_pb2 import CreateCoordinateSystemRequest
 from ansys.api.geometry.v0.coordinatesystems_pb2_grpc import CoordinateSystemsStub
@@ -19,18 +19,18 @@ class CoordinateSystem:
     """
     Represents a user-defined coordinate system within the design assembly.
 
-    Synchronizes to a design within a supporting geometry service instance.
+    This coordinate system synchronizes to a design within a supporting geometry service instance.
 
     Parameters
     ----------
     name : str
-        A user-defined label for the coordinate system.
+        User-defined label for the coordinate system.
     frame : Frame
-        The frame defining the coordinate system bounds.
+        Frame defining the coordinate system bounds.
     parent_component : Component
-        The parent component the coordinate system is assigned against.
+        Parent component the coordinate system is assigned against.
     grpc_client : GrpcClient
-        An active supporting geometry service instance for design modeling.
+        Active supporting Geometry service instance for design modeling.
     """
 
     @protect_grpc
@@ -43,7 +43,7 @@ class CoordinateSystem:
         self._grpc_client = grpc_client
         self._coordinate_systems_stub = CoordinateSystemsStub(grpc_client.channel)
 
-        self._grpc_client.log.debug("Requesting creation of Coordinate System.")
+        self._grpc_client.log.debug("Requesting creation of a coordinate system.")
         new_coordinate_system = self._coordinate_systems_stub.CreateCoordinateSystem(
             CreateCoordinateSystemRequest(
                 parent=parent_component.id,

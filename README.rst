@@ -31,15 +31,15 @@ PyGeometry
    :alt: Black
 
 
-A Python client library for the Ansys Geometry Service.
+PyGeometry is a Python client library for the Ansys Geometry service.
 
 Usage
 -----
 
-First, start the service locally. If you have docker installed and have
+First, start the Geometry service locally. If you have Docker installed and have
 `authenticated to ghcr.io
 <https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry>`_,
-you can start the geometry service locally using ``docker`` with:
+you can start the service locally using Docker with:
 
 .. code:: bash
 
@@ -52,21 +52,21 @@ Next, connect to the service with:
    >>> from ansys.geometry.core import Modeler
    >>> modeler = Modeler()
 
-By default ``Modeler`` will connect to ``127.0.0.1`` (``'localhost'``) at the
-port 50051. You can change this by modifying the ``host`` and ``port``
-parameters of ``Modeler``, but note that you will have to also modify this in
+By default ``Modeler`` connects to ``127.0.0.1`` (``'localhost'``) on
+port ``50051``. You can change this by modifying the ``host`` and ``port``
+parameters of ``Modeler``, but note that you must also modify
 your ``docker run`` command by changing ``<HOST-PORT>-50051``.
 
-If you wish to modify the defaults, modify the following environment variables:
+If you want to change the defaults, modify the following environment variables:
 
-If on Linux/Mac OS:
+**On Linux/Mac OS**
 
 .. code::
 
    export ANSRV_GEO_HOST=127.0.0.1
    export ANSRV_GEO_PORT=50051
 
-Or Windows:
+**On Windows**
 
 .. code::
 
@@ -74,22 +74,22 @@ Or Windows:
    SET ANSRV_GEO_PORT=50051
 
 
-How to install
---------------
+Install the package
+-------------------
 
-We have three modes of installation: user, developer and offline.
+PyGeometry has three installation modes: user, developer, and offline.
 
-For users
-^^^^^^^^^
+Install in user mode
+^^^^^^^^^^^^^^^^^^^^
 
-In order to install PyGeometry, make sure you have the latest version of
-`pip`_. To do so, run:
+Before installing PyGeometry in user mode, make sure you have the latest version of
+`pip`_ with:
 
 .. code:: bash
 
    python -m pip install -U pip
 
-Then, you can simply execute:
+Then, install PyGeometry with:
 
 .. code:: bash
 
@@ -110,22 +110,26 @@ Then, you can simply execute:
 
         pip install ansys-geometry-core --index-url=https://${PRIVATE_PYPI_ACCESS_TOKEN}@pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/
 
-For developers
-^^^^^^^^^^^^^^
+Install in developer mode
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Installing PyGeometry in developer mode allows
 you to modify the source and enhance it.
 
-Before contributing to the project, please refer to the `PyAnsys Developer's guide`_. You will 
-need to follow these steps:
+.. note::
+   
+    Before contributing to the project, ensure that you are thoroughly familiar
+    with the `PyAnsys Developer's Guide`_.
+    
+To install PyGeomery in developer mode, perform these steps:
 
-#. Start by cloning this repository:
+#. Clone the ``pygeometry`` repository:
 
    .. code:: bash
 
       git clone https://github.com/pyansys/pygeometry
 
-#. Create a fresh-clean Python environment and activate it:
+#. Create a clean Python virtual environment and activate it:
 
    .. code:: bash
 
@@ -154,17 +158,17 @@ need to follow these steps:
     
       poetry run python -m pip install ansys-geometry-core
         
-#. Finally, verify your development installation by running:
+#. Verify your development installation by running:
 
    .. code:: bash
         
       tox
 
-Offline mode installation
-^^^^^^^^^^^^^^^^^^^^^^^^^
+Install in offline mode
+^^^^^^^^^^^^^^^^^^^^^^^
 
 If you lack an internet connection on your installation machine (or you do not have access to the
-private Ansys PyPI packages repository), the recommended way of installing PyGeometry is downloading the wheelhouse
+private Ansys PyPI packages repository), you should install PyGeometry by downloading the wheelhouse
 archive from the `Releases Page <https://github.com/pyansys/pygeometry/releases>`_ for your
 corresponding machine architecture.
 
@@ -172,51 +176,53 @@ Each wheelhouse archive contains all the Python wheels necessary to install PyGe
 Linux, and MacOS from Python 3.7 to 3.10. You can install this on an isolated system with a fresh Python
 installation or on a virtual environment.
 
-For example, on Linux with Python 3.7, unzip the wheelhouse archive and install it with the following:
+For example, on Linux with Python 3.7, unzip the wheelhouse archive and install it with:
 
 .. code:: bash
 
     unzip ansys-geometry-core-v0.2.dev0-wheelhouse-Linux-3.7.zip wheelhouse
     pip install ansys-geometry-core -f wheelhouse --no-index --upgrade --ignore-installed
 
-If you're on Windows with Python 3.9, unzip to a wheelhouse directory and install using the same command as above.
+If you're on Windows with Python 3.9, unzip to a wheelhouse directory and install using the preceding command.
 
 Consider installing using a `virtual environment <https://docs.python.org/3/library/venv.html>`_.
 
 Testing
 -------
 
-This project takes advantage of `tox`_. This tool allows to automate common
-development tasks (similar to Makefile) but it is oriented towards Python
+This project takes advantage of `tox`_. This tool automate common
+development tasks (similar to Makefile), but it is oriented towards Python
 development. 
 
-Using tox
-^^^^^^^^^
+Using ``tox``
+^^^^^^^^^^^^^
 
-As Makefile has rules, `tox`_ has environments. In fact, the tool creates its
-own virtual environment so anything being tested is isolated from the project in
-order to guarantee project's integrity. The following environments commands are provided:
+While Makefile has rules, `tox`_ has environments. In fact, ``tox`` creates its
+own virtual environment so that anything being tested is isolated from the project
+to guarantee the project's integrity.
 
-- **tox -e style**: will check for coding style quality.
-- **tox -e py**: checks for unit tests.
-- **tox -e py-coverage**: checks for unit testing and code coverage.
-- **tox -e doc**: checs for documentation building process.
+The following environments commands are provided:
+
+- **tox -e style**: Checks for coding style quality.
+- **tox -e py**: Checks for unit tests.
+- **tox -e py-coverage**: Checks for unit testing and code coverage.
+- **tox -e doc**: Checks for documentation building process.
 
 
 Raw testing
 ^^^^^^^^^^^
 
-If required, you can always call the style commands (`black`_, `isort`_,
-`flake8`_...) or unit testing ones (`pytest`_) from the command line. However,
-this does not guarantee that your project is being tested in an isolated
+If required, from the command line, you can call style commands, including
+`black`_, `isort`_, and `flake8`_, and unit testing commands like `pytest`_.
+However, this does not guarantee that your project is being tested in an isolated
 environment, which is the reason why tools like `tox`_ exist.
 
 
-A note on pre-commit
+Using ``pre-commit``
 ^^^^^^^^^^^^^^^^^^^^
 
 The style checks take advantage of `pre-commit`_. Developers are not forced but
-encouraged to install this tool via:
+encouraged to install this tool with:
 
 .. code:: bash
 
@@ -226,14 +232,15 @@ encouraged to install this tool via:
 Documentation
 -------------
 
-For building documentation, you can either run the usual rules provided in the
-`Sphinx`_ Makefile, such us:
+For building documentation, you can run the usual rules provided in the
+`Sphinx`_ Makefile, such as:
 
 .. code:: bash
 
     make -C doc/ html && your_browser_name doc/html/index.html
 
-However, the recommended way of checking documentation integrity is using:
+However, the recommended way of checking documentation integrity is to use
+``tox``:
 
 .. code:: bash
 
@@ -259,7 +266,7 @@ the building requirements and then executing the build module:
 .. _isort: https://github.com/PyCQA/isort
 .. _pip: https://pypi.org/project/pip/
 .. _pre-commit: https://pre-commit.com/
-.. _PyAnsys Developer's guide: https://dev.docs.pyansys.com/
+.. _PyAnsys Developer's Guide: https://dev.docs.pyansys.com/
 .. _pytest: https://docs.pytest.org/en/stable/
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
 .. _tox: https://tox.wiki/

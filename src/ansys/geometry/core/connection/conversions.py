@@ -1,4 +1,4 @@
-"""``Conversions`` module."""
+"""Provides the ``Conversions`` module."""
 
 from ansys.api.geometry.v0.models_pb2 import Arc as GRPCArc
 from ansys.api.geometry.v0.models_pb2 import Circle as GRPCCircle
@@ -31,7 +31,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 def unit_vector_to_grpc_direction(unit_vector: UnitVector3D) -> GRPCDirection:
-    """Marshals a :class:`UnitVector3D` to a UnitVector gRPC message of the Geometry Service.
+    """Marshals a :class:`UnitVector3D` class to a Unit vector gRPC message of the Geometry service.
 
     Parameters
     ----------
@@ -41,13 +41,13 @@ def unit_vector_to_grpc_direction(unit_vector: UnitVector3D) -> GRPCDirection:
     Returns
     -------
     GRPCDirection
-        Geometry Service gRPC Direction message.
+        Geometry service gRPC direction message.
     """
     return GRPCDirection(x=unit_vector.x, y=unit_vector.y, z=unit_vector.z)
 
 
 def frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
-    """Marshals a :class:`Frame` to a Frame gRPC message of the Geometry Service.
+    """Marshals a :class:`Frame` class to a frame gRPC message of the Geometry service.
 
     Parameters
     ----------
@@ -57,7 +57,7 @@ def frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
     Returns
     -------
     GRPCFrame
-        Geometry Service gRPC Frame message. Frame origin units in meters.
+        Geometry service gRPC frame message. The unit for the frame origin is meters.
     """
     return GRPCFrame(
         origin=point3d_to_grpc_point(frame.origin),
@@ -67,7 +67,7 @@ def frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
 
 
 def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
-    """Marshals a :class:`Plane` to a Plane gRPC message of the Geometry Service.
+    """Marshals a :class:`Plane` class to a Plane gRPC message of the Geometry service.
 
     Parameters
     ----------
@@ -77,7 +77,7 @@ def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
     Returns
     -------
     GRPCPlane
-        Geometry Service gRPC Plane message, units in meters.
+        Geometry service gRPC plane message. The unit is meters.
     """
     return GRPCPlane(
         frame=GRPCFrame(
@@ -94,28 +94,27 @@ def sketch_shapes_to_grpc_geometries(
     faces: List[SketchFace],
     only_one_curve: Optional[bool] = False,
 ) -> Geometries:
-    """
-    Marshals a list of :class:`SketchEdge` and :class:`SketchFace`
-    to a Geometries gRPC message of the Geometry Service.
+    """Marshals a list of :class:`SketchEdge` and :class:`SketchFace`
+    classes to a geometries gRPC message of the Geometry service.
 
     Parameters
     ----------
     plane : Plane
-        The plane to position the 2D sketches.
+        Plane for positioning the 2D sketches.
     edges : List[SketchEdge]
         Source edge data.
     faces : List[SketchFace]
         Source face data.
     shapes : List[BaseShape]
         Source shape data.
-    only_one_curve : Optional[bool]
-        Indicates that we only want to project one curve of the whole
-        set of geometries, for performance enhancement. By default, ``False``.
+    only_one_curve : bool, optional
+        Whether to project one curve of the whole set of geometries to
+        enhancce performance. The default is ``False``.
 
     Returns
     -------
     Geometries
-        Geometry Service gRPC Geometries message, units in meters.
+        Geometry service gRPC geometries message. The unit is meters.
     """
     geometries = Geometries()
 
@@ -157,20 +156,20 @@ def sketch_edges_to_grpc_geometries(
     edges: List[SketchEdge],
     plane: Plane,
 ) -> Tuple[List[GRPCLine], List[GRPCArc]]:
-    """Marshals a list of :class:`SketchEdge` to a Geometries gRPC message of
-    the Geometry Service.
+    """Marshals a list of :class:`SketchEdge` classes to a geometries gRPC message of
+    the Geometry service.
 
     Parameters
     ----------
     edges : List[SketchEdge]
         Source edge data.
     plane : Plane
-        The plane to position the 2D sketches.
+        Plane for positioning the 2D sketches.
 
     Returns
     -------
     Tuple[List[GRPCLine], List[GRPCArc]]
-        Geometry Service gRPC lines and arcs, units in meters.
+        Geometry service gRPC line and arc messages. The unit is meters.
     """
     arcs = []
     segments = []
@@ -184,19 +183,19 @@ def sketch_edges_to_grpc_geometries(
 
 
 def sketch_arc_to_grpc_arc(arc: Arc, plane: Plane) -> GRPCArc:
-    """Marshals an :class:`Arc` to an Arc gRPC message of the Geometry Service.
+    """Marshals an :class:`Arc` class to an arc gRPC message of the Geometry service.
 
     Parameters
     ----------
     arc : Arc
         Source arc data.
     plane : Plane
-        The plane to position the arc within.
+        Plane for positioning the arc within.
 
     Returns
     -------
     GRPCArc
-        Geometry Service gRPC Arc message, units in meters.
+        Geometry service gRPC arc message. The unit is meters.
     """
     axis = (
         unit_vector_to_grpc_direction(plane.direction_z)
@@ -213,7 +212,7 @@ def sketch_arc_to_grpc_arc(arc: Arc, plane: Plane) -> GRPCArc:
 
 
 def sketch_ellipse_to_grpc_ellipse(ellipse: Ellipse, plane: Plane) -> GRPCEllipse:
-    """Marshals an :class:`Ellipse` to an Ellipse gRPC message of the Geometry Service.
+    """Marshals an :class:`Ellipse` class to an ellipse gRPC message of the Geometry service.
 
     Parameters
     ----------
@@ -223,7 +222,7 @@ def sketch_ellipse_to_grpc_ellipse(ellipse: Ellipse, plane: Plane) -> GRPCEllips
     Returns
     -------
     GRPCEllipse
-        Geometry Service gRPC Ellipse message, units in meters.
+        Geometry service gRPC ellipse message. The unit is meters.
     """
     return GRPCEllipse(
         center=point2d_to_grpc_point(plane, ellipse.center),
@@ -235,20 +234,19 @@ def sketch_ellipse_to_grpc_ellipse(ellipse: Ellipse, plane: Plane) -> GRPCEllips
 
 def sketch_circle_to_grpc_circle(circle: Circle, plane: Plane) -> GRPCCircle:
     """
-    Marshals a :class:`Circle`
-    to a Circle gRPC message of the Geometry Service.
+    Marshals a :class:`Circle` class to a circle gRPC message of the Geometry service.
 
     Parameters
     ----------
     circle : Circle
         Source circle data.
     plane : Plane
-        The plane to position the 2D circle.
+        Plane for positioning the 2D circle.
 
     Returns
     -------
     GRPCCircle
-        Geometry Service gRPC Circle message, units in meters.
+        Geometry service gRPC circle message. The unit is meters.
     """
     return GRPCCircle(
         center=point2d_to_grpc_point(plane, circle.center),
@@ -257,7 +255,7 @@ def sketch_circle_to_grpc_circle(circle: Circle, plane: Plane) -> GRPCCircle:
 
 
 def point3d_to_grpc_point(point: Point3D) -> GRPCPoint:
-    """Marshals a :class:`Point3D` to a Point gRPC message of the Geometry Service.
+    """Marshals a :class:`Point3D` class to a point gRPC message of the Geometry service.
 
     Parameters
     ----------
@@ -267,7 +265,7 @@ def point3d_to_grpc_point(point: Point3D) -> GRPCPoint:
     Returns
     -------
     GRPCPoint
-        Geometry Service gRPC Point message, units in meters.
+        Geometry service gRPC point message. The unit is meters.
     """
     return GRPCPoint(
         x=point.x.m_as(SERVER_UNIT_LENGTH),
@@ -278,20 +276,19 @@ def point3d_to_grpc_point(point: Point3D) -> GRPCPoint:
 
 def point2d_to_grpc_point(plane: Plane, point2d: Point2D) -> GRPCPoint:
     """
-    Marshals a :class:`Point2D`
-    to a Point gRPC message of the Geometry Service.
+    Marshals a :class:`Point2D` class to a point gRPC message of the Geometry service.
 
     Parameters
     ----------
     plane : Plane
-        The plane to position the 2D point.
-    point : Point3D
+        Plane for positioning the 2D point.
+    point : Point2D
         Source point data.
 
     Returns
     -------
     GRPCPoint
-        Geometry Service gRPC Point message, units in meters.
+        Geometry service gRPC point message. The unit is meters.
     """
     point3d = plane.transform_point2d_local_to_global(point2d)
     return GRPCPoint(
@@ -302,7 +299,7 @@ def point2d_to_grpc_point(plane: Plane, point2d: Point2D) -> GRPCPoint:
 
 
 def sketch_polygon_to_grpc_polygon(polygon: Polygon, plane: Plane) -> GRPCPolygon:
-    """Marshals a :class:`Polygon` to a Polygon gRPC message of the Geometry Service.
+    """Marshals a :class:`Polygon` class to a polygon gRPC message of the Geometry service.
 
     Parameters
     ----------
@@ -312,7 +309,7 @@ def sketch_polygon_to_grpc_polygon(polygon: Polygon, plane: Plane) -> GRPCPolygo
     Returns
     -------
     GRPCPolygon
-        Geometry Service gRPC Polygon message, units in meters.
+        Geometry service gRPC polygon message. The unit is meters.
     """
     return GRPCPolygon(
         center=point2d_to_grpc_point(plane, polygon.center),
@@ -323,7 +320,7 @@ def sketch_polygon_to_grpc_polygon(polygon: Polygon, plane: Plane) -> GRPCPolygo
 
 
 def sketch_segment_to_grpc_line(segment: Segment, plane: Plane) -> GRPCLine:
-    """Marshals a :class:`Segment` to a Line gRPC message of the Geometry Service.
+    """Marshals a :class:`Segment` class to a line gRPC message of the Geometry service.
 
     Parameters
     ----------
@@ -333,7 +330,7 @@ def sketch_segment_to_grpc_line(segment: Segment, plane: Plane) -> GRPCLine:
     Returns
     -------
     GRPCLine
-        Geometry Service gRPC Line message, units in meters.
+        Geometry service gRPC line message. The unit is meters.
     """
     return GRPCLine(
         start=point2d_to_grpc_point(plane, segment.start),
@@ -342,7 +339,7 @@ def sketch_segment_to_grpc_line(segment: Segment, plane: Plane) -> GRPCLine:
 
 
 def tess_to_pd(tess: Tessellation) -> "PolyData":
-    """Convert a ansys.api.geometry.Tessellation to a :class:`pyvista.PolyData`."""
+    """Convert an ``ansys.api.geometry.Tessellation`` to a :class:`pyvista.PolyData` class."""
     # lazy imports here to improve initial load
     import numpy as np
     import pyvista as pv
