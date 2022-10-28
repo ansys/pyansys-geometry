@@ -8,3 +8,4 @@ from ansys.geometry.core.connection.conversions import (
     unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
+from ansys.geometry.core.connection.launcher import launch_modeler

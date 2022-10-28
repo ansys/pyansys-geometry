@@ -59,13 +59,14 @@ jobs:
           vale_flags: "--config=doc/.vale.ini"
 
   smoke-tests:
-    name: Build and Smoke tests (Ubuntu only)
-    runs-on: ubuntu-latest
+    name: Build and Smoke tests
+    runs-on: ${{ matrix.os }}
     needs: [style]
     strategy:
-      matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10']
       fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.7', '3.8', '3.9', '3.10']
 
     steps:
       - uses: actions/checkout@v3
@@ -106,15 +107,15 @@ jobs:
           path: '*.zip'
           retention-days: 7
 
-  remaining-smoke-tests:
-    name: Build and Smoke tests (Windows, macOS)
-    runs-on: ${{ matrix.os }}
-    needs: [smoke-tests]
+  macos-build:
+    name: Build and Smoke tests (macOS)
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
+    runs-on: macos-latest
+    needs: [style]
     strategy:
-      matrix:
-        os: [windows-latest, macos-latest]
-        python-version: ['3.7', '3.8', '3.9', '3.10']
       fail-fast: false
+      matrix:
+        python-version: ['3.7', '3.8', '3.9', '3.10']
 
     steps:
       - uses: actions/checkout@v3
@@ -289,7 +290,7 @@ jobs:
 
   package:
     name: Package library
-    needs: [testing, docs, remaining-smoke-tests]
+    needs: [testing, docs]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -322,7 +323,7 @@ jobs:
   release:
     name: Release project
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    needs: [package]
+    needs: [package, macos-build]
     runs-on: ubuntu-latest
     steps:
       - name: Set up Python
@@ -372,7 +373,7 @@ jobs:
     name: Upload documentation
     if: (github.event_name == 'push' && contains(github.ref, 'refs/tags')) || (github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
-    needs: [package]
+    needs: [package, macos-build]
     steps:
       - uses: actions/checkout@v3
 
