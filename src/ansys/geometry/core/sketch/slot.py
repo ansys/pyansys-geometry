@@ -1,13 +1,14 @@
 """``Slot`` class module."""
-from typing import Optional, Union
 
+from beartype import beartype as check_input_types
+from beartype.typing import Optional, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Matrix33, Point2D
-from ansys.geometry.core.misc import UNIT_ANGLE, Angle, Distance, check_type
+from ansys.geometry.core.misc import UNIT_ANGLE, Angle, Distance
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import Segment
@@ -30,6 +31,7 @@ class Slot(SketchFace):
         The placement angle for orientation alignment.
     """
 
+    @check_input_types
     def __init__(
         self,
         center: Point2D,
@@ -40,13 +42,7 @@ class Slot(SketchFace):
         """Initializes the slot shape."""
         super().__init__()
 
-        check_type(center, Point2D)
         self._center = center
-
-        check_type(width, (Quantity, Distance, int, float))
-        check_type(height, (Quantity, Distance, int, float))
-        check_type(angle, (Quantity, Angle, int, float))
-
         self._width = width if isinstance(width, Distance) else Distance(width, center.unit)
         if self._width.value <= 0:
             raise ValueError("Width must be a real positive value.")

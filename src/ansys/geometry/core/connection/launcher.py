@@ -1,5 +1,8 @@
 """Module for connecting to geometry service instances."""
 
+from beartype import beartype as check_input_types
+from beartype.typing import Optional
+
 from ansys.geometry.core import LOG as logger
 from ansys.geometry.core.modeler import Modeler
 
@@ -44,8 +47,9 @@ def launch_modeler() -> Modeler:
     raise NotImplementedError("Not yet implemented.")
 
 
+@check_input_types
 def launch_remote_modeler(
-    version=None,
+    version: Optional[str] = None,
 ) -> Modeler:
     """Start the Geometry Service remotely using the product instance management API.
     When calling this method, you need to ensure that you are in an

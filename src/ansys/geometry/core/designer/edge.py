@@ -1,10 +1,10 @@
 """``Edge`` class module."""
 
 from enum import Enum, unique
-from typing import TYPE_CHECKING, List
 
 from ansys.api.geometry.v0.edges_pb2 import EdgeIdentifier
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
+from beartype.typing import TYPE_CHECKING, List
 from pint import Quantity
 
 from ansys.geometry.core.connection import GrpcClient

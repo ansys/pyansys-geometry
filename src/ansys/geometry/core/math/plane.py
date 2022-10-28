@@ -1,14 +1,13 @@
 """``Plane`` class module."""
 
-from typing import Union
-
+from beartype import beartype as check_input_types
+from beartype.typing import Union
 import numpy as np
 
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, ZERO_POINT3D
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc import check_type, check_type_equivalence
 from ansys.geometry.core.typing import RealSequence
 
 
@@ -35,6 +34,7 @@ class Plane(Frame):
         """Constructor method for ``Plane``."""
         super().__init__(origin, direction_x, direction_y)
 
+    @check_input_types
     def is_point_contained(self, point: Point3D) -> bool:
         """Method for checking if a Point3D is contained in the plane.
 
@@ -48,7 +48,6 @@ class Plane(Frame):
         bool
             Returns ``True`` if contained in the plane.
         """
-        check_type(point, Point3D)
 
         # Compute the plane equation A*(x-x0) + B*(y-y0) + C*(z-z0)
         plane_eq = (
@@ -60,9 +59,9 @@ class Plane(Frame):
         # If plane equation is equal to 0, your point is contained
         return True if np.isclose(plane_eq, 0.0) else False
 
+    @check_input_types
     def __eq__(self, other: "Plane") -> bool:
         """Equals operator for ``Plane``."""
-        check_type_equivalence(other, self)
         return (
             self.origin == other.origin
             and self.direction_x == other.direction_x

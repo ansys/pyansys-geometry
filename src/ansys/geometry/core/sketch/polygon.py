@@ -1,14 +1,14 @@
 """``Polygon`` class module."""
 
-from typing import Optional, Union
-
+from beartype import beartype as check_input_types
+from beartype.typing import Optional, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Matrix33, Matrix44, Point2D
-from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance, check_type
+from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
 
@@ -28,6 +28,7 @@ class Polygon(SketchFace):
         The placement angle for orientation alignment.
     """
 
+    @check_input_types
     def __init__(
         self,
         center: Point2D,
@@ -39,10 +40,7 @@ class Polygon(SketchFace):
         super().__init__()
 
         # Check the inputs
-        check_type(center, Point2D)
         self._center = center
-
-        check_type(inner_radius, (Quantity, Distance))
         self._inner_radius = (
             inner_radius if isinstance(inner_radius, Distance) else Distance(inner_radius)
         )

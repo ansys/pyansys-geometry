@@ -1,11 +1,10 @@
 """``Material`` class module."""
 
-from typing import Dict, Optional, Sequence
-
+from beartype import beartype as check_input_types
+from beartype.typing import Dict, Optional, Sequence
 from pint import Quantity
 
 from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
-from ansys.geometry.core.misc import check_type
 
 
 class Material:
@@ -22,6 +21,7 @@ class Material:
         Additional material properties. By default, ``[]``.
     """
 
+    @check_input_types
     def __init__(
         self,
         name: str,
@@ -30,13 +30,9 @@ class Material:
     ):
         """Constructor method for ``Material``."""
         self._name = name
-        check_type(density, Quantity)
         self._density = MaterialProperty(MaterialPropertyType.DENSITY, "Density", density)
         if not additional_properties:
             additional_properties = []
-        else:
-            check_type(additional_properties, (list, tuple, set))
-            [check_type(prop, MaterialProperty) for prop in additional_properties]
 
         # Add the density to the properties list
         additional_properties.append(self._density)
@@ -54,6 +50,7 @@ class Material:
         """Name assigned to the ``Material``."""
         return self._name
 
+    @check_input_types
     def add_property(self, type: MaterialPropertyType, name: str, quantity: Quantity) -> None:
         """Add a ``MaterialProperty`` to the ``Material``.
 

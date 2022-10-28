@@ -2,6 +2,7 @@
 
 from enum import Enum, unique
 
+from beartype import beartype as check_input_types
 from pint import Quantity
 
 
@@ -32,6 +33,7 @@ class MaterialProperty:
         Value and unit.
     """
 
+    @check_input_types
     def __init__(
         self,
         type: MaterialPropertyType,

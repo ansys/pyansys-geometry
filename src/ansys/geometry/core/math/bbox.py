@@ -1,15 +1,12 @@
 """``BoundingBox`` class module."""
 
 import sys
-from typing import List
+
+from beartype import beartype as check_input_types
+from beartype.typing import List
 
 from ansys.geometry.core.math.point import Point2D
-from ansys.geometry.core.misc import (
-    UNIT_LENGTH,
-    Accuracy,
-    check_is_float_int,
-    check_type_equivalence,
-)
+from ansys.geometry.core.misc import UNIT_LENGTH, Accuracy
 from ansys.geometry.core.typing import Real
 
 
@@ -29,6 +26,7 @@ class BoundingBox2D:
         Maximum value for the y-dimensional bounds.
     """
 
+    @check_input_types
     def __init__(
         self,
         x_min: Real = sys.float_info.max,
@@ -37,12 +35,6 @@ class BoundingBox2D:
         y_max: Real = sys.float_info.min,
     ):
         """Constructor method for ``BoundingBox2D``."""
-
-        check_is_float_int(x_min)
-        check_is_float_int(x_max)
-        check_is_float_int(y_min)
-        check_is_float_int(y_max)
-
         self._x_min = x_min
         self._x_max = x_max
         self._y_min = y_min
@@ -92,6 +84,7 @@ class BoundingBox2D:
         """
         return self._y_max
 
+    @check_input_types
     def add_point(self, point: Point2D) -> None:
         """Extends the ranges of the bounding box to include the point;
         only if point is outside current bounds.
@@ -103,6 +96,7 @@ class BoundingBox2D:
         """
         self.add_point_components(point.x.m_as(UNIT_LENGTH), point.y.m_as(UNIT_LENGTH))
 
+    @check_input_types
     def add_point_components(self, x: Real, y: Real) -> None:
         """Extends the ranges of the bounding box to include the point component x/y values;
         only if point components are outside current bounds.
@@ -119,6 +113,7 @@ class BoundingBox2D:
         self._y_min = y if y < self._y_min else self._y_min
         self._y_max = y if y > self._y_max else self._y_max
 
+    @check_input_types
     def add_points(self, points: List[Point2D]) -> None:
         """Extends the ranges of the bounding box to include all provided points.
 
@@ -130,6 +125,7 @@ class BoundingBox2D:
         for point in points:
             self.add_point(point)
 
+    @check_input_types
     def contains_point(self, point: Point2D) -> bool:
         """Evaluates whether a provided point lies within the current x/y ranges of the bounds.
 
@@ -145,6 +141,7 @@ class BoundingBox2D:
         """
         return self.contains_point_components(point.x.m_as(UNIT_LENGTH), point.y.m_as(UNIT_LENGTH))
 
+    @check_input_types
     def contains_point_components(self, x: Real, y: Real) -> bool:
         """Evaluates whether the point components are within the current x/y ranges of the bounds.
 
@@ -167,10 +164,9 @@ class BoundingBox2D:
             and Accuracy.length_is_less_than_or_equal(y, self._y_max)
         )
 
+    @check_input_types
     def __eq__(self, other: "BoundingBox2D") -> bool:
         """Equals operator for ``BoundingBox2D``."""
-        check_type_equivalence(other, self)
-
         return (
             self.x_min == other.x_min
             and self.x_max == other.x_max

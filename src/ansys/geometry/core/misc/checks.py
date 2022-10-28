@@ -1,6 +1,5 @@
 """Checking common functions."""
-from typing import Optional, Tuple, Union
-
+from beartype.typing import Optional, Tuple, Union
 import numpy as np
 from pint import Unit
 

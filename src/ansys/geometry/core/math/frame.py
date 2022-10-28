@@ -1,14 +1,13 @@
 """``Frame`` class module."""
 
-from typing import List, Union
-
+from beartype import beartype as check_input_types
+from beartype.typing import Union
 import numpy as np
 
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, ZERO_POINT3D
 from ansys.geometry.core.math.matrix import Matrix33, Matrix44
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc import check_type, check_type_equivalence
 from ansys.geometry.core.typing import RealSequence
 
 
@@ -26,6 +25,7 @@ class Frame:
         Y-axis direction. By default, ``UNITVECTOR3D_Y``.
     """
 
+    @check_input_types
     def __init__(
         self,
         origin: Union[np.ndarray, RealSequence, Point3D] = ZERO_POINT3D,
@@ -33,11 +33,6 @@ class Frame:
         direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Y,
     ):
         """Constructor method for ``Frame``."""
-
-        check_type(origin, (np.ndarray, List, Point3D))
-        check_type(direction_x, (np.ndarray, List, UnitVector3D, Vector3D))
-        check_type(direction_y, (np.ndarray, List, UnitVector3D, Vector3D))
-
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
         self._direction_x = (
             UnitVector3D(direction_x) if not isinstance(direction_x, UnitVector3D) else direction_x
@@ -146,6 +141,7 @@ class Frame:
         """
         return self._transformation_matrix
 
+    @check_input_types
     def transform_point2d_local_to_global(self, point: Point2D) -> Point3D:
         """Expresses a local, plane-contained ``Point2D`` object in the global
         coordinate system, and thus it is represented as a ``Point3D``.
@@ -162,10 +158,9 @@ class Frame:
         """
         return self.origin + Vector3D(self.local_to_global_rotation @ [point[0], point[1], 0])
 
+    @check_input_types
     def __eq__(self, other: "Frame") -> bool:
         """Equals operator for ``Frame``."""
-        check_type_equivalence(other, self)
-
         return (
             self.origin == other.origin
             and self.direction_x == other.direction_x

@@ -53,7 +53,7 @@ you can add a file handler with:
 .. code:: python
 
    import os
-   file_path = os.path.join(os.getcwd(), 'PyGeometry.log')
+   file_path = os.path.join(os.getcwd(), 'pygeometry.log')
    LOG.log_to_file(file_path)
 
 This sets the logger to be redirected also to this file. If you want
@@ -108,8 +108,9 @@ from copy import copy
 from datetime import datetime
 import logging
 import sys
-from typing import TYPE_CHECKING, Optional
 import weakref
+
+from beartype.typing import TYPE_CHECKING, Optional
 
 from ansys.geometry.core.misc.checks import check_type
 
@@ -118,7 +119,7 @@ if TYPE_CHECKING:
 
 ## Default configuration
 LOG_LEVEL = logging.DEBUG
-FILE_NAME = "PyGeometry.log"
+FILE_NAME = "pygeometry.log"
 
 # For convenience
 DEBUG = logging.DEBUG
@@ -194,7 +195,7 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
         ----------
         filename : str, optional
             Name of the file to write log messages to. The default is
-            ``"PyGeometry.log"``.
+            ``"pygeometry.log"``.
         level : str, optional
             Level of logging. The default is ``10``, in which case the
             ``logging.DEBUG`` level is used.
@@ -308,7 +309,7 @@ class Logger:
         default is ``True``.
     filename : str, optional
         Name of the file to write log log messages to. The default is
-        ``"PyGeometry.log"``.
+        ``"pygeometry.log"``.
 
     Examples
     --------
@@ -324,7 +325,7 @@ class Logger:
 
     >>> import os
     >>> from ansys.geometry.core import LOG
-    >>> file_path = os.path.join(os.getcwd(), 'PyGeometry.log')
+    >>> file_path = os.path.join(os.getcwd(), 'pygeometry.log')
     >>> LOG.log_to_file(file_path)
 
     """
@@ -348,7 +349,7 @@ class Logger:
             Whether to write log messages to the standard output (stdout). The
             default is ``True``.
         filename : str, optional
-           Name of the file to write log messages to. The default is ``"PyGeometry.log"``.
+           Name of the file to write log messages to. The default is ``"pygeometry.log"``.
         """
 
         # create default main logger
@@ -383,18 +384,18 @@ class Logger:
         ----------
         filename : str, optional
             Name of the file to write log messages to. The default
-            is ``"PyGeometry.log"``.
+            is ``"pygeometry.log"``.
         level : int, optional
             Level of logging. The default is ``10``, in which case the
             ``logging.DEBUG`` level is used.
 
         Examples
         --------
-        Write to the ``"PyGeometry.log"`` file in the current working directory.
+        Write to the ``"pygeometry.log"`` file in the current working directory.
 
         >>> from ansys.geometry.core import LOG
         >>> import os
-        >>> file_path = os.path.join(os.getcwd(), 'PyGeometry.log')
+        >>> file_path = os.path.join(os.getcwd(), 'pygeometry.log')
         >>> LOG.log_to_file(file_path)
 
         """
@@ -564,7 +565,7 @@ def addfile_handler(logger, filename=FILE_NAME, level=LOG_LEVEL, write_headers=F
     logger : logging.Logger or logging.Logger, optional
         Logger to add the file handler to.
     filename : str, optional
-        Name of the output file. The default is ``"PyGeometry.log"``.
+        Name of the output file. The default is ``"pygeometry.log"``.
     level : int, optional
         Level of logging. The default is ``LOG_LEVEL``.
     write_headers : bool, optional

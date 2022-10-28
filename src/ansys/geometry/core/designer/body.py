@@ -1,7 +1,5 @@
 """``Body`` class module."""
 
-from typing import TYPE_CHECKING, List, Optional, Tuple, Union
-
 from ansys.api.geometry.v0.bodies_pb2 import (
     BodyIdentifier,
     SetAssignedMaterialRequest,
@@ -10,6 +8,8 @@ from ansys.api.geometry.v0.bodies_pb2 import (
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import ImprintCurvesRequest, ProjectCurvesRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
+from beartype import beartype as check_input_types
+from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
 
 from ansys.geometry.core.connection import (
@@ -68,9 +68,11 @@ class Body:
         is_surface: bool = False,
     ):
         """Constructor method for ``Body``."""
-        # Sanity checks - cannot check Component due to circular import issues
+        from ansys.geometry.core.designer.component import Component
+
         check_type(id, str)
         check_type(name, str)
+        check_type(parent_component, Component)
         check_type(grpc_client, GrpcClient)
         check_type(is_surface, bool)
 
@@ -158,6 +160,7 @@ class Body:
             return Quantity(volume_response.volume, SERVER_UNIT_VOLUME)
 
     @protect_grpc
+    @check_input_types
     def assign_material(self, material: Material) -> None:
         """Sets the provided material against the design in the active geometry
         service instance.
@@ -167,13 +170,13 @@ class Body:
         material : Material
             Source material data.
         """
-        check_type(material, Material)
         self._grpc_client.log.debug(f"Assigning body {self.id} material {material.name}.")
         self._bodies_stub.SetAssignedMaterial(
             SetAssignedMaterialRequest(id=self._id, material=material.name)
         )
 
     @protect_grpc
+    @check_input_types
     def imprint_curves(self, faces: List[Face], sketch: Sketch) -> Tuple[List[Edge], List[Face]]:
         """Imprints all of the specified geometries onto the specified faces of the body.
 
@@ -189,12 +192,6 @@ class Body:
         Tuple[List[Edge], List[Face]]
             All of the impacted edges and faces from the imprint operation.
         """
-        # Sanity checks
-        check_type(faces, (list, tuple))
-        for face in faces:
-            check_type(face, Face)
-        check_type(sketch, Sketch)
-
         # Verify that each of the faces provided are part of this body
         body_faces = self.faces
         for provided_face in faces:
@@ -231,6 +228,7 @@ class Body:
         return (new_edges, new_faces)
 
     @protect_grpc
+    @check_input_types
     def project_curves(
         self,
         direction: UnitVector3D,
@@ -263,11 +261,6 @@ class Body:
         List[Face]
             All of the faces from the project curves operation.
         """
-        # Sanity checks
-        check_type(direction, UnitVector3D)
-        check_type(sketch, Sketch)
-        check_type(closest_face, bool)
-
         curves = sketch_shapes_to_grpc_geometries(
             sketch._plane, sketch.edges, sketch.faces, only_one_curve=only_one_curve
         )
@@ -291,6 +284,7 @@ class Body:
         return projected_faces
 
     @protect_grpc
+    @check_input_types
     def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance]) -> None:
         """Translates the geometry body in the direction specified by the given distance.
 
@@ -305,9 +299,6 @@ class Body:
         -------
         None
         """
-        check_type(direction, UnitVector3D)
-        check_type(distance, (Quantity, Distance))
-
         translate_distance = distance if isinstance(distance, Quantity) else distance.value
         check_pint_unit_compatibility(translate_distance.units, SERVER_UNIT_LENGTH)
 

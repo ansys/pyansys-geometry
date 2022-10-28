@@ -1,7 +1,6 @@
 """``SketchFace`` class module."""
 
-from typing import List
-
+from beartype.typing import List
 from pint import Quantity
 import pyvista as pv
 
