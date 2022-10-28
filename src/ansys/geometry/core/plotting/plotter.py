@@ -27,7 +27,7 @@ class Plotter:
         background_opts : dict, default: None
             A dictionary containing the desired background and top colors.
         num_points : int, default: 100
-            Desired number of points to be used for rendering the shapes. Default is 100.
+            Desired number of points to be used for rendering the shapes.
 
         """
         # Generate custom scene if none was provided
