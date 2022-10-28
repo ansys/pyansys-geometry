@@ -23,7 +23,7 @@ class GeometryExitedError(RuntimeError):
 
     Parameters
     ----------
-    msg : str, default: ``"Geometry Service has exited."``
+    msg : str, default: "Geometry Service has exited."
         Message to raise.
     """
 

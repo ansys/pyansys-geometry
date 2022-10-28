@@ -36,20 +36,20 @@ def fake_record():
             Message to include in the log record.
         instance_name : str, default: "172.1.1.1:52000"
             Name of the instance.
-        handler_index : int, default: ``0``
+        handler_index : int, default: 0
             Index of the selected handler in case you want to test a handler different than
             the first one.
         level : int, default: `deflogging.DEBUG``
             Logging level.
-        filename : str, default: ``fn``
+        filename : str, default: fn
             Name of the file name. [FAKE].
-        lno : int, default: ``0``
+        lno : int, default: 0
             Line where the fake log is recorded [FAKE].
-        args : tuple, default: ``()``
+        args : tuple, default: ()
             Other arguments.
-        exc_info : [type], default: ``None``
+        exc_info : [type], default: None``
             Exception information.
-        extra : dict, default: ``{}``
+        extra : dict, default: {}
             Extra arguments, one of them should be 'instance_name'.
 
         Returns

@@ -20,7 +20,7 @@ class Sphere:
         Centered origin of the ``Sphere``.
     radius : Real
         Radius of ``Sphere``.
-    unit : Unit, default: ``UNIT_LENGTH``
+    unit : Unit, default: UNIT_LENGTH
         Units employed to define the radius and height.
     """
 

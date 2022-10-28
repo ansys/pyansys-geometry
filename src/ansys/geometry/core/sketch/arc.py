@@ -32,7 +32,7 @@ class Arc(SketchEdge):
             A :class:`Point2D` representing the start of the arc.
         end : Point2D
             A :class:`Point2D` representing the end of the arc.
-        clockwise : bool, default: ``False``
+        clockwise : bool, default: False
             By default the arc spans the counter-clockwise angle between
             ``start`` and ``end``. By setting this to ``True``, the clockwise
             angle is used instead.

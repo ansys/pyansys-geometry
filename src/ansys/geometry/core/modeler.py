@@ -23,9 +23,9 @@ class Modeler:
     ----------
     host : str,  ``DEFAULT_HOST``
         Host where the server is running.
-    port : Union[str, int], default: ``DEFAULT_PORT``
+    port : Union[str, int], default: DEFAULT_PORT
         Port number where the server is running.
-    channel : ~grpc.Channel, default: ``None``
+    channel : ~grpc.Channel, default: None
         gRPC channel for server communication.
     remote_instance : ansys.platform.instancemanagement.Instance
         The corresponding remote instance when the Geometry Service
@@ -33,7 +33,7 @@ class Modeler:
         :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`.
     timeout : Real, default: 60
         Timeout in seconds to achieve the connection..
-    logging_level : int, default: ``INFO``
+    logging_level : int, default: INFO
         The logging level to be applied to the client.
         By default, ``INFO``.
     logging_file : Optional[str, Path]

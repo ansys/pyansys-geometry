@@ -175,7 +175,7 @@ class Design(Component):
             Location on disk where the file should be saved.
         format : Optional[DesignFileFormat]
             Format in which to export the design. By default, as an ``SCDOCX`` file.
-        as_stream : bool, default: ``False``
+        as_stream : bool, default: False
             Boolean indicating whether to use the gRPC stream functionality (if possible).
             or the single message approach.
         """
@@ -236,11 +236,11 @@ class Design(Component):
         ----------
         name : str
             A user-defined name for the named selection.
-        bodies : List[Body], default: ``None``
+        bodies : List[Body], default: None
             All bodies that should be included in the named selection.
-        faces : List[Face], default: ``None``
+        faces : List[Face], default: None
             All faces that should be included in the named selection.
-        edges : List[Edge], default: ``None``
+        edges : List[Edge], default: None
             All edges that should be included in the named selection.
 
         Returns
