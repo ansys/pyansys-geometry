@@ -16,7 +16,6 @@ jobs:
   py311-smoke-tests:
     name: Python 3.11 compatibility
     runs-on: ${{ matrix.os }}
-    needs: [smoke-tests]
     strategy:
       fail-fast: false
       matrix:
