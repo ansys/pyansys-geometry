@@ -1,4 +1,4 @@
-"""``Polygon`` class module."""
+"""Provides the ``polygon`` class."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
@@ -14,18 +14,18 @@ from ansys.geometry.core.typing import Real
 
 
 class Polygon(SketchFace):
-    """A class for modeling regular polygon.
+    """Provides for modeling regular polygons.
 
     Parameters
     ----------
     center: Point2D
-        A :class:`Point2D` representing the center of the circle.
+        2D pint representing the center of the circle.
     inner_radius : Union[Quantity, Distance]
-        The inradius(apothem) of the polygon.
+        Inner radius (apothem) of the polygon.
     sides : int
         Number of sides of the polygon.
-    angle : Optional[Union[Quantity, Angle, Real]]
-        The placement angle for orientation alignment.
+    angle : Union[Quantity, Angle, Real], optional
+        Placement angle for orientation alignment.
     """
 
     @check_input_types
@@ -36,7 +36,7 @@ class Polygon(SketchFace):
         sides: int,
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
-        """Initializes the polygon shape."""
+        """Initialize the polygon."""
         super().__init__()
 
         # Check the inputs
@@ -53,120 +53,66 @@ class Polygon(SketchFace):
 
         # Verify that the number of sides is valid with preferred range
         if sides < 3:
-            raise ValueError("The minimum number of sides to construct a polygon should be 3.")
+            raise ValueError("The minimum number of sides to construct a polygon is 3.")
         self._n_sides = sides
 
     @property
     def center(self) -> Point2D:
-        """The center of the polygon.
-
-        Returns
-        -------
-        Point2D
-            The center of the polygon.
-        """
+        """2D point that is the center of the polygon."""
         return self._center
 
     @property
     def inner_radius(self) -> Quantity:
-        """The inradius(apothem) of the polygon.
-
-        Returns
-        -------
-        Quantity
-            The inradius(apothem) of the polygon.
-
-        """
+        """Inner radius(apothem) of the polygon."""
         return self._inner_radius.value
 
     @property
     def n_sides(self) -> int:
-        """The number of sides of the polygon.
-
-        Returns
-        -------
-        int
-            The sides of the polygon.
-
-        """
+        """Number of sides of the polygon."""
         return self._n_sides
 
     @property
     def angle(self) -> Angle:
-        """Return the orientation angle of the polygon.
-
-        Returns
-        -------
-        Quantity
-            Orientation angle of the polygon.
-        """
+        """Orientation angle of the polygon."""
         return self._angle_offset
 
     @property
     def length(self) -> Quantity:
-        """The side length of the polygon.
-
-        Returns
-        -------
-        Quantity
-            The side length of the polygon.
-
-        """
+        """Side length of the polygon."""
         return 2 * self.inner_radius * np.tan(np.pi / self.n_sides)
 
     @property
     def outer_radius(self) -> Quantity:
-        """The outer radius of the polygon.
-
-        Returns
-        -------
-        Quantity
-            The outer radius of the polygon.
-
-        """
+        """Outer radius of the polygon."""
         return self.inner_radius / np.cos(np.pi / self.n_sides)
 
     @property
     def perimeter(self) -> Quantity:
-        """Return the perimeter of the polygon.
-
-        Returns
-        -------
-        Quantity
-            The perimeter of the polygon.
-
-        """
+        """Perimeter of the polygon."""
         return self.n_sides * self.length
 
     @property
     def area(self) -> Quantity:
-        """Return the area of the polygon.
-
-        Returns
-        -------
-        Quantity
-            The area of the polygon.
-
-        """
+        """Area of the polygon."""
         return (self.inner_radius * self.perimeter) / 2
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
         """
-        Return the vtk polydata representation for PyVista visualization.
+        VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
-        the standard global cartesian coordinate system.
+        the standard global Cartesian coordinate system.
 
         Returns
         -------
         pyvista.PolyData
-            The vtk pyvista.Polydata configuration.
+            VTK pyvista.Polydata configuration.
         """
-        # Compensate z orientation by -np.pi / 2 to match geometry service polygon processing
+        # Compensate z orientation by -np.pi / 2 to match Geometry service polygon processing
         # TODO : are we sure that the specific vertex we are targeting is the one matching the
         #        previous compensation angle? We could be rotating a different vertex for some
-        #        reason... Anyway, it's a regular polygon, everything will look the same.
+        #        reason. Anyway, it's a regular polygon, everything will look the same.
         #
         rotation = Matrix33(
             spatial_rotation.from_euler(

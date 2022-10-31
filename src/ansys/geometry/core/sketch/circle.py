@@ -1,4 +1,4 @@
-"""``Circle`` class module."""
+"""``Provides the ``Circle`` class."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Union
@@ -12,14 +12,14 @@ from ansys.geometry.core.sketch.face import SketchFace
 
 
 class Circle(SketchFace):
-    """A sketch class for modeling circles.
+    """Provides for modeling circles.
 
     Parameters
     ----------
     center: Point2D
-        A :class:`Point2D` representing the center of the circle.
+        2D point representing the center of the circle.
     radius : Union[Quantity, Distance]
-        The radius of the circle.
+        Radius of the circle.
     """
 
     @check_input_types
@@ -28,7 +28,7 @@ class Circle(SketchFace):
         center: Point2D,
         radius: Union[Quantity, Distance],
     ):
-        """Initializes the circle shape."""
+        """Initialize the circle."""
         super().__init__()
 
         self._center = center
@@ -38,71 +38,41 @@ class Circle(SketchFace):
 
     @property
     def center(self) -> Point2D:
-        """The center of the circle.
-
-        Returns
-        -------
-        Point2D
-            The center of the circle.
-        """
+        """Center of the circle."""
         return self._center
 
     @property
     def radius(self) -> Quantity:
-        """The radius of the circle.
-
-        Returns
-        -------
-        Quantity
-            The radius of the circle.
-        """
+        """Radius of the circle."""
         return self._radius.value
 
     @property
     def diameter(self) -> Quantity:
-        """The diameter of the circle.
-
-        Returns
-        -------
-        Quantity
-            The diameter of the circle.
-        """
+        """Diameter of the circle."""
         return 2 * self.radius
 
     @property
     def perimeter(self) -> Quantity:
-        """Return the perimeter of the circle.
-
-        Returns
-        -------
-        Quantity
-            The perimeter of the circle.
-        """
+        """Perimeter of the circle."""
         return 2 * np.pi * self.radius
 
     @property
     def area(self) -> Quantity:
-        """Return the area of the circle.
-
-        Returns
-        -------
-        Quantity
-            The area of the circle.
-        """
+        """Area of the circle."""
         return np.pi * self.radius**2
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
         """
-        Return the vtk polydata representation for PyVista visualization.
+        VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
-        the standard global cartesian coordinate system.
+        the standard global Cartesian coordinate system.
 
         Returns
         -------
         pyvista.PolyData
-            The vtk pyvista.Polydata configuration.
+            Vtk pyvista.Polydata configuration.
         """
         circle = pv.Circle(self.radius.m_as(UNIT_LENGTH))
         return circle.translate(

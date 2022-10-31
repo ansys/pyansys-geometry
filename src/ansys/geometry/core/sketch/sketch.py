@@ -1,4 +1,4 @@
-"""``Sketch`` class module."""
+"""`Provides the `Sketch`` class."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Dict, List, Optional, Union
@@ -20,12 +20,12 @@ from ansys.geometry.core.sketch.triangle import Triangle
 from ansys.geometry.core.typing import Real
 
 SketchObject = Union[SketchEdge, SketchFace]
-"""Type used to refer to both SketchEdge and SketchFace as possible values."""
+"""Type used to refer to both ``SketchEdge`` and ``SketchFace`` as possible values."""
 
 
 class Sketch:
     """
-    Provides Sketch class for building 2D sketch elements.
+    Provides for building 2D sketch elements.
     """
 
     # Types of the class instance private attributes
@@ -39,7 +39,7 @@ class Sketch:
         self,
         plane: Optional[Plane] = Plane(),
     ):
-        """Constructor method for ``Sketch``."""
+        """Constructor method for the ``Sketch`` class."""
         self._plane = plane
 
         self._faces = []
@@ -52,53 +52,33 @@ class Sketch:
 
     @property
     def plane(self) -> Plane:
-        """
-        Returns sketch plane configuration.
-
-        Returns
-        -------
-        Plane
-            The plane containing the sketch.
-        """
-
+        """Sketch plane configuration."""
         return self._plane
 
     @plane.setter
     @check_input_types
     def plane(self, plane: Plane) -> None:
         """
-        Sets the sketch plane configuration.
+        Set the sketch plane configuration.
 
         Parameters
         ----------
         plane : Plane
-            The updated sketch planar orientation.
+            New plane for the sketch planar orientation.
         """
         self._plane = plane
 
     @property
     def edges(self) -> List[SketchEdge]:
         """
-        Returns all independently sketched edges.
-
-        Returns
-        -------
-        List[SketchEdge]
-            Sketched edges that are not assigned to a face.
-        """
+        List of all independently sketched edges, which are sketched edges
+        that are not assigned to a face."""
 
         return self._edges
 
     @property
     def faces(self) -> List[SketchFace]:
-        """
-        Returns all independently sketched faces.
-
-        Returns
-        -------
-        List[Sketchface]
-            list of sketched faces.
-        """
+        """List of all independently sketched faces."""
 
         return self._faces
 
