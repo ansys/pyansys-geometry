@@ -1,4 +1,4 @@
-"""A module containing a class for plotting various PyGeometry objects."""
+"""Provides for plotting various PyGeometry objects."""
 from beartype.typing import Dict, List, Optional
 import numpy as np
 import pyvista as pv
@@ -10,7 +10,7 @@ from ansys.geometry.core.sketch import Sketch
 
 
 class Plotter:
-    """A class devoted to plotting sketches and bodies."""
+    """Provides for plotting sketches and bodies."""
 
     def __init__(
         self,
@@ -23,14 +23,14 @@ class Plotter:
         Parameters
         ----------
         scene : ~pyvista.Plotter, optional
-            A scene instance for rendering the desired objects.
+            Scene instance for rendering the objects.
         background_opts : dict, optional
-            A dictionary containing the desired background and top colors.
+            Dictionary containing the background and top colors.
         num_points : int, optional
-            Desired number of points to be used for rendering the shapes. Default is 100.
+            Number of points to use to render the shapes. The default is ``100``.
 
         """
-        # Generate custom scene if none was provided
+        # Generate custom scene if ``None`` is provided
         if scene is None:
             scene = pv.Plotter()
 
@@ -48,12 +48,12 @@ class Plotter:
 
     @property
     def scene(self) -> pv.Plotter:
-        """Return the rendering scene object.
+        """Rendered scene object.
 
         Returns
         -------
         ~pvyista.Plotter
-            The rendering scene object.
+            Rendered scene object.
 
         """
         return self._scene
@@ -83,15 +83,15 @@ class Plotter:
         self.scene.view_zy()
 
     def plot_frame(self, frame: Frame, plotting_options: Optional[Dict] = None) -> None:
-        """Plot desired frame into the scene.
+        """Plot a frame in the scene.
 
         Parameters
         ----------
         frame : Frame
-            The ``Frame`` instance to be rendered in the scene.
+            ``Frame`` instance to render in the scene.
         plotting_options : dict, optional
-            A dictionary containing parameters accepted by
-            :class:`pyvista.plotting.tools.create_axes_marker` for customizing
+            Dictionary containing parameters accepted by the
+            :class:`pyvista.plotting.tools.create_axes_marker` class for customizing
             the frame rendering in the scene.
 
         """
@@ -118,18 +118,18 @@ class Plotter:
         plane_options: Optional[Dict] = None,
         plotting_options: Optional[Dict] = None,
     ) -> None:
-        """Plot desired plane into the scene.
+        """Plot a plane in the scene.
 
         Parameters
         ----------
         plane : Plane
-            The ``Plane`` instance to be rendered in the scene.
+            ``Plane`` instance to render in the scene.
         plane_options : dict, optional
-            A dictionary containing parameters accepted by
+            Dictionary containing parameters accepted by the
             :class:`pyvista.Plane` for customizing the mesh representing the
             plane.
         plotting_options : dict, optional
-            A dictionary containing parameters accepted by
+            Dictionary containing parameters accepted by the
             :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
             rendering of the plane.
 
@@ -157,19 +157,20 @@ class Plotter:
         show_frame: bool = False,
         **kwargs: Optional[dict]
     ) -> None:
-        """Plot desired sketch into the scene.
+        """Plot a sketch in the scene.
 
         Parameters
         ----------
         sketch : Sketch
-            The ``Sketch`` instance to be rendered in the scene.
+            ``Sketch`` instance to render in the scene.
         show_plane : bool
-            If ``True``, it renders the sketch plane in the scene.
+            Whether to render the sketch plane in the scene. The default is ``False``.
         show_frame : bool
-            If ``Frame``, it renders the sketch plane in the scene.
+            If ``Frame``, whether to render the sketch plane in the scene. The default is ``False``.
         **kwargs : dict, optional
-            Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
-            for allowable keyword arguments.
+            Keyword arguments. For allowable keyword arguments, see the
+            :func:`pyvista.Plotter.add_mesh` method.
+            .
         """
         # Show the sketch plane if required
         if show_plane:
@@ -187,14 +188,15 @@ class Plotter:
         Parameters
         ----------
         body : ansys.geometry.core.designer.Body
-            Body to add to the scene.
-        merge : bool, default: False
-            Merge the body into a single mesh. Enable this if you wish to
-            merge wish to have the individual faces of the tessellation. This
+            Body to add.
+        merge : bool, optional
+            Whether to merge the body into a single mesh. The default is ``False``.
+            If ``True``, the individual faces of the tessellation are merged. This
             preserves the number of triangles and only merges the topology.
         **kwargs : dict, optional
-            Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
-            for allowable keyword arguments.
+            Keyword arguments. For allowable keyword arguments,
+            see the :func:`pyvista.Plotter.add_mesh` method.
+            .
         """
         kwargs.setdefault("smooth_shading", True)
         self.scene.add_mesh(body.tessellate(merge=merge), **kwargs)
@@ -211,33 +213,35 @@ class Plotter:
         Parameters
         ----------
         component : ansys.geometry.core.designer.Component
-            Component to add to the scene.
-        merge_component : bool, default: False
-            Merge this component into a single dataset. This effectively
-            combines all the individual bodies into a single dataset without
-            any hierarchy.
-        merge_bodies : bool, default: False
-            Merge each body into a single dataset. This effectively combines
-            all the faces of each individual body into a single dataset
-            without.
+            Component to add.
+        merge_component : bool, optional
+            Whether to merge the component into a single dataset. The default is
+            ``False``. When ``True``, all the individual bodies are effectively
+            combineed into a single dataset without any hierarchy.
+        merge_bodies : bool, optional
+            Whether to merge each body into a single dataset. The default is
+            ``False``. When ``True``, all the faces of each individual body
+            are effectively combineed into a single dataset without.
         **kwargs : dict, optional
-            Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
-            for allowable keyword arguments.
+            Keyword arguments. For allowable keyword arguments, see the
+            :func:`pyvista.Plotter.add_mesh` method.
+            .
         """
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
         kwargs.setdefault("smooth_shading", True)
         self.scene.add_mesh(dataset, **kwargs)
 
     def add_polydata(self, polydata_entries: List[pv.PolyData], **kwargs) -> None:
-        """Add a sketches to the scene.
+        """Add sketches to the scene from PyVista polydata.
 
         Parameters
         ----------
         polydata : pyvista.PolyData
-            pyvista PolyData to add to the scene.
+            Polydata to add.
         **kwargs : dict, optional
-            Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
-            for allowable keyword arguments.
+            Keyword arguments. For allowable keyword arguments, see the
+            :func:`pyvista.Plotter.add_mesh` method.
+            .
         """
         for polydata in polydata_entries:
             self.scene.add_mesh(polydata, **kwargs)
@@ -249,21 +253,22 @@ class Plotter:
         jupyter_backend: Optional[str] = None,
         **kwargs: Optional[dict]
     ) -> None:
-        """Display the rendered scene in the screen.
+        """Show the rendered scene on the screen.
 
         Parameters
         ----------
         backend_jupyter : str, optional
-            Desired ``pyvista`` jupyter backend.
+            PyVista Jupyter backend.
 
         **kwargs : dict, optional
-            Plotting keyword arguments. See :func:`pyvista.Plotter.show` for
-            all available options.
+            Plotting keyword arguments. For allowable keyword arguments, see the
+            :func:`pyvista.Plotter.show` method.
 
         Notes
         -----
-        Refer to https://docs.pyvista.org/user-guide/jupyter/index.html for more
-        information about supported Jupyter backends.
+        For more information on supported Jupyter backends, see
+        `Jupyter Notebook Plotting <https://docs.pyvista.org/user-guide/jupyter/index.html>`_
+        in the PyVista documentation.
 
         """
         # computue the scaling
@@ -282,7 +287,7 @@ class Plotter:
             plane = pv.Plane(i_size=sfac * 1.3, j_size=sfac * 1.3)
             self.scene.add_mesh(plane, color="white", show_edges=True, opacity=0.1)
 
-        # Conditionally set the jupyter backend as not all users will be within
+        # Conditionally set the Jupyter backend as not all users will be within
         # a notebook environment to avoid a pyvista warning
         if self.scene.notebook and jupyter_backend is None:
             jupyter_backend = "panel"

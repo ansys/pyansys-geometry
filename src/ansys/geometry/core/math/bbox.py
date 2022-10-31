@@ -1,4 +1,4 @@
-"""``BoundingBox`` class module."""
+"""Provides the ``BoundingBox`` class."""
 
 import sys
 
@@ -12,7 +12,7 @@ from ansys.geometry.core.typing import Real
 
 class BoundingBox2D:
     """
-    Maintains x and y dimensions.
+    Maintains the x and y dimensions.
 
     Parameters
     ----------
@@ -34,7 +34,7 @@ class BoundingBox2D:
         y_min: Real = sys.float_info.max,
         y_max: Real = sys.float_info.min,
     ):
-        """Constructor method for ``BoundingBox2D``."""
+        """Constructor method for the ``BoundingBox2D`` class."""
         self._x_min = x_min
         self._x_max = x_max
         self._y_min = y_min
@@ -42,52 +42,52 @@ class BoundingBox2D:
 
     @property
     def x_min(self) -> Real:
-        """Minimum value of x bounds.
+        """Minimum value of x-dimensional bounds.
 
         Returns
         -------
         Real
-            Minimum value of x dimension.
+            Minimum value of the x-dimensional bounds.
         """
         return self._x_min
 
     @property
     def x_max(self) -> Real:
-        """Maximum value of x bounds.
+        """Maximum value of the x-dimensional bounds.
 
         Returns
         -------
         Real
-            Maximum value of x dimension.
+            Maximum value of the x-dimensional bounds.
         """
         return self._x_max
 
     @property
     def y_min(self) -> Real:
-        """Minimum value of y bounds.
+        """Minimum value of y-dimensional bounds.
 
         Returns
         -------
         Real
-            Minimum value of y dimension.
+            Minimum value of y-dimensional bounds.
         """
         return self._y_min
 
     @property
     def y_max(self) -> Real:
-        """Maximum value of y bounds.
+        """Maximum value of y-dimensional bounds.
 
         Returns
         -------
         Real
-            Maximum value of y dimension.
+            Maximum value of y-dimensional bounds.
         """
         return self._y_max
 
     @check_input_types
     def add_point(self, point: Point2D) -> None:
-        """Extends the ranges of the bounding box to include the point;
-        only if point is outside current bounds.
+        """Extend the ranges of the bounding box to include a point only if the point
+        is outside the current bounds.
 
         Parameters
         ----------
@@ -98,15 +98,15 @@ class BoundingBox2D:
 
     @check_input_types
     def add_point_components(self, x: Real, y: Real) -> None:
-        """Extends the ranges of the bounding box to include the point component x/y values;
-        only if point components are outside current bounds.
+        """Extend the ranges of the bounding box to include the point component x and y values
+        only if the point components are outside the current bounds.
 
         Parameters
         ----------
         x : Real
-            The point x component to be included within the bounds.
+            Point x component to include within the bounds.
         y : Real
-            The point y component to be included within the bounds.
+            Point y component to include within the bounds.
         """
         self._x_min = x if x < self._x_min else self._x_min
         self._x_max = x if x > self._x_max else self._x_max
@@ -115,24 +115,24 @@ class BoundingBox2D:
 
     @check_input_types
     def add_points(self, points: List[Point2D]) -> None:
-        """Extends the ranges of the bounding box to include all provided points.
+        """Extend the ranges of the bounding box to include all provided points.
 
         Parameters
         ----------
         points : List[Point2D]
-            The list of points to be included within the bounds.
+            List of points to include within the bounds.
         """
         for point in points:
             self.add_point(point)
 
     @check_input_types
     def contains_point(self, point: Point2D) -> bool:
-        """Evaluates whether a provided point lies within the current x/y ranges of the bounds.
+        """Evaluate whether a provided point lies within the current x andy ranges of the bounds.
 
         Parameters
         ----------
         point : Point2D
-            The point to be compared against the bounds.
+            Point to compare against the bounds.
 
         Returns
         -------
@@ -143,14 +143,14 @@ class BoundingBox2D:
 
     @check_input_types
     def contains_point_components(self, x: Real, y: Real) -> bool:
-        """Evaluates whether the point components are within the current x/y ranges of the bounds.
+        """Evaluate whether the point components are within the current x and y ranges of the bounds.
 
         Parameters
         ----------
         x : Real
-            The point x component to be compared against the bounds.
+            Point x component to compare against the bounds.
         y : Real
-            The point y component to be compared against the bounds.
+            Point y component to compare against the bounds.
 
         Returns
         -------
@@ -166,7 +166,7 @@ class BoundingBox2D:
 
     @check_input_types
     def __eq__(self, other: "BoundingBox2D") -> bool:
-        """Equals operator for ``BoundingBox2D``."""
+        """Equals operator for the ``BoundingBox2D`` class."""
         return (
             self.x_min == other.x_min
             and self.x_max == other.x_max
@@ -175,5 +175,5 @@ class BoundingBox2D:
         )
 
     def __ne__(self, other: "BoundingBox2D") -> bool:
-        """Not equals operator for ``BoundingBox2D``."""
+        """Not equals operator for the ``BoundingBox2D`` class."""
         return not self == other

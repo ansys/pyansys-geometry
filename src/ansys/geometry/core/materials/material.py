@@ -1,4 +1,4 @@
-"""``Material`` class module."""
+"""Provides the ``Material`` class."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Dict, Optional, Sequence
@@ -9,16 +9,16 @@ from ansys.geometry.core.materials.property import MaterialProperty, MaterialPro
 
 class Material:
     """
-    Provides data structure for individual material.
+    Provides the data structure for a material.
 
     Parameters
     ----------
     name: str
-        User-defined display name.
+        Material name.
     density: ~pint.Quantity
         Material density.
-    additional_properties: Optional[Sequence[MaterialProperty]]
-        Additional material properties. By default, ``[]``.
+    additional_properties: [Sequence[MaterialProperty]], optional
+        Additional material properties. The default is ``[]``.
     """
 
     @check_input_types
@@ -28,7 +28,7 @@ class Material:
         density: Quantity,
         additional_properties: Optional[Sequence[MaterialProperty]] = None,
     ):
-        """Constructor method for ``Material``."""
+        """Constructor method for the ``Material`` class."""
         self._name = name
         self._density = MaterialProperty(MaterialPropertyType.DENSITY, "Density", density)
         if not additional_properties:
@@ -42,24 +42,24 @@ class Material:
 
     @property
     def properties(self) -> Dict[MaterialPropertyType, MaterialProperty]:
-        """Return the list of properties."""
+        """List of material properties."""
         return self._properties
 
     @property
     def name(self) -> str:
-        """Name assigned to the ``Material``."""
+        """Material name."""
         return self._name
 
     @check_input_types
     def add_property(self, type: MaterialPropertyType, name: str, quantity: Quantity) -> None:
-        """Add a ``MaterialProperty`` to the ``Material``.
+        """Add a material property to the ``Material`` class.
 
         Parameters
         ----------
         type : MaterialPropertyType
-            ``MaterialPropertyType`` value.
+            Type of the material property.
         name: str
-            User-defined display name.
+            Material name.
         quantity: ~pint.Quantity
             Value and unit.
         """

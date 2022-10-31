@@ -1,4 +1,4 @@
-"""``Units`` module for PyGeometry."""
+"""Provides the ``Units`` class for PyGeometry."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional
@@ -10,25 +10,25 @@ from ansys.geometry.core.typing import Real
 UNITS = UnitRegistry()
 """Unit manager."""
 
-# This forces pint to set the previous UnitRegistry as the one to be used
+# This forces pint to set the previous UnitRegistry as the one to use
 set_application_registry(UNITS)
 
 
 class PhysicalQuantity:
-    """Base class to handle units homogeneously throughout PyGeometry.
+    """Provides the base class for handling units homogeneously throughout PyGeometry.
 
     Parameters
     ----------
     unit : ~pint.Unit
-        The units to be considered for our class.
+        Units for the class.
     expected_dimensions : ~pint.Unit
-        The units containing the dimensionality of the ``PhysicalQuantity``.
-        By default, None.
+        Units for the dimensionality of the physical quantity.
+        The default is ``None``.
     """
 
     @check_input_types
     def __init__(self, unit: Unit, expected_dimensions: Optional[Unit] = None):
-        """Constructor for ``PhysicalQuantity``."""
+        """Constructor for the ``PhysicalQuantity`` class."""
         if expected_dimensions:
             check_pint_unit_compatibility(unit, expected_dimensions)
 
@@ -37,50 +37,50 @@ class PhysicalQuantity:
 
     @property
     def unit(self) -> Unit:
-        """Returns the unit of the object."""
+        """Unit of the object."""
         return self._unit
 
     @unit.setter
     @check_input_types
     def unit(self, unit: Unit) -> None:
-        """Sets the unit of the object."""
+        """Set the unit of the object."""
         check_pint_unit_compatibility(unit, self._base_unit)
         self._unit = unit
 
     @property
     def base_unit(self) -> Unit:
-        """Returns the base unit of the object."""
+        """Base unit of the object."""
         return self._base_unit
 
     def _get_quantity(self, input: Real) -> Quantity:
-        """Returns input value as a ~:class:`pint.Quantity`.
+        """Return the input value as a ~:class:`pint.Quantity` class.
 
         Parameters
         ----------
         input : Real
-            The number to be expressed as a quantity.
+            Number to express as a quantity.
 
         Returns
         -------
         ~pint.Quantity
-            The physical quantity the number represents.
+            Physical quantity that the number represents.
         """
         return Quantity(input, units=self.base_unit).to(self.unit)
 
     @check_input_types
     def _base_units_magnitude(self, input: Quantity) -> Real:
-        """Returns input's :class:`pint.Quantity` magnitude
+        """Get the input's :class:`pint.Quantity` magnitude
         in base units.
 
         Parameters
         ----------
         input : ~pint.Quantity
-            The :class:`pint.Quantity` to be processed.
+            :class:`pint.Quantity` to process.
 
         Returns
         -------
-        Real
-            The input's magnitude in base units.
+        Float
+            Input's magnitude in base units.
         """
         check_pint_unit_compatibility(input.units, self._base_unit)
         return input.to_base_units().m

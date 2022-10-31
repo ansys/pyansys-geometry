@@ -1,4 +1,4 @@
-"""``Cylinder`` class module."""
+""" Provides the ``Cylinder`` class."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
@@ -17,17 +17,17 @@ class Cylinder:
     Parameters
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D]
-        Origin of the ``Cylinder``.
+        Origin of the cylinder.
     direction_x : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         X-plane direction.
     direction_y : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         Y-plane direction.
     radius : Real
-        Radius of the ``Cylinder``.
+        Radius of the cylinder.
     height : Real
-        Height of the ``Cylinder``.
+        Height of the cylinder.
     unit : Unit, optional
-        Units employed to define the radius and height, by default ``UNIT_LENGTH``.
+        Units for defining the radius and height. The default is ``UNIT_LENGTH``.
     """
 
     @check_input_types
@@ -40,7 +40,7 @@ class Cylinder:
         height: Real,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
-        """Constructor method for ``Cylinder``."""
+        """Constructor method for the ``Cylinder`` class."""
 
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit
@@ -60,7 +60,7 @@ class Cylinder:
 
     @property
     def origin(self) -> Point3D:
-        """Origin of the ``Cylinder``."""
+        """Origin of the cylinder."""
         return self._origin
 
     @origin.setter
@@ -70,24 +70,24 @@ class Cylinder:
 
     @property
     def radius(self) -> Real:
-        """Radius of the ``Cylinder``."""
+        """Radius of the cylinder."""
         return UNITS.convert(self._radius, self._base_unit, self._unit)
 
     @radius.setter
     @check_input_types
     def radius(self, radius: Real) -> None:
-        """Set the Radius of the ``Cylinder``."""
+        """Set the radius of the cylinder."""
         self._radius = UNITS.convert(radius, self._unit, self._base_unit)
 
     @property
     def height(self) -> Real:
-        """Height of the ``Cylinder``."""
+        """height of the cylinder."""
         return UNITS.convert(self._height, self._base_unit, self._unit)
 
     @height.setter
     @check_input_types
     def height(self, height: Real) -> None:
-        """Set the Height of the ``Cylinder``."""
+        """Set the height of the cylinder."""
         self._height = UNITS.convert(height, self._unit, self._base_unit)
 
     @property
@@ -98,13 +98,13 @@ class Cylinder:
     @unit.setter
     @check_input_types
     def unit(self, unit: Unit) -> None:
-        """Sets the unit of the object."""
+        """Set the unit of the object."""
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit
 
     @check_input_types
     def __eq__(self, other: object) -> bool:
-        """Equals operator for ``Cylinder``."""
+        """Equals operator for the ``Cylinder`` class."""
         return (
             self._origin == other.origin
             and self._radius == other.radius
@@ -114,5 +114,5 @@ class Cylinder:
         )
 
     def __ne__(self, other) -> bool:
-        """Not equals operator for ``Cylinder``."""
+        """Not equals operator for the ``Cylinder`` class."""
         return not self == other

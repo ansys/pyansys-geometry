@@ -1,4 +1,4 @@
-"""``Torus`` class module."""
+"""Provides the ``Torus`` class."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
@@ -17,17 +17,17 @@ class Torus:
     Parameters
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D],
-        Centered origin of the ``Torus``.
+        Centered origin of the torus.
     direction_x : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         X-plane direction.
     direction_y : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         Y-plane direction.
     major_radius : Real
-        Major radius of ``Torus``.
+        Major radius of the torus.
     minor_radius : Real
-        Minor radius of ``Torus``.
+        Minor radius of the torus.
     unit : Unit, optional
-        Units employed to define the radius and minor_radius, by default ``UNIT_LENGTH``.
+        Units for defining the radius and minor radius. The default is ``UNIT_LENGTH``.
     """
 
     @check_input_types
@@ -40,7 +40,7 @@ class Torus:
         minor_radius: Real,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
-        """Constructor method for ``Torus``."""
+        """Constructor method for the ``Torus`` class."""
 
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit
@@ -60,7 +60,7 @@ class Torus:
 
     @property
     def origin(self) -> Point3D:
-        """Origin of the ``Torus``."""
+        """Origin of the torus."""
         return self._origin
 
     @origin.setter
@@ -70,7 +70,7 @@ class Torus:
 
     @property
     def major_radius(self) -> Real:
-        """Semi-major radius of the ``Torus``."""
+        """Semi-major radius of the torus."""
         return UNITS.convert(self._major_radius, self._base_unit, self._unit)
 
     @major_radius.setter
@@ -80,7 +80,7 @@ class Torus:
 
     @property
     def minor_radius(self) -> Real:
-        """Semi-minor radius of the ``Torus``."""
+        """Semi-minor radius of the torus."""
         return UNITS.convert(self._minor_radius, self._base_unit, self._unit)
 
     @minor_radius.setter
@@ -101,7 +101,7 @@ class Torus:
 
     @check_input_types
     def __eq__(self, other: object) -> bool:
-        """Equals operator for ``Torus``."""
+        """Equals operator for the ``Torus`` class."""
         return (
             self._origin == other.origin
             and self._major_radius == other.major_radius
@@ -111,5 +111,5 @@ class Torus:
         )
 
     def __ne__(self, other) -> bool:
-        """Not equals operator for ``Torus``."""
+        """Not equals operator for the ``Torus`` class."""
         return not self == other
