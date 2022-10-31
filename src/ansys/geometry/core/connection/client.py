@@ -62,7 +62,7 @@ class GrpcClient:
 
     Parameters
     ----------
-    host : str, default: DEFAULT_HOST
+    host : str, default: "DEFAULT_HOST"
         Host where the server is running.
     port : Union[str, int], default: DEFAULT_PORT
         Port number where the server is running.
