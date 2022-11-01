@@ -1,7 +1,7 @@
 Examples
 ########
 
-These examples demonstrate the beahvior and usage of PyGeometry.
+These examples demonstrate the behavior and usage of PyGeometry.
 
 Math and sketch examples
 ------------------------

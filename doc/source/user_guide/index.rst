@@ -5,7 +5,7 @@ User guide
 ==========
 
 This section provides an overview of the PyGeometry library,
-explaining key method concepts and approches for primitives,
+explaining key method concepts and approaches for primitives,
 sketches (2D basic shape elements), and model designs.
 
 .. toctree::
@@ -29,7 +29,7 @@ The key features of PyGeometry are:
 Simple interactive example
 ==========================
 
-Start an Geometry server instance
+Start a Geometry server instance
 ---------------------------------
 
 The :class:`Modeler() <ansys.geometry.core.modeler()>` class
@@ -46,8 +46,8 @@ You start the Geometry service with:
     >>> from ansys.geometry.core import Modeler
     >>> modeler = Modeler()
 
-Create geometry models
-----------------------
+Create geometry model
+---------------------
 
 Once the Geometry service is active , you can start creating the geometry model 
 by initializing the :ref:`Sketch <ref_sketch>` class and using the
