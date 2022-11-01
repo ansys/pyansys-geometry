@@ -18,7 +18,7 @@ def check_is_float_int(param: object, param_name: Optional[Union[str, None]] = N
     Raises
     ------
     TypeError
-        If the parameter does not have a float or interger value.
+        If the parameter does not have a float or integer value.
     """
     if not isinstance(param, (int, float)):
         raise TypeError(
@@ -44,7 +44,8 @@ def check_ndarray_is_float_int(
     Raises
     ------
     TypeError
-        If the :class:`numpy.ndarray <numpy.ndarray>` instance does not have float or integer values.
+        If the :class:`numpy.ndarray <numpy.ndarray>` instance does not
+        have float or integer values.
     """
     param_data = np.ravel(param)
 
@@ -62,7 +63,8 @@ def check_ndarray_is_not_none(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
     """
-    Check if the :class:`numpy.ndarray <numpy.ndarray>` instance has a value of ``None`` for all parameters.
+    Check if the :class:`numpy.ndarray <numpy.ndarray>` instance has a value
+    of ``None`` for all parameters.
 
     Parameters
     ----------
@@ -74,14 +76,15 @@ def check_ndarray_is_not_none(
     Raises
     ------
     ValueError
-        If the :class:`numpy.ndarray <numpy.ndarray>` instance has a value of ``None`` for all parameters.
+        If the :class:`numpy.ndarray <numpy.ndarray>` instance has a value
+        of ``None`` for all parameters.
     """
     param_data = np.ravel(param)
     if all(value is None for value in param_data):
         raise ValueError(
-            f"The numpy.ndarray should not have ``None`` for all paramerter values."
+            f"The numpy.ndarray should not have 'None' for all parameter values."
             if param_name is None
-            else f"The numpy.ndarray '{param_name}' should not have ``None`` for all parameter values."
+            else f"numpy.ndarray '{param_name}' should not have 'None' for all parameter values."
         )
 
 
@@ -96,7 +99,8 @@ def check_ndarray_is_all_nan(
     param : ~numpy.ndarray
         :class:`numpy.ndarray <numpy.ndarray>` instance to check.
     param_name : str or None, optional
-        :class:`numpy.ndarray <numpy.ndarray>` instance name (if any). The default is ``None``.
+        :class:`numpy.ndarray <numpy.ndarray>` instance name (if any).
+        The default is ``None``.
 
     Raises
     ------
@@ -178,7 +182,9 @@ def check_type_equivalence(input: object, expected: object) -> None:
     """
 
     if not isinstance(input, type(expected)):
-        raise TypeError(f"Provided type {type(input)} is invalid. Type {type(expected)} is expected.")
+        raise TypeError(
+            f"Provided type {type(input)} is invalid. Type {type(expected)} is expected."
+        )
 
 
 def check_type(input: object, expected_type: Union[type, Tuple[type, ...]]) -> None:
@@ -199,4 +205,6 @@ def check_type(input: object, expected_type: Union[type, Tuple[type, ...]]) -> N
     """
 
     if not isinstance(input, expected_type):
-        raise TypeError(f"Provided type {type(input)} is invalid. Type {expected_type} is expected.")
+        raise TypeError(
+            f"Provided type {type(input)} is invalid. Type {expected_type} is expected."
+        )

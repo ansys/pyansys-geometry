@@ -21,7 +21,7 @@ class Accuracy:
         """
         Check if the comparison length is equal to the reference length
             within the length accuracy.
-        
+
         Returns
         -------
         bool
@@ -36,7 +36,7 @@ class Accuracy:
         """
         Check if the comparison length is greater than the reference length within the
         length accuracy.
-        
+
         Returns
         -------
         bool
@@ -52,7 +52,7 @@ class Accuracy:
         """
         Check if the comparison length is less than or equal to the reference length within
         the length accuracy.
-        
+
         Returns
         -------
         bool

@@ -3,7 +3,7 @@
 This module supplies a general framework for logging in PyGeometry. It is
 built on the `logging <https://docs.python.org/3/library/logging.html>`_ library
 This module is not intended to replace the library but rather provide a way
-to interact between the ``logging`` classs and PyGeometry.
+to interact between the ``logging`` class and PyGeometry.
 
 The loggers used in this module include the name of the instance, which
 is intended to be unique. This name is printed in all active

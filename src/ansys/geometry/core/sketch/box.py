@@ -84,8 +84,7 @@ class Box(SketchFace):
 
     @property
     def center(self) -> Point2D:
-        """2D point that is the center of the box.
-        """
+        """2D point that is the center of the box."""
         return self._center
 
     @property

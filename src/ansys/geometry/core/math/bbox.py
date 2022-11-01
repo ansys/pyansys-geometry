@@ -143,7 +143,7 @@ class BoundingBox2D:
 
     @check_input_types
     def contains_point_components(self, x: Real, y: Real) -> bool:
-        """Evaluate whether the point components are within the current x and y ranges of the bounds.
+        """Check if point components are within current x and y ranges of the bounds.
 
         Parameters
         ----------

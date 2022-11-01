@@ -83,8 +83,7 @@ class Arc(SketchEdge):
 
     @property
     def end(self) -> Point2D:
-        """2D point that is the end of the arc line.
-        """
+        """2D point that is the end of the arc line."""
         return self._end
 
     @property
@@ -104,8 +103,7 @@ class Arc(SketchEdge):
 
     @property
     def angle(self) -> Quantity:
-        """Angle of the arc.""""
-
+        """Angle of the arc."""
         return Quantity(self._angle, UNITS.radian)
 
     @property
@@ -182,7 +180,7 @@ class Arc(SketchEdge):
     def __arc_pyvista_hack(self):
         """
         Hack for close to PI arcs. PyVista does not know whether the
-        roation is clockwise or counterclockwise. It only understands
+        rotation is clockwise or counterclockwise. It only understands
         the longest and shortest angle, which complicates things in the boundary.
 
         This means that we need to divide the arc in two so that it is properly

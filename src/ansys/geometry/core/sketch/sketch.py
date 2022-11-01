@@ -341,7 +341,8 @@ class Sketch:
         of the sketch, such as the end point of a previously added edge.
 
         Vector magnitude determines the segment endpoint.
-        Vector magnitude is assumed to use the same unit as the starting point in the previous context.
+        Vector magnitude is assumed to use the same unit as the starting point
+        in the previous context.
         """
         start = self._single_point_context_reference()
         return self.segment_from_point_and_vector(start, vector, tag)
@@ -646,7 +647,7 @@ class Sketch:
         Returns
         -------
         Polygon
-            Object reprsenting the polygon added to the sketch.
+            Object representing the polygon added to the sketch.
 
         """
         polygon = Polygon(center, inner_radius, sides, angle)

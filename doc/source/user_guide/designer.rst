@@ -60,7 +60,7 @@ There are no modifications against the body containing the source face.
         "LongerCircleFace", body.faces[0], Quantity(20, UNITS.mm)
     )
 
-You can also translate and tesselate design bodies and project curves onto them. For
+You can also translate and tessellate design bodies and project curves onto them. For
 more information, see these classes:
 
 * :class:`Body() <ansys.geometry.core.designer.body>`

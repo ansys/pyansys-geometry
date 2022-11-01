@@ -81,7 +81,7 @@ circle_surface_body.translate(UNITVECTOR3D_X, Distance(-35, UNITS.mm))
 design.plot()
 ```
 
-## Use surfaces from a body as references to create additoinal bodies
+## Use surfaces from a body as references to create additional bodies
 
 You can use surfaces from any body across the entire design as references for creating additional bodies.
 

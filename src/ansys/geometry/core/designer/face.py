@@ -39,13 +39,15 @@ class SurfaceType(Enum):
     - SURFACETYPE_PROCEDURAL = 7
     """
 
+
 @unique
 class FaceLoopType(Enum):
     """Provides an enum holding the possible values for face loop types:
-    
+
     - INNER_LOOP = "INNER"
     - OUTER_LOOP = "OUTER"
     """
+
 
 class FaceLoop:
     """Provides an internal class holding the face loops defined by the server side.

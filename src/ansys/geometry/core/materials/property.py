@@ -9,7 +9,7 @@ from pint import Quantity
 @unique
 class MaterialPropertyType(Enum):
     """Provides an enum holding the possible values for ``MaterialProperty`` objects.
-    
+
     - DENSITY = "Density"
     - ELASTIC_MODULUS = "ElasticModulus"
     - POISSON_RATIO = "PoissonsRatio"
@@ -17,9 +17,8 @@ class MaterialPropertyType(Enum):
     - SPECIFIC_HEAT = "SpecificHeat"
     - TENSILE_STRENGTH = "TensileStrength"
     - THERMAL_CONDUCTIVITY = "ThermalConductivity"
-    
-    """
 
+    """
 
 
 class MaterialProperty:

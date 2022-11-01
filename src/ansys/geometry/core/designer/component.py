@@ -48,12 +48,13 @@ if TYPE_CHECKING:  # pragma: no cover
 @unique
 class SharedTopologyType(Enum):
     """Enum holding the possible values for component shared topologies by the Geometry service:
-    
+
     * SHARETYPE_NONE = 0
     * SHARETYPE_SHARE = 1
     * SHARETYPE_MERGE = 2
     * SHARETYPE_GROUPS = 3
-    """ 
+    """
+
 
 class Component:
     """
@@ -199,7 +200,7 @@ class Component:
     ) -> Body:
         """Create a solid body by extruding the given sketch profile up to the given distance.
 
-        The newly creted body created is nested under this component within the design assembly.
+        The newly created body created is nested under this component within the design assembly.
 
         Parameters
         ----------
@@ -238,7 +239,7 @@ class Component:
     @check_input_types
     def extrude_face(self, name: str, face: Face, distance: Union[Quantity, Distance]) -> Body:
         """Extrude the face profile by a given distance to create a solid body.
-        
+
         There are no modifications against the body containing the source face.
 
         Notes
@@ -436,7 +437,8 @@ class Component:
         """
         Create beams under the component.
 
-        The newly created beams synchronize to a design within a supporting Geometry service instance.
+        The newly created beams synchronize to a design within a supporting
+        Geometry service instance.
 
         Parameters
         ----------
@@ -474,7 +476,8 @@ class Component:
         """
         Create a beam under the component.
 
-        The newly created beam synchronizes to a design within a supporting Geometry service instance.
+        The newly created beam synchronizes to a design within a supporting
+        Geometry service instance.
 
         Parameters
         ----------
@@ -617,7 +620,8 @@ class Component:
 
         Notes
         -----
-        This method is recursive. It is only to be used by the ``delete_component`` method and itself."""
+        This method is recursive. It is only to be used by the
+        ``delete_component()`` method and itself."""
 
         # Kill all its bodies
         for body in self.bodies:

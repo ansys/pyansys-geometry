@@ -22,8 +22,7 @@ class SketchFace:
 
     @property
     def perimeter(self) -> Quantity:
-        """Perimeter of the face.
-        """
+        """Perimeter of the face."""
         perimeter = 0
         for edge in self._edges:
             perimeter += edge.length

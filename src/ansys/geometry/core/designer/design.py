@@ -55,7 +55,7 @@ class DesignFileFormat(Enum):
     - PARASOLID_BIN = "PARASOLID_BIN", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_BINARY
     - INVALID = "INVALID", None
     """
- 
+
 
 class Design(Component):
     """
@@ -212,7 +212,7 @@ class Design(Component):
             received_bytes += response.data
         else:
             self._grpc_client.log.warning(
-                f"{format.value[0]} format requested is not supported. Ignoring this download request."
+                f"{format.value[0]} format requested is not supported. Ignoring download request."
             )
             return
 
@@ -221,7 +221,9 @@ class Design(Component):
         downloaded_file.write(received_bytes)
         downloaded_file.close()
 
-        self._grpc_client.log.debug(f"Design is successfully downloaded at location {file_location}.")
+        self._grpc_client.log.debug(
+            f"Design is successfully downloaded at location {file_location}."
+        )
 
     @check_input_types
     def create_named_selection(
@@ -375,7 +377,9 @@ class Design(Component):
         profile = BeamCircularProfile(response.id, name, radius, center, dir_x, dir_y)
         self._beam_profiles[profile.name] = profile
 
-        self._grpc_client.log.debug(f"Beam circular profile {profile.name} is successfully created.")
+        self._grpc_client.log.debug(
+            f"Beam circular profile {profile.name} is successfully created."
+        )
 
         return self._beam_profiles[profile.name]
 

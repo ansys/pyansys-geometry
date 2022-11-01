@@ -39,9 +39,7 @@ def launch_modeler() -> Modeler:
     # Start PyGeometry with PyPIM if the environment is configured for it
     # and the user did not pass a directive on how to launch it.
     if pypim.is_configured():
-        logger.info(
-            "Starting Geometry service remotely. The startup configuration is ignored."
-        )
+        logger.info("Starting Geometry service remotely. The startup configuration is ignored.")
         return launch_remote_modeler()
 
     raise NotImplementedError("Not yet implemented.")
@@ -52,7 +50,7 @@ def launch_remote_modeler(
     version: Optional[str] = None,
 ) -> Modeler:
     """Start the Geometry service remotely using the PIM API.
-    
+
     When calling this method, you must ensure that you are in an
     environment where PyPIM is configured. PyPIM is the Pythonic
     interface to communicate with the PIM (Product Instance Management)

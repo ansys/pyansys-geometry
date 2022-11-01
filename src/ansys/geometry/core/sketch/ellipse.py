@@ -67,8 +67,7 @@ class Ellipse(SketchFace):
 
     @property
     def center(self) -> Point2D:
-        """2D point that is the center of the ellipse.
-        """
+        """2D point that is the center of the ellipse."""
         return self._center
 
     @property
