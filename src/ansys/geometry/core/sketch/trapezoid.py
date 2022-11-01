@@ -1,4 +1,4 @@
-"""``Trapezoid`` class module."""
+"""Provides the ``Trapezoid`` class ."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
@@ -15,30 +15,30 @@ from ansys.geometry.core.typing import Real
 
 
 class Trapezoid(SketchFace):
-    """A class for modeling 2D trapezoid shape.
+    """Provides for modeling 2D trapezoids.
 
     Parameters
     ----------
     width : Union[Quantity, Distance, Real]
-        The width of the trapezoid.
+        Width of the trapezoid.
     height : Union[Quantity, Distance, Real]
-        The height of the trapezoid.
+        Height of the trapezoid.
     slant_angle : Union[Quantity, Angle, Real]
-        The angle for trapezoid generation.
-    nonsymmetrical_slant_angle : Optional[Union[Quantity, Angle, Real]]
-        Enables asymmetrical slant angles on each side of the trapezoid.
-        If not defined, the trapezoid will be symmetrical.
-    center: Optional[Point2D]
-        A :class:`Point2D` representing the center of the trapezoid.
-        Defaults to (0, 0).
-    angle : Optional[Union[Quantity, Angle, Real]]
-        The placement angle for orientation alignment.
+        Angle for trapezoid generation.
+    nonsymmetrical_slant_angle : Union[Quantity, Angle, Real], optional
+        Whether to enable asymmetrical slant angles on each side of the trapezoid.
+        The default is ``None``, in which case the trapezoid is symmetrical.
+    center: Point2D, optional
+        Point representing the center of the trapezoid. The default is
+        ``(0, 0)``.
+    angle : Union[Quantity, Angle, Real], optional
+        Placement angle for orientation alignment. The default is ``0``.
 
     Notes
     -----
-    If a ``nonsymmetrical_slant_angle`` is defined, the ``slant_angle`` will
-    be applied to the left-most angle, whereas the ``nonsymmetrical_slant_angle``
-    will be applied to the right-most angle.
+    If a nonsymmetrical slantangle is defined, the slant angle is
+    applied to the left-most angle and the nonsymmetrical slant angle
+    is applied to the right-most angle.
     """
 
     @check_input_types
@@ -51,7 +51,7 @@ class Trapezoid(SketchFace):
         center: Optional[Point2D] = ZERO_POINT2D,
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
-        """Initializes the trapezoid shape."""
+        """Initialize the trapezoid."""
         super().__init__()
 
         self._center = center
@@ -126,49 +126,31 @@ class Trapezoid(SketchFace):
 
     @property
     def center(self) -> Point2D:
-        """The center of the trapezoid.
-
-        Returns
-        -------
-        Point2D
-            The center of the trapezoid.
-        """
+        """Center of the trapezoid."""
         return self._center
 
     @property
     def width(self) -> Quantity:
-        """The width of the trapezoid.
-
-        Returns
-        -------
-        Quantity
-            The width of the trapezoid.
-        """
+        """Width of the trapezoid."""
         return self._width.value
 
     @property
     def height(self) -> Quantity:
-        """The height of the trapezoid.
-
-        Returns
-        -------
-        Quantity
-            The height of the trapezoid.
-        """
+        """Height of the trapezoid."""
         return self._height.value
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
         """
-        Return the vtk polydata representation for PyVista visualization.
+        VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
-        the standard global cartesian coordinate system.
+        the standard global Cartesian coordinate system.
 
         Returns
         -------
         pyvista.PolyData
-            The vtk pyvista.Polydata configuration.
+            VTK pyvista.Polydata configuration.
         """
         # TODO: Really, a rectangle???... This should be modified on PyVista... It doesn't make
         #       any sense that a trapezoid can be a rectangle...

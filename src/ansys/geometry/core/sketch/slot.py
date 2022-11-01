@@ -1,4 +1,4 @@
-"""``Slot`` class module."""
+""" Provides the ``Slot`` class."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
@@ -16,19 +16,19 @@ from ansys.geometry.core.typing import Real
 
 
 class Slot(SketchFace):
-    """A class for modeling 2D slot shape.
+    """Provides for modeling 2D slots.
 
     Parameters
     ----------
-    center: Point2D
-        A :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
-        representing the center of the slot.
+    center: :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+        Point that represents the center of the slot.
     width : Union[Quantity, Distance, Real]
-        The width of the slot main body.
+        Width of the slot main body.
     height : Union[Quantity, Distance, Real]
-        The height of the slot.
-    angle : Optional[Union[Quantity, Angle, Real]]
-        The placement angle for orientation alignment.
+        Height of the slot.
+    angle : Union[Quantity, Angle, Real], optional
+        Placement angle for orientation alignment. The default is
+        ``0``.
     """
 
     @check_input_types
@@ -39,7 +39,7 @@ class Slot(SketchFace):
         height: Union[Quantity, Distance, Real],
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
-        """Initializes the slot shape."""
+        """Initialize the slot."""
         super().__init__()
 
         self._center = center
@@ -108,57 +108,27 @@ class Slot(SketchFace):
 
     @property
     def center(self) -> Point2D:
-        """The center of the slot.
-
-        Returns
-        -------
-        Point2D
-            The center of the slot.
-        """
+        """Center of the slot."""
         return self._center
 
     @property
     def width(self) -> Quantity:
-        """The width of the slot.
-
-        Returns
-        -------
-        Quantity
-            The width of the slot.
-        """
+        """Width of the slot."""
         return self._width.value
 
     @property
     def height(self) -> Quantity:
-        """The height of the slot.
-
-        Returns
-        -------
-        Quantity
-            The height of the slot.
-        """
+        """Height of the slot."""
         return self._height.value
 
     @property
     def perimeter(self) -> Quantity:
-        """Return the perimeter of the slot.
-
-        Returns
-        -------
-        Quantity
-            The perimeter of the slot.
-        """
+        """Perimeter of the slot."""
         return np.pi * self._height.value + 2 * (self._width.value - self._height.value)
 
     @property
     def area(self) -> Quantity:
-        """Return the area of the slot.
-
-        Returns
-        -------
-        Quantity
-            The area of the slot.
-        """
+        """Area of the slot."""
         return (
             np.pi * (self._height.value / 2) ** 2
             + (self._width.value - self._height.value) * self._height.value
@@ -167,15 +137,15 @@ class Slot(SketchFace):
     @property
     def visualization_polydata(self) -> pv.PolyData:
         """
-        Return the vtk polydata representation for PyVista visualization.
+        VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
-        the standard global cartesian coordinate system.
+        the standard global Cartesian coordinate system.
 
         Returns
         -------
         pyvista.PolyData
-            The vtk pyvista.Polydata configuration.
+            VTK pyvista.Polydata configuration.
         """
         return pv.merge(
             [
