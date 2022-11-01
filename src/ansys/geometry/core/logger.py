@@ -1,13 +1,13 @@
-"""Logging module.
+"""Provides the Logging module.
 
-This module supplies a general framework for logging in PyGeometry.  This module is
-built upon `logging <https://docs.python.org/3/library/logging.html>`_ library
-and it does not intend to replace it but rather provide a way to interact between
-``logging`` and PyGeometry.
+This module supplies a general framework for logging in PyGeometry. It is
+built on the `logging <https://docs.python.org/3/library/logging.html>`_ library
+This module is not intended to replace the library but rather provide a way
+to interact between the ``logging`` classs and PyGeometry.
 
-The loggers used in the module include the name of the instance, which
+The loggers used in this module include the name of the instance, which
 is intended to be unique. This name is printed in all active
-outputs and is used to track the different Geometry Service instances.
+outputs and is used to track the different Geometry service instances.
 
 
 Usage
@@ -23,15 +23,15 @@ you must call it at the top of your module:
 
    from ansys.geometry.core import LOG
 
-You can also rename it to avoid conflicts with other loggers (if any):
+You can rename this logger to avoid conflicts with other loggers (if any):
 
 .. code:: python
 
    from ansys.geometry.core import LOG as logger
 
 
-It should be noticed that the default logging level of ``LOG`` is ``ERROR``.
-You can change this and output lower-level messages with:
+The default logging level of ``LOG`` is ``ERROR``.
+You can change this level and output lower-level messages with:
 
 .. code:: python
 
@@ -40,15 +40,15 @@ You can change this and output lower-level messages with:
    LOG.stdout_handler.setLevel('DEBUG')  # If present.
 
 
-Alternatively, you can ensure all the handlers are set to the input log
+Alternatively, you can ensure that all the handlers are set to the input log
 level with:
 
 .. code:: python
 
    LOG.setLevel('DEBUG')
 
-By default, this logger does not log to a file. If you want to do so,
-you can add a file handler with:
+By default, this logger does not log to a file. If you want, you can
+add a file handler with:
 
 .. code:: python
 
@@ -56,7 +56,7 @@ you can add a file handler with:
    file_path = os.path.join(os.getcwd(), 'pygeometry.log')
    LOG.log_to_file(file_path)
 
-This sets the logger to be redirected also to this file. If you want
+This also sets the logger to be redirected to this file. If you want
 to change the characteristics of this global logger from the beginning
 of the execution, you must edit the ``__init__`` file in the directory
 ``ansys.geometry.core``.
@@ -85,7 +85,7 @@ similar to the global logger. If you want to add a file handler, you can use
 the :func:`log_to_file() <PyGeometryCustomAdapter.log_to_file>` method. If you want
 to change the log level, you can use the :func:`logger.Logging.setLevel` method.
 
-You can use this logger like this:
+Here is an example of hoow you can use this logger:
 
 .. code:: python
 
@@ -155,14 +155,14 @@ string_to_loglevel = {
 
 
 class PyGeometryCustomAdapter(logging.LoggerAdapter):
-    """Keeps the reference to the Geometry Service instance name dynamic.
+    """Keeps the reference to the Geometry service instance name dynamic.
 
-    If we use the standard approach, which is supplying **extra** input
-    to the logger, we would need to keep inputting Geometry Service instances
-    every time we do a log.
+    If you use the standard approach, which is supplying **extra** input
+    to the logger, you must input Geometry service instances
+    each time you do a log.
 
-    Using adapters, we only need to specify the Geometry Service instance that
-    we are referring to once.
+    Using adapters, you only need to specify the Geometry service instance that
+    you are referring to once.
     """
 
     level = (
@@ -308,13 +308,13 @@ class Logger:
         Whether to write log messages to the standard output (stdout). The
         default is ``True``.
     filename : str, optional
-        Name of the file to write log log messages to. The default is
+        Name of the file to write log messages to. The default is
         ``"pygeometry.log"``.
 
     Examples
     --------
     Demonstrate logger usage from the ``Modeler`` instance, which is automatically
-    created when a Geometry Service instance is created.
+    created when a Geometry service instance is created.
 
     >>> from ansys.geometry.core import Modeler
     >>> modeler = Modeler(loglevel='DEBUG')
@@ -336,7 +336,7 @@ class Logger:
     _instances = {}
 
     def __init__(self, level=logging.DEBUG, to_file=False, to_stdout=True, filename=FILE_NAME):
-        """Customize the logger class for PyGeometry.
+        """Customize the ``logger`` class for PyGeometry.
 
         Parameters
         ----------
@@ -378,7 +378,7 @@ class Logger:
         self.add_handling_uncaught_expections(self.logger)
 
     def log_to_file(self, filename=FILE_NAME, level=LOG_LEVEL):
-        """Add file handler to logger.
+        """Add a file handler to the logger.
 
         Parameters
         ----------
@@ -391,7 +391,7 @@ class Logger:
 
         Examples
         --------
-        Write to the ``"pygeometry.log"`` file in the current working directory.
+        Write to the ``"pygeometry.log"`` file in the current working directory:
 
         >>> from ansys.geometry.core import LOG
         >>> import os
@@ -424,7 +424,7 @@ class Logger:
     def _make_child_logger(self, sufix, level):
         """Create a child logger.
 
-        This method uses the ``getChild`` method or copies attributes between the
+        This method uses the ``getChild()`` method or copies attributes between the
         ``PyGeometry_global`` logger and the new one.
         """
         logger = logging.getLogger(sufix)
@@ -469,7 +469,7 @@ class Logger:
         """Add a child logger to the main logger.
 
         This logger is more general than an instance logger, which is designed to
-        track the state of Geometry Service instances.
+        track the state of Geometry service instances.
 
         If the logging level is in the arguments, a new logger with a reference
         to the ``_global`` logger handlers is created instead of a child logger.
@@ -493,10 +493,10 @@ class Logger:
     def add_instance_logger(
         self, name: str, client_instance: "GrpcClient", level: Optional[int] = None
     ) -> PyGeometryCustomAdapter:
-        """Add a logger for a Geometry Service instance.
+        """Add a logger for a Geometry service instance.
 
-        The Geometry Service instance logger is a logger with an adapter that adds
-        contextual information such as the Geometry Service instance name. This logger is
+        The Geometry service instance logger is a logger with an adapter that adds
+        contextual information such as the Geometry service instance name. This logger is
         returned, and you can use it to log events as a normal logger. It is
         stored in the ``_instances`` field.
 
@@ -505,14 +505,14 @@ class Logger:
         name : str
             Name for the new instance logger.
         client_instance : GrpcClient
-            Geometry Service GrpcClient object, which should contain the ``get_name`` method.
+            Geometry service GrpcClient object, which should contain the ``get_name()`` method.
         level : int, optional
             Level of logging. The default is ``None``.
 
         Returns
         -------
         PyGeometryCustomAdapter
-            Logger adapter customized to add Geometry Service information to the
+            Logger adapter customized to add Geometry service information to the
             logs. You can use this class to log events in the same
             way you would with the ``Logger`` class.
         """

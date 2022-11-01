@@ -1,4 +1,4 @@
-"""``Modeler`` class module."""
+"""Provides the ``Modeler`` class."""
 import logging
 from pathlib import Path
 
@@ -16,32 +16,33 @@ if TYPE_CHECKING:  # pragma: no cover
 
 class Modeler:
     """
-    Provides a modeler class for interacting with an open session of
+    Provides for interacting with an open session of
     the Geometry service.
 
     Parameters
     ----------
     host : str, optional
         Host where the server is running.
-        By default, ``DEFAULT_HOST``.
+        The default is ``DEFAULT_HOST``.
     port : Union[str, int], optional
         Port number where the server is running.
-        By default, ``DEFAULT_PORT``.
+        The default is ``DEFAULT_PORT``.
     channel : ~grpc.Channel, optional
         gRPC channel for server communication.
-        By default, ``None``.
+        The default is ``None``.
     timeout : Real, optional
         Timeout in seconds to achieve the connection.
-        By default, 60 seconds.
+        The default is ``60``.
     remote_instance : ansys.platform.instancemanagement.Instance
-        The corresponding remote instance when the Geometry Service
-        is launched through PyPIM. This instance will be deleted when calling
-        :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`.
+        Corresponding remote instance when the Geometry service
+        is launched through PyPIM. This instance is deleted when the
+        :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
+        method is called.
     logging_level : int, optional
-        The logging level to be applied to the client.
-        By default, ``INFO``.
-    logging_file : Optional[str, Path]
-        The file to output the log, if requested. By default, ``None``.
+        Logging level to apply to the client.
+        The default is ``INFO``.
+    logging_file : str, Path, optional
+        File to output the log to, if requested. The default is ``None``.
     """
 
     def __init__(
@@ -54,7 +55,7 @@ class Modeler:
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
     ):
-        """Constructor method for ``Modeler``."""
+        """Constructor method for the ``Modeler`` class."""
         self._client = GrpcClient(
             host=host,
             port=port,
@@ -70,17 +71,17 @@ class Modeler:
 
     @property
     def client(self) -> GrpcClient:
-        """The ``Modeler`` instance client."""
+        """``Modeler`` instance client."""
         return self._client
 
     @check_input_types
     def create_design(self, name: str) -> Design:
-        """Initializes a new design with the connected client.
+        """Initialize a new design with the connected client.
 
         Parameters
         ----------
         name : str
-            Name assigned to the design.
+            Name for the new design.
 
         Returns
         -------
