@@ -222,12 +222,12 @@ class Face:
 
         Parameters
         ----------
-        u : float, optional
+        u : float, default: 0.5
             First coordinate of the 2D representation of a surface in UV space.
-            The default is ``0.5``, which is the center of the surface.
-        v : float, optional
+            The default is the center of the surface.
+        v : float, default: 0.5
             Second coordinate of the 2D representation of a surface in UV space.
-            The default is ``0.5``, which is the the center of the surface.
+            The default is the center of the surface.
 
         Returns
         -------
@@ -255,12 +255,12 @@ class Face:
 
         Parameters
         ----------
-        u : float, optional
+        u : float, default: 0.5
             First coordinate of the 2D representation of a surface in UV space.
-            The default is ``0.5``, which is the center of the surface.
-        v : float
+            The default is the center of the surface.
+        v : float, default: 0.5
             Second coordinate of the 2D representation of a surface in UV space.
-            The default is ``0.5``, which is the the center of the surface.
+            The default is the center of the surface.
 
         Returns
         -------

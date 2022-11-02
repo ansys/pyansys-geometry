@@ -22,15 +22,12 @@ class Plotter:
 
         Parameters
         ----------
-        scene : ~pyvista.Plotter, optional
-            Scene instance for rendering the objects. The default
-            is ``None``.
-        background_opts : dict, optional
-            Dictionary containing the background and top colors. The
-            default is ``None``.
-        num_points : int, optional
-            Number of points to use to render the shapes. The default
-            is ``100``.
+        scene : ~pyvista.Plotter, default: None
+            Scene instance for rendering the objects.
+        background_opts : dict, default: None
+            Dictionary containing the background and top colors.
+        num_points : int, default: 100
+            Number of points to use to render the shapes.
 
         """
         # Generate custom scene if ``None`` is provided
@@ -131,10 +128,10 @@ class Plotter:
             Dictionary containing parameters accepted by the
             :class:`pyvista.Plane` for customizing the mesh representing the
             plane.
-        plotting_options : dict, optional
+        plotting_options : dict, default: None
             Dictionary containing parameters accepted by the
             :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
-            rendering of the plane. The default is ``None``.
+            rendering of the plane.
 
         """
         # Impose default plane options if required
@@ -166,11 +163,11 @@ class Plotter:
         ----------
         sketch : Sketch
             ``Sketch`` instance to render in the scene.
-        show_plane : bool, optional
-            Whether to render the sketch plane in the scene. The default is ``False``.
-        show_frame : bool, optional
-            If ``Frame``, whether to render the sketch plane in the scene. The default is ``False``.
-        **kwargs : dict, optional
+        show_plane : bool, default: False
+            Whether to render the sketch plane in the scene.
+        show_frame : bool, default: False
+            If ``Frame``, whether to render the sketch plane in the scene.
+        **kwargs : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
         """
@@ -191,11 +188,11 @@ class Plotter:
         ----------
         body : ansys.geometry.core.designer.Body
             Body to add.
-        merge : bool, optional
-            Whether to merge the body into a single mesh. The default is ``False``.
-            If ``True``, the individual faces of the tessellation are merged. This
+        merge : bool, default: False
+            Whether to merge the body into a single mesh. If ``True``, the
+            individual faces of the tessellation are merged. This
             preserves the number of triangles and only merges the topology.
-        **kwargs : dict, optional
+        **kwargs : dict, default: None
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
@@ -215,15 +212,15 @@ class Plotter:
         ----------
         component : ansys.geometry.core.designer.Component
             Component to add.
-        merge_component : bool, optional
-            Whether to merge the component into a single dataset. The default is
-            ``False``. When ``True``, all the individual bodies are effectively
-            combineed into a single dataset without any hierarchy.
-        merge_bodies : bool, optional
-            Whether to merge each body into a single dataset. The default is
-            ``False``. When ``True``, all the faces of each individual body
-            are effectively combineed into a single dataset without.
-        **kwargs : dict, optional
+        merge_component : bool, default: False
+            Whether to merge the component into a single dataset. When
+            ``True``, all the individual bodies are effectively combined
+            into a single dataset without any hierarchy.
+        merge_bodies : bool, default: False
+            Whether to merge each body into a single dataset. When ``True``,
+            all the faces of each individual body are effectively combineed
+            into a single dataset without.
+        **kwargs : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
         """
@@ -238,7 +235,7 @@ class Plotter:
         ----------
         polydata : pyvista.PolyData
             Polydata to add.
-        **kwargs : dict, optional
+        **kwargs : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
         """
@@ -256,10 +253,10 @@ class Plotter:
 
         Parameters
         ----------
-        jupyter_backend : str, optional
-            PyVista Jupyter backend. The default is ``None``.
+        jupyter_backend : str, default: None
+            PyVista Jupyter backend.
 
-        **kwargs : dict, optional
+        **kwargs : dict, default: None
             Plotting keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.show` method.
 

@@ -17,12 +17,12 @@ class Plane(Frame):
 
     Parameters
     ----------
-    origin : Union[~numpy.ndarray, RealSequence, Point3D], optional
+    origin : Union[~numpy.ndarray, RealSequence, Point3D], default: ZERO_POINT3D
         Centered origin of the frame. The default is the Cartesian origin.
-    direction_x: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D], optional
-        X-axis direction. The default is ``UNITVECTOR3D_X``.
-    direction_y: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D], optional
-        Y-axis direction. The default is ``UNITVECTOR3D_Y``.
+    direction_x: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D], default: UNITVECTOR3D_X
+        X-axis direction.
+    direction_y: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D], default: UNITVECTOR3D_Y
+        Y-axis direction.
     """
 
     def __init__(
@@ -31,7 +31,7 @@ class Plane(Frame):
         direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Y,
     ):
-        """Constructor method for the ``Plane`` class."""
+        """Constructor method for ``Plane``."""
         super().__init__(origin, direction_x, direction_y)
 
     @check_input_types
@@ -41,7 +41,7 @@ class Plane(Frame):
         Parameters
         ----------
         point : Point3D
-            The :class:`Point3D <ansys.geometry.core.math.point.Point3D>` class to check.
+            :class:`Point3D <ansys.geometry.core.math.point.Point3D>` class to check.
 
         Returns
         -------

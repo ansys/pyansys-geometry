@@ -196,8 +196,8 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
         filename : str, default: "pygeometry.log"
             Name of the file to write log messages to.
         level : int, default: 10
-            Level of logging. The default is ``10``, in which case the
-            ``logging.DEBUG`` level is used.
+            Level of logging. By default, the ``logging.DEBUG``
+            level is used.
         """
 
         self.logger = addfile_handler(
@@ -211,8 +211,8 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
         Parameters
         ----------
         level : int, default: 10
-            Level of logging. The default is ``10``, in which case the
-            ``logging.DEBUG`` level is used.
+            Level of logging. By defualt, the ``logging.DEBUG``
+            level is used.
         """
         if self.std_out_handler:
             raise Exception("Stdout logger is already defined.")
@@ -226,8 +226,8 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
         Parameters
         ----------
         level : int, default: 10
-            Level of logging. The default is ``10``, in which case the
-            ``logging.DEBUG`` level is used.
+            Level of logging. By default, the ``logging.DEBUG``
+            level is used.
         """
         self.logger.setLevel(level)
         for each_handler in self.logger.handlers:
@@ -299,8 +299,7 @@ class Logger:
     ----------
     level : int, default: 10
         Logging level to filter the message severity allowed in the logger.
-        The default is ``10``, in which case the ``logging.DEBUG`` level
-        is used.
+        By default, the ``logging.DEBUG`` level is used.
     to_file : bool, default: False
         Whether to write log messages to a file.
     to_stdout : bool, default: True
@@ -338,10 +337,11 @@ class Logger:
         Parameters
         ----------
         level : int, default: 10
-            Level of logging as defined in the ``logging`` package. The default
-            is ``10``, in which case the ``logging.DEBUG`` level is used.
+            Level of logging as defined in the ``logging`` package. By default,
+            the ``logging.DEBUG`` level is used.
         to_file : bool, default: False
             Whether to write log messages to a file.
+        to_stdout : bool, default: True
             Whether to write log messages to the standard output (stdout).
         filename : str, default: "pygeometry.log"
            Name of the file to write log messages to.
@@ -380,8 +380,8 @@ class Logger:
         filename : str, default: "pygeometry.log"
             Name of the file to write log messages to.
         level : int, default: 10
-            Level of logging. The default is ``10``, in which case the
-            ``logging.DEBUG`` level is used.
+            Level of logging. By default, the ``logging.DEBUG``
+            level is used.
 
         Examples
         --------
@@ -402,8 +402,8 @@ class Logger:
         Parameters
         ----------
         level : int, default: 10
-            Level of logging. The default is ``10``, in which case the
-            ``logging.DEBUG`` level is used.
+            Level of logging. By default, the ``logging.DEBUG``
+            level is used.
         """
 
         self = add_stdout_handler(self, level=level)
@@ -561,8 +561,8 @@ def addfile_handler(logger, filename=FILE_NAME, level=LOG_LEVEL, write_headers=F
     filename : str, default: "pygeometry.log"
         Name of the output file.
     level : int, default: 10
-        Level of logging. The default is ``10``, in which case the
-        ``logging.DEBUG`` level is used.
+        Level of logging. By default, the ``logging.DEBUG``
+        level is used.
     write_headers : bool, default: False
         Whether to write the headers to the file.
 
@@ -599,8 +599,8 @@ def add_stdout_handler(logger, level=LOG_LEVEL, write_headers=False):
     logger : logging.Logger
         Logger to add the file handler to.
     level : int, default: 10
-        Level of logging. The default is ``10``, in which case the
-           ``logging.DEBUG`` level is used.
+        Level of logging. By default, the ``logging.DEBUG``
+        level is used.
     write_headers : bool, default: False
         Whether to write headers to the file.
 

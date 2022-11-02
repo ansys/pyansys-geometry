@@ -27,7 +27,7 @@ class CoordinateSystem:
         User-defined label for the coordinate system.
     frame : Frame
         Frame defining the coordinate system bounds.
-    parent_component : Component
+    parent_component : Component, default: Component
         Parent component the coordinate system is assigned against.
     grpc_client : GrpcClient
         Active supporting Geometry service instance for design modeling.

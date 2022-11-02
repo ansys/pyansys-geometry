@@ -24,7 +24,7 @@ class Box(SketchFace):
         Width of the box.
     height : Union[Quantity, Distance, Real]
         Height of the box.
-    angle : Optional[Union[Quantity, Angle, Real]]
+    angle : Union[Quantity, Angle, Real], default: 0
         Placement angle for orientation alignment.
     """
 

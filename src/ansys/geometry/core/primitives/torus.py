@@ -40,7 +40,7 @@ class Torus:
         minor_radius: Real,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
-        """Constructor method for the ``Torus`` class."""
+        """Constructor method for ``Torus``."""
 
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit

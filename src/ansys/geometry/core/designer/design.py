@@ -173,11 +173,11 @@ class Design(Component):
         ----------
         file_location : Union[Path, str]
             Location on disk to save the file to.
-        format : Optional[DesignFileFormat]
-            Format for the file to save to. The default is an ``SCDOCX`` file.
+        format :DesignFileFormat, default: DesignFileFormat.SCDOCX
+            Format for the file to save to.
         as_stream : bool, default: False
-            Whether to use the gRPC stream functionality (if possible). The default
-            is ``False``. If ``True``, the single-message functionality is used.
+            Whether to use the gRPC stream functionality (if possible). If
+            ``True``, single-message functionality is used.
         """
         # Sanity checks on inputs
         if isinstance(file_location, Path):
@@ -340,7 +340,7 @@ class Design(Component):
         Parameters
         ----------
         name : str
-            User-defined label dfor the new beam circular profile.
+            User-defined label for the new beam circular profile.
         radius : float
             Radius of the beam circular profile.
         center : Union[~numpy.ndarray, RealSequence, Point3D]

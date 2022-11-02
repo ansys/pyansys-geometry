@@ -640,13 +640,13 @@ class Component:
 
         Parameters
         ----------
-        merge_component : bool, optional
-            Whether to merge this component into a single dataset. This default
-            is ``False``. If ``True``, all the individual bodies are effectively
-            combined into a single dataset without any hierarchy.
-        merge_bodies : bool, optional
-            Whether to merge each body into a single dataset. The default is ``False``.
-            If ``True``, all the faces of each individual body are effectively
+        merge_component : bool, default: False
+            Whether to merge this component into a single dataset. If ``True``,
+            all the individual bodies are effectively combined into a single
+            dataset without any hierarchy.
+        merge_bodies : bool, default: False
+            Whether to merge each body into a single dataset. If ``True``,
+            all the faces of each individual body are effectively
             merged into a single dataset without separating faces.
 
         Returns
@@ -724,12 +724,12 @@ class Component:
         Parameters
         ----------
         merge_component : bool, default: False
-            Whether to merge this component into a single dataset. The default is
-            ``False``. If ``True``, all the individual bodies are effectively merged
-            into a single dataset without any hierarchy.
+            Whether to merge this component into a single dataset. When ``True``,
+            all the individual bodies are effectively merged into a single
+            dataset without any hierarchy.
         merge_bodies : bool, default: False
-            Whether to merge each body into a single dataset. The default is ``False``.
-            If ``True``, all the faces of each individual body are effectively merged
+            Whether to merge each body into a single dataset. When ``True``,
+            all the faces of each individual body are effectively merged
             into a single dataset without separating faces.
         **kwargs : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the

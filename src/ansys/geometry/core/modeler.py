@@ -50,7 +50,7 @@ class Modeler:
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
     ):
-        """Constructor method for the ``Modeler`` class."""
+        """Constructor method for ``Modeler``."""
         self._client = GrpcClient(
             host=host,
             port=port,

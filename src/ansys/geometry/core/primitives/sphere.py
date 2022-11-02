@@ -20,9 +20,8 @@ class Sphere:
         Centered origin of the sphere.
     radius : Real
         Radius of the sphere.
-    unit : Unit, optional
-        Units for defining the radius and height. The default
-        is ``UNIT_LENGTH``.
+    unit : Unit, default: UNIT_LENGTH
+        Units for defining the radius and height.
     """
 
     @check_input_types
@@ -32,7 +31,7 @@ class Sphere:
         radius: Real,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
-        """Constructor method for the ``Sphere`` class."""
+        """Constructor method for ``Sphere``."""
 
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit

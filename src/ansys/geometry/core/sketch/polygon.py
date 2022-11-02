@@ -24,9 +24,8 @@ class Polygon(SketchFace):
         Inner radius (apothem) of the polygon.
     sides : int
         Number of sides of the polygon.
-    angle : Union[Quantity, Angle, Real], optional
-        Placement angle for orientation alignment. The default
-        is ``0``.
+    angle : Union[Quantity, Angle, Real], default: 0
+        Placement angle for orientation alignment.
     """
 
     @check_input_types

@@ -27,11 +27,11 @@ class NamedSelection:
         User-defined name for the named selection.
     grpc_client : GrpcClient
         Active supporting Geometry service instance for design modeling.
-    bodies : Optional[List[Body]]
+    bodies : List[Body], default: None
         All bodies to include in the named selection.
-    faces : Optional[List[Face]]
+    faces : List[Face], default: None
         All faces to include in the named selection.
-    edges : Optional[List[Edge]]
+    edges : List[Edge], default: None
         All edges to include in the named selection.
     """
 

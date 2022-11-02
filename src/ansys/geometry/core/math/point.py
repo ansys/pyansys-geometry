@@ -64,7 +64,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
 
         # Check dimensions
         if len(input) != 2:
-            raise ValueError("Point2D class must receive 2 arguments.")  # noqa: E501
+            raise ValueError("Point2D class must receive two arguments.")  # noqa: E501
 
         # Store values
         self._quantities = [Quantity(elem, units=unit) for elem in input]
@@ -168,7 +168,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
         input: Optional[Union[np.ndarray, RealSequence]] = DEFAULT_POINT3D_VALUES,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
-        """Constructor for the ``Point3D`` class."""
+        """Constructor method for the ``Point3D`` class."""
         # Build an empty np.ndarray object
         return np.zeros(len(input)).view(cls)
 
@@ -232,7 +232,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
 
     @property
     def x(self) -> Quantity:
-        """Return the X plane component value."""
+        """X plane component value."""
         if self._quantities[0] is np.nan:
             self._quantities[0] = Quantity(self[0], units=self.base_unit).to(self.unit)
         return self._quantities[0]

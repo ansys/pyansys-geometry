@@ -17,8 +17,8 @@ class Material:
         Material name.
     density: ~pint.Quantity
         Material density.
-    additional_properties: [Sequence[MaterialProperty]], optional
-        Additional material properties. The default is ``[]``.
+    additional_properties: Sequence[MaterialProperty], default: None
+        Additional material properties.
     """
 
     @check_input_types
@@ -28,7 +28,7 @@ class Material:
         density: Quantity,
         additional_properties: Optional[Sequence[MaterialProperty]] = None,
     ):
-        """Constructor method for the ``Material`` class."""
+        """Constructor method for ``Material``."""
         self._name = name
         self._density = MaterialProperty(MaterialPropertyType.DENSITY, "Density", density)
         if not additional_properties:

@@ -34,7 +34,7 @@ class BoundingBox2D:
         y_min: Real = sys.float_info.max,
         y_max: Real = sys.float_info.min,
     ):
-        """Constructor method for the ``BoundingBox2D`` class."""
+        """Constructor method for ``BoundingBox2D``."""
         self._x_min = x_min
         self._x_max = x_max
         self._y_min = y_min
@@ -92,7 +92,7 @@ class BoundingBox2D:
         Parameters
         ----------
         point : Point2D
-            The point to be included within the bounds.
+            Point to include within the bounds.
         """
         self.add_point_components(point.x.m_as(UNIT_LENGTH), point.y.m_as(UNIT_LENGTH))
 
@@ -148,9 +148,9 @@ class BoundingBox2D:
         Parameters
         ----------
         x : Real
-            Point x component to compare against the bounds.
+            Point X component to compare against the bounds.
         y : Real
-            Point y component to compare against the bounds.
+            Point Y component to compare against the bounds.
 
         Returns
         -------

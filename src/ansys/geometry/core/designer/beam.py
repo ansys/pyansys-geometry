@@ -30,7 +30,7 @@ class BeamProfile:
     """
 
     def __init__(self, id: str, name: str):
-        """Constructor method for the ``BeamProfile``object."""
+        """Constructor method for ``BeamProfile`."""
         self._id = id
         self._name = name
 
@@ -60,8 +60,7 @@ class BeamCircularProfile(BeamProfile):
     radius : Distance
         Radius of the circle.
     center: Point3D
-        A :class:`Point3D <ansys.geometry.core.math.point.Point3D>` representing
-        the center of the circle.
+        A point representing the center of the circle.
     direction_x: UnitVector3D
         X-axis direction.
     direction_y: UnitVector3D
@@ -143,7 +142,7 @@ class Beam:
         End of the beam line segment.
     profile : BeamProfile
         Beam profile to use to create the beam.
-    parent_component : Component
+    parent_component : Component, default: Component
         Parent component to nest the new beam under within the design assembly.
     """
 
@@ -172,7 +171,7 @@ class Beam:
 
     @property
     def id(self) -> str:
-        """Geometry service-defined ID of the beam."""
+        """Service-defined ID of the beam."""
         return self._id
 
     @property

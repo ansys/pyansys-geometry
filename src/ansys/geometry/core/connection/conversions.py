@@ -109,7 +109,7 @@ def sketch_shapes_to_grpc_geometries(
         Source shape data.
     only_one_curve : bool, default: False
         Whether to project one curve of the whole set of geometries to
-        enhancce performance. The default is ``False``.
+        enhance performance.
 
     Returns
     -------
@@ -241,7 +241,7 @@ def sketch_circle_to_grpc_circle(circle: Circle, plane: Plane) -> GRPCCircle:
     circle : Circle
         Source circle data.
     plane : Plane
-        Plane for positioning the 2D circle.
+        Plane for positioning the circle.
 
     Returns
     -------
@@ -339,7 +339,7 @@ def sketch_segment_to_grpc_line(segment: Segment, plane: Plane) -> GRPCLine:
 
 
 def tess_to_pd(tess: Tessellation) -> "PolyData":
-    """Convert an ``ansys.api.geometry.Tessellation`` to a :class:`pyvista.PolyData` class."""
+    """Convert an ``ansys.api.geometry.Tessellation`` class to a :class:`pyvista.PolyData` class."""
     # lazy imports here to improve initial load
     import numpy as np
     import pyvista as pv

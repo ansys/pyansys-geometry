@@ -26,9 +26,8 @@ class Slot(SketchFace):
         Width of the slot main body.
     height : Union[Quantity, Distance, Real]
         Height of the slot.
-    angle : Union[Quantity, Angle, Real], optional
-        Placement angle for orientation alignment. The default is
-        ``0``.
+    angle : Union[Quantity, Angle, Real], default: 0
+        Placement angle for orientation alignment.
     """
 
     @check_input_types

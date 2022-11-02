@@ -17,7 +17,7 @@ class Circle(SketchFace):
     Parameters
     ----------
     center: Point2D
-        2D point representing the center of the circle.
+        Point representing the center of the circle.
     radius : Union[Quantity, Distance]
         Radius of the circle.
     """

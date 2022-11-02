@@ -17,7 +17,7 @@ class Segment(SketchEdge):
     Parameters
     ----------
     start : Point2D
-        2D point that is the start of the line segment.
+        Point that is the start of the line segment.
     end : Point2D
         Point that is the end of the line segment.
     """
@@ -28,7 +28,7 @@ class Segment(SketchEdge):
         start: Point2D,
         end: Point2D,
     ):
-        """Constructor method for the ``Segment`` class."""
+        """Constructor method for ``Segment``."""
         super().__init__()
 
         # Perform sanity checks on point values given

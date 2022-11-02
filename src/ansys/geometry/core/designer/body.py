@@ -246,8 +246,8 @@ class Body:
         closest_face: bool
             Whether to target the closest face with the projection.
         only_one_curve: bool, default: False
-            Whether to project only one curve of the entire sketch. The
-            default is ``False``. If ``True``, only one curve is projected.
+            Whether to project only one curve of the entire sketch. When
+            ``True``, only one curve is projected.
 
         Notes
         -----
@@ -320,9 +320,9 @@ class Body:
         Parameters
         ----------
         merge : bool, default: False
-            Whether to merge the body into a single mesh. The default is ``False``.
-            If ``True``, the individual faces of the tessellation are merged. This
-            preserves the number of triangles and only merges the topology.
+            Whether to merge the body into a single mesh. By default, the
+            number of triangles are preserved and only the topology is merged.
+            When ``True``, the individual faces of the tessellation are merged.
 
         Returns
         -------
@@ -391,9 +391,9 @@ class Body:
         Parameters
         ----------
         merge : bool, default: False
-            Whether to merge the body into a single mesh.
-            If ``True``, the individual faces of the tessellation are merged. This
-            preserves the number of triangles and only merges the topology.
+            Whether to merge the body into a single mesh. By default, the
+            number of triangles are preserved and only the topology is merged.
+            When ``True``, the individual faces of the tessellation are merged.
         **kwargs : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.

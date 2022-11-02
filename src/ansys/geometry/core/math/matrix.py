@@ -1,4 +1,4 @@
-"""Provides the ``Matrix`` class."""
+"""Provides the ``Matrix`` class."""e default is
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
 import numpy as np
@@ -23,7 +23,7 @@ class Matrix(np.ndarray):
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence]):
-        """Constructor for the ``Matrix`` class."""
+        """Constructor metho for ``Matrix``."""
         obj = np.asarray(input).view(cls)
         obj.setflags(write=False)
 

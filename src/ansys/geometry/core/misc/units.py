@@ -21,9 +21,8 @@ class PhysicalQuantity:
     ----------
     unit : ~pint.Unit
         Units for the class.
-    expected_dimensions : ~pint.Unit, optional
+    expected_dimensions : ~pint.Unit, default: None
         Units for the dimensionality of the physical quantity.
-        The default is ``None``.
     """
 
     @check_input_types

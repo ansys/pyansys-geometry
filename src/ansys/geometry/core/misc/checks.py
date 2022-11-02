@@ -12,8 +12,8 @@ def check_is_float_int(param: object, param_name: Optional[Union[str, None]] = N
     ----------
     param : object
         Object instance to check.
-    param_name : str, optional
-        Parameter name (if any). The default is ``None``.
+    param_name : str, default: None
+        Parameter name (if any).
 
     Raises
     ------
@@ -38,9 +38,8 @@ def check_ndarray_is_float_int(
     ----------
     param : ~numpy.ndarray
         :class:`numpy.ndarray <numpy.ndarray>` instance to check.
-    param_name : str, optional
-        :class:`numpy.ndarray <numpy.ndarray>` instance name (if any). The
-        default is ``None``.
+    param_name : str, default: None
+        :class:`numpy.ndarray <numpy.ndarray>` instance name (if any).
 
     Raises
     ------
@@ -71,9 +70,8 @@ def check_ndarray_is_not_none(
     ----------
     param : ~numpy.ndarray
         :class:`numpy.ndarray <numpy.ndarray>` instance to check.
-    param_name : str or None, optional
-        :class:`numpy.ndarray <numpy.ndarray>` instance name (if any). The
-        default is ``None``.
+    param_name : str, default: None
+        :class:`numpy.ndarray <numpy.ndarray>` instance name (if any).
 
     Raises
     ------
@@ -126,7 +124,7 @@ def check_ndarray_is_non_zero(
     ----------
     param : ~numpy.ndarray
         :class:`numpy.ndarray <numpy.ndarray>` instance to check.
-    param_name : str or None, default: None
+    param_name : str, default: None
         :class:`numpy.ndarray <numpy.ndarray>` instance name (if any).
 
     Raises

@@ -34,10 +34,10 @@ def launch_modeler() -> Modeler:
     # A local installation of the Geometry service or PyPIM is required for
     # this to work. Neither is integrated, but we can consider adding them later.
 
-    # Another alternative is running Docker locally from this method.
+    # Another alternative is to run Docker locally from this method.
 
     # Start PyGeometry with PyPIM if the environment is configured for it
-    # and the user did not pass a directive on how to launch it.
+    # and a directive on how to launch it was not passed.
     if pypim.is_configured():
         logger.info("Starting Geometry service remotely. The startup configuration is ignored.")
         return launch_remote_modeler()
