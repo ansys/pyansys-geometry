@@ -193,10 +193,9 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
 
         Parameters
         ----------
-        filename : str, optional
-            Name of the file to write log messages to. The default is
-            ``"pygeometry.log"``.
-        level : str, optional
+        filename : str, default: "pygeometry.log"
+            Name of the file to write log messages to.
+        level : int, default: 10
             Level of logging. The default is ``10``, in which case the
             ``logging.DEBUG`` level is used.
         """
@@ -211,7 +210,7 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
 
         Parameters
         ----------
-        level : int, optional
+        level : int, default: 10
             Level of logging. The default is ``10``, in which case the
             ``logging.DEBUG`` level is used.
         """
@@ -226,7 +225,7 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
 
         Parameters
         ----------
-        level : int, optional
+        level : int, default: 10
             Level of logging. The default is ``10``, in which case the
             ``logging.DEBUG`` level is used.
         """
@@ -298,18 +297,16 @@ class Logger:
 
     Parameters
     ----------
-    level : int, optional
+    level : int, default: 10
         Logging level to filter the message severity allowed in the logger.
         The default is ``10``, in which case the ``logging.DEBUG`` level
         is used.
-    to_file : bool, optional
-        Whether to write log messages to a file. The default is ``False``.
-    to_stdout : bool, optional
-        Whether to write log messages to the standard output (stdout). The
-        default is ``True``.
-    filename : str, optional
-        Name of the file to write log log messages to. The default is
-        ``"pygeometry.log"``.
+    to_file : bool, default: False
+        Whether to write log messages to a file.
+    to_stdout : bool, default: True
+        Whether to write log messages to the standard output (stdout).
+    filename : str, default: "pygeometry.log"
+        Name of the file to write log log messages to.
 
     Examples
     --------
@@ -340,16 +337,14 @@ class Logger:
 
         Parameters
         ----------
-        level : int, optional
+        level : int, default: 10
             Level of logging as defined in the ``logging`` package. The default
             is ``10``, in which case the ``logging.DEBUG`` level is used.
-        to_file : bool, optional
-            Whether to write log messages to a file. The default is ``False``.
-        to_stdout : bool, optional
-            Whether to write log messages to the standard output (stdout). The
-            default is ``True``.
-        filename : str, optional
-           Name of the file to write log messages to. The default is ``"pygeometry.log"``.
+        to_file : bool, default: False
+            Whether to write log messages to a file.
+            Whether to write log messages to the standard output (stdout).
+        filename : str, default: "pygeometry.log"
+           Name of the file to write log messages to.
         """
 
         # create default main logger
@@ -382,10 +377,9 @@ class Logger:
 
         Parameters
         ----------
-        filename : str, optional
-            Name of the file to write log messages to. The default
-            is ``"pygeometry.log"``.
-        level : int, optional
+        filename : str, default: "pygeometry.log"
+            Name of the file to write log messages to.
+        level : int, default: 10
             Level of logging. The default is ``10``, in which case the
             ``logging.DEBUG`` level is used.
 
@@ -407,7 +401,7 @@ class Logger:
 
         Parameters
         ----------
-        level : int, optional
+        level : int, default: 10
             Level of logging. The default is ``10``, in which case the
             ``logging.DEBUG`` level is used.
         """
@@ -478,8 +472,8 @@ class Logger:
         ----------
         sufix : str
             Name of the child logger.
-        level : str, optional
-            Level of logging. The default is ``None``.
+        level : str, default: None
+            Level of logging.
 
         Returns
         -------
@@ -506,8 +500,8 @@ class Logger:
             Name for the new instance logger.
         client_instance : GrpcClient
             Geometry Service GrpcClient object, which should contain the ``get_name`` method.
-        level : int, optional
-            Level of logging. The default is ``None``.
+        level : int, default: None
+            Level of logging.
 
         Returns
         -------
@@ -562,14 +556,15 @@ def addfile_handler(logger, filename=FILE_NAME, level=LOG_LEVEL, write_headers=F
 
     Parameters
     ----------
-    logger : logging.Logger or logging.Logger, optional
+    logger : logging.Logger
         Logger to add the file handler to.
-    filename : str, optional
-        Name of the output file. The default is ``"pygeometry.log"``.
-    level : int, optional
-        Level of logging. The default is ``LOG_LEVEL``.
-    write_headers : bool, optional
-        Whether to write the headers to the file. The default is ``False``.
+    filename : str, default: "pygeometry.log"
+        Name of the output file.
+    level : int, default: 10
+        Level of logging. The default is ``10``, in which case the
+        ``logging.DEBUG`` level is used.
+    write_headers : bool, default: False
+        Whether to write the headers to the file.
 
     Returns
     -------
@@ -601,13 +596,13 @@ def add_stdout_handler(logger, level=LOG_LEVEL, write_headers=False):
 
     Parameters
     ----------
-    logger : logging.Logger or logging.Logger
+    logger : logging.Logger
         Logger to add the file handler to.
-    level : in, optional
+    level : int, default: 10
         Level of logging. The default is ``10``, in which case the
            ``logging.DEBUG`` level is used.
-    write_headers : bool, optional
-        Whether to write headers to the file. The default is ``False``.
+    write_headers : bool, default: False
+        Whether to write headers to the file.
 
     Returns
     -------

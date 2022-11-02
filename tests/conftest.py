@@ -32,25 +32,25 @@ def fake_record():
         ----------
         logger : logging.Logger
             A logger object with at least a handler.
-        msg : str, optional
-            Message to include in the log record. By default 'This is a message'.
-        instance_name : str, optional
-            Name of the instance. By default '172.1.1.1:52000'.
-        handler_index : int, optional
+        msg : str, default: "This is a message"
+            Message to include in the log record.
+        instance_name : str, default: "172.1.1.1:52000"
+            Name of the instance.
+        handler_index : int, default: 0
             Index of the selected handler in case you want to test a handler different than
-            the first one. By default 0.
-        level : int, optional
-            Logging level, by default deflogging.DEBUG.
-        filename : str, optional
-            Name of the file name. [FAKE]. By default 'fn'.
-        lno : int, optional
-            Line where the fake log is recorded [FAKE]. By default 0.
-        args : tuple, optional
-            Other arguments. By default ().
-        exc_info : [type], optional
-            Exception information. By default `None`.
-        extra : dict, optional
-            Extra arguments, one of them should be 'instance_name'. By default `{}`.
+            the first one.
+        level : int, default: deflogging.DEBUG
+            Logging level.
+        filename : str, default: fn
+            Name of the file name. [FAKE].
+        lno : int, default: 0
+            Line where the fake log is recorded [FAKE].
+        args : tuple, default: ()
+            Other arguments.
+        exc_info : [type], default: None
+            Exception information.
+        extra : dict, default: {}
+            Extra arguments, one of them should be 'instance_name'.
 
         Returns
         -------

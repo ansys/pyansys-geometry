@@ -54,9 +54,9 @@ class Body:
         The parent component to nest the new component under within the design assembly.
     grpc_client : GrpcClient
         An active supporting geometry service instance for design modeling.
-    is_surface : bool, optional
+    is_surface : bool, default: False
         Boolean indicating whether the ``Body`` is in fact a surface or an actual
-        3D object (with volume). By default, ``False``.
+        3D object (with volume).
     """
 
     def __init__(
@@ -246,9 +246,9 @@ class Body:
             All of the curves to project on the body.
         closest_face: bool
             Signifies whether to target the closest face with the projection.
-        only_one_curve: bool, optional
+        only_one_curve: bool, default: False
             Projects only one curve of the entire sketch provided. If ``True``, then
-            only one curve is projected. By default, ``False``.
+            only one curve is projected.
 
         Notes
         -----
@@ -320,11 +320,10 @@ class Body:
 
         Parameters
         ----------
-        merge : bool, optional
+        merge : bool, default: False
             Merge the body into a single mesh. Enable this if you wish to
             merge the individual faces of the tessellation. This preserves
             the number of triangles and only merges the topology.
-            By default, ``False``.
 
         Returns
         -------
@@ -392,12 +391,11 @@ class Body:
 
         Parameters
         ----------
-        merge : bool, optional
+        merge : bool, default: False
             Merge the body into a single mesh. Enable this if you wish to
             merge the individual faces of the tessellation. This preserves
             the number of triangles and only merges the topology.
-            By default, ``False``.
-        **kwargs : dict, optional
+        **kwargs : dict, default: None
             Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
             for allowable keyword arguments.
 
