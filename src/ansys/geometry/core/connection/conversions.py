@@ -107,7 +107,7 @@ def sketch_shapes_to_grpc_geometries(
         Source face data.
     shapes : List[BaseShape]
         Source shape data.
-    only_one_curve : bool, optional
+    only_one_curve : bool, default: False
         Whether to project one curve of the whole set of geometries to
         enhancce performance. The default is ``False``.
 

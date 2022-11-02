@@ -27,10 +27,10 @@ class Cone:
         Radius of the cone.
     half_angle : float
         Half angle of the apex, determining the upward angle.
-    length_unit : Unit, optional
-        Units for defining the radius. The default is ``UNIT_LENGTH``.
-    angle_unit : Unit, optional
-        Units for defining the half angle. The default is ``UNIT_ANGLE``.
+    length_unit : Unit, default: UNIT_LENGTH
+        Units for defining the radius.
+    angle_unit : Unit, default: UNIT_ANGLE
+        Units for defining the half angle.
     """
 
     @check_input_types

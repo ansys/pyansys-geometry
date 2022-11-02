@@ -25,9 +25,9 @@ class Torus:
     major_radius : Real
         Major radius of the torus.
     minor_radius : Real
-        Minor radius of the torus.
-    unit : Unit, optional
-        Units for defining the radius and minor radius. The default is ``UNIT_LENGTH``.
+        Minor radius of ``Torus``.
+    unit : Unit, default: UNIT_LENGTH
+        Units for defining the radius and minor radius.
     """
 
     @check_input_types

@@ -53,10 +53,10 @@ class Body:
     parent_component : Component
         Parent component to nest the new component under within the design assembly.
     grpc_client : GrpcClient
-        Active supporting Geometry service instance for design modeling.
-    is_surface : bool, optional
-        Whether the ``Body`` is in fact a surface or an actual
-        3D object (with volume). The default is ``False``.
+        An active supporting geometry service instance for design modeling.
+    is_surface : bool, default: False
+        Boolean indicating whether the ``Body`` is in fact a surface or an actual
+        3D object (with volume).
     """
 
     def __init__(
@@ -245,7 +245,7 @@ class Body:
             All curves to project on the body.
         closest_face: bool
             Whether to target the closest face with the projection.
-        only_one_curve: bool, optional
+        only_one_curve: bool, default: False
             Whether to project only one curve of the entire sketch. The
             default is ``False``. If ``True``, only one curve is projected.
 
@@ -319,7 +319,7 @@ class Body:
 
         Parameters
         ----------
-        merge : bool, optional
+        merge : bool, default: False
             Whether to merge the body into a single mesh. The default is ``False``.
             If ``True``, the individual faces of the tessellation are merged. This
             preserves the number of triangles and only merges the topology.
@@ -390,11 +390,11 @@ class Body:
 
         Parameters
         ----------
-        merge : bool, optional
-            Whether to merge the body into a single mesh. The default is ``False`.
+        merge : bool, default: False
+            Whether to merge the body into a single mesh.
             If ``True``, the individual faces of the tessellation are merged. This
             preserves the number of triangles and only merges the topology.
-        **kwargs : dict, optional
+        **kwargs : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
 

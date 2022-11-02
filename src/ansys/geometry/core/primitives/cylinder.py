@@ -26,8 +26,8 @@ class Cylinder:
         Radius of the cylinder.
     height : Real
         Height of the cylinder.
-    unit : Unit, optional
-        Units for defining the radius and height. The default is ``UNIT_LENGTH``.
+    unit : Unit, default: UNIT_LENGTH
+        Units for defining the radius and height.
     """
 
     @check_input_types

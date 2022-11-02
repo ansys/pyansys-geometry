@@ -71,9 +71,8 @@ class Matrix33(Matrix):
 
     Parameters
     ----------
-    input : Union[~numpy.ndarray, RealSequence, Matrix], optional
+    input : Union[~numpy.ndarray, RealSequence, Matrix], default: DEFAULT_MATRIX33
         Matrix arguments as a :class:`np.ndarray <numpy.ndarray>` class.
-        The default is ``DEFAULT_MATRIX33``.
     """
 
     def __new__(cls, input: Optional[Union[np.ndarray, RealSequence, Matrix]] = DEFAULT_MATRIX33):
@@ -103,9 +102,8 @@ class Matrix44(Matrix):
 
     Parameters
     ----------
-    input : Union[~numpy.ndarray, RealSequence, Matrix], optional
+    input : Union[~numpy.ndarray, RealSequence, Matrix], default: DEFAULT_MATRIX44
         Matrix arguments as a :class:`np.ndarray <numpy.ndarray>` class.
-        The default is ``DEFAULT_MATRIX44``.
     """
 
     def __new__(cls, input: Optional[Union[np.ndarray, RealSequence, Matrix]] = DEFAULT_MATRIX44):

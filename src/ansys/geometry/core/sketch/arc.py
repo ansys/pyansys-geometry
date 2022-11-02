@@ -27,16 +27,18 @@ class Arc(SketchEdge):
         Parameters
         ----------
         center : Point2D
-            :class:`Point2D` class representing the center of the arc.
+            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
+            the center of the arc.
         start: Point2D
-            :class:`Point2D` class representing the start of the arc.
+            :class:`Point2D <ansys.geometry.core.math.point.Point2D>` class representing
+            the start of the arc.
         end : Point2D
-            :class:`Point2D` class representing the end of the arc.
-        clockwise : bool, optional
-            Whether the arc spans the clockwise angle between the start
-            and end points. The default is ``False``, in which
-            case the arc spans the counter-clockwise angle between the
-            start and end points.
+            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
+            the end of the arc.
+        clockwise : bool, default: False
+            By default the arc spans the counter-clockwise angle between
+            ``start`` and ``end``. By setting this to ``True``, the clockwise
+            angle is used instead.
         """
         super().__init__()
         if start == end:

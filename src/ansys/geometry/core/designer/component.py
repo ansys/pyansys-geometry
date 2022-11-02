@@ -723,15 +723,15 @@ class Component:
 
         Parameters
         ----------
-        merge_component : bool, optional
+        merge_component : bool, default: False
             Whether to merge this component into a single dataset. The default is
             ``False``. If ``True``, all the individual bodies are effectively merged
             into a single dataset without any hierarchy.
-        merge_bodies : bool, optional
+        merge_bodies : bool, default: False
             Whether to merge each body into a single dataset. The default is ``False``.
             If ``True``, all the faces of each individual body are effectively merged
             into a single dataset without separating faces.
-        **kwargs : dict, optional
+        **kwargs : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
 

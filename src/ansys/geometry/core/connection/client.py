@@ -62,28 +62,23 @@ class GrpcClient:
 
     Parameters
     ----------
-    host : str, optional
+    host : str, default: DEFAULT_HOST
         Host where the server is running.
-        The default is ``DEFAULT_HOST``.
-    port : Union[str, int], optional
+    port : Union[str, int], default: DEFAULT_PORT
         Port number where the server is running.
-        The default is ``DEFAULT_PORT``.
-    channel : ~grpc.Channel, optional
+    channel : ~grpc.Channel, default: None
         gRPC channel for server communication.
-        The default is ``None``.
     remote_instance : ansys.platform.instancemanagement.Instance
         Corresponding remote instance when the Geometry service
         is launched through PyPIM. This instance is deleted when calling the
         :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
         method.
-    timeout : real, optional
+    timeout : real, default: 60
         Timeout in seconds to achieve the connection.
-        The default is 60 seconds.
-    logging_level : int, optional
+    logging_level : int, default: INFO
         Logging level to apply to the client.
-        The default is ``INFO``.
-    logging_file : optional [str, Path]
-        File to output the log to, if requested. The default is ``None``.
+    logging_file : Optional[str, Path], default: None
+        File to output the log to, if requested.
     """
 
     @check_input_types
