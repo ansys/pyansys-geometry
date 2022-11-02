@@ -72,7 +72,7 @@ class Circle(SketchFace):
         Returns
         -------
         pyvista.PolyData
-            Vtk pyvista.Polydata configuration.
+            VTK pyvista.Polydata configuration.
         """
         circle = pv.Circle(self.radius.m_as(UNIT_LENGTH))
         return circle.translate(

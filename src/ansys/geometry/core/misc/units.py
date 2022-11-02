@@ -21,7 +21,7 @@ class PhysicalQuantity:
     ----------
     unit : ~pint.Unit
         Units for the class.
-    expected_dimensions : ~pint.Unit
+    expected_dimensions : ~pint.Unit, optional
         Units for the dimensionality of the physical quantity.
         The default is ``None``.
     """
@@ -75,7 +75,7 @@ class PhysicalQuantity:
         Parameters
         ----------
         input : ~pint.Quantity
-            :class:`pint.Quantity` to process.
+            :class:`pint.Quantity` class to process.
 
         Returns
         -------

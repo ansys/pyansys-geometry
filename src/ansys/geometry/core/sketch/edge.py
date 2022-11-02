@@ -11,12 +11,12 @@ class SketchEdge:
 
     @property
     def start(self) -> Point2D:
-        """2D point that is the start point of the edge."""
+        """Point that is the start point of the edge."""
         raise NotImplementedError("Each edge must provide the start point definition.")
 
     @property
     def end(self) -> Point2D:
-        """2D pint that is the end point of the edge."""
+        """Point that is the end point of the edge."""
         raise NotImplementedError("Each edge must provide the end point definition.")
 
     @property

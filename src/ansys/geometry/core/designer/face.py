@@ -225,7 +225,7 @@ class Face:
         u : float, optional
             First coordinate of the 2D representation of a surface in UV space.
             The default is ``0.5``, which is the center of the surface.
-        v : float
+        v : float, optional
             Second coordinate of the 2D representation of a surface in UV space.
             The default is ``0.5``, which is the the center of the surface.
 
@@ -245,7 +245,7 @@ class Face:
 
     @protect_grpc
     def face_point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
-        """Get a point of the face evaluated evaluated at certain UV coordinates.
+        """Get a point of the face evaluated at certain UV coordinates.
 
         Notes
         -----

@@ -25,7 +25,8 @@ class Polygon(SketchFace):
     sides : int
         Number of sides of the polygon.
     angle : Union[Quantity, Angle, Real], optional
-        Placement angle for orientation alignment.
+        Placement angle for orientation alignment. The default
+        is ``0``.
     """
 
     @check_input_types
@@ -58,7 +59,7 @@ class Polygon(SketchFace):
 
     @property
     def center(self) -> Point2D:
-        """2D point that is the center of the polygon."""
+        """Point that is the center of the polygon."""
         return self._center
 
     @property

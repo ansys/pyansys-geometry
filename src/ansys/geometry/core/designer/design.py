@@ -267,7 +267,7 @@ class Design(Component):
         Parameters
         ----------
         named_selection : Union[NamedSelection, str]
-            Name of the named selection or instance to delete.
+            Name of the named selection or instance.
         """
         removal_name = (
             named_selection.name if not isinstance(named_selection, str) else named_selection
@@ -315,7 +315,7 @@ class Design(Component):
         Parameters
         ----------
         share_type : SharedTopologyType
-            Shared topology type to assign to the component.
+            Shared topology type to assign.
 
         Raises
         ------

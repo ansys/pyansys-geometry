@@ -36,7 +36,7 @@ class Box(SketchFace):
         height: Union[Quantity, Distance, Real],
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
-        """Initialize the box shape."""
+        """Initialize the box."""
         super().__init__()
 
         self._center = center
@@ -84,7 +84,7 @@ class Box(SketchFace):
 
     @property
     def center(self) -> Point2D:
-        """2D point that is the center of the box."""
+        """Point that is the center of the box."""
         return self._center
 
     @property

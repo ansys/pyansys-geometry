@@ -81,7 +81,7 @@ class Cylinder:
 
     @property
     def height(self) -> Real:
-        """height of the cylinder."""
+        """Height of the cylinder."""
         return UNITS.convert(self._height, self._base_unit, self._unit)
 
     @height.setter

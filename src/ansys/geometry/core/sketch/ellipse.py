@@ -20,13 +20,13 @@ class Ellipse(SketchFace):
     Parameters
     ----------
     center: Point2D
-        2D point representing the center of the ellipse.
+        Point representing the center of the ellipse.
     semi_major_axis : Union[Quantity, Distance]
         Semi-major axis of the ellipse.
     semi_minor_axis : Union[Quantity, Distance]
         Semi-minor axis of the ellipse.
     angle : Union[Quantity, Angle, Real], optional
-        Placement angle for orientation alignment.
+        Placement angle for orientation alignment. The default is ``0``.
     """
 
     @check_input_types
@@ -67,7 +67,7 @@ class Ellipse(SketchFace):
 
     @property
     def center(self) -> Point2D:
-        """2D point that is the center of the ellipse."""
+        """Point that is the center of the ellipse."""
         return self._center
 
     @property

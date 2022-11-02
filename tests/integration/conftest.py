@@ -2,7 +2,7 @@
 This testing module automatically connects to the Geometry service running at
 localhost:50051.
 
-If you wish to override these defaults, set the following environment variables.
+If you want to override these defaults, set the following environment variables.
 
 - export ANSRV_GEO_HOST=127.0.0.1
 - export ANSRV_GEO_PORT=50051

@@ -15,7 +15,7 @@ from ansys.geometry.core.misc import (
 from ansys.geometry.core.typing import RealSequence
 
 DEFAULT_POINT2D_VALUES = [np.nan, np.nan]
-"""Default values for a 2D point``."""
+"""Default values for a 2D point."""
 
 DEFAULT_POINT3D_VALUES = [np.nan, np.nan, np.nan]
 """Default values for a 3D point."""
@@ -109,7 +109,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
 
     @property
     def x(self) -> Quantity:
-        """Return the X plane component value."""
+        """X plane component value."""
         if self._quantities[0] is np.nan:
             self._quantities[0] = Quantity(self[0], units=self.base_unit).to(self.unit)
         return self._quantities[0]
@@ -121,7 +121,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
 
     @property
     def y(self) -> Quantity:
-        """Return the Y plane component value."""
+        """Y plane component value."""
         if self._quantities[1] is np.nan:
             self._quantities[1] = Quantity(self[1], units=self.base_unit).to(self.unit)
         return self._quantities[1]
@@ -133,7 +133,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
 
     @PhysicalQuantity.unit.getter
     def unit(self) -> Unit:
-        """Return the unit of the object."""
+        """Get the unit of the object."""
         if hasattr(self, "_unit"):
             return self._unit
         else:
@@ -142,7 +142,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
 
     @PhysicalQuantity.base_unit.getter
     def base_unit(self) -> Unit:
-        """Return the base unit of the object."""
+        """Get the base unit of the object."""
         if hasattr(self, "_base_unit"):
             return self._base_unit
         else:
@@ -158,7 +158,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
     ----------
     input : Union[~numpy.ndarray, RealSequence], default: DEFAULT_POINT3D_VALUES
         Direction arguments, either as a :class:`numpy.ndarray <numpy.ndarray>` class
-        or as a RealSequence.
+        or as a ``RealSequence``.
     unit : ~pint.Unit, default: UNIT_LENGTH
         Units for define the 3D point values.
     """
@@ -244,7 +244,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
 
     @property
     def y(self) -> Quantity:
-        """Return the Y plane component value."""
+        """Y plane component value."""
         if self._quantities[1] is np.nan:
             self._quantities[1] = Quantity(self[1], units=self.base_unit).to(self.unit)
         return self._quantities[1]
@@ -256,7 +256,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
 
     @property
     def z(self) -> Quantity:
-        """Return the Z plane component value."""
+        """Z plane component value."""
         if self._quantities[2] is np.nan:
             self._quantities[2] = Quantity(self[2], units=self.base_unit).to(self.unit)
         return self._quantities[2]
@@ -268,7 +268,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
 
     @PhysicalQuantity.unit.getter
     def unit(self) -> Unit:
-        """Return the unit of the object."""
+        """Get the unit of the object."""
         if hasattr(self, "_unit"):
             return self._unit
         else:
@@ -277,7 +277,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
 
     @PhysicalQuantity.base_unit.getter
     def base_unit(self) -> Unit:
-        """Return the base unit of the object."""
+        """Get the base unit of the object."""
         if hasattr(self, "_base_unit"):
             return self._base_unit
         else:

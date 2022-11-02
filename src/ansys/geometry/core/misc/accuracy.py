@@ -20,7 +20,8 @@ class Accuracy:
     def length_is_equal(comparison_length: Real, reference_length: Real) -> bool:
         """
         Check if the comparison length is equal to the reference length
-            within the length accuracy.
+        within the length accuracy.
+            
 
         Returns
         -------
@@ -93,7 +94,7 @@ class Accuracy:
         Returns
         -------
         bool
-            ``True`` if length is above a positive length accuracy.
+            ``True`` if the length is above a positive length accuracy.
         """
         return bool(length > LENGTH_ACCURACY)
 

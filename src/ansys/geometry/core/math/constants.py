@@ -12,7 +12,7 @@ DEFAULT_POINT3D = Point3D(DEFAULT_POINT3D_VALUES)
 """Default value for a ``Point3D``."""
 
 DEFAULT_POINT2D = Point2D(DEFAULT_POINT2D_VALUES)
-"""Default value for a 2D point``."""
+"""Default value for a 2D point."""
 
 UNITVECTOR3D_X = UnitVector3D([1, 0, 0])
 """Default 3D unit vector in the Cartesian traditional X direction."""

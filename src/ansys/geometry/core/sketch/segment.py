@@ -19,7 +19,7 @@ class Segment(SketchEdge):
     start : Point2D
         2D point that is the start of the line segment.
     end : Point2D
-        2D point that is the end of the line segment.
+        Point that is the end of the line segment.
     """
 
     @check_input_types
@@ -50,12 +50,12 @@ class Segment(SketchEdge):
 
     @property
     def start(self) -> Point2D:
-        """2D point that is the start of the segment."""
+        """Point that is the start of the segment."""
         return self._start
 
     @property
     def end(self) -> Point2D:
-        """2D point that is the end of the segment."""
+        """Point that is the end of the segment."""
         return self._end
 
     @property

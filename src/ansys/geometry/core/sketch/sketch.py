@@ -85,7 +85,7 @@ class Sketch:
         Parameters
         ----------
         translation : Vector3D
-            3D vector defining the translation. Meters is the expected unit.
+            Vector defining the translation. Meters is the expected unit.
 
         Returns
         -------
@@ -187,8 +187,9 @@ class Sketch:
         ----------
         face : SketchFace
             Face to add.
-        tag : str, 202207_03134376M_RPASTORM
-            User-defined label for identifying this face.
+        tag : str, optional
+            User-defined label for identifying this face. The
+            default is ``None``.
 
         Returns
         -------
@@ -210,7 +211,7 @@ class Sketch:
         ----------
         edge : SketchEdge
             Edge to add.
-        tag : str, default: None
+        tag : str, optinal
             User-defined label for identifying this edge. The default
             is ``None.``
 
@@ -245,8 +246,9 @@ class Sketch:
             Point that is the start of the line segment.
         end : Point2D
             Point that is the end of the line segment.
-        tag: str, default: None
-            User-defined label for identifying this edge.
+        tag : str, optional
+            User-defined label for identifying this edge. The default
+            is ``None``.
 
         Returns
         -------
@@ -264,8 +266,9 @@ class Sketch:
         ----------
         end : Point2D
             Point that is the end of the line segment.
-        tag : str, default: None
-            User-defined label for identifying this edge.
+        tag : str, optional
+            User-defined label for identifying this edge. The default
+            is ``None``.
 
         Returns
         -------
@@ -295,8 +298,9 @@ class Sketch:
             Vector defining the line segment. Vector magnitude determines
             the segment endpoint. Vector magnitude is assumed to be in the
             same unit as the starting point.
-        tag : str, default: None
-            User-defined label for identifying this edge.
+        tag : str, optional
+            User-defined label for identifying this edge. The default
+            is ``None``.
 
         Returns
         -------
@@ -322,8 +326,9 @@ class Sketch:
         ----------
         vector : Vector2D
             Vector defining the line segment.
-        tag: str, default: None
-            User-defined label for identifying this edge.
+        tag : str, optional
+            User-defined label for identifying this edge. The default
+            is ``None``.
 
         Returns
         -------
@@ -361,11 +366,11 @@ class Sketch:
             Point that is the end of the arc.
         center : Point2D
             Point that is the center of the arc.
-        clockwise : bool, default: False
+        clockwise : bool, optional
             Whether the arc spands the angle clockwise between the start
             and end points. The default is ``False``, in which case the arc
             spans the angle counter-clockwise between the start and end points.
-        tag : str, default: None
+        tag : str,optional
             User-defined label for identifying this edge. The default
             is ``None.``
 
@@ -394,12 +399,13 @@ class Sketch:
             Point that is the end of the arc.
         center : Point2D
             Point that is the center of the arc.
-        clockwise : bool, default: False
+        clockwise : bool, optional
             Whether the arc spands the angle clockwise between the start
             and end points. The default is ``False``, in which case the arc
             spans the angle counter-clockwise between the start and end points.
-        tag : str, default: None
-            User-defined label for identifying this edge.
+        tag : str, optional
+            User-defined label for identifying this edge. The default
+            is ``None``.
 
         Returns
         -------
@@ -427,14 +433,15 @@ class Sketch:
 
         Parameters
         ----------
-        point1: Point2D
+        point1 : Point2D
             Point that represents a vertex of the triangle.
-        point2: Point2D
+        point2 : Point2D
             Point that represents a vertex of the triangle.
-        point3: Point2D
+        point3 : Point2D
             Point that represents a vertex of the triangle.
-        tag: str, default: None
-            User-defined label for identifying this edge.
+        tag : str, optional
+            User-defined label for identifying this edge. The default
+            is ``None``.
 
         Returns
         -------
@@ -465,16 +472,17 @@ class Sketch:
             Height of the slot.
         slant_angle : Union[Quantity, Angle, Real]
             Angle for trapezoid generation.
-        nonsymmetrical_slant_angle : Optional[Union[Quantity, Angle, Real]]
+        nonsymmetrical_slant_angle : Union[Quantity, Angle, Real], optional
             Whether to enable asymmetrical slant angles on each side of the trapezoid.
             The default is ``None``, in which case the trapezoid is symmetrical.
-        center: Optional[Point2D]
+        center : Point2D, optional
             Point that represents the center of the trapezoid.
             The default is ``(0, 0)``.
         angle : Optional[Union[Quantity, Angle, Real]], default: 0
             Placement angle for orientation alignment.
-        tag: str, default: None
-            User-defined label for identifying this edge.
+        tag : str, optional
+            User-defined label for identifying this edge. The default
+            is ``None``.
 
         Returns
         -------
@@ -499,8 +507,9 @@ class Sketch:
             Point that represents the center of the circle.
         radius : Union[Quantity, Distance]
             Radius of the circle.
-        tag : str, default: None
-            User-defined label for identifying this edge.
+        tag : str, optional
+            User-defined label for identifying this edge. The default
+            is ``None``.
 
         Returns
         -------
@@ -528,10 +537,12 @@ class Sketch:
             Width of the box.
         height : Union[Quantity, Distance, Real]
             Height of the box.
-        angle : Union[Quantity, Real], default: 0
-            Placement angle for orientation alignment.
-        tag : str, default: None
-            User-defined label for identifying this edge.
+        angle : Union[Quantity, Real], optional
+            Placement angle for orientation alignment. The default
+            is ``0``.
+        tag : str, optional
+            User-defined label for identifying this edge. The default
+            is ``None``.
 
         Returns
         -------
@@ -559,10 +570,11 @@ class Sketch:
             Width of the slot.
         height : Union[Quantity, Distance, Real]
             Height of the slot.
-        angle : Union[Quantity, Angle, Real], default: 0
-            Placement angle for orientation alignment.
-        tag : str, default: None
-            User-defined label for identifying this edge.
+        angle : Union[Quantity, Angle, Real], optional
+            Placement angle for orientation alignment. The default is ``0``.
+        tag : str, optional
+            User-defined label for identifying this edge. The default
+            is ``None``.
 
         Returns
         -------
@@ -590,10 +602,12 @@ class Sketch:
             Semi-major axis of the ellipse.
         semi_minor_axis : Union[Quantity, Distance]
             Semi-minor axis of the ellipse.
-        angle : Union[Quantity, Angle, Real], default: 0
-            Placement angle for orientation alignment.
-        tag : str, default: None
-            User-defined label for identifying this edge.
+        angle : Union[Quantity, Angle, Real], optional
+            Placement angle for orientation alignment. The default
+            is ``0``.
+        tag : str, optional
+            User-defined label for identifying this edge. The default
+            is ``None``.
 
         Returns
         -------
@@ -622,10 +636,12 @@ class Sketch:
             Inner radius (apothem) of the polygon.
         sides : int
             Number of sides of the polygon.
-        angle : Optional[Union[Quantity, Angle, Real]]
-            Placement angle for orientation alignment.
-        tag : str, default: None
-            User-defined label for identifying this edge.
+        angle : Union[Quantity, Angle, Real], optional
+            Placement angle for orientation alignment. The default
+            is ``0``.
+        tag : str, optional
+            User-defined label for identifying this edge. The default
+            is ``None``.
 
         Returns
         -------
@@ -669,8 +685,9 @@ class Sketch:
         ----------
         sketch_collection : List[SketchObject]
             Sketch objects to tag.
-        tag : str
-            Tag to assign to these sketch objects.
+        tag : str, optional
+            Tag to assign to these sketch objects. The default
+            is ``None``.
         """
         self._tags[tag] = sketch_collection
 
@@ -682,7 +699,7 @@ class Sketch:
 
         Parameters
         ----------
-        **kwargs : dict, default: None
+        **kwargs : dict, optional
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
@@ -700,7 +717,7 @@ class Sketch:
 
         Parameters
         ----------
-        **kwargs : dict, default: None
+        **kwargs : dict, optional
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """

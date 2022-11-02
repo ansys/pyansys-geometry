@@ -15,7 +15,7 @@ versions of Python are no longer supported.
 PyGeometry dependencies are automatically checked when packages are installed.
 These projects are required dependencies for PyGeometry:
 
-* ``ansys-api-geometry`` - Used for supplying gRPC code generated from Protobuf files.
+* `ansys-api-geometry <https://pypi.org/project/ansys-api-geometry/>`_ - Used for supplying gRPC code generated from Protobuf files.
 * `NumPy <https://pypi.org/project/numpy/>`_ - Used for data array access.
 * `Pint <https://pypi.org/project/Pint/>`_ - Used for measurement units.
 * `PyVista <https://pypi.org/project/pyvista/>`_ - Used for interactive 3D plotting.
@@ -46,7 +46,7 @@ Then, install PyGeometry with:
 
     If access to this package registry is needed, email `pyansys.support@ansys.com <mailto:pyansys.support@ansys.com>`_
     to request access. The PyAnsys team can provide you a read-only token to be inserted in ``${PRIVATE_PYPI_ACCESS_TOKEN}``.
-    Once you have this token, run this command:
+    Once you have obtained this token, run this command:
 
     .. code:: bash
 

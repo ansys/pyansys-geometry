@@ -36,7 +36,7 @@ class Trapezoid(SketchFace):
 
     Notes
     -----
-    If a nonsymmetrical slantangle is defined, the slant angle is
+    If a nonsymmetrical slant angle is defined, the slant angle is
     applied to the left-most angle and the nonsymmetrical slant angle
     is applied to the right-most angle.
     """
