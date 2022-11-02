@@ -27,11 +27,14 @@ class Arc(SketchEdge):
         Parameters
         ----------
         center : Point2D
-            A :class:`Point2D` representing the center of the arc.
+            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
+            the center of the arc.
         start: Point2D
-            A :class:`Point2D` representing the start of the arc.
+            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
+            the start of the arc.
         end : Point2D
-            A :class:`Point2D` representing the end of the arc.
+            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
+            the end of the arc.
         clockwise : bool, default: False
             By default the arc spans the counter-clockwise angle between
             ``start`` and ``end``. By setting this to ``True``, the clockwise

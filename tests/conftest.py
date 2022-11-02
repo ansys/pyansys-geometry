@@ -39,7 +39,7 @@ def fake_record():
         handler_index : int, default: 0
             Index of the selected handler in case you want to test a handler different than
             the first one.
-        level : int, default: `deflogging.DEBUG``
+        level : int, default: deflogging.DEBUG
             Logging level.
         filename : str, default: fn
             Name of the file name. [FAKE].
@@ -47,7 +47,7 @@ def fake_record():
             Line where the fake log is recorded [FAKE].
         args : tuple, default: ()
             Other arguments.
-        exc_info : [type], default: None``
+        exc_info : [type], default: None
             Exception information.
         extra : dict, default: {}
             Extra arguments, one of them should be 'instance_name'.

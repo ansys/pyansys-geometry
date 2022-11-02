@@ -269,7 +269,7 @@ class Sketch:
             Start of the line segment.
         end : Point2D
             End of the line segment.
-        tag: str, default: None
+        tag : str, default: None
             A user-defined label identifying this specific edge.
 
         Returns
@@ -345,7 +345,7 @@ class Sketch:
         ----------
         vector : Vector2D
             Vector defining the line segment.
-        tag: str, default: None
+        tag : str, default: None
             A user-defined label identifying this specific edge.
 
         Returns
@@ -387,7 +387,7 @@ class Sketch:
             By default the arc spans the counter-clockwise angle between
             ``start`` and ``end``. By setting this to ``True``, the clockwise
             angle is used instead.
-        tag: str, default: None
+        tag : str, default: None
             A user-defined label identifying this specific edge.
 
         Returns
@@ -419,7 +419,7 @@ class Sketch:
             By default the arc spans the counter-clockwise angle between
             ``start`` and ``end``. By setting this to ``True``, the clockwise
             angle is used instead.
-        tag: str, default: None
+        tag : str, default: None
             A user-defined label identifying this specific edge.
 
         Returns
@@ -448,13 +448,16 @@ class Sketch:
 
         Parameters
         ----------
-        point1: Point2D
-            A :class:`Point2D` representing the a triangle vertex.
-        point2: Point2D
-            A :class:`Point2D` representing the a triangle vertex.
-        point3: Point2D
-            A :class:`Point2D` representing the a triangle vertex.
-        tag: str, default: None
+        point1 : Point2D
+            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
+            the a triangle vertex.
+        point2 : Point2D
+            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
+            the a triangle vertex.
+        point3 : Point2D
+            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
+            the a triangle vertex.
+        tag : str, default: None
             A user-defined label identifying this specific edge.
 
         Returns
@@ -489,12 +492,13 @@ class Sketch:
         nonsymmetrical_slant_angle : Optional[Union[Quantity, Angle, Real]]
             Enables asymmetrical slant angles on each side of the trapezoid.
             If not defined, the trapezoid will be symmetrical.
-        center: Optional[Point2D]
-            A :class:`Point2D` representing the center of the trapezoid.
+        center : Optional[Point2D]
+            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+            representing the center of the trapezoid.
             Defaults to (0, 0)
         angle : Optional[Union[Quantity, Angle, Real]]
             The placement angle for orientation alignment.
-        tag: str, default: None
+        tag : str, default: None
             A user-defined label identifying this specific edge.
 
         Returns
@@ -517,10 +521,11 @@ class Sketch:
         Parameters
         ----------
         center: Point2D
-            A :class:`Point2D` representing the center of the circle.
+            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+            representing the center of the circle.
         radius : Union[Quantity, Distance]
             The radius of the circle.
-        tag: str, default: None
+        tag : str, default: None
             A user-defined label identifying this specific edge.
 
         Returns
@@ -544,7 +549,8 @@ class Sketch:
         Parameters
         ----------
         center: Point2D
-            A :class:`Point2D` representing the center of the box.
+            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+            representing the center of the box.
         width : Union[Quantity, Distance, Real]
             The width of the box.
         height : Union[Quantity, Distance, Real]
@@ -575,7 +581,8 @@ class Sketch:
         Parameters
         ----------
         center: Point2D
-            A :class:`Point2D` representing the center of the slot.
+            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+            representing the center of the slot.
         width : Union[Quantity, Distance, Real]
             The width of the slot.
         height : Union[Quantity, Distance, Real]
