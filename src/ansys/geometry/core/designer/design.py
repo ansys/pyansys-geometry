@@ -72,8 +72,8 @@ class Design(Component):
 
     # Types of the class instance private attributes
     _materials: List[Material]
-    _named_selections: Dict[NamedSelection]
-    _beam_profiles: Dict[BeamProfile]
+    _named_selections: Dict[str, NamedSelection]
+    _beam_profiles: Dict[str, BeamProfile]
 
     @protect_grpc
     @check_input_types
