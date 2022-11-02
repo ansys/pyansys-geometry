@@ -211,7 +211,7 @@ class Sketch:
         ----------
         edge : SketchEdge
             Edge to add.
-        tag : str, optinal
+        tag : str, optional
             User-defined label for identifying this edge. The default
             is ``None.``
 

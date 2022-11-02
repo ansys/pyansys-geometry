@@ -22,7 +22,7 @@ class Plotter:
 
         Parameters
         ----------
-        scene : ~pyvista.Plotter, optinal
+        scene : ~pyvista.Plotter, optional
             Scene instance for rendering the objects. The default
             is ``None``.
         background_opts : dict, optional
