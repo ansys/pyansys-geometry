@@ -14,7 +14,7 @@ UNIT_ANGLE = UNITS.radian
 """Default angle unit for PyGeometry."""
 
 SERVER_UNIT_LENGTH = UNITS.meter
-"""Default length unit for supporting geometry services for gRPC messages."""
+"""Default length unit for supporting Geometry services for gRPC messages."""
 
 SERVER_UNIT_AREA = SERVER_UNIT_LENGTH * SERVER_UNIT_LENGTH
 """Default area unit for supporting Geometry services for gRPC messages."""

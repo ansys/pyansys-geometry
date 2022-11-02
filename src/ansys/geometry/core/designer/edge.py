@@ -18,15 +18,14 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @unique
 class CurveType(Enum):
-    """Provides an enum holding the possible values for curve types by the Geometry service:
+    """Provides an enum holding the possible values for curve types by the Geometry service."""
 
-    - CURVETYPE_UNKNOWN = 0
-    - CURVETYPE_LINE = 1
-    - CURVETYPE_CIRCLE = 2
-    - CURVETYPE_ELLIPSE = 3
-    - CURVETYPE_NURBS = 4
-    - CURVETYPE_PROCEDURAL = 5
-    """
+    CURVETYPE_UNKNOWN = 0
+    CURVETYPE_LINE = 1
+    CURVETYPE_CIRCLE = 2
+    CURVETYPE_ELLIPSE = 3
+    CURVETYPE_NURBS = 4
+    CURVETYPE_PROCEDURAL = 5
 
 
 class Edge:

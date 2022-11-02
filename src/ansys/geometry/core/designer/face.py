@@ -27,26 +27,24 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @unique
 class SurfaceType(Enum):
-    """Provides an enum holding the possible values for surface types by the Geometry service:
+    """Provides an enum holding the possible values for surface types by the Geometry service."""
 
-    - SURFACETYPE_UNKNOWN = 0
-    - SURFACETYPE_PLANE = 1
-    - SURFACETYPE_CYLINDER = 2
-    - SURFACETYPE_CONE = 3
-    - SURFACETYPE_TORUS = 4
-    - SURFACETYPE_SPHERE = 5
-    - SURFACETYPE_NURBS = 6
-    - SURFACETYPE_PROCEDURAL = 7
-    """
+    SURFACETYPE_UNKNOWN = 0
+    SURFACETYPE_PLANE = 1
+    SURFACETYPE_CYLINDER = 2
+    SURFACETYPE_CONE = 3
+    SURFACETYPE_TORUS = 4
+    SURFACETYPE_SPHERE = 5
+    SURFACETYPE_NURBS = 6
+    SURFACETYPE_PROCEDURAL = 7
 
 
 @unique
 class FaceLoopType(Enum):
-    """Provides an enum holding the possible values for face loop types:
+    """Provides an enum holding the possible values for face loop types."""
 
-    - INNER_LOOP = "INNER"
-    - OUTER_LOOP = "OUTER"
-    """
+    INNER_LOOP = "INNER"
+    OUTER_LOOP = "OUTER"
 
 
 class FaceLoop:

@@ -47,13 +47,12 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @unique
 class SharedTopologyType(Enum):
-    """Enum holding the possible values for component shared topologies by the Geometry service:
+    """Enum holding the possible values for component shared topologies by the Geometry service."""
 
-    * SHARETYPE_NONE = 0
-    * SHARETYPE_SHARE = 1
-    * SHARETYPE_MERGE = 2
-    * SHARETYPE_GROUPS = 3
-    """
+    SHARETYPE_NONE = 0
+    SHARETYPE_SHARE = 1
+    SHARETYPE_MERGE = 2
+    SHARETYPE_GROUPS = 3
 
 
 class Component:

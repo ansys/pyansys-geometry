@@ -1,5 +1,5 @@
 """
-This testing module automatically connects to the geometry service running at
+This testing module automatically connects to the Geometry service running at
 localhost:50051.
 
 If you wish to override these defaults, set the following environment variables.

@@ -48,13 +48,12 @@ from ansys.geometry.core.typing import RealSequence
 
 
 class DesignFileFormat(Enum):
-    """Provides file formats supported by the ``Design`` class for download.
+    """Provides file formats supported by the ``Design`` class for download."""
 
-    - SCDOCX = "SCDOCX", None
-    - PARASOLID_TEXT = "PARASOLID_TEXT", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_TEXT
-    - PARASOLID_BIN = "PARASOLID_BIN", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_BINARY
-    - INVALID = "INVALID", None
-    """
+    SCDOCX = "SCDOCX", None
+    PARASOLID_TEXT = "PARASOLID_TEXT", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_TEXT
+    PARASOLID_BIN = "PARASOLID_BIN", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_BINARY
+    INVALID = "INVALID", None
 
 
 class Design(Component):
