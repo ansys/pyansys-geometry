@@ -28,7 +28,7 @@ class Trapezoid(SketchFace):
     nonsymmetrical_slant_angle : Union[Quantity, Angle, Real], default: None
         Asymmetrical slant angles on each side of the trapezoid.
         By default, the trapezoid is symmetrical.
-    center: Point2D, default: ZERO_POINT2D 
+    center: Point2D, default: ZERO_POINT2D
         Point representing the center of the trapezoid.
     angle : Union[Quantity, Angle, Real], default: 0
         Placement angle for orientation alignment.

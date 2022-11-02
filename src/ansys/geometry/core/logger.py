@@ -211,7 +211,7 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
         Parameters
         ----------
         level : int, default: 10
-            Level of logging. By defualt, the ``logging.DEBUG``
+            Level of logging. By default, the ``logging.DEBUG``
             level is used.
         """
         if self.std_out_handler:

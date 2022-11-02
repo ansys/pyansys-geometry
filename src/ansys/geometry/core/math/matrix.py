@@ -1,4 +1,4 @@
-"""Provides the ``Matrix`` class."""e default is
+"""Provides the ``Matrix`` class."""
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
 import numpy as np
