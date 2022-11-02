@@ -27,10 +27,10 @@ class Cone:
         Radius of ``Cone``.
     half_angle : Real
         Half angle of the apex, determining the upward angle.
-    length_unit : Unit, optional
-        Units employed to define the radius, by default ``UNIT_LENGTH``.
-    angle_unit : Unit, optional
-        Units employed to define the half_angle, by default ``UNIT_ANGLE``.
+    length_unit : Unit, default: UNIT_LENGTH
+        Units employed to define the radius.
+    angle_unit : Unit, default: UNIT_ANGLE
+        Units employed to define the half_angle.
     """
 
     @check_input_types
