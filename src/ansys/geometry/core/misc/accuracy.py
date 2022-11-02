@@ -21,7 +21,7 @@ class Accuracy:
         """
         Check if the comparison length is equal to the reference length
         within the length accuracy.
-            
+
 
         Returns
         -------
