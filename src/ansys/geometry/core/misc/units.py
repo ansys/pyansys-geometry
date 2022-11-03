@@ -78,7 +78,7 @@ class PhysicalQuantity:
 
         Returns
         -------
-        Float
+        Real
             Input's magnitude in base units.
         """
         check_pint_unit_compatibility(input.units, self._base_unit)

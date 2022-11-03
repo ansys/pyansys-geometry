@@ -39,7 +39,7 @@ and two fundamental orthogonal directions.
 from ansys.geometry.core.math import Plane, Point2D, Point3D
 ```
 
-The following code defines a plane is defined for creating the sketch.
+The following code defines a plane for creating the sketch.
 
 ```{code-cell} ipython3
 # Define the origin point of the plane
@@ -141,7 +141,7 @@ sketch.plot_selection()
 The ``Plotter`` class provides capabilities for plotting different PyGeometry objects.
 PyGeometry uses ``PyVista`` as the visualization backend.
 
-You use the ``plot_sketch`` method to plot a sketch. this method accepts a ``Sketch`` instance and
+You use the ``plot_sketch`` method to plot a sketch. This method accepts a ``Sketch`` instance and
 some extra arguments to further customize the visualization of the sketch. These arguments include
 showing the plane of the sketch and its frame.
 

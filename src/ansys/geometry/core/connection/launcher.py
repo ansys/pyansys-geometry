@@ -17,7 +17,7 @@ from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
 
 
 def launch_modeler() -> Modeler:
-    """Start the ``"Modeler`` for PyGeometry.
+    """Start the ``Modeler`` for PyGeometry.
 
     Returns
     -------
@@ -62,7 +62,7 @@ def launch_remote_modeler(
     ----------
     version : str, default: None
         Version of the Geometry service to run in the 3-digit format. For example, "212".
-        If you do not specify the version, the server choses the version.
+        If you do not specify the version, the server chooses the version.
 
     Returns
     -------

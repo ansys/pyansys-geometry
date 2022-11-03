@@ -85,7 +85,7 @@ similar to the global logger. If you want to add a file handler, you can use
 the :func:`log_to_file() <PyGeometryCustomAdapter.log_to_file>` method. If you want
 to change the log level, you can use the :func:`logger.Logging.setLevel` method.
 
-Here is an example of hoow you can use this logger:
+Here is an example of how you can use this logger:
 
 .. code:: python
 

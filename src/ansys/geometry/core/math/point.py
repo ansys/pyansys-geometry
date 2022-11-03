@@ -35,7 +35,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
     ----------
     input : Union[~numpy.ndarray, RealSequence], default: DEFAULT_POINT2D_VALUES
         Direction arguments, either as a :class:`numpy.ndarray <numpy.ndarray>` class
-        or as a RealSequence.
+        or as a ``RealSequence``.
     unit : ~pint.Unit, default: UNIT_LENGTH
         Units for defining 2D point values.
     """

@@ -23,9 +23,9 @@ class Cone:
         X-plane direction.
     direction_y : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         Y-plane direction.
-    radius : float
+    radius : Real
         Radius of the cone.
-    half_angle : float
+    half_angle : Real
         Half angle of the apex, determining the upward angle.
     length_unit : Unit, default: UNIT_LENGTH
         Units for defining the radius.

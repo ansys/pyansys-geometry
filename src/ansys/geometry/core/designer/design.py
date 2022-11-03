@@ -341,7 +341,7 @@ class Design(Component):
         ----------
         name : str
             User-defined label for the new beam circular profile.
-        radius : float
+        radius : Real
             Radius of the beam circular profile.
         center : Union[~numpy.ndarray, RealSequence, Point3D]
             Center of the beam circular profile.

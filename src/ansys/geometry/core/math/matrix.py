@@ -23,7 +23,7 @@ class Matrix(np.ndarray):
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence]):
-        """Constructor metho for ``Matrix``."""
+        """Constructor method for ``Matrix``."""
         obj = np.asarray(input).view(cls)
         obj.setflags(write=False)
 

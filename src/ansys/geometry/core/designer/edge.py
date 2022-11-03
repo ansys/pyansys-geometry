@@ -80,7 +80,7 @@ class Edge:
     @property
     @protect_grpc
     def faces(self) -> List["Face"]:
-        """Get the faces that contain a this edge."""
+        """Get the faces that contain this edge."""
         from ansys.geometry.core.designer.face import Face, SurfaceType
 
         self._grpc_client.log.debug("Requesting edge faces from server.")

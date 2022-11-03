@@ -207,7 +207,7 @@ class Sketch:
         ----------
         edge : SketchEdge
             Edge to add.
-        tag : str, defect: None
+        tag : str, default: None
             User-defined label for identifying this edge.
 
         Returns

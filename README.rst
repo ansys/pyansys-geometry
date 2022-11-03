@@ -121,7 +121,7 @@ you to modify the source and enhance it.
     Before contributing to the project, ensure that you are thoroughly familiar
     with the `PyAnsys Developer's Guide`_.
     
-To install PyGeomery in developer mode, perform these steps:
+To install PyGeometry in developer mode, perform these steps:
 
 #. Clone the ``pygeometry`` repository:
 

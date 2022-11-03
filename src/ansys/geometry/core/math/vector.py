@@ -196,7 +196,7 @@ class Vector3D(np.ndarray):
         Returns
         -------
         Vector3D
-            3D vection from ``point_a`` to ``point_b``.
+            3D vector from ``point_a`` to ``point_b``.
         """
         return Vector3D(point_b - point_a)
 

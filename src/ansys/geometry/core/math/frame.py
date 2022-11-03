@@ -19,11 +19,9 @@ class Frame:
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D], default: ZERO_POINT3D
         Centered origin of the ``Frame``. The default is the Cartesian origin.
-    direction_x: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D],
-    default: UNITVECTOR3D_X
+    direction_x: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D], default: UNITVECTOR3D_X
         X-axis direction.
-    direction_y: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D],
-    default: UNITVECTOR3D_Y
+    direction_y: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D], default: UNITVECTOR3D_Y
         Y-axis direction.
     """
 

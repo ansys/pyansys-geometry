@@ -30,7 +30,7 @@ class BeamProfile:
     """
 
     def __init__(self, id: str, name: str):
-        """Constructor method for ``BeamProfile`."""
+        """Constructor method for ``BeamProfile``."""
         self._id = id
         self._name = name
 
@@ -142,7 +142,7 @@ class Beam:
         End of the beam line segment.
     profile : BeamProfile
         Beam profile to use to create the beam.
-    parent_component : Component, default: Component
+    parent_component : Component
         Parent component to nest the new beam under within the design assembly.
     """
 
