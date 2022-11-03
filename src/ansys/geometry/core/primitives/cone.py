@@ -31,7 +31,6 @@ class Cone:
         Units for defining the radius.
     angle_unit : Unit, default: UNIT_ANGLE
         Units for defining the half angle.
-        ````.
     """
 
     @check_input_types

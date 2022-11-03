@@ -93,7 +93,7 @@ class Matrix33(Matrix):
         return np.array_equal(self, other)
 
     def __ne__(self, other: "Matrix33") -> bool:
-        """Not equals operator for the ``Matrix33``class."""
+        """Not equals operator for the ``Matrix33`` class."""
         return not self == other
 
 

@@ -176,7 +176,7 @@ class Arc(SketchEdge):
         )
 
     def __ne__(self, other: "Arc") -> bool:
-        """Not equals operator for the ``Arc``class."""
+        """Not equals operator for the ``Arc`` class."""
         return not self == other
 
     def __arc_pyvista_hack(self):
