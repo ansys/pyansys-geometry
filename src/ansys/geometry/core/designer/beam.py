@@ -30,7 +30,7 @@ class BeamProfile:
     """
 
     def __init__(self, id: str, name: str):
-        """Constructor method for ``BeamProfile``."""
+        """Constructor method for the ``BeamProfile`` class."""
         self._id = id
         self._name = name
 
@@ -82,7 +82,7 @@ class BeamCircularProfile(BeamProfile):
         direction_x: UnitVector3D,
         direction_y: UnitVector3D,
     ):
-        """Constructor method for ``BeamCircularProfile``."""
+        """Constructor method for the ``BeamCircularProfile`` class."""
         super().__init__(id, name)
 
         # Store specific BeamCircularProfile variables
@@ -154,7 +154,7 @@ class Beam:
         profile: BeamProfile,
         parent_component: "Component",
     ):
-        """Constructor method for ``Beam``."""
+        """Constructor method for the ``Beam`` class."""
         from ansys.geometry.core.designer.component import Component
 
         check_type(id, str)

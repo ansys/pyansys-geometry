@@ -32,7 +32,7 @@ class Frame:
         direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Y,
     ):
-        """Constructor method for ``Frame``."""
+        """Constructor method for the ``Frame`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
         self._direction_x = (
             UnitVector3D(direction_x) if not isinstance(direction_x, UnitVector3D) else direction_x

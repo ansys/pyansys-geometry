@@ -37,7 +37,7 @@ class CoordinateSystem:
     def __init__(
         self, name: str, frame: Frame, parent_component: "Component", grpc_client: GrpcClient
     ):
-        """Constructor method for ``CoordinateSystem``."""
+        """Constructor method for the ``CoordinateSystem`` class."""
 
         self._parent_component = parent_component
         self._grpc_client = grpc_client

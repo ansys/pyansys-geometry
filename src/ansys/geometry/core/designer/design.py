@@ -78,7 +78,7 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     def __init__(self, name: str, grpc_client: GrpcClient):
-        """Constructor method for ``Design``."""
+        """Constructor method for the ``Design`` class."""
         super().__init__(name, None, grpc_client)
 
         self._design_stub = DesignsStub(self._grpc_client.channel)

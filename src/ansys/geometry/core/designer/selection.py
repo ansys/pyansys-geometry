@@ -45,7 +45,7 @@ class NamedSelection:
         faces: Optional[List[Face]] = None,
         edges: Optional[List[Edge]] = None,
     ):
-        """Constructor method for ``NamedSelection``."""
+        """Constructor method for the ``NamedSelection`` class."""
 
         if bodies is None:
             bodies = []

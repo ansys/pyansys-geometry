@@ -40,7 +40,7 @@ class MaterialProperty:
         name: str,
         quantity: Quantity,
     ):
-        """Constructor method for ``Material Property``."""
+        """Constructor method for the ``MaterialProperty`` class."""
         self._type = type
         self._name = name
         self._quantity = quantity

@@ -28,7 +28,7 @@ class Material:
         density: Quantity,
         additional_properties: Optional[Sequence[MaterialProperty]] = None,
     ):
-        """Constructor method for ``Material``."""
+        """Constructor method for the ``Material`` class."""
         self._name = name
         self._density = MaterialProperty(MaterialPropertyType.DENSITY, "Density", density)
         if not additional_properties:

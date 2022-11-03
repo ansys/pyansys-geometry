@@ -80,7 +80,7 @@ class Component:
     @protect_grpc
     @check_input_types
     def __init__(self, name: str, parent_component: Optional["Component"], grpc_client: GrpcClient):
-        """Constructor method for ``Component``."""
+        """Constructor method for the ``Component`` class."""
         self._grpc_client = grpc_client
         self._component_stub = ComponentsStub(self._grpc_client.channel)
         self._bodies_stub = BodiesStub(self._grpc_client.channel)

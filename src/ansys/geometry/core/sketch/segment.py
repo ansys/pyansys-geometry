@@ -28,7 +28,7 @@ class Segment(SketchEdge):
         start: Point2D,
         end: Point2D,
     ):
-        """Constructor method for ``Segment``."""
+        """Constructor method for the ``Segment`` class."""
         super().__init__()
 
         # Perform sanity checks on point values given

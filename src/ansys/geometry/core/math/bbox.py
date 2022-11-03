@@ -34,7 +34,7 @@ class BoundingBox2D:
         y_min: Real = sys.float_info.max,
         y_max: Real = sys.float_info.min,
     ):
-        """Constructor method for ``BoundingBox2D``."""
+        """Constructor method for the ``BoundingBox2D`` class."""
         self._x_min = x_min
         self._x_max = x_max
         self._y_min = y_min

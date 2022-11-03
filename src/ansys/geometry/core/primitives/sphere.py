@@ -31,7 +31,7 @@ class Sphere:
         radius: Real,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
-        """Constructor method for ``Sphere``."""
+        """Constructor method for the ``Sphere`` class."""
 
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit

@@ -40,7 +40,7 @@ class Cylinder:
         height: Real,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
-        """Constructor method for ``Cylinder``."""
+        """Constructor method for the ``Cylinder`` class."""
 
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit

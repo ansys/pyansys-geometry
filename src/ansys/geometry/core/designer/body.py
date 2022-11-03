@@ -67,7 +67,7 @@ class Body:
         grpc_client: GrpcClient,
         is_surface: bool = False,
     ):
-        """Constructor method for ``Body``."""
+        """Constructor method for the ``Body`` class."""
         from ansys.geometry.core.designer.component import Component
 
         check_type(id, str)

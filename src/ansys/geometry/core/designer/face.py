@@ -129,7 +129,7 @@ class Face:
     """
 
     def __init__(self, id: str, surface_type: SurfaceType, body: "Body", grpc_client: GrpcClient):
-        """Constructor method for ``Face``."""
+        """Constructor method for the ``Face`` class."""
 
         self._id = id
         self._surface_type = surface_type
