@@ -199,7 +199,7 @@ class Component:
     ) -> Body:
         """Create a solid body by extruding the given sketch profile up to the given distance.
 
-        The newly created body created is nested under this component within the design assembly.
+        The newly created body is nested under this component within the design assembly.
 
         Parameters
         ----------

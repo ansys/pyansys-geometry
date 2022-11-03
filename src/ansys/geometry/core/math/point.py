@@ -160,7 +160,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
         Direction arguments, either as a :class:`numpy.ndarray <numpy.ndarray>` class
         or as a ``RealSequence``.
     unit : ~pint.Unit, default: UNIT_LENGTH
-        Units for define the 3D point values.
+        Units for defining the 3D point values.
     """
 
     def __new__(
