@@ -23,7 +23,7 @@ class Plane(Frame):
         X-axis direction.
     direction_y: Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D], default: UNITVECTOR3D_Y
         Y-axis direction.
-    """
+    """  # noqa : E501
 
     def __init__(
         self,
