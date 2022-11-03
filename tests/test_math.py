@@ -113,13 +113,13 @@ def test_point_errors():
 
     with pytest.raises(
         ValueError,
-        match="Point3D class must receive 3 arguments.",  # noqa: E501
+        match="Point3D class must receive 3 arguments.",
     ):
         Point3D([1, 4, 3, 5])
 
     with pytest.raises(
         ValueError,
-        match="Point2D class must receive 2 arguments.",  # noqa: E501
+        match="Point2D class must receive two arguments.",
     ):
         Point2D([1, 4, 5])
 
@@ -147,7 +147,7 @@ def test_point_errors():
         point3D.z = "a"
 
     with pytest.raises(
-        TypeError, match=r"The pint.Unit provided as input should be a \[length\] quantity."
+        TypeError, match=r"The pint.Unit provided as an input should be a \[length\] quantity."
     ):
         point3D.z = 10 * UNITS.degrees
 
@@ -162,7 +162,7 @@ def test_point_errors():
         point2D.y = "a"
 
     with pytest.raises(
-        TypeError, match=r"The pint.Unit provided as input should be a \[length\] quantity."
+        TypeError, match=r"The pint.Unit provided as an input should be a \[length\] quantity."
     ):
         point2D.y = 10 * UNITS.degrees
 
@@ -547,7 +547,7 @@ def test_vector3D_errors():
         v1.z = "z"
 
     # Try to normalize a 0-value vector
-    with pytest.raises(ValueError, match="The norm of the Vector3D is not valid."):
+    with pytest.raises(ValueError, match="The norm of the 3D vector is not valid."):
         v2 = ZERO_VECTOR3D
         v2.normalize()
 
@@ -588,7 +588,7 @@ def test_vector2D_errors():
         v1.y = "y"
 
     # Try to normalize a 0-value vector
-    with pytest.raises(ValueError, match="The norm of the Vector2D is not valid."):
+    with pytest.raises(ValueError, match="The norm of the 2D vector is not valid."):
         v2 = ZERO_VECTOR2D
         v2.normalize()
 
@@ -636,7 +636,7 @@ def test_matrix_errors():
     """Testing multiple ``Matrix`` errors."""
 
     with pytest.raises(
-        TypeError, match="The numpy.ndarray provided should contain float or integer values."
+        TypeError, match="The numpy.ndarray should contain float or integer values."
     ):
         Matrix(([[2, 0, "a"], [0, 3, 0], [0, 0, 4]]))
 
@@ -654,7 +654,9 @@ def test_matrix_errors():
     m_2 = Matrix([[2, 5, 6], [0, 8, 6], [1, 2, 3]])
 
     # Test multiply operator with mismatched dimensions.
-    with pytest.raises(ValueError, match="The matrices dimensions 2 and 3 are not multipliable."):
+    with pytest.raises(
+        ValueError, match="The dimensions of the matrices 2 and 3 are not multipliable."
+    ):
         m_1 * m_2
 
 

@@ -84,7 +84,7 @@ def check_ndarray_is_not_none(
         raise ValueError(
             f"The numpy.ndarray should not have 'None' for all parameter values."
             if param_name is None
-            else f"numpy.ndarray '{param_name}' should not have 'None' for all parameter values."
+            else f"The numpy.ndarray '{param_name}' should not have 'None' for all parameter values."  # noqa: E501
         )
 
 
