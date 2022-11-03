@@ -97,7 +97,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
         return point
 
     def __sub__(self, other: "Point2D") -> "Point2D":
-        """Subtraction operation for the ``Point2D``class."""
+        """Subtraction operation for the ``Point2D`` class."""
         from ansys.geometry.core.math.vector import Vector2D
 
         check_type(other, (Point2D, Vector2D))
@@ -214,7 +214,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
         return point
 
     def __sub__(self, other: Union["Point3D", "Vector3D"]) -> "Point3D":
-        """Subtraction operation for the ``Point3D``class."""
+        """Subtraction operation for the ``Point3D`` class."""
         from ansys.geometry.core.math.vector import Vector3D
 
         check_type(other, (Point3D, Vector3D))

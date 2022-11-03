@@ -167,7 +167,7 @@ class Vector3D(np.ndarray):
 
     @check_input_types
     def __sub__(self, other: "Vector3D") -> "Vector3D":
-        """Subtraction operation overload for `3D vectors."""
+        """Subtraction operation overload for 3D vectors."""
         return np.subtract(self, other).view(Vector3D)
 
     @classmethod
