@@ -7,7 +7,7 @@ and synchronizes to a supporting Geometry service instance.
 Define the model
 ----------------
 Define the model by creating a sketch with a circle on the client.
-Then, create your on the server.
+Then, create your model on the server.
 
 .. code:: python
 
