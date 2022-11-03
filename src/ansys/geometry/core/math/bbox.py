@@ -12,7 +12,7 @@ from ansys.geometry.core.typing import Real
 
 class BoundingBox2D:
     """
-    Maintains the x and y dimensions.
+    Maintains the X and Y dimensions.
 
     Parameters
     ----------
@@ -42,7 +42,7 @@ class BoundingBox2D:
 
     @property
     def x_min(self) -> Real:
-        """Minimum value of x-dimensional bounds.
+        """Minimum value of X-dimensional bounds.
 
         Returns
         -------

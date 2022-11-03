@@ -31,7 +31,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 def unit_vector_to_grpc_direction(unit_vector: UnitVector3D) -> GRPCDirection:
-    """Marshals a :class:`UnitVector3D` class to a Unit vector gRPC message of the Geometry service.
+    """Marshals a :class:`UnitVector3D` class to a unit vector gRPC message of the Geometry service.
 
     Parameters
     ----------
@@ -67,7 +67,7 @@ def frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
 
 
 def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
-    """Marshals a :class:`Plane` class to a Plane gRPC message of the Geometry service.
+    """Marshals a :class:`Plane` class to a plane gRPC message of the Geometry service.
 
     Parameters
     ----------
