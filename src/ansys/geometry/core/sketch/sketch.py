@@ -1,4 +1,4 @@
-"""``Sketch`` class module."""
+"""Provides the ``Sketch`` class."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Dict, List, Optional, Union
@@ -20,13 +20,11 @@ from ansys.geometry.core.sketch.triangle import Triangle
 from ansys.geometry.core.typing import Real
 
 SketchObject = Union[SketchEdge, SketchFace]
-"""Type used to refer to both SketchEdge and SketchFace as possible values."""
+"""Type used to refer to both ``SketchEdge`` and ``SketchFace`` as possible values."""
 
 
 class Sketch:
-    """
-    Provides Sketch class for building 2D sketch elements.
-    """
+    """Provides for building 2D sketch elements."""
 
     # Types of the class instance private attributes
     _faces: List[SketchFace]
@@ -39,7 +37,7 @@ class Sketch:
         self,
         plane: Optional[Plane] = Plane(),
     ):
-        """Constructor method for ``Sketch``."""
+        """Constructor method for the ``Sketch`` class."""
         self._plane = plane
 
         self._faces = []
@@ -52,70 +50,47 @@ class Sketch:
 
     @property
     def plane(self) -> Plane:
-        """
-        Returns sketch plane configuration.
-
-        Returns
-        -------
-        Plane
-            The plane containing the sketch.
-        """
-
+        """Sketch plane configuration."""
         return self._plane
 
     @plane.setter
     @check_input_types
     def plane(self, plane: Plane) -> None:
         """
-        Sets the sketch plane configuration.
+        Set the sketch plane configuration.
 
         Parameters
         ----------
         plane : Plane
-            The updated sketch planar orientation.
+            New plane for the sketch planar orientation.
         """
         self._plane = plane
 
     @property
     def edges(self) -> List[SketchEdge]:
-        """
-        Returns all independently sketched edges.
-
-        Returns
-        -------
-        List[SketchEdge]
-            Sketched edges that are not assigned to a face.
-        """
-
+        """List of all independently sketched edges, which are those
+        that are not assigned to a face."""
         return self._edges
 
     @property
     def faces(self) -> List[SketchFace]:
-        """
-        Returns all independently sketched faces.
-
-        Returns
-        -------
-        List[Sketchface]
-            list of sketched faces.
-        """
-
+        """List of all independently sketched faces."""
         return self._faces
 
     @check_input_types
     def translate_sketch_plane(self, translation: Vector3D) -> "Sketch":
         """
-        Convenience method to translate the active sketch plane origin location.
+        Convenience method to translate the origin location of the active sketch plane.
 
         Parameters
         ----------
         translation : Vector3D
-            The vector defining the translation, expecting values in meters.
+            Vector defining the translation. Meters is the expected unit.
 
         Returns
         -------
         Sketch
-            The revised sketch state ready for further sketch actions.
+            Revised sketch state ready for further sketch actions.
         """
         self.plane = Plane(
             self.plane.origin + translation, self.plane.direction_x, self.plane.direction_y
@@ -130,21 +105,21 @@ class Sketch:
         z: Union[Quantity, Distance] = Quantity(0, UNIT_LENGTH),
     ) -> "Sketch":
         """
-        Convenience method to translate the active sketch plane origin location.
+        Translate the origin location of the active sketch plane by offsets.
 
         Parameters
         ----------
         x : Union[Quantity, Distance], default: Quantity(0, UNIT_LENGTH)
-            The amount to translate the origin the x-direction.
+            Amount to translate the origin the x-direction.
         y : Union[Quantity, Distance], default: Quantity(0, UNIT_LENGTH)
-            The amount to translate the origin the y-direction.
+            Amount to translate the origin the y-direction.
         z : Union[Quantity, Distance], default: Quantity(0, UNIT_LENGTH)
-            The amount to translate the origin the z-direction.
+            Amount to translate the origin the z-direction.
 
         Returns
         -------
         Sketch
-            The revised sketch state ready for further sketch actions.
+            Revised sketch state ready for further sketch actions.
         """
         x_magnitude = (
             x.m_as(UNIT_LENGTH) if not isinstance(x, Distance) else x.value.m_as(UNIT_LENGTH)
@@ -165,19 +140,19 @@ class Sketch:
         self, direction: UnitVector3D, distance: Union[Quantity, Distance]
     ) -> "Sketch":
         """
-        Convenience method to translate the active sketch plane origin location.
+        Translate the origin location active sketch plane by distance.
 
         Parameters
         ----------
         direction : UnitVector3D
-            The direction the origin should be translated.
+            Direction to translate the origin.
         distance : Union[Quantity, Distance]
-            The distance to translate the origin.
+            Distance to translate the origin.
 
         Returns
         -------
         Sketch
-            The revised sketch state ready for further sketch actions.
+            Revised sketch state ready for further sketch actions.
         """
         magnitude = (
             distance.m_as(UNIT_LENGTH)
@@ -191,31 +166,31 @@ class Sketch:
 
     @check_input_types
     def get(self, tag: str) -> List[SketchObject]:
-        """Returns the list of shapes that were tagged by the provided label.
+        """Get a list of shapes with a given tag.
 
         Parameters
         ----------
         tag : str
-            The tag to query against.
+            Tag to query against.
         """
         return self._tags[tag]
 
     @check_input_types
     def face(self, face: SketchFace, tag: Optional[str] = None) -> "Sketch":
         """
-        Add a SketchFace to the sketch.
+        Add a sketch face to the sketch.
 
         Parameters
         ----------
         face : SketchFace
-            A face to add to the sketch.
+            Face to add.
         tag : str, default: None
-            A user-defined label identifying this specific face.
+            User-defined label for identifying this face.
 
         Returns
         -------
         Sketch
-            The revised sketch state ready for further sketch actions.
+            Revised sketch state ready for further sketch actions.
         """
         self._faces.append(face)
         if tag:
@@ -226,19 +201,19 @@ class Sketch:
     @check_input_types
     def edge(self, edge: SketchEdge, tag: Optional[str] = None) -> "Sketch":
         """
-        Add a SketchEdge to the sketch.
+        Add a sketch edge to the sketch.
 
         Parameters
         ----------
         edge : SketchEdge
-            A edge to add to the sketch.
+            Edge to add.
         tag : str, default: None
-            A user-defined label identifying this specific edge.
+            User-defined label for identifying this edge.
 
         Returns
         -------
         Sketch
-            The revised sketch state ready for further sketch actions.
+            Revised sketch state ready for further sketch actions.
         """
         self._edges.append(edge)
         if tag:
@@ -248,10 +223,7 @@ class Sketch:
 
     @check_input_types
     def select(self, *tags: str) -> "Sketch":
-        """
-        Add all objects to current context that match the provided tags.
-        """
-
+        """Add all objects to the current context that match provided tags."""
         self._current_sketch_context = []
 
         for tag in tags:
@@ -266,35 +238,35 @@ class Sketch:
         Parameters
         ----------
         start : Point2D
-            Start of the line segment.
+            Point that is the start of the line segment.
         end : Point2D
-            End of the line segment.
+            Point that is the end of the line segment.
         tag : str, default: None
-            A user-defined label identifying this specific edge.
+            User-defined label for identifying this edge.
 
         Returns
         -------
         Sketch
-            The revised sketch state ready for further sketch actions.
+            Revised sketch state ready for further sketch actions.
         """
         segment = Segment(start, end)
         return self.edge(segment, tag)
 
     def segment_to_point(self, end: Point2D, tag: Optional[str] = None) -> "Sketch":
         """
-        Add a segment to the sketch plane starting from previous edge end point.
+        Add a segment to the sketch plane starting from the previous edge end point.
 
         Parameters
         ----------
         end : Point2D
-            End of the line segment.
+            Point that is the end of the line segment.
         tag : str, default: None
-            A user-defined label identifying this specific edge.
+            User-defined label for identifying this edge.
 
         Returns
         -------
         Sketch
-            The revised sketch state ready for further sketch actions.
+            Revised sketch state ready for further sketch actions.
 
         Notes
         -----
@@ -309,27 +281,28 @@ class Sketch:
         self, start: Point2D, vector: Vector2D, tag: Optional[str] = None
     ):
         """
-        Add a segment to the sketch starting from a provided starting point.
+        Add a segment to the sketch starting from a given starting point.
 
         Parameters
         ----------
         start : Point2D
-            Start of the line segment.
+            Point that is the start of the line segment.
         vector : Vector2D
-            Vector defining the line segment. Vector magnitude determines segment endpoint.
-            Vector magnitude assumed to be in the same unit as the starting point.
+            Vector defining the line segment. Vector magnitude determines
+            the segment endpoint. Vector magnitude is assumed to be in the
+            same unit as the starting point.
         tag : str, default: None
-            A user-defined label identifying this specific edge.
+            User-defined label for identifying this edge.
 
         Returns
         -------
         Sketch
-            The revised sketch state ready for further sketch actions.
+            Revised sketch state ready for further sketch actions.
 
         Notes
         -----
-        Vector magnitude determines segment endpoint.
-        Vector magnitude assumed to use the same unit as the starting point.
+        Vector magnitude determines the segment endpoint.
+        Vector magnitude is assumed to use the same unit as the starting point.
         """
         end_vec_as_point = Point2D(vector, start.unit)
         end = start + end_vec_as_point
@@ -339,27 +312,28 @@ class Sketch:
     @check_input_types
     def segment_from_vector(self, vector: Vector2D, tag: Optional[str] = None):
         """
-        Add a segment to the sketch starting from previous edge end point.
+        Add a segment to the sketch starting from the end point of the previous edge.
 
         Parameters
         ----------
         vector : Vector2D
             Vector defining the line segment.
         tag : str, default: None
-            A user-defined label identifying this specific edge.
+            User-defined label for identifying this edge.
 
         Returns
         -------
         Sketch
-            The revised sketch state ready for further sketch actions.
+            Revised sketch state ready for further sketch actions.
 
         Notes
         -----
         The starting point of the created edge is based upon the current context
         of the sketch, such as the end point of a previously added edge.
 
-        Vector magnitude determines segment endpoint.
-        Vector magnitude assumed to use the same unit as the starting point in the previous context.
+        Vector magnitude determines the segment endpoint.
+        Vector magnitude is assumed to use the same unit as the starting point
+        in the previous context.
         """
         start = self._single_point_context_reference()
         return self.segment_from_point_and_vector(start, vector, tag)
@@ -373,27 +347,28 @@ class Sketch:
         tag: Optional[str] = None,
     ) -> "Sketch":
         """
-        Add an arc object to the sketch plane.
+        Add an arc to the sketch plane.
 
         Parameters
         ----------
         start : Point2D
-            Start of the arc.
+            Point that is the start of the arc.
         end : Point2D
-            End of the arc.
+            Point that is the end of the arc.
         center : Point2D
-            Center of the arc.
+            Point that is the center of the arc.
         clockwise : bool, default: False
-            By default the arc spans the counter-clockwise angle between
-            ``start`` and ``end``. By setting this to ``True``, the clockwise
-            angle is used instead.
+            Whether the arc spans the angle clockwise between the start
+            and end points. By default, the arc spans the angle
+            counter-clockwise. When ``True``, the arc spans the angle
+            clockwise.
         tag : str, default: None
-            A user-defined label identifying this specific edge.
+            User-defined label for identifying this edge.
 
         Returns
         -------
         Sketch
-            The revised sketch state ready for further sketch actions.
+            Revised sketch state ready for further sketch actions.
         """
         arc = Arc(center, start, end, clockwise)
         return self.edge(arc, tag)
@@ -407,25 +382,26 @@ class Sketch:
         tag: Optional[str] = None,
     ) -> "Sketch":
         """
-        Add an arc to the sketch starting from previous edge end point.
+        Add an arc to the sketch starting from the end point of the previous edge.
 
         Parameters
         ----------
         end : Point2D
-            End of the arc.
+            Point that is the end of the arc.
         center : Point2D
-            Center of the arc.
+            Point that is the center of the arc.
         clockwise : bool, default: False
-            By default the arc spans the counter-clockwise angle between
-            ``start`` and ``end``. By setting this to ``True``, the clockwise
-            angle is used instead.
+            Whether the arc spans the angle clockwise between the start
+            and end points. By default, the arc spans the angle
+            counter-clockwise. When ``True``, the arc spans the angle
+            clockwise.
         tag : str, default: None
-            A user-defined label identifying this specific edge.
+            User-defined label for identifying this edge.
 
         Returns
         -------
         Sketch
-            The revised sketch state ready for further sketch actions.
+            Revised sketch state ready for further sketch actions.
 
         Notes
         -----
@@ -444,26 +420,23 @@ class Sketch:
         tag: Optional[str] = None,
     ) -> "Sketch":
         """
-        Add a triangle to the using the explicit vertex points provided.
+        Add a triangle to the sketch using given vertex points.
 
         Parameters
         ----------
         point1 : Point2D
-            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
-            the a triangle vertex.
+            Point that represents a vertex of the triangle.
         point2 : Point2D
-            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
-            the a triangle vertex.
+            Point that represents a vertex of the triangle.
         point3 : Point2D
-            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
-            the a triangle vertex.
+            Point that represents a vertex of the triangle.
         tag : str, default: None
-            A user-defined label identifying this specific edge.
+            User-defined label for identifying this edge.
 
         Returns
         -------
         Sketch
-            The revised sketch state ready for further sketch actions.
+            Revised sketch state ready for further sketch actions.
         """
         triangle = Triangle(point1, point2, point3)
         return self.face(triangle, tag)
@@ -479,32 +452,30 @@ class Sketch:
         tag: Optional[str] = None,
     ) -> "Sketch":
         """
-        Add a triangle to the using the explicit vertex points provided.
+        Add a triangle to the sketch using given vertex points.
 
         Parameters
         ----------
         width : Union[Quantity, Distance, Real]
-            The width of the slot main body.
+            Width of the slot main body.
         height : Union[Quantity, Distance, Real]
-            The height of the slot.
+            Height of the slot.
         slant_angle : Union[Quantity, Angle, Real]
-            The angle for trapezoid generation.
-        nonsymmetrical_slant_angle : Optional[Union[Quantity, Angle, Real]]
-            Enables asymmetrical slant angles on each side of the trapezoid.
-            If not defined, the trapezoid will be symmetrical.
-        center : Optional[Point2D]
-            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
-            representing the center of the trapezoid.
-            Defaults to (0, 0)
-        angle : Optional[Union[Quantity, Angle, Real]]
-            The placement angle for orientation alignment.
+            Angle for trapezoid generation.
+        nonsymmetrical_slant_angle : Union[Quantity, Angle, Real], default: None
+            Asymmetrical slant angles on each side of the trapezoid.
+            By default, the trapezoid is symmetrical.
+        center : Point2D, default: (0, 0)
+            Point that represents the center of the trapezoid.
+        angle : Optional[Union[Quantity, Angle, Real]], default: 0
+            Placement angle for orientation alignment.
         tag : str, default: None
-            A user-defined label identifying this specific edge.
+            User-defined label for identifying this edge.
 
         Returns
         -------
         Sketch
-            The revised sketch state ready for further sketch actions.
+            Revised sketch state ready for further sketch actions.
         """
         trapezoid = Trapezoid(width, height, slant_angle, nonsymmetrical_slant_angle, center, angle)
         return self.face(trapezoid, tag)
@@ -516,22 +487,21 @@ class Sketch:
         tag: Optional[str] = None,
     ) -> "Sketch":
         """
-        Add a circle to the plane at the provided center.
+        Add a circle to the plane at a given center.
 
         Parameters
         ----------
         center: Point2D
-            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
-            representing the center of the circle.
+            Point that represents the center of the circle.
         radius : Union[Quantity, Distance]
-            The radius of the circle.
+            Radius of the circle.
         tag : str, default: None
-            A user-defined label identifying this specific edge.
+            User-defined label for identifying this edge.
 
         Returns
         -------
         Sketch
-            The revised sketch state ready for further sketch actions.
+            Revised sketch state ready for further sketch actions.
         """
         circle = Circle(center, radius)
         return self.face(circle, tag)
@@ -544,26 +514,25 @@ class Sketch:
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """Create a box shape on the sketch.
+        """Create a box on the sketch.
 
         Parameters
         ----------
         center: Point2D
-            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
-            representing the center of the box.
+            Point that represents the center of the box.
         width : Union[Quantity, Distance, Real]
-            The width of the box.
+            Width of the box.
         height : Union[Quantity, Distance, Real]
-            The height of the box.
-        angle : Optional[Union[Quantity, Real]]
-            The placement angle for orientation alignment.
+            Height of the box.
+        angle : Union[Quantity, Real], default: 0
+            Placement angle for orientation alignment.
         tag : str, default: None
-            A user-defined label identifying this specific edge.
+            User-defined label for identifying this edge.
 
         Returns
         -------
         Sketch
-            The revised sketch state ready for further sketch actions.
+            Revised sketch state ready for further sketch actions.
         """
         box = Box(center, width, height, angle)
         return self.face(box, tag)
@@ -576,26 +545,25 @@ class Sketch:
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """Create a slot shape on the sketch.
+        """Create a slot on the sketch.
 
         Parameters
         ----------
         center: Point2D
-            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
-            representing the center of the slot.
+            Point that represents the center of the slot.
         width : Union[Quantity, Distance, Real]
-            The width of the slot.
+            Width of the slot.
         height : Union[Quantity, Distance, Real]
-            The height of the slot.
-        angle : Optional[Union[Quantity, Angle, Real]]
-            The placement angle for orientation alignment.
+            Height of the slot.
+        angle : Union[Quantity, Angle, Real], default: 0
+            Placement angle for orientation alignment.
         tag : str, default: None
-            A user-defined label identifying this specific edge.
+            User-defined label for identifying this edge.
 
         Returns
         -------
         Slot
-            An object representing the slot added to the sketch.
+            Object representing the slot added to the sketch.
         """
         slot = Slot(center, width, height, angle)
         return self.face(slot, tag)
@@ -608,25 +576,25 @@ class Sketch:
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """Create an ellipse shape on the sketch.
+        """Create an ellipse on the sketch.
 
         Parameters
         ----------
         center: Point2D
-            A :class:`Point2D` representing the center of the ellipse.
+            Point that represents the center of the ellipse.
         semi_major_axis : Union[Quantity, Distance]
-            The semi-major axis of the ellipse.
+            Semi-major axis of the ellipse.
         semi_minor_axis : Union[Quantity, Distance]
-            The semi-minor axis of the ellipse.
-        angle : Optional[Union[Quantity, Angle, Real]]
-            The placement angle for orientation alignment.
+            Semi-minor axis of the ellipse.
+        angle : Union[Quantity, Angle, Real], default: 0
+            Placement angle for orientation alignment.
         tag : str, default: None
-            A user-defined label identifying this specific edge.
+            User-defined label for identifying this edge.
 
         Returns
         -------
         Ellipse
-            An object representing the ellipse added to the sketch.
+            Object representing the ellipse added to the sketch.
 
         """
         ellipse = Ellipse(center, semi_major_axis, semi_minor_axis, angle)
@@ -640,25 +608,25 @@ class Sketch:
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """Create a polygon shape on the sketch.
+        """Create a polygon on the sketch.
 
         Parameters
         ----------
         center: Point2D
-            A :class:`Point2D` representing the center of the polygon.
+            Point that represents the center of the polygon.
         inner_radius : Union[Quantity, Distance]
-            The inradius(apothem) of the polygon.
+            Inner radius (apothem) of the polygon.
         sides : int
             Number of sides of the polygon.
-        angle : Optional[Union[Quantity, Angle, Real]]
-            The placement angle for orientation alignment.
+        angle : Union[Quantity, Angle, Real], default: 0
+            Placement angle for orientation alignment.
         tag : str, default: None
-            A user-defined label identifying this specific edge.
+            User-defined label for identifying this edge.
 
         Returns
         -------
         Polygon
-            An object for modelling polygonal shapes.
+            Object representing the polygon added to the sketch.
 
         """
         polygon = Polygon(center, inner_radius, sides, angle)
@@ -667,22 +635,22 @@ class Sketch:
     @check_input_types
     def tag(self, tag: str) -> None:
         """
-        Adds a tag for the active selection of sketch objects.
+        Add a tag to the active selection of sketch objects.
 
         Parameters
         ----------
         tag : str
-            The tag to assign against the sketch objects.
+            Tag to assign the sketch objects.
         """
         self._tags[tag] = self._current_sketch_context
 
     def _single_point_context_reference(self) -> Point2D:
         """
-        Gets the last reference point from historical context.
+        Get the last reference point from historical context.
 
         Notes
         -----
-        If no single point context available, ``ZERO_POINT2D`` returned by default.
+        If no single point context is available, ``ZERO_POINT2D`` is returned by default.
         """
         if not self._edges or len(self._edges) == 0:
             return ZERO_POINT2D
@@ -691,14 +659,14 @@ class Sketch:
 
     def _tag(self, sketch_collection: List[SketchObject], tag: str) -> None:
         """
-        Adds a tag for a collection of sketch objects.
+        Add a tag for a collection of sketch objects.
 
         Parameters
         ----------
         sketch_collection : List[SketchObject]
-            The sketch objects to tag.
-        tag : str
-            The tag to assign against the sketch objects.
+            Sketch objects to tag.
+        tag : str, default: None
+            Tag to assign to these sketch objects.
         """
         self._tags[tag] = sketch_collection
 
@@ -710,10 +678,9 @@ class Sketch:
 
         Parameters
         ----------
-        **kwargs : dict, default: None
-            Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
-            for allowable keyword arguments.
-
+        **kwargs : dict, default:
+            Keyword arguments. For allowable keyword arguments,
+            see the :func:`pyvista.Plotter.add_mesh` method.
         """
         from ansys.geometry.core.plotting.plotter import Plotter
 
@@ -729,10 +696,9 @@ class Sketch:
 
         Parameters
         ----------
-        **kwargs : dict, default: None
-            Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
-            for allowable keyword arguments.
-
+        **kwargs : dict, default: []
+            Keyword arguments. For allowable keyword arguments,
+            see the :func:`pyvista.Plotter.add_mesh` method.
         """
         from ansys.geometry.core.plotting.plotter import Plotter
 
@@ -751,7 +717,7 @@ class Sketch:
 
     def sketch_polydata(self):
         """
-        Returns PolyData configuration for all
+        Gets polydata configuration for all
         objects of the sketch to the scene.
         """
         sketches_polydata = []

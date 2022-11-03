@@ -1,4 +1,4 @@
-"""PyGeometry primitives subpackage."""
+"""Provides the PyGeometry ``primitives`` subpackage."""
 
 from ansys.geometry.core.primitives.cone import Cone
 from ansys.geometry.core.primitives.cylinder import Cylinder

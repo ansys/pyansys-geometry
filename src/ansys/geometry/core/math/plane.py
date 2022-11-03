@@ -1,4 +1,4 @@
-"""``Plane`` class module."""
+"""Provides the ``Plane`` class."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Union
@@ -17,13 +17,13 @@ class Plane(Frame):
 
     Parameters
     ----------
-    origin : Optional[Union[~numpy.ndarray, RealSequence, Point3D]]
-        Centered origin of the ``Frame``. By default, cartesian origin.
-    direction_x: Optional[Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]]
-        X-axis direction. By default, ``UNITVECTOR3D_X``.
-    direction_y: Optional[Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]]
-        Y-axis direction. By default, ``UNITVECTOR3D_Y``.
-    """
+    origin : Union[~numpy.ndarray, RealSequence, Point3D], default: ZERO_POINT3D
+        Centered origin of the frame. The default is the Cartesian origin.
+    direction_x : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D], default: UNITVECTOR3D_X
+        X-axis direction.
+    direction_y : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D], default: UNITVECTOR3D_Y
+        Y-axis direction.
+    """  # noqa : E501
 
     def __init__(
         self,
@@ -31,22 +31,22 @@ class Plane(Frame):
         direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Y,
     ):
-        """Constructor method for ``Plane``."""
+        """Constructor method for the ``Plane`` class."""
         super().__init__(origin, direction_x, direction_y)
 
     @check_input_types
     def is_point_contained(self, point: Point3D) -> bool:
-        """Method for checking if a Point3D is contained in the plane.
+        """Check if a 3D point is contained in the plane.
 
         Parameters
         ----------
         point : Point3D
-            The :class:`Point3D <ansys.geometry.core.math.point.Point3D>` to be checked.
+            :class:`Point3D <ansys.geometry.core.math.point.Point3D>` class to check.
 
         Returns
         -------
         bool
-            Returns ``True`` if contained in the plane.
+            ``True`` if the 3D point is contained in the plane.
         """
 
         # Compute the plane equation A*(x-x0) + B*(y-y0) + C*(z-z0)
@@ -61,7 +61,7 @@ class Plane(Frame):
 
     @check_input_types
     def __eq__(self, other: "Plane") -> bool:
-        """Equals operator for ``Plane``."""
+        """Equals operator for the ``Plane`` class."""
         return (
             self.origin == other.origin
             and self.direction_x == other.direction_x
@@ -70,5 +70,5 @@ class Plane(Frame):
         )
 
     def __ne__(self, other: "Plane") -> bool:
-        """Not equals operator for ``Plane``."""
+        """Not equals operator for the ``Plane`` class."""
         return not self == other

@@ -1,4 +1,4 @@
-"""``Cone`` class module."""
+"""Provides the ``Cone`` class."""
 
 
 from beartype import beartype as check_input_types
@@ -18,19 +18,20 @@ class Cone:
     Parameters
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D]
-        Centered origin of the ``Cone``.
+        Centered origin of the cone.
     direction_x : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         X-plane direction.
     direction_y : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         Y-plane direction.
     radius : Real
-        Radius of ``Cone``.
+        Radius of the cone.
     half_angle : Real
         Half angle of the apex, determining the upward angle.
     length_unit : Unit, default: UNIT_LENGTH
-        Units employed to define the radius.
+        Units for defining the radius.
     angle_unit : Unit, default: UNIT_ANGLE
-        Units employed to define the half_angle.
+        Units for defining the half angle.
+        ````.
     """
 
     @check_input_types
@@ -44,7 +45,7 @@ class Cone:
         length_unit: Optional[Unit] = UNIT_LENGTH,
         angle_unit: Optional[Unit] = UNIT_ANGLE,
     ):
-        """Constructor method for ``Cone``."""
+        """Constructor method for the ``Cone`` class."""
         check_pint_unit_compatibility(length_unit, UNIT_LENGTH)
         check_pint_unit_compatibility(angle_unit, UNIT_ANGLE)
 
@@ -68,7 +69,7 @@ class Cone:
 
     @property
     def origin(self) -> Point3D:
-        """Origin of the ``Cone``."""
+        """Origin of the cone."""
         return self._origin
 
     @origin.setter
@@ -78,7 +79,7 @@ class Cone:
 
     @property
     def radius(self) -> Real:
-        """Radius of the ``Cone``."""
+        """Radius of the cone."""
         return UNITS.convert(self._radius, self._base_length_unit, self._length_unit)
 
     @radius.setter
@@ -120,7 +121,7 @@ class Cone:
 
     @check_input_types
     def __eq__(self, other: object) -> bool:
-        """Equals operator for ``Cone``."""
+        """Equals operator for the ``Cone`` class."""
         return (
             self._origin == other.origin
             and self._radius == other.radius
@@ -130,5 +131,5 @@ class Cone:
         )
 
     def __ne__(self, other) -> bool:
-        """Not equals operator for ``Cone``."""
+        """Not equals operator for the ``Cone`` class."""
         return not self == other

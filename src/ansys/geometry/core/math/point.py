@@ -1,4 +1,4 @@
-"""``Point`` classes module."""
+"""Provides ``Point`` classes."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, Optional, Union
@@ -15,28 +15,29 @@ from ansys.geometry.core.misc import (
 from ansys.geometry.core.typing import RealSequence
 
 DEFAULT_POINT2D_VALUES = [np.nan, np.nan]
-"""Default values for a ``Point2D``."""
+"""Default values for a 2D point."""
 
 DEFAULT_POINT3D_VALUES = [np.nan, np.nan, np.nan]
-"""Default values for a ``Point3D``."""
+"""Default values for a 3D point."""
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.math.vector import Vector2D, Vector3D
 
 BASE_UNIT_LENGTH = UNITS.get_base_units(UNIT_LENGTH)[1]
+"""Default value for the length of the base unit."""
 
 
 class Point2D(np.ndarray, PhysicalQuantity):
     """
-    Provides Point2D geometry primitive representation.
+    Provides ``Point2D`` geometry primitive representation.
 
     Parameters
     ----------
     input : Union[~numpy.ndarray, RealSequence], default: DEFAULT_POINT2D_VALUES
-        The direction arguments, either as a :class:`numpy.ndarray <numpy.ndarray>`
-        or a ``RealSequence``.
+        Direction arguments, either as a :class:`numpy.ndarray <numpy.ndarray>` class
+        or as a ``RealSequence``.
     unit : ~pint.Unit, default: UNIT_LENGTH
-        Units employed to define the Point2D values.
+        Units for defining 2D point values.
     """
 
     def __new__(
@@ -44,7 +45,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
         input: Optional[Union[np.ndarray, RealSequence]] = DEFAULT_POINT2D_VALUES,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
-        """Constructor for ``Point2D``."""
+        """Constructor for the ``Point2D`` class."""
         # Build an empty np.ndarray object
         return np.zeros(len(input)).view(cls)
 
@@ -63,7 +64,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
 
         # Check dimensions
         if len(input) != 2:
-            raise ValueError("Point2D class must receive 2 arguments.")  # noqa: E501
+            raise ValueError("Point2D class must receive two arguments.")  # noqa: E501
 
         # Store values
         self._quantities = [Quantity(elem, units=unit) for elem in input]
@@ -71,21 +72,21 @@ class Point2D(np.ndarray, PhysicalQuantity):
 
     @check_input_types
     def __eq__(self, other: "Point2D") -> bool:
-        """Equals operator for ``Point2D``."""
+        """Equals operator for the``Point2D`` class."""
         return np.array_equal(self, other)
 
     def __ne__(self, other: "Point2D") -> bool:
-        """Not equals operator for ``Point2D``."""
+        """Not equals operator for the ``Point2D`` class."""
         return not self == other
 
     @check_input_types
     def __set_value(self, input: Quantity, idx: int) -> None:
-        """General setter method for ``Point2D`` class."""
+        """General setter method for the ``Point2D`` class."""
         self[idx] = self._base_units_magnitude(input)
         self._quantities[idx] = input.to(self.unit)
 
     def __add__(self, other: Union["Point2D", "Vector2D"]) -> "Point2D":
-        """Add operation for ``Point2D``."""
+        """Add operation for the ``Point2D`` class."""
         from ansys.geometry.core.math.vector import Vector2D
 
         check_type(other, (Point2D, Vector2D))
@@ -96,7 +97,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
         return point
 
     def __sub__(self, other: "Point2D") -> "Point2D":
-        """Subtraction operation for ``Point2D``."""
+        """Subtraction operation for the ``Point2D``class."""
         from ansys.geometry.core.math.vector import Vector2D
 
         check_type(other, (Point2D, Vector2D))
@@ -108,7 +109,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
 
     @property
     def x(self) -> Quantity:
-        """Returns the X plane component value."""
+        """X plane component value."""
         if self._quantities[0] is np.nan:
             self._quantities[0] = Quantity(self[0], units=self.base_unit).to(self.unit)
         return self._quantities[0]
@@ -120,7 +121,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
 
     @property
     def y(self) -> Quantity:
-        """Returns the Y plane component value."""
+        """Y plane component value."""
         if self._quantities[1] is np.nan:
             self._quantities[1] = Quantity(self[1], units=self.base_unit).to(self.unit)
         return self._quantities[1]
@@ -132,7 +133,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
 
     @PhysicalQuantity.unit.getter
     def unit(self) -> Unit:
-        """Returns the unit of the object."""
+        """Get the unit of the object."""
         if hasattr(self, "_unit"):
             return self._unit
         else:
@@ -141,7 +142,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
 
     @PhysicalQuantity.base_unit.getter
     def base_unit(self) -> Unit:
-        """Returns the base unit of the object."""
+        """Get the base unit of the object."""
         if hasattr(self, "_base_unit"):
             return self._base_unit
         else:
@@ -151,15 +152,15 @@ class Point2D(np.ndarray, PhysicalQuantity):
 
 class Point3D(np.ndarray, PhysicalQuantity):
     """
-    Provides Point3D geometry primitive representation.
+    Provides ``Point3D`` geometry primitive representation.
 
     Parameters
     ----------
     input : Union[~numpy.ndarray, RealSequence], default: DEFAULT_POINT3D_VALUES
-        The direction arguments, either as a :class:`numpy.ndarray <numpy.ndarray>`
-        or a ``RealSequence``.
+        Direction arguments, either as a :class:`numpy.ndarray <numpy.ndarray>` class
+        or as a ``RealSequence``.
     unit : ~pint.Unit, default: UNIT_LENGTH
-        Units employed to define the Point3D values.
+        Units for defining the 3D point values.
     """
 
     def __new__(
@@ -167,7 +168,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
         input: Optional[Union[np.ndarray, RealSequence]] = DEFAULT_POINT3D_VALUES,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
-        """Constructor for ``Point3D``."""
+        """Constructor method for the ``Point3D`` class."""
         # Build an empty np.ndarray object
         return np.zeros(len(input)).view(cls)
 
@@ -194,15 +195,15 @@ class Point3D(np.ndarray, PhysicalQuantity):
 
     @check_input_types
     def __eq__(self, other: "Point3D") -> bool:
-        """Equals operator for ``Point3D``."""
+        """Equals operator for the ``Point3D`` class."""
         return np.array_equal(self, other)
 
     def __ne__(self, other: "Point3D") -> bool:
-        """Not equals operator for ``Point3D``."""
+        """Not equals operator for the ``Point3D`` class."""
         return not self == other
 
     def __add__(self, other: Union["Point3D", "Vector3D"]) -> "Point3D":
-        """Add operation for ``Point3D``."""
+        """Add operation for the ``Point3D`` class."""
         from ansys.geometry.core.math.vector import Vector3D
 
         check_type(other, (Point3D, Vector3D))
@@ -213,7 +214,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
         return point
 
     def __sub__(self, other: Union["Point3D", "Vector3D"]) -> "Point3D":
-        """Subtraction operation for ``Point3D``."""
+        """Subtraction operation for the ``Point3D``class."""
         from ansys.geometry.core.math.vector import Vector3D
 
         check_type(other, (Point3D, Vector3D))
@@ -225,13 +226,13 @@ class Point3D(np.ndarray, PhysicalQuantity):
 
     @check_input_types
     def __set_value(self, input: Quantity, idx: int) -> None:
-        """General setter method for ``Point3D`` class."""
+        """General setter method for the ``Point3D`` class."""
         self[idx] = self._base_units_magnitude(input)
         self._quantities[idx] = input.to(self.unit)
 
     @property
     def x(self) -> Quantity:
-        """Returns the X plane component value."""
+        """X plane component value."""
         if self._quantities[0] is np.nan:
             self._quantities[0] = Quantity(self[0], units=self.base_unit).to(self.unit)
         return self._quantities[0]
@@ -243,7 +244,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
 
     @property
     def y(self) -> Quantity:
-        """Returns the Y plane component value."""
+        """Y plane component value."""
         if self._quantities[1] is np.nan:
             self._quantities[1] = Quantity(self[1], units=self.base_unit).to(self.unit)
         return self._quantities[1]
@@ -255,7 +256,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
 
     @property
     def z(self) -> Quantity:
-        """Returns the Z plane component value."""
+        """Z plane component value."""
         if self._quantities[2] is np.nan:
             self._quantities[2] = Quantity(self[2], units=self.base_unit).to(self.unit)
         return self._quantities[2]
@@ -267,7 +268,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
 
     @PhysicalQuantity.unit.getter
     def unit(self) -> Unit:
-        """Returns the unit of the object."""
+        """Get the unit of the object."""
         if hasattr(self, "_unit"):
             return self._unit
         else:
@@ -276,7 +277,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
 
     @PhysicalQuantity.base_unit.getter
     def base_unit(self) -> Unit:
-        """Returns the base unit of the object."""
+        """Get the base unit of the object."""
         if hasattr(self, "_base_unit"):
             return self._base_unit
         else:

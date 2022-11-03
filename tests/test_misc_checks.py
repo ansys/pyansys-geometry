@@ -58,7 +58,7 @@ def test_check_pint_unit_compatibility():
     time_1 = UNITS.sec
 
     # Check that length_1 and time_1 are not of the same dimensionality
-    with pytest.raises(TypeError, match="The pint.Unit provided as input should be a"):
+    with pytest.raises(TypeError, match="The pint.Unit provided as an input should be a"):
         check_pint_unit_compatibility(length_1, time_1)
 
     # Check that length_1 and length_2 are not of the same dimensionality
@@ -79,7 +79,7 @@ def test_check_ndarray_is_float_int():
     arr_num_with_strs = np.asarray([1, 2, "a"])
 
     with pytest.raises(
-        TypeError, match="The numpy.ndarray provided should contain float or integer values."
+        TypeError, match="The numpy.ndarray should contain float or integer values."
     ):
         check_ndarray_is_float_int(arr_strs)
 
@@ -89,7 +89,7 @@ def test_check_ndarray_is_float_int():
         check_ndarray_is_float_int(arr_strs, "arr_strs")
 
     with pytest.raises(
-        TypeError, match="The numpy.ndarray provided should contain float or integer values."
+        TypeError, match="The numpy.ndarray should contain float or integer values."
     ):
         check_ndarray_is_float_int(arr_num_with_strs)
 
@@ -108,18 +108,16 @@ def test_check_is_float_int():
     num_float = 1.5345
     num_complex = 1 + 2j
 
-    with pytest.raises(
-        TypeError, match="The parameter provided should be a float or an integer value."
-    ):
+    with pytest.raises(TypeError, match="The parameter should have a float or integer value."):
         check_is_float_int(str)
 
     with pytest.raises(
-        TypeError, match="The parameter 'str' should be a float or an integer value."
+        TypeError, match="The parameter 'str' should have a float or integer value."
     ):
         check_is_float_int(str, "str")
 
     with pytest.raises(
-        TypeError, match="The parameter 'num_complex' should be a float or an integer value."
+        TypeError, match="The parameter 'num_complex' should have a float or integer value."
     ):
         check_is_float_int(num_complex, "num_complex")
 
@@ -136,7 +134,7 @@ def test_check_ndarray_is_non_zero():
     arr_2d = np.asarray([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
 
     with pytest.raises(
-        ValueError, match="The numpy.ndarray provided should not be a numpy.ndarray of zeros."
+        ValueError, match="The numpy.ndarray should not be a numpy.ndarray of zeros."
     ):
         check_ndarray_is_non_zero(arr_1d)
 
@@ -146,7 +144,7 @@ def test_check_ndarray_is_non_zero():
         check_ndarray_is_non_zero(arr_1d, "arr_1d")
 
     with pytest.raises(
-        ValueError, match="The numpy.ndarray provided should not be a numpy.ndarray of zeros."
+        ValueError, match="The numpy.ndarray should not be a numpy.ndarray of zeros."
     ):
         check_ndarray_is_non_zero(arr_2d)
 
@@ -163,17 +161,18 @@ def test_check_ndarray_is_not_none():
     arr_2d = np.asarray([[None, None, None], [None, None, None], [None, None, None]])
 
     with pytest.raises(
-        ValueError, match="The numpy.ndarray provided should not be a None numpy.ndarray."
+        ValueError, match="The numpy.ndarray should not have 'None' for all parameter values."
     ):
         check_ndarray_is_not_none(arr_1d)
 
     with pytest.raises(
-        ValueError, match="The numpy.ndarray 'arr_1d' should not be a None numpy.ndarray."
+        ValueError,
+        match="The numpy.ndarray 'arr_1d' should not have 'None' for all parameter values.",
     ):
         check_ndarray_is_not_none(arr_1d, "arr_1d")
 
     with pytest.raises(
-        ValueError, match="The numpy.ndarray provided should not be a None numpy.ndarray."
+        ValueError, match="The numpy.ndarray should not have 'None' for all parameter values."
     ):
         check_ndarray_is_not_none(arr_2d)
 

@@ -1,4 +1,4 @@
-"""``Vector`` classes module"""
+"""Provides ``Vector`` classes."""
 from io import UnsupportedOperation
 
 from beartype import beartype as check_input_types
@@ -12,16 +12,16 @@ from ansys.geometry.core.typing import Real, RealSequence
 
 
 class Vector3D(np.ndarray):
-    """A 3-dimensional vector class.
+    """Provides a 3D vector class.
 
     Parameters
     ----------
     input : Union[~numpy.ndarray, RealSequence]
-        3-dimensional :class:`numpy.ndarray <numpy.ndarray>` with shape(X,).
+        3D :class:`numpy.ndarray <numpy.ndarray>` class with shape(X,).
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence]):
-        """Constructor for ``Vector3D``."""
+        """Constructor method for the ``Vector3D`` class."""
 
         obj = np.asarray(input).view(cls)
 
@@ -36,81 +36,81 @@ class Vector3D(np.ndarray):
 
     @property
     def x(self) -> Real:
-        """X coordinate of ``Vector3D``."""
+        """X coordinate of the ``Vector3D`` class."""
         return self[0]
 
     @x.setter
     @check_input_types
     def x(self, value: Real) -> None:
-        """Sets the Y coordinate of ``Vector3D``."""
+        """Set the Y coordinate of the ``Vector3D`` class."""
         self[0] = value
 
     @property
     def y(self) -> Real:
-        """Y coordinate of ``Vector3D``."""
+        """Y coordinate of the ``Vector3D`` class."""
         return self[1]
 
     @y.setter
     @check_input_types
     def y(self, value: Real) -> None:
-        """Sets the Y coordinate of ``Vector3D``."""
+        """Set the Y coordinate of the ``Vector3D`` class."""
         self[1] = value
 
     @property
     def z(self) -> Real:
-        """Z coordinate of ``Vector3D``."""
+        """Z coordinate of the ``Vector3D`` class."""
         return self[2]
 
     @z.setter
     @check_input_types
     def z(self, value: Real) -> None:
-        """Sets the Z coordinate of ``Vector3D``."""
+        """Set the Z coordinate of the ``Vector3D`` class."""
         self[2] = value
 
     @property
     def norm(self) -> float:
-        """The norm of the vector."""
+        """Norm of the vector."""
         return np.linalg.norm(self)
 
     @property
     def magnitude(self) -> float:
-        """The norm of the vector."""
+        """Norm of the vector."""
         return self.norm
 
     @property
     def is_zero(self) -> bool:
-        """Confirms whether all components of the ``Vector3D`` are zero."""
+        """Check if all components of the 3D vector are zero."""
         return all([comp == 0 for comp in self])
 
     @check_input_types
     def is_perpendicular_to(self, other_vector: "Vector3D") -> bool:
-        """Verifies if the two ``Vector3D`` instances are perpendicular."""
+        """Check if this vector and another vector are perpendicular."""
         if self.is_zero or other_vector.is_zero:
             return False
         else:
             return Accuracy.angle_is_zero(self * other_vector)
 
     def normalize(self) -> "Vector3D":
-        """Return a normalized version of the ``Vector3D``."""
+        """Return a normalized version of the 3D vector."""
         norm = self.norm
         if norm > 0:
             return (self / norm).view(Vector3D)
         else:
-            raise ValueError("The norm of the Vector3D is not valid.")
+            raise ValueError("The norm of the 3D vector is not valid.")
 
     @check_input_types
     def get_angle_between(self, v: "Vector3D") -> Quantity:
-        """Method for getting the angle between two ``Vector3D`` objects.
+        """Get the angle between this 3D vector and another 3D vector.
 
         Parameters
         ----------
         v : Vector3D
-            The other vector to compute the angle with.
+            Other 3D vector for computing the angle.
 
         Returns
         -------
         Quantity
-            The angle between both vectors.
+            Angle between the two 3D vectors.
         """
         if v.is_zero or self.is_zero:
             raise ValueError("Vectors cannot be zero-valued.")
@@ -128,16 +128,16 @@ class Vector3D(np.ndarray):
 
     @check_input_types
     def cross(self, v: "Vector3D") -> "Vector3D":
-        """Return cross product of Vector3D objects"""
+        """Return the cross product of ``Vector3D`` objects."""
         return np.cross(self, v).view(Vector3D)
 
     @check_input_types
     def __eq__(self, other: "Vector3D") -> bool:
-        """Equals operator for ``Vector3D``."""
+        """Equals operator for the ``Vector3D`` class."""
         return np.array_equal(self, other)
 
     def __ne__(self, other: "Vector3D") -> bool:
-        """Not equals operator for ``Vector3D``."""
+        """Not equals operator for the ``Vector3D`` class."""
         return not self == other
 
     @check_input_types
@@ -159,7 +159,7 @@ class Vector3D(np.ndarray):
 
     @check_input_types
     def __add__(self, other: Union["Vector3D", Point3D]) -> Union["Vector3D", Point3D]:
-        """Addition operation overload for ``Vector3D`` objects."""
+        """Addition operation overload for 3D vectors."""
         if isinstance(other, Point3D):
             return other + self
         else:
@@ -167,7 +167,7 @@ class Vector3D(np.ndarray):
 
     @check_input_types
     def __sub__(self, other: "Vector3D") -> "Vector3D":
-        """Subtraction operation overload for ``Vector3D`` objects."""
+        """Subtraction operation overload for `3D vectors."""
         return np.subtract(self, other).view(Vector3D)
 
     @classmethod
@@ -177,41 +177,41 @@ class Vector3D(np.ndarray):
         point_a: Union[np.ndarray, RealSequence, Point3D],
         point_b: Union[np.ndarray, RealSequence, Point3D],
     ):
-        """Create a ``Vector3D`` from two distinct ``Point3D``.
+        """Create a 3D vector from two distinct 3D points.
 
         Parameters
         ----------
         point_a : Point3D
-            A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
-            representing the first point.
+            :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+            class representing the first point.
         point_b : Point3D
-            A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
-            representing the second point.
+            :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+            class representing the second point.
 
         Notes
         -----
-        The resulting ``Vector3D`` is expressed in `Point3D``
-        base units, no matter what.
+        The resulting 3D vector is always expressed in ``Point3D``
+        base units.
 
         Returns
         -------
         Vector3D
-            A ``Vector3D`` from ``point_a`` to ``point_b``.
+            3D vector from ``point_a`` to ``point_b``.
         """
         return Vector3D(point_b - point_a)
 
 
 class Vector2D(np.ndarray):
-    """A 2-dimensional vector class.
+    """Proves a 2D vector class.
 
     Parameters
     ----------
     input : Union[~numpy.ndarray, RealSequence]
-        2-dimensional :class:`numpy.ndarray <numpy.ndarray>` with shape(X,).
+        2D :class:`numpy.ndarray <numpy.ndarray>` class with shape(X,).
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence]):
-        """Constructor for ``Vector2D``."""
+        """Constructor for the ``Vector2D`` class."""
 
         obj = np.asarray(input).view(cls)
 
@@ -226,70 +226,70 @@ class Vector2D(np.ndarray):
 
     @property
     def x(self) -> Real:
-        """X coordinate of ``Vector2D``."""
+        """X coordinate of the 2D vector."""
         return self[0]
 
     @x.setter
     @check_input_types
     def x(self, value: Real) -> None:
-        """Sets the X coordinate of ``Vector2D``."""
+        """Set the X coordinate of the 2D vector."""
         self[0] = value
 
     @property
     def y(self) -> Real:
-        """Y coordinate of ``Vector2D``."""
+        """Y coordinate of the 2D vector."""
         return self[1]
 
     @y.setter
     @check_input_types
     def y(self, value: Real) -> None:
-        """Sets the Y coordinate of ``Vector2D``."""
+        """Set the Y coordinate of the 2D vector."""
         self[1] = value
 
     @property
     def norm(self) -> float:
-        """The norm of the vector."""
+        """Norm of the 2D vector."""
         return np.linalg.norm(self)
 
     @property
     def magnitude(self) -> float:
-        """The norm of the vector."""
+        """Norm of the 2D vector."""
         return self.norm
 
     @property
     def is_zero(self) -> bool:
-        """Confirms whether all components of the ``Vector2D`` are zero."""
+        """Check if values for all components of the 2D vector are zero."""
         return all([comp == 0 for comp in self])
 
     @check_input_types
     def is_perpendicular_to(self, other_vector: "Vector2D") -> bool:
-        """Verifies if the two ``Vector2D`` instances are perpendicular."""
+        """Check if this 2D vector and another 2D vector are perpendicular."""
         if self.is_zero or other_vector.is_zero:
             return False
         else:
             return Accuracy.angle_is_zero(self * other_vector)
 
     def normalize(self) -> "Vector2D":
-        """Return a normalized version of the ``Vector2D``."""
+        """Return a normalized version of the 2D vector."""
         norm = self.norm
         if norm > 0:
             return (self / norm).view(Vector2D)
         else:
-            raise ValueError("The norm of the Vector2D is not valid.")
+            raise ValueError("The norm of the 2D vector is not valid.")
 
     @check_input_types
     def get_angle_between(self, v: "Vector2D") -> Quantity:
-        """Method for getting the angle between two ``Vector2D`` objects.
+        """Getting the angle between this 2D vector and another 2D vector.
 
         Parameters
         ----------
         v : Vector2D
-            The other vector to compute the angle with.
+            Other 2D vector to compute the angle with.
 
         Returns
         -------
         Quantity
-            The angle between both vectors.
+            Angle between both 2D vectors.
         """
         if v.is_zero or self.is_zero:
             raise ValueError("Vectors cannot be zero-valued.")
@@ -303,11 +303,11 @@ class Vector2D(np.ndarray):
 
     @check_input_types
     def __eq__(self, other: "Vector2D") -> bool:
-        """Equals operator for ``Vector2D``."""
+        """Equals operator for the ``Vector2D`` class."""
         return np.array_equal(self, other)
 
     def __ne__(self, other: "Vector2D") -> bool:
-        """Not equals operator for ``Vector2D``."""
+        """Not equals operator for the ``Vector2D`` class."""
         return not self == other
 
     @check_input_types
@@ -325,7 +325,7 @@ class Vector2D(np.ndarray):
 
     @check_input_types
     def __add__(self, other: Union["Vector2D", Point2D]) -> Union["Vector2D", Point2D]:
-        """Addition operation overload for ``Vector2D`` objects."""
+        """Addition operation overload for 2D vectors."""
         if isinstance(other, Point2D):
             return other + self
         else:
@@ -333,7 +333,7 @@ class Vector2D(np.ndarray):
 
     @check_input_types
     def __sub__(self, other: "Vector2D") -> "Vector2D":
-        """Subtraction operation overload for ``Vector2D`` objects."""
+        """Subtraction operation overload for 2D vectors."""
         return np.subtract(self, other).view(Vector2D)
 
     @classmethod
@@ -343,37 +343,37 @@ class Vector2D(np.ndarray):
         point_a: Union[np.ndarray, RealSequence, Point2D],
         point_b: Union[np.ndarray, RealSequence, Point2D],
     ):
-        """Create a ``Vector2D`` from two distinct ``Point2D``.
+        """Create a 2D vector from two distinct 2D points.
 
         Parameters
         ----------
         point_a : Point2D
-            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
-            representing the first point.
+            :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+            class representing the first point.
         point_b : Point2D
-            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
-            representing the second point.
+            :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+            class representing the second point.
 
         Notes
         -----
-        The resulting ``Vector2D`` is expressed in `Point2D``
-        base units, no matter what.
+        The resulting 2D vector is always expressed in ``Point2D``
+        base units.
 
         Returns
         -------
         Vector2D
-            A ``Vector2D`` from ``point_a`` to ``point_b``.
+            2D vector from ``point_a`` to ``point_b``.
         """
         return Vector2D(point_b - point_a)
 
 
 class UnitVector3D(Vector3D):
-    """A 3-dimensional unit vector class.
+    """Provdes the 3D unit vector class.
 
     Parameters
     ----------
     input : ~numpy.ndarray, ``Vector3D``
-        * One dimensional :class:`numpy.ndarray <numpy.ndarray>` with shape(X,)
+        * 1D :class:`numpy.ndarray <numpy.ndarray>` class with shape(X,)
         * Vector3D
     """
 
@@ -401,32 +401,32 @@ class UnitVector3D(Vector3D):
         point_a: Union[np.ndarray, RealSequence, Point3D],
         point_b: Union[np.ndarray, RealSequence, Point3D],
     ):
-        """Create a ``UnitVector3D`` from two distinct ``Point3D``.
+        """Create a 3D unit vector from two distinct 3D points.
 
         Parameters
         ----------
         point_a : Point3D
-            A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
-            representing the first point.
+            :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+            class representing the first point.
         point_b : Point3D
-            A :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
-            representing the second point.
+            :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+            class representing the second point.
 
         Returns
         -------
         UnitVector3D
-            A ``UnitVector3D`` from ``point_a`` to ``point_b``.
+            A 3D unit vector from ``point_a`` to ``point_b``.
         """
         return UnitVector3D(Vector3D.from_points(point_a, point_b))
 
 
 class UnitVector2D(Vector2D):
-    """A 2-dimensional unit vector class.
+    """Provides the 2D unit vector class.
 
     Parameters
     ----------
     input : ~numpy.ndarray, ``Vector2D``
-        * One dimensional :class:`numpy.ndarray <numpy.ndarray>` with shape(X,)
+        * 1D :class:`numpy.ndarray <numpy.ndarray>` class with shape(X,)
         * Vector2D
     """
 
@@ -450,20 +450,20 @@ class UnitVector2D(Vector2D):
         point_a: Union[np.ndarray, RealSequence, Point2D],
         point_b: Union[np.ndarray, RealSequence, Point2D],
     ):
-        """Create a ``UnitVector2D`` from two distinct ``Point2D``.
+        """Create a 2D unit vector from two distinct 2D points.
 
         Parameters
         ----------
         point_a : Point2D
-            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
-            representing the first point.
+            :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+            class representing the first point.
         point_b : Point2D
-            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
-            representing the second point.
+            :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+            class representing the second point.
 
         Returns
         -------
         UnitVector2D
-            A ``UnitVector2D`` from ``point_a`` to ``point_b``.
+            A 2D unit vector from ``point_a`` to ``point_b``.
         """
         return UnitVector2D(Vector2D.from_points(point_a, point_b))

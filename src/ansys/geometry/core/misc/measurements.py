@@ -1,4 +1,4 @@
-"""Module holding various measurement-related classes."""
+"""Provides various measurement-related classes."""
 
 from beartype.typing import Optional, Union
 from pint import Quantity, Unit
@@ -14,31 +14,31 @@ UNIT_ANGLE = UNITS.radian
 """Default angle unit for PyGeometry."""
 
 SERVER_UNIT_LENGTH = UNITS.meter
-"""Default length unit for supporting geometry services for gRPC messages."""
+"""Default length unit for supporting Geometry services for gRPC messages."""
 
 SERVER_UNIT_AREA = SERVER_UNIT_LENGTH * SERVER_UNIT_LENGTH
-"""Default area unit for supporting geometry services for gRPC messages."""
+"""Default area unit for supporting Geometry services for gRPC messages."""
 
 SERVER_UNIT_VOLUME = SERVER_UNIT_AREA * SERVER_UNIT_LENGTH
-"""Default volume unit for supporting geometry services for gRPC messages."""
+"""Default volume unit for supporting Geometry services for gRPC messages."""
 
 
 class Measurement(PhysicalQuantity):
-    """``PhysicalQuantity`` subclass for holding a measurement.
+    """Provides the ``PhysicalQuantity`` subclass for holding a measurement.
 
     Parameters
     ----------
     value : Union[Real, Quantity]
-        The value of the measurement to be considered.
+        Value of the measurement.
     unit : ~pint.Unit
-        The units to be considered for the given measurement.
+        Units for the measurement.
     dimensions : ~pint.Unit
-        The units to be considered for extracting the dimensions of the measurement.
-        If ~pint.Unit.meter is given, the dimension extracted will be ``[length]``.
+        Units for extracting the dimensions of the measurement.
+        If ``~pint.Unit.meter`` is given, the dimension extracted is ``[length]``.
     """
 
     def __init__(self, value: Union[Real, Quantity], unit: Unit, dimensions: Unit):
-        """Constructor for ``Measurement``."""
+        """Constructor for the ``Measurement`` class."""
         # Check the input
         if isinstance(value, Quantity):
             # TODO: inform that if Quantity is given, we will ignore provided unit value
@@ -55,7 +55,7 @@ class Measurement(PhysicalQuantity):
 
     @property
     def value(self) -> Quantity:
-        """Get the value of the measurement."""
+        """Value of the measurement."""
         return self._get_quantity(self._value)
 
     @value.setter
@@ -65,34 +65,34 @@ class Measurement(PhysicalQuantity):
 
 
 class Distance(Measurement):
-    """``Measurement`` subclass for holding a distance.
+    """Provides the ``Measurement`` subclass for holding a distance.
 
     Parameters
     ----------
     value : Union[Real, Quantity]
-        The value of the distance to be considered.
+        Value of the distance.
     unit : ~pint.Unit
-        The units to be considered for the given measurement.
+        Units for the distance.
     """
 
     def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = UNIT_LENGTH):
-        """Constructor for ``Distance``."""
+        """Constructor for the ``Distance`` class."""
         # Delegates in Measurement ctor. forcing expected dimensions.
         super().__init__(value, unit, UNIT_LENGTH)
 
 
 class Angle(Measurement):
-    """``Measurement`` subclass for holding an angle.
+    """Provides the ``Measurement`` subclass for holding an angle.
 
     Parameters
     ----------
     value : Union[Real, Quantity]
-        The value of the angle to be considered.
+        Value of the angle.
     unit : ~pint.Unit
-        The units to be considered for the given measurement.
+        Units for the angle.
     """
 
     def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = UNIT_ANGLE):
-        """Constructor for ``Angle``."""
+        """Constructor for the ``Angle`` class."""
         # Delegates in Measurement ctor. forcing expected dimensions.
         super().__init__(value, unit, UNIT_ANGLE)

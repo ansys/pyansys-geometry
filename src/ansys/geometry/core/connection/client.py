@@ -28,15 +28,15 @@ def wait_until_healthy(channel: grpc.Channel, timeout: float):
     Parameters
     ----------
     channel : ~grpc.Channel
-        Channel to wait until established and healthy.
+        Channel that must be established and healthy.
     timeout : float
-        Timeout in seconds. One attempt will be made each 100 milliseconds
+        Timeout in seconds. An attempt is made every 100 milliseconds
         until the timeout is exceeded.
 
     Raises
     ------
     TimeoutError
-        Raised when the total elapsed time exceeds ``timeout``.
+        Raised when the total elapsed time exceeds the value for the ``timeout`` parameter.
 
     """
     t_max = time.time() + timeout
@@ -58,7 +58,7 @@ def wait_until_healthy(channel: grpc.Channel, timeout: float):
 
 class GrpcClient:
     """
-    Wraps a geometry gRPC connection.
+    Wraps the gRPC connection for the Geometry service.
 
     Parameters
     ----------
@@ -68,16 +68,17 @@ class GrpcClient:
         Port number where the server is running.
     channel : ~grpc.Channel, default: None
         gRPC channel for server communication.
-    remote_instance : ansys.platform.instancemanagement.Instance
-        The corresponding remote instance when the Geometry Service
-        is launched through PyPIM. This instance will be deleted when calling
-        :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`.
-    timeout : Real, default: 60
+    remote_instance : ansys.platform.instancemanagement.Instance, default: None
+        Corresponding remote instance when the Geometry service
+        is launched through PyPIM. This instance is deleted when calling the
+        :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
+        method.
+    timeout : real, default: 60
         Timeout in seconds to achieve the connection.
     logging_level : int, default: INFO
-        The logging level to be applied to the client.
-    logging_file : Optional[str, Path], default: None
-        The file to output the log, if requested.
+        Logging level to apply to the client.
+    logging_file : str or Path, default: None
+        File to output the log to, if requested.
     """
 
     @check_input_types
@@ -121,17 +122,17 @@ class GrpcClient:
 
     @property
     def channel(self) -> grpc.Channel:
-        """The gRPC channel of this client."""
+        """gRPC channel of the client."""
         return self._channel
 
     @property
     def log(self) -> PyGeometryCustomAdapter:
-        """The specific instance logger."""
+        """Specific instance logger."""
         return self._log
 
     @property
     def healthy(self) -> bool:
-        """Return if the client channel if healthy."""
+        """Check if the client channel if healthy."""
         if self._closed:
             return False
         health_stub = health_pb2_grpc.HealthStub(self._channel)
@@ -160,8 +161,8 @@ class GrpcClient:
 
         Notes
         -----
-        If an instance of the Geometry Service was started using
-        PyPIM, this instance will be deleted.
+        If an instance of the Geometry service was started using
+        PyPIM, this instance is deleted.
         """
         if self._remote_instance:
             self._remote_instance.delete()  # pragma: no cover
@@ -169,11 +170,11 @@ class GrpcClient:
         self._channel.close()
 
     def target(self) -> str:
-        """Return the target of the channel."""
+        """Get the target of the channel."""
         if self._closed:
             return ""
         return self._channel._channel.target().decode()
 
     def get_name(self) -> str:
-        """The target name of the connection."""
+        """Get the target name of the connection."""
         return self._target

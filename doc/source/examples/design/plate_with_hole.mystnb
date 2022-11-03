@@ -11,20 +11,23 @@ kernelspec:
   name: python3
 ---
 
-# Extrude rectangular plate with multiple bodies
+# Rectangular plate with multiple bodies
 
-Multiple bodies can be created from a single sketch by extruding the same sketch in different planes.
+You can create multiple bodies from a single sketch by extruding the same sketch in different planes.
 
-The sketch is designed as an effective fluent-style API with all operations receiving 2D configurations.
-To know more about the fluent API, see [Fluent based API in Sketch](../../user_guide/shapes.rst)
+The sketch is designed as an effective Ansys Fluent-style API with all operations receiving 2D configurations.
+To know more about the Fluent API, see [Fluent-based approach (Fluent API) in Sketch](../../user_guide/shapes.rst).
 
-In this example, a box is located in the center of the plate, with the default origin of a sketch plane (origin at (0, 0, 0)).
+In this example, a box is located in the center of the plate, with the default origin of a sketch plane (origin at ``(0, 0, 0)``).
 Four holes of equal radius are sketched at the corners of the plate.
 The plate is then extruded, leading to the generation of the requested body.
 The projection is at the center of the face. The default projection depth is through the entire part.
 
 +++
-First, let us import the fundamental objects:
+
+## Perform required imports
+
+Start by performing required imports.
 
 ```{code-cell} ipython3 
 import numpy as np
@@ -36,12 +39,12 @@ from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 ```
 
-## Defining a ``Sketch`` profile for the proposed design
+## Define a sketch profile for the proposed design
 
-The profile requires four ``Segments`` which constitute the outer limits of the design,
-a ``Box`` on the center and a ``Circle`` at its four corners.
+The sketch profile requires four segments that constitute the outer limits of the design,
+a box on the center, and a circle at its four corners.
 
-A single sketch instance can be used for multiple design operations such as extruding a body,
+You can use a single sketch instance for multiple design operations such as extruding a body,
 projecting a profile, or imprinting curves.
 
 ```{code-cell} ipython3 
@@ -58,12 +61,12 @@ sketch = Sketch()
 )
 ```
 
-## Create the design by extruding sketch
+## Create the design by extruding the sketch
 
-A server connection is established and the single sketch profile is used to extrude 
-the base component at Z axis. A named selection is then created from the 
-resulting list of bodies.
-The design is going to extrude the four segments with desired thickness, just in three server calls.
+Establish a server connection and use the single sketch profile to extrude 
+the base component at the Z axis. A named selection is created from the 
+resulting list of bodies. In only three server calls, the design extrudes
+the four segments with the desired thickness.
 
 ```{code-cell} ipython3
 modeler = Modeler()
@@ -75,11 +78,11 @@ board_named_selection = design.create_named_selection("Plate", bodies=[body])
 design.plot()
 ```
 
-## Add new component with planar surface
+## Add a component with a planar surface
 
-We have created a plate as a base component. Let's add a new component with a planar surface to it.
-For that, create an instance ``sketch``, and create a surface in the design with that sketch.
-For the sketch, we are creating an ellipse keeping the origin of the plane as its center.
+After creating a plate as a base component, you might want to add a component with a planar surface to it.
+You create a ``sketch`` instance and create a surface in the design with this sketch.
+For the sketch, create an ellipse, keeping the origin of the plane as its center.
 
 ```{code-cell} ipython3
 # Add components to the design
@@ -99,7 +102,7 @@ design.plot()
 
 ## Extrude from face to create body
 
-It is possible to extrude a face profile by a given distance to create a new solid body. 
+You can extrude a face profile by a given distance to create a solid body. 
 There are no modifications against the body containing the source face.
 
 ```{code-cell} ipython3
@@ -108,10 +111,10 @@ longer_body = design.extrude_face(
     )
 design.plot()
 ```
-## Translate the body with in the plane
+## Translate the body within the plane
 
-By using the translate method, we can move the body in a direction specified by a given distance.
-It is also possible to move a sketch around the global coordinate system. See example
+By using the translate method, you can move the body in a specified direction by a given distance.
+You can also move a sketch around the global coordinate system. For more information, see
 [Dynamic Sketch Plane](dynamic_sketch_plane.mystnb).
 
 ```{code-cell} ipython3

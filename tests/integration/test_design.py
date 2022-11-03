@@ -635,7 +635,7 @@ def test_delete_body_component(modeler: Modeler):
     assert not design.components[2].bodies[0].is_alive
 
     # Try deleting the Design object itself - this is forbidden
-    with pytest.raises(ValueError, match="The Design object itself cannot be deleted."):
+    with pytest.raises(ValueError, match="The design itself cannot be deleted."):
         design.delete_component(design)
 
     # Let's try out the representation methods
@@ -695,7 +695,7 @@ def test_shared_topology(modeler: Modeler):
 
     # Try to assign it to the entire design
     assert design.shared_topology is None
-    with pytest.raises(ValueError, match="The Design object itself cannot have a shared topology."):
+    with pytest.raises(ValueError, match="The design itself cannot have a shared topology."):
         design.set_shared_topology(SharedTopologyType.SHARETYPE_NONE)
 
 
@@ -913,7 +913,7 @@ def test_beams(modeler: Modeler):
             UNITVECTOR3D_Y,
         )
 
-    with pytest.raises(ValueError, match="Direction x and direction y must be perpendicular."):
+    with pytest.raises(ValueError, match="Direction X and direction Y must be perpendicular."):
         design.add_beam_circular_profile(
             "InvalidUnitVectorAlignment",
             Quantity(10, UNITS.mm),

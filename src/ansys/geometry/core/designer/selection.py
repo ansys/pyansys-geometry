@@ -1,4 +1,4 @@
-"""``NamedSelection`` class module."""
+"""Provides the``NamedSelection`` class module."""
 
 from ansys.api.geometry.v0.namedselections_pb2 import CreateNamedSelectionRequest
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
@@ -14,25 +14,25 @@ from ansys.geometry.core.errors import protect_grpc
 
 class NamedSelection:
     """
-    A named selection organizes one or more design entities together for common actions
-    against the entire group.
-
     Represents a single named selection within the design assembly.
 
-    Synchronizes to a design within a supporting geometry service instance.
+    This class synchronizes to a design within a supporting Geometry service instance.
+
+    A named selection organizes one or more design entities together for common actions
+    against the entire group.
 
     Parameters
     ----------
     name : str
-        A user-defined name for the named selection.
+        User-defined name for the named selection.
     grpc_client : GrpcClient
-        An active supporting geometry service instance for design modeling.
-    bodies : Optional[List[Body]]
-        All bodies that should be included in the named selection.
-    faces : Optional[List[Face]]
-        All faces that should be included in the named selection.
-    edges : Optional[List[Edge]]
-        All edges that should be included in the named selection.
+        Active supporting Geometry service instance for design modeling.
+    bodies : List[Body], default: None
+        All bodies to include in the named selection.
+    faces : List[Face], default: None
+        All faces to include in the named selection.
+    edges : List[Edge], default: None
+        All edges to include in the named selection.
     """
 
     @protect_grpc
@@ -45,7 +45,7 @@ class NamedSelection:
         faces: Optional[List[Face]] = None,
         edges: Optional[List[Edge]] = None,
     ):
-        """Constructor method for ``NamedSelection``."""
+        """Constructor method for the ``NamedSelection`` class."""
 
         if bodies is None:
             bodies = []
@@ -75,10 +75,10 @@ class NamedSelection:
 
     @property
     def id(self) -> str:
-        """ID of the ``NamedSelection``."""
+        """ID of the named selection."""
         return self._id
 
     @property
     def name(self) -> str:
-        """Name of the ``NamedSelection``."""
+        """Name of the named selection."""
         return self._name
