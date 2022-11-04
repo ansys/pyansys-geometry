@@ -3,7 +3,11 @@
 from enum import Enum
 from pathlib import Path
 
-from ansys.api.geometry.v0.commands_pb2 import CreateBeamCircularProfileRequest
+from ansys.api.geometry.v0.commands_pb2 import (
+    AssignMidSurfaceOffsetTypeRequest,
+    AssignMidSurfaceThicknessRequest,
+    CreateBeamCircularProfileRequest,
+)
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.designs_pb2 import (
     ExportDesignRequest,
@@ -389,6 +393,8 @@ class Design(Component):
 
         return self._beam_profiles[profile.name]
 
+    @protect_grpc
+    @check_input_types
     def add_midsurface_thickness(
         self,
         thickness: Quantity,
@@ -406,9 +412,22 @@ class Design(Component):
         faces : Optional[List[Face]], default: None
             All faces to include in the midsurface thickness assignment.
         """
-        # Do whatever
-        return
+        # Group all ids together
+        ids = []
+        if bodies:
+            [ids.append(body.id) for body in bodies]
+        if faces:
+            [ids.append(face.id) for face in faces]
 
+        # Assign midsurface thickness
+        self._commands_stub.AssignMidSurfaceThickness(
+            AssignMidSurfaceThicknessRequest(
+                bodiesOrFaces=ids, thickness=thickness.m_as(SERVER_UNIT_LENGTH)
+            )
+        )
+
+    @protect_grpc
+    @check_input_types
     def add_midsurface_offset(
         self,
         offset_type: MidSurfaceOffesetType,
@@ -426,8 +445,17 @@ class Design(Component):
         faces : Optional[List[Face]], default: None
             All faces to include in the midsurface offset assignment.
         """
-        # Do whatever
-        return
+        # Group all ids together
+        ids = []
+        if bodies:
+            [ids.append(body.id) for body in bodies]
+        if faces:
+            [ids.append(face.id) for face in faces]
+
+        # Assign midsurface offset type
+        self._commands_stub.AssignMidSurfaceOffsetType(
+            AssignMidSurfaceOffsetTypeRequest(bodiesOrFaces=ids, offsetType=offset_type)
+        )
 
     def __repr__(self):
         """String representation of the design."""
