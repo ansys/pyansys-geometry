@@ -76,7 +76,7 @@ def test_cylinder_units():
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
-        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
+        match=r"The pint.Unit provided as an input should be a \[length\] quantity.",
     ):
         Cylinder(
             origin,
@@ -94,7 +94,7 @@ def test_cylinder_units():
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
-        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
+        match=r"The pint.Unit provided as an input should be a \[length\] quantity.",
     ):
         c_1.unit = UNITS.celsius
 
@@ -168,7 +168,7 @@ def test_sphere_units():
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
-        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
+        match=r"The pint.Unit provided as an input should be a \[length\] quantity.",
     ):
         Sphere(origin, radius, UNITS.celsius)
 
@@ -177,7 +177,7 @@ def test_sphere_units():
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
-        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
+        match=r"The pint.Unit provided as an input should be a \[length\] quantity.",
     ):
         s_1.unit = UNITS.celsius
 
@@ -264,7 +264,7 @@ def test_cone_units():
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
-        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
+        match=r"The pint.Unit provided as an input should be a \[length\] quantity.",
     ):
         Cone(
             origin,
@@ -277,7 +277,7 @@ def test_cone_units():
 
     with pytest.raises(
         TypeError,
-        match="The pint.Unit provided as input should be a dimensionless quantity.",
+        match="The pint.Unit provided as an input should be a dimensionless quantity.",
     ):
         Cone(
             origin,
@@ -302,13 +302,13 @@ def test_cone_units():
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
-        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
+        match=r"The pint.Unit provided as an input should be a \[length\] quantity.",
     ):
         c_1.length_unit = UNITS.celsius
 
     with pytest.raises(
         TypeError,
-        match=r"The pint.Unit provided as input should be a dimensionless quantity.",
+        match=r"The pint.Unit provided as an input should be a dimensionless quantity.",
     ):
         c_1.angle_unit = UNITS.celsius
 
@@ -408,7 +408,7 @@ def test_torus_units():
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
-        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
+        match=r"The pint.Unit provided as an input should be a \[length\] quantity.",
     ):
         Torus(
             origin,
@@ -431,7 +431,7 @@ def test_torus_units():
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
-        match=r"The pint.Unit provided as input should be a \[length\] quantity.",
+        match=r"The pint.Unit provided as an input should be a \[length\] quantity.",
     ):
         t_1.unit = UNITS.celsius
 

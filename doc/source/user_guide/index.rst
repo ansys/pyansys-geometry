@@ -3,9 +3,10 @@
 ==========
 User guide
 ==========
-This guide provides a general overview of the basics and usage of the
-PyGeometry library. See the side panel for the individual sections 
-demonstrating the key method concepts of PyGeometry.
+
+This section provides an overview of the PyGeometry library,
+explaining key method concepts and approaches for primitives,
+sketches (2D basic shape elements), and model designs.
 
 .. toctree::
    :maxdepth: 1
@@ -15,39 +16,42 @@ demonstrating the key method concepts of PyGeometry.
    shapes
    designer
 
-PyGeometry basic overview
-=========================
+PyGeometry overview
+===================
 
-PyGeometry is a Python wrapper for the Ansys Geometry Service. The key features of PyGeometry are:
+PyGeometry is a Python wrapper for the Ansys Geometry service.
+The key features of PyGeometry are:
 
 * Ability to use the library alongside other Python libraries
-* Fluent based API for clean and easy coding experience
+* Fluent based API for a clean and easy coding experience
 * Built-in examples
 
 Simple interactive example
 ==========================
 
-Start the Geometry Service instance
------------------------------------
+Start a Geometry server instance
+---------------------------------
 
 The :class:`Modeler() <ansys.geometry.core.modeler()>` class
 within the ``ansys-geometry-core`` library creates an instance of
-the Geometry Service. By default ``Modeler`` connects to ``127.0.0.1`` 
-(``'localhost'``) at the port 50051. You can change this by modifying
+the Geometry service. By default ``Modeler`` connects to ``127.0.0.1`` 
+(``'localhost'``) on port ``50051``. You can change this by modifying
 the ``host`` and ``port`` parameters of ``Modeler``, but note that you
 have to also modify this in your ``docker run`` command by changing ``<HOST-PORT>-50051``.
-Now, you can start the service with:
+
+You start the Geometry service with:
 
 .. code:: python
     
     >>> from ansys.geometry.core import Modeler
     >>> modeler = Modeler()
 
-Create Geometry models
-----------------------
+Create geometry model
+---------------------
 
-The Geometry Service is now active and you can start creating the geometry model 
-by initializing the :ref:`Sketch <ref_sketch>` and :ref:`Primitives <ref_primitives>`.
+Once the Geometry service is active , you can start creating the geometry model 
+by initializing the :ref:`Sketch <ref_sketch>` class and using the
+:ref:`Primitives <ref_primitives>` math subpackage for PyGeometry.
 
 .. code:: python
 

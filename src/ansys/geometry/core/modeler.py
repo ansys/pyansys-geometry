@@ -1,4 +1,4 @@
-"""``Modeler`` class module."""
+"""Provides the ``Modeler`` class."""
 import logging
 from pathlib import Path
 
@@ -16,7 +16,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 class Modeler:
     """
-    Provides a modeler class for interacting with an open session of
+    Provides for interacting with an open session of
     the Geometry service.
 
     Parameters
@@ -27,17 +27,17 @@ class Modeler:
         Port number where the server is running.
     channel : ~grpc.Channel, default: None
         gRPC channel for server communication.
-    remote_instance : ansys.platform.instancemanagement.Instance
-        The corresponding remote instance when the Geometry Service
-        is launched through PyPIM. This instance will be deleted when calling
-        :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`.
+    remote_instance : ansys.platform.instancemanagement.Instance, default: None
+        Corresponding remote instance when the Geometry service
+        is launched through PyPIM. This instance is deleted when the
+        :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
+        method is called.
     timeout : Real, default: 60
-        Timeout in seconds to achieve the connection..
+        Timeout in seconds to achieve the connection.
     logging_level : int, default: INFO
-        The logging level to be applied to the client.
-        By default, ``INFO``.
-    logging_file : str or Path, default: None
-        The file to output the log, if requested.
+        Logging level to apply to the client.
+    logging_file : str, Path, default: None
+        File to output the log to, if requested.
     """
 
     def __init__(
@@ -50,7 +50,7 @@ class Modeler:
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
     ):
-        """Constructor method for ``Modeler``."""
+        """Constructor method for the ``Modeler`` class."""
         self._client = GrpcClient(
             host=host,
             port=port,
@@ -66,17 +66,17 @@ class Modeler:
 
     @property
     def client(self) -> GrpcClient:
-        """The ``Modeler`` instance client."""
+        """``Modeler`` instance client."""
         return self._client
 
     @check_input_types
     def create_design(self, name: str) -> Design:
-        """Initializes a new design with the connected client.
+        """Initialize a new design with the connected client.
 
         Parameters
         ----------
         name : str
-            Name assigned to the design.
+            Name for the new design.
 
         Returns
         -------

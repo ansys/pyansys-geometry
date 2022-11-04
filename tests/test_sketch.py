@@ -259,7 +259,7 @@ def test_circle_instance_errors():
     """Test various circle instantiation errors."""
 
     with pytest.raises(
-        TypeError, match=r"The pint.Unit provided as input should be a \[length\] quantity."
+        TypeError, match=r"The pint.Unit provided as an input should be a \[length\] quantity."
     ):
         Circle(Point2D([10, 20]), 1 * UNITS.fahrenheit)
 
@@ -315,7 +315,7 @@ def test_ellipse_instance():
 def test_ellipse_instance_errors():
     """Test various ellipse instantiation errors."""
     with pytest.raises(
-        TypeError, match=r"The pint.Unit provided as input should be a \[length\] quantity."
+        TypeError, match=r"The pint.Unit provided as an input should be a \[length\] quantity."
     ):
         Ellipse(
             Point2D([10, 20]),
@@ -324,7 +324,7 @@ def test_ellipse_instance_errors():
         )
 
     with pytest.raises(
-        TypeError, match=r"The pint.Unit provided as input should be a \[length\] quantity."
+        TypeError, match=r"The pint.Unit provided as an input should be a \[length\] quantity."
     ):
         Ellipse(Point2D([10, 20]), 1 * UNITS.m, Quantity(56, UNITS.fahrenheit))
 
@@ -342,7 +342,9 @@ def test_ellipse_instance_errors():
             -3 * UNITS.m,
         )
 
-    with pytest.raises(ValueError, match="Semi-major axis cannot be shorter than semi-minor axis."):
+    with pytest.raises(
+        ValueError, match="Semi-major axis cannot be shorter than the semi-minor axis."
+    ):
         Ellipse(
             Point2D([10, 20]),
             1 * UNITS.m,
@@ -410,7 +412,7 @@ def test_polygon_instance():
     assert abs(square.area.m - 4.0) <= 1e-15
 
     with pytest.raises(
-        ValueError, match="The minimum number of sides to construct a polygon should be 3."
+        ValueError, match="The minimum number of sides to construct a polygon is 3."
     ):
         radius, sides, center = (1 * UNITS.m), 2, Point2D([0, 0], UNITS.m)
         Polygon(center, radius, sides)

@@ -1,4 +1,4 @@
-"""``Ellipse`` class module."""
+"""Provides the ``Ellipse`` class."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
@@ -15,18 +15,18 @@ from ansys.geometry.core.typing import Real
 
 
 class Ellipse(SketchFace):
-    """A class for modeling ellipses.
+    """Provides for modeling ellipses.
 
     Parameters
     ----------
     center: Point2D
-        A :class:`Point2D` representing the center of the ellipse.
+        Point representing the center of the ellipse.
     semi_major_axis : Union[Quantity, Distance]
-        The semi-major axis of the ellipse.
+        Semi-major axis of the ellipse.
     semi_minor_axis : Union[Quantity, Distance]
-        The semi-minor axis of the ellipse.
-    angle : Optional[Union[Quantity, Angle, Real]]
-        The placement angle for orientation alignment.
+        Semi-minor axis of the ellipse.
+    angle : Union[Quantity, Angle, Real], default: 0
+        Placement angle for orientation alignment.
     """
 
     @check_input_types
@@ -37,7 +37,7 @@ class Ellipse(SketchFace):
         semi_minor_axis: Union[Quantity, Distance],
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
-        """Initializes the ellipse shape."""
+        """Initialize the ellipse."""
         super().__init__()
 
         self._center = center
@@ -63,78 +63,43 @@ class Ellipse(SketchFace):
 
         # Ensure that the semi-major axis is equal or larger than the minor one
         if self._semi_major_axis.value.m < self._semi_minor_axis.value.m:
-            raise ValueError("Semi-major axis cannot be shorter than semi-minor axis.")
+            raise ValueError("Semi-major axis cannot be shorter than the semi-minor axis.")
 
     @property
     def center(self) -> Point2D:
-        """The center of the ellipse.
-
-        Returns
-        -------
-        Point2D
-            The center of the ellipse.
-        """
+        """Point that is the center of the ellipse."""
         return self._center
 
     @property
     def semi_major_axis(self) -> Quantity:
-        """Return the semi-major axis of the ellipse.
-
-        Returns
-        -------
-        Quantity
-            Semi-major axis of the ellipse.
-        """
+        """Semi-major axis of the ellipse."""
         return self._semi_major_axis.value
 
     @property
     def semi_minor_axis(self) -> Quantity:
-        """Return the semi-minor axis of the ellipse.
-
-        Returns
-        -------
-        Quantity
-            Semi-minor axis of the ellipse.
-        """
+        """Semi-minor axis of the ellipse."""
         return self._semi_minor_axis.value
 
     @property
     def angle(self) -> Angle:
-        """Return the orientation angle of the ellipse.
-
-        Returns
-        -------
-        Quantity
-            Orientation angle of the ellipse.
-        """
+        """Orientation angle of the ellipse."""
         return self._angle_offset
 
     @property
     def eccentricity(self) -> Real:
-        """Return the eccentricity of the ellipse.
-
-        Returns
-        -------
-        Real
-            Eccentricity of the ellipse.
-        """
+        """Eccentricity of the ellipse."""
         ecc = (
             self.semi_major_axis.m**2 - self.semi_minor_axis.m**2
         ) ** 0.5 / self.semi_major_axis.m
         if ecc == 1:
-            raise ValueError("The curve defined is a parabola not an ellipse.")
+            raise ValueError("The curve defined is a parabola and not an ellipse.")
         elif ecc > 1:
-            raise ValueError("The curve defined is an hyperbola not an ellipse.")
+            raise ValueError("The curve defined is an hyperbola and not an ellipse.")
         return ecc
 
     @property
     def linear_eccentricity(self) -> Quantity:
-        """Return the linear eccentricity of the ellipse.
-
-        Returns
-        -------
-        Quantity
-            Linear eccentricity of the ellipse.
+        """Linear eccentricity of the ellipse.
 
         Notes
         -----
@@ -144,24 +109,12 @@ class Ellipse(SketchFace):
 
     @property
     def semi_latus_rectum(self) -> Quantity:
-        """Return the semi-latus rectum of the ellipse.
-
-        Returns
-        -------
-        Quantity
-            Semi-latus rectum of the ellipse.
-        """
+        """Return the semi-latus rectum of the ellipse."""
         return self.semi_minor_axis**2 / self.semi_major_axis
 
     @property
     def perimeter(self) -> Quantity:
-        """Return the perimeter of the ellipse.
-
-        Returns
-        -------
-        Quantity
-            The perimeter of the ellipse.
-        """
+        """Perimeter of the ellipse."""
 
         def integrand(theta, ecc):
             return np.sqrt(1 - (ecc * np.sin(theta)) ** 2)
@@ -171,27 +124,21 @@ class Ellipse(SketchFace):
 
     @property
     def area(self) -> Quantity:
-        """Return the area of the ellipse.
-
-        Returns
-        -------
-        Quantity
-            The area of the ellipse.
-        """
+        """Area of the ellipse."""
         return np.pi * self.semi_major_axis * self.semi_minor_axis
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
         """
-        Return the vtk polydata representation for PyVista visualization.
+        VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
-        the standard global cartesian coordinate system.
+        the standard global Cartesian coordinate system.
 
         Returns
         -------
         pyvista.PolyData
-            The vtk pyvista.Polydata configuration.
+            VTK pyvista.Polydata configuration.
         """
         rotation = Matrix33(
             spatial_rotation.from_euler(

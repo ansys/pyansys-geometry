@@ -13,55 +13,54 @@ class BeamProfile:
     """
     Represents a single beam profile organized within the design assembly.
 
-    Synchronizes to a design within a supporting geometry service instance.
+    This profile synchronizes to a design within a supporting Geometry service instance.
 
     Parameters
     ----------
     id : str
-        A server defined identifier for the beam profile.
+        Server-defined ID for the beam profile.
     name : str
-        A user-defined label for the beam profile.
+        User-defined label for the beam profile.
 
     Notes
     -----
     ``BeamProfile`` objects are expected to be created from the ``Design`` object.
-    This means that users are not expected to instantiate their own ``BeamProfile``. They
-    should call the specific ``Design`` API for the ``BeamProfile`` desired.
+    This means that you are not expected to instantiate your own ``BeamProfile``
+    object. You should call the specific ``Design`` API for the ``BeamProfile`` desired.
     """
 
     def __init__(self, id: str, name: str):
-        """Constructor method for ``BeamProfile``."""
+        """Constructor method for the ``BeamProfile`` class."""
         self._id = id
         self._name = name
 
     @property
     def id(self) -> str:
-        """Id of the ``BeamProfile``."""
+        """ID of the beam profile."""
         return self._id
 
     @property
     def name(self) -> str:
-        """Name of the ``BeamProfile``."""
+        """Name of the beam profile."""
         return self._name
 
 
 class BeamCircularProfile(BeamProfile):
     """
-    Represents a single beam profile organized within the design assembly.
+    Represents a single circular beam profile organized within the design assembly.
 
-    Synchronizes to a design within a supporting geometry service instance.
+    This profile synchronizes to a design within a supporting Geometry service instance.
 
     Parameters
     ----------
     id : str
-        A server defined identifier for the beam profile.
+        Server-defined ID for the beam profile.
     name : str
-        A user-defined label for the beam profile.
+        User-defined label for the beam profile.
     radius : Distance
-        The radius of the circle.
+        Radius of the circle.
     center: Point3D
-        A :class:`Point3D <ansys.geometry.core.math.point.Point3D>` representing
-        the center of the circle.
+        A point representing the center of the circle.
     direction_x: UnitVector3D
         X-axis direction.
     direction_y: UnitVector3D
@@ -70,8 +69,8 @@ class BeamCircularProfile(BeamProfile):
     Notes
     -----
     ``BeamProfile`` objects are expected to be created from the ``Design`` object.
-    This means that users are not expected to instantiate their own ``BeamProfile``. They
-    should call the specific ``Design`` API for the ``BeamProfile`` desired.
+    This means that you are not expected to instantiate your own ``BeamProfile``
+    object. You should call the specific ``Design`` API for the ``BeamProfile`` desired.
     """
 
     def __init__(
@@ -83,7 +82,7 @@ class BeamCircularProfile(BeamProfile):
         direction_x: UnitVector3D,
         direction_y: UnitVector3D,
     ):
-        """Constructor method for ``BeamCircularProfile``."""
+        """Constructor method for the ``BeamCircularProfile`` class."""
         super().__init__(id, name)
 
         # Store specific BeamCircularProfile variables
@@ -94,22 +93,22 @@ class BeamCircularProfile(BeamProfile):
 
     @property
     def radius(self) -> Distance:
-        """Returns the radius of the ``BeamCircularProfile``."""
+        """Radius of the circular beam profile."""
         return self._radius
 
     @property
     def center(self) -> Point3D:
-        """Returns the center of the ``BeamCircularProfile``."""
+        """Center of the circular beam profile."""
         return self._center
 
     @property
     def direction_x(self) -> UnitVector3D:
-        """Returns the X-axis direction of the ``BeamCircularProfile``."""
+        """X-axis direction of the circular beam profile."""
         return self._dir_x
 
     @property
     def direction_y(self) -> UnitVector3D:
-        """Returns the Y-axis direction of the ``BeamCircularProfile``."""
+        """Y-axis direction of the circular beam profile."""
         return self._dir_y
 
     def __repr__(self) -> str:
@@ -127,24 +126,24 @@ class BeamCircularProfile(BeamProfile):
 
 class Beam:
     """
-    Simplified solid body representation with an assigned 2D cross-section.
+    Represents a simplified solid body with an assigned 2D cross-section.
 
-    Synchronizes to a design within a supporting geometry service instance.
+    This body synchronizes to a design within a supporting Geometry service instance.
 
     Parameters
     ----------
     id : str
-        A server defined identifier for the body.
+        Server-defined ID for the body.
     name : str
-        A user-defined label for the body.
+        User-defined label for the body.
     start : Point3D
-        The start of the beam line segment.
+        Start of the beam line segment.
     end : Point3D
-        The end of the beam line segment.
+        End of the beam line segment.
     profile : BeamProfile
-        The beam profile used to create the Beam.
+        Beam profile to use to create the beam.
     parent_component : Component
-        The parent component to nest the new beam under within the design assembly.
+        Parent component to nest the new beam under within the design assembly.
     """
 
     def __init__(
@@ -155,7 +154,7 @@ class Beam:
         profile: BeamProfile,
         parent_component: "Component",
     ):
-        """Constructor method for ``Beam``."""
+        """Constructor method for the ``Beam`` class."""
         from ansys.geometry.core.designer.component import Component
 
         check_type(id, str)
@@ -173,27 +172,27 @@ class Beam:
 
     @property
     def id(self) -> str:
-        """Geometry Service defined Id of the ``Beam``."""
+        """Service-defined ID of the beam."""
         return self._id
 
     @property
     def start(self) -> Point3D:
-        """The start of the beam line segment."""
+        """Start of the beam line segment."""
         return self._start
 
     @property
     def end(self) -> Point3D:
-        """The end of the beam line segment."""
+        """End of the beam line segment."""
         return self._end
 
     @property
     def profile(self) -> BeamProfile:
-        """The beam profile of the beam line segment."""
+        """Beam profile of the beam line segment."""
         return self._profile
 
     @property
     def parent_component(self) -> Union["Component", None]:
-        """Component node the ``Beam`` is under."""
+        """Component node that the beam`` is under."""
         return self._parent_component
 
     @property

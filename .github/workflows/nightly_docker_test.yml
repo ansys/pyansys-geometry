@@ -52,7 +52,7 @@ jobs:
       - name: Download Geometry service container (if needed)
         run: docker pull $env:ANSRV_GEO_IMAGE
 
-      - name: Start geometry service and verify start
+      - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
           $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
@@ -64,7 +64,7 @@ jobs:
           .\.venv\Scripts\Activate.ps1
           pytest -v
 
-      - name: Stop the geometry service
+      - name: Stop the Geometry service
         if: always()
         run: |
           docker stop $env:GEO_CONT_NAME

@@ -1,4 +1,4 @@
-"""``Box`` class module."""
+"""Provides the ``Box`` class."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
@@ -14,18 +14,18 @@ from ansys.geometry.core.typing import Real
 
 
 class Box(SketchFace):
-    """A class for modeling quadrilaterals.
+    """Provides for modeling quadrilaterals.
 
     Parameters
     ----------
     center: Point2D
-        A :class:`Point2D` representing the center of the box.
+        2D point representing the center of the box.
     width : Union[Quantity, Distance, Real]
-        The width of the box.
+        Width of the box.
     height : Union[Quantity, Distance, Real]
-        The height of the box.
-    angle : Optional[Union[Quantity, Angle, Real]]
-        The placement angle for orientation alignment.
+        Height of the box.
+    angle : Union[Quantity, Angle, Real], default: 0
+        Placement angle for orientation alignment.
     """
 
     @check_input_types
@@ -36,7 +36,7 @@ class Box(SketchFace):
         height: Union[Quantity, Distance, Real],
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
-        """Initializes the box shape."""
+        """Initialize the box."""
         super().__init__()
 
         self._center = center
@@ -84,63 +84,33 @@ class Box(SketchFace):
 
     @property
     def center(self) -> Point2D:
-        """The center of the box.
-
-        Returns
-        -------
-        Point2D
-            The center of the box.
-        """
+        """Point that is the center of the box."""
         return self._center
 
     @property
     def width(self) -> Quantity:
-        """The width of the box.
-
-        Returns
-        -------
-        Quantity
-            The width of the box.
-        """
+        """Width of the box."""
         return self._width.value
 
     @property
     def height(self) -> Quantity:
-        """The height of the box.
-
-        Returns
-        -------
-        Quantity
-            The height of the box.
-        """
+        """Height of the box."""
         return self._height.value
 
     @property
     def perimeter(self) -> Quantity:
-        """Return the perimeter of the box.
-
-        Returns
-        -------
-        Quantity
-            The perimeter of the box.
-        """
+        """Perimeter of the box."""
         return 2 * self.width + 2 * self.height
 
     @property
     def area(self) -> Quantity:
-        """Return the area of the box.
-
-        Returns
-        -------
-        Quantity
-            The area of the box.
-        """
+        """Area of the box."""
         return self.width * self.height
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
         """
-        Return the vtk polydata representation for PyVista visualization.
+        VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
         the standard global cartesian coordinate system.
@@ -148,7 +118,7 @@ class Box(SketchFace):
         Returns
         -------
         pyvista.PolyData
-            The vtk pyvista.Polydata configuration.
+            VTK pyvista.Polydata configuration.
         """
         return pv.Rectangle(
             [

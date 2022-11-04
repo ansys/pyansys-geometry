@@ -1,4 +1,4 @@
-"""Module for connecting to geometry service instances."""
+"""Provides for connecting to Geometry service instances."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional
@@ -17,7 +17,7 @@ from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
 
 
 def launch_modeler() -> Modeler:
-    """Start the PyGeometry modeler.
+    """Start the ``Modeler`` for PyGeometry.
 
     Returns
     -------
@@ -26,22 +26,20 @@ def launch_modeler() -> Modeler:
 
     Examples
     --------
-    Launch the ansys geometry service.
+    Launch the Ansys Geometry service.
 
     >>> from ansys.geometry.core import launch_modeler
     >>> modeler = launch_modeler()
     """
-    # This needs a local installation of the geometry service or PyPIM to
-    # work. Neither is integrated, we can consider adding it later.
+    # A local installation of the Geometry service or PyPIM is required for
+    # this to work. Neither is integrated, but we can consider adding them later.
 
-    # Another alternative is running docker locally from this method.
+    # Another alternative is to run Docker locally from this method.
 
     # Start PyGeometry with PyPIM if the environment is configured for it
-    # and the user did not pass a directive on how to launch it.
+    # and a directive on how to launch it was not passed.
     if pypim.is_configured():
-        logger.info(
-            "Starting Geometry service remotely. The startup configuration will be ignored."
-        )
+        logger.info("Starting Geometry service remotely. The startup configuration is ignored.")
         return launch_remote_modeler()
 
     raise NotImplementedError("Not yet implemented.")
@@ -51,21 +49,26 @@ def launch_modeler() -> Modeler:
 def launch_remote_modeler(
     version: Optional[str] = None,
 ) -> Modeler:
-    """Start the Geometry Service remotely using the product instance management API.
-    When calling this method, you need to ensure that you are in an
-    environment where PyPIM is configured. This can be verified with
-    :func:`pypim.is_configured <ansys.platform.instancemanagement.is_configured>`.
+    """Start the Geometry service remotely using the PIM API.
+
+    When calling this method, you must ensure that you are in an
+    environment where PyPIM is configured. PyPIM is the Pythonic
+    interface to communicate with the PIM (Product Instance Management)
+    API. You can use the
+    :func:`pypim.is_configured <ansys.platform.instancemanagement.is_configured>`
+    method to check if PyPIM is configured.
 
     Parameters
     ----------
     version : str, default: None
-        The Geometry Service version to run, in the 3 digits format, such as "212".
-        If unspecified, the version will be chosen by the server.
+        Version of the Geometry service to run in the three-digit format.
+        For example, "212". If you do not specify the version, the server
+        chooses the version.
 
     Returns
     -------
     ansys.geometry.core.modeler.Modeler
-        An instance of the Geometry Service.
+        Instance of the Geometry service.
     """
     if not _HAS_PIM:  # pragma: no cover
         raise ModuleNotFoundError(

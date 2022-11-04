@@ -1,4 +1,4 @@
-"""``Component`` class module."""
+"""Provides the ``Component`` class module."""
 
 from enum import Enum, unique
 from threading import Thread
@@ -47,7 +47,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @unique
 class SharedTopologyType(Enum):
-    """Enum holding the possible values for component shared topologies by the geometry service."""
+    """Enum holding the possible values for component shared topologies by the Geometry service."""
 
     SHARETYPE_NONE = 0
     SHARETYPE_SHARE = 1
@@ -57,18 +57,18 @@ class SharedTopologyType(Enum):
 
 class Component:
     """
-    Provides class for organizing design bodies.
+    Provides the ``Component`` class for organizing design bodies.
 
-    Synchronizes to a design within a supporting geometry service instance.
+    This class synchronizes to a design within a supporting Geometry service instance.
 
     Parameters
     ----------
     name : str
-        A user-defined label for the component.
+        User-defined label for the component.
     parent_component : Component
-        The parent component to nest the new component under within the design assembly.
+        Parent component to nest the new component under within the design assembly.
     grpc_client : GrpcClient
-        An active supporting geometry service instance for design modeling.
+        Active supporting Geometry service instance for design modeling.
     """
 
     # Types of the class instance private attributes
@@ -80,7 +80,7 @@ class Component:
     @protect_grpc
     @check_input_types
     def __init__(self, name: str, parent_component: Optional["Component"], grpc_client: GrpcClient):
-        """Constructor method for ``Component``."""
+        """Constructor method for the ``Component`` class."""
         self._grpc_client = grpc_client
         self._component_stub = ComponentsStub(self._grpc_client.channel)
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
@@ -106,67 +106,67 @@ class Component:
 
     @property
     def id(self) -> str:
-        """Id of the ``Component``."""
+        """ID of the component."""
         return self._id
 
     @property
     def name(self) -> str:
-        """Name of the ``Component``."""
+        """Name of the component."""
         return self._name
 
     @property
     def components(self) -> List["Component"]:
-        """``Component`` objects inside of the ``Component``."""
+        """``Component`` objects inside of the component."""
         return self._components
 
     @property
     def bodies(self) -> List[Body]:
-        """``Body`` objects inside of the ``Component``."""
+        """``Body`` objects inside of the component."""
         return self._bodies
 
     @property
     def beams(self) -> List[Beam]:
-        """``Beam`` objects inside of the ``Component``."""
+        """``Beam`` objects inside of the component."""
         return self._beams
 
     @property
     def coordinate_systems(self) -> List[CoordinateSystem]:
-        """``CoordinateSystem`` objects inside of the ``Component``."""
+        """``CoordinateSystem`` objects inside of the component."""
         return self._coordinate_systems
 
     @property
     def parent_component(self) -> Union["Component", None]:
-        """Parent of the ``Component``."""
+        """Parent of the component."""
         return self._parent_component
 
     @property
     def is_alive(self) -> bool:
-        """Boolean indicating whether the component is still alive on the server side."""
+        """Whether the component is still alive on the server side."""
         return self._is_alive
 
     @property
     def shared_topology(self) -> Union[SharedTopologyType, None]:
-        """Indicates the SharedTopology type of the component (if any).
+        """Indicates the ``SharedTopologyType`` of the component (if any).
 
         Notes
         -----
-        If no shared topology has been set it will return ``None``.
+        If no shared topology has been set, ``None`` is returned.
         """
         return self._shared_topology
 
     @check_input_types
     def add_component(self, name: str) -> "Component":
-        """Creates a new component nested under this component within the design assembly.
+        """Add a new component nested under this component within the design assembly.
 
         Parameters
         ----------
         name : str
-            A user-defined label assigned to the new component.
+            User-defined label for the new component.
 
         Returns
         -------
         Component
-            A newly created component with no children in the design assembly.
+            New component with no children in the design assembly.
         """
         self._components.append(Component(name, self, self._grpc_client))
         return self._components[-1]
@@ -174,12 +174,12 @@ class Component:
     @protect_grpc
     @check_input_types
     def set_shared_topology(self, share_type: SharedTopologyType) -> None:
-        """Defines the shared topology to be applied to the component.
+        """Set the shared topology to apply to the component.
 
         Parameters
         ----------
         share_type : SharedTopologyType
-            The shared topology type to be assigned to the component.
+            Shared topology type to assign to the component.
         """
         # Set the SharedTopologyType on the server
         self._grpc_client.log.debug(
@@ -197,23 +197,23 @@ class Component:
     def extrude_sketch(
         self, name: str, sketch: Sketch, distance: Union[Quantity, Distance]
     ) -> Body:
-        """Creates a solid body by extruding the given sketch profile up to the given distance.
+        """Create a solid body by extruding the given sketch profile up to the given distance.
 
-        The resulting body created is nested under this component within the design assembly.
+        The newly created body is nested under this component within the design assembly.
 
         Parameters
         ----------
         name : str
-            A user-defined label assigned to the resulting solid body.
+            User-defined label for the new solid body.
         sketch : Sketch
-            The two-dimensional sketch source for extrusion.
+            Two-dimensional sketch source for the extrusion.
         distance : Union[Quantity, Distance]
-            The distance to extrude the solid body.
+            Distance to extrude the solid body.
 
         Returns
         -------
         Body
-            Extruded ``Body`` object from the given ``Sketch``.
+            Extruded body from the given sketch.
         """
         # Sanity checks on inputs
         extrude_distance = distance if isinstance(distance, Quantity) else distance.value
@@ -237,28 +237,29 @@ class Component:
     @protect_grpc
     @check_input_types
     def extrude_face(self, name: str, face: Face, distance: Union[Quantity, Distance]) -> Body:
-        """Extrudes the face profile by the given distance to create a new solid body.
+        """Extrude the face profile by a given distance to create a solid body.
+
         There are no modifications against the body containing the source face.
 
         Notes
         -----
-        The source face can be anywhere within the design component hierarchy, and
-        therefore there is no validation requiring the face is nested under the
-        target component where the new body will be created.
+        The source face can be anywhere within the design component hierarchy.
+        Therefore, there is no validation requiring that the face is nested under the
+        target component where the body is to be created.
 
         Parameters
         ----------
         name : str
-            A user-defined label assigned to the resulting solid body.
+            User-defined label for the new solid body.
         face : Face
-            The target face to use as the source for the new surface.
+            Target face to use as the source for the new surface.
         distance : Union[Quantity, Distance]
-            The distance to extrude the solid body.
+            Distance to extrude the solid body.
 
         Returns
         -------
         Body
-            Extruded solid ``Body`` object.
+            Extruded solid body.
         """
         # Sanity checks on inputs
         extrude_distance = distance if isinstance(distance, Quantity) else distance.value
@@ -281,21 +282,21 @@ class Component:
     @protect_grpc
     @check_input_types
     def create_surface(self, name: str, sketch: Sketch) -> Body:
-        """Creates a surface body with the given sketch profile.
+        """Create a surface body with a sketch profile.
 
-        The resulting body created is nested under this component within the design assembly.
+        The newly created body is nested under this component within the design assembly.
 
         Parameters
         ----------
         name : str
-            A user-defined label assigned to the resulting surface body.
+            User-defined label for the new surface body.
         sketch : Sketch
-            The two-dimensional sketch source for surface definition.
+            Two-dimensional sketch source for the surface definition.
 
         Returns
         -------
         Body
-            ``Body`` object (as a planar surface) from the given ``Sketch``.
+            Body (as a planar surface) from the given sketch.
         """
         # Perform planar body request
         request = CreatePlanarBodyRequest(
@@ -316,25 +317,25 @@ class Component:
     @protect_grpc
     @check_input_types
     def create_surface_from_face(self, name: str, face: Face) -> Body:
-        """Creates a new surface body based upon the provided face.
+        """Create a surface body based on a face.
 
         Notes
         -----
-        The source face can be anywhere within the design component hierarchy, and
-        therefore there is no validation requiring the face is nested under the
-        target component where the new body will be created.
+        The source face can be anywhere within the design component hierarchy.
+        Therefore, there is no validation requiring that the face is nested under the
+        target component where the body is to be created.
 
         Parameters
         ----------
         name : str
-            A user-defined label assigned to the resulting surface body.
+            User-defined label for the new surface body.
         face : Face
-            The target face to use as the source for the new surface.
+            Target face to use as the source for the new surface.
 
         Returns
         -------
         Body
-            Surface ``Body`` object.
+            Surface body.
         """
         # Take the face source directly. No need to verify the source of the face.
         request = CreateBodyFromFaceRequest(
@@ -353,17 +354,17 @@ class Component:
 
     @check_input_types
     def create_coordinate_system(self, name: str, frame: Frame) -> CoordinateSystem:
-        """Creates a coordinate system.
+        """Create a coordinate system.
 
-        The resulting coordinate system created is nested under this component
+        The newly created coordinate system is nested under this component
         within the design assembly.
 
         Parameters
         ----------
         name : str
-            A user-defined label for the coordinate system.
+            User-defined label for the new coordinate system.
         frame : Frame
-            The frame defining the coordinate system bounds.
+            Frame defining the coordinate system bounds.
 
         Returns
         -------
@@ -378,21 +379,21 @@ class Component:
     def translate_bodies(
         self, bodies: List[Body], direction: UnitVector3D, distance: Union[Quantity, Distance]
     ) -> None:
-        """Translates the geometry bodies in the direction specified by the given distance.
+        """Translate the geometry bodies in a specified direction by a given distance.
 
         Notes
         -----
         If the body does not belong to this component (or its children), it
-        will not be translated.
+        is not translated.
 
         Parameters
         ----------
         bodies: List[Body]
-            A list of bodies to translate by the same distance.
+            List of bodies to translate by the same distance.
         direction: UnitVector3D
-            The direction of the translation.
+            Direction of the translation.
         distance: Union[Quantity, Distance]
-            The magnitude of the translation.
+            Magnitude of the translation.
 
         Returns
         -------
@@ -407,8 +408,8 @@ class Component:
                 body_ids_found.append(body_requested.id)
             else:
                 self._grpc_client.log.warning(
-                    f"Body with id {body.id} and name {body.name} not found in this "
-                    + "component (or sub-components). Ignoring translation request."
+                    f"Body with id {body.id} and name {body.name} is not found in this "
+                    + "component (or subcomponents). Ignoring this translation request."
                 )
                 pass
 
@@ -433,16 +434,17 @@ class Component:
         self, segments: List[Tuple[Point3D, Point3D]], profile: BeamProfile
     ) -> List[Beam]:
         """
-        Adds a list of new ``Beam`` entities under the component.
+        Create beams under the component.
 
-        Synchronizes to a design within a supporting geometry service instance.
+        The newly created beams synchronize to a design within a supporting
+        Geometry service instance.
 
         Parameters
         ----------
         segments : List[Tuple[Point3D, Point3D]]
-            List of start/end pairs, each specifying a single line segment.
+            List of start and end pairs, each specifying a single line segment.
         profile : BeamProfile
-            The beam profile used to create the Beam.
+            Beam profile to use to create the beams.
         """
 
         request = CreateBeamBodyLinesRequest(parent=self.id, profile=profile.id)
@@ -456,8 +458,8 @@ class Component:
         response = self._commands_stub.CreateBeamBodyLines(request)
         self._grpc_client.log.debug(f"Beams successfully created.")
 
-        # Note: The current gRPC API simply returns a list of Ids. There is no additional
-        # information to correlate/merge against, so it is fully assumed the list is
+        # Note: The current gRPC API simply returns a list of IDs. There is no additional
+        # information to correlate/merge against, so it is fully assumed that the list is
         # returned in order with a 1 to 1 index match to the request segments list.
         new_beams = []
         n_beams = len(response.ids)
@@ -471,35 +473,36 @@ class Component:
 
     def create_beam(self, start: Point3D, end: Point3D, profile: BeamProfile) -> Beam:
         """
-        Adds a new ``Beam`` under the component.
+        Create a beam under the component.
 
-        Synchronizes to a design within a supporting geometry service instance.
+        The newly created beam synchronizes to a design within a supporting
+        Geometry service instance.
 
         Parameters
         ----------
         start : Point3D
-            The start of the beam line segment.
+            Starting point of the beam line segment.
         end : Point3D
-            The end of the beam line segment.
+            Ending point of the beam line segment.
         profile : BeamProfile
-            The beam profile used to create the Beam.
+            Beam profile to use to create the beam.
         """
         return self.create_beams([(start, end)], profile)[0]
 
     @protect_grpc
     @check_input_types
     def delete_component(self, component: Union["Component", str]) -> None:
-        """Deletes an existing component (itself or its children).
+        """Delete a component (itself or its children).
 
         Notes
         -----
         If the component is not this component (or its children), it
-        will not be deleted.
+        is not deleted.
 
         Parameters
         ----------
         id : Union[Component, str]
-            The name of the component or instance that should be deleted.
+            Name of the component or instance to delete.
         """
         id = component.id if not isinstance(component, str) else component
         component_requested = self.search_component(id)
@@ -523,17 +526,17 @@ class Component:
     @protect_grpc
     @check_input_types
     def delete_body(self, body: Union[Body, str]) -> None:
-        """Deletes an existing body belonging to this component (or its children).
+        """Delete a body belonging to this component (or its children).
 
         Notes
         -----
         If the body does not belong to this component (or its children), it
-        will not be deleted.
+        is not deleted.
 
         Parameters
         ----------
         id : Union[Body, str]
-            The name of the body or instance that should be deleted.
+            Name of the body or instance to delete.
         """
         id = body.id if not isinstance(body, str) else body
         body_requested = self.search_body(id)
@@ -549,8 +552,8 @@ class Component:
             self._grpc_client.log.debug(f"Body {body_requested.id} has been deleted.")
         else:
             self._grpc_client.log.warning(
-                f"Body {id} not found in this component (or sub-components)."
-                + " Ignoring deletion request."
+                f"Body {id} is not found in this component (or subcomponents)."
+                + " Ignoring this deletion request."
             )
             pass
 
@@ -594,17 +597,17 @@ class Component:
 
     @check_input_types
     def search_component(self, id: str) -> Union["Component", None]:
-        """Recursive search on available nested components.
+        """Search nested components recursively for a component.
 
         Parameters
         ----------
         id : str
-            The ``Component`` ID we are searching for.
+            ID of the component to search for.
 
         Returns
         -------
         Component
-            The ``Component`` with the requested ID. If not found, it will return ``None``.
+           Component with the requested ID. If it is not found, ``None`` is returned.
         """
         # Check if the requested component is this one
         if self.id == id and self.is_alive:
@@ -622,17 +625,17 @@ class Component:
 
     @check_input_types
     def search_body(self, id: str) -> Union[Body, None]:
-        """Recursive search on available bodies in component and nested components.
+        """Search bodies in component and nested components recursively for a body.
 
         Parameters
         ----------
         id : str
-            The ``Body`` ID we are searching for.
+            ID of the body to search for.
 
         Returns
         -------
         Body
-            The ``Body`` with the requested ID. If not found, it will return ``None``.
+            Body with the requested ID. If it is not found, ``None`` is returned.
         """
         # Search in component's bodies
         for body in self.bodies:
@@ -683,8 +686,8 @@ class Component:
 
         Notes
         -----
-        Only to be used by the ``delete_component`` method and itself (this method
-        is recursive)."""
+        This method is recursive. It is only to be used by the
+        ``delete_component()`` method and itself."""
 
         # Kill all its bodies, beams and coordinate systems
         for elem in [*self.bodies, *self.beams, *self._coordinate_systems]:
@@ -705,23 +708,23 @@ class Component:
         Parameters
         ----------
         merge_component : bool, default: False
-            Merge this component into a single dataset. This effectively
-            combines all the individual bodies into a single dataset without
-            any hierarchy.
+            Whether to merge this component into a single dataset. If ``True``,
+            all the individual bodies are effectively combined into a single
+            dataset without any hierarchy.
         merge_bodies : bool, default: False
-            Merge each body into a single dataset. This effectively combines
-            all the faces of each individual body into a single dataset
-            without separating faces.
+            Whether to merge each body into a single dataset. If ``True``,
+            all the faces of each individual body are effectively
+            merged into a single dataset without separating faces.
 
         Returns
         -------
         ~pyvista.PolyData, ~pyvista.MultiBlock
-            Merged :class:`pyvista.PolyData` if ``merge_component=True`` or
+            Merged :class:`pyvista.PolyData` if ``merge_component=True`` or a
             composite dataset.
 
         Examples
         --------
-        Create two stacked bodies and return the tessellation as two merged bodies.
+        Create two stacked bodies and return the tessellation as two merged bodies:
 
         >>> from ansys.geometry.core.sketch import Sketch
         >>> from ansys.geometry.core import Modeler
@@ -776,7 +779,7 @@ class Component:
 
         if merge_component:
             ugrid = blocks.combine()
-            # convert to polydata as it's slightly faster than extract surface
+            # Convert to polydata as it's slightly faster than extract surface
             return pv.PolyData(ugrid.points, ugrid.cells, n_faces=ugrid.n_cells)
         return blocks
 
@@ -788,16 +791,16 @@ class Component:
         Parameters
         ----------
         merge_component : bool, default: False
-            Merge this component into a single dataset. This effectively
-            combines all the individual bodies into a single dataset without
-            any hierarchy.
+            Whether to merge this component into a single dataset. When ``True``,
+            all the individual bodies are effectively merged into a single
+            dataset without any hierarchy.
         merge_bodies : bool, default: False
-            Merge each body into a single dataset. This effectively combines
-            all the faces of each individual body into a single dataset
-            without.
+            Whether to merge each body into a single dataset. When ``True``,
+            all the faces of each individual body are effectively merged
+            into a single dataset without separating faces.
         **kwargs : dict, default: None
-            Optional keyword arguments. See :func:`pyvista.Plotter.add_mesh`
-            for allowable keyword arguments.
+            Keyword arguments. For allowable keyword arguments, see the
+            :func:`pyvista.Plotter.add_mesh` method.
 
         Examples
         --------

@@ -2,12 +2,17 @@ ANSYS
 Ansys
 ansys
 API
+api
 Direct API
 Fluent API
-Geometry Service
+Geometry
+geometry
+Geometry service
 Geometry models
+GitHub
+pygeometry
 PyGeometry
-api
 Protobuf
-Scipy
+SciPy
+subpackage
 PyPI

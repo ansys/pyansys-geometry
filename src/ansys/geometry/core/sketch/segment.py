@@ -1,4 +1,4 @@
-"""``Segment`` class module."""
+"""Provides the ``Segment`` class."""
 
 from beartype import beartype as check_input_types
 import numpy as np
@@ -12,14 +12,14 @@ from ansys.geometry.core.sketch.edge import SketchEdge
 
 class Segment(SketchEdge):
     """
-    Provides Segment representation of a Line.
+    Provides segment representation of a line.
 
     Parameters
     ----------
     start : Point2D
-        Start of the line segment.
+        Point that is the start of the line segment.
     end : Point2D
-        End of the line segment.
+        Point that is the end of the line segment.
     """
 
     @check_input_types
@@ -28,10 +28,10 @@ class Segment(SketchEdge):
         start: Point2D,
         end: Point2D,
     ):
-        """Constructor method for ``Segment``."""
+        """Constructor method for the ``Segment`` class."""
         super().__init__()
 
-        # Perform sanity checks on Point values given
+        # Perform sanity checks on point values given
         check_ndarray_is_all_nan(start, "start")
         check_ndarray_is_all_nan(end, "end")
 
@@ -50,35 +50,17 @@ class Segment(SketchEdge):
 
     @property
     def start(self) -> Point2D:
-        """Returns the start of the ``Segment``.
-
-        Returns
-        -------
-        Point2D
-            The start point of the ``Segment``.
-        """
+        """Point that is the start of the segment."""
         return self._start
 
     @property
     def end(self) -> Point2D:
-        """Returns the end of the ``Segment``.
-
-        Returns
-        -------
-        Point2D
-            The end point of the ``Segment``.
-        """
+        """Point that is the end of the segment."""
         return self._end
 
     @property
     def length(self) -> Quantity:
-        """Return the length of the ``Segment``.
-
-        Returns
-        -------
-        Quantity
-            The length of the ``Segment``.
-        """
+        """Length of the segment."""
         return np.sqrt(
             np.square(self._end.x - self._start.x) + np.square(self._end.y - self._start.y)
         )
@@ -86,15 +68,15 @@ class Segment(SketchEdge):
     @property
     def visualization_polydata(self) -> pv.PolyData:
         """
-        Returns the vtk polydata representation for PyVista visualization.
+        VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
-        the standard global cartesian coordinate system.
+        the standard global Cartesian coordinate system.
 
         Returns
         -------
         pyvista.PolyData
-            The vtk pyvista.Polydata configuration.
+            VTK pyvista.Polydata configuration.
         """
         return pv.Line(
             [
@@ -107,9 +89,9 @@ class Segment(SketchEdge):
 
     @check_input_types
     def __eq__(self, other: "Segment") -> bool:
-        """Equals operator for ``Segment``."""
+        """Equals operator for the ``Segment`` class."""
         return self.start == other.start and self.end == other.end
 
     def __ne__(self, other: "Segment") -> bool:
-        """Not equals operator for ``Segment``."""
+        """Not equals operator for the ``Segment`` class."""
         return not self == other

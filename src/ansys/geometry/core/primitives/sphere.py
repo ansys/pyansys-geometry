@@ -1,4 +1,4 @@
-"""``Sphere`` class module."""
+""" Provides the ``Sphere`` class."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
@@ -17,11 +17,11 @@ class Sphere:
     Parameters
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D]
-        Centered origin of the ``Sphere``.
+        Centered origin of the sphere.
     radius : Real
-        Radius of ``Sphere``.
+        Radius of the sphere.
     unit : Unit, default: UNIT_LENGTH
-        Units employed to define the radius and height.
+        Units for defining the radius and height.
     """
 
     @check_input_types
@@ -31,7 +31,7 @@ class Sphere:
         radius: Real,
         unit: Optional[Unit] = UNIT_LENGTH,
     ):
-        """Constructor method for ``Sphere``."""
+        """Constructor method for the ``Sphere`` class."""
 
         check_pint_unit_compatibility(unit, UNIT_LENGTH)
         self._unit = unit
@@ -44,7 +44,7 @@ class Sphere:
 
     @property
     def origin(self) -> Point3D:
-        """Origin of the ``Sphere``."""
+        """Origin of the sphere."""
         return self._origin
 
     @origin.setter
@@ -54,7 +54,7 @@ class Sphere:
 
     @property
     def radius(self) -> Real:
-        """Radius of the ``Sphere``."""
+        """Radius of the sphere."""
         return UNITS.convert(self._radius, self._base_unit, self._unit)
 
     @radius.setter
@@ -75,9 +75,9 @@ class Sphere:
 
     @check_input_types
     def __eq__(self, other: object) -> bool:
-        """Equals operator for ``Sphere``."""
+        """Equals operator for the ``Sphere`` class."""
         return self._origin == other.origin and self._radius == other.radius
 
     def __ne__(self, other) -> bool:
-        """Not equals operator for ``Sphere``."""
+        """Not equals operator for the ``Sphere`` class."""
         return not self == other

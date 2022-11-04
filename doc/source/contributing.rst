@@ -1,20 +1,18 @@
-Contributing
-############
+Contribute
+##########
 
 Overall guidance on contributing to a PyAnsys library appears in the
 `Contributing <https://dev.docs.pyansys.com/how-to/contributing.html>`_ topic
 in the *PyAnsys Developer's Guide*. Ensure that you are thoroughly familiar
-with it and all `How-to <https://dev.docs.pyansys.com/how-to/index.html>`_ for 
-guidelines and best practices. 
-before attempting to
-contribute to PyGeometry.
+with it and all `How-to <https://dev.docs.pyansys.com/how-to/index.html>`_ pages
+before attempting to contribute to PyGeometry.
  
 The following contribution information is specific to PyGeometry.
 
-Cloning the PyGeometry repository
----------------------------------
+Clone the repository
+--------------------
 
-Run this code to clone and install the latest version of PyGeometry in development mode:
+To clone and install the latest PyGeometry release in development mode, run:
 
 .. code::
 
@@ -24,22 +22,22 @@ Run this code to clone and install the latest version of PyGeometry in developme
     pip install -e .
 
 
-Posting issues
---------------
+Post issues
+-----------
 
 Use the `PyGeometry Issues <https://github.com/pyansys/pygeometry/issues>`_
-page to submit questions, report bugs, and request new features. When possible, it is
-recommended that you use these issue templates:
+page to submit questions, report bugs, and request new features. When possible, you
+should use these issue templates:
 
 * Bug report template
 * Feature request template
 
-If your issue does not fit into one of these categories, create your own issue.
+If your issue does not fit into these categories, create your own issue.
 
-To reach the project support team, email `pyansys.support@ansys.com <pyansys.support@ansys.com>`_.
+To reach the PyAnsys team, email `pyansys.support@ansys.com <pyansys.support@ansys.com>`_.
 
-Viewing PyGeometry documentation
----------------------------------
+View documentation
+------------------
 
 Documentation for the latest stable release of PyGeometry is hosted at
 `PyGeometry Documentation <https://geometry.docs.pyansys.com>`_.

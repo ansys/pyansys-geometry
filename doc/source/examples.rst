@@ -1,21 +1,21 @@
 Examples
 ########
 
-All examples are collected in this page.
+These examples demonstrate the behavior and usage of PyGeometry.
 
 Math and sketch examples
 ------------------------
-This section demonstrates the math operations on geometric objects
-and basic sketching capabilities in PyGeometry.
+These examples demonstrate math operations on geometric objects
+and basic sketching capabilities.
 
 .. nbgallery::
 
     examples/basic/basic_usage.mystnb
 
-Service based examples
+Service-based examples
 ----------------------
 
-This section demonstrates service based operations on PyGeometry.
+These examples demonstrate service-based operations.
 
 .. nbgallery::
 

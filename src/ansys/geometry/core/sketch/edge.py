@@ -1,4 +1,4 @@
-"""``SketchEdge`` class module."""
+"""Provides the ``SketchEdge`` class."""
 
 from pint import Quantity
 import pyvista as pv
@@ -7,52 +7,33 @@ from ansys.geometry.core.math import Point2D
 
 
 class SketchEdge:
-    """Provides base class for modeling edges forming sketched shapes."""
+    """Provides for modeling edges forming sketched shapes."""
 
     @property
     def start(self) -> Point2D:
-        """Returns the start point of the edge.
-
-        Returns
-        -------
-        Point2D
-            The start point of the edge.
-        """
-        raise NotImplementedError("Each edge must provide start point definition.")
+        """Point that is the start point of the edge."""
+        raise NotImplementedError("Each edge must provide the start point definition.")
 
     @property
     def end(self) -> Point2D:
-        """Returns the end point of the edge.
-
-        Returns
-        -------
-        Point2D
-            The end point of the edge.
-        """
-        raise NotImplementedError("Each edge must provide end point definition.")
+        """Point that is the end point of the edge."""
+        raise NotImplementedError("Each edge must provide the end point definition.")
 
     @property
     def length(self) -> Quantity:
-        """Returns the length of the edge.
-
-        Returns
-        -------
-        Quantity
-            The length of the edge.
-        """
-        raise NotImplementedError("Each edge must provide length definition.")
+        """Length of the edge."""
+        raise NotImplementedError("Each edge must provide the length definition.")
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
-        """
-        Returns the vtk polydata representation for PyVista visualization.
+        """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
-        the standard global cartesian coordinate system.
+        the standard global Cartesian coordinate system.
 
         Returns
         -------
         pyvista.PolyData
-            The vtk pyvista.Polydata configuration.
+            VTK pyvista.Polydata configuration.
         """
-        raise NotImplementedError("Each edge must provide PolyData definition.")
+        raise NotImplementedError("Each edge must provide the polydata definition.")
