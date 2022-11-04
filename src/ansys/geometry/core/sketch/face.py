@@ -1,4 +1,4 @@
-"""``SketchFace`` class module."""
+"""Provides the ``SketchFace`` class."""
 
 from beartype.typing import List
 from pint import Quantity
@@ -8,33 +8,21 @@ from ansys.geometry.core.sketch.edge import SketchEdge
 
 
 class SketchFace:
-    """Provides base class for modeling closed 2D sketches."""
+    """Provides modeling closed 2D sketches."""
 
     def __init__(self):
-        """Initializes the ``SketchFace``."""
+        """Initialize the sketch face."""
         # TODO: What about the circular faces? Circle, Ellipse are not making use of this...
         self._edges = []
 
     @property
     def edges(self) -> List[SketchEdge]:
-        """Returns a list containing all edges forming the face.
-
-        Returns
-        -------
-        List[SketchEdge]
-            A list of component edges forming the face.
-        """
+        """List of all component edges forming the face."""
         return self._edges
 
     @property
     def perimeter(self) -> Quantity:
-        """Returns the perimeter of the face.
-
-        Returns
-        -------
-        Quantity
-            The perimeter of the face.
-        """
+        """Perimeter of the face."""
         perimeter = 0
         for edge in self._edges:
             perimeter += edge.length
@@ -43,15 +31,15 @@ class SketchFace:
     @property
     def visualization_polydata(self) -> pv.PolyData:
         """
-        Return the vtk polydata representation for PyVista visualization.
+        VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
-        the standard global cartesian coordinate system.
+        the standard global Cartesian coordinate system.
 
         Returns
         -------
         pyvista.PolyData
-            The vtk pyvista.Polydata configuration.
+            VTK pyvista.Polydata configuration.
         """
         meshes = [edge.visualization_polydata for edge in self.edges]
         return pv.merge(meshes)

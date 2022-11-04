@@ -62,16 +62,16 @@ def test_distance():
 
     # Let's try out some errors
     with pytest.raises(
-        TypeError, match=r"The pint.Unit provided as input should be a \[length\] quantity."
+        TypeError, match=r"The pint.Unit provided as an input should be a \[length\] quantity."
     ):
         Distance(Quantity(123, UNITS.fahrenheit))
 
     with pytest.raises(
-        TypeError, match=r"The pint.Unit provided as input should be a \[length\] quantity."
+        TypeError, match=r"The pint.Unit provided as an input should be a \[length\] quantity."
     ):
         Distance(123, unit=UNITS.radian)
 
     with pytest.raises(
-        TypeError, match="The parameter 'value' should be a float or an integer value."
+        TypeError, match="The parameter 'value' should have a float or integer value."
     ):
         Distance("avsdbv")

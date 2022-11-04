@@ -1,4 +1,4 @@
-"""``Triangle`` class module."""
+"""Provides the ``Triangle`` class."""
 
 from beartype import beartype as check_input_types
 import pyvista as pv
@@ -10,21 +10,21 @@ from ansys.geometry.core.sketch.segment import Segment
 
 
 class Triangle(SketchFace):
-    """A class for modeling 2D triangle shape.
+    """Provides for modeling 2D triangles.
 
     Parameters
     ----------
     point1: Point2D
-        A :class:`Point2D` representing the a triangle vertex.
+        Point that represents a triangle vertex.
     point2: Point2D
-        A :class:`Point2D` representing the a triangle vertex.
+        Point that represents a triangle vertex.
     point3: Point2D
-        A :class:`Point2D` representing the a triangle vertex.
+        Point that represents a triangle vertex.
     """
 
     @check_input_types
     def __init__(self, point1: Point2D, point2: Point2D, point3: Point2D):
-        """Initializes the triangle shape."""
+        """Initialize the triangle."""
         super().__init__()
 
         self._point1 = point1
@@ -37,49 +37,31 @@ class Triangle(SketchFace):
 
     @property
     def point1(self) -> Point2D:
-        """Triangle vertex 1.
-
-        Returns
-        -------
-        Point2D
-            Triangle vertex 1.
-        """
+        """Triangle vertex 1."""
         return self._point1
 
     @property
     def point2(self) -> Point2D:
-        """Triangle vertex 2.
-
-        Returns
-        -------
-        Point2D
-            Triangle vertex 2.
-        """
+        """Triangle vertex 2."""
         return self._point2
 
     @property
     def point3(self) -> Point2D:
-        """Triangle vertex 3.
-
-        Returns
-        -------
-        Point2D
-            Triangle vertex 3.
-        """
+        """Triangle vertex 3."""
         return self._point3
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
         """
-        Return the vtk polydata representation for PyVista visualization.
+        VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
-        the standard global cartesian coordinate system.
+        the standard global Cartesian coordinate system.
 
         Returns
         -------
         pyvista.PolyData
-            The vtk pyvista.Polydata configuration.
+            VTK pyvista.Polydata configuration.
         """
         return pv.Triangle(
             [

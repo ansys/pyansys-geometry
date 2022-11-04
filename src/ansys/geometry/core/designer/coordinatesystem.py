@@ -1,4 +1,4 @@
-"""``CoordinateSystem`` class module."""
+"""Provides the ``CoordinateSystem`` class module."""
 
 from ansys.api.geometry.v0.coordinatesystems_pb2 import CreateRequest
 from ansys.api.geometry.v0.coordinatesystems_pb2_grpc import CoordinateSystemsStub
@@ -19,25 +19,25 @@ class CoordinateSystem:
     """
     Represents a user-defined coordinate system within the design assembly.
 
-    Synchronizes to a design within a supporting geometry service instance.
+    This coordinate system synchronizes to a design within a supporting Geometry service instance.
 
     Parameters
     ----------
     name : str
-        A user-defined label for the coordinate system.
+        User-defined label for the coordinate system.
     frame : Frame
-        The frame defining the coordinate system bounds.
-    parent_component : Component
-        The parent component the coordinate system is assigned against.
+        Frame defining the coordinate system bounds.
+    parent_component : Component, default: Component
+        Parent component the coordinate system is assigned against.
     grpc_client : GrpcClient
-        An active supporting geometry service instance for design modeling.
+        Active supporting Geometry service instance for design modeling.
     """
 
     @protect_grpc
     def __init__(
         self, name: str, frame: Frame, parent_component: "Component", grpc_client: GrpcClient
     ):
-        """Constructor method for ``CoordinateSystem``."""
+        """Constructor method for the ``CoordinateSystem`` class."""
 
         self._parent_component = parent_component
         self._grpc_client = grpc_client

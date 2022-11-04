@@ -1,4 +1,4 @@
-"""``MaterialProperty`` class module."""
+"""Provides the ``MaterialProperty`` class."""
 
 from enum import Enum, unique
 
@@ -8,7 +8,7 @@ from pint import Quantity
 
 @unique
 class MaterialPropertyType(Enum):
-    """Enum holding the possible values for ``MaterialProperty`` objects."""
+    """Provides an enum holding the possible values for ``MaterialProperty`` objects."""
 
     DENSITY = "Density"
     ELASTIC_MODULUS = "ElasticModulus"
@@ -21,14 +21,14 @@ class MaterialPropertyType(Enum):
 
 class MaterialProperty:
     """
-    Provides data structure for individual material properties.
+    Provides the data structure for a material property.
 
     Parameters
     ----------
     type : MaterialPropertyType
-        ``MaterialPropertyType`` value.
+        Type of the material property.
     name: str
-        User-defined display name.
+        Material property name.
     quantity: ~pint.Quantity
         Value and unit.
     """
@@ -40,22 +40,22 @@ class MaterialProperty:
         name: str,
         quantity: Quantity,
     ):
-        """Constructor method for ``Material Property``."""
+        """Constructor method for the ``MaterialProperty`` class."""
         self._type = type
         self._name = name
         self._quantity = quantity
 
     @property
     def type(self) -> MaterialPropertyType:
-        """Id of the ``MaterialProperty``."""
+        """Material property ID."""
         return self._type
 
     @property
     def name(self) -> str:
-        """Display name of the ``MaterialProperty``."""
+        """Material property name."""
         return self._name
 
     @property
     def quantity(self) -> Quantity:
-        """Quantity of the ``MaterialProperty``."""
+        """Material property quantity and unit."""
         return self._quantity

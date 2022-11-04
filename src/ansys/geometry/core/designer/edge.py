@@ -1,4 +1,4 @@
-"""``Edge`` class module."""
+"""Provides the ``Edge`` class module."""
 
 from enum import Enum, unique
 
@@ -18,7 +18,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @unique
 class CurveType(Enum):
-    """Enum holding the possible values for curve types by the geometry service."""
+    """Provides an enum holding the possible values for curve types by the Geometry service."""
 
     CURVETYPE_UNKNOWN = 0
     CURVETYPE_LINE = 1
@@ -32,22 +32,22 @@ class Edge:
     """
     Represents a single edge of a body within the design assembly.
 
-    Synchronizes to a design within a supporting geometry service instance.
+    This class synchronizes to a design within a supporting Geometry service instance.
 
     Parameters
     ----------
     id : str
-        A server defined identifier for the body.
+        Server-defined ID for the body.
     curve_type : CurveType
-        Specifies what type of curve the edge forms.
+        Type of curve that the edge forms.
     body : Body
-        The parent body the edge constructs.
+        Parent body that the edge constructs.
     grpc_client : GrpcClient
-        An active supporting geometry service instance for design modeling.
+        Active supporting Geometry service instance for design modeling.
     """
 
     def __init__(self, id: str, curve_type: CurveType, body: "Body", grpc_client: GrpcClient):
-        """Constructor method for ``Edge``."""
+        """Constructor method for the ``Edge`` class."""
         self._id = id
         self._curve_type = curve_type
         self._body = body
@@ -80,7 +80,7 @@ class Edge:
     @property
     @protect_grpc
     def faces(self) -> List["Face"]:
-        """Get the ``Face`` objects that contain this ``Edge``."""
+        """Get the faces that contain this edge."""
         from ansys.geometry.core.designer.face import Face, SurfaceType
 
         self._grpc_client.log.debug("Requesting edge faces from server.")
