@@ -6,7 +6,9 @@ from beartype import beartype as check_input_types
 from beartype.typing import List, Optional
 
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.designer.beam import Beam
 from ansys.geometry.core.designer.body import Body
+from ansys.geometry.core.designer.designpoints import DesignPoints
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
@@ -44,6 +46,8 @@ class NamedSelection:
         bodies: Optional[List[Body]] = None,
         faces: Optional[List[Face]] = None,
         edges: Optional[List[Edge]] = None,
+        beams: Optional[List[Beam]] = None,
+        design_points: Optional[List[DesignPoints]] = None,
     ):
         """Constructor method for the ``NamedSelection`` class."""
 
@@ -53,6 +57,10 @@ class NamedSelection:
             faces = []
         if edges is None:
             edges = []
+        if beams is None:
+            beams = []
+        if design_points is None:
+            design_points = []
 
         self._grpc_client = grpc_client
         self._named_selections_stub = NamedSelectionsStub(grpc_client.channel)
@@ -64,6 +72,8 @@ class NamedSelection:
         [ids.add(body.id) for body in bodies]
         [ids.add(face.id) for face in faces]
         [ids.add(edge.id) for edge in edges]
+        [ids.add(beam.id) for beam in beams]
+        [ids.add(design_point.id) for design_point in design_points]
 
         named_selection_request = CreateNamedSelectionRequest(name=name, members=ids)
         self._grpc_client.log.debug("Requesting creation of named selection.")

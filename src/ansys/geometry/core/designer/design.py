@@ -26,9 +26,10 @@ from pint import Quantity
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.conversions import plane_to_grpc_plane, point3d_to_grpc_point
-from ansys.geometry.core.designer.beam import BeamCircularProfile, BeamProfile
+from ansys.geometry.core.designer.beam import Beam, BeamCircularProfile, BeamProfile
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
+from ansys.geometry.core.designer.designpoints import DesignPoints
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.selection import NamedSelection
@@ -231,6 +232,8 @@ class Design(Component):
         bodies: Optional[List[Body]] = None,
         faces: Optional[List[Face]] = None,
         edges: Optional[List[Edge]] = None,
+        beams: Optional[List[Beam]] = None,
+        design_points: Optional[List[DesignPoints]] = None,
     ) -> NamedSelection:
         """Create a named selection on the active Geometry server instance.
 
@@ -251,7 +254,13 @@ class Design(Component):
             Newly created named selection maintaining references to all target entities.
         """
         named_selection = NamedSelection(
-            name, self._grpc_client, bodies=bodies, faces=faces, edges=edges
+            name,
+            self._grpc_client,
+            bodies=bodies,
+            faces=faces,
+            edges=edges,
+            beams=beams,
+            design_points=design_points,
         )
         self._named_selections[named_selection.name] = named_selection
 

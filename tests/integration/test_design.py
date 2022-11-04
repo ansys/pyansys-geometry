@@ -287,6 +287,16 @@ def test_named_selections(modeler: Modeler):
     assert design.named_selections[2].name == "CircleAndPolygon"
     assert design.named_selections[3].name == "OnlyPolygonFaces"
 
+    circle_profile_1 = design.add_beam_circular_profile(
+        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
+    )
+    beam_1 = design.create_beam(
+        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
+    )
+    design.create_named_selection("CircleProfile", beams=[beam_1])
+    assert len(design.named_selections) == 5
+    assert design.named_selections[4].name == "CircleProfile"
+
 
 def test_faces_edges(modeler: Modeler):
     """Test for verifying the correct creation and
@@ -959,3 +969,28 @@ def test_beams(modeler: Modeler):
     assert beam_2.parent_component.id == nested_component.id
     assert len(nested_component.beams) == 1
     assert nested_component.beams[0] == beam_2
+
+
+def test_design_points(modeler: Modeler):
+    design = modeler.create_design("DesignPoints")
+    points = []
+    for k in range(1, 10):
+        x = k + 3
+        y = k
+        z = 10
+        points.append(Point3D([x, y, z]))
+    points2 = []
+    for k in range(1, 20):
+        x = k + 3
+        y = k
+        z = 10
+        points2.append(Point3D([x, y, z]))
+    design_points = design.add_design_points("FirstOne", points)
+    assert design_points.id is not None
+    assert design_points.name == "FirstOne"
+    assert design_points.design_points == points
+    design_points_2 = design.add_design_points("second", points2)
+    assert design_points_2.id is not None
+    assert design_points_2.name == "second"
+    assert design_points_2.design_points == points2
+    assert len(design.design_points) == 2

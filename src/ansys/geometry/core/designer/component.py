@@ -35,6 +35,7 @@ from ansys.geometry.core.connection.conversions import point3d_to_grpc_point
 from ansys.geometry.core.designer.beam import Beam, BeamProfile
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.coordinatesystem import CoordinateSystem
+from ansys.geometry.core.designer.designpoints import DesignPoints
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import Frame, Point3D, UnitVector3D
@@ -76,6 +77,7 @@ class Component:
     _bodies: List[Body]
     _beams: List[Beam]
     _coordinate_systems: List[CoordinateSystem]
+    _design_points: List[DesignPoints]
 
     @protect_grpc
     @check_input_types
@@ -100,6 +102,7 @@ class Component:
         self._bodies = []
         self._beams = []
         self._coordinate_systems = []
+        self._design_points = []
         self._parent_component = parent_component
         self._is_alive = True
         self._shared_topology = None
@@ -128,6 +131,11 @@ class Component:
     def beams(self) -> List[Beam]:
         """``Beam`` objects inside of the component."""
         return self._beams
+
+    @property
+    def design_points(self) -> List[DesignPoints]:
+        """``DesignPoint`` objects inside of the component."""
+        return self._design_points
 
     @property
     def coordinate_systems(self) -> List[CoordinateSystem]:
@@ -556,6 +564,11 @@ class Component:
                 + " Ignoring this deletion request."
             )
             pass
+
+    @check_input_types
+    def add_design_points(self, name: str, points: List[Point3D]) -> DesignPoints:
+        self._design_points.append(DesignPoints(self.id, name, points, self))
+        return self._design_points[-1]
 
     @check_input_types
     def search_component(self, id: str) -> Union["Component", None]:
