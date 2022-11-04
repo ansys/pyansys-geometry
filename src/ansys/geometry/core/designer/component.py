@@ -654,7 +654,7 @@ class Component:
 
     @check_input_types
     def search_beam(self, id: str) -> Union[Beam, None]:
-        """Recursive search on available bodies in component and nested components.
+        """Search beams in component and nested components recursively for a beam.
 
         Parameters
         ----------
@@ -663,7 +663,7 @@ class Component:
 
         Returns
         -------
-        Union[Body, None]
+        Union[Beam, None]
             The ``Beam`` with the requested ID. If not found, it will return ``None``.
         """
         # Search in component's beams
