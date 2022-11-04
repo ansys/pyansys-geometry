@@ -56,6 +56,16 @@ class DesignFileFormat(Enum):
     INVALID = "INVALID", None
 
 
+class MidSurfaceOffesetType(Enum):
+    """Provides mid-surface offset types available."""
+
+    MIDDLE = 0
+    TOP = 1
+    BOTTOM = 2
+    VARIABLE = 3
+    CUSTOM = 4
+
+
 class Design(Component):
     """
     Provides the ``Design`` class for organizing geometry assemblies.
@@ -378,6 +388,46 @@ class Design(Component):
         )
 
         return self._beam_profiles[profile.name]
+
+    def add_midsurface_thickness(
+        self,
+        thickness: Quantity,
+        bodies: Optional[List[Body]] = None,
+        faces: Optional[List[Face]] = None,
+    ) -> None:
+        """Adds a midsurface thickness to a list of bodies or faces.
+
+        Parameters
+        ----------
+        thickness : Quantity
+            Thickness to be assigned.
+        bodies : Optional[List[Body]], default: None
+            All bodies to include in the midsurface thickness assignment.
+        faces : Optional[List[Face]], default: None
+            All faces to include in the midsurface thickness assignment.
+        """
+        # Do whatever
+        return
+
+    def add_midsurface_offset(
+        self,
+        offset_type: MidSurfaceOffesetType,
+        bodies: Optional[List[Body]] = None,
+        faces: Optional[List[Face]] = None,
+    ) -> None:
+        """Adds a midsurface offset type to a list of bodies or faces.
+
+        Parameters
+        ----------
+        offset_type : MidSurfaceOffesetType
+            Surface offset to be assigned.
+        bodies : Optional[List[Body]], default: None
+            All bodies to include in the midsurface offset assignment.
+        faces : Optional[List[Face]], default: None
+            All faces to include in the midsurface offset assignment.
+        """
+        # Do whatever
+        return
 
     def __repr__(self):
         """String representation of the design."""
