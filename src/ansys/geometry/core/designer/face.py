@@ -2,16 +2,14 @@
 
 from enum import Enum, unique
 
-from ansys.api.geometry.v0.edges_pb2 import EdgeIdentifier
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.api.geometry.v0.faces_pb2 import (
-    EvaluateFaceRequest,
-    FaceIdentifier,
-    GetFaceLoopsRequest,
-    GetFaceNormalRequest,
+    EvaluateRequest,
+    GetNormalRequest,
 )
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
+from ansys.api.geometry.v0.models_pb2 import EntityIdentifier
 from beartype.typing import TYPE_CHECKING, List
 from pint import Quantity
 
@@ -144,9 +142,9 @@ class Face:
         return self._id
 
     @property
-    def _grpc_id(self) -> FaceIdentifier:
+    def _grpc_id(self) -> EntityIdentifier:
         """gRPC face identifier."""
-        return FaceIdentifier(id=self._id)
+        return EntityIdentifier(id=self._id)
 
     @property
     def body(self) -> "Body":
@@ -158,7 +156,7 @@ class Face:
     def area(self) -> Quantity:
         """Calculated area of the face."""
         self._grpc_client.log.debug("Requesting face area from server.")
-        area_response = self._faces_stub.GetFaceArea(self._grpc_id)
+        area_response = self._faces_stub.GetArea(self._grpc_id)
         return Quantity(area_response.area, SERVER_UNIT_AREA)
 
     @property
@@ -171,7 +169,7 @@ class Face:
     def edges(self) -> List[Edge]:
         """Get all ``Edge`` objects of our ``Face``."""
         self._grpc_client.log.debug("Requesting face edges from server.")
-        edges_response = self._faces_stub.GetFaceEdges(self._grpc_id)
+        edges_response = self._faces_stub.GetEdges(self._grpc_id)
         return self.__grpc_edges_to_edges(edges_response.edges)
 
     @property
@@ -179,7 +177,7 @@ class Face:
     def loops(self) -> List[FaceLoop]:
         """Face loops of the ``Face``."""
         self._grpc_client.log.debug("Requesting face loops from server.")
-        grpc_loops = self._faces_stub.GetFaceLoops(GetFaceLoopsRequest(face=self.id)).loops
+        grpc_loops = self._faces_stub.GetLoops(EntityIdentifier(id=self.id)).loops
         loops = []
         for grpc_loop in grpc_loops:
             type = FaceLoopType(grpc_loop.type)
@@ -201,7 +199,7 @@ class Face:
                 SERVER_UNIT_LENGTH,
             )
             grpc_edges = [
-                self._edges_stub.GetEdge(EdgeIdentifier(id=edge_id)) for edge_id in grpc_loop.edges
+                self._edges_stub.Get(EntityIdentifier(id=edge_id)) for edge_id in grpc_loop.edges
             ]
             edges = self.__grpc_edges_to_edges(grpc_edges)
             loops.append(
@@ -240,8 +238,8 @@ class Face:
             given UV coordinates.
         """
         self._grpc_client.log.debug(f"Requesting face normal from server with (u,v)=({u},{v}).")
-        response = self._faces_stub.GetFaceNormal(
-            GetFaceNormalRequest(id=self.id, u=u, v=v)
+        response = self._faces_stub.GetNormal(
+            GetNormalRequest(id=self.id, u=u, v=v)
         ).direction
         return UnitVector3D([response.x, response.y, response.z])
 
@@ -272,7 +270,7 @@ class Face:
             object evaluated at the given U and V coordinates.
         """
         self._grpc_client.log.debug(f"Requesting face point from server with (u,v)=({u},{v}).")
-        response = self._faces_stub.EvaluateFace(EvaluateFaceRequest(face=self.id, u=u, v=v)).point
+        response = self._faces_stub.Evaluate(EvaluateRequest(id=self.id, u=u, v=v)).point
         return Point3D([response.x, response.y, response.z], SERVER_UNIT_LENGTH)
 
     def __grpc_edges_to_edges(self, edges_grpc: List[GRPCEdge]) -> List[Edge]:

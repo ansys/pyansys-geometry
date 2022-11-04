@@ -6,18 +6,18 @@ from pathlib import Path
 from ansys.api.geometry.v0.commands_pb2 import CreateBeamCircularProfileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.designs_pb2 import (
-    ExportDesignRequest,
-    NewDesignRequest,
-    SaveAsDocumentRequest,
+    ExportRequest,
+    NewRequest,
+    SaveAsRequest,
 )
 from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
-from ansys.api.geometry.v0.materials_pb2 import AddMaterialToDocumentRequest
+from ansys.api.geometry.v0.materials_pb2 import AddToDocumentRequest
 from ansys.api.geometry.v0.materials_pb2_grpc import MaterialsStub
 from ansys.api.geometry.v0.models_pb2 import Empty
 from ansys.api.geometry.v0.models_pb2 import Material as GRPCMaterial
 from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialProperty
 from ansys.api.geometry.v0.models_pb2 import PartExportFormat
-from ansys.api.geometry.v0.namedselections_pb2 import NamedSelectionIdentifier
+from ansys.api.geometry.v0.models_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from beartype import beartype as check_input_types
 from beartype.typing import List, Optional, Union
@@ -86,7 +86,7 @@ class Design(Component):
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
         self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
 
-        new_design = self._design_stub.New(NewDesignRequest(name=name))
+        new_design = self._design_stub.New(NewRequest(name=name))
         self._id = new_design.id
 
         self._materials = []
@@ -122,8 +122,8 @@ class Design(Component):
             ``Material`` to be added.
         """
         # TODO: Add design id to the request
-        self._materials_stub.AddMaterialToDocument(
-            AddMaterialToDocumentRequest(
+        self._materials_stub.AddToDocument(
+            AddToDocumentRequest(
                 material=GRPCMaterial(
                     name=material.name,
                     materialProperties=[
@@ -156,7 +156,7 @@ class Design(Component):
         if isinstance(file_location, Path):
             file_location = str(file_location)
 
-        self._design_stub.SaveAs(SaveAsDocumentRequest(filepath=file_location))
+        self._design_stub.SaveAs(SaveAsRequest(filepath=file_location))
         self._grpc_client.log.debug(f"Design successfully saved at location {file_location}.")
 
     @protect_grpc
@@ -207,7 +207,7 @@ class Design(Component):
                     "Streaming mechanism not supported for Parasolid format."
                 )
             self._grpc_client.log.debug(single_msg)
-            response = self._design_stub.ExportDesign(ExportDesignRequest(format=format.value[1]))
+            response = self._design_stub.Export(ExportRequest(format=format.value[1]))
             received_bytes += response.data
         else:
             self._grpc_client.log.warning(
@@ -270,7 +270,7 @@ class Design(Component):
         removal_name = (
             named_selection.name if not isinstance(named_selection, str) else named_selection
         )
-        self._named_selections_stub.Delete(NamedSelectionIdentifier(name=removal_name))
+        self._named_selections_stub.Delete(EntityIdentifier(id=removal_name))
 
         try:
             self._named_selections.pop(removal_name)
