@@ -923,6 +923,7 @@ def test_beams(modeler: Modeler):
             UnitVector3D([-1, -1, -1]),
         )
 
+    # Create a beam at the root component level
     beam_1 = design.create_beam(
         Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
     )
@@ -951,32 +952,54 @@ def test_beams(modeler: Modeler):
     assert "  Direction x          : [1.0,0.0,0.0]" in beam_1_str
     assert "  Direction y          : [0.0,1.0,0.0]" in beam_1_str
 
+    # Now, let's create two beams at a nested component, with the same profile
     nested_component = design.add_component("NestedComponent")
-
     beam_2 = nested_component.create_beam(
         Point3D([7, 77, 777], UNITS.mm), Point3D([6, 66, 666], UNITS.mm), circle_profile_2
+    )
+    beam_3 = nested_component.create_beam(
+        Point3D([8, 88, 888], UNITS.mm), Point3D([7, 77, 777], UNITS.mm), circle_profile_2
     )
 
     assert beam_2.id is not None
     assert beam_2.profile == circle_profile_2
     assert beam_2.parent_component.id == nested_component.id
     assert beam_2.is_alive
-    assert len(nested_component.beams) == 1
+    assert beam_3.id is not None
+    assert beam_3.profile == circle_profile_2
+    assert beam_3.parent_component.id == nested_component.id
+    assert beam_3.is_alive
+    assert beam_2.id != beam_3.id
+    assert len(nested_component.beams) == 2
     assert nested_component.beams[0] == beam_2
+    assert nested_component.beams[1] == beam_3
 
     # Once the beams are created, let's try deleting it.
     # For example, we shouldn't be able to delete beam_1 from the nested component.
-    nested_component.delete_beam(beam_2)
+    nested_component.delete_beam(beam_1)
 
     assert beam_2.is_alive
     assert nested_component.beams[0].is_alive
+    assert beam_3.is_alive
+    assert nested_component.beams[1].is_alive
+    assert beam_1.is_alive
+    assert design.beams[0].is_alive
+
+    # Let's try deleting one of the beams from the nested component
+    nested_component.delete_beam(beam_2)
+    assert not beam_2.is_alive
+    assert not nested_component.beams[0].is_alive
+    assert beam_3.is_alive
+    assert nested_component.beams[1].is_alive
     assert beam_1.is_alive
     assert design.beams[0].is_alive
 
     # Now, let's try deleting it from the design directly - this should be possible
-    design.delete_beam(beam_2)
+    design.delete_beam(beam_3)
     assert not beam_2.is_alive
     assert not nested_component.beams[0].is_alive
+    assert not beam_3.is_alive
+    assert not nested_component.beams[1].is_alive
     assert beam_1.is_alive
     assert design.beams[0].is_alive
 
@@ -984,6 +1007,8 @@ def test_beams(modeler: Modeler):
     design.delete_beam(beam_1)
     assert not beam_2.is_alive
     assert not nested_component.beams[0].is_alive
+    assert not beam_3.is_alive
+    assert not nested_component.beams[1].is_alive
     assert not beam_1.is_alive
     assert not design.beams[0].is_alive
 
