@@ -501,10 +501,10 @@ class Component:
 
         Parameters
         ----------
-        id : Union[Component, str]
-            Name of the component or instance to delete.
+        component : Union[Component, str]
+            ID of the component or instance to delete.
         """
-        id = component.id if not isinstance(component, str) else component
+        id = component if isinstance(component, str) else component.id
         component_requested = self.search_component(id)
 
         if component_requested:
@@ -535,10 +535,10 @@ class Component:
 
         Parameters
         ----------
-        id : Union[Body, str]
-            Name of the body or instance to delete.
+        body : Union[Body, str]
+            ID of the body or instance to delete.
         """
-        id = body.id if not isinstance(body, str) else body
+        id = body if isinstance(body, str) else body.id
         body_requested = self.search_body(id)
 
         if body_requested:
@@ -569,10 +569,10 @@ class Component:
 
         Parameters
         ----------
-        id : Union[Beam, str]
-            The name of the beam or instance that should be deleted.
+        beam : Union[Beam, str]
+            ID of the beam or instance to delete.
         """
-        id = beam.id if not isinstance(beam, str) else beam
+        id = beam if isinstance(beam, str) else beam.id
         beam_requested = self.search_beam(id)
 
         if beam_requested:

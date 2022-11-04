@@ -269,9 +269,7 @@ class Design(Component):
         named_selection : Union[NamedSelection, str]
             Name of the named selection or instance.
         """
-        removal_name = (
-            named_selection.name if not isinstance(named_selection, str) else named_selection
-        )
+        removal_name = named_selection if isinstance(named_selection, str) else named_selection.name
         self._grpc_client.log.debug(f"Named selection {removal_name} deletion request received.")
         removal_obj = self._named_selections.get(removal_name, None)
 
@@ -304,7 +302,7 @@ class Design(Component):
         ValueError
             The design itself cannot be deleted.
         """
-        id = component.id if not isinstance(component, str) else component
+        id = component if isinstance(component, str) else component.id
         if id == self.id:
             raise ValueError("The design itself cannot be deleted.")
         else:
@@ -390,7 +388,7 @@ class Design(Component):
         beam_profile : Union[BeamProfile, str]
             A beam profile name or instance that should be deleted.
         """
-        removal_name = beam_profile.name if not isinstance(beam_profile, str) else beam_profile
+        removal_name = beam_profile if isinstance(beam_profile, str) else beam_profile.name
         self._grpc_client.log.debug(f"Beam profile {removal_name} deletion request received.")
         removal_obj = self._beam_profiles.get(removal_name, None)
 
