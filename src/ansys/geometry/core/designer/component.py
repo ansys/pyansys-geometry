@@ -582,7 +582,7 @@ class Component:
             # Server-side, the same deletion request has to be performed
             # as for deleting a Body
             #
-            self._commands_stub.DeleteBeam(EntityIdentifier(id=id))
+            self._commands_stub.DeleteBeam(EntityIdentifier(id=beam_requested.id))
 
             # If the beam was deleted from the server side... "kill" it
             # on the client side

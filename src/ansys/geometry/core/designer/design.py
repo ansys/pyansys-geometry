@@ -395,7 +395,7 @@ class Design(Component):
         removal_obj = self._beam_profiles.get(removal_name, None)
 
         if removal_obj:
-            self._commands_stub.DeleteBeamProfile(EntityIdentifier(id=removal_name))
+            self._commands_stub.DeleteBeamProfile(EntityIdentifier(id=removal_obj.id))
             self._beam_profiles.pop(removal_name)
             self._grpc_client.log.debug(f"Beam profile {removal_name} successfully deleted.")
         else:
