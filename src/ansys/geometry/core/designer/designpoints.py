@@ -1,4 +1,4 @@
-"""``Beam`` class module."""
+"""``DesignPoint`` class module."""
 
 from beartype.typing import TYPE_CHECKING, List
 
@@ -10,6 +10,21 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 class DesignPoints:
+    """
+    Represents a list of 3D points creates a single Design Points.
+
+    Parameters
+    ----------
+    id : str
+        Server-defined ID for the design points.
+    name : str
+        User-defined label for the design points.
+    points : List[Point3D]
+        List of 3D points constituting the design points.
+    parent_component : Component
+        Parent component to nest the new beam under within the design assembly.
+    """
+
     def __init__(self, id: str, name: str, points: List[Point3D], parent_component: "Component"):
         from ansys.geometry.core.designer.component import Component
 
@@ -25,14 +40,22 @@ class DesignPoints:
 
     @property
     def id(self) -> str:
-        """ID of the beam profile."""
+        """ID of the design points."""
         return self._id
 
     @property
     def name(self) -> str:
-        """Name of the beam profile."""
+        """Name of the design points."""
         return self._name
 
     @property
     def design_points(self) -> List[Point3D]:
+        """List of 3D points for create design points."""
         return self._design_points
+
+    def __repr__(self) -> str:
+        """String representation of the design points."""
+        lines = [f"ansys.geometry.core.designer.DesignPoints {hex(id(self))}"]
+        lines.append(f"  Name                 : {self.name}")
+        lines.append(f"  Number of Points     : {len(self.design_points)}")
+        return "\n".join(lines)

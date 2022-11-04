@@ -35,6 +35,10 @@ class NamedSelection:
         All faces to include in the named selection.
     edges : List[Edge], default: None
         All edges to include in the named selection.
+    beams : List[Beam], default: None
+        All beams to include in the named selection.
+    design_points : List[DesignPoints], default: None
+        All design_points to include in the named selection.
     """
 
     @protect_grpc

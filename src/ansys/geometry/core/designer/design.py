@@ -247,6 +247,10 @@ class Design(Component):
             All faces to include in the named selection.
         edges : List[Edge], default: None
             All edges to include in the named selection.
+        beams : List[Beam], default: None
+            All beams to include in the named selection.
+        design_points : List[DesignPoints], default: None
+            All design_points to include in the named selection.
 
         Returns
         -------
@@ -400,4 +404,5 @@ class Design(Component):
         lines.append(f"  N Named Selections   : {len(self.named_selections)}")
         lines.append(f"  N Materials          : {len(self.materials)}")
         lines.append(f"  N Beam Profiles      : {len(self.beam_profiles)}")
+        lines.append(f"  N DesignPoints       : {len(self.design_points)}")
         return "\n".join(lines)

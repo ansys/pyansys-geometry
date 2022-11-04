@@ -1,5 +1,6 @@
 """Test design interaction."""
 
+import numpy as np
 from pint import Quantity
 import pytest
 
@@ -972,25 +973,34 @@ def test_beams(modeler: Modeler):
 
 
 def test_design_points(modeler: Modeler):
+    """Test for verifying the ``DesignPoints``"""
+
+    # Create your design on the server side
     design = modeler.create_design("DesignPoints")
-    points = []
-    for k in range(1, 10):
-        x = k + 3
-        y = k
-        z = 10
-        points.append(Point3D([x, y, z]))
-    points2 = []
-    for k in range(1, 20):
-        x = k + 3
-        y = k
-        z = 10
-        points2.append(Point3D([x, y, z]))
-    design_points = design.add_design_points("FirstOne", points)
-    assert design_points.id is not None
-    assert design_points.name == "FirstOne"
-    assert design_points.design_points == points
-    design_points_2 = design.add_design_points("second", points2)
-    assert design_points_2.id is not None
-    assert design_points_2.name == "second"
-    assert design_points_2.design_points == points2
+    point_set_1 = []
+    x_cor, y_cor = np.linspace(1, 10, 10), np.linspace(20, 56, 10)
+    for x, y in zip(x_cor, y_cor):
+        point_set_1.append(Point3D([x, y, 0]))
+    design_points_1 = design.add_design_points("FirstPointSet", point_set_1)
+
+    # Check the design points
+    assert len(design.design_points) == 1
+    assert design_points_1.id is not None
+    assert design_points_1.name == "FirstPointSet"
+    assert design_points_1.design_points == point_set_1
+
+    point_set_2 = []
+    x_cor, y_cor = np.linspace(1, 1000, 100), np.linspace(20, 56, 100)
+    for x, y in zip(x_cor, y_cor):
+        point_set_2.append(Point3D([x, y, 0]))
+    design_points_2 = design.add_design_points("SecondPointSet", point_set_2)
+
     assert len(design.design_points) == 2
+    assert design_points_2.id is not None
+    assert design_points_2.name == "SecondPointSet"
+    assert design_points_2.design_points == point_set_2
+
+    design_point_1_str = str(design_points_1)
+    assert "ansys.geometry.core.designer.DesignPoint" in design_point_1_str
+    assert "  Name                 : FirstPointSet" in design_point_1_str
+    assert "  Number of Points     : 10" in design_point_1_str
