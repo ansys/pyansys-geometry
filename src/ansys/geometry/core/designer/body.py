@@ -1,4 +1,5 @@
 """Provides the ``Body`` class module."""
+from enum import Enum
 
 from ansys.api.geometry.v0.bodies_pb2 import (
     BodyIdentifier,
@@ -6,7 +7,12 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
-from ansys.api.geometry.v0.commands_pb2 import ImprintCurvesRequest, ProjectCurvesRequest
+from ansys.api.geometry.v0.commands_pb2 import (
+    AssignMidSurfaceOffsetTypeRequest,
+    AssignMidSurfaceThicknessRequest,
+    ImprintCurvesRequest,
+    ProjectCurvesRequest,
+)
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
@@ -37,6 +43,16 @@ if TYPE_CHECKING:  # pragma: no cover
 
     from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.design import MidSurfaceOffsetType
+
+
+class MidSurfaceOffsetType(Enum):
+    """Provides mid-surface offset types available."""
+
+    MIDDLE = 0
+    TOP = 1
+    BOTTOM = 2
+    VARIABLE = 3
+    CUSTOM = 4
 
 
 class Body:
@@ -194,6 +210,56 @@ class Body:
         self._bodies_stub.SetAssignedMaterial(
             SetAssignedMaterialRequest(id=self._id, material=material.name)
         )
+
+    @protect_grpc
+    @check_input_types
+    def add_midsurface_thickness(self, thickness: Quantity) -> None:
+        """Adds a mid-surface thickness to a surface body.
+
+        Parameters
+        ----------
+        thickness : Quantity
+            Thickness to be assigned.
+
+        Notes
+        -----
+        Only surface bodies will be eligible for mid-surface thickness assignment.
+        """
+        if self.is_surface:
+            self._commands_stub.AssignMidSurfaceThickness(
+                AssignMidSurfaceThicknessRequest(
+                    bodiesOrFaces=[self.id], thickness=thickness.m_as(SERVER_UNIT_LENGTH)
+                )
+            )
+            self._surface_thickness = thickness
+        else:
+            self._grpc_client.log.warning(
+                f"Body {self.name} cannot be assigned a mid-surface thickness since it is not a surface. Ignoring request."  # noqa : E501
+            )
+
+    @protect_grpc
+    @check_input_types
+    def add_midsurface_offset(self, offset: MidSurfaceOffsetType) -> None:
+        """Adds a mid-surface offset to a surface body.
+
+        Parameters
+        ----------
+        thickness : Quantity
+            Thickness to be assigned.
+
+        Notes
+        -----
+        Only surface bodies will be eligible for mid-surface thickness assignment.
+        """
+        if self.is_surface:
+            self._commands_stub.AssignMidSurfaceOffsetType(
+                AssignMidSurfaceOffsetTypeRequest(bodiesOrFaces=[self.id], offsetType=offset.value)
+            )
+            self._surface_offset = offset
+        else:
+            self._grpc_client.log.warning(
+                f"Body {self.name} cannot be assigned a mid-surface offset since it is not a surface. Ignoring request."  # noqa : E501
+            )
 
     @protect_grpc
     @check_input_types

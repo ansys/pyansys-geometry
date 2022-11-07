@@ -31,7 +31,7 @@ from pint import Quantity
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.conversions import plane_to_grpc_plane, point3d_to_grpc_point
 from ansys.geometry.core.designer.beam import BeamCircularProfile, BeamProfile
-from ansys.geometry.core.designer.body import Body
+from ansys.geometry.core.designer.body import Body, MidSurfaceOffsetType
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
@@ -58,16 +58,6 @@ class DesignFileFormat(Enum):
     PARASOLID_TEXT = "PARASOLID_TEXT", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_TEXT
     PARASOLID_BIN = "PARASOLID_BIN", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_BINARY
     INVALID = "INVALID", None
-
-
-class MidSurfaceOffsetType(Enum):
-    """Provides mid-surface offset types available."""
-
-    MIDDLE = 0
-    TOP = 1
-    BOTTOM = 2
-    VARIABLE = 3
-    CUSTOM = 4
 
 
 class Design(Component):
