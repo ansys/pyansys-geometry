@@ -287,17 +287,6 @@ def test_named_selections(modeler: Modeler):
     assert design.named_selections[2].name == "CircleAndPolygon"
     assert design.named_selections[3].name == "OnlyPolygonFaces"
 
-    # Test creating a named selection out of design_points
-    point_set_1 = Point3D([10, 10, 0], UNITS.m)
-    design_points_1 = design.add_design_point("FirstPointSet", point_set_1)
-    design.create_named_selection("FirstPointSet", design_points=[design_points_1])
-    assert len(design.named_selections) == 5
-    assert design.named_selections[0].name == "OnlyCircle"
-    assert design.named_selections[1].name == "OnlyPolygon"
-    assert design.named_selections[2].name == "CircleAndPolygon"
-    assert design.named_selections[3].name == "OnlyPolygonFaces"
-    assert design.named_selections[4].name == "FirstPointSet"
-
 
 def test_faces_edges(modeler: Modeler):
     """Test for verifying the correct creation and
@@ -1038,4 +1027,23 @@ def test_named_selections_beams(modeler: Modeler):
 
     # Try deleting this named selection
     design.delete_named_selection(ns_beams)
+    assert len(design.named_selections) == 0
+
+
+@pytest.mark.skip(reason="Container fails on DesignPoint-related operations. See #203.")
+def test_named_selections_design_points(modeler: Modeler):
+    """Test for verifying the correct creation of ``NamedSelection`` with design points."""
+
+    # Create your design on the server side
+    design = modeler.create_design("NamedSelectionBeams_Test")
+
+    # Test creating a named selection out of design_points
+    point_set_1 = Point3D([10, 10, 0], UNITS.m)
+    design_points_1 = design.add_design_point("FirstPointSet", point_set_1)
+    ns_despoint = design.create_named_selection("FirstPointSet", design_points=[design_points_1])
+    assert len(design.named_selections) == 1
+    assert design.named_selections[0].name == "FirstPointSet"
+
+    # Try deleting this named selection
+    design.delete_named_selection(ns_despoint)
     assert len(design.named_selections) == 0
