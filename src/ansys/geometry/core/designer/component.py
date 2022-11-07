@@ -565,8 +565,6 @@ class Component:
             )
             pass
 
-    @protect_grpc
-    @check_input_types
     def add_design_point(
         self,
         name: str,

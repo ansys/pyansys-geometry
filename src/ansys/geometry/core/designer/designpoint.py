@@ -34,6 +34,7 @@ class DesignPoint:
         check_type(name, str)
         check_type(point, Point3D)
         check_type(parent_component, Component)
+
         self._id = id
         self._name = name
         self._design_point = point
