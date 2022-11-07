@@ -845,6 +845,7 @@ class Component:
         lines.append(f"  Parent component     : {self.parent_component.name}")
         lines.append(f"  N Bodies             : {sum(alive_bodies)}")
         lines.append(f"  N Beams              : {len(self.beams)}")
+        lines.append(f"  N Design Points      : {len(self.design_points)}")
         lines.append(f"  N Components         : {sum(alive_comps)}")
         lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
         return "\n".join(lines)

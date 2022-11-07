@@ -91,7 +91,6 @@ class Design(Component):
         self._id = new_design.id
 
         self._materials = []
-        self._design_points = []
         self._named_selections = {}
         self._beam_profiles = {}
 
@@ -405,5 +404,4 @@ class Design(Component):
         lines.append(f"  N Named Selections   : {len(self.named_selections)}")
         lines.append(f"  N Materials          : {len(self.materials)}")
         lines.append(f"  N Beam Profiles      : {len(self.beam_profiles)}")
-        lines.append(f"  N DesignPoints       : {len(self.design_points)}")
         return "\n".join(lines)

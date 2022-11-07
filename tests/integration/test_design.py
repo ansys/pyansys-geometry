@@ -684,6 +684,7 @@ def test_delete_body_component(modeler: Modeler):
     assert "N Bodies             : 0" in comp_1_str
     assert "N Beams              : 0" in comp_1_str
     assert "N Components         : 0" in comp_1_str
+    assert "N Design Points      : 0" in comp_1_str
     assert "N Coordinate Systems : 0" in comp_1_str
 
     body_1_str = str(body_1)
