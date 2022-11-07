@@ -250,7 +250,7 @@ class Design(Component):
         beams : List[Beam], default: None
             All beams to include in the named selection.
         design_points : List[DesignPoints], default: None
-            All design_points to include in the named selection.
+            All design points to include in the named selection.
 
         Returns
         -------

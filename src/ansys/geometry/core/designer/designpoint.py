@@ -11,7 +11,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 class DesignPoint:
     """
-    Represents a list of 3D points creates a single Design Points.
+    Provides the ``DesignPoint`` class for creating design points in components.
 
     Parameters
     ----------
@@ -26,7 +26,6 @@ class DesignPoint:
     """
 
     def __init__(self, id: str, name: str, point: Point3D, parent_component: "Component"):
-
         """Constructor method for the ``DesignPoints`` class."""
         from ansys.geometry.core.designer.component import Component
 
@@ -37,7 +36,7 @@ class DesignPoint:
 
         self._id = id
         self._name = name
-        self._design_point = point
+        self._value = point
         self._parent_component = parent_component
 
     @property
@@ -52,8 +51,8 @@ class DesignPoint:
 
     @property
     def value(self) -> Point3D:
-        """List of 3D points for create design points."""
-        return self._design_point
+        """Design point value."""
+        return self._value
 
     @property
     def parent_component(self) -> Union["Component", None]:

@@ -570,14 +570,14 @@ class Component:
         name: str,
         point: Point3D,
     ) -> DesignPoint:
-        """Represents a 3D point creates a single design point.
+        """Creates a single design point.
 
         Parameters
         ----------
         name : str
             User-defined label for the design points.
         points : Point3D
-           3D point constituting the design point.
+            3D point constituting the design point.
         """
         return self.add_design_points(name, [point])[0]
 
@@ -588,7 +588,7 @@ class Component:
         name: str,
         points: List[Point3D],
     ) -> List[DesignPoint]:
-        """Represents a list of 3D points creates a single Design Points.
+        """Creates a list of design points.
 
         Parameters
         ----------
@@ -597,6 +597,7 @@ class Component:
         points : List[Point3D]
             List of 3D points constituting the design points.
         """
+        # Create DesignPoint objects server-side
         self._grpc_client.log.debug(f"Creating design points on {self.id}...")
         response = self._commands_stub.CreateDesignPoints(
             CreateDesignPointsRequest(
@@ -604,12 +605,15 @@ class Component:
             )
         )
         self._grpc_client.log.debug(f"Design points successfully created.")
+
+        # Once created on the server, create them client side
         new_design_points = []
         n_design_points = len(response.ids)
         for index in range(n_design_points):
             new_design_points.append((DesignPoint(response.ids[index], name, points[index], self)))
-
         self._design_points.extend(new_design_points)
+
+        # Finally return the list of created DesignPoint objects
         return self._design_points[-n_design_points:]
 
     @check_input_types
