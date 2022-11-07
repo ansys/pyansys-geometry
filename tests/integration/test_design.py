@@ -7,10 +7,12 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.designer import (
     CurveType,
     DesignFileFormat,
+    MidSurfaceOffsetType,
     SharedTopologyType,
     SurfaceType,
 )
 from ansys.geometry.core.designer.face import FaceLoopType
+from ansys.geometry.core.errors import GeometryExitedError
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
@@ -961,6 +963,110 @@ def test_beams(modeler: Modeler):
     assert beam_2.parent_component.id == nested_component.id
     assert len(nested_component.beams) == 1
     assert nested_component.beams[0] == beam_2
+
+
+def test_midsurface_properties(modeler: Modeler):
+    """Test mid-surface properties assignment."""
+
+    # Create your design on the server side
+    design = modeler.create_design("MidSurfaceProperties")
+
+    # Create a Sketch object and draw a slot
+    sketch = Sketch()
+    sketch.slot(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm))
+
+    # Create an actual body from the slot, and translate it
+    slot_body = design.extrude_sketch("MySlot", sketch, Quantity(10, UNITS.mm))
+    slot_body.translate(UNITVECTOR3D_X, Quantity(40, UNITS.mm))
+
+    # Create a surface body as well
+    slot_surf = design.create_surface("MySlotSurface", sketch)
+
+    surf_repr = str(slot_surf)
+    assert "ansys.geometry.core.designer.Body" in surf_repr
+    assert "Name                 : MySlotSurface" in surf_repr
+    assert "Exists               : True" in surf_repr
+    assert "Parent component     : MidSurfaceProperties" in surf_repr
+    assert "Surface body         : True" in surf_repr
+    assert "Surface thickness    : None" in surf_repr
+    assert "Surface offset       : None" in surf_repr
+
+    # Let's assign a thickness to both bodies
+    design.add_midsurface_thickness(
+        thickness=Quantity(10, UNITS.mm),
+        bodies=[slot_body, slot_surf],
+    )
+
+    # Let's also assign a mid-surface offset to both bodies
+    design.add_midsurface_offset(
+        offset_type=MidSurfaceOffsetType.TOP, bodies=[slot_body, slot_surf]
+    )
+
+    # Let's check the values now
+    assert slot_body.surface_thickness is None
+    assert slot_body.surface_offset is None
+    assert slot_surf.surface_thickness == Quantity(10, UNITS.mm)
+    assert slot_surf.surface_offset == MidSurfaceOffsetType.TOP
+
+    # Let's check that the design-stored values are also updated
+    assert design.bodies[0].surface_thickness is None
+    assert design.bodies[0].surface_offset is None
+    assert design.bodies[1].surface_thickness == Quantity(10, UNITS.mm)
+    assert design.bodies[1].surface_offset == MidSurfaceOffsetType.TOP
+
+    surf_repr = str(slot_surf)
+    assert "ansys.geometry.core.designer.Body" in surf_repr
+    assert "Name                 : MySlotSurface" in surf_repr
+    assert "Exists               : True" in surf_repr
+    assert "Parent component     : MidSurfaceProperties" in surf_repr
+    assert "Surface body         : True" in surf_repr
+    assert "Surface thickness    : 10 millimeter" in surf_repr
+    assert "Surface offset       : MidSurfaceOffsetType.TOP" in surf_repr
+
+    # Let's try reassigning values directly to slot_body - this shouldn't do anything
+    slot_body.add_midsurface_thickness(Quantity(10, UNITS.mm))
+    slot_body.add_midsurface_offset(MidSurfaceOffsetType.TOP)
+
+    body_repr = str(slot_body)
+    assert "ansys.geometry.core.designer.Body" in body_repr
+    assert "Name                 : MySlot" in body_repr
+    assert "Exists               : True" in body_repr
+    assert "Parent component     : MidSurfaceProperties" in body_repr
+    assert "Surface body         : False" in body_repr
+    assert slot_body._surface_thickness is None
+    assert slot_body._surface_offset is None
+
+    # Let's try reassigning values directly to slot_surf - this should work
+    # TODO : at the moment the server does not allow to reassign - put in try/catch block
+    try:
+        slot_surf.add_midsurface_thickness(Quantity(30, UNITS.mm))
+        slot_surf.add_midsurface_offset(MidSurfaceOffsetType.BOTTOM)
+
+        surf_repr = str(slot_surf)
+        assert "ansys.geometry.core.designer.Body" in surf_repr
+        assert "Name                 : MySlotSurface" in surf_repr
+        assert "Exists               : True" in surf_repr
+        assert "Parent component     : MidSurfaceProperties" in surf_repr
+        assert "Surface body         : True" in surf_repr
+        assert "Surface thickness    : 30 millimeter" in surf_repr
+        assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
+    except GeometryExitedError:
+        pass
+
+    # Let's create a new surface body and assign them from body methods directly
+    slot_surf2 = design.create_surface("MySlotSurface2", sketch)
+
+    slot_surf2.add_midsurface_thickness(Quantity(30, UNITS.mm))
+    slot_surf2.add_midsurface_offset(MidSurfaceOffsetType.BOTTOM)
+
+    surf_repr = str(slot_surf2)
+    assert "ansys.geometry.core.designer.Body" in surf_repr
+    assert "Name                 : MySlotSurface2" in surf_repr
+    assert "Exists               : True" in surf_repr
+    assert "Parent component     : MidSurfaceProperties" in surf_repr
+    assert "Surface body         : True" in surf_repr
+    assert "Surface thickness    : 30 millimeter" in surf_repr
+    assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
 
 
 def test_design_points(modeler: Modeler):
