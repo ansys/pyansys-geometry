@@ -7,6 +7,7 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.designer import (
     CurveType,
     DesignFileFormat,
+    MidSurfaceOffesetType,
     SharedTopologyType,
     SurfaceType,
 )
@@ -959,3 +960,38 @@ def test_beams(modeler: Modeler):
     assert beam_2.parent_component.id == nested_component.id
     assert len(nested_component.beams) == 1
     assert nested_component.beams[0] == beam_2
+
+
+def test_midsurface_properties(modeler: Modeler):
+    """Test midsurface properties assignment."""
+
+    # Create your design on the server side
+    design = modeler.create_design("MidSurfaceProperties")
+
+    # Create a Sketch object and draw a slot
+    sketch = Sketch()
+    sketch.slot(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm))
+
+    # Create an actual body from the slot, and translate it
+    slot_body = design.extrude_sketch("MySlot", sketch, Quantity(10, UNITS.mm))
+    slot_body.translate(UNITVECTOR3D_X, Quantity(40, UNITS.mm))
+
+    # Create a surface body as well
+    slot_surf = design.create_surface("MySlotSurface", sketch)
+
+    # Let's assign a thickness to both bodies and one of its faces
+    design.add_midsurface_thickness(
+        thickness=Quantity(10, UNITS.mm),
+        bodies=[slot_body, slot_surf],
+        faces=[slot_body.faces[0], slot_surf.faces[0]],
+    )
+
+    # Let's also assign a midsurface offset only to the 3D body (not the surface)
+    design.add_midsurface_offset(
+        offset_type=MidSurfaceOffesetType.TOP, bodies=[slot_body], faces=[slot_body.faces[0]]
+    )
+
+    # Let's also assign a midsurface offset only to the surface body
+    design.add_midsurface_offset(
+        offset_type=MidSurfaceOffesetType.BOTTOM, bodies=[slot_surf], faces=[slot_surf.faces[0]]
+    )
