@@ -385,16 +385,14 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
-    def add_midsurface_thickness(
-        self, thickness: Quantity, bodies: Optional[List[Body]] = None
-    ) -> None:
+    def add_midsurface_thickness(self, thickness: Quantity, bodies: List[Body]) -> None:
         """Adds a mid-surface thickness to a list of bodies.
 
         Parameters
         ----------
         thickness : Quantity
             Thickness to be assigned.
-        bodies : Optional[List[Body]], default: None
+        bodies : List[Body]
             All bodies to include in the mid-surface thickness assignment.
 
         Notes
@@ -404,15 +402,14 @@ class Design(Component):
         # Store only assignable ids
         ids = []
         ids_bodies = []
-        if bodies:
-            for body in bodies:
-                if body.is_surface:
-                    ids.append(body.id)
-                    ids_bodies.append(body)
-                else:
-                    self._grpc_client.log.warning(
-                        f"Body {body.name} cannot be assigned a mid-surface thickness since it is not a surface. Ignoring request."  # noqa : E501
-                    )
+        for body in bodies:
+            if body.is_surface:
+                ids.append(body.id)
+                ids_bodies.append(body)
+            else:
+                self._grpc_client.log.warning(
+                    f"Body {body.name} cannot be assigned a mid-surface thickness since it is not a surface. Ignoring request."  # noqa : E501
+                )
 
         # Assign mid-surface thickness
         self._commands_stub.AssignMidSurfaceThickness(
@@ -427,16 +424,14 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
-    def add_midsurface_offset(
-        self, offset_type: MidSurfaceOffsetType, bodies: Optional[List[Body]] = None
-    ) -> None:
+    def add_midsurface_offset(self, offset_type: MidSurfaceOffsetType, bodies: List[Body]) -> None:
         """Adds a mid-surface offset type to a list of bodies.
 
         Parameters
         ----------
         offset_type : MidSurfaceOffsetType
             Surface offset to be assigned.
-        bodies : Optional[List[Body]], default: None
+        bodies : List[Body]
             All bodies to include in the mid-surface offset assignment.
 
         Notes
@@ -446,15 +441,14 @@ class Design(Component):
         # Store only assignable ids
         ids = []
         ids_bodies = []
-        if bodies:
-            for body in bodies:
-                if body.is_surface:
-                    ids.append(body.id)
-                    ids_bodies.append(body)
-                else:
-                    self._grpc_client.log.warning(
-                        f"Body {body.name} cannot be assigned a mid-surface offset since it is not a surface. Ignoring request."  # noqa : E501
-                    )
+        for body in bodies:
+            if body.is_surface:
+                ids.append(body.id)
+                ids_bodies.append(body)
+            else:
+                self._grpc_client.log.warning(
+                    f"Body {body.name} cannot be assigned a mid-surface offset since it is not a surface. Ignoring request."  # noqa : E501
+                )
 
         # Assign mid-surface offset type
         self._commands_stub.AssignMidSurfaceOffsetType(
