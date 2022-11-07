@@ -401,7 +401,7 @@ class Design(Component):
         -----
         Only surface bodies will be eligible for mid-surface thickness assignment.
         """
-        # Group all ids together
+        # Store only assignable ids
         ids = []
         ids_bodies = []
         if bodies:
@@ -443,7 +443,7 @@ class Design(Component):
         -----
         Only surface bodies will be eligible for mid-surface offset assignment.
         """
-        # Group all ids together
+        # Store only assignable ids
         ids = []
         ids_bodies = []
         if bodies:
@@ -455,6 +455,7 @@ class Design(Component):
                     self._grpc_client.log.warning(
                         f"Body {body.name} cannot be assigned a mid-surface offset since it is not a surface. Ignoring request."  # noqa : E501
                     )
+
         # Assign mid-surface offset type
         self._commands_stub.AssignMidSurfaceOffsetType(
             AssignMidSurfaceOffsetTypeRequest(bodiesOrFaces=ids, offsetType=offset_type.value)
