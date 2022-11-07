@@ -41,12 +41,12 @@ class DesignPoint:
 
     @property
     def id(self) -> str:
-        """ID of the design points."""
+        """ID of the design point."""
         return self._id
 
     @property
     def name(self) -> str:
-        """Name of the design points."""
+        """Name of the design point."""
         return self._name
 
     @property

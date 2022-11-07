@@ -604,7 +604,7 @@ class Component:
                 points=[point3d_to_grpc_point(point) for point in points], parent=self.id
             )
         )
-        self._grpc_client.log.debug(f"Design points successfully created.")
+        self._grpc_client.log.debug("Design points successfully created.")
 
         # Once created on the server, create them client side
         new_design_points = []
