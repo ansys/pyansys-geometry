@@ -51,7 +51,7 @@ class DesignPoint:
         return self._name
 
     @property
-    def design_point(self) -> Point3D:
+    def value(self) -> Point3D:
         """List of 3D points for create design points."""
         return self._design_point
 
@@ -64,5 +64,5 @@ class DesignPoint:
         """String representation of the design points."""
         lines = [f"ansys.geometry.core.designer.DesignPoints {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
-        lines.append(f"  Design Point         : {self.design_point}")
+        lines.append(f"  Design Point         : {self.value}")
         return "\n".join(lines)

@@ -597,13 +597,12 @@ class Component:
         points : List[Point3D]
             List of 3D points constituting the design points.
         """
-
-        request = CreateDesignPointsRequest(
-            points=[point3d_to_grpc_point(point) for point in points], parent=self.id
-        )
-
         self._grpc_client.log.debug(f"Creating design points on {self.id}...")
-        response = self._commands_stub.CreateDesignPoints(request)
+        response = self._commands_stub.CreateDesignPoints(
+            CreateDesignPointsRequest(
+                points=[point3d_to_grpc_point(point) for point in points], parent=self.id
+            )
+        )
         self._grpc_client.log.debug(f"Design points successfully created.")
         new_design_points = []
         n_design_points = len(response.ids)
