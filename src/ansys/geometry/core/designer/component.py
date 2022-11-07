@@ -581,7 +581,7 @@ class Component:
         points : Point3D
            3D point constituting the design point.
         """
-        return self.add_design_points(name, [point])
+        return self.add_design_points(name, [point])[0]
 
     @protect_grpc
     @check_input_types

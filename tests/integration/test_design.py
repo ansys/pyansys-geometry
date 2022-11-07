@@ -1,6 +1,5 @@
 """Test design interaction."""
 
-import numpy as np
 from pint import Quantity
 import pytest
 
@@ -296,7 +295,7 @@ def test_named_selections(modeler: Modeler):
         Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
     )
     design.create_named_selection("CircleProfile", beams=[beam_1])
-    assert len(design.named_selections) == 5
+    assert len(design.named_selections) == 6
     assert design.named_selections[0].name == "OnlyCircle"
     assert design.named_selections[1].name == "OnlyPolygon"
     assert design.named_selections[2].name == "CircleAndPolygon"
@@ -304,14 +303,11 @@ def test_named_selections(modeler: Modeler):
     assert design.named_selections[4].name == "CircleProfile"
 
     # Test creating a named selection out of design_points
-    point_set_1 = []
-    x_cor, y_cor = np.linspace(1, 10, 10), np.linspace(20, 56, 10)
-    for x, y in zip(x_cor, y_cor):
-        point_set_1.append(Point3D([x, y, 0]))
-    design_points_1 = design.add_design_points("FirstPointSet", point_set_1)
+    point_set_1 = Point3D([10, 10, 0], UNITS.m)
+    design_points_1 = design.add_design_point("FirstPointSet", point_set_1)
     design.create_named_selection("FirstPointSet", design_points=[design_points_1])
-    assert len(design.named_selections) == 7
-    assert design.named_selections[6].name == "FirstPointSet"
+    assert len(design.named_selections) == 6
+    assert design.named_selections[5].name == "FirstPointSet"
 
 
 def test_faces_edges(modeler: Modeler):
@@ -1002,23 +998,30 @@ def test_design_points(modeler: Modeler):
     assert design_points_1.design_point == point
 
     # Create another set of design points
-    point_set_2 = []
-    x_cor, y_cor = np.linspace(1, 1000, 100), np.linspace(20, 56, 100)
-    for x, y in zip(x_cor, y_cor):
-        point_set_2.append(Point3D([x, y, 0]))
+    point_set_2 = [Point3D([10, 10, 10], UNITS.m), Point3D([20, 20, 20], UNITS.m)]
     design_points_2 = design.add_design_points("SecondPointSet", point_set_2)
 
-    assert len(design.design_points) == 2
-    assert design_points_2.id is not None
-    assert design_points_2.name == "SecondPointSet"
-    assert design_points_2.design_points == point_set_2
+    assert len(design.design_points) == 3
+
+    nested_component = design.add_component("NestedComponent")
+
+    design_point_3 = nested_component.add_design_point("nested", Point3D([7, 77, 777], UNITS.mm))
+
+    assert design_point_3.id is not None
+    assert design_point_3.design_point == Point3D([7, 77, 777], UNITS.mm)
+    assert design_point_3._parent_component.id == nested_component.id
+    assert len(nested_component.design_points) == 1
+    assert nested_component.design_points[0] == design_point_3
 
     design_point_1_str = str(design_points_1)
     assert "ansys.geometry.core.designer.DesignPoint" in design_point_1_str
     assert "  Name                 : FirstPointSet" in design_point_1_str
-    assert "  Number of Points     : 10" in design_point_1_str
+    assert "  Design Point         : [0.006 0.066 0.666]" in design_point_1_str
 
     design_point_2_str = str(design_points_2)
     assert "ansys.geometry.core.designer.DesignPoint" in design_point_2_str
     assert "  Name                 : SecondPointSet" in design_point_2_str
-    assert "  Number of Points     : 100" in design_point_2_str
+    assert "  Design Point         : [10. 10. 10.]" in design_point_2_str
+    assert "ansys.geometry.core.designer.DesignPoint" in design_point_2_str
+    assert "  Name                 : SecondPointSet" in design_point_2_str
+    assert "  Design Point         : [20. 20. 20.]" in design_point_2_str

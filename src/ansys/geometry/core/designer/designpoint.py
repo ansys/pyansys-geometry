@@ -58,5 +58,5 @@ class DesignPoint:
         """String representation of the design points."""
         lines = [f"ansys.geometry.core.designer.DesignPoints {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
-        lines.append(f"  Design Point         : {self.design_points}")
+        lines.append(f"  Design Point         : {self.design_point}")
         return "\n".join(lines)
