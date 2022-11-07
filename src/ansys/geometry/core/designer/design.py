@@ -404,4 +404,5 @@ class Design(Component):
         lines.append(f"  N Named Selections   : {len(self.named_selections)}")
         lines.append(f"  N Materials          : {len(self.materials)}")
         lines.append(f"  N Beam Profiles      : {len(self.beam_profiles)}")
+        lines.append(f"  N Design Points      : {len(self.design_points)}")
         return "\n".join(lines)

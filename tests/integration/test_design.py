@@ -675,6 +675,7 @@ def test_delete_body_component(modeler: Modeler):
     assert "N Named Selections   : 0" in design_str
     assert "N Materials          : 0" in design_str
     assert "N Beam Profiles      : 0" in design_str
+    assert "N Design Points      : 0" in design_str
 
     comp_1_str = str(comp_1)
     assert "ansys.geometry.core.designer.Component" in comp_1_str
