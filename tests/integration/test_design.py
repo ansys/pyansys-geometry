@@ -295,7 +295,7 @@ def test_named_selections(modeler: Modeler):
         Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
     )
     design.create_named_selection("CircleProfile", beams=[beam_1])
-    assert len(design.named_selections) == 6
+    assert len(design.named_selections) == 5
     assert design.named_selections[0].name == "OnlyCircle"
     assert design.named_selections[1].name == "OnlyPolygon"
     assert design.named_selections[2].name == "CircleAndPolygon"
@@ -307,6 +307,11 @@ def test_named_selections(modeler: Modeler):
     design_points_1 = design.add_design_point("FirstPointSet", point_set_1)
     design.create_named_selection("FirstPointSet", design_points=[design_points_1])
     assert len(design.named_selections) == 6
+    assert design.named_selections[0].name == "OnlyCircle"
+    assert design.named_selections[1].name == "OnlyPolygon"
+    assert design.named_selections[2].name == "CircleAndPolygon"
+    assert design.named_selections[3].name == "OnlyPolygonFaces"
+    assert design.named_selections[4].name == "CircleProfile"
     assert design.named_selections[5].name == "FirstPointSet"
 
 
