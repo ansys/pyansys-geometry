@@ -299,28 +299,6 @@ def test_named_selections(modeler: Modeler):
     assert design.named_selections[4].name == "FirstPointSet"
 
 
-def test_named_selections_beams(modeler: Modeler):
-    """Test for verifying the correct creation of ``NamedSelection`` with beams."""
-
-    # Create your design on the server side
-    design = modeler.create_design("NamedSelectionBeams_Test")
-
-    # Test creating a named selection out of beams
-    circle_profile_1 = design.add_beam_circular_profile(
-        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
-    )
-    beam_1 = design.create_beam(
-        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
-    )
-    ns_beams = design.create_named_selection("CircleProfile", beams=[beam_1])
-    assert len(design.named_selections) == 1
-    assert design.named_selections[0].name == "CircleProfile"
-
-    # Try deleting this named selection
-    design.delete_named_selection(ns_beams)
-    assert len(design.named_selections) == 0
-
-
 def test_faces_edges(modeler: Modeler):
     """Test for verifying the correct creation and
     usage of ``Face`` and ``Edge`` objects."""
@@ -1038,3 +1016,26 @@ def test_design_points(modeler: Modeler):
     assert "ansys.geometry.core.designer.DesignPoint" in design_point_2_str
     assert "  Name                 : SecondPointSet" in design_point_2_str
     assert "  Design Point         : [20. 20. 20.]" in design_point_2_str
+
+
+@pytest.mark.skip(reason="Container fails on beam-related operations. See #203.")
+def test_named_selections_beams(modeler: Modeler):
+    """Test for verifying the correct creation of ``NamedSelection`` with beams."""
+
+    # Create your design on the server side
+    design = modeler.create_design("NamedSelectionBeams_Test")
+
+    # Test creating a named selection out of beams
+    circle_profile_1 = design.add_beam_circular_profile(
+        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
+    )
+    beam_1 = design.create_beam(
+        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
+    )
+    ns_beams = design.create_named_selection("CircleProfile", beams=[beam_1])
+    assert len(design.named_selections) == 1
+    assert design.named_selections[0].name == "CircleProfile"
+
+    # Try deleting this named selection
+    design.delete_named_selection(ns_beams)
+    assert len(design.named_selections) == 0
