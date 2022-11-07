@@ -22,7 +22,7 @@ class DesignPoint:
     points : Point3D
         3D point constituting the design points.
     parent_component : Component
-        Parent component to nest the new beam under within the design assembly.
+        Parent component to nest the new design point under within the design assembly.
     """
 
     def __init__(self, id: str, name: str, point: Point3D, parent_component: "Component"):
@@ -57,7 +57,7 @@ class DesignPoint:
 
     @property
     def parent_component(self) -> Union["Component", None]:
-        """Component node that the beam`` is under."""
+        """Component node that the design point is under."""
         return self._parent_component
 
     def __repr__(self) -> str:
