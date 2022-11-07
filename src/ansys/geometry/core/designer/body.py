@@ -36,6 +36,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
 
     from ansys.geometry.core.designer.component import Component
+    from ansys.geometry.core.designer.design import MidSurfaceOffsetType
 
 
 class Body:
@@ -81,6 +82,8 @@ class Body:
         self._parent_component = parent_component
         self._grpc_client = grpc_client
         self._is_surface = is_surface
+        self._surface_thickness = None
+        self._surface_offset = None
         self._is_alive = True
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
@@ -104,6 +107,24 @@ class Body:
     def is_surface(self) -> bool:
         """Check if the body is a planar body."""
         return self._is_surface
+
+    @property
+    def surface_thickness(self) -> Union[Quantity, None]:
+        """Surface thickness of a surface body.
+
+        Notes
+        -----
+        Only for surface-type bodies which have been assigned a surface_thickness."""
+        return self._surface_thickness if self.is_surface else None
+
+    @property
+    def surface_offset(self) -> Union["MidSurfaceOffsetType", None]:
+        """Surface offset type of a surface body.
+
+        Notes
+        -----
+        Only for surface-type bodies which have been assigned a surface_thickness."""
+        return self._surface_offset if self.is_surface else None
 
     @property
     @protect_grpc
@@ -434,6 +455,10 @@ class Body:
         lines = [f"ansys.geometry.core.designer.Body {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Exists               : {self.is_alive}")
-        lines.append(f"  Surface body         : {self.is_surface}")
         lines.append(f"  Parent component     : {self._parent_component.name}")
+        lines.append(f"  Surface body         : {self.is_surface}")
+        if self.is_surface:
+            lines.append(f"  Surface thickness    : {self.surface_thickness}")
+            lines.append(f"  Surface offset       : {self.surface_offset}")
+
         return "\n".join(lines)

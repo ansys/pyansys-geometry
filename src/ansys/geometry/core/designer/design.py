@@ -60,7 +60,7 @@ class DesignFileFormat(Enum):
     INVALID = "INVALID", None
 
 
-class MidSurfaceOffesetType(Enum):
+class MidSurfaceOffsetType(Enum):
     """Provides mid-surface offset types available."""
 
     MIDDLE = 0
@@ -396,66 +396,83 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     def add_midsurface_thickness(
-        self,
-        thickness: Quantity,
-        bodies: Optional[List[Body]] = None,
-        faces: Optional[List[Face]] = None,
+        self, thickness: Quantity, bodies: Optional[List[Body]] = None
     ) -> None:
-        """Adds a midsurface thickness to a list of bodies or faces.
+        """Adds a mid-surface thickness to a list of bodies.
 
         Parameters
         ----------
         thickness : Quantity
             Thickness to be assigned.
         bodies : Optional[List[Body]], default: None
-            All bodies to include in the midsurface thickness assignment.
-        faces : Optional[List[Face]], default: None
-            All faces to include in the midsurface thickness assignment.
+            All bodies to include in the mid-surface thickness assignment.
+
+        Notes
+        -----
+        Only surface bodies will be eligible for mid-surface thickness assignment.
         """
         # Group all ids together
         ids = []
+        ids_bodies = []
         if bodies:
-            [ids.append(body.id) for body in bodies]
-        if faces:
-            [ids.append(face.id) for face in faces]
+            for body in bodies:
+                if body.is_surface:
+                    ids.append(body.id)
+                    ids_bodies.append(body)
+                else:
+                    self._grpc_client.log.warning(
+                        f"Body {body.name} cannot be assigned a mid-surface thickness since it is not a surface. Ignoring request."  # noqa : E501
+                    )
 
-        # Assign midsurface thickness
+        # Assign mid-surface thickness
         self._commands_stub.AssignMidSurfaceThickness(
             AssignMidSurfaceThicknessRequest(
                 bodiesOrFaces=ids, thickness=thickness.m_as(SERVER_UNIT_LENGTH)
             )
         )
 
+        # Once the assignment has gone fine, store the values
+        for body in ids_bodies:
+            body._surface_thickness = thickness
+
     @protect_grpc
     @check_input_types
     def add_midsurface_offset(
-        self,
-        offset_type: MidSurfaceOffesetType,
-        bodies: Optional[List[Body]] = None,
-        faces: Optional[List[Face]] = None,
+        self, offset_type: MidSurfaceOffsetType, bodies: Optional[List[Body]] = None
     ) -> None:
-        """Adds a midsurface offset type to a list of bodies or faces.
+        """Adds a mid-surface offset type to a list of bodies.
 
         Parameters
         ----------
-        offset_type : MidSurfaceOffesetType
+        offset_type : MidSurfaceOffsetType
             Surface offset to be assigned.
         bodies : Optional[List[Body]], default: None
-            All bodies to include in the midsurface offset assignment.
-        faces : Optional[List[Face]], default: None
-            All faces to include in the midsurface offset assignment.
+            All bodies to include in the mid-surface offset assignment.
+
+        Notes
+        -----
+        Only surface bodies will be eligible for mid-surface offset assignment.
         """
         # Group all ids together
         ids = []
+        ids_bodies = []
         if bodies:
-            [ids.append(body.id) for body in bodies]
-        if faces:
-            [ids.append(face.id) for face in faces]
-
-        # Assign midsurface offset type
+            for body in bodies:
+                if body.is_surface:
+                    ids.append(body.id)
+                    ids_bodies.append(body)
+                else:
+                    self._grpc_client.log.warning(
+                        f"Body {body.name} cannot be assigned a mid-surface offset since it is not a surface. Ignoring request."  # noqa : E501
+                    )
+        # Assign mid-surface offset type
         self._commands_stub.AssignMidSurfaceOffsetType(
-            AssignMidSurfaceOffsetTypeRequest(bodiesOrFaces=ids, offsetType=offset_type)
+            AssignMidSurfaceOffsetTypeRequest(bodiesOrFaces=ids, offsetType=offset_type.value)
         )
+
+        # Once the assignment has gone fine, store the values
+        for body in ids_bodies:
+            body._surface_offset = offset_type
 
     def __repr__(self):
         """String representation of the design."""
