@@ -46,7 +46,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 class MidSurfaceOffsetType(Enum):
-    """Provides mid-surface offset types available."""
+    """Provides an enum holding the possible types of mid-surface offset by the Geometry service"""
 
     MIDDLE = 0
     TOP = 1
