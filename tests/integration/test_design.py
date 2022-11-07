@@ -1112,7 +1112,6 @@ def test_design_points(modeler: Modeler):
     assert "  Design Point         : [20. 20. 20.]" in design_point_2_str
 
 
-@pytest.mark.skip(reason="Container fails on beam-related operations. See #203.")
 def test_named_selections_beams(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection`` with beams."""
 
@@ -1135,7 +1134,6 @@ def test_named_selections_beams(modeler: Modeler):
     assert len(design.named_selections) == 0
 
 
-@pytest.mark.skip(reason="Container fails on DesignPoint-related operations. See #203.")
 def test_named_selections_design_points(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection`` with design points."""
 
