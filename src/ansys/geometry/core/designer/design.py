@@ -29,7 +29,7 @@ from ansys.geometry.core.connection.conversions import plane_to_grpc_plane, poin
 from ansys.geometry.core.designer.beam import Beam, BeamCircularProfile, BeamProfile
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
-from ansys.geometry.core.designer.designpoints import DesignPoints
+from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.selection import NamedSelection
@@ -91,6 +91,7 @@ class Design(Component):
         self._id = new_design.id
 
         self._materials = []
+        self._design_points = []
         self._named_selections = {}
         self._beam_profiles = {}
 
@@ -233,7 +234,7 @@ class Design(Component):
         faces: Optional[List[Face]] = None,
         edges: Optional[List[Edge]] = None,
         beams: Optional[List[Beam]] = None,
-        design_points: Optional[List[DesignPoints]] = None,
+        design_points: Optional[List[DesignPoint]] = None,
     ) -> NamedSelection:
         """Create a named selection on the active Geometry server instance.
 

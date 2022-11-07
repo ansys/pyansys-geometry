@@ -12,7 +12,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
-from ansys.api.geometry.v0.commands_pb2 import CreateBeamBodyLinesRequest
+from ansys.api.geometry.v0.commands_pb2 import CreateBeamBodyLinesRequest, CreateDesignPointsRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.components_pb2 import (
     ComponentIdentifier,
@@ -35,7 +35,7 @@ from ansys.geometry.core.connection.conversions import point3d_to_grpc_point
 from ansys.geometry.core.designer.beam import Beam, BeamProfile
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.coordinatesystem import CoordinateSystem
-from ansys.geometry.core.designer.designpoints import DesignPoints
+from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import Frame, Point3D, UnitVector3D
@@ -77,7 +77,7 @@ class Component:
     _bodies: List[Body]
     _beams: List[Beam]
     _coordinate_systems: List[CoordinateSystem]
-    _design_points: List[DesignPoints]
+    _design_points: List[DesignPoint]
 
     @protect_grpc
     @check_input_types
@@ -133,7 +133,7 @@ class Component:
         return self._beams
 
     @property
-    def design_points(self) -> List[DesignPoints]:
+    def design_points(self) -> List[DesignPoint]:
         """``DesignPoint`` objects inside of the component."""
         return self._design_points
 
@@ -565,10 +565,52 @@ class Component:
             )
             pass
 
+    @protect_grpc
     @check_input_types
-    def add_design_points(self, name: str, points: List[Point3D]) -> DesignPoints:
-        self._design_points.append(DesignPoints(self.id, name, points, self))
-        return self._design_points[-1]
+    def add_design_point(
+        self,
+        name: str,
+        point: Point3D,
+    ) -> DesignPoint:
+        """Represents a 3D point creates a single design point.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the design points.
+        points : Point3D
+           3D point constituting the design point.
+        """
+        return self.add_design_points(name, [point])
+
+    @protect_grpc
+    @check_input_types
+    def add_design_points(
+        self,
+        name: str,
+        points: List[Point3D],
+    ) -> List[DesignPoint]:
+        """Represents a list of 3D points creates a single Design Points.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the design points.
+        points : List[Point3D]
+            List of 3D points constituting the design points.
+        """
+
+        request = CreateDesignPointsRequest(
+            points=[point3d_to_grpc_point(point) for point in points], parent=self.id
+        )
+        response = self._commands_stub.CreateDesignPoints(request)
+        new_design_points = []
+        n_design_points = len(response.ids)
+        for index in range(n_design_points):
+            new_design_points.append((DesignPoint(response.ids[index], name, points[index], self)))
+
+        self._design_points.extend(new_design_points)
+        return self._design_points[-n_design_points:]
 
     @check_input_types
     def search_component(self, id: str) -> Union["Component", None]:

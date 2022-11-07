@@ -8,7 +8,7 @@ from beartype.typing import List, Optional
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.designer.beam import Beam
 from ansys.geometry.core.designer.body import Body
-from ansys.geometry.core.designer.designpoints import DesignPoints
+from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
@@ -51,7 +51,7 @@ class NamedSelection:
         faces: Optional[List[Face]] = None,
         edges: Optional[List[Edge]] = None,
         beams: Optional[List[Beam]] = None,
-        design_points: Optional[List[DesignPoints]] = None,
+        design_points: Optional[List[DesignPoint]] = None,
     ):
         """Constructor method for the ``NamedSelection`` class."""
 
