@@ -1,6 +1,6 @@
 """``DesignPoint`` class module."""
 
-from beartype.typing import TYPE_CHECKING
+from beartype.typing import TYPE_CHECKING, Union
 
 from ansys.geometry.core.math import Point3D
 from ansys.geometry.core.misc import check_type
@@ -53,6 +53,11 @@ class DesignPoint:
     def design_point(self) -> Point3D:
         """List of 3D points for create design points."""
         return self._design_point
+
+    @property
+    def parent_component(self) -> Union["Component", None]:
+        """Component node that the beam`` is under."""
+        return self._parent_component
 
     def __repr__(self) -> str:
         """String representation of the design points."""

@@ -1005,11 +1005,11 @@ def test_design_points(modeler: Modeler):
 
     nested_component = design.add_component("NestedComponent")
 
-    design_point_3 = nested_component.add_design_point("nested", Point3D([7, 77, 777], UNITS.mm))
+    design_point_3 = nested_component.add_design_point("Nested", Point3D([7, 77, 777], UNITS.mm))
 
     assert design_point_3.id is not None
     assert design_point_3.design_point == Point3D([7, 77, 777], UNITS.mm)
-    assert design_point_3._parent_component.id == nested_component.id
+    assert design_point_3.parent_component.id == nested_component.id
     assert len(nested_component.design_points) == 1
     assert nested_component.design_points[0] == design_point_3
 

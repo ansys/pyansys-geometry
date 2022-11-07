@@ -603,7 +603,10 @@ class Component:
         request = CreateDesignPointsRequest(
             points=[point3d_to_grpc_point(point) for point in points], parent=self.id
         )
+
+        self._grpc_client.log.debug(f"Creating design points on {self.id}...")
         response = self._commands_stub.CreateDesignPoints(request)
+        self._grpc_client.log.debug(f"Design points successfully created.")
         new_design_points = []
         n_design_points = len(response.ids)
         for index in range(n_design_points):
