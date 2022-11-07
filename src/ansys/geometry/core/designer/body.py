@@ -130,7 +130,8 @@ class Body:
 
         Notes
         -----
-        Only for surface-type bodies which have been assigned a surface_thickness."""
+        Only for surface-type bodies which have been assigned a surface thickness.
+        """
         return self._surface_thickness if self.is_surface else None
 
     @property
@@ -139,7 +140,8 @@ class Body:
 
         Notes
         -----
-        Only for surface-type bodies which have been assigned a surface_thickness."""
+        Only for surface-type bodies which have been assigned a surface offset.
+        """
         return self._surface_offset if self.is_surface else None
 
     @property
@@ -244,12 +246,12 @@ class Body:
 
         Parameters
         ----------
-        thickness : Quantity
-            Thickness to be assigned.
+        offset_type : MidSurfaceOffsetType
+            Surface offset to be assigned.
 
         Notes
         -----
-        Only surface bodies will be eligible for mid-surface thickness assignment.
+        Only surface bodies will be eligible for mid-surface offset assignment.
         """
         if self.is_surface:
             self._commands_stub.AssignMidSurfaceOffsetType(
