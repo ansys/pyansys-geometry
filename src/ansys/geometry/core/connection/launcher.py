@@ -1,9 +1,8 @@
 """Provides for connecting to Geometry service instances."""
-
-from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, Optional
 
 from ansys.geometry.core.logger import LOG as logger
+from ansys.geometry.core.misc import check_type
 
 try:
     import ansys.platform.instancemanagement as pypim
@@ -47,7 +46,6 @@ def launch_modeler() -> "Modeler":
     raise NotImplementedError("Not yet implemented.")
 
 
-@check_input_types
 def launch_remote_modeler(
     version: Optional[str] = None,
 ) -> "Modeler":
@@ -73,6 +71,9 @@ def launch_remote_modeler(
         Instance of the Geometry service.
     """
     from ansys.geometry.core.modeler import Modeler
+
+    if version:
+        check_type(version, (str))
 
     if not _HAS_PIM:  # pragma: no cover
         raise ModuleNotFoundError(
