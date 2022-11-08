@@ -16,7 +16,7 @@ Install the PyGeometry image
       echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX > GH_TOKEN.txt
 
 #. Authorize Docker to access the repository:
-   
+
    .. code:: bash
 
       GH_USERNAME=<my-github-username>
@@ -73,4 +73,3 @@ If you want to change the defaults, modify environment variables and the
 
             >>> from ansys.geometry.core import Modeler
             >>> modeler = Modeler(host="127.0.0.1", port=50051) 
-      
