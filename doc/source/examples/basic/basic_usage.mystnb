@@ -24,7 +24,7 @@ Start by performing required imports.
 ```{code-cell} ipython3
 from ansys.geometry.core.misc.units import UNITS as u
 from ansys.geometry.core.sketch import Sketch
-from ansys.geometry.core.plotting.plotter import Plotter
+from ansys.geometry.core.plotting import Plotter
 ```
 
 ## Create a sketch

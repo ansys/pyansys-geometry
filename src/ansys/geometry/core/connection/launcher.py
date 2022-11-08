@@ -1,10 +1,9 @@
 """Provides for connecting to Geometry service instances."""
 
 from beartype import beartype as check_input_types
-from beartype.typing import Optional
+from beartype.typing import TYPE_CHECKING, Optional
 
-from ansys.geometry.core import LOG as logger
-from ansys.geometry.core.modeler import Modeler
+from ansys.geometry.core.logger import LOG as logger
 
 try:
     import ansys.platform.instancemanagement as pypim
@@ -15,8 +14,11 @@ except ModuleNotFoundError:  # pragma: no cover
 
 from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
 
+if TYPE_CHECKING:
+    from ansys.geometry.core.modeler import Modeler
 
-def launch_modeler() -> Modeler:
+
+def launch_modeler() -> "Modeler":
     """Start the ``Modeler`` for PyGeometry.
 
     Returns
@@ -48,7 +50,7 @@ def launch_modeler() -> Modeler:
 @check_input_types
 def launch_remote_modeler(
     version: Optional[str] = None,
-) -> Modeler:
+) -> "Modeler":
     """Start the Geometry service remotely using the PIM API.
 
     When calling this method, you must ensure that you are in an
@@ -70,6 +72,8 @@ def launch_remote_modeler(
     ansys.geometry.core.modeler.Modeler
         Instance of the Geometry service.
     """
+    from ansys.geometry.core.modeler import Modeler
+
     if not _HAS_PIM:  # pragma: no cover
         raise ModuleNotFoundError(
             "The package 'ansys-platform-instancemanagement' is required to use this function."
