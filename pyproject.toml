@@ -3,7 +3,6 @@ requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-# Check https://python-poetry.org/docs/pyproject/ for all available sections
 name = "ansys-geometry-core"
 version = "0.2.dev0"
 description = "A python wrapper for Ansys Geometry Service"
