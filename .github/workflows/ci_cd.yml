@@ -177,7 +177,8 @@ jobs:
       - name: Install packages for testing
         run: |
           .\.venv\Scripts\Activate.ps1
-          pip install --upgrade build
+          python -m pip install --upgrade pip
+          pip install --upgrade build wheel
           pip install .[test]
 
       - name: Login to GitHub Container Registry
@@ -248,7 +249,8 @@ jobs:
       - name: Install packages for documentation build
         run: |
           .\.venv\Scripts\Activate.ps1
-          pip install --upgrade build
+          python -m pip install --upgrade pip
+          pip install --upgrade build wheel
           pip install .[docs]
 
       - name: Login to GitHub Container Registry
