@@ -158,6 +158,9 @@ def test_sketch_arc_edge():
     assert sketch.edges[2].start == Point2D([10, 10])
     assert sketch.edges[2].end == Point2D([10, -10])
     assert sketch.edges[2].angle == np.pi
+    assert sketch.edges[2].sector_area.m == pytest.approx(157.07963267948966, rel=1e-7, abs=1e-8)
+    assert sketch.edges[2].length.m == pytest.approx(31.41592653589793, rel=1e-7, abs=1e-8)
+    assert sketch.edges[2].radius.m == 10
 
     arc1_retrieved = sketch.get("Arc1")
     assert len(arc1_retrieved) == 1
@@ -170,6 +173,22 @@ def test_sketch_arc_edge():
     arc3_retrieved = sketch.get("Arc3")
     assert len(arc3_retrieved) == 1
     assert arc3_retrieved[0] == sketch.edges[2]
+
+    # Test the arc errors
+    with pytest.raises(ValueError, match="Start and end points must be different."):
+        sketch.arc(Point2D([10, 10]), Point2D([10, 10]), Point2D([10, 0]), tag="Arc3")
+
+    with pytest.raises(ValueError, match="Center and start points must be different."):
+        sketch.arc(Point2D([10, 10]), Point2D([10, -10]), Point2D([10, 10]), tag="Arc3")
+
+    with pytest.raises(ValueError, match="Center and end points must be different."):
+        sketch.arc(Point2D([10, 10]), Point2D([10, -10]), Point2D([10, -10]), tag="Arc3")
+
+    with pytest.raises(
+        ValueError,
+        match="The start and end points of the arc are not an equidistant from the center point.",
+    ):
+        sketch.arc(Point2D([10, 10]), Point2D([20, -10]), Point2D([10, 0]), tag="Arc3")
 
 
 def test_sketch_triangle_face():
