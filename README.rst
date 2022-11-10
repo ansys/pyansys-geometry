@@ -93,7 +93,7 @@ Then, install PyGeometry with:
 
 .. code:: bash
 
-   poetry run python -m pip install ansys-geometry-core
+   python -m pip install ansys-geometry-core
 
 .. caution::
 
@@ -149,14 +149,14 @@ To install PyGeometry in developer mode, perform these steps:
 
    .. code:: bash
 
-      python -m pip install -U pip poetry tox
+      python -m pip install -U pip tox
 
 
 #. Install the project in editable mode:
 
    .. code:: bash
     
-      poetry run python -m pip install ansys-geometry-core
+      python -m pip install ansys-geometry-core
         
 #. Verify your development installation by running:
 
@@ -255,7 +255,7 @@ the building requirements and then executing the build module:
 
 .. code:: bash
 
-    python -m pip install -U pip poetry 
+    python -m pip install -U pip 
     python -m build
     python -m twine check dist/*
 

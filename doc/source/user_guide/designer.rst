@@ -55,7 +55,7 @@ You can also extrude a face profile by a given distance to create a solid body.
 There are no modifications against the body containing the source face.
 
 .. code:: python
-    
+
     longer_body = design.extrude_face(
         "LongerCircleFace", body.faces[0], Quantity(20, UNITS.mm)
     )

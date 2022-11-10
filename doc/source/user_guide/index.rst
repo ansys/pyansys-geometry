@@ -11,7 +11,7 @@ sketches (2D basic shape elements), and model designs.
 .. toctree::
    :maxdepth: 1
    :hidden:
-   
+
    primitives
    shapes
    designer
@@ -42,7 +42,7 @@ have to also modify this in your ``docker run`` command by changing ``<HOST-PORT
 You start the Geometry service with:
 
 .. code:: python
-    
+
     >>> from ansys.geometry.core import Modeler
     >>> modeler = Modeler()
 
@@ -79,4 +79,3 @@ by initializing the :ref:`Sketch <ref_sketch>` class and using the
     sketch = Sketch(plane)
     sketch.circle(Point2D([1, 1]), 30*UNITS.m)
     sketch.plot()
-

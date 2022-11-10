@@ -35,7 +35,7 @@ Then, install PyGeometry with:
 
    .. code:: bash
 
-      poetry run python -m pip install ansys-geometry-core
+      python -m pip install ansys-geometry-core
 
 .. caution::
 
@@ -63,11 +63,11 @@ You can install the latest release from the `PyGeometry`_ repository on GitHub:
       git clone https://github.com/pyansys/pygeometry
       cd pygeometry
       pip install -e .
-        
+
 You can verify your development installation by running:
 
    .. code:: bash
-        
+
       tox
 
 Install in offline mode

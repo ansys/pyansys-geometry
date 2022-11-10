@@ -29,7 +29,7 @@ edges to use as a reference start point for additional objects.
 
 
 .. code:: python
-    
+
     sketch.segment_to_point(Point2D([3, 3]), "Segment2").segment_to_point(
         Point2D([3, 2]), "Segment3"
     )
@@ -64,7 +64,7 @@ You can also create multiple elements independently and combine them all togethe
 
     sketch.triangle(Point2D([-10, 10]), Point2D([5, 6]), Point2D([-10, -10]), tag="triangle2")
     sketch.plot()
-    
+
 .. jupyter-execute::
     :hide-code:
 
