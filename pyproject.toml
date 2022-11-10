@@ -45,7 +45,7 @@ test = [
     "google-api-python-client==2.65.0",
     "googleapis-common-protos==1.56.4",
     "grpcio==1.50.0",
-    "grpcio-health-checking==1.48.2",
+    "grpcio-health-checking==1.50.0",
     "numpy==1.23.4",
     "Pint==0.20.1",
     "protobuf==3.20.3",
