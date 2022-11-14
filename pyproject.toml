@@ -72,7 +72,7 @@ docs = [
     "sphinx-autodoc-typehints==1.19.5",
     "sphinx-copybutton==0.5",
     "sphinx_design==0.3.0",
-    "sphinx-gallery==0.11.1",
+    "sphinx-gallery==0.7.0",
 ]
 
 [project.urls]
