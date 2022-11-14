@@ -65,13 +65,11 @@ class Arc(SketchEdge):
 
         # Compute the radius of the arc
         self._radius = Quantity(to_start_vector.norm, self._start.base_unit)
-        if not self._radius.m > 0:
+        if not self._radius.m > 0:  # pragma: no cover
             raise ValueError("Point configuration does not yield a positive length arc radius.")
 
         # Compute the angle of the arc (always counter-clockwise at this point)
         self._angle = to_start_vector.get_angle_between(to_end_vector)
-        if self._angle < 0:
-            self._angle = (2 * np.pi) + self._angle
 
         # Check if the clockwise direction is desired... and recompute angle
         self._clockwise = clockwise
