@@ -169,6 +169,9 @@ jobs:
         with:
           python-version: '3.9' # use python3.9, self-hosted has an issue with 3.10
 
+      - name: Set up headless display
+        uses: pyvista/setup-headless-display-action@v1
+
       - name: Create Python venv
         run: |
           python -m venv .venv
@@ -240,6 +243,9 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.9' # use python3.9, self-hosted has an issue with 3.10
+
+      - name: Set up headless display
+        uses: pyvista/setup-headless-display-action@v1
 
       - name: Create Python venv
         run: |
