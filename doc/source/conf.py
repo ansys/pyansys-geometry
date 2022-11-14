@@ -150,7 +150,7 @@ nbsphinx_epilog = """
     `link <https://geometry.docs.pyansys.com/{{ env.docname }}.ipynb>`_.
 
 """
-nbsphinx_prolog = r"""
+nbsphinx_prolog = """
 
 .. admonition:: Download this example!
 
