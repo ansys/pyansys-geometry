@@ -509,3 +509,114 @@ def test_sketch_plane_translation():
 
     assert sketch.plane.origin == Point3D([0.1, 1, 10])
     assert sketch.plane.origin.unit == UNITS.cm
+
+
+def test_validate_arc():
+    """
+    Test for performing Arc rotation-sense validation
+    when using PyVista. Server-side validation will be done with the
+    body tessellation.
+    """
+    # =======================================================
+    # Validate counterclockwise definition of an arc
+    # =======================================================
+    #
+    # Create a Sketch instance
+    sketch = Sketch()
+
+    origin = Point2D([0, 0])
+    arc_center = Point2D([0, 0])
+    arc_start = Point2D([0, 5])
+    arc_end = Point2D([5, 0])
+
+    # Draw the segments
+    sketch.segment(origin, arc_start)
+    sketch.segment(arc_end, origin)
+
+    # Draw the arc (by default, counterclockwise)
+    sketch.arc(arc_start, arc_end, arc_center, clockwise=False)
+
+    # Get the sketch
+    pd = sketch.sketch_polydata()
+    assert len(pd) == 3
+
+    # Get the third element (arc)
+    #
+    # Remember, the arc is counterclockwise. Let's put in
+    # some imagination to interpret the arc below
+    # (arc with straight lines =) )
+    #
+    #                 - S
+    #      Q2       -   |            Q1
+    #             -     |
+    #           -       |
+    #         -         |
+    # -------x---------------------E---------
+    #         -         |         -
+    #           -       |       -
+    #      Q3     -     |     -       Q4
+    #               -   |   -
+    #                 - x -
+    #
+    # We will check that all Q4 points have a negative Y
+    #
+    #
+    for point in pd[2].points:
+        # Ignoring start and end points
+        if np.allclose([0, 5, 0], point):
+            pass
+        elif np.allclose([5, 0, 0], point):
+            pass
+        # Ignoring negative X points - they can be both positive and negative
+        elif point[0] < 0:
+            pass
+        # Check that if X is positive, we only have negative Y values
+        else:  # if point[0] >= 0
+            assert point[1] < 0
+
+    # =======================================================
+    # Validate clockwise definition of an arc
+    # =======================================================
+    #
+    # Create a Sketch instance
+    sketch = Sketch()
+
+    # Draw the segments
+    sketch.segment(origin, arc_start)
+    sketch.segment(arc_end, origin)
+
+    # Draw the arc (in this case, clockwise)
+    sketch.arc(arc_start, arc_end, arc_center, clockwise=True)
+
+    # Get the sketch
+    pd = sketch.sketch_polydata()
+    assert len(pd) == 3
+
+    # Get the third element (arc)
+    #
+    # Remember, the arc is clockwise. Let's put in
+    # some imagination to interpret the arc below
+    # (arc with straight lines =) )
+    #
+    #                   S -
+    #      Q2           |   -         Q1
+    #                   |     -
+    #                   |       -
+    #                   |         -
+    # -----------------------------E---------
+    #                   |
+    #                   |
+    #      Q3           |             Q4
+    #                   |
+    #                   |
+    #
+    # We will check that all Q1 points have a positive Y
+    #
+    #
+    for point in pd[2].points:
+        if np.allclose([0, 5, 0], point):
+            pass
+        elif np.allclose([5, 0, 0], point):
+            pass
+        else:  # all points should be in Q1
+            assert point[1] > 0
