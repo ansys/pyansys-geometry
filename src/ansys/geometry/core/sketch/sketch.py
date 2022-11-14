@@ -1,7 +1,7 @@
 """Provides the ``Sketch`` class."""
 
 from beartype import beartype as check_input_types
-from beartype.typing import Dict, List, Optional, Union
+from beartype.typing import TYPE_CHECKING, Dict, List, Optional, Union
 from pint import Quantity
 
 from ansys.geometry.core.math import ZERO_POINT2D, Plane, Point2D, UnitVector3D, Vector2D, Vector3D
@@ -18,6 +18,9 @@ from ansys.geometry.core.sketch.slot import Slot
 from ansys.geometry.core.sketch.trapezoid import Trapezoid
 from ansys.geometry.core.sketch.triangle import Triangle
 from ansys.geometry.core.typing import Real
+
+if TYPE_CHECKING:
+    from pyvista import PolyData
 
 SketchObject = Union[SketchEdge, SketchFace]
 """Type used to refer to both ``SketchEdge`` and ``SketchFace`` as possible values."""
@@ -715,10 +718,14 @@ class Sketch:
         pl.add_polydata(sketches_polydata, **kwargs)
         pl.show()
 
-    def sketch_polydata(self):
+    def sketch_polydata(self) -> List["PolyData"]:
         """
-        Gets polydata configuration for all
-        objects of the sketch to the scene.
+        Gets polydata configuration for all objects of the sketch to the scene.
+
+        Returns
+        -------
+        List[PolyData]
+            Set of PolyData configuration for all edges and faces in the sketch.
         """
         sketches_polydata = []
         sketches_polydata.extend(
