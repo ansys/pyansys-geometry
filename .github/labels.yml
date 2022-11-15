@@ -30,6 +30,10 @@
   description: Issue/PR assigned with this tag must be given priority over the rest of the backlog
   color: 7A1FCC
 
+- name: SERVER-IMPLEMENTATION
+  description: Issue/PR assigned with this tag must be solved server-side
+  color: 086C8E
+
 - name: testing
   description: Anything related to tests
   color: BFE4D6
