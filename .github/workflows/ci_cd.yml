@@ -38,6 +38,8 @@ jobs:
     steps:
       - name: Documentation style checks
         uses: pyansys/actions/doc-style@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   smoke-tests:
     name: Build and Smoke tests
