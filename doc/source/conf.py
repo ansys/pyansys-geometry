@@ -22,6 +22,10 @@ html_context = {
     "doc_path": "doc/source",
 }
 html_theme_options = {
+    "switcher": {
+        "json_url": "https://raw.githubusercontent.com/pyansys/pygeometry/gh-pages/release/versions.json",  # noqa: E501
+        "version_match": "dev" if version.endswith("dev0") else version,
+    },
     "github_url": "https://github.com/pyansys/pygeometry",
     "show_prev_next": False,
     "show_breadcrumbs": True,
