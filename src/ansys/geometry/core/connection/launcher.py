@@ -13,7 +13,7 @@ except ModuleNotFoundError:  # pragma: no cover
 
 from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
 
 
@@ -72,8 +72,7 @@ def launch_remote_modeler(
     """
     from ansys.geometry.core.modeler import Modeler
 
-    if version:
-        check_type(version, (str))
+    check_type(version, (type(None), str))
 
     if not _HAS_PIM:  # pragma: no cover
         raise ModuleNotFoundError(
