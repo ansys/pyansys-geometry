@@ -203,11 +203,21 @@ jobs:
           docker run --detach --name $env:GEO_CONT_NAME -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
-      - name: Build the documentation
+      - name: Build the documentation (HTML)
         run: |
           .\.venv\Scripts\Activate.ps1
           cd doc
           .\make.bat html
+
+      - name: Build the documentation (PDF)
+        # run: |
+        #   .\.venv\Scripts\Activate.ps1
+        #   cd doc
+        #   .\make.bat pdf
+        run: |
+          cd doc/_build
+          mkdir latex
+          echo "" > dummy_docs.pdf
 
       - name: Upload HTML documentation
         uses: actions/upload-artifact@v3
@@ -216,13 +226,19 @@ jobs:
           path: doc/_build/html
           retention-days: 7
 
+      - name: Upload PDF documentation
+        uses: actions/upload-artifact@v3
+        with:
+          name: documentation-pdf
+          path: doc/_build/latex/*.pdf
+          retention-days: 7
+
       - name: Stop the Geometry service
         if: always()
         run: |
           docker stop $env:GEO_CONT_NAME
           docker logs $env:GEO_CONT_NAME
           docker rm $env:GEO_CONT_NAME
-
 
 # =================================================================================================
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
