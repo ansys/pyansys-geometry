@@ -1,5 +1,6 @@
 """Sphinx documentation configuration file."""
 from datetime import datetime
+import os
 
 from ansys_sphinx_theme import ansys_favicon, pyansys_logo_black
 
@@ -8,7 +9,7 @@ project = "ansys-geometry-core"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc."
 release = version = "0.2.dev0"
-cname = "geometry.docs.pyansys.com"
+cname = os.getenv("DOCUMENTATION_CNAME", default="nocname.com")
 
 # Select desired logo, theme, and declare the html title
 html_logo = pyansys_logo_black
