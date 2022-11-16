@@ -79,6 +79,10 @@ jobs:
           operating-system: ${{ runner.os }}
           python-version: ${{ matrix.python-version }}
 
+# =================================================================================================
+# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+# =================================================================================================
+
   testing:
     name: Testing and coverage
     needs: [smoke-tests]
@@ -218,6 +222,11 @@ jobs:
           docker stop $env:GEO_CONT_NAME
           docker logs $env:GEO_CONT_NAME
           docker rm $env:GEO_CONT_NAME
+
+
+# =================================================================================================
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# =================================================================================================
 
   package:
     name: Package library
