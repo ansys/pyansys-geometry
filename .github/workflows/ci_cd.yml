@@ -266,8 +266,8 @@ jobs:
       - name: Deploy the latest documentation
         uses: pyansys/actions/doc-deploy-dev@main
         with:
-            cname: ${{ env.DOCUMENTATION_CNAME }}
-            token: ${{ secrets.GITHUB_TOKEN }}
+          cname: ${{ env.DOCUMENTATION_CNAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   upload_docs_release:
     name: Upload release documentation
@@ -278,6 +278,6 @@ jobs:
       - name: Deploy the stable documentation
         uses: pyansys/actions/doc-deploy-stable@main
         with:
-            cname: ${{ env.DOCUMENTATION_CNAME }}
-            token: ${{ secrets.GITHUB_TOKEN }}
-            python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          cname: ${{ env.DOCUMENTATION_CNAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
