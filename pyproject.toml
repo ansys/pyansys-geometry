@@ -57,22 +57,22 @@ test = [
     "pytest-cov==4.0.0",
 ]
 docs = [
-    "ansys-sphinx-theme==0.7.0",
+    "ansys-sphinx-theme==0.7.1",
     "ipyvtklink==0.2.3",
     "jupyter_sphinx==0.4.0",
     "jupytext==1.14.1",
     "myst-parser==0.18.1",
-    "nbconvert==7.2.4",
-    "nbsphinx==0.8.9",
+    "nbconvert==7.2.5",
+    "nbsphinx==0.8.10",
     "notebook==6.5.2",
     "numpydoc==1.5.0",
     "panel==0.14.1",
     "Sphinx==5.3.0",
     "sphinx-autoapi==2.0.0",
     "sphinx-autodoc-typehints==1.19.5",
-    "sphinx-copybutton==0.5",
+    "sphinx-copybutton==0.5.1",
     "sphinx_design==0.3.0",
-    "sphinx-gallery==0.11.1",
+    "sphinx-gallery==0.7.0",
 ]
 
 [project.urls]
