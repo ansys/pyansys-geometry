@@ -8,7 +8,7 @@ from ansys.geometry.core.sketch import Sketch
 
 
 def test_body_tessellate(modeler: Modeler):
-    """Test the body tessellation"""
+    """Test the body tessellation."""
     sketch_1 = Sketch()
     sketch_1.box(Point2D([2, 0], UNITS.m), Quantity(4, UNITS.m), Quantity(4, UNITS.m))
     design = modeler.create_design("Design")
@@ -26,7 +26,7 @@ def test_body_tessellate(modeler: Modeler):
     # containing min/max along each axis
     assert blocks_1.bounds == [0.0, 4.0, -2.0, 2.0, 0.0, 1.0]
 
-    # Tessellate the body without merging the individual faces
+    # Tessellate the body merging the individual faces
     mesh_1 = body_1.tessellate(merge=True)
     assert "PolyData" in str(mesh_1)
     # Test number of cells, points and arrays in dataset
@@ -42,6 +42,8 @@ def test_body_tessellate(modeler: Modeler):
     # Create a component
     comp_2 = design.add_component("Component_2")
     body_2 = comp_2.extrude_sketch(name="Body_2", sketch=sketch_2, distance=distance)
+
+    # Tessellate the body without merging the individual faces
     blocks_2 = body_2.tessellate()
     assert "MultiBlock" in str(blocks_2)
     assert blocks_2.n_blocks == 3
@@ -52,7 +54,7 @@ def test_body_tessellate(modeler: Modeler):
     )
     assert (blocks_2.center == ([0.03, 0.03, 0.015])).all()
 
-    # Tessellate the body without merging the individual faces
+    # Tessellate the body merging the individual faces
     mesh_2 = body_2.tessellate(merge=True)
     assert "PolyData" in str(mesh_2)
     assert mesh_2.n_cells == 72
@@ -61,7 +63,7 @@ def test_body_tessellate(modeler: Modeler):
 
 
 def test_component_tessellate(modeler: Modeler):
-    """Test the component tessellation"""
+    """Test the component tessellation."""
 
     # Create a sketch
     sketch_1 = Sketch()
@@ -74,7 +76,7 @@ def test_component_tessellate(modeler: Modeler):
     distance = Quantity(10, UNITS.m)
     comp.extrude_sketch("Body", sketch=sketch_1, distance=distance)
 
-    # Create another sketch in different plane
+    # Create another sketch in a different plane
     sketch_2 = Sketch(Plane([0, 0, 10]))
     sketch_2.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(5, UNITS.m))
     sketch_2.circle(Point2D([0, 0], UNITS.m), Quantity(25, UNITS.m))
@@ -91,7 +93,8 @@ def test_component_tessellate(modeler: Modeler):
         rel=1e-6,
         abs=1e-8,
     )
-    # Tessellate the component by merging it to single dataset.
+
+    # Tessellate the component by merging it to a single dataset.
     mesh = comp.tessellate(merge_component=True)
     assert "PolyData" in str(mesh)
     assert mesh.n_cells == 3280
