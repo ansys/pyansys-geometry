@@ -1,48 +1,78 @@
 """Test tessellation and plotting."""
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.math import Plane, Point2D
-from ansys.geometry.core.misc.units import UNITS
+from ansys.geometry.core.misc.units import UNITS, Quantity
 from ansys.geometry.core.sketch import Sketch
 
 
 def test_body_tessellate(modeler: Modeler):
     """Test the body tessellation"""
-    sketch = Sketch()
-    sketch.box(Point2D([2, 0]), 4, 4)
-    design = modeler.create_design("Design1")
-    my_comp = design.add_component("Component1")
-    body = my_comp.extrude_sketch("Sketch1", sketch, 1 * UNITS.m)
+    sketch_1 = Sketch()
+    sketch_1.box(Point2D([2, 0], UNITS.m), Quantity(4, UNITS.m), Quantity(4, UNITS.m))
+    design = modeler.create_design("Design")
+    comp_1 = design.add_component("Component_1")
+    body_1 = comp_1.extrude_sketch("Sketch_1", sketch_1, Quantity(1, UNITS.m))
 
     # Tessellate the body without merging the individual faces
-    blocks = body.tessellate()
-    assert "MultiBlock" in str(blocks)
-    assert blocks.n_blocks == 6
-    assert (blocks.center == ([2, 0, 0.5])).all()
+    blocks_1 = body_1.tessellate()
+    assert "MultiBlock" in str(blocks_1)
+    # Number of blocks will be number of faces
+    assert blocks_1.n_blocks == 6
+    assert (blocks_1.center == ([2, 0, 0.5])).all()
 
     # Tessellate the body without merging the individual faces
-    mesh = body.tessellate(merge=True)
-    assert "PolyData" in str(mesh)
-    assert mesh.n_cells == 12
-    assert mesh.n_points == 24
-    assert mesh.n_arrays == 0
+    mesh_1 = body_1.tessellate(merge=True)
+    assert "PolyData" in str(mesh_1)
+    # Test number of cells, points and arrays in dataset
+    assert mesh_1.n_cells == 12
+    assert mesh_1.n_points == 24
+    assert mesh_1.n_arrays == 0
+
+    sketch_2 = Sketch()
+    sketch_2.circle(Point2D([30, 30], UNITS.mm), Quantity(10, UNITS.mm))
+    distance = Quantity(30, UNITS.mm)
+
+    # Create a component
+    comp_2 = design.add_component("Component_2")
+    body_2 = comp_2.extrude_sketch(name="Body_2", sketch=sketch_2, distance=distance)
+    blocks_2 = body_2.tessellate()
+    assert "MultiBlock" in str(blocks_2)
+    assert blocks_2.n_blocks == 3
+    assert (blocks_2.center == ([0.03, 0.03, 0.015])).all()
+
+    # Tessellate the body without merging the individual faces
+    mesh_2 = body_2.tessellate(merge=True)
+    assert "PolyData" in str(mesh_2)
+    assert mesh_2.n_cells == 72
+    assert mesh_2.n_points == 76
+    assert mesh_2.n_arrays == 0
 
 
 def test_component_tessellate(modeler: Modeler):
     """Test the component tessellation"""
     sketch_1 = Sketch()
-    sketch_1.box(Point2D([10, 10]), width=10, height=5)
-    sketch_1.circle(Point2D([0, 0]), radius=25 * UNITS.m)
+    sketch_1.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(5, UNITS.m))
+    sketch_1.circle(Point2D([0, 0], UNITS.m), Quantity(25, UNITS.m))
     design = modeler.create_design("Design")
     comp = design.add_component("Component")
-    comp.extrude_sketch("Body", sketch=sketch_1, distance=10 * UNITS.m)
+    distance = Quantity(10, UNITS.m)
+    comp.extrude_sketch("Body", sketch=sketch_1, distance=distance)
     sketch_2 = Sketch(Plane([0, 0, 10]))
-    sketch_2.box(Point2D([10, 10]), width=10, height=5)
-    sketch_2.circle(Point2D([0, 0]), radius=25 * UNITS.m)
-    comp.extrude_sketch("Body", sketch=sketch_2, distance=10 * UNITS.m)
+    sketch_2.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(5, UNITS.m))
+    sketch_2.circle(Point2D([0, 0], UNITS.m), Quantity(25, UNITS.m))
+    comp.extrude_sketch("Body", sketch=sketch_2, distance=distance)
+
+    # Tessellate the component by merging all the faces of each individual body
+    # and creates a single dataset
     dataset = comp.tessellate(merge_bodies=True)
     assert "MultiBlock" in str(dataset)
     assert dataset.n_blocks == 1
+    assert (dataset.center == ([0.0, 0.0, 10.0])).all()
+
+    # Tessellate the component by merging it to single dataset.
     mesh = comp.tessellate(merge_component=True)
+    assert "PolyData" in str(mesh)
     assert mesh.n_cells == 3280
+    assert mesh.n_faces == 3280
     assert mesh.n_arrays == 0
     assert mesh.n_points == 3300
