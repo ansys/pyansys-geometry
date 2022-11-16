@@ -158,6 +158,9 @@ def test_sketch_arc_edge():
     assert sketch.edges[2].start == Point2D([10, 10])
     assert sketch.edges[2].end == Point2D([10, -10])
     assert sketch.edges[2].angle == np.pi
+    assert sketch.edges[2].sector_area.m == pytest.approx(157.07963267948966, rel=1e-7, abs=1e-8)
+    assert sketch.edges[2].length.m == pytest.approx(31.41592653589793, rel=1e-7, abs=1e-8)
+    assert sketch.edges[2].radius.m == 10
 
     arc1_retrieved = sketch.get("Arc1")
     assert len(arc1_retrieved) == 1
