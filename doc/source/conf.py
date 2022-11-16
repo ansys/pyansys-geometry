@@ -8,6 +8,7 @@ project = "ansys-geometry-core"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc."
 release = version = "0.2.dev0"
+cname = "geometry.docs.pyansys.com"
 
 # Select desired logo, theme, and declare the html title
 html_logo = pyansys_logo_black
@@ -23,7 +24,7 @@ html_context = {
 }
 html_theme_options = {
     "switcher": {
-        "json_url": "https://raw.githubusercontent.com/pyansys/pygeometry/gh-pages/release/versions.json",  # noqa: E501
+        "json_url": f"https://{cname}/release/versions.json",
         "version_match": "dev" if version.endswith("dev0") else version,
     },
     "github_url": "https://github.com/pyansys/pygeometry",
