@@ -18,9 +18,9 @@ def test_body_tessellate(modeler: Modeler):
     # Tessellate the body without merging the individual faces
     blocks_1 = body_1.tessellate()
     assert "MultiBlock" in str(blocks_1)
-    # Number of blocks will be number of faces
+    # Number of blocks will be the number of faces
     assert blocks_1.n_blocks == 6
-    # test the center of bounding box
+    # Test the center of the bounding box
     assert (blocks_1.center == ([2, 0, 0.5])).all()
     # Test the values of blocks which are the length 6 tuple of floats
     # containing min/max along each axis
@@ -37,11 +37,10 @@ def test_body_tessellate(modeler: Modeler):
 
     sketch_2 = Sketch()
     sketch_2.circle(Point2D([30, 30], UNITS.mm), Quantity(10, UNITS.mm))
-    distance = Quantity(30, UNITS.mm)
 
     # Create a component
     comp_2 = design.add_component("Component_2")
-    body_2 = comp_2.extrude_sketch(name="Body_2", sketch=sketch_2, distance=distance)
+    body_2 = comp_2.extrude_sketch(name="Body_2", sketch=sketch_2, distance=Quantity(30, UNITS.mm))
 
     # Tessellate the body without merging the individual faces
     blocks_2 = body_2.tessellate()
