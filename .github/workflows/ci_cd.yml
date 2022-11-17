@@ -13,6 +13,8 @@ env:
   PACKAGE_NAME: 'ansys-geometry-core'
   # TODO : PIP_EXTRA_INDEX_URL should be deleted once the private dependencies are removed
   PIP_EXTRA_INDEX_URL: 'https://${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/'
+  PACKAGE_NAMESPACE: 'ansys.geometry.core'
+  DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
   ANSRV_GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest
   ANSRV_GEO_PORT: 700
   GEO_CONT_NAME: ans_geo
@@ -212,14 +214,14 @@ jobs:
       - name: Upload integration test logs
         uses: actions/upload-artifact@v3
         with:
-          name: Integration-Test-Logs
+          name: integration-test-logs
           path: tests/integration/logs
           retention-days: 7  
 
       - name: Upload Coverage Results
         uses: actions/upload-artifact@v3
         with:
-          name: HTML-Coverage
+          name: coverage-html
           path: .cov/html
           retention-days: 7
 
@@ -277,17 +279,35 @@ jobs:
           docker run --detach --name $env:GEO_CONT_NAME -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
-      - name: Build the documentation
+      - name: Build the documentation (HTML)
         run: |
           .\.venv\Scripts\Activate.ps1
           cd doc
           .\make.bat html
 
+      - name: Build the documentation (PDF)
+        # run: |
+        #   .\.venv\Scripts\Activate.ps1
+        #   cd doc
+        #   .\make.bat pdf
+        run: |
+          cd doc/_build
+          mkdir latex
+          cd latex
+          echo "" > dummy_docs.pdf
+
       - name: Upload HTML documentation
         uses: actions/upload-artifact@v3
         with:
-          name: HTML-Documentation
+          name: documentation-html
           path: doc/_build/html
+          retention-days: 7
+
+      - name: Upload PDF documentation
+        uses: actions/upload-artifact@v3
+        with:
+          name: documentation-pdf
+          path: doc/_build/latex/*.pdf
           retention-days: 7
 
       - name: Stop the geometry service
@@ -378,44 +398,27 @@ jobs:
             ./**/*.tar.gz
             ./**/*.zip
 
-  upload_docs_release:
-    name: Upload documentation
-    if: (github.event_name == 'push' && contains(github.ref, 'refs/tags')) || (github.ref == 'refs/heads/main')
+  upload_docs_dev:
+    name: Upload dev documentation
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs: [package]
     steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/download-artifact@v3
+      - name: Deploy the latest documentation
+        uses: pyansys/actions/doc-deploy-dev@v1
         with:
-          name: HTML-Documentation
-          path: HTML-Documentation
+          cname: ${{ env.DOCUMENTATION_CNAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get Bot Application Token
-        id: get_workflow_token
-        uses: peter-murray/workflow-application-token-action@v2
+  upload_docs_release:
+    name: Upload release documentation
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
+    runs-on: ubuntu-latest
+    needs: [release]
+    steps:
+      - name: Deploy the stable documentation
+        uses: pyansys/actions/doc-deploy-stable@v1
         with:
-          application_id: ${{ secrets.BOT_APPLICATION_ID }}
-          application_private_key: ${{ secrets.BOT_APPLICATION_PRIVATE_KEY }}
-
-      - name: Deploy documentation to pygeometry-dev-docs repository
-        if: github.ref == 'refs/heads/main'
-        uses: JamesIves/github-pages-deploy-action@v4.4.1
-        with:
-          repository-name: pyansys/pygeometry-dev-docs
-          token: ${{ steps.get_workflow_token.outputs.token }}
-          branch: gh-pages
-          folder: HTML-Documentation
-          clean: true
-          single-commit: true
-
-      - name: Deploy documentation to pygeometry-docs repository
-        if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-        uses: JamesIves/github-pages-deploy-action@v4.4.1
-        with:
-          repository-name: pyansys/pygeometry-docs
-          token: ${{ steps.get_workflow_token.outputs.token }}
-          branch: gh-pages
-          folder: HTML-Documentation
-          clean: true
-          single-commit: true
+          cname: ${{ env.DOCUMENTATION_CNAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
