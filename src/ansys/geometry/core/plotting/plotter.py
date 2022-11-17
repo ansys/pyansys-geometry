@@ -181,52 +181,38 @@ class Plotter:
 
         self.add_polydata(sketch.sketch_polydata(), **kwargs)
 
-    def add_body(self, body: Body, merge: Optional[bool] = False, **kwargs: Optional[dict]) -> None:
+    def add_body(self, body: Body, **kwargs: Optional[dict]) -> None:
         """Add a body to the scene.
 
         Parameters
         ----------
         body : ansys.geometry.core.designer.Body
             Body to add.
-        merge : bool, default: False
-            Whether to merge the body into a single mesh. If ``True``, the
-            individual faces of the tessellation are merged. This
-            preserves the number of triangles and only merges the topology.
         **kwargs : dict, default: None
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
         kwargs.setdefault("smooth_shading", True)
-        self.scene.add_mesh(body.tessellate(merge=merge), **kwargs)
+        self.scene.add_mesh(body.tessellate(), **kwargs)
 
-    def add_component(
-        self,
-        component: Component,
-        merge_component: bool = False,
-        merge_bodies: bool = False,
-        **kwargs
-    ) -> None:
+    def add_component(self, component: Component, merge: bool = False, **kwargs) -> None:
         """Add a component to the scene.
 
         Parameters
         ----------
         component : ansys.geometry.core.designer.Component
             Component to add.
-        merge_component : bool, default: False
-            Whether to merge the component into a single dataset. When
-            ``True``, all the individual bodies are effectively combined
-            into a single dataset without any hierarchy.
-        merge_bodies : bool, default: False
-            Whether to merge each body into a single dataset. When ``True``,
-            all the faces of each individual body are effectively combineed
-            into a single dataset without.
+        merge : bool, default: False
+            Whether to merge the bodies and child components into a single dataset.
+            If ``True``, all the ~pyvista.PolyData from each body and component are
+            merged into a single dataset as a single ~pyvista.PolyData.
         **kwargs : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
         """
-        dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
+        dataset = component.tessellate(merge=merge)
         kwargs.setdefault("smooth_shading", True)
-        self.scene.add_mesh(dataset, **kwargs)
+        self.add_polydata(dataset, **kwargs)
 
     def add_polydata(self, polydata_entries: List[pv.PolyData], **kwargs) -> None:
         """Add sketches to the scene from PyVista polydata.
@@ -281,11 +267,14 @@ class Plotter:
         if show_plane:
             # self.scene.bounds
             plane = pv.Plane(i_size=sfac * 1.3, j_size=sfac * 1.3)
-            self.scene.add_mesh(plane, color="white", show_edges=True, opacity=0.1)
+            plane_actor = self.scene.add_mesh(plane, color="white", show_edges=True, opacity=0.1)
+            plane_actor.pickable = False
 
         # Conditionally set the Jupyter backend as not all users will be within
         # a notebook environment to avoid a pyvista warning
         if self.scene.notebook and jupyter_backend is None:
             jupyter_backend = "panel"
+
+        self.scene.enable_mesh_picking(left_clicking=True, style="surface", color="red")
 
         self.scene.show(jupyter_backend=jupyter_backend, **kwargs)

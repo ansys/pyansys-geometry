@@ -24,6 +24,7 @@ from ansys.api.geometry.v0.models_pb2 import Line
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
+import pyvista as pv
 
 from ansys.geometry.core.connection import (
     GrpcClient,
@@ -42,7 +43,7 @@ from ansys.geometry.core.misc import SERVER_UNIT_LENGTH, Distance, check_pint_un
 from ansys.geometry.core.sketch import Sketch
 
 if TYPE_CHECKING:  # pragma: no cover
-    from pyvista import MultiBlock, PolyData
+    from pyvista import PolyData
 
 
 @unique
@@ -633,25 +634,19 @@ class Component:
         # Kill itself
         self._is_alive = False
 
-    def tessellate(
-        self, merge_component: bool = False, merge_bodies: bool = False
-    ) -> Union["PolyData", "MultiBlock"]:
+    def tessellate(self, merge: bool = False) -> List["PolyData"]:
         """Tessellate this component.
 
         Parameters
         ----------
-        merge_component : bool, default: False
-            Whether to merge this component into a single dataset. If ``True``,
-            all the individual bodies are effectively combined into a single
-            dataset without any hierarchy.
-        merge_bodies : bool, default: False
-            Whether to merge each body into a single dataset. If ``True``,
-            all the faces of each individual body are effectively
-            merged into a single dataset without separating faces.
+        merge : bool, default: False
+            Whether to merge the bodies and child components into a single dataset.
+            If ``True``, all the ~pyvista.PolyData from each body and component are
+            merged into a single dataset as a single ~pyvista.PolyData.
 
         Returns
         -------
-        ~pyvista.PolyData, ~pyvista.MultiBlock
+        ~pyvista.PolyData
             Merged :class:`pyvista.PolyData` if ``merge_component=True`` or a
             composite dataset.
 
@@ -687,12 +682,11 @@ class Component:
           Z Bounds:     0.000, 20.000
 
         """
-        import pyvista as pv
 
-        datasets = []
+        bodies_and_components_polydata = []
 
         def get_tessellation(body: Body):
-            datasets.append(body.tessellate(merge=merge_bodies))
+            bodies_and_components_polydata.append(body.tessellate())
 
         # Tessellate the bodies in this component
         threads = []
@@ -701,39 +695,31 @@ class Component:
             thread.start()
             threads.append(thread)
         [thread.join() for thread in threads]
-        blocks_list = [pv.MultiBlock(datasets)]
 
         # Now, go recursively inside its subcomponents (with no arguments) and
         # merge the PolyData obtained into our blocks
         for comp in self._components:
             if not comp.is_alive:
                 continue
-            blocks_list.append(comp.tessellate(merge_bodies=merge_bodies))
+            bodies_and_components_polydata.extend(comp.tessellate(merge=merge))
 
-        # Transform the list of MultiBlock objects into a single MultiBlock
-        blocks = pv.MultiBlock(blocks_list)
-
-        if merge_component:
+        if merge:
+            # Transform the list of objects into a single MultiBlock
+            blocks = pv.MultiBlock(bodies_and_components_polydata)
             ugrid = blocks.combine()
             # Convert to polydata as it's slightly faster than extract surface
-            return pv.PolyData(ugrid.points, ugrid.cells, n_faces=ugrid.n_cells)
-        return blocks
+            return [pv.PolyData(ugrid.points, ugrid.cells, n_faces=ugrid.n_cells)]
+        return bodies_and_components_polydata
 
-    def plot(
-        self, merge_component: bool = False, merge_bodies: bool = False, **kwargs: Optional[dict]
-    ) -> None:
+    def plot(self, merge: bool = False, **kwargs: Optional[dict]) -> None:
         """Plot this component.
 
         Parameters
         ----------
-        merge_component : bool, default: False
-            Whether to merge this component into a single dataset. When ``True``,
-            all the individual bodies are effectively merged into a single
-            dataset without any hierarchy.
-        merge_bodies : bool, default: False
-            Whether to merge each body into a single dataset. When ``True``,
-            all the faces of each individual body are effectively merged
-            into a single dataset without separating faces.
+        merge : bool, default: False
+            Whether to merge the bodies and child components into a single dataset.
+            If ``True``, all the ~pyvista.PolyData from each body and component are
+            merged into a single dataset as a single ~pyvista.PolyData.
         **kwargs : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
@@ -777,7 +763,7 @@ class Component:
         from ansys.geometry.core.plotting import Plotter
 
         pl = Plotter()
-        pl.add_component(self, merge_bodies=merge_bodies, merge_component=merge_component, **kwargs)
+        pl.add_component(self, merge=merge, **kwargs)
         pl.show()
 
     def __repr__(self) -> str:
