@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys code style checks
-        uses: pyansys/actions/code-style@main
+        uses: pyansys/actions/code-style@v1
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Documentation style checks
-        uses: pyansys/actions/doc-style@main
+        uses: pyansys/actions/doc-style@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -53,7 +53,7 @@ jobs:
 
     steps:
       - name: Build wheelhouse and perform smoke test
-        uses: pyansys/actions/build-wheelhouse@main
+        uses: pyansys/actions/build-wheelhouse@v1
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           library-namespace: ${{ env.PACKAGE_NAMESPACE }}
@@ -72,7 +72,7 @@ jobs:
 
     steps:
       - name: Build wheelhouse and perform smoke test
-        uses: pyansys/actions/build-wheelhouse@main
+        uses: pyansys/actions/build-wheelhouse@v1
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           library-namespace: ${{ env.PACKAGE_NAMESPACE }}
@@ -250,7 +250,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Build library source and wheel artifacts
-        uses: pyansys/actions/build-library@main
+        uses: pyansys/actions/build-library@v1
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -262,14 +262,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Release to the private PyPI repository
-        uses: pyansys/actions/release-pypi-private@main
+        uses: pyansys/actions/release-pypi-private@v1
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           twine-username: "__token__"
           twine-token: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
 
       - name: Release to GitHub
-        uses: pyansys/actions/release-github@main
+        uses: pyansys/actions/release-github@v1
         with:
           library-name: ${{ env.PACKAGE_NAME }}
 
@@ -280,7 +280,7 @@ jobs:
     needs: [package]
     steps:
       - name: Deploy the latest documentation
-        uses: pyansys/actions/doc-deploy-dev@main
+        uses: pyansys/actions/doc-deploy-dev@v1
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -292,7 +292,7 @@ jobs:
     needs: [release]
     steps:
       - name: Deploy the stable documentation
-        uses: pyansys/actions/doc-deploy-stable@main
+        uses: pyansys/actions/doc-deploy-stable@v1
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
