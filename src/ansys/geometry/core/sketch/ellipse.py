@@ -6,9 +6,8 @@ import numpy as np
 from pint import Quantity
 import pyvista as pv
 from scipy.integrate import quad
-from scipy.spatial.transform import Rotation as spatial_rotation
 
-from ansys.geometry.core.math import Matrix33, Matrix44, Point2D
+from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
@@ -140,40 +139,9 @@ class Ellipse(SketchFace):
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
         """
-        rotation = Matrix33(
-            spatial_rotation.from_euler(
-                "xyz", [0, 0, self._angle_offset.value.m_as(UNIT_ANGLE)], degrees=False
-            ).as_matrix()
+        ellipse = pv.Ellipse(
+            self.semi_major_axis.m_as(UNIT_LENGTH), self.semi_minor_axis.m_as(UNIT_LENGTH)
         )
-
-        transformation_matrix = Matrix44(
-            [
-                [
-                    rotation[0, 0],
-                    rotation[0, 1],
-                    rotation[0, 2],
-                    self.center.x.m_as(UNIT_LENGTH),
-                ],
-                [
-                    rotation[1, 0],
-                    rotation[1, 1],
-                    rotation[1, 2],
-                    self.center.y.m_as(UNIT_LENGTH),
-                ],
-                [
-                    rotation[2, 0],
-                    rotation[2, 1],
-                    rotation[2, 2],
-                    0,
-                ],
-                [0, 0, 0, 1],
-            ]
+        return ellipse.translate(
+            [self.center.x.m_as(UNIT_LENGTH), self.center.y.m_as(UNIT_LENGTH), 0], inplace=True
         )
-
-        # TODO: Replace with core pyvista ellipse implementation when released
-        points = np.zeros((100, 3))
-        theta = np.linspace(0.0, 2.0 * np.pi, 100)
-        points[:, 0] = self.semi_major_axis.m_as(UNIT_LENGTH) * np.cos(theta)
-        points[:, 1] = self.semi_minor_axis.m_as(UNIT_LENGTH) * np.sin(theta)
-        cells = np.array([np.append(np.array([100]), np.arange(100))])
-        return pv.wrap(pv.PolyData(points, cells)).transform(transformation_matrix)
