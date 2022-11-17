@@ -40,7 +40,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-test = [
+tests = [
     "beartype==0.11.0",
     "google-api-python-client==2.66.0",
     "googleapis-common-protos==1.57.0",
@@ -78,7 +78,6 @@ docs = [
 [project.urls]
 Source = "https://github.com/pyansys/pygeometry"
 Documentation = "https://geometry.docs.pyansys.com"
-Dev-Documentation = "https://dev.geometry.docs.pyansys.com"
 
 
 [tool.flit.module]
