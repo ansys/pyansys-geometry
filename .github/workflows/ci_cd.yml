@@ -217,6 +217,7 @@ jobs:
         run: |
           cd doc/_build
           mkdir latex
+          cd latex
           echo "" > dummy_docs.pdf
 
       - name: Upload HTML documentation
