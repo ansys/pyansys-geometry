@@ -161,49 +161,102 @@ def test_visualization_polydata():
         rel=1e-6,
         abs=1e-8,
     )
-    # assert (slot.visualization_polydata.center == [2.0, 3.0, 0.0]).all()
+    assert slot.visualization_polydata.center == ([2.0, 3.0, 0.0])
     assert slot.visualization_polydata.n_faces == 6
     assert slot.visualization_polydata.n_cells == 6
     assert slot.visualization_polydata.n_points == 402
     assert slot.visualization_polydata.n_open_edges == 0
 
     segment = Segment(Point2D([3, 2]), Point2D([2, 0]))
+    assert segment.visualization_polydata.center == ([2.5, 1.0, 0.0])
+    assert segment.visualization_polydata.bounds == pytest.approx(
+        [2.0, 3.0, 0.0, 2.0, 0.0, 0.0],
+        rel=1e-6,
+        abs=1e-8,
+    )
     assert segment.visualization_polydata.n_faces == 1
     assert segment.visualization_polydata.n_cells == 1
     assert segment.visualization_polydata.n_points == 2
     assert segment.visualization_polydata.n_open_edges == 0
 
     polygon = Polygon(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+    assert polygon.visualization_polydata.center == pytest.approx(
+        ([0.01095491, 0.0099999998, 0.0]),
+        rel=1e-6,
+        abs=1e-8,
+    )
+    assert polygon.visualization_polydata.bounds == pytest.approx(
+        [
+            0.0019098299089819193,
+            0.019999999552965164,
+            0.0004894344601780176,
+            0.01951056532561779,
+            0.0,
+            0.0,
+        ],
+        rel=1e-6,
+        abs=1e-8,
+    )
     assert polygon.visualization_polydata.n_faces == 2
     assert polygon.visualization_polydata.n_cells == 2
     assert polygon.visualization_polydata.n_points == 5
     assert polygon.visualization_polydata.n_open_edges == 5
 
     arc = Arc(Point2D([10, 0]), Point2D([10, 10]), Point2D([10, -10]))
+    assert arc.visualization_polydata.center == ([5.0, 0.0, 0.0])
+    assert arc.visualization_polydata.bounds == pytest.approx(
+        [0.0, 10.0, -10.0, 10.0, 0.0, 0.0],
+        rel=1e-6,
+        abs=1e-8,
+    )
     assert arc.visualization_polydata.n_faces == 2
     assert arc.visualization_polydata.n_cells == 2
     assert arc.visualization_polydata.n_points == 202
     assert arc.visualization_polydata.n_open_edges == 0
 
     triangle = Triangle(Point2D([10, 10]), Point2D([2, 1]), Point2D([10, -10]))
+    assert triangle.visualization_polydata.center == ([6.0, 0.0, 0.0])
+    assert triangle.visualization_polydata.bounds == pytest.approx(
+        [2.0, 10.0, -10.0, 10.0, 0.0, 0.0],
+        rel=1e-6,
+        abs=1e-8,
+    )
     assert triangle.visualization_polydata.n_faces == 1
     assert triangle.visualization_polydata.n_cells == 1
     assert triangle.visualization_polydata.n_points == 3
     assert triangle.visualization_polydata.n_open_edges == 3
 
     trapezoid = Trapezoid(10, 8, np.pi / 4, np.pi / 8, Point2D([10, -10]))
+    assert trapezoid.visualization_polydata.center == ([5.34314575050762, -10.0, 0.0])
+    assert trapezoid.visualization_polydata.bounds == pytest.approx(
+        [-4.313708498984759, 15.0, -14.0, -6.0, 0.0, 0.0],
+        rel=1e-6,
+        abs=1e-8,
+    )
     assert trapezoid.visualization_polydata.n_faces == 1
     assert trapezoid.visualization_polydata.n_cells == 1
     assert trapezoid.visualization_polydata.n_points == 4
     assert trapezoid.visualization_polydata.n_open_edges == 4
 
     circle = Circle(Point2D([10, -10], UNIT_LENGTH), Quantity(1, UNIT_LENGTH))
+    assert circle.visualization_polydata.center == ([10.000251728808408, -10.0, 0.0])
+    assert circle.visualization_polydata.bounds == pytest.approx(
+        [9.000503457616816, 11.0, -10.999874127673875, -9.000125872326125, 0.0, 0.0],
+        rel=1e-6,
+        abs=1e-8,
+    )
     assert circle.visualization_polydata.n_faces == 1
     assert circle.visualization_polydata.n_cells == 1
     assert circle.visualization_polydata.n_points == 100
     assert circle.visualization_polydata.n_open_edges == 100
 
     ellipse = Ellipse(Point2D([0, 0], UNITS.m), Quantity(1, UNITS.m), Quantity(1, UNITS.m))
+    assert ellipse.visualization_polydata.center == ([0.0002517288084074587, 0.0, 0.0])
+    assert ellipse.visualization_polydata.bounds == pytest.approx(
+        [-0.9994965423831851, 1.0, -0.9998741276738751, 0.9998741276738751, 0.0, 0.0],
+        rel=1e-6,
+        abs=1e-8,
+    )
     assert ellipse.visualization_polydata.n_faces == 1
     assert ellipse.visualization_polydata.n_cells == 1
     assert ellipse.visualization_polydata.n_points == 100
@@ -213,6 +266,12 @@ def test_visualization_polydata():
         Point2D([3, 1], unit=UNITS.meter),
         Distance(4, unit=UNITS.meter),
         Distance(2, unit=UNITS.meter),
+    )
+    assert box.visualization_polydata.center == ([3.0, 1.0, 0.0])
+    assert box.visualization_polydata.bounds == pytest.approx(
+        [0.0, 10.0, -10.0, 10.0, 0.0, 0.0],
+        rel=1e-6,
+        abs=1e-8,
     )
     assert box.visualization_polydata.n_faces == 1
     assert box.visualization_polydata.n_cells == 1

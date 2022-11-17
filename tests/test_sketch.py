@@ -446,6 +446,7 @@ def test_slot_instance():
     assert slot.center == center
     assert slot.width == Quantity(4, UNIT_LENGTH)
     assert slot.height == Quantity(2, UNIT_LENGTH)
+
     with pytest.raises(ValueError, match="Height must be a real positive value."):
         Slot(center, width, Quantity(-4, UNIT_LENGTH))
 
@@ -472,6 +473,13 @@ def test_box_instance():
     assert box.area.units == UNITS.m * UNITS.m
     assert box.perimeter.m == 12
     assert box.perimeter.units == UNITS.m
+    assert box.center == center
+
+    with pytest.raises(ValueError, match="Width must be a real positive value."):
+        Box(center, Quantity(-4, UNIT_LENGTH), height)
+
+    with pytest.raises(ValueError, match="Height must be a real positive value."):
+        Box(center, width, Quantity(-4, UNIT_LENGTH))
 
 
 def test_sketch_plane_translation():
