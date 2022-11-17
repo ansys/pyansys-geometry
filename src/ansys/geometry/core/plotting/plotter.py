@@ -17,6 +17,7 @@ class Plotter:
         scene: Optional[pv.Plotter] = None,
         background_opts: Optional[Dict] = None,
         num_points: int = 100,
+        default_mesh_color: str = "#D6F7D1",
     ):
         """Initializes the plotter.
 
@@ -28,6 +29,8 @@ class Plotter:
             Dictionary containing the background and top colors.
         num_points : int, default: 100
             Number of points to use to render the shapes.
+        default_mesh_color : str, default: #D6F7D1
+            The color has to use for mesh rendering.
 
         """
         # Generate custom scene if ``None`` is provided
@@ -45,6 +48,7 @@ class Plotter:
 
         # Save the desired number of points
         self._num_points = num_points
+        self._default_mesh_color = default_mesh_color
 
     @property
     def scene(self) -> pv.Plotter:
@@ -136,7 +140,7 @@ class Plotter:
         """
         # Impose default plane options if required
         if plane_options is None:
-            plane_options = dict(i_size=10, j_size=10)
+            plane_options = dict(i_size=20, j_size=20)
 
         # Create a plane for showing the plane
         plane_mesh = pv.Plane(
@@ -148,7 +152,7 @@ class Plotter:
             plotting_options = dict(color="blue", opacity=0.1)
 
         # Render the plane in the mesh with desired plotting options
-        self.scene.add_mesh(plane_mesh, **plotting_options)
+        self.scene.add_mesh(plane_mesh, color=self._default_mesh_color, **plotting_options)
 
     def plot_sketch(
         self,
@@ -179,7 +183,7 @@ class Plotter:
         if show_frame:
             self.plot_frame(sketch._plane)
 
-        self.add_polydata(sketch.sketch_polydata(), **kwargs)
+        self.add_polydata(sketch.sketch_polydata(), color=self._default_mesh_color, **kwargs)
 
     def add_body(self, body: Body, merge: Optional[bool] = False, **kwargs: Optional[dict]) -> None:
         """Add a body to the scene.
@@ -197,7 +201,7 @@ class Plotter:
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
         kwargs.setdefault("smooth_shading", True)
-        self.scene.add_mesh(body.tessellate(merge=merge), **kwargs)
+        self.scene.add_mesh(body.tessellate(merge=merge), color=self._default_mesh_color, **kwargs)
 
     def add_component(
         self,
@@ -226,7 +230,7 @@ class Plotter:
         """
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
         kwargs.setdefault("smooth_shading", True)
-        self.scene.add_mesh(dataset, **kwargs)
+        self.scene.add_mesh(dataset, color=self._default_mesh_color, **kwargs)
 
     def add_polydata(self, polydata_entries: List[pv.PolyData], **kwargs) -> None:
         """Add sketches to the scene from PyVista polydata.
@@ -240,7 +244,7 @@ class Plotter:
             :func:`pyvista.Plotter.add_mesh` method.
         """
         for polydata in polydata_entries:
-            self.scene.add_mesh(polydata, **kwargs)
+            self.scene.add_mesh(polydata, color=self._default_mesh_color, **kwargs)
 
     def show(
         self,
@@ -287,5 +291,7 @@ class Plotter:
         # a notebook environment to avoid a pyvista warning
         if self.scene.notebook and jupyter_backend is None:
             jupyter_backend = "panel"
+
+        self.scene.enable_anti_aliasing("ssaa")
 
         self.scene.show(jupyter_backend=jupyter_backend, **kwargs)
