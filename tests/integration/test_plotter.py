@@ -39,6 +39,8 @@ def test_body_plot(modeler: Modeler):
 
     # Extrude the sketch to create a Body
     box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.mm))
+
+    # TODO : add test to check cache images using pyvista-pytest plugin
     box_body.plot()
 
 
@@ -62,12 +64,25 @@ def test_component_plot(modeler: Modeler):
     component_1.create_surface("Component_Surface", sketch_1)
 
     # Test the plotting of the component
+    # TODO : add test to check cache images using pyvista-pytest plugin
     design.plot()
 
 
 @skip_no_xserver
-def test_plot_sketches():
+def test_plot_sketch():
     """Test plotting the sketch instances."""
+
+    # Create a sketch instance
+    sketch = Sketch()
+    sketch.polygon(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), sides=5, tag="Polygon")
+    sketch.segment(Point2D([3, 2]), Point2D([2, 0]), "Segment")
+
+    # Plot the entire sketch instance
+    sketch.plot()
+
+
+@skip_no_xserver
+def test_plot_polygon():
 
     # Create a sketch instance
     sketch = Sketch()
@@ -75,39 +90,90 @@ def test_plot_sketches():
     # Create a polygon and plot
     sketch.polygon(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), sides=5, tag="Polygon")
     sketch.select("Polygon")
+
+    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot_selection()
+
+
+@skip_no_xserver
+def test_plot_segment():
+
+    # Create a sketch instance
+    sketch = Sketch()
 
     # Create a segment and plot
     sketch.segment(Point2D([3, 2]), Point2D([2, 0]), "Segment")
     sketch.select("Segment")
     sketch.plot_selection()
 
+
+@skip_no_xserver
+def test_plot_arc():
+
+    # Create a sketch instance
+    sketch = Sketch()
+
     # Create a arc and plot
     sketch.arc(Point2D([10, 10]), Point2D([10, -10]), Point2D([10, 0]), tag="Arc")
     sketch.select("Arc")
     sketch.plot_selection()
+
+
+@skip_no_xserver
+def test_plot_triangle():
+
+    # Create a sketch instance
+    sketch = Sketch()
 
     # Create a triangle and plot
     sketch.triangle(Point2D([10, 10]), Point2D([2, 1]), Point2D([10, -10]), tag="Triangle")
     sketch.select("Triangle")
     sketch.plot_selection()
 
+
+@skip_no_xserver
+def test_plot_trapezoid():
+
+    # Create a sketch instance
+    sketch = Sketch()
+
     # Create a trapezoid and plot
     sketch.trapezoid(10, 8, np.pi / 4, np.pi / 8, Point2D([10, -10]), tag="Trapezoid")
     sketch.select("Trapezoid")
     sketch.plot_selection()
 
+
+@skip_no_xserver
+def test_plot_circle():
+
+    # Create a sketch instance
+    sketch = Sketch()
+
     # Create a circle and plot
     sketch.circle(Point2D([10, -10], UNIT_LENGTH), Quantity(1, UNIT_LENGTH), "Circle")
-    sketch.plot_selection()
     sketch.select("Circle")
+    sketch.plot_selection()
+
+
+@skip_no_xserver
+def test_plot_ellipse():
+
+    # Create a sketch instance
+    sketch = Sketch()
 
     # Create a ellipse and plot
     sketch.ellipse(
         Point2D([0, 0], UNITS.m), Quantity(2, UNITS.m), Quantity(1, UNITS.m), tag="Ellipse"
     )
-    sketch.plot_selection()
     sketch.select("Ellipse")
+    sketch.plot_selection()
+
+
+@skip_no_xserver
+def test_plot_slot():
+
+    # Create a sketch instance
+    sketch = Sketch()
 
     # Create a slot and plot
     sketch.slot(
@@ -116,8 +182,15 @@ def test_plot_sketches():
         Distance(2, unit=UNITS.meter),
         tag="Slot",
     )
-    sketch.plot_selection()
     sketch.select("Slot")
+    sketch.plot_selection()
+
+
+@skip_no_xserver
+def test_plot_box():
+
+    # Create a sketch instance
+    sketch = Sketch()
 
     # Create a box and plot
     sketch.box(
@@ -128,9 +201,6 @@ def test_plot_sketches():
     )
     sketch.select("Box")
     sketch.plot_selection()
-
-    # Plot the entire sketch instance
-    sketch.plot()
 
 
 @skip_no_xserver
