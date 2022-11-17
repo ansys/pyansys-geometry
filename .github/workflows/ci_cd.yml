@@ -387,7 +387,7 @@ jobs:
       - name: Zip HTML Documentation
         uses: vimtor/action-zip@v1
         with:
-          files: HTML-Documentation
+          files: documentation-html
           dest: pygeometry-Documentation-HTML.zip
 
       - name: Release
