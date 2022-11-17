@@ -70,7 +70,7 @@ def test_component_plot(modeler: Modeler):
 
 @skip_no_xserver
 def test_plot_sketch():
-    """Test plotting the sketch instance"""
+    """Test plotting the sketch instance."""
 
     # Create a sketch instance
     sketch = Sketch()
@@ -85,7 +85,7 @@ def test_plot_sketch():
 
 @skip_no_xserver
 def test_plot_polygon():
-    """Test plotting of polygon instance."""
+    """Test plotting of a polygon."""
 
     # Create a sketch instance
     sketch = Sketch()
@@ -100,7 +100,7 @@ def test_plot_polygon():
 
 @skip_no_xserver
 def test_plot_segment():
-    """Test plotting of segment instance"""
+    """Test plotting of a segment."""
 
     # Create a sketch instance
     sketch = Sketch()
@@ -115,12 +115,12 @@ def test_plot_segment():
 
 @skip_no_xserver
 def test_plot_arc():
-    """Test plotting of an arc instance"""
+    """Test plotting of an arc."""
 
     # Create a sketch instance
     sketch = Sketch()
 
-    # Create a arc and plot
+    # Create an arc and plot
     sketch.arc(Point2D([10, 10]), Point2D([10, -10]), Point2D([10, 0]), tag="Arc")
     sketch.select("Arc")
 
@@ -130,7 +130,7 @@ def test_plot_arc():
 
 @skip_no_xserver
 def test_plot_triangle():
-    """Test plotting of triangle"""
+    """Test plotting of a triangle."""
 
     # Create a sketch instance
     sketch = Sketch()
@@ -145,7 +145,7 @@ def test_plot_triangle():
 
 @skip_no_xserver
 def test_plot_trapezoid():
-    """Test plotting of a trapezoid"""
+    """Test plotting of a trapezoid."""
 
     # Create a sketch instance
     sketch = Sketch()
@@ -160,7 +160,7 @@ def test_plot_trapezoid():
 
 @skip_no_xserver
 def test_plot_circle():
-    """Test plotting of a circle"""
+    """Test plotting of a circle."""
 
     # Create a sketch instance
     sketch = Sketch()
@@ -192,7 +192,7 @@ def test_plot_ellipse():
 
 @skip_no_xserver
 def test_plot_slot():
-    """Test plotting of a slot"""
+    """Test plotting of a slot."""
 
     # Create a sketch instance
     sketch = Sketch()
