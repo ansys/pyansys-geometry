@@ -303,7 +303,7 @@ class Plotter:
 
         self.scene.show(jupyter_backend=jupyter_backend, **kwargs)
 
-    def __set_add_mesh_defaults(self, plotting_options: Optional[dict]) -> None:
+    def __set_add_mesh_defaults(self, plotting_options: Optional[Dict]) -> None:
         # If the following keys do not exist, set the default values
         plotting_options.setdefault("smooth_shading", True)
         plotting_options.setdefault("color", "#D6F7D1")
