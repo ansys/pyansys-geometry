@@ -45,16 +45,18 @@ class Plotter:
         if not background_opts:
             background_opts = dict(color="white")
 
-        # Create the scene and assign the background
+        # Create the scene
         self._scene = scene
+
+        # Use the default PyGeometry theme for the plotter
+        self._scene.theme = PYGEOMETRY_THEME
+
+        # Scene: assign the background
         self._scene.set_background(**background_opts)
         view_box = self._scene.add_axes(line_width=5, box=True)
 
         # Save the desired number of points
         self._num_points = num_points
-
-        # Use the default PyGeometry theme for the plotter
-        self._scene.theme = PYGEOMETRY_THEME
 
     @property
     def scene(self) -> pv.Plotter:
