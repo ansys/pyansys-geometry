@@ -181,7 +181,7 @@ class Plotter:
             self.plot_frame(sketch._plane)
 
         # Use the default PyGeometry add_mesh arguments
-        self.__set_add_mesh_defaults(**plotting_options)
+        self.__set_add_mesh_defaults(plotting_options)
 
         self.add_polydata(sketch.sketch_polydata(), **plotting_options)
 
@@ -203,7 +203,7 @@ class Plotter:
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
         # Use the default PyGeometry add_mesh arguments
-        self.__set_add_mesh_defaults(**plotting_options)
+        self.__set_add_mesh_defaults(plotting_options)
         self.scene.add_mesh(body.tessellate(merge=merge), **plotting_options)
 
     def add_component(
@@ -232,7 +232,7 @@ class Plotter:
             :func:`pyvista.Plotter.add_mesh` method.
         """
         # Use the default PyGeometry add_mesh arguments
-        self.__set_add_mesh_defaults(**plotting_options)
+        self.__set_add_mesh_defaults(plotting_options)
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
         self.scene.add_mesh(dataset, **plotting_options)
 
@@ -248,7 +248,7 @@ class Plotter:
             :func:`pyvista.Plotter.add_mesh` method.
         """
         # Use the default PyGeometry add_mesh arguments
-        self.__set_add_mesh_defaults(**plotting_options)
+        self.__set_add_mesh_defaults(plotting_options)
         for polydata in polydata_entries:
             self.scene.add_mesh(polydata, **plotting_options)
 
@@ -303,7 +303,7 @@ class Plotter:
 
         self.scene.show(jupyter_backend=jupyter_backend, **kwargs)
 
-    def __set_add_mesh_defaults(**kwargs: Optional[dict]):
+    def __set_add_mesh_defaults(plotting_options: Optional[dict]):
         # If the following keys do not exist, set the default values
-        kwargs.setdefault("smooth_shading", True)
-        kwargs.setdefault("color", "#D6F7D1")
+        plotting_options.setdefault("smooth_shading", True)
+        plotting_options.setdefault("color", "#D6F7D1")
