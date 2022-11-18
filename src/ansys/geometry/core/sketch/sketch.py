@@ -688,7 +688,7 @@ class Sketch:
         from ansys.geometry.core.plotting.plotter import Plotter
 
         pl = Plotter()
-        pl.add_polydata(self.sketch_polydata(), **plotting_options)
+        pl.add_sketch_polydata(self.sketch_polydata(), **plotting_options)
         pl.show()
 
     def plot_selection(
@@ -715,7 +715,7 @@ class Sketch:
             ]
         )
 
-        pl.add_polydata(sketches_polydata, **plotting_options)
+        pl.add_sketch_polydata(sketches_polydata, **plotting_options)
         pl.show()
 
     def sketch_polydata(self) -> List["PolyData"]:

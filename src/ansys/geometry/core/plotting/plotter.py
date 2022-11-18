@@ -180,10 +180,7 @@ class Plotter:
         if show_frame:
             self.plot_frame(sketch._plane)
 
-        # Use the default PyGeometry add_mesh arguments
-        self.__set_add_mesh_defaults(plotting_options)
-
-        self.add_polydata(sketch.sketch_polydata(), **plotting_options)
+        self.add_sketch_polydata(sketch.sketch_polydata(), **plotting_options)
 
     def add_body(
         self, body: Body, merge: Optional[bool] = False, **plotting_options: Optional[dict]
@@ -236,7 +233,7 @@ class Plotter:
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
         self.scene.add_mesh(dataset, **plotting_options)
 
-    def add_polydata(self, polydata_entries: List[pv.PolyData], **plotting_options) -> None:
+    def add_sketch_polydata(self, polydata_entries: List[pv.PolyData], **plotting_options) -> None:
         """Add sketches to the scene from PyVista polydata.
 
         Parameters
@@ -248,7 +245,6 @@ class Plotter:
             :func:`pyvista.Plotter.add_mesh` method.
         """
         # Use the default PyGeometry add_mesh arguments
-        self.__set_add_mesh_defaults(plotting_options)
         for polydata in polydata_entries:
             self.scene.add_mesh(polydata, **plotting_options)
 
@@ -305,5 +301,7 @@ class Plotter:
 
     def __set_add_mesh_defaults(self, plotting_options: Optional[Dict]) -> None:
         # If the following keys do not exist, set the default values
+        #
+        # This method should only be applied in 3D objects: bodies, components
         plotting_options.setdefault("smooth_shading", True)
         plotting_options.setdefault("color", "#D6F7D1")
