@@ -8,8 +8,11 @@ from ansys.geometry.core.designer import Body, Component
 from ansys.geometry.core.math import Frame, Plane
 from ansys.geometry.core.sketch import Sketch
 
-# Define the global mesh color
+# Define the global PyVista theme options
+# --- mesh color
 pv.global_theme.color = "#D6F7D1"
+# --- smooth shading options
+pv.global_theme.smooth_shading = True
 
 
 class Plotter:
@@ -132,7 +135,7 @@ class Plotter:
             plane.
         plotting_options : dict, default: None
             Dictionary containing parameters accepted by the
-            :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
+            :class:`pyvista.Plotter.add_mesh` for customizing the mesh
             rendering of the plane.
 
         """
@@ -157,7 +160,7 @@ class Plotter:
         sketch: Sketch,
         show_plane: bool = False,
         show_frame: bool = False,
-        **kwargs: Optional[dict]
+        **plotting_options: Optional[dict]
     ) -> None:
         """Plot a sketch in the scene.
 
@@ -169,7 +172,7 @@ class Plotter:
             Whether to render the sketch plane in the scene.
         show_frame : bool, default: False
             If ``Frame``, whether to render the sketch plane in the scene.
-        **kwargs : dict, default: None
+        **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
         """
@@ -181,9 +184,11 @@ class Plotter:
         if show_frame:
             self.plot_frame(sketch._plane)
 
-        self.add_polydata(sketch.sketch_polydata(), **kwargs)
+        self.add_polydata(sketch.sketch_polydata(), **plotting_options)
 
-    def add_body(self, body: Body, merge: Optional[bool] = False, **kwargs: Optional[dict]) -> None:
+    def add_body(
+        self, body: Body, merge: Optional[bool] = False, **plotting_options: Optional[dict]
+    ) -> None:
         """Add a body to the scene.
 
         Parameters
@@ -194,19 +199,18 @@ class Plotter:
             Whether to merge the body into a single mesh. If ``True``, the
             individual faces of the tessellation are merged. This
             preserves the number of triangles and only merges the topology.
-        **kwargs : dict, default: None
+        **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
-        kwargs.setdefault("smooth_shading", True)
-        self.scene.add_mesh(body.tessellate(merge=merge), **kwargs)
+        self.scene.add_mesh(body.tessellate(merge=merge), **plotting_options)
 
     def add_component(
         self,
         component: Component,
         merge_component: bool = False,
         merge_bodies: bool = False,
-        **kwargs
+        **plotting_options
     ) -> None:
         """Add a component to the scene.
 
@@ -222,27 +226,26 @@ class Plotter:
             Whether to merge each body into a single dataset. When ``True``,
             all the faces of each individual body are effectively combineed
             into a single dataset without.
-        **kwargs : dict, default: None
+        **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
         """
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
-        kwargs.setdefault("smooth_shading", True)
-        self.scene.add_mesh(dataset, **kwargs)
+        self.scene.add_mesh(dataset, **plotting_options)
 
-    def add_polydata(self, polydata_entries: List[pv.PolyData], **kwargs) -> None:
+    def add_polydata(self, polydata_entries: List[pv.PolyData], **plotting_options) -> None:
         """Add sketches to the scene from PyVista polydata.
 
         Parameters
         ----------
         polydata : pyvista.PolyData
             Polydata to add.
-        **kwargs : dict, default: None
+        **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
         """
         for polydata in polydata_entries:
-            self.scene.add_mesh(polydata, **kwargs)
+            self.scene.add_mesh(polydata, **plotting_options)
 
     def show(
         self,

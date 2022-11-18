@@ -675,31 +675,31 @@ class Sketch:
 
     def plot(
         self,
-        **kwargs: Optional[dict],
+        **plotting_options: Optional[dict],
     ):
         """Plot all objects of the sketch to the scene.
 
         Parameters
         ----------
-        **kwargs : dict, default:
+        **plotting_options : dict, default:
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
         from ansys.geometry.core.plotting.plotter import Plotter
 
         pl = Plotter()
-        pl.add_polydata(self.sketch_polydata(), **kwargs)
+        pl.add_polydata(self.sketch_polydata(), **plotting_options)
         pl.show()
 
     def plot_selection(
         self,
-        **kwargs: Optional[dict],
+        **plotting_options: Optional[dict],
     ):
         """Plot the current selection to the scene.
 
         Parameters
         ----------
-        **kwargs : dict, default: []
+        **plotting_options : dict, default: []
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
@@ -715,7 +715,7 @@ class Sketch:
             ]
         )
 
-        pl.add_polydata(sketches_polydata, **kwargs)
+        pl.add_polydata(sketches_polydata, **plotting_options)
         pl.show()
 
     def sketch_polydata(self) -> List["PolyData"]:
