@@ -6,8 +6,9 @@ import numpy as np
 from pint import Quantity
 import pyvista as pv
 from scipy.integrate import quad
+from scipy.spatial.transform import Rotation as spatial_rotation
 
-from ansys.geometry.core.math import Point2D
+from ansys.geometry.core.math import Matrix33, Matrix44, Point2D
 from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
@@ -139,9 +140,37 @@ class Ellipse(SketchFace):
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
         """
-        ellipse = pv.Ellipse(
-            self.semi_major_axis.m_as(UNIT_LENGTH), self.semi_minor_axis.m_as(UNIT_LENGTH)
+        rotation = Matrix33(
+            spatial_rotation.from_euler(
+                "xyz", [0, 0, self._angle_offset.value.m_as(UNIT_ANGLE)], degrees=False
+            ).as_matrix()
         )
-        return ellipse.translate(
-            [self.center.x.m_as(UNIT_LENGTH), self.center.y.m_as(UNIT_LENGTH), 0], inplace=True
+
+        transformation_matrix = Matrix44(
+            [
+                [
+                    rotation[0, 0],
+                    rotation[0, 1],
+                    rotation[0, 2],
+                    self.center.x.m_as(UNIT_LENGTH),
+                ],
+                [
+                    rotation[1, 0],
+                    rotation[1, 1],
+                    rotation[1, 2],
+                    self.center.y.m_as(UNIT_LENGTH),
+                ],
+                [
+                    rotation[2, 0],
+                    rotation[2, 1],
+                    rotation[2, 2],
+                    0,
+                ],
+                [0, 0, 0, 1],
+            ]
         )
+
+        return pv.Ellipse(
+            semi_major_axis=self.semi_major_axis.m_as(UNIT_LENGTH),
+            semi_minor_axis=self.semi_minor_axis.m_as(UNIT_LENGTH),
+        ).transform(transformation_matrix)
