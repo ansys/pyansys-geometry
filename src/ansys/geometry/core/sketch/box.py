@@ -120,11 +120,16 @@ class Box(SketchFace):
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
         """
+        import numpy as np
+
         return pv.Rectangle(
-            [
-                [self._corner_1.x.m_as(UNIT_LENGTH), self._corner_1.y.m_as(UNIT_LENGTH), 0],
-                [self._corner_2.x.m_as(UNIT_LENGTH), self._corner_2.y.m_as(UNIT_LENGTH), 0],
-                [self._corner_3.x.m_as(UNIT_LENGTH), self._corner_3.y.m_as(UNIT_LENGTH), 0],
-                [self._corner_4.x.m_as(UNIT_LENGTH), self._corner_4.y.m_as(UNIT_LENGTH), 0],
-            ]
+            np.array(
+                [
+                    [self._corner_1.x.m_as(UNIT_LENGTH), self._corner_1.y.m_as(UNIT_LENGTH), 0],
+                    [self._corner_2.x.m_as(UNIT_LENGTH), self._corner_2.y.m_as(UNIT_LENGTH), 0],
+                    [self._corner_3.x.m_as(UNIT_LENGTH), self._corner_3.y.m_as(UNIT_LENGTH), 0],
+                    [self._corner_4.x.m_as(UNIT_LENGTH), self._corner_4.y.m_as(UNIT_LENGTH), 0],
+                ],
+                dtype=np.float_,
+            )
         )

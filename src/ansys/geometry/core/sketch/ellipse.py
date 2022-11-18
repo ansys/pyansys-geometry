@@ -170,10 +170,7 @@ class Ellipse(SketchFace):
             ]
         )
 
-        # TODO: Replace with core pyvista ellipse implementation when released
-        points = np.zeros((100, 3))
-        theta = np.linspace(0.0, 2.0 * np.pi, 100)
-        points[:, 0] = self.semi_major_axis.m_as(UNIT_LENGTH) * np.cos(theta)
-        points[:, 1] = self.semi_minor_axis.m_as(UNIT_LENGTH) * np.sin(theta)
-        cells = np.array([np.append(np.array([100]), np.arange(100))])
-        return pv.wrap(pv.PolyData(points, cells)).transform(transformation_matrix)
+        return pv.Ellipse(
+            semi_major_axis=self.semi_major_axis.m_as(UNIT_LENGTH),
+            semi_minor_axis=self.semi_minor_axis.m_as(UNIT_LENGTH),
+        ).transform(transformation_matrix)

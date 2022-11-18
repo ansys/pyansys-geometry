@@ -401,6 +401,7 @@ def test_polygon_instance():
     assert pentagon.n_sides == 5
     assert pentagon.length == side_length
     assert pentagon.perimeter == sides * side_length
+    assert pentagon.outer_radius.m == pytest.approx(1.23606798, rel=1e-7, abs=1e-8)
 
     # Draw a square in previous sketch
     radius, sides, center = (1 * UNITS.m), 4, Point2D([0, 0], UNITS.m)
@@ -442,6 +443,18 @@ def test_slot_instance():
     perimeter = slot.perimeter
     assert perimeter.m == pytest.approx(10.283185307179586, rel=1e-7, abs=1e-8)
     assert perimeter.units == UNITS.m
+    assert slot.center == center
+    assert slot.width == Quantity(4, UNIT_LENGTH)
+    assert slot.height == Quantity(2, UNIT_LENGTH)
+
+    with pytest.raises(ValueError, match="Height must be a real positive value."):
+        Slot(center, width, Quantity(-4, UNIT_LENGTH))
+
+    with pytest.raises(ValueError, match="Width must be a real positive value."):
+        Slot(center, Quantity(-4, UNIT_LENGTH), height)
+
+    with pytest.raises(ValueError, match="Width must be greater than height."):
+        Slot(center, width, Quantity(10, UNIT_LENGTH))
 
 
 def test_box_instance():
@@ -460,6 +473,13 @@ def test_box_instance():
     assert box.area.units == UNITS.m * UNITS.m
     assert box.perimeter.m == 12
     assert box.perimeter.units == UNITS.m
+    assert box.center == center
+
+    with pytest.raises(ValueError, match="Width must be a real positive value."):
+        Box(center, Quantity(-4, UNIT_LENGTH), height)
+
+    with pytest.raises(ValueError, match="Height must be a real positive value."):
+        Box(center, width, Quantity(-4, UNIT_LENGTH))
 
 
 def test_sketch_plane_translation():
