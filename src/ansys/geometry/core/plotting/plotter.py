@@ -10,9 +10,9 @@ from ansys.geometry.core.sketch import Sketch
 
 # Define the global PyVista theme options
 # --- mesh color
-pv.global_theme.color = "#D6F7D1"
+#  pv.global_theme.color = "#D6F7D1"
 # --- smooth shading options
-pv.global_theme.smooth_shading = True
+#  pv.global_theme.smooth_shading = True
 
 
 class Plotter:
