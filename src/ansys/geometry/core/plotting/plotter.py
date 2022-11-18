@@ -3,18 +3,10 @@ from beartype.typing import Dict, List, Optional
 import numpy as np
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
-from pyvista.themes import DefaultTheme, set_plot_theme
 
 from ansys.geometry.core.designer import Body, Component
 from ansys.geometry.core.math import Frame, Plane
 from ansys.geometry.core.sketch import Sketch
-
-# Define the global PyVista theme options
-PYGEOMETRY_THEME = DefaultTheme()
-# --- mesh color
-PYGEOMETRY_THEME.color = "#D6F7D1"
-# --- smooth shading options
-PYGEOMETRY_THEME.smooth_shading = True
 
 
 class Plotter:
@@ -47,9 +39,6 @@ class Plotter:
 
         # Create the scene
         self._scene = scene
-
-        # Use the default PyGeometry theme for the plotter
-        set_plot_theme(PYGEOMETRY_THEME)
 
         # Scene: assign the background
         self._scene.set_background(**background_opts)
@@ -191,6 +180,9 @@ class Plotter:
         if show_frame:
             self.plot_frame(sketch._plane)
 
+        # Use the default PyGeometry add_mesh arguments
+        self.__set_add_mesh_defaults(**plotting_options)
+
         self.add_polydata(sketch.sketch_polydata(), **plotting_options)
 
     def add_body(
@@ -210,6 +202,8 @@ class Plotter:
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
+        # Use the default PyGeometry add_mesh arguments
+        self.__set_add_mesh_defaults(**plotting_options)
         self.scene.add_mesh(body.tessellate(merge=merge), **plotting_options)
 
     def add_component(
@@ -237,6 +231,8 @@ class Plotter:
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
         """
+        # Use the default PyGeometry add_mesh arguments
+        self.__set_add_mesh_defaults(**plotting_options)
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
         self.scene.add_mesh(dataset, **plotting_options)
 
@@ -251,6 +247,8 @@ class Plotter:
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
         """
+        # Use the default PyGeometry add_mesh arguments
+        self.__set_add_mesh_defaults(**plotting_options)
         for polydata in polydata_entries:
             self.scene.add_mesh(polydata, **plotting_options)
 
@@ -304,3 +302,8 @@ class Plotter:
         self.scene.enable_anti_aliasing("ssaa")
 
         self.scene.show(jupyter_backend=jupyter_backend, **kwargs)
+
+    def __set_add_mesh_defaults(**kwargs: Optional[dict]):
+        # If the following keys do not exist, set the default values
+        kwargs.setdefault("smooth_shading", True)
+        kwargs.setdefault("color", "#D6F7D1")
