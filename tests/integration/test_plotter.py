@@ -34,8 +34,7 @@ def test_body_plot(modeler: Modeler):
     sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
 
     # Create your design on the server side
-    design_name = "BoxExtrusions"
-    design = modeler.create_design(design_name)
+    design = modeler.create_design("BoxExtrusions")
 
     # Extrude the sketch to create a Body
     box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.mm))
@@ -52,8 +51,7 @@ def test_component_plot(modeler: Modeler):
     sketch = Sketch()
     sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
     # Create your design on the server side
-    design_name = "Box_Extrusion"
-    design = modeler.create_design(design_name)
+    design = modeler.create_design("BoxExtrusion")
 
     # Extrude the sketch to create a Body
     design.extrude_sketch("Box", sketch, Quantity(10, UNITS.mm))
