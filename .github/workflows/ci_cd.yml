@@ -16,7 +16,7 @@ env:
   ANSRV_GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest
   ANSRV_GEO_PORT: 700
   GEO_CONT_NAME: ans_geo
-  RESET_PIP_CACHE: 11
+  RESET_PIP_CACHE: 9
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -132,9 +132,9 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: Python-v${{ env.RESET_PIP_CACHE }}-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements/requirements_tests.txt') }}
+          key: Python-v${{ env.RESET_PIP_CACHE }}-${{ runner.os }}-${{ python-version }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: |
-            Python-v${{ env.RESET_PIP_CACHE }}-${{ runner.os }}-${{ matrix.python-version }}
+            Python-v${{ env.RESET_PIP_CACHE }}-${{ runner.os }}-${{ python-version }}
             
       - name: Testing
         # TODO : Once the container is available on Linux we should be able to run it as
