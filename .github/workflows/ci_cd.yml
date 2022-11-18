@@ -16,6 +16,7 @@ env:
   ANSRV_GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest
   ANSRV_GEO_PORT: 700
   GEO_CONT_NAME: ans_geo
+  RESET_PIP_CACHE: 11
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -128,12 +129,19 @@ jobs:
           docker run --detach --name $env:GEO_CONT_NAME -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: Python-v${{ env.RESET_PIP_CACHE }}-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements/requirements_tests.txt') }}
+          restore-keys: |
+            Python-v${{ env.RESET_PIP_CACHE }}-${{ runner.os }}-${{ matrix.python-version }}
+            
       - name: Testing
         # TODO : Once the container is available on Linux we should be able to run it as
         #        a service, allowing to remove this stage
         run: |
           .\.venv\Scripts\Activate.ps1
-          pytest -v
+          pytest -v --image_cache_dir tests/
 
       - name: Upload integration test logs
         uses: actions/upload-artifact@v3
