@@ -135,20 +135,18 @@ class Plotter:
             rendering of the plane.
 
         """
-        # Impose default plane options if required
+        # Impose default plane options if none provided
         if plane_options is None:
-            plane_options = dict(i_size=20, j_size=20)
+            plane_options = dict(i_size=10, j_size=10)
 
-        # Create a plane for showing the plane
         plane_mesh = pv.Plane(
             center=plane.origin.tolist(), direction=plane.direction_z.tolist(), **plane_options
         )
 
-        # Render the plane in the scene
-        if not plotting_options:
+        # Impose default plotting options if none provided
+        if plotting_options is None:
             plotting_options = dict(color="blue", opacity=0.1)
 
-        # Render the plane in the mesh with desired plotting options
         self.scene.add_mesh(plane_mesh, **plotting_options)
 
     def plot_sketch(
