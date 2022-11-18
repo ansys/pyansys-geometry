@@ -34,16 +34,16 @@ dependencies = [
     "numpy>=1.20.3",
     "Pint>=0.18",
     "protobuf~=3.20.2",
-    "pyvista>=0.36.1",
+    "pyvista>=0.37.0",
     "scipy>=1.7.3",
     "six>=1.16.0",
 ]
 
 [project.optional-dependencies]
-test = [
+tests = [
     "beartype==0.11.0",
-    "google-api-python-client==2.65.0",
-    "googleapis-common-protos==1.56.4",
+    "google-api-python-client==2.66.0",
+    "googleapis-common-protos==1.57.0",
     "grpcio==1.50.0",
     "grpcio-health-checking==1.48.2",
     "numpy==1.23.4",
@@ -70,7 +70,7 @@ docs = [
     "Sphinx==5.3.0",
     "sphinx-autoapi==2.0.0",
     "sphinx-autodoc-typehints==1.19.5",
-    "sphinx-copybutton==0.5",
+    "sphinx-copybutton==0.5.1",
     "sphinx_design==0.3.0",
     "sphinx-gallery==0.7.0",
 ]
@@ -78,7 +78,6 @@ docs = [
 [project.urls]
 Source = "https://github.com/pyansys/pygeometry"
 Documentation = "https://geometry.docs.pyansys.com"
-Dev-Documentation = "https://dev.geometry.docs.pyansys.com"
 
 
 [tool.flit.module]

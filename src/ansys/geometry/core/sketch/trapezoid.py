@@ -153,11 +153,16 @@ class Trapezoid(SketchFace):
         """
         # TODO: Really, a rectangle???... This should be modified on PyVista... It doesn't make
         #       any sense that a trapezoid can be a rectangle...
+        import numpy as np
+
         return pv.Rectangle(
-            [
-                [self._point1.x.m_as(UNIT_LENGTH), self._point1.y.m_as(UNIT_LENGTH), 0],
-                [self._point2.x.m_as(UNIT_LENGTH), self._point2.y.m_as(UNIT_LENGTH), 0],
-                [self._point3.x.m_as(UNIT_LENGTH), self._point3.y.m_as(UNIT_LENGTH), 0],
-                [self._point4.x.m_as(UNIT_LENGTH), self._point4.y.m_as(UNIT_LENGTH), 0],
-            ]
+            np.array(
+                [
+                    [self._point1.x.m_as(UNIT_LENGTH), self._point1.y.m_as(UNIT_LENGTH), 0],
+                    [self._point2.x.m_as(UNIT_LENGTH), self._point2.y.m_as(UNIT_LENGTH), 0],
+                    [self._point3.x.m_as(UNIT_LENGTH), self._point3.y.m_as(UNIT_LENGTH), 0],
+                    [self._point4.x.m_as(UNIT_LENGTH), self._point4.y.m_as(UNIT_LENGTH), 0],
+                ],
+                dtype=np.float_,
+            )
         )

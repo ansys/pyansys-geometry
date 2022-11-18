@@ -11,6 +11,8 @@ on:
 env:
   MAIN_PYTHON_VERSION: '3.10'
   PACKAGE_NAME: 'ansys-geometry-core'
+  PACKAGE_NAMESPACE: 'ansys.geometry.core'
+  DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
   ANSRV_GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest
   ANSRV_GEO_PORT: 700
   GEO_CONT_NAME: ans_geo
@@ -25,38 +27,19 @@ jobs:
     name: Code style
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: PyAnsys code style checks
+        uses: pyansys/actions/code-style@v1
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
-
-      - name: Install pre-commit
-        run: pip install pre-commit
-
-      - name: Run pre-commit
-        run: pre-commit run --all-files --show-diff-on-failure
 
   docs-style:
     name: Documentation Style Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Running Vale
-        uses: errata-ai/vale-action@reviewdog
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - name: PyAnsys documentation style checks
+        uses: pyansys/actions/doc-style@v1
         with:
-          files: doc
-          reporter: github-pr-check
-          level: error
-          filter_mode: nofilter
-          fail_on_error: true
-          vale_flags: "--config=doc/.vale.ini"
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   smoke-tests:
     name: Build and Smoke tests
@@ -69,43 +52,13 @@ jobs:
         python-version: ['3.7', '3.8', '3.9', '3.10']
 
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - name: Build wheelhouse and perform smoke test
+        uses: pyansys/actions/build-wheelhouse@v1
         with:
+          library-name: ${{ env.PACKAGE_NAME }}
+          library-namespace: ${{ env.PACKAGE_NAMESPACE }}
+          operating-system: ${{ matrix.os }}
           python-version: ${{ matrix.python-version }}
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
-
-      - name: Install packages for building
-        run: |
-          pip install --upgrade build wheel
-          pip install .
-
-      - name: Smoke test
-        run: python -c "from ansys.geometry.core import __version__; print(__version__)"
-
-      - name: Store version
-        run: |
-          echo "PYGEOM_VERSION=$(python -c "from ansys.geometry.core import __version__; print(__version__)")" >> $GITHUB_ENV
-
-      - name: Generate wheelhouse
-        run: |
-          pip wheel . -w wheelhouse
-
-      - name: Zip wheelhouse
-        uses: vimtor/action-zip@v1
-        with:
-          files: wheelhouse
-          dest: ${{ env.PACKAGE_NAME }}-v${{ env.PYGEOM_VERSION }}-wheelhouse-${{ runner.os }}-${{ matrix.python-version }}.zip
-
-      - name: Upload Wheelhouse
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.PACKAGE_NAME }}-v${{ env.PYGEOM_VERSION }}-wheelhouse-${{ runner.os }}-${{ matrix.python-version }}
-          path: '*.zip'
-          retention-days: 7
 
   macos-build:
     name: Build and Smoke tests (macOS)
@@ -118,43 +71,17 @@ jobs:
         python-version: ['3.7', '3.8', '3.9', '3.10']
 
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - name: Build wheelhouse and perform smoke test
+        uses: pyansys/actions/build-wheelhouse@v1
         with:
+          library-name: ${{ env.PACKAGE_NAME }}
+          library-namespace: ${{ env.PACKAGE_NAMESPACE }}
+          operating-system: ${{ runner.os }}
           python-version: ${{ matrix.python-version }}
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
 
-      - name: Install packages for building
-        run: |
-          pip install --upgrade build wheel
-          pip install .
-
-      - name: Smoke test
-        run: python -c "from ansys.geometry.core import __version__; print(__version__)"
-
-      - name: Store version
-        run: |
-          echo "PYGEOM_VERSION=$(python -c "from ansys.geometry.core import __version__; print(__version__)")" >> $GITHUB_ENV
-
-      - name: Generate wheelhouse
-        run: |
-          pip wheel . -w wheelhouse
-
-      - name: Zip wheelhouse
-        uses: vimtor/action-zip@v1
-        with:
-          files: wheelhouse
-          dest: ${{ env.PACKAGE_NAME }}-v${{ env.PYGEOM_VERSION }}-wheelhouse-${{ runner.os }}-${{ matrix.python-version }}.zip
-
-      - name: Upload Wheelhouse
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.PACKAGE_NAME }}-v${{ env.PYGEOM_VERSION }}-wheelhouse-${{ runner.os }}-${{ matrix.python-version }}
-          path: '*.zip'
-          retention-days: 7
+# =================================================================================================
+# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+# =================================================================================================
 
   testing:
     name: Testing and coverage
@@ -182,7 +109,7 @@ jobs:
           .\.venv\Scripts\Activate.ps1
           python -m pip install --upgrade pip
           pip install --upgrade build wheel
-          pip install .[test]
+          pip install .[tests]
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
@@ -211,14 +138,14 @@ jobs:
       - name: Upload integration test logs
         uses: actions/upload-artifact@v3
         with:
-          name: Integration-Test-Logs
+          name: integration-test-logs
           path: tests/integration/logs
           retention-days: 7  
 
       - name: Upload Coverage Results
         uses: actions/upload-artifact@v3
         with:
-          name: HTML-Coverage
+          name: coverage-html
           path: .cov/html
           retention-days: 7
 
@@ -276,17 +203,35 @@ jobs:
           docker run --detach --name $env:GEO_CONT_NAME -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
-      - name: Build the documentation
+      - name: Build the documentation (HTML)
         run: |
           .\.venv\Scripts\Activate.ps1
           cd doc
           .\make.bat html
 
+      - name: Build the documentation (PDF)
+        # run: |
+        #   .\.venv\Scripts\Activate.ps1
+        #   cd doc
+        #   .\make.bat pdf
+        run: |
+          cd doc/_build
+          mkdir latex
+          cd latex
+          echo "" > dummy_docs.pdf
+
       - name: Upload HTML documentation
         uses: actions/upload-artifact@v3
         with:
-          name: HTML-Documentation
+          name: documentation-html
           path: doc/_build/html
+          retention-days: 7
+
+      - name: Upload PDF documentation
+        uses: actions/upload-artifact@v3
+        with:
+          name: documentation-pdf
+          path: doc/_build/latex/*.pdf
           retention-days: 7
 
       - name: Stop the Geometry service
@@ -296,37 +241,20 @@ jobs:
           docker logs $env:GEO_CONT_NAME
           docker rm $env:GEO_CONT_NAME
 
+# =================================================================================================
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# =================================================================================================
+
   package:
     name: Package library
     needs: [testing, docs]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Build library source and wheel artifacts
+        uses: pyansys/actions/build-library@v1
         with:
+          library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
-
-      - name: Install ansys-geometry-core
-        run: |
-          pip install build
-          python -m build
-          pip install dist/*.whl
-
-      - name: Check package
-        run: |
-          pip install twine
-          twine check dist/*
-
-      - name: Upload wheel and binaries
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.PACKAGE_NAME }}-packages
-          path: dist/
-          retention-days: 7
 
   release:
     name: Release project
@@ -334,48 +262,17 @@ jobs:
     needs: [package, macos-build]
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Release to the private PyPI repository
+        uses: pyansys/actions/release-pypi-private@v1
         with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          library-name: ${{ env.PACKAGE_NAME }}
+          twine-username: "__token__"
+          twine-token: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
 
-      - uses: actions/download-artifact@v3
-
-      - name: Display structure of downloaded files
-        run: ls -R
-
-      # - name: Upload to Public PyPi
-      #   run: |
-      #     pip install twine
-      #     twine upload --skip-existing ./**/*.whl
-      #     twine upload --skip-existing ./**/*.tar.gz
-      #   env:
-      #     TWINE_USERNAME: __token__
-      #     TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-
-      - name: Upload to Private PyPi
-        run: |
-          pip install twine
-          python -m twine upload --skip-existing ./**/*.whl
-          python -m twine upload --skip-existing ./**/*.tar.gz
-        env:
-          TWINE_USERNAME: PAT
-          TWINE_PASSWORD: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
-          TWINE_REPOSITORY_URL: https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/upload
-
-      - name: Zip HTML Documentation
-        uses: vimtor/action-zip@v1
+      - name: Release to GitHub
+        uses: pyansys/actions/release-github@v1
         with:
-          files: HTML-Documentation
-          dest: pygeometry-Documentation-HTML.zip
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            ./**/*.whl
-            ./**/*.tar.gz
-            ./**/*.zip
+          library-name: ${{ env.PACKAGE_NAME }}
 
   upload_dev_docs:
     name: Upload dev documentation
@@ -383,29 +280,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: [package]
     steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/download-artifact@v3
+      - name: Deploy the latest documentation
+        uses: pyansys/actions/doc-deploy-dev@v1
         with:
-          name: HTML-Documentation
-          path: HTML-Documentation
-
-      - name: Get Bot Application Token
-        id: get_workflow_token
-        uses: peter-murray/workflow-application-token-action@v2
-        with:
-          application_id: ${{ secrets.BOT_APPLICATION_ID }}
-          application_private_key: ${{ secrets.BOT_APPLICATION_PRIVATE_KEY }}
-
-      - name: Deploy documentation to pygeometry-dev-docs repository
-        uses: JamesIves/github-pages-deploy-action@v4.4.1
-        with:
-          repository-name: pyansys/pygeometry-dev-docs
-          token: ${{ steps.get_workflow_token.outputs.token }}
-          branch: gh-pages
-          folder: HTML-Documentation
-          clean: true
-          single-commit: true
+          cname: ${{ env.DOCUMENTATION_CNAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   upload_docs_release:
     name: Upload release documentation
@@ -413,26 +292,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [release]
     steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/download-artifact@v3
+      - name: Deploy the stable documentation
+        uses: pyansys/actions/doc-deploy-stable@v1
         with:
-          name: HTML-Documentation
-          path: HTML-Documentation
-
-      - name: Get Bot Application Token
-        id: get_workflow_token
-        uses: peter-murray/workflow-application-token-action@v2
-        with:
-          application_id: ${{ secrets.BOT_APPLICATION_ID }}
-          application_private_key: ${{ secrets.BOT_APPLICATION_PRIVATE_KEY }}
-
-      - name: Deploy documentation to pygeometry-docs repository
-        uses: JamesIves/github-pages-deploy-action@v4.4.1
-        with:
-          repository-name: pyansys/pygeometry-docs
-          token: ${{ steps.get_workflow_token.outputs.token }}
-          branch: gh-pages
-          folder: HTML-Documentation
-          clean: true
-          single-commit: true
+          cname: ${{ env.DOCUMENTATION_CNAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
