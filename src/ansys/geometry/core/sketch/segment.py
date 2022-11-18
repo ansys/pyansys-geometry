@@ -78,13 +78,20 @@ class Segment(SketchEdge):
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
         """
+        import numpy as np
+
         return pv.Line(
-            [
-                self.start.x.m_as(UNIT_LENGTH),
-                self.start.y.m_as(UNIT_LENGTH),
-                0,
-            ],
-            [self.end.x.m_as(UNIT_LENGTH), self.end.y.m_as(UNIT_LENGTH), 0],
+            np.array(
+                [
+                    self.start.x.m_as(UNIT_LENGTH),
+                    self.start.y.m_as(UNIT_LENGTH),
+                    0,
+                ],
+                dtype=np.float_,
+            ),
+            np.array(
+                [self.end.x.m_as(UNIT_LENGTH), self.end.y.m_as(UNIT_LENGTH), 0], dtype=np.float_
+            ),
         )
 
     @check_input_types

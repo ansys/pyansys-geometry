@@ -6,6 +6,7 @@ on:
 
 env:
   PACKAGE_NAME: 'ansys-geometry-core'
+  PACKAGE_NAMESPACE: 'ansys.geometry.core'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -22,40 +23,11 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v4
+      - name: Build wheelhouse and perform smoke test
+        uses: pyansys/actions/build-wheelhouse@v1
         with:
+          library-name: ${{ env.PACKAGE_NAME }}
+          library-namespace: ${{ env.PACKAGE_NAMESPACE }}
+          operating-system: ${{ matrix.os }}
           python-version: '3.11'
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
 
-      - name: Install packages for building
-        run: |
-          pip install --upgrade build wheel
-          pip install .
-
-      - name: Smoke test
-        run: python -c "from ansys.geometry.core import __version__; print(__version__)"
-
-      - name: Store version
-        run: |
-          echo "PYGEOM_VERSION=$(python -c "from ansys.geometry.core import __version__; print(__version__)")" >> $GITHUB_ENV
-
-      - name: Generate wheelhouse
-        run: |
-          pip wheel . -w wheelhouse
-
-      - name: Zip wheelhouse
-        uses: vimtor/action-zip@v1
-        with:
-          files: wheelhouse
-          dest: ${{ env.PACKAGE_NAME }}-v${{ env.PYGEOM_VERSION }}-wheelhouse-${{ runner.os }}-3.11.zip
-
-      - name: Upload Wheelhouse
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.PACKAGE_NAME }}-v${{ env.PYGEOM_VERSION }}-wheelhouse-${{ runner.os }}-3.11
-          path: '*.zip'
-          retention-days: 7

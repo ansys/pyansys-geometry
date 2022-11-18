@@ -733,15 +733,18 @@ class Component:
         >>> from ansys.geometry.core.plotting.plotter import Plotter
         >>> modeler = Modeler("10.54.0.72", "50051")
         >>> sketch_1 = Sketch()
-        >>> box = sketch_1.box(Point3D([10, 10]), width=10, height=5)
-        >>> circle = sketch_1.circle(Point3D([0, 0]), radius=25 * UNITS.m)
+        >>> box = sketch_1.box(
+        >>>    Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(5, UNITS.m))
+        >>> sketch_1.circle(Point2D([0, 0], UNITS.m), Quantity(25, UNITS.m))
         >>> design = modeler.create_design("MyDesign")
         >>> comp = design.add_component("MyComponent")
-        >>> body = comp.extrude_sketch("MyBody", sketch=sketch_1, distance=10 * UNITS.m)
+        >>> distance = Quantity(10, UNITS.m)
+        >>> body = comp.extrude_sketch("Body", sketch=sketch_1, distance=distance)
         >>> sketch_2 = Sketch(Plane([0, 0, 10]))
-        >>> box = sketch_2.box(Point2D([10, 10]), width=10, height=5)
-        >>> circle = sketch_2.circle(Point2D([0, 0]), radius=25 * UNITS.m)
-        >>> body = comp.extrude_sketch("MyBody", sketch=sketch_2, distance=10 * UNITS.m)
+        >>> box = sketch_2.box(
+        >>>    Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(5, UNITS.m))
+        >>> circle = sketch_2.circle(Point2D([0, 0], UNITS.m), Quantity(25, UNITS.m))
+        >>> body = comp.extrude_sketch("Body", sketch=sketch_2, distance=distance)
         >>> dataset = comp.tessellate(merge_bodies=True)
         >>> dataset
         MultiBlock (0x7ff6bcb511e0)
