@@ -3,7 +3,7 @@ from beartype.typing import Dict, List, Optional
 import numpy as np
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
-from pyvista.themes import DefaultTheme
+from pyvista.themes import DefaultTheme, set_plot_theme
 
 from ansys.geometry.core.designer import Body, Component
 from ansys.geometry.core.math import Frame, Plane
@@ -49,7 +49,7 @@ class Plotter:
         self._scene = scene
 
         # Use the default PyGeometry theme for the plotter
-        self._scene.theme = PYGEOMETRY_THEME
+        set_plot_theme(PYGEOMETRY_THEME)
 
         # Scene: assign the background
         self._scene.set_background(**background_opts)
