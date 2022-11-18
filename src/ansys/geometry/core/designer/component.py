@@ -711,7 +711,7 @@ class Component:
             return [pv.PolyData(ugrid.points, ugrid.cells, n_faces=ugrid.n_cells)]
         return bodies_and_components_polydata
 
-    def plot(self, merge: bool = False, **kwargs: Optional[dict]) -> None:
+    def plot(self, merge: bool = False, **plotting_options: Optional[dict]) -> None:
         """Plot this component.
 
         Parameters
@@ -720,7 +720,7 @@ class Component:
             Whether to merge the bodies and child components into a single dataset.
             If ``True``, all the ~pyvista.PolyData from each body and component are
             merged into a single dataset as a single ~pyvista.PolyData.
-        **kwargs : dict, default: None
+        **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
 
@@ -763,7 +763,7 @@ class Component:
         from ansys.geometry.core.plotting import Plotter
 
         pl = Plotter()
-        pl.add_component(self, merge=merge, **kwargs)
+        pl.add_component(self, merge=merge, **plotting_options)
         pl.show()
 
     def __repr__(self) -> str:

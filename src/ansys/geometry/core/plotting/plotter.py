@@ -28,7 +28,6 @@ class Plotter:
             Dictionary containing the background and top colors.
         num_points : int, default: 100
             Number of points to use to render the shapes.
-
         """
         # Generate custom scene if ``None`` is provided
         if scene is None:
@@ -38,10 +37,12 @@ class Plotter:
         if not background_opts:
             background_opts = dict(color="white")
 
-        # Create the scene and assign the background
+        # Create the scene
         self._scene = scene
-        scene.set_background(**background_opts)
-        view_box = scene.add_axes(line_width=5, box=True)
+
+        # Scene: assign the background
+        self._scene.set_background(**background_opts)
+        view_box = self._scene.add_axes(line_width=5, box=True)
 
         # Save the desired number of points
         self._num_points = num_points
@@ -130,24 +131,22 @@ class Plotter:
             plane.
         plotting_options : dict, default: None
             Dictionary containing parameters accepted by the
-            :class:`pyvista.Plotter.plot_mesh` for customizing the mesh
+            :class:`pyvista.Plotter.add_mesh` for customizing the mesh
             rendering of the plane.
 
         """
-        # Impose default plane options if required
+        # Impose default plane options if none provided
         if plane_options is None:
             plane_options = dict(i_size=10, j_size=10)
 
-        # Create a plane for showing the plane
         plane_mesh = pv.Plane(
             center=plane.origin.tolist(), direction=plane.direction_z.tolist(), **plane_options
         )
 
-        # Render the plane in the scene
-        if not plotting_options:
+        # Impose default plotting options if none provided
+        if plotting_options is None:
             plotting_options = dict(color="blue", opacity=0.1)
 
-        # Render the plane in the mesh with desired plotting options
         self.scene.add_mesh(plane_mesh, **plotting_options)
 
     def plot_sketch(
@@ -155,7 +154,7 @@ class Plotter:
         sketch: Sketch,
         show_plane: bool = False,
         show_frame: bool = False,
-        **kwargs: Optional[dict]
+        **plotting_options: Optional[dict]
     ) -> None:
         """Plot a sketch in the scene.
 
@@ -167,7 +166,7 @@ class Plotter:
             Whether to render the sketch plane in the scene.
         show_frame : bool, default: False
             If ``Frame``, whether to render the sketch plane in the scene.
-        **kwargs : dict, default: None
+        **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
         """
@@ -179,23 +178,24 @@ class Plotter:
         if show_frame:
             self.plot_frame(sketch._plane)
 
-        self.add_polydata(sketch.sketch_polydata(), **kwargs)
+        self.add_sketch_polydata(sketch.sketch_polydata(), **plotting_options)
 
-    def add_body(self, body: Body, **kwargs: Optional[dict]) -> None:
+    def add_body(self, body: Body, **plotting_options: Optional[dict]) -> None:
         """Add a body to the scene.
 
         Parameters
         ----------
         body : ansys.geometry.core.designer.Body
             Body to add.
-        **kwargs : dict, default: None
+        **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
-        kwargs.setdefault("smooth_shading", True)
-        self.scene.add_mesh(body.tessellate(), **kwargs)
+        # Use the default PyGeometry add_mesh arguments
+        self.__set_add_mesh_defaults(plotting_options)
+        self.scene.add_mesh(body.tessellate(), **plotting_options)
 
-    def add_component(self, component: Component, merge: bool = False, **kwargs) -> None:
+    def add_component(self, component: Component, merge: bool = False, **plotting_options) -> None:
         """Add a component to the scene.
 
         Parameters
@@ -206,27 +206,28 @@ class Plotter:
             Whether to merge the bodies and child components into a single dataset.
             If ``True``, all the ~pyvista.PolyData from each body and component are
             merged into a single dataset as a single ~pyvista.PolyData.
-        **kwargs : dict, default: None
+        **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
         """
         dataset = component.tessellate(merge=merge)
-        kwargs.setdefault("smooth_shading", True)
-        self.add_polydata(dataset, **kwargs)
+        self.__set_add_mesh_defaults(plotting_options)
+        self.add_polydata(dataset, **plotting_options)
 
-    def add_polydata(self, polydata_entries: List[pv.PolyData], **kwargs) -> None:
+    def add_sketch_polydata(self, polydata_entries: List[pv.PolyData], **plotting_options) -> None:
         """Add sketches to the scene from PyVista polydata.
 
         Parameters
         ----------
         polydata : pyvista.PolyData
             Polydata to add.
-        **kwargs : dict, default: None
+        **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
         """
+        # Use the default PyGeometry add_mesh arguments
         for polydata in polydata_entries:
-            self.scene.add_mesh(polydata, **kwargs)
+            self.scene.add_mesh(polydata, **plotting_options)
 
     def show(
         self,
@@ -277,4 +278,14 @@ class Plotter:
 
         self.scene.enable_mesh_picking(left_clicking=True, style="surface", color="red")
 
+        # Enabling anti-aliasing by default on scene
+        self.scene.enable_anti_aliasing("ssaa")
+
         self.scene.show(jupyter_backend=jupyter_backend, **kwargs)
+
+    def __set_add_mesh_defaults(self, plotting_options: Optional[Dict]) -> None:
+        # If the following keys do not exist, set the default values
+        #
+        # This method should only be applied in 3D objects: bodies, components
+        plotting_options.setdefault("smooth_shading", True)
+        plotting_options.setdefault("color", "#D6F7D1")

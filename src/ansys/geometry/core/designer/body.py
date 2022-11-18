@@ -468,12 +468,12 @@ class Body:
         ugrid = comp.combine()
         return pv.PolyData(ugrid.points, ugrid.cells, n_faces=ugrid.n_cells)
 
-    def plot(self, **kwargs: Optional[dict]) -> None:
+    def plot(self, **plotting_options: Optional[dict]) -> None:
         """Plot the body.
 
         Parameters
         ----------
-        **kwargs : dict, default: None
+        **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
 
@@ -505,7 +505,7 @@ class Body:
         from ansys.geometry.core.plotting import Plotter
 
         pl = Plotter()
-        pl.add_body(self, **kwargs)
+        pl.add_body(self, **plotting_options)
         pl.show()
 
     def __repr__(self) -> str:
