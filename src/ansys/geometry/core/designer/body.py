@@ -477,7 +477,6 @@ class Body:
     def plot(
         self,
         merge: Optional[bool] = False,
-        default_mesh_color: str = "#D6F7D1",
         **kwargs: Optional[dict],
     ) -> None:
         """Plot the body.
@@ -488,8 +487,6 @@ class Body:
             Whether to merge the body into a single mesh. By default, the
             number of triangles are preserved and only the topology is merged.
             When ``True``, the individual faces of the tessellation are merged.
-        default_mesh_color : str, default: #D6F7D1
-            The color has to use for mesh rendering.
         **kwargs : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
@@ -521,7 +518,7 @@ class Body:
         # lazy import here to improve initial module load time
         from ansys.geometry.core.plotting import Plotter
 
-        pl = Plotter(default_mesh_color=default_mesh_color)
+        pl = Plotter()
         pl.add_body(self, merge=merge, **kwargs)
         pl.show()
 
