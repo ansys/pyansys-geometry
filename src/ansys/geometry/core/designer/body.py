@@ -474,7 +474,11 @@ class Body:
             return pv.PolyData(ugrid.points, ugrid.cells, n_faces=ugrid.n_cells)
         return comp
 
-    def plot(self, merge: Optional[bool] = False, **kwargs: Optional[dict]) -> None:
+    def plot(
+        self,
+        merge: Optional[bool] = False,
+        **plotting_options: Optional[dict],
+    ) -> None:
         """Plot the body.
 
         Parameters
@@ -483,7 +487,7 @@ class Body:
             Whether to merge the body into a single mesh. By default, the
             number of triangles are preserved and only the topology is merged.
             When ``True``, the individual faces of the tessellation are merged.
-        **kwargs : dict, default: None
+        **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
 
@@ -515,7 +519,7 @@ class Body:
         from ansys.geometry.core.plotting import Plotter
 
         pl = Plotter()
-        pl.add_body(self, merge=merge, **kwargs)
+        pl.add_body(self, merge=merge, **plotting_options)
         pl.show()
 
     def __repr__(self) -> str:

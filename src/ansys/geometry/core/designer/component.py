@@ -720,7 +720,10 @@ class Component:
         return blocks
 
     def plot(
-        self, merge_component: bool = False, merge_bodies: bool = False, **kwargs: Optional[dict]
+        self,
+        merge_component: bool = False,
+        merge_bodies: bool = False,
+        **plotting_options: Optional[dict],
     ) -> None:
         """Plot this component.
 
@@ -734,7 +737,7 @@ class Component:
             Whether to merge each body into a single dataset. When ``True``,
             all the faces of each individual body are effectively merged
             into a single dataset without separating faces.
-        **kwargs : dict, default: None
+        **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
 
@@ -777,7 +780,9 @@ class Component:
         from ansys.geometry.core.plotting import Plotter
 
         pl = Plotter()
-        pl.add_component(self, merge_bodies=merge_bodies, merge_component=merge_component, **kwargs)
+        pl.add_component(
+            self, merge_bodies=merge_bodies, merge_component=merge_component, **plotting_options
+        )
         pl.show()
 
     def __repr__(self) -> str:
