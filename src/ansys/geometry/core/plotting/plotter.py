@@ -3,16 +3,18 @@ from beartype.typing import Dict, List, Optional
 import numpy as np
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
+from pyvista.themes import DefaultTheme
 
 from ansys.geometry.core.designer import Body, Component
 from ansys.geometry.core.math import Frame, Plane
 from ansys.geometry.core.sketch import Sketch
 
 # Define the global PyVista theme options
+PYGEOMETRY_THEME = DefaultTheme()
 # --- mesh color
-#  pv.global_theme.color = "#D6F7D1"
+PYGEOMETRY_THEME.color = "#D6F7D1"
 # --- smooth shading options
-#  pv.global_theme.smooth_shading = True
+PYGEOMETRY_THEME.smooth_shading = True
 
 
 class Plotter:
@@ -45,11 +47,14 @@ class Plotter:
 
         # Create the scene and assign the background
         self._scene = scene
-        scene.set_background(**background_opts)
-        view_box = scene.add_axes(line_width=5, box=True)
+        self._scene.set_background(**background_opts)
+        view_box = self._scene.add_axes(line_width=5, box=True)
 
         # Save the desired number of points
         self._num_points = num_points
+
+        # Use the default PyGeometry theme for the plotter
+        self._scene.theme = PYGEOMETRY_THEME
 
     @property
     def scene(self) -> pv.Plotter:
