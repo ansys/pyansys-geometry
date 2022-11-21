@@ -132,9 +132,9 @@ jobs:
       - uses: actions/cache@v3
         with:
           path:  ~\AppData\Local\tests\integration\image_cache
-          key: ${{ runner.os }}-pyvista_image_cache-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
+          key: pyvista-image-cache-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: |
-            ${{ runner.os }}-pyvista_image_cache-v-${{ env.RESET_IMAGE_CACHE }}
+            pyvista-image-cache-v-${{ env.RESET_IMAGE_CACHE }}
 
       - name: Testing
         # TODO : Once the container is available on Linux we should be able to run it as
