@@ -71,9 +71,14 @@ def test_plot_sketch(verify_image_cache):
 
     # Create a sketch instance
     sketch = Sketch()
-    sketch.polygon(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), sides=5, tag="Polygon")
-    sketch.segment(Point2D([3, 2]), Point2D([2, 0]), "Segment")
-    sketch.arc(Point2D([10, 10]), Point2D([10, -10]), Point2D([10, 0]), tag="Arc")
+    sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon1")
+    sketch.segment(Point2D([3, 2], UNITS.m), Point2D([2, 0], UNITS.m), "Segment1")
+    sketch.arc(
+        Point2D([10, 10], UNITS.m),
+        Point2D([10, -10], UNITS.m),
+        Point2D([10, 0], UNITS.m),
+        tag="Arc1",
+    )
 
     # Plot the entire sketch instance
     sketch.plot()
@@ -87,7 +92,7 @@ def test_plot_polygon(verify_image_cache):
     sketch = Sketch()
 
     # Create a polygon and plot
-    sketch.polygon(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), sides=5, tag="Polygon")
+    sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon")
     sketch.select("Polygon")
     sketch.plot_selection()
 
@@ -214,7 +219,7 @@ def test_plot_sketch_scene(verify_image_cache):
 
     # Create a sketch
     sketch = Sketch()
-    sketch.polygon(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+    sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5)
     sketch.segment(Point2D([3, 2]), Point2D([2, 0]), "Segment")
 
     # Initialize the ``Plotter`` class
