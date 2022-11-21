@@ -72,7 +72,7 @@ def test_plot_sketch(verify_image_cache):
     # Create a sketch instance
     sketch = Sketch()
     sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon1")
-    sketch.segment(Point2D([3, 2], UNITS.m), Point2D([2, 0], UNITS.m), "Segment1")
+    # sketch.segment(Point2D([3, 2], UNITS.m), Point2D([2, 0], UNITS.m), "Segment1")
     sketch.arc(
         Point2D([10, 10], UNITS.m),
         Point2D([10, -10], UNITS.m),
