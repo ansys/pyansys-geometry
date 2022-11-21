@@ -74,7 +74,7 @@ def test_plot_sketch(verify_image_cache):
     sketch = Sketch()
     sketch.polygon(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), sides=5, tag="Polygon")
     sketch.segment(Point2D([3, 2]), Point2D([2, 0]), "Segment")
-    sketch.arc(Point2D([10, 10]), Point2D([10, -10]), Point2D([10, 0]), tag="Arc")
+    # sketch.arc(Point2D([10, 10]), Point2D([10, -10]), Point2D([10, 0]), tag="Arc")
 
     # Plot the entire sketch instance
     # TODO : add test to check cache images using pyvista-pytest plugin
