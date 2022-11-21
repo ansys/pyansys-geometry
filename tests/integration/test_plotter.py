@@ -36,10 +36,10 @@ def test_body_plot(modeler: Modeler, verify_image_cache):
     # Create your design on the server side
     design = modeler.create_design("BoxExtrusions")
 
-    # Extrude the sketch to create a Body
+    # Extrude the sketch to create a body
     box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.mm))
 
-    # TODO : add test to check cache images using pyvista-pytest plugin
+    # Test the plotting of the body
     box_body.plot()
 
 
@@ -62,7 +62,6 @@ def test_component_plot(modeler: Modeler, verify_image_cache):
     component_1.create_surface("Component_Surface", sketch_1)
 
     # Test the plotting of the component
-    # TODO : add test to check cache images using pyvista-pytest plugin
     design.plot()
 
 
@@ -74,10 +73,9 @@ def test_plot_sketch(verify_image_cache):
     sketch = Sketch()
     sketch.polygon(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), sides=5, tag="Polygon")
     sketch.segment(Point2D([3, 2]), Point2D([2, 0]), "Segment")
-    # sketch.arc(Point2D([10, 10]), Point2D([10, -10]), Point2D([10, 0]), tag="Arc")
+    sketch.arc(Point2D([10, 10]), Point2D([10, -10]), Point2D([10, 0]), tag="Arc")
 
     # Plot the entire sketch instance
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot()
 
 
@@ -91,8 +89,6 @@ def test_plot_polygon(verify_image_cache):
     # Create a polygon and plot
     sketch.polygon(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), sides=5, tag="Polygon")
     sketch.select("Polygon")
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot_selection()
 
 
@@ -106,8 +102,6 @@ def test_plot_segment(verify_image_cache):
     # Create a segment and plot
     sketch.segment(Point2D([3, 2]), Point2D([2, 0]), "Segment")
     sketch.select("Segment")
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot_selection()
 
 
@@ -121,8 +115,6 @@ def test_plot_arc(verify_image_cache):
     # Create an arc and plot
     sketch.arc(Point2D([10, 10]), Point2D([10, -10]), Point2D([10, 0]), tag="Arc")
     sketch.select("Arc")
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot_selection()
 
 
@@ -136,8 +128,6 @@ def test_plot_triangle(verify_image_cache):
     # Create a triangle and plot
     sketch.triangle(Point2D([10, 10]), Point2D([2, 1]), Point2D([10, -10]), tag="Triangle")
     sketch.select("Triangle")
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot_selection()
 
 
@@ -151,8 +141,6 @@ def test_plot_trapezoid(verify_image_cache):
     # Create a trapezoid and plot
     sketch.trapezoid(10, 8, np.pi / 4, np.pi / 8, Point2D([10, -10]), tag="Trapezoid")
     sketch.select("Trapezoid")
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot_selection()
 
 
@@ -166,8 +154,6 @@ def test_plot_circle(verify_image_cache):
     # Create a circle and plot
     sketch.circle(Point2D([10, -10], UNIT_LENGTH), Quantity(1, UNIT_LENGTH), "Circle")
     sketch.select("Circle")
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot_selection()
 
 
@@ -183,8 +169,6 @@ def test_plot_ellipse(verify_image_cache):
         Point2D([0, 0], UNITS.m), Quantity(2, UNITS.m), Quantity(1, UNITS.m), tag="Ellipse"
     )
     sketch.select("Ellipse")
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot_selection()
 
 
@@ -203,8 +187,6 @@ def test_plot_slot(verify_image_cache):
         tag="Slot",
     )
     sketch.select("Slot")
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot_selection()
 
 
@@ -223,8 +205,6 @@ def test_plot_box(verify_image_cache):
         tag="Box",
     )
     sketch.select("Box")
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot_selection()
 
 
@@ -242,8 +222,6 @@ def test_plot_sketch_scene(verify_image_cache):
 
     # Showing the plane of the sketch and its frame.
     pl.plot_sketch(sketch=sketch, show_frame=True, show_plane=True)
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     pl.scene.show()
 
 
