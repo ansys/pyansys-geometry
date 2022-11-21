@@ -208,6 +208,11 @@ The following environments commands are provided:
 - **tox -e py-coverage**: Checks for unit testing and code coverage.
 - **tox -e doc**: Checks for documentation building process.
 
+ .. admonition:: pyvista-pytest plugin 
+
+   This plugin facilitates the comparison of the images produced in PyGeometry for testing the plots.
+   If you are changing the images, use flag ``--reset_image_cache`` which is not recommended except
+   for testing or for potentially a major or minor release. For more information, see `pyvista-pytest`_.
 
 Raw testing
 ^^^^^^^^^^^
@@ -270,3 +275,4 @@ the building requirements and then executing the build module:
 .. _pytest: https://docs.pytest.org/en/stable/
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
 .. _tox: https://tox.wiki/
+.. _pyvista-pytest: https://github.com/pyvista/pytest-pyvista
