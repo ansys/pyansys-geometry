@@ -157,7 +157,7 @@ def test_plot_circle(verify_image_cache):
     sketch = Sketch()
 
     # Create a circle and plot
-    sketch.circle(Point2D([10, -10], UNIT_LENGTH), Quantity(1, UNIT_LENGTH), "Circle")
+    sketch.circle(Point2D([0, 1], UNIT_LENGTH), Quantity(2, UNIT_LENGTH), "Circle")
     sketch.select("Circle")
     sketch.plot_selection()
 
@@ -219,8 +219,8 @@ def test_plot_sketch_scene(verify_image_cache):
 
     # Create a sketch
     sketch = Sketch()
-    sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5)
-    sketch.segment(Point2D([3, 2]), Point2D([2, 0]), "Segment")
+    sketch.polygon(Point2D([0, 0], UNITS.m), Quantity(2, UNITS.m), sides=5)
+    sketch.segment(Point2D([0, 2]), Point2D([2, 0]), "Segment")
 
     # Initialize the ``Plotter`` class
     pl = Plotter()
