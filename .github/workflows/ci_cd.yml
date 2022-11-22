@@ -132,7 +132,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: .\tests\integration\image_cache
-          key: pyvista-image-cache-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
+          key: pyvista-image-cache-v-${{ env.RESET_IMAGE_CACHE }}
           restore-keys: |
             pyvista-image-cache-v-${{ env.RESET_IMAGE_CACHE }}
 
