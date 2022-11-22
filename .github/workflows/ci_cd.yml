@@ -16,6 +16,7 @@ env:
   ANSRV_GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest
   ANSRV_GEO_PORT: 700
   GEO_CONT_NAME: ans_geo
+  RESET_IMAGE_CACHE: 1
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -127,6 +128,11 @@ jobs:
           $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
           docker run --detach --name $env:GEO_CONT_NAME -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+      
+      - uses: actions/cache@v3
+        with:
+          path: .\tests\integration\image_cache
+          key: pyvista-image-cache-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
 
       - name: Testing
         # TODO : Once the container is available on Linux we should be able to run it as
