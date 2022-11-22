@@ -26,7 +26,7 @@ skip_no_xserver = pytest.mark.skipif(
 
 
 @skip_no_xserver
-def test_body_plot(modeler: Modeler):
+def test_body_plot(modeler: Modeler, verify_image_cache):
     """Test plotting of the body."""
 
     # Create a Sketch
@@ -36,15 +36,15 @@ def test_body_plot(modeler: Modeler):
     # Create your design on the server side
     design = modeler.create_design("BoxExtrusions")
 
-    # Extrude the sketch to create a Body
+    # Extrude the sketch to create a body
     box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.mm))
 
-    # TODO : add test to check cache images using pyvista-pytest plugin
+    # Test the plotting of the body
     box_body.plot()
 
 
 @skip_no_xserver
-def test_component_plot(modeler: Modeler):
+def test_component_plot(modeler: Modeler, verify_image_cache):
     """Test plotting of the component."""
 
     # Create a Sketch
@@ -62,42 +62,43 @@ def test_component_plot(modeler: Modeler):
     component_1.create_surface("Component_Surface", sketch_1)
 
     # Test the plotting of the component
-    # TODO : add test to check cache images using pyvista-pytest plugin
     design.plot()
 
 
 @skip_no_xserver
-def test_plot_sketch():
+def test_plot_sketch(verify_image_cache):
     """Test plotting the sketch instance."""
 
     # Create a sketch instance
     sketch = Sketch()
-    sketch.polygon(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), sides=5, tag="Polygon")
-    sketch.segment(Point2D([3, 2]), Point2D([2, 0]), "Segment")
-    sketch.arc(Point2D([10, 10]), Point2D([10, -10]), Point2D([10, 0]), tag="Arc")
+    sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon1")
+    sketch.segment(Point2D([3, 0], UNITS.m), Point2D([10, 0], UNITS.m), "Segment1")
+    sketch.arc(
+        Point2D([10, 10], UNITS.m),
+        Point2D([10, -10], UNITS.m),
+        Point2D([10, 0], UNITS.m),
+        tag="Arc1",
+    )
 
     # Plot the entire sketch instance
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot()
 
 
 @skip_no_xserver
-def test_plot_polygon():
+def test_plot_polygon(verify_image_cache):
     """Test plotting of a polygon."""
 
     # Create a sketch instance
     sketch = Sketch()
 
     # Create a polygon and plot
-    sketch.polygon(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), sides=5, tag="Polygon")
+    sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon")
     sketch.select("Polygon")
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot_selection()
 
 
 @skip_no_xserver
-def test_plot_segment():
+def test_plot_segment(verify_image_cache):
     """Test plotting of a segment."""
 
     # Create a sketch instance
@@ -106,13 +107,11 @@ def test_plot_segment():
     # Create a segment and plot
     sketch.segment(Point2D([3, 2]), Point2D([2, 0]), "Segment")
     sketch.select("Segment")
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot_selection()
 
 
 @skip_no_xserver
-def test_plot_arc():
+def test_plot_arc(verify_image_cache):
     """Test plotting of an arc."""
 
     # Create a sketch instance
@@ -121,13 +120,11 @@ def test_plot_arc():
     # Create an arc and plot
     sketch.arc(Point2D([10, 10]), Point2D([10, -10]), Point2D([10, 0]), tag="Arc")
     sketch.select("Arc")
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot_selection()
 
 
 @skip_no_xserver
-def test_plot_triangle():
+def test_plot_triangle(verify_image_cache):
     """Test plotting of a triangle."""
 
     # Create a sketch instance
@@ -136,13 +133,11 @@ def test_plot_triangle():
     # Create a triangle and plot
     sketch.triangle(Point2D([10, 10]), Point2D([2, 1]), Point2D([10, -10]), tag="Triangle")
     sketch.select("Triangle")
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot_selection()
 
 
 @skip_no_xserver
-def test_plot_trapezoid():
+def test_plot_trapezoid(verify_image_cache):
     """Test plotting of a trapezoid."""
 
     # Create a sketch instance
@@ -151,28 +146,24 @@ def test_plot_trapezoid():
     # Create a trapezoid and plot
     sketch.trapezoid(10, 8, np.pi / 4, np.pi / 8, Point2D([10, -10]), tag="Trapezoid")
     sketch.select("Trapezoid")
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot_selection()
 
 
 @skip_no_xserver
-def test_plot_circle():
+def test_plot_circle(verify_image_cache):
     """Test plotting of a circle."""
 
     # Create a sketch instance
     sketch = Sketch()
 
     # Create a circle and plot
-    sketch.circle(Point2D([10, -10], UNIT_LENGTH), Quantity(1, UNIT_LENGTH), "Circle")
+    sketch.circle(Point2D([0, 1], UNIT_LENGTH), Quantity(2, UNIT_LENGTH), "Circle")
     sketch.select("Circle")
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot_selection()
 
 
 @skip_no_xserver
-def test_plot_ellipse():
+def test_plot_ellipse(verify_image_cache):
     """Test plotting of an ellipse."""
 
     # Create a sketch instance
@@ -183,13 +174,11 @@ def test_plot_ellipse():
         Point2D([0, 0], UNITS.m), Quantity(2, UNITS.m), Quantity(1, UNITS.m), tag="Ellipse"
     )
     sketch.select("Ellipse")
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot_selection()
 
 
 @skip_no_xserver
-def test_plot_slot():
+def test_plot_slot(verify_image_cache):
     """Test plotting of a slot."""
 
     # Create a sketch instance
@@ -203,13 +192,11 @@ def test_plot_slot():
         tag="Slot",
     )
     sketch.select("Slot")
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot_selection()
 
 
 @skip_no_xserver
-def test_plot_box():
+def test_plot_box(verify_image_cache):
     """Test plotting of a box."""
 
     # Create a sketch instance
@@ -223,27 +210,23 @@ def test_plot_box():
         tag="Box",
     )
     sketch.select("Box")
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     sketch.plot_selection()
 
 
 @skip_no_xserver
-def test_plot_sketch_scene():
+def test_plot_sketch_scene(verify_image_cache):
     """Test plotting a sketch in the scene."""
 
     # Create a sketch
     sketch = Sketch()
-    sketch.polygon(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
-    sketch.segment(Point2D([3, 2]), Point2D([2, 0]), "Segment")
+    sketch.polygon(Point2D([0, 0], UNITS.m), Quantity(2, UNITS.m), sides=5)
+    sketch.segment(Point2D([0, 2]), Point2D([2, 0]), "Segment")
 
     # Initialize the ``Plotter`` class
     pl = Plotter()
 
     # Showing the plane of the sketch and its frame.
     pl.plot_sketch(sketch=sketch, show_frame=True, show_plane=True)
-
-    # TODO : add test to check cache images using pyvista-pytest plugin
     pl.scene.show()
 
 
