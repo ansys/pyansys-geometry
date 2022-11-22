@@ -55,6 +55,7 @@ tests = [
     "ansys-platform-instancemanagement==1.0.2",
     "pytest==7.2.0",
     "pytest-cov==4.0.0",
+    "pytest-pyvista==0.1.1",
 ]
 doc = [
     "ansys-sphinx-theme==0.7.1",
@@ -101,7 +102,7 @@ show_missing = true
 
 [tool.pytest.ini_options]
 minversion = "7.1"
-addopts = "-ra --cov=ansys.geometry --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term -vv"
+addopts = "-ra --cov=ansys.geometry --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term -vv --image_cache_dir tests/integration/image_cache"
 testpaths = [
     "tests",
 ]
