@@ -31,6 +31,7 @@ PyGeometry
    :alt: Black
 
 
+
 PyGeometry is a Python client library for the Ansys Geometry service.
 
 Usage
