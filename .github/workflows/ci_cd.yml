@@ -16,7 +16,7 @@ env:
   ANSRV_GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest
   ANSRV_GEO_PORT: 700
   GEO_CONT_NAME: ans_geo
-  RESET_IMAGE_CACHE: 0
+  RESET_IMAGE_CACHE: 1
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -134,7 +134,7 @@ jobs:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-v-${{ env.RESET_IMAGE_CACHE }}
           restore-keys: |
-            pyvista-image-cache-v-0
+            pyvista-image-cache-v-1
 
       - name: Testing
         # TODO : Once the container is available on Linux we should be able to run it as
