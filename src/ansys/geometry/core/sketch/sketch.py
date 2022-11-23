@@ -697,12 +697,16 @@ class Sketch:
 
     def plot_selection(
         self,
+        screenshot: Optional[str] = None,
         **plotting_options: Optional[dict],
     ):
         """Plot the current selection to the scene.
 
         Parameters
         ----------
+        screenshot : str, default: None
+            Save a screenshot of the image being represented. The image is
+            stored in the path provided as an argument.
         **plotting_options : dict, default: []
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
@@ -720,7 +724,7 @@ class Sketch:
         )
 
         pl.add_sketch_polydata(sketches_polydata, **plotting_options)
-        pl.show()
+        pl.show(screenshot=screenshot)
 
     def sketch_polydata(self) -> List["PolyData"]:
         """
