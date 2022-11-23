@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import numpy as np
 from pint import Quantity
@@ -26,6 +27,8 @@ skip_no_xserver = pytest.mark.skipif(
     not system_supports_plotting(), reason="Requires active X Server"
 )
 
+IMAGE_RESULTS_DIR = Path(Path(__file__).parent, "image_cache", "results")
+
 
 def allow_workflow_high_variance(verify_image_cache) -> None:
     """Allow high variability in the rendered images.
@@ -37,7 +40,7 @@ def allow_workflow_high_variance(verify_image_cache) -> None:
 
 
 @skip_no_xserver
-def test_body_plot(modeler: Modeler, verify_image_cache):
+def test_plot_body(modeler: Modeler, verify_image_cache):
     """Test plotting of the body."""
     allow_workflow_high_variance(verify_image_cache)
 
@@ -52,11 +55,11 @@ def test_body_plot(modeler: Modeler, verify_image_cache):
     box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.mm))
 
     # Test the plotting of the body
-    box_body.plot()
+    box_body.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_body.png"))
 
 
 @skip_no_xserver
-def test_component_plot(modeler: Modeler, verify_image_cache):
+def test_plot_component(modeler: Modeler, verify_image_cache):
     """Test plotting of the component."""
     allow_workflow_high_variance(verify_image_cache)
 
@@ -75,7 +78,7 @@ def test_component_plot(modeler: Modeler, verify_image_cache):
     component_1.create_surface("Component_Surface", sketch_1)
 
     # Test the plotting of the component
-    design.plot()
+    design.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_component.png"))
 
 
 @skip_no_xserver
@@ -95,7 +98,7 @@ def test_plot_sketch(verify_image_cache):
     )
 
     # Plot the entire sketch instance
-    sketch.plot()
+    sketch.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_sketch.png"))
 
 
 @skip_no_xserver
@@ -109,7 +112,7 @@ def test_plot_polygon(verify_image_cache):
     # Create a polygon and plot
     sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon")
     sketch.select("Polygon")
-    sketch.plot_selection()
+    sketch.plot_selection(screenshot=Path(IMAGE_RESULTS_DIR, "plot_polygon.png"))
 
 
 @skip_no_xserver
@@ -123,7 +126,7 @@ def test_plot_segment(verify_image_cache):
     # Create a segment and plot
     sketch.segment(Point2D([3, 2]), Point2D([2, 0]), "Segment")
     sketch.select("Segment")
-    sketch.plot_selection()
+    sketch.plot_selection(screenshot=Path(IMAGE_RESULTS_DIR, "plot_segment.png"))
 
 
 @skip_no_xserver
@@ -137,7 +140,7 @@ def test_plot_arc(verify_image_cache):
     # Create an arc and plot
     sketch.arc(Point2D([10, 10]), Point2D([10, -10]), Point2D([10, 0]), tag="Arc")
     sketch.select("Arc")
-    sketch.plot_selection()
+    sketch.plot_selection(screenshot=Path(IMAGE_RESULTS_DIR, "plot_arc.png"))
 
 
 @skip_no_xserver
@@ -151,7 +154,7 @@ def test_plot_triangle(verify_image_cache):
     # Create a triangle and plot
     sketch.triangle(Point2D([10, 10]), Point2D([2, 1]), Point2D([10, -10]), tag="Triangle")
     sketch.select("Triangle")
-    sketch.plot_selection()
+    sketch.plot_selection(screenshot=Path(IMAGE_RESULTS_DIR, "plot_triangle.png"))
 
 
 @skip_no_xserver
@@ -165,7 +168,7 @@ def test_plot_trapezoid(verify_image_cache):
     # Create a trapezoid and plot
     sketch.trapezoid(10, 8, np.pi / 4, np.pi / 8, Point2D([10, -10]), tag="Trapezoid")
     sketch.select("Trapezoid")
-    sketch.plot_selection()
+    sketch.plot_selection(screenshot=Path(IMAGE_RESULTS_DIR, "plot_trapezoid.png"))
 
 
 @skip_no_xserver
@@ -179,7 +182,7 @@ def test_plot_circle(verify_image_cache):
     # Create a circle and plot
     sketch.circle(Point2D([0, 1], UNIT_LENGTH), Quantity(2, UNIT_LENGTH), "Circle")
     sketch.select("Circle")
-    sketch.plot_selection()
+    sketch.plot_selection(screenshot=Path(IMAGE_RESULTS_DIR, "plot_circle.png"))
 
 
 @skip_no_xserver
@@ -195,7 +198,7 @@ def test_plot_ellipse(verify_image_cache):
         Point2D([0, 0], UNITS.m), Quantity(2, UNITS.m), Quantity(1, UNITS.m), tag="Ellipse"
     )
     sketch.select("Ellipse")
-    sketch.plot_selection()
+    sketch.plot_selection(screenshot=Path(IMAGE_RESULTS_DIR, "plot_ellipse.png"))
 
 
 @skip_no_xserver
@@ -214,7 +217,7 @@ def test_plot_slot(verify_image_cache):
         tag="Slot",
     )
     sketch.select("Slot")
-    sketch.plot_selection()
+    sketch.plot_selection(screenshot=Path(IMAGE_RESULTS_DIR, "plot_slot.png"))
 
 
 @skip_no_xserver
@@ -233,7 +236,7 @@ def test_plot_box(verify_image_cache):
         tag="Box",
     )
     sketch.select("Box")
-    sketch.plot_selection()
+    sketch.plot_selection(screenshot=Path(IMAGE_RESULTS_DIR, "plot_box.png"))
 
 
 @skip_no_xserver
@@ -251,7 +254,7 @@ def test_plot_sketch_scene(verify_image_cache):
 
     # Showing the plane of the sketch and its frame.
     pl.plot_sketch(sketch=sketch, show_frame=True, show_plane=True)
-    pl.scene.show()
+    pl.scene.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_sketch_scene.png"))
 
 
 def test_visualization_polydata():
