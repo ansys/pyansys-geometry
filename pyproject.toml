@@ -46,7 +46,7 @@ tests = [
     "googleapis-common-protos==1.57.0",
     "grpcio==1.50.0",
     "grpcio-health-checking==1.48.2",
-    "numpy==1.23.4",
+    "numpy==1.23.5",
     "Pint==0.20.1",
     "protobuf==3.20.3",
     "pyvista==0.37.0",
@@ -55,6 +55,7 @@ tests = [
     "ansys-platform-instancemanagement==1.0.2",
     "pytest==7.2.0",
     "pytest-cov==4.0.0",
+    "pytest-pyvista==0.1.1",
 ]
 doc = [
     "ansys-sphinx-theme==0.7.1",
@@ -101,7 +102,7 @@ show_missing = true
 
 [tool.pytest.ini_options]
 minversion = "7.1"
-addopts = "-ra --cov=ansys.geometry --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term -vv"
+addopts = "-ra --cov=ansys.geometry --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term -vv --image_cache_dir tests/integration/image_cache"
 testpaths = [
     "tests",
 ]
