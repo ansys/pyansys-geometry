@@ -148,7 +148,14 @@ jobs:
         with:
           name: integration-test-logs
           path: tests/integration/logs
-          retention-days: 7  
+          retention-days: 7
+
+      - name: Upload PyVista generated images (cache and results)
+        uses: actions/upload-artifact@v3
+        with:
+          name: pytest-pyvista-images
+          path: tests/integration/image_cache
+          retention-days: 7
 
       - name: Upload Coverage Results
         uses: actions/upload-artifact@v3
