@@ -35,13 +35,13 @@ def test_plot_body(modeler: Modeler, verify_image_cache):
 
     # Create a Sketch
     sketch = Sketch()
-    sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
+    sketch.box(Point2D([10, 10], UNITS.cm), Quantity(10, UNITS.cm), Quantity(10, UNITS.mm))
 
     # Create your design on the server side
     design = modeler.create_design("BoxExtrusions")
 
     # Extrude the sketch to create a body
-    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.mm))
+    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.m))
 
     # Test the plotting of the body
     box_body.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_body.png"))
