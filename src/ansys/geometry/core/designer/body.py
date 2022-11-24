@@ -477,6 +477,7 @@ class Body:
     def plot(
         self,
         merge: Optional[bool] = False,
+        screenshot: Optional[str] = None,
         **plotting_options: Optional[dict],
     ) -> None:
         """Plot the body.
@@ -487,6 +488,9 @@ class Body:
             Whether to merge the body into a single mesh. By default, the
             number of triangles are preserved and only the topology is merged.
             When ``True``, the individual faces of the tessellation are merged.
+        screenshot : str, default: None
+            Save a screenshot of the image being represented. The image is
+            stored in the path provided as an argument.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
@@ -520,7 +524,7 @@ class Body:
 
         pl = Plotter()
         pl.add_body(self, merge=merge, **plotting_options)
-        pl.show()
+        pl.show(screenshot=screenshot)
 
     def __repr__(self) -> str:
         """String representation of the body."""

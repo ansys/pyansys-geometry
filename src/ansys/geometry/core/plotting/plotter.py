@@ -42,7 +42,7 @@ class Plotter:
 
         # Scene: assign the background
         self._scene.set_background(**background_opts)
-        view_box = self._scene.add_axes(line_width=5, box=True)
+        view_box = self._scene.add_axes(line_width=5, color="black")
 
         # Save the desired number of points
         self._num_points = num_points

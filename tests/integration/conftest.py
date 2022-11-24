@@ -38,3 +38,20 @@ def modeler():
     # TODO: check cleanup on exit
     # modeler.exit()
     # assert modeler._client.closed
+
+
+@pytest.fixture(scope="session", autouse=True)
+def clean_plot_result_images():
+    """
+    Method cleaning up the image results path.
+
+    Runs before each session once.
+    """
+    # Create the directory if it does not exist
+    results_dir = Path(Path(__file__).parent, "image_cache", "results")
+    results_dir.mkdir(parents=True, exist_ok=True)
+
+    # Clean up the directory
+    files = os.listdir(results_dir)
+    for file in files:
+        os.remove(Path(results_dir, file))
