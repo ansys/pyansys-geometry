@@ -693,6 +693,15 @@ class Sketch:
 
         pl = Plotter()
         pl.add_sketch_polydata(self.sketch_polydata(), **plotting_options)
+
+        # If you want to visualize a Sketch, you want to see it from the top
+        # by default... common sense.
+        pl.scene.view_vector(
+            vector=self.plane.direction_z.tolist(),
+            viewup=self.plane.direction_y.tolist(),
+        )
+
+        # Finally, show the plot
         pl.show(screenshot=screenshot)
 
     def plot_selection(
@@ -714,8 +723,6 @@ class Sketch:
         from ansys.geometry.core.plotting.plotter import Plotter
 
         sketches_polydata = []
-        pl = Plotter()
-
         sketches_polydata.extend(
             [
                 sketch_item.visualization_polydata.transform(self._plane.transformation_matrix)
@@ -723,7 +730,17 @@ class Sketch:
             ]
         )
 
+        pl = Plotter()
         pl.add_sketch_polydata(sketches_polydata, **plotting_options)
+
+        # If you want to visualize a Sketch, you want to see it from the top
+        # by default... common sense.
+        pl.scene.view_vector(
+            vector=self.plane.direction_z.tolist(),
+            viewup=self.plane.direction_y.tolist(),
+        )
+
+        # Finally, show the plot
         pl.show(screenshot=screenshot)
 
     def sketch_polydata(self) -> List["PolyData"]:
