@@ -16,8 +16,13 @@ class PlotterWidget(ABC):
     def __init__(self, plotter: Plotter):
         self._plotter: Plotter = plotter
 
+    @property
+    def plotter(self):
+        """The Plotter object to which the widget is assigned."""
+        return self._plotter
+
     @abstractmethod
-    def callback(self) -> None:
+    def callback(self, state) -> None:
         """General callback function for PlotterWidget objects."""
         pass
 

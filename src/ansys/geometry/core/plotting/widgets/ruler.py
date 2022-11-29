@@ -15,16 +15,16 @@ class Ruler(PlotterWidget):
         # Initialize variables
         self._is_visible: bool = False
         self._actor = None
-        self._button: _vtk.vtkButtonWidget = self._plotter.add_checkbox_button_widget(
+        self._button: _vtk.vtkButtonWidget = self.plotter.add_checkbox_button_widget(
             self.callback, position=(10, 500), size=30, border_size=3
         )
 
-    def callback(self) -> None:
+    def callback(self, state) -> None:
         if self._is_visible and self._actor is not None:
-            self._plotter.remove_actor(self._actor)
+            self.plotter.remove_actor(self._actor)
             self._is_visible = False
         else:
-            self._actor = self._plotter.show_bounds(
+            self._actor = self.plotter.show_bounds(
                 grid="front",
                 location="outer",
                 all_edges=False,
@@ -37,7 +37,7 @@ class Ruler(PlotterWidget):
     def update(self) -> None:
 
         show_ruler_vr = self._button.GetRepresentation()
-        show_ruler_icon_file = os.path.join(os.path.dirname(__file__), "_images", "show_ruler.png")
+        show_ruler_icon_file = os.path.join(os.path.dirname(__file__), "_images", "ruler.png")
         show_ruler_r = _vtk.vtkPNGReader()
         show_ruler_r.SetFileName(show_ruler_icon_file)
         show_ruler_r.Update()
