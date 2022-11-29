@@ -31,6 +31,7 @@ class Ruler(PlotterWidget):
                 show_xaxis=True,
                 show_yaxis=True,
                 show_zaxis=True,
+                color="black",
             )
             self._is_visible = True
 
