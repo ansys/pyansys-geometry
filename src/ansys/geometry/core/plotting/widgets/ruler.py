@@ -4,6 +4,7 @@ import os
 
 from pyvista import Plotter, _vtk
 
+from ansys.geometry.core.misc import UNIT_LENGTH
 from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
 
 
@@ -51,6 +52,9 @@ class Ruler(PlotterWidget):
                 show_yaxis=True,
                 show_zaxis=True,
                 color="black",
+                xlabel=f"X Axis [{UNIT_LENGTH:~H}]",
+                ylabel=f"Y Axis [{UNIT_LENGTH:~H}]",
+                zlabel=f"Z Axis [{UNIT_LENGTH:~H}]",
             )
 
     def update(self) -> None:
