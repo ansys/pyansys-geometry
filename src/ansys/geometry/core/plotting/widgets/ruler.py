@@ -8,21 +8,40 @@ from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
 
 
 class Ruler(PlotterWidget):
+    """Ruler widget for the PyGeometry plotter class.
+
+    Parameters
+    ----------
+    plotter : ~pyvista.Plotter
+        The Plotter instance to which the widget will be added.
+    """
+
     def __init__(self, plotter: Plotter) -> None:
+        """Constructor method for the ``Ruler`` class."""
         # Call PlotterWidget ctor
         super().__init__(plotter)
 
         # Initialize variables
-        self._is_visible: bool = False
-        self._actor = None
+        self._actor: _vtk.vtkActor = None
         self._button: _vtk.vtkButtonWidget = self.plotter.add_checkbox_button_widget(
             self.callback, position=(10, 500), size=30, border_size=3
         )
 
-    def callback(self, state) -> None:
-        if self._is_visible and self._actor is not None:
+    def callback(self, state: bool) -> None:
+        """Callback function for the Ruler widget.
+
+        Notes
+        -----
+        This method is called every time the Ruler widget is clicked.
+
+        Parameters
+        ----------
+        state : bool
+            The value of the button. ``True`` if active.
+        """
+        if not state and self._actor:
             self.plotter.remove_actor(self._actor)
-            self._is_visible = False
+            self._actor = None
         else:
             self._actor = self.plotter.show_bounds(
                 grid="front",
@@ -33,10 +52,9 @@ class Ruler(PlotterWidget):
                 show_zaxis=True,
                 color="black",
             )
-            self._is_visible = True
 
     def update(self) -> None:
-
+        """Method defining the configuration and representation of the Ruler widget button."""
         show_ruler_vr = self._button.GetRepresentation()
         show_ruler_icon_file = os.path.join(os.path.dirname(__file__), "_images", "ruler.png")
         show_ruler_r = _vtk.vtkPNGReader()

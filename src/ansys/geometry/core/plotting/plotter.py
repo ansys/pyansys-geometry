@@ -301,8 +301,7 @@ class Plotter:
         self.scene.enable_anti_aliasing("ssaa")
 
         # Update all buttons/widgets
-        for widget in self._widgets:
-            widget.update()
+        [widget.update() for widget in self._widgets]
 
         self.scene.show(jupyter_backend=jupyter_backend, **kwargs)
 
