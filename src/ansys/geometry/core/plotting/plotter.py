@@ -6,6 +6,7 @@ from pyvista.plotting.tools import create_axes_marker
 
 from ansys.geometry.core.designer import Body, Component
 from ansys.geometry.core.math import Frame, Plane
+from ansys.geometry.core.plotting.widgets import PlotterWidget, Ruler
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -46,6 +47,10 @@ class Plotter:
 
         # Save the desired number of points
         self._num_points = num_points
+
+        # Create Plotter widgets
+        self._widgets: List[PlotterWidget] = []
+        self._widgets.append(Ruler(self._scene))
 
     @property
     def scene(self) -> pv.Plotter:
@@ -294,6 +299,9 @@ class Plotter:
 
         # Enabling anti-aliasing by default on scene
         self.scene.enable_anti_aliasing("ssaa")
+
+        # Update all buttons/widgets
+        [widget.update() for widget in self._widgets]
 
         self.scene.show(jupyter_backend=jupyter_backend, **kwargs)
 
