@@ -43,6 +43,8 @@ goto end
 cd "%BUILDDIR%\latex"
 for %%f in (*.tex) do (
 pdflatex "%%f" --interaction=nonstopmode)
+IF NOT EXIST ansys-geometry-core.pdf EXIT /b
+Echo "pdf generated!"
 
 :end
 popd
