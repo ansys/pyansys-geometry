@@ -85,7 +85,7 @@ def test_plot_sketch(verify_image_cache):
     )
 
     # Plot the entire sketch instance
-    sketch.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_sketch.png"))
+    sketch.plot(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_sketch.png"))
 
 
 @skip_no_xserver
@@ -98,7 +98,7 @@ def test_plot_polygon(verify_image_cache):
     # Create a polygon and plot
     sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon")
     sketch.select("Polygon")
-    sketch.plot_selection(screenshot=Path(IMAGE_RESULTS_DIR, "plot_polygon.png"))
+    sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_polygon.png"))
 
 
 @skip_no_xserver
@@ -111,7 +111,7 @@ def test_plot_segment(verify_image_cache):
     # Create a segment and plot
     sketch.segment(Point2D([3, 2]), Point2D([2, 0]), "Segment")
     sketch.select("Segment")
-    sketch.plot_selection(screenshot=Path(IMAGE_RESULTS_DIR, "plot_segment.png"))
+    sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_segment.png"))
 
 
 @skip_no_xserver
@@ -124,7 +124,7 @@ def test_plot_arc(verify_image_cache):
     # Create an arc and plot
     sketch.arc(Point2D([10, 10]), Point2D([10, -10]), Point2D([10, 0]), tag="Arc")
     sketch.select("Arc")
-    sketch.plot_selection(screenshot=Path(IMAGE_RESULTS_DIR, "plot_arc.png"))
+    sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_arc.png"))
 
 
 @skip_no_xserver
@@ -137,7 +137,7 @@ def test_plot_triangle(verify_image_cache):
     # Create a triangle and plot
     sketch.triangle(Point2D([10, 10]), Point2D([2, 1]), Point2D([10, -10]), tag="Triangle")
     sketch.select("Triangle")
-    sketch.plot_selection(screenshot=Path(IMAGE_RESULTS_DIR, "plot_triangle.png"))
+    sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_triangle.png"))
 
 
 @skip_no_xserver
@@ -150,7 +150,7 @@ def test_plot_trapezoid(verify_image_cache):
     # Create a trapezoid and plot
     sketch.trapezoid(10, 8, np.pi / 4, np.pi / 8, Point2D([10, -10]), tag="Trapezoid")
     sketch.select("Trapezoid")
-    sketch.plot_selection(screenshot=Path(IMAGE_RESULTS_DIR, "plot_trapezoid.png"))
+    sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_trapezoid.png"))
 
 
 @skip_no_xserver
@@ -163,7 +163,7 @@ def test_plot_circle(verify_image_cache):
     # Create a circle and plot
     sketch.circle(Point2D([0, 1], UNIT_LENGTH), Quantity(2, UNIT_LENGTH), "Circle")
     sketch.select("Circle")
-    sketch.plot_selection(screenshot=Path(IMAGE_RESULTS_DIR, "plot_circle.png"))
+    sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_circle.png"))
 
 
 @skip_no_xserver
@@ -178,7 +178,7 @@ def test_plot_ellipse(verify_image_cache):
         Point2D([0, 0], UNITS.m), Quantity(2, UNITS.m), Quantity(1, UNITS.m), tag="Ellipse"
     )
     sketch.select("Ellipse")
-    sketch.plot_selection(screenshot=Path(IMAGE_RESULTS_DIR, "plot_ellipse.png"))
+    sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_ellipse.png"))
 
 
 @skip_no_xserver
@@ -196,7 +196,7 @@ def test_plot_slot(verify_image_cache):
         tag="Slot",
     )
     sketch.select("Slot")
-    sketch.plot_selection(screenshot=Path(IMAGE_RESULTS_DIR, "plot_slot.png"))
+    sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_slot.png"))
 
 
 @skip_no_xserver
@@ -214,7 +214,7 @@ def test_plot_box(verify_image_cache):
         tag="Box",
     )
     sketch.select("Box")
-    sketch.plot_selection(screenshot=Path(IMAGE_RESULTS_DIR, "plot_box.png"))
+    sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_box.png"))
 
 
 @skip_no_xserver
