@@ -240,6 +240,23 @@ class Arc(SketchEdge):
 
     @classmethod
     def from_three_points(cls, start: Point2D, inter: Point2D, end: Point2D):
+        """
+        Create an Arc from three given points.
+
+        Parameters
+        ----------
+        start : Point2D
+            Point that is the start of the arc.
+        inter : Point2D
+            Point that is at an intermediate location of the arc.
+        end : Point2D
+            Point that is the end of the arc.
+
+        Returns
+        -------
+        Arc
+            Arc generated from the three given points.
+        """
         # Unpack the points into its coordinates (in UNIT_LENGTH)
         x_s, y_s = start.tolist()
         x_i, y_i = inter.tolist()
