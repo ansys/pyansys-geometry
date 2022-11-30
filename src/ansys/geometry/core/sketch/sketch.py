@@ -675,6 +675,7 @@ class Sketch:
 
     def plot(
         self,
+        view_2d: Optional[bool] = False,
         screenshot: Optional[str] = None,
         **plotting_options: Optional[dict],
     ):
@@ -694,18 +695,19 @@ class Sketch:
         pl = Plotter()
         pl.add_sketch_polydata(self.sketch_polydata(), **plotting_options)
 
-        # If you want to visualize a Sketch, you want to see it from the top
-        # by default... common sense.
-        pl.scene.view_vector(
-            vector=self.plane.direction_z.tolist(),
-            viewup=self.plane.direction_y.tolist(),
-        )
+        # If you want to visualize a Sketch from the top...
+        if view_2d:
+            pl.scene.view_vector(
+                vector=self.plane.direction_z.tolist(),
+                viewup=self.plane.direction_y.tolist(),
+            )
 
         # Finally, show the plot
         pl.show(screenshot=screenshot)
 
     def plot_selection(
         self,
+        view_2d: Optional[bool] = False,
         screenshot: Optional[str] = None,
         **plotting_options: Optional[dict],
     ):
@@ -713,6 +715,9 @@ class Sketch:
 
         Parameters
         ----------
+        view_2d : bool, default: False
+            Specifies whether the plot should be represented in a 2D format.
+            By default, this is set to ``False``.
         screenshot : str, default: None
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
@@ -733,12 +738,12 @@ class Sketch:
         pl = Plotter()
         pl.add_sketch_polydata(sketches_polydata, **plotting_options)
 
-        # If you want to visualize a Sketch, you want to see it from the top
-        # by default... common sense.
-        pl.scene.view_vector(
-            vector=self.plane.direction_z.tolist(),
-            viewup=self.plane.direction_y.tolist(),
-        )
+        # If you want to visualize a Sketch from the top...
+        if view_2d:
+            pl.scene.view_vector(
+                vector=self.plane.direction_z.tolist(),
+                viewup=self.plane.direction_y.tolist(),
+            )
 
         # Finally, show the plot
         pl.show(screenshot=screenshot)
