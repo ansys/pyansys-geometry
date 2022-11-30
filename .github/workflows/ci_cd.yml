@@ -225,15 +225,10 @@ jobs:
           .\make.bat html
 
       - name: Build the documentation (PDF)
-        # run: |
-        #   .\.venv\Scripts\Activate.ps1
-        #   cd doc
-        #   .\make.bat pdf
         run: |
-          cd doc/_build
-          mkdir latex
-          cd latex
-          echo "" > dummy_docs.pdf
+          .\.venv\Scripts\Activate.ps1
+          cd doc
+          .\make.bat pdf
 
       - name: Upload HTML documentation
         uses: actions/upload-artifact@v3
@@ -246,7 +241,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: documentation-pdf
-          path: doc/_build/latex/*.pdf
+          path: doc/_build/latex/ansys-geometry-core*.pdf
           retention-days: 7
 
       - name: Stop the Geometry service
