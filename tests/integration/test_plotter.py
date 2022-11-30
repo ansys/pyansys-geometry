@@ -140,6 +140,7 @@ def test_plot_arc_from_three_points_clockwise(verify_image_cache):
     # Forcing a clockwise arc
     inter = Point2D([2, 4])
     sketch.arc_from_three_points(start, inter, end, tag="Arc_clockwise")
+    sketch.select("Arc_clockwise")
     sketch.plot_selection(
         view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_arc_from_three_points_clockwise.png")
     )
@@ -158,6 +159,7 @@ def test_plot_arc_from_three_points_counterclockwise(verify_image_cache):
     # Forcing a counter-clockwise arc
     inter = Point2D([0, -5])
     sketch.arc_from_three_points(start, inter, end, tag="Arc_counterclockwise")
+    sketch.select("Arc_counterclockwise")
     sketch.plot_selection(
         view_2d=True,
         screenshot=Path(IMAGE_RESULTS_DIR, "plot_arc_from_three_points_counterclockwise.png"),
