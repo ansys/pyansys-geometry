@@ -128,6 +128,43 @@ def test_plot_arc(verify_image_cache):
 
 
 @skip_no_xserver
+def test_plot_arc_from_three_points_clockwise(verify_image_cache):
+    """Test plotting of an arc from three points (clockwise)."""
+    # Create a sketch instance
+    sketch = Sketch()
+
+    # Create start and end points for the arc
+    start = Point2D([0, 5])
+    end = Point2D([5, 0])
+
+    # Forcing a clockwise arc
+    inter = Point2D([2, 4])
+    sketch.arc_from_three_points(start, inter, end, tag="Arc_clockwise")
+    sketch.plot_selection(
+        view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_arc_from_three_points_clockwise.png")
+    )
+
+
+@skip_no_xserver
+def test_plot_arc_from_three_points_counterclockwise(verify_image_cache):
+    """Test plotting of an arc from three points (counter-clockwise)."""
+    # Create a sketch instance
+    sketch = Sketch()
+
+    # Create start and end points for the arc
+    start = Point2D([0, 5])
+    end = Point2D([5, 0])
+
+    # Forcing a counter-clockwise arc
+    inter = Point2D([0, -5])
+    sketch.arc_from_three_points(start, inter, end, tag="Arc_counterclockwise")
+    sketch.plot_selection(
+        view_2d=True,
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_arc_from_three_points_counterclockwise.png"),
+    )
+
+
+@skip_no_xserver
 def test_plot_triangle(verify_image_cache):
     """Test plotting of a triangle."""
 

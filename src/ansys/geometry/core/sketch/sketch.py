@@ -415,6 +415,36 @@ class Sketch:
         arc = Arc(center, start, end, clockwise)
         return self.edge(arc, tag)
 
+    def arc_from_three_points(
+        self,
+        start: Point2D,
+        inter: Point2D,
+        end: Point2D,
+        tag: Optional[str] = None,
+    ) -> "Sketch":
+        """
+        Add an arc to the sketch plane from three given points.
+
+        Parameters
+        ----------
+        start : Point2D
+            Point that is the start of the arc.
+        inter : Point2D
+            Point that is at an intermediate location of the arc.
+        end : Point2D
+            Point that is the end of the arc.
+        tag : str, default: None
+            User-defined label for identifying this edge.
+
+        Returns
+        -------
+        Sketch
+            Revised sketch state ready for further sketch actions.
+        """
+
+        arc = Arc.from_three_points(start, inter, end)
+        return self.edge(arc, tag)
+
     def triangle(
         self,
         point1: Point2D,
