@@ -12,3 +12,10 @@
 .bd-toc {
     padding-top: 5em;
 }
+
+.sd-card .sd-card-img-top {
+    height: 52px;
+    width: 52px;
+    margin-left: auto;
+    margin-right: auto;
+}
