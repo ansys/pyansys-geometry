@@ -79,6 +79,23 @@ PyGeometry is a Python client library for the Ansys Geometry service.
 
                   To the contribute
 
+.. grid:: 
+
+   .. grid-item-card:: 
+      
+            Examples
+            ^^^^^^^^
+            The examples demonstrate the behavior and usage of PyGeometry.
+
+            +++
+            .. button-link:: examples.html
+               :color: secondary
+               :expand:
+               :outline:
+               :click-parent:
+
+                  To the examples
+
 .. toctree::
    :hidden:
    :maxdepth: 3
