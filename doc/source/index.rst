@@ -11,7 +11,7 @@ PyGeometry is a Python client library for the Ansys Geometry service.
             Getting started
             ^^^^^^^^^^^^^^^
 
-            New to *pygeometry*? Check out the getting started
+            New to *PyGeometry*? Check out the getting started
             guide.
 
             +++
@@ -31,7 +31,7 @@ PyGeometry is a Python client library for the Ansys Geometry service.
             ^^^^^^^^^^
 
             The user guide provides in-depth information on the
-            key concepts of pygeometry.
+            key concepts of *PyGeometry*.
 
             +++
             .. button-link:: user_guide/index.html
@@ -47,9 +47,9 @@ PyGeometry is a Python client library for the Ansys Geometry service.
             :img-top: _static/assets/index_api.png
 
             API
-            ^^^^
+            ^^^
 
-            The reference guide contains a detailed description of PyGeometry API.
+            The reference guide contains a detailed description of PyGeometry's API.
 
             +++
             .. button-link:: autoapi/index.html
@@ -58,7 +58,7 @@ PyGeometry is a Python client library for the Ansys Geometry service.
                :outline:
                :click-parent:
 
-                  To the API 
+                  API 
 
    .. grid-item-card::
             :img-top: _static/assets/index_contribute.png
@@ -77,7 +77,7 @@ PyGeometry is a Python client library for the Ansys Geometry service.
                :outline:
                :click-parent:
 
-                  To the contribute
+                  Contribute
 
 .. grid:: 
 
@@ -95,7 +95,7 @@ PyGeometry is a Python client library for the Ansys Geometry service.
                :outline:
                :click-parent:
 
-                  To the examples
+                  Examples
 
 .. toctree::
    :hidden:
