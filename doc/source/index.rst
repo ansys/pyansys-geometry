@@ -49,7 +49,7 @@ PyGeometry is a Python client library for the Ansys Geometry service.
             API
             ^^^
 
-            The reference guide contains a detailed description of PyGeometry's API.
+            The reference guide contains a detailed description of *PyGeometry*'s API.
 
             +++
             .. button-link:: autoapi/index.html
