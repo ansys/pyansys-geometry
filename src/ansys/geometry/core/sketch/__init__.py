@@ -6,6 +6,7 @@ from ansys.geometry.core.sketch.circle import Circle
 from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.sketch.ellipse import Ellipse
 from ansys.geometry.core.sketch.face import SketchFace
+from ansys.geometry.core.sketch.gears import DummyGear
 from ansys.geometry.core.sketch.polygon import Polygon
 from ansys.geometry.core.sketch.segment import Segment
 from ansys.geometry.core.sketch.sketch import Sketch
