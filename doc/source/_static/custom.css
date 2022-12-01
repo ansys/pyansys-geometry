@@ -13,9 +13,28 @@
     padding-top: 5em;
 }
 
+/* Remove once implemented in ansys-sphinx-theme*/
+
 .sd-card .sd-card-img-top {
-    height: 52px;
-    width: 52px;
+    height: 100px;
+    width: 100px;
+    margin-top: auto;
     margin-left: auto;
     margin-right: auto;
+}
+
+.sd-card .sd-card-header {
+  border: none;
+  background-color:white;
+  color: #150458 !important;
+  font-size: var(--pst-font-size-h5);
+  font-weight: bold;
+  padding: 2.5rem 0rem 0.5rem 0rem;
+  text-align: center;
+}
+
+.sd-card .sd-card-footer .sd-card-text {
+  max-width: 220px;
+  margin-left: auto;
+  margin-right: auto;
 }
