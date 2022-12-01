@@ -263,7 +263,7 @@ def test_plot_dummy_gear(verify_image_cache):
     # Create a sketch instance
     sketch = Sketch()
 
-    # Create a box and plot
+    # Create a gear
     sketch.dummy_gear(
         Point2D([3, 1], unit=UNITS.meter),
         Distance(4, unit=UNITS.meter),
