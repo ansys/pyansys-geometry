@@ -128,6 +128,45 @@ def test_plot_arc(verify_image_cache):
 
 
 @skip_no_xserver
+def test_plot_arc_from_three_points_clockwise(verify_image_cache):
+    """Test plotting of an arc from three points (clockwise)."""
+    # Create a sketch instance
+    sketch = Sketch()
+
+    # Create start and end points for the arc
+    start = Point2D([0, 5])
+    end = Point2D([5, 0])
+
+    # Forcing a clockwise arc
+    inter = Point2D([2, 4])
+    sketch.arc_from_three_points(start, inter, end, tag="Arc_clockwise")
+    sketch.select("Arc_clockwise")
+    sketch.plot_selection(
+        view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_arc_from_three_points_clockwise.png")
+    )
+
+
+@skip_no_xserver
+def test_plot_arc_from_three_points_counterclockwise(verify_image_cache):
+    """Test plotting of an arc from three points (counter-clockwise)."""
+    # Create a sketch instance
+    sketch = Sketch()
+
+    # Create start and end points for the arc
+    start = Point2D([0, 5])
+    end = Point2D([5, 0])
+
+    # Forcing a counter-clockwise arc
+    inter = Point2D([0, -5])
+    sketch.arc_from_three_points(start, inter, end, tag="Arc_counterclockwise")
+    sketch.select("Arc_counterclockwise")
+    sketch.plot_selection(
+        view_2d=True,
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_arc_from_three_points_counterclockwise.png"),
+    )
+
+
+@skip_no_xserver
 def test_plot_triangle(verify_image_cache):
     """Test plotting of a triangle."""
 
@@ -215,6 +254,51 @@ def test_plot_box(verify_image_cache):
     )
     sketch.select("Box")
     sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_box.png"))
+
+
+@skip_no_xserver
+def test_plot_dummy_gear(verify_image_cache):
+    """Test plotting of a dummy gear."""
+
+    # Create a sketch instance
+    sketch = Sketch()
+
+    # Create a gear
+    sketch.dummy_gear(
+        Point2D([3, 1], unit=UNITS.meter),
+        Distance(4, unit=UNITS.meter),
+        Distance(3.8, unit=UNITS.meter),
+        30,
+        tag="Gear",
+    )
+    sketch.select("Gear")
+    sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_dummy_gear.png"))
+
+
+def test_extrude_dummy_gear(modeler: Modeler, verify_image_cache):
+    """Test plotting and extrusion of a dummy gear."""
+
+    # Create a sketch instance
+    sketch = Sketch()
+
+    # Create a gear
+    sketch.dummy_gear(
+        Point2D([3, 1], unit=UNITS.meter),
+        Distance(4, unit=UNITS.meter),
+        Distance(3.8, unit=UNITS.meter),
+        30,
+        tag="Gear",
+    )
+    sketch.circle(Point2D([3, 1], unit=UNITS.meter), Distance(1, unit=UNITS.meter), tag="Circle")
+
+    # Create your design on the server side
+    design = modeler.create_design("GearExtrusions")
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("GearExtruded", sketch, Quantity(500, UNITS.mm))
+
+    # Test the plotting of the body
+    box_body.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_extrude_dummy_gear.png"))
 
 
 @skip_no_xserver
