@@ -706,3 +706,28 @@ def test_arc():
     # Since the arc is clockwise, all X values should be >=0
     for point in pd.points:
         assert point[0] > 0 or np.isclose(point[0], 0)
+
+
+def test_arc_from_three_points():
+    """Test arc generation from three points."""
+
+    # Fixing start and end points
+    start = Point2D([0, 5])
+    end = Point2D([5, 0])
+
+    # Case 1: forcing a clockwise arc
+    inter = Point2D([2, 4])
+    arc = Arc.from_three_points(start, inter, end)
+    pd = arc.visualization_polydata
+    # Since the arc is clockwise, all X values should be >=0
+    for point in pd.points:
+        assert point[0] > 0 or np.isclose(point[0], 0)
+
+    # Case 2: forcing a counter-clockwise arc
+    inter = Point2D([0, -5])
+    arc = Arc.from_three_points(start, inter, end)
+    pd = arc.visualization_polydata
+    # Since the arc is counter-clockwise, all X values should be <=0 for Y>0
+    for point in pd.points:
+        if point[1] > 0:
+            assert point[0] < 0 or np.isclose(point[0], 0)
