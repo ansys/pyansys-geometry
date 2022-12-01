@@ -12,6 +12,7 @@ from ansys.geometry.core.sketch.circle import Circle
 from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.sketch.ellipse import Ellipse
 from ansys.geometry.core.sketch.face import SketchFace
+from ansys.geometry.core.sketch.gears import DummyGear
 from ansys.geometry.core.sketch.polygon import Polygon
 from ansys.geometry.core.sketch.segment import Segment
 from ansys.geometry.core.sketch.slot import Slot
@@ -464,7 +465,7 @@ class Sketch:
         point3 : Point2D
             Point that represents a vertex of the triangle.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying this face.
 
         Returns
         -------
@@ -503,7 +504,7 @@ class Sketch:
         angle : Optional[Union[Quantity, Angle, Real]], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying this face.
 
         Returns
         -------
@@ -529,7 +530,7 @@ class Sketch:
         radius : Union[Quantity, Distance]
             Radius of the circle.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying this face.
 
         Returns
         -------
@@ -560,7 +561,7 @@ class Sketch:
         angle : Union[Quantity, Real], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying this face.
 
         Returns
         -------
@@ -591,12 +592,12 @@ class Sketch:
         angle : Union[Quantity, Angle, Real], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying this face.
 
         Returns
         -------
-        Slot
-            Object representing the slot added to the sketch.
+        Sketch
+            Revised sketch state ready for further sketch actions.
         """
         slot = Slot(center, width, height, angle)
         return self.face(slot, tag)
@@ -622,13 +623,12 @@ class Sketch:
         angle : Union[Quantity, Angle, Real], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying this face.
 
         Returns
         -------
-        Ellipse
-            Object representing the ellipse added to the sketch.
-
+        Sketch
+            Revised sketch state ready for further sketch actions.
         """
         ellipse = Ellipse(center, semi_major_axis, semi_minor_axis, angle)
         return self.face(ellipse, tag)
@@ -654,16 +654,46 @@ class Sketch:
         angle : Union[Quantity, Angle, Real], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying this face.
 
         Returns
         -------
-        Polygon
-            Object representing the polygon added to the sketch.
-
+        Sketch
+            Revised sketch state ready for further sketch actions.
         """
         polygon = Polygon(center, inner_radius, sides, angle)
         return self.face(polygon, tag)
+
+    def dummy_gear(
+        self,
+        origin: Point2D,
+        outer_radius: Distance,
+        inner_radius: Distance,
+        n_teeth: int,
+        tag: Optional[str] = None,
+    ):
+        """Dummy gear sketching class.
+
+        Parameters
+        ----------
+        origin : Point2D
+            Origin of the gear.
+        outer_radius : Distance
+            Outer radius of the gear.
+        inner_radius : Distance
+            Inner radius of the gear.
+        n_teeth : int
+            Number of teeth of the gear.
+        tag : str, default: None
+            User-defined label for identifying this face.
+
+        Returns
+        -------
+        Sketch
+            Revised sketch state ready for further sketch actions.
+        """
+        gear = DummyGear(origin, outer_radius, inner_radius, n_teeth)
+        return self.face(gear, tag)
 
     @check_input_types
     def tag(self, tag: str) -> None:
@@ -713,6 +743,9 @@ class Sketch:
 
         Parameters
         ----------
+        view_2d : bool, default: False
+            Specifies whether the plot should be represented in a 2D format.
+            By default, this is set to ``False``.
         screenshot : str, default: None
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.

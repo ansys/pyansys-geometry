@@ -257,6 +257,51 @@ def test_plot_box(verify_image_cache):
 
 
 @skip_no_xserver
+def test_plot_dummy_gear(verify_image_cache):
+    """Test plotting of a dummy gear."""
+
+    # Create a sketch instance
+    sketch = Sketch()
+
+    # Create a gear
+    sketch.dummy_gear(
+        Point2D([3, 1], unit=UNITS.meter),
+        Distance(4, unit=UNITS.meter),
+        Distance(3.8, unit=UNITS.meter),
+        30,
+        tag="Gear",
+    )
+    sketch.select("Gear")
+    sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_dummy_gear.png"))
+
+
+def test_extrude_dummy_gear(modeler: Modeler, verify_image_cache):
+    """Test plotting and extrusion of a dummy gear."""
+
+    # Create a sketch instance
+    sketch = Sketch()
+
+    # Create a gear
+    sketch.dummy_gear(
+        Point2D([3, 1], unit=UNITS.meter),
+        Distance(4, unit=UNITS.meter),
+        Distance(3.8, unit=UNITS.meter),
+        30,
+        tag="Gear",
+    )
+    sketch.circle(Point2D([3, 1], unit=UNITS.meter), Distance(1, unit=UNITS.meter), tag="Circle")
+
+    # Create your design on the server side
+    design = modeler.create_design("GearExtrusions")
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("GearExtruded", sketch, Quantity(500, UNITS.mm))
+
+    # Test the plotting of the body
+    box_body.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_extrude_dummy_gear.png"))
+
+
+@skip_no_xserver
 def test_plot_sketch_scene(verify_image_cache):
     """Test plotting a sketch in the scene."""
 
