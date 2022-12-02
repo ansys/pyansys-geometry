@@ -1,6 +1,7 @@
 """Module for sketching gears."""
 
 from beartype import beartype as check_input_types
+from beartype.typing import List, Tuple
 import numpy as np
 from pint import Quantity
 import pyvista as pv
@@ -125,7 +126,7 @@ class SpurGear(Gear):
         Origin of the spur gear.
     module : Real
         Module of the spur gear. This is also the ratio between the pitch circle
-        in millimeters and the number of teeth.
+        diameter in millimeters and the number of teeth.
     pressure_angle : Quantity
         Pressure angle of the spur gear.
     n_teeth : int
@@ -156,6 +157,7 @@ class SpurGear(Gear):
         self._root_diameter = self.ref_diameter - 2.5 * self.module
 
         # TODO: To be properly implemented (sketching)...
+        self._sketch_spur_gear()
 
     @property
     def origin(self) -> Point2D:
@@ -206,3 +208,141 @@ class SpurGear(Gear):
     def root_diameter(self) -> Real:
         """Root diameter of the spur gear."""
         return self._root_diameter
+
+    def _sketch_spur_gear(self) -> None:
+        """Private method in charge of generating the arcs and segments
+        needed to sketch the Spur Gear from its properties previously defined.
+        """
+
+        # Let's sketch a single tooth first
+        tooth_lines = self._sketch_single_tooth_spur_gear()
+
+    def _sketch_single_tooth_spur_gear(self) -> List[Arc]:
+        """Private method to sketch a single tooth.
+
+        Returns
+        -------
+        List[Arc]
+            A list of arcs that create the tooth.
+        """
+        # Compute the involute with the smallest of both
+        #
+        # FYI: Max angle is 108deg - slightly over 90deg
+        diam = self.root_diameter if self.root_diameter < self.base_diameter else self.base_diameter
+        x_i, y_i, t_i = self._involute(diam / 2, self.tip_diameter / 2, np.pi * 0.6)
+
+        # Align the involute curve to cross the pitch diameter
+        x_i, y_i = self._align_involute(x_i, y_i, t_i)
+
+        # Get the mirrored section of the involute
+        x_m = x_i.reverse()
+        y_m = [-y for y in y_i.reverse()]
+
+        # Rotate the mirrored curve by the circular tooth angle
+        # First, compute the tooth thickness = circular pitch (== module * pi) / (2 + backlash)
+        # Then, the angle will be = thickness * 2 / diametral pitch
+        circular_tooth_thickness = (self.module * np.pi) / 2.05
+        circular_tooth_angle = circular_tooth_thickness * 2 / (self.module * self.n_teeth)
+        x_m, y_m = self._rotate_curve(circular_tooth_angle, x_m, y_m)
+
+        # Now that we have the whole tooth points, we should create the arcs
+        #
+        # TODO... To be continued
+
+    def _involute(
+        self, radius: Real, max_radius: Real, max_theta: Real, steps: int = 30
+    ) -> Tuple[List[Real], List[Real]]:
+        """Generates the involute points discretization of a curve.
+
+        Parameters
+        ----------
+        radius : Real
+            The departing radius for computing the involute.
+        max_radius : Real
+            The maximum radius up to which the involute will be computed.
+        max_theta : Real
+            The maximum angle up to which the involute will be computed.
+        steps : int, optional
+            The number of steps used to discretize the curve, by default 30.
+
+        Returns
+        -------
+        Tuple[List[Real], List[Real], List[Real]]
+            A three-element tuple containing a list of X, Y and theta values
+            defining the involute.
+        """
+        # Instantiate the containers which will store the results
+        x_p = []
+        y_p = []
+        t_p = []
+
+        # Define the delta angle to be increased in each step
+        dtheta = max_theta / steps
+
+        # Iterate over the defined steps
+        for i in range(steps):
+            # Compute the involute X, Y and curve angle values
+            c_dtheta = np.cos(dtheta)
+            s_dtheta = np.cos(dtheta)
+            invol_x = radius * (c_dtheta + i * dtheta * s_dtheta)
+            invol_y = radius * (s_dtheta - i * dtheta * c_dtheta)
+            invol_ang = np.arctan2(invol_x, invol_y)
+            dist = np.sqrt(invol_x**2 + invol_y**2)
+
+            # Appending values to result containers
+            x_p.append(invol_x)
+            y_p.append(invol_y)
+            t_p.append(invol_ang)
+
+            # Check if we overcame the max_radius...
+            if dist > max_radius:
+                # We passed the limit... let's readjust (linear interp to the max)
+                adjustment = (max_radius - radius) / (dist - radius)
+                x_p[-1] = x_p[-2] * (1 - adjustment) + invol_x * adjustment
+                y_p[-1] = y_p[-2] * (1 - adjustment) + invol_y * adjustment
+                t_p[-1] = t_p[-2] * (1 - adjustment) + invol_ang * adjustment
+                break
+
+        return (x_p, y_p, t_p)
+
+    def _align_involute(
+        self, x_p: List[Real], y_p: List[Real], t_p: List[Real]
+    ) -> Tuple[List[Real], List[Real]]:
+
+        # Compute the angle where the involute curve crosses the circle
+        theta_cross = None
+        pitch_circle_radius = (self.module * self.n_teeth) / 2
+        rr = pitch_circle_radius * pitch_circle_radius
+        for idx in range(0, len(x_p) - 1):
+            rr_2 = x_p[idx + 1] * x_p[idx + 1] + y_p[idx + 1] * y_p[idx + 1]
+            if rr_2 > rr:
+                # This means we passed the angle, adjust!
+                r1 = np.sqrt(x_p[idx] * x_p[idx] + y_p[idx] * y_p[idx])
+                r2 = np.sqrt(rr_2)
+                adjustment = (pitch_circle_radius - r1) / (r2 - r1)
+                theta_cross = t_p[idx] * (1 - adjustment) + t_p[idx + 1] * adjustment
+                break
+
+        # If no angle is found... fail!
+        if not theta_cross:
+            raise ValueError("Error in involute alignment! Check values and implementation")
+
+        # Proceed to alignment using -theta_cross
+        return self._rotate_curve(-theta_cross, x_p, y_p)
+
+    def _rotate_curve(
+        self, angle: Real, x_p: List[Real], y_p: List[Real]
+    ) -> Tuple[List[Real], List[Real]]:
+
+        # Compute the sin and cos values of the angle
+        c_ang = np.cos(angle)
+        s_ang = np.cos(angle)
+
+        # Rotate the points
+        x_r = []
+        y_r = []
+        for x, y in zip(x_p, y_p):
+            x_r.append(c_ang * x - s_ang * y)
+            y_r.append(s_ang * x + c_ang * y)
+
+        return (x_r, y_r)
