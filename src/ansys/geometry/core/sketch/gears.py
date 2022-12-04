@@ -345,6 +345,28 @@ class SpurGear(Gear):
     def _align_involute(
         self, x_p: List[Real], y_p: List[Real], t_p: List[Real]
     ) -> Tuple[List[Real], List[Real]]:
+        """Private method in charge of aligning the discretized values
+        of the involute curve.
+
+        Parameters
+        ----------
+        x_p : List[Real]
+            X-elements defining the involute curve to align.
+        y_p : List[Real]
+            Y-elements defining the involute curve to align.
+        t_p : List[Real]
+            Angles defining the involute curve to align.
+
+        Returns
+        -------
+        Tuple[List[Real], List[Real]]
+            The set of X and Y elements aligned.
+
+        Raises
+        ------
+        ValueError
+            In case no alignment angle is found.
+        """
 
         # Compute the angle where the involute curve crosses the circle
         theta_cross = None
@@ -361,7 +383,7 @@ class SpurGear(Gear):
                 break
 
         # If no angle is found... fail!
-        if not theta_cross:
+        if not theta_cross:  # pragma: no cover
             raise ValueError("Error in involute alignment! Check values and implementation")
 
         # Proceed to alignment using -theta_cross
@@ -370,6 +392,23 @@ class SpurGear(Gear):
     def _rotate_curve(
         self, angle: Real, x_p: List[Real], y_p: List[Real]
     ) -> Tuple[List[Real], List[Real]]:
+        """Private method used for rotating X,Y elements defining a curve
+        by a given angle.
+
+        Parameters
+        ----------
+        angle : Real
+            Angle (in radians) to rotate the X,Y elements.
+        x_p : List[Real]
+            X-elements of the curve to rotate.
+        y_p : List[Real]
+            Y-elements of the curve to rotate.
+
+        Returns
+        -------
+        Tuple[List[Real], List[Real]]
+            The X and Y elements of the rotated curve.
+        """
 
         # Compute the sin and cos values of the angle
         c_ang = np.cos(angle)
@@ -387,6 +426,23 @@ class SpurGear(Gear):
     def _generate_arcs(
         self, x_p: List[Real], y_p: List[Real], closing_involute: bool = False
     ) -> List[Arc]:
+        """Private method used for generating the arcs of involute curves
+        when sketching spur gears.
+
+        Parameters
+        ----------
+        x_p : List[Real]
+            X-elements defining the involute curve.
+        y_p : List[Real]
+            Y-elements defining the involute curve.
+        closing_involute : bool, optional
+            Shortcut for joining involute curves, by default False.
+
+        Returns
+        -------
+        List[Arc]
+            The list of arcs defining the requested curve.
+        """
 
         # Initialize results container
         arcs = []

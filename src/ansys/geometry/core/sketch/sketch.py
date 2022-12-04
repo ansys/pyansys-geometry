@@ -20,7 +20,7 @@ from ansys.geometry.core.sketch.trapezoid import Trapezoid
 from ansys.geometry.core.sketch.triangle import Triangle
 from ansys.geometry.core.typing import Real
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from pyvista import PolyData
 
 SketchObject = Union[SketchEdge, SketchFace]
