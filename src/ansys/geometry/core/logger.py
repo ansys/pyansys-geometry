@@ -114,8 +114,8 @@ from beartype.typing import TYPE_CHECKING, Optional
 
 from ansys.geometry.core.misc.checks import check_type
 
-if TYPE_CHECKING:
-    from ansys.geometry.core.connection.client import GrpcClient  # pragma: no cover
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.connection.client import GrpcClient
 
 ## Default configuration
 LOG_LEVEL = logging.DEBUG

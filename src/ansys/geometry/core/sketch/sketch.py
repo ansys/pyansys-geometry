@@ -12,7 +12,7 @@ from ansys.geometry.core.sketch.circle import Circle
 from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.sketch.ellipse import Ellipse
 from ansys.geometry.core.sketch.face import SketchFace
-from ansys.geometry.core.sketch.gears import DummyGear
+from ansys.geometry.core.sketch.gears import DummyGear, SpurGear
 from ansys.geometry.core.sketch.polygon import Polygon
 from ansys.geometry.core.sketch.segment import Segment
 from ansys.geometry.core.sketch.slot import Slot
@@ -20,7 +20,7 @@ from ansys.geometry.core.sketch.trapezoid import Trapezoid
 from ansys.geometry.core.sketch.triangle import Triangle
 from ansys.geometry.core.typing import Real
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from pyvista import PolyData
 
 SketchObject = Union[SketchEdge, SketchFace]
@@ -671,8 +671,8 @@ class Sketch:
         inner_radius: Distance,
         n_teeth: int,
         tag: Optional[str] = None,
-    ):
-        """Dummy gear sketching class.
+    ) -> "Sketch":
+        """Creates a dummy gear on the sketch.
 
         Parameters
         ----------
@@ -693,6 +693,38 @@ class Sketch:
             Revised sketch state ready for further sketch actions.
         """
         gear = DummyGear(origin, outer_radius, inner_radius, n_teeth)
+        return self.face(gear, tag)
+
+    def spur_gear(
+        self,
+        origin: Point2D,
+        module: Real,
+        pressure_angle: Quantity,
+        n_teeth: int,
+        tag: Optional[str] = None,
+    ) -> "Sketch":
+        """Creates a spur gear on the sketch.
+
+        Parameters
+        ----------
+        origin : Point2D
+            Origin of the spur gear.
+        module : Real
+            Module of the spur gear. This is also the ratio between the pitch circle
+            diameter in millimeters and the number of teeth.
+        pressure_angle : Quantity
+            Pressure angle of the spur gear.
+        n_teeth : int
+            Number of teeth of the spur gear.
+        tag : str, default: None
+            User-defined label for identifying this face.
+
+        Returns
+        -------
+        Sketch
+            Revised sketch state ready for further sketch actions.
+        """
+        gear = SpurGear(origin, module, pressure_angle, n_teeth)
         return self.face(gear, tag)
 
     @check_input_types
