@@ -7,7 +7,7 @@ from pint import Quantity
 import pyvista as pv
 
 from ansys.geometry.core.math import Point2D
-from ansys.geometry.core.misc import UNIT_ANGLE, Distance, check_pint_unit_compatibility
+from ansys.geometry.core.misc import UNIT_ANGLE, UNITS, Distance, check_pint_unit_compatibility
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import Segment
@@ -150,7 +150,7 @@ class SpurGear(Gear):
 
         # Compute additional needed values
         self._ref_diameter = self.module * self.n_teeth
-        self._base_diameter = self.ref_diameter * np.cos(self.pressure_angle)
+        self._base_diameter = self.ref_diameter * np.cos(self.pressure_angle.m)
         self._addendum = self.module
         self._dedendum = 1.25 * self.module
         self._tip_diameter = self.ref_diameter + 2 * self.module
@@ -217,26 +217,64 @@ class SpurGear(Gear):
         # Let's sketch a single tooth first
         tooth_lines = self._sketch_single_tooth_spur_gear()
 
-    def _sketch_single_tooth_spur_gear(self) -> List[Arc]:
+        # Now, for all teeth, let's rotate those values
+        rotate_angle = 2 * np.pi / self.n_teeth
+        last_point = None
+        for tooth_idx in range(self.n_teeth):
+            # Rotate the tooth points by a given angle
+            x_i, y_i = self._rotate_curve(tooth_idx * rotate_angle, tooth_lines[0], tooth_lines[2])
+            x_m, y_m = self._rotate_curve(tooth_idx * rotate_angle, tooth_lines[1], tooth_lines[3])
+
+            if last_point:
+                # Add the closing arc from the previous tooth
+                self._edges.extend(
+                    self._generate_arcs(
+                        [last_point[0], x_i[0]], [last_point[1], y_i[0]], closing_involute=True
+                    )
+                )
+
+            # Generate the arcs from involute curve
+            self._edges.extend(self._generate_arcs(x_i, y_i))
+            # Add the closing involute-to-mirror arc
+            self._edges.extend(
+                self._generate_arcs([x_i[-1], x_m[0]], [y_i[-1], y_m[0]], closing_involute=True)
+            )
+            # Generate the arcs from mirrored involute curve
+            self._edges.extend(self._generate_arcs(x_m, y_m))
+            # Update the last point value
+            last_point = (x_m[-1], y_m[-1])
+
+        # When coming out of the loop, we need to close with the starting tooth
+        self._edges.extend(
+            self._generate_arcs(
+                [last_point[0], tooth_lines[0][0]],
+                [last_point[1], tooth_lines[2][0]],
+                closing_involute=True,
+            )
+        )
+
+    def _sketch_single_tooth_spur_gear(
+        self,
+    ) -> Tuple[List[Real], List[Real], List[Real], List[Real]]:
         """Private method to sketch a single tooth.
 
         Returns
         -------
-        List[Arc]
-            A list of arcs that create the tooth.
+        Tuple[List[Real], List[Real], List[Real], List[Real]]
+            X and Y values for the tooth grouped together as follows: (x_i, x_m, y_i, y_m)
         """
         # Compute the involute with the smallest of both
         #
-        # FYI: Max angle is 108deg - slightly over 90deg
+        # FYI: Max angle is slightly less than  90deg
         diam = self.root_diameter if self.root_diameter < self.base_diameter else self.base_diameter
-        x_i, y_i, t_i = self._involute(diam / 2, self.tip_diameter / 2, np.pi * 0.6)
+        x_i, y_i, t_i = self._involute(diam / 2, self.tip_diameter / 2, np.pi / 2.1)
 
         # Align the involute curve to cross the pitch diameter
         x_i, y_i = self._align_involute(x_i, y_i, t_i)
 
         # Get the mirrored section of the involute
-        x_m = x_i.reverse()
-        y_m = [-y for y in y_i.reverse()]
+        x_m = list(reversed(x_i))
+        y_m = [-y for y in list(reversed(y_i))]
 
         # Rotate the mirrored curve by the circular tooth angle
         # First, compute the tooth thickness = circular pitch (== module * pi) / (2 + backlash)
@@ -245,9 +283,8 @@ class SpurGear(Gear):
         circular_tooth_angle = circular_tooth_thickness * 2 / (self.module * self.n_teeth)
         x_m, y_m = self._rotate_curve(circular_tooth_angle, x_m, y_m)
 
-        # Now that we have the whole tooth points, we should create the arcs
-        #
-        # TODO... To be continued
+        # Now that we have the whole tooth points, return them
+        return (x_i, x_m, y_i, y_m)
 
     def _involute(
         self, radius: Real, max_radius: Real, max_theta: Real, steps: int = 30
@@ -282,11 +319,11 @@ class SpurGear(Gear):
         # Iterate over the defined steps
         for i in range(steps):
             # Compute the involute X, Y and curve angle values
-            c_dtheta = np.cos(dtheta)
-            s_dtheta = np.cos(dtheta)
+            c_dtheta = np.cos(i * dtheta)
+            s_dtheta = np.sin(i * dtheta)
             invol_x = radius * (c_dtheta + i * dtheta * s_dtheta)
             invol_y = radius * (s_dtheta - i * dtheta * c_dtheta)
-            invol_ang = np.arctan2(invol_x, invol_y)
+            invol_ang = np.arctan2(invol_y, invol_x)
             dist = np.sqrt(invol_x**2 + invol_y**2)
 
             # Appending values to result containers
@@ -336,7 +373,7 @@ class SpurGear(Gear):
 
         # Compute the sin and cos values of the angle
         c_ang = np.cos(angle)
-        s_ang = np.cos(angle)
+        s_ang = np.sin(angle)
 
         # Rotate the points
         x_r = []
@@ -346,3 +383,67 @@ class SpurGear(Gear):
             y_r.append(s_ang * x + c_ang * y)
 
         return (x_r, y_r)
+
+    def _generate_arcs(
+        self, x_p: List[Real], y_p: List[Real], closing_involute: bool = False
+    ) -> List[Arc]:
+
+        # Initialize results container
+        arcs = []
+
+        # Generate Point2D objects from given X, Y values (remember, they are in mm)
+        points = [
+            Point2D(
+                [x_i + self.origin.x.to(UNITS.mm).m, y_i + self.origin.y.to(UNITS.mm).m],
+                unit=UNITS.mm,
+            )
+            for (x_i, y_i) in zip(x_p, y_p)
+        ]
+
+        if not closing_involute:
+
+            # Initiate preliminary arc object - lives outside the scope of the loop
+            preliminary_arc = None
+
+            for idx in range(len(points) - 2):
+                # Compute a preliminary arc taking into account three points
+                preliminary_arc = Arc.from_three_points(
+                    start=points[idx], inter=points[idx + 1], end=points[idx + 2]
+                )
+
+                # Keep only the first two points as part of the arc... use the
+                # needed values from the preliminary arc
+                arcs.append(
+                    Arc(
+                        center=preliminary_arc.center,
+                        start=points[idx],
+                        end=points[idx + 1],
+                        clockwise=preliminary_arc.is_clockwise,
+                    )
+                )
+
+            # Once the loop has finished... extend the last arc
+            arcs.append(
+                Arc(
+                    center=preliminary_arc.center,
+                    start=points[-2],
+                    end=points[-1],
+                    clockwise=preliminary_arc.is_clockwise,
+                )
+            )
+
+        else:
+            # We should only enter this branch if we are closing the involute curves...
+            # ... which means that we only have two points in our list...
+            #
+            # Just in case, let us only take the first and last elements of the given list
+            arcs.append(
+                Arc(
+                    center=self.origin,
+                    start=points[0],
+                    end=points[-1],
+                )
+            )
+
+        # Finally, return the requested arcs
+        return arcs

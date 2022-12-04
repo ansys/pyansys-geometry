@@ -301,6 +301,43 @@ def test_extrude_dummy_gear(modeler: Modeler, verify_image_cache):
     box_body.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_extrude_dummy_gear.png"))
 
 
+def test_spur_gear_extrude(verify_image_cache):
+    """Test plotting of a spur gear."""
+    # Create a sketch instance
+    sketch = Sketch()
+
+    # Create a spur gear
+    center = Point2D([0, 0], unit=UNITS.meter)
+    sketch.spur_gear(
+        center, module=6, pressure_angle=Quantity(20, UNITS.deg), n_teeth=22, tag="SpurGear"
+    )
+
+    # Plot
+    sketch.select("SpurGear")
+    sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_spur_gear.png"))
+
+
+def test_extrude_spur_gear(modeler: Modeler, verify_image_cache):
+    """Test plotting and extrusion of a spur gear."""
+
+    # Create a sketch instance
+    sketch = Sketch()
+
+    # Create a spur gear
+    center = Point2D([0, 0], unit=UNITS.meter)
+    sketch.spur_gear(center, module=6, pressure_angle=Quantity(20, UNITS.deg), n_teeth=22)
+    sketch.circle(center, Distance(10, unit=UNITS.mm), tag="Circle")
+
+    # Create your design on the server side
+    design = modeler.create_design("SpurGearExtrusions")
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("SpurGearExtruded", sketch, Quantity(50, UNITS.mm))
+
+    # Test the plotting of the body
+    box_body.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_extrude_spur_gear.png"))
+
+
 @skip_no_xserver
 def test_plot_sketch_scene(verify_image_cache):
     """Test plotting a sketch in the scene."""
