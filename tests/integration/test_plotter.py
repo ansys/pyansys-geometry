@@ -301,7 +301,7 @@ def test_extrude_dummy_gear(modeler: Modeler, verify_image_cache):
     box_body.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_extrude_dummy_gear.png"))
 
 
-def test_spur_gear_extrude(verify_image_cache):
+def test_plot_spur_gear(verify_image_cache):
     """Test plotting of a spur gear."""
     # Create a sketch instance
     sketch = Sketch()
