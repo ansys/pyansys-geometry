@@ -21,6 +21,16 @@ These examples demonstrate service-based operations.
 
     examples/add_design_material.mystnb
     examples/plate_with_hole.mystnb
-    examples/dynamic_sketch_plane.mystnb
     examples/tessellation_usage.mystnb
     examples/design_organization.mystnb
+
+Advanced sketching features
+---------------------------
+
+These examples demonstrate advanced sketching features - combined with
+server-based operations.
+
+.. nbgallery::
+
+    examples/dynamic_sketch_plane.mystnb
+    examples/advanced_sketching_gears.mystnb
