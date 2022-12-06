@@ -17,9 +17,9 @@ This example describes how to use gear sketching shapes from PyGeometry.
 
 +++
 
-## Sketching pre-stages
+## Perform required imports and pre-sketching operations
 
-Start by performing the typical sketching procedures.
+Start by performing required imports and instantiating the ``Modeler`` and basic elements that define a ``Sketch``.
 
 ```{code-cell} ipython3
 from pint import Quantity
@@ -36,7 +36,7 @@ modeler = Modeler()
 # Define the origin point of the plane
 origin = Point3D([1, 1, 1])
 
-# Create a plane located in previous point with desired fundamental directions
+# Create a plane containing the previous point with desired fundamental directions
 plane = Plane(
     origin, direction_x=[1, 0, 0], direction_y=[0, -1, 1]
 )
@@ -103,7 +103,7 @@ module = 40
 pressure_angle = Quantity(20, UNITS.deg)
 n_teeth = 22
 
-# Sketching spur gear...
+# Sketching spur gear
 sketch.spur_gear(origin, module, pressure_angle, n_teeth)
 
 # Let's plot it!
