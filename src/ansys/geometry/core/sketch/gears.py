@@ -118,7 +118,7 @@ class DummyGear(Gear):
 
 
 class SpurGear(Gear):
-    """Class for sketching Spur gears.
+    """Class for sketching spur gears.
 
     Parameters
     ----------
@@ -135,7 +135,7 @@ class SpurGear(Gear):
 
     @check_input_types
     def __init__(self, origin: Point2D, module: Real, pressure_angle: Quantity, n_teeth: int):
-        """Constructor for Spur Gears."""
+        """Constructor for spur gears."""
         # Call the parent ctor
         super().__init__()
 
