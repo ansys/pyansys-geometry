@@ -1,7 +1,7 @@
 """Provides the ``Sketch`` class."""
 
 from beartype import beartype as check_input_types
-from beartype.typing import Dict, List, Optional, Union
+from beartype.typing import TYPE_CHECKING, Dict, List, Optional, Union
 from pint import Quantity
 
 from ansys.geometry.core.math import ZERO_POINT2D, Plane, Point2D, UnitVector3D, Vector2D, Vector3D
@@ -12,12 +12,16 @@ from ansys.geometry.core.sketch.circle import Circle
 from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.sketch.ellipse import Ellipse
 from ansys.geometry.core.sketch.face import SketchFace
+from ansys.geometry.core.sketch.gears import DummyGear, SpurGear
 from ansys.geometry.core.sketch.polygon import Polygon
 from ansys.geometry.core.sketch.segment import Segment
 from ansys.geometry.core.sketch.slot import Slot
 from ansys.geometry.core.sketch.trapezoid import Trapezoid
 from ansys.geometry.core.sketch.triangle import Triangle
 from ansys.geometry.core.typing import Real
+
+if TYPE_CHECKING:  # pragma: no cover
+    from pyvista import PolyData
 
 SketchObject = Union[SketchEdge, SketchFace]
 """Type used to refer to both ``SketchEdge`` and ``SketchFace`` as possible values."""
@@ -412,6 +416,36 @@ class Sketch:
         arc = Arc(center, start, end, clockwise)
         return self.edge(arc, tag)
 
+    def arc_from_three_points(
+        self,
+        start: Point2D,
+        inter: Point2D,
+        end: Point2D,
+        tag: Optional[str] = None,
+    ) -> "Sketch":
+        """
+        Add an arc to the sketch plane from three given points.
+
+        Parameters
+        ----------
+        start : Point2D
+            Point that is the start of the arc.
+        inter : Point2D
+            Point that is at an intermediate location of the arc.
+        end : Point2D
+            Point that is the end of the arc.
+        tag : str, default: None
+            User-defined label for identifying this edge.
+
+        Returns
+        -------
+        Sketch
+            Revised sketch state ready for further sketch actions.
+        """
+
+        arc = Arc.from_three_points(start, inter, end)
+        return self.edge(arc, tag)
+
     def triangle(
         self,
         point1: Point2D,
@@ -431,7 +465,7 @@ class Sketch:
         point3 : Point2D
             Point that represents a vertex of the triangle.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying this face.
 
         Returns
         -------
@@ -470,7 +504,7 @@ class Sketch:
         angle : Optional[Union[Quantity, Angle, Real]], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying this face.
 
         Returns
         -------
@@ -496,7 +530,7 @@ class Sketch:
         radius : Union[Quantity, Distance]
             Radius of the circle.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying this face.
 
         Returns
         -------
@@ -527,7 +561,7 @@ class Sketch:
         angle : Union[Quantity, Real], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying this face.
 
         Returns
         -------
@@ -558,12 +592,12 @@ class Sketch:
         angle : Union[Quantity, Angle, Real], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying this face.
 
         Returns
         -------
-        Slot
-            Object representing the slot added to the sketch.
+        Sketch
+            Revised sketch state ready for further sketch actions.
         """
         slot = Slot(center, width, height, angle)
         return self.face(slot, tag)
@@ -589,13 +623,12 @@ class Sketch:
         angle : Union[Quantity, Angle, Real], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying this face.
 
         Returns
         -------
-        Ellipse
-            Object representing the ellipse added to the sketch.
-
+        Sketch
+            Revised sketch state ready for further sketch actions.
         """
         ellipse = Ellipse(center, semi_major_axis, semi_minor_axis, angle)
         return self.face(ellipse, tag)
@@ -621,16 +654,78 @@ class Sketch:
         angle : Union[Quantity, Angle, Real], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying this face.
 
         Returns
         -------
-        Polygon
-            Object representing the polygon added to the sketch.
-
+        Sketch
+            Revised sketch state ready for further sketch actions.
         """
         polygon = Polygon(center, inner_radius, sides, angle)
         return self.face(polygon, tag)
+
+    def dummy_gear(
+        self,
+        origin: Point2D,
+        outer_radius: Distance,
+        inner_radius: Distance,
+        n_teeth: int,
+        tag: Optional[str] = None,
+    ) -> "Sketch":
+        """Creates a dummy gear on the sketch.
+
+        Parameters
+        ----------
+        origin : Point2D
+            Origin of the gear.
+        outer_radius : Distance
+            Outer radius of the gear.
+        inner_radius : Distance
+            Inner radius of the gear.
+        n_teeth : int
+            Number of teeth of the gear.
+        tag : str, default: None
+            User-defined label for identifying this face.
+
+        Returns
+        -------
+        Sketch
+            Revised sketch state ready for further sketch actions.
+        """
+        gear = DummyGear(origin, outer_radius, inner_radius, n_teeth)
+        return self.face(gear, tag)
+
+    def spur_gear(
+        self,
+        origin: Point2D,
+        module: Real,
+        pressure_angle: Quantity,
+        n_teeth: int,
+        tag: Optional[str] = None,
+    ) -> "Sketch":
+        """Creates a spur gear on the sketch.
+
+        Parameters
+        ----------
+        origin : Point2D
+            Origin of the spur gear.
+        module : Real
+            Module of the spur gear. This is also the ratio between the pitch circle
+            diameter in millimeters and the number of teeth.
+        pressure_angle : Quantity
+            Pressure angle of the spur gear.
+        n_teeth : int
+            Number of teeth of the spur gear.
+        tag : str, default: None
+            User-defined label for identifying this face.
+
+        Returns
+        -------
+        Sketch
+            Revised sketch state ready for further sketch actions.
+        """
+        gear = SpurGear(origin, module, pressure_angle, n_teeth)
+        return self.face(gear, tag)
 
     @check_input_types
     def tag(self, tag: str) -> None:
@@ -672,39 +767,62 @@ class Sketch:
 
     def plot(
         self,
-        **kwargs: Optional[dict],
+        view_2d: Optional[bool] = False,
+        screenshot: Optional[str] = None,
+        **plotting_options: Optional[dict],
     ):
         """Plot all objects of the sketch to the scene.
 
         Parameters
         ----------
-        **kwargs : dict, default:
+        view_2d : bool, default: False
+            Specifies whether the plot should be represented in a 2D format.
+            By default, this is set to ``False``.
+        screenshot : str, default: None
+            Save a screenshot of the image being represented. The image is
+            stored in the path provided as an argument.
+        **plotting_options : dict, default:
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
         from ansys.geometry.core.plotting.plotter import Plotter
 
         pl = Plotter()
-        pl.add_polydata(self.sketch_polydata(), **kwargs)
-        pl.show()
+        pl.add_sketch_polydata(self.sketch_polydata(), **plotting_options)
+
+        # If you want to visualize a Sketch from the top...
+        if view_2d:
+            pl.scene.view_vector(
+                vector=self.plane.direction_z.tolist(),
+                viewup=self.plane.direction_y.tolist(),
+            )
+
+        # Finally, show the plot
+        pl.show(screenshot=screenshot)
 
     def plot_selection(
         self,
-        **kwargs: Optional[dict],
+        view_2d: Optional[bool] = False,
+        screenshot: Optional[str] = None,
+        **plotting_options: Optional[dict],
     ):
         """Plot the current selection to the scene.
 
         Parameters
         ----------
-        **kwargs : dict, default: []
+        view_2d : bool, default: False
+            Specifies whether the plot should be represented in a 2D format.
+            By default, this is set to ``False``.
+        screenshot : str, default: None
+            Save a screenshot of the image being represented. The image is
+            stored in the path provided as an argument.
+        **plotting_options : dict, default: []
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
         from ansys.geometry.core.plotting.plotter import Plotter
 
         sketches_polydata = []
-        pl = Plotter()
-
         sketches_polydata.extend(
             [
                 sketch_item.visualization_polydata.transform(self._plane.transformation_matrix)
@@ -712,13 +830,27 @@ class Sketch:
             ]
         )
 
-        pl.add_polydata(sketches_polydata, **kwargs)
-        pl.show()
+        pl = Plotter()
+        pl.add_sketch_polydata(sketches_polydata, **plotting_options)
 
-    def sketch_polydata(self):
+        # If you want to visualize a Sketch from the top...
+        if view_2d:
+            pl.scene.view_vector(
+                vector=self.plane.direction_z.tolist(),
+                viewup=self.plane.direction_y.tolist(),
+            )
+
+        # Finally, show the plot
+        pl.show(screenshot=screenshot)
+
+    def sketch_polydata(self) -> List["PolyData"]:
         """
-        Gets polydata configuration for all
-        objects of the sketch to the scene.
+        Gets polydata configuration for all objects of the sketch to the scene.
+
+        Returns
+        -------
+        List[PolyData]
+            Set of PolyData configuration for all edges and faces in the sketch.
         """
         sketches_polydata = []
         sketches_polydata.extend(

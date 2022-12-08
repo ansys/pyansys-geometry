@@ -665,15 +665,18 @@ class Component:
         >>> from ansys.geometry.core.plotting.plotter import Plotter
         >>> modeler = Modeler("10.54.0.72", "50051")
         >>> sketch_1 = Sketch()
-        >>> box = sketch_1.box(Point3D([10, 10]), width=10, height=5)
-        >>> circle = sketch_1.circle(Point3D([0, 0]), radius=25 * UNITS.m)
+        >>> box = sketch_1.box(
+        >>>    Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(5, UNITS.m))
+        >>> sketch_1.circle(Point2D([0, 0], UNITS.m), Quantity(25, UNITS.m))
         >>> design = modeler.create_design("MyDesign")
         >>> comp = design.add_component("MyComponent")
-        >>> body = comp.extrude_sketch("MyBody", sketch=sketch_1, distance=10 * UNITS.m)
+        >>> distance = Quantity(10, UNITS.m)
+        >>> body = comp.extrude_sketch("Body", sketch=sketch_1, distance=distance)
         >>> sketch_2 = Sketch(Plane([0, 0, 10]))
-        >>> box = sketch_2.box(Point2D([10, 10]), width=10, height=5)
-        >>> circle = sketch_2.circle(Point2D([0, 0]), radius=25 * UNITS.m)
-        >>> body = comp.extrude_sketch("MyBody", sketch=sketch_2, distance=10 * UNITS.m)
+        >>> box = sketch_2.box(
+        >>>    Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(5, UNITS.m))
+        >>> circle = sketch_2.circle(Point2D([0, 0], UNITS.m), Quantity(25, UNITS.m))
+        >>> body = comp.extrude_sketch("Body", sketch=sketch_2, distance=distance)
         >>> dataset = comp.tessellate(merge_bodies=True)
         >>> dataset
         MultiBlock (0x7ff6bcb511e0)
@@ -716,7 +719,11 @@ class Component:
         return blocks
 
     def plot(
-        self, merge_component: bool = False, merge_bodies: bool = False, **kwargs: Optional[dict]
+        self,
+        merge_component: bool = False,
+        merge_bodies: bool = False,
+        screenshot: Optional[str] = None,
+        **plotting_options: Optional[dict],
     ) -> None:
         """Plot this component.
 
@@ -730,7 +737,10 @@ class Component:
             Whether to merge each body into a single dataset. When ``True``,
             all the faces of each individual body are effectively merged
             into a single dataset without separating faces.
-        **kwargs : dict, default: None
+        screenshot : str, default: None
+            Save a screenshot of the image being represented. The image is
+            stored in the path provided as an argument.
+        **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
 
@@ -773,8 +783,10 @@ class Component:
         from ansys.geometry.core.plotting import Plotter
 
         pl = Plotter()
-        pl.add_component(self, merge_bodies=merge_bodies, merge_component=merge_component, **kwargs)
-        pl.show()
+        pl.add_component(
+            self, merge_bodies=merge_bodies, merge_component=merge_component, **plotting_options
+        )
+        pl.show(screenshot=screenshot)
 
     def __repr__(self) -> str:
         """String representation of the component."""

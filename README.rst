@@ -93,7 +93,7 @@ Then, install PyGeometry with:
 
 .. code:: bash
 
-   poetry run python -m pip install ansys-geometry-core
+   python -m pip install ansys-geometry-core
 
 .. caution::
 
@@ -149,14 +149,14 @@ To install PyGeometry in developer mode, perform these steps:
 
    .. code:: bash
 
-      python -m pip install -U pip poetry tox
+      python -m pip install -U pip tox
 
 
 #. Install the project in editable mode:
 
    .. code:: bash
     
-      poetry run python -m pip install ansys-geometry-core
+      python -m pip install ansys-geometry-core
         
 #. Verify your development installation by running:
 
@@ -208,6 +208,11 @@ The following environments commands are provided:
 - **tox -e py-coverage**: Checks for unit testing and code coverage.
 - **tox -e doc**: Checks for documentation building process.
 
+ .. admonition:: pyvista-pytest plugin 
+
+   This plugin facilitates the comparison of the images produced in PyGeometry for testing the plots.
+   If you are changing the images, use flag ``--reset_image_cache`` which is not recommended except
+   for testing or for potentially a major or minor release. For more information, see `pyvista-pytest`_.
 
 Raw testing
 ^^^^^^^^^^^
@@ -255,7 +260,7 @@ the building requirements and then executing the build module:
 
 .. code:: bash
 
-    python -m pip install -U pip poetry 
+    python -m pip install -U pip 
     python -m build
     python -m twine check dist/*
 
@@ -270,3 +275,4 @@ the building requirements and then executing the build module:
 .. _pytest: https://docs.pytest.org/en/stable/
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
 .. _tox: https://tox.wiki/
+.. _pyvista-pytest: https://github.com/pyvista/pytest-pyvista

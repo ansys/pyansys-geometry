@@ -1,13 +1,29 @@
 """Sphinx documentation configuration file."""
 from datetime import datetime
+import os
 
-from ansys_sphinx_theme import ansys_favicon, pyansys_logo_black
+from ansys_sphinx_theme import (
+    ansys_favicon,
+    ansys_logo_white,
+    ansys_logo_white_cropped,
+    get_version_match,
+    latex,
+    pyansys_logo_black,
+    watermark,
+)
+from sphinx.builders.latex import LaTeXBuilder
+
+from ansys.geometry.core import __version__
+
+LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
+
 
 # Project information
 project = "ansys-geometry-core"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc."
 release = version = "0.2.dev0"
+cname = os.getenv("DOCUMENTATION_CNAME", default="nocname.com")
 
 # Select desired logo, theme, and declare the html title
 html_logo = pyansys_logo_black
@@ -22,6 +38,11 @@ html_context = {
     "doc_path": "doc/source",
 }
 html_theme_options = {
+    "switcher": {
+        "json_url": f"https://{cname}/release/versions.json",
+        "version_match": get_version_match(__version__),
+    },
+    "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],
     "github_url": "https://github.com/pyansys/pygeometry",
     "show_prev_next": False,
     "show_breadcrumbs": True,
@@ -134,13 +155,38 @@ nbsphinx_custom_formats = {
     ".mystnb": ["jupytext.reads", {"fmt": "mystnb"}],
 }
 nbsphinx_thumbnails = {
-    "examples/basic/basic_usage": "_static/thumbnails/basic_usage.png",
-    "examples/design/dynamic_sketch_plane": "_static/thumbnails/dynamic_sketch_plane.png",
-    "examples/design/add_design_material": "_static/thumbnails/add_design_material.png",
-    "examples/design/plate_with_hole": "_static/thumbnails/plate_with_hole.png",
-    "examples/design/tessellation_usage": "_static/thumbnails/tessellation_usage.png",
-    "examples/design/design_organization": "_static/thumbnails/design_organization.png",
+    "examples/basic_usage": "_static/thumbnails/basic_usage.png",
+    "examples/dynamic_sketch_plane": "_static/thumbnails/dynamic_sketch_plane.png",
+    "examples/add_design_material": "_static/thumbnails/add_design_material.png",
+    "examples/plate_with_hole": "_static/thumbnails/plate_with_hole.png",
+    "examples/tessellation_usage": "_static/thumbnails/tessellation_usage.png",
+    "examples/design_organization": "_static/thumbnails/design_organization.png",
 }
+nbsphinx_epilog = """
+----
+
+.. admonition:: Download this example!
+
+    Download this example from this
+    `link <https://geometry.docs.pyansys.com/{{ env.docname }}.ipynb>`_.
+
+"""
+nbsphinx_prolog = """
+
+.. admonition:: Download this example!
+
+    Download this example from this
+    `link <https://geometry.docs.pyansys.com/{{ env.docname }}.ipynb>`_.
+
+----
+"""
 
 typehints_defaults = "comma"
 simplify_optional_unions = False
+
+# additional logos for the latex coverpage
+latex_additional_files = [watermark, ansys_logo_white, ansys_logo_white_cropped]
+
+# change the preamble of latex with customized title page
+# variables are the title of pdf, watermark
+latex_elements = {"preamble": latex.generate_preamble(html_title)}

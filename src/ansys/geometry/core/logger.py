@@ -114,8 +114,8 @@ from beartype.typing import TYPE_CHECKING, Optional
 
 from ansys.geometry.core.misc.checks import check_type
 
-if TYPE_CHECKING:
-    from ansys.geometry.core.connection.client import GrpcClient  # pragma: no cover
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.connection.client import GrpcClient
 
 ## Default configuration
 LOG_LEVEL = logging.DEBUG
@@ -625,3 +625,11 @@ def add_stdout_handler(logger, level=LOG_LEVEL, write_headers=False):
         std_out_handler.stream.write(DEFAULT_STDOUT_HEADER)
 
     return logger
+
+
+# ===============================================================
+# Finally define logger
+# ===============================================================
+
+LOG = Logger(level=logging.ERROR, to_file=False, to_stdout=True)
+LOG.debug("Loaded logging module as LOG")

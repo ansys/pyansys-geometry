@@ -13,7 +13,7 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
-from ansys.geometry.core.sketch import Box, Circle, Ellipse, Polygon, Segment, Sketch, Slot
+from ansys.geometry.core.sketch import Arc, Box, Circle, Ellipse, Polygon, Segment, Sketch, Slot
 
 DOUBLE_EPS = np.finfo(float).eps
 
@@ -158,6 +158,9 @@ def test_sketch_arc_edge():
     assert sketch.edges[2].start == Point2D([10, 10])
     assert sketch.edges[2].end == Point2D([10, -10])
     assert sketch.edges[2].angle == np.pi
+    assert sketch.edges[2].sector_area.m == pytest.approx(157.07963267948966, rel=1e-7, abs=1e-8)
+    assert sketch.edges[2].length.m == pytest.approx(31.41592653589793, rel=1e-7, abs=1e-8)
+    assert sketch.edges[2].radius.m == 10
 
     arc1_retrieved = sketch.get("Arc1")
     assert len(arc1_retrieved) == 1
@@ -398,6 +401,7 @@ def test_polygon_instance():
     assert pentagon.n_sides == 5
     assert pentagon.length == side_length
     assert pentagon.perimeter == sides * side_length
+    assert pentagon.outer_radius.m == pytest.approx(1.23606798, rel=1e-7, abs=1e-8)
 
     # Draw a square in previous sketch
     radius, sides, center = (1 * UNITS.m), 4, Point2D([0, 0], UNITS.m)
@@ -439,6 +443,18 @@ def test_slot_instance():
     perimeter = slot.perimeter
     assert perimeter.m == pytest.approx(10.283185307179586, rel=1e-7, abs=1e-8)
     assert perimeter.units == UNITS.m
+    assert slot.center == center
+    assert slot.width == Quantity(4, UNIT_LENGTH)
+    assert slot.height == Quantity(2, UNIT_LENGTH)
+
+    with pytest.raises(ValueError, match="Height must be a real positive value."):
+        Slot(center, width, Quantity(-4, UNIT_LENGTH))
+
+    with pytest.raises(ValueError, match="Width must be a real positive value."):
+        Slot(center, Quantity(-4, UNIT_LENGTH), height)
+
+    with pytest.raises(ValueError, match="Width must be greater than height."):
+        Slot(center, width, Quantity(10, UNIT_LENGTH))
 
 
 def test_box_instance():
@@ -457,6 +473,13 @@ def test_box_instance():
     assert box.area.units == UNITS.m * UNITS.m
     assert box.perimeter.m == 12
     assert box.perimeter.units == UNITS.m
+    assert box.center == center
+
+    with pytest.raises(ValueError, match="Width must be a real positive value."):
+        Box(center, Quantity(-4, UNIT_LENGTH), height)
+
+    with pytest.raises(ValueError, match="Height must be a real positive value."):
+        Box(center, width, Quantity(-4, UNIT_LENGTH))
 
 
 def test_sketch_plane_translation():
@@ -509,3 +532,202 @@ def test_sketch_plane_translation():
 
     assert sketch.plane.origin == Point3D([0.1, 1, 10])
     assert sketch.plane.origin.unit == UNITS.cm
+
+
+def test_validate_arc():
+    """
+    Test for performing Arc rotation-sense validation
+    when using PyVista. Server-side validation will be done with the
+    body tessellation.
+    """
+    # =======================================================
+    # Validate counterclockwise definition of an arc
+    # =======================================================
+    #
+    # Create a Sketch instance
+    sketch = Sketch()
+
+    origin = Point2D([0, 0])
+    arc_center = Point2D([0, 0])
+    arc_start = Point2D([0, 5])
+    arc_end = Point2D([5, 0])
+
+    # Draw the segments
+    sketch.segment(origin, arc_start)
+    sketch.segment(arc_end, origin)
+
+    # Draw the arc (by default, counterclockwise)
+    sketch.arc(arc_start, arc_end, arc_center, clockwise=False)
+
+    # Get the sketch
+    pd = sketch.sketch_polydata()
+    assert len(pd) == 3
+
+    # Get the third element (arc)
+    #
+    # Remember, the arc is counterclockwise. Let's put in
+    # some imagination to interpret the arc below
+    # (arc with straight lines =) )
+    #
+    #                 - S
+    #      Q2       -   |            Q1
+    #             -     |
+    #           -       |
+    #         -         |
+    # -------x---------------------E---------
+    #         -         |         -
+    #           -       |       -
+    #      Q3     -     |     -       Q4
+    #               -   |   -
+    #                 - x -
+    #
+    # We will check that all Q4 points have a negative Y
+    #
+    #
+    for point in pd[2].points:
+        # Ignoring start and end points
+        if np.allclose([0, 5, 0], point):
+            pass
+        elif np.allclose([5, 0, 0], point):
+            pass
+        # Ignoring negative X points - they can be both positive and negative
+        elif point[0] < 0:
+            pass
+        # Check that if X is positive, we only have negative Y values
+        else:  # if point[0] >= 0
+            assert point[1] < 0
+
+    # =======================================================
+    # Validate clockwise definition of an arc
+    # =======================================================
+    #
+    # Create a Sketch instance
+    sketch = Sketch()
+
+    # Draw the segments
+    sketch.segment(origin, arc_start)
+    sketch.segment(arc_end, origin)
+
+    # Draw the arc (in this case, clockwise)
+    sketch.arc(arc_start, arc_end, arc_center, clockwise=True)
+
+    # Get the sketch
+    pd = sketch.sketch_polydata()
+    assert len(pd) == 3
+
+    # Get the third element (arc)
+    #
+    # Remember, the arc is clockwise. Let's put in
+    # some imagination to interpret the arc below
+    # (arc with straight lines =) )
+    #
+    #                   S -
+    #      Q2           |   -         Q1
+    #                   |     -
+    #                   |       -
+    #                   |         -
+    # -----------------------------E---------
+    #                   |
+    #                   |
+    #      Q3           |             Q4
+    #                   |
+    #                   |
+    #
+    # We will check that all Q1 points have a positive Y
+    #
+    #
+    for point in pd[2].points:
+        if np.allclose([0, 5, 0], point):
+            pass
+        elif np.allclose([5, 0, 0], point):
+            pass
+        else:  # all points should be in Q1
+            assert point[1] > 0
+
+
+def test_arc():
+    """Test arc generation and errors."""
+
+    # Test errors first
+    point_0_0 = Point2D([0, 0])
+    point_5_0 = Point2D([5, 0])
+    point_6_0 = Point2D([6, 0])
+    point_0_5 = Point2D([0, 5])
+    point_0_m5 = Point2D([0, -5])
+
+    with pytest.raises(ValueError, match="Start and end points must be different."):
+        Arc(point_0_0, point_0_5, point_0_5)
+
+    with pytest.raises(ValueError, match="Center and start points must be different."):
+        Arc(point_0_0, point_0_0, point_5_0)
+
+    with pytest.raises(ValueError, match="Center and end points must be different."):
+        Arc(point_0_0, point_0_5, point_0_0)
+
+    with pytest.raises(ValueError, match="The start and end points of the arc are not"):
+        Arc(point_0_0, point_0_5, point_6_0)
+
+    # Let's create a simple arc
+    arc = Arc(point_0_0, point_0_5, point_5_0)
+    arc_2 = Arc(point_0_0, point_0_5, point_5_0)
+    assert arc == arc_2
+    assert not (arc != arc_2)
+
+    assert arc.center == point_0_0
+    assert arc.start == point_0_5
+    assert arc.end == point_5_0
+    assert np.isclose(arc.radius.m, 5.0)
+    assert arc.radius.units == UNITS.m
+    assert np.isclose(arc.angle.m, 3 * np.pi / 2)
+    assert arc.angle.units == UNITS.rad
+
+    # Arc length = (2*PI*R) * ang / 2PI = R * ang
+    assert np.isclose(arc.length.m, 5 * (3 * np.pi / 2))
+
+    # Sector area = PI * R**2 * (ang / 2PI) =  R**2 * (ang / 2)
+    assert np.isclose(arc.sector_area.m, 5**2 * (3 * np.pi / 2) / 2)
+
+    # Validate the PyVista hack for generating the PolyData
+    #
+    # Needed : 180º arc, counterclockwise
+    arc_180 = Arc(point_0_0, point_0_5, point_0_m5, clockwise=False)
+    pd = arc_180.visualization_polydata
+
+    # Since the arc is counterclockwise, all X values should be <=0
+    for point in pd.points:
+        assert point[0] < 0 or np.isclose(point[0], 0)
+
+    # Validate the PyVista hack for generating the PolyData
+    #
+    # Needed : 180º arc, clockwise
+    arc_180 = Arc(point_0_0, point_0_5, point_0_m5, clockwise=True)
+    pd = arc_180.visualization_polydata
+
+    # Since the arc is clockwise, all X values should be >=0
+    for point in pd.points:
+        assert point[0] > 0 or np.isclose(point[0], 0)
+
+
+def test_arc_from_three_points():
+    """Test arc generation from three points."""
+
+    # Fixing start and end points
+    start = Point2D([0, 5])
+    end = Point2D([5, 0])
+
+    # Case 1: forcing a clockwise arc
+    inter = Point2D([2, 4])
+    arc = Arc.from_three_points(start, inter, end)
+    pd = arc.visualization_polydata
+    # Since the arc is clockwise, all X values should be >=0
+    for point in pd.points:
+        assert point[0] > 0 or np.isclose(point[0], 0)
+
+    # Case 2: forcing a counter-clockwise arc
+    inter = Point2D([0, -5])
+    arc = Arc.from_three_points(start, inter, end)
+    pd = arc.visualization_polydata
+    # Since the arc is counter-clockwise, all X values should be <=0 for Y>0
+    for point in pd.points:
+        if point[1] > 0:
+            assert point[0] < 0 or np.isclose(point[0], 0)

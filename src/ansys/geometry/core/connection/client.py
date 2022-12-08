@@ -10,8 +10,8 @@ import grpc
 from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
 
-from ansys.geometry.core import LOG as logger
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
+from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.logger import PyGeometryCustomAdapter
 from ansys.geometry.core.typing import Real
 

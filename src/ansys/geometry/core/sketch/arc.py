@@ -65,13 +65,11 @@ class Arc(SketchEdge):
 
         # Compute the radius of the arc
         self._radius = Quantity(to_start_vector.norm, self._start.base_unit)
-        if not self._radius.m > 0:
+        if not self._radius.m > 0:  # pragma: no cover
             raise ValueError("Point configuration does not yield a positive length arc radius.")
 
         # Compute the angle of the arc (always counter-clockwise at this point)
         self._angle = to_start_vector.get_angle_between(to_end_vector)
-        if self._angle < 0:
-            self._angle = (2 * np.pi) + self._angle
 
         # Check if the clockwise direction is desired... and recompute angle
         self._clockwise = clockwise
@@ -239,3 +237,77 @@ class Arc(SketchEdge):
         )
 
         return arc_sub1 + arc_sub2
+
+    @classmethod
+    def from_three_points(cls, start: Point2D, inter: Point2D, end: Point2D):
+        """
+        Create an Arc from three given points.
+
+        Parameters
+        ----------
+        start : Point2D
+            Point that is the start of the arc.
+        inter : Point2D
+            Point that is at an intermediate location of the arc.
+        end : Point2D
+            Point that is the end of the arc.
+
+        Returns
+        -------
+        Arc
+            Arc generated from the three given points.
+        """
+        # Unpack the points into its coordinates (in UNIT_LENGTH)
+        x_s, y_s = start.tolist()
+        x_i, y_i = inter.tolist()
+        x_e, y_e = end.tolist()
+
+        # Solve the circle equation to find out its center
+        # (Xc - X)**2 + (Yc - Y)**2 = r**2
+        #
+        # Since r is the radius, and its constant, we can just simply solve
+        # the system of equations formed by the three points, for (x_c, y_c)
+        #
+        # 2*(x_s - x_i)*x_c + 2*(y_s-y_i)*y_c + (x_i**2 + y_i**2 - x_s**2 - y_s**2) = 0
+        # 2*(x_s - x_e)*x_c + 2*(y_s-y_e)*y_c + (x_e**2 + y_e**2 - x_s**2 - y_s**2) = 0
+        #
+        # Or...
+        #
+        # k11 * x_c + k12 * y_c = k1
+        # k21 * x_c + k22 * y_c = k2
+        #
+        # Where...
+        #
+        # k11 = 2*(x_s - x_i)
+        # k12 = 2*(y_s - y_i)
+        # k21 = 2*(x_s - x_e)
+        # k22 = 2*(y_s - y_e)
+        #
+        # k1 = (x_s**2 + y_s**2) - (x_i**2 + y_i**2)
+        # k2 = (x_s**2 + y_s**2) - (x_e**2 + y_e**2)
+        #
+        # This is easily done with numpy!
+        #
+        k11 = 2 * (x_s - x_i)
+        k12 = 2 * (y_s - y_i)
+        k21 = 2 * (x_s - x_e)
+        k22 = 2 * (y_s - y_e)
+
+        k1 = (x_s**2 + y_s**2) - (x_i**2 + y_i**2)
+        k2 = (x_s**2 + y_s**2) - (x_e**2 + y_e**2)
+
+        x_c, y_c = np.linalg.solve([[k11, k12], [k21, k22]], [k1, k2])
+        center = Point2D([x_c, y_c], unit=UNIT_LENGTH)
+
+        # Now, we should try to figure out if the rotation has to be clockwise or
+        # counter-clockwise... let's see
+        center_start = Vector2D([x_s - x_c, y_s - y_c])
+        center_inter = Vector2D([x_i - x_c, y_i - y_c])
+        center_end = Vector2D([x_e - x_c, y_e - y_c])
+        angle_s_i = Vector2D.get_angle_between(center_start, center_inter)
+        angle_s_e = Vector2D.get_angle_between(center_start, center_end)
+
+        is_clockwise = False if angle_s_i < angle_s_e else True
+
+        # Finally... we achieved it! Let's create the arc
+        return Arc(center=center, start=start, end=end, clockwise=is_clockwise)

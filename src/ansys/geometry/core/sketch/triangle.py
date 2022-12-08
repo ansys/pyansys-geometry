@@ -63,10 +63,15 @@ class Triangle(SketchFace):
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
         """
+        import numpy as np
+
         return pv.Triangle(
-            [
-                [self.point1.x.m_as(UNIT_LENGTH), self.point1.y.m_as(UNIT_LENGTH), 0],
-                [self.point2.x.m_as(UNIT_LENGTH), self.point2.y.m_as(UNIT_LENGTH), 0],
-                [self.point3.x.m_as(UNIT_LENGTH), self.point3.y.m_as(UNIT_LENGTH), 0],
-            ]
+            np.array(
+                [
+                    [self.point1.x.m_as(UNIT_LENGTH), self.point1.y.m_as(UNIT_LENGTH), 0],
+                    [self.point2.x.m_as(UNIT_LENGTH), self.point2.y.m_as(UNIT_LENGTH), 0],
+                    [self.point3.x.m_as(UNIT_LENGTH), self.point3.y.m_as(UNIT_LENGTH), 0],
+                ],
+                dtype=np.float_,
+            )
         )
