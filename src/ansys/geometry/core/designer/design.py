@@ -254,11 +254,11 @@ class Design(Component):
         named_selection = NamedSelection(
             name, self._grpc_client, bodies=bodies, faces=faces, edges=edges
         )
-        self._named_selections[named_selection.name] = named_selection
+        self._named_selections[named_selection.id] = named_selection
 
         self._grpc_client.log.debug(f"Named selection {named_selection.name} successfully created.")
 
-        return self._named_selections[named_selection.name]
+        return self._named_selections[named_selection.id]
 
     @protect_grpc
     @check_input_types
@@ -271,12 +271,12 @@ class Design(Component):
             Name of the named selection or instance.
         """
         removal_name = (
-            named_selection.name if not isinstance(named_selection, str) else named_selection
+            named_selection.id if not isinstance(named_selection, str) else named_selection
         )
         self._named_selections_stub.Delete(EntityIdentifier(id=removal_name))
 
         try:
-            self._named_selections.pop(removal_name)
+            self._named_selections.pop(named_selection)
             self._grpc_client.log.debug(f"Named selection {removal_name} is successfully deleted.")
         except KeyError:
             self._grpc_client.log.warning(

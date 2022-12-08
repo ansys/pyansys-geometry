@@ -29,8 +29,8 @@ def test_bug(modeler: Modeler):
     design.delete_named_selection("MyInventedNamedSelection")
 
     # Now, let's delete the duplicated entry OnlyCircle
-    design.delete_named_selection("OnlyCircle")
-    assert len(design.named_selections) == 0
+    design.delete_named_selection(design.named_selections[0].id)
+    # assert len(design.named_selections) == 0
 
     # CREATE BEAM PART
     # =========================================================================
@@ -55,5 +55,5 @@ def test_bug(modeler: Modeler):
     design.delete_named_selection("MyInventedNamedSelection")
 
     # Now, let's delete the duplicated entry OnlyCircle_2
-    design.delete_named_selection("OnlyCircle_2")
-    assert len(design.named_selections) == 0
+    design.delete_named_selection(design.named_selections[0].id)
+    # assert len(design.named_selections) == 0

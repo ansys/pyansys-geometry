@@ -273,7 +273,7 @@ def test_named_selections(modeler: Modeler):
     assert len(design.named_selections) == 4
 
     # Now, let's delete the duplicated entry CircleAndPolygon_2
-    design.delete_named_selection(dupl_named_selection)
+    design.delete_named_selection(dupl_named_selection.id)
     assert len(design.named_selections) == 3
     assert design.named_selections[0].name == "OnlyCircle"
     assert design.named_selections[1].name == "OnlyPolygon"
