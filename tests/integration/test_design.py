@@ -309,7 +309,6 @@ def test_faces_edges(modeler: Modeler):
     faces = body_polygon_comp.faces
     assert len(faces) == 7  # top + bottom + sides
     assert all(face.id is not None for face in faces)
-    # TODO: may be at some point these might change to planar?
     assert all(face.surface_type == SurfaceType.SURFACETYPE_PLANE for face in faces)
     assert all(face.area > 0.0 for face in faces)
     assert abs(faces[0].area.to_base_units().m - sketch.faces[0].area.to_base_units().m) <= 1e-15
@@ -335,7 +334,6 @@ def test_faces_edges(modeler: Modeler):
     edges = faces[0].edges
     assert len(edges) == 5  # pentagon
     assert all(edge.id is not None for edge in edges)
-    # TODO: may be at some point these might change to line?
     assert all(edge.curve_type == CurveType.CURVETYPE_LINE for edge in edges)
     assert all(edge.length > 0.0 for edge in edges)
     assert (
