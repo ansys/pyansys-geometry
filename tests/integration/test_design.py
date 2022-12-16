@@ -428,6 +428,7 @@ def test_coordinate_system_creation(modeler: Modeler):
     assert "  Frame Y-direction    : " in nested_comp_cs1_str
     assert "  Frame Z-direction    : " in nested_comp_cs1_str
 
+
 @pytest.mark.skip(reason="Not working so far. to be investigated")
 def test_delete_body_component(modeler: Modeler):
     """Test for verifying the deletion of ``Component`` and ``Body`` objects.
@@ -782,11 +783,11 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.scdocx"
     file_stream = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder_stream.scdocx"
     design.download(file, as_stream=False)
-    #design.download(file_stream, as_stream=True)
+    # design.download(file_stream, as_stream=True)
 
     # Check that both files exist
     assert file.exists()
-    #assert file_stream.exists()
+    # assert file_stream.exists()
 
     # Check that we can also save it (even if it is not accessible on the server)
     file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"

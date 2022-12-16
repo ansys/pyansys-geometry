@@ -67,9 +67,7 @@ class NamedSelection:
 
         named_selection_request = CreateRequest(name=name, members=ids)
         self._grpc_client.log.debug("Requesting creation of named selection.")
-        new_named_selection = self._named_selections_stub.Create(
-            named_selection_request
-        )
+        new_named_selection = self._named_selections_stub.Create(named_selection_request)
         self._id = new_named_selection.id
         self._name = new_named_selection.name
 

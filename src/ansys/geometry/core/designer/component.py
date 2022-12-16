@@ -13,12 +13,9 @@ from ansys.api.geometry.v0.bodies_pb2 import (
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import CreateBeamSegmentsRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.components_pb2 import (
-    CreateRequest,
-    SetSharedTopologyRequest,
-)
+from ansys.api.geometry.v0.components_pb2 import CreateRequest, SetSharedTopologyRequest
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
-from ansys.api.geometry.v0.models_pb2 import Line, EntityIdentifier
+from ansys.api.geometry.v0.models_pb2 import EntityIdentifier, Line
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
@@ -445,7 +442,6 @@ class Component:
             Beam profile to use to create the beams.
         """
 
-        
         request = CreateBeamSegmentsRequest(parent=self.id, profile=profile.id)
 
         for segment in segments:

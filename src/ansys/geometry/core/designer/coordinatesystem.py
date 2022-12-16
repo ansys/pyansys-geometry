@@ -2,7 +2,6 @@
 
 from ansys.api.geometry.v0.coordinatesystems_pb2 import CreateRequest
 from ansys.api.geometry.v0.coordinatesystems_pb2_grpc import CoordinateSystemsStub
-from ansys.api.geometry.v0.models_pb2 import CoordinateSystem as cs
 from beartype.typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection import GrpcClient
@@ -47,7 +46,7 @@ class CoordinateSystem:
         new_coordinate_system = self._coordinate_systems_stub.Create(
             CreateRequest(
                 parent=parent_component.id,
-                name = name,
+                name=name,
                 frame=frame_to_grpc_frame(frame),
             )
         )

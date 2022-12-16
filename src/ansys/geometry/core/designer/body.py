@@ -1,15 +1,10 @@
-
 """``Body`` class module."""
-from ansys.api.geometry.v0.models_pb2 import (
-    EntityIdentifier
-)
+from ansys.api.geometry.v0.models_pb2 import EntityIdentifier
+
 """Provides the ``Body`` class module."""
 from enum import Enum
 
-from ansys.api.geometry.v0.bodies_pb2 import (
-    SetAssignedMaterialRequest,
-    TranslateRequest,
-)
+from ansys.api.geometry.v0.bodies_pb2 import SetAssignedMaterialRequest, TranslateRequest
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
@@ -299,7 +294,7 @@ class Body:
             f"Imprinting curves provided on {self.id} "
             + f"for faces {[face.id for face in faces]}."
         )
-        
+
         imprint_response = self._commands_stub.ImprintCurves(
             ImprintCurvesRequest(
                 body=self._id,
