@@ -49,6 +49,11 @@ from ansys.geometry.core.math import (
 )
 from ansys.geometry.core.misc import SERVER_UNIT_LENGTH, Distance
 from ansys.geometry.core.typing import RealSequence
+from ansys.geometry.core.services.curves import Curves
+from ansys.geometry.core.tools.facet_tools import FacetTools
+from ansys.geometry.core.designer.meshes import Meshes
+from ansys.geometry.core.designer.parts import Parts
+
 
 
 class DesignFileFormat(Enum):
