@@ -90,6 +90,19 @@ class Vector3D(np.ndarray):
         else:
             return Accuracy.angle_is_zero(self * other_vector)
 
+    @check_input_types
+    def is_parallel_to(self, other_vector: "Vector3D") -> bool:
+        """Check if this vector and another vector are perpendicular."""
+        if self.is_zero or other_vector.is_zero:
+            return False
+        else:
+            return Accuracy.angle_is_zero(self % other_vector)
+
+    @check_input_types
+    def is_opposite(self, other_vector: "Vector3D") -> bool:
+        """Check if this vector and another vector are opposite."""
+        return self.is_parallel_to(other_vector) and self * other_vector < 0
+
     def normalize(self) -> "Vector3D":
         """Return a normalized version of the 3D vector."""
         norm = self.norm
