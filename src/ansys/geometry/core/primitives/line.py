@@ -1,5 +1,7 @@
 """ Provides the ``Line`` class."""
 
+import math
+
 from beartype import beartype as check_input_types
 from beartype.typing import Union
 import numpy as np
@@ -68,16 +70,11 @@ class Line:
         if not self.direction.is_parallel_to(other.direction):
             return False
 
-        between = Vector3D(
-            [
-                self.origin.x - other.origin.x,
-                self.origin.y - other.origin.y,
-                self.origin.z - other.origin.z,
-            ]
-        )
-        return np.power((self.direction % between).magnitude, 2) <= np.power(
+        between = Vector3D(self.origin - other.origin)
+
+        return math.pow((self.direction % between).magnitude, 2) <= math.pow(
             LENGTH_ACCURACY, 2
-        ) and np.power((self.direction % between).magnitude, 2) <= np.power(LENGTH_ACCURACY, 2)
+        ) and math.pow((self.direction % between).magnitude, 2) <= math.pow(LENGTH_ACCURACY, 2)
 
     def is_opposite_line(self, other: "Line") -> bool:
         """Returns True if lines are opposite each other"""

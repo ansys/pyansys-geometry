@@ -7,6 +7,7 @@ from pint import Unit
 
 from ansys.geometry.core.math import Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, check_pint_unit_compatibility
+from ansys.geometry.core.misc.accuracy import Accuracy
 from ansys.geometry.core.primitives.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.typing import Real, RealSequence
 
@@ -116,6 +117,24 @@ class Circle:
 
     def evaluate(self, parameter: float) -> "CircleEvaluation":
         return CircleEvaluation(self, parameter)
+
+    def project_point(self, point: Point3D) -> "CircleEvaluation":
+        origin_to_point = point - self.origin
+        dir_in_plane = UnitVector3D.from_points(
+            Point3D([0, 0, 0]), origin_to_point - ((origin_to_point * self.dir_z) * self.dir_z)
+        )
+        if dir_in_plane.is_zero:
+            return CircleEvaluation(self, 0)
+
+        t = np.arctan2(self.dir_y.dot(dir_in_plane), self.dir_x.dot(dir_in_plane))
+        return CircleEvaluation(self, t)
+
+    def is_coincident_circle(self, other: "Circle") -> bool:
+        return (
+            Accuracy.length_is_equal(self.radius, other.radius)
+            and self.origin == other.origin
+            and self.dir_z == other.dir_z
+        )
 
 
 class CircleEvaluation(CurveEvaluation):
