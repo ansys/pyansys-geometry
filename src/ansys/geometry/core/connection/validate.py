@@ -6,7 +6,7 @@ GitHub and can safely be skipped within testing.
 
 Here is how it is typically used:
 
-.. code:: python
+.. code:: bash
 
    python -c "from ansys.geometry.core.connection import validate; validate()"
 
