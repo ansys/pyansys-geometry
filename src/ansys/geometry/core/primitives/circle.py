@@ -103,16 +103,14 @@ class Circle:
         self._unit = unit
 
     @check_input_types
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: "Circle") -> bool:
         """Equals operator for the ``Circle`` class."""
-        if isinstance(other, Circle):
-            return (
-                self._origin == other.origin
-                and self._radius == other.radius
-                and self._reference == other._reference
-                and self._axis == other._axis
-            )
-        return False
+        return (
+            self._origin == other.origin
+            and self._radius == other.radius
+            and self._reference == other._reference
+            and self._axis == other._axis
+        )
 
     def evaluate(self, parameter: float) -> "CircleEvaluation":
         return CircleEvaluation(self, parameter)
