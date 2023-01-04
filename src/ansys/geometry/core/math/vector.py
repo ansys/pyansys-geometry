@@ -101,13 +101,6 @@ class Vector3D(np.ndarray):
     @check_input_types
     def is_opposite(self, other_vector: "Vector3D") -> bool:
         """Check if this vector and another vector are opposite."""
-        # TODO: fix wrapping of return value here
-
-        # Had to wrap this result in bool() because I received this error:
-        # "beartype.roar.BeartypeCallHintReturnViolation:
-        # @beartyped ansys.geometry.core.math.vector.Vector3D.is_opposite()
-        # return "True" violates type hint <class 'bool'>,
-        # as <protocol "numpy.bool_"> "True" not instance of bool."
         return bool(self.is_parallel_to(other_vector) and self * other_vector < 0)
 
     def normalize(self) -> "Vector3D":
