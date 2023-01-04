@@ -48,9 +48,10 @@ you can start the service locally using Docker with:
 Next, connect to the service with:
 
 .. code:: python
-   
-   >>> from ansys.geometry.core import Modeler
-   >>> modeler = Modeler()
+
+   from ansys.geometry.core import Modeler
+
+   modeler = Modeler()
 
 By default ``Modeler`` connects to ``127.0.0.1`` (``'localhost'``) on
 port ``50051``. You can change this by modifying the ``host`` and ``port``
