@@ -364,6 +364,14 @@ def test_vector3D():
     vec_res = pos_x - neg_x
     assert vec_res == (UNITVECTOR3D_X + UNITVECTOR3D_X)
 
+    # Parallel vectors
+    assert UNITVECTOR3D_X.is_parallel_to(UNITVECTOR3D_X)
+    assert not UNITVECTOR3D_X.is_parallel_to(UNITVECTOR3D_Y)
+
+    # Opposite vectors
+    assert UNITVECTOR3D_X.is_opposite(Vector3D([-1, 0, 0]))
+    assert not UNITVECTOR3D_X.is_opposite(UNITVECTOR3D_X)
+
 
 def test_vector2D():
     """Simple test to create ``Vector2D``."""
@@ -442,6 +450,14 @@ def test_vector2D():
     # Subtract two vectors
     vec_res = pos_x - neg_x
     assert vec_res == (UNITVECTOR2D_X + UNITVECTOR2D_X)
+
+    # Parallel vectors
+    assert UNITVECTOR2D_X.is_parallel_to(UNITVECTOR2D_X)
+    assert not UNITVECTOR2D_X.is_parallel_to(UNITVECTOR2D_Y)
+
+    # Opposite vectors
+    assert UNITVECTOR2D_X.is_opposite(Vector2D([-1, 0]))
+    assert not UNITVECTOR2D_X.is_opposite(UNITVECTOR2D_X)
 
 
 def test_unitvector3D():

@@ -44,6 +44,7 @@ class Line:
     @direction.setter
     @check_input_types
     def direction(self, direction: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D]):
+        """Set the direction of the line"""
         self._direction = (
             UnitVector3D(direction) if not isinstance(direction, UnitVector3D) else direction
         )
@@ -59,6 +60,7 @@ class Line:
         return LineEvaluation(self, parameter)
 
     def project_point(self, point: Point3D) -> "LineEvaluation":
+        """Project a point onto the line and return its LineEvaluation"""
         origin_to_point = point - self.origin
         t = origin_to_point.dot(self.direction)
         return LineEvaluation(self, t)
@@ -84,29 +86,38 @@ class Line:
 
 
 class LineEvaluation(CurveEvaluation):
+    """Provides result class when evaluating a line"""
+
     def __init__(self, line: Line, parameter: float = None) -> None:
         self._line = line
         self._parameter = parameter
 
     @property
     def line(self) -> Line:
+        """The line being evaluated"""
         return self._line
 
     @property
     def parameter(self) -> float:
+        """The parameter that the evaluation is based upon"""
         return self._parameter
 
     def position(self) -> Point3D:
+        """The position of the evaluation"""
         return self.line.origin + self.parameter * self.line.direction
 
     def tangent(self) -> UnitVector3D:
+        """The tangent of the evaluation"""
         return self.line.direction
 
     def first_derivative(self) -> Vector3D:
+        """The first derivative of the evaluation"""
         return self.line.direction
 
     def second_derivative(self) -> Vector3D:
+        """The second derivative of the evaluation"""
         return Vector3D([0, 0, 0])
 
     def curvature(self) -> float:
+        """The curvature of the evaluation"""
         return 0

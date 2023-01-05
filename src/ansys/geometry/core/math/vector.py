@@ -92,7 +92,7 @@ class Vector3D(np.ndarray):
 
     @check_input_types
     def is_parallel_to(self, other_vector: "Vector3D") -> bool:
-        """Check if this vector and another vector are perpendicular."""
+        """Check if this vector and another vector are parallel."""
         if self.is_zero or other_vector.is_zero:
             return False
         else:
@@ -275,12 +275,30 @@ class Vector2D(np.ndarray):
         return all([comp == 0 for comp in self])
 
     @check_input_types
+    def cross(self, v: "Vector2D"):
+        """Return the cross product of ``Vector2D`` objects."""
+        return np.cross(self, v)
+
+    @check_input_types
     def is_perpendicular_to(self, other_vector: "Vector2D") -> bool:
         """Check if this 2D vector and another 2D vector are perpendicular."""
         if self.is_zero or other_vector.is_zero:
             return False
         else:
             return Accuracy.angle_is_zero(self * other_vector)
+
+    @check_input_types
+    def is_parallel_to(self, other_vector: "Vector2D") -> bool:
+        """Check if this vector and another vector are parallel."""
+        if self.is_zero or other_vector.is_zero:
+            return False
+        else:
+            return bool((self % other_vector) == 0)
+
+    @check_input_types
+    def is_opposite(self, other_vector: "Vector2D") -> bool:
+        """Check if this vector and another vector are opposite."""
+        return bool(self.is_parallel_to(other_vector) and self * other_vector < 0)
 
     def normalize(self) -> "Vector2D":
         """Return a normalized version of the 2D vector."""
@@ -348,6 +366,10 @@ class Vector2D(np.ndarray):
     def __sub__(self, other: "Vector2D") -> "Vector2D":
         """Subtraction operation overload for 2D vectors."""
         return np.subtract(self, other).view(Vector2D)
+
+    def __mod__(self, other: "Vector2D") -> "Vector2D":
+        """Overload % operator with cross product."""
+        return self.cross(other)
 
     @classmethod
     @check_input_types

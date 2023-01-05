@@ -1,14 +1,14 @@
 """ Provides the ``Circle`` class."""
 
 from beartype import beartype as check_input_types
-from beartype.typing import Optional, Union
+from beartype.typing import Union
 import numpy as np
-from pint import Unit
+from pint import Quantity
 
-from ansys.geometry.core.math import Point3D, UnitVector3D, Vector3D
-from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Accuracy, check_pint_unit_compatibility
+from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.misc import Accuracy, Distance
 from ansys.geometry.core.primitives.curve_evaluation import CurveEvaluation
-from ansys.geometry.core.typing import Real, RealSequence
+from ansys.geometry.core.typing import RealSequence
 
 
 class Circle:
@@ -19,7 +19,7 @@ class Circle:
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D]
         Origin of the circle.
-    radius : Real
+    radius : Union[Quantity, Distance]
         Radius of the circle.
     reference : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         X-plane direction.
@@ -33,17 +33,10 @@ class Circle:
     def __init__(
         self,
         origin: Union[np.ndarray, RealSequence, Point3D],
-        radius: Real,
-        reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UnitVector3D(
-            [1, 0, 0]
-        ),
-        axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UnitVector3D([0, 0, 1]),
-        unit: Optional[Unit] = UNIT_LENGTH,
+        radius: Union[Quantity, Distance],
+        reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
+        axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
-        check_pint_unit_compatibility(unit, UNIT_LENGTH)
-        self._unit = unit
-        _, self._base_unit = UNITS.get_base_units(unit)
-
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
 
         self._reference = (
@@ -54,7 +47,9 @@ class Circle:
         if not self._reference.is_perpendicular_to(self._axis):
             raise ValueError("Circle reference (dir_x) and axis (dir_z) must be perpendicular.")
 
-        self._radius = UNITS.convert(radius, self._unit, self._base_unit)
+        self._radius = radius if isinstance(radius, Distance) else Distance(radius)
+        if self._radius.value <= 0:
+            raise ValueError("Radius must be a real positive value.")
 
     @property
     def origin(self) -> Point3D:
@@ -68,54 +63,41 @@ class Circle:
         self._origin = origin
 
     @property
-    def radius(self) -> Real:
+    def radius(self) -> Quantity:
         """Radius of the circle."""
-        return UNITS.convert(self._radius, self._base_unit, self._unit)
-
-    @radius.setter
-    @check_input_types
-    def radius(self, radius: Real) -> None:
-        """Set the radius of the circle."""
-        self._radius = UNITS.convert(radius, self._unit, self._base_unit)
+        return self._radius.value
 
     @property
     def dir_x(self) -> UnitVector3D:
+        """X-direction of the circle"""
         return self._reference
 
     @property
     def dir_y(self) -> UnitVector3D:
+        """Y-direction of the circle"""
         return self.dir_z.cross(self.dir_x)
 
     @property
     def dir_z(self) -> UnitVector3D:
+        """Z-direction of the circle"""
         return self._axis
-
-    @property
-    def unit(self) -> Unit:
-        """Unit of the radius."""
-        return self._unit
-
-    @unit.setter
-    @check_input_types
-    def unit(self, unit: Unit) -> None:
-        """Set the unit of the object."""
-        check_pint_unit_compatibility(unit, UNIT_LENGTH)
-        self._unit = unit
 
     @check_input_types
     def __eq__(self, other: "Circle") -> bool:
         """Equals operator for the ``Circle`` class."""
         return (
-            self._origin == other.origin
-            and self._radius == other.radius
+            self._origin == other._origin
+            and self._radius == other._radius
             and self._reference == other._reference
             and self._axis == other._axis
         )
 
     def evaluate(self, parameter: float) -> "CircleEvaluation":
+        """Evaluate the circle at the given parameter"""
         return CircleEvaluation(self, parameter)
 
     def project_point(self, point: Point3D) -> "CircleEvaluation":
+        """Project a point onto the circle and return its CircleEvaluation"""
         origin_to_point = point - self.origin
         dir_in_plane = UnitVector3D.from_points(
             Point3D([0, 0, 0]), origin_to_point - ((origin_to_point * self.dir_z) * self.dir_z)
@@ -127,47 +109,57 @@ class Circle:
         return CircleEvaluation(self, t)
 
     def is_coincident_circle(self, other: "Circle") -> bool:
+        """Determine if this circle is coincident with another"""
         return (
-            Accuracy.length_is_equal(self.radius, other.radius)
+            Accuracy.length_is_equal(self.radius.m, other.radius.m)
             and self.origin == other.origin
             and self.dir_z == other.dir_z
         )
 
 
 class CircleEvaluation(CurveEvaluation):
+    """Provides result class when evaluating a circle"""
+
     def __init__(self, circle: Circle, parameter: float = None) -> None:
         self._circle = circle
         self._parameter = parameter
 
     @property
     def circle(self) -> Circle:
+        """The circle being evaluated"""
         return self._circle
 
     @property
     def parameter(self) -> float:
+        """The parameter that the evaluation is based upon"""
         return self._parameter
 
     def position(self) -> Point3D:
+        """The position of the evaluation"""
         return (
             self.circle.origin
-            + (self.circle.radius * np.cos(self.parameter)) * self.circle.dir_x
-            + (self.circle.radius * np.sin(self.parameter)) * self.circle.dir_y
+            + ((self.circle.radius * np.cos(self.parameter)) * self.circle.dir_x).m
+            + ((self.circle.radius * np.sin(self.parameter)) * self.circle.dir_y).m
         )
 
     def tangent(self) -> UnitVector3D:
+        """The tangent of the evaluation"""
         return (
             np.cos(self.parameter) * self.circle.dir_y - np.sin(self.parameter) * self.circle.dir_x
         )
 
     def first_derivative(self) -> Vector3D:
-        return self.circle.radius * (
+        """The first derivative of the evaluation"""
+        return self.circle.radius.m * (
             np.cos(self.parameter) * self.circle.dir_y - np.sin(self.parameter) * self.circle.dir_x
         )
 
     def second_derivative(self) -> Vector3D:
-        return -self.circle.radius * (
+        """The second derivative of the evaluation"""
+        return -self.circle.radius.m * (
             np.cos(self.parameter) * self.circle.dir_x + np.sin(self.parameter) * self.circle.dir_y
         )
 
     def curvature(self) -> float:
-        return 1 / np.abs(self.circle.radius)
+        """The curvature of the evaluation"""
+        return 1 / np.abs(self.circle.radius.m)
