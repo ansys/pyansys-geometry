@@ -25,8 +25,6 @@ class Circle:
         X-plane direction.
     axis : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         Z-plane direction.
-    unit : Unit, default: UNIT_LENGTH
-        Units for defining the radius.
     """
 
     @check_input_types
