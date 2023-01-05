@@ -50,7 +50,7 @@ tests = [
     "Pint==0.20.1",
     "protobuf==3.20.3",
     "pyvista==0.37.0",
-    "scipy==1.9.3",
+    "scipy==1.10.0",
     "six==1.16.0",
     "ansys-platform-instancemanagement==1.0.2",
     "pytest==7.2.0",
