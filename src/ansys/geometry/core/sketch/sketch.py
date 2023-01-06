@@ -8,7 +8,7 @@ from ansys.geometry.core.math import ZERO_POINT2D, Plane, Point2D, UnitVector3D,
 from ansys.geometry.core.misc import UNIT_LENGTH, Angle, Distance
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.box import Box
-from ansys.geometry.core.sketch.circle import Circle
+from ansys.geometry.core.sketch.circle import SketchCircle
 from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.sketch.ellipse import Ellipse
 from ansys.geometry.core.sketch.face import SketchFace
@@ -537,7 +537,7 @@ class Sketch:
         Sketch
             Revised sketch state ready for further sketch actions.
         """
-        circle = Circle(center, radius)
+        circle = SketchCircle(center, radius)
         return self.face(circle, tag)
 
     def box(

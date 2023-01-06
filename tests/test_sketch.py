@@ -13,7 +13,16 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
-from ansys.geometry.core.sketch import Arc, Box, Circle, Ellipse, Polygon, Segment, Sketch, Slot
+from ansys.geometry.core.sketch import (
+    Arc,
+    Box,
+    Ellipse,
+    Polygon,
+    Segment,
+    Sketch,
+    SketchCircle,
+    Slot,
+)
 
 DOUBLE_EPS = np.finfo(float).eps
 
@@ -248,10 +257,25 @@ def test_circle_instance():
         Point2D([0, 0], UNIT_LENGTH),
         (1 * UNIT_LENGTH),
     )
-    circle = Circle(center, radius)
-
+    circle = SketchCircle(center, radius)
     # Check attributes are expected ones
     assert circle.center == center
+    assert circle.radius == radius
+    assert circle.diameter == 2 * radius
+    assert circle.area == np.pi * radius**2
+    assert circle.perimeter == 2 * np.pi * radius
+
+    # Test circle on different plane
+    center, radius = (
+        Point2D([1, 1], UNIT_LENGTH),
+        (1 * UNIT_LENGTH),
+    )
+    circle = SketchCircle(
+        center, radius, Plane(Point3D([1, 1, 1]), UnitVector3D([-1, 0, 0]), UnitVector3D([0, 0, 1]))
+    )
+
+    # Check attributes are expected ones
+    assert circle.origin == Point3D([0, 1, 2])
     assert circle.radius == radius
     assert circle.diameter == 2 * radius
     assert circle.area == np.pi * radius**2
@@ -264,10 +288,10 @@ def test_circle_instance_errors():
     with pytest.raises(
         TypeError, match=r"The pint.Unit provided as an input should be a \[length\] quantity."
     ):
-        Circle(Point2D([10, 20]), 1 * UNITS.fahrenheit)
+        SketchCircle(Point2D([10, 20]), 1 * UNITS.fahrenheit)
 
     with pytest.raises(ValueError, match="Radius must be a real positive value."):
-        Circle(Point2D([10, 20]), -10 * UNITS.mm)
+        SketchCircle(Point2D([10, 20]), -10 * UNITS.mm)
 
 
 def test_sketch_circle_face():

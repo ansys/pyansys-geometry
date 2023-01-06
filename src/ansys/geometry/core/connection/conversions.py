@@ -18,10 +18,10 @@ from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 from ansys.geometry.core.misc.measurements import UNIT_ANGLE
 from ansys.geometry.core.sketch import (
     Arc,
-    Circle,
     Ellipse,
     Polygon,
     Segment,
+    SketchCircle,
     SketchEdge,
     SketchFace,
 )
@@ -123,7 +123,7 @@ def sketch_shapes_to_grpc_geometries(
     geometries.arcs.extend(converted_sketch_edges[1])
 
     for face in faces:
-        if isinstance(face, Circle):
+        if isinstance(face, SketchCircle):
             geometries.circles.append(sketch_circle_to_grpc_circle(face, plane))
         if isinstance(face, Ellipse):
             geometries.ellipses.append(sketch_ellipse_to_grpc_ellipse(face, plane))
@@ -232,13 +232,13 @@ def sketch_ellipse_to_grpc_ellipse(ellipse: Ellipse, plane: Plane) -> GRPCEllips
     )
 
 
-def sketch_circle_to_grpc_circle(circle: Circle, plane: Plane) -> GRPCCircle:
+def sketch_circle_to_grpc_circle(circle: SketchCircle, plane: Plane) -> GRPCCircle:
     """
-    Marshals a :class:`Circle` class to a circle gRPC message of the Geometry service.
+    Marshals a :class:`SketchCircle` class to a circle gRPC message of the Geometry service.
 
     Parameters
     ----------
-    circle : Circle
+    circle : SketchCircle
         Source circle data.
     plane : Plane
         Plane for positioning the circle.

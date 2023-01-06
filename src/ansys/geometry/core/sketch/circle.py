@@ -1,4 +1,4 @@
-"""``Provides the ``Circle`` class."""
+"""``Provides the ``SketchCircle`` class."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Union
@@ -6,12 +6,13 @@ import numpy as np
 from pint import Quantity
 import pyvista as pv
 
-from ansys.geometry.core.math import Point2D
+from ansys.geometry.core.math import Plane, Point2D
 from ansys.geometry.core.misc import UNIT_LENGTH, Distance
+from ansys.geometry.core.primitives import Circle
 from ansys.geometry.core.sketch.face import SketchFace
 
 
-class Circle(SketchFace):
+class SketchCircle(SketchFace, Circle):
     """Provides for modeling circles.
 
     Parameters
@@ -27,9 +28,18 @@ class Circle(SketchFace):
         self,
         center: Point2D,
         radius: Union[Quantity, Distance],
+        plane: Plane = Plane(),  # Default XY-plane
     ):
         """Initialize the circle."""
-        super().__init__()
+        SketchFace().__init__()
+
+        # Transforms local 2D center of circle into 3D point in world
+        circle_center_in_world = (
+            plane.origin + center.x.m * plane.direction_x + center.y.m * plane.direction_y
+        )
+
+        dir_z = plane.direction_x % plane.direction_y
+        Circle.__init__(self, circle_center_in_world, radius, plane.direction_x, dir_z)
 
         self._center = center
         self._radius = radius if isinstance(radius, Distance) else Distance(radius)

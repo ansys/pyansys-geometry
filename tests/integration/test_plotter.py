@@ -12,11 +12,11 @@ from ansys.geometry.core.plotting import Plotter
 from ansys.geometry.core.sketch import (
     Arc,
     Box,
-    Circle,
     Ellipse,
     Polygon,
     Segment,
     Sketch,
+    SketchCircle,
     Slot,
     Trapezoid,
     Triangle,
@@ -458,7 +458,7 @@ def test_visualization_polydata():
     assert trapezoid.visualization_polydata.n_open_edges == 4
 
     # Test for circle visualization polydata
-    circle = Circle(Point2D([10, -10], UNIT_LENGTH), Quantity(1, UNIT_LENGTH))
+    circle = SketchCircle(Point2D([10, -10], UNIT_LENGTH), Quantity(1, UNIT_LENGTH))
     assert circle.visualization_polydata.center == pytest.approx(
         ([10.000251728808408, -10.0, 0.0]),
         rel=1e-6,
