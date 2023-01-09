@@ -1,7 +1,7 @@
 """``Provides the ``SketchCircle`` class."""
 
 from beartype import beartype as check_input_types
-from beartype.typing import Union
+from beartype.typing import Optional, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
@@ -21,6 +21,8 @@ class SketchCircle(SketchFace, Circle):
         Point representing the center of the circle.
     radius : Union[Quantity, Distance]
         Radius of the circle.
+    plane : Plane, optional
+        Plane containing the sketched circle, by default global XY Plane.
     """
 
     @check_input_types
@@ -28,20 +30,46 @@ class SketchCircle(SketchFace, Circle):
         self,
         center: Point2D,
         radius: Union[Quantity, Distance],
-        plane: Plane = Plane(),  # Default XY-plane
+        plane: Plane = Plane(),
     ):
         """Initialize the circle."""
         # Call SketchFace init method
         SketchFace.__init__(self)
 
-        # Call Circle init method
-        center_global = plane.origin + Point3D(
-            center[0] * plane.direction_x + center[1] * plane.direction_y, unit=center.base_unit
-        )
-        Circle.__init__(self, center_global, radius, plane.direction_x, plane.direction_z)
-
         # Store the 2D center of the circle
         self._center = center
+
+        self._radius = radius if isinstance(radius, Distance) else Distance(radius)
+        if self._radius.value <= 0:
+            raise ValueError("Radius must be a real positive value.")
+
+        # Call Circle init method
+        self._init_primitive_circle_from_plane(plane, radius=radius)
+
+    def _init_primitive_circle_from_plane(
+        self, plane: Plane, radius: Optional[Union[Quantity, Distance]] = None
+    ) -> None:
+        """
+        Method in charge of initializing correctly the underlying
+        primitive ``Circle`` class.
+
+        Parameters
+        ----------
+        plane : Plane
+            Plane containing the sketched circle.
+        radius : Optional[Union[Quantity, Distance]], optional
+            Radius of the circle (if any), by default None.
+        """
+
+        # Use the radius given (if any)
+        radius = radius if radius else self.radius
+
+        # Call Circle init method
+        center_global = plane.origin + Point3D(
+            self.center[0] * plane.direction_x + self.center[1] * plane.direction_y,
+            unit=self.center.base_unit,
+        )
+        Circle.__init__(self, center_global, radius, plane.direction_x, plane.direction_z)
 
     @property
     def center(self) -> Point2D:
@@ -93,8 +121,4 @@ class SketchCircle(SketchFace, Circle):
             Desired new plane which will contain the sketched circle.
         """
         # Reinitialize the Circle definition for the given plane
-        center_global = plane.origin + Point3D(
-            self._center[0] * plane.direction_x + self._center[1] * plane.direction_y,
-            unit=self._center.base_unit,
-        )
-        Circle.__init__(self, center_global, self._radius, plane.direction_x, plane.direction_z)
+        self._init_primitive_circle_from_plane(plane)

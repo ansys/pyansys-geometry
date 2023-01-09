@@ -19,7 +19,7 @@ from ansys.geometry.core.connection.conversions import (
 )
 from ansys.geometry.core.math import Frame, Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import UNITS, Angle
-from ansys.geometry.core.sketch import Arc, Ellipse, Polygon, Segment, SketchCircle
+from ansys.geometry.core.sketch import Arc, Ellipse, Polygon, SketchCircle, SketchSegment
 
 
 def test_wait_until_healthy():
@@ -99,9 +99,9 @@ def test_ellipse_message_conversion():
 
 def test_segment_message_conversion():
     """Test conversion between :class:
-    `Segment <ansys.geometry.core.sketch.segment.Segment>`
+    `SketchSegment <ansys.geometry.core.sketch.segment.SketchSegment>`
     and expected gRPC message type."""
-    segment = Segment(
+    segment = SketchSegment(
         Point2D([30, 400], UNITS.mm),
         Point2D([500, 600], UNITS.mm),
     )

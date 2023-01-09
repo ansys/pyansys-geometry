@@ -18,9 +18,9 @@ from ansys.geometry.core.sketch import (
     Box,
     Ellipse,
     Polygon,
-    Segment,
     Sketch,
     SketchCircle,
+    SketchSegment,
     Slot,
 )
 
@@ -28,28 +28,28 @@ DOUBLE_EPS = np.finfo(float).eps
 
 
 def test_errors_segment():
-    """Check errors when handling a ``Segment``."""
+    """Check errors when handling a ``SketchSegment``."""
     with pytest.raises(BeartypeCallHintParamViolation):
-        Segment("a", "b")
+        SketchSegment("a", "b")
     with pytest.raises(BeartypeCallHintParamViolation):
-        Segment(Point2D([10, 20], unit=UNITS.meter), "b")
+        SketchSegment(Point2D([10, 20], unit=UNITS.meter), "b")
     with pytest.raises(
         ValueError, match="The numpy.ndarray 'start' should not be a nan numpy.ndarray."
     ):
-        Segment(Point2D(), Point2D())
+        SketchSegment(Point2D(), Point2D())
     with pytest.raises(
         ValueError, match="The numpy.ndarray 'end' should not be a nan numpy.ndarray."
     ):
-        Segment(Point2D([10, 20]), Point2D())
+        SketchSegment(Point2D([10, 20]), Point2D())
     with pytest.raises(
         ValueError,
         match="Parameters 'start' and 'end' have the same values. No segment can be created.",
     ):
-        Segment(Point2D([10, 20]), Point2D([10, 20]))
+        SketchSegment(Point2D([10, 20]), Point2D([10, 20]))
 
 
 def test_sketch_segment_edge():
-    """Test Segment SketchEdge sketching."""
+    """Test SketchSegment SketchEdge sketching."""
 
     # Create a Sketch instance
     sketch = Sketch()

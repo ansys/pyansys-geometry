@@ -14,7 +14,7 @@ from ansys.geometry.core.sketch.ellipse import Ellipse
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.gears import DummyGear, SpurGear
 from ansys.geometry.core.sketch.polygon import Polygon
-from ansys.geometry.core.sketch.segment import Segment
+from ansys.geometry.core.sketch.segment import SketchSegment
 from ansys.geometry.core.sketch.slot import Slot
 from ansys.geometry.core.sketch.trapezoid import Trapezoid
 from ansys.geometry.core.sketch.triangle import Triangle
@@ -255,7 +255,7 @@ class Sketch:
         Sketch
             Revised sketch state ready for further sketch actions.
         """
-        segment = Segment(start, end)
+        segment = SketchSegment(start, end)
         return self.edge(segment, tag)
 
     def segment_to_point(self, end: Point2D, tag: Optional[str] = None) -> "Sketch":
@@ -279,7 +279,7 @@ class Sketch:
         The starting point of the created edge is based upon the current context
         of the sketch, such as the end point of a previously added edge.
         """
-        segment = Segment(self._single_point_context_reference(), end)
+        segment = SketchSegment(self._single_point_context_reference(), end)
         return self.edge(segment, tag)
 
     @check_input_types

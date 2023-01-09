@@ -14,9 +14,9 @@ from ansys.geometry.core.sketch import (
     Box,
     Ellipse,
     Polygon,
-    Segment,
     Sketch,
     SketchCircle,
+    SketchSegment,
     Slot,
     Trapezoid,
     Triangle,
@@ -396,7 +396,7 @@ def test_visualization_polydata():
     assert arc.visualization_polydata.n_open_edges == 0
 
     # Test for segment visualization polydata
-    segment = Segment(Point2D([3, 2]), Point2D([2, 0]))
+    segment = SketchSegment(Point2D([3, 2]), Point2D([2, 0]))
     assert segment.visualization_polydata.center == ([2.5, 1.0, 0.0])
     assert segment.visualization_polydata.bounds == pytest.approx(
         [2.0, 3.0, 0.0, 2.0, 0.0, 0.0],

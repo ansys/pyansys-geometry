@@ -20,10 +20,10 @@ from ansys.geometry.core.sketch import (
     Arc,
     Ellipse,
     Polygon,
-    Segment,
     SketchCircle,
     SketchEdge,
     SketchFace,
+    SketchSegment,
 )
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -174,7 +174,7 @@ def sketch_edges_to_grpc_geometries(
     arcs = []
     segments = []
     for edge in edges:
-        if isinstance(edge, Segment):
+        if isinstance(edge, SketchSegment):
             segments.append(sketch_segment_to_grpc_line(edge, plane))
         elif isinstance(edge, Arc):
             arcs.append(sketch_arc_to_grpc_arc(edge, plane))
@@ -319,12 +319,12 @@ def sketch_polygon_to_grpc_polygon(polygon: Polygon, plane: Plane) -> GRPCPolygo
     )
 
 
-def sketch_segment_to_grpc_line(segment: Segment, plane: Plane) -> GRPCLine:
+def sketch_segment_to_grpc_line(segment: SketchSegment, plane: Plane) -> GRPCLine:
     """Marshals a :class:`Segment` class to a line gRPC message of the Geometry service.
 
     Parameters
     ----------
-    segment : Segment
+    segment : SketchSegment
         Source segment data.
 
     Returns
