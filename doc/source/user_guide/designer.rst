@@ -17,7 +17,7 @@ Then, create your model on the server.
 
     # Create your design on the server
     design_name = "ExtrudeProfile"
-    design = modeler.create_design(design_name) 
+    design = modeler.create_design(design_name)
 
 
 Add materials to model

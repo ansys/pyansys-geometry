@@ -35,9 +35,10 @@ Connect to the Geometry service
 After the service is launched, connect to it with:
 
 .. code:: python
-   
-   >>> from ansys.geometry.core import Modeler
-   >>> modeler = Modeler()
+
+   from ansys.geometry.core import Modeler
+
+   modeler = Modeler()
 
 By default ``Modeler`` connects to ``127.0.0.1`` (``'localhost'``) on
 port ``50051``. You can change this by modifying the ``host`` and ``port``
@@ -69,7 +70,7 @@ If you want to change the defaults, modify environment variables and the
 
     .. tab-item:: Modeler function
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> from ansys.geometry.core import Modeler
-            >>> modeler = Modeler(host="127.0.0.1", port=50051) 
+            >>> modeler = Modeler(host="127.0.0.1", port=50051)

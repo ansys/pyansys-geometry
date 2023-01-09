@@ -1,9 +1,17 @@
 from beartype.roar import BeartypeCallHintParamViolation
+import numpy as np
 import pytest
 
-from ansys.geometry.core.math import Point3D, UnitVector3D
-from ansys.geometry.core.misc import UNITS
-from ansys.geometry.core.primitives import Cone, Cylinder, Sphere, Torus
+from ansys.geometry.core.math import (
+    UNITVECTOR3D_X,
+    UNITVECTOR3D_Y,
+    UNITVECTOR3D_Z,
+    Point3D,
+    UnitVector3D,
+    Vector3D,
+)
+from ansys.geometry.core.misc import UNITS, Accuracy, Distance
+from ansys.geometry.core.primitives import Circle, Cone, Cylinder, Line, Sphere, Torus
 
 
 def test_cylinder():
@@ -451,3 +459,115 @@ def test_torus_units():
     assert t_1.major_radius == UNITS.convert(major_radius, unit, new_unit)
     assert t_1.minor_radius == UNITS.convert(minor_radius, unit, new_unit)
     assert t_1.unit == new_unit
+
+
+def test_circle():
+    """``Circle`` construction and equivalency."""
+    origin = Point3D([0, 0, 0])
+    radius = Distance(10)
+    origin_circle = Circle(origin, radius)
+    origin_duplicate_circle = Circle(origin, radius)
+    bigger_circle = Circle(origin, Distance(20))
+    tilted_circle = Circle(
+        origin, radius, reference=UnitVector3D([1, 0, 1]), axis=UnitVector3D([-1, 2, 1])
+    )
+
+    # Test attributes
+    assert origin_circle.origin.x == origin.x
+    assert origin_circle.origin.y == origin.y
+    assert origin_circle.origin.z == origin.z
+    assert origin_circle.radius.m == 10
+    assert origin_circle.dir_x == UNITVECTOR3D_X
+    assert origin_circle.dir_y == UNITVECTOR3D_Y
+    assert origin_circle.dir_z == UNITVECTOR3D_Z
+    assert tilted_circle.dir_y == Vector3D([2, 2, -2]).normalize()
+
+    # Test comparisons
+    assert origin_circle == origin_duplicate_circle
+    assert origin_circle.is_coincident_circle(origin_duplicate_circle)
+    assert origin_circle != bigger_circle
+
+    # Test expected errors
+    with pytest.raises(ValueError):
+        invalid_axis_circle = Circle(
+            origin, radius, reference=UNITVECTOR3D_X, axis=UnitVector3D([1, 1, 1])
+        )
+
+
+def test_circle_evaluation():
+    """``CircleEvaluation`` construction and equivalency."""
+    origin = Point3D([0, 0, 0])
+    radius = Distance(1)
+
+    # Test evaluation at 0
+    circle = Circle(origin, radius)
+    eval = circle.evaluate(0)
+
+    assert eval.circle == circle
+    assert eval.position() == Point3D([1, 0, 0])
+    assert eval.tangent() == UNITVECTOR3D_Y
+    assert eval.first_derivative() == UNITVECTOR3D_Y
+    assert eval.second_derivative() == UnitVector3D([-1, 0, 0])
+    assert eval.curvature() == 1
+
+    # Test evaluation at (.785) by projecting a point
+    eval2 = circle.project_point(Point3D([1, 1, 0]))
+
+    # TODO: enforce Accuracy in Point3D __eq__ ? want to be able to say:
+    assert eval2.position() == Point3D([np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
+    assert eval2.tangent() == UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
+    assert eval2.first_derivative() == UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
+    assert eval2.second_derivative() == UnitVector3D([-np.sqrt(2) / 2, -np.sqrt(2) / 2, 0])
+    assert eval2.curvature() == 1
+
+
+def test_line():
+    """``Line`` construction and equivalency."""
+
+    origin = Point3D([0, 0, 0])
+    direction = UnitVector3D([0.5, 0.5, 0])
+
+    line = Line(origin, direction)
+    line_duplicate = Line(origin, direction)
+    coincident_line = Line(Point3D([-1, -1, 0]), direction)
+    x_line = Line(origin, UNITVECTOR3D_X)
+    opposite_x_line = Line(origin, UnitVector3D([-1, 0, 0]))
+
+    # Test attributes
+    assert line.origin.x == origin.x
+    assert line.origin.y == origin.y
+    assert line.origin.z == origin.z
+
+    # Test comparisons
+    assert line == line_duplicate
+    assert line != x_line
+    assert line.is_coincident_line(line_duplicate)
+    assert line.is_coincident_line(coincident_line)
+    assert x_line.is_opposite_line(opposite_x_line)
+
+
+def test_line_evaluation():
+    """``LineEvaluation`` construction and equivalency."""
+    origin = Point3D([0, 0, 0])
+    direction = UnitVector3D([0.5, 0.5, 0])
+
+    # Test evaluation at 0
+    line = Line(origin, direction)
+    eval = line.evaluate(0)
+
+    assert eval.line == line
+    assert eval.position() == origin
+    assert eval.tangent() == UnitVector3D([0.5, 0.5, 0])
+    assert eval.first_derivative() == UnitVector3D([0.5, 0.5, 0])
+    assert eval.second_derivative() == Vector3D([0, 0, 0])
+    assert eval.curvature() == 0
+
+    # Test evaluation at (.707) by projecting a point
+    eval2 = line.project_point(Point3D([1, 0, 0]))
+
+    # TODO: enforce Accuracy in Point3D __eq__ ? want to be able to say:
+    # assert eval2.position() == Point3D([.5,.5,0])
+    diff = Vector3D.from_points(eval2.position(), Point3D([0.5, 0.5, 0]))
+    assert Accuracy.length_is_zero(diff.x)
+    assert Accuracy.length_is_zero(diff.y)
+    assert Accuracy.length_is_zero(diff.z)
