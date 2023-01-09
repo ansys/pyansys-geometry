@@ -8,10 +8,12 @@ from ansys.geometry.core.designer import Body, Component
 from ansys.geometry.core.math import Frame, Plane
 from ansys.geometry.core.plotting.widgets import PlotterWidget, Ruler
 from ansys.geometry.core.plotting.widgets.displace_arrows import (
-    DisplaceArrowDown,
-    DisplaceArrowLeft,
-    DisplaceArrowRight,
-    DisplaceArrowUp,
+    DisplaceArrowXDown,
+    DisplaceArrowXUp,
+    DisplaceArrowYDown,
+    DisplaceArrowYUp,
+    DisplaceArrowZDown,
+    DisplaceArrowZUp,
 )
 from ansys.geometry.core.sketch import Sketch
 
@@ -46,7 +48,7 @@ class Plotter:
 
         # Create the scene
         self._scene = scene
-
+        # scene.enable_terrain_style(mouse_wheel_zooms=True, shift_pans=True)
         # Scene: assign the background
         self._scene.set_background(**background_opts)
         view_box = self._scene.add_axes(line_width=5, color="black")
@@ -57,10 +59,12 @@ class Plotter:
         # Create Plotter widgets
         self._widgets: List[PlotterWidget] = []
         self._widgets.append(Ruler(self._scene))
-        self._widgets.append(DisplaceArrowUp(self._scene))
-        self._widgets.append(DisplaceArrowDown(self._scene))
-        self._widgets.append(DisplaceArrowLeft(self._scene))
-        self._widgets.append(DisplaceArrowRight(self._scene))
+        self._widgets.append(DisplaceArrowXUp(self._scene))
+        self._widgets.append(DisplaceArrowXDown(self._scene))
+        self._widgets.append(DisplaceArrowYUp(self._scene))
+        self._widgets.append(DisplaceArrowYDown(self._scene))
+        self._widgets.append(DisplaceArrowZUp(self._scene))
+        self._widgets.append(DisplaceArrowZDown(self._scene))
 
     @property
     def scene(self) -> pv.Plotter:
