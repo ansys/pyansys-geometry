@@ -57,6 +57,17 @@ class Sketch:
         """Sketch plane configuration."""
         return self._plane
 
+    @property
+    def edges(self) -> List[SketchEdge]:
+        """List of all independently sketched edges, which are those
+        that are not assigned to a face."""
+        return self._edges
+
+    @property
+    def faces(self) -> List[SketchFace]:
+        """List of all independently sketched faces."""
+        return self._faces
+
     @plane.setter
     @check_input_types
     def plane(self, plane: Plane) -> None:
@@ -69,17 +80,8 @@ class Sketch:
             New plane for the sketch planar orientation.
         """
         self._plane = plane
-
-    @property
-    def edges(self) -> List[SketchEdge]:
-        """List of all independently sketched edges, which are those
-        that are not assigned to a face."""
-        return self._edges
-
-    @property
-    def faces(self) -> List[SketchFace]:
-        """List of all independently sketched faces."""
-        return self._faces
+        [face.plane_change(plane) for face in self.faces]
+        [edge.plane_change(plane) for edge in self.edges]
 
     @check_input_types
     def translate_sketch_plane(self, translation: Vector3D) -> "Sketch":

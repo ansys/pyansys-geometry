@@ -1,10 +1,13 @@
 """Provides the ``SketchFace`` class."""
 
-from beartype.typing import List
+from beartype.typing import TYPE_CHECKING, List
 from pint import Quantity
 import pyvista as pv
 
 from ansys.geometry.core.sketch.edge import SketchEdge
+
+if TYPE_CHECKING:
+    from ansys.geometry.core.math import Plane
 
 
 class SketchFace:
@@ -43,3 +46,17 @@ class SketchFace:
         """
         meshes = [edge.visualization_polydata for edge in self.edges]
         return pv.merge(meshes)
+
+    def plane_change(self, plane: "Plane") -> None:
+        """
+        Common method for SketchFace objects to redefine the plane
+        containing them. This implies that their 3D definition may suffer
+        changes. By default, it does nothing. It is required to be implemented
+        in child SketchFace classes.
+
+        Parameters
+        ----------
+        plane : Plane
+            Desired new plane which will contain the sketched face.
+        """
+        pass

@@ -6,7 +6,7 @@ import numpy as np
 from pint import Quantity
 import pyvista as pv
 
-from ansys.geometry.core.math import Plane, Point2D
+from ansys.geometry.core.math import Plane, Point2D, Point3D
 from ansys.geometry.core.misc import UNIT_LENGTH, Distance
 from ansys.geometry.core.primitives import Circle
 from ansys.geometry.core.sketch.face import SketchFace
@@ -31,30 +31,22 @@ class SketchCircle(SketchFace, Circle):
         plane: Plane = Plane(),  # Default XY-plane
     ):
         """Initialize the circle."""
-        SketchFace().__init__()
+        # Call SketchFace init method
+        SketchFace.__init__(self)
 
-        # Transforms local 2D center of circle into 3D point in world
-        circle_center_in_world = (
-            plane.origin + center.x.m * plane.direction_x + center.y.m * plane.direction_y
+        # Call Circle init method
+        center_global = plane.origin + Point3D(
+            center[0] * plane.direction_x + center[1] * plane.direction_y, unit=center.base_unit
         )
+        Circle.__init__(self, center_global, radius, plane.direction_x, plane.direction_z)
 
-        dir_z = plane.direction_x % plane.direction_y
-        Circle.__init__(self, circle_center_in_world, radius, plane.direction_x, dir_z)
-
+        # Store the 2D center of the circle
         self._center = center
-        self._radius = radius if isinstance(radius, Distance) else Distance(radius)
-        if self._radius.value <= 0:
-            raise ValueError("Radius must be a real positive value.")
 
     @property
     def center(self) -> Point2D:
         """Center of the circle."""
         return self._center
-
-    @property
-    def radius(self) -> Quantity:
-        """Radius of the circle."""
-        return self._radius.value
 
     @property
     def diameter(self) -> Quantity:
@@ -88,3 +80,21 @@ class SketchCircle(SketchFace, Circle):
         return circle.translate(
             [self.center.x.m_as(UNIT_LENGTH), self.center.y.m_as(UNIT_LENGTH), 0], inplace=True
         )
+
+    def plane_change(self, plane: Plane) -> None:
+        """
+        Method for SketchCircle objects to redefine the plane
+        containing them. This implies that their 3D definition may suffer
+        changes.
+
+        Parameters
+        ----------
+        plane : Plane
+            Desired new plane which will contain the sketched circle.
+        """
+        # Reinitialize the Circle definition for the given plane
+        center_global = plane.origin + Point3D(
+            self._center[0] * plane.direction_x + self._center[1] * plane.direction_y,
+            unit=self._center.base_unit,
+        )
+        Circle.__init__(self, center_global, self._radius, plane.direction_x, plane.direction_z)
