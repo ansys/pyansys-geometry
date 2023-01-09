@@ -539,7 +539,7 @@ class Sketch:
         Sketch
             Revised sketch state ready for further sketch actions.
         """
-        circle = SketchCircle(center, radius)
+        circle = SketchCircle(center, radius, plane=self.plane)
         return self.face(circle, tag)
 
     def box(
