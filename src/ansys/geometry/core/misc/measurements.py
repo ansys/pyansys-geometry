@@ -1,5 +1,6 @@
 """Provides various measurement-related classes."""
 
+from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
 from pint import Quantity, Unit
 
@@ -62,6 +63,10 @@ class Measurement(PhysicalQuantity):
     def value(self, value: Quantity) -> None:
         """Set the measurement value."""
         self._value = self._base_units_magnitude(value)
+
+    @check_input_types
+    def __eq__(self, other: "Measurement") -> bool:
+        return self._value == other._value and self._base_unit == other._base_unit
 
 
 class Distance(Measurement):
