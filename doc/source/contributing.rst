@@ -67,6 +67,7 @@ This way, it's not possible for you to push code that fails the style checks. Fo
   $ pre-commit install
   $ git commit -am "added my cool feature"
   black....................................................................Passed
+  blacken-docs.............................................................Passed
   isort....................................................................Passed
   flake8...................................................................Passed
   codespell................................................................Passed

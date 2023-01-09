@@ -98,12 +98,12 @@ Verify your installation
 
 Check the :class:`Modeler() <ansys.geometry.core.modeler()>` connection with:
 
-.. code:: python
+.. code:: pycon
 
     >>> from ansys.geometry.core import Modeler
     >>> modeler = Modeler()
     >>> print(modeler)
-    
+
     Ansys Geometry Modeler (0x205c5c17d90)
 
     Ansys Geometry Modeler Client (0x205c5c16e00)

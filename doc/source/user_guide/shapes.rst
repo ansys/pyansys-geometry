@@ -16,7 +16,8 @@ You can initialize the sketch by:
 
 .. code:: python
 
-    from ansys.geometry.core.sketch.Sketch
+    from ansys.geometry.core.sketch import Sketch
+
     sketch = Sketch()
 
 The sketch can be constructed using different approaches.
@@ -41,14 +42,14 @@ which take as a starting point the last point of the previous edge.
 It is also able to get a desired shape of the sketch object by taking advantage of the user-defined labels.
 
 .. code:: python
-    
     sketch.get("<tag>")
 
 .. jupyter-execute::
     :hide-code:
 
     from ansys.geometry.core.sketch import Sketch
-    from ansys.geometry.core.math import Point2D   
+    from ansys.geometry.core.math import Point2D
+
     sketch = Sketch()
     sketch.segment_to_point(Point2D([3, 3]), "Segment2").segment_to_point(
         Point2D([3, 2]), "Segment3"
@@ -62,16 +63,21 @@ You can also create multiple elements independently and combine them all togethe
 
 .. code:: python
 
-    sketch.triangle(Point2D([-10, 10]), Point2D([5, 6]), Point2D([-10, -10]), tag="triangle2")
+    sketch.triangle(
+        Point2D([-10, 10]), Point2D([5, 6]), Point2D([-10, -10]), tag="triangle2"
+    )
     sketch.plot()
 
 .. jupyter-execute::
     :hide-code:
 
     from ansys.geometry.core.sketch import Sketch
-    from ansys.geometry.core.math import Point2D   
+    from ansys.geometry.core.math import Point2D
+
     sketch = Sketch()
-    sketch.triangle(Point2D([-10, 10]), Point2D([5, 6]), Point2D([-10, -10]), tag="triangle2")
+    sketch.triangle(
+        Point2D([-10, 10]), Point2D([5, 6]), Point2D([-10, -10]), tag="triangle2"
+    )
     sketch.plot()
 
 For further details and familiarizing with different sketch shapes, refer to :class:`Sketch() <ansys.geometry.core.sketch>`.
