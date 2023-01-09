@@ -6,14 +6,15 @@ from pyvista.plotting.tools import create_axes_marker
 
 from ansys.geometry.core.designer import Body, Component
 from ansys.geometry.core.math import Frame, Plane
-from ansys.geometry.core.plotting.widgets import PlotterWidget, Ruler
-from ansys.geometry.core.plotting.widgets.displace_arrows import (
+from ansys.geometry.core.plotting.widgets import (
     DisplaceArrowXDown,
     DisplaceArrowXUp,
     DisplaceArrowYDown,
     DisplaceArrowYUp,
     DisplaceArrowZDown,
     DisplaceArrowZUp,
+    PlotterWidget,
+    Ruler,
 )
 from ansys.geometry.core.sketch import Sketch
 
@@ -48,7 +49,6 @@ class Plotter:
 
         # Create the scene
         self._scene = scene
-        # scene.enable_terrain_style(mouse_wheel_zooms=True, shift_pans=True)
         # Scene: assign the background
         self._scene.set_background(**background_opts)
         view_box = self._scene.add_axes(line_width=5, color="black")
