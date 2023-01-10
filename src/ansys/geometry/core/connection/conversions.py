@@ -18,12 +18,12 @@ from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 from ansys.geometry.core.misc.measurements import UNIT_ANGLE
 from ansys.geometry.core.sketch import (
     Arc,
-    Circle,
     Ellipse,
     Polygon,
-    Segment,
+    SketchCircle,
     SketchEdge,
     SketchFace,
+    SketchSegment,
 )
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -123,7 +123,7 @@ def sketch_shapes_to_grpc_geometries(
     geometries.arcs.extend(converted_sketch_edges[1])
 
     for face in faces:
-        if isinstance(face, Circle):
+        if isinstance(face, SketchCircle):
             geometries.circles.append(sketch_circle_to_grpc_circle(face, plane))
         if isinstance(face, Ellipse):
             geometries.ellipses.append(sketch_ellipse_to_grpc_ellipse(face, plane))
@@ -174,7 +174,7 @@ def sketch_edges_to_grpc_geometries(
     arcs = []
     segments = []
     for edge in edges:
-        if isinstance(edge, Segment):
+        if isinstance(edge, SketchSegment):
             segments.append(sketch_segment_to_grpc_line(edge, plane))
         elif isinstance(edge, Arc):
             arcs.append(sketch_arc_to_grpc_arc(edge, plane))
@@ -232,13 +232,13 @@ def sketch_ellipse_to_grpc_ellipse(ellipse: Ellipse, plane: Plane) -> GRPCEllips
     )
 
 
-def sketch_circle_to_grpc_circle(circle: Circle, plane: Plane) -> GRPCCircle:
+def sketch_circle_to_grpc_circle(circle: SketchCircle, plane: Plane) -> GRPCCircle:
     """
-    Marshals a :class:`Circle` class to a circle gRPC message of the Geometry service.
+    Marshals a :class:`SketchCircle` class to a circle gRPC message of the Geometry service.
 
     Parameters
     ----------
-    circle : Circle
+    circle : SketchCircle
         Source circle data.
     plane : Plane
         Plane for positioning the circle.
@@ -319,12 +319,12 @@ def sketch_polygon_to_grpc_polygon(polygon: Polygon, plane: Plane) -> GRPCPolygo
     )
 
 
-def sketch_segment_to_grpc_line(segment: Segment, plane: Plane) -> GRPCLine:
+def sketch_segment_to_grpc_line(segment: SketchSegment, plane: Plane) -> GRPCLine:
     """Marshals a :class:`Segment` class to a line gRPC message of the Geometry service.
 
     Parameters
     ----------
-    segment : Segment
+    segment : SketchSegment
         Source segment data.
 
     Returns

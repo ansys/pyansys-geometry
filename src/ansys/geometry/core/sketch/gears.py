@@ -10,7 +10,7 @@ from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import UNIT_ANGLE, UNITS, Distance, check_pint_unit_compatibility
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.face import SketchFace
-from ansys.geometry.core.sketch.segment import Segment
+from ansys.geometry.core.sketch.segment import SketchSegment
 from ansys.geometry.core.typing import Real
 
 
@@ -105,15 +105,18 @@ class DummyGear(Gear):
             )
 
             # Now, let's proceed to draw the arcs and segments
+            # TODO: add plane to SketchSegment when available
             self._edges.append(
                 Arc(center=origin, start=outer_arc_start + origin, end=outer_arc_end + origin)
             )
-            self._edges.append(Segment(start=outer_arc_end + origin, end=inner_arc_start + origin))
+            self._edges.append(
+                SketchSegment(start=outer_arc_end + origin, end=inner_arc_start + origin)
+            )
             self._edges.append(
                 Arc(center=origin, start=inner_arc_start + origin, end=inner_arc_end + origin)
             )
             self._edges.append(
-                Segment(start=inner_arc_end + origin, end=next_outer_arc_start + origin)
+                SketchSegment(start=inner_arc_end + origin, end=next_outer_arc_start + origin)
             )
 
 

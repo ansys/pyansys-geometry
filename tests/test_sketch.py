@@ -13,34 +13,43 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
-from ansys.geometry.core.sketch import Arc, Box, Circle, Ellipse, Polygon, Segment, Sketch, Slot
+from ansys.geometry.core.sketch import (
+    Arc,
+    Box,
+    Ellipse,
+    Polygon,
+    Sketch,
+    SketchCircle,
+    SketchSegment,
+    Slot,
+)
 
 DOUBLE_EPS = np.finfo(float).eps
 
 
-def test_errors_segment():
-    """Check errors when handling a ``Segment``."""
+def test_errors_sketch_segment():
+    """Check errors when handling a ``SketchSegment``."""
     with pytest.raises(BeartypeCallHintParamViolation):
-        Segment("a", "b")
+        SketchSegment("a", "b")
     with pytest.raises(BeartypeCallHintParamViolation):
-        Segment(Point2D([10, 20], unit=UNITS.meter), "b")
+        SketchSegment(Point2D([10, 20], unit=UNITS.meter), "b")
     with pytest.raises(
         ValueError, match="The numpy.ndarray 'start' should not be a nan numpy.ndarray."
     ):
-        Segment(Point2D(), Point2D())
+        SketchSegment(Point2D(), Point2D())
     with pytest.raises(
         ValueError, match="The numpy.ndarray 'end' should not be a nan numpy.ndarray."
     ):
-        Segment(Point2D([10, 20]), Point2D())
+        SketchSegment(Point2D([10, 20]), Point2D())
     with pytest.raises(
         ValueError,
         match="Parameters 'start' and 'end' have the same values. No segment can be created.",
     ):
-        Segment(Point2D([10, 20]), Point2D([10, 20]))
+        SketchSegment(Point2D([10, 20]), Point2D([10, 20]))
 
 
 def test_sketch_segment_edge():
-    """Test Segment SketchEdge sketching."""
+    """Test SketchSegment SketchEdge sketching."""
 
     # Create a Sketch instance
     sketch = Sketch()
@@ -242,14 +251,13 @@ def test_sketch_trapezoidal_face():
         )
 
 
-def test_circle_instance():
+def test_sketch_circle_instance():
     """Test circle instance."""
     center, radius = (
         Point2D([0, 0], UNIT_LENGTH),
         (1 * UNIT_LENGTH),
     )
-    circle = Circle(center, radius)
-
+    circle = SketchCircle(center, radius)
     # Check attributes are expected ones
     assert circle.center == center
     assert circle.radius == radius
@@ -257,17 +265,33 @@ def test_circle_instance():
     assert circle.area == np.pi * radius**2
     assert circle.perimeter == 2 * np.pi * radius
 
+    # Test circle on different plane
+    center, radius = (
+        Point2D([1, 1], UNIT_LENGTH),
+        (1 * UNIT_LENGTH),
+    )
+    circle = SketchCircle(
+        center, radius, Plane(Point3D([1, 1, 1]), UnitVector3D([-1, 0, 0]), UnitVector3D([0, 0, 1]))
+    )
 
-def test_circle_instance_errors():
+    # Check attributes are expected ones
+    assert circle.origin == Point3D([0, 1, 2])
+    assert circle.radius == radius
+    assert circle.diameter == 2 * radius
+    assert circle.area == np.pi * radius**2
+    assert circle.perimeter == 2 * np.pi * radius
+
+
+def test_sketch_circle_instance_errors():
     """Test various circle instantiation errors."""
 
     with pytest.raises(
         TypeError, match=r"The pint.Unit provided as an input should be a \[length\] quantity."
     ):
-        Circle(Point2D([10, 20]), 1 * UNITS.fahrenheit)
+        SketchCircle(Point2D([10, 20]), 1 * UNITS.fahrenheit)
 
     with pytest.raises(ValueError, match="Radius must be a real positive value."):
-        Circle(Point2D([10, 20]), -10 * UNITS.mm)
+        SketchCircle(Point2D([10, 20]), -10 * UNITS.mm)
 
 
 def test_sketch_circle_face():

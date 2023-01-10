@@ -9,7 +9,7 @@ from scipy.spatial.transform import Rotation as spatial_rotation
 from ansys.geometry.core.math import Matrix33, Point2D
 from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance
 from ansys.geometry.core.sketch.face import SketchFace
-from ansys.geometry.core.sketch.segment import Segment
+from ansys.geometry.core.sketch.segment import SketchSegment
 from ansys.geometry.core.typing import Real
 
 
@@ -72,10 +72,11 @@ class Box(SketchFace):
         self._corner_3 = Point2D([center.x.m + corner_3[0], center.y.m + corner_3[1]], center.unit)
         self._corner_4 = Point2D([center.x.m + corner_4[0], center.y.m + corner_4[1]], center.unit)
 
-        self._width_segment1 = Segment(self._corner_1, self._corner_2)
-        self._height_segment1 = Segment(self._corner_2, self._corner_3)
-        self._width_segment2 = Segment(self._corner_3, self._corner_4)
-        self._height_segment2 = Segment(self._corner_4, self._corner_1)
+        # TODO: add plane to SketchSegment when available
+        self._width_segment1 = SketchSegment(self._corner_1, self._corner_2)
+        self._height_segment1 = SketchSegment(self._corner_2, self._corner_3)
+        self._width_segment2 = SketchSegment(self._corner_3, self._corner_4)
+        self._height_segment2 = SketchSegment(self._corner_4, self._corner_1)
 
         self._edges.append(self._width_segment1)
         self._edges.append(self._height_segment1)
