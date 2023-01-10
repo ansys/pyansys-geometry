@@ -2,7 +2,6 @@
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
-import numpy as np
 from pint import Quantity
 import pyvista as pv
 
@@ -75,21 +74,6 @@ class SketchCircle(SketchFace, Circle):
     def center(self) -> Point2D:
         """Center of the circle."""
         return self._center
-
-    @property
-    def diameter(self) -> Quantity:
-        """Diameter of the circle."""
-        return 2 * self.radius
-
-    @property
-    def perimeter(self) -> Quantity:
-        """Perimeter of the circle."""
-        return 2 * np.pi * self.radius
-
-    @property
-    def area(self) -> Quantity:
-        """Area of the circle."""
-        return np.pi * self.radius**2
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
