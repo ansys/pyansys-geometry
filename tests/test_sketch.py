@@ -27,7 +27,7 @@ from ansys.geometry.core.sketch import (
 DOUBLE_EPS = np.finfo(float).eps
 
 
-def test_errors_segment():
+def test_errors_sketch_segment():
     """Check errors when handling a ``SketchSegment``."""
     with pytest.raises(BeartypeCallHintParamViolation):
         SketchSegment("a", "b")
@@ -251,7 +251,7 @@ def test_sketch_trapezoidal_face():
         )
 
 
-def test_circle_instance():
+def test_sketch_circle_instance():
     """Test circle instance."""
     center, radius = (
         Point2D([0, 0], UNIT_LENGTH),
@@ -282,7 +282,7 @@ def test_circle_instance():
     assert circle.perimeter == 2 * np.pi * radius
 
 
-def test_circle_instance_errors():
+def test_sketch_circle_instance_errors():
     """Test various circle instantiation errors."""
 
     with pytest.raises(

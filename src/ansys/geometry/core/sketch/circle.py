@@ -76,6 +76,17 @@ class SketchCircle(SketchFace, Circle):
         return self._center
 
     @property
+    def perimeter(self) -> Quantity:
+        """Perimeter of the circle.
+
+        Notes
+        -----
+        This property resolves the dilemma between using the ``SkethFace.perimeter``
+        property and the ``Circle.perimeter`` property.
+        """
+        return Circle.perimeter.fget(self)
+
+    @property
     def visualization_polydata(self) -> pv.PolyData:
         """
         VTK polydata representation for PyVista visualization.
