@@ -18,22 +18,23 @@ class CameraPanDirection(Enum):
 
 
 class DisplacementArrow(PlotterWidget):
+    """Defines which arrow you will draw and what it will do
+
+    Parameters
+    ----------
+    plotter : Plotter
+        Plotter on which the buttons will be drawn.
+    position : tuple
+        (x, y) tuple with the position of the button in the screen.
+    button_image : str
+        Path to the image of the button
+    direction : CameraPanDirection
+        Direction on which the camera will move.
+    """
     def __init__(
         self, plotter: Plotter, position: tuple, button_image: str, direction: CameraPanDirection
     ):
-        """Defines which arrow you will draw and what it will do
-
-        Parameters
-        ----------
-        plotter : Plotter
-            Plotter on which the buttons will be drawn.
-        position : tuple
-            (x, y) tuple with the position of the button in the screen.
-        button_image : str
-            Path to the image of the button
-        direction : CameraPanDirection
-            Direction on which the camera will move.
-        """
+        """Constructor method for ``DisplacementArrow``."""
         super().__init__(plotter)
         self._arrow_button: _vtk.vtkButtonWidget = self.plotter.add_checkbox_button_widget(
             self.callback, position=position, size=30, border_size=3
