@@ -56,52 +56,22 @@ class Plotter:
         self._widgets: List[PlotterWidget] = []
         self._widgets.append(Ruler(self._scene))
         self._widgets.append(
-            DisplacementArrow(
-                self._scene,
-                direction=CameraPanDirection.XUP,
-                position=(5, 170),
-                button_image="upxarrow.png",
-            )
+            DisplacementArrow(self._scene, direction=CameraPanDirection.XUP, position=(5, 170))
         )
         self._widgets.append(
-            DisplacementArrow(
-                self._scene,
-                direction=CameraPanDirection.XDOWN,
-                position=(5, 130),
-                button_image="downarrow.png",
-            )
+            DisplacementArrow(self._scene, direction=CameraPanDirection.XDOWN, position=(5, 130))
         )
         self._widgets.append(
-            DisplacementArrow(
-                self._scene,
-                direction=CameraPanDirection.YUP,
-                position=(35, 170),
-                button_image="upyarrow.png",
-            )
+            DisplacementArrow(self._scene, direction=CameraPanDirection.YUP, position=(35, 170))
         )
         self._widgets.append(
-            DisplacementArrow(
-                self._scene,
-                direction=CameraPanDirection.YDOWN,
-                position=(35, 130),
-                button_image="downarrow.png",
-            )
+            DisplacementArrow(self._scene, direction=CameraPanDirection.YDOWN, position=(35, 130))
         )
         self._widgets.append(
-            DisplacementArrow(
-                self._scene,
-                direction=CameraPanDirection.ZUP,
-                position=(65, 170),
-                button_image="upzarrow.png",
-            )
+            DisplacementArrow(self._scene, direction=CameraPanDirection.ZUP, position=(65, 170))
         )
         self._widgets.append(
-            DisplacementArrow(
-                self._scene,
-                direction=CameraPanDirection.ZDOWN,
-                position=(65, 130),
-                button_image="downarrow.png",
-            )
+            DisplacementArrow(self._scene, direction=CameraPanDirection.ZDOWN, position=(65, 130))
         )
 
     @property

@@ -9,12 +9,12 @@ from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
 class CameraPanDirection(Enum):
     """Enumerate with the possible movement directions of the camera"""
 
-    XUP = 0
-    XDOWN = 1
-    YUP = 2
-    YDOWN = 3
-    ZUP = 4
-    ZDOWN = 5
+    XUP = 0, "upxarrow.png"
+    XDOWN = 1, "downarrow.png"
+    YUP = 2, "upyarrow.png"
+    YDOWN = 3, "downarrow.png"
+    ZUP = 4, "upzarrow.png"
+    ZDOWN = 5, "downarrow.png"
 
 
 class DisplacementArrow(PlotterWidget):
@@ -26,29 +26,16 @@ class DisplacementArrow(PlotterWidget):
         Plotter on which the buttons will be drawn.
     position : tuple
         (x, y) tuple with the position of the button in the screen.
-    button_image : str
-        Path to the image of the button
     direction : CameraPanDirection
         Direction on which the camera will move.
     """
 
-    def __init__(
-        self, plotter: Plotter, position: tuple, button_image: str, direction: CameraPanDirection
-    ):
+    def __init__(self, plotter: Plotter, position: tuple, direction: CameraPanDirection):
         """Constructor method for ``DisplacementArrow``."""
         super().__init__(plotter)
         self._arrow_button: _vtk.vtkButtonWidget = self.plotter.add_checkbox_button_widget(
             self.callback, position=position, size=30, border_size=3
         )
-        self.icon_dict = {
-            CameraPanDirection.XUP: "upxarrow.png",
-            CameraPanDirection.YUP: "upyarrow.png",
-            CameraPanDirection.ZUP: "upzarrow.png",
-            CameraPanDirection.XDOWN: "downarrow.png",
-            CameraPanDirection.YDOWN: "downarrow.png",
-            CameraPanDirection.ZDOWN: "downarrow.png",
-        }
-        self.button_image = button_image
         self.direction = direction
 
     def callback(self, state: bool) -> None:
@@ -81,7 +68,9 @@ class DisplacementArrow(PlotterWidget):
             self.current_camera_pos[0][2] -= 1
             self.current_camera_pos[1][2] -= 1
         else:  # pragma: no cover
-            raise NotImplementedError
+            raise NotImplementedError(
+                f"CameraPanDirection {self.direction.name} is not implemented as a widget."
+            )
 
         self.plotter.set_position(self.current_camera_pos[0])
         self.plotter.set_focus(self.current_camera_pos[1])
@@ -90,7 +79,7 @@ class DisplacementArrow(PlotterWidget):
         """Assigns the image that will represent the button."""
         arrow_button_repr = self._arrow_button.GetRepresentation()
         arrow_button_icon_path = os.path.join(
-            os.path.dirname(__file__), "_images", self.icon_dict[self.direction]
+            os.path.dirname(__file__), "_images", self.direction.value[1]
         )
         arrow_button_icon = _vtk.vtkPNGReader()
         arrow_button_icon.SetFileName(arrow_button_icon_path)
