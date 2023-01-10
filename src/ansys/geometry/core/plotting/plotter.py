@@ -7,12 +7,8 @@ from pyvista.plotting.tools import create_axes_marker
 from ansys.geometry.core.designer import Body, Component
 from ansys.geometry.core.math import Frame, Plane
 from ansys.geometry.core.plotting.widgets import (
-    DisplaceArrowXDown,
-    DisplaceArrowXUp,
-    DisplaceArrowYDown,
-    DisplaceArrowYUp,
-    DisplaceArrowZDown,
-    DisplaceArrowZUp,
+    CameraPanDirection,
+    DisplacementArrow,
     PlotterWidget,
     Ruler,
 )
@@ -59,12 +55,54 @@ class Plotter:
         # Create Plotter widgets
         self._widgets: List[PlotterWidget] = []
         self._widgets.append(Ruler(self._scene))
-        self._widgets.append(DisplaceArrowXUp(self._scene))
-        self._widgets.append(DisplaceArrowXDown(self._scene))
-        self._widgets.append(DisplaceArrowYUp(self._scene))
-        self._widgets.append(DisplaceArrowYDown(self._scene))
-        self._widgets.append(DisplaceArrowZUp(self._scene))
-        self._widgets.append(DisplaceArrowZDown(self._scene))
+        self._widgets.append(
+            DisplacementArrow(
+                self._scene,
+                direction=CameraPanDirection.XUP,
+                position=(5, 170),
+                button_image="upxarrow.png",
+            )
+        )
+        self._widgets.append(
+            DisplacementArrow(
+                self._scene,
+                direction=CameraPanDirection.XDOWN,
+                position=(5, 130),
+                button_image="downarrow.png",
+            )
+        )
+        self._widgets.append(
+            DisplacementArrow(
+                self._scene,
+                direction=CameraPanDirection.YUP,
+                position=(35, 170),
+                button_image="upyarrow.png",
+            )
+        )
+        self._widgets.append(
+            DisplacementArrow(
+                self._scene,
+                direction=CameraPanDirection.YDOWN,
+                position=(35, 130),
+                button_image="downarrow.png",
+            )
+        )
+        self._widgets.append(
+            DisplacementArrow(
+                self._scene,
+                direction=CameraPanDirection.ZUP,
+                position=(65, 170),
+                button_image="upzarrow.png",
+            )
+        )
+        self._widgets.append(
+            DisplacementArrow(
+                self._scene,
+                direction=CameraPanDirection.ZDOWN,
+                position=(65, 130),
+                button_image="downarrow.png",
+            )
+        )
 
     @property
     def scene(self) -> pv.Plotter:
