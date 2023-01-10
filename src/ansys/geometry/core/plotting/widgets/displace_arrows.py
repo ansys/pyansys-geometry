@@ -31,6 +31,7 @@ class DisplacementArrow(PlotterWidget):
     direction : CameraPanDirection
         Direction on which the camera will move.
     """
+
     def __init__(
         self, plotter: Plotter, position: tuple, button_image: str, direction: CameraPanDirection
     ):
