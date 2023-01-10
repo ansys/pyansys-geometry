@@ -7,6 +7,8 @@ from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
 
 
 class CameraPanDirection(Enum):
+    """Enumerate with the possible movement directions of the camera"""
+
     XUP = 0
     XDOWN = 1
     YUP = 2
@@ -36,6 +38,14 @@ class DisplacementArrow(PlotterWidget):
         self._arrow_button: _vtk.vtkButtonWidget = self.plotter.add_checkbox_button_widget(
             self.callback, position=position, size=30, border_size=3
         )
+        self.icon_dict = {
+            CameraPanDirection.XUP: "upxarrow.png",
+            CameraPanDirection.YUP: "upyarrow.png",
+            CameraPanDirection.ZUP: "upzarrow.png",
+            CameraPanDirection.XDOWN: "downarrow.png",
+            CameraPanDirection.YDOWN: "downarrow.png",
+            CameraPanDirection.ZDOWN: "downarrow.png",
+        }
         self.button_image = button_image
         self.direction = direction
 
@@ -68,6 +78,8 @@ class DisplacementArrow(PlotterWidget):
         elif self.direction == CameraPanDirection.ZDOWN:
             self.current_camera_pos[0][2] -= 1
             self.current_camera_pos[1][2] -= 1
+        else:  # pragma: no cover
+            raise NotImplementedError
 
         self.plotter.set_position(self.current_camera_pos[0])
         self.plotter.set_focus(self.current_camera_pos[1])
@@ -76,7 +88,7 @@ class DisplacementArrow(PlotterWidget):
         """Assigns the image that will represent the button."""
         arrow_button_repr = self._arrow_button.GetRepresentation()
         arrow_button_icon_path = os.path.join(
-            os.path.dirname(__file__), "_images", self.button_image
+            os.path.dirname(__file__), "_images", self.icon_dict[self.direction]
         )
         arrow_button_icon = _vtk.vtkPNGReader()
         arrow_button_icon.SetFileName(arrow_button_icon_path)
