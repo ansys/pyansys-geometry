@@ -9,12 +9,12 @@ from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
 class CameraPanDirection(Enum):
     """Enumerate with the possible movement directions of the camera"""
 
-    XUP = 0, "upxarrow.png"
-    XDOWN = 1, "downarrow.png"
-    YUP = 2, "upyarrow.png"
-    YDOWN = 3, "downarrow.png"
-    ZUP = 4, "upzarrow.png"
-    ZDOWN = 5, "downarrow.png"
+    XUP = 0, "upxarrow.png", (5, 170)
+    XDOWN = 1, "downarrow.png", (5, 130)
+    YUP = 2, "upyarrow.png", (35, 170)
+    YDOWN = 3, "downarrow.png", (35, 130)
+    ZUP = 4, "upzarrow.png", (65, 170)
+    ZDOWN = 5, "downarrow.png", (65, 130)
 
 
 class DisplacementArrow(PlotterWidget):
@@ -24,17 +24,15 @@ class DisplacementArrow(PlotterWidget):
     ----------
     plotter : Plotter
         Plotter on which the buttons will be drawn.
-    position : tuple
-        (x, y) tuple with the position of the button in the screen.
     direction : CameraPanDirection
         Direction on which the camera will move.
     """
 
-    def __init__(self, plotter: Plotter, position: tuple, direction: CameraPanDirection):
+    def __init__(self, plotter: Plotter, direction: CameraPanDirection):
         """Constructor method for ``DisplacementArrow``."""
         super().__init__(plotter)
         self._arrow_button: _vtk.vtkButtonWidget = self.plotter.add_checkbox_button_widget(
-            self.callback, position=position, size=30, border_size=3
+            self.callback, position=direction.value[2], size=30, border_size=3
         )
         self.direction = direction
 

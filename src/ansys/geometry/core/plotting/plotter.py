@@ -55,24 +55,12 @@ class Plotter:
         # Create Plotter widgets
         self._widgets: List[PlotterWidget] = []
         self._widgets.append(Ruler(self._scene))
-        self._widgets.append(
-            DisplacementArrow(self._scene, direction=CameraPanDirection.XUP, position=(5, 170))
-        )
-        self._widgets.append(
-            DisplacementArrow(self._scene, direction=CameraPanDirection.XDOWN, position=(5, 130))
-        )
-        self._widgets.append(
-            DisplacementArrow(self._scene, direction=CameraPanDirection.YUP, position=(35, 170))
-        )
-        self._widgets.append(
-            DisplacementArrow(self._scene, direction=CameraPanDirection.YDOWN, position=(35, 130))
-        )
-        self._widgets.append(
-            DisplacementArrow(self._scene, direction=CameraPanDirection.ZUP, position=(65, 170))
-        )
-        self._widgets.append(
-            DisplacementArrow(self._scene, direction=CameraPanDirection.ZDOWN, position=(65, 130))
-        )
+        self._widgets.append(DisplacementArrow(self._scene, direction=CameraPanDirection.XUP))
+        self._widgets.append(DisplacementArrow(self._scene, direction=CameraPanDirection.XDOWN))
+        self._widgets.append(DisplacementArrow(self._scene, direction=CameraPanDirection.YUP))
+        self._widgets.append(DisplacementArrow(self._scene, direction=CameraPanDirection.YDOWN))
+        self._widgets.append(DisplacementArrow(self._scene, direction=CameraPanDirection.ZUP))
+        self._widgets.append(DisplacementArrow(self._scene, direction=CameraPanDirection.ZDOWN))
 
     @property
     def scene(self) -> pv.Plotter:
