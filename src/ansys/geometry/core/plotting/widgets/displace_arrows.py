@@ -18,7 +18,7 @@ class CameraPanDirection(Enum):
 
 
 class DisplacementArrow(PlotterWidget):
-    """Defines which arrow you will draw and what it will do
+    """Defines which arrow you will draw and what it will do.
 
     Parameters
     ----------
@@ -75,7 +75,7 @@ class DisplacementArrow(PlotterWidget):
         self.plotter.set_focus(self.current_camera_pos[1])
 
     def update(self) -> None:
-        """Assigns the image that will represent the button."""
+        """Assign the image that will represent the button."""
         arrow_button_repr = self._arrow_button.GetRepresentation()
         arrow_button_icon_path = os.path.join(
             os.path.dirname(__file__), "_images", self.direction.value[1]
