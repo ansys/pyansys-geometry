@@ -1,16 +1,17 @@
-"""Provides the ``Segment`` class."""
+"""Provides the ``SketchSegment`` class."""
 
 from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity
 import pyvista as pv
 
-from ansys.geometry.core.math import Point2D
+from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import UNIT_LENGTH, check_ndarray_is_all_nan
+from ansys.geometry.core.primitives import Line
 from ansys.geometry.core.sketch.edge import SketchEdge
 
 
-class Segment(SketchEdge):
+class SketchSegment(SketchEdge, Line):
     """
     Provides segment representation of a line.
 
@@ -20,6 +21,8 @@ class Segment(SketchEdge):
         Point that is the start of the line segment.
     end : Point2D
         Point that is the end of the line segment.
+    plane : Plane, optional
+        Plane containing the sketched circle, by default global XY Plane.
     """
 
     @check_input_types
@@ -27,9 +30,11 @@ class Segment(SketchEdge):
         self,
         start: Point2D,
         end: Point2D,
+        plane: Plane = Plane(),
     ):
-        """Constructor method for the ``Segment`` class."""
-        super().__init__()
+        """Constructor method for the ``SketchSegment`` class."""
+        # Call SketchEdge init method
+        SketchEdge.__init__(self)
 
         # Perform sanity checks on point values given
         check_ndarray_is_all_nan(start, "start")
@@ -47,6 +52,35 @@ class Segment(SketchEdge):
 
         if not self._start.unit == self._end.unit:
             self._start.unit = self._end.unit = UNIT_LENGTH
+
+        # Call the Line init method
+        self._init_primitive_line_from_plane(plane)
+
+    def _init_primitive_line_from_plane(self, plane: Plane) -> None:
+        """Method in charge of initializing correctly the underlying
+        primitive ``Line`` class.
+
+        Parameters
+        ----------
+        plane : Plane
+            Plane containing the sketched line.
+        """
+
+        # Find the global start and end points
+        start_glb = plane.origin + Point3D(
+            self.start[0] * plane.direction_x + self.start[1] * plane.direction_y,
+            unit=self.start.base_unit,
+        )
+        end_glb = plane.origin + Point3D(
+            self.end[0] * plane.direction_x + self.end[1] * plane.direction_y,
+            unit=self.end.base_unit,
+        )
+
+        # Define the line direction
+        line_direction = UnitVector3D.from_points(start_glb, end_glb)
+
+        # Call the Line init method
+        Line.__init__(self, start_glb, line_direction)
 
     @property
     def start(self) -> Point2D:
@@ -95,10 +129,24 @@ class Segment(SketchEdge):
         )
 
     @check_input_types
-    def __eq__(self, other: "Segment") -> bool:
-        """Equals operator for the ``Segment`` class."""
+    def __eq__(self, other: "SketchSegment") -> bool:
+        """Equals operator for the ``SketchSegment`` class."""
         return self.start == other.start and self.end == other.end
 
-    def __ne__(self, other: "Segment") -> bool:
-        """Not equals operator for the ``Segment`` class."""
+    def __ne__(self, other: "SketchSegment") -> bool:
+        """Not equals operator for the ``SketchSegment`` class."""
         return not self == other
+
+    def plane_change(self, plane: "Plane") -> None:
+        """
+        Method for SketchSegment objects to redefine the plane
+        containing them. This implies that their 3D definition may suffer
+        changes.
+
+        Parameters
+        ----------
+        plane : Plane
+            Desired new plane which will contain the sketched segment.
+        """
+        # Reinitialize the Line definition for the given plane
+        self._init_primitive_line_from_plane(plane)
