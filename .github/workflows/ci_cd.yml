@@ -16,7 +16,7 @@ env:
   ANSRV_GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest
   ANSRV_GEO_PORT: 700
   GEO_CONT_NAME: ans_geo
-  RESET_IMAGE_CACHE: 3
+  RESET_IMAGE_CACHE: 5
   IS_WORKFLOW_RUNNING: True
 
 concurrency:
@@ -51,7 +51,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: ['3.7', '3.8', '3.9', '3.10']
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
 
     steps:
       - name: Build wheelhouse and perform smoke test
@@ -70,7 +70,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10']
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
 
     steps:
       - name: Build wheelhouse and perform smoke test
