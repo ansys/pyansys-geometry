@@ -6,7 +6,12 @@ from pyvista.plotting.tools import create_axes_marker
 
 from ansys.geometry.core.designer import Body, Component
 from ansys.geometry.core.math import Frame, Plane
-from ansys.geometry.core.plotting.widgets import PlotterWidget, Ruler
+from ansys.geometry.core.plotting.widgets import (
+    CameraPanDirection,
+    DisplacementArrow,
+    PlotterWidget,
+    Ruler,
+)
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -40,7 +45,6 @@ class Plotter:
 
         # Create the scene
         self._scene = scene
-
         # Scene: assign the background
         self._scene.set_background(**background_opts)
         view_box = self._scene.add_axes(line_width=5, color="black")
@@ -51,6 +55,12 @@ class Plotter:
         # Create Plotter widgets
         self._widgets: List[PlotterWidget] = []
         self._widgets.append(Ruler(self._scene))
+        self._widgets.append(DisplacementArrow(self._scene, direction=CameraPanDirection.XUP))
+        self._widgets.append(DisplacementArrow(self._scene, direction=CameraPanDirection.XDOWN))
+        self._widgets.append(DisplacementArrow(self._scene, direction=CameraPanDirection.YUP))
+        self._widgets.append(DisplacementArrow(self._scene, direction=CameraPanDirection.YDOWN))
+        self._widgets.append(DisplacementArrow(self._scene, direction=CameraPanDirection.ZUP))
+        self._widgets.append(DisplacementArrow(self._scene, direction=CameraPanDirection.ZDOWN))
 
     @property
     def scene(self) -> pv.Plotter:
