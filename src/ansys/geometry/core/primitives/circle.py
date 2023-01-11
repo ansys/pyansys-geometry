@@ -66,6 +66,21 @@ class Circle:
         return self._radius.value
 
     @property
+    def diameter(self) -> Quantity:
+        """Diameter of the circle."""
+        return 2 * self.radius
+
+    @property
+    def perimeter(self) -> Quantity:
+        """Perimeter of the circle."""
+        return 2 * np.pi * self.radius
+
+    @property
+    def area(self) -> Quantity:
+        """Area of the circle."""
+        return np.pi * self.radius**2
+
+    @property
     def dir_x(self) -> UnitVector3D:
         """X-direction of the circle"""
         return self._reference

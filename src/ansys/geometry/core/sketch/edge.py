@@ -1,9 +1,13 @@
 """Provides the ``SketchEdge`` class."""
 
+from beartype.typing import TYPE_CHECKING
 from pint import Quantity
 import pyvista as pv
 
 from ansys.geometry.core.math import Point2D
+
+if TYPE_CHECKING:
+    from ansys.geometry.core.math import Plane
 
 
 class SketchEdge:
@@ -37,3 +41,17 @@ class SketchEdge:
             VTK pyvista.Polydata configuration.
         """
         raise NotImplementedError("Each edge must provide the polydata definition.")
+
+    def plane_change(self, plane: "Plane") -> None:
+        """
+        Common method for SketchEdge objects to redefine the plane
+        containing them. This implies that their 3D definition may suffer
+        changes. By default, it does nothing. It is required to be implemented
+        in child SketchEdge classes.
+
+        Parameters
+        ----------
+        plane : Plane
+            Desired new plane which will contain the sketched edge.
+        """
+        pass

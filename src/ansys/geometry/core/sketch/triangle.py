@@ -6,7 +6,7 @@ import pyvista as pv
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import UNIT_LENGTH
 from ansys.geometry.core.sketch.face import SketchFace
-from ansys.geometry.core.sketch.segment import Segment
+from ansys.geometry.core.sketch.segment import SketchSegment
 
 
 class Triangle(SketchFace):
@@ -31,9 +31,11 @@ class Triangle(SketchFace):
         self._point2 = point2
         self._point3 = point3
 
-        self._edges.append(Segment(self._point1, self._point2))
-        self._edges.append(Segment(self._point2, self._point3))
-        self._edges.append(Segment(self._point3, self._point1))
+        # TODO: add plane to SketchSegment when available
+
+        self._edges.append(SketchSegment(self._point1, self._point2))
+        self._edges.append(SketchSegment(self._point2, self._point3))
+        self._edges.append(SketchSegment(self._point3, self._point1))
 
     @property
     def point1(self) -> Point2D:

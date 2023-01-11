@@ -11,7 +11,7 @@ from ansys.geometry.core.math import Matrix33, Point2D
 from ansys.geometry.core.misc import UNIT_ANGLE, Angle, Distance
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.face import SketchFace
-from ansys.geometry.core.sketch.segment import Segment
+from ansys.geometry.core.sketch.segment import SketchSegment
 from ansys.geometry.core.typing import Real
 
 
@@ -95,10 +95,11 @@ class Slot(SketchFace):
             center.unit,
         )
 
+        # TODO: add plane to SketchSegment when available
         self._arc1 = Arc(self._arc_1_center, self._slot_corner_1, self._slot_corner_2)
-        self._segment1 = Segment(self._slot_corner_2, self._slot_corner_3)
+        self._segment1 = SketchSegment(self._slot_corner_2, self._slot_corner_3)
         self._arc2 = Arc(self._arc_2_center, self._slot_corner_3, self._slot_corner_4)
-        self._segment2 = Segment(self._slot_corner_4, self._slot_corner_1)
+        self._segment2 = SketchSegment(self._slot_corner_4, self._slot_corner_1)
 
         self._edges.append(self._arc1)
         self._edges.append(self._segment1)
