@@ -8,13 +8,13 @@ from ansys.geometry.core.math import ZERO_POINT2D, Plane, Point2D, UnitVector3D,
 from ansys.geometry.core.misc import UNIT_LENGTH, Angle, Distance
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.box import Box
-from ansys.geometry.core.sketch.circle import Circle
+from ansys.geometry.core.sketch.circle import SketchCircle
 from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.sketch.ellipse import Ellipse
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.gears import DummyGear, SpurGear
 from ansys.geometry.core.sketch.polygon import Polygon
-from ansys.geometry.core.sketch.segment import Segment
+from ansys.geometry.core.sketch.segment import SketchSegment
 from ansys.geometry.core.sketch.slot import Slot
 from ansys.geometry.core.sketch.trapezoid import Trapezoid
 from ansys.geometry.core.sketch.triangle import Triangle
@@ -57,6 +57,17 @@ class Sketch:
         """Sketch plane configuration."""
         return self._plane
 
+    @property
+    def edges(self) -> List[SketchEdge]:
+        """List of all independently sketched edges, which are those
+        that are not assigned to a face."""
+        return self._edges
+
+    @property
+    def faces(self) -> List[SketchFace]:
+        """List of all independently sketched faces."""
+        return self._faces
+
     @plane.setter
     @check_input_types
     def plane(self, plane: Plane) -> None:
@@ -69,17 +80,8 @@ class Sketch:
             New plane for the sketch planar orientation.
         """
         self._plane = plane
-
-    @property
-    def edges(self) -> List[SketchEdge]:
-        """List of all independently sketched edges, which are those
-        that are not assigned to a face."""
-        return self._edges
-
-    @property
-    def faces(self) -> List[SketchFace]:
-        """List of all independently sketched faces."""
-        return self._faces
+        [face.plane_change(plane) for face in self.faces]
+        [edge.plane_change(plane) for edge in self.edges]
 
     @check_input_types
     def translate_sketch_plane(self, translation: Vector3D) -> "Sketch":
@@ -253,7 +255,7 @@ class Sketch:
         Sketch
             Revised sketch state ready for further sketch actions.
         """
-        segment = Segment(start, end)
+        segment = SketchSegment(start, end)
         return self.edge(segment, tag)
 
     def segment_to_point(self, end: Point2D, tag: Optional[str] = None) -> "Sketch":
@@ -277,7 +279,7 @@ class Sketch:
         The starting point of the created edge is based upon the current context
         of the sketch, such as the end point of a previously added edge.
         """
-        segment = Segment(self._single_point_context_reference(), end)
+        segment = SketchSegment(self._single_point_context_reference(), end)
         return self.edge(segment, tag)
 
     @check_input_types
@@ -537,7 +539,7 @@ class Sketch:
         Sketch
             Revised sketch state ready for further sketch actions.
         """
-        circle = Circle(center, radius)
+        circle = SketchCircle(center, radius, plane=self.plane)
         return self.face(circle, tag)
 
     def box(
