@@ -29,7 +29,7 @@ class ViewButton(Button):
     """
 
     def __init__(self, plotter: Plotter, direction: tuple):
-        """Constructor method for ``DisplacementArrow``."""
+        """Constructor method for ``ViewButton``."""
         super().__init__(plotter, direction)
         self.direction = direction
 

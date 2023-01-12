@@ -8,7 +8,7 @@ from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
 
 class Button(PlotterWidget):
     """Abstract class for implementing buttons in PyGeometry. Wraps
-    the function add_check_button_widget() from PyVista.
+    the function ``add_check_button_widget()`` from ``PyVista``.
 
     Parameters
     ----------
