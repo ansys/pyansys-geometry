@@ -18,10 +18,10 @@ from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
 from ansys.geometry.core.misc.measurements import UNIT_ANGLE
 from ansys.geometry.core.sketch import (
     Arc,
-    Ellipse,
     Polygon,
     SketchCircle,
     SketchEdge,
+    SketchEllipse,
     SketchFace,
     SketchSegment,
 )
@@ -125,7 +125,7 @@ def sketch_shapes_to_grpc_geometries(
     for face in faces:
         if isinstance(face, SketchCircle):
             geometries.circles.append(sketch_circle_to_grpc_circle(face, plane))
-        if isinstance(face, Ellipse):
+        if isinstance(face, SketchEllipse):
             geometries.ellipses.append(sketch_ellipse_to_grpc_ellipse(face, plane))
         if isinstance(face, Polygon):
             geometries.polygons.append(sketch_polygon_to_grpc_polygon(face, plane))
@@ -211,12 +211,12 @@ def sketch_arc_to_grpc_arc(arc: Arc, plane: Plane) -> GRPCArc:
     )
 
 
-def sketch_ellipse_to_grpc_ellipse(ellipse: Ellipse, plane: Plane) -> GRPCEllipse:
-    """Marshals an :class:`Ellipse` class to an ellipse gRPC message of the Geometry service.
+def sketch_ellipse_to_grpc_ellipse(ellipse: SketchEllipse, plane: Plane) -> GRPCEllipse:
+    """Marshals an :class:`SketchEllipse` class to an ellipse gRPC message of the Geometry service.
 
     Parameters
     ----------
-    ellipse : Ellipse
+    ellipse : SketchEllipse
         Source ellipse data.
 
     Returns

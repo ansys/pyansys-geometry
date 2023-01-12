@@ -5,16 +5,16 @@ from beartype.typing import Optional, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
-from scipy.integrate import quad
 from scipy.spatial.transform import Rotation as spatial_rotation
 
-from ansys.geometry.core.math import Matrix33, Matrix44, Point2D
+from ansys.geometry.core.math import Matrix33, Matrix44, Plane, Point2D, Point3D, Vector3D
 from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance
+from ansys.geometry.core.primitives import Ellipse
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
 
 
-class Ellipse(SketchFace):
+class SketchEllipse(SketchFace, Ellipse):
     """Provides for modeling ellipses.
 
     Parameters
@@ -36,11 +36,15 @@ class Ellipse(SketchFace):
         semi_major_axis: Union[Quantity, Distance],
         semi_minor_axis: Union[Quantity, Distance],
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
+        plane: Plane = Plane(),
     ):
         """Initialize the ellipse."""
-        super().__init__()
+        # Call SketchFace init method
+        SketchFace.__init__(self)
 
+        # Store the 2D center of the ellipse
         self._center = center
+
         self._semi_major_axis = (
             semi_major_axis if isinstance(semi_major_axis, Distance) else Distance(semi_major_axis)
         )
@@ -65,6 +69,56 @@ class Ellipse(SketchFace):
         if self._semi_major_axis.value.m < self._semi_minor_axis.value.m:
             raise ValueError("Semi-major axis cannot be shorter than the semi-minor axis.")
 
+        # Call Circle init method
+        self._init_primitive_ellipse_from_plane(plane, semi_major_axis, semi_minor_axis, angle)
+
+    def _init_primitive_ellipse_from_plane(
+        self,
+        plane: Plane,
+        major_radius: Optional[Union[Quantity, Distance]] = None,
+        minor_radius: Optional[Union[Quantity, Distance]] = None,
+        angle: Optional[Union[Quantity, Angle, Real]] = 0,
+    ) -> None:
+        """
+        Method in charge of initializing correctly the underlying
+        primitive ``Ellipse`` class.
+
+        Parameters
+        ----------
+        plane : Plane
+            Plane containing the sketched ellipse.
+        major_radius : Optional[Union[Quantity, Distance]], optional
+            Major radius of the ellipse (if any), by default None.
+        minor_radius : Optional[Union[Quantity, Distance]], optional
+            Minor radius of the ellipse (if any), by default None.
+        angle : Union[Quantity, Angle, Real], default: 0
+            Placement angle for orientation alignment.
+        """
+
+        # Use the radius given (if any)
+        maj_radius = major_radius if major_radius else self.semi_major_axis
+        min_radius = minor_radius if minor_radius else self.semi_minor_axis
+
+        # Call Ellipse init method
+        center_global = plane.origin + Point3D(
+            self.center[0] * plane.direction_x + self.center[1] * plane.direction_y,
+            unit=self.center.base_unit,
+        )
+
+        angle_rad = angle.value.m_as(UNIT_ANGLE)
+        # import pdb; pdb.set_trace()
+        new_rotated_dir_x = Vector3D(
+            [
+                np.cos(angle_rad) * plane.direction_x.x - np.sin(angle_rad) * plane.direction_x.y,
+                np.sin(angle_rad) * plane.direction_x.x + np.cos(angle_rad) * plane.direction_x.y,
+                plane.direction_x.z,
+            ]
+        )
+
+        Ellipse.__init__(
+            self, center_global, maj_radius, min_radius, new_rotated_dir_x, plane.direction_z
+        )
+
     @property
     def center(self) -> Point2D:
         """Point that is the center of the ellipse."""
@@ -86,46 +140,15 @@ class Ellipse(SketchFace):
         return self._angle_offset
 
     @property
-    def eccentricity(self) -> Real:
-        """Eccentricity of the ellipse."""
-        ecc = (
-            self.semi_major_axis.m**2 - self.semi_minor_axis.m**2
-        ) ** 0.5 / self.semi_major_axis.m
-        if ecc == 1:
-            raise ValueError("The curve defined is a parabola and not an ellipse.")
-        elif ecc > 1:
-            raise ValueError("The curve defined is an hyperbola and not an ellipse.")
-        return ecc
-
-    @property
-    def linear_eccentricity(self) -> Quantity:
-        """Linear eccentricity of the ellipse.
+    def perimeter(self) -> Quantity:
+        """Perimeter of the circle.
 
         Notes
         -----
-        The linear eccentricity is the distance from the center to the focus.
+        This property resolves the dilemma between using the ``SkethFace.perimeter``
+        property and the ``Circle.perimeter`` property.
         """
-        return (self.semi_major_axis**2 - self.semi_minor_axis**2) ** 0.5
-
-    @property
-    def semi_latus_rectum(self) -> Quantity:
-        """Return the semi-latus rectum of the ellipse."""
-        return self.semi_minor_axis**2 / self.semi_major_axis
-
-    @property
-    def perimeter(self) -> Quantity:
-        """Perimeter of the ellipse."""
-
-        def integrand(theta, ecc):
-            return np.sqrt(1 - (ecc * np.sin(theta)) ** 2)
-
-        I, _ = quad(integrand, 0, np.pi / 2, args=(self.eccentricity,))
-        return 4 * self.semi_major_axis * I
-
-    @property
-    def area(self) -> Quantity:
-        """Area of the ellipse."""
-        return np.pi * self.semi_major_axis * self.semi_minor_axis
+        return Ellipse.perimeter.fget(self)
 
     @property
     def visualization_polydata(self) -> pv.PolyData:

@@ -10,7 +10,7 @@ from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.box import Box
 from ansys.geometry.core.sketch.circle import SketchCircle
 from ansys.geometry.core.sketch.edge import SketchEdge
-from ansys.geometry.core.sketch.ellipse import Ellipse
+from ansys.geometry.core.sketch.ellipse import SketchEllipse
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.gears import DummyGear, SpurGear
 from ansys.geometry.core.sketch.polygon import Polygon
@@ -632,7 +632,7 @@ class Sketch:
         Sketch
             Revised sketch state ready for further sketch actions.
         """
-        ellipse = Ellipse(center, semi_major_axis, semi_minor_axis, angle)
+        ellipse = SketchEllipse(center, semi_major_axis, semi_minor_axis, angle)
         return self.face(ellipse, tag)
 
     def polygon(
