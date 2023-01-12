@@ -35,7 +35,7 @@ class ViewButton(Button):
 
     def callback(self, state: bool) -> None:
         """Changes the view of the camera to one of the options
-        especified in ViewDirection class.
+        especified in ``ViewDirection`` class.
 
         Parameters
         ----------
