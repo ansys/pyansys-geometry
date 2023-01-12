@@ -19,7 +19,7 @@ class Button(PlotterWidget):
     """
 
     def __init__(self, plotter: Plotter, button_config: tuple):
-        """Constructor method for ``DisplacementArrow``."""
+        """Constructor method for ``Button``."""
         super().__init__(plotter)
         self._arrow_button: _vtk.vtkButtonWidget = self.plotter.add_checkbox_button_widget(
             self.callback, position=button_config.value[2], size=30, border_size=3
