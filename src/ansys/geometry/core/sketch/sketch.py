@@ -607,8 +607,8 @@ class Sketch:
     def ellipse(
         self,
         center: Point2D,
-        semi_major_axis: Union[Quantity, Distance],
-        semi_minor_axis: Union[Quantity, Distance],
+        major_radius: Union[Quantity, Distance],
+        minor_radius: Union[Quantity, Distance],
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         tag: Optional[str] = None,
     ) -> "Sketch":
@@ -618,9 +618,9 @@ class Sketch:
         ----------
         center: Point2D
             Point that represents the center of the ellipse.
-        semi_major_axis : Union[Quantity, Distance]
+        major_radius : Union[Quantity, Distance]
             Semi-major axis of the ellipse.
-        semi_minor_axis : Union[Quantity, Distance]
+        minor_radius : Union[Quantity, Distance]
             Semi-minor axis of the ellipse.
         angle : Union[Quantity, Angle, Real], default: 0
             Placement angle for orientation alignment.
@@ -632,7 +632,7 @@ class Sketch:
         Sketch
             Revised sketch state ready for further sketch actions.
         """
-        ellipse = SketchEllipse(center, semi_major_axis, semi_minor_axis, angle)
+        ellipse = SketchEllipse(center, major_radius, minor_radius, angle)
         return self.face(ellipse, tag)
 
     def polygon(

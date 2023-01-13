@@ -21,10 +21,10 @@ class SketchEllipse(SketchFace, Ellipse):
     ----------
     center: Point2D
         Point representing the center of the ellipse.
-    semi_major_axis : Union[Quantity, Distance]
-        Semi-major axis of the ellipse.
-    semi_minor_axis : Union[Quantity, Distance]
-        Semi-minor axis of the ellipse.
+    major_radius : Union[Quantity, Distance]
+        Major radius of the ellipse.
+    minor_radius : Union[Quantity, Distance]
+        Minor radius of the ellipse.
     angle : Union[Quantity, Angle, Real], default: 0
         Placement angle for orientation alignment.
     """
@@ -33,8 +33,8 @@ class SketchEllipse(SketchFace, Ellipse):
     def __init__(
         self,
         center: Point2D,
-        semi_major_axis: Union[Quantity, Distance],
-        semi_minor_axis: Union[Quantity, Distance],
+        major_radius: Union[Quantity, Distance],
+        minor_radius: Union[Quantity, Distance],
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         plane: Plane = Plane(),
     ):
@@ -45,32 +45,12 @@ class SketchEllipse(SketchFace, Ellipse):
         # Store the 2D center of the ellipse
         self._center = center
 
-        self._semi_major_axis = (
-            semi_major_axis if isinstance(semi_major_axis, Distance) else Distance(semi_major_axis)
-        )
-        self._semi_minor_axis = (
-            semi_minor_axis if isinstance(semi_minor_axis, Distance) else Distance(semi_minor_axis)
-        )
-
-        if self._semi_major_axis.value.m_as(self._semi_major_axis.base_unit) <= 0:
-            raise ValueError("Semi-major axis must be a real positive value.")
-        if self._semi_minor_axis.value.m_as(self._semi_minor_axis.base_unit) <= 0:
-            raise ValueError("Semi-minor axis must be a real positive value.")
-
         if isinstance(angle, (int, float)):
             angle = Angle(angle, UNIT_ANGLE)
         self._angle_offset = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
 
-        # Align both units if misaligned
-        if self._semi_major_axis.unit != self._semi_minor_axis.unit:
-            self._semi_minor_axis.unit = self._semi_major_axis.unit
-
-        # Ensure that the semi-major axis is equal or larger than the minor one
-        if self._semi_major_axis.value.m < self._semi_minor_axis.value.m:
-            raise ValueError("Semi-major axis cannot be shorter than the semi-minor axis.")
-
         # Call Circle init method
-        self._init_primitive_ellipse_from_plane(plane, semi_major_axis, semi_minor_axis, angle)
+        self._init_primitive_ellipse_from_plane(plane, major_radius, minor_radius, angle)
 
     def _init_primitive_ellipse_from_plane(
         self,
@@ -95,10 +75,6 @@ class SketchEllipse(SketchFace, Ellipse):
             Placement angle for orientation alignment.
         """
 
-        # Use the radius given (if any)
-        maj_radius = major_radius if major_radius else self.semi_major_axis
-        min_radius = minor_radius if minor_radius else self.semi_minor_axis
-
         # Call Ellipse init method
         center_global = plane.origin + Point3D(
             self.center[0] * plane.direction_x + self.center[1] * plane.direction_y,
@@ -106,7 +82,6 @@ class SketchEllipse(SketchFace, Ellipse):
         )
 
         angle_rad = angle.value.m_as(UNIT_ANGLE)
-        # import pdb; pdb.set_trace()
         new_rotated_dir_x = Vector3D(
             [
                 np.cos(angle_rad) * plane.direction_x.x - np.sin(angle_rad) * plane.direction_x.y,
@@ -116,23 +91,13 @@ class SketchEllipse(SketchFace, Ellipse):
         )
 
         Ellipse.__init__(
-            self, center_global, maj_radius, min_radius, new_rotated_dir_x, plane.direction_z
+            self, center_global, major_radius, minor_radius, new_rotated_dir_x, plane.direction_z
         )
 
     @property
     def center(self) -> Point2D:
         """Point that is the center of the ellipse."""
         return self._center
-
-    @property
-    def semi_major_axis(self) -> Quantity:
-        """Semi-major axis of the ellipse."""
-        return self._semi_major_axis.value
-
-    @property
-    def semi_minor_axis(self) -> Quantity:
-        """Semi-minor axis of the ellipse."""
-        return self._semi_minor_axis.value
 
     @property
     def angle(self) -> Angle:
@@ -194,6 +159,6 @@ class SketchEllipse(SketchFace, Ellipse):
         )
 
         return pv.Ellipse(
-            semi_major_axis=self.semi_major_axis.m_as(UNIT_LENGTH),
-            semi_minor_axis=self.semi_minor_axis.m_as(UNIT_LENGTH),
+            semi_major_axis=self.major_radius.m_as(UNIT_LENGTH),
+            semi_minor_axis=self.minor_radius.m_as(UNIT_LENGTH),
         ).transform(transformation_matrix)

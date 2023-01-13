@@ -54,12 +54,13 @@ class Ellipse:
         self._major_radius = (
             major_radius if isinstance(major_radius, Distance) else Distance(major_radius)
         )
-        if self._major_radius.value <= 0:
-            raise ValueError("Major radius must be a real positive value.")
         self._minor_radius = (
             minor_radius if isinstance(minor_radius, Distance) else Distance(minor_radius)
         )
-        if self._minor_radius.value <= 0:
+
+        if self._major_radius.value.m_as(self._major_radius.base_unit) <= 0:
+            raise ValueError("Major radius must be a real positive value.")
+        if self._minor_radius.value.m_as(self._minor_radius.base_unit) <= 0:
             raise ValueError("Minor radius must be a real positive value.")
 
         # Align both units if misaligned

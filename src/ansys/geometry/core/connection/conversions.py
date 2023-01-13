@@ -226,8 +226,8 @@ def sketch_ellipse_to_grpc_ellipse(ellipse: SketchEllipse, plane: Plane) -> GRPC
     """
     return GRPCEllipse(
         center=point2d_to_grpc_point(plane, ellipse.center),
-        majorradius=ellipse.semi_major_axis.m_as(SERVER_UNIT_LENGTH),
-        minorradius=ellipse.semi_minor_axis.m_as(SERVER_UNIT_LENGTH),
+        majorradius=ellipse.major_radius.m_as(SERVER_UNIT_LENGTH),
+        minorradius=ellipse.minor_radius.m_as(SERVER_UNIT_LENGTH),
         angle=ellipse.angle.value.m_as(UNIT_ANGLE),
     )
 
