@@ -146,7 +146,7 @@ class SketchEllipse(SketchFace, Ellipse):
         Notes
         -----
         This property resolves the dilemma between using the ``SkethFace.perimeter``
-        property and the ``Circle.perimeter`` property.
+        property and the ``Ellipse.perimeter`` property.
         """
         return Ellipse.perimeter.fget(self)
 
