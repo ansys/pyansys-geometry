@@ -35,7 +35,7 @@ class ViewButton(Button):
 
     def callback(self, state: bool) -> None:
         """Changes the view of the camera to one of the options
-        especified in ``ViewDirection`` class.
+        specified in ``ViewDirection`` class.
 
         Parameters
         ----------
@@ -45,7 +45,7 @@ class ViewButton(Button):
         Raises
         ------
         NotImplementedError
-            Raised if the especified direction is not implemented.
+            Raised if the specified direction is not implemented.
         """
         if self.direction == ViewDirection.XYPLUS:
             self.plotter.view_xy()
