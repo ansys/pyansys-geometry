@@ -1,4 +1,4 @@
-""" Provides the ``Circle`` class."""
+""" Provides the ``Ellipse`` class."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Union
