@@ -1,9 +1,8 @@
 from enum import Enum
-import os
 
-from pyvista import Plotter, _vtk
+from pyvista import Plotter
 
-from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
+from ansys.geometry.core.plotting.widgets.button import Button
 
 
 class CameraPanDirection(Enum):
@@ -17,7 +16,7 @@ class CameraPanDirection(Enum):
     ZDOWN = 5, "downarrow.png", (65, 130)
 
 
-class DisplacementArrow(PlotterWidget):
+class DisplacementArrow(Button):
     """Defines which arrow you will draw and what it will do.
 
     Parameters
@@ -30,10 +29,7 @@ class DisplacementArrow(PlotterWidget):
 
     def __init__(self, plotter: Plotter, direction: CameraPanDirection):
         """Constructor method for ``DisplacementArrow``."""
-        super().__init__(plotter)
-        self._arrow_button: _vtk.vtkButtonWidget = self.plotter.add_checkbox_button_widget(
-            self.callback, position=direction.value[2], size=30, border_size=3
-        )
+        super().__init__(plotter, direction)
         self.direction = direction
 
     def callback(self, state: bool) -> None:
@@ -73,16 +69,3 @@ class DisplacementArrow(PlotterWidget):
 
         self.plotter.set_position(self.current_camera_pos[0])
         self.plotter.set_focus(self.current_camera_pos[1])
-
-    def update(self) -> None:
-        """Assign the image that will represent the button."""
-        arrow_button_repr = self._arrow_button.GetRepresentation()
-        arrow_button_icon_path = os.path.join(
-            os.path.dirname(__file__), "_images", self.direction.value[1]
-        )
-        arrow_button_icon = _vtk.vtkPNGReader()
-        arrow_button_icon.SetFileName(arrow_button_icon_path)
-        arrow_button_icon.Update()
-        image = arrow_button_icon.GetOutput()
-        arrow_button_repr.SetButtonTexture(0, image)
-        arrow_button_repr.SetButtonTexture(1, image)
