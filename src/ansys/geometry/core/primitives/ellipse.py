@@ -174,6 +174,7 @@ class Ellipse:
     @property
     def perimeter(self) -> Quantity:
         """Perimeter of the ellipse."""
+
         def integrand(theta, ecc):
             return np.sqrt(1 - (ecc * np.sin(theta)) ** 2)
 
@@ -187,7 +188,15 @@ class Ellipse:
 
 
 class EllipseEvaluation(CurveEvaluation):
-    """Provides result class when evaluating an ellipse"""
+    """
+    Provides ``Ellipse`` evaluation at a certain parameter.
+    Parameters
+    ----------
+    ellipse: ~ansys.geometry.core.primitives.ellipse.Ellipse
+        The ``Ellipse`` object to be evaluated.
+    parameter: float, int
+        The parameter at which the ``Ellipse`` evaluation is requested.
+    """
 
     def __init__(self, ellipse: Ellipse, parameter: Real) -> None:
         self._ellipse = ellipse

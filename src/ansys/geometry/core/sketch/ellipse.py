@@ -45,6 +45,13 @@ class SketchEllipse(SketchFace, Ellipse):
         # Store the 2D center of the ellipse
         self._center = center
 
+        self._major_radius = (
+            major_radius if isinstance(major_radius, Distance) else Distance(major_radius)
+        )
+        self._minor_radius = (
+            minor_radius if isinstance(minor_radius, Distance) else Distance(minor_radius)
+        )
+
         if isinstance(angle, (int, float)):
             angle = Angle(angle, UNIT_ANGLE)
         self._angle_offset = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
@@ -74,6 +81,10 @@ class SketchEllipse(SketchFace, Ellipse):
         angle : Union[Quantity, Angle, Real], default: 0
             Placement angle for orientation alignment.
         """
+
+        major_radius = major_radius if major_radius else self.major_radius
+        minor_radius = minor_radius if minor_radius else self.minor_radius
+        angle = angle if angle else self.angle
 
         # Call Ellipse init method
         center_global = plane.origin + Point3D(
@@ -162,3 +173,17 @@ class SketchEllipse(SketchFace, Ellipse):
             semi_major_axis=self.major_radius.m_as(UNIT_LENGTH),
             semi_minor_axis=self.minor_radius.m_as(UNIT_LENGTH),
         ).transform(transformation_matrix)
+
+    def plane_change(self, plane: Plane) -> None:
+        """
+        Method for SketchEllipse objects to redefine the plane
+        containing them. This implies that their 3D definition may suffer
+        changes.
+
+        Parameters
+        ----------
+        plane : Plane
+            Desired new plane which will contain the sketched ellipse.
+        """
+        # Reinitialize the Circle definition for the given plane
+        self._init_primitive_ellipse_from_plane(plane)

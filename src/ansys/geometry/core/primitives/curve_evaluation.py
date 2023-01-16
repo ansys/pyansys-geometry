@@ -1,5 +1,6 @@
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import Vector3D
+from ansys.geometry.core.typing import Real
 
 
 class CurveEvaluation:
@@ -13,7 +14,7 @@ class CurveEvaluation:
         return self._parameter is not None
 
     @property
-    def parameter(self) -> float:
+    def parameter(self) -> Real:
         """The parameter that the evaluation is based upon"""
         raise NotImplementedError("Each evaluation must provide the parameter definition.")
 
@@ -29,6 +30,6 @@ class CurveEvaluation:
         """The second derivative of the evaluation"""
         raise NotImplementedError("Each evaluation must provide the second_derivative definition.")
 
-    def curvature(self) -> float:
+    def curvature(self) -> Real:
         """The curvature of the evaluation"""
         raise NotImplementedError("Each evaluation must provide the curvature definition.")

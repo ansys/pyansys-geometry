@@ -8,7 +8,7 @@ from pint import Quantity
 from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import Accuracy, Distance
 from ansys.geometry.core.primitives.curve_evaluation import CurveEvaluation
-from ansys.geometry.core.typing import RealSequence
+from ansys.geometry.core.typing import Real, RealSequence
 
 
 class Circle:
@@ -131,9 +131,17 @@ class Circle:
 
 
 class CircleEvaluation(CurveEvaluation):
-    """Provides result class when evaluating a circle"""
+    """
+    Provides ``Circle`` evaluation at a certain parameter.
+    Parameters
+    ----------
+    circle: ~ansys.geometry.core.primitives.circle.Circle
+        The ``Circle`` object to be evaluated.
+    parameter: float, int
+        The parameter at which the ``Circle`` evaluation is requested.
+    """
 
-    def __init__(self, circle: Circle, parameter: float = None) -> None:
+    def __init__(self, circle: Circle, parameter: Real) -> None:
         self._circle = circle
         self._parameter = parameter
 
@@ -143,7 +151,7 @@ class CircleEvaluation(CurveEvaluation):
         return self._circle
 
     @property
-    def parameter(self) -> float:
+    def parameter(self) -> Real:
         """The parameter that the evaluation is based upon"""
         return self._parameter
 
@@ -173,6 +181,6 @@ class CircleEvaluation(CurveEvaluation):
             np.cos(self.parameter) * self.circle.dir_x + np.sin(self.parameter) * self.circle.dir_y
         )
 
-    def curvature(self) -> float:
+    def curvature(self) -> Real:
         """The curvature of the evaluation"""
         return 1 / np.abs(self.circle.radius.m)
