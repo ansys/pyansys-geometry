@@ -199,7 +199,7 @@ class EllipseEvaluation(CurveEvaluation):
         return self._ellipse
 
     @property
-    def parameter(self) -> float:
+    def parameter(self) -> Real:
         """The parameter that the evaluation is based upon"""
         return self._parameter
 
