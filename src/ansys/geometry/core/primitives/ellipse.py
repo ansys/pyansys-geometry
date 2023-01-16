@@ -231,6 +231,6 @@ class EllipseEvaluation(CurveEvaluation):
             - self.ellipse.minor_radius * np.sin(self.parameter) * self.ellipse.dir_y
         ).m
 
-    def curvature(self) -> float:
+    def curvature(self) -> Real:
         """The curvature of the evaluation"""
         return self.second_derivative().magnitude / np.power(self.first_derivative().magnitude, 2)
