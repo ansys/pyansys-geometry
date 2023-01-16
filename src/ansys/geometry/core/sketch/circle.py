@@ -1,4 +1,4 @@
-"""``Provides the ``SketchCircle`` class."""
+"""Provides the ``SketchCircle`` class."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
