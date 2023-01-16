@@ -49,7 +49,7 @@ class SketchEllipse(SketchFace, Ellipse):
             angle = Angle(angle, UNIT_ANGLE)
         self._angle_offset = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
 
-        # Call Circle init method
+        # Call Ellipse init method
         self._init_primitive_ellipse_from_plane(plane, major_radius, minor_radius, angle)
 
     def _init_primitive_ellipse_from_plane(
