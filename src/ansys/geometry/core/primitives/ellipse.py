@@ -174,7 +174,6 @@ class Ellipse:
     @property
     def perimeter(self) -> Quantity:
         """Perimeter of the ellipse."""
-        # import pdb; pdb.set_trace()
         def integrand(theta, ecc):
             return np.sqrt(1 - (ecc * np.sin(theta)) ** 2)
 
