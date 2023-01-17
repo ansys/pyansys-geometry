@@ -79,7 +79,7 @@ class Ellipse:
     @origin.setter
     @check_input_types
     def origin(self, origin: Point3D) -> None:
-        """Set the origin of the ellipse"""
+        """Set the origin of the ellipse."""
         self._origin = origin
 
     @property
@@ -94,17 +94,17 @@ class Ellipse:
 
     @property
     def dir_x(self) -> UnitVector3D:
-        """X-direction of the ellipse"""
+        """X-direction of the ellipse."""
         return self._reference
 
     @property
     def dir_y(self) -> UnitVector3D:
-        """Y-direction of the ellipse"""
+        """Y-direction of the ellipse."""
         return self.dir_z.cross(self.dir_x)
 
     @property
     def dir_z(self) -> UnitVector3D:
-        """Z-direction of the ellipse"""
+        """Z-direction of the ellipse."""
         return self._axis
 
     @check_input_types
@@ -119,11 +119,11 @@ class Ellipse:
         )
 
     def evaluate(self, parameter: Real) -> "EllipseEvaluation":
-        """Evaluate the ellipse at the given parameter"""
+        """Evaluate the ellipse at the given parameter."""
         return EllipseEvaluation(self, parameter)
 
     def project_point(self, point: Point3D) -> "EllipseEvaluation":
-        """Project a point onto the ellipse and return its EllipseEvaluation"""
+        """Project a point onto the ellipse and return its ``EllipseEvaluation``."""
         origin_to_point = point - self.origin
         dir_in_plane = UnitVector3D.from_points(
             Point3D([0, 0, 0]), origin_to_point - ((origin_to_point * self.dir_z) * self.dir_z)
@@ -138,7 +138,7 @@ class Ellipse:
         return EllipseEvaluation(self, t)
 
     def is_coincident_ellipse(self, other: "Ellipse") -> bool:
-        """Determine if this ellipse is coincident with another"""
+        """Determine if this ellipse is coincident with another."""
         return (
             Accuracy.length_is_equal(self.major_radius.m, other.major_radius.m)
             and Accuracy.length_is_equal(self.minor_radius.m, other.minor_radius.m)
@@ -205,16 +205,16 @@ class EllipseEvaluation(CurveEvaluation):
 
     @property
     def ellipse(self) -> Ellipse:
-        """The ellipse being evaluated"""
+        """The ellipse being evaluated."""
         return self._ellipse
 
     @property
     def parameter(self) -> Real:
-        """The parameter that the evaluation is based upon"""
+        """The parameter that the evaluation is based upon."""
         return self._parameter
 
     def position(self) -> Point3D:
-        """The position of the evaluation"""
+        """The position of the evaluation."""
         return (
             self.ellipse.origin
             + ((self.ellipse.major_radius * np.cos(self.parameter)) * self.ellipse.dir_x).m
@@ -222,25 +222,25 @@ class EllipseEvaluation(CurveEvaluation):
         )
 
     def tangent(self) -> UnitVector3D:
-        """The tangent of the evaluation"""
+        """The tangent of the evaluation."""
         return (
             (self.ellipse.minor_radius * np.cos(self.parameter) * self.ellipse.dir_y).m
             - (self.ellipse.major_radius * np.sin(self.parameter) * self.ellipse.dir_x).m
         ).normalize()
 
     def first_derivative(self) -> Vector3D:
-        """The first derivative of the evaluation"""
+        """The first derivative of the evaluation."""
         return (self.ellipse.minor_radius * np.cos(self.parameter) * self.ellipse.dir_y).m - (
             self.ellipse.major_radius * np.sin(self.parameter) * self.ellipse.dir_x
         ).m
 
     def second_derivative(self) -> Vector3D:
-        """The second derivative of the evaluation"""
+        """The second derivative of the evaluation."""
         return (
             -self.ellipse.major_radius * np.cos(self.parameter) * self.ellipse.dir_x
             - self.ellipse.minor_radius * np.sin(self.parameter) * self.ellipse.dir_y
         ).m
 
     def curvature(self) -> Real:
-        """The curvature of the evaluation"""
+        """The curvature of the evaluation."""
         return self.second_derivative().magnitude / np.power(self.first_derivative().magnitude, 2)
