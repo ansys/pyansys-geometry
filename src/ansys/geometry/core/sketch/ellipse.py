@@ -64,7 +64,7 @@ class SketchEllipse(SketchFace, Ellipse):
         plane: Plane,
         major_radius: Optional[Union[Quantity, Distance]] = None,
         minor_radius: Optional[Union[Quantity, Distance]] = None,
-        angle: Optional[Union[Quantity, Angle, Real]] = 0,
+        angle: Optional[Union[Quantity, Angle, Real]] = None,
     ) -> None:
         """
         Method in charge of initializing correctly the underlying
@@ -74,11 +74,11 @@ class SketchEllipse(SketchFace, Ellipse):
         ----------
         plane : Plane
             Plane containing the sketched ellipse.
-        major_radius : Optional[Union[Quantity, Distance]], optional
+        major_radius : Optional[Union[Quantity, Distance]]
             Major radius of the ellipse (if any), by default None.
-        minor_radius : Optional[Union[Quantity, Distance]], optional
+        minor_radius : Optional[Union[Quantity, Distance]]
             Minor radius of the ellipse (if any), by default None.
-        angle : Union[Quantity, Angle, Real], default: 0
+        angle : Optional[Union[Quantity, Angle, Real]]
             Placement angle for orientation alignment.
         """
 
