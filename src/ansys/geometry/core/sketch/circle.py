@@ -25,12 +25,7 @@ class SketchCircle(SketchFace, Circle):
     """
 
     @check_input_types
-    def __init__(
-        self,
-        center: Point2D,
-        radius: Union[Quantity, Distance],
-        plane: Plane = Plane(),
-    ):
+    def __init__(self, center: Point2D, radius: Union[Quantity, Distance], plane: Plane = Plane()):
         """Initialize the circle."""
         # Call SketchFace init method
         SketchFace.__init__(self)
