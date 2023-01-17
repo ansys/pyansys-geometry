@@ -133,6 +133,7 @@ class Circle:
 class CircleEvaluation(CurveEvaluation):
     """
     Provides ``Circle`` evaluation at a certain parameter.
+
     Parameters
     ----------
     circle: ~ansys.geometry.core.primitives.circle.Circle

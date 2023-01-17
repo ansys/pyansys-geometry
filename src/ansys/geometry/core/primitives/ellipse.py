@@ -118,7 +118,7 @@ class Ellipse:
             and self._axis == other._axis
         )
 
-    def evaluate(self, parameter: float) -> "EllipseEvaluation":
+    def evaluate(self, parameter: Real) -> "EllipseEvaluation":
         """Evaluate the ellipse at the given parameter"""
         return EllipseEvaluation(self, parameter)
 
@@ -190,6 +190,7 @@ class Ellipse:
 class EllipseEvaluation(CurveEvaluation):
     """
     Provides ``Ellipse`` evaluation at a certain parameter.
+
     Parameters
     ----------
     ellipse: ~ansys.geometry.core.primitives.ellipse.Ellipse
