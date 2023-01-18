@@ -9,3 +9,4 @@ from ansys.geometry.core.connection.conversions import (
 )
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
 from ansys.geometry.core.connection.launcher import launch_modeler
+from ansys.geometry.core.connection.localinstance import LocalDockerInstance

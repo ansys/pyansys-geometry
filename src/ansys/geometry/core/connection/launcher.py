@@ -1,6 +1,7 @@
 """Provides for connecting to Geometry service instances."""
 from beartype.typing import TYPE_CHECKING, Optional
 
+from ansys.geometry.core.connection.localinstance import LocalDockerInstance
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.misc import check_type
 
@@ -32,7 +33,7 @@ def launch_modeler() -> "Modeler":
     >>> from ansys.geometry.core import launch_modeler
     >>> modeler = launch_modeler()
     """
-    # A local installation of the Geometry service or PyPIM is required for
+    # A local Docker container of the Geometry service or PyPIM is required for
     # this to work. Neither is integrated, but we can consider adding them later.
 
     # Another alternative is to run Docker locally from this method.
@@ -43,7 +44,14 @@ def launch_modeler() -> "Modeler":
         logger.info("Starting Geometry service remotely. The startup configuration is ignored.")
         return launch_remote_modeler()
 
-    raise NotImplementedError("Not yet implemented.")
+    # Otherwise, we are in the "local Docker Container" scenario
+    if LocalDockerInstance.is_docker_installed():
+        logger.info("Starting Geometry service locally from Docker container.")
+        # return launch_local_instance()
+        pass
+
+    # If we reached this point...
+    raise NotImplementedError("Geometry service cannot be initialized.")
 
 
 def launch_remote_modeler(
