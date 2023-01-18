@@ -7,7 +7,8 @@ from pint import Quantity
 
 from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import Distance
-from ansys.geometry.core.typing import RealSequence
+from ansys.geometry.core.primitives.surface_evaluation import ParamUV, SurfaceEvaluation
+from ansys.geometry.core.typing import Real, RealSequence
 
 
 class Sphere:
@@ -36,10 +37,6 @@ class Sphere:
     ):
         """Constructor method for the ``Sphere`` class."""
 
-        # check_pint_unit_compatibility(unit, UNIT_LENGTH)
-        # self._unit = unit
-        # _, self._base_unit = UNITS.get_base_units(unit)
-
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
 
         self._reference = (
@@ -52,9 +49,6 @@ class Sphere:
         self._radius = radius if isinstance(radius, Distance) else Distance(radius)
         if self._radius.value <= 0:
             raise ValueError("Radius must be a real positive value.")
-
-        # # Store values in base unit
-        # self._radius = UNITS.convert(radius, self._unit, self._base_unit)
 
     @property
     def origin(self) -> Point3D:
@@ -94,6 +88,7 @@ class Sphere:
 
     @property
     def volume(self) -> Quantity:
+        """Volume of the sphere"""
         return 4.0 / 3.0 * np.pi * self.radius**3
 
     @check_input_types
@@ -106,6 +101,106 @@ class Sphere:
             and self._axis == other._axis
         )
 
+    def evaluate(self, parameter: ParamUV) -> "SphereEvaluation":
+        """Evaluate the sphere at the given parameters"""
+        return SphereEvaluation(self, parameter)
 
-class SphereEvaluation:
-    pass
+    def project_point(self, point: Point3D) -> "SphereEvaluation":
+        """Project a point onto the sphere and return its ``SphereEvaluation``."""
+        origin_to_point = point - self.origin
+        x = origin_to_point.dot(self.dir_x)
+        y = origin_to_point.dot(self.dir_y)
+        z = origin_to_point.dot(self.dir_z)
+        if np.allclose((x * x + y * y + z * z), Point3D([0, 0, 0])):
+            return SphereEvaluation(self, ParamUV(0, np.pi / 2))
+
+        u = np.arctan2(y, x)
+        v = np.arctan2(z, np.sqrt(x * x + y * y))
+        return SphereEvaluation(self, ParamUV(u, v))
+
+
+class SphereEvaluation(SurfaceEvaluation):
+    """
+    Provides ``Sphere`` evaluation at certain parameters.
+
+    Parameters
+    ----------
+    sphere: ~ansys.geometry.core.primitives.sphere.Sphere
+        The ``Sphere`` object to be evaluated.
+    parameter: ParamUV
+        The parameters (u, v) at which the ``Sphere`` evaluation is requested.
+    """
+
+    def __init__(self, sphere: Sphere, parameter: ParamUV) -> None:
+        self._sphere = sphere
+        self._parameter = parameter
+
+    @property
+    def sphere(self) -> Sphere:
+        """The sphere being evaluated."""
+        return self._sphere
+
+    @property
+    def parameter(self) -> ParamUV:
+        """The parameter that the evaluation is based upon."""
+        return self._parameter
+
+    def position(self) -> Point3D:
+        """The position of the evaluation."""
+        return self.sphere.origin + self.sphere.radius.m * self.normal()
+
+    def normal(self) -> UnitVector3D:
+        """The surface normal"""
+        return UnitVector3D(
+            np.cos(self.parameter.v) * self.cylinder_normal()
+            + np.sin(self.parameter.v) * self.sphere.dir_z
+        )
+
+    def cylinder_normal(self) -> Vector3D:
+        """Cylinder normal of the evaluation"""
+        return (
+            np.cos(self.parameter.u) * self.sphere.dir_x
+            + np.sin(self.parameter.u) * self.sphere.dir_y
+        )
+
+    def cylinder_tangent(self) -> Vector3D:
+        """Cylinder tangent of the evaluation"""
+        return (
+            -np.sin(self.parameter.u) * self.sphere.dir_x
+            + np.cos(self.parameter.u) * self.sphere.dir_y
+        )
+
+    def u_derivative(self) -> Vector3D:
+        """U-derivative of the evaluation"""
+        return np.cos(self.parameter.v) * self.sphere.radius.m * self.cylinder_tangent()
+
+    def v_derivative(self) -> Vector3D:
+        """V-derivative of the evaluation"""
+        return self.sphere.radius.m * (
+            np.cos(self.parameter.v) * self.sphere.dir_z
+            - np.sin(self.parameter.v) * self.cylinder_normal()
+        )
+
+    def uu_derivative(self) -> Vector3D:
+        return -np.cos(self.parameter.v) * self.sphere.radius.m * self.cylinder_normal()
+
+    def uv_derivative(self) -> Vector3D:
+        return -np.sin(self.parameter.v) * self.sphere.radius.m * self.cylinder_tangent()
+
+    def vv_derivative(self) -> Vector3D:
+        return self.sphere.radius.m * (
+            -np.sin(self.parameter.v) * self.sphere.dir_z
+            - np.cos(self.parameter.v) * self.cylinder_normal()
+        )
+
+    def min_curvature(self) -> Real:
+        return 1.0 / self.sphere.radius.m
+
+    def min_curvature_direction(self) -> UnitVector3D:
+        return self.normal() % self.max_curvature_direction()
+
+    def max_curvature(self) -> Real:
+        return 1.0 / self.sphere.radius.m
+
+    def max_curvature_direction(self) -> UnitVector3D:
+        return UnitVector3D(self.v_derivative())

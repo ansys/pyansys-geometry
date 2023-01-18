@@ -7,8 +7,15 @@ from ansys.geometry.core.typing import Real
 
 class ParamUV:
     """
-    Parameter class containing 2 parameters: (u,v).
+    Parameter class containing 2 parameters: (u, v).
     Used in surface evaluations.
+
+    Parameters
+    ----------
+    u : Real
+        u-parameter
+    v : Real
+        v-parameter
     """
 
     def __init__(self, u: Real = None, v: Real = None) -> None:

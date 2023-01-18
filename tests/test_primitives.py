@@ -13,6 +13,7 @@ from ansys.geometry.core.math import (
 )
 from ansys.geometry.core.misc import UNITS, Accuracy, Distance
 from ansys.geometry.core.primitives import Circle, Cone, Cylinder, Ellipse, Line, Sphere, Torus
+from ansys.geometry.core.primitives.surface_evaluation import ParamUV
 
 
 def test_cylinder():
@@ -189,6 +190,37 @@ def test_sphere_units():
     # Set unit to cm now... and check if the values changed
     s_1._radius.unit = new_unit = UNITS.cm
     assert s_1.radius.m == UNITS.convert(radius, unit, new_unit)
+
+
+def test_sphere_evaluation():
+    origin = Point3D([0, 0, 0])
+    radius = Distance(1)
+    sphere = Sphere(origin, radius)
+    eval = sphere.evaluate(ParamUV(0, 0))
+
+    # Test base evaluation at (0, 0)
+    assert eval.sphere == sphere
+    assert np.allclose(eval.position(), Point3D([1, 0, 0]))
+    assert np.allclose(eval.normal(), UnitVector3D([1, 0, 0]))
+    assert np.allclose(eval.cylinder_normal(), Vector3D([1, 0, 0]))
+    assert np.allclose(eval.cylinder_tangent(), Vector3D([0, 1, 0]))
+    assert np.allclose(eval.u_derivative(), Vector3D([0, 1, 0]))
+    assert np.allclose(eval.v_derivative(), Vector3D([0, 0, 1]))
+    assert np.allclose(eval.uu_derivative(), Vector3D([-1, 0, 0]))
+    assert np.allclose(eval.uv_derivative(), Vector3D([0, 0, 0]))
+    assert np.allclose(eval.vv_derivative(), Vector3D([-1, 0, 0]))
+    assert eval.min_curvature() == 1.0
+    assert np.allclose(eval.min_curvature_direction(), Vector3D([0, -1, 0]))
+    assert eval.max_curvature() == 1.0
+    assert np.allclose(eval.max_curvature_direction(), Vector3D([0, 0, 1]))
+
+    # Test evaluation by projecting a point onto the sphere
+    eval2 = sphere.project_point(Point3D([1, 1, 1]))
+    assert eval2.sphere == sphere
+    assert np.allclose(eval2.position(), Point3D([0.57735027, 0.57735027, 0.57735027]))
+    assert np.allclose(eval2.normal(), UnitVector3D([1, 1, 1]))
+    assert np.allclose(eval2.u_derivative().normalize(), UnitVector3D([-1, 1, 0]))
+    assert np.allclose(eval2.v_derivative().normalize(), UnitVector3D([-1, -1, 2]))
 
 
 def test_cone():
