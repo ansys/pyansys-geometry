@@ -19,7 +19,7 @@ class Sphere:
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D]
         Origin of the sphere.
-    radius : Real
+    radius : Union[Quantity, Distance]
         Radius of the sphere.
     reference : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         X-plane direction.
