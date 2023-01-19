@@ -16,10 +16,10 @@ from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
 from ansys.geometry.core.sketch import (
     Arc,
     Box,
-    Ellipse,
     Polygon,
     Sketch,
     SketchCircle,
+    SketchEllipse,
     SketchSegment,
     Slot,
 )
@@ -327,11 +327,11 @@ def test_ellipse_instance():
 
     semi_major, semi_minor, origin = 2 * UNITS.m, 1 * UNITS.m, Point2D([0, 0], UNITS.m)
     ecc = np.sqrt(1 - (semi_minor / semi_major) ** 2)
-    ellipse = Ellipse(origin, semi_major, semi_minor)
+    ellipse = SketchEllipse(origin, semi_major, semi_minor)
 
     # Check attributes are expected ones
-    assert ellipse.semi_major_axis == semi_major
-    assert ellipse.semi_minor_axis == semi_minor
+    assert ellipse.major_radius == semi_major
+    assert ellipse.minor_radius == semi_minor
     assert abs(ellipse.eccentricity - ecc.m) <= DOUBLE_EPS
     assert ellipse.linear_eccentricity == np.sqrt(semi_major**2 - semi_minor**2)
     assert ellipse.semi_latus_rectum == semi_minor**2 / semi_major
@@ -344,7 +344,7 @@ def test_ellipse_instance_errors():
     with pytest.raises(
         TypeError, match=r"The pint.Unit provided as an input should be a \[length\] quantity."
     ):
-        Ellipse(
+        SketchEllipse(
             Point2D([10, 20]),
             Quantity(1, UNITS.fahrenheit),
             Quantity(56, UNITS.fahrenheit),
@@ -353,32 +353,30 @@ def test_ellipse_instance_errors():
     with pytest.raises(
         TypeError, match=r"The pint.Unit provided as an input should be a \[length\] quantity."
     ):
-        Ellipse(Point2D([10, 20]), 1 * UNITS.m, Quantity(56, UNITS.fahrenheit))
+        SketchEllipse(Point2D([10, 20]), 1 * UNITS.m, Quantity(56, UNITS.fahrenheit))
 
-    with pytest.raises(ValueError, match="Semi-major axis must be a real positive value."):
-        Ellipse(
+    with pytest.raises(ValueError, match="Major radius must be a real positive value."):
+        SketchEllipse(
             Point2D([10, 20]),
             -1 * UNITS.m,
             -3 * UNITS.m,
         )
 
-    with pytest.raises(ValueError, match="Semi-minor axis must be a real positive value."):
-        Ellipse(
+    with pytest.raises(ValueError, match="Minor radius must be a real positive value."):
+        SketchEllipse(
             Point2D([10, 20]),
             1 * UNITS.m,
             -3 * UNITS.m,
         )
 
-    with pytest.raises(
-        ValueError, match="Semi-major axis cannot be shorter than the semi-minor axis."
-    ):
-        Ellipse(
+    with pytest.raises(ValueError, match="Major radius cannot be shorter than the minor radius."):
+        SketchEllipse(
             Point2D([10, 20]),
             1 * UNITS.m,
             3 * UNITS.m,
         )
 
-    ellipse = Ellipse(
+    ellipse = SketchEllipse(
         Point2D([10, 20]),
         3 * UNITS.m,
         100 * UNITS.cm,
@@ -400,8 +398,8 @@ def test_sketch_ellipse_face():
 
     # Check attributes are expected ones
     assert len(sketch.faces) == 1
-    assert sketch.faces[0].semi_major_axis == semi_major
-    assert sketch.faces[0].semi_minor_axis == semi_minor
+    assert sketch.faces[0].major_radius == semi_major
+    assert sketch.faces[0].minor_radius == semi_minor
     assert abs(sketch.faces[0].eccentricity - ecc.m) <= DOUBLE_EPS
     assert sketch.faces[0].linear_eccentricity == np.sqrt(semi_major**2 - semi_minor**2)
     assert sketch.faces[0].semi_latus_rectum == semi_minor**2 / semi_major

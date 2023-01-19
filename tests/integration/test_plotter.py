@@ -12,10 +12,10 @@ from ansys.geometry.core.plotting import Plotter
 from ansys.geometry.core.sketch import (
     Arc,
     Box,
-    Ellipse,
     Polygon,
     Sketch,
     SketchCircle,
+    SketchEllipse,
     SketchSegment,
     Slot,
     Trapezoid,
@@ -475,7 +475,7 @@ def test_visualization_polydata():
     assert circle.visualization_polydata.n_open_edges == 100
 
     # Test for ellipse visualization polydata
-    ellipse = Ellipse(Point2D([0, 0], UNITS.m), Quantity(1, UNITS.m), Quantity(1, UNITS.m))
+    ellipse = SketchEllipse(Point2D([0, 0], UNITS.m), Quantity(1, UNITS.m), Quantity(1, UNITS.m))
     assert ellipse.visualization_polydata.center == pytest.approx(
         ([0.0002517288084074587, 0.0, 0.0]),
         rel=1e-6,

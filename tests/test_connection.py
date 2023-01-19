@@ -19,7 +19,7 @@ from ansys.geometry.core.connection.conversions import (
 )
 from ansys.geometry.core.math import Frame, Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import UNITS, Angle
-from ansys.geometry.core.sketch import Arc, Ellipse, Polygon, SketchCircle, SketchSegment
+from ansys.geometry.core.sketch import Arc, Polygon, SketchCircle, SketchEllipse, SketchSegment
 
 
 def test_wait_until_healthy():
@@ -61,9 +61,9 @@ def test_circle_message_conversion():
 
 
 def test_ellipse_message_conversion():
-    """Test conversion between :class:`Ellipse <ansys.geometry.core.sketch.ellipse.Ellipse>`
-    and expected gRPC message type."""
-    ellipse = Ellipse(
+    """Test conversion between :class:`SketchEllipse <
+    ansys.geometry.core.sketch.ellipse.SketchEllipse>` and expected gRPC message type."""
+    ellipse = SketchEllipse(
         Point2D([10, 100], UNITS.mm),
         Quantity(300, UNITS.mm),
         Quantity(50, UNITS.mm),
@@ -79,7 +79,7 @@ def test_ellipse_message_conversion():
     assert grpc_ellipse_message.minorradius == 0.05
     assert grpc_ellipse_message.angle == 0
 
-    rotated_ellipse = Ellipse(
+    rotated_ellipse = SketchEllipse(
         Point2D([10, 100], UNITS.mm),
         Quantity(300, UNITS.mm),
         Quantity(50, UNITS.mm),
