@@ -11,6 +11,8 @@ from ansys.geometry.core.plotting.widgets import (
     DisplacementArrow,
     PlotterWidget,
     Ruler,
+    ViewButton,
+    ViewDirection,
 )
 from ansys.geometry.core.sketch import Sketch
 
@@ -55,12 +57,11 @@ class Plotter:
         # Create Plotter widgets
         self._widgets: List[PlotterWidget] = []
         self._widgets.append(Ruler(self._scene))
-        self._widgets.append(DisplacementArrow(self._scene, direction=CameraPanDirection.XUP))
-        self._widgets.append(DisplacementArrow(self._scene, direction=CameraPanDirection.XDOWN))
-        self._widgets.append(DisplacementArrow(self._scene, direction=CameraPanDirection.YUP))
-        self._widgets.append(DisplacementArrow(self._scene, direction=CameraPanDirection.YDOWN))
-        self._widgets.append(DisplacementArrow(self._scene, direction=CameraPanDirection.ZUP))
-        self._widgets.append(DisplacementArrow(self._scene, direction=CameraPanDirection.ZDOWN))
+        [
+            self._widgets.append(DisplacementArrow(self._scene, direction=dir))
+            for dir in CameraPanDirection
+        ]
+        [self._widgets.append(ViewButton(self._scene, direction=dir)) for dir in ViewDirection]
 
     @property
     def scene(self) -> pv.Plotter:

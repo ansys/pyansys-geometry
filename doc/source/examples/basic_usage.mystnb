@@ -72,11 +72,11 @@ sketch.plot_selection()
 
 ### Draw an ellipse
 
-You draw an ellipse in a sketch by specifying the center, semi-major axis, and semi-minor axis.
+You draw an ellipse in a sketch by specifying the center, major radius, and minor radius.
 
 ```{code-cell} ipython3
 sketch.ellipse(
-    Point2D([1, 1]), semi_major_axis=2*u.m, semi_minor_axis=1*u.m, tag="Ellipse"
+    Point2D([1, 1]), major_radius=2*u.m, minor_radius=1*u.m, tag="Ellipse"
 )
 sketch.select("Ellipse")
 sketch.plot_selection()

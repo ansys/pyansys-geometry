@@ -4,7 +4,7 @@ from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.box import Box
 from ansys.geometry.core.sketch.circle import SketchCircle
 from ansys.geometry.core.sketch.edge import SketchEdge
-from ansys.geometry.core.sketch.ellipse import Ellipse
+from ansys.geometry.core.sketch.ellipse import SketchEllipse
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.gears import DummyGear
 from ansys.geometry.core.sketch.polygon import Polygon
