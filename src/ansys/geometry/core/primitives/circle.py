@@ -8,7 +8,7 @@ from pint import Quantity
 from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import Accuracy, Distance
 from ansys.geometry.core.primitives.curve_evaluation import CurveEvaluation
-from ansys.geometry.core.typing import RealSequence
+from ansys.geometry.core.typing import Real, RealSequence
 
 
 class Circle:
@@ -57,7 +57,7 @@ class Circle:
     @origin.setter
     @check_input_types
     def origin(self, origin: Point3D) -> None:
-        """Set the origin of the circle"""
+        """Set the origin of the circle."""
         self._origin = origin
 
     @property
@@ -82,17 +82,17 @@ class Circle:
 
     @property
     def dir_x(self) -> UnitVector3D:
-        """X-direction of the circle"""
+        """X-direction of the circle."""
         return self._reference
 
     @property
     def dir_y(self) -> UnitVector3D:
-        """Y-direction of the circle"""
+        """Y-direction of the circle."""
         return self.dir_z.cross(self.dir_x)
 
     @property
     def dir_z(self) -> UnitVector3D:
-        """Z-direction of the circle"""
+        """Z-direction of the circle."""
         return self._axis
 
     @check_input_types
@@ -106,11 +106,11 @@ class Circle:
         )
 
     def evaluate(self, parameter: float) -> "CircleEvaluation":
-        """Evaluate the circle at the given parameter"""
+        """Evaluate the circle at the given parameter."""
         return CircleEvaluation(self, parameter)
 
     def project_point(self, point: Point3D) -> "CircleEvaluation":
-        """Project a point onto the circle and return its CircleEvaluation"""
+        """Project a point onto the circle and return its ``CircleEvaluation``."""
         origin_to_point = point - self.origin
         dir_in_plane = UnitVector3D.from_points(
             Point3D([0, 0, 0]), origin_to_point - ((origin_to_point * self.dir_z) * self.dir_z)
@@ -122,7 +122,7 @@ class Circle:
         return CircleEvaluation(self, t)
 
     def is_coincident_circle(self, other: "Circle") -> bool:
-        """Determine if this circle is coincident with another"""
+        """Determine if this circle is coincident with another."""
         return (
             Accuracy.length_is_equal(self.radius.m, other.radius.m)
             and self.origin == other.origin
@@ -131,24 +131,33 @@ class Circle:
 
 
 class CircleEvaluation(CurveEvaluation):
-    """Provides result class when evaluating a circle"""
+    """
+    Provides ``Circle`` evaluation at a certain parameter.
 
-    def __init__(self, circle: Circle, parameter: float = None) -> None:
+    Parameters
+    ----------
+    circle: ~ansys.geometry.core.primitives.circle.Circle
+        The ``Circle`` object to be evaluated.
+    parameter: float, int
+        The parameter at which the ``Circle`` evaluation is requested.
+    """
+
+    def __init__(self, circle: Circle, parameter: Real) -> None:
         self._circle = circle
         self._parameter = parameter
 
     @property
     def circle(self) -> Circle:
-        """The circle being evaluated"""
+        """The circle being evaluated."""
         return self._circle
 
     @property
-    def parameter(self) -> float:
-        """The parameter that the evaluation is based upon"""
+    def parameter(self) -> Real:
+        """The parameter that the evaluation is based upon."""
         return self._parameter
 
     def position(self) -> Point3D:
-        """The position of the evaluation"""
+        """The position of the evaluation."""
         return (
             self.circle.origin
             + ((self.circle.radius * np.cos(self.parameter)) * self.circle.dir_x).m
@@ -156,23 +165,23 @@ class CircleEvaluation(CurveEvaluation):
         )
 
     def tangent(self) -> UnitVector3D:
-        """The tangent of the evaluation"""
+        """The tangent of the evaluation."""
         return (
             np.cos(self.parameter) * self.circle.dir_y - np.sin(self.parameter) * self.circle.dir_x
         )
 
     def first_derivative(self) -> Vector3D:
-        """The first derivative of the evaluation"""
+        """The first derivative of the evaluation."""
         return self.circle.radius.m * (
             np.cos(self.parameter) * self.circle.dir_y - np.sin(self.parameter) * self.circle.dir_x
         )
 
     def second_derivative(self) -> Vector3D:
-        """The second derivative of the evaluation"""
+        """The second derivative of the evaluation."""
         return -self.circle.radius.m * (
             np.cos(self.parameter) * self.circle.dir_x + np.sin(self.parameter) * self.circle.dir_y
         )
 
-    def curvature(self) -> float:
-        """The curvature of the evaluation"""
+    def curvature(self) -> Real:
+        """The curvature of the evaluation."""
         return 1 / np.abs(self.circle.radius.m)

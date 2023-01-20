@@ -11,7 +11,7 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import UNITS, Accuracy, Distance
-from ansys.geometry.core.primitives import Circle, Cone, Cylinder, Line, Sphere, Torus
+from ansys.geometry.core.primitives import Circle, Cone, Cylinder, Ellipse, Line, Sphere, Torus
 
 
 def test_cylinder():
@@ -571,3 +571,95 @@ def test_line_evaluation():
     assert Accuracy.length_is_zero(diff.x)
     assert Accuracy.length_is_zero(diff.y)
     assert Accuracy.length_is_zero(diff.z)
+
+
+def test_ellipse():
+    """``Ellipse`` construction and equivalency."""
+    origin = Point3D([0, 0, 0])
+    major_radius = Distance(10)
+    minor_radius = Distance(5)
+    origin_ellipse = Ellipse(origin, major_radius, minor_radius)
+    origin_duplicate_ellipse = Ellipse(origin, major_radius, minor_radius)
+    bigger_ellipse = Ellipse(origin, Distance(20), Distance(10))
+    tilted_ellipse = Ellipse(
+        origin,
+        major_radius,
+        minor_radius,
+        reference=UnitVector3D([1, 0, 1]),
+        axis=UnitVector3D([-1, 2, 1]),
+    )
+
+    # Test attributes
+    assert origin_ellipse.origin.x == origin.x
+    assert origin_ellipse.origin.y == origin.y
+    assert origin_ellipse.origin.z == origin.z
+    assert origin_ellipse.major_radius.m == 10
+    assert origin_ellipse.minor_radius.m == 5
+    assert origin_ellipse.dir_x == UNITVECTOR3D_X
+    assert origin_ellipse.dir_y == UNITVECTOR3D_Y
+    assert origin_ellipse.dir_z == UNITVECTOR3D_Z
+    assert tilted_ellipse.dir_y == Vector3D([2, 2, -2]).normalize()
+
+    # Test comparisons
+    assert origin_ellipse == origin_duplicate_ellipse
+    assert origin_ellipse.is_coincident_ellipse(origin_duplicate_ellipse)
+    assert origin_ellipse != bigger_ellipse
+
+    # Test expected errors
+    with pytest.raises(ValueError):
+        invalid_axis = Ellipse(
+            origin,
+            major_radius,
+            minor_radius,
+            reference=UNITVECTOR3D_X,
+            axis=UnitVector3D([1, 1, 1]),
+        )
+
+
+def test_ellipse_evaluation():
+    """``EllipseEvaluation`` construction and equivalency."""
+    origin = Point3D([0, 0, 0])
+    major_radius = Distance(3)
+    minor_radius = Distance(2)
+
+    # Test evaluation at 0
+    ellipse = Ellipse(origin, major_radius, minor_radius)
+    eval = ellipse.evaluate(0)
+
+    assert eval.ellipse == ellipse
+    assert eval.position() == Point3D([3, 0, 0])
+    assert eval.tangent() == UNITVECTOR3D_Y
+    assert eval.first_derivative().normalize() == UNITVECTOR3D_Y
+    assert eval.second_derivative().normalize() == UnitVector3D([-1, 0, 0])
+    assert eval.curvature() == 0.75
+
+    # Test evaluation at (t) by projecting a point
+    eval2 = ellipse.project_point(Point3D([3, 3, 0]))
+
+    # TODO: enforce Accuracy in Point3D __eq__ ? want to be able to say:
+    diff = Vector3D.from_points(eval2.position(), Point3D([1.66410059, 1.66410059, 0]))
+    assert Accuracy.length_is_zero(diff.x)
+    assert Accuracy.length_is_zero(diff.y)
+    assert Accuracy.length_is_zero(diff.z)
+
+    # TODO: enforce Accuracy in Vector3D __eq__ ? want to be able to say:
+    diff = Vector3D.from_points(eval2.tangent(), UnitVector3D([-0.91381155, 0.40613847, 0]))
+    assert Accuracy.length_is_zero(diff.x)
+    assert Accuracy.length_is_zero(diff.y)
+    assert Accuracy.length_is_zero(diff.z)
+
+    diff = Vector3D.from_points(
+        eval2.first_derivative().normalize(), UnitVector3D([-0.91381155, 0.40613847, 0])
+    )
+    assert Accuracy.length_is_zero(diff.x)
+    assert Accuracy.length_is_zero(diff.y)
+    assert Accuracy.length_is_zero(diff.z)
+
+    diff = Vector3D.from_points(
+        eval2.second_derivative().normalize(), UnitVector3D([-np.sqrt(2) / 2, -np.sqrt(2) / 2, -0])
+    )
+    assert Accuracy.length_is_zero(diff.x)
+    assert Accuracy.length_is_zero(diff.y)
+    assert Accuracy.length_is_zero(diff.z)
+
+    assert Accuracy.length_is_equal(eval2.curvature(), 0.31540327)
