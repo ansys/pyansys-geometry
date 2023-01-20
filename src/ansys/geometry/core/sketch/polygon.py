@@ -20,7 +20,7 @@ class Polygon(SketchFace):
     ----------
     center: Point2D
         2D pint representing the center of the circle.
-    inner_radius : Union[Quantity, Distance]
+    inner_radius : Union[Quantity, Distance, Real]
         Inner radius (apothem) of the polygon.
     sides : int
         Number of sides of the polygon.
@@ -32,7 +32,7 @@ class Polygon(SketchFace):
     def __init__(
         self,
         center: Point2D,
-        inner_radius: Union[Quantity, Distance],
+        inner_radius: Union[Quantity, Distance, Real],
         sides: int,
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):

@@ -1,7 +1,7 @@
 """Module for sketching gears."""
 
 from beartype import beartype as check_input_types
-from beartype.typing import List, Tuple
+from beartype.typing import List, Tuple, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
@@ -44,9 +44,9 @@ class DummyGear(Gear):
     ----------
     origin : Point2D
         Origin of the gear.
-    outer_radius : Distance
+    outer_radius : Union[Distance, Real]
         Outer radius of the gear.
-    inner_radius : Distance
+    inner_radius : Union[Distance, Real]
         Inner radius of the gear.
     n_teeth : int
         Number of teeth of the gear.
@@ -54,11 +54,23 @@ class DummyGear(Gear):
 
     @check_input_types
     def __init__(
-        self, origin: Point2D, outer_radius: Distance, inner_radius: Distance, n_teeth: int
+        self,
+        origin: Point2D,
+        outer_radius: Union[Distance, Real],
+        inner_radius: Union[Distance, Real],
+        n_teeth: int,
     ):
         """Constructor method for a dummy gear."""
         # Call the parent ctor
         super().__init__()
+
+        # Ensure radiuses are Distances
+        outer_radius = (
+            outer_radius if isinstance(outer_radius, Distance) else Distance(outer_radius)
+        )
+        inner_radius = (
+            inner_radius if isinstance(inner_radius, Distance) else Distance(inner_radius)
+        )
 
         # Let's compute auxiliary variables
         repeat_angle = 2 * np.pi / n_teeth

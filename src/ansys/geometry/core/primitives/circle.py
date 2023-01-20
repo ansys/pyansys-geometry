@@ -19,7 +19,7 @@ class Circle:
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D]
         Origin of the circle.
-    radius : Union[Quantity, Distance]
+    radius : Union[Quantity, Distance, Real]
         Radius of the circle.
     reference : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         X-plane direction.
@@ -31,7 +31,7 @@ class Circle:
     def __init__(
         self,
         origin: Union[np.ndarray, RealSequence, Point3D],
-        radius: Union[Quantity, Distance],
+        radius: Union[Quantity, Distance, Real],
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):

@@ -21,9 +21,9 @@ class SketchEllipse(SketchFace, Ellipse):
     ----------
     center: Point2D
         Point representing the center of the ellipse.
-    major_radius : Union[Quantity, Distance]
+    major_radius : Union[Quantity, Distance, Real]
         Major radius of the ellipse.
-    minor_radius : Union[Quantity, Distance]
+    minor_radius : Union[Quantity, Distance, Real]
         Minor radius of the ellipse.
     angle : Union[Quantity, Angle, Real], default: 0
         Placement angle for orientation alignment.
@@ -33,8 +33,8 @@ class SketchEllipse(SketchFace, Ellipse):
     def __init__(
         self,
         center: Point2D,
-        major_radius: Union[Quantity, Distance],
-        minor_radius: Union[Quantity, Distance],
+        major_radius: Union[Quantity, Distance, Real],
+        minor_radius: Union[Quantity, Distance, Real],
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         plane: Plane = Plane(),
     ):
@@ -62,8 +62,8 @@ class SketchEllipse(SketchFace, Ellipse):
     def _init_primitive_ellipse_from_plane(
         self,
         plane: Plane,
-        major_radius: Optional[Union[Quantity, Distance]] = None,
-        minor_radius: Optional[Union[Quantity, Distance]] = None,
+        major_radius: Optional[Union[Quantity, Distance, Real]] = None,
+        minor_radius: Optional[Union[Quantity, Distance, Real]] = None,
         angle: Optional[Union[Quantity, Angle, Real]] = None,
     ) -> None:
         """

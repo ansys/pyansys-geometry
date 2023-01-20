@@ -20,9 +20,9 @@ class Ellipse:
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D]
         Origin of the ellipse.
-    major_radius : Union[Quantity, Distance]
+    major_radius : Union[Quantity, Distance, Real]
         Major radius of the ellipse.
-    minor_radius : Union[Quantity, Distance]
+    minor_radius : Union[Quantity, Distance, Real]
         Minor radius of the ellipse.
     reference : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         X-plane direction.
@@ -34,8 +34,8 @@ class Ellipse:
     def __init__(
         self,
         origin: Union[np.ndarray, RealSequence, Point3D],
-        major_radius: Union[Quantity, Distance],
-        minor_radius: Union[Quantity, Distance],
+        major_radius: Union[Quantity, Distance, Real],
+        minor_radius: Union[Quantity, Distance, Real],
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
