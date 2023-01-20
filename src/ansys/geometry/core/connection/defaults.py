@@ -10,7 +10,7 @@ By default, it searches for the environment variable ``ANSRV_GEO_HOST``,
 and if it does not exist, it falls back to ``127.0.0.1``.
 """
 
-DEFAULT_PORT = os.environ.get("ANSRV_GEO_PORT", 50051)
+DEFAULT_PORT: int = int(os.environ.get("ANSRV_GEO_PORT", 50051))
 """
 Default HOST port used.
 
