@@ -25,3 +25,10 @@ Default gRPC message length.
 By default, it searches for the environment variable ``PYGEOMETRY_MAX_MESSAGE_LENGTH``,
 and if it does not exist, it falls back to ``256Mb``.
 """
+
+GEOMETRY_SERVICE_DOCKER_IMAGE = "ghcr.io/pyansys/pygeometry"
+"""
+Default Geometry Service Docker image location.
+
+Tag is dependent on what OS service is requested.
+"""
