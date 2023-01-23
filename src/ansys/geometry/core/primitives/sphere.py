@@ -83,12 +83,12 @@ class Sphere:
 
     @property
     def surface_area(self) -> Quantity:
-        """Surface area of the sphere"""
+        """Surface area of the sphere."""
         return 4 * np.pi * self.radius**2
 
     @property
     def volume(self) -> Quantity:
-        """Volume of the sphere"""
+        """Volume of the sphere."""
         return 4.0 / 3.0 * np.pi * self.radius**3
 
     @check_input_types
@@ -102,7 +102,7 @@ class Sphere:
         )
 
     def evaluate(self, parameter: ParamUV) -> "SphereEvaluation":
-        """Evaluate the sphere at the given parameters"""
+        """Evaluate the sphere at the given parameters."""
         return SphereEvaluation(self, parameter)
 
     def project_point(self, point: Point3D) -> "SphereEvaluation":
@@ -157,14 +157,14 @@ class SphereEvaluation(SurfaceEvaluation):
         )
 
     def cylinder_normal(self) -> Vector3D:
-        """Cylinder normal of the evaluation"""
+        """Cylinder normal of the evaluation."""
         return (
             np.cos(self.parameter.u) * self.sphere.dir_x
             + np.sin(self.parameter.u) * self.sphere.dir_y
         )
 
     def cylinder_tangent(self) -> Vector3D:
-        """Cylinder tangent of the evaluation"""
+        """Cylinder tangent of the evaluation."""
         return (
             -np.sin(self.parameter.u) * self.sphere.dir_x
             + np.cos(self.parameter.u) * self.sphere.dir_y

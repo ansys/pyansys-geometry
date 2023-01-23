@@ -13,9 +13,9 @@ class ParamUV:
     Parameters
     ----------
     u : Real
-        u-parameter
+        u-parameter.
     v : Real
-        v-parameter
+        v-parameter.
     """
 
     def __init__(self, u: Real, v: Real) -> None:
@@ -24,35 +24,35 @@ class ParamUV:
 
     @property
     def u(self) -> Real:
-        """u-parameter"""
+        """u-parameter."""
         return self._u
 
     @property
     def v(self) -> Real:
-        """v-parameter"""
+        """v-parameter."""
         return self._v
 
     @check_input_types
     def __add__(self, other: "ParamUV") -> "ParamUV":
-        """Adds the u and v components of the other ParamUV to this ParamUV"""
+        """Adds the u and v components of the other ParamUV to this ParamUV."""
         self._u += other._u
         self._v += other._v
 
     @check_input_types
     def __sub__(self, other: "ParamUV") -> "ParamUV":
-        """Subtracts the u and v components of the other ParamUV from this ParamUV"""
+        """Subtracts the u and v components of the other ParamUV from this ParamUV."""
         self._u -= other._u
         self._v -= other._v
 
     @check_input_types
     def __mul__(self, other: "ParamUV") -> "ParamUV":
-        """Multiplies the u and v components of this ParamUV by the other ParamUV"""
+        """Multiplies the u and v components of this ParamUV by the other ParamUV."""
         self._u *= other._u
         self._v *= other._v
 
     @check_input_types
     def __truediv__(self, other: "ParamUV") -> "ParamUV":
-        """Divides the u and v components of this ParamUV by the other ParamUV"""
+        """Divides the u and v components of this ParamUV by the other ParamUV."""
         self._u /= other._u
         self._v /= other._v
 
