@@ -72,5 +72,5 @@ def test_launch_remote_instance(monkeypatch, modeler: Modeler):
 
 def test_launch_remote_instance_error():
     """Check that when PyPIM is not configures, launch_modeler raises an error."""
-    with pytest.raises(NotImplementedError, match="Not yet implemented."):
+    with pytest.raises(NotImplementedError, match="Geometry service cannot be initialized."):
         launch_modeler()
