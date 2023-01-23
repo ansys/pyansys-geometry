@@ -1,7 +1,6 @@
 from beartype import beartype as check_input_types
 
-from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.math import Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.typing import Real
 
 
