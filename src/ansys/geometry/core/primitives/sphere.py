@@ -146,11 +146,11 @@ class SphereEvaluation(SurfaceEvaluation):
         return self._parameter
 
     def position(self) -> Point3D:
-        """The position of the evaluation."""
+        """The point on the sphere, based on the evaluation."""
         return self.sphere.origin + self.sphere.radius.m * self.normal()
 
     def normal(self) -> UnitVector3D:
-        """The surface normal"""
+        """The normal to the surface."""
         return UnitVector3D(
             np.cos(self.parameter.v) * self.cylinder_normal()
             + np.sin(self.parameter.v) * self.sphere.dir_z
@@ -171,36 +171,43 @@ class SphereEvaluation(SurfaceEvaluation):
         )
 
     def u_derivative(self) -> Vector3D:
-        """U-derivative of the evaluation"""
+        """The first derivative with respect to u."""
         return np.cos(self.parameter.v) * self.sphere.radius.m * self.cylinder_tangent()
 
     def v_derivative(self) -> Vector3D:
-        """V-derivative of the evaluation"""
+        """The first derivative with respect to v."""
         return self.sphere.radius.m * (
             np.cos(self.parameter.v) * self.sphere.dir_z
             - np.sin(self.parameter.v) * self.cylinder_normal()
         )
 
     def uu_derivative(self) -> Vector3D:
+        """The second derivative with respect to u."""
         return -np.cos(self.parameter.v) * self.sphere.radius.m * self.cylinder_normal()
 
     def uv_derivative(self) -> Vector3D:
+        """The second derivative with respect to u and v."""
         return -np.sin(self.parameter.v) * self.sphere.radius.m * self.cylinder_tangent()
 
     def vv_derivative(self) -> Vector3D:
+        """The second derivative with respect to v."""
         return self.sphere.radius.m * (
             -np.sin(self.parameter.v) * self.sphere.dir_z
             - np.cos(self.parameter.v) * self.cylinder_normal()
         )
 
     def min_curvature(self) -> Real:
+        """The minimum curvature."""
         return 1.0 / self.sphere.radius.m
 
     def min_curvature_direction(self) -> UnitVector3D:
+        """The minimum curvature direction."""
         return self.normal() % self.max_curvature_direction()
 
     def max_curvature(self) -> Real:
+        """The maximum curvature."""
         return 1.0 / self.sphere.radius.m
 
     def max_curvature_direction(self) -> UnitVector3D:
+        """The maximum curvature direction."""
         return UnitVector3D(self.v_derivative())
