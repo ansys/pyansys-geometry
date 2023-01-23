@@ -53,7 +53,7 @@ tests = [
     "pyvista==0.37.0",
     "scipy==1.10.0",
     "six==1.16.0",
-    "ansys-platform-instancemanagement==1.0.2",
+    "ansys-platform-instancemanagement==1.0.3",
     "pytest==7.2.1",
     "pytest-cov==4.0.0",
     "pytest-pyvista==0.1.4",
