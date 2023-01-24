@@ -8,6 +8,7 @@ import pytest
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
 from ansys.geometry.core.connection.launcher import launch_modeler
+from ansys.geometry.core.connection.localinstance import LocalDockerInstance
 
 
 def test_launch_remote_instance(monkeypatch, modeler: Modeler):
@@ -70,7 +71,12 @@ def test_launch_remote_instance(monkeypatch, modeler: Modeler):
     assert modeler.client.channel == pim_channel
 
 
-def test_launch_remote_instance_error():
+def test_launch_remote_instance_error(monkeypatch):
     """Check that when PyPIM is not configures, launch_modeler raises an error."""
+    mock_is_installed = create_autospec(LocalDockerInstance.is_docker_installed, return_value=False)
+    monkeypatch.setattr(LocalDockerInstance, "is_docker_installed", mock_is_installed)
+
     with pytest.raises(NotImplementedError, match="Geometry service cannot be initialized."):
         launch_modeler()
+
+    assert mock_is_installed.called
