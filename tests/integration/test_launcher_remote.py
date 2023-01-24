@@ -12,7 +12,7 @@ from ansys.geometry.core.connection.localinstance import LocalDockerInstance
 
 
 def test_launch_remote_instance(monkeypatch, modeler: Modeler):
-    """Test to create a mock pypim pretenting it is configured and returning
+    """Test to create a mock pypim pretending it is configured and returning
     a channel to an already running PyGeometry.
 
     Parameters
@@ -72,7 +72,7 @@ def test_launch_remote_instance(monkeypatch, modeler: Modeler):
 
 
 def test_launch_remote_instance_error(monkeypatch):
-    """Check that when PyPIM is not configures, launch_modeler raises an error."""
+    """Check that when PyPIM is not configured, launch_modeler raises an error."""
     mock_is_installed = create_autospec(LocalDockerInstance.is_docker_installed, return_value=False)
     monkeypatch.setattr(LocalDockerInstance, "is_docker_installed", mock_is_installed)
 
