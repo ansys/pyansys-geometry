@@ -1,5 +1,6 @@
 from beartype.roar import BeartypeCallHintParamViolation
 import numpy as np
+from pint import Quantity
 import pytest
 
 from ansys.geometry.core.math import (
@@ -11,7 +12,16 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import UNITS, Accuracy, Distance
-from ansys.geometry.core.primitives import Circle, Cone, Cylinder, Ellipse, Line, Sphere, Torus
+from ansys.geometry.core.primitives import (
+    Circle,
+    Cone,
+    Cylinder,
+    Ellipse,
+    Line,
+    ParamUV,
+    Sphere,
+    Torus,
+)
 
 
 def test_cylinder():
@@ -128,11 +138,11 @@ def test_sphere():
 
     # Create two Sphere objects
     origin = Point3D([42, 99, 13])
-    radius = 100
-    s_1 = Sphere(origin, 100)
-    s_1_duplicate = Sphere(origin, 100)
-    s_2 = Sphere(Point3D([5, 8, 9]), 88)
-    s_with_array_definitions = Sphere([5, 8, 9], 88)
+    radius = Distance(100)
+    s_1 = Sphere(origin, radius)
+    s_1_duplicate = Sphere(origin, radius)
+    s_2 = Sphere(Point3D([5, 8, 9]), radius)
+    s_with_array_definitions = Sphere([5, 8, 9], radius)
 
     # Check that the equals operator works
     assert s_1 == s_1_duplicate
@@ -143,25 +153,22 @@ def test_sphere():
     assert s_1.origin.x == origin.x
     assert s_1.origin.y == origin.y
     assert s_1.origin.z == origin.z
-    assert s_1.radius == radius
+    assert s_1.radius.m == 100
+    assert s_1.radius.u == "meter"
+    assert Accuracy.length_is_equal(s_1.surface_area.m, 1.25663706e5)
+    assert Accuracy.length_is_equal(s_1.volume.m, 4.1887902e6)
 
     s_1.origin = new_origin = Point3D([42, 88, 99])
-    s_1.radius = new_radius = 1000
 
     assert s_1.origin.x == new_origin.x
     assert s_1.origin.y == new_origin.y
     assert s_1.origin.z == new_origin.z
-    assert s_1.radius == new_radius
 
     s_2.origin = new_origin
-    s_2.radius = new_radius
     assert s_1 == s_2
 
     with pytest.raises(BeartypeCallHintParamViolation):
         Sphere(origin, "A")
-
-    with pytest.raises(BeartypeCallHintParamViolation):
-        s_1.radius = "A"
 
     with pytest.raises(BeartypeCallHintParamViolation):
         s_1.origin = "A"
@@ -178,29 +185,50 @@ def test_sphere_units():
         TypeError,
         match=r"The pint.Unit provided as an input should be a \[length\] quantity.",
     ):
-        Sphere(origin, radius, UNITS.celsius)
+        Sphere(origin, Quantity(radius, UNITS.celsius))
 
-    s_1 = Sphere(origin, radius, unit)
-
-    # Verify rejection of invalid base unit type
-    with pytest.raises(
-        TypeError,
-        match=r"The pint.Unit provided as an input should be a \[length\] quantity.",
-    ):
-        s_1.unit = UNITS.celsius
+    s_1 = Sphere(origin, Quantity(radius, unit))
 
     # Check that the units are correctly in place
-    assert s_1.unit == unit
+    assert s_1.radius.u == unit
 
     # Request for radius and ensure in mm
-    assert s_1.radius == radius
-
-    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
-    assert s_1._radius == (s_1.radius * s_1.unit).to_base_units().magnitude
+    assert s_1.radius.m == radius
 
     # Set unit to cm now... and check if the values changed
-    s_1.unit = new_unit = UNITS.cm
-    assert s_1.radius == UNITS.convert(radius, unit, new_unit)
+    s_1._radius.unit = new_unit = UNITS.cm
+    assert s_1.radius.m == UNITS.convert(radius, unit, new_unit)
+
+
+def test_sphere_evaluation():
+    origin = Point3D([0, 0, 0])
+    radius = Distance(1)
+    sphere = Sphere(origin, radius)
+    eval = sphere.evaluate(ParamUV(0, 0))
+
+    # Test base evaluation at (0, 0)
+    assert eval.sphere == sphere
+    assert np.allclose(eval.position(), Point3D([1, 0, 0]))
+    assert np.allclose(eval.normal(), UnitVector3D([1, 0, 0]))
+    assert np.allclose(eval.cylinder_normal(), Vector3D([1, 0, 0]))
+    assert np.allclose(eval.cylinder_tangent(), Vector3D([0, 1, 0]))
+    assert np.allclose(eval.u_derivative(), Vector3D([0, 1, 0]))
+    assert np.allclose(eval.v_derivative(), Vector3D([0, 0, 1]))
+    assert np.allclose(eval.uu_derivative(), Vector3D([-1, 0, 0]))
+    assert np.allclose(eval.uv_derivative(), Vector3D([0, 0, 0]))
+    assert np.allclose(eval.vv_derivative(), Vector3D([-1, 0, 0]))
+    assert eval.min_curvature() == 1.0
+    assert np.allclose(eval.min_curvature_direction(), Vector3D([0, -1, 0]))
+    assert eval.max_curvature() == 1.0
+    assert np.allclose(eval.max_curvature_direction(), Vector3D([0, 0, 1]))
+
+    # Test evaluation by projecting a point onto the sphere
+    eval2 = sphere.project_point(Point3D([1, 1, 1]))
+    assert eval2.sphere == sphere
+    assert np.allclose(eval2.position(), Point3D([0.57735027, 0.57735027, 0.57735027]))
+    assert np.allclose(eval2.normal(), UnitVector3D([1, 1, 1]))
+    assert np.allclose(eval2.u_derivative().normalize(), UnitVector3D([-1, 1, 0]))
+    assert np.allclose(eval2.v_derivative().normalize(), UnitVector3D([-1, -1, 2]))
 
 
 def test_cone():
