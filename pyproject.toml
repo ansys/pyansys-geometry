@@ -59,7 +59,7 @@ tests = [
     "pytest-pyvista==0.1.4",
 ]
 doc = [
-    "ansys-sphinx-theme==0.8.0",
+    "ansys-sphinx-theme==0.8.1",
     "ipyvtklink==0.2.3",
     "jupyter_sphinx==0.4.0",
     "jupytext==1.14.4",
