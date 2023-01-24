@@ -174,8 +174,13 @@ class GrpcClient:
         """
         if self._remote_instance:
             self._remote_instance.delete()  # pragma: no cover
-        if self._local_instance and not self._local_instance.existed_previously:
-            self._local_instance.container.stop()
+        if self._local_instance:
+            if not self._local_instance.existed_previously:
+                self._local_instance.container.stop()
+            else:
+                self.log.warning(
+                    "Geometry Service will not be shutdown since it was already running..."
+                )
         self._closed = True
         self._channel.close()
 
