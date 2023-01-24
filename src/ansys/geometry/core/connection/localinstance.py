@@ -93,7 +93,7 @@ class LocalDockerInstance:
         # server is not available
         try:
             return LocalDockerInstance.docker_client().ping()
-        except APIError:
+        except APIError:  # pragma: no cover
             return False
 
     @check_input_types
@@ -119,6 +119,7 @@ class LocalDockerInstance:
         if cont and connect_to_existing_service and self._is_cont_geom_service(cont):
             # Now, let's check if a restart of the service is required
             if restart_if_existing_service:
+                logger.warning(f"Restarting service already running at port {port}...")
                 cont.restart()
 
             # Finally, store the container
