@@ -6,4 +6,5 @@ from ansys.geometry.core.primitives.cylinder import Cylinder
 from ansys.geometry.core.primitives.ellipse import Ellipse, EllipseEvaluation
 from ansys.geometry.core.primitives.line import Line
 from ansys.geometry.core.primitives.sphere import Sphere
+from ansys.geometry.core.primitives.surface_evaluation import ParamUV, SurfaceEvaluation
 from ansys.geometry.core.primitives.torus import Torus
