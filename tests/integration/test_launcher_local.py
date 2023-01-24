@@ -18,6 +18,10 @@ def test_local_launcher_connect(modeler: Modeler, caplog: pytest.LogCaptureFixtu
     host = target[0]
     port = int(target[1])
 
+    # Trying to deploy a service there will lead to an error...
+    with pytest.raises(RuntimeError, match=f"Geometry service cannot be deployed on port {port}"):
+        launch_local_modeler(port=port, connect_to_existing_service=False)
+
     # Connect to the existing target... this will throw a warning
     local_modeler = launch_local_modeler(
         port=port, connect_to_existing_service=True, restart_if_existing_service=False

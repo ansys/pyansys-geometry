@@ -134,7 +134,7 @@ class LocalDockerInstance:
         if port_available:
             self._deploy_container(port=port, name=name, image=image)
         else:
-            raise RuntimeWarning(f"Geometry service cannot be deployed on port {port}")
+            raise RuntimeError(f"Geometry service cannot be deployed on port {port}")
 
     def _check_port_availability(self, port: int) -> Tuple[bool, Optional[Container]]:
         """Private method which checks whether the requested port is available for
@@ -180,7 +180,7 @@ class LocalDockerInstance:
                     return True
 
         # If we reached this point, this means that our image is not a Geometry Service
-        return False
+        return False  # pragma: no cover
 
     def _deploy_container(
         self, port: int, name: Union[str, None], image: Union[GeometryContainers, None]
@@ -201,7 +201,7 @@ class LocalDockerInstance:
 
         Raises
         ------
-        RuntimeWarning
+        RuntimeError
             In case the Geometry Service cannot be launched.
         """
 
@@ -221,8 +221,8 @@ class LocalDockerInstance:
         #
         # Also, if you requested an image incompatible with the existing OS, it
         # will not be possible either.
-        if image is None or image.value[1] != docker_os:
-            raise RuntimeWarning(f"Geometry service cannot be launched on {docker_os}")
+        if image is None or image.value[1] != docker_os:  # pragma: no cover
+            raise RuntimeError(f"Geometry service cannot be launched on {docker_os}")
 
         # At this point, we are good to deploy the Geometry Service!
         #
@@ -235,7 +235,7 @@ class LocalDockerInstance:
                 name=name,
                 ports={"50051/tcp": port},
             )
-        except ImageNotFound as err:
+        except ImageNotFound as err:  # pragma: no cover
             raise RuntimeError(
                 f"Geometry service Docker image {image.value[1]} not found. Please download it first to your machine."  # noqa: E501
             )
