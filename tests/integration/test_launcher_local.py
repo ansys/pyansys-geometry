@@ -15,7 +15,6 @@ def test_local_launcher_connect(modeler: Modeler, caplog: pytest.LogCaptureFixtu
     """Checking connection to existing service using launch modeler."""
     # Get the existing target
     target = modeler.client.target().split(":")
-    host = target[0]
     port = int(target[1])
 
     # Trying to deploy a service there will lead to an error...
@@ -33,7 +32,7 @@ def test_local_launcher_connect(modeler: Modeler, caplog: pytest.LogCaptureFixtu
     # Try to close it... this will throw a warning
     local_modeler.client.close()
 
-    msg = f"WARNING  {host}:{port}:client.py:182 Geometry Service will not be shutdown since it was already running...\n"  # noqa : E501
+    msg = f"WARNING  localhost:{port}:client.py:182 Geometry Service will not be shutdown since it was already running...\n"  # noqa : E501
     assert msg in caplog.text
 
 
@@ -42,7 +41,6 @@ def test_local_launcher_connect_with_restart(modeler: Modeler, caplog: pytest.Lo
     restarting existing service."""
     # Get the existing target
     target = modeler.client.target().split(":")
-    host = target[0]
     port = int(target[1])
     new_port = port + 1
 
@@ -71,14 +69,14 @@ def test_local_launcher_connect_with_restart(modeler: Modeler, caplog: pytest.Lo
     # Try to close the new_modeler_restarted... this will throw a warning
     new_modeler_restarted.client.close()
 
-    msg = f"WARNING  {host}:{new_port}:client.py:182 Geometry Service will not be shutdown since it was already running...\n"  # noqa : E501
+    msg = f"WARNING  localhost:{new_port}:client.py:182 Geometry Service will not be shutdown since it was already running...\n"  # noqa : E501
     assert msg in caplog.text
     caplog.clear()
 
     # And now try to close the new_modeler... this will NOT throw a warning
     new_modeler.client.close()
 
-    msg = f"WARNING  {host}:{new_port}:client.py:182 Geometry Service will not be shutdown since it was already running...\n"  # noqa : E501
+    msg = f"WARNING  localhost:{new_port}:client.py:182 Geometry Service will not be shutdown since it was already running...\n"  # noqa : E501
     assert msg not in caplog.text
     caplog.clear()
 
@@ -89,7 +87,6 @@ def test_try_deploying_container_with_same_name(modeler: Modeler, caplog: pytest
 
     # Get the existing target
     target = modeler.client.target().split(":")
-    host = target[0]
     port = int(target[1])
     new_port = port + 1
     new_port_2 = port + 2
@@ -123,6 +120,6 @@ def test_try_deploying_container_with_same_name(modeler: Modeler, caplog: pytest
     # And now try to close the new_modeler... this will NOT throw a warning
     new_modeler.client.close()
 
-    msg = f"WARNING  {host}:{new_port}:client.py:182 Geometry Service will not be shutdown since it was already running...\n"  # noqa : E501
+    msg = f"WARNING  localhost:{new_port}:client.py:182 Geometry Service will not be shutdown since it was already running...\n"  # noqa : E501
     assert msg not in caplog.text
     caplog.clear()
