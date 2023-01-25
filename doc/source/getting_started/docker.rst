@@ -22,11 +22,47 @@ Install the PyGeometry image
       GH_USERNAME=<my-github-username>
       cat GH_TOKEN.txt | docker login docker.pkg.github.com -u $GH_USERNAME --password-stdin
 
-#. Launch the Geometry service locally using Docker with:
+#. Pull the Geometry service locally using Docker with:
+
 
    .. code:: bash
 
-      docker run --name ans_geo -p 50051:50051 ghcr.io/pyansys/pygeometry:windows-latest
+      docker pull ghcr.io/pyansys/pygeometry:<tag>
+
+   The following OS-dependent tags are available:
+
+   * ``windows-latest``
+   * ``windows-latest-unstable``
+
+Launching the Geometry service
+------------------------------
+
+The Geometry service can be launched locally in two different ways:
+
+.. tab-set:: 
+
+    .. tab-item:: Using PyGeometry launcher
+
+        This method will directly launch for you the Geometry Service and it
+        will provide a ``Modeler`` object.
+
+        .. code:: python
+
+          from ansys.geometry.core.connection import launch_modeler
+
+          modeler = launch_modeler()
+
+        The previous ``launch_modeler()`` method will launch the Geometry Service under the default
+        conditions. For more configurability, please use ``launch_local_modeler()``.
+
+    .. tab-item:: Manual Geometry Service launch
+
+       This method will involve the user manually launching the Geometry Service. Afterwards, please
+       refer to the next section in order to understand how to connect to it from PyGeometry.
+
+       .. code:: bash
+
+          docker run --name ans_geo -p 50051:50051 ghcr.io/pyansys/pygeometry:windows-latest
 
 
 Connect to the Geometry service
