@@ -42,6 +42,7 @@ which take as a starting point the last point of the previous edge.
 It is also able to get a desired shape of the sketch object by taking advantage of the user-defined labels.
 
 .. code:: python
+
     sketch.get("<tag>")
 
 .. jupyter-execute::
