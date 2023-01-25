@@ -15,6 +15,10 @@ __version__ = importlib_metadata.version(__name__.replace(".", "-"))
 # Ease import statements
 # ------------------------------------------------------------------------------
 
-from ansys.geometry.core.connection.launcher import launch_modeler
+from ansys.geometry.core.connection.launcher import (
+    launch_local_modeler,
+    launch_modeler,
+    launch_remote_modeler,
+)
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.modeler import Modeler

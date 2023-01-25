@@ -36,10 +36,52 @@ PyGeometry is a Python client library for the Ansys Geometry service.
 Usage
 -----
 
+There are two different ways of getting started with the Geometry Service and its client-library, PyGeometry.
+
+Using PyGeometry launcher
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+PyGeometry is provided with an internal launcher that is capable of handling the specifics of
+launching the Geometry Service locally. The only requirements are that:
+
+* Docker is installed on your machine.
+* You have access to the PyAnsys GitHub container registry, where the Geometry Service image is hosted.
+
+.. caution::
+
+   The Geometry Service is currently available only as a Windows Docker image. The development
+   team is working on getting the Linux Docker container available as soon as possible. In the meantime,
+   make sure that your Docker engine is configured to run Windows Docker images.
+
+First, bear in mind that you have to be `authenticated to ghcr.io
+<https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry>`_.
+Once authenticated, please proceed to download the Geometry Service Docker image:
+
+.. code:: bash
+
+   docker pull ghcr.io/pyansys/pygeometry:<tag>
+
+The following OS-dependent tags are available:
+
+* ``windows-latest``
+* ``windows-latest-unstable``
+
+Next, you will be ready to run the Geometry Service directly from PyGeometry:
+
+.. code:: python
+
+   from ansys.geometry.core.connection import launch_modeler
+
+   modeler = launch_modeler()
+
+The previous ``launch_modeler()`` method will launch the Geometry Service under the default
+conditions. For more configurability, please use ``launch_local_modeler()``.
+
+Manual service launch
+^^^^^^^^^^^^^^^^^^^^^
+
 First, start the Geometry service locally. If you have Docker installed and have
-`authenticated to ghcr.io
-<https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry>`_,
-you can start the service locally using Docker with:
+`authenticated to ghcr.io`_, you can start the service locally using Docker with:
 
 .. code:: bash
 
