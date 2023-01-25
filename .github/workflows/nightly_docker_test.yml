@@ -17,7 +17,7 @@ jobs:
     name: Run all tests against server
     runs-on: [self-hosted, pygeometry]
     env:
-      ANSRV_GEO_IMAGE: ghcr.io/pyansys/pygeometry:latest-unstable
+      ANSRV_GEO_IMAGE: ghcr.io/pyansys/pygeometry:windows-latest-unstable
       ANSRV_GEO_PORT: 710
       GEO_CONT_NAME: ans_geo_nightly
 
