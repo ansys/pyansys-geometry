@@ -1,9 +1,29 @@
 """Testing module for the local launcher."""
 
+import re
+
 import pytest
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection import LocalDockerInstance, launch_local_modeler
+
+
+def _check_no_shutdown_warning(port: int, log: str) -> bool:
+    msg = f"WARNING  localhost:{port}:client\.py:[0-9]+ Geometry Service will not be shutdown since it was already running\.\.\."  # noqa : E501
+    pattern = re.compile(msg)
+    return True if pattern.search(log) else False
+
+
+def _check_service_already_running(port: int, log: str) -> bool:
+    msg = f"WARNING  PyGeometry_global:localinstance\.py:[0-9]+ Service already running at port {port}\.\.\."  # noqa : E501
+    pattern = re.compile(msg)
+    return True if pattern.search(log) else False
+
+
+def _check_restarting_service(port: int, log: str) -> bool:
+    msg = f"WARNING  PyGeometry_global:localinstance\.py:124 Restarting service already running at port {port}\.\.\."  # noqa : E501
+    pattern = re.compile(msg)
+    return True if pattern.search(log) else False
 
 
 def test_if_docker_is_installed():
@@ -11,8 +31,13 @@ def test_if_docker_is_installed():
     assert LocalDockerInstance.is_docker_installed()
 
 
-def test_local_launcher_connect(modeler: Modeler, caplog: pytest.LogCaptureFixture):
+def test_local_launcher_connect(
+    modeler: Modeler, caplog: pytest.LogCaptureFixture, docker_instance
+):
     """Checking connection to existing service using launch modeler."""
+    if not docker_instance:
+        pytest.skip("Docker local launcher tests are not runnable.")
+
     # Get the existing target
     target = modeler.client.target().split(":")
     port = int(target[1])
@@ -25,20 +50,23 @@ def test_local_launcher_connect(modeler: Modeler, caplog: pytest.LogCaptureFixtu
     local_modeler = launch_local_modeler(
         port=port, connect_to_existing_service=True, restart_if_existing_service=False
     )
-
-    msg = f"WARNING  PyGeometry_global:localinstance.py:155 Service already running at port {port}...\n"  # noqa : E501
-    assert msg in caplog.text
+    assert _check_service_already_running(port, caplog.text)
+    caplog.clear()
 
     # Try to close it... this will throw a warning
     local_modeler.client.close()
+    assert _check_no_shutdown_warning(port, caplog.text)
+    caplog.clear()
 
-    msg = f"WARNING  localhost:{port}:client.py:182 Geometry Service will not be shutdown since it was already running...\n"  # noqa : E501
-    assert msg in caplog.text
 
-
-def test_local_launcher_connect_with_restart(modeler: Modeler, caplog: pytest.LogCaptureFixture):
+def test_local_launcher_connect_with_restart(
+    modeler: Modeler, caplog: pytest.LogCaptureFixture, docker_instance
+):
     """Checking connection to existing service using launch modeler and
     restarting existing service."""
+    if not docker_instance:
+        pytest.skip("Docker local launcher tests are not runnable.")
+
     # Get the existing target
     target = modeler.client.target().split(":")
     port = int(target[1])
@@ -50,8 +78,7 @@ def test_local_launcher_connect_with_restart(modeler: Modeler, caplog: pytest.Lo
     )
 
     # Check that the warning is NOT raised
-    msg = f"WARNING  PyGeometry_global:localinstance.py:155 Service already running at port {new_port}...\n"  # noqa : E501
-    assert msg not in caplog.text
+    assert _check_service_already_running(new_port, caplog.text) is False
     caplog.clear()
 
     # Connect to the previous modeler and restart it
@@ -60,30 +87,30 @@ def test_local_launcher_connect_with_restart(modeler: Modeler, caplog: pytest.Lo
     )
 
     # Check that the warnings are raised
-    msg = f"WARNING  PyGeometry_global:localinstance.py:155 Service already running at port {new_port}...\n"  # noqa : E501
-    assert msg in caplog.text
-    msg = f"WARNING  PyGeometry_global:localinstance.py:122 Restarting service already running at port {new_port}...\n"  # noqa : E501
-    assert msg in caplog.text
+    assert _check_service_already_running(new_port, caplog.text) is True
+    assert _check_restarting_service(new_port, caplog.text) is True
     caplog.clear()
 
     # Try to close the new_modeler_restarted... this will throw a warning
     new_modeler_restarted.client.close()
 
-    msg = f"WARNING  localhost:{new_port}:client.py:182 Geometry Service will not be shutdown since it was already running...\n"  # noqa : E501
-    assert msg in caplog.text
+    assert _check_no_shutdown_warning(new_port, caplog.text) is True
     caplog.clear()
 
     # And now try to close the new_modeler... this will NOT throw a warning
     new_modeler.client.close()
 
-    msg = f"WARNING  localhost:{new_port}:client.py:182 Geometry Service will not be shutdown since it was already running...\n"  # noqa : E501
-    assert msg not in caplog.text
+    assert _check_no_shutdown_warning(new_port, caplog.text) is False
     caplog.clear()
 
 
-def test_try_deploying_container_with_same_name(modeler: Modeler, caplog: pytest.LogCaptureFixture):
+def test_try_deploying_container_with_same_name(
+    modeler: Modeler, caplog: pytest.LogCaptureFixture, docker_instance
+):
     """Checks that an error is raised when trying to deploy a container
     with a name that already exists."""
+    if not docker_instance:
+        pytest.skip("Docker local launcher tests are not runnable.")
 
     # Get the existing target
     target = modeler.client.target().split(":")
@@ -101,8 +128,7 @@ def test_try_deploying_container_with_same_name(modeler: Modeler, caplog: pytest
     )
 
     # Check that the warning is NOT raised
-    msg = f"WARNING  PyGeometry_global:localinstance.py:155 Service already running at port {new_port}...\n"  # noqa : E501
-    assert msg not in caplog.text
+    assert _check_service_already_running(new_port, caplog.text) is False
     caplog.clear()
 
     # Now try launching a service in a new port (where no service is available) but
@@ -119,7 +145,5 @@ def test_try_deploying_container_with_same_name(modeler: Modeler, caplog: pytest
 
     # And now try to close the new_modeler... this will NOT throw a warning
     new_modeler.client.close()
-
-    msg = f"WARNING  localhost:{new_port}:client.py:182 Geometry Service will not be shutdown since it was already running...\n"  # noqa : E501
-    assert msg not in caplog.text
+    assert _check_no_shutdown_warning(new_port, caplog.text) is False
     caplog.clear()
