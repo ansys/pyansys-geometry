@@ -15,8 +15,10 @@ from ansys.geometry.core.logger import LOG as logger
 class GeometryContainers(Enum):
     """Provides an enum holding the different Geometry services available."""
 
-    WINDOWS_LATEST_STABLE = 0, "windows", "windows-latest"
-    LINUX_LATEST_STABLE = 1, "linux", None
+    WINDOWS_LATEST = 0, "windows", "windows-latest"
+    LINUX_LATEST = 1, "linux", "linux-latest"
+    WINDOWS_LATEST_UNSTABLE = 0, "windows", "windows-latest-unstable"
+    LINUX_LATEST_UNSTABLE = 1, "linux", "linux-latest-unstable"
 
 
 class LocalDockerInstance:
