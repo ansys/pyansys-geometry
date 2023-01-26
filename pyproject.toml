@@ -72,7 +72,7 @@ doc = [
     "panel==0.14.2",
     "Sphinx==5.1.1",
     "sphinx-autoapi==2.0.1",
-    "sphinx-autodoc-typehints==1.19.1",
+    "sphinx-autodoc-typehints==1.21.8",
     "sphinx-copybutton==0.5.1",
     "sphinx_design==0.3.0",
     "sphinx-gallery==0.7.0",
