@@ -50,12 +50,12 @@ def test_local_launcher_connect(
     local_modeler = launch_local_modeler(
         port=port, connect_to_existing_service=True, restart_if_existing_service=False
     )
-    assert _check_service_already_running(port, caplog.text)
+    assert _check_service_already_running(port, caplog.text) is True
     caplog.clear()
 
     # Try to close it... this will throw a warning
     local_modeler.client.close()
-    assert _check_no_shutdown_warning(port, caplog.text)
+    assert _check_no_shutdown_warning(port, caplog.text) is True
     caplog.clear()
 
 
