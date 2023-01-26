@@ -252,6 +252,20 @@ def test_cone():
     duplicate = Cone(origin, radius, half_angle)
     assert cone == duplicate
 
+    # Same cone, but opens the opposite way since half_angle will be negative
+    neg_cone = Cone(origin, radius, -half_angle)
+
+    assert np.allclose(neg_cone.origin, origin)
+    assert neg_cone.radius.m == radius
+    assert neg_cone.half_angle.value.m == -half_angle
+    assert np.allclose(neg_cone.dir_x, UNITVECTOR3D_X)
+    assert np.allclose(neg_cone.dir_y, UNITVECTOR3D_Y)
+    assert np.allclose(neg_cone.dir_z, UNITVECTOR3D_Z)
+    assert Accuracy.length_is_equal(neg_cone.height.m, 1)
+    assert Accuracy.length_is_equal(neg_cone.surface_area.m, 7.58447559)
+    assert Accuracy.length_is_equal(neg_cone.volume.m, 1.04719755)
+    assert np.allclose(neg_cone.apex, Point3D([0, 0, 1]))
+
     with pytest.raises(BeartypeCallHintParamViolation):
         Cone(origin, "A", 200)
 

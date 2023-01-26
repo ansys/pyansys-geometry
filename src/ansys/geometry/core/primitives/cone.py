@@ -114,7 +114,12 @@ class Cone:
     @property
     def apex(self) -> Point3D:
         """Apex point of the cone"""
-        return self.origin - self.height.m * self.dir_z
+        return self.origin + self.apex_param * self.dir_z
+
+    @property
+    def apex_param(self) -> float:
+        """Apex parameter of the cone"""
+        return -np.abs(self.radius.m) / np.tan(self.half_angle.value.m)
 
     @check_input_types
     def __eq__(self, other: "Cone") -> bool:
