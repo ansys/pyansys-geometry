@@ -99,6 +99,10 @@ class Modeler:
         self._designs.append(design)
         return self._designs[-1]
 
+    def close(self) -> None:
+        """``Modeler`` easy-access method to the client's ``close()`` method."""
+        return self.client.close()
+
     def __repr__(self):
         """String representation of the modeler."""
         lines = []
