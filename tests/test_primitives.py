@@ -12,6 +12,7 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import UNITS, Accuracy, Distance
+from ansys.geometry.core.misc.measurements import Angle
 from ansys.geometry.core.primitives import (
     Circle,
     Cone,
@@ -210,8 +211,6 @@ def test_sphere_evaluation():
     assert eval.sphere == sphere
     assert np.allclose(eval.position(), Point3D([1, 0, 0]))
     assert np.allclose(eval.normal(), UnitVector3D([1, 0, 0]))
-    assert np.allclose(eval.cylinder_normal(), Vector3D([1, 0, 0]))
-    assert np.allclose(eval.cylinder_tangent(), Vector3D([0, 1, 0]))
     assert np.allclose(eval.u_derivative(), Vector3D([0, 1, 0]))
     assert np.allclose(eval.v_derivative(), Vector3D([0, 0, 1]))
     assert np.allclose(eval.uu_derivative(), Vector3D([-1, 0, 0]))
@@ -234,59 +233,42 @@ def test_sphere_evaluation():
 def test_cone():
     """``Cone`` construction and equivalency."""
 
-    # Create two Cone objects
-    origin = Point3D([42, 99, 13])
-    radius = 100
-    half_angle = 0.78539816
-    c_1 = Cone(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), radius, half_angle)
-    c_1_duplicate = Cone(
-        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), radius, half_angle
-    )
-    c_2 = Cone(Point3D([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 0.65)
-    c_with_array_definitions = Cone([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 0.65)
+    origin = Point3D([0, 0, 0])
+    radius = 1
+    half_angle = np.pi / 4
+    cone = Cone(origin, radius, half_angle)
 
-    # Check that the equals operator works
-    assert c_1 == c_1_duplicate
-    assert c_1 != c_2
-    assert c_2 == c_with_array_definitions
+    assert np.allclose(cone.origin, origin)
+    assert cone.radius.m == radius
+    assert cone.half_angle.value.m == half_angle
+    assert np.allclose(cone.dir_x, UNITVECTOR3D_X)
+    assert np.allclose(cone.dir_y, UNITVECTOR3D_Y)
+    assert np.allclose(cone.dir_z, UNITVECTOR3D_Z)
+    assert Accuracy.length_is_equal(cone.height.m, 1)
+    assert Accuracy.length_is_equal(cone.surface_area.m, 7.58447559)
+    assert Accuracy.length_is_equal(cone.volume.m, 1.04719755)
+    assert np.allclose(cone.apex, Point3D([0, 0, -1]))
 
-    # Check cone definition
-    assert c_1.origin.x == origin.x
-    assert c_1.origin.y == origin.y
-    assert c_1.origin.z == origin.z
-    assert c_1.radius == radius
-    assert c_1.half_angle == half_angle
-
-    c_1.origin = new_origin = Point3D([42, 88, 99])
-    c_1.radius = new_radius = 1000
-    c_1.half_angle = new_half_angle = 0.78539816
-
-    assert c_1.origin.x == new_origin.x
-    assert c_1.origin.y == new_origin.y
-    assert c_1.origin.z == new_origin.z
-    assert c_1.radius == new_radius
-    assert c_1.half_angle == new_half_angle
+    duplicate = Cone(origin, radius, half_angle)
+    assert cone == duplicate
 
     with pytest.raises(BeartypeCallHintParamViolation):
-        Cone(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), "A", 200)
+        Cone(origin, "A", 200)
 
     with pytest.raises(BeartypeCallHintParamViolation):
-        Cone(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, "A")
+        Cone(origin, 100, "A")
 
     with pytest.raises(BeartypeCallHintParamViolation):
-        c_1.radius = "A"
+        cone.origin = "A"
 
     with pytest.raises(BeartypeCallHintParamViolation):
-        c_1.half_angle = "A"
+        Cone(origin, 100, 200, "A", UnitVector3D([25, 39, 82]))
 
     with pytest.raises(BeartypeCallHintParamViolation):
-        c_1.origin = "A"
+        Cone(origin, 100, 200, UnitVector3D([12, 31, 99]), "A")
 
-    with pytest.raises(BeartypeCallHintParamViolation):
-        Cone(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
-
-    with pytest.raises(BeartypeCallHintParamViolation):
-        Cone(origin, UnitVector3D([12, 31, 99]), "A", 100, 200)
+    with pytest.raises(ValueError):
+        Cone(origin, 1, 1, UnitVector3D([1, 0, 0]), UnitVector3D([1, 1, 1]))
 
 
 def test_cone_units():
@@ -294,9 +276,12 @@ def test_cone_units():
 
     origin = Point3D([42, 99, 13])
     radius = 100
+    radius_unit = UNITS.mm
     half_angle = 45
-    unit_radius = UNITS.mm
-    unit_angle = UNITS.degree
+    angle_unit = UNITS.degrees
+
+    cone = Cone(origin, Quantity(radius, radius_unit), Quantity(half_angle, angle_unit))
+
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
@@ -304,67 +289,62 @@ def test_cone_units():
     ):
         Cone(
             origin,
-            UnitVector3D([12, 31, 99]),
-            UnitVector3D([25, 39, 82]),
-            radius,
+            Quantity(radius, UNITS.celsius),
             half_angle,
-            UNITS.celsius,
         )
 
     with pytest.raises(
         TypeError,
         match="The pint.Unit provided as an input should be a dimensionless quantity.",
     ):
-        Cone(
-            origin,
-            UnitVector3D([12, 31, 99]),
-            UnitVector3D([25, 39, 82]),
-            radius,
-            half_angle,
-            unit_radius,
-            UNITS.celsius,
-        )
-
-    c_1 = Cone(
-        origin,
-        UnitVector3D([12, 31, 99]),
-        UnitVector3D([25, 39, 82]),
-        radius,
-        half_angle,
-        unit_radius,
-        unit_angle,
-    )
-
-    # Verify rejection of invalid base unit type
-    with pytest.raises(
-        TypeError,
-        match=r"The pint.Unit provided as an input should be a \[length\] quantity.",
-    ):
-        c_1.length_unit = UNITS.celsius
-
-    with pytest.raises(
-        TypeError,
-        match=r"The pint.Unit provided as an input should be a dimensionless quantity.",
-    ):
-        c_1.angle_unit = UNITS.celsius
+        Cone(origin, Quantity(radius, UNITS.mm), Quantity(half_angle, UNITS.celsius))
 
     # Check that the units are correctly in place
-    assert c_1.length_unit == unit_radius
-    assert c_1.angle_unit == unit_angle
+    assert cone.radius.u == radius_unit
+    assert cone.half_angle.unit == angle_unit
 
     # Request for radius and half angle are in expected units
-    assert c_1.radius == radius
-    assert c_1.half_angle == half_angle
-
-    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
-    assert c_1._radius == (c_1.radius * c_1.length_unit).to_base_units().magnitude
-    assert c_1._half_angle == (c_1.half_angle * c_1.angle_unit).to_base_units().magnitude
+    assert cone.radius == Quantity(radius, UNITS.mm)
+    assert cone.half_angle == Angle(half_angle, UNITS.degrees)
 
     # Change units to and check if the values changed
-    c_1.length_unit = new_unit_radius = UNITS.cm
-    c_1.angle_unit = new_unit_angle = UNITS.radian
-    assert c_1.radius == UNITS.convert(radius, unit_radius, new_unit_radius)
-    assert c_1.half_angle == UNITS.convert(half_angle, unit_angle, new_unit_angle)
+    cone._radius.unit = new_unit_radius = UNITS.cm
+    cone.half_angle.unit = new_unit_angle = UNITS.radian
+    assert cone.radius.m == UNITS.convert(radius, radius_unit, new_unit_radius)
+    assert Accuracy.angle_is_zero(
+        cone.half_angle.value - UNITS.convert(half_angle, angle_unit, new_unit_angle)
+    )
+
+
+def test_cone_evaluation():
+    origin = Point3D([0, 0, 0])
+    radius = 1
+    half_angle = np.pi / 4
+    cone = Cone(origin, radius, half_angle)
+
+    eval = cone.evaluate(ParamUV(0, 0))
+
+    # Test base evaluation at (0, 0)
+    assert eval.cone == cone
+    assert np.allclose(eval.position(), Point3D([1, 0, 0]))
+    assert np.allclose(eval.normal(), UnitVector3D([1, 0, -1]))
+    assert np.allclose(eval.u_derivative(), Vector3D([0, 1, 0]))
+    assert np.allclose(eval.v_derivative(), Vector3D([1, 0, 1]))
+    assert np.allclose(eval.uu_derivative(), Vector3D([-1, 0, 0]))
+    assert np.allclose(eval.uv_derivative(), Vector3D([0, 1, 0]))
+    assert np.allclose(eval.vv_derivative(), Vector3D([0, 0, 0]))
+    assert eval.min_curvature() == 0
+    assert np.allclose(eval.min_curvature_direction(), UnitVector3D([1, 0, 1]))
+    assert eval.max_curvature() == 1.0
+    assert np.allclose(eval.max_curvature_direction(), UnitVector3D([0, 1, 0]))
+
+    # # Test evaluation by projecting a point onto the sphere
+    eval2 = cone.project_point(Point3D([1, 1, 1]))
+    assert eval2.cone == cone
+    assert np.allclose(eval2.position(), Point3D([1.20710678, 1.20710678, 0.70710678]))
+    assert np.allclose(eval2.normal(), UnitVector3D([0.5, 0.5, -0.70710678]))
+    assert np.allclose(eval2.u_derivative().normalize(), UnitVector3D([-1, 1, 0]))
+    assert np.allclose(eval2.v_derivative(), Vector3D([0.70710678, 0.70710678, 1]))
 
 
 def test_torus():
