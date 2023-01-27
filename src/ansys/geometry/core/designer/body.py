@@ -103,7 +103,7 @@ class Body:
 
     @property
     def _grpc_id(self) -> EntityIdentifier:
-        """gRPC body identifier of this body."""
+        """gRPC entity identifier of this body."""
         return EntityIdentifier(id=self._id)
 
     @property
