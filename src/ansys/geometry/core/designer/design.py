@@ -164,7 +164,6 @@ class Design(Component):
         self,
         file_location: Union[Path, str],
         format: Optional[DesignFileFormat] = DesignFileFormat.SCDOCX,
-        as_stream: Optional[bool] = False,
     ) -> None:
         """Download a design from the active Geometry server instance.
 
@@ -174,38 +173,20 @@ class Design(Component):
             Location on disk to save the file to.
         format :DesignFileFormat, default: DesignFileFormat.SCDOCX
             Format for the file to save to.
-        as_stream : bool, default: False
-            Whether to use the gRPC stream functionality (if possible). If
-            ``True``, single-message functionality is used.
         """
         # Sanity checks on inputs
         if isinstance(file_location, Path):
             file_location = str(file_location)
 
-        # Process response (as stream or single file)
-        stream_msg = f"Downloading design in {format.value[0]} format using the stream mechanism."
-        single_msg = (
-            f"Downloading design in {format.value[0]} format using the single-message mechanism."
-        )
+        # Process response
+        self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
         received_bytes = bytes()
         if format is DesignFileFormat.SCDOCX:
-            if as_stream:
-                self._grpc_client.log.debug(stream_msg)
-                response_iterator = self._commands_stub.DownloadFileStream(Empty())
-                for response in response_iterator:
-                    received_bytes += response.chunk
-            else:
-                self._grpc_client.log.debug(single_msg)
-                response = self._commands_stub.DownloadFile(Empty())
-                received_bytes += response.data
+            response = self._commands_stub.DownloadFile(Empty())
+            received_bytes += response.data
         elif (format is DesignFileFormat.PARASOLID_TEXT) or (
             format is DesignFileFormat.PARASOLID_BIN
         ):
-            if as_stream:
-                self._grpc_client.log.warning(
-                    "Streaming mechanism is not supported for Parasolid format."
-                )
-            self._grpc_client.log.debug(single_msg)
             response = self._design_stub.Export(ExportRequest(format=format.value[1]))
             received_bytes += response.data
         else:

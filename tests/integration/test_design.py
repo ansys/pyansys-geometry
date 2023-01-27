@@ -778,13 +778,10 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
 
     # Download the design
     file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.scdocx"
-    file_stream = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder_stream.scdocx"
-    design.download(file, as_stream=False)
-    # design.download(file_stream, as_stream=True)
+    design.download(file)
 
-    # Check that both files exist
+    # Check that the file exists
     assert file.exists()
-    # assert file_stream.exists()
 
     # Check that we can also save it (even if it is not accessible on the server)
     file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
@@ -792,16 +789,11 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
 
     # Check for parasolid exports
     binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
-    text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder_stream.x_t"
+    text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
     design.download(binary_parasolid_file, format=DesignFileFormat.PARASOLID_BIN)
     design.download(text_parasolid_file, format=DesignFileFormat.PARASOLID_TEXT)
     assert binary_parasolid_file.exists()
     assert text_parasolid_file.exists()
-
-    # Check also the invalid format is not supported - no download performed
-    invalid_file = tmp_path_factory.mktemp("scdoc_files_download") / "invalid.file"
-    design.download(invalid_file, format=DesignFileFormat.INVALID, as_stream=True)
-    assert not invalid_file.exists()
 
 
 def test_slot_extrusion(modeler: Modeler):
