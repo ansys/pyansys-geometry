@@ -7,7 +7,7 @@ import numpy as np
 from pint import Quantity
 
 from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
-from ansys.geometry.core.misc import UNIT_ANGLE, Angle, Distance
+from ansys.geometry.core.misc import Angle, Distance
 from ansys.geometry.core.primitives.line import Line
 from ansys.geometry.core.primitives.surface_evaluation import ParamUV, SurfaceEvaluation
 from ansys.geometry.core.typing import Real, RealSequence
@@ -61,21 +61,15 @@ class Cone:
         """Origin of the cone."""
         return self._origin
 
-    @origin.setter
-    @check_input_types
-    def origin(self, origin: Point3D) -> None:
-        """Set the origin of the cone."""
-        self._origin = origin
-
     @property
     def radius(self) -> Quantity:
         """Radius of the cone."""
         return self._radius.value
 
     @property
-    def half_angle(self) -> Angle:
+    def half_angle(self) -> Quantity:
         """Half angle of the apex."""
-        return self._half_angle
+        return self._half_angle.value
 
     @property
     def dir_x(self) -> UnitVector3D:
@@ -94,8 +88,8 @@ class Cone:
 
     @property
     def height(self) -> Quantity:
-        """Height of the cone"""
-        return np.abs(self.radius / np.tan(self.half_angle.value))
+        """Height of the cone."""
+        return np.abs(self.radius / np.tan(self.half_angle))
 
     @property
     def surface_area(self) -> Quantity:
@@ -109,13 +103,13 @@ class Cone:
 
     @property
     def apex(self) -> Point3D:
-        """Apex point of the cone"""
+        """Apex point of the cone."""
         return self.origin + self.apex_param * self.dir_z
 
     @property
-    def apex_param(self) -> float:
-        """Apex parameter of the cone"""
-        return -np.abs(self.radius.m) / np.tan(self.half_angle.value.m)
+    def apex_param(self) -> Real:
+        """Apex parameter of the cone."""
+        return -np.abs(self.radius.m) / np.tan(self.half_angle.m)
 
     @check_input_types
     def __eq__(self, other: "Cone") -> bool:
@@ -143,10 +137,10 @@ class Cone:
         line_eval = axis.project_point(point)
         v = line_eval.parameter
 
-        cone_radius = self.radius.m + v * np.tan(self.half_angle.value.m)
+        cone_radius = self.radius.m + v * np.tan(self.half_angle.m)
         point_radius = np.linalg.norm(point - line_eval.position())
-        dist_to_cone = (point_radius - cone_radius) * np.cos(self.half_angle.value.m)
-        v += dist_to_cone * np.sin(self.half_angle.value.m)
+        dist_to_cone = (point_radius - cone_radius) * np.cos(self.half_angle.m)
+        v += dist_to_cone * np.sin(self.half_angle.m)
 
         return ConeEvaluation(self, ParamUV(u, v))
 
@@ -189,22 +183,22 @@ class ConeEvaluation(SurfaceEvaluation):
     def normal(self) -> UnitVector3D:
         """The normal to the surface."""
         return UnitVector3D(
-            self.__cone_normal() * np.cos(self.cone.half_angle.value.m)
-            - self.cone.dir_z * np.sin(self.cone.half_angle.value.m)
+            self.__cone_normal() * np.cos(self.cone.half_angle.m)
+            - self.cone.dir_z * np.sin(self.cone.half_angle.m)
         )
 
-    def __radius_v(self) -> float:
-        """Private radius helper method"""
-        return self.cone.radius.m + self.parameter.v * np.tan(self.cone.half_angle.value.m)
+    def __radius_v(self) -> Real:
+        """Private radius helper method."""
+        return self.cone.radius.m + self.parameter.v * np.tan(self.cone.half_angle.m)
 
     def __cone_normal(self) -> Vector3D:
-        """Private normal helper method"""
+        """Private normal helper method."""
         return (
             np.cos(self.parameter.u) * self.cone.dir_x + np.sin(self.parameter.u) * self.cone.dir_y
         )
 
     def __cone_tangent(self) -> Vector3D:
-        """Private tangent helper method"""
+        """Private tangent helper method."""
         return (
             -np.sin(self.parameter.u) * self.cone.dir_x + np.cos(self.parameter.u) * self.cone.dir_y
         )
@@ -215,7 +209,7 @@ class ConeEvaluation(SurfaceEvaluation):
 
     def v_derivative(self) -> Vector3D:
         """The first derivative with respect to v."""
-        return self.cone.dir_z + np.tan(self.cone.half_angle.value.m) * self.__cone_normal()
+        return self.cone.dir_z + np.tan(self.cone.half_angle.m) * self.__cone_normal()
 
     def uu_derivative(self) -> Vector3D:
         """The second derivative with respect to u."""
@@ -223,7 +217,7 @@ class ConeEvaluation(SurfaceEvaluation):
 
     def uv_derivative(self) -> Vector3D:
         """The second derivative with respect to u and v."""
-        return np.tan(self.cone.half_angle.value.m) * self.__cone_tangent()
+        return np.tan(self.cone.half_angle.m) * self.__cone_tangent()
 
     def vv_derivative(self) -> Vector3D:
         """The second derivative with respect to v."""

@@ -12,7 +12,6 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import UNITS, Accuracy, Distance
-from ansys.geometry.core.misc.measurements import Angle
 from ansys.geometry.core.primitives import (
     Circle,
     Cone,
@@ -240,13 +239,21 @@ def test_cone():
 
     assert np.allclose(cone.origin, origin)
     assert cone.radius.m == radius
-    assert cone.half_angle.value.m == half_angle
+    assert isinstance(cone.radius, Quantity)
+    assert cone.half_angle.m == half_angle
+    assert isinstance(cone.half_angle, Quantity)
     assert np.allclose(cone.dir_x, UNITVECTOR3D_X)
     assert np.allclose(cone.dir_y, UNITVECTOR3D_Y)
     assert np.allclose(cone.dir_z, UNITVECTOR3D_Z)
     assert Accuracy.length_is_equal(cone.height.m, 1)
+    assert cone.height.u == "meter"
+    assert isinstance(cone.height, Quantity)
     assert Accuracy.length_is_equal(cone.surface_area.m, 7.58447559)
+    assert cone.surface_area.u == "meter ** 2"
+    assert isinstance(cone.surface_area, Quantity)
     assert Accuracy.length_is_equal(cone.volume.m, 1.04719755)
+    assert cone.volume.u == "meter ** 3"
+    assert isinstance(cone.volume, Quantity)
     assert np.allclose(cone.apex, Point3D([0, 0, -1]))
 
     duplicate = Cone(origin, radius, half_angle)
@@ -257,7 +264,7 @@ def test_cone():
 
     assert np.allclose(neg_cone.origin, origin)
     assert neg_cone.radius.m == radius
-    assert neg_cone.half_angle.value.m == -half_angle
+    assert neg_cone.half_angle.m == -half_angle
     assert np.allclose(neg_cone.dir_x, UNITVECTOR3D_X)
     assert np.allclose(neg_cone.dir_y, UNITVECTOR3D_Y)
     assert np.allclose(neg_cone.dir_z, UNITVECTOR3D_Z)
@@ -271,9 +278,6 @@ def test_cone():
 
     with pytest.raises(BeartypeCallHintParamViolation):
         Cone(origin, 100, "A")
-
-    with pytest.raises(BeartypeCallHintParamViolation):
-        cone.origin = "A"
 
     with pytest.raises(BeartypeCallHintParamViolation):
         Cone(origin, 100, 200, "A", UnitVector3D([25, 39, 82]))
@@ -315,18 +319,18 @@ def test_cone_units():
 
     # Check that the units are correctly in place
     assert cone.radius.u == radius_unit
-    assert cone.half_angle.unit == angle_unit
+    assert cone.half_angle.u == angle_unit
 
     # Request for radius and half angle are in expected units
     assert cone.radius == Quantity(radius, UNITS.mm)
-    assert cone.half_angle == Angle(half_angle, UNITS.degrees)
+    assert cone.half_angle == Quantity(half_angle, UNITS.degrees)
 
     # Change units to and check if the values changed
     cone._radius.unit = new_unit_radius = UNITS.cm
-    cone.half_angle.unit = new_unit_angle = UNITS.radian
+    cone._half_angle.unit = new_unit_angle = UNITS.radian
     assert cone.radius.m == UNITS.convert(radius, radius_unit, new_unit_radius)
     assert Accuracy.angle_is_zero(
-        cone.half_angle.value - UNITS.convert(half_angle, angle_unit, new_unit_angle)
+        cone.half_angle - UNITS.convert(half_angle, angle_unit, new_unit_angle)
     )
 
 
@@ -341,16 +345,25 @@ def test_cone_evaluation():
     # Test base evaluation at (0, 0)
     assert eval.cone == cone
     assert np.allclose(eval.position(), Point3D([1, 0, 0]))
+    assert isinstance(eval.position(), Point3D)
     assert np.allclose(eval.normal(), UnitVector3D([1, 0, -1]))
+    assert isinstance(eval.normal(), UnitVector3D)
     assert np.allclose(eval.u_derivative(), Vector3D([0, 1, 0]))
+    assert isinstance(eval.u_derivative(), Vector3D)
     assert np.allclose(eval.v_derivative(), Vector3D([1, 0, 1]))
+    assert isinstance(eval.v_derivative(), Vector3D)
     assert np.allclose(eval.uu_derivative(), Vector3D([-1, 0, 0]))
+    assert isinstance(eval.uu_derivative(), Vector3D)
     assert np.allclose(eval.uv_derivative(), Vector3D([0, 1, 0]))
+    assert isinstance(eval.uv_derivative(), Vector3D)
     assert np.allclose(eval.vv_derivative(), Vector3D([0, 0, 0]))
+    assert isinstance(eval.vv_derivative(), Vector3D)
     assert eval.min_curvature() == 0
     assert np.allclose(eval.min_curvature_direction(), UnitVector3D([1, 0, 1]))
+    assert isinstance(eval.min_curvature_direction(), UnitVector3D)
     assert eval.max_curvature() == 1.0
     assert np.allclose(eval.max_curvature_direction(), UnitVector3D([0, 1, 0]))
+    assert isinstance(eval.max_curvature_direction(), UnitVector3D)
 
     # # Test evaluation by projecting a point onto the sphere
     eval2 = cone.project_point(Point3D([1, 1, 1]))
