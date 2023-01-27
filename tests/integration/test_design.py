@@ -275,7 +275,7 @@ def test_named_selections(modeler: Modeler):
     assert len(design.named_selections) == 4
 
     # Now, let's delete the duplicated entry CircleAndPolygon_2
-    design.delete_named_selection(dupl_named_selection.id)
+    design.delete_named_selection(dupl_named_selection)
     assert len(design.named_selections) == 3
     assert design.named_selections[0].name == "OnlyCircle"
     assert design.named_selections[1].name == "OnlyPolygon"
@@ -427,7 +427,6 @@ def test_coordinate_system_creation(modeler: Modeler):
     assert "  Frame Z-direction    : " in nested_comp_cs1_str
 
 
-@pytest.mark.skip(reason="Not working so far. to be investigated")
 def test_delete_body_component(modeler: Modeler):
     """Test for verifying the deletion of ``Component`` and ``Body`` objects.
 

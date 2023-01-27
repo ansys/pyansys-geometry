@@ -19,7 +19,7 @@ from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialPro
 from ansys.api.geometry.v0.models_pb2 import PartExportFormat
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from beartype import beartype as check_input_types
-from beartype.typing import List, Optional, Union
+from beartype.typing import Dict, List, Optional, Union
 import numpy as np
 from pint import Quantity
 
@@ -71,8 +71,8 @@ class Design(Component):
 
     # Types of the class instance private attributes
     _materials: List[Material]
-    _named_selections: List[NamedSelection]
-    _beam_profiles: List[BeamProfile]
+    _named_selections: Dict[str, NamedSelection]
+    _beam_profiles: Dict[str, BeamProfile]
 
     @protect_grpc
     @check_input_types
@@ -252,11 +252,11 @@ class Design(Component):
         named_selection = NamedSelection(
             name, self._grpc_client, bodies=bodies, faces=faces, edges=edges
         )
-        self._named_selections[named_selection.id] = named_selection
+        self._named_selections[named_selection.name] = named_selection
 
         self._grpc_client.log.debug(f"Named selection {named_selection.name} successfully created.")
 
-        return self._named_selections[named_selection.id]
+        return self._named_selections[named_selection.name]
 
     @protect_grpc
     @check_input_types
@@ -268,13 +268,17 @@ class Design(Component):
         named_selection : Union[NamedSelection, str]
             Name of the named selection or instance.
         """
-        removal_name = (
-            named_selection.id if not isinstance(named_selection, str) else named_selection
-        )
-        self._named_selections_stub.Delete(EntityIdentifier(id=removal_name))
+        if isinstance(named_selection, str):
+            removal_name = named_selection
+            removal_id = self._named_selections.get(named_selection, None)
+        else:
+            removal_name = named_selection.name
+            removal_id = named_selection.id
+
+        self._named_selections_stub.Delete(EntityIdentifier(id=removal_id))
 
         try:
-            self._named_selections.pop(named_selection)
+            self._named_selections.pop(removal_name)
             self._grpc_client.log.debug(f"Named selection {removal_name} is successfully deleted.")
         except KeyError:
             self._grpc_client.log.warning(
