@@ -54,11 +54,7 @@ class Cone:
         if self._radius.value <= 0:
             raise ValueError("Radius must be a real positive value.")
 
-        if isinstance(half_angle, (int, float)):
-            half_angle = Angle(half_angle, UNIT_ANGLE)
-        self._half_angle = (
-            half_angle if isinstance(half_angle, Angle) else Angle(half_angle, half_angle.units)
-        )
+        self._half_angle = half_angle if isinstance(half_angle, Angle) else Angle(half_angle)
 
     @property
     def origin(self) -> Point3D:
