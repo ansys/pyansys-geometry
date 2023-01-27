@@ -164,6 +164,7 @@ class ConeEvaluation(SurfaceEvaluation):
     """
 
     def __init__(self, cone: Cone, parameter: ParamUV) -> None:
+        """``ConeEvaluation`` class constructor."""
         self._cone = cone
         self._parameter = parameter
 
