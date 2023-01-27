@@ -59,7 +59,7 @@ Once authenticated, please proceed to download the Geometry Service Docker image
 
 .. code:: bash
 
-   docker pull ghcr.io/pyansys/pygeometry:<tag>
+   docker pull ghcr.io/pyansys/geometry:<tag>
 
 The following OS-dependent tags are available:
 
@@ -85,7 +85,7 @@ First, start the Geometry service locally. If you have Docker installed and have
 
 .. code:: bash
 
-   docker run --name ans_geo -p 50051:50051 ghcr.io/pyansys/pygeometry:windows-latest
+   docker run --name ans_geo -p 50051:50051 ghcr.io/pyansys/geometry:windows-latest
 
 Next, connect to the service with:
 

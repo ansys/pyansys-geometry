@@ -27,7 +27,7 @@ Install the PyGeometry image
 
    .. code:: bash
 
-      docker pull ghcr.io/pyansys/pygeometry:<tag>
+      docker pull ghcr.io/pyansys/geometry:<tag>
 
    The following OS-dependent tags are available:
 
@@ -62,7 +62,7 @@ The Geometry service can be launched locally in two different ways:
 
        .. code:: bash
 
-          docker run --name ans_geo -p 50051:50051 ghcr.io/pyansys/pygeometry:windows-latest
+          docker run --name ans_geo -p 50051:50051 ghcr.io/pyansys/geometry:windows-latest
 
 
 Connect to the Geometry service

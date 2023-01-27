@@ -13,7 +13,7 @@ env:
   PACKAGE_NAME: 'ansys-geometry-core'
   PACKAGE_NAMESPACE: 'ansys.geometry.core'
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
-  ANSRV_GEO_IMAGE: ghcr.io/pyansys/pygeometry:windows-latest
+  ANSRV_GEO_IMAGE: ghcr.io/pyansys/geometry:windows-latest
   ANSRV_GEO_PORT: 700
   GEO_CONT_NAME: ans_geo
   RESET_IMAGE_CACHE: 6

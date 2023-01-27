@@ -26,7 +26,7 @@ By default, it searches for the environment variable ``PYGEOMETRY_MAX_MESSAGE_LE
 and if it does not exist, it falls back to ``256Mb``.
 """
 
-GEOMETRY_SERVICE_DOCKER_IMAGE = "ghcr.io/pyansys/pygeometry"
+GEOMETRY_SERVICE_DOCKER_IMAGE = "ghcr.io/pyansys/geometry"
 """
 Default Geometry Service Docker image location.
 
