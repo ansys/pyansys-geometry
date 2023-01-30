@@ -5,9 +5,11 @@ from beartype.typing import Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math import Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import Distance
-from ansys.geometry.core.primitives import Circle, Line, ParamUV, SurfaceEvaluation
+from ansys.geometry.core.primitives.circle import Circle
+from ansys.geometry.core.primitives.line import Line
+from ansys.geometry.core.primitives.surface_evaluation import ParamUV, SurfaceEvaluation
 from ansys.geometry.core.typing import Real, RealSequence
 
 
@@ -32,8 +34,8 @@ class Cylinder:
         self,
         origin: Union[np.ndarray, RealSequence, Point3D],
         radius: Union[Quantity, Distance, Real],
-        reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D],
-        axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D],
+        reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
+        axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
         """Constructor method for the ``Cylinder`` class."""
 
@@ -75,20 +77,21 @@ class Cylinder:
         """Z-direction of the cylinder."""
         return self._axis
 
-    @property
-    def height(self) -> Quantity:
-        """Height of the cylinder."""
-        return self._height.value
-
-    @property
-    def surface_area(self, height: Real) -> Quantity:
+    def surface_area(self, height: Union[Quantity, Distance, Real]) -> Quantity:
         """Surface area of the cylinder."""
-        return 2 * np.pi * self.radius * height + 2 * np.pi * self.radius**2
+        height = height if isinstance(height, Distance) else Distance(height)
+        if height.value <= 0:
+            raise ValueError("Height must be a real positive value.")
 
-    @property
-    def volume(self, height: Real) -> Quantity:
+        return 2 * np.pi * self.radius * height.value + 2 * np.pi * self.radius**2
+
+    def volume(self, height: Union[Quantity, Distance, Real]) -> Quantity:
         """Volume of the cylinder."""
-        return np.pi * self.radius**2 * height
+        height = height if isinstance(height, Distance) else Distance(height)
+        if height.value <= 0:
+            raise ValueError("Height must be a real positive value.")
+
+        return np.pi * self.radius**2 * height.value
 
     @check_input_types
     def __eq__(self, other: "Cylinder") -> bool:
@@ -112,7 +115,7 @@ class Cylinder:
         line = Line(self.origin, self.dir_z)
         v = line.project_point(point).parameter
 
-        return CylinderEvaluation(ParamUV(u, v))
+        return CylinderEvaluation(self, ParamUV(u, v))
 
 
 class CylinderEvaluation(SurfaceEvaluation):
