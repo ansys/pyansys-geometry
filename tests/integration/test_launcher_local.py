@@ -9,19 +9,31 @@ from ansys.geometry.core.connection import LocalDockerInstance, launch_local_mod
 
 
 def _check_no_shutdown_warning(port: int, log: str) -> bool:
-    msg = f"WARNING  localhost:{port}:client\.py:[0-9]+ Geometry Service will not be shutdown since it was already running\.\.\."  # noqa : E501
+    msg = (
+        "WARNING  localhost:"
+        + str(port)
+        + r":client\.py:[0-9]+ Geometry Service will not be shutdown since it was already running\.\.\."  # noqa : E501
+    )
     pattern = re.compile(msg)
     return True if pattern.search(log) else False
 
 
 def _check_service_already_running(port: int, log: str) -> bool:
-    msg = f"WARNING  PyGeometry_global:localinstance\.py:[0-9]+ Service already running at port {port}\.\.\."  # noqa : E501
+    msg = (
+        r"WARNING  PyGeometry_global:localinstance\.py:[0-9]+ Service already running at port "
+        + str(port)
+        + r"\.\.\."
+    )
     pattern = re.compile(msg)
     return True if pattern.search(log) else False
 
 
 def _check_restarting_service(port: int, log: str) -> bool:
-    msg = f"WARNING  PyGeometry_global:localinstance\.py:124 Restarting service already running at port {port}\.\.\."  # noqa : E501
+    msg = (
+        r"WARNING  PyGeometry_global:localinstance\.py:124 Restarting service already running at port "  # noqa : E501
+        + str(port)
+        + r"\.\.\."
+    )
     pattern = re.compile(msg)
     return True if pattern.search(log) else False
 
