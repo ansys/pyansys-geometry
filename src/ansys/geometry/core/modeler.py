@@ -13,7 +13,7 @@ from ansys.geometry.core.typing import Real
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.platform.instancemanagement import Instance
 
-    from ansys.geometry.core.connection.localinstance import LocalDockerInstance
+    from ansys.geometry.core.connection.local_instance import LocalDockerInstance
     from ansys.geometry.core.designer import Design
 
 
