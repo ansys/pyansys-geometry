@@ -57,7 +57,7 @@ tests = [
     "ansys-platform-instancemanagement==1.0.3",
     "pytest==7.2.1",
     "pytest-cov==4.0.0",
-    "pytest-pyvista==0.1.4",
+    "pytest-pyvista==0.1.5",
 ]
 doc = [
     "ansys-sphinx-theme==0.8.1",
