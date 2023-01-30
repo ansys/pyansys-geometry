@@ -17,7 +17,7 @@ import pyvista as pv
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.defaults import GEOMETRY_SERVICE_DOCKER_IMAGE
-from ansys.geometry.core.connection.localinstance import GeometryContainers, LocalDockerInstance
+from ansys.geometry.core.connection.local_instance import GeometryContainers, LocalDockerInstance
 
 pv.OFF_SCREEN = True
 

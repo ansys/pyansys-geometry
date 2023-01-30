@@ -20,7 +20,7 @@ def _check_no_shutdown_warning(port: int, log: str) -> bool:
 
 def _check_service_already_running(port: int, log: str) -> bool:
     msg = (
-        r"WARNING  PyGeometry_global:localinstance\.py:[0-9]+ Service already running at port "
+        r"WARNING  PyGeometry_global:local_instance\.py:[0-9]+ Service already running at port "
         + str(port)
         + r"\.\.\."
     )
@@ -30,7 +30,7 @@ def _check_service_already_running(port: int, log: str) -> bool:
 
 def _check_restarting_service(port: int, log: str) -> bool:
     msg = (
-        r"WARNING  PyGeometry_global:localinstance\.py:124 Restarting service already running at port "  # noqa : E501
+        r"WARNING  PyGeometry_global:local_instance\.py:124 Restarting service already running at port "  # noqa : E501
         + str(port)
         + r"\.\.\."
     )
