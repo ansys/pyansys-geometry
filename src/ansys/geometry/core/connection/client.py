@@ -139,6 +139,11 @@ class GrpcClient:
         return self._log
 
     @property
+    def is_closed(self) -> bool:
+        """Checks if the client connection is closed or not."""
+        return self._closed
+
+    @property
     def healthy(self) -> bool:
         """Check if the client channel if healthy."""
         if self._closed:
