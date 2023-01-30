@@ -2,7 +2,7 @@
 from beartype.typing import TYPE_CHECKING, Optional
 
 from ansys.geometry.core.connection.defaults import DEFAULT_PORT
-from ansys.geometry.core.connection.localinstance import GeometryContainers, LocalDockerInstance
+from ansys.geometry.core.connection.local_instance import GeometryContainers, LocalDockerInstance
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.misc import check_type
 

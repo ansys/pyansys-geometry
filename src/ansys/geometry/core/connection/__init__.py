@@ -17,4 +17,4 @@ from ansys.geometry.core.connection.launcher import (
     launch_modeler,
     launch_remote_modeler,
 )
-from ansys.geometry.core.connection.localinstance import GeometryContainers, LocalDockerInstance
+from ansys.geometry.core.connection.local_instance import GeometryContainers, LocalDockerInstance
