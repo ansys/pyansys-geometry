@@ -34,7 +34,7 @@ from ansys.geometry.core.connection import (
 from ansys.geometry.core.connection.conversions import point3d_to_grpc_point
 from ansys.geometry.core.designer.beam import Beam, BeamProfile
 from ansys.geometry.core.designer.body import Body
-from ansys.geometry.core.designer.coordinatesystem import CoordinateSystem
+from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import Frame, Point3D, UnitVector3D
