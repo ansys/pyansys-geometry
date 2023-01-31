@@ -15,6 +15,8 @@ env:
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
   ANSRV_GEO_IMAGE: ghcr.io/pyansys/geometry:windows-latest
   ANSRV_GEO_PORT: 700
+  ANSRV_GEO_USE_DEBUG_MODE: 0
+  ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo
   RESET_IMAGE_CACHE: 6
   IS_WORKFLOW_RUNNING: True
