@@ -34,8 +34,60 @@ Install the PyGeometry image
    * ``windows-latest``
    * ``windows-latest-unstable``
 
-Launching the Geometry service
+Launching the Geometry Service
 ------------------------------
+
+In this section we will see two mechanisms for launching the Geometry Service: either **using the PyGeometry launcher**
+or **manually launching the service**.
+
+Environment variables
+^^^^^^^^^^^^^^^^^^^^^
+
+The Geometry Service has a set of environment variables that are **mandatory** for its use:
+
+* ``LICENSE_SERVER``: the license server (IP, DNS) to which the Geometry Service shall connect. For example, ``127.0.0.1``.
+
+Other optional environment variables are:
+
+* ``ENABLE_TRACE``: whether to set up the trace level for debugging purposes. Expects either ``1`` or ``0``.
+  By default, ``0`` (which means it is not activated).
+* ``LOG_LEVEL``: sets the Geometry Service logging level. By default, ``2``.
+
+Depending on the mechanism chosen to launch the Geometry Service, you can set them as follows:
+
+.. tab-set:: 
+
+    .. tab-item:: Using PyGeometry launcher
+
+        In this case, users will have to define the following general environment variables prior
+        to launching it. Bare in mind that the naming of the variables is not the same:
+
+        .. tab-set::
+
+            .. tab-item:: Linux/Mac
+
+                .. code-block:: bash
+
+                    export ANSRV_GEO_LICENSE_SERVER=127.0.0.1
+                    export ANSRV_GEO_ENABLE_TRACE=0
+                    export ANSRV_GEO_LOG_LEVEL=2
+
+            .. tab-item:: Windows
+
+                .. code-block:: bash
+
+                    SET ANSRV_GEO_LICENSE_SERVER=127.0.0.1
+                    SET ANSRV_GEO_ENABLE_TRACE=0
+                    SET ANSRV_GEO_LOG_LEVEL=2
+
+    .. tab-item:: Manual Geometry Service launch
+
+        In this case, there is no prior environment variable definition needed. They can
+        directly be passed to the Docker container itself.
+
+
+Geometry Service launcher
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The Geometry service can be launched locally in two different ways:
 
@@ -57,12 +109,13 @@ The Geometry service can be launched locally in two different ways:
 
     .. tab-item:: Manual Geometry Service launch
 
-       This method will involve the user manually launching the Geometry Service. Afterwards, please
-       refer to the next section in order to understand how to connect to it from PyGeometry.
+       This method will involve the user manually launching the Geometry Service. Remember to pass
+       in the different environment variables needed. Afterwards, please refer to the next section in
+       order to understand how to connect to it from PyGeometry.
 
        .. code:: bash
 
-          docker run --name ans_geo -p 50051:50051 ghcr.io/pyansys/geometry:windows-latest
+          docker run --name ans_geo -e LICENSE_SERVER=<LICENSE_SERVER> -p 50051:50051 ghcr.io/pyansys/geometry:windows-latest
 
 
 Connect to the Geometry service

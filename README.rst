@@ -85,7 +85,17 @@ First, start the Geometry service locally. If you have Docker installed and have
 
 .. code:: bash
 
-   docker run --name ans_geo -p 50051:50051 ghcr.io/pyansys/geometry:windows-latest
+   docker run --name ans_geo -e LICENSE_SERVER=<LICENSE-SERVER> -p 50051:50051 ghcr.io/pyansys/geometry:windows-latest
+
+The Geometry Service has a set of environment variables that are **mandatory**:
+
+* ``LICENSE_SERVER``: the license server (IP, DNS) to which the Geometry Service shall connect. For example, ``127.0.0.1``.
+
+Other optional environment variables are:
+
+* ``ENABLE_TRACE``: whether to set up the trace level for debugging purposes. Expects either ``1`` or ``0``.
+  By default, ``0`` (which means it is not activated).
+* ``LOG_LEVEL``: sets the Geometry Service logging level. By default, ``2``.
 
 Next, connect to the service with:
 
