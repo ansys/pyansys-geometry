@@ -1,6 +1,6 @@
 """Module containing the ``LocalDockerInstance`` class."""
-
 from enum import Enum
+import os
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Tuple, Union
@@ -236,6 +236,12 @@ class LocalDockerInstance:
                 auto_remove=True,
                 name=name,
                 ports={"50051/tcp": port},
+                environment={
+                    "LOG_LEVEL": os.getenv("GEOMSERVICE_LOG_LEVEL", 2),
+                    "ENABLE_TRACE": os.getenv("GEOMSERVICE_ENABLE_TRACE", 0),
+                    "USE_DEBUG_MODE": os.getenv("GEOMSERVICE_USE_DEBUG_MODE", 0),
+                    "LICENSE_SERVER": os.getenv("GEOMSERVICE_LICENSE_SERVER", None),
+                },
             )
         except ImageNotFound as err:  # pragma: no cover
             raise RuntimeError(
