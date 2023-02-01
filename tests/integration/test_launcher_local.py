@@ -1,11 +1,18 @@
 """Testing module for the local launcher."""
 
+import os
 import re
 
 import pytest
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection import LocalDockerInstance, launch_local_modeler
+
+SKIP_DOCKER_TESTS_CONDITION = (
+    os.getenv("IS_WORKFLOW_RUNNING") is None,
+    "Local launcher tests only run on workflow.",
+)
+"""Only run local launcher tests if running on workflow."""
 
 
 def _check_no_shutdown_warning(port: int, log: str) -> bool:
@@ -38,11 +45,13 @@ def _check_restarting_service(port: int, log: str) -> bool:
     return True if pattern.search(log) else False
 
 
+@pytest.mark.skipif(SKIP_DOCKER_TESTS_CONDITION[0], reason=SKIP_DOCKER_TESTS_CONDITION[1])
 def test_if_docker_is_installed():
     """Simple test to check if Docker is installed in the machine."""
     assert LocalDockerInstance.is_docker_installed()
 
 
+@pytest.mark.skipif(SKIP_DOCKER_TESTS_CONDITION[0], reason=SKIP_DOCKER_TESTS_CONDITION[1])
 def test_local_launcher_connect(
     modeler: Modeler, caplog: pytest.LogCaptureFixture, docker_instance: LocalDockerInstance
 ):
@@ -71,6 +80,7 @@ def test_local_launcher_connect(
     caplog.clear()
 
 
+@pytest.mark.skipif(SKIP_DOCKER_TESTS_CONDITION[0], reason=SKIP_DOCKER_TESTS_CONDITION[1])
 def test_local_launcher_connect_with_restart(
     modeler: Modeler, caplog: pytest.LogCaptureFixture, docker_instance: LocalDockerInstance
 ):
@@ -116,6 +126,7 @@ def test_local_launcher_connect_with_restart(
     caplog.clear()
 
 
+@pytest.mark.skipif(SKIP_DOCKER_TESTS_CONDITION[0], reason=SKIP_DOCKER_TESTS_CONDITION[1])
 def test_try_deploying_container_with_same_name(
     modeler: Modeler, caplog: pytest.LogCaptureFixture, docker_instance: LocalDockerInstance
 ):
