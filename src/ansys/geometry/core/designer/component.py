@@ -4,7 +4,6 @@ from enum import Enum, unique
 from threading import Thread
 
 from ansys.api.geometry.v0.bodies_pb2 import (
-    BodyIdentifier,
     CreateBodyFromFaceRequest,
     CreateExtrudedBodyFromFaceProfileRequest,
     CreateExtrudedBodyRequest,
@@ -12,15 +11,11 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
-from ansys.api.geometry.v0.commands_pb2 import CreateBeamBodyLinesRequest
+from ansys.api.geometry.v0.commands_pb2 import CreateBeamSegmentsRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.components_pb2 import (
-    ComponentIdentifier,
-    CreateComponentRequest,
-    SetComponentSharedTopologyRequest,
-)
+from ansys.api.geometry.v0.components_pb2 import CreateRequest, SetSharedTopologyRequest
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
-from ansys.api.geometry.v0.models_pb2 import Line
+from ansys.api.geometry.v0.models_pb2 import EntityIdentifier, Line
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
@@ -87,11 +82,11 @@ class Component:
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 
         if parent_component:
-            new_component = self._component_stub.CreateComponent(
-                CreateComponentRequest(display_name=name, parent=parent_component.id)
+            new_component = self._component_stub.Create(
+                CreateRequest(name=name, parent=parent_component.id)
             )
             self._id = new_component.component.id
-            self._name = new_component.component.display_name
+            self._name = new_component.component.name
         else:
             self._name = name
             self._id = None
@@ -185,8 +180,8 @@ class Component:
         self._grpc_client.log.debug(
             f"Setting shared topology type {share_type.value} on {self.id}."
         )
-        self._component_stub.SetComponentSharedTopology(
-            SetComponentSharedTopologyRequest(component=self.id, shareType=share_type.value)
+        self._component_stub.SetSharedTopology(
+            SetSharedTopologyRequest(id=self.id, shareType=share_type.value)
         )
 
         # Store the SharedTopologyType set on the client
@@ -422,7 +417,7 @@ class Component:
         self._grpc_client.log.debug(f"Translating {body_ids_found}...")
         self._bodies_stub.Translate(
             TranslateRequest(
-                bodies=body_ids_found,
+                ids=body_ids_found,
                 direction=unit_vector_to_grpc_direction(direction),
                 distance=magnitude,
             )
@@ -447,7 +442,7 @@ class Component:
             Beam profile to use to create the beams.
         """
 
-        request = CreateBeamBodyLinesRequest(parent=self.id, profile=profile.id)
+        request = CreateBeamSegmentsRequest(parent=self.id, profile=profile.id)
 
         for segment in segments:
             request.lines.append(
@@ -455,7 +450,7 @@ class Component:
             )
 
         self._grpc_client.log.debug(f"Creating beams on {self.id}...")
-        response = self._commands_stub.CreateBeamBodyLines(request)
+        response = self._commands_stub.CreateBeamSegments(request)
         self._grpc_client.log.debug(f"Beams successfully created.")
 
         # Note: The current gRPC API simply returns a list of IDs. There is no additional
@@ -510,7 +505,7 @@ class Component:
         if component_requested:
             # If the component belongs to this component (or nested components)
             # call the server deletion mechanism
-            self._component_stub.DeleteComponent(ComponentIdentifier(id=id))
+            self._component_stub.Delete(EntityIdentifier(id=id))
 
             # If the component was deleted from the server side... "kill" it
             # on the client side
@@ -544,7 +539,7 @@ class Component:
         if body_requested:
             # If the body belongs to this component (or nested components)
             # call the server deletion mechanism
-            self._bodies_stub.Delete(BodyIdentifier(id=id))
+            self._bodies_stub.Delete(EntityIdentifier(id=id))
 
             # If the body was deleted from the server side... "kill" it
             # on the client side

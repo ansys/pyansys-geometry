@@ -17,8 +17,9 @@ jobs:
     name: Run all tests against server
     runs-on: [self-hosted, pygeometry]
     env:
-      ANSRV_GEO_IMAGE: ghcr.io/pyansys/pygeometry:windows-latest-unstable
+      ANSRV_GEO_IMAGE: ghcr.io/pyansys/geometry:windows-latest-unstable
       ANSRV_GEO_PORT: 710
+      ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
       GEO_CONT_NAME: ans_geo_nightly
 
     steps:
@@ -59,7 +60,7 @@ jobs:
         run: |
           .\.venv\Scripts\Activate.ps1
           $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
-          docker run --detach --name $env:GEO_CONT_NAME -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE
+          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Run PyGeometry tests

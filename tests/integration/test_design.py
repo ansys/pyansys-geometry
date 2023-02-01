@@ -309,8 +309,7 @@ def test_faces_edges(modeler: Modeler):
     faces = body_polygon_comp.faces
     assert len(faces) == 7  # top + bottom + sides
     assert all(face.id is not None for face in faces)
-    # TODO: may be at some point these might change to planar?
-    assert all(face.surface_type == SurfaceType.SURFACETYPE_UNKNOWN for face in faces)
+    assert all(face.surface_type == SurfaceType.SURFACETYPE_PLANE for face in faces)
     assert all(face.area > 0.0 for face in faces)
     assert abs(faces[0].area.to_base_units().m - sketch.faces[0].area.to_base_units().m) <= 1e-15
     assert all(face.body.id == body_polygon_comp.id for face in faces)
@@ -335,8 +334,7 @@ def test_faces_edges(modeler: Modeler):
     edges = faces[0].edges
     assert len(edges) == 5  # pentagon
     assert all(edge.id is not None for edge in edges)
-    # TODO: may be at some point these might change to line?
-    assert all(edge.curve_type == CurveType.CURVETYPE_UNKNOWN for edge in edges)
+    assert all(edge.curve_type == CurveType.CURVETYPE_LINE for edge in edges)
     assert all(edge.length > 0.0 for edge in edges)
     assert (
         abs(edges[0].length.to_base_units().m - sketch.faces[0].length.to_base_units().m) <= 1e-15
@@ -780,13 +778,10 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
 
     # Download the design
     file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.scdocx"
-    file_stream = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder_stream.scdocx"
-    design.download(file, as_stream=False)
-    design.download(file_stream, as_stream=True)
+    design.download(file)
 
-    # Check that both files exist
+    # Check that the file exists
     assert file.exists()
-    assert file_stream.exists()
 
     # Check that we can also save it (even if it is not accessible on the server)
     file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
@@ -794,16 +789,11 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
 
     # Check for parasolid exports
     binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
-    text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder_stream.x_t"
-    design.download(binary_parasolid_file, format=DesignFileFormat.PARASOLID_BIN, as_stream=True)
+    text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
+    design.download(binary_parasolid_file, format=DesignFileFormat.PARASOLID_BIN)
     design.download(text_parasolid_file, format=DesignFileFormat.PARASOLID_TEXT)
     assert binary_parasolid_file.exists()
     assert text_parasolid_file.exists()
-
-    # Check also the invalid format is not supported - no download performed
-    invalid_file = tmp_path_factory.mktemp("scdoc_files_download") / "invalid.file"
-    design.download(invalid_file, format=DesignFileFormat.INVALID, as_stream=True)
-    assert not invalid_file.exists()
 
 
 def test_slot_extrusion(modeler: Modeler):

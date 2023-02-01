@@ -1,6 +1,6 @@
 """Provides the``NamedSelection`` class module."""
 
-from ansys.api.geometry.v0.namedselections_pb2 import CreateNamedSelectionRequest
+from ansys.api.geometry.v0.namedselections_pb2 import CreateRequest
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from beartype import beartype as check_input_types
 from beartype.typing import List, Optional
@@ -65,13 +65,11 @@ class NamedSelection:
         [ids.add(face.id) for face in faces]
         [ids.add(edge.id) for edge in edges]
 
-        named_selection_request = CreateNamedSelectionRequest(name=name, members=ids)
+        named_selection_request = CreateRequest(name=name, members=ids)
         self._grpc_client.log.debug("Requesting creation of named selection.")
-        new_named_selection = self._named_selections_stub.CreateNamedSelection(
-            named_selection_request
-        )
+        new_named_selection = self._named_selections_stub.Create(named_selection_request)
         self._id = new_named_selection.id
-        self._name = new_named_selection.display_name
+        self._name = new_named_selection.name
 
     @property
     def id(self) -> str:
