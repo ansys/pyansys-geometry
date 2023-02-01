@@ -1,8 +1,7 @@
 """Provides the ``CoordinateSystem`` class module."""
 
-from ansys.api.geometry.v0.coordinatesystems_pb2 import CreateCoordinateSystemRequest
+from ansys.api.geometry.v0.coordinatesystems_pb2 import CreateRequest
 from ansys.api.geometry.v0.coordinatesystems_pb2_grpc import CoordinateSystemsStub
-from ansys.api.geometry.v0.models_pb2 import CoordinateSystem as cs
 from beartype.typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection import GrpcClient
@@ -43,16 +42,17 @@ class CoordinateSystem:
         self._grpc_client = grpc_client
         self._coordinate_systems_stub = CoordinateSystemsStub(grpc_client.channel)
 
-        self._grpc_client.log.debug("Requesting creation of a coordinate system.")
-        new_coordinate_system = self._coordinate_systems_stub.CreateCoordinateSystem(
-            CreateCoordinateSystemRequest(
+        self._grpc_client.log.debug("Requesting creation of Coordinate System.")
+        new_coordinate_system = self._coordinate_systems_stub.Create(
+            CreateRequest(
                 parent=parent_component.id,
-                coordinate_system=cs(display_name=name, frame=frame_to_grpc_frame(frame)),
+                name=name,
+                frame=frame_to_grpc_frame(frame),
             )
         )
 
         self._id = new_coordinate_system.id
-        self._name = new_coordinate_system.display_name
+        self._name = new_coordinate_system.name
         self._frame = Frame(
             Point3D(
                 [
