@@ -1,11 +1,7 @@
 """Provides the ``Body`` class module."""
 from enum import Enum
 
-from ansys.api.geometry.v0.bodies_pb2 import (
-    BodyIdentifier,
-    SetAssignedMaterialRequest,
-    TranslateRequest,
-)
+from ansys.api.geometry.v0.bodies_pb2 import SetAssignedMaterialRequest, TranslateRequest
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
@@ -14,6 +10,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ProjectCurvesRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
+from ansys.api.geometry.v0.models_pb2 import EntityIdentifier
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
@@ -105,9 +102,9 @@ class Body:
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 
     @property
-    def _grpc_id(self) -> BodyIdentifier:
-        """gRPC body identifier for this body."""
-        return BodyIdentifier(id=self._id)
+    def _grpc_id(self) -> EntityIdentifier:
+        """gRPC entity identifier of this body."""
+        return EntityIdentifier(id=self._id)
 
     @property
     def id(self) -> str:
@@ -295,6 +292,7 @@ class Body:
             f"Imprinting curves provided on {self.id} "
             + f"for faces {[face.id for face in faces]}."
         )
+
         imprint_response = self._commands_stub.ImprintCurves(
             ImprintCurvesRequest(
                 body=self._id,
@@ -396,7 +394,7 @@ class Body:
 
         self._bodies_stub.Translate(
             TranslateRequest(
-                bodies=[self.id],
+                ids=[self.id],
                 direction=unit_vector_to_grpc_direction(direction),
                 distance=translation_magnitude,
             )
@@ -465,7 +463,7 @@ class Body:
 
         self._grpc_client.log.debug(f"Requesting tessellation for body {self.id}.")
 
-        resp = self._bodies_stub.GetBodyTessellation(self._grpc_id)
+        resp = self._bodies_stub.GetTessellation(self._grpc_id)
 
         pdata = [tess_to_pd(tess) for tess in resp.face_tessellation.values()]
         comp = pv.MultiBlock(pdata)

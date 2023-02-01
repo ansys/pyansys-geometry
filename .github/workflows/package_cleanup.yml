@@ -1,0 +1,35 @@
+name: Geometry Service - Package cleanup
+on:
+  workflow_dispatch:
+  schedule: # UTC at 0200
+    - cron: "0 2 * * *"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  cleanup:
+    name: Cleaning unnecessary packages
+    runs-on: ubuntu-latest
+    env:
+      PACKAGE_DELETION_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+
+      - name: "Install requirements"
+        run: |
+          pip install ghapi
+
+      - name: "Perform cleanup"
+        run: |
+          python -m .ci/clean_registry.py

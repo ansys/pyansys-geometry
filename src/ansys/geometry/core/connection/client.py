@@ -176,7 +176,7 @@ class GrpcClient:
         -----
         If an instance of the Geometry service was started using
         PyPIM, this instance is deleted. Furthermore, if a local instance
-        of the Geometry Service was started, it will be stopped.
+        of the Geometry service was started, it will be stopped.
         """
         if self._remote_instance:
             self._remote_instance.delete()  # pragma: no cover
@@ -185,7 +185,7 @@ class GrpcClient:
                 self._local_instance.container.stop()
             else:
                 self.log.warning(
-                    "Geometry Service will not be shutdown since it was already running..."
+                    "Geometry service will not be shutdown since it was already running..."
                 )
         self._closed = True
         self._channel.close()

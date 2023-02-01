@@ -9,22 +9,17 @@ from ansys.api.geometry.v0.commands_pb2 import (
     CreateBeamCircularProfileRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.designs_pb2 import (
-    ExportDesignRequest,
-    NewDesignRequest,
-    SaveAsDocumentRequest,
-)
+from ansys.api.geometry.v0.designs_pb2 import ExportRequest, NewRequest, SaveAsRequest
 from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
-from ansys.api.geometry.v0.materials_pb2 import AddMaterialToDocumentRequest
+from ansys.api.geometry.v0.materials_pb2 import AddToDocumentRequest
 from ansys.api.geometry.v0.materials_pb2_grpc import MaterialsStub
-from ansys.api.geometry.v0.models_pb2 import Empty
+from ansys.api.geometry.v0.models_pb2 import Empty, EntityIdentifier
 from ansys.api.geometry.v0.models_pb2 import Material as GRPCMaterial
 from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialProperty
 from ansys.api.geometry.v0.models_pb2 import PartExportFormat
-from ansys.api.geometry.v0.namedselections_pb2 import NamedSelectionIdentifier
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from beartype import beartype as check_input_types
-from beartype.typing import List, Optional, Union
+from beartype.typing import Dict, List, Optional, Union
 import numpy as np
 from pint import Quantity
 
@@ -77,8 +72,8 @@ class Design(Component):
 
     # Types of the class instance private attributes
     _materials: List[Material]
-    _named_selections: List[NamedSelection]
-    _beam_profiles: List[BeamProfile]
+    _named_selections: Dict[str, NamedSelection]
+    _beam_profiles: Dict[str, BeamProfile]
 
     @protect_grpc
     @check_input_types
@@ -91,7 +86,7 @@ class Design(Component):
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
         self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
 
-        new_design = self._design_stub.New(NewDesignRequest(name=name))
+        new_design = self._design_stub.New(NewRequest(name=name))
         self._id = new_design.id
 
         self._materials = []
@@ -127,8 +122,8 @@ class Design(Component):
             Material to add.
         """
         # TODO: Add design id to the request
-        self._materials_stub.AddMaterialToDocument(
-            AddMaterialToDocumentRequest(
+        self._materials_stub.AddToDocument(
+            AddToDocumentRequest(
                 material=GRPCMaterial(
                     name=material.name,
                     materialProperties=[
@@ -161,8 +156,8 @@ class Design(Component):
         if isinstance(file_location, Path):
             file_location = str(file_location)
 
-        self._design_stub.SaveAs(SaveAsDocumentRequest(filepath=file_location))
-        self._grpc_client.log.debug(f"Design is successfully saved at location {file_location}.")
+        self._design_stub.SaveAs(SaveAsRequest(filepath=file_location))
+        self._grpc_client.log.debug(f"Design successfully saved at location {file_location}.")
 
     @protect_grpc
     @check_input_types
@@ -170,7 +165,6 @@ class Design(Component):
         self,
         file_location: Union[Path, str],
         format: Optional[DesignFileFormat] = DesignFileFormat.SCDOCX,
-        as_stream: Optional[bool] = False,
     ) -> None:
         """Download a design from the active Geometry server instance.
 
@@ -180,39 +174,21 @@ class Design(Component):
             Location on disk to save the file to.
         format :DesignFileFormat, default: DesignFileFormat.SCDOCX
             Format for the file to save to.
-        as_stream : bool, default: False
-            Whether to use the gRPC stream functionality (if possible). If
-            ``True``, single-message functionality is used.
         """
         # Sanity checks on inputs
         if isinstance(file_location, Path):
             file_location = str(file_location)
 
-        # Process response (as stream or single file)
-        stream_msg = f"Downloading design in {format.value[0]} format using the stream mechanism."
-        single_msg = (
-            f"Downloading design in {format.value[0]} format using the single-message mechanism."
-        )
+        # Process response
+        self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
         received_bytes = bytes()
         if format is DesignFileFormat.SCDOCX:
-            if as_stream:
-                self._grpc_client.log.debug(stream_msg)
-                response_iterator = self._commands_stub.DownloadFileStream(Empty())
-                for response in response_iterator:
-                    received_bytes += response.chunk
-            else:
-                self._grpc_client.log.debug(single_msg)
-                response = self._commands_stub.DownloadFile(Empty())
-                received_bytes += response.data
+            response = self._commands_stub.DownloadFile(Empty())
+            received_bytes += response.data
         elif (format is DesignFileFormat.PARASOLID_TEXT) or (
             format is DesignFileFormat.PARASOLID_BIN
         ):
-            if as_stream:
-                self._grpc_client.log.warning(
-                    "Streaming mechanism is not supported for Parasolid format."
-                )
-            self._grpc_client.log.debug(single_msg)
-            response = self._design_stub.ExportDesign(ExportDesignRequest(format=format.value[1]))
+            response = self._design_stub.Export(ExportRequest(format=format.value[1]))
             received_bytes += response.data
         else:
             self._grpc_client.log.warning(
@@ -286,10 +262,14 @@ class Design(Component):
         named_selection : Union[NamedSelection, str]
             Name of the named selection or instance.
         """
-        removal_name = (
-            named_selection.name if not isinstance(named_selection, str) else named_selection
-        )
-        self._named_selections_stub.Delete(NamedSelectionIdentifier(name=removal_name))
+        if isinstance(named_selection, str):
+            removal_name = named_selection
+            removal_id = self._named_selections.get(named_selection, None)
+        else:
+            removal_name = named_selection.name
+            removal_id = named_selection.id
+
+        self._named_selections_stub.Delete(EntityIdentifier(id=removal_id))
 
         try:
             self._named_selections.pop(removal_name)
