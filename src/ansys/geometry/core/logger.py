@@ -500,7 +500,7 @@ class Logger:
         name : str
             Name for the new instance logger.
         client_instance : GrpcClient
-            Geometry service GrpcClient object, which should contain the ``get_name`` method.
+            Geometry Service GrpcClient object, which should contain the ``get_name`` method.
         level : int, default: None
             Level of logging.
 
