@@ -249,7 +249,6 @@ class Design(Component):
         named_selection : Union[NamedSelection, str]
             Name of the named selection or instance.
         """
-
         if isinstance(named_selection, str):
             removal_name = named_selection
             removal_id = self._named_selections.get(named_selection, None)
