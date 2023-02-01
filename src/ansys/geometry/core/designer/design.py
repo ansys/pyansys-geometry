@@ -7,7 +7,6 @@ from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
     AssignMidSurfaceThicknessRequest,
     CreateBeamCircularProfileRequest,
-    EntityIdentifier,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.designs_pb2 import ExportRequest, NewRequest, SaveAsRequest
@@ -259,16 +258,17 @@ class Design(Component):
             removal_id = named_selection.id
 
         self._grpc_client.log.debug(f"Named selection {removal_name} deletion request received.")
+        self._named_selections_stub.Delete(EntityIdentifier(id=removal_id))
 
-        if removal_obj:
-            self._named_selections_stub.Delete(EntityIdentifier(id=removal_id))
+        try:
             self._named_selections.pop(removal_name)
             self._grpc_client.log.debug(f"Named selection {removal_name} is successfully deleted.")
-        else:
+        except KeyError:
             self._grpc_client.log.warning(
                 f"Attempted named selection deletion failed, with name {removal_name}."
                 + " Ignoring this request."
             )
+            pass
 
     @check_input_types
     def delete_component(self, component: Union["Component", str]) -> None:
