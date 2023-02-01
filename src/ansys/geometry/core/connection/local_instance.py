@@ -228,7 +228,14 @@ class LocalDockerInstance:
 
         # At this point, we are good to deploy the Geometry Service!
         #
-        # WIP!
+        # Check if the license server env variable is available
+        license_server = os.getenv("ANSRV_GEO_LICENSE_SERVER", None)
+        if not license_server:  # pragma: no cover
+            raise RuntimeError(
+                f"No license server provided... Store its value under the following env variable: ANSRV_GEO_LICENSE_SERVER."  # noqa: E501
+            )
+
+        # Try to deploy it
         try:
             container: Container = self.docker_client().containers.run(
                 image=f"{GEOMETRY_SERVICE_DOCKER_IMAGE}:{image.value[2]}",
@@ -237,10 +244,10 @@ class LocalDockerInstance:
                 name=name,
                 ports={"50051/tcp": port},
                 environment={
+                    "LICENSE_SERVER": license_server,
                     "LOG_LEVEL": os.getenv("ANSRV_GEO_LOG_LEVEL", 2),
                     "ENABLE_TRACE": os.getenv("ANSRV_GEO_ENABLE_TRACE", 0),
                     "USE_DEBUG_MODE": os.getenv("ANSRV_GEO_USE_DEBUG_MODE", 0),
-                    "LICENSE_SERVER": os.getenv("ANSRV_GEO_LICENSE_SERVER", None),
                 },
             )
         except ImageNotFound as err:  # pragma: no cover

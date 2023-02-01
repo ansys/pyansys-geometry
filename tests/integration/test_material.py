@@ -7,10 +7,8 @@ from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPr
 from ansys.geometry.core.misc import UNITS
 
 
-def test_material_creation():
+def test_material_creation(modeler: Modeler):
     """Test the creation of a material on a design."""
-    modeler = Modeler()
-
     design = modeler.create_design("my_design")
 
     mat_name = "mat_1"
