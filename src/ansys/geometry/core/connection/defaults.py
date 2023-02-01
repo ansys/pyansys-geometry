@@ -28,7 +28,7 @@ and if it does not exist, it falls back to ``256Mb``.
 
 GEOMETRY_SERVICE_DOCKER_IMAGE = "ghcr.io/pyansys/geometry"
 """
-Default Geometry Service Docker image location.
+Default Geometry service Docker image location.
 
 Tag is dependent on what OS service is requested.
 """

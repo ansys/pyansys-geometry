@@ -19,7 +19,7 @@ def _check_no_shutdown_warning(port: int, log: str) -> bool:
     msg = (
         "WARNING  localhost:"
         + str(port)
-        + r":client\.py:[0-9]+ Geometry Service will not be shutdown since it was already running\.\.\."  # noqa : E501
+        + r":client\.py:[0-9]+ Geometry service will not be shutdown since it was already running\.\.\."  # noqa : E501
     )
     pattern = re.compile(msg)
     return True if pattern.search(log) else False

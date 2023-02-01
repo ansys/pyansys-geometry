@@ -34,26 +34,26 @@ Install the PyGeometry image
    * ``windows-latest``
    * ``windows-latest-unstable``
 
-Launching the Geometry Service
+Launching the Geometry service
 ------------------------------
 
-In this section we will see two mechanisms for launching the Geometry Service: either **using the PyGeometry launcher**
+In this section there are two mechanisms for launching the Geometry service: either **using the PyGeometry launcher**
 or **manually launching the service**.
 
 Environment variables
 ^^^^^^^^^^^^^^^^^^^^^
 
-The Geometry Service has a set of environment variables that are **mandatory** for its use:
+The Geometry service has a set of environment variables that are **mandatory** for its use:
 
-* ``LICENSE_SERVER``: the license server (IP, DNS) to which the Geometry Service shall connect. For example, ``127.0.0.1``.
+* ``LICENSE_SERVER``: the license server (IP, DNS) to which the Geometry service shall connect. For example, ``127.0.0.1``.
 
 Other optional environment variables are:
 
 * ``ENABLE_TRACE``: whether to set up the trace level for debugging purposes. Expects either ``1`` or ``0``.
   By default, ``0`` (which means it is not activated).
-* ``LOG_LEVEL``: sets the Geometry Service logging level. By default, ``2``.
+* ``LOG_LEVEL``: sets the Geometry service logging level. By default, ``2``.
 
-Depending on the mechanism chosen to launch the Geometry Service, you can set them as follows:
+Depending on the mechanism chosen to launch the Geometry service, you can set them as follows:
 
 .. tab-set:: 
 
@@ -80,13 +80,13 @@ Depending on the mechanism chosen to launch the Geometry Service, you can set th
                     SET ANSRV_GEO_ENABLE_TRACE=0
                     SET ANSRV_GEO_LOG_LEVEL=2
 
-    .. tab-item:: Manual Geometry Service launch
+    .. tab-item:: Manual Geometry service launch
 
         In this case, there is no prior environment variable definition needed. They can
         directly be passed to the Docker container itself.
 
 
-Geometry Service launcher
+Geometry service launcher
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The Geometry service can be launched locally in two different ways:
@@ -95,7 +95,7 @@ The Geometry service can be launched locally in two different ways:
 
     .. tab-item:: Using PyGeometry launcher
 
-        This method will directly launch for you the Geometry Service and it
+        This method will directly launch for you the Geometry service and it
         will provide a ``Modeler`` object.
 
         .. code:: python
@@ -104,12 +104,12 @@ The Geometry service can be launched locally in two different ways:
 
           modeler = launch_modeler()
 
-        The previous ``launch_modeler()`` method will launch the Geometry Service under the default
+        The previous ``launch_modeler()`` method will launch the Geometry service under the default
         conditions. For more configurability, please use ``launch_local_modeler()``.
 
-    .. tab-item:: Manual Geometry Service launch
+    .. tab-item:: Manual Geometry service launch
 
-       This method will involve the user manually launching the Geometry Service. Remember to pass
+       This method will involve the user manually launching the Geometry service. Remember to pass
        in the different environment variables needed. Afterwards, please refer to the next section in
        order to understand how to connect to it from PyGeometry.
 

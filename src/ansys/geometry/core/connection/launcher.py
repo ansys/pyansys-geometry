@@ -116,22 +116,22 @@ def launch_local_modeler(
     Parameters
     ----------
     port : int, optional
-        Localhost port at which the Geometry Service will be deployed or which
+        Localhost port at which the Geometry service will be deployed or which
         the ``Modeler`` will connect to (if it is already deployed). By default,
         value will be the one at ``DEFAULT_PORT``.
     connect_to_existing_service : bool, optional
         Boolean indicating whether if the Modeler should connect to a Geometry
         Service already deployed at that port, by default ``True``.
     restart_if_existing_service : bool, optional
-        Boolean indicating whether the Geometry Service (which is already running)
+        Boolean indicating whether the Geometry service (which is already running)
         should be restarted when attempting connection, by default ``False``
     name : Optional[str], optional
         Name of the Docker container to be deployed, by default ``None``, which
         means that Docker will assign it a random name.
     image : Optional[GeometryContainers], optional
-        The Geometry Service Docker image to be deployed, by default ``None``, which
+        The Geometry service Docker image to be deployed, by default ``None``, which
         means that the ``LocalDockerInstance`` class will identify the OS of your
-        Docker engine and deploy the latest version of the Geometry Service for that
+        Docker engine and deploy the latest version of the Geometry service for that
         OS.
 
     Returns
