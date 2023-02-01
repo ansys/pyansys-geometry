@@ -1,12 +1,19 @@
 """Module containing the ``LocalDockerInstance`` class."""
 from enum import Enum
+from functools import wraps
 import os
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Tuple, Union
-import docker
-from docker.errors import APIError, ContainerError, ImageNotFound
-from docker.models.containers import Container
+
+try:
+    import docker
+    from docker.errors import APIError, ContainerError, ImageNotFound
+    from docker.models.containers import Container
+
+    _HAS_DOCKER = True
+except ModuleNotFoundError:  # pragma: no cover
+    _HAS_DOCKER = False
 
 from ansys.geometry.core.connection.defaults import DEFAULT_PORT, GEOMETRY_SERVICE_DOCKER_IMAGE
 from ansys.geometry.core.logger import LOG as logger
@@ -51,7 +58,7 @@ class LocalDockerInstance:
         OS.
     """
 
-    __DOCKER_CLIENT__: docker.DockerClient = None
+    __DOCKER_CLIENT__: "docker.DockerClient" = None
     """Docker client class variable. By default, none is needed.
     It will be lazy initialized.
 
@@ -62,7 +69,23 @@ class LocalDockerInstance:
     """
 
     @staticmethod
-    def docker_client() -> docker.DockerClient:
+    def __docker_python_available(func):
+        """Private decorator for checking whether docker is installed as Python package or not."""
+
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            if not _HAS_DOCKER:  # pragma: no cover
+                raise ModuleNotFoundError(
+                    "The package 'docker' is required to use the LocalDockerInstance class."
+                )
+            else:
+                return func(*args, **kwargs)
+
+        return wrapper
+
+    @staticmethod
+    @__docker_python_available
+    def docker_client() -> "docker.DockerClient":
         """Static method for returning the initialized ``__DOCKER_CLIENT__`` object.
         LocalDockerInstance performs a lazy loading initialization of the class
         variable ``__DOCKER_CLIENT__``.
@@ -82,6 +105,7 @@ class LocalDockerInstance:
         return LocalDockerInstance.__DOCKER_CLIENT__
 
     @staticmethod
+    @__docker_python_available
     def is_docker_installed() -> bool:
         """Checks whether there is a local install of Docker engine available
         and running.
@@ -99,6 +123,7 @@ class LocalDockerInstance:
             return False
 
     @check_input_types
+    @__docker_python_available
     def __init__(
         self,
         port: int = DEFAULT_PORT,
@@ -138,7 +163,7 @@ class LocalDockerInstance:
         else:
             raise RuntimeError(f"Geometry service cannot be deployed on port {port}")
 
-    def _check_port_availability(self, port: int) -> Tuple[bool, Optional[Container]]:
+    def _check_port_availability(self, port: int) -> Tuple[bool, Optional["Container"]]:
         """Private method which checks whether the requested port is available for
         deployment or not. If not available, it also returns the ``Container`` deployed
         at that port.
@@ -160,7 +185,7 @@ class LocalDockerInstance:
         # If you reached here, just return default values
         return (True, None)
 
-    def _is_cont_geom_service(self, cont: Container) -> bool:
+    def _is_cont_geom_service(self, cont: "Container") -> bool:
         """Private method for checking whether a provided ``Container``
         object is a Geometry Service container or not.
 
@@ -264,7 +289,7 @@ class LocalDockerInstance:
         self._existed_previously = False
 
     @property
-    def container(self) -> Container:
+    def container(self) -> "Container":
         """Docker Container object hosting the Geometry Service deployed."""
         return self._container
 
