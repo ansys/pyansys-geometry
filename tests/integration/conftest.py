@@ -27,7 +27,7 @@ def docker_instance():
     # This will only have a value in case that:
     #
     # 1) Docker is installed
-    # 2) At least one of the Geometry Service images for your OS is downloaded
+    # 2) At least one of the Geometry service images for your OS is downloaded
     #    on the machine
     #
     local_instance = None
