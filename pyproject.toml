@@ -69,7 +69,7 @@ doc = [
     "nbsphinx==0.8.12",
     "notebook==6.5.2",
     "numpydoc==1.5.0",
-    "panel==0.14.2",
+    "panel==0.14.3",
     "Sphinx==5.1.1",
     "sphinx-autoapi==2.0.1",
     "sphinx-autodoc-typehints==1.19.1",
