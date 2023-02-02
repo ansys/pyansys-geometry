@@ -5,8 +5,8 @@ from ghapi.core import print_summary
 from ghapi.page import paged
 
 org_str = "pyansys"
-pck_str = "geometry"
-valid_tags = ["windows-latest", "windows-latest-unstable", "linux-latest", "linux-latest-unstable"]
+pck_str = "pyacp-private"
+valid_tags = ["latest"]
 
 api = GhApi(debug=print_summary, token=os.getenv("PACKAGE_DELETION_TOKEN"))
 
