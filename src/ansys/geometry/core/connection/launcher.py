@@ -2,7 +2,11 @@
 from beartype.typing import TYPE_CHECKING, Optional
 
 from ansys.geometry.core.connection.defaults import DEFAULT_PORT
-from ansys.geometry.core.connection.local_instance import GeometryContainers, LocalDockerInstance
+from ansys.geometry.core.connection.local_instance import (
+    _HAS_DOCKER,
+    GeometryContainers,
+    LocalDockerInstance,
+)
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.misc import check_type
 
@@ -41,12 +45,12 @@ def launch_modeler() -> "Modeler":
 
     # Start PyGeometry with PyPIM if the environment is configured for it
     # and a directive on how to launch it was not passed.
-    if pypim.is_configured():
+    if _HAS_PIM and pypim.is_configured():
         logger.info("Starting Geometry service remotely. The startup configuration is ignored.")
         return launch_remote_modeler()
 
     # Otherwise, we are in the "local Docker Container" scenario
-    if LocalDockerInstance.is_docker_installed():
+    if _HAS_DOCKER and LocalDockerInstance.is_docker_installed():
         logger.info("Starting Geometry service locally from Docker container.")
         return launch_local_modeler()
 
@@ -141,6 +145,9 @@ def launch_local_modeler(
     """
 
     from ansys.geometry.core.modeler import Modeler
+
+    if not _HAS_DOCKER:  # pragma: no cover
+        raise ModuleNotFoundError("The package 'docker' is required to use this function.")
 
     # Call the LocalDockerInstance ctor.
     local_instance = LocalDockerInstance(
