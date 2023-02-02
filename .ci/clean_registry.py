@@ -32,7 +32,7 @@ for page in paged_packages:
 
         # In case it should, delete it
         if delete:
-            print("Deleting:" + package)
+            print("Deleting:\n" + str(package))
             api.packages.delete_package_version_for_org(
                 org=org_str,
                 package_name=pck_str,
