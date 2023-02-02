@@ -4,11 +4,12 @@ Test basic client connection.
 from grpc import insecure_channel
 import pytest
 
+from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection import DEFAULT_HOST, DEFAULT_PORT, GrpcClient
 
 
 @pytest.fixture(scope="function")
-def client():
+def client(modeler: Modeler):
     # this uses DEFAULT_HOST and DEFAULT_PORT which are set by environment
     # variables in the workflow
     return GrpcClient()
@@ -24,7 +25,7 @@ def test_client_init(client: GrpcClient):
     assert client.channel
 
 
-def test_client_through_channel():
+def test_client_through_channel(modeler: Modeler):
     """Test the instantiation of a client from a gRPC channel."""
     target = f"{DEFAULT_HOST}:{DEFAULT_PORT}"
     channel = insecure_channel(target)

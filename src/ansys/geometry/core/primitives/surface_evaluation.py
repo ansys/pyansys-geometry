@@ -8,7 +8,7 @@ class ParamUV:
     """
     Parameter class containing 2 parameters: (u, v). Likened to a 2D point in UV space
     Used as an argument in parametric surface evaluations. This matches the service
-    implementation for the Geometry Service.
+    implementation for the Geometry service.
 
     Parameters
     ----------

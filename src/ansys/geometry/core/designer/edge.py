@@ -2,8 +2,8 @@
 
 from enum import Enum, unique
 
-from ansys.api.geometry.v0.edges_pb2 import EdgeIdentifier
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
+from ansys.api.geometry.v0.models_pb2 import EntityIdentifier
 from beartype.typing import TYPE_CHECKING, List
 from pint import Quantity
 
@@ -60,16 +60,16 @@ class Edge:
         return self._id
 
     @property
-    def _grpc_id(self) -> EdgeIdentifier:
-        """ID of the gRPC edge."""
-        return EdgeIdentifier(id=self._id)
+    def _grpc_id(self) -> EntityIdentifier:
+        """gRPC edge identifier."""
+        return EntityIdentifier(id=self._id)
 
     @property
     @protect_grpc
     def length(self) -> Quantity:
         """Calculated length of the edge."""
         self._grpc_client.log.debug("Requesting edge length from server.")
-        length_response = self._edges_stub.GetEdgeLength(self._grpc_id)
+        length_response = self._edges_stub.GetLength(self._grpc_id)
         return Quantity(length_response.length, SERVER_UNIT_LENGTH)
 
     @property
@@ -84,7 +84,7 @@ class Edge:
         from ansys.geometry.core.designer.face import Face, SurfaceType
 
         self._grpc_client.log.debug("Requesting edge faces from server.")
-        grpc_faces = self._edges_stub.GetEdgeFaces(self._grpc_id).faces
+        grpc_faces = self._edges_stub.GetFaces(self._grpc_id).faces
         return [
             Face(grpc_face.id, SurfaceType(grpc_face.surface_type), self._body, self._grpc_client)
             for grpc_face in grpc_faces
