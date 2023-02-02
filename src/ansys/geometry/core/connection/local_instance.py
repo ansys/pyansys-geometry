@@ -176,7 +176,7 @@ class LocalDockerInstance:
         """
         # First, check if there is a container already running at that port
         for cont in self.docker_client().containers.list():
-            for (_, ports_shared) in cont.attrs["NetworkSettings"]["Ports"].items():
+            for _, ports_shared in cont.attrs["NetworkSettings"]["Ports"].items():
                 for port_shared in ports_shared:
                     if int(port_shared["HostPort"]) == port:
                         logger.warning(f"Service already running at port {port}...")
