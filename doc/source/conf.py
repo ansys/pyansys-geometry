@@ -22,7 +22,7 @@ LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
 project = "ansys-geometry-core"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc."
-release = version = "0.2.dev0"
+release = version = "0.3.dev0"
 cname = os.getenv("DOCUMENTATION_CNAME", default="nocname.com")
 
 # Select desired logo, theme, and declare the html title
