@@ -786,6 +786,8 @@ class Sketch:
         screenshot : str, default: None
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
+        use_trame: bool, default: False
+            Enables/disables the usage of the trame web visualizer.
         **plotting_options : dict, default:
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
@@ -840,7 +842,6 @@ class Sketch:
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
-
         from ansys.geometry.core.plotting.plotter import Plotter
 
         sketches_polydata = []

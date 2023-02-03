@@ -1,9 +1,7 @@
 """Module for the trame visualizer."""
-import matplotlib.pyplot as plt
 from pyvista.trame.ui import plotter_ui
 from trame.app import get_server
 from trame.ui.vuetify import SinglePageLayout
-from trame.widgets import vuetify
 
 
 class TrameVisualizer:
@@ -27,20 +25,7 @@ class TrameVisualizer:
 
         with SinglePageLayout(self.server) as layout:
             layout.icon.click = self.ctrl.view_reset_camera
-            layout.title.set_text("PyVista Colormaps")
-
-            with layout.toolbar:
-                vuetify.VSpacer()
-                vuetify.VSelect(
-                    label="Color map",
-                    v_model=("cmap", "viridis"),
-                    items=("array_list", plt.colormaps()),
-                    hide_details=True,
-                    dense=True,
-                    outlined=True,
-                    classes="pt-1 ml-2",
-                    style="max-width: 250px",
-                )
+            layout.title.set_text("PyGeometry")
 
             with layout.content:
                 # Use PyVista UI template for Plotters
