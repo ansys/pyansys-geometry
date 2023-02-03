@@ -50,7 +50,7 @@ tests = [
     "numpy==1.24.1",
     "Pint==0.20.1",
     "protobuf==3.20.3",
-    "pyvista==0.37.0",
+    "pyvista==0.38.0",
     "scipy==1.10.0",
     "six==1.16.0",
     "ansys-platform-instancemanagement==1.0.3",
@@ -70,7 +70,7 @@ doc = [
     "notebook==6.5.2",
     "numpydoc==1.5.0",
     "panel==0.14.3",
-    "pyvista==0.37.0",
+    "pyvista==0.38.0",
     "Sphinx==5.1.1",                        # PR349 - Duplicated documentation entries...
     "sphinx-autoapi==2.0.1",
     "sphinx-autodoc-typehints==1.19.1",     # PR349 - Duplicated documentation entries...
