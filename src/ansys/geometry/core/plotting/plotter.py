@@ -11,6 +11,8 @@ from ansys.geometry.core.plotting.widgets import (
     DisplacementArrow,
     PlotterWidget,
     Ruler,
+    ViewButton,
+    ViewDirection,
 )
 from ansys.geometry.core.sketch import Sketch
 

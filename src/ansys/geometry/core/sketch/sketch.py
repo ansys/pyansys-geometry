@@ -792,11 +792,9 @@ class Sketch:
         """
         from ansys.geometry.core.plotting.plotter import Plotter
 
-        # avoids GUI window popping up
         if use_trame:
+            # avoids GUI window popping up
             pv.OFF_SCREEN = True
-
-        if use_trame:
             pl = Plotter(enable_widgets=False)
         else:
             pl = Plotter()
@@ -845,10 +843,6 @@ class Sketch:
 
         from ansys.geometry.core.plotting.plotter import Plotter
 
-        # avoids GUI window popping up
-        if use_trame:
-            pv.OFF_SCREEN = True
-
         sketches_polydata = []
         sketches_polydata.extend(
             [
@@ -858,6 +852,8 @@ class Sketch:
         )
 
         if use_trame:
+            # avoids GUI window popping up
+            pv.OFF_SCREEN = True
             pl = Plotter(enable_widgets=False)
         else:
             pl = Plotter()
