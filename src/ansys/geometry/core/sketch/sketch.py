@@ -3,9 +3,11 @@
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, Dict, List, Optional, Union
 from pint import Quantity
+import pyvista as pv
 
 from ansys.geometry.core.math import ZERO_POINT2D, Plane, Point2D, UnitVector3D, Vector2D, Vector3D
 from ansys.geometry.core.misc import UNIT_LENGTH, Angle, Distance
+from ansys.geometry.core.plotting.trame_gui import TrameVisualizer
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.box import Box
 from ansys.geometry.core.sketch.circle import SketchCircle
@@ -771,6 +773,7 @@ class Sketch:
         self,
         view_2d: Optional[bool] = False,
         screenshot: Optional[str] = None,
+        use_trame: bool = False,
         **plotting_options: Optional[dict],
     ):
         """Plot all objects of the sketch to the scene.
@@ -789,9 +792,18 @@ class Sketch:
         """
         from ansys.geometry.core.plotting.plotter import Plotter
 
-        pl = Plotter()
+        # avoids GUI window popping up
+        if use_trame:
+            pv.OFF_SCREEN = True
+
+        if use_trame:
+            pl = Plotter(enable_widgets=False)
+        else:
+            pl = Plotter()
+
         pl.add_sketch_polydata(self.sketch_polydata(), **plotting_options)
 
+        # TODO: Does this make sense with the buttons?
         # If you want to visualize a Sketch from the top...
         if view_2d:
             pl.scene.view_vector(
@@ -800,12 +812,18 @@ class Sketch:
             )
 
         # Finally, show the plot
-        pl.show(screenshot=screenshot)
+        if use_trame:
+            visualizer = TrameVisualizer()
+            visualizer.set_scene(pl)
+            visualizer.show()
+        else:
+            pl.show(screenshot=screenshot)
 
     def plot_selection(
         self,
         view_2d: Optional[bool] = False,
         screenshot: Optional[str] = None,
+        use_trame: bool = False,
         **plotting_options: Optional[dict],
     ):
         """Plot the current selection to the scene.
@@ -818,11 +836,18 @@ class Sketch:
         screenshot : str, default: None
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
+        use_trame: bool, default: False
+            Enables/disables the usage of the trame web visualizer.
         **plotting_options : dict, default: []
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
+
         from ansys.geometry.core.plotting.plotter import Plotter
+
+        # avoids GUI window popping up
+        if use_trame:
+            pv.OFF_SCREEN = True
 
         sketches_polydata = []
         sketches_polydata.extend(
@@ -832,9 +857,13 @@ class Sketch:
             ]
         )
 
-        pl = Plotter()
+        if use_trame:
+            pl = Plotter(enable_widgets=False)
+        else:
+            pl = Plotter()
         pl.add_sketch_polydata(sketches_polydata, **plotting_options)
 
+        # TODO: Does this make sense with the buttons?
         # If you want to visualize a Sketch from the top...
         if view_2d:
             pl.scene.view_vector(
@@ -843,7 +872,12 @@ class Sketch:
             )
 
         # Finally, show the plot
-        pl.show(screenshot=screenshot)
+        if use_trame:
+            visualizer = TrameVisualizer()
+            visualizer.set_scene(pl)
+            visualizer.show()
+        else:
+            pl.show(screenshot=screenshot)
 
     def sketch_polydata(self) -> List["PolyData"]:
         """

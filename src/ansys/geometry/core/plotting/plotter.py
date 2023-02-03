@@ -11,8 +11,6 @@ from ansys.geometry.core.plotting.widgets import (
     DisplacementArrow,
     PlotterWidget,
     Ruler,
-    ViewButton,
-    ViewDirection,
 )
 from ansys.geometry.core.sketch import Sketch
 
@@ -25,6 +23,7 @@ class Plotter:
         scene: Optional[pv.Plotter] = None,
         background_opts: Optional[Dict] = None,
         num_points: int = 100,
+        enable_widgets: bool = False,
     ):
         """Initializes the plotter.
 
@@ -36,6 +35,9 @@ class Plotter:
             Dictionary containing the background and top colors.
         num_points : int, default: 100
             Number of points to use to render the shapes.
+        enable_widgets: bool, default: True
+            Enables/disables widget buttons in the plotter window.
+            They need to be disabled for trame viewer.
         """
         # Generate custom scene if ``None`` is provided
         if scene is None:
@@ -55,13 +57,14 @@ class Plotter:
         self._num_points = num_points
 
         # Create Plotter widgets
-        self._widgets: List[PlotterWidget] = []
-        self._widgets.append(Ruler(self._scene))
-        [
-            self._widgets.append(DisplacementArrow(self._scene, direction=dir))
-            for dir in CameraPanDirection
-        ]
-        [self._widgets.append(ViewButton(self._scene, direction=dir)) for dir in ViewDirection]
+        if enable_widgets:
+            self._widgets: List[PlotterWidget] = []
+            self._widgets.append(Ruler(self._scene))
+            [
+                self._widgets.append(DisplacementArrow(self._scene, direction=dir))
+                for dir in CameraPanDirection
+            ]
+            [self._widgets.append(ViewButton(self._scene, direction=dir)) for dir in ViewDirection]
 
     @property
     def scene(self) -> pv.Plotter:
