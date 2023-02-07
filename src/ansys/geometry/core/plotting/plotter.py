@@ -28,7 +28,7 @@ class Plotter:
         Dictionary containing the background and top colors.
     num_points : int, default: 100
         Number of points to use to render the shapes.
-    enable_widgets: bool, default: False
+    enable_widgets: bool, default: True
         Enables/disables widget buttons in the plotter window.
         They need to be disabled for trame viewer.
     """
@@ -38,7 +38,7 @@ class Plotter:
         scene: Optional[pv.Plotter] = None,
         background_opts: Optional[Dict] = None,
         num_points: int = 100,
-        enable_widgets: bool = False,
+        enable_widgets: bool = True,
     ):
         """Initializes the plotter."""
 
