@@ -405,9 +405,7 @@ class Body:
         )
 
     @protect_grpc
-    @check_input_types
-    # TODO: type hint for (parent: Component) was causing issues
-    def copy(self, parent=None, name: str = None) -> "Body":
+    def copy(self, parent: "Component", name: str = None) -> "Body":
         """Creates a copy of the geometry body and places it under the specified parent.
 
         Parameters
@@ -422,9 +420,11 @@ class Body:
         Body
             Copy of the body.
         """
-        if parent is None:
-            parent = self._parent_component
+        from ansys.geometry.core.designer.component import Component
+
+        check_type(parent, Component)
         if name is None:
+            check_type(name, str)
             name = self.name
 
         self._grpc_client.log.debug(f"Copying body {self.id}.")
