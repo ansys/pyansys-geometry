@@ -72,7 +72,6 @@ class FaceLoop:
         max_bbox: Point3D,
         edges: List[Edge],
     ):
-
         self._type = type
         self._length = length
         self._min_bbox = min_bbox
