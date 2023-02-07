@@ -52,6 +52,7 @@ class DesignFileFormat(Enum):
     SCDOCX = "SCDOCX", None
     PARASOLID_TEXT = "PARASOLID_TEXT", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_TEXT
     PARASOLID_BIN = "PARASOLID_BIN", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_BINARY
+    FMD = "FMD", PartExportFormat.PARTEXPORTFORMAT_FMD
     INVALID = "INVALID", None
 
 
@@ -185,7 +186,8 @@ class Design(Component):
             response = self._commands_stub.DownloadFile(Empty())
             received_bytes += response.data
         elif (format is DesignFileFormat.PARASOLID_TEXT) or (
-            format is DesignFileFormat.PARASOLID_BIN
+            format is DesignFileFormat.PARASOLID_BIN) or (
+            format is DesignFileFormat.FMD
         ):
             response = self._design_stub.Export(ExportRequest(format=format.value[1]))
             received_bytes += response.data
