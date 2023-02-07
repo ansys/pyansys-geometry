@@ -1,7 +1,11 @@
 """Provides the ``Body`` class module."""
 from enum import Enum
 
-from ansys.api.geometry.v0.bodies_pb2 import SetAssignedMaterialRequest, TranslateRequest
+from ansys.api.geometry.v0.bodies_pb2 import (
+    CopyRequest,
+    SetAssignedMaterialRequest,
+    TranslateRequest,
+)
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
@@ -399,6 +403,42 @@ class Body:
                 distance=translation_magnitude,
             )
         )
+
+    @protect_grpc
+    @check_input_types
+    # TODO: type hint for (parent: Component) was causing issues
+    def copy(self, parent=None, name: str = None) -> "Body":
+        """Creates a copy of the geometry body and places it under the specified parent.
+
+        Parameters
+        ----------
+        parent: Component
+            The parent component that the new body should live under.
+        name: str
+            The name to give the new body.
+
+        Returns
+        -------
+        Body
+            Copy of the body.
+        """
+        if parent is None:
+            parent = self._parent_component
+        if name is None:
+            name = self.name
+
+        self._grpc_client.log.debug(f"Copying body {self.id}.")
+
+        response = self._bodies_stub.Copy(
+            CopyRequest(
+                id=self.id,
+                parent=parent.id,
+                name=name,
+            )
+        )
+
+        parent._bodies.append(Body(response.id, name, parent, self._grpc_client, is_surface=False))
+        return parent._bodies[-1]
 
     @protect_grpc
     def tessellate(self, merge: Optional[bool] = False) -> Union["PolyData", "MultiBlock"]:
