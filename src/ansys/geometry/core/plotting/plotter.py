@@ -18,7 +18,20 @@ from ansys.geometry.core.sketch import Sketch
 
 
 class Plotter:
-    """Provides for plotting sketches and bodies."""
+    """Provides for plotting sketches and bodies.
+
+    Parameters
+    ----------
+    scene : ~pyvista.Plotter, default: None
+        Scene instance for rendering the objects.
+    background_opts : dict, default: None
+        Dictionary containing the background and top colors.
+    num_points : int, default: 100
+        Number of points to use to render the shapes.
+    enable_widgets: bool, default: False
+        Enables/disables widget buttons in the plotter window.
+        They need to be disabled for trame viewer.
+    """
 
     def __init__(
         self,
@@ -27,20 +40,8 @@ class Plotter:
         num_points: int = 100,
         enable_widgets: bool = False,
     ):
-        """Initializes the plotter.
+        """Initializes the plotter."""
 
-        Parameters
-        ----------
-        scene : ~pyvista.Plotter, default: None
-            Scene instance for rendering the objects.
-        background_opts : dict, default: None
-            Dictionary containing the background and top colors.
-        num_points : int, default: 100
-            Number of points to use to render the shapes.
-        enable_widgets: bool, default: True
-            Enables/disables widget buttons in the plotter window.
-            They need to be disabled for trame viewer.
-        """
         # Generate custom scene if ``None`` is provided
         if scene is None:
             scene = pv.Plotter()
