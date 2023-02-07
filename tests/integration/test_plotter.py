@@ -8,7 +8,7 @@ from pyvista.plotting import system_supports_plotting
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
-from ansys.geometry.core.plotting import Plotter
+from ansys.geometry.core.plotting.plotter import Plotter
 from ansys.geometry.core.sketch import (
     Arc,
     Box,
