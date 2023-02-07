@@ -32,7 +32,7 @@ class TrameVisualizer:
                 view = plotter_ui(plotter.scene)
                 self.ctrl.view_update = view.update
 
-            # hide footer
+            # hide footer with trame watermark
             layout.footer.hide()
 
     def show(self):
