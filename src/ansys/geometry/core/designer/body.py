@@ -518,7 +518,7 @@ class Body:
 
         """
         # lazy import here to improve initial module load time
-        from ansys.geometry.core.plotting import Plotter
+        from ansys.geometry.core.plotting.plotter import Plotter
 
         pl = Plotter()
         pl.add_body(self, merge=merge, **plotting_options)

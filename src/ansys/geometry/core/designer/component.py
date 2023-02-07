@@ -776,7 +776,7 @@ class Component:
         >>> mycomp.plot(pbr=True, metallic=1.0)
 
         """
-        from ansys.geometry.core.plotting import Plotter
+        from ansys.geometry.core.plotting.plotter import Plotter
 
         pl = Plotter()
         pl.add_component(
