@@ -185,8 +185,8 @@ class Design(Component):
         if format is DesignFileFormat.SCDOCX:
             response = self._commands_stub.DownloadFile(Empty())
             received_bytes += response.data
-        elif (format is DesignFileFormat.PARASOLID_TEXT) or (
-            format is DesignFileFormat.PARASOLID_BIN) or (
+        elif (format is DesignFileFormat.PARASOLID_TEXT) or
+            (format is DesignFileFormat.PARASOLID_BIN) or (
             format is DesignFileFormat.FMD
         ):
             response = self._design_stub.Export(ExportRequest(format=format.value[1]))
