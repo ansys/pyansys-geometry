@@ -7,7 +7,8 @@ from pint import Quantity
 import pyvista as pv
 
 from ansys.geometry.core.math import Point2D
-from ansys.geometry.core.misc import UNIT_ANGLE, UNITS, Distance, check_pint_unit_compatibility
+from ansys.geometry.core.misc import UNITS, Distance
+from ansys.geometry.core.misc.measurements import Angle
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import SketchSegment
@@ -142,25 +143,33 @@ class SpurGear(Gear):
     module : Real
         Module of the spur gear. This is also the ratio between the pitch circle
         diameter in millimeters and the number of teeth.
-    pressure_angle : Quantity
+    pressure_angle : Union[Quantity, Angle, Real]
         Pressure angle of the spur gear.
     n_teeth : int
         Number of teeth of the spur gear.
     """
 
     @check_input_types
-    def __init__(self, origin: Point2D, module: Real, pressure_angle: Quantity, n_teeth: int):
+    def __init__(
+        self,
+        origin: Point2D,
+        module: Real,
+        pressure_angle: Union[Quantity, Angle, Real],
+        n_teeth: int,
+    ):
         """Constructor for spur gears."""
         # Call the parent ctor
         super().__init__()
 
         # Additional checks for inputs
-        check_pint_unit_compatibility(pressure_angle.u, UNIT_ANGLE)
+        self._pressure_angle = (
+            pressure_angle if isinstance(pressure_angle, Angle) else Angle(pressure_angle)
+        )
+        # check_pint_unit_compatibility(pressure_angle.u, UNIT_ANGLE)
 
         # Store input parameters
         self._origin = origin
         self._module = module
-        self._pressure_angle = pressure_angle.to(UNIT_ANGLE)
         self._n_teeth = n_teeth
 
         # Compute additional needed values
@@ -187,7 +196,7 @@ class SpurGear(Gear):
     @property
     def pressure_angle(self) -> Quantity:
         """Pressure angle of the spur gear."""
-        return self._pressure_angle
+        return self._pressure_angle.value
 
     @property
     def n_teeth(self) -> int:
