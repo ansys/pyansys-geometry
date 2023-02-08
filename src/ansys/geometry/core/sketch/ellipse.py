@@ -27,6 +27,8 @@ class SketchEllipse(SketchFace, Ellipse):
         Minor radius of the ellipse.
     angle : Union[Quantity, Angle, Real], default: 0
         Placement angle for orientation alignment.
+    plane : Plane, optional
+        Plane containing the sketched ellipse, by default global XY Plane.
     """
 
     @check_input_types
@@ -52,9 +54,7 @@ class SketchEllipse(SketchFace, Ellipse):
             minor_radius if isinstance(minor_radius, Distance) else Distance(minor_radius)
         )
 
-        if isinstance(angle, (int, float)):
-            angle = Angle(angle, UNIT_ANGLE)
-        self._angle_offset = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
+        self._angle_offset = angle if isinstance(angle, Angle) else Angle(angle)
 
         # Call Ellipse init method
         self._init_primitive_ellipse_from_plane(plane, major_radius, minor_radius, angle)
@@ -92,7 +92,7 @@ class SketchEllipse(SketchFace, Ellipse):
             unit=self.center.base_unit,
         )
 
-        angle_rad = angle.value.m_as(UNIT_ANGLE)
+        angle_rad = angle.m_as(UNIT_ANGLE)
         new_rotated_dir_x = Vector3D(
             [
                 np.cos(angle_rad) * plane.direction_x.x - np.sin(angle_rad) * plane.direction_x.y,
@@ -111,9 +111,9 @@ class SketchEllipse(SketchFace, Ellipse):
         return self._center
 
     @property
-    def angle(self) -> Angle:
+    def angle(self) -> Quantity:
         """Orientation angle of the ellipse."""
-        return self._angle_offset
+        return self._angle_offset.value
 
     @property
     def perimeter(self) -> Quantity:
