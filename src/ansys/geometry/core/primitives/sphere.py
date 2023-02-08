@@ -152,18 +152,18 @@ class SphereEvaluation(SurfaceEvaluation):
     def normal(self) -> UnitVector3D:
         """The normal to the surface."""
         return UnitVector3D(
-            np.cos(self.parameter.v) * self.cylinder_normal()
+            np.cos(self.parameter.v) * self.__cylinder_normal()
             + np.sin(self.parameter.v) * self.sphere.dir_z
         )
 
-    def cylinder_normal(self) -> Vector3D:
+    def __cylinder_normal(self) -> Vector3D:
         """Cylinder normal of the evaluation."""
         return (
             np.cos(self.parameter.u) * self.sphere.dir_x
             + np.sin(self.parameter.u) * self.sphere.dir_y
         )
 
-    def cylinder_tangent(self) -> Vector3D:
+    def __cylinder_tangent(self) -> Vector3D:
         """Cylinder tangent of the evaluation."""
         return (
             -np.sin(self.parameter.u) * self.sphere.dir_x
@@ -172,28 +172,28 @@ class SphereEvaluation(SurfaceEvaluation):
 
     def u_derivative(self) -> Vector3D:
         """The first derivative with respect to u."""
-        return np.cos(self.parameter.v) * self.sphere.radius.m * self.cylinder_tangent()
+        return np.cos(self.parameter.v) * self.sphere.radius.m * self.__cylinder_tangent()
 
     def v_derivative(self) -> Vector3D:
         """The first derivative with respect to v."""
         return self.sphere.radius.m * (
             np.cos(self.parameter.v) * self.sphere.dir_z
-            - np.sin(self.parameter.v) * self.cylinder_normal()
+            - np.sin(self.parameter.v) * self.__cylinder_normal()
         )
 
     def uu_derivative(self) -> Vector3D:
         """The second derivative with respect to u."""
-        return -np.cos(self.parameter.v) * self.sphere.radius.m * self.cylinder_normal()
+        return -np.cos(self.parameter.v) * self.sphere.radius.m * self.__cylinder_normal()
 
     def uv_derivative(self) -> Vector3D:
         """The second derivative with respect to u and v."""
-        return -np.sin(self.parameter.v) * self.sphere.radius.m * self.cylinder_tangent()
+        return -np.sin(self.parameter.v) * self.sphere.radius.m * self.__cylinder_tangent()
 
     def vv_derivative(self) -> Vector3D:
         """The second derivative with respect to v."""
         return self.sphere.radius.m * (
             -np.sin(self.parameter.v) * self.sphere.dir_z
-            - np.cos(self.parameter.v) * self.cylinder_normal()
+            - np.cos(self.parameter.v) * self.__cylinder_normal()
         )
 
     def min_curvature(self) -> Real:

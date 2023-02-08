@@ -36,14 +36,66 @@ PyGeometry is a Python client library for the Ansys Geometry service.
 Usage
 -----
 
-First, start the Geometry service locally. If you have Docker installed and have
-`authenticated to ghcr.io
-<https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry>`_,
-you can start the service locally using Docker with:
+There are two different ways of getting started with the Geometry service and its client-library, PyGeometry.
+
+Using PyGeometry launcher
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+PyGeometry is provided with an internal launcher that is capable of handling the specifics of
+launching the Geometry service locally. The only requirements are that:
+
+* Docker is installed on your machine.
+* You have access to the PyAnsys GitHub container registry, where the Geometry service image is hosted.
+
+.. caution::
+
+   The Geometry service is currently available only as a Windows Docker image. The development
+   team is working on getting the Linux Docker container available as soon as possible. In the meantime,
+   make sure that your Docker engine is configured to run Windows Docker images.
+
+First, bear in mind that you have to be `authenticated to ghcr.io
+<https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry>`_.
+Once authenticated, please proceed to download the Geometry service Docker image:
 
 .. code:: bash
 
-   docker run --name ans_geo -p 50051:50051 ghcr.io/pyansys/pygeometry:latest
+   docker pull ghcr.io/pyansys/geometry:<tag>
+
+The following OS-dependent tags are available:
+
+* ``windows-latest``
+* ``windows-latest-unstable``
+
+Next, you will be ready to run the Geometry service directly from PyGeometry:
+
+.. code:: python
+
+   from ansys.geometry.core.connection import launch_modeler
+
+   modeler = launch_modeler()
+
+The previous ``launch_modeler()`` method will launch the Geometry service under the default
+conditions. For more configurability, please use ``launch_local_modeler()``.
+
+Manual service launch
+^^^^^^^^^^^^^^^^^^^^^
+
+First, start the Geometry service locally. If you have Docker installed and have
+`authenticated to ghcr.io`_, you can start the service locally using Docker with:
+
+.. code:: bash
+
+   docker run --name ans_geo -e LICENSE_SERVER=<LICENSE-SERVER> -p 50051:50051 ghcr.io/pyansys/geometry:windows-latest
+
+The Geometry service has a set of environment variables that are **mandatory**:
+
+* ``LICENSE_SERVER``: the license server (IP, DNS) to which the Geometry service shall connect. For example, ``127.0.0.1``.
+
+Other optional environment variables are:
+
+* ``ENABLE_TRACE``: whether to set up the trace level for debugging purposes. Expects either ``1`` or ``0``.
+  By default, ``0`` (which means it is not activated).
+* ``LOG_LEVEL``: sets the Geometry service logging level. By default, ``2``.
 
 Next, connect to the service with:
 
@@ -181,7 +233,7 @@ For example, on Linux with Python 3.7, unzip the wheelhouse archive and install 
 
 .. code:: bash
 
-    unzip ansys-geometry-core-v0.2.dev0-wheelhouse-Linux-3.7.zip wheelhouse
+    unzip ansys-geometry-core-v0.3.dev0-wheelhouse-Linux-3.7.zip wheelhouse
     pip install ansys-geometry-core -f wheelhouse --no-index --upgrade --ignore-installed
 
 If you're on Windows with Python 3.9, unzip to a wheelhouse directory and install using the preceding command.

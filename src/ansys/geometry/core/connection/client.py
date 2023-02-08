@@ -11,6 +11,7 @@ from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
 
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
+from ansys.geometry.core.connection.local_instance import LocalDockerInstance
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.logger import PyGeometryCustomAdapter
 from ansys.geometry.core.typing import Real
@@ -73,6 +74,11 @@ class GrpcClient:
         is launched through PyPIM. This instance is deleted when calling the
         :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
         method.
+    local_instance : LocalDockerInstance, default: None
+        Corresponding local instance when the Geometry service is launched through
+        the ``launch_local_modeler()`` interface. This instance will be deleted
+        when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
+        method is called.
     timeout : real, default: 60
         Timeout in seconds to achieve the connection.
     logging_level : int, default: INFO
@@ -88,6 +94,7 @@ class GrpcClient:
         port: Union[str, int] = DEFAULT_PORT,
         channel: Optional[grpc.Channel] = None,
         remote_instance: Optional["Instance"] = None,
+        local_instance: Optional[LocalDockerInstance] = None,
         timeout: Optional[Real] = 60,
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
@@ -95,6 +102,7 @@ class GrpcClient:
         """Initialize the ``GrpcClient`` object."""
         self._closed = False
         self._remote_instance = remote_instance
+        self._local_instance = local_instance
         if channel:
             # Used for PyPIM when directly providing a channel
             self._channel = channel
@@ -131,6 +139,11 @@ class GrpcClient:
         return self._log
 
     @property
+    def is_closed(self) -> bool:
+        """Checks if the client connection is closed or not."""
+        return self._closed
+
+    @property
     def healthy(self) -> bool:
         """Check if the client channel if healthy."""
         if self._closed:
@@ -162,10 +175,18 @@ class GrpcClient:
         Notes
         -----
         If an instance of the Geometry service was started using
-        PyPIM, this instance is deleted.
+        PyPIM, this instance is deleted. Furthermore, if a local instance
+        of the Geometry service was started, it will be stopped.
         """
         if self._remote_instance:
             self._remote_instance.delete()  # pragma: no cover
+        if self._local_instance:
+            if not self._local_instance.existed_previously:
+                self._local_instance.container.stop()
+            else:
+                self.log.warning(
+                    "Geometry service will not be shutdown since it was already running..."
+                )
         self._closed = True
         self._channel.close()
 

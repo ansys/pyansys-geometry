@@ -472,7 +472,6 @@ class SpurGear(Gear):
         ]
 
         if not closing_involute:
-
             # Initiate preliminary arc object - lives outside the scope of the loop
             preliminary_arc = None
 

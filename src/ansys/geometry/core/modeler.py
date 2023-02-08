@@ -13,6 +13,7 @@ from ansys.geometry.core.typing import Real
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.platform.instancemanagement import Instance
 
+    from ansys.geometry.core.connection.local_instance import LocalDockerInstance
     from ansys.geometry.core.designer import Design
 
 
@@ -34,6 +35,11 @@ class Modeler:
         is launched through PyPIM. This instance is deleted when the
         :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
         method is called.
+    local_instance : LocalDockerInstance, default: None
+        Corresponding local instance when the Geometry service is launched through
+        the ``launch_local_modeler()`` interface. This instance will be deleted
+        when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
+        method is called.
     timeout : Real, default: 60
         Timeout in seconds to achieve the connection.
     logging_level : int, default: INFO
@@ -48,6 +54,7 @@ class Modeler:
         port: Union[str, int] = DEFAULT_PORT,
         channel: Optional[Channel] = None,
         remote_instance: Optional["Instance"] = None,
+        local_instance: Optional["LocalDockerInstance"] = None,
         timeout: Optional[Real] = 60,
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
@@ -58,6 +65,7 @@ class Modeler:
             port=port,
             channel=channel,
             remote_instance=remote_instance,
+            local_instance=local_instance,
             timeout=timeout,
             logging_level=logging_level,
             logging_file=logging_file,
@@ -90,6 +98,10 @@ class Modeler:
         design = Design(name, self._client)
         self._designs.append(design)
         return self._designs[-1]
+
+    def close(self) -> None:
+        """``Modeler`` easy-access method to the client's ``close()`` method."""
+        return self.client.close()
 
     def __repr__(self):
         """String representation of the modeler."""

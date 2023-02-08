@@ -2,7 +2,6 @@ from ansys.geometry.core import __version__
 
 
 def test_pkg_version():
-
     try:
         import importlib.metadata as importlib_metadata
     except ModuleNotFoundError:  # pragma: no cover
