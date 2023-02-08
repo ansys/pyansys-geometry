@@ -875,6 +875,41 @@ def test_project_and_imprint_curves(modeler: Modeler):
     assert len(body.faces) == 8
 
 
+def test_copy_body(modeler: Modeler):
+    """Test copying a body."""
+
+    # Create your design on the server side
+    design = modeler.create_design("Design")
+
+    sketch_1 = Sketch().circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
+    body = design.extrude_sketch("Original", sketch_1, Distance(1, UNITS.mm))
+
+    # Copy body at same design level
+    copy = body.copy(design, "Copy")
+    assert len(design.bodies) == 2
+    assert design.bodies[-1] == copy
+
+    # Bodies should be distinct
+    assert body != copy
+
+    # Copy body into sub-component
+    comp1 = design.add_component("comp1")
+    copy2 = body.copy(comp1, "Subcopy")
+    assert len(comp1.bodies) == 1
+    assert comp1.bodies[-1] == copy2
+
+    # Copy a copy
+    comp2 = comp1.add_component("comp2")
+    copy3 = copy2.copy(comp2, "Copy3")
+    assert len(comp2.bodies) == 1
+    assert comp2.bodies[-1] == copy3
+
+    # Ensure deleting original doesn't affect the copies
+    design.delete_body(body)
+    assert not body.is_alive
+    assert copy.is_alive
+
+
 def test_beams(modeler: Modeler):
     """Test beam creation."""
     # Create your design on the server side
@@ -1060,30 +1095,3 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Surface body         : True" in surf_repr
     assert "Surface thickness    : 30 millimeter" in surf_repr
     assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
-
-
-def test_copy_body(modeler: Modeler):
-    """Test copying a body."""
-
-    # Create your design on the server side
-    design = modeler.create_design("TestCopyBody")
-
-    sketch_1 = Sketch().circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
-    body = design.extrude_sketch("Original", sketch_1, Distance(1, UNITS.mm))
-
-    # Copy body at same design level
-    copy = body.copy(design, "Copy")
-    assert len(design.bodies) == 2
-    assert design.bodies[-1] == copy
-
-    # Copy body into sub-component
-    comp1 = design.add_component("comp1")
-    copy2 = body.copy(comp1, "Subcopy")
-    assert len(comp1.bodies) == 1
-    assert comp1.bodies[-1] == copy2
-
-    # Copy a copy
-    comp2 = comp1.add_component("comp2")
-    copy3 = copy2.copy(comp2, "Copy3")
-    assert len(comp2.bodies) == 1
-    assert comp2.bodies[-1] == copy3
