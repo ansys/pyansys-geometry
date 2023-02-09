@@ -455,3 +455,20 @@ class Design(Component):
         lines.append(f"  N Materials          : {len(self.materials)}")
         lines.append(f"  N Beam Profiles      : {len(self.beam_profiles)}")
         return "\n".join(lines)
+
+    @classmethod
+    def read_existing_design(cls, grpc_client: GrpcClient) -> "Design":
+        """Read existing design on the service with the connected client.
+
+        Parameters
+        ----------
+        grpc_client : GrpcClient
+            Active supporting Geometry service instance for design modeling.
+
+        Returns
+        -------
+        Design
+            Design object already living on the server.
+        """
+        # TODO: To be implemented...
+        return None
