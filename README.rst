@@ -182,6 +182,12 @@ To install PyGeometry in developer mode, perform these steps:
 
       git clone https://github.com/pyansys/pygeometry
 
+#. Access the ``pygeometry`` directory where the repository has been cloned:
+
+   .. code:: bash
+
+      cd pygeometry
+
 #. Create a clean Python virtual environment and activate it:
 
    .. code:: bash
@@ -204,18 +210,21 @@ To install PyGeometry in developer mode, perform these steps:
 
       python -m pip install -U pip tox
 
-
 #. Install the project in editable mode:
 
    .. code:: bash
-    
-      python -m pip install ansys-geometry-core
-        
-#. Verify your development installation by running:
+      
+      # Install the minimum requirements
+      python -m pip install -e .
 
-   .. code:: bash
-        
-      tox
+      # Install the minimum + tests requirements
+      python -m pip install -e .[tests]
+
+      # Install the minimum + doc requirements
+      python -m pip install -e .[doc]
+
+      # Install the all requirements
+      python -m pip install -e .[tests,doc]
 
 Install in offline mode
 ^^^^^^^^^^^^^^^^^^^^^^^
