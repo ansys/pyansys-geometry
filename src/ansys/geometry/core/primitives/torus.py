@@ -19,9 +19,9 @@ class Torus:
     origin : Union[~numpy.ndarray, RealSequence, Point3D],
         Centered origin of the torus.
     direction_x : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
-        X-plane direction.
+        X-axis direction.
     direction_y : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
-        Y-plane direction.
+        Y-axis direction.
     major_radius : Real
         Major radius of the torus.
     minor_radius : Real
