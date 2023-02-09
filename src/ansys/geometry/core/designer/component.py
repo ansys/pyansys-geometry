@@ -13,7 +13,11 @@ from ansys.api.geometry.v0.bodies_pb2 import (
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import CreateBeamSegmentsRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.components_pb2 import CreateRequest, SetSharedTopologyRequest
+from ansys.api.geometry.v0.components_pb2 import (
+    CreateRequest,
+    GetAllRequest,
+    SetSharedTopologyRequest,
+)
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
 from ansys.api.geometry.v0.models_pb2 import EntityIdentifier, Line
 from beartype import beartype as check_input_types
@@ -64,6 +68,11 @@ class Component:
         Parent component to nest the new component under within the design assembly.
     grpc_client : GrpcClient
         Active supporting Geometry service instance for design modeling.
+    read_existing_comp : bool, optional
+        Indicates whether an existing component on the service should be read
+        or not. By default, ``False``. This is only valid when connecting
+        to an existing service session. Otherwise, avoid using this optional
+        argument.
     """
 
     # Types of the class instance private attributes
@@ -74,7 +83,13 @@ class Component:
 
     @protect_grpc
     @check_input_types
-    def __init__(self, name: str, parent_component: Optional["Component"], grpc_client: GrpcClient):
+    def __init__(
+        self,
+        name: str,
+        parent_component: Optional["Component"],
+        grpc_client: GrpcClient,
+        read_existing_comp: bool = False,
+    ):
         """Constructor method for the ``Component`` class."""
 
         # Initialize the client and stubs needed
@@ -84,7 +99,7 @@ class Component:
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 
         # Check if we are dealing with the root component (i.e. parent_component is None)
-        if parent_component:
+        if parent_component and not read_existing_comp:
             new_component = self._component_stub.Create(
                 CreateRequest(name=name, parent=parent_component.id)
             )
@@ -801,3 +816,22 @@ class Component:
         lines.append(f"  N Components         : {sum(alive_comps)}")
         lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
         return "\n".join(lines)
+
+    def __read_existing_component(self, component: "Component") -> None:
+        # Given the existing component...
+        #
+        # Let's read the existing bodies first
+        list_bodies_grpc = self._component_stub.GetBodies(EntityIdentifier(id=self.id))
+        for body_grpc in list_bodies_grpc:
+            self._bodies.append(Body(body_grpc.id, body_grpc.name, self, self._grpc_client))
+
+        # Now, once all bodies have been read, let's get all subcomponents
+        list_subcomponents_grpc = self._component_stub.GetAll(GetAllRequest(parent=self.id))
+        for subcomp_grpc in list_subcomponents_grpc:
+            subcomp = Component("", component, self._grpc_client, read_existing_comp=True)
+            subcomp._id = subcomp_grpc.id
+            subcomp._name = subcomp_grpc.name
+            self._components.append(subcomp)
+            self.__read_existing_component(subcomp)
+
+        # TODO: WIP...

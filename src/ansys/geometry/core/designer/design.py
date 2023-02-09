@@ -484,4 +484,15 @@ class Design(Component):
         # - [ ] Beams
         # - [ ] CoordinateSystems
         # - [ ] SharedTopology
-        pass
+
+        # First, let's start by getting the design object (i.e. root component)
+        design = self._design_stub.GetActive(Empty())
+        if not design:
+            raise RuntimeError("No existing design available at service level.")
+        else:
+            self._id = design.id
+            self._name = design.name
+
+        # Now that we have verified that there is an active design
+        # on the service, let's keep reading it.
+        self.__read_existing_component(self)
