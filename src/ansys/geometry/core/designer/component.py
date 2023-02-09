@@ -76,11 +76,14 @@ class Component:
     @check_input_types
     def __init__(self, name: str, parent_component: Optional["Component"], grpc_client: GrpcClient):
         """Constructor method for the ``Component`` class."""
+
+        # Initialize the client and stubs needed
         self._grpc_client = grpc_client
         self._component_stub = ComponentsStub(self._grpc_client.channel)
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 
+        # Check if we are dealing with the root component (i.e. parent_component is None)
         if parent_component:
             new_component = self._component_stub.Create(
                 CreateRequest(name=name, parent=parent_component.id)
@@ -91,6 +94,7 @@ class Component:
             self._name = name
             self._id = None
 
+        # Initialize needed instance variables
         self._components = []
         self._bodies = []
         self._beams = []

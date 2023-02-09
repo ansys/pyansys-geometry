@@ -68,6 +68,11 @@ class Design(Component):
         User-defined label for the design.
     grpc_client : GrpcClient
         Active supporting Geometry service instance for design modeling.
+    read_existing_design : bool, optional
+        Indicates whether an existing design on the service should be read
+        or not. By default, ``False``. This is only valid when connecting
+        to an existing service session. Otherwise, avoid using this optional
+        argument.
     """
 
     # Types of the class instance private attributes
@@ -77,23 +82,29 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
-    def __init__(self, name: str, grpc_client: GrpcClient):
+    def __init__(self, name: str, grpc_client: GrpcClient, read_existing_design: bool = False):
         """Constructor method for the ``Design`` class."""
         super().__init__(name, None, grpc_client)
 
+        # Initialize the stubs needed
         self._design_stub = DesignsStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
         self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
 
-        new_design = self._design_stub.New(NewRequest(name=name))
-        self._id = new_design.id
-
+        # Initialize needed instance variables
         self._materials = []
         self._named_selections = {}
         self._beam_profiles = {}
 
-        self._grpc_client.log.debug("Design object instantiated successfully.")
+        # Check whether we want to process an existing design or create a new one.
+        if read_existing_design:
+            self._grpc_client.log.debug("Reading Design object from service.")
+            self.__read_existing_design()
+        else:
+            new_design = self._design_stub.New(NewRequest(name=name))
+            self._id = new_design.id
+            self._grpc_client.log.debug("Design object instantiated successfully.")
 
     @property
     def materials(self) -> List[Material]:
@@ -456,19 +467,21 @@ class Design(Component):
         lines.append(f"  N Beam Profiles      : {len(self.beam_profiles)}")
         return "\n".join(lines)
 
-    @classmethod
-    def read_existing_design(cls, grpc_client: GrpcClient) -> "Design":
+    def __read_existing_design(self) -> None:
         """Read existing design on the service with the connected client.
-
-        Parameters
-        ----------
-        grpc_client : GrpcClient
-            Active supporting Geometry service instance for design modeling.
-
-        Returns
-        -------
-        Design
-            Design object already living on the server.
+        This method will just fill the ``Design`` object with all its
+        existing ``Component`` and ``Body`` objects.
         """
         # TODO: To be implemented...
-        return None
+        #
+        # We have to get back:
+        #
+        # - [ ] Components
+        # - [ ] Bodies
+        # - [ ] Materials
+        # - [ ] NamedSelections
+        # - [ ] BeamProfiles
+        # - [ ] Beams
+        # - [ ] CoordinateSystems
+        # - [ ] SharedTopology
+        pass

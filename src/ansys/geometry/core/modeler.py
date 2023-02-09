@@ -109,7 +109,7 @@ class Modeler:
         """
         from ansys.geometry.core.designer.design import Design
 
-        design = Design.read_existing_design(self._client)
+        design = Design("", self._client, read_existing_design=True)
         self._designs.append(design)
         return self._designs[-1]
 
