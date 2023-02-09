@@ -422,22 +422,26 @@ class Body:
         """
         from ansys.geometry.core.designer.component import Component
 
+        # Check input types
         check_type(parent, Component)
-        if name is None:
-            check_type(name, str)
-            name = self.name
+        check_type(name, (type(None), str))
+        copy_name = self.name if name is None else name
 
         self._grpc_client.log.debug(f"Copying body {self.id}.")
 
+        # Perform copy request to server
         response = self._bodies_stub.Copy(
             CopyRequest(
                 id=self.id,
                 parent=parent.id,
-                name=name,
+                name=copy_name,
             )
         )
 
-        parent._bodies.append(Body(response.id, name, parent, self._grpc_client, is_surface=False))
+        # Assign the new body to its specified parent (and return the new body)
+        parent._bodies.append(
+            Body(response.id, copy_name, parent, self._grpc_client, is_surface=False)
+        )
         return parent._bodies[-1]
 
     @protect_grpc
