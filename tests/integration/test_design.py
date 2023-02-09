@@ -787,13 +787,18 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
     design.save(file_location=file_save)
 
-    # Check for parasolid exports
+    # Check for other exports
     binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
     text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
+    fmd_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.fmd"
+
     design.download(binary_parasolid_file, format=DesignFileFormat.PARASOLID_BIN)
     design.download(text_parasolid_file, format=DesignFileFormat.PARASOLID_TEXT)
+    design.download(fmd_file, format=DesignFileFormat.FMD)
+
     assert binary_parasolid_file.exists()
     assert text_parasolid_file.exists()
+    assert fmd_file.exists()
 
 
 def test_slot_extrusion(modeler: Modeler):
@@ -868,6 +873,41 @@ def test_project_and_imprint_curves(modeler: Modeler):
 
     assert len(new_faces) == 2
     assert len(body.faces) == 8
+
+
+def test_copy_body(modeler: Modeler):
+    """Test copying a body."""
+
+    # Create your design on the server side
+    design = modeler.create_design("Design")
+
+    sketch_1 = Sketch().circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
+    body = design.extrude_sketch("Original", sketch_1, Distance(1, UNITS.mm))
+
+    # Copy body at same design level
+    copy = body.copy(design, "Copy")
+    assert len(design.bodies) == 2
+    assert design.bodies[-1] == copy
+
+    # Bodies should be distinct
+    assert body != copy
+
+    # Copy body into sub-component
+    comp1 = design.add_component("comp1")
+    copy2 = body.copy(comp1, "Subcopy")
+    assert len(comp1.bodies) == 1
+    assert comp1.bodies[-1] == copy2
+
+    # Copy a copy
+    comp2 = comp1.add_component("comp2")
+    copy3 = copy2.copy(comp2, "Copy3")
+    assert len(comp2.bodies) == 1
+    assert comp2.bodies[-1] == copy3
+
+    # Ensure deleting original doesn't affect the copies
+    design.delete_body(body)
+    assert not body.is_alive
+    assert copy.is_alive
 
 
 def test_beams(modeler: Modeler):
