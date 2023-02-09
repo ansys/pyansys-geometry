@@ -54,6 +54,8 @@ def test_design_import_simple_case(modeler: Modeler):
 
     # Now, let's create a new client session
     new_client = Modeler()
-    # TODO: read_design = new_client.read_existing_design()
+    read_design = new_client.read_existing_design()
     #
     # TODO: And now assert all its elements
+    assert read_design is None
+    assert len(new_client._designs) == 1
