@@ -140,7 +140,7 @@ Depending on the mechanism chosen to launch the Geometry service, you can set th
                     $env:ANSRV_GEO_ENABLE_TRACE=0
                     $env:ANSRV_GEO_LOG_LEVEL=2
 
-            .. tab-item:: Windows
+            .. tab-item:: Windows CMD
 
                 .. code-block:: bash
 
@@ -218,7 +218,14 @@ If you want to change the defaults, modify environment variables and the
                     export ANSRV_GEO_HOST=127.0.0.1
                     export ANSRV_GEO_PORT=50051
 
-            .. tab-item:: Windows
+            .. tab-item:: Powershell
+
+                .. code-block:: bash
+
+                    $env:ANSRV_GEO_HOST="127.0.0.1"
+                    $env:ANSRV_GEO_PORT=50051
+
+            .. tab-item:: Windows CMD
 
                 .. code-block:: bash
 

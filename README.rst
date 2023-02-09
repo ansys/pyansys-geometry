@@ -119,7 +119,14 @@ If you want to change the defaults, modify the following environment variables:
    export ANSRV_GEO_HOST=127.0.0.1
    export ANSRV_GEO_PORT=50051
 
-**On Windows**
+**On Windows Powershell**
+
+.. code::
+
+   $env:ANSRV_GEO_HOST="127.0.0.1"
+   $env:ANSRV_GEO_PORT=50051
+
+**On Windows CMD**
 
 .. code::
 
