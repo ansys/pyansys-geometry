@@ -1,7 +1,11 @@
 """Provides the ``Body`` class module."""
 from enum import Enum
 
-from ansys.api.geometry.v0.bodies_pb2 import SetAssignedMaterialRequest, TranslateRequest
+from ansys.api.geometry.v0.bodies_pb2 import (
+    CopyRequest,
+    SetAssignedMaterialRequest,
+    TranslateRequest,
+)
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
@@ -399,6 +403,46 @@ class Body:
                 distance=translation_magnitude,
             )
         )
+
+    @protect_grpc
+    def copy(self, parent: "Component", name: str = None) -> "Body":
+        """Creates a copy of the geometry body and places it under the specified parent.
+
+        Parameters
+        ----------
+        parent: Component
+            The parent component that the new body should live under.
+        name: str
+            The name to give the new body.
+
+        Returns
+        -------
+        Body
+            Copy of the body.
+        """
+        from ansys.geometry.core.designer.component import Component
+
+        # Check input types
+        check_type(parent, Component)
+        check_type(name, (type(None), str))
+        copy_name = self.name if name is None else name
+
+        self._grpc_client.log.debug(f"Copying body {self.id}.")
+
+        # Perform copy request to server
+        response = self._bodies_stub.Copy(
+            CopyRequest(
+                id=self.id,
+                parent=parent.id,
+                name=copy_name,
+            )
+        )
+
+        # Assign the new body to its specified parent (and return the new body)
+        parent._bodies.append(
+            Body(response.id, copy_name, parent, self._grpc_client, is_surface=False)
+        )
+        return parent._bodies[-1]
 
     @protect_grpc
     def tessellate(self, merge: Optional[bool] = False) -> Union["PolyData", "MultiBlock"]:
