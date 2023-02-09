@@ -8,6 +8,12 @@ from pint import Quantity
 from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import Accuracy, Distance
 from ansys.geometry.core.primitives.curve_evaluation import CurveEvaluation
+from ansys.geometry.core.primitives.parameterization import (
+    Interval,
+    Parameterization,
+    ParamForm,
+    ParamType,
+)
 from ansys.geometry.core.typing import Real, RealSequence
 
 
@@ -128,6 +134,14 @@ class Circle:
             and self.origin == other.origin
             and self.dir_z == other.dir_z
         )
+
+    def get_parameterization(self) -> Parameterization:
+        """
+        The parameter of a circle specifies the clockwise angle around the axis
+        (right hand corkscrew law), with a zero parameter at `dir_x` and a period
+        of 2*pi.
+        """
+        return Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
 
 
 class CircleEvaluation(CurveEvaluation):

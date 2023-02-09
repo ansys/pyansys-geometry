@@ -7,6 +7,12 @@ from pint import Quantity
 
 from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import Distance
+from ansys.geometry.core.primitives.parameterization import (
+    Interval,
+    Parameterization,
+    ParamForm,
+    ParamType,
+)
 from ansys.geometry.core.primitives.surface_evaluation import ParamUV, SurfaceEvaluation
 from ansys.geometry.core.typing import Real, RealSequence
 
@@ -117,6 +123,20 @@ class Sphere:
         u = np.arctan2(y, x)
         v = np.arctan2(z, np.sqrt(x * x + y * y))
         return SphereEvaluation(self, ParamUV(u, v))
+
+    def get_u_parameterization(self) -> Parameterization:
+        """
+        The U parameter specifies the longitude angle, increasing clockwise (East) about `dir_z`
+        (right hand corkscrew law). It has a zero parameter at `dir_x`, and a period of 2*pi.
+        """
+        return Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
+
+    def get_v_parameterization(self) -> Parameterization:
+        """
+        The V parameter specifies the latitude, increasing North, with a zero parameter at the
+        equator, and a range of [-pi/2, pi/2].
+        """
+        return Parameterization(ParamForm.CLOSED, ParamType.OTHER, Interval(-np.pi / 2, np.pi / 2))
 
 
 class SphereEvaluation(SurfaceEvaluation):

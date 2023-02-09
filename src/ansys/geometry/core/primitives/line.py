@@ -9,6 +9,12 @@ import numpy as np
 from ansys.geometry.core.math import Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc.accuracy import LENGTH_ACCURACY
 from ansys.geometry.core.primitives.curve_evaluation import CurveEvaluation
+from ansys.geometry.core.primitives.parameterization import (
+    Interval,
+    Parameterization,
+    ParamForm,
+    ParamType,
+)
 from ansys.geometry.core.typing import RealSequence
 
 
@@ -82,6 +88,15 @@ class Line:
         if self.is_coincident_line(other):
             return self.direction.is_opposite(other.direction)
         return False
+
+    def get_parameterization(self) -> Parameterization:
+        """
+        The parameter of a line specifies the distance from the `origin` in the
+        direction of `direction`.
+        """
+        return Parameterization(
+            ParamForm.OPEN, ParamType.LINEAR, Interval(float("-inf"), float("inf"))
+        )
 
 
 class LineEvaluation(CurveEvaluation):

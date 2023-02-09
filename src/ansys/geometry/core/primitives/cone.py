@@ -9,6 +9,12 @@ from pint import Quantity
 from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import Angle, Distance
 from ansys.geometry.core.primitives.line import Line
+from ansys.geometry.core.primitives.parameterization import (
+    Interval,
+    Parameterization,
+    ParamForm,
+    ParamType,
+)
 from ansys.geometry.core.primitives.surface_evaluation import ParamUV, SurfaceEvaluation
 from ansys.geometry.core.typing import Real, RealSequence
 
@@ -143,6 +149,27 @@ class Cone:
         v += dist_to_cone * np.sin(self.half_angle.m)
 
         return ConeEvaluation(self, ParamUV(u, v))
+
+    def get_u_parameterization(self) -> Parameterization:
+        """
+        The U parameter specifies the clockwise angle around the axis (right hand corkscrew law),
+        with a zero parameter at `dir_x`, and a period of 2*pi.
+        """
+        return Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
+
+    def get_v_parameterization(self) -> Parameterization:
+        """
+        The V parameter specifies the distance along the axis,
+        with a zero parameter at the XY plane of the Cone.
+        """
+
+        # V parameter interval depends on which way the cone opens
+        start, end = (
+            (self.apex_param, float("inf"))
+            if self.apex_param < 0
+            else (float("-inf"), self.apex_param)
+        )
+        return Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(start, end))
 
 
 class ConeEvaluation(SurfaceEvaluation):

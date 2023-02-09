@@ -7,6 +7,12 @@ from pint import Unit
 
 from ansys.geometry.core.math import Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, check_pint_unit_compatibility
+from ansys.geometry.core.primitives.parameterization import (
+    Interval,
+    Parameterization,
+    ParamForm,
+    ParamType,
+)
 from ansys.geometry.core.typing import Real, RealSequence
 
 
@@ -116,3 +122,19 @@ class Cylinder:
     def __ne__(self, other) -> bool:
         """Not equals operator for the ``Cylinder`` class."""
         return not self == other
+
+    def get_u_parameterization(self) -> Parameterization:
+        """
+        The U parameter specifies the clockwise angle around the axis (right hand corkscrew law),
+        with a zero parameter at `dir_x`, and a period of 2*pi.
+        """
+        return Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
+
+    def get_v_parameterization(self) -> Parameterization:
+        """
+        The V parameter specifies the distance along the axis,
+        with a zero parameter at the XY plane of the Cylinder.
+        """
+        return Parameterization(
+            ParamForm.OPEN, ParamType.LINEAR, Interval(float("-inf"), float("inf"))
+        )
