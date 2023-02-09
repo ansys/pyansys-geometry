@@ -1,29 +1,89 @@
+.. _ref_docker:
+
 Geometry service using Docker
 =============================
+
+Docker
+------
+
+Ensure that the machine in which the Geometry service should run has Docker installed. Otherwise,
+please install `Docker Engine <https://docs.docker.com/engine/install/>`_ from the previous link.
+
+.. caution::
+    At the moment, the Geometry service backend is only delivered as a Windows Docker container.
+    As such, this container only runs on a Windows machine. Furthermore, it has also been observed
+    that certain Docker Desktop versions for Windows are not properly configured for running Windows
+    Docker containers. Refer to our section
+    :ref:`Running the Geometry service Windows Docker container <ref_docker_windows>` for further details.
+
+.. _ref_docker_windows:
+
+Running the Geometry service Windows Docker container
+-----------------------------------------------------
+
+For running the Windows Docker container of the Geometry service, please ensure that
+you follow the upcoming steps when installing Docker:
+
+#. Install `Docker Desktop 4.13.1 <https://docs.docker.com/desktop/release-notes/#4131>`_ **or below**.
+   It has been observed that newer versions present problems when running Windows Docker containers.
+
+#. When prompted for ``Use WSL2 instead of Hyper-V (recommended)``, **deselect this option**.
+
+#. Once the installation process finishes, open up Docker Desktop.
+
+#. On ``Settings >> Software updates``, deselect ``Automatically check for updates``. Then, ``Apply & restart``.
+
+#. On the Windows taskbar, go to the ``Show hidden icons`` section, right click on the Docker Desktop app and
+   select ``Switch to Windows containers...``.
+
+At this point, your Docker engine will support running Windows Docker containers. Next step will involve downloading
+the Geometry service Windows Docker image.
 
 Install the PyGeometry image
 ----------------------------
 
+Once you have Docker installed on your machine, the next steps involve pulling down the Geometry service
+Docker container.
+
 #. Using your GitHub credentials, download the Docker image from the `pygeometry <https://github.com/pyansys/pygeometry>`_ repository.
+
 #. If you have Docker installed, use a GitHub personal access token (PAT) with packages read permission to authorize Docker 
    to access this repository. For more information,
    see `creating a personal access token <https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token>`_.
 
 #. Save the token to a file:
 
-   .. code:: bash
+    .. code-block:: bash
 
-      echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX > GH_TOKEN.txt
+        echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX > GH_TOKEN.txt
 
 #. Authorize Docker to access the repository:
 
-   .. code:: bash
+.. tab-set:: 
 
-      GH_USERNAME=<my-github-username>
-      cat GH_TOKEN.txt | docker login docker.pkg.github.com -u $GH_USERNAME --password-stdin
+    .. tab-item:: Linux/Mac
+
+        .. code-block:: bash
+
+            GH_USERNAME=<my-github-username>
+            cat GH_TOKEN.txt | docker login ghcr.io -u $GH_USERNAME --password-stdin
+
+    .. tab-item:: Powershell
+
+        .. code-block:: bash
+
+            $env:GH_USERNAME=<my-github-username>
+            cat GH_TOKEN.txt | docker login ghcr.io -u $env:GH_USERNAME --password-stdin
+
+    .. tab-item:: Windows CMD
+
+        .. code-block:: bash
+
+            SET GH_USERNAME=<my-github-username>
+            type GH_TOKEN.txt | docker login ghcr.io -u %GH_USERNAME% --password-stdin
+
 
 #. Pull the Geometry service locally using Docker with:
-
 
    .. code:: bash
 
@@ -71,6 +131,14 @@ Depending on the mechanism chosen to launch the Geometry service, you can set th
                     export ANSRV_GEO_LICENSE_SERVER=127.0.0.1
                     export ANSRV_GEO_ENABLE_TRACE=0
                     export ANSRV_GEO_LOG_LEVEL=2
+
+            .. tab-item:: Powershell
+
+                .. code-block:: bash
+
+                    $env:ANSRV_GEO_LICENSE_SERVER="127.0.0.1"
+                    $env:ANSRV_GEO_ENABLE_TRACE=0
+                    $env:ANSRV_GEO_LOG_LEVEL=2
 
             .. tab-item:: Windows
 
