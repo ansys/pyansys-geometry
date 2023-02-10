@@ -227,7 +227,7 @@ def sketch_ellipse_to_grpc_ellipse(ellipse: SketchEllipse, plane: Plane) -> GRPC
         center=point2d_to_grpc_point(plane, ellipse.center),
         majorradius=ellipse.major_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
         minorradius=ellipse.minor_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-        angle=ellipse.angle.value.m_as(DEFAULT_UNITS.ANGLE),
+        angle=ellipse.angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE),
     )
 
 
@@ -314,7 +314,7 @@ def sketch_polygon_to_grpc_polygon(polygon: Polygon, plane: Plane) -> GRPCPolygo
         center=point2d_to_grpc_point(plane, polygon.center),
         radius=polygon.inner_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
         numberofsides=polygon.n_sides,
-        angle=polygon.angle.value.m_as(DEFAULT_UNITS.ANGLE),
+        angle=polygon.angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE),
     )
 
 

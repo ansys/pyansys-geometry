@@ -8,7 +8,7 @@ import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Matrix33, Matrix44, Point2D
-from ansys.geometry.core.misc import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
 
@@ -117,7 +117,7 @@ class Polygon(SketchFace):
         rotation = Matrix33(
             spatial_rotation.from_euler(
                 "xyz",
-                [0, 0, -np.pi / 2 + self._angle_offset.value.m_as(DEFAULT_UNITS.ANGLE)],
+                [0, 0, -np.pi / 2 + self._angle_offset.value.m_as(UNITS.radian)],
                 degrees=False,
             ).as_matrix()
         )

@@ -8,7 +8,7 @@ import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Matrix33, Matrix44, Plane, Point2D, Point3D, Vector3D
-from ansys.geometry.core.misc import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
 from ansys.geometry.core.primitives import Ellipse
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
@@ -92,7 +92,7 @@ class SketchEllipse(SketchFace, Ellipse):
             unit=self.center.base_unit,
         )
 
-        angle_rad = angle.value.m_as(DEFAULT_UNITS.ANGLE)
+        angle_rad = angle.value.m_as(UNITS.radian)
         new_rotated_dir_x = Vector3D(
             [
                 np.cos(angle_rad) * plane.direction_x.x - np.sin(angle_rad) * plane.direction_x.y,
@@ -141,7 +141,7 @@ class SketchEllipse(SketchFace, Ellipse):
         """
         rotation = Matrix33(
             spatial_rotation.from_euler(
-                "xyz", [0, 0, self._angle_offset.value.m_as(DEFAULT_UNITS.ANGLE)], degrees=False
+                "xyz", [0, 0, self._angle_offset.value.m_as(UNITS.radian)], degrees=False
             ).as_matrix()
         )
 

@@ -7,7 +7,7 @@ import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Matrix33, Point2D
-from ansys.geometry.core.misc import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import SketchSegment
 from ansys.geometry.core.typing import Real
@@ -46,7 +46,7 @@ class Box(SketchFace):
 
         rotation = Matrix33(
             spatial_rotation.from_euler(
-                "xyz", [0, 0, angle.value.m_as(DEFAULT_UNITS.ANGLE)], degrees=False
+                "xyz", [0, 0, angle.value.m_as(UNITS.radian)], degrees=False
             ).as_matrix()
         )
 

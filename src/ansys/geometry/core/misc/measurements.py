@@ -53,6 +53,7 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
         self._length: Unit = UNITS.meter
         self._angle: Unit = UNITS.radian
         self._server_length: Unit = UNITS.meter
+        self._server_angle: Unit = UNITS.radian
 
     @property
     def LENGTH(self) -> Unit:
@@ -105,6 +106,16 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
         The default units on the server side are not modifiable yet.
         """
         return self._server_length * self._server_length * self._server_length
+
+    @property
+    def SERVER_ANGLE(self) -> Unit:
+        """Default angle unit for supporting Geometry services for gRPC messages.
+
+        Notes
+        -----
+        The default units on the server side are not modifiable yet.
+        """
+        return self._server_angle
 
 
 DEFAULT_UNITS = DefaultUnitsClass()

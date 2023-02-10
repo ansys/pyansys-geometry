@@ -148,7 +148,7 @@ class SpurGear(Gear):
         # Store input parameters
         self._origin = origin
         self._module = module
-        self._pressure_angle = pressure_angle.to(DEFAULT_UNITS.ANGLE)
+        self._pressure_angle = pressure_angle.to(UNITS.radian)
         self._n_teeth = n_teeth
 
         # Compute additional needed values
