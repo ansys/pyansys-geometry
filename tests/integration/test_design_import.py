@@ -21,14 +21,16 @@ def test_design_import_simple_case(modeler: Modeler):
 
     #  The following component hierarchy is made
     #
-    #           |---> comp_1 ---|---> nested_1_comp_1 ---> nested_1_nested_1_comp_1
-    #           |               |
+    #           |---> comp_1 ---|---> nested_1_comp_1 ---> nested_1_nested_1_comp_1 X
+    #           |               |                              X BODY X
     #           |               |---> nested_2_comp_1
+    #           |                         X BODY X
     #           |
     # DESIGN ---|---> comp_2 -------> nested_1_comp_2
     #           |
     #           |
     #           |---> comp_3
+    #                X BODY X
     #
     #
     # Now, only "comp_3", "nested_2_comp_1" and "nested_1_nested_1_comp_1"

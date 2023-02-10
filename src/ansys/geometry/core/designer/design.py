@@ -490,9 +490,9 @@ class Design(Component):
         if not design:
             raise RuntimeError("No existing design available at service level.")
         else:
-            self._id = design.id
-            self._name = design.name
+            self._id = design.main_part.id
+            self._name = design.main_part.name
 
         # Now that we have verified that there is an active design
         # on the service, let's keep reading it.
-        self.__read_existing_component(self)
+        self._Component__read_existing_component(self)

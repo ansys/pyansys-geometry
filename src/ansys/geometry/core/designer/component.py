@@ -821,6 +821,7 @@ class Component:
         # Given the existing component...
         #
         # Let's read the existing bodies first
+        # if self.parent_component is not None:
         list_bodies_grpc = self._component_stub.GetBodies(EntityIdentifier(id=self.id))
         for body_grpc in list_bodies_grpc:
             self._bodies.append(Body(body_grpc.id, body_grpc.name, self, self._grpc_client))
