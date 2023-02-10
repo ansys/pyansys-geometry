@@ -1,27 +1,114 @@
 """Provides various measurement-related classes."""
 
+from threading import Lock
+
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
 from pint import Quantity, Unit
 
-from ansys.geometry.core.misc.checks import check_is_float_int
+from ansys.geometry.core.misc.checks import check_is_float_int, check_pint_unit_compatibility
 from ansys.geometry.core.misc.units import UNITS, PhysicalQuantity
 from ansys.geometry.core.typing import Real
 
-UNIT_LENGTH = UNITS.meter
-"""Default length unit for PyGeometry."""
 
-UNIT_ANGLE = UNITS.radian
-"""Default angle unit for PyGeometry."""
+class SingletonMeta(type):
+    """
+    This is a thread-safe implementation of Singleton.
+    """
 
-SERVER_UNIT_LENGTH = UNITS.meter
-"""Default length unit for supporting Geometry services for gRPC messages."""
+    _instances = {}
 
-SERVER_UNIT_AREA = SERVER_UNIT_LENGTH * SERVER_UNIT_LENGTH
-"""Default area unit for supporting Geometry services for gRPC messages."""
+    _lock: Lock = Lock()
+    """
+    We now have a lock object that will be used to synchronize threads during
+    first access to the Singleton.
+    """
 
-SERVER_UNIT_VOLUME = SERVER_UNIT_AREA * SERVER_UNIT_LENGTH
-"""Default volume unit for supporting Geometry services for gRPC messages."""
+    def __call__(cls, *args, **kwargs):
+        """
+        Possible changes to the value of the `__init__` argument do not affect
+        the returned instance.
+        """
+        # Now, imagine that the program has just been launched. Since there's no
+        # Singleton instance yet, multiple threads can simultaneously pass the
+        # previous conditional and reach this point almost at the same time. The
+        # first of them will acquire lock and will proceed further, while the
+        # rest will wait here.
+        with cls._lock:
+            # The first thread to acquire the lock, reaches this conditional,
+            # goes inside and creates the Singleton instance. Once it leaves the
+            # lock block, a thread that might have been waiting for the lock
+            # release may then enter this section. But since the Singleton field
+            # is already initialized, the thread won't create a new object.
+            if cls not in cls._instances:
+                instance = super().__call__(*args, **kwargs)
+                cls._instances[cls] = instance
+        return cls._instances[cls]
+
+
+class DefaultUnitsClass(metaclass=SingletonMeta):
+    """PyGeometry default units singleton class."""
+
+    def __init__(self) -> None:
+        self._length: Unit = UNITS.meter
+        self._angle: Unit = UNITS.radian
+        self._server_length: Unit = UNITS.meter
+
+    @property
+    def LENGTH(self) -> Unit:
+        """Default length unit for PyGeometry."""
+        return self._length
+
+    @LENGTH.setter
+    @check_input_types
+    def LENGTH(self, value: Unit) -> None:
+        check_pint_unit_compatibility(value, self._length)
+        self._length = value
+
+    @property
+    def ANGLE(self) -> Unit:
+        """Default angle unit for PyGeometry."""
+        return self._angle
+
+    @ANGLE.setter
+    @check_input_types
+    def ANGLE(self, value: Unit) -> None:
+        check_pint_unit_compatibility(value, self._angle)
+        self._angle = value
+
+    @property
+    def SERVER_LENGTH(self) -> Unit:
+        """Default length unit for supporting Geometry services for gRPC messages.
+
+        Notes
+        -----
+        The default units on the server side are not modifiable yet.
+        """
+        return self._server_length
+
+    @property
+    def SERVER_AREA(self) -> Unit:
+        """Default area unit for supporting Geometry services for gRPC messages.
+
+        Notes
+        -----
+        The default units on the server side are not modifiable yet.
+        """
+        return self._server_length * self._server_length
+
+    @property
+    def SERVER_VOLUME(self) -> Unit:
+        """Default volume unit for supporting Geometry services for gRPC messages.
+
+        Notes
+        -----
+        The default units on the server side are not modifiable yet.
+        """
+        return self._server_length * self._server_length * self._server_length
+
+
+DEFAULT_UNITS = DefaultUnitsClass()
+"""PyGeometry default units object."""
 
 
 class Measurement(PhysicalQuantity):
@@ -80,10 +167,11 @@ class Distance(Measurement):
         Units for the distance.
     """
 
-    def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = UNIT_LENGTH):
+    def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = None):
         """Constructor for the ``Distance`` class."""
         # Delegates in Measurement ctor. forcing expected dimensions.
-        super().__init__(value, unit, UNIT_LENGTH)
+        unit = unit if unit else DEFAULT_UNITS.LENGTH
+        super().__init__(value, unit, DEFAULT_UNITS.LENGTH)
 
 
 class Angle(Measurement):
@@ -97,7 +185,8 @@ class Angle(Measurement):
         Units for the angle.
     """
 
-    def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = UNIT_ANGLE):
+    def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = None):
         """Constructor for the ``Angle`` class."""
         # Delegates in Measurement ctor. forcing expected dimensions.
-        super().__init__(value, unit, UNIT_ANGLE)
+        unit = unit if unit else DEFAULT_UNITS.ANGLE
+        super().__init__(value, unit, DEFAULT_UNITS.ANGLE)

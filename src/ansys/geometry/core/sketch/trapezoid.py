@@ -8,7 +8,7 @@ import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import ZERO_POINT2D, Matrix33, Point2D
-from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import SketchSegment
 from ansys.geometry.core.typing import Real
@@ -65,11 +65,11 @@ class Trapezoid(SketchFace):
         height_magnitude = self._height.value.m_as(center.unit)
 
         if isinstance(angle, (int, float)):
-            angle = Angle(angle, UNIT_ANGLE)
+            angle = Angle(angle, DEFAULT_UNITS.ANGLE)
         angle = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
 
         if isinstance(slant_angle, (int, float)):
-            slant_angle = Angle(slant_angle, UNIT_ANGLE)
+            slant_angle = Angle(slant_angle, DEFAULT_UNITS.ANGLE)
         slant_angle = (
             slant_angle if isinstance(slant_angle, Angle) else Angle(slant_angle, slant_angle.units)
         )
@@ -78,7 +78,7 @@ class Trapezoid(SketchFace):
             nonsymmetrical_slant_angle = slant_angle
         else:
             if isinstance(nonsymmetrical_slant_angle, (int, float)):
-                nonsymmetrical_slant_angle = Angle(nonsymmetrical_slant_angle, UNIT_ANGLE)
+                nonsymmetrical_slant_angle = Angle(nonsymmetrical_slant_angle, DEFAULT_UNITS.ANGLE)
             nonsymmetrical_slant_angle = (
                 nonsymmetrical_slant_angle
                 if isinstance(nonsymmetrical_slant_angle, Angle)
@@ -87,7 +87,7 @@ class Trapezoid(SketchFace):
 
         rotation = Matrix33(
             spatial_rotation.from_euler(
-                "xyz", [0, 0, angle.value.m_as(UNIT_ANGLE)], degrees=False
+                "xyz", [0, 0, angle.value.m_as(DEFAULT_UNITS.ANGLE)], degrees=False
             ).as_matrix()
         )
 
@@ -96,14 +96,16 @@ class Trapezoid(SketchFace):
         rotated_point_1 = rotation @ [center.x.m - half_w, center.y.m - half_h, 0]
         rotated_point_2 = rotation @ [center.x.m + half_w, center.y.m - half_h, 0]
         rotated_point_3 = rotation @ [
-            center.x.m - half_w + height_magnitude / np.tan(slant_angle.value.m_as(UNIT_ANGLE)),
+            center.x.m
+            - half_w
+            + height_magnitude / np.tan(slant_angle.value.m_as(DEFAULT_UNITS.ANGLE)),
             center.y.m + half_h,
             0,
         ]
         rotated_point_4 = rotation @ [
             center.x.m
             + half_w
-            - height_magnitude / np.tan(nonsymmetrical_slant_angle.value.m_as(UNIT_ANGLE)),
+            - height_magnitude / np.tan(nonsymmetrical_slant_angle.value.m_as(DEFAULT_UNITS.ANGLE)),
             center.y.m + half_h,
             0,
         ]
@@ -159,10 +161,26 @@ class Trapezoid(SketchFace):
         return pv.Rectangle(
             np.array(
                 [
-                    [self._point1.x.m_as(UNIT_LENGTH), self._point1.y.m_as(UNIT_LENGTH), 0],
-                    [self._point2.x.m_as(UNIT_LENGTH), self._point2.y.m_as(UNIT_LENGTH), 0],
-                    [self._point3.x.m_as(UNIT_LENGTH), self._point3.y.m_as(UNIT_LENGTH), 0],
-                    [self._point4.x.m_as(UNIT_LENGTH), self._point4.y.m_as(UNIT_LENGTH), 0],
+                    [
+                        self._point1.x.m_as(DEFAULT_UNITS.LENGTH),
+                        self._point1.y.m_as(DEFAULT_UNITS.LENGTH),
+                        0,
+                    ],
+                    [
+                        self._point2.x.m_as(DEFAULT_UNITS.LENGTH),
+                        self._point2.y.m_as(DEFAULT_UNITS.LENGTH),
+                        0,
+                    ],
+                    [
+                        self._point3.x.m_as(DEFAULT_UNITS.LENGTH),
+                        self._point3.y.m_as(DEFAULT_UNITS.LENGTH),
+                        0,
+                    ],
+                    [
+                        self._point4.x.m_as(DEFAULT_UNITS.LENGTH),
+                        self._point4.y.m_as(DEFAULT_UNITS.LENGTH),
+                        0,
+                    ],
                 ],
                 dtype=np.float_,
             )
