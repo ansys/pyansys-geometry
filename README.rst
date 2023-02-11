@@ -108,7 +108,7 @@ Next, connect to the service with:
 By default ``Modeler`` connects to ``127.0.0.1`` (``'localhost'``) on
 port ``50051``. You can change this by modifying the ``host`` and ``port``
 parameters of ``Modeler``, but note that you must also modify
-your ``docker run`` command by changing ``<HOST-PORT>-50051``.
+your ``docker run`` command by changing ``<HOST-PORT>:50051``.
 
 If you want to change the defaults, modify the following environment variables:
 
@@ -230,7 +230,7 @@ To install PyGeometry in developer mode, perform these steps:
       # Install the minimum + doc requirements
       python -m pip install -e .[doc]
 
-      # Install the all requirements
+      # Install all requirements
       python -m pip install -e .[tests,doc]
 
 Install in offline mode
