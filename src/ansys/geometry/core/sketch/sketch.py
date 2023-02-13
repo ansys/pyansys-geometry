@@ -7,7 +7,6 @@ import pyvista as pv
 
 from ansys.geometry.core.math import ZERO_POINT2D, Plane, Point2D, UnitVector3D, Vector2D, Vector3D
 from ansys.geometry.core.misc import UNIT_LENGTH, Angle, Distance
-from ansys.geometry.core.plotting.trame_gui import TrameVisualizer
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.box import Box
 from ansys.geometry.core.sketch.circle import SketchCircle
@@ -792,7 +791,7 @@ class Sketch:
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
-        from ansys.geometry.core.plotting.plotter import Plotter
+        from ansys.geometry.core.plotting import Plotter, TrameVisualizer
 
         if use_trame:
             # avoids GUI window popping up
@@ -842,7 +841,7 @@ class Sketch:
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
-        from ansys.geometry.core.plotting.plotter import Plotter
+        from ansys.geometry.core.plotting import Plotter, TrameVisualizer
 
         sketches_polydata = []
         sketches_polydata.extend(

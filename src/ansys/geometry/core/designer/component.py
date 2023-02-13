@@ -658,7 +658,7 @@ class Component:
         >>> from ansys.geometry.core import Modeler
         >>> from ansys.geometry.core.math import Point2D, Point3D, Plane
         >>> from ansys.geometry.core.misc import UNITS
-        >>> from ansys.geometry.core.plotting.plotter import Plotter
+        >>> from ansys.geometry.core.plotting import Plotter
         >>> modeler = Modeler("10.54.0.72", "50051")
         >>> sketch_1 = Sketch()
         >>> box = sketch_1.box(
@@ -776,7 +776,7 @@ class Component:
         >>> mycomp.plot(pbr=True, metallic=1.0)
 
         """
-        from ansys.geometry.core.plotting.plotter import Plotter
+        from ansys.geometry.core.plotting import Plotter
 
         pl = Plotter()
         pl.add_component(
