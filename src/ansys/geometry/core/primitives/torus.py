@@ -6,7 +6,7 @@ import numpy as np
 from pint import Unit
 
 from ansys.geometry.core.math import Point3D, UnitVector3D, Vector3D
-from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, check_pint_unit_compatibility
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, check_pint_unit_compatibility
 from ansys.geometry.core.typing import Real, RealSequence
 
 
@@ -26,8 +26,8 @@ class Torus:
         Major radius of the torus.
     minor_radius : Real
         Minor radius of ``Torus``.
-    unit : Unit, default: UNIT_LENGTH
-        Units for defining the radius and minor radius.
+    unit : ~pint.Unit, optional
+        Units for defining the radius and minor radius. By default, ``DEFAULT_UNITS.LENGTH``
     """
 
     @check_input_types
@@ -38,11 +38,11 @@ class Torus:
         direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D],
         major_radius: Real,
         minor_radius: Real,
-        unit: Optional[Unit] = UNIT_LENGTH,
+        unit: Optional[Unit] = DEFAULT_UNITS.LENGTH,
     ):
         """Constructor method for the ``Torus`` class."""
 
-        check_pint_unit_compatibility(unit, UNIT_LENGTH)
+        check_pint_unit_compatibility(unit, DEFAULT_UNITS.LENGTH)
         self._unit = unit
         _, self._base_unit = UNITS.get_base_units(unit)
 
@@ -96,7 +96,7 @@ class Torus:
     @unit.setter
     @check_input_types
     def unit(self, unit: Unit) -> None:
-        check_pint_unit_compatibility(unit, UNIT_LENGTH)
+        check_pint_unit_compatibility(unit, DEFAULT_UNITS.LENGTH)
         self._unit = unit
 
     @check_input_types

@@ -180,7 +180,7 @@ def test_point2d_units():
     assert p_cm_to_mm.x == 10 * UNITS.cm
     assert p_cm_to_mm.y == 20 * UNITS.cm
 
-    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
+    # Check that the actual values are in base units (i.e. DEFAULT_UNITS.LENGTH)
     assert p_cm_to_mm[0] == p_cm_to_mm.x.to_base_units().magnitude
     assert p_cm_to_mm[1] == p_cm_to_mm.y.to_base_units().magnitude
 
@@ -221,7 +221,7 @@ def test_point3d_units():
     assert p_cm_to_mm.y == 20 * UNITS.cm
     assert p_cm_to_mm.z == 30 * UNITS.cm
 
-    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
+    # Check that the actual values are in base units (i.e. DEFAULT_UNITS.LENGTH)
     assert p_cm_to_mm[0] == p_cm_to_mm.x.to_base_units().magnitude
     assert p_cm_to_mm[1] == p_cm_to_mm.y.to_base_units().magnitude
     assert p_cm_to_mm[2] == p_cm_to_mm.z.to_base_units().magnitude

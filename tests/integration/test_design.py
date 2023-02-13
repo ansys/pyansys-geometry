@@ -24,7 +24,7 @@ from ansys.geometry.core.math import (
     Point3D,
     UnitVector3D,
 )
-from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -921,7 +921,7 @@ def test_beams(modeler: Modeler):
 
     assert circle_profile_1.id is not None
     assert circle_profile_1.center == Point3D([0, 0, 0])
-    assert circle_profile_1.radius.value.m_as(UNIT_LENGTH) == 0.01
+    assert circle_profile_1.radius.value.m_as(DEFAULT_UNITS.LENGTH) == 0.01
     assert circle_profile_1.direction_x == UNITVECTOR3D_X
     assert circle_profile_1.direction_y == UNITVECTOR3D_Y
 
