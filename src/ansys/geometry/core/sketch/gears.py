@@ -44,9 +44,9 @@ class DummyGear(Gear):
     ----------
     origin : Point2D
         Origin of the gear.
-    outer_radius : Union[Distance, Real]
+    outer_radius : Union[Quantity, Distance, Real]
         Outer radius of the gear.
-    inner_radius : Union[Distance, Real]
+    inner_radius : Union[Quantity, Distance, Real]
         Inner radius of the gear.
     n_teeth : int
         Number of teeth of the gear.
@@ -56,8 +56,8 @@ class DummyGear(Gear):
     def __init__(
         self,
         origin: Point2D,
-        outer_radius: Union[Distance, Real],
-        inner_radius: Union[Distance, Real],
+        outer_radius: Union[Quantity, Distance, Real],
+        inner_radius: Union[Quantity, Distance, Real],
         n_teeth: int,
     ):
         """Constructor method for a dummy gear."""
@@ -164,7 +164,6 @@ class SpurGear(Gear):
         pressure_angle = (
             pressure_angle if isinstance(pressure_angle, Angle) else Angle(pressure_angle)
         )
-        # check_pint_unit_compatibility(pressure_angle.u, UNIT_ANGLE)
 
         # Store input parameters
         self._origin = origin

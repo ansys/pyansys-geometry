@@ -19,9 +19,9 @@ class Line:
     Parameters
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D]
-        Origin of the Line.
+        Origin of the line.
     direction : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
-        Direction of the Line.
+        Direction of the line.
     """
 
     @check_input_types
