@@ -54,7 +54,7 @@ def test_sketch_segment_edge():
     # Create a Sketch instance
     sketch = Sketch()
 
-    # fluent api has 0, 0 origin as default start position
+    # sketch api has 0, 0 origin as default start position
     assert len(sketch.edges) == 0
     sketch.segment_to_point(Point2D([2, 3]), "Segment1")
     assert len(sketch.edges) == 1
@@ -62,7 +62,7 @@ def test_sketch_segment_edge():
     assert sketch.edges[0].end == Point2D([2, 3])
     assert sketch.edges[0].length.m == pytest.approx(3.60555128, rel=1e-7, abs=1e-8)
 
-    # fluent api keeps last edge endpoint as context for new edge
+    # sketch api keeps last edge endpoint as context for new edge
     sketch.segment_to_point(Point2D([3, 3]), "Segment2").segment_to_point(
         Point2D([3, 2]), "Segment3"
     )
