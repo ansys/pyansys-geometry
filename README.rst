@@ -108,7 +108,7 @@ Next, connect to the service with:
 By default ``Modeler`` connects to ``127.0.0.1`` (``'localhost'``) on
 port ``50051``. You can change this by modifying the ``host`` and ``port``
 parameters of ``Modeler``, but note that you must also modify
-your ``docker run`` command by changing ``<HOST-PORT>-50051``.
+your ``docker run`` command by changing ``<HOST-PORT>:50051``.
 
 If you want to change the defaults, modify the following environment variables:
 
@@ -119,7 +119,14 @@ If you want to change the defaults, modify the following environment variables:
    export ANSRV_GEO_HOST=127.0.0.1
    export ANSRV_GEO_PORT=50051
 
-**On Windows**
+**On Windows Powershell**
+
+.. code::
+
+   $env:ANSRV_GEO_HOST="127.0.0.1"
+   $env:ANSRV_GEO_PORT=50051
+
+**On Windows CMD**
 
 .. code::
 
@@ -182,6 +189,12 @@ To install PyGeometry in developer mode, perform these steps:
 
       git clone https://github.com/pyansys/pygeometry
 
+#. Access the ``pygeometry`` directory where the repository has been cloned:
+
+   .. code:: bash
+
+      cd pygeometry
+
 #. Create a clean Python virtual environment and activate it:
 
    .. code:: bash
@@ -204,18 +217,21 @@ To install PyGeometry in developer mode, perform these steps:
 
       python -m pip install -U pip tox
 
-
 #. Install the project in editable mode:
 
    .. code:: bash
-    
-      python -m pip install ansys-geometry-core
-        
-#. Verify your development installation by running:
+      
+      # Install the minimum requirements
+      python -m pip install -e .
 
-   .. code:: bash
-        
-      tox
+      # Install the minimum + tests requirements
+      python -m pip install -e .[tests]
+
+      # Install the minimum + doc requirements
+      python -m pip install -e .[doc]
+
+      # Install all requirements
+      python -m pip install -e .[tests,doc]
 
 Install in offline mode
 ^^^^^^^^^^^^^^^^^^^^^^^

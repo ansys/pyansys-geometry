@@ -22,9 +22,9 @@ class Sphere:
     radius : Union[Quantity, Distance, Real]
         Radius of the sphere.
     reference : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
-        X-plane direction.
+        X-axis direction.
     axis : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
-        Z-plane direction.
+        Z-axis direction.
     """
 
     @check_input_types

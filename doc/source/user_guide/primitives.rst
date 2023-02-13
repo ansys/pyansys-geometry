@@ -10,17 +10,17 @@ manipulate physical quantities.
 
 This table shows PyGeometry base values:
 
-+-------------------+---------+ 
-| Name              | value   |
-+===================+=========+
-| LENGTH_ACCURACY   | 1e-8    |
-+-------------------+---------+  
-| ANGLE_ACCURACY    | 1e-6    |
-+-------------------+---------+ 
-| UNIT_LENGTH       | meter   |
-+-------------------+---------+ 
-| UNIT_ANGLE        | radian  |
-+-------------------+---------+ 
++----------------------------+---------+ 
+| Name                       | value   |
++============================+=========+
+| LENGTH_ACCURACY            | 1e-8    |
++----------------------------+---------+  
+| ANGLE_ACCURACY             | 1e-6    |
++----------------------------+---------+ 
+| DEFAULT_UNITS.LENGTH       | meter   |
++----------------------------+---------+ 
+| DEFAULT_UNITS.ANGLE        | radian  |
++----------------------------+---------+ 
 
 You use these PyGeometry classes to define accuracy and measurements:
 

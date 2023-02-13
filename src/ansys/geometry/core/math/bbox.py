@@ -6,7 +6,7 @@ from beartype import beartype as check_input_types
 from beartype.typing import List
 
 from ansys.geometry.core.math.point import Point2D
-from ansys.geometry.core.misc import UNIT_LENGTH, Accuracy
+from ansys.geometry.core.misc import DEFAULT_UNITS, Accuracy
 from ansys.geometry.core.typing import Real
 
 
@@ -94,7 +94,9 @@ class BoundingBox2D:
         point : Point2D
             Point to include within the bounds.
         """
-        self.add_point_components(point.x.m_as(UNIT_LENGTH), point.y.m_as(UNIT_LENGTH))
+        self.add_point_components(
+            point.x.m_as(DEFAULT_UNITS.LENGTH), point.y.m_as(DEFAULT_UNITS.LENGTH)
+        )
 
     @check_input_types
     def add_point_components(self, x: Real, y: Real) -> None:
@@ -139,7 +141,9 @@ class BoundingBox2D:
         bool
             ``True`` if the point is contained in the bounding box. Otherwise, ``False``.
         """
-        return self.contains_point_components(point.x.m_as(UNIT_LENGTH), point.y.m_as(UNIT_LENGTH))
+        return self.contains_point_components(
+            point.x.m_as(DEFAULT_UNITS.LENGTH), point.y.m_as(DEFAULT_UNITS.LENGTH)
+        )
 
     @check_input_types
     def contains_point_components(self, x: Real, y: Real) -> bool:
