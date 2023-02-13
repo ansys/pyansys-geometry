@@ -177,8 +177,8 @@ class Distance(Measurement):
     ----------
     value : Union[Real, Quantity]
         Value of the distance.
-    unit : ~pint.Unit
-        Units for the distance.
+    unit : ~pint.Unit, optional
+        Units for the distance. By default, ``DEFAULT_UNITS.LENGTH``
     """
 
     def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = None):
@@ -195,8 +195,8 @@ class Angle(Measurement):
     ----------
     value : Union[Real, Quantity]
         Value of the angle.
-    unit : ~pint.Unit
-        Units for the angle.
+    unit : ~pint.Unit, optional
+        Units for the distance. By default, ``DEFAULT_UNITS.ANGLE``
     """
 
     def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = None):

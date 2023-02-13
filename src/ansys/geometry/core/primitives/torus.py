@@ -26,8 +26,8 @@ class Torus:
         Major radius of the torus.
     minor_radius : Real
         Minor radius of ``Torus``.
-    unit : Unit, default: DEFAULT_UNITS.LENGTH
-        Units for defining the radius and minor radius.
+    unit : ~pint.Unit, optional
+        Units for defining the radius and minor radius. By default, ``DEFAULT_UNITS.LENGTH``
     """
 
     @check_input_types
