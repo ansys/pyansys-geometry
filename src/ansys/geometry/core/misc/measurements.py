@@ -16,6 +16,9 @@ class SingletonMeta(type):
     This is a thread-safe implementation of Singleton.
     """
 
+    # This class has been extracted from
+    # https://refactoring.guru/design-patterns/singleton/python/example#example-1--main-py
+
     _instances = {}
 
     _lock: Lock = Lock()
