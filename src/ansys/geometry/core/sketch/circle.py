@@ -6,7 +6,7 @@ from pint import Quantity
 import pyvista as pv
 
 from ansys.geometry.core.math import Plane, Point2D, Point3D
-from ansys.geometry.core.misc import UNIT_LENGTH, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, Distance
 from ansys.geometry.core.primitives import Circle
 from ansys.geometry.core.sketch.face import SketchFace
 
@@ -94,9 +94,14 @@ class SketchCircle(SketchFace, Circle):
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
         """
-        circle = pv.Circle(self.radius.m_as(UNIT_LENGTH))
+        circle = pv.Circle(self.radius.m_as(DEFAULT_UNITS.LENGTH))
         return circle.translate(
-            [self.center.x.m_as(UNIT_LENGTH), self.center.y.m_as(UNIT_LENGTH), 0], inplace=True
+            [
+                self.center.x.m_as(DEFAULT_UNITS.LENGTH),
+                self.center.y.m_as(DEFAULT_UNITS.LENGTH),
+                0,
+            ],
+            inplace=True,
         )
 
     def plane_change(self, plane: Plane) -> None:

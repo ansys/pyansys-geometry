@@ -8,7 +8,7 @@ import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Matrix33, Matrix44, Point2D
-from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
 
@@ -48,7 +48,7 @@ class Polygon(SketchFace):
             raise ValueError("Radius must be a real positive value.")
 
         if isinstance(angle, (int, float)):
-            angle = Angle(angle, UNIT_ANGLE)
+            angle = Angle(angle, DEFAULT_UNITS.ANGLE)
         self._angle_offset = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
 
         # Verify that the number of sides is valid with preferred range
@@ -116,7 +116,9 @@ class Polygon(SketchFace):
         #
         rotation = Matrix33(
             spatial_rotation.from_euler(
-                "xyz", [0, 0, -np.pi / 2 + self._angle_offset.value.m_as(UNIT_ANGLE)], degrees=False
+                "xyz",
+                [0, 0, -np.pi / 2 + self._angle_offset.value.m_as(UNITS.radian)],
+                degrees=False,
             ).as_matrix()
         )
 
@@ -126,13 +128,13 @@ class Polygon(SketchFace):
                     rotation[0, 0],
                     rotation[0, 1],
                     rotation[0, 2],
-                    self.center.x.m_as(UNIT_LENGTH),
+                    self.center.x.m_as(DEFAULT_UNITS.LENGTH),
                 ],
                 [
                     rotation[1, 0],
                     rotation[1, 1],
                     rotation[1, 2],
-                    self.center.y.m_as(UNIT_LENGTH),
+                    self.center.y.m_as(DEFAULT_UNITS.LENGTH),
                 ],
                 [
                     rotation[2, 0],
@@ -145,6 +147,6 @@ class Polygon(SketchFace):
         )
 
         return pv.Polygon(
-            radius=self.inner_radius.m_as(UNIT_LENGTH),
+            radius=self.inner_radius.m_as(DEFAULT_UNITS.LENGTH),
             n_sides=self.n_sides,
         ).transform(transformation_matrix)

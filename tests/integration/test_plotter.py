@@ -7,8 +7,10 @@ from pyvista.plotting import system_supports_plotting
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.math import Point2D
-from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
-from ansys.geometry.core.plotting.plotter import Plotter
+
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
+from ansys.geometry.core.plotting import Plotter
+
 from ansys.geometry.core.sketch import (
     Arc,
     Box,
@@ -200,7 +202,9 @@ def test_plot_circle(verify_image_cache):
     sketch = Sketch()
 
     # Create a circle and plot
-    sketch.circle(Point2D([0, 1], UNIT_LENGTH), Quantity(2, UNIT_LENGTH), "Circle")
+    sketch.circle(
+        Point2D([0, 1], DEFAULT_UNITS.LENGTH), Quantity(2, DEFAULT_UNITS.LENGTH), "Circle"
+    )
     sketch.select("Circle")
     sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_circle.png"))
 
@@ -458,7 +462,9 @@ def test_visualization_polydata():
     assert trapezoid.visualization_polydata.n_open_edges == 4
 
     # Test for circle visualization polydata
-    circle = SketchCircle(Point2D([10, -10], UNIT_LENGTH), Quantity(1, UNIT_LENGTH))
+    circle = SketchCircle(
+        Point2D([10, -10], DEFAULT_UNITS.LENGTH), Quantity(1, DEFAULT_UNITS.LENGTH)
+    )
     assert circle.visualization_polydata.center == pytest.approx(
         ([10.000251728808408, -10.0, 0.0]),
         rel=1e-6,

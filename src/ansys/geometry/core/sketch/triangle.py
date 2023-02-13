@@ -4,7 +4,7 @@ from beartype import beartype as check_input_types
 import pyvista as pv
 
 from ansys.geometry.core.math import Point2D
-from ansys.geometry.core.misc import UNIT_LENGTH
+from ansys.geometry.core.misc import DEFAULT_UNITS
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import SketchSegment
 
@@ -70,9 +70,21 @@ class Triangle(SketchFace):
         return pv.Triangle(
             np.array(
                 [
-                    [self.point1.x.m_as(UNIT_LENGTH), self.point1.y.m_as(UNIT_LENGTH), 0],
-                    [self.point2.x.m_as(UNIT_LENGTH), self.point2.y.m_as(UNIT_LENGTH), 0],
-                    [self.point3.x.m_as(UNIT_LENGTH), self.point3.y.m_as(UNIT_LENGTH), 0],
+                    [
+                        self.point1.x.m_as(DEFAULT_UNITS.LENGTH),
+                        self.point1.y.m_as(DEFAULT_UNITS.LENGTH),
+                        0,
+                    ],
+                    [
+                        self.point2.x.m_as(DEFAULT_UNITS.LENGTH),
+                        self.point2.y.m_as(DEFAULT_UNITS.LENGTH),
+                        0,
+                    ],
+                    [
+                        self.point3.x.m_as(DEFAULT_UNITS.LENGTH),
+                        self.point3.y.m_as(DEFAULT_UNITS.LENGTH),
+                        0,
+                    ],
                 ],
                 dtype=np.float_,
             )

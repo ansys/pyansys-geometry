@@ -8,7 +8,7 @@ import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Matrix33, Point2D
-from ansys.geometry.core.misc import UNIT_ANGLE, Angle, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import SketchSegment
@@ -56,12 +56,12 @@ class Slot(SketchFace):
             raise ValueError("Width must be greater than height.")
 
         if isinstance(angle, (int, float)):
-            angle = Angle(angle, UNIT_ANGLE)
+            angle = Angle(angle, DEFAULT_UNITS.ANGLE)
         angle = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
 
         rotation = Matrix33(
             spatial_rotation.from_euler(
-                "xyz", [0, 0, angle.value.m_as(UNIT_ANGLE)], degrees=False
+                "xyz", [0, 0, angle.value.m_as(UNITS.radian)], degrees=False
             ).as_matrix()
         )
 
