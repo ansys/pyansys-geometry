@@ -168,7 +168,7 @@ class SpurGear(Gear):
         # Store input parameters
         self._origin = origin
         self._module = module
-        self._pressure_angle = pressure_angle.to(UNITS.radian)
+        self._pressure_angle = pressure_angle.value.to(UNITS.radian)
         self._n_teeth = n_teeth
 
         # Compute additional needed values
@@ -195,7 +195,7 @@ class SpurGear(Gear):
     @property
     def pressure_angle(self) -> Quantity:
         """Pressure angle of the spur gear."""
-        return self._pressure_angle.value
+        return self._pressure_angle
 
     @property
     def n_teeth(self) -> int:

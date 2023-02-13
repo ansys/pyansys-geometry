@@ -57,14 +57,16 @@ class SketchEllipse(SketchFace, Ellipse):
         self._angle_offset = angle if isinstance(angle, Angle) else Angle(angle)
 
         # Call Ellipse init method
-        self._init_primitive_ellipse_from_plane(plane, major_radius, minor_radius, angle)
+        self._init_primitive_ellipse_from_plane(
+            plane, self._major_radius, self._minor_radius, self._angle_offset
+        )
 
     def _init_primitive_ellipse_from_plane(
         self,
         plane: Plane,
-        major_radius: Optional[Union[Quantity, Distance, Real]] = None,
-        minor_radius: Optional[Union[Quantity, Distance, Real]] = None,
-        angle: Optional[Union[Quantity, Angle, Real]] = None,
+        major_radius: Optional[Distance] = None,
+        minor_radius: Optional[Distance] = None,
+        angle: Optional[Angle] = None,
     ) -> None:
         """
         Method in charge of initializing correctly the underlying
@@ -74,11 +76,11 @@ class SketchEllipse(SketchFace, Ellipse):
         ----------
         plane : Plane
             Plane containing the sketched ellipse.
-        major_radius : Optional[Union[Quantity, Distance]]
+        major_radius : Optional[Distance]
             Major radius of the ellipse (if any), by default None.
-        minor_radius : Optional[Union[Quantity, Distance]]
+        minor_radius : Optional[Distance]
             Minor radius of the ellipse (if any), by default None.
-        angle : Optional[Union[Quantity, Angle, Real]]
+        angle : Optional[Angle]
             Placement angle for orientation alignment.
         """
 

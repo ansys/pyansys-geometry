@@ -47,9 +47,7 @@ class Polygon(SketchFace):
         if self._inner_radius.value <= 0:
             raise ValueError("Radius must be a real positive value.")
 
-        if isinstance(angle, (int, float)):
-            angle = Angle(angle, DEFAULT_UNITS.ANGLE)
-        self._angle_offset = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
+        self._angle_offset = angle if isinstance(angle, Angle) else Angle(angle)
 
         # Verify that the number of sides is valid with preferred range
         if sides < 3:
@@ -72,9 +70,9 @@ class Polygon(SketchFace):
         return self._n_sides
 
     @property
-    def angle(self) -> Angle:
+    def angle(self) -> Quantity:
         """Orientation angle of the polygon."""
-        return self._angle_offset
+        return self._angle_offset.value
 
     @property
     def length(self) -> Quantity:
@@ -117,7 +115,7 @@ class Polygon(SketchFace):
         rotation = Matrix33(
             spatial_rotation.from_euler(
                 "xyz",
-                [0, 0, -np.pi / 2 + self._angle_offset.value.m_as(UNITS.radian)],
+                [0, 0, -np.pi / 2 + self.angle.m_as(UNITS.radian)],
                 degrees=False,
             ).as_matrix()
         )
