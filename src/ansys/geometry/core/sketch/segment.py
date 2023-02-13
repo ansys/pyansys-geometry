@@ -6,7 +6,7 @@ from pint import Quantity
 import pyvista as pv
 
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
-from ansys.geometry.core.misc import UNIT_LENGTH, check_ndarray_is_all_nan
+from ansys.geometry.core.misc import DEFAULT_UNITS, check_ndarray_is_all_nan
 from ansys.geometry.core.primitives import Line
 from ansys.geometry.core.sketch.edge import SketchEdge
 
@@ -51,7 +51,7 @@ class SketchSegment(SketchEdge, Line):
             )
 
         if not self._start.unit == self._end.unit:
-            self._start.unit = self._end.unit = UNIT_LENGTH
+            self._start.unit = self._end.unit = DEFAULT_UNITS.LENGTH
 
         # Call the Line init method
         self._init_primitive_line_from_plane(plane)
@@ -117,14 +117,15 @@ class SketchSegment(SketchEdge, Line):
         return pv.Line(
             np.array(
                 [
-                    self.start.x.m_as(UNIT_LENGTH),
-                    self.start.y.m_as(UNIT_LENGTH),
+                    self.start.x.m_as(DEFAULT_UNITS.LENGTH),
+                    self.start.y.m_as(DEFAULT_UNITS.LENGTH),
                     0,
                 ],
                 dtype=np.float_,
             ),
             np.array(
-                [self.end.x.m_as(UNIT_LENGTH), self.end.y.m_as(UNIT_LENGTH), 0], dtype=np.float_
+                [self.end.x.m_as(DEFAULT_UNITS.LENGTH), self.end.y.m_as(DEFAULT_UNITS.LENGTH), 0],
+                dtype=np.float_,
             ),
         )
 

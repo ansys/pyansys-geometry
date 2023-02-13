@@ -8,7 +8,7 @@ import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Matrix33, Matrix44, Plane, Point2D, Point3D, Vector3D
-from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
 from ansys.geometry.core.primitives import Ellipse
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
@@ -53,7 +53,7 @@ class SketchEllipse(SketchFace, Ellipse):
         )
 
         if isinstance(angle, (int, float)):
-            angle = Angle(angle, UNIT_ANGLE)
+            angle = Angle(angle, DEFAULT_UNITS.ANGLE)
         self._angle_offset = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
 
         # Call Ellipse init method
@@ -92,7 +92,7 @@ class SketchEllipse(SketchFace, Ellipse):
             unit=self.center.base_unit,
         )
 
-        angle_rad = angle.value.m_as(UNIT_ANGLE)
+        angle_rad = angle.value.m_as(UNITS.radian)
         new_rotated_dir_x = Vector3D(
             [
                 np.cos(angle_rad) * plane.direction_x.x - np.sin(angle_rad) * plane.direction_x.y,
@@ -141,7 +141,7 @@ class SketchEllipse(SketchFace, Ellipse):
         """
         rotation = Matrix33(
             spatial_rotation.from_euler(
-                "xyz", [0, 0, self._angle_offset.value.m_as(UNIT_ANGLE)], degrees=False
+                "xyz", [0, 0, self._angle_offset.value.m_as(UNITS.radian)], degrees=False
             ).as_matrix()
         )
 
@@ -151,13 +151,13 @@ class SketchEllipse(SketchFace, Ellipse):
                     rotation[0, 0],
                     rotation[0, 1],
                     rotation[0, 2],
-                    self.center.x.m_as(UNIT_LENGTH),
+                    self.center.x.m_as(DEFAULT_UNITS.LENGTH),
                 ],
                 [
                     rotation[1, 0],
                     rotation[1, 1],
                     rotation[1, 2],
-                    self.center.y.m_as(UNIT_LENGTH),
+                    self.center.y.m_as(DEFAULT_UNITS.LENGTH),
                 ],
                 [
                     rotation[2, 0],
@@ -170,8 +170,8 @@ class SketchEllipse(SketchFace, Ellipse):
         )
 
         return pv.Ellipse(
-            semi_major_axis=self.major_radius.m_as(UNIT_LENGTH),
-            semi_minor_axis=self.minor_radius.m_as(UNIT_LENGTH),
+            semi_major_axis=self.major_radius.m_as(DEFAULT_UNITS.LENGTH),
+            semi_minor_axis=self.minor_radius.m_as(DEFAULT_UNITS.LENGTH),
         ).transform(transformation_matrix)
 
     def plane_change(self, plane: Plane) -> None:

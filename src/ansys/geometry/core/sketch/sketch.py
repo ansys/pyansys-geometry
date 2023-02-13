@@ -6,7 +6,7 @@ from pint import Quantity
 import pyvista as pv
 
 from ansys.geometry.core.math import ZERO_POINT2D, Plane, Point2D, UnitVector3D, Vector2D, Vector3D
-from ansys.geometry.core.misc import UNIT_LENGTH, Angle, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.box import Box
 from ansys.geometry.core.sketch.circle import SketchCircle
@@ -107,20 +107,20 @@ class Sketch:
     @check_input_types
     def translate_sketch_plane_by_offset(
         self,
-        x: Union[Quantity, Distance] = Quantity(0, UNIT_LENGTH),
-        y: Union[Quantity, Distance] = Quantity(0, UNIT_LENGTH),
-        z: Union[Quantity, Distance] = Quantity(0, UNIT_LENGTH),
+        x: Union[Quantity, Distance] = Quantity(0, DEFAULT_UNITS.LENGTH),
+        y: Union[Quantity, Distance] = Quantity(0, DEFAULT_UNITS.LENGTH),
+        z: Union[Quantity, Distance] = Quantity(0, DEFAULT_UNITS.LENGTH),
     ) -> "Sketch":
         """
         Translate the origin location of the active sketch plane by offsets.
 
         Parameters
         ----------
-        x : Union[Quantity, Distance], default: Quantity(0, UNIT_LENGTH)
+        x : Union[Quantity, Distance], default: Quantity(0, DEFAULT_UNITS.LENGTH)
             Amount to translate the origin the x-direction.
-        y : Union[Quantity, Distance], default: Quantity(0, UNIT_LENGTH)
+        y : Union[Quantity, Distance], default: Quantity(0, DEFAULT_UNITS.LENGTH)
             Amount to translate the origin the y-direction.
-        z : Union[Quantity, Distance], default: Quantity(0, UNIT_LENGTH)
+        z : Union[Quantity, Distance], default: Quantity(0, DEFAULT_UNITS.LENGTH)
             Amount to translate the origin the z-direction.
 
         Returns
@@ -129,15 +129,21 @@ class Sketch:
             Revised sketch state ready for further sketch actions.
         """
         x_magnitude = (
-            x.m_as(UNIT_LENGTH) if not isinstance(x, Distance) else x.value.m_as(UNIT_LENGTH)
+            x.m_as(DEFAULT_UNITS.LENGTH)
+            if not isinstance(x, Distance)
+            else x.value.m_as(DEFAULT_UNITS.LENGTH)
         )
 
         y_magnitude = (
-            y.m_as(UNIT_LENGTH) if not isinstance(y, Distance) else y.value.m_as(UNIT_LENGTH)
+            y.m_as(DEFAULT_UNITS.LENGTH)
+            if not isinstance(y, Distance)
+            else y.value.m_as(DEFAULT_UNITS.LENGTH)
         )
 
         z_magnitude = (
-            z.m_as(UNIT_LENGTH) if not isinstance(z, Distance) else z.value.m_as(UNIT_LENGTH)
+            z.m_as(DEFAULT_UNITS.LENGTH)
+            if not isinstance(z, Distance)
+            else z.value.m_as(DEFAULT_UNITS.LENGTH)
         )
         translation = Vector3D([x_magnitude, y_magnitude, z_magnitude])
         return self.translate_sketch_plane(translation)
@@ -162,9 +168,9 @@ class Sketch:
             Revised sketch state ready for further sketch actions.
         """
         magnitude = (
-            distance.m_as(UNIT_LENGTH)
+            distance.m_as(DEFAULT_UNITS.LENGTH)
             if not isinstance(distance, Distance)
-            else distance.value.m_as(UNIT_LENGTH)
+            else distance.value.m_as(DEFAULT_UNITS.LENGTH)
         )
         translation = Vector3D(
             [direction.x * magnitude, direction.y * magnitude, direction.z * magnitude]

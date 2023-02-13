@@ -25,9 +25,9 @@ class Ellipse:
     minor_radius : Union[Quantity, Distance]
         Minor radius of the ellipse.
     reference : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
-        X-plane direction.
+        X-axis direction.
     axis : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
-        Z-plane direction.
+        Z-axis direction.
     """
 
     @check_input_types

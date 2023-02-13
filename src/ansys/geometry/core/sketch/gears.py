@@ -7,7 +7,7 @@ from pint import Quantity
 import pyvista as pv
 
 from ansys.geometry.core.math import Point2D
-from ansys.geometry.core.misc import UNIT_ANGLE, UNITS, Distance, check_pint_unit_compatibility
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance, check_pint_unit_compatibility
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import SketchSegment
@@ -143,12 +143,12 @@ class SpurGear(Gear):
         super().__init__()
 
         # Additional checks for inputs
-        check_pint_unit_compatibility(pressure_angle.u, UNIT_ANGLE)
+        check_pint_unit_compatibility(pressure_angle.u, DEFAULT_UNITS.ANGLE)
 
         # Store input parameters
         self._origin = origin
         self._module = module
-        self._pressure_angle = pressure_angle.to(UNIT_ANGLE)
+        self._pressure_angle = pressure_angle.to(UNITS.radian)
         self._n_teeth = n_teeth
 
         # Compute additional needed values
