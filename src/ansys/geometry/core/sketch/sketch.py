@@ -3,7 +3,6 @@
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, Dict, List, Optional, Union
 from pint import Quantity
-import pyvista as pv
 
 from ansys.geometry.core.math import ZERO_POINT2D, Plane, Point2D, UnitVector3D, Vector2D, Vector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, Angle, Distance
@@ -800,6 +799,8 @@ class Sketch:
         from ansys.geometry.core.plotting import Plotter, TrameVisualizer
 
         if use_trame:
+            import pyvista as pv
+
             # avoids GUI window popping up
             pv.OFF_SCREEN = True
             pl = Plotter(enable_widgets=False)
@@ -858,6 +859,8 @@ class Sketch:
         )
 
         if use_trame:
+            import pyvista as pv
+
             # avoids GUI window popping up
             pv.OFF_SCREEN = True
             pl = Plotter(enable_widgets=False)
