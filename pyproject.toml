@@ -35,12 +35,18 @@ dependencies = [
     "numpy>=1.20.3",
     "Pint>=0.18",
     "protobuf~=3.20.2",
-    "pyvista[trame]>=0.38.1",
+    "pyvista>=0.37.0",
     "scipy>=1.7.3",
     "six>=1.16.0",
 ]
 
 [project.optional-dependencies]
+all = [
+    "pyvista[trame]>=0.38.1",
+    "docker==6.0.1",
+    "ansys-platform-instancemanagement==1.0.3",
+]
+
 tests = [
     "beartype==0.12.0",
     "google-api-python-client==2.77.0",

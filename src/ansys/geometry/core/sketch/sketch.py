@@ -1,5 +1,7 @@
 """Provides the ``Sketch`` class."""
 
+import warnings
+
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, Dict, List, Optional, Union
 from pint import Quantity
@@ -796,14 +798,22 @@ class Sketch:
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
-        from ansys.geometry.core.plotting import Plotter, TrameVisualizer
+        from ansys.geometry.core.plotting import _HAS_TRAME, Plotter, TrameVisualizer
 
-        if use_trame:
+        if use_trame and _HAS_TRAME:
             import pyvista as pv
 
             # avoids GUI window popping up
             pv.OFF_SCREEN = True
             pl = Plotter(enable_widgets=False)
+        elif use_trame and not _HAS_TRAME:
+            warn_msg = f"""
+            Trame flag is active but Trame dependencies are not installed.
+            If you want to use trame please install with the following command:
+            pip install ansys-geometry-core[all]
+            """
+            warnings.warn(warn_msg)
+            pl = Plotter()
         else:
             pl = Plotter()
 
@@ -818,7 +828,7 @@ class Sketch:
             )
 
         # Finally, show the plot
-        if use_trame:
+        if use_trame and _HAS_TRAME:
             visualizer = TrameVisualizer()
             visualizer.set_scene(pl)
             visualizer.show()
@@ -848,7 +858,7 @@ class Sketch:
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
-        from ansys.geometry.core.plotting import Plotter, TrameVisualizer
+        from ansys.geometry.core.plotting import _HAS_TRAME, Plotter, TrameVisualizer
 
         sketches_polydata = []
         sketches_polydata.extend(
@@ -858,14 +868,23 @@ class Sketch:
             ]
         )
 
-        if use_trame:
+        if use_trame and _HAS_TRAME:
             import pyvista as pv
 
             # avoids GUI window popping up
             pv.OFF_SCREEN = True
             pl = Plotter(enable_widgets=False)
+        elif use_trame and not _HAS_TRAME:
+            warn_msg = f"""
+            Trame flag is active but Trame dependencies are not installed.
+            If you want to use trame please install with the following command:
+            pip install ansys-geometry-core[all]
+            """
+            warnings.warn(warn_msg)
+            pl = Plotter()
         else:
             pl = Plotter()
+
         pl.add_sketch_polydata(sketches_polydata, **plotting_options)
 
         # TODO: Does this make sense with the buttons?
@@ -877,7 +896,7 @@ class Sketch:
             )
 
         # Finally, show the plot
-        if use_trame:
+        if use_trame and _HAS_TRAME:
             visualizer = TrameVisualizer()
             visualizer.set_scene(pl)
             visualizer.show()
