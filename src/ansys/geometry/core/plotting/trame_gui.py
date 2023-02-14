@@ -17,7 +17,7 @@ class TrameVisualizer:
         """Inits server and server related variables."""
         if not _HAS_TRAME:
             error_msg = f"""
-            Trame flag is active but Trame dependencies are not installed.
+            Trame dependencies are not installed.
             If you want to use trame please install with the following command:
             pip install ansys-geometry-core[all]
             """
