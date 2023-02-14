@@ -1,11 +1,10 @@
 """Provides the ``Sketch`` class."""
 
-import warnings
-
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, Dict, List, Optional, Union
 from pint import Quantity
 
+from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.math import ZERO_POINT2D, Plane, Point2D, UnitVector3D, Vector2D, Vector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.arc import Arc
@@ -27,6 +26,8 @@ if TYPE_CHECKING:  # pragma: no cover
 
 SketchObject = Union[SketchEdge, SketchFace]
 """Type used to refer to both ``SketchEdge`` and ``SketchFace`` as possible values."""
+
+logger.setLevel("WARN")
 
 
 class Sketch:
@@ -812,7 +813,7 @@ class Sketch:
             If you want to use trame please install with the following command:
             pip install ansys-geometry-core[all]
             """
-            warnings.warn(warn_msg)
+            logger.warning(warn_msg)
             pl = Plotter()
         else:
             pl = Plotter()
@@ -880,7 +881,7 @@ class Sketch:
             If you want to use trame please install with the following command:
             pip install ansys-geometry-core[all]
             """
-            warnings.warn(warn_msg)
+            logger.warning(warn_msg)
             pl = Plotter()
         else:
             pl = Plotter()
