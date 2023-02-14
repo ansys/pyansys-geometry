@@ -43,8 +43,8 @@ dependencies = [
 [project.optional-dependencies]
 all = [
     "pyvista[trame]>=0.38.1",
-    "docker==6.0.1",
-    "ansys-platform-instancemanagement==1.0.3",
+    "docker>=6.0.1",
+    "ansys-platform-instancemanagement>=1.0.3",
 ]
 
 tests = [
