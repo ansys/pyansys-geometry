@@ -1,5 +1,7 @@
 """Test design interaction."""
 
+import os
+
 from pint import Quantity
 import pytest
 
@@ -799,6 +801,25 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     assert binary_parasolid_file.exists()
     assert text_parasolid_file.exists()
     assert fmd_file.exists()
+
+
+def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    file = tmp_path_factory.mktemp("upload_file") / "example.scdocx"
+    file_size = 1024
+
+    # Write random bytes
+    with open(file, "wb") as fout:
+        fout.write(os.urandom(file_size))
+
+    assert file.exists()
+
+    # Read the file to get its bytes
+    with open(file, "rb") as f:
+        data = f.read()
+
+    # Upload file
+    path_on_server = modeler.upload_file(data, "example.scdocx")
+    assert path_on_server is not None
 
 
 def test_slot_extrusion(modeler: Modeler):
