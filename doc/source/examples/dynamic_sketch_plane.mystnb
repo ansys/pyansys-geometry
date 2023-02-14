@@ -18,7 +18,7 @@ The sketch is a lightweight, two-dimensional modeler driven primarily by client-
 At any point, the current state of a sketch can be used for operations such as extruding a body,
 projecting a profile, or imprinting curves.
 
-The sketch is designed as an effective Fluent-style API with all operations receiving 2D configurations.
+The sketch is designed as an effective 'fluent functional-style' API with all operations receiving 2D configurations.
 
 For easy reuse of sketches across different regions of your design, you can move a sketch around the
 global coordinate system by modifying the plane defining the current sketch location.
