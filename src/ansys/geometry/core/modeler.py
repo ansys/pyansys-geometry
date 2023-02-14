@@ -2,6 +2,8 @@
 import logging
 from pathlib import Path
 
+from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
+from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype.typing import TYPE_CHECKING, Optional, Union
 from grpc import Channel
 
@@ -102,6 +104,28 @@ class Modeler:
     def close(self) -> None:
         """``Modeler`` easy-access method to the client's ``close()`` method."""
         return self.client.close()
+
+    def upload_file(self, bytes: bytes, file_name: str):
+        """
+        Upload a file from the client to the server. ``file_name`` must include the extension.
+
+        Parameters
+        ----------
+        bytes : bytes
+            The file as a byte array.
+        file_name : str
+            The name for the new file created on the server. Must include extension.
+            Example: "example.txt"
+
+        Returns
+        -------
+        file_path : str
+            The full path of the uploaded file on the server machine.
+        """
+        c_stub = CommandsStub(self._client.channel)
+
+        response = c_stub.UploadFile(UploadFileRequest(data=bytes, file_name=file_name))
+        return response.file_path
 
     def __repr__(self):
         """String representation of the modeler."""
