@@ -26,4 +26,4 @@ jobs:
       with:
         package-name: 'geometry'
         token: ${{ secrets.GITHUB_TOKEN }}
-        tags-kept: 'windows-latest, windows-latest-unstable'
+        tags-kept: 'windows-latest, windows-latest-unstable, linux-latest, linux-latest-unstable'

@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-# Advanced sketching: gears
+# Sketching: parametric sketching for gears
 
 This example describes how to use gear sketching shapes from PyGeometry.
 

@@ -67,6 +67,7 @@ tests = [
 ]
 doc = [
     "ansys-sphinx-theme==0.8.2",
+    "docker==6.0.1",
     "ipyvtklink==0.2.3",
     "jupyter_sphinx==0.4.0",
     "jupytext==1.14.4",
