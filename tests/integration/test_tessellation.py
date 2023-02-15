@@ -24,7 +24,7 @@ def test_body_tessellate(modeler: Modeler):
     assert (blocks_1.center == ([2, 0, 0.5])).all()
     # Test the values of blocks which are the length 6 tuple of floats
     # containing min/max along each axis
-    assert blocks_1.bounds == [0.0, 4.0, -2.0, 2.0, 0.0, 1.0]
+    assert blocks_1.bounds == pytest.approx([0.0, 4.0, -2.0, 2.0, 0.0, 1.0])
 
     # Tessellate the body merging the individual faces
     mesh_1 = body_1.tessellate(merge=True)
@@ -32,7 +32,7 @@ def test_body_tessellate(modeler: Modeler):
     # Test number of cells, points and arrays in dataset
     assert mesh_1.n_cells == 12
     assert mesh_1.n_points == 24
-    assert blocks_1.bounds == [0.0, 4.0, -2.0, 2.0, 0.0, 1.0]
+    assert blocks_1.bounds == pytest.approx([0.0, 4.0, -2.0, 2.0, 0.0, 1.0])
     assert mesh_1.n_arrays == 0
 
     sketch_2 = Sketch()
