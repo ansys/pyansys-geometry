@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-# Dynamic sketch plane
+# Sketching: dynamic sketch plane
 
 The sketch is a lightweight, two-dimensional modeler driven primarily by client-side execution.
 
