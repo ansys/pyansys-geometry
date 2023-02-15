@@ -961,4 +961,4 @@ class Sketch:
 
         # Restore the original pv.OFF_SCREEN value changed in
         # self.__init_plotter()
-        pv.OFF_SCREEN = pv_off_screen_original
+        pv.OFF_SCREEN = bool(pv_off_screen_original)
