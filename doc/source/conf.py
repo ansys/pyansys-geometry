@@ -155,12 +155,17 @@ nbsphinx_custom_formats = {
     ".mystnb": ["jupytext.reads", {"fmt": "mystnb"}],
 }
 nbsphinx_thumbnails = {
-    "examples/basic_usage": "_static/thumbnails/basic_usage.png",
-    "examples/dynamic_sketch_plane": "_static/thumbnails/dynamic_sketch_plane.png",
-    "examples/add_design_material": "_static/thumbnails/add_design_material.png",
-    "examples/plate_with_hole": "_static/thumbnails/plate_with_hole.png",
-    "examples/tessellation_usage": "_static/thumbnails/tessellation_usage.png",
-    "examples/design_organization": "_static/thumbnails/design_organization.png",
+    "examples/01_getting_started/basic_usage": "_static/thumbnails/basic_usage.png",
+    "examples/01_getting_started/basic_usage": "_static/thumbnails/basic_usage.png",
+    "examples/01_getting_started/basic_usage": "_static/thumbnails/basic_usage.png",
+    "examples/01_getting_started/basic_usage": "_static/thumbnails/basic_usage.png",
+    "examples/02_sketching/basic_usage": "_static/thumbnails/basic_usage.png",
+    "examples/02_sketching/dynamic_sketch_plane": "_static/thumbnails/dynamic_sketch_plane.png",
+    "examples/02_sketching/advanced_sketching_gears": "_static/thumbnails/basic_usage.png",
+    "examples/03_modeling/add_design_material": "_static/thumbnails/add_design_material.png",
+    "examples/03_modeling/plate_with_hole": "_static/thumbnails/plate_with_hole.png",
+    "examples/03_modeling/tessellation_usage": "_static/thumbnails/tessellation_usage.png",
+    "examples/03_modeling/design_organization": "_static/thumbnails/design_organization.png",
 }
 nbsphinx_epilog = """
 ----
