@@ -24,6 +24,8 @@ from ansys.geometry.core.typing import Real
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import PolyData
 
+    from ansys.geometry.core.plotting import Plotter
+
 SketchObject = Union[SketchEdge, SketchFace]
 """Type used to refer to both ``SketchEdge`` and ``SketchFace`` as possible values."""
 
@@ -797,41 +799,15 @@ class Sketch:
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
-        from ansys.geometry.core.plotting import _HAS_TRAME, Plotter, TrameVisualizer
 
-        if use_trame and _HAS_TRAME:
-            import pyvista as pv
+        # Initialize the plotter
+        pl, pv_offscreen = self.__init_plotter(use_trame)
 
-            # avoids GUI window popping up
-            pv.OFF_SCREEN = True
-            pl = Plotter(enable_widgets=False)
-        elif use_trame and not _HAS_TRAME:
-            warn_msg = (
-                "'use_trame' is active but Trame dependencies are not installed."
-                "Consider installing 'pyvista[trame]' to use this functionality."
-            )
-            logger.warning(warn_msg)
-            pl = Plotter()
-        else:
-            pl = Plotter()
-
+        # Add the polydata
         pl.add_sketch_polydata(self.sketch_polydata(), **plotting_options)
 
-        # TODO: Does this make sense with the buttons?
-        # If you want to visualize a Sketch from the top...
-        if view_2d:
-            pl.scene.view_vector(
-                vector=self.plane.direction_z.tolist(),
-                viewup=self.plane.direction_y.tolist(),
-            )
-
-        # Finally, show the plot
-        if use_trame and _HAS_TRAME:
-            visualizer = TrameVisualizer()
-            visualizer.set_scene(pl)
-            visualizer.show()
-        else:
-            pl.show(screenshot=screenshot)
+        # Show the plot requested
+        self.__show_plotter(pl, view_2d, use_trame, screenshot, pv_offscreen)
 
     def plot_selection(
         self,
@@ -856,7 +832,6 @@ class Sketch:
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
-        from ansys.geometry.core.plotting import _HAS_TRAME, Plotter, TrameVisualizer
 
         sketches_polydata = []
         sketches_polydata.extend(
@@ -866,39 +841,14 @@ class Sketch:
             ]
         )
 
-        if use_trame and _HAS_TRAME:
-            import pyvista as pv
+        # Initialize the plotter
+        pl, pv_offscreen = self.__init_plotter(use_trame)
 
-            # avoids GUI window popping up
-            pv.OFF_SCREEN = True
-            pl = Plotter(enable_widgets=False)
-        elif use_trame and not _HAS_TRAME:
-            warn_msg = (
-                "'use_trame' is active but Trame dependencies are not installed."
-                "Consider installing 'pyvista[trame]' to use this functionality."
-            )
-            logger.warning(warn_msg)
-            pl = Plotter()
-        else:
-            pl = Plotter()
-
+        # Add the polydata
         pl.add_sketch_polydata(sketches_polydata, **plotting_options)
 
-        # TODO: Does this make sense with the buttons?
-        # If you want to visualize a Sketch from the top...
-        if view_2d:
-            pl.scene.view_vector(
-                vector=self.plane.direction_z.tolist(),
-                viewup=self.plane.direction_y.tolist(),
-            )
-
-        # Finally, show the plot
-        if use_trame and _HAS_TRAME:
-            visualizer = TrameVisualizer()
-            visualizer.set_scene(pl)
-            visualizer.show()
-        else:
-            pl.show(screenshot=screenshot)
+        # Show the plot requested
+        self.__show_plotter(pl, view_2d, use_trame, screenshot, pv_offscreen)
 
     def sketch_polydata(self) -> List["PolyData"]:
         """
@@ -925,3 +875,90 @@ class Sketch:
         )
 
         return sketches_polydata
+
+    def __init_plotter(self, use_trame: bool) -> "Plotter":
+        """
+        Private class method to initialize the ``Plotter`` for
+        sketching purposes.
+
+        Parameters
+        ----------
+        use_trame : bool
+            Enables/disables the usage of the trame web visualizer.
+
+        Returns
+        -------
+        Plotter
+            The ``Plotter`` requested.
+        """
+        import pyvista as pv
+
+        from ansys.geometry.core.plotting import _HAS_TRAME, Plotter
+
+        pv_off_screen_original = bool(pv.OFF_SCREEN)
+
+        if use_trame and _HAS_TRAME:
+            # avoids GUI window popping up
+            pv.OFF_SCREEN = True
+            pl = Plotter(enable_widgets=False)
+        elif use_trame and not _HAS_TRAME:
+            warn_msg = (
+                "'use_trame' is active but Trame dependencies are not installed."
+                "Consider installing 'pyvista[trame]' to use this functionality."
+            )
+            logger.warning(warn_msg)
+            pl = Plotter()
+        else:
+            pl = Plotter()
+
+        return pl, pv_off_screen_original
+
+    def __show_plotter(
+        self,
+        pl: "Plotter",
+        view_2d: bool,
+        use_trame: bool,
+        screenshot: Optional[str],
+        pv_off_screen_original: bool,
+    ) -> None:
+        """
+        Private method handling the ``show`` call of our Plotter.
+
+        Parameters
+        ----------
+        pl : Plotter
+            The ``Plotter`` object to be used.
+        view_2d : bool
+            Specifies whether the plot should be represented in a 2D format.
+            By default, this is set to ``False``.
+        use_trame : bool
+            Enables/disables the usage of the trame web visualizer.
+        screenshot :str, optional
+            Save a screenshot of the image being represented. The image is
+            stored in the path provided as an argument.
+        pv_off_screen_original : bool
+            The original value of ~pv.OFF_SCREEN. This is restored after show
+            is called.
+        """
+        import pyvista as pv
+
+        from ansys.geometry.core.plotting import _HAS_TRAME, TrameVisualizer
+
+        # If you want to visualize a Sketch from the top...
+        if view_2d:
+            pl.scene.view_vector(
+                vector=self.plane.direction_z.tolist(),
+                viewup=self.plane.direction_y.tolist(),
+            )
+
+        # Finally, show the plot
+        if use_trame and _HAS_TRAME:
+            visualizer = TrameVisualizer()
+            visualizer.set_scene(pl)
+            visualizer.show()
+        else:
+            pl.show(screenshot=screenshot)
+
+        # Restore the original pv.OFF_SCREEN value changed in
+        # self.__init_plotter()
+        pv.OFF_SCREEN = pv_off_screen_original
