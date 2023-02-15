@@ -27,8 +27,6 @@ if TYPE_CHECKING:  # pragma: no cover
 SketchObject = Union[SketchEdge, SketchFace]
 """Type used to refer to both ``SketchEdge`` and ``SketchFace`` as possible values."""
 
-logger.setLevel("WARN")
-
 
 class Sketch:
     """Provides for building 2D sketch elements."""
@@ -808,11 +806,10 @@ class Sketch:
             pv.OFF_SCREEN = True
             pl = Plotter(enable_widgets=False)
         elif use_trame and not _HAS_TRAME:
-            warn_msg = f"""
-            Trame flag is active but Trame dependencies are not installed.
-            If you want to use trame please install with the following command:
-            pip install ansys-geometry-core[all]
-            """
+            warn_msg = (
+                "'use_trame' is active but Trame dependencies are not installed."
+                "Consider installing 'pyvista[trame]' to use this functionality."
+            )
             logger.warning(warn_msg)
             pl = Plotter()
         else:
@@ -876,11 +873,10 @@ class Sketch:
             pv.OFF_SCREEN = True
             pl = Plotter(enable_widgets=False)
         elif use_trame and not _HAS_TRAME:
-            warn_msg = f"""
-            Trame flag is active but Trame dependencies are not installed.
-            If you want to use trame please install with the following command:
-            pip install ansys-geometry-core[all]
-            """
+            warn_msg = (
+                "'use_trame' is active but Trame dependencies are not installed."
+                "Consider installing 'pyvista[trame]' to use this functionality."
+            )
             logger.warning(warn_msg)
             pl = Plotter()
         else:
