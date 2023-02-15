@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-# PyGeometry modeling
+# PyGeometry 101: modeling
 
 Once the mathematical constructs, units and sketching capabilities of PyGeometry are clear,
 let's dive into the modeling capabilities available with PyGeometry.
@@ -20,11 +20,12 @@ let's dive into the modeling capabilities available with PyGeometry.
 
 PyGeometry is a Python client that connects to a modeling service. The following modeling
 services are available for connection:
-* ``DMS``: a **Windows-based modelling service** which has been containerized to ease
+
+- ``DMS``: a **Windows-based modeling service** which has been containerized to ease
   distribution, execution and remotability operations.
-* ``Geometry service``: this is the **Linux-based approach** of the ``DMS``.
+- ``Geometry service``: this is the **Linux-based approach** of the ``DMS``.
   It is currently under development.
-* ``Discovery/SpaceClaim``: PyGeometry is also capable of connecting to a running session
+- ``Discovery/SpaceClaim``: PyGeometry is also capable of connecting to a running session
   of SpaceClaim or Discovery. Though this is not the main use-case, it is also possible.
   Performance will not be as high as with the ``DMS`` or the ``Geometry service`` due to
   the graphical interface, but it might be useful for some users.
@@ -45,7 +46,7 @@ print(modeler)
 
 Users are also allowed to spawn their own services and connect to them. For details on how
 to connect to an existing service, read through the
-[``Modeler`` API](https://geometry.docs.pyansys.com/dev/autoapi/ansys/geometry/core/modeler/index.html#ansys.geometry.core.modeler.Modeler)
+[Modeler API](https://geometry.docs.pyansys.com/dev/autoapi/ansys/geometry/core/modeler/index.html#ansys.geometry.core.modeler.Modeler)
 
 +++
 
@@ -54,22 +55,22 @@ The way the class architecture is implemented is the following:
 * ``Modeler``: this is the handler object for the active service session. It allows users
   to connect to an existing service by passing in a ``host`` and a ``port``. It also
   allows to create ``Design`` objects, which is where the actual modeling will take
-  place. Documentation for [``Modeler`` API](https://geometry.docs.pyansys.com/dev/autoapi/ansys/geometry/core/modeler/index.html#ansys.geometry.core.modeler.Modeler)
+  place. Documentation for [Modeler API](https://geometry.docs.pyansys.com/dev/autoapi/ansys/geometry/core/modeler/index.html#ansys.geometry.core.modeler.Modeler)
   can be found in the previous link.
 * ``Design``: this is the root object of our assembly/tree. A ``Design`` is also a
   ``Component``, but with enhanced functionalities such as: creating named selection,
-  adding materials, handling beam profiles etc. Documentation for [``Design`` API](https://geometry.docs.pyansys.com/release/0.2/autoapi/ansys/geometry/core/designer/design/index.html#ansys.geometry.core.designer.design.Design)
+  adding materials, handling beam profiles etc. Documentation for [Design API](https://geometry.docs.pyansys.com/release/0.2/autoapi/ansys/geometry/core/designer/design/index.html#ansys.geometry.core.designer.design.Design)
   can be found in the previous link.
 * ``Component``: one of the main objects for modeling purposes. ``Component`` objects
   allow users to create bodies, sub-components, beams, design points, planar surfaces etc.
-  Documentation for [``Component`` API](https://geometry.docs.pyansys.com/release/0.2/autoapi/ansys/geometry/core/designer/component/index.html#ansys.geometry.core.designer.component.Component)
+  Documentation for [Component API](https://geometry.docs.pyansys.com/release/0.2/autoapi/ansys/geometry/core/designer/component/index.html#ansys.geometry.core.designer.component.Component)
   can be found in the previous link.
 
 Let's start playing around with them!
 
 +++
 
-# First of all, we have to create a ``Sketch``.
+First of all, we have to create a ``Sketch``.
 
 ```{code-cell} ipython3
 from ansys.geometry.core.sketch import Sketch
@@ -240,12 +241,11 @@ from pathlib import Path
 from ansys.geometry.core.designer import DesignFileFormat
 
 # Path to our downloads directory
-file_dir = Path(os.getcwd(), "downloads").mkdir(parents=True, exist_ok=True)
+file_dir = Path(os.getcwd(), "downloads")
+file_dir.mkdir(parents=True, exist_ok=True)
 
 # Download the model in different formats
 design.download(file_location=Path(file_dir, "ModelingDemo.scdocx"), format=DesignFileFormat.SCDOCX)
-design.download(file_location=Path(file_dir, "ModelingDemo.x_t"), format=DesignFileFormat.PARASOLID_TEXT)
-design.download(file_location=Path(file_dir, "ModelingDemo.x_b"), format=DesignFileFormat.PARASOLID_BIN)
 design.download(file_location=Path(file_dir, "ModelingDemo.fmd"), format=DesignFileFormat.FMD)
 ```
 

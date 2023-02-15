@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-# PyGeometry units
+# PyGeometry 101: units
 
 PyGeometry has the capability of handling units inside the source code. In order to do so,
 a third-party open-source software which is being used in other PyAnsys libraries
@@ -30,12 +30,13 @@ from ansys.geometry.core.misc import UNITS
 
 Now, with this ``UnitRegistry`` object called ``UNITS``, we will create
 ``Quantity`` objects. A ``Quantity`` object is simply a container class with two core elements:
-* A number
-* A unit
+
+- A number
+- A unit
 
 ``Quantity`` objects also have convenience methods for: transforming to different units, comparing
 magnitudes/values, units, etc. For more information on their functioning please refer to the
-[``pint.Quantity``](https://pint.readthedocs.io/en/stable/api/base.html#most-important-classes)
+[pint.Quantity](https://pint.readthedocs.io/en/stable/api/base.html#most-important-classes)
 docs or the [Pint tutorial](https://pint.readthedocs.io/en/stable/getting/tutorial.html?#tutorial).
 
 ```{code-cell} ipython3
@@ -112,8 +113,6 @@ Also, it is important to differentiate between *client-side* default units
 and *server-side* ones. Users are able to control both of them.
 
 ```{code-cell} ipython3
-from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
-
 print("=== Default server unit length ===")
 print(DEFAULT_UNITS.SERVER_LENGTH)
 ```

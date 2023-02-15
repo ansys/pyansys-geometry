@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-# PyGeometry sketching
+# PyGeometry 101: sketching
 
 PyGeometry allows the building of powerful dynamic sketches without communicating
 to the Geometry service server. In this example, a demo on how to build these sketches is shown.

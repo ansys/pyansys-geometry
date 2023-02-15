@@ -14,31 +14,21 @@ can perform with PyGeometry.
     examples/01_getting_started/02_units.mystnb
     examples/01_getting_started/03_sketching.mystnb
     examples/01_getting_started/04_modeling.mystnb
-    examples/01_getting_started/05_modeling_extra.mystnb
 
-Math and sketch examples
-------------------------
+Sketching examples
+------------------
 These examples demonstrate math operations on geometric objects
-and basic sketching capabilities.
+and sketching capabilities - combined with server-based operations.
 
 .. nbgallery::
 
     examples/02_sketching/basic_usage.mystnb
-
-
-Advanced sketching features
----------------------------
-These examples demonstrate advanced sketching features - combined with
-server-based operations.
-
-.. nbgallery::
-
     examples/02_sketching/dynamic_sketch_plane.mystnb
     examples/02_sketching/advanced_sketching_gears.mystnb
 
-Service-based examples
-----------------------
-These examples demonstrate service-based operations.
+Modeling examples
+-----------------
+These examples demonstrate service-based modeling operations.
 
 .. nbgallery::
 

@@ -11,10 +11,10 @@ kernelspec:
   name: python3
 ---
 
-# PyGeometry math
+# PyGeometry 101: math
 
 The ``math`` module is the foundation of PyGeometry. This foundation is built on top of
-[``NumPy``](https://numpy.org/), one of the most renowned mathematical Python libraries.
+[NumPy](https://numpy.org/), one of the most renowned mathematical Python libraries.
 
 In this demo, some of the main PyGeometry math objects are shown
 and it is shown why they are important prior to doing more exciting things in PyGeometry.
@@ -26,9 +26,9 @@ and it is shown why they are important prior to doing more exciting things in Py
 Start by performing the required imports.
 
 ```{code-cell} ipython3
-from ansys.geometry.core.math import Plane, Point2D, Point3D, Vector2D, Vector3D, UnitVector3D
 import numpy as np
 
+from ansys.geometry.core.math import Plane, Point2D, Point3D, Vector2D, Vector3D, UnitVector3D
 ```
 
 ### ``Point`` and ``Vector``
