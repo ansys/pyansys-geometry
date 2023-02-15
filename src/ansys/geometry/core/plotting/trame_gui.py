@@ -6,7 +6,7 @@ try:
 
     _HAS_TRAME = True
 
-except ModuleNotFoundError:
+except ModuleNotFoundError:  # pragma: no cover
     _HAS_TRAME = False
 
 
@@ -15,13 +15,10 @@ class TrameVisualizer:
 
     def __init__(self) -> None:
         """Inits server and server related variables."""
-        if not _HAS_TRAME:
-            error_msg = f"""
-            Trame dependencies are not installed.
-            If you want to use trame please install with the following command:
-            pip install ansys-geometry-core[all]
-            """
-            raise ModuleNotFoundError(error_msg)
+        if not _HAS_TRAME:  # pragma: no cover
+            raise ModuleNotFoundError(
+                "The package 'pyvista[trame]' is required to use this function."
+            )
 
         self.server = get_server()
         self.state, self.ctrl = self.server.state, self.server.controller
