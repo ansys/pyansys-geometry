@@ -24,8 +24,6 @@ from ansys.geometry.core.typing import Real
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import PolyData
 
-    from ansys.geometry.core.plotting import Plotter
-
 SketchObject = Union[SketchEdge, SketchFace]
 """Type used to refer to both ``SketchEdge`` and ``SketchFace`` as possible values."""
 
@@ -799,15 +797,10 @@ class Sketch:
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
-
-        # Initialize the plotter
-        pl, pv_offscreen = self.__init_plotter(use_trame)
-
-        # Add the polydata
-        pl.add_sketch_polydata(self.sketch_polydata(), **plotting_options)
-
-        # Show the plot requested
-        self.__show_plotter(pl, view_2d, use_trame, screenshot, pv_offscreen)
+        # Show the plot requested - i.e. all polydata in sketch
+        self.__show_plotter(
+            self.sketch_polydata(), view_2d, screenshot, use_trame, **plotting_options
+        )
 
     def plot_selection(
         self,
@@ -833,6 +826,7 @@ class Sketch:
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
 
+        # Get the selected polydata
         sketches_polydata = []
         sketches_polydata.extend(
             [
@@ -841,14 +835,8 @@ class Sketch:
             ]
         )
 
-        # Initialize the plotter
-        pl, pv_offscreen = self.__init_plotter(use_trame)
-
-        # Add the polydata
-        pl.add_sketch_polydata(sketches_polydata, **plotting_options)
-
         # Show the plot requested
-        self.__show_plotter(pl, view_2d, use_trame, screenshot, pv_offscreen)
+        self.__show_plotter(sketches_polydata, view_2d, screenshot, use_trame, plotting_options)
 
     def sketch_polydata(self) -> List["PolyData"]:
         """
@@ -876,24 +864,36 @@ class Sketch:
 
         return sketches_polydata
 
-    def __init_plotter(self, use_trame: bool) -> "Plotter":
+    def __show_plotter(
+        self,
+        polydata: List["PolyData"],
+        view_2d: bool,
+        screenshot: Optional[str],
+        use_trame: bool,
+        **plotting_options: Optional[dict],
+    ) -> None:
         """
-        Private class method to initialize the ``Plotter`` for
-        sketching purposes.
+        Private method handling the ``show`` call of our Plotter.
 
         Parameters
         ----------
+        polydata: List["PolyData"]
+            Set of PolyData configuration for all edges and faces to be plotted.
+        view_2d : bool
+            Specifies whether the plot should be represented in a 2D format.
+            By default, this is set to ``False``.
+        screenshot : str or ``None``
+            Save a screenshot of the image being represented. The image is
+            stored in the path provided as an argument.
         use_trame : bool
             Enables/disables the usage of the trame web visualizer.
-
-        Returns
-        -------
-        Plotter
-            The ``Plotter`` requested.
+        **plotting_options : dict, default: []
+            Keyword arguments. For allowable keyword arguments,
+            see the :func:`pyvista.Plotter.add_mesh` method.
         """
         import pyvista as pv
 
-        from ansys.geometry.core.plotting import _HAS_TRAME, Plotter
+        from ansys.geometry.core.plotting import _HAS_TRAME, Plotter, TrameVisualizer
 
         pv_off_screen_original = bool(pv.OFF_SCREEN)
 
@@ -911,38 +911,8 @@ class Sketch:
         else:
             pl = Plotter()
 
-        return pl, pv_off_screen_original
-
-    def __show_plotter(
-        self,
-        pl: "Plotter",
-        view_2d: bool,
-        use_trame: bool,
-        screenshot: Optional[str],
-        pv_off_screen_original: bool,
-    ) -> None:
-        """
-        Private method handling the ``show`` call of our Plotter.
-
-        Parameters
-        ----------
-        pl : Plotter
-            The ``Plotter`` object to be used.
-        view_2d : bool
-            Specifies whether the plot should be represented in a 2D format.
-            By default, this is set to ``False``.
-        use_trame : bool
-            Enables/disables the usage of the trame web visualizer.
-        screenshot :str, optional
-            Save a screenshot of the image being represented. The image is
-            stored in the path provided as an argument.
-        pv_off_screen_original : bool
-            The original value of ~pv.OFF_SCREEN. This is restored after show
-            is called.
-        """
-        import pyvista as pv
-
-        from ansys.geometry.core.plotting import _HAS_TRAME, TrameVisualizer
+        # Add the polydata
+        pl.add_sketch_polydata(polydata, **plotting_options)
 
         # If you want to visualize a Sketch from the top...
         if view_2d:
@@ -959,6 +929,5 @@ class Sketch:
         else:
             pl.show(screenshot=screenshot)
 
-        # Restore the original pv.OFF_SCREEN value changed in
-        # self.__init_plotter()
+        # Restore the original pv.OFF_SCREEN value
         pv.OFF_SCREEN = bool(pv_off_screen_original)
