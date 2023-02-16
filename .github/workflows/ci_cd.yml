@@ -279,6 +279,13 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           requires-xvfb: true
 
+      - name: Stop the Geometry service
+        if: always()
+        run: |
+          docker stop ${{ env.GEO_CONT_NAME }}
+          docker logs ${{ env.GEO_CONT_NAME }}
+          docker rm ${{ env.GEO_CONT_NAME }}
+
   package:
     name: Package library
     needs: [testing-windows, docs]
