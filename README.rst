@@ -65,6 +65,8 @@ The following OS-dependent tags are available:
 
 * ``windows-latest``
 * ``windows-latest-unstable``
+* ``linux-latest``
+* ``linux-latest-unstable``
 
 Next, you will be ready to run the Geometry service directly from PyGeometry:
 
@@ -85,7 +87,7 @@ First, start the Geometry service locally. If you have Docker installed and have
 
 .. code:: bash
 
-   docker run --name ans_geo -e LICENSE_SERVER=<LICENSE-SERVER> -p 50051:50051 ghcr.io/pyansys/geometry:windows-latest
+   docker run --name ans_geo -e LICENSE_SERVER=<LICENSE-SERVER> -p 50051:50051 ghcr.io/pyansys/geometry:<TAG>
 
 The Geometry service has a set of environment variables that are **mandatory**:
 
@@ -108,7 +110,7 @@ Next, connect to the service with:
 By default ``Modeler`` connects to ``127.0.0.1`` (``'localhost'``) on
 port ``50051``. You can change this by modifying the ``host`` and ``port``
 parameters of ``Modeler``, but note that you must also modify
-your ``docker run`` command by changing ``<HOST-PORT>-50051``.
+your ``docker run`` command by changing ``<HOST-PORT>:50051``.
 
 If you want to change the defaults, modify the following environment variables:
 
@@ -230,7 +232,7 @@ To install PyGeometry in developer mode, perform these steps:
       # Install the minimum + doc requirements
       python -m pip install -e .[doc]
 
-      # Install the all requirements
+      # Install all requirements
       python -m pip install -e .[tests,doc]
 
 Install in offline mode

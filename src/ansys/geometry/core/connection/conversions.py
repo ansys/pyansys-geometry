@@ -14,8 +14,7 @@ from ansys.api.geometry.v0.models_pb2 import Tessellation
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple
 
 from ansys.geometry.core.math import Frame, Plane, Point2D, Point3D, UnitVector3D
-from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
-from ansys.geometry.core.misc.measurements import UNIT_ANGLE
+from ansys.geometry.core.misc import DEFAULT_UNITS
 from ansys.geometry.core.sketch import (
     Arc,
     Polygon,
@@ -226,9 +225,9 @@ def sketch_ellipse_to_grpc_ellipse(ellipse: SketchEllipse, plane: Plane) -> GRPC
     """
     return GRPCEllipse(
         center=point2d_to_grpc_point(plane, ellipse.center),
-        majorradius=ellipse.major_radius.m_as(SERVER_UNIT_LENGTH),
-        minorradius=ellipse.minor_radius.m_as(SERVER_UNIT_LENGTH),
-        angle=ellipse.angle.value.m_as(UNIT_ANGLE),
+        majorradius=ellipse.major_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        minorradius=ellipse.minor_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        angle=ellipse.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE),
     )
 
 
@@ -250,7 +249,7 @@ def sketch_circle_to_grpc_circle(circle: SketchCircle, plane: Plane) -> GRPCCirc
     """
     return GRPCCircle(
         center=point2d_to_grpc_point(plane, circle.center),
-        radius=circle.radius.m_as(SERVER_UNIT_LENGTH),
+        radius=circle.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
     )
 
 
@@ -268,9 +267,9 @@ def point3d_to_grpc_point(point: Point3D) -> GRPCPoint:
         Geometry service gRPC point message. The unit is meters.
     """
     return GRPCPoint(
-        x=point.x.m_as(SERVER_UNIT_LENGTH),
-        y=point.y.m_as(SERVER_UNIT_LENGTH),
-        z=point.z.m_as(SERVER_UNIT_LENGTH),
+        x=point.x.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        y=point.y.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        z=point.z.m_as(DEFAULT_UNITS.SERVER_LENGTH),
     )
 
 
@@ -292,9 +291,9 @@ def point2d_to_grpc_point(plane: Plane, point2d: Point2D) -> GRPCPoint:
     """
     point3d = plane.transform_point2d_local_to_global(point2d)
     return GRPCPoint(
-        x=point3d.x.m_as(SERVER_UNIT_LENGTH),
-        y=point3d.y.m_as(SERVER_UNIT_LENGTH),
-        z=point3d.z.m_as(SERVER_UNIT_LENGTH),
+        x=point3d.x.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        y=point3d.y.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        z=point3d.z.m_as(DEFAULT_UNITS.SERVER_LENGTH),
     )
 
 
@@ -313,9 +312,9 @@ def sketch_polygon_to_grpc_polygon(polygon: Polygon, plane: Plane) -> GRPCPolygo
     """
     return GRPCPolygon(
         center=point2d_to_grpc_point(plane, polygon.center),
-        radius=polygon.inner_radius.m_as(SERVER_UNIT_LENGTH),
+        radius=polygon.inner_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
         numberofsides=polygon.n_sides,
-        angle=polygon.angle.value.m_as(UNIT_ANGLE),
+        angle=polygon.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE),
     )
 
 

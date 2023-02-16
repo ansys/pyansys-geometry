@@ -26,9 +26,9 @@ class Cone:
     half_angle : Union[Quantity, Angle, Real]
         Half angle of the apex, determining the upward angle.
     reference : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
-        X-plane direction.
+        X-axis direction.
     axis : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
-        Z-plane direction.
+        Z-axis direction.
     """
 
     @check_input_types

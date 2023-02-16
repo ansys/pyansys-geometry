@@ -23,8 +23,7 @@ from beartype.typing import Dict, List, Optional, Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.connection.conversions import plane_to_grpc_plane, point3d_to_grpc_point
+from ansys.geometry.core.connection import GrpcClient, plane_to_grpc_plane, point3d_to_grpc_point
 from ansys.geometry.core.designer.beam import BeamCircularProfile, BeamProfile
 from ansys.geometry.core.designer.body import Body, MidSurfaceOffsetType
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
@@ -42,7 +41,7 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector3D,
 )
-from ansys.geometry.core.misc import SERVER_UNIT_LENGTH, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, Distance
 from ansys.geometry.core.typing import RealSequence
 
 
@@ -360,7 +359,7 @@ class Design(Component):
 
         request = CreateBeamCircularProfileRequest(
             origin=point3d_to_grpc_point(center),
-            radius=radius.value.m_as(SERVER_UNIT_LENGTH),
+            radius=radius.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
             plane=plane_to_grpc_plane(Plane(center, dir_x, dir_y)),
             name=name,
         )
@@ -408,7 +407,7 @@ class Design(Component):
         # Assign mid-surface thickness
         self._commands_stub.AssignMidSurfaceThickness(
             AssignMidSurfaceThicknessRequest(
-                bodiesOrFaces=ids, thickness=thickness.m_as(SERVER_UNIT_LENGTH)
+                bodiesOrFaces=ids, thickness=thickness.m_as(DEFAULT_UNITS.SERVER_LENGTH)
             )
         )
 

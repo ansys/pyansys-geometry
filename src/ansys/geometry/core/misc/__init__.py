@@ -11,13 +11,5 @@ from ansys.geometry.core.misc.checks import (
     check_type,
     check_type_equivalence,
 )
-from ansys.geometry.core.misc.measurements import (
-    SERVER_UNIT_AREA,
-    SERVER_UNIT_LENGTH,
-    SERVER_UNIT_VOLUME,
-    UNIT_ANGLE,
-    UNIT_LENGTH,
-    Angle,
-    Distance,
-)
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.misc.units import UNITS, PhysicalQuantity

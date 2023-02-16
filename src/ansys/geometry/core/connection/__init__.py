@@ -2,7 +2,9 @@
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
+    frame_to_grpc_frame,
     plane_to_grpc_plane,
+    point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
     tess_to_pd,
     unit_vector_to_grpc_direction,

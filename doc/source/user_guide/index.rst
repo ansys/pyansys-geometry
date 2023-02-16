@@ -23,7 +23,7 @@ PyGeometry is a Python wrapper for the Ansys Geometry service.
 The key features of PyGeometry are:
 
 * Ability to use the library alongside other Python libraries
-* Fluent based API for a clean and easy coding experience
+* A 'fluent functional-style' API for a clean and easy coding experience
 * Built-in examples
 
 Simple interactive example

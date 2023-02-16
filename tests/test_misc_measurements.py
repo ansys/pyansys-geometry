@@ -1,7 +1,7 @@
 from pint import Quantity
 import pytest
 
-from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
 
 
 def test_distance():
@@ -44,9 +44,9 @@ def test_distance():
     d_3_magnitude = 5346
     d_3 = Distance(d_3_magnitude)
 
-    assert d_3.base_unit == UNITS.get_base_units(UNIT_LENGTH)[1]
-    assert d_3.unit == UNIT_LENGTH
-    assert d_3.value == d_3_magnitude * UNIT_LENGTH
+    assert d_3.base_unit == UNITS.get_base_units(DEFAULT_UNITS.LENGTH)[1]
+    assert d_3.unit == DEFAULT_UNITS.LENGTH
+    assert d_3.value == d_3_magnitude * DEFAULT_UNITS.LENGTH
 
     # Finally check that if you provide a Quantity and some other units,
     # the units provided will be ignored. The units assigned to the
@@ -75,3 +75,53 @@ def test_distance():
         TypeError, match="The parameter 'value' should have a float or integer value."
     ):
         Distance("avsdbv")
+
+
+def test_change_units_length():
+    """Testing units change for Distance object."""
+    # Let's store the original units first
+    original_units = DEFAULT_UNITS.LENGTH
+
+    # Check that the distance object is properly built
+    a = Distance(10)
+    assert a.value == 10 * original_units
+    assert DEFAULT_UNITS.LENGTH == original_units
+
+    # Now, let's change the DEFAULT_UNITS
+    DEFAULT_UNITS.LENGTH = UNITS.mm
+    assert DEFAULT_UNITS.LENGTH == UNITS.mm
+
+    # Check that the distance object is properly built
+    # with the new default units
+    b = Distance(10)
+    assert a.value != b.value
+    assert b.value == 10 * UNITS.mm
+
+    # Finally, let's change them back
+    DEFAULT_UNITS.LENGTH = original_units
+    assert DEFAULT_UNITS.LENGTH == original_units
+
+
+def test_change_units_angle():
+    """Testing units change for Angle object."""
+    # Let's store the original units first
+    original_units = DEFAULT_UNITS.ANGLE
+
+    # Check that the angle object is properly built
+    a = Angle(10)
+    assert a.value == 10 * original_units
+    assert DEFAULT_UNITS.ANGLE == original_units
+
+    # Now, let's change the DEFAULT_UNITS
+    DEFAULT_UNITS.ANGLE = UNITS.degrees
+    assert DEFAULT_UNITS.ANGLE == UNITS.degrees
+
+    # Check that the angle object is properly built
+    # with the new default units
+    b = Angle(10)
+    assert a.value != b.value
+    assert b.value == 10 * UNITS.degrees
+
+    # Finally, let's change them back
+    DEFAULT_UNITS.ANGLE = original_units
+    assert DEFAULT_UNITS.ANGLE == original_units

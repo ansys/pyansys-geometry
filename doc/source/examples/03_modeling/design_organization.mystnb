@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-# Design organization
+# Modeling: design organization
 
 The ``Design`` instance creates a design project within the remote Geometry service to
 complete all CAD modeling against.

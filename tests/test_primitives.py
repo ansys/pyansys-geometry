@@ -487,7 +487,7 @@ def test_torus_units():
     assert t_1.major_radius == major_radius
     assert t_1.minor_radius == minor_radius
 
-    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
+    # Check that the actual values are in base units (i.e. DEFAULT_UNITS.LENGTH)
     assert t_1._major_radius == (t_1.major_radius * t_1.unit).to_base_units().magnitude
     assert t_1._minor_radius == (t_1.minor_radius * t_1.unit).to_base_units().magnitude
 

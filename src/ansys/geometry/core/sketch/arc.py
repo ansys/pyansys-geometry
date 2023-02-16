@@ -7,7 +7,7 @@ from pint import Quantity
 import pyvista as pv
 
 from ansys.geometry.core.math import Point2D, Vector2D
-from ansys.geometry.core.misc import UNIT_LENGTH, UNITS
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS
 from ansys.geometry.core.sketch.edge import SketchEdge
 
 
@@ -150,14 +150,14 @@ class Arc(SketchEdge):
 
         return pv.CircularArc(
             [
-                self.start.x.m_as(UNIT_LENGTH),
-                self.start.y.m_as(UNIT_LENGTH),
+                self.start.x.m_as(DEFAULT_UNITS.LENGTH),
+                self.start.y.m_as(DEFAULT_UNITS.LENGTH),
                 0,
             ],
-            [self.end.x.m_as(UNIT_LENGTH), self.end.y.m_as(UNIT_LENGTH), 0],
+            [self.end.x.m_as(DEFAULT_UNITS.LENGTH), self.end.y.m_as(DEFAULT_UNITS.LENGTH), 0],
             [
-                self.center.x.m_as(UNIT_LENGTH),
-                self.center.y.m_as(UNIT_LENGTH),
+                self.center.x.m_as(DEFAULT_UNITS.LENGTH),
+                self.center.y.m_as(DEFAULT_UNITS.LENGTH),
                 0,
             ],
             negative=pv_negative,
@@ -208,19 +208,23 @@ class Arc(SketchEdge):
 
         # Define auxiliary lists for PyVista containing the start, mid, end, and center points
         mid_point = [
-            mid_point2d.x.m_as(UNIT_LENGTH),
-            mid_point2d.y.m_as(UNIT_LENGTH),
+            mid_point2d.x.m_as(DEFAULT_UNITS.LENGTH),
+            mid_point2d.y.m_as(DEFAULT_UNITS.LENGTH),
             0,
         ]
         start_point = [
-            self.start.x.m_as(UNIT_LENGTH),
-            self.start.y.m_as(UNIT_LENGTH),
+            self.start.x.m_as(DEFAULT_UNITS.LENGTH),
+            self.start.y.m_as(DEFAULT_UNITS.LENGTH),
             0,
         ]
-        end_point = [self.end.x.m_as(UNIT_LENGTH), self.end.y.m_as(UNIT_LENGTH), 0]
+        end_point = [
+            self.end.x.m_as(DEFAULT_UNITS.LENGTH),
+            self.end.y.m_as(DEFAULT_UNITS.LENGTH),
+            0,
+        ]
         center_point = [
-            self.center.x.m_as(UNIT_LENGTH),
-            self.center.y.m_as(UNIT_LENGTH),
+            self.center.x.m_as(DEFAULT_UNITS.LENGTH),
+            self.center.y.m_as(DEFAULT_UNITS.LENGTH),
             0,
         ]
 
@@ -257,7 +261,7 @@ class Arc(SketchEdge):
         Arc
             Arc generated from the three given points.
         """
-        # Unpack the points into its coordinates (in UNIT_LENGTH)
+        # Unpack the points into its coordinates (in DEFAULT_UNITS.LENGTH)
         x_s, y_s = start.tolist()
         x_i, y_i = inter.tolist()
         x_e, y_e = end.tolist()
@@ -297,7 +301,7 @@ class Arc(SketchEdge):
         k2 = (x_s**2 + y_s**2) - (x_e**2 + y_e**2)
 
         x_c, y_c = np.linalg.solve([[k11, k12], [k21, k22]], [k1, k2])
-        center = Point2D([x_c, y_c], unit=UNIT_LENGTH)
+        center = Point2D([x_c, y_c], unit=DEFAULT_UNITS.LENGTH)
 
         # Now, we should try to figure out if the rotation has to be clockwise or
         # counter-clockwise... let's see

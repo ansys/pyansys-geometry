@@ -31,8 +31,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials import Material
 from ansys.geometry.core.math import UnitVector3D
 from ansys.geometry.core.misc import (
-    SERVER_UNIT_LENGTH,
-    SERVER_UNIT_VOLUME,
+    DEFAULT_UNITS,
     Distance,
     check_pint_unit_compatibility,
     check_type,
@@ -193,11 +192,11 @@ class Body:
         """
         if self.is_surface:
             self._grpc_client.log.debug("Dealing with planar surface. Returning 0 as the volume.")
-            return Quantity(0, SERVER_UNIT_VOLUME)
+            return Quantity(0, DEFAULT_UNITS.SERVER_VOLUME)
         else:
             self._grpc_client.log.debug(f"Retrieving volume for body {self.id} from server.")
             volume_response = self._bodies_stub.GetVolume(self._grpc_id)
-            return Quantity(volume_response.volume, SERVER_UNIT_VOLUME)
+            return Quantity(volume_response.volume, DEFAULT_UNITS.SERVER_VOLUME)
 
     @protect_grpc
     @check_input_types
@@ -231,7 +230,7 @@ class Body:
         if self.is_surface:
             self._commands_stub.AssignMidSurfaceThickness(
                 AssignMidSurfaceThicknessRequest(
-                    bodiesOrFaces=[self.id], thickness=thickness.m_as(SERVER_UNIT_LENGTH)
+                    bodiesOrFaces=[self.id], thickness=thickness.m_as(DEFAULT_UNITS.SERVER_LENGTH)
                 )
             )
             self._surface_thickness = thickness
@@ -390,9 +389,9 @@ class Body:
         None
         """
         translate_distance = distance if isinstance(distance, Quantity) else distance.value
-        check_pint_unit_compatibility(translate_distance.units, SERVER_UNIT_LENGTH)
+        check_pint_unit_compatibility(translate_distance.units, DEFAULT_UNITS.SERVER_LENGTH)
 
-        translation_magnitude = translate_distance.m_as(SERVER_UNIT_LENGTH)
+        translation_magnitude = translate_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH)
 
         self._grpc_client.log.debug(f"Translating body {self.id}.")
 

@@ -4,11 +4,10 @@ from ansys.api.geometry.v0.coordinatesystems_pb2 import CreateRequest
 from ansys.api.geometry.v0.coordinatesystems_pb2_grpc import CoordinateSystemsStub
 from beartype.typing import TYPE_CHECKING
 
-from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.connection.conversions import frame_to_grpc_frame
+from ansys.geometry.core.connection import GrpcClient, frame_to_grpc_frame
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import Frame, Point3D, UnitVector3D
-from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
+from ansys.geometry.core.misc import DEFAULT_UNITS
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.component import Component
@@ -60,7 +59,7 @@ class CoordinateSystem:
                     new_coordinate_system.frame.origin.y,
                     new_coordinate_system.frame.origin.z,
                 ],
-                SERVER_UNIT_LENGTH,
+                DEFAULT_UNITS.SERVER_LENGTH,
             ),
             UnitVector3D(
                 [
