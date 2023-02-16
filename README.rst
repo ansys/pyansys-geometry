@@ -65,8 +65,8 @@ The following OS-dependent tags are available:
 
 * ``windows-latest``
 * ``windows-latest-unstable``
-* ``linux-latest-unstable``
 * ``linux-latest``
+* ``linux-latest-unstable``
 
 Next, you will be ready to run the Geometry service directly from PyGeometry:
 

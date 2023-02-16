@@ -93,8 +93,8 @@ Docker container.
 
    * ``windows-latest``
    * ``windows-latest-unstable``
-   * ``linux-latest-unstable``
    * ``linux-latest``
+   * ``linux-latest-unstable``
 
 Launching the Geometry service
 ------------------------------
