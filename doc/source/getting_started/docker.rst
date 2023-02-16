@@ -93,6 +93,8 @@ Docker container.
 
    * ``windows-latest``
    * ``windows-latest-unstable``
+   * ``linux-latest``
+   * ``linux-latest-unstable``
 
 Launching the Geometry service
 ------------------------------
@@ -183,7 +185,7 @@ The Geometry service can be launched locally in two different ways:
 
        .. code:: bash
 
-          docker run --name ans_geo -e LICENSE_SERVER=<LICENSE_SERVER> -p 50051:50051 ghcr.io/pyansys/geometry:windows-latest
+          docker run --name ans_geo -e LICENSE_SERVER=<LICENSE_SERVER> -p 50051:50051 ghcr.io/pyansys/geometry:<TAG>
 
 
 Connect to the Geometry service
