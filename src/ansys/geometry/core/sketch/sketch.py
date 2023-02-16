@@ -4,7 +4,6 @@ from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, Dict, List, Optional, Union
 from pint import Quantity
 
-from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.math import ZERO_POINT2D, Plane, Point2D, UnitVector3D, Vector2D, Vector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.arc import Arc
@@ -836,7 +835,13 @@ class Sketch:
         )
 
         # Show the plot requested
-        self.__show_plotter(sketches_polydata, view_2d, screenshot, use_trame, plotting_options)
+        self.__show_plotter(
+            polydata=sketches_polydata,
+            view_2d=view_2d,
+            screenshot=screenshot,
+            use_trame=use_trame,
+            **plotting_options,
+        )
 
     def sketch_polydata(self) -> List["PolyData"]:
         """
@@ -891,26 +896,11 @@ class Sketch:
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
-        import pyvista as pv
 
-        from ansys.geometry.core.plotting import _HAS_TRAME, Plotter, TrameVisualizer
+        from ansys.geometry.core.plotting import PlotterHelper
 
-        pv_off_screen_original = bool(pv.OFF_SCREEN)
-
-        if use_trame and _HAS_TRAME:
-            # avoids GUI window popping up
-            pv.OFF_SCREEN = True
-            pl = Plotter(enable_widgets=False)
-        elif use_trame and not _HAS_TRAME:
-            warn_msg = (
-                "'use_trame' is active but Trame dependencies are not installed."
-                "Consider installing 'pyvista[trame]' to use this functionality."
-            )
-            logger.warning(warn_msg)
-            pl = Plotter()
-        else:
-            pl = Plotter()
-
+        pl_helper = PlotterHelper(use_trame=use_trame)
+        pl = pl_helper.init_plotter()
         # Add the polydata
         pl.add_sketch_polydata(polydata, **plotting_options)
 
@@ -922,12 +912,4 @@ class Sketch:
             )
 
         # Finally, show the plot
-        if use_trame and _HAS_TRAME:
-            visualizer = TrameVisualizer()
-            visualizer.set_scene(pl)
-            visualizer.show()
-        else:
-            pl.show(screenshot=screenshot)
-
-        # Restore the original pv.OFF_SCREEN value
-        pv.OFF_SCREEN = bool(pv_off_screen_original)
+        pl_helper.show_plotter(pl, screenshot=screenshot)

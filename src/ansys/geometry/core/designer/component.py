@@ -716,6 +716,7 @@ class Component:
 
     def plot(
         self,
+        use_trame: bool,
         merge_component: bool = False,
         merge_bodies: bool = False,
         screenshot: Optional[str] = None,
@@ -725,6 +726,8 @@ class Component:
 
         Parameters
         ----------
+        use_trame : bool
+            Enables/disables the usage of the trame web visualizer.
         merge_component : bool, default: False
             Whether to merge this component into a single dataset. When ``True``,
             all the individual bodies are effectively merged into a single
@@ -776,13 +779,15 @@ class Component:
         >>> mycomp.plot(pbr=True, metallic=1.0)
 
         """
-        from ansys.geometry.core.plotting import Plotter
 
-        pl = Plotter()
+        from ansys.geometry.core.plotting import PlotterHelper
+
+        pl_helper = PlotterHelper(use_trame=use_trame)
+        pl = pl_helper.init_plotter()
         pl.add_component(
             self, merge_bodies=merge_bodies, merge_component=merge_component, **plotting_options
         )
-        pl.show(screenshot=screenshot)
+        pl_helper.show_plotter(pl, screenshot=screenshot)
 
     def __repr__(self) -> str:
         """String representation of the component."""

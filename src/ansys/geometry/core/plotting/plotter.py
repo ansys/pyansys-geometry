@@ -5,6 +5,7 @@ import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
 
 from ansys.geometry.core.designer import Body, Component
+from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.math import Frame, Plane
 from ansys.geometry.core.plotting.widgets import (
     CameraPanDirection,
@@ -15,6 +16,8 @@ from ansys.geometry.core.plotting.widgets import (
     ViewDirection,
 )
 from ansys.geometry.core.sketch import Sketch
+
+from .trame_gui import _HAS_TRAME, TrameVisualizer
 
 
 class Plotter:
@@ -328,3 +331,62 @@ class Plotter:
         # This method should only be applied in 3D objects: bodies, components
         plotting_options.setdefault("smooth_shading", True)
         plotting_options.setdefault("color", "#D6F7D1")
+
+
+class PlotterHelper:
+    """_summary_
+
+    Parameters
+    ----------
+    use_trame : bool, optional
+        _description_, by default True
+    """
+
+    def __init__(self, use_trame=True) -> None:
+        print("init helper")
+        self.use_trame = use_trame
+        self.pv_off_screen_original = bool(pv.OFF_SCREEN)
+
+    def init_plotter(self):
+        """_summary_
+
+        Returns
+        -------
+        _type_
+            _description_
+        """
+        if self.use_trame and _HAS_TRAME:
+            # avoids GUI window popping up
+            print("Using_trame")
+            pv.OFF_SCREEN = True
+            pl = Plotter(enable_widgets=False)
+        elif self.use_trame and not _HAS_TRAME:
+            print("Using_trame warn")
+            warn_msg = (
+                "'use_trame' is active but Trame dependencies are not installed."
+                "Consider installing 'pyvista[trame]' to use this functionality."
+            )
+            logger.warning(warn_msg)
+            pl = Plotter()
+        else:
+            print("Not using warn")
+            pl = Plotter()
+        return pl
+
+    def show_plotter(self, plotter, screenshot):
+        """_summary_
+
+        Parameters
+        ----------
+        plotter : _type_
+            _description_
+        screenshot : _type_
+            _description_
+        """
+        if self.use_trame and _HAS_TRAME:
+            visualizer = TrameVisualizer()
+            visualizer.set_scene(plotter)
+            visualizer.show()
+        else:
+            plotter.show(screenshot=screenshot)
+        pv.OFF_SCREEN = self.pv_off_screen_original
