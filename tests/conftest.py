@@ -10,6 +10,22 @@ LOG.setLevel(level="DEBUG")
 LOG.log_to_stdout()
 
 
+def pytest_addoption(parser):
+    parser.addoption(
+        "--use-existing-service",
+        action="store",
+        default="no",
+        help="Use Modeler object to connect to an existing service. Options: 'yes' or 'no'.",
+        choices=("yes", "no"),
+    )
+
+
+@pytest.fixture(scope="session")
+def use_existing_service(request):
+    value: str = request.config.getoption("--use-existing-service")
+    return True if value.lower() == "yes" else False
+
+
 @pytest.fixture
 def fake_record():
     def inner_fake_record(

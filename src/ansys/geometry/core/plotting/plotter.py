@@ -179,7 +179,7 @@ class Plotter:
         sketch: Sketch,
         show_plane: bool = False,
         show_frame: bool = False,
-        **plotting_options: Optional[dict],
+        **plotting_options: Optional[Dict],
     ) -> None:
         """Plot a sketch in the scene.
 
@@ -206,7 +206,7 @@ class Plotter:
         self.add_sketch_polydata(sketch.sketch_polydata(), **plotting_options)
 
     def add_body(
-        self, body: Body, merge: Optional[bool] = False, **plotting_options: Optional[dict]
+        self, body: Body, merge: Optional[bool] = False, **plotting_options: Optional[Dict]
     ) -> None:
         """Add a body to the scene.
 
@@ -276,7 +276,7 @@ class Plotter:
         show_axes_at_origin: bool = True,
         show_plane: bool = True,
         jupyter_backend: Optional[str] = None,
-        **kwargs: Optional[dict],
+        **kwargs: Optional[Dict],
     ) -> None:
         """Show the rendered scene on the screen.
 
