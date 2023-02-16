@@ -4,6 +4,7 @@ import numpy as np
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
 
+from ansys.geometry.core import USE_TRAME
 from ansys.geometry.core.designer import Body, Component
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.math import Frame, Plane
@@ -339,11 +340,12 @@ class PlotterHelper:
 
     Parameters
     ----------
-    use_trame: bool, default: False
-        Enables/disables the usage of the trame web visualizer.
+        use_trame: bool, default: False
+            Enables/disables the usage of the trame web visualizer. Defaults to the
+            global setting ``USE_TRAME``.
     """
 
-    def __init__(self, use_trame=True) -> None:
+    def __init__(self, use_trame=USE_TRAME) -> None:
         """Initializes use_trame and saves current pv.OFF_SCREEN value."""
         self.use_trame = use_trame
         self.pv_off_screen_original = bool(pv.OFF_SCREEN)

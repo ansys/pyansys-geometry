@@ -19,6 +19,7 @@ from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
 
+from ansys.geometry.core import USE_TRAME
 from ansys.geometry.core.connection import (
     GrpcClient,
     sketch_shapes_to_grpc_geometries,
@@ -519,7 +520,7 @@ class Body:
         self,
         merge: Optional[bool] = False,
         screenshot: Optional[str] = None,
-        use_trame: bool = False,
+        use_trame: bool = USE_TRAME,
         **plotting_options: Optional[dict],
     ) -> None:
         """Plot the body.
@@ -534,7 +535,8 @@ class Body:
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
         use_trame: bool, default: False
-            Enables/disables the usage of the trame web visualizer.
+            Enables/disables the usage of the trame web visualizer. Defaults to the
+            global setting ``USE_TRAME``.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.

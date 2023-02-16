@@ -22,3 +22,6 @@ from ansys.geometry.core.connection.launcher import (
 )
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.modeler import Modeler
+
+# Trame visualizer global flag
+USE_TRAME = False
