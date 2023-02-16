@@ -105,26 +105,37 @@ class Modeler:
         """``Modeler`` easy-access method to the client's ``close()`` method."""
         return self.client.close()
 
-    def upload_file(self, bytes: bytes, file_name: str):
+    def upload_file(self, file_path: str) -> str:
         """
-        Upload a file from the client to the server. ``file_name`` must include the extension.
+        Upload a file from the client to the server. ``file_path`` must include the extension.
+        The new file created on the server will have the same name and extension.
 
         Parameters
         ----------
-        bytes : bytes
-            The file as a byte array.
-        file_name : str
-            The name for the new file created on the server. Must include extension.
-            Example: "example.txt"
+        file_path : str
+            The path of the file. Must include extension.
 
         Returns
         -------
         file_path : str
             The full path of the uploaded file on the server machine.
         """
+        import os
+
+        if not os.path.exists(file_path):
+            message = f"Could not find file: {file_path}"
+            raise ValueError(message)
+        if os.path.isdir(file_path):
+            raise ValueError("File path must lead to a file, not a directory.")
+
+        file_name = os.path.split(file_path)[1]
+
+        with open(file_path, "rb") as file:
+            data = file.read()
+
         c_stub = CommandsStub(self._client.channel)
 
-        response = c_stub.UploadFile(UploadFileRequest(data=bytes, file_name=file_name))
+        response = c_stub.UploadFile(UploadFileRequest(data=data, file_name=file_name))
         return response.file_path
 
     def __repr__(self):
