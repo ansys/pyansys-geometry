@@ -10,7 +10,7 @@ kernelspec:
   language: python
   name: python3
 ---
-# Single body with material assignment
+# Modeling: single body with material assignment
 
 In PyGeometry, a `body` represents solids or surfaces organized within the ``Design`` assembly.
 The current state of `sketch`, which is a client-side execution, can be used for the operations of

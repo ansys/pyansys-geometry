@@ -23,8 +23,7 @@ from beartype.typing import Dict, List, Optional, Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.connection.conversions import plane_to_grpc_plane, point3d_to_grpc_point
+from ansys.geometry.core.connection import GrpcClient, plane_to_grpc_plane, point3d_to_grpc_point
 from ansys.geometry.core.designer.beam import BeamCircularProfile, BeamProfile
 from ansys.geometry.core.designer.body import Body, MidSurfaceOffsetType
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
@@ -42,7 +41,7 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector3D,
 )
-from ansys.geometry.core.misc import SERVER_UNIT_LENGTH, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, Distance
 from ansys.geometry.core.typing import RealSequence
 
 
@@ -52,6 +51,7 @@ class DesignFileFormat(Enum):
     SCDOCX = "SCDOCX", None
     PARASOLID_TEXT = "PARASOLID_TEXT", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_TEXT
     PARASOLID_BIN = "PARASOLID_BIN", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_BINARY
+    FMD = "FMD", PartExportFormat.PARTEXPORTFORMAT_FMD
     INVALID = "INVALID", None
 
 
@@ -184,9 +184,11 @@ class Design(Component):
         if format is DesignFileFormat.SCDOCX:
             response = self._commands_stub.DownloadFile(Empty())
             received_bytes += response.data
-        elif (format is DesignFileFormat.PARASOLID_TEXT) or (
-            format is DesignFileFormat.PARASOLID_BIN
-        ):
+        elif format in [
+            DesignFileFormat.PARASOLID_TEXT,
+            DesignFileFormat.PARASOLID_BIN,
+            DesignFileFormat.FMD,
+        ]:
             response = self._design_stub.Export(ExportRequest(format=format.value[1]))
             received_bytes += response.data
         else:
@@ -347,7 +349,7 @@ class Design(Component):
 
         request = CreateBeamCircularProfileRequest(
             origin=point3d_to_grpc_point(center),
-            radius=radius.value.m_as(SERVER_UNIT_LENGTH),
+            radius=radius.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
             plane=plane_to_grpc_plane(Plane(center, dir_x, dir_y)),
             name=name,
         )
@@ -395,7 +397,7 @@ class Design(Component):
         # Assign mid-surface thickness
         self._commands_stub.AssignMidSurfaceThickness(
             AssignMidSurfaceThicknessRequest(
-                bodiesOrFaces=ids, thickness=thickness.m_as(SERVER_UNIT_LENGTH)
+                bodiesOrFaces=ids, thickness=thickness.m_as(DEFAULT_UNITS.SERVER_LENGTH)
             )
         )
 

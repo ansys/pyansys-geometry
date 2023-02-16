@@ -8,7 +8,7 @@ import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Matrix33, Matrix44, Point2D
-from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
 
@@ -20,7 +20,7 @@ class Polygon(SketchFace):
     ----------
     center: Point2D
         2D pint representing the center of the circle.
-    inner_radius : Union[Quantity, Distance]
+    inner_radius : Union[Quantity, Distance, Real]
         Inner radius (apothem) of the polygon.
     sides : int
         Number of sides of the polygon.
@@ -32,7 +32,7 @@ class Polygon(SketchFace):
     def __init__(
         self,
         center: Point2D,
-        inner_radius: Union[Quantity, Distance],
+        inner_radius: Union[Quantity, Distance, Real],
         sides: int,
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
     ):
@@ -47,9 +47,7 @@ class Polygon(SketchFace):
         if self._inner_radius.value <= 0:
             raise ValueError("Radius must be a real positive value.")
 
-        if isinstance(angle, (int, float)):
-            angle = Angle(angle, UNIT_ANGLE)
-        self._angle_offset = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
+        self._angle_offset = angle if isinstance(angle, Angle) else Angle(angle)
 
         # Verify that the number of sides is valid with preferred range
         if sides < 3:
@@ -72,9 +70,9 @@ class Polygon(SketchFace):
         return self._n_sides
 
     @property
-    def angle(self) -> Angle:
+    def angle(self) -> Quantity:
         """Orientation angle of the polygon."""
-        return self._angle_offset
+        return self._angle_offset.value
 
     @property
     def length(self) -> Quantity:
@@ -116,7 +114,9 @@ class Polygon(SketchFace):
         #
         rotation = Matrix33(
             spatial_rotation.from_euler(
-                "xyz", [0, 0, -np.pi / 2 + self._angle_offset.value.m_as(UNIT_ANGLE)], degrees=False
+                "xyz",
+                [0, 0, -np.pi / 2 + self.angle.m_as(UNITS.radian)],
+                degrees=False,
             ).as_matrix()
         )
 
@@ -126,13 +126,13 @@ class Polygon(SketchFace):
                     rotation[0, 0],
                     rotation[0, 1],
                     rotation[0, 2],
-                    self.center.x.m_as(UNIT_LENGTH),
+                    self.center.x.m_as(DEFAULT_UNITS.LENGTH),
                 ],
                 [
                     rotation[1, 0],
                     rotation[1, 1],
                     rotation[1, 2],
-                    self.center.y.m_as(UNIT_LENGTH),
+                    self.center.y.m_as(DEFAULT_UNITS.LENGTH),
                 ],
                 [
                     rotation[2, 0],
@@ -145,6 +145,6 @@ class Polygon(SketchFace):
         )
 
         return pv.Polygon(
-            radius=self.inner_radius.m_as(UNIT_LENGTH),
+            radius=self.inner_radius.m_as(DEFAULT_UNITS.LENGTH),
             n_sides=self.n_sides,
         ).transform(transformation_matrix)

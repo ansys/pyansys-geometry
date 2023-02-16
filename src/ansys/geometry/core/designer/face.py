@@ -14,7 +14,7 @@ from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import Point3D, UnitVector3D
-from ansys.geometry.core.misc import SERVER_UNIT_AREA, SERVER_UNIT_LENGTH
+from ansys.geometry.core.misc import DEFAULT_UNITS
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -72,7 +72,6 @@ class FaceLoop:
         max_bbox: Point3D,
         edges: List[Edge],
     ):
-
         self._type = type
         self._length = length
         self._min_bbox = min_bbox
@@ -154,7 +153,7 @@ class Face:
         """Calculated area of the face."""
         self._grpc_client.log.debug("Requesting face area from server.")
         area_response = self._faces_stub.GetArea(self._grpc_id)
-        return Quantity(area_response.area, SERVER_UNIT_AREA)
+        return Quantity(area_response.area, DEFAULT_UNITS.SERVER_AREA)
 
     @property
     def surface_type(self) -> SurfaceType:
@@ -178,14 +177,14 @@ class Face:
         loops = []
         for grpc_loop in grpc_loops:
             type = FaceLoopType(grpc_loop.type)
-            length = Quantity(grpc_loop.length, SERVER_UNIT_LENGTH)
+            length = Quantity(grpc_loop.length, DEFAULT_UNITS.SERVER_LENGTH)
             min = Point3D(
                 [
                     grpc_loop.boundingBox.min.x,
                     grpc_loop.boundingBox.min.y,
                     grpc_loop.boundingBox.min.z,
                 ],
-                SERVER_UNIT_LENGTH,
+                DEFAULT_UNITS.SERVER_LENGTH,
             )
             max = Point3D(
                 [
@@ -193,7 +192,7 @@ class Face:
                     grpc_loop.boundingBox.max.y,
                     grpc_loop.boundingBox.max.z,
                 ],
-                SERVER_UNIT_LENGTH,
+                DEFAULT_UNITS.SERVER_LENGTH,
             )
             grpc_edges = [
                 self._edges_stub.Get(EntityIdentifier(id=edge_id)) for edge_id in grpc_loop.edges
@@ -263,7 +262,7 @@ class Face:
         """
         self._grpc_client.log.debug(f"Requesting face point from server with (u,v)=({u},{v}).")
         response = self._faces_stub.Evaluate(EvaluateRequest(id=self.id, u=u, v=v)).point
-        return Point3D([response.x, response.y, response.z], SERVER_UNIT_LENGTH)
+        return Point3D([response.x, response.y, response.z], DEFAULT_UNITS.SERVER_LENGTH)
 
     def __grpc_edges_to_edges(self, edges_grpc: List[GRPCEdge]) -> List[Edge]:
         """Transform a list of gRPC edge messages into actual ``Edge`` objects.

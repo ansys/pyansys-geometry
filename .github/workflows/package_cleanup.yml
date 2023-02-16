@@ -20,18 +20,10 @@ jobs:
       PACKAGE_DELETION_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - name: "Checkout repository"
-        uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: "Install requirements"
-        run: |
-          pip install ghapi
-
-      - name: "Perform cleanup"
-        run: |
-          python .ci/clean_registry.py
+    - name: "Perform versions cleanup - except certain tags"
+      uses: pyansys/actions/hk-package-clean-except@main
+      with:
+        package-name: 'geometry'
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tags-kept: 'windows-latest, windows-latest-unstable, linux-latest, linux-latest-unstable'

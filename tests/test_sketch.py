@@ -12,7 +12,7 @@ from ansys.geometry.core.math import (
     Vector2D,
     Vector3D,
 )
-from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
 from ansys.geometry.core.sketch import (
     Arc,
     Box,
@@ -54,7 +54,7 @@ def test_sketch_segment_edge():
     # Create a Sketch instance
     sketch = Sketch()
 
-    # fluent api has 0, 0 origin as default start position
+    # sketch api has 0, 0 origin as default start position
     assert len(sketch.edges) == 0
     sketch.segment_to_point(Point2D([2, 3]), "Segment1")
     assert len(sketch.edges) == 1
@@ -62,7 +62,7 @@ def test_sketch_segment_edge():
     assert sketch.edges[0].end == Point2D([2, 3])
     assert sketch.edges[0].length.m == pytest.approx(3.60555128, rel=1e-7, abs=1e-8)
 
-    # fluent api keeps last edge endpoint as context for new edge
+    # sketch api keeps last edge endpoint as context for new edge
     sketch.segment_to_point(Point2D([3, 3]), "Segment2").segment_to_point(
         Point2D([3, 2]), "Segment3"
     )
@@ -254,8 +254,8 @@ def test_sketch_trapezoidal_face():
 def test_sketch_circle_instance():
     """Test circle instance."""
     center, radius = (
-        Point2D([0, 0], UNIT_LENGTH),
-        (1 * UNIT_LENGTH),
+        Point2D([0, 0], DEFAULT_UNITS.LENGTH),
+        (1 * DEFAULT_UNITS.LENGTH),
     )
     circle = SketchCircle(center, radius)
     # Check attributes are expected ones
@@ -267,8 +267,8 @@ def test_sketch_circle_instance():
 
     # Test circle on different plane
     center, radius = (
-        Point2D([1, 1], UNIT_LENGTH),
-        (1 * UNIT_LENGTH),
+        Point2D([1, 1], DEFAULT_UNITS.LENGTH),
+        (1 * DEFAULT_UNITS.LENGTH),
     )
     circle = SketchCircle(
         center, radius, Plane(Point3D([1, 1, 1]), UnitVector3D([-1, 0, 0]), UnitVector3D([0, 0, 1]))
@@ -304,8 +304,8 @@ def test_sketch_circle_face():
 
     # Draw a circle in previous sketch
     center, radius = (
-        Point2D([10, -10], UNIT_LENGTH),
-        (1 * UNIT_LENGTH),
+        Point2D([10, -10], DEFAULT_UNITS.LENGTH),
+        (1 * DEFAULT_UNITS.LENGTH),
     )
     sketch.circle(center, radius, "Circle")
 
@@ -466,17 +466,17 @@ def test_slot_instance():
     assert perimeter.m == pytest.approx(10.283185307179586, rel=1e-7, abs=1e-8)
     assert perimeter.units == UNITS.m
     assert slot.center == center
-    assert slot.width == Quantity(4, UNIT_LENGTH)
-    assert slot.height == Quantity(2, UNIT_LENGTH)
+    assert slot.width == Quantity(4, DEFAULT_UNITS.LENGTH)
+    assert slot.height == Quantity(2, DEFAULT_UNITS.LENGTH)
 
     with pytest.raises(ValueError, match="Height must be a real positive value."):
-        Slot(center, width, Quantity(-4, UNIT_LENGTH))
+        Slot(center, width, Quantity(-4, DEFAULT_UNITS.LENGTH))
 
     with pytest.raises(ValueError, match="Width must be a real positive value."):
-        Slot(center, Quantity(-4, UNIT_LENGTH), height)
+        Slot(center, Quantity(-4, DEFAULT_UNITS.LENGTH), height)
 
     with pytest.raises(ValueError, match="Width must be greater than height."):
-        Slot(center, width, Quantity(10, UNIT_LENGTH))
+        Slot(center, width, Quantity(10, DEFAULT_UNITS.LENGTH))
 
 
 def test_box_instance():
@@ -498,10 +498,10 @@ def test_box_instance():
     assert box.center == center
 
     with pytest.raises(ValueError, match="Width must be a real positive value."):
-        Box(center, Quantity(-4, UNIT_LENGTH), height)
+        Box(center, Quantity(-4, DEFAULT_UNITS.LENGTH), height)
 
     with pytest.raises(ValueError, match="Height must be a real positive value."):
-        Box(center, width, Quantity(-4, UNIT_LENGTH))
+        Box(center, width, Quantity(-4, DEFAULT_UNITS.LENGTH))
 
 
 def test_sketch_plane_translation():
