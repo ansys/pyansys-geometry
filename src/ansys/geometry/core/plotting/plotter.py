@@ -4,10 +4,10 @@ import numpy as np
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
 
-from ansys.geometry.core import USE_TRAME
 from ansys.geometry.core.designer import Body, Component
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.math import Frame, Plane
+import ansys.geometry.core.misc as misc
 from ansys.geometry.core.plotting.widgets import (
     CameraPanDirection,
     DisplacementArrow,
@@ -345,8 +345,10 @@ class PlotterHelper:
             global setting ``USE_TRAME``.
     """
 
-    def __init__(self, use_trame=USE_TRAME) -> None:
+    def __init__(self, use_trame=None) -> None:
         """Initializes use_trame and saves current pv.OFF_SCREEN value."""
+        if use_trame is None:
+            self.use_trame = misc.USE_TRAME
         self.use_trame = use_trame
         self.pv_off_screen_original = bool(pv.OFF_SCREEN)
 

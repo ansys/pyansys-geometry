@@ -19,7 +19,6 @@ from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
 
-from ansys.geometry.core import USE_TRAME
 from ansys.geometry.core.connection import (
     GrpcClient,
     sketch_shapes_to_grpc_geometries,
@@ -520,7 +519,7 @@ class Body:
         self,
         merge: Optional[bool] = False,
         screenshot: Optional[str] = None,
-        use_trame: bool = USE_TRAME,
+        use_trame: bool = None,
         **plotting_options: Optional[dict],
     ) -> None:
         """Plot the body.

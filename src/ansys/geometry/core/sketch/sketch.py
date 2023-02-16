@@ -4,7 +4,6 @@ from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, Dict, List, Optional, Union
 from pint import Quantity
 
-from ansys.geometry.core import USE_TRAME
 from ansys.geometry.core.math import ZERO_POINT2D, Plane, Point2D, UnitVector3D, Vector2D, Vector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.arc import Arc
@@ -778,7 +777,7 @@ class Sketch:
         self,
         view_2d: Optional[bool] = False,
         screenshot: Optional[str] = None,
-        use_trame: bool = USE_TRAME,
+        use_trame: bool = None,
         **plotting_options: Optional[dict],
     ):
         """Plot all objects of the sketch to the scene.
@@ -807,7 +806,7 @@ class Sketch:
         self,
         view_2d: Optional[bool] = False,
         screenshot: Optional[str] = None,
-        use_trame: bool = USE_TRAME,
+        use_trame: bool = None,
         **plotting_options: Optional[dict],
     ):
         """Plot the current selection to the scene.
@@ -877,7 +876,7 @@ class Sketch:
         polydata: List["PolyData"],
         view_2d: bool,
         screenshot: Optional[str],
-        use_trame: bool = USE_TRAME,
+        use_trame: bool = None,
         **plotting_options: Optional[dict],
     ) -> None:
         """

@@ -20,7 +20,6 @@ from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
 
-from ansys.geometry.core import USE_TRAME
 from ansys.geometry.core.connection import (
     GrpcClient,
     plane_to_grpc_plane,
@@ -717,7 +716,7 @@ class Component:
 
     def plot(
         self,
-        use_trame: bool = USE_TRAME,
+        use_trame: bool = None,
         merge_component: bool = False,
         merge_bodies: bool = False,
         screenshot: Optional[str] = None,
