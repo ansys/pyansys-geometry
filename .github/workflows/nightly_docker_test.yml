@@ -6,6 +6,11 @@ on:
 
 env:
   MAIN_PYTHON_VERSION: '3.9' # use python3.9, self-hosted has an issue with 3.10
+  ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/pyansys/geometry:windows-latest-unstable
+  ANSRV_GEO_IMAGE_LINUX_TAG: ghcr.io/pyansys/geometry:linux-latest-unstable
+  ANSRV_GEO_PORT: 710
+  ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
+  GEO_CONT_NAME: ans_geo_nightly
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -13,14 +18,9 @@ concurrency:
 
 jobs:
 
-  all-tests:
-    name: Run all tests against server
+  windows-tests:
+    name: Nightly unstable testing - Windows
     runs-on: [self-hosted, pygeometry]
-    env:
-      ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/pyansys/geometry:windows-latest-unstable
-      ANSRV_GEO_PORT: 710
-      ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
-      GEO_CONT_NAME: ans_geo_nightly
 
     steps:
       - uses: actions/checkout@v3
@@ -78,3 +78,25 @@ jobs:
       - name: Clean all Docker dangling images
         if: always()
         run: docker image prune -f
+
+  linux-tests:
+    name: Nightly unstable testing - Linux
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login in Github Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull, launch, and validate geometry service
+        run: |
+          docker pull ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
+
+      - name: Run pytest
+        uses: pyansys/actions/tests-pytest@v3
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}

@@ -87,8 +87,8 @@ jobs:
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 # =================================================================================================
 
-  testing:
-    name: Testing and coverage
+  testing-windows:
+    name: Testing and coverage (Windows)
     needs: [smoke-tests]
     runs-on: [self-hosted, pygeometry]
 
@@ -139,8 +139,6 @@ jobs:
           restore-keys: pyvista-image-cache-v-${{ env.RESET_IMAGE_CACHE }}
 
       - name: Testing
-        # TODO : Once the container is available on Linux we should be able to run it as
-        #        a service, allowing to remove this stage
         run: |
           .\.venv\Scripts\Activate.ps1
           pytest -v
@@ -257,9 +255,30 @@ jobs:
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # =================================================================================================
 
+  testing-linux:
+    name: Testing and coverage (Linux)
+    needs: [smoke-tests]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login in Github Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull, launch, and validate geometry service
+        run: |
+          docker pull ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
+
+      - name: Run pytest
+        uses: pyansys/actions/tests-pytest@v3
+
   package:
     name: Package library
-    needs: [testing, docs]
+    needs: [testing-windows, docs]
     runs-on: ubuntu-latest
     steps:
       - name: Build library source and wheel artifacts
