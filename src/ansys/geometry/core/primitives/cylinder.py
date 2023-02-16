@@ -1,12 +1,15 @@
 """ Provides the ``Cylinder`` class."""
 
 from beartype import beartype as check_input_types
-from beartype.typing import Optional, Union
+from beartype.typing import Union
 import numpy as np
-from pint import Unit
+from pint import Quantity
 
-from ansys.geometry.core.math import Point3D, UnitVector3D, Vector3D
-from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, check_pint_unit_compatibility
+from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.misc import Distance
+from ansys.geometry.core.primitives.circle import Circle
+from ansys.geometry.core.primitives.line import Line
+from ansys.geometry.core.primitives.surface_evaluation import ParamUV, SurfaceEvaluation
 from ansys.geometry.core.typing import Real, RealSequence
 
 
@@ -18,101 +21,188 @@ class Cylinder:
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D]
         Origin of the cylinder.
-    direction_x : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
-        X-plane direction.
-    direction_y : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
-        Y-plane direction.
-    radius : Real
+    radius : Union[Quantity, Distance, Real]
         Radius of the cylinder.
-    height : Real
-        Height of the cylinder.
-    unit : Unit, default: UNIT_LENGTH
-        Units for defining the radius and height.
+    reference : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+        X-axis direction.
+    axis : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+        Z-axis direction.
     """
 
     @check_input_types
     def __init__(
         self,
         origin: Union[np.ndarray, RealSequence, Point3D],
-        direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D],
-        direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D],
-        radius: Real,
-        height: Real,
-        unit: Optional[Unit] = UNIT_LENGTH,
+        radius: Union[Quantity, Distance, Real],
+        reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
+        axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
         """Constructor method for the ``Cylinder`` class."""
 
-        check_pint_unit_compatibility(unit, UNIT_LENGTH)
-        self._unit = unit
-        _, self._base_unit = UNITS.get_base_units(unit)
-
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
-        self._direction_x = (
-            UnitVector3D(direction_x) if not isinstance(direction_x, UnitVector3D) else direction_x
+        self._reference = (
+            UnitVector3D(reference) if not isinstance(reference, UnitVector3D) else reference
         )
-        self._direction_y = (
-            UnitVector3D(direction_y) if not isinstance(direction_y, UnitVector3D) else direction_y
-        )
+        self._axis = UnitVector3D(axis) if not isinstance(axis, UnitVector3D) else axis
+        self._axis = UnitVector3D(axis) if not isinstance(axis, UnitVector3D) else axis
+        if not self._reference.is_perpendicular_to(self._axis):
+            raise ValueError("Cylinder reference (dir_x) and axis (dir_z) must be perpendicular.")
 
-        # Store values in base unit
-        self._radius = UNITS.convert(radius, self._unit, self._base_unit)
-        self._height = UNITS.convert(height, self._unit, self._base_unit)
+        self._radius = radius if isinstance(radius, Distance) else Distance(radius)
+        if self._radius.value <= 0:
+            raise ValueError("Radius must be a real positive value.")
 
     @property
     def origin(self) -> Point3D:
         """Origin of the cylinder."""
         return self._origin
 
-    @origin.setter
-    @check_input_types
-    def origin(self, origin: Point3D) -> None:
-        self._origin = origin
-
     @property
-    def radius(self) -> Real:
+    def radius(self) -> Quantity:
         """Radius of the cylinder."""
-        return UNITS.convert(self._radius, self._base_unit, self._unit)
-
-    @radius.setter
-    @check_input_types
-    def radius(self, radius: Real) -> None:
-        """Set the radius of the cylinder."""
-        self._radius = UNITS.convert(radius, self._unit, self._base_unit)
+        return self._radius.value
 
     @property
-    def height(self) -> Real:
-        """Height of the cylinder."""
-        return UNITS.convert(self._height, self._base_unit, self._unit)
-
-    @height.setter
-    @check_input_types
-    def height(self, height: Real) -> None:
-        """Set the height of the cylinder."""
-        self._height = UNITS.convert(height, self._unit, self._base_unit)
+    def dir_x(self) -> UnitVector3D:
+        """X-direction of the cylinder."""
+        return self._reference
 
     @property
-    def unit(self) -> Unit:
-        """Unit of the radius and height."""
-        return self._unit
+    def dir_y(self) -> UnitVector3D:
+        """Y-direction of the cylinder."""
+        return self.dir_z.cross(self.dir_x)
 
-    @unit.setter
-    @check_input_types
-    def unit(self, unit: Unit) -> None:
-        """Set the unit of the object."""
-        check_pint_unit_compatibility(unit, UNIT_LENGTH)
-        self._unit = unit
+    @property
+    def dir_z(self) -> UnitVector3D:
+        """Z-direction of the cylinder."""
+        return self._axis
+
+    def surface_area(self, height: Union[Quantity, Distance, Real]) -> Quantity:
+        """Surface area of the cylinder."""
+        height = height if isinstance(height, Distance) else Distance(height)
+        if height.value <= 0:
+            raise ValueError("Height must be a real positive value.")
+
+        return 2 * np.pi * self.radius * height.value + 2 * np.pi * self.radius**2
+
+    def volume(self, height: Union[Quantity, Distance, Real]) -> Quantity:
+        """Volume of the cylinder."""
+        height = height if isinstance(height, Distance) else Distance(height)
+        if height.value <= 0:
+            raise ValueError("Height must be a real positive value.")
+
+        return np.pi * self.radius**2 * height.value
 
     @check_input_types
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: "Cylinder") -> bool:
         """Equals operator for the ``Cylinder`` class."""
         return (
-            self._origin == other.origin
-            and self._radius == other.radius
-            and self._height == other.height
-            and self._direction_x == other._direction_x
-            and self._direction_y == other._direction_y
+            self._origin == other._origin
+            and self._radius == other._radius
+            and self._reference == other._reference
+            and self._axis == other._axis
         )
 
-    def __ne__(self, other) -> bool:
-        """Not equals operator for the ``Cylinder`` class."""
-        return not self == other
+    def evaluate(self, parameter: ParamUV) -> "CylinderEvaluation":
+        """Evaluate the cylinder at the given parameters."""
+        return CylinderEvaluation(self, parameter)
+
+    def project_point(self, point: Point3D) -> "CylinderEvaluation":
+        """Project a point onto the cylinder and return its ``CylinderEvaluation``."""
+        circle = Circle(self.origin, self.radius, self.dir_x, self.dir_z)
+        u = circle.project_point(point).parameter
+
+        line = Line(self.origin, self.dir_z)
+        v = line.project_point(point).parameter
+
+        return CylinderEvaluation(self, ParamUV(u, v))
+
+
+class CylinderEvaluation(SurfaceEvaluation):
+    """
+    Provides ``Cylinder`` evaluation at certain parameters.
+
+    Parameters
+    ----------
+    cylinder: ~ansys.geometry.core.primitives.cylinder.Cylinder
+        The ``Cylinder`` object to be evaluated.
+    parameter: ParamUV
+        The parameters (u, v) at which the ``Cylinder`` evaluation is requested.
+    """
+
+    def __init__(self, cylinder: Cylinder, parameter: ParamUV) -> None:
+        """``CylinderEvaluation`` class constructor."""
+        self._cylinder = cylinder
+        self._parameter = parameter
+
+    @property
+    def cylinder(self) -> Cylinder:
+        """The cylinder being evaluated."""
+        return self._cylinder
+
+    @property
+    def parameter(self) -> ParamUV:
+        """The parameter that the evaluation is based upon."""
+        return self._parameter
+
+    def position(self) -> Point3D:
+        """The point on the cylinder, based on the evaluation."""
+        return (
+            self.cylinder.origin
+            + self.cylinder.radius.m * self.__cylinder_normal()
+            + self.parameter.v * self.cylinder.dir_z
+        )
+
+    def normal(self) -> UnitVector3D:
+        """The normal to the surface."""
+        return UnitVector3D(self.__cylinder_normal())
+
+    def __cylinder_normal(self) -> Vector3D:
+        """The normal to the cylinder."""
+        return (
+            np.cos(self.parameter.u) * self.cylinder.dir_x
+            + np.sin(self.parameter.u) * self.cylinder.dir_y
+        )
+
+    def __cylinder_tangent(self) -> Vector3D:
+        """The tangent to the cylinder."""
+        return (
+            -np.sin(self.parameter.u) * self.cylinder.dir_x
+            + np.cos(self.parameter.u) * self.cylinder.dir_y
+        )
+
+    def u_derivative(self) -> Vector3D:
+        """The first derivative with respect to u."""
+        return self.cylinder.radius.m * self.__cylinder_tangent()
+
+    def v_derivative(self) -> Vector3D:
+        """The first derivative with respect to v."""
+        return self.cylinder.dir_z
+
+    def uu_derivative(self) -> Vector3D:
+        """The second derivative with respect to u."""
+        return -self.cylinder.radius.m * self.__cylinder_normal()
+
+    def uv_derivative(self) -> Vector3D:
+        """The second derivative with respect to u and v."""
+        return Vector3D([0, 0, 0])
+
+    def vv_derivative(self) -> Vector3D:
+        """The second derivative with respect to v."""
+        return Vector3D([0, 0, 0])
+
+    def min_curvature(self) -> Real:
+        """The minimum curvature."""
+        return 0
+
+    def min_curvature_direction(self) -> UnitVector3D:
+        """The minimum curvature direction."""
+        return UnitVector3D(self.cylinder.dir_z)
+
+    def max_curvature(self) -> Real:
+        """The maximum curvature."""
+        return 1.0 / self.cylinder.radius.m
+
+    def max_curvature_direction(self) -> UnitVector3D:
+        """The maximum curvature direction."""
+        return UnitVector3D(self.u_derivative())

@@ -34,7 +34,7 @@ from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import Frame, Point3D, UnitVector3D
-from ansys.geometry.core.misc import SERVER_UNIT_LENGTH, Distance, check_pint_unit_compatibility
+from ansys.geometry.core.misc import DEFAULT_UNITS, Distance, check_pint_unit_compatibility
 from ansys.geometry.core.sketch import Sketch
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -220,11 +220,11 @@ class Component:
         """
         # Sanity checks on inputs
         extrude_distance = distance if isinstance(distance, Quantity) else distance.value
-        check_pint_unit_compatibility(extrude_distance.units, SERVER_UNIT_LENGTH)
+        check_pint_unit_compatibility(extrude_distance.units, DEFAULT_UNITS.SERVER_LENGTH)
 
         # Perform extrusion request
         request = CreateExtrudedBodyRequest(
-            distance=extrude_distance.m_as(SERVER_UNIT_LENGTH),
+            distance=extrude_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
             parent=self.id,
             plane=plane_to_grpc_plane(sketch._plane),
             geometries=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
@@ -266,11 +266,11 @@ class Component:
         """
         # Sanity checks on inputs
         extrude_distance = distance if isinstance(distance, Quantity) else distance.value
-        check_pint_unit_compatibility(extrude_distance.units, SERVER_UNIT_LENGTH)
+        check_pint_unit_compatibility(extrude_distance.units, DEFAULT_UNITS.SERVER_LENGTH)
 
         # Take the face source directly. No need to verify the source of the face.
         request = CreateExtrudedBodyFromFaceProfileRequest(
-            distance=extrude_distance.m_as(SERVER_UNIT_LENGTH),
+            distance=extrude_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
             parent=self.id,
             face=face.id,
             name=name,
@@ -402,7 +402,7 @@ class Component:
         -------
         None
         """
-        check_pint_unit_compatibility(distance, SERVER_UNIT_LENGTH)
+        check_pint_unit_compatibility(distance, DEFAULT_UNITS.SERVER_LENGTH)
         body_ids_found = []
 
         for body in bodies:
@@ -417,9 +417,9 @@ class Component:
                 pass
 
         magnitude = (
-            distance.m_as(SERVER_UNIT_LENGTH)
+            distance.m_as(DEFAULT_UNITS.SERVER_LENGTH)
             if not isinstance(distance, Distance)
-            else distance.value.m_as(SERVER_UNIT_LENGTH)
+            else distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
         )
 
         self._grpc_client.log.debug(f"Translating {body_ids_found}...")

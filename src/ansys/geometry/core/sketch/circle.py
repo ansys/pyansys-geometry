@@ -6,9 +6,10 @@ from pint import Quantity
 import pyvista as pv
 
 from ansys.geometry.core.math import Plane, Point2D, Point3D
-from ansys.geometry.core.misc import UNIT_LENGTH, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, Distance
 from ansys.geometry.core.primitives import Circle
 from ansys.geometry.core.sketch.face import SketchFace
+from ansys.geometry.core.typing import Real
 
 
 class SketchCircle(SketchFace, Circle):
@@ -18,14 +19,16 @@ class SketchCircle(SketchFace, Circle):
     ----------
     center: Point2D
         Point representing the center of the circle.
-    radius : Union[Quantity, Distance]
+    radius : Union[Quantity, Distance, Real]
         Radius of the circle.
     plane : Plane, optional
         Plane containing the sketched circle, by default global XY Plane.
     """
 
     @check_input_types
-    def __init__(self, center: Point2D, radius: Union[Quantity, Distance], plane: Plane = Plane()):
+    def __init__(
+        self, center: Point2D, radius: Union[Quantity, Distance, Real], plane: Plane = Plane()
+    ):
         """Initialize the circle."""
         # Call SketchFace init method
         SketchFace.__init__(self)
@@ -94,9 +97,14 @@ class SketchCircle(SketchFace, Circle):
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
         """
-        circle = pv.Circle(self.radius.m_as(UNIT_LENGTH))
+        circle = pv.Circle(self.radius.m_as(DEFAULT_UNITS.LENGTH))
         return circle.translate(
-            [self.center.x.m_as(UNIT_LENGTH), self.center.y.m_as(UNIT_LENGTH), 0], inplace=True
+            [
+                self.center.x.m_as(DEFAULT_UNITS.LENGTH),
+                self.center.y.m_as(DEFAULT_UNITS.LENGTH),
+                0,
+            ],
+            inplace=True,
         )
 
     def plane_change(self, plane: Plane) -> None:

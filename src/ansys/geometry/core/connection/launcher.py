@@ -1,8 +1,12 @@
 """Provides for connecting to Geometry service instances."""
-from beartype.typing import TYPE_CHECKING, Optional
+from beartype.typing import TYPE_CHECKING, Dict, Optional
 
 from ansys.geometry.core.connection.defaults import DEFAULT_PORT
-from ansys.geometry.core.connection.local_instance import GeometryContainers, LocalDockerInstance
+from ansys.geometry.core.connection.local_instance import (
+    _HAS_DOCKER,
+    GeometryContainers,
+    LocalDockerInstance,
+)
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.misc import check_type
 
@@ -19,8 +23,15 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
 
 
-def launch_modeler() -> "Modeler":
+def launch_modeler(**kwargs: Optional[Dict]) -> "Modeler":
     """Start the ``Modeler`` for PyGeometry.
+
+    Parameters
+    ----------
+    **kwargs : dict, default: None
+        Launching functions keyword arguments. For allowable keyword arguments, see the
+        :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of
+        them might be unused.
 
     Returns
     -------
@@ -41,22 +52,20 @@ def launch_modeler() -> "Modeler":
 
     # Start PyGeometry with PyPIM if the environment is configured for it
     # and a directive on how to launch it was not passed.
-    if pypim.is_configured():
+    if _HAS_PIM and pypim.is_configured():
         logger.info("Starting Geometry service remotely. The startup configuration is ignored.")
-        return launch_remote_modeler()
+        return launch_remote_modeler(**kwargs)
 
     # Otherwise, we are in the "local Docker Container" scenario
-    if LocalDockerInstance.is_docker_installed():
+    if _HAS_DOCKER and LocalDockerInstance.is_docker_installed():
         logger.info("Starting Geometry service locally from Docker container.")
-        return launch_local_modeler()
+        return launch_local_modeler(**kwargs)
 
     # If we reached this point...
     raise NotImplementedError("Geometry service cannot be initialized.")
 
 
-def launch_remote_modeler(
-    version: Optional[str] = None,
-) -> "Modeler":
+def launch_remote_modeler(version: Optional[str] = None, **kwargs: Optional[Dict]) -> "Modeler":
     """Start the Geometry service remotely using the PIM API.
 
     When calling this method, you must ensure that you are in an
@@ -72,6 +81,10 @@ def launch_remote_modeler(
         Version of the Geometry service to run in the three-digit format.
         For example, "212". If you do not specify the version, the server
         chooses the version.
+    **kwargs : dict, default: None
+        Launching functions keyword arguments. For allowable keyword arguments, see the
+        :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of
+        them might be unused.
 
     Returns
     -------
@@ -104,6 +117,7 @@ def launch_local_modeler(
     restart_if_existing_service: bool = False,
     name: Optional[str] = None,
     image: Optional[GeometryContainers] = None,
+    **kwargs: Optional[Dict],
 ) -> "Modeler":
     """
     Start the Geometry service locally using the ``LocalDockerInstance`` class.
@@ -133,6 +147,10 @@ def launch_local_modeler(
         means that the ``LocalDockerInstance`` class will identify the OS of your
         Docker engine and deploy the latest version of the Geometry service for that
         OS.
+    **kwargs : dict, default: None
+        Launching functions keyword arguments. For allowable keyword arguments, see the
+        :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of
+        them might be unused.
 
     Returns
     -------
@@ -141,6 +159,9 @@ def launch_local_modeler(
     """
 
     from ansys.geometry.core.modeler import Modeler
+
+    if not _HAS_DOCKER:  # pragma: no cover
+        raise ModuleNotFoundError("The package 'docker' is required to use this function.")
 
     # Call the LocalDockerInstance ctor.
     local_instance = LocalDockerInstance(
