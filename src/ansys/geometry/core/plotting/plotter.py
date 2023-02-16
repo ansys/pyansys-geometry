@@ -334,34 +334,33 @@ class Plotter:
 
 
 class PlotterHelper:
-    """_summary_
+    """This class simplifies the selection of Trame visualizer in plot()
+    functions.
 
     Parameters
     ----------
-    use_trame : bool, optional
-        _description_, by default True
+    use_trame: bool, default: False
+        Enables/disables the usage of the trame web visualizer.
     """
 
     def __init__(self, use_trame=True) -> None:
-        print("init helper")
+        """Initializes use_trame and saves current pv.OFF_SCREEN value."""
         self.use_trame = use_trame
         self.pv_off_screen_original = bool(pv.OFF_SCREEN)
 
     def init_plotter(self):
-        """_summary_
+        """Initializes the plotter with or without trame visualizer.
 
         Returns
         -------
-        _type_
-            _description_
+        Plotter
+            PyGeometry plotter initialized.
         """
         if self.use_trame and _HAS_TRAME:
             # avoids GUI window popping up
-            print("Using_trame")
             pv.OFF_SCREEN = True
             pl = Plotter(enable_widgets=False)
         elif self.use_trame and not _HAS_TRAME:
-            print("Using_trame warn")
             warn_msg = (
                 "'use_trame' is active but Trame dependencies are not installed."
                 "Consider installing 'pyvista[trame]' to use this functionality."
@@ -369,19 +368,19 @@ class PlotterHelper:
             logger.warning(warn_msg)
             pl = Plotter()
         else:
-            print("Not using warn")
             pl = Plotter()
         return pl
 
     def show_plotter(self, plotter, screenshot):
-        """_summary_
+        """Shows the plotter or starts Trame service.
 
         Parameters
         ----------
-        plotter : _type_
-            _description_
-        screenshot : _type_
-            _description_
+        plotter : Plotter
+            PyGeometry plotter with the meshes added.
+        screenshot : str, default: None
+            Save a screenshot of the image being represented. The image is
+            stored in the path provided as an argument.
         """
         if self.use_trame and _HAS_TRAME:
             visualizer = TrameVisualizer()

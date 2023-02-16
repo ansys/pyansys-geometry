@@ -565,7 +565,14 @@ class Body:
         """
         # lazy import here to improve initial module load time
 
-        self.__show_plotter()
+        from ansys.geometry.core.plotting import PlotterHelper
+
+        pl_helper = PlotterHelper(use_trame=use_trame)
+        pl = pl_helper.init_plotter()
+        # Add the polydata
+        pl.add_body(self, merge=merge, **plotting_options)
+        # Finally, show the plot
+        pl_helper.show_plotter(pl, screenshot=screenshot)
 
     def __repr__(self) -> str:
         """String representation of the body."""
@@ -579,38 +586,3 @@ class Body:
             lines.append(f"  Surface offset       : {self.surface_offset}")
 
         return "\n".join(lines)
-
-    def __show_plotter(
-        self,
-        screenshot: Optional[str],
-        use_trame: bool,
-        merge: Optional[bool] = False,
-        **plotting_options: Optional[dict],
-    ) -> None:
-        """
-        Private method handling the ``show`` call of our Plotter.
-
-        Parameters
-        ----------
-        merge : bool, default: False
-            Whether to merge the body into a single mesh. By default, the
-            number of triangles are preserved and only the topology is merged.
-            When ``True``, the individual faces of the tessellation are merged.
-        screenshot : str or ``None``
-            Save a screenshot of the image being represented. The image is
-            stored in the path provided as an argument.
-        use_trame : bool
-            Enables/disables the usage of the trame web visualizer.
-        **plotting_options : dict, default: []
-            Keyword arguments. For allowable keyword arguments,
-            see the :func:`pyvista.Plotter.add_mesh` method.
-        """
-
-        from ansys.geometry.core.plotting import PlotterHelper
-
-        pl_helper = PlotterHelper(use_trame=use_trame)
-        pl = pl_helper.init_plotter()
-        # Add the polydata
-        pl.add_body(self, merge=merge, **plotting_options)
-        # Finally, show the plot
-        pl_helper.show_plotter(pl, screenshot=screenshot)
