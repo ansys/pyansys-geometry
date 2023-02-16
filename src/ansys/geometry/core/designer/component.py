@@ -716,7 +716,7 @@ class Component:
 
     def plot(
         self,
-        use_trame: bool,
+        use_trame: bool = False,
         merge_component: bool = False,
         merge_bodies: bool = False,
         screenshot: Optional[str] = None,
