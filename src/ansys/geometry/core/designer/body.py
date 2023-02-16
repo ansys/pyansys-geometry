@@ -569,9 +569,7 @@ class Body:
 
         pl_helper = PlotterHelper(use_trame=use_trame)
         pl = pl_helper.init_plotter()
-        # Add the polydata
         pl.add_body(self, merge=merge, **plotting_options)
-        # Finally, show the plot
         pl_helper.show_plotter(pl, screenshot=screenshot)
 
     def __repr__(self) -> str:
