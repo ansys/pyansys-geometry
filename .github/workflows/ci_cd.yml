@@ -13,7 +13,8 @@ env:
   PACKAGE_NAME: 'ansys-geometry-core'
   PACKAGE_NAMESPACE: 'ansys.geometry.core'
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
-  ANSRV_GEO_IMAGE: ghcr.io/pyansys/geometry:windows-latest
+  ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/pyansys/geometry:windows-latest
+  ANSRV_GEO_IMAGE_LINUX_TAG: ghcr.io/pyansys/geometry:linux-latest
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo
@@ -86,8 +87,8 @@ jobs:
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 # =================================================================================================
 
-  testing:
-    name: Testing and coverage
+  testing-windows:
+    name: Testing and coverage (Windows)
     needs: [smoke-tests]
     runs-on: [self-hosted, pygeometry]
 
@@ -122,13 +123,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download Geometry service container (if needed)
-        run: docker pull $env:ANSRV_GEO_IMAGE
+        run: docker pull $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
 
       - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
           $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
-          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE
+          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
       
       - uses: actions/cache@v3
@@ -138,8 +139,6 @@ jobs:
           restore-keys: pyvista-image-cache-v-${{ env.RESET_IMAGE_CACHE }}
 
       - name: Testing
-        # TODO : Once the container is available on Linux we should be able to run it as
-        #        a service, allowing to remove this stage
         run: |
           .\.venv\Scripts\Activate.ps1
           pytest -v
@@ -210,13 +209,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download Geometry service container (if needed)
-        run: docker pull $env:ANSRV_GEO_IMAGE
+        run: docker pull $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
 
       - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
           $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
-          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE
+          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Build the documentation (HTML)
@@ -256,9 +255,42 @@ jobs:
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # =================================================================================================
 
+  testing-linux:
+    name: Testing and coverage (Linux)
+    needs: [smoke-tests]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login in Github Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull and launch geometry service
+        run: |
+          docker pull ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
+
+      # TODO - FOLLOW UP FOR #395 - ACTIVATE TESTING
+      #
+      # - name: Run pytest
+      #   uses: pyansys/actions/tests-pytest@v3
+      #   with:
+      #     python-version: ${{ env.MAIN_PYTHON_VERSION }}
+      #     requires-xvfb: true
+
+      - name: Stop the Geometry service
+        if: always()
+        run: |
+          docker stop ${{ env.GEO_CONT_NAME }}
+          docker logs ${{ env.GEO_CONT_NAME }}
+          docker rm ${{ env.GEO_CONT_NAME }}
+
   package:
     name: Package library
-    needs: [testing, docs]
+    needs: [testing-windows, docs]
     runs-on: ubuntu-latest
     steps:
       - name: Build library source and wheel artifacts
