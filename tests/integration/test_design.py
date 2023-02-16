@@ -813,12 +813,8 @@ def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory)
 
     assert file.exists()
 
-    # Read the file to get its bytes
-    with open(file, "rb") as f:
-        data = f.read()
-
     # Upload file
-    path_on_server = modeler.upload_file(data, "example.scdocx")
+    path_on_server = modeler.upload_file(file)
     assert path_on_server is not None
 
 
