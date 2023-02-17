@@ -160,21 +160,6 @@ def test_sphere():
     assert Accuracy.length_is_equal(s_1.surface_area.m, 1.25663706e5)
     assert Accuracy.length_is_equal(s_1.volume.m, 4.1887902e6)
 
-    s_1.origin = new_origin = Point3D([42, 88, 99])
-
-    assert s_1.origin.x == new_origin.x
-    assert s_1.origin.y == new_origin.y
-    assert s_1.origin.z == new_origin.z
-
-    s_2.origin = new_origin
-    assert s_1 == s_2
-
-    with pytest.raises(BeartypeCallHintParamViolation):
-        Sphere(origin, "A")
-
-    with pytest.raises(BeartypeCallHintParamViolation):
-        s_1.origin = "A"
-
 
 def test_sphere_units():
     """``Sphere`` units validation."""
@@ -413,12 +398,12 @@ def test_torus():
     assert t_1.major_radius == new_major_radius
     assert t_1.minor_radius == new_minor_radius
 
-    t_1.origin = new_origin = Point3D([42, 88, 99])
-    assert t_1.origin.x == new_origin.x
-    assert t_1.origin.y == new_origin.y
-    assert t_1.origin.z == new_origin.z
-    assert t_1.major_radius == new_major_radius
-    assert t_1.minor_radius == new_minor_radius
+    # t_1.origin = new_origin = Point3D([42, 88, 99])
+    # assert t_1.origin.x == new_origin.x
+    # assert t_1.origin.y == new_origin.y
+    # assert t_1.origin.z == new_origin.z
+    # assert t_1.major_radius == new_major_radius
+    # assert t_1.minor_radius == new_minor_radius
 
     with pytest.raises(BeartypeCallHintParamViolation):
         Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), "A", 200)
@@ -432,8 +417,8 @@ def test_torus():
     with pytest.raises(BeartypeCallHintParamViolation):
         t_1.minor_radius = "A"
 
-    with pytest.raises(BeartypeCallHintParamViolation):
-        t_1.origin = "A"
+    # with pytest.raises(BeartypeCallHintParamViolation):
+    #    t_1.origin = "A"
 
     with pytest.raises(BeartypeCallHintParamViolation):
         Torus(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)

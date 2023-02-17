@@ -63,11 +63,6 @@ class Torus:
         """Origin of the torus."""
         return self._origin
 
-    @origin.setter
-    @check_input_types
-    def origin(self, origin: Point3D) -> None:
-        self._origin = origin
-
     @property
     def major_radius(self) -> Real:
         """Semi-major radius of the torus."""
