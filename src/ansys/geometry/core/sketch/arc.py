@@ -12,7 +12,24 @@ from ansys.geometry.core.sketch.edge import SketchEdge
 
 
 class Arc(SketchEdge):
-    """Provides for modeling arcs."""
+    """Provides for modeling arcs.
+
+    Parameters
+    ----------
+    center : Point2D
+        A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
+        the center of the arc.
+    start : Point2D
+        :class:`Point2D <ansys.geometry.core.math.point.Point2D>` class representing
+        the start of the arc.
+    end : Point2D
+        A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
+        the end of the arc.
+    clockwise : bool, default: False
+        Whether the arc spans the clockwise angle between the start
+        and end points. By default, the arc spans the counter-clockwise angle. When
+        ``True``, the arc spands the clockwise angle.
+    """
 
     @check_input_types
     def __init__(
@@ -22,24 +39,7 @@ class Arc(SketchEdge):
         end: Point2D,
         clockwise: Optional[bool] = False,
     ):
-        """Initializes the arc shape.
-
-        Parameters
-        ----------
-        center : Point2D
-            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
-            the center of the arc.
-        start: Point2D
-            :class:`Point2D <ansys.geometry.core.math.point.Point2D>` class representing
-            the start of the arc.
-        end : Point2D
-            A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
-            the end of the arc.
-        clockwise : bool, default: False
-            Whether the arc spans the clockwise angle between the start
-            and end points. By default, the arc spans the counter-clockwise angle. When
-            ``True``, the arc spands the clockwise angle.
-        """
+        """Initializes the arc shape."""
         super().__init__()
         if start == end:
             raise ValueError("Start and end points must be different.")
