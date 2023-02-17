@@ -253,7 +253,8 @@ class Design(Component):
         """
         if isinstance(named_selection, str):
             removal_name = named_selection
-            removal_id = self._named_selections.get(named_selection, None)
+            removal = self._named_selections.get(named_selection, None)
+            removal_id = removal.id if removal else None
         else:
             removal_name = named_selection.name
             removal_id = named_selection.id
