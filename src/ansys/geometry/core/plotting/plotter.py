@@ -7,7 +7,7 @@ from pyvista.plotting.tools import create_axes_marker
 from ansys.geometry.core.designer import Body, Component
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.math import Frame, Plane
-import ansys.geometry.core.misc as misc
+from ansys.geometry.core.plotting.trame_gui import _HAS_TRAME, TrameVisualizer
 from ansys.geometry.core.plotting.widgets import (
     CameraPanDirection,
     DisplacementArrow,
@@ -17,8 +17,6 @@ from ansys.geometry.core.plotting.widgets import (
     ViewDirection,
 )
 from ansys.geometry.core.sketch import Sketch
-
-from .trame_gui import _HAS_TRAME, TrameVisualizer
 
 
 class Plotter:
@@ -340,17 +338,21 @@ class PlotterHelper:
 
     Parameters
     ----------
-        use_trame: bool, default: False
-            Enables/disables the usage of the trame web visualizer. Defaults to the
-            global setting ``USE_TRAME``.
+    use_trame: bool, optional
+        Enables/disables the usage of the trame web visualizer. Defaults to the
+        global setting ``USE_TRAME``.
     """
 
-    def __init__(self, use_trame=None) -> None:
+    def __init__(self, use_trame: Optional[bool] = None) -> None:
         """Initializes use_trame and saves current pv.OFF_SCREEN value."""
+        # Check if the use of trame was requested
         if use_trame is None:
-            self.use_trame = misc.USE_TRAME
-        self.use_trame = use_trame
-        self.pv_off_screen_original = bool(pv.OFF_SCREEN)
+            import ansys.geometry.core as pygeom
+
+            use_trame = pygeom.USE_TRAME
+
+        self._use_trame = use_trame
+        self._pv_off_screen_original = bool(pv.OFF_SCREEN)
 
     def init_plotter(self):
         """Initializes the plotter with or without trame visualizer.
@@ -360,11 +362,11 @@ class PlotterHelper:
         Plotter
             PyGeometry plotter initialized.
         """
-        if self.use_trame and _HAS_TRAME:
+        if self._use_trame and _HAS_TRAME:
             # avoids GUI window popping up
             pv.OFF_SCREEN = True
             pl = Plotter(enable_widgets=False)
-        elif self.use_trame and not _HAS_TRAME:
+        elif self._use_trame and not _HAS_TRAME:
             warn_msg = (
                 "'use_trame' is active but Trame dependencies are not installed."
                 "Consider installing 'pyvista[trame]' to use this functionality."
@@ -386,10 +388,10 @@ class PlotterHelper:
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
         """
-        if self.use_trame and _HAS_TRAME:
+        if self._use_trame and _HAS_TRAME:
             visualizer = TrameVisualizer()
             visualizer.set_scene(plotter)
             visualizer.show()
         else:
             plotter.show(screenshot=screenshot)
-        pv.OFF_SCREEN = self.pv_off_screen_original
+        pv.OFF_SCREEN = self._pv_off_screen_original

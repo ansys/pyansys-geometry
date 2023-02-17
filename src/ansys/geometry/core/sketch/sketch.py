@@ -777,7 +777,7 @@ class Sketch:
         self,
         view_2d: Optional[bool] = False,
         screenshot: Optional[str] = None,
-        use_trame: bool = None,
+        use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ):
         """Plot all objects of the sketch to the scene.
@@ -787,13 +787,13 @@ class Sketch:
         view_2d : bool, default: False
             Specifies whether the plot should be represented in a 2D format.
             By default, this is set to ``False``.
-        screenshot : str, default: None
+        screenshot : str, optional
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
-        use_trame: bool, default: False
+        use_trame : bool, optional
             Enables/disables the usage of the trame web visualizer. Defaults to the
             global setting ``USE_TRAME``.
-        **plotting_options : dict, default:
+        **plotting_options : dict, optional
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
@@ -806,7 +806,7 @@ class Sketch:
         self,
         view_2d: Optional[bool] = False,
         screenshot: Optional[str] = None,
-        use_trame: bool = None,
+        use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ):
         """Plot the current selection to the scene.
@@ -816,13 +816,13 @@ class Sketch:
         view_2d : bool, default: False
             Specifies whether the plot should be represented in a 2D format.
             By default, this is set to ``False``.
-        screenshot : str, default: None
+        screenshot : str, optional
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
-        use_trame: bool, default: False
+        use_trame : bool, optional
             Enables/disables the usage of the trame web visualizer. Defaults to the
             global setting ``USE_TRAME``.
-        **plotting_options : dict, default: []
+        **plotting_options : dict, optional
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
@@ -876,7 +876,7 @@ class Sketch:
         polydata: List["PolyData"],
         view_2d: bool,
         screenshot: Optional[str],
-        use_trame: bool = None,
+        use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ) -> None:
         """
@@ -889,13 +889,13 @@ class Sketch:
         view_2d : bool
             Specifies whether the plot should be represented in a 2D format.
             By default, this is set to ``False``.
-        screenshot : str or ``None``
+        screenshot : str, optional
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
-        use_trame : bool, default: False
+        use_trame : bool, optional
             Enables/disables the usage of the trame web visualizer. Defaults to the
             global setting ``USE_TRAME``.
-        **plotting_options : dict, default: {}
+        **plotting_options : dict, optional
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """

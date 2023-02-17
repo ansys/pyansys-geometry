@@ -22,3 +22,9 @@ from ansys.geometry.core.connection.launcher import (
 )
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.modeler import Modeler
+
+# Global config constants
+# ------------------------------------------------------------------------------
+
+USE_TRAME = False
+"""Global constant for checking the use of trame or not."""

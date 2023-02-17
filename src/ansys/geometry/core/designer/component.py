@@ -716,19 +716,16 @@ class Component:
 
     def plot(
         self,
-        use_trame: bool = None,
         merge_component: bool = False,
         merge_bodies: bool = False,
         screenshot: Optional[str] = None,
+        use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ) -> None:
         """Plot this component.
 
         Parameters
         ----------
-        use_trame: bool, default: False
-            Enables/disables the usage of the trame web visualizer. Defaults to the
-            global setting ``USE_TRAME``.
         merge_component : bool, default: False
             Whether to merge this component into a single dataset. When ``True``,
             all the individual bodies are effectively merged into a single
@@ -737,9 +734,12 @@ class Component:
             Whether to merge each body into a single dataset. When ``True``,
             all the faces of each individual body are effectively merged
             into a single dataset without separating faces.
-        screenshot : str, default: None
+        screenshot : str, optional
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
+        use_trame : bool, optional
+            Enables/disables the usage of the trame web visualizer. Defaults to the
+            global setting ``USE_TRAME``.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.

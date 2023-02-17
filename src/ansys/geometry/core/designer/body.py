@@ -517,9 +517,9 @@ class Body:
 
     def plot(
         self,
-        merge: Optional[bool] = False,
+        merge: bool = False,
         screenshot: Optional[str] = None,
-        use_trame: bool = None,
+        use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ) -> None:
         """Plot the body.
@@ -530,10 +530,10 @@ class Body:
             Whether to merge the body into a single mesh. By default, the
             number of triangles are preserved and only the topology is merged.
             When ``True``, the individual faces of the tessellation are merged.
-        screenshot : str, default: None
+        screenshot : str, optional
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
-        use_trame: bool, default: False
+        use_trame : bool, optional
             Enables/disables the usage of the trame web visualizer. Defaults to the
             global setting ``USE_TRAME``.
         **plotting_options : dict, default: None
