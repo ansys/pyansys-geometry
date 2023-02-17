@@ -370,6 +370,11 @@ class Component:
         return self._coordinate_systems[-1]
 
     @protect_grpc
+    def get_update_state(self) -> int:
+        response = self._component_stub.GetUpdateState(EntityIdentifier(id=self.id))
+        return response.state
+
+    @protect_grpc
     @check_input_types
     def translate_bodies(
         self, bodies: List[Body], direction: UnitVector3D, distance: Union[Quantity, Distance]

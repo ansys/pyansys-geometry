@@ -283,3 +283,8 @@ class Face:
                 Edge(edge_grpc.id, CurveType(edge_grpc.curve_type), self._body, self._grpc_client)
             )
         return edges
+
+    @protect_grpc
+    def get_update_state(self) -> int:
+        response = self._faces_stub.GetUpdateState(EntityIdentifier(id=self.id))
+        return response.state

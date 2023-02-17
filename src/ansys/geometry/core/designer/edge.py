@@ -89,3 +89,8 @@ class Edge:
             Face(grpc_face.id, SurfaceType(grpc_face.surface_type), self._body, self._grpc_client)
             for grpc_face in grpc_faces
         ]
+
+    @protect_grpc
+    def get_update_state(self) -> int:
+        response = self._edges_stub.GetUpdateState(EntityIdentifier(id=self.id))
+        return response.state

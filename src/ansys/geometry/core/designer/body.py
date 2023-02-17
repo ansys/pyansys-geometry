@@ -404,6 +404,11 @@ class Body:
         )
 
     @protect_grpc
+    def get_update_state(self) -> int:
+        response = self._bodies_stub.GetUpdateState(EntityIdentifier(id=self.id))
+        return response.state
+
+    @protect_grpc
     def copy(self, parent: "Component", name: str = None) -> "Body":
         """Creates a copy of the geometry body and places it under the specified parent.
 
