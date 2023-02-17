@@ -5,7 +5,9 @@ import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
 
 from ansys.geometry.core.designer import Body, Component
+from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.math import Frame, Plane
+from ansys.geometry.core.plotting.trame_gui import _HAS_TRAME, TrameVisualizer
 from ansys.geometry.core.plotting.widgets import (
     CameraPanDirection,
     DisplacementArrow,
@@ -18,50 +20,56 @@ from ansys.geometry.core.sketch import Sketch
 
 
 class Plotter:
-    """Provides for plotting sketches and bodies."""
+    """Provides for plotting sketches and bodies.
+
+    Parameters
+    ----------
+    scene : ~pyvista.Plotter, default: None
+        Scene instance for rendering the objects.
+    color_opts : dict, default: None
+        Dictionary containing the background and top colors.
+    num_points : int, default: 100
+        Number of points to use to render the shapes.
+    enable_widgets: bool, default: True
+        Enables/disables widget buttons in the plotter window.
+        They must be disabled for trame viewer.
+    """
 
     def __init__(
         self,
         scene: Optional[pv.Plotter] = None,
-        background_opts: Optional[Dict] = None,
+        color_opts: Optional[Dict] = None,
         num_points: int = 100,
+        enable_widgets: bool = True,
     ):
-        """Initializes the plotter.
+        """Initializes the plotter."""
 
-        Parameters
-        ----------
-        scene : ~pyvista.Plotter, default: None
-            Scene instance for rendering the objects.
-        background_opts : dict, default: None
-            Dictionary containing the background and top colors.
-        num_points : int, default: 100
-            Number of points to use to render the shapes.
-        """
         # Generate custom scene if ``None`` is provided
         if scene is None:
             scene = pv.Plotter()
 
         # If required, use a white background with no gradient
-        if not background_opts:
-            background_opts = dict(color="white")
+        if not color_opts:
+            color_opts = dict(color="white")
 
         # Create the scene
         self._scene = scene
         # Scene: assign the background
-        self._scene.set_background(**background_opts)
+        self._scene.set_background(**color_opts)
         view_box = self._scene.add_axes(line_width=5, color="black")
 
         # Save the desired number of points
         self._num_points = num_points
 
         # Create Plotter widgets
-        self._widgets: List[PlotterWidget] = []
-        self._widgets.append(Ruler(self._scene))
-        [
-            self._widgets.append(DisplacementArrow(self._scene, direction=dir))
-            for dir in CameraPanDirection
-        ]
-        [self._widgets.append(ViewButton(self._scene, direction=dir)) for dir in ViewDirection]
+        if enable_widgets:
+            self._widgets: List[PlotterWidget] = []
+            self._widgets.append(Ruler(self._scene))
+            [
+                self._widgets.append(DisplacementArrow(self._scene, direction=dir))
+                for dir in CameraPanDirection
+            ]
+            [self._widgets.append(ViewButton(self._scene, direction=dir)) for dir in ViewDirection]
 
     @property
     def scene(self) -> pv.Plotter:
@@ -322,3 +330,68 @@ class Plotter:
         # This method should only be applied in 3D objects: bodies, components
         plotting_options.setdefault("smooth_shading", True)
         plotting_options.setdefault("color", "#D6F7D1")
+
+
+class PlotterHelper:
+    """This class simplifies the selection of Trame visualizer in plot()
+    functions.
+
+    Parameters
+    ----------
+    use_trame: bool, optional
+        Enables/disables the usage of the trame web visualizer. Defaults to the
+        global setting ``USE_TRAME``.
+    """
+
+    def __init__(self, use_trame: Optional[bool] = None) -> None:
+        """Initializes use_trame and saves current pv.OFF_SCREEN value."""
+        # Check if the use of trame was requested
+        if use_trame is None:
+            import ansys.geometry.core as pygeom
+
+            use_trame = pygeom.USE_TRAME
+
+        self._use_trame = use_trame
+        self._pv_off_screen_original = bool(pv.OFF_SCREEN)
+
+    def init_plotter(self):
+        """Initializes the plotter with or without trame visualizer.
+
+        Returns
+        -------
+        Plotter
+            PyGeometry plotter initialized.
+        """
+        if self._use_trame and _HAS_TRAME:
+            # avoids GUI window popping up
+            pv.OFF_SCREEN = True
+            pl = Plotter(enable_widgets=False)
+        elif self._use_trame and not _HAS_TRAME:
+            warn_msg = (
+                "'use_trame' is active but Trame dependencies are not installed."
+                "Consider installing 'pyvista[trame]' to use this functionality."
+            )
+            logger.warning(warn_msg)
+            pl = Plotter()
+        else:
+            pl = Plotter()
+        return pl
+
+    def show_plotter(self, plotter, screenshot):
+        """Shows the plotter or starts Trame service.
+
+        Parameters
+        ----------
+        plotter : Plotter
+            PyGeometry plotter with the meshes added.
+        screenshot : str, default: None
+            Save a screenshot of the image being represented. The image is
+            stored in the path provided as an argument.
+        """
+        if self._use_trame and _HAS_TRAME:
+            visualizer = TrameVisualizer()
+            visualizer.set_scene(plotter)
+            visualizer.show()
+        else:
+            plotter.show(screenshot=screenshot)
+        pv.OFF_SCREEN = self._pv_off_screen_original
