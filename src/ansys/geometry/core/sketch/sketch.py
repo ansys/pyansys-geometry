@@ -892,10 +892,10 @@ class Sketch:
         screenshot : str or ``None``
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
-        use_trame: bool, default: False
+        use_trame : bool, default: False
             Enables/disables the usage of the trame web visualizer. Defaults to the
             global setting ``USE_TRAME``.
-        **plotting_options : dict, default: []
+        **plotting_options : dict, default: {}
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """

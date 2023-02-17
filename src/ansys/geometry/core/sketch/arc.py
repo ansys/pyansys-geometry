@@ -19,7 +19,7 @@ class Arc(SketchEdge):
     center : Point2D
         A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
         the center of the arc.
-    start: Point2D
+    start : Point2D
         :class:`Point2D <ansys.geometry.core.math.point.Point2D>` class representing
         the start of the arc.
     end : Point2D

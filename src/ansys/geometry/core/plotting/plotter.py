@@ -34,7 +34,7 @@ class Plotter:
         Number of points to use to render the shapes.
     enable_widgets: bool, default: True
         Enables/disables widget buttons in the plotter window.
-        They need to be disabled for trame viewer.
+        They must be disabled for trame viewer.
     """
 
     def __init__(
