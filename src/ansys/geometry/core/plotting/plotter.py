@@ -26,7 +26,7 @@ class Plotter:
     ----------
     scene : ~pyvista.Plotter, default: None
         Scene instance for rendering the objects.
-    background_opts : dict, default: None
+    color_opts : dict, default: None
         Dictionary containing the background and top colors.
     num_points : int, default: 100
         Number of points to use to render the shapes.
