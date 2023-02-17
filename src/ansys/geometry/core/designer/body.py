@@ -517,8 +517,9 @@ class Body:
 
     def plot(
         self,
-        merge: Optional[bool] = False,
+        merge: bool = False,
         screenshot: Optional[str] = None,
+        use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ) -> None:
         """Plot the body.
@@ -529,9 +530,12 @@ class Body:
             Whether to merge the body into a single mesh. By default, the
             number of triangles are preserved and only the topology is merged.
             When ``True``, the individual faces of the tessellation are merged.
-        screenshot : str, default: None
+        screenshot : str, optional
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
+        use_trame : bool, optional
+            Enables/disables the usage of the trame web visualizer. Defaults to the
+            global setting ``USE_TRAME``.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
@@ -561,11 +565,13 @@ class Body:
 
         """
         # lazy import here to improve initial module load time
-        from ansys.geometry.core.plotting import Plotter
 
-        pl = Plotter()
+        from ansys.geometry.core.plotting import PlotterHelper
+
+        pl_helper = PlotterHelper(use_trame=use_trame)
+        pl = pl_helper.init_plotter()
         pl.add_body(self, merge=merge, **plotting_options)
-        pl.show(screenshot=screenshot)
+        pl_helper.show_plotter(pl, screenshot=screenshot)
 
     def __repr__(self) -> str:
         """String representation of the body."""
