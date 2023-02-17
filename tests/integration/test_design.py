@@ -291,6 +291,10 @@ def test_named_selections(modeler: Modeler):
     assert design.named_selections[2].name == "CircleAndPolygon"
     assert design.named_selections[3].name == "OnlyPolygonFaces"
 
+    # Try deleting a named selection by name
+    design.delete_named_selection("OnlyCircle")
+    assert len(design.named_selections) == 3
+
 
 def test_faces_edges(modeler: Modeler):
     """Test for verifying the correct creation and
