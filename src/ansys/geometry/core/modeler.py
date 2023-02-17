@@ -123,8 +123,7 @@ class Modeler:
         import os
 
         if not os.path.exists(file_path):
-            message = f"Could not find file: {file_path}"
-            raise ValueError(message)
+            raise ValueError(f"Could not find file: {file_path}")
         if os.path.isdir(file_path):
             raise ValueError("File path must lead to a file, not a directory.")
 
