@@ -38,7 +38,7 @@ class Plotter:
     def __init__(
         self,
         scene: Optional[pv.Plotter] = None,
-        background_opts: Optional[Dict] = None,
+        color_opts: Optional[Dict] = None,
         num_points: int = 100,
         enable_widgets: bool = True,
     ):
@@ -49,13 +49,13 @@ class Plotter:
             scene = pv.Plotter()
 
         # If required, use a white background with no gradient
-        if not background_opts:
-            background_opts = dict(color="white")
+        if not color_opts:
+            color_opts = dict(color="white")
 
         # Create the scene
         self._scene = scene
         # Scene: assign the background
-        self._scene.set_background(**background_opts)
+        self._scene.set_background(**color_opts)
         view_box = self._scene.add_axes(line_width=5, color="black")
 
         # Save the desired number of points
