@@ -286,5 +286,6 @@ class Face:
 
     @protect_grpc
     def get_update_state(self) -> int:
+        """Gets the update state version number of the face from the server."""
         response = self._faces_stub.GetUpdateState(EntityIdentifier(id=self.id))
         return response.state

@@ -92,5 +92,6 @@ class Edge:
 
     @protect_grpc
     def get_update_state(self) -> int:
+        """Gets the update state version number of the edge from the server."""
         response = self._edges_stub.GetUpdateState(EntityIdentifier(id=self.id))
         return response.state

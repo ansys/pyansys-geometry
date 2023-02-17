@@ -371,6 +371,7 @@ class Component:
 
     @protect_grpc
     def get_update_state(self) -> int:
+        """Gets the update state version number of the component from the server."""
         response = self._component_stub.GetUpdateState(EntityIdentifier(id=self.id))
         return response.state
 
