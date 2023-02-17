@@ -677,7 +677,7 @@ class Component:
         >>> from ansys.geometry.core import Modeler
         >>> from ansys.geometry.core.math import Point2D, Point3D, Plane
         >>> from ansys.geometry.core.misc import UNITS
-        >>> from ansys.geometry.core.plotting.plotter import Plotter
+        >>> from ansys.geometry.core.plotting import Plotter
         >>> modeler = Modeler("10.54.0.72", "50051")
         >>> sketch_1 = Sketch()
         >>> box = sketch_1.box(
@@ -738,6 +738,7 @@ class Component:
         merge_component: bool = False,
         merge_bodies: bool = False,
         screenshot: Optional[str] = None,
+        use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ) -> None:
         """Plot this component.
@@ -752,9 +753,12 @@ class Component:
             Whether to merge each body into a single dataset. When ``True``,
             all the faces of each individual body are effectively merged
             into a single dataset without separating faces.
-        screenshot : str, default: None
+        screenshot : str, optional
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
+        use_trame : bool, optional
+            Enables/disables the usage of the trame web visualizer. Defaults to the
+            global setting ``USE_TRAME``.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
@@ -795,13 +799,15 @@ class Component:
         >>> mycomp.plot(pbr=True, metallic=1.0)
 
         """
-        from ansys.geometry.core.plotting import Plotter
 
-        pl = Plotter()
+        from ansys.geometry.core.plotting import PlotterHelper
+
+        pl_helper = PlotterHelper(use_trame=use_trame)
+        pl = pl_helper.init_plotter()
         pl.add_component(
             self, merge_bodies=merge_bodies, merge_component=merge_component, **plotting_options
         )
-        pl.show(screenshot=screenshot)
+        pl_helper.show_plotter(pl, screenshot=screenshot)
 
     def __repr__(self) -> str:
         """String representation of the component."""
