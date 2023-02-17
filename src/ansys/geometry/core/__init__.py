@@ -11,6 +11,7 @@ except ModuleNotFoundError:  # pragma: no cover
     import importlib_metadata  # type: ignore
 
 __version__ = importlib_metadata.version(__name__.replace(".", "-"))
+"""PyGeometry version."""
 
 # Ease import statements
 # ------------------------------------------------------------------------------
