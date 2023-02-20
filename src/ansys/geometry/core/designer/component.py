@@ -213,12 +213,10 @@ class Component:
         """
         # Sanity checks on inputs
         distance = distance if isinstance(distance, Distance) else Distance(distance)
-        extrude_distance = distance.value
-        check_pint_unit_compatibility(extrude_distance.units, DEFAULT_UNITS.SERVER_LENGTH)
 
         # Perform extrusion request
         request = CreateExtrudedBodyRequest(
-            distance=extrude_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+            distance=distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
             parent=self.id,
             plane=plane_to_grpc_plane(sketch._plane),
             geometries=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
