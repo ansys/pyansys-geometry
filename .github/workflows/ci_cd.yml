@@ -287,9 +287,12 @@ jobs:
       - name: Install ansys-geometry-core[tests]
         run: pip install .[tests]
 
+      - name: Check plotting is allowed
+        run: python -c "from pyvista.plotting import system_supports_plotting; print("system_supports_plotting", system_supports_plotting())"
+
       - name: Run pytest
         run: |
-         xvfb-run pytest --service-os=linux
+          xvfb-run pytest --service-os=linux
 
       - name: Stop the Geometry service
         if: always()
