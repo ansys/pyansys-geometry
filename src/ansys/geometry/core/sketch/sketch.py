@@ -5,7 +5,7 @@ from beartype.typing import TYPE_CHECKING, Dict, List, Optional, Union
 from pint import Quantity
 
 from ansys.geometry.core.math import ZERO_POINT2D, Plane, Point2D, UnitVector3D, Vector2D, Vector3D
-from ansys.geometry.core.misc import UNIT_LENGTH, Angle, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.box import Box
 from ansys.geometry.core.sketch.circle import SketchCircle
@@ -106,20 +106,20 @@ class Sketch:
     @check_input_types
     def translate_sketch_plane_by_offset(
         self,
-        x: Union[Quantity, Distance] = Quantity(0, UNIT_LENGTH),
-        y: Union[Quantity, Distance] = Quantity(0, UNIT_LENGTH),
-        z: Union[Quantity, Distance] = Quantity(0, UNIT_LENGTH),
+        x: Union[Quantity, Distance] = Quantity(0, DEFAULT_UNITS.LENGTH),
+        y: Union[Quantity, Distance] = Quantity(0, DEFAULT_UNITS.LENGTH),
+        z: Union[Quantity, Distance] = Quantity(0, DEFAULT_UNITS.LENGTH),
     ) -> "Sketch":
         """
         Translate the origin location of the active sketch plane by offsets.
 
         Parameters
         ----------
-        x : Union[Quantity, Distance], default: Quantity(0, UNIT_LENGTH)
+        x : Union[Quantity, Distance], default: Quantity(0, DEFAULT_UNITS.LENGTH)
             Amount to translate the origin the x-direction.
-        y : Union[Quantity, Distance], default: Quantity(0, UNIT_LENGTH)
+        y : Union[Quantity, Distance], default: Quantity(0, DEFAULT_UNITS.LENGTH)
             Amount to translate the origin the y-direction.
-        z : Union[Quantity, Distance], default: Quantity(0, UNIT_LENGTH)
+        z : Union[Quantity, Distance], default: Quantity(0, DEFAULT_UNITS.LENGTH)
             Amount to translate the origin the z-direction.
 
         Returns
@@ -128,15 +128,21 @@ class Sketch:
             Revised sketch state ready for further sketch actions.
         """
         x_magnitude = (
-            x.m_as(UNIT_LENGTH) if not isinstance(x, Distance) else x.value.m_as(UNIT_LENGTH)
+            x.m_as(DEFAULT_UNITS.LENGTH)
+            if not isinstance(x, Distance)
+            else x.value.m_as(DEFAULT_UNITS.LENGTH)
         )
 
         y_magnitude = (
-            y.m_as(UNIT_LENGTH) if not isinstance(y, Distance) else y.value.m_as(UNIT_LENGTH)
+            y.m_as(DEFAULT_UNITS.LENGTH)
+            if not isinstance(y, Distance)
+            else y.value.m_as(DEFAULT_UNITS.LENGTH)
         )
 
         z_magnitude = (
-            z.m_as(UNIT_LENGTH) if not isinstance(z, Distance) else z.value.m_as(UNIT_LENGTH)
+            z.m_as(DEFAULT_UNITS.LENGTH)
+            if not isinstance(z, Distance)
+            else z.value.m_as(DEFAULT_UNITS.LENGTH)
         )
         translation = Vector3D([x_magnitude, y_magnitude, z_magnitude])
         return self.translate_sketch_plane(translation)
@@ -161,9 +167,9 @@ class Sketch:
             Revised sketch state ready for further sketch actions.
         """
         magnitude = (
-            distance.m_as(UNIT_LENGTH)
+            distance.m_as(DEFAULT_UNITS.LENGTH)
             if not isinstance(distance, Distance)
-            else distance.value.m_as(UNIT_LENGTH)
+            else distance.value.m_as(DEFAULT_UNITS.LENGTH)
         )
         translation = Vector3D(
             [direction.x * magnitude, direction.y * magnitude, direction.z * magnitude]
@@ -771,6 +777,7 @@ class Sketch:
         self,
         view_2d: Optional[bool] = False,
         screenshot: Optional[str] = None,
+        use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ):
         """Plot all objects of the sketch to the scene.
@@ -780,32 +787,26 @@ class Sketch:
         view_2d : bool, default: False
             Specifies whether the plot should be represented in a 2D format.
             By default, this is set to ``False``.
-        screenshot : str, default: None
+        screenshot : str, optional
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
-        **plotting_options : dict, default:
+        use_trame : bool, optional
+            Enables/disables the usage of the trame web visualizer. Defaults to the
+            global setting ``USE_TRAME``.
+        **plotting_options : dict, optional
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
-        from ansys.geometry.core.plotting.plotter import Plotter
-
-        pl = Plotter()
-        pl.add_sketch_polydata(self.sketch_polydata(), **plotting_options)
-
-        # If you want to visualize a Sketch from the top...
-        if view_2d:
-            pl.scene.view_vector(
-                vector=self.plane.direction_z.tolist(),
-                viewup=self.plane.direction_y.tolist(),
-            )
-
-        # Finally, show the plot
-        pl.show(screenshot=screenshot)
+        # Show the plot requested - i.e. all polydata in sketch
+        self.__show_plotter(
+            self.sketch_polydata(), view_2d, screenshot, use_trame, **plotting_options
+        )
 
     def plot_selection(
         self,
         view_2d: Optional[bool] = False,
         screenshot: Optional[str] = None,
+        use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ):
         """Plot the current selection to the scene.
@@ -815,15 +816,18 @@ class Sketch:
         view_2d : bool, default: False
             Specifies whether the plot should be represented in a 2D format.
             By default, this is set to ``False``.
-        screenshot : str, default: None
+        screenshot : str, optional
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
-        **plotting_options : dict, default: []
+        use_trame : bool, optional
+            Enables/disables the usage of the trame web visualizer. Defaults to the
+            global setting ``USE_TRAME``.
+        **plotting_options : dict, optional
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
-        from ansys.geometry.core.plotting.plotter import Plotter
 
+        # Get the selected polydata
         sketches_polydata = []
         sketches_polydata.extend(
             [
@@ -832,18 +836,14 @@ class Sketch:
             ]
         )
 
-        pl = Plotter()
-        pl.add_sketch_polydata(sketches_polydata, **plotting_options)
-
-        # If you want to visualize a Sketch from the top...
-        if view_2d:
-            pl.scene.view_vector(
-                vector=self.plane.direction_z.tolist(),
-                viewup=self.plane.direction_y.tolist(),
-            )
-
-        # Finally, show the plot
-        pl.show(screenshot=screenshot)
+        # Show the plot requested
+        self.__show_plotter(
+            polydata=sketches_polydata,
+            view_2d=view_2d,
+            screenshot=screenshot,
+            use_trame=use_trame,
+            **plotting_options,
+        )
 
     def sketch_polydata(self) -> List["PolyData"]:
         """
@@ -870,3 +870,49 @@ class Sketch:
         )
 
         return sketches_polydata
+
+    def __show_plotter(
+        self,
+        polydata: List["PolyData"],
+        view_2d: bool,
+        screenshot: Optional[str],
+        use_trame: Optional[bool] = None,
+        **plotting_options: Optional[dict],
+    ) -> None:
+        """
+        Private method handling the ``show`` call of our Plotter.
+
+        Parameters
+        ----------
+        polydata: List["PolyData"]
+            Set of PolyData configuration for all edges and faces to be plotted.
+        view_2d : bool
+            Specifies whether the plot should be represented in a 2D format.
+            By default, this is set to ``False``.
+        screenshot : str, optional
+            Save a screenshot of the image being represented. The image is
+            stored in the path provided as an argument.
+        use_trame : bool, optional
+            Enables/disables the usage of the trame web visualizer. Defaults to the
+            global setting ``USE_TRAME``.
+        **plotting_options : dict, optional
+            Keyword arguments. For allowable keyword arguments,
+            see the :func:`pyvista.Plotter.add_mesh` method.
+        """
+
+        from ansys.geometry.core.plotting import PlotterHelper
+
+        pl_helper = PlotterHelper(use_trame=use_trame)
+        pl = pl_helper.init_plotter()
+        # Add the polydata
+        pl.add_sketch_polydata(polydata, **plotting_options)
+
+        # If you want to visualize a Sketch from the top...
+        if view_2d:
+            pl.scene.view_vector(
+                vector=self.plane.direction_z.tolist(),
+                viewup=self.plane.direction_y.tolist(),
+            )
+
+        # Finally, show the plot
+        pl_helper.show_plotter(pl, screenshot=screenshot)

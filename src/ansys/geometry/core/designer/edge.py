@@ -9,7 +9,7 @@ from pint import Quantity
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.misc import SERVER_UNIT_LENGTH
+from ansys.geometry.core.misc import DEFAULT_UNITS
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -70,7 +70,7 @@ class Edge:
         """Calculated length of the edge."""
         self._grpc_client.log.debug("Requesting edge length from server.")
         length_response = self._edges_stub.GetLength(self._grpc_id)
-        return Quantity(length_response.length, SERVER_UNIT_LENGTH)
+        return Quantity(length_response.length, DEFAULT_UNITS.SERVER_LENGTH)
 
     @property
     def curve_type(self) -> CurveType:

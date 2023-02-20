@@ -1,7 +1,11 @@
 """Provides the ``Body`` class module."""
 from enum import Enum
 
-from ansys.api.geometry.v0.bodies_pb2 import SetAssignedMaterialRequest, TranslateRequest
+from ansys.api.geometry.v0.bodies_pb2 import (
+    CopyRequest,
+    SetAssignedMaterialRequest,
+    TranslateRequest,
+)
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
@@ -27,8 +31,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials import Material
 from ansys.geometry.core.math import UnitVector3D
 from ansys.geometry.core.misc import (
-    SERVER_UNIT_LENGTH,
-    SERVER_UNIT_VOLUME,
+    DEFAULT_UNITS,
     Distance,
     check_pint_unit_compatibility,
     check_type,
@@ -189,11 +192,11 @@ class Body:
         """
         if self.is_surface:
             self._grpc_client.log.debug("Dealing with planar surface. Returning 0 as the volume.")
-            return Quantity(0, SERVER_UNIT_VOLUME)
+            return Quantity(0, DEFAULT_UNITS.SERVER_VOLUME)
         else:
             self._grpc_client.log.debug(f"Retrieving volume for body {self.id} from server.")
             volume_response = self._bodies_stub.GetVolume(self._grpc_id)
-            return Quantity(volume_response.volume, SERVER_UNIT_VOLUME)
+            return Quantity(volume_response.volume, DEFAULT_UNITS.SERVER_VOLUME)
 
     @protect_grpc
     @check_input_types
@@ -227,7 +230,7 @@ class Body:
         if self.is_surface:
             self._commands_stub.AssignMidSurfaceThickness(
                 AssignMidSurfaceThicknessRequest(
-                    bodiesOrFaces=[self.id], thickness=thickness.m_as(SERVER_UNIT_LENGTH)
+                    bodiesOrFaces=[self.id], thickness=thickness.m_as(DEFAULT_UNITS.SERVER_LENGTH)
                 )
             )
             self._surface_thickness = thickness
@@ -386,9 +389,9 @@ class Body:
         None
         """
         translate_distance = distance if isinstance(distance, Quantity) else distance.value
-        check_pint_unit_compatibility(translate_distance.units, SERVER_UNIT_LENGTH)
+        check_pint_unit_compatibility(translate_distance.units, DEFAULT_UNITS.SERVER_LENGTH)
 
-        translation_magnitude = translate_distance.m_as(SERVER_UNIT_LENGTH)
+        translation_magnitude = translate_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH)
 
         self._grpc_client.log.debug(f"Translating body {self.id}.")
 
@@ -399,6 +402,46 @@ class Body:
                 distance=translation_magnitude,
             )
         )
+
+    @protect_grpc
+    def copy(self, parent: "Component", name: str = None) -> "Body":
+        """Creates a copy of the geometry body and places it under the specified parent.
+
+        Parameters
+        ----------
+        parent: Component
+            The parent component that the new body should live under.
+        name: str
+            The name to give the new body.
+
+        Returns
+        -------
+        Body
+            Copy of the body.
+        """
+        from ansys.geometry.core.designer.component import Component
+
+        # Check input types
+        check_type(parent, Component)
+        check_type(name, (type(None), str))
+        copy_name = self.name if name is None else name
+
+        self._grpc_client.log.debug(f"Copying body {self.id}.")
+
+        # Perform copy request to server
+        response = self._bodies_stub.Copy(
+            CopyRequest(
+                id=self.id,
+                parent=parent.id,
+                name=copy_name,
+            )
+        )
+
+        # Assign the new body to its specified parent (and return the new body)
+        parent._bodies.append(
+            Body(response.id, copy_name, parent, self._grpc_client, is_surface=False)
+        )
+        return parent._bodies[-1]
 
     @protect_grpc
     def tessellate(self, merge: Optional[bool] = False) -> Union["PolyData", "MultiBlock"]:
@@ -474,8 +517,9 @@ class Body:
 
     def plot(
         self,
-        merge: Optional[bool] = False,
+        merge: bool = False,
         screenshot: Optional[str] = None,
+        use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ) -> None:
         """Plot the body.
@@ -486,9 +530,12 @@ class Body:
             Whether to merge the body into a single mesh. By default, the
             number of triangles are preserved and only the topology is merged.
             When ``True``, the individual faces of the tessellation are merged.
-        screenshot : str, default: None
+        screenshot : str, optional
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
+        use_trame : bool, optional
+            Enables/disables the usage of the trame web visualizer. Defaults to the
+            global setting ``USE_TRAME``.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
@@ -518,11 +565,13 @@ class Body:
 
         """
         # lazy import here to improve initial module load time
-        from ansys.geometry.core.plotting import Plotter
 
-        pl = Plotter()
+        from ansys.geometry.core.plotting import PlotterHelper
+
+        pl_helper = PlotterHelper(use_trame=use_trame)
+        pl = pl_helper.init_plotter()
         pl.add_body(self, merge=merge, **plotting_options)
-        pl.show(screenshot=screenshot)
+        pl_helper.show_plotter(pl, screenshot=screenshot)
 
     def __repr__(self) -> str:
         """String representation of the body."""

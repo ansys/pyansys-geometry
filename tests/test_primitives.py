@@ -28,60 +28,45 @@ def test_cylinder():
     """``Cylinder`` construction and equivalency."""
 
     # Create two Cylinder objects
-    origin = Point3D([42, 99, 13])
-    radius = 100
-    height = 200
-    c_1 = Cylinder(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), radius, height)
-    c_1_duplicate = Cylinder(
-        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), radius, height
-    )
-    c_2 = Cylinder(
-        Point3D([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 76
-    )
-    c_with_array_definitions = Cylinder([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 76)
+    origin = Point3D([0, 0, 0])
+    radius = 1
+    c_1 = Cylinder(origin, radius)
+    duplicate = Cylinder(origin, radius)
+    c_2 = Cylinder(origin, 2)
 
     # Check that the equals operator works
-    assert c_1 == c_1_duplicate
+    assert c_1 == duplicate
     assert c_1 != c_2
-    assert c_2 == c_with_array_definitions
 
     # Check cylinder definition
     assert c_1.origin.x == origin.x
     assert c_1.origin.y == origin.y
     assert c_1.origin.z == origin.z
-    assert c_1.radius == radius
-    assert c_1.height == height
+    assert c_1.radius.m == radius
+    assert c_1.radius.u == "meter"
+    assert isinstance(c_1.radius, Quantity)
+    assert np.allclose(c_1.dir_x, UNITVECTOR3D_X)
+    assert np.allclose(c_1.dir_y, UNITVECTOR3D_Y)
+    assert np.allclose(c_1.dir_z, UNITVECTOR3D_Z)
 
-    c_1.origin = new_origin = Point3D([42, 88, 99])
-    c_1.radius = new_radius = 1000
-    c_1.height = new_height = 2000
-
-    assert c_1.origin.x == new_origin.x
-    assert c_1.origin.y == new_origin.y
-    assert c_1.origin.z == new_origin.z
-    assert c_1.radius == new_radius
-    assert c_1.height == new_height
-
-    with pytest.raises(BeartypeCallHintParamViolation):
-        Cylinder(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), "A", 200)
+    assert Accuracy.length_is_equal(c_1.surface_area(1).m, 12.5663706)
+    assert c_1.surface_area(1).u == "meter ** 2"
+    assert isinstance(c_1.surface_area(1), Quantity)
+    assert Accuracy.length_is_equal(c_1.volume(1).m, 3.14159265)
+    assert c_1.volume(1).u == "meter ** 3"
+    assert isinstance(c_1.volume(1), Quantity)
 
     with pytest.raises(BeartypeCallHintParamViolation):
-        Cylinder(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, "A")
+        Cylinder(origin, "A")
 
     with pytest.raises(BeartypeCallHintParamViolation):
-        c_1.radius = "A"
+        Cylinder(origin, 100, "A", UnitVector3D([25, 39, 82]))
 
     with pytest.raises(BeartypeCallHintParamViolation):
-        c_1.height = "A"
+        Cylinder(origin, 100, UnitVector3D([12, 31, 99]), "A")
 
-    with pytest.raises(BeartypeCallHintParamViolation):
-        c_1.origin = "A"
-
-    with pytest.raises(BeartypeCallHintParamViolation):
-        Cylinder(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
-
-    with pytest.raises(BeartypeCallHintParamViolation):
-        Cylinder(origin, UnitVector3D([12, 31, 99]), "A", 100, 200)
+    with pytest.raises(ValueError):
+        Cylinder(origin, 1, UnitVector3D([1, 0, 0]), UnitVector3D([1, 1, 1]))
 
 
 def test_cylinder_units():
@@ -89,48 +74,65 @@ def test_cylinder_units():
 
     origin = Point3D([42, 99, 13])
     radius = 100
-    height = 200
     unit = UNITS.mm
-    # Verify rejection of invalid base unit type
-    with pytest.raises(
-        TypeError,
-        match=r"The pint.Unit provided as an input should be a \[length\] quantity.",
-    ):
-        Cylinder(
-            origin,
-            UnitVector3D([12, 31, 99]),
-            UnitVector3D([25, 39, 82]),
-            radius,
-            height,
-            UNITS.celsius,
-        )
 
-    c_1 = Cylinder(
-        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), radius, height, unit
-    )
+    c_1 = Cylinder(origin, Quantity(radius, unit))
 
     # Verify rejection of invalid base unit type
     with pytest.raises(
         TypeError,
         match=r"The pint.Unit provided as an input should be a \[length\] quantity.",
     ):
-        c_1.unit = UNITS.celsius
+        Cylinder(origin, Quantity(radius, UNITS.celsius))
 
     # Check that the units are correctly in place
-    assert c_1.unit == unit
+    assert c_1.radius.u == unit
 
     # Request for radius/height and ensure they are in mm
-    assert c_1.radius == radius
-    assert c_1.height == height
-
-    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
-    assert c_1._radius == (c_1.radius * c_1.unit).to_base_units().magnitude
-    assert c_1._height == (c_1.height * c_1.unit).to_base_units().magnitude
+    assert c_1.radius == Quantity(radius, unit)
 
     # Set unit to cm now... and check if the values changed
-    c_1.unit = new_unit = UNITS.cm
-    assert c_1.radius == UNITS.convert(radius, unit, new_unit)
-    assert c_1.height == UNITS.convert(height, unit, new_unit)
+    c_1._radius.unit = new_unit = UNITS.cm
+    assert c_1.radius.m == UNITS.convert(radius, unit, new_unit)
+
+
+def test_cylinder_evaluation():
+    origin = Point3D([0, 0, 0])
+    radius = 1
+    cylinder = Cylinder(origin, radius)
+
+    eval = cylinder.evaluate(ParamUV(0, 0))
+
+    # Test base evaluation at (0, 0)
+    assert eval.cylinder == cylinder
+    assert np.allclose(eval.position(), Point3D([1, 0, 0]))
+    assert isinstance(eval.position(), Point3D)
+    assert np.allclose(eval.normal(), UnitVector3D([1, 0, 0]))
+    assert isinstance(eval.normal(), UnitVector3D)
+    assert np.allclose(eval.u_derivative(), Vector3D([0, 1, 0]))
+    assert isinstance(eval.u_derivative(), Vector3D)
+    assert np.allclose(eval.v_derivative(), Vector3D([0, 0, 1]))
+    assert isinstance(eval.v_derivative(), Vector3D)
+    assert np.allclose(eval.uu_derivative(), Vector3D([-1, 0, 0]))
+    assert isinstance(eval.uu_derivative(), Vector3D)
+    assert np.allclose(eval.uv_derivative(), Vector3D([0, 0, 0]))
+    assert isinstance(eval.uv_derivative(), Vector3D)
+    assert np.allclose(eval.vv_derivative(), Vector3D([0, 0, 0]))
+    assert isinstance(eval.vv_derivative(), Vector3D)
+    assert eval.min_curvature() == 0
+    assert np.allclose(eval.min_curvature_direction(), UnitVector3D([0, 0, 1]))
+    assert isinstance(eval.min_curvature_direction(), UnitVector3D)
+    assert eval.max_curvature() == 1.0
+    assert np.allclose(eval.max_curvature_direction(), UnitVector3D([0, 1, 0]))
+    assert isinstance(eval.max_curvature_direction(), UnitVector3D)
+
+    # # Test evaluation by projecting a point onto the cylinder
+    eval2 = cylinder.project_point(Point3D([3, 3, 3]))
+    assert eval2.cylinder == cylinder
+    assert np.allclose(eval2.position(), Point3D([0.70710678, 0.70710678, 3]))
+    assert np.allclose(eval2.normal(), UnitVector3D([1, 1, 0]))
+    assert np.allclose(eval2.u_derivative().normalize(), UnitVector3D([-1, 1, 0]))
+    assert np.allclose(eval2.v_derivative(), Vector3D([0, 0, 1]))
 
 
 def test_sphere():
@@ -365,7 +367,7 @@ def test_cone_evaluation():
     assert np.allclose(eval.max_curvature_direction(), UnitVector3D([0, 1, 0]))
     assert isinstance(eval.max_curvature_direction(), UnitVector3D)
 
-    # # Test evaluation by projecting a point onto the sphere
+    # # Test evaluation by projecting a point onto the cone
     eval2 = cone.project_point(Point3D([1, 1, 1]))
     assert eval2.cone == cone
     assert np.allclose(eval2.position(), Point3D([1.20710678, 1.20710678, 0.70710678]))
@@ -485,7 +487,7 @@ def test_torus_units():
     assert t_1.major_radius == major_radius
     assert t_1.minor_radius == minor_radius
 
-    # Check that the actual values are in base units (i.e. UNIT_LENGTH)
+    # Check that the actual values are in base units (i.e. DEFAULT_UNITS.LENGTH)
     assert t_1._major_radius == (t_1.major_radius * t_1.unit).to_base_units().magnitude
     assert t_1._minor_radius == (t_1.minor_radius * t_1.unit).to_base_units().magnitude
 

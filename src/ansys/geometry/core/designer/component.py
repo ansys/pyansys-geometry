@@ -33,7 +33,7 @@ from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import Frame, Point3D, UnitVector3D
-from ansys.geometry.core.misc import SERVER_UNIT_LENGTH, Distance, check_pint_unit_compatibility
+from ansys.geometry.core.misc import DEFAULT_UNITS, Distance, check_pint_unit_compatibility
 from ansys.geometry.core.sketch import Sketch
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -212,11 +212,11 @@ class Component:
         """
         # Sanity checks on inputs
         extrude_distance = distance if isinstance(distance, Quantity) else distance.value
-        check_pint_unit_compatibility(extrude_distance.units, SERVER_UNIT_LENGTH)
+        check_pint_unit_compatibility(extrude_distance.units, DEFAULT_UNITS.SERVER_LENGTH)
 
         # Perform extrusion request
         request = CreateExtrudedBodyRequest(
-            distance=extrude_distance.m_as(SERVER_UNIT_LENGTH),
+            distance=extrude_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
             parent=self.id,
             plane=plane_to_grpc_plane(sketch._plane),
             geometries=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
@@ -258,11 +258,11 @@ class Component:
         """
         # Sanity checks on inputs
         extrude_distance = distance if isinstance(distance, Quantity) else distance.value
-        check_pint_unit_compatibility(extrude_distance.units, SERVER_UNIT_LENGTH)
+        check_pint_unit_compatibility(extrude_distance.units, DEFAULT_UNITS.SERVER_LENGTH)
 
         # Take the face source directly. No need to verify the source of the face.
         request = CreateExtrudedBodyFromFaceProfileRequest(
-            distance=extrude_distance.m_as(SERVER_UNIT_LENGTH),
+            distance=extrude_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
             parent=self.id,
             face=face.id,
             name=name,
@@ -394,7 +394,7 @@ class Component:
         -------
         None
         """
-        check_pint_unit_compatibility(distance, SERVER_UNIT_LENGTH)
+        check_pint_unit_compatibility(distance, DEFAULT_UNITS.SERVER_LENGTH)
         body_ids_found = []
 
         for body in bodies:
@@ -409,9 +409,9 @@ class Component:
                 pass
 
         magnitude = (
-            distance.m_as(SERVER_UNIT_LENGTH)
+            distance.m_as(DEFAULT_UNITS.SERVER_LENGTH)
             if not isinstance(distance, Distance)
-            else distance.value.m_as(SERVER_UNIT_LENGTH)
+            else distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
         )
 
         self._grpc_client.log.debug(f"Translating {body_ids_found}...")
@@ -658,7 +658,7 @@ class Component:
         >>> from ansys.geometry.core import Modeler
         >>> from ansys.geometry.core.math import Point2D, Point3D, Plane
         >>> from ansys.geometry.core.misc import UNITS
-        >>> from ansys.geometry.core.plotting.plotter import Plotter
+        >>> from ansys.geometry.core.plotting import Plotter
         >>> modeler = Modeler("10.54.0.72", "50051")
         >>> sketch_1 = Sketch()
         >>> box = sketch_1.box(
@@ -719,6 +719,7 @@ class Component:
         merge_component: bool = False,
         merge_bodies: bool = False,
         screenshot: Optional[str] = None,
+        use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ) -> None:
         """Plot this component.
@@ -733,9 +734,12 @@ class Component:
             Whether to merge each body into a single dataset. When ``True``,
             all the faces of each individual body are effectively merged
             into a single dataset without separating faces.
-        screenshot : str, default: None
+        screenshot : str, optional
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
+        use_trame : bool, optional
+            Enables/disables the usage of the trame web visualizer. Defaults to the
+            global setting ``USE_TRAME``.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
@@ -776,13 +780,15 @@ class Component:
         >>> mycomp.plot(pbr=True, metallic=1.0)
 
         """
-        from ansys.geometry.core.plotting import Plotter
 
-        pl = Plotter()
+        from ansys.geometry.core.plotting import PlotterHelper
+
+        pl_helper = PlotterHelper(use_trame=use_trame)
+        pl = pl_helper.init_plotter()
         pl.add_component(
             self, merge_bodies=merge_bodies, merge_component=merge_component, **plotting_options
         )
-        pl.show(screenshot=screenshot)
+        pl_helper.show_plotter(pl, screenshot=screenshot)
 
     def __repr__(self) -> str:
         """String representation of the component."""

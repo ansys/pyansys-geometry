@@ -7,7 +7,7 @@ import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.math import Matrix33, Point2D
-from ansys.geometry.core.misc import UNIT_ANGLE, UNIT_LENGTH, Angle, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import SketchSegment
 from ansys.geometry.core.typing import Real
@@ -41,12 +41,12 @@ class Box(SketchFace):
 
         self._center = center
         if isinstance(angle, (int, float)):
-            angle = Angle(angle, UNIT_ANGLE)
+            angle = Angle(angle, DEFAULT_UNITS.ANGLE)
         angle = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
 
         rotation = Matrix33(
             spatial_rotation.from_euler(
-                "xyz", [0, 0, angle.value.m_as(UNIT_ANGLE)], degrees=False
+                "xyz", [0, 0, angle.value.m_as(UNITS.radian)], degrees=False
             ).as_matrix()
         )
 
@@ -126,10 +126,26 @@ class Box(SketchFace):
         return pv.Rectangle(
             np.array(
                 [
-                    [self._corner_1.x.m_as(UNIT_LENGTH), self._corner_1.y.m_as(UNIT_LENGTH), 0],
-                    [self._corner_2.x.m_as(UNIT_LENGTH), self._corner_2.y.m_as(UNIT_LENGTH), 0],
-                    [self._corner_3.x.m_as(UNIT_LENGTH), self._corner_3.y.m_as(UNIT_LENGTH), 0],
-                    [self._corner_4.x.m_as(UNIT_LENGTH), self._corner_4.y.m_as(UNIT_LENGTH), 0],
+                    [
+                        self._corner_1.x.m_as(DEFAULT_UNITS.LENGTH),
+                        self._corner_1.y.m_as(DEFAULT_UNITS.LENGTH),
+                        0,
+                    ],
+                    [
+                        self._corner_2.x.m_as(DEFAULT_UNITS.LENGTH),
+                        self._corner_2.y.m_as(DEFAULT_UNITS.LENGTH),
+                        0,
+                    ],
+                    [
+                        self._corner_3.x.m_as(DEFAULT_UNITS.LENGTH),
+                        self._corner_3.y.m_as(DEFAULT_UNITS.LENGTH),
+                        0,
+                    ],
+                    [
+                        self._corner_4.x.m_as(DEFAULT_UNITS.LENGTH),
+                        self._corner_4.y.m_as(DEFAULT_UNITS.LENGTH),
+                        0,
+                    ],
                 ],
                 dtype=np.float_,
             )

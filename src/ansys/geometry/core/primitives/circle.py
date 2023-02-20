@@ -25,19 +25,19 @@ class Circle:
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D]
         Origin of the circle.
-    radius : Union[Quantity, Distance]
+    radius : Union[Quantity, Distance, Real]
         Radius of the circle.
     reference : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
-        X-plane direction.
+        X-axis direction.
     axis : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
-        Z-plane direction.
+        Z-axis direction.
     """
 
     @check_input_types
     def __init__(
         self,
         origin: Union[np.ndarray, RealSequence, Point3D],
-        radius: Union[Quantity, Distance],
+        radius: Union[Quantity, Distance, Real],
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):

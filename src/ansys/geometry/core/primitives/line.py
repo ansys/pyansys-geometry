@@ -19,6 +19,17 @@ from ansys.geometry.core.typing import RealSequence
 
 
 class Line:
+    """
+    Provides 3D ``Line`` representation.
+
+    Parameters
+    ----------
+    origin : Union[~numpy.ndarray, RealSequence, Point3D]
+        Origin of the line.
+    direction : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+        Direction of the line.
+    """
+
     @check_input_types
     def __init__(
         self,
