@@ -259,6 +259,8 @@ jobs:
     name: Testing and coverage (Linux)
     needs: [smoke-tests]
     runs-on: ubuntu-latest
+    env:
+      ALLOW_PLOTTING: "true"
 
     steps:
       - name: Login in Github Container registry
