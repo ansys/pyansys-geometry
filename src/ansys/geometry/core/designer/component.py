@@ -213,7 +213,7 @@ class Component:
         """
         # Sanity checks on inputs
         distance = distance if isinstance(distance, Distance) else Distance(distance)
-        extrude_distance = distance if isinstance(distance, Quantity) else distance.value
+        extrude_distance = distance.value
         check_pint_unit_compatibility(extrude_distance.units, DEFAULT_UNITS.SERVER_LENGTH)
 
         # Perform extrusion request
