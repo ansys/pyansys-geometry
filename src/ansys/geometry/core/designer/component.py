@@ -35,6 +35,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import Frame, Point3D, UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, Distance, check_pint_unit_compatibility
 from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
@@ -190,7 +191,7 @@ class Component:
     @protect_grpc
     @check_input_types
     def extrude_sketch(
-        self, name: str, sketch: Sketch, distance: Union[Quantity, Distance]
+        self, name: str, sketch: Sketch, distance: Union[Quantity, Distance, Real]
     ) -> Body:
         """Create a solid body by extruding the given sketch profile up to the given distance.
 
@@ -202,7 +203,7 @@ class Component:
             User-defined label for the new solid body.
         sketch : Sketch
             Two-dimensional sketch source for the extrusion.
-        distance : Union[Quantity, Distance]
+        distance : Union[Quantity, Distance, Real]
             Distance to extrude the solid body.
 
         Returns
@@ -211,6 +212,7 @@ class Component:
             Extruded body from the given sketch.
         """
         # Sanity checks on inputs
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
         extrude_distance = distance if isinstance(distance, Quantity) else distance.value
         check_pint_unit_compatibility(extrude_distance.units, DEFAULT_UNITS.SERVER_LENGTH)
 
