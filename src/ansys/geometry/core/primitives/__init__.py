@@ -2,7 +2,7 @@
 
 from ansys.geometry.core.primitives.circle import Circle, CircleEvaluation
 from ansys.geometry.core.primitives.cone import Cone, ConeEvaluation
-from ansys.geometry.core.primitives.cylinder import Cylinder
+from ansys.geometry.core.primitives.cylinder import Cylinder, CylinderEvaluation
 from ansys.geometry.core.primitives.ellipse import Ellipse, EllipseEvaluation
 from ansys.geometry.core.primitives.line import Line, LineEvaluation
 from ansys.geometry.core.primitives.parameterization import (

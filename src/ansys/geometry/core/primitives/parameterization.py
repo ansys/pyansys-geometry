@@ -57,6 +57,9 @@ class ParamUV:
         self._u /= other._u
         self._v /= other._v
 
+    def __repr__(self) -> str:
+        return f"ParamUV(u={self.u}, v={self.v})"
+
 
 class Interval:
     """
@@ -102,6 +105,9 @@ class Interval:
 
         return self.end - self.start
 
+    def __repr__(self) -> str:
+        return f"Interval(start={self.start}, end={self.end})"
+
 
 class ParamForm(Enum):
     """The form of the parameterization."""
@@ -143,3 +149,6 @@ class Parameterization:
     def interval(self) -> Interval:
         """The interval of the parameterization."""
         return self._interval
+
+    def __repr__(self) -> str:
+        return f"Parameterization(form={self.form}, type={self.type}, interval={self.interval})"
