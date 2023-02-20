@@ -372,7 +372,7 @@ class Component:
     @protect_grpc
     @check_input_types
     def translate_bodies(
-        self, bodies: List[Body], direction: UnitVector3D, distance: Union[Quantity, Distance]
+        self, bodies: List[Body], direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
     ) -> None:
         """Translate the geometry bodies in a specified direction by a given distance.
 
@@ -387,14 +387,13 @@ class Component:
             List of bodies to translate by the same distance.
         direction: UnitVector3D
             Direction of the translation.
-        distance: Union[Quantity, Distance]
+        distance: Union[Quantity, Distance, Real]
             Magnitude of the translation.
 
         Returns
         -------
         None
         """
-        check_pint_unit_compatibility(distance, DEFAULT_UNITS.SERVER_LENGTH)
         body_ids_found = []
 
         for body in bodies:
@@ -408,18 +407,16 @@ class Component:
                 )
                 pass
 
-        magnitude = (
-            distance.m_as(DEFAULT_UNITS.SERVER_LENGTH)
-            if not isinstance(distance, Distance)
-            else distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
-        )
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+
+        translation_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
 
         self._grpc_client.log.debug(f"Translating {body_ids_found}...")
         self._bodies_stub.Translate(
             TranslateRequest(
                 ids=body_ids_found,
                 direction=unit_vector_to_grpc_direction(direction),
-                distance=magnitude,
+                distance=translation_magnitude,
             )
         )
 

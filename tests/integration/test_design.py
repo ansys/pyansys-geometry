@@ -728,6 +728,7 @@ def test_single_body_translation(modeler: Modeler):
 
     body_circle_comp.translate(UnitVector3D([1, 0, 0]), Distance(50, UNITS.mm))
     body_polygon_comp.translate(UnitVector3D([-1, 1, -1]), Quantity(88, UNITS.mm))
+    body_polygon_comp.translate(UnitVector3D([-1, 1, -1]), 101)
 
 
 def test_bodies_translation(modeler: Modeler):
@@ -754,11 +755,12 @@ def test_bodies_translation(modeler: Modeler):
     body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch_2, Quantity(30, UNITS.mm))
 
     design.translate_bodies(
-        [body_circle_comp, body_polygon_comp], UnitVector3D([1, 0, 0]), Quantity(48, UNITS.mm)
+        [body_circle_comp, body_polygon_comp], UnitVector3D([1, 0, 0]), Distance(48, UNITS.mm)
     )
     design.translate_bodies(
         [body_circle_comp, body_polygon_comp], UnitVector3D([0, -1, 1]), Quantity(88, UNITS.mm)
     )
+    design.translate_bodies([body_circle_comp, body_polygon_comp], UnitVector3D([0, -1, 1]), 101)
 
     # Try translating a body that does not belong to this component - no error thrown,
     # but no operation performed either.
