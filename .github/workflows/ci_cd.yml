@@ -274,7 +274,9 @@ jobs:
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
 
       - name: Install linux deps libgl1-mesa-glx xvfb
-        run: sudo apt-get install xvfb libgl1-mesa-glx
+        run: |
+          sudo apt-get update
+          sudo apt-get install xvfb libgl1-mesa-glx
 
       - name: Checkout repository
         uses: actions/checkout@v3
