@@ -273,15 +273,23 @@ jobs:
           docker pull ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
 
-      - name: Install libgl1-mesa-glx
+      - name: Install linux deps libgl1-mesa-glx xvfb
         run: sudo apt-get install libgl1-mesa-glx
 
-      - name: Run pytest
-        uses: pyansys/actions/tests-pytest@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          requires-xvfb: true
-          pytest-extra-args: "--service-os=linux"
+
+      - name: Install ansys-geometry-core[tests]
+        run: pip install .[tests]
+
+      - name: Run pytest
+        run: |
+         xvfb-run pytest --service-os=linux
 
       - name: Stop the Geometry service
         if: always()
