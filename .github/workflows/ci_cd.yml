@@ -273,6 +273,9 @@ jobs:
           docker pull ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
 
+      - name: Install libgl1-mesa-glx
+        run: sudo apt-get install libgl1-mesa-glx
+
       - name: Run pytest
         uses: pyansys/actions/tests-pytest@v3
         with:
