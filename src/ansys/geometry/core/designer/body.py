@@ -30,13 +30,9 @@ from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials import Material
 from ansys.geometry.core.math import UnitVector3D
-from ansys.geometry.core.misc import (
-    DEFAULT_UNITS,
-    Distance,
-    check_pint_unit_compatibility,
-    check_type,
-)
+from ansys.geometry.core.misc import DEFAULT_UNITS, Distance, check_type
 from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
@@ -374,24 +370,23 @@ class Body:
 
     @protect_grpc
     @check_input_types
-    def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance]) -> None:
+    def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]) -> None:
         """Translates the geometry body in the specified direction by a given distance.
 
         Parameters
         ----------
         direction: UnitVector3D
             Direction of the translation.
-        distance: Union[Quantity, Distance]
+        distance: Union[Quantity, Distance, Real]
             Magnitude of the translation.
 
         Returns
         -------
         None
         """
-        translate_distance = distance if isinstance(distance, Quantity) else distance.value
-        check_pint_unit_compatibility(translate_distance.units, DEFAULT_UNITS.SERVER_LENGTH)
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
 
-        translation_magnitude = translate_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+        translation_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
 
         self._grpc_client.log.debug(f"Translating body {self.id}.")
 
