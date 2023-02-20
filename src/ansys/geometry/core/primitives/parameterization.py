@@ -5,6 +5,59 @@ from beartype import beartype as check_input_types
 from ansys.geometry.core.typing import Real
 
 
+class ParamUV:
+    """
+    Parameter class containing 2 parameters: (u, v). Likened to a 2D point in UV space
+    Used as an argument in parametric surface evaluations. This matches the service
+    implementation for the Geometry service.
+
+    Parameters
+    ----------
+    u : Real
+        u-parameter.
+    v : Real
+        v-parameter.
+    """
+
+    def __init__(self, u: Real, v: Real) -> None:
+        self._u = u
+        self._v = v
+
+    @property
+    def u(self) -> Real:
+        """u-parameter."""
+        return self._u
+
+    @property
+    def v(self) -> Real:
+        """v-parameter."""
+        return self._v
+
+    @check_input_types
+    def __add__(self, other: "ParamUV") -> "ParamUV":
+        """Adds the u and v components of the other ParamUV to this ParamUV."""
+        self._u += other._u
+        self._v += other._v
+
+    @check_input_types
+    def __sub__(self, other: "ParamUV") -> "ParamUV":
+        """Subtracts the u and v components of the other ParamUV from this ParamUV."""
+        self._u -= other._u
+        self._v -= other._v
+
+    @check_input_types
+    def __mul__(self, other: "ParamUV") -> "ParamUV":
+        """Multiplies the u and v components of this ParamUV by the other ParamUV."""
+        self._u *= other._u
+        self._v *= other._v
+
+    @check_input_types
+    def __truediv__(self, other: "ParamUV") -> "ParamUV":
+        """Divides the u and v components of this ParamUV by the other ParamUV."""
+        self._u /= other._u
+        self._v /= other._v
+
+
 class Interval:
     """
     Interval class that defines a range of values.

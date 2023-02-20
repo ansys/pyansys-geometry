@@ -14,8 +14,9 @@ from ansys.geometry.core.primitives.parameterization import (
     Parameterization,
     ParamForm,
     ParamType,
+    ParamUV,
 )
-from ansys.geometry.core.primitives.surface_evaluation import ParamUV, SurfaceEvaluation
+from ansys.geometry.core.primitives.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.typing import Real, RealSequence
 
 
