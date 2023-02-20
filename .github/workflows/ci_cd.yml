@@ -259,8 +259,6 @@ jobs:
     name: Testing and coverage (Linux)
     needs: [smoke-tests]
     runs-on: ubuntu-latest
-    env:
-      ALLOW_PLOTTING: "true"
 
     steps:
       - name: Login in Github Container registry
@@ -291,10 +289,9 @@ jobs:
       - name: Install ansys-geometry-core[tests]
         run: pip install .[tests]
 
-      - name: Check plotting is allowed
-        run: python -c "from pyvista.plotting import system_supports_plotting; print("system_supports_plotting", system_supports_plotting())"
-
       - name: Run pytest
+        env:
+          ALLOW_PLOTTING: true
         run: |
           xvfb-run pytest --service-os=linux
 
