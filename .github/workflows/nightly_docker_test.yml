@@ -5,7 +5,7 @@ on:
     - cron: "0 3 * * *"
 
 env:
-  MAIN_PYTHON_VERSION: '3.9' # use python3.9, self-hosted has an issue with 3.10
+  MAIN_PYTHON_VERSION: '3.10'
   ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/pyansys/geometry:windows-latest-unstable
   ANSRV_GEO_IMAGE_LINUX_TAG: ghcr.io/pyansys/geometry:linux-latest-unstable
   ANSRV_GEO_PORT: 710
@@ -28,7 +28,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          python-version: '3.9' # use python3.9, self-hosted has an issue with 3.10
           cache: 'pip'
           cache-dependency-path: 'pyproject.toml'
 
@@ -91,14 +91,23 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Pull, launch, and validate geometry service
+      - name: Pull and launch geometry service
         run: |
           docker pull ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
 
       - name: Run pytest
         uses: pyansys/actions/tests-pytest@v3
+        env:
+          ALLOW_PLOTTING: true
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          requires-xvfb: true
           pytest-extra-args: "--service-os=linux"
+          requires-xvfb: true
+
+      - name: Stop the Geometry service
+        if: always()
+        run: |
+          docker stop ${{ env.GEO_CONT_NAME }}
+          docker logs ${{ env.GEO_CONT_NAME }}
+          docker rm ${{ env.GEO_CONT_NAME }}
