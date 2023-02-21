@@ -24,6 +24,8 @@ copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc."
 release = version = __version__
 cname = os.getenv("DOCUMENTATION_CNAME", default="nocname.com")
+switcher_version = get_version_match(__version__)
+docs_prefix = switcher_version if switcher_version == "dev" else f"release/{switcher_version}"
 
 # Select desired logo, theme, and declare the html title
 html_logo = pyansys_logo_black
@@ -40,7 +42,7 @@ html_context = {
 html_theme_options = {
     "switcher": {
         "json_url": f"https://{cname}/release/versions.json",
-        "version_match": get_version_match(__version__),
+        "version_match": switcher_version,
     },
     "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],
     "github_url": "https://github.com/pyansys/pygeometry",
@@ -172,19 +174,24 @@ nbsphinx_epilog = """
 
 .. admonition:: Download this example!
 
-    Download this example from this
-    `link <https://geometry.docs.pyansys.com/{{ env.docname }}.ipynb>`_.
+    Download this example as a Jupyter Notebook from
+    `here <{cname_pref}/{ipynb_file_loc}>`_.
 
-"""
+""".format(
+    cname_pref=f"https://{cname}/{docs_prefix}", ipynb_file_loc="{{ env.docname }}.ipynb"
+)
+
 nbsphinx_prolog = """
 
 .. admonition:: Download this example!
 
-    Download this example from this
-    `link <https://geometry.docs.pyansys.com/{{ env.docname }}.ipynb>`_.
+    Download this example as a Jupyter Notebook from
+    `here <{cname_pref}/{ipynb_file_loc}>`_.
 
 ----
-"""
+""".format(
+    cname_pref=f"https://{cname}/{docs_prefix}", ipynb_file_loc="{{ env.docname }}.ipynb"
+)
 
 typehints_defaults = "comma"
 simplify_optional_unions = False

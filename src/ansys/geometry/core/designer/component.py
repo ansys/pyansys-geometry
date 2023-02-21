@@ -39,6 +39,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import Frame, Point3D, UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, Distance, check_pint_unit_compatibility
 from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
@@ -209,7 +210,7 @@ class Component:
     @protect_grpc
     @check_input_types
     def extrude_sketch(
-        self, name: str, sketch: Sketch, distance: Union[Quantity, Distance]
+        self, name: str, sketch: Sketch, distance: Union[Quantity, Distance, Real]
     ) -> Body:
         """Create a solid body by extruding the given sketch profile up to the given distance.
 
@@ -221,7 +222,7 @@ class Component:
             User-defined label for the new solid body.
         sketch : Sketch
             Two-dimensional sketch source for the extrusion.
-        distance : Union[Quantity, Distance]
+        distance : Union[Quantity, Distance, Real]
             Distance to extrude the solid body.
 
         Returns
@@ -230,12 +231,11 @@ class Component:
             Extruded body from the given sketch.
         """
         # Sanity checks on inputs
-        extrude_distance = distance if isinstance(distance, Quantity) else distance.value
-        check_pint_unit_compatibility(extrude_distance.units, DEFAULT_UNITS.SERVER_LENGTH)
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
 
         # Perform extrusion request
         request = CreateExtrudedBodyRequest(
-            distance=extrude_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+            distance=distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
             parent=self.id,
             plane=plane_to_grpc_plane(sketch._plane),
             geometries=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
@@ -391,7 +391,7 @@ class Component:
     @protect_grpc
     @check_input_types
     def translate_bodies(
-        self, bodies: List[Body], direction: UnitVector3D, distance: Union[Quantity, Distance]
+        self, bodies: List[Body], direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
     ) -> None:
         """Translate the geometry bodies in a specified direction by a given distance.
 
@@ -406,14 +406,13 @@ class Component:
             List of bodies to translate by the same distance.
         direction: UnitVector3D
             Direction of the translation.
-        distance: Union[Quantity, Distance]
+        distance: Union[Quantity, Distance, Real]
             Magnitude of the translation.
 
         Returns
         -------
         None
         """
-        check_pint_unit_compatibility(distance, DEFAULT_UNITS.SERVER_LENGTH)
         body_ids_found = []
 
         for body in bodies:
@@ -427,18 +426,16 @@ class Component:
                 )
                 pass
 
-        magnitude = (
-            distance.m_as(DEFAULT_UNITS.SERVER_LENGTH)
-            if not isinstance(distance, Distance)
-            else distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
-        )
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+
+        translation_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
 
         self._grpc_client.log.debug(f"Translating {body_ids_found}...")
         self._bodies_stub.Translate(
             TranslateRequest(
                 ids=body_ids_found,
                 direction=unit_vector_to_grpc_direction(direction),
-                distance=magnitude,
+                distance=translation_magnitude,
             )
         )
 

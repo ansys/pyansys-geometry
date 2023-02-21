@@ -11,8 +11,6 @@ updates:
       - dependency-name: "grpcio"
     assignees: 
       - "pyansys-ci-bot"
-    reviewers: 
-      - "RobPasMue"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -22,5 +20,3 @@ updates:
       - "maintenance"
     assignees: 
       - "pyansys-ci-bot"
-    reviewers: 
-      - "RobPasMue"
