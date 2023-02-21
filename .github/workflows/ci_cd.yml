@@ -18,7 +18,7 @@ env:
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo
-  RESET_IMAGE_CACHE: 6
+  RESET_IMAGE_CACHE: 0
   IS_WORKFLOW_RUNNING: True
 
 concurrency:
@@ -132,11 +132,12 @@ jobs:
           docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
       
-      - uses: actions/cache@v3
+      - name: Restore images cache
+        uses: actions/cache@v3
         with:
           path: .\tests\integration\image_cache
-          key: pyvista-image-cache-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
-          restore-keys: pyvista-image-cache-v-${{ env.RESET_IMAGE_CACHE }}
+          key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
+          restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
 
       - name: Testing
         run: |
@@ -153,7 +154,7 @@ jobs:
       - name: Upload PyVista generated images (cache and results)
         uses: actions/upload-artifact@v3
         with:
-          name: pytest-pyvista-images
+          name: pytest-pyvista-images-${{ runner.os }}
           path: tests/integration/image_cache
           retention-days: 7
 
@@ -273,27 +274,31 @@ jobs:
           docker pull ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
 
-      - name: Install linux deps libgl1-mesa-glx xvfb
-        run: |
-          sudo apt-get update
-          sudo apt-get install xvfb libgl1-mesa-glx
-
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Restore images cache
+        uses: actions/cache@v3
         with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
-
-      - name: Install ansys-geometry-core[tests]
-        run: pip install .[tests]
+          path: tests/integration/image_cache
+          key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
+          restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
 
       - name: Run pytest
+        uses: pyansys/actions/tests-pytest@v3
         env:
           ALLOW_PLOTTING: true
-        run: |
-          xvfb-run pytest --service-os=linux
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          checkout: false
+          requires-xvfb: true
+
+      - name: Upload PyVista generated images (cache and results)
+        uses: actions/upload-artifact@v3
+        with:
+          name: pytest-pyvista-images-${{ runner.os }}
+          path: tests/integration/image_cache
+          retention-days: 7
 
       - name: Stop the Geometry service
         if: always()
