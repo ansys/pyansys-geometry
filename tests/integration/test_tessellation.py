@@ -7,7 +7,7 @@ from ansys.geometry.core.misc.units import UNITS, Quantity
 from ansys.geometry.core.sketch import Sketch
 
 
-def test_body_tessellate(modeler: Modeler):
+def test_body_tessellate(modeler: Modeler, skip_not_on_linux_service):
     """Test the body tessellation."""
     sketch_1 = Sketch()
     sketch_1.box(Point2D([2, 0], UNITS.m), Quantity(4, UNITS.m), Quantity(4, UNITS.m))
@@ -61,7 +61,7 @@ def test_body_tessellate(modeler: Modeler):
     assert mesh_2.n_arrays == 0
 
 
-def test_component_tessellate(modeler: Modeler):
+def test_component_tessellate(modeler: Modeler, skip_not_on_linux_service):
     """Test the component tessellation."""
 
     # Create a sketch
