@@ -35,7 +35,7 @@ html:
 	@$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	cd $(BUILDDIR)/html/examples
 	for d in */ ; do
-    	cd $d
+		cd $d
 		for f in ./*.ipynb; do
 			jupytext --to py $f
 		done
