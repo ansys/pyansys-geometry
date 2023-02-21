@@ -174,23 +174,27 @@ nbsphinx_epilog = """
 
 .. admonition:: Download this example!
 
-    Download this example as a Jupyter Notebook from
-    `here <{cname_pref}/{ipynb_file_loc}>`_.
+    Download this example as a `Jupyter Notebook <{cname_pref}/{ipynb_file_loc}>`_
+    or as a `Python script <{cname_pref}/{py_file_loc}>`_ from the previous links.
 
 """.format(
-    cname_pref=f"https://{cname}/{docs_prefix}", ipynb_file_loc="{{ env.docname }}.ipynb"
+    cname_pref=f"https://{cname}/{docs_prefix}",
+    ipynb_file_loc="{{ env.docname }}.ipynb",
+    py_file_loc="{{ env.docname }}.py",
 )
 
 nbsphinx_prolog = """
 
 .. admonition:: Download this example!
 
-    Download this example as a Jupyter Notebook from
-    `here <{cname_pref}/{ipynb_file_loc}>`_.
+    Download this example as a `Jupyter Notebook <{cname_pref}/{ipynb_file_loc}>`_
+    or as a `Python script <{cname_pref}/{py_file_loc}>`_ from the previous links.
 
 ----
 """.format(
-    cname_pref=f"https://{cname}/{docs_prefix}", ipynb_file_loc="{{ env.docname }}.ipynb"
+    cname_pref=f"https://{cname}/{docs_prefix}",
+    ipynb_file_loc="{{ env.docname }}.ipynb",
+    py_file_loc="{{ env.docname }}.py",
 )
 
 typehints_defaults = "comma"
