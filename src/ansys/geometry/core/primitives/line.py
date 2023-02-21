@@ -105,9 +105,7 @@ class Line:
         The parameter of a line specifies the distance from the `origin` in the
         direction of `direction`.
         """
-        return Parameterization(
-            ParamForm.OPEN, ParamType.LINEAR, Interval(float("-inf"), float("inf"))
-        )
+        return Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(np.NINF, np.inf))
 
 
 class LineEvaluation(CurveEvaluation):

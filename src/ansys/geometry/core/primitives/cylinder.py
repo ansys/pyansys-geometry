@@ -136,9 +136,7 @@ class Cylinder:
         The V parameter specifies the distance along the axis,
         with a zero parameter at the XY plane of the Cylinder.
         """
-        return Parameterization(
-            ParamForm.OPEN, ParamType.LINEAR, Interval(float("-inf"), float("inf"))
-        )
+        return Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(np.NINF, np.inf))
 
 
 class CylinderEvaluation(SurfaceEvaluation):

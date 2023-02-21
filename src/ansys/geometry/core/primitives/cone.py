@@ -166,9 +166,7 @@ class Cone:
 
         # V parameter interval depends on which way the cone opens
         start, end = (
-            (self.apex_param, float("inf"))
-            if self.apex_param < 0
-            else (float("-inf"), self.apex_param)
+            (self.apex_param, np.inf) if self.apex_param < 0 else (np.NINF, self.apex_param)
         )
         return Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(start, end))
 

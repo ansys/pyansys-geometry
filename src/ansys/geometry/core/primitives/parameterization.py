@@ -1,6 +1,7 @@
 from enum import Enum
 
 from beartype import beartype as check_input_types
+import numpy as np
 
 from ansys.geometry.core.typing import Real
 
@@ -93,11 +94,11 @@ class Interval:
 
     def is_open(self) -> bool:
         """If the interval is open (-inf, inf)."""
-        return self.start == float("-inf") and self.end == float("inf")
+        return np.isneginf(self.start) and np.isinf(self.end)
 
     def is_closed(self) -> bool:
         """If the interval is closed. Neither value is inf or -inf."""
-        return self.start > float("-inf") and self.end < float("inf")
+        return self.start > np.NINF and self.end < np.inf
 
     def get_span(self) -> Real:
         if not self.is_closed():
