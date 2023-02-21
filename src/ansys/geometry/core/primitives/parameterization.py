@@ -36,27 +36,71 @@ class ParamUV:
 
     @check_input_types
     def __add__(self, other: "ParamUV") -> "ParamUV":
-        """Adds the u and v components of the other ParamUV to this ParamUV."""
-        self._u += other._u
-        self._v += other._v
+        """
+        Adds the u and v components of the other ParamUV to this ParamUV.
+
+        Parameters
+        ----------
+        other : ParamUV
+            The parameters to add these parameters.
+
+        Returns
+        -------
+        ParamUV
+            The sum of the parameters.
+        """
+        return ParamUV(self._u + other._u, self._v + other._v)
 
     @check_input_types
     def __sub__(self, other: "ParamUV") -> "ParamUV":
-        """Subtracts the u and v components of the other ParamUV from this ParamUV."""
-        self._u -= other._u
-        self._v -= other._v
+        """
+        Subtracts the u and v components of the other ParamUV from this ParamUV.
+
+        Parameters
+        ----------
+        other : ParamUV
+            The parameters to subtract from these parameters.
+
+        Returns
+        -------
+        ParamUV
+            The difference of the parameters.
+        """
+        return ParamUV(self._u - other._u, self._v - other._v)
 
     @check_input_types
     def __mul__(self, other: "ParamUV") -> "ParamUV":
-        """Multiplies the u and v components of this ParamUV by the other ParamUV."""
-        self._u *= other._u
-        self._v *= other._v
+        """
+        Multiplies the u and v components of this ParamUV by the other ParamUV.
+
+        Parameters
+        ----------
+        other : ParamUV
+            The parameters to multiply by these parameters.
+
+        Returns
+        -------
+        ParamUV
+            The product of the parameters.
+        """
+        return ParamUV(self._u * other._u, self._v * other._v)
 
     @check_input_types
     def __truediv__(self, other: "ParamUV") -> "ParamUV":
-        """Divides the u and v components of this ParamUV by the other ParamUV."""
-        self._u /= other._u
-        self._v /= other._v
+        """
+        Divides the u and v components of this ParamUV by the other ParamUV.
+
+        Parameters
+        ----------
+        other : ParamUV
+            The parameters to divide these parameters by.
+
+        Returns
+        -------
+        ParamUV
+            The quotient of the parameters.
+        """
+        return ParamUV(self._u / other._u, self._v / other._v)
 
     def __repr__(self) -> str:
         return f"ParamUV(u={self.u}, v={self.v})"
@@ -93,14 +137,36 @@ class Interval:
         return self._end
 
     def is_open(self) -> bool:
-        """If the interval is open (-inf, inf)."""
+        """
+        If the interval is open (-inf, inf).
+
+        Returns
+        -------
+        bool
+            True if both ends of the interval are negative and positive infinity respectively.
+        """
         return np.isneginf(self.start) and np.isinf(self.end)
 
     def is_closed(self) -> bool:
-        """If the interval is closed. Neither value is inf or -inf."""
+        """
+        If the interval is closed. Neither value is inf or -inf.
+
+        Returns
+        -------
+        bool
+            True if neither bound of the interval is infinite.
+        """
         return self.start > np.NINF and self.end < np.inf
 
     def get_span(self) -> Real:
+        """
+        Returns the quantity contained by the interval. Interval must be closed.
+
+        Returns
+        -------
+        Real
+            The difference between the end and start of the interval.
+        """
         if not self.is_closed():
             raise ValueError("Interval must be closed to get the span.")
 
@@ -111,7 +177,7 @@ class Interval:
 
 
 class ParamForm(Enum):
-    """The form of the parameterization."""
+    """ParamForm enum class that defines the form of a Parameterization."""
 
     OPEN = 1
     CLOSED = 2
@@ -120,7 +186,7 @@ class ParamForm(Enum):
 
 
 class ParamType(Enum):
-    """The type of the parameterization."""
+    """ParamType enum class that defines the type of a Parameterization."""
 
     LINEAR = 1
     CIRCULAR = 2
@@ -128,7 +194,18 @@ class ParamType(Enum):
 
 
 class Parameterization:
-    """Parameterization class describes the parameters of a given geometry."""
+    """
+    Parameterization class describes the parameters of a specific geometry.
+
+    Parameters
+    ----------
+    form : ParamForm
+        Form of the parameterization.
+    type : ParamType
+        Type of the parameterization.
+    interval : Interval
+        Interval of the parameterization.
+    """
 
     @check_input_types
     def __init__(self, form: ParamForm, type: ParamType, interval: Interval) -> None:
