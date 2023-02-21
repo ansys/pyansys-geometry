@@ -6,7 +6,7 @@ on:
     tags:
       - "*"
     branches:
-      - main
+      - release/0.2
 
 env:
   MAIN_PYTHON_VERSION: '3.10'
