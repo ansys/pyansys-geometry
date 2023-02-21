@@ -147,7 +147,7 @@ jobs:
       - name: Upload integration test logs
         uses: actions/upload-artifact@v3
         with:
-          name: integration-test-logs
+          name: integration-test-logs-${{ runner.os }}
           path: tests/integration/logs
           retention-days: 7
 
@@ -293,6 +293,13 @@ jobs:
           pytest-extra-args: "--service-os=linux"
           checkout: false
           requires-xvfb: true
+
+      - name: Upload integration test logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: integration-test-logs-${{ runner.os }}
+          path: tests/integration/logs
+          retention-days: 7
 
       - name: Upload PyVista generated images (cache and results)
         uses: actions/upload-artifact@v3
