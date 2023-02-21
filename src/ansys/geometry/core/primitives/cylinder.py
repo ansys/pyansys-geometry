@@ -85,7 +85,22 @@ class Cylinder:
         return self._axis
 
     def surface_area(self, height: Union[Quantity, Distance, Real]) -> Quantity:
-        """Surface area of the cylinder."""
+        """
+        Surface area of the cylinder.
+
+        Parameters
+        ----------
+        height : Quantity, Distance, Real
+            By nature, a cylinder is infinite. If you want to get the surface area,
+            you must bound it by a height. Normally a cylinder surface is not closed
+            (does not have "caps" on the ends). This method will assume it is closed
+            for the purpose of getting the surface area.
+
+        Returns
+        -------
+        Quantity
+            The surface area of the temporarily bounded cylinder.
+        """
         height = height if isinstance(height, Distance) else Distance(height)
         if height.value <= 0:
             raise ValueError("Height must be a real positive value.")
@@ -93,7 +108,22 @@ class Cylinder:
         return 2 * np.pi * self.radius * height.value + 2 * np.pi * self.radius**2
 
     def volume(self, height: Union[Quantity, Distance, Real]) -> Quantity:
-        """Volume of the cylinder."""
+        """
+        Volume of the cylinder.
+
+        Parameters
+        ----------
+        height : Quantity, Distance, Real
+            By nature, a cylinder is infinite. If you want to get the volume,
+            you must bound it by a height. Normally a cylinder surface is not closed
+            (does not have "caps" on the ends). This method will assume it is closed
+            for the purpose of getting the volume.
+
+        Returns
+        -------
+        Quantity
+            The volume of the temporarily bounded cylinder.
+        """
         height = height if isinstance(height, Distance) else Distance(height)
         if height.value <= 0:
             raise ValueError("Height must be a real positive value.")
@@ -111,11 +141,35 @@ class Cylinder:
         )
 
     def evaluate(self, parameter: ParamUV) -> "CylinderEvaluation":
-        """Evaluate the cylinder at the given parameters."""
+        """
+        Evaluate the cylinder at the given parameters.
+
+        Parameters
+        ----------
+        parameter : ParamUV
+            The parameters (u,v) at which to evaluate the cylinder.
+
+        Returns
+        -------
+        CylinderEvaluation
+            The resulting evaluation.
+        """
         return CylinderEvaluation(self, parameter)
 
     def project_point(self, point: Point3D) -> "CylinderEvaluation":
-        """Project a point onto the cylinder and return its ``CylinderEvaluation``."""
+        """
+        Project a point onto the cylinder and return its ``CylinderEvaluation``.
+
+        Parameters
+        ----------
+        point : Point3D
+            The point to project onto the cylinder.
+
+        Returns
+        -------
+        CylinderEvaluation
+            The resulting evaluation.
+        """
         circle = Circle(self.origin, self.radius, self.dir_x, self.dir_z)
         u = circle.project_point(point).parameter
 
@@ -128,6 +182,11 @@ class Cylinder:
         """
         The U parameter specifies the clockwise angle around the axis (right hand corkscrew law),
         with a zero parameter at `dir_x`, and a period of 2*pi.
+
+        Returns
+        -------
+        Parameterization
+            Information about how a cylinder's u parameter is parameterized.
         """
         return Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
 
@@ -135,6 +194,11 @@ class Cylinder:
         """
         The V parameter specifies the distance along the axis,
         with a zero parameter at the XY plane of the Cylinder.
+
+        Returns
+        -------
+        Parameterization
+            Information about how a cylinders's v parameter is parameterized.
         """
         return Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(np.NINF, np.inf))
 
@@ -167,7 +231,14 @@ class CylinderEvaluation(SurfaceEvaluation):
         return self._parameter
 
     def position(self) -> Point3D:
-        """The point on the cylinder, based on the evaluation."""
+        """
+        The position of the evaluation.
+
+        Returns
+        -------
+        Point3D
+            The point that lies on the cylinder at this evaluation.
+        """
         return (
             self.cylinder.origin
             + self.cylinder.radius.m * self.__cylinder_normal()
@@ -175,55 +246,132 @@ class CylinderEvaluation(SurfaceEvaluation):
         )
 
     def normal(self) -> UnitVector3D:
-        """The normal to the surface."""
+        """
+        The normal to the surface.
+
+        Returns
+        -------
+        UnitVector3D
+            The normal unit vector to the cylinder at this evaluation.
+        """
         return UnitVector3D(self.__cylinder_normal())
 
     def __cylinder_normal(self) -> Vector3D:
-        """The normal to the cylinder."""
+        """
+        The normal to the surface.
+
+        Returns
+        -------
+        UnitVector3D
+            The normal unit vector to the cylinder at this evaluation.
+        """
         return (
             np.cos(self.parameter.u) * self.cylinder.dir_x
             + np.sin(self.parameter.u) * self.cylinder.dir_y
         )
 
     def __cylinder_tangent(self) -> Vector3D:
-        """The tangent to the cylinder."""
+        """Private tangent helper method."""
         return (
             -np.sin(self.parameter.u) * self.cylinder.dir_x
             + np.cos(self.parameter.u) * self.cylinder.dir_y
         )
 
     def u_derivative(self) -> Vector3D:
-        """The first derivative with respect to u."""
+        """
+        The first derivative with respect to u.
+
+        Returns
+        -------
+        Vector3D
+            The first derivative with respect to u.
+        """
         return self.cylinder.radius.m * self.__cylinder_tangent()
 
     def v_derivative(self) -> Vector3D:
-        """The first derivative with respect to v."""
+        """
+        The first derivative with respect to v.
+
+        Returns
+        -------
+        Vector3D
+            The first derivative with respect to v.
+        """
         return self.cylinder.dir_z
 
     def uu_derivative(self) -> Vector3D:
-        """The second derivative with respect to u."""
+        """
+        The second derivative with respect to u.
+
+        Returns
+        -------
+        Vector3D
+            The second derivative with respect to u.
+        """
         return -self.cylinder.radius.m * self.__cylinder_normal()
 
     def uv_derivative(self) -> Vector3D:
-        """The second derivative with respect to u and v."""
+        """
+        The second derivative with respect to u and v.
+
+        Returns
+        -------
+        Vector3D
+            The second derivative with respect to u and v.
+        """
         return Vector3D([0, 0, 0])
 
     def vv_derivative(self) -> Vector3D:
-        """The second derivative with respect to v."""
+        """
+        The second derivative with respect to v.
+
+        Returns
+        -------
+        Vector3D
+            The second derivative with respect to v.
+        """
         return Vector3D([0, 0, 0])
 
     def min_curvature(self) -> Real:
-        """The minimum curvature."""
+        """
+        The minimum curvature of the cylinder.
+
+        Returns
+        -------
+        Real
+            The minimum curvature of the cylinder.
+        """
         return 0
 
     def min_curvature_direction(self) -> UnitVector3D:
-        """The minimum curvature direction."""
+        """
+        The minimum curvature direction.
+
+        Returns
+        -------
+        UnitVector3D
+            The minimum curvature direction.
+        """
         return UnitVector3D(self.cylinder.dir_z)
 
     def max_curvature(self) -> Real:
-        """The maximum curvature."""
+        """
+        The maximum curvature of the cylinder.
+
+        Returns
+        -------
+        Real
+            The maximum curvature of the cylinder.
+        """
         return 1.0 / self.cylinder.radius.m
 
     def max_curvature_direction(self) -> UnitVector3D:
-        """The maximum curvature direction."""
+        """
+        The maximum curvature direction.
+
+        Returns
+        -------
+        UnitVector3D
+            The maximum curvature direction.
+        """
         return UnitVector3D(self.u_derivative())

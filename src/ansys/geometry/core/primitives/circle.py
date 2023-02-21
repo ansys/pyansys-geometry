@@ -198,6 +198,7 @@ class CircleEvaluation(CurveEvaluation):
     """
 
     def __init__(self, circle: Circle, parameter: Real) -> None:
+        """``CircleEvaluation`` class constructor."""
         self._circle = circle
         self._parameter = parameter
 
