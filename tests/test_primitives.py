@@ -551,10 +551,16 @@ def test_circle_evaluation():
     eval2 = circle.project_point(Point3D([1, 1, 0]))
 
     # TODO: enforce Accuracy in Point3D __eq__ ? want to be able to say:
-    assert eval2.position() == Point3D([np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
-    assert eval2.tangent() == UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
-    assert eval2.first_derivative() == UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
-    assert eval2.second_derivative() == UnitVector3D([-np.sqrt(2) / 2, -np.sqrt(2) / 2, 0])
+    assert np.array(eval2.position()) == pytest.approx(Point3D([np.sqrt(2) / 2, np.sqrt(2) / 2, 0]))
+    assert np.array(eval2.tangent()) == pytest.approx(
+        UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
+    )
+    assert np.array(eval2.first_derivative()) == pytest.approx(
+        UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
+    )
+    assert np.array(eval2.second_derivative()) == pytest.approx(
+        UnitVector3D([-np.sqrt(2) / 2, -np.sqrt(2) / 2, 0])
+    )
     assert eval2.curvature() == 1
 
 
