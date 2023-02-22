@@ -235,7 +235,14 @@ class CircleEvaluation(CurveEvaluation):
         )
 
     def normal(self) -> UnitVector3D:
-        """The normal to the circle"""
+        """
+        The normal to the circle.
+
+        Returns
+        -------
+        UnitVector3D
+            The normal unit vector to the circle at this evaluation.
+        """
         return (
             np.cos(self.parameter) * self.circle.dir_x + np.sin(self.parameter) * self.circle.dir_y
         )

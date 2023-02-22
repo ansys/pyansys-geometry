@@ -293,6 +293,14 @@ class EllipseEvaluation(CurveEvaluation):
         ).normalize()
 
     def normal(self) -> UnitVector3D:
+        """
+        The normal of the evaluation.
+
+        Returns
+        -------
+        UnitVector3D
+            The normal unit vector to the ellipse at this evaluation.
+        """
         return UnitVector3D.from_points(self.ellipse.origin, self.position())
 
     def first_derivative(self) -> Vector3D:

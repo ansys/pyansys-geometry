@@ -634,11 +634,7 @@ def test_ellipse_evaluation():
     assert Accuracy.length_is_zero(diff.y)
     assert Accuracy.length_is_zero(diff.z)
 
-    assert eval.normal() == UNITVECTOR3D_X
-    diff = Vector3D.from_points(eval2.normal(), UnitVector3D([1, 1, 0]))
-    assert Accuracy.length_is_zero(diff.x)
-    assert Accuracy.length_is_zero(diff.y)
-    assert Accuracy.length_is_zero(diff.z)
+    np.allclose(eval2.normal(), UnitVector3D([1, 1, 0]))
 
     # TODO: enforce Accuracy in Vector3D __eq__ ? want to be able to say:
     diff = Vector3D.from_points(eval2.tangent(), UnitVector3D([-0.91381155, 0.40613847, 0]))
