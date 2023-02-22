@@ -234,6 +234,12 @@ class CircleEvaluation(CurveEvaluation):
             np.cos(self.parameter) * self.circle.dir_y - np.sin(self.parameter) * self.circle.dir_x
         )
 
+    def normal(self) -> UnitVector3D:
+        """The normal to the circle"""
+        return (
+            np.cos(self.parameter) * self.circle.dir_x + np.sin(self.parameter) * self.circle.dir_y
+        )
+
     def first_derivative(self) -> Vector3D:
         """
         The first derivative of the evaluation. The first derivative is in the direction of the

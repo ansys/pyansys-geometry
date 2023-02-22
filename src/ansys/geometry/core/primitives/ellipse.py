@@ -292,6 +292,9 @@ class EllipseEvaluation(CurveEvaluation):
             - (self.ellipse.major_radius * np.sin(self.parameter) * self.ellipse.dir_x).m
         ).normalize()
 
+    def normal(self) -> UnitVector3D:
+        return UnitVector3D.from_points(self.ellipse.origin, self.position())
+
     def first_derivative(self) -> Vector3D:
         """
         The first derivative of the evaluation. The first derivative is in the direction of the

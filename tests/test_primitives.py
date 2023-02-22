@@ -488,6 +488,7 @@ def test_circle_evaluation():
     assert eval.circle == circle
     assert eval.position() == Point3D([1, 0, 0])
     assert eval.tangent() == UNITVECTOR3D_Y
+    assert eval.normal() == UNITVECTOR3D_X
     assert eval.first_derivative() == UNITVECTOR3D_Y
     assert eval.second_derivative() == UnitVector3D([-1, 0, 0])
     assert eval.curvature() == 1
@@ -500,6 +501,8 @@ def test_circle_evaluation():
     assert np.array(eval2.tangent()) == pytest.approx(
         UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
     )
+    assert np.allclose(eval2.normal(), UnitVector3D([1, 1, 0]))
+
     assert np.array(eval2.first_derivative()) == pytest.approx(
         UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
     )
@@ -617,6 +620,7 @@ def test_ellipse_evaluation():
     assert eval.ellipse == ellipse
     assert eval.position() == Point3D([3, 0, 0])
     assert eval.tangent() == UNITVECTOR3D_Y
+    assert eval.normal() == UNITVECTOR3D_X
     assert eval.first_derivative().normalize() == UNITVECTOR3D_Y
     assert eval.second_derivative().normalize() == UnitVector3D([-1, 0, 0])
     assert eval.curvature() == 0.75
@@ -626,6 +630,12 @@ def test_ellipse_evaluation():
 
     # TODO: enforce Accuracy in Point3D __eq__ ? want to be able to say:
     diff = Vector3D.from_points(eval2.position(), Point3D([1.66410059, 1.66410059, 0]))
+    assert Accuracy.length_is_zero(diff.x)
+    assert Accuracy.length_is_zero(diff.y)
+    assert Accuracy.length_is_zero(diff.z)
+
+    assert eval.normal() == UNITVECTOR3D_X
+    diff = Vector3D.from_points(eval2.normal(), UnitVector3D([1, 1, 0]))
     assert Accuracy.length_is_zero(diff.x)
     assert Accuracy.length_is_zero(diff.y)
     assert Accuracy.length_is_zero(diff.z)
