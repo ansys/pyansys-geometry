@@ -11,7 +11,7 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector3D,
 )
-from ansys.geometry.core.misc import UNITS, Accuracy, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Distance
 from ansys.geometry.core.primitives import (
     Circle,
     Cone,
@@ -389,29 +389,14 @@ def test_torus():
     assert t_1.origin.x == origin.x
     assert t_1.origin.y == origin.y
     assert t_1.origin.z == origin.z
-    assert t_1.major_radius == major_radius
-    assert t_1.minor_radius == minor_radius
-
-    t_1.major_radius = new_major_radius = 2000
-    t_1.minor_radius = new_minor_radius = 1000
-
-    assert t_1.origin.x == origin.x
-    assert t_1.origin.y == origin.y
-    assert t_1.origin.z == origin.z
-    assert t_1.major_radius == new_major_radius
-    assert t_1.minor_radius == new_minor_radius
+    assert t_1.major_radius == major_radius * DEFAULT_UNITS.LENGTH
+    assert t_1.minor_radius == minor_radius * DEFAULT_UNITS.LENGTH
 
     with pytest.raises(BeartypeCallHintParamViolation):
         Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), "A", 200)
 
     with pytest.raises(BeartypeCallHintParamViolation):
         Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, "A")
-
-    with pytest.raises(BeartypeCallHintParamViolation):
-        t_1.major_radius = "A"
-
-    with pytest.raises(BeartypeCallHintParamViolation):
-        t_1.minor_radius = "A"
 
     with pytest.raises(BeartypeCallHintParamViolation):
         Torus(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
@@ -437,43 +422,25 @@ def test_torus_units():
             origin,
             UnitVector3D([12, 31, 99]),
             UnitVector3D([25, 39, 82]),
-            major_radius,
-            minor_radius,
-            UNITS.celsius,
+            Quantity(major_radius, UNITS.celsius),
+            Quantity(minor_radius, UNITS.celsius),
         )
 
     t_1 = Torus(
         origin,
         UnitVector3D([12, 31, 99]),
         UnitVector3D([25, 39, 82]),
-        major_radius,
-        minor_radius,
-        unit,
+        Quantity(major_radius, unit),
+        Quantity(minor_radius, unit),
     )
 
-    # Verify rejection of invalid base unit type
-    with pytest.raises(
-        TypeError,
-        match=r"The pint.Unit provided as an input should be a \[length\] quantity.",
-    ):
-        t_1.unit = UNITS.celsius
-
     # Check that the units are correctly in place
-    assert t_1.unit == unit
+    assert t_1.major_radius.u == unit
+    assert t_1.minor_radius.u == unit
 
-    # Request for radius/height and ensure they are in mm
-    assert t_1.major_radius == major_radius
-    assert t_1.minor_radius == minor_radius
-
-    # Check that the actual values are in base units (i.e. DEFAULT_UNITS.LENGTH)
-    assert t_1._major_radius == (t_1.major_radius * t_1.unit).to_base_units().magnitude
-    assert t_1._minor_radius == (t_1.minor_radius * t_1.unit).to_base_units().magnitude
-
-    # Set unit to cm now... and check if the values changed
-    t_1.unit = new_unit = UNITS.cm
-    assert t_1.major_radius == UNITS.convert(major_radius, unit, new_unit)
-    assert t_1.minor_radius == UNITS.convert(minor_radius, unit, new_unit)
-    assert t_1.unit == new_unit
+    # Request for radii and ensure they are in mm
+    assert t_1.major_radius.m == major_radius
+    assert t_1.minor_radius.m == minor_radius
 
 
 def test_circle():
