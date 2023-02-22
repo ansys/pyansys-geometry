@@ -173,7 +173,7 @@ class Ellipse:
         Returns
         -------
         bool
-            Returns true if this ellipse is coincident with the other.
+            Returns ``True`` if this ellipse is coincident with the other.
         """
         return (
             Accuracy.length_is_equal(self.major_radius.m, other.major_radius.m)
@@ -231,7 +231,7 @@ class Ellipse:
         Returns
         -------
         Parameterization
-            Information about how a ellipse is parameterized.
+            Information about how an ellipse is parameterized.
         """
         return Parameterization(ParamForm.PERIODIC, ParamType.OTHER, Interval(0, 2 * np.pi))
 

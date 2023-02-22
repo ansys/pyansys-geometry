@@ -90,7 +90,7 @@ class Cylinder:
 
         Parameters
         ----------
-        height : Quantity, Distance, Real
+        height : Union[Quantity, Distance, Real]
             By nature, a cylinder is infinite. If you want to get the surface area,
             you must bound it by a height. Normally a cylinder surface is not closed
             (does not have "caps" on the ends). This method will assume it is closed

@@ -103,7 +103,7 @@ class Line:
         Returns
         -------
         bool
-            Returns true if this line is coincident with the other.
+            Returns ``True`` if this line is coincident with the other.
         """
         if self == other:
             return True
@@ -128,7 +128,7 @@ class Line:
         Returns
         -------
         bool
-            Returns true if this line is opposite the other.
+            Returns ``True`` if this line is opposite to the other.
         """
         if self.is_coincident_line(other):
             return self.direction.is_opposite(other.direction)
