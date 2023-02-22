@@ -76,12 +76,6 @@ class Ellipse:
         """Origin of the ellipse."""
         return self._origin
 
-    @origin.setter
-    @check_input_types
-    def origin(self, origin: Point3D) -> None:
-        """Set the origin of the ellipse."""
-        self._origin = origin
-
     @property
     def major_radius(self) -> Quantity:
         """Major radius of the ellipse."""
