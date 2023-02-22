@@ -30,7 +30,7 @@ IMAGE_RESULTS_DIR = Path(Path(__file__).parent, "image_cache", "results")
 
 
 @skip_no_xserver
-def test_plot_body(modeler: Modeler, verify_image_cache):
+def test_plot_body(modeler: Modeler, verify_image_cache, skip_not_on_linux_service):
     """Test plotting of the body."""
 
     # Create a Sketch
@@ -48,7 +48,7 @@ def test_plot_body(modeler: Modeler, verify_image_cache):
 
 
 @skip_no_xserver
-def test_plot_component(modeler: Modeler, verify_image_cache):
+def test_plot_component(modeler: Modeler, verify_image_cache, skip_not_on_linux_service):
     """Test plotting of the component."""
 
     # Create a Sketch
@@ -277,7 +277,8 @@ def test_plot_dummy_gear(verify_image_cache):
     sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_dummy_gear.png"))
 
 
-def test_extrude_dummy_gear(modeler: Modeler, verify_image_cache):
+@skip_no_xserver
+def test_extrude_dummy_gear(modeler: Modeler, verify_image_cache, skip_not_on_linux_service):
     """Test plotting and extrusion of a dummy gear."""
 
     # Create a sketch instance
@@ -303,6 +304,7 @@ def test_extrude_dummy_gear(modeler: Modeler, verify_image_cache):
     box_body.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_extrude_dummy_gear.png"))
 
 
+@skip_no_xserver
 def test_plot_spur_gear(verify_image_cache):
     """Test plotting of a spur gear."""
     # Create a sketch instance
@@ -319,7 +321,8 @@ def test_plot_spur_gear(verify_image_cache):
     sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_spur_gear.png"))
 
 
-def test_extrude_spur_gear(modeler: Modeler, verify_image_cache):
+@skip_no_xserver
+def test_extrude_spur_gear(modeler: Modeler, verify_image_cache, skip_not_on_linux_service):
     """Test plotting and extrusion of a spur gear."""
 
     # Create a sketch instance

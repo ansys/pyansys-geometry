@@ -29,3 +29,15 @@ pdf:
 	@$(SPHINXBUILD) -M latex "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	cd $(SPHINXBUILD)/latex && latexmk -r latexmkrc -pdf *.tex -interaction=nonstopmode || true
 	(test -f $(SPHINXBUILD)/latex/*.pdf && echo pdf exists) || exit 1
+
+# Build HTML files and generate examples as .py files
+html:
+	@$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	cd $(BUILDDIR)/html/examples
+	for d in */ ; do
+		cd $d
+		for f in ./*.ipynb; do
+			jupytext --to py $f
+		done
+		cd -
+	done
