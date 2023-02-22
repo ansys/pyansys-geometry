@@ -496,7 +496,6 @@ def test_circle_evaluation():
     # Test evaluation at (.785) by projecting a point
     eval2 = circle.project_point(Point3D([1, 1, 0]))
 
-    # TODO: enforce Accuracy in Point3D __eq__ ? want to be able to say:
     assert np.array(eval2.position()) == pytest.approx(Point3D([np.sqrt(2) / 2, np.sqrt(2) / 2, 0]))
     assert np.array(eval2.tangent()) == pytest.approx(
         UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
@@ -628,7 +627,6 @@ def test_ellipse_evaluation():
     # Test evaluation at (t) by projecting a point
     eval2 = ellipse.project_point(Point3D([3, 3, 0]))
 
-    # TODO: enforce Accuracy in Point3D __eq__ ? want to be able to say:
     diff = Vector3D.from_points(eval2.position(), Point3D([1.66410059, 1.66410059, 0]))
     assert Accuracy.length_is_zero(diff.x)
     assert Accuracy.length_is_zero(diff.y)
@@ -640,7 +638,6 @@ def test_ellipse_evaluation():
     assert Accuracy.length_is_zero(diff.y)
     assert Accuracy.length_is_zero(diff.z)
 
-    # TODO: enforce Accuracy in Vector3D __eq__ ? want to be able to say:
     diff = Vector3D.from_points(eval2.tangent(), UnitVector3D([-0.91381155, 0.40613847, 0]))
     assert Accuracy.length_is_zero(diff.x)
     assert Accuracy.length_is_zero(diff.y)
