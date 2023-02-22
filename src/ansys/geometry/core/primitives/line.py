@@ -46,24 +46,10 @@ class Line:
         """Origin of the line."""
         return self._origin
 
-    @origin.setter
-    @check_input_types
-    def origin(self, origin: Point3D) -> None:
-        """Set the origin of the line."""
-        self._origin = origin
-
     @property
     def direction(self) -> UnitVector3D:
         """Direction of the line."""
         return self._direction
-
-    @direction.setter
-    @check_input_types
-    def direction(self, direction: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D]):
-        """Set the direction of the line."""
-        self._direction = (
-            UnitVector3D(direction) if not isinstance(direction, UnitVector3D) else direction
-        )
 
     def __eq__(self, other: object) -> bool:
         """Equals operator for the ``Line`` class."""

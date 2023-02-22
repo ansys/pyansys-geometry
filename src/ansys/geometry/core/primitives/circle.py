@@ -60,12 +60,6 @@ class Circle:
         """Origin of the circle."""
         return self._origin
 
-    @origin.setter
-    @check_input_types
-    def origin(self, origin: Point3D) -> None:
-        """Set the origin of the circle."""
-        self._origin = origin
-
     @property
     def radius(self) -> Quantity:
         """Radius of the circle."""
