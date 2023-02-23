@@ -11,7 +11,7 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector3D,
 )
-from ansys.geometry.core.misc import UNITS, Accuracy, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Distance
 from ansys.geometry.core.primitives import (
     Circle,
     Cone,
@@ -160,20 +160,8 @@ def test_sphere():
     assert Accuracy.length_is_equal(s_1.surface_area.m, 1.25663706e5)
     assert Accuracy.length_is_equal(s_1.volume.m, 4.1887902e6)
 
-    s_1.origin = new_origin = Point3D([42, 88, 99])
-
-    assert s_1.origin.x == new_origin.x
-    assert s_1.origin.y == new_origin.y
-    assert s_1.origin.z == new_origin.z
-
-    s_2.origin = new_origin
-    assert s_1 == s_2
-
     with pytest.raises(BeartypeCallHintParamViolation):
         Sphere(origin, "A")
-
-    with pytest.raises(BeartypeCallHintParamViolation):
-        s_1.origin = "A"
 
 
 def test_sphere_units():
@@ -401,39 +389,14 @@ def test_torus():
     assert t_1.origin.x == origin.x
     assert t_1.origin.y == origin.y
     assert t_1.origin.z == origin.z
-    assert t_1.major_radius == major_radius
-    assert t_1.minor_radius == minor_radius
-
-    t_1.major_radius = new_major_radius = 2000
-    t_1.minor_radius = new_minor_radius = 1000
-
-    assert t_1.origin.x == origin.x
-    assert t_1.origin.y == origin.y
-    assert t_1.origin.z == origin.z
-    assert t_1.major_radius == new_major_radius
-    assert t_1.minor_radius == new_minor_radius
-
-    t_1.origin = new_origin = Point3D([42, 88, 99])
-    assert t_1.origin.x == new_origin.x
-    assert t_1.origin.y == new_origin.y
-    assert t_1.origin.z == new_origin.z
-    assert t_1.major_radius == new_major_radius
-    assert t_1.minor_radius == new_minor_radius
+    assert t_1.major_radius == major_radius * DEFAULT_UNITS.LENGTH
+    assert t_1.minor_radius == minor_radius * DEFAULT_UNITS.LENGTH
 
     with pytest.raises(BeartypeCallHintParamViolation):
         Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), "A", 200)
 
     with pytest.raises(BeartypeCallHintParamViolation):
         Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, "A")
-
-    with pytest.raises(BeartypeCallHintParamViolation):
-        t_1.major_radius = "A"
-
-    with pytest.raises(BeartypeCallHintParamViolation):
-        t_1.minor_radius = "A"
-
-    with pytest.raises(BeartypeCallHintParamViolation):
-        t_1.origin = "A"
 
     with pytest.raises(BeartypeCallHintParamViolation):
         Torus(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
@@ -459,43 +422,25 @@ def test_torus_units():
             origin,
             UnitVector3D([12, 31, 99]),
             UnitVector3D([25, 39, 82]),
-            major_radius,
-            minor_radius,
-            UNITS.celsius,
+            Quantity(major_radius, UNITS.celsius),
+            Quantity(minor_radius, UNITS.celsius),
         )
 
     t_1 = Torus(
         origin,
         UnitVector3D([12, 31, 99]),
         UnitVector3D([25, 39, 82]),
-        major_radius,
-        minor_radius,
-        unit,
+        Quantity(major_radius, unit),
+        Quantity(minor_radius, unit),
     )
 
-    # Verify rejection of invalid base unit type
-    with pytest.raises(
-        TypeError,
-        match=r"The pint.Unit provided as an input should be a \[length\] quantity.",
-    ):
-        t_1.unit = UNITS.celsius
-
     # Check that the units are correctly in place
-    assert t_1.unit == unit
+    assert t_1.major_radius.u == unit
+    assert t_1.minor_radius.u == unit
 
-    # Request for radius/height and ensure they are in mm
-    assert t_1.major_radius == major_radius
-    assert t_1.minor_radius == minor_radius
-
-    # Check that the actual values are in base units (i.e. DEFAULT_UNITS.LENGTH)
-    assert t_1._major_radius == (t_1.major_radius * t_1.unit).to_base_units().magnitude
-    assert t_1._minor_radius == (t_1.minor_radius * t_1.unit).to_base_units().magnitude
-
-    # Set unit to cm now... and check if the values changed
-    t_1.unit = new_unit = UNITS.cm
-    assert t_1.major_radius == UNITS.convert(major_radius, unit, new_unit)
-    assert t_1.minor_radius == UNITS.convert(minor_radius, unit, new_unit)
-    assert t_1.unit == new_unit
+    # Request for radii and ensure they are in mm
+    assert t_1.major_radius.m == major_radius
+    assert t_1.minor_radius.m == minor_radius
 
 
 def test_circle():
@@ -551,10 +496,16 @@ def test_circle_evaluation():
     eval2 = circle.project_point(Point3D([1, 1, 0]))
 
     # TODO: enforce Accuracy in Point3D __eq__ ? want to be able to say:
-    assert eval2.position() == Point3D([np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
-    assert eval2.tangent() == UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
-    assert eval2.first_derivative() == UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
-    assert eval2.second_derivative() == UnitVector3D([-np.sqrt(2) / 2, -np.sqrt(2) / 2, 0])
+    assert np.array(eval2.position()) == pytest.approx(Point3D([np.sqrt(2) / 2, np.sqrt(2) / 2, 0]))
+    assert np.array(eval2.tangent()) == pytest.approx(
+        UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
+    )
+    assert np.array(eval2.first_derivative()) == pytest.approx(
+        UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
+    )
+    assert np.array(eval2.second_derivative()) == pytest.approx(
+        UnitVector3D([-np.sqrt(2) / 2, -np.sqrt(2) / 2, 0])
+    )
     assert eval2.curvature() == 1
 
 

@@ -23,6 +23,12 @@ pv.OFF_SCREEN = True
 
 
 @pytest.fixture(scope="session")
+def skip_not_on_linux_service(service_os: str):
+    if service_os == "linux":
+        return pytest.skip("Implementation not available on Linux service.")  # skip!
+
+
+@pytest.fixture(scope="session")
 def docker_instance(use_existing_service):
     # This will only have a value in case that:
     #

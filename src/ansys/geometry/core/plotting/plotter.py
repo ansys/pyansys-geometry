@@ -377,7 +377,7 @@ class PlotterHelper:
             pl = Plotter()
         return pl
 
-    def show_plotter(self, plotter, screenshot):
+    def show_plotter(self, plotter: Plotter, screenshot: Optional[str] = None):
         """Shows the plotter or starts Trame service.
 
         Parameters
