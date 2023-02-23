@@ -91,6 +91,7 @@ class Design(Component):
         self._materials = []
         self._named_selections = {}
         self._beam_profiles = {}
+        self._update_states = {}
 
         self._grpc_client.log.debug("Design object instantiated successfully.")
 
@@ -108,6 +109,17 @@ class Design(Component):
     def beam_profiles(self) -> List[BeamProfile]:
         """List of beam profile available for the design."""
         return list(self._beam_profiles.values())
+
+    @property
+    def update_states(self) -> dict[str, int]:
+        """Dictionary that maps the id of each object in this design to its
+        update state (version)."""
+        return self._update_states
+
+    def fetch_update_states(self) -> None:
+        """Recursively fetches the update state of every object from the server."""
+        # Calling private method of parent class via name mangling
+        self._Component__fetch_sub_update_states(self.update_states)
 
     # TODO: allow for list of materials
     @protect_grpc

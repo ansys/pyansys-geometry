@@ -150,6 +150,25 @@ class Component:
         """
         return self._shared_topology
 
+    @protect_grpc
+    def __fetch_sub_update_states(self, dict: dict[str, int]):
+        """
+        Recursively fetches the update state of every object from the server.
+
+        Parameters
+        ----------
+        dict : dict[str, int]
+            The dictionary that will hold the mapping between object id's and update states.
+        """
+        for body in self.bodies:
+            dict[body.id] = body.get_update_state()
+            for face in body.faces:
+                dict[face.id] = face.get_update_state()
+            for edge in body.edges:
+                dict[edge.id] = edge.get_update_state()
+        for component in self.components:
+            component.__fetch_sub_update_states(dict)
+
     @check_input_types
     def add_component(self, name: str) -> "Component":
         """Add a new component nested under this component within the design assembly.
