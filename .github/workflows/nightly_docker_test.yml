@@ -53,7 +53,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Check if update available
+      - name: Check if Geometry service container update available
         id: check
         uses: lucacome/docker-image-update-checker@v1.2.1
         with:
