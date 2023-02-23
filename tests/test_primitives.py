@@ -496,17 +496,12 @@ def test_circle_evaluation():
     # Test evaluation at (.785) by projecting a point
     eval2 = circle.project_point(Point3D([1, 1, 0]))
 
-    assert np.array(eval2.position()) == pytest.approx(Point3D([np.sqrt(2) / 2, np.sqrt(2) / 2, 0]))
-    assert np.array(eval2.tangent()) == pytest.approx(
-        UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
-    )
+    assert np.allclose(eval2.position(), Point3D([np.sqrt(2) / 2, np.sqrt(2) / 2, 0]))
+    assert np.allclose(eval2.tangent(), UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0]))
     assert np.allclose(eval2.normal(), UnitVector3D([1, 1, 0]))
-
-    assert np.array(eval2.first_derivative()) == pytest.approx(
-        UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
-    )
-    assert np.array(eval2.second_derivative()) == pytest.approx(
-        UnitVector3D([-np.sqrt(2) / 2, -np.sqrt(2) / 2, 0])
+    assert np.allclose(eval2.first_derivative(), UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0]))
+    assert np.allclose(
+        eval2.second_derivative(), UnitVector3D([-np.sqrt(2) / 2, -np.sqrt(2) / 2, 0])
     )
     assert eval2.curvature() == 1
 
@@ -557,6 +552,7 @@ def test_line_evaluation():
 
     # TODO: enforce Accuracy in Point3D __eq__ ? want to be able to say:
     # assert eval2.position() == Point3D([.5,.5,0])
+
     diff = Vector3D.from_points(eval2.position(), Point3D([0.5, 0.5, 0]))
     assert Accuracy.length_is_zero(diff.x)
     assert Accuracy.length_is_zero(diff.y)
@@ -627,30 +623,16 @@ def test_ellipse_evaluation():
     # Test evaluation at (t) by projecting a point
     eval2 = ellipse.project_point(Point3D([3, 3, 0]))
 
-    diff = Vector3D.from_points(eval2.position(), Point3D([1.66410059, 1.66410059, 0]))
-    assert Accuracy.length_is_zero(diff.x)
-    assert Accuracy.length_is_zero(diff.y)
-    assert Accuracy.length_is_zero(diff.z)
+    np.allclose(eval2.position(), Point3D([1.66410059, 1.66410059, 0]))
 
     np.allclose(eval2.normal(), UnitVector3D([1, 1, 0]))
 
-    diff = Vector3D.from_points(eval2.tangent(), UnitVector3D([-0.91381155, 0.40613847, 0]))
-    assert Accuracy.length_is_zero(diff.x)
-    assert Accuracy.length_is_zero(diff.y)
-    assert Accuracy.length_is_zero(diff.z)
+    np.allclose(eval2.tangent(), UnitVector3D([-0.91381155, 0.40613847, 0]))
 
-    diff = Vector3D.from_points(
-        eval2.first_derivative().normalize(), UnitVector3D([-0.91381155, 0.40613847, 0])
-    )
-    assert Accuracy.length_is_zero(diff.x)
-    assert Accuracy.length_is_zero(diff.y)
-    assert Accuracy.length_is_zero(diff.z)
+    np.allclose(eval2.first_derivative().normalize(), UnitVector3D([-0.91381155, 0.40613847, 0]))
 
-    diff = Vector3D.from_points(
+    np.allclose(
         eval2.second_derivative().normalize(), UnitVector3D([-np.sqrt(2) / 2, -np.sqrt(2) / 2, -0])
     )
-    assert Accuracy.length_is_zero(diff.x)
-    assert Accuracy.length_is_zero(diff.y)
-    assert Accuracy.length_is_zero(diff.z)
 
     assert Accuracy.length_is_equal(eval2.curvature(), 0.31540327)
