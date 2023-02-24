@@ -243,7 +243,7 @@ class CircleEvaluation(CurveEvaluation):
         UnitVector3D
             The normal unit vector to the circle at this evaluation.
         """
-        return (
+        return UnitVector3D(
             np.cos(self.parameter) * self.circle.dir_x + np.sin(self.parameter) * self.circle.dir_y
         )
 
