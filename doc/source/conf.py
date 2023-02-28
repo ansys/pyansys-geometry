@@ -25,7 +25,6 @@ author = "ANSYS, Inc."
 release = version = __version__
 cname = os.getenv("DOCUMENTATION_CNAME", default="nocname.com")
 switcher_version = get_version_match(__version__)
-docs_prefix = switcher_version if switcher_version == "dev" else f"release/{switcher_version}"
 
 # Select desired logo, theme, and declare the html title
 html_logo = pyansys_logo_black
@@ -178,7 +177,7 @@ nbsphinx_epilog = """
     or as a `Python script <{cname_pref}/{py_file_loc}>`_ from the previous links.
 
 """.format(
-    cname_pref=f"https://{cname}/{docs_prefix}",
+    cname_pref=f"https://{cname}/version/{switcher_version}",
     ipynb_file_loc="{{ env.docname }}.ipynb",
     py_file_loc="{{ env.docname }}.py",
 )
@@ -192,7 +191,7 @@ nbsphinx_prolog = """
 
 ----
 """.format(
-    cname_pref=f"https://{cname}/{docs_prefix}",
+    cname_pref=f"https://{cname}/version/{switcher_version}",
     ipynb_file_loc="{{ env.docname }}.ipynb",
     py_file_loc="{{ env.docname }}.py",
 )
