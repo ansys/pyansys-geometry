@@ -41,7 +41,7 @@ html_context = {
 }
 html_theme_options = {
     "switcher": {
-        "json_url": f"https://{cname}/release/versions.json",
+        "json_url": f"https://{cname}/versions.json",
         "version_match": switcher_version,
     },
     "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],
