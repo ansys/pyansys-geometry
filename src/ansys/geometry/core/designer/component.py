@@ -75,7 +75,13 @@ class Component:
 
     @protect_grpc
     @check_input_types
-    def __init__(self, name: str, parent_component: Optional["Component"], grpc_client: GrpcClient):
+    def __init__(
+        self,
+        name: str,
+        parent_component: Optional["Component"],
+        template: Optional["Component"],
+        grpc_client: GrpcClient,
+    ):
         """Constructor method for the ``Component`` class."""
         self._grpc_client = grpc_client
         self._component_stub = ComponentsStub(self._grpc_client.channel)
@@ -83,8 +89,9 @@ class Component:
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 
         if parent_component:
+            template_id = template.id if template else ""
             new_component = self._component_stub.Create(
-                CreateRequest(name=name, parent=parent_component.id)
+                CreateRequest(name=name, parent=parent_component.id, template=template_id)
             )
             self._id = new_component.component.id
             self._name = new_component.component.name
@@ -151,7 +158,7 @@ class Component:
         return self._shared_topology
 
     @check_input_types
-    def add_component(self, name: str) -> "Component":
+    def add_component(self, name: str, template: Optional["Component"] = None) -> "Component":
         """Add a new component nested under this component within the design assembly.
 
         Parameters
@@ -164,7 +171,7 @@ class Component:
         Component
             New component with no children in the design assembly.
         """
-        self._components.append(Component(name, self, self._grpc_client))
+        self._components.append(Component(name, self, template, self._grpc_client))
         return self._components[-1]
 
     @protect_grpc
