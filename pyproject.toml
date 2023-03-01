@@ -107,9 +107,6 @@ src_paths = ["doc", "src", "tests"]
 [tool.coverage.run]
 source = ["ansys.geometry"]
 
-[tool.distutils.bdist_wheel]
-universal = true
-
 [tool.coverage.report]
 show_missing = true
 
