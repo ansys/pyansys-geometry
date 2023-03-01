@@ -13,7 +13,11 @@ from ansys.api.geometry.v0.bodies_pb2 import (
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import CreateBeamSegmentsRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.components_pb2 import CreateRequest, SetSharedTopologyRequest
+from ansys.api.geometry.v0.components_pb2 import (
+    CreateRequest,
+    GetAllRequest,
+    SetSharedTopologyRequest,
+)
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
 from ansys.api.geometry.v0.models_pb2 import EntityIdentifier, Line
 from beartype import beartype as check_input_types
@@ -63,6 +67,8 @@ class Component:
         User-defined label for the component.
     parent_component : Component
         Parent component to nest the new component under within the design assembly.
+    template : Component, optional
+        The component that the new component will become an instance of.
     grpc_client : GrpcClient
         Active supporting Geometry service instance for design modeling.
     """
@@ -81,6 +87,7 @@ class Component:
         parent_component: Optional["Component"],
         template: Optional["Component"],
         grpc_client: GrpcClient,
+        preexisting_id: str = None,
     ):
         """Constructor method for the ``Component`` class."""
         self._grpc_client = grpc_client
@@ -88,16 +95,20 @@ class Component:
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 
-        if parent_component:
-            template_id = template.id if template else ""
-            new_component = self._component_stub.Create(
-                CreateRequest(name=name, parent=parent_component.id, template=template_id)
-            )
-            self._id = new_component.component.id
-            self._name = new_component.component.name
+        if preexisting_id is None:
+            if parent_component:
+                template_id = template.id if template else ""
+                new_component = self._component_stub.Create(
+                    CreateRequest(name=name, parent=parent_component.id, template=template_id)
+                )
+                self._id = new_component.component.id
+                self._name = new_component.component.name
+            else:
+                self._name = name
+                self._id = None
         else:
             self._name = name
-            self._id = None
+            self._id = preexisting_id
 
         self._components = []
         self._bodies = []
@@ -106,6 +117,11 @@ class Component:
         self._parent_component = parent_component
         self._is_alive = True
         self._shared_topology = None
+        self._template = template
+
+        # If this is an instance component, we need to fetch data for it
+        if template:
+            self.populate_from_server()
 
     @property
     def id(self) -> str:
@@ -157,6 +173,34 @@ class Component:
         """
         return self._shared_topology
 
+    @property
+    def template(self) -> Union["Component", None]:
+        """Template of the component."""
+        return self._template
+
+    def populate_from_server(self) -> None:
+        """
+        Recursively requests the server for all subcomponents and bodies data. This data already
+        lives on the server, but sometimes we need to fetch it to populate the pygeometry data
+        model.
+        """
+        sub_components = self._component_stub.GetAll(
+            GetAllRequest(parent=f"components/{self.id}")
+        ).components
+        new_components = [
+            Component(sub_component.name, self, None, self._grpc_client, sub_component.id)
+            for sub_component in sub_components
+        ]
+        self._components = new_components
+        for sub_component in self._components:
+            sub_component.populate_from_server()
+
+        bodies = self._component_stub.GetBodies(EntityIdentifier(id=self.id)).bodies
+        new_bodies = [
+            Body(body.id, body.name, self, self._grpc_client, is_surface=False) for body in bodies
+        ]
+        self._bodies = new_bodies
+
     @check_input_types
     def add_component(self, name: str, template: Optional["Component"] = None) -> "Component":
         """Add a new component nested under this component within the design assembly.
@@ -165,6 +209,8 @@ class Component:
         ----------
         name : str
             User-defined label for the new component.
+        template : Component, optional
+            The component that the new component will become an instance of.
 
         Returns
         -------
@@ -802,6 +848,7 @@ class Component:
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Exists               : {self.is_alive}")
         lines.append(f"  Parent component     : {self.parent_component.name}")
+        lines.append(f"  Template component   : {self.template.name if self.template else None}")
         lines.append(f"  N Bodies             : {sum(alive_bodies)}")
         lines.append(f"  N Beams              : {len(self.beams)}")
         lines.append(f"  N Components         : {sum(alive_comps)}")
