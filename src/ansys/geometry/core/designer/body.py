@@ -226,7 +226,7 @@ class Body:
         if self.is_surface:
             self._commands_stub.AssignMidSurfaceThickness(
                 AssignMidSurfaceThicknessRequest(
-                    bodiesOrFaces=[self.id], thickness=thickness.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+                    bodies_or_faces=[self.id], thickness=thickness.m_as(DEFAULT_UNITS.SERVER_LENGTH)
                 )
             )
             self._surface_thickness = thickness
@@ -251,7 +251,7 @@ class Body:
         """
         if self.is_surface:
             self._commands_stub.AssignMidSurfaceOffsetType(
-                AssignMidSurfaceOffsetTypeRequest(bodiesOrFaces=[self.id], offsetType=offset.value)
+                AssignMidSurfaceOffsetTypeRequest(bodies_or_faces=[self.id], offset_type=offset.value)
             )
             self._surface_offset = offset
         else:
@@ -357,7 +357,7 @@ class Body:
                 body=self._id,
                 curves=curves,
                 direction=unit_vector_to_grpc_direction(direction),
-                closestFace=closest_face,
+                closest_face=closest_face,
             )
         )
 
