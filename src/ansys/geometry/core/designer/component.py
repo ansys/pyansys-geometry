@@ -16,28 +16,31 @@ from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.components_pb2 import (
     CreateRequest,
     GetAllRequest,
+    SetPlacementRequest,
     SetSharedTopologyRequest,
 )
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
-from ansys.api.geometry.v0.models_pb2 import EntityIdentifier, Line
+from ansys.api.geometry.v0.models_pb2 import Direction, EntityIdentifier, Line
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
 
 from ansys.geometry.core.connection import (
     GrpcClient,
+    grpc_matrix_to_matrix,
     plane_to_grpc_plane,
+    point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
     unit_vector_to_grpc_direction,
 )
-from ansys.geometry.core.connection.conversions import point3d_to_grpc_point
 from ansys.geometry.core.designer.beam import Beam, BeamProfile
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.math import Frame, Point3D, UnitVector3D
-from ansys.geometry.core.misc import DEFAULT_UNITS, Distance, check_pint_unit_compatibility
+from ansys.geometry.core.math import Frame, Matrix44, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.misc import DEFAULT_UNITS, Angle, Distance, check_pint_unit_compatibility
+from ansys.geometry.core.primitives import Line as primitive_Line
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -118,6 +121,7 @@ class Component:
         self._is_alive = True
         self._shared_topology = None
         self._template = template
+        self._placement = Matrix44()
 
         # If this is an instance component, we need to fetch data for it
         if template:
@@ -178,6 +182,65 @@ class Component:
         """Template of the component."""
         return self._template
 
+    @property
+    def placement(self):
+        """Placement of the component relative to its master."""
+        return self._placement
+
+    @protect_grpc
+    def modify_placement(
+        self,
+        translation: Optional[Vector3D] = None,
+        rotation_axis: Optional[primitive_Line] = None,
+        rotation_angle: Union[Quantity, Angle, Real] = 0,
+    ):
+        """
+        Applies a translation and/or rotation to the existing placement matrix of the component.
+        To reset a component's placement to an identity matrix, see
+        ``reset_placement()`` or call this method with no arguments.
+
+        Parameters
+        ----------
+        translation : Vector3D, optional
+            The vector that defines the desired translation to the component.
+        rotation_axis : Line, optional
+            The line that defines the axis to rotate the component about.
+        rotation_angle : Union[Quantity, Angle, Real], default=0
+            The angle to rotate the component around the axis.
+        """
+        t = (
+            Direction(x=translation.x, y=translation.y, z=translation.z)
+            if translation is not None
+            else None
+        )
+        p = point3d_to_grpc_point(rotation_axis.origin) if rotation_axis is not None else None
+        d = (
+            unit_vector_to_grpc_direction(rotation_axis.direction)
+            if rotation_axis is not None
+            else None
+        )
+
+        angle = rotation_angle if isinstance(rotation_angle, Angle) else Angle(rotation_angle)
+        a = angle.value.m
+
+        response = self._component_stub.SetPlacement(
+            SetPlacementRequest(
+                id=self.id,
+                translation=t,
+                rotation_axis_origin=p,
+                rotation_axis_direction=d,
+                rotation_angle=a,
+            )
+        )
+
+        self._placement = grpc_matrix_to_matrix(response.matrix)
+
+    def reset_placement(self):
+        """Resets a component's placement matrix to an identity matrix.
+        See ``modify_placement()``."""
+        self.modify_placement()
+
+    @protect_grpc
     def populate_from_server(self) -> None:
         """
         Recursively requests the server for all subcomponents and bodies data. This data already

@@ -7,13 +7,14 @@ from ansys.api.geometry.v0.models_pb2 import Ellipse as GRPCEllipse
 from ansys.api.geometry.v0.models_pb2 import Frame as GRPCFrame
 from ansys.api.geometry.v0.models_pb2 import Geometries
 from ansys.api.geometry.v0.models_pb2 import Line as GRPCLine
+from ansys.api.geometry.v0.models_pb2 import Matrix as GRPCMatrix
 from ansys.api.geometry.v0.models_pb2 import Plane as GRPCPlane
 from ansys.api.geometry.v0.models_pb2 import Point as GRPCPoint
 from ansys.api.geometry.v0.models_pb2 import Polygon as GRPCPolygon
 from ansys.api.geometry.v0.models_pb2 import Tessellation
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple
 
-from ansys.geometry.core.math import Frame, Plane, Point2D, Point3D, UnitVector3D
+from ansys.geometry.core.math import Frame, Matrix44, Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS
 from ansys.geometry.core.sketch import (
     Arc,
@@ -344,3 +345,23 @@ def tess_to_pd(tess: Tessellation) -> "PolyData":
     import pyvista as pv
 
     return pv.PolyData(np.array(tess.vertices).reshape(-1, 3), tess.faces)
+
+
+def grpc_matrix_to_matrix(m: GRPCMatrix) -> Matrix44:
+    """
+    Convert an ``ansys.api.geometry.Matrix`` class to a
+    :class:`ansys.geometry.core.math.Matrix44` class.
+    """
+    import numpy as np
+
+    return Matrix44(
+        np.round(
+            [
+                [m.m00, m.m01, m.m02, m.m03],
+                [m.m10, m.m11, m.m12, m.m13],
+                [m.m20, m.m21, m.m22, m.m23],
+                [m.m30, m.m31, m.m32, m.m33],
+            ],
+            16,
+        )
+    )
