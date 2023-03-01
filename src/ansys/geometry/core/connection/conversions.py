@@ -362,6 +362,6 @@ def grpc_matrix_to_matrix(m: GRPCMatrix) -> Matrix44:
                 [m.m20, m.m21, m.m22, m.m23],
                 [m.m30, m.m31, m.m32, m.m33],
             ],
-            16,
+            8,
         )
     )

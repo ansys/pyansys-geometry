@@ -38,7 +38,7 @@ from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.math import Frame, Matrix44, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math import Frame, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, Angle, Distance, check_pint_unit_compatibility
 from ansys.geometry.core.primitives import Line as primitive_Line
 from ansys.geometry.core.sketch import Sketch
@@ -106,6 +106,7 @@ class Component:
                 )
                 self._id = new_component.component.id
                 self._name = new_component.component.name
+                self._placement = grpc_matrix_to_matrix(new_component.component.placement)
             else:
                 self._name = name
                 self._id = None
@@ -121,7 +122,6 @@ class Component:
         self._is_alive = True
         self._shared_topology = None
         self._template = template
-        self._placement = Matrix44()
 
         # If this is an instance component, we need to fetch data for it
         if template:
@@ -250,11 +250,12 @@ class Component:
         sub_components = self._component_stub.GetAll(
             GetAllRequest(parent=f"components/{self.id}")
         ).components
-        new_components = [
-            Component(sub_component.name, self, None, self._grpc_client, sub_component.id)
-            for sub_component in sub_components
-        ]
-        self._components = new_components
+
+        for sub_component in sub_components:
+            c = Component(sub_component.name, self, None, self._grpc_client, sub_component.id)
+            c._placement = grpc_matrix_to_matrix(sub_component.placement)
+            self._components.append(c)
+
         for sub_component in self._components:
             sub_component.populate_from_server()
 
