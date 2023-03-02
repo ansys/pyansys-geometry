@@ -26,7 +26,7 @@ def _checker_method(comp: Component, comp_ref: Component) -> None:
         _checker_method(subcomp, subcomp_ref)
 
 
-def test_design_import_simple_case(modeler: Modeler):
+def test_design_import_simple_case(modeler: Modeler, skip_not_on_linux_service):
     # With the given session let's create a the following Design
     #
     # Create your design on the server side
