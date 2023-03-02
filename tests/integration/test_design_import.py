@@ -3,9 +3,27 @@
 from pint import Quantity
 
 from ansys.geometry.core import Modeler
+from ansys.geometry.core.designer import Component
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
+
+
+def _checker_method(comp: Component, comp_ref: Component) -> None:
+    # Check component features
+    assert comp.id == comp_ref.id
+    assert comp.name == comp_ref.name
+    assert len(comp.bodies) == len(comp_ref.bodies)
+    assert len(comp.components) == len(comp_ref.components)
+
+    # Check bodies (if any)
+    for body, body_ref in zip(comp.bodies, comp_ref.bodies):
+        assert body.id == body_ref.id
+        assert body.name == body_ref.name
+
+    # Check subcomponents
+    for subcomp, subcomp_ref in zip(comp.components, comp_ref.components):
+        _checker_method(subcomp, subcomp_ref)
 
 
 def test_design_import_simple_case(modeler: Modeler):
@@ -57,7 +75,10 @@ def test_design_import_simple_case(modeler: Modeler):
     # Now, let's create a new client session
     new_client = Modeler()
     read_design = new_client.read_existing_design()
-    #
-    # TODO: And now assert all its elements
-    assert read_design is None
+
+    # And now assert all its elements
+    assert read_design is not None
     assert len(new_client._designs) == 1
+
+    # Check the design
+    _checker_method(read_design, design)

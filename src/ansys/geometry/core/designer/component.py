@@ -13,15 +13,11 @@ from ansys.api.geometry.v0.bodies_pb2 import (
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import CreateBeamSegmentsRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.components_pb2 import (
-    CreateRequest,
-    GetAllRequest,
-    SetSharedTopologyRequest,
-)
+from ansys.api.geometry.v0.components_pb2 import CreateRequest, SetSharedTopologyRequest
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
 from ansys.api.geometry.v0.models_pb2 import EntityIdentifier, Line
 from beartype import beartype as check_input_types
-from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
+from beartype.typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
 from pint import Quantity
 
 from ansys.geometry.core.connection import (
@@ -820,22 +816,30 @@ class Component:
         lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
         return "\n".join(lines)
 
-    def __read_existing_component(self, component: "Component") -> None:
+    def __read_existing_component(self, component_as_json: Dict) -> None:
         # Given the existing component...
         #
         # Let's read the existing bodies first
-        # if self.parent_component is not None:
-        list_bodies_grpc = self._component_stub.GetBodies(EntityIdentifier(id=self.id))
-        for body_grpc in list_bodies_grpc:
-            self._bodies.append(Body(body_grpc.id, body_grpc.name, self, self._grpc_client))
+        bodies_json = component_as_json["bodies"]
+        subcomps_json = component_as_json["components"]
+        for body in bodies_json:
+            self._bodies.append(
+                Body(
+                    body["masterid"],
+                    body["name"],
+                    self,
+                    self._grpc_client,
+                    is_surface=(not body["isclosed"]),
+                )
+            )
 
         # Now, once all bodies have been read, let's get all subcomponents
-        list_subcomponents_grpc = self._component_stub.GetAll(GetAllRequest(parent=self.id))
-        for subcomp_grpc in list_subcomponents_grpc:
-            subcomp = Component("", component, self._grpc_client, read_existing_comp=True)
-            subcomp._id = subcomp_grpc.id
-            subcomp._name = subcomp_grpc.name
+        for subcomp_json in subcomps_json:
+            subcomp = Component("", self, self._grpc_client, read_existing_comp=True)
+            subcomp._id = subcomp_json["id"]
+            subcomp._name = subcomp_json["name"]
             self._components.append(subcomp)
-            self.__read_existing_component(subcomp)
+            subcomp.__read_existing_component(subcomp_json)
 
-        # TODO: WIP...
+        # Finally, return... just for readability purposes
+        return

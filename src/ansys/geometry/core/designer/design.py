@@ -9,7 +9,12 @@ from ansys.api.geometry.v0.commands_pb2 import (
     CreateBeamCircularProfileRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.designs_pb2 import ExportRequest, NewRequest, SaveAsRequest
+from ansys.api.geometry.v0.designs_pb2 import (
+    ExportRequest,
+    GetAsJsonRequest,
+    NewRequest,
+    SaveAsRequest,
+)
 from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.materials_pb2 import AddToDocumentRequest
 from ansys.api.geometry.v0.materials_pb2_grpc import MaterialsStub
@@ -472,19 +477,23 @@ class Design(Component):
         This method will just fill the ``Design`` object with all its
         existing ``Component`` and ``Body`` objects.
         """
+
+        import json
+
         # TODO: To be implemented...
         #
         # We have to get back:
         #
-        # - [ ] Components
-        # - [ ] Bodies
+        # - [X] Components
+        # - [X] Bodies
         # - [ ] Materials
         # - [ ] NamedSelections
         # - [ ] BeamProfiles
         # - [ ] Beams
         # - [ ] CoordinateSystems
         # - [ ] SharedTopology
-
+        #
+        #
         # First, let's start by getting the design object (i.e. root component)
         design = self._design_stub.GetActive(Empty())
         if not design:
@@ -494,5 +503,10 @@ class Design(Component):
             self._name = design.main_part.name
 
         # Now that we have verified that there is an active design
-        # on the service, let's keep reading it.
-        self._Component__read_existing_component(self)
+        # on the service, let's read it.
+        response = self._design_stub.GetAsJson(GetAsJsonRequest(id=""))
+        design_as_json: Dict = json.loads(response.json)
+
+        # Having the information available as a JSON file, it is now time
+        # to start creating the different bodies, components...
+        self._Component__read_existing_component(design_as_json["design"])
