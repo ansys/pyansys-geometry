@@ -251,7 +251,9 @@ class Body:
         """
         if self.is_surface:
             self._commands_stub.AssignMidSurfaceOffsetType(
-                AssignMidSurfaceOffsetTypeRequest(bodies_or_faces=[self.id], offset_type=offset.value)
+                AssignMidSurfaceOffsetTypeRequest(
+                    bodies_or_faces=[self.id], offset_type=offset.value
+                )
             )
             self._surface_offset = offset
         else:
