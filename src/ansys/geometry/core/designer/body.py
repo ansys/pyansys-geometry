@@ -500,10 +500,13 @@ class Body:
             return pv.PolyData() if merge else pv.MultiBlock()
 
         self._grpc_client.log.debug(f"Requesting tessellation for body {self.id}.")
+        # TODO: check cache for tessellation before making request to server
 
         resp = self._bodies_stub.GetTessellation(self._grpc_id)
-
-        pdata = [tess_to_pd(tess) for tess in resp.face_tessellation.values()]
+        pdata = [
+            tess_to_pd(tess).transform(self._parent_component.get_full_placement())
+            for tess in resp.face_tessellation.values()
+        ]
         comp = pv.MultiBlock(pdata)
         if merge:
             ugrid = comp.combine()

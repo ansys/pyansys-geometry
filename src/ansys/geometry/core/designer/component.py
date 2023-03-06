@@ -38,7 +38,7 @@ from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.math import Frame, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math import Frame, Matrix44, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, Angle, Distance, check_pint_unit_compatibility
 from ansys.geometry.core.primitives import Line as primitive_Line
 from ansys.geometry.core.sketch import Sketch
@@ -187,6 +187,20 @@ class Component:
         """Placement of the component relative to its master."""
         return self._placement
 
+    def get_full_placement(self) -> Matrix44:
+        """
+        Gets the placement matrix relative to the root. Recursively combines
+        placement matrices of parent components and returns the result.
+
+        Returns
+        -------
+        Matrix44
+            A 4x4 transformation matrix relative from the root component.
+        """
+        if self.parent_component is None:
+            return Matrix44()
+        return self.parent_component.get_full_placement() * self.placement
+
     @protect_grpc
     def modify_placement(
         self,
@@ -251,10 +265,13 @@ class Component:
             GetAllRequest(parent=f"components/{self.id}")
         ).components
 
+        new_components = []
+
         for sub_component in sub_components:
             c = Component(sub_component.name, self, None, self._grpc_client, sub_component.id)
             c._placement = grpc_matrix_to_matrix(sub_component.placement)
-            self._components.append(c)
+            new_components.append(c)
+        self._components = new_components
 
         for sub_component in self._components:
             sub_component.populate_from_server()
@@ -820,6 +837,7 @@ class Component:
             blocks_list.append(comp.tessellate(merge_bodies=merge_bodies))
 
         # Transform the list of MultiBlock objects into a single MultiBlock
+
         blocks = pv.MultiBlock(blocks_list)
 
         if merge_component:
