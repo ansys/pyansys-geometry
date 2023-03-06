@@ -183,7 +183,7 @@ class Component:
         return self._template
 
     @property
-    def placement(self):
+    def placement(self) -> Matrix44:
         """Placement of the component relative to its master."""
         return self._placement
 
@@ -837,7 +837,6 @@ class Component:
             blocks_list.append(comp.tessellate(merge_bodies=merge_bodies))
 
         # Transform the list of MultiBlock objects into a single MultiBlock
-
         blocks = pv.MultiBlock(blocks_list)
 
         if merge_component:
