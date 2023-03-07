@@ -131,7 +131,7 @@ jobs:
           INTERNAL_DOCKER_EXTRA_ENVS: ${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }}
         run: |
           echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
-          $env:INTERNAL_DOCKER_EXTRA_ENVS | Out-File -FilePath env.list 
+          $env:INTERNAL_DOCKER_EXTRA_ENVS | Out-File -FilePath env.list -Encoding UTF8
 
       - name: Start Geometry service and verify start
         run: |
@@ -226,7 +226,7 @@ jobs:
           INTERNAL_DOCKER_EXTRA_ENVS: ${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }}
         run: |
           echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
-          $env:INTERNAL_DOCKER_EXTRA_ENVS | Out-File -FilePath env.list 
+          $env:INTERNAL_DOCKER_EXTRA_ENVS | Out-File -FilePath env.list -Encoding UTF8
 
       - name: Start Geometry service and verify start
         run: |
