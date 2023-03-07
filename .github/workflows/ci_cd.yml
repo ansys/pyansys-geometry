@@ -129,13 +129,13 @@ jobs:
         if: runner.name == 'pygeometry-ci-1'
         run: |
           echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "DOCKER_EXTRA_ENVS=${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo ${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }} >> env.list
 
       - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
           $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
-          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER $env:DOCKER_EXTRA_ENVS -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
+          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER --env-file .\env.list -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
       
       - name: Restore images cache
@@ -222,13 +222,13 @@ jobs:
         if: runner.name == 'pygeometry-ci-1'
         run: |
           echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "DOCKER_EXTRA_ENVS=${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo ${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }} >> env.list
 
       - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
           $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
-          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER $env:DOCKER_EXTRA_ENVS -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
+          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER --env-file .\env.list -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Build the documentation (HTML)
