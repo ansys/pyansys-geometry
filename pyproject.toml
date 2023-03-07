@@ -76,7 +76,7 @@ doc = [
     "nbsphinx==0.8.12",
     "notebook==6.5.3",
     "numpydoc==1.5.0",
-    "panel==0.14.3",
+    "panel==0.14.4",
     "pyvista[trame]==0.38.3",
     "Sphinx==5.1.1",                        # PR349 - Duplicated documentation entries...
     "sphinx-autoapi==2.0.1",
