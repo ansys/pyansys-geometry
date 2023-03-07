@@ -125,6 +125,11 @@ jobs:
       - name: Download Geometry service container (if needed)
         run: docker pull $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
 
+      - name: Check runner and license server
+        if: runner.name == 'pygeometry-ci-1'
+        run: |
+          $env:ANSRV_GEO_LICENSE_SERVER = ${{ secrets.LICENSE_SERVER_INTERNAL }}
+
       - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
@@ -211,6 +216,11 @@ jobs:
 
       - name: Download Geometry service container (if needed)
         run: docker pull $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
+
+      - name: Check runner and license server
+        if: runner.name == 'pygeometry-ci-1'
+        run: |
+          $env:ANSRV_GEO_LICENSE_SERVER = ${{ secrets.LICENSE_SERVER_INTERNAL }}
 
       - name: Start Geometry service and verify start
         run: |
