@@ -74,7 +74,7 @@ doc = [
     "myst-parser==0.19.1",
     "nbconvert==7.2.9",
     "nbsphinx==0.8.12",
-    "notebook==6.5.2",
+    "notebook==6.5.3",
     "numpydoc==1.5.0",
     "panel==0.14.3",
     "pyvista[trame]==0.38.3",
