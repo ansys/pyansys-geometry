@@ -129,12 +129,13 @@ jobs:
         if: runner.name == 'pygeometry-ci-1'
         run: |
           echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.LICENSE_SERVER_INTERNAL }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "DOCKER_EXTRA_ENVS=${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
           $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
-          docker run --detach --name $env:GEO_CONT_NAME -e ANSYSLMD_LICENSE_FILE="1055@$env:ANSRV_GEO_LICENSE_SERVER" -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
+          docker run --detach --name $env:GEO_CONT_NAME -e ANSYSLIC_LMD=1055@$env:ANSRV_GEO_LICENSE_SERVER $env:DOCKER_EXTRA_ENVS -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
       
       - name: Restore images cache
@@ -221,12 +222,13 @@ jobs:
         if: runner.name == 'pygeometry-ci-1'
         run: |
           echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.LICENSE_SERVER_INTERNAL }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "DOCKER_EXTRA_ENVS=${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
           $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
-          docker run --detach --name $env:GEO_CONT_NAME -e ANSYSLMD_LICENSE_FILE="1055@$env:ANSRV_GEO_LICENSE_SERVER" -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
+          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER $env:DOCKER_EXTRA_ENVS -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Build the documentation (HTML)
@@ -282,7 +284,7 @@ jobs:
       - name: Pull and launch geometry service
         run: |
           docker pull ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e ANSYSLMD_LICENSE_FILE=1055@${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
 
       - name: Checkout repository
         uses: actions/checkout@v3
