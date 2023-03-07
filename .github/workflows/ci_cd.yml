@@ -135,7 +135,7 @@ jobs:
         run: |
           .\.venv\Scripts\Activate.ps1
           $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
-          docker run --detach --name $env:GEO_CONT_NAME -e ANSYSLIC_LMD=1055@$env:ANSRV_GEO_LICENSE_SERVER $env:DOCKER_EXTRA_ENVS -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
+          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER $env:DOCKER_EXTRA_ENVS -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
       
       - name: Restore images cache
