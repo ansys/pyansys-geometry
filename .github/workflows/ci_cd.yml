@@ -128,7 +128,7 @@ jobs:
       - name: Check runner and license server
         if: runner.name == 'pygeometry-ci-1'
         run: |
-          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.LICENSE_SERVER_INTERNAL }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "DOCKER_EXTRA_ENVS=${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Start Geometry service and verify start
@@ -221,7 +221,7 @@ jobs:
       - name: Check runner and license server
         if: runner.name == 'pygeometry-ci-1'
         run: |
-          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.LICENSE_SERVER_INTERNAL }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "DOCKER_EXTRA_ENVS=${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Start Geometry service and verify start
