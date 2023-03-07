@@ -134,7 +134,7 @@ jobs:
         run: |
           .\.venv\Scripts\Activate.ps1
           $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
-          docker run --detach --name $env:GEO_CONT_NAME -e ANSYSLMD_LICENSE_FILE=1055@$env:ANSRV_GEO_LICENSE_SERVER -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
+          docker run --detach --name $env:GEO_CONT_NAME -e ANSYSLMD_LICENSE_FILE="1055@$env:ANSRV_GEO_LICENSE_SERVER" -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
       
       - name: Restore images cache
@@ -226,7 +226,7 @@ jobs:
         run: |
           .\.venv\Scripts\Activate.ps1
           $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
-          docker run --detach --name $env:GEO_CONT_NAME -e ANSYSLMD_LICENSE_FILE=1055@$env:ANSRV_GEO_LICENSE_SERVER -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
+          docker run --detach --name $env:GEO_CONT_NAME -e ANSYSLMD_LICENSE_FILE="1055@$env:ANSRV_GEO_LICENSE_SERVER" -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Build the documentation (HTML)
