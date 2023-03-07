@@ -128,7 +128,7 @@ jobs:
       - name: Check runner and license server
         if: runner.name == 'pygeometry-ci-1'
         run: |
-          $env:ANSRV_GEO_LICENSE_SERVER = ${{ secrets.LICENSE_SERVER_INTERNAL }}
+          $env:ANSRV_GEO_LICENSE_SERVER="${{ secrets.LICENSE_SERVER_INTERNAL }}"
 
       - name: Start Geometry service and verify start
         run: |
@@ -220,7 +220,7 @@ jobs:
       - name: Check runner and license server
         if: runner.name == 'pygeometry-ci-1'
         run: |
-          $env:ANSRV_GEO_LICENSE_SERVER = ${{ secrets.LICENSE_SERVER_INTERNAL }}
+          $env:ANSRV_GEO_LICENSE_SERVER="${{ secrets.LICENSE_SERVER_INTERNAL }}"
 
       - name: Start Geometry service and verify start
         run: |
