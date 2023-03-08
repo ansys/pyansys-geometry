@@ -116,7 +116,7 @@ jobs:
         env:
           INTERNAL_DOCKER_EXTRA_ENVS: ${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }}
         run: |
-          $env:INTERNAL_DOCKER_EXTRA_ENVS | Out-File -FilePath $env:GITHUB_ENV -Append
+          $env:INTERNAL_DOCKER_EXTRA_ENVS | Out-File -FilePath env.list -Encoding UTF8
 
       - name: Check runner type (not needed)
         if: runner.name != 'pygeometry-ci-1'
@@ -215,7 +215,7 @@ jobs:
         env:
           INTERNAL_DOCKER_EXTRA_ENVS: ${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }}
         run: |
-          $env:INTERNAL_DOCKER_EXTRA_ENVS | Out-File -FilePath $env:GITHUB_ENV -Append
+          $env:INTERNAL_DOCKER_EXTRA_ENVS | Out-File -FilePath env.list -Encoding UTF8
 
       - name: Check runner type (not needed)
         if: runner.name != 'pygeometry-ci-1'
