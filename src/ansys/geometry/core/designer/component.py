@@ -316,7 +316,7 @@ class Component:
             f"Setting shared topology type {share_type.value} on {self.id}."
         )
         self._component_stub.SetSharedTopology(
-            SetSharedTopologyRequest(id=self.id, shareType=share_type.value)
+            SetSharedTopologyRequest(id=self.id, share_type=share_type.value)
         )
 
         # Store the SharedTopologyType set on the client
