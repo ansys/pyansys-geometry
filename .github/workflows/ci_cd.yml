@@ -52,9 +52,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
 
+        should-release: 
+          - ${{ github.event_name == 'push' && contains(github.ref, 'refs/tags') }}
+        exclude:
+          - should-release: false
+            os: macos-latest
     steps:
       - name: Build wheelhouse and perform smoke test
         uses: pyansys/actions/build-wheelhouse@v4
@@ -62,25 +67,6 @@ jobs:
           library-name: ${{ env.PACKAGE_NAME }}
           library-namespace: ${{ env.PACKAGE_NAMESPACE }}
           operating-system: ${{ matrix.os }}
-          python-version: ${{ matrix.python-version }}
-
-  macos-build:
-    name: Build and Smoke tests (macOS)
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    runs-on: macos-latest
-    needs: [style]
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
-
-    steps:
-      - name: Build wheelhouse and perform smoke test
-        uses: pyansys/actions/build-wheelhouse@v4
-        with:
-          library-name: ${{ env.PACKAGE_NAME }}
-          library-namespace: ${{ env.PACKAGE_NAMESPACE }}
-          operating-system: ${{ runner.os }}
           python-version: ${{ matrix.python-version }}
 
 # =================================================================================================
@@ -329,7 +315,7 @@ jobs:
   release:
     name: Release project
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    needs: [package, macos-build]
+    needs: [package]
     runs-on: ubuntu-latest
     steps:
       - name: Release to the private PyPI repository
