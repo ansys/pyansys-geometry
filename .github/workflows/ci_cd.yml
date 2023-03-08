@@ -113,8 +113,10 @@ jobs:
 
       - name: Check runner type
         if: runner.name == 'pygeometry-ci-1'
+        env:
+          INTERNAL_DOCKER_EXTRA_ENVS: ${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }}
         run: |
-          ${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }} | Out-File -FilePath $env:GITHUB_ENV -Append
+          $env:INTERNAL_DOCKER_EXTRA_ENVS | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Check runner type (not needed)
         if: runner.name != 'pygeometry-ci-1'
@@ -210,8 +212,10 @@ jobs:
 
       - name: Check runner type
         if: runner.name == 'pygeometry-ci-1'
+        env:
+          INTERNAL_DOCKER_EXTRA_ENVS: ${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }}
         run: |
-          ${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }} | Out-File -FilePath $env:GITHUB_ENV -Append
+          $env:INTERNAL_DOCKER_EXTRA_ENVS | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Check runner type (not needed)
         if: runner.name != 'pygeometry-ci-1'
