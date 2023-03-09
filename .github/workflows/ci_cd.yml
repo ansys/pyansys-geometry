@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys code style checks
-        uses: pyansys/actions/code-style@v3
+        uses: pyansys/actions/code-style@v4
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: pyansys/actions/doc-style@v3
+        uses: pyansys/actions/doc-style@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -52,35 +52,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
 
+        should-release: 
+          - ${{ github.event_name == 'push' && contains(github.ref, 'refs/tags') }}
+        exclude:
+          - should-release: false
+            os: macos-latest
     steps:
       - name: Build wheelhouse and perform smoke test
-        uses: pyansys/actions/build-wheelhouse@v3
+        uses: pyansys/actions/build-wheelhouse@v4
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           library-namespace: ${{ env.PACKAGE_NAMESPACE }}
           operating-system: ${{ matrix.os }}
-          python-version: ${{ matrix.python-version }}
-
-  macos-build:
-    name: Build and Smoke tests (macOS)
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    runs-on: macos-latest
-    needs: [style]
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
-
-    steps:
-      - name: Build wheelhouse and perform smoke test
-        uses: pyansys/actions/build-wheelhouse@v3
-        with:
-          library-name: ${{ env.PACKAGE_NAME }}
-          library-namespace: ${{ env.PACKAGE_NAMESPACE }}
-          operating-system: ${{ runner.os }}
           python-version: ${{ matrix.python-version }}
 
 # =================================================================================================
@@ -125,11 +111,23 @@ jobs:
       - name: Download Geometry service container (if needed)
         run: docker pull $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
 
+      - name: Check runner type
+        if: runner.name == 'pygeometry-ci-1'
+        env:
+          INTERNAL_DOCKER_EXTRA_ENVS: ${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }}
+        run: |
+          $env:INTERNAL_DOCKER_EXTRA_ENVS | Out-File -FilePath env.list -Encoding UTF8
+
+      - name: Check runner type (not needed)
+        if: runner.name != 'pygeometry-ci-1'
+        run: |
+          echo "" | Out-File -FilePath env.list -Encoding UTF8
+
       - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
           $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
-          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
+          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER --env-file .\env.list -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
       
       - name: Restore images cache
@@ -212,11 +210,23 @@ jobs:
       - name: Download Geometry service container (if needed)
         run: docker pull $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
 
+      - name: Check runner type
+        if: runner.name == 'pygeometry-ci-1'
+        env:
+          INTERNAL_DOCKER_EXTRA_ENVS: ${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }}
+        run: |
+          $env:INTERNAL_DOCKER_EXTRA_ENVS | Out-File -FilePath env.list -Encoding UTF8
+
+      - name: Check runner type (not needed)
+        if: runner.name != 'pygeometry-ci-1'
+        run: |
+          echo "" | Out-File -FilePath env.list -Encoding UTF8
+
       - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
           $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
-          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
+          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER --env-file .\env.list -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Build the documentation (HTML)
@@ -285,7 +295,7 @@ jobs:
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
 
       - name: Run pytest
-        uses: pyansys/actions/tests-pytest@v3
+        uses: pyansys/actions/tests-pytest@v4
         env:
           ALLOW_PLOTTING: true
         with:
@@ -321,7 +331,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Build library source and wheel artifacts
-        uses: pyansys/actions/build-library@v3
+        uses: pyansys/actions/build-library@v4
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -329,18 +339,18 @@ jobs:
   release:
     name: Release project
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    needs: [package, macos-build]
+    needs: [package]
     runs-on: ubuntu-latest
     steps:
       - name: Release to the private PyPI repository
-        uses: pyansys/actions/release-pypi-private@v3
+        uses: pyansys/actions/release-pypi-private@v4
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           twine-username: "__token__"
           twine-token: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
 
       - name: Release to GitHub
-        uses: pyansys/actions/release-github@v3
+        uses: pyansys/actions/release-github@v4
         with:
           library-name: ${{ env.PACKAGE_NAME }}
 
@@ -351,7 +361,7 @@ jobs:
     needs: [package]
     steps:
       - name: Deploy the latest documentation
-        uses: pyansys/actions/doc-deploy-dev@v3
+        uses: pyansys/actions/doc-deploy-dev@v4
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -363,7 +373,7 @@ jobs:
     needs: [release]
     steps:
       - name: Deploy the stable documentation
-        uses: pyansys/actions/doc-deploy-stable@v3
+        uses: pyansys/actions/doc-deploy-stable@v4
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}

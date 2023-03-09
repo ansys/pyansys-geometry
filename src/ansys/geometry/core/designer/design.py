@@ -137,10 +137,10 @@ class Design(Component):
             AddToDocumentRequest(
                 material=GRPCMaterial(
                     name=material.name,
-                    materialProperties=[
+                    material_properties=[
                         GRPCMaterialProperty(
                             id=property.type.value,
-                            displayName=property.name,
+                            display_name=property.name,
                             value=property.quantity.m,
                             units=format(property.quantity.units),
                         )
@@ -409,7 +409,7 @@ class Design(Component):
         # Assign mid-surface thickness
         self._commands_stub.AssignMidSurfaceThickness(
             AssignMidSurfaceThicknessRequest(
-                bodiesOrFaces=ids, thickness=thickness.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+                bodies_or_faces=ids, thickness=thickness.m_as(DEFAULT_UNITS.SERVER_LENGTH)
             )
         )
 
@@ -447,7 +447,7 @@ class Design(Component):
 
         # Assign mid-surface offset type
         self._commands_stub.AssignMidSurfaceOffsetType(
-            AssignMidSurfaceOffsetTypeRequest(bodiesOrFaces=ids, offsetType=offset_type.value)
+            AssignMidSurfaceOffsetTypeRequest(bodies_or_faces=ids, offset_type=offset_type.value)
         )
 
         # Once the assignment has gone fine, store the values

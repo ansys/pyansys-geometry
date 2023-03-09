@@ -180,17 +180,17 @@ class Face:
             length = Quantity(grpc_loop.length, DEFAULT_UNITS.SERVER_LENGTH)
             min = Point3D(
                 [
-                    grpc_loop.boundingBox.min.x,
-                    grpc_loop.boundingBox.min.y,
-                    grpc_loop.boundingBox.min.z,
+                    grpc_loop.bounding_box.min.x,
+                    grpc_loop.bounding_box.min.y,
+                    grpc_loop.bounding_box.min.z,
                 ],
                 DEFAULT_UNITS.SERVER_LENGTH,
             )
             max = Point3D(
                 [
-                    grpc_loop.boundingBox.max.x,
-                    grpc_loop.boundingBox.max.y,
-                    grpc_loop.boundingBox.max.z,
+                    grpc_loop.bounding_box.max.x,
+                    grpc_loop.bounding_box.max.y,
+                    grpc_loop.bounding_box.max.z,
                 ],
                 DEFAULT_UNITS.SERVER_LENGTH,
             )
