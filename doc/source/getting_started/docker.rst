@@ -53,9 +53,9 @@ Docker container.
 
 #. Save the token to a file:
 
-    .. code-block:: bash
+   .. code-block:: bash
 
-        echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX > GH_TOKEN.txt
+       echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX > GH_TOKEN.txt
 
 #. Authorize Docker to access the repository:
 
