@@ -61,9 +61,9 @@ tests = [
     "six==1.16.0",
     "ansys-platform-instancemanagement==1.0.3",
     "docker==6.0.1",
-    "pytest==7.2.1",
+    "pytest==7.2.2",
     "pytest-cov==4.0.0",
-    "pytest-pyvista==0.1.6",
+    "pytest-pyvista==0.1.7",
 ]
 doc = [
     "ansys-sphinx-theme==0.9.5",
@@ -71,12 +71,12 @@ doc = [
     "ipyvtklink==0.2.3",
     "jupyter_sphinx==0.4.0",
     "jupytext==1.14.5",
-    "myst-parser==0.19.1",
+    "myst-parser==1.0.0",
     "nbconvert==7.2.9",
     "nbsphinx==0.8.12",
-    "notebook==6.5.2",
+    "notebook==6.5.3",
     "numpydoc==1.5.0",
-    "panel==0.14.3",
+    "panel==0.14.4",
     "pyvista[trame]==0.38.3",
     "Sphinx==5.1.1",                        # PR349 - Duplicated documentation entries...
     "sphinx-autoapi==2.0.1",
