@@ -23,8 +23,7 @@ from beartype.typing import Dict, List, Optional, Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.connection.conversions import plane_to_grpc_plane, point3d_to_grpc_point
+from ansys.geometry.core.connection import GrpcClient, plane_to_grpc_plane, point3d_to_grpc_point
 from ansys.geometry.core.designer.beam import BeamCircularProfile, BeamProfile
 from ansys.geometry.core.designer.body import Body, MidSurfaceOffsetType
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
@@ -42,7 +41,7 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector3D,
 )
-from ansys.geometry.core.misc import SERVER_UNIT_LENGTH, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, Distance
 from ansys.geometry.core.typing import RealSequence
 
 
@@ -126,10 +125,10 @@ class Design(Component):
             AddToDocumentRequest(
                 material=GRPCMaterial(
                     name=material.name,
-                    materialProperties=[
+                    material_properties=[
                         GRPCMaterialProperty(
                             id=property.type.value,
-                            displayName=property.name,
+                            display_name=property.name,
                             value=property.quantity.m,
                             units=format(property.quantity.units),
                         )
@@ -254,7 +253,8 @@ class Design(Component):
         """
         if isinstance(named_selection, str):
             removal_name = named_selection
-            removal_id = self._named_selections.get(named_selection, None)
+            removal = self._named_selections.get(named_selection, None)
+            removal_id = removal.id if removal else None
         else:
             removal_name = named_selection.name
             removal_id = named_selection.id
@@ -349,7 +349,7 @@ class Design(Component):
 
         request = CreateBeamCircularProfileRequest(
             origin=point3d_to_grpc_point(center),
-            radius=radius.value.m_as(SERVER_UNIT_LENGTH),
+            radius=radius.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
             plane=plane_to_grpc_plane(Plane(center, dir_x, dir_y)),
             name=name,
         )
@@ -397,7 +397,7 @@ class Design(Component):
         # Assign mid-surface thickness
         self._commands_stub.AssignMidSurfaceThickness(
             AssignMidSurfaceThicknessRequest(
-                bodiesOrFaces=ids, thickness=thickness.m_as(SERVER_UNIT_LENGTH)
+                bodies_or_faces=ids, thickness=thickness.m_as(DEFAULT_UNITS.SERVER_LENGTH)
             )
         )
 
@@ -435,7 +435,7 @@ class Design(Component):
 
         # Assign mid-surface offset type
         self._commands_stub.AssignMidSurfaceOffsetType(
-            AssignMidSurfaceOffsetTypeRequest(bodiesOrFaces=ids, offsetType=offset_type.value)
+            AssignMidSurfaceOffsetTypeRequest(bodies_or_faces=ids, offset_type=offset_type.value)
         )
 
         # Once the assignment has gone fine, store the values

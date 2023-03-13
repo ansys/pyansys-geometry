@@ -7,7 +7,7 @@ import numpy as np
 from pint import Quantity
 
 from ansys.geometry.core.math.point import Point2D, Point3D
-from ansys.geometry.core.misc import UNIT_ANGLE, Accuracy, check_ndarray_is_float_int
+from ansys.geometry.core.misc import UNITS, Accuracy, check_ndarray_is_float_int
 from ansys.geometry.core.typing import Real, RealSequence
 
 
@@ -133,11 +133,11 @@ class Vector3D(np.ndarray):
 
         if Accuracy.angle_is_zero(sine):
             if cosine > 0.0:
-                return Quantity(0, UNIT_ANGLE)
+                return Quantity(0, UNITS.radian)
             else:
-                return Quantity(np.pi, UNIT_ANGLE)
+                return Quantity(np.pi, UNITS.radian)
         else:
-            return Quantity(np.arctan2(sine, cosine), UNIT_ANGLE)
+            return Quantity(np.arctan2(sine, cosine), UNITS.radian)
 
     @check_input_types
     def cross(self, v: "Vector3D") -> "Vector3D":
@@ -330,7 +330,7 @@ class Vector2D(np.ndarray):
         if angle < 0:
             angle = angle + 2 * np.pi
 
-        return Quantity(angle, UNIT_ANGLE)
+        return Quantity(angle, UNITS.radian)
 
     @check_input_types
     def __eq__(self, other: "Vector2D") -> bool:

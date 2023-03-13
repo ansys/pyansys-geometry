@@ -1,13 +1,13 @@
 """Module for sketching gears."""
 
 from beartype import beartype as check_input_types
-from beartype.typing import List, Tuple
+from beartype.typing import List, Tuple, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
 
 from ansys.geometry.core.math import Point2D
-from ansys.geometry.core.misc import UNIT_ANGLE, UNITS, Distance, check_pint_unit_compatibility
+from ansys.geometry.core.misc import UNITS, Angle, Distance
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import SketchSegment
@@ -44,9 +44,9 @@ class DummyGear(Gear):
     ----------
     origin : Point2D
         Origin of the gear.
-    outer_radius : Distance
+    outer_radius : Union[Quantity, Distance, Real]
         Outer radius of the gear.
-    inner_radius : Distance
+    inner_radius : Union[Quantity, Distance, Real]
         Inner radius of the gear.
     n_teeth : int
         Number of teeth of the gear.
@@ -54,11 +54,23 @@ class DummyGear(Gear):
 
     @check_input_types
     def __init__(
-        self, origin: Point2D, outer_radius: Distance, inner_radius: Distance, n_teeth: int
+        self,
+        origin: Point2D,
+        outer_radius: Union[Quantity, Distance, Real],
+        inner_radius: Union[Quantity, Distance, Real],
+        n_teeth: int,
     ):
         """Constructor method for a dummy gear."""
         # Call the parent ctor
         super().__init__()
+
+        # Ensure radiuses are Distances
+        outer_radius = (
+            outer_radius if isinstance(outer_radius, Distance) else Distance(outer_radius)
+        )
+        inner_radius = (
+            inner_radius if isinstance(inner_radius, Distance) else Distance(inner_radius)
+        )
 
         # Let's compute auxiliary variables
         repeat_angle = 2 * np.pi / n_teeth
@@ -130,25 +142,33 @@ class SpurGear(Gear):
     module : Real
         Module of the spur gear. This is also the ratio between the pitch circle
         diameter in millimeters and the number of teeth.
-    pressure_angle : Quantity
+    pressure_angle : Union[Quantity, Angle, Real]
         Pressure angle of the spur gear.
     n_teeth : int
         Number of teeth of the spur gear.
     """
 
     @check_input_types
-    def __init__(self, origin: Point2D, module: Real, pressure_angle: Quantity, n_teeth: int):
+    def __init__(
+        self,
+        origin: Point2D,
+        module: Real,
+        pressure_angle: Union[Quantity, Angle, Real],
+        n_teeth: int,
+    ):
         """Constructor for spur gears."""
         # Call the parent ctor
         super().__init__()
 
         # Additional checks for inputs
-        check_pint_unit_compatibility(pressure_angle.u, UNIT_ANGLE)
+        pressure_angle = (
+            pressure_angle if isinstance(pressure_angle, Angle) else Angle(pressure_angle)
+        )
 
         # Store input parameters
         self._origin = origin
         self._module = module
-        self._pressure_angle = pressure_angle.to(UNIT_ANGLE)
+        self._pressure_angle = pressure_angle.value.to(UNITS.radian)
         self._n_teeth = n_teeth
 
         # Compute additional needed values

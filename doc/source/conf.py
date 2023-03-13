@@ -25,7 +25,6 @@ author = "ANSYS, Inc."
 release = version = __version__
 cname = os.getenv("DOCUMENTATION_CNAME", default="nocname.com")
 switcher_version = get_version_match(__version__)
-docs_prefix = switcher_version if switcher_version == "dev" else f"release/{switcher_version}"
 
 # Select desired logo, theme, and declare the html title
 html_logo = pyansys_logo_black
@@ -44,7 +43,7 @@ html_theme_options = {
         "json_url": f"https://{cname}/versions.json",
         "version_match": switcher_version,
     },
-    "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],
+    "check_switcher": False,
     "github_url": "https://github.com/pyansys/pygeometry",
     "show_prev_next": False,
     "show_breadcrumbs": True,
@@ -157,35 +156,44 @@ nbsphinx_custom_formats = {
     ".mystnb": ["jupytext.reads", {"fmt": "mystnb"}],
 }
 nbsphinx_thumbnails = {
-    "examples/basic_usage": "_static/thumbnails/basic_usage.png",
-    "examples/dynamic_sketch_plane": "_static/thumbnails/dynamic_sketch_plane.png",
-    "examples/add_design_material": "_static/thumbnails/add_design_material.png",
-    "examples/plate_with_hole": "_static/thumbnails/plate_with_hole.png",
-    "examples/tessellation_usage": "_static/thumbnails/tessellation_usage.png",
-    "examples/design_organization": "_static/thumbnails/design_organization.png",
+    "examples/01_getting_started/01_math": "_static/thumbnails/101_getting_started.png",
+    "examples/01_getting_started/02_units": "_static/thumbnails/101_getting_started.png",
+    "examples/01_getting_started/03_sketching": "_static/thumbnails/101_getting_started.png",
+    "examples/01_getting_started/04_modeling": "_static/thumbnails/101_getting_started.png",
+    "examples/02_sketching/basic_usage": "_static/thumbnails/basic_usage.png",
+    "examples/02_sketching/dynamic_sketch_plane": "_static/thumbnails/dynamic_sketch_plane.png",
+    "examples/02_sketching/advanced_sketching_gears": "_static/thumbnails/advanced_sketching_gears.png",  # noqa: E501
+    "examples/03_modeling/add_design_material": "_static/thumbnails/add_design_material.png",
+    "examples/03_modeling/plate_with_hole": "_static/thumbnails/plate_with_hole.png",
+    "examples/03_modeling/tessellation_usage": "_static/thumbnails/tessellation_usage.png",
+    "examples/03_modeling/design_organization": "_static/thumbnails/design_organization.png",
 }
 nbsphinx_epilog = """
 ----
 
 .. admonition:: Download this example!
 
-    Download this example as a Jupyter Notebook from
-    `here <{cname_pref}/{ipynb_file_loc}>`_.
+    Download this example as a `Jupyter Notebook <{cname_pref}/{ipynb_file_loc}>`_
+    or as a `Python script <{cname_pref}/{py_file_loc}>`_ from the previous links.
 
 """.format(
-    cname_pref=f"https://{cname}/{docs_prefix}", ipynb_file_loc="{{ env.docname }}.ipynb"
+    cname_pref=f"https://{cname}/version/{switcher_version}",
+    ipynb_file_loc="{{ env.docname }}.ipynb",
+    py_file_loc="{{ env.docname }}.py",
 )
 
 nbsphinx_prolog = """
 
 .. admonition:: Download this example!
 
-    Download this example as a Jupyter Notebook from
-    `here <{cname_pref}/{ipynb_file_loc}>`_.
+    Download this example as a `Jupyter Notebook <{cname_pref}/{ipynb_file_loc}>`_
+    or as a `Python script <{cname_pref}/{py_file_loc}>`_ from the previous links.
 
 ----
 """.format(
-    cname_pref=f"https://{cname}/{docs_prefix}", ipynb_file_loc="{{ env.docname }}.ipynb"
+    cname_pref=f"https://{cname}/version/{switcher_version}",
+    ipynb_file_loc="{{ env.docname }}.ipynb",
+    py_file_loc="{{ env.docname }}.py",
 )
 
 typehints_defaults = "comma"

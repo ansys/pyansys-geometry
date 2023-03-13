@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-# Tessellation of two bodies
+# Modeling: tessellation of two bodies
 
 This example creates two stacked bodies and returns the tessellation as two merged bodies.
 

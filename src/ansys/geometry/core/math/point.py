@@ -6,7 +6,7 @@ import numpy as np
 from pint import Quantity, Unit
 
 from ansys.geometry.core.misc import (
-    UNIT_LENGTH,
+    DEFAULT_UNITS,
     UNITS,
     PhysicalQuantity,
     check_ndarray_is_float_int,
@@ -23,7 +23,7 @@ DEFAULT_POINT3D_VALUES = [np.nan, np.nan, np.nan]
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.math.vector import Vector2D, Vector3D
 
-BASE_UNIT_LENGTH = UNITS.get_base_units(UNIT_LENGTH)[1]
+BASE_UNIT_LENGTH = UNITS.get_base_units(DEFAULT_UNITS.LENGTH)[1]
 """Default value for the length of the base unit."""
 
 
@@ -36,14 +36,14 @@ class Point2D(np.ndarray, PhysicalQuantity):
     input : Union[~numpy.ndarray, RealSequence], default: DEFAULT_POINT2D_VALUES
         Direction arguments, either as a :class:`numpy.ndarray <numpy.ndarray>` class
         or as a ``RealSequence``.
-    unit : ~pint.Unit, default: UNIT_LENGTH
-        Units for defining 2D point values.
+    unit : ~pint.Unit, optional
+        Units for defining 2D point values. By default, ``DEFAULT_UNITS.LENGTH``
     """
 
     def __new__(
         cls,
         input: Optional[Union[np.ndarray, RealSequence]] = DEFAULT_POINT2D_VALUES,
-        unit: Optional[Unit] = UNIT_LENGTH,
+        unit: Optional[Unit] = None,
     ):
         """Constructor for the ``Point2D`` class."""
         # Build an empty np.ndarray object
@@ -52,10 +52,11 @@ class Point2D(np.ndarray, PhysicalQuantity):
     def __init__(
         self,
         input: Union[np.ndarray, RealSequence] = DEFAULT_POINT2D_VALUES,
-        unit: Optional[Unit] = UNIT_LENGTH,
+        unit: Optional[Unit] = None,
     ):
         # Call the PhysicalQuantity ctor
-        super().__init__(unit, expected_dimensions=UNIT_LENGTH)
+        unit = unit if unit else DEFAULT_UNITS.LENGTH
+        super().__init__(unit, expected_dimensions=DEFAULT_UNITS.LENGTH)
 
         # Check the inputs
         check_ndarray_is_float_int(input, "input") if isinstance(
@@ -137,7 +138,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
         if hasattr(self, "_unit"):
             return self._unit
         else:
-            self._unit = UNIT_LENGTH
+            self._unit = DEFAULT_UNITS.LENGTH
             return self._unit
 
     @PhysicalQuantity.base_unit.getter
@@ -159,14 +160,14 @@ class Point3D(np.ndarray, PhysicalQuantity):
     input : Union[~numpy.ndarray, RealSequence], default: DEFAULT_POINT3D_VALUES
         Direction arguments, either as a :class:`numpy.ndarray <numpy.ndarray>` class
         or as a ``RealSequence``.
-    unit : ~pint.Unit, default: UNIT_LENGTH
-        Units for defining the 3D point values.
+    unit : ~pint.Unit, optional
+        Units for defining 3D point values. By default, ``DEFAULT_UNITS.LENGTH``
     """
 
     def __new__(
         cls,
         input: Optional[Union[np.ndarray, RealSequence]] = DEFAULT_POINT3D_VALUES,
-        unit: Optional[Unit] = UNIT_LENGTH,
+        unit: Optional[Unit] = None,
     ):
         """Constructor method for the ``Point3D`` class."""
         # Build an empty np.ndarray object
@@ -175,10 +176,11 @@ class Point3D(np.ndarray, PhysicalQuantity):
     def __init__(
         self,
         input: Union[np.ndarray, RealSequence] = DEFAULT_POINT3D_VALUES,
-        unit: Optional[Unit] = UNIT_LENGTH,
+        unit: Optional[Unit] = None,
     ):
         # Call the PhysicalQuantity ctor
-        super().__init__(unit, expected_dimensions=UNIT_LENGTH)
+        unit = unit if unit else DEFAULT_UNITS.LENGTH
+        super().__init__(unit, expected_dimensions=DEFAULT_UNITS.LENGTH)
 
         # Check the inputs
         check_ndarray_is_float_int(input, "input") if isinstance(
@@ -272,7 +274,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
         if hasattr(self, "_unit"):
             return self._unit
         else:
-            self._unit = UNIT_LENGTH
+            self._unit = DEFAULT_UNITS.LENGTH
             return self._unit
 
     @PhysicalQuantity.base_unit.getter

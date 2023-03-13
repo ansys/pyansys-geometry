@@ -7,7 +7,7 @@ from pyvista.plotting import system_supports_plotting
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.math import Point2D
-from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
 from ansys.geometry.core.plotting import Plotter
 from ansys.geometry.core.sketch import (
     Arc,
@@ -30,7 +30,7 @@ IMAGE_RESULTS_DIR = Path(Path(__file__).parent, "image_cache", "results")
 
 
 @skip_no_xserver
-def test_plot_body(modeler: Modeler, verify_image_cache):
+def test_plot_body(modeler: Modeler, verify_image_cache, skip_not_on_linux_service):
     """Test plotting of the body."""
 
     # Create a Sketch
@@ -48,7 +48,7 @@ def test_plot_body(modeler: Modeler, verify_image_cache):
 
 
 @skip_no_xserver
-def test_plot_component(modeler: Modeler, verify_image_cache):
+def test_plot_component(modeler: Modeler, verify_image_cache, skip_not_on_linux_service):
     """Test plotting of the component."""
 
     # Create a Sketch
@@ -200,7 +200,9 @@ def test_plot_circle(verify_image_cache):
     sketch = Sketch()
 
     # Create a circle and plot
-    sketch.circle(Point2D([0, 1], UNIT_LENGTH), Quantity(2, UNIT_LENGTH), "Circle")
+    sketch.circle(
+        Point2D([0, 1], DEFAULT_UNITS.LENGTH), Quantity(2, DEFAULT_UNITS.LENGTH), "Circle"
+    )
     sketch.select("Circle")
     sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_circle.png"))
 
@@ -275,7 +277,8 @@ def test_plot_dummy_gear(verify_image_cache):
     sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_dummy_gear.png"))
 
 
-def test_extrude_dummy_gear(modeler: Modeler, verify_image_cache):
+@skip_no_xserver
+def test_extrude_dummy_gear(modeler: Modeler, verify_image_cache, skip_not_on_linux_service):
     """Test plotting and extrusion of a dummy gear."""
 
     # Create a sketch instance
@@ -301,6 +304,7 @@ def test_extrude_dummy_gear(modeler: Modeler, verify_image_cache):
     box_body.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_extrude_dummy_gear.png"))
 
 
+@skip_no_xserver
 def test_plot_spur_gear(verify_image_cache):
     """Test plotting of a spur gear."""
     # Create a sketch instance
@@ -317,7 +321,8 @@ def test_plot_spur_gear(verify_image_cache):
     sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_spur_gear.png"))
 
 
-def test_extrude_spur_gear(modeler: Modeler, verify_image_cache):
+@skip_no_xserver
+def test_extrude_spur_gear(modeler: Modeler, verify_image_cache, skip_not_on_linux_service):
     """Test plotting and extrusion of a spur gear."""
 
     # Create a sketch instance
@@ -385,11 +390,7 @@ def test_visualization_polydata():
     # Test for arc visualization polydata
     arc = Arc(Point2D([10, 0]), Point2D([10, 10]), Point2D([10, -10]))
     assert arc.visualization_polydata.center == ([5.0, 0.0, 0.0])
-    assert arc.visualization_polydata.bounds == pytest.approx(
-        [0.0, 10.0, -10.0, 10.0, 0.0, 0.0],
-        rel=1e-6,
-        abs=1e-8,
-    )
+    assert arc.visualization_polydata.bounds == pytest.approx([0.0, 10.0, -10.0, 10.0, 0.0, 0.0])
     assert arc.visualization_polydata.n_faces == 2
     assert arc.visualization_polydata.n_cells == 2
     assert arc.visualization_polydata.n_points == 202
@@ -398,11 +399,7 @@ def test_visualization_polydata():
     # Test for segment visualization polydata
     segment = SketchSegment(Point2D([3, 2]), Point2D([2, 0]))
     assert segment.visualization_polydata.center == ([2.5, 1.0, 0.0])
-    assert segment.visualization_polydata.bounds == pytest.approx(
-        [2.0, 3.0, 0.0, 2.0, 0.0, 0.0],
-        rel=1e-6,
-        abs=1e-8,
-    )
+    assert segment.visualization_polydata.bounds == pytest.approx([2.0, 3.0, 0.0, 2.0, 0.0, 0.0])
     assert segment.visualization_polydata.n_faces == 1
     assert segment.visualization_polydata.n_cells == 1
     assert segment.visualization_polydata.n_points == 2
@@ -415,11 +412,7 @@ def test_visualization_polydata():
         Distance(2, unit=UNITS.meter),
     )
     assert slot.visualization_polydata
-    assert slot.visualization_polydata.bounds == pytest.approx(
-        [0.0, 4.0, 2.0, 4.0, 0.0, 0.0],
-        rel=1e-6,
-        abs=1e-8,
-    )
+    assert slot.visualization_polydata.bounds == pytest.approx([0.0, 4.0, 2.0, 4.0, 0.0, 0.0])
     assert slot.visualization_polydata.center == ([2.0, 3.0, 0.0])
     # Two arcs and segments creates the slot, thus it should have 6 faces
     assert slot.visualization_polydata.n_faces == 6
@@ -431,9 +424,7 @@ def test_visualization_polydata():
     triangle = Triangle(Point2D([10, 10]), Point2D([2, 1]), Point2D([10, -10]))
     assert triangle.visualization_polydata.center == ([6.0, 0.0, 0.0])
     assert triangle.visualization_polydata.bounds == pytest.approx(
-        [2.0, 10.0, -10.0, 10.0, 0.0, 0.0],
-        rel=1e-6,
-        abs=1e-8,
+        [2.0, 10.0, -10.0, 10.0, 0.0, 0.0]
     )
     assert triangle.visualization_polydata.n_faces == 1
     assert triangle.visualization_polydata.n_cells == 1
@@ -458,17 +449,11 @@ def test_visualization_polydata():
     assert trapezoid.visualization_polydata.n_open_edges == 4
 
     # Test for circle visualization polydata
-    circle = SketchCircle(Point2D([10, -10], UNIT_LENGTH), Quantity(1, UNIT_LENGTH))
-    assert circle.visualization_polydata.center == pytest.approx(
-        ([10.000251728808408, -10.0, 0.0]),
-        rel=1e-6,
-        abs=1e-8,
+    circle = SketchCircle(
+        Point2D([10, -10], DEFAULT_UNITS.LENGTH), Quantity(1, DEFAULT_UNITS.LENGTH)
     )
-    assert circle.visualization_polydata.bounds == pytest.approx(
-        [9.000503457616816, 11.0, -10.999874127673875, -9.000125872326125, 0.0, 0.0],
-        rel=1e-6,
-        abs=1e-8,
-    )
+    assert circle.visualization_polydata.center == pytest.approx(([10.0, -10.0, 0.0]))
+    assert circle.visualization_polydata.bounds == pytest.approx([9.0, 11.0, -11.0, -9.0, 0.0, 0.0])
     assert circle.visualization_polydata.n_faces == 1
     assert circle.visualization_polydata.n_cells == 1
     assert circle.visualization_polydata.n_points == 100
@@ -476,16 +461,8 @@ def test_visualization_polydata():
 
     # Test for ellipse visualization polydata
     ellipse = SketchEllipse(Point2D([0, 0], UNITS.m), Quantity(1, UNITS.m), Quantity(1, UNITS.m))
-    assert ellipse.visualization_polydata.center == pytest.approx(
-        ([0.0002517288084074587, 0.0, 0.0]),
-        rel=1e-6,
-        abs=1e-8,
-    )
-    assert ellipse.visualization_polydata.bounds == pytest.approx(
-        [-0.9994965423831851, 1.0, -0.9998741276738751, 0.9998741276738751, 0.0, 0.0],
-        rel=1e-6,
-        abs=1e-8,
-    )
+    assert ellipse.visualization_polydata.center == pytest.approx(([0.0, 0.0, 0.0]))
+    assert ellipse.visualization_polydata.bounds == pytest.approx([-1.0, 1.0, -1.0, 1.0, 0.0, 0.0])
     assert ellipse.visualization_polydata.n_faces == 1
     assert ellipse.visualization_polydata.n_cells == 1
     assert ellipse.visualization_polydata.n_points == 100
@@ -498,11 +475,7 @@ def test_visualization_polydata():
         Distance(2, unit=UNITS.meter),
     )
     assert box.visualization_polydata.center == ([3.0, 1.0, 0.0])
-    assert box.visualization_polydata.bounds == pytest.approx(
-        [1.0, 5.0, 0.0, 2.0, 0.0, 0.0],
-        rel=1e-6,
-        abs=1e-8,
-    )
+    assert box.visualization_polydata.bounds == pytest.approx([1.0, 5.0, 0.0, 2.0, 0.0, 0.0])
     assert box.visualization_polydata.n_faces == 1
     assert box.visualization_polydata.n_cells == 1
     assert box.visualization_polydata.n_points == 4

@@ -30,14 +30,9 @@ from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials import Material
 from ansys.geometry.core.math import UnitVector3D
-from ansys.geometry.core.misc import (
-    SERVER_UNIT_LENGTH,
-    SERVER_UNIT_VOLUME,
-    Distance,
-    check_pint_unit_compatibility,
-    check_type,
-)
+from ansys.geometry.core.misc import DEFAULT_UNITS, Distance, check_type
 from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
@@ -193,11 +188,11 @@ class Body:
         """
         if self.is_surface:
             self._grpc_client.log.debug("Dealing with planar surface. Returning 0 as the volume.")
-            return Quantity(0, SERVER_UNIT_VOLUME)
+            return Quantity(0, DEFAULT_UNITS.SERVER_VOLUME)
         else:
             self._grpc_client.log.debug(f"Retrieving volume for body {self.id} from server.")
             volume_response = self._bodies_stub.GetVolume(self._grpc_id)
-            return Quantity(volume_response.volume, SERVER_UNIT_VOLUME)
+            return Quantity(volume_response.volume, DEFAULT_UNITS.SERVER_VOLUME)
 
     @protect_grpc
     @check_input_types
@@ -231,7 +226,7 @@ class Body:
         if self.is_surface:
             self._commands_stub.AssignMidSurfaceThickness(
                 AssignMidSurfaceThicknessRequest(
-                    bodiesOrFaces=[self.id], thickness=thickness.m_as(SERVER_UNIT_LENGTH)
+                    bodies_or_faces=[self.id], thickness=thickness.m_as(DEFAULT_UNITS.SERVER_LENGTH)
                 )
             )
             self._surface_thickness = thickness
@@ -256,7 +251,9 @@ class Body:
         """
         if self.is_surface:
             self._commands_stub.AssignMidSurfaceOffsetType(
-                AssignMidSurfaceOffsetTypeRequest(bodiesOrFaces=[self.id], offsetType=offset.value)
+                AssignMidSurfaceOffsetTypeRequest(
+                    bodies_or_faces=[self.id], offset_type=offset.value
+                )
             )
             self._surface_offset = offset
         else:
@@ -362,7 +359,7 @@ class Body:
                 body=self._id,
                 curves=curves,
                 direction=unit_vector_to_grpc_direction(direction),
-                closestFace=closest_face,
+                closest_face=closest_face,
             )
         )
 
@@ -375,24 +372,23 @@ class Body:
 
     @protect_grpc
     @check_input_types
-    def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance]) -> None:
+    def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]) -> None:
         """Translates the geometry body in the specified direction by a given distance.
 
         Parameters
         ----------
         direction: UnitVector3D
             Direction of the translation.
-        distance: Union[Quantity, Distance]
+        distance: Union[Quantity, Distance, Real]
             Magnitude of the translation.
 
         Returns
         -------
         None
         """
-        translate_distance = distance if isinstance(distance, Quantity) else distance.value
-        check_pint_unit_compatibility(translate_distance.units, SERVER_UNIT_LENGTH)
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
 
-        translation_magnitude = translate_distance.m_as(SERVER_UNIT_LENGTH)
+        translation_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
 
         self._grpc_client.log.debug(f"Translating body {self.id}.")
 
@@ -518,8 +514,9 @@ class Body:
 
     def plot(
         self,
-        merge: Optional[bool] = False,
+        merge: bool = False,
         screenshot: Optional[str] = None,
+        use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ) -> None:
         """Plot the body.
@@ -530,9 +527,12 @@ class Body:
             Whether to merge the body into a single mesh. By default, the
             number of triangles are preserved and only the topology is merged.
             When ``True``, the individual faces of the tessellation are merged.
-        screenshot : str, default: None
+        screenshot : str, optional
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
+        use_trame : bool, optional
+            Enables/disables the usage of the trame web visualizer. Defaults to the
+            global setting ``USE_TRAME``.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
@@ -562,11 +562,13 @@ class Body:
 
         """
         # lazy import here to improve initial module load time
-        from ansys.geometry.core.plotting import Plotter
 
-        pl = Plotter()
+        from ansys.geometry.core.plotting import PlotterHelper
+
+        pl_helper = PlotterHelper(use_trame=use_trame)
+        pl = pl_helper.init_plotter()
         pl.add_body(self, merge=merge, **plotting_options)
-        pl.show(screenshot=screenshot)
+        pl_helper.show_plotter(pl, screenshot=screenshot)
 
     def __repr__(self) -> str:
         """String representation of the body."""

@@ -23,14 +23,27 @@ pv.OFF_SCREEN = True
 
 
 @pytest.fixture(scope="session")
-def docker_instance():
+def skip_not_on_linux_service(service_os: str):
+    if service_os == "linux":
+        return pytest.skip("Implementation not available on Linux service.")  # skip!
+
+
+@pytest.fixture(scope="session")
+def docker_instance(use_existing_service):
     # This will only have a value in case that:
     #
+    # 0) The "--use-existing-service=yes" option is not used
     # 1) Docker is installed
     # 2) At least one of the Geometry service images for your OS is downloaded
     #    on the machine
     #
     local_instance = None
+
+    # Check 0)
+    # If it is requested the connection to an existing service
+    # just return the local instance as None
+    if use_existing_service:
+        return local_instance
 
     # Check 1)
     if LocalDockerInstance.is_docker_installed():

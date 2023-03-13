@@ -33,8 +33,9 @@ from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import Frame, Point3D, UnitVector3D
-from ansys.geometry.core.misc import SERVER_UNIT_LENGTH, Distance, check_pint_unit_compatibility
+from ansys.geometry.core.misc import DEFAULT_UNITS, Distance, check_pint_unit_compatibility
 from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
@@ -181,7 +182,7 @@ class Component:
             f"Setting shared topology type {share_type.value} on {self.id}."
         )
         self._component_stub.SetSharedTopology(
-            SetSharedTopologyRequest(id=self.id, shareType=share_type.value)
+            SetSharedTopologyRequest(id=self.id, share_type=share_type.value)
         )
 
         # Store the SharedTopologyType set on the client
@@ -190,7 +191,7 @@ class Component:
     @protect_grpc
     @check_input_types
     def extrude_sketch(
-        self, name: str, sketch: Sketch, distance: Union[Quantity, Distance]
+        self, name: str, sketch: Sketch, distance: Union[Quantity, Distance, Real]
     ) -> Body:
         """Create a solid body by extruding the given sketch profile up to the given distance.
 
@@ -202,7 +203,7 @@ class Component:
             User-defined label for the new solid body.
         sketch : Sketch
             Two-dimensional sketch source for the extrusion.
-        distance : Union[Quantity, Distance]
+        distance : Union[Quantity, Distance, Real]
             Distance to extrude the solid body.
 
         Returns
@@ -211,12 +212,11 @@ class Component:
             Extruded body from the given sketch.
         """
         # Sanity checks on inputs
-        extrude_distance = distance if isinstance(distance, Quantity) else distance.value
-        check_pint_unit_compatibility(extrude_distance.units, SERVER_UNIT_LENGTH)
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
 
         # Perform extrusion request
         request = CreateExtrudedBodyRequest(
-            distance=extrude_distance.m_as(SERVER_UNIT_LENGTH),
+            distance=distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
             parent=self.id,
             plane=plane_to_grpc_plane(sketch._plane),
             geometries=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
@@ -258,11 +258,11 @@ class Component:
         """
         # Sanity checks on inputs
         extrude_distance = distance if isinstance(distance, Quantity) else distance.value
-        check_pint_unit_compatibility(extrude_distance.units, SERVER_UNIT_LENGTH)
+        check_pint_unit_compatibility(extrude_distance.units, DEFAULT_UNITS.SERVER_LENGTH)
 
         # Take the face source directly. No need to verify the source of the face.
         request = CreateExtrudedBodyFromFaceProfileRequest(
-            distance=extrude_distance.m_as(SERVER_UNIT_LENGTH),
+            distance=extrude_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
             parent=self.id,
             face=face.id,
             name=name,
@@ -372,7 +372,7 @@ class Component:
     @protect_grpc
     @check_input_types
     def translate_bodies(
-        self, bodies: List[Body], direction: UnitVector3D, distance: Union[Quantity, Distance]
+        self, bodies: List[Body], direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
     ) -> None:
         """Translate the geometry bodies in a specified direction by a given distance.
 
@@ -387,14 +387,13 @@ class Component:
             List of bodies to translate by the same distance.
         direction: UnitVector3D
             Direction of the translation.
-        distance: Union[Quantity, Distance]
+        distance: Union[Quantity, Distance, Real]
             Magnitude of the translation.
 
         Returns
         -------
         None
         """
-        check_pint_unit_compatibility(distance, SERVER_UNIT_LENGTH)
         body_ids_found = []
 
         for body in bodies:
@@ -408,18 +407,16 @@ class Component:
                 )
                 pass
 
-        magnitude = (
-            distance.m_as(SERVER_UNIT_LENGTH)
-            if not isinstance(distance, Distance)
-            else distance.value.m_as(SERVER_UNIT_LENGTH)
-        )
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+
+        translation_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
 
         self._grpc_client.log.debug(f"Translating {body_ids_found}...")
         self._bodies_stub.Translate(
             TranslateRequest(
                 ids=body_ids_found,
                 direction=unit_vector_to_grpc_direction(direction),
-                distance=magnitude,
+                distance=translation_magnitude,
             )
         )
 
@@ -658,7 +655,7 @@ class Component:
         >>> from ansys.geometry.core import Modeler
         >>> from ansys.geometry.core.math import Point2D, Point3D, Plane
         >>> from ansys.geometry.core.misc import UNITS
-        >>> from ansys.geometry.core.plotting.plotter import Plotter
+        >>> from ansys.geometry.core.plotting import Plotter
         >>> modeler = Modeler("10.54.0.72", "50051")
         >>> sketch_1 = Sketch()
         >>> box = sketch_1.box(
@@ -719,6 +716,7 @@ class Component:
         merge_component: bool = False,
         merge_bodies: bool = False,
         screenshot: Optional[str] = None,
+        use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ) -> None:
         """Plot this component.
@@ -733,9 +731,12 @@ class Component:
             Whether to merge each body into a single dataset. When ``True``,
             all the faces of each individual body are effectively merged
             into a single dataset without separating faces.
-        screenshot : str, default: None
+        screenshot : str, optional
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
+        use_trame : bool, optional
+            Enables/disables the usage of the trame web visualizer. Defaults to the
+            global setting ``USE_TRAME``.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
@@ -776,13 +777,15 @@ class Component:
         >>> mycomp.plot(pbr=True, metallic=1.0)
 
         """
-        from ansys.geometry.core.plotting import Plotter
 
-        pl = Plotter()
+        from ansys.geometry.core.plotting import PlotterHelper
+
+        pl_helper = PlotterHelper(use_trame=use_trame)
+        pl = pl_helper.init_plotter()
         pl.add_component(
             self, merge_bodies=merge_bodies, merge_component=merge_component, **plotting_options
         )
-        pl.show(screenshot=screenshot)
+        pl_helper.show_plotter(pl, screenshot=screenshot)
 
     def __repr__(self) -> str:
         """String representation of the component."""

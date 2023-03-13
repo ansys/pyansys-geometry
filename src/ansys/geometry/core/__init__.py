@@ -11,6 +11,7 @@ except ModuleNotFoundError:  # pragma: no cover
     import importlib_metadata  # type: ignore
 
 __version__ = importlib_metadata.version(__name__.replace(".", "-"))
+"""PyGeometry version."""
 
 # Ease import statements
 # ------------------------------------------------------------------------------
@@ -22,3 +23,9 @@ from ansys.geometry.core.connection.launcher import (
 )
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.modeler import Modeler
+
+# Global config constants
+# ------------------------------------------------------------------------------
+
+USE_TRAME = False
+"""Global constant for checking the use of trame or not."""

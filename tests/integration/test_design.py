@@ -24,11 +24,11 @@ from ansys.geometry.core.math import (
     Point3D,
     UnitVector3D,
 )
-from ansys.geometry.core.misc import UNIT_LENGTH, UNITS, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
 from ansys.geometry.core.sketch import Sketch
 
 
-def test_design_extrusion_and_material_assignment(modeler: Modeler):
+def test_design_extrusion_and_material_assignment(modeler: Modeler, skip_not_on_linux_service):
     """Test in charge of validating the extrusion of a simple
     circle as a cylinder and assigning materials to it."""
 
@@ -100,7 +100,7 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
     # design.save(r"C:\temp\shared_volume\MyFile2.scdocx")
 
 
-def test_face_to_body_creation(modeler: Modeler):
+def test_face_to_body_creation(modeler: Modeler, skip_not_on_linux_service):
     """Test in charge of validating the extrusion of an existing face."""
 
     # Create a Sketch and draw a circle (all client side)
@@ -150,7 +150,7 @@ def test_face_to_body_creation(modeler: Modeler):
     )
 
 
-def test_modeler(modeler: Modeler):
+def test_modeler(modeler: Modeler, skip_not_on_linux_service):
     """Test the ``Modeler`` methods."""
 
     # Get the modeler's string representation and check it
@@ -161,7 +161,7 @@ def test_modeler(modeler: Modeler):
     assert design is not None
 
 
-def test_component_body(modeler: Modeler):
+def test_component_body(modeler: Modeler, skip_not_on_linux_service):
     """Test the different ``Component`` and ``Body`` creation methods."""
 
     # Create your design on the server side
@@ -236,7 +236,7 @@ def test_component_body(modeler: Modeler):
     assert "N Coordinate Systems : 0" in comp_str
 
 
-def test_named_selections(modeler: Modeler):
+def test_named_selections(modeler: Modeler, skip_not_on_linux_service):
     """Test for verifying the correct creation of ``NamedSelection``."""
 
     # Create your design on the server side
@@ -289,8 +289,12 @@ def test_named_selections(modeler: Modeler):
     assert design.named_selections[2].name == "CircleAndPolygon"
     assert design.named_selections[3].name == "OnlyPolygonFaces"
 
+    # Try deleting a named selection by name
+    design.delete_named_selection("OnlyCircle")
+    assert len(design.named_selections) == 3
 
-def test_faces_edges(modeler: Modeler):
+
+def test_faces_edges(modeler: Modeler, skip_not_on_linux_service):
     """Test for verifying the correct creation and
     usage of ``Face`` and ``Edge`` objects."""
 
@@ -348,7 +352,7 @@ def test_faces_edges(modeler: Modeler):
     )  # The bottom face must be one of them
 
 
-def test_coordinate_system_creation(modeler: Modeler):
+def test_coordinate_system_creation(modeler: Modeler, skip_not_on_linux_service):
     """Test for verifying the correct creation of ``CoordinateSystem``."""
 
     # Create your design on the server side
@@ -427,7 +431,7 @@ def test_coordinate_system_creation(modeler: Modeler):
     assert "  Frame Z-direction    : " in nested_comp_cs1_str
 
 
-def test_delete_body_component(modeler: Modeler):
+def test_delete_body_component(modeler: Modeler, skip_not_on_linux_service):
     """Test for verifying the deletion of ``Component`` and ``Body`` objects.
 
     Notes
@@ -667,7 +671,7 @@ def test_delete_body_component(modeler: Modeler):
     assert "Parent component     : Component_3" in body_1_str
 
 
-def test_shared_topology(modeler: Modeler):
+def test_shared_topology(modeler: Modeler, skip_not_on_linux_service):
     """Test for checking the correct setting of shared topology on the server.
 
     Notes
@@ -699,7 +703,7 @@ def test_shared_topology(modeler: Modeler):
         design.set_shared_topology(SharedTopologyType.SHARETYPE_NONE)
 
 
-def test_single_body_translation(modeler: Modeler):
+def test_single_body_translation(modeler: Modeler, skip_not_on_linux_service):
     """Test for verifying the correct translation of a ``Body``.
 
     Notes
@@ -724,9 +728,10 @@ def test_single_body_translation(modeler: Modeler):
 
     body_circle_comp.translate(UnitVector3D([1, 0, 0]), Distance(50, UNITS.mm))
     body_polygon_comp.translate(UnitVector3D([-1, 1, -1]), Quantity(88, UNITS.mm))
+    body_polygon_comp.translate(UnitVector3D([-1, 1, -1]), 101)
 
 
-def test_bodies_translation(modeler: Modeler):
+def test_bodies_translation(modeler: Modeler, skip_not_on_linux_service):
     """Test for verifying the correct translation of list of ``Body``.
 
     Notes
@@ -750,11 +755,12 @@ def test_bodies_translation(modeler: Modeler):
     body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch_2, Quantity(30, UNITS.mm))
 
     design.translate_bodies(
-        [body_circle_comp, body_polygon_comp], UnitVector3D([1, 0, 0]), Quantity(48, UNITS.mm)
+        [body_circle_comp, body_polygon_comp], UnitVector3D([1, 0, 0]), Distance(48, UNITS.mm)
     )
     design.translate_bodies(
         [body_circle_comp, body_polygon_comp], UnitVector3D([0, -1, 1]), Quantity(88, UNITS.mm)
     )
+    design.translate_bodies([body_circle_comp, body_polygon_comp], UnitVector3D([0, -1, 1]), 101)
 
     # Try translating a body that does not belong to this component - no error thrown,
     # but no operation performed either.
@@ -763,7 +769,9 @@ def test_bodies_translation(modeler: Modeler):
     )
 
 
-def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+def test_download_file(
+    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, skip_not_on_linux_service
+):
     """Test for downloading a design in multiple modes and verifying the correct download."""
 
     # Create your design on the server side
@@ -801,7 +809,7 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     assert fmd_file.exists()
 
 
-def test_slot_extrusion(modeler: Modeler):
+def test_slot_extrusion(modeler: Modeler, skip_not_on_linux_service):
     """Test the extrusion of a slot."""
     # Create your design on the server side
     design = modeler.create_design("ExtrudeSlot")
@@ -818,7 +826,7 @@ def test_slot_extrusion(modeler: Modeler):
     assert len(body.edges) == 12
 
 
-def test_project_and_imprint_curves(modeler: Modeler):
+def test_project_and_imprint_curves(modeler: Modeler, skip_not_on_linux_service):
     """Test the projection of a set of curves on a body."""
     # Create your design on the server side
     design = modeler.create_design("ExtrudeSlot")
@@ -875,7 +883,7 @@ def test_project_and_imprint_curves(modeler: Modeler):
     assert len(body.faces) == 8
 
 
-def test_copy_body(modeler: Modeler):
+def test_copy_body(modeler: Modeler, skip_not_on_linux_service):
     """Test copying a body."""
 
     # Create your design on the server side
@@ -910,7 +918,7 @@ def test_copy_body(modeler: Modeler):
     assert copy.is_alive
 
 
-def test_beams(modeler: Modeler):
+def test_beams(modeler: Modeler, skip_not_on_linux_service):
     """Test beam creation."""
     # Create your design on the server side
     design = modeler.create_design("BeamCreation")
@@ -921,7 +929,7 @@ def test_beams(modeler: Modeler):
 
     assert circle_profile_1.id is not None
     assert circle_profile_1.center == Point3D([0, 0, 0])
-    assert circle_profile_1.radius.value.m_as(UNIT_LENGTH) == 0.01
+    assert circle_profile_1.radius.value.m_as(DEFAULT_UNITS.LENGTH) == 0.01
     assert circle_profile_1.direction_x == UNITVECTOR3D_X
     assert circle_profile_1.direction_y == UNITVECTOR3D_Y
 
@@ -993,7 +1001,7 @@ def test_beams(modeler: Modeler):
     assert nested_component.beams[0] == beam_2
 
 
-def test_midsurface_properties(modeler: Modeler):
+def test_midsurface_properties(modeler: Modeler, skip_not_on_linux_service):
     """Test mid-surface properties assignment."""
 
     # Create your design on the server side
