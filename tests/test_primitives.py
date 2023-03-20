@@ -372,20 +372,28 @@ def test_torus():
     major_radius = 200
     minor_radius = 100
     t_1 = Torus(
-        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), major_radius, minor_radius
+        origin,
+        major_radius,
+        minor_radius,
+        UnitVector3D([12, 31, 99]),
+        UnitVector3D([0, 99, -31]),
     )
     t_1_duplicate = Torus(
-        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), major_radius, minor_radius
+        origin,
+        major_radius,
+        minor_radius,
+        UnitVector3D([12, 31, 99]),
+        UnitVector3D([0, 99, -31]),
     )
-    t_2 = Torus(Point3D([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 76)
-    t_with_array_definitions = Torus([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 76)
+    t_2 = Torus(Point3D([5, 8, 9]), 88, 76, UnitVector3D([55, 16, 73]), UnitVector3D([73, 0, -55]))
+    t_with_array_definitions = Torus([5, 8, 9], 88, 76, [55, 16, 73], [73, 0, -55])
 
     # Check that the equals operator works
     assert t_1 == t_1_duplicate
     assert t_1 != t_2
     assert t_2 == t_with_array_definitions
 
-    # Check cylinder definition
+    # Check torus definition
     assert t_1.origin.x == origin.x
     assert t_1.origin.y == origin.y
     assert t_1.origin.z == origin.z
@@ -393,16 +401,40 @@ def test_torus():
     assert t_1.minor_radius == minor_radius * DEFAULT_UNITS.LENGTH
 
     with pytest.raises(BeartypeCallHintParamViolation):
-        Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), "A", 200)
+        Torus(
+            origin,
+            "A",
+            200,
+            UnitVector3D([12, 31, 99]),
+            UnitVector3D([0, 99, -31]),
+        )
 
     with pytest.raises(BeartypeCallHintParamViolation):
-        Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, "A")
+        Torus(
+            origin,
+            100,
+            "A",
+            UnitVector3D([12, 31, 99]),
+            UnitVector3D([0, 99, -31]),
+        )
 
     with pytest.raises(BeartypeCallHintParamViolation):
-        Torus(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
+        Torus(
+            origin,
+            100,
+            200,
+            "A",
+            UnitVector3D([0, 99, -31]),
+        )
 
     with pytest.raises(BeartypeCallHintParamViolation):
-        Torus(origin, UnitVector3D([12, 31, 99]), "A", 100, 200)
+        Torus(
+            origin,
+            100,
+            200,
+            UnitVector3D([12, 31, 99]),
+            "A",
+        )
 
 
 def test_torus_units():
@@ -420,18 +452,18 @@ def test_torus_units():
     ):
         Torus(
             origin,
-            UnitVector3D([12, 31, 99]),
-            UnitVector3D([25, 39, 82]),
             Quantity(major_radius, UNITS.celsius),
             Quantity(minor_radius, UNITS.celsius),
+            UnitVector3D([12, 31, 99]),
+            UnitVector3D([0, 99, -31]),
         )
 
     t_1 = Torus(
         origin,
-        UnitVector3D([12, 31, 99]),
-        UnitVector3D([25, 39, 82]),
         Quantity(major_radius, unit),
         Quantity(minor_radius, unit),
+        UnitVector3D([12, 31, 99]),
+        UnitVector3D([0, 99, -31]),
     )
 
     # Check that the units are correctly in place
@@ -441,6 +473,50 @@ def test_torus_units():
     # Request for radii and ensure they are in mm
     assert t_1.major_radius.m == major_radius
     assert t_1.minor_radius.m == minor_radius
+
+
+def test_torus_evaluation():
+    origin = Point3D([0, 0, 0])
+    major_radius = 2
+    unit = UNITS.mm
+    minor_radius = 1
+    t1 = Torus(
+        origin,
+        Quantity(major_radius, unit),
+        Quantity(minor_radius, unit),
+        UnitVector3D([1, 0, 0]),
+        UnitVector3D([0, 0, 1]),
+    )
+    eval = t1.evaluate(ParamUV(np.pi / 2, 0))
+    assert eval.torus == t1
+    assert np.allclose(eval.position(), Point3D([0, 3, 0]))
+    assert isinstance(eval.position(), Point3D)
+    assert np.allclose(eval.normal(), UnitVector3D([0, 1, 0]))
+    assert isinstance(eval.normal(), UnitVector3D)
+    assert np.allclose(eval.u_derivative(), Vector3D([-3, 0, 0]))
+    assert isinstance(eval.u_derivative(), Vector3D)
+    assert np.allclose(eval.v_derivative(), Vector3D([0, 0, 1]))
+    assert isinstance(eval.v_derivative(), Vector3D)
+    assert np.allclose(eval.uu_derivative(), Vector3D([0, -3, 0]))
+    assert isinstance(eval.uu_derivative(), Vector3D)
+    assert np.allclose(eval.uv_derivative(), Vector3D([0, 0, 0]))
+    assert isinstance(eval.uv_derivative(), Vector3D)
+    assert np.allclose(eval.vv_derivative(), Vector3D([0, -1, 0]))
+    assert isinstance(eval.vv_derivative(), Vector3D)
+    assert eval.min_curvature() == 0.3333333333333333
+    assert np.allclose(eval.min_curvature_direction(), UnitVector3D([-1, 0, 0]))
+    assert isinstance(eval.min_curvature_direction(), UnitVector3D)
+    assert eval.max_curvature() == 1.0
+    assert np.allclose(eval.max_curvature_direction(), UnitVector3D([0, 0, 1]))
+    assert isinstance(eval.max_curvature_direction(), UnitVector3D)
+
+    # # Test evaluation by projecting a point onto the Torus
+    eval2 = t1.project_point(Point3D([1, 1, 0]))
+    assert eval2.torus == t1
+    assert np.allclose(eval2.position(), Point3D([0.707106781186548, 0.707106781186547, 0]))
+    assert np.allclose(eval2.normal(), UnitVector3D([-0.707106781186548, -0.707106781186547, 0]))
+    assert np.allclose(eval2.u_derivative(), UnitVector3D([-1, 1, 0]))
+    assert np.allclose(eval2.v_derivative(), Vector3D([0, 0, -1]))
 
 
 def test_circle():
