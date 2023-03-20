@@ -12,7 +12,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc import DEFAULT_UNITS
 
 if TYPE_CHECKING:  # pragma: no cover
-    from ansys.geometry.core.designer.body import Body
+    from ansys.geometry.core.designer.body import TemplateBody
     from ansys.geometry.core.designer.face import Face
 
 
@@ -46,7 +46,9 @@ class Edge:
         Active supporting Geometry service instance for design modeling.
     """
 
-    def __init__(self, id: str, curve_type: CurveType, body: "Body", grpc_client: GrpcClient):
+    def __init__(
+        self, id: str, curve_type: CurveType, body: "TemplateBody", grpc_client: GrpcClient
+    ):
         """Constructor method for the ``Edge`` class."""
         self._id = id
         self._curve_type = curve_type

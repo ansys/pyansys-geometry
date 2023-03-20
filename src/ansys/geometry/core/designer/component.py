@@ -28,7 +28,7 @@ from ansys.geometry.core.connection import (
 )
 from ansys.geometry.core.connection.conversions import point3d_to_grpc_point
 from ansys.geometry.core.designer.beam import Beam, BeamProfile
-from ansys.geometry.core.designer.body import Body
+from ansys.geometry.core.designer.body import Body, TemplateBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
@@ -232,8 +232,9 @@ class Component:
 
         self._grpc_client.log.debug(f"Extruding sketch provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBody(request)
-
-        self._bodies.append(Body(response.id, name, self, self._grpc_client, is_surface=False))
+        tb = TemplateBody(response.master_id, name, self, self._grpc_client, is_surface=False)
+        b = Body(response.id, response.name, self, tb)
+        self._bodies.append(b)
         return self._bodies[-1]
 
     @protect_grpc
@@ -278,7 +279,9 @@ class Component:
         self._grpc_client.log.debug(f"Extruding from face provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBodyFromFaceProfile(request)
 
-        self._bodies.append(Body(response.id, name, self, self._grpc_client, is_surface=False))
+        tb = TemplateBody(response.master_id, name, self, self._grpc_client, is_surface=False)
+        b = Body(response.id, response.name, self, tb)
+        self._bodies.append(b)
         return self._bodies[-1]
 
     @protect_grpc
@@ -313,7 +316,9 @@ class Component:
         )
         response = self._bodies_stub.CreatePlanarBody(request)
 
-        self._bodies.append(Body(response.id, name, self, self._grpc_client, is_surface=True))
+        tb = TemplateBody(response.master_id, name, self, self._grpc_client, is_surface=True)
+        b = Body(response.id, response.name, self, tb)
+        self._bodies.append(b)
         return self._bodies[-1]
 
     @protect_grpc
@@ -351,7 +356,9 @@ class Component:
         )
         response = self._bodies_stub.CreateBodyFromFace(request)
 
-        self._bodies.append(Body(response.id, name, self, self._grpc_client, is_surface=True))
+        tb = TemplateBody(response.master_id, name, self, self._grpc_client, is_surface=True)
+        b = Body(response.id, response.name, self, tb)
+        self._bodies.append(b)
         return self._bodies[-1]
 
     @check_input_types
@@ -547,7 +554,7 @@ class Component:
 
             # If the body was deleted from the server side... "kill" it
             # on the client side
-            body_requested._is_alive = False
+            body_requested.is_alive = False
             self._grpc_client.log.debug(f"Body {body_requested.id} has been deleted.")
         else:
             self._grpc_client.log.warning(
@@ -623,7 +630,7 @@ class Component:
 
         # Kill all its bodies
         for body in self.bodies:
-            body._is_alive = False
+            body.is_alive = False
 
         # Now, go to the nested components and kill them as well
         for component in self.components:

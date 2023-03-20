@@ -403,7 +403,7 @@ class Design(Component):
 
         # Once the assignment has gone fine, store the values
         for body in ids_bodies:
-            body._surface_thickness = thickness
+            body.surface_thickness = thickness
 
     @protect_grpc
     @check_input_types
@@ -440,7 +440,7 @@ class Design(Component):
 
         # Once the assignment has gone fine, store the values
         for body in ids_bodies:
-            body._surface_offset = offset_type
+            body.surface_offset = offset_type
 
     def __repr__(self):
         """String representation of the design."""

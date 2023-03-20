@@ -51,7 +51,7 @@ class MidSurfaceOffsetType(Enum):
     CUSTOM = 4
 
 
-class Body:
+class TemplateBody:
     """
     Represents solids and surfaces organized within the design assembly.
 
@@ -435,9 +435,11 @@ class Body:
         )
 
         # Assign the new body to its specified parent (and return the new body)
-        parent._bodies.append(
-            Body(response.id, copy_name, parent, self._grpc_client, is_surface=False)
+        tb = TemplateBody(
+            response.master_id, copy_name, parent, self._grpc_client, is_surface=self.is_surface
         )
+        b = Body(response.id, response.name, self, tb)
+        parent._bodies.append(b)
         return parent._bodies[-1]
 
     @protect_grpc
@@ -572,10 +574,160 @@ class Body:
 
     def __repr__(self) -> str:
         """String representation of the body."""
-        lines = [f"ansys.geometry.core.designer.Body {hex(id(self))}"]
+        lines = [f"ansys.geometry.core.designer.TemplateBody {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Exists               : {self.is_alive}")
         lines.append(f"  Parent component     : {self._parent_component.name}")
+        lines.append(f"  Surface body         : {self.is_surface}")
+        if self.is_surface:
+            lines.append(f"  Surface thickness    : {self.surface_thickness}")
+            lines.append(f"  Surface offset       : {self.surface_offset}")
+
+        return "\n".join(lines)
+
+
+class Body:
+    def __init__(self, id, name, parent: "Component", template: TemplateBody) -> None:
+        self._id = id
+        self._name = name
+        self._parent = parent
+        self.__template = template
+
+    @property
+    def id(self) -> str:
+        return self._id
+
+    @property
+    def name(self) -> str:
+        return self.__template.name
+
+    @property
+    def parent(self) -> str:
+        return self._parent
+
+    @property
+    @protect_grpc
+    def faces(self) -> List[Face]:
+        """All faces within the body.
+
+        Returns
+        -------
+        List[Face]
+        """
+        self.__template._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
+        grpc_faces = self.__template._bodies_stub.GetFaces(EntityIdentifier(id=self.id))
+        return [
+            Face(
+                grpc_face.id,
+                SurfaceType(grpc_face.surface_type),
+                self,
+                self.__template._grpc_client,
+            )
+            for grpc_face in grpc_faces.faces
+        ]
+
+    @property
+    @protect_grpc
+    def edges(self) -> List[Edge]:
+        """All edges within the body.
+
+        Returns
+        -------
+        List[Edge]
+        """
+        self.__template._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
+        grpc_edges = self.__template._bodies_stub.GetEdges(EntityIdentifier(id=self.id))
+        return [
+            Edge(grpc_edge.id, CurveType(grpc_edge.curve_type), self, self.__template._grpc_client)
+            for grpc_edge in grpc_edges.edges
+        ]
+
+    # @property
+    # def template(self) -> "TemplateBody":
+    #     return self.__template
+
+    @property
+    def is_alive(self) -> bool:
+        return self.__template.is_alive
+
+    @is_alive.setter
+    def is_alive(self, value: bool):
+        self.__template._is_alive = value
+
+    @property
+    def is_surface(self) -> bool:
+        return self.__template.is_surface
+
+    @property
+    def surface_thickness(self) -> Union[Quantity, None]:
+        return self.__template.surface_thickness
+
+    @surface_thickness.setter
+    def surface_thickness(self, value):
+        self.__template._surface_thickness = value
+
+    @property
+    def surface_offset(self) -> Union["MidSurfaceOffsetType", None]:
+        return self.__template._surface_offset
+
+    @surface_offset.setter
+    def surface_offset(self, value: "MidSurfaceOffsetType"):
+        self.__template._surface_offset = value
+
+    @property
+    def volume(self) -> str:
+        return self.__template.volume
+
+    @property
+    def master_id(self) -> str:
+        return self.__template.id
+
+    def assign_material(self, material: Material) -> None:
+        self.__template.assign_material(material)
+
+    def add_midsurface_thickness(self, thickness: Quantity) -> None:
+        self.__template.add_midsurface_thickness(thickness)
+
+    def add_midsurface_offset(self, offset: "MidSurfaceOffsetType") -> None:
+        self.__template.add_midsurface_offset(offset)
+
+    def imprint_curves(self, faces: List[Face], sketch: Sketch) -> Tuple[List[Edge], List[Face]]:
+        return self.__template.imprint_curves(faces, sketch)
+
+    def project_curves(
+        self,
+        direction: UnitVector3D,
+        sketch: Sketch,
+        closest_face: bool,
+        only_one_curve: Optional[bool] = False,
+    ) -> List[Face]:
+        return self.__template.project_curves(direction, sketch, closest_face, only_one_curve)
+
+    def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]) -> None:
+        return self.__template.translate(direction, distance)
+
+    def copy(self, parent: "Component", name: str = None) -> "Body":
+        return self.__template.copy(parent, name)
+
+    def tessellate(self, merge: Optional[bool] = False) -> Union["PolyData", "MultiBlock"]:
+        return self.__template.tessellate(merge)
+
+    def plot(
+        self,
+        merge: bool = False,
+        screenshot: Optional[str] = None,
+        use_trame: Optional[bool] = None,
+        **plotting_options: Optional[dict],
+    ) -> None:
+        return self.__template.plot(merge, screenshot, use_trame, **plotting_options)
+
+    def __repr__(self) -> str:
+        """String representation of the body."""
+        lines = [f"ansys.geometry.core.designer.Body {hex(id(self))}"]
+        lines.append(f"  Name                 : {self.name}")
+        lines.append(f"  Exists               : {self.is_alive}")
+        lines.append(f"  Parent component     : {self._parent.name}")
+        lines.append(f"  TemplateBody         : {self.__template.id}")
         lines.append(f"  Surface body         : {self.is_surface}")
         if self.is_surface:
             lines.append(f"  Surface thickness    : {self.surface_thickness}")

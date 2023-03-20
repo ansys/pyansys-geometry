@@ -1069,8 +1069,8 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Exists               : True" in body_repr
     assert "Parent component     : MidSurfaceProperties" in body_repr
     assert "Surface body         : False" in body_repr
-    assert slot_body._surface_thickness is None
-    assert slot_body._surface_offset is None
+    assert slot_body.surface_thickness is None
+    assert slot_body.surface_offset is None
 
     # Let's try reassigning values directly to slot_surf - this should work
     # TODO : at the moment the server does not allow to reassign - put in try/catch block
