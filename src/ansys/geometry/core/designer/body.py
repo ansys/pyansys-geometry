@@ -68,7 +68,7 @@ class TemplateBody:
     grpc_client : GrpcClient
         An active supporting geometry service instance for design modeling.
     is_surface : bool, default: False
-        Boolean indicating whether the ``Body`` is in fact a surface or an actual
+        Boolean indicating whether the ``TemplateBody`` is in fact a surface or an actual
         3D object (with volume).
     """
 
@@ -80,7 +80,7 @@ class TemplateBody:
         grpc_client: GrpcClient,
         is_surface: bool = False,
     ):
-        """Constructor method for the ``Body`` class."""
+        """Constructor method for the ``TemplateBody`` class."""
         from ansys.geometry.core.designer.component import Component
 
         check_type(id, str)
@@ -586,20 +586,40 @@ class TemplateBody:
         return "\n".join(lines)
 
 
-class Body:
+class Body(TemplateBody):
+    """
+    Represents solids and surfaces organized within the design assembly.
+
+    Solids and surfaces synchronize to a design within a supporting Geometry service instance.
+
+    Parameters
+    ----------
+    id : str
+        Server-defined ID for the body.
+    name : str
+        User-defined label for the body.
+    parent : Component
+        Parent component to nest the new component under within the design assembly.
+    template : TemplateBody
+        The master body that this body is an occurrence of.
+    """
+
     def __init__(self, id, name, parent: "Component", template: TemplateBody) -> None:
+        """Constructor method for the ``Body`` class."""
         self._id = id
         self._name = name
         self._parent = parent
-        self.__template = template
+        self._template = template
 
     @property
     def id(self) -> str:
+        """ID of the body."""
         return self._id
 
     @property
     def name(self) -> str:
-        return self.__template.name
+        """Name of the body."""
+        return self._template.name
 
     @property
     def parent(self) -> str:
@@ -614,14 +634,14 @@ class Body:
         -------
         List[Face]
         """
-        self.__template._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
-        grpc_faces = self.__template._bodies_stub.GetFaces(EntityIdentifier(id=self.id))
+        self._template._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
+        grpc_faces = self._template._bodies_stub.GetFaces(EntityIdentifier(id=self.id))
         return [
             Face(
                 grpc_face.id,
                 SurfaceType(grpc_face.surface_type),
                 self,
-                self.__template._grpc_client,
+                self._template._grpc_client,
             )
             for grpc_face in grpc_faces.faces
         ]
@@ -635,64 +655,124 @@ class Body:
         -------
         List[Edge]
         """
-        self.__template._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
-        grpc_edges = self.__template._bodies_stub.GetEdges(EntityIdentifier(id=self.id))
+        self._template._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
+        grpc_edges = self._template._bodies_stub.GetEdges(EntityIdentifier(id=self.id))
         return [
-            Edge(grpc_edge.id, CurveType(grpc_edge.curve_type), self, self.__template._grpc_client)
+            Edge(grpc_edge.id, CurveType(grpc_edge.curve_type), self, self._template._grpc_client)
             for grpc_edge in grpc_edges.edges
         ]
 
-    # @property
-    # def template(self) -> "TemplateBody":
-    #     return self.__template
+    @property
+    def master(self) -> "TemplateBody":
+        """TEMPORARY - FOR DEBUG ONLY"""
+        return self._template
 
     @property
     def is_alive(self) -> bool:
-        return self.__template.is_alive
+        """Check if the body is still alive on the server side."""
+        return self._template.is_alive
 
     @is_alive.setter
     def is_alive(self, value: bool):
-        self.__template._is_alive = value
+        self._template._is_alive = value
 
     @property
     def is_surface(self) -> bool:
-        return self.__template.is_surface
+        """Check if the body is a planar body."""
+        return self._template.is_surface
 
     @property
     def surface_thickness(self) -> Union[Quantity, None]:
-        return self.__template.surface_thickness
+        """Surface thickness of a surface body.
+
+        Notes
+        -----
+        Only for surface-type bodies which have been assigned a surface thickness.
+        """
+        return self._template.surface_thickness
 
     @surface_thickness.setter
     def surface_thickness(self, value):
-        self.__template._surface_thickness = value
+        self._template._surface_thickness = value
 
     @property
     def surface_offset(self) -> Union["MidSurfaceOffsetType", None]:
-        return self.__template._surface_offset
+        """Surface offset type of a surface body.
+
+        Notes
+        -----
+        Only for surface-type bodies which have been assigned a surface offset.
+        """
+        return self._template._surface_offset
 
     @surface_offset.setter
     def surface_offset(self, value: "MidSurfaceOffsetType"):
-        self.__template._surface_offset = value
+        self._template._surface_offset = value
 
     @property
     def volume(self) -> str:
-        return self.__template.volume
+        """Calculated volume of the body.
 
-    @property
-    def master_id(self) -> str:
-        return self.__template.id
+        Notes
+        -----
+        When dealing with a planar surface, a value of ``0`` is returned as a volume.
+        """
+        return self._template.volume
 
     def assign_material(self, material: Material) -> None:
-        self.__template.assign_material(material)
+        """Assigns a material against the design in the active Geometry service instance.
+
+        Parameters
+        ----------
+        material : Material
+            Source material data.
+        """
+        self._template.assign_material(material)
 
     def add_midsurface_thickness(self, thickness: Quantity) -> None:
-        self.__template.add_midsurface_thickness(thickness)
+        """Adds a mid-surface thickness to a surface body.
+
+        Parameters
+        ----------
+        thickness : Quantity
+            Thickness to be assigned.
+
+        Notes
+        -----
+        Only surface bodies will be eligible for mid-surface thickness assignment.
+        """
+        self._template.add_midsurface_thickness(thickness)
 
     def add_midsurface_offset(self, offset: "MidSurfaceOffsetType") -> None:
-        self.__template.add_midsurface_offset(offset)
+        """Adds a mid-surface offset to a surface body.
+
+        Parameters
+        ----------
+        offset_type : MidSurfaceOffsetType
+            Surface offset to be assigned.
+
+        Notes
+        -----
+        Only surface bodies will be eligible for mid-surface offset assignment.
+        """
+        self._template.add_midsurface_offset(offset)
 
     def imprint_curves(self, faces: List[Face], sketch: Sketch) -> Tuple[List[Edge], List[Face]]:
-        return self.__template.imprint_curves(faces, sketch)
+        """Imprints all specified geometries onto the specified faces of the body.
+
+        Parameters
+        ----------
+        faces: List[Face]
+            List of faces to imprint the curves of the sketch.
+        sketch: Sketch
+            All curves to imprint on the faces.
+
+        Returns
+        -------
+        Tuple[List[Edge], List[Face]]
+            All impacted edges and faces from the imprint operation.
+        """
+        return self._template.imprint_curves(faces, sketch)
 
     def project_curves(
         self,
@@ -701,16 +781,121 @@ class Body:
         closest_face: bool,
         only_one_curve: Optional[bool] = False,
     ) -> List[Face]:
-        return self.__template.project_curves(direction, sketch, closest_face, only_one_curve)
+        """Projects all specified geometries onto the body.
+
+        Parameters
+        ----------
+        direction: UnitVector3D
+            Establishes the direction of the projection.
+        sketch: Sketch
+            All curves to project on the body.
+        closest_face: bool
+            Whether to target the closest face with the projection.
+        only_one_curve: bool, default: False
+            Whether to project only one curve of the entire sketch. When
+            ``True``, only one curve is projected.
+
+        Notes
+        -----
+        The ``only_one_curve`` parameter allows you to optimize the server call because
+        projecting curves is an expensive operation. This reduces the workload on the
+        server side.
+
+        Returns
+        -------
+        List[Face]
+            All faces from the project curves operation.
+        """
+        return self._template.project_curves(direction, sketch, closest_face, only_one_curve)
 
     def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]) -> None:
-        return self.__template.translate(direction, distance)
+        """Translates the geometry body in the specified direction by a given distance.
+
+        Parameters
+        ----------
+        direction: UnitVector3D
+            Direction of the translation.
+        distance: Union[Quantity, Distance, Real]
+            Magnitude of the translation.
+
+        Returns
+        -------
+        None
+        """
+        return self._template.translate(direction, distance)
 
     def copy(self, parent: "Component", name: str = None) -> "Body":
-        return self.__template.copy(parent, name)
+        """Creates a copy of the geometry body and places it under the specified parent.
+
+        Parameters
+        ----------
+        parent: Component
+            The parent component that the new body should live under.
+        name: str
+            The name to give the new body.
+
+        Returns
+        -------
+        Body
+            Copy of the body.
+        """
+        return self._template.copy(parent, name)
 
     def tessellate(self, merge: Optional[bool] = False) -> Union["PolyData", "MultiBlock"]:
-        return self.__template.tessellate(merge)
+        """Tessellate the body and return the geometry as triangles.
+
+        Parameters
+        ----------
+        merge : bool, default: False
+            Whether to merge the body into a single mesh. By default, the
+            number of triangles are preserved and only the topology is merged.
+            When ``True``, the individual faces of the tessellation are merged.
+
+        Returns
+        -------
+        ~pyvista.PolyData, ~pyvista.MultiBlock
+            Merged :class:`pyvista.PolyData` if ``merge=True`` or a composite dataset.
+
+        Examples
+        --------
+        Extrude a box centered at the origin to create a rectangular body and
+        tessellate it:
+
+        >>> from ansys.geometry.core.misc.units import UNITS as u
+        >>> from ansys.geometry.core.sketch import Sketch
+        >>> from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
+        >>> from ansys.geometry.core import Modeler
+        >>> modeler = Modeler()
+        >>> origin = Point3D([0, 0, 0])
+        >>> plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 0, 1])
+        >>> sketch = Sketch(plane)
+        >>> box = sketch.box(Point2D([2, 0]), 4, 4)
+        >>> design = modeler.create_design("my-design")
+        >>> my_comp = design.add_component("my-comp")
+        >>> body = my_comp.extrude_sketch("my-sketch", sketch, 1 * u.m)
+        >>> blocks = body.tessellate()
+        >>> blocks
+        >>> MultiBlock (0x7f94ec757460)
+             N Blocks:	6
+             X Bounds:	0.000, 4.000
+             Y Bounds:	-1.000, 0.000
+             Z Bounds:	-0.500, 4.500
+
+        Merge the body:
+
+        >>> mesh = body.tessellate(merge=True)
+        >>> mesh
+        PolyData (0x7f94ec75f3a0)
+          N Cells:	12
+          N Points:	24
+          X Bounds:	0.000e+00, 4.000e+00
+          Y Bounds:	-1.000e+00, 0.000e+00
+          Z Bounds:	-5.000e-01, 4.500e+00
+          N Arrays:	0
+
+
+        """
+        return self._template.tessellate(merge)
 
     def plot(
         self,
@@ -719,7 +904,49 @@ class Body:
         use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ) -> None:
-        return self.__template.plot(merge, screenshot, use_trame, **plotting_options)
+        """Plot the body.
+
+        Parameters
+        ----------
+        merge : bool, default: False
+            Whether to merge the body into a single mesh. By default, the
+            number of triangles are preserved and only the topology is merged.
+            When ``True``, the individual faces of the tessellation are merged.
+        screenshot : str, optional
+            Save a screenshot of the image being represented. The image is
+            stored in the path provided as an argument.
+        use_trame : bool, optional
+            Enables/disables the usage of the trame web visualizer. Defaults to the
+            global setting ``USE_TRAME``.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :func:`pyvista.Plotter.add_mesh` method.
+
+        Examples
+        --------
+        Extrude a box centered at the origin to create rectangular body and
+        plot it:
+
+        >>> from ansys.geometry.core.misc.units import UNITS as u
+        >>> from ansys.geometry.core.sketch import Sketch
+        >>> from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
+        >>> from ansys.geometry.core import Modeler
+        >>> modeler = Modeler()
+        >>> origin = Point3D([0, 0, 0])
+        >>> plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 0, 1])
+        >>> sketch = Sketch(plane)
+        >>> box = sketch.box(Point2D([2, 0]), 4, 4)
+        >>> design = modeler.create_design("my-design")
+        >>> mycomp = design.add_component("my-comp")
+        >>> body = mycomp.extrude_sketch("my-sketch", sketch, 1 * u.m)
+        >>> body.plot()
+
+        Plot the body and color each face individually:
+
+        >>> body.plot(multi_colors=True)
+
+        """
+        return self._template.plot(merge, screenshot, use_trame, **plotting_options)
 
     def __repr__(self) -> str:
         """String representation of the body."""
@@ -727,7 +954,7 @@ class Body:
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Exists               : {self.is_alive}")
         lines.append(f"  Parent component     : {self._parent.name}")
-        lines.append(f"  TemplateBody         : {self.__template.id}")
+        lines.append(f"  TemplateBody         : {self._template.id}")
         lines.append(f"  Surface body         : {self.is_surface}")
         if self.is_surface:
             lines.append(f"  Surface thickness    : {self.surface_thickness}")
