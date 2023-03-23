@@ -1,5 +1,6 @@
 """Provides the ``Cone`` class."""
 
+from functools import cached_property
 
 from beartype import beartype as check_input_types
 from beartype.typing import Union
@@ -169,7 +170,7 @@ class Cone:
         v = line_eval.parameter
 
         cone_radius = self.radius.m + v * np.tan(self.half_angle.m)
-        point_radius = np.linalg.norm(point - line_eval.position())
+        point_radius = np.linalg.norm(point - line_eval.position)
         dist_to_cone = (point_radius - cone_radius) * np.cos(self.half_angle.m)
         v += dist_to_cone * np.sin(self.half_angle.m)
 
@@ -232,6 +233,7 @@ class ConeEvaluation(SurfaceEvaluation):
         """The parameter that the evaluation is based upon."""
         return self._parameter
 
+    @cached_property
     def position(self) -> Point3D:
         """
         The position of the evaluation.
@@ -244,9 +246,10 @@ class ConeEvaluation(SurfaceEvaluation):
         return (
             self.cone.origin
             + self.parameter.v * self.cone.dir_z
-            + self.__radius_v() * self.__cone_normal()
+            + self.__radius_v * self.__cone_normal
         )
 
+    @cached_property
     def normal(self) -> UnitVector3D:
         """
         The normal to the surface.
@@ -257,26 +260,30 @@ class ConeEvaluation(SurfaceEvaluation):
             The normal unit vector to the cone at this evaluation.
         """
         return UnitVector3D(
-            self.__cone_normal() * np.cos(self.cone.half_angle.m)
+            self.__cone_normal * np.cos(self.cone.half_angle.m)
             - self.cone.dir_z * np.sin(self.cone.half_angle.m)
         )
 
+    @cached_property
     def __radius_v(self) -> Real:
         """Private radius helper method."""
         return self.cone.radius.m + self.parameter.v * np.tan(self.cone.half_angle.m)
 
+    @cached_property
     def __cone_normal(self) -> Vector3D:
         """Private normal helper method."""
         return (
             np.cos(self.parameter.u) * self.cone.dir_x + np.sin(self.parameter.u) * self.cone.dir_y
         )
 
+    @cached_property
     def __cone_tangent(self) -> Vector3D:
         """Private tangent helper method."""
         return (
             -np.sin(self.parameter.u) * self.cone.dir_x + np.cos(self.parameter.u) * self.cone.dir_y
         )
 
+    @cached_property
     def u_derivative(self) -> Vector3D:
         """
         The first derivative with respect to u.
@@ -286,8 +293,9 @@ class ConeEvaluation(SurfaceEvaluation):
         Vector3D
             The first derivative with respect to u.
         """
-        return self.__radius_v() * self.__cone_tangent()
+        return self.__radius_v * self.__cone_tangent
 
+    @cached_property
     def v_derivative(self) -> Vector3D:
         """
         The first derivative with respect to v.
@@ -297,8 +305,9 @@ class ConeEvaluation(SurfaceEvaluation):
         Vector3D
             The first derivative with respect to v.
         """
-        return self.cone.dir_z + np.tan(self.cone.half_angle.m) * self.__cone_normal()
+        return self.cone.dir_z + np.tan(self.cone.half_angle.m) * self.__cone_normal
 
+    @cached_property
     def uu_derivative(self) -> Vector3D:
         """
         The second derivative with respect to u.
@@ -308,8 +317,9 @@ class ConeEvaluation(SurfaceEvaluation):
         Vector3D
             The second derivative with respect to u.
         """
-        return -self.__radius_v() * self.__cone_normal()
+        return -self.__radius_v * self.__cone_normal
 
+    @cached_property
     def uv_derivative(self) -> Vector3D:
         """
         The second derivative with respect to u and v.
@@ -319,8 +329,9 @@ class ConeEvaluation(SurfaceEvaluation):
         Vector3D
             The second derivative with respect to u and v.
         """
-        return np.tan(self.cone.half_angle.m) * self.__cone_tangent()
+        return np.tan(self.cone.half_angle.m) * self.__cone_tangent
 
+    @cached_property
     def vv_derivative(self) -> Vector3D:
         """
         The second derivative with respect to v.
@@ -332,6 +343,7 @@ class ConeEvaluation(SurfaceEvaluation):
         """
         return Vector3D([0, 0, 0])
 
+    @cached_property
     def min_curvature(self) -> Real:
         """
         The minimum curvature of the cone.
@@ -343,6 +355,7 @@ class ConeEvaluation(SurfaceEvaluation):
         """
         return 0
 
+    @cached_property
     def min_curvature_direction(self) -> UnitVector3D:
         """
         The minimum curvature direction.
@@ -352,8 +365,9 @@ class ConeEvaluation(SurfaceEvaluation):
         UnitVector3D
             The minimum curvature direction.
         """
-        return UnitVector3D(self.v_derivative())
+        return UnitVector3D(self.v_derivative)
 
+    @cached_property
     def max_curvature(self) -> Real:
         """
         The maximum curvature of the cone.
@@ -363,8 +377,9 @@ class ConeEvaluation(SurfaceEvaluation):
         Real
             The maximum curvature of the cone.
         """
-        return 1.0 / self.__radius_v()
+        return 1.0 / self.__radius_v
 
+    @cached_property
     def max_curvature_direction(self) -> UnitVector3D:
         """
         The maximum curvature direction.
@@ -374,4 +389,4 @@ class ConeEvaluation(SurfaceEvaluation):
         UnitVector3D
             The maximum curvature direction.
         """
-        return UnitVector3D(self.u_derivative())
+        return UnitVector3D(self.u_derivative)
