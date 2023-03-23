@@ -345,8 +345,8 @@ jobs:
       - name: Download binaries
         # TODO: We have to provide the proper path for the windows binaries
         run: |
-          curl.exe -X GET -H 'X-JFrog-Art-Api: S{{ secrets.ARTIFACTORY_KEY }}' S{{ secrets.ARTIFACTORY_URL }}/DockerLinux.zip --output windows-binaries.zip
-          curl.exe -X GET -H 'X-JFrog-Art-Api: S{{ secrets.ARTIFACTORY_KEY }}' S{{ secrets.ARTIFACTORY_URL }}/DockerLinux.zip --output linux-binaries.zip
+          curl.exe -X GET -H "X-JFrog-Art-Api: S{{ secrets.ARTIFACTORY_KEY }}" S{{ secrets.ARTIFACTORY_URL }}/DockerLinux.zip --output windows-binaries.zip
+          curl.exe -X GET -H "X-JFrog-Art-Api: S{{ secrets.ARTIFACTORY_KEY }}" S{{ secrets.ARTIFACTORY_URL }}/DockerLinux.zip --output linux-binaries.zip
       
       - name: Upload Windows binaries as workflow artifacts
         uses: actions/upload-artifact@v3
