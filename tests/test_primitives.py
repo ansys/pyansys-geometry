@@ -521,8 +521,8 @@ def test_torus_evaluation():
     assert np.allclose(eval2.v_derivative, Vector3D([0, 0, -1]))
 
     x = Vector3D([95, -35, 5])
-    y = Vector3D([1, 2, -5])
-    t2 = Torus(Point3D([-18, 7, -9]), 2, 1, x, y)
+    z = Vector3D([1, 2, -5])
+    t2 = Torus(Point3D([-18, 7, -9]), 2, 1, x, z)
     eval3 = t2.evaluate(ParamUV(np.pi, 0))
     assert np.allclose(
         eval3.position, Point3D([-20.8116026549018, 8.03585360970068, -9.1479790871001])

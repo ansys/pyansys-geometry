@@ -240,7 +240,7 @@ class TorusEvaluation(SurfaceEvaluation):
         return (
             self._torus.origin
             + (self._torus.major_radius.m + np.cos(self.parameter.v) * self._torus.minor_radius.m)
-            * self.__cylinder_normal()
+            * self.__cylinder_normal
             + np.sin(self.parameter.v) * self._torus.minor_radius.m * self._torus.dir_z
         )
 
@@ -255,10 +255,11 @@ class TorusEvaluation(SurfaceEvaluation):
             The normal unit vector to the torus at this evaluation.
         """
         return UnitVector3D(
-            np.cos(self.parameter.v) * self.__cylinder_normal()
+            np.cos(self.parameter.v) * self.__cylinder_normal
             + np.sin(self.parameter.v) * self._torus.dir_z
         )
 
+    @cached_property
     def __cylinder_normal(self) -> Vector3D:
         """
         The normal to the surface.
@@ -273,6 +274,7 @@ class TorusEvaluation(SurfaceEvaluation):
             + np.sin(self.parameter.u) * self._torus.dir_y
         )
 
+    @cached_property
     def __cylinder_tangent(self) -> Vector3D:
         """Private tangent helper method."""
         return (
@@ -292,7 +294,7 @@ class TorusEvaluation(SurfaceEvaluation):
         """
         return (
             self._torus.major_radius.m + np.cos(self.parameter.v) * self._torus.minor_radius.m
-        ) * self.__cylinder_tangent()
+        ) * self.__cylinder_tangent
 
     @cached_property
     def v_derivative(self) -> Vector3D:
@@ -305,7 +307,7 @@ class TorusEvaluation(SurfaceEvaluation):
             The first derivative with respect to v.
         """
         return (
-            -np.sin(self.parameter.v) * self._torus.minor_radius.m * self.__cylinder_tangent()
+            -np.sin(self.parameter.v) * self._torus.minor_radius.m * self.__cylinder_tangent
             + np.cos(self.parameter.v) * self._torus.minor_radius.m * self._torus.dir_z
         )
 
@@ -322,7 +324,7 @@ class TorusEvaluation(SurfaceEvaluation):
         return (
             -(self._torus.major_radius.m + np.cos(self.parameter.v))
             * self._torus.minor_radius.m
-            * self.__cylinder_normal()
+            * self.__cylinder_normal
         )
 
     @cached_property
@@ -335,7 +337,7 @@ class TorusEvaluation(SurfaceEvaluation):
         Vector3D
             The second derivative with respect to u and v.
         """
-        return -np.sin(self.parameter.v) * self._torus.minor_radius.m * self.__cylinder_tangent()
+        return -np.sin(self.parameter.v) * self._torus.minor_radius.m * self.__cylinder_tangent
 
     @cached_property
     def vv_derivative(self) -> Vector3D:
@@ -348,7 +350,7 @@ class TorusEvaluation(SurfaceEvaluation):
             The second derivative with respect to v.
         """
         return (
-            -np.cos(self.parameter.v) * self._torus.minor_radius.m * self.__cylinder_normal()
+            -np.cos(self.parameter.v) * self._torus.minor_radius.m * self.__cylinder_normal
             - np.sin(self.parameter.v) * self._torus.minor_radius.m * self._torus.dir_z
         )
 
