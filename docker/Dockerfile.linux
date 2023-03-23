@@ -6,12 +6,12 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0
 # Define the working directory - /app
 WORKDIR /app
 
-# Add the binary files from the latest release
-ADD https://github.com/pyansys/pygeometry/releases/download/latest/linux-binaries.zip linux-binaries.zip
+# Install unzip
+RUN apt-get update && apt-get install -y unzip
 
-# TODO : Extract zip file and move binaries to WORKDIR
-#
-#
+# Add the binary files from the latest release
+COPY linux-binaries.zip .
+RUN unzip -qqju linux-binaries.zip -d . && rm linux-binaries.zip
 
 # Let the dynamic link loader where to search for shared libraries
 ENV LD_LIBRARY_PATH="/app"
