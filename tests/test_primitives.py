@@ -487,36 +487,81 @@ def test_torus_evaluation():
         UnitVector3D([1, 0, 0]),
         UnitVector3D([0, 0, 1]),
     )
+    assert Accuracy.length_is_equal(t1.surface_area.m, 78.9568352087)
+    assert Accuracy.length_is_equal(t1.volume.m, 39.4784176044)
     eval = t1.evaluate(ParamUV(np.pi / 2, 0))
     assert eval.torus == t1
-    assert np.allclose(eval.position(), Point3D([0, 3, 0]))
-    assert isinstance(eval.position(), Point3D)
-    assert np.allclose(eval.normal(), UnitVector3D([0, 1, 0]))
-    assert isinstance(eval.normal(), UnitVector3D)
-    assert np.allclose(eval.u_derivative(), Vector3D([-3, 0, 0]))
-    assert isinstance(eval.u_derivative(), Vector3D)
-    assert np.allclose(eval.v_derivative(), Vector3D([0, 0, 1]))
-    assert isinstance(eval.v_derivative(), Vector3D)
-    assert np.allclose(eval.uu_derivative(), Vector3D([0, -3, 0]))
-    assert isinstance(eval.uu_derivative(), Vector3D)
-    assert np.allclose(eval.uv_derivative(), Vector3D([0, 0, 0]))
-    assert isinstance(eval.uv_derivative(), Vector3D)
-    assert np.allclose(eval.vv_derivative(), Vector3D([0, -1, 0]))
-    assert isinstance(eval.vv_derivative(), Vector3D)
-    assert eval.min_curvature() == 0.3333333333333333
-    assert np.allclose(eval.min_curvature_direction(), UnitVector3D([-1, 0, 0]))
-    assert isinstance(eval.min_curvature_direction(), UnitVector3D)
-    assert eval.max_curvature() == 1.0
-    assert np.allclose(eval.max_curvature_direction(), UnitVector3D([0, 0, 1]))
-    assert isinstance(eval.max_curvature_direction(), UnitVector3D)
+    assert np.allclose(eval.position, Point3D([0, 3, 0]))
+    assert isinstance(eval.position, Point3D)
+    assert np.allclose(eval.normal, UnitVector3D([0, 1, 0]))
+    assert isinstance(eval.normal, UnitVector3D)
+    assert np.allclose(eval.u_derivative, Vector3D([-3, 0, 0]))
+    assert isinstance(eval.u_derivative, Vector3D)
+    assert np.allclose(eval.v_derivative, Vector3D([0, 0, 1]))
+    assert isinstance(eval.v_derivative, Vector3D)
+    assert np.allclose(eval.uu_derivative, Vector3D([0, -3, 0]))
+    assert isinstance(eval.uu_derivative, Vector3D)
+    assert np.allclose(eval.uv_derivative, Vector3D([0, 0, 0]))
+    assert isinstance(eval.uv_derivative, Vector3D)
+    assert np.allclose(eval.vv_derivative, Vector3D([0, -1, 0]))
+    assert isinstance(eval.vv_derivative, Vector3D)
+    assert eval.min_curvature == 0.3333333333333333
+    assert np.allclose(eval.min_curvature_direction, UnitVector3D([-1, 0, 0]))
+    assert isinstance(eval.min_curvature_direction, UnitVector3D)
+    assert eval.max_curvature == 1.0
+    assert np.allclose(eval.max_curvature_direction, UnitVector3D([0, 0, 1]))
+    assert isinstance(eval.max_curvature_direction, UnitVector3D)
 
     # # Test evaluation by projecting a point onto the Torus
     eval2 = t1.project_point(Point3D([1, 1, 0]))
     assert eval2.torus == t1
-    assert np.allclose(eval2.position(), Point3D([0.707106781186548, 0.707106781186547, 0]))
-    assert np.allclose(eval2.normal(), UnitVector3D([-0.707106781186548, -0.707106781186547, 0]))
-    assert np.allclose(eval2.u_derivative(), UnitVector3D([-1, 1, 0]))
-    assert np.allclose(eval2.v_derivative(), Vector3D([0, 0, -1]))
+    assert np.allclose(eval2.position, Point3D([0.707106781186548, 0.707106781186547, 0]))
+    assert np.allclose(eval2.normal, UnitVector3D([-0.707106781186548, -0.707106781186547, 0]))
+    assert np.allclose(eval2.u_derivative, UnitVector3D([-1, 1, 0]))
+    assert np.allclose(eval2.v_derivative, Vector3D([0, 0, -1]))
+
+    x = Vector3D([95, -35, 5])
+    y = Vector3D([1, 2, -5])
+    t2 = Torus(Point3D([-18, 7, -9]), 2, 1, x, y)
+    eval3 = t2.evaluate(ParamUV(np.pi, 0))
+    assert np.allclose(
+        eval3.position, Point3D([-20.8116026549018, 8.03585360970068, -9.1479790871001])
+    )
+    assert isinstance(eval3.position, Point3D)
+    assert np.allclose(
+        eval3.normal, UnitVector3D([-0.937200884967281, 0.345284536566893, -0.0493263623666991])
+    )
+    assert isinstance(eval3.normal, UnitVector3D)
+    assert np.allclose(
+        eval3.u_derivative, Vector3D([0.891566324481193, 2.59364748939984, 1.21577226065617])
+    )
+    assert isinstance(eval3.u_derivative, Vector3D)
+    assert np.allclose(
+        eval3.v_derivative, Vector3D([0.182574185835055, 0.365148371670111, -0.912870929175277])
+    )
+    assert isinstance(eval3.v_derivative, Vector3D)
+    assert np.allclose(
+        eval3.uu_derivative, Vector3D([2.81160265490184, -1.03585360970068, 0.147979087100097])
+    )
+    assert isinstance(eval3.uu_derivative, Vector3D)
+    assert np.allclose(eval3.uv_derivative, Vector3D([0, 0, 0]))
+    assert isinstance(eval3.uv_derivative, Vector3D)
+    assert np.allclose(
+        eval3.vv_derivative, Vector3D([0.937200884967281, -0.345284536566893, 0.0493263623666991])
+    )
+    assert isinstance(eval3.vv_derivative, Vector3D)
+    assert np.allclose(eval3.min_curvature, 0.3333333333333333)
+    assert np.allclose(
+        eval3.min_curvature_direction,
+        UnitVector3D([0.297188774827064, 0.864549163133279, 0.405257420218724]),
+    )
+    assert isinstance(eval3.min_curvature_direction, UnitVector3D)
+    assert eval3.max_curvature == 1.0
+    assert np.allclose(
+        eval3.max_curvature_direction,
+        UnitVector3D([0.182574185835055, 0.365148371670111, -0.912870929175277]),
+    )
+    assert isinstance(eval3.max_curvature_direction, UnitVector3D)
 
 
 def test_circle():

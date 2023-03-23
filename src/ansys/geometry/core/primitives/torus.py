@@ -1,6 +1,7 @@
 """Provides the ``Torus`` class."""
 
-import math
+from functools import cached_property
+from typing import Tuple
 
 from beartype import beartype as check_input_types
 from beartype.typing import Union
@@ -8,7 +9,7 @@ import numpy as np
 from pint import Quantity
 
 from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
-from ansys.geometry.core.misc import ANGLE_ACCURACY, Distance
+from ansys.geometry.core.misc import Distance
 from ansys.geometry.core.primitives.parameterization import (
     Interval,
     Parameterization,
@@ -35,7 +36,7 @@ class Torus:
     major_radius : Union[Quantity, Distance, Real]
         Major radius of the torus.
     minor_radius : Union[Quantity, Distance, Real]
-        Minor radius of ``Torus``.
+        Minor radius of the torus.
     """
 
     @check_input_types
@@ -55,7 +56,7 @@ class Torus:
         )
         self._axis = UnitVector3D(axis) if not isinstance(axis, UnitVector3D) else axis
         if not self._reference.is_perpendicular_to(self._axis):
-            raise ValueError("Circle reference (dir_x) and axis (dir_z) must be perpendicular.")
+            raise ValueError("Torus reference (dir_x) and axis (dir_z) must be perpendicular.")
 
         # Store values in base unit
         self._major_radius = (
@@ -98,12 +99,12 @@ class Torus:
     @property
     def volume(self) -> Quantity:
         """Volume of the torus."""
-        return 2 * math.pi**2 * self._major_radius.value * self._major_radius.value**2
+        return 2 * np.pi**2 * self._major_radius.value * self._minor_radius.value**2
 
     @property
     def surface_area(self) -> Quantity:
         """Surface_area of the torus."""
-        return 4 * math.pi**2 * self._major_radius.value * self._minor_radius.value
+        return 4 * np.pi**2 * self._major_radius.value * self._minor_radius.value
 
     @check_input_types
     def __eq__(self, other: "Torus") -> bool:
@@ -118,7 +119,7 @@ class Torus:
 
     def evaluate(self, parameter: ParamUV) -> "TorusEvaluation":
         """
-        Evaluate the tours at the given parameters.
+        Evaluate the torus at the given parameters.
 
         Parameters
         ----------
@@ -134,8 +135,9 @@ class Torus:
 
     def get_u_parameterization(self):
         """
-        The U parameter specifies the longitude angle, increasing clockwise (East) about `dir_z`
-        (right hand corkscrew law). It has a zero parameter at `dir_x`, and a period of 2*pi.
+        The U parameter specifies the longitude angle, increasing clockwise (East) about the axis
+        (right hand corkscrew law). It has a zero parameter at Geometry.Frame.DirX,
+        and a period of 2*pi.
 
         Returns
         -------
@@ -146,8 +148,12 @@ class Torus:
 
     def get_v_parameterization(self) -> Parameterization:
         """
-        The V parameter specifies the latitude, increasing North, with a zero parameter at the
-        equator, and a range of [-pi/2, pi/2].
+        The V parameter specifies the latitude, increasing North,
+        with a zero parameter at the equator.
+        For the donut, where the Geometry.Torus.MajorRadius is greater than the
+        Geometry.Torus.MinorRadius, the range is [-pi, pi] and the parameterization is periodic.
+        For a degenerate torus, the range is restricted accordingly and
+        the parameterization is non-periodic.
 
         Returns
         -------
@@ -181,25 +187,16 @@ class Torus:
             v = np.arctan2(vector2.dot(self.dir_z), vector2.dot(localX))
             return TorusEvaluation(self, ParamUV(u, v))
         vector3 = vector1 + delta
-
-        def min(parameter, clamp):
-            if parameter < clamp and parameter > (clamp - ANGLE_ACCURACY):
-                return clamp
-            new_parameter = parameter - (2 * math.pi) * math.floor(
-                (parameter - clamp) / (2 * math.pi)
-            )
-            return new_parameter
-
-        v1 = min(np.arctan2(vector2.dot(self.dir_z), vector2.dot(localX)), -math.pi)
-        v2 = min(np.arctan2(vector3.dot(self.dir_z), vector3.dot(localX)), -math.pi)
-        if math.pow(
+        v1 = np.arctan2(vector2.dot(self.dir_z), vector2.dot(localX)), -np.pi
+        v2 = np.arctan2(vector3.dot(self.dir_z), vector3.dot(localX)), -np.pi
+        if np.power(
             np.linalg.norm((TorusEvaluation(self, ParamUV(u, v1)).position() - point)), 2
-        ) < math.pow(
-            np.linalg.norm((TorusEvaluation(self, ParamUV(u + math.pi, v2)).position() - point)), 2
+        ) < np.power(
+            np.linalg.norm((TorusEvaluation(self, ParamUV(u + np.pi, v2)).position() - point)), 2
         ):
             return TorusEvaluation(self, ParamUV(u, v1))
         else:
-            return TorusEvaluation(self, ParamUV(u + math.pi, v2))
+            return TorusEvaluation(self, ParamUV(u + np.pi, v2))
 
 
 class TorusEvaluation(SurfaceEvaluation):
@@ -218,6 +215,7 @@ class TorusEvaluation(SurfaceEvaluation):
         """``TorusEvaluation`` class constructor."""
         self._torus = torus
         self._parameter = parameter
+        self.cache = {}
 
     @property
     def torus(self) -> Torus:
@@ -229,6 +227,7 @@ class TorusEvaluation(SurfaceEvaluation):
         """The parameter that the evaluation is based upon."""
         return self._parameter
 
+    @cached_property
     def position(self) -> Point3D:
         """
         The position of the evaluation.
@@ -245,6 +244,7 @@ class TorusEvaluation(SurfaceEvaluation):
             + np.sin(self.parameter.v) * self._torus.minor_radius.m * self._torus.dir_z
         )
 
+    @cached_property
     def normal(self) -> UnitVector3D:
         """
         The normal to the surface.
@@ -280,6 +280,7 @@ class TorusEvaluation(SurfaceEvaluation):
             + np.cos(self.parameter.u) * self._torus.dir_y
         )
 
+    @cached_property
     def u_derivative(self) -> Vector3D:
         """
         The first derivative with respect to u.
@@ -293,6 +294,7 @@ class TorusEvaluation(SurfaceEvaluation):
             self._torus.major_radius.m + np.cos(self.parameter.v) * self._torus.minor_radius.m
         ) * self.__cylinder_tangent()
 
+    @cached_property
     def v_derivative(self) -> Vector3D:
         """
         The first derivative with respect to v.
@@ -307,6 +309,7 @@ class TorusEvaluation(SurfaceEvaluation):
             + np.cos(self.parameter.v) * self._torus.minor_radius.m * self._torus.dir_z
         )
 
+    @cached_property
     def uu_derivative(self) -> Vector3D:
         """
         The second derivative with respect to u.
@@ -322,6 +325,7 @@ class TorusEvaluation(SurfaceEvaluation):
             * self.__cylinder_normal()
         )
 
+    @cached_property
     def uv_derivative(self) -> Vector3D:
         """
         The second derivative with respect to u and v.
@@ -333,6 +337,7 @@ class TorusEvaluation(SurfaceEvaluation):
         """
         return -np.sin(self.parameter.v) * self._torus.minor_radius.m * self.__cylinder_tangent()
 
+    @cached_property
     def vv_derivative(self) -> Vector3D:
         """
         The second derivative with respect to v.
@@ -347,6 +352,20 @@ class TorusEvaluation(SurfaceEvaluation):
             - np.sin(self.parameter.v) * self._torus.minor_radius.m * self._torus.dir_z
         )
 
+    @cached_property
+    def curvature(self) -> Tuple[Real, Vector3D, Real, Vector3D]:
+        min_cur = 1.0 / self._torus.minor_radius.m
+        min_dir = UnitVector3D(self.v_derivative)
+        start_point = self._torus.origin
+        end_point = self.position
+        max_cur = 1.0 / np.linalg.norm((end_point - start_point))
+        max_dir = UnitVector3D(self.u_derivative)
+        if min_cur > max_cur:
+            min_cur, max_cur = max_cur, min_cur
+            min_dir, max_dir = max_dir, min_dir
+        return min_cur, min_dir, max_cur, max_dir
+
+    @cached_property
     def min_curvature(self) -> Real:
         """
         The minimum curvature of the torus.
@@ -356,14 +375,9 @@ class TorusEvaluation(SurfaceEvaluation):
         Real
             The minimum curvature of the torus.
         """
-        min_cur = 1.0 / self._torus.minor_radius.m
-        start_point = self._torus.origin
-        origin = self.position()
-        max_cur = 1.0 / np.linalg.norm((origin - start_point))
-        if min_cur > max_cur:
-            min_cur, max_cur = max_cur, min_cur
-        return min_cur
+        return self.curvature[0]
 
+    @cached_property
     def min_curvature_direction(self) -> UnitVector3D:
         """
         The minimum curvature direction.
@@ -373,16 +387,9 @@ class TorusEvaluation(SurfaceEvaluation):
         UnitVector3D
             The minimum curvature direction.
         """
-        min_cur = 1.0 / self._torus.minor_radius.m
-        min_dir = UnitVector3D(self.v_derivative())
-        start_point = self._torus.origin
-        end_point = self.position()
-        max_cur = 1.0 / np.linalg.norm((end_point - start_point))
-        max_dir = UnitVector3D(self.u_derivative())
-        if min_cur > max_cur:
-            min_dir, max_dir = max_dir, min_dir
-        return min_dir
+        return self.curvature[1]
 
+    @cached_property
     def max_curvature(self) -> Real:
         """
         The maximum curvature of the torus.
@@ -392,14 +399,9 @@ class TorusEvaluation(SurfaceEvaluation):
         Real
             The maximum curvature of the torus.
         """
-        min_cur = 1.0 / self._torus.minor_radius.m
-        start_point = self._torus.origin
-        origin = self.position()
-        max_cur = 1.0 / np.linalg.norm((origin - start_point))
-        if min_cur > max_cur:
-            min_cur, max_cur = max_cur, min_cur
-        return max_cur
+        return self.curvature[2]
 
+    @cached_property
     def max_curvature_direction(self) -> UnitVector3D:
         """
         The maximum curvature direction.
@@ -409,12 +411,4 @@ class TorusEvaluation(SurfaceEvaluation):
         UnitVector3D
             The maximum curvature direction.
         """
-        min_cur = 1.0 / self._torus.minor_radius.m
-        min_dir = UnitVector3D(self.v_derivative())
-        start_point = self._torus.origin
-        end_point = self.position()
-        max_cur = 1.0 / np.linalg.norm((end_point - start_point))
-        max_dir = UnitVector3D(self.u_derivative())
-        if min_cur > max_cur:
-            min_dir, max_dir = max_dir, min_dir
-        return max_dir
+        return self.curvature[3]
