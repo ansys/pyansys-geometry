@@ -337,6 +337,7 @@ jobs:
 
   fetch-release-artifacts:
     name: Fetch release artifacts
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     runs-on: 
       group: ansys-internal
       labels: [self-hosted, Windows, signtool]
@@ -379,6 +380,7 @@ jobs:
         uses: pyansys/actions/release-github@v4
         with:
           library-name: ${{ env.PACKAGE_NAME }}
+          additional-artifacts: windows-binaries.zip linux-binaries.zip
 
   upload_dev_docs:
     name: Upload dev documentation
