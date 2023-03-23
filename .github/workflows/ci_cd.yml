@@ -326,7 +326,7 @@ jobs:
 
   package:
     name: Package library
-    needs: [testing-windows, docs]
+    needs: [testing-windows, testing-linux, docs]
     runs-on: ubuntu-latest
     steps:
       - name: Build library source and wheel artifacts
@@ -337,6 +337,7 @@ jobs:
 
   fetch-release-artifacts:
     name: Fetch release artifacts
+    needs: [testing-windows, testing-linux, docs]
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     runs-on: 
       group: ansys-internal
