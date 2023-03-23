@@ -15,10 +15,9 @@ WORKDIR /app
 
 # Add the binary files from the latest release
 COPY windows-binaries.zip .
-
-# TODO : Extract zip file and move binaries to WORKDIR
-#
-#
+RUN mkdir tmp_folder && tar -xf windows-binaries.zip -C tmp_folder
+RUN for /R "tmp_folder" %f in (*) do move /Y "%f" .
+RUN del windows-binaries.zip && rmdir /s /q tmp_folder
 
 # Defining environment variables
 ENV LICENSE_SERVER = ""
