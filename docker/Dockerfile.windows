@@ -1,4 +1,4 @@
-# Geometry service Linux-based Dockerfile
+# Geometry service Windows-based Dockerfile
 #
 # Based on mcr.microsoft.com/dotnet/framework/runtime:4.7.2-windowsservercore-ltsc2019
 FROM mcr.microsoft.com/dotnet/framework/runtime:4.7.2-windowsservercore-ltsc2019
@@ -14,7 +14,7 @@ RUN VC_redist.x64.exe /install /quiet /norestart
 WORKDIR /app
 
 # Add the binary files from the latest release
-ADD https://github.com/pyansys/pygeometry/releases/download/latest/windows-binaries.zip windows-binaries.zip
+COPY windows-binaries.zip .
 
 # TODO : Extract zip file and move binaries to WORKDIR
 #
