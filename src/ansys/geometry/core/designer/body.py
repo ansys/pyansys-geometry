@@ -29,7 +29,7 @@ from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials import Material
-from ansys.geometry.core.math import UnitVector3D
+from ansys.geometry.core.math import IDENTITY_MATRIX44, Matrix44, UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, Distance, check_type
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.typing import Real
@@ -438,12 +438,13 @@ class TemplateBody:
         tb = TemplateBody(
             response.master_id, copy_name, parent, self._grpc_client, is_surface=self.is_surface
         )
-        b = Body(response.id, response.name, self, tb)
-        parent._bodies.append(b)
-        return parent._bodies[-1]
+        parent._transformed_part.part.bodies.append(tb)
+        return Body(response.id, response.name, self, tb)
 
     @protect_grpc
-    def tessellate(self, merge: Optional[bool] = False) -> Union["PolyData", "MultiBlock"]:
+    def tessellate(
+        self, merge: Optional[bool] = False, transform: Matrix44 = IDENTITY_MATRIX44
+    ) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
         Parameters
@@ -507,7 +508,7 @@ class TemplateBody:
 
         resp = self._bodies_stub.GetTessellation(self._grpc_id)
 
-        pdata = [tess_to_pd(tess) for tess in resp.face_tessellation.values()]
+        pdata = [tess_to_pd(tess).transform(transform) for tess in resp.face_tessellation.values()]
         comp = pv.MultiBlock(pdata)
         if merge:
             ugrid = comp.combine()
@@ -622,7 +623,7 @@ class Body(TemplateBody):
         return self._template.name
 
     @property
-    def parent(self) -> str:
+    def parent(self) -> "Component":
         return self._parent
 
     @property
@@ -661,11 +662,6 @@ class Body(TemplateBody):
             Edge(grpc_edge.id, CurveType(grpc_edge.curve_type), self, self._template._grpc_client)
             for grpc_edge in grpc_edges.edges
         ]
-
-    @property
-    def master(self) -> "TemplateBody":
-        """TEMPORARY - FOR DEBUG ONLY"""
-        return self._template
 
     @property
     def is_alive(self) -> bool:
@@ -895,7 +891,7 @@ class Body(TemplateBody):
 
 
         """
-        return self._template.tessellate(merge)
+        return self._template.tessellate(merge, self.parent.get_world_transform())
 
     def plot(
         self,

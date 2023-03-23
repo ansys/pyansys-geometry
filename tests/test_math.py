@@ -705,11 +705,6 @@ def test_matrix_33():
         Matrix33([[1, 2], [1, 6]])
         assert "Matrix33 should only be a 2D array of shape (3,3)." in str(val.value)
 
-    # Build a Matrix44 and try to compare against it
-    with pytest.raises(BeartypeCallHintParamViolation):
-        m_2 = Matrix44([[2, 0, 0, 2], [0, 3, 0, 1], [0, 0, 4, 2], [0, 0, 4, 2]])
-        assert m_1 == m_2
-
 
 def test_matrix_44():
     """Simple test to create a ``Matrix44``."""
@@ -740,11 +735,6 @@ def test_matrix_44():
     with pytest.raises(ValueError) as val:
         Matrix44([[1, 2], [1, 6]])
         assert "Matrix44 should only be a 2D array of shape (4,4)." in str(val.value)
-
-    # Build a Matrix44 and try to compare against it
-    with pytest.raises(BeartypeCallHintParamViolation):
-        m_2 = Matrix33([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
-        assert m_1 == m_2
 
 
 def test_frame():

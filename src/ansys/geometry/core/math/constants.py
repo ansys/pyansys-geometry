@@ -1,5 +1,8 @@
 """Provides the ``Constants`` class for mathematical constants."""
 
+import numpy as np
+
+from ansys.geometry.core.math.matrix import Matrix33, Matrix44
 from ansys.geometry.core.math.point import (
     DEFAULT_POINT2D_VALUES,
     DEFAULT_POINT3D_VALUES,
@@ -13,6 +16,12 @@ DEFAULT_POINT3D = Point3D(DEFAULT_POINT3D_VALUES)
 
 DEFAULT_POINT2D = Point2D(DEFAULT_POINT2D_VALUES)
 """Default value for a 2D point."""
+
+IDENTITY_MATRIX33 = Matrix33(np.identity(3))
+"""Identity ``Matrix33`` object."""
+
+IDENTITY_MATRIX44 = Matrix44(np.identity(4))
+"""Identity ``Matrix44`` object."""
 
 UNITVECTOR3D_X = UnitVector3D([1, 0, 0])
 """Default 3D unit vector in the Cartesian traditional X direction."""
@@ -44,6 +53,8 @@ ZERO_POINT2D = Point2D([0, 0])
 # Define the numpy.ndarrays as read-only - just for the sake of being "safe"
 DEFAULT_POINT3D.setflags(write=False)
 DEFAULT_POINT2D.setflags(write=False)
+IDENTITY_MATRIX33.setflags(write=False)
+IDENTITY_MATRIX44.setflags(write=False)
 UNITVECTOR3D_X.setflags(write=False)
 UNITVECTOR3D_Y.setflags(write=False)
 UNITVECTOR3D_Z.setflags(write=False)

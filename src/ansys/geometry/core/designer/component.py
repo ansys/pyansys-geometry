@@ -2,6 +2,7 @@
 
 from enum import Enum, unique
 from threading import Thread
+import uuid  # TODO: if we even need ID, try to use from SC
 
 from ansys.api.geometry.v0.bodies_pb2 import (
     CreateBodyFromFaceRequest,
@@ -13,16 +14,22 @@ from ansys.api.geometry.v0.bodies_pb2 import (
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import CreateBeamSegmentsRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.components_pb2 import CreateRequest, SetSharedTopologyRequest
+from ansys.api.geometry.v0.components_pb2 import (
+    CreateRequest,
+    SetPlacementRequest,
+    SetSharedTopologyRequest,
+)
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
-from ansys.api.geometry.v0.models_pb2 import EntityIdentifier, Line
+from ansys.api.geometry.v0.models_pb2 import Direction, EntityIdentifier, Line
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
 
 from ansys.geometry.core.connection import (
     GrpcClient,
+    grpc_matrix_to_matrix,
     plane_to_grpc_plane,
+    point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
     unit_vector_to_grpc_direction,
 )
@@ -31,9 +38,18 @@ from ansys.geometry.core.designer.beam import Beam, BeamProfile
 from ansys.geometry.core.designer.body import Body, TemplateBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.face import Face
+from ansys.geometry.core.designer.part import Part, TransformedPart
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.math import Frame, Point3D, UnitVector3D
-from ansys.geometry.core.misc import DEFAULT_UNITS, Distance, check_pint_unit_compatibility
+from ansys.geometry.core.math import (
+    IDENTITY_MATRIX44,
+    Frame,
+    Matrix44,
+    Point3D,
+    UnitVector3D,
+    Vector3D,
+)
+from ansys.geometry.core.misc import DEFAULT_UNITS, Angle, Distance, check_pint_unit_compatibility
+from ansys.geometry.core.primitives import Line as primitive_Line
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -81,6 +97,7 @@ class Component:
         parent_component: Optional["Component"],
         template: Optional["Component"],
         grpc_client: GrpcClient,
+        preexisting_id: Optional[str] = None,
     ):
         """Constructor method for the ``Component`` class."""
         self._grpc_client = grpc_client
@@ -88,16 +105,21 @@ class Component:
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 
-        if parent_component:
-            template_id = template.id if template else ""
-            new_component = self._component_stub.Create(
-                CreateRequest(name=name, parent=parent_component.id, template=template_id)
-            )
-            self._id = new_component.component.id
-            self._name = new_component.component.name
-        else:
+        if preexisting_id:
             self._name = name
-            self._id = None
+            self._id = preexisting_id
+        else:
+            if parent_component:
+                template_id = template.id if template else ""
+                new_component = self._component_stub.Create(
+                    CreateRequest(name=name, parent=parent_component.id, template=template_id)
+                )
+                self._id = new_component.component.id
+                self._name = new_component.component.name
+                self._placement = grpc_matrix_to_matrix(new_component.component.placement)
+            else:
+                self._name = name
+                self._id = None
 
         self._components = []
         self._bodies = []
@@ -106,6 +128,31 @@ class Component:
         self._parent_component = parent_component
         self._is_alive = True
         self._shared_topology = None
+
+        # Populate client data model
+        if template:
+            # Create new TransformedPart, but use template's Part
+            tp = TransformedPart(
+                uuid.uuid4(),
+                f"tp_{name}",
+                template._transformed_part.part,
+                template._transformed_part.transform,
+            )
+            tp.part.parts.append(tp)
+            self._transformed_part = tp
+
+            # Create children from template's children
+            self.__create_children(template)
+        else:
+            # Create new Part and TransformedPart since this is creating a new "master"
+            p = Part(uuid.uuid4(), f"p_{name}", [], [])
+            tp = TransformedPart(uuid.uuid4(), f"tp_{name}", p)
+            p.parts.append(tp)
+            self._transformed_part = tp
+
+        # Add transformation matrix to TransformedPart
+        if hasattr(self, "_placement"):
+            self._transformed_part.transform = self._placement
 
     @property
     def id(self) -> str:
@@ -125,7 +172,12 @@ class Component:
     @property
     def bodies(self) -> List[Body]:
         """``Body`` objects inside of the component."""
-        return self._bodies
+        bodies = []
+        for body in self._transformed_part.part.bodies:
+            id = self.id + body.id if self.parent_component else body.id
+            id = self.__fix_moniker(id)
+            bodies.append(Body(id, body.name, self, body))
+        return bodies
 
     @property
     def beams(self) -> List[Beam]:
@@ -156,6 +208,93 @@ class Component:
         If no shared topology has been set, ``None`` is returned.
         """
         return self._shared_topology
+
+    def __create_children(self, template: "Component") -> None:
+        """Create new Component and Body children in ``self`` from ``template``."""
+
+        for t_body in template.bodies:
+            new_id = self.id + ("~" + t_body.id.split("~")[-1])
+            new_body = Body(new_id, t_body.name, self, t_body._template)
+            self.bodies.append(new_body)
+
+        for template_comp in template.components:
+            new = Component(
+                template_comp.name,
+                self,
+                template_comp,
+                self._grpc_client,
+                self.id + template_comp.id,
+            )
+            self.components.append(new)
+
+    def __fix_moniker(self, string: str) -> str:
+        """Properly format a chain of monikers so the service can identify the entities."""
+        x = string.split("~")[1:]
+        if len(x) > 1:
+            x[0] = x[0].replace("sE", "~sO_~iI", 1)
+            for s in x[1:-1]:
+                x[x.index(s)] = s.replace("sE", "~oO", 1)
+            x[-1] = x[-1].replace("sE", "~oE", 1)
+            x = "".join(x) + "_"
+        else:
+            x[0] = "~" + x[0]
+            x = "".join(x)
+        return x
+
+    def get_world_transform(self) -> Matrix44:
+        """The full transformation matrix of this Component in world space."""
+        if self.parent_component is None:
+            return IDENTITY_MATRIX44
+        return self.parent_component.get_world_transform() * self._transformed_part.transform
+
+    @protect_grpc
+    def modify_placement(
+        self,
+        translation: Optional[Vector3D] = None,
+        rotation_axis: Optional[primitive_Line] = None,
+        rotation_angle: Union[Quantity, Angle, Real] = 0,
+    ):
+        """
+        Applies a translation and/or rotation to the existing placement matrix of the component.
+        To reset a component's placement to an identity matrix, see
+        ``reset_placement()`` or call this method with no arguments.
+        Parameters
+        ----------
+        translation : Vector3D, optional
+            The vector that defines the desired translation to the component.
+        rotation_axis : Line, optional
+            The line that defines the axis to rotate the component about.
+        rotation_angle : Union[Quantity, Angle, Real], default=0
+            The angle to rotate the component around the axis.
+        """
+        t = (
+            Direction(x=translation.x, y=translation.y, z=translation.z)
+            if translation is not None
+            else None
+        )
+        p = point3d_to_grpc_point(rotation_axis.origin) if rotation_axis is not None else None
+        d = (
+            unit_vector_to_grpc_direction(rotation_axis.direction)
+            if rotation_axis is not None
+            else None
+        )
+        angle = rotation_angle if isinstance(rotation_angle, Angle) else Angle(rotation_angle)
+
+        response = self._component_stub.SetPlacement(
+            SetPlacementRequest(
+                id=self.id,
+                translation=t,
+                rotation_axis_origin=p,
+                rotation_axis_direction=d,
+                rotation_angle=angle.value.m,
+            )
+        )
+        self._transformed_part.transform = grpc_matrix_to_matrix(response.matrix)
+
+    def reset_placement(self):
+        """Resets a component's placement matrix to an identity matrix.
+        See ``modify_placement()``."""
+        self.modify_placement()
 
     @check_input_types
     def add_component(self, name: str, template: Optional["Component"] = None) -> "Component":
@@ -233,9 +372,8 @@ class Component:
         self._grpc_client.log.debug(f"Extruding sketch provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBody(request)
         tb = TemplateBody(response.master_id, name, self, self._grpc_client, is_surface=False)
-        b = Body(response.id, response.name, self, tb)
-        self._bodies.append(b)
-        return self._bodies[-1]
+        self._transformed_part.part.bodies.append(tb)
+        return Body(response.id, response.name, self, tb)
 
     @protect_grpc
     @check_input_types
@@ -280,9 +418,8 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBodyFromFaceProfile(request)
 
         tb = TemplateBody(response.master_id, name, self, self._grpc_client, is_surface=False)
-        b = Body(response.id, response.name, self, tb)
-        self._bodies.append(b)
-        return self._bodies[-1]
+        self._transformed_part.part.bodies.append(tb)
+        return Body(response.id, response.name, self, tb)
 
     @protect_grpc
     @check_input_types
@@ -317,9 +454,8 @@ class Component:
         response = self._bodies_stub.CreatePlanarBody(request)
 
         tb = TemplateBody(response.master_id, name, self, self._grpc_client, is_surface=True)
-        b = Body(response.id, response.name, self, tb)
-        self._bodies.append(b)
-        return self._bodies[-1]
+        self._transformed_part.part.bodies.append(tb)
+        return Body(response.id, response.name, self, tb)
 
     @protect_grpc
     @check_input_types
@@ -357,9 +493,8 @@ class Component:
         response = self._bodies_stub.CreateBodyFromFace(request)
 
         tb = TemplateBody(response.master_id, name, self, self._grpc_client, is_surface=True)
-        b = Body(response.id, response.name, self, tb)
-        self._bodies.append(b)
-        return self._bodies[-1]
+        self._transformed_part.part.bodies.append(tb)
+        return Body(response.id, response.name, self, tb)
 
     @check_input_types
     def create_coordinate_system(self, name: str, frame: Frame) -> CoordinateSystem:
