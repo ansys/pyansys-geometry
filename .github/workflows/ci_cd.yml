@@ -335,10 +335,37 @@ jobs:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
+  fetch-release-artifacts:
+    name: Fetch release artifacts
+    runs-on: 
+      group: ansys-internal
+      labels: [self-hosted, Windows, signtool]
+
+    steps:
+      - name: Download binaries
+        # TODO: We have to provide the proper path for the windows binaries
+        run: |
+          curl.exe -X GET -H 'X-JFrog-Art-Api: S{{ secrets.ARTIFACTORY_KEY }}' S{{ secrets.ARTIFACTORY_URL }}/DockerLinux.zip --output windows-binaries.zip
+          curl.exe -X GET -H 'X-JFrog-Art-Api: S{{ secrets.ARTIFACTORY_KEY }}' S{{ secrets.ARTIFACTORY_URL }}/DockerLinux.zip --output linux-binaries.zip
+      
+      - name: Upload Windows binaries as workflow artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-binaries.zip
+          path: windows-binaries.zip
+          retention-days: 7
+
+      - name: Upload Linux binaries as workflow artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-binaries.zip
+          path: linux-binaries.zip
+          retention-days: 7
+
   release:
     name: Release project
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    needs: [package]
+    needs: [package, fetch-release-artifacts]
     runs-on: ubuntu-latest
     steps:
       - name: Release to the private PyPI repository
