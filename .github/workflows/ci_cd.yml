@@ -345,7 +345,6 @@ jobs:
 
     steps:
       - name: Download binaries
-        # TODO: We have to provide the proper path for the windows binaries
         run: |
           curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/DockerWindows.zip --output windows-binaries.zip
           curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/DockerLinux.zip --output linux-binaries.zip
