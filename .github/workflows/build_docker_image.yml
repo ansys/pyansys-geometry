@@ -50,7 +50,7 @@ jobs:
           path: windows-binaries.zip
           retention-days: 7
 
-      - name: Upload Windows binaries to workflow artifacts
+      - name: Upload Linux binaries to workflow artifacts
         uses: actions/upload-artifact@v3
         with:
           name: linux-binaries.zip
