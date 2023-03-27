@@ -18,8 +18,8 @@ machine, you will have to build one or the other. For example:
   ``Dockerfile.linux`` image.
 * If you are running on a Windows-based machine with Docker CE, you will
   need to build the ``Dockerfile.windows`` image.
-* If you are running on a Windows-based machine and you have ``Docker Desktop``,
-  bear in mind that you can run both kinds of containers.
+* If you are running on a Windows-based machine and you have ``WSL``,
+  bear in mind that you can also run Linux containers.
 
 Prerequisites
 ^^^^^^^^^^^^^
