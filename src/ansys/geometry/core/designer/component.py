@@ -834,11 +834,11 @@ class Component:
         bodies = self.bodies
         datasets = []
 
-        if len(bodies) > 0:
+        for body in bodies:
             # dump existing cached tessellation as a safety measure
-            bodies[0]._template._tessellation = None
+            body._template._tessellation = None
 
-            datasets = [body.tessellate(merge_bodies) for body in bodies]
+        datasets = [body.tessellate(merge_bodies) for body in bodies]
 
         blocks_list = [pv.MultiBlock(datasets)]
 
