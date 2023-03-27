@@ -79,7 +79,7 @@ jobs:
       - name: Build Docker image
         working-directory: docker
         run: |
-          docker build -f .\Dockerfile.windows -t ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }} .
+          docker build -f Dockerfile.windows -t ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }} .
 
       - name: Launch Geometry service
         run: |
@@ -120,7 +120,7 @@ jobs:
       - name: Build Docker image
         working-directory: docker
         run: |
-          docker build -f .\Dockerfile.linux -t ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }} .
+          docker build -f Dockerfile.linux -t ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }} .
 
       - name: Launch Geometry service
         run: |
