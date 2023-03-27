@@ -6,6 +6,8 @@ on:
       - 'docker/**'
       - '.github/workflows/build_docker_image.yml'
   push:
+    branches:
+      - main
     paths:
       - 'docker/**'
       - '.github/workflows/build_docker_image.yml'
