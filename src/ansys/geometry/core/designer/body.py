@@ -99,6 +99,7 @@ class TemplateBody:
         self._is_alive = True
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
+        self._tessellation = None
 
     @property
     def _grpc_id(self) -> EntityIdentifier:
@@ -506,13 +507,17 @@ class TemplateBody:
 
         self._grpc_client.log.debug(f"Requesting tessellation for body {self.id}.")
 
-        resp = self._bodies_stub.GetTessellation(self._grpc_id)
+        # cache
+        if not self._tessellation:
+            resp = self._bodies_stub.GetTessellation(self._grpc_id)
+            self._tessellation = resp.face_tessellation.values()
 
-        pdata = [tess_to_pd(tess).transform(transform) for tess in resp.face_tessellation.values()]
+        pdata = [tess_to_pd(tess).transform(transform) for tess in self._tessellation]
         comp = pv.MultiBlock(pdata)
         if merge:
             ugrid = comp.combine()
             return pv.PolyData(ugrid.points, ugrid.cells, n_faces=ugrid.n_cells)
+
         return comp
 
     def plot(

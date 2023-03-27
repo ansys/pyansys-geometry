@@ -1,7 +1,6 @@
 """Provides the ``Component`` class module."""
 
 from enum import Enum, unique
-from threading import Thread
 import uuid  # TODO: if we even need ID, try to use from SC
 
 from ansys.api.geometry.v0.bodies_pb2 import (
@@ -258,6 +257,7 @@ class Component:
         Applies a translation and/or rotation to the existing placement matrix of the component.
         To reset a component's placement to an identity matrix, see
         ``reset_placement()`` or call this method with no arguments.
+
         Parameters
         ----------
         translation : Vector3D, optional
@@ -830,18 +830,16 @@ class Component:
         """
         import pyvista as pv
 
+        # Tessellate the bodies in this component
+        bodies = self.bodies
         datasets = []
 
-        def get_tessellation(body: Body):
-            datasets.append(body.tessellate(merge=merge_bodies))
+        if len(bodies) > 0:
+            # dump existing cached tessellation as a safety measure
+            bodies[0]._template._tessellation = None
 
-        # Tessellate the bodies in this component
-        threads = []
-        for body in self.bodies:
-            thread = Thread(target=get_tessellation, args=(body,))
-            thread.start()
-            threads.append(thread)
-        [thread.join() for thread in threads]
+            datasets = [body.tessellate(merge_bodies) for body in bodies]
+
         blocks_list = [pv.MultiBlock(datasets)]
 
         # Now, go recursively inside its subcomponents (with no arguments) and
