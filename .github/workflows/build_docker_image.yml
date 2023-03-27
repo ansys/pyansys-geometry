@@ -71,10 +71,9 @@ jobs:
       
       - name: Download the Windows binaries
         uses: actions/download-artifact@v3
-        working-directory: docker
         with:
           name: windows-binaries.zip
-          path: windows-binaries.zip
+          path: docker/windows-binaries.zip
 
       - name: Build Docker image
         working-directory: docker
@@ -112,10 +111,9 @@ jobs:
       
       - name: Download the Linux binaries
         uses: actions/download-artifact@v3
-        working-directory: docker
         with:
           name: linux-binaries.zip
-          path: linux-binaries.zip
+          path: docker/linux-binaries.zip
 
       - name: Build Docker image
         working-directory: docker
