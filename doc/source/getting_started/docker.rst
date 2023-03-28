@@ -13,7 +13,7 @@ please install `Docker Engine <https://docs.docker.com/engine/install/>`_ from t
     At the moment, the Geometry service backend is only delivered as a Windows Docker container.
     As such, this container only runs on a Windows machine. Furthermore, it has also been observed
     that certain Docker Desktop versions for Windows are not properly configured for running Windows
-    Docker containers. Refer to our section
+    Docker containers. Refer to 
     :ref:`Running the Geometry service Windows Docker container <ref_docker_windows>` for further details.
 
 .. _ref_docker_windows:
@@ -33,10 +33,10 @@ you follow the upcoming steps when installing Docker:
 
 #. On ``Settings >> Software updates``, deselect ``Automatically check for updates``. Then, ``Apply & restart``.
 
-#. On the Windows taskbar, go to the ``Show hidden icons`` section, right click on the Docker Desktop app and
+#. On the Windows taskbar, go to the ``Show hidden icons`` section, right click in the Docker Desktop app and
    select ``Switch to Windows containers...``.
 
-At this point, your Docker engine will support running Windows Docker containers. Next step will involve downloading
+At this point, your Docker engine supports running Windows Docker containers. Next step involves downloading
 the Geometry service Windows Docker image.
 
 Install the PyGeometry image
