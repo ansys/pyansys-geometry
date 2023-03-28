@@ -76,22 +76,17 @@ class TemplateBody:
         self,
         id: str,
         name: str,
-        parent_component: "Component",
         grpc_client: GrpcClient,
         is_surface: bool = False,
     ):
         """Constructor method for the ``TemplateBody`` class."""
-        from ansys.geometry.core.designer.component import Component
-
         check_type(id, str)
         check_type(name, str)
-        check_type(parent_component, Component)
         check_type(grpc_client, GrpcClient)
         check_type(is_surface, bool)
 
         self._id = id
         self._name = name
-        self._parent_component = parent_component
         self._grpc_client = grpc_client
         self._is_surface = is_surface
         self._surface_thickness = None
@@ -436,7 +431,7 @@ class TemplateBody:
 
         # Assign the new body to its specified parent (and return the new body)
         tb = TemplateBody(
-            response.master_id, copy_name, parent, self._grpc_client, is_surface=self.is_surface
+            response.master_id, copy_name, self._grpc_client, is_surface=self.is_surface
         )
         parent._transformed_part.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)

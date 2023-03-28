@@ -377,7 +377,7 @@ class Component:
 
         self._grpc_client.log.debug(f"Extruding sketch provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBody(request)
-        tb = TemplateBody(response.master_id, name, self, self._grpc_client, is_surface=False)
+        tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._transformed_part.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
@@ -423,7 +423,7 @@ class Component:
         self._grpc_client.log.debug(f"Extruding from face provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBodyFromFaceProfile(request)
 
-        tb = TemplateBody(response.master_id, name, self, self._grpc_client, is_surface=False)
+        tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._transformed_part.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
@@ -459,7 +459,7 @@ class Component:
         )
         response = self._bodies_stub.CreatePlanarBody(request)
 
-        tb = TemplateBody(response.master_id, name, self, self._grpc_client, is_surface=True)
+        tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._transformed_part.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
@@ -498,7 +498,7 @@ class Component:
         )
         response = self._bodies_stub.CreateBodyFromFace(request)
 
-        tb = TemplateBody(response.master_id, name, self, self._grpc_client, is_surface=True)
+        tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._transformed_part.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
