@@ -33,7 +33,7 @@ jobs:
 
   build-windows:
     name: Building Geometry Service - Windows
-    runs-on: [ pygeometry-ci-1 ]
+    runs-on: pygeometry-ci-1
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -78,7 +78,7 @@ jobs:
       - name: Delete the Docker images (and untagged ones)
         if: always()
         run: |
-          docker image rm stop ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }}
+          docker image rm ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }}
           docker system prune -f
 
 # =================================================================================================
