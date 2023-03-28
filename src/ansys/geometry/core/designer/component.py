@@ -228,7 +228,7 @@ class Component:
                 self,
                 template_comp,
                 self._grpc_client,
-                self.id + template_comp.id,
+                self.__fix_moniker(self.id + template_comp.id),
                 template_comp._transformed_part,
             )
             self.components.append(new)
@@ -239,12 +239,19 @@ class Component:
         if len(x) > 1:
             x[0] = x[0].replace("sE", "~sO_~iI", 1)
             for s in x[1:-1]:
-                x[x.index(s)] = s.replace("sE", "~oO", 1)
+                index = x.index(s)
+                s = "~" + s if s[0] != "~" else s
+                s = s.replace("sE", "oO", 1)
+                s = s.replace("oE", "oO", 1)
+                s = s.replace("oO", "oO", 1)
+                s = s.replace("___", "__", 1)
+                x[index] = s
             x[-1] = x[-1].replace("sE", "~oE", 1)
             x = "".join(x) + "_"
         else:
-            x[0] = "~" + x[0]
             x = "".join(x)
+        if x[0] != "~":
+            x = "~" + x
         return x
 
     def get_world_transform(self) -> Matrix44:
@@ -448,7 +455,7 @@ class Component:
         """
         # Perform planar body request
         request = CreatePlanarBodyRequest(
-            parent=self._id,
+            parent=self.id,
             plane=plane_to_grpc_plane(sketch._plane),
             geometries=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
             name=name,
