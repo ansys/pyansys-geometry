@@ -98,6 +98,7 @@ class Component:
         template: Optional["Component"],
         grpc_client: GrpcClient,
         preexisting_id: Optional[str] = None,
+        transformed_part: Optional[TransformedPart] = None,
     ):
         """Constructor method for the ``Component`` class."""
         self._grpc_client = grpc_client
@@ -131,17 +132,21 @@ class Component:
 
         # Populate client data model
         if template:
-            # Create new TransformedPart, but use template's Part
-            tp = TransformedPart(
-                uuid.uuid4(),
-                f"tp_{name}",
-                template._transformed_part.part,
-                template._transformed_part.transform,
-            )
-            tp.part.parts.append(tp)
-            self._transformed_part = tp
+            if transformed_part:
+                # Re-use an existing tp if this is a nested instance
+                self._transformed_part = transformed_part
+            else:
+                # Create new TransformedPart, but use template's Part
+                tp = TransformedPart(
+                    uuid.uuid4(),
+                    f"tp_{name}",
+                    template._transformed_part.part,
+                    template._transformed_part.transform,
+                )
+                tp.part.parts.append(tp)
+                self._transformed_part = tp
 
-            # Create children from template's children
+            # Recurse - Create more children components from template's remaining children
             self.__create_children(template)
         else:
             # Create new Part and TransformedPart since this is creating a new "master"
@@ -224,6 +229,7 @@ class Component:
                 template_comp,
                 self._grpc_client,
                 self.id + template_comp.id,
+                template_comp._transformed_part,
             )
             self.components.append(new)
 
