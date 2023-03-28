@@ -47,7 +47,7 @@ class LocalDockerInstance:
     """
     ``LocalDockerInstance`` class.
 
-    This class is used for instatiating a Geometry service (as a local Docker container).
+    This class is used for instantiating a Geometry service (as a local Docker container).
     By default, if a container with the Geometry service already exists at the given port,
     it will connect to it. Otherwise, it will try to launch its own service.
 
