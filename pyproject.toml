@@ -79,7 +79,7 @@ doc = [
     "panel==0.14.4",
     "pyvista[trame]==0.38.5",
     "Sphinx==5.1.1",                        # PR349 - Duplicated documentation entries...
-    "sphinx-autoapi==2.0.1",
+    "sphinx-autoapi==2.1.0",
     "sphinx-autodoc-typehints==1.19.1",     # PR349 - Duplicated documentation entries...
     "sphinx-copybutton==0.5.1",
     "sphinx_design==0.3.0",
