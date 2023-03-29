@@ -106,6 +106,34 @@ class Torus:
         """Surface_area of the torus."""
         return 4 * np.pi**2 * self._major_radius.value * self._minor_radius.value
 
+    @property
+    def rotation_transition_transformation(self, matrix):
+        def rotate(matrix, vector):
+            return np.dot(matrix, vector)
+
+        origin_4_dimension = np.array([self.origin[0]], self.origin[1], self.origin[2], 1)
+        transformed_origin_4_dimension = rotate(matrix, origin_4_dimension)
+        transformed_origin = transformed_origin_4_dimension[0:3] / transformed_origin_4_dimension[3]
+        transformed_reference = rotate(matrix, self._reference)
+        transformed_axis = rotate(matrix, self._axis)
+        return Torus(
+            transformed_origin,
+            self.major_radius,
+            self.minor_radius,
+            transformed_reference,
+            transformed_axis,
+        )
+
+    @property
+    def scaling_transition(self, major_radius_para, minor_radius_para):
+        return Torus(
+            self.origin,
+            self.major_radius * major_radius_para,
+            self.minor_radius * minor_radius_para,
+            self._reference,
+            self._axis,
+        )
+
     @check_input_types
     def __eq__(self, other: "Torus") -> bool:
         """Equals operator for the ``Torus`` class."""
