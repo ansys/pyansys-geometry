@@ -1,0 +1,128 @@
+name: Build Docker images
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'docker/**'
+      - '.github/workflows/build_docker_image.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'docker/**'
+      - '.github/workflows/build_docker_image.yml'
+  release:
+    types: [published]
+
+env:
+  MAIN_PYTHON_VERSION: '3.10'
+  ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/pyansys/geometry:windows-latest-tmp
+  ANSRV_GEO_IMAGE_LINUX_TAG: ghcr.io/pyansys/geometry:linux-latest-tmp
+  ANSRV_GEO_PORT: 700
+  ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
+  GEO_CONT_NAME: ans_geo
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+# =================================================================================================
+# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+# =================================================================================================
+
+  build-windows:
+    name: Building Geometry Service - Windows
+    runs-on: [self-hosted, pygeometry-ci-1]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9' # use python3.9, self-hosted has an issue with 3.10
+
+      - name: Download Windows binaries
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          version: 'latest'
+          file: 'windows-binaries.zip'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          target: 'docker/windows-binaries.zip'
+
+      - name: Build Docker image
+        working-directory: docker
+        run: |
+          docker build -f Dockerfile.windows -t ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }} .
+
+      - name: Launch Geometry service
+        run: |
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }}
+
+      - name: Validate connection using PyGeometry
+        run: |
+          python -m venv .venv
+          .\.venv\Scripts\Activate.ps1
+          python -m pip install --upgrade pip
+          pip install .
+          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+
+      - name: Stop the Geometry service
+        if: always()
+        run: |
+          docker stop ${{ env.GEO_CONT_NAME }}
+          docker logs ${{ env.GEO_CONT_NAME }}
+          docker rm ${{ env.GEO_CONT_NAME }}
+
+      - name: Delete the Docker images (and untagged ones)
+        if: always()
+        run: |
+          docker image rm ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }}
+          docker system prune -f
+
+# =================================================================================================
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# =================================================================================================
+
+  build-linux:
+    name: Building Geometry Service - Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+      - name: Download Linux binaries
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          version: 'latest'
+          file: 'linux-binaries.zip'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          target: 'docker/linux-binaries.zip'
+
+      - name: Build Docker image
+        working-directory: docker
+        run: |
+          docker build -f Dockerfile.linux -t ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }} .
+
+      - name: Launch Geometry service
+        run: |
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
+
+      - name: Validate connection using PyGeometry
+        run: |
+          python -m pip install --upgrade pip
+          pip install .
+          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+
+      - name: Stop the Geometry service
+        if: always()
+        run: |
+          docker stop ${{ env.GEO_CONT_NAME }}
+          docker logs ${{ env.GEO_CONT_NAME }}
+          docker rm ${{ env.GEO_CONT_NAME }}
