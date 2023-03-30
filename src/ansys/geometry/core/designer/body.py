@@ -401,6 +401,8 @@ class TemplateBody:
             )
         )
 
+        self.reset_cache()
+
     @protect_grpc
     def copy(self, parent: "Component", name: str = None) -> "Body":
         """Creates a copy of the geometry body and places it under the specified parent.
@@ -590,6 +592,9 @@ class TemplateBody:
             lines.append(f"  Surface offset       : {self.surface_offset}")
 
         return "\n".join(lines)
+
+    def reset_cache(self):
+        self._tessellation = None
 
 
 class Body(TemplateBody):
