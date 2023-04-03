@@ -2,7 +2,7 @@
 
 from enum import Enum, unique
 from threading import Thread
-import uuid  # TODO: if we even need ID, try to use from SC
+import uuid  # TODO: do we even need ID?, maybe use from SC?
 
 from ansys.api.geometry.v0.bodies_pb2 import (
     CreateBodyFromFaceRequest,
@@ -79,8 +79,17 @@ class Component:
         User-defined label for the component.
     parent_component : Component
         Parent component to nest the new component under within the design assembly.
+    template : Component, optional
+        The template component that this component will be created from. This creates an instance.
     grpc_client : GrpcClient
         Active supporting Geometry service instance for design modeling.
+    preexisting_id : str, optional
+        If a component already exists on the server, you can pass in its ID to create it on the
+        client-side data model. If this is argument is present, a new Component will not be created
+        on the server.
+    transformed_part : TransformedPart, optional
+        This argument should be present when creating a nested instance component. It will use the
+        given transformed_part instead of creating a new one.
     """
 
     # Types of the class instance private attributes
@@ -255,7 +264,15 @@ class Component:
         return x
 
     def get_world_transform(self) -> Matrix44:
-        """The full transformation matrix of this Component in world space."""
+        """
+        The full transformation matrix of this Component in world space.
+
+        Returns
+        -------
+
+        Matrix44
+            The 4x4 transformation matrix of this component in world space.
+        """
         if self.parent_component is None:
             return IDENTITY_MATRIX44
         return self.parent_component.get_world_transform() * self._transformed_part.transform
@@ -317,6 +334,9 @@ class Component:
         ----------
         name : str
             User-defined label for the new component.
+        template : Component, optional
+            The template component that this component will be created from. This will create an
+            instance component that shares a master with the template component.
 
         Returns
         -------

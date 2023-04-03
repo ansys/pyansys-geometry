@@ -582,7 +582,7 @@ class TemplateBody:
         return "\n".join(lines)
 
 
-class Body(TemplateBody):
+class Body:
     """
     Represents solids and surfaces organized within the design assembly.
 
