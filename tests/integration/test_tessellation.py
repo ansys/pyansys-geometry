@@ -2,7 +2,7 @@
 import pytest
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core.math import Plane, Point2D, Vector3D
+from ansys.geometry.core.math import Plane, Point2D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc.units import UNITS, Quantity
 from ansys.geometry.core.sketch import Sketch
 
@@ -69,6 +69,10 @@ def test_body_tessellate(modeler: Modeler, skip_not_on_linux_service):
     assert comp_1_instance.bodies[0].tessellate() != comp_1.bodies[0].tessellate()
 
     assert comp_1.bodies[0]._template._tessellation is not None
+
+    comp_1.bodies[0].translate(UnitVector3D([1, 0, 0]), 1)
+
+    assert comp_1.bodies[0]._template._tessellation is None
 
 
 def test_component_tessellate(modeler: Modeler, skip_not_on_linux_service):

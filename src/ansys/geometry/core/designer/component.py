@@ -831,14 +831,7 @@ class Component:
         import pyvista as pv
 
         # Tessellate the bodies in this component
-        bodies = self.bodies
-        datasets = []
-
-        for body in bodies:
-            # dump existing cached tessellation as a safety measure
-            body._template._tessellation = None
-
-        datasets = [body.tessellate(merge_bodies) for body in bodies]
+        datasets = [body.tessellate(merge_bodies) for body in self.bodies]
 
         blocks_list = [pv.MultiBlock(datasets)]
 
