@@ -223,7 +223,11 @@ class Plotter:
         """
         # Use the default PyGeometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
-        self.scene.add_mesh(body.tessellate(merge=merge), **plotting_options)
+        dataset = body.tessellate(merge=merge)
+        if isinstance(dataset, pv.MuliBlock):
+            self.scene.add_composite(dataset, **plotting_options)
+        else:
+            self.scene.add_mesh(dataset, **plotting_options)
 
     def add_component(
         self,
@@ -253,7 +257,10 @@ class Plotter:
         # Use the default PyGeometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
-        self.scene.add_mesh(dataset, **plotting_options)
+        if isinstance(dataset, pv.MultiBlock):
+            self.scene.add_composite(dataset, **plotting_options)
+        else:
+            self.scene.add_mesh(dataset, **plotting_options)
 
     def add_sketch_polydata(self, polydata_entries: List[pv.PolyData], **plotting_options) -> None:
         """Add sketches to the scene from PyVista polydata.
