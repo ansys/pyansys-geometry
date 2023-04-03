@@ -573,7 +573,6 @@ class TemplateBody:
         lines = [f"ansys.geometry.core.designer.TemplateBody {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Exists               : {self.is_alive}")
-        lines.append(f"  Parent component     : {self._parent_component.name}")
         lines.append(f"  Surface body         : {self.is_surface}")
         if self.is_surface:
             lines.append(f"  Surface thickness    : {self.surface_thickness}")

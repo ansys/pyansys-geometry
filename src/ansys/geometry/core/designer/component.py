@@ -126,7 +126,6 @@ class Component:
                 )
                 self._id = new_component.component.id
                 self._name = new_component.component.name
-                self._placement = grpc_matrix_to_matrix(new_component.component.placement)
             else:
                 self._name = name
                 self._id = None
