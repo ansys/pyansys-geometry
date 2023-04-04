@@ -224,7 +224,7 @@ class Plotter:
         # Use the default PyGeometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
         dataset = body.tessellate(merge=merge)
-        if isinstance(dataset, pv.MuliBlock):
+        if isinstance(dataset, pv.MultiBlock):
             self.scene.add_composite(dataset, **plotting_options)
         else:
             self.scene.add_mesh(dataset, **plotting_options)
