@@ -1185,3 +1185,6 @@ def test_component_instances(modeler: Modeler, skip_not_on_linux_service):
     # Show the body also got added to Car2, and they are distinct, but
     # not independent
     assert car1.components[0].bodies[0].id != car2.components[0].bodies[0].id
+
+    # If monikers were formatted properly, you should be able to use them
+    assert len(car2.components[1].components[1].bodies[0].faces) > 0

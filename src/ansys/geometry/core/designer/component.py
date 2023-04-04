@@ -251,7 +251,8 @@ class Component:
                 s = "~" + s if s[0] != "~" else s
                 s = s.replace("sE", "oO", 1)
                 s = s.replace("oE", "oO", 1)
-                s = s.replace("oO", "oO_~iI", 1)
+                if "iI" not in x[index + 1]:
+                    s = s.replace("oO", "oO_~iI", 1)
                 s = s.replace("___", "__", 1)
                 x[index] = s
             x[-1] = x[-1].replace("sE", "~oE", 1)
