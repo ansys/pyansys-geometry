@@ -287,6 +287,7 @@ class Component:
         Applies a translation and/or rotation to the existing placement matrix of the component.
         To reset a component's placement to an identity matrix, see
         ``reset_placement()`` or call this method with no arguments.
+
         Parameters
         ----------
         translation : Vector3D, optional

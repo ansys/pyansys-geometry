@@ -899,22 +899,31 @@ def test_copy_body(modeler: Modeler, skip_not_on_linux_service):
     # Copy body at same design level
     copy = body.copy(design, "Copy")
     assert len(design.bodies) == 2
-    assert design.bodies[-1].name == copy.name
+    assert design.bodies[-1].id == copy.id
 
     # Bodies should be distinct
+    assert body.id != copy.id
     assert body != copy
 
     # Copy body into sub-component
     comp1 = design.add_component("comp1")
     copy2 = body.copy(comp1, "Subcopy")
     assert len(comp1.bodies) == 1
-    assert comp1.bodies[-1].name == copy2.name
+    assert comp1.bodies[-1].id == copy2.id
+
+    # Bodies should be distinct
+    assert body.id != copy2.id
+    assert body != copy2
 
     # Copy a copy
     comp2 = comp1.add_component("comp2")
     copy3 = copy2.copy(comp2, "Copy3")
     assert len(comp2.bodies) == 1
-    assert comp2.bodies[-1].name == copy3.name
+    assert comp2.bodies[-1].id == copy3.id
+
+    # Bodies should be distinct
+    assert copy2.id != copy3.id
+    assert copy2 != copy3
 
     # Ensure deleting original doesn't affect the copies
     design.delete_body(body)

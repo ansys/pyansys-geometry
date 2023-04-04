@@ -701,6 +701,9 @@ def test_matrix_33():
     det = m_1.determinant()
     assert abs(round(det, 3) - 24) <= DOUBLE_EPS
 
+    m_2 = Matrix44([[2, 0, 0, 2], [0, 3, 0, 1], [0, 0, 4, 2], [0, 0, 4, 2]])
+    assert m_1 != m_2
+
     with pytest.raises(ValueError) as val:
         Matrix33([[1, 2], [1, 6]])
         assert "Matrix33 should only be a 2D array of shape (3,3)." in str(val.value)
@@ -730,6 +733,9 @@ def test_matrix_44():
     # Check determinant of matrix
     det = m_1.determinant()
     assert abs(round(det, 3) - 24) <= DOUBLE_EPS
+
+    m_2 = Matrix33([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
+    assert m_1 != m_2
 
     # Check error with other than 4x4 matrix
     with pytest.raises(ValueError) as val:
