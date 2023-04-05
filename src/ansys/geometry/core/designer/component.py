@@ -76,12 +76,13 @@ class Component:
     ----------
     name : str
         User-defined label for the component.
-    parent_component : Component
-        Parent component to nest the new component under within the design assembly.
-    template : Component, optional
-        The template component that this component will be created from. This creates an instance.
+    parent_component : Component or None
+        Parent component to nest the new component under within the design assembly. Only
+        ``None`` when dealing with a Design object.
     grpc_client : GrpcClient
         Active supporting Geometry service instance for design modeling.
+    template : Component, optional
+        The template component that this component will be created from. This creates an instance.
     preexisting_id : str, optional
         If a component already exists on the server, you can pass in its ID to create it on the
         client-side data model. If this is argument is present, a new Component will not be created
@@ -93,7 +94,6 @@ class Component:
 
     # Types of the class instance private attributes
     _components: List["Component"]
-    _bodies: List[Body]
     _beams: List[Beam]
     _coordinate_systems: List[CoordinateSystem]
 
@@ -102,9 +102,9 @@ class Component:
     def __init__(
         self,
         name: str,
-        parent_component: Optional["Component"],
-        template: Optional["Component"],
+        parent_component: Union["Component", None],
         grpc_client: GrpcClient,
+        template: Optional["Component"] = None,
         preexisting_id: Optional[str] = None,
         transformed_part: Optional[TransformedPart] = None,
     ):
@@ -130,7 +130,6 @@ class Component:
                 self._id = None
 
         self._components = []
-        self._bodies = []
         self._beams = []
         self._coordinate_systems = []
         self._parent_component = parent_component
@@ -230,10 +229,10 @@ class Component:
             new = Component(
                 template_comp.name,
                 self,
-                template_comp,
                 self._grpc_client,
-                self.__fix_moniker(self.id + template_comp.id),
-                template_comp._transformed_part,
+                template=template_comp,
+                preexisting_id=self.__fix_moniker(self.id + template_comp.id),
+                transformed_part=template_comp._transformed_part,
             )
             self.components.append(new)
 
@@ -343,7 +342,7 @@ class Component:
         Component
             New component with no children in the design assembly.
         """
-        self._components.append(Component(name, self, template, self._grpc_client))
+        self._components.append(Component(name, self, self._grpc_client, template=template))
         return self._components[-1]
 
     @protect_grpc
