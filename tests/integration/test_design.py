@@ -28,7 +28,6 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
-from ansys.geometry.core.primitives import Line
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -1140,16 +1139,17 @@ def test_component_instances(modeler: Modeler, skip_not_on_linux_service):
     wheel1.extrude_sketch("Wheel", sketch, -5)
 
     # Create 3 other wheels and move them into position
-    rotation_axis = Line(Point3D([0, 0, 0]), UnitVector3D([0, 0, 1]))
+    rotation_origin = Point3D([0, 0, 0])
+    rotation_direction = UnitVector3D([0, 0, 1])
 
     wheel2 = comp2.add_component("Wheel2", wheel1)
     wheel2.modify_placement(Vector3D([0, 20, 0]))
 
     wheel3 = comp2.add_component("Wheel3", wheel1)
-    wheel3.modify_placement(Vector3D([10, 0, 0]), rotation_axis, np.pi)
+    wheel3.modify_placement(Vector3D([10, 0, 0]), rotation_origin, rotation_direction, np.pi)
 
     wheel4 = comp2.add_component("Wheel4", wheel1)
-    wheel4.modify_placement(Vector3D([10, 20, 0]), rotation_axis, np.pi)
+    wheel4.modify_placement(Vector3D([10, 20, 0]), rotation_origin, rotation_direction, np.pi)
 
     # Assert all components have unique IDs
     comp_ids = [wheel1.id, wheel2.id, wheel3.id, wheel4.id]

@@ -49,7 +49,6 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, Angle, Distance, check_pint_unit_compatibility
-from ansys.geometry.core.primitives import Line as primitive_Line
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -278,7 +277,8 @@ class Component:
     def modify_placement(
         self,
         translation: Optional[Vector3D] = None,
-        rotation_axis: Optional[primitive_Line] = None,
+        rotation_origin: Optional[Point3D] = None,
+        rotation_direction: Optional[UnitVector3D] = None,
         rotation_angle: Union[Quantity, Angle, Real] = 0,
     ):
         """
@@ -290,8 +290,10 @@ class Component:
         ----------
         translation : Vector3D, optional
             The vector that defines the desired translation to the component.
-        rotation_axis : Line, optional
-            The line that defines the axis to rotate the component about.
+        rotation_origin : Point3D, optional
+            The origin that defines the axis to rotate the component about.
+        rotation_direction : UnitVector3D, optional
+            The direction of the axis to rotate the component about.
         rotation_angle : Union[Quantity, Angle, Real], default=0
             The angle to rotate the component around the axis.
         """
@@ -300,10 +302,10 @@ class Component:
             if translation is not None
             else None
         )
-        p = point3d_to_grpc_point(rotation_axis.origin) if rotation_axis is not None else None
+        p = point3d_to_grpc_point(rotation_origin) if rotation_origin is not None else None
         d = (
-            unit_vector_to_grpc_direction(rotation_axis.direction)
-            if rotation_axis is not None
+            unit_vector_to_grpc_direction(rotation_direction)
+            if rotation_direction is not None
             else None
         )
         angle = rotation_angle if isinstance(rotation_angle, Angle) else Angle(rotation_angle)
