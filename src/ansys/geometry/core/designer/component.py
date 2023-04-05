@@ -137,6 +137,7 @@ class Component:
         self._parent_component = parent_component
         self._is_alive = True
         self._shared_topology = None
+        self._transformed_part = None
 
         # Populate client data model
         if template:
@@ -162,10 +163,6 @@ class Component:
             tp = TransformedPart(uuid.uuid4(), f"tp_{name}", p)
             p.parts.append(tp)
             self._transformed_part = tp
-
-        # Add transformation matrix to TransformedPart
-        if hasattr(self, "_placement"):
-            self._transformed_part.transform = self._placement
 
     @property
     def id(self) -> str:
