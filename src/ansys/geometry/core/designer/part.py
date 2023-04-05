@@ -23,12 +23,12 @@ class Part:
     """
 
     def __init__(
-        self, id, name, parts: List["TransformedPart"], bodies: List[TemplateBody]
+        self, id: str, name: str, parts: List["TransformedPart"], bodies: List[TemplateBody]
     ) -> None:
-        self._id = id
-        self._name = name
-        self._parts = parts
-        self._bodies = bodies
+        self._id: str = id
+        self._name: str = name
+        self._parts: List["TransformedPart"] = parts
+        self._bodies: List[TemplateBody] = bodies
 
     @property
     def id(self) -> str:
@@ -84,11 +84,13 @@ class TransformedPart:
         4x4 transformation matrix from the master part.
     """
 
-    def __init__(self, id, name, part: Part, transform: Matrix44 = IDENTITY_MATRIX44) -> None:
-        self._id = id
-        self._name = name
-        self._part = part
-        self._transform = transform
+    def __init__(
+        self, id: str, name: str, part: Part, transform: Matrix44 = IDENTITY_MATRIX44
+    ) -> None:
+        self._id: str = id
+        self._name: str = name
+        self._part: Part = part
+        self._transform: Matrix44 = transform
 
     @property
     def id(self) -> str:
