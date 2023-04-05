@@ -743,7 +743,7 @@ class Component:
 
             # If the body was deleted from the server side... "kill" it
             # on the client side
-            body_requested.is_alive = False
+            body_requested._is_alive = False
             self._grpc_client.log.debug(f"Body {body_requested.id} has been deleted.")
         else:
             self._grpc_client.log.warning(
@@ -819,7 +819,7 @@ class Component:
 
         # Kill all its bodies
         for body in self.bodies:
-            body.is_alive = False
+            body._is_alive = False
 
         # Now, go to the nested components and kill them as well
         for component in self.components:

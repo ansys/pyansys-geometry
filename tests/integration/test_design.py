@@ -1139,7 +1139,6 @@ def test_component_instances(modeler: Modeler, skip_not_on_linux_service):
     wheel1.extrude_sketch("Wheel", sketch, -5)
 
     # Create 3 other wheels and move them into position
-
     rotation_origin = Point3D([0, 0, 0])
     rotation_direction = UnitVector3D([0, 0, 1])
 
@@ -1147,7 +1146,6 @@ def test_component_instances(modeler: Modeler, skip_not_on_linux_service):
     wheel2.modify_placement(Vector3D([0, 20, 0]))
 
     wheel3 = comp2.add_component("Wheel3", wheel1)
-
     wheel3.modify_placement(Vector3D([10, 0, 0]), rotation_origin, rotation_direction, np.pi)
 
     wheel4 = comp2.add_component("Wheel4", wheel1)

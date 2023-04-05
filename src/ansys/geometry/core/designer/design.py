@@ -78,7 +78,7 @@ class Design(Component):
     @check_input_types
     def __init__(self, name: str, grpc_client: GrpcClient):
         """Constructor method for the ``Design`` class."""
-        super().__init__(name, None, None, grpc_client)
+        super().__init__(name, None, grpc_client)
 
         self._design_stub = DesignsStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
@@ -403,7 +403,7 @@ class Design(Component):
 
         # Once the assignment has gone fine, store the values
         for body in ids_bodies:
-            body.surface_thickness = thickness
+            body._surface_thickness = thickness
 
     @protect_grpc
     @check_input_types
@@ -440,7 +440,7 @@ class Design(Component):
 
         # Once the assignment has gone fine, store the values
         for body in ids_bodies:
-            body.surface_offset = offset_type
+            body._surface_offset = offset_type
 
     def __repr__(self):
         """String representation of the design."""
