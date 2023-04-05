@@ -840,6 +840,3 @@ class Body(IBody):
             lines.append(f"  Surface offset       : {self.surface_offset}")
 
         return "\n".join(lines)
-
-    def reset_cache(self):
-        self._tessellation = None
