@@ -48,13 +48,16 @@ class Matrix(np.ndarray):
         return np.linalg.inv(self)
 
     @check_input_types
-    def __mul__(self, other: "Matrix") -> "Matrix":
+    def __mul__(self, other: Union["Matrix", np.ndarray]) -> Union["Matrix", np.ndarray]:
         """Provides the multiplication of the matrix."""
-        if self.shape[1] != other.shape[0]:
+        if isinstance(other, np.ndarray):
+            return np.matmul(self, other)
+        elif isinstance(other, Matrix) and self.shape[1] == other.shape[0]:
+            return Matrix(np.matmul(self, other))
+        else:
             raise ValueError(
                 f"The dimensions of the matrices {self.shape[1]} and {other.shape[0]} are not multipliable."  # noqa : E501
             )
-        return Matrix(np.matmul(self, other))
 
     @check_input_types
     def __eq__(self, other: "Matrix") -> bool:

@@ -139,12 +139,25 @@ class Cylinder:
 
         return np.pi * self.radius**2 * height.value
 
-    def create_transform_copy(self, matrix: Matrix44) -> "Cylinder":
+    def create_transformed_copy(self, matrix: Matrix44) -> "Cylinder":
+        """
+        Creates a transformed copy of the cylinder based on a given transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the cylinder.
+
+        Returns
+        -------
+        Cylinder
+            A new cylinder that is the transformed copy of the original cylinder.
+        """
         old_origin_4d = np.array([[self.origin[0]], [self.origin[1]], [self.origin[2]], [1]])
-        new_origin_4d = np.matmul(matrix, old_origin_4d)
+        new_origin_4d = matrix * old_origin_4d
         new_point = Point3D([new_origin_4d[0], new_origin_4d[1], new_origin_4d[2]])
-        new_reference = np.matmul(matrix, np.append(self._reference, 0))
-        new_axis = np.matmul(matrix, np.append(self._axis, 0))
+        new_reference = matrix * np.append(self._reference, 0)
+        new_axis = matrix * np.append(self._axis, 0)
         return Cylinder(
             new_point,
             self.radius,
@@ -153,7 +166,14 @@ class Cylinder:
         )
 
     def mirror(self) -> "Cylinder":
-        # mirror the torus along the y-axis
+        """
+        Creates a mirrored copy of the cylinder along the y-axis.
+
+        Returns
+        -------
+        Cylinder
+            A new cylinder that is a mirrored copy of the original cylinder.
+        """
         return Cylinder(self.origin, self.radius, -self._reference, -self._axis)
 
     @check_input_types

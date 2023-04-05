@@ -116,12 +116,25 @@ class Cone:
         """Volume of the cone."""
         return np.pi * self.radius**2 * self.height / 3
 
-    def create_transform_copy(self, matrix: Matrix44) -> "Cone":
+    def create_transformed_copy(self, matrix: Matrix44) -> "Cone":
+        """
+        Creates a transformed copy of the cone based on a given transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the cone.
+
+        Returns
+        -------
+        Cone
+            A new cone that is the transformed copy of the original cone.
+        """
         old_origin_4d = np.array([[self.origin[0]], [self.origin[1]], [self.origin[2]], [1]])
-        new_origin_4d = np.matmul(matrix, old_origin_4d)
+        new_origin_4d = matrix * old_origin_4d
         new_point = Point3D([new_origin_4d[0], new_origin_4d[1], new_origin_4d[2]])
-        new_reference = np.matmul(matrix, np.append(self._reference, 0))
-        new_axis = np.matmul(matrix, np.append(self._axis, 0))
+        new_reference = matrix * np.append(self._reference, 0)
+        new_axis = matrix * np.append(self._axis, 0)
         return Cone(
             new_point,
             self.radius,
@@ -131,7 +144,14 @@ class Cone:
         )
 
     def mirror(self) -> "Cone":
-        # mirror the torus along the y-axis
+        """
+        Creates a mirrored copy of the cone along the y-axis.
+
+        Returns
+        -------
+        Cone
+            A new cone that is a mirrored copy of the original cone.
+        """
         return Cone(self.origin, self.radius, self.half_angle, -self._reference, -self._axis)
 
     @property

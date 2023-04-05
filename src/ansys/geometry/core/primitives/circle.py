@@ -129,12 +129,25 @@ class Circle:
         """
         return CircleEvaluation(self, parameter)
 
-    def create_transform_copy(self, matrix: Matrix44) -> "Circle":
+    def create_transformed_copy(self, matrix: Matrix44) -> "Circle":
+        """
+        Creates a transformed copy of the circle based on a given transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the circle.
+
+        Returns
+        -------
+        Circle
+            A new circle that is the transformed copy of the original circle.
+        """
         old_origin_4d = np.array([[self.origin[0]], [self.origin[1]], [self.origin[2]], [1]])
-        new_origin_4d = np.matmul(matrix, old_origin_4d)
+        new_origin_4d = matrix * old_origin_4d
         new_point = Point3D([new_origin_4d[0], new_origin_4d[1], new_origin_4d[2]])
-        new_reference = np.matmul(matrix, np.append(self._reference, 0))
-        new_axis = np.matmul(matrix, np.append(self._axis, 0))
+        new_reference = matrix * np.append(self._reference, 0)
+        new_axis = matrix * np.append(self._axis, 0)
         return Circle(
             new_point,
             self.radius,
@@ -143,7 +156,15 @@ class Circle:
         )
 
     def mirror(self) -> "Circle":
-        # mirror the torus along the y-axis
+        """
+        Creates a mirrored copy of the circle along the y-axis.
+
+        Returns
+        -------
+        Circle
+            A new circle that is a mirrored copy of the original circle.
+        """
+
         return Circle(self.origin, self.radius, -self._reference, -self._axis)
 
     def project_point(self, point: Point3D) -> "CircleEvaluation":

@@ -74,11 +74,24 @@ class Line:
         """
         return LineEvaluation(self, parameter)
 
-    def create_transform_copy(self, matrix: Matrix44) -> "Line":
+    def create_transformed_copy(self, matrix: Matrix44) -> "Line":
+        """
+        Creates a transformed copy of the line based on a given transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the line.
+
+        Returns
+        -------
+        Line
+            A new line that is the transformed copy of the original line.
+        """
         old_origin_4d = np.array([[self.origin[0]], [self.origin[1]], [self.origin[2]], [1]])
-        new_origin_4d = np.matmul(matrix, old_origin_4d)
+        new_origin_4d = matrix * old_origin_4d
         new_point = Point3D([new_origin_4d[0], new_origin_4d[1], new_origin_4d[2]])
-        new_axis = np.matmul(matrix, np.append(self._direction, 0))
+        new_axis = matrix * np.append(self._direction, 0)
         return Line(new_point, UnitVector3D([new_axis[0], new_axis[1], new_axis[2]]))
 
     def project_point(self, point: Point3D) -> "LineEvaluation":

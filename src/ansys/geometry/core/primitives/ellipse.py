@@ -128,7 +128,14 @@ class Ellipse:
         )
 
     def mirror(self) -> "Ellipse":
-        # mirror the torus along the y-axis
+        """
+        Creates a mirrored copy of the ellipse along the y-axis.
+
+        Returns
+        -------
+        Ellipse
+            A new ellipse that is a mirrored copy of the original ellipse.
+        """
         return Ellipse(
             self.origin, self.major_radius, self.minor_radius, -self._reference, -self._axis
         )
@@ -237,12 +244,25 @@ class Ellipse:
         """Area of the ellipse."""
         return np.pi * self.major_radius * self.minor_radius
 
-    def create_transform_copy(self, matrix: Matrix44) -> "Ellipse":
+    def create_transformed_copy(self, matrix: Matrix44) -> "Ellipse":
+        """
+        Creates a transformed copy of the ellipse based on a given transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the ellipse.
+
+        Returns
+        -------
+        Ellipse
+            A new ellipse that is the transformed copy of the original ellipse.
+        """
         old_origin_4d = np.array([[self.origin[0]], [self.origin[1]], [self.origin[2]], [1]])
-        new_origin_4d = np.matmul(matrix, old_origin_4d)
+        new_origin_4d = matrix * old_origin_4d
         new_point = Point3D([new_origin_4d[0], new_origin_4d[1], new_origin_4d[2]])
-        new_reference = np.matmul(matrix, np.append(self._reference, 0))
-        new_axis = np.matmul(matrix, np.append(self._axis, 0))
+        new_reference = matrix * np.append(self._reference, 0)
+        new_axis = matrix * np.append(self._axis, 0)
         return Ellipse(
             new_point,
             self.major_radius,

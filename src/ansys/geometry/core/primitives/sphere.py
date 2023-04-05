@@ -111,12 +111,12 @@ class Sphere:
             and self._axis == other._axis
         )
 
-    def create_transform_copy(self, matrix: Matrix44) -> "Sphere":
+    def create_transformed_copy(self, matrix: Matrix44) -> "Sphere":
         old_origin_4d = np.array([[self.origin[0]], [self.origin[1]], [self.origin[2]], [1]])
-        new_origin_4d = np.matmul(matrix, old_origin_4d)
+        new_origin_4d = matrix * old_origin_4d
         new_point = Point3D([new_origin_4d[0], new_origin_4d[1], new_origin_4d[2]])
-        new_reference = np.matmul(matrix, np.append(self._reference, 0))
-        new_axis = np.matmul(matrix, np.append(self._axis, 0))
+        new_reference = matrix * np.append(self._reference, 0)
+        new_axis = matrix * np.append(self._axis, 0)
         return Sphere(
             new_point,
             self.radius,
@@ -125,7 +125,19 @@ class Sphere:
         )
 
     def mirror(self) -> "Sphere":
-        # mirror the torus along the y-axis
+        """
+        Creates a transformed copy of the sphere based on a given transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the sphere.
+
+        Returns
+        -------
+        Sphere
+            A new sphere that is the transformed copy of the original sphere.
+        """
         return Sphere(self.origin, self.radius, -self._reference, -self._axis)
 
     def evaluate(self, parameter: ParamUV) -> "SphereEvaluation":

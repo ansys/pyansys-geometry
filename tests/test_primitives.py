@@ -78,7 +78,7 @@ def test_cylinder():
         UnitVector3D([0, 99, -31]),
     )
     rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
-    cylinder_transformation = cylinder_2.create_transform_copy(matrix=rotation_matrix)
+    cylinder_transformation = cylinder_2.create_transformed_copy(matrix=rotation_matrix)
     assert np.allclose(cylinder_transformation._origin, Point3D([-99, 42, 13]))
     assert np.allclose(cylinder_transformation._reference, UnitVector3D([-31, 12, 99]))
     assert np.allclose(cylinder_transformation._axis, UnitVector3D([-99, 0, -31]))
@@ -198,7 +198,7 @@ def test_sphere():
         UnitVector3D([0, 99, -31]),
     )
     rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
-    sphere_transformation = sphere_2.create_transform_copy(matrix=rotation_matrix)
+    sphere_transformation = sphere_2.create_transformed_copy(matrix=rotation_matrix)
     assert np.allclose(sphere_transformation._origin, Point3D([-99, 42, 13]))
     assert np.allclose(sphere_transformation._reference, UnitVector3D([-31, 12, 99]))
     assert np.allclose(sphere_transformation._axis, UnitVector3D([-99, 0, -31]))
@@ -338,7 +338,7 @@ def test_cone():
         UnitVector3D([0, 99, -31]),
     )
     rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
-    cone_transformation = cone_2.create_transform_copy(matrix=rotation_matrix)
+    cone_transformation = cone_2.create_transformed_copy(matrix=rotation_matrix)
     assert np.allclose(cone_transformation._origin, Point3D([-99, 42, 13]))
     assert np.allclose(cone_transformation._reference, UnitVector3D([-31, 12, 99]))
     assert np.allclose(cone_transformation._axis, UnitVector3D([-99, 0, -31]))
@@ -463,7 +463,7 @@ def test_torus():
     t_with_array_definitions = Torus([5, 8, 9], 88, 76, [55, 16, 73], [73, 0, -55])
 
     rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
-    t_3 = t_1.create_transform_copy(rotation_matrix)
+    t_3 = t_1.create_transformed_copy(rotation_matrix)
 
     # Check that the equals operator works
     assert t_1 == t_1_duplicate
@@ -523,7 +523,7 @@ def test_torus():
         UnitVector3D([0, 99, -31]),
     )
     rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
-    torus_transformation = t_2.create_transform_copy(matrix=rotation_matrix)
+    torus_transformation = t_2.create_transformed_copy(matrix=rotation_matrix)
     assert np.allclose(torus_transformation._origin, Point3D([-99, 42, 13]))
     assert np.allclose(torus_transformation._reference, UnitVector3D([-31, 12, 99]))
     assert np.allclose(torus_transformation._axis, UnitVector3D([-99, 0, -31]))
@@ -708,7 +708,7 @@ def test_circle():
         UnitVector3D([0, 99, -31]),
     )
     rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
-    circle_transformation = circle_2.create_transform_copy(matrix=rotation_matrix)
+    circle_transformation = circle_2.create_transformed_copy(matrix=rotation_matrix)
     assert np.allclose(circle_transformation._origin, Point3D([-99, 42, 13]))
     assert np.allclose(circle_transformation._reference, UnitVector3D([-31, 12, 99]))
     assert np.allclose(circle_transformation._axis, UnitVector3D([-99, 0, -31]))
@@ -780,7 +780,7 @@ def test_line():
         UnitVector3D([0, 99, -31]),
     )
     rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
-    line_transformation = line_2.create_transform_copy(matrix=rotation_matrix)
+    line_transformation = line_2.create_transformed_copy(matrix=rotation_matrix)
     assert np.allclose(line_transformation._origin, Point3D([-99, 42, 13]))
     assert np.allclose(line_transformation._direction, UnitVector3D([-99, 0, -31]))
 
@@ -869,7 +869,7 @@ def test_ellipse():
         UnitVector3D([0, 99, -31]),
     )
     rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
-    ellipse_transformation = ellipse_2.create_transform_copy(matrix=rotation_matrix)
+    ellipse_transformation = ellipse_2.create_transformed_copy(matrix=rotation_matrix)
     assert np.allclose(ellipse_transformation._origin, Point3D([-99, 42, 13]))
     assert np.allclose(ellipse_transformation._reference, UnitVector3D([-31, 12, 99]))
     assert np.allclose(ellipse_transformation._axis, UnitVector3D([-99, 0, -31]))
