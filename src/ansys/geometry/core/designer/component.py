@@ -161,31 +161,6 @@ class Component:
             p.parts.append(tp)
             self._transformed_part = tp
 
-        # Populate client data model
-        if template:
-            # Create new TransformedPart, but use template's Part
-            tp = TransformedPart(
-                uuid.uuid4(),
-                f"tp_{name}",
-                template._transformed_part.part,
-                template._transformed_part.transform,
-            )
-            tp.part.parts.append(tp)
-            self._transformed_part = tp
-
-            # Create children from template's children
-            self.__create_children(template)
-        else:
-            # Create new Part and TransformedPart since this is creating a new "master"
-            p = Part(uuid.uuid4(), f"p_{name}", [], [])
-            tp = TransformedPart(uuid.uuid4(), f"tp_{name}", p)
-            p.parts.append(tp)
-            self._transformed_part = tp
-
-        # Add transformation matrix to TransformedPart
-        if hasattr(self, "_placement"):
-            self._transformed_part.transform = self._placement
-
     @property
     def id(self) -> str:
         """ID of the component."""
