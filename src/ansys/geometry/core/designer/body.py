@@ -410,6 +410,7 @@ class TemplateBody(IBody):
         self._is_alive = True
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
+        self._tessellation = None
 
     @property
     def _grpc_id(self) -> EntityIdentifier:
@@ -596,6 +597,8 @@ class TemplateBody(IBody):
             )
         )
 
+        self.reset_cache()
+
     @protect_grpc
     def copy(self, parent: "Component", name: str = None) -> "Body":
         from ansys.geometry.core.designer.component import Component
@@ -635,9 +638,12 @@ class TemplateBody(IBody):
 
         self._grpc_client.log.debug(f"Requesting tessellation for body {self.id}.")
 
-        resp = self._bodies_stub.GetTessellation(self._grpc_id)
+        # cache tessellation
+        if not self._tessellation:
+            resp = self._bodies_stub.GetTessellation(self._grpc_id)
+            self._tessellation = resp.face_tessellation.values()
 
-        pdata = [tess_to_pd(tess).transform(transform) for tess in resp.face_tessellation.values()]
+        pdata = [tess_to_pd(tess).transform(transform) for tess in self._tessellation]
         comp = pv.MultiBlock(pdata)
         if merge:
             ugrid = comp.combine()
@@ -659,6 +665,9 @@ class TemplateBody(IBody):
         pl = pl_helper.init_plotter()
         pl.add_body(self, merge=merge, **plotting_options)
         pl_helper.show_plotter(pl, screenshot=screenshot)
+
+    def reset_cache(self):
+        self._tessellation = None
 
     def __repr__(self) -> str:
         """String representation of the body."""
