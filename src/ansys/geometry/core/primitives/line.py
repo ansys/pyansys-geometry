@@ -1,5 +1,6 @@
 """ Provides the ``Line`` class."""
 
+from functools import cached_property
 import math
 
 from beartype import beartype as check_input_types
@@ -172,6 +173,7 @@ class LineEvaluation(CurveEvaluation):
         """The parameter that the evaluation is based upon."""
         return self._parameter
 
+    @cached_property
     def position(self) -> Point3D:
         """
         The position of the evaluation.
@@ -183,6 +185,7 @@ class LineEvaluation(CurveEvaluation):
         """
         return self.line.origin + self.parameter * self.line.direction
 
+    @cached_property
     def tangent(self) -> UnitVector3D:
         """
         The tangent of the evaluation. This is always equal to the direction of the line.
@@ -194,6 +197,7 @@ class LineEvaluation(CurveEvaluation):
         """
         return self.line.direction
 
+    @cached_property
     def first_derivative(self) -> Vector3D:
         """
         The first derivative of the evaluation. This is always equal to the direction of the line.
@@ -205,6 +209,7 @@ class LineEvaluation(CurveEvaluation):
         """
         return self.line.direction
 
+    @cached_property
     def second_derivative(self) -> Vector3D:
         """
         The second derivative of the evaluation. This is always equal to a zero vector.
@@ -216,6 +221,7 @@ class LineEvaluation(CurveEvaluation):
         """
         return Vector3D([0, 0, 0])
 
+    @cached_property
     def curvature(self) -> float:
         """
         The curvature of the line. This will always be 0.
