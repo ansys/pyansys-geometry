@@ -30,7 +30,7 @@ IMAGE_RESULTS_DIR = Path(Path(__file__).parent, "image_cache", "results")
 
 
 @skip_no_xserver
-def test_plot_body(modeler: Modeler, verify_image_cache, skip_not_on_linux_service):
+def test_plot_body(modeler: Modeler, verify_image_cache):
     """Test plotting of the body."""
 
     # Create a Sketch
@@ -48,7 +48,7 @@ def test_plot_body(modeler: Modeler, verify_image_cache, skip_not_on_linux_servi
 
 
 @skip_no_xserver
-def test_plot_component(modeler: Modeler, verify_image_cache, skip_not_on_linux_service):
+def test_plot_component(modeler: Modeler, verify_image_cache):
     """Test plotting of the component."""
 
     # Create a Sketch

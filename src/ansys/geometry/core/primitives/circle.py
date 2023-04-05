@@ -1,4 +1,5 @@
 """ Provides the ``Circle`` class."""
+from functools import cached_property
 
 from beartype import beartype as check_input_types
 from beartype.typing import Union
@@ -206,6 +207,7 @@ class CircleEvaluation(CurveEvaluation):
         """The parameter that the evaluation is based upon."""
         return self._parameter
 
+    @cached_property
     def position(self) -> Point3D:
         """
         The position of the evaluation.
@@ -221,6 +223,7 @@ class CircleEvaluation(CurveEvaluation):
             + ((self.circle.radius * np.sin(self.parameter)) * self.circle.dir_y).m
         )
 
+    @cached_property
     def tangent(self) -> UnitVector3D:
         """
         The tangent of the evaluation.
@@ -234,6 +237,7 @@ class CircleEvaluation(CurveEvaluation):
             np.cos(self.parameter) * self.circle.dir_y - np.sin(self.parameter) * self.circle.dir_x
         )
 
+    @cached_property
     def normal(self) -> UnitVector3D:
         """
         The normal to the circle.
@@ -247,6 +251,7 @@ class CircleEvaluation(CurveEvaluation):
             np.cos(self.parameter) * self.circle.dir_x + np.sin(self.parameter) * self.circle.dir_y
         )
 
+    @cached_property
     def first_derivative(self) -> Vector3D:
         """
         The first derivative of the evaluation. The first derivative is in the direction of the
@@ -262,6 +267,7 @@ class CircleEvaluation(CurveEvaluation):
             np.cos(self.parameter) * self.circle.dir_y - np.sin(self.parameter) * self.circle.dir_x
         )
 
+    @cached_property
     def second_derivative(self) -> Vector3D:
         """
         The second derivative of the evaluation.
@@ -275,6 +281,7 @@ class CircleEvaluation(CurveEvaluation):
             np.cos(self.parameter) * self.circle.dir_x + np.sin(self.parameter) * self.circle.dir_y
         )
 
+    @cached_property
     def curvature(self) -> Real:
         """
         The curvature of the circle.

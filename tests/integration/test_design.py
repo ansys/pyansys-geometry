@@ -1,5 +1,6 @@
 """Test design interaction."""
 
+import numpy as np
 from pint import Quantity
 import pytest
 
@@ -15,6 +16,7 @@ from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.errors import GeometryExitedError
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import (
+    IDENTITY_MATRIX44,
     UNITVECTOR3D_X,
     UNITVECTOR3D_Y,
     UNITVECTOR3D_Z,
@@ -23,12 +25,13 @@ from ansys.geometry.core.math import (
     Point2D,
     Point3D,
     UnitVector3D,
+    Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
 from ansys.geometry.core.sketch import Sketch
 
 
-def test_design_extrusion_and_material_assignment(modeler: Modeler, skip_not_on_linux_service):
+def test_design_extrusion_and_material_assignment(modeler: Modeler):
     """Test in charge of validating the extrusion of a simple
     circle as a cylinder and assigning materials to it."""
 
@@ -100,7 +103,7 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler, skip_not_on_
     # design.save(r"C:\temp\shared_volume\MyFile2.scdocx")
 
 
-def test_face_to_body_creation(modeler: Modeler, skip_not_on_linux_service):
+def test_face_to_body_creation(modeler: Modeler):
     """Test in charge of validating the extrusion of an existing face."""
 
     # Create a Sketch and draw a circle (all client side)
@@ -150,7 +153,7 @@ def test_face_to_body_creation(modeler: Modeler, skip_not_on_linux_service):
     )
 
 
-def test_modeler(modeler: Modeler, skip_not_on_linux_service):
+def test_modeler(modeler: Modeler):
     """Test the ``Modeler`` methods."""
 
     # Get the modeler's string representation and check it
@@ -161,7 +164,7 @@ def test_modeler(modeler: Modeler, skip_not_on_linux_service):
     assert design is not None
 
 
-def test_component_body(modeler: Modeler, skip_not_on_linux_service):
+def test_component_body(modeler: Modeler):
     """Test the different ``Component`` and ``Body`` creation methods."""
 
     # Create your design on the server side
@@ -236,7 +239,7 @@ def test_component_body(modeler: Modeler, skip_not_on_linux_service):
     assert "N Coordinate Systems : 0" in comp_str
 
 
-def test_named_selections(modeler: Modeler, skip_not_on_linux_service):
+def test_named_selections(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection``."""
 
     # Create your design on the server side
@@ -294,7 +297,7 @@ def test_named_selections(modeler: Modeler, skip_not_on_linux_service):
     assert len(design.named_selections) == 3
 
 
-def test_faces_edges(modeler: Modeler, skip_not_on_linux_service):
+def test_faces_edges(modeler: Modeler):
     """Test for verifying the correct creation and
     usage of ``Face`` and ``Edge`` objects."""
 
@@ -352,7 +355,7 @@ def test_faces_edges(modeler: Modeler, skip_not_on_linux_service):
     )  # The bottom face must be one of them
 
 
-def test_coordinate_system_creation(modeler: Modeler, skip_not_on_linux_service):
+def test_coordinate_system_creation(modeler: Modeler):
     """Test for verifying the correct creation of ``CoordinateSystem``."""
 
     # Create your design on the server side
@@ -431,7 +434,7 @@ def test_coordinate_system_creation(modeler: Modeler, skip_not_on_linux_service)
     assert "  Frame Z-direction    : " in nested_comp_cs1_str
 
 
-def test_delete_body_component(modeler: Modeler, skip_not_on_linux_service):
+def test_delete_body_component(modeler: Modeler):
     """Test for verifying the deletion of ``Component`` and ``Body`` objects.
 
     Notes
@@ -671,7 +674,7 @@ def test_delete_body_component(modeler: Modeler, skip_not_on_linux_service):
     assert "Parent component     : Component_3" in body_1_str
 
 
-def test_shared_topology(modeler: Modeler, skip_not_on_linux_service):
+def test_shared_topology(modeler: Modeler):
     """Test for checking the correct setting of shared topology on the server.
 
     Notes
@@ -703,7 +706,7 @@ def test_shared_topology(modeler: Modeler, skip_not_on_linux_service):
         design.set_shared_topology(SharedTopologyType.SHARETYPE_NONE)
 
 
-def test_single_body_translation(modeler: Modeler, skip_not_on_linux_service):
+def test_single_body_translation(modeler: Modeler):
     """Test for verifying the correct translation of a ``Body``.
 
     Notes
@@ -731,7 +734,7 @@ def test_single_body_translation(modeler: Modeler, skip_not_on_linux_service):
     body_polygon_comp.translate(UnitVector3D([-1, 1, -1]), 101)
 
 
-def test_bodies_translation(modeler: Modeler, skip_not_on_linux_service):
+def test_bodies_translation(modeler: Modeler):
     """Test for verifying the correct translation of list of ``Body``.
 
     Notes
@@ -809,7 +812,7 @@ def test_download_file(
     assert fmd_file.exists()
 
 
-def test_slot_extrusion(modeler: Modeler, skip_not_on_linux_service):
+def test_slot_extrusion(modeler: Modeler):
     """Test the extrusion of a slot."""
     # Create your design on the server side
     design = modeler.create_design("ExtrudeSlot")
@@ -895,22 +898,31 @@ def test_copy_body(modeler: Modeler, skip_not_on_linux_service):
     # Copy body at same design level
     copy = body.copy(design, "Copy")
     assert len(design.bodies) == 2
-    assert design.bodies[-1] == copy
+    assert design.bodies[-1].id == copy.id
 
     # Bodies should be distinct
+    assert body.id != copy.id
     assert body != copy
 
     # Copy body into sub-component
     comp1 = design.add_component("comp1")
     copy2 = body.copy(comp1, "Subcopy")
     assert len(comp1.bodies) == 1
-    assert comp1.bodies[-1] == copy2
+    assert comp1.bodies[-1].id == copy2.id
+
+    # Bodies should be distinct
+    assert body.id != copy2.id
+    assert body != copy2
 
     # Copy a copy
     comp2 = comp1.add_component("comp2")
     copy3 = copy2.copy(comp2, "Copy3")
     assert len(comp2.bodies) == 1
-    assert comp2.bodies[-1] == copy3
+    assert comp2.bodies[-1].id == copy3.id
+
+    # Bodies should be distinct
+    assert copy2.id != copy3.id
+    assert copy2 != copy3
 
     # Ensure deleting original doesn't affect the copies
     design.delete_body(body)
@@ -1001,7 +1013,7 @@ def test_beams(modeler: Modeler, skip_not_on_linux_service):
     assert nested_component.beams[0] == beam_2
 
 
-def test_midsurface_properties(modeler: Modeler, skip_not_on_linux_service):
+def test_midsurface_properties(modeler: Modeler):
     """Test mid-surface properties assignment."""
 
     # Create your design on the server side
@@ -1069,8 +1081,8 @@ def test_midsurface_properties(modeler: Modeler, skip_not_on_linux_service):
     assert "Exists               : True" in body_repr
     assert "Parent component     : MidSurfaceProperties" in body_repr
     assert "Surface body         : False" in body_repr
-    assert slot_body._surface_thickness is None
-    assert slot_body._surface_offset is None
+    assert slot_body.surface_thickness is None
+    assert slot_body.surface_offset is None
 
     # Let's try reassigning values directly to slot_surf - this should work
     # TODO : at the moment the server does not allow to reassign - put in try/catch block
@@ -1103,3 +1115,76 @@ def test_midsurface_properties(modeler: Modeler, skip_not_on_linux_service):
     assert "Surface body         : True" in surf_repr
     assert "Surface thickness    : 30 millimeter" in surf_repr
     assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
+
+
+def test_component_instances(modeler: Modeler, skip_not_on_linux_service):
+    """Test creation of ``Component`` instances and the effects this has."""
+
+    design_name = "ComponentInstance_Test"
+    design = modeler.create_design(design_name)
+
+    # Create a car
+    car1 = design.add_component("Car1")
+    comp1 = car1.add_component("A")
+    comp2 = car1.add_component("B")
+    wheel1 = comp2.add_component("Wheel1")
+
+    # Create car base frame
+    sketch = Sketch().box(Point2D([5, 10]), 10, 20)
+    comp2.extrude_sketch("Base", sketch, 5)
+
+    # Create first wheel
+    sketch = Sketch(Plane(direction_x=Vector3D([0, 1, 0]), direction_y=Vector3D([0, 0, 1])))
+    sketch.circle(Point2D([0, 0]), 5)
+    wheel1.extrude_sketch("Wheel", sketch, -5)
+
+    # Create 3 other wheels and move them into position
+    rotation_origin = Point3D([0, 0, 0])
+    rotation_direction = UnitVector3D([0, 0, 1])
+
+    wheel2 = comp2.add_component("Wheel2", wheel1)
+    wheel2.modify_placement(Vector3D([0, 20, 0]))
+
+    wheel3 = comp2.add_component("Wheel3", wheel1)
+    wheel3.modify_placement(Vector3D([10, 0, 0]), rotation_origin, rotation_direction, np.pi)
+
+    wheel4 = comp2.add_component("Wheel4", wheel1)
+    wheel4.modify_placement(Vector3D([10, 20, 0]), rotation_origin, rotation_direction, np.pi)
+
+    # Assert all components have unique IDs
+    comp_ids = [wheel1.id, wheel2.id, wheel3.id, wheel4.id]
+    assert len(comp_ids) == len(set(comp_ids))
+
+    # Assert all bodies have unique IDs
+    body_ids = [wheel1.bodies[0].id, wheel2.bodies[0].id, wheel3.bodies[0].id, wheel4.bodies[0].id]
+    assert len(body_ids) == len(set(body_ids))
+
+    # Assert all instances have unique TransformedParts
+    comp_templates = [wheel2._transformed_part, wheel3._transformed_part, wheel4._transformed_part]
+    assert len(comp_templates) == len(set(comp_templates))
+
+    # Assert all instances have the same Part
+    comp_parts = [
+        wheel2._transformed_part.part,
+        wheel3._transformed_part.part,
+        wheel4._transformed_part.part,
+    ]
+    assert len(set(comp_parts)) == 1
+
+    assert wheel1.get_world_transform() == IDENTITY_MATRIX44
+    assert wheel2.get_world_transform() != IDENTITY_MATRIX44
+
+    # Create 2nd car
+    car2 = design.add_component("Car2", car1)
+    car2.modify_placement(Vector3D([30, 0, 0]))
+
+    # Create top of car - applies to BOTH cars
+    sketch = Sketch(Plane(Point3D([0, 5, 5]))).box(Point2D([5, 2.5]), 10, 5)
+    comp1.extrude_sketch("Top", sketch, 5)
+
+    # Show the body also got added to Car2, and they are distinct, but
+    # not independent
+    assert car1.components[0].bodies[0].id != car2.components[0].bodies[0].id
+
+    # If monikers were formatted properly, you should be able to use them
+    assert len(car2.components[1].components[1].bodies[0].faces) > 0

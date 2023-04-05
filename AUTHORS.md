@@ -15,3 +15,4 @@
 * [Alexander Kaszynski](https://github.com/akaszynski)
 * [Jorge Martínez](https://github.com/jorgepiloto)
 * [Alejandro Fernández](https://github.com/AlejandroFernandezLuces)
+* [Lance Lance](https://github.com/LanceX2214)
