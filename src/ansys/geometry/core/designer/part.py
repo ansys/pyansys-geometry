@@ -5,24 +5,44 @@ from ansys.geometry.core.math import IDENTITY_MATRIX44, Matrix44
 
 
 class Part:
+    """
+    Represents a Part Master. This class should not be accessed by users. Parts hold fundamental
+    data of an assembly.
+
+
+    Parameters
+    ----------
+    id : str
+        Unique identifier for this part.
+    name : str
+        Name of this part.
+    parts : List[TransformedPart]
+        List of TransformedPart children that this Part contains.
+    bodies : List[TemplateBody]
+        List of TemplateBody children that this Part contains. These are master bodies.
+    """
+
     def __init__(
-        self, id, name, parts: List["TransformedPart"], bodies: List[TemplateBody]
+        self, id: str, name: str, parts: List["TransformedPart"], bodies: List[TemplateBody]
     ) -> None:
-        self._id = id
-        self._name = name
-        self._parts = parts
-        self._bodies = bodies
+        self._id: str = id
+        self._name: str = name
+        self._parts: List["TransformedPart"] = parts
+        self._bodies: List[TemplateBody] = bodies
 
     @property
     def id(self) -> str:
+        """ID of the part."""
         return self._id
 
     @property
     def name(self) -> str:
+        """Name of the part"""
         return self._name
 
     @property
     def parts(self) -> List["TransformedPart"]:
+        """TransformedPart children that this Part contains."""
         return self._parts
 
     @parts.setter
@@ -31,6 +51,7 @@ class Part:
 
     @property
     def bodies(self) -> List[TemplateBody]:
+        """TemplateBody children that this Part contains. These are master bodies."""
         return self._bodies
 
     @bodies.setter
@@ -47,26 +68,48 @@ class Part:
 
 
 class TransformedPart:
-    def __init__(self, id, name, part: Part, transform: Matrix44 = IDENTITY_MATRIX44) -> None:
-        self._id = id
-        self._name = name
-        self._part = part
-        self._transform = transform
+    """
+    Represents a Part Occurrence. This class should not be accessed by users. TransformedParts hold
+    fundamental data of an assembly. TransformedParts wrap Parts by adding a transform matrix.
+
+    Parameters
+    ----------
+    id : str
+        Unique identifier for this transformed part.
+    name : str
+        Name of this transformed part.
+    part : Part
+        Reference to this transformed part's master part.
+    transform : Matrix44
+        4x4 transformation matrix from the master part.
+    """
+
+    def __init__(
+        self, id: str, name: str, part: Part, transform: Matrix44 = IDENTITY_MATRIX44
+    ) -> None:
+        self._id: str = id
+        self._name: str = name
+        self._part: Part = part
+        self._transform: Matrix44 = transform
 
     @property
     def id(self) -> str:
+        """ID of the transformed part."""
         return self._id
 
     @property
     def name(self) -> str:
+        """Name of the transformed part."""
         return self._name
 
     @property
     def part(self) -> Part:
+        """The master part of this transformed part."""
         return self._part
 
     @property
     def transform(self) -> Matrix44:
+        """The 4x4 transformation matrix from the master part."""
         return self._transform
 
     @transform.setter

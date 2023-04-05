@@ -383,8 +383,8 @@ class Design(Component):
         Only surface bodies will be eligible for mid-surface thickness assignment.
         """
         # Store only assignable ids
-        ids = []
-        ids_bodies = []
+        ids: List[str] = []
+        ids_bodies: List[Body] = []
         for body in bodies:
             if body.is_surface:
                 ids.append(body.id)
@@ -422,8 +422,8 @@ class Design(Component):
         Only surface bodies will be eligible for mid-surface offset assignment.
         """
         # Store only assignable ids
-        ids = []
-        ids_bodies = []
+        ids: List[str] = []
+        ids_bodies: List[Body] = []
         for body in bodies:
             if body.is_surface:
                 ids.append(body.id)

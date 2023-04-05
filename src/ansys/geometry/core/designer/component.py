@@ -1,7 +1,7 @@
 """Provides the ``Component`` class module."""
 
 from enum import Enum, unique
-import uuid  # TODO: if we even need ID, try to use from SC
+import uuid  # TODO: do we even need ID?, maybe use from SC?
 
 from ansys.api.geometry.v0.bodies_pb2 import (
     CreateBodyFromFaceRequest,
@@ -48,7 +48,6 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, Angle, Distance, check_pint_unit_compatibility
-from ansys.geometry.core.primitives import Line as primitive_Line
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -76,15 +75,24 @@ class Component:
     ----------
     name : str
         User-defined label for the component.
-    parent_component : Component
-        Parent component to nest the new component under within the design assembly.
+    parent_component : Component or None
+        Parent component to nest the new component under within the design assembly. Only
+        ``None`` when dealing with a Design object.
     grpc_client : GrpcClient
         Active supporting Geometry service instance for design modeling.
+    template : Component, optional
+        The template component that this component will be created from. This creates an instance.
+    preexisting_id : str, optional
+        If a component already exists on the server, you can pass in its ID to create it on the
+        client-side data model. If this is argument is present, a new Component will not be created
+        on the server.
+    transformed_part : TransformedPart, optional
+        This argument should be present when creating a nested instance component. It will use the
+        given transformed_part instead of creating a new one.
     """
 
     # Types of the class instance private attributes
     _components: List["Component"]
-    _bodies: List[Body]
     _beams: List[Beam]
     _coordinate_systems: List[CoordinateSystem]
 
@@ -93,10 +101,11 @@ class Component:
     def __init__(
         self,
         name: str,
-        parent_component: Optional["Component"],
-        template: Optional["Component"],
+        parent_component: Union["Component", None],
         grpc_client: GrpcClient,
+        template: Optional["Component"] = None,
         preexisting_id: Optional[str] = None,
+        transformed_part: Optional[TransformedPart] = None,
     ):
         """Constructor method for the ``Component`` class."""
         self._grpc_client = grpc_client
@@ -115,18 +124,42 @@ class Component:
                 )
                 self._id = new_component.component.id
                 self._name = new_component.component.name
-                self._placement = grpc_matrix_to_matrix(new_component.component.placement)
             else:
                 self._name = name
                 self._id = None
 
         self._components = []
-        self._bodies = []
         self._beams = []
         self._coordinate_systems = []
         self._parent_component = parent_component
         self._is_alive = True
         self._shared_topology = None
+        self._transformed_part = None
+
+        # Populate client data model
+        if template:
+            if transformed_part:
+                # Re-use an existing tp if this is a nested instance
+                self._transformed_part = transformed_part
+            else:
+                # Create new TransformedPart, but use template's Part
+                tp = TransformedPart(
+                    uuid.uuid4(),
+                    f"tp_{name}",
+                    template._transformed_part.part,
+                    template._transformed_part.transform,
+                )
+                tp.part.parts.append(tp)
+                self._transformed_part = tp
+
+            # Recurse - Create more children components from template's remaining children
+            self.__create_children(template)
+        else:
+            # Create new Part and TransformedPart since this is creating a new "master"
+            p = Part(uuid.uuid4(), f"p_{name}", [], [])
+            tp = TransformedPart(uuid.uuid4(), f"tp_{name}", p)
+            p.parts.append(tp)
+            self._transformed_part = tp
 
         # Populate client data model
         if template:
@@ -220,9 +253,10 @@ class Component:
             new = Component(
                 template_comp.name,
                 self,
-                template_comp,
                 self._grpc_client,
-                self.id + template_comp.id,
+                template=template_comp,
+                preexisting_id=self.__fix_moniker(self.id + template_comp.id),
+                transformed_part=template_comp._transformed_part,
             )
             self.components.append(new)
 
@@ -232,16 +266,32 @@ class Component:
         if len(x) > 1:
             x[0] = x[0].replace("sE", "~sO_~iI", 1)
             for s in x[1:-1]:
-                x[x.index(s)] = s.replace("sE", "~oO", 1)
+                index = x.index(s)
+                s = "~" + s if s[0] != "~" else s
+                s = s.replace("sE", "oO", 1)
+                s = s.replace("oE", "oO", 1)
+                if "iI" not in x[index + 1]:
+                    s = s.replace("oO", "oO_~iI", 1)
+                s = s.replace("___", "__", 1)
+                x[index] = s
             x[-1] = x[-1].replace("sE", "~oE", 1)
             x = "".join(x) + "_"
         else:
-            x[0] = "~" + x[0]
             x = "".join(x)
+        if x[0] != "~":
+            x = "~" + x
         return x
 
     def get_world_transform(self) -> Matrix44:
-        """The full transformation matrix of this Component in world space."""
+        """
+        The full transformation matrix of this Component in world space.
+
+        Returns
+        -------
+
+        Matrix44
+            The 4x4 transformation matrix of this component in world space.
+        """
         if self.parent_component is None:
             return IDENTITY_MATRIX44
         return self.parent_component.get_world_transform() * self._transformed_part.transform
@@ -250,7 +300,8 @@ class Component:
     def modify_placement(
         self,
         translation: Optional[Vector3D] = None,
-        rotation_axis: Optional[primitive_Line] = None,
+        rotation_origin: Optional[Point3D] = None,
+        rotation_direction: Optional[UnitVector3D] = None,
         rotation_angle: Union[Quantity, Angle, Real] = 0,
     ):
         """
@@ -262,8 +313,10 @@ class Component:
         ----------
         translation : Vector3D, optional
             The vector that defines the desired translation to the component.
-        rotation_axis : Line, optional
-            The line that defines the axis to rotate the component about.
+        rotation_origin : Point3D, optional
+            The origin that defines the axis to rotate the component about.
+        rotation_direction : UnitVector3D, optional
+            The direction of the axis to rotate the component about.
         rotation_angle : Union[Quantity, Angle, Real], default=0
             The angle to rotate the component around the axis.
         """
@@ -272,10 +325,10 @@ class Component:
             if translation is not None
             else None
         )
-        p = point3d_to_grpc_point(rotation_axis.origin) if rotation_axis is not None else None
+        p = point3d_to_grpc_point(rotation_origin) if rotation_origin is not None else None
         d = (
-            unit_vector_to_grpc_direction(rotation_axis.direction)
-            if rotation_axis is not None
+            unit_vector_to_grpc_direction(rotation_direction)
+            if rotation_direction is not None
             else None
         )
         angle = rotation_angle if isinstance(rotation_angle, Angle) else Angle(rotation_angle)
@@ -304,13 +357,16 @@ class Component:
         ----------
         name : str
             User-defined label for the new component.
+        template : Component, optional
+            The template component that this component will be created from. This will create an
+            instance component that shares a master with the template component.
 
         Returns
         -------
         Component
             New component with no children in the design assembly.
         """
-        self._components.append(Component(name, self, template, self._grpc_client))
+        self._components.append(Component(name, self, self._grpc_client, template=template))
         return self._components[-1]
 
     @protect_grpc
@@ -371,7 +427,7 @@ class Component:
 
         self._grpc_client.log.debug(f"Extruding sketch provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBody(request)
-        tb = TemplateBody(response.master_id, name, self, self._grpc_client, is_surface=False)
+        tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._transformed_part.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
@@ -416,8 +472,7 @@ class Component:
 
         self._grpc_client.log.debug(f"Extruding from face provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBodyFromFaceProfile(request)
-
-        tb = TemplateBody(response.master_id, name, self, self._grpc_client, is_surface=False)
+        tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._transformed_part.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
@@ -442,7 +497,7 @@ class Component:
         """
         # Perform planar body request
         request = CreatePlanarBodyRequest(
-            parent=self._id,
+            parent=self.id,
             plane=plane_to_grpc_plane(sketch._plane),
             geometries=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
             name=name,
@@ -452,8 +507,7 @@ class Component:
             f"Creating planar surface from sketch provided on {self.id}. Creating body..."
         )
         response = self._bodies_stub.CreatePlanarBody(request)
-
-        tb = TemplateBody(response.master_id, name, self, self._grpc_client, is_surface=True)
+        tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._transformed_part.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
@@ -492,7 +546,7 @@ class Component:
         )
         response = self._bodies_stub.CreateBodyFromFace(request)
 
-        tb = TemplateBody(response.master_id, name, self, self._grpc_client, is_surface=True)
+        tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._transformed_part.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 

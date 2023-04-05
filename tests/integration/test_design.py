@@ -28,7 +28,6 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
-from ansys.geometry.core.primitives import Line
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -899,22 +898,31 @@ def test_copy_body(modeler: Modeler, skip_not_on_linux_service):
     # Copy body at same design level
     copy = body.copy(design, "Copy")
     assert len(design.bodies) == 2
-    assert design.bodies[-1].name == copy.name
+    assert design.bodies[-1].id == copy.id
 
     # Bodies should be distinct
+    assert body.id != copy.id
     assert body != copy
 
     # Copy body into sub-component
     comp1 = design.add_component("comp1")
     copy2 = body.copy(comp1, "Subcopy")
     assert len(comp1.bodies) == 1
-    assert comp1.bodies[-1].name == copy2.name
+    assert comp1.bodies[-1].id == copy2.id
+
+    # Bodies should be distinct
+    assert body.id != copy2.id
+    assert body != copy2
 
     # Copy a copy
     comp2 = comp1.add_component("comp2")
     copy3 = copy2.copy(comp2, "Copy3")
     assert len(comp2.bodies) == 1
-    assert comp2.bodies[-1].name == copy3.name
+    assert comp2.bodies[-1].id == copy3.id
+
+    # Bodies should be distinct
+    assert copy2.id != copy3.id
+    assert copy2 != copy3
 
     # Ensure deleting original doesn't affect the copies
     design.delete_body(body)
@@ -1131,16 +1139,19 @@ def test_component_instances(modeler: Modeler, skip_not_on_linux_service):
     wheel1.extrude_sketch("Wheel", sketch, -5)
 
     # Create 3 other wheels and move them into position
-    rotation_axis = Line(Point3D([0, 0, 0]), UnitVector3D([0, 0, 1]))
+
+    rotation_origin = Point3D([0, 0, 0])
+    rotation_direction = UnitVector3D([0, 0, 1])
 
     wheel2 = comp2.add_component("Wheel2", wheel1)
     wheel2.modify_placement(Vector3D([0, 20, 0]))
 
     wheel3 = comp2.add_component("Wheel3", wheel1)
-    wheel3.modify_placement(Vector3D([10, 0, 0]), rotation_axis, np.pi)
+
+    wheel3.modify_placement(Vector3D([10, 0, 0]), rotation_origin, rotation_direction, np.pi)
 
     wheel4 = comp2.add_component("Wheel4", wheel1)
-    wheel4.modify_placement(Vector3D([10, 20, 0]), rotation_axis, np.pi)
+    wheel4.modify_placement(Vector3D([10, 20, 0]), rotation_origin, rotation_direction, np.pi)
 
     # Assert all components have unique IDs
     comp_ids = [wheel1.id, wheel2.id, wheel3.id, wheel4.id]
@@ -1176,3 +1187,6 @@ def test_component_instances(modeler: Modeler, skip_not_on_linux_service):
     # Show the body also got added to Car2, and they are distinct, but
     # not independent
     assert car1.components[0].bodies[0].id != car2.components[0].bodies[0].id
+
+    # If monikers were formatted properly, you should be able to use them
+    assert len(car2.components[1].components[1].bodies[0].faces) > 0

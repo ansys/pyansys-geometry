@@ -25,8 +25,8 @@ The sketch can be constructed using different approaches.
 Functional-style API 
 ====================
 
-This is sometimes termed a 'fluent functional-style api, or fluent API' in the developer community. We avoid
-that term in the context of Ansys APIs to avoid confusion with the Ansys Fluent product.
+This is sometimes termed a 'fluent functional-style api, or fluent API' in the developer community. The latter
+term is avoided in the context of Ansys APIs to avoid confusion with the Ansys Fluent product.
 
 One of the key features of this approach is keeping an active context based upon the previously created 
 edges to use as a reference start point for additional objects.
