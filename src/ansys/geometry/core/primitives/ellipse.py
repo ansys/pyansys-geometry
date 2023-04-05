@@ -1,5 +1,7 @@
 """ Provides the ``Ellipse`` class."""
 
+from functools import cached_property
+
 from beartype import beartype as check_input_types
 from beartype.typing import Union
 import numpy as np
@@ -290,6 +292,7 @@ class EllipseEvaluation(CurveEvaluation):
         """The parameter that the evaluation is based upon."""
         return self._parameter
 
+    @cached_property
     def position(self) -> Point3D:
         """
         The position of the evaluation.
@@ -305,6 +308,7 @@ class EllipseEvaluation(CurveEvaluation):
             + ((self.ellipse.minor_radius * np.sin(self.parameter)) * self.ellipse.dir_y).m
         )
 
+    @cached_property
     def tangent(self) -> UnitVector3D:
         """
         The tangent of the evaluation.
@@ -319,6 +323,7 @@ class EllipseEvaluation(CurveEvaluation):
             - (self.ellipse.major_radius * np.sin(self.parameter) * self.ellipse.dir_x).m
         ).normalize()
 
+    @cached_property
     def normal(self) -> UnitVector3D:
         """
         The normal of the evaluation.
@@ -328,8 +333,9 @@ class EllipseEvaluation(CurveEvaluation):
         UnitVector3D
             The normal unit vector to the ellipse at this evaluation.
         """
-        return UnitVector3D.from_points(self.ellipse.origin, self.position())
+        return UnitVector3D.from_points(self.ellipse.origin, self.position)
 
+    @cached_property
     def first_derivative(self) -> Vector3D:
         """
         The first derivative of the evaluation. The first derivative is in the direction of the
@@ -345,6 +351,7 @@ class EllipseEvaluation(CurveEvaluation):
             self.ellipse.major_radius * np.sin(self.parameter) * self.ellipse.dir_x
         ).m
 
+    @cached_property
     def second_derivative(self) -> Vector3D:
         """
         The second derivative of the evaluation.
@@ -359,6 +366,7 @@ class EllipseEvaluation(CurveEvaluation):
             - self.ellipse.minor_radius * np.sin(self.parameter) * self.ellipse.dir_y
         ).m
 
+    @cached_property
     def curvature(self) -> Real:
         """
         The curvature of the ellipse.
@@ -368,4 +376,4 @@ class EllipseEvaluation(CurveEvaluation):
         Real
             The curvature of the ellipse.
         """
-        return self.second_derivative().magnitude / np.power(self.first_derivative().magnitude, 2)
+        return self.second_derivative.magnitude / np.power(self.first_derivative.magnitude, 2)

@@ -1,5 +1,7 @@
 """ Provides the ``Cylinder`` class."""
 
+from functools import cached_property
+
 from beartype import beartype as check_input_types
 from beartype.typing import Union
 import numpy as np
@@ -254,6 +256,7 @@ class CylinderEvaluation(SurfaceEvaluation):
         """The parameter that the evaluation is based upon."""
         return self._parameter
 
+    @cached_property
     def position(self) -> Point3D:
         """
         The position of the evaluation.
@@ -265,10 +268,11 @@ class CylinderEvaluation(SurfaceEvaluation):
         """
         return (
             self.cylinder.origin
-            + self.cylinder.radius.m * self.__cylinder_normal()
+            + self.cylinder.radius.m * self.__cylinder_normal
             + self.parameter.v * self.cylinder.dir_z
         )
 
+    @cached_property
     def normal(self) -> UnitVector3D:
         """
         The normal to the surface.
@@ -278,8 +282,9 @@ class CylinderEvaluation(SurfaceEvaluation):
         UnitVector3D
             The normal unit vector to the cylinder at this evaluation.
         """
-        return UnitVector3D(self.__cylinder_normal())
+        return UnitVector3D(self.__cylinder_normal)
 
+    @cached_property
     def __cylinder_normal(self) -> Vector3D:
         """
         The normal to the surface.
@@ -294,6 +299,7 @@ class CylinderEvaluation(SurfaceEvaluation):
             + np.sin(self.parameter.u) * self.cylinder.dir_y
         )
 
+    @cached_property
     def __cylinder_tangent(self) -> Vector3D:
         """Private tangent helper method."""
         return (
@@ -301,6 +307,7 @@ class CylinderEvaluation(SurfaceEvaluation):
             + np.cos(self.parameter.u) * self.cylinder.dir_y
         )
 
+    @cached_property
     def u_derivative(self) -> Vector3D:
         """
         The first derivative with respect to u.
@@ -310,8 +317,9 @@ class CylinderEvaluation(SurfaceEvaluation):
         Vector3D
             The first derivative with respect to u.
         """
-        return self.cylinder.radius.m * self.__cylinder_tangent()
+        return self.cylinder.radius.m * self.__cylinder_tangent
 
+    @cached_property
     def v_derivative(self) -> Vector3D:
         """
         The first derivative with respect to v.
@@ -323,6 +331,7 @@ class CylinderEvaluation(SurfaceEvaluation):
         """
         return self.cylinder.dir_z
 
+    @cached_property
     def uu_derivative(self) -> Vector3D:
         """
         The second derivative with respect to u.
@@ -332,8 +341,9 @@ class CylinderEvaluation(SurfaceEvaluation):
         Vector3D
             The second derivative with respect to u.
         """
-        return -self.cylinder.radius.m * self.__cylinder_normal()
+        return -self.cylinder.radius.m * self.__cylinder_normal
 
+    @cached_property
     def uv_derivative(self) -> Vector3D:
         """
         The second derivative with respect to u and v.
@@ -345,6 +355,7 @@ class CylinderEvaluation(SurfaceEvaluation):
         """
         return Vector3D([0, 0, 0])
 
+    @cached_property
     def vv_derivative(self) -> Vector3D:
         """
         The second derivative with respect to v.
@@ -356,6 +367,7 @@ class CylinderEvaluation(SurfaceEvaluation):
         """
         return Vector3D([0, 0, 0])
 
+    @cached_property
     def min_curvature(self) -> Real:
         """
         The minimum curvature of the cylinder.
@@ -367,6 +379,7 @@ class CylinderEvaluation(SurfaceEvaluation):
         """
         return 0
 
+    @cached_property
     def min_curvature_direction(self) -> UnitVector3D:
         """
         The minimum curvature direction.
@@ -378,6 +391,7 @@ class CylinderEvaluation(SurfaceEvaluation):
         """
         return UnitVector3D(self.cylinder.dir_z)
 
+    @cached_property
     def max_curvature(self) -> Real:
         """
         The maximum curvature of the cylinder.
@@ -389,6 +403,7 @@ class CylinderEvaluation(SurfaceEvaluation):
         """
         return 1.0 / self.cylinder.radius.m
 
+    @cached_property
     def max_curvature_direction(self) -> UnitVector3D:
         """
         The maximum curvature direction.
@@ -398,4 +413,4 @@ class CylinderEvaluation(SurfaceEvaluation):
         UnitVector3D
             The maximum curvature direction.
         """
-        return UnitVector3D(self.u_derivative())
+        return UnitVector3D(self.u_derivative)
