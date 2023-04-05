@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 
 from ansys.api.geometry.v0.bodies_pb2 import (
+    BooleanRequest,
     CopyRequest,
     SetAssignedMaterialRequest,
     TranslateRequest,
@@ -366,6 +367,55 @@ class IBody(ABC):
         """
         return
 
+    def intersect(self, other: "Body") -> None:
+        """
+        Intersect two bodies. `self` will be directly modified with the result, and `other` will be
+        consumed, so it is important to make copies if needed.
+
+        Parameters
+        ----------
+        other : Body
+            The body to intersect with self.
+
+        Raises
+        ------
+        ValueError
+            If the bodies do not intersect.
+        """
+        return
+
+    @protect_grpc
+    def subtract(self, other: "Body") -> None:
+        """
+        Subtract two bodies. `self` is the minuend, and `other` is the subtrahend
+        (`self` - `other`). `self` will be directly modified with the result, and
+        `other` will be consumed, so it is important to make copies if needed.
+
+        Parameters
+        ----------
+        other : Body
+            The body to subtract from self.
+
+        Raises
+        ------
+        ValueError
+            If the subtraction results in an empty (complete) subtraction.
+        """
+        return
+
+    @protect_grpc
+    def unite(self, other: "Body") -> None:
+        """
+        Unite two bodies. `self` will be directly modified with the resulting union, and `other`
+        will be consumed, so it is important to make copies if needed.
+
+        Parameters
+        ----------
+        other : Body
+            The body to unite with self.
+        """
+        return
+
 
 class TemplateBody(IBody):
     """
@@ -660,6 +710,18 @@ class TemplateBody(IBody):
         pl.add_body(self, merge=merge, **plotting_options)
         pl_helper.show_plotter(pl, screenshot=screenshot)
 
+    def intersect(self, other: "Body") -> None:
+        e = "TemplateBody does not implement boolean methods. Call this method on a Body instead."
+        raise NotImplementedError(e)
+
+    def subtract(self, other: "Body") -> None:
+        e = "TemplateBody does not implement boolean methods. Call this method on a Body instead."
+        raise NotImplementedError(e)
+
+    def unite(self, other: "Body") -> None:
+        e = "TemplateBody does not implement boolean methods. Call this method on a Body instead."
+        raise NotImplementedError(e)
+
     def __repr__(self) -> str:
         """String representation of the body."""
         lines = [f"ansys.geometry.core.designer.TemplateBody {hex(id(self))}"]
@@ -817,6 +879,35 @@ class Body(IBody):
         **plotting_options: Optional[dict],
     ) -> None:
         return self._template.plot(merge, screenshot, use_trame, **plotting_options)
+
+    @protect_grpc
+    def intersect(self, other: "Body") -> None:
+        response = self._template._bodies_stub.Boolean(
+            BooleanRequest(body1=self.id, body2=other.id, method="intersect")
+        ).empty_result
+
+        if response == 1:
+            raise ValueError("Bodies do not intersect.")
+
+        other.parent.delete_body(other)
+
+    @protect_grpc
+    def subtract(self, other: "Body") -> None:
+        response = self._template._bodies_stub.Boolean(
+            BooleanRequest(body1=self.id, body2=other.id, method="subtract")
+        ).empty_result
+
+        if response == 1:
+            raise ValueError("Subtraction of bodies results in an empty (complete) subtraction.")
+
+        other.parent.delete_body(other)
+
+    @protect_grpc
+    def unite(self, other: "Body") -> None:
+        self._template._bodies_stub.Boolean(
+            BooleanRequest(body1=self.id, body2=other.id, method="unite")
+        )
+        other.parent.delete_body(other)
 
     def __repr__(self) -> str:
         """String representation of the body."""
