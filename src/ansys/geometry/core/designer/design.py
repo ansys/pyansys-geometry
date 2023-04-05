@@ -383,8 +383,8 @@ class Design(Component):
         Only surface bodies will be eligible for mid-surface thickness assignment.
         """
         # Store only assignable ids
-        ids = []
-        ids_bodies = []
+        ids: List[str] = []
+        ids_bodies: List[Body] = []
         for body in bodies:
             if body.is_surface:
                 ids.append(body.id)
@@ -403,7 +403,7 @@ class Design(Component):
 
         # Once the assignment has gone fine, store the values
         for body in ids_bodies:
-            body.surface_thickness = thickness
+            body._surface_thickness = thickness
 
     @protect_grpc
     @check_input_types
@@ -422,8 +422,8 @@ class Design(Component):
         Only surface bodies will be eligible for mid-surface offset assignment.
         """
         # Store only assignable ids
-        ids = []
-        ids_bodies = []
+        ids: List[str] = []
+        ids_bodies: List[Body] = []
         for body in bodies:
             if body.is_surface:
                 ids.append(body.id)
@@ -440,7 +440,7 @@ class Design(Component):
 
         # Once the assignment has gone fine, store the values
         for body in ids_bodies:
-            body.surface_offset = offset_type
+            body._surface_offset = offset_type
 
     def __repr__(self):
         """String representation of the design."""

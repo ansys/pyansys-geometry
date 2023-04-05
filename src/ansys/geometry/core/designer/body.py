@@ -736,32 +736,44 @@ class Body(IBody):
         ]
 
     @property
-    def is_alive(self) -> bool:
+    def _is_alive(self) -> bool:
         return self._template.is_alive
 
-    @is_alive.setter
-    def is_alive(self, value: bool):
+    @_is_alive.setter
+    def _is_alive(self, value: bool):
         self._template._is_alive = value
+
+    @property
+    def is_alive(self) -> bool:
+        return self._is_alive
 
     @property
     def is_surface(self) -> bool:
         return self._template.is_surface
 
     @property
-    def surface_thickness(self) -> Union[Quantity, None]:
+    def _surface_thickness(self) -> Union[Quantity, None]:
         return self._template.surface_thickness
 
-    @surface_thickness.setter
-    def surface_thickness(self, value):
+    @_surface_thickness.setter
+    def _surface_thickness(self, value):
         self._template._surface_thickness = value
 
     @property
-    def surface_offset(self) -> Union["MidSurfaceOffsetType", None]:
+    def surface_thickness(self) -> Union[Quantity, None]:
+        return self._surface_thickness
+
+    @property
+    def _surface_offset(self) -> Union["MidSurfaceOffsetType", None]:
         return self._template._surface_offset
 
-    @surface_offset.setter
-    def surface_offset(self, value: "MidSurfaceOffsetType"):
+    @_surface_offset.setter
+    def _surface_offset(self, value: "MidSurfaceOffsetType"):
         self._template._surface_offset = value
+
+    @property
+    def surface_offset(self) -> Union["MidSurfaceOffsetType", None]:
+        return self._surface_offset
 
     @property
     def volume(self) -> Quantity:
