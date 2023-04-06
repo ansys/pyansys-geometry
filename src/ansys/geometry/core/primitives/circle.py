@@ -143,11 +143,9 @@ class Circle:
         Circle
             A new circle that is the transformed copy of the original circle.
         """
-        old_origin_4d = np.array([[self.origin[0]], [self.origin[1]], [self.origin[2]], [1]])
-        new_origin_4d = matrix * old_origin_4d
-        new_point = Point3D([new_origin_4d[0], new_origin_4d[1], new_origin_4d[2]])
-        new_reference = matrix * np.append(self._reference, 0)
-        new_axis = matrix * np.append(self._axis, 0)
+        new_point = self.origin.transform(matrix)
+        new_reference = self._reference.transform(matrix)
+        new_axis = self._axis.transform(matrix)
         return Circle(
             new_point,
             self.radius,

@@ -112,11 +112,22 @@ class Sphere:
         )
 
     def create_transformed_copy(self, matrix: Matrix44) -> "Sphere":
-        old_origin_4d = np.array([[self.origin[0]], [self.origin[1]], [self.origin[2]], [1]])
-        new_origin_4d = matrix * old_origin_4d
-        new_point = Point3D([new_origin_4d[0], new_origin_4d[1], new_origin_4d[2]])
-        new_reference = matrix * np.append(self._reference, 0)
-        new_axis = matrix * np.append(self._axis, 0)
+        """
+        Creates a transformed copy of the sphere based on a given transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the sphere.
+
+        Returns
+        -------
+        Sphere
+            A new sphere that is the transformed copy of the original sphere.
+        """
+        new_point = self.origin.transform(matrix)
+        new_reference = self._reference.transform(matrix)
+        new_axis = self._axis.transform(matrix)
         return Sphere(
             new_point,
             self.radius,
