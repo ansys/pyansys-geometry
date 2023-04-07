@@ -22,7 +22,7 @@ from ansys.api.geometry.v0.components_pb2 import (
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
 from ansys.api.geometry.v0.models_pb2 import Direction, EntityIdentifier, Line
 from beartype import beartype as check_input_types
-from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
+from beartype.typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
 from pint import Quantity
 
 from ansys.geometry.core.connection import (
@@ -90,6 +90,11 @@ class Component:
     transformed_part : TransformedPart, optional
         This argument should be present when creating a nested instance component. It will use the
         given transformed_part instead of creating a new one.
+    read_existing_comp : bool, optional
+        Indicates whether an existing component on the service should be read
+        or not. By default, ``False``. This is only valid when connecting
+        to an existing service session. Otherwise, avoid using this optional
+        argument.
     """
 
     # Types of the class instance private attributes
@@ -107,8 +112,11 @@ class Component:
         template: Optional["Component"] = None,
         preexisting_id: Optional[str] = None,
         transformed_part: Optional[TransformedPart] = None,
+        read_existing_comp: bool = False,
     ):
         """Constructor method for the ``Component`` class."""
+
+        # Initialize the client and stubs needed
         self._grpc_client = grpc_client
         self._component_stub = ComponentsStub(self._grpc_client.channel)
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
@@ -129,6 +137,7 @@ class Component:
                 self._name = name
                 self._id = None
 
+        # Initialize needed instance variables
         self._components = []
         self._beams = []
         self._coordinate_systems = []
@@ -981,3 +990,31 @@ class Component:
         lines.append(f"  N Components         : {sum(alive_comps)}")
         lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
         return "\n".join(lines)
+
+    def __read_existing_component(self, component_as_json: Dict) -> None:
+        # Given the existing component...
+        #
+        # Let's read the existing bodies first
+        bodies_json = component_as_json["bodies"]
+        subcomps_json = component_as_json["components"]
+        for body in bodies_json:
+            self._bodies.append(
+                Body(
+                    body["masterid"],
+                    body["name"],
+                    self,
+                    self._grpc_client,
+                    is_surface=(not body["isclosed"]),
+                )
+            )
+
+        # Now, once all bodies have been read, let's get all subcomponents
+        for subcomp_json in subcomps_json:
+            subcomp = Component("", self, self._grpc_client, read_existing_comp=True)
+            subcomp._id = subcomp_json["id"]
+            subcomp._name = subcomp_json["name"]
+            self._components.append(subcomp)
+            subcomp.__read_existing_component(subcomp_json)
+
+        # Finally, return... just for readability purposes
+        return

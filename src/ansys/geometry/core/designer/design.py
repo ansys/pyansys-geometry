@@ -9,7 +9,12 @@ from ansys.api.geometry.v0.commands_pb2 import (
     CreateBeamCircularProfileRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.designs_pb2 import ExportRequest, NewRequest, SaveAsRequest
+from ansys.api.geometry.v0.designs_pb2 import (
+    ExportRequest,
+    GetAsJsonRequest,
+    NewRequest,
+    SaveAsRequest,
+)
 from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.materials_pb2 import AddToDocumentRequest
 from ansys.api.geometry.v0.materials_pb2_grpc import MaterialsStub
@@ -67,6 +72,11 @@ class Design(Component):
         User-defined label for the design.
     grpc_client : GrpcClient
         Active supporting Geometry service instance for design modeling.
+    read_existing_design : bool, optional
+        Indicates whether an existing design on the service should be read
+        or not. By default, ``False``. This is only valid when connecting
+        to an existing service session. Otherwise, avoid using this optional
+        argument.
     """
 
     # Types of the class instance private attributes
@@ -76,23 +86,29 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
-    def __init__(self, name: str, grpc_client: GrpcClient):
+    def __init__(self, name: str, grpc_client: GrpcClient, read_existing_design: bool = False):
         """Constructor method for the ``Design`` class."""
         super().__init__(name, None, grpc_client)
 
+        # Initialize the stubs needed
         self._design_stub = DesignsStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
         self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
 
-        new_design = self._design_stub.New(NewRequest(name=name))
-        self._id = new_design.id
-
+        # Initialize needed instance variables
         self._materials = []
         self._named_selections = {}
         self._beam_profiles = {}
 
-        self._grpc_client.log.debug("Design object instantiated successfully.")
+        # Check whether we want to process an existing design or create a new one.
+        if read_existing_design:
+            self._grpc_client.log.debug("Reading Design object from service.")
+            self.__read_existing_design()
+        else:
+            new_design = self._design_stub.New(NewRequest(name=name))
+            self._id = new_design.id
+            self._grpc_client.log.debug("Design object instantiated successfully.")
 
     @property
     def materials(self) -> List[Material]:
@@ -455,3 +471,42 @@ class Design(Component):
         lines.append(f"  N Materials          : {len(self.materials)}")
         lines.append(f"  N Beam Profiles      : {len(self.beam_profiles)}")
         return "\n".join(lines)
+
+    def __read_existing_design(self) -> None:
+        """Read existing design on the service with the connected client.
+        This method will just fill the ``Design`` object with all its
+        existing ``Component`` and ``Body`` objects.
+        """
+
+        import json
+
+        # TODO: To be implemented...
+        #
+        # We have to get back:
+        #
+        # - [X] Components
+        # - [X] Bodies
+        # - [ ] Materials
+        # - [ ] NamedSelections
+        # - [ ] BeamProfiles
+        # - [ ] Beams
+        # - [ ] CoordinateSystems
+        # - [ ] SharedTopology
+        #
+        #
+        # First, let's start by getting the design object (i.e. root component)
+        design = self._design_stub.GetActive(Empty())
+        if not design:
+            raise RuntimeError("No existing design available at service level.")
+        else:
+            self._id = design.main_part.id
+            self._name = design.main_part.name
+
+        # Now that we have verified that there is an active design
+        # on the service, let's read it.
+        response = self._design_stub.GetAsJson(GetAsJsonRequest(id=""))
+        design_as_json: Dict = json.loads(response.json)
+
+        # Having the information available as a JSON file, it is now time
+        # to start creating the different bodies, components...
+        self._Component__read_existing_component(design_as_json["design"])

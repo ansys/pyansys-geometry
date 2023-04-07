@@ -99,6 +99,20 @@ class Modeler:
         self._designs.append(design)
         return self._designs[-1]
 
+    def read_existing_design(self) -> "Design":
+        """Read existing design on the service with the connected client.
+
+        Returns
+        -------
+        Design
+            Design object already living on the server.
+        """
+        from ansys.geometry.core.designer.design import Design
+
+        design = Design("", self._client, read_existing_design=True)
+        self._designs.append(design)
+        return self._designs[-1]
+
     def close(self) -> None:
         """``Modeler`` easy-access method to the client's ``close()`` method."""
         return self.client.close()
