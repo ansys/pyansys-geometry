@@ -110,6 +110,11 @@ jobs:
       - name: Download Geometry service container (if needed)
         run: docker pull $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
 
+      - name: Check location of self-hosted runner and define license server accordingly
+        if: runner.name == 'pygeometry-ci-1'
+        run:
+          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+
       - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
@@ -198,6 +203,11 @@ jobs:
 
       - name: Download Geometry service container (if needed)
         run: docker pull $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
+
+      - name: Check location of self-hosted runner and define license server accordingly
+        if: runner.name == 'pygeometry-ci-1'
+        run:
+          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Start Geometry service and verify start
         run: |
