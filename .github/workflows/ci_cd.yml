@@ -110,25 +110,12 @@ jobs:
       - name: Download Geometry service container (if needed)
         run: docker pull $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
 
-      - name: Check runner type
-        if: runner.name == 'pygeometry-ci-1'
-        env:
-          INTERNAL_DOCKER_EXTRA_ENVS: ${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }}
-        run: |
-          $env:INTERNAL_DOCKER_EXTRA_ENVS | Out-File -FilePath env.list -Encoding UTF8
-
-      - name: Check runner type (not needed)
-        if: runner.name != 'pygeometry-ci-1'
-        run: |
-          echo "" | Out-File -FilePath env.list -Encoding UTF8
-
       - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
-          $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
-          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER --env-file .\env.list -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
-      
+
       - name: Restore images cache
         uses: actions/cache@v3
         with:
@@ -212,23 +199,10 @@ jobs:
       - name: Download Geometry service container (if needed)
         run: docker pull $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
 
-      - name: Check runner type
-        if: runner.name == 'pygeometry-ci-1'
-        env:
-          INTERNAL_DOCKER_EXTRA_ENVS: ${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }}
-        run: |
-          $env:INTERNAL_DOCKER_EXTRA_ENVS | Out-File -FilePath env.list -Encoding UTF8
-
-      - name: Check runner type (not needed)
-        if: runner.name != 'pygeometry-ci-1'
-        run: |
-          echo "" | Out-File -FilePath env.list -Encoding UTF8
-
       - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
-          $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
-          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER --env-file .\env.list -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Build the documentation (HTML)
