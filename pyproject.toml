@@ -48,7 +48,7 @@ all = [
 ]
 
 tests = [
-    "beartype==0.12.0",
+    "beartype==0.13.0",
     "google-api-python-client==2.84.0",
     "googleapis-common-protos==1.59.0",
     "grpcio==1.50.0",
