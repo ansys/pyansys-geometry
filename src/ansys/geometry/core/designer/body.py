@@ -375,7 +375,7 @@ class IBody(ABC):
         Parameters
         ----------
         other : Body
-            The body to intersect with self.
+            The body to intersect with.
 
         Raises
         ------
