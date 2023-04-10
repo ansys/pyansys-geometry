@@ -77,7 +77,7 @@ class NamedSelection:
         [ids.add(face.id) for face in faces]
         [ids.add(edge.id) for edge in edges]
         [ids.add(beam.id) for beam in beams]
-        [ids.add(design_point.id) for design_point in design_points]
+        [ids.add(dp.id) for dp in design_points]
 
         named_selection_request = CreateRequest(name=name, members=ids)
         self._grpc_client.log.debug("Requesting creation of named selection.")
