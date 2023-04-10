@@ -1,6 +1,7 @@
 """Provides the ``Body`` class module."""
 from abc import ABC, abstractmethod
 from enum import Enum
+from functools import wraps
 
 from ansys.api.geometry.v0.bodies_pb2 import (
     CopyRequest,
@@ -412,6 +413,27 @@ class TemplateBody(IBody):
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._tessellation = None
 
+    def reset_tessellation_cache(func):
+        """Decorator for ``TemplateBody`` methods that require a tessellation cache update.
+
+        Parameters
+        ----------
+        func : method
+            The method being called.
+
+        Returns
+        -------
+        Any
+            The output of the method, if any.
+        """
+
+        @wraps(func)
+        def wrapper(self: "TemplateBody", *args, **kwargs):
+            self._tessellation = None
+            return func(self, *args, **kwargs)
+
+        return wrapper
+
     @property
     def _grpc_id(self) -> EntityIdentifier:
         """gRPC entity identifier of this body."""
@@ -582,6 +604,7 @@ class TemplateBody(IBody):
 
     @protect_grpc
     @check_input_types
+    @reset_tessellation_cache
     def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]) -> None:
         distance = distance if isinstance(distance, Distance) else Distance(distance)
 
@@ -596,8 +619,6 @@ class TemplateBody(IBody):
                 distance=translation_magnitude,
             )
         )
-
-        self.reset_cache()
 
     @protect_grpc
     def copy(self, parent: "Component", name: str = None) -> "Body":
@@ -665,9 +686,6 @@ class TemplateBody(IBody):
         pl = pl_helper.init_plotter()
         pl.add_body(self, merge=merge, **plotting_options)
         pl_helper.show_plotter(pl, screenshot=screenshot)
-
-    def reset_cache(self):
-        self._tessellation = None
 
     def __repr__(self) -> str:
         """String representation of the body."""
