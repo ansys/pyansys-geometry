@@ -1223,7 +1223,7 @@ def test_design_points(modeler: Modeler):
     assert "  Design Point         : [20. 20. 20.]" in design_point_2_str
 
 
-def test_named_selections_beams(modeler: Modeler):
+def test_named_selections_beams(modeler: Modeler, skip_not_on_linux_service):
     """Test for verifying the correct creation of ``NamedSelection`` with beams."""
 
     # Create your design on the server side
