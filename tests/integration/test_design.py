@@ -427,6 +427,7 @@ def test_coordinate_system_creation(modeler: Modeler):
     nested_comp_cs1_str = str(nested_comp_cs1)
     assert "ansys.geometry.core.designer.CoordinateSystem" in nested_comp_cs1_str
     assert "  Name                 : CompCS1" in nested_comp_cs1_str
+    assert "  Exists               : True" in nested_comp_cs1_str
     assert "  Parent component     : NestedComponent" in nested_comp_cs1_str
     assert "  Frame origin         : [0.01,0.2,3.0] in meters" in nested_comp_cs1_str
     assert "  Frame X-direction    : " in nested_comp_cs1_str
@@ -974,6 +975,7 @@ def test_beams(modeler: Modeler, skip_not_on_linux_service):
             UnitVector3D([-1, -1, -1]),
         )
 
+    # Create a beam at the root component level
     beam_1 = design.create_beam(
         Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
     )
@@ -983,11 +985,13 @@ def test_beams(modeler: Modeler, skip_not_on_linux_service):
     assert beam_1.end == Point3D([8, 88, 888], UNITS.mm)
     assert beam_1.profile == circle_profile_1
     assert beam_1.parent_component.id == design.id
+    assert beam_1.is_alive
     assert len(design.beams) == 1
     assert design.beams[0] == beam_1
 
     beam_1_str = str(beam_1)
     assert "ansys.geometry.core.designer.Beam" in beam_1_str
+    assert "  Exists               : True" in beam_1_str
     assert "  Start                : [0.009" in beam_1_str
     assert "  End                  : [0.008" in beam_1_str
     assert "  Parent component     : BeamCreation" in beam_1_str
@@ -1000,17 +1004,74 @@ def test_beams(modeler: Modeler, skip_not_on_linux_service):
     assert "  Direction x          : [1.0,0.0,0.0]" in beam_1_str
     assert "  Direction y          : [0.0,1.0,0.0]" in beam_1_str
 
+    # Now, let's create two beams at a nested component, with the same profile
     nested_component = design.add_component("NestedComponent")
-
     beam_2 = nested_component.create_beam(
         Point3D([7, 77, 777], UNITS.mm), Point3D([6, 66, 666], UNITS.mm), circle_profile_2
+    )
+    beam_3 = nested_component.create_beam(
+        Point3D([8, 88, 888], UNITS.mm), Point3D([7, 77, 777], UNITS.mm), circle_profile_2
     )
 
     assert beam_2.id is not None
     assert beam_2.profile == circle_profile_2
     assert beam_2.parent_component.id == nested_component.id
-    assert len(nested_component.beams) == 1
+    assert beam_2.is_alive
+    assert beam_3.id is not None
+    assert beam_3.profile == circle_profile_2
+    assert beam_3.parent_component.id == nested_component.id
+    assert beam_3.is_alive
+    assert beam_2.id != beam_3.id
+    assert len(nested_component.beams) == 2
     assert nested_component.beams[0] == beam_2
+    assert nested_component.beams[1] == beam_3
+
+    # Once the beams are created, let's try deleting it.
+    # For example, we shouldn't be able to delete beam_1 from the nested component.
+    nested_component.delete_beam(beam_1)
+
+    assert beam_2.is_alive
+    assert nested_component.beams[0].is_alive
+    assert beam_3.is_alive
+    assert nested_component.beams[1].is_alive
+    assert beam_1.is_alive
+    assert design.beams[0].is_alive
+
+    # Let's try deleting one of the beams from the nested component
+    nested_component.delete_beam(beam_2)
+    assert not beam_2.is_alive
+    assert not nested_component.beams[0].is_alive
+    assert beam_3.is_alive
+    assert nested_component.beams[1].is_alive
+    assert beam_1.is_alive
+    assert design.beams[0].is_alive
+
+    # Now, let's try deleting it from the design directly - this should be possible
+    design.delete_beam(beam_3)
+    assert not beam_2.is_alive
+    assert not nested_component.beams[0].is_alive
+    assert not beam_3.is_alive
+    assert not nested_component.beams[1].is_alive
+    assert beam_1.is_alive
+    assert design.beams[0].is_alive
+
+    # Finally, let's delete the beam from the root component
+    design.delete_beam(beam_1)
+    assert not beam_2.is_alive
+    assert not nested_component.beams[0].is_alive
+    assert not beam_3.is_alive
+    assert not nested_component.beams[1].is_alive
+    assert not beam_1.is_alive
+    assert not design.beams[0].is_alive
+
+    # Now, let's try deleting the beam profiles!
+    assert len(design.beam_profiles) == 2
+    design.delete_beam_profile("MyInventedBeamProfile")
+    assert len(design.beam_profiles) == 2
+    design.delete_beam_profile(circle_profile_1)
+    assert len(design.beam_profiles) == 1
+    design.delete_beam_profile(circle_profile_2)
+    assert len(design.beam_profiles) == 0
 
 
 def test_midsurface_properties(modeler: Modeler):
