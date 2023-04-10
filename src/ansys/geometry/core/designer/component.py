@@ -12,7 +12,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
-from ansys.api.geometry.v0.commands_pb2 import CreateBeamSegmentsRequest
+from ansys.api.geometry.v0.commands_pb2 import CreateBeamSegmentsRequest, CreateDesignPointsRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.components_pb2 import (
     CreateRequest,
@@ -37,6 +37,7 @@ from ansys.geometry.core.connection.conversions import point3d_to_grpc_point
 from ansys.geometry.core.designer.beam import Beam, BeamProfile
 from ansys.geometry.core.designer.body import Body, TemplateBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
+from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.part import Part, TransformedPart
 from ansys.geometry.core.errors import protect_grpc
@@ -96,6 +97,7 @@ class Component:
     _components: List["Component"]
     _beams: List[Beam]
     _coordinate_systems: List[CoordinateSystem]
+    _design_points: List[DesignPoint]
 
     @protect_grpc
     @check_input_types
@@ -132,6 +134,7 @@ class Component:
         self._components = []
         self._beams = []
         self._coordinate_systems = []
+        self._design_points = []
         self._parent_component = parent_component
         self._is_alive = True
         self._shared_topology = None
@@ -191,6 +194,11 @@ class Component:
     def beams(self) -> List[Beam]:
         """``Beam`` objects inside of the component."""
         return self._beams
+
+    @property
+    def design_points(self) -> List[DesignPoint]:
+        """``DesignPoint`` objects inside of the component."""
+        return self._design_points
 
     @property
     def coordinate_systems(self) -> List[CoordinateSystem]:
@@ -730,6 +738,57 @@ class Component:
             )
             pass
 
+    def add_design_point(
+        self,
+        name: str,
+        point: Point3D,
+    ) -> DesignPoint:
+        """Creates a single design point.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the design points.
+        points : Point3D
+            3D point constituting the design point.
+        """
+        return self.add_design_points(name, [point])[0]
+
+    @protect_grpc
+    @check_input_types
+    def add_design_points(
+        self,
+        name: str,
+        points: List[Point3D],
+    ) -> List[DesignPoint]:
+        """Creates a list of design points.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the design points.
+        points : List[Point3D]
+            List of 3D points constituting the design points.
+        """
+        # Create DesignPoint objects server-side
+        self._grpc_client.log.debug(f"Creating design points on {self.id}...")
+        response = self._commands_stub.CreateDesignPoints(
+            CreateDesignPointsRequest(
+                points=[point3d_to_grpc_point(point) for point in points], parent=self.id
+            )
+        )
+        self._grpc_client.log.debug("Design points successfully created.")
+
+        # Once created on the server, create them client side
+        new_design_points = []
+        n_design_points = len(response.ids)
+        for index in range(n_design_points):
+            new_design_points.append((DesignPoint(response.ids[index], name, points[index], self)))
+        self._design_points.extend(new_design_points)
+
+        # Finally return the list of created DesignPoint objects
+        return self._design_points[-n_design_points:]
+
     @protect_grpc
     @check_input_types
     def delete_beam(self, beam: Union[Beam, str]) -> None:
@@ -1048,5 +1107,6 @@ class Component:
         lines.append(f"  N Bodies             : {sum(alive_bodies)}")
         lines.append(f"  N Beams              : {sum(alive_beams)}")
         lines.append(f"  N Coordinate Systems : {sum(alive_coords)}")
+        lines.append(f"  N Design Points      : {len(self.design_points)}")
         lines.append(f"  N Components         : {sum(alive_comps)}")
         return "\n".join(lines)

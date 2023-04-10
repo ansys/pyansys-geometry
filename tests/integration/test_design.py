@@ -656,6 +656,7 @@ def test_delete_body_component(modeler: Modeler):
     assert "N Named Selections   : 0" in design_str
     assert "N Materials          : 0" in design_str
     assert "N Beam Profiles      : 0" in design_str
+    assert "N Design Points      : 0" in design_str
 
     comp_1_str = str(comp_1)
     assert "ansys.geometry.core.designer.Component" in comp_1_str
@@ -665,6 +666,7 @@ def test_delete_body_component(modeler: Modeler):
     assert "N Bodies             : 0" in comp_1_str
     assert "N Beams              : 0" in comp_1_str
     assert "N Components         : 0" in comp_1_str
+    assert "N Design Points      : 0" in comp_1_str
     assert "N Coordinate Systems : 0" in comp_1_str
 
     body_1_str = str(body_1)
@@ -1176,6 +1178,89 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Surface body         : True" in surf_repr
     assert "Surface thickness    : 30 millimeter" in surf_repr
     assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
+
+
+def test_design_points(modeler: Modeler):
+    """Test for verifying the ``DesignPoints``"""
+
+    # Create your design on the server side
+    design = modeler.create_design("DesignPoints")
+    point = Point3D([6, 66, 666], UNITS.mm)
+    design_points_1 = design.add_design_point("FirstPointSet", point)
+
+    # Check the design points
+    assert len(design.design_points) == 1
+    assert design_points_1.id is not None
+    assert design_points_1.name == "FirstPointSet"
+    assert design_points_1.value == point
+
+    # Create another set of design points
+    point_set_2 = [Point3D([10, 10, 10], UNITS.m), Point3D([20, 20, 20], UNITS.m)]
+    design_points_2 = design.add_design_points("SecondPointSet", point_set_2)
+
+    assert len(design.design_points) == 3
+
+    nested_component = design.add_component("NestedComponent")
+    design_point_3 = nested_component.add_design_point("Nested", Point3D([7, 77, 777], UNITS.mm))
+
+    assert design_point_3.id is not None
+    assert design_point_3.value == Point3D([7, 77, 777], UNITS.mm)
+    assert design_point_3.parent_component.id == nested_component.id
+    assert len(nested_component.design_points) == 1
+    assert nested_component.design_points[0] == design_point_3
+
+    design_point_1_str = str(design_points_1)
+    assert "ansys.geometry.core.designer.DesignPoint" in design_point_1_str
+    assert "  Name                 : FirstPointSet" in design_point_1_str
+    assert "  Design Point         : [0.006 0.066 0.666]" in design_point_1_str
+
+    design_point_2_str = str(design_points_2)
+    assert "ansys.geometry.core.designer.DesignPoint" in design_point_2_str
+    assert "  Name                 : SecondPointSet" in design_point_2_str
+    assert "  Design Point         : [10. 10. 10.]" in design_point_2_str
+    assert "ansys.geometry.core.designer.DesignPoint" in design_point_2_str
+    assert "  Name                 : SecondPointSet" in design_point_2_str
+    assert "  Design Point         : [20. 20. 20.]" in design_point_2_str
+
+
+def test_named_selections_beams(modeler: Modeler, skip_not_on_linux_service):
+    """Test for verifying the correct creation of ``NamedSelection`` with beams."""
+
+    # Create your design on the server side
+    design = modeler.create_design("NamedSelectionBeams_Test")
+
+    # Test creating a named selection out of beams
+    circle_profile_1 = design.add_beam_circular_profile(
+        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
+    )
+    beam_1 = design.create_beam(
+        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
+    )
+    ns_beams = design.create_named_selection("CircleProfile", beams=[beam_1])
+    assert len(design.named_selections) == 1
+    assert design.named_selections[0].name == "CircleProfile"
+
+    # Try deleting this named selection
+    design.delete_named_selection(ns_beams)
+    assert len(design.named_selections) == 0
+
+
+def test_named_selections_design_points(modeler: Modeler):
+    """Test for verifying the correct creation of ``NamedSelection`` with design points."""
+
+    # Create your design on the server side
+    design = modeler.create_design("NamedSelectionBeams_Test")
+
+    # Test creating a named selection out of design_points
+    point_set_1 = Point3D([10, 10, 0], UNITS.m)
+    design_points_1 = design.add_design_point("FirstPointSet", point_set_1)
+    ns_despoint = design.create_named_selection("FirstPointSet", design_points=[design_points_1])
+    assert len(design.named_selections) == 1
+    assert design.named_selections[0].name == "FirstPointSet"
+
+    # Try deleting this named selection
+    design.delete_named_selection(ns_despoint)
+    assert len(design.named_selections) == 0
 
 
 def test_component_instances(modeler: Modeler, skip_not_on_linux_service):
