@@ -1,5 +1,6 @@
 """Test design interaction."""
 
+import numpy as np
 from pint import Quantity
 import pytest
 
@@ -15,6 +16,7 @@ from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.errors import GeometryExitedError
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import (
+    IDENTITY_MATRIX44,
     UNITVECTOR3D_X,
     UNITVECTOR3D_Y,
     UNITVECTOR3D_Z,
@@ -23,6 +25,7 @@ from ansys.geometry.core.math import (
     Point2D,
     Point3D,
     UnitVector3D,
+    Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
 from ansys.geometry.core.sketch import Sketch
@@ -424,6 +427,7 @@ def test_coordinate_system_creation(modeler: Modeler):
     nested_comp_cs1_str = str(nested_comp_cs1)
     assert "ansys.geometry.core.designer.CoordinateSystem" in nested_comp_cs1_str
     assert "  Name                 : CompCS1" in nested_comp_cs1_str
+    assert "  Exists               : True" in nested_comp_cs1_str
     assert "  Parent component     : NestedComponent" in nested_comp_cs1_str
     assert "  Frame origin         : [0.01,0.2,3.0] in meters" in nested_comp_cs1_str
     assert "  Frame X-direction    : " in nested_comp_cs1_str
@@ -897,22 +901,31 @@ def test_copy_body(modeler: Modeler, skip_not_on_linux_service):
     # Copy body at same design level
     copy = body.copy(design, "Copy")
     assert len(design.bodies) == 2
-    assert design.bodies[-1] == copy
+    assert design.bodies[-1].id == copy.id
 
     # Bodies should be distinct
+    assert body.id != copy.id
     assert body != copy
 
     # Copy body into sub-component
     comp1 = design.add_component("comp1")
     copy2 = body.copy(comp1, "Subcopy")
     assert len(comp1.bodies) == 1
-    assert comp1.bodies[-1] == copy2
+    assert comp1.bodies[-1].id == copy2.id
+
+    # Bodies should be distinct
+    assert body.id != copy2.id
+    assert body != copy2
 
     # Copy a copy
     comp2 = comp1.add_component("comp2")
     copy3 = copy2.copy(comp2, "Copy3")
     assert len(comp2.bodies) == 1
-    assert comp2.bodies[-1] == copy3
+    assert comp2.bodies[-1].id == copy3.id
+
+    # Bodies should be distinct
+    assert copy2.id != copy3.id
+    assert copy2 != copy3
 
     # Ensure deleting original doesn't affect the copies
     design.delete_body(body)
@@ -964,6 +977,7 @@ def test_beams(modeler: Modeler, skip_not_on_linux_service):
             UnitVector3D([-1, -1, -1]),
         )
 
+    # Create a beam at the root component level
     beam_1 = design.create_beam(
         Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
     )
@@ -973,11 +987,13 @@ def test_beams(modeler: Modeler, skip_not_on_linux_service):
     assert beam_1.end == Point3D([8, 88, 888], UNITS.mm)
     assert beam_1.profile == circle_profile_1
     assert beam_1.parent_component.id == design.id
+    assert beam_1.is_alive
     assert len(design.beams) == 1
     assert design.beams[0] == beam_1
 
     beam_1_str = str(beam_1)
     assert "ansys.geometry.core.designer.Beam" in beam_1_str
+    assert "  Exists               : True" in beam_1_str
     assert "  Start                : [0.009" in beam_1_str
     assert "  End                  : [0.008" in beam_1_str
     assert "  Parent component     : BeamCreation" in beam_1_str
@@ -990,17 +1006,74 @@ def test_beams(modeler: Modeler, skip_not_on_linux_service):
     assert "  Direction x          : [1.0,0.0,0.0]" in beam_1_str
     assert "  Direction y          : [0.0,1.0,0.0]" in beam_1_str
 
+    # Now, let's create two beams at a nested component, with the same profile
     nested_component = design.add_component("NestedComponent")
-
     beam_2 = nested_component.create_beam(
         Point3D([7, 77, 777], UNITS.mm), Point3D([6, 66, 666], UNITS.mm), circle_profile_2
+    )
+    beam_3 = nested_component.create_beam(
+        Point3D([8, 88, 888], UNITS.mm), Point3D([7, 77, 777], UNITS.mm), circle_profile_2
     )
 
     assert beam_2.id is not None
     assert beam_2.profile == circle_profile_2
     assert beam_2.parent_component.id == nested_component.id
-    assert len(nested_component.beams) == 1
+    assert beam_2.is_alive
+    assert beam_3.id is not None
+    assert beam_3.profile == circle_profile_2
+    assert beam_3.parent_component.id == nested_component.id
+    assert beam_3.is_alive
+    assert beam_2.id != beam_3.id
+    assert len(nested_component.beams) == 2
     assert nested_component.beams[0] == beam_2
+    assert nested_component.beams[1] == beam_3
+
+    # Once the beams are created, let's try deleting it.
+    # For example, we shouldn't be able to delete beam_1 from the nested component.
+    nested_component.delete_beam(beam_1)
+
+    assert beam_2.is_alive
+    assert nested_component.beams[0].is_alive
+    assert beam_3.is_alive
+    assert nested_component.beams[1].is_alive
+    assert beam_1.is_alive
+    assert design.beams[0].is_alive
+
+    # Let's try deleting one of the beams from the nested component
+    nested_component.delete_beam(beam_2)
+    assert not beam_2.is_alive
+    assert not nested_component.beams[0].is_alive
+    assert beam_3.is_alive
+    assert nested_component.beams[1].is_alive
+    assert beam_1.is_alive
+    assert design.beams[0].is_alive
+
+    # Now, let's try deleting it from the design directly - this should be possible
+    design.delete_beam(beam_3)
+    assert not beam_2.is_alive
+    assert not nested_component.beams[0].is_alive
+    assert not beam_3.is_alive
+    assert not nested_component.beams[1].is_alive
+    assert beam_1.is_alive
+    assert design.beams[0].is_alive
+
+    # Finally, let's delete the beam from the root component
+    design.delete_beam(beam_1)
+    assert not beam_2.is_alive
+    assert not nested_component.beams[0].is_alive
+    assert not beam_3.is_alive
+    assert not nested_component.beams[1].is_alive
+    assert not beam_1.is_alive
+    assert not design.beams[0].is_alive
+
+    # Now, let's try deleting the beam profiles!
+    assert len(design.beam_profiles) == 2
+    design.delete_beam_profile("MyInventedBeamProfile")
+    assert len(design.beam_profiles) == 2
+    design.delete_beam_profile(circle_profile_1)
+    assert len(design.beam_profiles) == 1
+    design.delete_beam_profile(circle_profile_2)
+    assert len(design.beam_profiles) == 0
 
 
 def test_midsurface_properties(modeler: Modeler):
@@ -1071,8 +1144,8 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Exists               : True" in body_repr
     assert "Parent component     : MidSurfaceProperties" in body_repr
     assert "Surface body         : False" in body_repr
-    assert slot_body._surface_thickness is None
-    assert slot_body._surface_offset is None
+    assert slot_body.surface_thickness is None
+    assert slot_body.surface_offset is None
 
     # Let's try reassigning values directly to slot_surf - this should work
     # TODO : at the moment the server does not allow to reassign - put in try/catch block
@@ -1188,3 +1261,75 @@ def test_named_selections_design_points(modeler: Modeler):
     # Try deleting this named selection
     design.delete_named_selection(ns_despoint)
     assert len(design.named_selections) == 0
+
+def test_component_instances(modeler: Modeler, skip_not_on_linux_service):
+    """Test creation of ``Component`` instances and the effects this has."""
+
+    design_name = "ComponentInstance_Test"
+    design = modeler.create_design(design_name)
+
+    # Create a car
+    car1 = design.add_component("Car1")
+    comp1 = car1.add_component("A")
+    comp2 = car1.add_component("B")
+    wheel1 = comp2.add_component("Wheel1")
+
+    # Create car base frame
+    sketch = Sketch().box(Point2D([5, 10]), 10, 20)
+    comp2.extrude_sketch("Base", sketch, 5)
+
+    # Create first wheel
+    sketch = Sketch(Plane(direction_x=Vector3D([0, 1, 0]), direction_y=Vector3D([0, 0, 1])))
+    sketch.circle(Point2D([0, 0]), 5)
+    wheel1.extrude_sketch("Wheel", sketch, -5)
+
+    # Create 3 other wheels and move them into position
+    rotation_origin = Point3D([0, 0, 0])
+    rotation_direction = UnitVector3D([0, 0, 1])
+
+    wheel2 = comp2.add_component("Wheel2", wheel1)
+    wheel2.modify_placement(Vector3D([0, 20, 0]))
+
+    wheel3 = comp2.add_component("Wheel3", wheel1)
+    wheel3.modify_placement(Vector3D([10, 0, 0]), rotation_origin, rotation_direction, np.pi)
+
+    wheel4 = comp2.add_component("Wheel4", wheel1)
+    wheel4.modify_placement(Vector3D([10, 20, 0]), rotation_origin, rotation_direction, np.pi)
+
+    # Assert all components have unique IDs
+    comp_ids = [wheel1.id, wheel2.id, wheel3.id, wheel4.id]
+    assert len(comp_ids) == len(set(comp_ids))
+
+    # Assert all bodies have unique IDs
+    body_ids = [wheel1.bodies[0].id, wheel2.bodies[0].id, wheel3.bodies[0].id, wheel4.bodies[0].id]
+    assert len(body_ids) == len(set(body_ids))
+
+    # Assert all instances have unique TransformedParts
+    comp_templates = [wheel2._transformed_part, wheel3._transformed_part, wheel4._transformed_part]
+    assert len(comp_templates) == len(set(comp_templates))
+
+    # Assert all instances have the same Part
+    comp_parts = [
+        wheel2._transformed_part.part,
+        wheel3._transformed_part.part,
+        wheel4._transformed_part.part,
+    ]
+    assert len(set(comp_parts)) == 1
+
+    assert wheel1.get_world_transform() == IDENTITY_MATRIX44
+    assert wheel2.get_world_transform() != IDENTITY_MATRIX44
+
+    # Create 2nd car
+    car2 = design.add_component("Car2", car1)
+    car2.modify_placement(Vector3D([30, 0, 0]))
+
+    # Create top of car - applies to BOTH cars
+    sketch = Sketch(Plane(Point3D([0, 5, 5]))).box(Point2D([5, 2.5]), 10, 5)
+    comp1.extrude_sketch("Top", sketch, 5)
+
+    # Show the body also got added to Car2, and they are distinct, but
+    # not independent
+    assert car1.components[0].bodies[0].id != car2.components[0].bodies[0].id
+
+    # If monikers were formatted properly, you should be able to use them
+    assert len(car2.components[1].components[1].bodies[0].faces) > 0

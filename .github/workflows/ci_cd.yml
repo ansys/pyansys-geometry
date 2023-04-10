@@ -86,7 +86,7 @@ jobs:
           python-version: '3.9' # use python3.9, self-hosted has an issue with 3.10
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@v1
+        uses: pyvista/setup-headless-display-action@v2
 
       - name: Create Python venv
         run: |
@@ -142,6 +142,7 @@ jobs:
           pytest -v
 
       - name: Upload integration test logs
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: integration-test-logs-${{ runner.os }}
@@ -149,6 +150,7 @@ jobs:
           retention-days: 7
 
       - name: Upload PyVista generated images (cache and results)
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: pytest-pyvista-images-${{ runner.os }}
@@ -156,6 +158,7 @@ jobs:
           retention-days: 7
 
       - name: Upload Coverage Results
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: coverage-html
@@ -185,7 +188,7 @@ jobs:
           python-version: '3.9' # use python3.9, self-hosted has an issue with 3.10
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@v1
+        uses: pyvista/setup-headless-display-action@v2
 
       - name: Create Python venv
         run: |
@@ -304,6 +307,7 @@ jobs:
           requires-xvfb: true
 
       - name: Upload integration test logs
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: integration-test-logs-${{ runner.os }}
@@ -311,6 +315,7 @@ jobs:
           retention-days: 7
 
       - name: Upload PyVista generated images (cache and results)
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: pytest-pyvista-images-${{ runner.os }}

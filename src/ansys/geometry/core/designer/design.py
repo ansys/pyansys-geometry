@@ -272,6 +272,7 @@ class Design(Component):
             removal_name = named_selection.name
             removal_id = named_selection.id
 
+        self._grpc_client.log.debug(f"Named selection {removal_name} deletion request received.")
         self._named_selections_stub.Delete(EntityIdentifier(id=removal_id))
 
         try:
@@ -303,7 +304,7 @@ class Design(Component):
         ValueError
             The design itself cannot be deleted.
         """
-        id = component.id if not isinstance(component, str) else component
+        id = component if isinstance(component, str) else component.id
         if id == self.id:
             raise ValueError("The design itself cannot be deleted.")
         else:
@@ -396,8 +397,8 @@ class Design(Component):
         Only surface bodies will be eligible for mid-surface thickness assignment.
         """
         # Store only assignable ids
-        ids = []
-        ids_bodies = []
+        ids: List[str] = []
+        ids_bodies: List[Body] = []
         for body in bodies:
             if body.is_surface:
                 ids.append(body.id)
@@ -435,8 +436,8 @@ class Design(Component):
         Only surface bodies will be eligible for mid-surface offset assignment.
         """
         # Store only assignable ids
-        ids = []
-        ids_bodies = []
+        ids: List[str] = []
+        ids_bodies: List[Body] = []
         for body in bodies:
             if body.is_surface:
                 ids.append(body.id)
@@ -454,6 +455,30 @@ class Design(Component):
         # Once the assignment has gone fine, store the values
         for body in ids_bodies:
             body._surface_offset = offset_type
+
+    @protect_grpc
+    @check_input_types
+    def delete_beam_profile(self, beam_profile: Union[BeamProfile, str]) -> None:
+        """Removes a beam profile on the active geometry server instance.
+
+        Parameters
+        ----------
+        beam_profile : Union[BeamProfile, str]
+            A beam profile name or instance that should be deleted.
+        """
+        removal_name = beam_profile if isinstance(beam_profile, str) else beam_profile.name
+        self._grpc_client.log.debug(f"Beam profile {removal_name} deletion request received.")
+        removal_obj = self._beam_profiles.get(removal_name, None)
+
+        if removal_obj:
+            self._commands_stub.DeleteBeamProfile(EntityIdentifier(id=removal_obj.id))
+            self._beam_profiles.pop(removal_name)
+            self._grpc_client.log.debug(f"Beam profile {removal_name} successfully deleted.")
+        else:
+            self._grpc_client.log.warning(
+                f"Attempted beam profile deletion failed, with name {removal_name}."
+                + " Ignoring request."
+            )
 
     def __repr__(self):
         """String representation of the design."""

@@ -76,6 +76,7 @@ class CoordinateSystem:
                 ]
             ),
         )
+        self._is_alive = True
 
     @property
     def id(self) -> str:
@@ -97,10 +98,16 @@ class CoordinateSystem:
         """Parent component of the coordinate system."""
         return self._parent_component
 
+    @property
+    def is_alive(self) -> bool:
+        """Boolean indicating whether the CoordinateSystem is still alive on the server side."""
+        return self._is_alive
+
     def __repr__(self):
         """String representation of the coordinate system."""
         lines = [f"ansys.geometry.core.designer.CoordinateSystem {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
+        lines.append(f"  Exists               : {self.is_alive}")
         lines.append(f"  Parent component     : {self.parent_component.name}")
         lines.append(
             f"  Frame origin         : [{','.join([str(x) for x in self.frame.origin])}] in meters"

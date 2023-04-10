@@ -87,15 +87,6 @@ class Matrix33(Matrix):
 
         return obj
 
-    @check_input_types
-    def __eq__(self, other: "Matrix33") -> bool:
-        """Equals operator for the ``Matrix33`` class."""
-        return np.array_equal(self, other)
-
-    def __ne__(self, other: "Matrix33") -> bool:
-        """Not equals operator for the ``Matrix33`` class."""
-        return not self == other
-
 
 class Matrix44(Matrix):
     """Provides 4x4 matrix primitive representation.
@@ -117,12 +108,3 @@ class Matrix44(Matrix):
             raise ValueError("Matrix44 should only be a 2D array of shape (4,4).")
 
         return obj
-
-    @check_input_types
-    def __eq__(self, other: "Matrix44") -> bool:
-        """Equals operator for the ``Matrix44`` class."""
-        return np.array_equal(self, other)
-
-    def __ne__(self, other: "Matrix44") -> bool:
-        """Not equals operator for the ``Matrix44`` class."""
-        return not self == other

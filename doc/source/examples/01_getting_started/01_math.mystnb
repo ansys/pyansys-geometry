@@ -156,10 +156,10 @@ print(eval.parameter.v)
 
 ```{code-cell} ipython3
 print("Point on the sphere:")
-eval.position()
+eval.position
 ```
 
 ```{code-cell} ipython3
 print("Normal to the surface of the sphere at the evaluation position:")
-eval.normal()
+eval.normal
 ```
