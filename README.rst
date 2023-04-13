@@ -244,14 +244,14 @@ archive from the `Releases Page <https://github.com/pyansys/pygeometry/releases>
 corresponding machine architecture.
 
 Each wheelhouse archive contains all the Python wheels necessary to install PyGeometry from scratch on Windows,
-Linux, and MacOS from Python 3.7 to 3.11. You can install this on an isolated system with a fresh Python
+Linux, and MacOS from Python 3.8 to 3.11. You can install this on an isolated system with a fresh Python
 installation or on a virtual environment.
 
-For example, on Linux with Python 3.7, unzip the wheelhouse archive and install it with:
+For example, on Linux with Python 3.8, unzip the wheelhouse archive and install it with:
 
 .. code:: bash
 
-    unzip ansys-geometry-core-v0.3.dev0-wheelhouse-Linux-3.7.zip wheelhouse
+    unzip ansys-geometry-core-v0.3.dev0-wheelhouse-Linux-3.8.zip wheelhouse
     pip install ansys-geometry-core -f wheelhouse --no-index --upgrade --ignore-installed
 
 If you're on Windows with Python 3.9, unzip to a wheelhouse directory and install using the preceding command.
