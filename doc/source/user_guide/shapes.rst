@@ -22,13 +22,13 @@ You can initialize the sketch by:
 
 The sketch can be constructed using different approaches.
 
-Functional-style API 
+Functional-style API
 ====================
 
 This is sometimes termed a 'fluent functional-style api, or fluent API' in the developer community. The latter
 term is avoided in the context of Ansys APIs to avoid confusion with the Ansys Fluent product.
 
-One of the key features of this approach is keeping an active context based upon the previously created 
+One of the key features of this approach is keeping an active context based upon the previously created
 edges to use as a reference start point for additional objects.
 
 
@@ -40,7 +40,7 @@ edges to use as a reference start point for additional objects.
     sketch.plot()
 
 The sketch has been created with its origin as a starting point. Subsequent calls create segments,
-which take as a starting point the last point of the previous edge.  
+which take as a starting point the last point of the previous edge.
 
 It is also able to get a desired shape of the sketch object by taking advantage of the user-defined labels.
 

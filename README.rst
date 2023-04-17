@@ -179,10 +179,10 @@ Installing PyGeometry in developer mode allows
 you to modify the source and enhance it.
 
 .. note::
-   
+
     Before contributing to the project, ensure that you are thoroughly familiar
     with the `PyAnsys Developer's Guide`_.
-    
+
 To install PyGeometry in developer mode, perform these steps:
 
 #. Clone the ``pygeometry`` repository:
@@ -222,7 +222,7 @@ To install PyGeometry in developer mode, perform these steps:
 #. Install the project in editable mode:
 
    .. code:: bash
-      
+
       # Install the minimum requirements
       python -m pip install -e .
 
@@ -263,7 +263,7 @@ Testing
 
 This project takes advantage of `tox`_. This tool automate common
 development tasks (similar to Makefile), but it is oriented towards Python
-development. 
+development.
 
 Using ``tox``
 ^^^^^^^^^^^^^
@@ -279,7 +279,7 @@ The following environments commands are provided:
 - **tox -e py-coverage**: Checks for unit testing and code coverage.
 - **tox -e doc**: Checks for documentation building process.
 
- .. admonition:: pyvista-pytest plugin 
+ .. admonition:: pyvista-pytest plugin
 
    This plugin facilitates the comparison of the images produced in PyGeometry for testing the plots.
    If you are changing the images, use flag ``--reset_image_cache`` which is not recommended except
@@ -331,7 +331,7 @@ the building requirements and then executing the build module:
 
 .. code:: bash
 
-    python -m pip install -U pip 
+    python -m pip install -U pip
     python -m build
     python -m twine check dist/*
 

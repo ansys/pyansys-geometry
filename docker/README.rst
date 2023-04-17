@@ -33,7 +33,7 @@ Prerequisites
 
   * Latest Linux artifacts: `linux-binaries.zip <https://github.com/pyansys/pygeometry/releases/latest/download/linux-binaries.zip>`_
   * Latest Windows artifacts: `windows-binaries.zip <https://github.com/pyansys/pygeometry/releases/latest/download/windows-binaries.zip>`_
- 
+
 * Move these ``.zip`` files to the current location (i.e. ``<repository-root-folder>/docker``).
 
 Building the Docker images
@@ -43,7 +43,7 @@ In order to build your images, follow the next instructions:
 
 * Locate yourself at ``<repository-root-folder>/docker`` in your terminal.
 * Run the following Docker command:
-  
+
   .. code:: bash
 
      docker build -t ghcr.io/pyansys/geometry:<DOCKER_IMAGE_TAG> -f <DOCKERFILE_NAME> .
@@ -60,7 +60,7 @@ In order to build your images, follow the next instructions:
   to this one when running the following command:
 
   .. code:: bash
-    
+
      docker images
 
      >>> REPOSITORY                                               TAG                                IMAGE ID       CREATED          SIZE

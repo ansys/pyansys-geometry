@@ -6,7 +6,7 @@ Overall guidance on contributing to a PyAnsys library appears in the
 in the *PyAnsys Developer's Guide*. Ensure that you are thoroughly familiar
 with it and all `How-to <https://dev.docs.pyansys.com/how-to/index.html>`_ pages
 before attempting to contribute to PyGeometry.
- 
+
 The following contribution information is specific to PyGeometry.
 
 Clone the repository
