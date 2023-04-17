@@ -536,8 +536,10 @@ class TemplateBody(IBody):
     @check_input_types
     def imprint_curves(self, faces: List[Face], sketch: Sketch) -> Tuple[List[Edge], List[Face]]:
         raise NotImplementedError(
-            "imprint_curves is not implemented at the TemplateBody level.",
-            "Instead, call this method on a Body.",
+            """
+            imprint_curves is not implemented at the TemplateBody level.
+            Instead, call this method on a Body.
+        """
         )
 
     @protect_grpc
@@ -550,8 +552,10 @@ class TemplateBody(IBody):
         only_one_curve: Optional[bool] = False,
     ) -> List[Face]:
         raise NotImplementedError(
-            "project_curves is not implemented at the TemplateBody level.",
-            "Instead, call this method on a Body.",
+            """
+            project_curves is not implemented at the TemplateBody level.
+            Instead, call this method on a Body.
+        """
         )
 
     @protect_grpc
