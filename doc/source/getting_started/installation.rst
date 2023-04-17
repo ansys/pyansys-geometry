@@ -10,7 +10,7 @@ Package dependencies
 
 PyGeometry is supported on Python version 3.8 and later. As indicated in
 `Moving to require Python 3 <https://python3statement.org/>`_, previous
-versions of Python are no longer supported. 
+versions of Python are no longer supported.
 
 PyGeometry dependencies are automatically checked when packages are installed.
 These projects are required dependencies for PyGeometry:
