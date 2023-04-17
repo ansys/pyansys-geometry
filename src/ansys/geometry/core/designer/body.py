@@ -585,41 +585,12 @@ class TemplateBody(IBody):
     @protect_grpc
     @check_input_types
     def imprint_curves(self, faces: List[Face], sketch: Sketch) -> Tuple[List[Edge], List[Face]]:
-        # Verify that each of the faces provided are part of this body
-        body_faces = self.faces
-        for provided_face in faces:
-            is_found = False
-            for body_face in body_faces:
-                if provided_face.id == body_face.id:
-                    is_found = True
-                    break
-            if not is_found:
-                raise ValueError(f"Face with id {provided_face.id} is not part of this body.")
-
-        self._grpc_client.log.debug(
-            f"Imprinting curves provided on {self.id} "
-            + f"for faces {[face.id for face in faces]}."
+        raise NotImplementedError(
+            """
+            imprint_curves is not implemented at the TemplateBody level.
+            Instead, call this method on a Body.
+        """
         )
-
-        imprint_response = self._commands_stub.ImprintCurves(
-            ImprintCurvesRequest(
-                body=self._id,
-                curves=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
-                faces=[face._id for face in faces],
-            )
-        )
-
-        new_edges = [
-            Edge(grpc_edge.id, grpc_edge.curve_type, self, self._grpc_client)
-            for grpc_edge in imprint_response.edges
-        ]
-
-        new_faces = [
-            Face(grpc_face.id, grpc_face.surface_type, self, self._grpc_client)
-            for grpc_face in imprint_response.faces
-        ]
-
-        return (new_edges, new_faces)
 
     @protect_grpc
     @check_input_types
@@ -630,27 +601,12 @@ class TemplateBody(IBody):
         closest_face: bool,
         only_one_curve: Optional[bool] = False,
     ) -> List[Face]:
-        curves = sketch_shapes_to_grpc_geometries(
-            sketch._plane, sketch.edges, sketch.faces, only_one_curve=only_one_curve
+        raise NotImplementedError(
+            """
+            project_curves is not implemented at the TemplateBody level.
+            Instead, call this method on a Body.
+        """
         )
-
-        self._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
-
-        project_response = self._commands_stub.ProjectCurves(
-            ProjectCurvesRequest(
-                body=self._id,
-                curves=curves,
-                direction=unit_vector_to_grpc_direction(direction),
-                closest_face=closest_face,
-            )
-        )
-
-        projected_faces = [
-            Face(grpc_face.id, grpc_face.surface_type, self, self._grpc_client)
-            for grpc_face in project_response.faces
-        ]
-
-        return projected_faces
 
     @protect_grpc
     @check_input_types
@@ -902,7 +858,41 @@ class Body(IBody):
         self._template.add_midsurface_offset(offset)
 
     def imprint_curves(self, faces: List[Face], sketch: Sketch) -> Tuple[List[Edge], List[Face]]:
-        return self._template.imprint_curves(faces, sketch)
+        # Verify that each of the faces provided are part of this body
+        body_faces = self.faces
+        for provided_face in faces:
+            is_found = False
+            for body_face in body_faces:
+                if provided_face.id == body_face.id:
+                    is_found = True
+                    break
+            if not is_found:
+                raise ValueError(f"Face with id {provided_face.id} is not part of this body.")
+
+        self._template._grpc_client.log.debug(
+            f"Imprinting curves provided on {self.id} "
+            + f"for faces {[face.id for face in faces]}."
+        )
+
+        imprint_response = self._template._commands_stub.ImprintCurves(
+            ImprintCurvesRequest(
+                body=self._id,
+                curves=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
+                faces=[face._id for face in faces],
+            )
+        )
+
+        new_edges = [
+            Edge(grpc_edge.id, grpc_edge.curve_type, self, self._template._grpc_client)
+            for grpc_edge in imprint_response.edges
+        ]
+
+        new_faces = [
+            Face(grpc_face.id, grpc_face.surface_type, self, self._template._grpc_client)
+            for grpc_face in imprint_response.faces
+        ]
+
+        return (new_edges, new_faces)
 
     def project_curves(
         self,
@@ -911,7 +901,26 @@ class Body(IBody):
         closest_face: bool,
         only_one_curve: Optional[bool] = False,
     ) -> List[Face]:
-        return self._template.project_curves(direction, sketch, closest_face, only_one_curve)
+        curves = sketch_shapes_to_grpc_geometries(
+            sketch._plane, sketch.edges, sketch.faces, only_one_curve=only_one_curve
+        )
+        self._template._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
+
+        project_response = self._template._commands_stub.ProjectCurves(
+            ProjectCurvesRequest(
+                body=self._id,
+                curves=curves,
+                direction=unit_vector_to_grpc_direction(direction),
+                closest_face=closest_face,
+            )
+        )
+
+        projected_faces = [
+            Face(grpc_face.id, grpc_face.surface_type, self, self._template._grpc_client)
+            for grpc_face in project_response.faces
+        ]
+
+        return projected_faces
 
     def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]) -> None:
         return self._template.translate(direction, distance)
