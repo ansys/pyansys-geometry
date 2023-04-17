@@ -908,6 +908,7 @@ class Body(IBody):
         return self._template.plot(merge, screenshot, use_trame, **plotting_options)
 
     @protect_grpc
+    @reset_tessellation_cache
     def intersect(self, other: "Body") -> None:
         response = self._template._bodies_stub.Boolean(
             BooleanRequest(body1=self.id, body2=other.id, method="intersect")
@@ -919,6 +920,7 @@ class Body(IBody):
         other.parent.delete_body(other)
 
     @protect_grpc
+    @reset_tessellation_cache
     def subtract(self, other: "Body") -> None:
         response = self._template._bodies_stub.Boolean(
             BooleanRequest(body1=self.id, body2=other.id, method="subtract")
@@ -930,6 +932,7 @@ class Body(IBody):
         other.parent.delete_body(other)
 
     @protect_grpc
+    @reset_tessellation_cache
     def unite(self, other: "Body") -> None:
         self._template._bodies_stub.Boolean(
             BooleanRequest(body1=self.id, body2=other.id, method="unite")
