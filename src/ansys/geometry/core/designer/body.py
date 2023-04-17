@@ -1,6 +1,7 @@
 """Provides the ``Body`` class module."""
 from abc import ABC, abstractmethod
 from enum import Enum
+from functools import wraps
 
 from ansys.api.geometry.v0.bodies_pb2 import (
     CopyRequest,
@@ -410,6 +411,28 @@ class TemplateBody(IBody):
         self._is_alive = True
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
+        self._tessellation = None
+
+    def reset_tessellation_cache(func):
+        """Decorator for ``TemplateBody`` methods that require a tessellation cache update.
+
+        Parameters
+        ----------
+        func : method
+            The method being called.
+
+        Returns
+        -------
+        Any
+            The output of the method, if any.
+        """
+
+        @wraps(func)
+        def wrapper(self: "TemplateBody", *args, **kwargs):
+            self._tessellation = None
+            return func(self, *args, **kwargs)
+
+        return wrapper
 
     @property
     def _grpc_id(self) -> EntityIdentifier:
@@ -581,6 +604,7 @@ class TemplateBody(IBody):
 
     @protect_grpc
     @check_input_types
+    @reset_tessellation_cache
     def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]) -> None:
         distance = distance if isinstance(distance, Distance) else Distance(distance)
 
@@ -635,9 +659,12 @@ class TemplateBody(IBody):
 
         self._grpc_client.log.debug(f"Requesting tessellation for body {self.id}.")
 
-        resp = self._bodies_stub.GetTessellation(self._grpc_id)
+        # cache tessellation
+        if not self._tessellation:
+            resp = self._bodies_stub.GetTessellation(self._grpc_id)
+            self._tessellation = resp.face_tessellation.values()
 
-        pdata = [tess_to_pd(tess).transform(transform) for tess in resp.face_tessellation.values()]
+        pdata = [tess_to_pd(tess).transform(transform) for tess in self._tessellation]
         comp = pv.MultiBlock(pdata)
         if merge:
             ugrid = comp.combine()
