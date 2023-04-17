@@ -9,7 +9,7 @@ updates:
       - "dependencies"
     ignore:
       - dependency-name: "grpcio"
-    assignees: 
+    assignees:
       - "pyansys-ci-bot"
 
   - package-ecosystem: "github-actions"
@@ -18,5 +18,5 @@ updates:
       interval: "daily"
     labels:
       - "maintenance"
-    assignees: 
+    assignees:
       - "pyansys-ci-bot"
