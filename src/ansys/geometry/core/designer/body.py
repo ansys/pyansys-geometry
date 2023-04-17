@@ -738,16 +738,19 @@ class TemplateBody(IBody):
         pl_helper.show_plotter(pl, screenshot=screenshot)
 
     def intersect(self, other: "Body") -> None:
-        e = "TemplateBody does not implement boolean methods. Call this method on a Body instead."
-        raise NotImplementedError(e)
+        raise NotImplementedError(
+            "TemplateBody does not implement boolean methods. Call this method on a Body instead."
+        )
 
     def subtract(self, other: "Body") -> None:
-        e = "TemplateBody does not implement boolean methods. Call this method on a Body instead."
-        raise NotImplementedError(e)
+        raise NotImplementedError(
+            "TemplateBody does not implement boolean methods. Call this method on a Body instead."
+        )
 
     def unite(self, other: "Body") -> None:
-        e = "TemplateBody does not implement boolean methods. Call this method on a Body instead."
-        raise NotImplementedError(e)
+        raise NotImplementedError(
+            "TemplateBody does not implement boolean methods. Call this method on a Body instead."
+        )
 
     def __repr__(self) -> str:
         """String representation of the body."""
@@ -786,6 +789,27 @@ class Body(IBody):
         self._name = name
         self._parent = parent
         self._template = template
+
+    def reset_tessellation_cache(func):
+        """Decorator for ``Body`` methods that require a tessellation cache update.
+
+        Parameters
+        ----------
+        func : method
+            The method being called.
+
+        Returns
+        -------
+        Any
+            The output of the method, if any.
+        """
+
+        @wraps(func)
+        def wrapper(self: "Body", *args, **kwargs):
+            self._template._tessellation = None
+            return func(self, *args, **kwargs)
+
+        return wrapper
 
     @property
     def id(self) -> str:
