@@ -17,7 +17,7 @@ The ``Design`` instance creates a design project within the remote Geometry serv
 complete all CAD modeling against.
 
 You can organize all solid and surface bodies in each design within a customizable
-component hierarchy. A component is simply an organization mechanism. 
+component hierarchy. A component is simply an organization mechanism.
 
 The top-level design node and each child-component node can have one or more bodies assigned
 and one or more components assigned.
@@ -44,7 +44,7 @@ from ansys.geometry.core.sketch import Sketch
 ## Organize design
 
 Extrude two sketches to create bodies. Assign the cylinder to the
-top-level design component. Assign the slot to the component nested 
+top-level design component. Assign the slot to the component nested
 one level beneath the top-level design component.
 
 ```{code-cell} ipython3

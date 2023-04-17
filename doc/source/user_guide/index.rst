@@ -34,7 +34,7 @@ Start a Geometry server instance
 
 The :class:`Modeler() <ansys.geometry.core.modeler()>` class
 within the ``ansys-geometry-core`` library creates an instance of
-the Geometry service. By default ``Modeler`` connects to ``127.0.0.1`` 
+the Geometry service. By default ``Modeler`` connects to ``127.0.0.1``
 (``'localhost'``) on port ``50051``. You can change this by modifying
 the ``host`` and ``port`` parameters of ``Modeler``, but note that you
 have to also modify this in your ``docker run`` command by changing ``<HOST-PORT>-50051``.
@@ -49,7 +49,7 @@ You start the Geometry service with:
 Create geometry model
 ---------------------
 
-Once the Geometry service is active , you can start creating the geometry model 
+Once the Geometry service is active , you can start creating the geometry model
 by initializing the :ref:`Sketch <ref_sketch>` class and using the
 :ref:`Primitives <ref_primitives>` math subpackage for PyGeometry.
 

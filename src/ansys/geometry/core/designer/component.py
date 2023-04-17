@@ -1,7 +1,6 @@
 """Provides the ``Component`` class module."""
 
 from enum import Enum, unique
-from threading import Thread
 import uuid  # TODO: do we even need ID?, maybe use from SC?
 
 from ansys.api.geometry.v0.bodies_pb2 import (
@@ -988,18 +987,9 @@ class Component:
         """
         import pyvista as pv
 
-        datasets = []
-
-        def get_tessellation(body: Body):
-            datasets.append(body.tessellate(merge=merge_bodies))
-
         # Tessellate the bodies in this component
-        threads = []
-        for body in self.bodies:
-            thread = Thread(target=get_tessellation, args=(body,))
-            thread.start()
-            threads.append(thread)
-        [thread.join() for thread in threads]
+        datasets = [body.tessellate(merge_bodies) for body in self.bodies]
+
         blocks_list = [pv.MultiBlock(datasets)]
 
         # Now, go recursively inside its subcomponents (with no arguments) and
