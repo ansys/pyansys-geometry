@@ -833,6 +833,7 @@ def test_project_and_imprint_curves(modeler: Modeler, skip_not_on_linux_service)
     """Test the projection of a set of curves on a body."""
     # Create your design on the server side
     design = modeler.create_design("ExtrudeSlot")
+    comp = design.add_component("Comp1")
 
     # Create a Sketch object and draw a couple of slots
     imprint_sketch = Sketch()
@@ -842,7 +843,7 @@ def test_project_and_imprint_curves(modeler: Modeler, skip_not_on_linux_service)
     # Extrude the sketch
     sketch = Sketch()
     sketch.box(Point2D([0, 0], UNITS.mm), Quantity(150, UNITS.mm), Quantity(150, UNITS.mm))
-    body = design.extrude_sketch(name="MyBox", sketch=sketch, distance=Quantity(50, UNITS.mm))
+    body = comp.extrude_sketch(name="MyBox", sketch=sketch, distance=Quantity(50, UNITS.mm))
     body_faces = body.faces
 
     # Project the curves on the box
@@ -884,6 +885,10 @@ def test_project_and_imprint_curves(modeler: Modeler, skip_not_on_linux_service)
 
     assert len(new_faces) == 2
     assert len(body.faces) == 8
+
+    # Make sure we have occurrence faces, not master
+    assert faces[0].id not in [face.id for face in body._template.faces]
+    assert new_faces[0].id not in [face.id for face in body._template.faces]
 
 
 def test_copy_body(modeler: Modeler, skip_not_on_linux_service):
