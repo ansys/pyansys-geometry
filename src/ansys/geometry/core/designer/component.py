@@ -22,7 +22,7 @@ from ansys.api.geometry.v0.components_pb2 import (
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
 from ansys.api.geometry.v0.models_pb2 import Direction, EntityIdentifier, Line
 from beartype import beartype as check_input_types
-from beartype.typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
+from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
 
 from ansys.geometry.core.connection import (
@@ -144,7 +144,7 @@ class Component:
         self._parent_component = parent_component
         self._is_alive = True
         self._shared_topology = None
-        self._transformed_part = None
+        self._transformed_part = transformed_part
 
         # Populate client data model
         if template:
@@ -164,7 +164,7 @@ class Component:
 
             # Recurse - Create more children components from template's remaining children
             self.__create_children(template)
-        else:
+        elif not read_existing_comp:
             # Create new Part and TransformedPart since this is creating a new "master"
             p = Part(uuid.uuid4(), f"p_{name}", [], [])
             tp = TransformedPart(uuid.uuid4(), f"tp_{name}", p)
@@ -990,31 +990,3 @@ class Component:
         lines.append(f"  N Components         : {sum(alive_comps)}")
         lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
         return "\n".join(lines)
-
-    def __read_existing_component(self, component_as_json: Dict) -> None:
-        # Given the existing component...
-        #
-        # Let's read the existing bodies first
-        bodies_json = component_as_json["bodies"]
-        subcomps_json = component_as_json["components"]
-        for body in bodies_json:
-            self._bodies.append(
-                Body(
-                    body["masterid"],
-                    body["name"],
-                    self,
-                    self._grpc_client,
-                    is_surface=(not body["isclosed"]),
-                )
-            )
-
-        # Now, once all bodies have been read, let's get all subcomponents
-        for subcomp_json in subcomps_json:
-            subcomp = Component("", self, self._grpc_client, read_existing_comp=True)
-            subcomp._id = subcomp_json["id"]
-            subcomp._name = subcomp_json["name"]
-            self._components.append(subcomp)
-            subcomp.__read_existing_component(subcomp_json)
-
-        # Finally, return... just for readability purposes
-        return

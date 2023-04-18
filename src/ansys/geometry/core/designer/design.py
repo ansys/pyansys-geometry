@@ -9,12 +9,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     CreateBeamCircularProfileRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.designs_pb2 import (
-    ExportRequest,
-    GetAsJsonRequest,
-    NewRequest,
-    SaveAsRequest,
-)
+from ansys.api.geometry.v0.designs_pb2 import ExportRequest, NewRequest, SaveAsRequest
 from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.materials_pb2 import AddToDocumentRequest
 from ansys.api.geometry.v0.materials_pb2_grpc import MaterialsStub
@@ -24,16 +19,18 @@ from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialPro
 from ansys.api.geometry.v0.models_pb2 import PartExportFormat
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from beartype import beartype as check_input_types
-from beartype.typing import Dict, List, Optional, Union
+from beartype.typing import List, Optional, Union
 import numpy as np
 from pint import Quantity
 
 from ansys.geometry.core.connection import GrpcClient, plane_to_grpc_plane, point3d_to_grpc_point
+from ansys.geometry.core.connection.conversions import grpc_matrix_to_matrix
 from ansys.geometry.core.designer.beam import BeamCircularProfile, BeamProfile
-from ansys.geometry.core.designer.body import Body, MidSurfaceOffsetType
+from ansys.geometry.core.designer.body import Body, MidSurfaceOffsetType, TemplateBody
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
+from ansys.geometry.core.designer.part import Part, TransformedPart
 from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials import Material
@@ -473,15 +470,6 @@ class Design(Component):
         return "\n".join(lines)
 
     def __read_existing_design(self) -> None:
-        """Read existing design on the service with the connected client.
-        This method will just fill the ``Design`` object with all its
-        existing ``Component`` and ``Body`` objects.
-        """
-
-        import json
-
-        # TODO: To be implemented...
-        #
         # We have to get back:
         #
         # - [X] Components
@@ -492,9 +480,8 @@ class Design(Component):
         # - [ ] Beams
         # - [ ] CoordinateSystems
         # - [ ] SharedTopology
-        #
-        #
-        # First, let's start by getting the design object (i.e. root component)
+
+        # Grab active design
         design = self._design_stub.GetActive(Empty())
         if not design:
             raise RuntimeError("No existing design available at service level.")
@@ -502,11 +489,60 @@ class Design(Component):
             self._id = design.main_part.id
             self._name = design.main_part.name
 
-        # Now that we have verified that there is an active design
-        # on the service, let's read it.
-        response = self._design_stub.GetAsJson(GetAsJsonRequest(id=""))
-        design_as_json: Dict = json.loads(response.json)
+        response = self._design_stub.GetAssembly(EntityIdentifier(id=""))
 
-        # Having the information available as a JSON file, it is now time
-        # to start creating the different bodies, components...
-        self._Component__read_existing_component(design_as_json["design"])
+        # Store created objects
+        created_parts = [Part(p.id, p.name, [], []) for p in response.parts]
+        created_tps = []
+        created_components = [self]
+        created_bodies = []
+
+        # Make dummy TP for design since server doesn't have one
+        self._transformed_part = TransformedPart("1", "tp_design", created_parts[0])
+
+        # Create TransformedParts
+        for tp in response.transformed_parts:
+            # Find Part to connect to
+            for part in created_parts:
+                if part.id == tp.part_master.id:
+                    new_tp = TransformedPart(
+                        tp.id, tp.name, part, grpc_matrix_to_matrix(tp.placement)
+                    )
+                    created_tps.append(new_tp)
+                    break
+
+        # Create Components
+        for comp in response.components:
+            # Find parent Component to connect to
+            for parent in created_components:
+                if comp.parent_id == parent.id:
+                    # Find TransformedPart to connect to
+                    for tp in created_tps:
+                        if comp.master_id == tp.id:
+                            c = Component(
+                                comp.name,
+                                parent,
+                                self._grpc_client,
+                                preexisting_id=comp.id,
+                                transformed_part=tp,
+                                read_existing_comp=True,
+                            )
+                            created_components.append(c)
+                            parent.components.append(c)
+                            break
+                    break
+
+        # Create Bodies
+        for body in response.bodies:
+            # Find Part to connect to
+            for part in created_parts:
+                if body.parent_id == part.id:
+                    tb = TemplateBody(body.id, body.name, self._grpc_client)
+                    part.bodies.append(tb)
+                    created_bodies.append(tb)
+                    break
+
+        print(f"Parts created: {len(created_parts)}")
+        print(f"TransformedParts created: {len(created_tps)}")
+        print(f"Components created: {len(created_components)}")
+        print(f"Bodies created: {len(created_bodies)}")
