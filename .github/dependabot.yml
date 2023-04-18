@@ -11,6 +11,8 @@ updates:
       - dependency-name: "grpcio"
     assignees:
       - "pyansys-ci-bot"
+    commit-message:
+      prefix: "MAINT"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -20,3 +22,5 @@ updates:
       - "maintenance"
     assignees:
       - "pyansys-ci-bot"
+    commit-message:
+      prefix: "MAINT"
