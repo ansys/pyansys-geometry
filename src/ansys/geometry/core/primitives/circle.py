@@ -149,11 +149,11 @@ class Circle:
         return Circle(
             new_point,
             self.radius,
-            UnitVector3D([new_reference[0], new_reference[1], new_reference[2]]),
-            UnitVector3D([new_axis[0], new_axis[1], new_axis[2]]),
+            UnitVector3D(new_reference[0:3]),
+            UnitVector3D(new_axis[0:3]),
         )
 
-    def mirror(self) -> "Circle":
+    def create_mirrored_copy(self) -> "Circle":
         """
         Creates a mirrored copy of the circle along the y-axis.
 

@@ -82,7 +82,7 @@ def test_cylinder():
     assert np.allclose(cylinder_transformation._origin, Point3D([-99, 42, 13]))
     assert np.allclose(cylinder_transformation._reference, UnitVector3D([-31, 12, 99]))
     assert np.allclose(cylinder_transformation._axis, UnitVector3D([-99, 0, -31]))
-    cylinder_mirror = cylinder_2.mirror()
+    cylinder_mirror = cylinder_2.create_mirrored_copy()
     assert np.allclose(cylinder_mirror._origin, Point3D([42, 99, 13]))
     assert np.allclose(
         cylinder_mirror._reference, UnitVector3D([-0.11490753, -0.29684446, -0.94798714])
@@ -202,7 +202,7 @@ def test_sphere():
     assert np.allclose(sphere_transformation._origin, Point3D([-99, 42, 13]))
     assert np.allclose(sphere_transformation._reference, UnitVector3D([-31, 12, 99]))
     assert np.allclose(sphere_transformation._axis, UnitVector3D([-99, 0, -31]))
-    sphere_mirror = sphere_2.mirror()
+    sphere_mirror = sphere_2.create_mirrored_copy()
     assert np.allclose(sphere_mirror._origin, Point3D([42, 99, 13]))
     assert np.allclose(
         sphere_mirror._reference, UnitVector3D([-0.11490753, -0.29684446, -0.94798714])
@@ -342,7 +342,7 @@ def test_cone():
     assert np.allclose(cone_transformation._origin, Point3D([-99, 42, 13]))
     assert np.allclose(cone_transformation._reference, UnitVector3D([-31, 12, 99]))
     assert np.allclose(cone_transformation._axis, UnitVector3D([-99, 0, -31]))
-    cone_mirror = cone_2.mirror()
+    cone_mirror = cone_2.create_mirrored_copy()
     assert np.allclose(cone_mirror._origin, Point3D([42, 99, 13]))
     assert np.allclose(
         cone_mirror._reference, UnitVector3D([-0.11490753, -0.29684446, -0.94798714])
@@ -527,7 +527,7 @@ def test_torus():
     assert np.allclose(torus_transformation._origin, Point3D([-99, 42, 13]))
     assert np.allclose(torus_transformation._reference, UnitVector3D([-31, 12, 99]))
     assert np.allclose(torus_transformation._axis, UnitVector3D([-99, 0, -31]))
-    torus_mirror = t_2.mirror()
+    torus_mirror = t_2.create_mirrored_copy()
     assert np.allclose(torus_mirror._origin, Point3D([42, 99, 13]))
     assert np.allclose(
         torus_mirror._reference, UnitVector3D([-0.11490753, -0.29684446, -0.94798714])
@@ -712,7 +712,7 @@ def test_circle():
     assert np.allclose(circle_transformation._origin, Point3D([-99, 42, 13]))
     assert np.allclose(circle_transformation._reference, UnitVector3D([-31, 12, 99]))
     assert np.allclose(circle_transformation._axis, UnitVector3D([-99, 0, -31]))
-    circle_mirror = circle_2.mirror()
+    circle_mirror = circle_2.create_mirrored_copy()
     assert np.allclose(circle_mirror._origin, Point3D([42, 99, 13]))
     assert np.allclose(
         circle_mirror._reference, UnitVector3D([-0.11490753, -0.29684446, -0.94798714])
@@ -873,7 +873,7 @@ def test_ellipse():
     assert np.allclose(ellipse_transformation._origin, Point3D([-99, 42, 13]))
     assert np.allclose(ellipse_transformation._reference, UnitVector3D([-31, 12, 99]))
     assert np.allclose(ellipse_transformation._axis, UnitVector3D([-99, 0, -31]))
-    ellipse_mirror = ellipse_2.mirror()
+    ellipse_mirror = ellipse_2.create_mirrored_copy()
     assert np.allclose(ellipse_mirror._origin, Point3D([42, 99, 13]))
     assert np.allclose(
         ellipse_mirror._reference, UnitVector3D([-0.11490753, -0.29684446, -0.94798714])

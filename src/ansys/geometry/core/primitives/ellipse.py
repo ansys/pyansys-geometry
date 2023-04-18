@@ -127,7 +127,7 @@ class Ellipse:
             and self._axis == other._axis
         )
 
-    def mirror(self) -> "Ellipse":
+    def create_mirrored_copy(self) -> "Ellipse":
         """
         Creates a mirrored copy of the ellipse along the y-axis.
 
@@ -265,8 +265,8 @@ class Ellipse:
             new_point,
             self.major_radius,
             self.minor_radius,
-            UnitVector3D([new_reference[0], new_reference[1], new_reference[2]]),
-            UnitVector3D([new_axis[0], new_axis[1], new_axis[2]]),
+            UnitVector3D(new_reference[0:3]),
+            UnitVector3D(new_axis[0:3]),
         )
 
     def get_parameterization(self) -> Parameterization:

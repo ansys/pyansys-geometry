@@ -145,18 +145,18 @@ class Torus:
             new_point,
             self.major_radius,
             self.minor_radius,
-            UnitVector3D([new_reference[0], new_reference[1], new_reference[2]]),
-            UnitVector3D([new_axis[0], new_axis[1], new_axis[2]]),
+            UnitVector3D(new_reference[0:3]),
+            UnitVector3D(new_axis[0:3]),
         )
 
-    def mirror(self) -> "Torus":
+    def create_mirrored_copy(self) -> "Torus":
         """
-        Creates a mirrored copy of the torus along the y-axis.
+        Creates a create_mirrored_copyed copy of the torus along the y-axis.
 
         Returns
         -------
         Torus
-            A new torus that is a mirrored copy of the original torus.
+            A new torus that is a create_mirrored_copyed copy of the original torus.
         """
         return Torus(
             self.origin, self.major_radius, self.minor_radius, -self._reference, -self._axis

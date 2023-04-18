@@ -92,7 +92,7 @@ class Line:
         new_origin_4d = matrix * old_origin_4d
         new_point = Point3D([new_origin_4d[0], new_origin_4d[1], new_origin_4d[2]])
         new_axis = matrix * np.append(self._direction, 0)
-        return Line(new_point, UnitVector3D([new_axis[0], new_axis[1], new_axis[2]]))
+        return Line(new_point, UnitVector3D(new_axis[0:3]))
 
     def project_point(self, point: Point3D) -> "LineEvaluation":
         """

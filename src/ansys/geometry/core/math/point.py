@@ -290,5 +290,6 @@ class Point3D(np.ndarray, PhysicalQuantity):
     def transform(self, matrix: "Matrix44") -> "Point3D":
         point_4x1 = np.append(self, 1)
         result_4x1 = matrix * point_4x1
-        result_point = Point3D([result_4x1[0], result_4x1[1], result_4x1[2]])
+        result_point = Point3D(result_4x1[0:3])
+        result_point.unit = self.unit
         return result_point

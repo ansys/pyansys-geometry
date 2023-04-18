@@ -115,7 +115,7 @@ class Vector3D(np.ndarray):
     def transform(self, matrix: "Matrix44") -> "Vector3D":
         vector_4x1 = np.append(self, 1)
         result_4x1 = matrix * vector_4x1
-        result_vector = Vector3D([result_4x1[0], result_4x1[1], result_4x1[2]])
+        result_vector = Vector3D(result_4x1[0:3])
         return result_vector
 
     @check_input_types

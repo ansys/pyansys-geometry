@@ -137,11 +137,11 @@ class Cone:
             new_point,
             self.radius,
             self.half_angle,
-            UnitVector3D([new_reference[0], new_reference[1], new_reference[2]]),
-            UnitVector3D([new_axis[0], new_axis[1], new_axis[2]]),
+            UnitVector3D(new_reference[0:3]),
+            UnitVector3D(new_axis[0:3]),
         )
 
-    def mirror(self) -> "Cone":
+    def create_mirrored_copy(self) -> "Cone":
         """
         Creates a mirrored copy of the cone along the y-axis.
 
