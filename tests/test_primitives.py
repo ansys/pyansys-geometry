@@ -270,7 +270,6 @@ def test_sphere_evaluation():
 
 def test_cone():
     """``Cone`` construction and equivalency."""
-    """this is one problem with half_angle"""
     origin = Point3D([0, 0, 0])
     radius = 1
     half_angle = np.pi / 4
