@@ -33,7 +33,7 @@ jobs:
 
   build-windows:
     name: Building Geometry Service - Windows
-    runs-on: [self-hosted, pygeometry-ci-1]
+    runs-on: [self-hosted, pygeometry]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -55,6 +55,11 @@ jobs:
         working-directory: docker
         run: |
           docker build -f Dockerfile.windows -t ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }} .
+
+      - name: Check location of self-hosted runner and define license server accordingly
+        if: runner.name == 'pygeometry-ci-1'
+        run:
+          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Launch Geometry service
         run: |

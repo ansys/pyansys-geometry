@@ -53,8 +53,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
-        should-release: 
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+        should-release:
           - ${{ github.event_name == 'push' && contains(github.ref, 'refs/tags') }}
         exclude:
           - should-release: false
@@ -110,25 +110,17 @@ jobs:
       - name: Download Geometry service container (if needed)
         run: docker pull $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
 
-      - name: Check runner type
+      - name: Check location of self-hosted runner and define license server accordingly
         if: runner.name == 'pygeometry-ci-1'
-        env:
-          INTERNAL_DOCKER_EXTRA_ENVS: ${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }}
-        run: |
-          $env:INTERNAL_DOCKER_EXTRA_ENVS | Out-File -FilePath env.list -Encoding UTF8
-
-      - name: Check runner type (not needed)
-        if: runner.name != 'pygeometry-ci-1'
-        run: |
-          echo "" | Out-File -FilePath env.list -Encoding UTF8
+        run:
+          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
-          $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
-          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER --env-file .\env.list -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
-      
+
       - name: Restore images cache
         uses: actions/cache@v3
         with:
@@ -212,23 +204,15 @@ jobs:
       - name: Download Geometry service container (if needed)
         run: docker pull $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
 
-      - name: Check runner type
+      - name: Check location of self-hosted runner and define license server accordingly
         if: runner.name == 'pygeometry-ci-1'
-        env:
-          INTERNAL_DOCKER_EXTRA_ENVS: ${{ secrets.INTERNAL_DOCKER_EXTRA_ENVS }}
-        run: |
-          $env:INTERNAL_DOCKER_EXTRA_ENVS | Out-File -FilePath env.list -Encoding UTF8
-
-      - name: Check runner type (not needed)
-        if: runner.name != 'pygeometry-ci-1'
-        run: |
-          echo "" | Out-File -FilePath env.list -Encoding UTF8
+        run:
+          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
-          $env:ANSRV_GEO_PORT_MAP = $env:ANSRV_GEO_PORT + ":50051"
-          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER --env-file .\env.list -p $env:ANSRV_GEO_PORT_MAP $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Build the documentation (HTML)
@@ -344,7 +328,7 @@ jobs:
     name: Fetch release artifacts
     needs: [testing-windows, testing-linux, docs]
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    runs-on: 
+    runs-on:
       group: ansys-internal
       labels: [self-hosted, Windows, signtool]
 
@@ -353,7 +337,7 @@ jobs:
         run: |
           curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/DockerWindows.zip --output windows-binaries.zip
           curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/DockerLinux.zip --output linux-binaries.zip
-      
+
       - name: Upload Windows binaries as workflow artifacts
         uses: actions/upload-artifact@v3
         with:

@@ -255,7 +255,7 @@ More features of each of these objects will be shown in upcoming demos.
 
 Finally, it is highly recommended once you finish interacting with your modeling
 service, you close the active server session. This will allow to free resources
-wherever the service is running on. 
+wherever the service is running on.
 
 In order to close the session, do as follows.
 
