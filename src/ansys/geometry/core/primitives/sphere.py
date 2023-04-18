@@ -111,7 +111,7 @@ class Sphere:
             and self._axis == other._axis
         )
 
-    def create_transformed_copy(self, matrix: Matrix44) -> "Sphere":
+    def transformed_copy(self, matrix: Matrix44) -> "Sphere":
         """
         Creates a transformed copy of the sphere based on a given transformation matrix.
 
@@ -135,19 +135,14 @@ class Sphere:
             UnitVector3D(new_axis[0:3]),
         )
 
-    def create_mirrored_copy(self) -> "Sphere":
+    def mirrored_copy(self) -> "Sphere":
         """
-        Creates a transformed copy of the sphere based on a given transformation matrix.
-
-        Parameters
-        ----------
-        matrix : Matrix44
-            The transformation matrix to apply to the sphere.
+        Creates a mirrored copy of the sphere along the y-axis.
 
         Returns
         -------
-        Sphere
-            A new sphere that is the transformed copy of the original sphere.
+        Torus
+            A new sphere that is a mirrored copy of the original sphere.
         """
         return Sphere(self.origin, self.radius, -self._reference, -self._axis)
 

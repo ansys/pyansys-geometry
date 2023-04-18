@@ -116,7 +116,7 @@ class Cone:
         """Volume of the cone."""
         return np.pi * self.radius**2 * self.height / 3
 
-    def create_transformed_copy(self, matrix: Matrix44) -> "Cone":
+    def transformed_copy(self, matrix: Matrix44) -> "Cone":
         """
         Creates a transformed copy of the cone based on a given transformation matrix.
 
@@ -141,7 +141,7 @@ class Cone:
             UnitVector3D(new_axis[0:3]),
         )
 
-    def create_mirrored_copy(self) -> "Cone":
+    def mirrored_copy(self) -> "Cone":
         """
         Creates a mirrored copy of the cone along the y-axis.
 

@@ -139,7 +139,7 @@ class Cylinder:
 
         return np.pi * self.radius**2 * height.value
 
-    def create_transformed_copy(self, matrix: Matrix44) -> "Cylinder":
+    def transformed_copy(self, matrix: Matrix44) -> "Cylinder":
         """
         Creates a transformed copy of the cylinder based on a given transformation matrix.
 
@@ -163,7 +163,7 @@ class Cylinder:
             UnitVector3D(new_axis[0:3]),
         )
 
-    def create_mirrored_copy(self) -> "Cylinder":
+    def mirrored_copy(self) -> "Cylinder":
         """
         Creates a mirrored copy of the cylinder along the y-axis.
 

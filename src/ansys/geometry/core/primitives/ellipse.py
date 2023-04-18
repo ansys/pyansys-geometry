@@ -127,7 +127,7 @@ class Ellipse:
             and self._axis == other._axis
         )
 
-    def create_mirrored_copy(self) -> "Ellipse":
+    def mirrored_copy(self) -> "Ellipse":
         """
         Creates a mirrored copy of the ellipse along the y-axis.
 
@@ -244,7 +244,7 @@ class Ellipse:
         """Area of the ellipse."""
         return np.pi * self.major_radius * self.minor_radius
 
-    def create_transformed_copy(self, matrix: Matrix44) -> "Ellipse":
+    def transformed_copy(self, matrix: Matrix44) -> "Ellipse":
         """
         Creates a transformed copy of the ellipse based on a given transformation matrix.
 

@@ -54,8 +54,7 @@ class Matrix(np.ndarray):
             raise ValueError(
                 f"The dimensions of the matrices {self.shape[1]} and {other.shape[0]} are not multipliable."  # noqa : E501
             )
-        result = np.matmul(self, other)
-        return np.asarray(result).view(Matrix)
+        return np.matmul(self, other).view(Matrix)
 
     @check_input_types
     def __eq__(self, other: "Matrix") -> bool:

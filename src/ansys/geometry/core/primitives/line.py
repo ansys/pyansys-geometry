@@ -74,7 +74,7 @@ class Line:
         """
         return LineEvaluation(self, parameter)
 
-    def create_transformed_copy(self, matrix: Matrix44) -> "Line":
+    def transformed_copy(self, matrix: Matrix44) -> "Line":
         """
         Creates a transformed copy of the line based on a given transformation matrix.
 

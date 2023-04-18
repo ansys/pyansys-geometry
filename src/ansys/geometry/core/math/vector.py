@@ -113,6 +113,21 @@ class Vector3D(np.ndarray):
             raise ValueError("The norm of the 3D vector is not valid.")
 
     def transform(self, matrix: "Matrix44") -> "Vector3D":
+        """
+        Transforms the current Vector3D object by applying the specified 4x4 transformation matrix
+        and returns a new Vector3D object representing the transformed vector.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The 4x4 transformation matrix to apply to the vector.
+
+        Returns
+        -------
+        Vector3D
+            A new Vector3D object that is the transformed copy of the original vector after applying
+            the transformation matrix.
+        """
         vector_4x1 = np.append(self, 1)
         result_4x1 = matrix * vector_4x1
         result_vector = Vector3D(result_4x1[0:3])

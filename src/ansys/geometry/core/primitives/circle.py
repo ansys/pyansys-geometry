@@ -129,7 +129,7 @@ class Circle:
         """
         return CircleEvaluation(self, parameter)
 
-    def create_transformed_copy(self, matrix: Matrix44) -> "Circle":
+    def transformed_copy(self, matrix: Matrix44) -> "Circle":
         """
         Creates a transformed copy of the circle based on a given transformation matrix.
 
@@ -153,7 +153,7 @@ class Circle:
             UnitVector3D(new_axis[0:3]),
         )
 
-    def create_mirrored_copy(self) -> "Circle":
+    def mirrored_copy(self) -> "Circle":
         """
         Creates a mirrored copy of the circle along the y-axis.
 

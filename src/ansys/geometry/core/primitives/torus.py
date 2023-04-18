@@ -124,7 +124,7 @@ class Torus:
             and self._axis == other._axis
         )
 
-    def create_transformed_copy(self, matrix: Matrix44) -> "Torus":
+    def transformed_copy(self, matrix: Matrix44) -> "Torus":
         """
         Creates a transformed copy of the torus based on a given transformation matrix.
 
@@ -149,14 +149,14 @@ class Torus:
             UnitVector3D(new_axis[0:3]),
         )
 
-    def create_mirrored_copy(self) -> "Torus":
+    def mirrored_copy(self) -> "Torus":
         """
-        Creates a create_mirrored_copyed copy of the torus along the y-axis.
+        Creates a mirrored copy of the torus along the y-axis.
 
         Returns
         -------
         Torus
-            A new torus that is a create_mirrored_copyed copy of the original torus.
+            A new torus that is a mirrored copy of the original torus.
         """
         return Torus(
             self.origin, self.major_radius, self.minor_radius, -self._reference, -self._axis
