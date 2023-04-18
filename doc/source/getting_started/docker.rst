@@ -13,7 +13,7 @@ please install `Docker Engine <https://docs.docker.com/engine/install/>`_ from t
     At the moment, the Geometry service backend is only delivered as a Windows Docker container.
     As such, this container only runs on a Windows machine. Furthermore, it has also been observed
     that certain Docker Desktop versions for Windows are not properly configured for running Windows
-    Docker containers. Refer to 
+    Docker containers. Refer to
     :ref:`Running the Geometry service Windows Docker container <ref_docker_windows>` for further details.
 
 .. _ref_docker_windows:
@@ -47,7 +47,7 @@ Docker container.
 
 #. Using your GitHub credentials, download the Docker image from the `pygeometry <https://github.com/pyansys/pygeometry>`_ repository.
 
-#. If you have Docker installed, use a GitHub personal access token (PAT) with packages read permission to authorize Docker 
+#. If you have Docker installed, use a GitHub personal access token (PAT) with packages read permission to authorize Docker
    to access this repository. For more information,
    see `creating a personal access token <https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token>`_.
 
@@ -59,7 +59,7 @@ Docker container.
 
 #. Authorize Docker to access the repository:
 
-.. tab-set:: 
+.. tab-set::
 
     .. tab-item:: Linux/Mac
 
@@ -117,7 +117,7 @@ Other optional environment variables are:
 
 Depending on the mechanism chosen to launch the Geometry service, you can set them as follows:
 
-.. tab-set:: 
+.. tab-set::
 
     .. tab-item:: Using PyGeometry launcher
 
@@ -161,7 +161,7 @@ Geometry service launcher
 
 The Geometry service can be launched locally in two different ways:
 
-.. tab-set:: 
+.. tab-set::
 
     .. tab-item:: Using PyGeometry launcher
 
@@ -207,7 +207,7 @@ your ``docker run`` command by changing ``<HOST-PORT>-50051``.
 If you want to change the defaults, modify environment variables and the
 ``Modeler`` function:
 
-.. tab-set:: 
+.. tab-set::
 
     .. tab-item:: Environment variables
 

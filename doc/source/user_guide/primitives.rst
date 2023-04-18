@@ -10,17 +10,17 @@ manipulate physical quantities.
 
 This table shows PyGeometry base values:
 
-+----------------------------+---------+ 
++----------------------------+---------+
 | Name                       | value   |
 +============================+=========+
 | LENGTH_ACCURACY            | 1e-8    |
-+----------------------------+---------+  
++----------------------------+---------+
 | ANGLE_ACCURACY             | 1e-6    |
-+----------------------------+---------+ 
++----------------------------+---------+
 | DEFAULT_UNITS.LENGTH       | meter   |
-+----------------------------+---------+ 
++----------------------------+---------+
 | DEFAULT_UNITS.ANGLE        | radian  |
-+----------------------------+---------+ 
++----------------------------+---------+
 
 You use these PyGeometry classes to define accuracy and measurements:
 
@@ -30,7 +30,7 @@ You use these PyGeometry classes to define accuracy and measurements:
 Plane concept
 -------------
 
-The :class:`Plane() <ansys.geometry.core.math.plane>` class provides primitive representation of a 2D plane in 3D space. 
+The :class:`Plane() <ansys.geometry.core.math.plane>` class provides primitive representation of a 2D plane in 3D space.
 It has an origin and a coordinate system.
 Sketched shapes are always defined relative to a plane.
 The default working plane is XY with ``(0,0)`` as the origin.
