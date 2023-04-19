@@ -5,6 +5,7 @@ from beartype.typing import TYPE_CHECKING, Optional, Union
 import numpy as np
 from pint import Quantity, Unit
 
+from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.misc import (
     DEFAULT_UNITS,
     UNITS,
@@ -285,3 +286,25 @@ class Point3D(np.ndarray, PhysicalQuantity):
         else:
             self._base_unit = BASE_UNIT_LENGTH
             return self._base_unit
+
+    def transform(self, matrix: "Matrix44") -> "Point3D":
+        """
+        Transforms the current Point3D object by applying the specified 4x4 transformation matrix
+        and returns a new Point3D object representing the transformed point.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The 4x4 transformation matrix to apply to the point.
+
+        Returns
+        -------
+        Point3D
+            A new Point3D object that is the transformed copy of the original point after applying
+            the transformation matrix.
+        """
+        point_4x1 = np.append(self, 1)
+        result_4x1 = matrix * point_4x1
+        result_point = Point3D(result_4x1[0:3])
+        result_point.unit = self.unit
+        return result_point

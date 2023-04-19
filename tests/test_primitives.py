@@ -7,6 +7,7 @@ from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
     UNITVECTOR3D_Y,
     UNITVECTOR3D_Z,
+    Matrix44,
     Point3D,
     UnitVector3D,
     Vector3D,
@@ -67,6 +68,26 @@ def test_cylinder():
 
     with pytest.raises(ValueError):
         Cylinder(origin, 1, UnitVector3D([1, 0, 0]), UnitVector3D([1, 1, 1]))
+
+    origin = Point3D([42, 99, 13])
+    radius = 200
+    cylinder_2 = Cylinder(
+        origin,
+        radius,
+        UnitVector3D([12, 31, 99]),
+        UnitVector3D([0, 99, -31]),
+    )
+    rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    cylinder_transformation = cylinder_2.transformed_copy(matrix=rotation_matrix)
+    assert np.allclose(cylinder_transformation._origin, Point3D([-99, 42, 13]))
+    assert np.allclose(cylinder_transformation._reference, UnitVector3D([-31, 12, 99]))
+    assert np.allclose(cylinder_transformation._axis, UnitVector3D([-99, 0, -31]))
+    cylinder_mirror = cylinder_2.mirrored_copy()
+    assert np.allclose(cylinder_mirror._origin, Point3D([42, 99, 13]))
+    assert np.allclose(
+        cylinder_mirror._reference, UnitVector3D([-0.11490753, -0.29684446, -0.94798714])
+    )
+    assert np.allclose(cylinder_mirror._axis, UnitVector3D([0, -0.9543083, 0.29882381]))
 
 
 def test_cylinder_units():
@@ -168,6 +189,26 @@ def test_sphere():
     with pytest.raises(BeartypeCallHintParamViolation):
         Sphere(origin, "A")
 
+    origin = Point3D([42, 99, 13])
+    radius = 200
+    sphere_2 = Sphere(
+        origin,
+        radius,
+        UnitVector3D([12, 31, 99]),
+        UnitVector3D([0, 99, -31]),
+    )
+    rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    sphere_transformation = sphere_2.transformed_copy(matrix=rotation_matrix)
+    assert np.allclose(sphere_transformation._origin, Point3D([-99, 42, 13]))
+    assert np.allclose(sphere_transformation._reference, UnitVector3D([-31, 12, 99]))
+    assert np.allclose(sphere_transformation._axis, UnitVector3D([-99, 0, -31]))
+    sphere_mirror = sphere_2.mirrored_copy()
+    assert np.allclose(sphere_mirror._origin, Point3D([42, 99, 13]))
+    assert np.allclose(
+        sphere_mirror._reference, UnitVector3D([-0.11490753, -0.29684446, -0.94798714])
+    )
+    assert np.allclose(sphere_mirror._axis, UnitVector3D([0, -0.9543083, 0.29882381]))
+
 
 def test_sphere_units():
     """``Sphere`` units validation."""
@@ -229,7 +270,6 @@ def test_sphere_evaluation():
 
 def test_cone():
     """``Cone`` construction and equivalency."""
-
     origin = Point3D([0, 0, 0])
     radius = 1
     half_angle = np.pi / 4
@@ -285,6 +325,28 @@ def test_cone():
 
     with pytest.raises(ValueError):
         Cone(origin, 1, 1, UnitVector3D([1, 0, 0]), UnitVector3D([1, 1, 1]))
+
+    origin = Point3D([42, 99, 13])
+    radius = 200
+    half_angle = np.pi / 4
+    cone_2 = Cone(
+        origin,
+        radius,
+        half_angle,
+        UnitVector3D([12, 31, 99]),
+        UnitVector3D([0, 99, -31]),
+    )
+    rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    cone_transformation = cone_2.transformed_copy(matrix=rotation_matrix)
+    assert np.allclose(cone_transformation._origin, Point3D([-99, 42, 13]))
+    assert np.allclose(cone_transformation._reference, UnitVector3D([-31, 12, 99]))
+    assert np.allclose(cone_transformation._axis, UnitVector3D([-99, 0, -31]))
+    cone_mirror = cone_2.mirrored_copy()
+    assert np.allclose(cone_mirror._origin, Point3D([42, 99, 13]))
+    assert np.allclose(
+        cone_mirror._reference, UnitVector3D([-0.11490753, -0.29684446, -0.94798714])
+    )
+    assert np.allclose(cone_mirror._axis, UnitVector3D([0, -0.9543083, 0.29882381]))
 
 
 def test_cone_units():
@@ -399,6 +461,9 @@ def test_torus():
     t_2 = Torus(Point3D([5, 8, 9]), 88, 76, UnitVector3D([55, 16, 73]), UnitVector3D([73, 0, -55]))
     t_with_array_definitions = Torus([5, 8, 9], 88, 76, [55, 16, 73], [73, 0, -55])
 
+    rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    t_3 = t_1.transformed_copy(rotation_matrix)
+
     # Check that the equals operator works
     assert t_1 == t_1_duplicate
     assert t_1 != t_2
@@ -446,6 +511,27 @@ def test_torus():
             UnitVector3D([12, 31, 99]),
             "A",
         )
+    origin = Point3D([42, 99, 13])
+    major_radius = 200
+    minor_radius = 100
+    t_2 = Torus(
+        origin,
+        major_radius,
+        minor_radius,
+        UnitVector3D([12, 31, 99]),
+        UnitVector3D([0, 99, -31]),
+    )
+    rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    torus_transformation = t_2.transformed_copy(matrix=rotation_matrix)
+    assert np.allclose(torus_transformation._origin, Point3D([-99, 42, 13]))
+    assert np.allclose(torus_transformation._reference, UnitVector3D([-31, 12, 99]))
+    assert np.allclose(torus_transformation._axis, UnitVector3D([-99, 0, -31]))
+    torus_mirror = t_2.mirrored_copy()
+    assert np.allclose(torus_mirror._origin, Point3D([42, 99, 13]))
+    assert np.allclose(
+        torus_mirror._reference, UnitVector3D([-0.11490753, -0.29684446, -0.94798714])
+    )
+    assert np.allclose(torus_mirror._axis, UnitVector3D([0, -0.9543083, 0.29882381]))
 
 
 def test_torus_units():
@@ -612,6 +698,26 @@ def test_circle():
             origin, radius, reference=UNITVECTOR3D_X, axis=UnitVector3D([1, 1, 1])
         )
 
+    origin = Point3D([42, 99, 13])
+    radius = 200
+    circle_2 = Circle(
+        origin,
+        radius,
+        UnitVector3D([12, 31, 99]),
+        UnitVector3D([0, 99, -31]),
+    )
+    rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    circle_transformation = circle_2.transformed_copy(matrix=rotation_matrix)
+    assert np.allclose(circle_transformation._origin, Point3D([-99, 42, 13]))
+    assert np.allclose(circle_transformation._reference, UnitVector3D([-31, 12, 99]))
+    assert np.allclose(circle_transformation._axis, UnitVector3D([-99, 0, -31]))
+    circle_mirror = circle_2.mirrored_copy()
+    assert np.allclose(circle_mirror._origin, Point3D([42, 99, 13]))
+    assert np.allclose(
+        circle_mirror._reference, UnitVector3D([-0.11490753, -0.29684446, -0.94798714])
+    )
+    assert np.allclose(circle_mirror._axis, UnitVector3D([0, -0.9543083, 0.29882381]))
+
 
 def test_circle_evaluation():
     """``CircleEvaluation`` construction and equivalency."""
@@ -666,6 +772,16 @@ def test_line():
     assert line.is_coincident_line(line_duplicate)
     assert line.is_coincident_line(coincident_line)
     assert x_line.is_opposite_line(opposite_x_line)
+
+    origin = Point3D([42, 99, 13])
+    line_2 = Line(
+        origin,
+        UnitVector3D([0, 99, -31]),
+    )
+    rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    line_transformation = line_2.transformed_copy(matrix=rotation_matrix)
+    assert np.allclose(line_transformation._origin, Point3D([-99, 42, 13]))
+    assert np.allclose(line_transformation._direction, UnitVector3D([-99, 0, -31]))
 
 
 def test_line_evaluation():
@@ -740,6 +856,28 @@ def test_ellipse():
             reference=UNITVECTOR3D_X,
             axis=UnitVector3D([1, 1, 1]),
         )
+
+    origin = Point3D([42, 99, 13])
+    major_radius = 200
+    minor_radius = 100
+    ellipse_2 = Ellipse(
+        origin,
+        major_radius,
+        minor_radius,
+        UnitVector3D([12, 31, 99]),
+        UnitVector3D([0, 99, -31]),
+    )
+    rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    ellipse_transformation = ellipse_2.transformed_copy(matrix=rotation_matrix)
+    assert np.allclose(ellipse_transformation._origin, Point3D([-99, 42, 13]))
+    assert np.allclose(ellipse_transformation._reference, UnitVector3D([-31, 12, 99]))
+    assert np.allclose(ellipse_transformation._axis, UnitVector3D([-99, 0, -31]))
+    ellipse_mirror = ellipse_2.mirrored_copy()
+    assert np.allclose(ellipse_mirror._origin, Point3D([42, 99, 13]))
+    assert np.allclose(
+        ellipse_mirror._reference, UnitVector3D([-0.11490753, -0.29684446, -0.94798714])
+    )
+    assert np.allclose(ellipse_mirror._axis, UnitVector3D([0, -0.9543083, 0.29882381]))
 
 
 def test_ellipse_evaluation():

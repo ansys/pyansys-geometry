@@ -7,7 +7,7 @@ from beartype import beartype as check_input_types
 from beartype.typing import Union
 import numpy as np
 
-from ansys.geometry.core.math import Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math import Matrix44, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc.accuracy import LENGTH_ACCURACY
 from ansys.geometry.core.primitives.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.primitives.parameterization import (
@@ -73,6 +73,26 @@ class Line:
             The resulting evaluation.
         """
         return LineEvaluation(self, parameter)
+
+    def transformed_copy(self, matrix: Matrix44) -> "Line":
+        """
+        Creates a transformed copy of the line based on a given transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the line.
+
+        Returns
+        -------
+        Line
+            A new line that is the transformed copy of the original line.
+        """
+        old_origin_4d = np.array([[self.origin[0]], [self.origin[1]], [self.origin[2]], [1]])
+        new_origin_4d = matrix * old_origin_4d
+        new_point = Point3D([new_origin_4d[0], new_origin_4d[1], new_origin_4d[2]])
+        new_axis = matrix * np.append(self._direction, 0)
+        return Line(new_point, UnitVector3D(new_axis[0:3]))
 
     def project_point(self, point: Point3D) -> "LineEvaluation":
         """

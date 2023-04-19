@@ -8,7 +8,14 @@ from beartype.typing import Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math import (
+    UNITVECTOR3D_X,
+    UNITVECTOR3D_Z,
+    Matrix44,
+    Point3D,
+    UnitVector3D,
+    Vector3D,
+)
 from ansys.geometry.core.misc import Distance
 from ansys.geometry.core.primitives.parameterization import (
     Interval,
@@ -115,6 +122,44 @@ class Torus:
             and self._minor_radius == other._minor_radius
             and self._reference == other._reference
             and self._axis == other._axis
+        )
+
+    def transformed_copy(self, matrix: Matrix44) -> "Torus":
+        """
+        Creates a transformed copy of the torus based on a given transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the torus.
+
+        Returns
+        -------
+        Torus
+            A new torus that is the transformed copy of the original torus.
+        """
+        new_point = self.origin.transform(matrix)
+        new_reference = self._reference.transform(matrix)
+        new_axis = self._axis.transform(matrix)
+        return Torus(
+            new_point,
+            self.major_radius,
+            self.minor_radius,
+            UnitVector3D(new_reference[0:3]),
+            UnitVector3D(new_axis[0:3]),
+        )
+
+    def mirrored_copy(self) -> "Torus":
+        """
+        Creates a mirrored copy of the torus along the y-axis.
+
+        Returns
+        -------
+        Torus
+            A new torus that is a mirrored copy of the original torus.
+        """
+        return Torus(
+            self.origin, self.major_radius, self.minor_radius, -self._reference, -self._axis
         )
 
     def evaluate(self, parameter: ParamUV) -> "TorusEvaluation":

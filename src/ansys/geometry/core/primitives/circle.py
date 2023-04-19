@@ -6,7 +6,14 @@ from beartype.typing import Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math import (
+    UNITVECTOR3D_X,
+    UNITVECTOR3D_Z,
+    Matrix44,
+    Point3D,
+    UnitVector3D,
+    Vector3D,
+)
 from ansys.geometry.core.misc import Accuracy, Distance
 from ansys.geometry.core.primitives.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.primitives.parameterization import (
@@ -121,6 +128,42 @@ class Circle:
             The resulting evaluation.
         """
         return CircleEvaluation(self, parameter)
+
+    def transformed_copy(self, matrix: Matrix44) -> "Circle":
+        """
+        Creates a transformed copy of the circle based on a given transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the circle.
+
+        Returns
+        -------
+        Circle
+            A new circle that is the transformed copy of the original circle.
+        """
+        new_point = self.origin.transform(matrix)
+        new_reference = self._reference.transform(matrix)
+        new_axis = self._axis.transform(matrix)
+        return Circle(
+            new_point,
+            self.radius,
+            UnitVector3D(new_reference[0:3]),
+            UnitVector3D(new_axis[0:3]),
+        )
+
+    def mirrored_copy(self) -> "Circle":
+        """
+        Creates a mirrored copy of the circle along the y-axis.
+
+        Returns
+        -------
+        Circle
+            A new circle that is a mirrored copy of the original circle.
+        """
+
+        return Circle(self.origin, self.radius, -self._reference, -self._axis)
 
     def project_point(self, point: Point3D) -> "CircleEvaluation":
         """

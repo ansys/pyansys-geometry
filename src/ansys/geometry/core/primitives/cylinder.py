@@ -7,7 +7,14 @@ from beartype.typing import Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math import (
+    UNITVECTOR3D_X,
+    UNITVECTOR3D_Z,
+    Matrix44,
+    Point3D,
+    UnitVector3D,
+    Vector3D,
+)
 from ansys.geometry.core.misc import Distance
 from ansys.geometry.core.primitives.circle import Circle
 from ansys.geometry.core.primitives.line import Line
@@ -131,6 +138,41 @@ class Cylinder:
             raise ValueError("Height must be a real positive value.")
 
         return np.pi * self.radius**2 * height.value
+
+    def transformed_copy(self, matrix: Matrix44) -> "Cylinder":
+        """
+        Creates a transformed copy of the cylinder based on a given transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the cylinder.
+
+        Returns
+        -------
+        Cylinder
+            A new cylinder that is the transformed copy of the original cylinder.
+        """
+        new_point = self.origin.transform(matrix)
+        new_reference = self._reference.transform(matrix)
+        new_axis = self._axis.transform(matrix)
+        return Cylinder(
+            new_point,
+            self.radius,
+            UnitVector3D(new_reference[0:3]),
+            UnitVector3D(new_axis[0:3]),
+        )
+
+    def mirrored_copy(self) -> "Cylinder":
+        """
+        Creates a mirrored copy of the cylinder along the y-axis.
+
+        Returns
+        -------
+        Cylinder
+            A new cylinder that is a mirrored copy of the original cylinder.
+        """
+        return Cylinder(self.origin, self.radius, -self._reference, -self._axis)
 
     @check_input_types
     def __eq__(self, other: "Cylinder") -> bool:

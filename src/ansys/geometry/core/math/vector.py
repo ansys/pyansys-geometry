@@ -6,6 +6,7 @@ from beartype.typing import Union
 import numpy as np
 from pint import Quantity
 
+from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.misc import UNITS, Accuracy, check_ndarray_is_float_int
 from ansys.geometry.core.typing import Real, RealSequence
@@ -110,6 +111,27 @@ class Vector3D(np.ndarray):
             return (self / norm).view(Vector3D)
         else:
             raise ValueError("The norm of the 3D vector is not valid.")
+
+    def transform(self, matrix: "Matrix44") -> "Vector3D":
+        """
+        Transforms the current Vector3D object by applying the specified 4x4 transformation matrix
+        and returns a new Vector3D object representing the transformed vector.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The 4x4 transformation matrix to apply to the vector.
+
+        Returns
+        -------
+        Vector3D
+            A new Vector3D object that is the transformed copy of the original vector after applying
+            the transformation matrix.
+        """
+        vector_4x1 = np.append(self, 1)
+        result_4x1 = matrix * vector_4x1
+        result_vector = Vector3D(result_4x1[0:3])
+        return result_vector
 
     @check_input_types
     def get_angle_between(self, v: "Vector3D") -> Quantity:

@@ -7,7 +7,14 @@ from beartype.typing import Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math import (
+    UNITVECTOR3D_X,
+    UNITVECTOR3D_Z,
+    Matrix44,
+    Point3D,
+    UnitVector3D,
+    Vector3D,
+)
 from ansys.geometry.core.misc import Distance
 from ansys.geometry.core.primitives.parameterization import (
     Interval,
@@ -103,6 +110,41 @@ class Sphere:
             and self._reference == other._reference
             and self._axis == other._axis
         )
+
+    def transformed_copy(self, matrix: Matrix44) -> "Sphere":
+        """
+        Creates a transformed copy of the sphere based on a given transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the sphere.
+
+        Returns
+        -------
+        Sphere
+            A new sphere that is the transformed copy of the original sphere.
+        """
+        new_point = self.origin.transform(matrix)
+        new_reference = self._reference.transform(matrix)
+        new_axis = self._axis.transform(matrix)
+        return Sphere(
+            new_point,
+            self.radius,
+            UnitVector3D(new_reference[0:3]),
+            UnitVector3D(new_axis[0:3]),
+        )
+
+    def mirrored_copy(self) -> "Sphere":
+        """
+        Creates a mirrored copy of the sphere along the y-axis.
+
+        Returns
+        -------
+        Torus
+            A new sphere that is a mirrored copy of the original sphere.
+        """
+        return Sphere(self.origin, self.radius, -self._reference, -self._axis)
 
     def evaluate(self, parameter: ParamUV) -> "SphereEvaluation":
         """
