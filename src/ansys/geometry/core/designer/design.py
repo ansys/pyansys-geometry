@@ -25,9 +25,10 @@ from pint import Quantity
 
 from ansys.geometry.core.connection import GrpcClient, plane_to_grpc_plane, point3d_to_grpc_point
 from ansys.geometry.core.connection.conversions import grpc_matrix_to_matrix
-from ansys.geometry.core.designer.beam import BeamCircularProfile, BeamProfile
+from ansys.geometry.core.designer.beam import Beam, BeamCircularProfile, BeamProfile
 from ansys.geometry.core.designer.body import Body, MidSurfaceOffsetType, TemplateBody
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
+from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.part import Part, TransformedPart
@@ -226,6 +227,8 @@ class Design(Component):
         bodies: Optional[List[Body]] = None,
         faces: Optional[List[Face]] = None,
         edges: Optional[List[Edge]] = None,
+        beams: Optional[List[Beam]] = None,
+        design_points: Optional[List[DesignPoint]] = None,
     ) -> NamedSelection:
         """Create a named selection on the active Geometry server instance.
 
@@ -239,6 +242,10 @@ class Design(Component):
             All faces to include in the named selection.
         edges : List[Edge], default: None
             All edges to include in the named selection.
+        beams : List[Beam], default: None
+            All beams to include in the named selection.
+        design_points : List[DesignPoints], default: None
+            All design points to include in the named selection.
 
         Returns
         -------
@@ -246,7 +253,13 @@ class Design(Component):
             Newly created named selection maintaining references to all target entities.
         """
         named_selection = NamedSelection(
-            name, self._grpc_client, bodies=bodies, faces=faces, edges=edges
+            name,
+            self._grpc_client,
+            bodies=bodies,
+            faces=faces,
+            edges=edges,
+            beams=beams,
+            design_points=design_points,
         )
         self._named_selections[named_selection.name] = named_selection
 
@@ -272,6 +285,7 @@ class Design(Component):
             removal_name = named_selection.name
             removal_id = named_selection.id
 
+        self._grpc_client.log.debug(f"Named selection {removal_name} deletion request received.")
         self._named_selections_stub.Delete(EntityIdentifier(id=removal_id))
 
         try:
@@ -303,7 +317,7 @@ class Design(Component):
         ValueError
             The design itself cannot be deleted.
         """
-        id = component.id if not isinstance(component, str) else component
+        id = component if isinstance(component, str) else component.id
         if id == self.id:
             raise ValueError("The design itself cannot be deleted.")
         else:
@@ -455,6 +469,30 @@ class Design(Component):
         for body in ids_bodies:
             body._surface_offset = offset_type
 
+    @protect_grpc
+    @check_input_types
+    def delete_beam_profile(self, beam_profile: Union[BeamProfile, str]) -> None:
+        """Removes a beam profile on the active geometry server instance.
+
+        Parameters
+        ----------
+        beam_profile : Union[BeamProfile, str]
+            A beam profile name or instance that should be deleted.
+        """
+        removal_name = beam_profile if isinstance(beam_profile, str) else beam_profile.name
+        self._grpc_client.log.debug(f"Beam profile {removal_name} deletion request received.")
+        removal_obj = self._beam_profiles.get(removal_name, None)
+
+        if removal_obj:
+            self._commands_stub.DeleteBeamProfile(EntityIdentifier(id=removal_obj.id))
+            self._beam_profiles.pop(removal_name)
+            self._grpc_client.log.debug(f"Beam profile {removal_name} successfully deleted.")
+        else:
+            self._grpc_client.log.warning(
+                f"Attempted beam profile deletion failed, with name {removal_name}."
+                + " Ignoring request."
+            )
+
     def __repr__(self):
         """String representation of the design."""
         alive_bodies = [1 if body.is_alive else 0 for body in self.bodies]
@@ -467,6 +505,7 @@ class Design(Component):
         lines.append(f"  N Named Selections   : {len(self.named_selections)}")
         lines.append(f"  N Materials          : {len(self.materials)}")
         lines.append(f"  N Beam Profiles      : {len(self.beam_profiles)}")
+        lines.append(f"  N Design Points      : {len(self.design_points)}")
         return "\n".join(lines)
 
     def __read_existing_design(self) -> None:

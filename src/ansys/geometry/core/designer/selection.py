@@ -6,7 +6,9 @@ from beartype import beartype as check_input_types
 from beartype.typing import List, Optional
 
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.designer.beam import Beam
 from ansys.geometry.core.designer.body import Body
+from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
@@ -33,6 +35,10 @@ class NamedSelection:
         All faces to include in the named selection.
     edges : List[Edge], default: None
         All edges to include in the named selection.
+    beams : List[Beam], default: None
+        All beams to include in the named selection.
+    design_points : List[DesignPoints], default: None
+        All design_points to include in the named selection.
     """
 
     @protect_grpc
@@ -44,6 +50,8 @@ class NamedSelection:
         bodies: Optional[List[Body]] = None,
         faces: Optional[List[Face]] = None,
         edges: Optional[List[Edge]] = None,
+        beams: Optional[List[Beam]] = None,
+        design_points: Optional[List[DesignPoint]] = None,
         preexisting_id: Optional[str] = None,
     ):
         """Constructor method for the ``NamedSelection`` class."""
@@ -54,6 +62,10 @@ class NamedSelection:
             faces = []
         if edges is None:
             edges = []
+        if beams is None:
+            beams = []
+        if design_points is None:
+            design_points = []
 
         self._grpc_client = grpc_client
         self._named_selections_stub = NamedSelectionsStub(grpc_client.channel)
@@ -65,6 +77,8 @@ class NamedSelection:
         [ids.add(body.id) for body in bodies]
         [ids.add(face.id) for face in faces]
         [ids.add(edge.id) for edge in edges]
+        [ids.add(beam.id) for beam in beams]
+        [ids.add(dp.id) for dp in design_points]
 
         if not preexisting_id:
             named_selection_request = CreateRequest(name=name, members=ids)

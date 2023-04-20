@@ -72,7 +72,7 @@ body = comp.extrude_sketch("Body", sketch=sketch_2, distance=10 * UNITS.m)
 ## Tessellation of the component as two merged bodies
 
 Tessellate the component and merge each body into a single dataset.
-This effectively combines all the faces of each individual body into a 
+This effectively combines all the faces of each individual body into a
 single dataset without separating faces.
 
 ```{code-cell} ipython3

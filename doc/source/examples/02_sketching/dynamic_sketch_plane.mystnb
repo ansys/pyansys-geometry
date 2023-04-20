@@ -43,7 +43,7 @@ from ansys.geometry.core.sketch import Sketch
 
 ## Define a sketch profile for the PCB
 
-You can create, modify, and plot ``Sketch`` instances independent of supporting 
+You can create, modify, and plot ``Sketch`` instances independent of supporting
 Geometry service instances.
 
 Create a sketch outline of individual ``Segment`` and ``Arc`` objects with two
@@ -75,8 +75,8 @@ sketch.plot()
 
 ## Extrude multiple bodies with a single sketch
 
-Establish a server connection and use the single sketch profile to extrude 
-the board profile at multiple Z-offsets. A named selection is created from the 
+Establish a server connection and use the single sketch profile to extrude
+the board profile at multiple Z-offsets. A named selection is created from the
 resulting list of layer bodies.
 
 Note that translating the sketch plane prior to extrusion is more effective (10 server calls)

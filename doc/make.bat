@@ -36,7 +36,7 @@ goto end
 goto build-examples-py
 
 :clean
-rmdir /s /q %BUILDDIR% > /NUL 2>&1 
+rmdir /s /q %BUILDDIR% > /NUL 2>&1
 for /d /r %SOURCEDIR% %%d in (_autosummary) do @if exist "%%d" rmdir /s /q "%%d"
 goto end
 

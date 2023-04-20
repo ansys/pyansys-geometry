@@ -8,7 +8,14 @@ import numpy as np
 from pint import Quantity
 from scipy.integrate import quad
 
-from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math import (
+    UNITVECTOR3D_X,
+    UNITVECTOR3D_Z,
+    Matrix44,
+    Point3D,
+    UnitVector3D,
+    Vector3D,
+)
 from ansys.geometry.core.misc import Accuracy, Distance
 from ansys.geometry.core.primitives.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.primitives.parameterization import (
@@ -120,6 +127,19 @@ class Ellipse:
             and self._axis == other._axis
         )
 
+    def mirrored_copy(self) -> "Ellipse":
+        """
+        Creates a mirrored copy of the ellipse along the y-axis.
+
+        Returns
+        -------
+        Ellipse
+            A new ellipse that is a mirrored copy of the original ellipse.
+        """
+        return Ellipse(
+            self.origin, self.major_radius, self.minor_radius, -self._reference, -self._axis
+        )
+
     def evaluate(self, parameter: Real) -> "EllipseEvaluation":
         """
         Evaluate the ellipse at the given parameter.
@@ -223,6 +243,31 @@ class Ellipse:
     def area(self) -> Quantity:
         """Area of the ellipse."""
         return np.pi * self.major_radius * self.minor_radius
+
+    def transformed_copy(self, matrix: Matrix44) -> "Ellipse":
+        """
+        Creates a transformed copy of the ellipse based on a given transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the ellipse.
+
+        Returns
+        -------
+        Ellipse
+            A new ellipse that is the transformed copy of the original ellipse.
+        """
+        new_point = self.origin.transform(matrix)
+        new_reference = self._reference.transform(matrix)
+        new_axis = self._axis.transform(matrix)
+        return Ellipse(
+            new_point,
+            self.major_radius,
+            self.minor_radius,
+            UnitVector3D(new_reference[0:3]),
+            UnitVector3D(new_axis[0:3]),
+        )
 
     def get_parameterization(self) -> Parameterization:
         """

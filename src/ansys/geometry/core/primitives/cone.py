@@ -7,7 +7,14 @@ from beartype.typing import Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math import (
+    UNITVECTOR3D_X,
+    UNITVECTOR3D_Z,
+    Matrix44,
+    Point3D,
+    UnitVector3D,
+    Vector3D,
+)
 from ansys.geometry.core.misc import Angle, Distance
 from ansys.geometry.core.primitives.line import Line
 from ansys.geometry.core.primitives.parameterization import (
@@ -108,6 +115,42 @@ class Cone:
     def volume(self) -> Quantity:
         """Volume of the cone."""
         return np.pi * self.radius**2 * self.height / 3
+
+    def transformed_copy(self, matrix: Matrix44) -> "Cone":
+        """
+        Creates a transformed copy of the cone based on a given transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the cone.
+
+        Returns
+        -------
+        Cone
+            A new cone that is the transformed copy of the original cone.
+        """
+        new_point = self.origin.transform(matrix)
+        new_reference = self._reference.transform(matrix)
+        new_axis = self._axis.transform(matrix)
+        return Cone(
+            new_point,
+            self.radius,
+            self.half_angle,
+            UnitVector3D(new_reference[0:3]),
+            UnitVector3D(new_axis[0:3]),
+        )
+
+    def mirrored_copy(self) -> "Cone":
+        """
+        Creates a mirrored copy of the cone along the y-axis.
+
+        Returns
+        -------
+        Cone
+            A new cone that is a mirrored copy of the original cone.
+        """
+        return Cone(self.origin, self.radius, self.half_angle, -self._reference, -self._axis)
 
     @property
     def apex(self) -> Point3D:
