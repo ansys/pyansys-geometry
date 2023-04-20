@@ -365,3 +365,30 @@ def grpc_matrix_to_matrix(m: GRPCMatrix) -> Matrix44:
             8,
         )
     )
+
+
+def grpc_frame_to_frame(frame: GRPCFrame) -> Frame:
+    return Frame(
+        Point3D(
+            [
+                frame.origin.x,
+                frame.origin.y,
+                frame.origin.z,
+            ],
+            DEFAULT_UNITS.SERVER_LENGTH,
+        ),
+        UnitVector3D(
+            [
+                frame.dir_x.x,
+                frame.dir_x.y,
+                frame.dir_x.z,
+            ]
+        ),
+        UnitVector3D(
+            [
+                frame.dir_y.x,
+                frame.dir_y.y,
+                frame.dir_y.z,
+            ]
+        ),
+    )

@@ -2,7 +2,7 @@
 
 from ansys.api.geometry.v0.coordinatesystems_pb2 import CreateRequest
 from ansys.api.geometry.v0.coordinatesystems_pb2_grpc import CoordinateSystemsStub
-from beartype.typing import TYPE_CHECKING
+from beartype.typing import TYPE_CHECKING, Optional
 
 from ansys.geometry.core.connection import GrpcClient, frame_to_grpc_frame
 from ansys.geometry.core.errors import protect_grpc
@@ -33,7 +33,12 @@ class CoordinateSystem:
 
     @protect_grpc
     def __init__(
-        self, name: str, frame: Frame, parent_component: "Component", grpc_client: GrpcClient
+        self,
+        name: str,
+        frame: Frame,
+        parent_component: "Component",
+        grpc_client: GrpcClient,
+        preexisting_id: Optional[str] = None,
     ):
         """Constructor method for the ``CoordinateSystem`` class."""
 
@@ -41,41 +46,45 @@ class CoordinateSystem:
         self._grpc_client = grpc_client
         self._coordinate_systems_stub = CoordinateSystemsStub(grpc_client.channel)
 
-        self._grpc_client.log.debug("Requesting creation of Coordinate System.")
-        new_coordinate_system = self._coordinate_systems_stub.Create(
-            CreateRequest(
-                parent=parent_component.id,
-                name=name,
-                frame=frame_to_grpc_frame(frame),
+        if not preexisting_id:
+            self._grpc_client.log.debug("Requesting creation of Coordinate System.")
+            new_coordinate_system = self._coordinate_systems_stub.Create(
+                CreateRequest(
+                    parent=parent_component.id,
+                    name=name,
+                    frame=frame_to_grpc_frame(frame),
+                )
             )
-        )
 
-        self._id = new_coordinate_system.id
-        self._name = new_coordinate_system.name
-        self._frame = Frame(
-            Point3D(
-                [
-                    new_coordinate_system.frame.origin.x,
-                    new_coordinate_system.frame.origin.y,
-                    new_coordinate_system.frame.origin.z,
-                ],
-                DEFAULT_UNITS.SERVER_LENGTH,
-            ),
-            UnitVector3D(
-                [
-                    new_coordinate_system.frame.dir_x.x,
-                    new_coordinate_system.frame.dir_x.y,
-                    new_coordinate_system.frame.dir_x.z,
-                ]
-            ),
-            UnitVector3D(
-                [
-                    new_coordinate_system.frame.dir_y.x,
-                    new_coordinate_system.frame.dir_y.y,
-                    new_coordinate_system.frame.dir_y.z,
-                ]
-            ),
-        )
+            self._id = new_coordinate_system.id
+            self._name = new_coordinate_system.name
+            self._frame = Frame(
+                Point3D(
+                    [
+                        new_coordinate_system.frame.origin.x,
+                        new_coordinate_system.frame.origin.y,
+                        new_coordinate_system.frame.origin.z,
+                    ],
+                    DEFAULT_UNITS.SERVER_LENGTH,
+                ),
+                UnitVector3D(
+                    [
+                        new_coordinate_system.frame.dir_x.x,
+                        new_coordinate_system.frame.dir_x.y,
+                        new_coordinate_system.frame.dir_x.z,
+                    ]
+                ),
+                UnitVector3D(
+                    [
+                        new_coordinate_system.frame.dir_y.x,
+                        new_coordinate_system.frame.dir_y.y,
+                        new_coordinate_system.frame.dir_y.z,
+                    ]
+                ),
+            )
+        else:
+            self._name = name
+            self._frame = frame
         self._is_alive = True
 
     @property

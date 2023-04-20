@@ -23,11 +23,17 @@ from beartype.typing import Dict, List, Optional, Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.connection import GrpcClient, plane_to_grpc_plane, point3d_to_grpc_point
-from ansys.geometry.core.connection.conversions import grpc_matrix_to_matrix
+from ansys.geometry.core.connection import (
+    GrpcClient,
+    grpc_frame_to_frame,
+    grpc_matrix_to_matrix,
+    plane_to_grpc_plane,
+    point3d_to_grpc_point,
+)
 from ansys.geometry.core.designer.beam import Beam, BeamCircularProfile, BeamProfile
 from ansys.geometry.core.designer.body import Body, MidSurfaceOffsetType, TemplateBody
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
+from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
@@ -517,8 +523,8 @@ class Design(Component):
         # - [X] NamedSelections
         # - [ ] BeamProfiles
         # - [ ] Beams
-        # - [ ] CoordinateSystems
-        # - [ ] SharedTopology
+        # - [X] CoordinateSystems
+        # - [X] SharedTopology
         import time
 
         start = time.time()
@@ -592,7 +598,27 @@ class Design(Component):
             new_ns = NamedSelection(ns.name, self._grpc_client, preexisting_id=ns.id)
             self._named_selections[new_ns.name] = new_ns
 
+        # Create CoordinateSystems
+        num_created_coord_systems = 0
+        for component_id, coordinate_systems in response.component_coord_systems.items():
+            component = created_components.get(component_id)
+            for cs in coordinate_systems.coordinate_systems:
+                frame = grpc_frame_to_frame(cs.frame)
+                new_cs = CoordinateSystem(cs.name, frame, component, self._grpc_client, cs.id)
+                component.coordinate_systems.append(new_cs)
+                num_created_coord_systems += 1
+
         end = time.time()
+
+        # Set SharedTopology
+        # TODO: Maybe just add it to Component or Part message
+        #          - we're starting to iterate through all the Components too much
+        # TODO: Make sure design doesn't need edge case attention
+        num_created_shared_topologies = 0
+        for component_id, shared_topology_type in response.component_shared_topologies.items():
+            component = created_components.get(component_id)
+            component._shared_topology = SharedTopologyType(shared_topology_type)
+            num_created_shared_topologies += 1
 
         print(f"Parts created: {len(created_parts)}")
         print(f"TransformedParts created: {len(created_tps) + 1}")
@@ -600,5 +626,7 @@ class Design(Component):
         print(f"Bodies created: {len(created_bodies)}")
         print(f"Materials created: {len(self.materials)}")
         print(f"NamedSelections created: {len(self.named_selections)}")
+        print(f"CoordinateSystems created: {num_created_coord_systems}")
+        print(f"SharedTopologyTypes set: {num_created_shared_topologies}")
 
         print(f"\nRead Time: {end - start}")
