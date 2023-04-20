@@ -18,6 +18,18 @@ class MaterialPropertyType(Enum):
     TENSILE_STRENGTH = "TensileStrength"
     THERMAL_CONDUCTIVITY = "ThermalConductivity"
 
+    def from_id(id: str) -> "MaterialPropertyType":
+        relations = {
+            "General.Density.Mass": "Density",
+            "Linear.Isotropic.Emodulus": "ElasticModulus",
+            "Linear.Isotropic.Poisson": "PoissonsRatio",
+            "Linear.Isotropic.Gmodulus": "ShearModulus",
+            "Heat.Iso.Cp": "SpecificHeat",
+            "Nonlinear.vonMises.Ultimate": "TensileStrength",
+            "Heat.Iso.Conduction": "ThermalConductivity",
+        }
+        return MaterialPropertyType(relations.get(id))
+
 
 class MaterialProperty:
     """

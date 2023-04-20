@@ -44,6 +44,7 @@ class NamedSelection:
         bodies: Optional[List[Body]] = None,
         faces: Optional[List[Face]] = None,
         edges: Optional[List[Edge]] = None,
+        preexisting_id: Optional[str] = None,
     ):
         """Constructor method for the ``NamedSelection`` class."""
 
@@ -65,11 +66,15 @@ class NamedSelection:
         [ids.add(face.id) for face in faces]
         [ids.add(edge.id) for edge in edges]
 
-        named_selection_request = CreateRequest(name=name, members=ids)
-        self._grpc_client.log.debug("Requesting creation of named selection.")
-        new_named_selection = self._named_selections_stub.Create(named_selection_request)
-        self._id = new_named_selection.id
-        self._name = new_named_selection.name
+        if not preexisting_id:
+            named_selection_request = CreateRequest(name=name, members=ids)
+            self._grpc_client.log.debug("Requesting creation of named selection.")
+            new_named_selection = self._named_selections_stub.Create(named_selection_request)
+            self._id = new_named_selection.id
+            self._name = new_named_selection.name
+        else:
+            self._id = preexisting_id
+            self._name = name
 
     @property
     def id(self) -> str:

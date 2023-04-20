@@ -19,7 +19,7 @@ from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialPro
 from ansys.api.geometry.v0.models_pb2 import PartExportFormat
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from beartype import beartype as check_input_types
-from beartype.typing import List, Optional, Union
+from beartype.typing import Dict, List, Optional, Union
 import numpy as np
 from pint import Quantity
 
@@ -33,7 +33,7 @@ from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.part import Part, TransformedPart
 from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.materials import Material
+from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
     UNITVECTOR3D_Y,
@@ -474,13 +474,15 @@ class Design(Component):
         #
         # - [X] Components
         # - [X] Bodies
-        # - [ ] Materials
-        # - [ ] NamedSelections
+        # - [X] Materials
+        # - [X] NamedSelections
         # - [ ] BeamProfiles
         # - [ ] Beams
         # - [ ] CoordinateSystems
         # - [ ] SharedTopology
+        import time
 
+        start = time.time()
         # Grab active design
         design = self._design_stub.GetActive(Empty())
         if not design:
@@ -492,57 +494,72 @@ class Design(Component):
         response = self._design_stub.GetAssembly(EntityIdentifier(id=""))
 
         # Store created objects
-        created_parts = [Part(p.id, p.name, [], []) for p in response.parts]
-        created_tps = []
-        created_components = [self]
-        created_bodies = []
+        created_parts = {p.id: Part(p.id, p.name, [], []) for p in response.parts}
+        created_tps = {}
+        created_components = {self.id: self}
+        created_bodies = {}
 
         # Make dummy TP for design since server doesn't have one
-        self._transformed_part = TransformedPart("1", "tp_design", created_parts[0])
+        self._transformed_part = TransformedPart("1", "tp_design", created_parts[self.id])
 
         # Create TransformedParts
         for tp in response.transformed_parts:
-            # Find Part to connect to
-            for part in created_parts:
-                if part.id == tp.part_master.id:
-                    new_tp = TransformedPart(
-                        tp.id, tp.name, part, grpc_matrix_to_matrix(tp.placement)
-                    )
-                    created_tps.append(new_tp)
-                    break
+            part = created_parts.get(tp.part_master.id)
+            new_tp = TransformedPart(tp.id, tp.name, part, grpc_matrix_to_matrix(tp.placement))
+            created_tps[tp.id] = new_tp
 
         # Create Components
         for comp in response.components:
-            # Find parent Component to connect to
-            for parent in created_components:
-                if comp.parent_id == parent.id:
-                    # Find TransformedPart to connect to
-                    for tp in created_tps:
-                        if comp.master_id == tp.id:
-                            c = Component(
-                                comp.name,
-                                parent,
-                                self._grpc_client,
-                                preexisting_id=comp.id,
-                                transformed_part=tp,
-                                read_existing_comp=True,
-                            )
-                            created_components.append(c)
-                            parent.components.append(c)
-                            break
-                    break
+            parent = created_components.get(comp.parent_id)
+            tp = created_tps.get(comp.master_id)
+            c = Component(
+                comp.name,
+                parent,
+                self._grpc_client,
+                preexisting_id=comp.id,
+                transformed_part=tp,
+                read_existing_comp=True,
+            )
+            created_components[comp.id] = c
+            parent.components.append(c)
 
         # Create Bodies
+        # TODO: is_surface?
         for body in response.bodies:
-            # Find Part to connect to
-            for part in created_parts:
-                if body.parent_id == part.id:
-                    tb = TemplateBody(body.id, body.name, self._grpc_client)
-                    part.bodies.append(tb)
-                    created_bodies.append(tb)
-                    break
+            part = created_parts.get(body.parent_id)
+            tb = TemplateBody(body.id, body.name, self._grpc_client)
+            part.bodies.append(tb)
+            created_bodies[body.id] = tb
+
+        # Create Materials
+        for material in response.materials:
+            properties = []
+            density = Quantity(0)
+            for property in material.material_properties:
+                mp = MaterialProperty(
+                    MaterialPropertyType.from_id(property.id),
+                    property.display_name,
+                    Quantity(property.value, property.units),
+                )
+                properties.append(mp)
+                if mp.type == MaterialPropertyType.DENSITY:
+                    density = mp.quantity
+
+            m = Material(material.name, density, properties)
+            self.materials.append(m)
+
+        # Create NamedSelections
+        for ns in response.named_selections:
+            new_ns = NamedSelection(ns.name, self._grpc_client, preexisting_id=ns.id)
+            self._named_selections[new_ns.name] = new_ns
+
+        end = time.time()
 
         print(f"Parts created: {len(created_parts)}")
-        print(f"TransformedParts created: {len(created_tps)}")
+        print(f"TransformedParts created: {len(created_tps) + 1}")
         print(f"Components created: {len(created_components)}")
         print(f"Bodies created: {len(created_bodies)}")
+        print(f"Materials created: {len(self.materials)}")
+        print(f"NamedSelections created: {len(self.named_selections)}")
+
+        print(f"\nRead Time: {end - start}")
