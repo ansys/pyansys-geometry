@@ -368,6 +368,19 @@ def grpc_matrix_to_matrix(m: GRPCMatrix) -> Matrix44:
 
 
 def grpc_frame_to_frame(frame: GRPCFrame) -> Frame:
+    """Converts a ``ansys.api.geometry.Frame`` grpc message to a
+    :class:`ansys.geometry.core.math.Frame` class.
+
+    Parameters
+    ----------
+    GRPCFrame
+        Geometry service gRPC frame message. The unit for the frame origin is meters.
+
+    Returns
+    -------
+    frame : Frame
+        Resulting converted frame.
+    """
     return Frame(
         Point3D(
             [

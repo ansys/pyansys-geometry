@@ -149,29 +149,26 @@ class Component:
         self._transformed_part = transformed_part
 
         # Populate client data model
-        if template:
-            if transformed_part:
-                # Re-use an existing tp if this is a nested instance
-                self._transformed_part = transformed_part
-            else:
-                # Create new TransformedPart, but use template's Part
-                tp = TransformedPart(
-                    uuid.uuid4(),
-                    f"tp_{name}",
-                    template._transformed_part.part,
-                    template._transformed_part.transform,
-                )
-                tp.part.parts.append(tp)
-                self._transformed_part = tp
+        if template and not transformed_part:
+            # Create new TransformedPart, but use template's Part
+            tp = TransformedPart(
+                uuid.uuid4(),
+                f"tp_{name}",
+                template._transformed_part.part,
+                template._transformed_part.transform,
+            )
+            tp.part.parts.append(tp)
+            self._transformed_part = tp
 
             # Recurse - Create more children components from template's remaining children
             self.__create_children(template)
-        elif not read_existing_comp:
-            # Create new Part and TransformedPart since this is creating a new "master"
-            p = Part(uuid.uuid4(), f"p_{name}", [], [])
-            tp = TransformedPart(uuid.uuid4(), f"tp_{name}", p)
-            p.parts.append(tp)
-            self._transformed_part = tp
+            return
+
+        # This is an independent Component - Create new Part and TransformedPart
+        p = Part(uuid.uuid4(), f"p_{name}", [], [])
+        tp = TransformedPart(uuid.uuid4(), f"tp_{name}", p)
+        p.parts.append(tp)
+        self._transformed_part = tp
 
     @property
     def id(self) -> str:

@@ -19,6 +19,20 @@ class MaterialPropertyType(Enum):
     THERMAL_CONDUCTIVITY = "ThermalConductivity"
 
     def from_id(id: str) -> "MaterialPropertyType":
+        """
+        Return a ``ansys.geometry.core.materials.MaterialPropertyType`` from the Geometry Service
+        string representation of a property.
+
+        Parameters
+        ----------
+        id : str
+            Geometry Service string representation of a property type.
+
+        Returns
+        -------
+        MaterialPropertyType
+            Common name for property type.
+        """
         relations = {
             "General.Density.Mass": "Density",
             "Linear.Isotropic.Emodulus": "ElasticModulus",
