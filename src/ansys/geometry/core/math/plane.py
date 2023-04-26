@@ -49,7 +49,6 @@ class Plane(Frame):
         bool
             ``True`` if the 3D point is contained in the plane.
         """
-
         # Compute the plane equation A*(x-x0) + B*(y-y0) + C*(z-z0)
         plane_eq = (
             self.direction_z.x * (point.x - self.origin.x).m

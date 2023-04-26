@@ -129,7 +129,7 @@ class IBody(ABC):
     @abstractmethod
     def volume(self) -> Quantity:
         """
-        Calculated volume of the body.
+        Calculate volume of the body.
 
         Notes
         -----
@@ -140,7 +140,7 @@ class IBody(ABC):
     @abstractmethod
     def assign_material(self, material: Material) -> None:
         """
-        Assigns a material against the design in the active Geometry service instance.
+        Assign a material against the design in the active Geometry service instance.
 
         Parameters
         ----------
@@ -152,7 +152,7 @@ class IBody(ABC):
     @abstractmethod
     def add_midsurface_thickness(self, thickness: Quantity) -> None:
         """
-        Adds a mid-surface thickness to a surface body.
+        Add a mid-surface thickness to a surface body.
 
         Parameters
         ----------
@@ -168,7 +168,7 @@ class IBody(ABC):
     @abstractmethod
     def add_midsurface_offset(self, offset: "MidSurfaceOffsetType") -> None:
         """
-        Adds a mid-surface offset to a surface body.
+        Add a mid-surface offset to a surface body.
 
         Parameters
         ----------
@@ -184,7 +184,7 @@ class IBody(ABC):
     @abstractmethod
     def imprint_curves(self, faces: List[Face], sketch: Sketch) -> Tuple[List[Edge], List[Face]]:
         """
-        Imprints all specified geometries onto the specified faces of the body.
+        Imprint all specified geometries onto the specified faces of the body.
 
         Parameters
         ----------
@@ -209,7 +209,7 @@ class IBody(ABC):
         only_one_curve: Optional[bool] = False,
     ) -> List[Face]:
         """
-        Projects all specified geometries onto the body.
+        Project all specified geometries onto the body.
 
         Parameters
         ----------
@@ -239,7 +239,7 @@ class IBody(ABC):
     @abstractmethod
     def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]) -> None:
         """
-        Translates the geometry body in the specified direction by a given distance.
+        Translate the geometry body in the specified direction by a given distance.
 
         Parameters
         ----------
@@ -257,7 +257,7 @@ class IBody(ABC):
     @abstractmethod
     def copy(self, parent: "Component", name: str = None) -> "Body":
         """
-        Creates a copy of the geometry body and places it under the specified parent.
+        Create a copy of the geometry body and places it under the specified parent.
 
         Parameters
         ----------
@@ -383,7 +383,11 @@ class IBody(ABC):
 
     def intersect(self, other: "Body") -> None:
         """
-        Intersect two bodies. `self` will be directly modified with the result, and
+        Intersect two bodies.
+
+        Notes
+        -----
+        `self` will be directly modified with the result, and
         `other` will be consumed, so it is important to make copies if needed.
 
         Parameters
@@ -401,7 +405,11 @@ class IBody(ABC):
     @protect_grpc
     def subtract(self, other: "Body") -> None:
         """
-        Subtract two bodies. `self` is the minuend, and `other` is the subtrahend
+        Subtract two bodies.
+
+        Notes
+        -----
+        `self` is the minuend, and `other` is the subtrahend
         (`self` - `other`). `self` will be directly modified with the result, and
         `other` will be consumed, so it is important to make copies if needed.
 
@@ -420,7 +428,11 @@ class IBody(ABC):
     @protect_grpc
     def unite(self, other: "Body") -> None:
         """
-        Unite two bodies. `self` will be directly modified with the resulting union, and
+        Unite two bodies.
+
+        Notes
+        -----
+        `self` will be directly modified with the resulting union, and
         `other` will be consumed, so it is important to make copies if needed.
 
         Parameters
@@ -477,7 +489,7 @@ class TemplateBody(IBody):
         self._tessellation = None
 
     def reset_tessellation_cache(func):
-        """Decorator for ``TemplateBody`` methods that require a tessellation cache update.
+        """Decorate ``TemplateBody`` methods that require a tessellation cache update.
 
         Parameters
         ----------
@@ -498,33 +510,33 @@ class TemplateBody(IBody):
         return wrapper
 
     @property
-    def _grpc_id(self) -> EntityIdentifier:
-        """gRPC entity identifier of this body."""
+    def _grpc_id(self) -> EntityIdentifier:  # noqa: D102
+        """Entity identifier of this body on the server side."""
         return EntityIdentifier(id=self._id)
 
     @property
-    def id(self) -> str:
+    def id(self) -> str:  # noqa: D102
         return self._id
 
     @property
-    def name(self) -> str:
+    def name(self) -> str:  # noqa: D102
         return self._name
 
     @property
-    def is_surface(self) -> bool:
+    def is_surface(self) -> bool:  # noqa: D102
         return self._is_surface
 
     @property
-    def surface_thickness(self) -> Union[Quantity, None]:
+    def surface_thickness(self) -> Union[Quantity, None]:  # noqa: D102
         return self._surface_thickness if self.is_surface else None
 
     @property
-    def surface_offset(self) -> Union["MidSurfaceOffsetType", None]:
+    def surface_offset(self) -> Union["MidSurfaceOffsetType", None]:  # noqa: D102
         return self._surface_offset if self.is_surface else None
 
     @property
     @protect_grpc
-    def faces(self) -> List[Face]:
+    def faces(self) -> List[Face]:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
         grpc_faces = self._bodies_stub.GetFaces(self._grpc_id)
         return [
@@ -534,7 +546,7 @@ class TemplateBody(IBody):
 
     @property
     @protect_grpc
-    def edges(self) -> List[Edge]:
+    def edges(self) -> List[Edge]:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
         grpc_edges = self._bodies_stub.GetEdges(self._grpc_id)
         return [
@@ -543,12 +555,12 @@ class TemplateBody(IBody):
         ]
 
     @property
-    def is_alive(self) -> bool:
+    def is_alive(self) -> bool:  # noqa: D102
         return self._is_alive
 
     @property
     @protect_grpc
-    def volume(self) -> Quantity:
+    def volume(self) -> Quantity:  # noqa: D102
         if self.is_surface:
             self._grpc_client.log.debug("Dealing with planar surface. Returning 0 as the volume.")
             return Quantity(0, DEFAULT_UNITS.SERVER_VOLUME)
@@ -559,7 +571,7 @@ class TemplateBody(IBody):
 
     @protect_grpc
     @check_input_types
-    def assign_material(self, material: Material) -> None:
+    def assign_material(self, material: Material) -> None:  # noqa: D102
         self._grpc_client.log.debug(f"Assigning body {self.id} material {material.name}.")
         self._bodies_stub.SetAssignedMaterial(
             SetAssignedMaterialRequest(id=self._id, material=material.name)
@@ -567,7 +579,7 @@ class TemplateBody(IBody):
 
     @protect_grpc
     @check_input_types
-    def add_midsurface_thickness(self, thickness: Quantity) -> None:
+    def add_midsurface_thickness(self, thickness: Quantity) -> None:  # noqa: D102
         if self.is_surface:
             self._commands_stub.AssignMidSurfaceThickness(
                 AssignMidSurfaceThicknessRequest(
@@ -582,7 +594,7 @@ class TemplateBody(IBody):
 
     @protect_grpc
     @check_input_types
-    def add_midsurface_offset(self, offset: MidSurfaceOffsetType) -> None:
+    def add_midsurface_offset(self, offset: MidSurfaceOffsetType) -> None:  # noqa: D102
         if self.is_surface:
             self._commands_stub.AssignMidSurfaceOffsetType(
                 AssignMidSurfaceOffsetTypeRequest(
@@ -597,7 +609,9 @@ class TemplateBody(IBody):
 
     @protect_grpc
     @check_input_types
-    def imprint_curves(self, faces: List[Face], sketch: Sketch) -> Tuple[List[Edge], List[Face]]:
+    def imprint_curves(
+        self, faces: List[Face], sketch: Sketch
+    ) -> Tuple[List[Edge], List[Face]]:  # noqa: D102
         raise NotImplementedError(
             """
             imprint_curves is not implemented at the TemplateBody level.
@@ -613,7 +627,7 @@ class TemplateBody(IBody):
         sketch: Sketch,
         closest_face: bool,
         only_one_curve: Optional[bool] = False,
-    ) -> List[Face]:
+    ) -> List[Face]:  # noqa: D102
         raise NotImplementedError(
             """
             project_curves is not implemented at the TemplateBody level.
@@ -624,7 +638,9 @@ class TemplateBody(IBody):
     @protect_grpc
     @check_input_types
     @reset_tessellation_cache
-    def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]) -> None:
+    def translate(
+        self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
+    ) -> None:  # noqa: D102
         distance = distance if isinstance(distance, Distance) else Distance(distance)
 
         translation_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
@@ -640,7 +656,7 @@ class TemplateBody(IBody):
         )
 
     @protect_grpc
-    def copy(self, parent: "Component", name: str = None) -> "Body":
+    def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
         from ansys.geometry.core.designer.component import Component
 
         # Check input types
@@ -669,7 +685,7 @@ class TemplateBody(IBody):
     @protect_grpc
     def tessellate(
         self, merge: Optional[bool] = False, transform: Matrix44 = IDENTITY_MATRIX44
-    ) -> Union["PolyData", "MultiBlock"]:
+    ) -> Union["PolyData", "MultiBlock"]:  # noqa: D102
         # lazy import here to improve initial module load time
         import pyvista as pv
 
@@ -696,7 +712,7 @@ class TemplateBody(IBody):
         screenshot: Optional[str] = None,
         use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
-    ) -> None:
+    ) -> None:  # noqa: D102
         # lazy import here to improve initial module load time
 
         from ansys.geometry.core.plotting import PlotterHelper
@@ -706,17 +722,18 @@ class TemplateBody(IBody):
         pl.add_body(self, merge=merge, **plotting_options)
         pl_helper.show_plotter(pl, screenshot=screenshot)
 
-    def intersect(self, other: "Body") -> None:
+    def intersect(self, other: "Body") -> None:  # noqa: D102
         raise NotImplementedError(
             "TemplateBody does not implement boolean methods. Call this method on a Body instead."
         )
 
-    def subtract(self, other: "Body") -> None:
+    def subtract(self, other: "Body") -> None:  # noqa: D102
         raise NotImplementedError(
             "TemplateBody does not implement boolean methods. Call this method on a Body instead."
         )
 
     def unite(self, other: "Body") -> None:
+        # noqa: D102
         raise NotImplementedError(
             "TemplateBody does not implement boolean methods. Call this method on a Body instead."
         )
@@ -760,7 +777,7 @@ class Body(IBody):
         self._template = template
 
     def reset_tessellation_cache(func):
-        """Decorator for ``Body`` methods that require a tessellation cache update.
+        """Decorate ``Body`` methods that require a tessellation cache update.
 
         Parameters
         ----------
@@ -781,20 +798,20 @@ class Body(IBody):
         return wrapper
 
     @property
-    def id(self) -> str:
+    def id(self) -> str:  # noqa: D102
         return self._id
 
     @property
-    def name(self) -> str:
+    def name(self) -> str:  # noqa: D102
         return self._template.name
 
     @property
-    def parent(self) -> "Component":
+    def parent(self) -> "Component":  # noqa: D102
         return self._parent
 
     @property
     @protect_grpc
-    def faces(self) -> List[Face]:
+    def faces(self) -> List[Face]:  # noqa: D102
         self._template._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
         grpc_faces = self._template._bodies_stub.GetFaces(EntityIdentifier(id=self.id))
         return [
@@ -809,7 +826,7 @@ class Body(IBody):
 
     @property
     @protect_grpc
-    def edges(self) -> List[Edge]:
+    def edges(self) -> List[Edge]:  # noqa: D102
         self._template._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
         grpc_edges = self._template._bodies_stub.GetEdges(EntityIdentifier(id=self.id))
         return [
@@ -818,7 +835,7 @@ class Body(IBody):
         ]
 
     @property
-    def _is_alive(self) -> bool:
+    def _is_alive(self) -> bool:  # noqa: D102
         return self._template.is_alive
 
     @_is_alive.setter
@@ -826,15 +843,15 @@ class Body(IBody):
         self._template._is_alive = value
 
     @property
-    def is_alive(self) -> bool:
+    def is_alive(self) -> bool:  # noqa: D102
         return self._is_alive
 
     @property
-    def is_surface(self) -> bool:
+    def is_surface(self) -> bool:  # noqa: D102
         return self._template.is_surface
 
     @property
-    def _surface_thickness(self) -> Union[Quantity, None]:
+    def _surface_thickness(self) -> Union[Quantity, None]:  # noqa: D102
         return self._template.surface_thickness
 
     @_surface_thickness.setter
@@ -842,35 +859,37 @@ class Body(IBody):
         self._template._surface_thickness = value
 
     @property
-    def surface_thickness(self) -> Union[Quantity, None]:
+    def surface_thickness(self) -> Union[Quantity, None]:  # noqa: D102
         return self._surface_thickness
 
     @property
-    def _surface_offset(self) -> Union["MidSurfaceOffsetType", None]:
+    def _surface_offset(self) -> Union["MidSurfaceOffsetType", None]:  # noqa: D102
         return self._template._surface_offset
 
     @_surface_offset.setter
-    def _surface_offset(self, value: "MidSurfaceOffsetType"):
+    def _surface_offset(self, value: "MidSurfaceOffsetType"):  # noqa: D102
         self._template._surface_offset = value
 
     @property
-    def surface_offset(self) -> Union["MidSurfaceOffsetType", None]:
+    def surface_offset(self) -> Union["MidSurfaceOffsetType", None]:  # noqa: D102
         return self._surface_offset
 
     @property
-    def volume(self) -> Quantity:
+    def volume(self) -> Quantity:  # noqa: D102
         return self._template.volume
 
-    def assign_material(self, material: Material) -> None:
+    def assign_material(self, material: Material) -> None:  # noqa: D102
         self._template.assign_material(material)
 
-    def add_midsurface_thickness(self, thickness: Quantity) -> None:
+    def add_midsurface_thickness(self, thickness: Quantity) -> None:  # noqa: D102
         self._template.add_midsurface_thickness(thickness)
 
-    def add_midsurface_offset(self, offset: "MidSurfaceOffsetType") -> None:
+    def add_midsurface_offset(self, offset: "MidSurfaceOffsetType") -> None:  # noqa: D102
         self._template.add_midsurface_offset(offset)
 
-    def imprint_curves(self, faces: List[Face], sketch: Sketch) -> Tuple[List[Edge], List[Face]]:
+    def imprint_curves(
+        self, faces: List[Face], sketch: Sketch
+    ) -> Tuple[List[Edge], List[Face]]:  # noqa: D102
         # Verify that each of the faces provided are part of this body
         body_faces = self.faces
         for provided_face in faces:
@@ -913,7 +932,7 @@ class Body(IBody):
         sketch: Sketch,
         closest_face: bool,
         only_one_curve: Optional[bool] = False,
-    ) -> List[Face]:
+    ) -> List[Face]:  # noqa: D102
         curves = sketch_shapes_to_grpc_geometries(
             sketch._plane, sketch.edges, sketch.faces, only_one_curve=only_one_curve
         )
@@ -935,13 +954,17 @@ class Body(IBody):
 
         return projected_faces
 
-    def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]) -> None:
+    def translate(
+        self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
+    ) -> None:  # noqa: D102
         return self._template.translate(direction, distance)
 
-    def copy(self, parent: "Component", name: str = None) -> "Body":
+    def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
         return self._template.copy(parent, name)
 
-    def tessellate(self, merge: Optional[bool] = False) -> Union["PolyData", "MultiBlock"]:
+    def tessellate(
+        self, merge: Optional[bool] = False
+    ) -> Union["PolyData", "MultiBlock"]:  # noqa: D102
         return self._template.tessellate(merge, self.parent.get_world_transform())
 
     def plot(
@@ -950,12 +973,12 @@ class Body(IBody):
         screenshot: Optional[str] = None,
         use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
-    ) -> None:
+    ) -> None:  # noqa: D102
         return self._template.plot(merge, screenshot, use_trame, **plotting_options)
 
     @protect_grpc
     @reset_tessellation_cache
-    def intersect(self, other: "Body") -> None:
+    def intersect(self, other: "Body") -> None:  # noqa: D102
         response = self._template._bodies_stub.Boolean(
             BooleanRequest(body1=self.id, body2=other.id, method="intersect")
         ).empty_result
@@ -967,7 +990,7 @@ class Body(IBody):
 
     @protect_grpc
     @reset_tessellation_cache
-    def subtract(self, other: "Body") -> None:
+    def subtract(self, other: "Body") -> None:  # noqa: D102
         response = self._template._bodies_stub.Boolean(
             BooleanRequest(body1=self.id, body2=other.id, method="subtract")
         ).empty_result
@@ -979,7 +1002,7 @@ class Body(IBody):
 
     @protect_grpc
     @reset_tessellation_cache
-    def unite(self, other: "Body") -> None:
+    def unite(self, other: "Body") -> None:  # noqa: D102
         self._template._bodies_stub.Boolean(
             BooleanRequest(body1=self.id, body2=other.id, method="unite")
         )

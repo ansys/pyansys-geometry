@@ -37,6 +37,7 @@ class Line:
         origin: Union[np.ndarray, RealSequence, Point3D],
         direction: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D],
     ):
+        """Initialize the ``Line`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
         self._direction = (
             UnitVector3D(direction) if not isinstance(direction, UnitVector3D) else direction
@@ -76,7 +77,7 @@ class Line:
 
     def transformed_copy(self, matrix: Matrix44) -> "Line":
         """
-        Creates a transformed copy of the line based on a transformation matrix.
+        Create a transformed copy of the line based on a transformation matrix.
 
         Parameters
         ----------
@@ -157,6 +158,8 @@ class Line:
 
     def get_parameterization(self) -> Parameterization:
         """
+        Return the parametrization of a ``Line`` instance.
+
         The parameter of a line specifies the distance from the `origin` in the
         direction of `direction`.
 
@@ -201,8 +204,9 @@ class LineEvaluation(CurveEvaluation):
     @cached_property
     def tangent(self) -> UnitVector3D:
         """
-        The tangent of the evaluation. This is always equal to the direction of the
-        line.
+        The tangent of the evaluation.
+
+        This is always equal to the direction of the line.
 
         Returns
         -------
@@ -214,8 +218,9 @@ class LineEvaluation(CurveEvaluation):
     @cached_property
     def first_derivative(self) -> Vector3D:
         """
-        The first derivative of the evaluation. This is always equal to the direction of
-        the line.
+        The first derivative of the evaluation.
+
+        This is always equal to the direction of the line.
 
         Returns
         -------
@@ -227,7 +232,9 @@ class LineEvaluation(CurveEvaluation):
     @cached_property
     def second_derivative(self) -> Vector3D:
         """
-        The second derivative of the evaluation. This is always equal to a zero vector.
+        The second derivative of the evaluation.
+
+        This is always equal to a zero vector.
 
         Returns
         -------
@@ -239,7 +246,9 @@ class LineEvaluation(CurveEvaluation):
     @cached_property
     def curvature(self) -> float:
         """
-        The curvature of the line. This will always be 0.
+        The curvature of the line.
+
+        This will always be 0.
 
         Returns
         -------

@@ -211,6 +211,8 @@ class Circle:
 
     def get_parameterization(self) -> Parameterization:
         """
+        Return the parametrization of a ``Circle`` instance.
+
         The parameter of a circle specifies the clockwise angle around the axis (right
         hand corkscrew law), with a zero parameter at `dir_x` and a period of 2*pi.
 
@@ -296,9 +298,11 @@ class CircleEvaluation(CurveEvaluation):
     @cached_property
     def first_derivative(self) -> Vector3D:
         """
-        The first derivative of the evaluation. The first derivative is in the direction
-        of the tangent and has a magnitude equal to the velocity (rate of change of
-        position) at that point.
+        The first derivative of the evaluation.
+
+        The first derivative is in the direction of the tangent and has a
+        magnitude equal to the velocity (rate of change of position) at that
+        point.
 
         Returns
         -------

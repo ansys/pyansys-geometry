@@ -22,8 +22,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @unique
 class SurfaceType(Enum):
-    """Provides an enum holding the possible values for surface types by the Geometry
-    service."""
+    """Enum holding the possible values for surface types by the Geometry service."""
 
     SURFACETYPE_UNKNOWN = 0
     SURFACETYPE_PLANE = 1
@@ -74,6 +73,7 @@ class FaceLoop:
         max_bbox: Point3D,
         edges: List[Edge],
     ):
+        """Initialize ``FaceLoop`` class."""
         self._type = type
         self._length = length
         self._min_bbox = min_bbox
@@ -126,7 +126,6 @@ class Face:
 
     def __init__(self, id: str, surface_type: SurfaceType, body: "Body", grpc_client: GrpcClient):
         """Initialize ``Face`` class."""
-
         self._id = id
         self._surface_type = surface_type
         self._body = body
@@ -141,7 +140,7 @@ class Face:
 
     @property
     def _grpc_id(self) -> EntityIdentifier:
-        """gRPC face identifier."""
+        """Entity identifier of this face on the server side."""
         return EntityIdentifier(id=self._id)
 
     @property

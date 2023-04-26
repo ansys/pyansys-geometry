@@ -36,7 +36,6 @@ class CoordinateSystem:
         self, name: str, frame: Frame, parent_component: "Component", grpc_client: GrpcClient
     ):
         """Initialize ``CoordinateSystem`` class."""
-
         self._parent_component = parent_component
         self._grpc_client = grpc_client
         self._coordinate_systems_stub = CoordinateSystemsStub(grpc_client.channel)
@@ -100,8 +99,7 @@ class CoordinateSystem:
 
     @property
     def is_alive(self) -> bool:
-        """Boolean indicating whether the CoordinateSystem is still alive on the server
-        side."""
+        """If the CoordinateSystem is still alive on the server side."""
         return self._is_alive
 
     def __repr__(self) -> str:

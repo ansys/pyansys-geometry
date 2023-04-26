@@ -46,7 +46,7 @@ class SketchEdge:
     def plane_change(self, plane: "Plane") -> None:
         """
         Redefine the plane containing the SketchEdge objects.
-        
+
         Notes
         -----
         Common method for SketchEdge objects to redefine the plane containing them. This

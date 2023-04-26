@@ -54,7 +54,6 @@ class Cylinder:
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
         """Initialize ``Cylinder`` class."""
-
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
         self._reference = (
             UnitVector3D(reference) if not isinstance(reference, UnitVector3D) else reference
@@ -141,7 +140,7 @@ class Cylinder:
 
     def transformed_copy(self, matrix: Matrix44) -> "Cylinder":
         """
-        Creates a transformed copy of the cylinder based on a transformation matrix.
+        Create a transformed copy of the cylinder based on a transformation matrix.
 
         Parameters
         ----------
@@ -165,7 +164,7 @@ class Cylinder:
 
     def mirrored_copy(self) -> "Cylinder":
         """
-        Creates a mirrored copy of the cylinder along the y-axis.
+        Create a mirrored copy of the cylinder along the y-axis.
 
         Returns
         -------
