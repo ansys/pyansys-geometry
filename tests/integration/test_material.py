@@ -1,4 +1,4 @@
-""" Test material assignment."""
+"""Test material assignment."""
 
 from pint import Quantity
 
@@ -7,7 +7,7 @@ from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPr
 from ansys.geometry.core.misc import UNITS
 
 
-def test_material_creation(modeler: Modeler):
+def test_material_creation(modeler: Modeler, skip_not_on_linux_service):
     """Test the creation of a material on a design."""
     design = modeler.create_design("my_design")
 

@@ -1,6 +1,4 @@
-"""
-PyGeometry is a Python wrapper for the Ansys Geometry service.
-"""
+"""PyGeometry is a Python wrapper for the Ansys Geometry service."""
 
 # Version
 # ------------------------------------------------------------------------------
@@ -11,6 +9,7 @@ except ModuleNotFoundError:  # pragma: no cover
     import importlib_metadata  # type: ignore
 
 __version__ = importlib_metadata.version(__name__.replace(".", "-"))
+"""PyGeometry version."""
 
 # Ease import statements
 # ------------------------------------------------------------------------------

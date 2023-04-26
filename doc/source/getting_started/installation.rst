@@ -8,9 +8,9 @@ or from the `PyGeometry`_ repository on GitHub.
 Package dependencies
 --------------------
 
-PyGeometry is supported on Python version 3.7 and later. As indicated in
+PyGeometry is supported on Python version 3.8 and later. As indicated in
 `Moving to require Python 3 <https://python3statement.org/>`_, previous
-versions of Python are no longer supported. 
+versions of Python are no longer supported.
 
 PyGeometry dependencies are automatically checked when packages are installed.
 These projects are required dependencies for PyGeometry:
@@ -44,7 +44,7 @@ Then, install PyGeometry with:
 
     ``https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/``
 
-    If access to this package registry is needed, email `pyansys.support@ansys.com <mailto:pyansys.support@ansys.com>`_
+    If access to this package registry is needed, email `pyansys.core@ansys.com <mailto:pyansys.core@ansys.com>`_
     to request access. The PyAnsys team can provide you a read-only token to be inserted in ``${PRIVATE_PYPI_ACCESS_TOKEN}``.
     Once you have obtained this token, run this command:
 
@@ -79,14 +79,14 @@ archive from the `Releases Page <https://github.com/pyansys/pygeometry/releases>
 corresponding machine architecture.
 
 Each wheelhouse archive contains all the Python wheels necessary to install PyGeometry from scratch on Windows,
-Linux, and MacOS from Python 3.7 to 3.10. You can install this on an isolated system with a fresh Python
+Linux, and MacOS from Python 3.8 to 3.11. You can install this on an isolated system with a fresh Python
 installation or on a virtual environment.
 
-For example, on Linux with Python 3.7, unzip the wheelhouse archive and install it with:
+For example, on Linux with Python 3.8, unzip the wheelhouse archive and install it with:
 
 .. code:: bash
 
-    unzip ansys-geometry-core-v0.3.dev0-wheelhouse-Linux-3.7.zip wheelhouse
+    unzip ansys-geometry-core-v0.3.dev0-wheelhouse-Linux-3.8.zip wheelhouse
     pip install ansys-geometry-core -f wheelhouse --no-index --upgrade --ignore-installed
 
 If you're on Windows with Python 3.9, unzip to a wheelhouse directory and install using the same command as preceding.

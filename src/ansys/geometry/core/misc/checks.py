@@ -32,7 +32,8 @@ def check_ndarray_is_float_int(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
     """
-    Check if a :class:`numpy.ndarray <numpy.ndarray>` instance has float or integer values.
+    Check if a :class:`numpy.ndarray <numpy.ndarray>` instance has float or integer
+    values.
 
     Parameters
     ----------
@@ -143,7 +144,8 @@ def check_ndarray_is_non_zero(
 
 def check_pint_unit_compatibility(input: Unit, expected: Unit) -> None:
     """
-    Check if the input for the :class:`pint.Unit` class is compatible with the expected one.
+    Check if the input for the :class:`pint.Unit` class is compatible with the expected
+    one.
 
     Parameters
     ----------

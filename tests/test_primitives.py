@@ -7,11 +7,12 @@ from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
     UNITVECTOR3D_Y,
     UNITVECTOR3D_Z,
+    Matrix44,
     Point3D,
     UnitVector3D,
     Vector3D,
 )
-from ansys.geometry.core.misc import UNITS, Accuracy, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Distance
 from ansys.geometry.core.primitives import (
     Circle,
     Cone,
@@ -68,6 +69,26 @@ def test_cylinder():
     with pytest.raises(ValueError):
         Cylinder(origin, 1, UnitVector3D([1, 0, 0]), UnitVector3D([1, 1, 1]))
 
+    origin = Point3D([42, 99, 13])
+    radius = 200
+    cylinder_2 = Cylinder(
+        origin,
+        radius,
+        UnitVector3D([12, 31, 99]),
+        UnitVector3D([0, 99, -31]),
+    )
+    rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    cylinder_transformation = cylinder_2.transformed_copy(matrix=rotation_matrix)
+    assert np.allclose(cylinder_transformation._origin, Point3D([-99, 42, 13]))
+    assert np.allclose(cylinder_transformation._reference, UnitVector3D([-31, 12, 99]))
+    assert np.allclose(cylinder_transformation._axis, UnitVector3D([-99, 0, -31]))
+    cylinder_mirror = cylinder_2.mirrored_copy()
+    assert np.allclose(cylinder_mirror._origin, Point3D([42, 99, 13]))
+    assert np.allclose(
+        cylinder_mirror._reference, UnitVector3D([-0.11490753, -0.29684446, -0.94798714])
+    )
+    assert np.allclose(cylinder_mirror._axis, UnitVector3D([0, -0.9543083, 0.29882381]))
+
 
 def test_cylinder_units():
     """``Cylinder`` units validation."""
@@ -103,36 +124,41 @@ def test_cylinder_evaluation():
 
     eval = cylinder.evaluate(ParamUV(0, 0))
 
+    # with pytest.raises(AttributeError, match="can't set attribute"):
+    #    eval.cylinder = Cylinder()
     # Test base evaluation at (0, 0)
     assert eval.cylinder == cylinder
-    assert np.allclose(eval.position(), Point3D([1, 0, 0]))
-    assert isinstance(eval.position(), Point3D)
-    assert np.allclose(eval.normal(), UnitVector3D([1, 0, 0]))
-    assert isinstance(eval.normal(), UnitVector3D)
-    assert np.allclose(eval.u_derivative(), Vector3D([0, 1, 0]))
-    assert isinstance(eval.u_derivative(), Vector3D)
-    assert np.allclose(eval.v_derivative(), Vector3D([0, 0, 1]))
-    assert isinstance(eval.v_derivative(), Vector3D)
-    assert np.allclose(eval.uu_derivative(), Vector3D([-1, 0, 0]))
-    assert isinstance(eval.uu_derivative(), Vector3D)
-    assert np.allclose(eval.uv_derivative(), Vector3D([0, 0, 0]))
-    assert isinstance(eval.uv_derivative(), Vector3D)
-    assert np.allclose(eval.vv_derivative(), Vector3D([0, 0, 0]))
-    assert isinstance(eval.vv_derivative(), Vector3D)
-    assert eval.min_curvature() == 0
-    assert np.allclose(eval.min_curvature_direction(), UnitVector3D([0, 0, 1]))
-    assert isinstance(eval.min_curvature_direction(), UnitVector3D)
-    assert eval.max_curvature() == 1.0
-    assert np.allclose(eval.max_curvature_direction(), UnitVector3D([0, 1, 0]))
-    assert isinstance(eval.max_curvature_direction(), UnitVector3D)
+    with pytest.raises(AttributeError):
+        eval.cylinder = Cylinder(Point3D([0, 0, 0]), 3)
+        eval.parameter = ParamUV(np.pi / 2, np.pi / 2)
+    assert np.allclose(eval.position, Point3D([1, 0, 0]))
+    assert isinstance(eval.position, Point3D)
+    assert np.allclose(eval.normal, UnitVector3D([1, 0, 0]))
+    assert isinstance(eval.normal, UnitVector3D)
+    assert np.allclose(eval.u_derivative, Vector3D([0, 1, 0]))
+    assert isinstance(eval.u_derivative, Vector3D)
+    assert np.allclose(eval.v_derivative, Vector3D([0, 0, 1]))
+    assert isinstance(eval.v_derivative, Vector3D)
+    assert np.allclose(eval.uu_derivative, Vector3D([-1, 0, 0]))
+    assert isinstance(eval.uu_derivative, Vector3D)
+    assert np.allclose(eval.uv_derivative, Vector3D([0, 0, 0]))
+    assert isinstance(eval.uv_derivative, Vector3D)
+    assert np.allclose(eval.vv_derivative, Vector3D([0, 0, 0]))
+    assert isinstance(eval.vv_derivative, Vector3D)
+    assert eval.min_curvature == 0
+    assert np.allclose(eval.min_curvature_direction, UnitVector3D([0, 0, 1]))
+    assert isinstance(eval.min_curvature_direction, UnitVector3D)
+    assert eval.max_curvature == 1.0
+    assert np.allclose(eval.max_curvature_direction, UnitVector3D([0, 1, 0]))
+    assert isinstance(eval.max_curvature_direction, UnitVector3D)
 
     # # Test evaluation by projecting a point onto the cylinder
     eval2 = cylinder.project_point(Point3D([3, 3, 3]))
     assert eval2.cylinder == cylinder
-    assert np.allclose(eval2.position(), Point3D([0.70710678, 0.70710678, 3]))
-    assert np.allclose(eval2.normal(), UnitVector3D([1, 1, 0]))
-    assert np.allclose(eval2.u_derivative().normalize(), UnitVector3D([-1, 1, 0]))
-    assert np.allclose(eval2.v_derivative(), Vector3D([0, 0, 1]))
+    assert np.allclose(eval2.position, Point3D([0.70710678, 0.70710678, 3]))
+    assert np.allclose(eval2.normal, UnitVector3D([1, 1, 0]))
+    assert np.allclose(eval2.u_derivative.normalize(), UnitVector3D([-1, 1, 0]))
+    assert np.allclose(eval2.v_derivative, Vector3D([0, 0, 1]))
 
 
 def test_sphere():
@@ -160,20 +186,28 @@ def test_sphere():
     assert Accuracy.length_is_equal(s_1.surface_area.m, 1.25663706e5)
     assert Accuracy.length_is_equal(s_1.volume.m, 4.1887902e6)
 
-    s_1.origin = new_origin = Point3D([42, 88, 99])
-
-    assert s_1.origin.x == new_origin.x
-    assert s_1.origin.y == new_origin.y
-    assert s_1.origin.z == new_origin.z
-
-    s_2.origin = new_origin
-    assert s_1 == s_2
-
     with pytest.raises(BeartypeCallHintParamViolation):
         Sphere(origin, "A")
 
-    with pytest.raises(BeartypeCallHintParamViolation):
-        s_1.origin = "A"
+    origin = Point3D([42, 99, 13])
+    radius = 200
+    sphere_2 = Sphere(
+        origin,
+        radius,
+        UnitVector3D([12, 31, 99]),
+        UnitVector3D([0, 99, -31]),
+    )
+    rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    sphere_transformation = sphere_2.transformed_copy(matrix=rotation_matrix)
+    assert np.allclose(sphere_transformation._origin, Point3D([-99, 42, 13]))
+    assert np.allclose(sphere_transformation._reference, UnitVector3D([-31, 12, 99]))
+    assert np.allclose(sphere_transformation._axis, UnitVector3D([-99, 0, -31]))
+    sphere_mirror = sphere_2.mirrored_copy()
+    assert np.allclose(sphere_mirror._origin, Point3D([42, 99, 13]))
+    assert np.allclose(
+        sphere_mirror._reference, UnitVector3D([-0.11490753, -0.29684446, -0.94798714])
+    )
+    assert np.allclose(sphere_mirror._axis, UnitVector3D([0, -0.9543083, 0.29882381]))
 
 
 def test_sphere_units():
@@ -210,30 +244,32 @@ def test_sphere_evaluation():
 
     # Test base evaluation at (0, 0)
     assert eval.sphere == sphere
-    assert np.allclose(eval.position(), Point3D([1, 0, 0]))
-    assert np.allclose(eval.normal(), UnitVector3D([1, 0, 0]))
-    assert np.allclose(eval.u_derivative(), Vector3D([0, 1, 0]))
-    assert np.allclose(eval.v_derivative(), Vector3D([0, 0, 1]))
-    assert np.allclose(eval.uu_derivative(), Vector3D([-1, 0, 0]))
-    assert np.allclose(eval.uv_derivative(), Vector3D([0, 0, 0]))
-    assert np.allclose(eval.vv_derivative(), Vector3D([-1, 0, 0]))
-    assert eval.min_curvature() == 1.0
-    assert np.allclose(eval.min_curvature_direction(), Vector3D([0, -1, 0]))
-    assert eval.max_curvature() == 1.0
-    assert np.allclose(eval.max_curvature_direction(), Vector3D([0, 0, 1]))
+    with pytest.raises(AttributeError):
+        eval.sphere = Sphere(Point3D([0, 0, 0]), Distance(1))
+        eval.parameter = ParamUV(np.pi / 2, np.pi / 2)
+    assert np.allclose(eval.position, Point3D([1, 0, 0]))
+    assert np.allclose(eval.normal, UnitVector3D([1, 0, 0]))
+    assert np.allclose(eval.u_derivative, Vector3D([0, 1, 0]))
+    assert np.allclose(eval.v_derivative, Vector3D([0, 0, 1]))
+    assert np.allclose(eval.uu_derivative, Vector3D([-1, 0, 0]))
+    assert np.allclose(eval.uv_derivative, Vector3D([0, 0, 0]))
+    assert np.allclose(eval.vv_derivative, Vector3D([-1, 0, 0]))
+    assert eval.min_curvature == 1.0
+    assert np.allclose(eval.min_curvature_direction, Vector3D([0, -1, 0]))
+    assert eval.max_curvature == 1.0
+    assert np.allclose(eval.max_curvature_direction, Vector3D([0, 0, 1]))
 
     # Test evaluation by projecting a point onto the sphere
     eval2 = sphere.project_point(Point3D([1, 1, 1]))
     assert eval2.sphere == sphere
-    assert np.allclose(eval2.position(), Point3D([0.57735027, 0.57735027, 0.57735027]))
-    assert np.allclose(eval2.normal(), UnitVector3D([1, 1, 1]))
-    assert np.allclose(eval2.u_derivative().normalize(), UnitVector3D([-1, 1, 0]))
-    assert np.allclose(eval2.v_derivative().normalize(), UnitVector3D([-1, -1, 2]))
+    assert np.allclose(eval2.position, Point3D([0.57735027, 0.57735027, 0.57735027]))
+    assert np.allclose(eval2.normal, UnitVector3D([1, 1, 1]))
+    assert np.allclose(eval2.u_derivative.normalize(), UnitVector3D([-1, 1, 0]))
+    assert np.allclose(eval2.v_derivative.normalize(), UnitVector3D([-1, -1, 2]))
 
 
 def test_cone():
     """``Cone`` construction and equivalency."""
-
     origin = Point3D([0, 0, 0])
     radius = 1
     half_angle = np.pi / 4
@@ -289,6 +325,28 @@ def test_cone():
 
     with pytest.raises(ValueError):
         Cone(origin, 1, 1, UnitVector3D([1, 0, 0]), UnitVector3D([1, 1, 1]))
+
+    origin = Point3D([42, 99, 13])
+    radius = 200
+    half_angle = np.pi / 4
+    cone_2 = Cone(
+        origin,
+        radius,
+        half_angle,
+        UnitVector3D([12, 31, 99]),
+        UnitVector3D([0, 99, -31]),
+    )
+    rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    cone_transformation = cone_2.transformed_copy(matrix=rotation_matrix)
+    assert np.allclose(cone_transformation._origin, Point3D([-99, 42, 13]))
+    assert np.allclose(cone_transformation._reference, UnitVector3D([-31, 12, 99]))
+    assert np.allclose(cone_transformation._axis, UnitVector3D([-99, 0, -31]))
+    cone_mirror = cone_2.mirrored_copy()
+    assert np.allclose(cone_mirror._origin, Point3D([42, 99, 13]))
+    assert np.allclose(
+        cone_mirror._reference, UnitVector3D([-0.11490753, -0.29684446, -0.94798714])
+    )
+    assert np.allclose(cone_mirror._axis, UnitVector3D([0, -0.9543083, 0.29882381]))
 
 
 def test_cone_units():
@@ -346,34 +404,37 @@ def test_cone_evaluation():
 
     # Test base evaluation at (0, 0)
     assert eval.cone == cone
-    assert np.allclose(eval.position(), Point3D([1, 0, 0]))
-    assert isinstance(eval.position(), Point3D)
-    assert np.allclose(eval.normal(), UnitVector3D([1, 0, -1]))
-    assert isinstance(eval.normal(), UnitVector3D)
-    assert np.allclose(eval.u_derivative(), Vector3D([0, 1, 0]))
-    assert isinstance(eval.u_derivative(), Vector3D)
-    assert np.allclose(eval.v_derivative(), Vector3D([1, 0, 1]))
-    assert isinstance(eval.v_derivative(), Vector3D)
-    assert np.allclose(eval.uu_derivative(), Vector3D([-1, 0, 0]))
-    assert isinstance(eval.uu_derivative(), Vector3D)
-    assert np.allclose(eval.uv_derivative(), Vector3D([0, 1, 0]))
-    assert isinstance(eval.uv_derivative(), Vector3D)
-    assert np.allclose(eval.vv_derivative(), Vector3D([0, 0, 0]))
-    assert isinstance(eval.vv_derivative(), Vector3D)
-    assert eval.min_curvature() == 0
-    assert np.allclose(eval.min_curvature_direction(), UnitVector3D([1, 0, 1]))
-    assert isinstance(eval.min_curvature_direction(), UnitVector3D)
-    assert eval.max_curvature() == 1.0
-    assert np.allclose(eval.max_curvature_direction(), UnitVector3D([0, 1, 0]))
-    assert isinstance(eval.max_curvature_direction(), UnitVector3D)
+    with pytest.raises(AttributeError):
+        eval.cone = Cone(Point3D([0, 0, 0]), 1, np.pi / 4)
+        eval.parameter = ParamUV(np.pi / 2, np.pi / 2)
+    assert np.allclose(eval.position, Point3D([1, 0, 0]))
+    assert isinstance(eval.position, Point3D)
+    assert np.allclose(eval.normal, UnitVector3D([1, 0, -1]))
+    assert isinstance(eval.normal, UnitVector3D)
+    assert np.allclose(eval.u_derivative, Vector3D([0, 1, 0]))
+    assert isinstance(eval.u_derivative, Vector3D)
+    assert np.allclose(eval.v_derivative, Vector3D([1, 0, 1]))
+    assert isinstance(eval.v_derivative, Vector3D)
+    assert np.allclose(eval.uu_derivative, Vector3D([-1, 0, 0]))
+    assert isinstance(eval.uu_derivative, Vector3D)
+    assert np.allclose(eval.uv_derivative, Vector3D([0, 1, 0]))
+    assert isinstance(eval.uv_derivative, Vector3D)
+    assert np.allclose(eval.vv_derivative, Vector3D([0, 0, 0]))
+    assert isinstance(eval.vv_derivative, Vector3D)
+    assert eval.min_curvature == 0
+    assert np.allclose(eval.min_curvature_direction, UnitVector3D([1, 0, 1]))
+    assert isinstance(eval.min_curvature_direction, UnitVector3D)
+    assert eval.max_curvature == 1.0
+    assert np.allclose(eval.max_curvature_direction, UnitVector3D([0, 1, 0]))
+    assert isinstance(eval.max_curvature_direction, UnitVector3D)
 
     # # Test evaluation by projecting a point onto the cone
     eval2 = cone.project_point(Point3D([1, 1, 1]))
     assert eval2.cone == cone
-    assert np.allclose(eval2.position(), Point3D([1.20710678, 1.20710678, 0.70710678]))
-    assert np.allclose(eval2.normal(), UnitVector3D([0.5, 0.5, -0.70710678]))
-    assert np.allclose(eval2.u_derivative().normalize(), UnitVector3D([-1, 1, 0]))
-    assert np.allclose(eval2.v_derivative(), Vector3D([0.70710678, 0.70710678, 1]))
+    assert np.allclose(eval2.position, Point3D([1.20710678, 1.20710678, 0.70710678]))
+    assert np.allclose(eval2.normal, UnitVector3D([0.5, 0.5, -0.70710678]))
+    assert np.allclose(eval2.u_derivative.normalize(), UnitVector3D([-1, 1, 0]))
+    assert np.allclose(eval2.v_derivative, Vector3D([0.70710678, 0.70710678, 1]))
 
 
 def test_torus():
@@ -384,62 +445,93 @@ def test_torus():
     major_radius = 200
     minor_radius = 100
     t_1 = Torus(
-        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), major_radius, minor_radius
+        origin,
+        major_radius,
+        minor_radius,
+        UnitVector3D([12, 31, 99]),
+        UnitVector3D([0, 99, -31]),
     )
     t_1_duplicate = Torus(
-        origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), major_radius, minor_radius
+        origin,
+        major_radius,
+        minor_radius,
+        UnitVector3D([12, 31, 99]),
+        UnitVector3D([0, 99, -31]),
     )
-    t_2 = Torus(Point3D([5, 8, 9]), UnitVector3D([55, 16, 73]), UnitVector3D([23, 67, 45]), 88, 76)
-    t_with_array_definitions = Torus([5, 8, 9], [55, 16, 73], [23, 67, 45], 88, 76)
+    t_2 = Torus(Point3D([5, 8, 9]), 88, 76, UnitVector3D([55, 16, 73]), UnitVector3D([73, 0, -55]))
+    t_with_array_definitions = Torus([5, 8, 9], 88, 76, [55, 16, 73], [73, 0, -55])
+
+    rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    t_3 = t_1.transformed_copy(rotation_matrix)
 
     # Check that the equals operator works
     assert t_1 == t_1_duplicate
     assert t_1 != t_2
     assert t_2 == t_with_array_definitions
 
-    # Check cylinder definition
+    # Check torus definition
     assert t_1.origin.x == origin.x
     assert t_1.origin.y == origin.y
     assert t_1.origin.z == origin.z
-    assert t_1.major_radius == major_radius
-    assert t_1.minor_radius == minor_radius
-
-    t_1.major_radius = new_major_radius = 2000
-    t_1.minor_radius = new_minor_radius = 1000
-
-    assert t_1.origin.x == origin.x
-    assert t_1.origin.y == origin.y
-    assert t_1.origin.z == origin.z
-    assert t_1.major_radius == new_major_radius
-    assert t_1.minor_radius == new_minor_radius
-
-    t_1.origin = new_origin = Point3D([42, 88, 99])
-    assert t_1.origin.x == new_origin.x
-    assert t_1.origin.y == new_origin.y
-    assert t_1.origin.z == new_origin.z
-    assert t_1.major_radius == new_major_radius
-    assert t_1.minor_radius == new_minor_radius
+    assert t_1.major_radius == major_radius * DEFAULT_UNITS.LENGTH
+    assert t_1.minor_radius == minor_radius * DEFAULT_UNITS.LENGTH
 
     with pytest.raises(BeartypeCallHintParamViolation):
-        Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), "A", 200)
+        Torus(
+            origin,
+            "A",
+            200,
+            UnitVector3D([12, 31, 99]),
+            UnitVector3D([0, 99, -31]),
+        )
 
     with pytest.raises(BeartypeCallHintParamViolation):
-        Torus(origin, UnitVector3D([12, 31, 99]), UnitVector3D([25, 39, 82]), 100, "A")
+        Torus(
+            origin,
+            100,
+            "A",
+            UnitVector3D([12, 31, 99]),
+            UnitVector3D([0, 99, -31]),
+        )
 
     with pytest.raises(BeartypeCallHintParamViolation):
-        t_1.major_radius = "A"
+        Torus(
+            origin,
+            100,
+            200,
+            "A",
+            UnitVector3D([0, 99, -31]),
+        )
 
     with pytest.raises(BeartypeCallHintParamViolation):
-        t_1.minor_radius = "A"
-
-    with pytest.raises(BeartypeCallHintParamViolation):
-        t_1.origin = "A"
-
-    with pytest.raises(BeartypeCallHintParamViolation):
-        Torus(origin, "A", UnitVector3D([25, 39, 82]), 100, 200)
-
-    with pytest.raises(BeartypeCallHintParamViolation):
-        Torus(origin, UnitVector3D([12, 31, 99]), "A", 100, 200)
+        Torus(
+            origin,
+            100,
+            200,
+            UnitVector3D([12, 31, 99]),
+            "A",
+        )
+    origin = Point3D([42, 99, 13])
+    major_radius = 200
+    minor_radius = 100
+    t_2 = Torus(
+        origin,
+        major_radius,
+        minor_radius,
+        UnitVector3D([12, 31, 99]),
+        UnitVector3D([0, 99, -31]),
+    )
+    rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    torus_transformation = t_2.transformed_copy(matrix=rotation_matrix)
+    assert np.allclose(torus_transformation._origin, Point3D([-99, 42, 13]))
+    assert np.allclose(torus_transformation._reference, UnitVector3D([-31, 12, 99]))
+    assert np.allclose(torus_transformation._axis, UnitVector3D([-99, 0, -31]))
+    torus_mirror = t_2.mirrored_copy()
+    assert np.allclose(torus_mirror._origin, Point3D([42, 99, 13]))
+    assert np.allclose(
+        torus_mirror._reference, UnitVector3D([-0.11490753, -0.29684446, -0.94798714])
+    )
+    assert np.allclose(torus_mirror._axis, UnitVector3D([0, -0.9543083, 0.29882381]))
 
 
 def test_torus_units():
@@ -457,45 +549,121 @@ def test_torus_units():
     ):
         Torus(
             origin,
+            Quantity(major_radius, UNITS.celsius),
+            Quantity(minor_radius, UNITS.celsius),
             UnitVector3D([12, 31, 99]),
-            UnitVector3D([25, 39, 82]),
-            major_radius,
-            minor_radius,
-            UNITS.celsius,
+            UnitVector3D([0, 99, -31]),
         )
 
     t_1 = Torus(
         origin,
+        Quantity(major_radius, unit),
+        Quantity(minor_radius, unit),
         UnitVector3D([12, 31, 99]),
-        UnitVector3D([25, 39, 82]),
-        major_radius,
-        minor_radius,
-        unit,
+        UnitVector3D([0, 99, -31]),
     )
 
-    # Verify rejection of invalid base unit type
-    with pytest.raises(
-        TypeError,
-        match=r"The pint.Unit provided as an input should be a \[length\] quantity.",
-    ):
-        t_1.unit = UNITS.celsius
-
     # Check that the units are correctly in place
-    assert t_1.unit == unit
+    assert t_1.major_radius.u == unit
+    assert t_1.minor_radius.u == unit
 
-    # Request for radius/height and ensure they are in mm
-    assert t_1.major_radius == major_radius
-    assert t_1.minor_radius == minor_radius
+    # Request for radii and ensure they are in mm
+    assert t_1.major_radius.m == major_radius
+    assert t_1.minor_radius.m == minor_radius
 
-    # Check that the actual values are in base units (i.e. DEFAULT_UNITS.LENGTH)
-    assert t_1._major_radius == (t_1.major_radius * t_1.unit).to_base_units().magnitude
-    assert t_1._minor_radius == (t_1.minor_radius * t_1.unit).to_base_units().magnitude
 
-    # Set unit to cm now... and check if the values changed
-    t_1.unit = new_unit = UNITS.cm
-    assert t_1.major_radius == UNITS.convert(major_radius, unit, new_unit)
-    assert t_1.minor_radius == UNITS.convert(minor_radius, unit, new_unit)
-    assert t_1.unit == new_unit
+def test_torus_evaluation():
+    origin = Point3D([0, 0, 0])
+    major_radius = 2
+    unit = UNITS.mm
+    minor_radius = 1
+    t1 = Torus(
+        origin,
+        Quantity(major_radius, unit),
+        Quantity(minor_radius, unit),
+        UnitVector3D([1, 0, 0]),
+        UnitVector3D([0, 0, 1]),
+    )
+    assert Accuracy.length_is_equal(t1.surface_area.m, 78.9568352087)
+    assert Accuracy.length_is_equal(t1.volume.m, 39.4784176044)
+    eval = t1.evaluate(ParamUV(np.pi / 2, 0))
+    assert eval.torus == t1
+    with pytest.raises(AttributeError):
+        eval.torus = Torus(
+            Point3D([0, 0, 0]), 3, 1, UnitVector3D([1, 0, 0]), UnitVector3D([0, 0, 1])
+        )
+        eval.parameter = ParamUV(np.pi / 2, np.pi / 2)
+    assert np.allclose(eval.position, Point3D([0, 3, 0]))
+    assert isinstance(eval.position, Point3D)
+    assert np.allclose(eval.normal, UnitVector3D([0, 1, 0]))
+    assert isinstance(eval.normal, UnitVector3D)
+    assert np.allclose(eval.u_derivative, Vector3D([-3, 0, 0]))
+    assert isinstance(eval.u_derivative, Vector3D)
+    assert np.allclose(eval.v_derivative, Vector3D([0, 0, 1]))
+    assert isinstance(eval.v_derivative, Vector3D)
+    assert np.allclose(eval.uu_derivative, Vector3D([0, -3, 0]))
+    assert isinstance(eval.uu_derivative, Vector3D)
+    assert np.allclose(eval.uv_derivative, Vector3D([0, 0, 0]))
+    assert isinstance(eval.uv_derivative, Vector3D)
+    assert np.allclose(eval.vv_derivative, Vector3D([0, -1, 0]))
+    assert isinstance(eval.vv_derivative, Vector3D)
+    assert eval.min_curvature == 0.3333333333333333
+    assert np.allclose(eval.min_curvature_direction, UnitVector3D([-1, 0, 0]))
+    assert isinstance(eval.min_curvature_direction, UnitVector3D)
+    assert eval.max_curvature == 1.0
+    assert np.allclose(eval.max_curvature_direction, UnitVector3D([0, 0, 1]))
+    assert isinstance(eval.max_curvature_direction, UnitVector3D)
+
+    # # Test evaluation by projecting a point onto the Torus
+    eval2 = t1.project_point(Point3D([1, 1, 0]))
+    assert eval2.torus == t1
+    assert np.allclose(eval2.position, Point3D([0.707106781186548, 0.707106781186547, 0]))
+    assert np.allclose(eval2.normal, UnitVector3D([-0.707106781186548, -0.707106781186547, 0]))
+    assert np.allclose(eval2.u_derivative, UnitVector3D([-1, 1, 0]))
+    assert np.allclose(eval2.v_derivative, Vector3D([0, 0, -1]))
+
+    x = Vector3D([95, -35, 5])
+    z = Vector3D([1, 2, -5])
+    t2 = Torus(Point3D([-18, 7, -9]), 2, 1, x, z)
+    eval3 = t2.evaluate(ParamUV(np.pi, 0))
+    assert np.allclose(
+        eval3.position, Point3D([-20.8116026549018, 8.03585360970068, -9.1479790871001])
+    )
+    assert isinstance(eval3.position, Point3D)
+    assert np.allclose(
+        eval3.normal, UnitVector3D([-0.937200884967281, 0.345284536566893, -0.0493263623666991])
+    )
+    assert isinstance(eval3.normal, UnitVector3D)
+    assert np.allclose(
+        eval3.u_derivative, Vector3D([0.891566324481193, 2.59364748939984, 1.21577226065617])
+    )
+    assert isinstance(eval3.u_derivative, Vector3D)
+    assert np.allclose(
+        eval3.v_derivative, Vector3D([0.182574185835055, 0.365148371670111, -0.912870929175277])
+    )
+    assert isinstance(eval3.v_derivative, Vector3D)
+    assert np.allclose(
+        eval3.uu_derivative, Vector3D([2.81160265490184, -1.03585360970068, 0.147979087100097])
+    )
+    assert isinstance(eval3.uu_derivative, Vector3D)
+    assert np.allclose(eval3.uv_derivative, Vector3D([0, 0, 0]))
+    assert isinstance(eval3.uv_derivative, Vector3D)
+    assert np.allclose(
+        eval3.vv_derivative, Vector3D([0.937200884967281, -0.345284536566893, 0.0493263623666991])
+    )
+    assert isinstance(eval3.vv_derivative, Vector3D)
+    assert np.allclose(eval3.min_curvature, 0.3333333333333333)
+    assert np.allclose(
+        eval3.min_curvature_direction,
+        UnitVector3D([0.297188774827064, 0.864549163133279, 0.405257420218724]),
+    )
+    assert isinstance(eval3.min_curvature_direction, UnitVector3D)
+    assert eval3.max_curvature == 1.0
+    assert np.allclose(
+        eval3.max_curvature_direction,
+        UnitVector3D([0.182574185835055, 0.365148371670111, -0.912870929175277]),
+    )
+    assert isinstance(eval3.max_curvature_direction, UnitVector3D)
 
 
 def test_circle():
@@ -530,6 +698,26 @@ def test_circle():
             origin, radius, reference=UNITVECTOR3D_X, axis=UnitVector3D([1, 1, 1])
         )
 
+    origin = Point3D([42, 99, 13])
+    radius = 200
+    circle_2 = Circle(
+        origin,
+        radius,
+        UnitVector3D([12, 31, 99]),
+        UnitVector3D([0, 99, -31]),
+    )
+    rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    circle_transformation = circle_2.transformed_copy(matrix=rotation_matrix)
+    assert np.allclose(circle_transformation._origin, Point3D([-99, 42, 13]))
+    assert np.allclose(circle_transformation._reference, UnitVector3D([-31, 12, 99]))
+    assert np.allclose(circle_transformation._axis, UnitVector3D([-99, 0, -31]))
+    circle_mirror = circle_2.mirrored_copy()
+    assert np.allclose(circle_mirror._origin, Point3D([42, 99, 13]))
+    assert np.allclose(
+        circle_mirror._reference, UnitVector3D([-0.11490753, -0.29684446, -0.94798714])
+    )
+    assert np.allclose(circle_mirror._axis, UnitVector3D([0, -0.9543083, 0.29882381]))
+
 
 def test_circle_evaluation():
     """``CircleEvaluation`` construction and equivalency."""
@@ -539,23 +727,26 @@ def test_circle_evaluation():
     # Test evaluation at 0
     circle = Circle(origin, radius)
     eval = circle.evaluate(0)
-
     assert eval.circle == circle
-    assert eval.position() == Point3D([1, 0, 0])
-    assert eval.tangent() == UNITVECTOR3D_Y
-    assert eval.first_derivative() == UNITVECTOR3D_Y
-    assert eval.second_derivative() == UnitVector3D([-1, 0, 0])
-    assert eval.curvature() == 1
+    with pytest.raises(AttributeError):
+        eval.circle = Circle(Point3D([0, 0, 0]), Distance(1))
+        eval.parameter = ParamUV(np.pi / 2)
+    assert eval.position == Point3D([1, 0, 0])
+    assert eval.tangent == UNITVECTOR3D_Y
+    assert eval.normal == UNITVECTOR3D_X
+    assert eval.first_derivative == UNITVECTOR3D_Y
+    assert eval.second_derivative == UnitVector3D([-1, 0, 0])
+    assert eval.curvature == 1
 
     # Test evaluation at (.785) by projecting a point
     eval2 = circle.project_point(Point3D([1, 1, 0]))
 
-    # TODO: enforce Accuracy in Point3D __eq__ ? want to be able to say:
-    assert eval2.position() == Point3D([np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
-    assert eval2.tangent() == UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
-    assert eval2.first_derivative() == UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0])
-    assert eval2.second_derivative() == UnitVector3D([-np.sqrt(2) / 2, -np.sqrt(2) / 2, 0])
-    assert eval2.curvature() == 1
+    assert np.allclose(eval2.position, Point3D([np.sqrt(2) / 2, np.sqrt(2) / 2, 0]))
+    assert np.allclose(eval2.tangent, UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0]))
+    assert np.allclose(eval2.normal, UnitVector3D([1, 1, 0]))
+    assert np.allclose(eval2.first_derivative, UnitVector3D([-np.sqrt(2) / 2, np.sqrt(2) / 2, 0]))
+    assert np.allclose(eval2.second_derivative, UnitVector3D([-np.sqrt(2) / 2, -np.sqrt(2) / 2, 0]))
+    assert eval2.curvature == 1
 
 
 def test_line():
@@ -582,6 +773,16 @@ def test_line():
     assert line.is_coincident_line(coincident_line)
     assert x_line.is_opposite_line(opposite_x_line)
 
+    origin = Point3D([42, 99, 13])
+    line_2 = Line(
+        origin,
+        UnitVector3D([0, 99, -31]),
+    )
+    rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    line_transformation = line_2.transformed_copy(matrix=rotation_matrix)
+    assert np.allclose(line_transformation._origin, Point3D([-99, 42, 13]))
+    assert np.allclose(line_transformation._direction, UnitVector3D([-99, 0, -31]))
+
 
 def test_line_evaluation():
     """``LineEvaluation`` construction and equivalency."""
@@ -593,18 +794,22 @@ def test_line_evaluation():
     eval = line.evaluate(0)
 
     assert eval.line == line
-    assert eval.position() == origin
-    assert eval.tangent() == UnitVector3D([0.5, 0.5, 0])
-    assert eval.first_derivative() == UnitVector3D([0.5, 0.5, 0])
-    assert eval.second_derivative() == Vector3D([0, 0, 0])
-    assert eval.curvature() == 0
+    with pytest.raises(AttributeError):
+        eval.line = Line(Point3D([0, 0, 0]), UnitVector3D([0.5, 0.5, 0.5]))
+        eval.parameter = 0
+    assert eval.position == origin
+    assert eval.tangent == UnitVector3D([0.5, 0.5, 0])
+    assert eval.first_derivative == UnitVector3D([0.5, 0.5, 0])
+    assert eval.second_derivative == Vector3D([0, 0, 0])
+    assert eval.curvature == 0
 
     # Test evaluation at (.707) by projecting a point
     eval2 = line.project_point(Point3D([1, 0, 0]))
 
     # TODO: enforce Accuracy in Point3D __eq__ ? want to be able to say:
     # assert eval2.position() == Point3D([.5,.5,0])
-    diff = Vector3D.from_points(eval2.position(), Point3D([0.5, 0.5, 0]))
+
+    diff = Vector3D.from_points(eval2.position, Point3D([0.5, 0.5, 0]))
     assert Accuracy.length_is_zero(diff.x)
     assert Accuracy.length_is_zero(diff.y)
     assert Accuracy.length_is_zero(diff.z)
@@ -652,6 +857,28 @@ def test_ellipse():
             axis=UnitVector3D([1, 1, 1]),
         )
 
+    origin = Point3D([42, 99, 13])
+    major_radius = 200
+    minor_radius = 100
+    ellipse_2 = Ellipse(
+        origin,
+        major_radius,
+        minor_radius,
+        UnitVector3D([12, 31, 99]),
+        UnitVector3D([0, 99, -31]),
+    )
+    rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    ellipse_transformation = ellipse_2.transformed_copy(matrix=rotation_matrix)
+    assert np.allclose(ellipse_transformation._origin, Point3D([-99, 42, 13]))
+    assert np.allclose(ellipse_transformation._reference, UnitVector3D([-31, 12, 99]))
+    assert np.allclose(ellipse_transformation._axis, UnitVector3D([-99, 0, -31]))
+    ellipse_mirror = ellipse_2.mirrored_copy()
+    assert np.allclose(ellipse_mirror._origin, Point3D([42, 99, 13]))
+    assert np.allclose(
+        ellipse_mirror._reference, UnitVector3D([-0.11490753, -0.29684446, -0.94798714])
+    )
+    assert np.allclose(ellipse_mirror._axis, UnitVector3D([0, -0.9543083, 0.29882381]))
+
 
 def test_ellipse_evaluation():
     """``EllipseEvaluation`` construction and equivalency."""
@@ -664,39 +891,29 @@ def test_ellipse_evaluation():
     eval = ellipse.evaluate(0)
 
     assert eval.ellipse == ellipse
-    assert eval.position() == Point3D([3, 0, 0])
-    assert eval.tangent() == UNITVECTOR3D_Y
-    assert eval.first_derivative().normalize() == UNITVECTOR3D_Y
-    assert eval.second_derivative().normalize() == UnitVector3D([-1, 0, 0])
-    assert eval.curvature() == 0.75
+    with pytest.raises(AttributeError):
+        eval.ellipse = Ellipse(Point3D([0, 0, 0]), Distance(3), Distance(1))
+        eval.parameter = 0
+    assert eval.position == Point3D([3, 0, 0])
+    assert eval.tangent == UNITVECTOR3D_Y
+    assert eval.normal == UNITVECTOR3D_X
+    assert eval.first_derivative.normalize() == UNITVECTOR3D_Y
+    assert eval.second_derivative.normalize() == UnitVector3D([-1, 0, 0])
+    assert eval.curvature == 0.75
 
     # Test evaluation at (t) by projecting a point
     eval2 = ellipse.project_point(Point3D([3, 3, 0]))
 
-    # TODO: enforce Accuracy in Point3D __eq__ ? want to be able to say:
-    diff = Vector3D.from_points(eval2.position(), Point3D([1.66410059, 1.66410059, 0]))
-    assert Accuracy.length_is_zero(diff.x)
-    assert Accuracy.length_is_zero(diff.y)
-    assert Accuracy.length_is_zero(diff.z)
+    np.allclose(eval2.position, Point3D([1.66410059, 1.66410059, 0]))
 
-    # TODO: enforce Accuracy in Vector3D __eq__ ? want to be able to say:
-    diff = Vector3D.from_points(eval2.tangent(), UnitVector3D([-0.91381155, 0.40613847, 0]))
-    assert Accuracy.length_is_zero(diff.x)
-    assert Accuracy.length_is_zero(diff.y)
-    assert Accuracy.length_is_zero(diff.z)
+    np.allclose(eval2.normal, UnitVector3D([1, 1, 0]))
 
-    diff = Vector3D.from_points(
-        eval2.first_derivative().normalize(), UnitVector3D([-0.91381155, 0.40613847, 0])
+    np.allclose(eval2.tangent, UnitVector3D([-0.91381155, 0.40613847, 0]))
+
+    np.allclose(eval2.first_derivative.normalize(), UnitVector3D([-0.91381155, 0.40613847, 0]))
+
+    np.allclose(
+        eval2.second_derivative.normalize(), UnitVector3D([-np.sqrt(2) / 2, -np.sqrt(2) / 2, -0])
     )
-    assert Accuracy.length_is_zero(diff.x)
-    assert Accuracy.length_is_zero(diff.y)
-    assert Accuracy.length_is_zero(diff.z)
 
-    diff = Vector3D.from_points(
-        eval2.second_derivative().normalize(), UnitVector3D([-np.sqrt(2) / 2, -np.sqrt(2) / 2, -0])
-    )
-    assert Accuracy.length_is_zero(diff.x)
-    assert Accuracy.length_is_zero(diff.y)
-    assert Accuracy.length_is_zero(diff.z)
-
-    assert Accuracy.length_is_equal(eval2.curvature(), 0.31540327)
+    assert Accuracy.length_is_equal(eval2.curvature, 0.31540327)

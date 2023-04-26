@@ -14,7 +14,8 @@ DEFAULT_MATRIX44 = np.identity(4)
 
 
 class Matrix(np.ndarray):
-    """Provides matrix primitive representation.
+    """
+    Provides matrix primitive representation.
 
     Parameters
     ----------
@@ -48,13 +49,13 @@ class Matrix(np.ndarray):
         return np.linalg.inv(self)
 
     @check_input_types
-    def __mul__(self, other: "Matrix") -> "Matrix":
+    def __mul__(self, other: Union["Matrix", np.ndarray]) -> "Matrix":
         """Provides the multiplication of the matrix."""
         if self.shape[1] != other.shape[0]:
             raise ValueError(
                 f"The dimensions of the matrices {self.shape[1]} and {other.shape[0]} are not multipliable."  # noqa : E501
             )
-        return Matrix(np.matmul(self, other))
+        return np.matmul(self, other).view(Matrix)
 
     @check_input_types
     def __eq__(self, other: "Matrix") -> bool:
@@ -67,7 +68,8 @@ class Matrix(np.ndarray):
 
 
 class Matrix33(Matrix):
-    """Provides 3x3 matrix primitive representation.
+    """
+    Provides 3x3 matrix primitive representation.
 
     Parameters
     ----------
@@ -87,18 +89,10 @@ class Matrix33(Matrix):
 
         return obj
 
-    @check_input_types
-    def __eq__(self, other: "Matrix33") -> bool:
-        """Equals operator for the ``Matrix33`` class."""
-        return np.array_equal(self, other)
-
-    def __ne__(self, other: "Matrix33") -> bool:
-        """Not equals operator for the ``Matrix33`` class."""
-        return not self == other
-
 
 class Matrix44(Matrix):
-    """Provides 4x4 matrix primitive representation.
+    """
+    Provides 4x4 matrix primitive representation.
 
     Parameters
     ----------
@@ -117,12 +111,3 @@ class Matrix44(Matrix):
             raise ValueError("Matrix44 should only be a 2D array of shape (4,4).")
 
         return obj
-
-    @check_input_types
-    def __eq__(self, other: "Matrix44") -> bool:
-        """Equals operator for the ``Matrix44`` class."""
-        return np.array_equal(self, other)
-
-    def __ne__(self, other: "Matrix44") -> bool:
-        """Not equals operator for the ``Matrix44`` class."""
-        return not self == other

@@ -1,6 +1,4 @@
-"""
-Test basic client connection.
-"""
+"""Test basic client connection."""
 from grpc import insecure_channel
 import pytest
 

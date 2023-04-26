@@ -7,13 +7,14 @@ from ansys.api.geometry.v0.models_pb2 import Ellipse as GRPCEllipse
 from ansys.api.geometry.v0.models_pb2 import Frame as GRPCFrame
 from ansys.api.geometry.v0.models_pb2 import Geometries
 from ansys.api.geometry.v0.models_pb2 import Line as GRPCLine
+from ansys.api.geometry.v0.models_pb2 import Matrix as GRPCMatrix
 from ansys.api.geometry.v0.models_pb2 import Plane as GRPCPlane
 from ansys.api.geometry.v0.models_pb2 import Point as GRPCPoint
 from ansys.api.geometry.v0.models_pb2 import Polygon as GRPCPolygon
 from ansys.api.geometry.v0.models_pb2 import Tessellation
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple
 
-from ansys.geometry.core.math import Frame, Plane, Point2D, Point3D, UnitVector3D
+from ansys.geometry.core.math import Frame, Matrix44, Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS
 from ansys.geometry.core.sketch import (
     Arc,
@@ -30,7 +31,9 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 def unit_vector_to_grpc_direction(unit_vector: UnitVector3D) -> GRPCDirection:
-    """Marshals a :class:`UnitVector3D` class to a unit vector gRPC message of the Geometry service.
+    """
+    Marshals a :class:`UnitVector3D` class to a unit vector gRPC message of the Geometry
+    service.
 
     Parameters
     ----------
@@ -46,7 +49,8 @@ def unit_vector_to_grpc_direction(unit_vector: UnitVector3D) -> GRPCDirection:
 
 
 def frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
-    """Marshals a :class:`Frame` class to a frame gRPC message of the Geometry service.
+    """
+    Marshals a :class:`Frame` class to a frame gRPC message of the Geometry service.
 
     Parameters
     ----------
@@ -66,7 +70,8 @@ def frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
 
 
 def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
-    """Marshals a :class:`Plane` class to a plane gRPC message of the Geometry service.
+    """
+    Marshals a :class:`Plane` class to a plane gRPC message of the Geometry service.
 
     Parameters
     ----------
@@ -93,8 +98,9 @@ def sketch_shapes_to_grpc_geometries(
     faces: List[SketchFace],
     only_one_curve: Optional[bool] = False,
 ) -> Geometries:
-    """Marshals a list of :class:`SketchEdge` and :class:`SketchFace`
-    classes to a geometries gRPC message of the Geometry service.
+    """
+    Marshals a list of :class:`SketchEdge` and :class:`SketchFace` classes to a
+    geometries gRPC message of the Geometry service.
 
     Parameters
     ----------
@@ -155,8 +161,9 @@ def sketch_edges_to_grpc_geometries(
     edges: List[SketchEdge],
     plane: Plane,
 ) -> Tuple[List[GRPCLine], List[GRPCArc]]:
-    """Marshals a list of :class:`SketchEdge` classes to a geometries gRPC message of
-    the Geometry service.
+    """
+    Marshals a list of :class:`SketchEdge` classes to a geometries gRPC message of the
+    Geometry service.
 
     Parameters
     ----------
@@ -182,7 +189,8 @@ def sketch_edges_to_grpc_geometries(
 
 
 def sketch_arc_to_grpc_arc(arc: Arc, plane: Plane) -> GRPCArc:
-    """Marshals an :class:`Arc` class to an arc gRPC message of the Geometry service.
+    """
+    Marshals an :class:`Arc` class to an arc gRPC message of the Geometry service.
 
     Parameters
     ----------
@@ -211,7 +219,9 @@ def sketch_arc_to_grpc_arc(arc: Arc, plane: Plane) -> GRPCArc:
 
 
 def sketch_ellipse_to_grpc_ellipse(ellipse: SketchEllipse, plane: Plane) -> GRPCEllipse:
-    """Marshals an :class:`SketchEllipse` class to an ellipse gRPC message of the Geometry service.
+    """
+    Marshals an :class:`SketchEllipse` class to an ellipse gRPC message of the Geometry
+    service.
 
     Parameters
     ----------
@@ -233,7 +243,8 @@ def sketch_ellipse_to_grpc_ellipse(ellipse: SketchEllipse, plane: Plane) -> GRPC
 
 def sketch_circle_to_grpc_circle(circle: SketchCircle, plane: Plane) -> GRPCCircle:
     """
-    Marshals a :class:`SketchCircle` class to a circle gRPC message of the Geometry service.
+    Marshals a :class:`SketchCircle` class to a circle gRPC message of the Geometry
+    service.
 
     Parameters
     ----------
@@ -254,7 +265,8 @@ def sketch_circle_to_grpc_circle(circle: SketchCircle, plane: Plane) -> GRPCCirc
 
 
 def point3d_to_grpc_point(point: Point3D) -> GRPCPoint:
-    """Marshals a :class:`Point3D` class to a point gRPC message of the Geometry service.
+    """
+    Marshals a :class:`Point3D` class to a point gRPC message of the Geometry service.
 
     Parameters
     ----------
@@ -298,7 +310,8 @@ def point2d_to_grpc_point(plane: Plane, point2d: Point2D) -> GRPCPoint:
 
 
 def sketch_polygon_to_grpc_polygon(polygon: Polygon, plane: Plane) -> GRPCPolygon:
-    """Marshals a :class:`Polygon` class to a polygon gRPC message of the Geometry service.
+    """
+    Marshals a :class:`Polygon` class to a polygon gRPC message of the Geometry service.
 
     Parameters
     ----------
@@ -319,7 +332,8 @@ def sketch_polygon_to_grpc_polygon(polygon: Polygon, plane: Plane) -> GRPCPolygo
 
 
 def sketch_segment_to_grpc_line(segment: SketchSegment, plane: Plane) -> GRPCLine:
-    """Marshals a :class:`Segment` class to a line gRPC message of the Geometry service.
+    """
+    Marshals a :class:`Segment` class to a line gRPC message of the Geometry service.
 
     Parameters
     ----------
@@ -344,3 +358,23 @@ def tess_to_pd(tess: Tessellation) -> "PolyData":
     import pyvista as pv
 
     return pv.PolyData(np.array(tess.vertices).reshape(-1, 3), tess.faces)
+
+
+def grpc_matrix_to_matrix(m: GRPCMatrix) -> Matrix44:
+    """
+    Convert an ``ansys.api.geometry.Matrix`` class to a
+    :class:`ansys.geometry.core.math.Matrix44` class.
+    """
+    import numpy as np
+
+    return Matrix44(
+        np.round(
+            [
+                [m.m00, m.m01, m.m02, m.m03],
+                [m.m10, m.m11, m.m12, m.m13],
+                [m.m20, m.m21, m.m22, m.m23],
+                [m.m30, m.m31, m.m32, m.m33],
+            ],
+            8,
+        )
+    )

@@ -20,7 +20,8 @@ from ansys.geometry.core.sketch import Sketch
 
 
 class Plotter:
-    """Provides for plotting sketches and bodies.
+    """
+    Provides for plotting sketches and bodies.
 
     Parameters
     ----------
@@ -73,13 +74,13 @@ class Plotter:
 
     @property
     def scene(self) -> pv.Plotter:
-        """Rendered scene object.
+        """
+        Rendered scene object.
 
         Returns
         -------
         ~pvyista.Plotter
             Rendered scene object.
-
         """
         return self._scene
 
@@ -108,7 +109,8 @@ class Plotter:
         self.scene.view_zy()
 
     def plot_frame(self, frame: Frame, plotting_options: Optional[Dict] = None) -> None:
-        """Plot a frame in the scene.
+        """
+        Plot a frame in the scene.
 
         Parameters
         ----------
@@ -118,7 +120,6 @@ class Plotter:
             Dictionary containing parameters accepted by the
             :class:`pyvista.plotting.tools.create_axes_marker` class for customizing
             the frame rendering in the scene.
-
         """
         # Use default plotting options if required
         if plotting_options is None:
@@ -143,7 +144,8 @@ class Plotter:
         plane_options: Optional[Dict] = None,
         plotting_options: Optional[Dict] = None,
     ) -> None:
-        """Plot a plane in the scene.
+        """
+        Plot a plane in the scene.
 
         Parameters
         ----------
@@ -157,7 +159,6 @@ class Plotter:
             Dictionary containing parameters accepted by the
             :class:`pyvista.Plotter.add_mesh` for customizing the mesh
             rendering of the plane.
-
         """
         # Impose default plane options if none provided
         if plane_options is None:
@@ -180,7 +181,8 @@ class Plotter:
         show_frame: bool = False,
         **plotting_options: Optional[Dict],
     ) -> None:
-        """Plot a sketch in the scene.
+        """
+        Plot a sketch in the scene.
 
         Parameters
         ----------
@@ -207,7 +209,8 @@ class Plotter:
     def add_body(
         self, body: Body, merge: Optional[bool] = False, **plotting_options: Optional[Dict]
     ) -> None:
-        """Add a body to the scene.
+        """
+        Add a body to the scene.
 
         Parameters
         ----------
@@ -223,7 +226,11 @@ class Plotter:
         """
         # Use the default PyGeometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
-        self.scene.add_mesh(body.tessellate(merge=merge), **plotting_options)
+        dataset = body.tessellate(merge=merge)
+        if isinstance(dataset, pv.MultiBlock):
+            self.scene.add_composite(dataset, **plotting_options)
+        else:
+            self.scene.add_mesh(dataset, **plotting_options)
 
     def add_component(
         self,
@@ -232,7 +239,8 @@ class Plotter:
         merge_bodies: bool = False,
         **plotting_options,
     ) -> None:
-        """Add a component to the scene.
+        """
+        Add a component to the scene.
 
         Parameters
         ----------
@@ -253,10 +261,14 @@ class Plotter:
         # Use the default PyGeometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
-        self.scene.add_mesh(dataset, **plotting_options)
+        if isinstance(dataset, pv.MultiBlock):
+            self.scene.add_composite(dataset, **plotting_options)
+        else:
+            self.scene.add_mesh(dataset, **plotting_options)
 
     def add_sketch_polydata(self, polydata_entries: List[pv.PolyData], **plotting_options) -> None:
-        """Add sketches to the scene from PyVista polydata.
+        """
+        Add sketches to the scene from PyVista polydata.
 
         Parameters
         ----------
@@ -277,7 +289,8 @@ class Plotter:
         jupyter_backend: Optional[str] = None,
         **kwargs: Optional[Dict],
     ) -> None:
-        """Show the rendered scene on the screen.
+        """
+        Show the rendered scene on the screen.
 
         Parameters
         ----------
@@ -293,7 +306,6 @@ class Plotter:
         For more information on supported Jupyter backends, see
         `Jupyter Notebook Plotting <https://docs.pyvista.org/user-guide/jupyter/index.html>`_
         in the PyVista documentation.
-
         """
         # computue the scaling
         bounds = self.scene.renderer.bounds
@@ -333,8 +345,8 @@ class Plotter:
 
 
 class PlotterHelper:
-    """This class simplifies the selection of Trame visualizer in plot()
-    functions.
+    """
+    This class simplifies the selection of Trame visualizer in plot() functions.
 
     Parameters
     ----------
@@ -355,7 +367,8 @@ class PlotterHelper:
         self._pv_off_screen_original = bool(pv.OFF_SCREEN)
 
     def init_plotter(self):
-        """Initializes the plotter with or without trame visualizer.
+        """
+        Initializes the plotter with or without trame visualizer.
 
         Returns
         -------
@@ -377,8 +390,9 @@ class PlotterHelper:
             pl = Plotter()
         return pl
 
-    def show_plotter(self, plotter, screenshot):
-        """Shows the plotter or starts Trame service.
+    def show_plotter(self, plotter: Plotter, screenshot: Optional[str] = None):
+        """
+        Shows the plotter or starts Trame service.
 
         Parameters
         ----------

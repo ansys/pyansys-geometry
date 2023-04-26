@@ -2,12 +2,12 @@
 import pytest
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core.math import Plane, Point2D
+from ansys.geometry.core.math import Plane, Point2D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc.units import UNITS, Quantity
 from ansys.geometry.core.sketch import Sketch
 
 
-def test_body_tessellate(modeler: Modeler):
+def test_body_tessellate(modeler: Modeler, skip_not_on_linux_service):
     """Test the body tessellation."""
     sketch_1 = Sketch()
     sketch_1.box(Point2D([2, 0], UNITS.m), Quantity(4, UNITS.m), Quantity(4, UNITS.m))
@@ -60,8 +60,22 @@ def test_body_tessellate(modeler: Modeler):
     assert mesh_2.n_points == 76
     assert mesh_2.n_arrays == 0
 
+    # Make sure instance body tessellation is the same as original
+    comp_1_instance = design.add_component("Component_1_Instance", comp_1)
+    assert comp_1_instance.bodies[0].tessellate() == comp_1.bodies[0].tessellate()
 
-def test_component_tessellate(modeler: Modeler):
+    # After modifying placement, they should be different
+    comp_1_instance.modify_placement(Vector3D([1, 2, 3]))
+    assert comp_1_instance.bodies[0].tessellate() != comp_1.bodies[0].tessellate()
+
+    assert comp_1.bodies[0]._template._tessellation is not None
+
+    comp_1.bodies[0].translate(UnitVector3D([1, 0, 0]), 1)
+
+    assert comp_1.bodies[0]._template._tessellation is None
+
+
+def test_component_tessellate(modeler: Modeler, skip_not_on_linux_service):
     """Test the component tessellation."""
 
     # Create a sketch

@@ -20,7 +20,8 @@ from ansys.geometry.core.logger import LOG as logger
 
 
 def _docker_python_available(func):
-    """Private decorator for checking whether docker is installed as Python package or not."""
+    """Private decorator for checking whether docker is installed as Python package or
+    not."""
 
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -47,7 +48,7 @@ class LocalDockerInstance:
     """
     ``LocalDockerInstance`` class.
 
-    This class is used for instatiating a Geometry service (as a local Docker container).
+    This class is used for instantiating a Geometry service (as a local Docker container).
     By default, if a container with the Geometry service already exists at the given port,
     it will connect to it. Otherwise, it will try to launch its own service.
 
@@ -74,8 +75,9 @@ class LocalDockerInstance:
     """
 
     __DOCKER_CLIENT__: "docker.DockerClient" = None
-    """Docker client class variable. By default, none is needed.
-    It will be lazy initialized.
+    """
+    Docker client class variable. By default, none is needed. It will be lazy
+    initialized.
 
     Notes
     -----
@@ -107,8 +109,8 @@ class LocalDockerInstance:
     @staticmethod
     @_docker_python_available
     def is_docker_installed() -> bool:
-        """Checks whether there is a local install of Docker engine available
-        and running.
+        """
+        Checks whether there is a local install of Docker engine available and running.
 
         Returns
         -------
@@ -217,8 +219,9 @@ class LocalDockerInstance:
     def _deploy_container(
         self, port: int, name: Union[str, None], image: Union[GeometryContainers, None]
     ):
-        """Private method for handling the deployment of a Geometry service container
-        according to the provided arguments
+        """
+        Private method for handling the deployment of a Geometry service container
+        according to the provided arguments.
 
         Parameters
         ----------
@@ -300,6 +303,6 @@ class LocalDockerInstance:
 
     @property
     def existed_previously(self) -> bool:
-        """Indicates whether the container hosting the Geometry service
-        was effectively deployed by this class or if it already existed."""
+        """Indicates whether the container hosting the Geometry service was effectively
+        deployed by this class or if it already existed."""
         return self._existed_previously

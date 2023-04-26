@@ -6,7 +6,6 @@ If you want to override these defaults, set the following environment variables.
 
 - export ANSRV_GEO_HOST=127.0.0.1
 - export ANSRV_GEO_PORT=50051
-
 """
 import logging
 import os
@@ -20,6 +19,12 @@ from ansys.geometry.core.connection.defaults import GEOMETRY_SERVICE_DOCKER_IMAG
 from ansys.geometry.core.connection.local_instance import GeometryContainers, LocalDockerInstance
 
 pv.OFF_SCREEN = True
+
+
+@pytest.fixture(scope="session")
+def skip_not_on_linux_service(service_os: str):
+    if service_os == "linux":
+        return pytest.skip("Implementation not available on Linux service.")  # skip!
 
 
 @pytest.fixture(scope="session")

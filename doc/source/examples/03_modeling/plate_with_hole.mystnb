@@ -29,7 +29,7 @@ The projection is at the center of the face. The default projection depth is thr
 
 Start by performing required imports.
 
-```{code-cell} ipython3 
+```{code-cell} ipython3
 import numpy as np
 from pint import Quantity
 
@@ -47,7 +47,7 @@ a box on the center, and a circle at its four corners.
 You can use a single sketch instance for multiple design operations such as extruding a body,
 projecting a profile, or imprinting curves.
 
-```{code-cell} ipython3 
+```{code-cell} ipython3
 sketch = Sketch()
 (sketch.segment(Point2D([-4, 5], unit=UNITS.m), Point2D([4, 5], unit=UNITS.m))
     .segment_to_point(Point2D([4, -5], unit=UNITS.m))
@@ -63,8 +63,8 @@ sketch = Sketch()
 
 ## Create the design by extruding the sketch
 
-Establish a server connection and use the single sketch profile to extrude 
-the base component at the Z axis. A named selection is created from the 
+Establish a server connection and use the single sketch profile to extrude
+the base component at the Z axis. A named selection is created from the
 resulting list of bodies. In only three server calls, the design extrudes
 the four segments with the desired thickness.
 
@@ -102,7 +102,7 @@ design.plot()
 
 ## Extrude from face to create body
 
-You can extrude a face profile by a given distance to create a solid body. 
+You can extrude a face profile by a given distance to create a solid body.
 There are no modifications against the body containing the source face.
 
 ```{code-cell} ipython3

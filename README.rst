@@ -164,7 +164,7 @@ Then, install PyGeometry with:
 
     * Index URL: ``https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/``
 
-    If access to this package registry is needed, email `pyansys.support@ansys.com <mailto:pyansys.support@ansys.com>`_
+    If access to this package registry is needed, email `pyansys.core@ansys.com <mailto:pyansys.core@ansys.com>`_
     to request access. The PyAnsys team can provide you a read-only token to be inserted in ``${PRIVATE_PYPI_ACCESS_TOKEN}``.
     Once you have it, run the following command:
 
@@ -179,10 +179,10 @@ Installing PyGeometry in developer mode allows
 you to modify the source and enhance it.
 
 .. note::
-   
+
     Before contributing to the project, ensure that you are thoroughly familiar
     with the `PyAnsys Developer's Guide`_.
-    
+
 To install PyGeometry in developer mode, perform these steps:
 
 #. Clone the ``pygeometry`` repository:
@@ -222,7 +222,7 @@ To install PyGeometry in developer mode, perform these steps:
 #. Install the project in editable mode:
 
    .. code:: bash
-      
+
       # Install the minimum requirements
       python -m pip install -e .
 
@@ -244,14 +244,14 @@ archive from the `Releases Page <https://github.com/pyansys/pygeometry/releases>
 corresponding machine architecture.
 
 Each wheelhouse archive contains all the Python wheels necessary to install PyGeometry from scratch on Windows,
-Linux, and MacOS from Python 3.7 to 3.10. You can install this on an isolated system with a fresh Python
+Linux, and MacOS from Python 3.8 to 3.11. You can install this on an isolated system with a fresh Python
 installation or on a virtual environment.
 
-For example, on Linux with Python 3.7, unzip the wheelhouse archive and install it with:
+For example, on Linux with Python 3.8, unzip the wheelhouse archive and install it with:
 
 .. code:: bash
 
-    unzip ansys-geometry-core-v0.3.dev0-wheelhouse-Linux-3.7.zip wheelhouse
+    unzip ansys-geometry-core-v0.3.dev0-wheelhouse-Linux-3.8.zip wheelhouse
     pip install ansys-geometry-core -f wheelhouse --no-index --upgrade --ignore-installed
 
 If you're on Windows with Python 3.9, unzip to a wheelhouse directory and install using the preceding command.
@@ -263,7 +263,7 @@ Testing
 
 This project takes advantage of `tox`_. This tool automate common
 development tasks (similar to Makefile), but it is oriented towards Python
-development. 
+development.
 
 Using ``tox``
 ^^^^^^^^^^^^^
@@ -279,7 +279,7 @@ The following environments commands are provided:
 - **tox -e py-coverage**: Checks for unit testing and code coverage.
 - **tox -e doc**: Checks for documentation building process.
 
- .. admonition:: pyvista-pytest plugin 
+ .. admonition:: pyvista-pytest plugin
 
    This plugin facilitates the comparison of the images produced in PyGeometry for testing the plots.
    If you are changing the images, use flag ``--reset_image_cache`` which is not recommended except
@@ -331,7 +331,7 @@ the building requirements and then executing the build module:
 
 .. code:: bash
 
-    python -m pip install -U pip 
+    python -m pip install -U pip
     python -m build
     python -m twine check dist/*
 

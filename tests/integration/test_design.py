@@ -2,6 +2,7 @@
 
 import os
 
+import numpy as np
 from pint import Quantity
 import pytest
 
@@ -17,6 +18,7 @@ from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.errors import GeometryExitedError
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import (
+    IDENTITY_MATRIX44,
     UNITVECTOR3D_X,
     UNITVECTOR3D_Y,
     UNITVECTOR3D_Z,
@@ -25,14 +27,15 @@ from ansys.geometry.core.math import (
     Point2D,
     Point3D,
     UnitVector3D,
+    Vector3D,
 )
-from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Distance
 from ansys.geometry.core.sketch import Sketch
 
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):
-    """Test in charge of validating the extrusion of a simple
-    circle as a cylinder and assigning materials to it."""
+    """Test in charge of validating the extrusion of a simple circle as a cylinder and
+    assigning materials to it."""
 
     # Create a Sketch and draw a circle (all client side)
     sketch = Sketch()
@@ -426,6 +429,7 @@ def test_coordinate_system_creation(modeler: Modeler):
     nested_comp_cs1_str = str(nested_comp_cs1)
     assert "ansys.geometry.core.designer.CoordinateSystem" in nested_comp_cs1_str
     assert "  Name                 : CompCS1" in nested_comp_cs1_str
+    assert "  Exists               : True" in nested_comp_cs1_str
     assert "  Parent component     : NestedComponent" in nested_comp_cs1_str
     assert "  Frame origin         : [0.01,0.2,3.0] in meters" in nested_comp_cs1_str
     assert "  Frame X-direction    : " in nested_comp_cs1_str
@@ -654,6 +658,7 @@ def test_delete_body_component(modeler: Modeler):
     assert "N Named Selections   : 0" in design_str
     assert "N Materials          : 0" in design_str
     assert "N Beam Profiles      : 0" in design_str
+    assert "N Design Points      : 0" in design_str
 
     comp_1_str = str(comp_1)
     assert "ansys.geometry.core.designer.Component" in comp_1_str
@@ -663,6 +668,7 @@ def test_delete_body_component(modeler: Modeler):
     assert "N Bodies             : 0" in comp_1_str
     assert "N Beams              : 0" in comp_1_str
     assert "N Components         : 0" in comp_1_str
+    assert "N Design Points      : 0" in comp_1_str
     assert "N Coordinate Systems : 0" in comp_1_str
 
     body_1_str = str(body_1)
@@ -674,7 +680,8 @@ def test_delete_body_component(modeler: Modeler):
 
 
 def test_shared_topology(modeler: Modeler):
-    """Test for checking the correct setting of shared topology on the server.
+    """
+    Test for checking the correct setting of shared topology on the server.
 
     Notes
     -----
@@ -730,6 +737,7 @@ def test_single_body_translation(modeler: Modeler):
 
     body_circle_comp.translate(UnitVector3D([1, 0, 0]), Distance(50, UNITS.mm))
     body_polygon_comp.translate(UnitVector3D([-1, 1, -1]), Quantity(88, UNITS.mm))
+    body_polygon_comp.translate(UnitVector3D([-1, 1, -1]), 101)
 
 
 def test_bodies_translation(modeler: Modeler):
@@ -756,11 +764,12 @@ def test_bodies_translation(modeler: Modeler):
     body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch_2, Quantity(30, UNITS.mm))
 
     design.translate_bodies(
-        [body_circle_comp, body_polygon_comp], UnitVector3D([1, 0, 0]), Quantity(48, UNITS.mm)
+        [body_circle_comp, body_polygon_comp], UnitVector3D([1, 0, 0]), Distance(48, UNITS.mm)
     )
     design.translate_bodies(
         [body_circle_comp, body_polygon_comp], UnitVector3D([0, -1, 1]), Quantity(88, UNITS.mm)
     )
+    design.translate_bodies([body_circle_comp, body_polygon_comp], UnitVector3D([0, -1, 1]), 101)
 
     # Try translating a body that does not belong to this component - no error thrown,
     # but no operation performed either.
@@ -769,8 +778,11 @@ def test_bodies_translation(modeler: Modeler):
     )
 
 
-def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
-    """Test for downloading a design in multiple modes and verifying the correct download."""
+def test_download_file(
+    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, skip_not_on_linux_service
+):
+    """Test for downloading a design in multiple modes and verifying the correct
+    download."""
 
     # Create your design on the server side
     design = modeler.create_design("MultipleBodyTranslation_Test")
@@ -839,10 +851,11 @@ def test_slot_extrusion(modeler: Modeler):
     assert len(body.edges) == 12
 
 
-def test_project_and_imprint_curves(modeler: Modeler):
+def test_project_and_imprint_curves(modeler: Modeler, skip_not_on_linux_service):
     """Test the projection of a set of curves on a body."""
     # Create your design on the server side
     design = modeler.create_design("ExtrudeSlot")
+    comp = design.add_component("Comp1")
 
     # Create a Sketch object and draw a couple of slots
     imprint_sketch = Sketch()
@@ -852,7 +865,7 @@ def test_project_and_imprint_curves(modeler: Modeler):
     # Extrude the sketch
     sketch = Sketch()
     sketch.box(Point2D([0, 0], UNITS.mm), Quantity(150, UNITS.mm), Quantity(150, UNITS.mm))
-    body = design.extrude_sketch(name="MyBox", sketch=sketch, distance=Quantity(50, UNITS.mm))
+    body = comp.extrude_sketch(name="MyBox", sketch=sketch, distance=Quantity(50, UNITS.mm))
     body_faces = body.faces
 
     # Project the curves on the box
@@ -895,8 +908,12 @@ def test_project_and_imprint_curves(modeler: Modeler):
     assert len(new_faces) == 2
     assert len(body.faces) == 8
 
+    # Make sure we have occurrence faces, not master
+    assert faces[0].id not in [face.id for face in body._template.faces]
+    assert new_faces[0].id not in [face.id for face in body._template.faces]
 
-def test_copy_body(modeler: Modeler):
+
+def test_copy_body(modeler: Modeler, skip_not_on_linux_service):
     """Test copying a body."""
 
     # Create your design on the server side
@@ -908,22 +925,31 @@ def test_copy_body(modeler: Modeler):
     # Copy body at same design level
     copy = body.copy(design, "Copy")
     assert len(design.bodies) == 2
-    assert design.bodies[-1] == copy
+    assert design.bodies[-1].id == copy.id
 
     # Bodies should be distinct
+    assert body.id != copy.id
     assert body != copy
 
     # Copy body into sub-component
     comp1 = design.add_component("comp1")
     copy2 = body.copy(comp1, "Subcopy")
     assert len(comp1.bodies) == 1
-    assert comp1.bodies[-1] == copy2
+    assert comp1.bodies[-1].id == copy2.id
+
+    # Bodies should be distinct
+    assert body.id != copy2.id
+    assert body != copy2
 
     # Copy a copy
     comp2 = comp1.add_component("comp2")
     copy3 = copy2.copy(comp2, "Copy3")
     assert len(comp2.bodies) == 1
-    assert comp2.bodies[-1] == copy3
+    assert comp2.bodies[-1].id == copy3.id
+
+    # Bodies should be distinct
+    assert copy2.id != copy3.id
+    assert copy2 != copy3
 
     # Ensure deleting original doesn't affect the copies
     design.delete_body(body)
@@ -931,7 +957,7 @@ def test_copy_body(modeler: Modeler):
     assert copy.is_alive
 
 
-def test_beams(modeler: Modeler):
+def test_beams(modeler: Modeler, skip_not_on_linux_service):
     """Test beam creation."""
     # Create your design on the server side
     design = modeler.create_design("BeamCreation")
@@ -975,6 +1001,7 @@ def test_beams(modeler: Modeler):
             UnitVector3D([-1, -1, -1]),
         )
 
+    # Create a beam at the root component level
     beam_1 = design.create_beam(
         Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
     )
@@ -984,11 +1011,13 @@ def test_beams(modeler: Modeler):
     assert beam_1.end == Point3D([8, 88, 888], UNITS.mm)
     assert beam_1.profile == circle_profile_1
     assert beam_1.parent_component.id == design.id
+    assert beam_1.is_alive
     assert len(design.beams) == 1
     assert design.beams[0] == beam_1
 
     beam_1_str = str(beam_1)
     assert "ansys.geometry.core.designer.Beam" in beam_1_str
+    assert "  Exists               : True" in beam_1_str
     assert "  Start                : [0.009" in beam_1_str
     assert "  End                  : [0.008" in beam_1_str
     assert "  Parent component     : BeamCreation" in beam_1_str
@@ -1001,17 +1030,74 @@ def test_beams(modeler: Modeler):
     assert "  Direction x          : [1.0,0.0,0.0]" in beam_1_str
     assert "  Direction y          : [0.0,1.0,0.0]" in beam_1_str
 
+    # Now, let's create two beams at a nested component, with the same profile
     nested_component = design.add_component("NestedComponent")
-
     beam_2 = nested_component.create_beam(
         Point3D([7, 77, 777], UNITS.mm), Point3D([6, 66, 666], UNITS.mm), circle_profile_2
+    )
+    beam_3 = nested_component.create_beam(
+        Point3D([8, 88, 888], UNITS.mm), Point3D([7, 77, 777], UNITS.mm), circle_profile_2
     )
 
     assert beam_2.id is not None
     assert beam_2.profile == circle_profile_2
     assert beam_2.parent_component.id == nested_component.id
-    assert len(nested_component.beams) == 1
+    assert beam_2.is_alive
+    assert beam_3.id is not None
+    assert beam_3.profile == circle_profile_2
+    assert beam_3.parent_component.id == nested_component.id
+    assert beam_3.is_alive
+    assert beam_2.id != beam_3.id
+    assert len(nested_component.beams) == 2
     assert nested_component.beams[0] == beam_2
+    assert nested_component.beams[1] == beam_3
+
+    # Once the beams are created, let's try deleting it.
+    # For example, we shouldn't be able to delete beam_1 from the nested component.
+    nested_component.delete_beam(beam_1)
+
+    assert beam_2.is_alive
+    assert nested_component.beams[0].is_alive
+    assert beam_3.is_alive
+    assert nested_component.beams[1].is_alive
+    assert beam_1.is_alive
+    assert design.beams[0].is_alive
+
+    # Let's try deleting one of the beams from the nested component
+    nested_component.delete_beam(beam_2)
+    assert not beam_2.is_alive
+    assert not nested_component.beams[0].is_alive
+    assert beam_3.is_alive
+    assert nested_component.beams[1].is_alive
+    assert beam_1.is_alive
+    assert design.beams[0].is_alive
+
+    # Now, let's try deleting it from the design directly - this should be possible
+    design.delete_beam(beam_3)
+    assert not beam_2.is_alive
+    assert not nested_component.beams[0].is_alive
+    assert not beam_3.is_alive
+    assert not nested_component.beams[1].is_alive
+    assert beam_1.is_alive
+    assert design.beams[0].is_alive
+
+    # Finally, let's delete the beam from the root component
+    design.delete_beam(beam_1)
+    assert not beam_2.is_alive
+    assert not nested_component.beams[0].is_alive
+    assert not beam_3.is_alive
+    assert not nested_component.beams[1].is_alive
+    assert not beam_1.is_alive
+    assert not design.beams[0].is_alive
+
+    # Now, let's try deleting the beam profiles!
+    assert len(design.beam_profiles) == 2
+    design.delete_beam_profile("MyInventedBeamProfile")
+    assert len(design.beam_profiles) == 2
+    design.delete_beam_profile(circle_profile_1)
+    assert len(design.beam_profiles) == 1
+    design.delete_beam_profile(circle_profile_2)
+    assert len(design.beam_profiles) == 0
 
 
 def test_midsurface_properties(modeler: Modeler):
@@ -1082,8 +1168,8 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Exists               : True" in body_repr
     assert "Parent component     : MidSurfaceProperties" in body_repr
     assert "Surface body         : False" in body_repr
-    assert slot_body._surface_thickness is None
-    assert slot_body._surface_offset is None
+    assert slot_body.surface_thickness is None
+    assert slot_body.surface_offset is None
 
     # Let's try reassigning values directly to slot_surf - this should work
     # TODO : at the moment the server does not allow to reassign - put in try/catch block
@@ -1116,3 +1202,407 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Surface body         : True" in surf_repr
     assert "Surface thickness    : 30 millimeter" in surf_repr
     assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
+
+
+def test_design_points(modeler: Modeler):
+    """Test for verifying the ``DesignPoints``"""
+
+    # Create your design on the server side
+    design = modeler.create_design("DesignPoints")
+    point = Point3D([6, 66, 666], UNITS.mm)
+    design_points_1 = design.add_design_point("FirstPointSet", point)
+
+    # Check the design points
+    assert len(design.design_points) == 1
+    assert design_points_1.id is not None
+    assert design_points_1.name == "FirstPointSet"
+    assert design_points_1.value == point
+
+    # Create another set of design points
+    point_set_2 = [Point3D([10, 10, 10], UNITS.m), Point3D([20, 20, 20], UNITS.m)]
+    design_points_2 = design.add_design_points("SecondPointSet", point_set_2)
+
+    assert len(design.design_points) == 3
+
+    nested_component = design.add_component("NestedComponent")
+    design_point_3 = nested_component.add_design_point("Nested", Point3D([7, 77, 777], UNITS.mm))
+
+    assert design_point_3.id is not None
+    assert design_point_3.value == Point3D([7, 77, 777], UNITS.mm)
+    assert design_point_3.parent_component.id == nested_component.id
+    assert len(nested_component.design_points) == 1
+    assert nested_component.design_points[0] == design_point_3
+
+    design_point_1_str = str(design_points_1)
+    assert "ansys.geometry.core.designer.DesignPoint" in design_point_1_str
+    assert "  Name                 : FirstPointSet" in design_point_1_str
+    assert "  Design Point         : [0.006 0.066 0.666]" in design_point_1_str
+
+    design_point_2_str = str(design_points_2)
+    assert "ansys.geometry.core.designer.DesignPoint" in design_point_2_str
+    assert "  Name                 : SecondPointSet" in design_point_2_str
+    assert "  Design Point         : [10. 10. 10.]" in design_point_2_str
+    assert "ansys.geometry.core.designer.DesignPoint" in design_point_2_str
+    assert "  Name                 : SecondPointSet" in design_point_2_str
+    assert "  Design Point         : [20. 20. 20.]" in design_point_2_str
+
+
+def test_named_selections_beams(modeler: Modeler, skip_not_on_linux_service):
+    """Test for verifying the correct creation of ``NamedSelection`` with beams."""
+
+    # Create your design on the server side
+    design = modeler.create_design("NamedSelectionBeams_Test")
+
+    # Test creating a named selection out of beams
+    circle_profile_1 = design.add_beam_circular_profile(
+        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
+    )
+    beam_1 = design.create_beam(
+        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
+    )
+    ns_beams = design.create_named_selection("CircleProfile", beams=[beam_1])
+    assert len(design.named_selections) == 1
+    assert design.named_selections[0].name == "CircleProfile"
+
+    # Try deleting this named selection
+    design.delete_named_selection(ns_beams)
+    assert len(design.named_selections) == 0
+
+
+def test_named_selections_design_points(modeler: Modeler):
+    """Test for verifying the correct creation of ``NamedSelection`` with design points."""
+
+    # Create your design on the server side
+    design = modeler.create_design("NamedSelectionBeams_Test")
+
+    # Test creating a named selection out of design_points
+    point_set_1 = Point3D([10, 10, 0], UNITS.m)
+    design_points_1 = design.add_design_point("FirstPointSet", point_set_1)
+    ns_despoint = design.create_named_selection("FirstPointSet", design_points=[design_points_1])
+    assert len(design.named_selections) == 1
+    assert design.named_selections[0].name == "FirstPointSet"
+
+    # Try deleting this named selection
+    design.delete_named_selection(ns_despoint)
+    assert len(design.named_selections) == 0
+
+
+def test_component_instances(modeler: Modeler, skip_not_on_linux_service):
+    """Test creation of ``Component`` instances and the effects this has."""
+
+    design_name = "ComponentInstance_Test"
+    design = modeler.create_design(design_name)
+
+    # Create a car
+    car1 = design.add_component("Car1")
+    comp1 = car1.add_component("A")
+    comp2 = car1.add_component("B")
+    wheel1 = comp2.add_component("Wheel1")
+
+    # Create car base frame
+    sketch = Sketch().box(Point2D([5, 10]), 10, 20)
+    comp2.extrude_sketch("Base", sketch, 5)
+
+    # Create first wheel
+    sketch = Sketch(Plane(direction_x=Vector3D([0, 1, 0]), direction_y=Vector3D([0, 0, 1])))
+    sketch.circle(Point2D([0, 0]), 5)
+    wheel1.extrude_sketch("Wheel", sketch, -5)
+
+    # Create 3 other wheels and move them into position
+    rotation_origin = Point3D([0, 0, 0])
+    rotation_direction = UnitVector3D([0, 0, 1])
+
+    wheel2 = comp2.add_component("Wheel2", wheel1)
+    wheel2.modify_placement(Vector3D([0, 20, 0]))
+
+    wheel3 = comp2.add_component("Wheel3", wheel1)
+    wheel3.modify_placement(Vector3D([10, 0, 0]), rotation_origin, rotation_direction, np.pi)
+
+    wheel4 = comp2.add_component("Wheel4", wheel1)
+    wheel4.modify_placement(Vector3D([10, 20, 0]), rotation_origin, rotation_direction, np.pi)
+
+    # Assert all components have unique IDs
+    comp_ids = [wheel1.id, wheel2.id, wheel3.id, wheel4.id]
+    assert len(comp_ids) == len(set(comp_ids))
+
+    # Assert all bodies have unique IDs
+    body_ids = [wheel1.bodies[0].id, wheel2.bodies[0].id, wheel3.bodies[0].id, wheel4.bodies[0].id]
+    assert len(body_ids) == len(set(body_ids))
+
+    # Assert all instances have unique TransformedParts
+    comp_templates = [wheel2._transformed_part, wheel3._transformed_part, wheel4._transformed_part]
+    assert len(comp_templates) == len(set(comp_templates))
+
+    # Assert all instances have the same Part
+    comp_parts = [
+        wheel2._transformed_part.part,
+        wheel3._transformed_part.part,
+        wheel4._transformed_part.part,
+    ]
+    assert len(set(comp_parts)) == 1
+
+    assert wheel1.get_world_transform() == IDENTITY_MATRIX44
+    assert wheel2.get_world_transform() != IDENTITY_MATRIX44
+
+    # Create 2nd car
+    car2 = design.add_component("Car2", car1)
+    car2.modify_placement(Vector3D([30, 0, 0]))
+
+    # Create top of car - applies to BOTH cars
+    sketch = Sketch(Plane(Point3D([0, 5, 5]))).box(Point2D([5, 2.5]), 10, 5)
+    comp1.extrude_sketch("Top", sketch, 5)
+
+    # Show the body also got added to Car2, and they are distinct, but
+    # not independent
+    assert car1.components[0].bodies[0].id != car2.components[0].bodies[0].id
+
+    # If monikers were formatted properly, you should be able to use them
+    assert len(car2.components[1].components[1].bodies[0].faces) > 0
+
+
+def test_boolean_body_operations(modeler: Modeler, skip_not_on_linux_service):
+    """
+    Test cases:
+
+    1) master/master
+        a) intersect
+            i) normal
+                x) identity
+                y) transform
+            ii) empty failure
+        b) subtract
+            i) normal
+                x) identity
+                y) transform
+            ii) empty failure
+            iii) disjoint
+        c) unite
+            i) normal
+                x) identity
+                y) transform
+            ii) disjoint
+    2) instance/instance
+        a) intersect
+            i) normal
+                x) identity
+                y) transform
+            ii) empty failure
+        b) subtract
+            i) normal
+                x) identity
+                y) transform
+            ii) empty failure
+        c) unite
+            i) normal
+                x) identity
+                y) transform
+    """
+
+    design = modeler.create_design("TestBooleanOperations")
+
+    comp1 = design.add_component("Comp1")
+    comp2 = design.add_component("Comp2")
+    comp3 = design.add_component("Comp3")
+
+    body1 = comp1.extrude_sketch("Body1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    body2 = comp2.extrude_sketch("Body2", Sketch().box(Point2D([0.5, 0]), 1, 1), 1)
+    body3 = comp3.extrude_sketch("Body3", Sketch().box(Point2D([5, 0]), 1, 1), 1)
+
+    # 1.a.i.x
+    copy1 = body1.copy(comp1, "Copy1")
+    copy2 = body2.copy(comp2, "Copy2")
+    copy1.intersect(copy2)
+
+    assert not copy2.is_alive
+    assert body2.is_alive
+    assert Accuracy.length_is_equal(copy1.volume.m, 0.5)
+
+    # 1.a.i.y
+    copy1 = body1.copy(comp1, "Copy1")
+    copy2 = body2.copy(comp2, "Copy2")
+    copy2.translate(UnitVector3D([1, 0, 0]), 0.25)
+    copy1.intersect(copy2)
+
+    assert not copy2.is_alive
+    assert Accuracy.length_is_equal(copy1.volume.m, 0.25)
+
+    # 1.a.ii
+    copy1 = body1.copy(comp1, "Copy1")
+    copy3 = body3.copy(comp3, "Copy3")
+    with pytest.raises(ValueError, match="Bodies do not intersect."):
+        copy1.intersect(copy3)
+
+    assert copy1.is_alive
+    assert copy3.is_alive
+
+    # 1.b.i.x
+    copy1 = body1.copy(comp1, "Copy1")
+    copy2 = body2.copy(comp2, "Copy2")
+    copy1.subtract(copy2)
+
+    assert not copy2.is_alive
+    assert body2.is_alive
+    assert Accuracy.length_is_equal(copy1.volume.m, 0.5)
+
+    # 1.b.i.y
+    copy1 = body1.copy(comp1, "Copy1")
+    copy2 = body2.copy(comp2, "Copy2")
+    copy2.translate(UnitVector3D([1, 0, 0]), 0.25)
+    copy1.subtract(copy2)
+
+    assert not copy2.is_alive
+    assert Accuracy.length_is_equal(copy1.volume.m, 0.75)
+
+    # 1.b.ii
+    copy1 = body1.copy(comp1, "Copy1")
+    copy1a = body1.copy(comp1, "Copy1a")
+    with pytest.raises(ValueError):
+        copy1.subtract(copy1a)
+
+    assert copy1.is_alive
+    assert copy1a.is_alive
+
+    # 1.b.iii
+    copy1 = body1.copy(comp1, "Copy1")
+    copy3 = body3.copy(comp3, "Copy3")
+    copy1.subtract(copy3)
+
+    assert Accuracy.length_is_equal(copy1.volume.m, 1)
+    assert copy1.volume
+    assert not copy3.is_alive
+
+    # 1.c.i.x
+    copy1 = body1.copy(comp1, "Copy1")
+    copy2 = body2.copy(comp2, "Copy2")
+    copy1.unite(copy2)
+
+    assert not copy2.is_alive
+    assert body2.is_alive
+    assert Accuracy.length_is_equal(copy1.volume.m, 1.5)
+
+    # 1.c.i.y
+    copy1 = body1.copy(comp1, "Copy1")
+    copy2 = body2.copy(comp2, "Copy2")
+    copy2.translate(UnitVector3D([1, 0, 0]), 0.25)
+    copy1.unite(copy2)
+
+    assert not copy2.is_alive
+    assert Accuracy.length_is_equal(copy1.volume.m, 1.75)
+
+    # 1.c.ii
+    copy1 = body1.copy(comp1, "Copy1")
+    copy3 = body3.copy(comp3, "Copy3")
+    copy1.unite(copy3)
+
+    assert not copy3.is_alive
+    assert body3.is_alive
+    assert Accuracy.length_is_equal(copy1.volume.m, 1)
+
+    # Test instance/instance
+    comp1_i = design.add_component("Comp1_i", comp1)
+    comp2_i = design.add_component("Comp2_i", comp2)
+    comp3_i = design.add_component("Comp3_i", comp3)
+
+    comp1_i.modify_placement(
+        Vector3D([52, 61, -43]), Point3D([-4, 26, 66]), UnitVector3D([-21, 20, 87]), np.pi / 4
+    )
+    comp2_i.modify_placement(
+        Vector3D([52, 61, -43]), Point3D([-4, 26, 66]), UnitVector3D([-21, 20, 87]), np.pi / 4
+    )
+    comp3_i.modify_placement(
+        Vector3D([52, 61, -43]), Point3D([-4, 26, 66]), UnitVector3D([-21, 20, 87]), np.pi / 4
+    )
+
+    body1 = comp1_i.bodies[0]
+    body2 = comp2_i.bodies[0]
+    body3 = comp3_i.bodies[0]
+
+    # 2.a.i.x
+    copy1 = body1.copy(comp1_i, "Copy1")
+    copy2 = body2.copy(comp2_i, "Copy2")
+    copy1.intersect(copy2)
+
+    assert not copy2.is_alive
+    assert body2.is_alive
+    assert Accuracy.length_is_equal(copy1.volume.m, 0.5)
+
+    # 2.a.i.y
+    copy1 = body1.copy(comp1_i, "Copy1")
+    copy2 = body2.copy(comp2_i, "Copy2")
+    copy2.translate(UnitVector3D([1, 0, 0]), 0.25)
+    copy1.intersect(copy2)
+
+    assert not copy2.is_alive
+    assert Accuracy.length_is_equal(copy1.volume.m, 0.25)
+
+    # 2.a.ii
+    copy1 = body1.copy(comp1_i, "Copy1")
+    copy3 = body3.copy(comp3_i, "Copy3")
+    with pytest.raises(ValueError, match="Bodies do not intersect."):
+        copy1.intersect(copy3)
+
+    assert copy1.is_alive
+    assert copy3.is_alive
+
+    # 2.b.i.x
+    copy1 = body1.copy(comp1_i, "Copy1")
+    copy2 = body2.copy(comp2_i, "Copy2")
+    copy1.subtract(copy2)
+
+    assert not copy2.is_alive
+    assert body2.is_alive
+    assert Accuracy.length_is_equal(copy1.volume.m, 0.5)
+
+    # 2.b.i.y
+    copy1 = body1.copy(comp1_i, "Copy1")
+    copy2 = body2.copy(comp2_i, "Copy2")
+    copy2.translate(UnitVector3D([1, 0, 0]), 0.25)
+    copy1.subtract(copy2)
+
+    assert not copy2.is_alive
+    assert Accuracy.length_is_equal(copy1.volume.m, 0.75)
+
+    # 2.b.ii
+    copy1 = body1.copy(comp1_i, "Copy1")
+    copy1a = body1.copy(comp1_i, "Copy1a")
+    with pytest.raises(ValueError):
+        copy1.subtract(copy1a)
+
+    assert copy1.is_alive
+    assert copy1a.is_alive
+
+    # 2.b.iii
+    copy1 = body1.copy(comp1_i, "Copy1")
+    copy3 = body3.copy(comp3_i, "Copy3")
+    copy1.subtract(copy3)
+
+    assert Accuracy.length_is_equal(copy1.volume.m, 1)
+    assert copy1.volume
+    assert not copy3.is_alive
+
+    # 2.c.i.x
+    copy1 = body1.copy(comp1_i, "Copy1")
+    copy2 = body2.copy(comp2_i, "Copy2")
+    copy1.unite(copy2)
+
+    assert not copy2.is_alive
+    assert body2.is_alive
+    assert Accuracy.length_is_equal(copy1.volume.m, 1.5)
+
+    # 2.c.i.y
+    copy1 = body1.copy(comp1_i, "Copy1")
+    copy2 = body2.copy(comp2_i, "Copy2")
+    copy2.translate(UnitVector3D([1, 0, 0]), 0.25)
+    copy1.unite(copy2)
+
+    assert not copy2.is_alive
+    assert Accuracy.length_is_equal(copy1.volume.m, 1.75)
+
+    # 2.c.ii
+    copy1 = body1.copy(comp1_i, "Copy1")
+    copy3 = body3.copy(comp3_i, "Copy3")
+    copy1.unite(copy3)
+
+    assert not copy3.is_alive
+    assert body3.is_alive
+    assert Accuracy.length_is_equal(copy1.volume.m, 1)

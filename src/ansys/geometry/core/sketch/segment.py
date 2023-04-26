@@ -140,9 +140,8 @@ class SketchSegment(SketchEdge, Line):
 
     def plane_change(self, plane: "Plane") -> None:
         """
-        Method for SketchSegment objects to redefine the plane
-        containing them. This implies that their 3D definition may suffer
-        changes.
+        Method for SketchSegment objects to redefine the plane containing them. This
+        implies that their 3D definition may suffer changes.
 
         Parameters
         ----------

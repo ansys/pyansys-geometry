@@ -59,8 +59,8 @@ class Sketch:
 
     @property
     def edges(self) -> List[SketchEdge]:
-        """List of all independently sketched edges, which are those
-        that are not assigned to a face."""
+        """List of all independently sketched edges, which are those that are not
+        assigned to a face."""
         return self._edges
 
     @property
@@ -178,7 +178,8 @@ class Sketch:
 
     @check_input_types
     def get(self, tag: str) -> List[SketchObject]:
-        """Get a list of shapes with a given tag.
+        """
+        Get a list of shapes with a given tag.
 
         Parameters
         ----------
@@ -525,7 +526,7 @@ class Sketch:
     def circle(
         self,
         center: Point2D,
-        radius: Union[Quantity, Distance],
+        radius: Union[Quantity, Distance, Real],
         tag: Optional[str] = None,
     ) -> "Sketch":
         """
@@ -535,7 +536,7 @@ class Sketch:
         ----------
         center: Point2D
             Point that represents the center of the circle.
-        radius : Union[Quantity, Distance]
+        radius : Union[Quantity, Distance, Real]
             Radius of the circle.
         tag : str, default: None
             User-defined label for identifying this face.
@@ -556,7 +557,8 @@ class Sketch:
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """Create a box on the sketch.
+        """
+        Create a box on the sketch.
 
         Parameters
         ----------
@@ -587,7 +589,8 @@ class Sketch:
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """Create a slot on the sketch.
+        """
+        Create a slot on the sketch.
 
         Parameters
         ----------
@@ -613,20 +616,21 @@ class Sketch:
     def ellipse(
         self,
         center: Point2D,
-        major_radius: Union[Quantity, Distance],
-        minor_radius: Union[Quantity, Distance],
+        major_radius: Union[Quantity, Distance, Real],
+        minor_radius: Union[Quantity, Distance, Real],
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """Create an ellipse on the sketch.
+        """
+        Create an ellipse on the sketch.
 
         Parameters
         ----------
         center: Point2D
             Point that represents the center of the ellipse.
-        major_radius : Union[Quantity, Distance]
+        major_radius : Union[Quantity, Distance, Real]
             Semi-major axis of the ellipse.
-        minor_radius : Union[Quantity, Distance]
+        minor_radius : Union[Quantity, Distance, Real]
             Semi-minor axis of the ellipse.
         angle : Union[Quantity, Angle, Real], default: 0
             Placement angle for orientation alignment.
@@ -644,18 +648,19 @@ class Sketch:
     def polygon(
         self,
         center: Point2D,
-        inner_radius: Union[Quantity, Distance],
+        inner_radius: Union[Quantity, Distance, Real],
         sides: int,
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """Create a polygon on the sketch.
+        """
+        Create a polygon on the sketch.
 
         Parameters
         ----------
         center: Point2D
             Point that represents the center of the polygon.
-        inner_radius : Union[Quantity, Distance]
+        inner_radius : Union[Quantity, Distance, Real]
             Inner radius (apothem) of the polygon.
         sides : int
             Number of sides of the polygon.
@@ -675,20 +680,21 @@ class Sketch:
     def dummy_gear(
         self,
         origin: Point2D,
-        outer_radius: Distance,
-        inner_radius: Distance,
+        outer_radius: Union[Quantity, Distance, Real],
+        inner_radius: Union[Quantity, Distance, Real],
         n_teeth: int,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """Creates a dummy gear on the sketch.
+        """
+        Creates a dummy gear on the sketch.
 
         Parameters
         ----------
         origin : Point2D
             Origin of the gear.
-        outer_radius : Distance
+        outer_radius : Union[Quantity, Distance, Real]
             Outer radius of the gear.
-        inner_radius : Distance
+        inner_radius : Union[Quantity, Distance, Real]
             Inner radius of the gear.
         n_teeth : int
             Number of teeth of the gear.
@@ -707,11 +713,12 @@ class Sketch:
         self,
         origin: Point2D,
         module: Real,
-        pressure_angle: Quantity,
+        pressure_angle: Union[Quantity, Angle, Real],
         n_teeth: int,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """Creates a spur gear on the sketch.
+        """
+        Creates a spur gear on the sketch.
 
         Parameters
         ----------
@@ -720,7 +727,7 @@ class Sketch:
         module : Real
             Module of the spur gear. This is also the ratio between the pitch circle
             diameter in millimeters and the number of teeth.
-        pressure_angle : Quantity
+        pressure_angle : Union[Quantity, Angle, Real]
             Pressure angle of the spur gear.
         n_teeth : int
             Number of teeth of the spur gear.
@@ -780,7 +787,8 @@ class Sketch:
         use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ):
-        """Plot all objects of the sketch to the scene.
+        """
+        Plot all objects of the sketch to the scene.
 
         Parameters
         ----------
@@ -809,7 +817,8 @@ class Sketch:
         use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ):
-        """Plot the current selection to the scene.
+        """
+        Plot the current selection to the scene.
 
         Parameters
         ----------

@@ -6,7 +6,7 @@ Overall guidance on contributing to a PyAnsys library appears in the
 in the *PyAnsys Developer's Guide*. Ensure that you are thoroughly familiar
 with it and all `How-to <https://dev.docs.pyansys.com/how-to/index.html>`_ pages
 before attempting to contribute to PyGeometry.
- 
+
 The following contribution information is specific to PyGeometry.
 
 Clone the repository
@@ -34,7 +34,7 @@ should use these issue templates:
 
 If your issue does not fit into these categories, create your own issue.
 
-To reach the PyAnsys team, email `pyansys.support@ansys.com <pyansys.support@ansys.com>`_.
+To reach the PyAnsys team, email `pyansys.core@ansys.com <pyansys.core@ansys.com>`_.
 
 View documentation
 ------------------
