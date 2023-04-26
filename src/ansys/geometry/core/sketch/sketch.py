@@ -59,8 +59,8 @@ class Sketch:
 
     @property
     def edges(self) -> List[SketchEdge]:
-        """List of all independently sketched edges, which are those
-        that are not assigned to a face."""
+        """List of all independently sketched edges, which are those that are not
+        assigned to a face."""
         return self._edges
 
     @property
@@ -178,7 +178,8 @@ class Sketch:
 
     @check_input_types
     def get(self, tag: str) -> List[SketchObject]:
-        """Get a list of shapes with a given tag.
+        """
+        Get a list of shapes with a given tag.
 
         Parameters
         ----------
@@ -556,7 +557,8 @@ class Sketch:
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """Create a box on the sketch.
+        """
+        Create a box on the sketch.
 
         Parameters
         ----------
@@ -587,7 +589,8 @@ class Sketch:
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """Create a slot on the sketch.
+        """
+        Create a slot on the sketch.
 
         Parameters
         ----------
@@ -618,7 +621,8 @@ class Sketch:
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """Create an ellipse on the sketch.
+        """
+        Create an ellipse on the sketch.
 
         Parameters
         ----------
@@ -649,7 +653,8 @@ class Sketch:
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """Create a polygon on the sketch.
+        """
+        Create a polygon on the sketch.
 
         Parameters
         ----------
@@ -680,7 +685,8 @@ class Sketch:
         n_teeth: int,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """Creates a dummy gear on the sketch.
+        """
+        Creates a dummy gear on the sketch.
 
         Parameters
         ----------
@@ -711,7 +717,8 @@ class Sketch:
         n_teeth: int,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """Creates a spur gear on the sketch.
+        """
+        Creates a spur gear on the sketch.
 
         Parameters
         ----------
@@ -780,7 +787,8 @@ class Sketch:
         use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ):
-        """Plot all objects of the sketch to the scene.
+        """
+        Plot all objects of the sketch to the scene.
 
         Parameters
         ----------
@@ -809,7 +817,8 @@ class Sketch:
         use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ):
-        """Plot the current selection to the scene.
+        """
+        Plot the current selection to the scene.
 
         Parameters
         ----------

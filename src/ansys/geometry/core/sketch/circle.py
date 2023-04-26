@@ -13,7 +13,8 @@ from ansys.geometry.core.typing import Real
 
 
 class SketchCircle(SketchFace, Circle):
-    """Provides for modeling circles.
+    """
+    Provides for modeling circles.
 
     Parameters
     ----------
@@ -75,7 +76,8 @@ class SketchCircle(SketchFace, Circle):
 
     @property
     def perimeter(self) -> Quantity:
-        """Perimeter of the circle.
+        """
+        Perimeter of the circle.
 
         Notes
         -----
@@ -109,9 +111,8 @@ class SketchCircle(SketchFace, Circle):
 
     def plane_change(self, plane: Plane) -> None:
         """
-        Method for SketchCircle objects to redefine the plane
-        containing them. This implies that their 3D definition may suffer
-        changes.
+        Method for SketchCircle objects to redefine the plane containing them. This
+        implies that their 3D definition may suffer changes.
 
         Parameters
         ----------

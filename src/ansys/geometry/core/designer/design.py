@@ -114,7 +114,8 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     def add_material(self, material: Material) -> None:
-        """Add a material to the design.
+        """
+        Add a material to the design.
 
         Parameters
         ----------
@@ -145,7 +146,8 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     def save(self, file_location: Union[Path, str]) -> None:
-        """Save a design to disk on the active Geometry server instance.
+        """
+        Save a design to disk on the active Geometry server instance.
 
         Parameters
         ----------
@@ -166,7 +168,8 @@ class Design(Component):
         file_location: Union[Path, str],
         format: Optional[DesignFileFormat] = DesignFileFormat.SCDOCX,
     ) -> None:
-        """Download a design from the active Geometry server instance.
+        """
+        Download a design from the active Geometry server instance.
 
         Parameters
         ----------
@@ -217,7 +220,8 @@ class Design(Component):
         beams: Optional[List[Beam]] = None,
         design_points: Optional[List[DesignPoint]] = None,
     ) -> NamedSelection:
-        """Create a named selection on the active Geometry server instance.
+        """
+        Create a named selection on the active Geometry server instance.
 
         Parameters
         ----------
@@ -257,7 +261,8 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     def delete_named_selection(self, named_selection: Union[NamedSelection, str]) -> None:
-        """Delete a named selection on the active Geometry server instance.
+        """
+        Delete a named selection on the active Geometry server instance.
 
         Parameters
         ----------
@@ -287,7 +292,8 @@ class Design(Component):
 
     @check_input_types
     def delete_component(self, component: Union["Component", str]) -> None:
-        """Delete a component (itself or its children).
+        """
+        Delete a component (itself or its children).
 
         Notes
         -----
@@ -311,7 +317,8 @@ class Design(Component):
             return super().delete_component(component)
 
     def set_shared_topology(self, share_type: SharedTopologyType) -> None:
-        """Set the shared topology to apply to the component.
+        """
+        Set the shared topology to apply to the component.
 
         Parameters
         ----------
@@ -336,7 +343,8 @@ class Design(Component):
         direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Y,
     ) -> BeamCircularProfile:
         """
-        Add a new beam circular profile under the design for the future creation of beams.
+        Add a new beam circular profile under the design for the future creation of
+        beams.
 
         Parameters
         ----------
@@ -383,7 +391,8 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     def add_midsurface_thickness(self, thickness: Quantity, bodies: List[Body]) -> None:
-        """Adds a mid-surface thickness to a list of bodies.
+        """
+        Adds a mid-surface thickness to a list of bodies.
 
         Parameters
         ----------
@@ -422,7 +431,8 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     def add_midsurface_offset(self, offset_type: MidSurfaceOffsetType, bodies: List[Body]) -> None:
-        """Adds a mid-surface offset type to a list of bodies.
+        """
+        Adds a mid-surface offset type to a list of bodies.
 
         Parameters
         ----------
@@ -459,7 +469,8 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     def delete_beam_profile(self, beam_profile: Union[BeamProfile, str]) -> None:
-        """Removes a beam profile on the active geometry server instance.
+        """
+        Removes a beam profile on the active geometry server instance.
 
         Parameters
         ----------

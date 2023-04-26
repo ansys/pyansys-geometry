@@ -13,7 +13,8 @@ from ansys.geometry.core.typing import RealSequence
 
 class Frame:
     """
-    Provides primitive representation of a frame (an origin and three fundamental directions).
+    Provides primitive representation of a frame (an origin and three fundamental
+    directions).
 
     Parameters
     ----------
@@ -105,33 +106,34 @@ class Frame:
 
     @property
     def global_to_local_rotation(self) -> Matrix33:
-        """Global to local space transformation matrix.
+        """
+        Global to local space transformation matrix.
 
         Returns
         -------
         Matrix33
             A 3x3 matrix representing the transformation from global to local
             coordinate space excluding origin translation.
-
         """
         return self._rotation_matrix
 
     @property
     def local_to_global_rotation(self) -> Matrix33:
-        """Local to global space transformation matrix.
+        """
+        Local to global space transformation matrix.
 
         Returns
         -------
         Matrix33
             A 3x3 matrix representing the transformation from local to global
             coordinate space.
-
         """
         return self._rotation_matrix.T
 
     @property
     def transformation_matrix(self) -> Matrix44:
-        """Full 4x4 transformation matrix.
+        """
+        Full 4x4 transformation matrix.
 
         Returns
         -------

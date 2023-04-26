@@ -1,4 +1,5 @@
-"""Provides the Logging module.
+"""
+Provides the Logging module.
 
 This module supplies a general framework for logging in PyGeometry. It is
 built on the `logging <https://docs.python.org/3/library/logging.html>`_ library
@@ -102,7 +103,6 @@ Other loggers
 You can create your own loggers using a Python ``logging`` library as
 you would do in any other script. There would be no conflicts between
 these loggers.
-
 """
 
 from copy import copy
@@ -156,14 +156,14 @@ string_to_loglevel = {
 
 
 class PyGeometryCustomAdapter(logging.LoggerAdapter):
-    """Keeps the reference to the Geometry service instance name dynamic.
+    """
+    Keeps the reference to the Geometry service instance name dynamic.
 
-    If you use the standard approach, which is supplying **extra** input
-    to the logger, you must input Geometry service instances
-    each time you do a log.
+    If you use the standard approach, which is supplying **extra** input to the logger,
+    you must input Geometry service instances each time you do a log.
 
-    Using adapters, you only need to specify the Geometry service instance that
-    you are referring to once.
+    Using adapters, you only need to specify the Geometry service instance that you are
+    referring to once.
     """
 
     level = (
@@ -190,7 +190,8 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
         return msg, kwargs
 
     def log_to_file(self, filename: str = FILE_NAME, level: int = LOG_LEVEL):
-        """Add a file handler to the logger.
+        """
+        Add a file handler to the logger.
 
         Parameters
         ----------
@@ -207,7 +208,8 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
         self.file_handler = self.logger.file_handler
 
     def log_to_stdout(self, level=LOG_LEVEL):
-        """Add a standard output handler to the logger.
+        """
+        Add a standard output handler to the logger.
 
         Parameters
         ----------
@@ -222,7 +224,8 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
         self.std_out_handler = self.logger.std_out_handler
 
     def setLevel(self, level="DEBUG"):
-        """Change the log level of the object and the attached handlers.
+        """
+        Change the log level of the object and the attached handlers.
 
         Parameters
         ----------
@@ -291,7 +294,8 @@ class InstanceFilter(logging.Filter):
 
 
 class Logger:
-    """Provides the logger used for each PyGeometry session.
+    """
+    Provides the logger used for each PyGeometry session.
 
     This class allows you to add handlers to the logger to output messages
     to a file or to the standard output.
@@ -324,7 +328,6 @@ class Logger:
     >>> from ansys.geometry.core import LOG
     >>> file_path = os.path.join(os.getcwd(), 'pygeometry.log')
     >>> LOG.log_to_file(file_path)
-
     """
 
     file_handler = None
@@ -374,7 +377,8 @@ class Logger:
         self.add_handling_uncaught_expections(self.logger)
 
     def log_to_file(self, filename=FILE_NAME, level=LOG_LEVEL):
-        """Add a file handler to the logger.
+        """
+        Add a file handler to the logger.
 
         Parameters
         ----------
@@ -392,13 +396,13 @@ class Logger:
         >>> import os
         >>> file_path = os.path.join(os.getcwd(), 'pygeometry.log')
         >>> LOG.log_to_file(file_path)
-
         """
 
         self = addfile_handler(self, filename=filename, level=level, write_headers=True)
 
     def log_to_stdout(self, level=LOG_LEVEL):
-        """Add the standard output handler to the logger.
+        """
+        Add the standard output handler to the logger.
 
         Parameters
         ----------
@@ -417,7 +421,8 @@ class Logger:
         self._level = level
 
     def _make_child_logger(self, sufix, level):
-        """Create a child logger.
+        """
+        Create a child logger.
 
         This method uses the ``getChild()`` method or copies attributes between the
         ``PyGeometry_global`` logger and the new one.
@@ -461,7 +466,8 @@ class Logger:
         return logger
 
     def add_child_logger(self, sufix: str, level: Optional[str] = None):
-        """Add a child logger to the main logger.
+        """
+        Add a child logger to the main logger.
 
         This logger is more general than an instance logger, which is designed to
         track the state of Geometry service instances.
@@ -488,7 +494,8 @@ class Logger:
     def add_instance_logger(
         self, name: str, client_instance: "GrpcClient", level: Optional[int] = None
     ) -> PyGeometryCustomAdapter:
-        """Add a logger for a Geometry service instance.
+        """
+        Add a logger for a Geometry service instance.
 
         The Geometry service instance logger is a logger with an adapter that adds
         contextual information such as the Geometry service instance name. This logger is
@@ -535,7 +542,8 @@ class Logger:
             raise KeyError(f"There is no instances with name {key}.")
 
     def add_handling_uncaught_expections(self, logger):
-        """Redirect the output of an exception to a logger.
+        """
+        Redirect the output of an exception to a logger.
 
         Parameters
         ----------
@@ -553,7 +561,8 @@ class Logger:
 
 
 def addfile_handler(logger, filename=FILE_NAME, level=LOG_LEVEL, write_headers=False):
-    """Add a file handler to the input.
+    """
+    Add a file handler to the input.
 
     Parameters
     ----------
@@ -593,7 +602,8 @@ def addfile_handler(logger, filename=FILE_NAME, level=LOG_LEVEL, write_headers=F
 
 
 def add_stdout_handler(logger, level=LOG_LEVEL, write_headers=False):
-    """Add a standout handler to the logger.
+    """
+    Add a standout handler to the logger.
 
     Parameters
     ----------

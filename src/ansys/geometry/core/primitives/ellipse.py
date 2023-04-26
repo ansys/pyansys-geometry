@@ -216,7 +216,8 @@ class Ellipse:
 
     @property
     def linear_eccentricity(self) -> Quantity:
-        """Linear eccentricity of the ellipse.
+        """
+        Linear eccentricity of the ellipse.
 
         Notes
         -----
@@ -246,7 +247,8 @@ class Ellipse:
 
     def transformed_copy(self, matrix: Matrix44) -> "Ellipse":
         """
-        Creates a transformed copy of the ellipse based on a given transformation matrix.
+        Creates a transformed copy of the ellipse based on a given transformation
+        matrix.
 
         Parameters
         ----------
@@ -271,9 +273,8 @@ class Ellipse:
 
     def get_parameterization(self) -> Parameterization:
         """
-        The parameter of an ellipse specifies the clockwise angle around the axis
-        (right hand corkscrew law), with a zero parameter at `dir_x` and a period
-        of 2*pi.
+        The parameter of an ellipse specifies the clockwise angle around the axis (right
+        hand corkscrew law), with a zero parameter at `dir_x` and a period of 2*pi.
 
         Returns
         -------
@@ -356,9 +357,9 @@ class EllipseEvaluation(CurveEvaluation):
     @cached_property
     def first_derivative(self) -> Vector3D:
         """
-        The first derivative of the evaluation. The first derivative is in the direction of the
-        tangent and has a magnitude equal to the velocity (rate of change of position) at that
-        point.
+        The first derivative of the evaluation. The first derivative is in the direction
+        of the tangent and has a magnitude equal to the velocity (rate of change of
+        position) at that point.
 
         Returns
         -------

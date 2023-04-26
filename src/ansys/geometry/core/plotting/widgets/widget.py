@@ -6,7 +6,8 @@ from pyvista import Plotter
 
 
 class PlotterWidget(ABC):
-    """Abstract class for Plotter widgets.
+    """
+    Abstract class for Plotter widgets.
 
     Parameters
     ----------

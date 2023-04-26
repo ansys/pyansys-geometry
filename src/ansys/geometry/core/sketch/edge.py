@@ -30,7 +30,8 @@ class SketchEdge:
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
-        """VTK polydata representation for PyVista visualization.
+        """
+        VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
         the standard global Cartesian coordinate system.
@@ -44,10 +45,9 @@ class SketchEdge:
 
     def plane_change(self, plane: "Plane") -> None:
         """
-        Common method for SketchEdge objects to redefine the plane
-        containing them. This implies that their 3D definition may suffer
-        changes. By default, it does nothing. It is required to be implemented
-        in child SketchEdge classes.
+        Common method for SketchEdge objects to redefine the plane containing them. This
+        implies that their 3D definition may suffer changes. By default, it does
+        nothing. It is required to be implemented in child SketchEdge classes.
 
         Parameters
         ----------

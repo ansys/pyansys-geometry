@@ -13,15 +13,12 @@ ANGLE_ACCURACY = 1e-6
 
 
 class Accuracy:
-    """
-    Provides decimal precision evaluations for actions such as equivalency.
-    """
+    """Provides decimal precision evaluations for actions such as equivalency."""
 
     def length_is_equal(comparison_length: Real, reference_length: Real) -> bool:
         """
-        Check if the comparison length is equal to the reference length
-        within the length accuracy.
-
+        Check if the comparison length is equal to the reference length within the
+        length accuracy.
 
         Returns
         -------
@@ -51,8 +48,8 @@ class Accuracy:
 
     def length_is_less_than_or_equal(comparison_length: Real, reference_length: Real) -> bool:
         """
-        Check if the comparison length is less than or equal to the reference length within
-        the length accuracy.
+        Check if the comparison length is less than or equal to the reference length
+        within the length accuracy.
 
         Returns
         -------

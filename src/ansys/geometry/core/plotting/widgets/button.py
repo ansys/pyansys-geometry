@@ -28,7 +28,8 @@ class Button(PlotterWidget):
 
     @abstractmethod
     def callback(self, state: bool) -> None:
-        """Functionality of the button, to be implemented by subclasses.
+        """
+        Functionality of the button, to be implemented by subclasses.
 
         Parameters
         ----------

@@ -9,7 +9,8 @@ from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
 
 
 class Ruler(PlotterWidget):
-    """Ruler widget for the PyGeometry plotter class.
+    """
+    Ruler widget for the PyGeometry plotter class.
 
     Parameters
     ----------
@@ -29,7 +30,8 @@ class Ruler(PlotterWidget):
         )
 
     def callback(self, state: bool) -> None:
-        """Callback function for the Ruler widget.
+        """
+        Callback function for the Ruler widget.
 
         Notes
         -----
@@ -58,7 +60,8 @@ class Ruler(PlotterWidget):
             )
 
     def update(self) -> None:
-        """Method defining the configuration and representation of the Ruler widget button."""
+        """Method defining the configuration and representation of the Ruler widget
+        button."""
         show_ruler_vr = self._button.GetRepresentation()
         show_ruler_icon_file = os.path.join(os.path.dirname(__file__), "_images", "ruler.png")
         show_ruler_r = _vtk.vtkPNGReader()

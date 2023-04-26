@@ -10,7 +10,8 @@ from ansys.geometry.core.sketch.segment import SketchSegment
 
 
 class Triangle(SketchFace):
-    """Provides for modeling 2D triangles.
+    """
+    Provides for modeling 2D triangles.
 
     Parameters
     ----------
