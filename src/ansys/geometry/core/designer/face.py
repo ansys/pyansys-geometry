@@ -22,7 +22,8 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @unique
 class SurfaceType(Enum):
-    """Provides an enum holding the possible values for surface types by the Geometry service."""
+    """Provides an enum holding the possible values for surface types by the Geometry
+    service."""
 
     SURFACETYPE_UNKNOWN = 0
     SURFACETYPE_PLANE = 1
@@ -43,7 +44,8 @@ class FaceLoopType(Enum):
 
 
 class FaceLoop:
-    """Provides an internal class holding the face loops defined by the server side.
+    """
+    Provides an internal class holding the face loops defined by the server side.
 
     Notes
     -----
@@ -206,7 +208,8 @@ class Face:
 
     @protect_grpc
     def face_normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:
-        """Get the normal direction to the face evaluated at certain UV coordinates.
+        """
+        Get the normal direction to the face evaluated at certain UV coordinates.
 
         Notes
         -----
@@ -237,7 +240,8 @@ class Face:
 
     @protect_grpc
     def face_point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
-        """Get a point of the face evaluated at certain UV coordinates.
+        """
+        Get a point of the face evaluated at certain UV coordinates.
 
         Notes
         -----

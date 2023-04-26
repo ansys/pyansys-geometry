@@ -189,8 +189,9 @@ class Sphere:
 
     def get_u_parameterization(self) -> Parameterization:
         """
-        The U parameter specifies the longitude angle, increasing clockwise (East) about `dir_z`
-        (right hand corkscrew law). It has a zero parameter at `dir_x`, and a period of 2*pi.
+        The U parameter specifies the longitude angle, increasing clockwise (East) about
+        `dir_z` (right hand corkscrew law). It has a zero parameter at `dir_x`, and a
+        period of 2*pi.
 
         Returns
         -------
@@ -201,8 +202,8 @@ class Sphere:
 
     def get_v_parameterization(self) -> Parameterization:
         """
-        The V parameter specifies the latitude, increasing North, with a zero parameter at the
-        equator, and a range of [-pi/2, pi/2].
+        The V parameter specifies the latitude, increasing North, with a zero parameter
+        at the equator, and a range of [-pi/2, pi/2].
 
         Returns
         -------

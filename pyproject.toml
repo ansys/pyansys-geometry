@@ -104,9 +104,10 @@ default_section = "THIRDPARTY"
 src_paths = ["doc", "src", "tests"]
 
 [tool.docformatter]
-pre-summary-space = true
-wrap-descriptions = 100
-wrap-summaries = 100
+in-place = true
+pre-summary-newline = true
+wrap-descriptions = 88
+wrap-summaries = 88
 
 [tool.coverage.run]
 source = ["ansys.geometry"]

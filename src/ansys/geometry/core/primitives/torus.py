@@ -180,9 +180,9 @@ class Torus:
 
     def get_u_parameterization(self):
         """
-        The U parameter specifies the longitude angle, increasing clockwise (East) about the axis
-        (right hand corkscrew law). It has a zero parameter at Geometry.Frame.DirX,
-        and a period of 2*pi.
+        The U parameter specifies the longitude angle, increasing clockwise (East) about
+        the axis (right hand corkscrew law). It has a zero parameter at
+        Geometry.Frame.DirX, and a period of 2*pi.
 
         Returns
         -------
@@ -193,12 +193,11 @@ class Torus:
 
     def get_v_parameterization(self) -> Parameterization:
         """
-        The V parameter specifies the latitude, increasing North,
-        with a zero parameter at the equator.
-        For the donut, where the Geometry.Torus.MajorRadius is greater than the
-        Geometry.Torus.MinorRadius, the range is [-pi, pi] and the parameterization is periodic.
-        For a degenerate torus, the range is restricted accordingly and
-        the parameterization is non-periodic.
+        The V parameter specifies the latitude, increasing North, with a zero parameter
+        at the equator. For the donut, where the Geometry.Torus.MajorRadius is greater
+        than the Geometry.Torus.MinorRadius, the range is [-pi, pi] and the
+        parameterization is periodic. For a degenerate torus, the range is restricted
+        accordingly and the parameterization is non- periodic.
 
         Returns
         -------

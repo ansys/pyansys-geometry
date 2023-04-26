@@ -43,9 +43,8 @@ def test_invalid_inputs():
 
 
 def test_circle_message_conversion():
-    """Test conversion between :class:
-    `SketchCircle <ansys.geometry.core.sketch.circle.SketchCircle>`
-    and expected gRPC message type."""
+    """Test conversion between :class: `SketchCircle
+    <ansys.geometry.core.sketch.circle.SketchCircle>` and expected gRPC message type."""
     circle = SketchCircle(
         Point2D([10, 100], UNITS.mm),
         Quantity(300, UNITS.mm),
@@ -62,7 +61,8 @@ def test_circle_message_conversion():
 
 def test_ellipse_message_conversion():
     """Test conversion between :class:`SketchEllipse <
-    ansys.geometry.core.sketch.ellipse.SketchEllipse>` and expected gRPC message type."""
+    ansys.geometry.core.sketch.ellipse.SketchEllipse>` and expected gRPC message
+    type."""
     ellipse = SketchEllipse(
         Point2D([10, 100], UNITS.mm),
         Quantity(300, UNITS.mm),
@@ -98,9 +98,9 @@ def test_ellipse_message_conversion():
 
 
 def test_segment_message_conversion():
-    """Test conversion between :class:
-    `SketchSegment <ansys.geometry.core.sketch.segment.SketchSegment>`
-    and expected gRPC message type."""
+    """Test conversion between :class: `SketchSegment
+    <ansys.geometry.core.sketch.segment.SketchSegment>` and expected gRPC message
+    type."""
     segment = SketchSegment(
         Point2D([30, 400], UNITS.mm),
         Point2D([500, 600], UNITS.mm),
@@ -118,8 +118,8 @@ def test_segment_message_conversion():
 
 
 def test_polygon_message_conversion():
-    """Test conversion between :class:`Polygon <ansys.geometry.core.sketch.polygon.Polygon>`
-    and expected gRPC message type."""
+    """Test conversion between :class:`Polygon
+    <ansys.geometry.core.sketch.polygon.Polygon>` and expected gRPC message type."""
     polygon = Polygon(
         Point2D([10, 100], UNITS.mm),
         Quantity(300, UNITS.mm),
@@ -173,8 +173,8 @@ def test_point2d_message_conversion():
 
 
 def test_unit_vector_message_conversion():
-    """Test conversion between :class:`UnitVector3D <ansys.geometry.core.math.vector.unitVector3D>`
-    and expected gRPC message type."""
+    """Test conversion between :class:`UnitVector3D
+    <ansys.geometry.core.math.vector.unitVector3D>` and expected gRPC message type."""
     unit_vector = UnitVector3D([1, 1, 1])
     grpc_unit_vector_message = unit_vector_to_grpc_direction(unit_vector)
 
@@ -184,8 +184,8 @@ def test_unit_vector_message_conversion():
 
 
 def test_arc_message_conversion():
-    """Test conversion between :class:`Arc <ansys.geometry.core.sketch.arc.Arc>`
-    and expected gRPC message type."""
+    """Test conversion between :class:`Arc <ansys.geometry.core.sketch.arc.Arc>` and
+    expected gRPC message type."""
     arc = Arc(
         Point2D([500, 600], UNITS.mm),
         Point2D([100, 400], UNITS.mm),
@@ -235,8 +235,8 @@ def test_arc_message_conversion():
 
 
 def test_plane_message_conversion():
-    """Test conversion between :class:`Plane <ansys.geometry.core.math.plane.Plane>`
-    and expected gRPC message type."""
+    """Test conversion between :class:`Plane <ansys.geometry.core.math.plane.Plane>` and
+    expected gRPC message type."""
     plane = Plane(
         Point3D([10, 200, 3000], UNITS.mm), UnitVector3D([1, 1, 0]), UnitVector3D([1, -1, 0])
     )
@@ -258,8 +258,8 @@ def test_plane_message_conversion():
 
 
 def test_frame_message_conversion():
-    """Test conversion between :class:`Frame <ansys.geometry.core.math.frame.Frame>`
-    and expected gRPC message type."""
+    """Test conversion between :class:`Frame <ansys.geometry.core.math.frame.Frame>` and
+    expected gRPC message type."""
     frame = Frame(
         Point3D([10, 200, 3000], UNITS.mm), UnitVector3D([1, 1, 0]), UnitVector3D([1, -1, 0])
     )

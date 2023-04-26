@@ -6,9 +6,8 @@ from ansys.geometry.core.math import IDENTITY_MATRIX44, Matrix44
 
 class Part:
     """
-    Represents a Part Master. This class should not be accessed by users. Parts hold fundamental
-    data of an assembly.
-
+    Represents a Part Master. This class should not be accessed by users. Parts hold
+    fundamental data of an assembly.
 
     Parameters
     ----------
@@ -37,7 +36,7 @@ class Part:
 
     @property
     def name(self) -> str:
-        """Name of the part"""
+        """Name of the part."""
         return self._name
 
     @property
@@ -51,7 +50,11 @@ class Part:
 
     @property
     def bodies(self) -> List[TemplateBody]:
-        """TemplateBody children that this Part contains. These are master bodies."""
+        """
+        TemplateBody children that this Part contains.
+
+        These are master bodies.
+        """
         return self._bodies
 
     @bodies.setter
@@ -69,8 +72,9 @@ class Part:
 
 class TransformedPart:
     """
-    Represents a Part Occurrence. This class should not be accessed by users. TransformedParts hold
-    fundamental data of an assembly. TransformedParts wrap Parts by adding a transform matrix.
+    Represents a Part Occurrence. This class should not be accessed by users.
+    TransformedParts hold fundamental data of an assembly. TransformedParts wrap Parts
+    by adding a transform matrix.
 
     Parameters
     ----------

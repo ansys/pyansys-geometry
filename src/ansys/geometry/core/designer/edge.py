@@ -18,7 +18,8 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @unique
 class CurveType(Enum):
-    """Provides an enum holding the possible values for curve types by the Geometry service."""
+    """Provides an enum holding the possible values for curve types by the Geometry
+    service."""
 
     CURVETYPE_UNKNOWN = 0
     CURVETYPE_LINE = 1

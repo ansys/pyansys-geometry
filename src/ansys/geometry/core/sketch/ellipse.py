@@ -15,7 +15,8 @@ from ansys.geometry.core.typing import Real
 
 
 class SketchEllipse(SketchFace, Ellipse):
-    """Provides for modeling ellipses.
+    """
+    Provides for modeling ellipses.
 
     Parameters
     ----------
@@ -119,7 +120,8 @@ class SketchEllipse(SketchFace, Ellipse):
 
     @property
     def perimeter(self) -> Quantity:
-        """Perimeter of the circle.
+        """
+        Perimeter of the circle.
 
         Notes
         -----
@@ -178,9 +180,8 @@ class SketchEllipse(SketchFace, Ellipse):
 
     def plane_change(self, plane: Plane) -> None:
         """
-        Method for SketchEllipse objects to redefine the plane
-        containing them. This implies that their 3D definition may suffer
-        changes.
+        Method for SketchEllipse objects to redefine the plane containing them. This
+        implies that their 3D definition may suffer changes.
 
         Parameters
         ----------

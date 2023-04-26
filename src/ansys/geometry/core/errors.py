@@ -12,7 +12,8 @@ SIGINT_TRACKER = []
 
 
 class GeometryRuntimeError(RuntimeError):
-    """Provides the error message to raise when the Geometry service passes a runtime error."""
+    """Provides the error message to raise when the Geometry service passes a runtime
+    error."""
 
     pass
 
@@ -40,7 +41,8 @@ def handler(sig, frame):  # pragma: no cover
 
 
 def protect_grpc(func):
-    """Capture gRPC exceptions and raise a more succinct error message.
+    """
+    Capture gRPC exceptions and raise a more succinct error message.
 
     This method captures the ``KeyboardInterrupt`` exception to avoid
     segfaulting the Geometry service.
@@ -51,7 +53,8 @@ def protect_grpc(func):
 
     @wraps(func)
     def wrapper(*args, **kwargs):
-        """Capture gRPC exceptions and KeyboardInterrupt errors.
+        """
+        Capture gRPC exceptions and KeyboardInterrupt errors.
 
         Returns
         -------

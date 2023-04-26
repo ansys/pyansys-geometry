@@ -221,8 +221,8 @@ class Cone:
 
     def get_u_parameterization(self) -> Parameterization:
         """
-        The U parameter specifies the clockwise angle around the axis (right hand corkscrew law),
-        with a zero parameter at `dir_x`, and a period of 2*pi.
+        The U parameter specifies the clockwise angle around the axis (right hand
+        corkscrew law), with a zero parameter at `dir_x`, and a period of 2*pi.
 
         Returns
         -------
@@ -233,8 +233,8 @@ class Cone:
 
     def get_v_parameterization(self) -> Parameterization:
         """
-        The V parameter specifies the distance along the axis,
-        with a zero parameter at the XY plane of the Cone.
+        The V parameter specifies the distance along the axis, with a zero parameter at
+        the XY plane of the Cone.
 
         Returns
         -------

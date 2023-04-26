@@ -15,7 +15,8 @@ set_application_registry(UNITS)
 
 
 class PhysicalQuantity:
-    """Provides the base class for handling units homogeneously throughout PyGeometry.
+    """
+    Provides the base class for handling units homogeneously throughout PyGeometry.
 
     Parameters
     ----------
@@ -52,7 +53,8 @@ class PhysicalQuantity:
         return self._base_unit
 
     def _get_quantity(self, input: Real) -> Quantity:
-        """Return the input value as a ~:class:`pint.Quantity` class.
+        """
+        Return the input value as a ~:class:`pint.Quantity` class.
 
         Parameters
         ----------
@@ -68,8 +70,8 @@ class PhysicalQuantity:
 
     @check_input_types
     def _base_units_magnitude(self, input: Quantity) -> Real:
-        """Get the input's :class:`pint.Quantity` magnitude
-        in base units.
+        """
+        Get the input's :class:`pint.Quantity` magnitude in base units.
 
         Parameters
         ----------

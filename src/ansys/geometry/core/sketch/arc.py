@@ -12,7 +12,8 @@ from ansys.geometry.core.sketch.edge import SketchEdge
 
 
 class Arc(SketchEdge):
-    """Provides for modeling arcs.
+    """
+    Provides for modeling arcs.
 
     Parameters
     ----------
@@ -108,7 +109,8 @@ class Arc(SketchEdge):
 
     @property
     def is_clockwise(self) -> bool:
-        """Whether the rotation of the angle is clockwise.
+        """
+        Whether the rotation of the angle is clockwise.
 
         Returns
         -------
@@ -126,7 +128,8 @@ class Arc(SketchEdge):
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
-        """VTK polydata representation for the PyVista visualization.
+        """
+        VTK polydata representation for the PyVista visualization.
 
         The representation lies in the X/Y plane within
         the standard global Cartesian coordinate system.
@@ -179,9 +182,9 @@ class Arc(SketchEdge):
 
     def __arc_pyvista_hack(self):
         """
-        Hack for close to PI arcs. PyVista does not know whether the
-        rotation is clockwise or counterclockwise. It only understands
-        the longest and shortest angle, which complicates things in the boundary.
+        Hack for close to PI arcs. PyVista does not know whether the rotation is
+        clockwise or counterclockwise. It only understands the longest and shortest
+        angle, which complicates things in the boundary.
 
         This means that we need to divide the arc in two so that it is properly
         defined based on the known sense of rotation.
