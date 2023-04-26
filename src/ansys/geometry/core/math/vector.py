@@ -23,7 +23,7 @@ class Vector3D(np.ndarray):
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence]):
-        """Constructor method for the ``Vector3D`` class."""
+        """Initialize ``Vector3D`` class."""
 
         obj = np.asarray(input).view(cls)
 
@@ -251,7 +251,7 @@ class Vector2D(np.ndarray):
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence]):
-        """Constructor for the ``Vector2D`` class."""
+        """Initialize the ``Vector2D`` class."""
 
         obj = np.asarray(input).view(cls)
 

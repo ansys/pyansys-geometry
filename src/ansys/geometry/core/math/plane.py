@@ -31,7 +31,7 @@ class Plane(Frame):
         direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Y,
     ):
-        """Constructor method for the ``Plane`` class."""
+        """Initialize ``Plane`` class."""
         super().__init__(origin, direction_x, direction_y)
 
     @check_input_types

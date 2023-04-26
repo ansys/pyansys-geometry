@@ -55,7 +55,7 @@ class Cone:
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
-        """Constructor method for the ``Cone`` class."""
+        """Initialize ``Cone`` class."""
 
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
         self._reference = (
@@ -118,7 +118,7 @@ class Cone:
 
     def transformed_copy(self, matrix: Matrix44) -> "Cone":
         """
-        Creates a transformed copy of the cone based on a given transformation matrix.
+        Creates a transformed copy of the cone based on a transformation matrix.
 
         Parameters
         ----------
@@ -221,6 +221,8 @@ class Cone:
 
     def get_u_parameterization(self) -> Parameterization:
         """
+        Retrieve the U parameter parametrization conditions.
+
         The U parameter specifies the clockwise angle around the axis (right hand
         corkscrew law), with a zero parameter at `dir_x`, and a period of 2*pi.
 
@@ -233,6 +235,8 @@ class Cone:
 
     def get_v_parameterization(self) -> Parameterization:
         """
+        Retrieve the V parameter parametrization conditions.
+
         The V parameter specifies the distance along the axis, with a zero parameter at
         the XY plane of the Cone.
 

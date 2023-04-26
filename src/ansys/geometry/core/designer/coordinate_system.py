@@ -35,7 +35,7 @@ class CoordinateSystem:
     def __init__(
         self, name: str, frame: Frame, parent_component: "Component", grpc_client: GrpcClient
     ):
-        """Constructor method for the ``CoordinateSystem`` class."""
+        """Initialize ``CoordinateSystem`` class."""
 
         self._parent_component = parent_component
         self._grpc_client = grpc_client
@@ -104,8 +104,8 @@ class CoordinateSystem:
         side."""
         return self._is_alive
 
-    def __repr__(self):
-        """String representation of the coordinate system."""
+    def __repr__(self) -> str:
+        """Represent the ``CoordinateSystem`` as a string."""
         lines = [f"ansys.geometry.core.designer.CoordinateSystem {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Exists               : {self.is_alive}")

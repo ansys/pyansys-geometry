@@ -41,7 +41,7 @@ class Sketch:
         self,
         plane: Optional[Plane] = Plane(),
     ):
-        """Constructor method for the ``Sketch`` class."""
+        """Initialize ``Sketch`` class."""
         self._plane = plane
 
         self._faces = []

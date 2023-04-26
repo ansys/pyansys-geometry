@@ -78,7 +78,7 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     def __init__(self, name: str, grpc_client: GrpcClient):
-        """Constructor method for the ``Design`` class."""
+        """Initialize ``Design`` class."""
         super().__init__(name, None, grpc_client)
 
         self._design_stub = DesignsStub(self._grpc_client.channel)
@@ -491,8 +491,8 @@ class Design(Component):
                 + " Ignoring request."
             )
 
-    def __repr__(self):
-        """String representation of the design."""
+    def __repr__(self) -> str:
+        """Represent the ``Design`` as a string."""
         alive_bodies = [1 if body.is_alive else 0 for body in self.bodies]
         alive_comps = [1 if comp.is_alive else 0 for comp in self.components]
         lines = [f"ansys.geometry.core.designer.Design {hex(id(self))}"]

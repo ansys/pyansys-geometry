@@ -158,7 +158,7 @@ class SpurGear(Gear):
         pressure_angle: Union[Quantity, Angle, Real],
         n_teeth: int,
     ):
-        """Constructor for spur gears."""
+        """Initialize spur gears."""
         # Call the parent ctor
         super().__init__()
 

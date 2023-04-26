@@ -48,7 +48,7 @@ class Edge:
     """
 
     def __init__(self, id: str, curve_type: CurveType, body: "Body", grpc_client: GrpcClient):
-        """Constructor method for the ``Edge`` class."""
+        """Initialize ``Edge`` class."""
         self._id = id
         self._curve_type = curve_type
         self._body = body

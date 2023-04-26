@@ -46,7 +46,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
         input: Optional[Union[np.ndarray, RealSequence]] = DEFAULT_POINT2D_VALUES,
         unit: Optional[Unit] = None,
     ):
-        """Constructor for the ``Point2D`` class."""
+        """Initialize the ``Point2D`` class."""
         # Build an empty np.ndarray object
         return np.zeros(len(input)).view(cls)
 
@@ -170,7 +170,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
         input: Optional[Union[np.ndarray, RealSequence]] = DEFAULT_POINT3D_VALUES,
         unit: Optional[Unit] = None,
     ):
-        """Constructor method for the ``Point3D`` class."""
+        """Initialize ``Point3D`` class."""
         # Build an empty np.ndarray object
         return np.zeros(len(input)).view(cls)
 

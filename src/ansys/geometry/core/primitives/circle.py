@@ -1,4 +1,4 @@
-""" Provides the ``Circle`` class."""
+"""Provides the ``Circle`` class."""
 from functools import cached_property
 
 from beartype import beartype as check_input_types
@@ -131,7 +131,7 @@ class Circle:
 
     def transformed_copy(self, matrix: Matrix44) -> "Circle":
         """
-        Creates a transformed copy of the circle based on a given transformation matrix.
+        Creates a transformed copy of the circle based on a transformation matrix.
 
         Parameters
         ----------

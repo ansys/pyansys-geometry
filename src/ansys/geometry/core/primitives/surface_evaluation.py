@@ -1,3 +1,5 @@
+"""Provides the ``SurfaceEvaluation`` class."""
+
 from functools import cached_property
 
 from ansys.geometry.core.math import Point3D, UnitVector3D, Vector3D

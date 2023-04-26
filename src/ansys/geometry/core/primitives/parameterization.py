@@ -1,3 +1,5 @@
+"""Provides the parametrization-related classes."""
+
 from enum import Enum
 
 from beartype import beartype as check_input_types
@@ -103,6 +105,7 @@ class ParamUV:
         return ParamUV(self._u / other._u, self._v / other._v)
 
     def __repr__(self) -> str:
+        """Represent the ``ParamUV`` as a string."""
         return f"ParamUV(u={self.u}, v={self.v})"
 
 
@@ -173,6 +176,7 @@ class Interval:
         return self.end - self.start
 
     def __repr__(self) -> str:
+        """Represent the ``Interval`` as a string."""
         return f"Interval(start={self.start}, end={self.end})"
 
 
@@ -229,4 +233,5 @@ class Parameterization:
         return self._interval
 
     def __repr__(self) -> str:
+        """Represent the ``Parameterization`` as a string."""
         return f"Parameterization(form={self.form}, type={self.type}, interval={self.interval})"

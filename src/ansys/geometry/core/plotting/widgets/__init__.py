@@ -1,3 +1,4 @@
+"""Subpackage providing widgets for the PyGeometry plotter."""
 from ansys.geometry.core.plotting.widgets.displace_arrows import (
     CameraPanDirection,
     DisplacementArrow,

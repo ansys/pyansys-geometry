@@ -20,8 +20,11 @@ from ansys.geometry.core.logger import LOG as logger
 
 
 def _docker_python_available(func):
-    """Private decorator for checking whether docker is installed as Python package or
-    not."""
+    """
+    Check whether docker is installed as Python package or not.
+
+    Works as a decorator.
+    """
 
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -88,7 +91,10 @@ class LocalDockerInstance:
     @staticmethod
     @_docker_python_available
     def docker_client() -> "docker.DockerClient":
-        """Static method for returning the initialized ``__DOCKER_CLIENT__`` object.
+        """Return the initialized ``__DOCKER_CLIENT__`` object.
+
+        Notes
+        -----
         LocalDockerInstance performs a lazy loading initialization of the class
         variable ``__DOCKER_CLIENT__``.
 
@@ -97,9 +103,6 @@ class LocalDockerInstance:
         docker.DockerClient
             The initialized Docker client.
 
-        Notes
-        -----
-        This method is used as a lazy loader for the ``__DOCKER_CLIENT__`` object.
         """
         if not LocalDockerInstance.__DOCKER_CLIENT__:
             LocalDockerInstance.__DOCKER_CLIENT__ = docker.from_env()
@@ -110,7 +113,7 @@ class LocalDockerInstance:
     @_docker_python_available
     def is_docker_installed() -> bool:
         """
-        Checks whether there is a local install of Docker engine available and running.
+        Check whether there is a local install of Docker engine available and running.
 
         Returns
         -------
@@ -135,7 +138,6 @@ class LocalDockerInstance:
         image: Optional[GeometryContainers] = None,
     ) -> None:
         """``LocalDockerInstance`` constructor."""
-
         # Initialize instance variables
         self._container: Container = None
         self._existed_previously: bool = False
@@ -166,8 +168,12 @@ class LocalDockerInstance:
             raise RuntimeError(f"Geometry service cannot be deployed on port {port}")
 
     def _check_port_availability(self, port: int) -> Tuple[bool, Optional["Container"]]:
-        """Private method which checks whether the requested port is available for
-        deployment or not. If not available, it also returns the ``Container`` deployed
+        """
+        Check whether the requested port is available for deployment or not.
+
+        Notes
+        -----
+        If not available, it also returns the ``Container`` deployed
         at that port.
 
         Returns
@@ -193,8 +199,7 @@ class LocalDockerInstance:
         return (True, None)
 
     def _is_cont_geom_service(self, cont: "Container") -> bool:
-        """Private method for checking whether a provided ``Container``
-        object is a Geometry service container or not.
+        """Check whether a provided ``Container`` object is a Geometry service container or not.
 
         Parameters
         ----------
@@ -220,8 +225,7 @@ class LocalDockerInstance:
         self, port: int, name: Union[str, None], image: Union[GeometryContainers, None]
     ):
         """
-        Private method for handling the deployment of a Geometry service container
-        according to the provided arguments.
+        Handle the deployment of a Geometry service according to the arguments.
 
         Parameters
         ----------
@@ -239,7 +243,6 @@ class LocalDockerInstance:
         RuntimeError
             In case the Geometry service cannot be launched.
         """
-
         # First of all let's get the Docker Engine OS
         docker_os = self.docker_client().info()["OSType"]
 
@@ -303,6 +306,10 @@ class LocalDockerInstance:
 
     @property
     def existed_previously(self) -> bool:
-        """Indicates whether the container hosting the Geometry service was effectively
-        deployed by this class or if it already existed."""
+        """
+        Indicate whether the container previously existed or not.
+
+        Returns ``False`` if the Geometry service was effectively
+        deployed by this class or ``True`` if it already existed.
+        """
         return self._existed_previously

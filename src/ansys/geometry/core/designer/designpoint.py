@@ -26,7 +26,7 @@ class DesignPoint:
     """
 
     def __init__(self, id: str, name: str, point: Point3D, parent_component: "Component"):
-        """Constructor method for the ``DesignPoints`` class."""
+        """Initialize ``DesignPoints`` class."""
         from ansys.geometry.core.designer.component import Component
 
         check_type(id, str)
@@ -60,7 +60,7 @@ class DesignPoint:
         return self._parent_component
 
     def __repr__(self) -> str:
-        """String representation of the design points."""
+        """Represent the ``DesignPoints`` as a string."""
         lines = [f"ansys.geometry.core.designer.DesignPoints {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Design Point         : {self.value}")

@@ -40,7 +40,7 @@ class Arc(SketchEdge):
         end: Point2D,
         clockwise: Optional[bool] = False,
     ):
-        """Initializes the arc shape."""
+        """Initialize the arc shape."""
         super().__init__()
         if start == end:
             raise ValueError("Start and end points must be different.")

@@ -1,3 +1,4 @@
+"""Provides the ``Part`` class module."""
 from beartype.typing import List
 
 from ansys.geometry.core.designer.body import TemplateBody
@@ -6,8 +7,9 @@ from ansys.geometry.core.math import IDENTITY_MATRIX44, Matrix44
 
 class Part:
     """
-    Represents a Part Master. This class should not be accessed by users. Parts hold
-    fundamental data of an assembly.
+    Represents a Part Master.
+
+    This class should not be accessed by users. Parts hold fundamental data of an assembly.
 
     Parameters
     ----------
@@ -24,6 +26,7 @@ class Part:
     def __init__(
         self, id: str, name: str, parts: List["TransformedPart"], bodies: List[TemplateBody]
     ) -> None:
+        """Initialize the ``Part`` class."""
         self._id: str = id
         self._name: str = name
         self._parts: List["TransformedPart"] = parts
@@ -41,7 +44,7 @@ class Part:
 
     @property
     def parts(self) -> List["TransformedPart"]:
-        """TransformedPart children that this Part contains."""
+        """``TransformedPart`` children that this ``Part`` contains."""
         return self._parts
 
     @parts.setter
@@ -51,7 +54,7 @@ class Part:
     @property
     def bodies(self) -> List[TemplateBody]:
         """
-        TemplateBody children that this Part contains.
+        ``TemplateBody`` children that this ``Part`` contains.
 
         These are master bodies.
         """
@@ -62,6 +65,7 @@ class Part:
         self._bodies = bodies
 
     def __repr__(self) -> str:
+        """Represent the ``Part`` as a string."""
         return (
             f"Part(id={self.id}, "
             f"name={self.name}, "
@@ -121,6 +125,7 @@ class TransformedPart:
         self._transform = matrix
 
     def __repr__(self) -> str:
+        """Represent the ``TransformedPart`` as a string."""
         return (
             f"TransformedPart(id={self.id}, "
             f"name={self.name}, "

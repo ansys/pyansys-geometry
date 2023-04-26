@@ -32,7 +32,7 @@ class SketchSegment(SketchEdge, Line):
         end: Point2D,
         plane: Plane = Plane(),
     ):
-        """Constructor method for the ``SketchSegment`` class."""
+        """Initialize ``SketchSegment`` class."""
         # Call SketchEdge init method
         SketchEdge.__init__(self)
 

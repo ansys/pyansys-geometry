@@ -110,7 +110,7 @@ class Component:
         preexisting_id: Optional[str] = None,
         transformed_part: Optional[TransformedPart] = None,
     ):
-        """Constructor method for the ``Component`` class."""
+        """Initialize ``Component`` class."""
         self._grpc_client = grpc_client
         self._component_stub = ComponentsStub(self._grpc_client.channel)
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
@@ -1107,7 +1107,7 @@ class Component:
         pl_helper.show_plotter(pl, screenshot=screenshot)
 
     def __repr__(self) -> str:
-        """String representation of the component."""
+        """Represent the ``Component`` as a string."""
         alive_bodies = [1 if body.is_alive else 0 for body in self.bodies]
         alive_beams = [1 if beam.is_alive else 0 for beam in self.beams]
         alive_coords = [1 if cs.is_alive else 0 for cs in self.coordinate_systems]

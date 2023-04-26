@@ -45,8 +45,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 class MidSurfaceOffsetType(Enum):
-    """Provides an enum holding the possible types of mid-surface offset by the Geometry
-    service."""
+    """Enum holding the types of mid-surface offset for the Geometry service."""
 
     MIDDLE = 0
     TOP = 1
@@ -460,7 +459,7 @@ class TemplateBody(IBody):
         grpc_client: GrpcClient,
         is_surface: bool = False,
     ):
-        """Constructor method for the ``TemplateBody`` class."""
+        """Initialize ``TemplateBody`` class."""
         check_type(id, str)
         check_type(name, str)
         check_type(grpc_client, GrpcClient)
@@ -723,7 +722,7 @@ class TemplateBody(IBody):
         )
 
     def __repr__(self) -> str:
-        """String representation of the body."""
+        """Represent the ``TemplateBody`` as a string."""
         lines = [f"ansys.geometry.core.designer.TemplateBody {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Exists               : {self.is_alive}")
@@ -754,7 +753,7 @@ class Body(IBody):
     """
 
     def __init__(self, id, name, parent: "Component", template: TemplateBody) -> None:
-        """Constructor method for the ``Body`` class."""
+        """Initialize ``Body`` class."""
         self._id = id
         self._name = name
         self._parent = parent
@@ -987,7 +986,7 @@ class Body(IBody):
         other.parent.delete_body(other)
 
     def __repr__(self) -> str:
-        """String representation of the body."""
+        """Represent the ``Body`` as a string."""
         lines = [f"ansys.geometry.core.designer.Body {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Exists               : {self.is_alive}")

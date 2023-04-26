@@ -1,4 +1,4 @@
-""" Provides the ``Line`` class."""
+"""Provides the ``Line`` class."""
 
 from functools import cached_property
 import math
@@ -76,7 +76,7 @@ class Line:
 
     def transformed_copy(self, matrix: Matrix44) -> "Line":
         """
-        Creates a transformed copy of the line based on a given transformation matrix.
+        Creates a transformed copy of the line based on a transformation matrix.
 
         Parameters
         ----------

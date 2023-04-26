@@ -18,7 +18,7 @@ class TrameVisualizer:
     """
 
     def __init__(self) -> None:
-        """Inits server and server related variables."""
+        """Initialize server and server related variables."""
         if not _HAS_TRAME:  # pragma: no cover
             raise ModuleNotFoundError(
                 "The package 'pyvista[trame]' is required to use this function."
@@ -29,7 +29,7 @@ class TrameVisualizer:
 
     def set_scene(self, plotter):
         """
-        Sets the trame layout view and the mesh to show through the pyvista plotter.
+        Set the trame layout view and the mesh to show through the pyvista plotter.
 
         Parameters
         ----------
@@ -51,5 +51,5 @@ class TrameVisualizer:
             layout.footer.hide()
 
     def show(self):
-        """Starts the server and shows the mesh."""
+        """Start the server and show the mesh."""
         self.server.start()
