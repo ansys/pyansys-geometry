@@ -1346,6 +1346,7 @@ def test_component_instances(modeler: Modeler, skip_not_on_linux_service):
 def test_boolean_body_operations(modeler: Modeler, skip_not_on_linux_service):
     """
     Test cases:
+
     1) master/master
         a) intersect
             i) normal
