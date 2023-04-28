@@ -3,7 +3,7 @@
 from pint import Quantity
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core.designer import Component
+from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
@@ -15,6 +15,13 @@ def _checker_method(comp: Component, comp_ref: Component) -> None:
     assert comp.name == comp_ref.name
     assert len(comp.bodies) == len(comp_ref.bodies)
     assert len(comp.components) == len(comp_ref.components)
+    assert len(comp.coordinate_systems) == len(comp_ref.coordinate_systems)
+    assert comp.shared_topology == comp_ref.shared_topology
+
+    # Check design features
+    if isinstance(comp, Design) and isinstance(comp_ref, Design):
+        assert len(comp.materials) == len(comp_ref.materials)
+        assert len(comp.named_selections) == len(comp_ref.named_selections)
 
     # Check bodies (if any)
     for body, body_ref in zip(comp.bodies, comp_ref.bodies):

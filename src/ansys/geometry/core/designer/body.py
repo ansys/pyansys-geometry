@@ -651,7 +651,8 @@ class TemplateBody(IBody):
             response.master_id, copy_name, self._grpc_client, is_surface=self.is_surface
         )
         parent._transformed_part.part.bodies.append(tb)
-        return Body(response.id, response.name, parent, tb)
+        body_id = parent.id + "/" + tb.id if parent.parent_component else tb.id
+        return Body(body_id, response.name, parent, tb)
 
     @protect_grpc
     def tessellate(

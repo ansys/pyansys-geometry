@@ -132,7 +132,8 @@ class Component:
                 new_component = self._component_stub.Create(
                     CreateRequest(name=name, parent=parent_component.id, template=template_id)
                 )
-                self._id = new_component.component.id
+                # Remove this method call once we know Service sends correct ObjectPath id
+                self._id = self.__remove_duplicate_ids(new_component.component.id)
                 self._name = new_component.component.name
             else:
                 self._name = name
@@ -149,26 +150,28 @@ class Component:
         self._transformed_part = transformed_part
 
         # Populate client data model
-        if template and not transformed_part:
-            # Create new TransformedPart, but use template's Part
-            tp = TransformedPart(
-                uuid.uuid4(),
-                f"tp_{name}",
-                template._transformed_part.part,
-                template._transformed_part.transform,
-            )
-            tp.part.parts.append(tp)
-            self._transformed_part = tp
+        if template:
+            if not transformed_part:
+                # Create new TransformedPart, but use template's Part
+                tp = TransformedPart(
+                    uuid.uuid4(),
+                    f"tp_{name}",
+                    template._transformed_part.part,
+                    template._transformed_part.transform,
+                )
+                tp.part.parts.append(tp)
+                self._transformed_part = tp
 
             # Recurse - Create more children components from template's remaining children
             self.__create_children(template)
             return
 
-        # This is an independent Component - Create new Part and TransformedPart
-        p = Part(uuid.uuid4(), f"p_{name}", [], [])
-        tp = TransformedPart(uuid.uuid4(), f"tp_{name}", p)
-        p.parts.append(tp)
-        self._transformed_part = tp
+        elif not read_existing_comp:
+            # This is an independent Component - Create new Part and TransformedPart
+            p = Part(uuid.uuid4(), f"p_{name}", [], [])
+            tp = TransformedPart(uuid.uuid4(), f"tp_{name}", p)
+            p.parts.append(tp)
+            self._transformed_part = tp
 
     @property
     def id(self) -> str:
@@ -190,8 +193,7 @@ class Component:
         """``Body`` objects inside of the component."""
         bodies = []
         for body in self._transformed_part.part.bodies:
-            id = self.id + body.id if self.parent_component else body.id
-            id = self.__fix_moniker(id)
+            id = f"{self.id}/{body.id}" if self.parent_component else body.id
             bodies.append(Body(id, body.name, self, body))
         return bodies
 
@@ -233,18 +235,14 @@ class Component:
     def __create_children(self, template: "Component") -> None:
         """Create new Component and Body children in ``self`` from ``template``."""
 
-        for t_body in template.bodies:
-            new_id = self.id + ("~" + t_body.id.split("~")[-1])
-            new_body = Body(new_id, t_body.name, self, t_body._template)
-            self.bodies.append(new_body)
-
         for template_comp in template.components:
+            new_id = self.id + "/" + template_comp.id.split("/")[-1]
             new = Component(
                 template_comp.name,
                 self,
                 self._grpc_client,
                 template=template_comp,
-                preexisting_id=self.__fix_moniker(self.id + template_comp.id),
+                preexisting_id=new_id,
                 transformed_part=template_comp._transformed_part,
             )
             self.components.append(new)
@@ -270,6 +268,15 @@ class Component:
         if x[0] != "~":
             x = "~" + x
         return x
+
+    def __remove_duplicate_ids(self, path: str) -> str:
+        # Convert to set but maintain order
+        res = []
+        [res.append(x) for x in path.split("/") if x not in res]
+        id = "/".join(res)
+        if id != path:
+            print("Removed duplicate!")
+        return id
 
     def get_world_transform(self) -> Matrix44:
         """
@@ -418,7 +425,9 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBody(request)
         tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._transformed_part.part.bodies.append(tb)
-        return Body(response.id, response.name, self, tb)
+        # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
+        body_id = self.id + "/" + tb.id if self.parent_component else tb.id
+        return Body(body_id, response.name, self, tb)
 
     @protect_grpc
     @check_input_types
@@ -464,7 +473,9 @@ class Component:
 
         tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._transformed_part.part.bodies.append(tb)
-        return Body(response.id, response.name, self, tb)
+        # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
+        body_id = self.id + "/" + tb.id if self.parent_component else tb.id
+        return Body(body_id, response.name, self, tb)
 
     @protect_grpc
     @check_input_types
@@ -500,7 +511,9 @@ class Component:
 
         tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._transformed_part.part.bodies.append(tb)
-        return Body(response.id, response.name, self, tb)
+        # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
+        body_id = self.id + "/" + tb.id if self.parent_component else tb.id
+        return Body(body_id, response.name, self, tb)
 
     @protect_grpc
     @check_input_types
@@ -539,7 +552,9 @@ class Component:
 
         tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._transformed_part.part.bodies.append(tb)
-        return Body(response.id, response.name, self, tb)
+        # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
+        body_id = self.id + "/" + tb.id if self.parent_component else tb.id
+        return Body(body_id, response.name, self, tb)
 
     @check_input_types
     def create_coordinate_system(self, name: str, frame: Frame) -> CoordinateSystem:
