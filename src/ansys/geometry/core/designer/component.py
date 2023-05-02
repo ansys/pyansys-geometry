@@ -151,6 +151,7 @@ class Component:
 
         # Populate client data model
         if template:
+            # If this is not a nested instance
             if not transformed_part:
                 # Create new TransformedPart, but use template's Part
                 tp = TransformedPart(
@@ -270,7 +271,15 @@ class Component:
         return x
 
     def __remove_duplicate_ids(self, path: str) -> str:
-        # Convert to set but maintain order
+        """
+        Removes duplicate entries in the ID path. This is a safeguard, as the server
+        is known to have issues sometimes.
+
+        Examples
+        --------
+        This method converts "0:26/0:44/0:44/0:53" to "0:26/0:44/0:53".
+        """
+        # Split the string into a list -> convert list into a set but maintain order
         res = []
         [res.append(x) for x in path.split("/") if x not in res]
         id = "/".join(res)

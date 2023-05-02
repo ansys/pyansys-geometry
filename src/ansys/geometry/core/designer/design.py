@@ -620,13 +620,13 @@ class Design(Component):
             component._shared_topology = SharedTopologyType(shared_topology_type)
             num_created_shared_topologies += 1
 
-        print(f"Parts created: {len(created_parts)}")
-        print(f"TransformedParts created: {len(created_tps) + 1}")
-        print(f"Components created: {len(created_components)}")
-        print(f"Bodies created: {len(created_bodies)}")
-        print(f"Materials created: {len(self.materials)}")
-        print(f"NamedSelections created: {len(self.named_selections)}")
-        print(f"CoordinateSystems created: {num_created_coord_systems}")
-        print(f"SharedTopologyTypes set: {num_created_shared_topologies}")
+        self._grpc_client.log.debug(f"Parts created: {len(created_parts)}")
+        self._grpc_client.log.debug(f"TransformedParts created: {len(created_tps) + 1}")
+        self._grpc_client.log.debug(f"Components created: {len(created_components)}")
+        self._grpc_client.log.debug(f"Bodies created: {len(created_bodies)}")
+        self._grpc_client.log.debug(f"Materials created: {len(self.materials)}")
+        self._grpc_client.log.debug(f"NamedSelections created: {len(self.named_selections)}")
+        self._grpc_client.log.debug(f"CoordinateSystems created: {num_created_coord_systems}")
+        self._grpc_client.log.debug(f"SharedTopologyTypes set: {num_created_shared_topologies}")
 
-        print(f"\nRead Time: {end - start}")
+        self._grpc_client.log.debug(f"\nSuccessfully read design in: {end - start} s")

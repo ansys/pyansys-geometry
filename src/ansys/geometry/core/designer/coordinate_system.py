@@ -47,6 +47,7 @@ class CoordinateSystem:
         self._coordinate_systems_stub = CoordinateSystemsStub(grpc_client.channel)
         self._is_alive = True
 
+        # Create without going to server
         if preexisting_id:
             self._name = name
             self._frame = frame
