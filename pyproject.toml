@@ -10,7 +10,7 @@ readme = "README.rst"
 requires-python = ">=3.8,<4"
 license = {file = "LICENSE"}
 authors = [{name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}]
-maintainers = [{name = "PyGeometry developers", email = "PyGeometry@ansys.com"}]
+maintainers = [{name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
@@ -52,13 +52,13 @@ tests = [
     "googleapis-common-protos==1.59.0",
     "grpcio==1.50.0",
     "grpcio-health-checking==1.48.2",
-    "numpy==1.24.2",
+    "numpy==1.24.3",
     "Pint==0.20.1",
     "protobuf==3.20.3",
     "pyvista[trame]==0.38.5",
     "scipy==1.10.1",
     "six==1.16.0",
-    "ansys-platform-instancemanagement==1.1.0",
+    "ansys-platform-instancemanagement==1.1.1",
     "docker==6.0.1",
     "pytest==7.3.1",
     "pytest-cov==4.0.0",
@@ -102,6 +102,12 @@ force_sort_within_sections = true
 line_length = 100
 default_section = "THIRDPARTY"
 src_paths = ["doc", "src", "tests"]
+
+[tool.docformatter]
+in-place = true
+pre-summary-newline = true
+wrap-descriptions = 88
+wrap-summaries = 88
 
 [tool.coverage.run]
 source = ["ansys.geometry"]

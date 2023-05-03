@@ -112,7 +112,8 @@ class CoordinateSystem:
 
     @property
     def is_alive(self) -> bool:
-        """Boolean indicating whether the CoordinateSystem is still alive on the server side."""
+        """Boolean indicating whether the CoordinateSystem is still alive on the server
+        side."""
         return self._is_alive
 
     def __repr__(self):

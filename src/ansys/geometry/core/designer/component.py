@@ -58,7 +58,8 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @unique
 class SharedTopologyType(Enum):
-    """Enum holding the possible values for component shared topologies by the Geometry service."""
+    """Enum holding the possible values for component shared topologies by the Geometry
+    service."""
 
     SHARETYPE_NONE = 0
     SHARETYPE_SHARE = 1
@@ -249,7 +250,8 @@ class Component:
             self.components.append(new)
 
     def __fix_moniker(self, string: str) -> str:
-        """Properly format a chain of monikers so the service can identify the entities."""
+        """Properly format a chain of monikers so the service can identify the
+        entities."""
         x = string.split("~")[1:]
         if len(x) > 1:
             x[0] = x[0].replace("sE", "~sO_~iI", 1)
@@ -350,13 +352,17 @@ class Component:
         self._transformed_part.transform = grpc_matrix_to_matrix(response.matrix)
 
     def reset_placement(self):
-        """Resets a component's placement matrix to an identity matrix.
-        See ``modify_placement()``."""
+        """
+        Resets a component's placement matrix to an identity matrix.
+
+        See ``modify_placement()``.
+        """
         self.modify_placement()
 
     @check_input_types
     def add_component(self, name: str, template: Optional["Component"] = None) -> "Component":
-        """Add a new component nested under this component within the design assembly.
+        """
+        Add a new component nested under this component within the design assembly.
 
         Parameters
         ----------
@@ -377,7 +383,8 @@ class Component:
     @protect_grpc
     @check_input_types
     def set_shared_topology(self, share_type: SharedTopologyType) -> None:
-        """Set the shared topology to apply to the component.
+        """
+        Set the shared topology to apply to the component.
 
         Parameters
         ----------
@@ -400,7 +407,9 @@ class Component:
     def extrude_sketch(
         self, name: str, sketch: Sketch, distance: Union[Quantity, Distance, Real]
     ) -> Body:
-        """Create a solid body by extruding the given sketch profile up to the given distance.
+        """
+        Create a solid body by extruding the given sketch profile up to the given
+        distance.
 
         The newly created body is nested under this component within the design assembly.
 
@@ -441,7 +450,8 @@ class Component:
     @protect_grpc
     @check_input_types
     def extrude_face(self, name: str, face: Face, distance: Union[Quantity, Distance]) -> Body:
-        """Extrude the face profile by a given distance to create a solid body.
+        """
+        Extrude the face profile by a given distance to create a solid body.
 
         There are no modifications against the body containing the source face.
 
@@ -489,7 +499,8 @@ class Component:
     @protect_grpc
     @check_input_types
     def create_surface(self, name: str, sketch: Sketch) -> Body:
-        """Create a surface body with a sketch profile.
+        """
+        Create a surface body with a sketch profile.
 
         The newly created body is nested under this component within the design assembly.
 
@@ -527,7 +538,8 @@ class Component:
     @protect_grpc
     @check_input_types
     def create_surface_from_face(self, name: str, face: Face) -> Body:
-        """Create a surface body based on a face.
+        """
+        Create a surface body based on a face.
 
         Notes
         -----
@@ -567,7 +579,8 @@ class Component:
 
     @check_input_types
     def create_coordinate_system(self, name: str, frame: Frame) -> CoordinateSystem:
-        """Create a coordinate system.
+        """
+        Create a coordinate system.
 
         The newly created coordinate system is nested under this component
         within the design assembly.
@@ -592,7 +605,8 @@ class Component:
     def translate_bodies(
         self, bodies: List[Body], direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
     ) -> None:
-        """Translate the geometry bodies in a specified direction by a given distance.
+        """
+        Translate the geometry bodies in a specified direction by a given distance.
 
         Notes
         -----
@@ -702,7 +716,8 @@ class Component:
     @protect_grpc
     @check_input_types
     def delete_component(self, component: Union["Component", str]) -> None:
-        """Delete a component (itself or its children).
+        """
+        Delete a component (itself or its children).
 
         Notes
         -----
@@ -736,7 +751,8 @@ class Component:
     @protect_grpc
     @check_input_types
     def delete_body(self, body: Union[Body, str]) -> None:
-        """Delete a body belonging to this component (or its children).
+        """
+        Delete a body belonging to this component (or its children).
 
         Notes
         -----
@@ -772,7 +788,8 @@ class Component:
         name: str,
         point: Point3D,
     ) -> DesignPoint:
-        """Creates a single design point.
+        """
+        Creates a single design point.
 
         Parameters
         ----------
@@ -790,7 +807,8 @@ class Component:
         name: str,
         points: List[Point3D],
     ) -> List[DesignPoint]:
-        """Creates a list of design points.
+        """
+        Creates a list of design points.
 
         Parameters
         ----------
@@ -821,7 +839,8 @@ class Component:
     @protect_grpc
     @check_input_types
     def delete_beam(self, beam: Union[Beam, str]) -> None:
-        """Deletes an existing beam belonging to this component (or its children).
+        """
+        Deletes an existing beam belonging to this component (or its children).
 
         Notes
         -----
@@ -858,7 +877,8 @@ class Component:
 
     @check_input_types
     def search_component(self, id: str) -> Union["Component", None]:
-        """Search nested components recursively for a component.
+        """
+        Search nested components recursively for a component.
 
         Parameters
         ----------
@@ -886,7 +906,8 @@ class Component:
 
     @check_input_types
     def search_body(self, id: str) -> Union[Body, None]:
-        """Search bodies in component and nested components recursively for a body.
+        """
+        Search bodies in component and nested components recursively for a body.
 
         Parameters
         ----------
@@ -915,7 +936,8 @@ class Component:
 
     @check_input_types
     def search_beam(self, id: str) -> Union[Beam, None]:
-        """Search beams in component and nested components recursively for a beam.
+        """
+        Search beams in component and nested components recursively for a beam.
 
         Parameters
         ----------
@@ -964,7 +986,8 @@ class Component:
     def tessellate(
         self, merge_component: bool = False, merge_bodies: bool = False
     ) -> Union["PolyData", "MultiBlock"]:
-        """Tessellate this component.
+        """
+        Tessellate this component.
 
         Parameters
         ----------
@@ -1013,7 +1036,6 @@ class Component:
           X Bounds:     -25.000, 25.000
           Y Bounds:     -24.991, 24.991
           Z Bounds:     0.000, 20.000
-
         """
         import pyvista as pv
 
@@ -1046,7 +1068,8 @@ class Component:
         use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ) -> None:
-        """Plot this component.
+        """
+        Plot this component.
 
         Parameters
         ----------
@@ -1102,7 +1125,6 @@ class Component:
             N Components         : 0
             N Coordinate Systems : 0
         >>> mycomp.plot(pbr=True, metallic=1.0)
-
         """
 
         from ansys.geometry.core.plotting import PlotterHelper

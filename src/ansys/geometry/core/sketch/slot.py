@@ -16,7 +16,8 @@ from ansys.geometry.core.typing import Real
 
 
 class Slot(SketchFace):
-    """Provides for modeling 2D slots.
+    """
+    Provides for modeling 2D slots.
 
     Parameters
     ----------

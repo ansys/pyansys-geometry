@@ -14,7 +14,8 @@ from ansys.geometry.core.typing import Real
 
 
 class Box(SketchFace):
-    """Provides for modeling quadrilaterals.
+    """
+    Provides for modeling quadrilaterals.
 
     Parameters
     ----------

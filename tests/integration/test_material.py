@@ -1,4 +1,4 @@
-""" Test material assignment."""
+"""Test material assignment."""
 
 from pint import Quantity
 

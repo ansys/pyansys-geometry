@@ -45,7 +45,8 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 class MidSurfaceOffsetType(Enum):
-    """Provides an enum holding the possible types of mid-surface offset by the Geometry service"""
+    """Provides an enum holding the possible types of mid-surface offset by the Geometry
+    service."""
 
     MIDDLE = 0
     TOP = 1
@@ -56,8 +57,10 @@ class MidSurfaceOffsetType(Enum):
 
 class IBody(ABC):
     """
-    Abstract Body interface. Defines the common methods for a body. TemplateBody and Body both
-    inherit from this. All child classes must implement all abstract methods.
+    Abstract Body interface.
+
+    Defines the common methods for a body. TemplateBody and Body both inherit from this.
+    All child classes must implement all abstract methods.
     """
 
     @abstractmethod
@@ -72,7 +75,8 @@ class IBody(ABC):
 
     @abstractmethod
     def faces(self) -> List[Face]:
-        """All faces within the body.
+        """
+        All faces within the body.
 
         Returns
         -------
@@ -82,7 +86,8 @@ class IBody(ABC):
 
     @abstractmethod
     def edges(self) -> List[Edge]:
-        """All edges within the body.
+        """
+        All edges within the body.
 
         Returns
         -------
@@ -102,7 +107,8 @@ class IBody(ABC):
 
     @abstractmethod
     def surface_thickness(self) -> Union[Quantity, None]:
-        """Surface thickness of a surface body.
+        """
+        Surface thickness of a surface body.
 
         Notes
         -----
@@ -112,7 +118,8 @@ class IBody(ABC):
 
     @abstractmethod
     def surface_offset(self) -> Union["MidSurfaceOffsetType", None]:
-        """Surface offset type of a surface body.
+        """
+        Surface offset type of a surface body.
 
         Notes
         -----
@@ -122,7 +129,8 @@ class IBody(ABC):
 
     @abstractmethod
     def volume(self) -> Quantity:
-        """Calculated volume of the body.
+        """
+        Calculated volume of the body.
 
         Notes
         -----
@@ -132,7 +140,8 @@ class IBody(ABC):
 
     @abstractmethod
     def assign_material(self, material: Material) -> None:
-        """Assigns a material against the design in the active Geometry service instance.
+        """
+        Assigns a material against the design in the active Geometry service instance.
 
         Parameters
         ----------
@@ -143,7 +152,8 @@ class IBody(ABC):
 
     @abstractmethod
     def add_midsurface_thickness(self, thickness: Quantity) -> None:
-        """Adds a mid-surface thickness to a surface body.
+        """
+        Adds a mid-surface thickness to a surface body.
 
         Parameters
         ----------
@@ -158,7 +168,8 @@ class IBody(ABC):
 
     @abstractmethod
     def add_midsurface_offset(self, offset: "MidSurfaceOffsetType") -> None:
-        """Adds a mid-surface offset to a surface body.
+        """
+        Adds a mid-surface offset to a surface body.
 
         Parameters
         ----------
@@ -173,7 +184,8 @@ class IBody(ABC):
 
     @abstractmethod
     def imprint_curves(self, faces: List[Face], sketch: Sketch) -> Tuple[List[Edge], List[Face]]:
-        """Imprints all specified geometries onto the specified faces of the body.
+        """
+        Imprints all specified geometries onto the specified faces of the body.
 
         Parameters
         ----------
@@ -197,7 +209,8 @@ class IBody(ABC):
         closest_face: bool,
         only_one_curve: Optional[bool] = False,
     ) -> List[Face]:
-        """Projects all specified geometries onto the body.
+        """
+        Projects all specified geometries onto the body.
 
         Parameters
         ----------
@@ -226,7 +239,8 @@ class IBody(ABC):
 
     @abstractmethod
     def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]) -> None:
-        """Translates the geometry body in the specified direction by a given distance.
+        """
+        Translates the geometry body in the specified direction by a given distance.
 
         Parameters
         ----------
@@ -243,7 +257,8 @@ class IBody(ABC):
 
     @abstractmethod
     def copy(self, parent: "Component", name: str = None) -> "Body":
-        """Creates a copy of the geometry body and places it under the specified parent.
+        """
+        Creates a copy of the geometry body and places it under the specified parent.
 
         Parameters
         ----------
@@ -261,7 +276,8 @@ class IBody(ABC):
 
     @abstractmethod
     def tessellate(self, merge: Optional[bool] = False) -> Union["PolyData", "MultiBlock"]:
-        """Tessellate the body and return the geometry as triangles.
+        """
+        Tessellate the body and return the geometry as triangles.
 
         Parameters
         ----------
@@ -311,8 +327,6 @@ class IBody(ABC):
           Y Bounds:	-1.000e+00, 0.000e+00
           Z Bounds:	-5.000e-01, 4.500e+00
           N Arrays:	0
-
-
         """
         return
 
@@ -324,7 +338,8 @@ class IBody(ABC):
         use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ) -> None:
-        """Plot the body.
+        """
+        Plot the body.
 
         Parameters
         ----------
@@ -364,14 +379,13 @@ class IBody(ABC):
         Plot the body and color each face individually:
 
         >>> body.plot(multi_colors=True)
-
         """
         return
 
     def intersect(self, other: "Body") -> None:
         """
-        Intersect two bodies. `self` will be directly modified with the result, and `other` will be
-        consumed, so it is important to make copies if needed.
+        Intersect two bodies. `self` will be directly modified with the result, and
+        `other` will be consumed, so it is important to make copies if needed.
 
         Parameters
         ----------
@@ -407,8 +421,8 @@ class IBody(ABC):
     @protect_grpc
     def unite(self, other: "Body") -> None:
         """
-        Unite two bodies. `self` will be directly modified with the resulting union, and `other`
-        will be consumed, so it is important to make copies if needed.
+        Unite two bodies. `self` will be directly modified with the resulting union, and
+        `other` will be consumed, so it is important to make copies if needed.
 
         Parameters
         ----------

@@ -14,7 +14,8 @@ from ansys.geometry.core.typing import Real
 
 
 class Polygon(SketchFace):
-    """Provides for modeling regular polygons.
+    """
+    Provides for modeling regular polygons.
 
     Parameters
     ----------

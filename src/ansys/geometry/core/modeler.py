@@ -19,8 +19,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 class Modeler:
     """
-    Provides for interacting with an open session of
-    the Geometry service.
+    Provides for interacting with an open session of the Geometry service.
 
     Parameters
     ----------
@@ -80,7 +79,8 @@ class Modeler:
         return self._client
 
     def create_design(self, name: str) -> "Design":
-        """Initialize a new design with the connected client.
+        """
+        Initialize a new design with the connected client.
 
         Parameters
         ----------

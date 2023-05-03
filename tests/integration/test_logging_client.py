@@ -9,7 +9,8 @@ from ansys.geometry.core import LOG, Modeler  # Global logger
 
 
 def test_instance_logger_format(modeler: Modeler, fake_record: Callable):
-    """Test for checking the instance logger formatter aspect.
+    """
+    Test for checking the instance logger formatter aspect.
 
     Parameters
     ----------
@@ -37,8 +38,8 @@ def test_instance_logger_format(modeler: Modeler, fake_record: Callable):
 
 
 def test_log_instance_name(modeler: Modeler):
-    """Test for verifying access to specific logging instance by
-    providing the client name.
+    """
+    Test for verifying access to specific logging instance by providing the client name.
 
     Parameters
     ----------

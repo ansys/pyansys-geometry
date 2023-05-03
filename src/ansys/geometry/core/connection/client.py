@@ -38,7 +38,6 @@ def wait_until_healthy(channel: grpc.Channel, timeout: float):
     ------
     TimeoutError
         Raised when the total elapsed time exceeds the value for the ``timeout`` parameter.
-
     """
     t_max = time.time() + timeout
     health_stub = health_pb2_grpc.HealthStub(channel)
@@ -170,7 +169,8 @@ class GrpcClient:
         return "\n".join(lines)
 
     def close(self):
-        """Close the channel.
+        """
+        Close the channel.
 
         Notes
         -----

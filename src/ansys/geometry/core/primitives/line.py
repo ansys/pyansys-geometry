@@ -201,7 +201,8 @@ class LineEvaluation(CurveEvaluation):
     @cached_property
     def tangent(self) -> UnitVector3D:
         """
-        The tangent of the evaluation. This is always equal to the direction of the line.
+        The tangent of the evaluation. This is always equal to the direction of the
+        line.
 
         Returns
         -------
@@ -213,7 +214,8 @@ class LineEvaluation(CurveEvaluation):
     @cached_property
     def first_derivative(self) -> Vector3D:
         """
-        The first derivative of the evaluation. This is always equal to the direction of the line.
+        The first derivative of the evaluation. This is always equal to the direction of
+        the line.
 
         Returns
         -------

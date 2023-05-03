@@ -15,7 +15,8 @@ from ansys.geometry.core.typing import Real
 
 
 class Trapezoid(SketchFace):
-    """Provides for modeling 2D trapezoids.
+    """
+    Provides for modeling 2D trapezoids.
 
     Parameters
     ----------

@@ -289,8 +289,9 @@ class Point3D(np.ndarray, PhysicalQuantity):
 
     def transform(self, matrix: "Matrix44") -> "Point3D":
         """
-        Transforms the current Point3D object by applying the specified 4x4 transformation matrix
-        and returns a new Point3D object representing the transformed point.
+        Transforms the current Point3D object by applying the specified 4x4
+        transformation matrix and returns a new Point3D object representing the
+        transformed point.
 
         Parameters
         ----------

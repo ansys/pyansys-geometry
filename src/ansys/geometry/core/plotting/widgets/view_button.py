@@ -18,7 +18,8 @@ class ViewDirection(Enum):
 
 
 class ViewButton(Button):
-    """Changes the view of a plot to the one selected.
+    """
+    Changes the view of a plot to the one selected.
 
     Parameters
     ----------
