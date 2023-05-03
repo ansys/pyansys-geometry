@@ -100,7 +100,8 @@ class Modeler:
         return self._designs[-1]
 
     def read_existing_design(self) -> "Design":
-        """Read existing design on the service with the connected client.
+        """
+        Read existing design on the service with the connected client.
 
         Returns
         -------

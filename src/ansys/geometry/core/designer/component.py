@@ -274,8 +274,8 @@ class Component:
 
     def __remove_duplicate_ids(self, path: str) -> str:
         """
-        Removes duplicate entries in the ID path. This is a safeguard, as the server
-        is known to have issues sometimes.
+        Removes duplicate entries in the ID path. This is a safeguard, as the server is
+        known to have issues sometimes.
 
         Examples
         --------
