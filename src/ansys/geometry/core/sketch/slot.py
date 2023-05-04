@@ -1,4 +1,4 @@
-""" Provides the ``Slot`` class."""
+"""Provides the ``Slot`` class."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union

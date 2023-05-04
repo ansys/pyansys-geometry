@@ -53,8 +53,7 @@ class NamedSelection:
         beams: Optional[List[Beam]] = None,
         design_points: Optional[List[DesignPoint]] = None,
     ):
-        """Constructor method for the ``NamedSelection`` class."""
-
+        """Initialize ``NamedSelection`` class."""
         if bodies is None:
             bodies = []
         if faces is None:

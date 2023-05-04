@@ -45,8 +45,11 @@ class SketchEdge:
 
     def plane_change(self, plane: "Plane") -> None:
         """
-        Common method for SketchEdge objects to redefine the plane containing them. This
-        implies that their 3D definition may suffer changes. By default, it does
+        Redefine the plane containing SketchEdge objects.
+
+        Notes
+        -----
+        This implies that their 3D definition may suffer changes. By default, it does
         nothing. It is required to be implemented in child SketchEdge classes.
 
         Parameters

@@ -1,4 +1,4 @@
-""" Provides the ``Ellipse`` class."""
+"""Provides the ``Ellipse`` class."""
 
 from functools import cached_property
 
@@ -54,6 +54,7 @@ class Ellipse:
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
+        """Initialize the ``Ellipse`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
 
         self._reference = (
@@ -129,7 +130,7 @@ class Ellipse:
 
     def mirrored_copy(self) -> "Ellipse":
         """
-        Creates a mirrored copy of the ellipse along the y-axis.
+        Create a mirrored copy of the ellipse along the y-axis.
 
         Returns
         -------
@@ -247,8 +248,7 @@ class Ellipse:
 
     def transformed_copy(self, matrix: Matrix44) -> "Ellipse":
         """
-        Creates a transformed copy of the ellipse based on a given transformation
-        matrix.
+        Create a transformed copy of the ellipse based on a transformation matrix.
 
         Parameters
         ----------
@@ -273,6 +273,8 @@ class Ellipse:
 
     def get_parameterization(self) -> Parameterization:
         """
+        Return the parametrization of an ``Ellipse`` instance.
+
         The parameter of an ellipse specifies the clockwise angle around the axis (right
         hand corkscrew law), with a zero parameter at `dir_x` and a period of 2*pi.
 
@@ -357,9 +359,10 @@ class EllipseEvaluation(CurveEvaluation):
     @cached_property
     def first_derivative(self) -> Vector3D:
         """
-        The first derivative of the evaluation. The first derivative is in the direction
-        of the tangent and has a magnitude equal to the velocity (rate of change of
-        position) at that point.
+        The first derivative of the evaluation.
+
+        The first derivative is in the direction of the tangent and has a magnitude
+        equal to the velocity (rate of change of position) at that point.
 
         Returns
         -------

@@ -1,3 +1,5 @@
+"""Module containing the ViewButton widget."""
+
 from enum import Enum
 
 from pyvista import Plotter
@@ -30,13 +32,13 @@ class ViewButton(Button):
     """
 
     def __init__(self, plotter: Plotter, direction: tuple):
-        """Constructor method for ``ViewButton``."""
+        """Initialize ``ViewButton`` class."""
         super().__init__(plotter, direction)
         self.direction = direction
 
     def callback(self, state: bool) -> None:
-        """Changes the view of the camera to one of the options
-        specified in ``ViewDirection`` class.
+        """
+        Change the view of the camera depending on button interaction.
 
         Parameters
         ----------

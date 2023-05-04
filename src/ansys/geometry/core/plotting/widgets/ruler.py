@@ -19,7 +19,7 @@ class Ruler(PlotterWidget):
     """
 
     def __init__(self, plotter: Plotter) -> None:
-        """Constructor method for the ``Ruler`` class."""
+        """Initialize ``Ruler`` class."""
         # Call PlotterWidget ctor
         super().__init__(plotter)
 
@@ -31,6 +31,8 @@ class Ruler(PlotterWidget):
 
     def callback(self, state: bool) -> None:
         """
+        Remove/Add Ruler widget actor upon click.
+
         Callback function for the Ruler widget.
 
         Notes
@@ -60,8 +62,7 @@ class Ruler(PlotterWidget):
             )
 
     def update(self) -> None:
-        """Method defining the configuration and representation of the Ruler widget
-        button."""
+        """Define the configuration and representation of the Ruler widget button."""
         show_ruler_vr = self._button.GetRepresentation()
         show_ruler_icon_file = os.path.join(os.path.dirname(__file__), "_images", "ruler.png")
         show_ruler_r = _vtk.vtkPNGReader()

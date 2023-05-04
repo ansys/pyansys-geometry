@@ -58,8 +58,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @unique
 class SharedTopologyType(Enum):
-    """Enum holding the possible values for component shared topologies by the Geometry
-    service."""
+    """Enum for the component shared topologies available in the Geometry service."""
 
     SHARETYPE_NONE = 0
     SHARETYPE_SHARE = 1
@@ -110,7 +109,7 @@ class Component:
         preexisting_id: Optional[str] = None,
         transformed_part: Optional[TransformedPart] = None,
     ):
-        """Constructor method for the ``Component`` class."""
+        """Initialize ``Component`` class."""
         self._grpc_client = grpc_client
         self._component_stub = ComponentsStub(self._grpc_client.channel)
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
@@ -227,7 +226,6 @@ class Component:
 
     def __create_children(self, template: "Component") -> None:
         """Create new Component and Body children in ``self`` from ``template``."""
-
         for t_body in template.bodies:
             new_id = self.id + ("~" + t_body.id.split("~")[-1])
             new_body = Body(new_id, t_body.name, self, t_body._template)
@@ -245,8 +243,7 @@ class Component:
             self.components.append(new)
 
     def __fix_moniker(self, string: str) -> str:
-        """Properly format a chain of monikers so the service can identify the
-        entities."""
+        """Format a chain of monikers so the service can identify the entities."""
         x = string.split("~")[1:]
         if len(x) > 1:
             x[0] = x[0].replace("sE", "~sO_~iI", 1)
@@ -269,11 +266,10 @@ class Component:
 
     def get_world_transform(self) -> Matrix44:
         """
-        The full transformation matrix of this Component in world space.
+        Get the full transformation matrix of this Component in world space.
 
         Returns
         -------
-
         Matrix44
             The 4x4 transformation matrix of this component in world space.
         """
@@ -290,7 +286,10 @@ class Component:
         rotation_angle: Union[Quantity, Angle, Real] = 0,
     ):
         """
-        Applies a translation and/or rotation to the existing placement matrix of the component.
+        Apply a translation and/or rotation to the existing placement matrix.
+
+        Notes
+        -----
         To reset a component's placement to an identity matrix, see
         ``reset_placement()`` or call this method with no arguments.
 
@@ -331,7 +330,7 @@ class Component:
 
     def reset_placement(self):
         """
-        Resets a component's placement matrix to an identity matrix.
+        Reset a component's placement matrix to an identity matrix.
 
         See ``modify_placement()``.
         """
@@ -386,9 +385,10 @@ class Component:
         self, name: str, sketch: Sketch, distance: Union[Quantity, Distance, Real]
     ) -> Body:
         """
-        Create a solid body by extruding the given sketch profile up to the given
-        distance.
+        Create a solid body by extruding the sketch profile up by a given distance.
 
+        Notes
+        -----
         The newly created body is nested under this component within the design assembly.
 
         Parameters
@@ -630,6 +630,8 @@ class Component:
         """
         Create beams under the component.
 
+        Notes
+        -----
         The newly created beams synchronize to a design within a supporting
         Geometry service instance.
 
@@ -640,7 +642,6 @@ class Component:
         profile : BeamProfile
             Beam profile to use to create the beams.
         """
-
         request = CreateBeamSegmentsRequest(parent=self.id, profile=profile.id)
 
         for segment in segments:
@@ -759,7 +760,7 @@ class Component:
         point: Point3D,
     ) -> DesignPoint:
         """
-        Creates a single design point.
+        Create a single design point.
 
         Parameters
         ----------
@@ -778,7 +779,7 @@ class Component:
         points: List[Point3D],
     ) -> List[DesignPoint]:
         """
-        Creates a list of design points.
+        Create a list of design points.
 
         Parameters
         ----------
@@ -810,7 +811,7 @@ class Component:
     @check_input_types
     def delete_beam(self, beam: Union[Beam, str]) -> None:
         """
-        Deletes an existing beam belonging to this component (or its children).
+        Delete an existing beam belonging to this component (or its children).
 
         Notes
         -----
@@ -935,13 +936,13 @@ class Component:
         return None
 
     def _kill_component_on_client(self) -> None:
-        """Sets the ``is_alive`` property of nested objects to ``False``.
+        """Set the ``is_alive`` property of nested objects to ``False``.
 
         Notes
         -----
         This method is recursive. It is only to be used by the
-        ``delete_component()`` method and itself."""
-
+        ``delete_component()`` method and itself.
+        """
         # Kill all its bodies, beams and coordinate systems
         for elem in [*self.bodies, *self.beams, *self._coordinate_systems]:
             elem._is_alive = False
@@ -1096,7 +1097,6 @@ class Component:
             N Coordinate Systems : 0
         >>> mycomp.plot(pbr=True, metallic=1.0)
         """
-
         from ansys.geometry.core.plotting import PlotterHelper
 
         pl_helper = PlotterHelper(use_trame=use_trame)
@@ -1107,7 +1107,7 @@ class Component:
         pl_helper.show_plotter(pl, screenshot=screenshot)
 
     def __repr__(self) -> str:
-        """String representation of the component."""
+        """Represent the ``Component`` as a string."""
         alive_bodies = [1 if body.is_alive else 0 for body in self.bodies]
         alive_beams = [1 if beam.is_alive else 0 for beam in self.beams]
         alive_coords = [1 if cs.is_alive else 0 for cs in self.coordinate_systems]

@@ -17,8 +17,11 @@ class Accuracy:
 
     def length_is_equal(comparison_length: Real, reference_length: Real) -> bool:
         """
-        Check if the comparison length is equal to the reference length within the
-        length accuracy.
+        Check if the comparison length is equal to the reference length.
+
+        Notes
+        -----
+        Check is done up to the length accuracy: ``LENGTH_ACCURACY``.
 
         Returns
         -------
@@ -32,8 +35,11 @@ class Accuracy:
 
     def length_is_greater_than_or_equal(comparison_length: Real, reference_length: Real) -> bool:
         """
-        Check if the comparison length is greater than the reference length within the
-        length accuracy.
+        Check if the comparison length is greater than the reference length.
+
+        Notes
+        -----
+        Check is done up to the length accuracy: ``LENGTH_ACCURACY``.
 
         Returns
         -------
@@ -48,8 +54,11 @@ class Accuracy:
 
     def length_is_less_than_or_equal(comparison_length: Real, reference_length: Real) -> bool:
         """
-        Check if the comparison length is less than or equal to the reference length
-        within the length accuracy.
+        Check if the comparison length is less than or equal to the reference length.
+
+        Notes
+        -----
+        Check is done up to the length accuracy: ``LENGTH_ACCURACY``.
 
         Returns
         -------
@@ -119,7 +128,7 @@ class Accuracy:
 
     def angle_is_positive(angle: Real) -> bool:
         """
-        Check if the is above a positive angle accuracy.
+        Check if the angle is above a positive angle accuracy.
 
         Returns
         -------
@@ -131,6 +140,25 @@ class Accuracy:
     def is_within_tolerance(
         a: Real, b: Real, relative_tolerance: Real, absolute_tolerance: Real
     ) -> bool:
+        """
+        Check if the a and b values are inside a relative and absolute tolerance.
+
+        Parameters
+        ----------
+        a : Real
+            First value.
+        b : Real
+            Second value.
+        relative_tolerance : Real
+            Relative tolerance accepted.
+        absolute_tolerance : Real
+            Absolute tolerance accepted.
+
+        Returns
+        -------
+        bool
+            ``True`` if the values are inside the accepted tolerances.
+        """
         # The code doesn't work for comparing infinity and non-infinite numbers!
         a_is_infinite = math.isinf(a)
         b_is_infinite = math.isinf(b)

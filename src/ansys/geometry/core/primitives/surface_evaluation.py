@@ -1,3 +1,5 @@
+"""Provides the ``SurfaceEvaluation`` class."""
+
 from functools import cached_property
 
 from ansys.geometry.core.math import Point3D, UnitVector3D, Vector3D
@@ -9,6 +11,7 @@ class SurfaceEvaluation:
     """Provides result class when evaluating a surface."""
 
     def __init__(self, parameter: ParamUV) -> None:
+        """Initialize ``SurfaceEvaluation`` class."""
         self._parameter = parameter
 
     @property

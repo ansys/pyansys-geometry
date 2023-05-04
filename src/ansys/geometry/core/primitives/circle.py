@@ -1,4 +1,4 @@
-""" Provides the ``Circle`` class."""
+"""Provides the ``Circle`` class."""
 from functools import cached_property
 
 from beartype import beartype as check_input_types
@@ -49,6 +49,7 @@ class Circle:
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
+        """Initialize ``Circle`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
 
         self._reference = (
@@ -131,7 +132,7 @@ class Circle:
 
     def transformed_copy(self, matrix: Matrix44) -> "Circle":
         """
-        Creates a transformed copy of the circle based on a given transformation matrix.
+        Create a transformed copy of the circle based on a transformation matrix.
 
         Parameters
         ----------
@@ -155,14 +156,13 @@ class Circle:
 
     def mirrored_copy(self) -> "Circle":
         """
-        Creates a mirrored copy of the circle along the y-axis.
+        Create a mirrored copy of the circle along the y-axis.
 
         Returns
         -------
         Circle
             A new circle that is a mirrored copy of the original circle.
         """
-
         return Circle(self.origin, self.radius, -self._reference, -self._axis)
 
     def project_point(self, point: Point3D) -> "CircleEvaluation":
@@ -211,6 +211,8 @@ class Circle:
 
     def get_parameterization(self) -> Parameterization:
         """
+        Return the parametrization of a ``Circle`` instance.
+
         The parameter of a circle specifies the clockwise angle around the axis (right
         hand corkscrew law), with a zero parameter at `dir_x` and a period of 2*pi.
 
@@ -296,9 +298,11 @@ class CircleEvaluation(CurveEvaluation):
     @cached_property
     def first_derivative(self) -> Vector3D:
         """
-        The first derivative of the evaluation. The first derivative is in the direction
-        of the tangent and has a magnitude equal to the velocity (rate of change of
-        position) at that point.
+        The first derivative of the evaluation.
+
+        The first derivative is in the direction of the tangent and has a
+        magnitude equal to the velocity (rate of change of position) at that
+        point.
 
         Returns
         -------

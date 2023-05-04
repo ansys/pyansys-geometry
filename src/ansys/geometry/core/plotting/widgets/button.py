@@ -1,3 +1,5 @@
+"""Module containing the Button abstract class."""
+
 from abc import abstractmethod
 import os
 
@@ -7,8 +9,12 @@ from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
 
 
 class Button(PlotterWidget):
-    """Abstract class for implementing buttons in PyGeometry. Wraps
-    the function ``add_check_button_widget()`` from ``PyVista``.
+    """
+    Abstract class for implementing buttons in PyGeometry.
+
+    Notes
+    -----
+    Wraps the function ``add_check_button_widget()`` from ``PyVista``.
 
     Parameters
     ----------
@@ -19,7 +25,7 @@ class Button(PlotterWidget):
     """
 
     def __init__(self, plotter: Plotter, button_config: tuple):
-        """Constructor method for ``Button``."""
+        """Initialize ``Button`` class."""
         super().__init__(plotter)
         self._arrow_button: _vtk.vtkButtonWidget = self.plotter.add_checkbox_button_widget(
             self.callback, position=button_config.value[2], size=30, border_size=3

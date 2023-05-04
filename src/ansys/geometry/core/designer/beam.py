@@ -30,7 +30,7 @@ class BeamProfile:
     """
 
     def __init__(self, id: str, name: str):
-        """Constructor method for the ``BeamProfile`` class."""
+        """Initialize ``BeamProfile`` class."""
         self._id = id
         self._name = name
 
@@ -82,7 +82,7 @@ class BeamCircularProfile(BeamProfile):
         direction_x: UnitVector3D,
         direction_y: UnitVector3D,
     ):
-        """Constructor method for the ``BeamCircularProfile`` class."""
+        """Initialize ``BeamCircularProfile`` class."""
         super().__init__(id, name)
 
         # Store specific BeamCircularProfile variables
@@ -112,7 +112,7 @@ class BeamCircularProfile(BeamProfile):
         return self._dir_y
 
     def __repr__(self) -> str:
-        """String representation of the circular beam profile."""
+        """Represent the ``BeamCircularProfile`` as a string."""
         lines = [f"ansys.geometry.core.designer.BeamCircularProfile {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Radius               : {str(self.radius.value)}")
@@ -154,7 +154,7 @@ class Beam:
         profile: BeamProfile,
         parent_component: "Component",
     ):
-        """Constructor method for the ``Beam`` class."""
+        """Initialize ``Beam`` class."""
         from ansys.geometry.core.designer.component import Component
 
         check_type(id, str)
@@ -201,7 +201,7 @@ class Beam:
         return self._is_alive
 
     def __repr__(self) -> str:
-        """String representation of the beam."""
+        """Represent the ``Beam`` as a string."""
         lines = [f"ansys.geometry.core.designer.Beam {hex(id(self))}"]
         lines.append(f"  Exists               : {self.is_alive}")
         lines.append(

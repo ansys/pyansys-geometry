@@ -158,7 +158,6 @@ def launch_local_modeler(
     Modeler
         Instance of the Geometry service.
     """
-
     from ansys.geometry.core.modeler import Modeler
 
     if not _HAS_DOCKER:  # pragma: no cover

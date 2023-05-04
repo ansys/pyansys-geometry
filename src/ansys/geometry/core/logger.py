@@ -172,7 +172,7 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
     file_handler = None
     stdout_handler = None
 
-    def __init__(self, logger, extra=None):
+    def __init__(self, logger, extra=None):  # noqa: D107
         self.logger = logger
         if extra is not None:
             self.extra = weakref.proxy(extra)
@@ -181,7 +181,7 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
         self.file_handler = logger.file_handler
         self.std_out_handler = logger.std_out_handler
 
-    def process(self, msg, kwargs):
+    def process(self, msg, kwargs):  # noqa: D102
         kwargs["extra"] = {}
         # This are the extra parameters sent to log
         kwargs["extra"][
@@ -201,7 +201,6 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
             Level of logging. By default, the ``logging.DEBUG``
             level is used.
         """
-
         self.logger = addfile_handler(
             self.logger, filename=filename, level=level, write_headers=True
         )
@@ -240,11 +239,15 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
 
 
 class PyGeometryPercentStyle(logging.PercentStyle):
+    """Provides a common messaging style for the ``PyGeometryFormatter`` class."""
+
     def __init__(self, fmt, *, defaults=None):
+        """Initialize ``PyGeometryPercentStyle`` class."""
         self._fmt = fmt or self.default_format
         self._defaults = defaults
 
     def _format(self, record):
+        """Format properly the message styles."""
         defaults = self._defaults
         if defaults:
             values = defaults | record.__dict__
@@ -276,6 +279,7 @@ class PyGeometryFormatter(logging.Formatter):
         validate=True,
         defaults=None,
     ):
+        """Initialize ``PyGeometryFormatter`` class."""
         if sys.version_info[1] < 8:
             super().__init__(fmt, datefmt, style)
         else:
@@ -288,6 +292,7 @@ class InstanceFilter(logging.Filter):
     """Ensures that the ``instance_name`` record always exists."""
 
     def filter(self, record):
+        """Ensure that the ``instance_name`` attribute is always present."""
         if not hasattr(record, "instance_name"):
             record.instance_name = ""
         return True
@@ -336,7 +341,8 @@ class Logger:
     _instances = {}
 
     def __init__(self, level=logging.DEBUG, to_file=False, to_stdout=True, filename=FILE_NAME):
-        """Customize the ``logger`` class for PyGeometry.
+        """
+        Customize the ``logger`` class for PyGeometry.
 
         Parameters
         ----------
@@ -350,7 +356,6 @@ class Logger:
         filename : str, default: "pygeometry.log"
            Name of the file to write log messages to.
         """
-
         # create default main logger
         self.logger = logging.getLogger("PyGeometry_global")
         self.logger.addFilter(InstanceFilter())
@@ -397,7 +402,6 @@ class Logger:
         >>> file_path = os.path.join(os.getcwd(), 'pygeometry.log')
         >>> LOG.log_to_file(file_path)
         """
-
         self = addfile_handler(self, filename=filename, level=level, write_headers=True)
 
     def log_to_stdout(self, level=LOG_LEVEL):
@@ -410,7 +414,6 @@ class Logger:
             Level of logging. By default, the ``logging.DEBUG``
             level is used.
         """
-
         self = add_stdout_handler(self, level=level)
 
     def setLevel(self, level="DEBUG"):
@@ -536,6 +539,7 @@ class Logger:
         return self._instances[new_name]
 
     def __getitem__(self, key):
+        """Overload the access method by item for the ``Logger`` class."""
         if key in self._instances.keys():
             return self._instances[key]
         else:
@@ -581,7 +585,6 @@ def addfile_handler(logger, filename=FILE_NAME, level=LOG_LEVEL, write_headers=F
     logger
         Logger or Logger object.
     """
-
     file_handler = logging.FileHandler(filename)
     file_handler.setLevel(level)
     file_handler.setFormatter(logging.Formatter(FILE_MSG_FORMAT))
@@ -620,7 +623,6 @@ def add_stdout_handler(logger, level=LOG_LEVEL, write_headers=False):
     logger
         Logger or Logger object.
     """
-
     std_out_handler = logging.StreamHandler()
     std_out_handler.setLevel(level)
     std_out_handler.setFormatter(PyGeometryFormatter(STDOUT_MSG_FORMAT))

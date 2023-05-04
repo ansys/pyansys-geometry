@@ -24,8 +24,12 @@ class SingletonMeta(type):
     access to the Singleton."""
 
     def __call__(cls, *args, **kwargs):
-        """Possible changes to the value of the `__init__` argument do not affect the
-        returned instance."""
+        """
+        Return a single instance of the class.
+
+        Possible changes to the value of the `__init__` argument do not affect the
+        returned instance.
+        """
         # Now, imagine that the program has just been launched. Since there's no
         # Singleton instance yet, multiple threads can simultaneously pass the
         # previous conditional and reach this point almost at the same time. The
@@ -47,6 +51,7 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
     """PyGeometry default units singleton class."""
 
     def __init__(self) -> None:
+        """Initialize ``DefaultUnitsClass`` class."""
         self._length: Unit = UNITS.meter
         self._angle: Unit = UNITS.radian
         self._server_length: Unit = UNITS.meter
@@ -138,7 +143,7 @@ class Measurement(PhysicalQuantity):
     """
 
     def __init__(self, value: Union[Real, Quantity], unit: Unit, dimensions: Unit):
-        """Constructor for the ``Measurement`` class."""
+        """Initialize the ``Measurement`` class."""
         # Check the input
         if isinstance(value, Quantity):
             # TODO: inform that if Quantity is given, we will ignore provided unit value
@@ -165,6 +170,7 @@ class Measurement(PhysicalQuantity):
 
     @check_input_types
     def __eq__(self, other: "Measurement") -> bool:
+        """Equals operator for the ``Measurement`` class."""
         return self._value == other._value and self._base_unit == other._base_unit
 
 
@@ -180,7 +186,7 @@ class Distance(Measurement):
     """
 
     def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = None):
-        """Constructor for the ``Distance`` class."""
+        """Initialize the ``Distance`` class."""
         # Delegates in Measurement ctor. forcing expected dimensions.
         unit = unit if unit else DEFAULT_UNITS.LENGTH
         super().__init__(value, unit, DEFAULT_UNITS.LENGTH)
@@ -198,7 +204,7 @@ class Angle(Measurement):
     """
 
     def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = None):
-        """Constructor for the ``Angle`` class."""
+        """Initialize the ``Angle`` class."""
         # Delegates in Measurement ctor. forcing expected dimensions.
         unit = unit if unit else DEFAULT_UNITS.ANGLE
         super().__init__(value, unit, DEFAULT_UNITS.ANGLE)

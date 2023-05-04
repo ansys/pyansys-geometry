@@ -12,8 +12,7 @@ SIGINT_TRACKER = []
 
 
 class GeometryRuntimeError(RuntimeError):
-    """Provides the error message to raise when the Geometry service passes a runtime
-    error."""
+    """Error message to raise when the Geometry service passes a runtime error."""
 
     pass
 
@@ -68,7 +67,6 @@ def protect_grpc(func):
         KeyboardInterrupt
             If a KeyboardInterrupt error is observed.
         """
-
         # capture KeyboardInterrupt
         old_handler = None
         if threading.current_thread().__class__.__name__ == "_MainThread":

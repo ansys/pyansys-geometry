@@ -129,7 +129,7 @@ class GrpcClient:
 
     @property
     def channel(self) -> grpc.Channel:
-        """gRPC channel of the client."""
+        """Client gRPC channel."""
         return self._channel
 
     @property
@@ -156,7 +156,7 @@ class GrpcClient:
             return False
 
     def __repr__(self) -> str:
-        """String representation of the client."""
+        """Represent the client as a string."""
         lines = []
         lines.append(f"Ansys Geometry Modeler Client ({hex(id(self))})")
         lines.append(f"  Target:     {self._target}")
