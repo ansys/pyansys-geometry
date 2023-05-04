@@ -53,7 +53,7 @@ tests = [
     "grpcio==1.50.0",
     "grpcio-health-checking==1.48.2",
     "numpy==1.24.3",
-    "Pint==0.20.1",
+    "Pint==0.21",
     "protobuf==3.20.3",
     "pyvista[trame]==0.38.5",
     "scipy==1.10.1",
