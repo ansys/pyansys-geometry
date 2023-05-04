@@ -1,3 +1,4 @@
+"""Displacement arrows widget for PyVista plotter."""
 from enum import Enum
 
 from pyvista import Plotter
@@ -29,7 +30,7 @@ class DisplacementArrow(Button):
     """
 
     def __init__(self, plotter: Plotter, direction: CameraPanDirection):
-        """Constructor method for ``DisplacementArrow``."""
+        """Initialize ``DisplacementArrow`` class."""
         super().__init__(plotter, direction)
         self.direction = direction
 

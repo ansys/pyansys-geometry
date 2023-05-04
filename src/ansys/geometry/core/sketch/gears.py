@@ -18,7 +18,7 @@ class Gear(SketchFace):
     """Base class for sketching gears."""
 
     def __init__(self):
-        """Constructor method for gears."""
+        """Initialize ``Gear`` class."""
         super().__init__()
 
     @property
@@ -61,7 +61,7 @@ class DummyGear(Gear):
         inner_radius: Union[Quantity, Distance, Real],
         n_teeth: int,
     ):
-        """Constructor method for a dummy gear."""
+        """Initialize ``DummyGear`` class."""
         # Call the parent ctor
         super().__init__()
 
@@ -235,9 +235,7 @@ class SpurGear(Gear):
         return self._root_diameter
 
     def _sketch_spur_gear(self) -> None:
-        """Private method in charge of generating the arcs and segments needed to sketch
-        the Spur Gear from its properties previously defined."""
-
+        """Generate the spur gear sketch from the properties defined."""
         # Let's sketch a single tooth first
         tooth_lines = self._sketch_single_tooth_spur_gear()
 
@@ -315,7 +313,7 @@ class SpurGear(Gear):
         self, radius: Real, max_radius: Real, max_theta: Real, steps: int = 30
     ) -> Tuple[List[Real], List[Real]]:
         """
-        Generates the involute points discretization of a curve.
+        Generate the involute points discretization of a curve.
 
         Parameters
         ----------
@@ -372,8 +370,7 @@ class SpurGear(Gear):
         self, x_p: List[Real], y_p: List[Real], t_p: List[Real]
     ) -> Tuple[List[Real], List[Real]]:
         """
-        Private method in charge of aligning the discretized values of the involute
-        curve.
+        Align the discretized values of the involute curve.
 
         Parameters
         ----------
@@ -394,7 +391,6 @@ class SpurGear(Gear):
         ValueError
             In case no alignment angle is found.
         """
-
         # Compute the angle where the involute curve crosses the circle
         theta_cross = None
         pitch_circle_radius = (self.module * self.n_teeth) / 2
@@ -436,7 +432,6 @@ class SpurGear(Gear):
         Tuple[List[Real], List[Real]]
             The X and Y elements of the rotated curve.
         """
-
         # Compute the sin and cos values of the angle
         c_ang = np.cos(angle)
         s_ang = np.sin(angle)
@@ -454,8 +449,7 @@ class SpurGear(Gear):
         self, x_p: List[Real], y_p: List[Real], closing_involute: bool = False
     ) -> List[Arc]:
         """
-        Private method used for generating the arcs of involute curves when sketching
-        spur gears.
+        Generate the arcs of involute curves when sketching spur gears.
 
         Parameters
         ----------
@@ -471,7 +465,6 @@ class SpurGear(Gear):
         List[Arc]
             The list of arcs defining the requested curve.
         """
-
         # Initialize results container
         arcs = []
 

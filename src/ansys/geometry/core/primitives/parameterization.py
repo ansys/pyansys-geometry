@@ -39,7 +39,7 @@ class ParamUV:
     @check_input_types
     def __add__(self, other: "ParamUV") -> "ParamUV":
         """
-        Adds the u and v components of the other ParamUV to this ParamUV.
+        Add the u and v components of the other ParamUV to this ParamUV.
 
         Parameters
         ----------
@@ -56,7 +56,7 @@ class ParamUV:
     @check_input_types
     def __sub__(self, other: "ParamUV") -> "ParamUV":
         """
-        Subtracts the u and v components of the other ParamUV from this ParamUV.
+        Subtract the u and v components of the other ParamUV from this ParamUV.
 
         Parameters
         ----------
@@ -163,7 +163,7 @@ class Interval:
 
     def get_span(self) -> Real:
         """
-        Returns the quantity contained by the interval. Interval must be closed.
+        Return the quantity contained by the interval. Interval must be closed.
 
         Returns
         -------
@@ -213,6 +213,7 @@ class Parameterization:
 
     @check_input_types
     def __init__(self, form: ParamForm, type: ParamType, interval: Interval) -> None:
+        """Initialize ``Parameterization`` class."""
         self._form = form
         self._type = type
         self._interval = interval

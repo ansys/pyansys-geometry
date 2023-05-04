@@ -56,7 +56,6 @@ class Cone:
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
         """Initialize ``Cone`` class."""
-
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
         self._reference = (
             UnitVector3D(reference) if not isinstance(reference, UnitVector3D) else reference
@@ -118,7 +117,7 @@ class Cone:
 
     def transformed_copy(self, matrix: Matrix44) -> "Cone":
         """
-        Creates a transformed copy of the cone based on a transformation matrix.
+        Create a transformed copy of the cone based on a transformation matrix.
 
         Parameters
         ----------
@@ -143,7 +142,7 @@ class Cone:
 
     def mirrored_copy(self) -> "Cone":
         """
-        Creates a mirrored copy of the cone along the y-axis.
+        Create a mirrored copy of the cone along the y-axis.
 
         Returns
         -------
@@ -245,7 +244,6 @@ class Cone:
         Parameterization
             Information about how a cone's v parameter is parameterized.
         """
-
         # V parameter interval depends on which way the cone opens
         start, end = (
             (self.apex_param, np.inf) if self.apex_param < 0 else (np.NINF, self.apex_param)

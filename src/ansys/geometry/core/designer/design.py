@@ -343,8 +343,7 @@ class Design(Component):
         direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Y,
     ) -> BeamCircularProfile:
         """
-        Add a new beam circular profile under the design for the future creation of
-        beams.
+        Add a new beam circular profile under the design for the creating beams.
 
         Parameters
         ----------
@@ -392,7 +391,7 @@ class Design(Component):
     @check_input_types
     def add_midsurface_thickness(self, thickness: Quantity, bodies: List[Body]) -> None:
         """
-        Adds a mid-surface thickness to a list of bodies.
+        Add a mid-surface thickness to a list of bodies.
 
         Parameters
         ----------
@@ -432,7 +431,7 @@ class Design(Component):
     @check_input_types
     def add_midsurface_offset(self, offset_type: MidSurfaceOffsetType, bodies: List[Body]) -> None:
         """
-        Adds a mid-surface offset type to a list of bodies.
+        Add a mid-surface offset type to a list of bodies.
 
         Parameters
         ----------
@@ -470,7 +469,7 @@ class Design(Component):
     @check_input_types
     def delete_beam_profile(self, beam_profile: Union[BeamProfile, str]) -> None:
         """
-        Removes a beam profile on the active geometry server instance.
+        Remove a beam profile on the active geometry server instance.
 
         Parameters
         ----------

@@ -11,6 +11,7 @@ class SurfaceEvaluation:
     """Provides result class when evaluating a surface."""
 
     def __init__(self, parameter: ParamUV) -> None:
+        """Initialize ``SurfaceEvaluation`` class."""
         self._parameter = parameter
 
     @property

@@ -129,7 +129,7 @@ class GrpcClient:
 
     @property
     def channel(self) -> grpc.Channel:
-        """gRPC channel of the client."""
+        """Client gRPC channel."""
         return self._channel
 
     @property

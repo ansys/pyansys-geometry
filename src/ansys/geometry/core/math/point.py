@@ -55,6 +55,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
         input: Union[np.ndarray, RealSequence] = DEFAULT_POINT2D_VALUES,
         unit: Optional[Unit] = None,
     ):
+        """Initialize ``Point2D`` class."""
         # Call the PhysicalQuantity ctor
         unit = unit if unit else DEFAULT_UNITS.LENGTH
         super().__init__(unit, expected_dimensions=DEFAULT_UNITS.LENGTH)
@@ -179,6 +180,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
         input: Union[np.ndarray, RealSequence] = DEFAULT_POINT3D_VALUES,
         unit: Optional[Unit] = None,
     ):
+        """Initialize ``Point3D`` class."""
         # Call the PhysicalQuantity ctor
         unit = unit if unit else DEFAULT_UNITS.LENGTH
         super().__init__(unit, expected_dimensions=DEFAULT_UNITS.LENGTH)
@@ -289,7 +291,11 @@ class Point3D(np.ndarray, PhysicalQuantity):
 
     def transform(self, matrix: "Matrix44") -> "Point3D":
         """
-        Transforms the current Point3D object by applying the specified 4x4
+        Transform the current Point3D with a transformation matrix.
+
+        Notes
+        -----
+        Transform the current Point3D object by applying the specified 4x4
         transformation matrix and returns a new Point3D object representing the
         transformed point.
 
