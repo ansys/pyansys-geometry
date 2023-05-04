@@ -46,7 +46,7 @@ print(modeler)
 
 Users are also allowed to spawn their own services and connect to them. For details on how
 to connect to an existing service, read through the
-[Modeler API](https://geometry.docs.pyansys.com/dev/autoapi/ansys/geometry/core/modeler/index.html#ansys.geometry.core.modeler.Modeler)
+[Modeler API](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/modeler/index.html#ansys.geometry.core.modeler.Modeler)
 
 +++
 
@@ -55,15 +55,15 @@ The way the class architecture is implemented is the following:
 * ``Modeler``: this is the handler object for the active service session. It allows users
   to connect to an existing service by passing in a ``host`` and a ``port``. It also
   allows to create ``Design`` objects, which is where the actual modeling will take
-  place. Documentation for [Modeler API](https://geometry.docs.pyansys.com/dev/autoapi/ansys/geometry/core/modeler/index.html#ansys.geometry.core.modeler.Modeler)
+  place. Documentation for [Modeler API](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/modeler/index.html#ansys.geometry.core.modeler.Modeler)
   can be found in the previous link.
 * ``Design``: this is the root object of our assembly/tree. A ``Design`` is also a
   ``Component``, but with enhanced functionalities such as: creating named selection,
-  adding materials, handling beam profiles etc. Documentation for [Design API](https://geometry.docs.pyansys.com/release/0.2/autoapi/ansys/geometry/core/designer/design/index.html#ansys.geometry.core.designer.design.Design)
+  adding materials, handling beam profiles etc. Documentation for [Design API](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/designer/design/index.html#ansys.geometry.core.designer.design.Design)
   can be found in the previous link.
 * ``Component``: one of the main objects for modeling purposes. ``Component`` objects
   allow users to create bodies, sub-components, beams, design points, planar surfaces etc.
-  Documentation for [Component API](https://geometry.docs.pyansys.com/release/0.2/autoapi/ansys/geometry/core/designer/component/index.html#ansys.geometry.core.designer.component.Component)
+  Documentation for [Component API](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/designer/component/index.html#ansys.geometry.core.designer.component.Component)
   can be found in the previous link.
 
 Let's start playing around with them!
@@ -230,7 +230,7 @@ design.plot()
 
 Finally, once the modeling operations have finalized, users can request their files
 in different formats. The supported formats by the ``DMS`` are shown
-[here](https://geometry.docs.pyansys.com/dev/autoapi/ansys/geometry/core/designer/design/index.html#ansys.geometry.core.designer.design.DesignFileFormat).
+[here](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/designer/design/index.html#ansys.geometry.core.designer.design.DesignFileFormat).
 
 Let's try exporting it into the different formats.
 
