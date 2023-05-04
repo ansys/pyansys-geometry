@@ -10,9 +10,13 @@ from ansys.geometry.core.typing import Real
 
 class ParamUV:
     """
-    Parameter class containing 2 parameters: (u, v). Likened to a 2D point in UV space
-    Used as an argument in parametric surface evaluations. This matches the service
-    implementation for the Geometry service.
+    Parameter class containing 2 parameters: (u, v).
+
+    Notes
+    -----
+    Likened to a 2D point in UV space Used as an argument in parametric
+    surface evaluations. This matches the service implementation for the
+    Geometry service.
 
     Parameters
     ----------
@@ -23,6 +27,7 @@ class ParamUV:
     """
 
     def __init__(self, u: Real, v: Real) -> None:
+        """Initialize ``ParamUV`` class."""
         self._u = u
         self._v = v
 
@@ -123,6 +128,7 @@ class Interval:
 
     @check_input_types
     def __init__(self, start: Real, end: Real) -> None:
+        """Initialize ``Interval`` class."""
         if end < start:
             raise ValueError("Start value must be less than end value")
 

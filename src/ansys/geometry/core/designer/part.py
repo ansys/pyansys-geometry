@@ -76,7 +76,11 @@ class Part:
 
 class TransformedPart:
     """
-    Represents a Part Occurrence. This class should not be accessed by users.
+    Represents a Part Occurrence.
+
+    Notes
+    -----
+    This class should not be accessed by users.
     TransformedParts hold fundamental data of an assembly. TransformedParts wrap Parts
     by adding a transform matrix.
 
@@ -95,6 +99,7 @@ class TransformedPart:
     def __init__(
         self, id: str, name: str, part: Part, transform: Matrix44 = IDENTITY_MATRIX44
     ) -> None:
+        """Initialize ``TransformedPart`` class."""
         self._id: str = id
         self._name: str = name
         self._part: Part = part

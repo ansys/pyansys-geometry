@@ -49,6 +49,7 @@ class Circle:
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
+        """Initialize ``Circle`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
 
         self._reference = (
@@ -162,7 +163,6 @@ class Circle:
         Circle
             A new circle that is a mirrored copy of the original circle.
         """
-
         return Circle(self.origin, self.radius, -self._reference, -self._axis)
 
     def project_point(self, point: Point3D) -> "CircleEvaluation":
