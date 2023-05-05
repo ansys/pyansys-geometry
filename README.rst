@@ -33,6 +33,8 @@ PyGeometry
 
 PyGeometry is a Python client library for the Ansys Geometry service.
 
+.. contents::
+
 Usage
 -----
 
