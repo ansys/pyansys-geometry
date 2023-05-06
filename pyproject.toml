@@ -60,7 +60,7 @@ tests = [
     "six==1.16.0",
     "ansys-platform-instancemanagement==1.1.1",
     "docker==6.1.0",
-    "requests==2.29.0",
+    "requests==2.30.0",
     "pytest==7.3.1",
     "pytest-cov==4.0.0",
     "pytest-pyvista==0.1.8",
@@ -68,7 +68,7 @@ tests = [
 doc = [
     "ansys-sphinx-theme==0.9.8",
     "docker==6.1.0",
-    "requests==2.29.0",
+    "requests==2.30.0",
     "ipyvtklink==0.2.3",
     "jupyter_sphinx==0.4.0",
     "jupytext==1.14.5",
