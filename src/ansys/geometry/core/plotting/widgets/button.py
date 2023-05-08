@@ -3,7 +3,8 @@
 from abc import abstractmethod
 import os
 
-from pyvista import Plotter, _vtk
+from pyvista import Plotter
+from vtk import vtkButtonWidget, vtkPNGReader
 
 from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
 
@@ -27,7 +28,7 @@ class Button(PlotterWidget):
     def __init__(self, plotter: Plotter, button_config: tuple):
         """Initialize ``Button`` class."""
         super().__init__(plotter)
-        self._arrow_button: _vtk.vtkButtonWidget = self.plotter.add_checkbox_button_widget(
+        self._arrow_button: vtkButtonWidget = self.plotter.add_checkbox_button_widget(
             self.callback, position=button_config.value[2], size=30, border_size=3
         )
         self.button_config = button_config
@@ -50,7 +51,7 @@ class Button(PlotterWidget):
         arrow_button_icon_path = os.path.join(
             os.path.dirname(__file__), "_images", self.button_config.value[1]
         )
-        arrow_button_icon = _vtk.vtkPNGReader()
+        arrow_button_icon = vtkPNGReader()
         arrow_button_icon.SetFileName(arrow_button_icon_path)
         arrow_button_icon.Update()
         image = arrow_button_icon.GetOutput()

@@ -2,7 +2,8 @@
 
 import os
 
-from pyvista import Plotter, _vtk
+from pyvista import Plotter
+from vtk import vtkActor, vtkButtonWidget, vtkPNGReader
 
 from ansys.geometry.core.misc import DEFAULT_UNITS
 from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
@@ -24,8 +25,8 @@ class Ruler(PlotterWidget):
         super().__init__(plotter)
 
         # Initialize variables
-        self._actor: _vtk.vtkActor = None
-        self._button: _vtk.vtkButtonWidget = self.plotter.add_checkbox_button_widget(
+        self._actor: vtkActor = None
+        self._button: vtkButtonWidget = self.plotter.add_checkbox_button_widget(
             self.callback, position=(10, 100), size=30, border_size=3
         )
 
@@ -65,7 +66,7 @@ class Ruler(PlotterWidget):
         """Define the configuration and representation of the Ruler widget button."""
         show_ruler_vr = self._button.GetRepresentation()
         show_ruler_icon_file = os.path.join(os.path.dirname(__file__), "_images", "ruler.png")
-        show_ruler_r = _vtk.vtkPNGReader()
+        show_ruler_r = vtkPNGReader()
         show_ruler_r.SetFileName(show_ruler_icon_file)
         show_ruler_r.Update()
         image = show_ruler_r.GetOutput()
