@@ -40,8 +40,7 @@ class CoordinateSystem:
         grpc_client: GrpcClient,
         preexisting_id: Optional[str] = None,
     ):
-        """Constructor method for the ``CoordinateSystem`` class."""
-
+        """Initialize ``CoordinateSystem`` class."""
         self._parent_component = parent_component
         self._grpc_client = grpc_client
         self._coordinate_systems_stub = CoordinateSystemsStub(grpc_client.channel)
@@ -112,12 +111,11 @@ class CoordinateSystem:
 
     @property
     def is_alive(self) -> bool:
-        """Boolean indicating whether the CoordinateSystem is still alive on the server
-        side."""
+        """If the CoordinateSystem is still alive on the server side."""
         return self._is_alive
 
-    def __repr__(self):
-        """String representation of the coordinate system."""
+    def __repr__(self) -> str:
+        """Represent the ``CoordinateSystem`` as a string."""
         lines = [f"ansys.geometry.core.designer.CoordinateSystem {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Exists               : {self.is_alive}")

@@ -23,8 +23,7 @@ class Vector3D(np.ndarray):
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence]):
-        """Constructor method for the ``Vector3D`` class."""
-
+        """Initialize ``Vector3D`` class."""
         obj = np.asarray(input).view(cls)
 
         # Check that the size is as expected
@@ -115,7 +114,11 @@ class Vector3D(np.ndarray):
 
     def transform(self, matrix: "Matrix44") -> "Vector3D":
         """
-        Transforms the current Vector3D object by applying the specified 4x4
+        Transform the current Vector3D with a transformation matrix.
+
+        Notes
+        -----
+        Transform the current Vector3D object by applying the specified 4x4
         transformation matrix and returns a new Vector3D object representing the
         transformed vector.
 
@@ -251,8 +254,7 @@ class Vector2D(np.ndarray):
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence]):
-        """Constructor for the ``Vector2D`` class."""
-
+        """Initialize the ``Vector2D`` class."""
         obj = np.asarray(input).view(cls)
 
         # Check that the size is as expected
@@ -338,7 +340,7 @@ class Vector2D(np.ndarray):
     @check_input_types
     def get_angle_between(self, v: "Vector2D") -> Quantity:
         """
-        Getting the angle between this 2D vector and another 2D vector.
+        Get the angle between this 2D vector and another 2D vector.
 
         Parameters
         ----------
@@ -443,21 +445,22 @@ class UnitVector3D(Vector3D):
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence, Vector3D]):
+        """Initialize ``UnitVector3D`` class."""
         obj = Vector3D(input) if not isinstance(input, Vector3D) else input
         obj = obj.normalize().view(cls)
         obj.setflags(write=False)
         return obj
 
     @Vector3D.x.setter
-    def x(self, value: Real) -> None:
+    def x(self, value: Real) -> None:  # noqa : D102
         raise UnsupportedOperation("UnitVector3D is immutable.")
 
     @Vector3D.y.setter
-    def y(self, value: Real) -> None:
+    def y(self, value: Real) -> None:  # noqa : D102
         raise UnsupportedOperation("UnitVector3D is immutable.")
 
     @Vector3D.z.setter
-    def z(self, value: Real) -> None:
+    def z(self, value: Real) -> None:  # noqa : D102
         raise UnsupportedOperation("UnitVector3D is immutable.")
 
     @classmethod
@@ -498,17 +501,18 @@ class UnitVector2D(Vector2D):
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence, Vector2D]):
+        """Initialize ``UnitVector2D`` class."""
         obj = Vector2D(input) if not isinstance(input, Vector2D) else input
         obj = obj.normalize().view(cls)
         obj.setflags(write=False)
         return obj
 
     @Vector2D.x.setter
-    def x(self, value: Real) -> None:
+    def x(self, value: Real) -> None:  # noqa : D102
         raise UnsupportedOperation("UnitVector2D is immutable.")
 
     @Vector2D.y.setter
-    def y(self, value: Real) -> None:
+    def y(self, value: Real) -> None:  # noqa : D102
         raise UnsupportedOperation("UnitVector2D is immutable.")
 
     @classmethod

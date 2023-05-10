@@ -28,7 +28,7 @@ class PhysicalQuantity:
 
     @check_input_types
     def __init__(self, unit: Unit, expected_dimensions: Optional[Unit] = None):
-        """Constructor for the ``PhysicalQuantity`` class."""
+        """Initialize the ``PhysicalQuantity`` class."""
         if expected_dimensions:
             check_pint_unit_compatibility(unit, expected_dimensions)
 

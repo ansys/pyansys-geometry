@@ -13,8 +13,7 @@ from ansys.geometry.core.typing import RealSequence
 
 class Frame:
     """
-    Provides primitive representation of a frame (an origin and three fundamental
-    directions).
+    Primitive representation of a frame (an origin and three fundamental directions).
 
     Parameters
     ----------
@@ -33,7 +32,7 @@ class Frame:
         direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Y,
     ):
-        """Constructor method for the ``Frame`` class."""
+        """Initialize ``Frame`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
         self._direction_x = (
             UnitVector3D(direction_x) if not isinstance(direction_x, UnitVector3D) else direction_x
@@ -145,7 +144,9 @@ class Frame:
 
     @check_input_types
     def transform_point2d_local_to_global(self, point: Point2D) -> Point3D:
-        """Express a local, plane-contained ``Point2D`` object in the global
+        """Transform a ``Point2D`` to a global ``Point3D`` object.
+
+        Express a local, plane-contained ``Point2D`` object in the global
         coordinate system, thus representing it as a ``Point3D`` object.
 
         Parameters

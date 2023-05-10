@@ -18,8 +18,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @unique
 class CurveType(Enum):
-    """Provides an enum holding the possible values for curve types by the Geometry
-    service."""
+    """Enum holding the possible values for curve types by the Geometry service."""
 
     CURVETYPE_UNKNOWN = 0
     CURVETYPE_LINE = 1
@@ -48,7 +47,7 @@ class Edge:
     """
 
     def __init__(self, id: str, curve_type: CurveType, body: "Body", grpc_client: GrpcClient):
-        """Constructor method for the ``Edge`` class."""
+        """Initialize ``Edge`` class."""
         self._id = id
         self._curve_type = curve_type
         self._body = body
@@ -62,7 +61,7 @@ class Edge:
 
     @property
     def _grpc_id(self) -> EntityIdentifier:
-        """gRPC edge identifier."""
+        """Entity identifier of this edge on the server side."""
         return EntityIdentifier(id=self._id)
 
     @property

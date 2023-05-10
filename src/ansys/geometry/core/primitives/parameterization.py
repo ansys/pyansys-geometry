@@ -1,3 +1,5 @@
+"""Provides the parametrization-related classes."""
+
 from enum import Enum
 
 from beartype import beartype as check_input_types
@@ -8,9 +10,13 @@ from ansys.geometry.core.typing import Real
 
 class ParamUV:
     """
-    Parameter class containing 2 parameters: (u, v). Likened to a 2D point in UV space
-    Used as an argument in parametric surface evaluations. This matches the service
-    implementation for the Geometry service.
+    Parameter class containing 2 parameters: (u, v).
+
+    Notes
+    -----
+    Likened to a 2D point in UV space Used as an argument in parametric
+    surface evaluations. This matches the service implementation for the
+    Geometry service.
 
     Parameters
     ----------
@@ -21,6 +27,7 @@ class ParamUV:
     """
 
     def __init__(self, u: Real, v: Real) -> None:
+        """Initialize ``ParamUV`` class."""
         self._u = u
         self._v = v
 
@@ -37,7 +44,7 @@ class ParamUV:
     @check_input_types
     def __add__(self, other: "ParamUV") -> "ParamUV":
         """
-        Adds the u and v components of the other ParamUV to this ParamUV.
+        Add the u and v components of the other ParamUV to this ParamUV.
 
         Parameters
         ----------
@@ -54,7 +61,7 @@ class ParamUV:
     @check_input_types
     def __sub__(self, other: "ParamUV") -> "ParamUV":
         """
-        Subtracts the u and v components of the other ParamUV from this ParamUV.
+        Subtract the u and v components of the other ParamUV from this ParamUV.
 
         Parameters
         ----------
@@ -103,6 +110,7 @@ class ParamUV:
         return ParamUV(self._u / other._u, self._v / other._v)
 
     def __repr__(self) -> str:
+        """Represent the ``ParamUV`` as a string."""
         return f"ParamUV(u={self.u}, v={self.v})"
 
 
@@ -120,6 +128,7 @@ class Interval:
 
     @check_input_types
     def __init__(self, start: Real, end: Real) -> None:
+        """Initialize ``Interval`` class."""
         if end < start:
             raise ValueError("Start value must be less than end value")
 
@@ -160,7 +169,7 @@ class Interval:
 
     def get_span(self) -> Real:
         """
-        Returns the quantity contained by the interval. Interval must be closed.
+        Return the quantity contained by the interval. Interval must be closed.
 
         Returns
         -------
@@ -173,6 +182,7 @@ class Interval:
         return self.end - self.start
 
     def __repr__(self) -> str:
+        """Represent the ``Interval`` as a string."""
         return f"Interval(start={self.start}, end={self.end})"
 
 
@@ -209,6 +219,7 @@ class Parameterization:
 
     @check_input_types
     def __init__(self, form: ParamForm, type: ParamType, interval: Interval) -> None:
+        """Initialize ``Parameterization`` class."""
         self._form = form
         self._type = type
         self._interval = interval
@@ -229,4 +240,5 @@ class Parameterization:
         return self._interval
 
     def __repr__(self) -> str:
+        """Represent the ``Parameterization`` as a string."""
         return f"Parameterization(form={self.form}, type={self.type}, interval={self.interval})"

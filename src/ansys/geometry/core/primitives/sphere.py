@@ -1,4 +1,4 @@
-""" Provides the ``Sphere`` class."""
+"""Provides the ``Sphere`` class."""
 
 from functools import cached_property
 
@@ -51,8 +51,7 @@ class Sphere:
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
-        """Constructor method for the ``Sphere`` class."""
-
+        """Initialize ``Sphere`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
 
         self._reference = (
@@ -113,7 +112,7 @@ class Sphere:
 
     def transformed_copy(self, matrix: Matrix44) -> "Sphere":
         """
-        Creates a transformed copy of the sphere based on a given transformation matrix.
+        Create a transformed copy of the sphere based on a transformation matrix.
 
         Parameters
         ----------
@@ -137,7 +136,7 @@ class Sphere:
 
     def mirrored_copy(self) -> "Sphere":
         """
-        Creates a mirrored copy of the sphere along the y-axis.
+        Create a mirrored copy of the sphere along the y-axis.
 
         Returns
         -------
@@ -189,6 +188,8 @@ class Sphere:
 
     def get_u_parameterization(self) -> Parameterization:
         """
+        Retrieve the U parameter parametrization conditions.
+
         The U parameter specifies the longitude angle, increasing clockwise (East) about
         `dir_z` (right hand corkscrew law). It has a zero parameter at `dir_x`, and a
         period of 2*pi.
@@ -202,6 +203,8 @@ class Sphere:
 
     def get_v_parameterization(self) -> Parameterization:
         """
+        Retrieve the V parameter parametrization conditions.
+
         The V parameter specifies the latitude, increasing North, with a zero parameter
         at the equator, and a range of [-pi/2, pi/2].
 
