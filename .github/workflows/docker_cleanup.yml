@@ -1,4 +1,4 @@
-name: Geometry Service - Package cleanup
+name: Docker images - Cleanup
 on:
   workflow_dispatch:
   schedule: # UTC at 0200
