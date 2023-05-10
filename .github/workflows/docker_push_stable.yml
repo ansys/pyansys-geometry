@@ -84,7 +84,7 @@ jobs:
       - name: Pull Linux latest unstable container
         run: docker pull ${{ env.LINUX_UNSTABLE }}
 
-      - name: Tag container as latest (stable)
+      - name: Tag container as latest (stable) for Github Container registry
         run: docker tag ${{ env.LINUX_UNSTABLE }} ${{ env.LINUX_STABLE_GHCR }}
 
       - name: Publish latest stable container in ghcr.io
