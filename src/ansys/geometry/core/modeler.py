@@ -60,7 +60,7 @@ class Modeler:
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
     ):
-        """Constructor method for the ``Modeler`` class."""
+        """Initialize ``Modeler`` class."""
         self._client = GrpcClient(
             host=host,
             port=port,
@@ -101,13 +101,29 @@ class Modeler:
         self._designs.append(design)
         return self._designs[-1]
 
+    def read_existing_design(self) -> "Design":
+        """
+        Read existing design on the service with the connected client.
+
+        Returns
+        -------
+        Design
+            Design object already living on the server.
+        """
+        from ansys.geometry.core.designer.design import Design
+
+        design = Design("", self._client, read_existing_design=True)
+        self._designs.append(design)
+        return self._designs[-1]
+
     def close(self) -> None:
-        """``Modeler`` easy-access method to the client's ``close()`` method."""
+        """``Modeler`` easy-access method to the client's close method."""
         return self.client.close()
 
     def upload_file(self, file_path: str) -> str:
         """
         Upload a file from the client to the server. ``file_path`` must include the extension.
+
         The new file created on the server will have the same name and extension.
 
         Parameters
@@ -137,8 +153,8 @@ class Modeler:
         response = c_stub.UploadFile(UploadFileRequest(data=data, file_name=file_name))
         return response.file_path
 
-    def __repr__(self):
-        """String representation of the modeler."""
+    def __repr__(self) -> str:
+        """Represent the modeler as a string."""
         lines = []
         lines.append(f"Ansys Geometry Modeler ({hex(id(self))})")
         lines.append("")

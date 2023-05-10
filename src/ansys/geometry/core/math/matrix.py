@@ -24,7 +24,7 @@ class Matrix(np.ndarray):
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence]):
-        """Constructor method for the ``Matrix`` class."""
+        """Initialize ``Matrix`` class."""
         obj = np.asarray(input).view(cls)
         obj.setflags(write=False)
 
@@ -36,13 +36,13 @@ class Matrix(np.ndarray):
         return obj
 
     def determinant(self) -> Real:
-        """Provides the determinant of the matrix."""
+        """Provide the determinant of the matrix."""
         if self.shape[0] != self.shape[1]:
             raise ValueError("The determinant is only defined for square matrices.")
         return np.linalg.det(self)
 
     def inverse(self) -> "Matrix":
-        """Provides the inverse of the matrix."""
+        """Provide the inverse of the matrix."""
         det = self.determinant()
         if det <= 0:
             raise ValueError("The matrix cannot be inversed because its determinant is zero.")
@@ -50,7 +50,7 @@ class Matrix(np.ndarray):
 
     @check_input_types
     def __mul__(self, other: Union["Matrix", np.ndarray]) -> "Matrix":
-        """Provides the multiplication of the matrix."""
+        """Provide the multiplication of the matrix."""
         if self.shape[1] != other.shape[0]:
             raise ValueError(
                 f"The dimensions of the matrices {self.shape[1]} and {other.shape[0]} are not multipliable."  # noqa : E501
@@ -78,8 +78,7 @@ class Matrix33(Matrix):
     """
 
     def __new__(cls, input: Optional[Union[np.ndarray, RealSequence, Matrix]] = DEFAULT_MATRIX33):
-        """Constructor for the ``Matrix33`` class."""
-
+        """Initialize the ``Matrix33`` class."""
         obj = Matrix(input).view(cls)
         if input is DEFAULT_MATRIX33:
             return obj
@@ -101,8 +100,7 @@ class Matrix44(Matrix):
     """
 
     def __new__(cls, input: Optional[Union[np.ndarray, RealSequence, Matrix]] = DEFAULT_MATRIX44):
-        """Constructor for the ``Matrix44`` class."""
-
+        """Initialize the ``Matrix44`` class."""
         obj = Matrix(input).view(cls)
         if input is DEFAULT_MATRIX44:
             return obj

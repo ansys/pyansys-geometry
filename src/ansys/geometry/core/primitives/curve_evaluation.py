@@ -1,3 +1,4 @@
+"""Provides the ``CurveEvaluation`` class."""
 from functools import cached_property
 
 from ansys.geometry.core.math import Point3D, Vector3D
@@ -8,10 +9,11 @@ class CurveEvaluation:
     """Provides result class when evaluating a curve."""
 
     def __init__(self, parameter: Real = None) -> None:
+        """Initialize the ``CurveEvaluation`` class."""
         self._parameter = parameter
 
     def is_set(self) -> bool:
-        """Returns whether or not the parameter has been set."""
+        """Return whether or not the parameter has been set."""
         return self._parameter is not None
 
     @property

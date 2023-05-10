@@ -48,8 +48,7 @@ class SketchCircle(SketchFace, Circle):
         self, plane: Plane, radius: Optional[Union[Quantity, Distance]] = None
     ) -> None:
         """
-        Method in charge of initializing correctly the underlying
-        primitive ``Circle`` class.
+        Initialize correctly the underlying primitive ``Circle`` class.
 
         Parameters
         ----------
@@ -58,7 +57,6 @@ class SketchCircle(SketchFace, Circle):
         radius : Optional[Union[Quantity, Distance]], optional
             Radius of the circle (if any), by default None.
         """
-
         # Use the radius given (if any)
         radius = radius if radius else self.radius
 
@@ -111,8 +109,11 @@ class SketchCircle(SketchFace, Circle):
 
     def plane_change(self, plane: Plane) -> None:
         """
-        Method for SketchCircle objects to redefine the plane containing them. This
-        implies that their 3D definition may suffer changes.
+        Redefine the plane containing the SketchCircle objects.
+
+        Notes
+        -----
+        This implies that their 3D definition may suffer changes.
 
         Parameters
         ----------

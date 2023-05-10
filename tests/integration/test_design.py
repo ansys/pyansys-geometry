@@ -1287,7 +1287,7 @@ def test_named_selections_design_points(modeler: Modeler):
     assert len(design.named_selections) == 0
 
 
-def test_component_instances(modeler: Modeler, skip_not_on_linux_service):
+def test_component_instances(modeler: Modeler):
     """Test creation of ``Component`` instances and the effects this has."""
 
     design_name = "ComponentInstance_Test"

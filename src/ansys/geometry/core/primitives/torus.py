@@ -55,8 +55,7 @@ class Torus:
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
-        """Constructor method for the ``Torus`` class."""
-
+        """Initialize ``Torus`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
         self._reference = (
             UnitVector3D(reference) if not isinstance(reference, UnitVector3D) else reference
@@ -126,7 +125,7 @@ class Torus:
 
     def transformed_copy(self, matrix: Matrix44) -> "Torus":
         """
-        Creates a transformed copy of the torus based on a given transformation matrix.
+        Create a transformed copy of the torus based on a transformation matrix.
 
         Parameters
         ----------
@@ -151,7 +150,7 @@ class Torus:
 
     def mirrored_copy(self) -> "Torus":
         """
-        Creates a mirrored copy of the torus along the y-axis.
+        Create a mirrored copy of the torus along the y-axis.
 
         Returns
         -------
@@ -180,6 +179,8 @@ class Torus:
 
     def get_u_parameterization(self):
         """
+        Retrieve the U parameter parametrization conditions.
+
         The U parameter specifies the longitude angle, increasing clockwise (East) about
         the axis (right hand corkscrew law). It has a zero parameter at
         Geometry.Frame.DirX, and a period of 2*pi.
@@ -193,6 +194,8 @@ class Torus:
 
     def get_v_parameterization(self) -> Parameterization:
         """
+        Retrieve the V parameter parametrization conditions.
+
         The V parameter specifies the latitude, increasing North, with a zero parameter
         at the equator. For the donut, where the Geometry.Torus.MajorRadius is greater
         than the Geometry.Torus.MinorRadius, the range is [-pi, pi] and the
@@ -245,7 +248,7 @@ class Torus:
 
 class TorusEvaluation(SurfaceEvaluation):
     """
-    Provides ``Torus`` evaluation at certain parameters.
+    ``Torus`` evaluation at certain parameters.
 
     Parameters
     ----------
@@ -400,6 +403,14 @@ class TorusEvaluation(SurfaceEvaluation):
 
     @cached_property
     def curvature(self) -> Tuple[Real, Vector3D, Real, Vector3D]:
+        """
+        The curvature of the ``Torus``.
+
+        Returns
+        -------
+        Tuple[Real, Vector3D, Real, Vector3D]
+            The minimum and maximum curvature value and direction, respectively.
+        """
         min_cur = 1.0 / self._torus.minor_radius.m
         min_dir = UnitVector3D(self.v_derivative)
         start_point = self._torus.origin

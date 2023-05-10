@@ -43,8 +43,7 @@ class Plotter:
         num_points: int = 100,
         enable_widgets: bool = True,
     ):
-        """Initializes the plotter."""
-
+        """Initialize the plotter."""
         # Generate custom scene if ``None`` is provided
         if scene is None:
             scene = pv.Plotter()
@@ -356,7 +355,7 @@ class PlotterHelper:
     """
 
     def __init__(self, use_trame: Optional[bool] = None) -> None:
-        """Initializes use_trame and saves current pv.OFF_SCREEN value."""
+        """Initialize use_trame and saves current pv.OFF_SCREEN value."""
         # Check if the use of trame was requested
         if use_trame is None:
             import ansys.geometry.core as pygeom
@@ -368,7 +367,7 @@ class PlotterHelper:
 
     def init_plotter(self):
         """
-        Initializes the plotter with or without trame visualizer.
+        Initialize the plotter with or without trame visualizer.
 
         Returns
         -------
@@ -392,7 +391,7 @@ class PlotterHelper:
 
     def show_plotter(self, plotter: Plotter, screenshot: Optional[str] = None):
         """
-        Shows the plotter or starts Trame service.
+        Show the plotter or start the Trame service.
 
         Parameters
         ----------

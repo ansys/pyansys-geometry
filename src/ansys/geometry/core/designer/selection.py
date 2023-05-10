@@ -52,9 +52,9 @@ class NamedSelection:
         edges: Optional[List[Edge]] = None,
         beams: Optional[List[Beam]] = None,
         design_points: Optional[List[DesignPoint]] = None,
+        preexisting_id: Optional[str] = None,
     ):
-        """Constructor method for the ``NamedSelection`` class."""
-
+        """Initialize ``NamedSelection`` class."""
         if bodies is None:
             bodies = []
         if faces is None:
@@ -78,6 +78,11 @@ class NamedSelection:
         [ids.add(edge.id) for edge in edges]
         [ids.add(beam.id) for beam in beams]
         [ids.add(dp.id) for dp in design_points]
+
+        if preexisting_id:
+            self._id = preexisting_id
+            self._name = name
+            return
 
         named_selection_request = CreateRequest(name=name, members=ids)
         self._grpc_client.log.debug("Requesting creation of named selection.")

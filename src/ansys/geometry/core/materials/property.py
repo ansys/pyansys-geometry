@@ -18,6 +18,31 @@ class MaterialPropertyType(Enum):
     TENSILE_STRENGTH = "TensileStrength"
     THERMAL_CONDUCTIVITY = "ThermalConductivity"
 
+    def from_id(id: str) -> "MaterialPropertyType":
+        """
+        Return the ``MaterialPropertyType`` value from the service representation.
+
+        Parameters
+        ----------
+        id : str
+            Geometry Service string representation of a property type.
+
+        Returns
+        -------
+        MaterialPropertyType
+            Common name for property type.
+        """
+        relations = {
+            "General.Density.Mass": "Density",
+            "Linear.Isotropic.Emodulus": "ElasticModulus",
+            "Linear.Isotropic.Poisson": "PoissonsRatio",
+            "Linear.Isotropic.Gmodulus": "ShearModulus",
+            "Heat.Iso.Cp": "SpecificHeat",
+            "Nonlinear.vonMises.Ultimate": "TensileStrength",
+            "Heat.Iso.Conduction": "ThermalConductivity",
+        }
+        return MaterialPropertyType(relations.get(id))
+
 
 class MaterialProperty:
     """
@@ -40,7 +65,7 @@ class MaterialProperty:
         name: str,
         quantity: Quantity,
     ):
-        """Constructor method for the ``MaterialProperty`` class."""
+        """Initialize ``MaterialProperty`` class."""
         self._type = type
         self._name = name
         self._quantity = quantity
