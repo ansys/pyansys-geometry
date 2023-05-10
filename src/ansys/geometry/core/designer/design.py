@@ -525,7 +525,7 @@ class Design(Component):
         return "\n".join(lines)
 
     def __read_existing_design(self) -> None:
-        # We have to get back:
+        # Windows:
         #
         # - [X] Components
         # - [X] Bodies
@@ -535,6 +535,17 @@ class Design(Component):
         # - [ ] Beams
         # - [X] CoordinateSystems
         # - [X] SharedTopology
+
+        # Linux:
+        #
+        # - [X] Components
+        # - [X] Bodies
+        # - [X] Materials
+        # - [X] NamedSelections
+        # - [ ] BeamProfiles
+        # - [ ] Beams
+        # - [X] CoordinateSystems
+        # - [ ] SharedTopology
         import time
 
         start = time.time()
