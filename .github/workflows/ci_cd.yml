@@ -285,7 +285,6 @@ jobs:
         run: |
           docker pull ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
-          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Checkout repository
         uses: actions/checkout@v3
