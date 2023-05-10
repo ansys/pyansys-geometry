@@ -4,13 +4,13 @@ on:
   pull_request:
     paths:
       - 'docker/**'
-      - '.github/workflows/build_docker_image.yml'
+      - '.github/workflows/docker_test_build.yml'
   push:
     branches:
       - main
     paths:
       - 'docker/**'
-      - '.github/workflows/build_docker_image.yml'
+      - '.github/workflows/docker_test_build.yml'
   release:
     types: [published]
 
