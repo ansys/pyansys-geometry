@@ -246,28 +246,6 @@ class Component:
             )
             self.components.append(new)
 
-    def __fix_moniker(self, string: str) -> str:
-        """Format a chain of monikers so the service can identify the entities."""
-        x = string.split("~")[1:]
-        if len(x) > 1:
-            x[0] = x[0].replace("sE", "~sO_~iI", 1)
-            for s in x[1:-1]:
-                index = x.index(s)
-                s = "~" + s if s[0] != "~" else s
-                s = s.replace("sE", "oO", 1)
-                s = s.replace("oE", "oO", 1)
-                if "iI" not in x[index + 1]:
-                    s = s.replace("oO", "oO_~iI", 1)
-                s = s.replace("___", "__", 1)
-                x[index] = s
-            x[-1] = x[-1].replace("sE", "~oE", 1)
-            x = "".join(x) + "_"
-        else:
-            x = "".join(x)
-        if x[0] != "~":
-            x = "~" + x
-        return x
-
     def __remove_duplicate_ids(self, path: str) -> str:
         """
         Remove duplicate entries in the ID path.
