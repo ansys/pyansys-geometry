@@ -13,8 +13,8 @@ env:
   PACKAGE_NAME: 'ansys-geometry-core'
   PACKAGE_NAMESPACE: 'ansys.geometry.core'
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
+  ANSRV_GEO_IMAGE: 'ghcr.io/pyansys/geometry'
   ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/pyansys/geometry:windows-latest
-  ANSRV_GEO_IMAGE_LINUX_TAG: ghcr.io/pyansys/geometry:linux-latest
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo
@@ -76,6 +76,14 @@ jobs:
     name: Testing and coverage (Windows)
     needs: [smoke-tests]
     runs-on: [self-hosted, pygeometry]
+    continue-on-error: ${{ matrix.experimental }}
+    matrix:
+      fail-fast: false
+      include:
+        - docker-image: "windows-latest"
+          experimental: false
+        - docker-image: "windows-latest-unstable"
+          experimental: true
 
     steps:
       - uses: actions/checkout@v3
@@ -108,7 +116,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download Geometry service container (if needed)
-        run: docker pull $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
+        run: docker pull ${{ $env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
 
       - name: Check location of self-hosted runner and define license server accordingly
         if: runner.name == 'pygeometry-ci-1'
@@ -118,7 +126,7 @@ jobs:
       - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ $env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Restore images cache
@@ -256,6 +264,14 @@ jobs:
     name: Testing and coverage (Linux)
     needs: [smoke-tests]
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
+    matrix:
+      fail-fast: false
+      include:
+        - docker-image: "linux-latest"
+          experimental: false
+        - docker-image: "linux-latest-unstable"
+          experimental: true
 
     steps:
       - name: Login in Github Container registry
@@ -267,8 +283,8 @@ jobs:
 
       - name: Pull and launch geometry service
         run: |
-          docker pull ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
+          docker pull ${{ $env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ $env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
 
       - name: Checkout repository
         uses: actions/checkout@v3
