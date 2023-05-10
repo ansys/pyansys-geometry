@@ -77,13 +77,14 @@ jobs:
     needs: [smoke-tests]
     runs-on: [self-hosted, pygeometry]
     continue-on-error: ${{ matrix.experimental }}
-    matrix:
+    strategy:
       fail-fast: false
-      include:
-        - docker-image: "windows-latest"
-          experimental: false
-        - docker-image: "windows-latest-unstable"
-          experimental: true
+      matrix:
+        include:
+          - docker-image: "windows-latest"
+            experimental: false
+          - docker-image: "windows-latest-unstable"
+            experimental: true
 
     steps:
       - uses: actions/checkout@v3
@@ -265,13 +266,14 @@ jobs:
     needs: [smoke-tests]
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental }}
-    matrix:
+    strategy:
       fail-fast: false
-      include:
-        - docker-image: "linux-latest"
-          experimental: false
-        - docker-image: "linux-latest-unstable"
-          experimental: true
+      matrix:
+        include:
+          - docker-image: "linux-latest"
+            experimental: false
+          - docker-image: "linux-latest-unstable"
+            experimental: true
 
     steps:
       - name: Login in Github Container registry
