@@ -373,8 +373,7 @@ def grpc_matrix_to_matrix(m: GRPCMatrix) -> Matrix44:
 
 
 def grpc_frame_to_frame(frame: GRPCFrame) -> Frame:
-    """Converts a ``ansys.api.geometry.Frame`` grpc message to a
-    :class:`ansys.geometry.core.math.Frame` class.
+    """Convert an ``ansys.api.geometry.Frame`` grpc message to a ``Frame`` class.
 
     Parameters
     ----------

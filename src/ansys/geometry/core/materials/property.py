@@ -20,8 +20,7 @@ class MaterialPropertyType(Enum):
 
     def from_id(id: str) -> "MaterialPropertyType":
         """
-        Return a ``ansys.geometry.core.materials.MaterialPropertyType`` from the Geometry Service
-        string representation of a property.
+        Return the ``MaterialPropertyType`` value from the service representation.
 
         Parameters
         ----------
