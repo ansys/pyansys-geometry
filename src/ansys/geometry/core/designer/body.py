@@ -681,7 +681,7 @@ class TemplateBody(IBody):
         )
         parent._transformed_part.part.bodies.append(tb)
         # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
-        body_id = parent.id + "/" + tb.id if parent.parent_component else tb.id
+        body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
         return Body(body_id, response.name, parent, tb)
 
     @protect_grpc
