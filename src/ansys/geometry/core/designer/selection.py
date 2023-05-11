@@ -84,11 +84,6 @@ class NamedSelection:
         [ids.add(beam.id) for beam in beams]
         [ids.add(dp.id) for dp in design_points]
 
-        if preexisting_id:
-            self._id = preexisting_id
-            self._name = name
-            return
-
         named_selection_request = CreateRequest(name=name, members=ids)
         self._grpc_client.log.debug("Requesting creation of named selection.")
         new_named_selection = self._named_selections_stub.Create(named_selection_request)
