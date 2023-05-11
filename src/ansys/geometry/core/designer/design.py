@@ -529,7 +529,6 @@ class Design(Component):
         #
         # TODO: Not all features implemented yet. Status is as follows
         #
-
         # Windows:
         #
         # - [X] Components
@@ -540,7 +539,7 @@ class Design(Component):
         # - [ ] Beams
         # - [X] CoordinateSystems
         # - [X] SharedTopology
-
+        #
         # Linux:
         #
         # - [X] Components
@@ -551,7 +550,7 @@ class Design(Component):
         # - [ ] Beams
         # - [X] CoordinateSystems
         # - [ ] SharedTopology
-
+        #
         import time
 
         start = time.time()
