@@ -2,7 +2,7 @@
 
 from ansys.api.geometry.v0.coordinatesystems_pb2 import CreateRequest
 from ansys.api.geometry.v0.coordinatesystems_pb2_grpc import CoordinateSystemsStub
-from beartype.typing import TYPE_CHECKING
+from beartype.typing import TYPE_CHECKING, Optional
 
 from ansys.geometry.core.connection import GrpcClient, frame_to_grpc_frame
 from ansys.geometry.core.errors import protect_grpc
@@ -33,12 +33,25 @@ class CoordinateSystem:
 
     @protect_grpc
     def __init__(
-        self, name: str, frame: Frame, parent_component: "Component", grpc_client: GrpcClient
+        self,
+        name: str,
+        frame: Frame,
+        parent_component: "Component",
+        grpc_client: GrpcClient,
+        preexisting_id: Optional[str] = None,
     ):
         """Initialize ``CoordinateSystem`` class."""
         self._parent_component = parent_component
         self._grpc_client = grpc_client
         self._coordinate_systems_stub = CoordinateSystemsStub(grpc_client.channel)
+        self._is_alive = True
+
+        # Create without going to server
+        if preexisting_id:
+            self._name = name
+            self._frame = frame
+            self._id = preexisting_id
+            return
 
         self._grpc_client.log.debug("Requesting creation of Coordinate System.")
         new_coordinate_system = self._coordinate_systems_stub.Create(
@@ -75,7 +88,6 @@ class CoordinateSystem:
                 ]
             ),
         )
-        self._is_alive = True
 
     @property
     def id(self) -> str:
