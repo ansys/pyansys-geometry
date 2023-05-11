@@ -55,6 +55,17 @@ class NamedSelection:
         preexisting_id: Optional[str] = None,
     ):
         """Initialize ``NamedSelection`` class."""
+        self._grpc_client = grpc_client
+        self._named_selections_stub = NamedSelectionsStub(grpc_client.channel)
+
+        if preexisting_id:
+            self._id = preexisting_id
+            self._name = name
+            return
+
+        # All ids should be unique - no duplicated values
+        ids = set()
+
         if bodies is None:
             bodies = []
         if faces is None:
@@ -66,23 +77,12 @@ class NamedSelection:
         if design_points is None:
             design_points = []
 
-        self._grpc_client = grpc_client
-        self._named_selections_stub = NamedSelectionsStub(grpc_client.channel)
-
-        # All ids should be unique - no duplicated values
-        ids = set()
-
         # Loop over bodies, faces and edges
         [ids.add(body.id) for body in bodies]
         [ids.add(face.id) for face in faces]
         [ids.add(edge.id) for edge in edges]
         [ids.add(beam.id) for beam in beams]
         [ids.add(dp.id) for dp in design_points]
-
-        if preexisting_id:
-            self._id = preexisting_id
-            self._name = name
-            return
 
         named_selection_request = CreateRequest(name=name, members=ids)
         self._grpc_client.log.debug("Requesting creation of named selection.")
