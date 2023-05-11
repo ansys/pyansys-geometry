@@ -424,7 +424,7 @@ class Component:
         tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._transformed_part.part.bodies.append(tb)
         # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
-        body_id = self.id + "/" + tb.id if self.parent_component else tb.id
+        body_id = f"{self.id}/{tb.id}" if self.parent_component else tb.id
         return Body(body_id, response.name, self, tb)
 
     @protect_grpc
@@ -473,7 +473,7 @@ class Component:
         tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._transformed_part.part.bodies.append(tb)
         # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
-        body_id = self.id + "/" + tb.id if self.parent_component else tb.id
+        body_id = f"{self.id}/{tb.id}" if self.parent_component else tb.id
         return Body(body_id, response.name, self, tb)
 
     @protect_grpc
@@ -512,7 +512,7 @@ class Component:
         tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._transformed_part.part.bodies.append(tb)
         # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
-        body_id = self.id + "/" + tb.id if self.parent_component else tb.id
+        body_id = f"{self.id}/{tb.id}" if self.parent_component else tb.id
         return Body(body_id, response.name, self, tb)
 
     @protect_grpc
@@ -554,7 +554,7 @@ class Component:
         tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._transformed_part.part.bodies.append(tb)
         # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
-        body_id = self.id + "/" + tb.id if self.parent_component else tb.id
+        body_id = f"{self.id}/{tb.id}" if self.parent_component else tb.id
         return Body(body_id, response.name, self, tb)
 
     @check_input_types
