@@ -120,7 +120,7 @@ class Modeler:
         """``Modeler`` easy-access method to the client's close method."""
         return self.client.close()
 
-    def upload_file(self, file_path: str) -> str:
+    def _upload_file(self, file_path: str, open_file: bool = False) -> str:
         """
         Upload a file from the client to the server. ``file_path`` must include the extension.
 
@@ -130,6 +130,8 @@ class Modeler:
         ----------
         file_path : str
             The path of the file. Must include extension.
+        open_file : bool
+            Open the file in the Geometry Service.
 
         Returns
         -------
@@ -150,8 +152,30 @@ class Modeler:
 
         c_stub = CommandsStub(self._client.channel)
 
-        response = c_stub.UploadFile(UploadFileRequest(data=data, file_name=file_name))
+        response = c_stub.UploadFile(
+            UploadFileRequest(data=data, file_name=file_name, open=open_file)
+        )
         return response.file_path
+
+    def open_file(self, file_path: str) -> "Design":
+        """
+        Open a file. ``file_path`` must include the extension.
+
+        This imports a design into the service. On Windows, `.scdocx` and HOOPS Exchange formats
+        are supported. On Linux, only `.scdocx` is supported.
+
+        Parameters
+        ----------
+        file_path : str
+            The path of the file. Must include extension.
+
+        Returns
+        -------
+        Design
+            The newly imported design.
+        """
+        self._upload_file(file_path, True)
+        return self.read_existing_design()
 
     def __repr__(self) -> str:
         """Represent the modeler as a string."""
