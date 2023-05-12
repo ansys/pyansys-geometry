@@ -90,6 +90,11 @@ class Component:
     transformed_part : TransformedPart, optional
         This argument should be present when creating a nested instance component. It will use the
         given transformed_part instead of creating a new one.
+    read_existing_comp : bool, optional
+        Indicates whether an existing component on the service should be read
+        or not. By default, ``False``. This is only valid when connecting
+        to an existing service session. Otherwise, avoid using this optional
+        argument.
     """
 
     # Types of the class instance private attributes
@@ -108,8 +113,10 @@ class Component:
         template: Optional["Component"] = None,
         preexisting_id: Optional[str] = None,
         transformed_part: Optional[TransformedPart] = None,
+        read_existing_comp: bool = False,
     ):
         """Initialize ``Component`` class."""
+        # Initialize the client and stubs needed
         self._grpc_client = grpc_client
         self._component_stub = ComponentsStub(self._grpc_client.channel)
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
@@ -124,12 +131,14 @@ class Component:
                 new_component = self._component_stub.Create(
                     CreateRequest(name=name, parent=parent_component.id, template=template_id)
                 )
-                self._id = new_component.component.id
+                # Remove this method call once we know Service sends correct ObjectPath id
+                self._id = self.__remove_duplicate_ids(new_component.component.id)
                 self._name = new_component.component.name
             else:
                 self._name = name
                 self._id = None
 
+        # Initialize needed instance variables
         self._components = []
         self._beams = []
         self._coordinate_systems = []
@@ -137,14 +146,12 @@ class Component:
         self._parent_component = parent_component
         self._is_alive = True
         self._shared_topology = None
-        self._transformed_part = None
+        self._transformed_part = transformed_part
 
         # Populate client data model
         if template:
-            if transformed_part:
-                # Re-use an existing tp if this is a nested instance
-                self._transformed_part = transformed_part
-            else:
+            # If this is not a nested instance
+            if not transformed_part:
                 # Create new TransformedPart, but use template's Part
                 tp = TransformedPart(
                     uuid.uuid4(),
@@ -157,8 +164,10 @@ class Component:
 
             # Recurse - Create more children components from template's remaining children
             self.__create_children(template)
-        else:
-            # Create new Part and TransformedPart since this is creating a new "master"
+            return
+
+        elif not read_existing_comp:
+            # This is an independent Component - Create new Part and TransformedPart
             p = Part(uuid.uuid4(), f"p_{name}", [], [])
             tp = TransformedPart(uuid.uuid4(), f"tp_{name}", p)
             p.parts.append(tp)
@@ -184,8 +193,7 @@ class Component:
         """``Body`` objects inside of the component."""
         bodies = []
         for body in self._transformed_part.part.bodies:
-            id = self.id + body.id if self.parent_component else body.id
-            id = self.__fix_moniker(id)
+            id = f"{self.id}/{body.id}" if self.parent_component else body.id
             bodies.append(Body(id, body.name, self, body))
         return bodies
 
@@ -226,43 +234,37 @@ class Component:
 
     def __create_children(self, template: "Component") -> None:
         """Create new Component and Body children in ``self`` from ``template``."""
-        for t_body in template.bodies:
-            new_id = self.id + ("~" + t_body.id.split("~")[-1])
-            new_body = Body(new_id, t_body.name, self, t_body._template)
-            self.bodies.append(new_body)
-
         for template_comp in template.components:
+            new_id = self.id + "/" + template_comp.id.split("/")[-1]
             new = Component(
                 template_comp.name,
                 self,
                 self._grpc_client,
                 template=template_comp,
-                preexisting_id=self.__fix_moniker(self.id + template_comp.id),
+                preexisting_id=new_id,
                 transformed_part=template_comp._transformed_part,
             )
             self.components.append(new)
 
-    def __fix_moniker(self, string: str) -> str:
-        """Format a chain of monikers so the service can identify the entities."""
-        x = string.split("~")[1:]
-        if len(x) > 1:
-            x[0] = x[0].replace("sE", "~sO_~iI", 1)
-            for s in x[1:-1]:
-                index = x.index(s)
-                s = "~" + s if s[0] != "~" else s
-                s = s.replace("sE", "oO", 1)
-                s = s.replace("oE", "oO", 1)
-                if "iI" not in x[index + 1]:
-                    s = s.replace("oO", "oO_~iI", 1)
-                s = s.replace("___", "__", 1)
-                x[index] = s
-            x[-1] = x[-1].replace("sE", "~oE", 1)
-            x = "".join(x) + "_"
-        else:
-            x = "".join(x)
-        if x[0] != "~":
-            x = "~" + x
-        return x
+    def __remove_duplicate_ids(self, path: str) -> str:
+        """
+        Remove duplicate entries in the ID path.
+
+        Notes
+        -----
+        This is a safeguard, as the server is known to have issues sometimes.
+
+        Examples
+        --------
+        This method converts "0:26/0:44/0:44/0:53" to "0:26/0:44/0:53".
+        """
+        # Split the string into a list -> convert list into a set but maintain order
+        res = []
+        [res.append(x) for x in path.split("/") if x not in res]
+        id = "/".join(res)
+        if id != path:
+            print("Removed duplicate!")
+        return id
 
     def get_world_transform(self) -> Matrix44:
         """
@@ -421,7 +423,9 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBody(request)
         tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._transformed_part.part.bodies.append(tb)
-        return Body(response.id, response.name, self, tb)
+        # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
+        body_id = f"{self.id}/{tb.id}" if self.parent_component else tb.id
+        return Body(body_id, response.name, self, tb)
 
     @protect_grpc
     @check_input_types
@@ -468,7 +472,9 @@ class Component:
 
         tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._transformed_part.part.bodies.append(tb)
-        return Body(response.id, response.name, self, tb)
+        # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
+        body_id = f"{self.id}/{tb.id}" if self.parent_component else tb.id
+        return Body(body_id, response.name, self, tb)
 
     @protect_grpc
     @check_input_types
@@ -505,7 +511,9 @@ class Component:
 
         tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._transformed_part.part.bodies.append(tb)
-        return Body(response.id, response.name, self, tb)
+        # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
+        body_id = f"{self.id}/{tb.id}" if self.parent_component else tb.id
+        return Body(body_id, response.name, self, tb)
 
     @protect_grpc
     @check_input_types
@@ -545,7 +553,9 @@ class Component:
 
         tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._transformed_part.part.bodies.append(tb)
-        return Body(response.id, response.name, self, tb)
+        # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
+        body_id = f"{self.id}/{tb.id}" if self.parent_component else tb.id
+        return Body(body_id, response.name, self, tb)
 
     @check_input_types
     def create_coordinate_system(self, name: str, frame: Frame) -> CoordinateSystem:
