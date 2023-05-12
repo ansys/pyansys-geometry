@@ -50,7 +50,7 @@ all = [
 tests = [
     "ansys-platform-instancemanagement==1.1.1",
     "beartype==0.14.0",
-    "docker==6.1.1",
+    "docker==6.1.2",
     "google-api-python-client==2.86.0",
     "googleapis-common-protos==1.59.0",
     "grpcio==1.50.0",
@@ -69,7 +69,7 @@ tests = [
 ]
 doc = [
     "ansys-sphinx-theme==0.9.9",
-    "docker==6.1.1",
+    "docker==6.1.2",
     "ipyvtklink==0.2.3",
     "jupyter_sphinx==0.4.0",
     "jupytext==1.14.5",
