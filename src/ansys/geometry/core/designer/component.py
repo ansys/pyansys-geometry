@@ -132,7 +132,7 @@ class Component:
                     CreateRequest(name=name, parent=parent_component.id, template=template_id)
                 )
                 # Remove this method call once we know Service sends correct ObjectPath id
-                self._id = self.__remove_duplicate_ids(new_component.component.id)
+                self._id = new_component.component.id
                 self._name = new_component.component.name
             else:
                 self._name = name
@@ -245,26 +245,6 @@ class Component:
                 transformed_part=template_comp._transformed_part,
             )
             self.components.append(new)
-
-    def __remove_duplicate_ids(self, path: str) -> str:
-        """
-        Remove duplicate entries in the ID path.
-
-        Notes
-        -----
-        This is a safeguard, as the server is known to have issues sometimes.
-
-        Examples
-        --------
-        This method converts "0:26/0:44/0:44/0:53" to "0:26/0:44/0:53".
-        """
-        # Split the string into a list -> convert list into a set but maintain order
-        res = []
-        [res.append(x) for x in path.split("/") if x not in res]
-        id = "/".join(res)
-        if id != path:
-            print("Removed duplicate!")
-        return id
 
     def get_world_transform(self) -> Matrix44:
         """
