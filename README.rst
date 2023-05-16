@@ -14,12 +14,12 @@ PyGeometry
    :target: https://pypi.org/project/ansys-geometry-core
    :alt: PyPI
 
-.. |codecov| image:: https://codecov.io/gh/pyansys/ansys-geometry-core/branch/main/graph/badge.svg
-   :target: https://codecov.io/gh/pyansys/pygeometry
+.. |codecov| image:: https://codecov.io/gh/ansys/ansys-geometry-core/branch/main/graph/badge.svg
+   :target: https://codecov.io/gh/ansys/pygeometry
    :alt: Codecov
 
-.. |GH-CI| image:: https://github.com/pyansys/pygeometry/actions/workflows/ci_cd.yml/badge.svg
-   :target: https://github.com/pyansys/pygeometry/actions/workflows/ci_cd.yml
+.. |GH-CI| image:: https://github.com/ansys/pygeometry/actions/workflows/ci_cd.yml/badge.svg
+   :target: https://github.com/ansys/pygeometry/actions/workflows/ci_cd.yml
    :alt: GH-CI
 
 .. |MIT| image:: https://img.shields.io/badge/License-MIT-yellow.svg
@@ -61,7 +61,7 @@ Once authenticated, please proceed to download the Geometry service Docker image
 
 .. code:: bash
 
-   docker pull ghcr.io/pyansys/geometry:<tag>
+   docker pull ghcr.io/ansys/geometry:<tag>
 
 The following OS-dependent tags are available:
 
@@ -89,7 +89,7 @@ First, start the Geometry service locally. If you have Docker installed and have
 
 .. code:: bash
 
-   docker run --name ans_geo -e LICENSE_SERVER=<LICENSE-SERVER> -p 50051:50051 ghcr.io/pyansys/geometry:<TAG>
+   docker run --name ans_geo -e LICENSE_SERVER=<LICENSE-SERVER> -p 50051:50051 ghcr.io/ansys/geometry:<TAG>
 
 The Geometry service has a set of environment variables that are **mandatory**:
 
@@ -191,7 +191,7 @@ To install PyGeometry in developer mode, perform these steps:
 
    .. code:: bash
 
-      git clone https://github.com/pyansys/pygeometry
+      git clone https://github.com/ansys/pygeometry
 
 #. Access the ``pygeometry`` directory where the repository has been cloned:
 
@@ -242,7 +242,7 @@ Install in offline mode
 
 If you lack an internet connection on your installation machine (or you do not have access to the
 private Ansys PyPI packages repository), you should install PyGeometry by downloading the wheelhouse
-archive from the `Releases Page <https://github.com/pyansys/pygeometry/releases>`_ for your
+archive from the `Releases Page <https://github.com/ansys/pygeometry/releases>`_ for your
 corresponding machine architecture.
 
 Each wheelhouse archive contains all the Python wheels necessary to install PyGeometry from scratch on Windows,
