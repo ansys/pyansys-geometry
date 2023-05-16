@@ -44,7 +44,7 @@ html_theme_options = {
         "version_match": switcher_version,
     },
     "check_switcher": False,
-    "github_url": "https://github.com/pyansys/pygeometry",
+    "github_url": "https://github.com/ansys/pygeometry",
     "show_prev_next": False,
     "show_breadcrumbs": True,
     "collapse_navigation": True,
@@ -55,7 +55,7 @@ html_theme_options = {
     "icon_links": [
         {
             "name": "Support",
-            "url": "https://github.com/pyansys/pygeometry/discussions",
+            "url": "https://github.com/ansys/pygeometry/discussions",
             "icon": "fa fa-comment fa-fw",
         },
     ],
