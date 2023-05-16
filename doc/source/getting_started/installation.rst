@@ -60,7 +60,7 @@ You can install the latest release from the `PyGeometry`_ repository on GitHub:
 
    .. code:: bash
 
-      git clone https://github.com/pyansys/pygeometry
+      git clone https://github.com/ansys/pygeometry
       cd pygeometry
       pip install -e .
 
@@ -75,7 +75,7 @@ Install in offline mode
 
 If you lack an internet connection on your installation machine (or you do not have access to the
 private Ansys PyPI packages repository), you should install PyGeometry by downloading the wheelhouse
-archive from the `Releases Page <https://github.com/pyansys/pygeometry/releases>`_ for your
+archive from the `Releases Page <https://github.com/ansys/pygeometry/releases>`_ for your
 corresponding machine architecture.
 
 Each wheelhouse archive contains all the Python wheels necessary to install PyGeometry from scratch on Windows,
@@ -115,4 +115,4 @@ For more information on the PyGeometry interface, see :ref:`User guide <ref_user
 
 .. LINKS AND REFERENCES
 .. _pip: https://pypi.org/project/pip/
-.. _PyGeometry: https://github.com/pyansys/pygeometry
+.. _PyGeometry: https://github.com/ansys/pygeometry

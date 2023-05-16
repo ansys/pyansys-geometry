@@ -91,7 +91,7 @@ doc = [
 ]
 
 [project.urls]
-Source = "https://github.com/pyansys/pygeometry"
+Source = "https://github.com/ansys/pygeometry"
 Documentation = "https://geometry.docs.pyansys.com"
 
 

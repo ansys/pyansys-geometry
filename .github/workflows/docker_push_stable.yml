@@ -29,8 +29,8 @@ jobs:
     runs-on: windows-latest
     if:  inputs.images == 'all' || inputs.images == 'windows-latest'
     env:
-      WINDOWS_UNSTABLE: ghcr.io/pyansys/geometry:windows-latest-unstable
-      WINDOWS_STABLE_GHCR: ghcr.io/pyansys/geometry:windows-latest
+      WINDOWS_UNSTABLE: ghcr.io/ansys/geometry:windows-latest-unstable
+      WINDOWS_STABLE_GHCR: ghcr.io/ansys/geometry:windows-latest
       WINDOWS_STABLE_FUJI: azwepsifujiaksacr.azurecr.io/ansys/discovery/geometry:windows-latest
     steps:
       - name: Login in Github Container registry
@@ -70,8 +70,8 @@ jobs:
     runs-on: ubuntu-latest
     if:  inputs.images == 'all' || inputs.images == 'linux-latest'
     env:
-      LINUX_UNSTABLE: ghcr.io/pyansys/geometry:linux-latest-unstable
-      LINUX_STABLE_GHCR: ghcr.io/pyansys/geometry:linux-latest
+      LINUX_UNSTABLE: ghcr.io/ansys/geometry:linux-latest-unstable
+      LINUX_STABLE_GHCR: ghcr.io/ansys/geometry:linux-latest
       LINUX_STABLE_FUJI: azwepsifujiaksacr.azurecr.io/ansys/discovery/geometry:linux-latest
     steps:
       - name: Login in Github Container registry
