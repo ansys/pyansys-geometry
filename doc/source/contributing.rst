@@ -16,7 +16,7 @@ To clone and install the latest PyGeometry release in development mode, run:
 
 .. code::
 
-    git clone https://github.com/pyansys/pygeometry
+    git clone https://github.com/ansys/pygeometry
     cd pygeometry
     python -m pip install --upgrade pip
     pip install -e .
@@ -25,7 +25,7 @@ To clone and install the latest PyGeometry release in development mode, run:
 Post issues
 -----------
 
-Use the `PyGeometry Issues <https://github.com/pyansys/pygeometry/issues>`_
+Use the `PyGeometry Issues <https://github.com/ansys/pygeometry/issues>`_
 page to submit questions, report bugs, and request new features. When possible, you
 should use these issue templates:
 

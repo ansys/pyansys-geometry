@@ -13,8 +13,8 @@ env:
   PACKAGE_NAME: 'ansys-geometry-core'
   PACKAGE_NAMESPACE: 'ansys.geometry.core'
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
-  ANSRV_GEO_IMAGE: 'ghcr.io/pyansys/geometry'
-  ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/pyansys/geometry:windows-latest
+  ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
+  ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/ansys/geometry:windows-latest
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo
