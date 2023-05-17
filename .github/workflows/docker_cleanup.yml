@@ -24,6 +24,7 @@ jobs:
     - name: "Perform versions cleanup - except certain tags"
       uses: ansys/actions/hk-package-clean-except@v4
       with:
+        package-org: 'ansys'
         package-name: 'geometry'
         token: ${{ secrets.GITHUB_TOKEN }}
         tags-kept: 'windows-latest, windows-latest-unstable, linux-latest, linux-latest-unstable'
