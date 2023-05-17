@@ -45,7 +45,7 @@ Install the PyGeometry image
 Once you have Docker installed on your machine, the next steps involve pulling down the Geometry service
 Docker container.
 
-#. Using your GitHub credentials, download the Docker image from the `pygeometry <https://github.com/pyansys/pygeometry>`_ repository.
+#. Using your GitHub credentials, download the Docker image from the `pygeometry <https://github.com/ansys/pygeometry>`_ repository.
 
 #. If you have Docker installed, use a GitHub personal access token (PAT) with packages read permission to authorize Docker
    to access this repository. For more information,
@@ -87,7 +87,7 @@ Docker container.
 
    .. code:: bash
 
-      docker pull ghcr.io/pyansys/geometry:<tag>
+      docker pull ghcr.io/ansys/geometry:<tag>
 
    The following OS-dependent tags are available:
 
@@ -185,7 +185,7 @@ The Geometry service can be launched locally in two different ways:
 
        .. code:: bash
 
-          docker run --name ans_geo -e LICENSE_SERVER=<LICENSE_SERVER> -p 50051:50051 ghcr.io/pyansys/geometry:<TAG>
+          docker run --name ans_geo -e LICENSE_SERVER=<LICENSE_SERVER> -p 50051:50051 ghcr.io/ansys/geometry:<TAG>
 
 
 Connect to the Geometry service

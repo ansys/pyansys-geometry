@@ -31,8 +31,8 @@ Prerequisites
 * Download the latest release artifacts for the Windows or Linux
   Docker container. You can do this as follows:
 
-  * Latest Linux artifacts: `linux-binaries.zip <https://github.com/pyansys/pygeometry/releases/latest/download/linux-binaries.zip>`_
-  * Latest Windows artifacts: `windows-binaries.zip <https://github.com/pyansys/pygeometry/releases/latest/download/windows-binaries.zip>`_
+  * Latest Linux artifacts: `linux-binaries.zip <https://github.com/ansys/pygeometry/releases/latest/download/linux-binaries.zip>`_
+  * Latest Windows artifacts: `windows-binaries.zip <https://github.com/ansys/pygeometry/releases/latest/download/windows-binaries.zip>`_
 
 * Move these ``.zip`` files to the current location (i.e. ``<repository-root-folder>/docker``).
 
@@ -46,7 +46,7 @@ In order to build your images, follow the next instructions:
 
   .. code:: bash
 
-     docker build -t ghcr.io/pyansys/geometry:<DOCKER_IMAGE_TAG> -f <DOCKERFILE_NAME> .
+     docker build -t ghcr.io/ansys/geometry:<DOCKER_IMAGE_TAG> -f <DOCKERFILE_NAME> .
 
   Bear in mind that you will need to substitute the following entries in the previous command,
   determined by whether you want to build the Linux-based or the Windows-based Docker image:
@@ -64,5 +64,5 @@ In order to build your images, follow the next instructions:
      docker images
 
      >>> REPOSITORY                                               TAG                                IMAGE ID       CREATED          SIZE
-     >>> ghcr.io/pyansys/geometry                                 *******-latest                     ............   X seconds ago    6.43GB
+     >>> ghcr.io/ansys/geometry                                 *******-latest                     ............   X seconds ago    6.43GB
      >>> ......                                                   ......                             ............   ..............   ......
