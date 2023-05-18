@@ -820,7 +820,8 @@ def test_download_file(
 
 
 def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
-    file = tmp_path_factory.mktemp("upload_file") / "example.scdocx"
+    """Test uploading a file to the server."""
+    file = tmp_path_factory.mktemp("test_design") / "upload_example.scdocx"
     file_size = 1024
 
     # Write random bytes
