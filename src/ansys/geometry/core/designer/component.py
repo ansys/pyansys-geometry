@@ -34,11 +34,11 @@ from ansys.geometry.core.connection import (
 )
 from ansys.geometry.core.connection.conversions import point3d_to_grpc_point
 from ansys.geometry.core.designer.beam import Beam, BeamProfile
-from ansys.geometry.core.designer.body import Body, MasterBody
+from ansys.geometry.core.designer.body import Body, TemplateBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
-from ansys.geometry.core.designer.part import MasterComponent, Part
+from ansys.geometry.core.designer.part import Part, TransformedPart
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import (
     IDENTITY_MATRIX44,
@@ -87,7 +87,7 @@ class Component:
         If a component already exists on the server, you can pass in its ID to create it on the
         client-side data model. If this is argument is present, a new Component will not be created
         on the server.
-    transformed_part : MasterComponent, optional
+    transformed_part : TransformedPart, optional
         This argument should be present when creating a nested instance component. It will use the
         given transformed_part instead of creating a new one.
     read_existing_comp : bool, optional
@@ -112,7 +112,7 @@ class Component:
         grpc_client: GrpcClient,
         template: Optional["Component"] = None,
         preexisting_id: Optional[str] = None,
-        transformed_part: Optional[MasterComponent] = None,
+        transformed_part: Optional[TransformedPart] = None,
         read_existing_comp: bool = False,
     ):
         """Initialize ``Component`` class."""
@@ -152,8 +152,8 @@ class Component:
         if template:
             # If this is not a nested instance
             if not transformed_part:
-                # Create new MasterComponent, but use template's Part
-                tp = MasterComponent(
+                # Create new TransformedPart, but use template's Part
+                tp = TransformedPart(
                     uuid.uuid4(),
                     f"tp_{name}",
                     template._transformed_part.part,
@@ -167,9 +167,9 @@ class Component:
             return
 
         elif not read_existing_comp:
-            # This is an independent Component - Create new Part and MasterComponent
+            # This is an independent Component - Create new Part and TransformedPart
             p = Part(uuid.uuid4(), f"p_{name}", [], [])
-            tp = MasterComponent(uuid.uuid4(), f"tp_{name}", p)
+            tp = TransformedPart(uuid.uuid4(), f"tp_{name}", p)
             p.parts.append(tp)
             self._transformed_part = tp
 
@@ -401,7 +401,7 @@ class Component:
 
         self._grpc_client.log.debug(f"Extruding sketch provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBody(request)
-        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
+        tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._transformed_part.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
@@ -448,7 +448,7 @@ class Component:
         self._grpc_client.log.debug(f"Extruding from face provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBodyFromFaceProfile(request)
 
-        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
+        tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._transformed_part.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
@@ -485,7 +485,7 @@ class Component:
         )
         response = self._bodies_stub.CreatePlanarBody(request)
 
-        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
+        tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._transformed_part.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
@@ -525,7 +525,7 @@ class Component:
         )
         response = self._bodies_stub.CreateBodyFromFace(request)
 
-        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
+        tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._transformed_part.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 

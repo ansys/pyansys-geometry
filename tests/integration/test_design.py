@@ -1312,7 +1312,7 @@ def test_component_instances(modeler: Modeler):
     body_ids = [wheel1.bodies[0].id, wheel2.bodies[0].id, wheel3.bodies[0].id, wheel4.bodies[0].id]
     assert len(body_ids) == len(set(body_ids))
 
-    # Assert all instances have unique MasterComponents
+    # Assert all instances have unique TransformedParts
     comp_templates = [wheel2._transformed_part, wheel3._transformed_part, wheel4._transformed_part]
     assert len(comp_templates) == len(set(comp_templates))
 
