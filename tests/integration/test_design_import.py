@@ -135,7 +135,7 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     sketch = Sketch(Plane(Point3D([0, 5, 5]))).box(Point2D([5, 2.5]), 10, 5)
     comp1.extrude_sketch("Top", sketch, 5)
 
-    file = tmp_path_factory.mktemp("test_design") / "example.scdocx"
+    file = tmp_path_factory.mktemp("test_design_import") / "two_cars.scdocx"
     design.download(file)
     design2 = modeler.open_file(file)
 
