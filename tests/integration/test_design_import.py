@@ -94,7 +94,7 @@ def test_design_import_simple_case(modeler: Modeler):
 
 
 def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
-    """Test creation of ``Component`` instances and the effects this has."""
+    """Test creation of a component, saving it to a file, and loading it again to a second component and make sure they have the same properties."""
 
     design_name = "ComponentInstance_Test"
     design = modeler.create_design(design_name)
