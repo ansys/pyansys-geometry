@@ -1,7 +1,7 @@
 Designer
 ********
 
-The PyAnsys ``Design`` subpackage provides for organizing geometry assemblies
+The ``Design`` subpackage provides for organizing geometry assemblies
 and synchronizes to a supporting Geometry service instance.
 
 Define the model

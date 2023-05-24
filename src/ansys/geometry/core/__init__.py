@@ -1,6 +1,4 @@
-"""
-PyGeometry is a Python wrapper for the Ansys Geometry service.
-"""
+"""PyGeometry is a Python wrapper for the Ansys Geometry service."""
 
 # Version
 # ------------------------------------------------------------------------------

@@ -1,23 +1,23 @@
-name: Build Docker images
+name: Docker images - Test build
 on:
   workflow_dispatch:
   pull_request:
     paths:
       - 'docker/**'
-      - '.github/workflows/build_docker_image.yml'
+      - '.github/workflows/docker_test_build.yml'
   push:
     branches:
       - main
     paths:
       - 'docker/**'
-      - '.github/workflows/build_docker_image.yml'
+      - '.github/workflows/docker_test_build.yml'
   release:
     types: [published]
 
 env:
   MAIN_PYTHON_VERSION: '3.10'
-  ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/pyansys/geometry:windows-latest-tmp
-  ANSRV_GEO_IMAGE_LINUX_TAG: ghcr.io/pyansys/geometry:linux-latest-tmp
+  ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/ansys/geometry:windows-latest-tmp
+  ANSRV_GEO_IMAGE_LINUX_TAG: ghcr.io/ansys/geometry:linux-latest-tmp
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo

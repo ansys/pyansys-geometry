@@ -22,7 +22,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @unique
 class SurfaceType(Enum):
-    """Provides an enum holding the possible values for surface types by the Geometry service."""
+    """Enum holding the possible values for surface types by the Geometry service."""
 
     SURFACETYPE_UNKNOWN = 0
     SURFACETYPE_PLANE = 1
@@ -43,7 +43,8 @@ class FaceLoopType(Enum):
 
 
 class FaceLoop:
-    """Provides an internal class holding the face loops defined by the server side.
+    """
+    Provides an internal class holding the face loops defined by the server side.
 
     Notes
     -----
@@ -72,6 +73,7 @@ class FaceLoop:
         max_bbox: Point3D,
         edges: List[Edge],
     ):
+        """Initialize ``FaceLoop`` class."""
         self._type = type
         self._length = length
         self._min_bbox = min_bbox
@@ -123,8 +125,7 @@ class Face:
     """
 
     def __init__(self, id: str, surface_type: SurfaceType, body: "Body", grpc_client: GrpcClient):
-        """Constructor method for the ``Face`` class."""
-
+        """Initialize ``Face`` class."""
         self._id = id
         self._surface_type = surface_type
         self._body = body
@@ -139,7 +140,7 @@ class Face:
 
     @property
     def _grpc_id(self) -> EntityIdentifier:
-        """gRPC face identifier."""
+        """Entity identifier of this face on the server side."""
         return EntityIdentifier(id=self._id)
 
     @property
@@ -206,7 +207,8 @@ class Face:
 
     @protect_grpc
     def face_normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:
-        """Get the normal direction to the face evaluated at certain UV coordinates.
+        """
+        Get the normal direction to the face evaluated at certain UV coordinates.
 
         Notes
         -----
@@ -237,7 +239,8 @@ class Face:
 
     @protect_grpc
     def face_point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
-        """Get a point of the face evaluated at certain UV coordinates.
+        """
+        Get a point of the face evaluated at certain UV coordinates.
 
         Notes
         -----

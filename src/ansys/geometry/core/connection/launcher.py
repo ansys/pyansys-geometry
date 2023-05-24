@@ -66,7 +66,8 @@ def launch_modeler(**kwargs: Optional[Dict]) -> "Modeler":
 
 
 def launch_remote_modeler(version: Optional[str] = None, **kwargs: Optional[Dict]) -> "Modeler":
-    """Start the Geometry service remotely using the PIM API.
+    """
+    Start the Geometry service remotely using the PIM API.
 
     When calling this method, you must ensure that you are in an
     environment where PyPIM is configured. PyPIM is the Pythonic
@@ -157,7 +158,6 @@ def launch_local_modeler(
     Modeler
         Instance of the Geometry service.
     """
-
     from ansys.geometry.core.modeler import Modeler
 
     if not _HAS_DOCKER:  # pragma: no cover

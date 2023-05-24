@@ -31,12 +31,13 @@ class Plane(Frame):
         direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Y,
     ):
-        """Constructor method for the ``Plane`` class."""
+        """Initialize ``Plane`` class."""
         super().__init__(origin, direction_x, direction_y)
 
     @check_input_types
     def is_point_contained(self, point: Point3D) -> bool:
-        """Check if a 3D point is contained in the plane.
+        """
+        Check if a 3D point is contained in the plane.
 
         Parameters
         ----------
@@ -48,7 +49,6 @@ class Plane(Frame):
         bool
             ``True`` if the 3D point is contained in the plane.
         """
-
         # Compute the plane equation A*(x-x0) + B*(y-y0) + C*(z-z0)
         plane_eq = (
             self.direction_z.x * (point.x - self.origin.x).m

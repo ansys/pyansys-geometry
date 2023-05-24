@@ -21,19 +21,23 @@ repos:
   hooks:
   - id: flake8
 
+- repo: https://github.com/PyCQA/docformatter
+  rev: v1.6.3
+  hooks:
+  - id: docformatter
+    additional_dependencies: [tomli]
+
 - repo: https://github.com/codespell-project/codespell
   rev: v2.2.4
   hooks:
   - id: codespell
 
-# To be activated after quick dev cycles
-#
-# - repo: https://github.com/pycqa/pydocstyle
-#   rev: 6.1.1
-#   hooks:
-#   - id: pydocstyle
-#     additional_dependencies: [toml]
-#     exclude: "tests/"
+- repo: https://github.com/pycqa/pydocstyle
+  rev: 6.3.0
+  hooks:
+  - id: pydocstyle
+    additional_dependencies: [tomli]
+    exclude: "tests/"
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v4.4.0

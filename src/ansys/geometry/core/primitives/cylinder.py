@@ -1,4 +1,4 @@
-""" Provides the ``Cylinder`` class."""
+"""Provides the ``Cylinder`` class."""
 
 from functools import cached_property
 
@@ -7,7 +7,14 @@ from beartype.typing import Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math import (
+    UNITVECTOR3D_X,
+    UNITVECTOR3D_Z,
+    Matrix44,
+    Point3D,
+    UnitVector3D,
+    Vector3D,
+)
 from ansys.geometry.core.misc import Distance
 from ansys.geometry.core.primitives.circle import Circle
 from ansys.geometry.core.primitives.line import Line
@@ -46,8 +53,7 @@ class Cylinder:
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
-        """Constructor method for the ``Cylinder`` class."""
-
+        """Initialize ``Cylinder`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
         self._reference = (
             UnitVector3D(reference) if not isinstance(reference, UnitVector3D) else reference
@@ -132,6 +138,41 @@ class Cylinder:
 
         return np.pi * self.radius**2 * height.value
 
+    def transformed_copy(self, matrix: Matrix44) -> "Cylinder":
+        """
+        Create a transformed copy of the cylinder based on a transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the cylinder.
+
+        Returns
+        -------
+        Cylinder
+            A new cylinder that is the transformed copy of the original cylinder.
+        """
+        new_point = self.origin.transform(matrix)
+        new_reference = self._reference.transform(matrix)
+        new_axis = self._axis.transform(matrix)
+        return Cylinder(
+            new_point,
+            self.radius,
+            UnitVector3D(new_reference[0:3]),
+            UnitVector3D(new_axis[0:3]),
+        )
+
+    def mirrored_copy(self) -> "Cylinder":
+        """
+        Create a mirrored copy of the cylinder along the y-axis.
+
+        Returns
+        -------
+        Cylinder
+            A new cylinder that is a mirrored copy of the original cylinder.
+        """
+        return Cylinder(self.origin, self.radius, -self._reference, -self._axis)
+
     @check_input_types
     def __eq__(self, other: "Cylinder") -> bool:
         """Equals operator for the ``Cylinder`` class."""
@@ -182,8 +223,10 @@ class Cylinder:
 
     def get_u_parameterization(self) -> Parameterization:
         """
-        The U parameter specifies the clockwise angle around the axis (right hand corkscrew law),
-        with a zero parameter at `dir_x`, and a period of 2*pi.
+        Retrieve the U parameter parametrization conditions.
+
+        The U parameter specifies the clockwise angle around the axis (right hand
+        corkscrew law), with a zero parameter at `dir_x`, and a period of 2*pi.
 
         Returns
         -------
@@ -194,8 +237,10 @@ class Cylinder:
 
     def get_v_parameterization(self) -> Parameterization:
         """
-        The V parameter specifies the distance along the axis,
-        with a zero parameter at the XY plane of the Cylinder.
+        Retrieve the V parameter parametrization conditions.
+
+        The V parameter specifies the distance along the axis, with a zero parameter at
+        the XY plane of the Cylinder.
 
         Returns
         -------

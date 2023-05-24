@@ -31,7 +31,8 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 def unit_vector_to_grpc_direction(unit_vector: UnitVector3D) -> GRPCDirection:
-    """Marshals a :class:`UnitVector3D` class to a unit vector gRPC message of the Geometry service.
+    """
+    Marshals a ``UnitVector3D`` class to a unit vector Geometry service gRPC message.
 
     Parameters
     ----------
@@ -47,7 +48,8 @@ def unit_vector_to_grpc_direction(unit_vector: UnitVector3D) -> GRPCDirection:
 
 
 def frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
-    """Marshals a :class:`Frame` class to a frame gRPC message of the Geometry service.
+    """
+    Marshals a ``Frame`` class to a frame Geometry service gRPC message.
 
     Parameters
     ----------
@@ -67,7 +69,8 @@ def frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
 
 
 def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
-    """Marshals a :class:`Plane` class to a plane gRPC message of the Geometry service.
+    """
+    Marshals a ``Plane`` class to a plane Geometry service gRPC message.
 
     Parameters
     ----------
@@ -94,8 +97,8 @@ def sketch_shapes_to_grpc_geometries(
     faces: List[SketchFace],
     only_one_curve: Optional[bool] = False,
 ) -> Geometries:
-    """Marshals a list of :class:`SketchEdge` and :class:`SketchFace`
-    classes to a geometries gRPC message of the Geometry service.
+    """
+    Marshals a list of ``SketchEdge`` and ``SketchFace`` to a geometries gRPC message.
 
     Parameters
     ----------
@@ -156,8 +159,8 @@ def sketch_edges_to_grpc_geometries(
     edges: List[SketchEdge],
     plane: Plane,
 ) -> Tuple[List[GRPCLine], List[GRPCArc]]:
-    """Marshals a list of :class:`SketchEdge` classes to a geometries gRPC message of
-    the Geometry service.
+    """
+    Marshals a list of ``SketchEdge`` to a geometries gRPC message.
 
     Parameters
     ----------
@@ -183,7 +186,8 @@ def sketch_edges_to_grpc_geometries(
 
 
 def sketch_arc_to_grpc_arc(arc: Arc, plane: Plane) -> GRPCArc:
-    """Marshals an :class:`Arc` class to an arc gRPC message of the Geometry service.
+    """
+    Marshals an ``Arc`` class to an arc Geometry service gRPC message.
 
     Parameters
     ----------
@@ -212,7 +216,8 @@ def sketch_arc_to_grpc_arc(arc: Arc, plane: Plane) -> GRPCArc:
 
 
 def sketch_ellipse_to_grpc_ellipse(ellipse: SketchEllipse, plane: Plane) -> GRPCEllipse:
-    """Marshals an :class:`SketchEllipse` class to an ellipse gRPC message of the Geometry service.
+    """
+    Marshals a ``SketchEllipse`` class to an ellipse Geometry service gRPC message.
 
     Parameters
     ----------
@@ -234,7 +239,7 @@ def sketch_ellipse_to_grpc_ellipse(ellipse: SketchEllipse, plane: Plane) -> GRPC
 
 def sketch_circle_to_grpc_circle(circle: SketchCircle, plane: Plane) -> GRPCCircle:
     """
-    Marshals a :class:`SketchCircle` class to a circle gRPC message of the Geometry service.
+    Marshals a ``SketchCircle`` class to a circle Geometry service gRPC message.
 
     Parameters
     ----------
@@ -255,7 +260,8 @@ def sketch_circle_to_grpc_circle(circle: SketchCircle, plane: Plane) -> GRPCCirc
 
 
 def point3d_to_grpc_point(point: Point3D) -> GRPCPoint:
-    """Marshals a :class:`Point3D` class to a point gRPC message of the Geometry service.
+    """
+    Marshals a ``Point3D`` class to a point Geometry service gRPC message.
 
     Parameters
     ----------
@@ -276,7 +282,7 @@ def point3d_to_grpc_point(point: Point3D) -> GRPCPoint:
 
 def point2d_to_grpc_point(plane: Plane, point2d: Point2D) -> GRPCPoint:
     """
-    Marshals a :class:`Point2D` class to a point gRPC message of the Geometry service.
+    Marshals a ``Point2D`` class to a point Geometry service gRPC message.
 
     Parameters
     ----------
@@ -299,7 +305,8 @@ def point2d_to_grpc_point(plane: Plane, point2d: Point2D) -> GRPCPoint:
 
 
 def sketch_polygon_to_grpc_polygon(polygon: Polygon, plane: Plane) -> GRPCPolygon:
-    """Marshals a :class:`Polygon` class to a polygon gRPC message of the Geometry service.
+    """
+    Marshals a ``Polygon`` class to a polygon Geometry service gRPC message.
 
     Parameters
     ----------
@@ -320,7 +327,8 @@ def sketch_polygon_to_grpc_polygon(polygon: Polygon, plane: Plane) -> GRPCPolygo
 
 
 def sketch_segment_to_grpc_line(segment: SketchSegment, plane: Plane) -> GRPCLine:
-    """Marshals a :class:`Segment` class to a line gRPC message of the Geometry service.
+    """
+    Marshals a ``Segment`` class to a line Geometry service gRPC message.
 
     Parameters
     ----------
@@ -339,7 +347,7 @@ def sketch_segment_to_grpc_line(segment: SketchSegment, plane: Plane) -> GRPCLin
 
 
 def tess_to_pd(tess: Tessellation) -> "PolyData":
-    """Convert an ``ansys.api.geometry.Tessellation`` class to a :class:`pyvista.PolyData` class."""
+    """Convert an ``ansys.api.geometry.Tessellation`` class to a `pyvista.PolyData` class."""
     # lazy imports here to improve initial load
     import numpy as np
     import pyvista as pv
@@ -348,10 +356,7 @@ def tess_to_pd(tess: Tessellation) -> "PolyData":
 
 
 def grpc_matrix_to_matrix(m: GRPCMatrix) -> Matrix44:
-    """
-    Convert an ``ansys.api.geometry.Matrix`` class to a
-    :class:`ansys.geometry.core.math.Matrix44` class.
-    """
+    """Convert an ``ansys.api.geometry.Matrix`` class to a `ansys.geometry.core.math.Matrix44` class."""  # noqa: E501
     import numpy as np
 
     return Matrix44(
@@ -364,4 +369,43 @@ def grpc_matrix_to_matrix(m: GRPCMatrix) -> Matrix44:
             ],
             8,
         )
+    )
+
+
+def grpc_frame_to_frame(frame: GRPCFrame) -> Frame:
+    """Convert an ``ansys.api.geometry.Frame`` grpc message to a ``Frame`` class.
+
+    Parameters
+    ----------
+    GRPCFrame
+        Geometry service gRPC frame message. The unit for the frame origin is meters.
+
+    Returns
+    -------
+    frame : Frame
+        Resulting converted frame.
+    """
+    return Frame(
+        Point3D(
+            [
+                frame.origin.x,
+                frame.origin.y,
+                frame.origin.z,
+            ],
+            DEFAULT_UNITS.SERVER_LENGTH,
+        ),
+        UnitVector3D(
+            [
+                frame.dir_x.x,
+                frame.dir_x.y,
+                frame.dir_x.z,
+            ]
+        ),
+        UnitVector3D(
+            [
+                frame.dir_y.x,
+                frame.dir_y.y,
+                frame.dir_y.z,
+            ]
+        ),
     )

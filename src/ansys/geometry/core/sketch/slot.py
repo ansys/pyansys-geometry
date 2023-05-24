@@ -1,4 +1,4 @@
-""" Provides the ``Slot`` class."""
+"""Provides the ``Slot`` class."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
@@ -16,7 +16,8 @@ from ansys.geometry.core.typing import Real
 
 
 class Slot(SketchFace):
-    """Provides for modeling 2D slots.
+    """
+    Provides for modeling 2D slots.
 
     Parameters
     ----------

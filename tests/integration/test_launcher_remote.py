@@ -12,8 +12,9 @@ from ansys.geometry.core.connection.local_instance import LocalDockerInstance
 
 
 def test_launch_remote_instance(monkeypatch, modeler: Modeler):
-    """Test to create a mock pypim pretending it is configured and returning
-    a channel to an already running PyGeometry.
+    """
+    Test to create a mock pypim pretending it is configured and returning a channel to
+    an already running PyGeometry.
 
     Parameters
     ----------

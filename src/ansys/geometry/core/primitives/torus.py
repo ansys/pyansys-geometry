@@ -8,7 +8,14 @@ from beartype.typing import Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math import (
+    UNITVECTOR3D_X,
+    UNITVECTOR3D_Z,
+    Matrix44,
+    Point3D,
+    UnitVector3D,
+    Vector3D,
+)
 from ansys.geometry.core.misc import Distance
 from ansys.geometry.core.primitives.parameterization import (
     Interval,
@@ -48,8 +55,7 @@ class Torus:
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
-        """Constructor method for the ``Torus`` class."""
-
+        """Initialize ``Torus`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
         self._reference = (
             UnitVector3D(reference) if not isinstance(reference, UnitVector3D) else reference
@@ -117,6 +123,44 @@ class Torus:
             and self._axis == other._axis
         )
 
+    def transformed_copy(self, matrix: Matrix44) -> "Torus":
+        """
+        Create a transformed copy of the torus based on a transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the torus.
+
+        Returns
+        -------
+        Torus
+            A new torus that is the transformed copy of the original torus.
+        """
+        new_point = self.origin.transform(matrix)
+        new_reference = self._reference.transform(matrix)
+        new_axis = self._axis.transform(matrix)
+        return Torus(
+            new_point,
+            self.major_radius,
+            self.minor_radius,
+            UnitVector3D(new_reference[0:3]),
+            UnitVector3D(new_axis[0:3]),
+        )
+
+    def mirrored_copy(self) -> "Torus":
+        """
+        Create a mirrored copy of the torus along the y-axis.
+
+        Returns
+        -------
+        Torus
+            A new torus that is a mirrored copy of the original torus.
+        """
+        return Torus(
+            self.origin, self.major_radius, self.minor_radius, -self._reference, -self._axis
+        )
+
     def evaluate(self, parameter: ParamUV) -> "TorusEvaluation":
         """
         Evaluate the torus at the given parameters.
@@ -135,9 +179,11 @@ class Torus:
 
     def get_u_parameterization(self):
         """
-        The U parameter specifies the longitude angle, increasing clockwise (East) about the axis
-        (right hand corkscrew law). It has a zero parameter at Geometry.Frame.DirX,
-        and a period of 2*pi.
+        Retrieve the U parameter parametrization conditions.
+
+        The U parameter specifies the longitude angle, increasing clockwise (East) about
+        the axis (right hand corkscrew law). It has a zero parameter at
+        Geometry.Frame.DirX, and a period of 2*pi.
 
         Returns
         -------
@@ -148,12 +194,13 @@ class Torus:
 
     def get_v_parameterization(self) -> Parameterization:
         """
-        The V parameter specifies the latitude, increasing North,
-        with a zero parameter at the equator.
-        For the donut, where the Geometry.Torus.MajorRadius is greater than the
-        Geometry.Torus.MinorRadius, the range is [-pi, pi] and the parameterization is periodic.
-        For a degenerate torus, the range is restricted accordingly and
-        the parameterization is non-periodic.
+        Retrieve the V parameter parametrization conditions.
+
+        The V parameter specifies the latitude, increasing North, with a zero parameter
+        at the equator. For the donut, where the Geometry.Torus.MajorRadius is greater
+        than the Geometry.Torus.MinorRadius, the range is [-pi, pi] and the
+        parameterization is periodic. For a degenerate torus, the range is restricted
+        accordingly and the parameterization is non- periodic.
 
         Returns
         -------
@@ -201,7 +248,7 @@ class Torus:
 
 class TorusEvaluation(SurfaceEvaluation):
     """
-    Provides ``Torus`` evaluation at certain parameters.
+    ``Torus`` evaluation at certain parameters.
 
     Parameters
     ----------
@@ -356,6 +403,14 @@ class TorusEvaluation(SurfaceEvaluation):
 
     @cached_property
     def curvature(self) -> Tuple[Real, Vector3D, Real, Vector3D]:
+        """
+        The curvature of the ``Torus``.
+
+        Returns
+        -------
+        Tuple[Real, Vector3D, Real, Vector3D]
+            The minimum and maximum curvature value and direction, respectively.
+        """
         min_cur = 1.0 / self._torus.minor_radius.m
         min_dir = UnitVector3D(self.v_derivative)
         start_point = self._torus.origin

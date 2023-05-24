@@ -1,4 +1,4 @@
-""" Provides the ``Sphere`` class."""
+"""Provides the ``Sphere`` class."""
 
 from functools import cached_property
 
@@ -7,7 +7,14 @@ from beartype.typing import Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math import (
+    UNITVECTOR3D_X,
+    UNITVECTOR3D_Z,
+    Matrix44,
+    Point3D,
+    UnitVector3D,
+    Vector3D,
+)
 from ansys.geometry.core.misc import Distance
 from ansys.geometry.core.primitives.parameterization import (
     Interval,
@@ -44,8 +51,7 @@ class Sphere:
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
-        """Constructor method for the ``Sphere`` class."""
-
+        """Initialize ``Sphere`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
 
         self._reference = (
@@ -104,6 +110,41 @@ class Sphere:
             and self._axis == other._axis
         )
 
+    def transformed_copy(self, matrix: Matrix44) -> "Sphere":
+        """
+        Create a transformed copy of the sphere based on a transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the sphere.
+
+        Returns
+        -------
+        Sphere
+            A new sphere that is the transformed copy of the original sphere.
+        """
+        new_point = self.origin.transform(matrix)
+        new_reference = self._reference.transform(matrix)
+        new_axis = self._axis.transform(matrix)
+        return Sphere(
+            new_point,
+            self.radius,
+            UnitVector3D(new_reference[0:3]),
+            UnitVector3D(new_axis[0:3]),
+        )
+
+    def mirrored_copy(self) -> "Sphere":
+        """
+        Create a mirrored copy of the sphere along the y-axis.
+
+        Returns
+        -------
+        Torus
+            A new sphere that is a mirrored copy of the original sphere.
+        """
+        return Sphere(self.origin, self.radius, -self._reference, -self._axis)
+
     def evaluate(self, parameter: ParamUV) -> "SphereEvaluation":
         """
         Evaluate the sphere at the given parameters.
@@ -147,8 +188,11 @@ class Sphere:
 
     def get_u_parameterization(self) -> Parameterization:
         """
-        The U parameter specifies the longitude angle, increasing clockwise (East) about `dir_z`
-        (right hand corkscrew law). It has a zero parameter at `dir_x`, and a period of 2*pi.
+        Retrieve the U parameter parametrization conditions.
+
+        The U parameter specifies the longitude angle, increasing clockwise (East) about
+        `dir_z` (right hand corkscrew law). It has a zero parameter at `dir_x`, and a
+        period of 2*pi.
 
         Returns
         -------
@@ -159,8 +203,10 @@ class Sphere:
 
     def get_v_parameterization(self) -> Parameterization:
         """
-        The V parameter specifies the latitude, increasing North, with a zero parameter at the
-        equator, and a range of [-pi/2, pi/2].
+        Retrieve the V parameter parametrization conditions.
+
+        The V parameter specifies the latitude, increasing North, with a zero parameter
+        at the equator, and a range of [-pi/2, pi/2].
 
         Returns
         -------

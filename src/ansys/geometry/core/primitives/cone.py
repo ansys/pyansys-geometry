@@ -7,7 +7,14 @@ from beartype.typing import Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math import (
+    UNITVECTOR3D_X,
+    UNITVECTOR3D_Z,
+    Matrix44,
+    Point3D,
+    UnitVector3D,
+    Vector3D,
+)
 from ansys.geometry.core.misc import Angle, Distance
 from ansys.geometry.core.primitives.line import Line
 from ansys.geometry.core.primitives.parameterization import (
@@ -48,8 +55,7 @@ class Cone:
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
-        """Constructor method for the ``Cone`` class."""
-
+        """Initialize ``Cone`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
         self._reference = (
             UnitVector3D(reference) if not isinstance(reference, UnitVector3D) else reference
@@ -108,6 +114,42 @@ class Cone:
     def volume(self) -> Quantity:
         """Volume of the cone."""
         return np.pi * self.radius**2 * self.height / 3
+
+    def transformed_copy(self, matrix: Matrix44) -> "Cone":
+        """
+        Create a transformed copy of the cone based on a transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the cone.
+
+        Returns
+        -------
+        Cone
+            A new cone that is the transformed copy of the original cone.
+        """
+        new_point = self.origin.transform(matrix)
+        new_reference = self._reference.transform(matrix)
+        new_axis = self._axis.transform(matrix)
+        return Cone(
+            new_point,
+            self.radius,
+            self.half_angle,
+            UnitVector3D(new_reference[0:3]),
+            UnitVector3D(new_axis[0:3]),
+        )
+
+    def mirrored_copy(self) -> "Cone":
+        """
+        Create a mirrored copy of the cone along the y-axis.
+
+        Returns
+        -------
+        Cone
+            A new cone that is a mirrored copy of the original cone.
+        """
+        return Cone(self.origin, self.radius, self.half_angle, -self._reference, -self._axis)
 
     @property
     def apex(self) -> Point3D:
@@ -178,8 +220,10 @@ class Cone:
 
     def get_u_parameterization(self) -> Parameterization:
         """
-        The U parameter specifies the clockwise angle around the axis (right hand corkscrew law),
-        with a zero parameter at `dir_x`, and a period of 2*pi.
+        Retrieve the U parameter parametrization conditions.
+
+        The U parameter specifies the clockwise angle around the axis (right hand
+        corkscrew law), with a zero parameter at `dir_x`, and a period of 2*pi.
 
         Returns
         -------
@@ -190,15 +234,16 @@ class Cone:
 
     def get_v_parameterization(self) -> Parameterization:
         """
-        The V parameter specifies the distance along the axis,
-        with a zero parameter at the XY plane of the Cone.
+        Retrieve the V parameter parametrization conditions.
+
+        The V parameter specifies the distance along the axis, with a zero parameter at
+        the XY plane of the Cone.
 
         Returns
         -------
         Parameterization
             Information about how a cone's v parameter is parameterized.
         """
-
         # V parameter interval depends on which way the cone opens
         start, end = (
             (self.apex_param, np.inf) if self.apex_param < 0 else (np.NINF, self.apex_param)

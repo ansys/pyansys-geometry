@@ -12,7 +12,8 @@ from ansys.geometry.core.sketch.edge import SketchEdge
 
 
 class Arc(SketchEdge):
-    """Provides for modeling arcs.
+    """
+    Provides for modeling arcs.
 
     Parameters
     ----------
@@ -39,7 +40,7 @@ class Arc(SketchEdge):
         end: Point2D,
         clockwise: Optional[bool] = False,
     ):
-        """Initializes the arc shape."""
+        """Initialize the arc shape."""
         super().__init__()
         if start == end:
             raise ValueError("Start and end points must be different.")
@@ -108,7 +109,8 @@ class Arc(SketchEdge):
 
     @property
     def is_clockwise(self) -> bool:
-        """Whether the rotation of the angle is clockwise.
+        """
+        Whether the rotation of the angle is clockwise.
 
         Returns
         -------
@@ -116,7 +118,6 @@ class Arc(SketchEdge):
             ``True`` if the sense of rotation is clockwise.
             ``False`` if it is counter-clockwise.
         """
-
         return self._clockwise
 
     @property
@@ -126,8 +127,11 @@ class Arc(SketchEdge):
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
-        """VTK polydata representation for the PyVista visualization.
+        """
+        VTK polydata representation for the PyVista visualization.
 
+        Notes
+        -----
         The representation lies in the X/Y plane within
         the standard global Cartesian coordinate system.
 
@@ -136,7 +140,6 @@ class Arc(SketchEdge):
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
         """
-
         if np.isclose(self.angle, np.pi):
             # TODO : PyVista hack... Maybe worth implementing something in PyVista...
             #        A user should be able to define clockwise/counterclockwise sense of
@@ -179,9 +182,13 @@ class Arc(SketchEdge):
 
     def __arc_pyvista_hack(self):
         """
-        Hack for close to PI arcs. PyVista does not know whether the
-        rotation is clockwise or counterclockwise. It only understands
-        the longest and shortest angle, which complicates things in the boundary.
+        Hack for close to PI arcs.
+
+        Notes
+        -----
+        PyVista does not know whether the rotation is
+        clockwise or counterclockwise. It only understands the longest and shortest
+        angle, which complicates things in the boundary.
 
         This means that we need to divide the arc in two so that it is properly
         defined based on the known sense of rotation.

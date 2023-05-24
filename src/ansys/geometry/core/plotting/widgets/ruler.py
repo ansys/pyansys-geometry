@@ -2,14 +2,16 @@
 
 import os
 
-from pyvista import Plotter, _vtk
+from pyvista import Plotter
+from vtk import vtkActor, vtkButtonWidget, vtkPNGReader
 
 from ansys.geometry.core.misc import DEFAULT_UNITS
 from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
 
 
 class Ruler(PlotterWidget):
-    """Ruler widget for the PyGeometry plotter class.
+    """
+    Ruler widget for the PyGeometry plotter class.
 
     Parameters
     ----------
@@ -18,18 +20,21 @@ class Ruler(PlotterWidget):
     """
 
     def __init__(self, plotter: Plotter) -> None:
-        """Constructor method for the ``Ruler`` class."""
+        """Initialize ``Ruler`` class."""
         # Call PlotterWidget ctor
         super().__init__(plotter)
 
         # Initialize variables
-        self._actor: _vtk.vtkActor = None
-        self._button: _vtk.vtkButtonWidget = self.plotter.add_checkbox_button_widget(
+        self._actor: vtkActor = None
+        self._button: vtkButtonWidget = self.plotter.add_checkbox_button_widget(
             self.callback, position=(10, 100), size=30, border_size=3
         )
 
     def callback(self, state: bool) -> None:
-        """Callback function for the Ruler widget.
+        """
+        Remove/Add Ruler widget actor upon click.
+
+        Callback function for the Ruler widget.
 
         Notes
         -----
@@ -58,10 +63,10 @@ class Ruler(PlotterWidget):
             )
 
     def update(self) -> None:
-        """Method defining the configuration and representation of the Ruler widget button."""
+        """Define the configuration and representation of the Ruler widget button."""
         show_ruler_vr = self._button.GetRepresentation()
         show_ruler_icon_file = os.path.join(os.path.dirname(__file__), "_images", "ruler.png")
-        show_ruler_r = _vtk.vtkPNGReader()
+        show_ruler_r = vtkPNGReader()
         show_ruler_r.SetFileName(show_ruler_icon_file)
         show_ruler_r.Update()
         image = show_ruler_r.GetOutput()

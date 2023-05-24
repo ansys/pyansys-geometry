@@ -1,3 +1,4 @@
+"""Provides the ``Part`` class module."""
 from beartype.typing import List
 
 from ansys.geometry.core.designer.body import TemplateBody
@@ -6,9 +7,9 @@ from ansys.geometry.core.math import IDENTITY_MATRIX44, Matrix44
 
 class Part:
     """
-    Represents a Part Master. This class should not be accessed by users. Parts hold fundamental
-    data of an assembly.
+    Represents a Part Master.
 
+    This class should not be accessed by users. Parts hold fundamental data of an assembly.
 
     Parameters
     ----------
@@ -25,6 +26,7 @@ class Part:
     def __init__(
         self, id: str, name: str, parts: List["TransformedPart"], bodies: List[TemplateBody]
     ) -> None:
+        """Initialize the ``Part`` class."""
         self._id: str = id
         self._name: str = name
         self._parts: List["TransformedPart"] = parts
@@ -37,12 +39,12 @@ class Part:
 
     @property
     def name(self) -> str:
-        """Name of the part"""
+        """Name of the part."""
         return self._name
 
     @property
     def parts(self) -> List["TransformedPart"]:
-        """TransformedPart children that this Part contains."""
+        """``TransformedPart`` children that this ``Part`` contains."""
         return self._parts
 
     @parts.setter
@@ -51,7 +53,11 @@ class Part:
 
     @property
     def bodies(self) -> List[TemplateBody]:
-        """TemplateBody children that this Part contains. These are master bodies."""
+        """
+        ``TemplateBody`` children that this ``Part`` contains.
+
+        These are master bodies.
+        """
         return self._bodies
 
     @bodies.setter
@@ -59,6 +65,7 @@ class Part:
         self._bodies = bodies
 
     def __repr__(self) -> str:
+        """Represent the ``Part`` as a string."""
         return (
             f"Part(id={self.id}, "
             f"name={self.name}, "
@@ -69,8 +76,13 @@ class Part:
 
 class TransformedPart:
     """
-    Represents a Part Occurrence. This class should not be accessed by users. TransformedParts hold
-    fundamental data of an assembly. TransformedParts wrap Parts by adding a transform matrix.
+    Represents a Part Occurrence.
+
+    Notes
+    -----
+    This class should not be accessed by users.
+    TransformedParts hold fundamental data of an assembly. TransformedParts wrap Parts
+    by adding a transform matrix.
 
     Parameters
     ----------
@@ -87,6 +99,7 @@ class TransformedPart:
     def __init__(
         self, id: str, name: str, part: Part, transform: Matrix44 = IDENTITY_MATRIX44
     ) -> None:
+        """Initialize ``TransformedPart`` class."""
         self._id: str = id
         self._name: str = name
         self._part: Part = part
@@ -117,6 +130,7 @@ class TransformedPart:
         self._transform = matrix
 
     def __repr__(self) -> str:
+        """Represent the ``TransformedPart`` as a string."""
         return (
             f"TransformedPart(id={self.id}, "
             f"name={self.name}, "

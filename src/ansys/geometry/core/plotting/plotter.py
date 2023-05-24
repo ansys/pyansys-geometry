@@ -20,7 +20,8 @@ from ansys.geometry.core.sketch import Sketch
 
 
 class Plotter:
-    """Provides for plotting sketches and bodies.
+    """
+    Provides for plotting sketches and bodies.
 
     Parameters
     ----------
@@ -42,8 +43,7 @@ class Plotter:
         num_points: int = 100,
         enable_widgets: bool = True,
     ):
-        """Initializes the plotter."""
-
+        """Initialize the plotter."""
         # Generate custom scene if ``None`` is provided
         if scene is None:
             scene = pv.Plotter()
@@ -73,13 +73,13 @@ class Plotter:
 
     @property
     def scene(self) -> pv.Plotter:
-        """Rendered scene object.
+        """
+        Rendered scene object.
 
         Returns
         -------
         ~pvyista.Plotter
             Rendered scene object.
-
         """
         return self._scene
 
@@ -108,7 +108,8 @@ class Plotter:
         self.scene.view_zy()
 
     def plot_frame(self, frame: Frame, plotting_options: Optional[Dict] = None) -> None:
-        """Plot a frame in the scene.
+        """
+        Plot a frame in the scene.
 
         Parameters
         ----------
@@ -118,7 +119,6 @@ class Plotter:
             Dictionary containing parameters accepted by the
             :class:`pyvista.plotting.tools.create_axes_marker` class for customizing
             the frame rendering in the scene.
-
         """
         # Use default plotting options if required
         if plotting_options is None:
@@ -143,7 +143,8 @@ class Plotter:
         plane_options: Optional[Dict] = None,
         plotting_options: Optional[Dict] = None,
     ) -> None:
-        """Plot a plane in the scene.
+        """
+        Plot a plane in the scene.
 
         Parameters
         ----------
@@ -157,7 +158,6 @@ class Plotter:
             Dictionary containing parameters accepted by the
             :class:`pyvista.Plotter.add_mesh` for customizing the mesh
             rendering of the plane.
-
         """
         # Impose default plane options if none provided
         if plane_options is None:
@@ -180,7 +180,8 @@ class Plotter:
         show_frame: bool = False,
         **plotting_options: Optional[Dict],
     ) -> None:
-        """Plot a sketch in the scene.
+        """
+        Plot a sketch in the scene.
 
         Parameters
         ----------
@@ -207,7 +208,8 @@ class Plotter:
     def add_body(
         self, body: Body, merge: Optional[bool] = False, **plotting_options: Optional[Dict]
     ) -> None:
-        """Add a body to the scene.
+        """
+        Add a body to the scene.
 
         Parameters
         ----------
@@ -236,7 +238,8 @@ class Plotter:
         merge_bodies: bool = False,
         **plotting_options,
     ) -> None:
-        """Add a component to the scene.
+        """
+        Add a component to the scene.
 
         Parameters
         ----------
@@ -263,7 +266,8 @@ class Plotter:
             self.scene.add_mesh(dataset, **plotting_options)
 
     def add_sketch_polydata(self, polydata_entries: List[pv.PolyData], **plotting_options) -> None:
-        """Add sketches to the scene from PyVista polydata.
+        """
+        Add sketches to the scene from PyVista polydata.
 
         Parameters
         ----------
@@ -284,7 +288,8 @@ class Plotter:
         jupyter_backend: Optional[str] = None,
         **kwargs: Optional[Dict],
     ) -> None:
-        """Show the rendered scene on the screen.
+        """
+        Show the rendered scene on the screen.
 
         Parameters
         ----------
@@ -300,7 +305,6 @@ class Plotter:
         For more information on supported Jupyter backends, see
         `Jupyter Notebook Plotting <https://docs.pyvista.org/user-guide/jupyter/index.html>`_
         in the PyVista documentation.
-
         """
         # computue the scaling
         bounds = self.scene.renderer.bounds
@@ -340,8 +344,8 @@ class Plotter:
 
 
 class PlotterHelper:
-    """This class simplifies the selection of Trame visualizer in plot()
-    functions.
+    """
+    This class simplifies the selection of Trame visualizer in plot() functions.
 
     Parameters
     ----------
@@ -351,7 +355,7 @@ class PlotterHelper:
     """
 
     def __init__(self, use_trame: Optional[bool] = None) -> None:
-        """Initializes use_trame and saves current pv.OFF_SCREEN value."""
+        """Initialize use_trame and saves current pv.OFF_SCREEN value."""
         # Check if the use of trame was requested
         if use_trame is None:
             import ansys.geometry.core as pygeom
@@ -362,7 +366,8 @@ class PlotterHelper:
         self._pv_off_screen_original = bool(pv.OFF_SCREEN)
 
     def init_plotter(self):
-        """Initializes the plotter with or without trame visualizer.
+        """
+        Initialize the plotter with or without trame visualizer.
 
         Returns
         -------
@@ -385,7 +390,8 @@ class PlotterHelper:
         return pl
 
     def show_plotter(self, plotter: Plotter, screenshot: Optional[str] = None):
-        """Shows the plotter or starts Trame service.
+        """
+        Show the plotter or start the Trame service.
 
         Parameters
         ----------

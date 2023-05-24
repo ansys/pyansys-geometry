@@ -23,16 +23,24 @@ from beartype.typing import Dict, List, Optional, Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.connection import GrpcClient, plane_to_grpc_plane, point3d_to_grpc_point
+from ansys.geometry.core.connection import (
+    GrpcClient,
+    grpc_frame_to_frame,
+    grpc_matrix_to_matrix,
+    plane_to_grpc_plane,
+    point3d_to_grpc_point,
+)
 from ansys.geometry.core.designer.beam import Beam, BeamCircularProfile, BeamProfile
-from ansys.geometry.core.designer.body import Body, MidSurfaceOffsetType
+from ansys.geometry.core.designer.body import Body, MidSurfaceOffsetType, TemplateBody
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
+from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
+from ansys.geometry.core.designer.part import Part, TransformedPart
 from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.materials import Material
+from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
     UNITVECTOR3D_Y,
@@ -68,6 +76,11 @@ class Design(Component):
         User-defined label for the design.
     grpc_client : GrpcClient
         Active supporting Geometry service instance for design modeling.
+    read_existing_design : bool, optional
+        Indicates whether an existing design on the service should be read
+        or not. By default, ``False``. This is only valid when connecting
+        to an existing service session. Otherwise, avoid using this optional
+        argument.
     """
 
     # Types of the class instance private attributes
@@ -77,23 +90,29 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
-    def __init__(self, name: str, grpc_client: GrpcClient):
-        """Constructor method for the ``Design`` class."""
+    def __init__(self, name: str, grpc_client: GrpcClient, read_existing_design: bool = False):
+        """Initialize ``Design`` class."""
         super().__init__(name, None, grpc_client)
 
+        # Initialize the stubs needed
         self._design_stub = DesignsStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
         self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
 
-        new_design = self._design_stub.New(NewRequest(name=name))
-        self._id = new_design.id
-
+        # Initialize needed instance variables
         self._materials = []
         self._named_selections = {}
         self._beam_profiles = {}
 
-        self._grpc_client.log.debug("Design object instantiated successfully.")
+        # Check whether we want to process an existing design or create a new one.
+        if read_existing_design:
+            self._grpc_client.log.debug("Reading Design object from service.")
+            self.__read_existing_design()
+        else:
+            new_design = self._design_stub.New(NewRequest(name=name))
+            self._id = new_design.id
+            self._grpc_client.log.debug("Design object instantiated successfully.")
 
     @property
     def materials(self) -> List[Material]:
@@ -114,7 +133,8 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     def add_material(self, material: Material) -> None:
-        """Add a material to the design.
+        """
+        Add a material to the design.
 
         Parameters
         ----------
@@ -145,7 +165,8 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     def save(self, file_location: Union[Path, str]) -> None:
-        """Save a design to disk on the active Geometry server instance.
+        """
+        Save a design to disk on the active Geometry server instance.
 
         Parameters
         ----------
@@ -166,7 +187,8 @@ class Design(Component):
         file_location: Union[Path, str],
         format: Optional[DesignFileFormat] = DesignFileFormat.SCDOCX,
     ) -> None:
-        """Download a design from the active Geometry server instance.
+        """
+        Download a design from the active Geometry server instance.
 
         Parameters
         ----------
@@ -217,7 +239,8 @@ class Design(Component):
         beams: Optional[List[Beam]] = None,
         design_points: Optional[List[DesignPoint]] = None,
     ) -> NamedSelection:
-        """Create a named selection on the active Geometry server instance.
+        """
+        Create a named selection on the active Geometry server instance.
 
         Parameters
         ----------
@@ -257,7 +280,8 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     def delete_named_selection(self, named_selection: Union[NamedSelection, str]) -> None:
-        """Delete a named selection on the active Geometry server instance.
+        """
+        Delete a named selection on the active Geometry server instance.
 
         Parameters
         ----------
@@ -287,7 +311,8 @@ class Design(Component):
 
     @check_input_types
     def delete_component(self, component: Union["Component", str]) -> None:
-        """Delete a component (itself or its children).
+        """
+        Delete a component (itself or its children).
 
         Notes
         -----
@@ -311,7 +336,8 @@ class Design(Component):
             return super().delete_component(component)
 
     def set_shared_topology(self, share_type: SharedTopologyType) -> None:
-        """Set the shared topology to apply to the component.
+        """
+        Set the shared topology to apply to the component.
 
         Parameters
         ----------
@@ -336,7 +362,7 @@ class Design(Component):
         direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Y,
     ) -> BeamCircularProfile:
         """
-        Add a new beam circular profile under the design for the future creation of beams.
+        Add a new beam circular profile under the design for the creating beams.
 
         Parameters
         ----------
@@ -383,7 +409,8 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     def add_midsurface_thickness(self, thickness: Quantity, bodies: List[Body]) -> None:
-        """Adds a mid-surface thickness to a list of bodies.
+        """
+        Add a mid-surface thickness to a list of bodies.
 
         Parameters
         ----------
@@ -422,7 +449,8 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     def add_midsurface_offset(self, offset_type: MidSurfaceOffsetType, bodies: List[Body]) -> None:
-        """Adds a mid-surface offset type to a list of bodies.
+        """
+        Add a mid-surface offset type to a list of bodies.
 
         Parameters
         ----------
@@ -459,7 +487,8 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     def delete_beam_profile(self, beam_profile: Union[BeamProfile, str]) -> None:
-        """Removes a beam profile on the active geometry server instance.
+        """
+        Remove a beam profile on the active geometry server instance.
 
         Parameters
         ----------
@@ -480,8 +509,8 @@ class Design(Component):
                 + " Ignoring request."
             )
 
-    def __repr__(self):
-        """String representation of the design."""
+    def __repr__(self) -> str:
+        """Represent the ``Design`` as a string."""
         alive_bodies = [1 if body.is_alive else 0 for body in self.bodies]
         alive_comps = [1 if comp.is_alive else 0 for comp in self.components]
         lines = [f"ansys.geometry.core.designer.Design {hex(id(self))}"]
@@ -494,3 +523,136 @@ class Design(Component):
         lines.append(f"  N Beam Profiles      : {len(self.beam_profiles)}")
         lines.append(f"  N Design Points      : {len(self.design_points)}")
         return "\n".join(lines)
+
+    def __read_existing_design(self) -> None:
+        """Read an existing ``Design`` located on the server."""
+        #
+        # TODO: Not all features implemented yet. Status is as follows
+        #
+        # Windows:
+        #
+        # - [X] Components
+        # - [X] Bodies
+        # - [X] Materials
+        # - [X] NamedSelections
+        # - [ ] BeamProfiles
+        # - [ ] Beams
+        # - [X] CoordinateSystems
+        # - [X] SharedTopology
+        #
+        # Linux:
+        #
+        # - [X] Components
+        # - [X] Bodies
+        # - [X] Materials
+        # - [X] NamedSelections
+        # - [ ] BeamProfiles
+        # - [ ] Beams
+        # - [X] CoordinateSystems
+        # - [ ] SharedTopology
+        #
+        import time
+
+        start = time.time()
+        # Grab active design
+        design = self._design_stub.GetActive(Empty())
+        if not design:
+            raise RuntimeError("No existing design available at service level.")
+        else:
+            self._id = design.main_part.id
+            self._name = design.main_part.name
+
+        response = self._design_stub.GetAssembly(EntityIdentifier(id=""))
+
+        # Store created objects
+        created_parts = {p.id: Part(p.id, p.name, [], []) for p in response.parts}
+        created_tps = {}
+        created_components = {self.id: self}
+        created_bodies = {}
+
+        # Make dummy TP for design since server doesn't have one
+        self._transformed_part = TransformedPart("1", "tp_design", created_parts[self.id])
+
+        # Create TransformedParts
+        for tp in response.transformed_parts:
+            part = created_parts.get(tp.part_master.id)
+            new_tp = TransformedPart(tp.id, tp.name, part, grpc_matrix_to_matrix(tp.placement))
+            created_tps[tp.id] = new_tp
+
+        # Create Components
+        for comp in response.components:
+            parent = created_components.get(comp.parent_id)
+            tp = created_tps.get(comp.master_id)
+            c = Component(
+                comp.name,
+                parent,
+                self._grpc_client,
+                preexisting_id=comp.id,
+                transformed_part=tp,
+                read_existing_comp=True,
+            )
+            created_components[comp.id] = c
+            parent.components.append(c)
+
+        # Create Bodies
+        # TODO: is_surface?
+        for body in response.bodies:
+            part = created_parts.get(body.parent_id)
+            tb = TemplateBody(body.id, body.name, self._grpc_client)
+            part.bodies.append(tb)
+            created_bodies[body.id] = tb
+
+        # Create Materials
+        for material in response.materials:
+            properties = []
+            density = Quantity(0)
+            for property in material.material_properties:
+                mp = MaterialProperty(
+                    MaterialPropertyType.from_id(property.id),
+                    property.display_name,
+                    Quantity(property.value, property.units),
+                )
+                properties.append(mp)
+                if mp.type == MaterialPropertyType.DENSITY:
+                    density = mp.quantity
+
+            m = Material(material.name, density, properties)
+            self.materials.append(m)
+
+        # Create NamedSelections
+        for ns in response.named_selections:
+            new_ns = NamedSelection(ns.name, self._grpc_client, preexisting_id=ns.id)
+            self._named_selections[new_ns.name] = new_ns
+
+        # Create CoordinateSystems
+        num_created_coord_systems = 0
+        for component_id, coordinate_systems in response.component_coord_systems.items():
+            component = created_components.get(component_id)
+            for cs in coordinate_systems.coordinate_systems:
+                frame = grpc_frame_to_frame(cs.frame)
+                new_cs = CoordinateSystem(cs.name, frame, component, self._grpc_client, cs.id)
+                component.coordinate_systems.append(new_cs)
+                num_created_coord_systems += 1
+
+        end = time.time()
+
+        # Set SharedTopology
+        # TODO: Maybe just add it to Component or Part message
+        #          - we're starting to iterate through all the Components too much
+        # TODO: Make sure design doesn't need edge case attention
+        num_created_shared_topologies = 0
+        for component_id, shared_topology_type in response.component_shared_topologies.items():
+            component = created_components.get(component_id)
+            component._shared_topology = SharedTopologyType(shared_topology_type)
+            num_created_shared_topologies += 1
+
+        self._grpc_client.log.debug(f"Parts created: {len(created_parts)}")
+        self._grpc_client.log.debug(f"TransformedParts created: {len(created_tps) + 1}")
+        self._grpc_client.log.debug(f"Components created: {len(created_components)}")
+        self._grpc_client.log.debug(f"Bodies created: {len(created_bodies)}")
+        self._grpc_client.log.debug(f"Materials created: {len(self.materials)}")
+        self._grpc_client.log.debug(f"NamedSelections created: {len(self.named_selections)}")
+        self._grpc_client.log.debug(f"CoordinateSystems created: {num_created_coord_systems}")
+        self._grpc_client.log.debug(f"SharedTopologyTypes set: {num_created_shared_topologies}")
+
+        self._grpc_client.log.debug(f"\nSuccessfully read design in: {end - start} s")

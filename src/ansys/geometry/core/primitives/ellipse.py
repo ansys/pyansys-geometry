@@ -1,4 +1,4 @@
-""" Provides the ``Ellipse`` class."""
+"""Provides the ``Ellipse`` class."""
 
 from functools import cached_property
 
@@ -8,7 +8,14 @@ import numpy as np
 from pint import Quantity
 from scipy.integrate import quad
 
-from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Z, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math import (
+    UNITVECTOR3D_X,
+    UNITVECTOR3D_Z,
+    Matrix44,
+    Point3D,
+    UnitVector3D,
+    Vector3D,
+)
 from ansys.geometry.core.misc import Accuracy, Distance
 from ansys.geometry.core.primitives.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.primitives.parameterization import (
@@ -47,6 +54,7 @@ class Ellipse:
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
+        """Initialize the ``Ellipse`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
 
         self._reference = (
@@ -118,6 +126,19 @@ class Ellipse:
             and self._minor_radius == other._minor_radius
             and self._reference == other._reference
             and self._axis == other._axis
+        )
+
+    def mirrored_copy(self) -> "Ellipse":
+        """
+        Create a mirrored copy of the ellipse along the y-axis.
+
+        Returns
+        -------
+        Ellipse
+            A new ellipse that is a mirrored copy of the original ellipse.
+        """
+        return Ellipse(
+            self.origin, self.major_radius, self.minor_radius, -self._reference, -self._axis
         )
 
     def evaluate(self, parameter: Real) -> "EllipseEvaluation":
@@ -196,7 +217,8 @@ class Ellipse:
 
     @property
     def linear_eccentricity(self) -> Quantity:
-        """Linear eccentricity of the ellipse.
+        """
+        Linear eccentricity of the ellipse.
 
         Notes
         -----
@@ -224,11 +246,37 @@ class Ellipse:
         """Area of the ellipse."""
         return np.pi * self.major_radius * self.minor_radius
 
+    def transformed_copy(self, matrix: Matrix44) -> "Ellipse":
+        """
+        Create a transformed copy of the ellipse based on a transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the ellipse.
+
+        Returns
+        -------
+        Ellipse
+            A new ellipse that is the transformed copy of the original ellipse.
+        """
+        new_point = self.origin.transform(matrix)
+        new_reference = self._reference.transform(matrix)
+        new_axis = self._axis.transform(matrix)
+        return Ellipse(
+            new_point,
+            self.major_radius,
+            self.minor_radius,
+            UnitVector3D(new_reference[0:3]),
+            UnitVector3D(new_axis[0:3]),
+        )
+
     def get_parameterization(self) -> Parameterization:
         """
-        The parameter of an ellipse specifies the clockwise angle around the axis
-        (right hand corkscrew law), with a zero parameter at `dir_x` and a period
-        of 2*pi.
+        Return the parametrization of an ``Ellipse`` instance.
+
+        The parameter of an ellipse specifies the clockwise angle around the axis (right
+        hand corkscrew law), with a zero parameter at `dir_x` and a period of 2*pi.
 
         Returns
         -------
@@ -311,9 +359,10 @@ class EllipseEvaluation(CurveEvaluation):
     @cached_property
     def first_derivative(self) -> Vector3D:
         """
-        The first derivative of the evaluation. The first derivative is in the direction of the
-        tangent and has a magnitude equal to the velocity (rate of change of position) at that
-        point.
+        The first derivative of the evaluation.
+
+        The first derivative is in the direction of the tangent and has a magnitude
+        equal to the velocity (rate of change of position) at that point.
 
         Returns
         -------

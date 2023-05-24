@@ -558,9 +558,9 @@ def test_sketch_plane_translation():
 
 def test_validate_arc():
     """
-    Test for performing Arc rotation-sense validation
-    when using PyVista. Server-side validation will be done with the
-    body tessellation.
+    Test for performing Arc rotation-sense validation when using PyVista.
+
+    Server-side validation will be done with the body tessellation.
     """
     # =======================================================
     # Validate counterclockwise definition of an arc

@@ -6,13 +6,15 @@ from beartype.typing import Union
 import numpy as np
 from pint import Quantity
 
+from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.misc import UNITS, Accuracy, check_ndarray_is_float_int
 from ansys.geometry.core.typing import Real, RealSequence
 
 
 class Vector3D(np.ndarray):
-    """Provides a 3D vector class.
+    """
+    Provides a 3D vector class.
 
     Parameters
     ----------
@@ -21,8 +23,7 @@ class Vector3D(np.ndarray):
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence]):
-        """Constructor method for the ``Vector3D`` class."""
-
+        """Initialize ``Vector3D`` class."""
         obj = np.asarray(input).view(cls)
 
         # Check that the size is as expected
@@ -111,9 +112,36 @@ class Vector3D(np.ndarray):
         else:
             raise ValueError("The norm of the 3D vector is not valid.")
 
+    def transform(self, matrix: "Matrix44") -> "Vector3D":
+        """
+        Transform the current Vector3D with a transformation matrix.
+
+        Notes
+        -----
+        Transform the current Vector3D object by applying the specified 4x4
+        transformation matrix and returns a new Vector3D object representing the
+        transformed vector.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The 4x4 transformation matrix to apply to the vector.
+
+        Returns
+        -------
+        Vector3D
+            A new Vector3D object that is the transformed copy of the original vector after applying
+            the transformation matrix.
+        """
+        vector_4x1 = np.append(self, 1)
+        result_4x1 = matrix * vector_4x1
+        result_vector = Vector3D(result_4x1[0:3])
+        return result_vector
+
     @check_input_types
     def get_angle_between(self, v: "Vector3D") -> Quantity:
-        """Get the angle between this 3D vector and another 3D vector.
+        """
+        Get the angle between this 3D vector and another 3D vector.
 
         Parameters
         ----------
@@ -190,7 +218,8 @@ class Vector3D(np.ndarray):
         point_a: Union[np.ndarray, RealSequence, Point3D],
         point_b: Union[np.ndarray, RealSequence, Point3D],
     ):
-        """Create a 3D vector from two distinct 3D points.
+        """
+        Create a 3D vector from two distinct 3D points.
 
         Parameters
         ----------
@@ -215,7 +244,8 @@ class Vector3D(np.ndarray):
 
 
 class Vector2D(np.ndarray):
-    """Proves a 2D vector class.
+    """
+    Proves a 2D vector class.
 
     Parameters
     ----------
@@ -224,8 +254,7 @@ class Vector2D(np.ndarray):
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence]):
-        """Constructor for the ``Vector2D`` class."""
-
+        """Initialize the ``Vector2D`` class."""
         obj = np.asarray(input).view(cls)
 
         # Check that the size is as expected
@@ -310,7 +339,8 @@ class Vector2D(np.ndarray):
 
     @check_input_types
     def get_angle_between(self, v: "Vector2D") -> Quantity:
-        """Getting the angle between this 2D vector and another 2D vector.
+        """
+        Get the angle between this 2D vector and another 2D vector.
 
         Parameters
         ----------
@@ -378,7 +408,8 @@ class Vector2D(np.ndarray):
         point_a: Union[np.ndarray, RealSequence, Point2D],
         point_b: Union[np.ndarray, RealSequence, Point2D],
     ):
-        """Create a 2D vector from two distinct 2D points.
+        """
+        Create a 2D vector from two distinct 2D points.
 
         Parameters
         ----------
@@ -403,7 +434,8 @@ class Vector2D(np.ndarray):
 
 
 class UnitVector3D(Vector3D):
-    """Provdes the 3D unit vector class.
+    """
+    Provdes the 3D unit vector class.
 
     Parameters
     ----------
@@ -413,21 +445,22 @@ class UnitVector3D(Vector3D):
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence, Vector3D]):
+        """Initialize ``UnitVector3D`` class."""
         obj = Vector3D(input) if not isinstance(input, Vector3D) else input
         obj = obj.normalize().view(cls)
         obj.setflags(write=False)
         return obj
 
     @Vector3D.x.setter
-    def x(self, value: Real) -> None:
+    def x(self, value: Real) -> None:  # noqa : D102
         raise UnsupportedOperation("UnitVector3D is immutable.")
 
     @Vector3D.y.setter
-    def y(self, value: Real) -> None:
+    def y(self, value: Real) -> None:  # noqa : D102
         raise UnsupportedOperation("UnitVector3D is immutable.")
 
     @Vector3D.z.setter
-    def z(self, value: Real) -> None:
+    def z(self, value: Real) -> None:  # noqa : D102
         raise UnsupportedOperation("UnitVector3D is immutable.")
 
     @classmethod
@@ -436,7 +469,8 @@ class UnitVector3D(Vector3D):
         point_a: Union[np.ndarray, RealSequence, Point3D],
         point_b: Union[np.ndarray, RealSequence, Point3D],
     ):
-        """Create a 3D unit vector from two distinct 3D points.
+        """
+        Create a 3D unit vector from two distinct 3D points.
 
         Parameters
         ----------
@@ -456,7 +490,8 @@ class UnitVector3D(Vector3D):
 
 
 class UnitVector2D(Vector2D):
-    """Provides the 2D unit vector class.
+    """
+    Provides the 2D unit vector class.
 
     Parameters
     ----------
@@ -466,17 +501,18 @@ class UnitVector2D(Vector2D):
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence, Vector2D]):
+        """Initialize ``UnitVector2D`` class."""
         obj = Vector2D(input) if not isinstance(input, Vector2D) else input
         obj = obj.normalize().view(cls)
         obj.setflags(write=False)
         return obj
 
     @Vector2D.x.setter
-    def x(self, value: Real) -> None:
+    def x(self, value: Real) -> None:  # noqa : D102
         raise UnsupportedOperation("UnitVector2D is immutable.")
 
     @Vector2D.y.setter
-    def y(self, value: Real) -> None:
+    def y(self, value: Real) -> None:  # noqa : D102
         raise UnsupportedOperation("UnitVector2D is immutable.")
 
     @classmethod
@@ -485,7 +521,8 @@ class UnitVector2D(Vector2D):
         point_a: Union[np.ndarray, RealSequence, Point2D],
         point_b: Union[np.ndarray, RealSequence, Point2D],
     ):
-        """Create a 2D unit vector from two distinct 2D points.
+        """
+        Create a 2D unit vector from two distinct 2D points.
 
         Parameters
         ----------

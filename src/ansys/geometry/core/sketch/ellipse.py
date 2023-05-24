@@ -15,7 +15,8 @@ from ansys.geometry.core.typing import Real
 
 
 class SketchEllipse(SketchFace, Ellipse):
-    """Provides for modeling ellipses.
+    """
+    Provides for modeling ellipses.
 
     Parameters
     ----------
@@ -69,8 +70,7 @@ class SketchEllipse(SketchFace, Ellipse):
         angle: Optional[Angle] = None,
     ) -> None:
         """
-        Method in charge of initializing correctly the underlying
-        primitive ``Ellipse`` class.
+        Initialize correctly the underlying primitive ``Ellipse`` class.
 
         Parameters
         ----------
@@ -83,7 +83,6 @@ class SketchEllipse(SketchFace, Ellipse):
         angle : Optional[Angle]
             Placement angle for orientation alignment.
         """
-
         major_radius = major_radius if major_radius else self.major_radius
         minor_radius = minor_radius if minor_radius else self.minor_radius
         angle = angle if angle else self.angle
@@ -119,7 +118,8 @@ class SketchEllipse(SketchFace, Ellipse):
 
     @property
     def perimeter(self) -> Quantity:
-        """Perimeter of the circle.
+        """
+        Perimeter of the circle.
 
         Notes
         -----
@@ -178,9 +178,11 @@ class SketchEllipse(SketchFace, Ellipse):
 
     def plane_change(self, plane: Plane) -> None:
         """
-        Method for SketchEllipse objects to redefine the plane
-        containing them. This implies that their 3D definition may suffer
-        changes.
+        Redefine the plane containing SketchEllipse objects.
+
+        Notes
+        -----
+        This implies that their 3D definition may suffer changes.
 
         Parameters
         ----------

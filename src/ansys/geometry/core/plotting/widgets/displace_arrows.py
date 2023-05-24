@@ -1,3 +1,4 @@
+"""Displacement arrows widget for PyVista plotter."""
 from enum import Enum
 
 from pyvista import Plotter
@@ -6,7 +7,7 @@ from ansys.geometry.core.plotting.widgets.button import Button
 
 
 class CameraPanDirection(Enum):
-    """Enumerate with the possible movement directions of the camera"""
+    """Enumerate with the possible movement directions of the camera."""
 
     XUP = 0, "upxarrow.png", (5, 170)
     XDOWN = 1, "downarrow.png", (5, 130)
@@ -17,7 +18,8 @@ class CameraPanDirection(Enum):
 
 
 class DisplacementArrow(Button):
-    """Defines which arrow you will draw and what it will do.
+    """
+    Defines which arrow you will draw and what it will do.
 
     Parameters
     ----------
@@ -28,12 +30,13 @@ class DisplacementArrow(Button):
     """
 
     def __init__(self, plotter: Plotter, direction: CameraPanDirection):
-        """Constructor method for ``DisplacementArrow``."""
+        """Initialize ``DisplacementArrow`` class."""
         super().__init__(plotter, direction)
         self.direction = direction
 
     def callback(self, state: bool) -> None:
-        """Move the camera in the direction that the button was defined.
+        """
+        Move the camera in the direction that the button was defined.
 
         Parameters
         ----------

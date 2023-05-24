@@ -32,7 +32,7 @@ class SketchSegment(SketchEdge, Line):
         end: Point2D,
         plane: Plane = Plane(),
     ):
-        """Constructor method for the ``SketchSegment`` class."""
+        """Initialize ``SketchSegment`` class."""
         # Call SketchEdge init method
         SketchEdge.__init__(self)
 
@@ -57,15 +57,14 @@ class SketchSegment(SketchEdge, Line):
         self._init_primitive_line_from_plane(plane)
 
     def _init_primitive_line_from_plane(self, plane: Plane) -> None:
-        """Method in charge of initializing correctly the underlying
-        primitive ``Line`` class.
+        """
+        Initialize correctly the underlying primitive ``Line`` class.
 
         Parameters
         ----------
         plane : Plane
             Plane containing the sketched line.
         """
-
         # Find the global start and end points
         start_glb = plane.origin + Point3D(
             self.start[0] * plane.direction_x + self.start[1] * plane.direction_y,
@@ -140,9 +139,11 @@ class SketchSegment(SketchEdge, Line):
 
     def plane_change(self, plane: "Plane") -> None:
         """
-        Method for SketchSegment objects to redefine the plane
-        containing them. This implies that their 3D definition may suffer
-        changes.
+        Redefine the plane containing SketchSegment objects.
+
+        Notes
+        -----
+        This implies that their 3D definition may suffer changes.
 
         Parameters
         ----------

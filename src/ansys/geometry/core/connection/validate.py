@@ -9,7 +9,6 @@ Here is how it is typically used:
 .. code:: bash
 
    python -c "from ansys.geometry.core.connection import validate; validate()"
-
 """
 from ansys.geometry.core.connection.client import GrpcClient
 

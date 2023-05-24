@@ -1,4 +1,4 @@
-name: Geometry Service - Package cleanup
+name: Docker images - Cleanup
 on:
   workflow_dispatch:
   schedule: # UTC at 0200
@@ -22,7 +22,7 @@ jobs:
     steps:
 
     - name: "Perform versions cleanup - except certain tags"
-      uses: pyansys/actions/hk-package-clean-except@v4
+      uses: ansys/actions/hk-package-clean-except@v4
       with:
         package-name: 'geometry'
         token: ${{ secrets.GITHUB_TOKEN }}

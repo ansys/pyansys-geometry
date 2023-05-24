@@ -49,10 +49,12 @@ class SketchFace:
 
     def plane_change(self, plane: "Plane") -> None:
         """
-        Common method for SketchFace objects to redefine the plane
-        containing them. This implies that their 3D definition may suffer
-        changes. By default, it does nothing. It is required to be implemented
-        in child SketchFace classes.
+        Redefine the plane containing SketchFace objects.
+
+        Notes
+        -----
+        This implies that their 3D definition may suffer changes. By default, it does
+        nothing. It is required to be implemented in child SketchFace classes.
 
         Parameters
         ----------

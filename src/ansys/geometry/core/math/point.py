@@ -5,6 +5,7 @@ from beartype.typing import TYPE_CHECKING, Optional, Union
 import numpy as np
 from pint import Quantity, Unit
 
+from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.misc import (
     DEFAULT_UNITS,
     UNITS,
@@ -45,7 +46,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
         input: Optional[Union[np.ndarray, RealSequence]] = DEFAULT_POINT2D_VALUES,
         unit: Optional[Unit] = None,
     ):
-        """Constructor for the ``Point2D`` class."""
+        """Initialize the ``Point2D`` class."""
         # Build an empty np.ndarray object
         return np.zeros(len(input)).view(cls)
 
@@ -54,6 +55,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
         input: Union[np.ndarray, RealSequence] = DEFAULT_POINT2D_VALUES,
         unit: Optional[Unit] = None,
     ):
+        """Initialize ``Point2D`` class."""
         # Call the PhysicalQuantity ctor
         unit = unit if unit else DEFAULT_UNITS.LENGTH
         super().__init__(unit, expected_dimensions=DEFAULT_UNITS.LENGTH)
@@ -169,7 +171,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
         input: Optional[Union[np.ndarray, RealSequence]] = DEFAULT_POINT3D_VALUES,
         unit: Optional[Unit] = None,
     ):
-        """Constructor method for the ``Point3D`` class."""
+        """Initialize ``Point3D`` class."""
         # Build an empty np.ndarray object
         return np.zeros(len(input)).view(cls)
 
@@ -178,6 +180,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
         input: Union[np.ndarray, RealSequence] = DEFAULT_POINT3D_VALUES,
         unit: Optional[Unit] = None,
     ):
+        """Initialize ``Point3D`` class."""
         # Call the PhysicalQuantity ctor
         unit = unit if unit else DEFAULT_UNITS.LENGTH
         super().__init__(unit, expected_dimensions=DEFAULT_UNITS.LENGTH)
@@ -285,3 +288,30 @@ class Point3D(np.ndarray, PhysicalQuantity):
         else:
             self._base_unit = BASE_UNIT_LENGTH
             return self._base_unit
+
+    def transform(self, matrix: "Matrix44") -> "Point3D":
+        """
+        Transform the current Point3D with a transformation matrix.
+
+        Notes
+        -----
+        Transform the current Point3D object by applying the specified 4x4
+        transformation matrix and returns a new Point3D object representing the
+        transformed point.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The 4x4 transformation matrix to apply to the point.
+
+        Returns
+        -------
+        Point3D
+            A new Point3D object that is the transformed copy of the original point after applying
+            the transformation matrix.
+        """
+        point_4x1 = np.append(self, 1)
+        result_4x1 = matrix * point_4x1
+        result_point = Point3D(result_4x1[0:3])
+        result_point.unit = self.unit
+        return result_point

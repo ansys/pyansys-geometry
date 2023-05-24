@@ -32,7 +32,7 @@ def check_ndarray_is_float_int(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
     """
-    Check if a :class:`numpy.ndarray <numpy.ndarray>` instance has float or integer values.
+    Check if a :class:`numpy.ndarray <numpy.ndarray>` has float/integer values.
 
     Parameters
     ----------
@@ -63,8 +63,7 @@ def check_ndarray_is_not_none(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
     """
-    Check if the :class:`numpy.ndarray <numpy.ndarray>` instance has a value
-    of ``None`` for all parameters.
+    Check if a :class:`numpy.ndarray <numpy.ndarray>` has all ``None`` values.
 
     Parameters
     ----------
@@ -143,7 +142,7 @@ def check_ndarray_is_non_zero(
 
 def check_pint_unit_compatibility(input: Unit, expected: Unit) -> None:
     """
-    Check if the input for the :class:`pint.Unit` class is compatible with the expected one.
+    Check if the input for the :class:`pint.Unit` is compatible with the expected one.
 
     Parameters
     ----------
@@ -179,7 +178,6 @@ def check_type_equivalence(input: object, expected: object) -> None:
     TypeError
         If they are not of the same class.
     """
-
     if not isinstance(input, type(expected)):
         raise TypeError(
             f"Provided type {type(input)} is invalid. Type {type(expected)} is expected."
@@ -202,7 +200,6 @@ def check_type(input: object, expected_type: Union[type, Tuple[type, ...]]) -> N
     TypeError
         If the object does not match the one or more expected types.
     """
-
     if not isinstance(input, expected_type):
         raise TypeError(
             f"Provided type {type(input)} is invalid. Type {expected_type} is expected."

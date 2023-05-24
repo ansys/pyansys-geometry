@@ -32,8 +32,8 @@ from ansys.geometry.core.sketch import Sketch
 
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):
-    """Test in charge of validating the extrusion of a simple
-    circle as a cylinder and assigning materials to it."""
+    """Test in charge of validating the extrusion of a simple circle as a cylinder and
+    assigning materials to it."""
 
     # Create a Sketch and draw a circle (all client side)
     sketch = Sketch()
@@ -678,7 +678,8 @@ def test_delete_body_component(modeler: Modeler):
 
 
 def test_shared_topology(modeler: Modeler):
-    """Test for checking the correct setting of shared topology on the server.
+    """
+    Test for checking the correct setting of shared topology on the server.
 
     Notes
     -----
@@ -778,7 +779,8 @@ def test_bodies_translation(modeler: Modeler):
 def test_download_file(
     modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, skip_not_on_linux_service
 ):
-    """Test for downloading a design in multiple modes and verifying the correct download."""
+    """Test for downloading a design in multiple modes and verifying the correct
+    download."""
 
     # Create your design on the server side
     design = modeler.create_design("MultipleBodyTranslation_Test")
@@ -1268,7 +1270,7 @@ def test_named_selections_design_points(modeler: Modeler):
     assert len(design.named_selections) == 0
 
 
-def test_component_instances(modeler: Modeler, skip_not_on_linux_service):
+def test_component_instances(modeler: Modeler):
     """Test creation of ``Component`` instances and the effects this has."""
 
     design_name = "ComponentInstance_Test"
@@ -1344,6 +1346,7 @@ def test_component_instances(modeler: Modeler, skip_not_on_linux_service):
 def test_boolean_body_operations(modeler: Modeler, skip_not_on_linux_service):
     """
     Test cases:
+
     1) master/master
         a) intersect
             i) normal

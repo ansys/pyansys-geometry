@@ -12,9 +12,7 @@ from ansys.geometry.core.typing import Real
 
 
 class SingletonMeta(type):
-    """
-    This is a thread-safe implementation of Singleton.
-    """
+    """This is a thread-safe implementation of Singleton."""
 
     # This class has been extracted from
     # https://refactoring.guru/design-patterns/singleton/python/example#example-1--main-py
@@ -22,15 +20,15 @@ class SingletonMeta(type):
     _instances = {}
 
     _lock: Lock = Lock()
-    """
-    We now have a lock object that will be used to synchronize threads during
-    first access to the Singleton.
-    """
+    """We now have a lock object that will be used to synchronize threads during first
+    access to the Singleton."""
 
     def __call__(cls, *args, **kwargs):
         """
-        Possible changes to the value of the `__init__` argument do not affect
-        the returned instance.
+        Return a single instance of the class.
+
+        Possible changes to the value of the `__init__` argument do not affect the
+        returned instance.
         """
         # Now, imagine that the program has just been launched. Since there's no
         # Singleton instance yet, multiple threads can simultaneously pass the
@@ -53,6 +51,7 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
     """PyGeometry default units singleton class."""
 
     def __init__(self) -> None:
+        """Initialize ``DefaultUnitsClass`` class."""
         self._length: Unit = UNITS.meter
         self._angle: Unit = UNITS.radian
         self._server_length: Unit = UNITS.meter
@@ -82,7 +81,8 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
 
     @property
     def SERVER_LENGTH(self) -> Unit:
-        """Default length unit for supporting Geometry services for gRPC messages.
+        """
+        Default length unit for supporting Geometry services for gRPC messages.
 
         Notes
         -----
@@ -92,7 +92,8 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
 
     @property
     def SERVER_AREA(self) -> Unit:
-        """Default area unit for supporting Geometry services for gRPC messages.
+        """
+        Default area unit for supporting Geometry services for gRPC messages.
 
         Notes
         -----
@@ -102,7 +103,8 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
 
     @property
     def SERVER_VOLUME(self) -> Unit:
-        """Default volume unit for supporting Geometry services for gRPC messages.
+        """
+        Default volume unit for supporting Geometry services for gRPC messages.
 
         Notes
         -----
@@ -112,7 +114,8 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
 
     @property
     def SERVER_ANGLE(self) -> Unit:
-        """Default angle unit for supporting Geometry services for gRPC messages.
+        """
+        Default angle unit for supporting Geometry services for gRPC messages.
 
         Notes
         -----
@@ -140,7 +143,7 @@ class Measurement(PhysicalQuantity):
     """
 
     def __init__(self, value: Union[Real, Quantity], unit: Unit, dimensions: Unit):
-        """Constructor for the ``Measurement`` class."""
+        """Initialize the ``Measurement`` class."""
         # Check the input
         if isinstance(value, Quantity):
             # TODO: inform that if Quantity is given, we will ignore provided unit value
@@ -167,6 +170,7 @@ class Measurement(PhysicalQuantity):
 
     @check_input_types
     def __eq__(self, other: "Measurement") -> bool:
+        """Equals operator for the ``Measurement`` class."""
         return self._value == other._value and self._base_unit == other._base_unit
 
 
@@ -182,7 +186,7 @@ class Distance(Measurement):
     """
 
     def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = None):
-        """Constructor for the ``Distance`` class."""
+        """Initialize the ``Distance`` class."""
         # Delegates in Measurement ctor. forcing expected dimensions.
         unit = unit if unit else DEFAULT_UNITS.LENGTH
         super().__init__(value, unit, DEFAULT_UNITS.LENGTH)
@@ -200,7 +204,7 @@ class Angle(Measurement):
     """
 
     def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = None):
-        """Constructor for the ``Angle`` class."""
+        """Initialize the ``Angle`` class."""
         # Delegates in Measurement ctor. forcing expected dimensions.
         unit = unit if unit else DEFAULT_UNITS.ANGLE
         super().__init__(value, unit, DEFAULT_UNITS.ANGLE)

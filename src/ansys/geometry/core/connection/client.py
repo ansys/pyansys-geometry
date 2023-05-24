@@ -38,7 +38,6 @@ def wait_until_healthy(channel: grpc.Channel, timeout: float):
     ------
     TimeoutError
         Raised when the total elapsed time exceeds the value for the ``timeout`` parameter.
-
     """
     t_max = time.time() + timeout
     health_stub = health_pb2_grpc.HealthStub(channel)
@@ -130,7 +129,7 @@ class GrpcClient:
 
     @property
     def channel(self) -> grpc.Channel:
-        """gRPC channel of the client."""
+        """Client gRPC channel."""
         return self._channel
 
     @property
@@ -157,7 +156,7 @@ class GrpcClient:
             return False
 
     def __repr__(self) -> str:
-        """String representation of the client."""
+        """Represent the client as a string."""
         lines = []
         lines.append(f"Ansys Geometry Modeler Client ({hex(id(self))})")
         lines.append(f"  Target:     {self._target}")
@@ -170,7 +169,8 @@ class GrpcClient:
         return "\n".join(lines)
 
     def close(self):
-        """Close the channel.
+        """
+        Close the channel.
 
         Notes
         -----

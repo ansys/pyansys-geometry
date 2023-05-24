@@ -1,4 +1,4 @@
-""" Provides the ``Line`` class."""
+"""Provides the ``Line`` class."""
 
 from functools import cached_property
 import math
@@ -7,7 +7,7 @@ from beartype import beartype as check_input_types
 from beartype.typing import Union
 import numpy as np
 
-from ansys.geometry.core.math import Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math import Matrix44, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc.accuracy import LENGTH_ACCURACY
 from ansys.geometry.core.primitives.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.primitives.parameterization import (
@@ -37,6 +37,7 @@ class Line:
         origin: Union[np.ndarray, RealSequence, Point3D],
         direction: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D],
     ):
+        """Initialize the ``Line`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
         self._direction = (
             UnitVector3D(direction) if not isinstance(direction, UnitVector3D) else direction
@@ -73,6 +74,26 @@ class Line:
             The resulting evaluation.
         """
         return LineEvaluation(self, parameter)
+
+    def transformed_copy(self, matrix: Matrix44) -> "Line":
+        """
+        Create a transformed copy of the line based on a transformation matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            The transformation matrix to apply to the line.
+
+        Returns
+        -------
+        Line
+            A new line that is the transformed copy of the original line.
+        """
+        old_origin_4d = np.array([[self.origin[0]], [self.origin[1]], [self.origin[2]], [1]])
+        new_origin_4d = matrix * old_origin_4d
+        new_point = Point3D([new_origin_4d[0], new_origin_4d[1], new_origin_4d[2]])
+        new_axis = matrix * np.append(self._direction, 0)
+        return Line(new_point, UnitVector3D(new_axis[0:3]))
 
     def project_point(self, point: Point3D) -> "LineEvaluation":
         """
@@ -137,6 +158,8 @@ class Line:
 
     def get_parameterization(self) -> Parameterization:
         """
+        Return the parametrization of a ``Line`` instance.
+
         The parameter of a line specifies the distance from the `origin` in the
         direction of `direction`.
 
@@ -181,7 +204,9 @@ class LineEvaluation(CurveEvaluation):
     @cached_property
     def tangent(self) -> UnitVector3D:
         """
-        The tangent of the evaluation. This is always equal to the direction of the line.
+        The tangent of the evaluation.
+
+        This is always equal to the direction of the line.
 
         Returns
         -------
@@ -193,7 +218,9 @@ class LineEvaluation(CurveEvaluation):
     @cached_property
     def first_derivative(self) -> Vector3D:
         """
-        The first derivative of the evaluation. This is always equal to the direction of the line.
+        The first derivative of the evaluation.
+
+        This is always equal to the direction of the line.
 
         Returns
         -------
@@ -205,7 +232,9 @@ class LineEvaluation(CurveEvaluation):
     @cached_property
     def second_derivative(self) -> Vector3D:
         """
-        The second derivative of the evaluation. This is always equal to a zero vector.
+        The second derivative of the evaluation.
+
+        This is always equal to a zero vector.
 
         Returns
         -------
@@ -217,7 +246,9 @@ class LineEvaluation(CurveEvaluation):
     @cached_property
     def curvature(self) -> float:
         """
-        The curvature of the line. This will always be 0.
+        The curvature of the line.
+
+        This will always be 0.
 
         Returns
         -------
