@@ -57,7 +57,9 @@ jobs:
     name: Publish Windows latest image on AnsysLab
     if: inputs.ansyslab
     needs: [windows]
-    runs-on: [self-hosted, Windows, pygeometry]
+    runs-on:
+      group: ansys-internal
+      labels: Windows
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@v2
@@ -107,7 +109,9 @@ jobs:
     name: Publish Linux latest image on AnsysLab
     if: inputs.ansyslab
     needs: [linux]
-    runs-on: [self-hosted, Linux]
+    runs-on:
+      group: ansys-internal
+      labels: Linux
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@v2
