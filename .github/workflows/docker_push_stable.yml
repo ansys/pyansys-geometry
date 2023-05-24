@@ -23,15 +23,19 @@ concurrency:
 permissions:
   packages: write
 
+env:
+  WINDOWS_UNSTABLE: ghcr.io/ansys/geometry:windows-latest-unstable
+  WINDOWS_STABLE_GHCR: ghcr.io/ansys/geometry:windows-latest
+  WINDOWS_STABLE_FUJI: azwepsifujiaksacr.azurecr.io/ansys/discovery/geometry:windows-latest
+  LINUX_UNSTABLE: ghcr.io/ansys/geometry:linux-latest-unstable
+  LINUX_STABLE_GHCR: ghcr.io/ansys/geometry:linux-latest
+  LINUX_STABLE_FUJI: azwepsifujiaksacr.azurecr.io/ansys/discovery/geometry:linux-latest
+
 jobs:
   windows:
     name: Publish Windows latest image
     runs-on: windows-latest
     if:  inputs.images == 'all' || inputs.images == 'windows-latest'
-    env:
-      WINDOWS_UNSTABLE: ghcr.io/ansys/geometry:windows-latest-unstable
-      WINDOWS_STABLE_GHCR: ghcr.io/ansys/geometry:windows-latest
-      WINDOWS_STABLE_FUJI: azwepsifujiaksacr.azurecr.io/ansys/discovery/geometry:windows-latest
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@v2
@@ -49,8 +53,25 @@ jobs:
       - name: Publish latest stable container in ghcr.io
         run: docker push ${{ env.WINDOWS_STABLE_GHCR }}
 
+  windows-ansyslab:
+    name: Publish Windows latest image on AnsysLab
+    if: inputs.ansyslab
+    needs: [windows]
+    runs-on:
+      group: ansys-internal
+      labels: Windows
+    steps:
+      - name: Login in Github Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull Windows latest unstable container
+        run: docker pull ${{ env.WINDOWS_STABLE_GHCR }}
+
       - name: Login in AnsysLab registry
-        if: ${{ inputs.ansyslab }}
         uses: docker/login-action@v2
         with:
           registry: azwepsifujiaksacr.azurecr.io
@@ -58,21 +79,15 @@ jobs:
           password: ${{ secrets.FUJI_TOKEN }}
 
       - name: Tag container as latest (stable) for AnsysLab registry
-        if: ${{ inputs.ansyslab }}
-        run: docker tag ${{ env.WINDOWS_UNSTABLE }} ${{ env.WINDOWS_STABLE_FUJI }}
+        run: docker tag ${{ env.WINDOWS_STABLE_GHCR }} ${{ env.WINDOWS_STABLE_FUJI }}
 
       - name: Publish latest stable container in AnsysLab registry
-        if: ${{ inputs.ansyslab }}
         run: docker push ${{ env.WINDOWS_STABLE_FUJI }}
 
   linux:
     name: Publish Linux latest image
     runs-on: ubuntu-latest
     if:  inputs.images == 'all' || inputs.images == 'linux-latest'
-    env:
-      LINUX_UNSTABLE: ghcr.io/ansys/geometry:linux-latest-unstable
-      LINUX_STABLE_GHCR: ghcr.io/ansys/geometry:linux-latest
-      LINUX_STABLE_FUJI: azwepsifujiaksacr.azurecr.io/ansys/discovery/geometry:linux-latest
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@v2
@@ -90,8 +105,25 @@ jobs:
       - name: Publish latest stable container in ghcr.io
         run: docker push ${{ env.LINUX_STABLE_GHCR }}
 
+  linux-ansyslab:
+    name: Publish Linux latest image on AnsysLab
+    if: inputs.ansyslab
+    needs: [linux]
+    runs-on:
+      group: ansys-internal
+      labels: Linux
+    steps:
+      - name: Login in Github Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull Linux latest stable container
+        run: docker pull ${{ env.LINUX_STABLE_GHCR }}
+
       - name: Login in AnsysLab registry
-        if: ${{ inputs.ansyslab }}
         uses: docker/login-action@v2
         with:
           registry: azwepsifujiaksacr.azurecr.io
@@ -99,9 +131,7 @@ jobs:
           password: ${{ secrets.FUJI_TOKEN }}
 
       - name: Tag container as latest (stable) for AnsysLab registry
-        if: ${{ inputs.ansyslab }}
-        run: docker tag ${{ env.LINUX_UNSTABLE }} ${{ env.LINUX_STABLE_FUJI }}
+        run: docker tag ${{ env.LINUX_STABLE_GHCR }} ${{ env.LINUX_STABLE_FUJI }}
 
       - name: Publish latest stable container in AnsysLab registry
-        if: ${{ inputs.ansyslab }}
         run: docker push ${{ env.LINUX_STABLE_FUJI }}
