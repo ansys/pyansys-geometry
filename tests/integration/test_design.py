@@ -1,5 +1,7 @@
 """Test design interaction."""
 
+import os
+
 import numpy as np
 from pint import Quantity
 import pytest
@@ -815,6 +817,22 @@ def test_download_file(
     assert binary_parasolid_file.exists()
     assert text_parasolid_file.exists()
     assert fmd_file.exists()
+
+
+def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Test uploading a file to the server."""
+    file = tmp_path_factory.mktemp("test_design") / "upload_example.scdocx"
+    file_size = 1024
+
+    # Write random bytes
+    with open(file, "wb") as fout:
+        fout.write(os.urandom(file_size))
+
+    assert file.exists()
+
+    # Upload file
+    path_on_server = modeler._upload_file(file)
+    assert path_on_server is not None
 
 
 def test_slot_extrusion(modeler: Modeler):

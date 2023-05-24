@@ -1,10 +1,12 @@
 """Test design import."""
 
+import numpy as np
 from pint import Quantity
+import pytest
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.designer import Component, Design
-from ansys.geometry.core.math import Point2D
+from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 
@@ -89,3 +91,54 @@ def test_design_import_simple_case(modeler: Modeler):
 
     # Check the design
     _checker_method(read_design, design)
+
+
+def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Test creation of a component, saving it to a file, and loading it again to a
+    second component and make sure they have the same properties."""
+
+    design_name = "CarDesign_Test"
+    design = modeler.create_design(design_name)
+
+    # Create a car
+    car1 = design.add_component("Car1")
+    comp1 = car1.add_component("A")
+    comp2 = car1.add_component("B")
+    wheel1 = comp2.add_component("Wheel1")
+
+    # Create car base frame
+    sketch = Sketch().box(Point2D([5, 10]), 10, 20)
+    comp2.extrude_sketch("Base", sketch, 5)
+
+    # Create first wheel
+    sketch = Sketch(Plane(direction_x=Vector3D([0, 1, 0]), direction_y=Vector3D([0, 0, 1])))
+    sketch.circle(Point2D([0, 0]), 5)
+    wheel1.extrude_sketch("Wheel", sketch, -5)
+
+    # Create 3 other wheels and move them into position
+    rotation_origin = Point3D([0, 0, 0])
+    rotation_direction = UnitVector3D([0, 0, 1])
+
+    wheel2 = comp2.add_component("Wheel2", wheel1)
+    wheel2.modify_placement(Vector3D([0, 20, 0]))
+
+    wheel3 = comp2.add_component("Wheel3", wheel1)
+    wheel3.modify_placement(Vector3D([10, 0, 0]), rotation_origin, rotation_direction, np.pi)
+
+    wheel4 = comp2.add_component("Wheel4", wheel1)
+    wheel4.modify_placement(Vector3D([10, 20, 0]), rotation_origin, rotation_direction, np.pi)
+
+    # Create 2nd car
+    car2 = design.add_component("Car2", car1)
+    car2.modify_placement(Vector3D([30, 0, 0]))
+
+    # Create top of car - applies to BOTH cars
+    sketch = Sketch(Plane(Point3D([0, 5, 5]))).box(Point2D([5, 2.5]), 10, 5)
+    comp1.extrude_sketch("Top", sketch, 5)
+
+    file = tmp_path_factory.mktemp("test_design_import") / "two_cars.scdocx"
+    design.download(file)
+    design2 = modeler.open_file(file)
+
+    # assert the two cars are the same
+    _checker_method(design, design2)
