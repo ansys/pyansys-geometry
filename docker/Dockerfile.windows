@@ -20,7 +20,7 @@ RUN for /R "tmp_folder" %f in (*) do move /Y "%f" .
 RUN del windows-binaries.zip && rmdir /s /q tmp_folder
 
 # Defining environment variables
-ENV LICENSE_SERVER = ""
+ENV LICENSE_SERVER=""
 ENV SERVER_ENDPOINT="0.0.0.0:50051"
 ENV ENABLE_TRACE=0
 ENV LOG_LEVEL=2

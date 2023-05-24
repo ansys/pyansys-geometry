@@ -132,7 +132,7 @@ class Component:
                     CreateRequest(name=name, parent=parent_component.id, template=template_id)
                 )
                 # Remove this method call once we know Service sends correct ObjectPath id
-                self._id = self.__remove_duplicate_ids(new_component.component.id)
+                self._id = new_component.component.id
                 self._name = new_component.component.name
             else:
                 self._name = name
@@ -245,26 +245,6 @@ class Component:
                 transformed_part=template_comp._transformed_part,
             )
             self.components.append(new)
-
-    def __remove_duplicate_ids(self, path: str) -> str:
-        """
-        Remove duplicate entries in the ID path.
-
-        Notes
-        -----
-        This is a safeguard, as the server is known to have issues sometimes.
-
-        Examples
-        --------
-        This method converts "0:26/0:44/0:44/0:53" to "0:26/0:44/0:53".
-        """
-        # Split the string into a list -> convert list into a set but maintain order
-        res = []
-        [res.append(x) for x in path.split("/") if x not in res]
-        id = "/".join(res)
-        if id != path:
-            print("Removed duplicate!")
-        return id
 
     def get_world_transform(self) -> Matrix44:
         """
@@ -423,9 +403,7 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBody(request)
         tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._transformed_part.part.bodies.append(tb)
-        # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
-        body_id = f"{self.id}/{tb.id}" if self.parent_component else tb.id
-        return Body(body_id, response.name, self, tb)
+        return Body(response.id, response.name, self, tb)
 
     @protect_grpc
     @check_input_types
@@ -472,9 +450,7 @@ class Component:
 
         tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._transformed_part.part.bodies.append(tb)
-        # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
-        body_id = f"{self.id}/{tb.id}" if self.parent_component else tb.id
-        return Body(body_id, response.name, self, tb)
+        return Body(response.id, response.name, self, tb)
 
     @protect_grpc
     @check_input_types
@@ -511,9 +487,7 @@ class Component:
 
         tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._transformed_part.part.bodies.append(tb)
-        # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
-        body_id = f"{self.id}/{tb.id}" if self.parent_component else tb.id
-        return Body(body_id, response.name, self, tb)
+        return Body(response.id, response.name, self, tb)
 
     @protect_grpc
     @check_input_types
@@ -553,9 +527,7 @@ class Component:
 
         tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._transformed_part.part.bodies.append(tb)
-        # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
-        body_id = f"{self.id}/{tb.id}" if self.parent_component else tb.id
-        return Body(body_id, response.name, self, tb)
+        return Body(response.id, response.name, self, tb)
 
     @check_input_types
     def create_coordinate_system(self, name: str, frame: Frame) -> CoordinateSystem:
