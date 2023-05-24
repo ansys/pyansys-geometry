@@ -58,7 +58,7 @@ class IBody(ABC):
     """
     Abstract Body interface.
 
-    Defines the common methods for a body. TemplateBody and Body both inherit from this.
+    Defines the common methods for a body. MasterBody and Body both inherit from this.
     All child classes must implement all abstract methods.
     """
 
@@ -443,7 +443,7 @@ class IBody(ABC):
         return
 
 
-class TemplateBody(IBody):
+class MasterBody(IBody):
     """
     Represents solids and surfaces organized within the design assembly.
 
@@ -460,7 +460,7 @@ class TemplateBody(IBody):
     grpc_client : GrpcClient
         An active supporting geometry service instance for design modeling.
     is_surface : bool, default: False
-        Boolean indicating whether the ``TemplateBody`` is in fact a surface or an actual
+        Boolean indicating whether the ``MasterBody`` is in fact a surface or an actual
         3D object (with volume).
     """
 
@@ -471,7 +471,7 @@ class TemplateBody(IBody):
         grpc_client: GrpcClient,
         is_surface: bool = False,
     ):
-        """Initialize ``TemplateBody`` class."""
+        """Initialize ``MasterBody`` class."""
         check_type(id, str)
         check_type(name, str)
         check_type(grpc_client, GrpcClient)
@@ -489,7 +489,7 @@ class TemplateBody(IBody):
         self._tessellation = None
 
     def reset_tessellation_cache(func):
-        """Decorate ``TemplateBody`` methods that require a tessellation cache update.
+        """Decorate ``MasterBody`` methods that require a tessellation cache update.
 
         Parameters
         ----------
@@ -503,7 +503,7 @@ class TemplateBody(IBody):
         """
 
         @wraps(func)
-        def wrapper(self: "TemplateBody", *args, **kwargs):
+        def wrapper(self: "MasterBody", *args, **kwargs):
             self._tessellation = None
             return func(self, *args, **kwargs)
 
@@ -614,7 +614,7 @@ class TemplateBody(IBody):
     ) -> Tuple[List[Edge], List[Face]]:  # noqa: D102
         raise NotImplementedError(
             """
-            imprint_curves is not implemented at the TemplateBody level.
+            imprint_curves is not implemented at the MasterBody level.
             Instead, call this method on a Body.
             """
         )
@@ -630,7 +630,7 @@ class TemplateBody(IBody):
     ) -> List[Face]:  # noqa: D102
         raise NotImplementedError(
             """
-            project_curves is not implemented at the TemplateBody level.
+            project_curves is not implemented at the MasterBody level.
             Instead, call this method on a Body.
             """
         )
@@ -676,7 +676,7 @@ class TemplateBody(IBody):
         )
 
         # Assign the new body to its specified parent (and return the new body)
-        tb = TemplateBody(
+        tb = MasterBody(
             response.master_id, copy_name, self._grpc_client, is_surface=self.is_surface
         )
         parent._transformed_part.part.bodies.append(tb)
@@ -726,23 +726,23 @@ class TemplateBody(IBody):
 
     def intersect(self, other: "Body") -> None:  # noqa: D102
         raise NotImplementedError(
-            "TemplateBody does not implement boolean methods. Call this method on a Body instead."
+            "MasterBody does not implement boolean methods. Call this method on a Body instead."
         )
 
     def subtract(self, other: "Body") -> None:  # noqa: D102
         raise NotImplementedError(
-            "TemplateBody does not implement boolean methods. Call this method on a Body instead."
+            "MasterBody does not implement boolean methods. Call this method on a Body instead."
         )
 
     def unite(self, other: "Body") -> None:
         # noqa: D102
         raise NotImplementedError(
-            "TemplateBody does not implement boolean methods. Call this method on a Body instead."
+            "MasterBody does not implement boolean methods. Call this method on a Body instead."
         )
 
     def __repr__(self) -> str:
-        """Represent the ``TemplateBody`` as a string."""
-        lines = [f"ansys.geometry.core.designer.TemplateBody {hex(id(self))}"]
+        """Represent the ``MasterBody`` as a string."""
+        lines = [f"ansys.geometry.core.designer.MasterBody {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Exists               : {self.is_alive}")
         lines.append(f"  Surface body         : {self.is_surface}")
@@ -767,11 +767,11 @@ class Body(IBody):
         User-defined label for the body.
     parent : Component
         Parent component to nest the new component under within the design assembly.
-    template : TemplateBody
+    template : MasterBody
         The master body that this body is an occurrence of.
     """
 
-    def __init__(self, id, name, parent: "Component", template: TemplateBody) -> None:
+    def __init__(self, id, name, parent: "Component", template: MasterBody) -> None:
         """Initialize ``Body`` class."""
         self._id = id
         self._name = name
@@ -1016,7 +1016,7 @@ class Body(IBody):
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Exists               : {self.is_alive}")
         lines.append(f"  Parent component     : {self._parent.name}")
-        lines.append(f"  TemplateBody         : {self._template.id}")
+        lines.append(f"  MasterBody         : {self._template.id}")
         lines.append(f"  Surface body         : {self.is_surface}")
         if self.is_surface:
             lines.append(f"  Surface thickness    : {self.surface_thickness}")
