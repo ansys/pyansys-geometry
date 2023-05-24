@@ -16,6 +16,13 @@ RUN unzip -qqju linux-binaries.zip -d . && rm linux-binaries.zip
 # Let the dynamic link loader where to search for shared libraries
 ENV LD_LIBRARY_PATH="/app"
 
+# Define env variables
+ENV ANS_DSCO_REMOTE_PORT=50051
+ENV ANS_DSCO_REMOTE_IP="0.0.0.0"
+ENV LOG_LEVEL=2
+ENV ENABLE_TRACE=0
+ENV ANSYSLMD_LICENSE_FILE=""
+
 # Add container labels
 LABEL org.opencontainers.image.authors="ANSYS Inc."
 LABEL org.opencontainers.image.vendor="ANSYS Inc."
