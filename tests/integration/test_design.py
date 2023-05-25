@@ -1,5 +1,7 @@
 """Test design interaction."""
 
+import os
+
 import numpy as np
 from pint import Quantity
 import pytest
@@ -817,6 +819,22 @@ def test_download_file(
     assert fmd_file.exists()
 
 
+def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Test uploading a file to the server."""
+    file = tmp_path_factory.mktemp("test_design") / "upload_example.scdocx"
+    file_size = 1024
+
+    # Write random bytes
+    with open(file, "wb") as fout:
+        fout.write(os.urandom(file_size))
+
+    assert file.exists()
+
+    # Upload file
+    path_on_server = modeler._upload_file(file)
+    assert path_on_server is not None
+
+
 def test_slot_extrusion(modeler: Modeler):
     """Test the extrusion of a slot."""
     # Create your design on the server side
@@ -1312,7 +1330,7 @@ def test_component_instances(modeler: Modeler):
     body_ids = [wheel1.bodies[0].id, wheel2.bodies[0].id, wheel3.bodies[0].id, wheel4.bodies[0].id]
     assert len(body_ids) == len(set(body_ids))
 
-    # Assert all instances have unique TransformedParts
+    # Assert all instances have unique MasterComponents
     comp_templates = [wheel2._transformed_part, wheel3._transformed_part, wheel4._transformed_part]
     assert len(comp_templates) == len(set(comp_templates))
 

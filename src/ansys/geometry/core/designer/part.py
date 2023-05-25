@@ -1,7 +1,7 @@
 """Provides the ``Part`` class module."""
 from beartype.typing import List
 
-from ansys.geometry.core.designer.body import TemplateBody
+from ansys.geometry.core.designer.body import MasterBody
 from ansys.geometry.core.math import IDENTITY_MATRIX44, Matrix44
 
 
@@ -17,20 +17,20 @@ class Part:
         Unique identifier for this part.
     name : str
         Name of this part.
-    parts : List[TransformedPart]
-        List of TransformedPart children that this Part contains.
-    bodies : List[TemplateBody]
-        List of TemplateBody children that this Part contains. These are master bodies.
+    parts : List[MasterComponent]
+        List of MasterComponent children that this Part contains.
+    bodies : List[MasterBody]
+        List of MasterBody children that this Part contains. These are master bodies.
     """
 
     def __init__(
-        self, id: str, name: str, parts: List["TransformedPart"], bodies: List[TemplateBody]
+        self, id: str, name: str, parts: List["MasterComponent"], bodies: List[MasterBody]
     ) -> None:
         """Initialize the ``Part`` class."""
         self._id: str = id
         self._name: str = name
-        self._parts: List["TransformedPart"] = parts
-        self._bodies: List[TemplateBody] = bodies
+        self._parts: List["MasterComponent"] = parts
+        self._bodies: List[MasterBody] = bodies
 
     @property
     def id(self) -> str:
@@ -43,25 +43,25 @@ class Part:
         return self._name
 
     @property
-    def parts(self) -> List["TransformedPart"]:
-        """``TransformedPart`` children that this ``Part`` contains."""
+    def parts(self) -> List["MasterComponent"]:
+        """``MasterComponent`` children that this ``Part`` contains."""
         return self._parts
 
     @parts.setter
-    def parts(self, parts: List["TransformedPart"]) -> None:
+    def parts(self, parts: List["MasterComponent"]) -> None:
         self._parts = parts
 
     @property
-    def bodies(self) -> List[TemplateBody]:
+    def bodies(self) -> List[MasterBody]:
         """
-        ``TemplateBody`` children that this ``Part`` contains.
+        ``MasterBody`` children that this ``Part`` contains.
 
         These are master bodies.
         """
         return self._bodies
 
     @bodies.setter
-    def bodies(self, bodies: List["TemplateBody"]) -> None:
+    def bodies(self, bodies: List["MasterBody"]) -> None:
         self._bodies = bodies
 
     def __repr__(self) -> str:
@@ -74,14 +74,14 @@ class Part:
         )
 
 
-class TransformedPart:
+class MasterComponent:
     """
     Represents a Part Occurrence.
 
     Notes
     -----
     This class should not be accessed by users.
-    TransformedParts hold fundamental data of an assembly. TransformedParts wrap Parts
+    MasterComponents hold fundamental data of an assembly. MasterComponents wrap Parts
     by adding a transform matrix.
 
     Parameters
@@ -99,7 +99,7 @@ class TransformedPart:
     def __init__(
         self, id: str, name: str, part: Part, transform: Matrix44 = IDENTITY_MATRIX44
     ) -> None:
-        """Initialize ``TransformedPart`` class."""
+        """Initialize ``MasterComponent`` class."""
         self._id: str = id
         self._name: str = name
         self._part: Part = part
@@ -130,9 +130,9 @@ class TransformedPart:
         self._transform = matrix
 
     def __repr__(self) -> str:
-        """Represent the ``TransformedPart`` as a string."""
+        """Represent the ``MasterComponent`` as a string."""
         return (
-            f"TransformedPart(id={self.id}, "
+            f"MasterComponent(id={self.id}, "
             f"name={self.name}, "
             f"template={self.part}, "
             f"transform={self.transform})"

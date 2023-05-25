@@ -2,6 +2,8 @@
 import logging
 from pathlib import Path
 
+from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
+from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype.typing import TYPE_CHECKING, Optional, Union
 from grpc import Channel
 
@@ -117,6 +119,63 @@ class Modeler:
     def close(self) -> None:
         """``Modeler`` easy-access method to the client's close method."""
         return self.client.close()
+
+    def _upload_file(self, file_path: str, open_file: bool = False) -> str:
+        """
+        Upload a file from the client to the server. ``file_path`` must include the extension.
+
+        The new file created on the server will have the same name and extension.
+
+        Parameters
+        ----------
+        file_path : str
+            The path of the file. Must include extension.
+        open_file : bool
+            Open the file in the Geometry Service.
+
+        Returns
+        -------
+        file_path : str
+            The full path of the uploaded file on the server machine.
+        """
+        import os
+
+        if not os.path.exists(file_path):
+            raise ValueError(f"Could not find file: {file_path}")
+        if os.path.isdir(file_path):
+            raise ValueError("File path must lead to a file, not a directory.")
+
+        file_name = os.path.split(file_path)[1]
+
+        with open(file_path, "rb") as file:
+            data = file.read()
+
+        c_stub = CommandsStub(self._client.channel)
+
+        response = c_stub.UploadFile(
+            UploadFileRequest(data=data, file_name=file_name, open=open_file)
+        )
+        return response.file_path
+
+    def open_file(self, file_path: str) -> "Design":
+        """
+        Open a file. ``file_path`` must include the extension.
+
+        This imports a design into the service. On Windows, `.scdocx` and HOOPS Exchange formats
+        are supported. On Linux, only `.scdocx` is supported.
+
+        Parameters
+        ----------
+        file_path : str
+            The path of the file. Must include extension.
+
+        Returns
+        -------
+        Design
+            The newly imported design.
+        """
+        self._upload_file(file_path, True)
+        return self.read_existing_design()
 
     def __repr__(self) -> str:
         """Represent the modeler as a string."""

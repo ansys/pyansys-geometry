@@ -34,11 +34,11 @@ from ansys.geometry.core.connection import (
 )
 from ansys.geometry.core.connection.conversions import point3d_to_grpc_point
 from ansys.geometry.core.designer.beam import Beam, BeamProfile
-from ansys.geometry.core.designer.body import Body, TemplateBody
+from ansys.geometry.core.designer.body import Body, MasterBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
-from ansys.geometry.core.designer.part import Part, TransformedPart
+from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import (
     IDENTITY_MATRIX44,
@@ -87,7 +87,7 @@ class Component:
         If a component already exists on the server, you can pass in its ID to create it on the
         client-side data model. If this is argument is present, a new Component will not be created
         on the server.
-    transformed_part : TransformedPart, optional
+    transformed_part : MasterComponent, optional
         This argument should be present when creating a nested instance component. It will use the
         given transformed_part instead of creating a new one.
     read_existing_comp : bool, optional
@@ -112,7 +112,7 @@ class Component:
         grpc_client: GrpcClient,
         template: Optional["Component"] = None,
         preexisting_id: Optional[str] = None,
-        transformed_part: Optional[TransformedPart] = None,
+        transformed_part: Optional[MasterComponent] = None,
         read_existing_comp: bool = False,
     ):
         """Initialize ``Component`` class."""
@@ -132,7 +132,7 @@ class Component:
                     CreateRequest(name=name, parent=parent_component.id, template=template_id)
                 )
                 # Remove this method call once we know Service sends correct ObjectPath id
-                self._id = self.__remove_duplicate_ids(new_component.component.id)
+                self._id = new_component.component.id
                 self._name = new_component.component.name
             else:
                 self._name = name
@@ -152,8 +152,8 @@ class Component:
         if template:
             # If this is not a nested instance
             if not transformed_part:
-                # Create new TransformedPart, but use template's Part
-                tp = TransformedPart(
+                # Create new MasterComponent, but use template's Part
+                tp = MasterComponent(
                     uuid.uuid4(),
                     f"tp_{name}",
                     template._transformed_part.part,
@@ -167,9 +167,9 @@ class Component:
             return
 
         elif not read_existing_comp:
-            # This is an independent Component - Create new Part and TransformedPart
+            # This is an independent Component - Create new Part and MasterComponent
             p = Part(uuid.uuid4(), f"p_{name}", [], [])
-            tp = TransformedPart(uuid.uuid4(), f"tp_{name}", p)
+            tp = MasterComponent(uuid.uuid4(), f"tp_{name}", p)
             p.parts.append(tp)
             self._transformed_part = tp
 
@@ -245,26 +245,6 @@ class Component:
                 transformed_part=template_comp._transformed_part,
             )
             self.components.append(new)
-
-    def __remove_duplicate_ids(self, path: str) -> str:
-        """
-        Remove duplicate entries in the ID path.
-
-        Notes
-        -----
-        This is a safeguard, as the server is known to have issues sometimes.
-
-        Examples
-        --------
-        This method converts "0:26/0:44/0:44/0:53" to "0:26/0:44/0:53".
-        """
-        # Split the string into a list -> convert list into a set but maintain order
-        res = []
-        [res.append(x) for x in path.split("/") if x not in res]
-        id = "/".join(res)
-        if id != path:
-            print("Removed duplicate!")
-        return id
 
     def get_world_transform(self) -> Matrix44:
         """
@@ -421,11 +401,9 @@ class Component:
 
         self._grpc_client.log.debug(f"Extruding sketch provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBody(request)
-        tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=False)
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._transformed_part.part.bodies.append(tb)
-        # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
-        body_id = f"{self.id}/{tb.id}" if self.parent_component else tb.id
-        return Body(body_id, response.name, self, tb)
+        return Body(response.id, response.name, self, tb)
 
     @protect_grpc
     @check_input_types
@@ -470,11 +448,9 @@ class Component:
         self._grpc_client.log.debug(f"Extruding from face provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBodyFromFaceProfile(request)
 
-        tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=False)
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._transformed_part.part.bodies.append(tb)
-        # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
-        body_id = f"{self.id}/{tb.id}" if self.parent_component else tb.id
-        return Body(body_id, response.name, self, tb)
+        return Body(response.id, response.name, self, tb)
 
     @protect_grpc
     @check_input_types
@@ -509,11 +485,9 @@ class Component:
         )
         response = self._bodies_stub.CreatePlanarBody(request)
 
-        tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=True)
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._transformed_part.part.bodies.append(tb)
-        # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
-        body_id = f"{self.id}/{tb.id}" if self.parent_component else tb.id
-        return Body(body_id, response.name, self, tb)
+        return Body(response.id, response.name, self, tb)
 
     @protect_grpc
     @check_input_types
@@ -551,11 +525,9 @@ class Component:
         )
         response = self._bodies_stub.CreateBodyFromFace(request)
 
-        tb = TemplateBody(response.master_id, name, self._grpc_client, is_surface=True)
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._transformed_part.part.bodies.append(tb)
-        # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
-        body_id = f"{self.id}/{tb.id}" if self.parent_component else tb.id
-        return Body(body_id, response.name, self, tb)
+        return Body(response.id, response.name, self, tb)
 
     @check_input_types
     def create_coordinate_system(self, name: str, frame: Frame) -> CoordinateSystem:
