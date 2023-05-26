@@ -78,7 +78,7 @@ doc = [
     "nbsphinx==0.9.2",
     "notebook==6.5.4",
     "numpydoc==1.5.0",
-    "panel==1.0.2",
+    "panel==1.0.3",
     "pyvista[trame]==0.39.1",
     "requests==2.31.0",
     "Sphinx==6.1.3",
