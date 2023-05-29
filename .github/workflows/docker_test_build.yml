@@ -147,7 +147,6 @@ jobs:
 
       - name: Testing
         run: |
-          .\.venv\Scripts\Activate.ps1
           pytest -v --service-os=linux
 
       - name: Stop the Geometry service
