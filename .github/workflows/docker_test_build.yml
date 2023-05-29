@@ -84,7 +84,7 @@ jobs:
       - name: Testing
         run: |
           .\.venv\Scripts\Activate.ps1
-          pytest -v
+          pytest -v --use-existing-service=yes
 
       - name: Stop the Geometry service
         if: always()
@@ -147,7 +147,7 @@ jobs:
 
       - name: Testing
         run: |
-          pytest -v --service-os=linux
+          pytest -v --service-os=linux --use-existing-service=yes
 
       - name: Stop the Geometry service
         if: always()
