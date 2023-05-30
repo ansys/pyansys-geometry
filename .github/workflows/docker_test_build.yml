@@ -145,9 +145,14 @@ jobs:
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
 
+      - name: Install X Virtual Frame Buffer
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+
       - name: Testing
         run: |
-          pytest -v --service-os=linux --use-existing-service=yes
+          xvfb-run pytest -v --service-os=linux --use-existing-service=yes
 
       - name: Stop the Geometry service
         if: always()
