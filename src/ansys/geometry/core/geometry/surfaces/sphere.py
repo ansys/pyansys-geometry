@@ -7,6 +7,14 @@ from beartype.typing import Union
 import numpy as np
 from pint import Quantity
 
+from ansys.geometry.core.geometry.parameterization import (
+    Interval,
+    Parameterization,
+    ParamForm,
+    ParamType,
+    ParamUV,
+)
+from ansys.geometry.core.geometry.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
     UNITVECTOR3D_Z,
@@ -16,14 +24,6 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import Distance
-from ansys.geometry.core.primitives.parameterization import (
-    Interval,
-    Parameterization,
-    ParamForm,
-    ParamType,
-    ParamUV,
-)
-from ansys.geometry.core.primitives.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.typing import Real, RealSequence
 
 

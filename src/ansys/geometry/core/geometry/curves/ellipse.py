@@ -8,6 +8,13 @@ import numpy as np
 from pint import Quantity
 from scipy.integrate import quad
 
+from ansys.geometry.core.geometry.curves.curve_evaluation import CurveEvaluation
+from ansys.geometry.core.geometry.parameterization import (
+    Interval,
+    Parameterization,
+    ParamForm,
+    ParamType,
+)
 from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
     UNITVECTOR3D_Z,
@@ -17,13 +24,6 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import Accuracy, Distance
-from ansys.geometry.core.primitives.curve_evaluation import CurveEvaluation
-from ansys.geometry.core.primitives.parameterization import (
-    Interval,
-    Parameterization,
-    ParamForm,
-    ParamType,
-)
 from ansys.geometry.core.typing import Real, RealSequence
 
 
