@@ -75,7 +75,7 @@ jobs:
   testing-windows:
     name: Testing and coverage (Windows)
     needs: [smoke-tests]
-    runs-on: [self-hosted, pygeometry]
+    runs-on: [self-hosted, Windows, pygeometry]
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: false
@@ -179,7 +179,7 @@ jobs:
   docs:
     name: Documentation
     needs: [docs-style]
-    runs-on: [self-hosted, pygeometry]
+    runs-on: [self-hosted, Windows, pygeometry]
     steps:
       - uses: actions/checkout@v3
 
@@ -347,7 +347,7 @@ jobs:
     needs: [testing-windows, testing-linux, docs]
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     runs-on:
-      group: ansys-internal
+      group: ansys-network
       labels: [self-hosted, Windows, signtool]
 
     steps:
