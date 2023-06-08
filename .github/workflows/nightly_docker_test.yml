@@ -20,7 +20,7 @@ jobs:
 
   windows-tests:
     name: Nightly unstable testing - Windows
-    runs-on: [self-hosted, pygeometry]
+    runs-on: [self-hosted, Windows, pygeometry]
 
     steps:
       - uses: actions/checkout@v3
