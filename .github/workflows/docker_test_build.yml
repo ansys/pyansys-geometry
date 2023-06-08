@@ -34,7 +34,7 @@ jobs:
 
   build-windows:
     name: Building Geometry Service - Windows
-    runs-on: [self-hosted, pygeometry]
+    runs-on: [self-hosted, Windows, pygeometry]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
