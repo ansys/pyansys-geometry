@@ -16,6 +16,7 @@ from ansys.geometry.core.geometry.parameterization import (
     ParamType,
     ParamUV,
 )
+from ansys.geometry.core.geometry.surfaces.surface import Surface
 from ansys.geometry.core.geometry.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
@@ -29,7 +30,7 @@ from ansys.geometry.core.misc import Distance
 from ansys.geometry.core.typing import Real, RealSequence
 
 
-class Cylinder:
+class Cylinder(Surface):
     """
     Provides 3D ``Cylinder`` representation.
 
@@ -221,33 +222,31 @@ class Cylinder:
 
         return CylinderEvaluation(self, ParamUV(u, v))
 
-    def get_u_parameterization(self) -> Parameterization:
+    def parameterization(self) -> tuple[Parameterization, Parameterization]:
         """
-        Retrieve the U parameter parametrization conditions.
+        Parameterization of the cylinder surface as a tuple (U and V respectively).
 
         The U parameter specifies the clockwise angle around the axis (right hand
         corkscrew law), with a zero parameter at `dir_x`, and a period of 2*pi.
-
-        Returns
-        -------
-        Parameterization
-            Information about how a cylinder's u parameter is parameterized.
-        """
-        return Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
-
-    def get_v_parameterization(self) -> Parameterization:
-        """
-        Retrieve the V parameter parametrization conditions.
 
         The V parameter specifies the distance along the axis, with a zero parameter at
         the XY plane of the Cylinder.
 
         Returns
         -------
-        Parameterization
-            Information about how a cylinders's v parameter is parameterized.
+        tuple[Parameterization, Parameterization]
+            Information about how a cylinder's u and v parameters are parameterized, respectively.
         """
-        return Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(np.NINF, np.inf))
+        u = Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
+        v = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(np.NINF, np.inf))
+
+        return (u, v)
+
+    def contains_param(self, param_uv: ParamUV) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_param() is not implemented.")
+
+    def contains_point(self, point: Point3D) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_point() is not implemented.")
 
 
 class CylinderEvaluation(SurfaceEvaluation):

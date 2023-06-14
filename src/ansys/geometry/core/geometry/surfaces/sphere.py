@@ -14,6 +14,7 @@ from ansys.geometry.core.geometry.parameterization import (
     ParamType,
     ParamUV,
 )
+from ansys.geometry.core.geometry.surfaces.surface import Surface
 from ansys.geometry.core.geometry.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
@@ -27,7 +28,7 @@ from ansys.geometry.core.misc import Distance
 from ansys.geometry.core.typing import Real, RealSequence
 
 
-class Sphere:
+class Sphere(Surface):
     """
     Provides 3D ``Sphere`` representation.
 
@@ -186,34 +187,32 @@ class Sphere:
         v = np.arctan2(z, np.sqrt(x * x + y * y))
         return SphereEvaluation(self, ParamUV(u, v))
 
-    def get_u_parameterization(self) -> Parameterization:
+    def parameterization(self) -> tuple[Parameterization, Parameterization]:
         """
-        Retrieve the U parameter parametrization conditions.
+        Parameterization of the sphere surface as a tuple (U and V respectively).
 
         The U parameter specifies the longitude angle, increasing clockwise (East) about
         `dir_z` (right hand corkscrew law). It has a zero parameter at `dir_x`, and a
         period of 2*pi.
-
-        Returns
-        -------
-        Parameterization
-            Information about how a sphere's u parameter is parameterized.
-        """
-        return Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
-
-    def get_v_parameterization(self) -> Parameterization:
-        """
-        Retrieve the V parameter parametrization conditions.
 
         The V parameter specifies the latitude, increasing North, with a zero parameter
         at the equator, and a range of [-pi/2, pi/2].
 
         Returns
         -------
-        Parameterization
-            Information about how a sphere's v parameter is parameterized.
+        tuple[Parameterization, Parameterization]
+            Information about how a sphere's u and v parameters are parameterized, respectively.
         """
-        return Parameterization(ParamForm.CLOSED, ParamType.OTHER, Interval(-np.pi / 2, np.pi / 2))
+        u = Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
+        v = Parameterization(ParamForm.CLOSED, ParamType.OTHER, Interval(-np.pi / 2, np.pi / 2))
+
+        return (u, v)
+
+    def contains_param(self, param_uv: ParamUV) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_param() is not implemented.")
+
+    def contains_point(self, point: Point3D) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_point() is not implemented.")
 
 
 class SphereEvaluation(SurfaceEvaluation):

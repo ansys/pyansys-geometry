@@ -8,6 +8,7 @@ import numpy as np
 from pint import Quantity
 from scipy.integrate import quad
 
+from ansys.geometry.core.geometry.curves.curve import Curve
 from ansys.geometry.core.geometry.curves.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.geometry.parameterization import (
     Interval,
@@ -27,7 +28,7 @@ from ansys.geometry.core.misc import Accuracy, Distance
 from ansys.geometry.core.typing import Real, RealSequence
 
 
-class Ellipse:
+class Ellipse(Curve):
     """
     Provides 3D ``Ellipse`` representation.
 
@@ -271,7 +272,7 @@ class Ellipse:
             UnitVector3D(new_axis[0:3]),
         )
 
-    def get_parameterization(self) -> Parameterization:
+    def parameterization(self) -> Parameterization:
         """
         Return the parametrization of an ``Ellipse`` instance.
 
@@ -284,6 +285,12 @@ class Ellipse:
             Information about how an ellipse is parameterized.
         """
         return Parameterization(ParamForm.PERIODIC, ParamType.OTHER, Interval(0, 2 * np.pi))
+
+    def contains_param(self, param: Real) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_param() is not implemented.")
+
+    def contains_point(self, point: Point3D) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_point() is not implemented.")
 
 
 class EllipseEvaluation(CurveEvaluation):

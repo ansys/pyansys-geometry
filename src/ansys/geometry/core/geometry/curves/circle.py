@@ -6,6 +6,7 @@ from beartype.typing import Union
 import numpy as np
 from pint import Quantity
 
+from ansys.geometry.core.geometry.curves.curve import Curve
 from ansys.geometry.core.geometry.curves.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.geometry.parameterization import (
     Interval,
@@ -25,7 +26,7 @@ from ansys.geometry.core.misc import Accuracy, Distance
 from ansys.geometry.core.typing import Real, RealSequence
 
 
-class Circle:
+class Circle(Curve):
     """
     Provides 3D ``Circle`` representation.
 
@@ -209,9 +210,9 @@ class Circle:
             and self.dir_z == other.dir_z
         )
 
-    def get_parameterization(self) -> Parameterization:
+    def parameterization(self) -> Parameterization:
         """
-        Return the parametrization of a ``Circle`` instance.
+        Return the parametrization of a ``Circle`` curve.
 
         The parameter of a circle specifies the clockwise angle around the axis (right
         hand corkscrew law), with a zero parameter at `dir_x` and a period of 2*pi.
@@ -222,6 +223,12 @@ class Circle:
             Information about how a circle is parameterized.
         """
         return Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
+
+    def contains_param(self, param: Real) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_param() is not implemented.")
+
+    def contains_point(self, point: Point3D) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_point() is not implemented.")
 
 
 class CircleEvaluation(CurveEvaluation):

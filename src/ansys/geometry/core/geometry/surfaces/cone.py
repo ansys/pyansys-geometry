@@ -15,6 +15,7 @@ from ansys.geometry.core.geometry.parameterization import (
     ParamType,
     ParamUV,
 )
+from ansys.geometry.core.geometry.surfaces.surface import Surface
 from ansys.geometry.core.geometry.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
@@ -28,7 +29,7 @@ from ansys.geometry.core.misc import Angle, Distance
 from ansys.geometry.core.typing import Real, RealSequence
 
 
-class Cone:
+class Cone(Surface):
     """
     Provides 3D ``Cone`` representation.
 
@@ -218,37 +219,35 @@ class Cone:
 
         return ConeEvaluation(self, ParamUV(u, v))
 
-    def get_u_parameterization(self) -> Parameterization:
+    def parameterization(self) -> tuple[Parameterization, Parameterization]:
         """
-        Retrieve the U parameter parametrization conditions.
+        Parameterization of the cone surface as a tuple (U and V respectively).
 
         The U parameter specifies the clockwise angle around the axis (right hand
         corkscrew law), with a zero parameter at `dir_x`, and a period of 2*pi.
-
-        Returns
-        -------
-        Parameterization
-            Information about how a cone's u parameter is parameterized.
-        """
-        return Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
-
-    def get_v_parameterization(self) -> Parameterization:
-        """
-        Retrieve the V parameter parametrization conditions.
 
         The V parameter specifies the distance along the axis, with a zero parameter at
         the XY plane of the Cone.
 
         Returns
         -------
-        Parameterization
-            Information about how a cone's v parameter is parameterized.
+        tuple[Parameterization, Parameterization]
+            Information about how a cone's u and v parameters are parameterized, respectively.
         """
-        # V parameter interval depends on which way the cone opens
+        u = Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
+
         start, end = (
             (self.apex_param, np.inf) if self.apex_param < 0 else (np.NINF, self.apex_param)
         )
-        return Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(start, end))
+        v = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(start, end))
+
+        return (u, v)
+
+    def contains_param(self, param_uv: ParamUV) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_param() is not implemented.")
+
+    def contains_point(self, point: Point3D) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_point() is not implemented.")
 
 
 class ConeEvaluation(SurfaceEvaluation):

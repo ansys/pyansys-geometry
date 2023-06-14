@@ -7,6 +7,7 @@ from beartype import beartype as check_input_types
 from beartype.typing import Union
 import numpy as np
 
+from ansys.geometry.core.geometry.curves.curve import Curve
 from ansys.geometry.core.geometry.curves.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.geometry.parameterization import (
     Interval,
@@ -16,10 +17,10 @@ from ansys.geometry.core.geometry.parameterization import (
 )
 from ansys.geometry.core.math import Matrix44, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc.accuracy import LENGTH_ACCURACY
-from ansys.geometry.core.typing import RealSequence
+from ansys.geometry.core.typing import Real, RealSequence
 
 
-class Line:
+class Line(Curve):
     """
     Provides 3D ``Line`` representation.
 
@@ -156,7 +157,7 @@ class Line:
             return self.direction.is_opposite(other.direction)
         return False
 
-    def get_parameterization(self) -> Parameterization:
+    def parameterization(self) -> Parameterization:
         """
         Return the parametrization of a ``Line`` instance.
 
@@ -169,6 +170,12 @@ class Line:
             Information about how a line is parameterized.
         """
         return Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(np.NINF, np.inf))
+
+    def contains_param(self, param: Real) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_param() is not implemented.")
+
+    def contains_point(self, point: Point3D) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_point() is not implemented.")
 
 
 class LineEvaluation(CurveEvaluation):
