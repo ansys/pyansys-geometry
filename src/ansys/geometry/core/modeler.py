@@ -2,7 +2,7 @@
 import logging
 from pathlib import Path
 
-from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
+from ansys.api.geometry.v0.commands_pb2 import RunScriptFileRequest, UploadFileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype.typing import TYPE_CHECKING, Optional, Union
 from grpc import Channel
@@ -184,3 +184,17 @@ class Modeler:
         lines.append("")
         lines.append(str(self._client))
         return "\n".join(lines)
+
+    def RunScriptFile(self, file_path: str):
+        """Run script file on the server."""
+        serv_path = self._upload_file(file_path)
+        c_stub = CommandsStub(self._client.channel)
+        request = RunScriptFileRequest(
+            script_path=serv_path,
+            script_args=None,  # not sure about this map<string,string> script_args
+            api_version=241,
+        )
+
+        self.client.log.debug(f"running script file {file_path}...")
+        response = c_stub.RunScriptFile(request)
+        return response
