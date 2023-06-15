@@ -1,19 +1,16 @@
-# Authors
-
-## Project Lead
-
-* [Roberto Pastor](https://github.com/RobPasMue)
-
-## Contributors
-
-* [Jonah Boling](https://github.com/jonahrb)
-* [Matteo Bini](https://github.com/b-matteo)
-* [Chris Hawkins](https://github.com/chris-hawkins-usa)
-* [Chad Queen](https://github.com/chadqueen)
-* [Revathy Venugopal](https://github.com/Revathyvenugopal162)
-* [Maxime Rey](https://github.com/MaxJPRey)
-* [Alexander Kaszynski](https://github.com/akaszynski)
-* [Jorge Martínez](https://github.com/jorgepiloto)
-* [Alejandro Fernández](https://github.com/AlejandroFernandezLuces)
-* [Lance Lance](https://github.com/LanceX2214)
-* [Dastan Abdulla](https://github.com/dastan-ansys)
+# This is the list of PyGeometry's significant contributors.
+#
+# This file does not necessarily list everyone who has contributed code,
+# especially since many employees of one corporation may be contributing.
+# To see the full list of contributors, see the revision history in
+# source control.
+#
+# For contributions made under a Corporate CLA, then the copyright
+# belongs to that organization.
+#
+# If a contribution was made under an Individual CLA, the submitter
+# has indicated that they own the copyright. If that is your case, and
+# you want to be added to this file, please submit a request.
+#
+# 
+ANSYS, Inc.
