@@ -12,5 +12,5 @@
 # has indicated that they own the copyright. If that is your case, and
 # you want to be added to this file, please submit a request.
 #
-# 
+#
 ANSYS, Inc.
