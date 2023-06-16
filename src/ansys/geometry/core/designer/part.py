@@ -1,8 +1,11 @@
 """Provides the ``Part`` class module."""
-from beartype.typing import List
+from beartype.typing import TYPE_CHECKING, List
 
 from ansys.geometry.core.designer.body import MasterBody
 from ansys.geometry.core.math import IDENTITY_MATRIX44, Matrix44
+
+if TYPE_CHECKING:
+    from ansys.geometry.core.designer.component import Component
 
 
 class Part:
@@ -103,7 +106,9 @@ class MasterComponent:
         self._id: str = id
         self._name: str = name
         self._part: Part = part
+        part.parts.append(self)
         self._transform: Matrix44 = transform
+        self._occurrences: List["Component"] = []
 
     @property
     def id(self) -> str:
@@ -114,6 +119,11 @@ class MasterComponent:
     def name(self) -> str:
         """Name of the transformed part."""
         return self._name
+
+    @property
+    def occurrences(self) -> List["Component"]:
+        """All occurrences of this component."""
+        return self._occurrences
 
     @property
     def part(self) -> Part:
