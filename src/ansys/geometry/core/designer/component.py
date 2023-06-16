@@ -159,19 +159,18 @@ class Component:
                     template._transformed_part.part,
                     template._transformed_part.transform,
                 )
-                tp.part.parts.append(tp)
                 self._transformed_part = tp
 
             # Recurse - Create more children components from template's remaining children
             self.__create_children(template)
-            return
 
         elif not read_existing_comp:
             # This is an independent Component - Create new Part and MasterComponent
             p = Part(uuid.uuid4(), f"p_{name}", [], [])
             tp = MasterComponent(uuid.uuid4(), f"tp_{name}", p)
-            p.parts.append(tp)
             self._transformed_part = tp
+
+        self._transformed_part.occurrences.append(self)
 
     @property
     def id(self) -> str:
@@ -336,7 +335,27 @@ class Component:
         Component
             New component with no children in the design assembly.
         """
-        self._components.append(Component(name, self, self._grpc_client, template=template))
+        new_comp = Component(name, self, self._grpc_client, template=template)
+        master = new_comp._transformed_part
+        master_id = new_comp.id.split("/")[-1]
+
+        for comp in self._transformed_part.occurrences:
+            print(f"{comp.id} - {self.id}")
+            if comp.id != self.id:
+                print("here")
+                comp.components.append(
+                    Component(
+                        name,
+                        comp,
+                        self._grpc_client,
+                        template,
+                        preexisting_id=f"{comp.id}/{master_id}",
+                        transformed_part=master,
+                        read_existing_comp=True,
+                    )
+                )
+
+        self.components.append(new_comp)
         return self._components[-1]
 
     @protect_grpc
