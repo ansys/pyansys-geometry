@@ -20,19 +20,19 @@ class Part:
         Unique identifier for this part.
     name : str
         Name of this part.
-    parts : List[MasterComponent]
+    components : List[MasterComponent]
         List of MasterComponent children that this Part contains.
     bodies : List[MasterBody]
         List of MasterBody children that this Part contains. These are master bodies.
     """
 
     def __init__(
-        self, id: str, name: str, parts: List["MasterComponent"], bodies: List[MasterBody]
+        self, id: str, name: str, components: List["MasterComponent"], bodies: List[MasterBody]
     ) -> None:
         """Initialize the ``Part`` class."""
         self._id: str = id
         self._name: str = name
-        self._parts: List["MasterComponent"] = parts
+        self._components: List["MasterComponent"] = components
         self._bodies: List[MasterBody] = bodies
 
     @property
@@ -46,13 +46,13 @@ class Part:
         return self._name
 
     @property
-    def parts(self) -> List["MasterComponent"]:
+    def components(self) -> List["MasterComponent"]:
         """``MasterComponent`` children that this ``Part`` contains."""
-        return self._parts
+        return self._components
 
-    @parts.setter
-    def parts(self, parts: List["MasterComponent"]) -> None:
-        self._parts = parts
+    @components.setter
+    def components(self, components: List["MasterComponent"]) -> None:
+        self._components = components
 
     @property
     def bodies(self) -> List[MasterBody]:
@@ -72,7 +72,7 @@ class Part:
         return (
             f"Part(id={self.id}, "
             f"name={self.name}, "
-            f"parts={[p.name for p in self.parts]}, "
+            f"parts={[p.name for p in self.components]}, "
             f"bodies={[b.name for b in self.bodies]})"
         )
 
@@ -106,7 +106,7 @@ class MasterComponent:
         self._id: str = id
         self._name: str = name
         self._part: Part = part
-        part.parts.append(self)
+        part.components.append(self)
         self._transform: Matrix44 = transform
         self._occurrences: List["Component"] = []
 

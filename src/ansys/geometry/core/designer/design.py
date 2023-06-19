@@ -570,25 +570,27 @@ class Design(Component):
         created_components = {self.id: self}
         created_bodies = {}
 
-        # Make dummy TP for design since server doesn't have one
-        self._transformed_part = MasterComponent("1", "tp_design", created_parts[self.id])
+        # Make dummy master for design since server doesn't have one
+        self._master_comp = MasterComponent("1", "master_design", created_parts[self.id])
 
         # Create MasterComponents
-        for tp in response.transformed_parts:
-            part = created_parts.get(tp.part_master.id)
-            new_tp = MasterComponent(tp.id, tp.name, part, grpc_matrix_to_matrix(tp.placement))
-            created_tps[tp.id] = new_tp
+        for master in response.transformed_parts:
+            part = created_parts.get(master.part_master.id)
+            new_master = MasterComponent(
+                master.id, master.name, part, grpc_matrix_to_matrix(master.placement)
+            )
+            created_tps[master.id] = new_master
 
         # Create Components
         for comp in response.components:
             parent = created_components.get(comp.parent_id)
-            tp = created_tps.get(comp.master_id)
+            master = created_tps.get(comp.master_id)
             c = Component(
                 comp.name,
                 parent,
                 self._grpc_client,
                 preexisting_id=comp.id,
-                transformed_part=tp,
+                master_comp=master,
                 read_existing_comp=True,
             )
             created_components[comp.id] = c
