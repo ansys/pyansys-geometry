@@ -87,9 +87,9 @@ class Component:
         If a component already exists on the server, you can pass in its ID to create it on the
         client-side data model. If this is argument is present, a new Component will not be created
         on the server.
-    master_comp : MasterComponent, optional
+    master_component : MasterComponent, optional
         This argument should be present when creating a nested instance component. It will use the
-        given master_comp instead of creating a new one.
+        given master_component instead of creating a new one.
     read_existing_comp : bool, optional
         Indicates whether an existing component on the service should be read
         or not. By default, ``False``. This is only valid when connecting
@@ -112,7 +112,7 @@ class Component:
         grpc_client: GrpcClient,
         template: Optional["Component"] = None,
         preexisting_id: Optional[str] = None,
-        master_comp: Optional[MasterComponent] = None,
+        master_component: Optional[MasterComponent] = None,
         read_existing_comp: bool = False,
     ):
         """Initialize ``Component`` class."""
@@ -146,20 +146,20 @@ class Component:
         self._parent_component = parent_component
         self._is_alive = True
         self._shared_topology = None
-        self._master_comp = master_comp
+        self._master_component = master_component
 
         # Populate client data model
         if template:
             # If this is not a nested instance
-            if not master_comp:
+            if not master_component:
                 # Create new MasterComponent, but use template's Part
                 master = MasterComponent(
                     uuid.uuid4(),
                     f"master_{name}",
-                    template._master_comp.part,
-                    template._master_comp.transform,
+                    template._master_component.part,
+                    template._master_component.transform,
                 )
-                self._master_comp = master
+                self._master_component = master
 
             # Recurse - Create more children components from template's remaining children
             self.__create_children(template)
@@ -168,9 +168,9 @@ class Component:
             # This is an independent Component - Create new Part and MasterComponent
             p = Part(uuid.uuid4(), f"p_{name}", [], [])
             master = MasterComponent(uuid.uuid4(), f"master_{name}", p)
-            self._master_comp = master
+            self._master_component = master
 
-        self._master_comp.occurrences.append(self)
+        self._master_component.occurrences.append(self)
 
     @property
     def id(self) -> str:
@@ -191,7 +191,7 @@ class Component:
     def bodies(self) -> List[Body]:
         """``Body`` objects inside of the component."""
         bodies = []
-        for body in self._master_comp.part.bodies:
+        for body in self._master_component.part.bodies:
             id = f"{self.id}/{body.id}" if self.parent_component else body.id
             bodies.append(Body(id, body.name, self, body))
         return bodies
@@ -241,7 +241,7 @@ class Component:
                 self._grpc_client,
                 template=template_comp,
                 preexisting_id=new_id,
-                master_comp=template_comp._master_comp,
+                master_component=template_comp._master_component,
             )
             self.components.append(new)
 
@@ -256,7 +256,7 @@ class Component:
         """
         if self.parent_component is None:
             return IDENTITY_MATRIX44
-        return self.parent_component.get_world_transform() * self._master_comp.transform
+        return self.parent_component.get_world_transform() * self._master_component.transform
 
     @protect_grpc
     def modify_placement(
@@ -307,7 +307,7 @@ class Component:
                 rotation_angle=angle.value.m,
             )
         )
-        self._master_comp.transform = grpc_matrix_to_matrix(response.matrix)
+        self._master_component.transform = grpc_matrix_to_matrix(response.matrix)
 
     def reset_placement(self):
         """
@@ -336,13 +336,11 @@ class Component:
             New component with no children in the design assembly.
         """
         new_comp = Component(name, self, self._grpc_client, template=template)
-        master = new_comp._master_comp
+        master = new_comp._master_component
         master_id = new_comp.id.split("/")[-1]
 
-        for comp in self._master_comp.occurrences:
-            print(f"{comp.id} - {self.id}")
+        for comp in self._master_component.occurrences:
             if comp.id != self.id:
-                print("here")
                 comp.components.append(
                     Component(
                         name,
@@ -350,7 +348,7 @@ class Component:
                         self._grpc_client,
                         template,
                         preexisting_id=f"{comp.id}/{master_id}",
-                        master_comp=master,
+                        master_component=master,
                         read_existing_comp=True,
                     )
                 )
@@ -421,7 +419,7 @@ class Component:
         self._grpc_client.log.debug(f"Extruding sketch provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
-        self._master_comp.part.bodies.append(tb)
+        self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -468,7 +466,7 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBodyFromFaceProfile(request)
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
-        self._master_comp.part.bodies.append(tb)
+        self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -505,7 +503,7 @@ class Component:
         response = self._bodies_stub.CreatePlanarBody(request)
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
-        self._master_comp.part.bodies.append(tb)
+        self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -545,7 +543,7 @@ class Component:
         response = self._bodies_stub.CreateBodyFromFace(request)
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
-        self._master_comp.part.bodies.append(tb)
+        self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
     @check_input_types

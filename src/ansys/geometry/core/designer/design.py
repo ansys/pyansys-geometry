@@ -571,7 +571,7 @@ class Design(Component):
         created_bodies = {}
 
         # Make dummy master for design since server doesn't have one
-        self._master_comp = MasterComponent("1", "master_design", created_parts[self.id])
+        self._master_component = MasterComponent("1", "master_design", created_parts[self.id])
 
         # Create MasterComponents
         for master in response.transformed_parts:
@@ -590,7 +590,7 @@ class Design(Component):
                 parent,
                 self._grpc_client,
                 preexisting_id=comp.id,
-                master_comp=master,
+                master_component=master,
                 read_existing_comp=True,
             )
             created_components[comp.id] = c

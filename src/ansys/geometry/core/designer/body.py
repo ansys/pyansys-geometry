@@ -679,7 +679,7 @@ class MasterBody(IBody):
         tb = MasterBody(
             response.master_id, copy_name, self._grpc_client, is_surface=self.is_surface
         )
-        parent._master_comp.part.bodies.append(tb)
+        parent._master_component.part.bodies.append(tb)
         # TODO: fix when DMS ObjectPath is fixed - previously we return the body with response.id
         body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
         return Body(body_id, response.name, parent, tb)

@@ -1331,14 +1331,14 @@ def test_component_instances(modeler: Modeler):
     assert len(body_ids) == len(set(body_ids))
 
     # Assert all instances have unique MasterComponents
-    comp_templates = [wheel2._master_comp, wheel3._master_comp, wheel4._master_comp]
+    comp_templates = [wheel2._master_component, wheel3._master_component, wheel4._master_component]
     assert len(comp_templates) == len(set(comp_templates))
 
     # Assert all instances have the same Part
     comp_parts = [
-        wheel2._master_comp.part,
-        wheel3._master_comp.part,
-        wheel4._master_comp.part,
+        wheel2._master_component.part,
+        wheel3._master_component.part,
+        wheel4._master_component.part,
     ]
     assert len(set(comp_parts)) == 1
 
@@ -1607,3 +1607,42 @@ def test_boolean_body_operations(modeler: Modeler, skip_not_on_linux_service):
     assert not copy3.is_alive
     assert body3.is_alive
     assert Accuracy.length_is_equal(copy1.volume.m, 1)
+
+
+def test_child_component_instances(modeler: Modeler):
+    """Test creation of child ``Component`` instances and check the data model reflects that."""
+
+    design_name = "ChildComponentInstances_Test"
+    design = modeler.create_design(design_name)
+    # Create a base component
+    base1 = design.add_component("Base1")
+    comp1 = base1.add_component("A")
+    comp2 = base1.add_component("B")
+
+    # Create the solid body for the base
+    sketch = Sketch().box(Point2D([5, 10]), 10, 20)
+    comp2.extrude_sketch("Bottom", sketch, 5)
+
+    # Create the 2nd base
+    base2 = design.add_component("Base2", base1)
+    base2.modify_placement(Vector3D([30, 0, 0]))
+
+    # Create top part (applies to both Base1 and Base2)
+    sketch = Sketch(Plane(Point3D([0, 5, 5]))).box(Point2D([5, 2.5]), 10, 5)
+    comp1.extrude_sketch("Top", sketch, 5)
+
+    # create the first child component
+    comp1.add_component("Child1")
+    comp1.extrude_sketch("Child1_body", Sketch(Plane([5, 7.5, 10])).box(Point2D([0, 0]), 1, 1), 1)
+
+    assert len(comp1.components) == 1
+    assert len(base2.components[0].components) == 1
+    assert len(comp1.components) == len(base2.components[0].components)
+
+    # create the second child component
+    comp1.add_component("Child2")
+    comp1.extrude_sketch("Child2_body", Sketch(Plane([5, 7.5, 10])).box(Point2D([0, 0]), 1, 1), -1)
+
+    assert len(comp1.components) == 2
+    assert len(base2.components[0].components) == 2
+    assert len(comp1.components) == len(base2.components[0].components)
