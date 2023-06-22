@@ -778,9 +778,7 @@ def test_bodies_translation(modeler: Modeler):
     )
 
 
-def test_download_file(
-    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, service_os : str
-):
+def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, service_os: str):
     """Test for downloading a design in multiple modes and verifying the correct
     download."""
 
