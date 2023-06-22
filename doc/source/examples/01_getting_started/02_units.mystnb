@@ -37,7 +37,7 @@ Now, with this ``UnitRegistry`` object called ``UNITS``, we will create
 ``Quantity`` objects also have convenience methods for: transforming to different units, comparing
 magnitudes/values, units, etc. For more information on their functioning please refer to the
 [pint.Quantity](https://pint.readthedocs.io/en/stable/api/base.html#most-important-classes)
-docs or the [Pint tutorial](https://pint.readthedocs.io/en/stable/getting/tutorial.html?#tutorial).
+docs or the [Pint tutorial](https://pint.readthedocs.io/en/stable/getting/tutorial.html).
 
 ```{code-cell} ipython3
 from pint import Quantity
