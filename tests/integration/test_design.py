@@ -778,9 +778,7 @@ def test_bodies_translation(modeler: Modeler):
     )
 
 
-def test_download_file(
-    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, skip_not_on_linux_service
-):
+def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, service_os: str):
     """Test for downloading a design in multiple modes and verifying the correct
     download."""
 
@@ -806,8 +804,15 @@ def test_download_file(
     design.save(file_location=file_save)
 
     # Check for other exports
-    binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
-    text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
+    if service_os == "windows":
+        binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
+        text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
+    elif service_os == "linux":
+        binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_bin"
+        text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_txt"
+    else:
+        raise Exception("Unable to determine the service operating system.")
+
     fmd_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.fmd"
 
     design.download(binary_parasolid_file, format=DesignFileFormat.PARASOLID_BIN)
