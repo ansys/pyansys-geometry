@@ -58,8 +58,8 @@ jobs:
     if: inputs.ansyslab
     needs: [windows]
     runs-on:
-      group: ansys-internal
-      labels: Windows
+      group: ansys-network
+      labels: [Windows, pygeometry]
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@v2
@@ -110,8 +110,8 @@ jobs:
     if: inputs.ansyslab
     needs: [linux]
     runs-on:
-      group: ansys-internal
-      labels: Linux
+      group: ansys-network
+      labels: [Linux, pygeometry]
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@v2

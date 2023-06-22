@@ -21,6 +21,7 @@ env:
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo
+  RESET_IMAGE_CACHE: 0
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -33,7 +34,7 @@ jobs:
 
   build-windows:
     name: Building Geometry Service - Windows
-    runs-on: [self-hosted, pygeometry]
+    runs-on: [self-hosted, Windows, pygeometry]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -70,8 +71,20 @@ jobs:
           python -m venv .venv
           .\.venv\Scripts\Activate.ps1
           python -m pip install --upgrade pip
-          pip install .
+          pip install -e .[tests]
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+
+      - name: Restore images cache
+        uses: actions/cache@v3
+        with:
+          path: .\tests\integration\image_cache
+          key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
+          restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
+
+      - name: Testing
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          pytest -v --use-existing-service=yes
 
       - name: Stop the Geometry service
         if: always()
@@ -122,8 +135,25 @@ jobs:
       - name: Validate connection using PyGeometry
         run: |
           python -m pip install --upgrade pip
-          pip install .
+          pip install -e .[tests]
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+
+      - name: Restore images cache
+        uses: actions/cache@v3
+        with:
+          path: .\tests\integration\image_cache
+          key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
+          restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
+
+      - name: Run pytest
+        uses: ansys/actions/tests-pytest@v4
+        env:
+          ALLOW_PLOTTING: true
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          pytest-extra-args: "--service-os=linux --use-existing-service=yes"
+          checkout: false
+          requires-xvfb: true
 
       - name: Stop the Geometry service
         if: always()
