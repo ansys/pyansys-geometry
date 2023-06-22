@@ -49,7 +49,7 @@ Docker container.
 
 #. If you have Docker installed, use a GitHub personal access token (PAT) with packages read permission to authorize Docker
    to access this repository. For more information,
-   see `creating a personal access token <https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token>`_.
+   see `creating a personal access token <https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens>`_.
 
 #. Save the token to a file:
 
