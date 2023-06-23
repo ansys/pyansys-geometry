@@ -135,3 +135,6 @@ jobs:
 
       - name: Publish latest stable container in AnsysLab registry
         run: docker push ${{ env.LINUX_STABLE_FUJI }}
+
+      - name: Remove images (free space)
+        run: docker image rm ${{ env.LINUX_STABLE_FUJI }} ${{ env.LINUX_STABLE_GHCR }}
