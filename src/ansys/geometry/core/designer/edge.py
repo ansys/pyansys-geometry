@@ -2,6 +2,7 @@
 
 from enum import Enum, unique
 
+from ansys.api.geometry.v0.edges_pb2 import EvaluateRequest
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.api.geometry.v0.models_pb2 import EntityIdentifier
 from beartype.typing import TYPE_CHECKING, List
@@ -9,7 +10,9 @@ from pint import Quantity
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.math import Point3D
 from ansys.geometry.core.misc import DEFAULT_UNITS
+from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -46,13 +49,21 @@ class Edge:
         Active supporting Geometry service instance for design modeling.
     """
 
-    def __init__(self, id: str, curve_type: CurveType, body: "Body", grpc_client: GrpcClient):
+    def __init__(
+        self,
+        id: str,
+        curve_type: CurveType,
+        body: "Body",
+        grpc_client: GrpcClient,
+        is_reversed: bool = False,
+    ):
         """Initialize ``Edge`` class."""
         self._id = id
         self._curve_type = curve_type
         self._body = body
         self._grpc_client = grpc_client
         self._edges_stub = EdgesStub(grpc_client.channel)
+        self._is_reversed = is_reversed
 
     @property
     def id(self) -> str:
@@ -63,6 +74,11 @@ class Edge:
     def _grpc_id(self) -> EntityIdentifier:
         """Entity identifier of this edge on the server side."""
         return EntityIdentifier(id=self._id)
+
+    @property
+    def is_reversed(self) -> bool:
+        """Edge is reversed."""
+        return self._is_reversed
 
     @property
     @protect_grpc
@@ -86,6 +102,32 @@ class Edge:
         self._grpc_client.log.debug("Requesting edge faces from server.")
         grpc_faces = self._edges_stub.GetFaces(self._grpc_id).faces
         return [
-            Face(grpc_face.id, SurfaceType(grpc_face.surface_type), self._body, self._grpc_client)
+            Face(
+                grpc_face.id,
+                SurfaceType(grpc_face.surface_type),
+                self._body,
+                self._grpc_client,
+                grpc_face.is_reversed,
+            )
             for grpc_face in grpc_faces
         ]
+
+    @protect_grpc
+    def evaluate_proportion(self, param: Real) -> Point3D:
+        """
+        Evaluate the edge at a given proportion, a value in the range [0, 1].
+
+        Parameters
+        ----------
+        param: Real
+            The parameter at which to evaluate the edge.
+
+        Returns
+        -------
+        Point3D
+            The position of the evaluation.
+        """
+        response = self._edges_stub.EvaluateProportion(
+            EvaluateRequest(id=self.id, param=param)
+        ).point
+        return Point3D([response.x, response.y, response.z], DEFAULT_UNITS.SERVER_LENGTH)

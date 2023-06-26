@@ -3,14 +3,14 @@
 from enum import Enum, unique
 
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
-from ansys.api.geometry.v0.faces_pb2 import EvaluateRequest, GetNormalRequest
+from ansys.api.geometry.v0.faces_pb2 import EvaluateRequest, GetNormalRequest, ProjectPointRequest
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
 from ansys.api.geometry.v0.models_pb2 import EntityIdentifier
 from beartype.typing import TYPE_CHECKING, List
 from pint import Quantity
 
-from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.connection import GrpcClient, point3d_to_grpc_point
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import Point3D, UnitVector3D
@@ -124,7 +124,14 @@ class Face:
         Active supporting Geometry service instance for design modeling.
     """
 
-    def __init__(self, id: str, surface_type: SurfaceType, body: "Body", grpc_client: GrpcClient):
+    def __init__(
+        self,
+        id: str,
+        surface_type: SurfaceType,
+        body: "Body",
+        grpc_client: GrpcClient,
+        is_reversed: bool = False,
+    ):
         """Initialize ``Face`` class."""
         self._id = id
         self._surface_type = surface_type
@@ -132,6 +139,7 @@ class Face:
         self._grpc_client = grpc_client
         self._faces_stub = FacesStub(grpc_client.channel)
         self._edges_stub = EdgesStub(grpc_client.channel)
+        self._is_reversed = is_reversed
 
     @property
     def id(self) -> str:
@@ -142,6 +150,11 @@ class Face:
     def _grpc_id(self) -> EntityIdentifier:
         """Entity identifier of this face on the server side."""
         return EntityIdentifier(id=self._id)
+
+    @property
+    def is_reversed(self) -> bool:
+        """Face is reversed."""
+        return self._is_reversed
 
     @property
     def body(self) -> "Body":
@@ -283,6 +296,19 @@ class Face:
         edges = []
         for edge_grpc in edges_grpc:
             edges.append(
-                Edge(edge_grpc.id, CurveType(edge_grpc.curve_type), self._body, self._grpc_client)
+                Edge(
+                    edge_grpc.id,
+                    CurveType(edge_grpc.curve_type),
+                    self._body,
+                    self._grpc_client,
+                    edge_grpc.is_reversed,
+                )
             )
         return edges
+
+    def project_point(self, point: Point3D) -> UnitVector3D:
+        """Project a point to the face."""
+        response = self._faces_stub.ProjectPoint(
+            ProjectPointRequest(id=self.id, point=point3d_to_grpc_point(point))
+        )
+        return UnitVector3D([response.normal.x, response.normal.y, response.normal.z])
