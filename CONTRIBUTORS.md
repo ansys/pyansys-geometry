@@ -1,5 +1,3 @@
-# Authors
-
 ## Project Lead
 
 * [Roberto Pastor](https://github.com/RobPasMue)
