@@ -1,8 +1,10 @@
+# Contributors
+
 ## Project Lead
 
 * [Roberto Pastor](https://github.com/RobPasMue)
 
-## Contributors
+## Individual Contributors
 
 * [Jonah Boling](https://github.com/jonahrb)
 * [Matteo Bini](https://github.com/b-matteo)
