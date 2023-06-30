@@ -48,23 +48,23 @@ class DisplacementArrow(Button):
 
         # use the length of the diagonal to adjust the movement speed
         if self.direction == CameraPanDirection.XUP:
-            self.current_camera_pos[0][0] += 0.05 * self.plotter.length
-            self.current_camera_pos[1][0] += 0.05 * self.plotter.length
-        elif self.direction == CameraPanDirection.XDOWN:
             self.current_camera_pos[0][0] -= 0.05 * self.plotter.length
             self.current_camera_pos[1][0] -= 0.05 * self.plotter.length
+        elif self.direction == CameraPanDirection.XDOWN:
+            self.current_camera_pos[0][0] += 0.05 * self.plotter.length
+            self.current_camera_pos[1][0] += 0.05 * self.plotter.length
         elif self.direction == CameraPanDirection.YUP:
-            self.current_camera_pos[0][1] += 0.05 * self.plotter.length
-            self.current_camera_pos[1][1] += 0.05 * self.plotter.length
-        elif self.direction == CameraPanDirection.YDOWN:
             self.current_camera_pos[0][1] -= 0.05 * self.plotter.length
             self.current_camera_pos[1][1] -= 0.05 * self.plotter.length
+        elif self.direction == CameraPanDirection.YDOWN:
+            self.current_camera_pos[0][1] += 0.05 * self.plotter.length
+            self.current_camera_pos[1][1] += 0.05 * self.plotter.length
         elif self.direction == CameraPanDirection.ZUP:
-            self.current_camera_pos[0][2] += 0.05 * self.plotter.length
-            self.current_camera_pos[1][2] += 0.05 * self.plotter.length
-        elif self.direction == CameraPanDirection.ZDOWN:
             self.current_camera_pos[0][2] -= 0.05 * self.plotter.length
             self.current_camera_pos[1][2] -= 0.05 * self.plotter.length
+        elif self.direction == CameraPanDirection.ZDOWN:
+            self.current_camera_pos[0][2] += 0.05 * self.plotter.length
+            self.current_camera_pos[1][2] += 0.05 * self.plotter.length
         else:  # pragma: no cover
             raise NotImplementedError(
                 f"CameraPanDirection {self.direction.name} is not implemented as a widget."
