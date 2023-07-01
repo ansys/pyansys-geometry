@@ -13,6 +13,10 @@ updates:
       - "pyansys-ci-bot"
     commit-message:
       prefix: "MAINT"
+    groups:
+       dev-dependencies:
+          patterns:
+            - "*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -24,3 +28,7 @@ updates:
       - "pyansys-ci-bot"
     commit-message:
       prefix: "MAINT"
+    groups:
+       dev-dependencies:
+          patterns:
+            - "*"
