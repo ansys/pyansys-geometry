@@ -14,9 +14,11 @@ updates:
     commit-message:
       prefix: "MAINT"
     groups:
-       dev-dependencies:
+       grpc-deps:
           patterns:
-            - "*"
+            - "google*"
+            - "grpc*"
+            - "protobuf"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -29,6 +31,6 @@ updates:
     commit-message:
       prefix: "MAINT"
     groups:
-       dev-dependencies:
+       actions:
           patterns:
             - "*"
