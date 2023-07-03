@@ -94,9 +94,10 @@ def test_design_import_simple_case(modeler: Modeler):
 
 
 def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
-    """Test creation of ``Component`` instances and the effects this has."""
+    """Test creation of a component, saving it to a file, and loading it again to a
+    second component and make sure they have the same properties."""
 
-    design_name = "ComponentInstance_Test"
+    design_name = "CarDesign_Test"
     design = modeler.create_design(design_name)
 
     # Create a car
@@ -135,7 +136,7 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     sketch = Sketch(Plane(Point3D([0, 5, 5]))).box(Point2D([5, 2.5]), 10, 5)
     comp1.extrude_sketch("Top", sketch, 5)
 
-    file = tmp_path_factory.mktemp("test_design") / "example.scdocx"
+    file = tmp_path_factory.mktemp("test_design_import") / "two_cars.scdocx"
     design.download(file)
     design2 = modeler.open_file(file)
 

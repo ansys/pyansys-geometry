@@ -32,6 +32,7 @@ if errorlevel 9009 (
 goto end
 
 :html
+%SPHINXBUILD% -M linkcheck %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 %SPHINXBUILD% -M html %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 goto build-examples-py
 

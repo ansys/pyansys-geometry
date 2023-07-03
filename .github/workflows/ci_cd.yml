@@ -18,7 +18,7 @@ env:
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo
-  RESET_IMAGE_CACHE: 0
+  RESET_IMAGE_CACHE: 1
   IS_WORKFLOW_RUNNING: True
 
 concurrency:
@@ -75,7 +75,7 @@ jobs:
   testing-windows:
     name: Testing and coverage (Windows)
     needs: [smoke-tests]
-    runs-on: [self-hosted, pygeometry]
+    runs-on: [self-hosted, Windows, pygeometry]
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: false
@@ -179,7 +179,7 @@ jobs:
   docs:
     name: Documentation
     needs: [docs-style]
-    runs-on: [self-hosted, pygeometry]
+    runs-on: [self-hosted, Windows, pygeometry]
     steps:
       - uses: actions/checkout@v3
 
@@ -347,7 +347,7 @@ jobs:
     needs: [testing-windows, testing-linux, docs]
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     runs-on:
-      group: ansys-internal
+      group: ansys-network
       labels: [self-hosted, Windows, signtool]
 
     steps:
@@ -412,4 +412,3 @@ jobs:
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}

@@ -64,5 +64,5 @@ In order to build your images, follow the next instructions:
      docker images
 
      >>> REPOSITORY                                               TAG                                IMAGE ID       CREATED          SIZE
-     >>> ghcr.io/ansys/geometry                                 *******-latest                     ............   X seconds ago    6.43GB
+     >>> ghcr.io/ansys/geometry                                   *******-latest                     ............   X seconds ago    6.43GB
      >>> ......                                                   ......                             ............   ..............   ......

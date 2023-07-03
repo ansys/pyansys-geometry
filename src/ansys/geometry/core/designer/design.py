@@ -31,13 +31,13 @@ from ansys.geometry.core.connection import (
     point3d_to_grpc_point,
 )
 from ansys.geometry.core.designer.beam import Beam, BeamCircularProfile, BeamProfile
-from ansys.geometry.core.designer.body import Body, MidSurfaceOffsetType, TemplateBody
+from ansys.geometry.core.designer.body import Body, MasterBody, MidSurfaceOffsetType
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
-from ansys.geometry.core.designer.part import Part, TransformedPart
+from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
@@ -570,25 +570,27 @@ class Design(Component):
         created_components = {self.id: self}
         created_bodies = {}
 
-        # Make dummy TP for design since server doesn't have one
-        self._transformed_part = TransformedPart("1", "tp_design", created_parts[self.id])
+        # Make dummy master for design since server doesn't have one
+        self._master_component = MasterComponent("1", "master_design", created_parts[self.id])
 
-        # Create TransformedParts
-        for tp in response.transformed_parts:
-            part = created_parts.get(tp.part_master.id)
-            new_tp = TransformedPart(tp.id, tp.name, part, grpc_matrix_to_matrix(tp.placement))
-            created_tps[tp.id] = new_tp
+        # Create MasterComponents
+        for master in response.transformed_parts:
+            part = created_parts.get(master.part_master.id)
+            new_master = MasterComponent(
+                master.id, master.name, part, grpc_matrix_to_matrix(master.placement)
+            )
+            created_tps[master.id] = new_master
 
         # Create Components
         for comp in response.components:
             parent = created_components.get(comp.parent_id)
-            tp = created_tps.get(comp.master_id)
+            master = created_tps.get(comp.master_id)
             c = Component(
                 comp.name,
                 parent,
                 self._grpc_client,
                 preexisting_id=comp.id,
-                transformed_part=tp,
+                master_component=master,
                 read_existing_comp=True,
             )
             created_components[comp.id] = c
@@ -598,7 +600,7 @@ class Design(Component):
         # TODO: is_surface?
         for body in response.bodies:
             part = created_parts.get(body.parent_id)
-            tb = TemplateBody(body.id, body.name, self._grpc_client)
+            tb = MasterBody(body.id, body.name, self._grpc_client)
             part.bodies.append(tb)
             created_bodies[body.id] = tb
 
@@ -647,7 +649,7 @@ class Design(Component):
             num_created_shared_topologies += 1
 
         self._grpc_client.log.debug(f"Parts created: {len(created_parts)}")
-        self._grpc_client.log.debug(f"TransformedParts created: {len(created_tps) + 1}")
+        self._grpc_client.log.debug(f"MasterComponents created: {len(created_tps) + 1}")
         self._grpc_client.log.debug(f"Components created: {len(created_components)}")
         self._grpc_client.log.debug(f"Bodies created: {len(created_bodies)}")
         self._grpc_client.log.debug(f"Materials created: {len(self.materials)}")
