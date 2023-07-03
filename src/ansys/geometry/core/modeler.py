@@ -11,6 +11,7 @@ from grpc import Channel
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
+from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
 
@@ -187,16 +188,46 @@ class Modeler:
         lines.append(str(self._client))
         return "\n".join(lines)
 
-    def run_script_file(self, file_path: str):
-        """Run script file on the server."""
+    @protect_grpc
+    def run_discovery_script_file(
+        self, file_path: str, script_args: dict[str, str]
+    ) -> dict[str, str]:
+        """
+        Run a Discovery script file.
+
+        The implied API version of the script should match the API version of the running
+        Geometry Service. Earliest DMS API version supported: `>=23.2.1`.
+
+        Parameters
+        ----------
+        file_path : str
+            The path of the file. Must include extension.
+        script_args : dict[str, str]
+            Arguments to pass to the script.
+
+        Returns
+        -------
+        dict[str, str]
+            Values returned from the script.
+
+        Raises
+        ------
+        GeometryRuntimeError
+            If the Discovery script fails to run. Otherwise, assume the script ran successfully.
+        """
         serv_path = self._upload_file(file_path)
         ga_stub = GeometryApplicationStub(self._client.channel)
         request = RunScriptFileRequest(
             script_path=serv_path,
-            script_args=None,
-            api_version=241,
+            script_args=script_args,
         )
 
         self.client.log.debug(f"running script file {file_path}...")
         response = ga_stub.RunScriptFile(request)
-        return response
+
+        if not response.success:
+            raise GeometryRuntimeError(response.message)
+
+        self.client.log.debug(f"script message: {response.message}")
+
+        return response.values
