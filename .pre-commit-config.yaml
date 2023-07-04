@@ -1,42 +1,37 @@
+exclude: "tests/integration/files"
 repos:
 
 - repo: https://github.com/psf/black
   rev: 23.3.0  # IF VERSION CHANGES --> MODIFY "blacken-docs" MANUALLY AS WELL!!
   hooks:
   - id: black
-    exclude: "tests/integration/files"
 
 - repo: https://github.com/adamchainz/blacken-docs
   rev: 1.13.0
   hooks:
   - id: blacken-docs
     additional_dependencies: [black==23.3.0]
-    exclude: "tests/integration/files"
 
 - repo: https://github.com/pycqa/isort
   rev: 5.12.0
   hooks:
   - id: isort
-    exclude: "tests/integration/files"
 
 - repo: https://github.com/PyCQA/flake8
   rev: 6.0.0
   hooks:
   - id: flake8
-    exclude: "tests/integration/files"
 
 - repo: https://github.com/PyCQA/docformatter
   rev: v1.6.3
   hooks:
   - id: docformatter
     additional_dependencies: [tomli]
-    exclude: "tests/integration/files"
 
 - repo: https://github.com/codespell-project/codespell
   rev: v2.2.4
   hooks:
   - id: codespell
-    exclude: "tests/integration/files"
 
 - repo: https://github.com/pycqa/pydocstyle
   rev: 6.3.0
@@ -50,15 +45,11 @@ repos:
   hooks:
   - id: check-merge-conflict
   - id: debug-statements
-    exclude: "tests/integration/files"
   - id: check-yaml
-    exclude: "tests/integration/files"
   - id: trailing-whitespace
-    exclude: "tests/integration/files"
 
 # this validates our github workflow files
 - repo: https://github.com/python-jsonschema/check-jsonschema
   rev: 0.22.0
   hooks:
     - id: check-github-workflows
-      exclude: "tests/integration/files"
