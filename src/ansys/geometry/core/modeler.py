@@ -228,6 +228,6 @@ class Modeler:
         if not response.success:
             raise GeometryRuntimeError(response.message)
 
-        self.client.log.debug(f"script message: {response.message}")
+        self.client.log.debug(f"Script result message: {response.message}")
 
         return response.values
