@@ -25,7 +25,7 @@ def pytest_addoption(parser):
     parser.addoption(
         "--service-os",
         action="store",
-        default="no",
+        default="windows",
         help="Geometry service OS running. Options: 'windows' or 'linux'. By default, 'windows'.",
         choices=("windows", "linux"),
     )

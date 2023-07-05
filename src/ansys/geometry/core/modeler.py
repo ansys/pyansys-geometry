@@ -222,12 +222,12 @@ class Modeler:
             script_args=script_args,
         )
 
-        self.client.log.debug(f"running script file {file_path}...")
+        self.client.log.debug(f"Running Discovery script file at {file_path}...")
         response = ga_stub.RunScriptFile(request)
 
         if not response.success:
             raise GeometryRuntimeError(response.message)
 
-        self.client.log.debug(f"script message: {response.message}")
+        self.client.log.debug(f"Script result message: {response.message}")
 
         return response.values
