@@ -412,3 +412,9 @@ jobs:
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
+
+  test_docker_build:
+    name: Test Docker images build
+    needs: [release]
+    uses: ./.github/workflows/docker_test_build.yml
+    secrets: inherit
