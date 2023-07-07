@@ -9,7 +9,7 @@ from ansys.geometry.core.sketch import Sketch
 
 
 # Python (.py)
-def test_python_simple_script(modeler: Modeler):
+def test_python_simple_script(modeler: Modeler, skip_not_on_linux_service):
     args = {}
     result = modeler.run_discovery_script_file(
         "./tests/integration/files/disco_scripts/simple_script.py", args
@@ -21,7 +21,7 @@ def test_python_simple_script(modeler: Modeler):
     assert pattern_doc.match(result["design"])
 
 
-def test_python_failing_script(modeler: Modeler):
+def test_python_failing_script(modeler: Modeler, skip_not_on_linux_service):
     args = {}
     with pytest.raises(GeometryRuntimeError):
         modeler.run_discovery_script_file(
@@ -29,7 +29,7 @@ def test_python_failing_script(modeler: Modeler):
         )
 
 
-def test_python_integrated_script(modeler: Modeler):
+def test_python_integrated_script(modeler: Modeler, skip_not_on_linux_service):
     # Tests the workflow of creating a design in PyGeometry, modifying it with a script,
     # and continuing to use it in PyGeometry
     design = modeler.create_design("Integrated_Example")
@@ -43,7 +43,7 @@ def test_python_integrated_script(modeler: Modeler):
 
 
 # SpaceClaim (.scscript)
-def test_scscript_simple_script(modeler: Modeler):
+def test_scscript_simple_script(modeler: Modeler, skip_not_on_linux_service):
     args = {}
     result = modeler.run_discovery_script_file(
         "./tests/integration/files/disco_scripts/simple_script.scscript", args
@@ -57,7 +57,7 @@ def test_scscript_simple_script(modeler: Modeler):
 
 
 # Discovery (.dscript)
-def test_dscript_simple_script(modeler: Modeler):
+def test_dscript_simple_script(modeler: Modeler, skip_not_on_linux_service):
     args = {}
     result = modeler.run_discovery_script_file(
         "./tests/integration/files/disco_scripts/simple_script.dscript", args
