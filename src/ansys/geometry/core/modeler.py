@@ -6,7 +6,7 @@ from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.geometryapplication_pb2 import RunScriptFileRequest
 from ansys.api.geometry.v0.geometryapplication_pb2_grpc import GeometryApplicationStub
-from beartype.typing import TYPE_CHECKING, Optional, Union
+from beartype.typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
 from grpc import Channel
 
 from ansys.geometry.core.connection.client import GrpcClient
@@ -190,8 +190,8 @@ class Modeler:
 
     @protect_grpc
     def run_discovery_script_file(
-        self, file_path: str, script_args: dict[str, str], import_design=False
-    ) -> tuple[dict[str, str], Optional["Design"]]:
+        self, file_path: str, script_args: Dict[str, str], import_design=False
+    ) -> Tuple[Dict[str, str], Optional["Design"]]:
         """
         Run a Discovery script file.
 
@@ -204,17 +204,18 @@ class Modeler:
             The path of the file. Must include extension.
         script_args : dict[str, str]
             Arguments to pass to the script.
-        import_design : bool, default=False
-            Refresh the current design from the service. Set this to True if the script is expected
-            to modify the existing design, in order to retrieve up-to-date design data. If it is
-            set to False and the script modifies the current design, the design may be out-of-sync.
+        import_design : bool, optional
+            Refresh the current design from the service. Set this to ``True`` if the script
+            is expected to modify the existing design, in order to retrieve up-to-date design
+            data. If it is set to ``False`` and the script modifies the current design, the
+            design may be out-of-sync.
 
         Returns
         -------
         dict[str, str]
             Values returned from the script.
         Design, optional
-            The up-to-date current design. This is only returned if `import_design=True`.
+            The up-to-date current design. This is only returned if ``import_design=True``.
 
         Raises
         ------
