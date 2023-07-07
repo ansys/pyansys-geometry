@@ -16,7 +16,8 @@ WORKDIR /app
 # Add the binary files from the latest release
 COPY windows-binaries.zip .
 RUN mkdir tmp_folder && tar -xf windows-binaries.zip -C tmp_folder
-RUN for /R "tmp_folder" %f in (*) do move /Y "%f" .
+RUN xcopy "tmp_folder\DockerWindows\bin\x64\Release_Headless\net472\*" ".\" /s /e /i /h
+RUN xcopy "tmp_folder\DockerWindows\*" ".\"
 RUN del windows-binaries.zip && rmdir /s /q tmp_folder
 
 # Defining environment variables
