@@ -4,11 +4,14 @@ from pathlib import Path
 
 from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from beartype.typing import TYPE_CHECKING, Optional, Union
+from ansys.api.geometry.v0.geometryapplication_pb2 import RunScriptFileRequest
+from ansys.api.geometry.v0.geometryapplication_pb2_grpc import GeometryApplicationStub
+from beartype.typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
 from grpc import Channel
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
+from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
 
@@ -184,3 +187,57 @@ class Modeler:
         lines.append("")
         lines.append(str(self._client))
         return "\n".join(lines)
+
+    @protect_grpc
+    def run_discovery_script_file(
+        self, file_path: str, script_args: Dict[str, str], import_design=False
+    ) -> Tuple[Dict[str, str], Optional["Design"]]:
+        """
+        Run a Discovery script file.
+
+        The implied API version of the script should match the API version of the running
+        Geometry Service. Earliest DMS API version supported: `>=23.2.1`.
+
+        Parameters
+        ----------
+        file_path : str
+            The path of the file. Must include extension.
+        script_args : dict[str, str]
+            Arguments to pass to the script.
+        import_design : bool, optional
+            Refresh the current design from the service. Set this to ``True`` if the script
+            is expected to modify the existing design, in order to retrieve up-to-date design
+            data. If it is set to ``False`` and the script modifies the current design, the
+            design may be out-of-sync.
+
+        Returns
+        -------
+        dict[str, str]
+            Values returned from the script.
+        Design, optional
+            The up-to-date current design. This is only returned if ``import_design=True``.
+
+        Raises
+        ------
+        GeometryRuntimeError
+            If the Discovery script fails to run. Otherwise, assume the script ran successfully.
+        """
+        serv_path = self._upload_file(file_path)
+        ga_stub = GeometryApplicationStub(self._client.channel)
+        request = RunScriptFileRequest(
+            script_path=serv_path,
+            script_args=script_args,
+        )
+
+        self.client.log.debug(f"Running Discovery script file at {file_path}...")
+        response = ga_stub.RunScriptFile(request)
+
+        if not response.success:
+            raise GeometryRuntimeError(response.message)
+
+        self.client.log.debug(f"Script result message: {response.message}")
+
+        if import_design:
+            return (response.values, self.read_existing_design())
+        else:
+            return response.values
