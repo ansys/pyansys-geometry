@@ -10,6 +10,7 @@ import grpc
 from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
 
+from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
 from ansys.geometry.core.connection.local_instance import LocalDockerInstance
 from ansys.geometry.core.logger import LOG as logger
@@ -97,6 +98,7 @@ class GrpcClient:
         timeout: Optional[Real] = 60,
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
+        backend_type: Optional[BackendType] = BackendType.GEOMETRY_SERVICE
     ):
         """Initialize the ``GrpcClient`` object."""
         self._closed = False
@@ -126,6 +128,13 @@ class GrpcClient:
             if isinstance(logging_file, Path):
                 logging_file = str(logging_file)
             self._log.log_to_file(filename=logging_file, level=logging_level)
+
+        self._backend_type = backend_type
+
+    @property
+    def backend_type(self) -> BackendType:
+        """Backend's type (Windows DMS, Linux DMS, Discovery or SpaceClaim)."""
+        return self._backend_type
 
     @property
     def channel(self) -> grpc.Channel:

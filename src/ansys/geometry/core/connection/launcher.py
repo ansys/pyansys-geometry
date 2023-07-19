@@ -1,6 +1,7 @@
 """Provides for connecting to Geometry service instances."""
 from beartype.typing import TYPE_CHECKING, Dict, Optional
 
+from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.defaults import DEFAULT_PORT
 from ansys.geometry.core.connection.local_instance import (
     _HAS_DOCKER,
@@ -22,6 +23,11 @@ from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
 
+import os
+
+os.environ["ANSYS_PLATFORM_INSTANCEMANAGEMENT_CONFIG"] = (
+    os.path.dirname(__file__) + r"/pim_configuration.json"
+)
 
 def launch_modeler(**kwargs: Optional[Dict]) -> "Modeler":
     """Start the ``Modeler`` for PyGeometry.
@@ -174,3 +180,96 @@ def launch_local_modeler(
 
     # Once the local instance is ready... return the Modeler
     return Modeler(host="localhost", port=port, local_instance=local_instance)
+
+def launch_discovery(version: Optional[str] = None, **kwargs: Optional[Dict]) -> "Modeler":
+    """
+    Start Discovery remotely using the PIM API.
+
+    When calling this method, you must ensure that you are in an
+    environment where PyPIM is configured. PyPIM is the Pythonic
+    interface to communicate with the PIM (Product Instance Management)
+    API. You can use the
+    :func:`pypim.is_configured <ansys.platform.instancemanagement.is_configured>`
+    method to check if PyPIM is configured.
+
+    Parameters
+    ----------
+    version : str, default: None
+        Version of Discovery to run in the three-digit format.
+        For example, "212". If you do not specify the version, the server
+        chooses the version.
+    **kwargs : dict, default: None
+        Launching functions keyword arguments. For allowable keyword arguments, see the
+        :func:`launch_discovery` and :func:`launch_discovery` methods. Some of
+        them might be unused.
+
+    Returns
+    -------
+    ansys.geometry.core.Modeler
+        Instance of Modeler.
+    """
+    from ansys.geometry.core.modeler import Modeler
+
+    check_type(version, (type(None), str))
+
+    if not _HAS_PIM:  # pragma: no cover
+        raise ModuleNotFoundError(
+            "The package 'ansys-platform-instancemanagement' is required to use this function."
+        )
+
+    pim = pypim.connect()
+    instance = pim.create_instance(product_name="discovery", product_version=version)
+    instance.wait_for_ready()
+    channel = instance.build_grpc_channel(
+        options=[
+            ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
+        ]
+    )
+    return Modeler(channel=channel, remote_instance=instance , backend_type=BackendType.DISCOVERY)
+
+
+def launch_spaceclaim(version: Optional[str] = None, **kwargs: Optional[Dict]) -> "Modeler":
+    """
+    Start SpaceClaim remotely using the PIM API.
+
+    When calling this method, you must ensure that you are in an
+    environment where PyPIM is configured. PyPIM is the Pythonic
+    interface to communicate with the PIM (Product Instance Management)
+    API. You can use the
+    :func:`pypim.is_configured <ansys.platform.instancemanagement.is_configured>`
+    method to check if PyPIM is configured.
+
+    Parameters
+    ----------
+    version : str, default: None
+        Version of SpaceClaim to run in the three-digit format.
+        For example, "212". If you do not specify the version, the server
+        chooses the version.
+    **kwargs : dict, default: None
+        Launching functions keyword arguments. For allowable keyword arguments, see the
+        :func:`launch_spaceclaim` and :func:`launch_spaceclaim` methods. Some of
+        them might be unused.
+
+    Returns
+    -------
+    ansys.geometry.core.Modeler
+        Instance of Modeler.
+    """
+    from ansys.geometry.core.modeler import Modeler
+
+    check_type(version, (type(None), str))
+
+    if not _HAS_PIM:  # pragma: no cover
+        raise ModuleNotFoundError(
+            "The package 'ansys-platform-instancemanagement' is required to use this function."
+        )
+
+    pim = pypim.connect()
+    instance = pim.create_instance(product_name="scdm", product_version=version)
+    instance.wait_for_ready()
+    channel = instance.build_grpc_channel(
+        options=[
+            ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
+        ]
+    )
+    return Modeler(channel=channel, remote_instance=instance, backend_type=BackendType.SPACECLAIM)

@@ -1,0 +1,10 @@
+{
+    "version": 1,
+    "pim": {
+        "uri": "dns:localhost:5000",
+        "headers": {
+            "metadata-info": "value"
+        },
+        "tls": false
+    }
+}
