@@ -289,7 +289,7 @@ def launch_spaceclaim(version: Optional[str] = "241", **kwargs: Optional[Dict]) 
 
     Parameters
     ----------
-    version : str, default: None
+    version : str, default: "241"
         Version of SpaceClaim to run in the three-digit format.
         For example, "212". If you do not specify the version, the server
         chooses the version.
