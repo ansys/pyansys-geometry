@@ -61,6 +61,8 @@ class DesignFileFormat(Enum):
     PARASOLID_TEXT = "PARASOLID_TEXT", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_TEXT
     PARASOLID_BIN = "PARASOLID_BIN", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_BINARY
     FMD = "FMD", PartExportFormat.PARTEXPORTFORMAT_FMD
+    STEP = "STEP", PartExportFormat.PARTEXPORTFORMAT_STEP
+    IGES = "IGES", PartExportFormat.PARTEXPORTFORMAT_IGES
     INVALID = "INVALID", None
 
 
@@ -211,6 +213,8 @@ class Design(Component):
             DesignFileFormat.PARASOLID_TEXT,
             DesignFileFormat.PARASOLID_BIN,
             DesignFileFormat.FMD,
+            DesignFileFormat.STEP,
+            DesignFileFormat.IGES,
         ]:
             response = self._design_stub.Export(ExportRequest(format=format.value[1]))
             received_bytes += response.data
