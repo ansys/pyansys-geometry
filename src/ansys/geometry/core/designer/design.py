@@ -9,11 +9,12 @@ from ansys.api.geometry.v0.commands_pb2 import (
     CreateBeamCircularProfileRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.designs_pb2 import ExportRequest, NewRequest, SaveAsRequest
-from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
+from ansys.api.dbu.v0.designs_pb2 import ExportRequest, NewRequest, SaveAsRequest
+from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
+from google.protobuf.empty_pb2 import Empty
 from ansys.api.geometry.v0.materials_pb2 import AddToDocumentRequest
 from ansys.api.geometry.v0.materials_pb2_grpc import MaterialsStub
-from ansys.api.geometry.v0.models_pb2 import Empty, EntityIdentifier
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.models_pb2 import Material as GRPCMaterial
 from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialProperty
 from ansys.api.geometry.v0.models_pb2 import PartExportFormat
