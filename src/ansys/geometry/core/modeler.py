@@ -63,7 +63,7 @@ class Modeler:
         timeout: Optional[Real] = 60,
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
-        backend_type: Optional[BackendType] = BackendType.GEOMETRY_SERVICE
+        backend_type: Optional[BackendType] = BackendType.GEOMETRY_SERVICE,
     ):
         """Initialize ``Modeler`` class."""
         self._client = GrpcClient(
