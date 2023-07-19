@@ -243,7 +243,7 @@ def launch_geometry_service(version: Optional[str] = "241", **kwargs: Optional[D
 
     Parameters
     ----------
-    version : str, default: None
+    version : str, default: "241"
         Version of GeometryService to run in the three-digit format.
         For example, "232". If you do not specify the version, the server
         chooses the version.
