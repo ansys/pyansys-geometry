@@ -85,6 +85,8 @@ class GrpcClient:
         Logging level to apply to the client.
     logging_file : str or Path, default: None
         File to output the log to, if requested.
+    backend_type: BackendType, default: BackendType.GEOMETRY_SERVICE
+        Which kind of backend PyGeometry is communicating with.
     """
 
     @check_input_types
@@ -133,7 +135,7 @@ class GrpcClient:
 
     @property
     def backend_type(self) -> BackendType:
-        """Backend's type (Windows DMS, Linux DMS, Discovery or SpaceClaim)."""
+        """Backend's type (Windows DMS, Linux Geometry Service, Discovery or SpaceClaim)."""
         return self._backend_type
 
     @property
