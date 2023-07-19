@@ -75,7 +75,7 @@ class Modeler:
             timeout=timeout,
             logging_level=logging_level,
             logging_file=logging_file,
-            backend_type= backend_type
+            backend_type=backend_type,
         )
 
         # Design[] maintaining references to all designs within the modeler workspace

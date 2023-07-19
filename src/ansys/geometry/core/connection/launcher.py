@@ -29,6 +29,7 @@ os.environ["ANSYS_PLATFORM_INSTANCEMANAGEMENT_CONFIG"] = (
     os.path.dirname(__file__) + r"/pim_configuration.json"
 )
 
+
 def launch_modeler(**kwargs: Optional[Dict]) -> "Modeler":
     """Start the ``Modeler`` for PyGeometry.
 
@@ -181,6 +182,7 @@ def launch_local_modeler(
     # Once the local instance is ready... return the Modeler
     return Modeler(host="localhost", port=port, local_instance=local_instance)
 
+
 def launch_discovery(version: Optional[str] = None, **kwargs: Optional[Dict]) -> "Modeler":
     """
     Start Discovery remotely using the PIM API.
@@ -225,7 +227,7 @@ def launch_discovery(version: Optional[str] = None, **kwargs: Optional[Dict]) ->
             ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
         ]
     )
-    return Modeler(channel=channel, remote_instance=instance , backend_type=BackendType.DISCOVERY)
+    return Modeler(channel=channel, remote_instance=instance, backend_type=BackendType.DISCOVERY)
 
 
 def launch_spaceclaim(version: Optional[str] = None, **kwargs: Optional[Dict]) -> "Modeler":
