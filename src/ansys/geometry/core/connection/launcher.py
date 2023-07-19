@@ -183,7 +183,7 @@ def launch_local_modeler(
     return Modeler(host="localhost", port=port, local_instance=local_instance)
 
 
-def launch_discovery(version: Optional[str] = None, **kwargs: Optional[Dict]) -> "Modeler":
+def launch_discovery(version: Optional[str] = "241", **kwargs: Optional[Dict]) -> "Modeler":
     """
     Start Discovery remotely using the PIM API.
 
@@ -230,7 +230,53 @@ def launch_discovery(version: Optional[str] = None, **kwargs: Optional[Dict]) ->
     return Modeler(channel=channel, remote_instance=instance, backend_type=BackendType.DISCOVERY)
 
 
-def launch_spaceclaim(version: Optional[str] = None, **kwargs: Optional[Dict]) -> "Modeler":
+def launch_geometry_service(version: Optional[str] = "241", **kwargs: Optional[Dict]) -> "Modeler":
+    """
+    Start the GeometryService remotely using the PIM API.
+
+    When calling this method, you must ensure that you are in an
+    environment where PyPIM is configured. PyPIM is the Pythonic
+    interface to communicate with the PIM (Product Instance Management)
+    API. You can use the
+    :func:`pypim.is_configured <ansys.platform.instancemanagement.is_configured>`
+    method to check if PyPIM is configured.
+
+    Parameters
+    ----------
+    version : str, default: None
+        Version of GeometryService to run in the three-digit format.
+        For example, "232". If you do not specify the version, the server
+        chooses the version.
+    **kwargs : dict, default: None
+        Launching functions keyword arguments. For allowable keyword arguments, see the
+        :func:`launch_spaceclaim` and :func:`launch_spaceclaim` methods. Some of
+        them might be unused.
+
+    Returns
+    -------
+    ansys.geometry.core.Modeler
+        Instance of Modeler.
+    """
+    from ansys.geometry.core.modeler import Modeler
+
+    check_type(version, (type(None), str))
+
+    if not _HAS_PIM:  # pragma: no cover
+        raise ModuleNotFoundError(
+            "The package 'ansys-platform-instancemanagement' is required to use this function."
+        )
+
+    pim = pypim.connect()
+    instance = pim.create_instance(product_name="geometryservice", product_version=version)
+    instance.wait_for_ready()
+    channel = instance.build_grpc_channel(
+        options=[
+            ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
+        ]
+    )
+    return Modeler(channel=channel, remote_instance=instance, backend_type=BackendType.DMS)
+
+def launch_spaceclaim(version: Optional[str] = "241", **kwargs: Optional[Dict]) -> "Modeler":
     """
     Start SpaceClaim remotely using the PIM API.
 
