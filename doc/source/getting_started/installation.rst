@@ -27,15 +27,15 @@ PyPI
 Before installing PyGeometry, make sure you have the latest version of
 `pip`_ with:
 
-   .. code:: bash
+.. code:: bash
 
-      python -m pip install -U pip
+   python -m pip install -U pip
 
 Then, install PyGeometry with:
 
-   .. code:: bash
+.. code:: bash
 
-      python -m pip install ansys-geometry-core
+   python -m pip install ansys-geometry-core
 
 .. caution::
 
@@ -58,17 +58,17 @@ GitHub
 
 You can install the latest release from the `PyGeometry`_ repository on GitHub:
 
-   .. code:: bash
+.. code:: bash
 
-      git clone https://github.com/ansys/pygeometry
-      cd pygeometry
-      pip install -e .
+   git clone https://github.com/ansys/pygeometry
+   cd pygeometry
+   pip install -e .
 
 You can verify your development installation by running:
 
-   .. code:: bash
+.. code:: bash
 
-      tox
+   tox
 
 Install in offline mode
 -----------------------
