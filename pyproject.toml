@@ -75,7 +75,7 @@ doc = [
     "myst-parser==1.0.0", # BLOCKED BY jupytext
     "nbconvert==7.7.1",
     "nbsphinx==0.9.2",
-    "notebook==6.5.4",
+    "notebook==7.0.0",
     "numpydoc==1.5.0",
     "panel==1.2.0",
     "pyvista[trame]==0.40.1",
