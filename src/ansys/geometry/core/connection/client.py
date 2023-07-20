@@ -135,7 +135,7 @@ class GrpcClient:
 
     @property
     def backend_type(self) -> BackendType:
-        """Backend's type (Windows DMS, Linux Geometry Service, Discovery or SpaceClaim)."""
+        """Backend's type (Windows Service, Linux Service, Discovery or SpaceClaim)."""
         return self._backend_type
 
     @property

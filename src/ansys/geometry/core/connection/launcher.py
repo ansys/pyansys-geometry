@@ -274,7 +274,7 @@ def launch_geometry_service(version: Optional[str] = "241", **kwargs: Optional[D
             ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
         ]
     )
-    return Modeler(channel=channel, remote_instance=instance, backend_type=BackendType.DMS)
+    return Modeler(channel=channel, remote_instance=instance, backend_type=BackendType.WINDOWS_SERVICE)
 
 def launch_spaceclaim(version: Optional[str] = "241", **kwargs: Optional[Dict]) -> "Modeler":
     """
