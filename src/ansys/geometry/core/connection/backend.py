@@ -7,5 +7,5 @@ class BackendType(Enum):
 
     DISCOVERY = 0, "product", "discovery"
     SPACECLAIM = 1, "product", "spaceclaim"
-    DMS = 2, "service", "spaceclaim_headless"
-    GEOMETRY_SERVICE = 3, "service"
+    WINDOWS_SERVICE = 2, "service", "spaceclaim_headless"
+    LINUX_SERVICE = 3, "service"
