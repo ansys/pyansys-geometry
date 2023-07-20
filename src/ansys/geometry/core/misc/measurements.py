@@ -129,7 +129,8 @@ DEFAULT_UNITS = DefaultUnitsClass()
 
 
 class Measurement(PhysicalQuantity):
-    """Provides the ``PhysicalQuantity`` subclass for holding a measurement.
+    """
+    Provides the ``PhysicalQuantity`` subclass for holding a measurement.
 
     Parameters
     ----------
@@ -175,7 +176,8 @@ class Measurement(PhysicalQuantity):
 
 
 class Distance(Measurement):
-    """Provides the ``Measurement`` subclass for holding a distance.
+    """
+    Provides the ``Measurement`` subclass for holding a distance.
 
     Parameters
     ----------
@@ -193,7 +195,8 @@ class Distance(Measurement):
 
 
 class Angle(Measurement):
-    """Provides the ``Measurement`` subclass for holding an angle.
+    """
+    Provides the ``Measurement`` subclass for holding an angle.
 
     Parameters
     ----------

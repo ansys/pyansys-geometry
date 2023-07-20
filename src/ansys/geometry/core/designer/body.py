@@ -489,7 +489,8 @@ class MasterBody(IBody):
         self._tessellation = None
 
     def reset_tessellation_cache(func):
-        """Decorate ``MasterBody`` methods that require a tessellation cache update.
+        """
+        Decorate ``MasterBody`` methods that require a tessellation cache update.
 
         Parameters
         ----------
@@ -778,7 +779,8 @@ class Body(IBody):
         self._template = template
 
     def reset_tessellation_cache(func):
-        """Decorate ``Body`` methods that require a tessellation cache update.
+        """
+        Decorate ``Body`` methods that require a tessellation cache update.
 
         Parameters
         ----------

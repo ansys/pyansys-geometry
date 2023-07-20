@@ -144,7 +144,8 @@ class Frame:
 
     @check_input_types
     def transform_point2d_local_to_global(self, point: Point2D) -> Point3D:
-        """Transform a ``Point2D`` to a global ``Point3D`` object.
+        """
+        Transform a ``Point2D`` to a global ``Point3D`` object.
 
         Express a local, plane-contained ``Point2D`` object in the global
         coordinate system, thus representing it as a ``Point3D`` object.

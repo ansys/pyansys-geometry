@@ -24,7 +24,8 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 def launch_modeler(**kwargs: Optional[Dict]) -> "Modeler":
-    """Start the ``Modeler`` for PyGeometry.
+    """
+    Start the ``Modeler`` for PyGeometry.
 
     Parameters
     ----------

@@ -183,7 +183,8 @@ class Vector3D(np.ndarray):
 
     @check_input_types
     def __mul__(self, other: Union["Vector3D", Real]) -> Union["Vector3D", Real]:
-        """Overload * operator with dot product.
+        """
+        Overload * operator with dot product.
 
         Notes
         -----
@@ -373,7 +374,8 @@ class Vector2D(np.ndarray):
 
     @check_input_types
     def __mul__(self, other: Union["Vector2D", Real]) -> Union["Vector2D", Real]:
-        """Overload * operator with dot product.
+        """
+        Overload * operator with dot product.
 
         Notes
         -----
