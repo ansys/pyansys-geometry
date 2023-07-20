@@ -1013,6 +1013,8 @@ class Body(IBody):
 
         return projected_faces
 
+    @check_input_types
+    @protect_grpc
     def imprint_projected_curves(
         self,
         direction: UnitVector3D,
