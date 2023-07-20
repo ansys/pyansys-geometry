@@ -236,8 +236,7 @@ class IBody(ABC):
         """
         return
 
-    @check_input_types
-    @protect_grpc
+    @abstractmethod
     def imprint_projected_curves(
         self,
         direction: UnitVector3D,
