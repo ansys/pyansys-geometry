@@ -888,6 +888,8 @@ def test_project_and_imprint_curves(modeler: Modeler, skip_not_on_linux_service)
     body = comp.extrude_sketch(name="MyBox", sketch=sketch, distance=Quantity(50, UNITS.mm))
     body_faces = body.faces
 
+    body_copy = body.copy(design, "copy")
+
     # Project the curves on the box
     faces = body.project_curves(direction=UNITVECTOR3D_Z, sketch=imprint_sketch, closest_face=True)
     assert len(faces) == 1
@@ -931,6 +933,12 @@ def test_project_and_imprint_curves(modeler: Modeler, skip_not_on_linux_service)
     # Make sure we have occurrence faces, not master
     assert faces[0].id not in [face.id for face in body._template.faces]
     assert new_faces[0].id not in [face.id for face in body._template.faces]
+
+    faces = body_copy.imprint_projected_curves(
+        direction=UNITVECTOR3D_Z, sketch=imprint_sketch, closest_face=True
+    )
+    assert len(faces) == 2
+    assert len(body_copy.faces) == 8
 
 
 def test_copy_body(modeler: Modeler, skip_not_on_linux_service):

@@ -237,6 +237,46 @@ class IBody(ABC):
         return
 
     @abstractmethod
+    def imprint_projected_curves(
+        self,
+        direction: UnitVector3D,
+        sketch: Sketch,
+        closest_face: bool,
+        only_one_curve: Optional[bool] = False,
+    ) -> List[Face]:  # noqa: D102
+        """
+        Project and imprint specified geometries onto the body.
+
+        This method combines `project_curves()` and `imprint_curves()` into one method. It is much
+        more performant than calling them back-to-back when dealing with many curves. Since it is a
+        specialized function, it only returns the faces from the imprint operation, not the edges.
+
+        Parameters
+        ----------
+        direction: UnitVector3D
+            Establishes the direction of the projection.
+        sketch: Sketch
+            All curves to project on the body.
+        closest_face: bool
+            Whether to target the closest face with the projection.
+        only_one_curve: bool, default: False
+            Whether to project only one curve of the entire sketch. When
+            ``True``, only one curve is projected.
+
+        Notes
+        -----
+        The ``only_one_curve`` parameter allows you to optimize the server call because
+        projecting curves is an expensive operation. This reduces the workload on the
+        server side.
+
+        Returns
+        -------
+        List[Face]
+            All imprinted faces from the operation.
+        """
+        return
+
+    @abstractmethod
     def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]) -> None:
         """
         Translate the geometry body in the specified direction by a given distance.
@@ -636,6 +676,22 @@ class MasterBody(IBody):
             """
         )
 
+    @check_input_types
+    @protect_grpc
+    def imprint_projected_curves(
+        self,
+        direction: UnitVector3D,
+        sketch: Sketch,
+        closest_face: bool,
+        only_one_curve: Optional[bool] = False,
+    ) -> List[Face]:  # noqa: D102
+        raise NotImplementedError(
+            """
+            imprint_projected_curves is not implemented at the MasterBody level.
+            Instead, call this method on a Body.
+            """
+        )
+
     @protect_grpc
     @check_input_types
     @reset_tessellation_cache
@@ -956,6 +1012,36 @@ class Body(IBody):
         ]
 
         return projected_faces
+
+    @check_input_types
+    @protect_grpc
+    def imprint_projected_curves(
+        self,
+        direction: UnitVector3D,
+        sketch: Sketch,
+        closest_face: bool,
+        only_one_curve: Optional[bool] = False,
+    ) -> List[Face]:  # noqa: D102
+        curves = sketch_shapes_to_grpc_geometries(
+            sketch._plane, sketch.edges, sketch.faces, only_one_curve=only_one_curve
+        )
+        self._template._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
+
+        response = self._template._commands_stub.ImprintProjectedCurves(
+            ProjectCurvesRequest(
+                body=self._id,
+                curves=curves,
+                direction=unit_vector_to_grpc_direction(direction),
+                closest_face=closest_face,
+            )
+        )
+
+        imprinted_faces = [
+            Face(grpc_face.id, grpc_face.surface_type, self, self._template._grpc_client)
+            for grpc_face in response.faces
+        ]
+
+        return imprinted_faces
 
     def translate(
         self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
