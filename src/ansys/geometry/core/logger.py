@@ -269,7 +269,7 @@ class PyGeometryPercentStyle(logging.PercentStyle):
 
 
 class PyGeometryFormatter(logging.Formatter):
-    """Provides the customized ``Formatter`` class for overwriting default format styles."""
+    """Provides a ``Formatter`` class for overwriting default format styles."""
 
     def __init__(
         self,

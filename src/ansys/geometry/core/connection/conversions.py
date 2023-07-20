@@ -347,7 +347,7 @@ def sketch_segment_to_grpc_line(segment: SketchSegment, plane: Plane) -> GRPCLin
 
 
 def tess_to_pd(tess: Tessellation) -> "PolyData":
-    """Convert an ``ansys.api.geometry.Tessellation`` class to a `pyvista.PolyData` class."""
+    """Convert an ``ansys.api.geometry.Tessellation`` to `pyvista.PolyData`."""
     # lazy imports here to improve initial load
     import numpy as np
     import pyvista as pv
@@ -356,7 +356,7 @@ def tess_to_pd(tess: Tessellation) -> "PolyData":
 
 
 def grpc_matrix_to_matrix(m: GRPCMatrix) -> Matrix44:
-    """Convert an ``ansys.api.geometry.Matrix`` class to a `ansys.geometry.core.math.Matrix44` class."""  # noqa: E501
+    """Convert an ``ansys.api.geometry.Matrix`` to a ``Matrix44``."""
     import numpy as np
 
     return Matrix44(
@@ -373,7 +373,8 @@ def grpc_matrix_to_matrix(m: GRPCMatrix) -> Matrix44:
 
 
 def grpc_frame_to_frame(frame: GRPCFrame) -> Frame:
-    """Convert an ``ansys.api.geometry.Frame`` grpc message to a ``Frame`` class.
+    """
+    Convert an ``ansys.api.geometry.Frame`` grpc message to a ``Frame`` class.
 
     Parameters
     ----------

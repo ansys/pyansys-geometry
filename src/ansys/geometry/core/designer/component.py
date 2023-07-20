@@ -223,7 +223,8 @@ class Component:
 
     @property
     def shared_topology(self) -> Union[SharedTopologyType, None]:
-        """Indicates the ``SharedTopologyType`` of the component (if any).
+        """
+        Indicates the ``SharedTopologyType`` of the component (if any).
 
         Notes
         -----
@@ -935,7 +936,8 @@ class Component:
         return None
 
     def _kill_component_on_client(self) -> None:
-        """Set the ``is_alive`` property of nested objects to ``False``.
+        """
+        Set the ``is_alive`` property of nested objects to ``False``.
 
         Notes
         -----

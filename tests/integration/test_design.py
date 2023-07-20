@@ -300,8 +300,8 @@ def test_named_selections(modeler: Modeler):
 
 
 def test_faces_edges(modeler: Modeler):
-    """Test for verifying the correct creation and
-    usage of ``Face`` and ``Edge`` objects."""
+    """Test for verifying the correct creation and usage of ``Face`` and ``Edge``
+    objects."""
 
     # Create your design on the server side
     design = modeler.create_design("FacesEdges_Test")
@@ -438,7 +438,8 @@ def test_coordinate_system_creation(modeler: Modeler):
 
 
 def test_delete_body_component(modeler: Modeler):
-    """Test for verifying the deletion of ``Component`` and ``Body`` objects.
+    """
+    Test for verifying the deletion of ``Component`` and ``Body`` objects.
 
     Notes
     -----
@@ -713,7 +714,8 @@ def test_shared_topology(modeler: Modeler):
 
 
 def test_single_body_translation(modeler: Modeler):
-    """Test for verifying the correct translation of a ``Body``.
+    """
+    Test for verifying the correct translation of a ``Body``.
 
     Notes
     -----
@@ -741,7 +743,8 @@ def test_single_body_translation(modeler: Modeler):
 
 
 def test_bodies_translation(modeler: Modeler):
-    """Test for verifying the correct translation of list of ``Body``.
+    """
+    Test for verifying the correct translation of list of ``Body``.
 
     Notes
     -----
@@ -1287,7 +1290,8 @@ def test_named_selections_beams(modeler: Modeler, skip_not_on_linux_service):
 
 
 def test_named_selections_design_points(modeler: Modeler):
-    """Test for verifying the correct creation of ``NamedSelection`` with design points."""
+    """Test for verifying the correct creation of ``NamedSelection`` with design
+    points."""
 
     # Create your design on the server side
     design = modeler.create_design("NamedSelectionBeams_Test")
@@ -1626,7 +1630,8 @@ def test_boolean_body_operations(modeler: Modeler, skip_not_on_linux_service):
 
 
 def test_child_component_instances(modeler: Modeler):
-    """Test creation of child ``Component`` instances and check the data model reflects that."""
+    """Test creation of child ``Component`` instances and check the data model reflects
+    that."""
 
     design_name = "ChildComponentInstances_Test"
     design = modeler.create_design(design_name)

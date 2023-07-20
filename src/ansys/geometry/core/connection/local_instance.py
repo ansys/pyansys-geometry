@@ -91,7 +91,8 @@ class LocalDockerInstance:
     @staticmethod
     @_docker_python_available
     def docker_client() -> "docker.DockerClient":
-        """Return the initialized ``__DOCKER_CLIENT__`` object.
+        """
+        Return the initialized ``__DOCKER_CLIENT__`` object.
 
         Notes
         -----
@@ -102,7 +103,6 @@ class LocalDockerInstance:
         -------
         docker.DockerClient
             The initialized Docker client.
-
         """
         if not LocalDockerInstance.__DOCKER_CLIENT__:
             LocalDockerInstance.__DOCKER_CLIENT__ = docker.from_env()
@@ -199,7 +199,8 @@ class LocalDockerInstance:
         return (True, None)
 
     def _is_cont_geom_service(self, cont: "Container") -> bool:
-        """Check whether a provided ``Container`` object is a Geometry service container or not.
+        """
+        Check whether a provided ``Container`` object is a Geometry service container.
 
         Parameters
         ----------

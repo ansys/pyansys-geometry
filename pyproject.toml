@@ -46,7 +46,6 @@ all = [
     "docker>=6.0.1",
     "pyvista[trame]>=0.38.1",
 ]
-
 tests = [
     "ansys-platform-instancemanagement==1.1.1",
     "beartype==0.14.1",
@@ -92,8 +91,10 @@ doc = [
 
 [project.urls]
 Source = "https://github.com/ansys/pygeometry"
+Issues = "https://github.com/ansys/pygeometry/issues"
+Discussions = "https://github.com/ansys/pygeometry/discussions"
 Documentation = "https://geometry.docs.pyansys.com"
-
+Releases = "https://github.com/ansys/pygeometry/releases"
 
 [tool.flit.module]
 name = "ansys.geometry.core"

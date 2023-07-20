@@ -125,9 +125,12 @@ class Modeler:
 
     def _upload_file(self, file_path: str, open_file: bool = False) -> str:
         """
-        Upload a file from the client to the server. ``file_path`` must include the extension.
+        Upload a file from the client to the server.
 
-        The new file created on the server will have the same name and extension.
+        Notes
+        -----
+        ``file_path`` must include the extension. The new file created on
+        the server will have the same name and extension.
 
         Parameters
         ----------

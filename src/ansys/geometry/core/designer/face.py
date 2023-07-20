@@ -268,7 +268,8 @@ class Face:
         return Point3D([response.x, response.y, response.z], DEFAULT_UNITS.SERVER_LENGTH)
 
     def __grpc_edges_to_edges(self, edges_grpc: List[GRPCEdge]) -> List[Edge]:
-        """Transform a list of gRPC edge messages into actual ``Edge`` objects.
+        """
+        Transform a list of gRPC edge messages into actual ``Edge`` objects.
 
         Parameters
         ----------
