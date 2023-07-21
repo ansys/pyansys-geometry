@@ -9,7 +9,9 @@ from ansys.api.geometry.v0.commands_pb2 import (
     CreateBeamCircularProfileRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.dbu.v0.designs_pb2 import ExportRequest, NewRequest, SaveAsRequest
+from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
+from ansys.api.geometry.v0.parts_pb2 import ExportRequest
+from ansys.api.dbu.v0.designs_pb2 import NewRequest, SaveAsRequest
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
 from google.protobuf.empty_pb2 import Empty
 from ansys.api.geometry.v0.materials_pb2 import AddToDocumentRequest
@@ -100,12 +102,12 @@ class Design(Component):
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
         self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
-
+        self._parts_stub = PartsStub(self._grpc_client.channel)
         # Initialize needed instance variables
         self._materials = []
         self._named_selections = {}
         self._beam_profiles = {}
-
+        
         # Check whether we want to process an existing design or create a new one.
         if read_existing_design:
             self._grpc_client.log.debug("Reading Design object from service.")
@@ -113,6 +115,7 @@ class Design(Component):
         else:
             new_design = self._design_stub.New(NewRequest(name=name))
             self._id = new_design.id
+            print("new design created")
             self._grpc_client.log.debug("Design object instantiated successfully.")
 
     @property
@@ -213,7 +216,7 @@ class Design(Component):
             DesignFileFormat.PARASOLID_BIN,
             DesignFileFormat.FMD,
         ]:
-            response = self._design_stub.Export(ExportRequest(format=format.value[1]))
+            response = self._parts_stub.Export(ExportRequest(format=format.value[1]))
             received_bytes += response.data
         else:
             self._grpc_client.log.warning(
