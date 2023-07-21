@@ -31,7 +31,8 @@ os.environ["ANSYS_PLATFORM_INSTANCEMANAGEMENT_CONFIG"] = (
 
 
 def launch_modeler(**kwargs: Optional[Dict]) -> "Modeler":
-    """Start the ``Modeler`` for PyGeometry.
+    """
+    Start the ``Modeler`` for PyGeometry.
 
     Parameters
     ----------

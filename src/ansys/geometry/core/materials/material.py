@@ -52,7 +52,8 @@ class Material:
 
     @check_input_types
     def add_property(self, type: MaterialPropertyType, name: str, quantity: Quantity) -> None:
-        """Add a material property to the ``Material`` class.
+        """
+        Add a material property to the ``Material`` class.
 
         Parameters
         ----------
