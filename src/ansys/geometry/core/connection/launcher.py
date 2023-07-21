@@ -285,7 +285,7 @@ def _launch_pim_instance(
         Name of the service to run.
     product_version : str, optional
         Version of the service to run. By default, ``None``.
-    backend_type : BackendType
+    backend_type : BackendType, optional
         Service backend type deployed.
 
     Returns
