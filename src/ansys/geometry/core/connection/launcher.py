@@ -302,7 +302,7 @@ def _launch_pim_instance(
             "The package 'ansys-platform-instancemanagement' is required to use this function."
         )
 
-    # If PyPIM configuration is not defined... use defaults.
+    # If PIM Light is being used and PyPIM configuration is not defined... use defaults.
     if is_pim_light and not os.environ.get("ANSYS_PLATFORM_INSTANCEMANAGEMENT_CONFIG", None):
         os.environ["ANSYS_PLATFORM_INSTANCEMANAGEMENT_CONFIG"] = DEFAULT_PIM_CONFIG
         pop_out = True
