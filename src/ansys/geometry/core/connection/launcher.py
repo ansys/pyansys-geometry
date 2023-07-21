@@ -168,7 +168,7 @@ def launch_local_modeler(
     return Modeler(host="localhost", port=port, local_instance=local_instance)
 
 
-def launch_discovery(version: Optional[str] = None) -> "Modeler":
+def launch_modeler_with_pimlight_and_discovery(version: Optional[str] = None) -> "Modeler":
     """
     Start Discovery remotely using the PIM API.
 
@@ -199,7 +199,7 @@ def launch_discovery(version: Optional[str] = None) -> "Modeler":
     )
 
 
-def launch_geometry_service(version: Optional[str] = None) -> "Modeler":
+def launch_modeler_with_pimlight_and_geometry_service(version: Optional[str] = None) -> "Modeler":
     """
     Start the GeometryService remotely using the PIM API.
 
@@ -230,7 +230,7 @@ def launch_geometry_service(version: Optional[str] = None) -> "Modeler":
     )
 
 
-def launch_spaceclaim(version: Optional[str] = None) -> "Modeler":
+def launch_modeler_with_pimlight_and_spaceclaim(version: Optional[str] = None) -> "Modeler":
     """
     Start SpaceClaim remotely using the PIM API.
 
