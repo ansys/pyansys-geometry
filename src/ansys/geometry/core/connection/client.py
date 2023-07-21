@@ -85,8 +85,9 @@ class GrpcClient:
         Logging level to apply to the client.
     logging_file : str or Path, default: None
         File to output the log to, if requested.
-    backend_type: BackendType, default: BackendType.GEOMETRY_SERVICE
-        Which kind of backend PyGeometry is communicating with.
+    backend_type: BackendType, default: None
+        Which kind of backend PyGeometry is communicating with. By default we
+        do not know, and thus defaulting to ``None``.
     """
 
     @check_input_types
@@ -100,7 +101,7 @@ class GrpcClient:
         timeout: Optional[Real] = 60,
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
-        backend_type: Optional[BackendType] = BackendType.GEOMETRY_SERVICE,
+        backend_type: Optional[BackendType] = None,
     ):
         """Initialize the ``GrpcClient`` object."""
         self._closed = False
@@ -131,11 +132,19 @@ class GrpcClient:
                 logging_file = str(logging_file)
             self._log.log_to_file(filename=logging_file, level=logging_level)
 
+        # Store the backend
         self._backend_type = backend_type
 
     @property
     def backend_type(self) -> BackendType:
-        """Backend's type (Windows Service, Linux Service, Discovery or SpaceClaim)."""
+        """
+        Backend's type (Windows Service, Linux Service, Discovery or SpaceClaim).
+
+        Notes
+        -----
+        This method might return ``None`` since it is not straightforward
+        to determine it.
+        """
         return self._backend_type
 
     @property
