@@ -32,3 +32,10 @@ Default Geometry service Docker image location.
 
 Tag is dependent on what OS service is requested.
 """
+
+DEFAULT_PIM_CONFIG = os.path.join(os.path.dirname(__file__), "pim_configuration.json")
+"""
+Default PIM configuration for running PIM light.
+
+Only to be used when PIM Light is being run.
+"""

@@ -1,8 +1,10 @@
 """Provides for connecting to Geometry service instances."""
+import os
+
 from beartype.typing import TYPE_CHECKING, Dict, Optional
 
 from ansys.geometry.core.connection.backend import BackendType
-from ansys.geometry.core.connection.defaults import DEFAULT_PORT
+from ansys.geometry.core.connection.defaults import DEFAULT_PIM_CONFIG, DEFAULT_PORT
 from ansys.geometry.core.connection.local_instance import (
     _HAS_DOCKER,
     GeometryContainers,
@@ -22,12 +24,6 @@ from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
-
-import os
-
-os.environ["ANSYS_PLATFORM_INSTANCEMANAGEMENT_CONFIG"] = (
-    os.path.dirname(__file__) + r"/pim_configuration.json"
-)
 
 
 def launch_modeler(**kwargs: Optional[Dict]) -> "Modeler":
@@ -100,24 +96,12 @@ def launch_remote_modeler(version: Optional[str] = None, **kwargs: Optional[Dict
     ansys.geometry.core.modeler.Modeler
         Instance of the Geometry service.
     """
-    from ansys.geometry.core.modeler import Modeler
-
-    check_type(version, (type(None), str))
-
-    if not _HAS_PIM:  # pragma: no cover
-        raise ModuleNotFoundError(
-            "The package 'ansys-platform-instancemanagement' is required to use this function."
-        )
-
-    pim = pypim.connect()
-    instance = pim.create_instance(product_name="geometry", product_version=version)
-    instance.wait_for_ready()
-    channel = instance.build_grpc_channel(
-        options=[
-            ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
-        ]
+    return _launch_pim_instance(
+        is_pim_light=False,
+        product_name="geometry",
+        product_version=version,
+        backend_type=None,
     )
-    return Modeler(channel=channel, remote_instance=instance)
 
 
 def launch_local_modeler(
@@ -184,7 +168,7 @@ def launch_local_modeler(
     return Modeler(host="localhost", port=port, local_instance=local_instance)
 
 
-def launch_discovery(version: Optional[str] = "241", **kwargs: Optional[Dict]) -> "Modeler":
+def launch_discovery(version: Optional[str] = "241") -> "Modeler":
     """
     Start Discovery remotely using the PIM API.
 
@@ -201,37 +185,21 @@ def launch_discovery(version: Optional[str] = "241", **kwargs: Optional[Dict]) -
         Version of Discovery to run in the three-digit format.
         For example, "212". If you do not specify the version, the server
         chooses the version.
-    **kwargs : dict, default: None
-        Launching functions keyword arguments. For allowable keyword arguments, see the
-        :func:`launch_discovery` and :func:`launch_discovery` methods. Some of
-        them might be unused.
 
     Returns
     -------
     ansys.geometry.core.Modeler
         Instance of Modeler.
     """
-    from ansys.geometry.core.modeler import Modeler
-
-    check_type(version, (type(None), str))
-
-    if not _HAS_PIM:  # pragma: no cover
-        raise ModuleNotFoundError(
-            "The package 'ansys-platform-instancemanagement' is required to use this function."
-        )
-
-    pim = pypim.connect()
-    instance = pim.create_instance(product_name="discovery", product_version=version)
-    instance.wait_for_ready()
-    channel = instance.build_grpc_channel(
-        options=[
-            ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
-        ]
+    return _launch_pim_instance(
+        is_pim_light=True,
+        product_name="discovery",
+        product_version=version,
+        backend_type=BackendType.DISCOVERY,
     )
-    return Modeler(channel=channel, remote_instance=instance, backend_type=BackendType.DISCOVERY)
 
 
-def launch_geometry_service(version: Optional[str] = "241", **kwargs: Optional[Dict]) -> "Modeler":
+def launch_geometry_service(version: Optional[str] = "241") -> "Modeler":
     """
     Start the GeometryService remotely using the PIM API.
 
@@ -248,39 +216,21 @@ def launch_geometry_service(version: Optional[str] = "241", **kwargs: Optional[D
         Version of GeometryService to run in the three-digit format.
         For example, "232". If you do not specify the version, the server
         chooses the version.
-    **kwargs : dict, default: None
-        Launching functions keyword arguments. For allowable keyword arguments, see the
-        :func:`launch_spaceclaim` and :func:`launch_spaceclaim` methods. Some of
-        them might be unused.
 
     Returns
     -------
     ansys.geometry.core.Modeler
         Instance of Modeler.
     """
-    from ansys.geometry.core.modeler import Modeler
-
-    check_type(version, (type(None), str))
-
-    if not _HAS_PIM:  # pragma: no cover
-        raise ModuleNotFoundError(
-            "The package 'ansys-platform-instancemanagement' is required to use this function."
-        )
-
-    pim = pypim.connect()
-    instance = pim.create_instance(product_name="geometryservice", product_version=version)
-    instance.wait_for_ready()
-    channel = instance.build_grpc_channel(
-        options=[
-            ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
-        ]
-    )
-    return Modeler(
-        channel=channel, remote_instance=instance, backend_type=BackendType.WINDOWS_SERVICE
+    return _launch_pim_instance(
+        is_pim_light=True,
+        product_name="geometryservice",
+        product_version=version,
+        backend_type=BackendType.WINDOWS_SERVICE,
     )
 
 
-def launch_spaceclaim(version: Optional[str] = "241", **kwargs: Optional[Dict]) -> "Modeler":
+def launch_spaceclaim(version: Optional[str] = "241") -> "Modeler":
     """
     Start SpaceClaim remotely using the PIM API.
 
@@ -297,31 +247,80 @@ def launch_spaceclaim(version: Optional[str] = "241", **kwargs: Optional[Dict]) 
         Version of SpaceClaim to run in the three-digit format.
         For example, "212". If you do not specify the version, the server
         chooses the version.
-    **kwargs : dict, default: None
-        Launching functions keyword arguments. For allowable keyword arguments, see the
-        :func:`launch_spaceclaim` and :func:`launch_spaceclaim` methods. Some of
-        them might be unused.
 
     Returns
     -------
     ansys.geometry.core.Modeler
         Instance of Modeler.
     """
+    return _launch_pim_instance(
+        is_pim_light=True,
+        product_name="scdm",
+        product_version=version,
+        backend_type=BackendType.SPACECLAIM,
+    )
+
+
+def _launch_pim_instance(
+    is_pim_light: bool,
+    product_name: str,
+    product_version: Optional[str] = None,
+    backend_type: Optional[BackendType] = None,
+):
+    """
+    Start the service using the PIM API.
+
+    When calling this method, you must ensure that you are in an
+    environment where PyPIM is configured. PyPIM is the Pythonic
+    interface to communicate with the PIM (Product Instance Management)
+    API. You can use the
+    :func:`pypim.is_configured <ansys.platform.instancemanagement.is_configured>`
+    method to check if PyPIM is configured.
+
+    Parameters
+    ----------
+    is_pim_light : bool
+        Whether PIM Light is being used (i.e. for running PIM on a local machine).
+    product_name : str
+        Name of the service to run.
+    product_version : str, optional
+        Version of the service to run. By default, ``None``.
+    backend_type : BackendType
+        Service backend type deployed.
+
+    Returns
+    -------
+    ansys.geometry.core.modeler.Modeler
+        Instance of the Geometry service.
+    """
     from ansys.geometry.core.modeler import Modeler
 
-    check_type(version, (type(None), str))
+    check_type(product_version, (type(None), str))
 
     if not _HAS_PIM:  # pragma: no cover
         raise ModuleNotFoundError(
             "The package 'ansys-platform-instancemanagement' is required to use this function."
         )
 
+    # If PyPIM configuration is not defined... use defaults.
+    if is_pim_light and not os.environ.get("ANSYS_PLATFORM_INSTANCEMANAGEMENT_CONFIG", None):
+        os.environ["ANSYS_PLATFORM_INSTANCEMANAGEMENT_CONFIG"] = DEFAULT_PIM_CONFIG
+        pop_out = True
+    else:
+        pop_out = False
+
+    # Perform PyPIM connection
     pim = pypim.connect()
-    instance = pim.create_instance(product_name="scdm", product_version=version)
+    instance = pim.create_instance(product_name=product_name, product_version=product_version)
     instance.wait_for_ready()
     channel = instance.build_grpc_channel(
         options=[
             ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
         ]
     )
-    return Modeler(channel=channel, remote_instance=instance, backend_type=BackendType.SPACECLAIM)
+
+    # If the default PyPIM configuration was used... remove
+    if pop_out:
+        os.environ.pop("ANSYS_PLATFORM_INSTANCEMANAGEMENT_CONFIG")
+
+    return Modeler(channel=channel, remote_instance=instance, backend_type=backend_type)
