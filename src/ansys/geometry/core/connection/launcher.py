@@ -168,7 +168,7 @@ def launch_local_modeler(
     return Modeler(host="localhost", port=port, local_instance=local_instance)
 
 
-def launch_discovery(version: Optional[str] = "241") -> "Modeler":
+def launch_discovery(version: Optional[str] = None) -> "Modeler":
     """
     Start Discovery remotely using the PIM API.
 
@@ -181,7 +181,7 @@ def launch_discovery(version: Optional[str] = "241") -> "Modeler":
 
     Parameters
     ----------
-    version : str, default: "241"
+    version : str, default: None
         Version of Discovery to run in the three-digit format.
         For example, "212". If you do not specify the version, the server
         chooses the version.
@@ -199,7 +199,7 @@ def launch_discovery(version: Optional[str] = "241") -> "Modeler":
     )
 
 
-def launch_geometry_service(version: Optional[str] = "241") -> "Modeler":
+def launch_geometry_service(version: Optional[str] = None) -> "Modeler":
     """
     Start the GeometryService remotely using the PIM API.
 
@@ -212,7 +212,7 @@ def launch_geometry_service(version: Optional[str] = "241") -> "Modeler":
 
     Parameters
     ----------
-    version : str, default: "241"
+    version : str, default: None
         Version of GeometryService to run in the three-digit format.
         For example, "232". If you do not specify the version, the server
         chooses the version.
@@ -230,7 +230,7 @@ def launch_geometry_service(version: Optional[str] = "241") -> "Modeler":
     )
 
 
-def launch_spaceclaim(version: Optional[str] = "241") -> "Modeler":
+def launch_spaceclaim(version: Optional[str] = None) -> "Modeler":
     """
     Start SpaceClaim remotely using the PIM API.
 
@@ -243,7 +243,7 @@ def launch_spaceclaim(version: Optional[str] = "241") -> "Modeler":
 
     Parameters
     ----------
-    version : str, default: "241"
+    version : str, default: None
         Version of SpaceClaim to run in the three-digit format.
         For example, "212". If you do not specify the version, the server
         chooses the version.
