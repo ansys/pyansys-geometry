@@ -9,6 +9,7 @@ from ansys.api.geometry.v0.geometryapplication_pb2_grpc import GeometryApplicati
 from beartype.typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
 from grpc import Channel
 
+from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
@@ -62,6 +63,7 @@ class Modeler:
         timeout: Optional[Real] = 60,
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
+        backend_type: Optional[BackendType] = None,
     ):
         """Initialize ``Modeler`` class."""
         self._client = GrpcClient(
@@ -73,6 +75,7 @@ class Modeler:
             timeout=timeout,
             logging_level=logging_level,
             logging_file=logging_file,
+            backend_type=backend_type,
         )
 
         # Design[] maintaining references to all designs within the modeler workspace
