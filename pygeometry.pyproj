@@ -1,0 +1,324 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{76a14232-5432-44ad-8e60-4280a734dba8}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile />
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId>Global|PythonCore|3.10</InterpreterId>
+    <TestFramework>pytest</TestFramework>
+    <UnitTestPattern>test*.py</UnitTestPattern>
+    <UnitTestRootDirectory>.</UnitTestRootDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include=".cov\html\coverage_html.js" />
+    <Content Include=".cov\html\d_0e4e0ca7ff111628_errors_py.html" />
+    <Content Include=".cov\html\d_0e4e0ca7ff111628_logger_py.html" />
+    <Content Include=".cov\html\d_0e4e0ca7ff111628_modeler_py.html" />
+    <Content Include=".cov\html\d_0e4e0ca7ff111628_typing_py.html" />
+    <Content Include=".cov\html\d_0e4e0ca7ff111628___init___py.html" />
+    <Content Include=".cov\html\d_1c65e14764d067fe_material_py.html" />
+    <Content Include=".cov\html\d_1c65e14764d067fe_property_py.html" />
+    <Content Include=".cov\html\d_1c65e14764d067fe___init___py.html" />
+    <Content Include=".cov\html\d_23c00329b3c5e1f8_bbox_py.html" />
+    <Content Include=".cov\html\d_23c00329b3c5e1f8_constants_py.html" />
+    <Content Include=".cov\html\d_23c00329b3c5e1f8_frame_py.html" />
+    <Content Include=".cov\html\d_23c00329b3c5e1f8_matrix_py.html" />
+    <Content Include=".cov\html\d_23c00329b3c5e1f8_plane_py.html" />
+    <Content Include=".cov\html\d_23c00329b3c5e1f8_point_py.html" />
+    <Content Include=".cov\html\d_23c00329b3c5e1f8_vector_py.html" />
+    <Content Include=".cov\html\d_23c00329b3c5e1f8___init___py.html" />
+    <Content Include=".cov\html\d_2615d1173dd85048_plotter_py.html" />
+    <Content Include=".cov\html\d_2615d1173dd85048_trame_gui_py.html" />
+    <Content Include=".cov\html\d_2615d1173dd85048___init___py.html" />
+    <Content Include=".cov\html\d_270e425705f91210_backend_py.html" />
+    <Content Include=".cov\html\d_270e425705f91210_client_py.html" />
+    <Content Include=".cov\html\d_270e425705f91210_conversions_py.html" />
+    <Content Include=".cov\html\d_270e425705f91210_defaults_py.html" />
+    <Content Include=".cov\html\d_270e425705f91210_launcher_py.html" />
+    <Content Include=".cov\html\d_270e425705f91210_local_instance_py.html" />
+    <Content Include=".cov\html\d_270e425705f91210___init___py.html" />
+    <Content Include=".cov\html\d_380a56f929a1ec00_circle_py.html" />
+    <Content Include=".cov\html\d_380a56f929a1ec00_cone_py.html" />
+    <Content Include=".cov\html\d_380a56f929a1ec00_curve_evaluation_py.html" />
+    <Content Include=".cov\html\d_380a56f929a1ec00_cylinder_py.html" />
+    <Content Include=".cov\html\d_380a56f929a1ec00_ellipse_py.html" />
+    <Content Include=".cov\html\d_380a56f929a1ec00_line_py.html" />
+    <Content Include=".cov\html\d_380a56f929a1ec00_parameterization_py.html" />
+    <Content Include=".cov\html\d_380a56f929a1ec00_sphere_py.html" />
+    <Content Include=".cov\html\d_380a56f929a1ec00_surface_evaluation_py.html" />
+    <Content Include=".cov\html\d_380a56f929a1ec00_torus_py.html" />
+    <Content Include=".cov\html\d_380a56f929a1ec00___init___py.html" />
+    <Content Include=".cov\html\d_6dc60c96ca1e42e1_accuracy_py.html" />
+    <Content Include=".cov\html\d_6dc60c96ca1e42e1_checks_py.html" />
+    <Content Include=".cov\html\d_6dc60c96ca1e42e1_measurements_py.html" />
+    <Content Include=".cov\html\d_6dc60c96ca1e42e1_units_py.html" />
+    <Content Include=".cov\html\d_6dc60c96ca1e42e1___init___py.html" />
+    <Content Include=".cov\html\d_b172ebef61b36049_beam_py.html" />
+    <Content Include=".cov\html\d_b172ebef61b36049_body_py.html" />
+    <Content Include=".cov\html\d_b172ebef61b36049_component_py.html" />
+    <Content Include=".cov\html\d_b172ebef61b36049_coordinate_system_py.html" />
+    <Content Include=".cov\html\d_b172ebef61b36049_designpoint_py.html" />
+    <Content Include=".cov\html\d_b172ebef61b36049_design_py.html" />
+    <Content Include=".cov\html\d_b172ebef61b36049_edge_py.html" />
+    <Content Include=".cov\html\d_b172ebef61b36049_face_py.html" />
+    <Content Include=".cov\html\d_b172ebef61b36049_part_py.html" />
+    <Content Include=".cov\html\d_b172ebef61b36049_selection_py.html" />
+    <Content Include=".cov\html\d_b172ebef61b36049___init___py.html" />
+    <Content Include=".cov\html\d_e253d0573db529bb_arc_py.html" />
+    <Content Include=".cov\html\d_e253d0573db529bb_box_py.html" />
+    <Content Include=".cov\html\d_e253d0573db529bb_circle_py.html" />
+    <Content Include=".cov\html\d_e253d0573db529bb_edge_py.html" />
+    <Content Include=".cov\html\d_e253d0573db529bb_ellipse_py.html" />
+    <Content Include=".cov\html\d_e253d0573db529bb_face_py.html" />
+    <Content Include=".cov\html\d_e253d0573db529bb_gears_py.html" />
+    <Content Include=".cov\html\d_e253d0573db529bb_polygon_py.html" />
+    <Content Include=".cov\html\d_e253d0573db529bb_segment_py.html" />
+    <Content Include=".cov\html\d_e253d0573db529bb_sketch_py.html" />
+    <Content Include=".cov\html\d_e253d0573db529bb_slot_py.html" />
+    <Content Include=".cov\html\d_e253d0573db529bb_trapezoid_py.html" />
+    <Content Include=".cov\html\d_e253d0573db529bb_triangle_py.html" />
+    <Content Include=".cov\html\d_e253d0573db529bb___init___py.html" />
+    <Content Include=".cov\html\d_f78ce62d3dcb6e1a_button_py.html" />
+    <Content Include=".cov\html\d_f78ce62d3dcb6e1a_displace_arrows_py.html" />
+    <Content Include=".cov\html\d_f78ce62d3dcb6e1a_ruler_py.html" />
+    <Content Include=".cov\html\d_f78ce62d3dcb6e1a_view_button_py.html" />
+    <Content Include=".cov\html\d_f78ce62d3dcb6e1a_widget_py.html" />
+    <Content Include=".cov\html\d_f78ce62d3dcb6e1a___init___py.html" />
+    <Content Include=".cov\html\favicon_32.png" />
+    <Content Include=".cov\html\index.html" />
+    <Content Include=".cov\html\keybd_closed.png" />
+    <Content Include=".cov\html\keybd_open.png" />
+    <Content Include=".cov\html\style.css" />
+    <Content Include="doc\.vale.ini" />
+    <Content Include="doc\source\_static\assets\index_api.png" />
+    <Content Include="doc\source\_static\assets\index_contribute.png" />
+    <Content Include="doc\source\_static\assets\index_examples.png" />
+    <Content Include="doc\source\_static\assets\index_getting_started.png" />
+    <Content Include="doc\source\_static\assets\index_user_guide.png" />
+    <Content Include="doc\source\_static\custom.css" />
+    <Content Include="doc\source\_static\thumbnails\101_getting_started.png" />
+    <Content Include="doc\source\_static\thumbnails\add_design_material.png" />
+    <Content Include="doc\source\_static\thumbnails\advanced_sketching_gears.png" />
+    <Content Include="doc\source\_static\thumbnails\basic_usage.png" />
+    <Content Include="doc\source\_static\thumbnails\design_organization.png" />
+    <Content Include="doc\source\_static\thumbnails\dynamic_sketch_plane.png" />
+    <Content Include="doc\source\_static\thumbnails\plate_with_hole.png" />
+    <Content Include="doc\source\_static\thumbnails\tessellation_usage.png" />
+    <Content Include="doc\styles\Vocab\ANSYS\accept.txt" />
+    <Content Include="doc\styles\Vocab\ANSYS\reject.txt" />
+    <Content Include="pyproject.toml" />
+    <Content Include="src\ansys\geometry\core\plotting\widgets\_images\+xy.png" />
+    <Content Include="src\ansys\geometry\core\plotting\widgets\_images\+xz.png" />
+    <Content Include="src\ansys\geometry\core\plotting\widgets\_images\+yz.png" />
+    <Content Include="src\ansys\geometry\core\plotting\widgets\_images\-xy.png" />
+    <Content Include="src\ansys\geometry\core\plotting\widgets\_images\-xz.png" />
+    <Content Include="src\ansys\geometry\core\plotting\widgets\_images\-yz.png" />
+    <Content Include="src\ansys\geometry\core\plotting\widgets\_images\downarrow.png" />
+    <Content Include="src\ansys\geometry\core\plotting\widgets\_images\isometric.png" />
+    <Content Include="src\ansys\geometry\core\plotting\widgets\_images\ruler.png" />
+    <Content Include="src\ansys\geometry\core\plotting\widgets\_images\upxarrow.png" />
+    <Content Include="src\ansys\geometry\core\plotting\widgets\_images\upyarrow.png" />
+    <Content Include="src\ansys\geometry\core\plotting\widgets\_images\upzarrow.png" />
+    <Content Include="tests\integration\image_cache\extrude_dummy_gear.png" />
+    <Content Include="tests\integration\image_cache\extrude_spur_gear.png" />
+    <Content Include="tests\integration\image_cache\plot_arc.png" />
+    <Content Include="tests\integration\image_cache\plot_arc_from_three_points_clockwise.png" />
+    <Content Include="tests\integration\image_cache\plot_arc_from_three_points_counterclockwise.png" />
+    <Content Include="tests\integration\image_cache\plot_body.png" />
+    <Content Include="tests\integration\image_cache\plot_box.png" />
+    <Content Include="tests\integration\image_cache\plot_circle.png" />
+    <Content Include="tests\integration\image_cache\plot_component.png" />
+    <Content Include="tests\integration\image_cache\plot_dummy_gear.png" />
+    <Content Include="tests\integration\image_cache\plot_ellipse.png" />
+    <Content Include="tests\integration\image_cache\plot_polygon.png" />
+    <Content Include="tests\integration\image_cache\plot_segment.png" />
+    <Content Include="tests\integration\image_cache\plot_sketch.png" />
+    <Content Include="tests\integration\image_cache\plot_sketch_scene.png" />
+    <Content Include="tests\integration\image_cache\plot_slot.png" />
+    <Content Include="tests\integration\image_cache\plot_spur_gear.png" />
+    <Content Include="tests\integration\image_cache\plot_trapezoid.png" />
+    <Content Include="tests\integration\image_cache\plot_triangle.png" />
+    <Content Include="tests\integration\image_cache\results\plot_arc.png" />
+    <Content Include="tests\integration\image_cache\results\plot_arc_from_three_points_clockwise.png" />
+    <Content Include="tests\integration\image_cache\results\plot_arc_from_three_points_counterclockwise.png" />
+    <Content Include="tests\integration\image_cache\results\plot_body.png" />
+    <Content Include="tests\integration\image_cache\results\plot_box.png" />
+    <Content Include="tests\integration\image_cache\results\plot_circle.png" />
+    <Content Include="tests\integration\image_cache\results\plot_component.png" />
+    <Content Include="tests\integration\image_cache\results\plot_dummy_gear.png" />
+    <Content Include="tests\integration\image_cache\results\plot_ellipse.png" />
+    <Content Include="tests\integration\image_cache\results\plot_extrude_dummy_gear.png" />
+    <Content Include="tests\integration\image_cache\results\plot_extrude_spur_gear.png" />
+    <Content Include="tests\integration\image_cache\results\plot_polygon.png" />
+    <Content Include="tests\integration\image_cache\results\plot_segment.png" />
+    <Content Include="tests\integration\image_cache\results\plot_sketch.png" />
+    <Content Include="tests\integration\image_cache\results\plot_sketch_scene.png" />
+    <Content Include="tests\integration\image_cache\results\plot_slot.png" />
+    <Content Include="tests\integration\image_cache\results\plot_spur_gear.png" />
+    <Content Include="tests\integration\image_cache\results\plot_trapezoid.png" />
+    <Content Include="tests\integration\image_cache\results\plot_triangle.png" />
+    <Content Include="tests\integration\logs\integration_tests_logs.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="doc\source\conf.py" />
+    <Compile Include="src\ansys\geometry\core\connection\backend.py" />
+    <Compile Include="src\ansys\geometry\core\connection\client.py" />
+    <Compile Include="src\ansys\geometry\core\connection\conversions.py" />
+    <Compile Include="src\ansys\geometry\core\connection\defaults.py" />
+    <Compile Include="src\ansys\geometry\core\connection\launcher.py" />
+    <Compile Include="src\ansys\geometry\core\connection\local_instance.py" />
+    <Compile Include="src\ansys\geometry\core\connection\validate.py" />
+    <Compile Include="src\ansys\geometry\core\connection\__init__.py" />
+    <Compile Include="src\ansys\geometry\core\designer\beam.py" />
+    <Compile Include="src\ansys\geometry\core\designer\body.py" />
+    <Compile Include="src\ansys\geometry\core\designer\component.py" />
+    <Compile Include="src\ansys\geometry\core\designer\coordinate_system.py" />
+    <Compile Include="src\ansys\geometry\core\designer\design.py" />
+    <Compile Include="src\ansys\geometry\core\designer\designpoint.py" />
+    <Compile Include="src\ansys\geometry\core\designer\edge.py" />
+    <Compile Include="src\ansys\geometry\core\designer\face.py" />
+    <Compile Include="src\ansys\geometry\core\designer\part.py" />
+    <Compile Include="src\ansys\geometry\core\designer\selection.py" />
+    <Compile Include="src\ansys\geometry\core\designer\__init__.py" />
+    <Compile Include="src\ansys\geometry\core\errors.py" />
+    <Compile Include="src\ansys\geometry\core\logger.py" />
+    <Compile Include="src\ansys\geometry\core\materials\material.py" />
+    <Compile Include="src\ansys\geometry\core\materials\property.py" />
+    <Compile Include="src\ansys\geometry\core\materials\__init__.py" />
+    <Compile Include="src\ansys\geometry\core\math\bbox.py" />
+    <Compile Include="src\ansys\geometry\core\math\constants.py" />
+    <Compile Include="src\ansys\geometry\core\math\frame.py" />
+    <Compile Include="src\ansys\geometry\core\math\matrix.py" />
+    <Compile Include="src\ansys\geometry\core\math\plane.py" />
+    <Compile Include="src\ansys\geometry\core\math\point.py" />
+    <Compile Include="src\ansys\geometry\core\math\vector.py" />
+    <Compile Include="src\ansys\geometry\core\math\__init__.py" />
+    <Compile Include="src\ansys\geometry\core\misc\accuracy.py" />
+    <Compile Include="src\ansys\geometry\core\misc\checks.py" />
+    <Compile Include="src\ansys\geometry\core\misc\measurements.py" />
+    <Compile Include="src\ansys\geometry\core\misc\units.py" />
+    <Compile Include="src\ansys\geometry\core\misc\__init__.py" />
+    <Compile Include="src\ansys\geometry\core\modeler.py" />
+    <Compile Include="src\ansys\geometry\core\plotting\plotter.py" />
+    <Compile Include="src\ansys\geometry\core\plotting\trame_gui.py" />
+    <Compile Include="src\ansys\geometry\core\plotting\widgets\button.py" />
+    <Compile Include="src\ansys\geometry\core\plotting\widgets\displace_arrows.py" />
+    <Compile Include="src\ansys\geometry\core\plotting\widgets\ruler.py" />
+    <Compile Include="src\ansys\geometry\core\plotting\widgets\view_button.py" />
+    <Compile Include="src\ansys\geometry\core\plotting\widgets\widget.py" />
+    <Compile Include="src\ansys\geometry\core\plotting\widgets\__init__.py" />
+    <Compile Include="src\ansys\geometry\core\plotting\__init__.py" />
+    <Compile Include="src\ansys\geometry\core\primitives\circle.py" />
+    <Compile Include="src\ansys\geometry\core\primitives\cone.py" />
+    <Compile Include="src\ansys\geometry\core\primitives\curve_evaluation.py" />
+    <Compile Include="src\ansys\geometry\core\primitives\cylinder.py" />
+    <Compile Include="src\ansys\geometry\core\primitives\ellipse.py" />
+    <Compile Include="src\ansys\geometry\core\primitives\line.py" />
+    <Compile Include="src\ansys\geometry\core\primitives\parameterization.py" />
+    <Compile Include="src\ansys\geometry\core\primitives\sphere.py" />
+    <Compile Include="src\ansys\geometry\core\primitives\surface_evaluation.py" />
+    <Compile Include="src\ansys\geometry\core\primitives\torus.py" />
+    <Compile Include="src\ansys\geometry\core\primitives\__init__.py" />
+    <Compile Include="src\ansys\geometry\core\sketch\arc.py" />
+    <Compile Include="src\ansys\geometry\core\sketch\box.py" />
+    <Compile Include="src\ansys\geometry\core\sketch\circle.py" />
+    <Compile Include="src\ansys\geometry\core\sketch\edge.py" />
+    <Compile Include="src\ansys\geometry\core\sketch\ellipse.py" />
+    <Compile Include="src\ansys\geometry\core\sketch\face.py" />
+    <Compile Include="src\ansys\geometry\core\sketch\gears.py" />
+    <Compile Include="src\ansys\geometry\core\sketch\polygon.py" />
+    <Compile Include="src\ansys\geometry\core\sketch\segment.py" />
+    <Compile Include="src\ansys\geometry\core\sketch\sketch.py" />
+    <Compile Include="src\ansys\geometry\core\sketch\slot.py" />
+    <Compile Include="src\ansys\geometry\core\sketch\trapezoid.py" />
+    <Compile Include="src\ansys\geometry\core\sketch\triangle.py" />
+    <Compile Include="src\ansys\geometry\core\sketch\__init__.py" />
+    <Compile Include="src\ansys\geometry\core\typing.py" />
+    <Compile Include="src\ansys\geometry\core\__init__.py" />
+    <Compile Include="tests\conftest.py" />
+    <Compile Include="tests\integration\conftest.py" />
+    <Compile Include="tests\integration\files\disco_scripts\failing_script.py" />
+    <Compile Include="tests\integration\files\disco_scripts\integrated_script.py" />
+    <Compile Include="tests\integration\files\disco_scripts\simple_script.py" />
+    <Compile Include="tests\integration\test_client.py" />
+    <Compile Include="tests\integration\test_design.py" />
+    <Compile Include="tests\integration\test_design_import.py" />
+    <Compile Include="tests\integration\test_launcher_local.py" />
+    <Compile Include="tests\integration\test_launcher_remote.py" />
+    <Compile Include="tests\integration\test_logging_client.py" />
+    <Compile Include="tests\integration\test_material.py" />
+    <Compile Include="tests\integration\test_plotter.py" />
+    <Compile Include="tests\integration\test_runscript.py" />
+    <Compile Include="tests\integration\test_tessellation.py" />
+    <Compile Include="tests\test_connection.py" />
+    <Compile Include="tests\test_logging.py" />
+    <Compile Include="tests\test_math.py" />
+    <Compile Include="tests\test_metadata.py" />
+    <Compile Include="tests\test_misc_accuracy.py" />
+    <Compile Include="tests\test_misc_checks.py" />
+    <Compile Include="tests\test_misc_measurements.py" />
+    <Compile Include="tests\test_parameterization.py" />
+    <Compile Include="tests\test_primitives.py" />
+    <Compile Include="tests\test_sketch.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include=".cov\" />
+    <Folder Include=".cov\html" />
+    <Folder Include="doc" />
+    <Folder Include="doc\source" />
+    <Folder Include="doc\source\_static" />
+    <Folder Include="doc\source\_static\assets" />
+    <Folder Include="doc\source\_static\thumbnails" />
+    <Folder Include="doc\styles\" />
+    <Folder Include="doc\styles\Vocab\" />
+    <Folder Include="doc\styles\Vocab\ANSYS" />
+    <Folder Include="src\" />
+    <Folder Include="src\ansys\" />
+    <Folder Include="src\ansys\geometry\" />
+    <Folder Include="src\ansys\geometry\core" />
+    <Folder Include="src\ansys\geometry\core\connection" />
+    <Folder Include="src\ansys\geometry\core\designer" />
+    <Folder Include="src\ansys\geometry\core\materials" />
+    <Folder Include="src\ansys\geometry\core\math" />
+    <Folder Include="src\ansys\geometry\core\misc" />
+    <Folder Include="src\ansys\geometry\core\plotting" />
+    <Folder Include="src\ansys\geometry\core\plotting\widgets" />
+    <Folder Include="src\ansys\geometry\core\plotting\widgets\_images" />
+    <Folder Include="src\ansys\geometry\core\primitives" />
+    <Folder Include="src\ansys\geometry\core\sketch" />
+    <Folder Include="tests" />
+    <Folder Include="tests\integration" />
+    <Folder Include="tests\integration\files\" />
+    <Folder Include="tests\integration\files\disco_scripts" />
+    <Folder Include="tests\integration\image_cache" />
+    <Folder Include="tests\integration\image_cache\results" />
+    <Folder Include="tests\integration\logs" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|PythonCore|3.10" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include=".venv\">
+      <Id>.venv</Id>
+      <Description>.venv (Python 3.10 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <Version>3.10</Version>
+      <Architecture>X64</Architecture>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+    </Interpreter>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>

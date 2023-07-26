@@ -154,6 +154,10 @@ cython_debug/
 # vscode
 .vscode
 
+# visual studio
+.vs/
+TestResults/
+
 # docker
 docker/*-binaries.zip
 
