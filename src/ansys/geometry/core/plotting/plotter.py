@@ -443,6 +443,7 @@ class PlotterHelper:
         screenshot: Optional[str] = None,
         merge_bodies: bool = False,
         merge_component: bool = False,
+        view_2d: bool = False,
         **plotting_options,
     ):
         """
