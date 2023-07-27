@@ -281,6 +281,54 @@ class Plotter:
         for polydata in polydata_entries:
             self.scene.add_mesh(polydata, **plotting_options)
 
+    def add(
+        self,
+        object: any,
+        merge_bodies: bool = False,
+        merge_components: bool = False,
+        **plotting_options,
+    ):
+        """
+        Add any type of object to the scene.
+
+        Add any type of object to the scene. Currently supports
+        ``List[pv.PolyData]``, ``Component`` and ``Body`` objects.
+        Parameters
+        ----------
+        object : any
+            Any object that can be plotted.
+        """
+        if type(object) == List:
+            if type(object[0]) == pv.PolyData:
+                self.add_sketch_polydata(object, **plotting_options)
+        elif type(object) == Component:
+            self.add_component(object, merge_components, merge_bodies, **plotting_options)
+        elif type(object) == Body:
+            self.add_body(object, merge_bodies, **plotting_options)
+        else:
+            logger.warning(f"Object type {type(object)} can not be plotted.")
+
+    def add_list(
+        self,
+        plotting_list: List[any],
+        merge_bodies: bool = False,
+        merge_components: bool = False,
+        **plotting_options,
+    ):
+        """
+        Add a list of any type of object to the scene.
+
+        Add a list of any type of object to the scene. Currently supports
+        ``List[pv.PolyData]``, ``Component`` and ``Body`` objects.
+
+        Parameters
+        ----------
+        plotting_list : List[any]
+            List of objects you want to plot.
+        """
+        for object in plotting_list:
+            self.add(object, merge_bodies, merge_components, **plotting_options)
+
     def show(
         self,
         show_axes_at_origin: bool = True,
@@ -388,6 +436,40 @@ class PlotterHelper:
         else:
             pl = Plotter()
         return pl
+
+    def plot(
+        self,
+        object: any,
+        screenshot: Optional[str] = None,
+        merge_bodies: bool = False,
+        merge_component: bool = False,
+        **plotting_options,
+    ):
+        """
+        Plot and show any PyGeometry object.
+
+        Currently supports ``List[pv.PolyData]``, ``Component`` and ``Body`` objects.
+
+        Parameters
+        ----------
+        object : any
+            Any object that you want to plot.
+        screenshot : str, default: None
+            Save a screenshot of the image being represented. The image is
+            stored in the path provided as an argument.
+        """
+        pl = self.init_plotter()
+        if type(object) == List and type(object[0]) != pv.PolyData:
+            pl.add_list(object, merge_bodies, merge_component, **plotting_options)
+        else:
+            pl.add(object, merge_bodies, merge_component, **plotting_options)
+
+        if view_2d:
+            pl.scene.view_vector(
+                vector=self.plane.direction_z.tolist(),
+                viewup=self.plane.direction_y.tolist(),
+            )
+        self.show_plotter(pl, screenshot)
 
     def show_plotter(self, plotter: Plotter, screenshot: Optional[str] = None):
         """

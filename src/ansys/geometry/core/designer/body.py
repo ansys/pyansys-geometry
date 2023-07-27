@@ -775,10 +775,7 @@ class MasterBody(IBody):
 
         from ansys.geometry.core.plotting import PlotterHelper
 
-        pl_helper = PlotterHelper(use_trame=use_trame)
-        pl = pl_helper.init_plotter()
-        pl.add_body(self, merge=merge, **plotting_options)
-        pl_helper.show_plotter(pl, screenshot=screenshot)
+        PlotterHelper(use_trame=use_trame).plot(self, merge_bodies=merge)
 
     def intersect(self, other: "Body") -> None:  # noqa: D102
         raise NotImplementedError(
