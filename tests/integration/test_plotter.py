@@ -73,9 +73,6 @@ def test_plot_component(modeler: Modeler, verify_image_cache):
 def test_plot_sketch(verify_image_cache, xvfb):
     """Test plotting the sketch instance."""
     # Create a sketch instance
-
-    xvfb.width = 1024
-    xvfb.height = 1024
     sketch = Sketch()
     sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon1")
     sketch.segment(Point2D([3, 0], UNITS.m), Point2D([10, 0], UNITS.m), "Segment1")
