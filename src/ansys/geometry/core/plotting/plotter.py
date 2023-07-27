@@ -443,7 +443,7 @@ class PlotterHelper:
         screenshot: Optional[str] = None,
         merge_bodies: bool = False,
         merge_component: bool = False,
-        view_2d: bool = False,
+        view_2d: Dict = None,
         **plotting_options,
     ):
         """
@@ -458,6 +458,12 @@ class PlotterHelper:
         screenshot : str, default: None
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
+        merge_bodies : bool, optional
+            _description_, by default False
+        merge_component : bool, optional
+            _description_, by default False
+        view_2d : Dict, optional
+            Dict with the plane and the viewup vectors of the 2d plane, by default None.
         """
         pl = self.init_plotter()
         if type(object) == List and type(object[0]) != pv.PolyData:
@@ -465,10 +471,10 @@ class PlotterHelper:
         else:
             pl.add(object, merge_bodies, merge_component, **plotting_options)
 
-        if view_2d:
+        if view_2d is not None:
             pl.scene.view_vector(
-                vector=self.plane.direction_z.tolist(),
-                viewup=self.plane.direction_y.tolist(),
+                vector=view_2d["vector"],
+                viewup=view_2d["viewup"],
             )
         self.show_plotter(pl, screenshot)
 

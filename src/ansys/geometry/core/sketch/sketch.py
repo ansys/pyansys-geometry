@@ -813,8 +813,14 @@ class Sketch:
         # Show the plot requested - i.e. all polydata in sketch
         from ansys.geometry.core.plotting import PlotterHelper
 
+        if view_2d:
+            vector = self.plane.direction_z.tolist()
+            viewup = self.plane.direction_y.tolist()
+            view_2d_dict = {"vector": vector, "viewup": viewup}
+        else:
+            view_2d_dict = None
         pl_helper = PlotterHelper(use_trame=use_trame).plot(
-            self.sketch_polydata(), screenshot=screenshot, view_2d=view_2d, **plotting_options
+            self.sketch_polydata(), screenshot=screenshot, view_2d=view_2d_dict, **plotting_options
         )
 
     def plot_selection(
@@ -854,8 +860,14 @@ class Sketch:
         # Show the plot requested
         from ansys.geometry.core.plotting import PlotterHelper
 
+        if view_2d:
+            vector = self.plane.direction_z.tolist()
+            viewup = self.plane.direction_y.tolist()
+            view_2d_dict = {"vector": vector, "viewup": viewup}
+        else:
+            view_2d_dict = None
         PlotterHelper(use_trame=use_trame).plot(
-            sketches_polydata, view_2d=view_2d, screenshot=screenshot, **plotting_options
+            sketches_polydata, view_2d=view_2d_dict, screenshot=screenshot, **plotting_options
         )
 
     def sketch_polydata(self) -> List["PolyData"]:
