@@ -299,13 +299,14 @@ class Plotter:
             Any object that can be plotted.
         """
         logger.debug(f"Adding object type {type(object)}")
+
         if type(object) == List and type(object[0]) == pv.PolyData:
             self.add_sketch_polydata(object, **plotting_options)
         elif type(object) == Sketch:
             self.plot_sketch(object, **plotting_options)
-        elif type(object) == (Body or MasterBody):
+        elif type(object) == Body or type(object) == MasterBody:
             self.add_body(object, merge_bodies, **plotting_options)
-        elif type(object) == (Design or Component):
+        elif type(object) == Design or type(object) == Component:
             self.add_component(object, merge_components, merge_bodies, **plotting_options)
         else:
             logger.warning(f"Object type {type(object)} can not be plotted.")
@@ -456,7 +457,7 @@ class PlotterHelper:
         Parameters
         ----------
         object : any
-            Any object that you want to plot.
+            Any object or list of objects that you want to plot.
         screenshot : str, default: None
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
