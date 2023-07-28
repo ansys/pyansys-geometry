@@ -4,7 +4,7 @@ import numpy as np
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
 
-from ansys.geometry.core.designer import Body, Component
+from ansys.geometry.core.designer import Body, Component, Design, MasterBody
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.math import Frame, Plane
 from ansys.geometry.core.plotting.trame_gui import _HAS_TRAME, TrameVisualizer
@@ -298,13 +298,15 @@ class Plotter:
         object : any
             Any object that can be plotted.
         """
-        if type(object) == List:
-            if type(object[0]) == pv.PolyData:
-                self.add_sketch_polydata(object, **plotting_options)
-        elif type(object) == Component:
-            self.add_component(object, merge_components, merge_bodies, **plotting_options)
-        elif type(object) == Body:
+        logger.debug(f"Adding object type {type(object)}")
+        if type(object) == List and type(object[0]) == pv.PolyData:
+            self.add_sketch_polydata(object, **plotting_options)
+        elif type(object) == Sketch:
+            self.plot_sketch(object, **plotting_options)
+        elif type(object) == (Body or MasterBody):
             self.add_body(object, merge_bodies, **plotting_options)
+        elif type(object) == (Design or Component):
+            self.add_component(object, merge_components, merge_bodies, **plotting_options)
         else:
             logger.warning(f"Object type {type(object)} can not be plotted.")
 
@@ -467,6 +469,7 @@ class PlotterHelper:
         """
         pl = self.init_plotter()
         if type(object) == List and type(object[0]) != pv.PolyData:
+            logger.debug("Run object list.")
             pl.add_list(object, merge_bodies, merge_component, **plotting_options)
         else:
             pl.add(object, merge_bodies, merge_component, **plotting_options)
