@@ -60,6 +60,7 @@ tests = [
     "pytest==7.4.0",
     "pytest-cov==4.1.0",
     "pytest-pyvista==0.1.8",
+    "pytest-xvfb==3.0.0",
     "pyvista[trame]==0.41.1",
     "requests==2.31.0",
     "scipy==1.11.1",
