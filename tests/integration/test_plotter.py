@@ -72,6 +72,7 @@ def test_plot_component(modeler: Modeler, verify_image_cache):
 @skip_no_xserver
 def test_plot_sketch(verify_image_cache):
     """Test plotting the sketch instance."""
+
     # Create a sketch instance
     sketch = Sketch()
     sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon1")
