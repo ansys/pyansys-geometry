@@ -11,7 +11,6 @@ on:
 env:
   MAIN_PYTHON_VERSION: '3.10'
   PACKAGE_NAME: 'ansys-geometry-core'
-  PACKAGE_NAMESPACE: 'ansys.geometry.core'
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
   ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
   ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/ansys/geometry:windows-latest
@@ -64,7 +63,6 @@ jobs:
         uses: ansys/actions/build-wheelhouse@v4
         with:
           library-name: ${{ env.PACKAGE_NAME }}
-          library-namespace: ${{ env.PACKAGE_NAMESPACE }}
           operating-system: ${{ matrix.os }}
           python-version: ${{ matrix.python-version }}
 
@@ -176,6 +174,15 @@ jobs:
           docker logs $env:GEO_CONT_NAME
           docker rm $env:GEO_CONT_NAME
 
+      - name: Stop any remaining containers
+        if: always()
+        run: |
+          $dockerContainers = docker ps -a -q
+          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
+              docker stop $dockerContainers
+              docker rm $dockerContainers
+          }
+
   docs:
     name: Documentation
     needs: [docs-style]
@@ -256,6 +263,15 @@ jobs:
           docker stop $env:GEO_CONT_NAME
           docker logs $env:GEO_CONT_NAME
           docker rm $env:GEO_CONT_NAME
+
+      - name: Stop any remaining containers
+        if: always()
+        run: |
+          $dockerContainers = docker ps -a -q
+          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
+              docker stop $dockerContainers
+              docker rm $dockerContainers
+          }
 
 # =================================================================================================
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
