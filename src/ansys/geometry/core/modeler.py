@@ -12,6 +12,7 @@ from grpc import Channel
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
+from ansys.geometry.core.connection.product_instance import ProductInstance
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
@@ -45,6 +46,12 @@ class Modeler:
         the ``launch_local_modeler()`` interface. This instance will be deleted
         when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
         method is called.
+    product_instance : ProductInstance, default: None
+        is launched through the ``launch_modeler_with_geometry_service()``,  
+        ``launch_modeler_with_discovery()`` or the ``launch_modeler_with_spaceclaim()``
+        interface. This instance will be deleted
+        when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
+        method is called.        
     timeout : Real, default: 60
         Timeout in seconds to achieve the connection.
     logging_level : int, default: INFO
@@ -60,6 +67,7 @@ class Modeler:
         channel: Optional[Channel] = None,
         remote_instance: Optional["Instance"] = None,
         local_instance: Optional["LocalDockerInstance"] = None,
+        product_instance: Optional["ProductInstance"] = None,
         timeout: Optional[Real] = 60,
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
@@ -72,6 +80,7 @@ class Modeler:
             channel=channel,
             remote_instance=remote_instance,
             local_instance=local_instance,
+            product_instance=product_instance,
             timeout=timeout,
             logging_level=logging_level,
             logging_file=logging_file,
