@@ -93,6 +93,12 @@ jobs:
           docker logs ${{ env.GEO_CONT_NAME }}
           docker rm ${{ env.GEO_CONT_NAME }}
 
+      - name: Stop any remaining containers
+        if: always()
+        run: |
+          docker stop $(docker ps -a -q)
+          docker rm $(docker ps -a -q)
+
       - name: Delete the Docker images (and untagged ones)
         if: always()
         run: |

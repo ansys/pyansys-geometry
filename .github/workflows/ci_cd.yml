@@ -176,6 +176,12 @@ jobs:
           docker logs $env:GEO_CONT_NAME
           docker rm $env:GEO_CONT_NAME
 
+      - name: Stop any remaining containers
+        if: always()
+        run: |
+          docker stop $(docker ps -a -q)
+          docker rm $(docker ps -a -q)
+
   docs:
     name: Documentation
     needs: [docs-style]
@@ -256,6 +262,12 @@ jobs:
           docker stop $env:GEO_CONT_NAME
           docker logs $env:GEO_CONT_NAME
           docker rm $env:GEO_CONT_NAME
+
+      - name: Stop any remaining containers
+        if: always()
+        run: |
+          docker stop $(docker ps -a -q)
+          docker rm $(docker ps -a -q)
 
 # =================================================================================================
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
