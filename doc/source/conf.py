@@ -33,7 +33,7 @@ html_short_title = html_title = "PyGeometry"
 
 # specify the location of your github repo
 html_context = {
-    "github_user": "pyansys",
+    "github_user": "ansys",
     "github_repo": "pygeometry",
     "github_version": "main",
     "doc_path": "doc/source",
