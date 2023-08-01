@@ -54,7 +54,7 @@ tests = [
     "googleapis-common-protos==1.59.1",
     "grpcio==1.50.0",
     "grpcio-health-checking==1.48.2",
-    "numpy==1.25.1",
+    "numpy==1.25.2",
     "Pint==0.22",
     "protobuf==3.20.3",
     "pytest==7.4.0",
