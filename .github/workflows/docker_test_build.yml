@@ -95,9 +95,13 @@ jobs:
 
       - name: Stop any remaining containers
         if: always()
+        shell: bash
         run: |
-          docker stop $(docker ps -a -q)
-          docker rm $(docker ps -a -q)
+          docker_containers=$(docker ps -a -q)
+          if [ -z "$docker_containers" ]; then
+            docker stop $docker_containers
+            docker rm $docker_containers
+          fi
 
       - name: Delete the Docker images (and untagged ones)
         if: always()
