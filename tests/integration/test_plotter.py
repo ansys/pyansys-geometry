@@ -3,6 +3,7 @@ from pathlib import Path
 import numpy as np
 from pint import Quantity
 import pytest
+import pyvista as pv
 from pyvista.plotting import system_supports_plotting
 
 from ansys.geometry.core import Modeler
@@ -89,7 +90,7 @@ def test_plot_sketch(verify_image_cache):
 
 
 @skip_no_xserver
-def test_plot_object_list(modeler: Modeler, verify_image_cache):
+def test_plot_object_list(verify_image_cache):
     """Test plotting a list of pygeometry objects."""
     sketch = Sketch()
     sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon1")
@@ -101,31 +102,17 @@ def test_plot_object_list(modeler: Modeler, verify_image_cache):
         tag="Arc1",
     )
 
-    # Create a Sketch
     sketch2 = Sketch()
-    sketch2.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
-    # Create your design on the server side
-    design = modeler.create_design("BoxExtrusion")
 
-    # Extrude the sketch to create a Body
-    design.extrude_sketch("Box", sketch2, Quantity(10, UNITS.mm))
-    component_1 = design.add_component("Component")
+    sketch2.arc(
+        Point2D([20, 20], UNITS.m),
+        Point2D([20, -20], UNITS.m),
+        Point2D([10, 0], UNITS.m),
+        tag="Arc2",
+    )
+    cyl = pv.Cylinder(radius=5, height=20)
 
-    sketch3 = Sketch()
-    sketch3.ellipse(Point2D([50, 50], UNITS.mm), Quantity(30, UNITS.mm), Quantity(10, UNITS.mm))
-    component_1.create_surface("Component_Surface", sketch3)
-
-    # Create a Sketch
-    sketch4 = Sketch()
-    sketch4.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
-
-    # Create your design on the server side
-    design2 = modeler.create_design("BoxExtrusions")
-
-    # Extrude the sketch to create a body
-    box_body = design2.extrude_sketch("JustABox", sketch4, Quantity(10, UNITS.mm))
-
-    PlotterHelper().plot([sketch, box_body])
+    PlotterHelper().plot([sketch2, sketch, cyl])
 
 
 @skip_no_xserver
