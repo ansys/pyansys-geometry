@@ -1,48 +1,18 @@
 """Provides for connecting to Geometry service instances."""
 import os
-import socket
-import logging
-from distutils.sysconfig import get_python_lib
-from pathlib import Path
-import errno
-import logging
-import os
-import subprocess
 
-from beartype.typing import TYPE_CHECKING, Dict, Optional, Union
+from beartype.typing import TYPE_CHECKING, Dict, Optional
 
-from ansys.geometry.core.connection.backend import BackendType, ProductVersions, ApiVersions
-from ansys.geometry.core.connection.defaults import (
-    DEFAULT_PIM_CONFIG, 
-    DEFAULT_PORT,)
-from ansys.geometry.core.connection.environment import (
-    WINDOWS_GEOMETRY_SERVICE_FOLDER, 
-    DISCOVERY_FOLDER, 
-    SPACECLAIM_FOLDER, 
-    MANIFEST_FILENAME,
-    BACKEND_SUBFOLDER,
-    ADDINS_SUBFOLDER,
-    GEOMETRY_SERVICE_EXE,
-    DISCOVERY_EXE,
-    SPACECLAIM_EXE,
-    BACKEND_LOG_LEVEL_VARIABLE,
-    BACKEND_TRACE_VARIABLE,
-    BACKEND_HOST_VARIABLE,
-    BACKEND_PORT_VARIABLE,
-    BACKEND_API_VERSION_VARIABLE,
-    BACKEND_SPACECLAIM_OPTIONS,
-    BACKEND_ADDIN_MANIFEST_ARGUMENT,
-)
+from ansys.geometry.core.connection.backend import ApiVersions, BackendType, ProductVersions
+from ansys.geometry.core.connection.defaults import DEFAULT_PIM_CONFIG, DEFAULT_PORT
 from ansys.geometry.core.connection.local_instance import (
     _HAS_DOCKER,
     GeometryContainers,
     LocalDockerInstance,
 )
-from ansys.geometry.core.connection.product_instance import ProductInstance
-
+from ansys.geometry.core.connection.product_instance import prepare_and_start_backend
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.misc import check_type
-from ansys.tools.path import get_available_ansys_installations
 
 try:
     import ansys.platform.instancemanagement as pypim
@@ -292,6 +262,207 @@ def launch_modeler_with_pimlight_and_spaceclaim(version: Optional[str] = None) -
     )
 
 
+def launch_modeler_with_geometry_service(
+    host: str = "localhost",
+    port: int = None,
+    enable_trace: bool = False,
+    log_level: int = 2,
+    timeout: int = 60,
+) -> "Modeler":
+    """
+    Start the Geometry service locally using the ``ProductInstance`` class.
+
+    When calling this method, a standalone Geometry service is started.
+    By default, if an endpoint is specified (by defining `host` and `port` parameters)
+    but the endpoint isnt't available, the startup will fail. Otherwise, it will try to
+    launch its own service.
+
+    Parameters
+    ----------
+    host: str, optional
+        IP address at which the Geometry service will be deployed. By default,
+        its value will be ``localhost``.
+    port : int, optional
+        Port at which the Geometry service will be deployed. By default, its
+        value will be ``None``.
+    enable_trace : bool, optional
+        Boolean enabling the logs trace on the Geometry service console window.
+        By default its value is ``False``.
+    log_level : int, optional
+        Backend's log level from 0 to 3:
+            0: Chatterbox
+            1: Debug
+            2: Warning
+            3: Error
+        The default is ``2`` (Warning).
+    timeout : int, optional
+        Timeout for starting the backend startup process. The default is 60.
+
+    Exceptions
+    ----------
+    ConnectionError: if the specified endpoint is already in use, a connection
+        error will be raised.
+    SystemError:  if there isn't an Ansys products 23.2 version or later installed
+        a SystemError will be raised.
+
+    Returns
+    -------
+    Modeler
+        Instance of the Geometry service.
+    """
+    return prepare_and_start_backend(
+        BackendType.WINDOWS_SERVICE,
+        host=host,
+        port=port,
+        enable_trace=enable_trace,
+        log_level=log_level,
+        api_version=ApiVersions.latest,
+        timeout=timeout,
+    )
+
+
+def launch_modeler_with_discovery(
+    product_version: int = ProductVersions.latest.value,
+    host: str = "localhost",
+    port: int = None,
+    log_level: int = 2,
+    api_version: ApiVersions = ApiVersions.latest,
+    timeout: int = 150,
+):
+    """
+    Start the Geometry service locally using the ``ProductInstance`` class.
+
+    When calling this method, a standalone Geometry service is started.
+    By default, if an endpoint is specified (by defining `host` and `port` parameters)
+    but the endpoint isnt't available, the startup will fail. Otherwise, it will try to
+    launch its own service.
+
+    Parameters
+    ----------
+    product_version: ``ProductVersions``, optional
+        The product version to be started. Goes from v23.2.1 to
+        the latest. Default is ``ProductVersions.latest``.
+        If a specific product version is requested but not installed locally,
+        a SystemError will be raised.
+    host: str, optional
+        IP address at which the Geometry service will be deployed. By default,
+        its value will be ``localhost``.
+    port : int, optional
+        Port at which the Geometry service will be deployed. By default, its
+        value will be ``None``.
+    enable_trace : bool, optional
+        Boolean enabling the logs trace on the Geometry service console window.
+        By default its value is ``False``.
+    log_level : int, optional
+        Backend's log level from 0 to 3:
+            0: Chatterbox
+            1: Debug
+            2: Warning
+            3: Error
+        The default is ``2`` (Warning).
+    api_version: ``ApiVersions``, optional
+        The backend's API version to be used at runtime. Goes from API v21 to
+        the latest. Default is ``ApiVersions.latest``.
+    timeout : int, optional
+        Timeout for starting the backend startup process. The default is 150.
+
+    Exceptions
+    ----------
+    ConnectionError:
+        if the specified endpoint is already in use, a connection error will be raised.
+    SystemError:
+        if there isn't an Ansys products 23.2 version or later installed
+        or if a specific product's version is requested but not installed locally then
+        a SystemError will be raised.
+
+    Returns
+    -------
+    Modeler
+        Instance of the Geometry service.
+    """
+    return prepare_and_start_backend(
+        BackendType.DISCOVERY,
+        product_version=product_version,
+        host=host,
+        port=port,
+        enable_trace=False,
+        log_level=log_level,
+        api_version=api_version,
+        timeout=timeout,
+    )
+
+
+def launch_modeler_with_spaceclaim(
+    product_version: int = ProductVersions.latest.value,
+    host: str = "localhost",
+    port: int = None,
+    log_level: int = 2,
+    api_version: ApiVersions = ApiVersions.latest,
+    timeout: int = 150,
+):
+    """
+    Start the Geometry service locally using the ``ProductInstance`` class.
+
+    When calling this method, a standalone Geometry service is started.
+    By default, if an endpoint is specified (by defining `host` and `port` parameters)
+    but the endpoint isnt't available, the startup will fail. Otherwise, it will try to
+    launch its own service.
+
+    Parameters
+    ----------
+    product_version: ``ProductVersions``, optional
+        The product version to be started. Goes from v23.2.1 to the latest.
+        Default is ``ProductVersions.latest``.
+        If a specific product version is requested but not installed locally,
+        a SystemError will be raised.
+    host: str, optional
+        IP address at which the Geometry service will be deployed. By default,
+        its value will be ``localhost``.
+    port : int, optional
+        Port at which the Geometry service will be deployed. By default, its
+        value will be ``None``.
+    enable_trace : bool, optional
+        Boolean enabling the logs trace on the Geometry service console window.
+        By default its value is ``False``.
+    log_level : int, optional
+        Backend's log level from 0 to 3:
+            0: Chatterbox
+            1: Debug
+            2: Warning
+            3: Error
+        The default is ``2`` (Warning).
+    api_version: ``ApiVersions``, optional
+        The backend's API version to be used at runtime. Goes from API v21 to
+        the latest. Default is ``ApiVersions.latest``.
+    timeout : int, optional
+        Timeout for starting the backend startup process. The default is 150.
+
+    Exceptions
+    ----------
+    ConnectionError:
+        if the specified endpoint is already in use, a connection error will be raised.
+    SystemError:
+        if there isn't an Ansys products 23.2 version or later installed
+        or if a specific product's version is requested but not installed locally then
+        a SystemError will be raised.
+
+    Returns
+    -------
+    Modeler
+        Instance of the Geometry service.
+    """
+    return prepare_and_start_backend(
+        BackendType.SPACECLAIM,
+        product_version=product_version,
+        host=host,
+        port=port,
+        enable_trace=False,
+        log_level=log_level,
+        api_version=api_version,
+        timeout=timeout,
+    )
+
+
 def _launch_pim_instance(
     is_pim_light: bool,
     product_name: str,
@@ -355,179 +526,3 @@ def _launch_pim_instance(
         os.environ.pop("ANSYS_PLATFORM_INSTANCEMANAGEMENT_CONFIG")
 
     return Modeler(channel=channel, remote_instance=instance, backend_type=backend_type)
-
-def launch_modeler_with_geometry_service( 
-    host : str = "localhost", 
-    port: int = None, 
-    enable_trace: bool = False, 
-    log_level: int = 2, 
-    timeout = 150) -> "Modeler":
-    """"""
-    return _prepare_and_start_backend(
-        BackendType.WINDOWS_SERVICE,
-        product_version= ProductVersions.latest,
-        host= host,
-        port= port,
-        enable_trace= enable_trace,
-        log_level= log_level,
-        api_version= ApiVersions.latest,
-        timeout= timeout)
-
-            
-def launch_modeler_with_discovery(
-    product_version: Union[ProductVersions, int] = ProductVersions.latest.value, 
-    host: str = "localhost", 
-    port: int = None, 
-    enable_trace: bool = False, 
-    log_level: int = 2, 
-    api_version: ApiVersions = ApiVersions.latest, 
-    timeout = 150):
-    """"""
-
-    return _prepare_and_start_backend(
-        BackendType.DISCOVERY,
-        product_version= product_version,
-        host= host,
-        port= port,
-        enable_trace= enable_trace,
-        log_level= log_level,
-        api_version= api_version,
-        timeout= timeout)
-
-        
-def launch_modeler_with_spaceclaim(   
-    product_version: Union[ProductVersions, int] = ProductVersions.latest.value, 
-    host: str = "localhost", 
-    port: int = None, 
-    enable_trace: bool = False, 
-    log_level: int = 2, 
-    api_version: ApiVersions = ApiVersions.latest,
-    timeout = 150):
-    """"""
-    return _prepare_and_start_backend(
-        BackendType.SPACECLAIM,
-        product_version= product_version,
-        host= host,
-        port= port,
-        enable_trace= enable_trace,
-        log_level= log_level,
-        api_version= api_version,
-        timeout= timeout)        
-
-def _prepare_and_start_backend(
-    backend_type: BackendType,
-    product_version: Union[ProductVersions, int] = ProductVersions.latest.value, 
-    host: str = "localhost", 
-    port: int = None, 
-    enable_trace: bool = False, 
-    log_level: int = 2, 
-    api_version: ApiVersions = ApiVersions.latest, 
-    timeout = 150) -> "Modeler":
-
-    from ansys.geometry.core.modeler import Modeler
-
-    port = _check_port_or_get_one(port)
-    installations = get_available_ansys_installations()    
-    _check_minimal_versions()
-    _check_version_is_available(product_version, installations)
-
-    args = []
-    env_copy = _get_common_env( host= host, port= port, enable_trace=enable_trace, log_level= log_level)
-
-    if(backend_type == BackendType.DISCOVERY):
-        args.append(os.path.join(installations[product_version], DISCOVERY_FOLDER, DISCOVERY_EXE))
-        args.append(BACKEND_SPACECLAIM_OPTIONS)
-        args.append(BACKEND_ADDIN_MANIFEST_ARGUMENT + _manifest_path_provider(product_version, installations))
-        env_copy[BACKEND_API_VERSION_VARIABLE] = str(api_version)
-    elif( backend_type == BackendType.SPACECLAIM):
-        args.append(os.path.join(installations[product_version], SPACECLAIM_FOLDER, SPACECLAIM_EXE))
-        args.append(BACKEND_ADDIN_MANIFEST_ARGUMENT + _manifest_path_provider(product_version, installations))
-        env_copy[BACKEND_API_VERSION_VARIABLE] = str(api_version)
-    else:
-        # We're starting the Windows GeometryService (DMS)
-        installations = get_available_ansys_installations()
-        keys = list(installations.keys())
-        latest_version = max(keys)
-        args.append(os.path.join(installations[latest_version], WINDOWS_GEOMETRY_SERVICE_FOLDER, GEOMETRY_SERVICE_EXE)) 
-    print(args)
-    instance = ProductInstance(_start_program(args, env_copy).pid)
-    return Modeler(host= host, port = port, timeout = timeout, product_instance=instance, backend_type=backend_type)
-
-def _get_available_port():
-    sock = socket.socket()
-    sock.bind(('', 0))
-    port = sock.getsockname()[1]
-    sock.close()
-    return port
-    
-def _is_port_available(port: int , host: str = "localhost" ) -> bool:
-    if port != 0:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-            try:
-                sock.bind((host, port))
-                logging.info("Port" + str(port) + " is available.")
-                return True
-            except:
-                logging.error("Check port availability failed. Port " + str(port) +" already in use.")
-                return False
-
-def _manifest_path_provider(version: int , available_installations: dict):
-    return os.path.join(
-        available_installations[version], 
-        ADDINS_SUBFOLDER, 
-        BACKEND_SUBFOLDER, 
-        MANIFEST_FILENAME
-        )        
-
-def _start_program(args, local_env) -> subprocess.Popen:
-    logging.info("Starting program: " + str(args))
-    session = subprocess.Popen(
-        args,
-        shell=os.name != "nt",
-        stdin=subprocess.DEVNULL,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        env=local_env
-        )
-    return session
-
-def _check_minimal_versions():
-    installations = get_available_ansys_installations()
-    keys = list(installations.keys())
-    latest_version = max(keys)
-    if latest_version < ProductVersions.V_232.value:
-        msg = "PyGeometry is compatible with Ansys Products from version 23.2.1. Please install Ansys products 23.2.1 or later."
-        logging.error(msg)
-        raise ConnectionError(msg)
-
-def _check_version_is_available(version: int, installations: Dict[int,str]):
-    if version not in installations:
-        msg = "The requested Ansys product's version isn't available, please specify a different version."
-        logging.error(msg)
-        raise ConnectionError(msg)
-
-def _check_port_or_get_one(port:int) -> int:
-
-    if port != None and _is_port_available(port) == False:
-        msg = "Port " + str(port) + " is already in use. Please specify a different one."
-        logging.error(msg)
-        raise ConnectionError(msg)
-    elif port == None:
-        port = _get_available_port()
-    return port
-
-def _get_common_env(
-    host: str, port: int, 
-    enable_trace: bool, 
-    log_level: int) -> dict[str,str]:
-
-    env_copy = os.environ.copy()
-    env_copy[BACKEND_HOST_VARIABLE] = host
-    env_copy[BACKEND_PORT_VARIABLE] = str(port)
-    if enable_trace == True:        
-        env_copy[BACKEND_TRACE_VARIABLE] = str(1)
-    else: 
-        env_copy[BACKEND_TRACE_VARIABLE] = str(0)
-
-    env_copy[BACKEND_LOG_LEVEL_VARIABLE] = str(log_level)
-    return env_copy

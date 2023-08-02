@@ -47,11 +47,12 @@ class Modeler:
         when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
         method is called.
     product_instance : ProductInstance, default: None
-        is launched through the ``launch_modeler_with_geometry_service()``,  
+        Corresponding local product instance when the product (Discovery or SpaceClaim)
+        is launched through the ``launch_modeler_with_geometry_service()``,
         ``launch_modeler_with_discovery()`` or the ``launch_modeler_with_spaceclaim()``
         interface. This instance will be deleted
         when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
-        method is called.        
+        method is called.
     timeout : Real, default: 60
         Timeout in seconds to achieve the connection.
     logging_level : int, default: INFO

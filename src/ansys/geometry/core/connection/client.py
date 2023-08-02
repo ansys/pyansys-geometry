@@ -82,7 +82,7 @@ class GrpcClient:
         method is called.
     product_instance : ProductInstance, default: None
         Corresponding local product instance when the product (Discovery or SpaceClaim)
-        is launched through the ``launch_modeler_with_geometry_service()``,  
+        is launched through the ``launch_modeler_with_geometry_service()``,
         ``launch_modeler_with_discovery()`` or the ``launch_modeler_with_spaceclaim()``
         interface. This instance will be deleted
         when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
@@ -210,16 +210,16 @@ class GrpcClient:
         """
         if self._remote_instance:
             self._remote_instance.delete()  # pragma: no cover
-        if self._local_instance:
+        elif self._local_instance:
             if not self._local_instance.existed_previously:
                 self._local_instance.container.stop()
             else:
                 self.log.warning(
                     "Geometry service will not be shutdown since it was already running..."
                 )
-        if self._product_instance:
+        elif self._product_instance:
             self._product_instance.close()
-            
+
         self._closed = True
         self._channel.close()
 
