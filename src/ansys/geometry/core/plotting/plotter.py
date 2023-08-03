@@ -298,19 +298,19 @@ class Plotter:
         object : any
             Any object that can be plotted.
         """
-        logger.debug(f"Adding object type {type(object)}")
+        logger.debug(f"Adding object type {type(object)} to the PyVista plotter")
 
-        if type(object) == List and type(object[0]) == pv.PolyData:
+        if isinstance(object, List) and isinstance(object[0], pv.PolyData):
             self.add_sketch_polydata(object, **plotting_options)
-        elif type(object) == pv.PolyData:
+        elif isinstance(object, pv.PolyData):
             self.scene.add_mesh(object, **plotting_options)
-        elif type(object) == pv.MultiBlock:
+        elif isinstance(object, pv.MultiBlock):
             self.scene.add_composite(object, **plotting_options)
-        elif type(object) == Sketch:
+        elif isinstance(object, Sketch):
             self.plot_sketch(object, **plotting_options)
-        elif type(object) == Body or type(object) == MasterBody:
+        elif isinstance(object, Body) or isinstance(object, MasterBody):
             self.add_body(object, merge_bodies, **plotting_options)
-        elif type(object) == Design or type(object) == Component:
+        elif isinstance(object, Design) or isinstance(object, Component):
             self.add_component(object, merge_components, merge_bodies, **plotting_options)
         else:
             logger.warning(f"Object type {type(object)} can not be plotted.")
@@ -473,7 +473,7 @@ class PlotterHelper:
             Dict with the plane and the viewup vectors of the 2d plane, by default None.
         """
         pl = self.init_plotter()
-        if type(object) == List and type(object[0]) != pv.PolyData:
+        if isinstance(object, List) and not isinstance(object[0], pv.PolyData):
             logger.debug("Run object list.")
             pl.add_list(object, merge_bodies, merge_component, **plotting_options)
         else:
