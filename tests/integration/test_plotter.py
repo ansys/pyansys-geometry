@@ -7,7 +7,7 @@ import pyvista as pv
 from pyvista.plotting import system_supports_plotting
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core.math import Point2D
+from ansys.geometry.core.math import UNITVECTOR3D_Y, UNITVECTOR3D_Z, Plane, Point2D
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
 from ansys.geometry.core.plotting import Plotter, PlotterHelper
 from ansys.geometry.core.sketch import (
@@ -90,8 +90,100 @@ def test_plot_sketch(verify_image_cache):
 
 
 @skip_no_xserver
-def test_plot_object_list(verify_image_cache):
+def test_plot_sketch_pyvista(verify_image_cache):
+    # define sketch
+    sketch = Sketch()
+    sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon1")
+
+    # define pyvista PolyData
+    cyl = pv.Cylinder(radius=5, height=20, center=(-20, 10, 10))
+
+    # define PyVista Multiblock
+    blocks = pv.MultiBlock([pv.Sphere(center=(20, 10, -10), radius=4), pv.Cube()])
+
+    # plot together
+    PlotterHelper().plot([sketch, cyl, blocks])
+
+
+@skip_no_xserver
+def test_plot_sketch_body(modeler: Modeler, verify_image_cache):
+    # init modeler
+    design = modeler.create_design("Multiplot")
+
+    # define sketch
+    sketch = Sketch()
+    sketch.polygon(Point2D([-10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon1")
+
+    # define body
+    body_sketch = Sketch()
+    body_sketch.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+    box_body = design.extrude_sketch("JustABox", body_sketch, Quantity(10, UNITS.m))
+
+    # plot together
+    PlotterHelper().plot([sketch, box_body])
+
+
+@skip_no_xserver
+def test_plot_sketch_several_bodies(modeler: Modeler, verify_image_cache):
+    # init modeler
+    design = modeler.create_design("Multiplot")
+
+    # define sketch
+    sketch = Sketch()
+    sketch.polygon(Point2D([10, -10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon1")
+
+    # define box body
+    box_sketch = Sketch()
+    box_sketch.box(Point2D([-10, -10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+    box_body = design.extrude_sketch("JustABox", box_sketch, Quantity(10, UNITS.m))
+
+    # define box body
+    cyl_sketch = Sketch()
+    cyl_sketch.circle(Point2D([-20, 5], UNITS.m), Quantity(10, UNITS.m))
+    cyl_body = design.extrude_sketch("JustABox", cyl_sketch, Quantity(10, UNITS.m))
+
+    # Create a gear
+    sketch_gear = Sketch(plane=Plane(direction_x=UNITVECTOR3D_Y, direction_y=UNITVECTOR3D_Z))
+    sketch_gear.dummy_gear(
+        Point2D([3, 1], unit=UNITS.meter),
+        Distance(4, unit=UNITS.meter),
+        Distance(3.8, unit=UNITS.meter),
+        30,
+        tag="Gear",
+    )
+    gear_body = design.extrude_sketch("GearExtruded", sketch_gear, Quantity(1, UNITS.m))
+
+    # plot together
+    PlotterHelper().plot([sketch, box_body, gear_body, cyl_body])
+
+
+@skip_no_xserver
+def test_plot_sketch_design(modeler: Modeler, verify_image_cache):
+    # init modeler
+    design = modeler.create_design("Multiplot")
+
+    # define sketch
+    sketch = Sketch()
+    sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon1")
+
+    # define box body
+    box_sketch = Sketch()
+    box_sketch.box(Point2D([-10, -10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+    design.extrude_sketch("JustABox", box_sketch, Quantity(10, UNITS.m))
+
+    # plot together
+    PlotterHelper().plot([sketch, design])
+
+
+@skip_no_xserver
+def test_plot_object_list(modeler: Modeler, verify_image_cache):
     """Test plotting a list of pygeometry objects."""
+    plot_list = []
+
+    # init modeler
+    design = modeler.create_design("Multiplot")
+
+    # Sketch 1 definition
     sketch = Sketch()
     sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon1")
     sketch.segment(Point2D([3, 0], UNITS.m), Point2D([10, 0], UNITS.m), "Segment1")
@@ -101,18 +193,40 @@ def test_plot_object_list(verify_image_cache):
         Point2D([10, 0], UNITS.m),
         tag="Arc1",
     )
-
+    plot_list.append(sketch)
+    # Sketch 2 definition
     sketch2 = Sketch()
-
     sketch2.arc(
         Point2D([20, 20], UNITS.m),
         Point2D([20, -20], UNITS.m),
         Point2D([10, 0], UNITS.m),
         tag="Arc2",
     )
-    cyl = pv.Cylinder(radius=5, height=20)
+    plot_list.append(sketch2)
 
-    PlotterHelper().plot([sketch2, sketch, cyl])
+    # PyVista PolyData
+    cyl = pv.Cylinder(radius=5, height=20, center=(-20, 10, 10))
+    plot_list.append(cyl)
+
+    # PyVista Multiblock
+    blocks = pv.MultiBlock(
+        [pv.Sphere(center=(20, 10, -10), radius=10), pv.Cube(x_length=10, y_length=10, z_length=10)]
+    )
+    plot_list.append(blocks)
+
+    # Create a Body cylinder
+    cylinder = Sketch()
+    cylinder.circle(Point2D([10, 10], UNITS.m), 1.0)
+    cylinder_body = design.extrude_sketch("JustACyl", cylinder, Quantity(10, UNITS.m))
+    plot_list.append(cylinder_body)
+
+    # Create a Body box
+    box2 = Sketch()
+    box2.box(Point2D([-10, 20], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+    box_body2 = design.extrude_sketch("JustABox", box2, Quantity(10, UNITS.m))
+    plot_list.append(box_body2)
+
+    PlotterHelper().plot(plot_list)
 
 
 @skip_no_xserver
