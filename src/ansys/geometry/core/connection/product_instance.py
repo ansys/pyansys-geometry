@@ -8,7 +8,7 @@ import subprocess
 from ansys.tools.path import get_available_ansys_installations
 from beartype.typing import TYPE_CHECKING, Dict
 
-from ansys.geometry.core.connection.backend import ApiVersions, BackendType, ProductVersions
+from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.logger import LOG as logger
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -111,7 +111,7 @@ class ProductInstance:
 
 def prepare_and_start_backend(
     backend_type: BackendType,
-    product_version: int = ProductVersions.latest.value,
+    product_version: int = None,
     host: str = "localhost",
     port: int = None,
     enable_trace: bool = False,
@@ -129,9 +129,9 @@ def prepare_and_start_backend(
 
     Parameters
     ----------
-    product_version: ``ProductVersions``, optional
+    product_version: ``int``, optional
         The product version to be started. Goes from v23.2.1 to
-        the latest. Default is ``ProductVersions.latest``.
+        the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
         a SystemError will be raised.
     host: str, optional
@@ -174,8 +174,13 @@ def prepare_and_start_backend(
 
     port = _check_port_or_get_one(port)
     installations = get_available_ansys_installations()
-    _check_minimal_versions()
-    _check_version_is_available(product_version, installations)
+    keys = list(installations.keys())
+    latest_version = max(keys)  
+    _check_minimal_versions(latest_version)
+    if product_version != None:
+        _check_version_is_available(product_version, installations)
+    else:
+        product_version = latest_version
 
     args = []
     env_copy = _get_common_env(host=host, port=port, enable_trace=enable_trace, log_level=log_level)
@@ -252,12 +257,8 @@ def _start_program(args, local_env) -> subprocess.Popen:
     )
     return session
 
-
-def _check_minimal_versions():
-    installations = get_available_ansys_installations()
-    keys = list(installations.keys())
-    latest_version = max(keys)
-    if latest_version < ProductVersions.V_232.value:
+def _check_minimal_versions(latest_installed_version: int):    
+    if latest_installed_version < 232:
         msg = "PyGeometry is compatible with Ansys Products from version 23.2.1."
         msg.join("Please install Ansys products 23.2.1 or later.")
         logging.error(msg)

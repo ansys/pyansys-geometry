@@ -11,15 +11,6 @@ class BackendType(Enum):
     WINDOWS_SERVICE = 2
     LINUX_SERVICE = 3
 
-
-class ProductVersions(Enum):
-    """Provides an enum for all the compatibles product versions."""
-
-    V_232 = 232
-    V_241 = 241
-    latest = 241
-
-
 class ApiVersions(Enum):
     """Provides an enum for all the compatibles API versions."""
 

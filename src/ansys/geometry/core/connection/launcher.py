@@ -339,9 +339,9 @@ def launch_modeler_with_discovery(
 
     Parameters
     ----------
-    product_version: ``ProductVersions``, optional
+    product_version: ``int``, optional
         The product version to be started. Goes from v23.2.1 to
-        the latest. Default is ``ProductVersions.latest``.
+        the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
         a SystemError will be raised.
     host: str, optional
@@ -410,9 +410,9 @@ def launch_modeler_with_spaceclaim(
 
     Parameters
     ----------
-    product_version: ``ProductVersions``, optional
-        The product version to be started. Goes from v23.2.1 to the latest.
-        Default is ``ProductVersions.latest``.
+    product_version: ``int``, optional
+        The product version to be started. Goes from v23.2.1 to
+        the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
         a SystemError will be raised.
     host: str, optional
