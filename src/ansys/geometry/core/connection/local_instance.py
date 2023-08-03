@@ -185,7 +185,7 @@ class LocalDockerInstance:
                 # Check shared ports otherwise
                 for port_shared in ports_shared:
                     if int(port_shared["HostPort"]) == port:
-                        logger.warning(f"Service already running at port {port}...")
+                        logger.warning(f"Service is already running at port {port}...")
                         return (False, cont)
 
         # If you reached here, just return default values
