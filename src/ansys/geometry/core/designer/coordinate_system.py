@@ -17,7 +17,8 @@ class CoordinateSystem:
     """
     Represents a user-defined coordinate system within the design assembly.
 
-    This coordinate system synchronizes to a design within a supporting Geometry service instance.
+    This coordinate system synchronizes to a design within a supporting Geometry
+    service instance.
 
     Parameters
     ----------
@@ -40,7 +41,7 @@ class CoordinateSystem:
         grpc_client: GrpcClient,
         preexisting_id: Optional[str] = None,
     ):
-        """Initialize ``CoordinateSystem`` class."""
+        """Initialize the ``CoordinateSystem`` class."""
         self._parent_component = parent_component
         self._grpc_client = grpc_client
         self._coordinate_systems_stub = CoordinateSystemsStub(grpc_client.channel)
@@ -53,7 +54,7 @@ class CoordinateSystem:
             self._id = preexisting_id
             return
 
-        self._grpc_client.log.debug("Requesting creation of Coordinate System.")
+        self._grpc_client.log.debug("Requesting creation of a coordinate system.")
         new_coordinate_system = self._coordinate_systems_stub.Create(
             CreateRequest(
                 parent=parent_component.id,
@@ -111,11 +112,11 @@ class CoordinateSystem:
 
     @property
     def is_alive(self) -> bool:
-        """If the CoordinateSystem is still alive on the server side."""
+        """Flag indicating if coordinate system is still alive on the server side."""
         return self._is_alive
 
     def __repr__(self) -> str:
-        """Represent the ``CoordinateSystem`` as a string."""
+        """Represent the coordinate system as a string."""
         lines = [f"ansys.geometry.core.designer.CoordinateSystem {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Exists               : {self.is_alive}")
