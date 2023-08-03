@@ -5,7 +5,7 @@ User guide
 ==========
 
 This section provides an overview of the PyGeometry library,
-explaining key method concepts and approaches for primitives,
+explaining key concepts and approaches for primitives,
 sketches (2D basic shape elements), and model designs.
 
 .. toctree::
@@ -23,14 +23,16 @@ PyGeometry is a Python wrapper for the Ansys Geometry service.
 The key features of PyGeometry are:
 
 * Ability to use the library alongside other Python libraries
-* A 'fluent functional-style' API for a clean and easy coding experience
+* A *fluent functional-style* API for a clean and easy coding experience
 * Built-in examples
 
 Simple interactive example
 ==========================
+This simple interactive example shows how to start an instance of
+the Geometry server and create a geometry model.
 
-Start a Geometry server instance
----------------------------------
+Start Geometry server instance
+------------------------------
 
 The :class:`Modeler() <ansys.geometry.core.modeler()>` class
 within the ``ansys-geometry-core`` library creates an instance of
@@ -39,7 +41,7 @@ the Geometry service. By default ``Modeler`` connects to ``127.0.0.1``
 the ``host`` and ``port`` parameters of ``Modeler``, but note that you
 have to also modify this in your ``docker run`` command by changing ``<HOST-PORT>-50051``.
 
-You start the Geometry service with:
+You start the Geometry service with this code:
 
 .. code:: pycon
 
@@ -49,7 +51,7 @@ You start the Geometry service with:
 Create geometry model
 ---------------------
 
-Once the Geometry service is active , you can start creating the geometry model
+Once the Geometry service has started , you can createae geometry model
 by initializing the :ref:`Sketch <ref_sketch>` class and using the
 :ref:`Primitives <ref_primitives>` math subpackage for PyGeometry.
 

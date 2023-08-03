@@ -1,4 +1,4 @@
-"""Module containing the ``LocalDockerInstance`` class."""
+"""Module for connecting to a local Docker container with the Geometry service."""
 from enum import Enum
 from functools import wraps
 import os
@@ -21,9 +21,9 @@ from ansys.geometry.core.logger import LOG as logger
 
 def _docker_python_available(func):
     """
-    Check whether docker is installed as Python package or not.
+    Check whether Docker is installed as a Python package.
 
-    Works as a decorator.
+    This function works as a decorator.
     """
 
     @wraps(func)
@@ -39,7 +39,7 @@ def _docker_python_available(func):
 
 
 class GeometryContainers(Enum):
-    """Provides an enum holding the different Geometry services available."""
+    """Provides an enum holding the available Geometry services."""
 
     WINDOWS_LATEST = 0, "windows", "windows-latest"
     LINUX_LATEST = 1, "linux", "linux-latest"
@@ -49,38 +49,37 @@ class GeometryContainers(Enum):
 
 class LocalDockerInstance:
     """
-    ``LocalDockerInstance`` class.
+    Instantiates a Geometry service as a local Docker container.
 
-    This class is used for instantiating a Geometry service (as a local Docker container).
     By default, if a container with the Geometry service already exists at the given port,
-    it will connect to it. Otherwise, it will try to launch its own service.
+    PyGeometry connects to it. Otherwise, PyGeometry tries to launch its own service.
 
     Parameters
     ----------
     port : int, optional
-        Localhost port at which the Geometry service will be deployed or which
-        the ``Modeler`` will connect to (if it is already deployed). By default,
-        value will be the one at ``DEFAULT_PORT``.
-    connect_to_existing_service : bool, optional
-        Boolean indicating whether if the Modeler should connect to a Geometry
-        Service already deployed at that port, by default ``True``.
-    restart_if_existing_service : bool, optional
-        Boolean indicating whether the Geometry service (which is already running)
-        should be restarted when attempting connection, by default ``False``
-    name : Optional[str], optional
-        Name of the Docker container to be deployed, by default ``None``, which
-        means that Docker will assign it a random name.
-    image : Optional[GeometryContainers], optional
-        The Geometry service Docker image to be deployed, by default ``None``, which
-        means that the ``LocalDockerInstance`` class will identify the OS of your
-        Docker engine and deploy the latest version of the Geometry service for that
+        Localhost port to deploy the Geometry service on or the
+        the ``Modeler`` interface to connect to (if it is already deployed). By default,
+        the value is the one for the ``DEFAULT_PORT`` connection parameter.
+    connect_to_existing_service : bool, default: True
+        Whether the ``Modeler`` interface should connect to a Geometry
+        service already deployed at the specified port.
+    restart_if_existing_service : bool, default: False
+        Whether the Geometry service (which is already running)
+        should be restarted when attempting connection.
+    name : Optional[str], default: None
+        Name of the Docker container to deploy. The default is ``None``,
+        in which case Docker assigns it a random name.
+    image : Optional[GeometryContainers], default: None
+        The Geometry service Docker image to deploy. The default is ``None``,
+        in which case the ``LocalDockerInstance`` class identifies the OS of your
+        Docker engine and deploys the latest version of the Geometry service for that
         OS.
     """
 
     __DOCKER_CLIENT__: "docker.DockerClient" = None
     """
-    Docker client class variable. By default, none is needed. It will be lazy
-    initialized.
+    Docker client class variable. The default is ``None``, in which case lazy
+    initialization is used.
 
     Notes
     -----
@@ -92,17 +91,17 @@ class LocalDockerInstance:
     @_docker_python_available
     def docker_client() -> "docker.DockerClient":
         """
-        Return the initialized ``__DOCKER_CLIENT__`` object.
+        Get the initialized ``__DOCKER_CLIENT__`` object.
 
         Notes
         -----
-        LocalDockerInstance performs a lazy loading initialization of the class
-        variable ``__DOCKER_CLIENT__``.
+        The ``LocalDockerInstance`` class performs a lazy initialization of the
+        ``__DOCKER_CLIENT__`` class variable.
 
         Returns
         -------
         docker.DockerClient
-            The initialized Docker client.
+            Initialized Docker client.
         """
         if not LocalDockerInstance.__DOCKER_CLIENT__:
             LocalDockerInstance.__DOCKER_CLIENT__ = docker.from_env()
@@ -113,14 +112,14 @@ class LocalDockerInstance:
     @_docker_python_available
     def is_docker_installed() -> bool:
         """
-        Check whether there is a local install of Docker engine available and running.
+        Check whether a local installation of Docker engine is available and running.
 
         Returns
         -------
         bool
-            ``True`` if Docker engine is running, ``False`` otherwise.
+            ``True`` if Docker engine is available and running, ``False`` otherwise.
         """
-        # When trying to ping, this throws back an error if the
+        # When trying to ping, this throws an error if the
         # server is not available
         try:
             return LocalDockerInstance.docker_client().ping()
@@ -146,9 +145,9 @@ class LocalDockerInstance:
         port_available, cont = self._check_port_availability(port)
 
         # If a service was already deployed... check if it is a Geometry service
-        # in case we want to connect to it
+        # in case you want to connect to it
         if cont and connect_to_existing_service and self._is_cont_geom_service(cont):
-            # Now, let's check if a restart of the service is required
+            # Now, check if a restart of the service is required
             if restart_if_existing_service:
                 logger.warning(f"Restarting service already running at port {port}...")
                 cont.restart()
@@ -158,10 +157,9 @@ class LocalDockerInstance:
             self._existed_previously = True
             return
 
-        # At this stage we can confirm that we have to deploy our own Geometry service.
-        # Let's get started with it!
+        # At this stage, confirm that you have to deploy our own Geometry service.
         #
-        # First, let's check if the port is available... otherwise raise error
+        # First, check if the port is available... otherwise raise error
         if port_available:
             self._deploy_container(port=port, name=name, image=image)
         else:
@@ -169,18 +167,13 @@ class LocalDockerInstance:
 
     def _check_port_availability(self, port: int) -> Tuple[bool, Optional["Container"]]:
         """
-        Check whether the requested port is available for deployment or not.
-
-        Notes
-        -----
-        If not available, it also returns the ``Container`` deployed
-        at that port.
+        Check whether the requested port is available for deployment.
 
         Returns
         -------
         tuple[bool, Container]
-            Tuple with boolean indicating whether port is available (i.e. ``True``) or not.
-            If not available, it also returns the container occupying that port.
+            Tuple with a Boolean indicating whether the port is available.
+            If the port is not available, the container deployed at that port is also returned.
         """
         # First, check if there is a container already running at that port
         for cont in self.docker_client().containers.list():
@@ -219,7 +212,7 @@ class LocalDockerInstance:
                 if tag == f"{GEOMETRY_SERVICE_DOCKER_IMAGE}:{geom_services.value[2]}":
                     return True
 
-        # If we reached this point, this means that our image is not a Geometry service
+        # If you have reached this point, the image is not a Geometry service
         return False  # pragma: no cover
 
     def _deploy_container(
@@ -244,11 +237,11 @@ class LocalDockerInstance:
         RuntimeError
             In case the Geometry service cannot be launched.
         """
-        # First of all let's get the Docker Engine OS
+        # First get the Docker Engine OS
         docker_os = self.docker_client().info()["OSType"]
 
-        # If no image is provided, we will default to the whatever Docker engine OS
-        # your system is running on... Latest images will be used since they are the
+        # If no image is provided, default to the whatever Docker engine OS
+        # your system is running on... Latest images are used because they are the
         # ones defined first in the GeometryContainers enum class.
         if image is None:
             for geom_service in GeometryContainers:
@@ -259,11 +252,11 @@ class LocalDockerInstance:
         # If image is still None, this means it cannot be deployed on your OS
         #
         # Also, if you requested an image incompatible with the existing OS, it
-        # will not be possible either.
+        # is not possible either.
         if image is None or image.value[1] != docker_os:  # pragma: no cover
             raise RuntimeError(f"Geometry service cannot be launched on {docker_os}")
 
-        # At this point, we are good to deploy the Geometry service!
+        # At this point, you are can deploy the Geometry service.
         #
         # Check if the license server env variable is available
         license_server = os.getenv("ANSRV_GEO_LICENSE_SERVER", None)
@@ -289,26 +282,26 @@ class LocalDockerInstance:
             )
         except ImageNotFound as err:  # pragma: no cover
             raise RuntimeError(
-                f"Geometry service Docker image {image.value[1]} not found. Please download it first to your machine."  # noqa: E501
+                f"Geometry service Docker image {image.value[1]} not found. Download it first to your machine."  # noqa: E501
             )
         except (ContainerError, APIError) as err:
             raise RuntimeError(
                 f"Geometry service Docker image error when initialized. Error: {err.explanation}"
             )
 
-        # If the deployment went fine, this means that we have deployed our service!
+        # If the deployment went fine, this means that you have deployed the service.
         self._container = container
         self._existed_previously = False
 
     @property
     def container(self) -> "Container":
-        """Docker Container object hosting the Geometry service deployed."""
+        """Docker container object that hosts the deployed Geometry service."""
         return self._container
 
     @property
     def existed_previously(self) -> bool:
         """
-        Indicate whether the container previously existed or not.
+        Flag indicating whether the container previously existed.
 
         Returns ``False`` if the Geometry service was effectively
         deployed by this class or ``True`` if it already existed.

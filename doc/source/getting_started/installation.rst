@@ -15,23 +15,24 @@ versions of Python are no longer supported.
 PyGeometry dependencies are automatically checked when packages are installed.
 These projects are required dependencies for PyGeometry:
 
-* `ansys-api-geometry <https://pypi.org/project/ansys-api-geometry/>`_ - Used for supplying gRPC code generated from Protobuf files.
-* `NumPy <https://pypi.org/project/numpy/>`_ - Used for data array access.
-* `Pint <https://pypi.org/project/Pint/>`_ - Used for measurement units.
-* `PyVista <https://pypi.org/project/pyvista/>`_ - Used for interactive 3D plotting.
-* `SciPy <https://pypi.org/project/scipy/>`_ - Used for geometric transformations.
+* `ansys-api-geometry <https://pypi.org/project/ansys-api-geometry/>`_: Used for supplying
+  gRPC code generated from Protobuf (PROTO) files.
+* `NumPy <https://pypi.org/project/numpy/>`_: Used for data array access.
+* `Pint <https://pypi.org/project/Pint/>`_: Used for measurement units.
+* `PyVista <https://pypi.org/project/pyvista/>`_: Used for interactive 3D plotting.
+* `SciPy <https://pypi.org/project/scipy/>`_: Used for geometric transformations.
 
 PyPI
 ----
 
-Before installing PyGeometry, make sure you have the latest version of
-`pip`_ with:
+Before installing PyGeometry, make sure that you have the latest version of
+`pip`_ with this command:
 
 .. code:: bash
 
    python -m pip install -U pip
 
-Then, install PyGeometry with:
+Then, install PyGeometry with this command:
 
 .. code:: bash
 
@@ -56,7 +57,8 @@ Then, install PyGeometry with:
 GitHub
 ------
 
-You can install the latest release from the `PyGeometry`_ repository on GitHub:
+You can install the latest release from the `PyGeometry`_ repository on GitHub with
+these commands:
 
 .. code:: bash
 
@@ -64,7 +66,7 @@ You can install the latest release from the `PyGeometry`_ repository on GitHub:
    cd pygeometry
    pip install -e .
 
-You can verify your development installation by running:
+You can verify your development installation by running this command:
 
 .. code:: bash
 
@@ -82,21 +84,22 @@ Each wheelhouse archive contains all the Python wheels necessary to install PyGe
 Linux, and MacOS from Python 3.8 to 3.11. You can install this on an isolated system with a fresh Python
 installation or on a virtual environment.
 
-For example, on Linux with Python 3.8, unzip the wheelhouse archive and install it with:
+For example, on Linux with Python 3.8, unzip the wheelhouse archive and install it with these commands:
 
 .. code:: bash
 
     unzip ansys-geometry-core-v0.3.dev0-wheelhouse-Linux-3.8.zip wheelhouse
     pip install ansys-geometry-core -f wheelhouse --no-index --upgrade --ignore-installed
 
-If you're on Windows with Python 3.9, unzip to a wheelhouse directory and install using the same command as preceding.
+If you're on Windows with Python 3.9, unzip to a wheelhouse directory and install using the same command as
+in the preceding example.
 
 Consider installing using a `virtual environment <https://docs.python.org/3/library/venv.html>`_.
 
 Verify your installation
 ------------------------
 
-Check the :class:`Modeler() <ansys.geometry.core.modeler()>` connection with:
+Check the :class:`Modeler() <ansys.geometry.core.modeler()>` connection with this code:
 
 .. code:: pycon
 

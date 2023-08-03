@@ -9,8 +9,8 @@ To start the service locally, you must be `authenticated to ghcr.io
 
 .. caution::
    PyGeometry is a client library that works with a Geometry service backend. This service is distributed
-   as a Docker container. At the moment, there is only a Windows Docker container version available for this
-   service. For more information please refer to the :ref:`Geometry service using Docker <ref_docker>` section.
+   as a Docker container. Currently, only a Windows Docker container version is available for this
+   service. For more information, see :ref:`Geometry service using Docker <ref_docker>`.
 
 .. toctree::
 

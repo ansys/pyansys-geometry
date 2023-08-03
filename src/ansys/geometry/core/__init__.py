@@ -29,4 +29,5 @@ from ansys.geometry.core.modeler import Modeler
 # ------------------------------------------------------------------------------
 
 USE_TRAME = False
-"""Global constant for checking the use of trame or not."""
+"""Global constant for checking whether `trame <https://kitware.github.io/trame/>`_
+is to be used."""

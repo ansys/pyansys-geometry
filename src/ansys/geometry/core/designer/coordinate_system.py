@@ -1,4 +1,4 @@
-"""Provides the ``CoordinateSystem`` class module."""
+"""Provides for managing a user-defined coordinate system."""
 
 from ansys.api.geometry.v0.coordinatesystems_pb2 import CreateRequest
 from ansys.api.geometry.v0.coordinatesystems_pb2_grpc import CoordinateSystemsStub

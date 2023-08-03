@@ -3,7 +3,7 @@ from enum import Enum
 
 
 class BackendType(Enum):
-    """Provides an enum holding the different backend types available."""
+    """Provides an enum holding the available backend types."""
 
     DISCOVERY = 0
     SPACECLAIM = 1

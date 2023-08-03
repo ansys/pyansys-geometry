@@ -8,7 +8,7 @@ of basic geometric objects, such as ``Point``, ``Vector``, and ``Matrix``, along
 units by making use of `Pint <https://github.com/hgrecco/pint>`_ to operate and
 manipulate physical quantities.
 
-This table shows PyGeometry base values:
+This table shows PyGeometry names and base values for the physical quantities:
 
 +----------------------------+---------+
 | Name                       | value   |
@@ -36,7 +36,7 @@ Sketched shapes are always defined relative to a plane.
 The default working plane is XY with ``(0,0)`` as the origin.
 
 If you create 2D objects in the plane, PyGeometry converts it to the global coordinate system so that
-the 2D feature executes as expected.
+the 2D feature executes as expected:
 
 .. code:: python
 

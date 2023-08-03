@@ -12,6 +12,7 @@ Geometry models
 GitHub
 pygeometry
 PyGeometry
+PROTO
 Protobuf
 SciPy
 subpackage
