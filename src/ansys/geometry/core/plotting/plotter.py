@@ -304,6 +304,8 @@ class Plotter:
             self.add_sketch_polydata(object, **plotting_options)
         elif type(object) == pv.PolyData:
             self.scene.add_mesh(object, **plotting_options)
+        elif type(object) == pv.MultiBlock:
+            self.scene.add_composite(object, **plotting_options)
         elif type(object) == Sketch:
             self.plot_sketch(object, **plotting_options)
         elif type(object) == Body or type(object) == MasterBody:
