@@ -51,7 +51,7 @@ You start the Geometry service with this code:
 Create geometry model
 ---------------------
 
-Once the Geometry service has started , you can createae geometry model
+Once the Geometry service has started , you can create a geometry model
 by initializing the :ref:`Sketch <ref_sketch>` class and using the
 :ref:`Primitives <ref_primitives>` math subpackage for PyGeometry.
 

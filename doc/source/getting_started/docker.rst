@@ -30,8 +30,12 @@ installing Docker:
 
 #. Once the installation process finishes, open Docker Desktop.
 
+.. vale off
+
 #. Select **Settings >> Software updates**, clear the **Automatically check for updates** checkbox, and
    click **Apply & restart**.
+
+.. vale on
 
 #. On the Windows taskbar, go to the **Show hidden icons** section, right click in the Docker Desktop app, and
    select **Switch to Windows containers**.
@@ -42,14 +46,14 @@ Install the PyGeometry image
 ----------------------------
 
 Once Docker is installed on your machine, follow these steps to download the Docker container for the
-PyGeometry service and install this imge.
+PyGeometry service and install this image.
 
 #. Using your GitHub credentials, download the Docker image from the `pygeometry <https://github.com/ansys/pygeometry>`_
    repository.
 
 #. Use a GitHub personal access token (PAT) with permission for reading packages to authorize Docker
    to access this repository. For more information, see the GitHub documentation on creating personal
-   access tokens in `Manging your personal access tokens
+   access tokens in `Managing your personal access tokens
    <https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens>`_.
 
 #. Save the token to a file with this command:

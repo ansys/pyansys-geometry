@@ -21,7 +21,7 @@ You can initialize the sketch with this code:
 
     sketch = Sketch()
 
-You can construch a sketch using different approaches.
+You can construct a sketch using different approaches.
 
 Functional-style API
 ====================
