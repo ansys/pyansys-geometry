@@ -108,7 +108,8 @@ class Modeler:
         self._designs.append(design)
         if len(self._designs) > 1:
             logger.warning(
-                "Most backends only support one design. Previous designs may be deleted when creating a new one."
+                "Most backends only support one design. "
+                + "Previous designs may be deleted when creating a new one."
             )
         return self._designs[-1]
 
