@@ -175,7 +175,7 @@ def prepare_and_start_backend(
     port = _check_port_or_get_one(port)
     installations = get_available_ansys_installations()
     keys = list(installations.keys())
-    latest_version = max(keys)  
+    latest_version = max(keys)
     _check_minimal_versions(latest_version)
     if product_version != None:
         _check_version_is_available(product_version, installations)
@@ -257,7 +257,8 @@ def _start_program(args, local_env) -> subprocess.Popen:
     )
     return session
 
-def _check_minimal_versions(latest_installed_version: int):    
+
+def _check_minimal_versions(latest_installed_version: int):
     if latest_installed_version < 232:
         msg = "PyGeometry is compatible with Ansys Products from version 23.2.1."
         msg.join("Please install Ansys products 23.2.1 or later.")

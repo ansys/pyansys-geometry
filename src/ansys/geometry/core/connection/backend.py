@@ -11,6 +11,7 @@ class BackendType(Enum):
     WINDOWS_SERVICE = 2
     LINUX_SERVICE = 3
 
+
 class ApiVersions(Enum):
     """Provides an enum for all the compatibles API versions."""
 

@@ -3,7 +3,7 @@ import os
 
 from beartype.typing import TYPE_CHECKING, Dict, Optional
 
-from ansys.geometry.core.connection.backend import ApiVersions, BackendType, ProductVersions
+from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.defaults import DEFAULT_PIM_CONFIG, DEFAULT_PORT
 from ansys.geometry.core.connection.local_instance import (
     _HAS_DOCKER,
@@ -322,7 +322,7 @@ def launch_modeler_with_geometry_service(
 
 
 def launch_modeler_with_discovery(
-    product_version: int = ProductVersions.latest.value,
+    product_version: int = None,
     host: str = "localhost",
     port: int = None,
     log_level: int = 2,
@@ -393,7 +393,7 @@ def launch_modeler_with_discovery(
 
 
 def launch_modeler_with_spaceclaim(
-    product_version: int = ProductVersions.latest.value,
+    product_version: int = None,
     host: str = "localhost",
     port: int = None,
     log_level: int = 2,
