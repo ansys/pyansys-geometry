@@ -295,8 +295,19 @@ class Plotter:
         ``List[pv.PolyData]``, ``Component`` and ``Body`` objects.
         Parameters
         ----------
-        object : any
-            Any object that can be plotted.
+        plotting_list : List[any]
+            List of objects you want to plot.
+        merge_component : bool, default: False
+            Whether to merge the component into a single dataset. When
+            ``True``, all the individual bodies are effectively combined
+            into a single dataset without any hierarchy.
+        merge_bodies : bool, default: False
+            Whether to merge each body into a single dataset. When ``True``,
+            all the faces of each individual body are effectively combineed
+            into a single dataset without.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :func:`pyvista.Plotter.add_mesh` method.
         """
         logger.debug(f"Adding object type {type(object)} to the PyVista plotter")
 
@@ -332,6 +343,17 @@ class Plotter:
         ----------
         plotting_list : List[any]
             List of objects you want to plot.
+        merge_component : bool, default: False
+            Whether to merge the component into a single dataset. When
+            ``True``, all the individual bodies are effectively combined
+            into a single dataset without any hierarchy.
+        merge_bodies : bool, default: False
+            Whether to merge each body into a single dataset. When ``True``,
+            all the faces of each individual body are effectively combineed
+            into a single dataset without.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :func:`pyvista.Plotter.add_mesh` method.
         """
         for object in plotting_list:
             self.add(object, merge_bodies, merge_components, **plotting_options)
@@ -465,12 +487,19 @@ class PlotterHelper:
         screenshot : str, default: None
             Save a screenshot of the image being represented. The image is
             stored in the path provided as an argument.
-        merge_bodies : bool, optional
-            _description_, by default False
-        merge_component : bool, optional
-            _description_, by default False
+        merge_component : bool, default: False
+            Whether to merge the component into a single dataset. When
+            ``True``, all the individual bodies are effectively combined
+            into a single dataset without any hierarchy.
+        merge_bodies : bool, default: False
+            Whether to merge each body into a single dataset. When ``True``,
+            all the faces of each individual body are effectively combineed
+            into a single dataset without.
         view_2d : Dict, optional
             Dict with the plane and the viewup vectors of the 2d plane, by default None.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :func:`pyvista.Plotter.add_mesh` method.
         """
         pl = self.init_plotter()
         if isinstance(object, List) and not isinstance(object[0], pv.PolyData):
