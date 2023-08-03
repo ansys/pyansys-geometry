@@ -176,7 +176,7 @@ def test_plot_sketch_design(modeler: Modeler, verify_image_cache):
 
 
 @skip_no_xserver
-def test_plot_object_list(modeler: Modeler, verify_image_cache):
+def test_plot_all_types(modeler: Modeler, verify_image_cache):
     """Test plotting a list of pygeometry objects."""
     plot_list = []
 
