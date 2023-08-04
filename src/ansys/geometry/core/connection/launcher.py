@@ -318,7 +318,7 @@ def launch_modeler_with_geometry_service(
         port=port,
         enable_trace=enable_trace,
         log_level=log_level,
-        api_version=ApiVersions.latest,
+        api_version=ApiVersions.LATEST,
         timeout=timeout,
     )
 
