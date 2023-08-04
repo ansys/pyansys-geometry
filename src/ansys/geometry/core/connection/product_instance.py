@@ -216,6 +216,7 @@ def prepare_and_start_backend(
 
 
 def _get_available_port():
+    """Return an available port to be used."""
     sock = socket.socket()
     sock.bind(("", 0))
     port = sock.getsockname()[1]
@@ -224,6 +225,12 @@ def _get_available_port():
 
 
 def _is_port_available(port: int, host: str = "localhost") -> bool:
+    """
+    Check whether the argument port is available or not.
+
+    The optional argument is the ip address where to check port availability.
+    Its default is ``localhost``.
+    """
     if port != 0:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             try:
@@ -231,19 +238,34 @@ def _is_port_available(port: int, host: str = "localhost") -> bool:
                 logging.info("Port" + str(port) + " is available.")
                 return True
             except:
-                logging.error(
-                    f"Check port availability failed. Port {port} already in use."
-                )
+                logging.error(f"Check port availability failed. Port {port} already in use.")
                 return False
 
 
 def _manifest_path_provider(version: int, available_installations: dict):
+    """Return the ApiServer's addin manifest file path."""
     return os.path.join(
         available_installations[version], ADDINS_SUBFOLDER, BACKEND_SUBFOLDER, MANIFEST_FILENAME
     )
 
 
-def _start_program(args, local_env) -> subprocess.Popen:
+def _start_program(args: list[str], local_env: dict[str, str]) -> subprocess.Popen:
+    """
+    Start the program which path is the first item of the ``args`` array argument.
+
+    Parameters
+    ----------
+    args : list[str]
+        List of arguments to be passed to the program. The first list's item shall
+        be the program path.
+    local_env : dict[str,str]
+        Environment variables to be passed to the program.
+
+    Returns
+    -------
+    subprocess.Popen
+        The subprocess object.
+    """
     logging.info("Starting program: " + str(args))
     session = subprocess.Popen(
         args,
@@ -257,6 +279,11 @@ def _start_program(args, local_env) -> subprocess.Popen:
 
 
 def _check_minimal_versions(latest_installed_version: int):
+    """
+    Pygeometry is compatible with Ansys Products starting from 2023.2.1 version.
+
+    Check that at least V232 is installed.
+    """
     if latest_installed_version < 232:
         msg = "PyGeometry is compatible with Ansys Products from version 23.2.1."
         msg.join("Please install Ansys products 23.2.1 or later.")
@@ -265,6 +292,7 @@ def _check_minimal_versions(latest_installed_version: int):
 
 
 def _check_version_is_available(version: int, installations: Dict[int, str]):
+    """Check that the requested version for launcher is installed on the system."""
     if version not in installations:
         msg = f"The requested Ansys product's version: {version} isn't available,"
         msg.join("please specify a different version.")
@@ -273,6 +301,12 @@ def _check_version_is_available(version: int, installations: Dict[int, str]):
 
 
 def _check_port_or_get_one(port: int) -> int:
+    """
+    If a ``port`` argument is specified, check that it's free.
+
+    If not, raise an error.
+    If ``port`` is None, return an available port by calling ``_get_available_port``.
+    """
     if port != None and _is_port_available(port) == False:
         msg = "Port " + str(port) + " is already in use. Please specify a different one."
         logging.error(msg)
@@ -283,6 +317,11 @@ def _check_port_or_get_one(port: int) -> int:
 
 
 def _get_common_env(host: str, port: int, enable_trace: bool, log_level: int) -> dict[str, str]:
+    """
+    Make a copy of the actual system's environment.
+
+    Then update or create some environment variables with the provided arguments.
+    """
     env_copy = os.environ.copy()
     env_copy[BACKEND_HOST_VARIABLE] = host
     env_copy[BACKEND_PORT_VARIABLE] = str(port)

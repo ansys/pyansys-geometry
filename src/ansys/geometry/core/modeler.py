@@ -12,7 +12,6 @@ from grpc import Channel
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
-from ansys.geometry.core.connection.product_instance import ProductInstance
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
@@ -21,6 +20,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.platform.instancemanagement import Instance
 
     from ansys.geometry.core.connection.local_instance import LocalDockerInstance
+    from ansys.geometry.core.connection.product_instance import ProductInstance
     from ansys.geometry.core.designer import Design
 
 
