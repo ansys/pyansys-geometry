@@ -9,7 +9,6 @@ from ansys.tools.path import get_available_ansys_installations
 from beartype.typing import TYPE_CHECKING, Dict
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
-from ansys.geometry.core.logger import LOG as logger
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
@@ -182,7 +181,7 @@ def prepare_and_start_backend(
 
     args = []
     env_copy = _get_common_env(host=host, port=port, enable_trace=enable_trace, log_level=log_level)
-    logger.debug(env_copy)
+
     if backend_type == BackendType.DISCOVERY:
         args.append(os.path.join(installations[product_version], DISCOVERY_FOLDER, DISCOVERY_EXE))
         args.append(BACKEND_SPACECLAIM_OPTIONS)
@@ -208,11 +207,14 @@ def prepare_and_start_backend(
                 installations[latest_version], WINDOWS_GEOMETRY_SERVICE_FOLDER, GEOMETRY_SERVICE_EXE
             )
         )
-    logger.debug(args)
+
     instance = ProductInstance(_start_program(args, env_copy).pid)
-    return Modeler(
+    modeler = Modeler(
         host=host, port=port, timeout=timeout, product_instance=instance, backend_type=backend_type
     )
+    modeler.client.log.debug(args)
+    modeler.client.log.debug(env_copy)
+    return modeler
 
 
 def _get_available_port():
