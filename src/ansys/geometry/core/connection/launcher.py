@@ -169,7 +169,7 @@ def launch_local_modeler(
     return Modeler(host="localhost", port=port, local_instance=local_instance)
 
 
-def launch_modeler_with_pimlight_and_discovery(version: Optional[str] = None) -> "Modeler":
+def launch_modeler_with_discovery_and_pimlight(version: Optional[str] = None) -> "Modeler":
     """
     Start Discovery remotely using the PIM API.
 
@@ -200,7 +200,7 @@ def launch_modeler_with_pimlight_and_discovery(version: Optional[str] = None) ->
     )
 
 
-def launch_modeler_with_pimlight_and_geometry_service(version: Optional[str] = None) -> "Modeler":
+def launch_modeler_with_geometry_service_and_pimlight(version: Optional[str] = None) -> "Modeler":
     """
     Start the GeometryService remotely using the PIM API.
 
@@ -231,7 +231,7 @@ def launch_modeler_with_pimlight_and_geometry_service(version: Optional[str] = N
     )
 
 
-def launch_modeler_with_pimlight_and_spaceclaim(version: Optional[str] = None) -> "Modeler":
+def launch_modeler_with_spaceclaim_and_pimlight(version: Optional[str] = None) -> "Modeler":
     """
     Start SpaceClaim remotely using the PIM API.
 
@@ -317,15 +317,13 @@ def launch_modeler_with_geometry_service(
     Starting a geometry service with the default parameters and getting back a ``Modeler``
     object:
 
-    >>> from ansys.geometry.core.connection.launcher import launch_modeler_with_geometry_service
-
+    >>> from ansys.geometry.core import launch_modeler_with_geometry_service
     >>> modeler = launch_modeler_with_geometry_service()
 
     Starting a geometry service, on address ``10.171.22.44``, port ``5001``, with chatty
     logs, traces enabled and a ``300`` seconds timeout:
 
-    >>> from ansys.geometry.core.connection.launcher import launch_modeler_with_geometry_service
-
+    >>> from ansys.geometry.core import launch_modeler_with_geometry_service
     >>> modeler = launch_modeler_with_geometry_service(product_version = 232,
         host="10.171.22.44",
         port=5001,
@@ -409,15 +407,13 @@ def launch_modeler_with_discovery(
     Starting an Ansys Discovery session with the default parameters and getting back a ``Modeler``
     object:
 
-    >>> from ansys.geometry.core.connection.launcher import launch_modeler_with_discovery
-
+    >>> from ansys.geometry.core import launch_modeler_with_discovery
     >>> modeler = launch_modeler_with_discovery()
 
     Starting an Ansys Discovery V 23.2 session, on address ``10.171.22.44``, port ``5001``,
     with chatty logs, using API v231 and a ``300`` seconds timeout:
 
-    >>> from ansys.geometry.core.connection.launcher import launch_modeler_with_discovery
-
+    >>> from ansys.geometry.core import launch_modeler_with_discovery
     >>> modeler = launch_modeler_with_discovery(product_version = 232,
         host="10.171.22.44",
         port=5001,
@@ -502,13 +498,13 @@ def launch_modeler_with_spaceclaim(
     Starting an Ansys SpaceClaim session with the default parameters and get back a ``Modeler``
     object:
 
-    >>> from ansys.geometry.core.connection.launcher import launch_modeler_with_spaceclaim
+    >>> from ansys.geometry.core import launch_modeler_with_spaceclaim
     >>> modeler = launch_modeler_with_spaceclaim()
 
     Starting an Ansys SpaceClaim V 23.2 session, on address ``10.171.22.44``, port ``5001``,
     with chatty logs, using API v231 and a ``300`` seconds timeout:
 
-    >>> from ansys.geometry.core.connection.launcher import launch_modeler_with_spaceclaim
+    >>> from ansys.geometry.core import launch_modeler_with_spaceclaim
     >>> modeler = launch_modeler_with_spaceclaim(product_version = 232,
         host="10.171.22.44",
         port=5001,

@@ -5,9 +5,10 @@ import socket
 import subprocess
 
 from ansys.tools.path import get_available_ansys_installations, get_latest_ansys_installation
-from beartype.typing import TYPE_CHECKING, Dict
+from beartype.typing import TYPE_CHECKING, Dict, List
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
+from ansys.geometry.core.logger import LOG
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
@@ -101,8 +102,9 @@ class ProductInstance:
         try:
             os.kill(self._pid, signal.SIGTERM)
         except OSError as oserr:
-            logging.error(str(oserr))
+            LOG.error(str(oserr))
             return False
+
         return True
 
 
@@ -195,23 +197,27 @@ def prepare_and_start_backend(
             + _manifest_path_provider(product_version, installations)
         )
         env_copy[BACKEND_API_VERSION_VARIABLE] = str(api_version)
-    else:
-        # We're starting the Windows GeometryService (DMS)
-        installations = get_available_ansys_installations()
-        keys = list(installations.keys())
-        latest_version = max(keys)
+    elif backend_type == BackendType.WINDOWS_SERVICE:
+        latest_version = get_latest_ansys_installation()[0]
         args.append(
             os.path.join(
                 installations[latest_version], WINDOWS_GEOMETRY_SERVICE_FOLDER, GEOMETRY_SERVICE_EXE
             )
         )
+    else:
+        raise RuntimeError(
+            f"Cannot connect to backend {backend_type.name} using ``prepare_and_start_backend()``"
+        )
+
+    LOG.info(f"Launching ProductInstance for {backend_type.name}")
+    LOG.debug(f"Args: {args}")
+    LOG.debug(f"Environment variables: {env_copy}")
 
     instance = ProductInstance(_start_program(args, env_copy).pid)
     modeler = Modeler(
         host=host, port=port, timeout=timeout, product_instance=instance, backend_type=backend_type
     )
-    modeler.client.log.debug(args)
-    modeler.client.log.debug(env_copy)
+
     return modeler
 
 
@@ -240,23 +246,23 @@ def _is_port_available(port: int, host: str = "localhost") -> bool:
                 return False
 
 
-def _manifest_path_provider(version: int, available_installations: dict):
+def _manifest_path_provider(version: int, available_installations: Dict) -> str:
     """Return the ApiServer's addin manifest file path."""
     return os.path.join(
         available_installations[version], ADDINS_SUBFOLDER, BACKEND_SUBFOLDER, MANIFEST_FILENAME
     )
 
 
-def _start_program(args: list[str], local_env: dict[str, str]) -> subprocess.Popen:
+def _start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Popen:
     """
-    Start the program which path is the first item of the ``args`` array argument.
+    Start the program where the path is the first item of the ``args`` array argument.
 
     Parameters
     ----------
-    args : list[str]
+    args : List[str]
         List of arguments to be passed to the program. The first list's item shall
         be the program path.
-    local_env : dict[str,str]
+    local_env : Dict[str,str]
         Environment variables to be passed to the program.
 
     Returns
@@ -275,23 +281,27 @@ def _start_program(args: list[str], local_env: dict[str, str]) -> subprocess.Pop
     return session
 
 
-def _check_minimal_versions(latest_installed_version: int):
+def _check_minimal_versions(latest_installed_version: int) -> None:
     """
     Pygeometry is compatible with Ansys Products starting from 2023.2.1 version.
 
     Check that at least V232 is installed.
     """
     if latest_installed_version < 232:
-        msg = "PyGeometry is compatible with Ansys Products from version 23.2.1."
-        msg.join("Please install Ansys products 23.2.1 or later.")
+        msg = (
+            "PyGeometry is compatible with Ansys Products from version 23.2.1. "
+            + "Please install Ansys products 23.2.1 or later."
+        )
         raise SystemError(msg)
 
 
-def _check_version_is_available(version: int, installations: Dict[int, str]):
+def _check_version_is_available(version: int, installations: Dict[int, str]) -> None:
     """Check that the requested version for launcher is installed on the system."""
     if version not in installations:
-        msg = f"The requested Ansys product's version: {version} isn't available,"
-        msg.join("please specify a different version.")
+        msg = (
+            f"The requested Ansys product's version {version} is not available, "
+            + "please specify a different version."
+        )
         raise SystemError(msg)
 
 
@@ -300,29 +310,30 @@ def _check_port_or_get_one(port: int) -> int:
     If a ``port`` argument is specified, check that it's free.
 
     If not, raise an error.
+
     If ``port`` is None, return an available port by calling ``_get_available_port``.
     """
-    if port != None and _is_port_available(port) == False:
-        msg = "Port " + str(port) + " is already in use. Please specify a different one."
-        raise ConnectionError(msg)
-    elif port == None:
-        port = _get_available_port()
-    return port
+    if port:
+        if _is_port_available(port):
+            return port
+        else:
+            msg = f"Port {port} is already in use. Please specify a different one."
+            raise ConnectionError(msg)
+    else:
+        return _get_available_port()
 
 
-def _get_common_env(host: str, port: int, enable_trace: bool, log_level: int) -> dict[str, str]:
+def _get_common_env(host: str, port: int, enable_trace: bool, log_level: int) -> Dict[str, str]:
     """
     Make a copy of the actual system's environment.
 
     Then update or create some environment variables with the provided arguments.
     """
     env_copy = os.environ.copy()
-    env_copy[BACKEND_HOST_VARIABLE] = host
-    env_copy[BACKEND_PORT_VARIABLE] = str(port)
-    if enable_trace == True:
-        env_copy[BACKEND_TRACE_VARIABLE] = str(1)
-    else:
-        env_copy[BACKEND_TRACE_VARIABLE] = str(0)
 
-    env_copy[BACKEND_LOG_LEVEL_VARIABLE] = str(log_level)
+    env_copy[BACKEND_HOST_VARIABLE] = host
+    env_copy[BACKEND_PORT_VARIABLE] = f"{port}"
+    env_copy[BACKEND_TRACE_VARIABLE] = f"{enable_trace:d}"
+    env_copy[BACKEND_LOG_LEVEL_VARIABLE] = f"{log_level}"
+
     return env_copy
