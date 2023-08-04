@@ -436,7 +436,9 @@ class PlotterHelper:
         global setting ``USE_TRAME``.
     """
 
-    def __init__(self, use_trame: Optional[bool] = None) -> None:
+    def __init__(
+        self, use_trame: Optional[bool] = None, allow_picking: Optional[bool] = False
+    ) -> None:
         """Initialize use_trame and saves current pv.OFF_SCREEN value."""
         # Check if the use of trame was requested
         if use_trame is None:
@@ -445,6 +447,7 @@ class PlotterHelper:
             use_trame = pygeom.USE_TRAME
 
         self._use_trame = use_trame
+        self._allow_picking = allow_picking
         self._pv_off_screen_original = bool(pv.OFF_SCREEN)
 
     def init_plotter(self):
@@ -469,7 +472,16 @@ class PlotterHelper:
             pl = Plotter()
         else:
             pl = Plotter()
+
+        if self._allow_picking:
+            pl.scene.enable_mesh_picking(callback=self.picker_callback)
+
         return pl
+
+    def picker_callback(self, mesh):
+        """Define callback for the element picker."""
+        shrunk = mesh.shrink(0.9)
+        mesh.copy_from(shrunk)  # make operation "in-place" by replacing the original mesh
 
     def plot(
         self,
