@@ -869,7 +869,7 @@ class Sketch:
                 for sketch_item in self._current_sketch_context
             ]
         )
-        self.plot(view_2d, screenshot, use_trame, use_selection=True**plotting_options)
+        self.plot(view_2d, screenshot, use_trame, use_selection=True, **plotting_options)
 
     def sketch_polydata(self) -> List["PolyData"]:
         """
