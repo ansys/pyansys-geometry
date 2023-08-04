@@ -47,6 +47,7 @@ class Sketch:
         self._faces = []
         self._edges = []
         self._current_sketch_context = []
+        self._sketches_polydata_selection = []
 
         # data structure to track tagging individual
         # sketch objects and collections of sketch objects
@@ -790,6 +791,7 @@ class Sketch:
         view_2d: Optional[bool] = False,
         screenshot: Optional[str] = None,
         use_trame: Optional[bool] = None,
+        use_selection: Optional[bool] = False,
         **plotting_options: Optional[dict],
     ):
         """
@@ -819,9 +821,21 @@ class Sketch:
             view_2d_dict = {"vector": vector, "viewup": viewup}
         else:
             view_2d_dict = None
-        pl_helper = PlotterHelper(use_trame=use_trame).plot(
-            self.sketch_polydata(), screenshot=screenshot, view_2d=view_2d_dict, **plotting_options
-        )
+
+        if use_selection:
+            pl_helper = PlotterHelper(use_trame=use_trame).plot(
+                self._sketches_polydata_selection,
+                screenshot=screenshot,
+                view_2d=view_2d_dict,
+                **plotting_options,
+            )
+        else:
+            pl_helper = PlotterHelper(use_trame=use_trame).plot(
+                self.sketch_polydata(),
+                screenshot=screenshot,
+                view_2d=view_2d_dict,
+                **plotting_options,
+            )
 
     def plot_selection(
         self,
@@ -849,14 +863,13 @@ class Sketch:
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
         # Get the selected polydata
-        sketches_polydata = []
-        sketches_polydata.extend(
+        self._sketches_polydata_selection.extend(
             [
                 sketch_item.visualization_polydata.transform(self._plane.transformation_matrix)
                 for sketch_item in self._current_sketch_context
             ]
         )
-        self.plot(sketches_polydata, view_2d, screenshot, use_trame, **plotting_options)
+        self.plot(view_2d, screenshot, use_trame, use_selection=True**plotting_options)
 
     def sketch_polydata(self) -> List["PolyData"]:
         """
