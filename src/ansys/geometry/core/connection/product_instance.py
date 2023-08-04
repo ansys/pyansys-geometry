@@ -117,7 +117,7 @@ def prepare_and_start_backend(
     timeout: int = 150,
 ) -> "Modeler":
     """
-    Start the Geometry service locally using the ``ProductInstance`` class.
+    Start the requested service locally using the ``ProductInstance`` class.
 
     When calling this method, a standalone Geometry service is started.
     By default, if an endpoint is specified (by defining `host` and `port` parameters)
