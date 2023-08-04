@@ -119,7 +119,7 @@ def prepare_and_start_backend(
     """
     Start the requested service locally using the ``ProductInstance`` class.
 
-    When calling this method, a standalone Geometry service is started.
+    When calling this method, a standalone service or product session is started.
     By default, if an endpoint is specified (by defining `host` and `port` parameters)
     but the endpoint isnt't available, the startup will fail. Otherwise, it will try to
     launch its own service.
