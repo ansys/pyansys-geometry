@@ -28,7 +28,7 @@ class Vector3D(np.ndarray):
 
         # Check that the size is as expected
         if len(obj) != 3:
-            raise ValueError("Vector3D class must receive three arguments.")  # noqa: E501
+            raise ValueError("Vector3D class must receive 3 arguments.")  # noqa: E501
 
         # Check the input data
         check_ndarray_is_float_int(obj, "input")
