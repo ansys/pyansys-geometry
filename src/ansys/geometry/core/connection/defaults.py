@@ -1,4 +1,4 @@
-"""Provides default connection parameters."""
+"""Module providing default connection parameters."""
 
 import os
 

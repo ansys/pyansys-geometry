@@ -10,10 +10,12 @@ geometry
 Geometry service
 Geometry models
 GitHub
-pygeometry
-PyGeometry
+Polydata
 PROTO
 Protobuf
+pygeometry
+PyGeometry
+PyPI
+PyVista
 SciPy
 subpackage
-PyPI

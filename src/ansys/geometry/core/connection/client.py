@@ -1,4 +1,4 @@
-"""Provides a wrapped abstraction of the gRPC PROTO API definition and stubs."""
+"""Module providing a wrapped abstraction of the gRPC PROTO API definition and stubs."""
 
 import logging
 from pathlib import Path

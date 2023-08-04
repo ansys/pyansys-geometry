@@ -1,7 +1,7 @@
 """
-Perform a connection validation check.
+Module for perform a connection validation check.
 
-This method is only used for testing the default Docker service on
+The method in this module is only used for testing the default Docker service on
 GitHub and can safely be skipped within testing.
 
 This command shows how this method is typically used:

@@ -1,4 +1,4 @@
-"""Provides definitions about the backend type."""
+"""Module providing definitions for the backend types."""
 from enum import Enum
 
 

@@ -17,7 +17,7 @@ class CoordinateSystem:
     """
     Represents a user-defined coordinate system within the design assembly.
 
-    This coordinate system synchronizes to a design within a supporting Geometry
+    This class synchronizes to a design within a supporting Geometry
     service instance.
 
     Parameters

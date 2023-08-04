@@ -1,4 +1,4 @@
-"""Provides for connecting to instances of the Geometry service."""
+"""Module for connecting to instances of the Geometry service."""
 import os
 
 from beartype.typing import TYPE_CHECKING, Dict, Optional

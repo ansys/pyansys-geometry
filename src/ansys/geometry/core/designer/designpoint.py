@@ -1,4 +1,4 @@
-"""``DesignPoint`` class module."""
+"""``Module for creating and managing design points."""
 
 from beartype.typing import TYPE_CHECKING, Union
 
@@ -11,7 +11,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 class DesignPoint:
     """
-    Provides the ``DesignPoint`` class for creating design points in components.
+    Provides for creating design points in components.
 
     Parameters
     ----------
@@ -22,11 +22,11 @@ class DesignPoint:
     points : Point3D
         3D point constituting the design points.
     parent_component : Component
-        Parent component to nest the new design point under within the design assembly.
+        Parent component to place the new design point under within the design assembly.
     """
 
     def __init__(self, id: str, name: str, point: Point3D, parent_component: "Component"):
-        """Initialize ``DesignPoints`` class."""
+        """Initialize the ``DesignPoints`` class."""
         from ansys.geometry.core.designer.component import Component
 
         check_type(id, str)
@@ -51,7 +51,7 @@ class DesignPoint:
 
     @property
     def value(self) -> Point3D:
-        """Design point value."""
+        """Value of the design point."""
         return self._value
 
     @property
@@ -60,7 +60,7 @@ class DesignPoint:
         return self._parent_component
 
     def __repr__(self) -> str:
-        """Represent the ``DesignPoints`` as a string."""
+        """Represent the design points as a string."""
         lines = [f"ansys.geometry.core.designer.DesignPoints {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Design Point         : {self.value}")

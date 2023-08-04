@@ -1,4 +1,4 @@
-"""Module containing the Ruler widget."""
+"""Provides the ruler widget for the PyGeometry plotter."""
 
 import os
 
@@ -11,16 +11,16 @@ from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
 
 class Ruler(PlotterWidget):
     """
-    Ruler widget for the PyGeometry plotter class.
+    Provides the ruler widget for the PyGeometry ``Plotter`` class.
 
     Parameters
     ----------
     plotter : ~pyvista.Plotter
-        The Plotter instance to which the widget will be added.
+        Provides the plotter to add the ruler widget to.
     """
 
     def __init__(self, plotter: Plotter) -> None:
-        """Initialize ``Ruler`` class."""
+        """Initialize the ``Ruler`` class."""
         # Call PlotterWidget ctor
         super().__init__(plotter)
 
@@ -32,18 +32,18 @@ class Ruler(PlotterWidget):
 
     def callback(self, state: bool) -> None:
         """
-        Remove/Add Ruler widget actor upon click.
-
-        Callback function for the Ruler widget.
+        Remove or add the ruler widget actor upon click.
 
         Notes
         -----
-        This method is called every time the Ruler widget is clicked.
+        This method provides a callback function for the ruler widet.
+        It is called every time the ruler widget is clicked.
 
         Parameters
         ----------
         state : bool
-            The value of the button. ``True`` if active.
+            State of the button, which is inherited from PyVista. The value is ``True``
+            if the button is active
         """
         if not state and self._actor:
             self.plotter.remove_actor(self._actor)
@@ -63,7 +63,7 @@ class Ruler(PlotterWidget):
             )
 
     def update(self) -> None:
-        """Define the configuration and representation of the Ruler widget button."""
+        """Define the configuration and representation of the ruler widget button."""
         show_ruler_vr = self._button.GetRepresentation()
         show_ruler_icon_file = os.path.join(os.path.dirname(__file__), "_images", "ruler.png")
         show_ruler_r = vtkPNGReader()

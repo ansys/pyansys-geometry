@@ -964,11 +964,11 @@ class Component:
         Parameters
         ----------
         merge_component : bool, default: False
-            Whether to merge this component into a single dataset. If ``True``,
+            Whether to merge this component into a single dataset. When ``True``,
             all the individual bodies are effectively combined into a single
             dataset without any hierarchy.
         merge_bodies : bool, default: False
-            Whether to merge each body into a single dataset. If ``True``,
+            Whether to merge each body into a single dataset. When ``True``,
             all the faces of each individual body are effectively
             merged into a single dataset without separating faces.
 

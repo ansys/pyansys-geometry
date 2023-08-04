@@ -1,4 +1,4 @@
-"""Module containing the abstract implementation of Plotter widgets."""
+"""Provides the abstract implementation of plotter widgets."""
 
 from abc import ABC, abstractmethod
 
@@ -7,36 +7,36 @@ from pyvista import Plotter
 
 class PlotterWidget(ABC):
     """
-    Abstract class for Plotter widgets.
+    Provides an abstract class for plotter widgets.
 
     Parameters
     ----------
     plotter : ~pyvista.Plotter
-        The Plotter instance to which the widget will be added.
+        Plotter instance to add the widget to.
 
     Notes
     -----
     These widgets are intended to be used with PyVista plotter objects.
-    More specifically, the way in which this abstraction has been build
-    is such that they are easily integrable with PyGeometry's own Plotter
-    class.
+    More specifically, the way in which this abstraction has been built
+    ensures that these widgets are easily integrable with PyGeometry's
+    own ``Plotter`` class.
     """
 
     def __init__(self, plotter: Plotter):
-        """Initialize ``PlotterWidget`` class."""
+        """Initialize the ``PlotterWidget`` class."""
         self._plotter: Plotter = plotter
 
     @property
     def plotter(self) -> Plotter:
-        """The Plotter object to which the widget is assigned."""
+        """Plotter object the widget is assigned to."""
         return self._plotter
 
     @abstractmethod
     def callback(self, state) -> None:
-        """General callback function for PlotterWidget objects."""
+        """General callback function for ``PlotterWidget`` objects."""
         pass
 
     @abstractmethod
     def update(self) -> None:
-        """General update function for PlotterWidget objects."""
+        """General update function for ``PlotterWidget`` objects."""
         pass

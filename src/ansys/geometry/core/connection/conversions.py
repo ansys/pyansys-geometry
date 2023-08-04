@@ -1,4 +1,4 @@
-"""Provides the ``Conversions`` module."""
+"""Module providing for conversions."""
 
 from ansys.api.geometry.v0.models_pb2 import Arc as GRPCArc
 from ansys.api.geometry.v0.models_pb2 import Circle as GRPCCircle

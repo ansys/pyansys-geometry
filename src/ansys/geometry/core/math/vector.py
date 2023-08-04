@@ -1,4 +1,4 @@
-"""Provides ``Vector`` classes."""
+"""Provides for creating and managing 2D and 3D vectors."""
 from io import UnsupportedOperation
 
 from beartype import beartype as check_input_types
@@ -14,7 +14,7 @@ from ansys.geometry.core.typing import Real, RealSequence
 
 class Vector3D(np.ndarray):
     """
-    Provides a 3D vector class.
+    Provides for managing and creating a 3D vector.
 
     Parameters
     ----------
@@ -23,12 +23,12 @@ class Vector3D(np.ndarray):
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence]):
-        """Initialize ``Vector3D`` class."""
+        """Initialize the ``Vector3D`` class."""
         obj = np.asarray(input).view(cls)
 
         # Check that the size is as expected
         if len(obj) != 3:
-            raise ValueError("Vector3D class must receive 3 arguments.")  # noqa: E501
+            raise ValueError("Vector3D class must receive three arguments.")  # noqa: E501
 
         # Check the input data
         check_ndarray_is_float_int(obj, "input")
@@ -114,23 +114,23 @@ class Vector3D(np.ndarray):
 
     def transform(self, matrix: "Matrix44") -> "Vector3D":
         """
-        Transform the current Vector3D with a transformation matrix.
+        Transform the 3D vector3D with a transformation matrix.
 
         Notes
         -----
-        Transform the current Vector3D object by applying the specified 4x4
-        transformation matrix and returns a new Vector3D object representing the
+        Transform the ``Vector3D`` object by applying the specified 4x4
+        transformation matrix and return a new ``Vector3D`` object representing the
         transformed vector.
 
         Parameters
         ----------
         matrix : Matrix44
-            The 4x4 transformation matrix to apply to the vector.
+            4x4 transformation matrix to apply to the vector.
 
         Returns
         -------
         Vector3D
-            A new Vector3D object that is the transformed copy of the original vector after applying
+            A new 3D vector that is the transformed copy of the original 3D vector after applying
             the transformation matrix.
         """
         vector_4x1 = np.append(self, 1)
@@ -151,7 +151,7 @@ class Vector3D(np.ndarray):
         Returns
         -------
         Quantity
-            Angle between the two 3D vectors.
+            Angle between these two 3D vectors.
         """
         if v.is_zero or self.is_zero:
             raise ValueError("Vectors cannot be zero-valued.")
@@ -169,7 +169,7 @@ class Vector3D(np.ndarray):
 
     @check_input_types
     def cross(self, v: "Vector3D") -> "Vector3D":
-        """Return the cross product of ``Vector3D`` objects."""
+        """Get the cross product of ``Vector3D`` objects."""
         return np.cross(self, v).view(Vector3D)
 
     @check_input_types
@@ -188,7 +188,7 @@ class Vector3D(np.ndarray):
 
         Notes
         -----
-        Also admits scalar multiplication.
+        This method also admits scalar multiplication.
         """
         if isinstance(other, (int, float)):
             return np.multiply(self, other).view(Vector3D)
@@ -246,7 +246,7 @@ class Vector3D(np.ndarray):
 
 class Vector2D(np.ndarray):
     """
-    Proves a 2D vector class.
+    Provides for creating and managing a 2D vector.
 
     Parameters
     ----------
@@ -351,7 +351,7 @@ class Vector2D(np.ndarray):
         Returns
         -------
         Quantity
-            Angle between both 2D vectors.
+            Angle between these two 2D vectors.
         """
         if v.is_zero or self.is_zero:
             raise ValueError("Vectors cannot be zero-valued.")
@@ -379,7 +379,7 @@ class Vector2D(np.ndarray):
 
         Notes
         -----
-        Also admits scalar multiplication.
+        This method also admits scalar multiplication.
         """
         if isinstance(other, (int, float)):
             return np.multiply(self, other).view(Vector2D)
@@ -437,7 +437,7 @@ class Vector2D(np.ndarray):
 
 class UnitVector3D(Vector3D):
     """
-    Provdes the 3D unit vector class.
+    Provides for creating and managing a 3D unit vector.
 
     Parameters
     ----------
@@ -447,7 +447,7 @@ class UnitVector3D(Vector3D):
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence, Vector3D]):
-        """Initialize ``UnitVector3D`` class."""
+        """Initialize the ``UnitVector3D`` class."""
         obj = Vector3D(input) if not isinstance(input, Vector3D) else input
         obj = obj.normalize().view(cls)
         obj.setflags(write=False)
@@ -486,14 +486,14 @@ class UnitVector3D(Vector3D):
         Returns
         -------
         UnitVector3D
-            A 3D unit vector from ``point_a`` to ``point_b``.
+            3D unit vector from ``point_a`` to ``point_b``.
         """
         return UnitVector3D(Vector3D.from_points(point_a, point_b))
 
 
 class UnitVector2D(Vector2D):
     """
-    Provides the 2D unit vector class.
+    Provides for creating and managing a 3D unit vector.
 
     Parameters
     ----------
@@ -503,7 +503,7 @@ class UnitVector2D(Vector2D):
     """
 
     def __new__(cls, input: Union[np.ndarray, RealSequence, Vector2D]):
-        """Initialize ``UnitVector2D`` class."""
+        """Initialize the ``UnitVector2D`` class."""
         obj = Vector2D(input) if not isinstance(input, Vector2D) else input
         obj = obj.normalize().view(cls)
         obj.setflags(write=False)
@@ -538,6 +538,6 @@ class UnitVector2D(Vector2D):
         Returns
         -------
         UnitVector2D
-            A 2D unit vector from ``point_a`` to ``point_b``.
+            2D unit vector from ``point_a`` to ``point_b``.
         """
         return UnitVector2D(Vector2D.from_points(point_a, point_b))
