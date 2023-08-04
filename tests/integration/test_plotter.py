@@ -90,7 +90,7 @@ def test_plot_sketch(verify_image_cache):
 
 
 @skip_no_xserver
-def test_plot_sketch_pyvista(verify_image_cache):
+def test_plot_plotterhelper_sketch_pyvista(verify_image_cache):
     # define sketch
     sketch = Sketch()
     sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon1")
@@ -102,11 +102,14 @@ def test_plot_sketch_pyvista(verify_image_cache):
     blocks = pv.MultiBlock([pv.Sphere(center=(20, 10, -10), radius=4), pv.Cube()])
 
     # plot together
-    PlotterHelper().plot([sketch, cyl, blocks])
+    PlotterHelper().plot(
+        [sketch, cyl, blocks],
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_plotterhelper_sketch_pyvista.png"),
+    )
 
 
 @skip_no_xserver
-def test_plot_sketch_body(modeler: Modeler, verify_image_cache):
+def test_plot_plotterhelper_sketch_body(modeler: Modeler, verify_image_cache):
     # init modeler
     design = modeler.create_design("Multiplot")
 
@@ -120,11 +123,14 @@ def test_plot_sketch_body(modeler: Modeler, verify_image_cache):
     box_body = design.extrude_sketch("JustABox", body_sketch, Quantity(10, UNITS.m))
 
     # plot together
-    PlotterHelper().plot([sketch, box_body])
+    PlotterHelper().plot(
+        [sketch, box_body],
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_plotterhelper_sketch_body.png"),
+    )
 
 
 @skip_no_xserver
-def test_plot_sketch_several_bodies(modeler: Modeler, verify_image_cache):
+def test_plot_plotterhelper_sketch_several_bodies(modeler: Modeler, verify_image_cache):
     # init modeler
     design = modeler.create_design("Multiplot")
 
@@ -154,11 +160,14 @@ def test_plot_sketch_several_bodies(modeler: Modeler, verify_image_cache):
     gear_body = design.extrude_sketch("GearExtruded", sketch_gear, Quantity(1, UNITS.m))
 
     # plot together
-    PlotterHelper().plot([sketch, box_body, gear_body, cyl_body])
+    PlotterHelper().plot(
+        [sketch, box_body, gear_body, cyl_body],
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_plotterhelper_sketch_several_bodies.png"),
+    )
 
 
 @skip_no_xserver
-def test_plot_sketch_design(modeler: Modeler, verify_image_cache):
+def test_plot_plotterhelper_sketch_design(modeler: Modeler, verify_image_cache):
     # init modeler
     design = modeler.create_design("Multiplot")
 
@@ -172,11 +181,14 @@ def test_plot_sketch_design(modeler: Modeler, verify_image_cache):
     design.extrude_sketch("JustABox", box_sketch, Quantity(10, UNITS.m))
 
     # plot together
-    PlotterHelper().plot([sketch, design])
+    PlotterHelper().plot(
+        [sketch, design],
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_plotterhelper_sketch_design.png"),
+    )
 
 
 @skip_no_xserver
-def test_plot_all_types(modeler: Modeler, verify_image_cache):
+def test_plot_plotterhelper_all_types(modeler: Modeler, verify_image_cache):
     """Test plotting a list of pygeometry objects."""
     plot_list = []
 
@@ -226,7 +238,9 @@ def test_plot_all_types(modeler: Modeler, verify_image_cache):
     box_body2 = design.extrude_sketch("JustABox", box2, Quantity(10, UNITS.m))
     plot_list.append(box_body2)
 
-    PlotterHelper().plot(plot_list)
+    PlotterHelper().plot(
+        plot_list, screenshot=Path(IMAGE_RESULTS_DIR, "plot_plotterhelper_all_types.png")
+    )
 
 
 @skip_no_xserver
