@@ -1,10 +1,12 @@
 """Provides for plotting various PyGeometry objects."""
+from typing import Any
+
 from beartype.typing import Dict, List, Optional
 import numpy as np
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
 
-from ansys.geometry.core.designer import Body, Component
+from ansys.geometry.core.designer import Body, Component, Design, MasterBody
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.math import Frame, Plane
 from ansys.geometry.core.plotting.trame_gui import _HAS_TRAME, TrameVisualizer
@@ -281,6 +283,86 @@ class Plotter:
         for polydata in polydata_entries:
             self.scene.add_mesh(polydata, **plotting_options)
 
+    def add(
+        self,
+        object: Any,
+        merge_bodies: bool = False,
+        merge_components: bool = False,
+        **plotting_options,
+    ):
+        """
+        Add any type of object to the scene.
+
+        Add any type of object to the scene. Currently supports
+        ``List[pv.PolyData]``, ``pv.MultiBlock``, ``Sketch``,
+        ``Component`` and ``Body`` objects.
+
+        Parameters
+        ----------
+        plotting_list : List[Any]
+            List of objects you want to plot.
+        merge_component : bool, default: False
+            Whether to merge the component into a single dataset. When
+            ``True``, all the individual bodies are effectively combined
+            into a single dataset without any hierarchy.
+        merge_bodies : bool, default: False
+            Whether to merge each body into a single dataset. When ``True``,
+            all the faces of each individual body are effectively combineed
+            into a single dataset without.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :func:`pyvista.Plotter.add_mesh` method.
+        """
+        logger.debug(f"Adding object type {type(object)} to the PyVista plotter")
+
+        if isinstance(object, List) and isinstance(object[0], pv.PolyData):
+            self.add_sketch_polydata(object, **plotting_options)
+        elif isinstance(object, pv.PolyData):
+            self.scene.add_mesh(object, **plotting_options)
+        elif isinstance(object, pv.MultiBlock):
+            self.scene.add_composite(object, **plotting_options)
+        elif isinstance(object, Sketch):
+            self.plot_sketch(object, **plotting_options)
+        elif isinstance(object, Body) or isinstance(object, MasterBody):
+            self.add_body(object, merge_bodies, **plotting_options)
+        elif isinstance(object, Design) or isinstance(object, Component):
+            self.add_component(object, merge_components, merge_bodies, **plotting_options)
+        else:
+            logger.warning(f"Object type {type(object)} can not be plotted.")
+
+    def add_list(
+        self,
+        plotting_list: List[Any],
+        merge_bodies: bool = False,
+        merge_components: bool = False,
+        **plotting_options,
+    ):
+        """
+        Add a list of any type of object to the scene.
+
+        Add a list of any type of object to the scene. Currently supports
+        ``List[pv.PolyData]``, ``pv.MultiBlock``, ``Sketch``,
+        ``Component`` and ``Body`` objects.
+
+        Parameters
+        ----------
+        plotting_list : List[Any]
+            List of objects you want to plot.
+        merge_component : bool, default: False
+            Whether to merge the component into a single dataset. When
+            ``True``, all the individual bodies are effectively combined
+            into a single dataset without any hierarchy.
+        merge_bodies : bool, default: False
+            Whether to merge each body into a single dataset. When ``True``,
+            all the faces of each individual body are effectively combineed
+            into a single dataset without.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :func:`pyvista.Plotter.add_mesh` method.
+        """
+        for object in plotting_list:
+            self.add(object, merge_bodies, merge_components, **plotting_options)
+
     def show(
         self,
         show_axes_at_origin: bool = True,
@@ -388,6 +470,56 @@ class PlotterHelper:
         else:
             pl = Plotter()
         return pl
+
+    def plot(
+        self,
+        object: Any,
+        screenshot: Optional[str] = None,
+        merge_bodies: bool = False,
+        merge_component: bool = False,
+        view_2d: Dict = None,
+        **plotting_options,
+    ):
+        """
+        Plot and show any PyGeometry object.
+
+        Currently supports ``List[pv.PolyData]``, ``pv.MultiBlock``, ``Sketch``,
+        ``Component`` and ``Body`` objects.
+
+        Parameters
+        ----------
+        object : any
+            Any object or list of objects that you want to plot.
+        screenshot : str, default: None
+            Save a screenshot of the image being represented. The image is
+            stored in the path provided as an argument.
+        merge_component : bool, default: False
+            Whether to merge the component into a single dataset. When
+            ``True``, all the individual bodies are effectively combined
+            into a single dataset without any hierarchy.
+        merge_bodies : bool, default: False
+            Whether to merge each body into a single dataset. When ``True``,
+            all the faces of each individual body are effectively combineed
+            into a single dataset without.
+        view_2d : Dict, optional
+            Dict with the plane and the viewup vectors of the 2d plane, by default None.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :func:`pyvista.Plotter.add_mesh` method.
+        """
+        pl = self.init_plotter()
+        if isinstance(object, List) and not isinstance(object[0], pv.PolyData):
+            logger.debug("Plotting objects in list...")
+            pl.add_list(object, merge_bodies, merge_component, **plotting_options)
+        else:
+            pl.add(object, merge_bodies, merge_component, **plotting_options)
+
+        if view_2d is not None:
+            pl.scene.view_vector(
+                vector=view_2d["vector"],
+                viewup=view_2d["viewup"],
+            )
+        self.show_plotter(pl, screenshot)
 
     def show_plotter(self, plotter: Plotter, screenshot: Optional[str] = None):
         """
