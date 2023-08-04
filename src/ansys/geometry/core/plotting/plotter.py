@@ -292,7 +292,7 @@ class Plotter:
         Add any type of object to the scene.
 
         Add any type of object to the scene. Currently supports
-        ``List[pv.PolyData]``, ``pv.MultiBlock``, ``Sketch``, 
+        ``List[pv.PolyData]``, ``pv.MultiBlock``, ``Sketch``,
         ``Component`` and ``Body`` objects.
 
         Parameters
@@ -339,7 +339,7 @@ class Plotter:
         Add a list of any type of object to the scene.
 
         Add a list of any type of object to the scene. Currently supports
-        ``List[pv.PolyData]``, ``pv.MultiBlock``, ``Sketch``, 
+        ``List[pv.PolyData]``, ``pv.MultiBlock``, ``Sketch``,
         ``Component`` and ``Body`` objects.
 
         Parameters
@@ -481,7 +481,7 @@ class PlotterHelper:
         """
         Plot and show any PyGeometry object.
 
-        Currently supports ``List[pv.PolyData]``, ``pv.MultiBlock``, ``Sketch``, 
+        Currently supports ``List[pv.PolyData]``, ``pv.MultiBlock``, ``Sketch``,
         ``Component`` and ``Body`` objects.
 
         Parameters
