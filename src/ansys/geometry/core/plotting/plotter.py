@@ -283,7 +283,7 @@ class Plotter:
 
     def add(
         self,
-        object: any,
+        object: Any,
         merge_bodies: bool = False,
         merge_components: bool = False,
         **plotting_options,
@@ -292,10 +292,12 @@ class Plotter:
         Add any type of object to the scene.
 
         Add any type of object to the scene. Currently supports
-        ``List[pv.PolyData]``, ``Component`` and ``Body`` objects.
+        ``List[pv.PolyData]``, ``pv.MultiBlock``, ``Sketch``, 
+        ``Component`` and ``Body`` objects.
+
         Parameters
         ----------
-        plotting_list : List[any]
+        plotting_list : List[Any]
             List of objects you want to plot.
         merge_component : bool, default: False
             Whether to merge the component into a single dataset. When
@@ -328,7 +330,7 @@ class Plotter:
 
     def add_list(
         self,
-        plotting_list: List[any],
+        plotting_list: List[Any],
         merge_bodies: bool = False,
         merge_components: bool = False,
         **plotting_options,
@@ -337,11 +339,12 @@ class Plotter:
         Add a list of any type of object to the scene.
 
         Add a list of any type of object to the scene. Currently supports
-        ``List[pv.PolyData]``, ``Component`` and ``Body`` objects.
+        ``List[pv.PolyData]``, ``pv.MultiBlock``, ``Sketch``, 
+        ``Component`` and ``Body`` objects.
 
         Parameters
         ----------
-        plotting_list : List[any]
+        plotting_list : List[Any]
             List of objects you want to plot.
         merge_component : bool, default: False
             Whether to merge the component into a single dataset. When
@@ -468,7 +471,7 @@ class PlotterHelper:
 
     def plot(
         self,
-        object: any,
+        object: Any,
         screenshot: Optional[str] = None,
         merge_bodies: bool = False,
         merge_component: bool = False,
@@ -478,7 +481,8 @@ class PlotterHelper:
         """
         Plot and show any PyGeometry object.
 
-        Currently supports ``List[pv.PolyData]``, ``Component`` and ``Body`` objects.
+        Currently supports ``List[pv.PolyData]``, ``pv.MultiBlock``, ``Sketch``, 
+        ``Component`` and ``Body`` objects.
 
         Parameters
         ----------
@@ -503,7 +507,7 @@ class PlotterHelper:
         """
         pl = self.init_plotter()
         if isinstance(object, List) and not isinstance(object[0], pv.PolyData):
-            logger.debug("Run object list.")
+            logger.debug("Plotting objects in list...")
             pl.add_list(object, merge_bodies, merge_component, **plotting_options)
         else:
             pl.add(object, merge_bodies, merge_component, **plotting_options)

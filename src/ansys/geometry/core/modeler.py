@@ -109,7 +109,7 @@ class Modeler:
         if len(self._designs) > 1:
             logger.warning(
                 "Most backends only support one design. "
-                + "Previous designs may be deleted when creating a new one."
+                + "Previous designs may be deleted (on the service) when creating a new one."
             )
         return self._designs[-1]
 
@@ -127,7 +127,10 @@ class Modeler:
         design = Design("", self._client, read_existing_design=True)
         self._designs.append(design)
         if len(self._designs) > 1:
-            logger.warning("Only last created design is retrieved.")
+            logger.warning(
+                "Most backends only support one design. "
+                + "Previous designs may be deleted (on the service) when reading a new one."
+            )
         return self._designs[-1]
 
     def close(self) -> None:
