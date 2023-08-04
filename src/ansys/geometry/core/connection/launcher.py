@@ -312,21 +312,21 @@ def launch_modeler_with_geometry_service(
     Modeler
         Instance of the Geometry service.
 
-    Example
-    -------
+    Examples
+    --------
     Starting a geometry service with the default parameters and getting back a ``Modeler``
     object:
 
-    >>>from ansys.geometry.core.connection.launcher import launch_modeler_with_geometry_service
+    >>> from ansys.geometry.core.connection.launcher import launch_modeler_with_geometry_service
 
-    >>>modeler = launch_modeler_with_geometry_service()
+    >>> modeler = launch_modeler_with_geometry_service()
 
-    Starting a geometry service, on address 10.171.22.44, port 5001, with chatty
-    logs, traces enabled and a 300 seconds timeout:
+    Starting a geometry service, on address ``10.171.22.44``, port ``5001``, with chatty
+    logs, traces enabled and a ``300`` seconds timeout:
 
-    >>>from ansys.geometry.core.connection.launcher import launch_modeler_with_geometry_service
+    >>> from ansys.geometry.core.connection.launcher import launch_modeler_with_geometry_service
 
-    >>>modeler = launch_modeler_with_geometry_service(product_version = 232,
+    >>> modeler = launch_modeler_with_geometry_service(product_version = 232,
         host="10.171.22.44",
         port=5001,
         log_level=0,
@@ -404,21 +404,21 @@ def launch_modeler_with_discovery(
     Modeler
         Instance of the Geometry service.
 
-    Example
-    -------
+    Examples
+    --------
     Starting an Ansys Discovery session with the default parameters and getting back a ``Modeler``
     object:
 
-    >>>from ansys.geometry.core.connection.launcher import launch_modeler_with_discovery
+    >>> from ansys.geometry.core.connection.launcher import launch_modeler_with_discovery
 
-    >>>modeler = launch_modeler_with_discovery()
+    >>> modeler = launch_modeler_with_discovery()
 
-    Starting an Ansys Discovery V 23.2 session, on address 10.171.22.44, port 5001, with chatty
-    logs, using API v231 and a 300 seconds timeout:
+    Starting an Ansys Discovery V 23.2 session, on address ``10.171.22.44``, port ``5001``, with chatty
+    logs, using API v231 and a ``300`` seconds timeout:
 
-    >>>from ansys.geometry.core.connection.launcher import launch_modeler_with_discovery
+    >>> from ansys.geometry.core.connection.launcher import launch_modeler_with_discovery
 
-    >>>modeler = launch_modeler_with_discovery(product_version = 232,
+    >>> modeler = launch_modeler_with_discovery(product_version = 232,
         host="10.171.22.44",
         port=5001,
         log_level=0,
