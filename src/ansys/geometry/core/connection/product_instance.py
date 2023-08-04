@@ -174,13 +174,11 @@ def prepare_and_start_backend(
 
     port = _check_port_or_get_one(port)
     installations = get_available_ansys_installations()
-    keys = list(installations.keys())
-    latest_version = max(keys)
-    _check_minimal_versions(latest_version)
     if product_version != None:
         _check_version_is_available(product_version, installations)
     else:
-        product_version = latest_version
+        product_version = get_latest_ansys_installation()[0]
+        _check_minimal_versions(product_version)
 
     args = []
     env_copy = _get_common_env(host=host, port=port, enable_trace=enable_trace, log_level=log_level)
