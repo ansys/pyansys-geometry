@@ -4,7 +4,7 @@ import signal
 import socket
 import subprocess
 
-from ansys.tools.path import get_available_ansys_installations
+from ansys.tools.path import get_available_ansys_installations, get_latest_ansys_installation
 from beartype.typing import TYPE_CHECKING, Dict
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
