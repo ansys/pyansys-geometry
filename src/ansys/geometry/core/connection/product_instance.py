@@ -149,7 +149,7 @@ def prepare_and_start_backend(
         The default is ``2`` (Warning).
     api_version: ``ApiVersions``, optional
         The backend's API version to be used at runtime. Goes from API v21 to
-        the latest. Default is ``ApiVersions.latest``.
+        the latest. Default is ``ApiVersions.LATEST``.
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 150.
 
