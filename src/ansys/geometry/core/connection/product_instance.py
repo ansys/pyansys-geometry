@@ -12,7 +12,6 @@ from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
 
-"""Provides constant and environment variables values or names."""
 
 WINDOWS_GEOMETRY_SERVICE_FOLDER = "GeometryService"
 """Default Geometry Service's folder name into the unified installer."""
