@@ -871,9 +871,9 @@ class Sketch:
             ]
         )
         self.plot(
-            view_2d,
-            screenshot,
-            use_trame,
+            view_2d=view_2d,
+            screenshot=screenshot,
+            use_trame=use_trame,
             selected_pd_objects=sketches_polydata_selection,
             **plotting_options,
         )
