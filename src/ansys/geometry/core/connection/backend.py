@@ -15,9 +15,9 @@ class BackendType(Enum):
 class ApiVersions(Enum):
     """Provides an enum for all the compatibles API versions."""
 
-    V_212 = 212
-    V_222 = 222
+    V_21 = 21
+    V_22 = 22
     V_231 = 231
     V_232 = 232
     V_241 = 241
-    latest = 241
+    LATEST = 241
