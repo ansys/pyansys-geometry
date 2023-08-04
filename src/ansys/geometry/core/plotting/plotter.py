@@ -1,4 +1,6 @@
 """Provides for plotting various PyGeometry objects."""
+from typing import Any
+
 from beartype.typing import Dict, List, Optional
 import numpy as np
 import pyvista as pv
