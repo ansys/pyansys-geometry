@@ -856,19 +856,7 @@ class Sketch:
                 for sketch_item in self._current_sketch_context
             ]
         )
-
-        # Show the plot requested
-        from ansys.geometry.core.plotting import PlotterHelper
-
-        if view_2d:
-            vector = self.plane.direction_z.tolist()
-            viewup = self.plane.direction_y.tolist()
-            view_2d_dict = {"vector": vector, "viewup": viewup}
-        else:
-            view_2d_dict = None
-        PlotterHelper(use_trame=use_trame).plot(
-            sketches_polydata, view_2d=view_2d_dict, screenshot=screenshot, **plotting_options
-        )
+        self.plot(sketches_polydata, view_2d, screenshot, use_trame, **plotting_options)
 
     def sketch_polydata(self) -> List["PolyData"]:
         """
