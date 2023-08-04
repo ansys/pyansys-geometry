@@ -1,5 +1,4 @@
 """Module containing the ``ProductInstance`` class."""
-import logging
 import os
 import signal
 import socket
