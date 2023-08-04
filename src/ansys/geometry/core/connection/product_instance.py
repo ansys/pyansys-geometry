@@ -113,7 +113,7 @@ def prepare_and_start_backend(
     port: int = None,
     enable_trace: bool = False,
     log_level: int = 2,
-    api_version: ApiVersions = ApiVersions.latest,
+    api_version: ApiVersions = ApiVersions.LATEST,
     timeout: int = 150,
 ) -> "Modeler":
     """
