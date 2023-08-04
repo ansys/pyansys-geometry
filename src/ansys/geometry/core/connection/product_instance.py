@@ -234,11 +234,9 @@ def _is_port_available(port: int, host: str = "localhost") -> bool:
     if port != 0:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             try:
-                sock.bind((host, port))
-                logging.info("Port" + str(port) + " is available.")
+                sock.bind((host, port))                
                 return True
             except:
-                logging.error(f"Check port availability failed. Port {port} already in use.")
                 return False
 
 
@@ -266,7 +264,6 @@ def _start_program(args: list[str], local_env: dict[str, str]) -> subprocess.Pop
     subprocess.Popen
         The subprocess object.
     """
-    logging.info("Starting program: " + str(args))
     session = subprocess.Popen(
         args,
         shell=os.name != "nt",
@@ -287,7 +284,6 @@ def _check_minimal_versions(latest_installed_version: int):
     if latest_installed_version < 232:
         msg = "PyGeometry is compatible with Ansys Products from version 23.2.1."
         msg.join("Please install Ansys products 23.2.1 or later.")
-        logging.error(msg)
         raise SystemError(msg)
 
 
@@ -296,7 +292,6 @@ def _check_version_is_available(version: int, installations: Dict[int, str]):
     if version not in installations:
         msg = f"The requested Ansys product's version: {version} isn't available,"
         msg.join("please specify a different version.")
-        logging.error(msg)
         raise SystemError(msg)
 
 
@@ -309,7 +304,6 @@ def _check_port_or_get_one(port: int) -> int:
     """
     if port != None and _is_port_available(port) == False:
         msg = "Port " + str(port) + " is already in use. Please specify a different one."
-        logging.error(msg)
         raise ConnectionError(msg)
     elif port == None:
         port = _get_available_port()

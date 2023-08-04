@@ -311,6 +311,27 @@ def launch_modeler_with_geometry_service(
     -------
     Modeler
         Instance of the Geometry service.
+
+    Example
+    -------
+    Starting a geometry service with the default parameters and getting back a ``Modeler``
+    object:
+
+    >>>from ansys.geometry.core.connection.launcher import launch_modeler_with_geometry_service
+
+    >>>modeler = launch_modeler_with_geometry_service()
+
+    Starting a geometry service, on address 10.171.22.44, port 5001, with chatty
+    logs, traces enabled and a 300 seconds timeout:
+
+    >>>from ansys.geometry.core.connection.launcher import launch_modeler_with_geometry_service
+
+    >>>modeler = launch_modeler_with_geometry_service(product_version = 232,
+        host="10.171.22.44",
+        port=5001,
+        log_level=0,
+        enable_trace= True,
+        timeout=300)
     """
     return prepare_and_start_backend(
         BackendType.WINDOWS_SERVICE,
@@ -346,15 +367,16 @@ def launch_modeler_with_discovery(
         the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
         a SystemError will be raised.
+        Possible values:
+        Ansys products Versions and their corresponding int values:
+        23.2 -> value : 232
+        24.1 -> value : 241
     host: str, optional
         IP address at which the Geometry service will be deployed. By default,
         its value will be ``localhost``.
     port : int, optional
         Port at which the Geometry service will be deployed. By default, its
         value will be ``None``.
-    enable_trace : bool, optional
-        Boolean enabling the logs trace on the Geometry service console window.
-        By default its value is ``False``.
     log_level : int, optional
         Backend's log level from 0 to 3:
             0: Chatterbox
@@ -381,6 +403,27 @@ def launch_modeler_with_discovery(
     -------
     Modeler
         Instance of the Geometry service.
+
+    Example
+    -------
+    Starting an Ansys Discovery session with the default parameters and getting back a ``Modeler``
+    object:
+
+    >>>from ansys.geometry.core.connection.launcher import launch_modeler_with_discovery
+
+    >>>modeler = launch_modeler_with_discovery()
+
+    Starting an Ansys Discovery V 23.2 session, on address 10.171.22.44, port 5001, with chatty
+    logs, using API v231 and a 300 seconds timeout:
+
+    >>>from ansys.geometry.core.connection.launcher import launch_modeler_with_discovery
+
+    >>>modeler = launch_modeler_with_discovery(product_version = 232,
+        host="10.171.22.44",
+        port=5001,
+        log_level=0,
+        api_version= 231,
+        timeout=300)
     """
     return prepare_and_start_backend(
         BackendType.DISCOVERY,
@@ -417,15 +460,16 @@ def launch_modeler_with_spaceclaim(
         the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
         a SystemError will be raised.
+        Possible values:
+        Ansys products Versions and their corresponding int values:
+        23.2 -> value : 232
+        24.1 -> value : 241
     host: str, optional
         IP address at which the Geometry service will be deployed. By default,
         its value will be ``localhost``.
     port : int, optional
         Port at which the Geometry service will be deployed. By default, its
         value will be ``None``.
-    enable_trace : bool, optional
-        Boolean enabling the logs trace on the Geometry service console window.
-        By default its value is ``False``.
     log_level : int, optional
         Backend's log level from 0 to 3:
             0: Chatterbox
@@ -452,6 +496,24 @@ def launch_modeler_with_spaceclaim(
     -------
     Modeler
         Instance of the Geometry service.
+
+
+    Example
+    -------
+    Starting an Ansys SpaceClaim session with the default parameters and get back a ``Modeler``
+    object:
+    >>>from ansys.geometry.core.connection.launcher import launch_modeler_with_spaceclaim
+    >>>modeler = launch_modeler_with_spaceclaim()
+
+    Starting an Ansys SpaceClaim V 23.2 session, on address 10.171.22.44, port 5001, with chatty
+    logs, using API v231 and a 300 seconds timeout:
+    >>>from ansys.geometry.core.connection.launcher import launch_modeler_with_spaceclaim
+    >>>modeler = launch_modeler_with_spaceclaim(product_version = 232,
+        host="10.171.22.44",
+        port=5001,
+        log_level=0,
+        api_version= 231,
+        timeout=300)
     """
     return prepare_and_start_backend(
         BackendType.SPACECLAIM,
