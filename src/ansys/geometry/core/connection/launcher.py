@@ -336,7 +336,7 @@ def launch_modeler_with_discovery(
 
     When calling this method, a standalone Geometry service is started.
     By default, if an endpoint is specified (by defining `host` and `port` parameters)
-    but the endpoint isnt't available, the startup will fail. Otherwise, it will try to
+    but the endpoint is not available, the startup will fail. Otherwise, it will try to
     launch its own service.
 
     Parameters
