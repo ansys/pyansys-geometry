@@ -328,7 +328,7 @@ def launch_modeler_with_discovery(
     host: str = "localhost",
     port: int = None,
     log_level: int = 2,
-    api_version: ApiVersions = ApiVersions.latest,
+    api_version: ApiVersions = ApiVersions.LATEST,
     timeout: int = 150,
 ):
     """
