@@ -88,7 +88,7 @@ class ProductInstance:
     Parameters
     ----------
     pid : int
-        The local instance's process identifier. This allows to  keep track of the process
+        The local instance's process identifier. This allows to keep track of the process
         and close it if need be.
     """
 
