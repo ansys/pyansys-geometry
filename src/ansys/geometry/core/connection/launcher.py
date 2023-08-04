@@ -441,10 +441,10 @@ def launch_modeler_with_spaceclaim(
 
     Exceptions
     ----------
-    ConnectionError:
-        if the specified endpoint is already in use, a connection error will be raised.
-    SystemError:
-        if there isn't an Ansys products 23.2 version or later installed
+    ConnectionError
+        If the specified endpoint is already in use, a connection error will be raised.
+    SystemError
+        If there is not an Ansys product 23.2 version or later installed
         or if a specific product's version is requested but not installed locally then
         a SystemError will be raised.
 
