@@ -234,7 +234,7 @@ def _is_port_available(port: int, host: str = "localhost") -> bool:
                 return True
             except:
                 logging.error(
-                    "Check port availability failed. Port " + str(port) + " already in use."
+                    f"Check port availability failed. Port {port} already in use."
                 )
                 return False
 
