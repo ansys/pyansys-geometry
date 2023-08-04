@@ -193,7 +193,8 @@ class Component:
         bodies = []
         for body in self._master_component.part.bodies:
             id = f"{self.id}/{body.id}" if self.parent_component else body.id
-            bodies.append(Body(id, body.name, self, body))
+            if body.is_alive:
+                bodies.append(Body(id, body.name, self, body))
         return bodies
 
     @property
