@@ -214,11 +214,10 @@ def prepare_and_start_backend(
     LOG.debug(f"Environment variables: {env_copy}")
 
     instance = ProductInstance(_start_program(args, env_copy).pid)
-    modeler = Modeler(
+
+    return Modeler(
         host=host, port=port, timeout=timeout, product_instance=instance, backend_type=backend_type
     )
-
-    return modeler
 
 
 def _get_available_port():
@@ -270,7 +269,7 @@ def _start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Pop
     subprocess.Popen
         The subprocess object.
     """
-    session = subprocess.Popen(
+    return subprocess.Popen(
         args,
         shell=os.name != "nt",
         stdin=subprocess.DEVNULL,
@@ -278,7 +277,6 @@ def _start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Pop
         stderr=subprocess.DEVNULL,
         env=local_env,
     )
-    return session
 
 
 def _check_minimal_versions(latest_installed_version: int) -> None:
