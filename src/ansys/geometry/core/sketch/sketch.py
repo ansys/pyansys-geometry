@@ -791,7 +791,7 @@ class Sketch:
         view_2d: Optional[bool] = False,
         screenshot: Optional[str] = None,
         use_trame: Optional[bool] = None,
-        use_selection: Optional[bool] = False,
+        selected_pd_objects: List["PolyData"] = None,
         **plotting_options: Optional[dict],
     ):
         """
@@ -822,9 +822,9 @@ class Sketch:
         else:
             view_2d_dict = None
 
-        if use_selection:
+        if selected_pd_objects is not None:
             pl_helper = PlotterHelper(use_trame=use_trame).plot(
-                self._sketches_polydata_selection,
+                selected_pd_objects,
                 screenshot=screenshot,
                 view_2d=view_2d_dict,
                 **plotting_options,
@@ -863,13 +863,20 @@ class Sketch:
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
         # Get the selected polydata
-        self._sketches_polydata_selection.extend(
+        sketches_polydata_selection = []
+        sketches_polydata_selection.extend(
             [
                 sketch_item.visualization_polydata.transform(self._plane.transformation_matrix)
                 for sketch_item in self._current_sketch_context
             ]
         )
-        self.plot(view_2d, screenshot, use_trame, use_selection=True, **plotting_options)
+        self.plot(
+            view_2d,
+            screenshot,
+            use_trame,
+            selected_pd_objects=sketches_polydata_selection,
+            **plotting_options,
+        )
 
     def sketch_polydata(self) -> List["PolyData"]:
         """
