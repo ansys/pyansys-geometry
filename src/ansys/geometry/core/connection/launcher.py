@@ -332,7 +332,7 @@ def launch_modeler_with_discovery(
     timeout: int = 150,
 ):
     """
-    Start the Geometry service locally using the ``ProductInstance`` class.
+    Start Ansys Discovery locally using the ``ProductInstance`` class.
 
     When calling this method, a standalone Geometry service is started.
     By default, if an endpoint is specified (by defining `host` and `port` parameters)
