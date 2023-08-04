@@ -413,8 +413,8 @@ def launch_modeler_with_discovery(
 
     >>> modeler = launch_modeler_with_discovery()
 
-    Starting an Ansys Discovery V 23.2 session, on address ``10.171.22.44``, port ``5001``, with chatty
-    logs, using API v231 and a ``300`` seconds timeout:
+    Starting an Ansys Discovery V 23.2 session, on address ``10.171.22.44``, port ``5001``,
+    with chatty logs, using API v231 and a ``300`` seconds timeout:
 
     >>> from ansys.geometry.core.connection.launcher import launch_modeler_with_discovery
 
@@ -505,8 +505,8 @@ def launch_modeler_with_spaceclaim(
     >>> from ansys.geometry.core.connection.launcher import launch_modeler_with_spaceclaim
     >>> modeler = launch_modeler_with_spaceclaim()
 
-    Starting an Ansys SpaceClaim V 23.2 session, on address ``10.171.22.44``, port ``5001``, with chatty
-    logs, using API v231 and a ``300`` seconds timeout:
+    Starting an Ansys SpaceClaim V 23.2 session, on address ``10.171.22.44``, port ``5001``,
+    with chatty logs, using API v231 and a ``300`` seconds timeout:
 
     >>> from ansys.geometry.core.connection.launcher import launch_modeler_with_spaceclaim
     >>> modeler = launch_modeler_with_spaceclaim(product_version = 232,
