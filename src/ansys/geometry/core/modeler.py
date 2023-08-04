@@ -13,6 +13,7 @@ from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
+from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
 
@@ -115,6 +116,11 @@ class Modeler:
         check_type(name, str)
         design = Design(name, self._client)
         self._designs.append(design)
+        if len(self._designs) > 1:
+            logger.warning(
+                "Most backends only support one design. "
+                + "Previous designs may be deleted (on the service) when creating a new one."
+            )
         return self._designs[-1]
 
     def read_existing_design(self) -> "Design":
@@ -130,6 +136,11 @@ class Modeler:
 
         design = Design("", self._client, read_existing_design=True)
         self._designs.append(design)
+        if len(self._designs) > 1:
+            logger.warning(
+                "Most backends only support one design. "
+                + "Previous designs may be deleted (on the service) when reading a new one."
+            )
         return self._designs[-1]
 
     def close(self) -> None:
