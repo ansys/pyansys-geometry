@@ -234,7 +234,7 @@ def _is_port_available(port: int, host: str = "localhost") -> bool:
     if port != 0:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             try:
-                sock.bind((host, port))                
+                sock.bind((host, port))
                 return True
             except:
                 return False
