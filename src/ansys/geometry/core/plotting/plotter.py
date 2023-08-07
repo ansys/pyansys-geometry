@@ -516,16 +516,24 @@ class PlotterHelper:
             pl = Plotter()
 
         if self._allow_picking:
-            pl.scene.enable_mesh_picking(callback=self.picker_callback, use_actor=True)
+            pl.scene.enable_mesh_picking(callback=self.picker_callback, use_actor=True, show=False)
 
         return pl
 
+    def reset(self):
+        """Reset actor properties at callback."""
+        for a in self._pl.scene.renderer.actors.values():
+            if isinstance(a, pv.Actor):
+                a.prop.show_edges = False
+
     def picker_callback(self, actor):
         """Define callback for the element picker."""
+        self.reset()
         pt = self._pl.scene.picked_point
         self._actor_object_mapping.keys
         if actor.name in self._actor_object_mapping:
             body_name = self._actor_object_mapping[actor.name]
+            actor.prop.show_edges = True
             text = body_name
             self._pl.scene.add_point_labels(
                 [pt],
