@@ -1,4 +1,4 @@
-"""Provides the ``Box`` class."""
+"""Provides for creating and managing a box (quadrilateral)."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
@@ -15,12 +15,12 @@ from ansys.geometry.core.typing import Real
 
 class Box(SketchFace):
     """
-    Provides for modeling quadrilaterals.
+    Provides for modeling a box.
 
     Parameters
     ----------
     center: Point2D
-        2D point representing the center of the box.
+        Center point of the box.
     width : Union[Quantity, Distance, Real]
         Width of the box.
     height : Union[Quantity, Distance, Real]
@@ -86,7 +86,7 @@ class Box(SketchFace):
 
     @property
     def center(self) -> Point2D:
-        """Point that is the center of the box."""
+        """Center point of the box."""
         return self._center
 
     @property

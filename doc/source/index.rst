@@ -11,8 +11,9 @@ PyGeometry is a Python client library for the Ansys Geometry service.
             Getting started
             ^^^^^^^^^^^^^^^
 
-            New to PyGeometry? Check out this section to see
-            how to get started.
+            Learn how to run the Windows Docker container, install the
+            PyGeometry image, and launch and connect to the Geometry
+            servicve.
 
             +++
 
@@ -30,8 +31,8 @@ PyGeometry is a Python client library for the Ansys Geometry service.
             User guide
             ^^^^^^^^^^
 
-            The section describes key concepts related to
-            using PyGeometry.
+            Understand key concepts and approaches for primitives,
+            sketches, and model designs.
 
             +++
             .. button-link:: user_guide/index.html
@@ -49,7 +50,7 @@ PyGeometry is a Python client library for the Ansys Geometry service.
             API reference
             ^^^^^^^^^^^^^
 
-            This section describes PyGeometry API endpoints, their capabilities,
+            Understand PyGeometry API endpoints, their capabilities,
             and how to interact with them programmatically.
 
             +++
@@ -67,7 +68,8 @@ PyGeometry is a Python client library for the Ansys Geometry service.
             Examples
             ^^^^^^^^
 
-            This section demonstrates how to use PyGeometry.
+            Explore examples that show how to use PyGeometry to
+            perform many different types of operations.
 
             +++
             .. button-link:: examples.html
