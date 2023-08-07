@@ -10,6 +10,7 @@ geometry
 Geometry service
 Geometry models
 GitHub
+namespace
 Polydata
 PROTO
 Protobuf
