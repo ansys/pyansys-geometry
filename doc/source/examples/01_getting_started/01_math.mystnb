@@ -37,6 +37,8 @@ Everything starts with ``Point`` and ``Vector`` objects, which can each be defin
 These objects inherit from NumPy's ``ndarray``, providing them with enhanced functionalities.
 When creating these objects, you must remember to pass in the arguments as a list (that is, with brackets ``[ ]``).
 
+This code shows how to create 2d and 3D point and vectors:
+
 ```
 Point3D([x, y, z])
 Point2D([x, y])
@@ -45,7 +47,9 @@ Vector3D([x, y, z])
 Vector2D([x, y])
 ```
 
-This code shows some standard mathematical operations that you can perform on these objects:
+You can perform standard mathematical operations on points and vectors.
+
+This code performs some standard operations on vectors:
 
 ```{code-cell} ipython3
 vec_1 = Vector3D([1,0,0]) # x-vector
@@ -61,7 +65,7 @@ print("\nCross product of vectors [1, 0, 0] % [0, 1, 0]:")
 print(vec_1 % vec_2) # cross
 ```
 
-This code shows how you can also create a vector from two points:
+This code shows how to create a vector from two points:
 
 ```{code-cell} ipython3
 p1 = Point3D([12.4, 532.3, 89])
@@ -71,7 +75,7 @@ vec_3 = Vector3D.from_points(p1, p2)
 vec_3
 ```
 
-This code shows how you can normalize any vector to create a unit vector, also sometimes
+This code shows how to normalize any vector to create a unit vector, also sometimes
 known as a *direction*:
 
 ```{code-cell} ipython3
@@ -85,14 +89,15 @@ print("\nNew magnitude:")
 print(vec_3.normalize().magnitude)
 ```
 
-This code uses the ``UnitVector`` class to automatically normalize the input:
+This code uses the ``UnitVector`` class to automatically normalize the input
+for the unit vector:
 
 ```{code-cell} ipython3
 uv = UnitVector3D([1,1,1])
 uv
 ```
 
-This code shows a few more convenient mathematical operations.
+This code performs a few more mathematical operations on vectors:
 
 ```{code-cell} ipython3
 v1 = Vector3D([1, 0, 0])
@@ -116,13 +121,15 @@ print(f"{np.pi / 2} == pi/2")
 
 ## Create planes
 
-Once you get into creating sketches and bodies, ``Plane`` objects become very important. A plage
+Once you begin creating sketches and bodies, ``Plane`` objects become very important. A plane
 is defined by:
 
-- An origin, which consists of a 3D point.
-- Two directions (``direction_x`` and ``direction_y``), which are both ``UnitVector3D``objects.
+- An origin, which consists of a 3D point
+- Two directions (``direction_x`` and ``direction_y``), which are both ``UnitVector3D``objects
 
 If no direction vectors are provided, the plane defaults to the XY plane.
+
+This code shows create planes:
 
 ```{code-cell} ipython3
 plane = Plane(Point3D([0,0,0])) # XY plane
@@ -138,9 +145,9 @@ print(plane.is_point_contained(Point3D([0, 0, 5]))) # False
 
 ## Perform parametric evaluations
 
-Parametric evaluations for some curves and surfaces are also implemented.
+PyGeometry implements parametric evaluations for some curves and surfaces.
 
-This code provides a brief example for evaluating a sphere:
+This code provides an example for evaluating a sphere:
 
 ```{code-cell} ipython3
 from ansys.geometry.core.primitives.sphere import Sphere, SphereEvaluation

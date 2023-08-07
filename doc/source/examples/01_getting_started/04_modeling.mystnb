@@ -18,27 +18,28 @@ you can dive into its modeling capabilities.
 
 +++
 
-PyGeometry is a Python client that connects to a modeling service. These modeling
-services are available for connection:
+PyGeometry is a Python client that connects to a modeling service. Here are the modeling
+services that available for connection:
 
 - **DMS**: Windows-based modeling service that has been containerized to ease
   distribution, execution, and remotability operations.
 - **Geometry service**: Linux-based approach of DMS that is currently under development.
 - **Ansys Discovery and SpaceClaim**: PyGeometry is capable of connecting to a running session
-  of Ansys Discovery or SpaceClaim. Although this is not the main use case for PyGeometry, such
-  a connection is possible. Because of the product's graphical user interface, performance
-  is not as high with this option as the previous options. However, connecting to a running
-  product instance might be useful for some users.
+  of Ansys Discovery or SpaceClaim. Although this is not the main use case for PyGeometry,
+  a connection to one of these Ansys products is possible. Because of these products have
+  graphical user interfaces, performance is not as high with this option as with the previous
+  options. However, connecting to a running instance of Discovery or SpaceClaim might be
+  useful for some users.
 
 +++
 
 ## Launch a modeling service
 
-While the PyGeometry operations in the preceding examples did not require communication with
+While the PyGeometry operations in earlier examples did not require communication with
 a modeling service, this example requires that a modeling service be available. All subsequent
 examples also require that a modeling service be available.
 
-This code launches a modeling service session:
+This code shows how to launch a modeling service session:
 
 ```{code-cell} ipython3
 from ansys.geometry.core import launch_modeler
@@ -48,8 +49,8 @@ modeler = launch_modeler()
 print(modeler)
 ```
 
-You can also launch your own services and connect to them. For information on how
-to connect to an existing service, see the
+You can also launch your own services and connect to them. For information on
+connecting to an existing service, see the
 [Modeler API](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/modeler/index.html#ansys.geometry.core.modeler.Modeler)
 documentation.
 
@@ -58,12 +59,12 @@ documentation.
 Here is how the class architecture is implemented:
 
 * ``Modeler``: Handler object for the active service session. This object allows you
-  to connect to an existing service by passing in a host and port. It also
+  to connect to an existing service by passing in a host and a port. It also
   allows you to create ``Design`` objects, which is where the modeling takes
   place. For more information, see the [Modeler API](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/modeler/index.html#ansys.geometry.core.modeler.Modeler)
   documentation.
 * ``Design``: Root object of your assembly (tree). While a ``Design`` object is also a
-  ``Component`` object, it has enhanced functionalities, including creating named selections,
+  ``Component`` object, it has enhanced capabilities, including creating named selections,
   adding materials, and handling beam profiles. For more information, see the
   [Design API](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/designer/design/index.html#ansys.geometry.core.designer.design.Design)
   documentation.
@@ -73,14 +74,14 @@ Here is how the class architecture is implemented:
   documentation.
 
 The following code examples demonstrate how you use these objects.
-More features of each of these objects are shown in the specific
+More capabilities of these objects are shown in the specific
 example sections for sketching and modeling.
 
 +++
 
 ## Create and plot a sketch
 
-This code creates a ``Sketch`` object and plots it.
+This code shows how to create a ``Sketch`` object and plot it.
 
 ```{code-cell} ipython3
 from ansys.geometry.core.sketch import Sketch
@@ -116,7 +117,7 @@ sketch.plot()
 
 Now that the sketch is ready to be extruded, this code shows how to
 perform some modeling operations, including creating the design, creating
-the body direcyly on the design, and plotting the body:
+the body directly on the design, and plotting the body:
 
 ```{code-cell} ipython3
 # Start by creating the Design
@@ -170,20 +171,20 @@ body_copy.translate(direction=UNITVECTOR3D_X, distance=Distance(10, unit=UNITS.m
 design.plot()
 ```
 
-This code shows how create and assign materials to the bodies created:
+This code shows how create and assign materials to the bodies that were created:
 
 ```{code-cell} ipython3
 from pint import Quantity
 
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 
-# Define some general properties for the material
+# Define some general properties for the material.
 density = Quantity(125, 10 * UNITS.kg / (UNITS.m * UNITS.m * UNITS.m))
 poisson_ratio = Quantity(0.33, UNITS.dimensionless)
 tensile_strength = Quantity(45)  # WARNING: If no units are defined,
-# It is assumed that the magnitude is in the expected units by the server
+#it is assumed that the magnitude is in the units expected by the server.
 
-# Once your material properties are defined, you can easily create a material
+# Once your material properties are defined, you can easily create a material.
 material = Material(
     "steel",
     density,
@@ -191,7 +192,7 @@ material = Material(
 )
 
 # If you forgot to add a property, or you want to overwrite its value, you can still
-# add properties to your created material
+# add properties to your created material.
 material.add_property(
     type=MaterialPropertyType.TENSILE_STRENGTH, name="TensileProp", quantity=tensile_strength
 )
@@ -200,14 +201,14 @@ material.add_property(
 # This material can then be reused by different objects
 design.add_material(material)
 
-# And now, assign your material to your existing bodies
+# Assign your material to your existing bodies.
 body.assign_material(material)
 body_copy.assign_material(material)
 ```
 
 Currently materials do not have any impact on the visualization when plotting
-is requested. This could be a nice feature to add. Changes can
-be observed if the final assembly is opened on Discovery or SpaceClaim.
+is requested, although this could possibly be a future feature. If the final
+assembly is open in Discovery or SpaceClaimChanges, you can observe the changes.
 
 +++
 
@@ -215,7 +216,7 @@ be observed if the final assembly is opened on Discovery or SpaceClaim.
 
 PyGeometry supports the creation of a named selection via the ``Design`` object.
 
-This code create a named selection with some of the faces of your previous body
+This code shows how to create a named selection with some of the faces of the previous body
 and the body itself:
 
 ```{code-cell} ipython3
@@ -228,13 +229,13 @@ print(f"This is a named selection called {ns.name} with ID (server-side): {ns.id
 
 ## Perform deletions
 
-Deletion operations for bodies, named selections, and components are also possible,
+Deletion operations for bodies, named selections, and components are possible,
 always from the scope expected. For example, if you attempted to delete the original body
 from a component that has no ownership over it (such as your ``comp`` object), the deletion
 would fail. If you attempted to perform this deletion from the ``design`` object, the
-deletion would be successful.
+deletion would succeed.
 
-This code shows how deletion works:
+The next two code examples show how deletion works:
 
 ```{code-cell} ipython3
 # If you try to delete this body from an "unauthorized" component, the deletion is not allowed.
@@ -261,7 +262,7 @@ design.plot()
 Once modeling operations are finalized, you can export files
 in different formats. For the formats supported by DMS, see the
 [DesignFileFormat](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/designer/design/index.html#ansys.geometry.core.designer.design.DesignFileFormat)
-class in the ``Design`` module.
+class in the ``Design`` module documentation.
 
 This code shows how to export files in SCDOCX and FMD formats:
 
@@ -294,6 +295,6 @@ modeler.close()
 
 .. note::
    If the server session already existed (that is, it was not launched by
-   the current client session), you cannot use this mmethod to close it.
-   You must manually close the server service. This is a safeguard for
-   user-spawned services.
+   the current client session), you cannot use this method to close the
+   server session. You must manually close the server serssion instead.
+   This is a safeguard for user-spawned services.
