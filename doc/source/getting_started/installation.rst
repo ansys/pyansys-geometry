@@ -8,31 +8,31 @@ or from the `PyGeometry`_ repository on GitHub.
 Package dependencies
 --------------------
 
-PyGeometry is supported on Python version 3.8 and later. As indicated in
-`Moving to require Python 3 <https://python3statement.org/>`_, previous
-versions of Python are no longer supported.
+PyGeometry is supported on Python version 3.8 and later. As indicated in the
+`Moving to require Python 3 <https://python3statement.org/>`_ statement,
+previous versions of Python are no longer supported.
 
 PyGeometry dependencies are automatically checked when packages are installed.
 These projects are required dependencies for PyGeometry:
 
 * `ansys-api-geometry <https://pypi.org/project/ansys-api-geometry/>`_: Used for supplying
-  gRPC code generated from Protobuf (PROTO) files.
-* `NumPy <https://pypi.org/project/numpy/>`_: Used for data array access.
-* `Pint <https://pypi.org/project/Pint/>`_: Used for measurement units.
-* `PyVista <https://pypi.org/project/pyvista/>`_: Used for interactive 3D plotting.
-* `SciPy <https://pypi.org/project/scipy/>`_: Used for geometric transformations.
+  gRPC code generated from Protobuf (PROTO) files
+* `NumPy <https://pypi.org/project/numpy/>`_: Used for data array access
+* `Pint <https://pypi.org/project/Pint/>`_: Used for measurement units
+* `PyVista <https://pypi.org/project/pyvista/>`_: Used for interactive 3D plotting
+* `SciPy <https://pypi.org/project/scipy/>`_: Used for geometric transformations
 
 PyPI
 ----
 
-Before installing PyGeometry, make sure that you have the latest version of
-`pip`_ with this command:
+Before installing PyGeometry, to make sure that you have the latest version of
+`pip`_, run this command:
 
 .. code:: bash
 
    python -m pip install -U pip
 
-Then, install PyGeometry with this command:
+Then, to install PyGeometry, run this command:
 
 .. code:: bash
 
@@ -46,7 +46,7 @@ Then, install PyGeometry with this command:
     ``https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/``
 
     If access to this package registry is needed, email `pyansys.core@ansys.com <mailto:pyansys.core@ansys.com>`_
-    to request access. The PyAnsys team can provide you a read-only token to be inserted in ``${PRIVATE_PYPI_ACCESS_TOKEN}``.
+    to request access. The PyAnsys team can provide you a read-only token to insert in ``${PRIVATE_PYPI_ACCESS_TOKEN}``.
     Once you have obtained this token, run this command:
 
     .. code:: bash
@@ -57,7 +57,7 @@ Then, install PyGeometry with this command:
 GitHub
 ------
 
-You can install the latest release from the `PyGeometry`_ repository on GitHub with
+To install the latest release from the `PyGeometry`_ repository on GitHub, run
 these commands:
 
 .. code:: bash
@@ -66,7 +66,7 @@ these commands:
    cd pygeometry
    pip install -e .
 
-You can verify your development installation by running this command:
+To verify your development installation, run this command:
 
 .. code:: bash
 
@@ -114,7 +114,7 @@ Check the :class:`Modeler() <ansys.geometry.core.modeler()>` connection with thi
     Connection: Healthy
 
 If you see a response from the server, you can start using PyGeometry as a service.
-For more information on the PyGeometry interface, see :ref:`User guide <ref_user_guide>`.
+For more information on how to use PyGeometry, see :ref:`User guide <ref_user_guide>`.
 
 .. LINKS AND REFERENCES
 .. _pip: https://pypi.org/project/pip/

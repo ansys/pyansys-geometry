@@ -87,8 +87,8 @@ PyGeometry is a Python client library for the Ansys Geometry service.
 
             Contribute
             ^^^^^^^^^^
-            This section explains how to contribute to the
-            PyGeometry codebase or documentation.
+            Learn how to contribute to the PyGeometry codebase
+            or documentation.
 
             +++
             .. button-link:: contributing.html

@@ -11,19 +11,19 @@ kernelspec:
   name: python3
 ---
 
-# PyGeometry 101: math
+# PyGeometry 101: Math
 
-The ``math`` module is the foundation of PyGeometry. This foundation is built on top of
+The ``math`` module is the foundation of PyGeometry. This module is built on top of
 [NumPy](https://numpy.org/), one of the most renowned mathematical Python libraries.
 
-In this demo, some of the main PyGeometry math objects are shown
-and it is shown why they are important prior to doing more exciting things in PyGeometry.
+This example shows some of the main PyGeometry math objects and demonstrates
+why they are important prior to doing more exciting things in PyGeometry.
 
 +++
 
 ## Perform required imports
 
-Start by performing the required imports.
+Perform the required imports.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -31,12 +31,11 @@ import numpy as np
 from ansys.geometry.core.math import Plane, Point2D, Point3D, Vector2D, Vector3D, UnitVector3D
 ```
 
-### ``Point`` and ``Vector``
+## Create points and vectors
 
-Everything starts with ``Point`` and ``Vector``, which can each be defined in a 2D or 3D form.
+Everything starts with ``Point`` and ``Vector`` objects, which can each be defined in a 2D or 3D form.
 These objects inherit from NumPy's ``ndarray``, providing them with enhanced functionalities.
-It is very important to remember to pass in the arguments as a list (that is, with brackets ``[ ]``)
-when creating these objects.
+When creating these objects, you must remember to pass in the arguments as a list (that is, with brackets ``[ ]``).
 
 ```
 Point3D([x, y, z])
@@ -46,7 +45,7 @@ Vector3D([x, y, z])
 Vector2D([x, y])
 ```
 
-You can perform standard mathematical operations on these objects like the following.
+This code shows some standard mathematical operations that you can perform on these objects:
 
 ```{code-cell} ipython3
 vec_1 = Vector3D([1,0,0]) # x-vector
@@ -62,7 +61,7 @@ print("\nCross product of vectors [1, 0, 0] % [0, 1, 0]:")
 print(vec_1 % vec_2) # cross
 ```
 
-You can also create a ``Vector`` from 2 points.
+This code shows how you can also create a vector from two points:
 
 ```{code-cell} ipython3
 p1 = Point3D([12.4, 532.3, 89])
@@ -72,7 +71,8 @@ vec_3 = Vector3D.from_points(p1, p2)
 vec_3
 ```
 
-You can normalize any vector to create a unit vector, also sometimes known as a ``Direction``.
+This code shows how you can normalize any vector to create a unit vector, also sometimes
+known as a *direction*:
 
 ```{code-cell} ipython3
 print("Magnitude of vec_3:")
@@ -85,14 +85,14 @@ print("\nNew magnitude:")
 print(vec_3.normalize().magnitude)
 ```
 
-There is also a ``UnitVector`` class that will automatically normalize the input.
+This code uses the ``UnitVector`` class to automatically normalize the input:
 
 ```{code-cell} ipython3
 uv = UnitVector3D([1,1,1])
 uv
 ```
 
-Here are a few more convenient mathematical operations.
+This code shows a few more convenient mathematical operations.
 
 ```{code-cell} ipython3
 v1 = Vector3D([1, 0, 0])
@@ -114,13 +114,15 @@ print(f"{np.pi / 2} == pi/2")
 
 +++
 
-### ``Plane`` objects
+## Create planes
 
-``Plane`` objects also become very important once we get into creating sketches and bodies. It is defined by:
-- An ``origin``, which consists of a ``Point3D``.
-- Two directions which are ``direction_x`` and ``direction_y``, both of them ``UnitVector3D``objects.
+Once you get into creating sketches and bodies, ``Plane`` objects become very important. A plage
+is defined by:
 
-If no direction vectors are provided, the ``Plane`` will default to the XY plane.
+- An origin, which consists of a 3D point.
+- Two directions (``direction_x`` and ``direction_y``), which are both ``UnitVector3D``objects.
+
+If no direction vectors are provided, the plane defaults to the XY plane.
 
 ```{code-cell} ipython3
 plane = Plane(Point3D([0,0,0])) # XY plane
@@ -134,9 +136,11 @@ print(plane.is_point_contained(Point3D([0, 0, 5]))) # False
 
 +++
 
-## Parametric evaluations
+## Perform parametric evaluations
 
-Parametric evaluations for some curves and surfaces are also implemented. Here is a brief example for a sphere.
+Parametric evaluations for some curves and surfaces are also implemented.
+
+This code provides a brief example for evaluating a sphere:
 
 ```{code-cell} ipython3
 from ansys.geometry.core.primitives.sphere import Sphere, SphereEvaluation

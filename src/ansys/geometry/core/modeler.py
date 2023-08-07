@@ -215,7 +215,9 @@ class Modeler:
         Run a Discovery script file.
 
         The implied API version of the script should match the API version of the running
-        Geometry Service. DMS API version 23.2.1 and later are supported.
+        Geometry Service. DMS API versions 23.2.1 and later are supported. DMS is a
+        Windows-based modeling service that has been containerized to ease distribution,
+        execution, and remotability operations.
 
         Parameters
         ----------
