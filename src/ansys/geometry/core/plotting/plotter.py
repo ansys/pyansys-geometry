@@ -282,6 +282,8 @@ class Plotter:
             actor = self.scene.add_composite(dataset, **plotting_options)
         else:
             actor = self.scene.add_mesh(dataset, **plotting_options)
+        if isinstance(actor, tuple):
+            actor = actor[0]
         return actor.name
 
     def add_sketch_polydata(self, polydata_entries: List[pv.PolyData], **plotting_options) -> None:
@@ -304,6 +306,8 @@ class Plotter:
         # Use the default PyGeometry add_mesh arguments
         for polydata in polydata_entries:
             actor = self.scene.add_mesh(polydata, **plotting_options)
+        if isinstance(actor, tuple):
+            actor = actor[0]
             return actor.name
 
     def add(
