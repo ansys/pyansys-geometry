@@ -812,6 +812,11 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
         assert step_file.exists()
         assert iges_file.exists()
 
+        # PMDB addin is Windows-only
+        pmdb_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.pmdb"
+        design.download(pmdb_file, DesignFileFormat.PMDB)
+        assert pmdb_file.exists()
+
     elif service_os == "linux":
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_bin"
         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_txt"
