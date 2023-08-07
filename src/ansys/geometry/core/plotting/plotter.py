@@ -73,6 +73,9 @@ class Plotter:
             ]
             [self._widgets.append(ViewButton(self._scene, direction=dir)) for dir in ViewDirection]
 
+        # Dict where to save relation between generic object and pv.Actor
+        self._actor_object_mapping = {}
+
     @property
     def scene(self) -> pv.Plotter:
         """
@@ -224,14 +227,22 @@ class Plotter:
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
+
+        Returns
+        -------
+        str:
+            Name of the added PyVista Actor.
         """
         # Use the default PyGeometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
         dataset = body.tessellate(merge=merge)
         if isinstance(dataset, pv.MultiBlock):
-            self.scene.add_composite(dataset, **plotting_options)
+            actor = self.scene.add_composite(dataset, **plotting_options)
         else:
-            self.scene.add_mesh(dataset, **plotting_options)
+            actor = self.scene.add_mesh(dataset, **plotting_options)
+        if isinstance(actor, tuple):
+            actor = actor[0]
+        return actor.name
 
     def add_component(
         self,
@@ -258,14 +269,20 @@ class Plotter:
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
+
+        Returns
+        -------
+        str:
+            Name of the added PyVista Actor.
         """
         # Use the default PyGeometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
         if isinstance(dataset, pv.MultiBlock):
-            self.scene.add_composite(dataset, **plotting_options)
+            actor = self.scene.add_composite(dataset, **plotting_options)
         else:
-            self.scene.add_mesh(dataset, **plotting_options)
+            actor = self.scene.add_mesh(dataset, **plotting_options)
+        return actor.name
 
     def add_sketch_polydata(self, polydata_entries: List[pv.PolyData], **plotting_options) -> None:
         """
@@ -278,10 +295,16 @@ class Plotter:
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
+
+        Returns
+        -------
+        str:
+            Name of the added PyVista Actor.
         """
         # Use the default PyGeometry add_mesh arguments
         for polydata in polydata_entries:
-            self.scene.add_mesh(polydata, **plotting_options)
+            actor = self.scene.add_mesh(polydata, **plotting_options)
+            return actor.name
 
     def add(
         self,
@@ -312,9 +335,14 @@ class Plotter:
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
+
+        Returns
+        -------
+        Mapping[str, str]:
+            Mapping between the pv.Actor and the PyGeometry object.
         """
         logger.debug(f"Adding object type {type(object)} to the PyVista plotter")
-
+        actor_name = None
         if isinstance(object, List) and isinstance(object[0], pv.PolyData):
             self.add_sketch_polydata(object, **plotting_options)
         elif isinstance(object, pv.PolyData):
@@ -324,11 +352,17 @@ class Plotter:
         elif isinstance(object, Sketch):
             self.plot_sketch(object, **plotting_options)
         elif isinstance(object, Body) or isinstance(object, MasterBody):
-            self.add_body(object, merge_bodies, **plotting_options)
+            actor_name = self.add_body(object, merge_bodies, **plotting_options)
         elif isinstance(object, Design) or isinstance(object, Component):
-            self.add_component(object, merge_components, merge_bodies, **plotting_options)
+            actor_name = self.add_component(
+                object, merge_components, merge_bodies, **plotting_options
+            )
         else:
             logger.warning(f"Object type {type(object)} can not be plotted.")
+
+        if actor_name is not None:
+            self._actor_object_mapping[actor_name] = object.name
+        return self._actor_object_mapping
 
     def add_list(
         self,
@@ -359,9 +393,15 @@ class Plotter:
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
+
+        Returns
+        -------
+        Mapping[str, str]:
+            Dictionary with the mapping between pv.Actor and PyGeometry objects.
         """
         for object in plotting_list:
             self.add(object, merge_bodies, merge_components, **plotting_options)
+        return self._actor_object_mapping
 
     def show(
         self,
@@ -449,6 +489,8 @@ class PlotterHelper:
         self._use_trame = use_trame
         self._allow_picking = allow_picking
         self._pv_off_screen_original = bool(pv.OFF_SCREEN)
+        self._actor_object_mapping = {}
+        self._pl = None
 
     def init_plotter(self):
         """
@@ -474,14 +516,25 @@ class PlotterHelper:
             pl = Plotter()
 
         if self._allow_picking:
-            pl.scene.enable_mesh_picking(callback=self.picker_callback)
+            pl.scene.enable_mesh_picking(callback=self.picker_callback, use_actor=True)
 
         return pl
 
-    def picker_callback(self, mesh):
+    def picker_callback(self, actor):
         """Define callback for the element picker."""
-        shrunk = mesh.shrink(0.9)
-        mesh.copy_from(shrunk)  # make operation "in-place" by replacing the original mesh
+        pt = self._pl.scene.picked_point
+        self._actor_object_mapping.keys
+        if actor.name in self._actor_object_mapping:
+            body_name = self._actor_object_mapping[actor.name]
+            text = body_name
+            self._pl.scene.add_point_labels(
+                [pt],
+                [text],
+                always_visible=True,
+                point_size=10,
+                render_points_as_spheres=True,
+                name="selection-label",
+            )
 
     def plot(
         self,
@@ -519,19 +572,23 @@ class PlotterHelper:
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
         """
-        pl = self.init_plotter()
+        self._pl = self.init_plotter()
         if isinstance(object, List) and not isinstance(object[0], pv.PolyData):
             logger.debug("Plotting objects in list...")
-            pl.add_list(object, merge_bodies, merge_component, **plotting_options)
+            self._actor_object_mapping = self._pl.add_list(
+                object, merge_bodies, merge_component, **plotting_options
+            )
         else:
-            pl.add(object, merge_bodies, merge_component, **plotting_options)
+            self._actor_object_mapping = self._pl.add(
+                object, merge_bodies, merge_component, **plotting_options
+            )
 
         if view_2d is not None:
-            pl.scene.view_vector(
+            self._pl.scene.view_vector(
                 vector=view_2d["vector"],
                 viewup=view_2d["viewup"],
             )
-        self.show_plotter(pl, screenshot)
+        self.show_plotter(self._pl, screenshot)
 
     def show_plotter(self, plotter: Plotter, screenshot: Optional[str] = None):
         """
