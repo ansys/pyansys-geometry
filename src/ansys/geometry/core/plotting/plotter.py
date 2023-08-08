@@ -472,7 +472,7 @@ class PlotterHelper:
     """
 
     def __init__(
-        self, use_trame: Optional[bool] = None, allow_picking: Optional[bool] = None
+        self, use_trame: Optional[bool] = None, allow_picking: Optional[bool] = True
     ) -> None:
         """Initialize use_trame and saves current pv.OFF_SCREEN value."""
         # Check if the use of trame was requested
@@ -480,9 +480,6 @@ class PlotterHelper:
             import ansys.geometry.core as pygeom
 
             use_trame = pygeom.USE_TRAME
-
-        if allow_picking is None:
-            allow_picking = pygeom.ALLOW_PICKING
 
         self._use_trame = use_trame
         self._allow_picking = allow_picking
