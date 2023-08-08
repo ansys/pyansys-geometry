@@ -301,9 +301,7 @@ class Plotter:
         # Use the default PyGeometry add_mesh arguments
         for polydata in polydata_entries:
             actor = self.scene.add_mesh(polydata, **plotting_options)
-        if isinstance(actor, tuple):
-            actor = actor[0]
-            return actor.name
+        return actor.name
 
     def add(
         self,
