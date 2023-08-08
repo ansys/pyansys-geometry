@@ -234,11 +234,9 @@ class Plotter:
         self.__set_add_mesh_defaults(plotting_options)
         dataset = body.tessellate(merge=merge)
         if isinstance(dataset, pv.MultiBlock):
-            actor = self.scene.add_composite(dataset, **plotting_options)
+            actor, _ = self.scene.add_composite(dataset, **plotting_options)
         else:
             actor = self.scene.add_mesh(dataset, **plotting_options)
-        if isinstance(actor, tuple):
-            actor = actor[0]
         return actor.name
 
     def add_component(
@@ -276,11 +274,9 @@ class Plotter:
         self.__set_add_mesh_defaults(plotting_options)
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
         if isinstance(dataset, pv.MultiBlock):
-            actor = self.scene.add_composite(dataset, **plotting_options)
+            actor, _ = self.scene.add_composite(dataset, **plotting_options)
         else:
             actor = self.scene.add_mesh(dataset, **plotting_options)
-        if isinstance(actor, tuple):
-            actor = actor[0]
         return actor.name
 
     def add_sketch_polydata(self, polydata_entries: List[pv.PolyData], **plotting_options) -> None:
