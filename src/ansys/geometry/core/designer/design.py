@@ -63,8 +63,8 @@ class DesignFileFormat(Enum):
     FMD = "FMD", PartExportFormat.PARTEXPORTFORMAT_FMD
     STEP = "STEP", PartExportFormat.PARTEXPORTFORMAT_STEP
     IGES = "IGES", PartExportFormat.PARTEXPORTFORMAT_IGES
-    INVALID = "INVALID", None
     PMDB = "PMDB", PartExportFormat.PARTEXPORTFORMAT_PMDB
+    INVALID = "INVALID", None
 
 
 class Design(Component):
