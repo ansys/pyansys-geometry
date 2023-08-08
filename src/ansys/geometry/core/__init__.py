@@ -30,3 +30,6 @@ from ansys.geometry.core.modeler import Modeler
 
 USE_TRAME = False
 """Global constant for checking the use of trame or not."""
+
+ALLOW_PICKING = True
+"""Global constant to activate picking capabilities in PyVista plotter."""
