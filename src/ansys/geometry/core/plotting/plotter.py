@@ -237,6 +237,7 @@ class Plotter:
             actor, _ = self.scene.add_composite(dataset, **plotting_options)
         else:
             actor = self.scene.add_mesh(dataset, **plotting_options)
+
         return actor.name
 
     def add_component(
@@ -277,6 +278,7 @@ class Plotter:
             actor, _ = self.scene.add_composite(dataset, **plotting_options)
         else:
             actor = self.scene.add_mesh(dataset, **plotting_options)
+
         return actor.name
 
     def add_sketch_polydata(self, polydata_entries: List[pv.PolyData], **plotting_options) -> None:
@@ -356,11 +358,7 @@ class Plotter:
             )
         else:
             logger.warning(f"Object type {type(object)} can not be plotted.")
-        if actor_name is not None:
-            actor_object_mapping = {actor_name: object.name}
-            return actor_object_mapping
-        else:
-            return None
+        return {actor_name: object.name} if actor_name else None
 
     def add_list(
         self,
@@ -609,4 +607,5 @@ class PlotterHelper:
             visualizer.show()
         else:
             self._pl.show(screenshot=screenshot)
+
         pv.OFF_SCREEN = self._pv_off_screen_original
