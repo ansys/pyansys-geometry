@@ -220,7 +220,8 @@ def prepare_and_start_backend(
     )
 
 
-def _get_available_port():
+@staticmethod
+def get_available_port():
     """Return an available port to be used."""
     sock = socket.socket()
     sock.bind(("", 0))
@@ -309,7 +310,7 @@ def _check_port_or_get_one(port: int) -> int:
 
     If not, raise an error.
 
-    If ``port`` is None, return an available port by calling ``_get_available_port``.
+    If ``port`` is None, return an available port by calling ``get_available_port``.
     """
     if port:
         if _is_port_available(port):
@@ -318,7 +319,7 @@ def _check_port_or_get_one(port: int) -> int:
             msg = f"Port {port} is already in use. Please specify a different one."
             raise ConnectionError(msg)
     else:
-        return _get_available_port()
+        return get_available_port()
 
 
 def _get_common_env(host: str, port: int, enable_trace: bool, log_level: int) -> Dict[str, str]:
