@@ -4,13 +4,14 @@ Getting started
 PyGeometry is a Python client library for the Ansys Geometry service.
 
 To use PyGeometry, you must have a local installation of `Docker <https://docs.docker.com/engine/install/>`_.
-To start the service locally, you must be authenticated to the package namespace ``https://ghcr.io``. For
-more information, see GitHub's `Working with the Container registry
-<https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry>`_.
+To start the service locally, you must be authenticated to this package namespace: ``https://ghcr.io``. For
+more information, see `Working with the Container registry
+<https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry>`_
+in the GitHub documentation.
 
 .. caution::
    PyGeometry is a client library that works with a Geometry service backend. This service is distributed
-   as a Docker container. Currently, only a Windows Docker container version is available for this
+   as a Docker container. Currently, only a Windows Docker container is available for this
    service. For more information, see :ref:`Geometry service using Docker <ref_docker>`.
 
 .. toctree::

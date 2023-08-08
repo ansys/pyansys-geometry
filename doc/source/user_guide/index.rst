@@ -20,10 +20,10 @@ PyGeometry overview
 ===================
 
 PyGeometry is a Python wrapper for the Ansys Geometry service.
-The key features of PyGeometry are:
+Here are some of the key features of PyGeometry:
 
 * Ability to use the library alongside other Python libraries
-* A *fluent functional-style* API for a clean and easy coding experience
+* A *functional-style* API for a clean and easy coding experience
 * Built-in examples
 
 Simple interactive example
@@ -36,12 +36,13 @@ Start Geometry server instance
 
 The :class:`Modeler() <ansys.geometry.core.modeler()>` class
 within the ``ansys-geometry-core`` library creates an instance of
-the Geometry service. By default ``Modeler`` connects to ``127.0.0.1``
-(``'localhost'``) on port ``50051``. You can change this by modifying
-the ``host`` and ``port`` parameters of ``Modeler``, but note that you
-have to also modify this in your ``docker run`` command by changing ``<HOST-PORT>-50051``.
+the Geometry service. By default, the ``Modeler`` instance connects to
+``127.0.0.1`` (``"localhost"``) on port ``50051``. You can change this
+by modifying the ``host`` and ``port`` parameters of the ``Modeler`` object,
+but note that you must also modify your ``docker run`` command by changing
+the ``<HOST-PORT>-50051`` argument.
 
-You start the Geometry service with this code:
+This code starts an instance of the Geometry service:
 
 .. code:: pycon
 
@@ -51,9 +52,9 @@ You start the Geometry service with this code:
 Create geometry model
 ---------------------
 
-Once the Geometry service has started, you can create a geometry model
-by initializing the :ref:`Sketch <ref_sketch>` class and using the
-:ref:`Primitives <ref_primitives>` math subpackage for PyGeometry.
+Once an instance has started, you can create a
+geometry model by initializing the :ref:`Sketch <ref_sketch>` class and using the
+:ref:`Primitives <ref_primitives>` math subpackage.
 
 .. code:: python
 

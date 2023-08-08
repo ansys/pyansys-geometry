@@ -6,8 +6,8 @@ Geometry service using Docker
 Docker
 ------
 
-Ensure that the machine that the Geometry service should run on has Docker installed. Otherwise,
-install `Docker Engine <https://docs.docker.com/engine/install/>`_.
+Ensure that the machine that the Geometry service is to run on has Docker installed. Otherwise,
+see `Install Docker Engine <https://docs.docker.com/engine/install/>`_ in the Docker documentation.
 
 .. caution::
     Currently, the Geometry service backend is only delivered as a Windows Docker container.
@@ -20,27 +20,25 @@ install `Docker Engine <https://docs.docker.com/engine/install/>`_.
 Run the Windows Docker container
 --------------------------------
 
-To run the Windows Docker container for the Geometry service, ensure that you follow these steps when
-installing Docker:
+To run the Windows Docker container for the Geometry service, ensure that you follow
+these steps when installing Docker:
 
-#. Install `Docker Desktop 4.13.1 <https://docs.docker.com/desktop/release-notes/#4131>`_ or earlier.
-   New Docker Desktop versions present problems when running Windows Docker containers.
+#. Install Docker Desktop 4.13.1. To download this version, use the Windows download link
+   in the `4.13.1 <https://docs.docker.com/desktop/release-notes/#4131>`_ section of the
+   Docker release notes. Newer Docker Desktop versions present problems when running
+   Windows Docker containers.
 
-#. When prompted for **Use WSL2 instead of Hyper-V (recommended)**, deselect this option.
+#. When prompted for **Use WSL2 instead of Hyper-V (recommended)**, clear this checkbox.
 
-#. Once the installation process finishes, open Docker Desktop.
-
-.. vale off
+#. Once the installation process finishes, start Docker Desktop.
 
 #. Select **Settings >> Software updates**, clear the **Automatically check for updates** checkbox, and
    click **Apply & restart**.
 
-.. vale on
-
-#. On the Windows taskbar, go to the **Show hidden icons** section, right click in the Docker Desktop app, and
+#. On the Windows taskbar, go to the **Show hidden icons** section, right-click in the Docker Desktop app, and
    select **Switch to Windows containers**.
 
-Your Docker engine now supports running Windows Docker containers. You can now install the PyGeometry image.
+Now that your Docker engine supports running Windows Docker containers, you can install the PyGeometry image.
 
 Install the PyGeometry image
 ----------------------------
@@ -48,13 +46,13 @@ Install the PyGeometry image
 Once Docker is installed on your machine, follow these steps to download the Docker container for the
 PyGeometry service and install this image.
 
-#. Using your GitHub credentials, download the Docker image from the `pygeometry <https://github.com/ansys/pygeometry>`_
-   repository.
+#. Using your GitHub credentials, download the Docker image from the `pygeometry repository <https://github.com/ansys/pygeometry>`_
+   on GitHub.
 
 #. Use a GitHub personal access token (PAT) with permission for reading packages to authorize Docker
-   to access this repository. For more information, see the GitHub documentation on creating personal
-   access tokens in `Managing your personal access tokens
-   <https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens>`_.
+   to access this repository. For more information, see `Managing your personal access tokens
+   <https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens>`_
+   in the GitHub documentation.
 
 #. Save the token to a file with this command:
 
@@ -62,8 +60,7 @@ PyGeometry service and install this image.
 
        echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX > GH_TOKEN.txt
 
-#. Authorize Docker to access the repository. Click the tab for your OS
-   to see the appropriate commands.
+#. Authorize Docker to access the repository. To see the appropriate commands, click the tab for your OS.
 
    .. tab-set::
 
@@ -89,14 +86,13 @@ PyGeometry service and install this image.
                type GH_TOKEN.txt | docker login ghcr.io -u %GH_USERNAME% --password-stdin
 
 
-#. Pull the Geometry service locally using Docker with this command, where ``<tag>``
-   is the OS-dependent tag:
+#. Pull the Geometry service locally using Docker with a command like this:
 
    .. code:: bash
 
       docker pull ghcr.io/ansys/geometry:<tag>
 
-   These OS-dependent tags are available:
+   For ``<tag>``, use one of these available OS-dependent tags:
 
    * ``windows-latest``
    * ``windows-latest-unstable``
@@ -106,7 +102,7 @@ PyGeometry service and install this image.
 Launch the Geometry service
 ---------------------------
 
-There are two mechanisms for launching the Geometry service:
+There are methods for launching the Geometry service:
 
 * You can use the PyGeometry launcher.
 * You can manually launch the Geometry service.
@@ -121,13 +117,13 @@ The Geometry service requires this mandatory environment variable for its use:
 
 You can also specify other optional environment variables:
 
-* ``ENABLE_TRACE``: Whether to set up the trace level for debugging purposes. Options are
-  ``1`` and ``0``. The default is ``0``, in which case the trace level is not to be set up.
+* ``ENABLE_TRACE``: Whether to set up the trace level for debugging purposes. The default
+  is ``0``, in which case the trace level is not to be set up. Options are ``1`` and ``0``. 
 * ``LOG_LEVEL``: Sets the Geometry service logging level. The default is ``2``, in which case
   the logging level is ``INFO``.
 
-Depending on the mechanism chosen to launch the Geometry service, you can set environment
-variables as shown on the tabs for your OS:
+Depending on how you choose to launch the Geometry service, you can set environment
+variables as shown on the tab for your OS:
 
 .. tab-set::
 
@@ -172,7 +168,7 @@ Geometry service launcher
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 As already mentioned, you can launch the Geometry service locally in two different ways.
-Click the tab for the method that you'd like to use to see the appropriate commands.
+To see the commands for each method, click the following tabs.
 
 .. tab-set::
 
@@ -212,13 +208,12 @@ After the Geometry service is launched, connect to it with these commands:
 
    modeler = Modeler()
 
-By default ``Modeler`` connects to ``127.0.0.1`` (``"localhost"``) on
+By default, the ``Modeler`` instance connects to ``127.0.0.1`` (``"localhost"``) on
 port ``50051``. You can change this by modifying the ``host`` and ``port``
-parameters of ``Modeler``, but note that you must also modify
-your ``docker run`` command by changing ``<HOST-PORT>-50051``.
+parameters of the ``Modeler`` object, but note that you must also modify
+your ``docker run`` command by changing the ``<HOST-PORT>-50051`` argument.
 
-If you want to change the defaults, modify environment variables and the
-``Modeler`` function as shown on these tabs:
+The following tabs show the code that sets the environment variables and ``Modeler`` function.
 
 .. tab-set::
 

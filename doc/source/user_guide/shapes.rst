@@ -3,17 +3,17 @@
 Sketch
 *******
 
-In PyGeometry, a :class:`Sketch() <ansys.geometry.core.sketch>` is a class used to build 2D basic shape elements.
-This class contains two fundamental constructs:
+In PyGeometry, the :class:`sketch <ansys.geometry.core.sketch>` subpackage provides for building
+2D basic shapes. Shapes consist of two fundamental constructs:
 
-* Edges: A connection between two or more 2D points along a particular path. Edges represents open shapes
-  such as arcs and lines.
-* Faces: A set of edges that enclose a surface representing a closed shape such as a circle or triangle.
+* **Edge**: A connection between two or more 2D points along a particular path. An edge represents an open shape
+  such as an arc or line.
+* **Face**: A set of edges that enclose a surface. A face represents a closed shape such as a circle or triangle.
 
-To initialize the sketch, first you can specify the :class:`Plane() <ansys.geometry.core.math.plane>` class, which
-represents a plane in space from which other PyGeometry objects can be located.
+To initialize a sketch, you first specify the :class:`Plane() <ansys.geometry.core.math.plane>` class, which
+represents the plane in space from which other PyGeometry objects can be located.
 
-You can initialize the sketch with this code:
+This code shows how to initialize a sketch:
 
 .. code:: python
 
@@ -21,18 +21,18 @@ You can initialize the sketch with this code:
 
     sketch = Sketch()
 
-You can construct a sketch using different approaches.
+You can then construct a sketch using different approaches.
 
 Functional-style API
 ====================
 
 A functional-style API is sometimes called a *fluent functional-style api* or *fluent API* in the developer community.
-To avoid confusion with the Ansys Fluent product, the PyGeometry API documentation refrains from using the latter term.
+However, to avoid confusion with the Ansys Fluent product, the PyGeometry documentation refrains from using the latter terms.
 
 One of the key features of a functional-style API is that it keeps an active context based on the previously created
 edges to use as a reference starting point for additional objects.
 
-This code creates a sketch with its origin as a starting point. Subsequent calls create segments,
+The following code creates a sketch with its origin as a starting point. Subsequent calls create segments,
 which take as a starting point the last point of the previous edge.
 
 .. code:: python

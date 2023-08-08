@@ -21,7 +21,7 @@ the PyGeometry codebase and how to create objects with different units.
 
 +++
 
-## Import the units handler
+## Import units handler
 
 The following line of code imports the units handler: ``pint.util.UnitRegistry``.
 For more information on the ``UnitRegistry`` class in the ``pint`` API, see

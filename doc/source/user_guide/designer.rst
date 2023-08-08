@@ -1,8 +1,8 @@
 Designer
 ********
 
-The ``Design`` subpackage provides for organizing geometry assemblies
-and synchronizes to a supporting Geometry service instance.
+In PyGeometry, the :class:`designer <ansys/geometry/core/designer>` subpackage is used to organize geometry assemblies
+and synchronize to a supporting Geometry service instance.
 
 Define the model
 ----------------

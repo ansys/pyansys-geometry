@@ -3,7 +3,7 @@ Installation
 
 This page assumes that you want to install PyGeometry in developer mode so that
 you can modify the source and enhance it. You can install PyGeometry from PyPI
-or from the `PyGeometry`_ repository on GitHub.
+or from the `pygeometry repository <https://github.com/ansys/pygeometry>`_ on GitHub.
 
 Package dependencies
 --------------------
@@ -25,7 +25,7 @@ These projects are required dependencies for PyGeometry:
 PyPI
 ----
 
-Before installing PyGeometry, to make sure that you have the latest version of
+Before installing PyGeometry, to ensure that you have the latest version of
 `pip`_, run this command:
 
 .. code:: bash
@@ -46,8 +46,8 @@ Then, to install PyGeometry, run this command:
     ``https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/``
 
     If access to this package registry is needed, email `pyansys.core@ansys.com <mailto:pyansys.core@ansys.com>`_
-    to request access. The PyAnsys team can provide you a read-only token to insert in ``${PRIVATE_PYPI_ACCESS_TOKEN}``.
-    Once you have obtained this token, run this command:
+    to request a read-only token. Once you have obtained this token, run this command, replacing
+    ``${PRIVATE_PYPI_ACCESS_TOKEN}`` with the token that you were sent:
 
     .. code:: bash
 
@@ -57,8 +57,8 @@ Then, to install PyGeometry, run this command:
 GitHub
 ------
 
-To install the latest release from the `PyGeometry`_ repository on GitHub, run
-these commands:
+To install the latest release from the `pygeometry repository <https://github.com/ansys/pygeometry>`_
+on GitHub, run these commands:
 
 .. code:: bash
 
@@ -77,8 +77,8 @@ Install in offline mode
 
 If you lack an internet connection on your installation machine (or you do not have access to the
 private Ansys PyPI packages repository), you should install PyGeometry by downloading the wheelhouse
-archive from the `Releases Page <https://github.com/ansys/pygeometry/releases>`_ for your
-corresponding machine architecture.
+archive for your corresponding machine architecture from the repository's `Releases page
+<https://github.com/ansys/pygeometry/releases>`_.
 
 Each wheelhouse archive contains all the Python wheels necessary to install PyGeometry from scratch on Windows,
 Linux, and MacOS from Python 3.8 to 3.11. You can install this on an isolated system with a fresh Python
@@ -91,15 +91,16 @@ For example, on Linux with Python 3.8, unzip the wheelhouse archive and install 
     unzip ansys-geometry-core-v0.3.dev0-wheelhouse-Linux-3.8.zip wheelhouse
     pip install ansys-geometry-core -f wheelhouse --no-index --upgrade --ignore-installed
 
-If you're on Windows with Python 3.9, unzip to a wheelhouse directory and install using the same command as
-in the preceding example.
+If you're on Windows with Python 3.9, unzip the wheelhouse archive to a wheelhouse directory
+and then install using the same ``pip install`` command as in the preceding example.
 
-Consider installing using a `virtual environment <https://docs.python.org/3/library/venv.html>`_.
+Consider installing using a virtual environment. For more information, see`Creation of virtual
+environments <https://docs.python.org/3/library/venv.html>`_ in the Python documentation.
 
 Verify your installation
 ------------------------
 
-Check the :class:`Modeler() <ansys.geometry.core.modeler()>` connection with this code:
+Verify the :class:`Modeler() <ansys.geometry.core.modeler()>` connection with this code:
 
 .. code:: pycon
 
@@ -114,8 +115,7 @@ Check the :class:`Modeler() <ansys.geometry.core.modeler()>` connection with thi
     Connection: Healthy
 
 If you see a response from the server, you can start using PyGeometry as a service.
-For more information on how to use PyGeometry, see :ref:`User guide <ref_user_guide>`.
+For more information on PyGeometry usage, see :ref:`User guide <ref_user_guide>`.
 
 .. LINKS AND REFERENCES
 .. _pip: https://pypi.org/project/pip/
-.. _PyGeometry: https://github.com/ansys/pygeometry
