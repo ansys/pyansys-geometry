@@ -1,7 +1,7 @@
 Designer
 ********
 
-In PyGeometry, the :class:`designer <ansys/geometry/core/designer>` subpackage is used to organize geometry assemblies
+In PyGeometry, the :class:`primitives <ansys.geometry.core.designer>` subpackage is used to organize geometry assemblies
 and synchronize to a supporting Geometry service instance.
 
 Define the model
