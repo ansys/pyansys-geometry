@@ -589,9 +589,9 @@ class PlotterHelper:
                 vector=view_2d["vector"],
                 viewup=view_2d["viewup"],
             )
-        self.show_plotter(self._pl, screenshot)
+        self.show_plotter(screenshot)
 
-    def show_plotter(self, plotter: Plotter, screenshot: Optional[str] = None):
+    def show_plotter(self, screenshot: Optional[str] = None):
         """
         Show the plotter or start the Trame service.
 
@@ -605,8 +605,8 @@ class PlotterHelper:
         """
         if self._use_trame and _HAS_TRAME:
             visualizer = TrameVisualizer()
-            visualizer.set_scene(plotter)
+            visualizer.set_scene(self._pl)
             visualizer.show()
         else:
-            plotter.show(screenshot=screenshot)
+            self._pl.show(screenshot=screenshot)
         pv.OFF_SCREEN = self._pv_off_screen_original
