@@ -495,33 +495,24 @@ class PlotterHelper:
         self._actor_object_mapping = {}
         self._pl = None
 
-    def init_plotter(self):
-        """
-        Initialize the plotter with or without trame visualizer.
-
-        Returns
-        -------
-        Plotter
-            PyGeometry plotter initialized.
-        """
         if self._use_trame and _HAS_TRAME:
             # avoids GUI window popping up
             pv.OFF_SCREEN = True
-            pl = Plotter(enable_widgets=False)
+            self._pl = Plotter(enable_widgets=False)
         elif self._use_trame and not _HAS_TRAME:
             warn_msg = (
                 "'use_trame' is active but Trame dependencies are not installed."
                 "Consider installing 'pyvista[trame]' to use this functionality."
             )
             logger.warning(warn_msg)
-            pl = Plotter()
+            self._pl = Plotter()
         else:
-            pl = Plotter()
+            self._pl = Plotter()
 
         if self._allow_picking:
-            pl.scene.enable_mesh_picking(callback=self.picker_callback, use_actor=True, show=False)
-
-        return pl
+            self._pl.scene.enable_mesh_picking(
+                callback=self.picker_callback, use_actor=True, show=False
+            )
 
     def reset(self):
         """Reset actor properties at callback."""
@@ -583,7 +574,6 @@ class PlotterHelper:
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
         """
-        self._pl = self.init_plotter()
         if isinstance(object, List) and not isinstance(object[0], pv.PolyData):
             logger.debug("Plotting objects in list...")
             self._actor_object_mapping = self._pl.add_list(
