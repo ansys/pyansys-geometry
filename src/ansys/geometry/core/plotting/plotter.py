@@ -292,16 +292,10 @@ class Plotter:
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
-
-        Returns
-        -------
-        str:
-            Name of the added PyVista Actor.
         """
         # Use the default PyGeometry add_mesh arguments
         for polydata in polydata_entries:
             actor = self.scene.add_mesh(polydata, **plotting_options)
-        return actor.name
 
     def add(
         self,
