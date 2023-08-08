@@ -119,7 +119,7 @@ design.plot()
 The following code shows how to use the
 :func:`translate()<ansys.geometry.core.designer.body.Body.translate>` method
 to move the body in a specified direction by a given distance. You can also move
-a sketch around the global coordinate system. For more information, see 
+a sketch around the global coordinate system. For more information, see
 [Dynamic Sketch Plane](../02_sketching/dynamic_sketch_plane.mystnb).
 
 ```{code-cell} ipython3

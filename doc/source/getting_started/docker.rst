@@ -118,7 +118,7 @@ The Geometry service requires this mandatory environment variable for its use:
 You can also specify other optional environment variables:
 
 * ``ENABLE_TRACE``: Whether to set up the trace level for debugging purposes. The default
-  is ``0``, in which case the trace level is not to be set up. Options are ``1`` and ``0``. 
+  is ``0``, in which case the trace level is not to be set up. Options are ``1`` and ``0``.
 * ``LOG_LEVEL``: Sets the Geometry service logging level. The default is ``2``, in which case
   the logging level is ``INFO``.
 
