@@ -73,9 +73,6 @@ class Plotter:
             ]
             [self._widgets.append(ViewButton(self._scene, direction=dir)) for dir in ViewDirection]
 
-        # Dict where to save relation between generic object and pv.Actor
-        self._actor_object_mapping = {}
-
     @property
     def scene(self) -> pv.Plotter:
         """
@@ -363,10 +360,11 @@ class Plotter:
             )
         else:
             logger.warning(f"Object type {type(object)} can not be plotted.")
-
         if actor_name is not None:
-            self._actor_object_mapping[actor_name] = object.name
-        return self._actor_object_mapping
+            actor_object_mapping = {actor_name: object.name}
+            return actor_object_mapping
+        else:
+            return None
 
     def add_list(
         self,
@@ -403,9 +401,14 @@ class Plotter:
         Mapping[str, str]:
             Dictionary with the mapping between pv.Actor and PyGeometry objects.
         """
+        actors_objects_mapping = {}
         for object in plotting_list:
-            self.add(object, merge_bodies, merge_components, **plotting_options)
-        return self._actor_object_mapping
+            actor_object_mapping = self.add(
+                object, merge_bodies, merge_components, **plotting_options
+            )
+            if actor_object_mapping is not None:
+                actors_objects_mapping.update(actor_object_mapping)
+        return actors_objects_mapping
 
     def show(
         self,
