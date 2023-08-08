@@ -1,13 +1,13 @@
 Designer
 ********
 
-In PyGeometry, the :class:`primitives <ansys.geometry.core.designer>` subpackage is used to organize geometry assemblies
-and synchronize to a supporting Geometry service instance.
+The PyGeometry :class:`primitives <ansys.geometry.core.designer>` subpackage organizes geometry assemblies
+and synchronizes to a supporting Geometry service instance.
 
 Define the model
 ----------------
-Define the model by creating a sketch with a circle on the client.
-Then, create your model on the server.
+The following code define the model by creating a sketch with a circle on the client.
+It then creates the model on the server.
 
 .. code:: python
 
@@ -22,8 +22,7 @@ Then, create your model on the server.
 
 Add materials to model
 -----------------------
-
-Add the data structure and property for individual materials.
+This code adds the data structure and properties for individual materials:
 
 .. code:: python
 
@@ -40,9 +39,8 @@ Add the data structure and property for individual materials.
 
 Create bodies by extruding the sketch
 -------------------------------------
-
 Extruding a sketch projects all of the specified geometries onto the body. To create a solid body,
-you extrude the sketch profile by a given distance.
+this code extrudes the sketch profile by a given distance.
 
 .. code:: python
 
@@ -50,8 +48,7 @@ you extrude the sketch profile by a given distance.
 
 Create bodies by extruding the face
 -----------------------------------
-
-You can also extrude a face profile by a given distance to create a solid body.
+The following code shows how you can also extrude a face profile by a given distance to create a solid body.
 There are no modifications against the body containing the source face.
 
 .. code:: python
@@ -77,4 +74,4 @@ The following code shows how to download and save the design.
     file = "path/to/download"
     design.download(file, as_stream=False)
 
-For more information, see the :class:`Design() <ansys.geometry.core.designer.design>` class.
+For more information, see the :class:`Design <ansys.geometry.core.designer.design>` submodule.

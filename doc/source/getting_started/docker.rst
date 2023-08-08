@@ -13,7 +13,7 @@ see `Install Docker Engine <https://docs.docker.com/engine/install/>`_ in the Do
     Currently, the Geometry service backend is only delivered as a Windows Docker container.
     As such, this container only runs on a Windows machine. Furthermore, certain Docker Desktop
     versions for Windows are not properly configured for running Windows Docker containers. For
-    more information, see :ref:`Running the Geometry service Windows Docker container <ref_docker_windows>`.
+    more information, see :ref:`Run the Windows Docker container <ref_docker_windows>`.
 
 .. _ref_docker_windows:
 
@@ -30,9 +30,9 @@ these steps when installing Docker:
 
 #. When prompted for **Use WSL2 instead of Hyper-V (recommended)**, clear this checkbox.
 
-#. Once the installation process finishes, start Docker Desktop.
+#. Once the installation finishes, start Docker Desktop.
 
-#. Select **Settings >> Software updates**, clear the **Automatically check for updates** checkbox, and
+#. Select **Settings > Software updates**, clear the **Automatically check for updates** checkbox, and
    click **Apply & restart**.
 
 #. On the Windows taskbar, go to the **Show hidden icons** section, right-click in the Docker Desktop app, and
@@ -46,10 +46,10 @@ Install the PyGeometry image
 Once Docker is installed on your machine, follow these steps to download the Docker container for the
 PyGeometry service and install this image.
 
-#. Using your GitHub credentials, download the Docker image from the `pygeometry repository <https://github.com/ansys/pygeometry>`_
+#. Using your GitHub credentials, download the Docker image from the `PyGeometry repository <https://github.com/ansys/pygeometry>`_
    on GitHub.
 
-#. Use a GitHub personal access token (PAT) with permission for reading packages to authorize Docker
+#. Use a GitHub personal access token with permission for reading packages to authorize Docker
    to access this repository. For more information, see `Managing your personal access tokens
    <https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens>`_
    in the GitHub documentation.
@@ -60,7 +60,7 @@ PyGeometry service and install this image.
 
        echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX > GH_TOKEN.txt
 
-#. Authorize Docker to access the repository. To see the appropriate commands, click the tab for your OS.
+#. Authorize Docker to access the repository. To see the commands to run, click the tab for your OS.
 
    .. tab-set::
 
@@ -118,19 +118,20 @@ The Geometry service requires this mandatory environment variable for its use:
 You can also specify other optional environment variables:
 
 * ``ENABLE_TRACE``: Whether to set up the trace level for debugging purposes. The default
-  is ``0``, in which case the trace level is not to be set up. Options are ``1`` and ``0``.
+  is ``0``, in which case the trace level is not set up. Options are ``1`` and ``0``.
 * ``LOG_LEVEL``: Sets the Geometry service logging level. The default is ``2``, in which case
   the logging level is ``INFO``.
 
-Depending on how you choose to launch the Geometry service, you can set environment
-variables as shown on the tab for your OS:
+Prior to using the PyGeometry launcher to launch the Geometry service, you must define
+general environment variables required for your OS. You do not need to define these
+environment variables prior to manually launching the Geometry service.
 
 .. tab-set::
 
     .. tab-item:: Using PyGeometry launcher
 
-        In this case, you must define the following general environment variables prior
-        to launching PyGeometry. Bare in mind that the naming of the variables is not the same.
+        Define the following general environment variables prior to using the PyGeometry
+        launcher. Click the tab for your OS to see the appropriate commands.
 
         .. tab-set::
 
@@ -160,14 +161,14 @@ variables as shown on the tab for your OS:
 
     .. tab-item:: Manually launching Geometry service
 
-        In this case, no prior environment variable definition is needed. They are
-        directly passed to the Docker container itself.
+        You do not need to define general environment variables prior to manually launching
+        the Geometry service. They are directly passed to the Docker container itself.
 
 
 Geometry service launcher
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-As already mentioned, you can launch the Geometry service locally in two different ways.
+As mentioned earlier, you can launch the Geometry service locally in two different ways.
 To see the commands for each method, click the following tabs.
 
 .. tab-set::
@@ -213,7 +214,8 @@ port ``50051``. You can change this by modifying the ``host`` and ``port``
 parameters of the ``Modeler`` object, but note that you must also modify
 your ``docker run`` command by changing the ``<HOST-PORT>-50051`` argument.
 
-The following tabs show the code that sets the environment variables and ``Modeler`` function.
+The following tabs show the commands that set the environment variables and ``Modeler``
+function.
 
 .. tab-set::
 

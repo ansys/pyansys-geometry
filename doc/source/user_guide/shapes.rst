@@ -3,7 +3,7 @@
 Sketch
 *******
 
-In PyGeometry, the :class:`sketch <ansys.geometry.core.sketch>` subpackage provides for building
+The PyGeometry :class:`sketch <ansys.geometry.core.sketch>` subpackage is used to build
 2D basic shapes. Shapes consist of two fundamental constructs:
 
 * **Edge**: A connection between two or more 2D points along a particular path. An edge represents an open shape
@@ -21,7 +21,7 @@ This code shows how to initialize a sketch:
 
     sketch = Sketch()
 
-You can then construct a sketch using different approaches.
+You then construct a sketch, which can be done using different approaches.
 
 Functional-style API
 ====================

@@ -3,7 +3,7 @@ Installation
 
 This page assumes that you want to install PyGeometry in developer mode so that
 you can modify the source and enhance it. You can install PyGeometry from PyPI
-or from the `pygeometry repository <https://github.com/ansys/pygeometry>`_ on GitHub.
+or from the `PyGeometry repository <https://github.com/ansys/pygeometry>`_ on GitHub.
 
 Package dependencies
 --------------------
@@ -57,7 +57,7 @@ Then, to install PyGeometry, run this command:
 GitHub
 ------
 
-To install the latest release from the `pygeometry repository <https://github.com/ansys/pygeometry>`_
+To install the latest release from the `PyGeometry repository <https://github.com/ansys/pygeometry>`_
 on GitHub, run these commands:
 
 .. code:: bash

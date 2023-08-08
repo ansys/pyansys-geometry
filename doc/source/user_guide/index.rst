@@ -53,8 +53,8 @@ Create geometry model
 ---------------------
 
 Once an instance has started, you can create a
-geometry model by initializing the :ref:`Sketch <ref_sketch>` class and using the
-:ref:`Primitives <ref_primitives>` math subpackage.
+geometry model by initializing the :ref:`Sketch <ref_sketch>` subpackage and using the
+:ref:`Primitives <ref_primitives>` subpackage.
 
 .. code:: python
 

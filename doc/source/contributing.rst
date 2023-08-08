@@ -56,7 +56,7 @@ Adhere to code style
 PyGeometry follows the PEP8 standard as outlined in
 `PEP 8 <https://dev.docs.pyansys.com/coding-style/pep8.html>`_ in
 the *PyAnsys Developer's Guide* and implements style checking using
-`pre-commit <precommit_>`_.
+`pre-commit <https://pre-commit.com/>`_.
 
 To ensure your code meets minimum code styling standards, run these commands::
 
