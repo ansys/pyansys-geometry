@@ -472,7 +472,7 @@ class PlotterHelper:
     """
 
     def __init__(
-        self, use_trame: Optional[bool] = None, allow_picking: Optional[bool] = True
+        self, use_trame: Optional[bool] = None, allow_picking: Optional[bool] = False
     ) -> None:
         """Initialize use_trame and saves current pv.OFF_SCREEN value."""
         # Check if the use of trame was requested
