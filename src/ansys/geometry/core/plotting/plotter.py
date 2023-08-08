@@ -400,7 +400,7 @@ class Plotter:
             actor_object_mapping = self.add(
                 object, merge_bodies, merge_components, **plotting_options
             )
-            if actor_object_mapping is not None:
+            if actor_object_mapping:
                 actors_objects_mapping.update(actor_object_mapping)
         return actors_objects_mapping
 
