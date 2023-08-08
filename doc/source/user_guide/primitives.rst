@@ -6,7 +6,7 @@ Primitives
 In PyGeometry, the :class:`primitives <ansys/geometry/core/primitives>` subpackage consists
 of primitive representations of basic geometric objects, such as ``Point``, ``Vector``, and
 ``Matrix``. To operate and manipulate physical quantities, this subpackage uses
-`Pint <https://github.com/hgrecco/pint>`_, a third-party open-source software
+`Pint <https://github.com/hgrecco/pint>`_, a third-party open source software
 that other PyAnsys libraries also use.
 
 This table shows PyGeometry names and base values for the physical quantities:

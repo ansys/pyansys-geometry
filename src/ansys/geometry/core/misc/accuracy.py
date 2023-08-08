@@ -27,7 +27,7 @@ class Accuracy:
         -------
         bool
             ``True`` if the comparison length is equal to the reference length
-            within the length accuracy. ``False`` otherwise.
+            within the length accuracy, ``False`` otherwise.
         """
         return Accuracy.is_within_tolerance(
             comparison_length, reference_length, LENGTH_ACCURACY, LENGTH_ACCURACY
@@ -45,7 +45,7 @@ class Accuracy:
         -------
         bool
             ``True`` if the comparison length is greater than the reference length within
-            the length accuracy.  ``False`` otherwise.
+            the length accuracy, ``False`` otherwise.
         """
         return bool(
             comparison_length > reference_length
@@ -64,7 +64,7 @@ class Accuracy:
         -------
         bool
             ``True`` if the comparison length is less than or equal to the reference length
-            within the length accuracy. ``False`` otherwise.
+            within the length accuracy, ``False`` otherwise.
         """
         return bool(
             comparison_length < reference_length
@@ -78,7 +78,7 @@ class Accuracy:
         Returns
         -------
         bool
-            ``True`` if the length is within the length accuracy of exact zero.
+            ``True`` if the length is within the length accuracy of exact zero,
             ``False`` otherwise.
         """
         return bool(length <= LENGTH_ACCURACY and length >= -LENGTH_ACCURACY)
@@ -90,7 +90,7 @@ class Accuracy:
         Returns
         -------
         bool
-            ``True`` if the length is below a negative length accuracy.
+            ``True`` if the length is below a negative length accuracy,
              ``False`` otherwise.
         """
         return bool(length < -LENGTH_ACCURACY)
@@ -102,7 +102,7 @@ class Accuracy:
         Returns
         -------
         bool
-            ``True`` if the length is above a positive length accuracy.
+            ``True`` if the length is above a positive length accuracy,
              ``False`` otherwise.
         """
         return bool(length > LENGTH_ACCURACY)
@@ -114,7 +114,7 @@ class Accuracy:
         Returns
         -------
         bool
-            ``True`` if the length is within the angle accuracy of exact zero.
+            ``True`` if the length is within the angle accuracy of exact zero,
              ``False`` otherwise.
         """
         return bool(abs(angle) < ANGLE_ACCURACY)
@@ -126,7 +126,7 @@ class Accuracy:
         Returns
         -------
         bool
-            ``True`` if the angle is below a negative angle accuracy.
+            ``True`` if the angle is below a negative angle accuracy,
              ``False`` otherwise.
         """
         return bool(angle <= -ANGLE_ACCURACY)
@@ -138,7 +138,7 @@ class Accuracy:
         Returns
         -------
         bool
-           ``True`` if the angle is above a positive angle accuracy.
+           ``True`` if the angle is above a positive angle accuracy,
             ``False`` otherwise.
         """
         return bool(angle >= ANGLE_ACCURACY)
@@ -147,7 +147,7 @@ class Accuracy:
         a: Real, b: Real, relative_tolerance: Real, absolute_tolerance: Real
     ) -> bool:
         """
-        Check if two values are inside a relative and absolute tolerance.
+        Check if two values (a and b) are inside a relative and absolute tolerance.
 
         Parameters
         ----------
@@ -163,7 +163,7 @@ class Accuracy:
         Returns
         -------
         bool
-            ``True`` if the values are inside the accepted tolerances.
+            ``True`` if the values are inside the accepted tolerances,
              ``False`` otherwise.
         """
         # The code doesn't work for comparing infinity and non-infinite numbers!

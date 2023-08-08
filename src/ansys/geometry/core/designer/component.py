@@ -765,7 +765,7 @@ class Component:
         Parameters
         ----------
         name : str
-            User-defined label for the design points
+            User-defined label for the design points.
         points : Point3D
             3D point constituting the design point.
         """
@@ -779,14 +779,14 @@ class Component:
         points: List[Point3D],
     ) -> List[DesignPoint]:
         """
-        Create design points.
+        Create a list of design points.
 
         Parameters
         ----------
         name : str
-            User-defined label for the design points.
+            User-defined label for the list of design points.
         points : List[Point3D]
-            List of the 3D points constituting the design points.
+            List of the 3D points that constitute the list of design points.
         """
         # Create DesignPoint objects server-side
         self._grpc_client.log.debug(f"Creating design points on {self.id}...")

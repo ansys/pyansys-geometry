@@ -14,7 +14,7 @@ kernelspec:
 # PyGeometry 101: Units
 
 To handle units inside the source code, PyGeometry uses [Pint](https://pint.readthedocs.io/en/stable/),
-a third-party open-source software that other PyAnsys libraries also use.
+a third-party open source software that other PyAnsys libraries also use.
 
 The following code examples show how to operate with units inside
 the PyGeometry codebase and how to create objects with different units.

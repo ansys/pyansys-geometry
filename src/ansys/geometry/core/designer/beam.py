@@ -13,7 +13,7 @@ class BeamProfile:
     """
     Represents a single beam profile organized within the design assembly.
 
-    This class synchronizes to a design within a supporting Geometry service instance.
+    This profile synchronizes to a design within a supporting Geometry service instance.
 
     Parameters
     ----------
