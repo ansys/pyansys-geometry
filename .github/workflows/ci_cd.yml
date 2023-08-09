@@ -73,7 +73,7 @@ jobs:
   testing-windows:
     name: Testing and coverage (Windows)
     needs: [smoke-tests]
-    runs-on: [self-hosted, Windows, pygeometry]
+    runs-on: [self-hosted, Windows, pygeometry-test]
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: false
@@ -186,7 +186,7 @@ jobs:
   docs:
     name: Documentation
     needs: [docs-style]
-    runs-on: [self-hosted, Windows, pygeometry]
+    runs-on: [self-hosted, Windows, pygeometry-test]
     steps:
       - uses: actions/checkout@v3
 
