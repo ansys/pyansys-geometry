@@ -1,7 +1,8 @@
 API reference
 =============
 
-This page contains the ``ansys-geometry-core`` API reference.
+This section describes PyGeometry API endpoints, their capabilities, and how
+to interact with them programmatically.
 
 .. toctree::
    :titlesonly:
