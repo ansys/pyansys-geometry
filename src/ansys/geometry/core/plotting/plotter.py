@@ -506,13 +506,13 @@ class PlotterHelper:
                 callback=self.picker_callback, use_actor=True, show=False
             )
 
-    def reset(self):
+    def reset(self) -> None:
         """Reset actor properties at callback."""
         for a in self._pl.scene.renderer.actors.values():
             if isinstance(a, pv.Actor):
                 a.prop.show_edges = False
 
-    def picker_callback(self, actor: "pv.Actor"):
+    def picker_callback(self, actor: "pv.Actor") -> None:
         """Define callback for the element picker."""
         self.reset()
         pt = self._pl.scene.picked_point
@@ -538,7 +538,7 @@ class PlotterHelper:
         merge_component: bool = False,
         view_2d: Dict = None,
         **plotting_options,
-    ):
+    ) -> None:
         """
         Plot and show any PyGeometry object.
 
@@ -583,7 +583,7 @@ class PlotterHelper:
             )
         self.show_plotter(screenshot)
 
-    def show_plotter(self, screenshot: Optional[str] = None):
+    def show_plotter(self, screenshot: Optional[str] = None) -> None:
         """
         Show the plotter or start the Trame service.
 
