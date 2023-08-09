@@ -513,7 +513,14 @@ class PlotterHelper:
                 a.prop.show_edges = False
 
     def picker_callback(self, actor: "pv.Actor") -> None:
-        """Define callback for the element picker."""
+        """
+        Define callback for the element picker.
+
+        Parameters
+        ----------
+        actor : pv.Actor
+            Actor that we are picking.
+        """
         self.reset()
         pt = self._pl.scene.picked_point
         self._actor_object_mapping.keys
