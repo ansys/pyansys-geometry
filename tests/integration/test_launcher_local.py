@@ -19,7 +19,7 @@ def _check_no_shutdown_warning(port: int, log: str) -> bool:
     msg = (
         "WARNING  localhost:"
         + str(port)
-        + r":client\.py:[0-9]+ Geometry service will not be shutdown since it was already running\.\.\."  # noqa : E501
+        + r":client\.py:[0-9]+ Geometry service was not shut down because it was already running\.\.\."  # noqa : E501
     )
     pattern = re.compile(msg)
     return True if pattern.search(log) else False
@@ -27,7 +27,7 @@ def _check_no_shutdown_warning(port: int, log: str) -> bool:
 
 def _check_service_already_running(port: int, log: str) -> bool:
     msg = (
-        r"WARNING  PyGeometry_global:local_instance\.py:[0-9]+ Service already running at port "
+        r"WARNING  PyGeometry_global:local_instance\.py:[0-9]+ Service is already running at port "
         + str(port)
         + r"\.\.\."
     )

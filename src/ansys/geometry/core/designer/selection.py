@@ -1,4 +1,4 @@
-"""Provides the``NamedSelection`` class module."""
+"""Module for creating a named selection."""
 
 from ansys.api.geometry.v0.namedselections_pb2 import CreateRequest
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
@@ -38,7 +38,7 @@ class NamedSelection:
     beams : List[Beam], default: None
         All beams to include in the named selection.
     design_points : List[DesignPoints], default: None
-        All design_points to include in the named selection.
+        All design points to include in the named selection.
     """
 
     @protect_grpc
@@ -54,7 +54,7 @@ class NamedSelection:
         design_points: Optional[List[DesignPoint]] = None,
         preexisting_id: Optional[str] = None,
     ):
-        """Initialize ``NamedSelection`` class."""
+        """Initialize the ``NamedSelection`` class."""
         self._grpc_client = grpc_client
         self._named_selections_stub = NamedSelectionsStub(grpc_client.channel)
 

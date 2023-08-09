@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-# Modeling: design organization
+# Modeling: Design organization
 
 The ``Design`` instance creates a design project within the remote Geometry service to
 complete all CAD modeling against.
@@ -19,20 +19,20 @@ complete all CAD modeling against.
 You can organize all solid and surface bodies in each design within a customizable
 component hierarchy. A component is simply an organization mechanism.
 
-The top-level design node and each child-component node can have one or more bodies assigned
+The top-level design node and each child component node can have one or more bodies assigned
 and one or more components assigned.
 
 The API requires each component of the design hierarchy to be given a user-defined name.
 
 There are several design operations that result in a body being created within a design.
 Executing each of these methods against a specific component instance explicitly specifies the
-node of the design tree under which to organize the new body.
+node of the design tree to place the new body under.
 
 +++
 
 ## Perform required imports
 
-Start by performing required imports.
+Perform the required imports:
 
 ```{code-cell} ipython3
 from ansys.geometry.core import Modeler
@@ -43,8 +43,8 @@ from ansys.geometry.core.sketch import Sketch
 
 ## Organize design
 
-Extrude two sketches to create bodies. Assign the cylinder to the
-top-level design component. Assign the slot to the component nested
+The following code extrude two sketches to create bodies. It assigns the cylinder to the
+top-level design component. It then assigns the slot to the component nested
 one level beneath the top-level design component.
 
 ```{code-cell} ipython3
@@ -66,10 +66,10 @@ slot_body = nested_component.extrude_sketch("SlotExtrusion", slot_sketch, Distan
 design.plot()
 ```
 
-## Create a nested component
+## Create nested component
 
-Create a component nested under the previously created component and then create another cylinder
-from the previously used sketch.
+This code creates a component that is nested under the previously created component and then
+creates another cylinder from the previously used sketch:
 
 ```{code-cell} ipython3
 
@@ -81,11 +81,11 @@ circle_surface_body.translate(UNITVECTOR3D_X, Distance(-35, UNITS.mm))
 design.plot()
 ```
 
-## Use surfaces from a body as references to create additional bodies
+## Use surfaces from body as references to create additional bodies
 
 You can use surfaces from any body across the entire design as references for creating additional bodies.
 
-This example extrudes a cylinder from the surface body assigned to the child component.
+This code extrudes a cylinder from the surface body assigned to the child component:
 
 ```{code-cell} ipython3
 

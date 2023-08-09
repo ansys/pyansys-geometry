@@ -1,4 +1,4 @@
-"""Provides ``Point`` classes."""
+"""Provides geometry primitive representation for 2D and 3D points."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, Optional, Union
@@ -30,15 +30,15 @@ BASE_UNIT_LENGTH = UNITS.get_base_units(DEFAULT_UNITS.LENGTH)[1]
 
 class Point2D(np.ndarray, PhysicalQuantity):
     """
-    Provides ``Point2D`` geometry primitive representation.
+    Provides geometry primitive representation for a 2D point.
 
     Parameters
     ----------
     input : Union[~numpy.ndarray, RealSequence], default: DEFAULT_POINT2D_VALUES
         Direction arguments, either as a :class:`numpy.ndarray <numpy.ndarray>` class
         or as a ``RealSequence``.
-    unit : ~pint.Unit, optional
-        Units for defining 2D point values. By default, ``DEFAULT_UNITS.LENGTH``
+    unit : ~pint.Unit, default: DEFAULT_UNITS.LENGTH
+        Units for defining 2D point values.
     """
 
     def __new__(
@@ -55,7 +55,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
         input: Union[np.ndarray, RealSequence] = DEFAULT_POINT2D_VALUES,
         unit: Optional[Unit] = None,
     ):
-        """Initialize ``Point2D`` class."""
+        """Initialize the ``Point2D`` class."""
         # Call the PhysicalQuantity ctor
         unit = unit if unit else DEFAULT_UNITS.LENGTH
         super().__init__(unit, expected_dimensions=DEFAULT_UNITS.LENGTH)
@@ -75,7 +75,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
 
     @check_input_types
     def __eq__(self, other: "Point2D") -> bool:
-        """Equals operator for the``Point2D`` class."""
+        """Equals operator for the ``Point2D`` class."""
         return np.array_equal(self, other)
 
     def __ne__(self, other: "Point2D") -> bool:
@@ -155,15 +155,15 @@ class Point2D(np.ndarray, PhysicalQuantity):
 
 class Point3D(np.ndarray, PhysicalQuantity):
     """
-    Provides ``Point3D`` geometry primitive representation.
+    Provides geometry primitive representation for a 3D point.
 
     Parameters
     ----------
     input : Union[~numpy.ndarray, RealSequence], default: DEFAULT_POINT3D_VALUES
         Direction arguments, either as a :class:`numpy.ndarray <numpy.ndarray>` class
         or as a ``RealSequence``.
-    unit : ~pint.Unit, optional
-        Units for defining 3D point values. By default, ``DEFAULT_UNITS.LENGTH``
+    unit : ~pint.Unit, default: DEFAULT_UNITS.LENGTH
+        Units for defining 3D point values.
     """
 
     def __new__(
@@ -291,23 +291,23 @@ class Point3D(np.ndarray, PhysicalQuantity):
 
     def transform(self, matrix: "Matrix44") -> "Point3D":
         """
-        Transform the current Point3D with a transformation matrix.
+        Transform the 3D point with a transformation matrix.
 
         Notes
         -----
-        Transform the current Point3D object by applying the specified 4x4
-        transformation matrix and returns a new Point3D object representing the
+        Transform the ``Point3D`` object by applying the specified 4x4
+        transformation matrix and return a new ``Point3D`` object representing the
         transformed point.
 
         Parameters
         ----------
         matrix : Matrix44
-            The 4x4 transformation matrix to apply to the point.
+            4x4 transformation matrix to apply to the point.
 
         Returns
         -------
         Point3D
-            A new Point3D object that is the transformed copy of the original point after applying
+            New 3D point that is the transformed copy of the original 3D point after applying
             the transformation matrix.
         """
         point_4x1 = np.append(self, 1)

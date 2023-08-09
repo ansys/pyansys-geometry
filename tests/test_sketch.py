@@ -438,7 +438,7 @@ def test_polygon_instance():
     assert abs(square.area.m - 4.0) <= 1e-15
 
     with pytest.raises(
-        ValueError, match="The minimum number of sides to construct a polygon is 3."
+        ValueError, match="The minimum number of sides to construct a polygon is three."
     ):
         radius, sides, center = (1 * UNITS.m), 2, Point2D([0, 0], UNITS.m)
         Polygon(center, radius, sides)
