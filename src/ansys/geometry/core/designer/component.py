@@ -274,7 +274,7 @@ class Component:
         Notes
         -----
         To reset a component's placement to an identity matrix, see
-        :func:`reset_placement()` or call this method with no arguments.
+        :func:`reset_placement()` or call :func:`modify_placement()` with no arguments.
 
         Parameters
         ----------

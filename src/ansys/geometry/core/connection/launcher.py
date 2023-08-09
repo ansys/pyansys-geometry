@@ -34,8 +34,8 @@ def launch_modeler(**kwargs: Optional[Dict]) -> "Modeler":
     ----------
     **kwargs : dict, default: None
         Keyword arguments for the launching methods. For allowable keyword arguments, see the
-        :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of
-        them might be unused.
+        :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of these
+        keywords might be unused.
 
     Returns
     -------
@@ -87,8 +87,8 @@ def launch_remote_modeler(version: Optional[str] = None, **kwargs: Optional[Dict
         chooses the version.
     **kwargs : dict, default: None
         Keyword arguments for the launching methods. For allowable keyword arguments, see the
-        :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of
-        them might be unused.
+        :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of these
+        keywords might be unused.
 
     Returns
     -------
@@ -141,8 +141,8 @@ def launch_local_modeler(
         that OS.
     **kwargs : dict, default: None
         Keyword arguments for the launching methods. For allowable keyword arguments, see the
-        :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of
-        them might be unused.
+        :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of these
+        keywords might be unused.
 
     Returns
     -------
