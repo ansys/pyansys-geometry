@@ -209,7 +209,7 @@ class Plotter:
 
     def add_body(
         self, body: Body, merge: Optional[bool] = False, **plotting_options: Optional[Dict]
-    ) -> None:
+    ) -> str:
         """
         Add a body to the scene.
 
@@ -246,7 +246,7 @@ class Plotter:
         merge_component: bool = False,
         merge_bodies: bool = False,
         **plotting_options,
-    ) -> None:
+    ) -> str:
         """
         Add a component to the scene.
 
