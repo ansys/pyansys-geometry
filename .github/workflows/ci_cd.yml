@@ -44,6 +44,10 @@ jobs:
             experimental: true
 
     steps:
+      - name: Runner group
+        run: |
+          echo ${{runner.group}}
+
       - uses: actions/checkout@v3
 
       - name: Set up Python
