@@ -1,4 +1,4 @@
-"""``Beam`` class module."""
+"""Provides for creating and managing a beam."""
 
 from beartype.typing import TYPE_CHECKING, Union
 
@@ -60,7 +60,7 @@ class BeamCircularProfile(BeamProfile):
     radius : Distance
         Radius of the circle.
     center: Point3D
-        A point representing the center of the circle.
+        3D point representing the center of the circle.
     direction_x: UnitVector3D
         X-axis direction.
     direction_y: UnitVector3D
@@ -192,16 +192,16 @@ class Beam:
 
     @property
     def parent_component(self) -> Union["Component", None]:
-        """Component node that the beam`` is under."""
+        """Component node that the beam is under."""
         return self._parent_component
 
     @property
     def is_alive(self) -> bool:
-        """Boolean indicating whether the beam is still alive on the server side."""
+        """Flag indicating whether the beam is still alive on the server side."""
         return self._is_alive
 
     def __repr__(self) -> str:
-        """Represent the ``Beam`` as a string."""
+        """Represent the beam as a string."""
         lines = [f"ansys.geometry.core.designer.Beam {hex(id(self))}"]
         lines.append(f"  Exists               : {self.is_alive}")
         lines.append(

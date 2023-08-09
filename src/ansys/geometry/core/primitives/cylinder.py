@@ -1,4 +1,4 @@
-"""Provides the ``Cylinder`` class."""
+"""Provides for creating and managing a cylinder."""
 
 from functools import cached_property
 
@@ -31,7 +31,7 @@ from ansys.geometry.core.typing import Real, RealSequence
 
 class Cylinder:
     """
-    Provides 3D ``Cylinder`` representation.
+    Provides 3D cylinder representation.
 
     Parameters
     ----------
@@ -53,7 +53,7 @@ class Cylinder:
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
-        """Initialize ``Cylinder`` class."""
+        """Initialize the ``Cylinder`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
         self._reference = (
             UnitVector3D(reference) if not isinstance(reference, UnitVector3D) else reference
@@ -94,20 +94,24 @@ class Cylinder:
 
     def surface_area(self, height: Union[Quantity, Distance, Real]) -> Quantity:
         """
-        Surface area of the cylinder.
+        Get the surface area of the cylinder.
+
+        Notes
+        -----
+           By nature, a cylinder is infinite. If you want to get the surface area,
+           you must bound it by a height. Normally a cylinder surface is not closed
+           (does not have "caps" on the ends). This method assumes that the cylinder
+           is closed for the purpose of getting the surface area.
 
         Parameters
         ----------
         height : Union[Quantity, Distance, Real]
-            By nature, a cylinder is infinite. If you want to get the surface area,
-            you must bound it by a height. Normally a cylinder surface is not closed
-            (does not have "caps" on the ends). This method will assume it is closed
-            for the purpose of getting the surface area.
+            Height to bound the cylinder at.
 
         Returns
         -------
         Quantity
-            The surface area of the temporarily bounded cylinder.
+            Surface area of the temporarily bounded cylinder.
         """
         height = height if isinstance(height, Distance) else Distance(height)
         if height.value <= 0:
@@ -117,20 +121,24 @@ class Cylinder:
 
     def volume(self, height: Union[Quantity, Distance, Real]) -> Quantity:
         """
-        Volume of the cylinder.
+        Get the volume of the cylinder.
+
+        Notes
+        -----
+           By nature, a cylinder is infinite. If you want to get the surface area,
+           you must bound it by a height. Normally a cylinder surface is not closed
+           (does not have "caps" on the ends). This method assumes that the cylinder
+           is closed for the purpose of getting the surface area.
 
         Parameters
         ----------
         height : Union[Quantity, Distance, Real]
-            By nature, a cylinder is infinite. If you want to get the volume,
-            you must bound it by a height. Normally a cylinder surface is not closed
-            (does not have "caps" on the ends). This method will assume it is closed
-            for the purpose of getting the volume.
+            Height to bound the cylinder at.
 
         Returns
         -------
         Quantity
-            The volume of the temporarily bounded cylinder.
+            Volume of the temporarily bounded cylinder.
         """
         height = height if isinstance(height, Distance) else Distance(height)
         if height.value <= 0:
@@ -145,12 +153,12 @@ class Cylinder:
         Parameters
         ----------
         matrix : Matrix44
-            The transformation matrix to apply to the cylinder.
+            4X4 transformation matrix to apply to the cylinder.
 
         Returns
         -------
         Cylinder
-            A new cylinder that is the transformed copy of the original cylinder.
+            New cylinder that is the transformed copy of the original cylinder.
         """
         new_point = self.origin.transform(matrix)
         new_reference = self._reference.transform(matrix)
@@ -169,7 +177,7 @@ class Cylinder:
         Returns
         -------
         Cylinder
-            A new cylinder that is a mirrored copy of the original cylinder.
+            New cylinder that is a mirrored copy of the original cylinder.
         """
         return Cylinder(self.origin, self.radius, -self._reference, -self._axis)
 
@@ -190,28 +198,28 @@ class Cylinder:
         Parameters
         ----------
         parameter : ParamUV
-            The parameters (u,v) at which to evaluate the cylinder.
+            Parameters (u,v) to evaluate the cylinder at.
 
         Returns
         -------
         CylinderEvaluation
-            The resulting evaluation.
+            Resulting evaluation.
         """
         return CylinderEvaluation(self, parameter)
 
     def project_point(self, point: Point3D) -> "CylinderEvaluation":
         """
-        Project a point onto the cylinder and return its ``CylinderEvaluation``.
+        Project a point onto the cylinder and evaluate the cylinder.
 
         Parameters
         ----------
         point : Point3D
-            The point to project onto the cylinder.
+            Point to project onto the cylinder.
 
         Returns
         -------
         CylinderEvaluation
-            The resulting evaluation.
+            Resulting evaluation.
         """
         circle = Circle(self.origin, self.radius, self.dir_x, self.dir_z)
         u = circle.project_point(point).parameter
@@ -223,69 +231,69 @@ class Cylinder:
 
     def get_u_parameterization(self) -> Parameterization:
         """
-        Retrieve the U parameter parametrization conditions.
+        Get the parametrization conditions for the U parameter.
 
-        The U parameter specifies the clockwise angle around the axis (right hand
-        corkscrew law), with a zero parameter at `dir_x`, and a period of 2*pi.
+        The U parameter specifies the clockwise angle around the axis (right-hand
+        corkscrew law), with a zero parameter at ``dir_x`` and a period of 2*pi.
 
         Returns
         -------
         Parameterization
-            Information about how a cylinder's u parameter is parameterized.
+            Information about how the cylinder's U parameter is parameterized.
         """
         return Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
 
     def get_v_parameterization(self) -> Parameterization:
         """
-        Retrieve the V parameter parametrization conditions.
+        Get the parametrization conditions for the V parameter.
 
         The V parameter specifies the distance along the axis, with a zero parameter at
-        the XY plane of the Cylinder.
+        the XY plane of the cylinder.
 
         Returns
         -------
         Parameterization
-            Information about how a cylinders's v parameter is parameterized.
+            Information about how the cylinders's V parameter is parameterized.
         """
         return Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(np.NINF, np.inf))
 
 
 class CylinderEvaluation(SurfaceEvaluation):
     """
-    Provides ``Cylinder`` evaluation at certain parameters.
+    Provides evaluation of a cylinder at given parameters.
 
     Parameters
     ----------
     cylinder: ~ansys.geometry.core.primitives.cylinder.Cylinder
-        The ``Cylinder`` object to be evaluated.
+        Cylinder to evaluate.
     parameter: ParamUV
-        The parameters (u, v) at which the ``Cylinder`` evaluation is requested.
+        Parameters (u, v) to evaluate the cylinder at.
     """
 
     def __init__(self, cylinder: Cylinder, parameter: ParamUV) -> None:
-        """``CylinderEvaluation`` class constructor."""
+        """Initialize the ``CylinderEvaluation`` class."""
         self._cylinder = cylinder
         self._parameter = parameter
 
     @property
     def cylinder(self) -> Cylinder:
-        """The cylinder being evaluated."""
+        """Cylinder being evaluated."""
         return self._cylinder
 
     @property
     def parameter(self) -> ParamUV:
-        """The parameter that the evaluation is based upon."""
+        """Parameter that the evaluation is based upon."""
         return self._parameter
 
     @cached_property
     def position(self) -> Point3D:
         """
-        The position of the evaluation.
+        Position of the evaluation.
 
         Returns
         -------
         Point3D
-            The point that lies on the cylinder at this evaluation.
+            Point that lies on the cylinder at this evaluation.
         """
         return (
             self.cylinder.origin
@@ -296,24 +304,24 @@ class CylinderEvaluation(SurfaceEvaluation):
     @cached_property
     def normal(self) -> UnitVector3D:
         """
-        The normal to the surface.
+        Normal to the surface.
 
         Returns
         -------
         UnitVector3D
-            The normal unit vector to the cylinder at this evaluation.
+            Normal unit vector to the cylinder at this evaluation.
         """
         return UnitVector3D(self.__cylinder_normal)
 
     @cached_property
     def __cylinder_normal(self) -> Vector3D:
         """
-        The normal to the surface.
+        Normal to the surface.
 
         Returns
         -------
         UnitVector3D
-            The normal unit vector to the cylinder at this evaluation.
+            Normal unit vector to the cylinder at this evaluation.
         """
         return (
             np.cos(self.parameter.u) * self.cylinder.dir_x
@@ -331,107 +339,107 @@ class CylinderEvaluation(SurfaceEvaluation):
     @cached_property
     def u_derivative(self) -> Vector3D:
         """
-        The first derivative with respect to u.
+        First derivative with respect to the U parameter.
 
         Returns
         -------
         Vector3D
-            The first derivative with respect to u.
+            First derivative with respect to the U parameter.
         """
         return self.cylinder.radius.m * self.__cylinder_tangent
 
     @cached_property
     def v_derivative(self) -> Vector3D:
         """
-        The first derivative with respect to v.
+        First derivative with respect to the V parameter.
 
         Returns
         -------
         Vector3D
-            The first derivative with respect to v.
+            First derivative with respect to the V parameter.
         """
         return self.cylinder.dir_z
 
     @cached_property
     def uu_derivative(self) -> Vector3D:
         """
-        The second derivative with respect to u.
+        Second derivative with respect to the U parameter.
 
         Returns
         -------
         Vector3D
-            The second derivative with respect to u.
+            Second derivative with respect to the U parameter.
         """
         return -self.cylinder.radius.m * self.__cylinder_normal
 
     @cached_property
     def uv_derivative(self) -> Vector3D:
         """
-        The second derivative with respect to u and v.
+        Second derivative with respect to the U and V parameters.
 
         Returns
         -------
         Vector3D
-            The second derivative with respect to u and v.
+            Second derivative with respect to the U and v parameters.
         """
         return Vector3D([0, 0, 0])
 
     @cached_property
     def vv_derivative(self) -> Vector3D:
         """
-        The second derivative with respect to v.
+        Second derivative with respect to the V parameter.
 
         Returns
         -------
         Vector3D
-            The second derivative with respect to v.
+            Second derivative with respect to the V parameter.
         """
         return Vector3D([0, 0, 0])
 
     @cached_property
     def min_curvature(self) -> Real:
         """
-        The minimum curvature of the cylinder.
+        Minimum curvature of the cylinder.
 
         Returns
         -------
         Real
-            The minimum curvature of the cylinder.
+            Minimum curvature of the cylinder.
         """
         return 0
 
     @cached_property
     def min_curvature_direction(self) -> UnitVector3D:
         """
-        The minimum curvature direction.
+        Minimum curvature direction.
 
         Returns
         -------
         UnitVector3D
-            The minimum curvature direction.
+            Mminimum curvature direction.
         """
         return UnitVector3D(self.cylinder.dir_z)
 
     @cached_property
     def max_curvature(self) -> Real:
         """
-        The maximum curvature of the cylinder.
+        Maximum curvature of the cylinder.
 
         Returns
         -------
         Real
-            The maximum curvature of the cylinder.
+            Maximum curvature of the cylinder.
         """
         return 1.0 / self.cylinder.radius.m
 
     @cached_property
     def max_curvature_direction(self) -> UnitVector3D:
         """
-        The maximum curvature direction.
+        Maximum curvature direction.
 
         Returns
         -------
         UnitVector3D
-            The maximum curvature direction.
+            Maximum curvature direction.
         """
         return UnitVector3D(self.u_derivative)

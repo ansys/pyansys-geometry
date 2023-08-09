@@ -1,4 +1,4 @@
-"""Provides the ``Constants`` class for mathematical constants."""
+"""Provides mathematical constants."""
 
 import numpy as np
 
@@ -12,16 +12,16 @@ from ansys.geometry.core.math.point import (
 from ansys.geometry.core.math.vector import UnitVector2D, UnitVector3D, Vector2D, Vector3D
 
 DEFAULT_POINT3D = Point3D(DEFAULT_POINT3D_VALUES)
-"""Default value for a ``Point3D``."""
+"""Default value for a 3D point."""
 
 DEFAULT_POINT2D = Point2D(DEFAULT_POINT2D_VALUES)
 """Default value for a 2D point."""
 
 IDENTITY_MATRIX33 = Matrix33(np.identity(3))
-"""Identity ``Matrix33`` object."""
+"""Identity for a ``Matrix33`` object."""
 
 IDENTITY_MATRIX44 = Matrix44(np.identity(4))
-"""Identity ``Matrix44`` object."""
+"""Identity for a ``Matrix44`` object."""
 
 UNITVECTOR3D_X = UnitVector3D([1, 0, 0])
 """Default 3D unit vector in the Cartesian traditional X direction."""

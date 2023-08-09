@@ -12,14 +12,14 @@ SIGINT_TRACKER = []
 
 
 class GeometryRuntimeError(RuntimeError):
-    """Error message to raise when the Geometry service passes a runtime error."""
+    """Provides error message to raise when Geometry service passes a runtime error."""
 
     pass
 
 
 class GeometryExitedError(RuntimeError):
     """
-    Provides the error message to raise when the Geometry service has exited.
+    Provides error message to raise when Geometry service has exited.
 
     Parameters
     ----------
@@ -28,7 +28,7 @@ class GeometryExitedError(RuntimeError):
     """
 
     def __init__(self, msg="Geometry service has exited."):
-        """Initialize ``GeometryExitedError`` error."""
+        """Initialize the ``GeometryExitedError`` error."""
         RuntimeError.__init__(self, msg)  # pragma: no cover
 
 

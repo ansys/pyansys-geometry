@@ -1,4 +1,4 @@
-"""Provides the PyGeometry ``sketch`` subpackage."""
+"""PyGeometry sketch subpackage."""
 
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.box import Box

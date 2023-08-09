@@ -1,4 +1,4 @@
-"""Provides the ``Slot`` class."""
+"""Provides for creating and managing a slot."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
@@ -17,12 +17,12 @@ from ansys.geometry.core.typing import Real
 
 class Slot(SketchFace):
     """
-    Provides for modeling 2D slots.
+    Provides for modeling a 2D slot.
 
     Parameters
     ----------
     center: :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
-        Point that represents the center of the slot.
+        Center point of the slot.
     width : Union[Quantity, Distance, Real]
         Width of the slot main body.
     height : Union[Quantity, Distance, Real]

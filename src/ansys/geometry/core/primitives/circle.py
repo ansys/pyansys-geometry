@@ -1,4 +1,4 @@
-"""Provides the ``Circle`` class."""
+"""Provides for creating and managing a circle."""
 from functools import cached_property
 
 from beartype import beartype as check_input_types
@@ -27,7 +27,7 @@ from ansys.geometry.core.typing import Real, RealSequence
 
 class Circle:
     """
-    Provides 3D ``Circle`` representation.
+    Provides 3D circle representation.
 
     Parameters
     ----------
@@ -49,7 +49,7 @@ class Circle:
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
-        """Initialize ``Circle`` class."""
+        """Initialize the ``Circle`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
 
         self._reference = (
@@ -116,17 +116,17 @@ class Circle:
 
     def evaluate(self, parameter: Real) -> "CircleEvaluation":
         """
-        Evaluate the circle at the given parameter.
+        Evaluate the circle at a given parameter.
 
         Parameters
         ----------
         parameter : Real
-            The parameter at which to evaluate the circle.
+            Parameter to evaluate the circle at.
 
         Returns
         -------
         CircleEvaluation
-            The resulting evaluation.
+            Resulting evaluation.
         """
         return CircleEvaluation(self, parameter)
 
@@ -137,12 +137,12 @@ class Circle:
         Parameters
         ----------
         matrix : Matrix44
-            The transformation matrix to apply to the circle.
+            4x4 transformation matrix to apply to the circle.
 
         Returns
         -------
         Circle
-            A new circle that is the transformed copy of the original circle.
+            New circle that is the transformed copy of the original circle.
         """
         new_point = self.origin.transform(matrix)
         new_reference = self._reference.transform(matrix)
@@ -167,17 +167,17 @@ class Circle:
 
     def project_point(self, point: Point3D) -> "CircleEvaluation":
         """
-        Project a point onto the circle and return its ``CircleEvaluation``.
+        Project a point onto the circle and evauate the circle.
 
         Parameters
         ----------
         point : Point3D
-            The point to project onto the circle.
+            Point to project onto the circle.
 
         Returns
         -------
         CircleEvaluation
-            The resulting evaluation.
+            Resulting evaluation.
         """
         origin_to_point = point - self.origin
         dir_in_plane = UnitVector3D.from_points(
@@ -191,17 +191,17 @@ class Circle:
 
     def is_coincident_circle(self, other: "Circle") -> bool:
         """
-        Determine if this circle is coincident with another.
+        Determine if the circle is coincident with another.
 
         Parameters
         ----------
         other : Circle
-            The circle to determine coincidence with.
+            Circle to determine coincidence with.
 
         Returns
         -------
         bool
-            Returns true if this circle is coincident with the other.
+            ``True`` if this circle is coincident with the other, ``False`` otherwise.
         """
         return (
             Accuracy.length_is_equal(self.radius.m, other.radius.m)
@@ -211,29 +211,30 @@ class Circle:
 
     def get_parameterization(self) -> Parameterization:
         """
-        Return the parametrization of a ``Circle`` instance.
+        Get the parametrization of the circle.
 
-        The parameter of a circle specifies the clockwise angle around the axis (right
-        hand corkscrew law), with a zero parameter at `dir_x` and a period of 2*pi.
+        The parameter of a circle specifies the clockwise angle around the axis
+        (right-hand corkscrew law), with a zero parameter at ``dir_x`` and a
+        period of 2*pi.
 
         Returns
         -------
         Parameterization
-            Information about how a circle is parameterized.
+            Information about how the circle is parameterized.
         """
         return Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
 
 
 class CircleEvaluation(CurveEvaluation):
     """
-    Provides ``Circle`` evaluation at a certain parameter.
+    Provides evaluation of a circle at a given parameter.
 
     Parameters
     ----------
     circle: ~ansys.geometry.core.primitives.circle.Circle
-        The ``Circle`` object to be evaluated.
+        Circle to evaluate.
     parameter: Real
-        The parameter at which the ``Circle`` evaluation is requested.
+        Parameter to evaluate the circle at.
     """
 
     def __init__(self, circle: Circle, parameter: Real) -> None:
@@ -243,23 +244,23 @@ class CircleEvaluation(CurveEvaluation):
 
     @property
     def circle(self) -> Circle:
-        """The circle being evaluated."""
+        """Circle being evaluated."""
         return self._circle
 
     @property
     def parameter(self) -> Real:
-        """The parameter that the evaluation is based upon."""
+        """Parameter that the evaluation is based upon."""
         return self._parameter
 
     @cached_property
     def position(self) -> Point3D:
         """
-        The position of the evaluation.
+        Position of the evaluation.
 
         Returns
         -------
         Point3D
-            The point that lies on the circle at this evaluation.
+            Point that lies on the circle at this evaluation.
         """
         return (
             self.circle.origin
@@ -270,12 +271,12 @@ class CircleEvaluation(CurveEvaluation):
     @cached_property
     def tangent(self) -> UnitVector3D:
         """
-        The tangent of the evaluation.
+        Tangent of the evaluation.
 
         Returns
         -------
         UnitVector3D
-            The tangent unit vector to the circle at this evaluation.
+            Tangent unit vector to the circle at this evaluation.
         """
         return (
             np.cos(self.parameter) * self.circle.dir_y - np.sin(self.parameter) * self.circle.dir_x
@@ -284,12 +285,12 @@ class CircleEvaluation(CurveEvaluation):
     @cached_property
     def normal(self) -> UnitVector3D:
         """
-        The normal to the circle.
+        Normal to the circle.
 
         Returns
         -------
         UnitVector3D
-            The normal unit vector to the circle at this evaluation.
+            Normal unit vector to the circle at this evaluation.
         """
         return UnitVector3D(
             np.cos(self.parameter) * self.circle.dir_x + np.sin(self.parameter) * self.circle.dir_y
@@ -298,7 +299,7 @@ class CircleEvaluation(CurveEvaluation):
     @cached_property
     def first_derivative(self) -> Vector3D:
         """
-        The first derivative of the evaluation.
+        First derivative of the evaluation.
 
         The first derivative is in the direction of the tangent and has a
         magnitude equal to the velocity (rate of change of position) at that
@@ -307,7 +308,7 @@ class CircleEvaluation(CurveEvaluation):
         Returns
         -------
         Vector3D
-            The first derivative of this evaluation.
+            First derivative of the evaluation.
         """
         return self.circle.radius.m * (
             np.cos(self.parameter) * self.circle.dir_y - np.sin(self.parameter) * self.circle.dir_x
@@ -316,12 +317,12 @@ class CircleEvaluation(CurveEvaluation):
     @cached_property
     def second_derivative(self) -> Vector3D:
         """
-        The second derivative of the evaluation.
+        Second derivative of the evaluation.
 
         Returns
         -------
         Vector3D
-            The second derivative of this evaluation.
+            Second derivative of the evaluation.
         """
         return -self.circle.radius.m * (
             np.cos(self.parameter) * self.circle.dir_x + np.sin(self.parameter) * self.circle.dir_y
@@ -330,11 +331,11 @@ class CircleEvaluation(CurveEvaluation):
     @cached_property
     def curvature(self) -> Real:
         """
-        The curvature of the circle.
+        Curvature of the circle.
 
         Returns
         -------
         Real
-            The curvature of the circle.
+            Curvature of the circle.
         """
         return 1 / np.abs(self.circle.radius.m)

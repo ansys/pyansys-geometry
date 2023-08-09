@@ -4,15 +4,15 @@ Contribute
 Overall guidance on contributing to a PyAnsys library appears in the
 `Contributing <https://dev.docs.pyansys.com/how-to/contributing.html>`_ topic
 in the *PyAnsys Developer's Guide*. Ensure that you are thoroughly familiar
-with it and all `How-to <https://dev.docs.pyansys.com/how-to/index.html>`_ pages
-before attempting to contribute to PyGeometry.
+with this guide before attempting to contribute to PyGeometry.
 
 The following contribution information is specific to PyGeometry.
 
 Clone the repository
 --------------------
 
-To clone and install the latest PyGeometry release in development mode, run:
+To clone and install the latest PyGeometry release in development mode, run
+these commands:
 
 .. code::
 
@@ -29,12 +29,15 @@ Use the `PyGeometry Issues <https://github.com/ansys/pygeometry/issues>`_
 page to submit questions, report bugs, and request new features. When possible, you
 should use these issue templates:
 
-* Bug report template
-* Feature request template
+* Bug, problem, error: For filing a bug report
+* Documentation error: For requesting modifications to the documentation
+* Adding an example: For proposing a new example
+* New feature: For requesting enhancements to the code
 
-If your issue does not fit into these categories, create your own issue.
+If your issue does not fit into one of these template categories, you can click
+the link for opening a blank issue.
 
-To reach the PyAnsys team, email `pyansys.core@ansys.com <pyansys.core@ansys.com>`_.
+To reach the project support team, email `pyansys.core@ansys.com <pyansys.core@ansys.com>`_.
 
 View documentation
 ------------------
@@ -42,27 +45,29 @@ View documentation
 Documentation for the latest stable release of PyGeometry is hosted at
 `PyGeometry Documentation <https://geometry.docs.pyansys.com>`_.
 
-Documentation for the latest development version, which tracks the
-``main`` branch, is hosted at `Development PyGeometry Documentation <https://geometry.docs.pyansys.com/dev/>`_.
-This version is automatically kept up to date via GitHub actions.
+In the upper right corner of the documentation's title bar, there is an option
+for switching from viewing the documentation for the latest stable release
+to viewing the documentation for the development version or previously
+released versions.
 
-Code style
-----------
+Adhere to code style
+--------------------
 
-PyGeometry follows the PEP8 standard as outlined in the `PyAnsys Development Guide
-<https://dev.docs.pyansys.com>`_ and implements style checking using
+PyGeometry follows the PEP8 standard as outlined in
+`PEP 8 <https://dev.docs.pyansys.com/coding-style/pep8.html>`_ in
+the *PyAnsys Developer's Guide* and implements style checking using
 `pre-commit <https://pre-commit.com/>`_.
 
-To ensure your code meets minimum code styling standards, run::
+To ensure your code meets minimum code styling standards, run these commands::
 
   pip install pre-commit
   pre-commit run --all-files
 
-You can also install this as a pre-commit hook by running::
+You can also install this as a pre-commit hook by running this command::
 
   pre-commit install
 
-This way, it's not possible for you to push code that fails the style checks. For example::
+This way, it's not possible for you to push code that fails the style checks::
 
   $ pre-commit install
   $ git commit -am "added my cool feature"

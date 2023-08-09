@@ -28,14 +28,16 @@ class Plotter:
     Parameters
     ----------
     scene : ~pyvista.Plotter, default: None
-        Scene instance for rendering the objects.
+        ``Scene`` instance for rendering the objects.
     color_opts : dict, default: None
         Dictionary containing the background and top colors.
     num_points : int, default: 100
         Number of points to use to render the shapes.
     enable_widgets: bool, default: True
-        Enables/disables widget buttons in the plotter window.
-        They must be disabled for trame viewer.
+        Whether to enable widget buttons in the plotter window.
+        Widget buttons must be disabled when using
+        `trame <https://kitware.github.io/trame/index.html>`_
+        for visualization.
     """
 
     def __init__(
@@ -116,7 +118,7 @@ class Plotter:
         Parameters
         ----------
         frame : Frame
-            ``Frame`` instance to render in the scene.
+            Frame to render in the scene.
         plotting_options : dict, default: None
             Dictionary containing parameters accepted by the
             :class:`pyvista.plotting.tools.create_axes_marker` class for customizing
@@ -151,14 +153,14 @@ class Plotter:
         Parameters
         ----------
         plane : Plane
-            ``Plane`` instance to render in the scene.
+            Plane to render in the scene.
         plane_options : dict, default: None
             Dictionary containing parameters accepted by the
-            :class:`pyvista.Plane` for customizing the mesh representing the
-            plane.
+            :class:`pyvista.Plane` instance for customizing the mesh
+            representing the plane.
         plotting_options : dict, default: None
             Dictionary containing parameters accepted by the
-            :class:`pyvista.Plotter.add_mesh` for customizing the mesh
+            :class:`pyvista.Plotter.add_mesh` class for customizing the mesh
             rendering of the plane.
         """
         # Impose default plane options if none provided
@@ -188,11 +190,11 @@ class Plotter:
         Parameters
         ----------
         sketch : Sketch
-            ``Sketch`` instance to render in the scene.
+            Sketch to render in the scene.
         show_plane : bool, default: False
             Whether to render the sketch plane in the scene.
         show_frame : bool, default: False
-            If ``Frame``, whether to render the sketch plane in the scene.
+            Whether to show the frame in the scene.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
@@ -218,7 +220,7 @@ class Plotter:
         body : ansys.geometry.core.designer.Body
             Body to add.
         merge : bool, default: False
-            Whether to merge the body into a single mesh. If ``True``, the
+            Whether to merge the body into a single mesh. When ``True``, the
             individual faces of the tessellation are merged. This
             preserves the number of triangles and only merges the topology.
         **plotting_options : dict, default: None
@@ -260,8 +262,8 @@ class Plotter:
             into a single dataset without any hierarchy.
         merge_bodies : bool, default: False
             Whether to merge each body into a single dataset. When ``True``,
-            all the faces of each individual body are effectively combineed
-            into a single dataset without.
+            all the faces of each individual body are effectively combined
+            into a single dataset without separating faces.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
@@ -307,22 +309,21 @@ class Plotter:
         """
         Add any type of object to the scene.
 
-        Add any type of object to the scene. Currently supports
-        ``List[pv.PolyData]``, ``pv.MultiBlock``, ``Sketch``,
-        ``Component`` and ``Body`` objects.
+        These types of objects are supported: ``Body``, ``Component``, ``List[pv.PolyData]``,
+        ``pv.MultiBlock``, and ``Sketch``.
 
         Parameters
         ----------
         plotting_list : List[Any]
-            List of objects you want to plot.
+            List of objects that you want to plot.
+        merge_bodies : bool, default: False
+            Whether to merge each body into a single dataset. When ``True``,
+            all the faces of each individual body are effectively combined
+            into a single dataset without separating faces.
         merge_component : bool, default: False
             Whether to merge the component into a single dataset. When
             ``True``, all the individual bodies are effectively combined
             into a single dataset without any hierarchy.
-        merge_bodies : bool, default: False
-            Whether to merge each body into a single dataset. When ``True``,
-            all the faces of each individual body are effectively combineed
-            into a single dataset without.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
@@ -362,9 +363,8 @@ class Plotter:
         """
         Add a list of any type of object to the scene.
 
-        Add a list of any type of object to the scene. Currently supports
-        ``List[pv.PolyData]``, ``pv.MultiBlock``, ``Sketch``,
-        ``Component`` and ``Body`` objects.
+        These types of objects are supported: ``Body``, ``Component``, ``List[pv.PolyData]``,
+        ``pv.MultiBlock``, and ``Sketch``.
 
         Parameters
         ----------
@@ -376,8 +376,8 @@ class Plotter:
             into a single dataset without any hierarchy.
         merge_bodies : bool, default: False
             Whether to merge each body into a single dataset. When ``True``,
-            all the faces of each individual body are effectively combineed
-            into a single dataset without.
+            all the faces of each individual body are effectively combined
+            into a single dataset without separating faces.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
@@ -410,7 +410,6 @@ class Plotter:
         ----------
         jupyter_backend : str, default: None
             PyVista Jupyter backend.
-
         **kwargs : dict, default: None
             Plotting keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.show` method.
@@ -460,21 +459,22 @@ class Plotter:
 
 class PlotterHelper:
     """
-    This class simplifies the selection of Trame visualizer in plot() functions.
+    Provides for simplifying the selection of trame in ``plot()`` functions.
 
     Parameters
     ----------
-    use_trame: bool, optional
-        Enables/disables the usage of the trame web visualizer. Defaults to the
-        global setting ``USE_TRAME``.
-    allow_picking: bool, optional
+    use_trame : bool, default: None
+        Whether to enable the use of `trame <https://kitware.github.io/trame/index.html>`_.
+        The default is ``None``, in which case the ``USE_TRAME`` global setting
+        is used.
+    allow_picking: bool, default: False
         Enables/disables the picking capabilities in the PyVista plotter.
     """
 
     def __init__(
         self, use_trame: Optional[bool] = None, allow_picking: Optional[bool] = False
     ) -> None:
-        """Initialize use_trame and saves current pv.OFF_SCREEN value."""
+        """Initialize ``use_trame`` and save current ``pv.OFF_SCREEN`` value."""
         # Check if the use of trame was requested
         if use_trame is None:
             import ansys.geometry.core as pygeom
@@ -493,7 +493,7 @@ class PlotterHelper:
             self._pl = Plotter(enable_widgets=False)
         elif self._use_trame and not _HAS_TRAME:
             warn_msg = (
-                "'use_trame' is active but Trame dependencies are not installed."
+                "'use_trame' is active but trame dependencies are not installed."
                 "Consider installing 'pyvista[trame]' to use this functionality."
             )
             logger.warning(warn_msg)
@@ -549,26 +549,25 @@ class PlotterHelper:
         """
         Plot and show any PyGeometry object.
 
-        Currently supports ``List[pv.PolyData]``, ``pv.MultiBlock``, ``Sketch``,
-        ``Component`` and ``Body`` objects.
+        These types of objects are supported: ``Body``, ``Component``, ``List[pv.PolyData]``,
+        ``pv.MultiBlock``, and ``Sketch``.
 
         Parameters
         ----------
         object : any
             Any object or list of objects that you want to plot.
         screenshot : str, default: None
-            Save a screenshot of the image being represented. The image is
-            stored in the path provided as an argument.
-        merge_component : bool, default: False
-            Whether to merge the component into a single dataset. When
-            ``True``, all the individual bodies are effectively combined
-            into a single dataset without any hierarchy.
+            Path for saving a screenshot of the image that is being represented.
         merge_bodies : bool, default: False
             Whether to merge each body into a single dataset. When ``True``,
-            all the faces of each individual body are effectively combineed
-            into a single dataset without.
-        view_2d : Dict, optional
-            Dict with the plane and the viewup vectors of the 2d plane, by default None.
+            all the faces of each individual body are effectively combined
+            into a single dataset without separating faces.
+        merge_component : bool, default: False
+            Whether to merge this component into a single dataset. When ``True``,
+            all the individual bodies are effectively combined into a single
+            dataset without any hierarchy.
+        view_2d : Dict, default: None
+            Dictionary with the plane and the viewup vectors of the 2D plane.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
@@ -592,15 +591,14 @@ class PlotterHelper:
 
     def show_plotter(self, screenshot: Optional[str] = None) -> None:
         """
-        Show the plotter or start the Trame service.
+        Show the plotter or start the `trame <https://kitware.github.io/trame/index.html>`_ service.
 
         Parameters
         ----------
         plotter : Plotter
             PyGeometry plotter with the meshes added.
         screenshot : str, default: None
-            Save a screenshot of the image being represented. The image is
-            stored in the path provided as an argument.
+            Path for saving a screenshot of the image that is being represented.
         """
         if self._use_trame and _HAS_TRAME:
             visualizer = TrameVisualizer()

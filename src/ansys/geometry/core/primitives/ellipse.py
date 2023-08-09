@@ -1,4 +1,4 @@
-"""Provides the ``Ellipse`` class."""
+"""Provides for creating and managing an ellipse."""
 
 from functools import cached_property
 
@@ -29,7 +29,7 @@ from ansys.geometry.core.typing import Real, RealSequence
 
 class Ellipse:
     """
-    Provides 3D ``Ellipse`` representation.
+    Provides 3D ellipse representation.
 
     Parameters
     ----------
@@ -135,7 +135,7 @@ class Ellipse:
         Returns
         -------
         Ellipse
-            A new ellipse that is a mirrored copy of the original ellipse.
+            New ellipse that is a mirrored copy of the original ellipse.
         """
         return Ellipse(
             self.origin, self.major_radius, self.minor_radius, -self._reference, -self._axis
@@ -148,28 +148,28 @@ class Ellipse:
         Parameters
         ----------
         parameter : Real
-            The parameter at which to evaluate the ellipse.
+            Parameter to evaluate the ellipse at.
 
         Returns
         -------
         EllipseEvaluation
-            The resulting evaluation.
+            Resulting evaluation.
         """
         return EllipseEvaluation(self, parameter)
 
     def project_point(self, point: Point3D) -> "EllipseEvaluation":
         """
-        Project a point onto the ellipse and return its ``EllipseEvaluation``.
+        Project a point onto the ellipse and evaluate the ellipse.
 
         Parameters
         ----------
         point : Point3D
-            The point to project onto the ellipse.
+            Point to project onto the ellipse.
 
         Returns
         -------
         EllipseEvaluation
-            The resulting evaluation.
+            Resulting evaluation.
         """
         origin_to_point = point - self.origin
         dir_in_plane = UnitVector3D.from_points(
@@ -191,12 +191,12 @@ class Ellipse:
         Parameters
         ----------
         other : Ellipse
-            The ellipse to determine coincidence with.
+            Ellipse to determine coincidence with.
 
         Returns
         -------
         bool
-            Returns ``True`` if this ellipse is coincident with the other.
+            ``True`` if this ellipse is coincident with the other, ``False`` otherwise.
         """
         return (
             Accuracy.length_is_equal(self.major_radius.m, other.major_radius.m)
@@ -228,7 +228,7 @@ class Ellipse:
 
     @property
     def semi_latus_rectum(self) -> Quantity:
-        """Return the semi-latus rectum of the ellipse."""
+        """Semi-latus rectum of the ellipse."""
         return self.minor_radius**2 / self.major_radius
 
     @property
@@ -253,12 +253,12 @@ class Ellipse:
         Parameters
         ----------
         matrix : Matrix44
-            The transformation matrix to apply to the ellipse.
+            4x4 transformation matrix to apply to the ellipse.
 
         Returns
         -------
         Ellipse
-            A new ellipse that is the transformed copy of the original ellipse.
+            New ellipse that is the transformed copy of the original ellipse.
         """
         new_point = self.origin.transform(matrix)
         new_reference = self._reference.transform(matrix)
@@ -273,55 +273,55 @@ class Ellipse:
 
     def get_parameterization(self) -> Parameterization:
         """
-        Return the parametrization of an ``Ellipse`` instance.
+        Get the parametrization of the ellipse.
 
-        The parameter of an ellipse specifies the clockwise angle around the axis (right
-        hand corkscrew law), with a zero parameter at `dir_x` and a period of 2*pi.
+        The parameter of an ellipse specifies the clockwise angle around the axis
+        (right-hand corkscrew law), with a zero parameter at ``dir_x`` and a period of 2*pi.
 
         Returns
         -------
         Parameterization
-            Information about how an ellipse is parameterized.
+            Information about how the ellipse is parameterized.
         """
         return Parameterization(ParamForm.PERIODIC, ParamType.OTHER, Interval(0, 2 * np.pi))
 
 
 class EllipseEvaluation(CurveEvaluation):
     """
-    Provides ``Ellipse`` evaluation at a certain parameter.
+    Evaluate an ellipse at a given parameter.
 
     Parameters
     ----------
     ellipse: ~ansys.geometry.core.primitives.ellipse.Ellipse
-        The ``Ellipse`` object to be evaluated.
+        Ellipse to evaluate.
     parameter: float, int
-        The parameter at which the ``Ellipse`` evaluation is requested.
+        Parameter to evaluate the ellipse at.
     """
 
     def __init__(self, ellipse: Ellipse, parameter: Real) -> None:
-        """``EllipseEvaluation`` class constructor."""
+        """``Intialize the ``EllipseEvaluation`` class."""
         self._ellipse = ellipse
         self._parameter = parameter
 
     @property
     def ellipse(self) -> Ellipse:
-        """The ellipse being evaluated."""
+        """Ellipse being evaluated."""
         return self._ellipse
 
     @property
     def parameter(self) -> Real:
-        """The parameter that the evaluation is based upon."""
+        """Parameter that the evaluation is based upon."""
         return self._parameter
 
     @cached_property
     def position(self) -> Point3D:
         """
-        The position of the evaluation.
+        Position of the evaluation.
 
         Returns
         -------
         Point3D
-            The point that lies on the ellipse at this evaluation.
+            Point that lies on the ellipse at this evaluation.
         """
         return (
             self.ellipse.origin
@@ -332,12 +332,12 @@ class EllipseEvaluation(CurveEvaluation):
     @cached_property
     def tangent(self) -> UnitVector3D:
         """
-        The tangent of the evaluation.
+        Tangent of the evaluation.
 
         Returns
         -------
         UnitVector3D
-            The tangent unit vector to the ellipse at this evaluation.
+            Tangent unit vector to the ellipse at this evaluation.
         """
         return (
             (self.ellipse.minor_radius * np.cos(self.parameter) * self.ellipse.dir_y).m
@@ -347,19 +347,19 @@ class EllipseEvaluation(CurveEvaluation):
     @cached_property
     def normal(self) -> UnitVector3D:
         """
-        The normal of the evaluation.
+        Normal of the evaluation.
 
         Returns
         -------
         UnitVector3D
-            The normal unit vector to the ellipse at this evaluation.
+            Normal unit vector to the ellipse at this evaluation.
         """
         return UnitVector3D.from_points(self.ellipse.origin, self.position)
 
     @cached_property
     def first_derivative(self) -> Vector3D:
         """
-        The first derivative of the evaluation.
+        Girst derivative of the evaluation.
 
         The first derivative is in the direction of the tangent and has a magnitude
         equal to the velocity (rate of change of position) at that point.
@@ -367,7 +367,7 @@ class EllipseEvaluation(CurveEvaluation):
         Returns
         -------
         Vector3D
-            The first derivative of this evaluation.
+            First derivative of the evaluation.
         """
         return (self.ellipse.minor_radius * np.cos(self.parameter) * self.ellipse.dir_y).m - (
             self.ellipse.major_radius * np.sin(self.parameter) * self.ellipse.dir_x
@@ -376,12 +376,12 @@ class EllipseEvaluation(CurveEvaluation):
     @cached_property
     def second_derivative(self) -> Vector3D:
         """
-        The second derivative of the evaluation.
+        Second derivative of the evaluation.
 
         Returns
         -------
         Vector3D
-            The second derivative of this evaluation.
+            Second derivative of the evaluation.
         """
         return (
             -self.ellipse.major_radius * np.cos(self.parameter) * self.ellipse.dir_x
@@ -391,11 +391,11 @@ class EllipseEvaluation(CurveEvaluation):
     @cached_property
     def curvature(self) -> Real:
         """
-        The curvature of the ellipse.
+        Curvature of the ellipse.
 
         Returns
         -------
         Real
-            The curvature of the ellipse.
+            Curvature of the ellipse.
         """
         return self.second_derivative.magnitude / np.power(self.first_derivative.magnitude, 2)
