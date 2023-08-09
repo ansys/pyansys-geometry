@@ -171,10 +171,10 @@ nbsphinx_thumbnails = {
 nbsphinx_epilog = """
 ----
 
-.. admonition:: Download this example!
+.. admonition:: Download this example
 
     Download this example as a `Jupyter Notebook <{cname_pref}/{ipynb_file_loc}>`_
-    or as a `Python script <{cname_pref}/{py_file_loc}>`_ from the previous links.
+    or as a `Python script <{cname_pref}/{py_file_loc}>`_.
 
 """.format(
     cname_pref=f"https://{cname}/version/{switcher_version}",
@@ -184,10 +184,10 @@ nbsphinx_epilog = """
 
 nbsphinx_prolog = """
 
-.. admonition:: Download this example!
+.. admonition:: Download this example
 
     Download this example as a `Jupyter Notebook <{cname_pref}/{ipynb_file_loc}>`_
-    or as a `Python script <{cname_pref}/{py_file_loc}>`_ from the previous links.
+    or as a `Python script <{cname_pref}/{py_file_loc}>`_.
 
 ----
 """.format(
