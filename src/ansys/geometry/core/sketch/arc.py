@@ -1,4 +1,4 @@
-"""``Arc`` class module."""
+"""Provides for creating and managing an arc."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional
@@ -13,22 +13,19 @@ from ansys.geometry.core.sketch.edge import SketchEdge
 
 class Arc(SketchEdge):
     """
-    Provides for modeling arcs.
+    Provides for modeling an arc.
 
     Parameters
     ----------
     center : Point2D
-        A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
-        the center of the arc.
+        Center point of the arc.
     start : Point2D
-        :class:`Point2D <ansys.geometry.core.math.point.Point2D>` class representing
-        the start of the arc.
+        Starting point of the arc.
     end : Point2D
-        A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
-        the end of the arc.
+        Ending point of the arc.
     clockwise : bool, default: False
-        Whether the arc spans the clockwise angle between the start
-        and end points. By default, the arc spans the counter-clockwise angle. When
+        Whether the arc spans the clockwise angle between the start and end points.
+        When ``False`` (default), the arc spans the counter-clockwise angle. When
         ``True``, the arc spands the clockwise angle.
     """
 
@@ -79,12 +76,12 @@ class Arc(SketchEdge):
 
     @property
     def start(self) -> Point2D:
-        """2D point that is the start of the arc line."""
+        """Starting point of the arc line."""
         return self._start
 
     @property
     def end(self) -> Point2D:
-        """2D point that is the end of the arc line."""
+        """Ending point of the arc line."""
         return self._end
 
     @property
@@ -99,7 +96,7 @@ class Arc(SketchEdge):
 
     @property
     def center(self) -> Point2D:
-        """2D point that is the center of the arc."""
+        """Center point of the arc."""
         return self._center
 
     @property
@@ -110,13 +107,13 @@ class Arc(SketchEdge):
     @property
     def is_clockwise(self) -> bool:
         """
-        Whether the rotation of the angle is clockwise.
+        Flag indicating whether the rotation of the angle is clockwise.
 
         Returns
         -------
         bool
             ``True`` if the sense of rotation is clockwise.
-            ``False`` if it is counter-clockwise.
+            ``False`` if the sense of rotation is counter-clockwise.
         """
         return self._clockwise
 
@@ -128,7 +125,7 @@ class Arc(SketchEdge):
     @property
     def visualization_polydata(self) -> pv.PolyData:
         """
-        VTK polydata representation for the PyVista visualization.
+        VTK polydata representation for PyVista visualization.
 
         Notes
         -----
@@ -190,7 +187,7 @@ class Arc(SketchEdge):
         clockwise or counterclockwise. It only understands the longest and shortest
         angle, which complicates things in the boundary.
 
-        This means that we need to divide the arc in two so that it is properly
+        This means that the arc must be divided in two so that it is properly
         defined based on the known sense of rotation.
 
         Returns
@@ -252,21 +249,21 @@ class Arc(SketchEdge):
     @classmethod
     def from_three_points(cls, start: Point2D, inter: Point2D, end: Point2D):
         """
-        Create an Arc from three given points.
+        Create an arc from three given points.
 
         Parameters
         ----------
         start : Point2D
-            Point that is the start of the arc.
+            Starting point of the arc.
         inter : Point2D
-            Point that is at an intermediate location of the arc.
+            Intermediate point (location) of the arc.
         end : Point2D
-            Point that is the end of the arc.
+            Ending point of the arc.
 
         Returns
         -------
         Arc
-            Arc generated from the three given points.
+            Arc generated from the three points.
         """
         # Unpack the points into its coordinates (in DEFAULT_UNITS.LENGTH)
         x_s, y_s = start.tolist()
@@ -276,7 +273,7 @@ class Arc(SketchEdge):
         # Solve the circle equation to find out its center
         # (Xc - X)**2 + (Yc - Y)**2 = r**2
         #
-        # Since r is the radius, and its constant, we can just simply solve
+        # Since r is the radius, and its constant, you can just simply solve
         # the system of equations formed by the three points, for (x_c, y_c)
         #
         # 2*(x_s - x_i)*x_c + 2*(y_s-y_i)*y_c + (x_i**2 + y_i**2 - x_s**2 - y_s**2) = 0
@@ -310,8 +307,8 @@ class Arc(SketchEdge):
         x_c, y_c = np.linalg.solve([[k11, k12], [k21, k22]], [k1, k2])
         center = Point2D([x_c, y_c], unit=DEFAULT_UNITS.LENGTH)
 
-        # Now, we should try to figure out if the rotation has to be clockwise or
-        # counter-clockwise... let's see
+        # Now, you should try to figure out if the rotation has to be clockwise or
+        # counter-clockwise...
         center_start = Vector2D([x_s - x_c, y_s - y_c])
         center_inter = Vector2D([x_i - x_c, y_i - y_c])
         center_end = Vector2D([x_e - x_c, y_e - y_c])
@@ -320,5 +317,5 @@ class Arc(SketchEdge):
 
         is_clockwise = False if angle_s_i < angle_s_e else True
 
-        # Finally... we achieved it! Let's create the arc
+        # Finally... you can create the arc
         return Arc(center=center, start=start, end=end, clockwise=is_clockwise)

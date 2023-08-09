@@ -1,4 +1,4 @@
-"""Provides the ``Trapezoid`` class ."""
+"""Provides for creating and managing a trapezoid."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
@@ -16,7 +16,7 @@ from ansys.geometry.core.typing import Real
 
 class Trapezoid(SketchFace):
     """
-    Provides for modeling 2D trapezoids.
+    Provides for modeling a 2D trapezoid.
 
     Parameters
     ----------
@@ -28,16 +28,16 @@ class Trapezoid(SketchFace):
         Angle for trapezoid generation.
     nonsymmetrical_slant_angle : Union[Quantity, Angle, Real], default: None
         Asymmetrical slant angles on each side of the trapezoid.
-        By default, the trapezoid is symmetrical.
+        The default is ``None``, in which case the trapezoid is symmetrical.
     center: Point2D, default: ZERO_POINT2D
-        Point representing the center of the trapezoid.
+        Center point of the trapezoid.
     angle : Union[Quantity, Angle, Real], default: 0
         Placement angle for orientation alignment.
 
     Notes
     -----
     If a nonsymmetrical slant angle is defined, the slant angle is
-    applied to the left-most angle and the nonsymmetrical slant angle
+    applied to the left-most angle, and the nonsymmetrical slant angle
     is applied to the right-most angle.
     """
 

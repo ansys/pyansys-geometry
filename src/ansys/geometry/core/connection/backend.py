@@ -1,9 +1,9 @@
-"""Provides definitions about the backend type."""
+"""Module providing definitions for the backend types."""
 from enum import Enum
 
 
 class BackendType(Enum):
-    """Provides an enum holding the different backend types available."""
+    """Provides an enum holding the available backend types."""
 
     DISCOVERY = 0
     SPACECLAIM = 1

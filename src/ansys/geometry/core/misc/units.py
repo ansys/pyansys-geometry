@@ -1,4 +1,4 @@
-"""Provides the ``Units`` class for PyGeometry."""
+"""Provides for handling units homogeneously throughout PyGeometry."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional
@@ -8,7 +8,7 @@ from ansys.geometry.core.misc.checks import check_pint_unit_compatibility
 from ansys.geometry.core.typing import Real
 
 UNITS = UnitRegistry()
-"""Unit manager."""
+"""Units manager."""
 
 # This forces pint to set the previous UnitRegistry as the one to use
 set_application_registry(UNITS)

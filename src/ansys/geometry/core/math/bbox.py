@@ -1,4 +1,4 @@
-"""Provides the ``BoundingBox`` class."""
+"""Provides for managing a bounding box."""
 
 import sys
 
@@ -34,7 +34,7 @@ class BoundingBox2D:
         y_min: Real = sys.float_info.max,
         y_max: Real = sys.float_info.min,
     ):
-        """Initialize ``BoundingBox2D`` class."""
+        """Initialize the ``BoundingBox2D`` class."""
         self._x_min = x_min
         self._x_max = x_max
         self._y_min = y_min
@@ -91,11 +91,12 @@ class BoundingBox2D:
     @check_input_types
     def add_point(self, point: Point2D) -> None:
         """
-        Extend the ranges of the bounding box to include the ``Point2D`` object.
+        Extend the ranges of the bounding box to include a point.
 
         Notes
         -----
-        Only if the point components are outside the current bounds.
+        This method is only applicable if the point components are outside
+        the current bounds.
 
         Parameters
         ----------
@@ -113,7 +114,8 @@ class BoundingBox2D:
 
         Notes
         -----
-        Only if the point components are outside the current bounds.
+        This method is only applicable if the point components are outside
+        the current bounds.
 
         Parameters
         ----------

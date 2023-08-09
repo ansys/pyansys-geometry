@@ -1,4 +1,4 @@
-"""Provides the ``Matrix`` class."""
+"""Provides matrix primitive representations."""
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
 import numpy as np
@@ -36,7 +36,7 @@ class Matrix(np.ndarray):
         return obj
 
     def determinant(self) -> Real:
-        """Provide the determinant of the matrix."""
+        """Get the determinant of the matrix."""
         if self.shape[0] != self.shape[1]:
             raise ValueError("The determinant is only defined for square matrices.")
         return np.linalg.det(self)
@@ -50,7 +50,7 @@ class Matrix(np.ndarray):
 
     @check_input_types
     def __mul__(self, other: Union["Matrix", np.ndarray]) -> "Matrix":
-        """Provide the multiplication of the matrix."""
+        """Get the multiplication of the matrix."""
         if self.shape[1] != other.shape[0]:
             raise ValueError(
                 f"The dimensions of the matrices {self.shape[1]} and {other.shape[0]} are not multipliable."  # noqa : E501

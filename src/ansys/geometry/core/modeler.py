@@ -1,4 +1,4 @@
-"""Provides the ``Modeler`` class."""
+"""Provides for interacting with the Geometry service."""
 import logging
 from pathlib import Path
 
@@ -13,6 +13,7 @@ from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
+from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.misc import check_type
 from ansys.geometry.core.typing import Real
 
@@ -37,16 +38,17 @@ class Modeler:
         gRPC channel for server communication.
     remote_instance : ansys.platform.instancemanagement.Instance, default: None
         Corresponding remote instance when the Geometry service
-        is launched through PyPIM. This instance is deleted when the
-        :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
+        is launched using `PyPIM <https://github.com/ansys/pypim>`_. This instance
+        is deleted when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close>`
         method is called.
     local_instance : LocalDockerInstance, default: None
-        Corresponding local instance when the Geometry service is launched through
-        the ``launch_local_modeler()`` interface. This instance will be deleted
-        when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
+        Corresponding local instance when the Geometry service is launched using the
+        :func:`launch_local_modeler<ansys.geometry.core.connection.launcher.launch_local_modeler>`
+        method. This instance is deleted when the
+        :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close>`
         method is called.
     timeout : Real, default: 60
-        Timeout in seconds to achieve the connection.
+        Time in seconds for trying to achieve the connection.
     logging_level : int, default: INFO
         Logging level to apply to the client.
     logging_file : str, Path, default: None
@@ -65,7 +67,7 @@ class Modeler:
         logging_file: Optional[Union[Path, str]] = None,
         backend_type: Optional[BackendType] = None,
     ):
-        """Initialize ``Modeler`` class."""
+        """Initialize the ``Modeler`` class."""
         self._client = GrpcClient(
             host=host,
             port=port,
@@ -105,25 +107,35 @@ class Modeler:
         check_type(name, str)
         design = Design(name, self._client)
         self._designs.append(design)
+        if len(self._designs) > 1:
+            logger.warning(
+                "Most backends only support one design. "
+                + "Previous designs may be deleted (on the service) when creating a new one."
+            )
         return self._designs[-1]
 
     def read_existing_design(self) -> "Design":
         """
-        Read existing design on the service with the connected client.
+        Read the existing design on the service with the connected client.
 
         Returns
         -------
         Design
-            Design object already living on the server.
+            Design object already existing on the server.
         """
         from ansys.geometry.core.designer.design import Design
 
         design = Design("", self._client, read_existing_design=True)
         self._designs.append(design)
+        if len(self._designs) > 1:
+            logger.warning(
+                "Most backends only support one design. "
+                + "Previous designs may be deleted (on the service) when reading a new one."
+            )
         return self._designs[-1]
 
     def close(self) -> None:
-        """``Modeler`` easy-access method to the client's close method."""
+        """``Modeler`` method for easily accessing the client's close method."""
         return self.client.close()
 
     def _upload_file(self, file_path: str, open_file: bool = False) -> str:
@@ -132,20 +144,20 @@ class Modeler:
 
         Notes
         -----
-        ``file_path`` must include the extension. The new file created on
-        the server will have the same name and extension.
+        This method creates a file on the server that has the same name and extension
+        as the file on the client.
 
         Parameters
         ----------
         file_path : str
-            The path of the file. Must include extension.
-        open_file : bool
-            Open the file in the Geometry Service.
+            Path of the file to upload. The extension of the file must be included.
+        open_file : bool, default: False
+            Whether to open the file in the Geometry service.
 
         Returns
         -------
         file_path : str
-            The full path of the uploaded file on the server machine.
+            Full path of the file uploaded to the server.
         """
         import os
 
@@ -168,20 +180,21 @@ class Modeler:
 
     def open_file(self, file_path: str) -> "Design":
         """
-        Open a file. ``file_path`` must include the extension.
+        Open a file.
 
-        This imports a design into the service. On Windows, `.scdocx` and HOOPS Exchange formats
-        are supported. On Linux, only `.scdocx` is supported.
+        This method imports a design into the service. On Windows, ``.scdocx``
+        and HOOPS Exchange formats are supported. On Linux, only the ``.scdocx``
+        format is supported.
 
         Parameters
         ----------
         file_path : str
-            The path of the file. Must include extension.
+           Path of the file to open. The extension of the file must be included.
 
         Returns
         -------
         Design
-            The newly imported design.
+            Newly imported design.
         """
         self._upload_file(file_path, True)
         return self.read_existing_design()
@@ -202,31 +215,34 @@ class Modeler:
         Run a Discovery script file.
 
         The implied API version of the script should match the API version of the running
-        Geometry Service. Earliest DMS API version supported: `>=23.2.1`.
+        Geometry Service. DMS API versions 23.2.1 and later are supported. DMS is a
+        Windows-based modeling service that has been containerized to ease distribution,
+        execution, and remotability operations.
 
         Parameters
         ----------
         file_path : str
-            The path of the file. Must include extension.
+            Path of the file. The extension of the file must be included.
         script_args : dict[str, str]
             Arguments to pass to the script.
-        import_design : bool, optional
-            Refresh the current design from the service. Set this to ``True`` if the script
-            is expected to modify the existing design, in order to retrieve up-to-date design
-            data. If it is set to ``False`` and the script modifies the current design, the
-            design may be out-of-sync.
+        import_design : bool, default: False
+            Whether to refresh the current design from the service. When the script
+            is expected to modify the existing design, set this to ``True`` to retrieve
+            up-to-date design data. When this is set to ``False`` (default) and the
+            script modifies the current design, the design may be out-of-sync.
 
         Returns
         -------
         dict[str, str]
             Values returned from the script.
         Design, optional
-            The up-to-date current design. This is only returned if ``import_design=True``.
+            Up-to-date current design. This is only returned if ``import_design=True``.
 
         Raises
         ------
         GeometryRuntimeError
-            If the Discovery script fails to run. Otherwise, assume the script ran successfully.
+            If the Discovery script fails to run. Otherwise, assume that the script
+            ran successfully.
         """
         serv_path = self._upload_file(file_path)
         ga_stub = GeometryApplicationStub(self._client.channel)

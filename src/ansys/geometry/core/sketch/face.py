@@ -1,4 +1,4 @@
-"""Provides the ``SketchFace`` class."""
+"""Provides for creating and managing a face (closed 2D sketch)."""
 
 from beartype.typing import TYPE_CHECKING, List
 from pint import Quantity
@@ -11,10 +11,10 @@ if TYPE_CHECKING:
 
 
 class SketchFace:
-    """Provides modeling closed 2D sketches."""
+    """Provides for modeling a face."""
 
     def __init__(self):
-        """Initialize the sketch face."""
+        """Initialize the face."""
         # TODO: What about the circular faces? Circle, Ellipse are not making use of this...
         self._edges = []
 
@@ -49,16 +49,16 @@ class SketchFace:
 
     def plane_change(self, plane: "Plane") -> None:
         """
-        Redefine the plane containing SketchFace objects.
+        Redefine the plane containing ``SketchFace`` objects.
 
         Notes
         -----
-        This implies that their 3D definition may suffer changes. By default, it does
-        nothing. It is required to be implemented in child SketchFace classes.
+        This implies that their 3D definition might suffer changes. This method does
+        nothing by default. It is required to be implemented in child ``SketchFace`` classes.
 
         Parameters
         ----------
         plane : Plane
-            Desired new plane which will contain the sketched face.
+            Desired new plane that is to contain the sketched face.
         """
         pass
