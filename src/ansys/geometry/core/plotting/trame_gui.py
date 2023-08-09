@@ -1,4 +1,4 @@
-"""Module for the trame visualizer."""
+"""Module for using trame <https://kitware.github.io/trame/index.html>`_ for visualization."""
 try:
     from pyvista.trame.ui import plotter_ui
     from trame.app import get_server
@@ -11,14 +11,10 @@ except ModuleNotFoundError:  # pragma: no cover
 
 
 class TrameVisualizer:
-    """
-    Trame visualizer class.
-
-    It will define how the trame view layout will be.
-    """
+    """Defines the trame layout view."""
 
     def __init__(self) -> None:
-        """Initialize server and server related variables."""
+        """Initialize the trame server and server-related variables."""
         if not _HAS_TRAME:  # pragma: no cover
             raise ModuleNotFoundError(
                 "The package 'pyvista[trame]' is required to use this function."
@@ -29,12 +25,12 @@ class TrameVisualizer:
 
     def set_scene(self, plotter):
         """
-        Set the trame layout view and the mesh to show through the pyvista plotter.
+        Set the trame layout view and the mesh to show through the PyVista plotter.
 
         Parameters
         ----------
         plotter : pv.Plotter
-            PyVista plotter with the mesh rendered.
+            PyVista plotter with the rendered mesh.
         """
         self.state.trame__title = "PyGeometry Viewer"
 
@@ -51,5 +47,5 @@ class TrameVisualizer:
             layout.footer.hide()
 
     def show(self):
-        """Start the server and show the mesh."""
+        """Start the trame server and show the mesh."""
         self.server.start()

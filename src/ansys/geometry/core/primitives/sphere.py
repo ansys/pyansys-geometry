@@ -1,4 +1,4 @@
-"""Provides the ``Sphere`` class."""
+"""Provides for creating and managing a sphere."""
 
 from functools import cached_property
 
@@ -29,7 +29,7 @@ from ansys.geometry.core.typing import Real, RealSequence
 
 class Sphere:
     """
-    Provides 3D ``Sphere`` representation.
+    Provides 3D sphere representation.
 
     Parameters
     ----------
@@ -51,7 +51,7 @@ class Sphere:
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
-        """Initialize ``Sphere`` class."""
+        """Initialize the ``Sphere`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
 
         self._reference = (
@@ -117,12 +117,12 @@ class Sphere:
         Parameters
         ----------
         matrix : Matrix44
-            The transformation matrix to apply to the sphere.
+            4X4 transformation matrix to apply to the sphere.
 
         Returns
         -------
         Sphere
-            A new sphere that is the transformed copy of the original sphere.
+            New sphere that is the transformed copy of the original sphere.
         """
         new_point = self.origin.transform(matrix)
         new_reference = self._reference.transform(matrix)
@@ -140,8 +140,8 @@ class Sphere:
 
         Returns
         -------
-        Torus
-            A new sphere that is a mirrored copy of the original sphere.
+        Sphere
+            New sphere that is a mirrored copy of the original sphere.
         """
         return Sphere(self.origin, self.radius, -self._reference, -self._axis)
 
@@ -152,28 +152,28 @@ class Sphere:
         Parameters
         ----------
         parameter : ParamUV
-            The parameters (u,v) at which to evaluate the sphere.
+            Parameters (u,v) to evaluate the sphere at.
 
         Returns
         -------
         SphereEvaluation
-            The resulting evaluation.
+            Resulting evaluation.
         """
         return SphereEvaluation(self, parameter)
 
     def project_point(self, point: Point3D) -> "SphereEvaluation":
         """
-        Project a point onto the sphere and return its ``SphereEvaluation``.
+        Project a point onto the sphere and evaluate the sphere.
 
         Parameters
         ----------
         point : Point3D
-            The point to project onto the sphere.
+            Point to project onto the sphere.
 
         Returns
         -------
         SphereEvaluation
-            The resulting evaluation.
+            Resulting evaluation.
         """
         origin_to_point = point - self.origin
         x = origin_to_point.dot(self.dir_x)
@@ -188,70 +188,70 @@ class Sphere:
 
     def get_u_parameterization(self) -> Parameterization:
         """
-        Retrieve the U parameter parametrization conditions.
+        Get the parametrization conditions for the U parameter.
 
-        The U parameter specifies the longitude angle, increasing clockwise (East) about
-        `dir_z` (right hand corkscrew law). It has a zero parameter at `dir_x`, and a
-        period of 2*pi.
+        The U parameter specifies the longitude angle, increasing clockwise (east) about
+        ``dir_z`` (right-hand corkscrew law). It has a zero parameter at ``dir_x`` and a
+        period of ``2*pi``.
 
         Returns
         -------
         Parameterization
-            Information about how a sphere's u parameter is parameterized.
+            Information about how a sphere's U parameter is parameterized.
         """
         return Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
 
     def get_v_parameterization(self) -> Parameterization:
         """
-        Retrieve the V parameter parametrization conditions.
+        Get the parametrization conditions for the V parameter.
 
-        The V parameter specifies the latitude, increasing North, with a zero parameter
-        at the equator, and a range of [-pi/2, pi/2].
+        The V parameter specifies the latitude, increasing north, with a zero parameter
+        at the equator and a range of ``[-pi/2, pi/2]``.
 
         Returns
         -------
         Parameterization
-            Information about how a sphere's v parameter is parameterized.
+            Information about how a sphere's V parameter is parameterized.
         """
         return Parameterization(ParamForm.CLOSED, ParamType.OTHER, Interval(-np.pi / 2, np.pi / 2))
 
 
 class SphereEvaluation(SurfaceEvaluation):
     """
-    Provides ``Sphere`` evaluation at certain parameters.
+    Evaluate a sphere at given parameters.
 
     Parameters
     ----------
     sphere: ~ansys.geometry.core.primitives.sphere.Sphere
-        The ``Sphere`` object to be evaluated.
+        Sphere to evaluate.
     parameter: ParamUV
-        The parameters (u, v) at which the ``Sphere`` evaluation is requested.
+        Parameters (u, v) to evaluate the sphere at.
     """
 
     def __init__(self, sphere: Sphere, parameter: ParamUV) -> None:
-        """``SphereEvaluation`` class constructor."""
+        """Initialize the ``SphereEvaluation`` class."""
         self._sphere = sphere
         self._parameter = parameter
 
     @property
     def sphere(self) -> Sphere:
-        """The sphere being evaluated."""
+        """Sphere being evaluated."""
         return self._sphere
 
     @property
     def parameter(self) -> ParamUV:
-        """The parameter that the evaluation is based upon."""
+        """Parameter that the evaluation is based upon."""
         return self._parameter
 
     @cached_property
     def position(self) -> Point3D:
         """
-        The position of the evaluation.
+        Position of the evaluation.
 
         Returns
         -------
         Point3D
-            The point that lies on the sphere at this evaluation.
+            Point that lies on the sphere at this evaluation.
         """
         return self.sphere.origin + self.sphere.radius.m * self.normal
 
@@ -263,7 +263,7 @@ class SphereEvaluation(SurfaceEvaluation):
         Returns
         -------
         UnitVector3D
-            The normal unit vector to the sphere at this evaluation.
+            Normal unit vector to the sphere at this evaluation.
         """
         return UnitVector3D(
             np.cos(self.parameter.v) * self.__cylinder_normal
@@ -289,24 +289,24 @@ class SphereEvaluation(SurfaceEvaluation):
     @cached_property
     def u_derivative(self) -> Vector3D:
         """
-        The first derivative with respect to u.
+        First derivative with respect to the U parameter.
 
         Returns
         -------
         Vector3D
-            The first derivative with respect to u.
+            First derivative with respect to the U parameter.
         """
         return np.cos(self.parameter.v) * self.sphere.radius.m * self.__cylinder_tangent
 
     @cached_property
     def v_derivative(self) -> Vector3D:
         """
-        The first derivative with respect to v.
+        First derivative with respect to the V parameter.
 
         Returns
         -------
         Vector3D
-            The first derivative with respect to v.
+            First derivative with respect to the V parameter.
         """
         return self.sphere.radius.m * (
             np.cos(self.parameter.v) * self.sphere.dir_z
@@ -316,36 +316,36 @@ class SphereEvaluation(SurfaceEvaluation):
     @cached_property
     def uu_derivative(self) -> Vector3D:
         """
-        The second derivative with respect to u.
+        Second derivative with respect to the U parameter.
 
         Returns
         -------
         Vector3D
-            The second derivative with respect to u.
+            Second derivative with respect to the U parameter.
         """
         return -np.cos(self.parameter.v) * self.sphere.radius.m * self.__cylinder_normal
 
     @cached_property
     def uv_derivative(self) -> Vector3D:
         """
-        The second derivative with respect to u and v.
+        Second derivative with respect to the U and V parameters.
 
         Returns
         -------
         Vector3D
-            The second derivative with respect to u and v.
+            The second derivative with respect to the U and V parameters.
         """
         return -np.sin(self.parameter.v) * self.sphere.radius.m * self.__cylinder_tangent
 
     @cached_property
     def vv_derivative(self) -> Vector3D:
         """
-        The second derivative with respect to v.
+        Second derivative with respect to the V parameter.
 
         Returns
         -------
         Vector3D
-            The second derivative with respect to v.
+            The second derivative with respect to the V parameter.
         """
         return self.sphere.radius.m * (
             -np.sin(self.parameter.v) * self.sphere.dir_z
@@ -355,47 +355,47 @@ class SphereEvaluation(SurfaceEvaluation):
     @cached_property
     def min_curvature(self) -> Real:
         """
-        The minimum curvature of the sphere.
+        Minimum curvature of the sphere.
 
         Returns
         -------
         Real
-            The minimum curvature of the sphere.
+            Minimum curvature of the sphere.
         """
         return 1.0 / self.sphere.radius.m
 
     @cached_property
     def min_curvature_direction(self) -> UnitVector3D:
         """
-        The minimum curvature direction.
+        Minimum curvature direction.
 
         Returns
         -------
         UnitVector3D
-            The minimum curvature direction.
+            Minimum curvature direction.
         """
         return self.normal % self.max_curvature_direction
 
     @cached_property
     def max_curvature(self) -> Real:
         """
-        The maximum curvature of the sphere.
+        Maximum curvature of the sphere.
 
         Returns
         -------
         Real
-            The maximum curvature of the sphere.
+            Maximum curvature of the sphere.
         """
         return 1.0 / self.sphere.radius.m
 
     @cached_property
     def max_curvature_direction(self) -> UnitVector3D:
         """
-        The maximum curvature direction.
+        Maximum curvature direction.
 
         Returns
         -------
         UnitVector3D
-            The maximum curvature direction.
+            Maximum curvature direction.
         """
         return UnitVector3D(self.v_derivative)

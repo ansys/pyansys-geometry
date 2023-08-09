@@ -11,10 +11,16 @@ kernelspec:
   name: python3
 ---
 
-# PyGeometry 101: sketching
+# PyGeometry 101: Sketching
 
-PyGeometry allows the building of powerful dynamic sketches without communicating
-to the Geometry service server. In this example, a demo on how to build these sketches is shown.
+With PyGeometry, you can build powerful dynamic sketches without communicating
+with the Geometry service. This example shows how to build some simple sketches.
+
++++
+
+## Perform required imports
+
+Perform the required imports.
 
 ```{code-cell} ipython3
 from pint import Quantity
@@ -23,10 +29,13 @@ from ansys.geometry.core.math import Plane, Point2D, Point3D, Vector3D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 ```
++++
 
-The ``Sketch`` object is the starting point. Once it is created, you can start
-dynamically adding various curves to the sketch. Some of the available curves are
-listed below.
+## Add a box to sketch
+
+The ``Sketch`` object is the starting point. Once it is created, you can
+dynamically add various curves to the sketch. Here are some of the curves that
+are available:
 
 - ``arc``
 - ``box``
@@ -39,8 +48,9 @@ listed below.
 - ``trapezoid``
 - ``triangle``
 
+This code adds a box to the sketch:
+
 ```{code-cell} ipython3
-# Create a Sketch - Box
 
 sketch = Sketch()
 
@@ -52,11 +62,12 @@ sketch.segment(Point2D([1,0]), Point2D([0,0]))
 sketch.plot()
 ```
 
-A **fluent functional-style sketching API** is also implemented, where you
-can append curves to the sketch with the idea of "never picking up your pen."
+A *functional-style sketching API* is also implemented. It allows you
+to append curves to the sketch with the idea of *never picking up your pen*.
+
+This code shows how to use the functional-style sketching API to add a box:
 
 ```{code-cell} ipython3
-# Fluent Sketching API - Box
 
 sketch = Sketch()
 
@@ -70,11 +81,13 @@ sketch = Sketch()
 sketch.plot()
 ```
 
-By default, a ``Sketch`` uses the XY-plane. You can instead define
-your own ``Plane`` based on an ``origin``, ``direction_x``, and ``direction_y``.
+A ``Sketch`` object uses the XY plane by default. You can define your
+own custom plane using three parameters: ``origin``, ``direction_x``,
+and ``direction_y``.
+
+This code adds a box on a customm plane:
 
 ```{code-cell} ipython3
-# Use a custom plane - Box
 
 plane = Plane(origin=Point3D([0,0,0]), direction_x=Vector3D([1,2,-1]), direction_y=Vector3D([1,0,1]))
 
@@ -85,8 +98,12 @@ sketch.box(Point2D([0,0]), 1, 1)
 sketch.plot()
 ```
 
-Together, all these simple concepts can be combined to create
-powerful sketches. It is up to you to be creative!
++++
+
+## Combine concepts to create powerful sketches
+
+This code shows how to combine all these simple concepts to create
+powerful sketches:
 
 ```{code-cell} ipython3
 # Complex Fluent API Sketch - PCB

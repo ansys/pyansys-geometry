@@ -3,16 +3,17 @@
 Sketch
 *******
 
-In PyGeometry, a :class:`Sketch() <ansys.geometry.core.sketch>` is a class used to build 2D basic shape elements.
-PyGeometry Sketch contains two fundamental constructs:
+The PyGeometry :class:`sketch <ansys.geometry.core.sketch>` subpackage is used to build
+2D basic shapes. Shapes consist of two fundamental constructs:
 
-* Edges - a connection between two or more Point2D along a particular path. It represents open shapes such as arc, lines.
-* Faces - a set of edges that enclose a surface representing closed shapes such as circle, triangle and so on.
+* **Edge**: A connection between two or more 2D points along a particular path. An edge represents an open shape
+  such as an arc or line.
+* **Face**: A set of edges that enclose a surface. A face represents a closed shape such as a circle or triangle.
 
-To initialize the sketch, first you can specify the :class:`Plane() <ansys.geometry.core.math.plane>` which
-represents a plane in space, from which other PyGeometry objects can be located.
+To initialize a sketch, you first specify the :class:`Plane() <ansys.geometry.core.math.plane>` class, which
+represents the plane in space from which other PyGeometry objects can be located.
 
-You can initialize the sketch by:
+This code shows how to initialize a sketch:
 
 .. code:: python
 
@@ -20,17 +21,19 @@ You can initialize the sketch by:
 
     sketch = Sketch()
 
-The sketch can be constructed using different approaches.
+You then construct a sketch, which can be done using different approaches.
 
 Functional-style API
 ====================
 
-This is sometimes termed a 'fluent functional-style api, or fluent API' in the developer community. The latter
-term is avoided in the context of Ansys APIs to avoid confusion with the Ansys Fluent product.
+A functional-style API is sometimes called a *fluent functional-style api* or *fluent API* in the developer community.
+However, to avoid confusion with the Ansys Fluent product, the PyGeometry documentation refrains from using the latter terms.
 
-One of the key features of this approach is keeping an active context based upon the previously created
-edges to use as a reference start point for additional objects.
+One of the key features of a functional-style API is that it keeps an active context based on the previously created
+edges to use as a reference starting point for additional objects.
 
+The following code creates a sketch with its origin as a starting point. Subsequent calls create segments,
+which take as a starting point the last point of the previous edge.
 
 .. code:: python
 
@@ -39,10 +42,9 @@ edges to use as a reference start point for additional objects.
     )
     sketch.plot()
 
-The sketch has been created with its origin as a starting point. Subsequent calls create segments,
-which take as a starting point the last point of the previous edge.
 
-It is also able to get a desired shape of the sketch object by taking advantage of the user-defined labels.
+A functional-style API is also able to get a desired shape of the sketch object by taking advantage
+of user-defined labels:
 
 .. code:: python
 
@@ -60,10 +62,13 @@ It is also able to get a desired shape of the sketch object by taking advantage 
     )
     sketch.plot()
 
-Element-based approach (Direct API)
-===================================
+Direct API
+==========
 
-You can also create multiple elements independently and combine them all together in a single plane.
+A direct API is sometimes called an *element-based approach* in the developer community.
+
+This code shows how you can use a direct API to create multiple elements independently
+and combine them all together in a single plane:
 
 .. code:: python
 
@@ -84,4 +89,5 @@ You can also create multiple elements independently and combine them all togethe
     )
     sketch.plot()
 
-For further details and familiarizing with different sketch shapes, refer to :class:`Sketch() <ansys.geometry.core.sketch>`.
+For more information on sketch shapes, see the :class:`Sketch() <ansys.geometry.core.sketch>`
+subpackage.

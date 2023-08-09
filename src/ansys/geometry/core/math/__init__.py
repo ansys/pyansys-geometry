@@ -1,4 +1,4 @@
-"""Provides the PyGeometry ``math`` subpackage."""
+"""PyGeometry math subpackage."""
 
 from ansys.geometry.core.math.bbox import BoundingBox2D
 from ansys.geometry.core.math.constants import (

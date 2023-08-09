@@ -1,4 +1,4 @@
-"""Module containing the ViewButton widget."""
+"""Provides the view button widget for changing the camera view."""
 
 from enum import Enum
 
@@ -8,7 +8,7 @@ from ansys.geometry.core.plotting.widgets.button import Button
 
 
 class ViewDirection(Enum):
-    """Enumerate with the available views."""
+    """Provides an enum with the available views."""
 
     XYPLUS = 0, "+xy.png", (5, 220)
     XYMINUS = 1, "-xy.png", (5, 251)
@@ -21,29 +21,30 @@ class ViewDirection(Enum):
 
 class ViewButton(Button):
     """
-    Changes the view of a plot to the one selected.
+    Provides for changing the view.
 
     Parameters
     ----------
     plotter : Plotter
-        Plotter on which the buttons will be drawn.
+        Plotter to draw the buttons on.
     direction : ViewDirection
         Direction of the view.
     """
 
     def __init__(self, plotter: Plotter, direction: tuple):
-        """Initialize ``ViewButton`` class."""
+        """Initialize the ``ViewButton`` class."""
         super().__init__(plotter, direction)
         self.direction = direction
 
     def callback(self, state: bool) -> None:
         """
-        Change the view of the camera depending on button interaction.
+        Change the view depending on button interaction.
 
         Parameters
         ----------
         state : bool
-            True if the button is active.
+            State of the button, which is inherited from PyVista. The value is ``True``
+            if the button is active.
 
         Raises
         ------

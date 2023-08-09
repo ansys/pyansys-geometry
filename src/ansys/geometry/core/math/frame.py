@@ -1,4 +1,4 @@
-"""Provides the ``Frame`` class."""
+"""Provides for managing a frame."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Union
@@ -18,7 +18,8 @@ class Frame:
     Parameters
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D], default: ZERO_POINT3D
-        Centered origin of the ``Frame``. The default is the Cartesian origin.
+        Centered origin of the`frame. The default is ``ZERO_POINT3D``, which is the
+        Cartesian origin.
     direction_x : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D], default: UNITVECTOR3D_X
         X-axis direction.
     direction_y : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D], default: UNITVECTOR3D_Y
@@ -32,7 +33,7 @@ class Frame:
         direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Y,
     ):
-        """Initialize ``Frame`` class."""
+        """Initialize the ``Frame`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
         self._direction_x = (
             UnitVector3D(direction_x) if not isinstance(direction_x, UnitVector3D) else direction_x
@@ -85,22 +86,22 @@ class Frame:
 
     @property
     def origin(self) -> Point3D:
-        """Origin of the ``Frame``."""
+        """Origin of the frame."""
         return self._origin
 
     @property
     def direction_x(self) -> UnitVector3D:
-        """X-axis direction of the ``Frame``."""
+        """X-axis direction of the frame."""
         return self._direction_x
 
     @property
     def direction_y(self) -> UnitVector3D:
-        """Y-axis direction of the ``Frame``."""
+        """Y-axis direction of the frame."""
         return self._direction_y
 
     @property
     def direction_z(self) -> UnitVector3D:
-        """Z-axis direction of the ``Frame``."""
+        """Z-axis direction of the frame."""
         return self._direction_z
 
     @property
@@ -111,8 +112,8 @@ class Frame:
         Returns
         -------
         Matrix33
-            A 3x3 matrix representing the transformation from global to local
-            coordinate space excluding origin translation.
+            3x3 matrix representing the transformation from global to local
+            coordinate space, excluding origin translation.
         """
         return self._rotation_matrix
 
@@ -124,7 +125,7 @@ class Frame:
         Returns
         -------
         Matrix33
-            A 3x3 matrix representing the transformation from local to global
+            3x3 matrix representing the transformation from local to global
             coordinate space.
         """
         return self._rotation_matrix.T
@@ -137,7 +138,7 @@ class Frame:
         Returns
         -------
         Matrix44
-            A 4x4 matrix representing the transformation from global to local
+            4x4 matrix representing the transformation from global to local
             coordinate space.
         """
         return self._transformation_matrix
@@ -145,9 +146,9 @@ class Frame:
     @check_input_types
     def transform_point2d_local_to_global(self, point: Point2D) -> Point3D:
         """
-        Transform a ``Point2D`` to a global ``Point3D`` object.
+        Transform a 2D point to a global 3D point.
 
-        Express a local, plane-contained ``Point2D`` object in the global
+        This method transforms a local, plane-contained ``Point2D`` object in the global
         coordinate system, thus representing it as a ``Point3D`` object.
 
         Parameters
@@ -158,7 +159,7 @@ class Frame:
         Returns
         -------
         Point3D
-            Global coordinates ``Point3D`` object.
+            Global coordinates for the 3D point.
         """
         return self.origin + Vector3D(self.local_to_global_rotation @ [point[0], point[1], 0])
 

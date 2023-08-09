@@ -1,4 +1,4 @@
-"""Provides the ``polygon`` class."""
+"""Provides for creating and managing a polygon."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
@@ -20,7 +20,7 @@ class Polygon(SketchFace):
     Parameters
     ----------
     center: Point2D
-        2D pint representing the center of the circle.
+        Center point of the circle.
     inner_radius : Union[Quantity, Distance, Real]
         Inner radius (apothem) of the polygon.
     sides : int
@@ -52,17 +52,17 @@ class Polygon(SketchFace):
 
         # Verify that the number of sides is valid with preferred range
         if sides < 3:
-            raise ValueError("The minimum number of sides to construct a polygon is 3.")
+            raise ValueError("The minimum number of sides to construct a polygon is three.")
         self._n_sides = sides
 
     @property
     def center(self) -> Point2D:
-        """Point that is the center of the polygon."""
+        """Center point of the polygon."""
         return self._center
 
     @property
     def inner_radius(self) -> Quantity:
-        """Inner radius(apothem) of the polygon."""
+        """Inner radius (apothem) of the polygon."""
         return self._inner_radius.value
 
     @property

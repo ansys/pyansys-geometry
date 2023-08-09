@@ -1,4 +1,4 @@
-"""Provides the ``Plane`` class."""
+"""Provides primitive representation of a 2D plane in 3D space."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Union
@@ -18,7 +18,8 @@ class Plane(Frame):
     Parameters
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D], default: ZERO_POINT3D
-        Centered origin of the frame. The default is the Cartesian origin.
+        Centered origin of the frame. The default is ``ZERO_POINT3D``, which is the
+        Cartesian origin.
     direction_x : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D], default: UNITVECTOR3D_X
         X-axis direction.
     direction_y : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D], default: UNITVECTOR3D_Y
@@ -47,7 +48,7 @@ class Plane(Frame):
         Returns
         -------
         bool
-            ``True`` if the 3D point is contained in the plane.
+            ``True`` if the 3D point is contained in the plane, ``False`` otherwise.
         """
         # Compute the plane equation A*(x-x0) + B*(y-y0) + C*(z-z0)
         plane_eq = (
