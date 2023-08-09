@@ -1,4 +1,4 @@
-"""``Module for creating and managing design points."""
+"""Module for creating and managing design points."""
 
 from beartype.typing import TYPE_CHECKING, Union
 

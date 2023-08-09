@@ -205,3 +205,7 @@ latex_additional_files = [watermark, ansys_logo_white, ansys_logo_white_cropped]
 # change the preamble of latex with customized title page
 # variables are the title of pdf, watermark
 latex_elements = {"preamble": latex.generate_preamble(html_title)}
+
+linkcheck_exclude_documents = ["index"]
+linkcheck_anchors_ignore_for_url = ["https://docs.pyvista.org/api/*"]
+linkcheck_ignore = ["https://github.com/ansys/pygeometry/*", "https://geometry.docs.pyansys.com/*"]

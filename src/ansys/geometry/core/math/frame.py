@@ -96,7 +96,7 @@ class Frame:
 
     @property
     def direction_y(self) -> UnitVector3D:
-        """Y-axis direction of the `frame."""
+        """Y-axis direction of the frame."""
         return self._direction_y
 
     @property
