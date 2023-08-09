@@ -23,7 +23,7 @@ project = "ansys-geometry-core"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc."
 release = version = __version__
-cname = os.getenv("DOCUMENTATION_CNAME", default="nocname.com")
+cname = os.getenv("DOCUMENTATION_CNAME", default="geometry.docs.pyansys.com")
 switcher_version = get_version_match(__version__)
 
 # Select desired logo, theme, and declare the html title
@@ -82,12 +82,12 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "pint": ("https://pint.readthedocs.io/en/stable", None),
     "numpy": ("https://numpy.org/devdocs", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
     "pyvista": ("https://docs.pyvista.org/", None),
     "grpc": ("https://grpc.github.io/grpc/python/", None),
     # kept here as an example
     # "matplotlib": ("https://matplotlib.org/stable", None),
-    "pypim": ("https://pypim.docs.pyansys.com/", None),
+    "pypim": ("https://pypim.docs.pyansys.com/version/dev", None),
 }
 
 # numpydoc configuration
