@@ -85,6 +85,7 @@ jobs:
             experimental: true
 
     steps:
+
       - uses: actions/checkout@v3
 
       - name: Set up Python
@@ -118,7 +119,7 @@ jobs:
         run: docker pull ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
 
       - name: Check location of self-hosted runner and define license server accordingly
-        if: runner.name == 'pygeometry-ci-1'
+        if: runner.name == 'pygeometry-ci-1' || runner.name == 'pygeometry-ci-2'
         run:
           echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
@@ -132,8 +133,8 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .\tests\integration\image_cache
-          key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
-          restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
+          key: pyvista-image-cache-${{ runner.name }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
+          restore-keys: pyvista-image-cache-${{ runner.name }}-v-${{ env.RESET_IMAGE_CACHE }}
 
       - name: Testing
         run: |
@@ -144,7 +145,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: integration-test-logs-${{ runner.os }}
+          name: integration-test-logs-${{ matrix.docker-image }}
           path: tests/integration/logs
           retention-days: 7
 
@@ -152,7 +153,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: pytest-pyvista-images-${{ runner.os }}
+          name: pytest-pyvista-images-${{ matrix.docker-image }}
           path: tests/integration/image_cache
           retention-days: 7
 
@@ -221,7 +222,7 @@ jobs:
         run: docker pull $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
 
       - name: Check location of self-hosted runner and define license server accordingly
-        if: runner.name == 'pygeometry-ci-1'
+        if: runner.name == 'pygeometry-ci-1' || runner.name == 'pygeometry-ci-2'
         run:
           echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
@@ -303,7 +304,6 @@ jobs:
         run: |
           docker pull ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
-
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -327,7 +327,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: integration-test-logs-${{ runner.os }}
+          name: integration-test-logs-${{ matrix.docker-image }}
           path: tests/integration/logs
           retention-days: 7
 
@@ -335,7 +335,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: pytest-pyvista-images-${{ runner.os }}
+          name: pytest-pyvista-images-${{ matrix.docker-image }}
           path: tests/integration/image_cache
           retention-days: 7
 

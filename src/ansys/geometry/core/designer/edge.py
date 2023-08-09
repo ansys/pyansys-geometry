@@ -1,4 +1,4 @@
-"""Provides the ``Edge`` class module."""
+"""Module for managing an edge."""
 
 from enum import Enum, unique
 
@@ -18,7 +18,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @unique
 class CurveType(Enum):
-    """Enum holding the possible values for curve types by the Geometry service."""
+    """Provides values for the curve types supported by the Geometry service."""
 
     CURVETYPE_UNKNOWN = 0
     CURVETYPE_LINE = 1
@@ -80,7 +80,7 @@ class Edge:
     @property
     @protect_grpc
     def faces(self) -> List["Face"]:
-        """Get the faces that contain this edge."""
+        """Faces that contain the edge."""
         from ansys.geometry.core.designer.face import Face, SurfaceType
 
         self._grpc_client.log.debug("Requesting edge faces from server.")

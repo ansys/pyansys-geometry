@@ -1,4 +1,4 @@
-"""Provides the ``Design`` class module."""
+"""Provides for managing designs."""
 
 from enum import Enum
 from pathlib import Path
@@ -55,7 +55,7 @@ from ansys.geometry.core.typing import RealSequence
 
 
 class DesignFileFormat(Enum):
-    """Provides file formats supported by the ``Design`` class for download."""
+    """Provides supported file formats that can be downloaded for designs."""
 
     SCDOCX = "SCDOCX", None
     PARASOLID_TEXT = "PARASOLID_TEXT", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_TEXT
@@ -68,7 +68,7 @@ class DesignFileFormat(Enum):
 
 class Design(Component):
     """
-    Provides the ``Design`` class for organizing geometry assemblies.
+    Provides for organizing geometry assemblies.
 
     This class synchronizes to a supporting Geometry service instance.
 
@@ -78,11 +78,10 @@ class Design(Component):
         User-defined label for the design.
     grpc_client : GrpcClient
         Active supporting Geometry service instance for design modeling.
-    read_existing_design : bool, optional
-        Indicates whether an existing design on the service should be read
-        or not. By default, ``False``. This is only valid when connecting
-        to an existing service session. Otherwise, avoid using this optional
-        argument.
+    read_existing_design : bool, default: False
+        Whether an existing design on the service should be read. This parameter is
+        only valid when connecting to an existing service session. Otherwise, avoid
+        using this optional parameter.
     """
 
     # Types of the class instance private attributes
@@ -93,7 +92,7 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     def __init__(self, name: str, grpc_client: GrpcClient, read_existing_design: bool = False):
-        """Initialize ``Design`` class."""
+        """Initialize the ``Design`` class."""
         super().__init__(name, None, grpc_client)
 
         # Initialize the stubs needed
@@ -264,7 +263,7 @@ class Design(Component):
         Returns
         -------
         NamedSelection
-            Newly created named selection maintaining references to all target entities.
+            Newly created named selection that maintains references to all target entities.
         """
         named_selection = NamedSelection(
             name,
@@ -277,7 +276,9 @@ class Design(Component):
         )
         self._named_selections[named_selection.name] = named_selection
 
-        self._grpc_client.log.debug(f"Named selection {named_selection.name} successfully created.")
+        self._grpc_client.log.debug(
+            f"Named selection {named_selection.name} is successfully created."
+        )
 
         return self._named_selections[named_selection.name]
 

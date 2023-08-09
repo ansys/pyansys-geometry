@@ -3,10 +3,10 @@ Examples
 
 These examples demonstrate the behavior and usage of PyGeometry.
 
-PyGeometry 101 demos
---------------------
-These examples demonstrate basic demos of different operations you
-can perform with PyGeometry.
+PyGeometry 101 examples
+-----------------------
+These examples demonstrate basic operations you can perform
+with PyGeometry.
 
 .. nbgallery::
 
@@ -18,7 +18,7 @@ can perform with PyGeometry.
 Sketching examples
 ------------------
 These examples demonstrate math operations on geometric objects
-and sketching capabilities - combined with server-based operations.
+and sketching capabilities, combined with server-based operations.
 
 .. nbgallery::
 

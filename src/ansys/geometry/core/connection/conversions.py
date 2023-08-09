@@ -1,4 +1,4 @@
-"""Provides the ``Conversions`` module."""
+"""Module providing for conversions."""
 
 from ansys.api.geometry.v0.models_pb2 import Arc as GRPCArc
 from ansys.api.geometry.v0.models_pb2 import Circle as GRPCCircle
@@ -32,7 +32,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 def unit_vector_to_grpc_direction(unit_vector: UnitVector3D) -> GRPCDirection:
     """
-    Marshals a ``UnitVector3D`` class to a unit vector Geometry service gRPC message.
+    Convert a ``UnitVector3D`` class to a unit vector Geometry service gRPC message.
 
     Parameters
     ----------
@@ -49,7 +49,7 @@ def unit_vector_to_grpc_direction(unit_vector: UnitVector3D) -> GRPCDirection:
 
 def frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
     """
-    Marshals a ``Frame`` class to a frame Geometry service gRPC message.
+    Convert a ``Frame`` class to a frame Geometry service gRPC message.
 
     Parameters
     ----------
@@ -70,7 +70,7 @@ def frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
 
 def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
     """
-    Marshals a ``Plane`` class to a plane Geometry service gRPC message.
+    Convert a ``Plane`` class to a plane Geometry service gRPC message.
 
     Parameters
     ----------
@@ -98,7 +98,7 @@ def sketch_shapes_to_grpc_geometries(
     only_one_curve: Optional[bool] = False,
 ) -> Geometries:
     """
-    Marshals a list of ``SketchEdge`` and ``SketchFace`` to a geometries gRPC message.
+    Convert lists of ``SketchEdge`` and ``SketchFace`` to a ``Geometries`` gRPC message.
 
     Parameters
     ----------
@@ -160,7 +160,7 @@ def sketch_edges_to_grpc_geometries(
     plane: Plane,
 ) -> Tuple[List[GRPCLine], List[GRPCArc]]:
     """
-    Marshals a list of ``SketchEdge`` to a geometries gRPC message.
+    Convert a list of ``SketchEdge`` to a ``Geometries`` gRPC message.
 
     Parameters
     ----------
@@ -187,7 +187,7 @@ def sketch_edges_to_grpc_geometries(
 
 def sketch_arc_to_grpc_arc(arc: Arc, plane: Plane) -> GRPCArc:
     """
-    Marshals an ``Arc`` class to an arc Geometry service gRPC message.
+    Convert an ``Arc`` class to an arc Geometry service gRPC message.
 
     Parameters
     ----------
@@ -217,7 +217,7 @@ def sketch_arc_to_grpc_arc(arc: Arc, plane: Plane) -> GRPCArc:
 
 def sketch_ellipse_to_grpc_ellipse(ellipse: SketchEllipse, plane: Plane) -> GRPCEllipse:
     """
-    Marshals a ``SketchEllipse`` class to an ellipse Geometry service gRPC message.
+    Convert a ``SketchEllipse`` class to an ellipse Geometry service gRPC message.
 
     Parameters
     ----------
@@ -239,7 +239,7 @@ def sketch_ellipse_to_grpc_ellipse(ellipse: SketchEllipse, plane: Plane) -> GRPC
 
 def sketch_circle_to_grpc_circle(circle: SketchCircle, plane: Plane) -> GRPCCircle:
     """
-    Marshals a ``SketchCircle`` class to a circle Geometry service gRPC message.
+    Convert a ``SketchCircle`` class to a circle Geometry service gRPC message.
 
     Parameters
     ----------
@@ -261,7 +261,7 @@ def sketch_circle_to_grpc_circle(circle: SketchCircle, plane: Plane) -> GRPCCirc
 
 def point3d_to_grpc_point(point: Point3D) -> GRPCPoint:
     """
-    Marshals a ``Point3D`` class to a point Geometry service gRPC message.
+    Convert a ``Point3D`` class to a point Geometry service gRPC message.
 
     Parameters
     ----------
@@ -282,7 +282,7 @@ def point3d_to_grpc_point(point: Point3D) -> GRPCPoint:
 
 def point2d_to_grpc_point(plane: Plane, point2d: Point2D) -> GRPCPoint:
     """
-    Marshals a ``Point2D`` class to a point Geometry service gRPC message.
+    Convert a ``Point2D`` class to a point Geometry service gRPC message.
 
     Parameters
     ----------
@@ -306,7 +306,7 @@ def point2d_to_grpc_point(plane: Plane, point2d: Point2D) -> GRPCPoint:
 
 def sketch_polygon_to_grpc_polygon(polygon: Polygon, plane: Plane) -> GRPCPolygon:
     """
-    Marshals a ``Polygon`` class to a polygon Geometry service gRPC message.
+    Convert a ``Polygon`` class to a polygon Geometry service gRPC message.
 
     Parameters
     ----------
@@ -328,7 +328,7 @@ def sketch_polygon_to_grpc_polygon(polygon: Polygon, plane: Plane) -> GRPCPolygo
 
 def sketch_segment_to_grpc_line(segment: SketchSegment, plane: Plane) -> GRPCLine:
     """
-    Marshals a ``Segment`` class to a line Geometry service gRPC message.
+    Convert a ``Segment`` class to a line Geometry service gRPC message.
 
     Parameters
     ----------
@@ -347,7 +347,7 @@ def sketch_segment_to_grpc_line(segment: SketchSegment, plane: Plane) -> GRPCLin
 
 
 def tess_to_pd(tess: Tessellation) -> "PolyData":
-    """Convert an ``ansys.api.geometry.Tessellation`` to `pyvista.PolyData`."""
+    """Convert an ``ansys.api.geometry.Tessellation`` to ``pyvista.PolyData``."""
     # lazy imports here to improve initial load
     import numpy as np
     import pyvista as pv
@@ -374,7 +374,7 @@ def grpc_matrix_to_matrix(m: GRPCMatrix) -> Matrix44:
 
 def grpc_frame_to_frame(frame: GRPCFrame) -> Frame:
     """
-    Convert an ``ansys.api.geometry.Frame`` grpc message to a ``Frame`` class.
+    Convert an ``ansys.api.geometry.Frame`` gRPC message to a ``Frame`` class.
 
     Parameters
     ----------
