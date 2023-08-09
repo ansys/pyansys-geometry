@@ -370,6 +370,7 @@ jobs:
         run: |
           curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/DockerWindows.zip --output windows-binaries.zip
           curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/DockerLinux.zip --output linux-binaries.zip
+
       - name: Upload Windows binaries as workflow artifacts
         uses: actions/upload-artifact@v3
         with:
