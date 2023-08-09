@@ -44,7 +44,7 @@ class Plotter:
         color_opts: Optional[Dict] = None,
         num_points: int = 100,
         enable_widgets: bool = True,
-    ):
+    ) -> None:
         """Initialize the plotter."""
         # Generate custom scene if ``None`` is provided
         if scene is None:
