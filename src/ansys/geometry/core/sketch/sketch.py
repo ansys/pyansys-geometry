@@ -303,6 +303,11 @@ class Sketch:
         """
         Add a segment to the sketch starting from a given starting point.
 
+        Notes
+        -----
+        Vector magnitude determines the segment endpoint.
+        Vector magnitude is assumed to use the same unit as the starting point.
+
         Parameters
         ----------
         start : Point2D

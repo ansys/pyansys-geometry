@@ -13,7 +13,7 @@ PyGeometry is a Python client library for the Ansys Geometry service.
 
             Learn how to run the Windows Docker container, install the
             PyGeometry image, and launch and connect to the Geometry
-            servicve.
+            service.
 
             +++
 

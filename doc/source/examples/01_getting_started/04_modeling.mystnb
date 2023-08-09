@@ -26,7 +26,7 @@ services that available for connection:
 - **Geometry service**: Linux-based approach of DMS that is currently under development.
 - **Ansys Discovery and SpaceClaim**: PyGeometry is capable of connecting to a running session
   of Ansys Discovery or SpaceClaim. Although this is not the main use case for PyGeometry,
-  a connection to one of these Ansys products is possible. Because of these products have
+  a connection to one of these Ansys products is possible. Because these products have
   graphical user interfaces, performance is not as high with this option as with the previous
   options. However, connecting to a running instance of Discovery or SpaceClaim might be
   useful for some users.
@@ -36,7 +36,7 @@ services that available for connection:
 ## Launch a modeling service
 
 While the PyGeometry operations in earlier examples did not require communication with
-a modeling service, this example requires that a modeling service be available. All subsequent
+a modeling service, this example requires that a modeling service is available. All subsequent
 examples also require that a modeling service be available.
 
 This code shows how to launch a modeling service session:
@@ -171,7 +171,7 @@ body_copy.translate(direction=UNITVECTOR3D_X, distance=Distance(10, unit=UNITS.m
 design.plot()
 ```
 
-This code shows how create and assign materials to the bodies that were created:
+This code shows how to create and assign materials to the bodies that were created:
 
 ```{code-cell} ipython3
 from pint import Quantity
@@ -208,7 +208,7 @@ body_copy.assign_material(material)
 
 Currently materials do not have any impact on the visualization when plotting
 is requested, although this could possibly be a future feature. If the final
-assembly is open in Discovery or SpaceClaimChanges, you can observe the changes.
+assembly is open in Discovery or SpaceClaim, you can observe the changes.
 
 +++
 

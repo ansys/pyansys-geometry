@@ -164,7 +164,7 @@ class Accuracy:
         -------
         bool
             ``True`` if the values are inside the accepted tolerances,
-             ``False`` otherwise.
+            ``False`` otherwise.
         """
         # The code doesn't work for comparing infinity and non-infinite numbers!
         a_is_infinite = math.isinf(a)

@@ -129,7 +129,7 @@ is defined by:
 
 If no direction vectors are provided, the plane defaults to the XY plane.
 
-This code shows create planes:
+This code shows how to create planes:
 
 ```{code-cell} ipython3
 plane = Plane(Point3D([0,0,0])) # XY plane

@@ -94,7 +94,7 @@ For example, on Linux with Python 3.8, unzip the wheelhouse archive and install 
 If you're on Windows with Python 3.9, unzip the wheelhouse archive to a wheelhouse directory
 and then install using the same ``pip install`` command as in the preceding example.
 
-Consider installing using a virtual environment. For more information, see`Creation of virtual
+Consider installing using a virtual environment. For more information, see `Creation of virtual
 environments <https://docs.python.org/3/library/venv.html>`_ in the Python documentation.
 
 Verify your installation

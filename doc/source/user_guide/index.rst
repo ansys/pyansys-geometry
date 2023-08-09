@@ -40,7 +40,7 @@ the Geometry service. By default, the ``Modeler`` instance connects to
 ``127.0.0.1`` (``"localhost"``) on port ``50051``. You can change this
 by modifying the ``host`` and ``port`` parameters of the ``Modeler`` object,
 but note that you must also modify your ``docker run`` command by changing
-the ``<HOST-PORT>-50051`` argument.
+the ``<HOST-PORT>:50051`` argument.
 
 This code starts an instance of the Geometry service:
 

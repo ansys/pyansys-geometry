@@ -65,7 +65,7 @@ sketch = Sketch()
 
 ## Extrude sketch to create design
 
-The following code establishes a server connection and usese the single sketch profile to extrude
+The following code establishes a server connection and uses the single sketch profile to extrude
 the base component at the Z axis. A named selection is created from the
 resulting list of bodies. In only three server calls, the design extrudes
 the four segments with the desired thickness.

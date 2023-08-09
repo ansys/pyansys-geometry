@@ -183,7 +183,7 @@ class Distance(Measurement):
     ----------
     value : Union[Real, Quantity]
         Value of the distance.
-    unit : ~pint.Unit, default: ``DEFAULT_UNITS.LENGTH``
+    unit : ~pint.Unit, default: DEFAULT_UNITS.LENGTH
         Units for the distance.
     """
 
@@ -202,7 +202,7 @@ class Angle(Measurement):
     ----------
     value : Union[Real, Quantity]
         Value of the angle.
-    unit : ~pint.Unit, default: ``DEFAULT_UNITS.ANGLE``
+    unit : ~pint.Unit, default: DEFAULT_UNITS.ANGLE
         Units for the distance.
     """
 

@@ -96,7 +96,8 @@ class Cylinder:
         """
         Get the surface area of the cylinder.
 
-        .. note::
+        Notes
+        -----
            By nature, a cylinder is infinite. If you want to get the surface area,
            you must bound it by a height. Normally a cylinder surface is not closed
            (does not have "caps" on the ends). This method assumes that the cylinder
@@ -122,7 +123,8 @@ class Cylinder:
         """
         Get the volume of the cylinder.
 
-        .. note::
+        Notes
+        -----
            By nature, a cylinder is infinite. If you want to get the surface area,
            you must bound it by a height. Normally a cylinder surface is not closed
            (does not have "caps" on the ends). This method assumes that the cylinder

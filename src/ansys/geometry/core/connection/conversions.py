@@ -160,7 +160,7 @@ def sketch_edges_to_grpc_geometries(
     plane: Plane,
 ) -> Tuple[List[GRPCLine], List[GRPCArc]]:
     """
-    Convert a list of ``SketchEdge`` to a geometries gRPC message.
+    Convert a list of ``SketchEdge`` to a ``Geometries`` gRPC message.
 
     Parameters
     ----------

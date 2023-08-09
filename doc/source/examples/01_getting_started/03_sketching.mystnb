@@ -14,7 +14,7 @@ kernelspec:
 # PyGeometry 101: Sketching
 
 With PyGeometry, you can build powerful dynamic sketches without communicating
-with the Geometry service. This example shows how to build some simpple sketches.
+with the Geometry service. This example shows how to build some simple sketches.
 
 +++
 

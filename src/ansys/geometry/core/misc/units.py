@@ -1,4 +1,4 @@
-"""Provides fr handling units homogeneously throughout PyGeometry."""
+"""Provides for handling units homogeneously throughout PyGeometry."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional

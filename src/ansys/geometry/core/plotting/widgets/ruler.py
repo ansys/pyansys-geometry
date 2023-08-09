@@ -43,7 +43,7 @@ class Ruler(PlotterWidget):
         ----------
         state : bool
             State of the button, which is inherited from PyVista. The value is ``True``
-            if the button is active
+            if the button is active.
         """
         if not state and self._actor:
             self.plotter.remove_actor(self._actor)
