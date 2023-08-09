@@ -228,7 +228,7 @@ class Plotter:
         Returns
         -------
         str:
-            Name of the added PyVista Actor.
+            Name of the added PyVista actor.
         """
         # Use the default PyGeometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
@@ -269,7 +269,7 @@ class Plotter:
         Returns
         -------
         str:
-            Name of the added PyVista Actor.
+            Name of the added PyVista actor.
         """
         # Use the default PyGeometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
