@@ -46,7 +46,7 @@ class Plotter:
         color_opts: Optional[Dict] = None,
         num_points: int = 100,
         enable_widgets: bool = True,
-    ):
+    ) -> None:
         """Initialize the plotter."""
         # Generate custom scene if ``None`` is provided
         if scene is None:
@@ -211,7 +211,7 @@ class Plotter:
 
     def add_body(
         self, body: Body, merge: Optional[bool] = False, **plotting_options: Optional[Dict]
-    ) -> None:
+    ) -> str:
         """
         Add a body to the scene.
 
@@ -226,14 +226,21 @@ class Plotter:
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
+
+        Returns
+        -------
+        str
+            Name of the added PyVista actor.
         """
         # Use the default PyGeometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
         dataset = body.tessellate(merge=merge)
         if isinstance(dataset, pv.MultiBlock):
-            self.scene.add_composite(dataset, **plotting_options)
+            actor, _ = self.scene.add_composite(dataset, **plotting_options)
         else:
-            self.scene.add_mesh(dataset, **plotting_options)
+            actor = self.scene.add_mesh(dataset, **plotting_options)
+
+        return actor.name
 
     def add_component(
         self,
@@ -241,7 +248,7 @@ class Plotter:
         merge_component: bool = False,
         merge_bodies: bool = False,
         **plotting_options,
-    ) -> None:
+    ) -> str:
         """
         Add a component to the scene.
 
@@ -260,14 +267,21 @@ class Plotter:
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
+
+        Returns
+        -------
+        str
+            Name of the added PyVista actor.
         """
         # Use the default PyGeometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
         if isinstance(dataset, pv.MultiBlock):
-            self.scene.add_composite(dataset, **plotting_options)
+            actor, _ = self.scene.add_composite(dataset, **plotting_options)
         else:
-            self.scene.add_mesh(dataset, **plotting_options)
+            actor = self.scene.add_mesh(dataset, **plotting_options)
+
+        return actor.name
 
     def add_sketch_polydata(self, polydata_entries: List[pv.PolyData], **plotting_options) -> None:
         """
@@ -291,7 +305,7 @@ class Plotter:
         merge_bodies: bool = False,
         merge_components: bool = False,
         **plotting_options,
-    ):
+    ) -> Dict[str, str]:
         """
         Add any type of object to the scene.
 
@@ -313,9 +327,14 @@ class Plotter:
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
+
+        Returns
+        -------
+        Mapping[str, str]
+            Mapping between the pv.Actor and the PyGeometry object.
         """
         logger.debug(f"Adding object type {type(object)} to the PyVista plotter")
-
+        actor_name = None
         if isinstance(object, List) and isinstance(object[0], pv.PolyData):
             self.add_sketch_polydata(object, **plotting_options)
         elif isinstance(object, pv.PolyData):
@@ -325,11 +344,14 @@ class Plotter:
         elif isinstance(object, Sketch):
             self.plot_sketch(object, **plotting_options)
         elif isinstance(object, Body) or isinstance(object, MasterBody):
-            self.add_body(object, merge_bodies, **plotting_options)
+            actor_name = self.add_body(object, merge_bodies, **plotting_options)
         elif isinstance(object, Design) or isinstance(object, Component):
-            self.add_component(object, merge_components, merge_bodies, **plotting_options)
+            actor_name = self.add_component(
+                object, merge_components, merge_bodies, **plotting_options
+            )
         else:
             logger.warning(f"Object type {type(object)} can not be plotted.")
+        return {actor_name: object.name} if actor_name else {}
 
     def add_list(
         self,
@@ -337,7 +359,7 @@ class Plotter:
         merge_bodies: bool = False,
         merge_components: bool = False,
         **plotting_options,
-    ):
+    ) -> Dict[str, str]:
         """
         Add a list of any type of object to the scene.
 
@@ -359,9 +381,20 @@ class Plotter:
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
+
+        Returns
+        -------
+        Mapping[str, str]
+            Dictionary with the mapping between pv.Actor and PyGeometry objects.
         """
+        actors_objects_mapping = {}
         for object in plotting_list:
-            self.add(object, merge_bodies, merge_components, **plotting_options)
+            actor_object_mapping = self.add(
+                object, merge_bodies, merge_components, **plotting_options
+            )
+            if actor_object_mapping:
+                actors_objects_mapping.update(actor_object_mapping)
+        return actors_objects_mapping
 
     def show(
         self,
@@ -434,9 +467,13 @@ class PlotterHelper:
         Whether to enable the use of `trame <https://kitware.github.io/trame/index.html>`_.
         The default is ``None``, in which case the ``USE_TRAME`` global setting
         is used.
+    allow_picking: bool, default: False
+        Enables/disables the picking capabilities in the PyVista plotter.
     """
 
-    def __init__(self, use_trame: Optional[bool] = None) -> None:
+    def __init__(
+        self, use_trame: Optional[bool] = None, allow_picking: Optional[bool] = False
+    ) -> None:
         """Initialize ``use_trame`` and save current ``pv.OFF_SCREEN`` value."""
         # Check if the use of trame was requested
         if use_trame is None:
@@ -445,31 +482,60 @@ class PlotterHelper:
             use_trame = pygeom.USE_TRAME
 
         self._use_trame = use_trame
+        self._allow_picking = allow_picking
         self._pv_off_screen_original = bool(pv.OFF_SCREEN)
+        self._actor_object_mapping = {}
+        self._pl = None
 
-    def init_plotter(self):
-        """
-        Initialize the plotter with or without trame for visualization.
-
-        Returns
-        -------
-        Plotter
-            PyGeometry plotter initialized.
-        """
         if self._use_trame and _HAS_TRAME:
             # avoids GUI window popping up
             pv.OFF_SCREEN = True
-            pl = Plotter(enable_widgets=False)
+            self._pl = Plotter(enable_widgets=False)
         elif self._use_trame and not _HAS_TRAME:
             warn_msg = (
                 "'use_trame' is active but trame dependencies are not installed."
                 "Consider installing 'pyvista[trame]' to use this functionality."
             )
             logger.warning(warn_msg)
-            pl = Plotter()
+            self._pl = Plotter()
         else:
-            pl = Plotter()
-        return pl
+            self._pl = Plotter()
+
+        if self._allow_picking:
+            self._pl.scene.enable_mesh_picking(
+                callback=self.picker_callback, use_actor=True, show=False
+            )
+
+    def reset(self) -> None:
+        """Reset actor properties at callback."""
+        for a in self._pl.scene.renderer.actors.values():
+            if isinstance(a, pv.Actor):
+                a.prop.show_edges = False
+
+    def picker_callback(self, actor: "pv.Actor") -> None:
+        """
+        Define callback for the element picker.
+
+        Parameters
+        ----------
+        actor : pv.Actor
+            Actor that we are picking.
+        """
+        self.reset()
+        pt = self._pl.scene.picked_point
+        self._actor_object_mapping.keys
+        if actor.name in self._actor_object_mapping:
+            body_name = self._actor_object_mapping[actor.name]
+            actor.prop.show_edges = True
+            text = body_name
+            self._pl.scene.add_point_labels(
+                [pt],
+                [text],
+                always_visible=True,
+                point_size=10,
+                render_points_as_spheres=True,
+                name="selection-label",
+            )
 
     def plot(
         self,
@@ -479,7 +545,7 @@ class PlotterHelper:
         merge_component: bool = False,
         view_2d: Dict = None,
         **plotting_options,
-    ):
+    ) -> None:
         """
         Plot and show any PyGeometry object.
 
@@ -506,21 +572,24 @@ class PlotterHelper:
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
         """
-        pl = self.init_plotter()
         if isinstance(object, List) and not isinstance(object[0], pv.PolyData):
             logger.debug("Plotting objects in list...")
-            pl.add_list(object, merge_bodies, merge_component, **plotting_options)
+            self._actor_object_mapping = self._pl.add_list(
+                object, merge_bodies, merge_component, **plotting_options
+            )
         else:
-            pl.add(object, merge_bodies, merge_component, **plotting_options)
+            self._actor_object_mapping = self._pl.add(
+                object, merge_bodies, merge_component, **plotting_options
+            )
 
         if view_2d is not None:
-            pl.scene.view_vector(
+            self._pl.scene.view_vector(
                 vector=view_2d["vector"],
                 viewup=view_2d["viewup"],
             )
-        self.show_plotter(pl, screenshot)
+        self.show_plotter(screenshot)
 
-    def show_plotter(self, plotter: Plotter, screenshot: Optional[str] = None):
+    def show_plotter(self, screenshot: Optional[str] = None) -> None:
         """
         Show the plotter or start the `trame <https://kitware.github.io/trame/index.html>`_ service.
 
@@ -533,8 +602,9 @@ class PlotterHelper:
         """
         if self._use_trame and _HAS_TRAME:
             visualizer = TrameVisualizer()
-            visualizer.set_scene(plotter)
+            visualizer.set_scene(self._pl)
             visualizer.show()
         else:
-            plotter.show(screenshot=screenshot)
+            self._pl.show(screenshot=screenshot)
+
         pv.OFF_SCREEN = self._pv_off_screen_original
