@@ -1,4 +1,4 @@
-"""Provides common checks."""
+"""Provides functions for performing common checks."""
 from beartype.typing import Optional, Tuple, Union
 import numpy as np
 from pint import Unit
@@ -32,7 +32,7 @@ def check_ndarray_is_float_int(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
     """
-    Check if a :class:`numpy.ndarray <numpy.ndarray>` has float/integer values.
+    Check if a :class:`numpy.ndarray <numpy.ndarray>` has float or integer values.
 
     Parameters
     ----------
@@ -91,7 +91,7 @@ def check_ndarray_is_all_nan(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
     """
-    Check if the :class:`numpy.ndarray <numpy.ndarray>` is all nan-valued.
+    Check if a :class:`numpy.ndarray <numpy.ndarray>` is all nan-valued.
 
     Parameters
     ----------
@@ -103,7 +103,7 @@ def check_ndarray_is_all_nan(
     Raises
     ------
     ValueError
-        If the :class:`numpy.ndarray <numpy.ndarray>` is all nan-valued.
+        If the :class:`numpy.ndarray <numpy.ndarray>` instance is all nan-valued.
     """
     if np.isnan(param).all():
         raise ValueError(
@@ -117,7 +117,7 @@ def check_ndarray_is_non_zero(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
     """
-    Check if the :class:`numpy.ndarray <numpy.ndarray>` is zero-valued.
+    Check if a :class:`numpy.ndarray <numpy.ndarray>` is zero-valued.
 
     Parameters
     ----------
@@ -142,7 +142,7 @@ def check_ndarray_is_non_zero(
 
 def check_pint_unit_compatibility(input: Unit, expected: Unit) -> None:
     """
-    Check if the input for the :class:`pint.Unit` is compatible with the expected one.
+    Check if input for :class:`pint.Unit` is compatible with the expected input.
 
     Parameters
     ----------
@@ -154,7 +154,7 @@ def check_pint_unit_compatibility(input: Unit, expected: Unit) -> None:
     Raises
     ------
     TypeError
-        If the input is not a compatible with the :class:`pint.Unit` class.
+        If the input is not compatible with the :class:`pint.Unit` class.
     """
     if not input.is_compatible_with(expected):
         raise TypeError(
@@ -164,7 +164,7 @@ def check_pint_unit_compatibility(input: Unit, expected: Unit) -> None:
 
 def check_type_equivalence(input: object, expected: object) -> None:
     """
-    Check if the input object provided is of the same class as the expected object.
+    Check if an input object is of the same class as an expected object.
 
     Parameters
     ----------
@@ -176,7 +176,7 @@ def check_type_equivalence(input: object, expected: object) -> None:
     Raises
     ------
     TypeError
-        If they are not of the same class.
+        If the objects are not of the same class.
     """
     if not isinstance(input, type(expected)):
         raise TypeError(
@@ -186,14 +186,14 @@ def check_type_equivalence(input: object, expected: object) -> None:
 
 def check_type(input: object, expected_type: Union[type, Tuple[type, ...]]) -> None:
     """
-    Check if the input object provided is of the same type as the expected types.
+    Check if an input object is of the same type as expected types.
 
     Parameters
     ----------
     input : object
         Input object.
     expected_type : Union[type, Tuple[type, ...]]
-        One or more types to compare against.
+        One or more types to compare the input object against.
 
     Raises
     ------

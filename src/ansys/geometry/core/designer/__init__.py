@@ -1,4 +1,4 @@
-"""Provides the PyGeometry ``designer`` subpackage."""
+"""PyGeometry designer subpackage."""
 
 from ansys.geometry.core.designer.body import Body, MasterBody, MidSurfaceOffsetType
 from ansys.geometry.core.designer.component import Component, SharedTopologyType

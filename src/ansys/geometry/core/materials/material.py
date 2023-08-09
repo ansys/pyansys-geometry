@@ -1,4 +1,4 @@
-"""Provides the ``Material`` class."""
+"""Provides the data structure for material and for adding a material property."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Dict, Optional, Sequence
@@ -28,7 +28,7 @@ class Material:
         density: Quantity,
         additional_properties: Optional[Sequence[MaterialProperty]] = None,
     ):
-        """Initialize ``Material`` class."""
+        """Initialize the ``Material`` class."""
         self._name = name
         self._density = MaterialProperty(MaterialPropertyType.DENSITY, "Density", density)
         if not additional_properties:
@@ -42,7 +42,7 @@ class Material:
 
     @property
     def properties(self) -> Dict[MaterialPropertyType, MaterialProperty]:
-        """List of material properties."""
+        """Dictionary of the material property type and material properties."""
         return self._properties
 
     @property
@@ -52,16 +52,17 @@ class Material:
 
     @check_input_types
     def add_property(self, type: MaterialPropertyType, name: str, quantity: Quantity) -> None:
-        """Add a material property to the ``Material`` class.
+        """
+        Add a material property to the ``Material`` class.
 
         Parameters
         ----------
         type : MaterialPropertyType
-            Type of the material property.
+            Material property type.
         name: str
             Material name.
         quantity: ~pint.Quantity
-            Value and unit.
+            Material value and unit.
         """
         property = MaterialProperty(type, name, quantity)
         self._properties[property.type] = property

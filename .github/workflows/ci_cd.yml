@@ -11,7 +11,6 @@ on:
 env:
   MAIN_PYTHON_VERSION: '3.10'
   PACKAGE_NAME: 'ansys-geometry-core'
-  PACKAGE_NAMESPACE: 'ansys.geometry.core'
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
   ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
   ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/ansys/geometry:windows-latest
@@ -64,7 +63,6 @@ jobs:
         uses: ansys/actions/build-wheelhouse@v4
         with:
           library-name: ${{ env.PACKAGE_NAME }}
-          library-namespace: ${{ env.PACKAGE_NAMESPACE }}
           operating-system: ${{ matrix.os }}
           python-version: ${{ matrix.python-version }}
 
@@ -87,6 +85,7 @@ jobs:
             experimental: true
 
     steps:
+
       - uses: actions/checkout@v3
 
       - name: Set up Python
@@ -120,7 +119,7 @@ jobs:
         run: docker pull ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
 
       - name: Check location of self-hosted runner and define license server accordingly
-        if: runner.name == 'pygeometry-ci-1'
+        if: runner.name == 'pygeometry-ci-1' || runner.name == 'pygeometry-ci-2'
         run:
           echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
@@ -134,8 +133,8 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .\tests\integration\image_cache
-          key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
-          restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
+          key: pyvista-image-cache-${{ runner.name }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
+          restore-keys: pyvista-image-cache-${{ runner.name }}-v-${{ env.RESET_IMAGE_CACHE }}
 
       - name: Testing
         run: |
@@ -146,7 +145,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: integration-test-logs-${{ runner.os }}
+          name: integration-test-logs-${{ matrix.docker-image }}
           path: tests/integration/logs
           retention-days: 7
 
@@ -154,7 +153,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: pytest-pyvista-images-${{ runner.os }}
+          name: pytest-pyvista-images-${{ matrix.docker-image }}
           path: tests/integration/image_cache
           retention-days: 7
 
@@ -175,6 +174,15 @@ jobs:
           docker stop $env:GEO_CONT_NAME
           docker logs $env:GEO_CONT_NAME
           docker rm $env:GEO_CONT_NAME
+
+      - name: Stop any remaining containers
+        if: always()
+        run: |
+          $dockerContainers = docker ps -a -q
+          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
+              docker stop $dockerContainers
+              docker rm $dockerContainers
+          }
 
   docs:
     name: Documentation
@@ -214,7 +222,7 @@ jobs:
         run: docker pull $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
 
       - name: Check location of self-hosted runner and define license server accordingly
-        if: runner.name == 'pygeometry-ci-1'
+        if: runner.name == 'pygeometry-ci-1' || runner.name == 'pygeometry-ci-2'
         run:
           echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
@@ -257,6 +265,15 @@ jobs:
           docker logs $env:GEO_CONT_NAME
           docker rm $env:GEO_CONT_NAME
 
+      - name: Stop any remaining containers
+        if: always()
+        run: |
+          $dockerContainers = docker ps -a -q
+          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
+              docker stop $dockerContainers
+              docker rm $dockerContainers
+          }
+
 # =================================================================================================
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # =================================================================================================
@@ -287,7 +304,6 @@ jobs:
         run: |
           docker pull ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
-
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -306,13 +322,12 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           pytest-extra-args: "--service-os=linux"
           checkout: false
-          requires-xvfb: true
 
       - name: Upload integration test logs
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: integration-test-logs-${{ runner.os }}
+          name: integration-test-logs-${{ matrix.docker-image }}
           path: tests/integration/logs
           retention-days: 7
 
@@ -320,7 +335,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: pytest-pyvista-images-${{ runner.os }}
+          name: pytest-pyvista-images-${{ matrix.docker-image }}
           path: tests/integration/image_cache
           retention-days: 7
 
@@ -382,6 +397,13 @@ jobs:
           library-name: ${{ env.PACKAGE_NAME }}
           twine-username: "__token__"
           twine-token: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
+
+      # - name: Release to the public PyPI repository
+      #   uses: ansys/actions/release-pypi-public@v4
+      #   with:
+      #     library-name: ${{ env.PACKAGE_NAME }}
+      #     twine-username: "__token__"
+      #     twine-token: ${{ secrets.PYPI_TOKEN }}
 
       - name: Release to GitHub
         uses: ansys/actions/release-github@v4

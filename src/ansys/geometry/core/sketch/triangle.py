@@ -1,4 +1,4 @@
-"""Provides the ``Triangle`` class."""
+"""Provides for creating and managing a triangle."""
 
 from beartype import beartype as check_input_types
 import pyvista as pv

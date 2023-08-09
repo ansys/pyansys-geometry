@@ -17,6 +17,9 @@ __version__ = importlib_metadata.version(__name__.replace(".", "-"))
 from ansys.geometry.core.connection.launcher import (
     launch_local_modeler,
     launch_modeler,
+    launch_modeler_with_pimlight_and_discovery,
+    launch_modeler_with_pimlight_and_geometry_service,
+    launch_modeler_with_pimlight_and_spaceclaim,
     launch_remote_modeler,
 )
 from ansys.geometry.core.logger import LOG
@@ -26,4 +29,5 @@ from ansys.geometry.core.modeler import Modeler
 # ------------------------------------------------------------------------------
 
 USE_TRAME = False
-"""Global constant for checking the use of trame or not."""
+"""Global constant for checking whether to use `trame <https://kitware.github.io/trame/>`_
+for visualization."""

@@ -11,66 +11,77 @@ kernelspec:
   name: python3
 ---
 
-# PyGeometry 101: modeling
+# PyGeometry 101: Modeling
 
-Once the mathematical constructs, units and sketching capabilities of PyGeometry are clear,
-let's dive into the modeling capabilities available with PyGeometry.
-
-+++
-
-PyGeometry is a Python client that connects to a modeling service. The following modeling
-services are available for connection:
-
-- ``DMS``: a **Windows-based modeling service** which has been containerized to ease
-  distribution, execution and remotability operations.
-- ``Geometry service``: this is the **Linux-based approach** of the ``DMS``.
-  It is currently under development.
-- ``Discovery/SpaceClaim``: PyGeometry is also capable of connecting to a running session
-  of SpaceClaim or Discovery. Though this is not the main use-case, it is also possible.
-  Performance will not be as high as with the ``DMS`` or the ``Geometry service`` due to
-  the graphical interface, but it might be useful for some users.
+Once you understand PyGeometry's mathematical constructs, units, and sketching capabilities,
+you can dive into its modeling capabilities.
 
 +++
 
-Until now, all the operations performed with PyGeometry did not require communication
-with the modeling service. From this point onwards, we will need a modelling service
-available. In order to spawn a modeling service session, we have to do the following:
+PyGeometry is a Python client that connects to a modeling service. Here are the modeling
+services that available for connection:
+
+- **DMS**: Windows-based modeling service that has been containerized to ease
+  distribution, execution, and remotability operations.
+- **Geometry service**: Linux-based approach of DMS that is currently under development.
+- **Ansys Discovery and SpaceClaim**: PyGeometry is capable of connecting to a running session
+  of Ansys Discovery or SpaceClaim. Although this is not the main use case for PyGeometry,
+  a connection to one of these Ansys products is possible. Because these products have
+  graphical user interfaces, performance is not as high with this option as with the previous
+  options. However, connecting to a running instance of Discovery or SpaceClaim might be
+  useful for some users.
+
++++
+
+## Launch a modeling service
+
+While the PyGeometry operations in earlier examples did not require communication with
+a modeling service, this example requires that a modeling service is available. All subsequent
+examples also require that a modeling service be available.
+
+This code shows how to launch a modeling service session:
 
 ```{code-cell} ipython3
 from ansys.geometry.core import launch_modeler
 
-# Let's start a modeler session
+# Start a modeler session
 modeler = launch_modeler()
 print(modeler)
 ```
 
-Users are also allowed to spawn their own services and connect to them. For details on how
-to connect to an existing service, read through the
+You can also launch your own services and connect to them. For information on
+connecting to an existing service, see the
 [Modeler API](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/modeler/index.html#ansys.geometry.core.modeler.Modeler)
+documentation.
 
 +++
 
-The way the class architecture is implemented is the following:
+Here is how the class architecture is implemented:
 
-* ``Modeler``: this is the handler object for the active service session. It allows users
-  to connect to an existing service by passing in a ``host`` and a ``port``. It also
-  allows to create ``Design`` objects, which is where the actual modeling will take
-  place. Documentation for [Modeler API](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/modeler/index.html#ansys.geometry.core.modeler.Modeler)
-  can be found in the previous link.
-* ``Design``: this is the root object of our assembly/tree. A ``Design`` is also a
-  ``Component``, but with enhanced functionalities such as: creating named selection,
-  adding materials, handling beam profiles etc. Documentation for [Design API](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/designer/design/index.html#ansys.geometry.core.designer.design.Design)
-  can be found in the previous link.
-* ``Component``: one of the main objects for modeling purposes. ``Component`` objects
-  allow users to create bodies, sub-components, beams, design points, planar surfaces etc.
-  Documentation for [Component API](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/designer/component/index.html#ansys.geometry.core.designer.component.Component)
-  can be found in the previous link.
+* ``Modeler``: Handler object for the active service session. This object allows you
+  to connect to an existing service by passing in a host and a port. It also
+  allows you to create ``Design`` objects, which is where the modeling takes
+  place. For more information, see the [Modeler API](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/modeler/index.html#ansys.geometry.core.modeler.Modeler)
+  documentation.
+* ``Design``: Root object of your assembly (tree). While a ``Design`` object is also a
+  ``Component`` object, it has enhanced capabilities, including creating named selections,
+  adding materials, and handling beam profiles. For more information, see the
+  [Design API](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/designer/design/index.html#ansys.geometry.core.designer.design.Design)
+  documentation.
+* ``Component``: One of the main objects for modeling purposes. ``Component`` objects
+  allow you to create bodies, subcomponents, beams, design points, planar surfaces, and more.
+  For more information, see the [Component API](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/designer/component/index.html#ansys.geometry.core.designer.component.Component)
+  documentation.
 
-Let's start playing around with them!
+The following code examples demonstrate how you use these objects.
+More capabilities of these objects are shown in the specific
+example sections for sketching and modeling.
 
 +++
 
-First of all, we have to create a ``Sketch``.
+## Create and plot a sketch
+
+This code shows how to create a ``Sketch`` object and plot it.
 
 ```{code-cell} ipython3
 from ansys.geometry.core.sketch import Sketch
@@ -96,76 +107,84 @@ sketch = Sketch()
     .circle(center=Point2D([3, -4], unit=UNITS.m), radius=outer_hole_radius)
 )
 
-# Let's plot the sketch first
+# Plot the sketch
 sketch.plot()
 ```
 
-Now that we have our sketch ready to be extruded, let's do some modeling operations.
++++
+
+## Perform some modeling operations
+
+Now that the sketch is ready to be extruded, this code shows how to
+perform some modeling operations, including creating the design, creating
+the body directly on the design, and plotting the body:
 
 ```{code-cell} ipython3
-# We first start by creating the Design
+# Start by creating the Design
 design = modeler.create_design("ModelingDemo")
 
-# We will now create a body directly on our design by extruding our sketch
+# Create a body directly on the design by extruding the sketch
 body = design.extrude_sketch(
     name="Design_Body", sketch=sketch, distance=Distance(80, unit=UNITS.cm)
 )
 
-# Let's plot our body!
+# Plot the body
 design.plot()
 ```
 
-It has been shown how to extrude a ``Sketch`` object and create a ``Body``
-directly on our ``Design``. Let's investigate our ``Body`` object now.
++++
+
+## Perform some operations on the body
+
+This code shows how to perform some operations on the body:
 
 ```{code-cell} ipython3
-# We can request its faces, edges, volume...
+# Request its faces, edges, volume...
 faces = body.faces
 edges = body.edges
 volume = body.volume
 
-print(f"This is body {body.name} with id (server-side): {body.id}.")
+print(f"This is body {body.name} with ID (server-side): {body.id}.")
 print(f"This body has {len(faces)} faces and {len(edges)} edges.")
 print(f"The body volume is {volume}.")
 ```
 
-Other operations can be performed as well such as adding a midsurface offset
-and thickness (only for planar bodies), imprinting curves, assign materials,
-translate, copy...
+Other operations that can be performed include adding a midsurface offset
+and thickness (only for planar bodies), imprinting curves, assigning materials,
+translating, and copying.
 
-For example, let's try doing a copy of our object on a new subcomponent
-and translating it.
+This code shows how to copy the body on a new subcomponent and translate it:
 
 ```{code-cell} ipython3
 from ansys.geometry.core.math import UNITVECTOR3D_X
 
-# First, create a new component
+# Create a component
 comp = design.add_component("Component")
 
-# Now, let's do a copy of our body that belongs to this new component
+# Copy the body that belongs to this new component
 body_copy = body.copy(parent=comp, name="Design_Component_Body")
 
-# Finally, let's displace this new body by a certain distance (10m) in a certain direction (X-axis)
+# Displace this new body by a certain distance (10m) in a certain direction (X-axis)
 body_copy.translate(direction=UNITVECTOR3D_X, distance=Distance(10, unit=UNITS.m))
 
-# Let's plot the result of the entire design
+# Plot the result of the entire design
 design.plot()
 ```
 
-Let's show now how to create and assign materials to the bodies created.
+This code shows how to create and assign materials to the bodies that were created:
 
 ```{code-cell} ipython3
 from pint import Quantity
 
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 
-# Let's define some general properties for our material
+# Define some general properties for the material.
 density = Quantity(125, 10 * UNITS.kg / (UNITS.m * UNITS.m * UNITS.m))
 poisson_ratio = Quantity(0.33, UNITS.dimensionless)
 tensile_strength = Quantity(45)  # WARNING: If no units are defined,
-# it will assume the magnitude is in the expected units by the server
+#it is assumed that the magnitude is in the units expected by the server.
 
-# Once your material properties are defined you can easily create a material
+# Once your material properties are defined, you can easily create a material.
 material = Material(
     "steel",
     density,
@@ -173,66 +192,79 @@ material = Material(
 )
 
 # If you forgot to add a property, or you want to overwrite its value, you can still
-# add properties to your created material
+# add properties to your created material.
 material.add_property(
     type=MaterialPropertyType.TENSILE_STRENGTH, name="TensileProp", quantity=tensile_strength
 )
 
-# Once your material is properly defined, we will send it to the server.
+# Once your material is properly defined, send it to the server.
 # This material can then be reused by different objects
 design.add_material(material)
 
-# And now, let's assign our material to our existing bodies
+# Assign your material to your existing bodies.
 body.assign_material(material)
 body_copy.assign_material(material)
 ```
 
-Materials, as of now, do not have any impact on the visualization when plotting
-is requested - this could be a nice feature to be added. Changes can
-be observed if the final assembly is opened on SpaceClaim or Discovery.
+Currently materials do not have any impact on the visualization when plotting
+is requested, although this could possibly be a future feature. If the final
+assembly is open in Discovery or SpaceClaim, you can observe the changes.
 
 +++
 
-Another interesting feature is the creation of ``NamedSelections``.
-This is possible by means of the ``Design`` object. For example, let's create a
-``NamedSelection`` with some of the faces of our previous ``body`` and the ``body`` itself.
+## Create a named selection
+
+PyGeometry supports the creation of a named selection via the ``Design`` object.
+
+This code shows how to create a named selection with some of the faces of the previous body
+and the body itself:
 
 ```{code-cell} ipython3
-# Let's create the named selection
+# Create a named selection
 faces = body.faces
 ns = design.create_named_selection("MyNamedSelection", bodies=[body], faces=[faces[0], faces[-1]])
-print(f"This is a named selection called {ns.name} with id (server-side): {ns.id}.")
+print(f"This is a named selection called {ns.name} with ID (server-side): {ns.id}.")
 ```
++++
 
-Deletion operations for bodies, named selections and components are also possible,
-always from the scope expected. For example, if an attempt to delete the original body
-from a component that has no ownership over it (i.e our ``comp`` object) this will fail.
-If the same attempt is performed from the ``design`` object, this would work. Let's try it out.
+## Perform deletions
+
+Deletion operations for bodies, named selections, and components are possible,
+always from the scope expected. For example, if you attempted to delete the original body
+from a component that has no ownership over it (such as your ``comp`` object), the deletion
+would fail. If you attempted to perform this deletion from the ``design`` object, the
+deletion would succeed.
+
+The next two code examples show how deletion works:
 
 ```{code-cell} ipython3
-# If we try deleting this body from an "unauthorized" component... this will not be allowed
+# If you try to delete this body from an "unauthorized" component, the deletion is not allowed.
 comp.delete_body(body)
-print(f"Is our body alive? {body.is_alive}")
+print(f"Is the body alive? {body.is_alive}")
 
-# And if we request the plotting of the entire design we can still see it.
+# If you request a plot of the entire design, you can still see it.
 design.plot()
 ```
 
 ```{code-cell} ipython3
-# Since the body belongs to the ``design`` object and not the ``comp`` object, let's
-# delete it from its adequate location
+# Because the body belongs to the ``design`` object and not the ``comp`` object,
+# deleting it from ``design`` object works.
 design.delete_body(body)
-print(f"Is our body alive? {body.is_alive}")
+print(f"Is the body alive? {body.is_alive}")
 
-# And if we request the plotting of the entire design it is no longer visible.
+# If you request a plot of the entire design, it is no longer visible.
 design.plot()
 ```
++++
 
-Finally, once the modeling operations have finalized, users can request their files
-in different formats. The supported formats by the ``DMS`` are shown
-[here](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/designer/design/index.html#ansys.geometry.core.designer.design.DesignFileFormat).
+## Export files
 
-Let's try exporting it into the different formats.
+Once modeling operations are finalized, you can export files
+in different formats. For the formats supported by DMS, see the
+[DesignFileFormat](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/designer/design/index.html#ansys.geometry.core.designer.design.DesignFileFormat)
+class in the ``Design`` module documentation.
+
+This code shows how to export files in SCDOCX and FMD formats:
 
 ```{code-cell} ipython3
 import os
@@ -240,7 +272,7 @@ from pathlib import Path
 
 from ansys.geometry.core.designer import DesignFileFormat
 
-# Path to our downloads directory
+# Path to downloads directory
 file_dir = Path(os.getcwd(), "downloads")
 file_dir.mkdir(parents=True, exist_ok=True)
 
@@ -248,22 +280,21 @@ file_dir.mkdir(parents=True, exist_ok=True)
 design.download(file_location=Path(file_dir, "ModelingDemo.scdocx"), format=DesignFileFormat.SCDOCX)
 design.download(file_location=Path(file_dir, "ModelingDemo.fmd"), format=DesignFileFormat.FMD)
 ```
-
-More features of each of these objects will be shown in upcoming demos.
-
 +++
 
-Finally, it is highly recommended once you finish interacting with your modeling
-service, you close the active server session. This will allow to free resources
-wherever the service is running on.
+## Close session
 
-In order to close the session, do as follows.
+When you finish interacting with your modeling service, you should close the active
+server session. This frees resources wherever the service is running.
+
+This code shows how to close the server session:
 
 ```{code-cell} ipython3
-# Closing our modeling service session
 modeler.close()
 ```
 
-Beware that if the service session already existed (that is, it was not launched by
-the current client session), any attempt to close it will not succeed. Users would
-have to close such services manually. This is a safe-guard for user-spawned services.
+.. note::
+   If the server session already existed (that is, it was not launched by
+   the current client session), you cannot use this method to close the
+   server session. You must manually close the server serssion instead.
+   This is a safeguard for user-spawned services.
