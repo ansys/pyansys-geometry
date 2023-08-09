@@ -30,11 +30,8 @@ class RepairTools:
           Parameters
           ----------
           id : monikers
-          Server-defined ID for the beam profile.
           angle : str
-          User-defined label for the beam profile.
           length : str
-          User-defined label for the beam profile.
           """
           angle_value = DoubleValue(value=float(angle))
           length_value = DoubleValue(value=float(length))
@@ -52,19 +49,36 @@ class RepairTools:
           return ans
      
      def FindExtraEdges(self, monikers):
-         client = GrpcClient()
-         problemAreas = RepairToolsStub(client.channel).FindExtraEdges(FindExtraEdgesRequest(selection = monikers))
-         ans = []
-         for res in problemAreas.result:
+          """
+          This method find the extra edge problem areas and returns a list of extra edge problem areas objects.
+
+          Parameters
+          ----------
+          id : monikers
+          Server-defined ID for the edges.
+          """
+          client = GrpcClient()
+          problemAreas = RepairToolsStub(client.channel).FindExtraEdges(FindExtraEdgesRequest(selection = monikers))
+          ans = []
+          for res in problemAreas.result:
                connectedEdges = []
                for e in res.edge_monikers:
                     connectedEdges.append(res.id) 
                problemArea = ExtraEdgeProblemAreas(res.id, connectedEdges)
                ans.append(problemArea)
 
-         return ans
+          return ans
+
 
      def FindInexactEdges(self, monikers):
+          """
+          This method find the inexact edge problem areas and returns a list of inexact edge problem areas objects.
+
+          Parameters
+          ----------
+          id : monikers
+          Server-defined ID for the edges.
+          """
           client = GrpcClient()
           problemAreas = RepairToolsStub(client.channel).FindInexactEdges(FindInexactEdgesRequest(selection = monikers))
           ans = []
@@ -78,6 +92,14 @@ class RepairTools:
           return ans
 
      def FindShortEdges(self, monikers):
+          """
+          This method find the short edge problem areas and returns a list of short edge problem areas objects.
+
+          Parameters
+          ----------
+          id : monikers
+          Server-defined ID for the edges.
+          """
           client = GrpcClient()
           problemAreas = RepairToolsStub(client.channel).FindShortEdges(FindShortEdgesRequest(selection = monikers))
           ans = []

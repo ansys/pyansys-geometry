@@ -8,28 +8,31 @@ from google.protobuf.wrappers_pb2 import Int32Value
 
 
 class SplitEdgeProblemAreas:
-
+    """
+    The problem area definition for split edge tool. 
+    """
     def __init__(self, id, design_edges):
-        self.id = id
-        self.design_edges = design_edges
+        self._id = id
+        self._design_edges = design_edges
 
     @property
     def id(self):
+        """
+        The id of the problem area.
+        """
         return self._id
     
-    @id.setter
-    def id(self, value):
-        self._id = value
-
     @property
     def design_edges(self):
+        """
+        The list of the edges connected to this problem area.
+        """
         return self._design_edges
     
-    @design_edges.setter
-    def design_edges(self, value):
-        self._design_edges = value
-
     def Fix(self):
+        """
+        The fix method for the problem area. 
+        """
         client = GrpcClient()
         id_value = Int32Value(value=int(self.id))
         RepairToolsStub(client.channel).FixSplitEdges(FixSplitEdgesRequest(split_edge_problem_area_id=id_value))

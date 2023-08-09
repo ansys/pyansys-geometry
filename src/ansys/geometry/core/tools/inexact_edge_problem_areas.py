@@ -15,21 +15,23 @@ class InexactEdgeProblemAreas:
 
     @property
     def id(self):
+        """
+        The id of the problem area.
+        """
         return self._id
     
-    @id.setter
-    def id(self, value):
-        self._id = value
-
     @property
     def design_edges(self):
+        """
+        The list of the edges connected to this problem area.
+        """
         return self._design_edges
     
-    @design_edges.setter
-    def design_edges(self, value):
-        self._design_edges = value
 
     def Fix(self):
+        """
+        The fix method for the problem area. 
+        """
         client = GrpcClient()
         id_value = Int32Value(value=int(self.id))
         RepairToolsStub(client.channel).FixInexactEdges(FixInexactEdgesRequest(inexact_edge_problem_area_id=id_value))
