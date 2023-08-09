@@ -295,7 +295,7 @@ class Plotter:
         """
         # Use the default PyGeometry add_mesh arguments
         for polydata in polydata_entries:
-            actor = self.scene.add_mesh(polydata, **plotting_options)
+            self.scene.add_mesh(polydata, **plotting_options)
 
     def add(
         self,
@@ -303,7 +303,7 @@ class Plotter:
         merge_bodies: bool = False,
         merge_components: bool = False,
         **plotting_options,
-    ):
+    ) -> Dict[str, str]:
         """
         Add any type of object to the scene.
 
@@ -358,7 +358,7 @@ class Plotter:
         merge_bodies: bool = False,
         merge_components: bool = False,
         **plotting_options,
-    ):
+    ) -> Dict[str, str]:
         """
         Add a list of any type of object to the scene.
 
@@ -512,7 +512,7 @@ class PlotterHelper:
             if isinstance(a, pv.Actor):
                 a.prop.show_edges = False
 
-    def picker_callback(self, actor):
+    def picker_callback(self, actor: "pv.Actor"):
         """Define callback for the element picker."""
         self.reset()
         pt = self._pl.scene.picked_point
