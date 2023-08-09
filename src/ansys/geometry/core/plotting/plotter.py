@@ -227,7 +227,7 @@ class Plotter:
 
         Returns
         -------
-        str:
+        str
             Name of the added PyVista actor.
         """
         # Use the default PyGeometry add_mesh arguments
@@ -268,7 +268,7 @@ class Plotter:
 
         Returns
         -------
-        str:
+        str
             Name of the added PyVista actor.
         """
         # Use the default PyGeometry add_mesh arguments
@@ -329,7 +329,7 @@ class Plotter:
 
         Returns
         -------
-        Mapping[str, str]:
+        Mapping[str, str]
             Mapping between the pv.Actor and the PyGeometry object.
         """
         logger.debug(f"Adding object type {type(object)} to the PyVista plotter")
@@ -350,7 +350,7 @@ class Plotter:
             )
         else:
             logger.warning(f"Object type {type(object)} can not be plotted.")
-        return {actor_name: object.name} if actor_name else None
+        return {actor_name: object.name} if actor_name else {}
 
     def add_list(
         self,
@@ -384,7 +384,7 @@ class Plotter:
 
         Returns
         -------
-        Mapping[str, str]:
+        Mapping[str, str]
             Dictionary with the mapping between pv.Actor and PyGeometry objects.
         """
         actors_objects_mapping = {}
