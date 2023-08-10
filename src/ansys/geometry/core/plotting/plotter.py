@@ -486,6 +486,7 @@ class PlotterHelper:
         self._pv_off_screen_original = bool(pv.OFF_SCREEN)
         self._actor_object_mapping = {}
         self._pl = None
+        self._picked_list = []
 
         if self._use_trame and _HAS_TRAME:
             # avoids GUI window popping up
@@ -536,6 +537,8 @@ class PlotterHelper:
                 render_points_as_spheres=True,
                 name="selection-label",
             )
+            if body_name not in self._picked_list:
+                self._picked_list.append(body_name)
 
     def plot(
         self,
@@ -545,7 +548,7 @@ class PlotterHelper:
         merge_component: bool = False,
         view_2d: Dict = None,
         **plotting_options,
-    ) -> None:
+    ) -> List[str]:
         """
         Plot and show any PyGeometry object.
 
@@ -571,6 +574,11 @@ class PlotterHelper:
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
+
+        Returns
+        -------
+        List[str]
+            List with the picked bodies.
         """
         if isinstance(object, List) and not isinstance(object[0], pv.PolyData):
             logger.debug("Plotting objects in list...")
@@ -588,6 +596,7 @@ class PlotterHelper:
                 viewup=view_2d["viewup"],
             )
         self.show_plotter(screenshot)
+        return self._picked_list
 
     def show_plotter(self, screenshot: Optional[str] = None) -> None:
         """
