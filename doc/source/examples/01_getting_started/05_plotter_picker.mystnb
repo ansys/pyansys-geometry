@@ -12,25 +12,22 @@ kernelspec:
 ---
 
 # PyGeometry 101: Plotter
-
-After reviewing the basics of how the sketching and modeling, you can overview the plotter capabilities
-of PyGeometry.
+This documentation provides an overview of the plotting capabilities of PyGeometry, particularly focusing on its plotter features.
+After reviewing the fundamental concepts of sketching and modeling in PyGeometry, let's delve into the capabilities offered by its plotter.
 
 +++
+The PyGeometry plotter offers a range of capabilities that enhance the development process:
+- **Multi-Object Plotting**: You can conveniently plot a list of elements, encompassing objects from both PyGeometry and PyVista libraries.
+- **Interactive Object Selection**: The plotter allows interactive selection of PyGeometry objects within the scene.
+  This enables efficient manipulation of these objects in subsequent scripting.
 
-The plotter has the following capabilities that you can take advantage for development:
-- **Plot multiple objects**: you can plot a list of elements, allowing objects from PyGeometry
-  and PyVista.
-- **Picking objects in the scene**: you can select interactively the PyGeometry objects in the scene
-  to manipulate them later in the script.
-
-  We will show an example on how to use these features in the following sections.
+The upcoming sections illustrate how to leverage these features through practical examples.
 
 ## Setting the example
 
-First we will import the necessary libraries to run the example. In this case, we will be using
-the docker image to communicate with the modeling service, but you can choose any method described
-in the previous example.
+Begin by importing the necessary libraries. In this example, we utilize a docker image to interact with the modeling service.
+ However, you can opt for any suitable method mentioned in the preceding example.
+
 
 ```{code-cell} ipython3
 from pint import Quantity
@@ -77,8 +74,8 @@ Now we can continue by building the object examples.
 
 ## Building the example objects
 
-First, we will instantiate a new design were we will be working. We will also
-initialize a list where we will be saving the objects we want to plot.
+First, we will instantiate a new design were we will be working on. We will also
+initialize a list where we will be saving the objects we intend to plot.
 
 ```{code-cell} ipython3
 
@@ -172,9 +169,11 @@ plotter = PlotterHelper(use_trame=True)
 plotter.plot(plot_list)
 ```
 
-## Pick objects from the scene
+## Interactive object selection
 
-You can also select objects from the scene to use them later in your script
+PyGeometry's plotter supports interactive object selection within the scene.
+This enables you to pick objects for subsequent script manipulation.
+
 ```{code-cell} ipython3
 
 plotter = PlotterHelper(allow_picking=True)
