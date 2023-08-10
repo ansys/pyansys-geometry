@@ -584,7 +584,7 @@ class PlotterHelper:
         merge_component: bool = False,
         view_2d: Dict = None,
         **plotting_options,
-    ) -> List[str]:
+    ) -> List[any]:
         """
         Plot and show any PyGeometry object.
 
