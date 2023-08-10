@@ -488,6 +488,7 @@ class PlotterHelper:
         self._pl = None
         self._picked_list = []
         self._picker_added_actors_map = {}
+
         if self._use_trame and _HAS_TRAME:
             # avoids GUI window popping up
             pv.OFF_SCREEN = True
