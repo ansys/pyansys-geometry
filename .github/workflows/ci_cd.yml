@@ -165,8 +165,8 @@ jobs:
           path: .cov/html
           retention-days: 7
 
-      # - name: Upload coverage to Codecov
-      #   uses: codecov/codecov-action@v3
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
 
       - name: Stop the Geometry service
         if: always()
@@ -391,19 +391,12 @@ jobs:
     needs: [package, fetch-release-artifacts]
     runs-on: ubuntu-latest
     steps:
-      - name: Release to the private PyPI repository
-        uses: ansys/actions/release-pypi-private@v4
+      - name: Release to the public PyPI repository
+        uses: ansys/actions/release-pypi-public@v4
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           twine-username: "__token__"
-          twine-token: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
-
-      # - name: Release to the public PyPI repository
-      #   uses: ansys/actions/release-pypi-public@v4
-      #   with:
-      #     library-name: ${{ env.PACKAGE_NAME }}
-      #     twine-username: "__token__"
-      #     twine-token: ${{ secrets.PYPI_TOKEN }}
+          twine-token: ${{ secrets.PYPI_TOKEN }}
 
       - name: Release to GitHub
         uses: ansys/actions/release-github@v4
