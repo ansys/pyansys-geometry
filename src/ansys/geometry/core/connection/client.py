@@ -1,4 +1,4 @@
-"""Provides a wrapped abstraction of the gRPC proto API definition and stubs."""
+"""Module providing a wrapped abstraction of the gRPC PROTO API definition and stubs."""
 
 import logging
 from pathlib import Path
@@ -10,6 +10,7 @@ import grpc
 from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
 
+from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
 from ansys.geometry.core.connection.local_instance import LocalDockerInstance
 from ansys.geometry.core.logger import LOG as logger
@@ -70,20 +71,24 @@ class GrpcClient:
         gRPC channel for server communication.
     remote_instance : ansys.platform.instancemanagement.Instance, default: None
         Corresponding remote instance when the Geometry service
-        is launched through PyPIM. This instance is deleted when calling the
+        is launched through `PyPIM <https://github.com/ansys/pypim>`_.
+        This instance is deleted when calling the
         :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
         method.
     local_instance : LocalDockerInstance, default: None
-        Corresponding local instance when the Geometry service is launched through
-        the ``launch_local_modeler()`` interface. This instance will be deleted
+        Corresponding local instance when the Geometry service is launched using
+        the ``launch_local_modeler()`` method. This local instance is deleted
         when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
         method is called.
     timeout : real, default: 60
-        Timeout in seconds to achieve the connection.
+        Maximum time to spend trying to make the connection.
     logging_level : int, default: INFO
         Logging level to apply to the client.
     logging_file : str or Path, default: None
         File to output the log to, if requested.
+    backend_type: BackendType, default: None
+        Type of the backend that PyGeometry is communicating with. By default, this
+        value is unknown, which results in ``None`` being the default value.
     """
 
     @check_input_types
@@ -97,6 +102,7 @@ class GrpcClient:
         timeout: Optional[Real] = 60,
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
+        backend_type: Optional[BackendType] = None,
     ):
         """Initialize the ``GrpcClient`` object."""
         self._closed = False
@@ -127,6 +133,24 @@ class GrpcClient:
                 logging_file = str(logging_file)
             self._log.log_to_file(filename=logging_file, level=logging_level)
 
+        # Store the backend
+        self._backend_type = backend_type
+
+    @property
+    def backend_type(self) -> BackendType:
+        """
+        Backend type.
+
+        Options are ``Windows Service``, ``Linux Service``, ``Discovery``,
+        and ``SpaceClaim``.
+
+        Notes
+        -----
+        This method might return ``None`` because determining the backend type is
+        not straightforward.
+        """
+        return self._backend_type
+
     @property
     def channel(self) -> grpc.Channel:
         """Client gRPC channel."""
@@ -139,12 +163,12 @@ class GrpcClient:
 
     @property
     def is_closed(self) -> bool:
-        """Checks if the client connection is closed or not."""
+        """Flag indicating whether the client connection is closed."""
         return self._closed
 
     @property
     def healthy(self) -> bool:
-        """Check if the client channel if healthy."""
+        """Flag indicating whether the client channel is healthy."""
         if self._closed:
             return False
         health_stub = health_pb2_grpc.HealthStub(self._channel)
@@ -175,8 +199,9 @@ class GrpcClient:
         Notes
         -----
         If an instance of the Geometry service was started using
-        PyPIM, this instance is deleted. Furthermore, if a local instance
-        of the Geometry service was started, it will be stopped.
+        `PyPIM <https://github.com/ansys/pypim>`_, this instance is
+        deleted. Furthermore, if a local instance
+        of the Geometry service was started, it is stopped.
         """
         if self._remote_instance:
             self._remote_instance.delete()  # pragma: no cover
@@ -185,7 +210,7 @@ class GrpcClient:
                 self._local_instance.container.stop()
             else:
                 self.log.warning(
-                    "Geometry service will not be shutdown since it was already running..."
+                    "Geometry service was not shut down because it was already running..."
                 )
         self._closed = True
         self._channel.close()

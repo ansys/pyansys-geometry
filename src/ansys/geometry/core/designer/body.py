@@ -1,4 +1,4 @@
-"""Provides the ``Body`` class module."""
+"""Provides for managing a body."""
 from abc import ABC, abstractmethod
 from enum import Enum
 from functools import wraps
@@ -45,7 +45,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 class MidSurfaceOffsetType(Enum):
-    """Enum holding the types of mid-surface offset for the Geometry service."""
+    """Provides values for mid-surface offsets supported by the Geometry service."""
 
     MIDDLE = 0
     TOP = 1
@@ -56,26 +56,26 @@ class MidSurfaceOffsetType(Enum):
 
 class IBody(ABC):
     """
-    Abstract Body interface.
+    Defines the common methods for a body, providing the abstract body interface.
 
-    Defines the common methods for a body. MasterBody and Body both inherit from this.
-    All child classes must implement all abstract methods.
+    Both the ``MasterBody`` class and ``Body`` class both inherit from the ``IBody``
+    class. All child classes must implement all abstract methods.
     """
 
     @abstractmethod
     def id(self) -> str:
-        """ID of the body."""
+        """Get the ID of the body as a string."""
         return
 
     @abstractmethod
     def name(self) -> str:
-        """Name of the body."""
+        """Get the name of the body."""
         return
 
     @abstractmethod
     def faces(self) -> List[Face]:
         """
-        All faces within the body.
+        Get a list of all faces within the body.
 
         Returns
         -------
@@ -86,7 +86,7 @@ class IBody(ABC):
     @abstractmethod
     def edges(self) -> List[Edge]:
         """
-        All edges within the body.
+        Get a list of all edges within the body.
 
         Returns
         -------
@@ -96,7 +96,7 @@ class IBody(ABC):
 
     @abstractmethod
     def is_alive(self) -> bool:
-        """If the body is still alive and has not been deleted."""
+        """Check if the body is still alive and has not been deleted."""
         return
 
     @abstractmethod
@@ -107,29 +107,29 @@ class IBody(ABC):
     @abstractmethod
     def surface_thickness(self) -> Union[Quantity, None]:
         """
-        Surface thickness of a surface body.
+        Get the surface thickness of a surface body.
 
         Notes
         -----
-        Only for surface-type bodies which have been assigned a surface thickness.
+        This method is only for surface-type bodies that have been assigned a surface thickness.
         """
         return
 
     @abstractmethod
     def surface_offset(self) -> Union["MidSurfaceOffsetType", None]:
         """
-        Surface offset type of a surface body.
+        Get the surface offset type of a surface body.
 
         Notes
         -----
-        Only for surface-type bodies which have been assigned a surface offset.
+        This method is only for surface-type bodies that have been assigned a surface offset.
         """
         return
 
     @abstractmethod
     def volume(self) -> Quantity:
         """
-        Calculate volume of the body.
+        Calculate the volume of the body.
 
         Notes
         -----
@@ -157,11 +157,11 @@ class IBody(ABC):
         Parameters
         ----------
         thickness : Quantity
-            Thickness to be assigned.
+            Thickness to assign.
 
         Notes
         -----
-        Only surface bodies will be eligible for mid-surface thickness assignment.
+        Only surface bodies are eligible for mid-surface thickness assignment.
         """
         return
 
@@ -173,23 +173,23 @@ class IBody(ABC):
         Parameters
         ----------
         offset_type : MidSurfaceOffsetType
-            Surface offset to be assigned.
+            Surface offset to assign.
 
         Notes
         -----
-        Only surface bodies will be eligible for mid-surface offset assignment.
+        Only surface bodies are eligible for mid-surface offset assignment.
         """
         return
 
     @abstractmethod
     def imprint_curves(self, faces: List[Face], sketch: Sketch) -> Tuple[List[Edge], List[Face]]:
         """
-        Imprint all specified geometries onto the specified faces of the body.
+        Imprint all specified geometries onto specified faces of the body.
 
         Parameters
         ----------
         faces: List[Face]
-            List of faces to imprint the curves of the sketch.
+            List of faces to imprint the curves of the sketch onto.
         sketch: Sketch
             All curves to imprint on the faces.
 
@@ -214,7 +214,7 @@ class IBody(ABC):
         Parameters
         ----------
         direction: UnitVector3D
-            Establishes the direction of the projection.
+            Direction of the projection.
         sketch: Sketch
             All curves to project on the body.
         closest_face: bool
@@ -237,6 +237,47 @@ class IBody(ABC):
         return
 
     @abstractmethod
+    def imprint_projected_curves(
+        self,
+        direction: UnitVector3D,
+        sketch: Sketch,
+        closest_face: bool,
+        only_one_curve: Optional[bool] = False,
+    ) -> List[Face]:  # noqa: D102
+        """
+        Project and imprint specified geometries onto the body.
+
+        This method combines the ``project_curves()`` and ``imprint_curves()`` method into
+        one method. It is much more performant than calling them back-to-back when dealing
+        with many curves. Because it is a specialized function, this method only returns
+        the faces (and not the edges) from the imprint operation.
+
+        Parameters
+        ----------
+        direction: UnitVector3D
+            Direction of the projection.
+        sketch: Sketch
+            All curves to project on the body.
+        closest_face: bool
+            Whether to target the closest face with the projection.
+        only_one_curve: bool, default: False
+            Whether to project only one curve of the entire sketch. When
+            ``True``, only one curve is projected.
+
+        Notes
+        -----
+        The ``only_one_curve`` parameter allows you to optimize the server call because
+        projecting curves is an expensive operation. This reduces the workload on the
+        server side.
+
+        Returns
+        -------
+        List[Face]
+            All imprinted faces from the operation.
+        """
+        return
+
+    @abstractmethod
     def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]) -> None:
         """
         Translate the geometry body in the specified direction by a given distance.
@@ -246,7 +287,7 @@ class IBody(ABC):
         direction: UnitVector3D
             Direction of the translation.
         distance: Union[Quantity, Distance, Real]
-            Magnitude of the translation.
+            Distance (magnitude) of the translation.
 
         Returns
         -------
@@ -257,14 +298,14 @@ class IBody(ABC):
     @abstractmethod
     def copy(self, parent: "Component", name: str = None) -> "Body":
         """
-        Create a copy of the geometry body and places it under the specified parent.
+        Create a copy of the body and place it under the specified parent component.
 
         Parameters
         ----------
         parent: Component
-            The parent component that the new body should live under.
+            Parent component to place the new body under within the design assembly.
         name: str
-            The name to give the new body.
+            Name to give the new body.
 
         Returns
         -------
@@ -281,7 +322,7 @@ class IBody(ABC):
         Parameters
         ----------
         merge : bool, default: False
-            Whether to merge the body into a single mesh. By default, the
+            Whether to merge the body into a single mesh. When ``False`` (default), the
             number of triangles are preserved and only the topology is merged.
             When ``True``, the individual faces of the tessellation are merged.
 
@@ -343,17 +384,17 @@ class IBody(ABC):
         Parameters
         ----------
         merge : bool, default: False
-            Whether to merge the body into a single mesh. By default, the
-            number of triangles are preserved and only the topology is merged.
+            Whether to merge the body into a single mesh. When ``False`` (default),
+            the number of triangles are preserved and only the topology is merged.
             When ``True``, the individual faces of the tessellation are merged.
-        screenshot : str, optional
-            Save a screenshot of the image being represented. The image is
-            stored in the path provided as an argument.
-        use_trame : bool, optional
-            Enables/disables the usage of the trame web visualizer. Defaults to the
-            global setting ``USE_TRAME``.
+        screenshot : str, default: None
+            Path for saving a screenshot of the image that is being represented.
+        use_trame : bool, default: None
+            Whether to enable the use of `trame <https://kitware.github.io/trame/index.html>`_.
+            The default is ``None``, in which case the ``USE_TRAME`` global setting
+            is used.
         **plotting_options : dict, default: None
-            Keyword arguments. For allowable keyword arguments, see the
+            Keyword arguments for plotting. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
 
         Examples
@@ -387,13 +428,14 @@ class IBody(ABC):
 
         Notes
         -----
-        `self` will be directly modified with the result, and
-        `other` will be consumed, so it is important to make copies if needed.
+        The ``self`` parameter is directly modified with the result, and
+        the ``other`` parameter is consumed. Thus, it is important to make
+        copies if needed.
 
         Parameters
         ----------
         other : Body
-            The body to intersect with.
+            Body to intersect with.
 
         Raises
         ------
@@ -409,14 +451,14 @@ class IBody(ABC):
 
         Notes
         -----
-        `self` is the minuend, and `other` is the subtrahend
-        (`self` - `other`). `self` will be directly modified with the result, and
-        `other` will be consumed, so it is important to make copies if needed.
+        The ``self`` parameter is directly modified with the result, and
+        the ``other`` parameter is consumed. Thus, it is important to make
+        copies if needed.
 
         Parameters
         ----------
         other : Body
-            The body to subtract from self.
+            Body to subtract from the ``self`` parameter.
 
         Raises
         ------
@@ -432,13 +474,14 @@ class IBody(ABC):
 
         Notes
         -----
-        `self` will be directly modified with the resulting union, and
-        `other` will be consumed, so it is important to make copies if needed.
+        The ``self`` parameter is directly modified with the result, and
+        the ``other`` parameter is consumed. Thus, it is important to make
+        copies if needed.
 
         Parameters
         ----------
         other : Body
-            The body to unite with self.
+            Body to unite with the ``self`` parameter.
         """
         return
 
@@ -456,12 +499,13 @@ class MasterBody(IBody):
     name : str
         User-defined label for the body.
     parent_component : Component
-        Parent component to nest the new component under within the design assembly.
+        Parent component to place the new component under within the design assembly.
     grpc_client : GrpcClient
-        An active supporting geometry service instance for design modeling.
+        Active supporting geometry service instance for design modeling.
     is_surface : bool, default: False
-        Boolean indicating whether the ``MasterBody`` is in fact a surface or an actual
-        3D object (with volume).
+        Whether the master body is a surface or an 3D object (with volume). The default
+        is ``False``, in which case the master body is a surface. When ``True``, the
+        master body is a 3D object (with volume).
     """
 
     def __init__(
@@ -471,7 +515,7 @@ class MasterBody(IBody):
         grpc_client: GrpcClient,
         is_surface: bool = False,
     ):
-        """Initialize ``MasterBody`` class."""
+        """Initialize the ``MasterBody`` class."""
         check_type(id, str)
         check_type(name, str)
         check_type(grpc_client, GrpcClient)
@@ -489,17 +533,18 @@ class MasterBody(IBody):
         self._tessellation = None
 
     def reset_tessellation_cache(func):
-        """Decorate ``MasterBody`` methods that require a tessellation cache update.
+        """
+        Decorate ``MasterBody`` methods that require a tessellation cache update.
 
         Parameters
         ----------
         func : method
-            The method being called.
+            Method to call.
 
         Returns
         -------
         Any
-            The output of the method, if any.
+            Output of the method, if any.
         """
 
         @wraps(func)
@@ -589,7 +634,7 @@ class MasterBody(IBody):
             self._surface_thickness = thickness
         else:
             self._grpc_client.log.warning(
-                f"Body {self.name} cannot be assigned a mid-surface thickness since it is not a surface. Ignoring request."  # noqa : E501
+                f"Body {self.name} cannot be assigned a mid-surface thickness because it is not a surface. Ignoring request."  # noqa : E501
             )
 
     @protect_grpc
@@ -604,7 +649,7 @@ class MasterBody(IBody):
             self._surface_offset = offset
         else:
             self._grpc_client.log.warning(
-                f"Body {self.name} cannot be assigned a mid-surface offset since it is not a surface. Ignoring request."  # noqa : E501
+                f"Body {self.name} cannot be assigned a mid-surface offset because it is not a surface. Ignoring request."  # noqa : E501
             )
 
     @protect_grpc
@@ -615,7 +660,7 @@ class MasterBody(IBody):
         raise NotImplementedError(
             """
             imprint_curves is not implemented at the MasterBody level.
-            Instead, call this method on a Body.
+            Instead, call this method on a body.
             """
         )
 
@@ -631,7 +676,23 @@ class MasterBody(IBody):
         raise NotImplementedError(
             """
             project_curves is not implemented at the MasterBody level.
-            Instead, call this method on a Body.
+            Instead, call this method on a body.
+            """
+        )
+
+    @check_input_types
+    @protect_grpc
+    def imprint_projected_curves(
+        self,
+        direction: UnitVector3D,
+        sketch: Sketch,
+        closest_face: bool,
+        only_one_curve: Optional[bool] = False,
+    ) -> List[Face]:  # noqa: D102
+        raise NotImplementedError(
+            """
+            imprint_projected_curves is not implemented at the MasterBody level.
+            Instead, call this method on a body.
             """
         )
 
@@ -718,29 +779,26 @@ class MasterBody(IBody):
 
         from ansys.geometry.core.plotting import PlotterHelper
 
-        pl_helper = PlotterHelper(use_trame=use_trame)
-        pl = pl_helper.init_plotter()
-        pl.add_body(self, merge=merge, **plotting_options)
-        pl_helper.show_plotter(pl, screenshot=screenshot)
+        PlotterHelper(use_trame=use_trame).plot(self, merge_bodies=merge)
 
     def intersect(self, other: "Body") -> None:  # noqa: D102
         raise NotImplementedError(
-            "MasterBody does not implement boolean methods. Call this method on a Body instead."
+            "MasterBody does not implement Boolean methods. Call this method on a body instead."
         )
 
     def subtract(self, other: "Body") -> None:  # noqa: D102
         raise NotImplementedError(
-            "MasterBody does not implement boolean methods. Call this method on a Body instead."
+            "MasterBody does not implement Boolean methods. Call this method on a body instead."
         )
 
     def unite(self, other: "Body") -> None:
         # noqa: D102
         raise NotImplementedError(
-            "MasterBody does not implement boolean methods. Call this method on a Body instead."
+            "MasterBody does not implement Boolean methods. Call this method on a body instead."
         )
 
     def __repr__(self) -> str:
-        """Represent the ``MasterBody`` as a string."""
+        """Represent the master body as a string."""
         lines = [f"ansys.geometry.core.designer.MasterBody {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Exists               : {self.is_alive}")
@@ -765,30 +823,31 @@ class Body(IBody):
     name : str
         User-defined label for the body.
     parent : Component
-        Parent component to nest the new component under within the design assembly.
+        Parent component to place the new component under within the design assembly.
     template : MasterBody
-        The master body that this body is an occurrence of.
+        Master body that this body is an occurrence of.
     """
 
     def __init__(self, id, name, parent: "Component", template: MasterBody) -> None:
-        """Initialize ``Body`` class."""
+        """Initialize the ``Body`` class."""
         self._id = id
         self._name = name
         self._parent = parent
         self._template = template
 
     def reset_tessellation_cache(func):
-        """Decorate ``Body`` methods that require a tessellation cache update.
+        """
+        Decorate ``Body`` methods that require a tessellation cache update.
 
         Parameters
         ----------
         func : method
-            The method being called.
+            Method to call.
 
         Returns
         -------
         Any
-            The output of the method, if any.
+            Output of the method, if any.
         """
 
         @wraps(func)
@@ -900,7 +959,7 @@ class Body(IBody):
                     is_found = True
                     break
             if not is_found:
-                raise ValueError(f"Face with id {provided_face.id} is not part of this body.")
+                raise ValueError(f"Face with ID {provided_face.id} is not part of this body.")
 
         self._template._grpc_client.log.debug(
             f"Imprinting curves provided on {self.id} "
@@ -954,6 +1013,36 @@ class Body(IBody):
         ]
 
         return projected_faces
+
+    @check_input_types
+    @protect_grpc
+    def imprint_projected_curves(
+        self,
+        direction: UnitVector3D,
+        sketch: Sketch,
+        closest_face: bool,
+        only_one_curve: Optional[bool] = False,
+    ) -> List[Face]:  # noqa: D102
+        curves = sketch_shapes_to_grpc_geometries(
+            sketch._plane, sketch.edges, sketch.faces, only_one_curve=only_one_curve
+        )
+        self._template._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
+
+        response = self._template._commands_stub.ImprintProjectedCurves(
+            ProjectCurvesRequest(
+                body=self._id,
+                curves=curves,
+                direction=unit_vector_to_grpc_direction(direction),
+                closest_face=closest_face,
+            )
+        )
+
+        imprinted_faces = [
+            Face(grpc_face.id, grpc_face.surface_type, self, self._template._grpc_client)
+            for grpc_face in response.faces
+        ]
+
+        return imprinted_faces
 
     def translate(
         self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]

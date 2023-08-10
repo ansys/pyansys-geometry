@@ -1,4 +1,4 @@
-"""Provides the ``Accuracy`` class."""
+"""Provides for evaluating decimal precision."""
 
 
 import math
@@ -21,13 +21,13 @@ class Accuracy:
 
         Notes
         -----
-        Check is done up to the length accuracy: ``LENGTH_ACCURACY``.
+        The check is done up to the constant value specified for ``LENGTH_ACCURACY``.
 
         Returns
         -------
         bool
             ``True`` if the comparison length is equal to the reference length
-            within the length accuracy.
+            within the length accuracy, ``False`` otherwise.
         """
         return Accuracy.is_within_tolerance(
             comparison_length, reference_length, LENGTH_ACCURACY, LENGTH_ACCURACY
@@ -39,13 +39,13 @@ class Accuracy:
 
         Notes
         -----
-        Check is done up to the length accuracy: ``LENGTH_ACCURACY``.
+        The check is done up to the constant value specified for ``LENGTH_ACCURACY``.
 
         Returns
         -------
         bool
             ``True`` if the comparison length is greater than the reference length within
-            the length accuracy.
+            the length accuracy, ``False`` otherwise.
         """
         return bool(
             comparison_length > reference_length
@@ -58,13 +58,13 @@ class Accuracy:
 
         Notes
         -----
-        Check is done up to the length accuracy: ``LENGTH_ACCURACY``.
+        The check is done up to the constant value specified for ``LENGTH_ACCURACY``.
 
         Returns
         -------
         bool
             ``True`` if the comparison length is less than or equal to the reference length
-            within the length accuracy.
+            within the length accuracy, ``False`` otherwise.
         """
         return bool(
             comparison_length < reference_length
@@ -78,7 +78,8 @@ class Accuracy:
         Returns
         -------
         bool
-            ``True`` if the length is within the length accuracy of exact zero.
+            ``True`` if the length is within the length accuracy of exact zero,
+            ``False`` otherwise.
         """
         return bool(length <= LENGTH_ACCURACY and length >= -LENGTH_ACCURACY)
 
@@ -89,7 +90,8 @@ class Accuracy:
         Returns
         -------
         bool
-            ``True`` if the length is below a negative length accuracy.
+            ``True`` if the length is below a negative length accuracy,
+             ``False`` otherwise.
         """
         return bool(length < -LENGTH_ACCURACY)
 
@@ -100,7 +102,8 @@ class Accuracy:
         Returns
         -------
         bool
-            ``True`` if the length is above a positive length accuracy.
+            ``True`` if the length is above a positive length accuracy,
+             ``False`` otherwise.
         """
         return bool(length > LENGTH_ACCURACY)
 
@@ -111,7 +114,8 @@ class Accuracy:
         Returns
         -------
         bool
-            ``True`` if the length is within the angle accuracy of exact zero.
+            ``True`` if the length is within the angle accuracy of exact zero,
+             ``False`` otherwise.
         """
         return bool(abs(angle) < ANGLE_ACCURACY)
 
@@ -122,7 +126,8 @@ class Accuracy:
         Returns
         -------
         bool
-            ``True`` if the angle is below a negative angle accuracy.
+            ``True`` if the angle is below a negative angle accuracy,
+             ``False`` otherwise.
         """
         return bool(angle <= -ANGLE_ACCURACY)
 
@@ -133,7 +138,8 @@ class Accuracy:
         Returns
         -------
         bool
-           ``True`` if the angle is above a positive angle accuracy.
+           ``True`` if the angle is above a positive angle accuracy,
+            ``False`` otherwise.
         """
         return bool(angle >= ANGLE_ACCURACY)
 
@@ -141,7 +147,7 @@ class Accuracy:
         a: Real, b: Real, relative_tolerance: Real, absolute_tolerance: Real
     ) -> bool:
         """
-        Check if the a and b values are inside a relative and absolute tolerance.
+        Check if two values (a and b) are inside a relative and absolute tolerance.
 
         Parameters
         ----------
@@ -157,7 +163,8 @@ class Accuracy:
         Returns
         -------
         bool
-            ``True`` if the values are inside the accepted tolerances.
+            ``True`` if the values are inside the accepted tolerances,
+            ``False`` otherwise.
         """
         # The code doesn't work for comparing infinity and non-infinite numbers!
         a_is_infinite = math.isinf(a)

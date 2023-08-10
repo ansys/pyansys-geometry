@@ -1,7 +1,7 @@
-"""Provides the ``Component`` class module."""
+"""Provides for managing components."""
 
 from enum import Enum, unique
-import uuid  # TODO: do we even need ID?, maybe use from SC?
+import uuid  # TODO: Is ID even needed? Maybe use from SC?
 
 from ansys.api.geometry.v0.bodies_pb2 import (
     CreateBodyFromFaceRequest,
@@ -68,33 +68,33 @@ class SharedTopologyType(Enum):
 
 class Component:
     """
-    Provides the ``Component`` class for organizing design bodies.
+    Provides for creating and managing a component.
 
     This class synchronizes to a design within a supporting Geometry service instance.
 
     Parameters
     ----------
     name : str
-        User-defined label for the component.
+        User-defined label for the new component.
     parent_component : Component or None
-        Parent component to nest the new component under within the design assembly. Only
-        ``None`` when dealing with a Design object.
+        Parent component to place the new component under within the design assembly. The
+        default is ``None`` only when dealing with a ``Design`` object.
     grpc_client : GrpcClient
         Active supporting Geometry service instance for design modeling.
-    template : Component, optional
-        The template component that this component will be created from. This creates an instance.
-    preexisting_id : str, optional
-        If a component already exists on the server, you can pass in its ID to create it on the
-        client-side data model. If this is argument is present, a new Component will not be created
-        on the server.
-    master_component : MasterComponent, optional
-        This argument should be present when creating a nested instance component. It will use the
-        given master_component instead of creating a new one.
-    read_existing_comp : bool, optional
-        Indicates whether an existing component on the service should be read
-        or not. By default, ``False``. This is only valid when connecting
-        to an existing service session. Otherwise, avoid using this optional
-        argument.
+    template : Component, default: None
+        Template to create this component from. This creates an
+        instance component that shares a master with the template component.
+    preexisting_id : str, default: None
+        ID of a component pre-existing on the server side to use to create the component
+        on the client-side data model. If an ID is specified, a new component is not
+        created on the server.
+    master_component : MasterComponent, default: None
+        Master component to use to create a nested component instance instead
+        of creating a new conponent.
+    read_existing_comp : bool, default: False
+        Whether an existing component on the service should be read. This
+        parameter is only valid when connecting to an existing service session.
+        Otherwise, avoid using this optional parameter.
     """
 
     # Types of the class instance private attributes
@@ -115,7 +115,7 @@ class Component:
         master_component: Optional[MasterComponent] = None,
         read_existing_comp: bool = False,
     ):
-        """Initialize ``Component`` class."""
+        """Initialize the ``Component`` class."""
         # Initialize the client and stubs needed
         self._grpc_client = grpc_client
         self._component_stub = ComponentsStub(self._grpc_client.channel)
@@ -184,31 +184,32 @@ class Component:
 
     @property
     def components(self) -> List["Component"]:
-        """``Component`` objects inside of the component."""
+        """List of ``Component`` objects inside of the component."""
         return self._components
 
     @property
     def bodies(self) -> List[Body]:
-        """``Body`` objects inside of the component."""
+        """List of ``Body`` objects inside of the component."""
         bodies = []
         for body in self._master_component.part.bodies:
             id = f"{self.id}/{body.id}" if self.parent_component else body.id
-            bodies.append(Body(id, body.name, self, body))
+            if body.is_alive:
+                bodies.append(Body(id, body.name, self, body))
         return bodies
 
     @property
     def beams(self) -> List[Beam]:
-        """``Beam`` objects inside of the component."""
+        """List of ``Beam`` objects inside of the component."""
         return self._beams
 
     @property
     def design_points(self) -> List[DesignPoint]:
-        """``DesignPoint`` objects inside of the component."""
+        """List of ``DesignPoint`` objects inside of the component."""
         return self._design_points
 
     @property
     def coordinate_systems(self) -> List[CoordinateSystem]:
-        """``CoordinateSystem`` objects inside of the component."""
+        """List of ``CoordinateSystem`` objects inside of the component."""
         return self._coordinate_systems
 
     @property
@@ -223,7 +224,8 @@ class Component:
 
     @property
     def shared_topology(self) -> Union[SharedTopologyType, None]:
-        """Indicates the ``SharedTopologyType`` of the component (if any).
+        """
+        Shared topology type of the component (if any).
 
         Notes
         -----
@@ -232,7 +234,7 @@ class Component:
         return self._shared_topology
 
     def __create_children(self, template: "Component") -> None:
-        """Create new Component and Body children in ``self`` from ``template``."""
+        """Create new component and child bodies in ``self`` from ``template``."""
         for template_comp in template.components:
             new_id = self.id + "/" + template_comp.id.split("/")[-1]
             new = Component(
@@ -247,12 +249,12 @@ class Component:
 
     def get_world_transform(self) -> Matrix44:
         """
-        Get the full transformation matrix of this Component in world space.
+        Get the full transformation matrix of the component in world space.
 
         Returns
         -------
         Matrix44
-            The 4x4 transformation matrix of this component in world space.
+            4x4 transformation matrix of the component in world space.
         """
         if self.parent_component is None:
             return IDENTITY_MATRIX44
@@ -272,18 +274,18 @@ class Component:
         Notes
         -----
         To reset a component's placement to an identity matrix, see
-        ``reset_placement()`` or call this method with no arguments.
+        :func:`reset_placement()` or call :func:`modify_placement()` with no arguments.
 
         Parameters
         ----------
-        translation : Vector3D, optional
-            The vector that defines the desired translation to the component.
-        rotation_origin : Point3D, optional
-            The origin that defines the axis to rotate the component about.
-        rotation_direction : UnitVector3D, optional
-            The direction of the axis to rotate the component about.
-        rotation_angle : Union[Quantity, Angle, Real], default=0
-            The angle to rotate the component around the axis.
+        translation : Vector3D, default: None
+            Vector that defines the desired translation to the component.
+        rotation_origin : Point3D, default: None
+            Origin that defines the axis to rotate the component about.
+        rotation_direction : UnitVector3D, default: None
+            Direction of the axis to rotate the component about.
+        rotation_angle : Union[Quantity, Angle, Real], default: 0
+            Angle to rotate the component around the axis.
         """
         t = (
             Direction(x=translation.x, y=translation.y, z=translation.z)
@@ -313,21 +315,21 @@ class Component:
         """
         Reset a component's placement matrix to an identity matrix.
 
-        See ``modify_placement()``.
+        See :func:`modify_placement()`.
         """
         self.modify_placement()
 
     @check_input_types
     def add_component(self, name: str, template: Optional["Component"] = None) -> "Component":
         """
-        Add a new component nested under this component within the design assembly.
+        Add a new component under this component within the design assembly.
 
         Parameters
         ----------
         name : str
             User-defined label for the new component.
-        template : Component, optional
-            The template component that this component will be created from. This will create an
+        template : Component, default: None
+            Template to create this component from. This creates an
             instance component that shares a master with the template component.
 
         Returns
@@ -388,7 +390,7 @@ class Component:
 
         Notes
         -----
-        The newly created body is nested under this component within the design assembly.
+        The newly created body is placed under this component within the design assembly.
 
         Parameters
         ----------
@@ -433,7 +435,7 @@ class Component:
         Notes
         -----
         The source face can be anywhere within the design component hierarchy.
-        Therefore, there is no validation requiring that the face is nested under the
+        Therefore, there is no validation requiring that the face is placed under the
         target component where the body is to be created.
 
         Parameters
@@ -475,7 +477,7 @@ class Component:
         """
         Create a surface body with a sketch profile.
 
-        The newly created body is nested under this component within the design assembly.
+        The newly created body is placed under this component within the design assembly.
 
         Parameters
         ----------
@@ -515,7 +517,7 @@ class Component:
         Notes
         -----
         The source face can be anywhere within the design component hierarchy.
-        Therefore, there is no validation requiring that the face is nested under the
+        Therefore, there is no validation requiring that the face is placed under the
         target component where the body is to be created.
 
         Parameters
@@ -551,7 +553,7 @@ class Component:
         """
         Create a coordinate system.
 
-        The newly created coordinate system is nested under this component
+        The newly created coordinate system is place under this component
         within the design assembly.
 
         Parameters
@@ -564,7 +566,6 @@ class Component:
         Returns
         -------
         CoordinateSystem
-            ``CoordinateSystem`` object.
         """
         self._coordinate_systems.append(CoordinateSystem(name, frame, self, self._grpc_client))
         return self._coordinate_systems[-1]
@@ -603,7 +604,7 @@ class Component:
                 body_ids_found.append(body_requested.id)
             else:
                 self._grpc_client.log.warning(
-                    f"Body with id {body.id} and name {body.name} is not found in this "
+                    f"Body with ID {body.id} and name {body.name} is not found in this "
                     + "component (or subcomponents). Ignoring this translation request."
                 )
                 pass
@@ -713,7 +714,7 @@ class Component:
             self._grpc_client.log.debug(f"Component {component_requested.id} has been deleted.")
         else:
             self._grpc_client.log.warning(
-                f"Component {id} not found in this component (or sub-components)."
+                f"Component {id} not found in this component (or subcomponents)."
                 + " Ignoring deletion request."
             )
             pass
@@ -783,9 +784,9 @@ class Component:
         Parameters
         ----------
         name : str
-            User-defined label for the design points.
+            User-defined label for the list of design points.
         points : List[Point3D]
-            List of 3D points constituting the design points.
+            List of the 3D points that constitute the list of design points.
         """
         # Create DesignPoint objects server-side
         self._grpc_client.log.debug(f"Creating design points on {self.id}...")
@@ -815,7 +816,7 @@ class Component:
         Notes
         -----
         If the beam does not belong to this component (or its children), it
-        will not be deleted.
+        is not deleted.
 
         Parameters
         ----------
@@ -840,7 +841,7 @@ class Component:
             self._grpc_client.log.debug(f"Beam {beam_requested.id} has been deleted.")
         else:
             self._grpc_client.log.warning(
-                f"Beam {id} not found in this component (or sub-components)."
+                f"Beam {id} not found in this component (or subcomponents)."
                 + " Ignoring deletion request."
             )
             pass
@@ -858,7 +859,7 @@ class Component:
         Returns
         -------
         Component
-           Component with the requested ID. If it is not found, ``None`` is returned.
+           Component with the requested ID. If this ID is not found, ``None`` is returned.
         """
         # Check if the requested component is this one
         if self.id == id and self.is_alive:
@@ -877,7 +878,7 @@ class Component:
     @check_input_types
     def search_body(self, id: str) -> Union[Body, None]:
         """
-        Search bodies in component and nested components recursively for a body.
+        Search bodies in the component and nested components recursively for a body.
 
         Parameters
         ----------
@@ -887,7 +888,7 @@ class Component:
         Returns
         -------
         Body
-            Body with the requested ID. If it is not found, ``None`` is returned.
+            Body with the requested ID. If the ID is not found, ``None`` is returned.
         """
         # Search in component's bodies
         for body in self.bodies:
@@ -907,17 +908,17 @@ class Component:
     @check_input_types
     def search_beam(self, id: str) -> Union[Beam, None]:
         """
-        Search beams in component and nested components recursively for a beam.
+        Search beams in the component and nested components recursively for a beam.
 
         Parameters
         ----------
         id : str
-            The ``Beam`` ID we are searching for.
+            ID of the beam to search for.
 
         Returns
         -------
         Union[Beam, None]
-            The ``Beam`` with the requested ID. If not found, it will return ``None``.
+            Beam with the requested ID. If the ID is not found, ``None`` is returned.
         """
         # Search in component's beams
         for beam in self.beams:
@@ -935,12 +936,13 @@ class Component:
         return None
 
     def _kill_component_on_client(self) -> None:
-        """Set the ``is_alive`` property of nested objects to ``False``.
+        """
+        Set the ``is_alive`` property of nested objects to ``False``.
 
         Notes
         -----
         This method is recursive. It is only to be used by the
-        ``delete_component()`` method and itself.
+        :func:`delete_component()` method and itself.
         """
         # Kill all its bodies, beams and coordinate systems
         for elem in [*self.bodies, *self.beams, *self._coordinate_systems]:
@@ -957,16 +959,16 @@ class Component:
         self, merge_component: bool = False, merge_bodies: bool = False
     ) -> Union["PolyData", "MultiBlock"]:
         """
-        Tessellate this component.
+        Tessellate the component.
 
         Parameters
         ----------
         merge_component : bool, default: False
-            Whether to merge this component into a single dataset. If ``True``,
+            Whether to merge this component into a single dataset. When ``True``,
             all the individual bodies are effectively combined into a single
             dataset without any hierarchy.
         merge_bodies : bool, default: False
-            Whether to merge each body into a single dataset. If ``True``,
+            Whether to merge each body into a single dataset. When ``True``,
             all the faces of each individual body are effectively
             merged into a single dataset without separating faces.
 
@@ -1039,33 +1041,32 @@ class Component:
         **plotting_options: Optional[dict],
     ) -> None:
         """
-        Plot this component.
+        Plot the component.
 
         Parameters
         ----------
         merge_component : bool, default: False
-            Whether to merge this component into a single dataset. When ``True``,
+            Whether to merge the component into a single dataset. When ``True``,
             all the individual bodies are effectively merged into a single
             dataset without any hierarchy.
         merge_bodies : bool, default: False
             Whether to merge each body into a single dataset. When ``True``,
             all the faces of each individual body are effectively merged
             into a single dataset without separating faces.
-        screenshot : str, optional
-            Save a screenshot of the image being represented. The image is
-            stored in the path provided as an argument.
-        use_trame : bool, optional
-            Enables/disables the usage of the trame web visualizer. Defaults to the
-            global setting ``USE_TRAME``.
+        screenshot : str, default: None
+            Path for saving a screenshot of the image being represented.
+        use_trame : bool, default: None
+            Whether to enable the use of `trame <https://kitware.github.io/trame/index.html>`_.
+            The default is ``None``, in which case the ``USE_TRAME`` global setting
+            is used.
         **plotting_options : dict, default: None
-            Keyword arguments. For allowable keyword arguments, see the
-            :func:`pyvista.Plotter.add_mesh` method.
+            Keyword arguments for plotting. For allowable keyword arguments, see the
 
         Examples
         --------
         Create 25 small cylinders in a grid-like pattern on the XY plane and
-        plot them. Make the cylinders look metallic by enabling physically
-        based rendering with ``pbr=True``.
+        plot them. Make the cylinders look metallic by enabling
+        physically-based rendering with ``pbr=True``.
 
         >>> from ansys.geometry.core.misc.units import UNITS as u
         >>> from ansys.geometry.core.sketch import Sketch
@@ -1098,12 +1099,9 @@ class Component:
         """
         from ansys.geometry.core.plotting import PlotterHelper
 
-        pl_helper = PlotterHelper(use_trame=use_trame)
-        pl = pl_helper.init_plotter()
-        pl.add_component(
+        PlotterHelper(use_trame=use_trame).plot(
             self, merge_bodies=merge_bodies, merge_component=merge_component, **plotting_options
         )
-        pl_helper.show_plotter(pl, screenshot=screenshot)
 
     def __repr__(self) -> str:
         """Represent the ``Component`` as a string."""

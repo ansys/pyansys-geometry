@@ -23,7 +23,7 @@ project = "ansys-geometry-core"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc."
 release = version = __version__
-cname = os.getenv("DOCUMENTATION_CNAME", default="nocname.com")
+cname = os.getenv("DOCUMENTATION_CNAME", default="geometry.docs.pyansys.com")
 switcher_version = get_version_match(__version__)
 
 # Select desired logo, theme, and declare the html title
@@ -33,7 +33,7 @@ html_short_title = html_title = "PyGeometry"
 
 # specify the location of your github repo
 html_context = {
-    "github_user": "pyansys",
+    "github_user": "ansys",
     "github_repo": "pygeometry",
     "github_version": "main",
     "doc_path": "doc/source",
@@ -82,12 +82,12 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "pint": ("https://pint.readthedocs.io/en/stable", None),
     "numpy": ("https://numpy.org/devdocs", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
     "pyvista": ("https://docs.pyvista.org/", None),
     "grpc": ("https://grpc.github.io/grpc/python/", None),
     # kept here as an example
     # "matplotlib": ("https://matplotlib.org/stable", None),
-    "pypim": ("https://pypim.docs.pyansys.com/", None),
+    "pypim": ("https://pypim.docs.pyansys.com/version/dev", None),
 }
 
 # numpydoc configuration
@@ -171,10 +171,10 @@ nbsphinx_thumbnails = {
 nbsphinx_epilog = """
 ----
 
-.. admonition:: Download this example!
+.. admonition:: Download this example
 
     Download this example as a `Jupyter Notebook <{cname_pref}/{ipynb_file_loc}>`_
-    or as a `Python script <{cname_pref}/{py_file_loc}>`_ from the previous links.
+    or as a `Python script <{cname_pref}/{py_file_loc}>`_.
 
 """.format(
     cname_pref=f"https://{cname}/version/{switcher_version}",
@@ -184,10 +184,10 @@ nbsphinx_epilog = """
 
 nbsphinx_prolog = """
 
-.. admonition:: Download this example!
+.. admonition:: Download this example
 
     Download this example as a `Jupyter Notebook <{cname_pref}/{ipynb_file_loc}>`_
-    or as a `Python script <{cname_pref}/{py_file_loc}>`_ from the previous links.
+    or as a `Python script <{cname_pref}/{py_file_loc}>`_.
 
 ----
 """.format(
@@ -205,3 +205,7 @@ latex_additional_files = [watermark, ansys_logo_white, ansys_logo_white_cropped]
 # change the preamble of latex with customized title page
 # variables are the title of pdf, watermark
 latex_elements = {"preamble": latex.generate_preamble(html_title)}
+
+linkcheck_exclude_documents = ["index"]
+linkcheck_anchors_ignore_for_url = ["https://docs.pyvista.org/api/*"]
+linkcheck_ignore = ["https://github.com/ansys/pygeometry/*", "https://geometry.docs.pyansys.com/*"]

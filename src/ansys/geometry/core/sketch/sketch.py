@@ -1,4 +1,4 @@
-"""Provides the ``Sketch`` class."""
+"""Provides for creating and managing a sketch."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, Dict, List, Optional, Union
@@ -41,12 +41,13 @@ class Sketch:
         self,
         plane: Optional[Plane] = Plane(),
     ):
-        """Initialize ``Sketch`` class."""
+        """Initialize the ``Sketch`` class."""
         self._plane = plane
 
         self._faces = []
         self._edges = []
         self._current_sketch_context = []
+        self._sketches_polydata_selection = []
 
         # data structure to track tagging individual
         # sketch objects and collections of sketch objects
@@ -60,12 +61,12 @@ class Sketch:
     @property
     def edges(self) -> List[SketchEdge]:
         """
-        List all independently sketched edges.
+        List of all independently sketched edges.
 
         Notes
         -----
-        Those that are not assigned to a face. Face edges are not
-        included in this list.
+        Independently sketched edges are not assigned to a face. Face edges
+        are not included in this list.
         """
         return self._edges
 
@@ -122,11 +123,11 @@ class Sketch:
         Parameters
         ----------
         x : Union[Quantity, Distance], default: Quantity(0, DEFAULT_UNITS.LENGTH)
-            Amount to translate the origin the x-direction.
+            Amount to translate the origin of the x-direction.
         y : Union[Quantity, Distance], default: Quantity(0, DEFAULT_UNITS.LENGTH)
-            Amount to translate the origin the y-direction.
+            Amount to translate the origin of the y-direction.
         z : Union[Quantity, Distance], default: Quantity(0, DEFAULT_UNITS.LENGTH)
-            Amount to translate the origin the z-direction.
+            Amount to translate the origin of the z-direction.
 
         Returns
         -------
@@ -204,7 +205,7 @@ class Sketch:
         face : SketchFace
             Face to add.
         tag : str, default: None
-            User-defined label for identifying this face.
+            User-defined label for identifying the face.
 
         Returns
         -------
@@ -227,7 +228,7 @@ class Sketch:
         edge : SketchEdge
             Edge to add.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying the edge.
 
         Returns
         -------
@@ -242,7 +243,7 @@ class Sketch:
 
     @check_input_types
     def select(self, *tags: str) -> "Sketch":
-        """Add all objects to the current context that match provided tags."""
+        """Add all objects that match provided tags to the current context."""
         self._current_sketch_context = []
 
         for tag in tags:
@@ -257,11 +258,11 @@ class Sketch:
         Parameters
         ----------
         start : Point2D
-            Point that is the start of the line segment.
+            Starting point of the line segment.
         end : Point2D
-            Point that is the end of the line segment.
+            Ending point of the line segment.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying the edge.
 
         Returns
         -------
@@ -278,9 +279,9 @@ class Sketch:
         Parameters
         ----------
         end : Point2D
-            Point that is the end of the line segment.
+            Ending point of the line segment.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying the edge.
 
         Returns
         -------
@@ -302,26 +303,26 @@ class Sketch:
         """
         Add a segment to the sketch starting from a given starting point.
 
+        Notes
+        -----
+        Vector magnitude determines the segment endpoint.
+        Vector magnitude is assumed to use the same unit as the starting point.
+
         Parameters
         ----------
         start : Point2D
-            Point that is the start of the line segment.
+            Starting point of the line segment.
         vector : Vector2D
             Vector defining the line segment. Vector magnitude determines
             the segment endpoint. Vector magnitude is assumed to be in the
             same unit as the starting point.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying the edge.
 
         Returns
         -------
         Sketch
             Revised sketch state ready for further sketch actions.
-
-        Notes
-        -----
-        Vector magnitude determines the segment endpoint.
-        Vector magnitude is assumed to use the same unit as the starting point.
         """
         end_vec_as_point = Point2D(vector, start.unit)
         end = start + end_vec_as_point
@@ -338,7 +339,7 @@ class Sketch:
         vector : Vector2D
             Vector defining the line segment.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying the edge.
 
         Returns
         -------
@@ -371,18 +372,18 @@ class Sketch:
         Parameters
         ----------
         start : Point2D
-            Point that is the start of the arc.
+            Starting point of the arc.
         end : Point2D
-            Point that is the end of the arc.
+            Ending point of the arc.
         center : Point2D
-            Point that is the center of the arc.
+            Center point of the arc.
         clockwise : bool, default: False
             Whether the arc spans the angle clockwise between the start
-            and end points. By default, the arc spans the angle
+            and end points. When ``False `` (default), the arc spans the angle
             counter-clockwise. When ``True``, the arc spans the angle
             clockwise.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying the edge.
 
         Returns
         -------
@@ -406,16 +407,16 @@ class Sketch:
         Parameters
         ----------
         end : Point2D
-            Point that is the end of the arc.
+            Ending point of the arc.
         center : Point2D
-            Point that is the center of the arc.
+            Center point of the arc.
         clockwise : bool, default: False
             Whether the arc spans the angle clockwise between the start
-            and end points. By default, the arc spans the angle
+            and end points. When ``False`` (default), the arc spans the angle
             counter-clockwise. When ``True``, the arc spans the angle
             clockwise.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying the edge.
 
         Returns
         -------
@@ -444,13 +445,13 @@ class Sketch:
         Parameters
         ----------
         start : Point2D
-            Point that is the start of the arc.
+            Starting point of the arc.
         inter : Point2D
-            Point that is at an intermediate location of the arc.
+            Intermediate point (location) of the arc.
         end : Point2D
-            Point that is the end of the arc.
+            End point of the arc.
         tag : str, default: None
-            User-defined label for identifying this edge.
+            User-defined label for identifying the edge.
 
         Returns
         -------
@@ -479,7 +480,7 @@ class Sketch:
         point3 : Point2D
             Point that represents a vertex of the triangle.
         tag : str, default: None
-            User-defined label for identifying this face.
+            User-defined label for identifying the face.
 
         Returns
         -------
@@ -512,13 +513,13 @@ class Sketch:
             Angle for trapezoid generation.
         nonsymmetrical_slant_angle : Union[Quantity, Angle, Real], default: None
             Asymmetrical slant angles on each side of the trapezoid.
-            By default, the trapezoid is symmetrical.
+            The default is ``None``, in which case the trapezoid is symmetrical.
         center : Point2D, default: (0, 0)
-            Point that represents the center of the trapezoid.
+            Center point of the trapezoid.
         angle : Optional[Union[Quantity, Angle, Real]], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
-            User-defined label for identifying this face.
+            User-defined label for identifying the face.
 
         Returns
         -------
@@ -540,11 +541,11 @@ class Sketch:
         Parameters
         ----------
         center: Point2D
-            Point that represents the center of the circle.
+            Center point of the circle.
         radius : Union[Quantity, Distance, Real]
             Radius of the circle.
         tag : str, default: None
-            User-defined label for identifying this face.
+            User-defined label for identifying the face.
 
         Returns
         -------
@@ -568,7 +569,7 @@ class Sketch:
         Parameters
         ----------
         center: Point2D
-            Point that represents the center of the box.
+            Center point of the box.
         width : Union[Quantity, Distance, Real]
             Width of the box.
         height : Union[Quantity, Distance, Real]
@@ -576,7 +577,7 @@ class Sketch:
         angle : Union[Quantity, Real], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
-            User-defined label for identifying this face.
+            User-defined label for identifying the face.
 
         Returns
         -------
@@ -600,7 +601,7 @@ class Sketch:
         Parameters
         ----------
         center: Point2D
-            Point that represents the center of the slot.
+            Center point of the slot.
         width : Union[Quantity, Distance, Real]
             Width of the slot.
         height : Union[Quantity, Distance, Real]
@@ -608,7 +609,7 @@ class Sketch:
         angle : Union[Quantity, Angle, Real], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
-            User-defined label for identifying this face.
+            User-defined label for identifying the face.
 
         Returns
         -------
@@ -632,7 +633,7 @@ class Sketch:
         Parameters
         ----------
         center: Point2D
-            Point that represents the center of the ellipse.
+            Center point of the ellipse.
         major_radius : Union[Quantity, Distance, Real]
             Semi-major axis of the ellipse.
         minor_radius : Union[Quantity, Distance, Real]
@@ -640,7 +641,7 @@ class Sketch:
         angle : Union[Quantity, Angle, Real], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
-            User-defined label for identifying this face.
+            User-defined label for identifying the face.
 
         Returns
         -------
@@ -664,7 +665,7 @@ class Sketch:
         Parameters
         ----------
         center: Point2D
-            Point that represents the center of the polygon.
+            Center point of the polygon.
         inner_radius : Union[Quantity, Distance, Real]
             Inner radius (apothem) of the polygon.
         sides : int
@@ -672,7 +673,7 @@ class Sketch:
         angle : Union[Quantity, Angle, Real], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
-            User-defined label for identifying this face.
+            User-defined label for identifying the face.
 
         Returns
         -------
@@ -704,7 +705,7 @@ class Sketch:
         n_teeth : int
             Number of teeth of the gear.
         tag : str, default: None
-            User-defined label for identifying this face.
+            User-defined label for identifying the face.
 
         Returns
         -------
@@ -737,7 +738,7 @@ class Sketch:
         n_teeth : int
             Number of teeth of the spur gear.
         tag : str, default: None
-            User-defined label for identifying this face.
+            User-defined label for identifying the face.
 
         Returns
         -------
@@ -755,7 +756,7 @@ class Sketch:
         Parameters
         ----------
         tag : str
-            Tag to assign the sketch objects.
+            Tag to assign to the sketch objects.
         """
         self._tags[tag] = self._current_sketch_context
 
@@ -765,7 +766,7 @@ class Sketch:
 
         Notes
         -----
-        If no single point context is available, ``ZERO_POINT2D`` is returned by default.
+        If no single point context is available, ``ZERO_POINT2D`` is returned.
         """
         if not self._edges or len(self._edges) == 0:
             return ZERO_POINT2D
@@ -790,6 +791,7 @@ class Sketch:
         view_2d: Optional[bool] = False,
         screenshot: Optional[str] = None,
         use_trame: Optional[bool] = None,
+        selected_pd_objects: List["PolyData"] = None,
         **plotting_options: Optional[dict],
     ):
         """
@@ -798,22 +800,41 @@ class Sketch:
         Parameters
         ----------
         view_2d : bool, default: False
-            Specifies whether the plot should be represented in a 2D format.
-            By default, this is set to ``False``.
+            Whether to represent the plot in a 2D format.
         screenshot : str, optional
-            Save a screenshot of the image being represented. The image is
-            stored in the path provided as an argument.
-        use_trame : bool, optional
-            Enables/disables the usage of the trame web visualizer. Defaults to the
-            global setting ``USE_TRAME``.
+            Path for saving a screenshot of the image that is being represented.
+        use_trame : bool, default: None
+            Whether to enables the use of `trame <https://kitware.github.io/trame/index.html>`_.
+            The default is ``None``, in which case the ``USE_TRAME`` global
+            setting is used.
         **plotting_options : dict, optional
-            Keyword arguments. For allowable keyword arguments,
+            Keyword arguments for plotting. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
         # Show the plot requested - i.e. all polydata in sketch
-        self.__show_plotter(
-            self.sketch_polydata(), view_2d, screenshot, use_trame, **plotting_options
-        )
+        from ansys.geometry.core.plotting import PlotterHelper
+
+        if view_2d:
+            vector = self.plane.direction_z.tolist()
+            viewup = self.plane.direction_y.tolist()
+            view_2d_dict = {"vector": vector, "viewup": viewup}
+        else:
+            view_2d_dict = None
+
+        if selected_pd_objects is not None:
+            pl_helper = PlotterHelper(use_trame=use_trame).plot(
+                selected_pd_objects,
+                screenshot=screenshot,
+                view_2d=view_2d_dict,
+                **plotting_options,
+            )
+        else:
+            pl_helper = PlotterHelper(use_trame=use_trame).plot(
+                self.sketch_polydata(),
+                screenshot=screenshot,
+                view_2d=view_2d_dict,
+                **plotting_options,
+            )
 
     def plot_selection(
         self,
@@ -828,33 +849,30 @@ class Sketch:
         Parameters
         ----------
         view_2d : bool, default: False
-            Specifies whether the plot should be represented in a 2D format.
-            By default, this is set to ``False``.
+            Whether to represent the plot in a 2D format.
         screenshot : str, optional
-            Save a screenshot of the image being represented. The image is
-            stored in the path provided as an argument.
-        use_trame : bool, optional
-            Enables/disables the usage of the trame web visualizer. Defaults to the
-            global setting ``USE_TRAME``.
+            Path for saving a screenshot of the image that is being represented.
+        use_trame : bool, default: None
+            Whether to enables the use of `trame <https://kitware.github.io/trame/index.html>`_.
+            The default is ``None``, in which case the ``USE_TRAME`` global
+            setting is used.
         **plotting_options : dict, optional
-            Keyword arguments. For allowable keyword arguments,
+            Keyword arguments for plotting. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
         """
         # Get the selected polydata
-        sketches_polydata = []
-        sketches_polydata.extend(
+        sketches_polydata_selection = []
+        sketches_polydata_selection.extend(
             [
                 sketch_item.visualization_polydata.transform(self._plane.transformation_matrix)
                 for sketch_item in self._current_sketch_context
             ]
         )
-
-        # Show the plot requested
-        self.__show_plotter(
-            polydata=sketches_polydata,
+        self.plot(
             view_2d=view_2d,
             screenshot=screenshot,
             use_trame=use_trame,
+            selected_pd_objects=sketches_polydata_selection,
             **plotting_options,
         )
 
@@ -865,7 +883,7 @@ class Sketch:
         Returns
         -------
         List[PolyData]
-            Set of PolyData configuration for all edges and faces in the sketch.
+            List of the polydata configuration for all edges and faces in the sketch.
         """
         sketches_polydata = []
         sketches_polydata.extend(
@@ -883,48 +901,3 @@ class Sketch:
         )
 
         return sketches_polydata
-
-    def __show_plotter(
-        self,
-        polydata: List["PolyData"],
-        view_2d: bool,
-        screenshot: Optional[str],
-        use_trame: Optional[bool] = None,
-        **plotting_options: Optional[dict],
-    ) -> None:
-        """
-        Private method handling the ``show`` call of our Plotter.
-
-        Parameters
-        ----------
-        polydata: List["PolyData"]
-            Set of PolyData configuration for all edges and faces to be plotted.
-        view_2d : bool
-            Specifies whether the plot should be represented in a 2D format.
-            By default, this is set to ``False``.
-        screenshot : str, optional
-            Save a screenshot of the image being represented. The image is
-            stored in the path provided as an argument.
-        use_trame : bool, optional
-            Enables/disables the usage of the trame web visualizer. Defaults to the
-            global setting ``USE_TRAME``.
-        **plotting_options : dict, optional
-            Keyword arguments. For allowable keyword arguments,
-            see the :func:`pyvista.Plotter.add_mesh` method.
-        """
-        from ansys.geometry.core.plotting import PlotterHelper
-
-        pl_helper = PlotterHelper(use_trame=use_trame)
-        pl = pl_helper.init_plotter()
-        # Add the polydata
-        pl.add_sketch_polydata(polydata, **plotting_options)
-
-        # If you want to visualize a Sketch from the top...
-        if view_2d:
-            pl.scene.view_vector(
-                vector=self.plane.direction_z.tolist(),
-                viewup=self.plane.direction_y.tolist(),
-            )
-
-        # Finally, show the plot
-        pl_helper.show_plotter(pl, screenshot=screenshot)

@@ -2,15 +2,15 @@ exclude: "tests/integration/files"
 repos:
 
 - repo: https://github.com/psf/black
-  rev: 23.3.0  # IF VERSION CHANGES --> MODIFY "blacken-docs" MANUALLY AS WELL!!
+  rev: 23.7.0  # IF VERSION CHANGES --> MODIFY "blacken-docs" MANUALLY AS WELL!!
   hooks:
   - id: black
 
 - repo: https://github.com/adamchainz/blacken-docs
-  rev: 1.13.0
+  rev: 1.15.0
   hooks:
   - id: blacken-docs
-    additional_dependencies: [black==23.3.0]
+    additional_dependencies: [black==23.7.0]
 
 - repo: https://github.com/pycqa/isort
   rev: 5.12.0
@@ -23,15 +23,16 @@ repos:
   - id: flake8
 
 - repo: https://github.com/PyCQA/docformatter
-  rev: v1.6.3
+  rev: v1.7.5
   hooks:
   - id: docformatter
     additional_dependencies: [tomli]
 
 - repo: https://github.com/codespell-project/codespell
-  rev: v2.2.4
+  rev: v2.2.5
   hooks:
   - id: codespell
+    args: ["--ignore-words", "doc/styles/Vocab/ANSYS/accept.txt"]
 
 - repo: https://github.com/pycqa/pydocstyle
   rev: 6.3.0
@@ -50,6 +51,6 @@ repos:
 
 # this validates our github workflow files
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.22.0
+  rev: 0.23.3
   hooks:
     - id: check-github-workflows
