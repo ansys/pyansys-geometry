@@ -486,7 +486,7 @@ class PlotterHelper:
         self._pv_off_screen_original = bool(pv.OFF_SCREEN)
         self._actor_object_mapping = {}
         self._pl = None
-        self._picked_list = []
+        self._picked_list = set()
         self._picker_added_actors_map = {}
         if self._use_trame and _HAS_TRAME:
             # avoids GUI window popping up
@@ -535,7 +535,7 @@ class PlotterHelper:
             show_points=False,
         )
         if body_name not in self._picked_list:
-            self._picked_list.append(body_name)
+            self._picked_list.add(body_name)
         added_actors.append(label_actor)
 
         self._picker_added_actors_map[actor.name] = added_actors
@@ -556,7 +556,9 @@ class PlotterHelper:
         """
         actor.prop.show_edges = False
         self._picked_list.remove(body_name)
-        self._pl.scene.remove_actor(self._picker_added_actors_map[actor.name])
+        if actor.name in self._picker_added_actors_map:
+            self._pl.scene.remove_actor(self._picker_added_actors_map[actor.name])
+            self._picker_added_actors_map.pop(actor.name)
 
     def picker_callback(self, actor: "pv.Actor") -> None:
         """
