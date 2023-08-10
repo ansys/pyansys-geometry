@@ -4,6 +4,8 @@ from pathlib import Path
 
 from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
+from ansys.api.geometry.v0.designs_pb2 import OpenRequest
+from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.geometryapplication_pb2 import RunScriptFileRequest
 from ansys.api.geometry.v0.geometryapplication_pb2_grpc import GeometryApplicationStub
 from beartype.typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
@@ -178,7 +180,7 @@ class Modeler:
         )
         return response.file_path
 
-    def open_file(self, file_path: str) -> "Design":
+    def open_file(self, file_path: str, upload_to_server: bool = True) -> "Design":
         """
         Open a file.
 
@@ -186,17 +188,39 @@ class Modeler:
         and HOOPS Exchange formats are supported. On Linux, only the ``.scdocx``
         format is supported.
 
+        If the file is a shattered assembly, the whole containing folder will need to be uploaded.
+        Ensure proper folder structure in order to prevent uploading of unnecessary files.
+
         Parameters
         ----------
         file_path : str
            Path of the file to open. The extension of the file must be included.
+        upload_to_server : bool
+            True if the service is running on a remote machine. If service is running on the local
+            machine, set to False, as there is no reason to upload the file.
 
         Returns
         -------
         Design
             Newly imported design.
         """
-        self._upload_file(file_path, True)
+        # Format-specific logic - upload the whole containing folder for assemblies
+        if upload_to_server:
+            if any(
+                ext in file_path for ext in [".CATProduct", ".asm", ".solution", ".sldasm", ".prt"]
+            ):
+                import os
+
+                dir = os.path.dirname(file_path)
+                files = os.listdir(dir)
+                for file in files:
+                    full_path = os.path.join(dir, file)
+                    if full_path != file_path:
+                        self._upload_file(full_path)
+            self._upload_file(file_path, True)
+        else:
+            DesignsStub(self._client.channel).Open(OpenRequest(filepath=file_path))
+
         return self.read_existing_design()
 
     def __repr__(self) -> str:
