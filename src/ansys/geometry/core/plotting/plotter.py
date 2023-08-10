@@ -577,8 +577,8 @@ class PlotterHelper:
 
         Returns
         -------
-        List[str]
-            List with the picked bodies.
+        List[any]
+            List with the picked bodies in the picked order.
         """
         if isinstance(object, List) and not isinstance(object[0], pv.PolyData):
             logger.debug("Plotting objects in list...")
@@ -596,7 +596,16 @@ class PlotterHelper:
                 viewup=view_2d["viewup"],
             )
         self.show_plotter(screenshot)
-        return self._picked_list
+
+        picked_objects_list = []
+        if isinstance(object, list):
+            picked_objects_list = [
+                elem for elem in object if hasattr(elem, "name") and elem.name in self._picked_list
+            ]
+        elif hasattr(object, "name") and object.name in self._picked_list:
+            picked_objects_list = [object]
+
+        return picked_objects_list
 
     def show_plotter(self, screenshot: Optional[str] = None) -> None:
         """
