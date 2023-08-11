@@ -163,12 +163,10 @@ plotter.plot(plot_list)
 ```
 
 By default, we use the Python visualizer, but we can also use the Trame visualizer.
-```{code-cell} ipython3
+```python
 
 plotter = PlotterHelper(use_trame=True)
-
-# uncomment to plot using Trame
-# plotter.plot(plot_list)
+plotter.plot(plot_list)
 ```
 
 ## Interactive object selection
