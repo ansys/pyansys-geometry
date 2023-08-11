@@ -12,21 +12,21 @@ kernelspec:
 ---
 
 # PyGeometry 101: Plotter
-This documentation provides an overview of the plotting capabilities of PyGeometry, particularly focusing on its plotter features.
-After reviewing the fundamental concepts of sketching and modeling in PyGeometry, let's delve into the capabilities offered by its plotter.
+This example provides an overview of PyGeometry's plotting capabilities, particularly
+focusing on its plotter features. After reviewing the fundamental concepts of sketching
+and modeling in PyGeometry, it shows how to leverage these key PyGeometry plotting
+capabilities:
 
 +++
-The PyGeometry plotter offers a range of capabilities that enhance the development process:
-- **Multi-Object Plotting**: You can conveniently plot a list of elements, encompassing objects from both PyGeometry and PyVista libraries.
-- **Interactive Object Selection**: The plotter allows interactive selection of PyGeometry objects within the scene.
-  This enables efficient manipulation of these objects in subsequent scripting.
 
-The upcoming sections illustrate how to leverage these features through practical examples.
+- **Multi-object plotting**: You can conveniently plot a list of elements, encompassing objects
+  from both PyGeometry and PyVista libraries.
+- **Interactive object selection**: You can interactively select PyGeometry objects within the
+  scene. This enables efficient manipulation of these objects in subsequent scripting.
 
-## Setting the example
+## Perform required imports
 
-Begin by importing the necessary libraries. In this example, we utilize a docker image to interact with the modeling service.
- However, you can opt for any suitable method mentioned in the preceding example.
+Perform the required imports:
 
 
 ```{code-cell} ipython3
@@ -42,7 +42,11 @@ from ansys.geometry.core.plotting import PlotterHelper
 from ansys.geometry.core.sketch import Sketch
 ```
 
-Now we can load the Modeler as it follows.
+## Load modeler
+
+Load the modeler. While the following code uses a Docker image to interact
+with the modeling service, you can use any suitable method mentioned in the
+preceding examples. 
 
 ```{code-cell} ipython3
 
@@ -68,14 +72,12 @@ local_instance = LocalDockerInstance(
 modeler = Modeler(local_instance=local_instance)
 ```
 
-Now we can continue by building the object examples.
-
 +++
 
-## Building the example objects
+## Build example objects
 
-First, we will instantiate a new design were we will be working on. We will also
-initialize a list where we will be saving the objects we intend to plot.
+This code instantiates a new design to work on. It then initializes a list
+of objects for plotting.
 
 ```{code-cell} ipython3
 
@@ -85,11 +87,14 @@ design = modeler.create_design("Multiplot")
 plot_list = []
 ```
 
-Now we will create some objects that will serve as a showcase to the capabilities of the plotter.
+Subsequent code examples, which show how to create some objects, demonstrate
+the capabilities of the plotter.
 
 +++
 
-A PyGeometry cylinder Body object.
+## Create a PyGeometry body cylinder
+
+This code uses PyGeometry to create a body cylinder:
 
 ```{code-cell} ipython3
 
@@ -100,7 +105,9 @@ cylinder_body = design.extrude_sketch("JustACyl", cylinder, Quantity(10, UNITS.m
 plot_list.append(cylinder_body)
 ```
 
-A PyGeometry arc Sketch.
+## Create a PyGeometry arc sketch
+
+This code uses PyGeometry to create an arc sketch:
 ```{code-cell} ipython3
 
 # Sketch definition
@@ -114,7 +121,8 @@ sketch.arc(
 plot_list.append(sketch)
 ```
 
-A PyVista cylinder.
+## Create a PyVista cylinder
+This code uses PyVista to create a cylinder:
 
 ```{code-cell} ipython3
 
@@ -122,7 +130,8 @@ cyl = pv.Cylinder(radius=5, height=20, center=(-20, 10, 10))
 plot_list.append(cyl)
 ```
 
-A PyVista MultiBlock with a sphere and a cube.
+## Create a PyVista multiblock
+This code uses PyVista to create a multiBlock with a sphere and a cube:
 ```{code-cell} ipython3
 
 blocks = pv.MultiBlock(
@@ -132,21 +141,22 @@ plot_list.append(blocks)
 ```
 
 
-And finally, a cube PyGeometry Body object.
+## Create a PyGeometry body box
+
+This code uses PyGeometry to create a body box that is a cube:
 ```{code-cell} ipython3
 
-# Create a Body box
 box2 = Sketch()
 box2.box(Point2D([-10, 20], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
 box_body2 = design.extrude_sketch("JustABox", box2, Quantity(10, UNITS.m))
 plot_list.append(box_body2)
 ```
 
-## Plotting the objects
+## Plot the objects
 
-To plot the created objects, we have several options.
+To plot the created objects, you have several options.
 
-First, we can simply plot one of the created elements.
+First, you can simply plot one of the created elements:
 
 ```{code-cell} ipython3
 
@@ -154,7 +164,7 @@ plotter = PlotterHelper()
 plotter.plot(box_body2)
 ```
 
-We can also plot the whole list of elements if desired.
+You can also plot the whole list of elements if desired:
 
 ```{code-cell} ipython3
 
@@ -162,14 +172,14 @@ plotter = PlotterHelper()
 plotter.plot(plot_list)
 ```
 
-By default, we use the Python visualizer, but we can also use the Trame visualizer.
+The Python visualizer is used by default. However, you can also use `trame <https://kitware.github.io/trame/index.html>`_ for visualization.
 ```python
 
 plotter = PlotterHelper(use_trame=True)
 plotter.plot(plot_list)
 ```
 
-## Interactive object selection
+## Select objects interactively
 
 PyGeometry's plotter supports interactive object selection within the scene.
 This enables you to pick objects for subsequent script manipulation.
@@ -183,7 +193,11 @@ picked_list = plotter.plot(plot_list)
 print(picked_list)
 ```
 
-Finally, we close the server session.
+## Close session
+When you finish interacting with your modeling service, you should close the active
+server session. This frees resources wherever the service is running.
+
+This code shows how to close the server session:
 ```{code-cell} ipython3
 modeler.close()
 ```
