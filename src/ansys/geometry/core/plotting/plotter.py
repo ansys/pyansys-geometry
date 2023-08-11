@@ -522,7 +522,7 @@ class PlotterHelper:
         body_name : str
             Name of the Body to highlight.
         pt : np.Array
-            Set of point to determine the label position.
+            Set of points to determine the label position.
         """
         added_actors = []
         actor.prop.show_edges = True
