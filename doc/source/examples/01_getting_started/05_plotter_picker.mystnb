@@ -12,22 +12,20 @@ kernelspec:
 ---
 
 # PyGeometry 101: Plotter
-This example provides an overview of PyGeometry's plotting capabilities, particularly
-focusing on its plotter features. After reviewing the fundamental concepts of sketching
-and modeling in PyGeometry, it shows how to leverage these key PyGeometry plotting
-capabilities:
+This example provides an overview of PyGeometry's plotting capabilities, focusing on
+its plotter features. After reviewing the fundamental concepts of sketching
+and modeling in PyGeometry, it shows how to leverage these key plotting capabilities:
 
-+++
-
-- **Multi-object plotting**: You can conveniently plot a list of elements, encompassing objects
-  from both PyGeometry and PyVista libraries.
+- **Multi-object plotting**: You can conveniently plot a list of elements, including objects
+  created in both PyGeometry and PyVista libraries.
 - **Interactive object selection**: You can interactively select PyGeometry objects within the
   scene. This enables efficient manipulation of these objects in subsequent scripting.
+
++++
 
 ## Perform required imports
 
 Perform the required imports:
-
 
 ```{code-cell} ipython3
 from pint import Quantity
@@ -42,11 +40,11 @@ from ansys.geometry.core.plotting import PlotterHelper
 from ansys.geometry.core.sketch import Sketch
 ```
 
-## Load modeler
+## Load modeling service
 
-Load the modeler. While the following code uses a Docker image to interact
+Load the modeling service. While the following code uses a Docker image to interact
 with the modeling service, you can use any suitable method mentioned in the
-preceding examples. 
+preceding examples.
 
 ```{code-cell} ipython3
 
@@ -74,9 +72,9 @@ modeler = Modeler(local_instance=local_instance)
 
 +++
 
-## Build example objects
+## Instantiate design and initialize object list
 
-This code instantiates a new design to work on. It then initializes a list
+This code instantiates a new design to work on and initializes a list
 of objects for plotting.
 
 ```{code-cell} ipython3
@@ -87,8 +85,8 @@ design = modeler.create_design("Multiplot")
 plot_list = []
 ```
 
-Subsequent code examples, which show how to create some objects, demonstrate
-the capabilities of the plotter.
+Subsequent code examples show how to create some objects and demonstrate
+plotter capabilities.
 
 +++
 
@@ -98,7 +96,6 @@ This code uses PyGeometry to create a body cylinder:
 
 ```{code-cell} ipython3
 
-# Create a Body cylinder
 cylinder = Sketch()
 cylinder.circle(Point2D([10, 10], UNITS.m), 1.0)
 cylinder_body = design.extrude_sketch("JustACyl", cylinder, Quantity(10, UNITS.m))
@@ -108,9 +105,9 @@ plot_list.append(cylinder_body)
 ## Create a PyGeometry arc sketch
 
 This code uses PyGeometry to create an arc sketch:
+
 ```{code-cell} ipython3
 
-# Sketch definition
 sketch = Sketch()
 sketch.arc(
     Point2D([20, 20], UNITS.m),
@@ -132,6 +129,7 @@ plot_list.append(cyl)
 
 ## Create a PyVista multiblock
 This code uses PyVista to create a multiBlock with a sphere and a cube:
+
 ```{code-cell} ipython3
 
 blocks = pv.MultiBlock(
@@ -140,10 +138,10 @@ blocks = pv.MultiBlock(
 plot_list.append(blocks)
 ```
 
-
 ## Create a PyGeometry body box
 
 This code uses PyGeometry to create a body box that is a cube:
+
 ```{code-cell} ipython3
 
 box2 = Sketch()
@@ -152,11 +150,11 @@ box_body2 = design.extrude_sketch("JustABox", box2, Quantity(10, UNITS.m))
 plot_list.append(box_body2)
 ```
 
-## Plot the objects
+## Plot objects
 
 To plot the created objects, you have several options.
 
-First, you can simply plot one of the created elements:
+You can simply plot one of the created objects:
 
 ```{code-cell} ipython3
 
@@ -164,7 +162,7 @@ plotter = PlotterHelper()
 plotter.plot(box_body2)
 ```
 
-You can also plot the whole list of elements if desired:
+You can plot the whole list of objects if desired:
 
 ```{code-cell} ipython3
 
@@ -172,7 +170,9 @@ plotter = PlotterHelper()
 plotter.plot(plot_list)
 ```
 
-The Python visualizer is used by default. However, you can also use `trame <https://kitware.github.io/trame/index.html>`_ for visualization.
+The Python visualizer is used by default. However, you can also use
+`trame <https://kitware.github.io/trame/index.html>`_ for visualization:
+
 ```python
 
 plotter = PlotterHelper(use_trame=True)
@@ -188,7 +188,7 @@ This enables you to pick objects for subsequent script manipulation.
 
 plotter = PlotterHelper(allow_picking=True)
 
-# plotter returns picked bodies
+# Plotter returns picked bodies
 picked_list = plotter.plot(plot_list)
 print(picked_list)
 ```
@@ -198,6 +198,7 @@ When you finish interacting with your modeling service, you should close the act
 server session. This frees resources wherever the service is running.
 
 This code shows how to close the server session:
+
 ```{code-cell} ipython3
 modeler.close()
 ```
