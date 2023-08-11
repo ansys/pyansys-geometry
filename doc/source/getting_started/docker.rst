@@ -32,7 +32,7 @@ these steps when installing Docker:
 
 #. Once the installation finishes, start Docker Desktop.
 
-#. Select **Settings > Software updates**, clear the **Automatically check for updates** checkbox, and
+#. Go to **Settings > Software updates**, clear the **Automatically check for updates** checkbox, and
    click **Apply & restart**.
 
 #. On the Windows taskbar, go to the **Show hidden icons** section, right-click in the Docker Desktop app, and
