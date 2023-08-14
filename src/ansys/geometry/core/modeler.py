@@ -1,5 +1,6 @@
 """Provides for interacting with the Geometry service."""
 import logging
+import os
 from pathlib import Path
 
 from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
@@ -180,6 +181,7 @@ class Modeler:
         )
         return response.file_path
 
+    @protect_grpc
     def open_file(self, file_path: str, upload_to_server: bool = True) -> "Design":
         """
         Open a file.
@@ -209,8 +211,6 @@ class Modeler:
             if any(
                 ext in file_path for ext in [".CATProduct", ".asm", ".solution", ".sldasm", ".prt"]
             ):
-                import os
-
                 dir = os.path.dirname(file_path)
                 files = os.listdir(dir)
                 for file in files:
