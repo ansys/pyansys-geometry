@@ -172,8 +172,6 @@ class Component:
 
         self._master_component.occurrences.append(self)
 
-        self._transformed_part.occurrences.append(self)
-
     @property
     def id(self) -> str:
         """ID of the component."""
