@@ -11,33 +11,45 @@ kernelspec:
   name: python3
 ---
 
-# PyGeometry 101: units
+# PyGeometry 101: Units
 
-PyGeometry has the capability of handling units inside the source code. In order to do so,
-a third-party open-source software which is being used in other PyAnsys libraries
-called [Pint](https://pint.readthedocs.io/en/stable/) is used.
+To handle units inside the source code, PyGeometry uses [Pint](https://pint.readthedocs.io/en/stable/),
+a third-party open source software that other PyAnsys libraries also use.
 
-In the following code sections it is shown how to operate with units inside
+The following code examples show how to operate with units inside
 the PyGeometry codebase and how to create objects with different units.
 
++++
+
+## Import units handler
+
+The following line of code imports the units handler: ``pint.util.UnitRegistry``.
+For more information on the ``UnitRegistry`` class in the ``pint`` API, see
+[Most important classes](https://pint.readthedocs.io/en/stable/api/base.html#most-important-classes)
+in its documentation.
+
 ```{code-cell} ipython3
-# With this line of code, we will import the units handler - pint.util.UnitRegistry
-#
-# See docs https://pint.readthedocs.io/en/stable/api/base.html?highlight=UnitRegistry#most-important-classes
 
 from ansys.geometry.core.misc import UNITS
+
 ```
 
-Now, with this ``UnitRegistry`` object called ``UNITS``, we will create
-``Quantity`` objects. A ``Quantity`` object is simply a container class with two core elements:
++++
+
+## Create and work with ``Quantity`` objects
+
+With the ``UnitRegistry`` object called ``UNITS``, you can create ``Quantity``
+objects. A ``Quantity`` object is simply a container class with two core elements:
 
 - A number
 - A unit
 
-``Quantity`` objects also have convenience methods for: transforming to different units, comparing
-magnitudes/values, units, etc. For more information on their functioning please refer to the
-[pint.Quantity](https://pint.readthedocs.io/en/stable/api/base.html#most-important-classes)
-docs or the [Pint tutorial](https://pint.readthedocs.io/en/stable/getting/tutorial.html?#tutorial).
+``Quantity`` objects have convenience methods, including those for transforming to
+different units and comparing magnitudes, values, and units. For more information on the
+``Quantity`` class in the ``pint`` API, see
+[Most important classes](https://pint.readthedocs.io/en/stable/api/base.html#most-important-classes)
+in its documentation. You can also step through this ``pint``
+[tutorial](https://pint.readthedocs.io/en/stable/getting/tutorial.html).
 
 ```{code-cell} ipython3
 from pint import Quantity
@@ -46,48 +58,49 @@ a = Quantity(10, UNITS.mm)
 
 print(f"Object a is a pint.Quantity: {a}")
 
-print("Let's request its magnitude in different ways (accessor methods):")
+print("Request its magnitude in different ways (accessor methods):")
 print(f"Magnitude: {a.m}.")
 print(f"Also magnitude: {a.magnitude}.")
 
-print("Let's request its units in different ways (accessor methods):")
+print("Request its units in different ways (accessor methods):")
 print(f"Units: {a.u}.")
 print(f"Also units: {a.units}.")
 
-# Quantities can also be compared between different units
+# Quantities can be compared between different units
 # You can also build Quantity objects as follows:
 a2 = 10 * UNITS.mm
 print(f"Comparing quantities built differently: {a == a2}")
 
-# Quantities can also be compared between different units
+# Quantities can be compared between different units
 a2_diff_units = 1 * UNITS.cm
-print(f"Comparing quantities with different units: {a == a2_diff_units}")
+print(f"Compare quantities with different units: {a == a2_diff_units}")
 ```
 
-The way PyGeometry objects work is by returning ``Quantity`` objects whenever that
-property requested has a physical meaning. For example, let's see it on ``Point3D`` objects.
+PyGeometry objects work by returning ``Quantity`` objects whenever that
+property requested has a physical meaning. For example, this code shows the
+return of ``Quantity`` objects for ``Point3D`` objects.
 
 ```{code-cell} ipython3
 from ansys.geometry.core.math import Point3D
 
 point_a = Point3D([1,2,4])
 print("========================= Point3D([1,2,4]) ========================")
-print(f"Our Point3D is a numpy.ndarray in SI units: {point_a}.")
-print(f"However, if we request each of the coordinates individually...\n")
+print(f"Point3D is a numpy.ndarray in SI units: {point_a}.")
+print(f"However, request each of the coordinates individually...\n")
 print(f"X Coordinate: {point_a.x}")
 print(f"Y Coordinate: {point_a.y}")
 print(f"Z Coordinate: {point_a.z}\n")
 
-# Now, let's store the information with different units...
+# Now, store the information with different units...
 point_a_km = Point3D([1,2,4], unit=UNITS.km)
 print("================= Point3D([1,2,4], unit=UNITS.km) =================")
-print(f"Our Point3D is a numpy.ndarray in SI units: {point_a_km}.")
-print(f"However, if we request each of the coordinates individually...\n")
+print(f"Point3D is a numpy.ndarray in SI units: {point_a_km}.")
+print(f"However, request each of the coordinates individually...\n")
 print(f"X Coordinate: {point_a_km.x}")
 print(f"Y Coordinate: {point_a_km.y}")
 print(f"Z Coordinate: {point_a_km.z}\n")
 
-# These points, though they are in different units, they can be added together
+# These points, although they are in different units, can be added together.
 res = point_a + point_a_km
 
 print("=================== res = point_a + point_a_km ====================")
@@ -97,7 +110,11 @@ print(f"Y Coordinate: {res.y}")
 print(f"Z Coordinate: {res.z}")
 ```
 
-PyGeometry has also implemented the concept of **default units**. Let's have a look at them.
++++
+
+## Use default units
+
+This code shows how PyGeometry implements the concept of *default units*:
 
 ```{code-cell} ipython3
 from ansys.geometry.core.misc import DEFAULT_UNITS
@@ -109,15 +126,17 @@ print("=== Default unit angle ===")
 print(DEFAULT_UNITS.ANGLE)
 ```
 
-Also, it is important to differentiate between *client-side* default units
-and *server-side* ones. Users are able to control both of them.
+It is important to differentiate between *client-side* default units
+and *server-side* default units. You are able to control both of them.
+
+This code prints the default server unit length:
 
 ```{code-cell} ipython3
 print("=== Default server unit length ===")
 print(DEFAULT_UNITS.SERVER_LENGTH)
 ```
 
-Having default units allows us to do the following, for example.
+This code shows how to use default units:
 
 ```{code-cell} ipython3
 from ansys.geometry.core.math import Point2D
@@ -135,34 +154,34 @@ print(f"numpy.ndarray value: {point_2d_default_units}")
 DEFAULT_UNITS.LENGTH = UNITS.m
 ```
 
-PyGeometry also has certain auxiliary classes implemented that provide proper
-unit checking when assigning value. Although they are more intended for internal use
-of the library, they can also be defined by users. Let's have a look at them.
+PyGeometry has certain auxiliary classes implemented that provide proper
+unit checking when assigning values. Although they are basically intended for
+internal use of the library, this code shows how you to define them for use:
 
 ```{code-cell} ipython3
 from ansys.geometry.core.misc import Angle, Distance
 ```
 
-Let's start with ``Distance``. The main difference between a ``Quantity`` object
-(that is, ``from pint import Quantity``) and a ``Distance``, relies on the fact that
-there is an active check on the units passed (in case they are not the default ones).
-Let's do some trials.
+Start with ``Distance``. The main difference between a ``Quantity`` object
+(that is, ``from pint import Quantity``) and a ``Distance`` is that there
+is an active check on the units passed (in case they are not the default ones).
+Here are some examples.
 
 ```{code-cell} ipython3
 radius = Distance(4)
-print(f"We now have a radius of {radius.value}.")
+print(f"The radius is {radius.value}.")
 
-# Let's try reassigning the value of the distance
+# Reassign the value of the distance
 radius.value = 7 * UNITS.cm
-print(f"After reassignment, we now have a radius of {radius.value}.")
+print(f"After reassignment, the radius is {radius.value}.")
 
 
-# We could also change its units if desired
+# Change the units if desired
 radius.unit = UNITS.cm
-print(f"After changing its units, we now have a radius of {radius.value}.")
+print(f"After changing its units, the radius is {radius.value}.")
 ```
 
-Let's try doing some unreasonable operations now... These will throw out errors.
+The next two code examples show how unreasonable operations raise errors.
 
 ```{code-cell} ipython3
 try:
@@ -178,19 +197,19 @@ except TypeError as err:
     print(f"Error raised: {err}")
 ```
 
-The same behavior applies to the ``Angle`` object. Let's do some simple trials.
+The same behavior applies to the ``Angle`` object. Here are some examples.
 
 ```{code-cell} ipython3
 import numpy as np
 
 rotation_angle = Angle(np.pi / 2)
-print(f"We now have a rotation angle of {rotation_angle.value}.")
+print(f"The rotation angle is {rotation_angle.value}.")
 
-# Let's try reassigning the value of the distance
+# Try reassigning the value of the distance
 rotation_angle.value = 7 * UNITS.degrees
-print(f"After reassignment, we now have a rotation angle of {rotation_angle.value}.")
+print(f"After reassignment, the rotation angle is {rotation_angle.value}.")
 
-# We could also change its units if desired
+# You could also change its units if desired
 rotation_angle.unit = UNITS.degrees
-print(f"After changing its units, we now have a rotation angle of {rotation_angle.value}.")
+print(f"After changing its units, the rotation angle is {rotation_angle.value}.")
 ```

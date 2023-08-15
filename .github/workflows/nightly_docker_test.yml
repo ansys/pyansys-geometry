@@ -18,9 +18,13 @@ concurrency:
 
 jobs:
 
+# =================================================================================================
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# =================================================================================================
+
   windows-tests:
     name: Nightly unstable testing - Windows
-    runs-on: [self-hosted, pygeometry]
+    runs-on: [self-hosted, Windows, pygeometry]
 
     steps:
       - uses: actions/checkout@v3
@@ -59,7 +63,7 @@ jobs:
           docker pull $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
 
       - name: Check location of self-hosted runner and define license server accordingly
-        if: runner.name == 'pygeometry-ci-1'
+        if: runner.name == 'pygeometry-ci-1' || runner.name == 'pygeometry-ci-2'
         run:
           echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
@@ -81,9 +85,22 @@ jobs:
           docker logs $env:GEO_CONT_NAME
           docker rm $env:GEO_CONT_NAME
 
+      - name: Stop any remaining containers
+        if: always()
+        run: |
+          $dockerContainers = docker ps -a -q
+          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
+              docker stop $dockerContainers
+              docker rm $dockerContainers
+          }
+
       - name: Clean all Docker dangling images
         if: always()
         run: docker image prune -f
+
+# =================================================================================================
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# =================================================================================================
 
   linux-tests:
     name: Nightly unstable testing - Linux

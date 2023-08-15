@@ -1,18 +1,7 @@
 name: Docker images - Test build
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - 'docker/**'
-      - '.github/workflows/docker_test_build.yml'
-  push:
-    branches:
-      - main
-    paths:
-      - 'docker/**'
-      - '.github/workflows/docker_test_build.yml'
   release:
-    types: [published]
 
 env:
   MAIN_PYTHON_VERSION: '3.10'
@@ -21,7 +10,7 @@ env:
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo
-  RESET_IMAGE_CACHE: 0
+  RESET_IMAGE_CACHE: 1
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -34,7 +23,7 @@ jobs:
 
   build-windows:
     name: Building Geometry Service - Windows
-    runs-on: [self-hosted, pygeometry]
+    runs-on: [self-hosted, Windows, pygeometry]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -58,7 +47,7 @@ jobs:
           docker build -f Dockerfile.windows -t ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }} .
 
       - name: Check location of self-hosted runner and define license server accordingly
-        if: runner.name == 'pygeometry-ci-1'
+        if: runner.name == 'pygeometry-ci-1' || runner.name == 'pygeometry-ci-2'
         run:
           echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
@@ -92,6 +81,15 @@ jobs:
           docker stop ${{ env.GEO_CONT_NAME }}
           docker logs ${{ env.GEO_CONT_NAME }}
           docker rm ${{ env.GEO_CONT_NAME }}
+
+      - name: Stop any remaining containers
+        if: always()
+        run: |
+          $dockerContainers = docker ps -a -q
+          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
+              docker stop $dockerContainers
+              docker rm $dockerContainers
+          }
 
       - name: Delete the Docker images (and untagged ones)
         if: always()

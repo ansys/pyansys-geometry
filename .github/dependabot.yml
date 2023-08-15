@@ -13,6 +13,12 @@ updates:
       - "pyansys-ci-bot"
     commit-message:
       prefix: "MAINT"
+    groups:
+       grpc-deps:
+          patterns:
+            - "google*"
+            - "grpc*"
+            - "protobuf"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -24,3 +30,7 @@ updates:
       - "pyansys-ci-bot"
     commit-message:
       prefix: "MAINT"
+    groups:
+       actions:
+          patterns:
+            - "*"

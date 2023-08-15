@@ -1,4 +1,4 @@
-"""Provides the ``Ellipse`` class."""
+"""Provides for creating and managing an ellipse."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
@@ -16,12 +16,12 @@ from ansys.geometry.core.typing import Real
 
 class SketchEllipse(SketchFace, Ellipse):
     """
-    Provides for modeling ellipses.
+    Provides for modeling an ellipse.
 
     Parameters
     ----------
     center: Point2D
-        Point representing the center of the ellipse.
+        Center point of the ellipse.
     major_radius : Union[Quantity, Distance, Real]
         Major radius of the ellipse.
     minor_radius : Union[Quantity, Distance, Real]
@@ -29,7 +29,8 @@ class SketchEllipse(SketchFace, Ellipse):
     angle : Union[Quantity, Angle, Real], default: 0
         Placement angle for orientation alignment.
     plane : Plane, optional
-        Plane containing the sketched ellipse, by default global XY Plane.
+        Plane containing the sketched ellipse, which is the global XY plane
+        by default.
     """
 
     @check_input_types
@@ -76,11 +77,11 @@ class SketchEllipse(SketchFace, Ellipse):
         ----------
         plane : Plane
             Plane containing the sketched ellipse.
-        major_radius : Optional[Distance]
-            Major radius of the ellipse (if any), by default None.
-        minor_radius : Optional[Distance]
-            Minor radius of the ellipse (if any), by default None.
-        angle : Optional[Angle]
+        major_radius : [Distance], default: None
+            Major radius of the ellipse (if any).
+        minor_radius : [Distance], default: None
+            Minor radius of the ellipse (if any).
+        angle : [Angle], default: None
             Placement angle for orientation alignment.
         """
         major_radius = major_radius if major_radius else self.major_radius
@@ -108,7 +109,7 @@ class SketchEllipse(SketchFace, Ellipse):
 
     @property
     def center(self) -> Point2D:
-        """Point that is the center of the ellipse."""
+        """Center point of the ellipse."""
         return self._center
 
     @property
@@ -178,16 +179,16 @@ class SketchEllipse(SketchFace, Ellipse):
 
     def plane_change(self, plane: Plane) -> None:
         """
-        Redefine the plane containing SketchEllipse objects.
+        Redefine the plane containing ``SketchEllipse`` objects.
 
         Notes
         -----
-        This implies that their 3D definition may suffer changes.
+        This implies that their 3D definition might suffer changes.
 
         Parameters
         ----------
         plane : Plane
-            Desired new plane which will contain the sketched ellipse.
+            Desired new plane that is to contain the sketched ellipse.
         """
         # Reinitialize the Circle definition for the given plane
         self._init_primitive_ellipse_from_plane(plane)

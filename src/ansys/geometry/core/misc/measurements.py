@@ -12,7 +12,7 @@ from ansys.geometry.core.typing import Real
 
 
 class SingletonMeta(type):
-    """This is a thread-safe implementation of Singleton."""
+    """Provides a thread-safe implementation of a singleton design pattern."""
 
     # This class has been extracted from
     # https://refactoring.guru/design-patterns/singleton/python/example#example-1--main-py
@@ -27,7 +27,7 @@ class SingletonMeta(type):
         """
         Return a single instance of the class.
 
-        Possible changes to the value of the `__init__` argument do not affect the
+        Possible changes to the value of the ``__init__`` argument do not affect the
         returned instance.
         """
         # Now, imagine that the program has just been launched. Since there's no
@@ -48,10 +48,10 @@ class SingletonMeta(type):
 
 
 class DefaultUnitsClass(metaclass=SingletonMeta):
-    """PyGeometry default units singleton class."""
+    """Provides default units for the PyGeometry singleton design pattern."""
 
     def __init__(self) -> None:
-        """Initialize ``DefaultUnitsClass`` class."""
+        """Initialize the ``DefaultUnitsClass`` class."""
         self._length: Unit = UNITS.meter
         self._angle: Unit = UNITS.radian
         self._server_length: Unit = UNITS.meter
@@ -129,7 +129,8 @@ DEFAULT_UNITS = DefaultUnitsClass()
 
 
 class Measurement(PhysicalQuantity):
-    """Provides the ``PhysicalQuantity`` subclass for holding a measurement.
+    """
+    Provides the ``PhysicalQuantity`` subclass for holding a measurement.
 
     Parameters
     ----------
@@ -175,14 +176,15 @@ class Measurement(PhysicalQuantity):
 
 
 class Distance(Measurement):
-    """Provides the ``Measurement`` subclass for holding a distance.
+    """
+    Provides the ``Measurement`` subclass for holding a distance.
 
     Parameters
     ----------
     value : Union[Real, Quantity]
         Value of the distance.
-    unit : ~pint.Unit, optional
-        Units for the distance. By default, ``DEFAULT_UNITS.LENGTH``
+    unit : ~pint.Unit, default: DEFAULT_UNITS.LENGTH
+        Units for the distance.
     """
 
     def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = None):
@@ -193,14 +195,15 @@ class Distance(Measurement):
 
 
 class Angle(Measurement):
-    """Provides the ``Measurement`` subclass for holding an angle.
+    """
+    Provides the ``Measurement`` subclass for holding an angle.
 
     Parameters
     ----------
     value : Union[Real, Quantity]
         Value of the angle.
-    unit : ~pint.Unit, optional
-        Units for the distance. By default, ``DEFAULT_UNITS.ANGLE``
+    unit : ~pint.Unit, default: DEFAULT_UNITS.ANGLE
+        Units for the distance.
     """
 
     def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = None):

@@ -58,7 +58,7 @@ jobs:
     if: inputs.ansyslab
     needs: [windows]
     runs-on:
-      group: ansys-internal
+      group: ansys-network
       labels: [Windows, pygeometry]
     steps:
       - name: Login in Github Container registry
@@ -110,8 +110,8 @@ jobs:
     if: inputs.ansyslab
     needs: [linux]
     runs-on:
-      group: ansys-internal
-      labels: Linux
+      group: ansys-network
+      labels: [Linux, pygeometry]
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@v2
@@ -135,3 +135,6 @@ jobs:
 
       - name: Publish latest stable container in AnsysLab registry
         run: docker push ${{ env.LINUX_STABLE_FUJI }}
+
+      - name: Remove images (free space)
+        run: docker image rm ${{ env.LINUX_STABLE_FUJI }} ${{ env.LINUX_STABLE_GHCR }}

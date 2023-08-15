@@ -300,8 +300,8 @@ def test_named_selections(modeler: Modeler):
 
 
 def test_faces_edges(modeler: Modeler):
-    """Test for verifying the correct creation and
-    usage of ``Face`` and ``Edge`` objects."""
+    """Test for verifying the correct creation and usage of ``Face`` and ``Edge``
+    objects."""
 
     # Create your design on the server side
     design = modeler.create_design("FacesEdges_Test")
@@ -438,7 +438,8 @@ def test_coordinate_system_creation(modeler: Modeler):
 
 
 def test_delete_body_component(modeler: Modeler):
-    """Test for verifying the deletion of ``Component`` and ``Body`` objects.
+    """
+    Test for verifying the deletion of ``Component`` and ``Body`` objects.
 
     Notes
     -----
@@ -581,11 +582,10 @@ def test_delete_body_component(modeler: Modeler):
     assert comp_1.components[0].components[0].is_alive
     assert comp_1.components[0].components[0].bodies[0].is_alive
     assert comp_1.components[1].is_alive
-    assert not comp_1.components[1].bodies[0].is_alive
+    assert not body_2.is_alive
     assert not comp_2.is_alive
     assert not comp_2.components[0].is_alive
     assert comp_3.is_alive
-    assert comp_3.bodies[0].is_alive
 
     # Do the same checks but calling them from the design object
     assert design.is_alive
@@ -594,7 +594,6 @@ def test_delete_body_component(modeler: Modeler):
     assert design.components[0].components[0].components[0].is_alive
     assert design.components[0].components[0].components[0].bodies[0].is_alive
     assert design.components[0].components[1].is_alive
-    assert not design.components[0].components[1].bodies[0].is_alive
     assert not design.components[1].is_alive
     assert not design.components[1].components[0].is_alive
     assert design.components[2].is_alive
@@ -607,9 +606,7 @@ def test_delete_body_component(modeler: Modeler):
     assert not comp_1.is_alive
     assert not comp_1.components[0].is_alive
     assert not comp_1.components[0].components[0].is_alive
-    assert not comp_1.components[0].components[0].bodies[0].is_alive
     assert not comp_1.components[1].is_alive
-    assert not comp_1.components[1].bodies[0].is_alive
     assert not comp_2.is_alive
     assert not comp_2.components[0].is_alive
     assert comp_3.is_alive
@@ -620,9 +617,7 @@ def test_delete_body_component(modeler: Modeler):
     assert not design.components[0].is_alive
     assert not design.components[0].components[0].is_alive
     assert not design.components[0].components[0].components[0].is_alive
-    assert not design.components[0].components[0].components[0].bodies[0].is_alive
     assert not design.components[0].components[1].is_alive
-    assert not design.components[0].components[1].bodies[0].is_alive
     assert not design.components[1].is_alive
     assert not design.components[1].components[0].is_alive
     assert design.components[2].is_alive
@@ -636,13 +631,10 @@ def test_delete_body_component(modeler: Modeler):
     assert not design.components[0].is_alive
     assert not design.components[0].components[0].is_alive
     assert not design.components[0].components[0].components[0].is_alive
-    assert not design.components[0].components[0].components[0].bodies[0].is_alive
     assert not design.components[0].components[1].is_alive
-    assert not design.components[0].components[1].bodies[0].is_alive
     assert not design.components[1].is_alive
     assert not design.components[1].components[0].is_alive
     assert not design.components[2].is_alive
-    assert not design.components[2].bodies[0].is_alive
 
     # Try deleting the Design object itself - this is forbidden
     with pytest.raises(ValueError, match="The design itself cannot be deleted."):
@@ -713,7 +705,8 @@ def test_shared_topology(modeler: Modeler):
 
 
 def test_single_body_translation(modeler: Modeler):
-    """Test for verifying the correct translation of a ``Body``.
+    """
+    Test for verifying the correct translation of a ``Body``.
 
     Notes
     -----
@@ -741,7 +734,8 @@ def test_single_body_translation(modeler: Modeler):
 
 
 def test_bodies_translation(modeler: Modeler):
-    """Test for verifying the correct translation of list of ``Body``.
+    """
+    Test for verifying the correct translation of list of ``Body``.
 
     Notes
     -----
@@ -778,9 +772,7 @@ def test_bodies_translation(modeler: Modeler):
     )
 
 
-def test_download_file(
-    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, skip_not_on_linux_service
-):
+def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, service_os: str):
     """Test for downloading a design in multiple modes and verifying the correct
     download."""
 
@@ -806,8 +798,26 @@ def test_download_file(
     design.save(file_location=file_save)
 
     # Check for other exports
-    binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
-    text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
+    if service_os == "windows":
+        binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
+        text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
+
+        # Windows-only HOOPS exports for now
+        step_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.stp"
+        iges_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.igs"
+
+        design.download(step_file, format=DesignFileFormat.STEP)
+        design.download(iges_file, format=DesignFileFormat.IGES)
+
+        assert step_file.exists()
+        assert iges_file.exists()
+
+    elif service_os == "linux":
+        binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_bin"
+        text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_txt"
+    else:
+        raise Exception("Unable to determine the service operating system.")
+
     fmd_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.fmd"
 
     design.download(binary_parasolid_file, format=DesignFileFormat.PARASOLID_BIN)
@@ -869,6 +879,8 @@ def test_project_and_imprint_curves(modeler: Modeler, skip_not_on_linux_service)
     body = comp.extrude_sketch(name="MyBox", sketch=sketch, distance=Quantity(50, UNITS.mm))
     body_faces = body.faces
 
+    body_copy = body.copy(design, "copy")
+
     # Project the curves on the box
     faces = body.project_curves(direction=UNITVECTOR3D_Z, sketch=imprint_sketch, closest_face=True)
     assert len(faces) == 1
@@ -912,6 +924,12 @@ def test_project_and_imprint_curves(modeler: Modeler, skip_not_on_linux_service)
     # Make sure we have occurrence faces, not master
     assert faces[0].id not in [face.id for face in body._template.faces]
     assert new_faces[0].id not in [face.id for face in body._template.faces]
+
+    faces = body_copy.imprint_projected_curves(
+        direction=UNITVECTOR3D_Z, sketch=imprint_sketch, closest_face=True
+    )
+    assert len(faces) == 2
+    assert len(body_copy.faces) == 8
 
 
 def test_copy_body(modeler: Modeler, skip_not_on_linux_service):
@@ -1271,7 +1289,8 @@ def test_named_selections_beams(modeler: Modeler, skip_not_on_linux_service):
 
 
 def test_named_selections_design_points(modeler: Modeler):
-    """Test for verifying the correct creation of ``NamedSelection`` with design points."""
+    """Test for verifying the correct creation of ``NamedSelection`` with design
+    points."""
 
     # Create your design on the server side
     design = modeler.create_design("NamedSelectionBeams_Test")
@@ -1331,14 +1350,14 @@ def test_component_instances(modeler: Modeler):
     assert len(body_ids) == len(set(body_ids))
 
     # Assert all instances have unique MasterComponents
-    comp_templates = [wheel2._transformed_part, wheel3._transformed_part, wheel4._transformed_part]
+    comp_templates = [wheel2._master_component, wheel3._master_component, wheel4._master_component]
     assert len(comp_templates) == len(set(comp_templates))
 
     # Assert all instances have the same Part
     comp_parts = [
-        wheel2._transformed_part.part,
-        wheel3._transformed_part.part,
-        wheel4._transformed_part.part,
+        wheel2._master_component.part,
+        wheel3._master_component.part,
+        wheel4._master_component.part,
     ]
     assert len(set(comp_parts)) == 1
 
@@ -1607,3 +1626,43 @@ def test_boolean_body_operations(modeler: Modeler, skip_not_on_linux_service):
     assert not copy3.is_alive
     assert body3.is_alive
     assert Accuracy.length_is_equal(copy1.volume.m, 1)
+
+
+def test_child_component_instances(modeler: Modeler):
+    """Test creation of child ``Component`` instances and check the data model reflects
+    that."""
+
+    design_name = "ChildComponentInstances_Test"
+    design = modeler.create_design(design_name)
+    # Create a base component
+    base1 = design.add_component("Base1")
+    comp1 = base1.add_component("A")
+    comp2 = base1.add_component("B")
+
+    # Create the solid body for the base
+    sketch = Sketch().box(Point2D([5, 10]), 10, 20)
+    comp2.extrude_sketch("Bottom", sketch, 5)
+
+    # Create the 2nd base
+    base2 = design.add_component("Base2", base1)
+    base2.modify_placement(Vector3D([30, 0, 0]))
+
+    # Create top part (applies to both Base1 and Base2)
+    sketch = Sketch(Plane(Point3D([0, 5, 5]))).box(Point2D([5, 2.5]), 10, 5)
+    comp1.extrude_sketch("Top", sketch, 5)
+
+    # create the first child component
+    comp1.add_component("Child1")
+    comp1.extrude_sketch("Child1_body", Sketch(Plane([5, 7.5, 10])).box(Point2D([0, 0]), 1, 1), 1)
+
+    assert len(comp1.components) == 1
+    assert len(base2.components[0].components) == 1
+    assert len(comp1.components) == len(base2.components[0].components)
+
+    # create the second child component
+    comp1.add_component("Child2")
+    comp1.extrude_sketch("Child2_body", Sketch(Plane([5, 7.5, 10])).box(Point2D([0, 0]), 1, 1), -1)
+
+    assert len(comp1.components) == 2
+    assert len(base2.components[0].components) == 2
+    assert len(comp1.components) == len(base2.components[0].components)

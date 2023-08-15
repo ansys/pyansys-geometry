@@ -1,4 +1,4 @@
-"""Provides the ``Line`` class."""
+"""Provides for creating and managing a line."""
 
 from functools import cached_property
 import math
@@ -22,7 +22,7 @@ from ansys.geometry.core.typing import Real, RealSequence
 
 class Line(Curve):
     """
-    Provides 3D ``Line`` representation.
+    Provides 3D line representation.
 
     Parameters
     ----------
@@ -62,17 +62,17 @@ class Line(Curve):
 
     def evaluate(self, parameter: float) -> "LineEvaluation":
         """
-        Evaluate the line at the given parameter.
+        Evaluate the line at a given parameter.
 
         Parameters
         ----------
         parameter : Real
-            The parameter at which to evaluate the line.
+            Parameter to evaluate the line at.
 
         Returns
         -------
         LineEvaluation
-            The resulting evaluation.
+            Resulting evaluation.
         """
         return LineEvaluation(self, parameter)
 
@@ -83,12 +83,12 @@ class Line(Curve):
         Parameters
         ----------
         matrix : Matrix44
-            The transformation matrix to apply to the line.
+            4X4 transformation matrix to apply to the line.
 
         Returns
         -------
         Line
-            A new line that is the transformed copy of the original line.
+           New line that is the transformed copy of the original line.
         """
         old_origin_4d = np.array([[self.origin[0]], [self.origin[1]], [self.origin[2]], [1]])
         new_origin_4d = matrix * old_origin_4d
@@ -98,17 +98,17 @@ class Line(Curve):
 
     def project_point(self, point: Point3D) -> "LineEvaluation":
         """
-        Project a point onto the line and return its ``LineEvaluation``.
+        Project a point onto the line and evaluate the line.
 
         Parameters
         ----------
         point : Point3D
-            The point to project onto the line.
+            Point to project onto the line.
 
         Returns
         -------
         LineEvaluation
-            The resulting evaluation.
+            Resulting evaluation.
         """
         origin_to_point = point - self.origin
         t = origin_to_point.dot(self.direction)
@@ -116,17 +116,17 @@ class Line(Curve):
 
     def is_coincident_line(self, other: "Line") -> bool:
         """
-        Determine if this line is coincident with another.
+        Determine if the line is coincident with another line.
 
         Parameters
         ----------
         other : Line
-            The line to determine coincidence with.
+            Line to determine coincidence with.
 
         Returns
         -------
         bool
-            Returns ``True`` if this line is coincident with the other.
+            ``True`` if the line is coincident with another line, ``False`` otherwise.
         """
         if self == other:
             return True
@@ -141,17 +141,17 @@ class Line(Curve):
 
     def is_opposite_line(self, other: "Line") -> bool:
         """
-        Determine if this line is opposite another.
+        Determine if the line is opposite another line.
 
         Parameters
         ----------
         other : Line
-            The line to determine opposition with.
+            Line to determine opposition with.
 
         Returns
         -------
         bool
-            Returns ``True`` if this line is opposite to the other.
+            ``True`` if the line is opposite to another line.
         """
         if self.is_coincident_line(other):
             return self.direction.is_opposite(other.direction)
@@ -159,7 +159,7 @@ class Line(Curve):
 
     def parameterization(self) -> Parameterization:
         """
-        Return the parametrization of a ``Line`` instance.
+        Get the parametrization of the line.
 
         The parameter of a line specifies the distance from the `origin` in the
         direction of `direction`.
@@ -167,7 +167,7 @@ class Line(Curve):
         Returns
         -------
         Parameterization
-            Information about how a line is parameterized.
+            Information about how the line is parameterized.
         """
         return Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(np.NINF, np.inf))
 
@@ -179,87 +179,83 @@ class Line(Curve):
 
 
 class LineEvaluation(CurveEvaluation):
-    """Provides result class when evaluating a line."""
+    """Evaluate a line."""
 
     def __init__(self, line: Line, parameter: float = None) -> None:
-        """``LineEvaluation`` class constructor."""
+        """Initialize the ``LineEvaluation`` class."""
         self._line = line
         self._parameter = parameter
 
     @property
     def line(self) -> Line:
-        """The line being evaluated."""
+        """Line being evaluated."""
         return self._line
 
     @property
     def parameter(self) -> float:
-        """The parameter that the evaluation is based upon."""
+        """Parameter that the evaluation is based upon."""
         return self._parameter
 
     @cached_property
     def position(self) -> Point3D:
         """
-        The position of the evaluation.
+        Position of the evaluation.
 
         Returns
         -------
         Point3D
-            The point that lies on the line at this evaluation.
+            Point that lies on the line at this evaluation.
         """
         return self.line.origin + self.parameter * self.line.direction
 
     @cached_property
     def tangent(self) -> UnitVector3D:
         """
-        The tangent of the evaluation.
-
-        This is always equal to the direction of the line.
+        Tangent of the evaluation, which is always equal to the direction of the line.
 
         Returns
         -------
         UnitVector3D
-            The tangent unit vector to the line at this evaluation.
+            Tangent unit vector to the line at this evaluation.
         """
         return self.line.direction
 
     @cached_property
     def first_derivative(self) -> Vector3D:
         """
-        The first derivative of the evaluation.
+        First derivative of the evaluation.
 
-        This is always equal to the direction of the line.
+        The first derivative is always equal to the direction of the line.
 
         Returns
         -------
         Vector3D
-            The first derivative of this evaluation.
+            First derivative of the evaluation.
         """
         return self.line.direction
 
     @cached_property
     def second_derivative(self) -> Vector3D:
         """
-        The second derivative of the evaluation.
+        Second derivative of the evaluation.
 
-        This is always equal to a zero vector.
+        The second derivative is always equal to a zero vector ``Vector3D([0, 0, 0])``.
 
         Returns
         -------
         Vector3D
-            The second derivative of this evaluation. Always ``Vector3D([0, 0, 0])``.
+            Second derivative of the evaluation, which is always ``Vector3D([0, 0, 0])``.
         """
         return Vector3D([0, 0, 0])
 
     @cached_property
     def curvature(self) -> float:
         """
-        The curvature of the line.
-
-        This will always be 0.
+        Curvature of the line, which is always ``0``.
 
         Returns
         -------
         Real
-            The curvature of the line. Always 0.
+            Curvature of the line, which is always ``0``.
         """
         return 0

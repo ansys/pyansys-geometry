@@ -1,4 +1,4 @@
-"""Provides the ``SketchCircle`` class."""
+"""Provides for creating and managing a circle."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
@@ -14,16 +14,17 @@ from ansys.geometry.core.typing import Real
 
 class SketchCircle(SketchFace, Circle):
     """
-    Provides for modeling circles.
+    Provides for modeling a circle.
 
     Parameters
     ----------
     center: Point2D
-        Point representing the center of the circle.
+        Center point of the circle.
     radius : Union[Quantity, Distance, Real]
         Radius of the circle.
     plane : Plane, optional
-        Plane containing the sketched circle, by default global XY Plane.
+        Plane containing the sketched circle, which is the global XY plane
+        by default.
     """
 
     @check_input_types
@@ -54,8 +55,8 @@ class SketchCircle(SketchFace, Circle):
         ----------
         plane : Plane
             Plane containing the sketched circle.
-        radius : Optional[Union[Quantity, Distance]], optional
-            Radius of the circle (if any), by default None.
+        radius : [Union[Quantity, Distance]], default: None
+            Radius of the circle (if any).
         """
         # Use the radius given (if any)
         radius = radius if radius else self.radius
@@ -109,16 +110,16 @@ class SketchCircle(SketchFace, Circle):
 
     def plane_change(self, plane: Plane) -> None:
         """
-        Redefine the plane containing the SketchCircle objects.
+        Redefine the plane containing the ``SketchCircle`` objects.
 
         Notes
         -----
-        This implies that their 3D definition may suffer changes.
+        This implies that their 3D definition might suffer changes.
 
         Parameters
         ----------
         plane : Plane
-            Desired new plane which will contain the sketched circle.
+            Desired new plane that is to contain the sketched circle.
         """
-        # Reinitialize the Circle definition for the given plane
+        # Reinitialize the circle definition for the given plane
         self._init_primitive_circle_from_plane(plane)

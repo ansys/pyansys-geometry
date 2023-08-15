@@ -1,4 +1,4 @@
-"""Provides the ``Face`` class module."""
+"""Module for managing a face."""
 
 from enum import Enum, unique
 
@@ -31,7 +31,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @unique
 class SurfaceType(Enum):
-    """Enum holding the possible values for surface types by the Geometry service."""
+    """Provides values for the surface types supported by the Geometry service."""
 
     SURFACETYPE_UNKNOWN = 0
     SURFACETYPE_PLANE = 1
@@ -45,7 +45,7 @@ class SurfaceType(Enum):
 
 @unique
 class FaceLoopType(Enum):
-    """Provides an enum holding the possible values for face loop types."""
+    """Provides values for the face loop types supported by the Geometry service."""
 
     INNER_LOOP = "INNER"
     OUTER_LOOP = "OUTER"
@@ -53,7 +53,7 @@ class FaceLoopType(Enum):
 
 class FaceLoop:
     """
-    Provides an internal class holding the face loops defined by the server side.
+    Provides an internal class holding the face loops defined on the server side.
 
     Notes
     -----
@@ -91,7 +91,7 @@ class FaceLoop:
 
     @property
     def type(self) -> FaceLoopType:
-        """Type of the face loop."""
+        """Type of the loop."""
         return self._type
 
     @property
@@ -240,7 +240,7 @@ class Face:
     @property
     @protect_grpc
     def edges(self) -> List["Edge"]:
-        """Get all edges of the face."""
+        """List of all edges of the face."""
         self._grpc_client.log.debug("Requesting face edges from server.")
         edges_response = self._faces_stub.GetEdges(self._grpc_id)
         return self.__grpc_edges_to_edges(edges_response.edges)
@@ -248,7 +248,7 @@ class Face:
     @property
     @protect_grpc
     def loops(self) -> List[FaceLoop]:
-        """Get all face loops of the face."""
+        """List of all loops of the face."""
         self._grpc_client.log.debug("Requesting face loops from server.")
         grpc_loops = self._faces_stub.GetLoops(EntityIdentifier(id=self.id)).loops
         loops = []
@@ -296,15 +296,15 @@ class Face:
         ----------
         u : float, default: 0.5
             First coordinate of the 2D representation of a surface in UV space.
-            The default is the center of the surface.
+            The default is ``0.5``, which is the center of the surface.
         v : float, default: 0.5
             Second coordinate of the 2D representation of a surface in UV space.
-            The default is the center of the surface.
+            The default is ``0.5``, which is the center of the surface.
 
         Returns
         -------
         UnitVector3D
-            The :class:`UnitVector3D <ansys.geometry.core.math.vector.unitVector3D>`
+            :class:`UnitVector3D <ansys.geometry.core.math.vector.unitVector3D>`
             object evaluated at the given U and V coordinates.
             This :class:`UnitVector3D <ansys.geometry.core.math.vector.unitVector3D>`
             object is perpendicular to the surface at the given UV coordinates.
@@ -328,15 +328,15 @@ class Face:
         ----------
         u : float, default: 0.5
             First coordinate of the 2D representation of a surface in UV space.
-            The default is the center of the surface.
+            The default is ``0.5``, which is the center of the surface.
         v : float, default: 0.5
             Second coordinate of the 2D representation of a surface in UV space.
-            The default is the center of the surface.
+            The default is ``0.5``, which is the center of the surface.
 
         Returns
         -------
         Point
-            The :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+            :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
             object evaluated at the given UV coordinates.
         """
         self._grpc_client.log.debug(f"Requesting face point from server with (u,v)=({u},{v}).")
@@ -344,7 +344,8 @@ class Face:
         return Point3D([response.x, response.y, response.z], DEFAULT_UNITS.SERVER_LENGTH)
 
     def __grpc_edges_to_edges(self, edges_grpc: List[GRPCEdge]) -> List["Edge"]:
-        """Transform a list of gRPC edge messages into actual ``Edge`` objects.
+        """
+        Transform a list of gRPC edge messages into actual ``Edge`` objects.
 
         Parameters
         ----------

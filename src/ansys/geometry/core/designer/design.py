@@ -1,4 +1,4 @@
-"""Provides the ``Design`` class module."""
+"""Provides for managing designs."""
 
 from enum import Enum
 from pathlib import Path
@@ -55,18 +55,20 @@ from ansys.geometry.core.typing import RealSequence
 
 
 class DesignFileFormat(Enum):
-    """Provides file formats supported by the ``Design`` class for download."""
+    """Provides supported file formats that can be downloaded for designs."""
 
     SCDOCX = "SCDOCX", None
     PARASOLID_TEXT = "PARASOLID_TEXT", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_TEXT
     PARASOLID_BIN = "PARASOLID_BIN", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_BINARY
     FMD = "FMD", PartExportFormat.PARTEXPORTFORMAT_FMD
+    STEP = "STEP", PartExportFormat.PARTEXPORTFORMAT_STEP
+    IGES = "IGES", PartExportFormat.PARTEXPORTFORMAT_IGES
     INVALID = "INVALID", None
 
 
 class Design(Component):
     """
-    Provides the ``Design`` class for organizing geometry assemblies.
+    Provides for organizing geometry assemblies.
 
     This class synchronizes to a supporting Geometry service instance.
 
@@ -76,11 +78,10 @@ class Design(Component):
         User-defined label for the design.
     grpc_client : GrpcClient
         Active supporting Geometry service instance for design modeling.
-    read_existing_design : bool, optional
-        Indicates whether an existing design on the service should be read
-        or not. By default, ``False``. This is only valid when connecting
-        to an existing service session. Otherwise, avoid using this optional
-        argument.
+    read_existing_design : bool, default: False
+        Whether an existing design on the service should be read. This parameter is
+        only valid when connecting to an existing service session. Otherwise, avoid
+        using this optional parameter.
     """
 
     # Types of the class instance private attributes
@@ -91,7 +92,7 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     def __init__(self, name: str, grpc_client: GrpcClient, read_existing_design: bool = False):
-        """Initialize ``Design`` class."""
+        """Initialize the ``Design`` class."""
         super().__init__(name, None, grpc_client)
 
         # Initialize the stubs needed
@@ -211,6 +212,8 @@ class Design(Component):
             DesignFileFormat.PARASOLID_TEXT,
             DesignFileFormat.PARASOLID_BIN,
             DesignFileFormat.FMD,
+            DesignFileFormat.STEP,
+            DesignFileFormat.IGES,
         ]:
             response = self._design_stub.Export(ExportRequest(format=format.value[1]))
             received_bytes += response.data
@@ -260,7 +263,7 @@ class Design(Component):
         Returns
         -------
         NamedSelection
-            Newly created named selection maintaining references to all target entities.
+            Newly created named selection that maintains references to all target entities.
         """
         named_selection = NamedSelection(
             name,
@@ -273,7 +276,9 @@ class Design(Component):
         )
         self._named_selections[named_selection.name] = named_selection
 
-        self._grpc_client.log.debug(f"Named selection {named_selection.name} successfully created.")
+        self._grpc_client.log.debug(
+            f"Named selection {named_selection.name} is successfully created."
+        )
 
         return self._named_selections[named_selection.name]
 
@@ -570,25 +575,27 @@ class Design(Component):
         created_components = {self.id: self}
         created_bodies = {}
 
-        # Make dummy TP for design since server doesn't have one
-        self._transformed_part = MasterComponent("1", "tp_design", created_parts[self.id])
+        # Make dummy master for design since server doesn't have one
+        self._master_component = MasterComponent("1", "master_design", created_parts[self.id])
 
         # Create MasterComponents
-        for tp in response.transformed_parts:
-            part = created_parts.get(tp.part_master.id)
-            new_tp = MasterComponent(tp.id, tp.name, part, grpc_matrix_to_matrix(tp.placement))
-            created_tps[tp.id] = new_tp
+        for master in response.transformed_parts:
+            part = created_parts.get(master.part_master.id)
+            new_master = MasterComponent(
+                master.id, master.name, part, grpc_matrix_to_matrix(master.placement)
+            )
+            created_tps[master.id] = new_master
 
         # Create Components
         for comp in response.components:
             parent = created_components.get(comp.parent_id)
-            tp = created_tps.get(comp.master_id)
+            master = created_tps.get(comp.master_id)
             c = Component(
                 comp.name,
                 parent,
                 self._grpc_client,
                 preexisting_id=comp.id,
-                transformed_part=tp,
+                master_component=master,
                 read_existing_comp=True,
             )
             created_components[comp.id] = c

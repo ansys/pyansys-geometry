@@ -1,4 +1,4 @@
-"""Provides the ``SketchEdge`` class."""
+"""Provides for creating and managing an edge."""
 
 from beartype.typing import TYPE_CHECKING
 from pint import Quantity
@@ -15,12 +15,12 @@ class SketchEdge:
 
     @property
     def start(self) -> Point2D:
-        """Point that is the start point of the edge."""
+        """Starting point of the edge."""
         raise NotImplementedError("Each edge must provide the start point definition.")
 
     @property
     def end(self) -> Point2D:
-        """Point that is the end point of the edge."""
+        """Ending point of the edge."""
         raise NotImplementedError("Each edge must provide the end point definition.")
 
     @property
@@ -45,16 +45,17 @@ class SketchEdge:
 
     def plane_change(self, plane: "Plane") -> None:
         """
-        Redefine the plane containing SketchEdge objects.
+        Redefine the plane containing ``SketchEdge`` objects.
 
         Notes
         -----
-        This implies that their 3D definition may suffer changes. By default, it does
-        nothing. It is required to be implemented in child SketchEdge classes.
+        This implies that their 3D definition might suffer changes. By default, this
+        metho does nothing. It is required to be implemented in child ``SketchEdge``
+        classes.
 
         Parameters
         ----------
         plane : Plane
-            Desired new plane which will contain the sketched edge.
+            Desired new plane that is to contain the sketched edge.
         """
         pass

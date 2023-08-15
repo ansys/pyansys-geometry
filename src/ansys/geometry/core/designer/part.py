@@ -1,4 +1,4 @@
-"""Provides the ``Part`` class module."""
+"""Module providing fundamental data of an assembly."""
 from beartype.typing import TYPE_CHECKING, List
 
 from ansys.geometry.core.designer.body import MasterBody
@@ -10,29 +10,30 @@ if TYPE_CHECKING:
 
 class Part:
     """
-    Represents a Part Master.
+    Represents a part master.
 
-    This class should not be accessed by users. Parts hold fundamental data of an assembly.
+    This class should not be accessed by users. The ``Part`` class holds fundamental
+    data of an assembly.
 
     Parameters
     ----------
     id : str
-        Unique identifier for this part.
+        Unique identifier for the part.
     name : str
-        Name of this part.
-    parts : List[MasterComponent]
-        List of MasterComponent children that this Part contains.
+        Name of the part.
+    components : List[MasterComponent]
+        List of ``MasterComponent`` children that the part contains.
     bodies : List[MasterBody]
-        List of MasterBody children that this Part contains. These are master bodies.
+        List of ``MasterBody`` children that the part contains. These are master bodies.
     """
 
     def __init__(
-        self, id: str, name: str, parts: List["MasterComponent"], bodies: List[MasterBody]
+        self, id: str, name: str, components: List["MasterComponent"], bodies: List[MasterBody]
     ) -> None:
         """Initialize the ``Part`` class."""
         self._id: str = id
         self._name: str = name
-        self._parts: List["MasterComponent"] = parts
+        self._components: List["MasterComponent"] = components
         self._bodies: List[MasterBody] = bodies
 
     @property
@@ -46,18 +47,18 @@ class Part:
         return self._name
 
     @property
-    def parts(self) -> List["MasterComponent"]:
-        """``MasterComponent`` children that this ``Part`` contains."""
-        return self._parts
+    def components(self) -> List["MasterComponent"]:
+        """``MasterComponent`` children that the part contains."""
+        return self._components
 
-    @parts.setter
-    def parts(self, parts: List["MasterComponent"]) -> None:
-        self._parts = parts
+    @components.setter
+    def components(self, components: List["MasterComponent"]) -> None:
+        self._components = components
 
     @property
     def bodies(self) -> List[MasterBody]:
         """
-        ``MasterBody`` children that this ``Part`` contains.
+        ``MasterBody`` children that the part contains.
 
         These are master bodies.
         """
@@ -68,33 +69,32 @@ class Part:
         self._bodies = bodies
 
     def __repr__(self) -> str:
-        """Represent the ``Part`` as a string."""
+        """Represent the part as a string."""
         return (
             f"Part(id={self.id}, "
             f"name={self.name}, "
-            f"parts={[p.name for p in self.parts]}, "
+            f"parts={[p.name for p in self.components]}, "
             f"bodies={[b.name for b in self.bodies]})"
         )
 
 
 class MasterComponent:
     """
-    Represents a Part Occurrence.
+    Represents a part occurrence.
 
     Notes
     -----
-    This class should not be accessed by users.
-    MasterComponents hold fundamental data of an assembly. MasterComponents wrap Parts
-    by adding a transform matrix.
+    This class should not be accessed by users. It holds the fundamental data of
+    an assembly. Master components wrap parts by adding a transform matrix.
 
     Parameters
     ----------
     id : str
-        Unique identifier for this transformed part.
+        Unique identifier for the transformed part.
     name : str
-        Name of this transformed part.
+        Name of the transformed part.
     part : Part
-        Reference to this transformed part's master part.
+        Reference to the transformed part's master part.
     transform : Matrix44
         4x4 transformation matrix from the master part.
     """
@@ -102,11 +102,11 @@ class MasterComponent:
     def __init__(
         self, id: str, name: str, part: Part, transform: Matrix44 = IDENTITY_MATRIX44
     ) -> None:
-        """Initialize ``MasterComponent`` class."""
+        """Initialize the ``MasterComponent`` class."""
         self._id: str = id
         self._name: str = name
         self._part: Part = part
-        part.parts.append(self)
+        part.components.append(self)
         self._transform: Matrix44 = transform
         self._occurrences: List["Component"] = []
 
@@ -122,17 +122,17 @@ class MasterComponent:
 
     @property
     def occurrences(self) -> List["Component"]:
-        """All occurrences of this component."""
+        """List of all occurrences of the component."""
         return self._occurrences
 
     @property
     def part(self) -> Part:
-        """The master part of this transformed part."""
+        """Master part of the transformed part."""
         return self._part
 
     @property
     def transform(self) -> Matrix44:
-        """The 4x4 transformation matrix from the master part."""
+        """4x4 transformation matrix from the master part."""
         return self._transform
 
     @transform.setter
@@ -140,7 +140,7 @@ class MasterComponent:
         self._transform = matrix
 
     def __repr__(self) -> str:
-        """Represent the ``MasterComponent`` as a string."""
+        """Represent the master component as a string."""
         return (
             f"MasterComponent(id={self.id}, "
             f"name={self.name}, "

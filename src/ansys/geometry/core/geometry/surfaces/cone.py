@@ -1,4 +1,4 @@
-"""Provides the ``Cone`` class."""
+"""Provides for creating and managing a cone."""
 
 from functools import cached_property
 
@@ -31,7 +31,7 @@ from ansys.geometry.core.typing import Real, RealSequence
 
 class Cone(Surface):
     """
-    Provides 3D ``Cone`` representation.
+    Provides 3D cone representation.
 
     Parameters
     ----------
@@ -56,7 +56,7 @@ class Cone(Surface):
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
-        """Initialize ``Cone`` class."""
+        """Initialize the ``Cone`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
         self._reference = (
             UnitVector3D(reference) if not isinstance(reference, UnitVector3D) else reference
@@ -123,12 +123,12 @@ class Cone(Surface):
         Parameters
         ----------
         matrix : Matrix44
-            The transformation matrix to apply to the cone.
+            4x4 transformation matrix to apply to the cone.
 
         Returns
         -------
         Cone
-            A new cone that is the transformed copy of the original cone.
+            New cone that is the transformed copy of the original cone.
         """
         new_point = self.origin.transform(matrix)
         new_reference = self._reference.transform(matrix)
@@ -148,7 +148,7 @@ class Cone(Surface):
         Returns
         -------
         Cone
-            A new cone that is a mirrored copy of the original cone.
+            New cone that is a mirrored copy of the original cone.
         """
         return Cone(self.origin, self.radius, self.half_angle, -self._reference, -self._axis)
 
@@ -175,33 +175,33 @@ class Cone(Surface):
 
     def evaluate(self, parameter: ParamUV) -> "ConeEvaluation":
         """
-        Evaluate the cone at the given parameters.
+        Evaluate the cone at given parameters.
 
         Parameters
         ----------
         parameter : ParamUV
-            The parameters (u,v) at which to evaluate the cone.
+            Parameters (u,v) to evaluate the cone at.
 
         Returns
         -------
         ConeEvaluation
-            The resulting evaluation.
+            Resulting evaluation.
         """
         return ConeEvaluation(self, parameter)
 
     def project_point(self, point: Point3D) -> "ConeEvaluation":
         """
-        Project a point onto the cone and return its ``ConeEvaluation``.
+        Project a point onto the cone and evaluate the cone.
 
         Parameters
         ----------
         point : Point3D
-            The point to project onto the cone.
+            Point to project onto the cone.
 
         Returns
         -------
         ConeEvaluation
-            The resulting evaluation.
+            Resulting evaluation.
         """
         u = np.arctan2(self.dir_y.dot(point - self.origin), self.dir_x.dot(point - self.origin))
         while u < 0:
@@ -223,11 +223,11 @@ class Cone(Surface):
         """
         Parameterization of the cone surface as a tuple (U and V respectively).
 
-        The U parameter specifies the clockwise angle around the axis (right hand
-        corkscrew law), with a zero parameter at `dir_x`, and a period of 2*pi.
+        The U parameter specifies the clockwise angle around the axis (right-hand
+        corkscrew law), with a zero parameter at ``dir_x`` and a period of 2*pi.
 
         The V parameter specifies the distance along the axis, with a zero parameter at
-        the XY plane of the Cone.
+        the XY plane of the cone.
 
         Returns
         -------
@@ -252,40 +252,40 @@ class Cone(Surface):
 
 class ConeEvaluation(SurfaceEvaluation):
     """
-    Provides ``Cone`` evaluation at certain parameters.
+    Evaluate the cone at given parameters.
 
     Parameters
     ----------
     cone: ~ansys.geometry.core.primitives.cone.Cone
-        The ``Cone`` object to be evaluated.
+        Cone to evaluate.
     parameter: ParamUV
-        The parameters (u, v) at which the ``Cone`` evaluation is requested.
+        Pparameters (u, v) to evaluate the cone at.
     """
 
     def __init__(self, cone: Cone, parameter: ParamUV) -> None:
-        """``ConeEvaluation`` class constructor."""
+        """Initialize the ``ConeEvaluation`` class."""
         self._cone = cone
         self._parameter = parameter
 
     @property
     def cone(self) -> Cone:
-        """The cone being evaluated."""
+        """Cone being evaluated."""
         return self._cone
 
     @property
     def parameter(self) -> ParamUV:
-        """The parameter that the evaluation is based upon."""
+        """Parameter that the evaluation is based upon."""
         return self._parameter
 
     @cached_property
     def position(self) -> Point3D:
         """
-        The position of the evaluation.
+        Position of the evaluation.
 
         Returns
         -------
         Point3D
-            The point that lies on the cone at this evaluation.
+            Point that lies on the cone at this evaluation.
         """
         return (
             self.cone.origin
@@ -296,12 +296,12 @@ class ConeEvaluation(SurfaceEvaluation):
     @cached_property
     def normal(self) -> UnitVector3D:
         """
-        The normal to the surface.
+        Normal to the surface.
 
         Returns
         -------
         UnitVector3D
-            The normal unit vector to the cone at this evaluation.
+            Normal unit vector to the cone at this evaluation.
         """
         return UnitVector3D(
             self.__cone_normal * np.cos(self.cone.half_angle.m)
@@ -330,107 +330,107 @@ class ConeEvaluation(SurfaceEvaluation):
     @cached_property
     def u_derivative(self) -> Vector3D:
         """
-        The first derivative with respect to u.
+        First derivative with respect to the U parameter.
 
         Returns
         -------
         Vector3D
-            The first derivative with respect to u.
+            First derivative with respect to the U parameter.
         """
         return self.__radius_v * self.__cone_tangent
 
     @cached_property
     def v_derivative(self) -> Vector3D:
         """
-        The first derivative with respect to v.
+        First derivative with respect to the V parameter.
 
         Returns
         -------
         Vector3D
-            The first derivative with respect to v.
+            First derivative with respect to the V parameter.
         """
         return self.cone.dir_z + np.tan(self.cone.half_angle.m) * self.__cone_normal
 
     @cached_property
     def uu_derivative(self) -> Vector3D:
         """
-        The second derivative with respect to u.
+        Second derivative with respect to the U parameter.
 
         Returns
         -------
         Vector3D
-            The second derivative with respect to u.
+            Second derivative with respect to the U parameter.
         """
         return -self.__radius_v * self.__cone_normal
 
     @cached_property
     def uv_derivative(self) -> Vector3D:
         """
-        The second derivative with respect to u and v.
+        Second derivative with respect to the U and V parameters.
 
         Returns
         -------
         Vector3D
-            The second derivative with respect to u and v.
+            Second derivative with respect to U and V parameters.
         """
         return np.tan(self.cone.half_angle.m) * self.__cone_tangent
 
     @cached_property
     def vv_derivative(self) -> Vector3D:
         """
-        The second derivative with respect to v.
+        Second derivative with respect to the V parameter.
 
         Returns
         -------
         Vector3D
-            The second derivative with respect to v.
+            Second derivative with respect to the V parameter.
         """
         return Vector3D([0, 0, 0])
 
     @cached_property
     def min_curvature(self) -> Real:
         """
-        The minimum curvature of the cone.
+        Minimum curvature of the cone.
 
         Returns
         -------
         Real
-            The minimum curvature of the cone.
+            Minimum curvature of the cone.
         """
         return 0
 
     @cached_property
     def min_curvature_direction(self) -> UnitVector3D:
         """
-        The minimum curvature direction.
+        Minimum curvature direction.
 
         Returns
         -------
         UnitVector3D
-            The minimum curvature direction.
+            Minimum curvature direction.
         """
         return UnitVector3D(self.v_derivative)
 
     @cached_property
     def max_curvature(self) -> Real:
         """
-        The maximum curvature of the cone.
+        Maximum curvature of the cone.
 
         Returns
         -------
         Real
-            The maximum curvature of the cone.
+            Maximum curvature of the cone.
         """
         return 1.0 / self.__radius_v
 
     @cached_property
     def max_curvature_direction(self) -> UnitVector3D:
         """
-        The maximum curvature direction.
+        Maximum curvature direction.
 
         Returns
         -------
         UnitVector3D
-            The maximum curvature direction.
+            Maximum curvature direction.
         """
         return UnitVector3D(self.u_derivative)

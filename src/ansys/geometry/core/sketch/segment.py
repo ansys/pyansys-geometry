@@ -1,4 +1,4 @@
-"""Provides the ``SketchSegment`` class."""
+"""Provides for creating and managing a segment."""
 
 from beartype import beartype as check_input_types
 import numpy as np
@@ -18,11 +18,12 @@ class SketchSegment(SketchEdge, Line):
     Parameters
     ----------
     start : Point2D
-        Point that is the start of the line segment.
+        Starting point of the line segment.
     end : Point2D
-        Point that is the end of the line segment.
+        Ending point of the line segment.
     plane : Plane, optional
-        Plane containing the sketched circle, by default global XY Plane.
+        Plane containing the sketched circle, which is the global XY plane
+        by default.
     """
 
     @check_input_types
@@ -32,7 +33,7 @@ class SketchSegment(SketchEdge, Line):
         end: Point2D,
         plane: Plane = Plane(),
     ):
-        """Initialize ``SketchSegment`` class."""
+        """Initialize the ``SketchSegment`` class."""
         # Call SketchEdge init method
         SketchEdge.__init__(self)
 
@@ -83,12 +84,12 @@ class SketchSegment(SketchEdge, Line):
 
     @property
     def start(self) -> Point2D:
-        """Point that is the start of the segment."""
+        """Starting point of the segment."""
         return self._start
 
     @property
     def end(self) -> Point2D:
-        """Point that is the end of the segment."""
+        """Ending point of the segment."""
         return self._end
 
     @property
@@ -139,16 +140,16 @@ class SketchSegment(SketchEdge, Line):
 
     def plane_change(self, plane: "Plane") -> None:
         """
-        Redefine the plane containing SketchSegment objects.
+        Redefine the plane containing ``SketchSegment`` objects.
 
         Notes
         -----
-        This implies that their 3D definition may suffer changes.
+        This implies that their 3D definition might suffer changes.
 
         Parameters
         ----------
         plane : Plane
-            Desired new plane which will contain the sketched segment.
+            Desired new plane that is to contain the sketched segment.
         """
-        # Reinitialize the Line definition for the given plane
+        # Reinitialize the line definition for the given plane
         self._init_primitive_line_from_plane(plane)
