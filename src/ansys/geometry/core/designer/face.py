@@ -3,21 +3,30 @@
 from enum import Enum, unique
 
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
-from ansys.api.geometry.v0.faces_pb2 import EvaluateRequest, GetNormalRequest, ProjectPointRequest
+from ansys.api.geometry.v0.faces_pb2 import EvaluateRequest, GetNormalRequest
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
 from ansys.api.geometry.v0.models_pb2 import EntityIdentifier
 from beartype.typing import TYPE_CHECKING, List
 from pint import Quantity
 
-from ansys.geometry.core.connection import GrpcClient, point3d_to_grpc_point
-from ansys.geometry.core.designer.edge import CurveType, Edge
+from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
+
+# surfaces
+from ansys.geometry.core.geometry.surfaces.cone import Cone
+from ansys.geometry.core.geometry.surfaces.cylinder import Cylinder
+from ansys.geometry.core.geometry.surfaces.plane import Plane
+from ansys.geometry.core.geometry.surfaces.sphere import Sphere
+from ansys.geometry.core.geometry.surfaces.surface import Surface
+from ansys.geometry.core.geometry.surfaces.torus import Torus
+from ansys.geometry.core.geometry.surfaces.trimmed_surface import TrimmedSurface
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
+    from ansys.geometry.core.designer.edge import Edge
 
 
 @unique
@@ -71,7 +80,7 @@ class FaceLoop:
         length: Quantity,
         min_bbox: Point3D,
         max_bbox: Point3D,
-        edges: List[Edge],
+        edges: List["Edge"],
     ):
         """Initialize ``FaceLoop`` class."""
         self._type = type
@@ -101,7 +110,7 @@ class FaceLoop:
         return self._max_bbox
 
     @property
-    def edges(self) -> List[Edge]:
+    def edges(self) -> List["Edge"]:
         """Edges contained in the loop."""
         return self._edges
 
@@ -140,6 +149,58 @@ class Face:
         self._faces_stub = FacesStub(grpc_client.channel)
         self._edges_stub = EdgesStub(grpc_client.channel)
         self._is_reversed = is_reversed
+        self._shape = TrimmedSurface(self)
+        # request the underlying surface from the server
+        self._grpc_client.log.debug("Requesting surface properties from server.")
+        surface_response = self._faces_stub.GetSurface(self._grpc_id)
+        origin = surface_response.origin
+        axis_response = surface_response.axis
+        reference_response = surface_response.reference
+        axis = UnitVector3D([axis_response.x, axis_response.y, axis_response.z])
+        reference = UnitVector3D([reference_response.x, reference_response.y, reference_response.z])
+        if self.surface_type == SurfaceType.SURFACETYPE_CONE:
+            # cone
+            self._surface = Cone(
+                Point3D([origin.x, origin.y, origin.z], DEFAULT_UNITS.SERVER_LENGTH),
+                surface_response.radius,
+                surface_response.half_angle,
+                reference,
+                axis,
+            )
+        elif self.surface_type == SurfaceType.SURFACETYPE_CYLINDER:
+            # cylinder
+            self._surface = Cylinder(
+                Point3D([origin.x, origin.y, origin.z], DEFAULT_UNITS.SERVER_LENGTH),
+                surface_response.radius,
+                reference,
+                axis,
+            )
+        elif self.surface_type == SurfaceType.SURFACETYPE_SPHERE:
+            # sphere
+            self._surface = Sphere(
+                Point3D([origin.x, origin.y, origin.z], DEFAULT_UNITS.SERVER_LENGTH),
+                surface_response.radius,
+                reference,
+                axis,
+            )
+        elif self.surface_type == SurfaceType.SURFACETYPE_TORUS:
+            # torus
+            self._surface = Torus(
+                Point3D([origin.x, origin.y, origin.z], DEFAULT_UNITS.SERVER_LENGTH),
+                surface_response.major_radius,
+                surface_response.minor_radius,
+                reference,
+                axis,
+            )
+        elif self.surface_type == SurfaceType.SURFACETYPE_PLANE:
+            # plane
+            self._surface = Plane(
+                Point3D([origin.x, origin.y, origin.z], DEFAULT_UNITS.SERVER_LENGTH),
+                reference,
+                axis,
+            )
+        else:
+            self._surface = None
 
     @property
     def id(self) -> str:
@@ -162,12 +223,9 @@ class Face:
         return self._body
 
     @property
-    @protect_grpc
-    def area(self) -> Quantity:
-        """Calculated area of the face."""
-        self._grpc_client.log.debug("Requesting face area from server.")
-        area_response = self._faces_stub.GetArea(self._grpc_id)
-        return Quantity(area_response.area, DEFAULT_UNITS.SERVER_AREA)
+    def shape(self) -> TrimmedSurface:
+        """Internal TrimmedSurface instance."""
+        return self._shape
 
     @property
     def surface_type(self) -> SurfaceType:
@@ -175,8 +233,13 @@ class Face:
         return self._surface_type
 
     @property
+    def surface(self) -> Surface:
+        """Surface type of the face."""
+        return self._surface
+
+    @property
     @protect_grpc
-    def edges(self) -> List[Edge]:
+    def edges(self) -> List["Edge"]:
         """Get all edges of the face."""
         self._grpc_client.log.debug("Requesting face edges from server.")
         edges_response = self._faces_stub.GetEdges(self._grpc_id)
@@ -280,7 +343,7 @@ class Face:
         response = self._faces_stub.Evaluate(EvaluateRequest(id=self.id, u=u, v=v)).point
         return Point3D([response.x, response.y, response.z], DEFAULT_UNITS.SERVER_LENGTH)
 
-    def __grpc_edges_to_edges(self, edges_grpc: List[GRPCEdge]) -> List[Edge]:
+    def __grpc_edges_to_edges(self, edges_grpc: List[GRPCEdge]) -> List["Edge"]:
         """Transform a list of gRPC edge messages into actual ``Edge`` objects.
 
         Parameters
@@ -293,6 +356,8 @@ class Face:
         List[Edge]
             ``Edge`` objects to obtain from gRPC messages.
         """
+        from ansys.geometry.core.designer.edge import CurveType, Edge
+
         edges = []
         for edge_grpc in edges_grpc:
             edges.append(
@@ -305,10 +370,3 @@ class Face:
                 )
             )
         return edges
-
-    def project_point(self, point: Point3D) -> UnitVector3D:
-        """Project a point to the face."""
-        response = self._faces_stub.ProjectPoint(
-            ProjectPointRequest(id=self.id, point=point3d_to_grpc_point(point))
-        )
-        return UnitVector3D([response.normal.x, response.normal.y, response.normal.z])

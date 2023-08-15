@@ -11,9 +11,17 @@ LENGTH_ACCURACY = 1e-8
 ANGLE_ACCURACY = 1e-6
 """Constant for decimal accuracy in angle comparisons."""
 
+DOUBLE_ACCURACY = 1e-13
+"""Constant for double accuracy."""
+
 
 class Accuracy:
     """Provides decimal precision evaluations for actions such as equivalency."""
+
+    @property
+    def length_accuracy() -> Real:
+        """Return the LENGTH_ACCURACY constant."""
+        return LENGTH_ACCURACY
 
     def length_is_equal(comparison_length: Real, reference_length: Real) -> bool:
         """
@@ -32,6 +40,23 @@ class Accuracy:
         return Accuracy.is_within_tolerance(
             comparison_length, reference_length, LENGTH_ACCURACY, LENGTH_ACCURACY
         )
+
+    def equal_doubles(a: Real, b: Real):
+        """Compare two double values."""
+        return Accuracy.is_within_tolerance(a, b, DOUBLE_ACCURACY, DOUBLE_ACCURACY)
+
+    def compare_with_tolerance(
+        a: Real, b: Real, relative_tolerance: Real, absolute_tolerance: Real
+    ) -> Real:
+        """Compare two doubles given the relative and absolute tolerances."""
+        if Accuracy.is_within_tolerance(a, b, relative_tolerance, absolute_tolerance):
+            return 0
+        if a < b:
+            return -1
+        elif a == b:
+            return 0
+        else:
+            return 1
 
     def length_is_greater_than_or_equal(comparison_length: Real, reference_length: Real) -> bool:
         """

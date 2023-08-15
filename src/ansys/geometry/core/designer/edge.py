@@ -10,7 +10,13 @@ from pint import Quantity
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.geometry.curves.circle import Circle
+from ansys.geometry.core.geometry.curves.curve import Curve
+from ansys.geometry.core.geometry.curves.ellipse import Ellipse
+from ansys.geometry.core.geometry.curves.line import Line
+from ansys.geometry.core.geometry.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.math import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS
 from ansys.geometry.core.typing import Real
 
@@ -64,6 +70,50 @@ class Edge:
         self._grpc_client = grpc_client
         self._edges_stub = EdgesStub(grpc_client.channel)
         self._is_reversed = is_reversed
+        self._shape = TrimmedCurve(self)
+        # request the underlying curve from the server
+        self._grpc_client.log.debug("Requesting edge properties from server.")
+        curve_response = self._edges_stub.GetCurve(self._grpc_id)
+        origin = Point3D(
+            [curve_response.origin.x, curve_response.origin.y, curve_response.origin.z]
+        )
+        # check if the curve is a circle or ellipse
+        if (
+            self.curve_type == CurveType.CURVETYPE_CIRCLE
+            or self.curve_type == CurveType.CURVETYPE_ELLIPSE
+        ):
+            axis_response = curve_response.axis
+            reference_response = curve_response.reference
+            axis = UnitVector3D([axis_response.x, axis_response.y, axis_response.z])
+            reference = UnitVector3D(
+                [reference_response.x, reference_response.y, reference_response.z]
+            )
+            if self.curve_type == CurveType.CURVETYPE_CIRCLE:
+                # circle
+                self._curve = Circle(origin, curve_response.radius, reference, axis)
+            else:
+                # ellipse
+                self._curve = Ellipse(
+                    origin,
+                    curve_response.major_radius,
+                    curve_response.minor_radius,
+                    reference,
+                    axis,
+                )
+        elif self.curve_type == CurveType.CURVETYPE_LINE:
+            # line
+            self._curve = Line(
+                origin,
+                UnitVector3D(
+                    [
+                        curve_response.direction.x,
+                        curve_response.direction.y,
+                        curve_response.direction.z,
+                    ]
+                ),
+            )
+        else:
+            self._curve = None
 
     @property
     def id(self) -> str:
@@ -79,6 +129,16 @@ class Edge:
     def is_reversed(self) -> bool:
         """Edge is reversed."""
         return self._is_reversed
+
+    @property
+    def curve(self) -> Curve:
+        """Internal curve object."""
+        return self._curve
+
+    @property
+    def shape(self) -> TrimmedCurve:
+        """Internal Trimmed Curve object."""
+        return self._shape
 
     @property
     @protect_grpc
@@ -121,7 +181,6 @@ class Edge:
         ----------
         param: Real
             The parameter at which to evaluate the edge.
-
         Returns
         -------
         Point3D

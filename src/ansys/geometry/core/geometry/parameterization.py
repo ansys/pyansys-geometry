@@ -5,6 +5,7 @@ from enum import Enum
 from beartype import beartype as check_input_types
 import numpy as np
 
+from ansys.geometry.core.misc.accuracy import Accuracy
 from ansys.geometry.core.typing import Real
 
 
@@ -134,6 +135,7 @@ class Interval:
 
         self._start = start
         self._end = end
+        self.not_empty = True
 
     @property
     def start(self) -> Real:
@@ -144,6 +146,18 @@ class Interval:
     def end(self) -> Real:
         """End value of the interval."""
         return self._end
+
+    def __eq__(self, other: object):
+        """Compare two intervals."""
+        if not isinstance(other, Interval):
+            # don't attempt to compare against unrelated types
+            return NotImplemented
+        if self.is_empty() or other.is_empty():
+            return self.is_empty() and other.is_empty()
+
+        return Accuracy.equal_doubles(self.start, other.start) and Accuracy.equal_doubles(
+            self.end, other.end
+        )
 
     def is_open(self) -> bool:
         """
@@ -167,6 +181,16 @@ class Interval:
         """
         return self.start > np.NINF and self.end < np.inf
 
+    def is_empty(self) -> bool:
+        """
+        If the current interval is empty return true, else return false.
+
+        Returns:
+        Bool
+            The value that indicates whether the interval is empty or not.
+        """
+        return not self.not_empty
+
     def get_span(self) -> Real:
         """
         Return the quantity contained by the interval. Interval must be closed.
@@ -180,6 +204,114 @@ class Interval:
             raise ValueError("Interval must be closed to get the span.")
 
         return self.end - self.start
+
+    def get_relative_val(self, t: Real) -> Real:
+        """
+        Return an evaluation property of the interval, used in BoxUV.
+
+        Args:
+            t (Real): The offset that the interval gets evaluated at.
+
+        Returns:
+            Real: The actual value according to the offset
+        """
+        return self.start + t * self.get_span()
+
+    def is_negative(self, tolerance: Real) -> bool:
+        """
+        Boolean value that indicates whether the current interval is negative.
+
+        Args:
+            tolerance (Real): The accepted range since we could be working with doubles
+
+        Returns:
+            bool: True if negative False otherwise
+        """
+        return Accuracy.compare_with_tolerance(self.get_span(), 0, tolerance, tolerance)
+
+    @staticmethod
+    def unite(first: "Interval", second: "Interval") -> "Interval":
+        """
+        Return the union of two intervals.
+
+        Args:
+            first (Interval): First Interval
+            second (Interval): Second Interval
+
+        Returns:
+            Interval: The union of the two intervals
+        """
+        if first.is_empty():
+            return second
+        if second.is_empty():
+            return first
+        return Interval(min(first.start, second.start), max(first.end, second.end))
+
+    @staticmethod
+    def Intersect(first: "Interval", second: "Interval", tolerance: Real) -> "Interval":
+        """
+        Return the intersection of two intervals.
+
+        Args:
+            first (Interval): First Interval
+            second (Interval): Second Interval
+
+        Returns:
+            Interval: The intersection of the two intervals
+        """
+        if first.is_empty() or second.is_empty():
+            return None  # supposed to be empty
+        intersection = Interval(max(first.start, second.start), min(first.end, second.send))
+        if not intersection.is_negative(tolerance):
+            return intersection
+        return None  # supposed to be empty
+
+    def contains(self, t: Real, accuracy: Real) -> bool:
+        """
+        Check whether the current interval contains a value (t).
+
+        Args:
+            t (Real): The value of interest
+            accuracy (Real): The accepted range of error since we could be working with floats
+
+        Returns:
+            bool: True if the interval contains the value, false otherwise
+        """
+        if self.is_empty():
+            return False
+        negative_abs_accuracy = -abs(accuracy)
+        if self.start > self.end:
+            if self.start - t < negative_abs_accuracy:
+                return False
+            if t - self.end < negative_abs_accuracy:
+                return False
+        else:
+            if t - self.start < negative_abs_accuracy:
+                return False
+            if self.end - t < negative_abs_accuracy:
+                return False
+        return True
+
+    def contains(self, t: Real) -> bool:
+        """
+        Check whether the current interval contains a value (t) using the default.
+
+        length_accuracy constant.
+
+        Args:
+            t (Real): The value of interest
+
+        Returns:
+            bool: True if the interval contains the value, false otherwise
+        """
+        return self.contains(t, Accuracy.length_accuracy)
+
+    def inflate(self, delta: Real) -> "Interval":
+        """Enlarge the current interval by the given delta value."""
+        if self.is_empty():
+            # throw Error.InvalidMethodOnEmptyObjectException(GetType())
+            raise Exception("Invalid Method On Empty Object Exception" + type(self).__name__)
+        return Interval(self.start - delta, self.end + delta)
 
     def __repr__(self) -> str:
         """Represent the ``Interval`` as a string."""
