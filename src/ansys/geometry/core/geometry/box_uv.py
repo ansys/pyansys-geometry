@@ -1,4 +1,4 @@
-"""provides the ``BoxUV`` class."""
+"""Provides the ``BoxUV`` class."""
 from enum import Enum
 
 from ansys.geometry.core.geometry.parameterization import Interval, ParamUV
@@ -6,7 +6,7 @@ from ansys.geometry.core.typing import Real
 
 
 class LocationUV(Enum):
-    """provides the ``LocationUV`` class to indicate locations for BoxUV."""
+    """Provides the ``LocationUV`` class to indicate locations for BoxUV."""
 
     TopLeft = 1
     TopCenter = 2
