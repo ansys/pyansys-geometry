@@ -153,11 +153,9 @@ class Trapezoid(SketchFace):
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
         """
-        # TODO: Really, a rectangle???... This should be modified on PyVista... It doesn't make
-        #       any sense that a trapezoid can be a rectangle...
         import numpy as np
 
-        return pv.Rectangle(
+        return pv.Quadrilateral(
             np.array(
                 [
                     [
