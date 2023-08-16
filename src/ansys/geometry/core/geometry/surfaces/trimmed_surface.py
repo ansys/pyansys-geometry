@@ -30,7 +30,7 @@ class TrimmedSurface:
     def area(self) -> Quantity:
         """Calculated area of the face."""
         self.face._grpc_client.log.debug("Requesting face area from server.")
-        area_response = self.face._faces_stub.GetArea(self._grpc_id)
+        area_response = self.face._faces_stub.GetArea(self.face._grpc_id)
         return Quantity(area_response.area, DEFAULT_UNITS.SERVER_AREA)
 
     @property

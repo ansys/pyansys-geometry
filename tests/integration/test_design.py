@@ -150,7 +150,7 @@ def test_face_to_body_creation(modeler: Modeler):
     assert len(nested_component.components) == 0
     assert len(nested_component.bodies) == 1
     assert surface_body.volume.m == Quantity(0, UNITS.m**3).m
-    assert surface_body.faces[0].area.m == pytest.approx(
+    assert surface_body.faces[0].shape.area.m == pytest.approx(
         Quantity(2e-4, UNITS.m**2).m, rel=1e-6, abs=1e-8
     )
 
@@ -319,8 +319,10 @@ def test_faces_edges(modeler: Modeler):
     assert len(faces) == 7  # top + bottom + sides
     assert all(face.id is not None for face in faces)
     assert all(face.surface_type == SurfaceType.SURFACETYPE_PLANE for face in faces)
-    assert all(face.area > 0.0 for face in faces)
-    assert abs(faces[0].area.to_base_units().m - sketch.faces[0].area.to_base_units().m) <= 1e-15
+    assert all(face.shape.area > 0.0 for face in faces)
+    assert (
+        abs(faces[0].shape.area.to_base_units().m - sketch.faces[0].area.to_base_units().m) <= 1e-15
+    )
     assert all(face.body.id == body_polygon_comp.id for face in faces)
 
     # Get the normal to some of the faces
