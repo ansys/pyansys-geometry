@@ -215,7 +215,7 @@ linkcheck_ignore = ["https://github.com/ansys/pygeometry/*", "https://geometry.d
 # -- Declare the Jinja context -----------------------------------------------
 BUILD_API = True if os.environ.get("BUILD_API", "true") == "true" else False
 if not BUILD_API:
-    exclude_patterns.append("api")
+    exclude_patterns.append("autoapi")
 
 BUILD_EXAMPLES = True if os.environ.get("BUILD_EXAMPLES", "true") == "true" else False
 if not BUILD_EXAMPLES:
