@@ -4,8 +4,8 @@ from pathlib import Path
 
 from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.geometryapplication_pb2 import RunScriptFileRequest
-from ansys.api.geometry.v0.geometryapplication_pb2_grpc import GeometryApplicationStub
+from ansys.api.dbu.v0.dbuapplication_pb2 import RunScriptFileRequest
+from ansys.api.dbu.v0.dbuapplication_pb2_grpc import DbuApplicationStub
 from beartype.typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
 from grpc import Channel
 
@@ -245,7 +245,7 @@ class Modeler:
             ran successfully.
         """
         serv_path = self._upload_file(file_path)
-        ga_stub = GeometryApplicationStub(self._client.channel)
+        ga_stub = DbuApplicationStub(self._client.channel)
         request = RunScriptFileRequest(
             script_path=serv_path,
             script_args=script_args,
