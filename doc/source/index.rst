@@ -85,7 +85,7 @@ PyGeometry is a Python client library for the Ansys Geometry service.
                    :outline:
                    :click-parent:
 
-                  Examples
+                      Examples
        {% endif %}
 
 .. grid::
