@@ -42,43 +42,51 @@ PyGeometry is a Python client library for the Ansys Geometry service.
                :click-parent:
 
                   User guide
-.. grid:: 2
 
-   .. grid-item-card::
-            :img-top: _static/assets/index_api.png
 
-            API reference
-            ^^^^^^^^^^^^^
+.. jinja:: main_toctree
 
-            Understand PyGeometry API endpoints, their capabilities,
-            and how to interact with them programmatically.
+    .. grid:: 2
 
-            +++
-            .. button-link:: autoapi/index.html
-               :color: secondary
-               :expand:
-               :outline:
-               :click-parent:
+       {% if build_api %}
+       .. grid-item-card::
+                :img-top: _static/assets/index_api.png
 
-                  API reference
+                API reference
+                ^^^^^^^^^^^^^
 
-   .. grid-item-card::
-            :img-top: _static/assets/index_examples.png
+                Understand PyGeometry API endpoints, their capabilities,
+                and how to interact with them programmatically.
 
-            Examples
-            ^^^^^^^^
+                +++
+                .. button-link:: autoapi/index.html
+                   :color: secondary
+                   :expand:
+                   :outline:
+                   :click-parent:
 
-            Explore examples that show how to use PyGeometry to
-            perform many different types of operations.
+                      API reference
+       {% endif %}
 
-            +++
-            .. button-link:: examples.html
-               :color: secondary
-               :expand:
-               :outline:
-               :click-parent:
+       {% if build_examples %}
+       .. grid-item-card::
+                :img-top: _static/assets/index_examples.png
+
+                Examples
+                ^^^^^^^^
+
+                Explore examples that show how to use PyGeometry to
+                perform many different types of operations.
+
+                +++
+                .. button-link:: examples.html
+                   :color: secondary
+                   :expand:
+                   :outline:
+                   :click-parent:
 
                   Examples
+       {% endif %}
 
 .. grid::
 
@@ -99,12 +107,19 @@ PyGeometry is a Python client library for the Ansys Geometry service.
 
                   Contribute
 
-.. toctree::
-   :hidden:
-   :maxdepth: 3
 
-   getting_started/index
-   user_guide/index
-   autoapi/index
-   examples
-   contributing
+.. jinja:: main_toctree
+
+    .. toctree::
+       :hidden:
+       :maxdepth: 3
+
+       getting_started/index
+       user_guide/index
+       {% if build_api %}
+       autoapi/index
+       {% endif %}
+       {% if build_examples %}
+       examples
+       {% endif %}
+       contributing
