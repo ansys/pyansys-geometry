@@ -160,6 +160,7 @@ nbsphinx_thumbnails = {
     "examples/01_getting_started/02_units": "_static/thumbnails/101_getting_started.png",
     "examples/01_getting_started/03_sketching": "_static/thumbnails/101_getting_started.png",
     "examples/01_getting_started/04_modeling": "_static/thumbnails/101_getting_started.png",
+    "examples/01_getting_started/05_plotter_picker": "_static/thumbnails/101_getting_started.png",  # noqa: E501
     "examples/02_sketching/basic_usage": "_static/thumbnails/basic_usage.png",
     "examples/02_sketching/dynamic_sketch_plane": "_static/thumbnails/dynamic_sketch_plane.png",
     "examples/02_sketching/advanced_sketching_gears": "_static/thumbnails/advanced_sketching_gears.png",  # noqa: E501
