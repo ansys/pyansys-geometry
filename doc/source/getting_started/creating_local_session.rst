@@ -1,6 +1,6 @@
 .. _ref_creating_local_session:
 
-Creating a Local Session and Connecting to it 
+Creating a Local Session and Connecting to it
 ==============================================
 (Prerequisites: Ansys Unified Installer and PyGeometry)doc\source\getting_started\creating_local_session.rst
 ---------------------------------------------------------
@@ -10,9 +10,11 @@ This method uses PyGeometry to create a local backend session using your selecte
 #. To establish a connection to the service, open Python and use one of the following commands for Discovery or SpaceClaim, respectively:
 .. code:: python
     from ansys.geometry.core import launch_modeler_with_discovery
+
     modeler_discovery = launch_modeler_with_discovery()
-    
+
     from ansys.geometry.core import launch_modeler_with_spaceclaim
+
     modeler_spaceclaim = launch_modeler_with_spaceclaim()
 
 The following parameters can be defined for Discovery and SpaceClaim:
@@ -39,7 +41,7 @@ api_version (ApiVersions)
 Optional parameter to set the backend's API version to be used at runtime. Starts from API v21 to the latest. Default is "ApiVersions.LATEST."
 
 timeout (int)
-Optional parameter in seconds to set the timeout for starting the back startup process. The default is 150. 
+Optional parameter in seconds to set the timeout for starting the back startup process. The default is 150.
 
 #. To establish a connection to the service, open Python and use the following commands for the Geometry Service.
 .. note::
@@ -47,6 +49,7 @@ Optional parameter in seconds to set the timeout for starting the back startup p
 
 .. code:: python
     from ansys.geometry.core import launch_modeler_with_geometry_service
+
     modeler_geometry_service = launch_modeler_with_geometry_service()
 
 The parameters are the same as Discovery and SpaceClaim, except the Geometry Service also includes the following.

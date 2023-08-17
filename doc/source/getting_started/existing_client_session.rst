@@ -22,6 +22,7 @@ From Python, establish a connection to the existing service by creating a modele
 
 .. code:: python
     from ansys.geometry.core.modeler import Modeler
+
     modeler = Modeler(host="localhost", port=5001)
 
 If no error messages are received, your connection has been successfully established. Note that your local port number might differ.
