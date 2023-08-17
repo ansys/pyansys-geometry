@@ -486,6 +486,8 @@ class PlotterHelper:
         self._pv_off_screen_original = bool(pv.OFF_SCREEN)
         self._actor_object_mapping = {}
         self._pl = None
+        self._picked_list = set()
+        self._picker_added_actors_map = {}
 
         if self._use_trame and _HAS_TRAME:
             # avoids GUI window popping up
@@ -506,11 +508,58 @@ class PlotterHelper:
                 callback=self.picker_callback, use_actor=True, show=False
             )
 
-    def reset(self) -> None:
-        """Reset actor properties at callback."""
-        for a in self._pl.scene.renderer.actors.values():
-            if isinstance(a, pv.Actor):
-                a.prop.show_edges = False
+    def select_object(self, actor: pv.Actor, body_name: str, pt: "np.Array") -> None:
+        """
+        Select an object in the plotter.
+
+        Highlights the object edges and adds a label with the object name and adds
+        it to the PyGeometry object selection.
+
+        Parameters
+        ----------
+        actor : pv.Actor
+            Actor on which to perform the operations.
+        body_name : str
+            Name of the Body to highlight.
+        pt : np.Array
+            Set of points to determine the label position.
+        """
+        added_actors = []
+        actor.prop.show_edges = True
+        text = body_name
+        label_actor = self._pl.scene.add_point_labels(
+            [pt],
+            [text],
+            always_visible=True,
+            point_size=0,
+            render_points_as_spheres=False,
+            show_points=False,
+        )
+        if body_name not in self._picked_list:
+            self._picked_list.add(body_name)
+        added_actors.append(label_actor)
+
+        self._picker_added_actors_map[actor.name] = added_actors
+
+    def unselect_object(self, actor: pv.Actor, body_name: str) -> None:
+        """
+        Unselect an object in the plotter.
+
+        Removes edge highlighting and label from a plotter actor and removes it
+        from the PyGeometry object selection.
+
+        Parameters
+        ----------
+        actor : pv.Actor
+            Actor that is currently highlighted
+        body_name : str
+            Body name to remove
+        """
+        actor.prop.show_edges = False
+        self._picked_list.remove(body_name)
+        if actor.name in self._picker_added_actors_map:
+            self._pl.scene.remove_actor(self._picker_added_actors_map[actor.name])
+            self._picker_added_actors_map.pop(actor.name)
 
     def picker_callback(self, actor: "pv.Actor") -> None:
         """
@@ -521,21 +570,14 @@ class PlotterHelper:
         actor : pv.Actor
             Actor that we are picking.
         """
-        self.reset()
         pt = self._pl.scene.picked_point
         self._actor_object_mapping.keys
         if actor.name in self._actor_object_mapping:
             body_name = self._actor_object_mapping[actor.name]
-            actor.prop.show_edges = True
-            text = body_name
-            self._pl.scene.add_point_labels(
-                [pt],
-                [text],
-                always_visible=True,
-                point_size=10,
-                render_points_as_spheres=True,
-                name="selection-label",
-            )
+            if body_name not in self._picked_list:
+                self.select_object(actor, body_name, pt)
+            else:
+                self.unselect_object(actor, body_name)
 
     def plot(
         self,
@@ -545,7 +587,7 @@ class PlotterHelper:
         merge_component: bool = False,
         view_2d: Dict = None,
         **plotting_options,
-    ) -> None:
+    ) -> List[any]:
         """
         Plot and show any PyGeometry object.
 
@@ -571,6 +613,11 @@ class PlotterHelper:
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
+
+        Returns
+        -------
+        List[any]
+            List with the picked bodies in the picked order.
         """
         if isinstance(object, List) and not isinstance(object[0], pv.PolyData):
             logger.debug("Plotting objects in list...")
@@ -588,6 +635,18 @@ class PlotterHelper:
                 viewup=view_2d["viewup"],
             )
         self.show_plotter(screenshot)
+
+        picked_objects_list = []
+        if isinstance(object, list):
+            # Keep them ordered based on picking
+            for name in self._picked_list:
+                for elem in object:
+                    if hasattr(elem, "name") and elem.name == name:
+                        picked_objects_list.append(elem)
+        elif hasattr(object, "name") and object.name in self._picked_list:
+            picked_objects_list = [object]
+
+        return picked_objects_list
 
     def show_plotter(self, screenshot: Optional[str] = None) -> None:
         """
