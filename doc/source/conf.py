@@ -75,6 +75,7 @@ extensions = [
     "myst_parser",
     "jupyter_sphinx",
     "sphinx_design",
+    "sphinx_jinja",
 ]
 
 # Intersphinx mapping
@@ -160,6 +161,7 @@ nbsphinx_thumbnails = {
     "examples/01_getting_started/02_units": "_static/thumbnails/101_getting_started.png",
     "examples/01_getting_started/03_sketching": "_static/thumbnails/101_getting_started.png",
     "examples/01_getting_started/04_modeling": "_static/thumbnails/101_getting_started.png",
+    "examples/01_getting_started/05_plotter_picker": "_static/thumbnails/101_getting_started.png",  # noqa: E501
     "examples/02_sketching/basic_usage": "_static/thumbnails/basic_usage.png",
     "examples/02_sketching/dynamic_sketch_plane": "_static/thumbnails/dynamic_sketch_plane.png",
     "examples/02_sketching/advanced_sketching_gears": "_static/thumbnails/advanced_sketching_gears.png",  # noqa: E501
@@ -209,3 +211,20 @@ latex_elements = {"preamble": latex.generate_preamble(html_title)}
 linkcheck_exclude_documents = ["index"]
 linkcheck_anchors_ignore_for_url = ["https://docs.pyvista.org/api/*"]
 linkcheck_ignore = ["https://github.com/ansys/pygeometry/*", "https://geometry.docs.pyansys.com/*"]
+
+# -- Declare the Jinja context -----------------------------------------------
+BUILD_API = True if os.environ.get("BUILD_API", "true") == "true" else False
+if not BUILD_API:
+    exclude_patterns.append("autoapi")
+
+BUILD_EXAMPLES = True if os.environ.get("BUILD_EXAMPLES", "true") == "true" else False
+if not BUILD_EXAMPLES:
+    exclude_patterns.append("examples/**")
+    exclude_patterns.append("examples.rst")
+
+jinja_contexts = {
+    "main_toctree": {
+        "build_api": BUILD_API,
+        "build_examples": BUILD_EXAMPLES,
+    },
+}
