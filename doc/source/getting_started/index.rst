@@ -17,4 +17,7 @@ in the GitHub documentation.
 .. toctree::
 
    docker
+   existing_client_session
+   creating_remote_session
+   creating_local_session
    installation
