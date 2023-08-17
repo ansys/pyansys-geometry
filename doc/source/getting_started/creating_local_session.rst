@@ -38,7 +38,7 @@ Optional parameter to set the log level. The default setting is “2 (Warning).�
 3: Error
 
 ``api_version (ApiVersions)``
-Optional parameter to set the backend API version to be used at runtime. Starts from API v21 to the latest. Default is “ApiVersions.LATEST.”
+Optional parameter to set the backend API version to be used at runtime. Starts from API v21 to the latest. Default is `` ApiVersions.LATEST ``.
 
 ``timeout (int)``
 Optional parameter in seconds to set the timeout for starting the back startup process. The default is 150.
