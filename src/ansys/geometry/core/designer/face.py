@@ -3,7 +3,7 @@
 from enum import Enum, unique
 
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
-from ansys.api.geometry.v0.faces_pb2 import EvaluateRequest, GetNormalRequest
+from ansys.api.geometry.v0.faces_pb2 import EvaluateRequest
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
 from ansys.api.geometry.v0.models_pb2 import EntityIdentifier
@@ -309,9 +309,7 @@ class Face:
             This :class:`UnitVector3D <ansys.geometry.core.math.vector.unitVector3D>`
             object is perpendicular to the surface at the given UV coordinates.
         """
-        self._grpc_client.log.debug(f"Requesting face normal from server with (u,v)=({u},{v}).")
-        response = self._faces_stub.GetNormal(GetNormalRequest(id=self.id, u=u, v=v)).direction
-        return UnitVector3D([response.x, response.y, response.z])
+        return self.shape.normal(u, v)
 
     @protect_grpc
     def face_point(self, u: float = 0.5, v: float = 0.5) -> Point3D:

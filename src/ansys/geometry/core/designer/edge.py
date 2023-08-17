@@ -2,7 +2,6 @@
 
 from enum import Enum, unique
 
-from ansys.api.geometry.v0.edges_pb2 import EvaluateRequest
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.api.geometry.v0.models_pb2 import EntityIdentifier
 from beartype.typing import TYPE_CHECKING, List
@@ -172,7 +171,6 @@ class Edge:
             for grpc_face in grpc_faces
         ]
 
-    @protect_grpc
     def evaluate_proportion(self, param: Real) -> Point3D:
         """
         Evaluate the edge at a given proportion, a value in the range [0, 1].
@@ -186,7 +184,4 @@ class Edge:
         Point3D
             The position of the evaluation.
         """
-        response = self._edges_stub.EvaluateProportion(
-            EvaluateRequest(id=self.id, param=param)
-        ).point
-        return Point3D([response.x, response.y, response.z], DEFAULT_UNITS.SERVER_LENGTH)
+        return self.shape.evaluate(param)
