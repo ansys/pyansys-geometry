@@ -20,3 +20,6 @@ PyPI
 PyVista
 SciPy
 subpackage
+launch_modeler_with_discovery
+launch_modeler_with_pimlight_and_discovery
+launch_modeler_with_pimlight_and_spaceclaim
