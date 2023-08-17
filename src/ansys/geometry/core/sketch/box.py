@@ -124,7 +124,7 @@ class Box(SketchFace):
         """
         import numpy as np
 
-        return pv.Rectangle(
+        return pv.Quadrilateral(
             np.array(
                 [
                     [

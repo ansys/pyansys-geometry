@@ -638,9 +638,11 @@ class PlotterHelper:
 
         picked_objects_list = []
         if isinstance(object, list):
-            picked_objects_list = [
-                elem for elem in object if hasattr(elem, "name") and elem.name in self._picked_list
-            ]
+            # Keep them ordered based on picking
+            for name in self._picked_list:
+                for elem in object:
+                    if hasattr(elem, "name") and elem.name == name:
+                        picked_objects_list.append(elem)
         elif hasattr(object, "name") and object.name in self._picked_list:
             picked_objects_list = [object]
 
