@@ -15,7 +15,7 @@ class SurfaceEvaluation:
         self._parameter = parameter
 
     @property
-    def parameter(self) -> Real:
+    def parameter(self) -> ParamUV:
         """Parameter that the evaluation is based upon."""
         raise NotImplementedError("Each evaluation must provide the parameter definition.")
 

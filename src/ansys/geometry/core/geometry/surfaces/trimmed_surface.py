@@ -1,10 +1,8 @@
 """Provides the ``TrimmedSurface`` class."""
 
-from ansys.api.geometry.v0.faces_pb2 import ProjectPointRequest
 from beartype.typing import TYPE_CHECKING
 from pint import Quantity
 
-from ansys.geometry.core.connection.conversions import point3d_to_grpc_point
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.geometry.box_uv import BoxUV
 from ansys.geometry.core.geometry.parameterization import Interval, ParamUV
@@ -78,14 +76,14 @@ class TrimmedSurface:
 
     def project_point(self, point: Point3D):
         """Project a point to the face."""
-        response = self.face._faces_stub.ProjectPoint(
-            ProjectPointRequest(id=self.face.id, point=point3d_to_grpc_point(point))
-        )
         boundsU = self.boxUV.IntervalU
         boundsV = self.boxUV.IntervalV
+        params = self.face.surface.project_point(point).parameter
+        u = params.u
+        v = params.v
         return (
-            (response.param_u - boundsU.start) / boundsU.get_span(),
-            (response.param_v - boundsV.start) / boundsV.get_span(),
+            (u - boundsU.start) / boundsU.get_span(),
+            (v - boundsV.start) / boundsV.get_span(),
         )
 
     def eval_proportions(self, proportionU: Real, proportionV: Real) -> SurfaceEvaluation:
