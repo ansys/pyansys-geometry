@@ -25,4 +25,3 @@ launch_modeler_with_pimlight_and_discovery
 launch_modeler_with_pimlight_and_spaceclaim
 geo
 modeler_discovery
-python ApiVersions.LATEST

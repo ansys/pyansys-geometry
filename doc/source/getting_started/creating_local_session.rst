@@ -47,8 +47,8 @@ Discovery or SpaceClaim. Once the backend is running, PyGeometry can manage the 
    - ``2``: Warning
    - ``3``: Error
 
-   ``api_version (ApiVersions)``: Backend API version to use at runtime. The default is ``python
-    ApiVersions.LATEST``. You can use ````v21`` and later.
+   ``api_version (ApiVersions)``: Backend API version to use at runtime. The default is
+   the latest installed API version. You can use ``v21`` and later.
 
    ``timeout (int)``: Seconds to spend attempting to start the backend. The default is ``150``.
 
