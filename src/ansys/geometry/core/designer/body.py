@@ -1123,10 +1123,11 @@ class Body(IBody):
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Exists               : {self.is_alive}")
         lines.append(f"  Parent component     : {self._parent.name}")
-        lines.append(f"  MasterBody         : {self._template.id}")
+        lines.append(f"  MasterBody           : {self._template.id}")
         lines.append(f"  Surface body         : {self.is_surface}")
         if self.is_surface:
             lines.append(f"  Surface thickness    : {self.surface_thickness}")
             lines.append(f"  Surface offset       : {self.surface_offset}")
 
-        return "\n".join(lines)
+        nl = "\n"
+        return f"{nl}{nl.join(lines)}{nl}"
