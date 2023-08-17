@@ -1,49 +1,59 @@
 .. _ref_creating_remote_session:
 
-Creating a Remote Session and Connecting to it
-==============================================
-(Prerequisites: Remote Server Running Unified Installer and PIM Installer)
---------------------------------------------------------------------------
-Using PIM Server to start a Discovery or SpaceClaim session so that PyGeometry can connect to it.
+Create a remote session and connect to it
+=========================================
 
-Remote Server Setup
--------------------
-#.	On the remote server, initiate the Product Instance Manager by running the "run_piml.bat" application. This application executes other applications based on the configurations stored in the configurations folder. See Setting Up Backend Session with Product Instance Manager (PIM) for more information.
+If a remote server is running Ansys 2023 R2 or later and PIM, you can use PIM
+(Product Instance Manager) to start a Discovery or SpaceClaim session that
+PyGeometry can then connect to.
+
+Set up the remote server
+------------------------
+#. On the remote server, start PIM by double-clicking the ``run_piml.bat`` file. PIM
+   can start other apps based on the configurations stored in the ``configurations`` folder.
+   For more information, see :ref:`ref_existing_client_session`.
+
+   .. note::
+      Configuration files, like the ``discovery-241.yaml`` file, provide instructions
+      for starting a session of Discovery (version 24.1). The IP address and port default to ``localhost:5000``.
+
+Set up the client machine
+-------------------------
+#. To establish a connection to the existing session from your client machine, open
+   Python run these commands:
+
+   .. code:: python
+       from ansys.discovery.core.connection.launcher import (
+           launch_modeler_with_pimlight_and_discovery,
+       )
+
+       disco = launch_modeler_with_pimlight_and_discovery("241")
+
+   The preceding commands initiate a Discovery (version 24.1) session with the API server.
+   You receive a model object back from Discovery that you then use as a PyGeometry client.
+
+#. Start SpaceClaim or PyGeometry remotely using commands like these:
+
+   .. code:: python
+       from ansys.discovery.core.connection.launcher import (
+           launch_modeler_with_pimlight_and_spaceclaim,
+       )
+
+       sc = launch_modeler_with_pimlight_and_spaceclaim("version")
+
+       from ansys.discovery.core.connection.launcher import (
+           launch_modeler_with_pimlight_and_geometry_service,
+       )
+
+       geo = launch_modeler_with_pimlight_and_geometry_service("version")
 
 .. note::
-    Configuration files like "discovery-241.yaml" provide instructions for starting a session of Discovery (version 24.1).
-    The default listening port is usually set to "localhost:5000."
+    Performing all these operations remotely eliminates the need to worry about the
+    starting endpoint or managing the session.
 
-Client Machine Setup
---------------------
-#. To establish a connection to the service from your client machine, open Python and use the following command:
-.. code:: python
-    from ansys.discovery.core.connection.launcher import (
-        launch_modeler_with_pimlight_and_discovery,
-    )
-
-    disco = launch_modeler_with_pimlight_and_discovery("241")
-
-These commands initiate a Discovery (version 24.1) session with the API server, and you will receive a model object back from Discovery. This model object can be used as a PyGeometry client.
-#. Remote Launching of SpaceClaim and PyGeometry
-For SpaceClaim and PyGeometry, you can start them remotely using commands like these:
-.. code:: python
-    from ansys.discovery.core.connection.launcher import (
-        launch_modeler_with_pimlight_and_spaceclaim,
-    )
-
-    sc = launch_modeler_with_pimlight_and_spaceclaim("version")
-
-    from ansys.discovery.core.connection.launcher import (
-        launch_modeler_with_pimlight_and_geometry_service,
-    )
-
-    geo = launch_modeler_with_pimlight_and_geometry_service("version")
-.. note::
-    Performing all these operations remotely eliminates the need to worry about the starting endpoint or managing the session.
-
-Ending the Session
+End the session
 ------------------
-To terminate the session, type the following command:
+To end the session, run this command:
+
 .. code:: python
     disco.close()
