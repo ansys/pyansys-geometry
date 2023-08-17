@@ -19,28 +19,28 @@ This method uses PyGeometry to create a local backend session using your selecte
 
 The following parameters can be defined for Discovery and SpaceClaim:
 
-product_version ``(int)``
+``product_version (int)``
 Optional parameter that currently accepts 232 up to the latest version. The default value is “None.” Ansys product version v.23.2 would be set as 232 and v.24.1 would be set as 241. If a product version is specified but not installed locally, a SystemError will be raised.
 .. note::
     If you set your product_number to an older version, make sure to use the same api_version.
 
-host ``(str)``
+``host (str)``
 Optional parameter to set the IP address where the Geometry service will be deployed, with the default setting set to “localhost.”
 
-port ``(int)``
+``port (int)``
 Optional parameter to set the port where the Geometry service will be deployed, with a default setting of “None.”
 
-log_level ``(int)``
+``log_level (int)``
 Optional parameter to set the log level. The default setting is “2 (Warning).”
 0: Chatterbox
 1: Debug
 2: Warning
 3: Error
 
-api_version ``(ApiVersions)``
+``api_version (ApiVersions)``
 Optional parameter to set the backend API version to be used at runtime. Starts from API v21 to the latest. Default is “ApiVersions.LATEST.”
 
-timeout ``(int)``
+``timeout (int)``
 Optional parameter in seconds to set the timeout for starting the back startup process. The default is 150.
 
 #. To establish a connection to the service, open Python and use the following commands for the Geometry Service.
@@ -54,7 +54,7 @@ Optional parameter in seconds to set the timeout for starting the back startup p
 
 The parameters are the same as Discovery and SpaceClaim, except the Geometry Service also includes the following.
 
-enable_trace ``(bool)``
+``enable_trace (bool)``
 Optional parameter that enables the logs trace on the geometry service console window. The default setting is “false.”
 
 .. note::
