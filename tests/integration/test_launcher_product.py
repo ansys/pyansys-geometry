@@ -1,13 +1,14 @@
 import random
+
 import pytest
 
 from ansys.geometry.core import (
-        launch_modeler_with_discovery,
-        launch_modeler_with_geometry_service,
-        launch_modeler_with_spaceclaim,
-    )
+    launch_modeler_with_discovery,
+    launch_modeler_with_geometry_service,
+    launch_modeler_with_spaceclaim,
+)
+from ansys.geometry.core.connection import ApiVersions, ProductInstance
 
-from ansys.geometry.core.connection import ProductInstance, ApiVersions
 
 @pytest.mark.skip(reason="CI/CD machines need the Ansys products available.")
 def test_default_product_launch():
@@ -27,6 +28,7 @@ def test_default_product_launch():
     modeler_discovery.close()
     modeler_spaceclaim.close()
 
+
 @pytest.mark.skip(reason="CI/CD machines need the Ansys products available.")
 def test_default_product_launch():
     """Test the creation of a Modeler object based on the local Ansys Geometry Service
@@ -41,6 +43,7 @@ def test_default_product_launch():
     assert modeler_discovery.client.healthy
     assert modeler_spaceclaim != None
     assert modeler_spaceclaim.client.healthy
+
 
 @pytest.mark.skip(reason="CI/CD machines need the Ansys products available.")
 def test_product_launch_with_parameters():
