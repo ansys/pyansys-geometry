@@ -1,5 +1,6 @@
 """PyGeometry connection subpackage."""
 
+from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
@@ -28,3 +29,4 @@ from ansys.geometry.core.connection.launcher import (
     launch_remote_modeler,
 )
 from ansys.geometry.core.connection.local_instance import GeometryContainers, LocalDockerInstance
+from ansys.geometry.core.connection.product_instance import ProductInstance
