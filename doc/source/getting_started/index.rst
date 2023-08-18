@@ -10,6 +10,7 @@ more information, see `Working with the Container registry
 in the GitHub documentation.
 
 .. caution::
+
    PyGeometry is a client library that works with a Geometry service backend. This service is distributed
    as a Docker container. Currently, only a Windows Docker container is available for this
    service. For more information, see :ref:`Geometry service using Docker <ref_docker>`.
@@ -17,7 +18,7 @@ in the GitHub documentation.
 .. toctree::
 
    docker
+   installation
    existing_client_session
    creating_remote_session
    creating_local_session
-   installation

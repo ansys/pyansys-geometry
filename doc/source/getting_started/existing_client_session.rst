@@ -2,16 +2,19 @@
 
 Connect to an existing client session
 =====================================
+
 If a session of Discovery, SpaceClaim, or the Geometry service is already
 running, PIM (Product Instance Manager) can be used to connect to it.
 
 .. note::
+
     Only Ansys employees with credentials to the Artifact Repository Browser
     can download ZIP files for PIM.
 
 
 Set up the backend session with PIM
 -----------------------------------
+
 Download, install, configure, and run PIM to set up the backend session.
 
 #. Go to the `pim_light.zip <https://canartifactory.ansys.com:8443/artifactory/webapp/#/artifacts/browse/tree/General/Extensibility_std/Staging/afinney/pim_light/Windows/pim_light.zip>`_
@@ -35,10 +38,12 @@ PIM can start other apps based on the configurations stored in the ``configurati
 
 Connect to the existing session
 ===============================
+
 From Python, establish a connection to the existing client session by creating a ``modeler`` object:
 
 .. code:: python
-    from ansys.geometry.core.modeler import Modeler
+
+    from ansys.geometry.core import Modeler
 
     modeler = Modeler(host=` "localhost" `, port=5001)
 
@@ -51,6 +56,7 @@ If you want to verify that the connection is successful, create a design in Disc
 using this connection and then print the output:
 
 .. code:: python
+
     output = modeler.create_design("some_new_design")
     print(output)
 

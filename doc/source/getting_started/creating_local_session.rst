@@ -12,12 +12,14 @@ Discovery or SpaceClaim. Once the backend is running, PyGeometry can manage the 
    **Commands for Discovery**
 
    .. code:: python
+
        from ansys.geometry.core import launch_modeler_with_discovery
 
        modeler_discovery = launch_modeler_with_discovery()
 
    **Commands for SpaceClaim**
    .. code:: python
+
        from ansys.geometry.core import launch_modeler_with_spaceclaim
 
        modeler_spaceclaim = launch_modeler_with_spaceclaim()
@@ -30,6 +32,7 @@ Discovery or SpaceClaim. Once the backend is running, PyGeometry can manage the 
    is not installed locally, an error is raised.
 
    .. note::
+
        If you set the product version to a version earlier than 2023 R2, be sure to set the ``api_version``
        to the correct version.
 
@@ -56,6 +59,7 @@ Discovery or SpaceClaim. Once the backend is running, PyGeometry can manage the 
    the Geometry service, which is headless:
 
    .. code:: python
+
        from ansys.geometry.core import launch_modeler_with_geometry_service
 
        modeler_geometry_service = launch_modeler_with_geometry_service()
@@ -66,5 +70,6 @@ Discovery or SpaceClaim. Once the backend is running, PyGeometry can manage the 
    The default is ``False``.
 
    .. note::
+
       Because this is the first release of the Geometry service, you cannot yet define a product version
       or API version.
