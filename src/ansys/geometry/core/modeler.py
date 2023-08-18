@@ -21,6 +21,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.platform.instancemanagement import Instance
 
     from ansys.geometry.core.connection.local_instance import LocalDockerInstance
+    from ansys.geometry.core.connection.product_instance import ProductInstance
     from ansys.geometry.core.designer import Design
 
 
@@ -47,6 +48,13 @@ class Modeler:
         method. This instance is deleted when the
         :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close>`
         method is called.
+    product_instance : ProductInstance, default: None
+        Corresponding local product instance when the product (Discovery or SpaceClaim)
+        is launched through the ``launch_modeler_with_geometry_service()``,
+        ``launch_modeler_with_discovery()`` or the ``launch_modeler_with_spaceclaim()``
+        interface. This instance will be deleted
+        when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
+        method is called.
     timeout : Real, default: 60
         Time in seconds for trying to achieve the connection.
     logging_level : int, default: INFO
@@ -62,6 +70,7 @@ class Modeler:
         channel: Optional[Channel] = None,
         remote_instance: Optional["Instance"] = None,
         local_instance: Optional["LocalDockerInstance"] = None,
+        product_instance: Optional["ProductInstance"] = None,
         timeout: Optional[Real] = 60,
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
@@ -74,6 +83,7 @@ class Modeler:
             channel=channel,
             remote_instance=remote_instance,
             local_instance=local_instance,
+            product_instance=product_instance,
             timeout=timeout,
             logging_level=logging_level,
             logging_file=logging_file,
