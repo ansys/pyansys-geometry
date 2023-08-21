@@ -63,6 +63,7 @@ class DesignFileFormat(Enum):
     FMD = "FMD", PartExportFormat.PARTEXPORTFORMAT_FMD
     STEP = "STEP", PartExportFormat.PARTEXPORTFORMAT_STEP
     IGES = "IGES", PartExportFormat.PARTEXPORTFORMAT_IGES
+    PMDB = "PMDB", PartExportFormat.PARTEXPORTFORMAT_PMDB
     INVALID = "INVALID", None
 
 
@@ -189,7 +190,7 @@ class Design(Component):
         format: Optional[DesignFileFormat] = DesignFileFormat.SCDOCX,
     ) -> None:
         """
-        Download a design from the active Geometry server instance.
+        Export and download the design from the active Geometry server instance.
 
         Parameters
         ----------
@@ -214,6 +215,7 @@ class Design(Component):
             DesignFileFormat.FMD,
             DesignFileFormat.STEP,
             DesignFileFormat.IGES,
+            DesignFileFormat.PMDB,
         ]:
             response = self._design_stub.Export(ExportRequest(format=format.value[1]))
             received_bytes += response.data
