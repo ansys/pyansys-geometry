@@ -1,4 +1,4 @@
-"""Module for using trame <https://kitware.github.io/trame/index.html>`_ for visualization."""
+"""Module for using `trame <https://kitware.github.io/trame/index.html>`_ for visualization."""
 try:
     from pyvista.trame.ui import plotter_ui
     from trame.app import get_server
