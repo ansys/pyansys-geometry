@@ -29,7 +29,7 @@ from ansys.geometry.core.sketch import Sketch
 
 ```
 +++
-Before we proceed with boolean operations, we need to launch the local modeler. If you're not familiar with how to load the modeler, you can refer to the [modeler section](../03_modeling/add_design_material.mystnb) for detailed instructions.
+Before we proceed with boolean operations, we need to launch the local modeler. If you're not familiar with how to load the modeler, you can refer to the [modeler section](../01_getting_started/04_modeling.mystnb) for detailed instructions.
 
 ```{code-cell} ipython3
 modeler = launch_local_modeler()
