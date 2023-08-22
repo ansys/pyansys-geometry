@@ -9,13 +9,13 @@ jupytext:
 ---
 
 # Boolean operations
-This section provides an overview of boolean operations in the context of geometry manipulation. We will walk through an example and discuss how to set it up.
+This example shows how to use Boolean operations for geometry manipulation.
 
 +++
 
-## Setting up the example
+## Perform required imports
 
-In this section, we will set up the example by importing the necessary components and loading the modeler.
+Perform the required imports.
 
 ```{code-cell} ipython3
 from typing import List
@@ -29,20 +29,26 @@ from ansys.geometry.core.sketch import Sketch
 
 ```
 +++
-Before we proceed with boolean operations, we need to launch the local modeler. If you're not familiar with how to load the modeler, you can refer to the [modeler section](../01_getting_started/04_modeling.mystnb) for detailed instructions.
+
+## Launch local modeler
+
+Launch the local modeler. If you're not familiar with how to load the modeler, see the
+"Launch a modeling service" section in the [PyGeometry 101: Modeling](../01_getting_started/04_modeling.mystnb)
+example.
 
 ```{code-cell} ipython3
 modeler = launch_local_modeler()
 
 ```
 
-## Define the bodies
+## Define bodies
 
-In this section, we'll define the bodies that will be used in the boolean operations. We'll start by creating sketches of a box and a circle, and then we'll extrude these sketches to create 3D objects.
+This section defines the bodies to be used in the Boolean operations. First you create sketches
+of a box and a circle, and then you extrude these sketches to create 3D objects.
 
-### Creating sketches
+### Create sketches
 
-We'll begin by creating sketches of a box and a circle that will serve as the basis for our bodies.
+Create sketches of a box and a circle that serve as the basis for your bodies.
 
 ```{code-cell} ipython3
 # Create a sketch of a box
@@ -53,51 +59,54 @@ sketch_circle = Sketch().circle(Point2D([20, 0], unit=UNITS.m), radius=10 * UNIT
 
 ```
 
-### Extruding the sketches
-With the sketches in place, we'll now extrude them to create 3D objects.
+### Extrude sketches
+With the sketches in place, you now extrude them to create 3D objects.
 
 ```{code-cell} ipython3
-# Create a Design
+# Create a design
 design = modeler.create_design("example_design")
 
-# Extrude both sketches --> Getting a prism and a cylinder
+# Extrude both sketches to get a prism and a cylinder
 prism = design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
 cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
 
 ```
-We will need to do this each time we do an example operation, because when we perform a boolean operation we are modifying the underlying
-design permanently, thus we will not have the two bodies anymore.
+You must extrude the sketches each time that you perform an example operation.
+This is because when you perform a Boolean operation, you are modifying the underlying
+design permanently. Thus, you no longer have two bodies.
 +++
-## Select the bodies
+## Select bodies
 
-Optionally, bodies can be selected in the plotter, as described in the [plotter picker section](../01_getting_started/05_plotter_picker.mystnb)
+You can optionally select bodies in the plotter as described in the "Select objects
+interactively" section in the [PyGeometry 101: Plotter](../01_getting_started/05_plotter_picker.mystnb)
+example.
 
 ```python
 bodies: List[Body] = PlotterHelper(allow_picking=True).plot(design.bodies)
 
 ```
-Otherwise, bodies can be selected from the design directly.
+Otherwise, you can select bodies from the design directly.
 
 ```{code-cell} ipython3
 bodies = [design.bodies[0], design.bodies[1]]
 
 ```
 
-## Boolean operations
+## Perform Boolean operations
 
-In this section, we will perform boolean operations on the defined bodies using the PyGeometry library. We'll explore intersection, union, and subtraction operations.
+This section performs Boolean operations on the defined bodies using the PyGeometry
+library. It explores intersection, union, and subtraction operations.
 
-### Intersection
+### Perform an intersection operation
 
-Let's start by performing an intersection operation on the bodies.
-
-First, set up the bodies.
+To perform an intersection operation on the bodies, first
+set up the bodies.
 
 ```{code-cell} ipython3
-# Create a Design
+# Create a design
 design = modeler.create_design("intersection_design")
 
-# Extrude both sketches --> Getting a prism and a cylinder
+# Extrude both sketches to get a prism and a cylinder
 prism = design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
 cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
 
@@ -105,7 +114,6 @@ cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
 bodies = [design.bodies[0], design.bodies[1]]
 
 ```
-
 
 Perform the intersection and plot the results.
 
@@ -115,18 +123,16 @@ PlotterHelper().plot(design.bodies)
 
 ```
 
-### Union
+### Perform a union operation
 
-Next, we will carry out a union operation on the bodies.
-
-
-First, set up the bodies.
+To carry out a union operation on the bodies, first
+set up the bodies.
 
 ```{code-cell} ipython3
-# Create a Design
+# Create a design
 design = modeler.create_design("union_design")
 
-# Extrude both sketches --> Getting a prism and a cylinder
+# Extrude both sketches to get a prism and a cylinder
 prism = design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
 cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
 
@@ -144,17 +150,16 @@ PlotterHelper().plot(design.bodies)
 
 ```
 
-### Subtraction
+### Perform a subtraction operation
 
-Finally, we will perform a subtraction operation on the bodies.
-
-First, set up the bodies.
+To perform a subtraction operation on the bodies, first.
+set up the bodies.
 
 ```{code-cell} ipython3
-# Create a Design
+# Create a design
 design = modeler.create_design("subtraction_design")
 
-# Extrude both sketches --> Getting a prism and a cylinder
+# Extrude both sketches to get a prism and a cylinder
 prism = design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
 cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
 
@@ -173,8 +178,8 @@ PlotterHelper().plot(design.bodies)
 
 ## Summary
 
-These boolean operations provide powerful tools for creating complex geometries and combining or modifying existing shapes in meaningful ways.
+These Boolean operations provide powerful tools for creating complex geometries
+and combining or modifying existing shapes in meaningful ways.
 
-Feel free to experiment with different shapes, sizes, and arrangements to further enhance your understanding of boolean operations in PyGeometry and their applications.
-
-If you have any questions or want to learn more about specific topics, be sure to explore ANSYS documentation and related resources.
+Feel free to experiment with different shapes, sizes, and arrangements to further
+enhance your understanding of Boolean operations in PyGeometry and their applications.
