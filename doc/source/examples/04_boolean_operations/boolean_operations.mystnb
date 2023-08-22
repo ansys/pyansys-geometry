@@ -1,0 +1,123 @@
+---
+jupytext:
+  formats: mystnb:myst
+  text_representation:
+    extension: .mystnb
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.15.0
+---
+
+# Boolean operations
+This section provides an overview of boolean operations in the context of geometry manipulation. We will walk through an example and discuss how to set it up.
+
++++
+
+## Setting up the example
+
+In this section, we will set up the example by importing the necessary components and loading the modeler.
+
+```{code-cell} ipython3
+from typing import List
+
+from ansys.geometry.core import launch_local_modeler
+from ansys.geometry.core.designer import Body
+from ansys.geometry.core.math import Point2D
+from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.plotting import PlotterHelper
+from ansys.geometry.core.sketch import Sketch
+
+```
++++
+Before we proceed with boolean operations, we need to launch the local modeler. If you're not familiar with how to load the modeler, you can refer to the [modeler section](../03_modeling/add_design_material.mystnb) for detailed instructions.
+
+```{code-cell} ipython3
+modeler = launch_local_modeler()
+
+```
+
+## Define the bodies
+
+In this section, we'll define the bodies that will be used in the boolean operations. We'll start by creating sketches of a box and a circle, and then we'll extrude these sketches to create 3D objects.
+
+### Creating sketches
+
+We'll begin by creating sketches of a box and a circle that will serve as the basis for our bodies.
+
+```{code-cell} ipython3
+# Create a sketch of a box
+sketch_box = Sketch().box(Point2D([0, 0], unit=UNITS.m), width=30 * UNITS.m, height=40 * UNITS.m)
+
+# Create a sketch of a circle (overlapping the box, slightly)
+sketch_circle = Sketch().circle(Point2D([20, 0], unit=UNITS.m), radius=10 * UNITS.m)
+
+```
+
+### Extruding the sketches
+With the sketches in place, we'll now extrude them to create 3D objects.
+
+```{code-cell} ipython3
+# Create a Design
+design = modeler.create_design("PyAnsysAFT_PlotterPickingAndOperations_2")
+
+# Extrude both sketches --> Getting a prism and a cylinder
+prism = design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
+cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
+
+```
+
+## Select the bodies
+
+Optionally, bodies can be selected in the plotter, as described in the [plotter picker section](../01_getting_started/05_plotter_picker.mystnb)
+
+```python
+bodies: List[Body] = PlotterHelper(allow_picking=True).plot(design.bodies)
+
+```
+Otherwise, bodies can be selected from the design directly.
+
+```{code-cell} ipython3
+bodies = [design.bodies[0], design.bodies[1]]
+
+```
+
+## Boolean operations
+
+In this section, we will perform boolean operations on the defined bodies using the PyGeometry library. We'll explore intersection, union, and subtraction operations.
+
+### Intersection
+
+Let's start by performing an intersection operation on the bodies.
+```{code-cell} ipython3
+bodies[0].intersect(bodies[-1])
+PlotterHelper().plot(design.bodies)
+
+```
+
+### Union
+
+Next, we will carry out a union operation on the bodies.
+
+```{code-cell} ipython3
+bodies[0].unite(bodies[-1])
+PlotterHelper().plot(design.bodies)
+
+```
+
+### Subtraction
+
+Finally, we will perform a subtraction operation on the bodies.
+
+```{code-cell} ipython3
+bodies[0].subtract(bodies[-1])
+PlotterHelper().plot(design.bodies)
+
+```
+
+## Summary
+
+These boolean operations provide powerful tools for creating complex geometries and combining or modifying existing shapes in meaningful ways.
+
+Feel free to experiment with different shapes, sizes, and arrangements to further enhance your understanding of boolean operations in PyGeometry and their applications.
+
+If you have any questions or want to learn more about specific topics, be sure to explore ANSYS documentation and related resources.
