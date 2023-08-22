@@ -1,11 +1,13 @@
 """Sphinx documentation configuration file."""
 from datetime import datetime
 import os
+from pathlib import Path
 
 from ansys_sphinx_theme import (
     ansys_favicon,
     ansys_logo_white,
     ansys_logo_white_cropped,
+    get_autoapi_templates_dir_relative_path,
     get_version_match,
     latex,
     pyansys_logo_black,
@@ -119,14 +121,11 @@ autoapi_options = [
     "show-module-summary",
     "special-members",
 ]
-autoapi_template_dir = "_autoapi_templates"
+autoapi_template_dir = get_autoapi_templates_dir_relative_path(Path(__file__))
 suppress_warnings = ["autoapi.python_import_resolution"]
-exclude_patterns = [
-    "_autoapi_templates/index.rst",
-    "_autoapi_templates/python/module.rst",
-]
 autoapi_python_use_implicit_namespaces = True
 autoapi_keep_files = True
+autoapi_render_in_single_page = ["class"]
 
 # Examples gallery customization
 nbsphinx_execute = "always"
@@ -190,6 +189,7 @@ linkcheck_anchors_ignore_for_url = ["https://docs.pyvista.org/api/*"]
 linkcheck_ignore = ["https://github.com/ansys/pygeometry/*", "https://geometry.docs.pyansys.com/*"]
 
 # -- Declare the Jinja context -----------------------------------------------
+exclude_patterns = []
 BUILD_API = True if os.environ.get("BUILD_API", "true") == "true" else False
 if not BUILD_API:
     exclude_patterns.append("autoapi")
@@ -205,3 +205,17 @@ jinja_contexts = {
         "build_examples": BUILD_EXAMPLES,
     },
 }
+
+
+def prepare_jinja_env(jinja_env) -> None:
+    """
+    Customize the jinja env.
+
+    Notes
+    -----
+    See https://jinja.palletsprojects.com/en/3.0.x/api/#jinja2.Environment
+    """
+    jinja_env.globals["project_name"] = project
+
+
+autoapi_prepare_jinja_env = prepare_jinja_env
