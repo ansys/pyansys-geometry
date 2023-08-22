@@ -58,14 +58,16 @@ With the sketches in place, we'll now extrude them to create 3D objects.
 
 ```{code-cell} ipython3
 # Create a Design
-design = modeler.create_design("PyAnsysAFT_PlotterPickingAndOperations_2")
+design = modeler.create_design("example_design")
 
 # Extrude both sketches --> Getting a prism and a cylinder
 prism = design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
 cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
 
 ```
-
+We will need to do this each time we do an example operation, because when we perform a boolean operation we are modifying the underlying
+design permanently, thus we will not have the two bodies anymore.
++++
 ## Select the bodies
 
 Optionally, bodies can be selected in the plotter, as described in the [plotter picker section](../01_getting_started/05_plotter_picker.mystnb)
@@ -88,6 +90,25 @@ In this section, we will perform boolean operations on the defined bodies using 
 ### Intersection
 
 Let's start by performing an intersection operation on the bodies.
+
+First, set up the bodies.
+
+```{code-cell} ipython3
+# Create a Design
+design = modeler.create_design("intersection_design")
+
+# Extrude both sketches --> Getting a prism and a cylinder
+prism = design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
+cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
+
+# Save the bodies in a list
+bodies = [design.bodies[0], design.bodies[1]]
+
+```
+
+
+Perform the intersection and plot the results.
+
 ```{code-cell} ipython3
 bodies[0].intersect(bodies[-1])
 PlotterHelper().plot(design.bodies)
@@ -98,6 +119,25 @@ PlotterHelper().plot(design.bodies)
 
 Next, we will carry out a union operation on the bodies.
 
+
+First, set up the bodies.
+
+```{code-cell} ipython3
+# Create a Design
+design = modeler.create_design("union_design")
+
+# Extrude both sketches --> Getting a prism and a cylinder
+prism = design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
+cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
+
+# Save the bodies in a list
+bodies = [design.bodies[0], design.bodies[1]]
+
+```
+
+
+Perform the union and plot the results.
+
 ```{code-cell} ipython3
 bodies[0].unite(bodies[-1])
 PlotterHelper().plot(design.bodies)
@@ -107,6 +147,23 @@ PlotterHelper().plot(design.bodies)
 ### Subtraction
 
 Finally, we will perform a subtraction operation on the bodies.
+
+First, set up the bodies.
+
+```{code-cell} ipython3
+# Create a Design
+design = modeler.create_design("subtraction_design")
+
+# Extrude both sketches --> Getting a prism and a cylinder
+prism = design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
+cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
+
+# Save the bodies in a list
+bodies = [design.bodies[0], design.bodies[1]]
+
+```
+
+Perform the subtraction and plot the results.
 
 ```{code-cell} ipython3
 bodies[0].subtract(bodies[-1])
