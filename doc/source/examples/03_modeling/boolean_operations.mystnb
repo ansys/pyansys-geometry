@@ -32,9 +32,9 @@ from ansys.geometry.core.sketch import Sketch
 
 ## Launch local modeler
 
-Launch the local modeler. If you're not familiar with how to load the modeler, see the
-"Launch a modeling service" section in the [PyGeometry 101: Modeling](../01_getting_started/04_modeling.mystnb)
-example.
+Launch the local modeler. If you're not familiar with how to laumch the local
+modeler, see the "Launch a modeling service" section in the
+[PyGeometry 101: Modeling](../01_getting_started/04_modeling.mystnb) example.
 
 ```{code-cell} ipython3
 modeler = launch_local_modeler()
@@ -43,7 +43,7 @@ modeler = launch_local_modeler()
 
 ## Define bodies
 
-This section defines the bodies to be used in the Boolean operations. First you create sketches
+This section defines the bodies to be use the Boolean operations on. First you create sketches
 of a box and a circle, and then you extrude these sketches to create 3D objects.
 
 ### Create sketches
@@ -54,13 +54,13 @@ Create sketches of a box and a circle that serve as the basis for your bodies.
 # Create a sketch of a box
 sketch_box = Sketch().box(Point2D([0, 0], unit=UNITS.m), width=30 * UNITS.m, height=40 * UNITS.m)
 
-# Create a sketch of a circle (overlapping the box, slightly)
+# Create a sketch of a circle (overlapping the box slightly)
 sketch_circle = Sketch().circle(Point2D([20, 0], unit=UNITS.m), radius=10 * UNITS.m)
 
 ```
 
 ### Extrude sketches
-With the sketches in place, you now extrude them to create 3D objects.
+With the sketches in place, now extrude them to create 3D objects.
 
 ```{code-cell} ipython3
 # Create a design
