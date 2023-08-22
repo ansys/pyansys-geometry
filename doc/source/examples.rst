@@ -37,3 +37,4 @@ These examples demonstrate service-based modeling operations.
     examples/03_modeling/plate_with_hole.mystnb
     examples/03_modeling/tessellation_usage.mystnb
     examples/03_modeling/design_organization.mystnb
+    examples/03_modeling/boolean_operations.mystnb
