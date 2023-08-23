@@ -209,29 +209,31 @@ class Plotter:
 
         self.add_sketch_polydata(sketch.sketch_polydata(), **plotting_options)
 
-    def add_skeleton(self, edges: List[Point3D], **plotting_options) -> List[pv.Actor]:
+    def add_body_edges(
+        self, edges: Dict[str, tuple[Point3D, Point3D]], **plotting_options
+    ) -> Dict[str, pv.Actor]:
         """
         Add the outer edges of a body to the plot.
 
         Parameters
         ----------
-        edges : List[Point3D]
+        edges :  Dict[str, tuple[Point3D, Point3D]]
             Start and ending points of the edges of the body.
 
         Returns
         -------
-        pv.Actor
-            List of the actor edges.
+        Dictpv.Actor
+            Map of the actor edge name and edge ID.
         """
-        edge_actors = []
-        for start, stop in edges:
+        edge_actors_map = {}
+        for edge_id, (start, stop) in edges.items():
             pointA = (start.x.magnitude, start.y.magnitude, start.z.magnitude)
             pointB = (stop.x.magnitude, stop.y.magnitude, stop.z.magnitude)
             line = pv.Line(pointA, pointB)
             edge_actor = self.scene.add_mesh(line, line_width=10)
             edge_actor.SetVisibility(False)
-            edge_actors.append(edge_actor)
-        return edge_actors
+            edge_actors_map[edge_actor.name] = (edge_actor, edge_id)
+        return edge_actors_map
 
     def add_body(
         self, body: Body, merge: Optional[bool] = False, **plotting_options: Optional[Dict]
@@ -264,9 +266,9 @@ class Plotter:
         else:
             actor = self.scene.add_mesh(dataset, **plotting_options)
 
-        skeleton_actors = self.add_skeleton(body.skeleton)
+        body_edges_actors_map = self.add_body_edges(body.skeleton)
 
-        return actor.name, skeleton_actors
+        return actor.name, body_edges_actors_map
 
     def add_component(
         self,
@@ -361,7 +363,6 @@ class Plotter:
         """
         logger.debug(f"Adding object type {type(object)} to the PyVista plotter")
         actor_name = None
-        skeleton_name = None
         if isinstance(object, List) and isinstance(object[0], pv.PolyData):
             self.add_sketch_polydata(object, **plotting_options)
         elif isinstance(object, pv.PolyData):
@@ -371,14 +372,16 @@ class Plotter:
         elif isinstance(object, Sketch):
             self.plot_sketch(object, **plotting_options)
         elif isinstance(object, Body) or isinstance(object, MasterBody):
-            actor_name, skeleton_actors = self.add_body(object, merge_bodies, **plotting_options)
+            actor_name, body_edges_actors_map = self.add_body(
+                object, merge_bodies, **plotting_options
+            )
         elif isinstance(object, Design) or isinstance(object, Component):
             actor_name = self.add_component(
                 object, merge_components, merge_bodies, **plotting_options
             )
         else:
             logger.warning(f"Object type {type(object)} can not be plotted.")
-        return {actor_name: (skeleton_actors, object.name)} if actor_name else {}
+        return {actor_name: (body_edges_actors_map, object.name)} if actor_name else {}
 
     def add_list(
         self,
@@ -515,6 +518,8 @@ class PlotterHelper:
         self._pl = None
         self._picked_list = set()
         self._picker_added_actors_map = {}
+        self._body_edges_mapping = {}
+        self._object_children_map = {}
 
         if self._use_trame and _HAS_TRAME:
             # avoids GUI window popping up
@@ -535,8 +540,21 @@ class PlotterHelper:
                 callback=self.picker_callback, use_actor=True, show=False
             )
 
+    def edge_object_mapping(self):
+        """Compute the mapping between the actor edges and its parent object."""
+        for body_actor_name, (body_edges_map, body_name) in self._actor_object_mapping.items():
+            self._body_edges_mapping.update(body_edges_map)
+            children = []
+            for _, (edge_actor, edge_id) in body_edges_map.items():
+                children.append((edge_actor, edge_id))
+            self._object_children_map.update({body_actor_name: children})
+
     def select_object(
-        self, actor: pv.Actor, body_name: str, skeleton_actors: List[pv.Actor], pt: "np.Array"
+        self,
+        actor: pv.Actor,
+        object_name: str,
+        pt: "np.Array",
+        children_list: List[tuple[pv.Actor, str]] = None,
     ) -> None:
         """
         Select an object in the plotter.
@@ -548,16 +566,19 @@ class PlotterHelper:
         ----------
         actor : pv.Actor
             Actor on which to perform the operations.
-        body_name : str
+        object_name : str
             Name of the Body to highlight.
         pt : np.Array
             Set of points to determine the label position.
+        children_list : List[tuple[pv.Actor, str]], optional
+            List of the edges associated to this actor, containing
+            the PyVista actor and the PyGeometry ID, by default None.
         """
         added_actors = []
-        # actor.prop.show_edges = True
-        for actor in skeleton_actors:
-            actor.SetVisibility(True)
-        text = body_name
+        if children_list:
+            for edge_actor, _ in children_list:
+                edge_actor.SetVisibility(True)
+        text = object_name
         label_actor = self._pl.scene.add_point_labels(
             [pt],
             [text],
@@ -566,14 +587,13 @@ class PlotterHelper:
             render_points_as_spheres=False,
             show_points=False,
         )
-        if body_name not in self._picked_list:
-            self._picked_list.add(body_name)
+        if object_name not in self._picked_list:
+            self._picked_list.add(object_name)
         added_actors.append(label_actor)
-
         self._picker_added_actors_map[actor.name] = added_actors
 
     def unselect_object(
-        self, actor: pv.Actor, body_name: str, skeleton_actors: List[pv.Actor]
+        self, actor: pv.Actor, object_name: str, children_list: List[tuple[pv.Actor, str]] = None
     ) -> None:
         """
         Unselect an object in the plotter.
@@ -584,16 +604,26 @@ class PlotterHelper:
         Parameters
         ----------
         actor : pv.Actor
-            Actor that is currently highlighted
-        body_name : str
-            Body name to remove
+            Actor that is currently highlighted.
+        object_name : str
+            Object name to remove.
+        children_list : List[tuple[pv.Actor, str]], optional
+            List of the edges associated to this actor, containing
+            the PyVista actor and the PyGeometry ID, by default None.
         """
-        # actor.prop.show_edges = False
-        for actor in skeleton_actors:
-            actor.SetVisibility(False)
-        self._picked_list.remove(body_name)
+        # remove actor from picked list and from scene
+        if object_name in self._picked_list:
+            self._picked_list.remove(object_name)
         if actor.name in self._picker_added_actors_map:
             self._pl.scene.remove_actor(self._picker_added_actors_map[actor.name])
+
+            # remove actor and its children(edges) from the scene
+            if children_list:
+                for edge_actor, edge_id in children_list:
+                    # hide edges in the scene
+                    edge_actor.SetVisibility(False)
+                    # recursion
+                    self.unselect_object(edge_actor, edge_id)
             self._picker_added_actors_map.pop(actor.name)
 
     def picker_callback(self, actor: "pv.Actor") -> None:
@@ -606,13 +636,22 @@ class PlotterHelper:
             Actor that we are picking.
         """
         pt = self._pl.scene.picked_point
-        self._actor_object_mapping.keys
+
+        # if object is a body/component
         if actor.name in self._actor_object_mapping:
-            skeleton_actors, body_name = self._actor_object_mapping[actor.name]
+            body_edges_actors, body_name = self._actor_object_mapping[actor.name]
             if body_name not in self._picked_list:
-                self.select_object(actor, body_name, skeleton_actors, pt)
+                self.select_object(actor, body_name, pt, self._object_children_map[actor.name])
             else:
-                self.unselect_object(actor, body_name, skeleton_actors)
+                self.unselect_object(actor, body_name, self._object_children_map[actor.name])
+
+        # if object is an edge
+        elif actor.name in self._body_edges_mapping and actor.GetVisibility():
+            _, edge_id = self._body_edges_mapping[actor.name]
+            if edge_id not in self._picked_list:
+                self.select_object(actor, edge_id, pt)
+            else:
+                self.unselect_object(actor, edge_id)
 
     def plot(
         self,
@@ -663,6 +702,9 @@ class PlotterHelper:
             self._actor_object_mapping = self._pl.add(
                 object, merge_bodies, merge_component, **plotting_options
             )
+
+        # Compute mapping between the objects and its edges.
+        self.edge_object_mapping()
 
         if view_2d is not None:
             self._pl.scene.view_vector(

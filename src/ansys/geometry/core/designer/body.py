@@ -904,7 +904,7 @@ class Body(IBody):
         List[Point3D]
             List with the starting and ending points of the body edges.
         """
-        return [(edge.start, edge.stop) for edge in self.edges]
+        return {edge.id: (edge.start, edge.stop) for edge in self.edges}
 
     @property
     def _is_alive(self) -> bool:  # noqa: D102
