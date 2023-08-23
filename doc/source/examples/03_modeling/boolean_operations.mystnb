@@ -8,7 +8,7 @@ jupytext:
     jupytext_version: 1.15.0
 ---
 
-# Boolean operations
+# Modeling: Boolean operations
 
 This example shows how to use Boolean operations for geometry manipulation.
 
@@ -27,7 +27,6 @@ from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.plotting import PlotterHelper
 from ansys.geometry.core.sketch import Sketch
-
 ```
 +++
 
@@ -39,7 +38,6 @@ modeler, see the "Launch a modeling service" section in the
 
 ```{code-cell} ipython3
 modeler = launch_local_modeler()
-
 ```
 
 ## Define bodies
@@ -57,10 +55,10 @@ sketch_box = Sketch().box(Point2D([0, 0], unit=UNITS.m), width=30 * UNITS.m, hei
 
 # Create a sketch of a circle (overlapping the box slightly)
 sketch_circle = Sketch().circle(Point2D([20, 0], unit=UNITS.m), radius=10 * UNITS.m)
-
 ```
 
 ### Extrude sketches
+
 With the sketches in place, now extrude them to create 3D objects.
 
 ```{code-cell} ipython3
@@ -70,8 +68,8 @@ design = modeler.create_design("example_design")
 # Extrude both sketches to get a prism and a cylinder
 prism = design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
 cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
-
 ```
+
 You must extrude the sketches each time that you perform an example operation.
 This is because when you perform a Boolean operation, you are modifying the underlying
 design permanently. Thus, you no longer have two bodies. As it is shown in the Boolean
@@ -90,13 +88,12 @@ output list is sorted according to the picking order.
 
 ```python
 bodies: List[Body] = PlotterHelper(allow_picking=True).plot(design.bodies)
-
 ```
+
 Otherwise, you can select bodies from the design directly.
 
 ```{code-cell} ipython3
 bodies = [design.bodies[0], design.bodies[1]]
-
 ```
 
 +++
@@ -118,15 +115,13 @@ design = modeler.create_design("intersection_design")
 # Extrude both sketches to get a prism and a cylinder
 prism = design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
 cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
-
 ```
 
 Perform the intersection and plot the results.
 
 ```{code-cell} ipython3
 prism.intersect(cylin)
-PlotterHelper().plot(design.bodies)
-
+_ = PlotterHelper().plot(design.bodies)
 ```
 
 The final remaining body, as we can see, is the ``prism``, since
@@ -134,7 +129,6 @@ the ``cylin`` body has been consumed.
 
 ```{code-cell} ipython3
 print(design.bodies)
-
 ```
 
 ### Perform a union operation
@@ -149,15 +143,13 @@ design = modeler.create_design("union_design")
 # Extrude both sketches to get a prism and a cylinder
 prism = design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
 cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
-
 ```
 
 Perform the union and plot the results.
 
 ```{code-cell} ipython3
 prism.unite(cylin)
-PlotterHelper().plot(design.bodies)
-
+_ = PlotterHelper().plot(design.bodies)
 ```
 
 The final remaining body, as we can see, is the ``prism``, since
@@ -165,7 +157,6 @@ the ``cylin`` body has been consumed.
 
 ```{code-cell} ipython3
 print(design.bodies)
-
 ```
 
 ### Perform a subtraction operation
@@ -180,15 +171,13 @@ design = modeler.create_design("subtraction_design")
 # Extrude both sketches to get a prism and a cylinder
 prism = design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
 cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
-
 ```
 
 Perform the subtraction and plot the results.
 
 ```{code-cell} ipython3
 prism.subtract(cylin)
-PlotterHelper().plot(design.bodies)
-
+_ = PlotterHelper().plot(design.bodies)
 ```
 
 The final remaining body, as we can see, is the ``prism``, since
@@ -196,7 +185,6 @@ the ``cylin`` body has been consumed.
 
 ```{code-cell} ipython3
 print(design.bodies)
-
 ```
 
 If this action is performed inverting the order of the bodies (that is,
@@ -213,17 +201,14 @@ cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
 
 # Invert subtraction
 cylin.subtract(prism)
-PlotterHelper().plot(design.bodies)
-
+_ = PlotterHelper().plot(design.bodies)
 ```
-
 
 In this case, the final remaining body is the ``cylin``, since
 the ``prism`` body has now been consumed.
 
 ```{code-cell} ipython3
 print(design.bodies)
-
 ```
 
 ## Summary
