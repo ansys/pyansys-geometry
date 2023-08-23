@@ -7,5 +7,6 @@
 *       @ansys/pygeometry-maintainers
 
 # Documentation review required from Docs team for rST files and MD files
-*.rst   @PipKat
-*.md    @PipKat
+*.rst      @PipKat
+*.md       @PipKat
+*.mystnb   @PipKat
