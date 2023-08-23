@@ -9,6 +9,7 @@ jupytext:
 ---
 
 # Boolean operations
+
 This example shows how to use Boolean operations for geometry manipulation.
 
 +++
@@ -32,7 +33,7 @@ from ansys.geometry.core.sketch import Sketch
 
 ## Launch local modeler
 
-Launch the local modeler. If you're not familiar with how to laumch the local
+Launch the local modeler. If you are not familiar with how to launch the local
 modeler, see the "Launch a modeling service" section in the
 [PyGeometry 101: Modeling](../01_getting_started/04_modeling.mystnb) example.
 
@@ -43,7 +44,7 @@ modeler = launch_local_modeler()
 
 ## Define bodies
 
-This section defines the bodies to be use the Boolean operations on. First you create sketches
+This section defines the bodies to be used the Boolean operations on. First you create sketches
 of a box and a circle, and then you extrude these sketches to create 3D objects.
 
 ### Create sketches
@@ -73,13 +74,19 @@ cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
 ```
 You must extrude the sketches each time that you perform an example operation.
 This is because when you perform a Boolean operation, you are modifying the underlying
-design permanently. Thus, you no longer have two bodies.
+design permanently. Thus, you no longer have two bodies. As it is shown in the Boolean
+operations themselves, whenever you pass in a body, it is consumed, and no longer exists.
+The remaining body (with the performed Boolean operation) is the one that performed the
+call to the method.
+
 +++
+
 ## Select bodies
 
 You can optionally select bodies in the plotter as described in the "Select objects
 interactively" section in the [PyGeometry 101: Plotter](../01_getting_started/05_plotter_picker.mystnb)
-example.
+example. As it is shown in the example, the plotter preserves the picking order, meaning that the
+output list is sorted according to the picking order.
 
 ```python
 bodies: List[Body] = PlotterHelper(allow_picking=True).plot(design.bodies)
@@ -91,6 +98,8 @@ Otherwise, you can select bodies from the design directly.
 bodies = [design.bodies[0], design.bodies[1]]
 
 ```
+
++++
 
 ## Perform Boolean operations
 
@@ -110,16 +119,21 @@ design = modeler.create_design("intersection_design")
 prism = design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
 cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
 
-# Save the bodies in a list
-bodies = [design.bodies[0], design.bodies[1]]
-
 ```
 
 Perform the intersection and plot the results.
 
 ```{code-cell} ipython3
-bodies[0].intersect(bodies[-1])
+prism.intersect(cylin)
 PlotterHelper().plot(design.bodies)
+
+```
+
+The final remaining body, as we can see, is the ``prism``, since
+the ``cylin`` body has been consumed.
+
+```{code-cell} ipython3
+print(design.bodies)
 
 ```
 
@@ -136,17 +150,21 @@ design = modeler.create_design("union_design")
 prism = design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
 cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
 
-# Save the bodies in a list
-bodies = [design.bodies[0], design.bodies[1]]
-
 ```
-
 
 Perform the union and plot the results.
 
 ```{code-cell} ipython3
-bodies[0].unite(bodies[-1])
+prism.unite(cylin)
 PlotterHelper().plot(design.bodies)
+
+```
+
+The final remaining body, as we can see, is the ``prism``, since
+the ``cylin`` body has been consumed.
+
+```{code-cell} ipython3
+print(design.bodies)
 
 ```
 
@@ -163,16 +181,48 @@ design = modeler.create_design("subtraction_design")
 prism = design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
 cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
 
-# Save the bodies in a list
-bodies = [design.bodies[0], design.bodies[1]]
-
 ```
 
 Perform the subtraction and plot the results.
 
 ```{code-cell} ipython3
-bodies[0].subtract(bodies[-1])
+prism.subtract(cylin)
 PlotterHelper().plot(design.bodies)
+
+```
+
+The final remaining body, as we can see, is the ``prism``, since
+the ``cylin`` body has been consumed.
+
+```{code-cell} ipython3
+print(design.bodies)
+
+```
+
+If this action is performed inverting the order of the bodies (that is,
+``cylin.subtract(prism)``, we will observe the difference in the resulting
+shape of the body.
+
+```{code-cell} ipython3
+# Create a design
+design = modeler.create_design("subtraction_design_inverted")
+
+# Extrude both sketches to get a prism and a cylinder
+prism = design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
+cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
+
+# Invert subtraction
+cylin.subtract(prism)
+PlotterHelper().plot(design.bodies)
+
+```
+
+
+In this case, the final remaining body is the ``cylin``, since
+the ``prism`` body has now been consumed.
+
+```{code-cell} ipython3
+print(design.bodies)
 
 ```
 
