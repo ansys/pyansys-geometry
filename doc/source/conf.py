@@ -74,6 +74,7 @@ extensions = [
     "sphinx_design",
     "sphinx_jinja",
     "autoapi.extension",
+    "numpydoc",
 ]
 
 # Intersphinx mapping
@@ -87,6 +88,28 @@ intersphinx_mapping = {
     # kept here as an example
     # "matplotlib": ("https://matplotlib.org/stable", None),
     "pypim": ("https://pypim.docs.pyansys.com/version/dev", None),
+}
+
+# numpydoc configuration
+numpydoc_show_class_members = False
+numpydoc_xref_param_type = True
+
+# Consider enabling numpydoc validation. See:
+# https://numpydoc.readthedocs.io/en/latest/validation.html#
+numpydoc_validate = True
+numpydoc_validation_checks = {
+    "GL06",  # Found unknown section
+    "GL07",  # Sections are in the wrong order.
+    # "GL08",  # The object does not have a docstring
+    "GL09",  # Deprecation warning should precede extended summary
+    "GL10",  # reST directives {directives} must be followed by two colons
+    "SS01",  # No summary found
+    "SS02",  # Summary does not start with a capital letter
+    # "SS03", # Summary does not end with a period
+    "SS04",  # Summary contains heading whitespaces
+    # "SS05", # Summary must start with infinitive verb, not third person
+    "RT02",  # The first line of the Returns section should contain only the
+    # type, unless multiple values are being returned"
 }
 
 # static path
