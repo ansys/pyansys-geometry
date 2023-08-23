@@ -106,7 +106,7 @@ def test_design_import_simple_case(modeler: Modeler):
     _checker_method(read_design, design)
 
 
-def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, service_os: str):
     """Test creation of a component, saving it to a file, and loading it again to a
     second component and make sure they have the same properties."""
 
@@ -156,41 +156,41 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     # assert the two cars are the same
     _checker_method(design, design2, True)
 
-    # Test other formats
+    # Test HOOPS formats (Windows only)
+    if service_os == "windows":
+        # STEP
+        file = tmp_path_factory.mktemp("test_design_import") / "two_cars.step"
+        design.download(file, DesignFileFormat.STEP)
+        design2 = modeler.open_file(file)
+        _checker_method(design, design2, False)
 
-    # STEP
-    file = tmp_path_factory.mktemp("test_design_import") / "two_cars.step"
-    design.download(file, DesignFileFormat.STEP)
-    design2 = modeler.open_file(file)
-    _checker_method(design, design2, False)
+        # IGES
+        file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
+        design.download(file, DesignFileFormat.IGES)
+        design2 = modeler.open_file(file)
+        _checker_method(design, design2, False)
 
-    # IGES
-    file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
-    design.download(file, DesignFileFormat.IGES)
-    design2 = modeler.open_file(file)
-    _checker_method(design, design2, False)
+        # Catia
+        design2 = modeler.open_file("./tests/integration/files/import/catia_car/car.CATProduct")
+        _checker_method(design, design2, False)
 
-    # Catia
-    design2 = modeler.open_file("./tests/integration/files/import/catia_car/car.CATProduct")
-    _checker_method(design, design2, False)
+        # Rhino
+        design2 = modeler.open_file("./tests/integration/files/import/box.3dm")
+        assert len(design2.components) == 1
+        assert len(design2.components[0].bodies) == 1
 
-    # Rhino
-    design2 = modeler.open_file("./tests/integration/files/import/box.3dm")
-    assert len(design2.components) == 1
-    assert len(design2.components[0].bodies) == 1
+        # Stride
+        design2 = modeler.open_file("./tests/integration/files/import/sample_box.project")
+        assert len(design2.bodies) == 1
 
-    # Stride
-    design2 = modeler.open_file("./tests/integration/files/import/sample_box.project")
-    assert len(design2.bodies) == 1
+        # SolidWorks
+        design2 = modeler.open_file("./tests/integration/files/import/partColor.SLDPRT")
+        assert len(design2.components[0].bodies) == 1
 
-    # SolidWorks
-    design2 = modeler.open_file("./tests/integration/files/import/partColor.SLDPRT")
-    assert len(design2.components[0].bodies) == 1
+        # .par
+        design2 = modeler.open_file("./tests/integration/files/import/Tank_Bottom.par")
+        assert len(design2.bodies) == 1
 
-    # .par
-    design2 = modeler.open_file("./tests/integration/files/import/Tank_Bottom.par")
-    assert len(design2.bodies) == 1
-
-    # .prt
-    design2 = modeler.open_file("./tests/integration/files/import/disk1.prt")
-    assert len(design2.bodies) == 1
+        # .prt
+        design2 = modeler.open_file("./tests/integration/files/import/disk1.prt")
+        assert len(design2.bodies) == 1
