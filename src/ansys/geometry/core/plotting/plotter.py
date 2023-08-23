@@ -8,7 +8,7 @@ from pyvista.plotting.tools import create_axes_marker
 
 from ansys.geometry.core.designer import Body, Component, Design, MasterBody
 from ansys.geometry.core.logger import LOG as logger
-from ansys.geometry.core.math import Frame, Plane
+from ansys.geometry.core.math import Frame, Plane, Point3D
 from ansys.geometry.core.plotting.trame_gui import _HAS_TRAME, TrameVisualizer
 from ansys.geometry.core.plotting.widgets import (
     CameraPanDirection,
@@ -209,9 +209,33 @@ class Plotter:
 
         self.add_sketch_polydata(sketch.sketch_polydata(), **plotting_options)
 
+    def add_skeleton(self, edges: List[Point3D], **plotting_options) -> List[pv.Actor]:
+        """
+        Add the outer edges of a body to the plot.
+
+        Parameters
+        ----------
+        edges : List[Point3D]
+            Start and ending points of the edges of the body.
+
+        Returns
+        -------
+        pv.Actor
+            List of the actor edges.
+        """
+        edge_actors = []
+        for start, stop in edges:
+            pointA = (start.x.magnitude, start.y.magnitude, start.z.magnitude)
+            pointB = (stop.x.magnitude, stop.y.magnitude, stop.z.magnitude)
+            line = pv.Line(pointA, pointB)
+            edge_actor = self.scene.add_mesh(line, line_width=10)
+            edge_actor.SetVisibility(False)
+            edge_actors.append(edge_actor)
+        return edge_actors
+
     def add_body(
         self, body: Body, merge: Optional[bool] = False, **plotting_options: Optional[Dict]
-    ) -> str:
+    ) -> tuple[str, List[pv.Actor]]:
         """
         Add a body to the scene.
 
@@ -229,7 +253,7 @@ class Plotter:
 
         Returns
         -------
-        str
+        tuple(str, pv.Actor)
             Name of the added PyVista actor.
         """
         # Use the default PyGeometry add_mesh arguments
@@ -240,7 +264,9 @@ class Plotter:
         else:
             actor = self.scene.add_mesh(dataset, **plotting_options)
 
-        return actor.name
+        skeleton_actors = self.add_skeleton(body.skeleton)
+
+        return actor.name, skeleton_actors
 
     def add_component(
         self,
@@ -335,6 +361,7 @@ class Plotter:
         """
         logger.debug(f"Adding object type {type(object)} to the PyVista plotter")
         actor_name = None
+        skeleton_name = None
         if isinstance(object, List) and isinstance(object[0], pv.PolyData):
             self.add_sketch_polydata(object, **plotting_options)
         elif isinstance(object, pv.PolyData):
@@ -344,14 +371,14 @@ class Plotter:
         elif isinstance(object, Sketch):
             self.plot_sketch(object, **plotting_options)
         elif isinstance(object, Body) or isinstance(object, MasterBody):
-            actor_name = self.add_body(object, merge_bodies, **plotting_options)
+            actor_name, skeleton_actors = self.add_body(object, merge_bodies, **plotting_options)
         elif isinstance(object, Design) or isinstance(object, Component):
             actor_name = self.add_component(
                 object, merge_components, merge_bodies, **plotting_options
             )
         else:
             logger.warning(f"Object type {type(object)} can not be plotted.")
-        return {actor_name: object.name} if actor_name else {}
+        return {actor_name: (skeleton_actors, object.name)} if actor_name else {}
 
     def add_list(
         self,
@@ -508,7 +535,9 @@ class PlotterHelper:
                 callback=self.picker_callback, use_actor=True, show=False
             )
 
-    def select_object(self, actor: pv.Actor, body_name: str, pt: "np.Array") -> None:
+    def select_object(
+        self, actor: pv.Actor, body_name: str, skeleton_actors: List[pv.Actor], pt: "np.Array"
+    ) -> None:
         """
         Select an object in the plotter.
 
@@ -525,7 +554,9 @@ class PlotterHelper:
             Set of points to determine the label position.
         """
         added_actors = []
-        actor.prop.show_edges = True
+        # actor.prop.show_edges = True
+        for actor in skeleton_actors:
+            actor.SetVisibility(True)
         text = body_name
         label_actor = self._pl.scene.add_point_labels(
             [pt],
@@ -541,7 +572,9 @@ class PlotterHelper:
 
         self._picker_added_actors_map[actor.name] = added_actors
 
-    def unselect_object(self, actor: pv.Actor, body_name: str) -> None:
+    def unselect_object(
+        self, actor: pv.Actor, body_name: str, skeleton_actors: List[pv.Actor]
+    ) -> None:
         """
         Unselect an object in the plotter.
 
@@ -555,7 +588,9 @@ class PlotterHelper:
         body_name : str
             Body name to remove
         """
-        actor.prop.show_edges = False
+        # actor.prop.show_edges = False
+        for actor in skeleton_actors:
+            actor.SetVisibility(False)
         self._picked_list.remove(body_name)
         if actor.name in self._picker_added_actors_map:
             self._pl.scene.remove_actor(self._picker_added_actors_map[actor.name])
@@ -573,11 +608,11 @@ class PlotterHelper:
         pt = self._pl.scene.picked_point
         self._actor_object_mapping.keys
         if actor.name in self._actor_object_mapping:
-            body_name = self._actor_object_mapping[actor.name]
+            skeleton_actors, body_name = self._actor_object_mapping[actor.name]
             if body_name not in self._picked_list:
-                self.select_object(actor, body_name, pt)
+                self.select_object(actor, body_name, skeleton_actors, pt)
             else:
-                self.unselect_object(actor, body_name)
+                self.unselect_object(actor, body_name, skeleton_actors)
 
     def plot(
         self,
