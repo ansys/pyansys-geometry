@@ -42,7 +42,7 @@ modeler = launch_local_modeler()
 
 ## Define bodies
 
-This section defines the bodies to be used the Boolean operations on. First you create sketches
+This section defines the bodies to use the Boolean operations on. First you create sketches
 of a box and a circle, and then you extrude these sketches to create 3D objects.
 
 ### Create sketches
@@ -59,7 +59,7 @@ sketch_circle = Sketch().circle(Point2D([20, 0], unit=UNITS.m), radius=10 * UNIT
 
 ### Extrude sketches
 
-With the sketches in place, now extrude them to create 3D objects.
+After the sketches are created, extrude them to create 3D objects.
 
 ```{code-cell} ipython3
 # Create a design
@@ -71,11 +71,11 @@ cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
 ```
 
 You must extrude the sketches each time that you perform an example operation.
-This is because when you perform a Boolean operation, you are modifying the underlying
-design permanently. Thus, you no longer have two bodies. As it is shown in the Boolean
-operations themselves, whenever you pass in a body, it is consumed, and no longer exists.
-The remaining body (with the performed Boolean operation) is the one that performed the
-call to the method.
+This is because performing a Boolean operation modifies the underlying
+design permanently. Thus, you no longer have two bodies. As shown in the Boolean
+operations themselves, whenever you pass in a body, it is consumed, and so it no
+longer exists. The remaining body (with the performed Boolean operation) is the one
+that performed the call to the method.
 
 +++
 
@@ -83,7 +83,7 @@ call to the method.
 
 You can optionally select bodies in the plotter as described in the "Select objects
 interactively" section in the [PyGeometry 101: Plotter](../01_getting_started/05_plotter_picker.mystnb)
-example. As it is shown in the example, the plotter preserves the picking order, meaning that the
+example. As shown in this example, the plotter preserves the picking order, meaning that the
 output list is sorted according to the picking order.
 
 ```python
@@ -124,7 +124,7 @@ prism.intersect(cylin)
 _ = PlotterHelper().plot(design.bodies)
 ```
 
-The final remaining body, as we can see, is the ``prism``, since
+The final remaining body is the ``prism`` body because
 the ``cylin`` body has been consumed.
 
 ```{code-cell} ipython3
@@ -152,7 +152,7 @@ prism.unite(cylin)
 _ = PlotterHelper().plot(design.bodies)
 ```
 
-The final remaining body, as we can see, is the ``prism``, since
+The final remaining body is the ``prism`` body because
 the ``cylin`` body has been consumed.
 
 ```{code-cell} ipython3
@@ -161,7 +161,7 @@ print(design.bodies)
 
 ### Perform a subtraction operation
 
-To perform a subtraction operation on the bodies, first.
+To perform a subtraction operation on the bodies, first
 set up the bodies.
 
 ```{code-cell} ipython3
@@ -180,15 +180,15 @@ prism.subtract(cylin)
 _ = PlotterHelper().plot(design.bodies)
 ```
 
-The final remaining body, as we can see, is the ``prism``, since
+The final remaining body is the ``prism`` body because
 the ``cylin`` body has been consumed.
 
 ```{code-cell} ipython3
 print(design.bodies)
 ```
 
-If this action is performed inverting the order of the bodies (that is,
-``cylin.subtract(prism)``, we will observe the difference in the resulting
+If you perform this action inverting the order of the bodies (that is,
+``cylin.subtract(prism)``, you can see the difference in the resulting
 shape of the body.
 
 ```{code-cell} ipython3
@@ -204,8 +204,8 @@ cylin.subtract(prism)
 _ = PlotterHelper().plot(design.bodies)
 ```
 
-In this case, the final remaining body is the ``cylin``, since
-the ``prism`` body has now been consumed.
+In this case, the final remaining body is the ``cylin`` body because
+the ``prism`` body has been consumed.
 
 ```{code-cell} ipython3
 print(design.bodies)

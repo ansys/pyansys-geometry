@@ -50,8 +50,7 @@ To define the sketch profile for the PCB, you create a sketch outline of individ
 ``Segment`` and ``Arc`` objects with two circular through-hole attachment points added
 within the profile boundary to maintain a single, closed sketch face.
 
-This code shows how you can use a single ``Sketch`` instance for multiple design
-operations:
+Create a single ``Sketch`` instance to use for multiple design operations.
 
 ```{code-cell} ipython3
 sketch = Sketch()
@@ -76,9 +75,8 @@ sketch.plot()
 
 ## Extrude multiple bodies
 
-The following code establishes a server connection and uses the single sketch profile
-to extrude the board profile at multiple Z-offsets. A named selection is created from the
-resulting list of layer bodies.
+Establish a server connection and use the single sketch profile to extrude the board profile
+at multiple Z-offsets. Create a named selection from the resulting list of layer bodies.
 
 Note that translating the sketch plane prior to extrusion is more effective (10 server calls)
 than creating a design body on the supporting server and then translating the body on the
