@@ -9,6 +9,7 @@ from pint import Quantity
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.math import Point3D
 from ansys.geometry.core.misc import DEFAULT_UNITS
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -89,3 +90,19 @@ class Edge:
             Face(grpc_face.id, SurfaceType(grpc_face.surface_type), self._body, self._grpc_client)
             for grpc_face in grpc_faces
         ]
+
+    @property
+    @protect_grpc
+    def start_point(self) -> Point3D:
+        """Edge start point."""
+        self._grpc_client.log.debug("Requesting edge points from server.")
+        point = self._edges_stub.GetStartAndEndPoints(self._grpc_id).start
+        return Point3D([point.x, point.y, point.y])
+
+    @property
+    @protect_grpc
+    def end_point(self) -> Point3D:
+        """Edge end point."""
+        self._grpc_client.log.debug("Requesting edge points from server.")
+        point = self._edges_stub.GetStartAndEndPoints(self._grpc_id).end
+        return Point3D([point.x, point.y, point.y])
