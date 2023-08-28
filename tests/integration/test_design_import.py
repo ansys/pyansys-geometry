@@ -14,11 +14,6 @@ from ansys.geometry.core.sketch import Sketch
 
 def _checker_method(comp: Component, comp_ref: Component, precise_check: bool = True) -> None:
     # Check component features
-    # import pdb; pdb.set_trace()
-    # comp.components.sort(key=lambda c: c.name)
-    # comp_ref.components.sort(key=lambda c: c.name)
-    # comp.bodies.sort(key=lambda b: b.name)
-    # comp_ref.bodies.sort(key=lambda b: b.name)
     if precise_check:
         assert comp.id == comp_ref.id
         assert comp.name == comp_ref.name
