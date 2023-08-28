@@ -20,4 +20,4 @@ def test_edges_startend(modeler: Modeler):
     box_body = design.extrude_sketch("JustABox", body_sketch, Quantity(10, UNITS.m))
     for edge in box_body.edges:
         vec = Vector3D.from_points(edge.start_point, edge.end_point)
-        assert vec.magnitude == 10
+        assert vec.magnitude == edge.length
