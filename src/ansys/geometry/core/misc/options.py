@@ -33,6 +33,6 @@ class ImportOptions:
     import_planes: bool = False
     import_points: bool = False
 
-    def dict(self):
+    def to_dict(self):
         """Provide the dictionary representation of the ImportOptions class."""
         return {k: bool(v) for k, v in asdict(self).items()}
