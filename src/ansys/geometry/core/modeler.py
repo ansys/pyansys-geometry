@@ -247,7 +247,7 @@ class Modeler:
             self._upload_file(file_path, True, import_options)
         else:
             DesignsStub(self._client.channel).Open(
-                OpenRequest(filepath=file_path, import_options=import_options.dict())
+                OpenRequest(filepath=file_path, import_options=import_options.to_dict())
             )
 
         return self.read_existing_design()
