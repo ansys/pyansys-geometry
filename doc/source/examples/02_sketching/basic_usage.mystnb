@@ -13,7 +13,7 @@ kernelspec:
 
 # Sketching: Basic usage
 
-This example shows how to use basic PyGeometry capabilities.
+This example shows how to use basic PyGeometry sketching capabilities.
 
 +++
 
@@ -33,13 +33,13 @@ Sketches are fundamental objects for drawing basic shapes like lines, segments, 
 ellipses, arcs, and polygons.
 
 You create a ``Sketch`` instance by defining a drawing plane. To define a plane, you
-declare a point and two fundamental orthogonal directions:
+declare a point and two fundamental orthogonal directions.
 
 ```{code-cell} ipython3
 from ansys.geometry.core.math import Plane, Point2D, Point3D
 ```
 
-This code shows how to define a plane for creating a sketch.
+Define a plane for creating a sketch.
 
 ```{code-cell} ipython3
 # Define the origin point of the plane
@@ -62,7 +62,7 @@ To draw different shapes in the sketch, you use ``draw`` methods.
 
 ### Draw a circle
 
-You draw a circle in a sketch by specifying the center and radius:
+You draw a circle in a sketch by specifying the center and radius.
 
 ```{code-cell} ipython3
 sketch.circle(Point2D([2, 1]), radius=30 * u.cm, tag="Circle")
@@ -72,7 +72,7 @@ sketch.plot_selection()
 
 ### Draw an ellipse
 
-You draw an ellipse in a sketch by specifying the center, major radius, and minor radius:
+You draw an ellipse in a sketch by specifying the center, major radius, and minor radius.
 
 ```{code-cell} ipython3
 sketch.ellipse(
@@ -84,7 +84,7 @@ sketch.plot_selection()
 
 ### Draw a polygon
 
-You draw a regular polygon by specifying the center, radius, and desired number of sides:
+You draw a regular polygon by specifying the center, radius, and desired number of sides.
 
 ```{code-cell} ipython3
 sketch.polygon(
@@ -96,7 +96,7 @@ sketch.plot_selection()
 
 ### Draw an arc
 
-You draw an arc of circumference by specifying the center, starting point, and ending point:
+You draw an arc of circumference by specifying the center, starting point, and ending point.
 
 ```{code-cell} ipython3
 start_point, end_point = Point2D([2, 1], unit=u.m), Point2D([0, 1], unit=u.meter)
@@ -107,7 +107,7 @@ sketch.plot_selection()
 
 ### Draw a slot
 
-You draw a slot by specifying the center, width, and height:
+You draw a slot by specifying the center, width, and height.
 
 ```{code-cell} ipython3
 sketch.slot(Point2D([2, 0]), 4, 3, tag="Slot")
@@ -139,7 +139,7 @@ sketch.plot_selection()
 ## Plot the sketch
 
 The ``Plotter`` class provides capabilities for plotting different PyGeometry objects.
-PyGeometry uses ``PyVista`` as the visualization backend.
+PyGeometry uses PyVista as the visualization backend.
 
 You use the ``plot_sketch`` method to plot a sketch. This method accepts a ``Sketch`` instance and
 some extra arguments to further customize the visualization of the sketch. These arguments include

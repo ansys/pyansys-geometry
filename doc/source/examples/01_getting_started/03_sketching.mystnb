@@ -48,7 +48,7 @@ are available:
 - ``trapezoid``
 - ``triangle``
 
-This code adds a box to the sketch:
+Add a box to the sketch.
 
 ```{code-cell} ipython3
 
@@ -65,7 +65,7 @@ sketch.plot()
 A *functional-style sketching API* is also implemented. It allows you
 to append curves to the sketch with the idea of *never picking up your pen*.
 
-This code shows how to use the functional-style sketching API to add a box:
+Use the functional-style sketching API to add a box.
 
 ```{code-cell} ipython3
 
@@ -85,7 +85,7 @@ A ``Sketch`` object uses the XY plane by default. You can define your
 own custom plane using three parameters: ``origin``, ``direction_x``,
 and ``direction_y``.
 
-This code adds a box on a customm plane:
+Add a box on a custom plane.
 
 ```{code-cell} ipython3
 
@@ -102,8 +102,7 @@ sketch.plot()
 
 ## Combine concepts to create powerful sketches
 
-This code shows how to combine all these simple concepts to create
-powerful sketches:
+Combine these simple concepts to create powerful sketches.
 
 ```{code-cell} ipython3
 # Complex Fluent API Sketch - PCB

@@ -168,6 +168,7 @@ nbsphinx_thumbnails = {
     "examples/03_modeling/plate_with_hole": "_static/thumbnails/plate_with_hole.png",
     "examples/03_modeling/tessellation_usage": "_static/thumbnails/tessellation_usage.png",
     "examples/03_modeling/design_organization": "_static/thumbnails/design_organization.png",
+    "examples/03_modeling/boolean_operations": "_static/thumbnails/boolean_operations.png",
 }
 nbsphinx_epilog = """
 ----
