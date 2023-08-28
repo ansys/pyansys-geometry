@@ -195,7 +195,7 @@ class Modeler:
 
         response = c_stub.UploadFile(
             UploadFileRequest(
-                data=data, file_name=file_name, open=open_file, import_options=import_options.dict()
+                data=data, file_name=file_name, open=open_file, import_options=import_options.to_dict()
             )
         )
         return response.file_path
