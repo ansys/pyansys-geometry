@@ -77,7 +77,7 @@ doc = [
     "jupytext==1.15.1",
     "myst-parser==2.0.0",
     "nbconvert==7.7.4",
-    "nbsphinx==0.9.2",
+    "nbsphinx==0.9.3",
     "notebook==7.0.2",
     "numpydoc==1.5.0",
     "panel==1.2.1",
