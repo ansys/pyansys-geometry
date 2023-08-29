@@ -97,7 +97,7 @@ class Edge:
         """Edge start point."""
         self._grpc_client.log.debug("Requesting edge points from server.")
         point = self._edges_stub.GetStartAndEndPoints(self._grpc_id).start
-        return Point3D([point.x, point.y, point.y])
+        return Point3D([point.x, point.y, point.z])
 
     @property
     @protect_grpc
@@ -105,4 +105,4 @@ class Edge:
         """Edge end point."""
         self._grpc_client.log.debug("Requesting edge points from server.")
         point = self._edges_stub.GetStartAndEndPoints(self._grpc_id).end
-        return Point3D([point.x, point.y, point.y])
+        return Point3D([point.x, point.y, point.z])
