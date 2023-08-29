@@ -287,12 +287,13 @@ def launch_modeler_with_geometry_service(
             1: Debug
             2: Warning
             3: Error
+
         The default is ``2`` (Warning).
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 60.
 
-    Exceptions
-    ----------
+    Raises
+    ------
     ConnectionError
         If the specified endpoint is already in use, a connection
         error will be raised.
@@ -374,6 +375,7 @@ def launch_modeler_with_discovery(
             1: Debug
             2: Warning
             3: Error
+
         The default is ``2`` (Warning).
     api_version: ``ApiVersions``, optional
         The backend's API version to be used at runtime. Goes from API v21 to
@@ -381,8 +383,8 @@ def launch_modeler_with_discovery(
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 150.
 
-    Exceptions
-    ----------
+    Raises
+    ------
     ConnectionError
         If the specified endpoint is already in use, a connection error will be raised.
     SystemError:
@@ -465,6 +467,7 @@ def launch_modeler_with_spaceclaim(
             1: Debug
             2: Warning
             3: Error
+
         The default is ``2`` (Warning).
     api_version: ``ApiVersions``, optional
         The backend's API version to be used at runtime. Goes from API v21 to
@@ -472,8 +475,8 @@ def launch_modeler_with_spaceclaim(
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 150.
 
-    Exceptions
-    ----------
+    Raises
+    ------
     ConnectionError
         If the specified endpoint is already in use, a connection error will be raised.
     SystemError

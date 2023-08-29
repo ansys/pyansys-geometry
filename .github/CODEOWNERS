@@ -5,3 +5,8 @@
 # the repo. Unless a later match takes precedence,
 # they will be requested for review when someone opens a pull request.
 *       @ansys/pygeometry-maintainers
+
+# Documentation review required from Docs team (as well) on the following set of files:
+*.rst      @PipKat @ansys/pygeometry-maintainers
+*.md       @PipKat @ansys/pygeometry-maintainers
+*.mystnb   @PipKat @ansys/pygeometry-maintainers
