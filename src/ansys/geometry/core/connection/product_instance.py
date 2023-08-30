@@ -283,7 +283,7 @@ def _start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Pop
 
 def _check_minimal_versions(latest_installed_version: int) -> None:
     """
-    PyAnsys Geometry is compatible with Ansys Products starting from 2023.2.1 version.
+    Check client is compatible with Ansys Products starting from 2023.2.1 version.
 
     Check that at least V232 is installed.
     """
