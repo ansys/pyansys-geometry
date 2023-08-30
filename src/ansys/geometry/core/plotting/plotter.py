@@ -1,4 +1,4 @@
-"""Provides for plotting various PyGeometry objects."""
+"""Provides for plotting various PyAnsys Geometry objects."""
 from typing import Any
 
 from beartype.typing import Dict, List, Optional
@@ -232,7 +232,7 @@ class Plotter:
         str
             Name of the added PyVista actor.
         """
-        # Use the default PyGeometry add_mesh arguments
+        # Use the default PyAnsys Geometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
         dataset = body.tessellate(merge=merge)
         if isinstance(dataset, pv.MultiBlock):
@@ -273,7 +273,7 @@ class Plotter:
         str
             Name of the added PyVista actor.
         """
-        # Use the default PyGeometry add_mesh arguments
+        # Use the default PyAnsys Geometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
         if isinstance(dataset, pv.MultiBlock):
@@ -295,7 +295,7 @@ class Plotter:
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
         """
-        # Use the default PyGeometry add_mesh arguments
+        # Use the default PyAnsys Geometry add_mesh arguments
         for polydata in polydata_entries:
             self.scene.add_mesh(polydata, **plotting_options)
 
@@ -331,7 +331,7 @@ class Plotter:
         Returns
         -------
         Mapping[str, str]
-            Mapping between the pv.Actor and the PyGeometry object.
+            Mapping between the pv.Actor and the PyAnsys Geometry object.
         """
         logger.debug(f"Adding object type {type(object)} to the PyVista plotter")
         actor_name = None
@@ -385,7 +385,7 @@ class Plotter:
         Returns
         -------
         Mapping[str, str]
-            Dictionary with the mapping between pv.Actor and PyGeometry objects.
+            Dictionary with the mapping between pv.Actor and PyAnsys Geometry objects.
         """
         actors_objects_mapping = {}
         for object in plotting_list:
@@ -513,7 +513,7 @@ class PlotterHelper:
         Select an object in the plotter.
 
         Highlights the object edges and adds a label with the object name and adds
-        it to the PyGeometry object selection.
+        it to the PyAnsys Geometry object selection.
 
         Parameters
         ----------
@@ -546,7 +546,7 @@ class PlotterHelper:
         Unselect an object in the plotter.
 
         Removes edge highlighting and label from a plotter actor and removes it
-        from the PyGeometry object selection.
+        from the PyAnsys Geometry object selection.
 
         Parameters
         ----------
@@ -589,7 +589,7 @@ class PlotterHelper:
         **plotting_options,
     ) -> List[any]:
         """
-        Plot and show any PyGeometry object.
+        Plot and show any PyAnsys Geometry object.
 
         These types of objects are supported: ``Body``, ``Component``, ``List[pv.PolyData]``,
         ``pv.MultiBlock``, and ``Sketch``.
@@ -655,7 +655,7 @@ class PlotterHelper:
         Parameters
         ----------
         plotter : Plotter
-            PyGeometry plotter with the meshes added.
+            PyAnsys Geometry plotter with the meshes added.
         screenshot : str, default: None
             Path for saving a screenshot of the image that is being represented.
         """

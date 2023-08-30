@@ -1,4 +1,4 @@
-"""Provides PyGeometry-specific errors."""
+"""Provides PyAnsys Geometry-specific errors."""
 
 from functools import wraps
 import signal

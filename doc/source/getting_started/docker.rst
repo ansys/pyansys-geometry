@@ -38,15 +38,15 @@ these steps when installing Docker:
 #. On the Windows taskbar, go to the **Show hidden icons** section, right-click in the Docker Desktop app, and
    select **Switch to Windows containers**.
 
-Now that your Docker engine supports running Windows Docker containers, you can install the PyGeometry image.
+Now that your Docker engine supports running Windows Docker containers, you can install the PyAnsys Geometry image.
 
-Install the PyGeometry image
-----------------------------
+Install the PyAnsys Geometry image
+----------------------------------
 
 Once Docker is installed on your machine, follow these steps to download the Docker container for the
-PyGeometry service and install this image.
+PyAnsys Geometry service and install this image.
 
-#. Using your GitHub credentials, download the Docker image from the `PyGeometry repository <https://github.com/ansys/pygeometry>`_
+#. Using your GitHub credentials, download the Docker image from the `PyAnsys Geometry repository <https://github.com/ansys/pyansys-geometry>`_
    on GitHub.
 
 #. Use a GitHub personal access token with permission for reading packages to authorize Docker
@@ -104,7 +104,7 @@ Launch the Geometry service
 
 There are methods for launching the Geometry service:
 
-* You can use the PyGeometry launcher.
+* You can use the PyAnsys Geometry launcher.
 * You can manually launch the Geometry service.
 
 Environment variables
@@ -122,15 +122,15 @@ You can also specify other optional environment variables:
 * ``LOG_LEVEL``: Sets the Geometry service logging level. The default is ``2``, in which case
   the logging level is ``INFO``.
 
-Prior to using the PyGeometry launcher to launch the Geometry service, you must define
+Prior to using the PyAnsys Geometry launcher to launch the Geometry service, you must define
 general environment variables required for your OS. You do not need to define these
 environment variables prior to manually launching the Geometry service.
 
 .. tab-set::
 
-    .. tab-item:: Using PyGeometry launcher
+    .. tab-item:: Using PyAnsys Geometry launcher
 
-        Define the following general environment variables prior to using the PyGeometry
+        Define the following general environment variables prior to using the PyAnsys Geometry
         launcher. Click the tab for your OS to see the appropriate commands.
 
         .. tab-set::
@@ -173,7 +173,7 @@ To see the commands for each method, click the following tabs.
 
 .. tab-set::
 
-    .. tab-item:: Using PyGeometry launcher
+    .. tab-item:: Using PyAnsys Geometry launcher
 
         This method directly launches the Geometry service and
         provides a ``Modeler`` object.
@@ -191,7 +191,7 @@ To see the commands for each method, click the following tabs.
 
        This method requires that you manually launch the Geometry service. Remember to pass
        in the different environment variables that are needed. Afterwards, see the next section
-       to understand how to connect to this service instance from PyGeometry.
+       to understand how to connect to this service instance from PyAnsys Geometry.
 
        .. code:: bash
 

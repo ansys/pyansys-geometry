@@ -11,9 +11,9 @@ kernelspec:
   name: python3
 ---
 
-# PyGeometry 101: Sketching
+# PyAnsys Geometry 101: Sketching
 
-With PyGeometry, you can build powerful dynamic sketches without communicating
+With PyAnsys Geometry, you can build powerful dynamic sketches without communicating
 with the Geometry service. This example shows how to build some simple sketches.
 
 +++
