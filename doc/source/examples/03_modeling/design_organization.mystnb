@@ -32,7 +32,7 @@ node of the design tree to place the new body under.
 
 ## Perform required imports
 
-Perform the required imports:
+Perform the required imports.
 
 ```{code-cell} ipython3
 from ansys.geometry.core import Modeler
@@ -43,8 +43,8 @@ from ansys.geometry.core.sketch import Sketch
 
 ## Organize design
 
-The following code extrude two sketches to create bodies. It assigns the cylinder to the
-top-level design component. It then assigns the slot to the component nested
+Extrude two sketches to create bodies. Assign the cylinder to the
+top-level design component. Assign the slot to the component nested
 one level beneath the top-level design component.
 
 ```{code-cell} ipython3
@@ -68,8 +68,8 @@ design.plot()
 
 ## Create nested component
 
-This code creates a component that is nested under the previously created component and then
-creates another cylinder from the previously used sketch:
+Create a component that is nested under the previously created component and then
+create another cylinder from the previously used sketch.
 
 ```{code-cell} ipython3
 
@@ -81,11 +81,11 @@ circle_surface_body.translate(UNITVECTOR3D_X, Distance(-35, UNITS.mm))
 design.plot()
 ```
 
-## Use surfaces from body as references to create additional bodies
+## Use surfaces from body to create additional bodies
 
 You can use surfaces from any body across the entire design as references for creating additional bodies.
 
-This code extrudes a cylinder from the surface body assigned to the child component:
+Extrude a cylinder from the surface body assigned to the child component.
 
 ```{code-cell} ipython3
 

@@ -4,7 +4,7 @@
 User guide
 ==========
 
-This section provides an overview of the PyGeometry library,
+This section provides an overview of the PyAnsys Geometry library,
 explaining key concepts and approaches for primitives,
 sketches (2D basic shape elements), and model designs.
 
@@ -16,11 +16,11 @@ sketches (2D basic shape elements), and model designs.
    shapes
    designer
 
-PyGeometry overview
-===================
+PyAnsys Geometry overview
+=========================
 
-PyGeometry is a Python wrapper for the Ansys Geometry service.
-Here are some of the key features of PyGeometry:
+PyAnsys Geometry is a Python wrapper for the Ansys Geometry service.
+Here are some of the key features of PyAnsys Geometry:
 
 * Ability to use the library alongside other Python libraries
 * A *functional-style* API for a clean and easy coding experience

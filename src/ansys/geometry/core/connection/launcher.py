@@ -29,7 +29,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 def launch_modeler(**kwargs: Optional[Dict]) -> "Modeler":
     """
-    Start the ``Modeler`` interface for PyGeometry.
+    Start the ``Modeler`` interface for PyAnsys Geometry.
 
     Parameters
     ----------
@@ -55,7 +55,7 @@ def launch_modeler(**kwargs: Optional[Dict]) -> "Modeler":
 
     # Another alternative is to use this method to run Docker locally.
 
-    # Start PyGeometry with PyPIM if the environment is configured for it
+    # Start PyAnsys Geometry with PyPIM if the environment is configured for it
     # and a directive on how to launch it was not passed.
     if _HAS_PIM and pypim.is_configured():
         logger.info("Starting Geometry service remotely. The startup configuration is ignored.")
@@ -287,12 +287,13 @@ def launch_modeler_with_geometry_service(
             1: Debug
             2: Warning
             3: Error
+
         The default is ``2`` (Warning).
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 60.
 
-    Exceptions
-    ----------
+    Raises
+    ------
     ConnectionError
         If the specified endpoint is already in use, a connection
         error will be raised.
@@ -374,6 +375,7 @@ def launch_modeler_with_discovery(
             1: Debug
             2: Warning
             3: Error
+
         The default is ``2`` (Warning).
     api_version: ``ApiVersions``, optional
         The backend's API version to be used at runtime. Goes from API v21 to
@@ -381,8 +383,8 @@ def launch_modeler_with_discovery(
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 150.
 
-    Exceptions
-    ----------
+    Raises
+    ------
     ConnectionError
         If the specified endpoint is already in use, a connection error will be raised.
     SystemError:
@@ -465,6 +467,7 @@ def launch_modeler_with_spaceclaim(
             1: Debug
             2: Warning
             3: Error
+
         The default is ``2`` (Warning).
     api_version: ``ApiVersions``, optional
         The backend's API version to be used at runtime. Goes from API v21 to
@@ -472,8 +475,8 @@ def launch_modeler_with_spaceclaim(
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 150.
 
-    Exceptions
-    ----------
+    Raises
+    ------
     ConnectionError
         If the specified endpoint is already in use, a connection error will be raised.
     SystemError
@@ -541,7 +544,7 @@ def _launch_pim_instance(
     product_version : str, default: None
         Version of the service to run.
     backend_type : BackendType, default: None
-        Type of backend that PyGeometry is communicating with. By default, this
+        Type of backend that PyAnsys Geometry is communicating with. By default, this
         value is unknown, which results in ``None`` being the default value.
 
     Returns
