@@ -242,6 +242,7 @@ class Plotter:
             actor, _ = self.scene.add_composite(dataset, **plotting_options)
         else:
             actor = self.scene.add_mesh(dataset, **plotting_options)
+
         return actor.name
 
     def add_component(
@@ -282,6 +283,7 @@ class Plotter:
             actor, _ = self.scene.add_composite(dataset, **plotting_options)
         else:
             actor = self.scene.add_mesh(dataset, **plotting_options)
+
         return actor.name
 
     def add_sketch_polydata(self, polydata_entries: List[pv.PolyData], **plotting_options) -> None:
