@@ -13,6 +13,7 @@ from grpc_health.v1 import health_pb2, health_pb2_grpc
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
 from ansys.geometry.core.connection.local_instance import LocalDockerInstance
+from ansys.geometry.core.connection.product_instance import ProductInstance
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.logger import PyGeometryCustomAdapter
 from ansys.geometry.core.typing import Real
@@ -80,6 +81,13 @@ class GrpcClient:
         the ``launch_local_modeler()`` method. This local instance is deleted
         when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
         method is called.
+    product_instance : ProductInstance, default: None
+        Corresponding local product instance when the product (Discovery or SpaceClaim)
+        is launched through the ``launch_modeler_with_geometry_service()``,
+        ``launch_modeler_with_discovery()`` or the ``launch_modeler_with_spaceclaim()``
+        interface. This instance will be deleted
+        when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
+        method is called.
     timeout : real, default: 60
         Maximum time to spend trying to make the connection.
     logging_level : int, default: INFO
@@ -87,7 +95,7 @@ class GrpcClient:
     logging_file : str or Path, default: None
         File to output the log to, if requested.
     backend_type: BackendType, default: None
-        Type of the backend that PyGeometry is communicating with. By default, this
+        Type of the backend that PyAnsys Geometry is communicating with. By default, this
         value is unknown, which results in ``None`` being the default value.
     """
 
@@ -99,6 +107,7 @@ class GrpcClient:
         channel: Optional[grpc.Channel] = None,
         remote_instance: Optional["Instance"] = None,
         local_instance: Optional[LocalDockerInstance] = None,
+        product_instance: Optional[ProductInstance] = None,
         timeout: Optional[Real] = 60,
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
@@ -108,6 +117,7 @@ class GrpcClient:
         self._closed = False
         self._remote_instance = remote_instance
         self._local_instance = local_instance
+        self._product_instance = product_instance
         if channel:
             # Used for PyPIM when directly providing a channel
             self._channel = channel
@@ -205,13 +215,16 @@ class GrpcClient:
         """
         if self._remote_instance:
             self._remote_instance.delete()  # pragma: no cover
-        if self._local_instance:
+        elif self._local_instance:
             if not self._local_instance.existed_previously:
                 self._local_instance.container.stop()
             else:
                 self.log.warning(
                     "Geometry service was not shut down because it was already running..."
                 )
+        elif self._product_instance:
+            self._product_instance.close()
+
         self._closed = True
         self._channel.close()
 

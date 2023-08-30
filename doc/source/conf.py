@@ -29,12 +29,12 @@ switcher_version = get_version_match(__version__)
 # Select desired logo, theme, and declare the html title
 html_logo = pyansys_logo_black
 html_theme = "ansys_sphinx_theme"
-html_short_title = html_title = "PyGeometry"
+html_short_title = html_title = "PyAnsys Geometry"
 
 # specify the location of your github repo
 html_context = {
     "github_user": "ansys",
-    "github_repo": "pygeometry",
+    "github_repo": "pyansys-geometry",
     "github_version": "main",
     "doc_path": "doc/source",
 }
@@ -44,7 +44,7 @@ html_theme_options = {
         "version_match": switcher_version,
     },
     "check_switcher": False,
-    "github_url": "https://github.com/ansys/pygeometry",
+    "github_url": "https://github.com/ansys/pyansys-geometry",
     "show_prev_next": False,
     "show_breadcrumbs": True,
     "collapse_navigation": True,
@@ -55,7 +55,7 @@ html_theme_options = {
     "icon_links": [
         {
             "name": "Support",
-            "url": "https://github.com/ansys/pygeometry/discussions",
+            "url": "https://github.com/ansys/pyansys-geometry/discussions",
             "icon": "fa fa-comment fa-fw",
         },
     ],
@@ -75,6 +75,7 @@ extensions = [
     "myst_parser",
     "jupyter_sphinx",
     "sphinx_design",
+    "sphinx_jinja",
 ]
 
 # Intersphinx mapping
@@ -160,6 +161,7 @@ nbsphinx_thumbnails = {
     "examples/01_getting_started/02_units": "_static/thumbnails/101_getting_started.png",
     "examples/01_getting_started/03_sketching": "_static/thumbnails/101_getting_started.png",
     "examples/01_getting_started/04_modeling": "_static/thumbnails/101_getting_started.png",
+    "examples/01_getting_started/05_plotter_picker": "_static/thumbnails/101_getting_started.png",  # noqa: E501
     "examples/02_sketching/basic_usage": "_static/thumbnails/basic_usage.png",
     "examples/02_sketching/dynamic_sketch_plane": "_static/thumbnails/dynamic_sketch_plane.png",
     "examples/02_sketching/advanced_sketching_gears": "_static/thumbnails/advanced_sketching_gears.png",  # noqa: E501
@@ -167,6 +169,7 @@ nbsphinx_thumbnails = {
     "examples/03_modeling/plate_with_hole": "_static/thumbnails/plate_with_hole.png",
     "examples/03_modeling/tessellation_usage": "_static/thumbnails/tessellation_usage.png",
     "examples/03_modeling/design_organization": "_static/thumbnails/design_organization.png",
+    "examples/03_modeling/boolean_operations": "_static/thumbnails/boolean_operations.png",
 }
 nbsphinx_epilog = """
 ----
@@ -208,4 +211,24 @@ latex_elements = {"preamble": latex.generate_preamble(html_title)}
 
 linkcheck_exclude_documents = ["index"]
 linkcheck_anchors_ignore_for_url = ["https://docs.pyvista.org/api/*"]
-linkcheck_ignore = ["https://github.com/ansys/pygeometry/*", "https://geometry.docs.pyansys.com/*"]
+linkcheck_ignore = [
+    "https://github.com/ansys/pyansys-geometry/*",
+    "https://geometry.docs.pyansys.com/*",
+]
+
+# -- Declare the Jinja context -----------------------------------------------
+BUILD_API = True if os.environ.get("BUILD_API", "true") == "true" else False
+if not BUILD_API:
+    exclude_patterns.append("autoapi")
+
+BUILD_EXAMPLES = True if os.environ.get("BUILD_EXAMPLES", "true") == "true" else False
+if not BUILD_EXAMPLES:
+    exclude_patterns.append("examples/**")
+    exclude_patterns.append("examples.rst")
+
+jinja_contexts = {
+    "main_toctree": {
+        "build_api": BUILD_API,
+        "build_examples": BUILD_EXAMPLES,
+    },
+}

@@ -1,10 +1,10 @@
 """
-Provides a general framework for logging in PyGeometry.
+Provides a general framework for logging in PyAnsys Geometry.
 
 This module is built on the `Logging facility for
 Python <https://docs.python.org/3/library/logging.html>`_.
 It is not intended to replace the standard Python logging library but rather provide
-a way to interact between its ``logging`` class and PyGeometry.
+a way to interact between its ``logging`` class and PyAnsys Geometry.
 
 The loggers used in this module include the name of the instance, which
 is intended to be unique. This name is printed in all active
@@ -16,7 +16,7 @@ Logger usage
 
 Global logger
 ~~~~~~~~~~~~~
-There is a global logger named ``PyGeometry_global`` that is created when
+There is a global logger named ``PyAnsys_Geometry_global`` that is created when
 ``ansys.geometry.core.__init__`` is called.  If you want to use this global
 logger, you must call it at the top of your module:
 
@@ -56,7 +56,7 @@ add a file handler with this code:
 
    import os
 
-   file_path = os.path.join(os.getcwd(), "pygeometry.log")
+   file_path = os.path.join(os.getcwd(), "pyansys-geometry.log")
    LOG.log_to_file(file_path)
 
 This also sets the logger to be redirected to this file. If you want
@@ -82,7 +82,7 @@ Every time an instance of the :class:`Modeler <ansys.geometry.core.modeler.Model
 class is created, a logger is created and stored in ``LOG._instances``. This field is a
 dictionary where the key is the name of the created logger.
 
-These instance loggers inherit the ``PyGeometry_global`` output handlers and
+These instance loggers inherit the ``PyAnsys_Geometry_global`` output handlers and
 logging level unless otherwise specified. The way this logger works is very
 similar to the global logger. If you want to add a file handler, you can use
 the :func:`log_to_file() <PyGeometryCustomAdapter.log_to_file>` method. If you want
@@ -121,7 +121,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 ## Default configuration
 LOG_LEVEL = logging.DEBUG
-FILE_NAME = "pygeometry.log"
+FILE_NAME = "pyansys-geometry.log"
 
 # For convenience
 DEBUG = logging.DEBUG
@@ -196,7 +196,7 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
 
         Parameters
         ----------
-        filename : str, default: "pygeometry.log"
+        filename : str, default: "pyansys-geometry.log"
             Name of the file to write log messages to.
         level : int, default: 10
             Level of logging. The default is ``10``, in which case the
@@ -301,7 +301,7 @@ class InstanceFilter(logging.Filter):
 
 class Logger:
     """
-    Provides the logger used for each PyGeometry session.
+    Provides the logger used for each PyAnsys Geometry session.
 
     This class allows you to add handlers to the logger to output messages
     to a file or to the standard output (stdout).
@@ -316,7 +316,7 @@ class Logger:
         Whether to write log messages to a file.
     to_stdout : bool, default: True
         Whether to write log messages to the standard output.
-    filename : str, default: "pygeometry.log"
+    filename : str, default: "pyansys-geometry.log"
         Name of the file to write log log messages to.
 
     Examples
@@ -329,11 +329,11 @@ class Logger:
     >>> modeler._log.info('This is a useful message')
     INFO -  -  <ipython-input-24-80df150fe31f> - <module> - This is LOG debug message.
 
-    Import the global PyGeometry logger and add a file output handler.
+    Import the global PyAnsys Geometry logger and add a file output handler.
 
     >>> import os
     >>> from ansys.geometry.core import LOG
-    >>> file_path = os.path.join(os.getcwd(), 'pygeometry.log')
+    >>> file_path = os.path.join(os.getcwd(), 'pyansys-geometry.log')
     >>> LOG.log_to_file(file_path)
     """
 
@@ -344,7 +344,7 @@ class Logger:
 
     def __init__(self, level=logging.DEBUG, to_file=False, to_stdout=True, filename=FILE_NAME):
         """
-        Customize the ``logger`` class for PyGeometry.
+        Customize the ``logger`` class for PyAnsys Geometry.
 
         Parameters
         ----------
@@ -355,11 +355,11 @@ class Logger:
             Whether to write log messages to a file.
         to_stdout : bool, default: True
             Whether to write log messages to the standard output (stdout).
-        filename : str, default: "pygeometry.log"
+        filename : str, default: "pyansys-geometry.log"
            Name of the file to write log messages to.
         """
         # create default main logger
-        self.logger = logging.getLogger("PyGeometry_global")
+        self.logger = logging.getLogger("PyAnsys_Geometry_global")
         self.logger.addFilter(InstanceFilter())
         self.logger.setLevel(level)
         self.logger.propagate = True
@@ -389,7 +389,7 @@ class Logger:
 
         Parameters
         ----------
-        filename : str, default: "pygeometry.log"
+        filename : str, default: "pyansys-geometry.log"
             Name of the file to write log messages to.
         level : int, default: 10
             Level of logging. The default is ``10``, in which case the
@@ -397,11 +397,11 @@ class Logger:
 
         Examples
         --------
-        Write to the ``"pygeometry.log"`` file in the current working directory:
+        Write to the ``"pyansys-geometry.log"`` file in the current working directory:
 
         >>> from ansys.geometry.core import LOG
         >>> import os
-        >>> file_path = os.path.join(os.getcwd(), 'pygeometry.log')
+        >>> file_path = os.path.join(os.getcwd(), 'pyansys-geometry.log')
         >>> LOG.log_to_file(file_path)
         """
         self = addfile_handler(self, filename=filename, level=level, write_headers=True)
@@ -430,7 +430,7 @@ class Logger:
         Create a child logger.
 
         This method uses the ``getChild()`` method or copies attributes between the
-        ``PyGeometry_global`` logger and the new one.
+        ``PyAnsys_Geometry_global`` logger and the new one.
         """
         logger = logging.getLogger(sufix)
         logger.std_out_handler = None
@@ -574,7 +574,7 @@ def addfile_handler(logger, filename=FILE_NAME, level=LOG_LEVEL, write_headers=F
     ----------
     logger : logging.Logger
         Logger to add the file handler to.
-    filename : str, default: "pygeometry.log"
+    filename : str, default: "pyansys-geometry.log"
         Name of the output file.
     level : int, default: 10
         Level of logging. The default is ``10``, in which case the

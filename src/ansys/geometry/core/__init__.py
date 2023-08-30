@@ -1,4 +1,4 @@
-"""PyGeometry is a Python wrapper for the Ansys Geometry service."""
+"""PyAnsys Geometry is a Python wrapper for the Ansys Geometry service."""
 
 # Version
 # ------------------------------------------------------------------------------
@@ -9,7 +9,7 @@ except ModuleNotFoundError:  # pragma: no cover
     import importlib_metadata  # type: ignore
 
 __version__ = importlib_metadata.version(__name__.replace(".", "-"))
-"""PyGeometry version."""
+"""PyAnsys Geometry version."""
 
 # Ease import statements
 # ------------------------------------------------------------------------------
@@ -17,9 +17,12 @@ __version__ = importlib_metadata.version(__name__.replace(".", "-"))
 from ansys.geometry.core.connection.launcher import (
     launch_local_modeler,
     launch_modeler,
-    launch_modeler_with_pimlight_and_discovery,
-    launch_modeler_with_pimlight_and_geometry_service,
-    launch_modeler_with_pimlight_and_spaceclaim,
+    launch_modeler_with_discovery,
+    launch_modeler_with_discovery_and_pimlight,
+    launch_modeler_with_geometry_service,
+    launch_modeler_with_geometry_service_and_pimlight,
+    launch_modeler_with_spaceclaim,
+    launch_modeler_with_spaceclaim_and_pimlight,
     launch_remote_modeler,
 )
 from ansys.geometry.core.logger import LOG
