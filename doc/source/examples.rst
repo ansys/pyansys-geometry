@@ -1,12 +1,12 @@
 Examples
 ########
 
-These examples demonstrate the behavior and usage of PyGeometry.
+These examples demonstrate the behavior and usage of PyAnsys Geometry.
 
-PyGeometry 101 examples
------------------------
+PyAnsys Geometry 101 examples
+-----------------------------
 These examples demonstrate basic operations you can perform
-with PyGeometry.
+with PyAnsys Geometry.
 
 .. nbgallery::
 

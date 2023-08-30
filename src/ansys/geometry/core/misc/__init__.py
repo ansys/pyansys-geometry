@@ -1,4 +1,4 @@
-"""Provides the PyGeometry miscellaneous subpackage."""
+"""Provides the PyAnsys Geometry miscellaneous subpackage."""
 
 from ansys.geometry.core.misc.accuracy import ANGLE_ACCURACY, LENGTH_ACCURACY, Accuracy
 from ansys.geometry.core.misc.checks import (

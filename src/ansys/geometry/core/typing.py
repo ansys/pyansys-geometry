@@ -1,4 +1,4 @@
-"""Provides typing of values for PyGeometry."""
+"""Provides typing of values for PyAnsys Geometry."""
 
 from beartype.typing import Sequence, Union
 import numpy as np
@@ -13,5 +13,5 @@ Type used to refer to ``Real`` types as a ``Sequence`` type.
 Notes
 -----
 :class:`numpy.ndarrays <numpy.ndarray>` are also accepted because they are
-the overlaying data structure behind most PyGeometry objects.
+the overlaying data structure behind most PyAnsys Geometry objects.
 """
