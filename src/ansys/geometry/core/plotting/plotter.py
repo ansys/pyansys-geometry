@@ -20,7 +20,7 @@ from ansys.geometry.core.plotting.widgets import (
 )
 from ansys.geometry.core.sketch import Sketch
 
-DEFAULT_COLOR = [155, 186, 126]
+DEFAULT_COLOR = [214, 247, 209]
 PICKED_COLOR = [186, 110, 238]
 
 
@@ -242,7 +242,6 @@ class Plotter:
             actor, _ = self.scene.add_composite(dataset, **plotting_options)
         else:
             actor = self.scene.add_mesh(dataset, **plotting_options)
-        actor.prop.color = DEFAULT_COLOR
         return actor.name
 
     def add_component(
