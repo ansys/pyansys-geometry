@@ -189,7 +189,7 @@ def test_plot_plotterhelper_sketch_design(modeler: Modeler, verify_image_cache):
 
 @skip_no_xserver
 def test_plot_plotterhelper_all_types(modeler: Modeler, verify_image_cache):
-    """Test plotting a list of PyGeometry objects."""
+    """Test plotting a list of PyAnsys Geometry objects."""
     plot_list = []
 
     # init modeler
