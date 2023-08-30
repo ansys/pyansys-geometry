@@ -20,6 +20,9 @@ from ansys.geometry.core.plotting.widgets import (
 )
 from ansys.geometry.core.sketch import Sketch
 
+DEFAULT_COLOR = [155, 186, 126]
+PICKED_COLOR = [190, 219, 57]
+
 
 class Plotter:
     """
@@ -239,7 +242,7 @@ class Plotter:
             actor, _ = self.scene.add_composite(dataset, **plotting_options)
         else:
             actor = self.scene.add_mesh(dataset, **plotting_options)
-
+        actor.prop.color = DEFAULT_COLOR
         return actor.name
 
     def add_component(
@@ -280,7 +283,7 @@ class Plotter:
             actor, _ = self.scene.add_composite(dataset, **plotting_options)
         else:
             actor = self.scene.add_mesh(dataset, **plotting_options)
-
+        actor.prop.color = DEFAULT_COLOR
         return actor.name
 
     def add_sketch_polydata(self, polydata_entries: List[pv.PolyData], **plotting_options) -> None:
@@ -526,6 +529,7 @@ class PlotterHelper:
         """
         added_actors = []
         actor.prop.show_edges = True
+        actor.prop.color = PICKED_COLOR
         text = body_name
         label_actor = self._pl.scene.add_point_labels(
             [pt],
@@ -556,6 +560,7 @@ class PlotterHelper:
             Body name to remove
         """
         actor.prop.show_edges = False
+        actor.prop.color = DEFAULT_COLOR
         self._picked_list.remove(body_name)
         if actor.name in self._picker_added_actors_map:
             self._pl.scene.remove_actor(self._picker_added_actors_map[actor.name])
