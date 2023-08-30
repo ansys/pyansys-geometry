@@ -11,14 +11,14 @@ kernelspec:
   name: python3
 ---
 
-# PyGeometry 101: Plotter
-This example provides an overview of PyGeometry's plotting capabilities, focusing on
+# PyAnsys Geometry 101: Plotter
+This example provides an overview of PyAnsys Geometry's plotting capabilities, focusing on
 its plotter features. After reviewing the fundamental concepts of sketching
-and modeling in PyGeometry, it shows how to leverage these key plotting capabilities:
+and modeling in PyAnsys Geometry, it shows how to leverage these key plotting capabilities:
 
 - **Multi-object plotting**: You can conveniently plot a list of elements, including objects
-  created in both PyGeometry and PyVista libraries.
-- **Interactive object selection**: You can interactively select PyGeometry objects within the
+  created in both PyAnsys Geometry and PyVista libraries.
+- **Interactive object selection**: You can interactively select PyAnsys Geometry objects within the
   scene. This enables efficient manipulation of these objects in subsequent scripting.
 
 +++
@@ -90,9 +90,9 @@ plotter capabilities.
 
 +++
 
-## Create a PyGeometry body cylinder
+## Create a PyAnsys Geometry body cylinder
 
-Use PyGeometry to create a body cylinder.
+Use PyAnsys Geometry to create a body cylinder.
 
 ```{code-cell} ipython3
 
@@ -102,9 +102,9 @@ cylinder_body = design.extrude_sketch("JustACyl", cylinder, Quantity(10, UNITS.m
 plot_list.append(cylinder_body)
 ```
 
-## Create a PyGeometry arc sketch
+## Create a PyAnsys Geometry arc sketch
 
-Use PyGeometry to create an arc sketch.
+Use PyAnsys Geometry to create an arc sketch.
 
 ```{code-cell} ipython3
 
@@ -138,9 +138,9 @@ blocks = pv.MultiBlock(
 plot_list.append(blocks)
 ```
 
-## Create a PyGeometry body box
+## Create a PyAnsys Geometry body box
 
-Use PyGeometry to create a body box that is a cube.
+Use PyAnsys Geometry to create a body box that is a cube.
 
 ```{code-cell} ipython3
 
@@ -181,7 +181,7 @@ plotter.plot(plot_list)
 
 ## Select objects interactively
 
-PyGeometry's plotter supports interactive object selection within the scene.
+PyAnsys Geometry's plotter supports interactive object selection within the scene.
 This enables you to pick objects for subsequent script manipulation.
 
 ```{code-cell} ipython3

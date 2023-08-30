@@ -11,13 +11,13 @@ kernelspec:
   name: python3
 ---
 
-# PyGeometry 101: Units
+# PyAnsys Geometry 101: Units
 
-To handle units inside the source code, PyGeometry uses [Pint](https://pint.readthedocs.io/en/stable/),
+To handle units inside the source code, PyAnsys Geometry uses [Pint](https://pint.readthedocs.io/en/stable/),
 a third-party open source software that other PyAnsys libraries also use.
 
 The following code examples show how to operate with units inside
-the PyGeometry codebase and create objects with different units.
+the PyAnsys Geometry codebase and create objects with different units.
 
 +++
 
@@ -76,7 +76,7 @@ a2_diff_units = 1 * UNITS.cm
 print(f"Compare quantities with different units: {a == a2_diff_units}")
 ```
 
-PyGeometry objects work by returning ``Quantity`` objects whenever the
+PyAnsys Geometry objects work by returning ``Quantity`` objects whenever the
 property requested has a physical meaning.
 
 Return ``Quantity`` objects for ``Point3D`` objects.
@@ -115,7 +115,7 @@ print(f"Z Coordinate: {res.z}")
 
 ## Use default units
 
-PyGeometry implements the concept of *default units*.
+PyAnsys Geometry implements the concept of *default units*.
 
 ```{code-cell} ipython3
 from ansys.geometry.core.misc import DEFAULT_UNITS
@@ -155,7 +155,7 @@ print(f"numpy.ndarray value: {point_2d_default_units}")
 DEFAULT_UNITS.LENGTH = UNITS.m
 ```
 
-PyGeometry has certain auxiliary classes implemented that provide proper
+PyAnsys Geometry has certain auxiliary classes implemented that provide proper
 unit checking when assigning values. Although they are basically intended for
 internal use of the library, you can define them for use.
 

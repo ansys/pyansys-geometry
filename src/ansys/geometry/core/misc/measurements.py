@@ -48,7 +48,7 @@ class SingletonMeta(type):
 
 
 class DefaultUnitsClass(metaclass=SingletonMeta):
-    """Provides default units for the PyGeometry singleton design pattern."""
+    """Provides default units for the PyAnsys Geometry singleton design pattern."""
 
     def __init__(self) -> None:
         """Initialize the ``DefaultUnitsClass`` class."""
@@ -59,7 +59,7 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
 
     @property
     def LENGTH(self) -> Unit:
-        """Default length unit for PyGeometry."""
+        """Default length unit for PyAnsys Geometry."""
         return self._length
 
     @LENGTH.setter
@@ -70,7 +70,7 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
 
     @property
     def ANGLE(self) -> Unit:
-        """Default angle unit for PyGeometry."""
+        """Default angle unit for PyAnsys Geometry."""
         return self._angle
 
     @ANGLE.setter
@@ -125,7 +125,7 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
 
 
 DEFAULT_UNITS = DefaultUnitsClass()
-"""PyGeometry default units object."""
+"""PyAnsys Geometry default units object."""
 
 
 class Measurement(PhysicalQuantity):
