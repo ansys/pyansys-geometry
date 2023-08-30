@@ -94,11 +94,11 @@ doc = [
 ]
 
 [project.urls]
-Source = "https://github.com/ansys/pygeometry"
-Issues = "https://github.com/ansys/pygeometry/issues"
-Discussions = "https://github.com/ansys/pygeometry/discussions"
+Source = "https://github.com/ansys/pyansys-geometry"
+Issues = "https://github.com/ansys/pyansys-geometry/issues"
+Discussions = "https://github.com/ansys/pyansys-geometry/discussions"
 Documentation = "https://geometry.docs.pyansys.com"
-Releases = "https://github.com/ansys/pygeometry/releases"
+Releases = "https://github.com/ansys/pyansys-geometry/releases"
 
 [tool.flit.module]
 name = "ansys.geometry.core"

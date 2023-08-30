@@ -15,11 +15,11 @@ PyAnsys Geometry
    :alt: PyPI
 
 .. |codecov| image:: https://codecov.io/gh/ansys/ansys-geometry-core/branch/main/graph/badge.svg
-   :target: https://codecov.io/gh/ansys/pygeometry
+   :target: https://codecov.io/gh/ansys/pyansys-geometry
    :alt: Codecov
 
-.. |GH-CI| image:: https://github.com/ansys/pygeometry/actions/workflows/ci_cd.yml/badge.svg
-   :target: https://github.com/ansys/pygeometry/actions/workflows/ci_cd.yml
+.. |GH-CI| image:: https://github.com/ansys/pyansys-geometry/actions/workflows/ci_cd.yml/badge.svg
+   :target: https://github.com/ansys/pyansys-geometry/actions/workflows/ci_cd.yml
    :alt: GH-CI
 
 .. |MIT| image:: https://img.shields.io/badge/License-MIT-yellow.svg
@@ -187,17 +187,17 @@ you to modify the source and enhance it.
 
 To install PyAnsys Geometry in developer mode, perform these steps:
 
-#. Clone the ``pygeometry`` repository:
+#. Clone the ``pyansys-geometry`` repository:
 
    .. code:: bash
 
-      git clone https://github.com/ansys/pygeometry
+      git clone https://github.com/ansys/pyansys-geometry
 
-#. Access the ``pygeometry`` directory where the repository has been cloned:
+#. Access the ``pyansys-geometry`` directory where the repository has been cloned:
 
    .. code:: bash
 
-      cd pygeometry
+      cd pyansys-geometry
 
 #. Create a clean Python virtual environment and activate it:
 
@@ -242,7 +242,7 @@ Install in offline mode
 
 If you lack an internet connection on your installation machine (or you do not have access to the
 private Ansys PyPI packages repository), you should install PyAnsys Geometry by downloading the wheelhouse
-archive from the `Releases Page <https://github.com/ansys/pygeometry/releases>`_ for your
+archive from the `Releases Page <https://github.com/ansys/pyansys-geometry/releases>`_ for your
 corresponding machine architecture.
 
 Each wheelhouse archive contains all the Python wheels necessary to install PyAnsys Geometry from scratch on Windows,

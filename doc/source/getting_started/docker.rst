@@ -46,7 +46,7 @@ Install the PyAnsys Geometry image
 Once Docker is installed on your machine, follow these steps to download the Docker container for the
 PyAnsys Geometry service and install this image.
 
-#. Using your GitHub credentials, download the Docker image from the `PyAnsys Geometry repository <https://github.com/ansys/pygeometry>`_
+#. Using your GitHub credentials, download the Docker image from the `PyAnsys Geometry repository <https://github.com/ansys/pyansys-geometry>`_
    on GitHub.
 
 #. Use a GitHub personal access token with permission for reading packages to authorize Docker

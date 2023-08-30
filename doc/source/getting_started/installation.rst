@@ -3,7 +3,7 @@ Installation
 
 This page assumes that you want to install PyAnsys Geometry in developer mode so that
 you can modify the source and enhance it. You can install PyAnsys Geometry from PyPI
-or from the `PyAnsys Geometry repository <https://github.com/ansys/pygeometry>`_ on GitHub.
+or from the `PyAnsys Geometry repository <https://github.com/ansys/pyansys-geometry>`_ on GitHub.
 
 Package dependencies
 --------------------
@@ -57,13 +57,13 @@ Then, to install PyAnsys Geometry, run this command:
 GitHub
 ------
 
-To install the latest release from the `PyAnsys Geometry repository <https://github.com/ansys/pygeometry>`_
+To install the latest release from the `PyAnsys Geometry repository <https://github.com/ansys/pyansys-geometry>`_
 on GitHub, run these commands:
 
 .. code:: bash
 
-   git clone https://github.com/ansys/pygeometry
-   cd pygeometry
+   git clone https://github.com/ansys/pyansys-geometry
+   cd pyansys-geometry
    pip install -e .
 
 To verify your development installation, run this command:
@@ -78,7 +78,7 @@ Install in offline mode
 If you lack an internet connection on your installation machine (or you do not have access to the
 private Ansys PyPI packages repository), you should install PyAnsys Geometry by downloading the wheelhouse
 archive for your corresponding machine architecture from the repository's `Releases page
-<https://github.com/ansys/pygeometry/releases>`_.
+<https://github.com/ansys/pyansys-geometry/releases>`_.
 
 Each wheelhouse archive contains all the Python wheels necessary to install PyAnsys Geometry from scratch on Windows,
 Linux, and MacOS from Python 3.8 to 3.11. You can install this on an isolated system with a fresh Python

@@ -34,7 +34,7 @@ html_short_title = html_title = "PyAnsys Geometry"
 # specify the location of your github repo
 html_context = {
     "github_user": "ansys",
-    "github_repo": "pygeometry",
+    "github_repo": "pyansys-geometry",
     "github_version": "main",
     "doc_path": "doc/source",
 }
@@ -44,7 +44,7 @@ html_theme_options = {
         "version_match": switcher_version,
     },
     "check_switcher": False,
-    "github_url": "https://github.com/ansys/pygeometry",
+    "github_url": "https://github.com/ansys/pyansys-geometry",
     "show_prev_next": False,
     "show_breadcrumbs": True,
     "collapse_navigation": True,
@@ -55,7 +55,7 @@ html_theme_options = {
     "icon_links": [
         {
             "name": "Support",
-            "url": "https://github.com/ansys/pygeometry/discussions",
+            "url": "https://github.com/ansys/pyansys-geometry/discussions",
             "icon": "fa fa-comment fa-fw",
         },
     ],
@@ -211,7 +211,7 @@ latex_elements = {"preamble": latex.generate_preamble(html_title)}
 
 linkcheck_exclude_documents = ["index"]
 linkcheck_anchors_ignore_for_url = ["https://docs.pyvista.org/api/*"]
-linkcheck_ignore = ["https://github.com/ansys/pygeometry/*", "https://geometry.docs.pyansys.com/*"]
+linkcheck_ignore = ["https://github.com/ansys/pyansys-geometry/*", "https://geometry.docs.pyansys.com/*"]
 
 # -- Declare the Jinja context -----------------------------------------------
 BUILD_API = True if os.environ.get("BUILD_API", "true") == "true" else False

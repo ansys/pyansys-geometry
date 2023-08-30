@@ -16,8 +16,8 @@ these commands:
 
 .. code::
 
-    git clone https://github.com/ansys/pygeometry
-    cd pygeometry
+    git clone https://github.com/ansys/pyansys-geometry
+    cd pyansys-geometry
     python -m pip install --upgrade pip
     pip install -e .
 
@@ -25,7 +25,7 @@ these commands:
 Post issues
 -----------
 
-Use the `PyAnsys Geometry Issues <https://github.com/ansys/pygeometry/issues>`_
+Use the `PyAnsys Geometry Issues <https://github.com/ansys/pyansys-geometry/issues>`_
 page to submit questions, report bugs, and request new features. When possible, you
 should use these issue templates:
 

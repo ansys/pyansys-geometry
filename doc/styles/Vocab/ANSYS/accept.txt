@@ -14,7 +14,7 @@ namespace
 Polydata
 PROTO
 Protobuf
-pygeometry
+pyansys-geometry
 PyAnsys Geometry
 PyPI
 PyVista
