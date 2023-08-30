@@ -1,4 +1,4 @@
-"""Provides the PyGeometry miscellaneous subpackage."""
+"""Provides the PyAnsys Geometry miscellaneous subpackage."""
 
 from ansys.geometry.core.misc.accuracy import ANGLE_ACCURACY, LENGTH_ACCURACY, Accuracy
 from ansys.geometry.core.misc.checks import (
@@ -12,4 +12,5 @@ from ansys.geometry.core.misc.checks import (
     check_type_equivalence,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.misc.units import UNITS, PhysicalQuantity

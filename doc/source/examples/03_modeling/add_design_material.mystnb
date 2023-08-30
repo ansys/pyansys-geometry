@@ -12,12 +12,12 @@ kernelspec:
 ---
 # Modeling: Single body with material assignment
 
-In PyGeometry, a *body* represents solids or surfaces organized within the ``Design`` assembly.
+In PyAnsys Geometry, a *body* represents solids or surfaces organized within the ``Design`` assembly.
 The current state of sketch, which is a client-side execution, can be used for the operations of
 the geometric design assembly.
 
 The Geometry service provides data structures to create individual materials and their properties.
-These data structures are exposed through PyGeometry.
+These data structures are exposed through PyAnsys Geometry.
 
 This example shows how to create a single body from a sketch by requesting its extrusion. It then
 shows how to assign a material to this body.

@@ -54,7 +54,7 @@ def test_global_logger_exist():
     """Test for checking the accurrate naming of the general Logger instance."""
 
     assert isinstance(LOG.logger, deflogging.Logger)
-    assert LOG.logger.name == "PyGeometry_global"
+    assert LOG.logger.name == "PyAnsys_Geometry_global"
 
 
 def test_global_logger_has_handlers():
@@ -84,7 +84,7 @@ def test_global_logger_logging(caplog: pytest.LogCaptureFixture):
         msg = f"This is an {each_log_name} message."
         LOG.logger.log(each_log_number, msg)
         # Make sure we are using the right logger, the right level and message.
-        assert caplog.record_tuples[-1] == ("PyGeometry_global", each_log_number, msg)
+        assert caplog.record_tuples[-1] == ("PyAnsys_Geometry_global", each_log_number, msg)
 
     #  Set back to default level == ERROR
     LOG.logger.setLevel("ERROR")
@@ -150,13 +150,13 @@ def test_global_logger_debug_levels(level: int, caplog: pytest.LogCaptureFixture
             # Make sure we are using the right logger, the right level and message.
             if each_log_number >= level:
                 assert caplog.record_tuples[-1] == (
-                    "PyGeometry_global",
+                    "PyAnsys_Geometry_global",
                     each_log_number,
                     msg,
                 )
             else:
                 assert caplog.record_tuples[-1] != (
-                    "PyGeometry_global",
+                    "PyAnsys_Geometry_global",
                     each_log_number,
                     msg,
                 )

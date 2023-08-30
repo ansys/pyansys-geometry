@@ -14,7 +14,7 @@ from ansys.geometry.core.connection.local_instance import LocalDockerInstance
 def test_launch_remote_instance(monkeypatch, modeler: Modeler):
     """
     Test to create a mock pypim pretending it is configured and returning a channel to
-    an already running PyGeometry.
+    an already running PyAnsys Geometry.
 
     Parameters
     ----------
@@ -54,7 +54,7 @@ def test_launch_remote_instance(monkeypatch, modeler: Modeler):
 
     modeler = launch_modeler()
 
-    # Assert: PyGeometry went through the PyPIM workflow
+    # Assert: PyAnsys Geometry went through the PyPIM workflow
     assert mock_is_configured.called
     assert mock_connect.called
     mock_client.create_instance.assert_called_with(product_name="geometry", product_version=None)

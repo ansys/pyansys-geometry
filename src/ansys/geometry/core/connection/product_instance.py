@@ -283,13 +283,13 @@ def _start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Pop
 
 def _check_minimal_versions(latest_installed_version: int) -> None:
     """
-    Pygeometry is compatible with Ansys Products starting from 2023.2.1 version.
+    Check client is compatible with Ansys Products starting from 2023.2.1 version.
 
     Check that at least V232 is installed.
     """
     if latest_installed_version < 232:
         msg = (
-            "PyGeometry is compatible with Ansys Products from version 23.2.1. "
+            "PyAnsys Geometry is compatible with Ansys Products from version 23.2.1. "
             + "Please install Ansys products 23.2.1 or later."
         )
         raise SystemError(msg)
