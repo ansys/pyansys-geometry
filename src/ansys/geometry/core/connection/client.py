@@ -95,7 +95,7 @@ class GrpcClient:
     logging_file : str or Path, default: None
         File to output the log to, if requested.
     backend_type: BackendType, default: None
-        Type of the backend that PyGeometry is communicating with. By default, this
+        Type of the backend that PyAnsys Geometry is communicating with. By default, this
         value is unknown, which results in ``None`` being the default value.
     """
 

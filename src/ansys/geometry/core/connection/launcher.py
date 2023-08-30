@@ -29,7 +29,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 def launch_modeler(**kwargs: Optional[Dict]) -> "Modeler":
     """
-    Start the ``Modeler`` interface for PyGeometry.
+    Start the ``Modeler`` interface for PyAnsys Geometry.
 
     Parameters
     ----------
@@ -55,7 +55,7 @@ def launch_modeler(**kwargs: Optional[Dict]) -> "Modeler":
 
     # Another alternative is to use this method to run Docker locally.
 
-    # Start PyGeometry with PyPIM if the environment is configured for it
+    # Start PyAnsys Geometry with PyPIM if the environment is configured for it
     # and a directive on how to launch it was not passed.
     if _HAS_PIM and pypim.is_configured():
         logger.info("Starting Geometry service remotely. The startup configuration is ignored.")
@@ -544,7 +544,7 @@ def _launch_pim_instance(
     product_version : str, default: None
         Version of the service to run.
     backend_type : BackendType, default: None
-        Type of backend that PyGeometry is communicating with. By default, this
+        Type of backend that PyAnsys Geometry is communicating with. By default, this
         value is unknown, which results in ``None`` being the default value.
 
     Returns

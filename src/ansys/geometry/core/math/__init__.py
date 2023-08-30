@@ -1,4 +1,4 @@
-"""PyGeometry math subpackage."""
+"""PyAnsys Geometry math subpackage."""
 
 from ansys.geometry.core.math.bbox import BoundingBox2D
 from ansys.geometry.core.math.constants import (

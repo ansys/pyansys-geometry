@@ -11,13 +11,13 @@ kernelspec:
   name: python3
 ---
 
-# PyGeometry 101: Math
+# PyAnsys Geometry 101: Math
 
-The ``math`` module is the foundation of PyGeometry. This module is built on top of
+The ``math`` module is the foundation of PyAnsys Geometry. This module is built on top of
 [NumPy](https://numpy.org/), one of the most renowned mathematical Python libraries.
 
-This example shows some of the main PyGeometry math objects and demonstrates
-why they are important prior to doing more exciting things in PyGeometry.
+This example shows some of the main PyAnsys Geometry math objects and demonstrates
+why they are important prior to doing more exciting things in PyAnsys Geometry.
 
 +++
 
@@ -145,7 +145,7 @@ print(plane.is_point_contained(Point3D([0, 0, 5]))) # False
 
 ## Perform parametric evaluations
 
-PyGeometry implements parametric evaluations for some curves and surfaces.
+PyAnsys Geometry implements parametric evaluations for some curves and surfaces.
 
 Evaluate a sphere.
 

@@ -13,7 +13,7 @@ kernelspec:
 
 # Sketching: Basic usage
 
-This example shows how to use basic PyGeometry sketching capabilities.
+This example shows how to use basic PyAnsys Geometry sketching capabilities.
 
 +++
 
@@ -138,8 +138,8 @@ sketch.plot_selection()
 
 ## Plot the sketch
 
-The ``Plotter`` class provides capabilities for plotting different PyGeometry objects.
-PyGeometry uses PyVista as the visualization backend.
+The ``Plotter`` class provides capabilities for plotting different PyAnsys Geometry objects.
+PyAnsys Geometry uses PyVista as the visualization backend.
 
 You use the ``plot_sketch`` method to plot a sketch. This method accepts a ``Sketch`` instance and
 some extra arguments to further customize the visualization of the sketch. These arguments include
