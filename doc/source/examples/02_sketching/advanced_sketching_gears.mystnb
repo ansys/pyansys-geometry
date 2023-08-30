@@ -13,7 +13,7 @@ kernelspec:
 
 # Sketching: Parametric sketching for gears
 
-This example shows how to use gear sketching shapes from PyGeometry.
+This example shows how to use gear sketching shapes from PyAnsys Geometry.
 
 +++
 

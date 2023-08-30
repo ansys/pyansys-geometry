@@ -1,4 +1,4 @@
-"""PyGeometry primitives subpackage."""
+"""PyAnsys Geometry primitives subpackage."""
 
 from ansys.geometry.core.primitives.circle import Circle, CircleEvaluation
 from ansys.geometry.core.primitives.cone import Cone, ConeEvaluation

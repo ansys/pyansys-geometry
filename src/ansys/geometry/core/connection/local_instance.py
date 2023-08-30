@@ -52,7 +52,7 @@ class LocalDockerInstance:
     Instantiates a Geometry service as a local Docker container.
 
     By default, if a container with the Geometry service already exists at the given port,
-    PyGeometry connects to it. Otherwise, PyGeometry tries to launch its own service.
+    PyAnsys Geometry connects to it. Otherwise, PyAnsys Geometry tries to launch its own service.
 
     Parameters
     ----------
