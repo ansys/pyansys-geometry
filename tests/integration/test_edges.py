@@ -6,13 +6,9 @@ from ansys.geometry.core.misc.units import UNITS, Quantity
 from ansys.geometry.core.sketch import Sketch
 
 
-def test_edges_startend(modeler: Modeler):
+def test_edges_startend_box(modeler: Modeler):
     # init modeler
-    design = modeler.create_design("Multiplot")
-
-    # define sketch
-    sketch = Sketch()
-    sketch.polygon(Point2D([-10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon1")
+    design = modeler.create_design("Box")
 
     # define body
     body_sketch = Sketch()
