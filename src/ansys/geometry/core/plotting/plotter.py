@@ -21,7 +21,7 @@ from ansys.geometry.core.plotting.widgets import (
 from ansys.geometry.core.sketch import Sketch
 
 DEFAULT_COLOR = [155, 186, 126]
-PICKED_COLOR = [190, 219, 57]
+PICKED_COLOR = [186, 110, 238]
 
 
 class Plotter:
