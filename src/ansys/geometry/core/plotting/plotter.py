@@ -20,8 +20,8 @@ from ansys.geometry.core.plotting.widgets import (
 )
 from ansys.geometry.core.sketch import Sketch
 
-DEFAULT_COLOR = [214, 247, 209]
-PICKED_COLOR = [186, 110, 238]
+DEFAULT_COLOR = "#D6F7D1"
+PICKED_COLOR = "#BB6EEE"
 
 
 class Plotter:
@@ -455,7 +455,7 @@ class Plotter:
         #
         # This method should only be applied in 3D objects: bodies, components
         plotting_options.setdefault("smooth_shading", True)
-        plotting_options.setdefault("color", "#D6F7D1")
+        plotting_options.setdefault("color", DEFAULT_COLOR)
 
 
 class PlotterHelper:
