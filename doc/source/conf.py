@@ -211,7 +211,10 @@ latex_elements = {"preamble": latex.generate_preamble(html_title)}
 
 linkcheck_exclude_documents = ["index"]
 linkcheck_anchors_ignore_for_url = ["https://docs.pyvista.org/api/*"]
-linkcheck_ignore = ["https://github.com/ansys/pyansys-geometry/*", "https://geometry.docs.pyansys.com/*"]
+linkcheck_ignore = [
+    "https://github.com/ansys/pyansys-geometry/*",
+    "https://geometry.docs.pyansys.com/*",
+]
 
 # -- Declare the Jinja context -----------------------------------------------
 BUILD_API = True if os.environ.get("BUILD_API", "true") == "true" else False
