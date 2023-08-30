@@ -1,4 +1,4 @@
-"""Provides the ruler widget for the PyGeometry plotter."""
+"""Provides the ruler widget for the PyAnsys Geometry plotter."""
 
 import os
 
@@ -11,7 +11,7 @@ from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
 
 class Ruler(PlotterWidget):
     """
-    Provides the ruler widget for the PyGeometry ``Plotter`` class.
+    Provides the ruler widget for the PyAnsys Geometry ``Plotter`` class.
 
     Parameters
     ----------

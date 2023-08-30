@@ -55,7 +55,7 @@ jobs:
         run: |
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }}
 
-      - name: Validate connection using PyGeometry
+      - name: Validate connection using PyAnsys Geometry
         run: |
           python -m venv .venv
           .\.venv\Scripts\Activate.ps1
@@ -130,7 +130,7 @@ jobs:
         run: |
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
 
-      - name: Validate connection using PyGeometry
+      - name: Validate connection using PyAnsys Geometry
         run: |
           python -m pip install --upgrade pip
           pip install -e .[tests]

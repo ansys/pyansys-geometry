@@ -148,6 +148,7 @@ def prepare_and_start_backend(
             1: Debug
             2: Warning
             3: Error
+
         The default is ``2`` (Warning).
     api_version: ``ApiVersions``, optional
         The backend's API version to be used at runtime. Goes from API v21 to
@@ -155,8 +156,8 @@ def prepare_and_start_backend(
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 150.
 
-    Exceptions
-    ----------
+    Raises
+    ------
     ConnectionError
         If the specified endpoint is already in use, a connection error will be raised.
     SystemError
@@ -282,13 +283,13 @@ def _start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Pop
 
 def _check_minimal_versions(latest_installed_version: int) -> None:
     """
-    Pygeometry is compatible with Ansys Products starting from 2023.2.1 version.
+    Check client is compatible with Ansys Products starting from 2023.2.1 version.
 
     Check that at least V232 is installed.
     """
     if latest_installed_version < 232:
         msg = (
-            "PyGeometry is compatible with Ansys Products from version 23.2.1. "
+            "PyAnsys Geometry is compatible with Ansys Products from version 23.2.1. "
             + "Please install Ansys products 23.2.1 or later."
         )
         raise SystemError(msg)

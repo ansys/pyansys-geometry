@@ -1,7 +1,7 @@
 API reference
 =============
 
-This section describes PyGeometry API endpoints, their capabilities, and how
+This section describes PyAnsys Geometry API endpoints, their capabilities, and how
 to interact with them programmatically.
 
 .. toctree::

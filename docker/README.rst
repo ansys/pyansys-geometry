@@ -31,8 +31,8 @@ Prerequisites
 * Download the latest release artifacts for the Windows or Linux
   Docker container. You can do this as follows:
 
-  * Latest Linux artifacts: `linux-binaries.zip <https://github.com/ansys/pygeometry/releases/latest/download/linux-binaries.zip>`_
-  * Latest Windows artifacts: `windows-binaries.zip <https://github.com/ansys/pygeometry/releases/latest/download/windows-binaries.zip>`_
+  * Latest Linux artifacts: `linux-binaries.zip <https://github.com/ansys/pyansys-geometry/releases/latest/download/linux-binaries.zip>`_
+  * Latest Windows artifacts: `windows-binaries.zip <https://github.com/ansys/pyansys-geometry/releases/latest/download/windows-binaries.zip>`_
 
 * Move these ``.zip`` files to the current location (i.e. ``<repository-root-folder>/docker``).
 
