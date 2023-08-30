@@ -21,7 +21,10 @@ from ansys.geometry.core.plotting.widgets import (
 from ansys.geometry.core.sketch import Sketch
 
 DEFAULT_COLOR = "#D6F7D1"
+"""Default color we use for the plotter actors."""
+
 PICKED_COLOR = "#BB6EEE"
+"""Color to use for the actors that are currently picked."""
 
 
 class Plotter:
