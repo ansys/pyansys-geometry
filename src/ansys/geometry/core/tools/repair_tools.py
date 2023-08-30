@@ -29,23 +29,32 @@ class RepairTools:
     def __init__(self):
         """Initialize Repair Tools class."""
 
-    def FindSplitEdges(self, monikers, angle = 0, length = 0):
+    def FindSplitEdges(self, ids : list[str], angle: float = 0.0, length: float = 0.0) -> list[SplitEdgeProblemAreas]:
         """
-        This method find the split edge problem areas and returns a list of split edge
+        This method finds the split edge problem areas and returns a list of split edge
         problem areas objects.
 
         Parameters
         ----------
-        id : monikers
-        angle : double
-        length : double
+        ids : list[str]
+            Server-defined ID for the edges.
+        angle : float
+            The maximum angle between edges.
+        length : float
+            The maximum length of the edges.
+        
+        Returns
+        ----------
+
+        
         """
+
         angle_value = DoubleValue(value=float(angle))
         length_value = DoubleValue(value=float(length))
         client = GrpcClient()
         problemAreasResponse = RepairToolsStub(client.channel).FindSplitEdges(
             FindSplitEdgesRequest(
-                bodies_or_faces=monikers, angle=angle_value, distance=length_value
+                bodies_or_faces=ids, angle=angle_value, distance=length_value
             )
         )
 
@@ -59,15 +68,15 @@ class RepairTools:
 
         return problemAreas
 
-    def FindExtraEdges(self, monikers):
+    def FindExtraEdges(self, ids: list[str])-> list[ExtraEdgeProblemAreas]:
         """
         This method find the extra edge problem areas and returns a list of extra edge
         problem areas objects.
 
         Parameters
         ----------
-        id : monikers
-        Server-defined ID for the edges.
+        ids : list[str]
+            Server-defined ID for the edges.
 
         Returns
         ----------
@@ -76,7 +85,7 @@ class RepairTools:
         """
         client = GrpcClient()
         problemAreasResponse = RepairToolsStub(client.channel).FindExtraEdges(
-            FindExtraEdgesRequest(selection=monikers)
+            FindExtraEdgesRequest(selection= ids)
         )
         problemAreas = []
         for res in problemAreasResponse.result:
@@ -88,14 +97,14 @@ class RepairTools:
 
         return problemAreas
 
-    def FindInexactEdges(self, monikers):
+    def FindInexactEdges(self, ids):
         """
         This method find the inexact edge problem areas and returns a list of inexact
         edge problem areas objects.
 
         Parameters
         ----------
-        id : monikers
+        ids : ids
         Server-defined ID for the edges.
 
         Returns
@@ -105,7 +114,7 @@ class RepairTools:
         """
         client = GrpcClient()
         problemAreasResponse = RepairToolsStub(client.channel).FindInexactEdges(
-            FindInexactEdgesRequest(selection=monikers)
+            FindInexactEdgesRequest(selection = ids)
         )
         problemAreas = []
         for res in problemAreasResponse.result:
@@ -117,14 +126,14 @@ class RepairTools:
 
         return problemAreas
 
-    def FindShortEdges(self, monikers):
+    def FindShortEdges(self, ids):
         """
         This method find the short edge problem areas and returns a list of short edge
         problem areas objects.
 
         Parameters
         ----------
-        id : monikers
+        ids : string
         Server-defined ID for the edges.
 
         Returns
@@ -134,7 +143,7 @@ class RepairTools:
         """
         client = GrpcClient()
         problemAreasResponse = RepairToolsStub(client.channel).FindShortEdges(
-            FindShortEdgesRequest(selection=monikers)
+            FindShortEdgesRequest(selection = ids)
         )
         problemAreas = []
         for res in problemAreasResponse.result:
@@ -146,14 +155,14 @@ class RepairTools:
 
         return problemAreas
     
-    def FindDuplicateFaces(self, monikers):
+    def FindDuplicateFaces(self, ids):
         """
         This method find the short edge problem areas and returns a list of short edge
         problem areas objects.
 
         Parameters
         ----------
-        id : monikers
+        ids (list): a list of face ids.
         Server-defined ID for the edges.
 
         Returns
@@ -163,7 +172,7 @@ class RepairTools:
         """
         client = GrpcClient()
         problemAreasResponse = RepairToolsStub(client.channel).FindDuplicateFaces(
-            FindDuplicateFacesRequest(faces=monikers)
+            FindDuplicateFacesRequest(faces=ids)
         )
         problemAreas = []
         for res in problemAreasResponse.result:
@@ -175,14 +184,14 @@ class RepairTools:
 
         return problemAreas
 
-    def FindMissingFaces(self, monikers):
+    def FindMissingFaces(self, ids):
         """
         This method find the missing face problem areas and returns a list of missing face
         problem areas objects.
 
         Parameters
         ----------
-        id : monikers
+        ids : string
         Server-defined ID for the edges.
 
         Returns
@@ -204,14 +213,14 @@ class RepairTools:
 
         return problemAreas
     
-    def FindSmallFaces(self, monikers):
+    def FindSmallFaces(self, ids):
         """
         This method find the missing face problem areas and returns a list of missing face
         problem areas objects.
 
         Parameters
         ----------
-        id : monikers
+        ids : string
         Server-defined ID for the edges.
 
         Returns
@@ -233,14 +242,14 @@ class RepairTools:
 
         return problemAreas
     
-    def FindDuplicateCurves(self, monikers):
+    def FindStitchFaces(self, ids):
         """
         This method find the missing face problem areas and returns a list of missing face
         problem areas objects.
 
         Parameters
         ----------
-        id : monikers
+        ids : string
         Server-defined ID for the edges.
 
         Returns
@@ -257,7 +266,8 @@ class RepairTools:
             connectedEdges = []
             for face_moniker in res.face_monikers:
                 connectedEdges.append(face_moniker)
-            problemArea = DuplicateCurveProblemAreas(res.id, connectedEdges)
+            problemArea = DuplicateFaceProblemAreas(res.id, connectedEdges)
             problemAreas.append(problemArea)
 
         return problemAreas
+    
