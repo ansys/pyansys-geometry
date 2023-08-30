@@ -20,6 +20,12 @@ from ansys.geometry.core.plotting.widgets import (
 )
 from ansys.geometry.core.sketch import Sketch
 
+DEFAULT_COLOR = "#D6F7D1"
+"""Default color we use for the plotter actors."""
+
+PICKED_COLOR = "#BB6EEE"
+"""Color to use for the actors that are currently picked."""
+
 
 class Plotter:
     """
@@ -454,7 +460,7 @@ class Plotter:
         #
         # This method should only be applied in 3D objects: bodies, components
         plotting_options.setdefault("smooth_shading", True)
-        plotting_options.setdefault("color", "#D6F7D1")
+        plotting_options.setdefault("color", DEFAULT_COLOR)
 
 
 class PlotterHelper:
@@ -526,6 +532,7 @@ class PlotterHelper:
         """
         added_actors = []
         actor.prop.show_edges = True
+        actor.prop.color = PICKED_COLOR
         text = body_name
         label_actor = self._pl.scene.add_point_labels(
             [pt],
@@ -556,6 +563,7 @@ class PlotterHelper:
             Body name to remove
         """
         actor.prop.show_edges = False
+        actor.prop.color = DEFAULT_COLOR
         self._picked_list.remove(body_name)
         if actor.name in self._picker_added_actors_map:
             self._pl.scene.remove_actor(self._picker_added_actors_map[actor.name])
