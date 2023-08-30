@@ -4,14 +4,14 @@ Contribute
 Overall guidance on contributing to a PyAnsys library appears in the
 `Contributing <https://dev.docs.pyansys.com/how-to/contributing.html>`_ topic
 in the *PyAnsys Developer's Guide*. Ensure that you are thoroughly familiar
-with this guide before attempting to contribute to PyGeometry.
+with this guide before attempting to contribute to PyAnsys Geometry.
 
-The following contribution information is specific to PyGeometry.
+The following contribution information is specific to PyAnsys Geometry.
 
 Clone the repository
 --------------------
 
-To clone and install the latest PyGeometry release in development mode, run
+To clone and install the latest PyAnsys Geometry release in development mode, run
 these commands:
 
 .. code::
@@ -25,7 +25,7 @@ these commands:
 Post issues
 -----------
 
-Use the `PyGeometry Issues <https://github.com/ansys/pygeometry/issues>`_
+Use the `PyAnsys Geometry Issues <https://github.com/ansys/pygeometry/issues>`_
 page to submit questions, report bugs, and request new features. When possible, you
 should use these issue templates:
 
@@ -42,8 +42,8 @@ To reach the project support team, email `pyansys.core@ansys.com <pyansys.core@a
 View documentation
 ------------------
 
-Documentation for the latest stable release of PyGeometry is hosted at
-`PyGeometry Documentation <https://geometry.docs.pyansys.com>`_.
+Documentation for the latest stable release of PyAnsys Geometry is hosted at
+`PyAnsys Geometry Documentation <https://geometry.docs.pyansys.com>`_.
 
 In the upper right corner of the documentation's title bar, there is an option
 for switching from viewing the documentation for the latest stable release
@@ -53,7 +53,7 @@ released versions.
 Adhere to code style
 --------------------
 
-PyGeometry follows the PEP8 standard as outlined in
+PyAnsys Geometry follows the PEP8 standard as outlined in
 `PEP 8 <https://dev.docs.pyansys.com/coding-style/pep8.html>`_ in
 the *PyAnsys Developer's Guide* and implements style checking using
 `pre-commit <https://pre-commit.com/>`_.

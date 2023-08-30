@@ -29,7 +29,7 @@ switcher_version = get_version_match(__version__)
 # Select desired logo, theme, and declare the html title
 html_logo = pyansys_logo_black
 html_theme = "ansys_sphinx_theme"
-html_short_title = html_title = "PyGeometry"
+html_short_title = html_title = "PyAnsys Geometry"
 
 # specify the location of your github repo
 html_context = {

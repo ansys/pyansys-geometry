@@ -15,7 +15,7 @@ Polydata
 PROTO
 Protobuf
 pygeometry
-PyGeometry
+PyAnsys Geometry
 PyPI
 PyVista
 SciPy
