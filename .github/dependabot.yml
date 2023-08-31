@@ -19,6 +19,16 @@ updates:
             - "google*"
             - "grpc*"
             - "protobuf"
+       docs-deps:
+          patterns:
+            - "*sphinx*"
+            - "*jupy*"
+            - "ipyvtklink"
+            - "myst-parser"
+            - "nbconvert"
+            - "notebook"
+            - "numpydoc"
+            - "panel"
 
   - package-ecosystem: "github-actions"
     directory: "/"
