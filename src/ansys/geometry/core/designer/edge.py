@@ -92,11 +92,17 @@ class Edge:
         ]
 
     @property
-    def start(self) -> Point3D:
-        """Starting point of the edge."""
-        return Point3D([-50, -10, -10])
+    @protect_grpc
+    def start_point(self) -> Point3D:
+        """Edge start point."""
+        self._grpc_client.log.debug("Requesting edge points from server.")
+        point = self._edges_stub.GetStartAndEndPoints(self._grpc_id).start
+        return Point3D([point.x, point.y, point.z])
 
     @property
-    def stop(self) -> Point3D:
-        """Final point of the edge."""
-        return Point3D([-10, -30, -10])
+    @protect_grpc
+    def end_point(self) -> Point3D:
+        """Edge end point."""
+        self._grpc_client.log.debug("Requesting edge points from server.")
+        point = self._edges_stub.GetStartAndEndPoints(self._grpc_id).end
+        return Point3D([point.x, point.y, point.z])

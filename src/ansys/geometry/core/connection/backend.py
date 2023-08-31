@@ -1,7 +1,8 @@
 """Module providing definitions for the backend types."""
-from enum import Enum
+from enum import Enum, unique
 
 
+@unique
 class BackendType(Enum):
     """Provides an enum holding the available backend types."""
 
@@ -18,5 +19,4 @@ class ApiVersions(Enum):
     V_22 = 22
     V_231 = 231
     V_232 = 232
-    V_241 = 241
-    LATEST = 241
+    V_241 = LATEST = 241

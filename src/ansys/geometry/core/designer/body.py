@@ -1,6 +1,6 @@
 """Provides for managing a body."""
 from abc import ABC, abstractmethod
-from enum import Enum
+from enum import Enum, unique
 from functools import wraps
 
 from ansys.api.geometry.v0.bodies_pb2 import (
@@ -44,6 +44,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.design import MidSurfaceOffsetType
 
 
+@unique
 class MidSurfaceOffsetType(Enum):
     """Provides values for mid-surface offsets supported by the Geometry service."""
 
