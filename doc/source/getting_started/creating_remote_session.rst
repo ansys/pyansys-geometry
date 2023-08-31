@@ -5,7 +5,7 @@ Create a remote session and connect to it
 
 If a remote server is running Ansys 2023 R2 or later and PIM (Product
 Instance Manager), you can use PIM to start a Discovery or SpaceClaim session
-that PyGeometry can connect to.
+that PyAnsys Geometry can connect to.
 
 Set up the remote server
 ------------------------
@@ -32,9 +32,9 @@ Set up the client machine
        disco = launch_modeler_with_pimlight_and_discovery("241")
 
    The preceding commands launch a Discovery (version 24.1) session with the API server.
-   You receive a ``model`` object back from Discovery that you then use as a PyGeometry client.
+   You receive a ``model`` object back from Discovery that you then use as a PyAnsys Geometry client.
 
-#. Start SpaceClaim or PyGeometry remotely using commands like these:
+#. Start SpaceClaim or the Geometry Service remotely using commands like these:
 
    .. code:: python
 

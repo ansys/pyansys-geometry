@@ -3,8 +3,8 @@
 Create a local session and connect to it
 ========================================
 
-If Ansys 2023 R2 or later and PyGeometry are installed, you can create a local backend session using
-Discovery or SpaceClaim. Once the backend is running, PyGeometry can manage the connection.
+If Ansys 2023 R2 or later and PyAnsys Geometry are installed, you can create a local backend session using
+Discovery or SpaceClaim. Once the backend is running, PyAnsys Geometry can manage the connection.
 
 #. To establish a connection to the service, open Python and use the following commands for
    either Discovery or SpaceClaim.
@@ -36,11 +36,11 @@ Discovery or SpaceClaim. Once the backend is running, PyGeometry can manage the 
        If you set the product version to a version earlier than 2023 R2, be sure to set the ``api_version``
        to the correct version.
 
-   ``host (str)``: Host name. By default, PyGeometry searches for the environment variable ``ANSRV_GEO_HOST``,
-     and if this variable does not exist, PyGeometry uses ``127.0.0.1`` as the host.
+   ``host (str)``: Host name. By default, PyAnsys Geometry searches for the environment variable ``ANSRV_GEO_HOST``,
+     and if this variable does not exist, it uses ``127.0.0.1`` as the host.
 
-   ``port (int)``: Port the Geometry service is to listen on. By default, PyGeometry searches for
-   the environment variable ``ANSRV_GEO_PORT``, and if this variable does not exist, PyGeometry uses
+   ``port (int)``: Port the Geometry service is to listen on. By default, PyAnsys Geometry searches for
+   the environment variable ``ANSRV_GEO_PORT``, and if this variable does not exist, it uses
    ``50051`` as the port.
 
    ``log_level (int)``: Log level. The default is ``2``. Options are:
