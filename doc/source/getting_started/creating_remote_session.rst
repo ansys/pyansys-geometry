@@ -10,14 +10,16 @@ that PyAnsys Geometry can connect to.
 Set up the remote server
 ------------------------
 
-#. On the remote server, start PIM by double-clicking the ``run_piml.bat`` file. PIM
-   can start other apps based on the configurations stored in the ``configurations`` folder.
-   For more information, see :ref:`ref_existing_client_session`.
+#. On the remote server, start PIM. 
 
-   .. note::
-
-       Configuration files, like the ``discovery-241.yaml`` file, provide instructions
-       for starting a session of Discovery (version 24.1). The IP address and port default to ``localhost:5000``.
+# by double-clicking the ``run_piml.bat`` file. PIM
+#   can start other apps based on the configurations stored in the ``configurations`` folder.
+#   For more information, see :ref:`ref_existing_client_session`.
+#
+#   .. note::
+#
+#       Configuration files, like the ``discovery-241.yaml`` file, provide instructions
+#       for starting a session of Discovery (version 24.1). The IP address and port default to ``localhost:5000``.
 
 Set up the client machine
 -------------------------
