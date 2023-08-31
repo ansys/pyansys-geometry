@@ -324,7 +324,6 @@ However, the recommended way of checking documentation integrity is to use
 
     tox -e doc && your_browser_name .tox/doc_out/index.html
 
-
 Distributing
 ------------
 
