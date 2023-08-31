@@ -227,8 +227,8 @@ Install in offline mode
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 If you lack an internet connection on your installation machine, you should install PyAnsys Geometry
-by downloading the wheelhouse archive from the `Releases Page <https://github.com/ansys/pyansys-geometry/releases>`_
-for your corresponding machine architecture.
+by downloading the wheelhouse archive from the `Releases <https://github.com/ansys/pyansys-geometry/releases>`_
+page for your corresponding machine architecture.
 
 Each wheelhouse archive contains all the Python wheels necessary to install PyAnsys Geometry from scratch on Windows,
 Linux, and MacOS from Python 3.8 to 3.11. You can install this on an isolated system with a fresh Python
