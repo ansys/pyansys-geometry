@@ -83,7 +83,7 @@ doc = [
     "panel==1.2.1",
     "pyvista[trame]==0.41.1",
     "requests==2.31.0",
-    "Sphinx==7.2.5",
+    "sphinx==7.2.5",
     "sphinx-autoapi==2.1.1",
     "sphinx-autodoc-typehints==1.24.0",
     "sphinx-copybutton==0.5.2",
