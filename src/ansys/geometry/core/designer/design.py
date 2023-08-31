@@ -1,6 +1,6 @@
 """Provides for managing designs."""
 
-from enum import Enum
+from enum import Enum, unique
 from pathlib import Path
 
 from ansys.api.geometry.v0.commands_pb2 import (
@@ -54,6 +54,7 @@ from ansys.geometry.core.misc import DEFAULT_UNITS, Distance
 from ansys.geometry.core.typing import RealSequence
 
 
+@unique
 class DesignFileFormat(Enum):
     """Provides supported file formats that can be downloaded for designs."""
 

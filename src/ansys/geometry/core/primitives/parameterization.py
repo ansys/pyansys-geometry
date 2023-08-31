@@ -1,6 +1,6 @@
 """Provides the parametrization-related classes."""
 
-from enum import Enum
+from enum import Enum, unique
 
 from beartype import beartype as check_input_types
 import numpy as np
@@ -186,6 +186,7 @@ class Interval:
         return f"Interval(start={self.start}, end={self.end})"
 
 
+@unique
 class ParamForm(Enum):
     """ParamForm enum class that defines the form of a Parameterization."""
 
@@ -195,6 +196,7 @@ class ParamForm(Enum):
     OTHER = 4
 
 
+@unique
 class ParamType(Enum):
     """ParamType enum class that defines the type of a Parameterization."""
 
