@@ -10,7 +10,7 @@ that PyAnsys Geometry can connect to.
 Set up the remote server
 ------------------------
 
-#. On the remote server, start PIM. 
+#. On the remote server, start PIM.
 
 # by double-clicking the ``run_piml.bat`` file. PIM
 #   can start other apps based on the configurations stored in the ``configurations`` folder.
