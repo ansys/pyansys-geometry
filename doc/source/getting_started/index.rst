@@ -3,18 +3,16 @@ Getting started
 
 PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
-To use PyAnsys Geometry, you must have a local installation of `Docker <https://docs.docker.com/engine/install/>`_.
-To start the service locally, you must be authenticated to this package namespace: ``https://ghcr.io``. For
-more information, see `Working with the Container registry
-<https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry>`_
-in the GitHub documentation.
-
-.. caution::
-   PyAnsys Geometry is a client library that works with a Geometry service backend. This service is distributed
-   as a Docker container. Currently, only a Windows Docker container is available for this
-   service. For more information, see :ref:`Geometry service using Docker <ref_docker>`.
+This client library works with a Geometry service backend. This service is distributed
+mainly as a Docker container. For more information, see :ref:`Geometry service using Docker <ref_docker>`. If you
+want to use a local version of the Geometry Service distributed with the Ansys Unified Install,  please refer
+to :ref:`Create a local session <ref_creating_local_session>`.
 
 .. toctree::
+   :maxdepth: 2
 
    docker
    installation
+   creating_local_session
+   existing_client_session
+   creating_remote_session
