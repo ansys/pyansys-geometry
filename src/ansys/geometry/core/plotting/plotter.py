@@ -26,6 +26,12 @@ DEFAULT_COLOR = "#D6F7D1"
 PICKED_COLOR = "#BB6EEE"
 """Color to use for the actors that are currently picked."""
 
+EDGE_COLOR = "#000000"
+"""Default color to use for the edges."""
+
+PICKED_EDGE_COLOR = "#9C9C9C"
+"""Color to use for the edges that are currently picked."""
+
 
 class Plotter:
     """
@@ -236,7 +242,7 @@ class Plotter:
             pointA = (start.x.magnitude, start.y.magnitude, start.z.magnitude)
             pointB = (stop.x.magnitude, stop.y.magnitude, stop.z.magnitude)
             line = pv.Line(pointA, pointB)
-            edge_actor = self.scene.add_mesh(line, line_width=10)
+            edge_actor = self.scene.add_mesh(line, line_width=10, color=EDGE_COLOR)
             edge_actor.SetVisibility(False)
             edge_actors_map[edge_actor.name] = (edge_actor, edge_id)
         return edge_actors_map
@@ -584,8 +590,8 @@ class PlotterHelper:
         if children_list:
             for edge_actor, _ in children_list:
                 edge_actor.SetVisibility(True)
+                edge_actor.prop.color = EDGE_COLOR
         text = object_name
-        actor.prop.show_edges = True
         actor.prop.color = PICKED_COLOR
 
         label_actor = self._pl.scene.add_point_labels(
@@ -623,9 +629,7 @@ class PlotterHelper:
         # remove actor from picked list and from scene
         if object_name in self._picked_list:
             self._picked_list.remove(object_name)
-        actor.prop.show_edges = False
         actor.prop.color = DEFAULT_COLOR
-        self._picked_list.remove(object_name)
 
         if actor.name in self._picker_added_actors_map:
             self._pl.scene.remove_actor(self._picker_added_actors_map[actor.name])
@@ -663,8 +667,10 @@ class PlotterHelper:
             _, edge_id = self._body_edges_mapping[actor.name]
             if edge_id not in self._picked_list:
                 self.select_object(actor, edge_id, pt)
+                actor.prop.color = PICKED_EDGE_COLOR
             else:
                 self.unselect_object(actor, edge_id)
+                actor.prop.color = EDGE_COLOR
 
     def plot(
         self,
