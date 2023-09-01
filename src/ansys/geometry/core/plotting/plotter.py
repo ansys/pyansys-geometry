@@ -543,7 +543,7 @@ class PlotterHelper:
 
         if self._allow_picking:
             self._pl.scene.enable_mesh_picking(
-                callback=self.picker_callback, use_actor=True, show=False
+                callback=self.picker_callback, use_actor=True, show=False, show_message=False
             )
 
     def edge_object_mapping(self):
@@ -587,7 +587,7 @@ class PlotterHelper:
         text = object_name
         actor.prop.show_edges = True
         actor.prop.color = PICKED_COLOR
-        
+
         label_actor = self._pl.scene.add_point_labels(
             [pt],
             [text],
@@ -626,7 +626,7 @@ class PlotterHelper:
         actor.prop.show_edges = False
         actor.prop.color = DEFAULT_COLOR
         self._picked_list.remove(object_name)
- 
+
         if actor.name in self._picker_added_actors_map:
             self._pl.scene.remove_actor(self._picker_added_actors_map[actor.name])
 
