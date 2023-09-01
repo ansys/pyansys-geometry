@@ -375,6 +375,7 @@ class Plotter:
         """
         logger.debug(f"Adding object type {type(object)} to the PyVista plotter")
         actor_name = None
+        body_edges_actors_map = None
         if isinstance(object, List) and isinstance(object[0], pv.PolyData):
             self.add_sketch_polydata(object, **plotting_options)
         elif isinstance(object, pv.PolyData):
