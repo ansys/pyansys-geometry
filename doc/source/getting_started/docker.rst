@@ -10,7 +10,7 @@ Ensure that the machine that the Geometry service is to run on has Docker instal
 see `Install Docker Engine <https://docs.docker.com/engine/install/>`_ in the Docker documentation.
 
 .. note::
-    Currently, the Geometry service backend is only delivered as a Windows Docker container.
+    Currently, the Geometry service backend is mainly delivered as a Windows Docker container.
     As such, this container only runs on a Windows machine. Furthermore, certain Docker Desktop
     versions for Windows are not properly configured for running Windows Docker containers. For
     more information, see :ref:`Running Windows Docker containers <ref_docker_windows>`.
