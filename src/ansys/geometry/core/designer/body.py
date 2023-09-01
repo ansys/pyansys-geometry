@@ -601,6 +601,18 @@ class MasterBody(IBody):
         ]
 
     @property
+    def skeleton(self) -> List[Point3D]:
+        """
+        Return a list with the starting and ending points of the body edges.
+
+        Returns
+        -------
+        List[Point3D]
+            List with the starting and ending points of the body edges.
+        """
+        return {edge.id: (edge.start_point, edge.end_point) for edge in self.edges}
+
+    @property
     def is_alive(self) -> bool:  # noqa: D102
         return self._is_alive
 
