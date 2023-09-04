@@ -1,5 +1,5 @@
 """Provides for plotting various PyAnsys Geometry objects."""
-from typing import Any
+from typing import Any, Tuple
 
 from beartype.typing import Dict, List, Optional
 import numpy as np
@@ -222,14 +222,14 @@ class Plotter:
         self.add_sketch_polydata(sketch.sketch_polydata(), **plotting_options)
 
     def add_body_edges(
-        self, edges: Dict[str, tuple[Point3D, Point3D]], **plotting_options
+        self, edges: Dict[str, Tuple[Point3D, Point3D]], **plotting_options
     ) -> Dict[str, pv.Actor]:
         """
         Add the outer edges of a body to the plot.
 
         Parameters
         ----------
-        edges :  Dict[str, tuple[Point3D, Point3D]]
+        edges :  Dict[str, Tuple[Point3D, Point3D]]
             Start and ending points of the edges of the body.
 
         Returns
@@ -249,7 +249,7 @@ class Plotter:
 
     def add_body(
         self, body: Body, merge: Optional[bool] = False, **plotting_options: Optional[Dict]
-    ) -> tuple[str, List[pv.Actor]]:
+    ) -> Tuple[str, List[pv.Actor]]:
         """
         Add a body to the scene.
 
@@ -267,7 +267,7 @@ class Plotter:
 
         Returns
         -------
-        tuple(str, pv.Actor)
+        Tuple(str, pv.Actor)
             Name of the added PyVista actor.
         """
         # Use the default PyAnsys Geometry add_mesh arguments
@@ -567,7 +567,7 @@ class PlotterHelper:
         actor: pv.Actor,
         object_name: str,
         pt: "np.Array",
-        children_list: List[tuple[pv.Actor, str]] = None,
+        children_list: List[Tuple[pv.Actor, str]] = None,
     ) -> None:
         """
         Select an object in the plotter.
@@ -583,7 +583,7 @@ class PlotterHelper:
             Name of the Body to highlight.
         pt : np.Array
             Set of points to determine the label position.
-        children_list : List[tuple[pv.Actor, str]], optional
+        children_list : List[Tuple[pv.Actor, str]], optional
             List of the edges associated to this actor, containing
             the PyVista actor and the PyGeometry ID, by default None.
         """
@@ -609,7 +609,7 @@ class PlotterHelper:
         self._picker_added_actors_map[actor.name] = added_actors
 
     def unselect_object(
-        self, actor: pv.Actor, object_name: str, children_list: List[tuple[pv.Actor, str]] = None
+        self, actor: pv.Actor, object_name: str, children_list: List[Tuple[pv.Actor, str]] = None
     ) -> None:
         """
         Unselect an object in the plotter.
@@ -623,7 +623,7 @@ class PlotterHelper:
             Actor that is currently highlighted.
         object_name : str
             Object name to remove.
-        children_list : List[tuple[pv.Actor, str]], optional
+        children_list : List[Tuple[pv.Actor, str]], optional
             List of the edges associated to this actor, containing
             the PyVista actor and the PyGeometry ID, by default None.
         """
