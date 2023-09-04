@@ -223,7 +223,7 @@ class Plotter:
 
     def add_body_edges(
         self, edges: Dict[str, Tuple[Point3D, Point3D]], **plotting_options
-    ) -> Dict[str, pv.Actor]:
+    ) -> Dict[str, Tuple[pv.Actor, str]]:
         """
         Add the outer edges of a body to the plot.
 
@@ -267,7 +267,7 @@ class Plotter:
 
         Returns
         -------
-        Tuple(str, pv.Actor)
+        Tuple[str,  Dict[str, Tuple[pv.Actor, str]]]
             Name of the added PyVista actor.
         """
         # Use the default PyAnsys Geometry add_mesh arguments
