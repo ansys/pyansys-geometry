@@ -222,7 +222,7 @@ class Plotter:
         self.add_sketch_polydata(sketch.sketch_polydata(), **plotting_options)
 
     def add_body_edges(
-        self, edges: Dict[str, Tuple[Point3D, Point3D]], **plotting_options
+        self, body: Dict[str, Tuple[Point3D, Point3D]], **plotting_options
     ) -> Dict[str, Tuple[pv.Actor, str]]:
         """
         Add the outer edges of a body to the plot.
@@ -238,13 +238,14 @@ class Plotter:
             Map of the actor edge name and edge ID.
         """
         edge_actors_map = {}
-        for edge_id, (start, stop) in edges.items():
+        for edge_id, (start, stop) in body.skeleton.items():
             pointA = (start.x.magnitude, start.y.magnitude, start.z.magnitude)
             pointB = (stop.x.magnitude, stop.y.magnitude, stop.z.magnitude)
             line = pv.Line(pointA, pointB)
             edge_actor = self.scene.add_mesh(line, line_width=10, color=EDGE_COLOR)
             edge_actor.SetVisibility(False)
-            edge_actors_map[edge_actor.name] = (edge_actor, edge_id)
+            edge_name = f"{body.name}-{edge_id}"
+            edge_actors_map[edge_actor.name] = (edge_actor, edge_name)
         return edge_actors_map
 
     def add_body(
@@ -278,7 +279,7 @@ class Plotter:
         else:
             actor = self.scene.add_mesh(dataset, **plotting_options)
 
-        body_edges_actors_map = self.add_body_edges(body.skeleton)
+        body_edges_actors_map = self.add_body_edges(body)
 
         return actor.name, body_edges_actors_map
 
