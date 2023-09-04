@@ -58,7 +58,7 @@ class Modeler:
         interface. This instance will be deleted
         when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
         method is called.
-    timeout : Real, default: 60
+    timeout : Real, default: 120
         Time in seconds for trying to achieve the connection.
     logging_level : int, default: INFO
         Logging level to apply to the client.
@@ -74,7 +74,7 @@ class Modeler:
         remote_instance: Optional["Instance"] = None,
         local_instance: Optional["LocalDockerInstance"] = None,
         product_instance: Optional["ProductInstance"] = None,
-        timeout: Optional[Real] = 60,
+        timeout: Optional[Real] = 120,
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
         backend_type: Optional[BackendType] = None,
