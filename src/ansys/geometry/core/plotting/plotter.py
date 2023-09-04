@@ -337,7 +337,7 @@ class Plotter:
         """
         # Use the default PyAnsys Geometry add_mesh arguments
         for polydata in polydata_entries:
-            self.scene.add_mesh(polydata, line_width=10, color=EDGE_COLOR, **plotting_options)
+            self.scene.add_mesh(polydata, color=EDGE_COLOR, **plotting_options)
 
     def add(
         self,
