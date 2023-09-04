@@ -555,13 +555,12 @@ class PlotterHelper:
 
     def edge_object_mapping(self):
         """Compute the mapping between the actor edges and its parent object."""
-        if self._body_edges_mapping:
-            for body_actor_name, (body_edges_map, body_name) in self._actor_object_mapping.items():
-                self._body_edges_mapping.update(body_edges_map)
-                children = []
-                for _, (edge_actor, edge_id) in body_edges_map.items():
-                    children.append((edge_actor, edge_id))
-                self._object_children_map.update({body_actor_name: children})
+        for body_actor_name, (body_edges_map, body_name) in self._actor_object_mapping.items():
+            self._body_edges_mapping.update(body_edges_map)
+            children = []
+            for _, (edge_actor, edge_id) in body_edges_map.items():
+                children.append((edge_actor, edge_id))
+            self._object_children_map.update({body_actor_name: children})
 
     def select_object(
         self,
