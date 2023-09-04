@@ -234,7 +234,7 @@ class Plotter:
 
         Returns
         -------
-        Dictpv.Actor
+        Dict[str, Tuple[pv.Actor, str]]
             Map of the actor edge name and edge ID.
         """
         edge_actors_map = {}
