@@ -233,7 +233,6 @@ class Plotter:
         ----------
         body :  GeomObjectPlot
             Body of which to add the edges.
-
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
