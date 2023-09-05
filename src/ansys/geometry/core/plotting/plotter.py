@@ -225,7 +225,7 @@ class Plotter:
 
         self.add_sketch_polydata(sketch.sketch_polydata(), **plotting_options)
 
-    def add_body_edges(self, body: GeomObjectPlot, **plotting_options) -> None:
+    def add_body_edges(self, body: GeomObjectPlot, **plotting_options: Optional[dict]) -> None:
         """
         Add the outer edges of a body to the plot.
 
@@ -233,6 +233,10 @@ class Plotter:
         ----------
         body :  GeomObjectPlot
             Body of which to add the edges.
+
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :func:`pyvista.Plotter.add_mesh` method.
         """
         edge_plot_list = []
         for edge in body.object.edges:
