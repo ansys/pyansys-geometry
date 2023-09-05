@@ -30,8 +30,8 @@ def test_python_failing_script(modeler: Modeler, skip_not_on_linux_service):
 
 
 def test_python_integrated_script(modeler: Modeler, skip_not_on_linux_service):
-    # Tests the workflow of creating a design in PyGeometry, modifying it with a script,
-    # and continuing to use it in PyGeometry
+    # Tests the workflow of creating a design in PyAnsys Geometry, modifying it with a script,
+    # and continuing to use it in PyAnsys Geometry
     design = modeler.create_design("Integrated_Example")
     design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     values, design = modeler.run_discovery_script_file(

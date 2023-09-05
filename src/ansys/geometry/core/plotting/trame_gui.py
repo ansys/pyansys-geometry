@@ -1,4 +1,4 @@
-"""Module for using trame <https://kitware.github.io/trame/index.html>`_ for visualization."""
+"""Module for using `trame <https://kitware.github.io/trame/index.html>`_ for visualization."""
 try:
     from pyvista.trame.ui import plotter_ui
     from trame.app import get_server
@@ -32,11 +32,11 @@ class TrameVisualizer:
         plotter : pv.Plotter
             PyVista plotter with the rendered mesh.
         """
-        self.state.trame__title = "PyGeometry Viewer"
+        self.state.trame__title = "PyAnsys Geometry Viewer"
 
         with SinglePageLayout(self.server) as layout:
             layout.icon.click = self.ctrl.view_reset_camera
-            layout.title.set_text("PyGeometry")
+            layout.title.set_text("PyAnsys Geometry")
 
             with layout.content:
                 # Use PyVista UI template for Plotters

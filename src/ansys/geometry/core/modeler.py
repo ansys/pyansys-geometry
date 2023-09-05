@@ -1,11 +1,14 @@
 """Provides for interacting with the Geometry service."""
 import logging
+import os
 from pathlib import Path
 
 from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.dbu.v0.dbuapplication_pb2 import RunScriptFileRequest
 from ansys.api.dbu.v0.dbuapplication_pb2_grpc import DbuApplicationStub
+from ansys.api.geometry.v0.designs_pb2 import OpenRequest
+from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
 from beartype.typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
 from grpc import Channel
 
@@ -14,13 +17,14 @@ from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.logger import LOG as logger
-from ansys.geometry.core.misc import check_type
+from ansys.geometry.core.misc import ImportOptions, check_type
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.platform.instancemanagement import Instance
 
     from ansys.geometry.core.connection.local_instance import LocalDockerInstance
+    from ansys.geometry.core.connection.product_instance import ProductInstance
     from ansys.geometry.core.designer import Design
 
 
@@ -47,7 +51,14 @@ class Modeler:
         method. This instance is deleted when the
         :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close>`
         method is called.
-    timeout : Real, default: 60
+    product_instance : ProductInstance, default: None
+        Corresponding local product instance when the product (Discovery or SpaceClaim)
+        is launched through the ``launch_modeler_with_geometry_service()``,
+        ``launch_modeler_with_discovery()`` or the ``launch_modeler_with_spaceclaim()``
+        interface. This instance will be deleted
+        when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
+        method is called.
+    timeout : Real, default: 120
         Time in seconds for trying to achieve the connection.
     logging_level : int, default: INFO
         Logging level to apply to the client.
@@ -62,7 +73,8 @@ class Modeler:
         channel: Optional[Channel] = None,
         remote_instance: Optional["Instance"] = None,
         local_instance: Optional["LocalDockerInstance"] = None,
-        timeout: Optional[Real] = 60,
+        product_instance: Optional["ProductInstance"] = None,
+        timeout: Optional[Real] = 120,
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
         backend_type: Optional[BackendType] = None,
@@ -74,6 +86,7 @@ class Modeler:
             channel=channel,
             remote_instance=remote_instance,
             local_instance=local_instance,
+            product_instance=product_instance,
             timeout=timeout,
             logging_level=logging_level,
             logging_file=logging_file,
@@ -138,7 +151,12 @@ class Modeler:
         """``Modeler`` method for easily accessing the client's close method."""
         return self.client.close()
 
-    def _upload_file(self, file_path: str, open_file: bool = False) -> str:
+    def _upload_file(
+        self,
+        file_path: str,
+        open_file: bool = False,
+        import_options: ImportOptions = ImportOptions(),
+    ) -> str:
         """
         Upload a file from the client to the server.
 
@@ -153,6 +171,8 @@ class Modeler:
             Path of the file to upload. The extension of the file must be included.
         open_file : bool, default: False
             Whether to open the file in the Geometry service.
+        import_options : ImportOptions
+            Import options that toggle certain features when opening a file.
 
         Returns
         -------
@@ -174,11 +194,22 @@ class Modeler:
         c_stub = CommandsStub(self._client.channel)
 
         response = c_stub.UploadFile(
-            UploadFileRequest(data=data, file_name=file_name, open=open_file)
+            UploadFileRequest(
+                data=data,
+                file_name=file_name,
+                open=open_file,
+                import_options=import_options.to_dict(),
+            )
         )
         return response.file_path
 
-    def open_file(self, file_path: str) -> "Design":
+    @protect_grpc
+    def open_file(
+        self,
+        file_path: str,
+        upload_to_server: bool = True,
+        import_options: ImportOptions = ImportOptions(),
+    ) -> "Design":
         """
         Open a file.
 
@@ -186,17 +217,42 @@ class Modeler:
         and HOOPS Exchange formats are supported. On Linux, only the ``.scdocx``
         format is supported.
 
+        If the file is a shattered assembly with external references, the whole containing folder
+        will need to be uploaded. Ensure proper folder structure in order to prevent the uploading
+        of unnecessary files.
+
         Parameters
         ----------
         file_path : str
-           Path of the file to open. The extension of the file must be included.
+            Path of the file to open. The extension of the file must be included.
+        upload_to_server : bool
+            True if the service is running on a remote machine. If service is running on the local
+            machine, set to False, as there is no reason to upload the file.
+        import_options : ImportOptions
+            Import options that toggle certain features when opening a file.
 
         Returns
         -------
         Design
             Newly imported design.
         """
-        self._upload_file(file_path, True)
+        # Format-specific logic - upload the whole containing folder for assemblies
+        if upload_to_server:
+            if any(
+                ext in str(file_path) for ext in [".CATProduct", ".asm", ".solution", ".sldasm"]
+            ):
+                dir = os.path.dirname(file_path)
+                files = os.listdir(dir)
+                for file in files:
+                    full_path = os.path.join(dir, file)
+                    if full_path != file_path:
+                        self._upload_file(full_path)
+            self._upload_file(file_path, True, import_options)
+        else:
+            DesignsStub(self._client.channel).Open(
+                OpenRequest(filepath=file_path, import_options=import_options.to_dict())
+            )
+
         return self.read_existing_design()
 
     def __repr__(self) -> str:

@@ -9,16 +9,16 @@ Docker
 Ensure that the machine that the Geometry service is to run on has Docker installed. Otherwise,
 see `Install Docker Engine <https://docs.docker.com/engine/install/>`_ in the Docker documentation.
 
-.. caution::
-    Currently, the Geometry service backend is only delivered as a Windows Docker container.
+.. note::
+    Currently, the Geometry service backend is mainly delivered as a Windows Docker container.
     As such, this container only runs on a Windows machine. Furthermore, certain Docker Desktop
     versions for Windows are not properly configured for running Windows Docker containers. For
-    more information, see :ref:`Run the Windows Docker container <ref_docker_windows>`.
+    more information, see :ref:`Running Windows Docker containers <ref_docker_windows>`.
 
 .. _ref_docker_windows:
 
-Run the Windows Docker container
---------------------------------
+Running Windows Docker containers
+---------------------------------
 
 To run the Windows Docker container for the Geometry service, ensure that you follow
 these steps when installing Docker:
@@ -32,21 +32,35 @@ these steps when installing Docker:
 
 #. Once the installation finishes, start Docker Desktop.
 
-#. Select **Settings > Software updates**, clear the **Automatically check for updates** checkbox, and
+#. Go to **Settings > Software updates**, clear the **Automatically check for updates** checkbox, and
    click **Apply & restart**.
 
 #. On the Windows taskbar, go to the **Show hidden icons** section, right-click in the Docker Desktop app, and
    select **Switch to Windows containers**.
 
-Now that your Docker engine supports running Windows Docker containers, you can install the PyGeometry image.
+Now that your Docker engine supports running Windows Docker containers, you can install the PyAnsys Geometry image.
 
-Install the PyGeometry image
-----------------------------
+Install the PyAnsys Geometry image
+----------------------------------
+
+There are two options for users to install the PyAnsys Geometry image:
+
+* Downloading it from the :ref:`GitHub Container Registry <ref_docker_ghcr>`
+* :ref:`Building the Geometry Service container <ref_docker_fromscratch>`.
+
+.. _ref_docker_ghcr:
+
+GitHub Container registry
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. note::
+
+    This option is only available for users with write access to the repository or part of the Ansys organization.
 
 Once Docker is installed on your machine, follow these steps to download the Docker container for the
-PyGeometry service and install this image.
+PyAnsys Geometry service and install this image.
 
-#. Using your GitHub credentials, download the Docker image from the `PyGeometry repository <https://github.com/ansys/pygeometry>`_
+#. Using your GitHub credentials, download the Docker image from the `PyAnsys Geometry repository <https://github.com/ansys/pyansys-geometry>`_
    on GitHub.
 
 #. Use a GitHub personal access token with permission for reading packages to authorize Docker
@@ -99,12 +113,21 @@ PyGeometry service and install this image.
    * ``linux-latest``
    * ``linux-latest-unstable``
 
+
+.. _ref_docker_fromscratch:
+
+Building the Geometry Service container
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. include:: ../../../docker/README.rst
+   :start-after: .. documentation_start
+
 Launch the Geometry service
 ---------------------------
 
 There are methods for launching the Geometry service:
 
-* You can use the PyGeometry launcher.
+* You can use the PyAnsys Geometry launcher.
 * You can manually launch the Geometry service.
 
 Environment variables
@@ -122,47 +145,49 @@ You can also specify other optional environment variables:
 * ``LOG_LEVEL``: Sets the Geometry service logging level. The default is ``2``, in which case
   the logging level is ``INFO``.
 
-Prior to using the PyGeometry launcher to launch the Geometry service, you must define
+Prior to using the PyAnsys Geometry launcher to launch the Geometry service, you must define
 general environment variables required for your OS. You do not need to define these
 environment variables prior to manually launching the Geometry service.
 
 .. tab-set::
 
-    .. tab-item:: Using PyGeometry launcher
+    .. tab-item:: Using PyAnsys Geometry launcher
+       :sync: geometry
 
-        Define the following general environment variables prior to using the PyGeometry
-        launcher. Click the tab for your OS to see the appropriate commands.
+       Define the following general environment variables prior to using the PyAnsys Geometry
+       launcher. Click the tab for your OS to see the appropriate commands.
 
-        .. tab-set::
+       .. tab-set::
 
-            .. tab-item:: Linux/Mac
+           .. tab-item:: Linux/Mac
 
-                .. code-block:: bash
+               .. code-block:: bash
 
-                    export ANSRV_GEO_LICENSE_SERVER=127.0.0.1
-                    export ANSRV_GEO_ENABLE_TRACE=0
-                    export ANSRV_GEO_LOG_LEVEL=2
+                   export ANSRV_GEO_LICENSE_SERVER=127.0.0.1
+                   export ANSRV_GEO_ENABLE_TRACE=0
+                   export ANSRV_GEO_LOG_LEVEL=2
 
-            .. tab-item:: Powershell
+           .. tab-item:: Powershell
 
-                .. code-block:: bash
+               .. code-block:: bash
 
-                    $env:ANSRV_GEO_LICENSE_SERVER="127.0.0.1"
-                    $env:ANSRV_GEO_ENABLE_TRACE=0
-                    $env:ANSRV_GEO_LOG_LEVEL=2
+                   $env:ANSRV_GEO_LICENSE_SERVER="127.0.0.1"
+                   $env:ANSRV_GEO_ENABLE_TRACE=0
+                   $env:ANSRV_GEO_LOG_LEVEL=2
 
-            .. tab-item:: Windows CMD
+           .. tab-item:: Windows CMD
 
-                .. code-block:: bash
+               .. code-block:: bash
 
-                    SET ANSRV_GEO_LICENSE_SERVER=127.0.0.1
-                    SET ANSRV_GEO_ENABLE_TRACE=0
-                    SET ANSRV_GEO_LOG_LEVEL=2
+                   SET ANSRV_GEO_LICENSE_SERVER=127.0.0.1
+                   SET ANSRV_GEO_ENABLE_TRACE=0
+                   SET ANSRV_GEO_LOG_LEVEL=2
 
-    .. tab-item:: Manually launching Geometry service
+    .. tab-item:: Manual launch
+       :sync: manual
 
-        You do not need to define general environment variables prior to manually launching
-        the Geometry service. They are directly passed to the Docker container itself.
+       You do not need to define general environment variables prior to manually launching
+       the Geometry service. They are directly passed to the Docker container itself.
 
 
 Geometry service launcher
@@ -173,30 +198,59 @@ To see the commands for each method, click the following tabs.
 
 .. tab-set::
 
-    .. tab-item:: Using PyGeometry launcher
+    .. tab-item:: Using PyAnsys Geometry launcher
+       :sync: geometry
 
-        This method directly launches the Geometry service and
-        provides a ``Modeler`` object.
+       This method directly launches the Geometry service and
+       provides a ``Modeler`` object.
 
-        .. code:: python
+       .. code:: python
 
           from ansys.geometry.core.connection import launch_modeler
 
           modeler = launch_modeler()
 
-        The ``launch_modeler()`` method launches the Geometry service under the default
-        conditions. For more configurability, use the ``launch_local_modeler()`` method.
+       The ``launch_modeler()`` method launches the Geometry service under the default
+       conditions. For more configurability, use the ``launch_local_modeler()`` method.
 
-    .. tab-item:: Manual Geometry service launch
+    .. tab-item:: Manual launch
+       :sync: manual
 
        This method requires that you manually launch the Geometry service. Remember to pass
        in the different environment variables that are needed. Afterwards, see the next section
-       to understand how to connect to this service instance from PyGeometry.
+       to understand how to connect to this service instance from PyAnsys Geometry.
 
-       .. code:: bash
+       .. tab-set::
 
-          docker run --name ans_geo -e LICENSE_SERVER=<LICENSE_SERVER> -p 50051:50051 ghcr.io/ansys/geometry:<TAG>
+           .. tab-item:: Linux/Mac
 
+               .. code-block:: bash
+
+                   docker run \
+                       --name ans_geo \
+                       -e LICENSE_SERVER=<LICENSE_SERVER> \
+                       -p 50051:50051 \
+                       ghcr.io/ansys/geometry:<TAG>
+
+           .. tab-item:: Powershell
+
+               .. code-block:: bash
+
+                   docker run `
+                       --name ans_geo `
+                       -e LICENSE_SERVER=<LICENSE_SERVER> `
+                       -p 50051:50051 `
+                       ghcr.io/ansys/geometry:<TAG>
+
+           .. tab-item:: Windows CMD
+
+               .. code-block:: bash
+
+                   docker run ^
+                       --name ans_geo ^
+                       -e LICENSE_SERVER=<LICENSE_SERVER> ^
+                       -p 50051:50051 ^
+                       ghcr.io/ansys/geometry:<TAG>
 
 Connect to the Geometry service
 -------------------------------

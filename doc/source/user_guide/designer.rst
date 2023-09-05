@@ -1,7 +1,7 @@
 Designer
 ********
 
-The PyGeometry :class:`designer <ansys.geometry.core.designer>` subpackage organizes geometry assemblies
+The PyAnsys Geometry :class:`designer <ansys.geometry.core.designer>` subpackage organizes geometry assemblies
 and synchronizes to a supporting Geometry service instance.
 
 Define the model
@@ -13,7 +13,7 @@ It then creates the model on the server.
 
     # Create a sketch and draw a circle on the client
     sketch = Sketch()
-    sketch.draw_circle(Point3D([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm))
+    sketch.circle(Point3D([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm))
 
     # Create your design on the server
     design_name = "ExtrudeProfile"

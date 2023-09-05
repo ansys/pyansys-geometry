@@ -27,7 +27,7 @@ jobs:
     runs-on: [self-hosted, Windows, pygeometry]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -73,7 +73,7 @@ jobs:
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }}          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
-      - name: Run PyGeometry tests
+      - name: Run PyAnsys Geometry tests
         run: |
           .\.venv\Scripts\Activate.ps1
           pytest -v

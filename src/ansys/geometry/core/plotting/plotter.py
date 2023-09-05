@@ -1,4 +1,4 @@
-"""Provides for plotting various PyGeometry objects."""
+"""Provides for plotting various PyAnsys Geometry objects."""
 from typing import Any
 
 from beartype.typing import Dict, List, Optional
@@ -19,6 +19,12 @@ from ansys.geometry.core.plotting.widgets import (
     ViewDirection,
 )
 from ansys.geometry.core.sketch import Sketch
+
+DEFAULT_COLOR = "#D6F7D1"
+"""Default color we use for the plotter actors."""
+
+PICKED_COLOR = "#BB6EEE"
+"""Color to use for the actors that are currently picked."""
 
 
 class Plotter:
@@ -232,7 +238,7 @@ class Plotter:
         str
             Name of the added PyVista actor.
         """
-        # Use the default PyGeometry add_mesh arguments
+        # Use the default PyAnsys Geometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
         dataset = body.tessellate(merge=merge)
         if isinstance(dataset, pv.MultiBlock):
@@ -273,7 +279,7 @@ class Plotter:
         str
             Name of the added PyVista actor.
         """
-        # Use the default PyGeometry add_mesh arguments
+        # Use the default PyAnsys Geometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
         if isinstance(dataset, pv.MultiBlock):
@@ -295,7 +301,7 @@ class Plotter:
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
         """
-        # Use the default PyGeometry add_mesh arguments
+        # Use the default PyAnsys Geometry add_mesh arguments
         for polydata in polydata_entries:
             self.scene.add_mesh(polydata, **plotting_options)
 
@@ -331,7 +337,7 @@ class Plotter:
         Returns
         -------
         Mapping[str, str]
-            Mapping between the pv.Actor and the PyGeometry object.
+            Mapping between the pv.Actor and the PyAnsys Geometry object.
         """
         logger.debug(f"Adding object type {type(object)} to the PyVista plotter")
         actor_name = None
@@ -385,7 +391,7 @@ class Plotter:
         Returns
         -------
         Mapping[str, str]
-            Dictionary with the mapping between pv.Actor and PyGeometry objects.
+            Dictionary with the mapping between pv.Actor and PyAnsys Geometry objects.
         """
         actors_objects_mapping = {}
         for object in plotting_list:
@@ -454,7 +460,7 @@ class Plotter:
         #
         # This method should only be applied in 3D objects: bodies, components
         plotting_options.setdefault("smooth_shading", True)
-        plotting_options.setdefault("color", "#D6F7D1")
+        plotting_options.setdefault("color", DEFAULT_COLOR)
 
 
 class PlotterHelper:
@@ -486,6 +492,8 @@ class PlotterHelper:
         self._pv_off_screen_original = bool(pv.OFF_SCREEN)
         self._actor_object_mapping = {}
         self._pl = None
+        self._picked_list = set()
+        self._picker_added_actors_map = {}
 
         if self._use_trame and _HAS_TRAME:
             # avoids GUI window popping up
@@ -506,11 +514,60 @@ class PlotterHelper:
                 callback=self.picker_callback, use_actor=True, show=False
             )
 
-    def reset(self) -> None:
-        """Reset actor properties at callback."""
-        for a in self._pl.scene.renderer.actors.values():
-            if isinstance(a, pv.Actor):
-                a.prop.show_edges = False
+    def select_object(self, actor: pv.Actor, body_name: str, pt: "np.Array") -> None:
+        """
+        Select an object in the plotter.
+
+        Highlights the object edges and adds a label with the object name and adds
+        it to the PyAnsys Geometry object selection.
+
+        Parameters
+        ----------
+        actor : pv.Actor
+            Actor on which to perform the operations.
+        body_name : str
+            Name of the Body to highlight.
+        pt : np.Array
+            Set of points to determine the label position.
+        """
+        added_actors = []
+        actor.prop.show_edges = True
+        actor.prop.color = PICKED_COLOR
+        text = body_name
+        label_actor = self._pl.scene.add_point_labels(
+            [pt],
+            [text],
+            always_visible=True,
+            point_size=0,
+            render_points_as_spheres=False,
+            show_points=False,
+        )
+        if body_name not in self._picked_list:
+            self._picked_list.add(body_name)
+        added_actors.append(label_actor)
+
+        self._picker_added_actors_map[actor.name] = added_actors
+
+    def unselect_object(self, actor: pv.Actor, body_name: str) -> None:
+        """
+        Unselect an object in the plotter.
+
+        Removes edge highlighting and label from a plotter actor and removes it
+        from the PyAnsys Geometry object selection.
+
+        Parameters
+        ----------
+        actor : pv.Actor
+            Actor that is currently highlighted
+        body_name : str
+            Body name to remove
+        """
+        actor.prop.show_edges = False
+        actor.prop.color = DEFAULT_COLOR
+        self._picked_list.remove(body_name)
+        if actor.name in self._picker_added_actors_map:
+            self._pl.scene.remove_actor(self._picker_added_actors_map[actor.name])
+            self._picker_added_actors_map.pop(actor.name)
 
     def picker_callback(self, actor: "pv.Actor") -> None:
         """
@@ -521,21 +578,14 @@ class PlotterHelper:
         actor : pv.Actor
             Actor that we are picking.
         """
-        self.reset()
         pt = self._pl.scene.picked_point
         self._actor_object_mapping.keys
         if actor.name in self._actor_object_mapping:
             body_name = self._actor_object_mapping[actor.name]
-            actor.prop.show_edges = True
-            text = body_name
-            self._pl.scene.add_point_labels(
-                [pt],
-                [text],
-                always_visible=True,
-                point_size=10,
-                render_points_as_spheres=True,
-                name="selection-label",
-            )
+            if body_name not in self._picked_list:
+                self.select_object(actor, body_name, pt)
+            else:
+                self.unselect_object(actor, body_name)
 
     def plot(
         self,
@@ -545,9 +595,9 @@ class PlotterHelper:
         merge_component: bool = False,
         view_2d: Dict = None,
         **plotting_options,
-    ) -> None:
+    ) -> List[any]:
         """
-        Plot and show any PyGeometry object.
+        Plot and show any PyAnsys Geometry object.
 
         These types of objects are supported: ``Body``, ``Component``, ``List[pv.PolyData]``,
         ``pv.MultiBlock``, and ``Sketch``.
@@ -571,6 +621,11 @@ class PlotterHelper:
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :func:`pyvista.Plotter.add_mesh` method.
+
+        Returns
+        -------
+        List[any]
+            List with the picked bodies in the picked order.
         """
         if isinstance(object, List) and not isinstance(object[0], pv.PolyData):
             logger.debug("Plotting objects in list...")
@@ -589,6 +644,18 @@ class PlotterHelper:
             )
         self.show_plotter(screenshot)
 
+        picked_objects_list = []
+        if isinstance(object, list):
+            # Keep them ordered based on picking
+            for name in self._picked_list:
+                for elem in object:
+                    if hasattr(elem, "name") and elem.name == name:
+                        picked_objects_list.append(elem)
+        elif hasattr(object, "name") and object.name in self._picked_list:
+            picked_objects_list = [object]
+
+        return picked_objects_list
+
     def show_plotter(self, screenshot: Optional[str] = None) -> None:
         """
         Show the plotter or start the `trame <https://kitware.github.io/trame/index.html>`_ service.
@@ -596,7 +663,7 @@ class PlotterHelper:
         Parameters
         ----------
         plotter : Plotter
-            PyGeometry plotter with the meshes added.
+            PyAnsys Geometry plotter with the meshes added.
         screenshot : str, default: None
             Path for saving a screenshot of the image that is being represented.
         """

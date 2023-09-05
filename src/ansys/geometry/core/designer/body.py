@@ -1,6 +1,6 @@
 """Provides for managing a body."""
 from abc import ABC, abstractmethod
-from enum import Enum
+from enum import Enum, unique
 from functools import wraps
 
 from ansys.api.geometry.v0.bodies_pb2 import (
@@ -44,6 +44,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.design import MidSurfaceOffsetType
 
 
+@unique
 class MidSurfaceOffsetType(Enum):
     """Provides values for mid-surface offsets supported by the Geometry service."""
 
@@ -1104,10 +1105,11 @@ class Body(IBody):
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Exists               : {self.is_alive}")
         lines.append(f"  Parent component     : {self._parent.name}")
-        lines.append(f"  MasterBody         : {self._template.id}")
+        lines.append(f"  MasterBody           : {self._template.id}")
         lines.append(f"  Surface body         : {self.is_surface}")
         if self.is_surface:
             lines.append(f"  Surface thickness    : {self.surface_thickness}")
             lines.append(f"  Surface offset       : {self.surface_offset}")
 
-        return "\n".join(lines)
+        nl = "\n"
+        return f"{nl}{nl.join(lines)}{nl}"

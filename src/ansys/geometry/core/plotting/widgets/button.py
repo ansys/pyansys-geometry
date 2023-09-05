@@ -1,4 +1,4 @@
-"""Provides for implementing buttons in PyGeometry."""
+"""Provides for implementing buttons in PyAnsys Geometry."""
 
 from abc import abstractmethod
 import os
@@ -11,7 +11,7 @@ from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
 
 class Button(PlotterWidget):
     """
-    Provides the abstract class for implementing buttons in PyGeometry.
+    Provides the abstract class for implementing buttons in PyAnsys Geometry.
 
     Notes
     -----

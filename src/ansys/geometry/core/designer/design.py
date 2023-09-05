@@ -1,6 +1,6 @@
 """Provides for managing designs."""
 
-from enum import Enum
+from enum import Enum, unique
 from pathlib import Path
 
 from ansys.api.geometry.v0.commands_pb2 import (
@@ -57,6 +57,7 @@ from ansys.geometry.core.misc import DEFAULT_UNITS, Distance
 from ansys.geometry.core.typing import RealSequence
 
 
+@unique
 class DesignFileFormat(Enum):
     """Provides supported file formats that can be downloaded for designs."""
 
@@ -66,6 +67,7 @@ class DesignFileFormat(Enum):
     FMD = "FMD", PartExportFormat.PARTEXPORTFORMAT_FMD
     STEP = "STEP", PartExportFormat.PARTEXPORTFORMAT_STEP
     IGES = "IGES", PartExportFormat.PARTEXPORTFORMAT_IGES
+    PMDB = "PMDB", PartExportFormat.PARTEXPORTFORMAT_PMDB
     INVALID = "INVALID", None
 
 
@@ -193,7 +195,7 @@ class Design(Component):
         format: Optional[DesignFileFormat] = DesignFileFormat.SCDOCX,
     ) -> None:
         """
-        Download a design from the active Geometry server instance.
+        Export and download the design from the active Geometry server instance.
 
         Parameters
         ----------
@@ -218,6 +220,7 @@ class Design(Component):
             DesignFileFormat.FMD,
             DesignFileFormat.STEP,
             DesignFileFormat.IGES,
+            DesignFileFormat.PMDB,
         ]:
             response = self._parts_stub.Export(ExportRequest(format=format.value[1]))
             received_bytes += response.data

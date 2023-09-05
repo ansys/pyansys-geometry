@@ -1,6 +1,8 @@
 Create your own Geometry service docker container
 =================================================
 
+.. documentation_start
+
 The Geometry service Docker containers can be easily built by following
 these steps.
 
@@ -22,7 +24,7 @@ machine, you will have to build one or the other. For example:
   bear in mind that you can also run Linux containers.
 
 Prerequisites
-^^^^^^^^^^^^^
+~~~~~~~~~~~~~
 
 * Ensure that ``docker`` is installed in your machine.
   If you do not have ``docker`` available, please refer to the
@@ -31,13 +33,13 @@ Prerequisites
 * Download the latest release artifacts for the Windows or Linux
   Docker container. You can do this as follows:
 
-  * Latest Linux artifacts: `linux-binaries.zip <https://github.com/ansys/pygeometry/releases/latest/download/linux-binaries.zip>`_
-  * Latest Windows artifacts: `windows-binaries.zip <https://github.com/ansys/pygeometry/releases/latest/download/windows-binaries.zip>`_
+  * Latest Linux artifacts: `linux-binaries.zip <https://github.com/ansys/pyansys-geometry/releases/latest/download/linux-binaries.zip>`_
+  * Latest Windows artifacts: `windows-binaries.zip <https://github.com/ansys/pyansys-geometry/releases/latest/download/windows-binaries.zip>`_
 
 * Move these ``.zip`` files to the current location (i.e. ``<repository-root-folder>/docker``).
 
 Building the Docker images
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In order to build your images, follow the next instructions:
 
