@@ -88,14 +88,14 @@ class GrpcClient:
         interface. This instance will be deleted
         when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
         method is called.
-    timeout : real, default: 60
+    timeout : real, default: 120
         Maximum time to spend trying to make the connection.
     logging_level : int, default: INFO
         Logging level to apply to the client.
     logging_file : str or Path, default: None
         File to output the log to, if requested.
     backend_type: BackendType, default: None
-        Type of the backend that PyGeometry is communicating with. By default, this
+        Type of the backend that PyAnsys Geometry is communicating with. By default, this
         value is unknown, which results in ``None`` being the default value.
     """
 
@@ -108,7 +108,7 @@ class GrpcClient:
         remote_instance: Optional["Instance"] = None,
         local_instance: Optional[LocalDockerInstance] = None,
         product_instance: Optional[ProductInstance] = None,
-        timeout: Optional[Real] = 60,
+        timeout: Optional[Real] = 120,
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
         backend_type: Optional[BackendType] = None,

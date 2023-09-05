@@ -1,4 +1,4 @@
-"""Provides for handling units homogeneously throughout PyGeometry."""
+"""Provides for handling units homogeneously throughout PyAnsys Geometry."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Optional
@@ -16,7 +16,7 @@ set_application_registry(UNITS)
 
 class PhysicalQuantity:
     """
-    Provides the base class for handling units homogeneously throughout PyGeometry.
+    Provides the base class for handling units throughout PyAnsys Geometry.
 
     Parameters
     ----------

@@ -11,21 +11,21 @@ kernelspec:
   name: python3
 ---
 
-# PyGeometry 101: Modeling
+# PyAnsys Geometry 101: Modeling
 
-Once you understand PyGeometry's mathematical constructs, units, and sketching capabilities,
+Once you understand PyAnsys Geometry's mathematical constructs, units, and sketching capabilities,
 you can dive into its modeling capabilities.
 
 +++
 
-PyGeometry is a Python client that connects to a modeling service. Here are the modeling
+PyAnsys Geometry is a Python client that connects to a modeling service. Here are the modeling
 services that are available for connection:
 
 - **DMS**: Windows-based modeling service that has been containerized to ease
   distribution, execution, and remotability operations.
 - **Geometry service**: Linux-based approach of DMS that is currently under development.
-- **Ansys Discovery and SpaceClaim**: PyGeometry is capable of connecting to a running session
-  of Ansys Discovery or SpaceClaim. Although this is not the main use case for PyGeometry,
+- **Ansys Discovery and SpaceClaim**: PyAnsys Geometry is capable of connecting to a running session
+  of Ansys Discovery or SpaceClaim. Although this is not the main use case for PyAnsys Geometry,
   a connection to one of these Ansys products is possible. Because these products have
   graphical user interfaces, performance is not as high with this option as with the previous
   options. However, connecting to a running instance of Discovery or SpaceClaim might be
@@ -35,7 +35,7 @@ services that are available for connection:
 
 ## Launch a modeling service
 
-While the PyGeometry operations in earlier examples did not require communication with
+While the PyAnsys Geometry operations in earlier examples did not require communication with
 a modeling service, this example requires that a modeling service is available. All subsequent
 examples also require that a modeling service is available.
 
@@ -214,7 +214,7 @@ assembly is open in Discovery or SpaceClaim, you can observe the changes.
 
 ## Create a named selection
 
-PyGeometry supports the creation of a named selection via the ``Design`` object.
+PyAnsys Geometry supports the creation of a named selection via the ``Design`` object.
 
 Create a named selection with some of the faces of the previous body
 and the body itself.

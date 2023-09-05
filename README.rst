@@ -1,5 +1,5 @@
-PyGeometry
-==========
+PyAnsys Geometry
+================
 |pyansys| |python| |pypi| |GH-CI| |codecov| |MIT| |black|
 
 .. |pyansys| image:: https://img.shields.io/badge/Py-Ansys-ffc107.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAABDklEQVQ4jWNgoDfg5mD8vE7q/3bpVyskbW0sMRUwofHD7Dh5OBkZGBgW7/3W2tZpa2tLQEOyOzeEsfumlK2tbVpaGj4N6jIs1lpsDAwMJ278sveMY2BgCA0NFRISwqkhyQ1q/Nyd3zg4OBgYGNjZ2ePi4rB5loGBhZnhxTLJ/9ulv26Q4uVk1NXV/f///////69du4Zdg78lx//t0v+3S88rFISInD59GqIH2esIJ8G9O2/XVwhjzpw5EAam1xkkBJn/bJX+v1365hxxuCAfH9+3b9/+////48cPuNehNsS7cDEzMTAwMMzb+Q2u4dOnT2vWrMHu9ZtzxP9vl/69RVpCkBlZ3N7enoDXBwEAAA+YYitOilMVAAAAAElFTkSuQmCC
@@ -15,11 +15,11 @@ PyGeometry
    :alt: PyPI
 
 .. |codecov| image:: https://codecov.io/gh/ansys/ansys-geometry-core/branch/main/graph/badge.svg
-   :target: https://codecov.io/gh/ansys/pygeometry
+   :target: https://codecov.io/gh/ansys/pyansys-geometry
    :alt: Codecov
 
-.. |GH-CI| image:: https://github.com/ansys/pygeometry/actions/workflows/ci_cd.yml/badge.svg
-   :target: https://github.com/ansys/pygeometry/actions/workflows/ci_cd.yml
+.. |GH-CI| image:: https://github.com/ansys/pyansys-geometry/actions/workflows/ci_cd.yml/badge.svg
+   :target: https://github.com/ansys/pyansys-geometry/actions/workflows/ci_cd.yml
    :alt: GH-CI
 
 .. |MIT| image:: https://img.shields.io/badge/License-MIT-yellow.svg
@@ -31,29 +31,32 @@ PyGeometry
    :alt: Black
 
 
-PyGeometry is a Python client library for the Ansys Geometry service.
+PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
 .. contents::
 
 Usage
 -----
 
-There are two different ways of getting started with the Geometry service and its client-library, PyGeometry.
+There are two different ways of getting started with the Geometry service and its client-library, PyAnsys Geometry.
 
-Using PyGeometry launcher
-^^^^^^^^^^^^^^^^^^^^^^^^^
+Using PyAnsys Geometry launcher
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-PyGeometry is provided with an internal launcher that is capable of handling the specifics of
+PyAnsys Geometry is provided with an internal launcher that is capable of handling the specifics of
 launching the Geometry service locally. The only requirements are that:
 
 * Docker is installed on your machine.
-* You have access to the PyAnsys GitHub container registry, where the Geometry service image is hosted.
+* You have access to the Geometry service image.
 
-.. caution::
+.. note::
 
-   The Geometry service is currently available only as a Windows Docker image. The development
+   The Geometry service is mainly available as a Windows Docker image. The development
    team is working on getting the Linux Docker container available as soon as possible. In the meantime,
    make sure that your Docker engine is configured to run Windows Docker images.
+
+Using the GitHub Container Registry image
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 First, bear in mind that you have to be `authenticated to ghcr.io
 <https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry>`_.
@@ -70,7 +73,16 @@ The following OS-dependent tags are available:
 * ``linux-latest``
 * ``linux-latest-unstable``
 
-Next, you will be ready to run the Geometry service directly from PyGeometry:
+Build your own Geometry service image
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Access the ``docker`` folder in this repository and go through the instructions
+presented in the `main README file <https://github.com/ansys/pyansys-geometry/blob/main/docker/README.rst>`_.
+
+Launching the Geometry service image
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Next, you will be ready to run the Geometry service directly from PyAnsys Geometry:
 
 .. code:: python
 
@@ -141,19 +153,19 @@ If you want to change the defaults, modify the following environment variables:
 Install the package
 -------------------
 
-PyGeometry has three installation modes: user, developer, and offline.
+PyAnsys Geometry has three installation modes: user, developer, and offline.
 
 Install in user mode
 ^^^^^^^^^^^^^^^^^^^^
 
-Before installing PyGeometry in user mode, make sure you have the latest version of
+Before installing PyAnsys Geometry in user mode, make sure you have the latest version of
 `pip`_ with:
 
 .. code:: bash
 
    python -m pip install -U pip
 
-Then, install PyGeometry with:
+Then, install PyAnsys Geometry with:
 
 .. code:: bash
 
@@ -161,7 +173,7 @@ Then, install PyGeometry with:
 
 .. caution::
 
-    PyGeometry is currently hosted in a private PyPI repository. You must provide the index
+    PyAnsys Geometry is currently hosted in a private PyPI repository. You must provide the index
     URL to the private PyPI repository:
 
     * Index URL: ``https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/``
@@ -177,7 +189,7 @@ Then, install PyGeometry with:
 Install in developer mode
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Installing PyGeometry in developer mode allows
+Installing PyAnsys Geometry in developer mode allows
 you to modify the source and enhance it.
 
 .. note::
@@ -185,19 +197,19 @@ you to modify the source and enhance it.
     Before contributing to the project, ensure that you are thoroughly familiar
     with the `PyAnsys Developer's Guide`_.
 
-To install PyGeometry in developer mode, perform these steps:
+To install PyAnsys Geometry in developer mode, perform these steps:
 
-#. Clone the ``pygeometry`` repository:
-
-   .. code:: bash
-
-      git clone https://github.com/ansys/pygeometry
-
-#. Access the ``pygeometry`` directory where the repository has been cloned:
+#. Clone the ``pyansys-geometry`` repository:
 
    .. code:: bash
 
-      cd pygeometry
+      git clone https://github.com/ansys/pyansys-geometry
+
+#. Access the ``pyansys-geometry`` directory where the repository has been cloned:
+
+   .. code:: bash
+
+      cd pyansys-geometry
 
 #. Create a clean Python virtual environment and activate it:
 
@@ -241,11 +253,11 @@ Install in offline mode
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 If you lack an internet connection on your installation machine (or you do not have access to the
-private Ansys PyPI packages repository), you should install PyGeometry by downloading the wheelhouse
-archive from the `Releases Page <https://github.com/ansys/pygeometry/releases>`_ for your
+private Ansys PyPI packages repository), you should install PyAnsys Geometry by downloading the wheelhouse
+archive from the `Releases Page <https://github.com/ansys/pyansys-geometry/releases>`_ for your
 corresponding machine architecture.
 
-Each wheelhouse archive contains all the Python wheels necessary to install PyGeometry from scratch on Windows,
+Each wheelhouse archive contains all the Python wheels necessary to install PyAnsys Geometry from scratch on Windows,
 Linux, and MacOS from Python 3.8 to 3.11. You can install this on an isolated system with a fresh Python
 installation or on a virtual environment.
 
@@ -283,7 +295,7 @@ The following environments commands are provided:
 
  .. admonition:: pyvista-pytest plugin
 
-   This plugin facilitates the comparison of the images produced in PyGeometry for testing the plots.
+   This plugin facilitates the comparison of the images produced in PyAnsys Geometry for testing the plots.
    If you are changing the images, use flag ``--reset_image_cache`` which is not recommended except
    for testing or for potentially a major or minor release. For more information, see `pyvista-pytest`_.
 

@@ -3,7 +3,7 @@
 Sketch
 *******
 
-The PyGeometry :class:`sketch <ansys.geometry.core.sketch>` subpackage is used to build
+The PyAnsys Geometry :class:`sketch <ansys.geometry.core.sketch>` subpackage is used to build
 2D basic shapes. Shapes consist of two fundamental constructs:
 
 * **Edge**: A connection between two or more 2D points along a particular path. An edge represents an open shape
@@ -11,7 +11,7 @@ The PyGeometry :class:`sketch <ansys.geometry.core.sketch>` subpackage is used t
 * **Face**: A set of edges that enclose a surface. A face represents a closed shape such as a circle or triangle.
 
 To initialize a sketch, you first specify the :class:`Plane() <ansys.geometry.core.math.plane>` class, which
-represents the plane in space from which other PyGeometry objects can be located.
+represents the plane in space from which other PyAnsys Geometry objects can be located.
 
 This code shows how to initialize a sketch:
 
@@ -27,7 +27,7 @@ Functional-style API
 ====================
 
 A functional-style API is sometimes called a *fluent functional-style api* or *fluent API* in the developer community.
-However, to avoid confusion with the Ansys Fluent product, the PyGeometry documentation refrains from using the latter terms.
+However, to avoid confusion with the Ansys Fluent product, the PyAnsys Geometry documentation refrains from using the latter terms.
 
 One of the key features of a functional-style API is that it keeps an active context based on the previously created
 edges to use as a reference starting point for additional objects.

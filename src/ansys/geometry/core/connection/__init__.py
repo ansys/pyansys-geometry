@@ -1,4 +1,4 @@
-"""PyGeometry connection subpackage."""
+"""PyAnsys Geometry connection subpackage."""
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient

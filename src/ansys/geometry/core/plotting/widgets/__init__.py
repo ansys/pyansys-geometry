@@ -1,4 +1,4 @@
-"""Submodule providing widgets for the PyGeometry plotter."""
+"""Submodule providing widgets for the PyAnsys Geometry plotter."""
 from ansys.geometry.core.plotting.widgets.displace_arrows import (
     CameraPanDirection,
     DisplacementArrow,

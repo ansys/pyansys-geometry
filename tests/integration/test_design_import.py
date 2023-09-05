@@ -6,15 +6,17 @@ import pytest
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.designer import Component, Design
+from ansys.geometry.core.designer.design import DesignFileFormat
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 
 
-def _checker_method(comp: Component, comp_ref: Component) -> None:
+def _checker_method(comp: Component, comp_ref: Component, precise_check: bool = True) -> None:
     # Check component features
-    assert comp.id == comp_ref.id
-    assert comp.name == comp_ref.name
+    if precise_check:
+        assert comp.id == comp_ref.id
+        assert comp.name == comp_ref.name
     assert len(comp.bodies) == len(comp_ref.bodies)
     assert len(comp.components) == len(comp_ref.components)
     assert len(comp.coordinate_systems) == len(comp_ref.coordinate_systems)
@@ -25,14 +27,20 @@ def _checker_method(comp: Component, comp_ref: Component) -> None:
         assert len(comp.materials) == len(comp_ref.materials)
         assert len(comp.named_selections) == len(comp_ref.named_selections)
 
-    # Check bodies (if any)
-    for body, body_ref in zip(comp.bodies, comp_ref.bodies):
-        assert body.id == body_ref.id
-        assert body.name == body_ref.name
+    if precise_check:
+        # Check bodies (if any)
+        for body, body_ref in zip(
+            sorted(comp.bodies, key=lambda b: b.name), sorted(comp_ref.bodies, key=lambda b: b.name)
+        ):
+            assert body.id == body_ref.id
+            assert body.name == body_ref.name
 
     # Check subcomponents
-    for subcomp, subcomp_ref in zip(comp.components, comp_ref.components):
-        _checker_method(subcomp, subcomp_ref)
+    for subcomp, subcomp_ref in zip(
+        sorted(comp.components, key=lambda c: c.name),
+        sorted(comp_ref.components, key=lambda c: c.name),
+    ):
+        _checker_method(subcomp, subcomp_ref, precise_check)
 
 
 def test_design_import_simple_case(modeler: Modeler):
@@ -93,11 +101,11 @@ def test_design_import_simple_case(modeler: Modeler):
     _checker_method(read_design, design)
 
 
-def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, service_os: str):
     """Test creation of a component, saving it to a file, and loading it again to a
     second component and make sure they have the same properties."""
 
-    design_name = "CarDesign_Test"
+    design_name = "two_cars"
     design = modeler.create_design(design_name)
 
     # Create a car
@@ -108,7 +116,7 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
     # Create car base frame
     sketch = Sketch().box(Point2D([5, 10]), 10, 20)
-    comp2.extrude_sketch("Base", sketch, 5)
+    comp2.add_component("Base").extrude_sketch("BaseBody", sketch, 5)
 
     # Create first wheel
     sketch = Sketch(Plane(direction_x=Vector3D([0, 1, 0]), direction_y=Vector3D([0, 0, 1])))
@@ -141,4 +149,43 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     design2 = modeler.open_file(file)
 
     # assert the two cars are the same
-    _checker_method(design, design2)
+    _checker_method(design, design2, True)
+
+    # Test HOOPS formats (Windows only)
+    if service_os == "windows":
+        # STEP
+        file = tmp_path_factory.mktemp("test_design_import") / "two_cars.step"
+        design.download(file, DesignFileFormat.STEP)
+        design2 = modeler.open_file(file)
+        _checker_method(design, design2, False)
+
+        # IGES
+        file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
+        design.download(file, DesignFileFormat.IGES)
+        design2 = modeler.open_file(file)
+        _checker_method(design, design2, False)
+
+        # Catia
+        design2 = modeler.open_file("./tests/integration/files/import/catia_car/car.CATProduct")
+        _checker_method(design, design2, False)
+
+        # Rhino
+        design2 = modeler.open_file("./tests/integration/files/import/box.3dm")
+        assert len(design2.components) == 1
+        assert len(design2.components[0].bodies) == 1
+
+        # Stride
+        design2 = modeler.open_file("./tests/integration/files/import/sample_box.project")
+        assert len(design2.bodies) == 1
+
+        # SolidWorks
+        design2 = modeler.open_file("./tests/integration/files/import/partColor.SLDPRT")
+        assert len(design2.components[0].bodies) == 1
+
+        # .par
+        design2 = modeler.open_file("./tests/integration/files/import/Tank_Bottom.par")
+        assert len(design2.bodies) == 1
+
+        # .prt
+        design2 = modeler.open_file("./tests/integration/files/import/disk1.prt")
+        assert len(design2.bodies) == 1
