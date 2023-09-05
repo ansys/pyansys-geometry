@@ -8,16 +8,16 @@ from ansys.geometry.core.designer.edge import Edge
 
 class EdgePlot:
     """
-    Mapper class to relate pyansys-geometry edges with its PyVista actor.
+    Mapper class to relate PyAnsys Geometry edges with its PyVista actor.
 
     Parameters
     ----------
     actor : pv.Actor
         PyVista actor that represents the edge.
     edge_object : Edge
-        Pyansys-geometry edge that is represented by the PyVista actor.
+        PyAnsys Geometry edge that is represented by the PyVista actor.
     parent : GeomObjectPlot, optional
-        Parent pyansys-geometry object of this edge, by default None.
+        Parent PyAnsys Geometry object of this edge, by default ``None``.
     """
 
     def __init__(self, actor: pv.Actor, edge_object: Edge, parent: "GeomObjectPlot" = None) -> None:
@@ -41,24 +41,24 @@ class EdgePlot:
     @property
     def edge_object(self) -> Edge:
         """
-        Return the pyansys-geometry edge.
+        Return the PyAnsys Geometry edge.
 
         Returns
         -------
         Edge
-            Pyansys-geometry edge.
+            PyAnsys Geometry edge.
         """
         return self._object
 
     @property
     def parent(self) -> Any:
         """
-        Parent pyansys-geometry object of this edge.
+        Parent PyAnsys Geometry object of this edge.
 
         Returns
         -------
         Any
-            Pyansys-geometry object.
+            PyAnsys Geometry object.
         """
         return self._parent
 
@@ -92,16 +92,16 @@ class EdgePlot:
 
 class GeomObjectPlot:
     """
-    Mapper class to relate pyansys-geometry objects with its PyVista actor.
+    Mapper class to relate PyAnsys Geometry objects with its PyVista actor.
 
     Parameters
     ----------
     actor : pv.Actor
         PyVista actor that represents the pyansys-geometry object.
     object : Any
-        Pyansys-geometry object that is represented.
+        PyAnsys Geometry object that is represented.
     edges : List[EdgePlot], optional
-        List of edges of the pyansys-geometry object, by default None.
+        List of edges of the PyAnsys Geometry object, by default ``None``.
     """
 
     def __init__(self, actor: pv.Actor, object: Any, edges: List[EdgePlot] = None) -> None:
@@ -113,31 +113,31 @@ class GeomObjectPlot:
     @property
     def actor(self) -> pv.Actor:
         """
-        Return the PyVista actor of the pyansys-geometry object.
+        Return the PyVista actor of the PyAnsys Geometry object.
 
         Returns
         -------
         pv.Actor
-            Actor of the pyansys-geometry object.
+            Actor of the PyAnsys Geometry object.
         """
         return self._actor
 
     @property
     def object(self) -> Any:
         """
-        Return the pyansys-geometry object.
+        Return the PyAnsys Geometry object.
 
         Returns
         -------
         Any
-            Pyansys-geometry object.
+            PyAnsys Geometry object.
         """
         return self._object
 
     @property
     def edges(self) -> List[EdgePlot]:
         """
-        Return the list of edges associated to this pyansys-geometry object.
+        Return the list of edges associated to this PyAnsys Geometry object.
 
         Returns
         -------

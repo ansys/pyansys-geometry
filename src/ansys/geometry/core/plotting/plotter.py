@@ -231,7 +231,7 @@ class Plotter:
 
         Parameters
         ----------
-        body :  GeomObjectPlot
+        body : GeomObjectPlot
             Body of which to add the edges.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
