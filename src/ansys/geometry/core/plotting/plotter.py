@@ -239,13 +239,7 @@ class Plotter:
         """
         edge_plot_list = []
         for edge in body.object.edges:
-            start = edge.start_point
-            stop = edge.end_point
-
-            point_a = (start.x.magnitude, start.y.magnitude, start.z.magnitude)
-            point_b = (stop.x.magnitude, stop.y.magnitude, stop.z.magnitude)
-            line = pv.Line(point_a, point_b)
-
+            line = pv.Line(edge.start_point, edge.end_point)
             edge_actor = self.scene.add_mesh(
                 line, line_width=10, color=EDGE_COLOR, **plotting_options
             )
