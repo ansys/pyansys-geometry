@@ -8,7 +8,8 @@ from pyvista.plotting.tools import create_axes_marker
 
 from ansys.geometry.core.designer import Body, Component, Design, MasterBody
 from ansys.geometry.core.logger import LOG as logger
-from ansys.geometry.core.math import Frame, Plane, Point3D
+from ansys.geometry.core.math import Frame, Plane
+from ansys.geometry.core.plotting.plotting_types import EdgePlot, GeomObjectPlot
 from ansys.geometry.core.plotting.trame_gui import _HAS_TRAME, TrameVisualizer
 from ansys.geometry.core.plotting.widgets import (
     CameraPanDirection,
@@ -76,6 +77,9 @@ class Plotter:
 
         # Save the desired number of points
         self._num_points = num_points
+
+        # geometry objects to actors mapping
+        self._geom_object_actors_map = {}
 
         # Create Plotter widgets
         if enable_widgets:
@@ -222,7 +226,7 @@ class Plotter:
         self.add_sketch_polydata(sketch.sketch_polydata(), **plotting_options)
 
     def add_body_edges(
-        self, body: Dict[str, Tuple[Point3D, Point3D]], **plotting_options
+        self, body: GeomObjectPlot, **plotting_options
     ) -> Dict[str, Tuple[pv.Actor, str]]:
         """
         Add the outer edges of a body to the plot.
@@ -237,16 +241,20 @@ class Plotter:
         Dict[str, Tuple[pv.Actor, str]]
             Map of the actor edge name and edge ID.
         """
-        edge_actors_map = {}
-        for edge_id, (start, stop) in body.skeleton.items():
-            pointA = (start.x.magnitude, start.y.magnitude, start.z.magnitude)
-            pointB = (stop.x.magnitude, stop.y.magnitude, stop.z.magnitude)
-            line = pv.Line(pointA, pointB)
+        edge_plot_list = []
+        for edge in body.object.edges:
+            start = edge.start_point
+            stop = edge.end_point
+
+            point_a = (start.x.magnitude, start.y.magnitude, start.z.magnitude)
+            point_b = (stop.x.magnitude, stop.y.magnitude, stop.z.magnitude)
+            line = pv.Line(point_a, point_b)
+
             edge_actor = self.scene.add_mesh(line, line_width=10, color=EDGE_COLOR)
             edge_actor.SetVisibility(False)
-            edge_name = f"{body.name}-{edge_id}"
-            edge_actors_map[edge_actor.name] = (edge_actor, edge_name)
-        return edge_actors_map
+            edge_plot = EdgePlot(edge_actor, edge, body)
+            edge_plot_list.append(edge_plot)
+        body.edges = edge_plot_list
 
     def add_body(
         self, body: Body, merge: Optional[bool] = False, **plotting_options: Optional[Dict]
@@ -279,9 +287,9 @@ class Plotter:
         else:
             actor = self.scene.add_mesh(dataset, **plotting_options)
 
-        body_edges_actors_map = self.add_body_edges(body)
-
-        return actor.name, body_edges_actors_map
+        body_plot = GeomObjectPlot(actor=actor, object=body)
+        self.add_body_edges(body_plot)
+        self._geom_object_actors_map[actor] = body_plot
 
     def add_component(
         self,
@@ -386,16 +394,12 @@ class Plotter:
         elif isinstance(object, Sketch):
             self.plot_sketch(object, **plotting_options)
         elif isinstance(object, Body) or isinstance(object, MasterBody):
-            actor_name, body_edges_actors_map = self.add_body(
-                object, merge_bodies, **plotting_options
-            )
+            self.add_body(object, merge_bodies, **plotting_options)
         elif isinstance(object, Design) or isinstance(object, Component):
-            actor_name = self.add_component(
-                object, merge_components, merge_bodies, **plotting_options
-            )
+            self.add_component(object, merge_components, merge_bodies, **plotting_options)
         else:
             logger.warning(f"Object type {type(object)} can not be plotted.")
-        return {actor_name: (body_edges_actors_map, object.name)} if actor_name else {}
+        return self._geom_object_actors_map
 
     def add_list(
         self,
@@ -431,14 +435,9 @@ class Plotter:
         Mapping[str, str]
             Dictionary with the mapping between pv.Actor and PyAnsys Geometry objects.
         """
-        actors_objects_mapping = {}
         for object in plotting_list:
-            actor_object_mapping = self.add(
-                object, merge_bodies, merge_components, **plotting_options
-            )
-            if actor_object_mapping:
-                actors_objects_mapping.update(actor_object_mapping)
-        return actors_objects_mapping
+            _ = self.add(object, merge_bodies, merge_components, **plotting_options)
+        return self._geom_object_actors_map
 
     def show(
         self,
@@ -528,11 +527,11 @@ class PlotterHelper:
         self._use_trame = use_trame
         self._allow_picking = allow_picking
         self._pv_off_screen_original = bool(pv.OFF_SCREEN)
-        self._actor_object_mapping = {}
+        self._geom_object_actors_map = {}
         self._pl = None
         self._picked_list = set()
         self._picker_added_actors_map = {}
-        self._body_edges_mapping = {}
+        self._edge_actors_map = {}
         self._object_children_map = {}
 
         if self._use_trame and _HAS_TRAME:
@@ -554,22 +553,7 @@ class PlotterHelper:
                 callback=self.picker_callback, use_actor=True, show=False, show_message=False
             )
 
-    def edge_object_mapping(self):
-        """Compute the mapping between the actor edges and its parent object."""
-        for body_actor_name, (body_edges_map, body_name) in self._actor_object_mapping.items():
-            self._body_edges_mapping.update(body_edges_map)
-            children = []
-            for _, (edge_actor, edge_id) in body_edges_map.items():
-                children.append((edge_actor, edge_id))
-            self._object_children_map.update({body_actor_name: children})
-
-    def select_object(
-        self,
-        actor: pv.Actor,
-        object_name: str,
-        pt: "np.Array",
-        children_list: List[Tuple[pv.Actor, str]] = None,
-    ) -> None:
+    def select_object(self, geom_object: GeomObjectPlot | EdgePlot, pt: "np.Array") -> None:
         """
         Select an object in the plotter.
 
@@ -589,12 +573,18 @@ class PlotterHelper:
             the PyVista actor and the PyGeometry ID, by default None.
         """
         added_actors = []
-        if children_list:
-            for edge_actor, _ in children_list:
-                edge_actor.SetVisibility(True)
-                edge_actor.prop.color = EDGE_COLOR
-        text = object_name
-        actor.prop.color = PICKED_COLOR
+
+        # Add edges if selecting an object
+        if isinstance(geom_object, GeomObjectPlot):
+            geom_object.actor.prop.color = PICKED_COLOR
+            children_list = geom_object.edges
+            for edge in children_list:
+                edge.actor.SetVisibility(True)
+                edge.actor.prop.color = EDGE_COLOR
+        elif isinstance(geom_object, EdgePlot):
+            geom_object.actor.prop.color = PICKED_EDGE_COLOR
+
+        text = geom_object.name
 
         label_actor = self._pl.scene.add_point_labels(
             [pt],
@@ -604,14 +594,12 @@ class PlotterHelper:
             render_points_as_spheres=False,
             show_points=False,
         )
-        if object_name not in self._picked_list:
-            self._picked_list.add(object_name)
+        if geom_object.name not in self._picked_list:
+            self._picked_list.add(geom_object.name)
         added_actors.append(label_actor)
-        self._picker_added_actors_map[actor.name] = added_actors
+        self._picker_added_actors_map[geom_object.actor.name] = added_actors
 
-    def unselect_object(
-        self, actor: pv.Actor, object_name: str, children_list: List[Tuple[pv.Actor, str]] = None
-    ) -> None:
+    def unselect_object(self, geom_object: GeomObjectPlot | EdgePlot) -> None:
         """
         Unselect an object in the plotter.
 
@@ -629,21 +617,26 @@ class PlotterHelper:
             the PyVista actor and the PyGeometry ID, by default None.
         """
         # remove actor from picked list and from scene
+        object_name = geom_object.name
         if object_name in self._picked_list:
             self._picked_list.remove(object_name)
-        actor.prop.color = DEFAULT_COLOR
 
-        if actor.name in self._picker_added_actors_map:
-            self._pl.scene.remove_actor(self._picker_added_actors_map[actor.name])
+        if isinstance(geom_object, GeomObjectPlot):
+            geom_object.actor.prop.color = DEFAULT_COLOR
+        elif isinstance(geom_object, EdgePlot):
+            geom_object.actor.prop.color = EDGE_COLOR
+
+        if geom_object.actor.name in self._picker_added_actors_map:
+            self._pl.scene.remove_actor(self._picker_added_actors_map[geom_object.actor.name])
 
             # remove actor and its children(edges) from the scene
-            if children_list:
-                for edge_actor, edge_id in children_list:
+            if isinstance(geom_object, GeomObjectPlot):
+                for edge in geom_object.edges:
                     # hide edges in the scene
-                    edge_actor.SetVisibility(False)
+                    edge.actor.SetVisibility(False)
                     # recursion
-                    self.unselect_object(edge_actor, edge_id)
-            self._picker_added_actors_map.pop(actor.name)
+                    self.unselect_object(edge)
+            self._picker_added_actors_map.pop(geom_object.actor.name)
 
     def picker_callback(self, actor: "pv.Actor") -> None:
         """
@@ -657,22 +650,27 @@ class PlotterHelper:
         pt = self._pl.scene.picked_point
 
         # if object is a body/component
-        if actor.name in self._actor_object_mapping:
-            body_edges_actors, body_name = self._actor_object_mapping[actor.name]
-            if body_name not in self._picked_list:
-                self.select_object(actor, body_name, pt, self._object_children_map[actor.name])
+        if actor in self._geom_object_actors_map:
+            body_plot = self._geom_object_actors_map[actor]
+            if body_plot.object.name not in self._picked_list:
+                self.select_object(body_plot, pt)
             else:
-                self.unselect_object(actor, body_name, self._object_children_map[actor.name])
+                self.unselect_object(body_plot)
 
         # if object is an edge
-        elif actor.name in self._body_edges_mapping and actor.GetVisibility():
-            _, edge_id = self._body_edges_mapping[actor.name]
-            if edge_id not in self._picked_list:
-                self.select_object(actor, edge_id, pt)
-                actor.prop.color = PICKED_EDGE_COLOR
+        elif actor in self._edge_actors_map and actor.GetVisibility():
+            edge = self._edge_actors_map[actor]
+            if edge.name not in self._picked_list:
+                self.select_object(edge, pt)
             else:
-                self.unselect_object(actor, edge_id)
+                self.unselect_object(edge)
                 actor.prop.color = EDGE_COLOR
+
+    def compute_edge_object_map(self) -> Dict[pv.Actor, EdgePlot]:
+        """Compute the mapping between plotter actors and EdgePlot objects."""
+        for object in self._geom_object_actors_map.values():
+            for edge in object.edges:
+                self._edge_actors_map[edge.actor] = edge
 
     def plot(
         self,
@@ -716,16 +714,16 @@ class PlotterHelper:
         """
         if isinstance(object, List) and not isinstance(object[0], pv.PolyData):
             logger.debug("Plotting objects in list...")
-            self._actor_object_mapping = self._pl.add_list(
+            self._geom_object_actors_map = self._pl.add_list(
                 object, merge_bodies, merge_component, **plotting_options
             )
         else:
-            self._actor_object_mapping = self._pl.add(
+            self._geom_object_actors_map = self._pl.add(
                 object, merge_bodies, merge_component, **plotting_options
             )
 
+        self.compute_edge_object_map()
         # Compute mapping between the objects and its edges.
-        self.edge_object_mapping()
 
         if view_2d is not None:
             self._pl.scene.view_vector(

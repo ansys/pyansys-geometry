@@ -32,7 +32,7 @@ from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials import Material
-from ansys.geometry.core.math import IDENTITY_MATRIX44, Matrix44, Point3D, UnitVector3D
+from ansys.geometry.core.math import IDENTITY_MATRIX44, Matrix44, UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, Distance, check_type
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.typing import Real
@@ -601,18 +601,6 @@ class MasterBody(IBody):
         ]
 
     @property
-    def skeleton(self) -> List[Point3D]:
-        """
-        Return a list with the starting and ending points of the body edges.
-
-        Returns
-        -------
-        List[Point3D]
-            List with the starting and ending points of the body edges.
-        """
-        return {edge.id: (edge.start_point, edge.end_point) for edge in self.edges}
-
-    @property
     def is_alive(self) -> bool:  # noqa: D102
         return self._is_alive
 
@@ -906,18 +894,6 @@ class Body(IBody):
             Edge(grpc_edge.id, CurveType(grpc_edge.curve_type), self, self._template._grpc_client)
             for grpc_edge in grpc_edges.edges
         ]
-
-    @property
-    def skeleton(self) -> List[Point3D]:
-        """
-        Return a list with the starting and ending points of the body edges.
-
-        Returns
-        -------
-        List[Point3D]
-            List with the starting and ending points of the body edges.
-        """
-        return {edge.id: (edge.start_point, edge.end_point) for edge in self.edges}
 
     @property
     def _is_alive(self) -> bool:  # noqa: D102
