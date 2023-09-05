@@ -15,7 +15,7 @@ Files: doc/*
 Copyright: 2023 ANSYS, Inc. and/or its affiliates.
 License: MIT
 
-Files: docker/README.rst
+Files: docker/*
 Copyright: 2023 ANSYS, Inc. and/or its affiliates.
 License: MIT
 

@@ -53,6 +53,7 @@ repos:
   rev: v0.1.2
   hooks:
     - id: add-license-headers
+      args: ["--loc", "./"]
 
 # this validates our github workflow files
 - repo: https://github.com/python-jsonschema/check-jsonschema
