@@ -148,7 +148,7 @@ autoapi_template_dir = get_autoapi_templates_dir_relative_path(Path(__file__))
 suppress_warnings = ["autoapi.python_import_resolution"]
 autoapi_python_use_implicit_namespaces = True
 autoapi_keep_files = True
-autoapi_render_in_single_page = ["class"]
+autoapi_render_in_single_page = ["class", "enum"]
 
 # Examples gallery customization
 nbsphinx_execute = "always"
