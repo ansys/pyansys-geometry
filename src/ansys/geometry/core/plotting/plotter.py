@@ -1,5 +1,5 @@
 """Provides for plotting various PyAnsys Geometry objects."""
-from typing import Any, Tuple
+from typing import Any
 
 from beartype.typing import Dict, List, Optional
 import numpy as np
@@ -225,21 +225,14 @@ class Plotter:
 
         self.add_sketch_polydata(sketch.sketch_polydata(), **plotting_options)
 
-    def add_body_edges(
-        self, body: GeomObjectPlot, **plotting_options
-    ) -> Dict[str, Tuple[pv.Actor, str]]:
+    def add_body_edges(self, body: GeomObjectPlot, **plotting_options) -> None:
         """
         Add the outer edges of a body to the plot.
 
         Parameters
         ----------
-        edges :  Dict[str, Tuple[Point3D, Point3D]]
-            Start and ending points of the edges of the body.
-
-        Returns
-        -------
-        Dict[str, Tuple[pv.Actor, str]]
-            Map of the actor edge name and edge ID.
+        body :  GeomObjectPlot
+            Body of which to add the edges.
         """
         edge_plot_list = []
         for edge in body.object.edges:
@@ -250,7 +243,9 @@ class Plotter:
             point_b = (stop.x.magnitude, stop.y.magnitude, stop.z.magnitude)
             line = pv.Line(point_a, point_b)
 
-            edge_actor = self.scene.add_mesh(line, line_width=10, color=EDGE_COLOR)
+            edge_actor = self.scene.add_mesh(
+                line, line_width=10, color=EDGE_COLOR, **plotting_options
+            )
             edge_actor.SetVisibility(False)
             edge_plot = EdgePlot(edge_actor, edge, body)
             edge_plot_list.append(edge_plot)
@@ -258,7 +253,7 @@ class Plotter:
 
     def add_body(
         self, body: Body, merge: Optional[bool] = False, **plotting_options: Optional[Dict]
-    ) -> Tuple[str, List[pv.Actor]]:
+    ) -> None:
         """
         Add a body to the scene.
 
@@ -273,11 +268,6 @@ class Plotter:
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments,
             see the :func:`pyvista.Plotter.add_mesh` method.
-
-        Returns
-        -------
-        Tuple[str,  Dict[str, Tuple[pv.Actor, str]]]
-            Name of the added PyVista actor.
         """
         # Use the default PyAnsys Geometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
@@ -354,7 +344,7 @@ class Plotter:
         merge_bodies: bool = False,
         merge_components: bool = False,
         **plotting_options,
-    ) -> Dict[str, str]:
+    ) -> Dict[pv.Actor, GeomObjectPlot]:
         """
         Add any type of object to the scene.
 
@@ -379,12 +369,11 @@ class Plotter:
 
         Returns
         -------
-        Mapping[str, str]
+        Dict[pv.Actor, GeomObjectPlot]
             Mapping between the pv.Actor and the PyAnsys Geometry object.
         """
         logger.debug(f"Adding object type {type(object)} to the PyVista plotter")
-        actor_name = None
-        body_edges_actors_map = None
+
         if isinstance(object, List) and isinstance(object[0], pv.PolyData):
             self.add_sketch_polydata(object, **plotting_options)
         elif isinstance(object, pv.PolyData):
@@ -407,7 +396,7 @@ class Plotter:
         merge_bodies: bool = False,
         merge_components: bool = False,
         **plotting_options,
-    ) -> Dict[str, str]:
+    ) -> Dict[pv.Actor, GeomObjectPlot]:
         """
         Add a list of any type of object to the scene.
 
@@ -432,8 +421,8 @@ class Plotter:
 
         Returns
         -------
-        Mapping[str, str]
-            Dictionary with the mapping between pv.Actor and PyAnsys Geometry objects.
+        Dict[pv.Actor, GeomObjectPlot]
+            Mapping between the pv.Actor and the PyAnsys Geometry objects.
         """
         for object in plotting_list:
             _ = self.add(object, merge_bodies, merge_components, **plotting_options)
@@ -562,15 +551,10 @@ class PlotterHelper:
 
         Parameters
         ----------
-        actor : pv.Actor
-            Actor on which to perform the operations.
-        object_name : str
-            Name of the Body to highlight.
+        geom_object : GeomObjectPlot | EdgePlot
+            Geometry object to select.
         pt : np.Array
             Set of points to determine the label position.
-        children_list : List[Tuple[pv.Actor, str]], optional
-            List of the edges associated to this actor, containing
-            the PyVista actor and the PyGeometry ID, by default None.
         """
         added_actors = []
 
@@ -608,13 +592,8 @@ class PlotterHelper:
 
         Parameters
         ----------
-        actor : pv.Actor
-            Actor that is currently highlighted.
-        object_name : str
-            Object name to remove.
-        children_list : List[Tuple[pv.Actor, str]], optional
-            List of the edges associated to this actor, containing
-            the PyVista actor and the PyGeometry ID, by default None.
+        geom_object : GeomObjectPlot | EdgePlot
+            Object to unselect.
         """
         # remove actor from picked list and from scene
         object_name = geom_object.name
@@ -667,7 +646,14 @@ class PlotterHelper:
                 actor.prop.color = EDGE_COLOR
 
     def compute_edge_object_map(self) -> Dict[pv.Actor, EdgePlot]:
-        """Compute the mapping between plotter actors and EdgePlot objects."""
+        """
+        Compute the mapping between plotter actors and EdgePlot objects.
+
+        Returns
+        -------
+        Dict[pv.Actor, EdgePlot]
+            Mapping between plotter actors and EdgePlot objects.
+        """
         for object in self._geom_object_actors_map.values():
             for edge in object.edges:
                 self._edge_actors_map[edge.actor] = edge
