@@ -1,6 +1,5 @@
 """Data types for plotting."""
-from typing import Any, List
-
+from beartype.typing import Any, List
 import pyvista as pv
 
 from ansys.geometry.core import LOG

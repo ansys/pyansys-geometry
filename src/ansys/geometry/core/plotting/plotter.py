@@ -1,7 +1,5 @@
 """Provides for plotting various PyAnsys Geometry objects."""
-from typing import Any, Union
-
-from beartype.typing import Dict, List, Optional
+from beartype.typing import Any, Dict, List, Optional, Union
 import numpy as np
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
