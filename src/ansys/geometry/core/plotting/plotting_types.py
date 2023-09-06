@@ -3,6 +3,7 @@ from typing import Any, List
 
 import pyvista as pv
 
+from ansys.geometry.core import LOG
 from ansys.geometry.core.designer.edge import Edge
 
 
@@ -102,13 +103,22 @@ class GeomObjectPlot:
         PyAnsys Geometry object that is represented.
     edges : List[EdgePlot], optional
         List of edges of the PyAnsys Geometry object, by default ``None``.
+    add_body_edges: bool, optional
+        Flag to specify if you want to be able to add edges.
     """
 
-    def __init__(self, actor: pv.Actor, object: Any, edges: List[EdgePlot] = None) -> None:
+    def __init__(
+        self,
+        actor: pv.Actor,
+        object: Any,
+        edges: List[EdgePlot] = None,
+        add_body_edges: bool = True,
+    ) -> None:
         """Initialize GeomObjectPlot variables."""
         self._actor = actor
         self._object = object
         self._edges = edges
+        self._add_body_edges = add_body_edges
 
     @property
     def actor(self) -> pv.Actor:
@@ -156,7 +166,12 @@ class GeomObjectPlot:
         edges : List[EdgePlot]
             List of the edges of this object.
         """
-        self._edges = edges
+        if self._add_body_edges:
+            self._edges = edges
+        else:
+            LOG.warning(
+                "To add edges to this body, it should be initialized with add_body_edges flag."
+            )
 
     @property
     def name(self) -> str:
@@ -169,3 +184,15 @@ class GeomObjectPlot:
             Name of the object.
         """
         return self._object.name
+
+    @property
+    def add_body_edges(self) -> bool:
+        """
+        Return whether you want to be able to add edges.
+
+        Returns
+        -------
+        bool
+            Flag to add edges.
+        """
+        return self._add_body_edges

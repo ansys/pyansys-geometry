@@ -225,9 +225,12 @@ class Plotter:
 
         self.add_sketch_polydata(sketch.sketch_polydata(), **plotting_options)
 
-    def add_body_edges(self, body: GeomObjectPlot, **plotting_options: Optional[dict]) -> None:
+    def add_body_edges(self, body_plot: GeomObjectPlot, **plotting_options: Optional[dict]) -> None:
         """
         Add the outer edges of a body to the plot.
+
+        This method has the side effect of adding the edges to the GeomObject that
+        you pass through the parameters.
 
         Parameters
         ----------
@@ -238,15 +241,15 @@ class Plotter:
             :func:`pyvista.Plotter.add_mesh` method.
         """
         edge_plot_list = []
-        for edge in body.object.edges:
+        for edge in body_plot.object.edges:
             line = pv.Line(edge.start_point, edge.end_point)
             edge_actor = self.scene.add_mesh(
                 line, line_width=10, color=EDGE_COLOR, **plotting_options
             )
             edge_actor.SetVisibility(False)
-            edge_plot = EdgePlot(edge_actor, edge, body)
+            edge_plot = EdgePlot(edge_actor, edge, body_plot)
             edge_plot_list.append(edge_plot)
-        body.edges = edge_plot_list
+        body_plot.edges = edge_plot_list
 
     def add_body(
         self, body: Body, merge: Optional[bool] = False, **plotting_options: Optional[Dict]
@@ -274,7 +277,7 @@ class Plotter:
         else:
             actor = self.scene.add_mesh(dataset, **plotting_options)
 
-        body_plot = GeomObjectPlot(actor=actor, object=body)
+        body_plot = GeomObjectPlot(actor=actor, object=body, add_body_edges=True)
         self.add_body_edges(body_plot)
         self._geom_object_actors_map[actor] = body_plot
 
