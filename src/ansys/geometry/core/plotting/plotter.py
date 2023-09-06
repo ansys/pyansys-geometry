@@ -1,5 +1,5 @@
 """Provides for plotting various PyAnsys Geometry objects."""
-from typing import Any
+from typing import Any, Union
 
 from beartype.typing import Dict, List, Optional
 import numpy as np
@@ -541,7 +541,7 @@ class PlotterHelper:
                 callback=self.picker_callback, use_actor=True, show=False, show_message=False
             )
 
-    def select_object(self, geom_object: GeomObjectPlot | EdgePlot, pt: "np.Array") -> None:
+    def select_object(self, geom_object: Union[GeomObjectPlot, EdgePlot], pt: "np.Array") -> None:
         """
         Select an object in the plotter.
 
