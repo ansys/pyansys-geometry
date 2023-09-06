@@ -47,7 +47,8 @@ class RepairTools:
         
         Returns
         ----------
-
+        list[SplitEdgeProblemAreas]
+            List of objects representing split edge problem areas.
         
         """
 
@@ -99,7 +100,7 @@ class RepairTools:
 
         return problemAreas
 
-    def FindInexactEdges(self, ids):
+    def FindInexactEdges(self, ids)-> list[InexactEdgeProblemAreas]:
         """
         This method find the inexact edge problem areas and returns a list of inexact
         edge problem areas objects.
@@ -112,7 +113,7 @@ class RepairTools:
         Returns
         ----------
         list[InExactEdgeProblemArea]
-            List of objects representing extra edge problem areas.
+            List of objects representing inexact edge problem areas.
         """
         client = GrpcClient()
         problemAreasResponse = RepairToolsStub(client.channel).FindInexactEdges(
@@ -128,7 +129,7 @@ class RepairTools:
 
         return problemAreas
 
-    def FindShortEdges(self, ids):
+    def FindShortEdges(self, ids)-> list[ShortEdgeProblemAreas]:
         """
         This method find the short edge problem areas and returns a list of short edge
         problem areas objects.
@@ -141,7 +142,7 @@ class RepairTools:
         Returns
         ----------
         list[ShortEdgeProblemArea]
-            List of objects representing extra edge problem areas.
+            List of objects representing short edge problem areas.
         """
         client = GrpcClient()
         problemAreasResponse = RepairToolsStub(client.channel).FindShortEdges(
@@ -157,9 +158,9 @@ class RepairTools:
 
         return problemAreas
     
-    def FindDuplicateFaces(self, ids):
+    def FindDuplicateFaces(self, ids)-> list[DuplicateFaceProblemAreas]:
         """
-        This method find the short edge problem areas and returns a list of short edge
+        This method find the duplicate face problem areas and returns a list of duplicate face
         problem areas objects.
 
         Parameters
@@ -169,8 +170,8 @@ class RepairTools:
 
         Returns
         ----------
-        list[ShortEdgeProblemArea]
-            List of objects representing extra edge problem areas.
+        list[DuplicateFaceProblemAreas]
+            List of objects representing duplicate face problem areas.
         """
         client = GrpcClient()
         problemAreasResponse = RepairToolsStub(client.channel).FindDuplicateFaces(
@@ -186,7 +187,7 @@ class RepairTools:
 
         return problemAreas
 
-    def FindMissingFaces(self, ids):
+    def FindMissingFaces(self, ids)-> list[MissingFaceProblemAreas]:
         """
         This method find the missing face problem areas and returns a list of missing face
         problem areas objects.
@@ -198,8 +199,8 @@ class RepairTools:
 
         Returns
         ----------
-        list[ShortEdgeProblemArea]
-            List of objects representing extra edge problem areas.
+        list[MissingFaceProblemAreas]
+            List of objects representing missing face problem areas.
         """
         client = GrpcClient()
         problemAreasResponse = RepairToolsStub(client.channel).FindMissingFaces(
@@ -215,9 +216,9 @@ class RepairTools:
 
         return problemAreas
     
-    def FindSmallFaces(self, ids):
+    def FindSmallFaces(self, ids)-> list[SmallFaceProblemAreas]:
         """
-        This method find the missing face problem areas and returns a list of missing face
+        This method find the small face problem areas and returns a list of small face
         problem areas objects.
 
         Parameters
@@ -227,8 +228,8 @@ class RepairTools:
 
         Returns
         ----------
-        list[ShortEdgeProblemArea]
-            List of objects representing extra edge problem areas.
+        list[SmallFaceProblemAreas]
+            List of objects representing small face problem areas.
         """
         client = GrpcClient()
         problemAreasResponse = RepairToolsStub(client.channel).FindSmallFaces(
@@ -244,9 +245,9 @@ class RepairTools:
 
         return problemAreas
     
-    def FindStitchFaces(self, ids):
+    def FindStitchFaces(self, ids)-> list[StitchFaceProblemAreas]:
         """
-        This method find the missing face problem areas and returns a list of missing face
+        This method find the stitch face problem areas and returns a list of stitch face
         problem areas objects.
 
         Parameters
@@ -256,8 +257,8 @@ class RepairTools:
 
         Returns
         ----------
-        list[ShortEdgeProblemArea]
-            List of objects representing extra edge problem areas.
+        list[StitchFaceProblemAreas]
+            List of objects representing stitch face problem areas.
         """
         client = GrpcClient()
         problemAreasResponse = RepairToolsStub(client.channel).FindStitchFaces(
