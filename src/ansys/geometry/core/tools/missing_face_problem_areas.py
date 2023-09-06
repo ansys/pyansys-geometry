@@ -13,20 +13,20 @@ class MissingFaceProblemAreas:
 
     Attributes:
         _id (str): A unique identifier for the problem area.
-        _design_edges (list[str]): A list of faces associated with the design.
+        _edges (list[str]): A list of faces associated with the design.
     """
 
-    def __init__(self, id: str, design_edges: list[str]):
+    def __init__(self, id: str, edges: list[str]):
         """
-        Initialize a new instance of the extra edge problem area class.
+        Initialize a new instance of the missing face problem area class.
 
         :param id: A unique identifier for the design.
         :type id: str
-        :param design_edges: A list of edges associated with the design.
-        :type design_edges: list[str]
+        :param edges: A list of edges associated with the design.
+        :type edges: list[str]
         """
         self._id = id
-        self._design_edges = design_edges
+        self._edges = edges
 
     @property
     def id(self) -> str:
@@ -34,9 +34,9 @@ class MissingFaceProblemAreas:
         return self._id
 
     @property
-    def design_edges(self) -> list[str]:
+    def edges(self) -> list[str]:
         """The list of the ids of the edges connected to this problem area."""
-        return self._design_edges
+        return self._edges
 
     def Fix(self):
         """Fix the problem area."""

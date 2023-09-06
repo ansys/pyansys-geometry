@@ -13,20 +13,20 @@ class SmallFaceProblemAreas:
 
     Attributes:
         _id (str): A unique identifier for the problem area.
-        _design_edges (list[str]): A list of faces associated with the design.
+        _faces (list[str]): A list of faces associated with the design.
     """
 
-    def __init__(self, id: str, design_edges: list[str]):
+    def __init__(self, id: str, faces: list[str]):
         """
-        Initialize a new instance of the extra edge problem area class.
+        Initialize a new instance of the small face problem area class.
 
         :param id: A unique identifier for the design.
         :type id: str
-        :param design_edges: A list of edges associated with the design.
+        :param design_edges: A list of faces associated with the design.
         :type design_edges: list[str]
         """
         self._id = id
-        self._design_edges = design_edges
+        self._faces = faces
 
     @property
     def id(self) -> str:
@@ -34,9 +34,9 @@ class SmallFaceProblemAreas:
         return self._id
 
     @property
-    def design_edges(self) -> list[str]:
+    def faces(self) -> list[str]:
         """The list of the ids of the edges connected to this problem area."""
-        return self._design_edges
+        return self._faces
 
     def Fix(self):
         """Fix the problem area."""

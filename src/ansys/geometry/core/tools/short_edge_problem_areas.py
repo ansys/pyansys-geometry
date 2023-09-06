@@ -13,20 +13,20 @@ class ShortEdgeProblemAreas:
 
     Attributes:
         _id (str): A unique identifier for the problem area.
-        _design_edges (list[str]): A list of edges associated with the design.
+        _edges (list[str]): A list of edges associated with the design.
     """
 
-    def __init__(self, id: str, design_edges: list[str]):
+    def __init__(self, id: str, edges: list[str]):
         """
         Initialize a new instance of the short edge problem area class.
 
         :param id: A unique identifier for the design.
         :type id: str
-        :param design_edges: A list of edges associated with the design.
-        :type design_edges: list[str]
+        :param edges: A list of edges associated with the design.
+        :type edges: list[str]
         """
-        self.id = id
-        self.design_edges = design_edges
+        self._id = id
+        self._edges = edges
 
     @property
     def id(self) -> str:
