@@ -74,3 +74,11 @@ License: MIT
 Files: tox.ini
 Copyright: 2023 ANSYS, Inc. and/or its affiliates.
 License: MIT
+
+Files: *.json
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: *.png
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
