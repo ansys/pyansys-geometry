@@ -550,7 +550,7 @@ class PlotterHelper:
 
         Parameters
         ----------
-        geom_object : GeomObjectPlot | EdgePlot
+        geom_object : Union[GeomObjectPlot, EdgePlot]
             Geometry object to select.
         pt : np.Array
             Set of points to determine the label position.
@@ -582,7 +582,7 @@ class PlotterHelper:
         added_actors.append(label_actor)
         self._picker_added_actors_map[geom_object.actor.name] = added_actors
 
-    def unselect_object(self, geom_object: GeomObjectPlot | EdgePlot) -> None:
+    def unselect_object(self, geom_object: Union[GeomObjectPlot, EdgePlot]) -> None:
         """
         Unselect an object in the plotter.
 
@@ -591,7 +591,7 @@ class PlotterHelper:
 
         Parameters
         ----------
-        geom_object : GeomObjectPlot | EdgePlot
+        geom_object : Union[GeomObjectPlot, EdgePlot]
             Object to unselect.
         """
         # remove actor from picked list and from scene
