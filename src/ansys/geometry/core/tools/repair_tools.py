@@ -5,7 +5,8 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FindSplitEdgesRequest,
     FindDuplicateFacesRequest,
     FindSmallFacesRequest,
-    FindMissingFacesRequest
+    FindMissingFacesRequest,
+    FindStitchFacesRequest
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
 from google.protobuf.wrappers_pb2 import DoubleValue
@@ -18,6 +19,7 @@ from ansys.geometry.core.tools.short_edge_problem_areas import ShortEdgeProblemA
 from ansys.geometry.core.tools.split_edge_problem_areas import SplitEdgeProblemAreas
 from ansys.geometry.core.tools.duplicate_face_problem_areas import DuplicateFaceProblemAreas
 from ansys.geometry.core.tools.small_face_problem_areas import SmallFaceProblemAreas
+from ansys.geometry.core.tools.stitch_face_problem_areas import StitchFaceProblemAreas
 from ansys.geometry.core.tools.missing_face_problem_areas import MissingFaceProblemAreas
 
 
@@ -201,7 +203,7 @@ class RepairTools:
         """
         client = GrpcClient()
         problemAreasResponse = RepairToolsStub(client.channel).FindMissingFaces(
-            FindMissingFacesRequest(faces=monikers)
+            FindMissingFacesRequest(faces=ids)
         )
         problemAreas = []
         for res in problemAreasResponse.result:
@@ -230,14 +232,14 @@ class RepairTools:
         """
         client = GrpcClient()
         problemAreasResponse = RepairToolsStub(client.channel).FindSmallFaces(
-            FindSmallFacesRequest(faces=monikers)
+            FindSmallFacesRequest(selection=ids)
         )
         problemAreas = []
         for res in problemAreasResponse.result:
             connectedEdges = []
             for face_moniker in res.face_monikers:
                 connectedEdges.append(face_moniker)
-            problemArea = DuplicateFaceProblemAreas(res.id, connectedEdges)
+            problemArea = SmallFaceProblemAreas(res.id, connectedEdges)
             problemAreas.append(problemArea)
 
         return problemAreas
@@ -258,15 +260,15 @@ class RepairTools:
             List of objects representing extra edge problem areas.
         """
         client = GrpcClient()
-        problemAreasResponse = RepairToolsStub(client.channel).FindSmallFaces(
-            FindSmallFacesRequest(faces=monikers)
+        problemAreasResponse = RepairToolsStub(client.channel).FindStitchFaces(
+            FindStitchFacesRequest(faces=ids)
         )
         problemAreas = []
         for res in problemAreasResponse.result:
             connectedEdges = []
-            for face_moniker in res.face_monikers:
+            for face_moniker in res.body_monikers:
                 connectedEdges.append(face_moniker)
-            problemArea = DuplicateFaceProblemAreas(res.id, connectedEdges)
+            problemArea = StitchFaceProblemAreas(res.id, connectedEdges)
             problemAreas.append(problemArea)
 
         return problemAreas
