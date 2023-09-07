@@ -167,6 +167,9 @@ jobs:
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
+        if: matrix.docker-image == 'windows-latest'
+        with:
+          files: .cov/xml
 
       - name: Stop the Geometry service
         if: always()
