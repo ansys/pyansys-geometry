@@ -84,7 +84,7 @@ doc = [
     "pyvista[trame]==0.42.0",
     "requests==2.31.0",
     "sphinx==7.2.5",
-    "sphinx-autoapi @ https://github.com/jorgepiloto/sphinx-autoapi@feat/single-page-option",
+    "sphinx-autoapi @ git+https://github.com/jorgepiloto/sphinx-autoapi@feat/single-page-option",
     "sphinx-autodoc-typehints==1.24.0",
     "sphinx-copybutton==0.5.2",
     "sphinx_design==0.5.0",
