@@ -47,13 +47,16 @@ PyAnsys Geometry is provided with an internal launcher that is capable of handli
 launching the Geometry service locally. The only requirements are that:
 
 * Docker is installed on your machine.
-* You have access to the PyAnsys GitHub container registry, where the Geometry service image is hosted.
+* You have access to the Geometry service image.
 
-.. caution::
+.. note::
 
-   The Geometry service is currently available only as a Windows Docker image. The development
+   The Geometry service is mainly available as a Windows Docker image. The development
    team is working on getting the Linux Docker container available as soon as possible. In the meantime,
    make sure that your Docker engine is configured to run Windows Docker images.
+
+Using the GitHub Container Registry image
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 First, bear in mind that you have to be `authenticated to ghcr.io
 <https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry>`_.
@@ -69,6 +72,15 @@ The following OS-dependent tags are available:
 * ``windows-latest-unstable``
 * ``linux-latest``
 * ``linux-latest-unstable``
+
+Build your own Geometry service image
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Access the ``docker`` folder in this repository and go through the instructions
+presented in the `main README file <https://github.com/ansys/pyansys-geometry/blob/main/docker/README.rst>`_.
+
+Launching the Geometry service image
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Next, you will be ready to run the Geometry service directly from PyAnsys Geometry:
 
