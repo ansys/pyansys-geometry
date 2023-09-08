@@ -35,17 +35,19 @@ from ansys.api.geometry.v0.models_pb2 import Polygon as GRPCPolygon
 from ansys.api.geometry.v0.models_pb2 import Tessellation
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple
 
-from ansys.geometry.core.math import Frame, Matrix44, Plane, Point2D, Point3D, UnitVector3D
-from ansys.geometry.core.misc import DEFAULT_UNITS
-from ansys.geometry.core.sketch import (
-    Arc,
-    Polygon,
-    SketchCircle,
-    SketchEdge,
-    SketchEllipse,
-    SketchFace,
-    SketchSegment,
-)
+from ansys.geometry.core.math.frame import Frame
+from ansys.geometry.core.math.matrix import Matrix44
+from ansys.geometry.core.math.plane import Plane
+from ansys.geometry.core.math.point import Point2D, Point3D
+from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+from ansys.geometry.core.sketch.arc import Arc
+from ansys.geometry.core.sketch.circle import SketchCircle
+from ansys.geometry.core.sketch.edge import SketchEdge
+from ansys.geometry.core.sketch.ellipse import SketchEllipse
+from ansys.geometry.core.sketch.face import SketchFace
+from ansys.geometry.core.sketch.polygon import Polygon
+from ansys.geometry.core.sketch.segment import SketchSegment
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import PolyData

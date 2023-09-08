@@ -25,9 +25,12 @@ import numpy as np
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
 
-from ansys.geometry.core.designer import Body, Component, Design, MasterBody
+from ansys.geometry.core.designer.body import Body, MasterBody
+from ansys.geometry.core.designer.component import Component
+from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.logger import LOG as logger
-from ansys.geometry.core.math import Frame, Plane
+from ansys.geometry.core.math.frame import Frame
+from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.plotting.plotting_types import EdgePlot, GeomObjectPlot
 from ansys.geometry.core.plotting.trame_gui import _HAS_TRAME, TrameVisualizer
 from ansys.geometry.core.plotting.widgets import (
@@ -38,7 +41,7 @@ from ansys.geometry.core.plotting.widgets import (
     ViewButton,
     ViewDirection,
 )
-from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.sketch.sketch import Sketch
 
 DEFAULT_COLOR = "#D6F7D1"
 """Default color we use for the plotter actors."""

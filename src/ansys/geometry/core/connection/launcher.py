@@ -25,6 +25,7 @@ import os
 from beartype.typing import TYPE_CHECKING, Dict, Optional
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
+from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
 from ansys.geometry.core.connection.defaults import DEFAULT_PIM_CONFIG, DEFAULT_PORT
 from ansys.geometry.core.connection.local_instance import (
     _HAS_DOCKER,
@@ -33,7 +34,7 @@ from ansys.geometry.core.connection.local_instance import (
 )
 from ansys.geometry.core.connection.product_instance import prepare_and_start_backend
 from ansys.geometry.core.logger import LOG as logger
-from ansys.geometry.core.misc import check_type
+from ansys.geometry.core.misc.checks import check_type
 
 try:
     import ansys.platform.instancemanagement as pypim
@@ -42,7 +43,6 @@ try:
 except ModuleNotFoundError:  # pragma: no cover
     _HAS_PIM = False
 
-from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler

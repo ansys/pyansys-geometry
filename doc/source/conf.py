@@ -84,6 +84,7 @@ intersphinx_mapping = {
     "scipy": ("https://docs.scipy.org/doc/scipy/", None),
     "pyvista": ("https://docs.pyvista.org/", None),
     "grpc": ("https://grpc.github.io/grpc/python/", None),
+    "beartype": ("https://beartype.readthedocs.io/en/stable/", None),
     # kept here as an example
     # "matplotlib": ("https://matplotlib.org/stable", None),
     "pypim": ("https://pypim.docs.pyansys.com/version/dev", None),

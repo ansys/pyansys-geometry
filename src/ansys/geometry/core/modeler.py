@@ -38,7 +38,8 @@ from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.logger import LOG as logger
-from ansys.geometry.core.misc import ImportOptions, check_type
+from ansys.geometry.core.misc.checks import check_type
+from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover

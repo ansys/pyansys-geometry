@@ -23,8 +23,8 @@
 from beartype.typing import Any, List
 import pyvista as pv
 
-from ansys.geometry.core import LOG
 from ansys.geometry.core.designer.edge import Edge
+from ansys.geometry.core.logger import LOG
 
 
 class EdgePlot:

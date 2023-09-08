@@ -27,13 +27,9 @@ import numpy as np
 from pint import Quantity, Unit
 
 from ansys.geometry.core.math.matrix import Matrix44
-from ansys.geometry.core.misc import (
-    DEFAULT_UNITS,
-    UNITS,
-    PhysicalQuantity,
-    check_ndarray_is_float_int,
-    check_type,
-)
+from ansys.geometry.core.misc.checks import check_ndarray_is_float_int, check_type
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+from ansys.geometry.core.misc.units import UNITS, PhysicalQuantity
 from ansys.geometry.core.typing import RealSequence
 
 DEFAULT_POINT2D_VALUES = [np.nan, np.nan]
