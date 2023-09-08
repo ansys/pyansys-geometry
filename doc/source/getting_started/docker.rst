@@ -23,17 +23,11 @@ Running Windows Docker containers
 To run the Windows Docker container for the Geometry service, ensure that you follow
 these steps when installing Docker:
 
-#. Install Docker Desktop 4.13.1. To download this version, use the Windows download link
-   in the `4.13.1 <https://docs.docker.com/desktop/release-notes/#4131>`_ section of the
-   Docker release notes. Newer Docker Desktop versions present problems when running
-   Windows Docker containers.
+#. Install `Docker Desktop <https://docs.docker.com/desktop/install/windows-install/>`.
 
 #. When prompted for **Use WSL2 instead of Hyper-V (recommended)**, clear this checkbox.
 
 #. Once the installation finishes, start Docker Desktop.
-
-#. Go to **Settings > Software updates**, clear the **Automatically check for updates** checkbox, and
-   click **Apply & restart**.
 
 #. On the Windows taskbar, go to the **Show hidden icons** section, right-click in the Docker Desktop app, and
    select **Switch to Windows containers**.
@@ -50,7 +44,7 @@ There are two options for users to install the PyAnsys Geometry image:
 
 .. _ref_docker_ghcr:
 
-GitHub Container registry
+GitHub Container Registry
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. note::
