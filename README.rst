@@ -171,20 +171,6 @@ Then, install PyAnsys Geometry with:
 
    python -m pip install ansys-geometry-core
 
-.. caution::
-
-    PyAnsys Geometry is currently hosted in a private PyPI repository. You must provide the index
-    URL to the private PyPI repository:
-
-    * Index URL: ``https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/``
-
-    If access to this package registry is needed, email `pyansys.core@ansys.com <mailto:pyansys.core@ansys.com>`_
-    to request access. The PyAnsys team can provide you a read-only token to be inserted in ``${PRIVATE_PYPI_ACCESS_TOKEN}``.
-    Once you have it, run the following command:
-
-    .. code:: bash
-
-        pip install ansys-geometry-core --index-url=https://${PRIVATE_PYPI_ACCESS_TOKEN}@pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/
 
 Install in developer mode
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -252,10 +238,9 @@ To install PyAnsys Geometry in developer mode, perform these steps:
 Install in offline mode
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-If you lack an internet connection on your installation machine (or you do not have access to the
-private Ansys PyPI packages repository), you should install PyAnsys Geometry by downloading the wheelhouse
-archive from the `Releases Page <https://github.com/ansys/pyansys-geometry/releases>`_ for your
-corresponding machine architecture.
+If you lack an internet connection on your installation machine, you should install PyAnsys Geometry
+by downloading the wheelhouse archive from the `Releases <https://github.com/ansys/pyansys-geometry/releases>`_
+page for your corresponding machine architecture.
 
 Each wheelhouse archive contains all the Python wheels necessary to install PyAnsys Geometry from scratch on Windows,
 Linux, and MacOS from Python 3.8 to 3.11. You can install this on an isolated system with a fresh Python

@@ -22,7 +22,7 @@ Note that your local port number might differ from the one shown in the precedin
 
 Verify the connection
 ---------------------
-If you want to verify that the connection is successful, check the status of the client
+If you want to verify that the connection is successful, request the status of the client
 connection inside your ``Modeler`` object:
 
 .. code:: pycon
