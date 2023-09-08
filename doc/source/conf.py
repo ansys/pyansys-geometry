@@ -247,3 +247,11 @@ def prepare_jinja_env(jinja_env) -> None:
 
 
 autoapi_prepare_jinja_env = prepare_jinja_env
+nitpick_ignore_regex = [
+    (r"py:.*", r"beartype.typing.*"),
+    (r"py:.*", r"ansys.geometry.core.typing.*"),
+    (r"py:.*", r"Real"),
+    (r"py:.*", r"RealSequence"),
+    (r"py:.*", r"GRPC.*"),
+    (r"py:.*", r"ansys.api.geometry.v0.*"),
+]

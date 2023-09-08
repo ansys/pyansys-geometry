@@ -65,7 +65,6 @@ if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
 
     from ansys.geometry.core.designer.component import Component
-    from ansys.geometry.core.designer.design import MidSurfaceOffsetType
 
 
 @unique

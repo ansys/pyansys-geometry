@@ -28,10 +28,10 @@ from ansys.api.geometry.v0.models_pb2 import EntityIdentifier
 from beartype.typing import TYPE_CHECKING, List
 from pint import Quantity
 
-from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.math import Point3D
-from ansys.geometry.core.misc import DEFAULT_UNITS
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
