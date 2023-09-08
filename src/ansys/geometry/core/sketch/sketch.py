@@ -25,8 +25,11 @@ from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, Dict, List, Optional, Union
 from pint import Quantity
 
-from ansys.geometry.core.math import ZERO_POINT2D, Plane, Point2D, UnitVector3D, Vector2D, Vector3D
-from ansys.geometry.core.misc import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.math.constants import ZERO_POINT2D
+from ansys.geometry.core.math.plane import Plane
+from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector2D, Vector3D
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.box import Box
 from ansys.geometry.core.sketch.circle import SketchCircle

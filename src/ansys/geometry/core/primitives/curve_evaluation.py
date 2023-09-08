@@ -22,7 +22,8 @@
 """Provides for creating and managing a curve."""
 from functools import cached_property
 
-from ansys.geometry.core.math import Point3D, Vector3D
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import Vector3D
 from ansys.geometry.core.typing import Real
 
 

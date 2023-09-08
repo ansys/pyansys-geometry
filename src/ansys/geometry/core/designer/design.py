@@ -44,8 +44,8 @@ from beartype.typing import Dict, List, Optional, Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.connection import (
-    GrpcClient,
+from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.conversions import (
     grpc_frame_to_frame,
     grpc_matrix_to_matrix,
     plane_to_grpc_plane,
@@ -61,17 +61,13 @@ from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
-from ansys.geometry.core.math import (
-    UNITVECTOR3D_X,
-    UNITVECTOR3D_Y,
-    ZERO_POINT3D,
-    Plane,
-    Point3D,
-    UnitVector3D,
-    Vector3D,
-)
-from ansys.geometry.core.misc import DEFAULT_UNITS, Distance
+from ansys.geometry.core.materials.material import Material
+from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
+from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, ZERO_POINT3D
+from ansys.geometry.core.math.plane import Plane
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.typing import RealSequence
 
 
