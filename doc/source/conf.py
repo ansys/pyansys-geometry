@@ -79,14 +79,13 @@ extensions = [
 # Intersphinx mapping
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "pint": ("https://pint.readthedocs.io/en/stable", None),
     "numpy": ("https://numpy.org/devdocs", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/", None),
     "pyvista": ("https://docs.pyvista.org/", None),
     "grpc": ("https://grpc.github.io/grpc/python/", None),
+    "pint": ("https://pint.readthedocs.io/en/stable", None),
     "beartype": ("https://beartype.readthedocs.io/en/stable/", None),
-    # kept here as an example
-    # "matplotlib": ("https://matplotlib.org/stable", None),
+    "docker": ("https://docker-py.readthedocs.io/en/stable/", None),
     "pypim": ("https://pypim.docs.pyansys.com/version/dev", None),
 }
 
@@ -248,10 +247,12 @@ def prepare_jinja_env(jinja_env) -> None:
 
 autoapi_prepare_jinja_env = prepare_jinja_env
 nitpick_ignore_regex = [
+    # Ignore typing
+    (r"py:.*", r"optional"),
     (r"py:.*", r"beartype.typing.*"),
     (r"py:.*", r"ansys.geometry.core.typing.*"),
-    (r"py:.*", r"Real"),
-    (r"py:.*", r"RealSequence"),
-    (r"py:.*", r"GRPC.*"),
+    (r"py:.*", r"Real.*"),
+    # Ignore API package
     (r"py:.*", r"ansys.api.geometry.v0.*"),
+    (r"py:.*", r"GRPC.*"),
 ]

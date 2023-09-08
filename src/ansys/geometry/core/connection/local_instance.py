@@ -28,7 +28,7 @@ from beartype import beartype as check_input_types
 from beartype.typing import Optional, Tuple, Union
 
 try:
-    import docker
+    from docker.client import DockerClient
     from docker.errors import APIError, ContainerError, ImageNotFound
     from docker.models.containers import Container
 
@@ -97,7 +97,7 @@ class LocalDockerInstance:
         OS.
     """
 
-    __DOCKER_CLIENT__: "docker.DockerClient" = None
+    __DOCKER_CLIENT__: "DockerClient" = None
     """
     Docker client class variable. The default is ``None``, in which case lazy
     initialization is used.
@@ -110,7 +110,7 @@ class LocalDockerInstance:
 
     @staticmethod
     @_docker_python_available
-    def docker_client() -> "docker.DockerClient":
+    def docker_client() -> "DockerClient":
         """
         Get the initialized ``__DOCKER_CLIENT__`` object.
 
@@ -121,11 +121,11 @@ class LocalDockerInstance:
 
         Returns
         -------
-        docker.DockerClient
+        ~docker.client.DockerClient
             Initialized Docker client.
         """
         if not LocalDockerInstance.__DOCKER_CLIENT__:
-            LocalDockerInstance.__DOCKER_CLIENT__ = docker.from_env()
+            LocalDockerInstance.__DOCKER_CLIENT__ = DockerClient.from_env()
 
         return LocalDockerInstance.__DOCKER_CLIENT__
 

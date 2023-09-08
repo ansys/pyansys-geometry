@@ -61,7 +61,7 @@ def launch_modeler(**kwargs: Optional[Dict]) -> "Modeler":
 
     Returns
     -------
-    ansys.geometry.core.Modeler
+    ansys.geometry.core.modeler.Modeler
         Pythonic interface for geometry modeling.
 
     Examples
@@ -207,7 +207,7 @@ def launch_modeler_with_discovery_and_pimlight(version: Optional[str] = None) ->
 
     Returns
     -------
-    ansys.geometry.core.Modeler
+    ansys.geometry.core.modeler.Modeler
         Instance of Modeler.
     """
     return _launch_pim_instance(
@@ -236,7 +236,7 @@ def launch_modeler_with_geometry_service_and_pimlight(version: Optional[str] = N
 
     Returns
     -------
-    ansys.geometry.core.Modeler
+    ansys.geometry.core.modeler.Modeler
         Instance of Modeler.
     """
     return _launch_pim_instance(
@@ -265,7 +265,7 @@ def launch_modeler_with_spaceclaim_and_pimlight(version: Optional[str] = None) -
 
     Returns
     -------
-    ansys.geometry.core.Modeler
+    ansys.geometry.core.modeler.Modeler
         Instance of Modeler.
     """
     return _launch_pim_instance(
