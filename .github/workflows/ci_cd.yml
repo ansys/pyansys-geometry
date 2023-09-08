@@ -214,7 +214,7 @@ jobs:
           pip install --upgrade build wheel
           pip install .[doc]
           # TODO - To be removed once it is published
-          pip uninstall sphinx-autoapi
+          pip uninstall --yes sphinx-autoapi
           pip install "sphinx-autoapi @ git+https://github.com/jorgepiloto/sphinx-autoapi@feat/single-page-option"
 
       - name: Login to GitHub Container Registry
