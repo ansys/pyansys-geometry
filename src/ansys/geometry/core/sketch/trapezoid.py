@@ -28,8 +28,11 @@ from pint import Quantity
 import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
-from ansys.geometry.core.math import ZERO_POINT2D, Matrix33, Point2D
-from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
+from ansys.geometry.core.math.constants import ZERO_POINT2D
+from ansys.geometry.core.math.matrix import Matrix33
+from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import SketchSegment
 from ansys.geometry.core.typing import Real

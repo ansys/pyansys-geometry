@@ -21,3 +21,6 @@ PyPI
 PyVista
 SciPy
 subpackage
+launch_modeler_with_discovery
+launch_modeler_with_spaceclaim
+launch_modeler_with_geometry_service

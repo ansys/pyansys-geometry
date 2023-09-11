@@ -106,8 +106,8 @@ dictionary where the key is the name of the created logger.
 These instance loggers inherit the ``PyAnsys_Geometry_global`` output handlers and
 logging level unless otherwise specified. The way this logger works is very
 similar to the global logger. If you want to add a file handler, you can use
-the :func:`log_to_file() <PyGeometryCustomAdapter.log_to_file>` method. If you want
-to change the log level, you can use the :func:`logger.Logging.setLevel` method.
+the :meth:`log_to_file() <PyGeometryCustomAdapter.log_to_file>` method. If you want
+to change the log level, you can use the :meth:`~logging.Logger.setLevel` method.
 
 Here is an example of how you can use this logger:
 
@@ -510,7 +510,7 @@ class Logger:
 
         Returns
         -------
-        logging.logger
+        logging.Logger
             Logger class.
         """
         name = self.logger.name + "." + sufix
@@ -605,8 +605,8 @@ def addfile_handler(logger, filename=FILE_NAME, level=LOG_LEVEL, write_headers=F
 
     Returns
     -------
-    logger
-        Logger or Logger object.
+    Logger
+        :class:`Logger` or :class:`logging.Logger` object.
     """
     file_handler = logging.FileHandler(filename)
     file_handler.setLevel(level)
@@ -643,8 +643,8 @@ def add_stdout_handler(logger, level=LOG_LEVEL, write_headers=False):
 
     Returns
     -------
-    logger
-        Logger or Logger object.
+    Logger
+        :class:`Logger` or :class:`logging.Logger` object.
     """
     std_out_handler = logging.StreamHandler()
     std_out_handler.setLevel(level)

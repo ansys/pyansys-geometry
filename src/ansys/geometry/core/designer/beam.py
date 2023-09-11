@@ -23,8 +23,10 @@
 
 from beartype.typing import TYPE_CHECKING, Union
 
-from ansys.geometry.core.math import Point3D, UnitVector3D
-from ansys.geometry.core.misc import Distance, check_type
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc.checks import check_type
+from ansys.geometry.core.misc.measurements import Distance
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.component import Component

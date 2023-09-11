@@ -27,8 +27,9 @@ import numpy as np
 from pint import Quantity
 import pyvista as pv
 
-from ansys.geometry.core.math import Point2D
-from ansys.geometry.core.misc import UNITS, Angle, Distance
+from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.misc.measurements import Angle, Distance
+from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import SketchSegment

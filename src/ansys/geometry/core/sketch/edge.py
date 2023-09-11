@@ -25,10 +25,10 @@ from beartype.typing import TYPE_CHECKING
 from pint import Quantity
 import pyvista as pv
 
-from ansys.geometry.core.math import Point2D
+from ansys.geometry.core.math.point import Point2D
 
 if TYPE_CHECKING:
-    from ansys.geometry.core.math import Plane
+    from ansys.geometry.core.math.plane import Plane
 
 
 class SketchEdge:
