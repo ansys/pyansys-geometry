@@ -26,7 +26,7 @@ import os
 from pyvista import Plotter
 from vtk import vtkActor, vtkButtonWidget, vtkPNGReader
 
-from ansys.geometry.core.misc import DEFAULT_UNITS
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
 
 

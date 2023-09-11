@@ -29,7 +29,9 @@ from pint import Quantity
 
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point2D, Point3D
-from ansys.geometry.core.misc import UNITS, Accuracy, check_ndarray_is_float_int
+from ansys.geometry.core.misc.accuracy import Accuracy
+from ansys.geometry.core.misc.checks import check_ndarray_is_float_int
+from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.typing import Real, RealSequence
 
 
@@ -171,7 +173,7 @@ class Vector3D(np.ndarray):
 
         Returns
         -------
-        Quantity
+        ~pint.Quantity
             Angle between these two 3D vectors.
         """
         if v.is_zero or self.is_zero:
@@ -371,7 +373,7 @@ class Vector2D(np.ndarray):
 
         Returns
         -------
-        Quantity
+        ~pint.Quantity
             Angle between these two 2D vectors.
         """
         if v.is_zero or self.is_zero:

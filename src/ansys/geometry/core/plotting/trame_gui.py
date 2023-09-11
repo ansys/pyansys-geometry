@@ -50,7 +50,7 @@ class TrameVisualizer:
 
         Parameters
         ----------
-        plotter : pv.Plotter
+        plotter : ~pyvista.Plotter
             PyVista plotter with the rendered mesh.
         """
         self.state.trame__title = "PyAnsys Geometry Viewer"

@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides functions for performing common checks."""
-from beartype.typing import Optional, Tuple, Union
+from beartype.typing import Any, Optional, Tuple, Union
 import numpy as np
 from pint import Unit
 
@@ -205,7 +205,7 @@ def check_type_equivalence(input: object, expected: object) -> None:
         )
 
 
-def check_type(input: object, expected_type: Union[type, Tuple[type, ...]]) -> None:
+def check_type(input: object, expected_type: Union[type, Tuple[type, Any]]) -> None:
     """
     Check if an input object is of the same type as expected types.
 

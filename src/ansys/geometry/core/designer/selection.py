@@ -26,7 +26,7 @@ from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from beartype import beartype as check_input_types
 from beartype.typing import List, Optional
 
-from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.beam import Beam
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.designpoint import DesignPoint

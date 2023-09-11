@@ -31,11 +31,12 @@ from ansys.api.geometry.v0.models_pb2 import EntityIdentifier
 from beartype.typing import TYPE_CHECKING, List
 from pint import Quantity
 
-from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.math import Point3D, UnitVector3D
-from ansys.geometry.core.misc import DEFAULT_UNITS
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -249,10 +250,9 @@ class Face:
         Returns
         -------
         UnitVector3D
-            :class:`UnitVector3D <ansys.geometry.core.math.vector.unitVector3D>`
-            object evaluated at the given U and V coordinates.
-            This :class:`UnitVector3D <ansys.geometry.core.math.vector.unitVector3D>`
-            object is perpendicular to the surface at the given UV coordinates.
+            :class:`UnitVector3D` object evaluated at the given U and V coordinates.
+            This :class:`UnitVector3D` object is perpendicular to the surface at the
+            given UV coordinates.
         """
         self._grpc_client.log.debug(f"Requesting face normal from server with (u,v)=({u},{v}).")
         response = self._faces_stub.GetNormal(GetNormalRequest(id=self.id, u=u, v=v)).direction
@@ -280,8 +280,8 @@ class Face:
 
         Returns
         -------
-        Point
-            :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+        Point3D
+            :class:`Point3D`
             object evaluated at the given UV coordinates.
         """
         self._grpc_client.log.debug(f"Requesting face point from server with (u,v)=({u},{v}).")
