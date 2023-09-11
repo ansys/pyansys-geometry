@@ -253,4 +253,6 @@ nitpick_ignore_regex = [
     (r"py:.*", r"ansys.api.geometry.v0.*"),
     (r"py:.*", r"GRPC.*"),
     (r"py:.*", r"method"),
+    # Python std lib errors
+    (r"py:obj", r"logging.PercentStyle"),
 ]

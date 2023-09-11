@@ -281,7 +281,7 @@ class CylinderEvaluation(SurfaceEvaluation):
 
     Parameters
     ----------
-    cylinder: ~ansys.geometry.core.primitives.cylinder.Cylinder
+    cylinder: Cylinder
         Cylinder to evaluate.
     parameter: ParamUV
         Parameters (u, v) to evaluate the cylinder at.
