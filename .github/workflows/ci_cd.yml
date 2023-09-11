@@ -19,21 +19,13 @@ env:
   GEO_CONT_NAME: ans_geo
   RESET_IMAGE_CACHE: 3
   IS_WORKFLOW_RUNNING: True
+  ARTIFACTORY_VERSION: v241
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-
-  style:
-    name: Code style
-    runs-on: ubuntu-latest
-    steps:
-      - name: PyAnsys code style checks
-        uses: ansys/actions/code-style@v4
-        with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
   docs-style:
     name: Documentation Style Check
@@ -47,7 +39,6 @@ jobs:
   smoke-tests:
     name: Build and Smoke tests
     runs-on: ${{ matrix.os }}
-    needs: [style]
     strategy:
       fail-fast: false
       matrix:
@@ -363,6 +354,10 @@ jobs:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
+# =================================================================================================
+# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+# =================================================================================================
+
   fetch-release-artifacts:
     name: Fetch release artifacts
     needs: [testing-windows, testing-linux, docs]
@@ -374,8 +369,8 @@ jobs:
     steps:
       - name: Download binaries
         run: |
-          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/DockerWindows.zip --output windows-binaries.zip
-          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/DockerLinux.zip --output linux-binaries.zip
+          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerWindows.zip --output windows-binaries.zip
+          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerLinux.zip --output linux-binaries.zip
 
       - name: Upload Windows binaries as workflow artifacts
         uses: actions/upload-artifact@v3
@@ -391,10 +386,147 @@ jobs:
           path: linux-binaries.zip
           retention-days: 7
 
+  build-windows-container:
+    name: Building Geometry Service - Windows
+    runs-on: [self-hosted, Windows, pygeometry]
+    needs: [fetch-release-artifacts]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9' # use python3.9, self-hosted has an issue with 3.10
+
+      - name: Download Windows binaries
+        uses: actions/download-artifact@v3
+        with:
+          name: windows-binaries.zip
+          path: docker/windows-binaries.zip
+
+      - name: Build Docker image
+        working-directory: docker
+        run: |
+          docker build -f Dockerfile.windows -t ghcr.io/ansys/geometry:windows-latest-tmp .
+
+      - name: Check location of self-hosted runner and define license server accordingly
+        if: runner.name == 'pygeometry-ci-1' || runner.name == 'pygeometry-ci-2'
+        run:
+          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Launch Geometry service
+        run: |
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:windows-latest-tmp
+
+      - name: Validate connection using PyAnsys Geometry
+        run: |
+          python -m venv .venv
+          .\.venv\Scripts\Activate.ps1
+          python -m pip install --upgrade pip
+          pip install -e .[tests]
+          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+
+      - name: Restore images cache
+        uses: actions/cache@v3
+        with:
+          path: .\tests\integration\image_cache
+          key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
+          restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
+
+      - name: Testing
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          pytest -v --use-existing-service=yes
+
+      - name: Stop the Geometry service
+        if: always()
+        run: |
+          docker stop ${{ env.GEO_CONT_NAME }}
+          docker logs ${{ env.GEO_CONT_NAME }}
+          docker rm ${{ env.GEO_CONT_NAME }}
+
+      - name: Stop any remaining containers
+        if: always()
+        run: |
+          $dockerContainers = docker ps -a -q
+          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
+              docker stop $dockerContainers
+              docker rm $dockerContainers
+          }
+
+      - name: Delete the Docker images (and untagged ones)
+        if: always()
+        run: |
+          docker image rm ghcr.io/ansys/geometry:windows-latest-tmp
+          docker system prune -f
+
+# =================================================================================================
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# =================================================================================================
+
+  build-linux-container:
+    name: Building Geometry Service - Linux
+    runs-on: ubuntu-latest
+    needs: [fetch-release-artifacts]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+      - name: Download Linux binaries
+        uses: actions/download-artifact@v3
+        with:
+          name: linux-binaries.zip
+          path: docker/linux-binaries.zip
+
+      - name: Build Docker image
+        working-directory: docker
+        run: |
+          docker build -f Dockerfile.linux -t ghcr.io/ansys/geometry:linux-latest-tmp .
+
+      - name: Launch Geometry service
+        run: |
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:linux-latest-tmp
+
+      - name: Validate connection using PyAnsys Geometry
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[tests]
+          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+
+      - name: Restore images cache
+        uses: actions/cache@v3
+        with:
+          path: .\tests\integration\image_cache
+          key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
+          restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
+
+      - name: Run pytest
+        uses: ansys/actions/tests-pytest@v4
+        env:
+          ALLOW_PLOTTING: true
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          pytest-extra-args: "--service-os=linux --use-existing-service=yes"
+          checkout: false
+          requires-xvfb: true
+
+      - name: Stop the Geometry service
+        if: always()
+        run: |
+          docker stop ${{ env.GEO_CONT_NAME }}
+          docker logs ${{ env.GEO_CONT_NAME }}
+          docker rm ${{ env.GEO_CONT_NAME }}
+
   release:
     name: Release project
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    needs: [package, fetch-release-artifacts]
+    needs: [package, build-windows-container, build-linux-container]
     runs-on: ubuntu-latest
     steps:
       - name: Release to the public PyPI repository
