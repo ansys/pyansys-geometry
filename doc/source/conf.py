@@ -79,14 +79,15 @@ extensions = [
 # Intersphinx mapping
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "pint": ("https://pint.readthedocs.io/en/stable", None),
-    "numpy": ("https://numpy.org/devdocs", None),
+    "numpy": ("https://numpy.org/doc/stable", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/", None),
-    "pyvista": ("https://docs.pyvista.org/", None),
+    "pyvista": ("https://docs.pyvista.org/version/stable", None),
     "grpc": ("https://grpc.github.io/grpc/python/", None),
-    # kept here as an example
-    # "matplotlib": ("https://matplotlib.org/stable", None),
-    "pypim": ("https://pypim.docs.pyansys.com/version/dev", None),
+    "pint": ("https://pint.readthedocs.io/en/stable", None),
+    "beartype": ("https://beartype.readthedocs.io/en/stable/", None),
+    "docker": ("https://docker-py.readthedocs.io/en/stable/", None),
+    "pypim": ("https://pypim.docs.pyansys.com/version/stable", None),
+    "ansys.geometry.core": (f"https://geometry.docs.pyansys.com/version/{switcher_version}", None),
 }
 
 # numpydoc configuration
@@ -208,12 +209,7 @@ latex_additional_files = [watermark, ansys_logo_white, ansys_logo_white_cropped]
 # variables are the title of pdf, watermark
 latex_elements = {"preamble": latex.generate_preamble(html_title)}
 
-linkcheck_exclude_documents = ["index"]
-linkcheck_anchors_ignore_for_url = ["https://docs.pyvista.org/api/*"]
-linkcheck_ignore = [
-    "https://github.com/ansys/pyansys-geometry/*",
-    "https://geometry.docs.pyansys.com/*",
-]
+linkcheck_exclude_documents = ["index", "getting_started/creating_local_session"]
 
 # -- Declare the Jinja context -----------------------------------------------
 exclude_patterns = []
@@ -246,3 +242,17 @@ def prepare_jinja_env(jinja_env) -> None:
 
 
 autoapi_prepare_jinja_env = prepare_jinja_env
+nitpick_ignore_regex = [
+    # Ignore typing
+    (r"py:.*", r"optional"),
+    (r"py:.*", r"beartype.typing.*"),
+    (r"py:.*", r"ansys.geometry.core.typing.*"),
+    (r"py:.*", r"Real.*"),
+    (r"py:.*", r"SketchObject"),
+    # Ignore API package
+    (r"py:.*", r"ansys.api.geometry.v0.*"),
+    (r"py:.*", r"GRPC.*"),
+    (r"py:.*", r"method"),
+    # Python std lib errors
+    (r"py:obj", r"logging.PercentStyle"),
+]

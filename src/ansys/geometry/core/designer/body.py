@@ -43,8 +43,8 @@ from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
 
-from ansys.geometry.core.connection import (
-    GrpcClient,
+from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.conversions import (
     sketch_shapes_to_grpc_geometries,
     tess_to_pd,
     unit_vector_to_grpc_direction,
@@ -52,17 +52,19 @@ from ansys.geometry.core.connection import (
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.materials import Material
-from ansys.geometry.core.math import IDENTITY_MATRIX44, Matrix44, UnitVector3D
-from ansys.geometry.core.misc import DEFAULT_UNITS, Distance, check_type
-from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.materials.material import Material
+from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
+from ansys.geometry.core.math.matrix import Matrix44
+from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc.checks import check_type
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
+from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
 
     from ansys.geometry.core.designer.component import Component
-    from ansys.geometry.core.designer.design import MidSurfaceOffsetType
 
 
 @unique
@@ -178,7 +180,7 @@ class IBody(ABC):
 
         Parameters
         ----------
-        thickness : Quantity
+        thickness : ~pint.Quantity
             Thickness to assign.
 
         Notes
@@ -308,7 +310,7 @@ class IBody(ABC):
         ----------
         direction: UnitVector3D
             Direction of the translation.
-        distance: Union[Quantity, Distance, Real]
+        distance: Union[~pint.Quantity, Distance, Real]
             Distance (magnitude) of the translation.
 
         Returns
@@ -417,7 +419,7 @@ class IBody(ABC):
             is used.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
-            :func:`pyvista.Plotter.add_mesh` method.
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
 
         Examples
         --------

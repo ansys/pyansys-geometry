@@ -23,7 +23,8 @@
 from beartype.typing import TYPE_CHECKING, List
 
 from ansys.geometry.core.designer.body import MasterBody
-from ansys.geometry.core.math import IDENTITY_MATRIX44, Matrix44
+from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
+from ansys.geometry.core.math.matrix import Matrix44
 
 if TYPE_CHECKING:
     from ansys.geometry.core.designer.component import Component

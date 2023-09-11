@@ -24,8 +24,8 @@
 from beartype import beartype as check_input_types
 import pyvista as pv
 
-from ansys.geometry.core.math import Point2D
-from ansys.geometry.core.misc import DEFAULT_UNITS
+from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import SketchSegment
 
