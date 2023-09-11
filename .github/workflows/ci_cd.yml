@@ -19,6 +19,7 @@ env:
   GEO_CONT_NAME: ans_geo
   RESET_IMAGE_CACHE: 2
   IS_WORKFLOW_RUNNING: True
+  ARTIFACTORY_VERSION: v241
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -374,8 +375,8 @@ jobs:
     steps:
       - name: Download binaries
         run: |
-          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/DockerWindows.zip --output windows-binaries.zip
-          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/DockerLinux.zip --output linux-binaries.zip
+          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerWindows.zip --output windows-binaries.zip
+          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerLinux.zip --output linux-binaries.zip
 
       - name: Upload Windows binaries as workflow artifacts
         uses: actions/upload-artifact@v3
