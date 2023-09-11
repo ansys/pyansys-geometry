@@ -79,14 +79,14 @@ extensions = [
 # Intersphinx mapping
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "numpy": ("https://numpy.org/devdocs", None),
+    "numpy": ("https://numpy.org/doc/stable", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/", None),
-    "pyvista": ("https://docs.pyvista.org/", None),
+    "pyvista": ("https://docs.pyvista.org/version/stable", None),
     "grpc": ("https://grpc.github.io/grpc/python/", None),
     "pint": ("https://pint.readthedocs.io/en/stable", None),
     "beartype": ("https://beartype.readthedocs.io/en/stable/", None),
     "docker": ("https://docker-py.readthedocs.io/en/stable/", None),
-    "pypim": ("https://pypim.docs.pyansys.com/version/dev", None),
+    "pypim": ("https://pypim.docs.pyansys.com/version/stable", None),
 }
 
 # numpydoc configuration
