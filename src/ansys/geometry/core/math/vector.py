@@ -173,7 +173,7 @@ class Vector3D(np.ndarray):
 
         Returns
         -------
-        Quantity
+        ~pint.Quantity
             Angle between these two 3D vectors.
         """
         if v.is_zero or self.is_zero:
@@ -373,7 +373,7 @@ class Vector2D(np.ndarray):
 
         Returns
         -------
-        Quantity
+        ~pint.Quantity
             Angle between these two 2D vectors.
         """
         if v.is_zero or self.is_zero:

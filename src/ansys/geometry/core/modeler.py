@@ -47,7 +47,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
     from ansys.geometry.core.connection.local_instance import LocalDockerInstance
     from ansys.geometry.core.connection.product_instance import ProductInstance
-    from ansys.geometry.core.designer import Design
+    from ansys.geometry.core.designer.design import Design
 
 
 class Modeler:

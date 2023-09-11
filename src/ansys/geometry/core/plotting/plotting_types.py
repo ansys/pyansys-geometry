@@ -33,7 +33,7 @@ class EdgePlot:
 
     Parameters
     ----------
-    actor : pv.Actor
+    actor : ~pyvista.Actor
         PyVista actor that represents the edge.
     edge_object : Edge
         PyAnsys Geometry edge that is represented by the PyVista actor.
@@ -54,7 +54,7 @@ class EdgePlot:
 
         Returns
         -------
-        pv.Actor
+        ~pyvista.Actor
             PyVista actor.
         """
         return self._actor
@@ -147,7 +147,7 @@ class GeomObjectPlot:
 
         Returns
         -------
-        pv.Actor
+        ~pyvista.Actor
             Actor of the PyAnsys Geometry object.
         """
         return self._actor

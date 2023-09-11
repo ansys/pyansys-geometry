@@ -302,7 +302,7 @@ class Component:
             Origin that defines the axis to rotate the component about.
         rotation_direction : UnitVector3D, default: None
             Direction of the axis to rotate the component about.
-        rotation_angle : Union[Quantity, Angle, Real], default: 0
+        rotation_angle : Union[~pint.Quantity, Angle, Real], default: 0
             Angle to rotate the component around the axis.
         """
         t = (
@@ -416,7 +416,7 @@ class Component:
             User-defined label for the new solid body.
         sketch : Sketch
             Two-dimensional sketch source for the extrusion.
-        distance : Union[Quantity, Distance, Real]
+        distance : Union[~pint.Quantity, Distance, Real]
             Distance to extrude the solid body.
 
         Returns
@@ -462,7 +462,7 @@ class Component:
             User-defined label for the new solid body.
         face : Face
             Target face to use as the source for the new surface.
-        distance : Union[Quantity, Distance]
+        distance : Union[~pint.Quantity, Distance]
             Distance to extrude the solid body.
 
         Returns
@@ -607,7 +607,7 @@ class Component:
             List of bodies to translate by the same distance.
         direction: UnitVector3D
             Direction of the translation.
-        distance: Union[Quantity, Distance, Real]
+        distance: Union[~pint.Quantity, Distance, Real]
             Magnitude of the translation.
 
         Returns

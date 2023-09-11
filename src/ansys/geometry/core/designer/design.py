@@ -190,7 +190,7 @@ class Design(Component):
 
         Parameters
         ----------
-        file_location : Union[Path, str]
+        file_location : Union[~pathlib.Path, str]
             Location on disk to save the file to.
         """
         # Sanity checks on inputs
@@ -212,7 +212,7 @@ class Design(Component):
 
         Parameters
         ----------
-        file_location : Union[Path, str]
+        file_location : Union[~pathlib.Path, str]
             Location on disk to save the file to.
         format :DesignFileFormat, default: DesignFileFormat.SCDOCX
             Format for the file to save to.
@@ -277,7 +277,7 @@ class Design(Component):
             All edges to include in the named selection.
         beams : List[Beam], default: None
             All beams to include in the named selection.
-        design_points : List[DesignPoints], default: None
+        design_points : List[DesignPoint], default: None
             All design points to include in the named selection.
 
         Returns
@@ -439,7 +439,7 @@ class Design(Component):
 
         Parameters
         ----------
-        thickness : Quantity
+        thickness : ~pint.Quantity
             Thickness to be assigned.
         bodies : List[Body]
             All bodies to include in the mid-surface thickness assignment.

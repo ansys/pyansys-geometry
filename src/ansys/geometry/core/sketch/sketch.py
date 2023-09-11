@@ -146,11 +146,11 @@ class Sketch:
 
         Parameters
         ----------
-        x : Union[Quantity, Distance], default: Quantity(0, DEFAULT_UNITS.LENGTH)
+        x : Union[~pint.Quantity, Distance], default: ~pint.Quantity(0, ``DEFAULT_UNITS.LENGTH``)
             Amount to translate the origin of the x-direction.
-        y : Union[Quantity, Distance], default: Quantity(0, DEFAULT_UNITS.LENGTH)
+        y : Union[~pint.Quantity, Distance], default: ~pint.Quantity(0, ``DEFAULT_UNITS.LENGTH``)
             Amount to translate the origin of the y-direction.
-        z : Union[Quantity, Distance], default: Quantity(0, DEFAULT_UNITS.LENGTH)
+        z : Union[~pint.Quantity, Distance], default: ~pint.Quantity(0, ``DEFAULT_UNITS.LENGTH``)
             Amount to translate the origin of the z-direction.
 
         Returns
@@ -189,7 +189,7 @@ class Sketch:
         ----------
         direction : UnitVector3D
             Direction to translate the origin.
-        distance : Union[Quantity, Distance]
+        distance : Union[~pint.Quantity, Distance]
             Distance to translate the origin.
 
         Returns
@@ -529,18 +529,18 @@ class Sketch:
 
         Parameters
         ----------
-        width : Union[Quantity, Distance, Real]
+        width : Union[~pint.Quantity, Distance, Real]
             Width of the slot main body.
-        height : Union[Quantity, Distance, Real]
+        height : Union[~pint.Quantity, Distance, Real]
             Height of the slot.
-        slant_angle : Union[Quantity, Angle, Real]
+        slant_angle : Union[~pint.Quantity, Angle, Real]
             Angle for trapezoid generation.
-        nonsymmetrical_slant_angle : Union[Quantity, Angle, Real], default: None
+        nonsymmetrical_slant_angle : Union[~pint.Quantity, Angle, Real], default: None
             Asymmetrical slant angles on each side of the trapezoid.
             The default is ``None``, in which case the trapezoid is symmetrical.
         center : Point2D, default: (0, 0)
             Center point of the trapezoid.
-        angle : Optional[Union[Quantity, Angle, Real]], default: 0
+        angle : Optional[Union[~pint.Quantity, Angle, Real]], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
             User-defined label for identifying the face.
@@ -566,7 +566,7 @@ class Sketch:
         ----------
         center: Point2D
             Center point of the circle.
-        radius : Union[Quantity, Distance, Real]
+        radius : Union[~pint.Quantity, Distance, Real]
             Radius of the circle.
         tag : str, default: None
             User-defined label for identifying the face.
@@ -594,11 +594,11 @@ class Sketch:
         ----------
         center: Point2D
             Center point of the box.
-        width : Union[Quantity, Distance, Real]
+        width : Union[~pint.Quantity, Distance, Real]
             Width of the box.
-        height : Union[Quantity, Distance, Real]
+        height : Union[~pint.Quantity, Distance, Real]
             Height of the box.
-        angle : Union[Quantity, Real], default: 0
+        angle : Union[~pint.Quantity, Real], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
             User-defined label for identifying the face.
@@ -626,11 +626,11 @@ class Sketch:
         ----------
         center: Point2D
             Center point of the slot.
-        width : Union[Quantity, Distance, Real]
+        width : Union[~pint.Quantity, Distance, Real]
             Width of the slot.
-        height : Union[Quantity, Distance, Real]
+        height : Union[~pint.Quantity, Distance, Real]
             Height of the slot.
-        angle : Union[Quantity, Angle, Real], default: 0
+        angle : Union[~pint.Quantity, Angle, Real], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
             User-defined label for identifying the face.
@@ -658,11 +658,11 @@ class Sketch:
         ----------
         center: Point2D
             Center point of the ellipse.
-        major_radius : Union[Quantity, Distance, Real]
+        major_radius : Union[~pint.Quantity, Distance, Real]
             Semi-major axis of the ellipse.
-        minor_radius : Union[Quantity, Distance, Real]
+        minor_radius : Union[~pint.Quantity, Distance, Real]
             Semi-minor axis of the ellipse.
-        angle : Union[Quantity, Angle, Real], default: 0
+        angle : Union[~pint.Quantity, Angle, Real], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
             User-defined label for identifying the face.
@@ -690,11 +690,11 @@ class Sketch:
         ----------
         center: Point2D
             Center point of the polygon.
-        inner_radius : Union[Quantity, Distance, Real]
+        inner_radius : Union[~pint.Quantity, Distance, Real]
             Inner radius (apothem) of the polygon.
         sides : int
             Number of sides of the polygon.
-        angle : Union[Quantity, Angle, Real], default: 0
+        angle : Union[~pint.Quantity, Angle, Real], default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
             User-defined label for identifying the face.
@@ -722,9 +722,9 @@ class Sketch:
         ----------
         origin : Point2D
             Origin of the gear.
-        outer_radius : Union[Quantity, Distance, Real]
+        outer_radius : Union[~pint.Quantity, Distance, Real]
             Outer radius of the gear.
-        inner_radius : Union[Quantity, Distance, Real]
+        inner_radius : Union[~pint.Quantity, Distance, Real]
             Inner radius of the gear.
         n_teeth : int
             Number of teeth of the gear.
@@ -757,7 +757,7 @@ class Sketch:
         module : Real
             Module of the spur gear. This is also the ratio between the pitch circle
             diameter in millimeters and the number of teeth.
-        pressure_angle : Union[Quantity, Angle, Real]
+        pressure_angle : Union[~pint.Quantity, Angle, Real]
             Pressure angle of the spur gear.
         n_teeth : int
             Number of teeth of the spur gear.
@@ -833,7 +833,7 @@ class Sketch:
             setting is used.
         **plotting_options : dict, optional
             Keyword arguments for plotting. For allowable keyword arguments,
-            see the :func:`pyvista.Plotter.add_mesh` method.
+            see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         # Show the plot requested - i.e. all polydata in sketch
         from ansys.geometry.core.plotting import PlotterHelper
@@ -882,7 +882,7 @@ class Sketch:
             setting is used.
         **plotting_options : dict, optional
             Keyword arguments for plotting. For allowable keyword arguments,
-            see the :func:`pyvista.Plotter.add_mesh` method.
+            see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         # Get the selected polydata
         sketches_polydata_selection = []
@@ -906,7 +906,7 @@ class Sketch:
 
         Returns
         -------
-        List[PolyData]
+        List[~pyvista.PolyData]
             List of the polydata configuration for all edges and faces in the sketch.
         """
         sketches_polydata = []

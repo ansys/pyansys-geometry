@@ -39,9 +39,9 @@ either Discovery, SpaceClaim, or the Geometry service.
 For more information on the arguments accepted by the launcher methods, please refer
 to their API documentation:
 
-* :func:`launch_modeler_with_discovery() <ansys.geometry.core.connection.launcher.launch_modeler_with_discovery>`
-* :func:`launch_modeler_with_spaceclaim() <ansys.geometry.core.connection.launcher.launch_modeler_with_spaceclaim>`
-* :func:`launch_modeler_with_geometry_service() <ansys.geometry.core.connection.launcher.launch_modeler_with_geometry_service>`
+* `launch_modeler_with_discovery <../api/ansys/geometry/core/connection/launcher/index.html#launcher.launch_modeler_with_discovery>`_
+* `launch_modeler_with_spaceclaim <../api/ansys/geometry/core/connection/launcher/index.html#launcher.launch_modeler_with_spaceclaim>`_
+* `launch_modeler_with_geometry_service <../api/ansys/geometry/core/connection/launcher/index.html#launcher.launch_modeler_with_geometry_service>`_
 
 .. note::
 

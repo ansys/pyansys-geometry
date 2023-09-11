@@ -375,7 +375,7 @@ def launch_modeler_with_discovery(
 
     Parameters
     ----------
-    product_version: ``int``, optional
+    product_version: int, optional
         The product version to be started. Goes from v23.2.1 to
         the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
@@ -398,7 +398,7 @@ def launch_modeler_with_discovery(
             3: Error
 
         The default is ``2`` (Warning).
-    api_version: ``ApiVersions``, optional
+    api_version: ApiVersions, optional
         The backend's API version to be used at runtime. Goes from API v21 to
         the latest. Default is ``ApiVersions.LATEST``.
     timeout : int, optional
@@ -467,7 +467,7 @@ def launch_modeler_with_spaceclaim(
 
     Parameters
     ----------
-    product_version: ``int``, optional
+    product_version: int, optional
         The product version to be started. Goes from v23.2.1 to
         the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
@@ -490,7 +490,7 @@ def launch_modeler_with_spaceclaim(
             3: Error
 
         The default is ``2`` (Warning).
-    api_version: ``ApiVersions``, optional
+    api_version: ApiVersions, optional
         The backend's API version to be used at runtime. Goes from API v21 to
         the latest. Default is ``ApiVersions.LATEST``.
     timeout : int, optional

@@ -180,7 +180,7 @@ class IBody(ABC):
 
         Parameters
         ----------
-        thickness : Quantity
+        thickness : ~pint.Quantity
             Thickness to assign.
 
         Notes
@@ -310,7 +310,7 @@ class IBody(ABC):
         ----------
         direction: UnitVector3D
             Direction of the translation.
-        distance: Union[Quantity, Distance, Real]
+        distance: Union[~pint.Quantity, Distance, Real]
             Distance (magnitude) of the translation.
 
         Returns
@@ -419,7 +419,7 @@ class IBody(ABC):
             is used.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
-            :func:`pyvista.Plotter.add_mesh` method.
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
 
         Examples
         --------
