@@ -532,7 +532,7 @@ jobs:
           docker stop ${{ env.GEO_CONT_NAME }}
           docker logs ${{ env.GEO_CONT_NAME }}
           docker rm ${{ env.GEO_CONT_NAME }}
-        
+
   release:
     name: Release project
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
