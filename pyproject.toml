@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "ansys-geometry-core"
-version = "0.3.dev0"
+version = "0.4.dev0"
 description = "A python wrapper for Ansys Geometry service"
 readme = "README.rst"
 requires-python = ">=3.8,<4"
@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "ansys-api-geometry==0.2.15",
+    "ansys-api-geometry==0.2.16",
     "ansys-tools-path>=0.3",
     "beartype>=0.11.0",
     "google-api-python-client>=1.7.11",
@@ -59,7 +59,7 @@ tests = [
     "numpy==1.25.2",
     "Pint==0.22",
     "protobuf==3.20.3",
-    "pytest==7.4.1",
+    "pytest==7.4.2",
     "pytest-cov==4.1.0",
     "pytest-pyvista==0.1.8",
     "pytest-xvfb==3.0.0",
@@ -84,7 +84,7 @@ doc = [
     "pyvista[trame]==0.42.1",
     "requests==2.31.0",
     "sphinx==7.2.5",
-    "sphinx-autoapi @ git+https://github.com/jorgepiloto/sphinx-autoapi@feat/single-page-option",
+    "sphinx-autoapi==2.1.1", # "sphinx-autoapi @ git+https://github.com/jorgepiloto/sphinx-autoapi@feat/single-page-option", ---> Installed directly in workflow
     "sphinx-autodoc-typehints==1.24.0",
     "sphinx-copybutton==0.5.2",
     "sphinx_design==0.5.0",
