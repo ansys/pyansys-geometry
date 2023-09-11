@@ -45,7 +45,7 @@ dependencies = [
 all = [
     "ansys-platform-instancemanagement>=1.0.3",
     "docker>=6.0.1",
-    "pyvista[trame]<=0.41.1",
+    "pyvista[trame]>=0.38.1,<0.42",
 ]
 tests = [
     "ansys-platform-instancemanagement==1.1.2",
