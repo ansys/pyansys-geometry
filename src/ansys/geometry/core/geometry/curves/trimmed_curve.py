@@ -38,12 +38,12 @@ class TrimmedCurve:
 
     def evaluate(self, param: Real) -> Point3D:
         """Evaluate the curve with respect to the curve direction (reversed or not)."""
-        eval = self.eval_proportion(param)
+        eval = self.evaluate_proportion(param)
         if self.edge.is_reversed:
-            eval = self.eval_proportion(1 - param)
+            eval = self.evaluate_proportion(1 - param)
         return eval.position
 
-    def eval_proportion(self, param: Real) -> CurveEvaluation:
+    def evaluate_proportion(self, param: Real) -> CurveEvaluation:
         """Evaluate the given curve at the given parameter."""
         bounds = self.interval
         return self.edge.curve.evaluate(bounds.start + bounds.get_span() * param)

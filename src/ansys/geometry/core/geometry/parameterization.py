@@ -110,6 +110,10 @@ class ParamUV:
         """
         return ParamUV(self._u / other._u, self._v / other._v)
 
+    def __iter__(self):
+        """Iterate a `ParamUV`."""
+        return iter((self.u, self.v))
+
     def __repr__(self) -> str:
         """Represent the ``ParamUV`` as a string."""
         return f"ParamUV(u={self.u}, v={self.v})"
@@ -248,7 +252,7 @@ class Interval:
         return Interval(min(first.start, second.start), max(first.end, second.end))
 
     @staticmethod
-    def Intersect(first: "Interval", second: "Interval", tolerance: Real) -> "Interval":
+    def intersect(first: "Interval", second: "Interval", tolerance: Real) -> "Interval":
         """
         Return the intersection of two intervals.
 

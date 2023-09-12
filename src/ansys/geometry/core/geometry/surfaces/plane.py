@@ -56,6 +56,11 @@ class Plane(Surface):
             raise ValueError("Plane reference (dir_x) and axis (dir_z) must be perpendicular.")
 
     @property
+    def origin(self) -> Point3D:
+        """Origin of the cylinder."""
+        return self._origin
+
+    @property
     def dir_x(self) -> UnitVector3D:
         """X-direction of the cylinder."""
         return self._reference

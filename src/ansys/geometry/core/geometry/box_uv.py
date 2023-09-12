@@ -22,60 +22,60 @@ class LocationUV(Enum):
 class BoxUV:
     """BoxUV class."""
 
-    def __init__(self, rangeU: Interval = None, rangeV: Interval = None) -> None:
+    def __init__(self, range_u: Interval = None, range_v: Interval = None) -> None:
         """Root constructor for BoxUV."""
-        if rangeV is not None:
-            self.interval_v = rangeV
-        if rangeU is not None:
-            self.interval_u = rangeU
+        if range_u is not None:
+            self._interval_u = range_u
+        if range_v is not None:
+            self._interval_v = range_v
 
     @classmethod
     def from_param(cls, param: ParamUV):
         """Secondary constructor for BoxUV using a ParamUV object type."""
-        return cls(Interval(param.U, param.U), Interval(param.V, param.V))
+        return cls(Interval(param.u, param.u), Interval(param.v, param.v))
 
     @classmethod
     def from_two_params(cls, param1: ParamUV, param2: ParamUV):
         """Secondary constructor for BoxUV using two ParamUV object types."""
         return cls(
-            Interval(min(param1.U, param2.U), max(param1.U, param2.U)),
-            Interval(min(param1.V, param2.V), max(param1.V, param2.V)),
+            Interval(min(param1.u, param2.u), max(param1.u, param2.u)),
+            Interval(min(param1.v, param2.v), max(param1.v, param2.v)),
         )
 
     @property
-    def IntervalU(self) -> Interval:
+    def interval_u(self) -> Interval:
         """Return the u interval."""
-        return self.interval_u
+        return self._interval_u
 
     @property
-    def IntervalV(self) -> Interval:
+    def interval_v(self) -> Interval:
         """Return the v interval."""
-        return self.interval_v
+        return self._interval_v
 
     def __eq__(self, other: object) -> bool:
         """Check whether two BoxUV instances are equal."""
         if not isinstance(other, BoxUV):
             # don't attempt to compare against unrelated types
             return NotImplemented
-        return self.IntervalU.__eq__(other.IntervalU) and self.IntervalV.__eq__(other.IntervalV)
+        return self.interval_u.__eq__(other.interval_u) and self.interval_v.__eq__(other.interval_v)
 
     def __ne__(self, other: object) -> bool:
         """Check whether two BoxUV instances are not equal."""
         if not isinstance(other, BoxUV):
             # don't attempt to compare against unrelated types
             return NotImplemented
-        return not self.IntervalU.__eq__(other.IntervalU) or not self.IntervalV.__eq__(
-            other.IntervalV
+        return not self.interval_u.__eq__(other.interval_u) or not self.interval_v.__eq__(
+            other.interval_v
         )
 
     def is_empty(self):
         """Return whether this BoxUV is empty."""
-        return self.IntervalU.is_empty() or self.IntervalV.is_empty()
+        return self.interval_u.is_empty() or self.interval_v.is_empty()
 
     def proportion(self, prop_u: Real, prop_v: Real) -> ParamUV:
         """Evaluate the BoxUV at the given proportions."""
         return ParamUV(
-            self.IntervalU.get_relative_val(prop_u), self.IntervalV.get_relative_val(prop_v)
+            self.interval_u.get_relative_val(prop_u), self.interval_v.get_relative_val(prop_v)
         )
 
     def get_center(self) -> ParamUV:
@@ -86,7 +86,7 @@ class BoxUV:
         """Check whether the BoxUV is negative."""
         if self.is_empty():
             return False
-        return self.IntervalU.is_negative(tolerance_u) or self.IntervalV.is_negative(tolerance_v)
+        return self.interval_u.is_negative(tolerance_u) or self.interval_v.is_negative(tolerance_v)
 
     @staticmethod
     def unite(first: "BoxUV", second: "BoxUV") -> "BoxUV":
@@ -96,20 +96,20 @@ class BoxUV:
         if second.is_empty():
             return first
         return BoxUV(
-            Interval.unite(first.IntervalU, second.IntervalU),
-            Interval.unite(first.IntervalV, second.IntervalV),
+            Interval.unite(first.interval_u, second.interval_u),
+            Interval.unite(first.interval_v, second.interval_v),
         )
 
     @staticmethod
-    def Intersect(first: "BoxUV", second: "BoxUV", toleranceU: Real, toleranceV: Real) -> "BoxUV":
+    def intersect(first: "BoxUV", second: "BoxUV", tolerance_u: Real, tolerance_v: Real) -> "BoxUV":
         """Return the intersection of two BoxUV instances."""
         if first.is_empty() or second.is_empty():
             return None  # supposed to be empty
         intersection = BoxUV(
-            Interval.intersect(first.IntervalU, second.IntervalU, toleranceU),
-            Interval.intersect(first.IntervalV, second.IntervalV, toleranceV),
+            Interval.intersect(first.interval_u, second.interval_u, tolerance_u),
+            Interval.intersect(first.interval_v, second.interval_v, tolerance_v),
         )
-        if not intersection.is_negative(toleranceU, toleranceV):
+        if not intersection.is_negative(tolerance_u, tolerance_v):
             return intersection
         return None  # supposed to be empty
 
@@ -118,21 +118,21 @@ class BoxUV:
         if self.is_empty():
             # throw Error.InvalidMethodOnEmptyObjectException(GetType())
             raise Exception("Invalid Method On Empty Object Exception" + type(self).__name__)
-        return self.IntervalU.contains(param.u) and self.IntervalV.contains(param.v)
+        return self.interval_u.contains(param.u) and self.interval_v.contains(param.v)
 
-    def inflate(self, deltaU: Real, deltaV: Real) -> "BoxUV":
-        """Enlarge the BoxUV u and v intervals by deltaU and deltaV respectively."""
+    def inflate(self, delta_u: Real, delta_v: Real) -> "BoxUV":
+        """Enlarge the BoxUV u and v intervals by delta_u and delta_v respectively."""
         if self.is_empty():
             # throw Error.InvalidMethodOnEmptyObjectException(GetType())
             raise Exception("Invalid Method On Empty Object Exception" + type(self).__name__)
-        return BoxUV(self.InteravlU.inflate(deltaU), self.InteravlV.inflate(deltaV))
+        return BoxUV(self.interval_u.inflate(delta_u), self.interval_v.inflate(delta_v))
 
     def inflate(self, delta: Real) -> "BoxUV":
         """Enlarge the BoxUV by a given delta."""
         if self.is_empty():
             # throw Error.InvalidMethodOnEmptyObjectException(GetType())
             raise Exception("Invalid Method On Empty Object Exception" + type(self).__name__)
-        return BoxUV(self.InteravlU.inflate(delta), self.InteravlV.inflate(delta))
+        return BoxUV(self.interval_u.inflate(delta), self.interval_v.inflate(delta))
 
     def get_corner(self, location: LocationUV) -> ParamUV:
         """Return the corner location of the BoxUV."""
@@ -143,28 +143,28 @@ class BoxUV:
             or location == LocationUV.BottomLeft
             or location == LocationUV.LeftCenter
         ):
-            u = self.IntervalU.get_relative_val(0)
+            u = self.interval_u.get_relative_val(0)
         elif (
             location == LocationUV.TopRight
             or location == LocationUV.BottomRight
             or location == LocationUV.RightCenter
         ):
-            u = self.IntervalU.get_relative_val(1)
+            u = self.interval_u.get_relative_val(1)
         else:
-            u = self.IntervalU.get_relative_val(0.5)
+            u = self.interval_u.get_relative_val(0.5)
 
         if (
             location == LocationUV.BottomRight
             or location == LocationUV.BottomLeft
             or location == LocationUV.BottomCenter
         ):
-            v = self.IntervalU.get_relative_val(0)
+            v = self.interval_u.get_relative_val(0)
         elif (
             location == LocationUV.TopRight
             or location == LocationUV.TopLeft
             or location == LocationUV.TopCenter
         ):
-            v = self.IntervalU.get_relative_val(1)
+            v = self.interval_u.get_relative_val(1)
         else:
-            v = self.IntervalU.get_relative_val(0.5)
+            v = self.interval_u.get_relative_val(0.5)
         return ParamUV(u, v)

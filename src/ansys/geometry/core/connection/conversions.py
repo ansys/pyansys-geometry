@@ -11,9 +11,11 @@ from ansys.api.geometry.v0.models_pb2 import Matrix as GRPCMatrix
 from ansys.api.geometry.v0.models_pb2 import Plane as GRPCPlane
 from ansys.api.geometry.v0.models_pb2 import Point as GRPCPoint
 from ansys.api.geometry.v0.models_pb2 import Polygon as GRPCPolygon
+from ansys.api.geometry.v0.models_pb2 import Surface as GRPCSurface
 from ansys.api.geometry.v0.models_pb2 import Tessellation
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple
 
+from ansys.geometry.core.geometry import Cone, Cylinder, Plane, Sphere, Surface, Torus
 from ansys.geometry.core.math import Frame, Matrix44, Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS
 from ansys.geometry.core.sketch import (
@@ -28,6 +30,8 @@ from ansys.geometry.core.sketch import (
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import PolyData
+
+    from ansys.geometry.core.designer import SurfaceType
 
 
 def unit_vector_to_grpc_direction(unit_vector: UnitVector3D) -> GRPCDirection:
@@ -410,3 +414,40 @@ def grpc_frame_to_frame(frame: GRPCFrame) -> Frame:
             ]
         ),
     )
+
+
+def grpc_surface_to_surface(surface: GRPCSurface, surface_type: "SurfaceType") -> Surface:
+    """
+    Convert an ``ansys.api.geometry.Surface`` gRPC message to a ``Surface`` class.
+
+    Parameters
+    ----------
+    surface: GRPCSurface
+        Geometry service gRPC surface message.
+
+    Returns
+    -------
+    Surface
+        Resulting converted surface.
+    """
+    from ansys.geometry.core.designer import SurfaceType
+
+    origin = Point3D(
+        [surface.origin.x, surface.origin.y, surface.origin.z], DEFAULT_UNITS.SERVER_LENGTH
+    )
+    axis = UnitVector3D([surface.axis.x, surface.axis.y, surface.axis.z])
+    reference = UnitVector3D([surface.reference.x, surface.reference.y, surface.reference.z])
+
+    if surface_type == SurfaceType.SURFACETYPE_CONE:
+        result = Cone(origin, surface.radius, surface.half_angle, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_CYLINDER:
+        result = Cylinder(origin, surface.radius, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_SPHERE:
+        result = Sphere(origin, surface.radius, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_TORUS:
+        result = Torus(origin, surface.major_radius, surface.minor_radius, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_PLANE:
+        result = Plane(origin, reference, axis)
+    else:
+        result = None
+    return result

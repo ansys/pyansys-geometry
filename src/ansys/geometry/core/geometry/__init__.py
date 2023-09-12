@@ -13,6 +13,7 @@ from ansys.geometry.core.geometry.parameterization import (
 )
 from ansys.geometry.core.geometry.surfaces.cone import Cone, ConeEvaluation
 from ansys.geometry.core.geometry.surfaces.cylinder import Cylinder, CylinderEvaluation
+from ansys.geometry.core.geometry.surfaces.plane import Plane, PlaneEvaluation
 from ansys.geometry.core.geometry.surfaces.sphere import Sphere, SphereEvaluation
 from ansys.geometry.core.geometry.surfaces.surface import Surface
 from ansys.geometry.core.geometry.surfaces.surface_evaluation import SurfaceEvaluation

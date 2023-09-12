@@ -3,24 +3,18 @@
 from enum import Enum, unique
 
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
-from ansys.api.geometry.v0.faces_pb2 import EvaluateRequest
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
 from ansys.api.geometry.v0.models_pb2 import EntityIdentifier
 from beartype.typing import TYPE_CHECKING, List
 from pint import Quantity
 
-from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.connection import GrpcClient, grpc_surface_to_surface
 from ansys.geometry.core.errors import protect_grpc
-
-# surfaces
-from ansys.geometry.core.geometry.surfaces.cone import Cone
-from ansys.geometry.core.geometry.surfaces.cylinder import Cylinder
-from ansys.geometry.core.geometry.surfaces.plane import Plane
-from ansys.geometry.core.geometry.surfaces.sphere import Sphere
-from ansys.geometry.core.geometry.surfaces.surface import Surface
-from ansys.geometry.core.geometry.surfaces.torus import Torus
-from ansys.geometry.core.geometry.surfaces.trimmed_surface import TrimmedSurface
+from ansys.geometry.core.geometry.surfaces.trimmed_surface import (
+    ReversedTrimmedSurface,
+    TrimmedSurface,
+)
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS
 
@@ -149,58 +143,9 @@ class Face:
         self._faces_stub = FacesStub(grpc_client.channel)
         self._edges_stub = EdgesStub(grpc_client.channel)
         self._is_reversed = is_reversed
-        self._shape = TrimmedSurface(self)
-        # request the underlying surface from the server
+        self._shape = None
+
         self._grpc_client.log.debug("Requesting surface properties from server.")
-        surface_response = self._faces_stub.GetSurface(self._grpc_id)
-        origin = surface_response.origin
-        axis_response = surface_response.axis
-        reference_response = surface_response.reference
-        axis = UnitVector3D([axis_response.x, axis_response.y, axis_response.z])
-        reference = UnitVector3D([reference_response.x, reference_response.y, reference_response.z])
-        if self.surface_type == SurfaceType.SURFACETYPE_CONE:
-            # cone
-            self._surface = Cone(
-                Point3D([origin.x, origin.y, origin.z], DEFAULT_UNITS.SERVER_LENGTH),
-                surface_response.radius,
-                surface_response.half_angle,
-                reference,
-                axis,
-            )
-        elif self.surface_type == SurfaceType.SURFACETYPE_CYLINDER:
-            # cylinder
-            self._surface = Cylinder(
-                Point3D([origin.x, origin.y, origin.z], DEFAULT_UNITS.SERVER_LENGTH),
-                surface_response.radius,
-                reference,
-                axis,
-            )
-        elif self.surface_type == SurfaceType.SURFACETYPE_SPHERE:
-            # sphere
-            self._surface = Sphere(
-                Point3D([origin.x, origin.y, origin.z], DEFAULT_UNITS.SERVER_LENGTH),
-                surface_response.radius,
-                reference,
-                axis,
-            )
-        elif self.surface_type == SurfaceType.SURFACETYPE_TORUS:
-            # torus
-            self._surface = Torus(
-                Point3D([origin.x, origin.y, origin.z], DEFAULT_UNITS.SERVER_LENGTH),
-                surface_response.major_radius,
-                surface_response.minor_radius,
-                reference,
-                axis,
-            )
-        elif self.surface_type == SurfaceType.SURFACETYPE_PLANE:
-            # plane
-            self._surface = Plane(
-                Point3D([origin.x, origin.y, origin.z], DEFAULT_UNITS.SERVER_LENGTH),
-                reference,
-                axis,
-            )
-        else:
-            self._surface = None
 
     @property
     def id(self) -> str:
@@ -224,7 +169,20 @@ class Face:
 
     @property
     def shape(self) -> TrimmedSurface:
-        """Internal TrimmedSurface instance."""
+        """
+        Underlying trimmed surface of the face.
+
+        If the face is reversed, its shape will be a `ReversedTrimmedSurface`, which handles the
+        direction of the normal vector to ensure it is always facing outward.
+        """
+        if self._shape is None:
+            surface_response = self._faces_stub.GetSurface(self._grpc_id)
+            geometry = grpc_surface_to_surface(surface_response, self._surface_type)
+            self._shape = (
+                ReversedTrimmedSurface(self, geometry)
+                if self.is_reversed
+                else TrimmedSurface(self, geometry)
+            )
         return self._shape
 
     @property
@@ -233,9 +191,12 @@ class Face:
         return self._surface_type
 
     @property
-    def surface(self) -> Surface:
-        """Surface type of the face."""
-        return self._surface
+    @protect_grpc
+    def area(self) -> Quantity:
+        """Calculated area of the face."""
+        self.face._grpc_client.log.debug("Requesting face area from server.")
+        area_response = self.face._faces_stub.GetArea(self.face._grpc_id)
+        return Quantity(area_response.area, DEFAULT_UNITS.SERVER_AREA)
 
     @property
     @protect_grpc
@@ -282,9 +243,9 @@ class Face:
         return loops
 
     @protect_grpc
-    def face_normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:
+    def normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:
         """
-        Get the normal direction to the face evaluated at certain UV coordinates.
+        Get the normal direction to the face at certain proportional UV coordinates.
 
         Notes
         -----
@@ -312,9 +273,9 @@ class Face:
         return self.shape.normal(u, v)
 
     @protect_grpc
-    def face_point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
+    def point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
         """
-        Get a point of the face evaluated at certain UV coordinates.
+        Get a point of the face evaluated at certain proportional UV coordinates.
 
         Notes
         -----
@@ -337,9 +298,7 @@ class Face:
             :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
             object evaluated at the given UV coordinates.
         """
-        self._grpc_client.log.debug(f"Requesting face point from server with (u,v)=({u},{v}).")
-        response = self._faces_stub.Evaluate(EvaluateRequest(id=self.id, u=u, v=v)).point
-        return Point3D([response.x, response.y, response.z], DEFAULT_UNITS.SERVER_LENGTH)
+        return self.shape.evaluate_proportion(u, v).position
 
     def __grpc_edges_to_edges(self, edges_grpc: List[GRPCEdge]) -> List["Edge"]:
         """

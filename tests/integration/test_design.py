@@ -326,12 +326,12 @@ def test_faces_edges(modeler: Modeler):
     assert all(face.body.id == body_polygon_comp.id for face in faces)
 
     # Get the normal to some of the faces
-    assert faces[0].face_normal() == UnitVector3D(-UNITVECTOR3D_Z)  # Bottom
-    assert faces[1].face_normal() == UNITVECTOR3D_Z  # Top
+    assert faces[0].normal() == UnitVector3D(-UNITVECTOR3D_Z)  # Bottom
+    assert faces[1].normal() == UNITVECTOR3D_Z  # Top
 
     # Get the central point of some of the surfaces
-    assert faces[0].face_point(u=-0.03, v=-0.03) == Point3D([-30, -30, 0], UNITS.mm)
-    assert faces[1].face_point(u=-0.03, v=-0.03) == Point3D([-30, -30, 30], UNITS.mm)
+    assert faces[0].point(u=-0.03, v=-0.03) == Point3D([-30, -30, 0], UNITS.mm)
+    assert faces[1].point(u=-0.03, v=-0.03) == Point3D([-30, -30, 30], UNITS.mm)
 
     loops = faces[0].loops
     assert len(loops) == 1
