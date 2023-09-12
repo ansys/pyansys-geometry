@@ -6,7 +6,7 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 .. grid:: 2
 
    .. grid-item-card::
-            :img-top: _static/assets/index_getting_started.png
+            :img-top: _static/assets/index_getting_started.svg
 
             Getting started
             ^^^^^^^^^^^^^^^
@@ -26,7 +26,7 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
                   Getting started
 
    .. grid-item-card::
-            :img-top: _static/assets/index_user_guide.png
+            :img-top: _static/assets/index_user_guide.svg
 
             User guide
             ^^^^^^^^^^
@@ -50,7 +50,7 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
        {% if build_api %}
        .. grid-item-card::
-                :img-top: _static/assets/index_api.png
+                :img-top: _static/assets/index_api.svg
 
                 API reference
                 ^^^^^^^^^^^^^
@@ -70,7 +70,7 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
        {% if build_examples %}
        .. grid-item-card::
-                :img-top: _static/assets/index_examples.png
+                :img-top: _static/assets/index_examples.svg
 
                 Examples
                 ^^^^^^^^
@@ -91,7 +91,7 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 .. grid::
 
    .. grid-item-card::
-            :img-top: _static/assets/index_contribute.png
+            :img-top: _static/assets/index_contribute.svg
 
             Contribute
             ^^^^^^^^^^
