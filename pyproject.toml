@@ -90,6 +90,8 @@ doc = [
     "sphinx_design==0.5.0",
     "sphinx-jinja==2.0.2",
     "vtk==9.2.6",
+    "jupyter==1.0.0",
+    "ipython==7.32.0"
 ]
 
 [project.urls]
