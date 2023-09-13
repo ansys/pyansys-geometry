@@ -27,7 +27,7 @@ import threading
 
 from grpc._channel import _InactiveRpcError, _MultiThreadedRendezvous
 
-from ansys.geometry.core import LOG as logger
+from ansys.geometry.core.logger import LOG as logger
 
 SIGINT_TRACKER = []
 

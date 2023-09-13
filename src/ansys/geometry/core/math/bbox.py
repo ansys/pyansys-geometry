@@ -27,7 +27,8 @@ from beartype import beartype as check_input_types
 from beartype.typing import List
 
 from ansys.geometry.core.math.point import Point2D
-from ansys.geometry.core.misc import DEFAULT_UNITS, Accuracy
+from ansys.geometry.core.misc.accuracy import Accuracy
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.typing import Real
 
 

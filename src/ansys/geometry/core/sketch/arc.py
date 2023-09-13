@@ -27,8 +27,10 @@ import numpy as np
 from pint import Quantity
 import pyvista as pv
 
-from ansys.geometry.core.math import Point2D, Vector2D
-from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS
+from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.math.vector import Vector2D
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.sketch.edge import SketchEdge
 
 

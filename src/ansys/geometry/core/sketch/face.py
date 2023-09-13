@@ -28,7 +28,7 @@ import pyvista as pv
 from ansys.geometry.core.sketch.edge import SketchEdge
 
 if TYPE_CHECKING:
-    from ansys.geometry.core.math import Plane
+    from ansys.geometry.core.math.plane import Plane
 
 
 class SketchFace:

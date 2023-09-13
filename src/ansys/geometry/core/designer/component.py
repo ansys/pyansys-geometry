@@ -45,15 +45,14 @@ from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
 
-from ansys.geometry.core.connection import (
-    GrpcClient,
+from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.conversions import (
     grpc_matrix_to_matrix,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
     unit_vector_to_grpc_direction,
 )
-from ansys.geometry.core.connection.conversions import point3d_to_grpc_point
 from ansys.geometry.core.designer.beam import Beam, BeamProfile
 from ansys.geometry.core.designer.body import Body, MasterBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
@@ -61,16 +60,14 @@ from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.math import (
-    IDENTITY_MATRIX44,
-    Frame,
-    Matrix44,
-    Point3D,
-    UnitVector3D,
-    Vector3D,
-)
-from ansys.geometry.core.misc import DEFAULT_UNITS, Angle, Distance, check_pint_unit_compatibility
-from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
+from ansys.geometry.core.math.frame import Frame
+from ansys.geometry.core.math.matrix import Matrix44
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.checks import check_pint_unit_compatibility
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -305,7 +302,7 @@ class Component:
             Origin that defines the axis to rotate the component about.
         rotation_direction : UnitVector3D, default: None
             Direction of the axis to rotate the component about.
-        rotation_angle : Union[Quantity, Angle, Real], default: 0
+        rotation_angle : Union[~pint.Quantity, Angle, Real], default: 0
             Angle to rotate the component around the axis.
         """
         t = (
@@ -419,7 +416,7 @@ class Component:
             User-defined label for the new solid body.
         sketch : Sketch
             Two-dimensional sketch source for the extrusion.
-        distance : Union[Quantity, Distance, Real]
+        distance : Union[~pint.Quantity, Distance, Real]
             Distance to extrude the solid body.
 
         Returns
@@ -465,7 +462,7 @@ class Component:
             User-defined label for the new solid body.
         face : Face
             Target face to use as the source for the new surface.
-        distance : Union[Quantity, Distance]
+        distance : Union[~pint.Quantity, Distance]
             Distance to extrude the solid body.
 
         Returns
@@ -610,7 +607,7 @@ class Component:
             List of bodies to translate by the same distance.
         direction: UnitVector3D
             Direction of the translation.
-        distance: Union[Quantity, Distance, Real]
+        distance: Union[~pint.Quantity, Distance, Real]
             Magnitude of the translation.
 
         Returns

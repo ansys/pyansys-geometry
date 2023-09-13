@@ -59,7 +59,7 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
                 and how to interact with them programmatically.
 
                 +++
-                .. button-link:: autoapi/index.html
+                .. button-link:: api/index.html
                    :color: secondary
                    :expand:
                    :outline:
@@ -117,7 +117,7 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
        getting_started/index
        user_guide/index
        {% if build_api %}
-       autoapi/index
+       api/index
        {% endif %}
        {% if build_examples %}
        examples

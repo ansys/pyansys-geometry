@@ -29,15 +29,12 @@ import numpy as np
 from pint import Quantity
 from scipy.integrate import quad
 
-from ansys.geometry.core.math import (
-    UNITVECTOR3D_X,
-    UNITVECTOR3D_Z,
-    Matrix44,
-    Point3D,
-    UnitVector3D,
-    Vector3D,
-)
-from ansys.geometry.core.misc import Accuracy, Distance
+from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
+from ansys.geometry.core.math.matrix import Matrix44
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.accuracy import Accuracy
+from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.primitives.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.primitives.parameterization import (
     Interval,
@@ -313,7 +310,7 @@ class EllipseEvaluation(CurveEvaluation):
 
     Parameters
     ----------
-    ellipse: ~ansys.geometry.core.primitives.ellipse.Ellipse
+    ellipse: Ellipse
         Ellipse to evaluate.
     parameter: float, int
         Parameter to evaluate the ellipse at.

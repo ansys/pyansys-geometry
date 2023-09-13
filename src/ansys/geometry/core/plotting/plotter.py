@@ -23,11 +23,15 @@
 from beartype.typing import Any, Dict, List, Optional, Union
 import numpy as np
 import pyvista as pv
+from pyvista.plotting.plotter import Plotter as PyVistaPlotter
 from pyvista.plotting.tools import create_axes_marker
 
-from ansys.geometry.core.designer import Body, Component, Design, MasterBody
+from ansys.geometry.core.designer.body import Body, MasterBody
+from ansys.geometry.core.designer.component import Component
+from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.logger import LOG as logger
-from ansys.geometry.core.math import Frame, Plane
+from ansys.geometry.core.math.frame import Frame
+from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.plotting.plotting_types import EdgePlot, GeomObjectPlot
 from ansys.geometry.core.plotting.trame_gui import _HAS_TRAME, TrameVisualizer
 from ansys.geometry.core.plotting.widgets import (
@@ -38,7 +42,7 @@ from ansys.geometry.core.plotting.widgets import (
     ViewButton,
     ViewDirection,
 )
-from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.sketch.sketch import Sketch
 
 DEFAULT_COLOR = "#D6F7D1"
 """Default color we use for the plotter actors."""
@@ -111,13 +115,13 @@ class Plotter:
             [self._widgets.append(ViewButton(self._scene, direction=dir)) for dir in ViewDirection]
 
     @property
-    def scene(self) -> pv.Plotter:
+    def scene(self) -> PyVistaPlotter:
         """
         Rendered scene object.
 
         Returns
         -------
-        ~pvyista.Plotter
+        ~pyvista.Plotter
             Rendered scene object.
         """
         return self._scene
@@ -156,7 +160,7 @@ class Plotter:
             Frame to render in the scene.
         plotting_options : dict, default: None
             Dictionary containing parameters accepted by the
-            :class:`pyvista.plotting.tools.create_axes_marker` class for customizing
+            :func:`pyvista.create_axes_marker` class for customizing
             the frame rendering in the scene.
         """
         # Use default plotting options if required
@@ -191,12 +195,12 @@ class Plotter:
             Plane to render in the scene.
         plane_options : dict, default: None
             Dictionary containing parameters accepted by the
-            :class:`pyvista.Plane` instance for customizing the mesh
+            :func:`pyvista.Plane  <pyvista.Plane>` function for customizing the mesh
             representing the plane.
         plotting_options : dict, default: None
             Dictionary containing parameters accepted by the
-            :class:`pyvista.Plotter.add_mesh` class for customizing the mesh
-            rendering of the plane.
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method for
+            customizing the mesh rendering of the plane.
         """
         # Impose default plane options if none provided
         if plane_options is None:
@@ -232,7 +236,7 @@ class Plotter:
             Whether to show the frame in the scene.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
-            :func:`pyvista.Plotter.add_mesh` method.
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         # Show the sketch plane if required
         if show_plane:
@@ -257,7 +261,7 @@ class Plotter:
             Body of which to add the edges.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
-            :func:`pyvista.Plotter.add_mesh` method.
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         edge_plot_list = []
         for edge in body_plot.object.edges:
@@ -278,7 +282,7 @@ class Plotter:
 
         Parameters
         ----------
-        body : ansys.geometry.core.designer.Body
+        body : Body
             Body to add.
         merge : bool, default: False
             Whether to merge the body into a single mesh. When ``True``, the
@@ -286,7 +290,7 @@ class Plotter:
             preserves the number of triangles and only merges the topology.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments,
-            see the :func:`pyvista.Plotter.add_mesh` method.
+            see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         # Use the default PyAnsys Geometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
@@ -312,7 +316,7 @@ class Plotter:
 
         Parameters
         ----------
-        component : ansys.geometry.core.designer.Component
+        component : Component
             Component to add.
         merge_component : bool, default: False
             Whether to merge the component into a single dataset. When
@@ -324,7 +328,7 @@ class Plotter:
             into a single dataset without separating faces.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
-            :func:`pyvista.Plotter.add_mesh` method.
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
 
         Returns
         -------
@@ -351,7 +355,7 @@ class Plotter:
             Polydata to add.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
-            :func:`pyvista.Plotter.add_mesh` method.
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         # Use the default PyAnsys Geometry add_mesh arguments
         for polydata in polydata_entries:
@@ -384,12 +388,12 @@ class Plotter:
             into a single dataset without any hierarchy.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
-            :func:`pyvista.Plotter.add_mesh` method.
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
 
         Returns
         -------
-        Dict[pv.Actor, GeomObjectPlot]
-            Mapping between the pv.Actor and the PyAnsys Geometry object.
+        Dict[~pyvista.Actor, GeomObjectPlot]
+            Mapping between the ~pyvista.Actor and the PyAnsys Geometry object.
         """
         logger.debug(f"Adding object type {type(object)} to the PyVista plotter")
 
@@ -436,12 +440,12 @@ class Plotter:
             into a single dataset without separating faces.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
-            :func:`pyvista.Plotter.add_mesh` method.
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
 
         Returns
         -------
-        Dict[pv.Actor, GeomObjectPlot]
-            Mapping between the pv.Actor and the PyAnsys Geometry objects.
+        Dict[~pyvista.Actor, GeomObjectPlot]
+            Mapping between the ~pyvista.Actor and the PyAnsys Geometry objects.
         """
         for object in plotting_list:
             _ = self.add(object, merge_bodies, merge_components, **plotting_options)
@@ -463,7 +467,7 @@ class Plotter:
             PyVista Jupyter backend.
         **kwargs : dict, default: None
             Plotting keyword arguments. For allowable keyword arguments, see the
-            :func:`pyvista.Plotter.show` method.
+            :meth:`Plotter.show <pyvista.Plotter.show>` method.
 
         Notes
         -----
@@ -560,7 +564,7 @@ class PlotterHelper:
                 callback=self.picker_callback, use_actor=True, show=False, show_message=False
             )
 
-    def select_object(self, geom_object: Union[GeomObjectPlot, EdgePlot], pt: "np.Array") -> None:
+    def select_object(self, geom_object: Union[GeomObjectPlot, EdgePlot], pt: np.ndarray) -> None:
         """
         Select an object in the plotter.
 
@@ -571,7 +575,7 @@ class PlotterHelper:
         ----------
         geom_object : Union[GeomObjectPlot, EdgePlot]
             Geometry object to select.
-        pt : np.Array
+        pt : ~numpy.ndarray
             Set of points to determine the label position.
         """
         added_actors = []
@@ -641,7 +645,7 @@ class PlotterHelper:
 
         Parameters
         ----------
-        actor : pv.Actor
+        actor : ~pyvista.Actor
             Actor that we are picking.
         """
         pt = self._pl.scene.picked_point
@@ -669,7 +673,7 @@ class PlotterHelper:
 
         Returns
         -------
-        Dict[pv.Actor, EdgePlot]
+        Dict[~pyvista.Actor, EdgePlot]
             Mapping between plotter actors and EdgePlot objects.
         """
         for object in self._geom_object_actors_map.values():
@@ -684,7 +688,7 @@ class PlotterHelper:
         merge_component: bool = False,
         view_2d: Dict = None,
         **plotting_options,
-    ) -> List[any]:
+    ) -> List[Any]:
         """
         Plot and show any PyAnsys Geometry object.
 
@@ -693,7 +697,7 @@ class PlotterHelper:
 
         Parameters
         ----------
-        object : any
+        object : Any
             Any object or list of objects that you want to plot.
         screenshot : str, default: None
             Path for saving a screenshot of the image that is being represented.
@@ -709,11 +713,11 @@ class PlotterHelper:
             Dictionary with the plane and the viewup vectors of the 2D plane.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
-            :func:`pyvista.Plotter.add_mesh` method.
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
 
         Returns
         -------
-        List[any]
+        List[Any]
             List with the picked bodies in the picked order.
         """
         if isinstance(object, List) and not isinstance(object[0], pv.PolyData):
