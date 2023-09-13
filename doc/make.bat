@@ -35,6 +35,10 @@ if errorlevel 9009 (
 goto end
 
 :html
+REM TODO: these lines of code should be removed once the feature branch is merged
+pip uninstall --yes sphinx-autoapi
+pip install "sphinx-autoapi @ git+https://github.com/jorgepiloto/sphinx-autoapi@feat/single-page-option"
+REM TODO: these lines of code should be removed once the feature branch is merged
 %SPHINXBUILD% -M linkcheck %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 %SPHINXBUILD% -M html %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 goto build-examples-py
@@ -48,6 +52,10 @@ goto end
 %SPHINXBUILD% -M help %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 
 :pdf
+REM TODO: these lines of code should be removed once the feature branch is merged
+pip uninstall --yes sphinx-autoapi
+pip install "sphinx-autoapi @ git+https://github.com/jorgepiloto/sphinx-autoapi@feat/single-page-option"
+REM TODO: these lines of code should be removed once the feature branch is merged
 %SPHINXBUILD% -M latex %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 cd "%BUILDDIR%\latex"
 for %%f in (*.tex) do (
@@ -56,6 +64,7 @@ if NOT EXIST ansys-geometry-core.pdf (
 	Echo "no pdf generated!"
 	exit /b 1)
 Echo "pdf generated!"
+goto end
 
 :build-examples-py
 cd "%BUILDDIR%\html\examples"

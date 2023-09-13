@@ -100,7 +100,7 @@ jobs:
           pip install .[tests]
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -204,12 +204,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install --upgrade build wheel
           pip install .[doc]
-          # TODO - To be removed once it is published
-          pip uninstall --yes sphinx-autoapi
-          pip install "sphinx-autoapi @ git+https://github.com/jorgepiloto/sphinx-autoapi@feat/single-page-option"
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -291,7 +288,7 @@ jobs:
 
     steps:
       - name: Login in Github Container registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
