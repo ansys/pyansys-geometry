@@ -38,7 +38,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ProjectCurvesRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.models_pb2 import EntityIdentifier
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity

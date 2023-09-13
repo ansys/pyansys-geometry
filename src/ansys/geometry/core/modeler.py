@@ -28,8 +28,8 @@ from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.dbu.v0.dbuapplication_pb2 import RunScriptFileRequest
 from ansys.api.dbu.v0.dbuapplication_pb2_grpc import DbuApplicationStub
-from ansys.api.geometry.v0.designs_pb2 import OpenRequest
-from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
+from ansys.api.dbu.v0.designs_pb2 import OpenRequest
+from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
 from beartype.typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
 from grpc import Channel
 
