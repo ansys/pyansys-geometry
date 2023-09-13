@@ -591,7 +591,7 @@ class Design(Component):
             self._id = design.main_part.id
             self._name = design.main_part.name
 
-        response = self._design_stub.GetAssembly(EntityIdentifier(id=""))
+        response = self._commands_stub.GetAssembly(EntityIdentifier(id=""))
 
         # Store created objects
         created_parts = {p.id: Part(p.id, p.name, [], []) for p in response.parts}
