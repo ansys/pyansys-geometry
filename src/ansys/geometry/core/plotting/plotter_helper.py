@@ -1,4 +1,3 @@
-
 # Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
@@ -26,9 +25,15 @@ import numpy as np
 import pyvista as pv
 
 from ansys.geometry.core.logger import LOG as logger
+from ansys.geometry.core.plotting.plotter import (
+    DEFAULT_COLOR,
+    EDGE_COLOR,
+    PICKED_COLOR,
+    PICKED_EDGE_COLOR,
+    Plotter,
+)
 from ansys.geometry.core.plotting.plotting_types import EdgePlot, GeomObjectPlot
 from ansys.geometry.core.plotting.trame_gui import _HAS_TRAME, TrameVisualizer
-from ansys.geometry.core.plotting.plotter import Plotter, PICKED_COLOR, EDGE_COLOR, PICKED_EDGE_COLOR, DEFAULT_COLOR
 
 
 class PlotterHelper:
