@@ -41,6 +41,7 @@ from ansys.geometry.core.plotting.widgets import (
     ViewButton,
     ViewDirection,
 )
+from ansys.geometry.core.plotting.widgets.measure import MeasureWidget
 from ansys.geometry.core.sketch.sketch import Sketch
 
 DEFAULT_COLOR = "#D6F7D1"
@@ -112,6 +113,7 @@ class Plotter:
                 for dir in CameraPanDirection
             ]
             [self._widgets.append(ViewButton(self._scene, direction=dir)) for dir in ViewDirection]
+            self._widgets.append(MeasureWidget(self._scene))
 
     @property
     def scene(self) -> PyVistaPlotter:
