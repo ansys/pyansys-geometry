@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides plotting for various PyAnsys Geometry objects."""
-from beartype.typing import Any, Dict, List, Optional, Union
+from beartype.typing import Any, Dict, List, Optional
 import numpy as np
 import pyvista as pv
 from pyvista.plotting.plotter import Plotter as PyVistaPlotter
@@ -33,7 +33,6 @@ from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.plotting.plotting_types import EdgePlot, GeomObjectPlot
-from ansys.geometry.core.plotting.trame_gui import _HAS_TRAME, TrameVisualizer
 from ansys.geometry.core.plotting.widgets import (
     CameraPanDirection,
     DisplacementArrow,
@@ -510,4 +509,3 @@ class Plotter:
         # This method should only be applied in 3D objects: bodies, components
         plotting_options.setdefault("smooth_shading", True)
         plotting_options.setdefault("color", DEFAULT_COLOR)
-
