@@ -65,7 +65,7 @@ class MeasureWidget(PlotterWidget):
         # the PyVista picker and the measurement widget, this should be reviewed.
         if not state:
             self._widget.Off()
-            self.plotter_helper._pl.scene.clear_measurement_widgets()
+            self.plotter_helper._pl.scene.clear_measure_widgets()
             self.plotter_helper.enable_picking()
         else:
             self.plotter_helper.disable_picking()
