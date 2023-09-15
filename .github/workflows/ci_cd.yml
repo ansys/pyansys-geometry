@@ -73,11 +73,9 @@ jobs:
           - docker-image: "windows-latest"
             experimental: false
             should-skip: 0
-          - docker-image: "windows-latest-unstable"
+          - if: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1}}
+            docker-image: "windows-latest-unstable"
             experimental: true
-            should-skip: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY }}
-        exclude:
-          - should-skip: 1
 
     steps:
 
@@ -289,12 +287,10 @@ jobs:
         include:
           - docker-image: "linux-latest"
             experimental: false
-            should-skip: 0
-          - docker-image: "linux-latest-unstable"
+          - if: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1}}
+            docker-image: "linux-latest-unstable"
             experimental: true
-            should-skip: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY }}
-        exclude:
-          - should-skip: 1
+
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@v3
