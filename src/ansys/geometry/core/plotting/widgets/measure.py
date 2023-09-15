@@ -54,19 +54,18 @@ class MeasureWidget(PlotterWidget):
         """
         Remove or add the measurement widget actor upon click.
 
-        Notes
-        -----
-        This method provides a callback function for the ruler widet.
-        It is called every time the ruler widget is clicked.
-
         Parameters
         ----------
         state : bool
             State of the button, which is inherited from PyVista. The value is ``True``
             if the button is active.
         """
+        # This implementation uses direct calls to VTK due to limitations
+        # in PyVista. If there are improvements in the compatibility between
+        # the PyVista picker and the measurement widget, this should be reviewed.
         if not state:
             self._widget.Off()
+            self.plotter_helper._pl.scene.clear_measurement_widgets()
             self.plotter_helper.enable_picking()
         else:
             self.plotter_helper.disable_picking()
