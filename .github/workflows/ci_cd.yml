@@ -72,8 +72,12 @@ jobs:
         include:
           - docker-image: "windows-latest"
             experimental: false
+            should-skip: 0
           - docker-image: "windows-latest-unstable"
             experimental: true
+            should-skip: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY }}
+        exclude:
+          - should-skip: 1
 
     steps:
 
@@ -278,6 +282,7 @@ jobs:
     name: Testing and coverage (Linux)
     needs: [smoke-tests]
     runs-on: ubuntu-latest
+    if:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: false
@@ -285,9 +290,12 @@ jobs:
         include:
           - docker-image: "linux-latest"
             experimental: false
+            should-skip: 0
           - docker-image: "linux-latest-unstable"
             experimental: true
-
+            should-skip: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY }}
+        exclude:
+          - should-skip: 1
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@v3
