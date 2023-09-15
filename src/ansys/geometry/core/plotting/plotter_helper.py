@@ -229,7 +229,7 @@ class PlotterHelper:
     def enable_picking(self):
         """Enable picking capabilities in the plotter."""
         self._pl.scene.enable_mesh_picking(
-            callback=self.picker_callback, use_actor=True, show=False, picker="point"
+            callback=self.picker_callback, use_actor=True, show=False, show_message=False
         )
 
     def disable_picking(self):
