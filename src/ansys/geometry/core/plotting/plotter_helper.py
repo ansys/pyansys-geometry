@@ -83,11 +83,6 @@ class PlotterHelper:
         else:
             self._pl = Plotter()
 
-        if self._allow_picking:
-            self._pl.scene.enable_mesh_picking(
-                callback=self.picker_callback, use_actor=True, show=False, show_message=False
-            )
-
     def select_object(self, geom_object: Union[GeomObjectPlot, EdgePlot], pt: np.ndarray) -> None:
         """
         Select an object in the plotter.
@@ -262,8 +257,16 @@ class PlotterHelper:
                 vector=view_2d["vector"],
                 viewup=view_2d["viewup"],
             )
-
         self._pl.enable_widgets()
+
+        if self._allow_picking:
+            self._pl.scene.enable_mesh_picking(
+                callback=self.picker_callback,
+                use_actor=True,
+                show=False,
+                picker="point",
+                left_clicking=False,
+            )
         self.show_plotter(screenshot)
 
         picked_objects_list = []
