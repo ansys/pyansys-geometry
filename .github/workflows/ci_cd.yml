@@ -178,9 +178,12 @@ jobs:
       - name: Stop the Geometry service
         if: always()
         run: |
-          docker stop $env:GEO_CONT_NAME
-          docker logs $env:GEO_CONT_NAME
-          docker rm $env:GEO_CONT_NAME
+          if ( $env:SKIP_UNSTABLE -match 'false')
+          {
+            docker stop $env:GEO_CONT_NAME
+            docker logs $env:GEO_CONT_NAME
+            docker rm $env:GEO_CONT_NAME
+          }
 
       - name: Stop any remaining containers
         if: always()
@@ -355,9 +358,12 @@ jobs:
       - name: Stop the Geometry service
         if: always()
         run: |
-          docker stop ${{ env.GEO_CONT_NAME }}
-          docker logs ${{ env.GEO_CONT_NAME }}
-          docker rm ${{ env.GEO_CONT_NAME }}
+          if [[ ${{ env.SKIP_UNSTABLE }} == 'false' ]];
+          then
+            docker stop ${{ env.GEO_CONT_NAME }}
+            docker logs ${{ env.GEO_CONT_NAME }}
+            docker rm ${{ env.GEO_CONT_NAME }}
+          fi
 
   package:
     name: Package library
