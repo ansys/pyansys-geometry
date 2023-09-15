@@ -14,7 +14,7 @@ PyAnsys Geometry
    :target: https://pypi.org/project/ansys-geometry-core
    :alt: PyPI
 
-.. |codecov| image:: https://codecov.io/gh/ansys/ansys-geometry-core/branch/main/graph/badge.svg
+.. |codecov| image:: https://codecov.io/gh/ansys/pyansys-geometry/graph/badge.svg?token=UZIC7XT5WE 
    :target: https://codecov.io/gh/ansys/pyansys-geometry
    :alt: Codecov
 
