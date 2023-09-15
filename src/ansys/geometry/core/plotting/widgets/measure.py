@@ -46,14 +46,15 @@ class MeasureWidget(PlotterWidget):
 
         # Initialize variables
         self._actor: vtkActor = None
-        self._measure_actor = None
+        self._widget = self.plotter.add_measurement_widget(callback=self.measure_callback)
+        self._widget.Off()
         self._button: vtkButtonWidget = self.plotter.add_checkbox_button_widget(
             self.callback, position=(10, 60), size=30, border_size=3
         )
 
     def callback(self, state: bool) -> None:
         """
-        Remove or add the ruler widget actor upon click.
+        Remove or add the measurement widget actor upon click.
 
         Notes
         -----
@@ -66,19 +67,15 @@ class MeasureWidget(PlotterWidget):
             State of the button, which is inherited from PyVista. The value is ``True``
             if the button is active.
         """
-        if not state and self._actor:
-            self.plotter.remove_actor(self._measure_actor)
+        if not state:
+            self._widget.Off()
         else:
-            self.plotter.add_measurement_widget(callback=self.measure_callback)
-
-    def measure_callback(self, a, b, distance):
-        """Call back for the measurement widget."""
-        self.plotter.add_text(f"Distance: {distance:.2f}", name="dist")
+            self._widget.On()
 
     def update(self) -> None:
-        """Define the configuration and representation of the ruler widget button."""
+        """Define the measurement widget button params."""
         show_ruler_vr = self._button.GetRepresentation()
-        show_ruler_icon_file = os.path.join(os.path.dirname(__file__), "_images", "ruler.png")
+        show_ruler_icon_file = os.path.join(os.path.dirname(__file__), "_images", "measurement.png")
         show_ruler_r = vtkPNGReader()
         show_ruler_r.SetFileName(show_ruler_icon_file)
         show_ruler_r.Update()

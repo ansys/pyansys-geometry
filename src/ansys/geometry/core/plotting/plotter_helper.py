@@ -262,6 +262,8 @@ class PlotterHelper:
                 vector=view_2d["vector"],
                 viewup=view_2d["viewup"],
             )
+
+        self._pl.enable_widgets()
         self.show_plotter(screenshot)
 
         picked_objects_list = []

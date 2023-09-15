@@ -103,9 +103,12 @@ class Plotter:
 
         # geometry objects to actors mapping
         self._geom_object_actors_map = {}
+        self._enable_widgets = enable_widgets
 
+    def enable_widgets(self):
+        """Enable the widgets for the plotter."""
         # Create Plotter widgets
-        if enable_widgets:
+        if self._enable_widgets:
             self._widgets: List[PlotterWidget] = []
             self._widgets.append(Ruler(self._scene))
             [
