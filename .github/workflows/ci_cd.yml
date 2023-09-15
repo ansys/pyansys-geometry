@@ -70,12 +70,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - docker-image: "windows-latest"
+          - should-skip: false
+            docker-image: "windows-latest"
             experimental: false
-            should-skip: 0
-          - if: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1}}
+          - if: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY == 1}}
             docker-image: "windows-latest-unstable"
             experimental: true
+        exclude:
+          - should-skip: true
 
     steps:
 
@@ -285,11 +287,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - docker-image: "linux-latest"
+          - should-skip: false
+            docker-image: "linux-latest"
             experimental: false
-          - if: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1}}
+          - should-skip: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY == 1}}
             docker-image: "linux-latest-unstable"
             experimental: true
+        exclude:
+          - should-skip: true
 
     steps:
       - name: Login in Github Container registry
