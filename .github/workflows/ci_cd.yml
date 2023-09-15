@@ -318,7 +318,9 @@ jobs:
         run: |
           docker pull ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
+
       - name: Checkout repository
+        if: env.SKIP_UNSTABLE == 'false'
         uses: actions/checkout@v4
 
       - name: Restore images cache
