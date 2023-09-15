@@ -337,6 +337,17 @@ the building requirements and then executing the build module:
     python -m build
     python -m twine check dist/*
 
+Contributors
+------------
+Special thanks to all our contributors.
+
+.. raw:: html
+
+   <a href = "https://github.com/ansys/pyansys-geometry/graphs/contributors">
+     <img src = "https://contrib.rocks/image?repo = ansys/pyansys-geometry"/>
+   </a>
+
+.. Made with [contributors-img](https://contrib.rocks).
 
 .. LINKS AND REFERENCES
 .. _black: https://github.com/psf/black
