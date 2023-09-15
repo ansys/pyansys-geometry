@@ -295,12 +295,8 @@ class PlotterHelper:
                 viewup=view_2d["viewup"],
             )
         self.enable_widgets()
-
-        if self._allow_picking:
-            self._pl.scene.enable_mesh_picking(
-                callback=self.picker_callback, use_actor=True, show=False, picker="point"
-            )
-            # Update all buttons/widgets
+        self.enable_picking()
+        # Update all buttons/widgets
         [widget.update() for widget in self._widgets]
 
         self.show_plotter(screenshot)
