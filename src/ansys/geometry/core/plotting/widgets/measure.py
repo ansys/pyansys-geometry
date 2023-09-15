@@ -23,7 +23,6 @@
 
 import os
 
-from pyvista import Plotter
 from vtk import vtkActor, vtkButtonWidget, vtkPNGReader
 
 from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
@@ -39,16 +38,15 @@ class MeasureWidget(PlotterWidget):
         Provides the plotter to add the ruler widget to.
     """
 
-    def __init__(self, plotter: Plotter) -> None:
+    def __init__(self, plotter_helper: "PlotterHelper") -> None:
         """Initialize the ``Ruler`` class."""
         # Call PlotterWidget ctor
-        super().__init__(plotter)
+        super().__init__(plotter_helper._pl.scene)
 
         # Initialize variables
         self._actor: vtkActor = None
-        self._widget = self.plotter.add_measurement_widget()
-        self._widget.Off()
-        self._button: vtkButtonWidget = self.plotter.add_checkbox_button_widget(
+        self.plotter_helper = plotter_helper
+        self._button: vtkButtonWidget = self.plotter_helper._pl.scene.add_checkbox_button_widget(
             self.callback, position=(10, 60), size=30, border_size=3
         )
 
@@ -69,8 +67,10 @@ class MeasureWidget(PlotterWidget):
         """
         if not state:
             self._widget.Off()
+            self.plotter_helper.enable_picking()
         else:
-            self._widget.On()
+            self.plotter_helper.disable_picking()
+            self._widget = self.plotter_helper._pl.scene.add_measurement_widget()
 
     def update(self) -> None:
         """Define the measurement widget button params."""

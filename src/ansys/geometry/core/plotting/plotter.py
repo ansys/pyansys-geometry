@@ -33,15 +33,6 @@ from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.plotting.plotting_types import EdgePlot, GeomObjectPlot
-from ansys.geometry.core.plotting.widgets import (
-    CameraPanDirection,
-    DisplacementArrow,
-    PlotterWidget,
-    Ruler,
-    ViewButton,
-    ViewDirection,
-)
-from ansys.geometry.core.plotting.widgets.measure import MeasureWidget
 from ansys.geometry.core.sketch.sketch import Sketch
 
 DEFAULT_COLOR = "#D6F7D1"
@@ -104,19 +95,6 @@ class Plotter:
         # geometry objects to actors mapping
         self._geom_object_actors_map = {}
         self._enable_widgets = enable_widgets
-
-    def enable_widgets(self):
-        """Enable the widgets for the plotter."""
-        # Create Plotter widgets
-        if self._enable_widgets:
-            self._widgets: List[PlotterWidget] = []
-            self._widgets.append(Ruler(self._scene))
-            [
-                self._widgets.append(DisplacementArrow(self._scene, direction=dir))
-                for dir in CameraPanDirection
-            ]
-            [self._widgets.append(ViewButton(self._scene, direction=dir)) for dir in ViewDirection]
-            self._widgets.append(MeasureWidget(self._scene))
 
     @property
     def scene(self) -> PyVistaPlotter:
@@ -502,9 +480,6 @@ class Plotter:
 
         # Enabling anti-aliasing by default on scene
         self.scene.enable_anti_aliasing("ssaa")
-
-        # Update all buttons/widgets
-        [widget.update() for widget in self._widgets]
 
         self.scene.show(jupyter_backend=jupyter_backend, **kwargs)
 
