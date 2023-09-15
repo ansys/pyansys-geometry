@@ -46,7 +46,7 @@ class MeasureWidget(PlotterWidget):
 
         # Initialize variables
         self._actor: vtkActor = None
-        self._widget = self.plotter.add_measurement_widget(callback=self.measure_callback)
+        self._widget = self.plotter.add_measurement_widget()
         self._widget.Off()
         self._button: vtkButtonWidget = self.plotter.add_checkbox_button_widget(
             self.callback, position=(10, 60), size=30, border_size=3
