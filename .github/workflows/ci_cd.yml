@@ -66,6 +66,8 @@ jobs:
     needs: [smoke-tests]
     runs-on: [self-hosted, Windows, pygeometry]
     continue-on-error: ${{ matrix.experimental }}
+    env:
+      SKIP_UNSTABLE: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY == 1 && matrix.experimental }}
     strategy:
       fail-fast: false
       matrix:
@@ -76,23 +78,27 @@ jobs:
             experimental: true
 
     steps:
-
       - uses: actions/checkout@v4
+        if: env.SKIP_UNSTABLE == 'false'
 
       - name: Set up Python
+        if: env.SKIP_UNSTABLE == 'false'
         uses: actions/setup-python@v4
         with:
           python-version: '3.9' # use python3.9, self-hosted has an issue with 3.10
 
       - name: Set up headless display
+        if: env.SKIP_UNSTABLE == 'false'
         uses: pyvista/setup-headless-display-action@v2
 
       - name: Create Python venv
+        if: env.SKIP_UNSTABLE == 'false'
         run: |
           python -m venv .venv
           .\.venv\Scripts\Activate.ps1
 
       - name: Install packages for testing
+        if: env.SKIP_UNSTABLE == 'false'
         run: |
           .\.venv\Scripts\Activate.ps1
           python -m pip install --upgrade pip
@@ -100,6 +106,7 @@ jobs:
           pip install .[tests]
 
       - name: Login to GitHub Container Registry
+        if: env.SKIP_UNSTABLE == 'false'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -107,20 +114,23 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download Geometry service container (if needed)
+        if: env.SKIP_UNSTABLE == 'false'
         run: docker pull ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
 
       - name: Check location of self-hosted runner and define license server accordingly
-        if: runner.name == 'pygeometry-ci-1' || runner.name == 'pygeometry-ci-2'
+        if: env.SKIP_UNSTABLE == 'false' && (runner.name == 'pygeometry-ci-1' || runner.name == 'pygeometry-ci-2')
         run:
           echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Start Geometry service and verify start
+        if: env.SKIP_UNSTABLE == 'false'
         run: |
           .\.venv\Scripts\Activate.ps1
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Restore images cache
+        if: env.SKIP_UNSTABLE == 'false'
         uses: actions/cache@v3
         with:
           path: .\tests\integration\image_cache
@@ -128,6 +138,7 @@ jobs:
           restore-keys: pyvista-image-cache-${{ runner.name }}-v-${{ env.RESET_IMAGE_CACHE }}
 
       - name: Testing
+        if: env.SKIP_UNSTABLE == 'false'
         run: |
           .\.venv\Scripts\Activate.ps1
           pytest -v
@@ -159,15 +170,20 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         if: matrix.docker-image == 'windows-latest'
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           files: .cov/xml
 
       - name: Stop the Geometry service
         if: always()
         run: |
-          docker stop $env:GEO_CONT_NAME
-          docker logs $env:GEO_CONT_NAME
-          docker rm $env:GEO_CONT_NAME
+          if ( $env:SKIP_UNSTABLE -match 'false')
+          {
+            docker stop $env:GEO_CONT_NAME
+            docker logs $env:GEO_CONT_NAME
+            docker rm $env:GEO_CONT_NAME
+          }
 
       - name: Stop any remaining containers
         if: always()
@@ -277,6 +293,8 @@ jobs:
     needs: [smoke-tests]
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental }}
+    env:
+      SKIP_UNSTABLE: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY == 1 && matrix.experimental }}
     strategy:
       fail-fast: false
       matrix:
@@ -288,6 +306,7 @@ jobs:
 
     steps:
       - name: Login in Github Container registry
+        if: env.SKIP_UNSTABLE == 'false'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -295,13 +314,17 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pull and launch geometry service
+        if: env.SKIP_UNSTABLE == 'false'
         run: |
           docker pull ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
+
       - name: Checkout repository
+        if: env.SKIP_UNSTABLE == 'false'
         uses: actions/checkout@v4
 
       - name: Restore images cache
+        if: env.SKIP_UNSTABLE == 'false'
         uses: actions/cache@v3
         with:
           path: tests/integration/image_cache
@@ -309,6 +332,7 @@ jobs:
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
 
       - name: Run pytest
+        if: env.SKIP_UNSTABLE == 'false'
         uses: ansys/actions/tests-pytest@v4
         env:
           ALLOW_PLOTTING: true
@@ -336,9 +360,12 @@ jobs:
       - name: Stop the Geometry service
         if: always()
         run: |
-          docker stop ${{ env.GEO_CONT_NAME }}
-          docker logs ${{ env.GEO_CONT_NAME }}
-          docker rm ${{ env.GEO_CONT_NAME }}
+          if [[ ${{ env.SKIP_UNSTABLE }} == 'false' ]];
+          then
+            docker stop ${{ env.GEO_CONT_NAME }}
+            docker logs ${{ env.GEO_CONT_NAME }}
+            docker rm ${{ env.GEO_CONT_NAME }}
+          fi
 
   package:
     name: Package library
