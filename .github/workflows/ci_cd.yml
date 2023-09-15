@@ -66,20 +66,23 @@ jobs:
     needs: [smoke-tests]
     runs-on: [self-hosted, Windows, pygeometry]
     continue-on-error: ${{ matrix.experimental }}
+    env:
+      SKIP_UNSTABLE: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY == 1 && matrix.experimental }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - should-skip: false
-            docker-image: "windows-latest"
+          - docker-image: "windows-latest"
             experimental: false
-          - if: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY == 1}}
-            docker-image: "windows-latest-unstable"
+          - docker-image: "windows-latest-unstable"
             experimental: true
-        exclude:
-          - should-skip: true
 
     steps:
+
+      - name: Check if unstable images should run or not
+        if: env.SKIP_UNSTABLE == 'true'
+        run: |
+          exit 0
 
       - uses: actions/checkout@v4
 
@@ -283,20 +286,23 @@ jobs:
     needs: [smoke-tests]
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental }}
+    env:
+      SKIP_UNSTABLE: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY == 1 && matrix.experimental }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - should-skip: false
-            docker-image: "linux-latest"
+          - docker-image: "linux-latest"
             experimental: false
-          - should-skip: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY == 1}}
-            docker-image: "linux-latest-unstable"
+          - docker-image: "linux-latest-unstable"
             experimental: true
-        exclude:
-          - should-skip: true
 
     steps:
+      - name: Check if unstable images should run or not
+        if: env.SKIP_UNSTABLE == 'true'
+        run: |
+          exit 0
+
       - name: Login in Github Container registry
         uses: docker/login-action@v3
         with:
