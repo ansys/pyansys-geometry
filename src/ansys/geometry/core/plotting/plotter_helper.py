@@ -294,8 +294,11 @@ class PlotterHelper:
                 vector=view_2d["vector"],
                 viewup=view_2d["viewup"],
             )
+
+        # Enable widgets and picking capabilities
         self.enable_widgets()
         self.enable_picking()
+
         # Update all buttons/widgets
         [widget.update() for widget in self._widgets]
 
