@@ -78,6 +78,7 @@ class PlotterHelper:
         self._picker_added_actors_map = {}
         self._edge_actors_map = {}
         self._widgets = []
+
         if self._use_trame and _HAS_TRAME:
             # avoids GUI window popping up
             pv.OFF_SCREEN = True
