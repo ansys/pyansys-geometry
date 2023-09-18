@@ -38,6 +38,9 @@ from ansys.geometry.core.connection.product_instance import ProductInstance
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.logger import PyGeometryCustomAdapter
 from ansys.geometry.core.typing import Real
+from google.protobuf.empty_pb2 import Empty
+from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
+from ansys.api.dbu.v0.admin_pb2 import BackendType as grpcBackendType
 
 try:
     from ansys.platform.instancemanagement import Instance
@@ -164,7 +167,21 @@ class GrpcClient:
                 logging_file = str(logging_file)
             self._log.log_to_file(filename=logging_file, level=logging_level)
 
-        # Store the backend
+        self._admin_stub = AdminStub(self._channel)
+
+        # if no backend type has been specified, ask the backend which type it is
+        if backend_type == None:            
+            grpc_backend_type = self._admin_stub.GetBackend(Empty()).type
+            if grpc_backend_type == grpcBackendType.DISCOVERY:
+                backend_type = BackendType.DISCOVERY
+            elif grpc_backend_type == grpcBackendType.SPACECLAIM:
+                backend_type = BackendType.SPACECLAIM
+            elif grpc_backend_type == grpcBackendType.WINDOWS_DMS:
+                backend_type = BackendType.WINDOWS_SERVICE
+            elif grpc_backend_type == grpcBackendType.LINUX_DMS:
+                backend_type = BackendType.LINUX_SERVICE
+
+        # Store the backend type
         self._backend_type = backend_type
 
     @property

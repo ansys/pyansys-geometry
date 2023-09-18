@@ -589,7 +589,8 @@ class Design(Component):
             raise RuntimeError("No existing design available at service level.")
         else:
             self._id = design.main_part.id
-            self._name = design.main_part.name
+            # Here we may take the design's name instead of the main part's name since they're the same in the backend.
+            self._name = design.name
 
         response = self._commands_stub.GetAssembly(EntityIdentifier(id=""))
 
