@@ -910,18 +910,36 @@ class Sketch:
             List of the polydata configuration for all edges and faces in the sketch.
         """
         sketches_polydata = []
-        sketches_polydata.extend(
-            [
-                edge.visualization_polydata.transform(self._plane.transformation_matrix)
-                for edge in self.edges
-            ]
-        )
-
-        sketches_polydata.extend(
-            [
-                face.visualization_polydata.transform(self._plane.transformation_matrix)
-                for face in self.faces
-            ]
-        )
-
+        sketches_polydata.extend(self.sketch_polydata_edges())
+        sketches_polydata.extend(self.sketch_polydata_faces())
         return sketches_polydata
+
+    def sketch_polydata_faces(self) -> List["PolyData"]:
+        """
+        Get polydata configuration for all faces of the sketch to the scene.
+
+        Returns
+        -------
+        List[~pyvista.PolyData]
+            List of the polydata configuration for faces in the sketch.
+        """
+        sketches_polydata_faces = [
+            face.visualization_polydata.transform(self._plane.transformation_matrix)
+            for face in self.faces
+        ]
+        return sketches_polydata_faces
+
+    def sketch_polydata_edges(self) -> List["PolyData"]:
+        """
+        Get polydata configuration for all edges of the sketch to the scene.
+
+        Returns
+        -------
+        List[~pyvista.PolyData]
+            List of the polydata configuration for edges in the sketch.
+        """
+        sketches_polydata_edges = [
+            edge.visualization_polydata.transform(self._plane.transformation_matrix)
+            for edge in self.edges
+        ]
+        return sketches_polydata_edges
