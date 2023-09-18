@@ -144,7 +144,7 @@ In order to build your image, follow the next instructions:
      docker build -t ghcr.io/ansys/geometry:linux-latest -f Dockerfile.linux .
 
 #. Check that the image has been created successfully. You should see an output similar
-  to this one when running the following command:
+   to this one when running the following command:
 
   .. code:: bash
 

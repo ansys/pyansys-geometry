@@ -131,7 +131,7 @@ In order to build your image, follow the next instructions:
      docker build -t ghcr.io/ansys/geometry:windows-latest -f Dockerfile.windows .
 
 #. Check that the image has been created successfully. You should see an output similar
-  to this one when running the following command:
+   to this one when running the following command:
 
   .. code:: bash
 
