@@ -228,7 +228,8 @@ class Plotter:
         if show_frame:
             self.plot_frame(sketch._plane)
 
-        self.add_sketch_polydata(sketch.sketch_polydata(), **plotting_options)
+        self.add_sketch_polydata(sketch.sketch_polydata_faces(), opacity=0.7, **plotting_options)
+        self.add_sketch_polydata(sketch.sketch_polydata_edges(), **plotting_options)
 
     def add_body_edges(self, body_plot: GeomObjectPlot, **plotting_options: Optional[dict]) -> None:
         """
