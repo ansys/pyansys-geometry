@@ -244,6 +244,7 @@ class PlotterHelper:
         merge_bodies: bool = False,
         merge_component: bool = False,
         view_2d: Dict = None,
+        filter: str = None,
         **plotting_options,
     ) -> List[Any]:
         """
@@ -268,6 +269,8 @@ class PlotterHelper:
             dataset without any hierarchy.
         view_2d : Dict, default: None
             Dictionary with the plane and the viewup vectors of the 2D plane.
+        filter : str, default: None
+            Regular expression with the desired name or names you want to include in the plotter.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
@@ -280,11 +283,11 @@ class PlotterHelper:
         if isinstance(object, List) and not isinstance(object[0], pv.PolyData):
             logger.debug("Plotting objects in list...")
             self._geom_object_actors_map = self._pl.add_list(
-                object, merge_bodies, merge_component, **plotting_options
+                object, merge_bodies, merge_component, filter, **plotting_options
             )
         else:
             self._geom_object_actors_map = self._pl.add(
-                object, merge_bodies, merge_component, **plotting_options
+                object, merge_bodies, merge_component, filter, **plotting_options
             )
 
         self.compute_edge_object_map()
