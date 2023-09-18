@@ -268,6 +268,20 @@ jobs:
           path: doc/_build/latex/ansys-geometry-core*.pdf
           retention-days: 7
 
+      - name: Upload Windows Dockerfile
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-dockerfile
+          path: docker/Dockerfile.windows
+          retention-days: 7
+
+      - name: Upload Linux Dockerfile
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-dockerfile
+          path: docker/Dockerfile.linux
+          retention-days: 7
+
       - name: Stop the Geometry service
         if: always()
         run: |
