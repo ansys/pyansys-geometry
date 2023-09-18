@@ -94,9 +94,7 @@ Building the Geometry Service Windows container
 The Geometry service Docker containers can be easily built by following
 these steps.
 
-Inside the repository's ``docker`` folder, the instructions
-(i.e. ``Dockerfile.*`` files) for building the Geometry service Docker
-containers are made available. There are two ``Dockerfile`` files:
+Inside the repository's ``docker`` folder, there are two ``Dockerfile`` files:
 
 * ``Dockerfile.linux``: this file builds the Linux-based Docker image.
 * ``Dockerfile.windows``: this file builds the Windows-based Docker image.
@@ -104,7 +102,7 @@ containers are made available. There are two ``Dockerfile`` files:
 Depending on the characteristics of the Docker engine installed in your
 machine, either one or the other has to be built. For example:
 
-In this guide, we focus on building the ``Dockerfile.windows`` image.
+In this guide, focus is set on building the ``Dockerfile.windows`` image.
 
 Prerequisites
 ~~~~~~~~~~~~~
