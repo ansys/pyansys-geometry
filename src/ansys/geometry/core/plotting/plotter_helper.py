@@ -34,6 +34,15 @@ from ansys.geometry.core.plotting.plotter import (
 )
 from ansys.geometry.core.plotting.plotting_types import EdgePlot, GeomObjectPlot
 from ansys.geometry.core.plotting.trame_gui import _HAS_TRAME, TrameVisualizer
+from ansys.geometry.core.plotting.widgets import (
+    CameraPanDirection,
+    DisplacementArrow,
+    MeasureWidget,
+    PlotterWidget,
+    Ruler,
+    ViewButton,
+    ViewDirection,
+)
 
 
 class PlotterHelper:
@@ -68,6 +77,7 @@ class PlotterHelper:
         self._picked_list = set()
         self._picker_added_actors_map = {}
         self._edge_actors_map = {}
+        self._widgets = []
 
         if self._use_trame and _HAS_TRAME:
             # avoids GUI window popping up
@@ -83,10 +93,23 @@ class PlotterHelper:
         else:
             self._pl = Plotter()
 
-        if self._allow_picking:
-            self._pl.scene.enable_mesh_picking(
-                callback=self.picker_callback, use_actor=True, show=False, show_message=False
-            )
+        self._enable_widgets = self._pl._enable_widgets
+
+    def enable_widgets(self):
+        """Enable the widgets for the plotter."""
+        # Create Plotter widgets
+        if self._enable_widgets:
+            self._widgets: List[PlotterWidget] = []
+            self._widgets.append(Ruler(self._pl._scene))
+            [
+                self._widgets.append(DisplacementArrow(self._pl._scene, direction=dir))
+                for dir in CameraPanDirection
+            ]
+            [
+                self._widgets.append(ViewButton(self._pl._scene, direction=dir))
+                for dir in ViewDirection
+            ]
+            self._widgets.append(MeasureWidget(self))
 
     def select_object(self, geom_object: Union[GeomObjectPlot, EdgePlot], pt: np.ndarray) -> None:
         """
@@ -204,6 +227,16 @@ class PlotterHelper:
             for edge in object.edges:
                 self._edge_actors_map[edge.actor] = edge
 
+    def enable_picking(self):
+        """Enable picking capabilities in the plotter."""
+        self._pl.scene.enable_mesh_picking(
+            callback=self.picker_callback, use_actor=True, show=False, show_message=False
+        )
+
+    def disable_picking(self):
+        """Disable picking capabilities in the plotter."""
+        self._pl.scene.disable_picking()
+
     def plot(
         self,
         object: Any,
@@ -262,6 +295,15 @@ class PlotterHelper:
                 vector=view_2d["vector"],
                 viewup=view_2d["viewup"],
             )
+
+        # Enable widgets and picking capabilities
+        self.enable_widgets()
+        if self._allow_picking:
+            self.enable_picking()
+
+        # Update all buttons/widgets
+        [widget.update() for widget in self._widgets]
+
         self.show_plotter(screenshot)
 
         picked_objects_list = []

@@ -753,3 +753,20 @@ def test_arc_from_three_points():
     for point in pd.points:
         if point[1] > 0:
             assert point[0] < 0 or np.isclose(point[0], 0)
+
+
+def test_polydata_methods():
+    sketch = Sketch()
+    sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon1")
+    sketch.arc(
+        Point2D([10, 10], UNITS.m),
+        Point2D([10, -10], UNITS.m),
+        Point2D([10, 0], UNITS.m),
+        tag="Arc1",
+    )
+    pd = sketch.sketch_polydata()
+    pd_faces = sketch.sketch_polydata_faces()
+    pd_edges = sketch.sketch_polydata_edges()
+    assert len(pd) == 2
+    assert len(pd_edges) == 1
+    assert len(pd_faces) == 1
