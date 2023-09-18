@@ -21,10 +21,11 @@ these steps when installing Docker:
 
     .. tab-item:: Windows/MacOS machines
 
-       #. Install `Docker Desktop <https://docs.docker.com/desktop/install/windows-install/>`_.
+       #. Install `Docker Desktop for Windows <https://docs.docker.com/desktop/install/windows-install/>`_ or
+          `Docker Desktop for MacOS <https://docs.docker.com/desktop/install/mac-install/>`_.
 
-       #. (On Windows) When prompted for **Use WSL2 instead of Hyper-V (recommended)**, **UNTICK** this checkbox.
-       Hyper-V must be enabled to run Windows Docker containers.
+       #. **(On Windows)** When prompted for **Use WSL2 instead of Hyper-V (recommended)**, **UNTICK** this checkbox.
+          Hyper-V must be enabled to run Windows Docker containers - which you might be interested in doing in the future.
 
        #. Once the installation finishes, restart your machine, and start Docker Desktop.
 
