@@ -6,11 +6,11 @@ Geometry service using Docker
 What is Docker?
 ---------------
 
-Docker is an open platform for developing, shipping, and running applications in a
+Docker is an open platform for developing, shipping, and running apps in a
 containerized way.
 
 Containers are standard units of software that package up code and all its dependencies
-so the application runs quickly and reliably from one computing environment to another.
+so the app runs quickly and reliably from one computing environment to another.
 
 Ensure that the machine where the Geometry service is to run has Docker installed. Otherwise,
 see `Install Docker Engine <https://docs.docker.com/engine/install/>`_ in the Docker documentation.
