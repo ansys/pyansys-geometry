@@ -92,3 +92,11 @@ To end the session, run the corresponding command:
     disco.close()
     sc.close()
     geo.close()
+
+.. button-ref:: ../index
+    :ref-type: doc
+    :color: primary
+    :shadow:
+    :expand:
+
+    Go back to Getting Started

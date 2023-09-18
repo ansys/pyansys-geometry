@@ -31,3 +31,11 @@ connection inside your ``Modeler`` object:
    Ansys Geometry Modeler Client (...)
    Target:     localhost:5001
    Connection: Healthy
+
+.. button-ref:: ../index
+    :ref-type: doc
+    :color: primary
+    :shadow:
+    :expand:
+
+    Go back to Getting Started
