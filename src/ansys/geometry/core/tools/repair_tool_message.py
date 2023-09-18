@@ -1,14 +1,10 @@
-from ansys.api.geometry.v0.repairtools_pb2 import FixMissingFacesRequest
-from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
-from google.protobuf.wrappers_pb2 import Int32Value
-
-from ansys.geometry.core.connection import GrpcClient
+"""Module for repair tool message."""
 
 
 class RepairToolMessage:
+    """Provides return message for the repair tool methods."""
 
-
-    def __init__(self, success: bool, created_bodies: list[str], modified_bodies: list[str] ):
+    def __init__(self, success: bool, created_bodies: list[str], modified_bodies: list[str]):
         """
         Initialize a new instance of the extra edge problem area class.
 
@@ -21,7 +17,6 @@ class RepairToolMessage:
         self._created_bodies = created_bodies
         self._modified_bodies = modified_bodies
 
-
     @property
     def success(self) -> bool:
         """The success of the repair operation."""
@@ -31,7 +26,7 @@ class RepairToolMessage:
     def created_bodies(self) -> list[str]:
         """The success of the repair operation."""
         return self._created_bodies
-    
+
     @property
     def modified_bodies(self) -> list[str]:
         """The success of the repair operation."""

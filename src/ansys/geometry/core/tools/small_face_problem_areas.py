@@ -1,10 +1,10 @@
+"""Problem areas definition related to small faces."""
 from ansys.api.geometry.v0.repairtools_pb2 import FixSmallFacesRequest
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
-from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
-
 from google.protobuf.wrappers_pb2 import Int32Value
 
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 
 
 class SmallFaceProblemAreas:
@@ -45,5 +45,9 @@ class SmallFaceProblemAreas:
         response = RepairToolsStub(client.channel).FixSmallFaces(
             FixSmallFacesRequest(small_face_problem_area_id=id_value)
         )
-        message = RepairToolMessage(response.result.success,response.result.created_bodies_monikers, response.result.modified_bodies_monikers)
+        message = RepairToolMessage(
+            response.result.success,
+            response.result.created_bodies_monikers,
+            response.result.modified_bodies_monikers,
+        )
         return message
