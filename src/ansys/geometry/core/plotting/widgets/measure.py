@@ -66,9 +66,11 @@ class MeasureWidget(PlotterWidget):
         if not state:
             self._widget.Off()
             self.plotter_helper._pl.scene.clear_measure_widgets()
-            self.plotter_helper.enable_picking()
+            if self.plotter_helper._allow_picking:
+                self.plotter_helper.enable_picking()
         else:
-            self.plotter_helper.disable_picking()
+            if self.plotter_helper._allow_picking:
+                self.plotter_helper.disable_picking()
             self._widget = self.plotter_helper._pl.scene.add_measurement_widget()
 
     def update(self) -> None:

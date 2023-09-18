@@ -297,7 +297,8 @@ class PlotterHelper:
 
         # Enable widgets and picking capabilities
         self.enable_widgets()
-        self.enable_picking()
+        if self._allow_picking:
+            self.enable_picking()
 
         # Update all buttons/widgets
         [widget.update() for widget in self._widgets]
