@@ -128,7 +128,7 @@ Prerequisites
 * Download the `latest Linux Dockerfile <https://github.com/ansys/pyansys-geometry/blob/main/docker/Dockerfile.linux>`_.
 
 * Download the `latest release artifacts for the Linux
-  Docker container (ZIP file) <https://github.com/ansys/pyansys-geometry/releases/latest/download/linux-binaries.zip>`_. 
+  Docker container (ZIP file) <https://github.com/ansys/pyansys-geometry/releases/latest/download/linux-binaries.zip>`_.
 
 * Move this ``.zip`` file to the location of the Linux Dockerfile previously downloaded.
 

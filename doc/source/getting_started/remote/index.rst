@@ -10,7 +10,7 @@ that PyAnsys Geometry can connect to.
 .. warning::
 
    **This option is only available for Ansys employees.**
-   
+
    Only Ansys employees with credentials to the Artifact Repository Browser
    can download ZIP files for PIM.
 

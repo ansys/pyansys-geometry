@@ -7,7 +7,7 @@ What is Docker?
 ---------------
 
 Docker is an open platform for developing, shipping, and running applications in a
-containerized way. 
+containerized way.
 
 Containers are standard units of software that package up code and all its dependencies
 so the application runs quickly and reliably from one computing environment to another.
