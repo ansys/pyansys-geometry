@@ -384,7 +384,11 @@ class Plotter:
             Mapping between the ~pyvista.Actor and the PyAnsys Geometry object.
         """
         logger.debug(f"Adding object type {type(object)} to the PyVista plotter")
-
+        if filter:
+            if hasattr(object, "name"):
+                if not re.search(filter, object.name):
+                    logger.info(f"Name {object.name} not found in regex {filter}.")
+                    return self._geom_object_actors_map
         if isinstance(object, List) and isinstance(object[0], pv.PolyData):
             self.add_sketch_polydata(object, **plotting_options)
         elif isinstance(object, pv.PolyData):
@@ -394,11 +398,7 @@ class Plotter:
         elif isinstance(object, Sketch):
             self.plot_sketch(object, **plotting_options)
         elif isinstance(object, Body) or isinstance(object, MasterBody):
-            if filter:
-                if re.search(filter, object.name):
-                    self.add_body(object, merge_bodies, **plotting_options)
-            else:
-                self.add_body(object, merge_bodies, **plotting_options)
+            self.add_body(object, merge_bodies, **plotting_options)
         elif isinstance(object, Design) or isinstance(object, Component):
             self.add_component(object, merge_components, merge_bodies, **plotting_options)
         else:
