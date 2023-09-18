@@ -41,120 +41,13 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 Usage
 -----
 
-There are two different ways of getting started with the Geometry service and its client-library, PyAnsys Geometry.
+There are different ways of getting started with using the Geometry service and its client-library, PyAnsys Geometry.
 
-Using PyAnsys Geometry launcher
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+For more information, please refer to the
+`Getting Started <https://geometry.docs.pyansys.com/version/stable/getting_started/index.html>`_ documentation.
 
-PyAnsys Geometry is provided with an internal launcher that is capable of handling the specifics of
-launching the Geometry service locally. The only requirements are that:
-
-* Docker is installed on your machine.
-* You have access to the Geometry service image.
-
-.. note::
-
-   The Geometry service is mainly available as a Windows Docker image. The development
-   team is working on getting the Linux Docker container available as soon as possible. In the meantime,
-   make sure that your Docker engine is configured to run Windows Docker images.
-
-Using the GitHub Container Registry image
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-First, bear in mind that you have to be `authenticated to ghcr.io
-<https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry>`_.
-Once authenticated, please proceed to download the Geometry service Docker image:
-
-.. code:: bash
-
-   docker pull ghcr.io/ansys/geometry:<tag>
-
-The following OS-dependent tags are available:
-
-* ``windows-latest``
-* ``windows-latest-unstable``
-* ``linux-latest``
-* ``linux-latest-unstable``
-
-Build your own Geometry service image
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Access the ``docker`` folder in this repository and go through the instructions
-presented in the `main README file <https://github.com/ansys/pyansys-geometry/blob/main/docker/README.rst>`_.
-
-Launching the Geometry service image
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Next, you will be ready to run the Geometry service directly from PyAnsys Geometry:
-
-.. code:: python
-
-   from ansys.geometry.core.connection import launch_modeler
-
-   modeler = launch_modeler()
-
-The previous ``launch_modeler()`` method will launch the Geometry service under the default
-conditions. For more configurability, please use ``launch_local_modeler()``.
-
-Manual service launch
-^^^^^^^^^^^^^^^^^^^^^
-
-First, start the Geometry service locally. If you have Docker installed and have
-`authenticated to ghcr.io`_, you can start the service locally using Docker with:
-
-.. code:: bash
-
-   docker run --name ans_geo -e LICENSE_SERVER=<LICENSE-SERVER> -p 50051:50051 ghcr.io/ansys/geometry:<TAG>
-
-The Geometry service has a set of environment variables that are **mandatory**:
-
-* ``LICENSE_SERVER``: the license server (IP, DNS) to which the Geometry service shall connect. For example, ``127.0.0.1``.
-
-Other optional environment variables are:
-
-* ``ENABLE_TRACE``: whether to set up the trace level for debugging purposes. Expects either ``1`` or ``0``.
-  By default, ``0`` (which means it is not activated).
-* ``LOG_LEVEL``: sets the Geometry service logging level. By default, ``2``.
-
-Next, connect to the service with:
-
-.. code:: python
-
-   from ansys.geometry.core import Modeler
-
-   modeler = Modeler()
-
-By default ``Modeler`` connects to ``127.0.0.1`` (``'localhost'``) on
-port ``50051``. You can change this by modifying the ``host`` and ``port``
-parameters of ``Modeler``, but note that you must also modify
-your ``docker run`` command by changing ``<HOST-PORT>:50051``.
-
-If you want to change the defaults, modify the following environment variables:
-
-**On Linux/Mac OS**
-
-.. code::
-
-   export ANSRV_GEO_HOST=127.0.0.1
-   export ANSRV_GEO_PORT=50051
-
-**On Windows Powershell**
-
-.. code::
-
-   $env:ANSRV_GEO_HOST="127.0.0.1"
-   $env:ANSRV_GEO_PORT=50051
-
-**On Windows CMD**
-
-.. code::
-
-   SET ANSRV_GEO_HOST=127.0.0.1
-   SET ANSRV_GEO_PORT=50051
-
-
-Install the package
--------------------
+Installation
+------------
 
 PyAnsys Geometry has three installation modes: user, developer, and offline.
 
