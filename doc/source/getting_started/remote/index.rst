@@ -1,14 +1,16 @@
 .. _ref_creating_remote_session:
 
-Create a remote session
-=======================
+Geometry service using a remote session
+=======================================
 
 If a remote server is running Ansys 2023 R2 or later and PIM (Product
 Instance Manager), you can use PIM to start a Discovery or SpaceClaim session
 that PyAnsys Geometry can connect to.
 
-.. note::
+.. warning::
 
+   **This option is only available for Ansys employees.**
+   
    Only Ansys employees with credentials to the Artifact Repository Browser
    can download ZIP files for PIM.
 

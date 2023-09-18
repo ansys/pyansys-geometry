@@ -1,7 +1,7 @@
 .. _ref_creating_local_session:
 
-Create a local session
-======================
+Geometry service using a local session
+======================================
 
 If Ansys 2023 R2 or later and PyAnsys Geometry are installed, you can create a local backend session using
 Discovery, SpaceClaim, or the Geometry service. Once the backend is running, PyAnsys Geometry can manage the connection.
@@ -39,9 +39,9 @@ either Discovery, SpaceClaim, or the Geometry service.
 For more information on the arguments accepted by the launcher methods, please refer
 to their API documentation:
 
-* `launch_modeler_with_discovery <../api/ansys/geometry/core/connection/launcher/index.html#launcher.launch_modeler_with_discovery>`_
-* `launch_modeler_with_spaceclaim <../api/ansys/geometry/core/connection/launcher/index.html#launcher.launch_modeler_with_spaceclaim>`_
-* `launch_modeler_with_geometry_service <../api/ansys/geometry/core/connection/launcher/index.html#launcher.launch_modeler_with_geometry_service>`_
+* `launch_modeler_with_discovery <../../api/ansys/geometry/core/connection/launcher/index.html#launcher.launch_modeler_with_discovery>`_
+* `launch_modeler_with_spaceclaim <../../api/ansys/geometry/core/connection/launcher/index.html#launcher.launch_modeler_with_spaceclaim>`_
+* `launch_modeler_with_geometry_service <../../api/ansys/geometry/core/connection/launcher/index.html#launcher.launch_modeler_with_geometry_service>`_
 
 .. note::
 
