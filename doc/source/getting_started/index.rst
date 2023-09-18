@@ -6,7 +6,7 @@ Getting started
 PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
 This client library works with a Geometry service backend. There are several ways of
-running this backend, although the preferred and most performant mode is using Docker
+running this backend, although the preferred and high-performance mode is using Docker
 containers. Please select the option that suits your needs best from the ones below:
 
 .. grid:: 1

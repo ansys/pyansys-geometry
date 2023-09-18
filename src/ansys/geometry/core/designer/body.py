@@ -272,7 +272,7 @@ class IBody(ABC):
         Project and imprint specified geometries onto the body.
 
         This method combines the ``project_curves()`` and ``imprint_curves()`` method into
-        one method. It is much more performant than calling them back-to-back when dealing
+        one method. It has higher performance than calling them back-to-back when dealing
         with many curves. Because it is a specialized function, this method only returns
         the faces (and not the edges) from the imprint operation.
 

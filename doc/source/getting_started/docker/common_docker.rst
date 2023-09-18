@@ -23,12 +23,12 @@ You can also specify other optional environment variables:
 
 Other important information to keep in mind:
 
-* The **host**: this is the machine that will host the Geometry Service. It will typically be
+* The **host**: this is the machine that hosts the Geometry Service. It is typically be
   on ``localhost`` but bare in mind that if you are deploying the service in a remote machine,
-  you will need to pass in this machine's host IP when connecting. By default, PyAnsys Geometry
-  will assume it is on ``localhost``.
+  you need to pass in this machine's host IP when connecting. By default, PyAnsys Geometry
+  assumes it is on ``localhost``.
 
-* The **port**: this is the port that will expose the Geometry Service on the host machine. Its
+* The **port**: this is the port that exposes the Geometry Service on the host machine. Its
   value is assumed to be ``50051``, but users can deploy the service on their preferred port.
 
 Prior to using the PyAnsys Geometry launcher to launch the Geometry service, you must define
@@ -78,7 +78,7 @@ environment variables prior to manually launching the Geometry service.
        .. warning::
 
            When running a Windows Docker container, certain high-value ports might be restricted
-           from its use. This means that the port exposed by the container will have to be set
+           from its use. This means that the port exposed by the container has to be set
            to lower values. It is recommended to change the value of ``ANSRV_GEO_PORT``
            to use a port such as ``700``, instead of ``50051``.
 
@@ -154,7 +154,7 @@ To see the commands for each method, click the following tabs.
        .. warning::
 
            When running a Windows Docker container, certain high-value ports might be restricted
-           from its use. This means that the port exposed by the container will have to be set
+           from its use. This means that the port exposed by the container has to be set
            to lower values. It is recommended to change the value of ``-p 50051:50051``
            to use a port such as ``-p 700:50051``.
 
@@ -180,7 +180,7 @@ function.
 .. warning::
 
     When running a Windows Docker container, certain high-value ports might be restricted
-    from its use. This means that the port exposed by the container will have to be set
+    from its use. This means that the port exposed by the container has to be set
     to lower values. It is recommended to change the value of ``ANSRV_GEO_PORT``
     to use a port such as ``700``, instead of ``50051``.
 

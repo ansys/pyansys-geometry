@@ -22,7 +22,7 @@ Currently, the Geometry service backend is mainly delivered as a **Windows** Doc
 However, these containers require of a Windows machine to run them.
 
 A Linux version of the Geometry Service is also available but with limited capabilities,
-meaning that certain operations will not be available or fail.
+meaning that certain operations are not available or fail.
 
 Select the kind of Docker container you want to build:
 

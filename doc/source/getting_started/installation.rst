@@ -3,7 +3,7 @@
 Package installation in development mode
 ########################################
 
-This sectiom assumes that you want to install PyAnsys Geometry in developer mode so that
+This n assumes that you want to install PyAnsys Geometry in developer mode so that
 you can modify the source and enhance it. You can install PyAnsys Geometry from PyPI
 or from the `PyAnsys Geometry repository <https://github.com/ansys/pyansys-geometry>`_ on GitHub.
 

@@ -116,7 +116,7 @@ containers are made available. There are two ``Dockerfile`` files:
 Depending on the characteristics of the Docker engine installed in your
 machine, either one or the other has to be built. For example:
 
-In this guide, we will focus on building the ``Dockerfile.linux`` image.
+In this guide, we focus on building the ``Dockerfile.linux`` image.
 
 Prerequisites
 ~~~~~~~~~~~~~
@@ -137,7 +137,7 @@ Building the Docker images
 
 In order to build your image, follow the next instructions:
 
-* Locate yourself at the folder where the ``.zip`` file and the Dockefile are placed.
+* Locate yourself at the folder where the ``.zip`` file and the Dockerfile are placed.
 * Run the following Docker command:
 
   .. code:: bash
