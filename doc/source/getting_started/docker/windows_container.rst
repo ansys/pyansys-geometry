@@ -100,7 +100,7 @@ Inside the repository's ``docker`` folder, there are two ``Dockerfile`` files:
 * ``Dockerfile.windows``: this file builds the Windows-based Docker image.
 
 Depending on the characteristics of the Docker engine installed in your
-machine, either one or the other has to be built. For example:
+machine, either one or the other has to be built.
 
 In this guide, focus is set on building the ``Dockerfile.windows`` image.
 
@@ -123,14 +123,14 @@ Building the Docker images
 
 In order to build your image, follow the next instructions:
 
-* Locate yourself at the folder where the ``.zip`` file and the Dockerfile are placed.
-* Run the following Docker command:
+#. Locate yourself at the folder where the ``.zip`` file and the Dockerfile are placed.
+#. Run the following Docker command:
 
   .. code:: bash
 
      docker build -t ghcr.io/ansys/geometry:windows-latest -f Dockerfile.windows .
 
-* Check that the image has been created successfully. You should see an output similar
+#. Check that the image has been created successfully. You should see an output similar
   to this one when running the following command:
 
   .. code:: bash
