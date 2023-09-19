@@ -40,6 +40,7 @@ from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.misc.checks import check_type
 from ansys.geometry.core.misc.options import ImportOptions
+from ansys.geometry.core.tools.repair_tools import RepairTools
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -115,6 +116,7 @@ class Modeler:
             backend_type=backend_type,
         )
 
+        self._repair_tools = RepairTools()
         # Design[] maintaining references to all designs within the modeler workspace
         self._designs = []
 
@@ -341,3 +343,8 @@ class Modeler:
             return (response.values, self.read_existing_design())
         else:
             return response.values
+
+    @property
+    def repair_tools(self) -> RepairTools:
+        """Modeler instance repair tools."""
+        return self._repair_tools
