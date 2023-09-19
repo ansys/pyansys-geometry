@@ -387,8 +387,10 @@ class Plotter:
         if filter:
             if hasattr(object, "name"):
                 if not re.search(filter, object.name):
-                    logger.info(f"Name {object.name} not found in regex {filter}.")
+                    logger.debug(f"Name {object.name} not found in regex {filter}.")
                     return self._geom_object_actors_map
+
+        # Check what kind of object we are dealing with
         if isinstance(object, List) and isinstance(object[0], pv.PolyData):
             self.add_sketch_polydata(object, **plotting_options)
         elif isinstance(object, pv.PolyData):
