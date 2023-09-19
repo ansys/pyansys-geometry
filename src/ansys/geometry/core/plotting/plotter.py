@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides plotting for various PyAnsys Geometry objects."""
+import re
+
 from beartype.typing import Any, Dict, List, Optional
 import numpy as np
 import pyvista as pv
@@ -349,6 +351,7 @@ class Plotter:
         object: Any,
         merge_bodies: bool = False,
         merge_components: bool = False,
+        filter: str = None,
         **plotting_options,
     ) -> Dict[pv.Actor, GeomObjectPlot]:
         """
@@ -369,6 +372,8 @@ class Plotter:
             Whether to merge the component into a single dataset. When
             ``True``, all the individual bodies are effectively combined
             into a single dataset without any hierarchy.
+        filter : str, default: None
+            Regular expression with the desired name or names you want to include in the plotter.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
@@ -379,7 +384,13 @@ class Plotter:
             Mapping between the ~pyvista.Actor and the PyAnsys Geometry object.
         """
         logger.debug(f"Adding object type {type(object)} to the PyVista plotter")
+        if filter:
+            if hasattr(object, "name"):
+                if not re.search(filter, object.name):
+                    logger.debug(f"Name {object.name} not found in regex {filter}.")
+                    return self._geom_object_actors_map
 
+        # Check what kind of object we are dealing with
         if isinstance(object, List) and isinstance(object[0], pv.PolyData):
             self.add_sketch_polydata(object, **plotting_options)
         elif isinstance(object, pv.PolyData):
@@ -401,6 +412,7 @@ class Plotter:
         plotting_list: List[Any],
         merge_bodies: bool = False,
         merge_components: bool = False,
+        filter: str = None,
         **plotting_options,
     ) -> Dict[pv.Actor, GeomObjectPlot]:
         """
@@ -421,6 +433,8 @@ class Plotter:
             Whether to merge each body into a single dataset. When ``True``,
             all the faces of each individual body are effectively combined
             into a single dataset without separating faces.
+        filter : str, default: None
+            Regular expression with the desired name or names you want to include in the plotter.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
@@ -431,7 +445,7 @@ class Plotter:
             Mapping between the ~pyvista.Actor and the PyAnsys Geometry objects.
         """
         for object in plotting_list:
-            _ = self.add(object, merge_bodies, merge_components, **plotting_options)
+            _ = self.add(object, merge_bodies, merge_components, filter, **plotting_options)
         return self._geom_object_actors_map
 
     def show(
