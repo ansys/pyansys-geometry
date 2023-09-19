@@ -21,13 +21,15 @@
 # SOFTWARE.
 
 
-from ansys.api.geometry.v0.repairtools_pb2 import FixDuplicateFacesRequest
-from ansys.api.geometry.v0.repairtools_pb2 import FixInexactEdgesRequest
-from ansys.api.geometry.v0.repairtools_pb2 import FixExtraEdgesRequest
-from ansys.api.geometry.v0.repairtools_pb2 import FixMissingFacesRequest
-from ansys.api.geometry.v0.repairtools_pb2 import FixSmallFacesRequest
-from ansys.api.geometry.v0.repairtools_pb2 import FixStitchFacesRequest
-from ansys.api.geometry.v0.repairtools_pb2 import FixShortEdgesRequest
+from ansys.api.geometry.v0.repairtools_pb2 import (
+    FixDuplicateFacesRequest,
+    FixExtraEdgesRequest,
+    FixInexactEdgesRequest,
+    FixMissingFacesRequest,
+    FixShortEdgesRequest,
+    FixSmallFacesRequest,
+    FixStitchFacesRequest,
+)
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
 from google.protobuf.wrappers_pb2 import Int32Value
 
@@ -35,6 +37,8 @@ from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 
 """The duplicate face problem area definition."""
+
+
 class DuplicateFaceProblemAreas:
     """
     Represents a duplicate face problem area.
@@ -135,6 +139,7 @@ class MissingFaceProblemAreas:
         )
         return message
 
+
 class InexactEdgeProblemAreas:
     """
     Represents an inexact edge problem area with unique identifier and associated edges.
@@ -179,6 +184,7 @@ class InexactEdgeProblemAreas:
             response.result.modified_bodies_monikers,
         )
         return message
+
 
 class ExtraEdgeProblemAreas:
     """
@@ -225,6 +231,7 @@ class ExtraEdgeProblemAreas:
         )
         return message
 
+
 class ShortEdgeProblemAreas:
     """
     Represents a short edge problem area with unique identifier and associated edges.
@@ -269,7 +276,8 @@ class ShortEdgeProblemAreas:
             response.result.modified_bodies_monikers,
         )
         return message
-    
+
+
 class SmallFaceProblemAreas:
     """
     Represents a small face problem area with unique identifier and associated faces.
@@ -315,6 +323,7 @@ class SmallFaceProblemAreas:
         )
         return message
 
+
 class SplitEdgeProblemAreas:
     """
     Represents a split edge problem area with unique identifier and associated edges.
@@ -359,6 +368,7 @@ class SplitEdgeProblemAreas:
             response.result.modified_bodies_monikers,
         )
         return message
+
 
 class StitchFaceProblemAreas:
     """
