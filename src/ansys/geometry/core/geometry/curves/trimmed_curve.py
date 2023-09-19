@@ -3,6 +3,7 @@ from beartype.typing import TYPE_CHECKING
 from pint import Quantity
 
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.geometry.curves.curve import Curve
 from ansys.geometry.core.geometry.curves.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.geometry.parameterization import Interval
 from ansys.geometry.core.math import Point3D
@@ -14,11 +15,48 @@ if TYPE_CHECKING:
 
 
 class TrimmedCurve:
-    """TrimmedCurve class."""
+    """
+    Represents a trimmed curve.
 
-    def __init__(self, desEdge: "Edge") -> None:
-        """Construct the TrimmedCurve using the Edge object argument."""
-        self.edge = desEdge
+    A trimmed curve is a curve that has a boundary. This boundary comes in the form of an Interval.
+
+    Parameters
+    ----------
+    edge : Edge
+        Edge that the TrimmedCurve belongs to.
+    geometry : Curve
+        The underlying mathematical representation of the curve.
+    """
+
+    def __init__(self, edge: "Edge", geometry: Curve):
+        """Initialize ``TrimmedCurve`` class."""
+        self._edge = edge
+        self._geometry = geometry
+
+        self.edge._grpc_client.log.debug("Requesting edge points from server.")
+        response = self.edge._edges_stub.GetStartAndEndPoints(self._grpc_id)
+        self._start = Point3D([response.start.x, response.start.y, response.start.z])
+        self._end = Point3D([response.end.x, response.end.y, response.end.z])
+
+    @property
+    def edge(self) -> "Edge":
+        """The edge this TrimmedCurve belongs to."""
+        return self._edge
+
+    @property
+    def geometry(self) -> Curve:
+        """The underlying mathematical curve."""
+        return self._geometry
+
+    @property
+    def start(self) -> Point3D:
+        """The start point of the curve."""
+        return self._start
+
+    @property
+    def end(self) -> Point3D:
+        """The end point of the curve."""
+        return self._end
 
     @property
     @protect_grpc
@@ -31,19 +69,58 @@ class TrimmedCurve:
     @property
     @protect_grpc
     def interval(self) -> Interval:
-        """Calculated interval of the edge."""
+        """Interval of the curve that provides its boundary."""
         self.edge._grpc_client.log.debug("Requesting edge interval from server.")
-        interva_response = self.edge._edges_stub.GetInterval(self.edge._grpc_id)
-        return Interval(interva_response.start, interva_response.end)
-
-    def evaluate(self, param: Real) -> Point3D:
-        """Evaluate the curve with respect to the curve direction (reversed or not)."""
-        eval = self.evaluate_proportion(param)
-        if self.edge.is_reversed:
-            eval = self.evaluate_proportion(1 - param)
-        return eval.position
+        interval = self.edge._edges_stub.GetInterval(self.edge._grpc_id)
+        return Interval(interval.start, interval.end)
 
     def evaluate_proportion(self, param: Real) -> CurveEvaluation:
-        """Evaluate the given curve at the given parameter."""
+        """
+        Evaluate the curve at a proportional value.
+
+        A parameter of 0 would correspond to the start of the curve, while a parameter of 1 would
+        correspond to the end of the curve.
+
+        Parameters
+        ----------
+        param : Real
+            Parameter in the proportional range [0,1].
+
+        Returns
+        -------
+        CurveEvaluation
+            The resulting curve evaluation.
+        """
         bounds = self.interval
-        return self.edge.curve.evaluate(bounds.start + bounds.get_span() * param)
+        return self.geometry.evaluate(bounds.start + bounds.get_span() * param)
+
+
+class ReversedTrimmedCurve(TrimmedCurve):
+    """
+    Represents a reversed TrimmedCurve.
+
+    When a curve is reversed, its start and end points are swapped, and parameters for evaluations
+    are handled to provide expected results conforming to the direction of the curve. For example,
+    evaluating a TrimmedCurve proportionally at 0 would evaluate at the start point of the curve,
+    but evaluating a ReversedTrimmedCurve proportionally at 0 will evaluate at what was previously
+    the end point of the curve but is now the start point.
+
+    Parameters
+    ----------
+    edge : Edge
+        Edge that the TrimmedCurve belongs to.
+    geometry : Curve
+        The underlying mathematical representation of the curve.
+    """
+
+    def __init__(self, edge: "Edge", geometry: Curve):
+        """Initialize ``ReversedTrimmedCurve`` class."""
+        super().__init__(edge, geometry)
+
+        # Swap start and end points
+        temp = self._start
+        self._start = self._end
+        self._end = temp
+
+    def evaluate_proportion(self, param: Real) -> CurveEvaluation:  # noqa: D102
+        return self.geometry.evaluate(self.interval.end - self.interval.get_span() * param)

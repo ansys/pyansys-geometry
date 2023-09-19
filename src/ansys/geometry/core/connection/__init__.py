@@ -4,6 +4,7 @@ from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
+    grpc_curve_to_curve,
     grpc_frame_to_frame,
     grpc_matrix_to_matrix,
     grpc_surface_to_surface,

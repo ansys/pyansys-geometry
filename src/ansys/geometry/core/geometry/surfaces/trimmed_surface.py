@@ -29,7 +29,7 @@ class TrimmedSurface:
         The underlying mathematical representation of the surface.
     """
 
-    def __init__(self, face: "Face", geometry: Surface) -> None:
+    def __init__(self, face: "Face", geometry: Surface):
         """Initialize ``TrimmedSurface`` class."""
         self._face = face
         self._geometry = geometry
@@ -65,8 +65,8 @@ class TrimmedSurface:
         ParamUV
             Proportional (from 0-1) UV parameters.
         """
-        bounds_u = self.box_uv.IntervalU
-        bounds_v = self.box_uv.IntervalV
+        bounds_u = self.box_uv.interval_u
+        bounds_v = self.box_uv.interval_v
         u = param_uv.u
         v = param_uv.v
         return (
@@ -122,10 +122,10 @@ class TrimmedSurface:
         Returns
         -------
         SurfaceEvaluation
-            The corresponding surface evaluation.
+            The resulting surface evaluation.
         """
-        boundsU = self.box_uv.IntervalU
-        boundsV = self.box_uv.IntervalV
+        boundsU = self.box_uv.interval_u
+        boundsV = self.box_uv.interval_v
         return self.geometry.evaluate(
             ParamUV(
                 boundsU.start + boundsU.get_span() * u,
@@ -151,7 +151,7 @@ class ReversedTrimmedSurface(TrimmedSurface):
         The underlying mathematical representation of the surface.
     """
 
-    def __init__(self, face: "Face", geometry: Surface) -> None:
+    def __init__(self, face: "Face", geometry: Surface):
         """Initialize ``ReversedTrimmedSurface`` class."""
         super().__init__(face, geometry)
 

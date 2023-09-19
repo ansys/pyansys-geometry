@@ -3,6 +3,7 @@
 from enum import Enum, unique
 
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
+from ansys.api.geometry.v0.faces_pb2 import CreateIsoParamCurvesRequest
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
 from ansys.api.geometry.v0.models_pb2 import EntityIdentifier
@@ -328,3 +329,19 @@ class Face:
                 )
             )
         return edges
+
+    def create_isoparametric_curve(self, use_u_param: bool, parameter: float):
+        """
+        Create an isoparametic curve at the given proportional parameter.
+
+        Parameters
+        ----------
+        use_u_param : bool
+            Define whether the parameter is the u coordinate or v coordinate. If True,
+            then u parameter is used. If False, then v parameter is used.
+        parameter : float
+            The proportional [0-1] parameter to create the curve at.
+        """
+        self._faces_stub.CreateIsoParamCurves(
+            CreateIsoParamCurvesRequest(id=self.id, u_dir_curve=use_u_param, proportion=parameter)
+        )
