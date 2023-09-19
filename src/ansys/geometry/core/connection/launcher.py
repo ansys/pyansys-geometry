@@ -1,9 +1,31 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 """Module for connecting to instances of the Geometry service."""
 import os
 
 from beartype.typing import TYPE_CHECKING, Dict, Optional
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
+from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
 from ansys.geometry.core.connection.defaults import DEFAULT_PIM_CONFIG, DEFAULT_PORT
 from ansys.geometry.core.connection.local_instance import (
     _HAS_DOCKER,
@@ -12,7 +34,7 @@ from ansys.geometry.core.connection.local_instance import (
 )
 from ansys.geometry.core.connection.product_instance import prepare_and_start_backend
 from ansys.geometry.core.logger import LOG as logger
-from ansys.geometry.core.misc import check_type
+from ansys.geometry.core.misc.checks import check_type
 
 try:
     import ansys.platform.instancemanagement as pypim
@@ -21,7 +43,6 @@ try:
 except ModuleNotFoundError:  # pragma: no cover
     _HAS_PIM = False
 
-from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
@@ -40,7 +61,7 @@ def launch_modeler(**kwargs: Optional[Dict]) -> "Modeler":
 
     Returns
     -------
-    ansys.geometry.core.Modeler
+    ansys.geometry.core.modeler.Modeler
         Pythonic interface for geometry modeling.
 
     Examples
@@ -186,7 +207,7 @@ def launch_modeler_with_discovery_and_pimlight(version: Optional[str] = None) ->
 
     Returns
     -------
-    ansys.geometry.core.Modeler
+    ansys.geometry.core.modeler.Modeler
         Instance of Modeler.
     """
     return _launch_pim_instance(
@@ -215,7 +236,7 @@ def launch_modeler_with_geometry_service_and_pimlight(version: Optional[str] = N
 
     Returns
     -------
-    ansys.geometry.core.Modeler
+    ansys.geometry.core.modeler.Modeler
         Instance of Modeler.
     """
     return _launch_pim_instance(
@@ -244,7 +265,7 @@ def launch_modeler_with_spaceclaim_and_pimlight(version: Optional[str] = None) -
 
     Returns
     -------
-    ansys.geometry.core.Modeler
+    ansys.geometry.core.modeler.Modeler
         Instance of Modeler.
     """
     return _launch_pim_instance(
@@ -354,7 +375,7 @@ def launch_modeler_with_discovery(
 
     Parameters
     ----------
-    product_version: ``int``, optional
+    product_version: int, optional
         The product version to be started. Goes from v23.2.1 to
         the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
@@ -377,7 +398,7 @@ def launch_modeler_with_discovery(
             3: Error
 
         The default is ``2`` (Warning).
-    api_version: ``ApiVersions``, optional
+    api_version: ApiVersions, optional
         The backend's API version to be used at runtime. Goes from API v21 to
         the latest. Default is ``ApiVersions.LATEST``.
     timeout : int, optional
@@ -446,7 +467,7 @@ def launch_modeler_with_spaceclaim(
 
     Parameters
     ----------
-    product_version: ``int``, optional
+    product_version: int, optional
         The product version to be started. Goes from v23.2.1 to
         the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
@@ -469,7 +490,7 @@ def launch_modeler_with_spaceclaim(
             3: Error
 
         The default is ``2`` (Warning).
-    api_version: ``ApiVersions``, optional
+    api_version: ApiVersions, optional
         The backend's API version to be used at runtime. Goes from API v21 to
         the latest. Default is ``ApiVersions.LATEST``.
     timeout : int, optional

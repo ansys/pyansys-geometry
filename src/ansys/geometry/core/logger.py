@@ -1,3 +1,24 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 """
 Provides a general framework for logging in PyAnsys Geometry.
 
@@ -85,8 +106,8 @@ dictionary where the key is the name of the created logger.
 These instance loggers inherit the ``PyAnsys_Geometry_global`` output handlers and
 logging level unless otherwise specified. The way this logger works is very
 similar to the global logger. If you want to add a file handler, you can use
-the :func:`log_to_file() <PyGeometryCustomAdapter.log_to_file>` method. If you want
-to change the log level, you can use the :func:`logger.Logging.setLevel` method.
+the :meth:`log_to_file() <PyGeometryCustomAdapter.log_to_file>` method. If you want
+to change the log level, you can use the :meth:`~logging.Logger.setLevel` method.
 
 Here is an example of how you can use this logger:
 
@@ -489,7 +510,7 @@ class Logger:
 
         Returns
         -------
-        logging.logger
+        logging.Logger
             Logger class.
         """
         name = self.logger.name + "." + sufix
@@ -584,8 +605,8 @@ def addfile_handler(logger, filename=FILE_NAME, level=LOG_LEVEL, write_headers=F
 
     Returns
     -------
-    logger
-        Logger or Logger object.
+    Logger
+        :class:`Logger` or :class:`logging.Logger` object.
     """
     file_handler = logging.FileHandler(filename)
     file_handler.setLevel(level)
@@ -622,8 +643,8 @@ def add_stdout_handler(logger, level=LOG_LEVEL, write_headers=False):
 
     Returns
     -------
-    logger
-        Logger or Logger object.
+    Logger
+        :class:`Logger` or :class:`logging.Logger` object.
     """
     std_out_handler = logging.StreamHandler()
     std_out_handler.setLevel(level)

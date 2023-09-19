@@ -1,35 +1,37 @@
 Create your own Geometry service docker container
 =================================================
 
+.. documentation_start
+
 The Geometry service Docker containers can be easily built by following
 these steps.
 
-Inside this folder, the instructions (i.e. ``Dockerfile.*`` files) for
-building the Geometry service Docker containers are made available. We have
-two ``Dockerfile`` files:
+Inside the repository's ``docker`` folder, the instructions
+(i.e. ``Dockerfile.*`` files) for building the Geometry service Docker
+containers are made available. There are two ``Dockerfile`` files:
 
 * ``Dockerfile.linux``: this file builds the Linux-based Docker image.
 * ``Dockerfile.windows``: this file builds the Windows-based Docker image.
 
 Depending on the characteristics of the Docker engine installed in your
-machine, you will have to build one or the other. For example:
+machine, either one or the other has to be built. For example:
 
-* If you are running on a Linux-based machine, you will need to build the
+* If you are running on a Linux-based machine, build the
   ``Dockerfile.linux`` image.
-* If you are running on a Windows-based machine with Docker CE, you will
-  need to build the ``Dockerfile.windows`` image.
+* If you are running on a Windows-based machine with Docker CE,
+  build the ``Dockerfile.windows`` image.
 * If you are running on a Windows-based machine and you have ``WSL``,
   bear in mind that you can also run Linux containers.
 
 Prerequisites
-^^^^^^^^^^^^^
+~~~~~~~~~~~~~
 
 * Ensure that ``docker`` is installed in your machine.
   If you do not have ``docker`` available, please refer to the
   `official Docker site <https://www.docker.com>`_.
 
 * Download the latest release artifacts for the Windows or Linux
-  Docker container. You can do this as follows:
+  Docker container. This is done as follows:
 
   * Latest Linux artifacts: `linux-binaries.zip <https://github.com/ansys/pyansys-geometry/releases/latest/download/linux-binaries.zip>`_
   * Latest Windows artifacts: `windows-binaries.zip <https://github.com/ansys/pyansys-geometry/releases/latest/download/windows-binaries.zip>`_
@@ -37,7 +39,7 @@ Prerequisites
 * Move these ``.zip`` files to the current location (i.e. ``<repository-root-folder>/docker``).
 
 Building the Docker images
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In order to build your images, follow the next instructions:
 
@@ -48,7 +50,7 @@ In order to build your images, follow the next instructions:
 
      docker build -t ghcr.io/ansys/geometry:<DOCKER_IMAGE_TAG> -f <DOCKERFILE_NAME> .
 
-  Bear in mind that you will need to substitute the following entries in the previous command,
+  Bear in mind that you need to substitute the following entries in the previous command,
   determined by whether you want to build the Linux-based or the Windows-based Docker image:
 
   * ``<DOCKERFILE_NAME>``: this will be either ``Dockerfile.linux`` or ``Dockerfile.windows``

@@ -1,3 +1,24 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 """Module providing for conversions."""
 
 from ansys.api.geometry.v0.models_pb2 import Arc as GRPCArc
@@ -5,7 +26,7 @@ from ansys.api.geometry.v0.models_pb2 import Circle as GRPCCircle
 from ansys.api.geometry.v0.models_pb2 import Direction as GRPCDirection
 from ansys.api.geometry.v0.models_pb2 import Ellipse as GRPCEllipse
 from ansys.api.geometry.v0.models_pb2 import Frame as GRPCFrame
-from ansys.api.geometry.v0.models_pb2 import Geometries
+from ansys.api.geometry.v0.models_pb2 import Geometries as GRPCGeometries
 from ansys.api.geometry.v0.models_pb2 import Line as GRPCLine
 from ansys.api.geometry.v0.models_pb2 import Matrix as GRPCMatrix
 from ansys.api.geometry.v0.models_pb2 import Plane as GRPCPlane
@@ -14,17 +35,19 @@ from ansys.api.geometry.v0.models_pb2 import Polygon as GRPCPolygon
 from ansys.api.geometry.v0.models_pb2 import Tessellation
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple
 
-from ansys.geometry.core.math import Frame, Matrix44, Plane, Point2D, Point3D, UnitVector3D
-from ansys.geometry.core.misc import DEFAULT_UNITS
-from ansys.geometry.core.sketch import (
-    Arc,
-    Polygon,
-    SketchCircle,
-    SketchEdge,
-    SketchEllipse,
-    SketchFace,
-    SketchSegment,
-)
+from ansys.geometry.core.math.frame import Frame
+from ansys.geometry.core.math.matrix import Matrix44
+from ansys.geometry.core.math.plane import Plane
+from ansys.geometry.core.math.point import Point2D, Point3D
+from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+from ansys.geometry.core.sketch.arc import Arc
+from ansys.geometry.core.sketch.circle import SketchCircle
+from ansys.geometry.core.sketch.edge import SketchEdge
+from ansys.geometry.core.sketch.ellipse import SketchEllipse
+from ansys.geometry.core.sketch.face import SketchFace
+from ansys.geometry.core.sketch.polygon import Polygon
+from ansys.geometry.core.sketch.segment import SketchSegment
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import PolyData
@@ -96,9 +119,9 @@ def sketch_shapes_to_grpc_geometries(
     edges: List[SketchEdge],
     faces: List[SketchFace],
     only_one_curve: Optional[bool] = False,
-) -> Geometries:
+) -> GRPCGeometries:
     """
-    Convert lists of ``SketchEdge`` and ``SketchFace`` to a ``Geometries`` gRPC message.
+    Convert lists of ``SketchEdge`` and ``SketchFace`` to a ``GRPCGeometries`` message.
 
     Parameters
     ----------
@@ -108,18 +131,16 @@ def sketch_shapes_to_grpc_geometries(
         Source edge data.
     faces : List[SketchFace]
         Source face data.
-    shapes : List[BaseShape]
-        Source shape data.
     only_one_curve : bool, default: False
         Whether to project one curve of the whole set of geometries to
         enhance performance.
 
     Returns
     -------
-    Geometries
+    GRPCGeometries
         Geometry service gRPC geometries message. The unit is meters.
     """
-    geometries = Geometries()
+    geometries = GRPCGeometries()
 
     converted_sketch_edges = sketch_edges_to_grpc_geometries(edges, plane)
     geometries.lines.extend(converted_sketch_edges[0])
@@ -138,7 +159,7 @@ def sketch_shapes_to_grpc_geometries(
             geometries.arcs.extend(converted_face_edges[1])
 
     if only_one_curve:
-        one_curve_geometry = Geometries()
+        one_curve_geometry = GRPCGeometries()
         if len(geometries.lines) > 0:
             one_curve_geometry.lines.append(geometries.lines[0])
         elif len(geometries.arcs) > 0:
@@ -160,7 +181,7 @@ def sketch_edges_to_grpc_geometries(
     plane: Plane,
 ) -> Tuple[List[GRPCLine], List[GRPCArc]]:
     """
-    Convert a list of ``SketchEdge`` to a ``Geometries`` gRPC message.
+    Convert a list of ``SketchEdge`` to a ``GRPCGeometries`` gRPC message.
 
     Parameters
     ----------

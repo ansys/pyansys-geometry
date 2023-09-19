@@ -1,13 +1,37 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 """Provides for managing a user-defined coordinate system."""
 
 from ansys.api.geometry.v0.coordinatesystems_pb2 import CreateRequest
 from ansys.api.geometry.v0.coordinatesystems_pb2_grpc import CoordinateSystemsStub
 from beartype.typing import TYPE_CHECKING, Optional
 
-from ansys.geometry.core.connection import GrpcClient, frame_to_grpc_frame
+from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.conversions import frame_to_grpc_frame
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.math import Frame, Point3D, UnitVector3D
-from ansys.geometry.core.misc import DEFAULT_UNITS
+from ansys.geometry.core.math.frame import Frame
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.component import Component

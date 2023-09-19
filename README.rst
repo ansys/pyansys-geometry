@@ -1,6 +1,6 @@
 PyAnsys Geometry
 ================
-|pyansys| |python| |pypi| |GH-CI| |codecov| |MIT| |black|
+|pyansys| |python| |pypi| |GH-CI| |codecov| |MIT| |black| |pre-commit|
 
 .. |pyansys| image:: https://img.shields.io/badge/Py-Ansys-ffc107.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAABDklEQVQ4jWNgoDfg5mD8vE7q/3bpVyskbW0sMRUwofHD7Dh5OBkZGBgW7/3W2tZpa2tLQEOyOzeEsfumlK2tbVpaGj4N6jIs1lpsDAwMJ278sveMY2BgCA0NFRISwqkhyQ1q/Nyd3zg4OBgYGNjZ2ePi4rB5loGBhZnhxTLJ/9ulv26Q4uVk1NXV/f///////69du4Zdg78lx//t0v+3S88rFISInD59GqIH2esIJ8G9O2/XVwhjzpw5EAam1xkkBJn/bJX+v1365hxxuCAfH9+3b9/+////48cPuNehNsS7cDEzMTAwMMzb+Q2u4dOnT2vWrMHu9ZtzxP9vl/69RVpCkBlZ3N7enoDXBwEAAA+YYitOilMVAAAAAElFTkSuQmCC
    :target: https://docs.pyansys.com/
@@ -14,7 +14,7 @@ PyAnsys Geometry
    :target: https://pypi.org/project/ansys-geometry-core
    :alt: PyPI
 
-.. |codecov| image:: https://codecov.io/gh/ansys/ansys-geometry-core/branch/main/graph/badge.svg
+.. |codecov| image:: https://codecov.io/gh/ansys/pyansys-geometry/graph/badge.svg?token=UZIC7XT5WE
    :target: https://codecov.io/gh/ansys/pyansys-geometry
    :alt: Codecov
 
@@ -30,6 +30,9 @@ PyAnsys Geometry
    :target: https://github.com/psf/black
    :alt: Black
 
+.. |pre-commit| image:: https://results.pre-commit.ci/badge/github/ansys/pyansys-geometry/main.svg
+   :target: https://results.pre-commit.ci/latest/github/ansys/pyansys-geometry/main
+   :alt: pre-commit.ci
 
 PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
@@ -47,13 +50,16 @@ PyAnsys Geometry is provided with an internal launcher that is capable of handli
 launching the Geometry service locally. The only requirements are that:
 
 * Docker is installed on your machine.
-* You have access to the PyAnsys GitHub container registry, where the Geometry service image is hosted.
+* You have access to the Geometry service image.
 
-.. caution::
+.. note::
 
-   The Geometry service is currently available only as a Windows Docker image. The development
+   The Geometry service is mainly available as a Windows Docker image. The development
    team is working on getting the Linux Docker container available as soon as possible. In the meantime,
    make sure that your Docker engine is configured to run Windows Docker images.
+
+Using the GitHub Container Registry image
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 First, bear in mind that you have to be `authenticated to ghcr.io
 <https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry>`_.
@@ -69,6 +75,15 @@ The following OS-dependent tags are available:
 * ``windows-latest-unstable``
 * ``linux-latest``
 * ``linux-latest-unstable``
+
+Build your own Geometry service image
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Access the ``docker`` folder in this repository and go through the instructions
+presented in the `main README file <https://github.com/ansys/pyansys-geometry/blob/main/docker/README.rst>`_.
+
+Launching the Geometry service image
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Next, you will be ready to run the Geometry service directly from PyAnsys Geometry:
 
@@ -159,20 +174,6 @@ Then, install PyAnsys Geometry with:
 
    python -m pip install ansys-geometry-core
 
-.. caution::
-
-    PyAnsys Geometry is currently hosted in a private PyPI repository. You must provide the index
-    URL to the private PyPI repository:
-
-    * Index URL: ``https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/``
-
-    If access to this package registry is needed, email `pyansys.core@ansys.com <mailto:pyansys.core@ansys.com>`_
-    to request access. The PyAnsys team can provide you a read-only token to be inserted in ``${PRIVATE_PYPI_ACCESS_TOKEN}``.
-    Once you have it, run the following command:
-
-    .. code:: bash
-
-        pip install ansys-geometry-core --index-url=https://${PRIVATE_PYPI_ACCESS_TOKEN}@pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/
 
 Install in developer mode
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -240,10 +241,9 @@ To install PyAnsys Geometry in developer mode, perform these steps:
 Install in offline mode
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-If you lack an internet connection on your installation machine (or you do not have access to the
-private Ansys PyPI packages repository), you should install PyAnsys Geometry by downloading the wheelhouse
-archive from the `Releases Page <https://github.com/ansys/pyansys-geometry/releases>`_ for your
-corresponding machine architecture.
+If you lack an internet connection on your installation machine, you should install PyAnsys Geometry
+by downloading the wheelhouse archive from the `Releases <https://github.com/ansys/pyansys-geometry/releases>`_
+page for your corresponding machine architecture.
 
 Each wheelhouse archive contains all the Python wheels necessary to install PyAnsys Geometry from scratch on Windows,
 Linux, and MacOS from Python 3.8 to 3.11. You can install this on an isolated system with a fresh Python
@@ -253,7 +253,7 @@ For example, on Linux with Python 3.8, unzip the wheelhouse archive and install 
 
 .. code:: bash
 
-    unzip ansys-geometry-core-v0.3.dev0-wheelhouse-Linux-3.8.zip wheelhouse
+    unzip ansys-geometry-core-v0.4.dev0-wheelhouse-Linux-3.8.zip wheelhouse
     pip install ansys-geometry-core -f wheelhouse --no-index --upgrade --ignore-installed
 
 If you're on Windows with Python 3.9, unzip to a wheelhouse directory and install using the preceding command.

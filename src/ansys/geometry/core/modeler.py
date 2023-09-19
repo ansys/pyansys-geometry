@@ -1,3 +1,24 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 """Provides for interacting with the Geometry service."""
 import logging
 import os
@@ -17,7 +38,8 @@ from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.logger import LOG as logger
-from ansys.geometry.core.misc import ImportOptions, check_type
+from ansys.geometry.core.misc.checks import check_type
+from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -25,7 +47,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
     from ansys.geometry.core.connection.local_instance import LocalDockerInstance
     from ansys.geometry.core.connection.product_instance import ProductInstance
-    from ansys.geometry.core.designer import Design
+    from ansys.geometry.core.designer.design import Design
 
 
 class Modeler:
@@ -58,7 +80,7 @@ class Modeler:
         interface. This instance will be deleted
         when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
         method is called.
-    timeout : Real, default: 60
+    timeout : Real, default: 120
         Time in seconds for trying to achieve the connection.
     logging_level : int, default: INFO
         Logging level to apply to the client.
@@ -74,7 +96,7 @@ class Modeler:
         remote_instance: Optional["Instance"] = None,
         local_instance: Optional["LocalDockerInstance"] = None,
         product_instance: Optional["ProductInstance"] = None,
-        timeout: Optional[Real] = 60,
+        timeout: Optional[Real] = 120,
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
         backend_type: Optional[BackendType] = None,

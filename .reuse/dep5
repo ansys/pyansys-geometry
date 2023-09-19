@@ -1,0 +1,84 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: pyansys-geometry
+Upstream-Contact: pyansys.core@ansys.com
+Source: https://github.com/ansys/pyansys-geometry
+
+Files: .github/*
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: .reuse/*
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: doc/*
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: docker/*
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: tests/*
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: .flake8
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: .gitattributes
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: .gitignore
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: .pre-commit-config.yaml
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: AUTHORS
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: CHANGELOG.md
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: CODE_OF_CONDUCT.md
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: CONTRIBUTING.md
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: CONTRIBUTORS.md
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: LICENSE
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: pyproject.toml
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: README.rst
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: tox.ini
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: *.json
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT
+
+Files: *.png
+Copyright: 2023 ANSYS, Inc. and/or its affiliates.
+License: MIT

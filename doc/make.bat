@@ -7,6 +7,9 @@ REM Command file for Sphinx documentation
 if "%SPHINXBUILD%" == "" (
 	set SPHINXBUILD=sphinx-build
 )
+if "%SPHINXOPTS%" == "" (
+	set SPHINXOPTS=-j auto -W --color
+)
 set SOURCEDIR=source
 set BUILDDIR=_build
 
@@ -32,19 +35,27 @@ if errorlevel 9009 (
 goto end
 
 :html
-%SPHINXBUILD% -M linkcheck %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+REM TODO: these lines of code should be removed once the feature branch is merged
+pip uninstall --yes sphinx-autoapi
+pip install "sphinx-autoapi @ git+https://github.com/jorgepiloto/sphinx-autoapi@feat/single-page-option"
+REM TODO: these lines of code should be removed once the feature branch is merged
 %SPHINXBUILD% -M html %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+%SPHINXBUILD% -M linkcheck %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 goto build-examples-py
 
 :clean
 rmdir /s /q %BUILDDIR% > /NUL 2>&1
-for /d /r %SOURCEDIR% %%d in (_autosummary) do @if exist "%%d" rmdir /s /q "%%d"
+for /d /r %SOURCEDIR% %%d in (api) do @if exist "%%d" rmdir /s /q "%%d"
 goto end
 
 :help
 %SPHINXBUILD% -M help %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 
 :pdf
+REM TODO: these lines of code should be removed once the feature branch is merged
+pip uninstall --yes sphinx-autoapi
+pip install "sphinx-autoapi @ git+https://github.com/jorgepiloto/sphinx-autoapi@feat/single-page-option"
+REM TODO: these lines of code should be removed once the feature branch is merged
 %SPHINXBUILD% -M latex %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 cd "%BUILDDIR%\latex"
 for %%f in (*.tex) do (
@@ -53,6 +64,7 @@ if NOT EXIST ansys-geometry-core.pdf (
 	Echo "no pdf generated!"
 	exit /b 1)
 Echo "pdf generated!"
+goto end
 
 :build-examples-py
 cd "%BUILDDIR%\html\examples"
