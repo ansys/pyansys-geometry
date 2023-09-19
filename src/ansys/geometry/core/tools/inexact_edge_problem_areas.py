@@ -16,7 +16,7 @@ class InexactEdgeProblemAreas:
         _edges (list[str]): A list of edges associated with the design.
     """
 
-    def __init__(self, id: str, design_edges: list[str]):
+    def __init__(self, id: str, edges: list[str]):
         """
         Initialize a new instance of the inexact edge problem area class.
 
