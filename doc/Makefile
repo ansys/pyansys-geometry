@@ -22,7 +22,7 @@ help:
 # Customized clean due to examples gallery
 clean:
 	rm -rf $(BUILDDIR)/*
-	find . -type d -name "_autosummary" -exec rm -rf {} +
+	find . -type d -name "api" -exec rm -rf {} +
 
 # Create PDF
 pdf:

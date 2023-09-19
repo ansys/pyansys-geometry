@@ -1,6 +1,27 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 """Provides for managing a body."""
 from abc import ABC, abstractmethod
-from enum import Enum
+from enum import Enum, unique
 from functools import wraps
 
 from ansys.api.geometry.v0.bodies_pb2 import (
@@ -22,8 +43,8 @@ from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
 
-from ansys.geometry.core.connection import (
-    GrpcClient,
+from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.conversions import (
     sketch_shapes_to_grpc_geometries,
     tess_to_pd,
     unit_vector_to_grpc_direction,
@@ -31,19 +52,22 @@ from ansys.geometry.core.connection import (
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.materials import Material
-from ansys.geometry.core.math import IDENTITY_MATRIX44, Matrix44, UnitVector3D
-from ansys.geometry.core.misc import DEFAULT_UNITS, Distance, check_type
-from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.materials.material import Material
+from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
+from ansys.geometry.core.math.matrix import Matrix44
+from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc.checks import check_type
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
+from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
 
     from ansys.geometry.core.designer.component import Component
-    from ansys.geometry.core.designer.design import MidSurfaceOffsetType
 
 
+@unique
 class MidSurfaceOffsetType(Enum):
     """Provides values for mid-surface offsets supported by the Geometry service."""
 
@@ -156,7 +180,7 @@ class IBody(ABC):
 
         Parameters
         ----------
-        thickness : Quantity
+        thickness : ~pint.Quantity
             Thickness to assign.
 
         Notes
@@ -286,7 +310,7 @@ class IBody(ABC):
         ----------
         direction: UnitVector3D
             Direction of the translation.
-        distance: Union[Quantity, Distance, Real]
+        distance: Union[~pint.Quantity, Distance, Real]
             Distance (magnitude) of the translation.
 
         Returns
@@ -395,7 +419,7 @@ class IBody(ABC):
             is used.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
-            :func:`pyvista.Plotter.add_mesh` method.
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
 
         Examples
         --------

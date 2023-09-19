@@ -1,3 +1,24 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 """Provides for creating and managing a cylinder."""
 
 from functools import cached_property
@@ -5,17 +26,13 @@ from functools import cached_property
 from beartype import beartype as check_input_types
 from beartype.typing import Union
 import numpy as np
-from pint import Quantity
+import pint
 
-from ansys.geometry.core.math import (
-    UNITVECTOR3D_X,
-    UNITVECTOR3D_Z,
-    Matrix44,
-    Point3D,
-    UnitVector3D,
-    Vector3D,
-)
-from ansys.geometry.core.misc import Distance
+from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
+from ansys.geometry.core.math.matrix import Matrix44
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.primitives.circle import Circle
 from ansys.geometry.core.primitives.line import Line
 from ansys.geometry.core.primitives.parameterization import (
@@ -25,7 +42,7 @@ from ansys.geometry.core.primitives.parameterization import (
     ParamType,
     ParamUV,
 )
-from ansys.geometry.core.primitives.surface_evaluation import ParamUV, SurfaceEvaluation
+from ansys.geometry.core.primitives.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.typing import Real, RealSequence
 
 
@@ -37,7 +54,7 @@ class Cylinder:
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D]
         Origin of the cylinder.
-    radius : Union[Quantity, Distance, Real]
+    radius : Union[~pint.Quantity, Distance, Real]
         Radius of the cylinder.
     reference : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         X-axis direction.
@@ -49,7 +66,7 @@ class Cylinder:
     def __init__(
         self,
         origin: Union[np.ndarray, RealSequence, Point3D],
-        radius: Union[Quantity, Distance, Real],
+        radius: Union[pint.Quantity, Distance, Real],
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
@@ -73,7 +90,7 @@ class Cylinder:
         return self._origin
 
     @property
-    def radius(self) -> Quantity:
+    def radius(self) -> pint.Quantity:
         """Radius of the cylinder."""
         return self._radius.value
 
@@ -92,7 +109,7 @@ class Cylinder:
         """Z-direction of the cylinder."""
         return self._axis
 
-    def surface_area(self, height: Union[Quantity, Distance, Real]) -> Quantity:
+    def surface_area(self, height: Union[pint.Quantity, Distance, Real]) -> pint.Quantity:
         """
         Get the surface area of the cylinder.
 
@@ -105,12 +122,12 @@ class Cylinder:
 
         Parameters
         ----------
-        height : Union[Quantity, Distance, Real]
+        height : Union[~pint.Quantity, Distance, Real]
             Height to bound the cylinder at.
 
         Returns
         -------
-        Quantity
+        ~pint.Quantity
             Surface area of the temporarily bounded cylinder.
         """
         height = height if isinstance(height, Distance) else Distance(height)
@@ -119,7 +136,7 @@ class Cylinder:
 
         return 2 * np.pi * self.radius * height.value + 2 * np.pi * self.radius**2
 
-    def volume(self, height: Union[Quantity, Distance, Real]) -> Quantity:
+    def volume(self, height: Union[pint.Quantity, Distance, Real]) -> pint.Quantity:
         """
         Get the volume of the cylinder.
 
@@ -132,12 +149,12 @@ class Cylinder:
 
         Parameters
         ----------
-        height : Union[Quantity, Distance, Real]
+        height : Union[~pint.Quantity, Distance, Real]
             Height to bound the cylinder at.
 
         Returns
         -------
-        Quantity
+        ~pint.Quantity
             Volume of the temporarily bounded cylinder.
         """
         height = height if isinstance(height, Distance) else Distance(height)
@@ -264,7 +281,7 @@ class CylinderEvaluation(SurfaceEvaluation):
 
     Parameters
     ----------
-    cylinder: ~ansys.geometry.core.primitives.cylinder.Cylinder
+    cylinder: Cylinder
         Cylinder to evaluate.
     parameter: ParamUV
         Parameters (u, v) to evaluate the cylinder at.

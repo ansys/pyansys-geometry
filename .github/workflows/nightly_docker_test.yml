@@ -24,10 +24,11 @@ jobs:
 
   windows-tests:
     name: Nightly unstable testing - Windows
+    if: vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1
     runs-on: [self-hosted, Windows, pygeometry]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -51,7 +52,7 @@ jobs:
           pip install .[tests]
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -104,11 +105,12 @@ jobs:
 
   linux-tests:
     name: Nightly unstable testing - Linux
+    if: vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1
     runs-on: ubuntu-latest
 
     steps:
       - name: Login in Github Container registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
