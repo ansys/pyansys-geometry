@@ -463,6 +463,19 @@ jobs:
           .\.venv\Scripts\Activate.ps1
           pytest -v --use-existing-service=yes
 
+      - name: "Compressing Dockerfile.windows"
+        uses: vimtor/action-zip@v1.1
+        with:
+          files: docker/Dockerfile.windows
+          dest: windows-dockerfile.zip
+
+      - name: Upload Windows Dockerfile
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-dockerfile.zip
+          path: windows-dockerfile.zip
+          retention-days: 7
+
       - name: Stop the Geometry service
         if: always()
         run: |
@@ -540,6 +553,19 @@ jobs:
           checkout: false
           requires-xvfb: true
 
+      - name: "Compressing Dockerfile.linux"
+        uses: vimtor/action-zip@v1.1
+        with:
+          files: docker/Dockerfile.linux
+          dest: linux-dockerfile.zip
+
+      - name: Upload Linux Dockerfile
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-dockerfile.zip
+          path: linux-dockerfile.zip
+          retention-days: 7
+
       - name: Stop the Geometry service
         if: always()
         run: |
@@ -564,7 +590,7 @@ jobs:
         uses: ansys/actions/release-github@v4
         with:
           library-name: ${{ env.PACKAGE_NAME }}
-          additional-artifacts: windows-binaries.zip linux-binaries.zip
+          additional-artifacts: windows-binaries.zip windows-dockerfile.zip linux-binaries.zip linux-dockerfile.zip
 
   upload_dev_docs:
     name: Upload dev documentation
