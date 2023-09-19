@@ -590,7 +590,7 @@ jobs:
         uses: ansys/actions/release-github@v4
         with:
           library-name: ${{ env.PACKAGE_NAME }}
-          additional-artifacts: windows-binaries.zip linux-binaries.zip linux-dockerfile.zip windows-dockerfile.zip
+          additional-artifacts: windows-binaries.zip windows-dockerfile.zip linux-binaries.zip linux-dockerfile.zip
 
   upload_dev_docs:
     name: Upload dev documentation
