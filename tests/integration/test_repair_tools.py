@@ -7,8 +7,7 @@ from ansys.geometry.core.tools.repair_tools import RepairTools
 def test_find_split_edges():
     modeler = Modeler(host="localhost", port=50051)
     modeler.open_file("./tests/integration/files/SplitEdgeDesignTest.scdoc")
-    rep = RepairTools()
-    problem_areas = rep.FindSplitEdges(["0:39"], 25, 150)
+    problem_areas = modeler.tools.prepare.FindSplitEdges(["0:39"], 25, 150)
     assert len(problem_areas) == 3
 
 

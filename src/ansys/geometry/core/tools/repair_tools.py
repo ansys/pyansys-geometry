@@ -52,7 +52,7 @@ class RepairTools:
     def __init__(self):
         """Initialize Repair Tools class."""
 
-    def FindSplitEdges(
+    def find_split_edges(
         self, ids: list[str], angle: float = 0.0, length: float = 0.0
     ) -> list[SplitEdgeProblemAreas]:
         """
@@ -92,7 +92,7 @@ class RepairTools:
 
         return problemAreas
 
-    def FindExtraEdges(self, ids: list[str]) -> list[ExtraEdgeProblemAreas]:
+    def find_extra_edges(self, ids: list[str]) -> list[ExtraEdgeProblemAreas]:
         """
         Find the extra edges in the given list of bodies.
 
@@ -123,7 +123,7 @@ class RepairTools:
 
         return problemAreas
 
-    def FindInexactEdges(self, ids) -> list[InexactEdgeProblemAreas]:
+    def find_inexact_edges(self, ids) -> list[InexactEdgeProblemAreas]:
         """
         Find inexact edges in the given list of bodies.
 
@@ -154,7 +154,7 @@ class RepairTools:
 
         return problemAreas
 
-    def FindShortEdges(self, ids) -> list[ShortEdgeProblemAreas]:
+    def find_short_edges(self, ids) -> list[ShortEdgeProblemAreas]:
         """
         Find the short edge problem areas.
 
@@ -184,7 +184,7 @@ class RepairTools:
 
         return problemAreas
 
-    def FindDuplicateFaces(self, ids) -> list[DuplicateFaceProblemAreas]:
+    def find_duplicate_faces(self, ids) -> list[DuplicateFaceProblemAreas]:
         """
         Find the duplicate face problem areas.
 
@@ -215,7 +215,7 @@ class RepairTools:
 
         return problemAreas
 
-    def FindMissingFaces(self, ids) -> list[MissingFaceProblemAreas]:
+    def find_missing_faces(self, ids) -> list[MissingFaceProblemAreas]:
         """
         Find the missing faces.
 
@@ -246,7 +246,7 @@ class RepairTools:
 
         return problemAreas
 
-    def FindSmallFaces(self, ids) -> list[SmallFaceProblemAreas]:
+    def find_small_faces(self, ids) -> list[SmallFaceProblemAreas]:
         """
         Find the small face problem areas.
 
@@ -277,7 +277,7 @@ class RepairTools:
 
         return problemAreas
 
-    def FindStitchFaces(self, ids) -> list[StitchFaceProblemAreas]:
+    def find_stitch_faces(self, ids) -> list[StitchFaceProblemAreas]:
         """
         Return the list of stitch face problem areas.
 

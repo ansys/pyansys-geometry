@@ -68,7 +68,7 @@ class DuplicateFaceProblemAreas:
         """
         return self._faces
 
-    def Fix(self):
+    def fix(self):
         """Fix the problem area."""
         client = GrpcClient()
         id_value = Int32Value(value=int(self._id))
