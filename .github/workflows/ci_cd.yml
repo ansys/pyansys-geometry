@@ -566,13 +566,6 @@ jobs:
           path: linux-dockerfile.zip
           retention-days: 7
 
-      - name: Upload Linux Dockerfile
-        uses: actions/upload-artifact@v3
-        with:
-          name: linux-dockerfile.zip
-          path: docker/Dockerfile.linux
-          retention-days: 7
-
       - name: Stop the Geometry service
         if: always()
         run: |
