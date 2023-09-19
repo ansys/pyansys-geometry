@@ -35,14 +35,14 @@ from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
 from google.protobuf.wrappers_pb2 import DoubleValue
 
 from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.tools.duplicate_face_problem_areas import DuplicateFaceProblemAreas
-from ansys.geometry.core.tools.extra_edge_problem_areas import ExtraEdgeProblemAreas
-from ansys.geometry.core.tools.inexact_edge_problem_areas import InexactEdgeProblemAreas
-from ansys.geometry.core.tools.missing_face_problem_areas import MissingFaceProblemAreas
-from ansys.geometry.core.tools.short_edge_problem_areas import ShortEdgeProblemAreas
-from ansys.geometry.core.tools.small_face_problem_areas import SmallFaceProblemAreas
-from ansys.geometry.core.tools.split_edge_problem_areas import SplitEdgeProblemAreas
-from ansys.geometry.core.tools.stitch_face_problem_areas import StitchFaceProblemAreas
+from ansys.geometry.core.tools.problem_areas import DuplicateFaceProblemAreas
+from ansys.geometry.core.tools.problem_areas import ExtraEdgeProblemAreas
+from ansys.geometry.core.tools.problem_areas import InexactEdgeProblemAreas
+from ansys.geometry.core.tools.problem_areas import MissingFaceProblemAreas
+from ansys.geometry.core.tools.problem_areas import ShortEdgeProblemAreas
+from ansys.geometry.core.tools.problem_areas import SmallFaceProblemAreas
+from ansys.geometry.core.tools.problem_areas import SplitEdgeProblemAreas
+from ansys.geometry.core.tools.problem_areas import StitchFaceProblemAreas
 
 
 class RepairTools:
