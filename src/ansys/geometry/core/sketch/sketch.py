@@ -854,7 +854,7 @@ class Sketch:
             )
         else:
             pl_helper = PlotterHelper(use_trame=use_trame).plot(
-                self.sketch_polydata(),
+                self,
                 screenshot=screenshot,
                 view_2d=view_2d_dict,
                 **plotting_options,
