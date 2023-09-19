@@ -268,32 +268,6 @@ jobs:
           path: doc/_build/latex/ansys-geometry-core*.pdf
           retention-days: 7
 
-      - name: "Compressing Dockerfile.windows"
-        uses: vimtor/action-zip@v1.1
-        with:
-          files: docker/Dockerfile.windows
-          dest: windows-dockerfile.zip
-
-      - name: Upload Windows Dockerfile
-        uses: actions/upload-artifact@v3
-        with:
-          name: windows-dockerfile.zip
-          path: windows-dockerfile.zip
-          retention-days: 7
-
-      - name: "Compressing Dockerfile.linux"
-        uses: vimtor/action-zip@v1.1
-        with:
-          files: docker/Dockerfile.linux
-          dest: linux-dockerfile.zip
-
-      - name: Upload Linux Dockerfile
-        uses: actions/upload-artifact@v3
-        with:
-          name: linux-dockerfile.zip
-          path: linux-dockerfile.zip
-          retention-days: 7
-
       - name: Stop the Geometry service
         if: always()
         run: |
@@ -489,12 +463,17 @@ jobs:
           .\.venv\Scripts\Activate.ps1
           pytest -v --use-existing-service=yes
 
+      - name: "Compressing Dockerfile.windows"
+        uses: vimtor/action-zip@v1.1
+        with:
+          files: docker/Dockerfile.windows
+          dest: windows-dockerfile.zip
 
       - name: Upload Windows Dockerfile
         uses: actions/upload-artifact@v3
         with:
           name: windows-dockerfile.zip
-          path: docker/Dockerfile.windows
+          path: windows-dockerfile.zip
           retention-days: 7
 
       - name: Stop the Geometry service
@@ -573,6 +552,19 @@ jobs:
           pytest-extra-args: "--service-os=linux --use-existing-service=yes"
           checkout: false
           requires-xvfb: true
+
+      - name: "Compressing Dockerfile.linux"
+        uses: vimtor/action-zip@v1.1
+        with:
+          files: docker/Dockerfile.linux
+          dest: linux-dockerfile.zip
+
+      - name: Upload Linux Dockerfile
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-dockerfile.zip
+          path: linux-dockerfile.zip
+          retention-days: 7
 
       - name: Upload Linux Dockerfile
         uses: actions/upload-artifact@v3
