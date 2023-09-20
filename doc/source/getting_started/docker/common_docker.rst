@@ -21,15 +21,14 @@ You can also specify other optional environment variables:
 * ``LOG_LEVEL``: Sets the Geometry service logging level. The default is ``2``, in which case
   the logging level is ``INFO``.
 
-Other important information to keep in mind:
+Here are some terms to keep in mind:
 
-* The **host**: this is the machine that hosts the Geometry Service. It is typically be
-  on ``localhost`` but bare in mind that if you are deploying the service in a remote machine,
-  you need to pass in this machine's host IP when connecting. By default, PyAnsys Geometry
-  assumes it is on ``localhost``.
+* **host**: Machine that hosts the Geometry service. It is typically on ``localhost``, but if
+  you are deploying the service on a remote machine, you must pass in this host machine's
+  IP address when connecting. By default, PyAnsys Geometry assumes it is on ``localhost``.
 
-* The **port**: this is the port that exposes the Geometry Service on the host machine. Its
-  value is assumed to be ``50051``, but users can deploy the service on their preferred port.
+* **port**: Port that exposes the Geometry service on the host machine. Its
+  value is assumed to be ``50051``, but users can deploy the service on preferred ports.
 
 Prior to using the PyAnsys Geometry launcher to launch the Geometry service, you must define
 general environment variables required for your OS. You do not need to define these
@@ -155,7 +154,7 @@ To see the commands for each method, click the following tabs.
 
            When running a Windows Docker container, certain high-value ports might be restricted
            from its use. This means that the port exposed by the container has to be set
-           to lower values. It is recommended to change the value of ``-p 50051:50051``
+           to lower values. You should change the value of ``-p 50051:50051``
            to use a port such as ``-p 700:50051``.
 
 Connect to the Geometry service
@@ -181,7 +180,7 @@ function.
 
     When running a Windows Docker container, certain high-value ports might be restricted
     from its use. This means that the port exposed by the container has to be set
-    to lower values. It is recommended to change the value of ``ANSRV_GEO_PORT``
+    to lower values. You should change the value of ``ANSRV_GEO_PORT``
     to use a port such as ``700``, instead of ``50051``.
 
 .. tab-set::
