@@ -209,7 +209,7 @@ latex_additional_files = [watermark, ansys_logo_white, ansys_logo_white_cropped]
 # variables are the title of pdf, watermark
 latex_elements = {"preamble": latex.generate_preamble(html_title)}
 
-linkcheck_exclude_documents = ["index", "getting_started/creating_local_session"]
+linkcheck_exclude_documents = ["index", "getting_started/local/index"]
 
 # -- Declare the Jinja context -----------------------------------------------
 exclude_patterns = []
@@ -226,6 +226,12 @@ jinja_contexts = {
     "main_toctree": {
         "build_api": BUILD_API,
         "build_examples": BUILD_EXAMPLES,
+    },
+    "linux_containers": {
+        "add_windows_warnings": False,
+    },
+    "windows_containers": {
+        "add_windows_warnings": True,
     },
 }
 
