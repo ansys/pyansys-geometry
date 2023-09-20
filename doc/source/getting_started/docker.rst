@@ -23,7 +23,7 @@ Running Windows Docker containers
 To run the Windows Docker container for the Geometry service, ensure that you follow
 these steps when installing Docker:
 
-#. Install `Docker Desktop <https://docs.docker.com/desktop/install/windows-install/>`.
+#. Install `Docker Desktop <https://docs.docker.com/desktop/install/windows-install/>`_.
 
 #. When prompted for **Use WSL2 instead of Hyper-V (recommended)**, clear this checkbox.
 
