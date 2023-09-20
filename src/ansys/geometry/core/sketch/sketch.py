@@ -850,6 +850,7 @@ class Sketch:
                 selected_pd_objects,
                 screenshot=screenshot,
                 view_2d=view_2d_dict,
+                opacity=0.7,
                 **plotting_options,
             )
         else:
