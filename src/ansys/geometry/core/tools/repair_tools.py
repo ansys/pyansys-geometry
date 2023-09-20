@@ -46,6 +46,7 @@ from ansys.geometry.core.tools.problem_areas import (
     StitchFaceProblemAreas,
 )
 
+
 class RepairTools:
     """Repair tools for the pygeometry."""
 
