@@ -41,9 +41,9 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 Usage
 -----
 
-There are different ways of getting started with using the Geometry service and its client-library, PyAnsys Geometry.
+There are different ways of getting started with using the Geometry service and its client library, PyAnsys Geometry.
 
-For more information, please refer to the
+For more information, see
 `Getting Started <https://geometry.docs.pyansys.com/version/stable/getting_started/index.html>`_ documentation.
 
 Installation
