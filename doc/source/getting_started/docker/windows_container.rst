@@ -1,14 +1,15 @@
 .. _ref_windows_docker:
 
-Geometry service as a Windows Docker container
-==============================================
+Windows Docker container
+========================
 
 .. contents::
+   :backlinks: none
 
 .. _ref_running_windows_containers:
 
-Run the Windows Docker container
---------------------------------
+Docker for Windows containers
+-----------------------------
 
 To run the Windows Docker container for the Geometry service, ensure that you follow
 these steps when installing Docker:
@@ -41,8 +42,8 @@ GitHub Container Registry
 
 .. note::
 
-    This option is only available for users with write access to the repository or
-    part of the Ansys organization.
+   This option is only available for users with write access to the repository or
+   who are members of the Ansys organization.
 
 Once Docker is installed on your machine, follow these steps to download the Windows Docker
 container for the Geometry service and install this image.
@@ -89,7 +90,7 @@ container for the Geometry service and install this image.
 .. _ref_windows_docker_fromscratch:
 
 Build the Geometry service Windows container
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The Geometry service Docker containers can be easily built by following
 these steps.
@@ -107,9 +108,9 @@ This guide focuses on building the ``Dockerfile.windows`` image.
 Prerequisites
 ~~~~~~~~~~~~~
 
-* Ensure that ``docker`` is installed in your machine.
-  If you do not have ``docker`` available, see
-  :ref:`Running Windows Docker containers <ref_running_windows_containers>`.
+* Ensure that Docker is installed in your machine.
+  If you do not have Docker available, see
+  :ref:`Docker for Windows containers <ref_running_windows_containers>`.
 
 * Download the `latest Windows Dockerfile <https://github.com/ansys/pyansys-geometry/blob/main/docker/Dockerfile.windows>`_.
 
@@ -118,28 +119,28 @@ Prerequisites
 
 * Move this ZIP file to the location of the Windows Dockerfile previously downloaded.
 
-Build the Docker images
-~~~~~~~~~~~~~~~~~~~~~~~
+Build the Docker image
+~~~~~~~~~~~~~~~~~~~~~~
 
 To build your image, follow these instructions:
 
 #. Navigate to the folder where the ZIP file and Dockerfile are located.
 #. Run this Docker command:
 
-  .. code:: bash
+   .. code:: bash
 
-     docker build -t ghcr.io/ansys/geometry:windows-latest -f Dockerfile.windows .
+      docker build -t ghcr.io/ansys/geometry:windows-latest -f Dockerfile.windows .
 
 #. Check that the image has been created successfully. You should see output similar
    to this:
 
-  .. code:: bash
+   .. code:: bash
 
-     docker images
+      docker images
 
-     >>> REPOSITORY                                               TAG                                IMAGE ID       CREATED          SIZE
-     >>> ghcr.io/ansys/geometry                                   windows-******                     ............   X seconds ago    Y.ZZGB
-     >>> ......                                                   ......                             ............   ..............   ......
+      >>> REPOSITORY                                               TAG                                IMAGE ID       CREATED          SIZE
+      >>> ghcr.io/ansys/geometry                                   windows-******                     ............   X seconds ago    Y.ZZGB
+      >>> ......                                                   ......                             ............   ..............   ......
 
 
 .. START - Include the common text for launching the service from a Docker container
@@ -154,7 +155,7 @@ To build your image, follow these instructions:
     :shadow:
     :expand:
 
-    Go back to *Geometry service using Docker*
+    Go to Docker containers
 
 .. button-ref:: ../index
     :ref-type: doc
@@ -162,4 +163,4 @@ To build your image, follow these instructions:
     :shadow:
     :expand:
 
-    Go back to *Getting Started*
+    Go to Getting started

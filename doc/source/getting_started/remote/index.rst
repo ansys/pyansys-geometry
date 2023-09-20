@@ -1,7 +1,7 @@
 .. _ref_creating_remote_session:
 
-Geometry service using a remote session
-=======================================
+Launch a remote session
+=======================
 
 If a remote server is running Ansys 2023 R2 or later and is also running PIM (Product
 Instance Manager), you can use PIM to start a Discovery or SpaceClaim session
@@ -65,7 +65,7 @@ Set up the client machine
    The preceding commands launch a Discovery (version 24.1) session with the API server.
    You receive a ``model`` object back from Discovery that you then use as a PyAnsys Geometry client.
 
-#. Start SpaceClaim or the Geometry Service remotely using commands like these:
+#. Start SpaceClaim or the Geometry service remotely using commands like these:
 
    .. code:: python
 
@@ -99,4 +99,4 @@ To end the session, run the corresponding command:
     :shadow:
     :expand:
 
-    Go back to Getting started
+    Go to Getting started

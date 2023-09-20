@@ -45,7 +45,7 @@ containers. Select the option that suits your needs best.
 
 In case you want to support the development of PyAnsys Geometry, install the repository
 in development mode. For more information, see
-:ref:`Package installation in development mode <ref_dev_mode>`.
+:ref:`Install package in development mode <ref_dev_mode>`.
 
 .. toctree::
    :hidden:

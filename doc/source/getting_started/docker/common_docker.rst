@@ -78,7 +78,7 @@ environment variables prior to manually launching the Geometry service.
 
            When running a Windows Docker container, certain high-value ports might be restricted
            from its use. This means that the port exposed by the container has to be set
-           to lower values. It is recommended to change the value of ``ANSRV_GEO_PORT``
+           to lower values. You should change the value of ``ANSRV_GEO_PORT``
            to use a port such as ``700``, instead of ``50051``.
 
     .. tab-item:: Manual launch

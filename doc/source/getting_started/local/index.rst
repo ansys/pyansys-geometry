@@ -1,7 +1,7 @@
 .. _ref_creating_local_session:
 
-Geometry service using a local session
-======================================
+Launch a local session
+======================
 
 If Ansys 2023 R2 or later and PyAnsys Geometry are installed, you can create a local backend session using
 Discovery, SpaceClaim, or the Geometry service. Once the backend is running, PyAnsys Geometry can manage the connection.
@@ -54,4 +54,4 @@ their API documentation:
     :shadow:
     :expand:
 
-    Go back to Getting started
+    Go to Getting started

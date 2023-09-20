@@ -1,14 +1,15 @@
 .. _ref_linux_docker:
 
-Geometry service as a Linux Docker container
-==============================================
+Linux Docker container
+======================
 
 .. contents::
+   :backlinks: none
 
 .. _ref_running_linux_containers:
 
-Running the Linux Docker container
-----------------------------------
+Docker for Linux containers
+---------------------------
 
 To run the Linux Docker container for the Geometry service, ensure that you follow
 these steps when installing Docker:
@@ -32,13 +33,13 @@ these steps when installing Docker:
 Now that your Docker engine supports running Linux Docker containers, you can build or install
 the PyAnsys Geometry image.
 
-Build or install the Geometry Service image
+Build or install the Geometry service image
 -------------------------------------------
 
 There are two options for installing the PyAnsys Geometry image:
 
 * Downloading it from the :ref:`GitHub Container Registry <ref_linux_docker_ghcr>`.
-* :ref:`Building the Geometry Service Linux container <ref_linux_docker_fromscratch>`.
+* :ref:`Build the Geometry service Linux container <ref_linux_docker_fromscratch>`.
 
 .. _ref_linux_docker_ghcr:
 
@@ -47,8 +48,8 @@ GitHub Container Registry
 
 .. note::
 
-    This option is only available for users with write access to the repository or
-    part of the Ansys organization.
+   This option is only available for users with write access to the repository or
+   who are members of the Ansys organization.
 
 Once Docker is installed on your machine, follow these steps to download the Linux Docker
 container for the Geometry service and install this image.
@@ -120,39 +121,39 @@ This guide focuses on building the ``Dockerfile.linux`` image.
 Prerequisites
 ~~~~~~~~~~~~~
 
-* Ensure that ``docker`` is installed on your machine.
-  If you do not have ``docker`` available, see
-  :ref:`Running Linux Docker containers <ref_running_linux_containers>`.
+* Ensure that Docker is installed on your machine.
+  If you do not have Docker available, see
+  :ref:`Docker for Linux containers <ref_running_linux_containers>`.
 
 * Download the `latest Linux Dockerfile <https://github.com/ansys/pyansys-geometry/blob/main/docker/Dockerfile.linux>`_.
 
 * Download the `latest release artifacts for the Linux
   Docker container (ZIP file) <https://github.com/ansys/pyansys-geometry/releases/latest/download/linux-binaries.zip>`_.
 
-* Move this ``.zip`` file to the location of the Linux Dockerfile previously downloaded.
+* Move this ZIP file to the location of the Linux Dockerfile previously downloaded.
 
-Building the Docker images
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Build the Docker image
+~~~~~~~~~~~~~~~~~~~~~~
 
 To build your image, follow these steps:
 
-#. Navigate to the folder where the ``.zip`` file and the Dockerfile are located.
+#. Navigate to the folder where the ZIP file and the Dockerfile are located.
 #. Run this Docker command:
 
-  .. code:: bash
+   .. code:: bash
 
-     docker build -t ghcr.io/ansys/geometry:linux-latest -f Dockerfile.linux .
+      docker build -t ghcr.io/ansys/geometry:linux-latest -f Dockerfile.linux .
 
 #. Check that the image has been created successfully. You should see an output similar
    to this one:
 
-  .. code:: bash
+   .. code:: bash
 
-     docker images
+      docker images
 
-     >>> REPOSITORY                                               TAG                                IMAGE ID       CREATED          SIZE
-     >>> ghcr.io/ansys/geometry                                   linux-******                       ............   X seconds ago    Y.ZZGB
-     >>> ......                                                   ......                             ............   ..............   ......
+      >>> REPOSITORY                                               TAG                                IMAGE ID       CREATED          SIZE
+      >>> ghcr.io/ansys/geometry                                   linux-******                       ............   X seconds ago    Y.ZZGB
+      >>> ......                                                   ......                             ............   ..............   ......
 
 
 .. START - Include the common text for launching the service from a Docker container
@@ -167,7 +168,7 @@ To build your image, follow these steps:
     :shadow:
     :expand:
 
-    Go back to *Geometry service using Docker*
+    Go to Docker containers
 
 .. button-ref:: ../index
     :ref-type: doc
@@ -175,4 +176,4 @@ To build your image, follow these steps:
     :shadow:
     :expand:
 
-    Go back to *Getting Started*
+    Go to Getting started

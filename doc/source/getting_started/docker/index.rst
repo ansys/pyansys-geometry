@@ -1,7 +1,7 @@
 .. _ref_docker:
 
-Geometry service using Docker
-=============================
+Docker containers
+=================
 
 What is Docker?
 ---------------
@@ -21,7 +21,7 @@ Select your Docker container
 Currently, the Geometry service backend is mainly delivered as a **Windows** Docker container.
 However, these containers require a Windows machine to run them.
 
-A Linux version of the Geometry Service is also available but with limited capabilities,
+A Linux version of the Geometry service is also available but with limited capabilities,
 meaning that certain operations are not available or fail.
 
 Select the kind of Docker container you want to build:
@@ -51,7 +51,7 @@ Select the kind of Docker container you want to build:
     :shadow:
     :expand:
 
-    Go back to Getting Started
+    Go to Getting started
 
 .. toctree::
    :hidden:
