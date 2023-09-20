@@ -74,6 +74,7 @@ environment variables prior to manually launching the Geometry service.
                    SET ANSRV_GEO_HOST=127.0.0.1
                    SET ANSRV_GEO_PORT=50051
 
+       {% if add_windows_warnings %}
        .. warning::
 
            When running a Windows Docker container, certain high-value ports might be restricted
@@ -81,6 +82,7 @@ environment variables prior to manually launching the Geometry service.
            to lower values. You should change the value of ``ANSRV_GEO_PORT``
            to use a port such as ``700``, instead of ``50051``.
 
+       {% endif %}
     .. tab-item:: Manual launch
        :sync: manual
 
@@ -149,13 +151,18 @@ To see the commands for each method, click the following tabs.
                        -e LICENSE_SERVER=<LICENSE_SERVER> ^
                        -p 50051:50051 ^
                        ghcr.io/ansys/geometry:<TAG>
+       
+       .. jinja:: 
 
+       {% if add_windows_warnings %}
        .. warning::
 
            When running a Windows Docker container, certain high-value ports might be restricted
            from its use. This means that the port exposed by the container has to be set
            to lower values. You should change the value of ``-p 50051:50051``
            to use a port such as ``-p 700:50051``.
+
+       {% endif %}
 
 Connect to the Geometry service
 -------------------------------
@@ -176,6 +183,7 @@ your ``docker run`` command by changing the ``<HOST-PORT>-50051`` argument.
 The following tabs show the commands that set the environment variables and ``Modeler``
 function.
 
+{% if add_windows_warnings %}
 .. warning::
 
     When running a Windows Docker container, certain high-value ports might be restricted
@@ -183,6 +191,7 @@ function.
     to lower values. You should change the value of ``ANSRV_GEO_PORT``
     to use a port such as ``700``, instead of ``50051``.
 
+{% endif %}
 .. tab-set::
 
     .. tab-item:: Environment variables

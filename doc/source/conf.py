@@ -227,6 +227,12 @@ jinja_contexts = {
         "build_api": BUILD_API,
         "build_examples": BUILD_EXAMPLES,
     },
+    "linux_containers": {
+        "add_windows_warnings": False,
+    },
+    "windows_containers": {
+        "add_windows_warnings": True,
+    },
 }
 
 

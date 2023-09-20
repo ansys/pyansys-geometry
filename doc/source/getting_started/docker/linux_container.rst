@@ -158,7 +158,9 @@ To build your image, follow these steps:
 
 .. START - Include the common text for launching the service from a Docker container
 
-.. include:: ./common_docker.rst
+.. jinja:: linux_containers
+   :file: getting_started/docker/common_docker.jinja
+   :header_update_levels:
 
 .. END - Include the common text for launching the service from a Docker container
 
