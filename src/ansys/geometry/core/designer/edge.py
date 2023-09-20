@@ -23,8 +23,8 @@
 
 from enum import Enum, unique
 
-from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from beartype.typing import TYPE_CHECKING, List
 from pint import Quantity
 

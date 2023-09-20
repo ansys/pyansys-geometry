@@ -24,6 +24,7 @@
 from enum import Enum, unique
 import uuid  # TODO: Is ID even needed? Maybe use from SC?
 
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
     CreateBodyFromFaceRequest,
     CreateExtrudedBodyFromFaceProfileRequest,
@@ -41,7 +42,6 @@ from ansys.api.geometry.v0.components_pb2 import (
 )
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
 from ansys.api.geometry.v0.models_pb2 import Direction, Line
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
