@@ -1,6 +1,7 @@
 """"Testing of repair tools."""
 
 from ansys.geometry.core.modeler import Modeler
+from ansys.geometry.core.tools import RepairTools
 
 
 def test_find_split_edges():
@@ -30,7 +31,8 @@ def test_find_missing_faces():
     """Test to read geometry and find it's missing face problem areas."""
     modeler = Modeler(host="localhost", port=50051)
     modeler.open_file("./tests/integration/files/MissingFacesDesignBefore.scdoc")
-    problem_areas = modeler.repair_tools.find_missing_faces(["1:40"])
+    repair_tools = RepairTools(modeler.client)
+    problem_areas = repair_tools.find_missing_faces(["1:40"])
     assert len(problem_areas) == 1
 
 

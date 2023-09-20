@@ -116,7 +116,7 @@ class Modeler:
             backend_type=backend_type,
         )
 
-        self._repair_tools = RepairTools()
+        self._repair_tools = RepairTools(self._client)
         # Design[] maintaining references to all designs within the modeler workspace
         self._designs = []
 

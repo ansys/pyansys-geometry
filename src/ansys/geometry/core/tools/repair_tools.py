@@ -50,8 +50,12 @@ from ansys.geometry.core.tools.problem_areas import (
 class RepairTools:
     """Repair tools for the pygeometry."""
 
-    def __init__(self):
+    def __init__(self, grpc_client: GrpcClient):
         """Initialize Repair Tools class."""
+        
+        self._grpc_client = grpc_client
+        # Initialize the stubs needed.
+        self._repair_stub = RepairToolsStub(self._grpc_client.channel)
 
     def find_split_edges(
         self, ids: list[str], angle: float = 0.0, length: float = 0.0
@@ -78,20 +82,19 @@ class RepairTools:
         """
         angle_value = DoubleValue(value=float(angle))
         length_value = DoubleValue(value=float(length))
-        client = GrpcClient()
-        problemAreasResponse = RepairToolsStub(client.channel).FindSplitEdges(
+        problem_areas_response = self._repair_stub.FindSplitEdges(
             FindSplitEdgesRequest(bodies_or_faces=ids, angle=angle_value, distance=length_value)
         )
 
-        problemAreas = []
-        for res in problemAreasResponse.result:
-            connectedEdges = []
+        problem_areas = []
+        for res in problem_areas_response.result:
+            connected_edges = []
             for edge_moniker in res.edge_monikers:
-                connectedEdges.append(edge_moniker)
-            problemArea = SplitEdgeProblemAreas(res.id, connectedEdges)
-            problemAreas.append(problemArea)
+                connected_edges.append(edge_moniker)
+            problem_area = SplitEdgeProblemAreas(res.id, connected_edges)
+            problem_areas.append(problem_area)
 
-        return problemAreas
+        return problem_areas
 
     def find_extra_edges(self, ids: list[str]) -> list[ExtraEdgeProblemAreas]:
         """
@@ -111,18 +114,18 @@ class RepairTools:
             List of objects representing extra edge problem areas.
         """
         client = GrpcClient()
-        problemAreasResponse = RepairToolsStub(client.channel).FindExtraEdges(
+        problem_areas_response = RepairToolsStub(client.channel).FindExtraEdges(
             FindExtraEdgesRequest(selection=ids)
         )
-        problemAreas = []
-        for res in problemAreasResponse.result:
-            connectedEdges = []
+        problem_areas = []
+        for res in problem_areas_response.result:
+            connected_edges = []
             for edge_moniker in res.edge_monikers:
-                connectedEdges.append(edge_moniker)
-            problemArea = ExtraEdgeProblemAreas(res.id, connectedEdges)
-            problemAreas.append(problemArea)
+                connected_edges.append(edge_moniker)
+            problem_area = ExtraEdgeProblemAreas(res.id, connected_edges)
+            problem_areas.append(problem_area)
 
-        return problemAreas
+        return problem_areas
 
     def find_inexact_edges(self, ids) -> list[InexactEdgeProblemAreas]:
         """
@@ -145,15 +148,15 @@ class RepairTools:
         problemAreasResponse = RepairToolsStub(client.channel).FindInexactEdges(
             FindInexactEdgesRequest(selection=ids)
         )
-        problemAreas = []
+        problem_areas = []
         for res in problemAreasResponse.result:
-            connectedEdges = []
+            connected_edges = []
             for edge_moniker in res.edge_monikers:
-                connectedEdges.append(edge_moniker)
-            problemArea = InexactEdgeProblemAreas(res.id, connectedEdges)
-            problemAreas.append(problemArea)
+                connected_edges.append(edge_moniker)
+            problem_area = InexactEdgeProblemAreas(res.id, connected_edges)
+            problem_areas.append(problem_area)
 
-        return problemAreas
+        return problem_areas
 
     def find_short_edges(self, ids) -> list[ShortEdgeProblemAreas]:
         """
@@ -177,11 +180,11 @@ class RepairTools:
         )
         problemAreas = []
         for res in problemAreasResponse.result:
-            connectedEdges = []
+            connected_edges = []
             for edge_moniker in res.edge_monikers:
-                connectedEdges.append(edge_moniker)
-            problemAreas = ShortEdgeProblemAreas(res.id, connectedEdges)
-            problemAreas.append(problemAreas)
+                connected_edges.append(edge_moniker)
+            problem_area = ShortEdgeProblemAreas(res.id, connected_edges)
+            problemAreas.append(problem_area)
 
         return problemAreas
 
@@ -206,15 +209,15 @@ class RepairTools:
         problemAreasResponse = RepairToolsStub(client.channel).FindDuplicateFaces(
             FindDuplicateFacesRequest(faces=ids)
         )
-        problemAreas = []
+        problem_areas = []
         for res in problemAreasResponse.result:
-            connectedEdges = []
+            connected_edges = []
             for face_moniker in res.face_monikers:
-                connectedEdges.append(face_moniker)
-            problemArea = DuplicateFaceProblemAreas(res.id, connectedEdges)
-            problemAreas.append(problemArea)
+                connected_edges.append(face_moniker)
+            problem_area = DuplicateFaceProblemAreas(res.id, connected_edges)
+            problem_areas.append(problem_area)
 
-        return problemAreas
+        return problem_areas
 
     def find_missing_faces(self, ids) -> list[MissingFaceProblemAreas]:
         """
@@ -237,15 +240,15 @@ class RepairTools:
         problemAreasResponse = RepairToolsStub(client.channel).FindMissingFaces(
             FindMissingFacesRequest(faces=ids)
         )
-        problemAreas = []
+        problem_areas = []
         for res in problemAreasResponse.result:
-            connectedEdges = []
+            connected_edges = []
             for edge_moniker in res.edge_monikers:
-                connectedEdges.append(edge_moniker)
-            problemArea = MissingFaceProblemAreas(res.id, connectedEdges)
-            problemAreas.append(problemArea)
+                connected_edges.append(edge_moniker)
+            problem_area = MissingFaceProblemAreas(res.id, connected_edges)
+            problem_areas.append(problem_area)
 
-        return problemAreas
+        return problem_areas
 
     def find_small_faces(self, ids) -> list[SmallFaceProblemAreas]:
         """
@@ -268,15 +271,15 @@ class RepairTools:
         problemAreasResponse = RepairToolsStub(client.channel).FindSmallFaces(
             FindSmallFacesRequest(selection=ids)
         )
-        problemAreas = []
+        problem_areas = []
         for res in problemAreasResponse.result:
-            connectedEdges = []
+            connected_edges = []
             for face_moniker in res.face_monikers:
-                connectedEdges.append(face_moniker)
-            problemArea = SmallFaceProblemAreas(res.id, connectedEdges)
-            problemAreas.append(problemArea)
+                connected_edges.append(face_moniker)
+            problem_area = SmallFaceProblemAreas(res.id, connected_edges)
+            problem_areas.append(problem_area)
 
-        return problemAreas
+        return problem_areas
 
     def find_stitch_faces(self, ids) -> list[StitchFaceProblemAreas]:
         """
@@ -299,12 +302,12 @@ class RepairTools:
         problemAreasResponse = RepairToolsStub(client.channel).FindStitchFaces(
             FindStitchFacesRequest(faces=ids)
         )
-        problemAreas = []
+        problem_areas = []
         for res in problemAreasResponse.result:
-            connectedEdges = []
+            connected_edges = []
             for face_moniker in res.body_monikers:
-                connectedEdges.append(face_moniker)
-            problemArea = StitchFaceProblemAreas(res.id, connectedEdges)
-            problemAreas.append(problemArea)
+                connected_edges.append(face_moniker)
+            problem_area = StitchFaceProblemAreas(res.id, connected_edges)
+            problem_areas.append(problem_area)
 
-        return problemAreas
+        return problem_areas
