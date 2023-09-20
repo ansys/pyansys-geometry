@@ -850,7 +850,7 @@ class Sketch:
                 selected_pd_objects,
                 screenshot=screenshot,
                 view_2d=view_2d_dict,
-                opacity=0.7,  # Since we are passing PD objects directly... we apply opacity to all of them
+                opacity=0.7,  # We are passing PD objects directly... apply opacity to all of them
                 **plotting_options,
             )
         else:
