@@ -24,26 +24,26 @@
 from enum import Enum, unique
 from pathlib import Path
 
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+from ansys.api.dbu.v0.designs_pb2 import NewRequest, SaveAsRequest
+from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
     AssignMidSurfaceThicknessRequest,
     CreateBeamCircularProfileRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
-from ansys.api.geometry.v0.parts_pb2 import ExportRequest
-from ansys.api.dbu.v0.designs_pb2 import NewRequest, SaveAsRequest
-from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
-from google.protobuf.empty_pb2 import Empty
 from ansys.api.geometry.v0.materials_pb2 import AddToDocumentRequest
 from ansys.api.geometry.v0.materials_pb2_grpc import MaterialsStub
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.models_pb2 import Material as GRPCMaterial
 from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialProperty
 from ansys.api.geometry.v0.models_pb2 import PartExportFormat
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
+from ansys.api.geometry.v0.parts_pb2 import ExportRequest
+from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
 from beartype import beartype as check_input_types
 from beartype.typing import Dict, List, Optional, Union
+from google.protobuf.empty_pb2 import Empty
 import numpy as np
 from pint import Quantity
 
@@ -127,7 +127,7 @@ class Design(Component):
         self._materials = []
         self._named_selections = {}
         self._beam_profiles = {}
-        
+
         # Check whether we want to process an existing design or create a new one.
         if read_existing_design:
             self._grpc_client.log.debug("Reading Design object from service.")
@@ -589,7 +589,8 @@ class Design(Component):
             raise RuntimeError("No existing design available at service level.")
         else:
             self._id = design.main_part.id
-            # Here we may take the design's name instead of the main part's name since they're the same in the backend.
+            # Here we may take the design's name instead of the main part's name.
+            # Since they're the same in the backend.
             self._name = design.name
 
         response = self._commands_stub.GetAssembly(EntityIdentifier(id=""))

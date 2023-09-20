@@ -24,6 +24,7 @@ from abc import ABC, abstractmethod
 from enum import Enum, unique
 from functools import wraps
 
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
     BooleanRequest,
     CopyRequest,
@@ -38,7 +39,6 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ProjectCurvesRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity

@@ -25,8 +25,11 @@ import logging
 from pathlib import Path
 import time
 
+from ansys.api.dbu.v0.admin_pb2 import BackendType as grpcBackendType
+from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
+from google.protobuf.empty_pb2 import Empty
 import grpc
 from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
@@ -38,9 +41,6 @@ from ansys.geometry.core.connection.product_instance import ProductInstance
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.logger import PyGeometryCustomAdapter
 from ansys.geometry.core.typing import Real
-from google.protobuf.empty_pb2 import Empty
-from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
-from ansys.api.dbu.v0.admin_pb2 import BackendType as grpcBackendType
 
 try:
     from ansys.platform.instancemanagement import Instance
@@ -170,7 +170,7 @@ class GrpcClient:
         self._admin_stub = AdminStub(self._channel)
 
         # if no backend type has been specified, ask the backend which type it is
-        if backend_type == None:            
+        if backend_type == None:
             grpc_backend_type = self._admin_stub.GetBackend(Empty()).type
             if grpc_backend_type == grpcBackendType.DISCOVERY:
                 backend_type = BackendType.DISCOVERY
