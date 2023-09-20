@@ -135,7 +135,6 @@ class Design(Component):
         else:
             new_design = self._design_stub.New(NewRequest(name=name))
             self._id = new_design.id
-            print("new design created")
             self._grpc_client.log.debug("Design object instantiated successfully.")
 
     @property
