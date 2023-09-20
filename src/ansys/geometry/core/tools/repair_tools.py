@@ -46,7 +46,6 @@ from ansys.geometry.core.tools.problem_areas import (
     StitchFaceProblemAreas,
 )
 
-
 class RepairTools:
     """Repair tools for the pygeometry."""
 
@@ -140,7 +139,7 @@ class RepairTools:
         Server-defined ID for the edges.
 
         Returns
-        ----------
+        -------
         list[InExactEdgeProblemArea]
             List of objects representing inexact edge problem areas.
         """
@@ -170,7 +169,7 @@ class RepairTools:
         Server-defined ID for the edges.
 
         Returns
-        ----------
+        -------
         list[ShortEdgeProblemArea]
             List of objects representing short edge problem areas.
         """
@@ -201,7 +200,7 @@ class RepairTools:
         Server-defined ID for the edges.
 
         Returns
-        ----------
+        -------
         list[DuplicateFaceProblemAreas]
             List of objects representing duplicate face problem areas.
         """
@@ -232,7 +231,7 @@ class RepairTools:
         Server-defined ID for the edges.
 
         Returns
-        ----------
+        -------
         list[MissingFaceProblemAreas]
             List of objects representing missing face problem areas.
         """
@@ -263,7 +262,7 @@ class RepairTools:
         Server-defined ID for the edges.
 
         Returns
-        ----------
+        -------
         list[SmallFaceProblemAreas]
             List of objects representing small face problem areas.
         """
@@ -294,7 +293,7 @@ class RepairTools:
         Server-defined ID for the edges.
 
         Returns
-        ----------
+        -------
         list[StitchFaceProblemAreas]
             List of objects representing stitch face problem areas.
         """
