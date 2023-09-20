@@ -1,14 +1,14 @@
 .. _ref_linux_docker:
 
-Geometry Service as a Linux Docker container
+Geometry service as a Linux Docker container
 ==============================================
 
 .. contents::
 
 .. _ref_running_linux_containers:
 
-Running Linux Docker containers
----------------------------------
+Running the Linux Docker container
+----------------------------------
 
 To run the Linux Docker container for the Geometry service, ensure that you follow
 these steps when installing Docker:
@@ -24,10 +24,10 @@ these steps when installing Docker:
        #. Install `Docker Desktop for Windows <https://docs.docker.com/desktop/install/windows-install/>`_ or
           `Docker Desktop for MacOS <https://docs.docker.com/desktop/install/mac-install/>`_.
 
-       #. **(On Windows)** When prompted for **Use WSL2 instead of Hyper-V (recommended)**, **UNTICK** this checkbox.
-          Hyper-V must be enabled to run Windows Docker containers - which you might be interested in doing in the future.
+       #. **(On Windows)** When prompted for **Use WSL2 instead of Hyper-V (recommended)**, **clear** this checkbox.
+          Hyper-V must be enabled to run Windows Docker containers, which you might be interested in doing in the future.
 
-       #. Once the installation finishes, restart your machine, and start Docker Desktop.
+       #. Once the installation finishes, restart your machine and start Docker Desktop.
 
 Now that your Docker engine supports running Linux Docker containers, you can build or install
 the PyAnsys Geometry image.
@@ -35,7 +35,7 @@ the PyAnsys Geometry image.
 Build or install the Geometry Service image
 -------------------------------------------
 
-There are two options for users to install the PyAnsys Geometry image:
+There are two options for installing the PyAnsys Geometry image:
 
 * Downloading it from the :ref:`GitHub Container Registry <ref_linux_docker_ghcr>`.
 * :ref:`Building the Geometry Service Linux container <ref_linux_docker_fromscratch>`.
@@ -67,7 +67,7 @@ container for the Geometry service and install this image.
 
        echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX > GH_TOKEN.txt
 
-#. Authorize Docker to access the repository. To see the commands to run, click the tab for your OS.
+#. Authorize Docker to access the repository and then run the commands for your OS. To see these commands, click the tab for your OS.
 
    .. tab-set::
 
@@ -101,8 +101,8 @@ container for the Geometry service and install this image.
 
 .. _ref_linux_docker_fromscratch:
 
-Building the Geometry Service Linux container
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Build the Geometry service Linux container
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The Geometry service Docker containers can be easily built by following
 these steps.
