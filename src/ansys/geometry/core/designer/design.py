@@ -123,6 +123,7 @@ class Design(Component):
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
         self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
         self._parts_stub = PartsStub(self._grpc_client.channel)
+
         # Initialize needed instance variables
         self._materials = []
         self._named_selections = {}
