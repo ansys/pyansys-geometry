@@ -37,7 +37,7 @@ goto end
 :html
 REM TODO: these lines of code should be removed once the feature branch is merged
 pip uninstall --yes sphinx-autoapi
-pip install "sphinx-autoapi @ git+https://github.com/jorgepiloto/sphinx-autoapi@feat/single-page-option"
+pip install "sphinx-autoapi @ git+https://github.com/ansys/sphinx-autoapi@feat/single-page-option"
 REM TODO: these lines of code should be removed once the feature branch is merged
 %SPHINXBUILD% -M html %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 %SPHINXBUILD% -M linkcheck %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
