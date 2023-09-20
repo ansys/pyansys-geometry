@@ -850,11 +850,12 @@ class Sketch:
                 selected_pd_objects,
                 screenshot=screenshot,
                 view_2d=view_2d_dict,
+                opacity=0.7,  # We are passing PD objects directly... apply opacity to all of them
                 **plotting_options,
             )
         else:
             pl_helper = PlotterHelper(use_trame=use_trame).plot(
-                self.sketch_polydata(),
+                self,
                 screenshot=screenshot,
                 view_2d=view_2d_dict,
                 **plotting_options,

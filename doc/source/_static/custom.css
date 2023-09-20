@@ -15,11 +15,6 @@
 
 /* Remove once implemented in ansys-sphinx-theme*/
 
-.sd-card {
-  border-radius: 0;
-  padding: 20px 10px 20px 10px;
-}
-
 .sd-card .sd-card-img-top {
     height: 100px;
     width: 100px;

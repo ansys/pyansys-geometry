@@ -1,7 +1,7 @@
 .. _ref_existing_session:
 
-Connect to an existing session
-==============================
+Use an existing session
+=======================
 
 If a session of Discovery, SpaceClaim, or the Geometry service is already
 running, PyAnsys Geometry can be used to connect to it.
@@ -32,3 +32,10 @@ connection inside your ``Modeler`` object:
    Target:     localhost:5001
    Connection: Healthy
 
+.. button-ref:: ../index
+    :ref-type: doc
+    :color: primary
+    :shadow:
+    :expand:
+
+    Go to Getting started
