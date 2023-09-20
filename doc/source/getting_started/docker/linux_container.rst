@@ -109,19 +109,19 @@ these steps.
 
 Inside the repository's ``docker`` folder, there are two ``Dockerfile`` files:
 
-* ``Dockerfile.linux``: this file builds the Linux-based Docker image.
-* ``Dockerfile.windows``: this file builds the Windows-based Docker image.
+* ``Dockerfile.linux``: File for building the Linux-based Docker image.
+* ``Dockerfile.windows``: File for building the Windows-based Docker image.
 
-Depending on the characteristics of the Docker engine installed in your
+Depending on the characteristics of the Docker engine installed on your
 machine, either one or the other has to be built.
 
-In this guide, focus is set on building the ``Dockerfile.linux`` image.
+This guide focuses on building the ``Dockerfile.linux`` image.
 
 Prerequisites
 ~~~~~~~~~~~~~
 
-* Ensure that ``docker`` is installed in your machine.
-  If you do not have ``docker`` available, please refer to
+* Ensure that ``docker`` is installed on your machine.
+  If you do not have ``docker`` available, see
   :ref:`Running Linux Docker containers <ref_running_linux_containers>`.
 
 * Download the `latest Linux Dockerfile <https://github.com/ansys/pyansys-geometry/blob/main/docker/Dockerfile.linux>`_.
@@ -134,17 +134,17 @@ Prerequisites
 Building the Docker images
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In order to build your image, follow the next instructions:
+To build your image, follow these steps:
 
-#. Locate yourself at the folder where the ``.zip`` file and the Dockerfile are placed.
-#. Run the following Docker command:
+#. Navigate to the folder where the ``.zip`` file and the Dockerfile are located.
+#. Run this Docker command:
 
   .. code:: bash
 
      docker build -t ghcr.io/ansys/geometry:linux-latest -f Dockerfile.linux .
 
 #. Check that the image has been created successfully. You should see an output similar
-   to this one when running the following command:
+   to this one:
 
   .. code:: bash
 
@@ -155,11 +155,11 @@ In order to build your image, follow the next instructions:
      >>> ......                                                   ......                             ............   ..............   ......
 
 
-.. START - Include the common text for launching the service from a Docker Container
+.. START - Include the common text for launching the service from a Docker container
 
 .. include:: ./common_docker.rst
 
-.. END - Include the common text for launching the service from a Docker Container
+.. END - Include the common text for launching the service from a Docker container
 
 .. button-ref:: index
     :ref-type: doc
