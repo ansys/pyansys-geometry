@@ -108,7 +108,7 @@ Prerequisites
 ~~~~~~~~~~~~~
 
 * Ensure that ``docker`` is installed in your machine.
-  If you do not have ``docker`` available, please refer to
+  If you do not have ``docker`` available, see
   :ref:`Running Windows Docker containers <ref_running_windows_containers>`.
 
 * Download the `latest Windows Dockerfile <https://github.com/ansys/pyansys-geometry/blob/main/docker/Dockerfile.windows>`_.
@@ -116,22 +116,22 @@ Prerequisites
 * Download the `latest release artifacts for the Windows
   Docker container (ZIP file) <https://github.com/ansys/pyansys-geometry/releases/latest/download/windows-binaries.zip>`_.
 
-* Move this ``.zip`` file to the location of the Windows Dockerfile previously downloaded.
+* Move this ZIP file to the location of the Windows Dockerfile previously downloaded.
 
-Building the Docker images
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Build the Docker images
+~~~~~~~~~~~~~~~~~~~~~~~
 
-In order to build your image, follow the next instructions:
+To build your image, follow these instructions:
 
-#. Locate yourself at the folder where the ``.zip`` file and the Dockerfile are placed.
-#. Run the following Docker command:
+#. Navigate to the folder where the ZIP file and Dockerfile are located.
+#. Run this Docker command:
 
   .. code:: bash
 
      docker build -t ghcr.io/ansys/geometry:windows-latest -f Dockerfile.windows .
 
-#. Check that the image has been created successfully. You should see an output similar
-   to this one when running the following command:
+#. Check that the image has been created successfully. You should see output similar
+   to this:
 
   .. code:: bash
 
@@ -142,11 +142,11 @@ In order to build your image, follow the next instructions:
      >>> ......                                                   ......                             ............   ..............   ......
 
 
-.. START - Include the common text for launching the service from a Docker Container
+.. START - Include the common text for launching the service from a Docker container
 
 .. include:: ./common_docker.rst
 
-.. END - Include the common text for launching the service from a Docker Container
+.. END - Include the common text for launching the service from a Docker container
 
 .. button-ref:: index
     :ref-type: doc
