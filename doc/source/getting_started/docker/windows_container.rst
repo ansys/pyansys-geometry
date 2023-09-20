@@ -102,7 +102,7 @@ Inside the repository's ``docker`` folder, there are two ``Dockerfile`` files:
 Depending on the characteristics of the Docker engine installed on your
 machine, either one or the other has to be built.
 
-In this guide, focus is set on building the ``Dockerfile.windows`` image.
+This guide focuses on building the ``Dockerfile.windows`` image.
 
 Prerequisites
 ~~~~~~~~~~~~~
