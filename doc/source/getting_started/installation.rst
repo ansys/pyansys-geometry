@@ -111,7 +111,7 @@ For more information on PyAnsys Geometry usage, see :ref:`User guide <ref_user_g
     :shadow:
     :expand:
 
-    Go back to Getting Started
+    Go back to Getting started
 
 .. LINKS AND REFERENCES
 .. _pip: https://pypi.org/project/pip/
