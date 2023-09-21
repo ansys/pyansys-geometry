@@ -18,6 +18,7 @@ Polydata
 PROTO
 Protobuf
 PyAnsys
+pyansys
 pyansys-geometry
 PyAnsys Geometry
 PyPI
