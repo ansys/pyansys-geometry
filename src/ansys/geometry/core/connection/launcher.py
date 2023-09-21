@@ -387,7 +387,7 @@ def launch_modeler_with_discovery(
 
         **Ansys products versions and their corresponding int values:**
 
-        * 24.1 -> value : ``241``
+        * ``241`` : Ansys 24R1
     host: str, optional
         IP address at which the Discovery session will be deployed. By default,
         its value will be ``localhost``.
@@ -480,8 +480,8 @@ def launch_modeler_with_spaceclaim(
 
         **Ansys products versions and their corresponding int values:**
 
-        * ``232`` : 23.2
-        * ``241`` : 24.1
+        * ``232`` : Ansys 23R2 SP1
+        * ``241`` : Ansys 24R1
     host: str, optional
         IP address at which the SpaceClaim session will be deployed. By default,
         its value will be ``localhost``.
