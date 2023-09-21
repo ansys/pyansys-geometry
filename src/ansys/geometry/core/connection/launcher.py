@@ -339,8 +339,7 @@ def launch_modeler_with_geometry_service(
     logs, traces enabled and a ``300`` seconds timeout:
 
     >>> from ansys.geometry.core import launch_modeler_with_geometry_service
-    >>> modeler = launch_modeler_with_geometry_service(product_version = 232,
-        host="10.171.22.44",
+    >>> modeler = launch_modeler_with_geometry_service(host="10.171.22.44",
         port=5001,
         log_level=0,
         enable_trace= True,
@@ -380,10 +379,10 @@ def launch_modeler_with_discovery(
         the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
         a SystemError will be raised.
-        Possible values:
+        
         Ansys products Versions and their corresponding int values:
-        23.2 -> value : 232
-        24.1 -> value : 241
+        - 23.2 -> value : 232
+        - 24.1 -> value : 241
     host: str, optional
         IP address at which the Geometry service will be deployed. By default,
         its value will be ``localhost``.
@@ -392,10 +391,10 @@ def launch_modeler_with_discovery(
         value will be ``None``.
     log_level : int, optional
         Backend's log level from 0 to 3:
-            0: Chatterbox
-            1: Debug
-            2: Warning
-            3: Error
+        - 0: Chatterbox
+        - 1: Debug
+        - 2: Warning
+        - 3: Error
 
         The default is ``2`` (Warning).
     api_version: ApiVersions, optional
