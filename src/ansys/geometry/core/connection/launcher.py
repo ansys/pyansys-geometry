@@ -379,7 +379,7 @@ def launch_modeler_with_discovery(
         the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
         a SystemError will be raised.
-        
+
         Ansys products Versions and their corresponding int values:
         - 23.2 -> value : 232
         - 24.1 -> value : 241
