@@ -13,6 +13,13 @@ if "%SPHINXOPTS%" == "" (
 set SOURCEDIR=source
 set BUILDDIR=_build
 
+REM TODO: these lines of code should be removed once the feature branch is merged
+for /f %%i in ('pip freeze ^| findstr /c:"sphinx-autoapi @ git+https://github.com/ansys/sphinx-autoapi"') do set is_custom_sphinx_autoapi_installed=%%i
+if NOT "%is_custom_sphinx_autoapi_installed%" == "sphinx-autoapi" (
+	pip uninstall --yes sphinx-autoapi
+	pip install "sphinx-autoapi @ git+https://github.com/ansys/sphinx-autoapi@feat/single-page-option")
+REM TODO: these lines of code should be removed once the feature branch is merged
+
 if "%1" == "" goto help
 if "%1" == "clean" goto clean
 if "%1" == "pdf" goto pdf
@@ -35,8 +42,8 @@ if errorlevel 9009 (
 goto end
 
 :html
-%SPHINXBUILD% -M linkcheck %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 %SPHINXBUILD% -M html %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+%SPHINXBUILD% -M linkcheck %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 goto build-examples-py
 
 :clean
@@ -56,6 +63,7 @@ if NOT EXIST ansys-geometry-core.pdf (
 	Echo "no pdf generated!"
 	exit /b 1)
 Echo "pdf generated!"
+goto end
 
 :build-examples-py
 cd "%BUILDDIR%\html\examples"
