@@ -368,7 +368,11 @@ def launch_modeler_with_discovery(
     """
     Start Ansys Discovery locally using the ``ProductInstance`` class.
 
-    When calling this method, a standalone Geometry service is started.
+    .. note::
+
+       Support for Ansys Discovery is restricted to Ansys 24.1 onwards.
+
+    When calling this method, a standalone Discovery session is started.
     By default, if an endpoint is specified (by defining `host` and `port` parameters)
     but the endpoint is not available, the startup will fail. Otherwise, it will try to
     launch its own service.
@@ -383,10 +387,9 @@ def launch_modeler_with_discovery(
 
         **Ansys products versions and their corresponding int values:**
 
-        * 23.2 -> value : ``232``
         * 24.1 -> value : ``241``
     host: str, optional
-        IP address at which the Geometry service will be deployed. By default,
+        IP address at which the Discovery session will be deployed. By default,
         its value will be ``localhost``.
     port : int, optional
         Port at which the Geometry service will be deployed. By default, its
@@ -462,7 +465,7 @@ def launch_modeler_with_spaceclaim(
     """
     Start Ansys SpaceClaim locally using the ``ProductInstance`` class.
 
-    When calling this method, a standalone Geometry service is started.
+    When calling this method, a standalone SpaceClaim session is started.
     By default, if an endpoint is specified (by defining `host` and `port` parameters)
     but the endpoint is not available, the startup will fail. Otherwise, it will try to
     launch its own service.
@@ -480,7 +483,7 @@ def launch_modeler_with_spaceclaim(
         * 23.2 -> value : ``232``
         * 24.1 -> value : ``241``
     host: str, optional
-        IP address at which the Geometry service will be deployed. By default,
+        IP address at which the SpaceClaim session will be deployed. By default,
         its value will be ``localhost``.
     port : int, optional
         Port at which the Geometry service will be deployed. By default, its
