@@ -123,6 +123,7 @@ class Design(Component):
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
         self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
         self._parts_stub = PartsStub(self._grpc_client.channel)
+
         # Initialize needed instance variables
         self._materials = []
         self._named_selections = {}
@@ -135,7 +136,6 @@ class Design(Component):
         else:
             new_design = self._design_stub.New(NewRequest(name=name))
             self._id = new_design.id
-            print("new design created")
             self._grpc_client.log.debug("Design object instantiated successfully.")
 
     @property

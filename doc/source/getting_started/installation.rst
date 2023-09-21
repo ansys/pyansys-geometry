@@ -1,9 +1,14 @@
-Installation
-############
+.. _ref_dev_mode:
 
-This page assumes that you want to install PyAnsys Geometry in developer mode so that
+Install package in development mode
+###################################
+
+This topic assumes that you want to install PyAnsys Geometry in developer mode so that
 you can modify the source and enhance it. You can install PyAnsys Geometry from PyPI
 or from the `PyAnsys Geometry repository <https://github.com/ansys/pyansys-geometry>`_ on GitHub.
+
+.. contents::
+   :backlinks: none
 
 Package dependencies
 --------------------
@@ -37,22 +42,6 @@ Then, to install PyAnsys Geometry, run this command:
 .. code:: bash
 
    python -m pip install ansys-geometry-core
-
-.. caution::
-
-    PyAnsys Geometry is hosted in a private PyPI repository. You must provide the following
-    index URL to the private PyPI repository:
-
-    ``https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/``
-
-    If access to this package registry is needed, email `pyansys.core@ansys.com <mailto:pyansys.core@ansys.com>`_
-    to request a read-only token. Once you have obtained this token, run this command, replacing
-    ``${PRIVATE_PYPI_ACCESS_TOKEN}`` with the token that you were sent:
-
-    .. code:: bash
-
-        pip install ansys-geometry-core --index-url=https://${PRIVATE_PYPI_ACCESS_TOKEN}@pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/
-
 
 GitHub
 ------
@@ -91,7 +80,7 @@ For example, on Linux with Python 3.8, unzip the wheelhouse archive and install 
     unzip ansys-geometry-core-v0.4.dev0-wheelhouse-Linux-3.8.zip wheelhouse
     pip install ansys-geometry-core -f wheelhouse --no-index --upgrade --ignore-installed
 
-If you're on Windows with Python 3.9, unzip the wheelhouse archive to a wheelhouse directory
+If you are on Windows with Python 3.9, unzip the wheelhouse archive to a wheelhouse directory
 and then install using the same ``pip install`` command as in the preceding example.
 
 Consider installing using a virtual environment. For more information, see `Creation of virtual
@@ -116,6 +105,14 @@ Verify the :class:`Modeler() <ansys.geometry.core.modeler()>` connection with th
 
 If you see a response from the server, you can start using PyAnsys Geometry as a service.
 For more information on PyAnsys Geometry usage, see :ref:`User guide <ref_user_guide>`.
+
+.. button-ref:: index
+    :ref-type: doc
+    :color: primary
+    :shadow:
+    :expand:
+
+    Go to Getting started
 
 .. LINKS AND REFERENCES
 .. _pip: https://pypi.org/project/pip/

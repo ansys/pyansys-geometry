@@ -24,7 +24,6 @@ classifiers = [
 ]
 
 dependencies = [
-    "ansys-api-dbu==0.1.0",
     "ansys-api-geometry==0.3.0",
     "ansys-tools-path>=0.3",
     "beartype>=0.11.0",
