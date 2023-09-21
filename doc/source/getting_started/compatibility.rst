@@ -14,7 +14,7 @@ and the Ansys product versions.
 +---------------------------+------------------------+-------------------------------+-------------------------------+------------------------------+------------------------------+
 |         ``0.3.X``         |    23R2 (partially)    | :octicon:`check-circle-fill`  | :octicon:`check-circle-fill`  |      :octicon:`x-circle`     | :octicon:`check-circle-fill` |
 +---------------------------+------------------------+-------------------------------+-------------------------------+------------------------------+------------------------------+
-|         ``0.4.X``         |      24R1 onwards      | :octicon:`check-circle-fill`  | :octicon:`check-circle-fill`  | :octicon:`check-circle-fill` | :octicon:`check-circle-fill` |
+|         ``0.4.X``         |      24R1 onward       | :octicon:`check-circle-fill`  | :octicon:`check-circle-fill`  | :octicon:`check-circle-fill` | :octicon:`check-circle-fill` |
 +---------------------------+------------------------+-------------------------------+-------------------------------+------------------------------+------------------------------+
 
 .. button-ref:: index
