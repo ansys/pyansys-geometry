@@ -820,9 +820,9 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
         # PMDB addin is Windows-only
         # TODO: Requires resolution of https://github.com/ansys/pyansys-geometry/issues/710
         #
-        #pmdb_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.pmdb"
-        #design.download(pmdb_file, DesignFileFormat.PMDB)
-        #assert pmdb_file.exists()
+        # pmdb_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.pmdb"
+        # design.download(pmdb_file, DesignFileFormat.PMDB)
+        # assert pmdb_file.exists()
 
     elif service_os == "linux":
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_bin"
