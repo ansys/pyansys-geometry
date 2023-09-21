@@ -480,8 +480,8 @@ def launch_modeler_with_spaceclaim(
 
         **Ansys products versions and their corresponding int values:**
 
-        * 23.2 -> value : ``232``
-        * 24.1 -> value : ``241``
+        * ``232`` : 23.2
+        * ``241`` : 24.1
     host: str, optional
         IP address at which the SpaceClaim session will be deployed. By default,
         its value will be ``localhost``.
