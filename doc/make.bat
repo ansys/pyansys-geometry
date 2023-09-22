@@ -8,7 +8,7 @@ if "%SPHINXBUILD%" == "" (
 	set SPHINXBUILD=sphinx-build
 )
 if "%SPHINXOPTS%" == "" (
-	set SPHINXOPTS=-j auto -W --color
+	set SPHINXOPTS=-j auto
 )
 set SOURCEDIR=source
 set BUILDDIR=_build
