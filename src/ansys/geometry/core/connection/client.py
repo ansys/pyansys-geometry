@@ -25,7 +25,7 @@ import logging
 from pathlib import Path
 import time
 
-from ansys.api.dbu.v0.admin_pb2 import BackendType as grpcBackendType
+from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
 from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
@@ -172,13 +172,13 @@ class GrpcClient:
         # if no backend type has been specified, ask the backend which type it is
         if backend_type == None:
             grpc_backend_type = self._admin_stub.GetBackend(Empty()).type
-            if grpc_backend_type == grpcBackendType.DISCOVERY:
+            if grpc_backend_type == GRPCBackendType.DISCOVERY:
                 backend_type = BackendType.DISCOVERY
-            elif grpc_backend_type == grpcBackendType.SPACECLAIM:
+            elif grpc_backend_type == GRPCBackendType.SPACECLAIM:
                 backend_type = BackendType.SPACECLAIM
-            elif grpc_backend_type == grpcBackendType.WINDOWS_DMS:
+            elif grpc_backend_type == GRPCBackendType.WINDOWS_DMS:
                 backend_type = BackendType.WINDOWS_SERVICE
-            elif grpc_backend_type == grpcBackendType.LINUX_DMS:
+            elif grpc_backend_type == GRPCBackendType.LINUX_DMS:
                 backend_type = BackendType.LINUX_SERVICE
 
         # Store the backend type
