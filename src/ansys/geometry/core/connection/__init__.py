@@ -49,5 +49,9 @@ from ansys.geometry.core.connection.launcher import (
     launch_modeler_with_spaceclaim_and_pimlight,
     launch_remote_modeler,
 )
-from ansys.geometry.core.connection.local_instance import GeometryContainers, LocalDockerInstance
+from ansys.geometry.core.connection.local_instance import (
+    GeometryContainers,
+    LocalDockerInstance,
+    get_geometry_container_type,
+)
 from ansys.geometry.core.connection.product_instance import ProductInstance

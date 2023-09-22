@@ -328,3 +328,30 @@ class LocalDockerInstance:
         deployed by this class or ``True`` if it already existed.
         """
         return self._existed_previously
+
+
+def get_geometry_container_type(instance: LocalDockerInstance) -> Union[GeometryContainers, None]:
+    """
+    Given a ``LocalDockerInstance``, provide back the ``GeometryContainers`` value.
+
+    Notes
+    -----
+    This method returns the first hit on the available tags.
+
+    Parameters
+    ----------
+    instance : LocalDockerInstance
+        The LocalDockerInstance object.
+
+    Returns
+    -------
+    Union[GeometryContainers, None]
+        The GeometryContainer value corresponding to the previous image or None
+        if not match.
+    """
+    for tag in instance.container.image.tags:
+        for geom_services in GeometryContainers:
+            if tag == f"{GEOMETRY_SERVICE_DOCKER_IMAGE}:{geom_services.value[2]}":
+                return geom_services
+
+    return None
