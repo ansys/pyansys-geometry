@@ -24,7 +24,7 @@
 from enum import Enum, unique
 from pathlib import Path
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier, PartExportFormat
 from ansys.api.dbu.v0.designs_pb2 import NewRequest, SaveAsRequest
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.commands_pb2 import (
@@ -37,7 +37,6 @@ from ansys.api.geometry.v0.materials_pb2 import AddToDocumentRequest
 from ansys.api.geometry.v0.materials_pb2_grpc import MaterialsStub
 from ansys.api.geometry.v0.models_pb2 import Material as GRPCMaterial
 from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialProperty
-from ansys.api.dbu.v0.dbumodels_pb2 import PartExportFormat
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from ansys.api.geometry.v0.parts_pb2 import ExportRequest
 from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
