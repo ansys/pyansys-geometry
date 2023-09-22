@@ -17,6 +17,8 @@ and the Ansys product versions.
 |         ``0.4.X``         |      24R1 onward       | :octicon:`check-circle-fill`  | :octicon:`check-circle-fill`  | :octicon:`check-circle-fill` | :octicon:`check-circle-fill` |
 +---------------------------+------------------------+-------------------------------+-------------------------------+------------------------------+------------------------------+
 
+Access to the documentation for the versions above is found at the `Versions <https://geometry.docs.pyansys.com/version/index.html>`_ page.
+
 .. button-ref:: index
     :ref-type: doc
     :color: primary
