@@ -7,6 +7,7 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core import Modeler
+from ansys.geometry.core.connection import BackendType
 from ansys.geometry.core.designer import (
     CurveType,
     DesignFileFormat,
@@ -794,7 +795,11 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     assert file.exists()
 
     # Check that we can also save it (even if it is not accessible on the server)
-    file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
+    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
+        file_save = "/tmp/cylinder-temp.scdocx"
+    else:
+        file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
+
     design.save(file_location=file_save)
 
     # Check for other exports
