@@ -26,7 +26,7 @@ meaning that certain operations are not available or fail.
 
 Select the kind of Docker container you want to build:
 
-.. grid:: 1
+.. grid:: 2
 
    .. grid-item-card:: Windows Docker container
             :link: windows_container

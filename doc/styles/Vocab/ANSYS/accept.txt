@@ -5,6 +5,7 @@ API
 api
 Direct API
 Dockerfile
+dockerized
 Fluent API
 Geometry
 geometry
@@ -16,6 +17,8 @@ namespace
 Polydata
 PROTO
 Protobuf
+PyAnsys
+pyansys
 pyansys-geometry
 PyAnsys Geometry
 PyPI
