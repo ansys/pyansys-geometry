@@ -4,19 +4,27 @@ ansys
 API
 api
 Direct API
+Dockerfile
+dockerized
 Fluent API
 Geometry
 geometry
 Geometry service
 Geometry models
 GitHub
+GitHub Container Registry
 namespace
 Polydata
 PROTO
 Protobuf
-pygeometry
-PyGeometry
+PyAnsys
+pyansys
+pyansys-geometry
+PyAnsys Geometry
 PyPI
 PyVista
 SciPy
 subpackage
+launch_modeler_with_discovery
+launch_modeler_with_spaceclaim
+launch_modeler_with_geometry_service

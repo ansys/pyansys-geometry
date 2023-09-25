@@ -6,7 +6,11 @@ import re
 import pytest
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core.connection import LocalDockerInstance, launch_local_modeler
+from ansys.geometry.core.connection import (
+    LocalDockerInstance,
+    get_geometry_container_type,
+    launch_local_modeler,
+)
 
 SKIP_DOCKER_TESTS_CONDITION = (
     os.getenv("IS_WORKFLOW_RUNNING") is None,
@@ -27,7 +31,7 @@ def _check_no_shutdown_warning(port: int, log: str) -> bool:
 
 def _check_service_already_running(port: int, log: str) -> bool:
     msg = (
-        r"WARNING  PyGeometry_global:local_instance\.py:[0-9]+ Service is already running at port "
+        r"WARNING  PyAnsys_Geometry_global:local_instance\.py:[0-9]+ Service is already running at port "  # noqa : E501
         + str(port)
         + r"\.\.\."
     )
@@ -37,7 +41,7 @@ def _check_service_already_running(port: int, log: str) -> bool:
 
 def _check_restarting_service(port: int, log: str) -> bool:
     msg = (
-        r"WARNING  PyGeometry_global:local_instance\.py:[0-9]+ Restarting service already running at port "  # noqa : E501
+        r"WARNING  PyAnsys_Geometry_global:local_instance\.py:[0-9]+ Restarting service already running at port "  # noqa : E501
         + str(port)
         + r"\.\.\."
     )
@@ -88,6 +92,9 @@ def test_local_launcher_connect_with_restart(
     existing service."""
     if not docker_instance:
         pytest.skip("Docker local launcher tests are not runnable.")
+    else:
+        # Retrieve the image as a GeometryContainer
+        image = get_geometry_container_type(docker_instance)
 
     # Get the existing target
     target = modeler.client.target().split(":")
@@ -96,7 +103,10 @@ def test_local_launcher_connect_with_restart(
 
     # Launch a new modeler...
     new_modeler = launch_local_modeler(
-        port=new_port, connect_to_existing_service=True, restart_if_existing_service=False
+        port=new_port,
+        connect_to_existing_service=True,
+        restart_if_existing_service=False,
+        image=image,
     )
 
     # Check that the warning is NOT raised
@@ -105,7 +115,10 @@ def test_local_launcher_connect_with_restart(
 
     # Connect to the previous modeler and restart it
     new_modeler_restarted = launch_local_modeler(
-        port=new_port, connect_to_existing_service=True, restart_if_existing_service=True
+        port=new_port,
+        connect_to_existing_service=True,
+        restart_if_existing_service=True,
+        image=image,
     )
 
     # Check that the warnings are raised
@@ -134,6 +147,9 @@ def test_try_deploying_container_with_same_name(
     already exists."""
     if not docker_instance:
         pytest.skip("Docker local launcher tests are not runnable.")
+    else:
+        # Retrieve the image as a GeometryContainer
+        image = get_geometry_container_type(docker_instance)
 
     # Get the existing target
     target = modeler.client.target().split(":")
@@ -148,6 +164,7 @@ def test_try_deploying_container_with_same_name(
         connect_to_existing_service=True,
         restart_if_existing_service=False,
         name=container_name,
+        image=image,
     )
 
     # Check that the warning is NOT raised
@@ -164,6 +181,7 @@ def test_try_deploying_container_with_same_name(
             connect_to_existing_service=True,
             restart_if_existing_service=False,
             name=container_name,
+            image=image,
         )
 
     # And now try to close the new_modeler... this will NOT throw a warning

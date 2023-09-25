@@ -1,7 +1,7 @@
-PyGeometry documentation |version|
-==================================
+PyAnsys Geometry documentation |version|
+========================================
 
-PyGeometry is a Python client library for the Ansys Geometry service.
+PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
 .. grid:: 2
 
@@ -12,7 +12,7 @@ PyGeometry is a Python client library for the Ansys Geometry service.
             ^^^^^^^^^^^^^^^
 
             Learn how to run the Windows Docker container, install the
-            PyGeometry image, and launch and connect to the Geometry
+            PyAnsys Geometry image, and launch and connect to the Geometry
             service.
 
             +++
@@ -55,11 +55,11 @@ PyGeometry is a Python client library for the Ansys Geometry service.
                 API reference
                 ^^^^^^^^^^^^^
 
-                Understand PyGeometry API endpoints, their capabilities,
+                Understand PyAnsys Geometry API endpoints, their capabilities,
                 and how to interact with them programmatically.
 
                 +++
-                .. button-link:: autoapi/index.html
+                .. button-link:: api/index.html
                    :color: secondary
                    :expand:
                    :outline:
@@ -75,7 +75,7 @@ PyGeometry is a Python client library for the Ansys Geometry service.
                 Examples
                 ^^^^^^^^
 
-                Explore examples that show how to use PyGeometry to
+                Explore examples that show how to use PyAnsys Geometry to
                 perform many different types of operations.
 
                 +++
@@ -95,7 +95,7 @@ PyGeometry is a Python client library for the Ansys Geometry service.
 
             Contribute
             ^^^^^^^^^^
-            Learn how to contribute to the PyGeometry codebase
+            Learn how to contribute to the PyAnsys Geometry codebase
             or documentation.
 
             +++
@@ -117,7 +117,7 @@ PyGeometry is a Python client library for the Ansys Geometry service.
        getting_started/index
        user_guide/index
        {% if build_api %}
-       autoapi/index
+       api/index
        {% endif %}
        {% if build_examples %}
        examples

@@ -1,11 +1,35 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 """Provides for interacting with the Geometry service."""
 import logging
+import os
 from pathlib import Path
 
+from ansys.api.dbu.v0.dbuapplication_pb2 import RunScriptFileRequest
+from ansys.api.dbu.v0.dbuapplication_pb2_grpc import DbuApplicationStub
+from ansys.api.dbu.v0.designs_pb2 import OpenRequest
+from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.geometryapplication_pb2 import RunScriptFileRequest
-from ansys.api.geometry.v0.geometryapplication_pb2_grpc import GeometryApplicationStub
 from beartype.typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
 from grpc import Channel
 
@@ -14,7 +38,8 @@ from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.logger import LOG as logger
-from ansys.geometry.core.misc import check_type
+from ansys.geometry.core.misc.checks import check_type
+from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -22,7 +47,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
     from ansys.geometry.core.connection.local_instance import LocalDockerInstance
     from ansys.geometry.core.connection.product_instance import ProductInstance
-    from ansys.geometry.core.designer import Design
+    from ansys.geometry.core.designer.design import Design
 
 
 class Modeler:
@@ -55,7 +80,7 @@ class Modeler:
         interface. This instance will be deleted
         when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
         method is called.
-    timeout : Real, default: 60
+    timeout : Real, default: 120
         Time in seconds for trying to achieve the connection.
     logging_level : int, default: INFO
         Logging level to apply to the client.
@@ -71,7 +96,7 @@ class Modeler:
         remote_instance: Optional["Instance"] = None,
         local_instance: Optional["LocalDockerInstance"] = None,
         product_instance: Optional["ProductInstance"] = None,
-        timeout: Optional[Real] = 60,
+        timeout: Optional[Real] = 120,
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
         backend_type: Optional[BackendType] = None,
@@ -148,7 +173,12 @@ class Modeler:
         """``Modeler`` method for easily accessing the client's close method."""
         return self.client.close()
 
-    def _upload_file(self, file_path: str, open_file: bool = False) -> str:
+    def _upload_file(
+        self,
+        file_path: str,
+        open_file: bool = False,
+        import_options: ImportOptions = ImportOptions(),
+    ) -> str:
         """
         Upload a file from the client to the server.
 
@@ -163,6 +193,8 @@ class Modeler:
             Path of the file to upload. The extension of the file must be included.
         open_file : bool, default: False
             Whether to open the file in the Geometry service.
+        import_options : ImportOptions
+            Import options that toggle certain features when opening a file.
 
         Returns
         -------
@@ -184,11 +216,22 @@ class Modeler:
         c_stub = CommandsStub(self._client.channel)
 
         response = c_stub.UploadFile(
-            UploadFileRequest(data=data, file_name=file_name, open=open_file)
+            UploadFileRequest(
+                data=data,
+                file_name=file_name,
+                open=open_file,
+                import_options=import_options.to_dict(),
+            )
         )
         return response.file_path
 
-    def open_file(self, file_path: str) -> "Design":
+    @protect_grpc
+    def open_file(
+        self,
+        file_path: str,
+        upload_to_server: bool = True,
+        import_options: ImportOptions = ImportOptions(),
+    ) -> "Design":
         """
         Open a file.
 
@@ -196,17 +239,42 @@ class Modeler:
         and HOOPS Exchange formats are supported. On Linux, only the ``.scdocx``
         format is supported.
 
+        If the file is a shattered assembly with external references, the whole containing folder
+        will need to be uploaded. Ensure proper folder structure in order to prevent the uploading
+        of unnecessary files.
+
         Parameters
         ----------
         file_path : str
-           Path of the file to open. The extension of the file must be included.
+            Path of the file to open. The extension of the file must be included.
+        upload_to_server : bool
+            True if the service is running on a remote machine. If service is running on the local
+            machine, set to False, as there is no reason to upload the file.
+        import_options : ImportOptions
+            Import options that toggle certain features when opening a file.
 
         Returns
         -------
         Design
             Newly imported design.
         """
-        self._upload_file(file_path, True)
+        # Format-specific logic - upload the whole containing folder for assemblies
+        if upload_to_server:
+            if any(
+                ext in str(file_path) for ext in [".CATProduct", ".asm", ".solution", ".sldasm"]
+            ):
+                dir = os.path.dirname(file_path)
+                files = os.listdir(dir)
+                for file in files:
+                    full_path = os.path.join(dir, file)
+                    if full_path != file_path:
+                        self._upload_file(full_path)
+            self._upload_file(file_path, True, import_options)
+        else:
+            DesignsStub(self._client.channel).Open(
+                OpenRequest(filepath=file_path, import_options=import_options.to_dict())
+            )
+
         return self.read_existing_design()
 
     def __repr__(self) -> str:
@@ -255,7 +323,7 @@ class Modeler:
             ran successfully.
         """
         serv_path = self._upload_file(file_path)
-        ga_stub = GeometryApplicationStub(self._client.channel)
+        ga_stub = DbuApplicationStub(self._client.channel)
         request = RunScriptFileRequest(
             script_path=serv_path,
             script_args=script_args,

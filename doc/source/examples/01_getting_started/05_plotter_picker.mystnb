@@ -11,21 +11,21 @@ kernelspec:
   name: python3
 ---
 
-# PyGeometry 101: Plotter
-This example provides an overview of PyGeometry's plotting capabilities, focusing on
+# PyAnsys Geometry 101: Plotter
+This example provides an overview of PyAnsys Geometry's plotting capabilities, focusing on
 its plotter features. After reviewing the fundamental concepts of sketching
-and modeling in PyGeometry, it shows how to leverage these key plotting capabilities:
+and modeling in PyAnsys Geometry, it shows how to leverage these key plotting capabilities:
 
 - **Multi-object plotting**: You can conveniently plot a list of elements, including objects
-  created in both PyGeometry and PyVista libraries.
-- **Interactive object selection**: You can interactively select PyGeometry objects within the
+  created in both PyAnsys Geometry and PyVista libraries.
+- **Interactive object selection**: You can interactively select PyAnsys Geometry objects within the
   scene. This enables efficient manipulation of these objects in subsequent scripting.
 
 +++
 
 ## Perform required imports
 
-Perform the required imports:
+Perform the required imports.
 
 ```{code-cell} ipython3
 from pint import Quantity
@@ -74,7 +74,7 @@ modeler = Modeler(local_instance=local_instance)
 
 ## Instantiate design and initialize object list
 
-This code instantiates a new design to work on and initializes a list
+Instantiate a new design to work on and initialize a list
 of objects for plotting.
 
 ```{code-cell} ipython3
@@ -85,14 +85,14 @@ design = modeler.create_design("Multiplot")
 plot_list = []
 ```
 
-Subsequent code examples show how to create some objects and demonstrate
+You are now ready to create some objects and use the
 plotter capabilities.
 
 +++
 
-## Create a PyGeometry body cylinder
+## Create a PyAnsys Geometry body cylinder
 
-This code uses PyGeometry to create a body cylinder:
+Use PyAnsys Geometry to create a body cylinder.
 
 ```{code-cell} ipython3
 
@@ -102,9 +102,9 @@ cylinder_body = design.extrude_sketch("JustACyl", cylinder, Quantity(10, UNITS.m
 plot_list.append(cylinder_body)
 ```
 
-## Create a PyGeometry arc sketch
+## Create a PyAnsys Geometry arc sketch
 
-This code uses PyGeometry to create an arc sketch:
+Use PyAnsys Geometry to create an arc sketch.
 
 ```{code-cell} ipython3
 
@@ -119,7 +119,7 @@ plot_list.append(sketch)
 ```
 
 ## Create a PyVista cylinder
-This code uses PyVista to create a cylinder:
+Use PyVista to create a cylinder.
 
 ```{code-cell} ipython3
 
@@ -128,7 +128,7 @@ plot_list.append(cyl)
 ```
 
 ## Create a PyVista multiblock
-This code uses PyVista to create a multiBlock with a sphere and a cube:
+Use PyVista to create a multiblock with a sphere and a cube.
 
 ```{code-cell} ipython3
 
@@ -138,9 +138,9 @@ blocks = pv.MultiBlock(
 plot_list.append(blocks)
 ```
 
-## Create a PyGeometry body box
+## Create a PyAnsys Geometry body box
 
-This code uses PyGeometry to create a body box that is a cube:
+Use PyAnsys Geometry to create a body box that is a cube.
 
 ```{code-cell} ipython3
 
@@ -152,9 +152,9 @@ plot_list.append(box_body2)
 
 ## Plot objects
 
-To plot the created objects, you have several options.
+When plotting the created objects, you have several options.
 
-You can simply plot one of the created objects:
+You can simply plot one of the created objects.
 
 ```{code-cell} ipython3
 
@@ -162,7 +162,7 @@ plotter = PlotterHelper()
 plotter.plot(box_body2)
 ```
 
-You can plot the whole list of objects if desired:
+You can plot the whole list of objects.
 
 ```{code-cell} ipython3
 
@@ -171,7 +171,7 @@ plotter.plot(plot_list)
 ```
 
 The Python visualizer is used by default. However, you can also use
-`trame <https://kitware.github.io/trame/index.html>`_ for visualization:
+[trame](https://kitware.github.io/trame/index.html) for visualization.
 
 ```python
 
@@ -181,7 +181,7 @@ plotter.plot(plot_list)
 
 ## Select objects interactively
 
-PyGeometry's plotter supports interactive object selection within the scene.
+PyAnsys Geometry's plotter supports interactive object selection within the scene.
 This enables you to pick objects for subsequent script manipulation.
 
 ```{code-cell} ipython3
@@ -197,7 +197,7 @@ print(picked_list)
 When you finish interacting with your modeling service, you should close the active
 server session. This frees resources wherever the service is running.
 
-This code shows how to close the server session:
+Close the server session.
 
 ```{code-cell} ipython3
 modeler.close()

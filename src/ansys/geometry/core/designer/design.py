@@ -1,30 +1,53 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 """Provides for managing designs."""
 
-from enum import Enum
+from enum import Enum, unique
 from pathlib import Path
 
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier, PartExportFormat
+from ansys.api.dbu.v0.designs_pb2 import NewRequest, SaveAsRequest
+from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
     AssignMidSurfaceThicknessRequest,
     CreateBeamCircularProfileRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.designs_pb2 import ExportRequest, NewRequest, SaveAsRequest
-from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.materials_pb2 import AddToDocumentRequest
 from ansys.api.geometry.v0.materials_pb2_grpc import MaterialsStub
-from ansys.api.geometry.v0.models_pb2 import Empty, EntityIdentifier
 from ansys.api.geometry.v0.models_pb2 import Material as GRPCMaterial
 from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialProperty
-from ansys.api.geometry.v0.models_pb2 import PartExportFormat
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
+from ansys.api.geometry.v0.parts_pb2 import ExportRequest
+from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
 from beartype import beartype as check_input_types
 from beartype.typing import Dict, List, Optional, Union
+from google.protobuf.empty_pb2 import Empty
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.connection import (
-    GrpcClient,
+from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.conversions import (
     grpc_frame_to_frame,
     grpc_matrix_to_matrix,
     plane_to_grpc_plane,
@@ -40,20 +63,17 @@ from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
-from ansys.geometry.core.math import (
-    UNITVECTOR3D_X,
-    UNITVECTOR3D_Y,
-    ZERO_POINT3D,
-    Plane,
-    Point3D,
-    UnitVector3D,
-    Vector3D,
-)
-from ansys.geometry.core.misc import DEFAULT_UNITS, Distance
+from ansys.geometry.core.materials.material import Material
+from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
+from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, ZERO_POINT3D
+from ansys.geometry.core.math.plane import Plane
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.typing import RealSequence
 
 
+@unique
 class DesignFileFormat(Enum):
     """Provides supported file formats that can be downloaded for designs."""
 
@@ -101,6 +121,7 @@ class Design(Component):
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
         self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
+        self._parts_stub = PartsStub(self._grpc_client.channel)
 
         # Initialize needed instance variables
         self._materials = []
@@ -172,7 +193,7 @@ class Design(Component):
 
         Parameters
         ----------
-        file_location : Union[Path, str]
+        file_location : Union[~pathlib.Path, str]
             Location on disk to save the file to.
         """
         # Sanity checks on inputs
@@ -194,7 +215,7 @@ class Design(Component):
 
         Parameters
         ----------
-        file_location : Union[Path, str]
+        file_location : Union[~pathlib.Path, str]
             Location on disk to save the file to.
         format :DesignFileFormat, default: DesignFileFormat.SCDOCX
             Format for the file to save to.
@@ -217,7 +238,7 @@ class Design(Component):
             DesignFileFormat.IGES,
             DesignFileFormat.PMDB,
         ]:
-            response = self._design_stub.Export(ExportRequest(format=format.value[1]))
+            response = self._parts_stub.Export(ExportRequest(format=format.value[1]))
             received_bytes += response.data
         else:
             self._grpc_client.log.warning(
@@ -259,7 +280,7 @@ class Design(Component):
             All edges to include in the named selection.
         beams : List[Beam], default: None
             All beams to include in the named selection.
-        design_points : List[DesignPoints], default: None
+        design_points : List[DesignPoint], default: None
             All design points to include in the named selection.
 
         Returns
@@ -421,7 +442,7 @@ class Design(Component):
 
         Parameters
         ----------
-        thickness : Quantity
+        thickness : ~pint.Quantity
             Thickness to be assigned.
         bodies : List[Body]
             All bodies to include in the mid-surface thickness assignment.
@@ -567,9 +588,11 @@ class Design(Component):
             raise RuntimeError("No existing design available at service level.")
         else:
             self._id = design.main_part.id
-            self._name = design.main_part.name
+            # Here we may take the design's name instead of the main part's name.
+            # Since they're the same in the backend.
+            self._name = design.name
 
-        response = self._design_stub.GetAssembly(EntityIdentifier(id=""))
+        response = self._commands_stub.GetAssembly(EntityIdentifier(id=""))
 
         # Store created objects
         created_parts = {p.id: Part(p.id, p.name, [], []) for p in response.parts}

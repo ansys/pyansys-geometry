@@ -1,11 +1,13 @@
 """Sphinx documentation configuration file."""
 from datetime import datetime
 import os
+from pathlib import Path
 
 from ansys_sphinx_theme import (
     ansys_favicon,
     ansys_logo_white,
     ansys_logo_white_cropped,
+    get_autoapi_templates_dir_relative_path,
     get_version_match,
     latex,
     pyansys_logo_black,
@@ -29,12 +31,12 @@ switcher_version = get_version_match(__version__)
 # Select desired logo, theme, and declare the html title
 html_logo = pyansys_logo_black
 html_theme = "ansys_sphinx_theme"
-html_short_title = html_title = "PyGeometry"
+html_short_title = html_title = "PyAnsys Geometry"
 
 # specify the location of your github repo
 html_context = {
     "github_user": "ansys",
-    "github_repo": "pygeometry",
+    "github_repo": "pyansys-geometry",
     "github_version": "main",
     "doc_path": "doc/source",
 }
@@ -44,7 +46,7 @@ html_theme_options = {
         "version_match": switcher_version,
     },
     "check_switcher": False,
-    "github_url": "https://github.com/ansys/pygeometry",
+    "github_url": "https://github.com/ansys/pyansys-geometry",
     "show_prev_next": False,
     "show_breadcrumbs": True,
     "collapse_navigation": True,
@@ -55,7 +57,7 @@ html_theme_options = {
     "icon_links": [
         {
             "name": "Support",
-            "url": "https://github.com/ansys/pygeometry/discussions",
+            "url": "https://github.com/ansys/pyansys-geometry/discussions",
             "icon": "fa fa-comment fa-fw",
         },
     ],
@@ -63,32 +65,29 @@ html_theme_options = {
 
 # Sphinx extensions
 extensions = [
-    "autoapi.extension",
-    "sphinx.ext.autodoc",
-    "sphinx_autodoc_typehints",
-    "sphinx.ext.autosummary",
-    "numpydoc",
     "sphinx.ext.intersphinx",
     "sphinx_copybutton",
     "nbsphinx",
-    "sphinx_gallery.load_style",
     "myst_parser",
     "jupyter_sphinx",
     "sphinx_design",
     "sphinx_jinja",
+    "autoapi.extension",
+    "numpydoc",
 ]
 
 # Intersphinx mapping
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "pint": ("https://pint.readthedocs.io/en/stable", None),
-    "numpy": ("https://numpy.org/devdocs", None),
+    "numpy": ("https://numpy.org/doc/stable", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/", None),
-    "pyvista": ("https://docs.pyvista.org/", None),
+    "pyvista": ("https://docs.pyvista.org/version/stable", None),
     "grpc": ("https://grpc.github.io/grpc/python/", None),
-    # kept here as an example
-    # "matplotlib": ("https://matplotlib.org/stable", None),
-    "pypim": ("https://pypim.docs.pyansys.com/version/dev", None),
+    "pint": ("https://pint.readthedocs.io/en/stable", None),
+    "beartype": ("https://beartype.readthedocs.io/en/stable/", None),
+    "docker": ("https://docker-py.readthedocs.io/en/stable/", None),
+    "pypim": ("https://pypim.docs.pyansys.com/version/stable", None),
+    "ansys.geometry.core": (f"https://geometry.docs.pyansys.com/version/{switcher_version}", None),
 }
 
 # numpydoc configuration
@@ -112,7 +111,6 @@ numpydoc_validation_checks = {
     "RT02",  # The first line of the Returns section should contain only the
     # type, unless multiple values are being returned"
 }
-
 
 # static path
 html_static_path = ["_static"]
@@ -139,6 +137,7 @@ master_doc = "index"
 # Configuration for Sphinx autoapi
 autoapi_type = "python"
 autoapi_dirs = ["../../src/ansys"]
+autoapi_root = "api"
 autoapi_options = [
     "members",
     "undoc-members",
@@ -146,10 +145,11 @@ autoapi_options = [
     "show-module-summary",
     "special-members",
 ]
-autoapi_template_dir = "_autoapi_templates"
+autoapi_template_dir = get_autoapi_templates_dir_relative_path(Path(__file__))
 suppress_warnings = ["autoapi.python_import_resolution"]
-exclude_patterns = ["_autoapi_templates/index.rst"]
 autoapi_python_use_implicit_namespaces = True
+autoapi_keep_files = True
+autoapi_render_in_single_page = ["class", "enum", "exception"]
 
 # Examples gallery customization
 nbsphinx_execute = "always"
@@ -169,6 +169,7 @@ nbsphinx_thumbnails = {
     "examples/03_modeling/plate_with_hole": "_static/thumbnails/plate_with_hole.png",
     "examples/03_modeling/tessellation_usage": "_static/thumbnails/tessellation_usage.png",
     "examples/03_modeling/design_organization": "_static/thumbnails/design_organization.png",
+    "examples/03_modeling/boolean_operations": "_static/thumbnails/boolean_operations.png",
 }
 nbsphinx_epilog = """
 ----
@@ -208,11 +209,10 @@ latex_additional_files = [watermark, ansys_logo_white, ansys_logo_white_cropped]
 # variables are the title of pdf, watermark
 latex_elements = {"preamble": latex.generate_preamble(html_title)}
 
-linkcheck_exclude_documents = ["index"]
-linkcheck_anchors_ignore_for_url = ["https://docs.pyvista.org/api/*"]
-linkcheck_ignore = ["https://github.com/ansys/pygeometry/*", "https://geometry.docs.pyansys.com/*"]
+linkcheck_exclude_documents = ["index", "getting_started/local/index"]
 
 # -- Declare the Jinja context -----------------------------------------------
+exclude_patterns = []
 BUILD_API = True if os.environ.get("BUILD_API", "true") == "true" else False
 if not BUILD_API:
     exclude_patterns.append("autoapi")
@@ -227,4 +227,38 @@ jinja_contexts = {
         "build_api": BUILD_API,
         "build_examples": BUILD_EXAMPLES,
     },
+    "linux_containers": {
+        "add_windows_warnings": False,
+    },
+    "windows_containers": {
+        "add_windows_warnings": True,
+    },
 }
+
+
+def prepare_jinja_env(jinja_env) -> None:
+    """
+    Customize the jinja env.
+
+    Notes
+    -----
+    See https://jinja.palletsprojects.com/en/3.0.x/api/#jinja2.Environment
+    """
+    jinja_env.globals["project_name"] = project
+
+
+autoapi_prepare_jinja_env = prepare_jinja_env
+nitpick_ignore_regex = [
+    # Ignore typing
+    (r"py:.*", r"optional"),
+    (r"py:.*", r"beartype.typing.*"),
+    (r"py:.*", r"ansys.geometry.core.typing.*"),
+    (r"py:.*", r"Real.*"),
+    (r"py:.*", r"SketchObject"),
+    # Ignore API package
+    (r"py:.*", r"ansys.api.geometry.v0.*"),
+    (r"py:.*", r"GRPC.*"),
+    (r"py:.*", r"method"),
+    # Python std lib errors
+    (r"py:obj", r"logging.PercentStyle"),
+]

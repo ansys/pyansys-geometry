@@ -35,10 +35,10 @@ from ansys.geometry.core.sketch import Sketch
 
 ## Create design
 
-The following code create the basic sketches to be tessellated and
-extrudes the sketch in the required plane. For the example that creates
-a component and extrudes a sketch in the design, see
-[Rectangular plate with multiple bodies](plate_with_hole.mystnb).
+Create the basic sketches to be tessellated and extrude the sketch in the
+required plane. For more information on creating a component and extruding a
+sketch in the design, see the [Rectangular plate with multiple bodies](plate_with_hole.mystnb)
+example.
 
 Here is a typical situation in which two bodies, with different sketch planes,
 merge each body into a single dataset. This effectively combines all the faces
@@ -72,9 +72,9 @@ body = comp.extrude_sketch("Body", sketch=sketch_2, distance=10 * UNITS.m)
 ```
 ## Tessellate component as two merged bodies
 
-The following code shows how to tessellate the component and merge each body into
-a single dataset. This effectively combines all the faces of each individual body into a
-single dataset without separating faces.
+Tessellate the component and merge each body into a single dataset. This effectively
+combines all the faces of each individual body into a single dataset without
+separating faces.
 
 ```{code-cell} ipython3
 dataset = comp.tessellate(merge_bodies=True)

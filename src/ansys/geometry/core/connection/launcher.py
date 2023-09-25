@@ -1,9 +1,31 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 """Module for connecting to instances of the Geometry service."""
 import os
 
 from beartype.typing import TYPE_CHECKING, Dict, Optional
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
+from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
 from ansys.geometry.core.connection.defaults import DEFAULT_PIM_CONFIG, DEFAULT_PORT
 from ansys.geometry.core.connection.local_instance import (
     _HAS_DOCKER,
@@ -12,7 +34,7 @@ from ansys.geometry.core.connection.local_instance import (
 )
 from ansys.geometry.core.connection.product_instance import prepare_and_start_backend
 from ansys.geometry.core.logger import LOG as logger
-from ansys.geometry.core.misc import check_type
+from ansys.geometry.core.misc.checks import check_type
 
 try:
     import ansys.platform.instancemanagement as pypim
@@ -21,7 +43,6 @@ try:
 except ModuleNotFoundError:  # pragma: no cover
     _HAS_PIM = False
 
-from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
@@ -29,7 +50,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 def launch_modeler(**kwargs: Optional[Dict]) -> "Modeler":
     """
-    Start the ``Modeler`` interface for PyGeometry.
+    Start the ``Modeler`` interface for PyAnsys Geometry.
 
     Parameters
     ----------
@@ -40,7 +61,7 @@ def launch_modeler(**kwargs: Optional[Dict]) -> "Modeler":
 
     Returns
     -------
-    ansys.geometry.core.Modeler
+    ansys.geometry.core.modeler.Modeler
         Pythonic interface for geometry modeling.
 
     Examples
@@ -55,7 +76,7 @@ def launch_modeler(**kwargs: Optional[Dict]) -> "Modeler":
 
     # Another alternative is to use this method to run Docker locally.
 
-    # Start PyGeometry with PyPIM if the environment is configured for it
+    # Start PyAnsys Geometry with PyPIM if the environment is configured for it
     # and a directive on how to launch it was not passed.
     if _HAS_PIM and pypim.is_configured():
         logger.info("Starting Geometry service remotely. The startup configuration is ignored.")
@@ -186,7 +207,7 @@ def launch_modeler_with_discovery_and_pimlight(version: Optional[str] = None) ->
 
     Returns
     -------
-    ansys.geometry.core.Modeler
+    ansys.geometry.core.modeler.Modeler
         Instance of Modeler.
     """
     return _launch_pim_instance(
@@ -215,7 +236,7 @@ def launch_modeler_with_geometry_service_and_pimlight(version: Optional[str] = N
 
     Returns
     -------
-    ansys.geometry.core.Modeler
+    ansys.geometry.core.modeler.Modeler
         Instance of Modeler.
     """
     return _launch_pim_instance(
@@ -244,7 +265,7 @@ def launch_modeler_with_spaceclaim_and_pimlight(version: Optional[str] = None) -
 
     Returns
     -------
-    ansys.geometry.core.Modeler
+    ansys.geometry.core.modeler.Modeler
         Instance of Modeler.
     """
     return _launch_pim_instance(
@@ -283,16 +304,18 @@ def launch_modeler_with_geometry_service(
         By default its value is ``False``.
     log_level : int, optional
         Backend's log level from 0 to 3:
-            0: Chatterbox
-            1: Debug
-            2: Warning
-            3: Error
+
+        * ``0``: Chatterbox
+        * ``1``: Debug
+        * ``2``: Warning
+        * ``3``: Error
+
         The default is ``2`` (Warning).
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 60.
 
-    Exceptions
-    ----------
+    Raises
+    ------
     ConnectionError
         If the specified endpoint is already in use, a connection
         error will be raised.
@@ -317,8 +340,7 @@ def launch_modeler_with_geometry_service(
     logs, traces enabled and a ``300`` seconds timeout:
 
     >>> from ansys.geometry.core import launch_modeler_with_geometry_service
-    >>> modeler = launch_modeler_with_geometry_service(product_version = 232,
-        host="10.171.22.44",
+    >>> modeler = launch_modeler_with_geometry_service(host="10.171.22.44",
         port=5001,
         log_level=0,
         enable_trace= True,
@@ -346,43 +368,49 @@ def launch_modeler_with_discovery(
     """
     Start Ansys Discovery locally using the ``ProductInstance`` class.
 
-    When calling this method, a standalone Geometry service is started.
+    .. note::
+
+       Support for Ansys Discovery is restricted to Ansys 24.1 onwards.
+
+    When calling this method, a standalone Discovery session is started.
     By default, if an endpoint is specified (by defining `host` and `port` parameters)
     but the endpoint is not available, the startup will fail. Otherwise, it will try to
     launch its own service.
 
     Parameters
     ----------
-    product_version: ``int``, optional
+    product_version: int, optional
         The product version to be started. Goes from v23.2.1 to
         the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
         a SystemError will be raised.
-        Possible values:
-        Ansys products Versions and their corresponding int values:
-        23.2 -> value : 232
-        24.1 -> value : 241
+
+        **Ansys products versions and their corresponding int values:**
+
+        * ``241`` : Ansys 24R1
     host: str, optional
-        IP address at which the Geometry service will be deployed. By default,
+        IP address at which the Discovery session will be deployed. By default,
         its value will be ``localhost``.
     port : int, optional
         Port at which the Geometry service will be deployed. By default, its
         value will be ``None``.
     log_level : int, optional
         Backend's log level from 0 to 3:
-            0: Chatterbox
-            1: Debug
-            2: Warning
-            3: Error
+
+        * ``0``: Chatterbox
+        * ``1``: Debug
+        * ``2``: Warning
+        * ``3``: Error
+
         The default is ``2`` (Warning).
-    api_version: ``ApiVersions``, optional
+    api_version: ApiVersions, optional
         The backend's API version to be used at runtime. Goes from API v21 to
         the latest. Default is ``ApiVersions.LATEST``.
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 150.
 
-    Exceptions
-    ----------
+    Raises
+    ------
     ConnectionError
         If the specified endpoint is already in use, a connection error will be raised.
     SystemError:
@@ -437,43 +465,46 @@ def launch_modeler_with_spaceclaim(
     """
     Start Ansys SpaceClaim locally using the ``ProductInstance`` class.
 
-    When calling this method, a standalone Geometry service is started.
+    When calling this method, a standalone SpaceClaim session is started.
     By default, if an endpoint is specified (by defining `host` and `port` parameters)
     but the endpoint is not available, the startup will fail. Otherwise, it will try to
     launch its own service.
 
     Parameters
     ----------
-    product_version: ``int``, optional
+    product_version: int, optional
         The product version to be started. Goes from v23.2.1 to
         the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
         a SystemError will be raised.
-        Possible values:
-        Ansys products Versions and their corresponding int values:
-        23.2 -> value : 232
-        24.1 -> value : 241
+
+        **Ansys products versions and their corresponding int values:**
+
+        * ``232`` : Ansys 23R2 SP1
+        * ``241`` : Ansys 24R1
     host: str, optional
-        IP address at which the Geometry service will be deployed. By default,
+        IP address at which the SpaceClaim session will be deployed. By default,
         its value will be ``localhost``.
     port : int, optional
         Port at which the Geometry service will be deployed. By default, its
         value will be ``None``.
     log_level : int, optional
         Backend's log level from 0 to 3:
-            0: Chatterbox
-            1: Debug
-            2: Warning
-            3: Error
+
+        *  ``0``: Chatterbox
+        *  ``1``: Debug
+        *  ``2``: Warning
+        *  ``3``: Error
+
         The default is ``2`` (Warning).
-    api_version: ``ApiVersions``, optional
+    api_version: ApiVersions, optional
         The backend's API version to be used at runtime. Goes from API v21 to
         the latest. Default is ``ApiVersions.LATEST``.
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 150.
 
-    Exceptions
-    ----------
+    Raises
+    ------
     ConnectionError
         If the specified endpoint is already in use, a connection error will be raised.
     SystemError
@@ -541,7 +572,7 @@ def _launch_pim_instance(
     product_version : str, default: None
         Version of the service to run.
     backend_type : BackendType, default: None
-        Type of backend that PyGeometry is communicating with. By default, this
+        Type of backend that PyAnsys Geometry is communicating with. By default, this
         value is unknown, which results in ``None`` being the default value.
 
     Returns

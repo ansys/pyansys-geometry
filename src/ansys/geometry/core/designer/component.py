@@ -1,8 +1,30 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 """Provides for managing components."""
 
 from enum import Enum, unique
 import uuid  # TODO: Is ID even needed? Maybe use from SC?
 
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
     CreateBodyFromFaceRequest,
     CreateExtrudedBodyFromFaceProfileRequest,
@@ -19,20 +41,19 @@ from ansys.api.geometry.v0.components_pb2 import (
     SetSharedTopologyRequest,
 )
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
-from ansys.api.geometry.v0.models_pb2 import Direction, EntityIdentifier, Line
+from ansys.api.geometry.v0.models_pb2 import Direction, Line
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
 
-from ansys.geometry.core.connection import (
-    GrpcClient,
+from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.conversions import (
     grpc_matrix_to_matrix,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
     unit_vector_to_grpc_direction,
 )
-from ansys.geometry.core.connection.conversions import point3d_to_grpc_point
 from ansys.geometry.core.designer.beam import Beam, BeamProfile
 from ansys.geometry.core.designer.body import Body, MasterBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
@@ -40,16 +61,14 @@ from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.math import (
-    IDENTITY_MATRIX44,
-    Frame,
-    Matrix44,
-    Point3D,
-    UnitVector3D,
-    Vector3D,
-)
-from ansys.geometry.core.misc import DEFAULT_UNITS, Angle, Distance, check_pint_unit_compatibility
-from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
+from ansys.geometry.core.math.frame import Frame
+from ansys.geometry.core.math.matrix import Matrix44
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.checks import check_pint_unit_compatibility
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -284,7 +303,7 @@ class Component:
             Origin that defines the axis to rotate the component about.
         rotation_direction : UnitVector3D, default: None
             Direction of the axis to rotate the component about.
-        rotation_angle : Union[Quantity, Angle, Real], default: 0
+        rotation_angle : Union[~pint.Quantity, Angle, Real], default: 0
             Angle to rotate the component around the axis.
         """
         t = (
@@ -398,7 +417,7 @@ class Component:
             User-defined label for the new solid body.
         sketch : Sketch
             Two-dimensional sketch source for the extrusion.
-        distance : Union[Quantity, Distance, Real]
+        distance : Union[~pint.Quantity, Distance, Real]
             Distance to extrude the solid body.
 
         Returns
@@ -444,7 +463,7 @@ class Component:
             User-defined label for the new solid body.
         face : Face
             Target face to use as the source for the new surface.
-        distance : Union[Quantity, Distance]
+        distance : Union[~pint.Quantity, Distance]
             Distance to extrude the solid body.
 
         Returns
@@ -589,7 +608,7 @@ class Component:
             List of bodies to translate by the same distance.
         direction: UnitVector3D
             Direction of the translation.
-        distance: Union[Quantity, Distance, Real]
+        distance: Union[~pint.Quantity, Distance, Real]
             Magnitude of the translation.
 
         Returns

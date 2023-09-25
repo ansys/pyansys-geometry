@@ -1,3 +1,24 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 """Module containing the ``ProductInstance`` class."""
 import os
 import signal
@@ -14,7 +35,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
 
 
-WINDOWS_GEOMETRY_SERVICE_FOLDER = "GeometryService"
+WINDOWS_GEOMETRY_SERVICE_FOLDER = "GeometryServices"
 """Default Geometry Service's folder name into the unified installer."""
 
 DISCOVERY_FOLDER = "Discovery"
@@ -148,6 +169,7 @@ def prepare_and_start_backend(
             1: Debug
             2: Warning
             3: Error
+
         The default is ``2`` (Warning).
     api_version: ``ApiVersions``, optional
         The backend's API version to be used at runtime. Goes from API v21 to
@@ -155,8 +177,8 @@ def prepare_and_start_backend(
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 150.
 
-    Exceptions
-    ----------
+    Raises
+    ------
     ConnectionError
         If the specified endpoint is already in use, a connection error will be raised.
     SystemError
@@ -282,13 +304,13 @@ def _start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Pop
 
 def _check_minimal_versions(latest_installed_version: int) -> None:
     """
-    Pygeometry is compatible with Ansys Products starting from 2023.2.1 version.
+    Check client is compatible with Ansys Products starting from 2023.2.1 version.
 
     Check that at least V232 is installed.
     """
     if latest_installed_version < 232:
         msg = (
-            "PyGeometry is compatible with Ansys Products from version 23.2.1. "
+            "PyAnsys Geometry is compatible with Ansys Products from version 23.2.1. "
             + "Please install Ansys products 23.2.1 or later."
         )
         raise SystemError(msg)

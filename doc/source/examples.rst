@@ -1,12 +1,12 @@
 Examples
 ########
 
-These examples demonstrate the behavior and usage of PyGeometry.
+These examples demonstrate the behavior and usage of PyAnsys Geometry.
 
-PyGeometry 101 examples
------------------------
+PyAnsys Geometry 101 examples
+-----------------------------
 These examples demonstrate basic operations you can perform
-with PyGeometry.
+with PyAnsys Geometry.
 
 .. nbgallery::
 
@@ -37,3 +37,4 @@ These examples demonstrate service-based modeling operations.
     examples/03_modeling/plate_with_hole.mystnb
     examples/03_modeling/tessellation_usage.mystnb
     examples/03_modeling/design_organization.mystnb
+    examples/03_modeling/boolean_operations.mystnb

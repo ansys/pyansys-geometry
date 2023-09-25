@@ -189,7 +189,7 @@ def test_plot_plotterhelper_sketch_design(modeler: Modeler, verify_image_cache):
 
 @skip_no_xserver
 def test_plot_plotterhelper_all_types(modeler: Modeler, verify_image_cache):
-    """Test plotting a list of pygeometry objects."""
+    """Test plotting a list of PyAnsys Geometry objects."""
     plot_list = []
 
     # init modeler
@@ -635,3 +635,25 @@ def test_visualization_polydata():
     assert box.visualization_polydata.n_cells == 1
     assert box.visualization_polydata.n_points == 4
     assert box.visualization_polydata.n_open_edges == 4
+
+
+def test_name_filter(modeler: Modeler, verify_image_cache):
+    # init modeler
+    design = modeler.create_design("Multiplot")
+
+    # define cylinder
+    cyl_sketch = Sketch()
+    cyl_sketch.circle(Point2D([-20, 5], UNITS.m), Quantity(10, UNITS.m))
+    cyl_body = design.extrude_sketch("JustACyl", cyl_sketch, Quantity(10, UNITS.m))
+
+    # define box
+    body_sketch = Sketch()
+    body_sketch.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+    box_body = design.extrude_sketch("JustABox", body_sketch, Quantity(10, UNITS.m))
+
+    # plot together
+    PlotterHelper().plot(
+        [cyl_body, box_body],
+        filter="Cyl",
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_name_filter.png"),
+    )

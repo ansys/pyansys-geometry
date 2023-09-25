@@ -13,14 +13,14 @@ kernelspec:
 
 # Sketching: Parametric sketching for gears
 
-This example shows how to use gear sketching shapes from PyGeometry.
+This example shows how to use gear sketching shapes from PyAnsys Geometry.
 
 +++
 
 ## Perform required imports and pre-sketching operations
 
 Perform required imports and instantiate the ``Modeler`` instance and
-the basic elements that define a sketch:
+the basic elements that define a sketch.
 
 ```{code-cell} ipython3
 from pint import Quantity
@@ -49,8 +49,7 @@ plane = Plane(
 ``DummyGear`` sketches are simple gears that have straight teeth. While they do not ensure
 actual physical functionality, they might be useful for some simple playground tests.
 
-This code shows how to instantiate a new ``Sketch`` object and then define and plot a
-dummy gear:
+Instantiate a new ``Sketch`` object and then define and plot a dummy gear.
 
 ```{code-cell} ipython3
 # Instantiate a new sketch object from previous plane
@@ -68,7 +67,7 @@ sketch.dummy_gear(origin, outer_radius, inner_radius, n_teeth)
 sketch.plot()
 ```
 
-Once the sketching has taken place, this code extrudes it:
+After creating the sketch, extrudes it.
 
 ```{code-cell} ipython3
 
@@ -90,14 +89,13 @@ design.plot()
   be a ``Point2D`` object.
 * ``module``: Ratio between the pitch circle diameter in millimeters and the
   number of teeth. This is a common parameter for spur gears. The value should
-  be either an integer or a float.
+  be an integer or a float.
 * ``pressure_angle``: Pressure angle expected for the teeth of the spur gear.
   This is also a common parameter for spur gears. The value must be a
   ``pint.Quantity`` object.
 * ``n_teeth``: Number of teeth. The value must be an integer.
 
-This code shows how to instantiate a new ``Sketch`` object and then define and
-plot a spur gear:
+Instantiate a new ``Sketch`` object and then define and plot a spur gear.
 
 ```{code-cell} ipython3
 # Instantiate a new sketch object from previous plane
@@ -117,7 +115,7 @@ sketch.spur_gear(origin, module, pressure_angle, n_teeth)
 sketch.plot()
 ```
 
-Once the sketching has taken place, this code extrudes it:
+After creating the sketch, extrude it.
 
 ```{code-cell} ipython3
 

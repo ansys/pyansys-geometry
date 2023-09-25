@@ -1,11 +1,35 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 """Module providing a wrapped abstraction of the gRPC PROTO API definition and stubs."""
 
 import logging
 from pathlib import Path
 import time
 
+from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
+from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
+from google.protobuf.empty_pb2 import Empty
 import grpc
 from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
@@ -88,14 +112,14 @@ class GrpcClient:
         interface. This instance will be deleted
         when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
         method is called.
-    timeout : real, default: 60
+    timeout : real, default: 120
         Maximum time to spend trying to make the connection.
     logging_level : int, default: INFO
         Logging level to apply to the client.
     logging_file : str or Path, default: None
         File to output the log to, if requested.
     backend_type: BackendType, default: None
-        Type of the backend that PyGeometry is communicating with. By default, this
+        Type of the backend that PyAnsys Geometry is communicating with. By default, this
         value is unknown, which results in ``None`` being the default value.
     """
 
@@ -108,7 +132,7 @@ class GrpcClient:
         remote_instance: Optional["Instance"] = None,
         local_instance: Optional[LocalDockerInstance] = None,
         product_instance: Optional[ProductInstance] = None,
-        timeout: Optional[Real] = 60,
+        timeout: Optional[Real] = 120,
         logging_level: Optional[int] = logging.INFO,
         logging_file: Optional[Union[Path, str]] = None,
         backend_type: Optional[BackendType] = None,
@@ -143,7 +167,21 @@ class GrpcClient:
                 logging_file = str(logging_file)
             self._log.log_to_file(filename=logging_file, level=logging_level)
 
-        # Store the backend
+        self._admin_stub = AdminStub(self._channel)
+
+        # if no backend type has been specified, ask the backend which type it is
+        if backend_type == None:
+            grpc_backend_type = self._admin_stub.GetBackend(Empty()).type
+            if grpc_backend_type == GRPCBackendType.DISCOVERY:
+                backend_type = BackendType.DISCOVERY
+            elif grpc_backend_type == GRPCBackendType.SPACECLAIM:
+                backend_type = BackendType.SPACECLAIM
+            elif grpc_backend_type == GRPCBackendType.WINDOWS_DMS:
+                backend_type = BackendType.WINDOWS_SERVICE
+            elif grpc_backend_type == GRPCBackendType.LINUX_DMS:
+                backend_type = BackendType.LINUX_SERVICE
+
+        # Store the backend type
         self._backend_type = backend_type
 
     @property

@@ -16,7 +16,7 @@ kernelspec:
 You can create multiple bodies from a single sketch by extruding the same sketch in different planes.
 
 The sketch is designed as an effective *functional-style* API with all operations receiving 2D configurations.
-For more information about the functional-style API, see :ref:`ref_sketch`.
+For more information, see the :ref:`Sketch <ref_sketch>` subpackage.
 
 In this example, a box is located in the center of the plate, with the default origin of a sketch plane
 (origin at ``(0, 0, 0)``). Four holes of equal radius are sketched at the corners of the plate.
@@ -27,7 +27,7 @@ the center of the face. The default projection depth is through the entire part.
 
 ## Perform required imports
 
-Perform the required imports:
+Perform the required imports.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -44,10 +44,10 @@ from ansys.geometry.core.sketch import Sketch
 The sketch profile for the proposed design requires four segments that constitute
 the outer limits of the design, a box on the center, and a circle at its four corners.
 
-You can use a single ``sketch`` instance for multiple design operations such as extruding a body,
-projecting a profile, or imprinting curves.
+You can use a single ``sketch`` instance for multiple design operations, including extruding a body,
+projecting a profile, and imprinting curves.
 
-This code defines the sketch profle for the rectangular plate with multiple bodies:
+Define the sketch profle for the rectangular plate with multiple bodies.
 
 ```{code-cell} ipython3
 sketch = Sketch()
@@ -65,8 +65,8 @@ sketch = Sketch()
 
 ## Extrude sketch to create design
 
-The following code establishes a server connection and uses the single sketch profile to extrude
-the base component at the Z axis. A named selection is created from the
+Establish a server connection and use the single sketch profile to extrude
+the base component at the Z axis. Create a named selection from the
 resulting list of bodies. In only three server calls, the design extrudes
 the four segments with the desired thickness.
 
@@ -83,9 +83,10 @@ design.plot()
 ## Add component with a planar surface
 
 After creating a plate as a base component, you might want to add a component with a planar
-surface to it. The following code shows show to create a ``sketch`` instance and then create
-a surface in the design with this sketch. For the sketch, it creates an ellipse, keeping the
-origin of the plane as its center.
+surface to it.
+
+Create a ``sketch`` instance and then create a surface in the design with this sketch.
+For the sketch, it creates an ellipse, keeping the origin of the plane as its center.
 
 ```{code-cell} ipython3
 # Add components to the design
@@ -105,8 +106,8 @@ design.plot()
 
 ## Extrude from face to create body
 
-The following code shows how to extrude a face profile by a given distance to create
-a solid body. There are no modifications against the body containing the source face.
+Extrude a face profile by a given distance to create a solid body. There are no
+modifications against the body containing the source face.
 
 ```{code-cell} ipython3
 longer_body = design.extrude_face(
@@ -116,11 +117,10 @@ design.plot()
 ```
 ## Translate body within plane
 
-The following code shows how to use the
-:func:`translate()<ansys.geometry.core.designer.body.Body.translate>` method
+Use the :func:`translate()<ansys.geometry.core.designer.body.Body.translate>` method
 to move the body in a specified direction by a given distance. You can also move
-a sketch around the global coordinate system. For more information, see
-[Dynamic Sketch Plane](../02_sketching/dynamic_sketch_plane.mystnb).
+a sketch around the global coordinate system. For more information, see the
+[Dynamic Sketch Plane](../02_sketching/dynamic_sketch_plane.mystnb) example.
 
 ```{code-cell} ipython3
 longer_body.translate(UnitVector3D([1, 0, 0]), Quantity(4, UNITS.m))

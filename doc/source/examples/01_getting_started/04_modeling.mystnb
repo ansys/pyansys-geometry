@@ -11,21 +11,21 @@ kernelspec:
   name: python3
 ---
 
-# PyGeometry 101: Modeling
+# PyAnsys Geometry 101: Modeling
 
-Once you understand PyGeometry's mathematical constructs, units, and sketching capabilities,
+Once you understand PyAnsys Geometry's mathematical constructs, units, and sketching capabilities,
 you can dive into its modeling capabilities.
 
 +++
 
-PyGeometry is a Python client that connects to a modeling service. Here are the modeling
-services that available for connection:
+PyAnsys Geometry is a Python client that connects to a modeling service. Here are the modeling
+services that are available for connection:
 
 - **DMS**: Windows-based modeling service that has been containerized to ease
   distribution, execution, and remotability operations.
 - **Geometry service**: Linux-based approach of DMS that is currently under development.
-- **Ansys Discovery and SpaceClaim**: PyGeometry is capable of connecting to a running session
-  of Ansys Discovery or SpaceClaim. Although this is not the main use case for PyGeometry,
+- **Ansys Discovery and SpaceClaim**: PyAnsys Geometry is capable of connecting to a running session
+  of Ansys Discovery or SpaceClaim. Although this is not the main use case for PyAnsys Geometry,
   a connection to one of these Ansys products is possible. Because these products have
   graphical user interfaces, performance is not as high with this option as with the previous
   options. However, connecting to a running instance of Discovery or SpaceClaim might be
@@ -35,11 +35,11 @@ services that available for connection:
 
 ## Launch a modeling service
 
-While the PyGeometry operations in earlier examples did not require communication with
+While the PyAnsys Geometry operations in earlier examples did not require communication with
 a modeling service, this example requires that a modeling service is available. All subsequent
-examples also require that a modeling service be available.
+examples also require that a modeling service is available.
 
-This code shows how to launch a modeling service session:
+Launch a modeling service session.
 
 ```{code-cell} ipython3
 from ansys.geometry.core import launch_modeler
@@ -51,7 +51,7 @@ print(modeler)
 
 You can also launch your own services and connect to them. For information on
 connecting to an existing service, see the
-[Modeler API](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/modeler/index.html#ansys.geometry.core.modeler.Modeler)
+[Modeler API](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/modeler/Modeler.html#Modeler)
 documentation.
 
 +++
@@ -61,19 +61,19 @@ Here is how the class architecture is implemented:
 * ``Modeler``: Handler object for the active service session. This object allows you
   to connect to an existing service by passing in a host and a port. It also
   allows you to create ``Design`` objects, which is where the modeling takes
-  place. For more information, see the [Modeler API](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/modeler/index.html#ansys.geometry.core.modeler.Modeler)
+  place. For more information, see the [Modeler API](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/modeler/Modeler.html#Modeler)
   documentation.
 * ``Design``: Root object of your assembly (tree). While a ``Design`` object is also a
   ``Component`` object, it has enhanced capabilities, including creating named selections,
   adding materials, and handling beam profiles. For more information, see the
-  [Design API](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/designer/design/index.html#ansys.geometry.core.designer.design.Design)
+  [Design API](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/design/Design.html#Design)
   documentation.
 * ``Component``: One of the main objects for modeling purposes. ``Component`` objects
   allow you to create bodies, subcomponents, beams, design points, planar surfaces, and more.
-  For more information, see the [Component API](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/designer/component/index.html#ansys.geometry.core.designer.component.Component)
+  For more information, see the [Component API](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/component/Component.html#Component)
   documentation.
 
-The following code examples demonstrate how you use these objects.
+The following code examples show how you use these objects.
 More capabilities of these objects are shown in the specific
 example sections for sketching and modeling.
 
@@ -81,7 +81,7 @@ example sections for sketching and modeling.
 
 ## Create and plot a sketch
 
-This code shows how to create a ``Sketch`` object and plot it.
+Create a ``Sketch`` object and plot it.
 
 ```{code-cell} ipython3
 from ansys.geometry.core.sketch import Sketch
@@ -115,9 +115,9 @@ sketch.plot()
 
 ## Perform some modeling operations
 
-Now that the sketch is ready to be extruded, this code shows how to
-perform some modeling operations, including creating the design, creating
-the body directly on the design, and plotting the body:
+Now that the sketch is ready to be extruded, perform some modeling operations,
+including creating the design, creating the body directly on the design, and
+plotting the body.
 
 ```{code-cell} ipython3
 # Start by creating the Design
@@ -136,7 +136,7 @@ design.plot()
 
 ## Perform some operations on the body
 
-This code shows how to perform some operations on the body:
+Perform some operations on the body.
 
 ```{code-cell} ipython3
 # Request its faces, edges, volume...
@@ -151,9 +151,9 @@ print(f"The body volume is {volume}.")
 
 Other operations that can be performed include adding a midsurface offset
 and thickness (only for planar bodies), imprinting curves, assigning materials,
-translating, and copying.
+copying, and translating.
 
-This code shows how to copy the body on a new subcomponent and translate it:
+Copy the body on a new subcomponent and translate it.
 
 ```{code-cell} ipython3
 from ansys.geometry.core.math import UNITVECTOR3D_X
@@ -171,7 +171,7 @@ body_copy.translate(direction=UNITVECTOR3D_X, distance=Distance(10, unit=UNITS.m
 design.plot()
 ```
 
-This code shows how to create and assign materials to the bodies that were created:
+Create and assign materials to the bodies that were created.
 
 ```{code-cell} ipython3
 from pint import Quantity
@@ -207,17 +207,17 @@ body_copy.assign_material(material)
 ```
 
 Currently materials do not have any impact on the visualization when plotting
-is requested, although this could possibly be a future feature. If the final
+is requested, although this could be a future feature. If the final
 assembly is open in Discovery or SpaceClaim, you can observe the changes.
 
 +++
 
 ## Create a named selection
 
-PyGeometry supports the creation of a named selection via the ``Design`` object.
+PyAnsys Geometry supports the creation of a named selection via the ``Design`` object.
 
-This code shows how to create a named selection with some of the faces of the previous body
-and the body itself:
+Create a named selection with some of the faces of the previous body
+and the body itself.
 
 ```{code-cell} ipython3
 # Create a named selection
@@ -235,7 +235,7 @@ from a component that has no ownership over it (such as your ``comp`` object), t
 would fail. If you attempted to perform this deletion from the ``design`` object, the
 deletion would succeed.
 
-The next two code examples show how deletion works:
+The next two code examples show how deletion works.
 
 ```{code-cell} ipython3
 # If you try to delete this body from an "unauthorized" component, the deletion is not allowed.
@@ -261,10 +261,10 @@ design.plot()
 
 Once modeling operations are finalized, you can export files
 in different formats. For the formats supported by DMS, see the
-[DesignFileFormat](https://geometry.docs.pyansys.com/version/stable/autoapi/ansys/geometry/core/designer/design/index.html#ansys.geometry.core.designer.design.DesignFileFormat)
+[DesignFileFormat](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/design/DesignFileFormat.html#DesignFileFormat)
 class in the ``Design`` module documentation.
 
-This code shows how to export files in SCDOCX and FMD formats:
+Export files in SCDOCX and FMD formats.
 
 ```{code-cell} ipython3
 import os
@@ -287,7 +287,7 @@ design.download(file_location=Path(file_dir, "ModelingDemo.fmd"), format=DesignF
 When you finish interacting with your modeling service, you should close the active
 server session. This frees resources wherever the service is running.
 
-This code shows how to close the server session:
+Close the server session.
 
 ```{code-cell} ipython3
 modeler.close()

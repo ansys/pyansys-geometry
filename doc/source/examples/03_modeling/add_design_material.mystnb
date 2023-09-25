@@ -12,19 +12,19 @@ kernelspec:
 ---
 # Modeling: Single body with material assignment
 
-In PyGeometry, a *body* represents solids or surfaces organized within the ``Design`` assembly.
-The current state of *sketch*, which is a client-side execution, can be used for the operations of
+In PyAnsys Geometry, a *body* represents solids or surfaces organized within the ``Design`` assembly.
+The current state of sketch, which is a client-side execution, can be used for the operations of
 the geometric design assembly.
 
-The Geometry service also provides data structures to create individual materials and their properties.
-These data structures are also exposed through PyGeometry.
+The Geometry service provides data structures to create individual materials and their properties.
+These data structures are exposed through PyAnsys Geometry.
 
 This example shows how to create a single body from a sketch by requesting its extrusion. It then
 shows how to assign a material to this body.
 
 ## Perform required imports
 
-Perform the required imports:
+Perform the required imports.
 
 ```{code-cell} ipython3
 from pint import Quantity
@@ -35,10 +35,10 @@ from ansys.geometry.core.math import UNITVECTOR3D_Z, Frame, Plane, Point2D, Poin
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 ```
-## Define sketch
+## Create sketch
 
-This code create a ``Sketch`` instance and inserts a circle with a radius of 10 millimeters
-in the default plane:
+Create a ``Sketch`` instance and insert a circle with a radius of 10 millimeters
+in the default plane.
 
 ```{code-cell} ipython3
 sketch = Sketch()
@@ -47,7 +47,7 @@ sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
 
 ## Initiate design on server
 
-This code establishes a server connection and initiates a design:
+Establish a server connection and initiate a design on the server.
 
 ```{code-cell} ipython3
 modeler = Modeler()
@@ -57,7 +57,7 @@ design = modeler.create_design(design_name)
 
 ## Add materials to design
 
-The following code add materials and their properties to the design. Material
+Add materials and their properties to the design. Material
 properties can be added when creating the ``Material`` object or after
 its creation. This code adds material properties after creating
 the ``Material`` object.

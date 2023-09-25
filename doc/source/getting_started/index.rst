@@ -1,20 +1,76 @@
+.. _ref_getting_started:
+
 Getting started
 ###############
 
-PyGeometry is a Python client library for the Ansys Geometry service.
+PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
-To use PyGeometry, you must have a local installation of `Docker <https://docs.docker.com/engine/install/>`_.
-To start the service locally, you must be authenticated to this package namespace: ``https://ghcr.io``. For
-more information, see `Working with the Container registry
-<https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry>`_
-in the GitHub documentation.
+Available modes
+===============
 
-.. caution::
-   PyGeometry is a client library that works with a Geometry service backend. This service is distributed
-   as a Docker container. Currently, only a Windows Docker container is available for this
-   service. For more information, see :ref:`Geometry service using Docker <ref_docker>`.
+This client library works with a Geometry service backend. There are several ways of
+running this backend, although the preferred and high-performance mode is using Docker
+containers. Select the option that suits your needs best.
+
+.. grid:: 2
+
+   .. grid-item-card:: Docker containers
+            :link: docker/index
+            :link-type: doc
+            :margin: 2 2 0 0
+
+            Launch the Geometry service as a Docker container
+            and connect to it from PyAnsys Geometry.
+
+   .. grid-item-card:: Local service
+            :link: local/index
+            :link-type: doc
+            :margin: 2 2 0 0
+
+            Launch the Geometry service locally on your machine
+            and connect to it from PyAnsys Geometry.
+
+   .. grid-item-card:: Remote service
+            :link: remote/index
+            :link-type: doc
+            :margin: 2 2 0 0
+
+            Launch the Geometry service on a remote machine and
+            connect to it using PIM (Product Instance Manager).
+
+   .. grid-item-card:: Connect to an existing service
+            :link: existing/index
+            :link-type: doc
+            :margin: 2 2 0 0
+
+            Connect to an existing Geometry service locally or remotely.
+
+Compatibility with Ansys releases
+=================================
+
+PyAnsys Geometry continues to evolve as the Ansys products move forward. For
+more information, see :ref:`Ansys product version compatibility <ref_ansys_comp>`.
+
+Development installation
+========================
+
+In case you want to support the development of PyAnsys Geometry, install the repository
+in development mode. For more information, see
+:ref:`Install package in development mode <ref_dev_mode>`.
+
+Frequently asked questions
+==========================
+
+Any questions? Refer to :ref:`Q&A <ref_faq>` before submitting an issue.
 
 .. toctree::
+   :hidden:
+   :maxdepth: 2
 
-   docker
+   docker/index
+   local/index
+   remote/index
+   existing/index
+   compatibility
    installation
+   faq

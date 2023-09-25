@@ -1,24 +1,53 @@
-"""Provides for plotting various PyGeometry objects."""
-from typing import Any
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+"""Provides plotting for various PyAnsys Geometry objects."""
+import re
 
-from beartype.typing import Dict, List, Optional
+from beartype.typing import Any, Dict, List, Optional
 import numpy as np
 import pyvista as pv
+from pyvista.plotting.plotter import Plotter as PyVistaPlotter
 from pyvista.plotting.tools import create_axes_marker
 
-from ansys.geometry.core.designer import Body, Component, Design, MasterBody
+from ansys.geometry.core.designer.body import Body, MasterBody
+from ansys.geometry.core.designer.component import Component
+from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.logger import LOG as logger
-from ansys.geometry.core.math import Frame, Plane
-from ansys.geometry.core.plotting.trame_gui import _HAS_TRAME, TrameVisualizer
-from ansys.geometry.core.plotting.widgets import (
-    CameraPanDirection,
-    DisplacementArrow,
-    PlotterWidget,
-    Ruler,
-    ViewButton,
-    ViewDirection,
-)
-from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.math.frame import Frame
+from ansys.geometry.core.math.plane import Plane
+from ansys.geometry.core.plotting.plotting_types import EdgePlot, GeomObjectPlot
+from ansys.geometry.core.sketch.sketch import Sketch
+
+DEFAULT_COLOR = "#D6F7D1"
+"""Default color we use for the plotter actors."""
+
+PICKED_COLOR = "#BB6EEE"
+"""Color to use for the actors that are currently picked."""
+
+EDGE_COLOR = "#000000"
+"""Default color to use for the edges."""
+
+PICKED_EDGE_COLOR = "#9C9C9C"
+"""Color to use for the edges that are currently picked."""
 
 
 class Plotter:
@@ -65,24 +94,18 @@ class Plotter:
         # Save the desired number of points
         self._num_points = num_points
 
-        # Create Plotter widgets
-        if enable_widgets:
-            self._widgets: List[PlotterWidget] = []
-            self._widgets.append(Ruler(self._scene))
-            [
-                self._widgets.append(DisplacementArrow(self._scene, direction=dir))
-                for dir in CameraPanDirection
-            ]
-            [self._widgets.append(ViewButton(self._scene, direction=dir)) for dir in ViewDirection]
+        # geometry objects to actors mapping
+        self._geom_object_actors_map = {}
+        self._enable_widgets = enable_widgets
 
     @property
-    def scene(self) -> pv.Plotter:
+    def scene(self) -> PyVistaPlotter:
         """
         Rendered scene object.
 
         Returns
         -------
-        ~pvyista.Plotter
+        ~pyvista.Plotter
             Rendered scene object.
         """
         return self._scene
@@ -121,7 +144,7 @@ class Plotter:
             Frame to render in the scene.
         plotting_options : dict, default: None
             Dictionary containing parameters accepted by the
-            :class:`pyvista.plotting.tools.create_axes_marker` class for customizing
+            :func:`pyvista.create_axes_marker` class for customizing
             the frame rendering in the scene.
         """
         # Use default plotting options if required
@@ -156,12 +179,12 @@ class Plotter:
             Plane to render in the scene.
         plane_options : dict, default: None
             Dictionary containing parameters accepted by the
-            :class:`pyvista.Plane` instance for customizing the mesh
+            :func:`pyvista.Plane  <pyvista.Plane>` function for customizing the mesh
             representing the plane.
         plotting_options : dict, default: None
             Dictionary containing parameters accepted by the
-            :class:`pyvista.Plotter.add_mesh` class for customizing the mesh
-            rendering of the plane.
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method for
+            customizing the mesh rendering of the plane.
         """
         # Impose default plane options if none provided
         if plane_options is None:
@@ -197,7 +220,7 @@ class Plotter:
             Whether to show the frame in the scene.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
-            :func:`pyvista.Plotter.add_mesh` method.
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         # Show the sketch plane if required
         if show_plane:
@@ -207,17 +230,44 @@ class Plotter:
         if show_frame:
             self.plot_frame(sketch._plane)
 
-        self.add_sketch_polydata(sketch.sketch_polydata(), **plotting_options)
+        self.add_sketch_polydata(sketch.sketch_polydata_faces(), opacity=0.7, **plotting_options)
+        self.add_sketch_polydata(sketch.sketch_polydata_edges(), **plotting_options)
+
+    def add_body_edges(self, body_plot: GeomObjectPlot, **plotting_options: Optional[dict]) -> None:
+        """
+        Add the outer edges of a body to the plot.
+
+        This method has the side effect of adding the edges to the GeomObject that
+        you pass through the parameters.
+
+        Parameters
+        ----------
+        body : GeomObjectPlot
+            Body of which to add the edges.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+        """
+        edge_plot_list = []
+        for edge in body_plot.object.edges:
+            line = pv.Line(edge.start_point, edge.end_point)
+            edge_actor = self.scene.add_mesh(
+                line, line_width=10, color=EDGE_COLOR, **plotting_options
+            )
+            edge_actor.SetVisibility(False)
+            edge_plot = EdgePlot(edge_actor, edge, body_plot)
+            edge_plot_list.append(edge_plot)
+        body_plot.edges = edge_plot_list
 
     def add_body(
         self, body: Body, merge: Optional[bool] = False, **plotting_options: Optional[Dict]
-    ) -> str:
+    ) -> None:
         """
         Add a body to the scene.
 
         Parameters
         ----------
-        body : ansys.geometry.core.designer.Body
+        body : Body
             Body to add.
         merge : bool, default: False
             Whether to merge the body into a single mesh. When ``True``, the
@@ -225,14 +275,9 @@ class Plotter:
             preserves the number of triangles and only merges the topology.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments,
-            see the :func:`pyvista.Plotter.add_mesh` method.
-
-        Returns
-        -------
-        str
-            Name of the added PyVista actor.
+            see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
-        # Use the default PyGeometry add_mesh arguments
+        # Use the default PyAnsys Geometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
         dataset = body.tessellate(merge=merge)
         if isinstance(dataset, pv.MultiBlock):
@@ -240,7 +285,9 @@ class Plotter:
         else:
             actor = self.scene.add_mesh(dataset, **plotting_options)
 
-        return actor.name
+        body_plot = GeomObjectPlot(actor=actor, object=body, add_body_edges=True)
+        self.add_body_edges(body_plot)
+        self._geom_object_actors_map[actor] = body_plot
 
     def add_component(
         self,
@@ -254,7 +301,7 @@ class Plotter:
 
         Parameters
         ----------
-        component : ansys.geometry.core.designer.Component
+        component : Component
             Component to add.
         merge_component : bool, default: False
             Whether to merge the component into a single dataset. When
@@ -266,14 +313,14 @@ class Plotter:
             into a single dataset without separating faces.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
-            :func:`pyvista.Plotter.add_mesh` method.
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
 
         Returns
         -------
         str
             Name of the added PyVista actor.
         """
-        # Use the default PyGeometry add_mesh arguments
+        # Use the default PyAnsys Geometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
         if isinstance(dataset, pv.MultiBlock):
@@ -293,19 +340,20 @@ class Plotter:
             Polydata to add.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
-            :func:`pyvista.Plotter.add_mesh` method.
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
-        # Use the default PyGeometry add_mesh arguments
+        # Use the default PyAnsys Geometry add_mesh arguments
         for polydata in polydata_entries:
-            self.scene.add_mesh(polydata, **plotting_options)
+            self.scene.add_mesh(polydata, color=EDGE_COLOR, **plotting_options)
 
     def add(
         self,
         object: Any,
         merge_bodies: bool = False,
         merge_components: bool = False,
+        filter: str = None,
         **plotting_options,
-    ) -> Dict[str, str]:
+    ) -> Dict[pv.Actor, GeomObjectPlot]:
         """
         Add any type of object to the scene.
 
@@ -324,17 +372,25 @@ class Plotter:
             Whether to merge the component into a single dataset. When
             ``True``, all the individual bodies are effectively combined
             into a single dataset without any hierarchy.
+        filter : str, default: None
+            Regular expression with the desired name or names you want to include in the plotter.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
-            :func:`pyvista.Plotter.add_mesh` method.
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
 
         Returns
         -------
-        Mapping[str, str]
-            Mapping between the pv.Actor and the PyGeometry object.
+        Dict[~pyvista.Actor, GeomObjectPlot]
+            Mapping between the ~pyvista.Actor and the PyAnsys Geometry object.
         """
         logger.debug(f"Adding object type {type(object)} to the PyVista plotter")
-        actor_name = None
+        if filter:
+            if hasattr(object, "name"):
+                if not re.search(filter, object.name):
+                    logger.debug(f"Name {object.name} not found in regex {filter}.")
+                    return self._geom_object_actors_map
+
+        # Check what kind of object we are dealing with
         if isinstance(object, List) and isinstance(object[0], pv.PolyData):
             self.add_sketch_polydata(object, **plotting_options)
         elif isinstance(object, pv.PolyData):
@@ -344,22 +400,21 @@ class Plotter:
         elif isinstance(object, Sketch):
             self.plot_sketch(object, **plotting_options)
         elif isinstance(object, Body) or isinstance(object, MasterBody):
-            actor_name = self.add_body(object, merge_bodies, **plotting_options)
+            self.add_body(object, merge_bodies, **plotting_options)
         elif isinstance(object, Design) or isinstance(object, Component):
-            actor_name = self.add_component(
-                object, merge_components, merge_bodies, **plotting_options
-            )
+            self.add_component(object, merge_components, merge_bodies, **plotting_options)
         else:
             logger.warning(f"Object type {type(object)} can not be plotted.")
-        return {actor_name: object.name} if actor_name else {}
+        return self._geom_object_actors_map
 
     def add_list(
         self,
         plotting_list: List[Any],
         merge_bodies: bool = False,
         merge_components: bool = False,
+        filter: str = None,
         **plotting_options,
-    ) -> Dict[str, str]:
+    ) -> Dict[pv.Actor, GeomObjectPlot]:
         """
         Add a list of any type of object to the scene.
 
@@ -378,23 +433,20 @@ class Plotter:
             Whether to merge each body into a single dataset. When ``True``,
             all the faces of each individual body are effectively combined
             into a single dataset without separating faces.
+        filter : str, default: None
+            Regular expression with the desired name or names you want to include in the plotter.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
-            :func:`pyvista.Plotter.add_mesh` method.
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
 
         Returns
         -------
-        Mapping[str, str]
-            Dictionary with the mapping between pv.Actor and PyGeometry objects.
+        Dict[~pyvista.Actor, GeomObjectPlot]
+            Mapping between the ~pyvista.Actor and the PyAnsys Geometry objects.
         """
-        actors_objects_mapping = {}
         for object in plotting_list:
-            actor_object_mapping = self.add(
-                object, merge_bodies, merge_components, **plotting_options
-            )
-            if actor_object_mapping:
-                actors_objects_mapping.update(actor_object_mapping)
-        return actors_objects_mapping
+            _ = self.add(object, merge_bodies, merge_components, filter, **plotting_options)
+        return self._geom_object_actors_map
 
     def show(
         self,
@@ -412,7 +464,7 @@ class Plotter:
             PyVista Jupyter backend.
         **kwargs : dict, default: None
             Plotting keyword arguments. For allowable keyword arguments, see the
-            :func:`pyvista.Plotter.show` method.
+            :meth:`Plotter.show <pyvista.Plotter.show>` method.
 
         Notes
         -----
@@ -444,9 +496,6 @@ class Plotter:
         # Enabling anti-aliasing by default on scene
         self.scene.enable_anti_aliasing("ssaa")
 
-        # Update all buttons/widgets
-        [widget.update() for widget in self._widgets]
-
         self.scene.show(jupyter_backend=jupyter_backend, **kwargs)
 
     def __set_add_mesh_defaults(self, plotting_options: Optional[Dict]) -> None:
@@ -454,216 +503,4 @@ class Plotter:
         #
         # This method should only be applied in 3D objects: bodies, components
         plotting_options.setdefault("smooth_shading", True)
-        plotting_options.setdefault("color", "#D6F7D1")
-
-
-class PlotterHelper:
-    """
-    Provides for simplifying the selection of trame in ``plot()`` functions.
-
-    Parameters
-    ----------
-    use_trame : bool, default: None
-        Whether to enable the use of `trame <https://kitware.github.io/trame/index.html>`_.
-        The default is ``None``, in which case the ``USE_TRAME`` global setting
-        is used.
-    allow_picking: bool, default: False
-        Enables/disables the picking capabilities in the PyVista plotter.
-    """
-
-    def __init__(
-        self, use_trame: Optional[bool] = None, allow_picking: Optional[bool] = False
-    ) -> None:
-        """Initialize ``use_trame`` and save current ``pv.OFF_SCREEN`` value."""
-        # Check if the use of trame was requested
-        if use_trame is None:
-            import ansys.geometry.core as pygeom
-
-            use_trame = pygeom.USE_TRAME
-
-        self._use_trame = use_trame
-        self._allow_picking = allow_picking
-        self._pv_off_screen_original = bool(pv.OFF_SCREEN)
-        self._actor_object_mapping = {}
-        self._pl = None
-        self._picked_list = set()
-        self._picker_added_actors_map = {}
-
-        if self._use_trame and _HAS_TRAME:
-            # avoids GUI window popping up
-            pv.OFF_SCREEN = True
-            self._pl = Plotter(enable_widgets=False)
-        elif self._use_trame and not _HAS_TRAME:
-            warn_msg = (
-                "'use_trame' is active but trame dependencies are not installed."
-                "Consider installing 'pyvista[trame]' to use this functionality."
-            )
-            logger.warning(warn_msg)
-            self._pl = Plotter()
-        else:
-            self._pl = Plotter()
-
-        if self._allow_picking:
-            self._pl.scene.enable_mesh_picking(
-                callback=self.picker_callback, use_actor=True, show=False
-            )
-
-    def select_object(self, actor: pv.Actor, body_name: str, pt: "np.Array") -> None:
-        """
-        Select an object in the plotter.
-
-        Highlights the object edges and adds a label with the object name and adds
-        it to the PyGeometry object selection.
-
-        Parameters
-        ----------
-        actor : pv.Actor
-            Actor on which to perform the operations.
-        body_name : str
-            Name of the Body to highlight.
-        pt : np.Array
-            Set of points to determine the label position.
-        """
-        added_actors = []
-        actor.prop.show_edges = True
-        text = body_name
-        label_actor = self._pl.scene.add_point_labels(
-            [pt],
-            [text],
-            always_visible=True,
-            point_size=0,
-            render_points_as_spheres=False,
-            show_points=False,
-        )
-        if body_name not in self._picked_list:
-            self._picked_list.add(body_name)
-        added_actors.append(label_actor)
-
-        self._picker_added_actors_map[actor.name] = added_actors
-
-    def unselect_object(self, actor: pv.Actor, body_name: str) -> None:
-        """
-        Unselect an object in the plotter.
-
-        Removes edge highlighting and label from a plotter actor and removes it
-        from the PyGeometry object selection.
-
-        Parameters
-        ----------
-        actor : pv.Actor
-            Actor that is currently highlighted
-        body_name : str
-            Body name to remove
-        """
-        actor.prop.show_edges = False
-        self._picked_list.remove(body_name)
-        if actor.name in self._picker_added_actors_map:
-            self._pl.scene.remove_actor(self._picker_added_actors_map[actor.name])
-            self._picker_added_actors_map.pop(actor.name)
-
-    def picker_callback(self, actor: "pv.Actor") -> None:
-        """
-        Define callback for the element picker.
-
-        Parameters
-        ----------
-        actor : pv.Actor
-            Actor that we are picking.
-        """
-        pt = self._pl.scene.picked_point
-        self._actor_object_mapping.keys
-        if actor.name in self._actor_object_mapping:
-            body_name = self._actor_object_mapping[actor.name]
-            if body_name not in self._picked_list:
-                self.select_object(actor, body_name, pt)
-            else:
-                self.unselect_object(actor, body_name)
-
-    def plot(
-        self,
-        object: Any,
-        screenshot: Optional[str] = None,
-        merge_bodies: bool = False,
-        merge_component: bool = False,
-        view_2d: Dict = None,
-        **plotting_options,
-    ) -> List[any]:
-        """
-        Plot and show any PyGeometry object.
-
-        These types of objects are supported: ``Body``, ``Component``, ``List[pv.PolyData]``,
-        ``pv.MultiBlock``, and ``Sketch``.
-
-        Parameters
-        ----------
-        object : any
-            Any object or list of objects that you want to plot.
-        screenshot : str, default: None
-            Path for saving a screenshot of the image that is being represented.
-        merge_bodies : bool, default: False
-            Whether to merge each body into a single dataset. When ``True``,
-            all the faces of each individual body are effectively combined
-            into a single dataset without separating faces.
-        merge_component : bool, default: False
-            Whether to merge this component into a single dataset. When ``True``,
-            all the individual bodies are effectively combined into a single
-            dataset without any hierarchy.
-        view_2d : Dict, default: None
-            Dictionary with the plane and the viewup vectors of the 2D plane.
-        **plotting_options : dict, default: None
-            Keyword arguments. For allowable keyword arguments, see the
-            :func:`pyvista.Plotter.add_mesh` method.
-
-        Returns
-        -------
-        List[any]
-            List with the picked bodies in the picked order.
-        """
-        if isinstance(object, List) and not isinstance(object[0], pv.PolyData):
-            logger.debug("Plotting objects in list...")
-            self._actor_object_mapping = self._pl.add_list(
-                object, merge_bodies, merge_component, **plotting_options
-            )
-        else:
-            self._actor_object_mapping = self._pl.add(
-                object, merge_bodies, merge_component, **plotting_options
-            )
-
-        if view_2d is not None:
-            self._pl.scene.view_vector(
-                vector=view_2d["vector"],
-                viewup=view_2d["viewup"],
-            )
-        self.show_plotter(screenshot)
-
-        picked_objects_list = []
-        if isinstance(object, list):
-            # Keep them ordered based on picking
-            for name in self._picked_list:
-                for elem in object:
-                    if hasattr(elem, "name") and elem.name == name:
-                        picked_objects_list.append(elem)
-        elif hasattr(object, "name") and object.name in self._picked_list:
-            picked_objects_list = [object]
-
-        return picked_objects_list
-
-    def show_plotter(self, screenshot: Optional[str] = None) -> None:
-        """
-        Show the plotter or start the `trame <https://kitware.github.io/trame/index.html>`_ service.
-
-        Parameters
-        ----------
-        plotter : Plotter
-            PyGeometry plotter with the meshes added.
-        screenshot : str, default: None
-            Path for saving a screenshot of the image that is being represented.
-        """
-        if self._use_trame and _HAS_TRAME:
-            visualizer = TrameVisualizer()
-            visualizer.set_scene(self._pl)
-            visualizer.show()
-        else:
-            self._pl.show(screenshot=screenshot)
-
-        pv.OFF_SCREEN = self._pv_off_screen_original
+        plotting_options.setdefault("color", DEFAULT_COLOR)
