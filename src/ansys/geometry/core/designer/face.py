@@ -28,12 +28,14 @@ from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.api.geometry.v0.faces_pb2 import EvaluateRequest, GetNormalRequest
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
-from beartype.typing import TYPE_CHECKING, List
+from beartype.typing import TYPE_CHECKING, List, Union
 from pint import Quantity
+import pyvista as pv
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
@@ -308,3 +310,31 @@ class Face:
                 Edge(edge_grpc.id, CurveType(edge_grpc.curve_type), self._body, self._grpc_client)
             )
         return edges
+
+    def to_polydata(self) -> Union[pv.PolyData, None]:
+        """
+        Return the face as polydata.
+
+        This is useful to represent the face in a PyVista plotter.
+
+        Returns
+        -------
+        Union[pv.PolyData, None]
+            Face as polydata
+        """
+        if self.surface_type != SurfaceType.SURFACETYPE_PLANE:
+            LOG.warning("Only planes surfaces are supported")
+            return None
+        else:
+            # get vertices from edges
+            vertices = [
+                vertice
+                for edge in self.edges
+                for vertice in [edge.start_point.flat, edge.end_point.flat]
+            ]
+            # TODO remove duplicate vertices
+            # build the PyVista face
+            vertices_order = [len(vertices)]
+            vertices_order.extend(range(len(vertices)))
+
+            return pv.PolyData(vertices, faces=vertices_order, n_faces=1)

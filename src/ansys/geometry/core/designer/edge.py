@@ -25,11 +25,13 @@ from enum import Enum, unique
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
-from beartype.typing import TYPE_CHECKING, List
+from beartype.typing import TYPE_CHECKING, List, Union
 from pint import Quantity
+import pyvista as pv
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
@@ -127,3 +129,20 @@ class Edge:
         self._grpc_client.log.debug("Requesting edge points from server.")
         point = self._edges_stub.GetStartAndEndPoints(self._grpc_id).end
         return Point3D([point.x, point.y, point.z])
+
+    def to_polydata(self) -> Union[pv.PolyData, None]:
+        """
+        Return the edge as polydata.
+
+        This is useful to represent the edge in a PyVista plotter.
+
+        Returns
+        -------
+        Union[pv.PolyData, None]
+            Edge as polydata
+        """
+        if self._curve_type == CurveType.CURVETYPE_UNKNOWN or CurveType.CURVETYPE_LINE:
+            return pv.Line(pointa=self.start_point(), pointb=self.end_point)
+        else:
+            LOG.warning("Non linear edges not supported.")
+            return None
