@@ -22,6 +22,7 @@
 """Module for creating and managing design points."""
 
 from beartype.typing import TYPE_CHECKING, Union
+import pyvista as pv
 
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.misc.checks import check_type
@@ -86,3 +87,6 @@ class DesignPoint:
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Design Point         : {self.value}")
         return "\n".join(lines)
+
+    def _to_polydata(self) -> pv.PolyData:
+        return pv.Sphere(center=self.value.flat, radius=0.001)
