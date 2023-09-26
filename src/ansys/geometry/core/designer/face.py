@@ -311,7 +311,7 @@ class Face:
             )
         return edges
 
-    def to_polydata(self) -> Union[pv.PolyData, None]:
+    def _to_polydata(self) -> Union[pv.PolyData, None]:
         """
         Return the face as polydata.
 

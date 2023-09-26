@@ -130,7 +130,7 @@ class Edge:
         point = self._edges_stub.GetStartAndEndPoints(self._grpc_id).end
         return Point3D([point.x, point.y, point.z])
 
-    def to_polydata(self) -> Union[pv.PolyData, None]:
+    def _to_polydata(self) -> Union[pv.PolyData, None]:
         """
         Return the edge as polydata.
 
@@ -142,7 +142,7 @@ class Edge:
             Edge as polydata
         """
         if self._curve_type == CurveType.CURVETYPE_UNKNOWN or CurveType.CURVETYPE_LINE:
-            return pv.Line(pointa=self.start_point(), pointb=self.end_point)
+            return pv.Line(pointa=self.start_point, pointb=self.end_point)
         else:
             LOG.warning("Non linear edges not supported.")
             return None
