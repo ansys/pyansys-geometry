@@ -34,7 +34,7 @@ class MeasureWidget(PlotterWidget):
 
     Parameters
     ----------
-    plotter : PlotterHelper
+    plotter_helper : PlotterHelper
         Provides the plotter to add the measure widget to.
     """
 
