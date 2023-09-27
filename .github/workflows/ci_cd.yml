@@ -389,10 +389,8 @@ jobs:
         path: /tmp/artifacts
 
     - name: "Compressing HTML docs to ZIP file"
-      uses: vimtor/action-zip@v1.1
-      with:
-        files: /tmp/artifacts/documentation-html
-        dest: /tmp/artifacts/documentation-html.zip
+      run: |
+        zip /tmp/artifacts/documentation-html.zip /tmp/artifacts/documentation-html
 
     - name: "Download HTML documentation"
       uses: actions/download-artifact@v3
