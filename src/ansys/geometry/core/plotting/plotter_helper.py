@@ -80,7 +80,6 @@ class PlotterHelper:
         self._picked_list = set()
         self._picker_added_actors_map = {}
         self._edge_actors_map = {}
-        self._design_point_actors = []
         self._widgets = []
 
         if self._use_trame and _HAS_TRAME:
