@@ -60,6 +60,11 @@ html_theme_options = {
             "url": "https://github.com/ansys/pyansys-geometry/discussions",
             "icon": "fa fa-comment fa-fw",
         },
+        {
+            "name": "Download documentation in PDF",
+            "url": f"https://{cname}/version/{switcher_version}/_static/assets/download/ansys-geometry-core.pdf",
+            "icon": "fa fa-file-pdf fa-fw",
+        },
     ],
     "use_meilisearch": {
         "api_key": os.getenv("MEILISEARCH_PUBLIC_API_KEY", ""),

@@ -25,7 +25,7 @@ For example, on Linux with Python 3.8, unzip the wheelhouse archive and install 
 
 .. code:: bash
 
-    unzip ansys-geometry-core-v0.4.dev0-wheelhouse-ubuntu-3.8.zip wheelhouse
+    unzip ansys-geometry-core-v0.4.dev0-wheelhouse-ubuntu-latest3.8.zip wheelhouse
     pip install ansys-geometry-core -f wheelhouse --no-index --upgrade --ignore-installed
 
 If you are on Windows with Python 3.9, unzip to a wheelhouse directory and install using the preceding command.
@@ -37,23 +37,23 @@ The following wheelhouse files are available for download:
 Linux
 ^^^^^
 
-* `Linux wheelhouse for Python 3.8 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-ubuntu-3.8.zip>`_
-* `Linux wheelhouse for Python 3.9 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-ubuntu-3.9.zip>`_
-* `Linux wheelhouse for Python 3.10 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-ubuntu-3.10.zip>`_
-* `Linux wheelhouse for Python 3.11 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-ubuntu-3.11.zip>`_
+* `Linux wheelhouse for Python 3.8 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-ubuntu-latest-3.8.zip>`_
+* `Linux wheelhouse for Python 3.9 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-ubuntu-latest-3.9.zip>`_
+* `Linux wheelhouse for Python 3.10 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-ubuntu-latest-3.10.zip>`_
+* `Linux wheelhouse for Python 3.11 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-ubuntu-latest-3.11.zip>`_
 
 Windows
 ^^^^^^^
 
-* `Windows wheelhouse for Python 3.8 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-windows-3.8.zip>`_
-* `Windows wheelhouse for Python 3.9 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-windows-3.9.zip>`_
-* `Windows wheelhouse for Python 3.10 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-windows-3.10.zip>`_
-* `Windows wheelhouse for Python 3.11 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-windows-3.11.zip>`_
+* `Windows wheelhouse for Python 3.8 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-windows-latest-3.8.zip>`_
+* `Windows wheelhouse for Python 3.9 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-windows-latest-3.9.zip>`_
+* `Windows wheelhouse for Python 3.10 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-windows-latest-3.10.zip>`_
+* `Windows wheelhouse for Python 3.11 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-windows-latest-3.11.zip>`_
 
 MacOS
 ^^^^^
 
-* `MacOS wheelhouse for Python 3.8 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-macos-3.8.zip>`_
-* `MacOS wheelhouse for Python 3.9 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-macos-3.9.zip>`_
-* `MacOS wheelhouse for Python 3.10 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-macos-3.10.zip>`_
-* `MacOS wheelhouse for Python 3.11 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-macos-3.11.zip>`_
+* `MacOS wheelhouse for Python 3.8 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-macos-latest-3.8.zip>`_
+* `MacOS wheelhouse for Python 3.9 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-macos-latest-3.9.zip>`_
+* `MacOS wheelhouse for Python 3.10 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-macos-latest-3.10.zip>`_
+* `MacOS wheelhouse for Python 3.11 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-macos-latest-3.11.zip>`_
