@@ -78,7 +78,7 @@ class ShowDesignPoints(PlotterWidget):
     def update(self) -> None:
         """Define the configuration and representation of the ruler widget button."""
         show_point_vr = self._button.GetRepresentation()
-        show_point_icon_file = os.path.join(os.path.dirname(__file__), "_images", "ruler.png")
+        show_point_icon_file = os.path.join(os.path.dirname(__file__), "_images", "designpoint.png")
         show_point_r = vtkPNGReader()
         show_point_r.SetFileName(show_point_icon_file)
         show_point_r.Update()
