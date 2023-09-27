@@ -37,3 +37,7 @@
 - name: testing
   description: Anything related to tests
   color: BFE4D6
+
+- name: security
+  description: Anything related to security advisories
+  color: FF0000
