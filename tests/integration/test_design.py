@@ -5,6 +5,7 @@ import os
 import numpy as np
 from pint import Quantity
 import pytest
+import pyvista as pv
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection import BackendType
@@ -1276,6 +1277,10 @@ def test_design_points(modeler: Modeler):
     assert "ansys.geometry.core.designer.DesignPoint" in design_point_2_str
     assert "  Name                 : SecondPointSet" in design_point_2_str
     assert "  Design Point         : [20. 20. 20.]" in design_point_2_str
+
+    # make sure it can create polydata
+    pd = design_points_1._to_polydata()
+    assert isinstance(pd, pv.PolyData)
 
 
 def test_named_selections_beams(modeler: Modeler, skip_not_on_linux_service):
