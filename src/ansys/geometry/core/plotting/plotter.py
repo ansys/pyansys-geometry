@@ -347,14 +347,14 @@ class Plotter:
         for polydata in polydata_entries:
             self.scene.add_mesh(polydata, color=EDGE_COLOR, **plotting_options)
 
-    def add_design_point(self, design_point: DesignPoint, **plotting_options) -> pv.Actor:
+    def add_design_point(self, design_point: DesignPoint, **plotting_options) -> None:
         """
-        Summary.
+        Add a DesignPoint object to the plotter.
 
         Parameters
         ----------
         design_point : DesignPoint
-            _description_
+            DesignPoint to add.
         """
         # get the actor for the DesignPoint
         actor = self.scene.add_mesh(design_point._to_polydata(), **plotting_options)

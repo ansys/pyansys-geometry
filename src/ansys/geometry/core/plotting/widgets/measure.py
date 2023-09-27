@@ -30,12 +30,12 @@ from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
 
 class MeasureWidget(PlotterWidget):
     """
-    Provides the ruler widget for the PyAnsys Geometry ``Plotter`` class.
+    Provides the measure widget for the PyAnsys Geometry ``Plotter`` class.
 
     Parameters
     ----------
-    plotter : ~pyvista.Plotter
-        Provides the plotter to add the ruler widget to.
+    plotter : PlotterHelper
+        Provides the plotter to add the measure widget to.
     """
 
     def __init__(self, plotter_helper: "PlotterHelper") -> None:
@@ -75,11 +75,13 @@ class MeasureWidget(PlotterWidget):
 
     def update(self) -> None:
         """Define the measurement widget button params."""
-        show_ruler_vr = self._button.GetRepresentation()
-        show_ruler_icon_file = os.path.join(os.path.dirname(__file__), "_images", "measurement.png")
-        show_ruler_r = vtkPNGReader()
-        show_ruler_r.SetFileName(show_ruler_icon_file)
-        show_ruler_r.Update()
-        image = show_ruler_r.GetOutput()
-        show_ruler_vr.SetButtonTexture(0, image)
-        show_ruler_vr.SetButtonTexture(1, image)
+        show_measure_vr = self._button.GetRepresentation()
+        show_measure_icon_file = os.path.join(
+            os.path.dirname(__file__), "_images", "measurement.png"
+        )
+        show_measure_r = vtkPNGReader()
+        show_measure_r.SetFileName(show_measure_icon_file)
+        show_measure_r.Update()
+        image = show_measure_r.GetOutput()
+        show_measure_vr.SetButtonTexture(0, image)
+        show_measure_vr.SetButtonTexture(1, image)

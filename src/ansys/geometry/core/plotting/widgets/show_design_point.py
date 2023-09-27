@@ -31,16 +31,16 @@ from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
 
 class ShowDesignPoints(PlotterWidget):
     """
-    Provides the ruler widget for the PyAnsys Geometry ``Plotter`` class.
+    Provides the a button to hide/show DesignPoint objects in the plotter.
 
     Parameters
     ----------
-    plotter : ~pyvista.Plotter
-        Provides the plotter to add the ruler widget to.
+    plotter : PlotterHelper
+        Provides the plotter to add the button to.
     """
 
     def __init__(self, plotter_helper: "PlotterHelper") -> None:
-        """Initialize the ``Ruler`` class."""
+        """Initialize the ``ShowDesignPoints`` class."""
         # Call PlotterWidget ctor
         super().__init__(plotter_helper._pl.scene)
         self.plotter_helper = plotter_helper
@@ -53,12 +53,7 @@ class ShowDesignPoints(PlotterWidget):
 
     def callback(self, state: bool) -> None:
         """
-        Remove or add the ruler widget actor upon click.
-
-        Notes
-        -----
-        This method provides a callback function for the ruler widet.
-        It is called every time the ruler widget is clicked.
+        Remove or add the DesignPoint actors upon click.
 
         Parameters
         ----------
@@ -76,7 +71,7 @@ class ShowDesignPoints(PlotterWidget):
                     self.plotter_helper._pl.scene.remove_actor(actor)
 
     def update(self) -> None:
-        """Define the configuration and representation of the ruler widget button."""
+        """Define the configuration and representation of the button widget button."""
         show_point_vr = self._button.GetRepresentation()
         show_point_icon_file = os.path.join(os.path.dirname(__file__), "_images", "designpoint.png")
         show_point_r = vtkPNGReader()
