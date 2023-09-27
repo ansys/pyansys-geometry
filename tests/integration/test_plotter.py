@@ -638,6 +638,7 @@ def test_visualization_polydata():
 
 
 def test_name_filter(modeler: Modeler, verify_image_cache):
+    """Test the plotter name filter."""
     # init modeler
     design = modeler.create_design("Multiplot")
 
@@ -660,6 +661,7 @@ def test_name_filter(modeler: Modeler, verify_image_cache):
 
 
 def test_plot_design_point(modeler: Modeler, verify_image_cache):
+    """Test the plotting of DesignPoint objects."""
     design = modeler.create_design("Multiplot")
     plot_list = []
 
