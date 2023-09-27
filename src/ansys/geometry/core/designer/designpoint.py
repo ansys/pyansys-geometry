@@ -22,6 +22,7 @@
 """Module for creating and managing design points."""
 
 from beartype.typing import TYPE_CHECKING, Union
+from pint import UnitRegistry
 import pyvista as pv
 
 from ansys.geometry.core.math.point import Point3D
@@ -89,4 +90,8 @@ class DesignPoint:
         return "\n".join(lines)
 
     def _to_polydata(self) -> pv.PolyData:
-        return pv.Sphere(center=self.value.flat, radius=0.001)
+        """Get polydata from DesignPoint object."""
+        # get units to plot proportionally
+        ureg = UnitRegistry()
+        unit = 1 * self.value.unit
+        return pv.Sphere(center=self.value.flat, radius=unit.to(ureg.meter).magnitude)
