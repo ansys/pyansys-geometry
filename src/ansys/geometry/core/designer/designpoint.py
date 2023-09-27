@@ -88,7 +88,7 @@ class DesignPoint:
         lines.append(f"  Design Point         : {self.value}")
         return "\n".join(lines)
 
-    def _to_polydata(self) -> pv.PolyData:
+    def _to_polydata(self) -> "pv.PolyData":
         """Get polydata from DesignPoint object."""
         import pyvista as pv
 
