@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
+"""The duplicate face problem area definition."""
 from ansys.api.geometry.v0.repairtools_pb2 import (
     FixDuplicateFacesRequest,
     FixExtraEdgesRequest,
@@ -35,8 +35,6 @@ from google.protobuf.wrappers_pb2 import Int32Value
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
-
-"""The duplicate face problem area definition."""
 
 
 class DuplicateFaceProblemAreas:
@@ -218,7 +216,11 @@ class ExtraEdgeProblemAreas:
         return self._edges
 
     def fix(self):
-        """Fix the problem area."""
+        """
+        Fix the problem area.
+
+        This method fixes the problem area and returns the
+        """
         client = GrpcClient()
         id_value = Int32Value(value=int(self._id))
         response = RepairToolsStub(client.channel).FixExtraEdges(

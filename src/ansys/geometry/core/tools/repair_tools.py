@@ -46,12 +46,12 @@ from ansys.geometry.core.tools.problem_areas import (
     StitchFaceProblemAreas,
 )
 
+
 class RepairTools:
     """Repair tools for the pygeometry."""
 
     def __init__(self, grpc_client: GrpcClient):
         """Initialize Repair Tools class."""
-
         self._grpc_client = grpc_client
         # Initialize the stubs needed.
         self._repair_stub = RepairToolsStub(self._grpc_client.channel)
