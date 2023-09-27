@@ -383,23 +383,25 @@ jobs:
     needs: [testing-windows, testing-linux, docs]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-
     - name: "Download all artifacts"
       uses: actions/download-artifact@v3
       with:
         path: /tmp/artifacts
 
-    - name: "Compressing HTML docs"
+    - name: "Compressing HTML docs to ZIP file"
       uses: vimtor/action-zip@v1.1
       with:
         files: /tmp/artifacts/documentation-html
         dest: /tmp/artifacts/documentation-html.zip
 
-    - name: "Relocate the documentation folder"
+    - name: "Download HTML documentation"
+      uses: actions/download-artifact@v3
+      with:
+        name: documentation-html
+        path: /tmp/documentation-html
+
+    - name: "Fill the HTML docs with assets"
       run: |
-        # Relocate the documentation folder
-        mv /tmp/artifacts/documentation-html /tmp/documentation-html
         # Move the docs in HTML format
         mv /tmp/artifacts/documentation-html.zip /tmp/documentation-html/_static/assets/download/
         # Move the docs in PDF format
@@ -407,7 +409,7 @@ jobs:
         # Move the wheelhouses
         mv /tmp/artifacts/**/*-wheelhouse-*.zip /tmp/documentation-html/_static/assets/download/
 
-    - name: Upload HTML documentation
+    - name: "Upload HTML documentation"
       uses: actions/upload-artifact@v3
       with:
         name: documentation-html
