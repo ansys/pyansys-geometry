@@ -93,5 +93,5 @@ class DesignPoint:
         """Get polydata from DesignPoint object."""
         # get units to plot proportionally
         ureg = UnitRegistry()
-        unit = 1 * self.value.unit
+        unit = 0.3 * self.value.unit
         return pv.Sphere(center=self.value.flat, radius=unit.to(ureg.meter).magnitude)
