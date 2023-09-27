@@ -25,6 +25,7 @@ import numpy as np
 import pyvista as pv
 
 from ansys.geometry.core.designer.body import Body, MasterBody
+from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.plotting.plotter import (
     DEFAULT_COLOR,
@@ -229,7 +230,11 @@ class PlotterHelper:
         """
         for object in self._geom_object_actors_map.values():
             # get edges only from bodies
-            if isinstance(object, Body) or isinstance(object, MasterBody):
+            if (
+                isinstance(object, Body)
+                or isinstance(object, MasterBody)
+                or isinstance(object, Face)
+            ):
                 for edge in object.edges:
                     self._edge_actors_map[edge.actor] = edge
 
