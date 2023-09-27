@@ -62,7 +62,7 @@ html_theme_options = {
         },
         {
             "name": "Download documentation in PDF",
-            "url": f"https://{cname}/version/{switcher_version}/_static/assets/download/ansys-geometry-core.pdf",
+            "url": f"https://{cname}/version/{switcher_version}/_static/assets/download/ansys-geometry-core.pdf",  # noqa: E501
             "icon": "fa fa-file-pdf fa-fw",
         },
     ],
