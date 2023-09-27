@@ -380,6 +380,42 @@ jobs:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
+  add-assets-to-docs:
+    name: Add downloadable assets to docs
+    needs: [testing-windows, testing-linux, docs]
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Download all artifacts"
+      uses: actions/download-artifact@v3
+      with:
+        path: /tmp/artifacts
+
+    - name: "Compressing HTML docs to ZIP file"
+      run: |
+        zip -r /tmp/artifacts/documentation-html.zip /tmp/artifacts/documentation-html
+
+    - name: "Download HTML documentation"
+      uses: actions/download-artifact@v3
+      with:
+        name: documentation-html
+        path: /tmp/documentation-html
+
+    - name: "Fill the HTML docs with assets"
+      run: |
+        # Move the docs in HTML format
+        mv /tmp/artifacts/documentation-html.zip /tmp/documentation-html/_static/assets/download/
+        # Move the docs in PDF format
+        mv /tmp/artifacts/documentation-pdf/* /tmp/documentation-html/_static/assets/download/
+        # Move the wheelhouses
+        mv /tmp/artifacts/**/*-wheelhouse-*.zip /tmp/documentation-html/_static/assets/download/
+
+    - name: "Upload HTML documentation"
+      uses: actions/upload-artifact@v3
+      with:
+        name: documentation-html
+        path: /tmp/documentation-html
+        retention-days: 7
+
 # =================================================================================================
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 # =================================================================================================
@@ -578,7 +614,7 @@ jobs:
   release:
     name: Release project
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    needs: [package, build-windows-container, build-linux-container]
+    needs: [package, add-assets-to-docs, build-windows-container, build-linux-container]
     runs-on: ubuntu-latest
     steps:
       - name: Release to the public PyPI repository
@@ -598,7 +634,7 @@ jobs:
     name: Upload dev documentation
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    needs: [package]
+    needs: [package, add-assets-to-docs]
     steps:
       - name: Deploy the latest documentation
         uses: ansys/actions/doc-deploy-dev@v4

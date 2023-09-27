@@ -60,6 +60,11 @@ html_theme_options = {
             "url": "https://github.com/ansys/pyansys-geometry/discussions",
             "icon": "fa fa-comment fa-fw",
         },
+        {
+            "name": "Download documentation in PDF",
+            "url": f"https://{cname}/version/{switcher_version}/_static/assets/download/ansys-geometry-core.pdf",  # noqa: E501
+            "icon": "fa fa-file-pdf fa-fw",
+        },
     ],
     "use_meilisearch": {
         "api_key": os.getenv("MEILISEARCH_PUBLIC_API_KEY", ""),
@@ -215,7 +220,7 @@ latex_additional_files = [watermark, ansys_logo_white, ansys_logo_white_cropped]
 # variables are the title of pdf, watermark
 latex_elements = {"preamble": latex.generate_preamble(html_title)}
 
-linkcheck_exclude_documents = ["index", "getting_started/local/index"]
+linkcheck_exclude_documents = ["index", "getting_started/local/index", "assets"]
 
 # -- Declare the Jinja context -----------------------------------------------
 exclude_patterns = []
