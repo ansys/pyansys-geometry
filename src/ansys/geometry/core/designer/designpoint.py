@@ -92,6 +92,5 @@ class DesignPoint:
     def _to_polydata(self) -> pv.PolyData:
         """Get polydata from DesignPoint object."""
         # get units to plot proportionally
-
         unit = 0.3 * self.value.unit
         return pv.Sphere(center=self.value.flat, radius=unit.to(UNITS.m).magnitude)
