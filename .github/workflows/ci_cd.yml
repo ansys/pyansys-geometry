@@ -379,7 +379,7 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
   add-assets-to-docs:
-    name: Package library
+    name: Add downloadable assets to docs
     needs: [testing-windows, testing-linux, docs]
     runs-on: ubuntu-latest
     steps:
