@@ -93,5 +93,7 @@ class DesignPoint:
         import pyvista as pv
 
         # get units to plot proportionally
+        # 0.3 is the size for the sphere representation
+        # determined empirically for proper representation
         unit = 0.3 * self.value.unit
         return pv.Sphere(center=self.value.flat, radius=unit.to(UNITS.m).magnitude)
