@@ -605,7 +605,7 @@ jobs:
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
-  
+
   doc-index-dev:
     name: "Deploy dev index docs"
     if: github.ref == 'refs/heads/main'
@@ -643,7 +643,7 @@ jobs:
         shell: bash
         run: |
           echo "FULL_VERSION=$(cat VERSION)" >> $GITHUB_ENV
-      
+
       - name: "Scrape the stable documentation to PyMeilisearch"
         run: |
           VERSION=$(python -c "import os; version=os.environ['FULL_VERSION']; print('.'.join(version.split('.')[:2]))")
