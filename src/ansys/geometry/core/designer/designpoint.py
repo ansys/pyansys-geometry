@@ -22,10 +22,10 @@
 """Module for creating and managing design points."""
 
 from beartype.typing import TYPE_CHECKING, Union
-from pint import UnitRegistry
 import pyvista as pv
 
 from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.misc.checks import check_type
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -92,6 +92,6 @@ class DesignPoint:
     def _to_polydata(self) -> pv.PolyData:
         """Get polydata from DesignPoint object."""
         # get units to plot proportionally
-        ureg = UnitRegistry()
+
         unit = 0.3 * self.value.unit
-        return pv.Sphere(center=self.value.flat, radius=unit.to(ureg.meter).magnitude)
+        return pv.Sphere(center=self.value.flat, radius=unit.to(UNITS.m).magnitude)
