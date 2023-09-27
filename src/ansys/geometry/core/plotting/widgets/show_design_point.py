@@ -48,7 +48,7 @@ class ShowDesignPoints(PlotterWidget):
         # Initialize variables
         self._geom_object_actors_map = self.plotter_helper._pl._geom_object_actors_map
         self._button: vtkButtonWidget = self.plotter_helper._pl.scene.add_checkbox_button_widget(
-            self.callback, position=(5, 436), size=30, border_size=3
+            self.callback, position=(5, 438), size=30, border_size=3
         )
 
     def callback(self, state: bool) -> None:
@@ -69,11 +69,11 @@ class ShowDesignPoints(PlotterWidget):
         if not state:
             for actor, object in self._geom_object_actors_map.items():
                 if isinstance(object, DesignPoint):
-                    self.plotter_helper._pl.scene.remove_actor(actor)
+                    self.plotter_helper._pl.scene.add_actor(actor)
         else:
             for actor, object in self._geom_object_actors_map.items():
                 if isinstance(object, DesignPoint):
-                    self.plotter_helper._pl.scene.add_actor(actor)
+                    self.plotter_helper._pl.scene.remove_actor(actor)
 
     def update(self) -> None:
         """Define the configuration and representation of the ruler widget button."""

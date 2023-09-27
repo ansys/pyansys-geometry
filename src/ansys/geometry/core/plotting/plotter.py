@@ -356,7 +356,10 @@ class Plotter:
         design_point : DesignPoint
             _description_
         """
+        # get the actor for the DesignPoint
         actor = self.scene.add_mesh(design_point._to_polydata(), **plotting_options)
+
+        # save the actor to the object/actor map
         self._geom_object_actors_map[actor] = design_point
 
     def add(
