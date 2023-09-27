@@ -25,8 +25,11 @@ import logging
 from pathlib import Path
 import time
 
+from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
+from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
+from google.protobuf.empty_pb2 import Empty
 import grpc
 from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
@@ -164,7 +167,21 @@ class GrpcClient:
                 logging_file = str(logging_file)
             self._log.log_to_file(filename=logging_file, level=logging_level)
 
-        # Store the backend
+        self._admin_stub = AdminStub(self._channel)
+
+        # if no backend type has been specified, ask the backend which type it is
+        if backend_type == None:
+            grpc_backend_type = self._admin_stub.GetBackend(Empty()).type
+            if grpc_backend_type == GRPCBackendType.DISCOVERY:
+                backend_type = BackendType.DISCOVERY
+            elif grpc_backend_type == GRPCBackendType.SPACECLAIM:
+                backend_type = BackendType.SPACECLAIM
+            elif grpc_backend_type == GRPCBackendType.WINDOWS_DMS:
+                backend_type = BackendType.WINDOWS_SERVICE
+            elif grpc_backend_type == GRPCBackendType.LINUX_DMS:
+                backend_type = BackendType.LINUX_SERVICE
+
+        # Store the backend type
         self._backend_type = backend_type
 
     @property

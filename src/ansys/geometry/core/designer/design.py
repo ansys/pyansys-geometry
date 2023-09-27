@@ -24,23 +24,25 @@
 from enum import Enum, unique
 from pathlib import Path
 
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier, PartExportFormat
+from ansys.api.dbu.v0.designs_pb2 import NewRequest, SaveAsRequest
+from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
     AssignMidSurfaceThicknessRequest,
     CreateBeamCircularProfileRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.designs_pb2 import ExportRequest, NewRequest, SaveAsRequest
-from ansys.api.geometry.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.materials_pb2 import AddToDocumentRequest
 from ansys.api.geometry.v0.materials_pb2_grpc import MaterialsStub
-from ansys.api.geometry.v0.models_pb2 import Empty, EntityIdentifier
 from ansys.api.geometry.v0.models_pb2 import Material as GRPCMaterial
 from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialProperty
-from ansys.api.geometry.v0.models_pb2 import PartExportFormat
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
+from ansys.api.geometry.v0.parts_pb2 import ExportRequest
+from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
 from beartype import beartype as check_input_types
 from beartype.typing import Dict, List, Optional, Union
+from google.protobuf.empty_pb2 import Empty
 import numpy as np
 from pint import Quantity
 
@@ -119,6 +121,7 @@ class Design(Component):
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
         self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
+        self._parts_stub = PartsStub(self._grpc_client.channel)
 
         # Initialize needed instance variables
         self._materials = []
@@ -235,7 +238,7 @@ class Design(Component):
             DesignFileFormat.IGES,
             DesignFileFormat.PMDB,
         ]:
-            response = self._design_stub.Export(ExportRequest(format=format.value[1]))
+            response = self._parts_stub.Export(ExportRequest(format=format.value[1]))
             received_bytes += response.data
         else:
             self._grpc_client.log.warning(
@@ -585,9 +588,11 @@ class Design(Component):
             raise RuntimeError("No existing design available at service level.")
         else:
             self._id = design.main_part.id
-            self._name = design.main_part.name
+            # Here we may take the design's name instead of the main part's name.
+            # Since they're the same in the backend.
+            self._name = design.name
 
-        response = self._design_stub.GetAssembly(EntityIdentifier(id=""))
+        response = self._commands_stub.GetAssembly(EntityIdentifier(id=""))
 
         # Store created objects
         created_parts = {p.id: Part(p.id, p.name, [], []) for p in response.parts}
