@@ -21,6 +21,7 @@ env:
   IS_WORKFLOW_RUNNING: True
   ARTIFACTORY_VERSION: v241
   MEILISEARCH_API_KEY: ${{ secrets.MEILISEARCH_API_KEY }}
+  MEILISEARCH_HOST_URL: ${{ vars.MEILISEARCH_HOST_URL }}
   MEILISEARCH_PUBLIC_API_KEY: ${{ secrets.MEILISEARCH_PUBLIC_API_KEY }}
 
 concurrency:
@@ -256,6 +257,12 @@ jobs:
           cd doc
           .\make.bat pdf
 
+      - name: Add assets to HTML docs
+        run: |
+          zip -r documentation-html.zip .\doc\_build\html
+          mv documentation-html.zip .\doc\_build\html\_static\assets\download\
+          cp doc/_build/latex/ansys-geometry-core.pdf .\doc\_build\html\_static\assets\download\
+
       - name: Upload HTML documentation
         uses: actions/upload-artifact@v3
         with:
@@ -379,42 +386,6 @@ jobs:
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-
-  add-assets-to-docs:
-    name: Add downloadable assets to docs
-    needs: [testing-windows, testing-linux, docs]
-    runs-on: ubuntu-latest
-    steps:
-    - name: "Download all artifacts"
-      uses: actions/download-artifact@v3
-      with:
-        path: /tmp/artifacts
-
-    - name: "Compressing HTML docs to ZIP file"
-      run: |
-        zip -r /tmp/artifacts/documentation-html.zip /tmp/artifacts/documentation-html
-
-    - name: "Download HTML documentation"
-      uses: actions/download-artifact@v3
-      with:
-        name: documentation-html
-        path: /tmp/documentation-html
-
-    - name: "Fill the HTML docs with assets"
-      run: |
-        # Move the docs in HTML format
-        mv /tmp/artifacts/documentation-html.zip /tmp/documentation-html/_static/assets/download/
-        # Move the docs in PDF format
-        mv /tmp/artifacts/documentation-pdf/* /tmp/documentation-html/_static/assets/download/
-        # Move the wheelhouses
-        mv /tmp/artifacts/**/*-wheelhouse-*.zip /tmp/documentation-html/_static/assets/download/
-
-    - name: "Upload HTML documentation"
-      uses: actions/upload-artifact@v3
-      with:
-        name: documentation-html
-        path: /tmp/documentation-html
-        retention-days: 7
 
 # =================================================================================================
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
@@ -614,7 +585,7 @@ jobs:
   release:
     name: Release project
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    needs: [package, add-assets-to-docs, build-windows-container, build-linux-container]
+    needs: [package, build-windows-container, build-linux-container]
     runs-on: ubuntu-latest
     steps:
       - name: Release to the public PyPI repository
@@ -634,7 +605,7 @@ jobs:
     name: Upload dev documentation
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    needs: [package, add-assets-to-docs]
+    needs: [package]
     steps:
       - name: Deploy the latest documentation
         uses: ansys/actions/doc-deploy-dev@v4
@@ -653,7 +624,7 @@ jobs:
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}/version/dev
           index-name: pyansys-geometry-vdev
-          host-url: ${{ vars.MEILISEARCH_HOST_URL }}
+          host-url: ${{ env.MEILISEARCH_HOST_URL }}
           api-key: ${{ env.MEILISEARCH_API_KEY }}
 
   upload_docs_release:
@@ -693,5 +664,5 @@ jobs:
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}/version/${{ env.VERSION }}
           index-name: pyansys-geometry-v${{ env.VERSION_MEILI }}
-          host-url: ${{ vars.MEILISEARCH_HOST_URL }}
+          host-url: ${{ env.MEILISEARCH_HOST_URL }}
           api-key: ${{ env.MEILISEARCH_API_KEY }}
