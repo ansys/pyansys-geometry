@@ -37,6 +37,7 @@ The following wheelhouse files are available for download:
 .. jinja:: wheelhouse-assets
 
     {%- for os_name, download_links in assets.items() %}
+
     {{ os_name }}
     {{ "^" * os_name|length }}
 
