@@ -1,5 +1,6 @@
 """Sphinx documentation configuration file."""
 from datetime import datetime
+import json
 import os
 from pathlib import Path
 
@@ -13,11 +14,38 @@ from ansys_sphinx_theme import (
     pyansys_logo_black,
     watermark,
 )
+import requests
 from sphinx.builders.latex import LaTeXBuilder
 
 from ansys.geometry.core import __version__
 
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
+
+
+def get_wheelhouse_assets_dictionary():
+    """Auxiliary method to build the wheelhouse assets dictionary."""
+    assets_context_os = ["Linux", "Windows", "MacOS"]
+    assets_context_runners = ["ubuntu-latest", "windows-latest", "macos-latest"]
+    assets_context_python_versions = ["3.8", "3.9", "3.10", "3.11"]
+    assets_context_version = json.loads(
+        requests.get("https://api.github.com/repos/ansys/pyansys-geometry/releases/latest").content
+    )["name"]
+
+    assets = {}
+    for assets_os, assets_runner in zip(assets_context_os, assets_context_runners):
+        download_links = []
+        for assets_py_ver in assets_context_python_versions:
+            temp_dict = {
+                "os": assets_os,
+                "runner": assets_runner,
+                "python_versions": assets_py_ver,
+                "latest_released_version": assets_context_version,
+                "prefix_url": f"https://github.com/ansys/pyansys-geometry/releases/download/{assets_context_version}",  # noqa: E501
+            }
+            download_links.append(temp_dict)
+
+        assets[assets_os] = download_links
+    return assets
 
 
 # Project information
@@ -244,6 +272,7 @@ jinja_contexts = {
     "windows_containers": {
         "add_windows_warnings": True,
     },
+    "download-assets": {"assets": get_wheelhouse_assets_dictionary()},
 }
 
 
