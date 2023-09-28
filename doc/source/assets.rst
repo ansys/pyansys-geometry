@@ -44,7 +44,7 @@ The following wheelhouse files are available for download:
     * `{{ link.os }} wheelhouse for Python {{ link.python_versions }} <{{ link.prefix_url }}/ansys-geometry-core-{{ link.latest_released_version }}-wheelhouse-{{ link.runner }}-{{ link.python_versions }}.zip>`_
     {%- endfor %}
 
-    {% endfor %}
+    {%- endfor %}
 
 Geometry service Docker container assets
 ----------------------------------------
