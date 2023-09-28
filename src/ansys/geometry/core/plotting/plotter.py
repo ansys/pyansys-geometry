@@ -230,6 +230,12 @@ class Plotter:
         if show_frame:
             self.plot_frame(sketch._plane)
 
+        if "clip" in plotting_options:
+            logger.warning("Clipping is not available in Sketch objects.")
+            plotting_options.pop("clip")
+            plotting_options.pop("normal", None)
+            plotting_options.pop("origin", None)
+
         self.add_sketch_polydata(sketch.sketch_polydata_faces(), opacity=0.7, **plotting_options)
         self.add_sketch_polydata(sketch.sketch_polydata_edges(), **plotting_options)
 
@@ -280,6 +286,11 @@ class Plotter:
         # Use the default PyAnsys Geometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
         dataset = body.tessellate(merge=merge)
+        if "clip" in plotting_options:
+            plotting_options.pop("clip")
+            dataset = self.clip(dataset, **plotting_options)
+            plotting_options.pop("normal", None)
+            plotting_options.pop("origin", None)
         if isinstance(dataset, pv.MultiBlock):
             actor, _ = self.scene.add_composite(dataset, **plotting_options)
         else:
@@ -323,6 +334,13 @@ class Plotter:
         # Use the default PyAnsys Geometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
+
+        if "clip" in plotting_options:
+            plotting_options.pop("clip")
+            dataset = self.clip(dataset, **plotting_options)
+            plotting_options.pop("normal", None)
+            plotting_options.pop("origin", None)
+
         if isinstance(dataset, pv.MultiBlock):
             actor, _ = self.scene.add_composite(dataset, **plotting_options)
         else:
@@ -343,8 +361,44 @@ class Plotter:
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         # Use the default PyAnsys Geometry add_mesh arguments
+        mb = pv.MultiBlock()
         for polydata in polydata_entries:
-            self.scene.add_mesh(polydata, color=EDGE_COLOR, **plotting_options)
+            mb.append(polydata)
+
+        if "clip" in plotting_options:
+            plotting_options.pop("clip")
+            dataset = self.clip(dataset, **plotting_options)
+            plotting_options.pop("normal", None)
+            plotting_options.pop("origin", None)
+
+        self.scene.add_mesh(mb, color=EDGE_COLOR, **plotting_options)
+
+    def clip(
+        self,
+        mesh: Union[pv.PolyData | pv.MultiBlock],
+        normal: str = "x",
+        origin: tuple = None,
+        **plotting_options,
+    ) -> Union[pv.PolyData | pv.MultiBlock]:
+        """
+        Clip the passed mesh with a plane.
+
+        Parameters
+        ----------
+        mesh : Union[pv.PolyData|pv.MultiBlock]
+            Mesh you want to clip.
+        normal : str, optional
+            Plane you want to use for clipping, by default "x".
+            Available options: ["x", "-x", "y", "-y", "z", "-z"]
+        origin : tuple, optional
+            Origin point of the plane, by default None
+
+        Returns
+        -------
+        Union[pv.PolyData|pv.MultiBlock]
+            The clipped mesh.
+        """
+        return mesh.clip(normal=normal, origin=origin)
 
     def add(
         self,
@@ -353,7 +407,7 @@ class Plotter:
         merge_components: bool = False,
         filter: str = None,
         **plotting_options,
-    ) -> Dict[pv.Actor, GeomObjectPlot]:
+    ) -> None:
         """
         Add any type of object to the scene.
 
@@ -377,11 +431,6 @@ class Plotter:
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
-
-        Returns
-        -------
-        Dict[~pyvista.Actor, GeomObjectPlot]
-            Mapping between the ~pyvista.Actor and the PyAnsys Geometry object.
         """
         logger.debug(f"Adding object type {type(object)} to the PyVista plotter")
         if filter:
@@ -394,8 +443,18 @@ class Plotter:
         if isinstance(object, List) and isinstance(object[0], pv.PolyData):
             self.add_sketch_polydata(object, **plotting_options)
         elif isinstance(object, pv.PolyData):
+            if "clip" in plotting_options:
+                plotting_options.pop("clip")
+                object = self.clip(object, **plotting_options)
+                plotting_options.pop("normal", None)
+                plotting_options.pop("origin", None)
             self.scene.add_mesh(object, **plotting_options)
         elif isinstance(object, pv.MultiBlock):
+            if "clip" in plotting_options:
+                plotting_options.pop("clip")
+                object = self.clip(object, **plotting_options)
+                plotting_options.pop("normal", None)
+                plotting_options.pop("origin", None)
             self.scene.add_composite(object, **plotting_options)
         elif isinstance(object, Sketch):
             self.plot_sketch(object, **plotting_options)
@@ -405,7 +464,6 @@ class Plotter:
             self.add_component(object, merge_components, merge_bodies, **plotting_options)
         else:
             logger.warning(f"Object type {type(object)} can not be plotted.")
-        return self._geom_object_actors_map
 
     def add_list(
         self,
@@ -414,7 +472,7 @@ class Plotter:
         merge_components: bool = False,
         filter: str = None,
         **plotting_options,
-    ) -> Dict[pv.Actor, GeomObjectPlot]:
+    ) -> None:
         """
         Add a list of any type of object to the scene.
 
@@ -438,15 +496,9 @@ class Plotter:
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
-
-        Returns
-        -------
-        Dict[~pyvista.Actor, GeomObjectPlot]
-            Mapping between the ~pyvista.Actor and the PyAnsys Geometry objects.
         """
         for object in plotting_list:
             _ = self.add(object, merge_bodies, merge_components, filter, **plotting_options)
-        return self._geom_object_actors_map
 
     def show(
         self,
@@ -504,3 +556,8 @@ class Plotter:
         # This method should only be applied in 3D objects: bodies, components
         plotting_options.setdefault("smooth_shading", True)
         plotting_options.setdefault("color", DEFAULT_COLOR)
+
+    @property
+    def geom_object_actors_map(self) -> Dict[pv.Actor, GeomObjectPlot]:
+        """Mapping between the ~pyvista.Actor and the PyAnsys Geometry objects."""
+        return self._geom_object_actors_map
