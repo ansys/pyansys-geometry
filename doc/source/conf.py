@@ -272,7 +272,7 @@ jinja_contexts = {
     "windows_containers": {
         "add_windows_warnings": True,
     },
-    "download-assets": {"assets": get_wheelhouse_assets_dictionary()},
+    "wheelhouse-assets": {"assets": get_wheelhouse_assets_dictionary()},
 }
 
 

@@ -34,7 +34,7 @@ Consider installing using a `virtual environment <https://docs.python.org/3/libr
 
 The following wheelhouse files are available for download:
 
-.. jinja:: download-assets
+.. jinja:: wheelhouse-assets
 
     {%- for os_name, download_links in assets.items() %}
     {{ os_name }}
