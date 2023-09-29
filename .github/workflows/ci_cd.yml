@@ -635,17 +635,6 @@ jobs:
         run: |
           sudo apt-get update
 
-      - name: "Decompress artifact content"
-        run: |
-          sudo apt-get install -y cargo && cargo install ouch
-          export PATH="$HOME/.cargo/bin/:$PATH"
-          ouch --version
-          cd documentation-html && compressed_artifact=$(ls .)
-          ouch decompress $compressed_artifact
-          decompressed_artifact=$(ls -I "*${compressed_artifact##*.}")
-          mv $decompressed_artifact/* .
-          rm -rf $compressed_artifact $decompressed_artifact
-
       - name: "Display structure of documentation-html"
         run: |
           ls -R documentation-html
