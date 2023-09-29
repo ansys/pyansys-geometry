@@ -17,3 +17,4 @@
 * [Alejandro Fernández](https://github.com/AlejandroFernandezLuces)
 * [Lance Lance](https://github.com/LanceX2214)
 * [Dastan Abdulla](https://github.com/dastan-ansys)
+* [Riccardo Manno](https://github.com/rmanno91)
