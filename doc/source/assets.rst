@@ -34,26 +34,40 @@ Consider installing using a `virtual environment <https://docs.python.org/3/libr
 
 The following wheelhouse files are available for download:
 
-Linux
-^^^^^
+.. jinja:: wheelhouse-assets
 
-* `Linux wheelhouse for Python 3.8 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-ubuntu-latest-3.8.zip>`_
-* `Linux wheelhouse for Python 3.9 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-ubuntu-latest-3.9.zip>`_
-* `Linux wheelhouse for Python 3.10 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-ubuntu-latest-3.10.zip>`_
-* `Linux wheelhouse for Python 3.11 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-ubuntu-latest-3.11.zip>`_
+    {%- for os_name, download_links in assets.items() %}
 
-Windows
-^^^^^^^
+    {{ os_name }}
+    {{ "^" * os_name|length }}
 
-* `Windows wheelhouse for Python 3.8 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-windows-latest-3.8.zip>`_
-* `Windows wheelhouse for Python 3.9 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-windows-latest-3.9.zip>`_
-* `Windows wheelhouse for Python 3.10 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-windows-latest-3.10.zip>`_
-* `Windows wheelhouse for Python 3.11 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-windows-latest-3.11.zip>`_
+    {%- for link in download_links %}
+    * `{{ link.os }} wheelhouse for Python {{ link.python_versions }} <{{ link.prefix_url }}/ansys-geometry-core-{{ link.latest_released_version }}-wheelhouse-{{ link.runner }}-{{ link.python_versions }}.zip>`_
+    {%- endfor %}
 
-MacOS
-^^^^^
+    {%- endfor %}
 
-* `MacOS wheelhouse for Python 3.8 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-macos-latest-3.8.zip>`_
-* `MacOS wheelhouse for Python 3.9 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-macos-latest-3.9.zip>`_
-* `MacOS wheelhouse for Python 3.10 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-macos-latest-3.10.zip>`_
-* `MacOS wheelhouse for Python 3.11 <_static/assets/download/ansys-geometry-core-v0.4.dev0-wheelhouse-macos-latest-3.11.zip>`_
+Geometry service Docker container assets
+----------------------------------------
+
+Build the latest Geometry service Docker container using the following assets. Instructions
+on how to build the containers are found at `Docker containers <getting_started/docker/index.html>`_.
+
+Currently, the Geometry service backend is mainly delivered as a **Windows** Docker container.
+However, these containers require a Windows machine to run them.
+
+A Linux version of the Geometry service is also available but with limited capabilities,
+meaning that certain operations are not available or fail.
+
+
+Windows container
+^^^^^^^^^^^^^^^^^
+
+* `Latest Geometry service binaries for Windows containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/windows-binaries.zip>`_
+* `Latest Geometry service Dockerfile for Windows containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/windows-dockerfile.zip>`_
+
+Linux container
+^^^^^^^^^^^^^^^
+
+* `Latest Geometry service binaries for Linux containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/linux-binaries.zip>`_
+* `Latest Geometry service Dockerfile for Linux containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/linux-dockerfile.zip>`_
