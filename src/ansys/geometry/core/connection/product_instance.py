@@ -246,7 +246,7 @@ def prepare_and_start_backend(
 def get_available_port():
     """Return an available port to be used."""
     sock = socket.socket()
-    sock.bind(("", 0))
+    sock.bind((socket.gethostname(), 0))
     port = sock.getsockname()[1]
     sock.close()
     return port
