@@ -242,7 +242,6 @@ def prepare_and_start_backend(
     )
 
 
-@staticmethod
 def get_available_port():
     """Return an available port to be used."""
     sock = socket.socket()
