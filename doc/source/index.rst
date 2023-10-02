@@ -3,50 +3,52 @@ PyAnsys Geometry documentation |version|
 
 PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
-.. grid:: 2
+.. grid:: 1 2 2 2
+   :gutter: 4
+   :padding: 2 2 0 0
+   :class-container: sd-text-center
+    
+   .. grid-item-card:: Getting started
+      :img-top: _static/assets/index_getting_started.png
+      :class-card: intro-card
+      
+      Learn how to run the Windows Docker container, install the
+      PyAnsys Geometry image, and launch and connect to the Geometry
+      service.
+
+      +++
+      .. button-link:: getting_started/index.html
+         :color: secondary
+         :outline:
+         :expand:
+         :click-parent:
+
+         Getting started
 
    .. grid-item-card::
-            :img-top: _static/assets/index_getting_started.png
+      :img-top: _static/assets/index_user_guide.png
 
-            Getting started
-            ^^^^^^^^^^^^^^^
+      User guide
+      ^^^^^^^^^^
 
-            Learn how to run the Windows Docker container, install the
-            PyAnsys Geometry image, and launch and connect to the Geometry
-            service.
+      Understand key concepts and approaches for primitives,
+      sketches, and model designs.
 
-            +++
+      +++
+      .. button-link:: user_guide/index.html
+         :color: secondary
+         :expand:
+         :outline:
+         :click-parent:
 
-            .. button-link:: getting_started/index.html
-               :color: secondary
-               :expand:
-               :outline:
-               :click-parent:
+         User guide
 
-                  Getting started
-
-   .. grid-item-card::
-            :img-top: _static/assets/index_user_guide.png
-
-            User guide
-            ^^^^^^^^^^
-
-            Understand key concepts and approaches for primitives,
-            sketches, and model designs.
-
-            +++
-            .. button-link:: user_guide/index.html
-               :color: secondary
-               :expand:
-               :outline:
-               :click-parent:
-
-                  User guide
 
 
 .. jinja:: main_toctree
 
     .. grid:: 2
+       :gutter: 2 2 3 3
 
        {% if build_api %}
        .. grid-item-card::
@@ -89,8 +91,9 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
        {% endif %}
 
 .. grid:: 2
+    :gutter: 2 2 3 3
 
-   .. grid-item-card::
+    .. grid-item-card::
             :img-top: _static/assets/index_contribute.png
 
             Contribute
@@ -107,7 +110,7 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
                   Contribute
 
-   .. grid-item-card::
+    .. grid-item-card::
             :img-top: _static/assets/index_download.png
 
             Assets
