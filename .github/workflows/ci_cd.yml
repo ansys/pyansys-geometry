@@ -626,6 +626,7 @@ jobs:
           index-name: pyansys-geometry-vdev
           host-url: ${{ env.MEILISEARCH_HOST_URL }}
           api-key: ${{ env.MEILISEARCH_API_KEY }}
+          python-version: '3.11'
 
   upload_docs_release:
     name: Upload release documentation
@@ -666,3 +667,4 @@ jobs:
           index-name: pyansys-geometry-v${{ env.VERSION_MEILI }}
           host-url: ${{ env.MEILISEARCH_HOST_URL }}
           api-key: ${{ env.MEILISEARCH_API_KEY }}
+          python-version: '3.11'
