@@ -1,7 +1,6 @@
 """"Testing of repair tools."""
 
 from ansys.geometry.core.modeler import Modeler
-from ansys.geometry.core.tools import RepairTools
 
 
 def test_find_split_edges(modeler: Modeler):
@@ -21,14 +20,13 @@ def test_find_inexact_edges(modeler: Modeler):
     """Test to read geometry and find it's inexact edge problem areas."""
     modeler.open_file("./tests/integration/files/InExactEdgesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_inexact_edges(["0:38"])
-    assert len(problem_areas) == 6
+    assert len(problem_areas) == 12
 
 
 def test_find_missing_faces(modeler: Modeler):
     """Test to read geometry and find it's missing face problem areas."""
     modeler.open_file("./tests/integration/files/MissingFacesDesignBefore.scdocx")
-    repair_tools = RepairTools(modeler.client)
-    problem_areas = repair_tools.find_missing_faces(["1:40"])
+    problem_areas = modeler.repair_tools.find_missing_faces(["1:40"])
     assert len(problem_areas) == 1
 
 

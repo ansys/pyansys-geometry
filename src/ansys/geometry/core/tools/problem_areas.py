@@ -19,7 +19,9 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""The duplicate face problem area definition."""
+"""The problem area definition."""
+from abc import abstractmethod
+
 from ansys.api.geometry.v0.repairtools_pb2 import (
     FixDuplicateFacesRequest,
     FixExtraEdgesRequest,
@@ -30,43 +32,64 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FixStitchFacesRequest,
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
+from beartype.typing import List
 from google.protobuf.wrappers_pb2 import Int32Value
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 
 
-class DuplicateFaceProblemAreas:
+class ProblemArea:
     """
-    Represents a duplicate face problem area.
+    Represents problem areas.
 
-    Resas with unique identifier and associated
-    faces.
-
-    Attributes:
-        _id (str): A unique identifier for the problem area.
-        _faces (list[str]): A list of faces associated with the design.
+    Parameters
+    ----------
+    id : str
+        Server-defined ID for the problem area.
+    grpc_client : GrpcClient
+        Active supporting geometry service instance for design modeling.
     """
 
-    def __init__(self, id: str, faces: list[str]):
-        """
-        Initialize a new instance of the duplicate face problem area class.
-
-        :param id: A unique identifier for the design.
-        :type id: str
-        :param design_edges: A list of faces associated with the design.
-        :type design_edges: list[str]
-        """
+    def __init__(self, id: str, grpc_client: GrpcClient):
+        """Initialize a new instance of the duplicate face problem area class."""
         self._id = id
-        self._faces = faces
+        self._repair_stub = RepairToolsStub(grpc_client.channel)
 
     @property
     def id(self) -> str:
         """The id of the problem area."""
         return self._id
 
+    @abstractmethod
+    def fix(self):
+        """Fix problem areas."""
+        raise NotImplementedError("Fix method is not implemented in the base class.")
+
+
+class DuplicateFaceProblemAreas(ProblemArea):
+    """
+    Provides duplicate face problem area definition.
+
+    Represents a duplicate face problem area with unique identifier and associated faces.
+
+    Parameters
+    ----------
+    id : str
+        Server-defined ID for the body.
+    grpc_client : GrpcClient
+        Active supporting geometry service instance for design modeling.
+    faces : List[str]
+        A list of faces associated with the design.
+    """
+
+    def __init__(self, id: str, faces: List[str], grpc_client: GrpcClient):
+        """Initialize a new instance of the duplicate face problem area class."""
+        super().__init__(id, grpc_client)
+        self._faces = faces
+
     @property
-    def faces(self) -> list[str]:
+    def faces(self) -> List[str]:
         """
         The list of the problem area ids.
 
@@ -75,10 +98,16 @@ class DuplicateFaceProblemAreas:
         return self._faces
 
     def fix(self):
-        """Fix the problem area."""
-        client = GrpcClient()
+        """
+        Fix the problem area.
+
+        Returns
+        -------
+        message: RepairToolMessage
+            a message containing created and/or modified bodies.
+        """
         id_value = Int32Value(value=int(self._id))
-        response = RepairToolsStub(client.channel).FixDuplicateFaces(
+        response = self._repair_stub.FixDuplicateFaces(
             FixDuplicateFacesRequest(duplicate_face_problem_area_id=id_value)
         )
         message = RepairToolMessage(
@@ -89,27 +118,30 @@ class DuplicateFaceProblemAreas:
         return message
 
 
-class MissingFaceProblemAreas:
+class MissingFaceProblemAreas(ProblemArea):
     """
     Provides missing face problem area definition.
 
-    Represents a duplicate face problem area with unique identifier and associated faces.
-
-    Attributes:
-        _id (str): A unique identifier for the problem area.
-        _edges (list[str]): A list of faces associated with the design.
+    Parameters
+    ----------
+    id : str
+        Server-defined ID for the body.
+    grpc_client : GrpcClient
+        Active supporting geometry service instance for design modeling.
+    edges : List[str]
+        A list of edges associated with the design.
     """
 
-    def __init__(self, id: str, edges: list[str]):
+    def __init__(self, id: str, edges: List[str], grpc_client: GrpcClient):
         """
         Initialize a new instance of the missing face problem area class.
 
         :param id: A unique identifier for the design.
         :type id: str
         :param edges: A list of edges associated with the design.
-        :type edges: list[str]
+        :type edges: List[str]
         """
-        self._id = id
+        super().__init__(id, grpc_client)
         self._edges = edges
 
     @property
@@ -118,15 +150,21 @@ class MissingFaceProblemAreas:
         return self._id
 
     @property
-    def edges(self) -> list[str]:
+    def edges(self) -> List[str]:
         """The list of the ids of the edges connected to this problem area."""
         return self._edges
 
     def fix(self):
-        """Fix the problem area."""
-        client = GrpcClient()
-        id_value = Int32Value(value=int(self._id))
-        response = RepairToolsStub(client.channel).FixMissingFaces(
+        """
+        Fix the problem area.
+
+        Returns
+        -------
+        message: RepairToolMessage
+            a message containing created and/or modified bodies.
+        """
+        id_value = self._id
+        response = self._repair_stub.FixMissingFaces(
             FixMissingFacesRequest(missing_face_problem_area_id=id_value)
         )
         message = RepairToolMessage(
@@ -137,25 +175,23 @@ class MissingFaceProblemAreas:
         return message
 
 
-class InexactEdgeProblemAreas:
+class InexactEdgeProblemAreas(ProblemArea):
     """
     Represents an inexact edge problem area with unique identifier and associated edges.
 
-    Attributes:
-        _id (str): A unique identifier for the problem area.
-        _edges (list[str]): A list of edges associated with the design.
+    Parameters
+    ----------
+    id : str
+        Server-defined ID for the body.
+    grpc_client : GrpcClient
+        Active supporting geometry service instance for design modeling.
+    edges : List[str]
+        A list of edges associated with the design.
     """
 
-    def __init__(self, id: str, edges: list[str]):
-        """
-        Initialize a new instance of the inexact edge problem area class.
-
-        :param id: A unique identifier for the design.
-        :type id: str
-        :param edges: A list of edges associated with the design.
-        :type edges: list[str]
-        """
-        self._id = id
+    def __init__(self, id: str, edges: List[str], grpc_client: GrpcClient):
+        """Initialize a new instance of the inexact edge problem area class."""
+        super().__init__(id, grpc_client)
         self._edges = edges
 
     @property
@@ -164,15 +200,21 @@ class InexactEdgeProblemAreas:
         return self._id
 
     @property
-    def edges(self) -> list[str]:
+    def edges(self) -> List[str]:
         """The list of the ids of the edges connected to this problem area."""
         return self._edges
 
     def fix(self):
-        """Fix the problem area."""
-        client = GrpcClient()
+        """
+        Fix the problem area.
+
+        Returns
+        -------
+        message: RepairToolMessage
+            a message containing created and/or modified bodies.
+        """
         id_value = Int32Value(value=int(self._id))
-        response = RepairToolsStub(client.channel).FixInexactEdges(
+        response = self._repair_stub.FixInexactEdges(
             FixInexactEdgesRequest(inexact_edge_problem_area_id=id_value)
         )
         message = RepairToolMessage(
@@ -183,25 +225,23 @@ class InexactEdgeProblemAreas:
         return message
 
 
-class ExtraEdgeProblemAreas:
+class ExtraEdgeProblemAreas(ProblemArea):
     """
     Represents a extra edge problem area with unique identifier and associated edges.
 
-    Attributes:
-        _id (str): A unique identifier for the problem area.
-        _edges (list[str]): A list of edges associated with the design.
+    Parameters
+    ----------
+    id : str
+        Server-defined ID for the body.
+    grpc_client : GrpcClient
+        Active supporting geometry service instance for design modeling.
+    edges : List[str]
+        A list of edges associated with the design.
     """
 
-    def __init__(self, id: str, edges: list[str]):
-        """
-        Initialize a new instance of the extra edge problem area class.
-
-        :param id: A unique identifier for the design.
-        :type id: str
-        :param edges: A list of edges associated with the design.
-        :type edges: list[str]
-        """
-        self._id = id
+    def __init__(self, id: str, edges: List[str], grpc_client: GrpcClient):
+        """Initialize a new instance of the extra edge problem area class."""
+        super().__init__(id, grpc_client)
         self._edges = edges
 
     @property
@@ -210,7 +250,7 @@ class ExtraEdgeProblemAreas:
         return self._id
 
     @property
-    def edges(self) -> list[str]:
+    def edges(self) -> List[str]:
         """The list of the ids of the edges connected to this problem area."""
         return self._edges
 
@@ -218,11 +258,13 @@ class ExtraEdgeProblemAreas:
         """
         Fix the problem area.
 
-        This method fixes the problem area and returns the
+        Returns
+        -------
+        message: RepairToolMessage
+            a message containing created and/or modified bodies.
         """
-        client = GrpcClient()
         id_value = Int32Value(value=int(self._id))
-        response = RepairToolsStub(client.channel).FixExtraEdges(
+        response = self._repair_stub.FixExtraEdges(
             FixExtraEdgesRequest(extra_edge_problem_area_id=id_value)
         )
         message = RepairToolMessage(
@@ -233,25 +275,23 @@ class ExtraEdgeProblemAreas:
         return message
 
 
-class ShortEdgeProblemAreas:
+class ShortEdgeProblemAreas(ProblemArea):
     """
     Represents a short edge problem area with unique identifier and associated edges.
 
-    Attributes:
-        _id (str): A unique identifier for the problem area.
-        _edges (list[str]): A list of edges associated with the design.
+    Parameters
+    ----------
+    id : str
+        Server-defined ID for the body.
+    grpc_client : GrpcClient
+        Active supporting geometry service instance for design modeling.
+    edges : List[str]
+        A list of edges associated with the design.
     """
 
-    def __init__(self, id: str, edges: list[str]):
-        """
-        Initialize a new instance of the short edge problem area class.
-
-        :param id: A unique identifier for the design.
-        :type id: str
-        :param edges: A list of edges associated with the design.
-        :type edges: list[str]
-        """
-        self._id = id
+    def __init__(self, id: str, edges: List[str], grpc_client: GrpcClient):
+        """Initialize a new instance of the short edge problem area class."""
+        super().__init__(id, grpc_client)
         self._edges = edges
 
     @property
@@ -260,15 +300,21 @@ class ShortEdgeProblemAreas:
         return self._id
 
     @property
-    def design_edges(self) -> list[str]:
+    def design_edges(self) -> List[str]:
         """The list of the ids of the edges connected to this problem area."""
         return self._design_edges
 
     def fix(self):
-        """Fix the problem area."""
-        client = GrpcClient()
+        """
+        Fix the problem area.
+
+        Returns
+        -------
+        message: RepairToolMessage
+            a message containing created and/or modified bodies.
+        """
         id_value = Int32Value(value=int(self._id))
-        response = RepairToolsStub(client.channel).FixShortEdges(
+        response = self._repair_stub.FixShortEdges(
             FixShortEdgesRequest(short_edge_problem_area_id=id_value)
         )
         message = RepairToolMessage(
@@ -279,25 +325,23 @@ class ShortEdgeProblemAreas:
         return message
 
 
-class SmallFaceProblemAreas:
+class SmallFaceProblemAreas(ProblemArea):
     """
     Represents a small face problem area with unique identifier and associated faces.
 
-    Attributes:
-        _id (str): A unique identifier for the problem area.
-        _faces (list[str]): A list of faces associated with the design.
+    Parameters
+    ----------
+    id : str
+        Server-defined ID for the body.
+    grpc_client : GrpcClient
+        Active supporting geometry service instance for design modeling.
+    faces : List[str]
+        A list of edges associated with the design.
     """
 
-    def __init__(self, id: str, faces: list[str]):
-        """
-        Initialize a new instance of the small face problem area class.
-
-        :param id: A unique identifier for the design.
-        :type id: str
-        :param design_edges: A list of faces associated with the design.
-        :type design_edges: list[str]
-        """
-        self._id = id
+    def __init__(self, id: str, faces: List[str], grpc_client: GrpcClient):
+        """Initialize a new instance of the small face problem area class."""
+        super().__init__(id, grpc_client)
         self._faces = faces
 
     @property
@@ -306,15 +350,21 @@ class SmallFaceProblemAreas:
         return self._id
 
     @property
-    def faces(self) -> list[str]:
+    def faces(self) -> List[str]:
         """The list of the ids of the edges connected to this problem area."""
         return self._faces
 
     def fix(self):
-        """Fix the problem area."""
-        client = GrpcClient()
+        """
+        Fix the problem area.
+
+        Returns
+        -------
+        message: RepairToolMessage
+            a message containing created and/or modified bodies.
+        """
         id_value = Int32Value(value=int(self._id))
-        response = RepairToolsStub(client.channel).FixSmallFaces(
+        response = self._repair_stub.FixSmallFaces(
             FixSmallFacesRequest(small_face_problem_area_id=id_value)
         )
         message = RepairToolMessage(
@@ -325,25 +375,23 @@ class SmallFaceProblemAreas:
         return message
 
 
-class SplitEdgeProblemAreas:
+class SplitEdgeProblemAreas(ProblemArea):
     """
     Represents a split edge problem area with unique identifier and associated edges.
 
-    Attributes:
-        _id (str): A unique identifier for the problem area.
-        _edges (list[str]): A list of edges associated with the design.
+    Parameters
+    ----------
+    id : str
+        Server-defined ID for the body.
+    grpc_client : GrpcClient
+        Active supporting geometry service instance for design modeling.
+    edges : List[str]
+        A list of edges associated with the design.
     """
 
-    def __init__(self, id: str, edges: list[str]):
-        """
-        Initialize a new instance of the split edge problem area class.
-
-        :param id: A unique identifier for the design.
-        :type id: str
-        :param design_edges: A list of faces associated with the design.
-        :type design_edges: list[str]
-        """
-        self._id = id
+    def __init__(self, id: str, edges: List[str], grpc_client: GrpcClient):
+        """Initialize a new instance of the split edge problem area class."""
+        super().__init__(id, grpc_client)
         self._edges = edges
 
     @property
@@ -352,15 +400,21 @@ class SplitEdgeProblemAreas:
         return self._id
 
     @property
-    def edges(self) -> list[str]:
+    def edges(self) -> List[str]:
         """The list of the ids of the edges connected to this problem area."""
         return self._edges
 
     def fix(self):
-        """Fix the problem area."""
-        client = GrpcClient()
+        """
+        Fix the problem area.
+
+        Returns
+        -------
+        message: RepairToolMessage
+            a message containing created and/or modified bodies.
+        """
         id_value = Int32Value(value=int(self._id))
-        response = RepairToolsStub(client.channel).FixSplitEdges(
+        response = self._repair_stub.FixSplitEdges(
             FixSplitEdgesRequest(split_edge_problem_area_id=id_value)
         )
         message = RepairToolMessage(
@@ -371,25 +425,23 @@ class SplitEdgeProblemAreas:
         return message
 
 
-class StitchFaceProblemAreas:
+class StitchFaceProblemAreas(ProblemArea):
     """
     Represents a stitch face problem area with unique identifier and associated faces.
 
-    Attributes:
-        _id (str): A unique identifier for the problem area.
-        _faces (list[str]): A list of faces associated with the design.
+    Parameters
+    ----------
+    id : str
+        Server-defined ID for the body.
+    grpc_client : GrpcClient
+        Active supporting geometry service instance for design modeling.
+    faces : List[str]
+        A list of faces associated with the design.
     """
 
-    def __init__(self, id: str, faces: list[str]):
-        """
-        Initialize a new instance of the stitch face problem area class.
-
-        :param id: A unique identifier for the design.
-        :type id: str
-        :param faces: A list of faces associated with the design.
-        :type faces: list[str]
-        """
-        self._id = id
+    def __init__(self, id: str, faces: List[str], grpc_client: GrpcClient):
+        """Initialize a new instance of the stitch face problem area class."""
+        super().__init__(id, grpc_client)
         self._faces = faces
 
     @property
@@ -398,15 +450,21 @@ class StitchFaceProblemAreas:
         return self._id
 
     @property
-    def faces(self) -> list[str]:
+    def faces(self) -> List[str]:
         """The list of the ids of the faces connected to this problem area."""
         return self._faces
 
     def fix(self):
-        """Fix the problem area."""
-        client = GrpcClient()
+        """
+        Fix the problem area.
+
+        Returns
+        -------
+        message: RepairToolMessage
+            a message containing created and/or modified bodies.
+        """
         id_value = Int32Value(value=int(self._id))
-        response = RepairToolsStub(client.channel).FixStitchFaces(
+        response = self._repair_stub.FixStitchFaces(
             FixStitchFacesRequest(stitch_face_problem_area_id=id_value)
         )
         message = RepairToolMessage(
