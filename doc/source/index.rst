@@ -7,11 +7,11 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
    :gutter: 4
    :padding: 2 2 0 0
    :class-container: sd-text-center
-    
+
    .. grid-item-card:: Getting started
       :img-top: _static/assets/index_getting_started.png
       :class-card: intro-card
-      
+
       Learn how to run the Windows Docker container, install the
       PyAnsys Geometry image, and launch and connect to the Geometry
       service.
