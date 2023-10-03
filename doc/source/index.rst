@@ -88,7 +88,7 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
                       Examples
        {% endif %}
 
-.. grid::
+.. grid:: 2
 
    .. grid-item-card::
             :img-top: _static/assets/index_contribute.png
@@ -107,6 +107,22 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
                   Contribute
 
+   .. grid-item-card::
+            :img-top: _static/assets/index_download.png
+
+            Assets
+            ^^^^^^
+            Download different assets related to PyAnsys Geometry,
+            such as documentation, package wheelhouse, and related files.
+
+            +++
+            .. button-link:: assets.html
+               :color: secondary
+               :expand:
+               :outline:
+               :click-parent:
+
+                  Assets
 
 .. jinja:: main_toctree
 
@@ -123,3 +139,4 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
        examples
        {% endif %}
        contributing
+       assets

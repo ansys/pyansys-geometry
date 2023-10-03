@@ -7,7 +7,7 @@ import pyvista as pv
 from pyvista.plotting import system_supports_plotting
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core.math import UNITVECTOR3D_Y, UNITVECTOR3D_Z, Plane, Point2D
+from ansys.geometry.core.math import UNITVECTOR3D_Y, UNITVECTOR3D_Z, Plane, Point2D, Point3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
 from ansys.geometry.core.plotting import Plotter, PlotterHelper
 from ansys.geometry.core.sketch import (
@@ -638,6 +638,7 @@ def test_visualization_polydata():
 
 
 def test_name_filter(modeler: Modeler, verify_image_cache):
+    """Test the plotter name filter."""
     # init modeler
     design = modeler.create_design("Multiplot")
 
@@ -656,4 +657,29 @@ def test_name_filter(modeler: Modeler, verify_image_cache):
         [cyl_body, box_body],
         filter="Cyl",
         screenshot=Path(IMAGE_RESULTS_DIR, "test_name_filter.png"),
+    )
+
+
+def test_plot_design_point(modeler: Modeler, verify_image_cache):
+    """Test the plotting of DesignPoint objects."""
+    design = modeler.create_design("Multiplot")
+    plot_list = []
+
+    # add body to check compatibility
+    body_sketch = Sketch()
+    body_sketch.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+    box_body = design.extrude_sketch("JustABox", body_sketch, Quantity(10, UNITS.m))
+    plot_list.append(box_body)
+
+    # add single point
+    point_set_2 = [Point3D([10, 10, 10], UNITS.m), Point3D([20, 20, 20], UNITS.m)]
+
+    # add list of points
+    design_points_2 = design.add_design_points("SecondPointSet", point_set_2)
+    plot_list.extend(design_points_2)
+
+    # plot
+    PlotterHelper().plot(
+        plot_list,
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_design_point.png"),
     )
