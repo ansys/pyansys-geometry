@@ -622,7 +622,7 @@ def test_matrix():
     m_1_copy = Matrix([[2, 5], [0, 8]])
     m_2 = Matrix([[3, 2, 0], [1, 3, 0], [0, 6, 4]])
 
-    # Intiate a test matrix using numpy.ndarray
+    # Initiate a test matrix using numpy.ndarray
     test_matrix = np.array([[2, 5], [0, 8]])
 
     # Check inverse of matrix
@@ -685,7 +685,7 @@ def test_matrix_33():
     # Create a null matrix, which is 3x3 identity matrix
     m_null = Matrix33()
 
-    # Intiate a test matrix using numpy.ndarray
+    # Initiate a test matrix using numpy.ndarray
     test_matrix = np.array([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
     assert np.array_equal(test_matrix, m_1)
 
@@ -718,7 +718,7 @@ def test_matrix_44():
     # Create a null matrix, which is 4x4 identity matrix
     m_null = Matrix44()
 
-    # Intiate a test matrix using numpy.ndarray
+    # Initiate a test matrix using numpy.ndarray
     test_matrix = np.array([[2, 0, 0, 0], [0, 3, 0, 0], [0, 0, 4, 0], [0, 0, 0, 1]])
     assert np.array_equal(test_matrix, m_1)
 
