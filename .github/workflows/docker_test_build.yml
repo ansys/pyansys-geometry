@@ -4,7 +4,8 @@ on:
   release:
 
 env:
-  MAIN_PYTHON_VERSION: '3.10'
+  MAIN_PYTHON_VERSION: '3.11'
+  MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED: '3.9'
   ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/ansys/geometry:windows-latest-tmp
   ANSRV_GEO_IMAGE_LINUX_TAG: ghcr.io/ansys/geometry:linux-latest-tmp
   ANSRV_GEO_PORT: 700
@@ -31,7 +32,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9' # use python3.9, self-hosted has an issue with 3.10
+          python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
 
       - name: Download Windows binaries
         uses: dsaltares/fetch-gh-release-asset@master
