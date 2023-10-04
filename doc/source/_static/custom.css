@@ -10,7 +10,6 @@
 
 .sd-card .sd-card-header {
   font-size: var(--pst-font-size-h5);
-  font-family: var(--pst-font-family-base) !important;
   font-weight: bold;
   padding: 1rem 0rem 0.5rem 0rem;
 }
