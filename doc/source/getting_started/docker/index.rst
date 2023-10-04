@@ -27,11 +27,11 @@ meaning that certain operations are not available or fail.
 Select the kind of Docker container you want to build:
 
 .. grid:: 2
+   :gutter: 3 3 4 4
 
    .. grid-item-card:: Windows Docker container
             :link: windows_container
             :link-type: doc
-            :margin: 2 2 0 0
 
             Build a Windows Docker container for the Geometry service
             and use it from PyAnsys Geometry. Explore the full potential
@@ -40,7 +40,6 @@ Select the kind of Docker container you want to build:
    .. grid-item-card:: Linux Docker container
             :link: linux_container
             :link-type: doc
-            :margin: 2 2 0 0
 
             Test out the Linux Docker container for the Geometry service,
             which has limited functionalities.
