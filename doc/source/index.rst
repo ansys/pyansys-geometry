@@ -44,46 +44,47 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
 
 .. jinja:: main_toctree
-
-    .. grid:: 1 2 2 2
+   
+   .. grid:: 1 2 2 2
       :gutter: 4
       :padding: 2 2 0 0
       :class-container: sd-text-center
 
        {% if build_api %}
       .. grid-item-card:: API reference
-                :img-top: _static/assets/index_api.svg
-                :class-card: intro-card
+         :img-top: _static/assets/index_api.svg
+         :class-card: intro-card
+         
+         Understand PyAnsys Geometry API endpoints, their capabilities,
+         and how to interact with them programmatically.
 
-                Understand PyAnsys Geometry API endpoints, their capabilities,
-                and how to interact with them programmatically.
+         +++
+         .. button-link:: api/index.html
+            :color: secondary
+            :expand:
+            :outline:
+            :click-parent:
 
-                +++
-                .. button-link:: api/index.html
-                   :color: secondary
-                   :expand:
-                   :outline:
-                   :click-parent:
-
-                      API reference
+            API reference
        {% endif %}
 
        {% if build_examples %}
-       .. grid-item-card:: Examples
-                :img-top: _static/assets/index_examples.png
-                :class-card: intro-card
+      .. grid-item-card:: Examples
+         :img-top: _static/assets/index_examples.png
+         :class-card: intro-card
+         
+         Explore examples that show how to use PyAnsys Geometry to
+         perform many different types of operations.
 
-                Explore examples that show how to use PyAnsys Geometry to
-                perform many different types of operations.
+         +++
+         .. button-link:: examples.html
+            :color: secondary
+            :expand:
+            :outline:
+            :click-parent:
+            
+            Examples
 
-                +++
-                .. button-link:: examples.html
-                   :color: secondary
-                   :expand:
-                   :outline:
-                   :click-parent:
-
-                      Examples
        {% endif %}
 
 .. grid:: 1 2 2 2
@@ -92,36 +93,36 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
    :class-container: sd-text-center
 
    .. grid-item-card:: Contribute
-            :img-top: _static/assets/index_contribute.png
-            :class-card: intro-card
+      :img-top: _static/assets/index_contribute.png
+      :class-card: intro-card
+      
+      Learn how to contribute to the PyAnsys Geometry codebase
+      or documentation.
 
-            Learn how to contribute to the PyAnsys Geometry codebase
-            or documentation.
+      +++
+      .. button-link:: contributing.html
+         :color: secondary
+         :expand:
+         :outline:
+         :click-parent:
 
-            +++
-            .. button-link:: contributing.html
-               :color: secondary
-               :expand:
-               :outline:
-               :click-parent:
-
-                  Contribute
+         Contribute
 
    .. grid-item-card:: Assets
-            :img-top: _static/assets/index_download.png
-            :class-card: intro-card
+      :img-top: _static/assets/index_download.png
+      :class-card: intro-card
+      
+      Download different assets related to PyAnsys Geometry,
+      such as documentation, package wheelhouse, and related files.
 
-            Download different assets related to PyAnsys Geometry,
-            such as documentation, package wheelhouse, and related files.
+      +++
+      .. button-link:: assets.html
+         :color: secondary
+         :expand:
+         :outline:
+         :click-parent:
 
-            +++
-            .. button-link:: assets.html
-               :color: secondary
-               :expand:
-               :outline:
-               :click-parent:
-
-                  Assets
+      Assets
 
 .. jinja:: main_toctree
 
