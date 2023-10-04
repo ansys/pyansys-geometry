@@ -17,6 +17,7 @@ from ansys.geometry.core.designer import (
 )
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.errors import GeometryExitedError
+from ansys.geometry.core.geometry.parameterization import ParamUV
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import (
     IDENTITY_MATRIX44,
@@ -151,7 +152,7 @@ def test_face_to_body_creation(modeler: Modeler):
     assert len(nested_component.components) == 0
     assert len(nested_component.bodies) == 1
     assert surface_body.volume.m == Quantity(0, UNITS.m**3).m
-    assert surface_body.faces[0].shape.area.m == pytest.approx(
+    assert surface_body.faces[0].area.m == pytest.approx(
         Quantity(2e-4, UNITS.m**2).m, rel=1e-6, abs=1e-8
     )
 
@@ -314,16 +315,14 @@ def test_faces_edges(modeler: Modeler):
     # Build independent components and bodies
     polygon_comp = design.add_component("PolygonComponent")
     body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch, Quantity(30, UNITS.mm))
-
+    design.download(r"D:\Work\Projects\PyGeometry\test104.scdocx")
     # Get all its faces
     faces = body_polygon_comp.faces
     assert len(faces) == 7  # top + bottom + sides
     assert all(face.id is not None for face in faces)
     assert all(face.surface_type == SurfaceType.SURFACETYPE_PLANE for face in faces)
-    assert all(face.shape.area > 0.0 for face in faces)
-    assert (
-        abs(faces[0].shape.area.to_base_units().m - sketch.faces[0].area.to_base_units().m) <= 1e-15
-    )
+    assert all(face.area > 0.0 for face in faces)
+    assert abs(faces[0].area.to_base_units().m - sketch.faces[0].area.to_base_units().m) <= 1e-15
     assert all(face.body.id == body_polygon_comp.id for face in faces)
 
     # Get the normal to some of the faces
@@ -331,8 +330,9 @@ def test_faces_edges(modeler: Modeler):
     assert faces[1].normal() == UNITVECTOR3D_Z  # Top
 
     # Get the central point of some of the surfaces
-    assert faces[0].point(u=-0.03, v=-0.03) == Point3D([-30, -30, 0], UNITS.mm)
-    assert faces[1].point(u=-0.03, v=-0.03) == Point3D([-30, -30, 30], UNITS.mm)
+    assert faces[0].point(0.4472135954999579, 0.5) == Point3D([-30, -30, 0], UNITS.mm)
+    u, v = faces[1].shape.get_proportional_parameters(ParamUV(-0.03, -0.03))
+    assert faces[1].point(u, v) == Point3D([-30, -30, 30], UNITS.mm)
 
     loops = faces[0].loops
     assert len(loops) == 1
