@@ -9,7 +9,8 @@ on:
       - main
 
 env:
-  MAIN_PYTHON_VERSION: '3.10'
+  MAIN_PYTHON_VERSION: '3.11'
+  MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED: '3.9'
   PACKAGE_NAME: 'ansys-geometry-core'
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
   ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
@@ -46,7 +47,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.9', '3.10', '3.11']
         should-release:
           - ${{ github.event_name == 'push' && contains(github.ref, 'refs/tags') }}
         exclude:
@@ -88,7 +89,7 @@ jobs:
         if: env.SKIP_UNSTABLE == 'false'
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9' # use python3.9, self-hosted has an issue with 3.10
+          python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
 
       - name: Set up headless display
         if: env.SKIP_UNSTABLE == 'false'
@@ -207,7 +208,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9' # use python3.9, self-hosted has an issue with 3.10
+          python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
 
       - name: Set up headless display
         uses: pyvista/setup-headless-display-action@v2
@@ -430,7 +431,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9' # use python3.9, self-hosted has an issue with 3.10
+          python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
 
       - name: Download Windows binaries
         uses: actions/download-artifact@v3
@@ -626,7 +627,7 @@ jobs:
           index-name: pyansys-geometry-vdev
           host-url: ${{ env.MEILISEARCH_HOST_URL }}
           api-key: ${{ env.MEILISEARCH_API_KEY }}
-          python-version: '3.11'
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
   upload_docs_release:
     name: Upload release documentation
@@ -667,4 +668,4 @@ jobs:
           index-name: pyansys-geometry-v${{ env.VERSION_MEILI }}
           host-url: ${{ env.MEILISEARCH_HOST_URL }}
           api-key: ${{ env.MEILISEARCH_API_KEY }}
-          python-version: '3.11'
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
