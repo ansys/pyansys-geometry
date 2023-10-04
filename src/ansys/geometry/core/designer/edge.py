@@ -31,6 +31,8 @@ from pint import Quantity
 from ansys.geometry.core.connection import GrpcClient, grpc_curve_to_curve
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.geometry.curves.trimmed_curve import ReversedTrimmedCurve, TrimmedCurve
+from ansys.geometry.core.geometry.parameterization import Interval
+from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.misc import DEFAULT_UNITS
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -112,11 +114,22 @@ class Edge:
         if self._shape is None:
             self._grpc_client.log.debug("Requesting edge properties from server.")
             response = self._edges_stub.GetCurve(self._grpc_id)
-            geometry = grpc_curve_to_curve(response, self.curve_type)
+            geometry = grpc_curve_to_curve(response)
+
+            response = self._edges_stub.GetStartAndEndPoints(self._grpc_id)
+            start = Point3D([response.start.x, response.start.y, response.start.z])
+            end = Point3D([response.end.x, response.end.y, response.end.z])
+
+            response = self._edges_stub.GetLength(self._grpc_id)
+            length = Quantity(response.length, DEFAULT_UNITS.SERVER_LENGTH)
+
+            response = self._edges_stub.GetInterval(self._grpc_id)
+            interval = Interval(response.start, response.end)
+
             self._shape = (
-                ReversedTrimmedCurve(self, geometry)
+                ReversedTrimmedCurve(geometry, start, end, interval, length)
                 if self.is_reversed
-                else TrimmedCurve(self, geometry)
+                else TrimmedCurve(geometry, start, end, interval, length)
             )
         return self._shape
 
@@ -124,9 +137,7 @@ class Edge:
     @protect_grpc
     def length(self) -> Quantity:
         """Calculated length of the edge."""
-        self._grpc_client.log.debug("Requesting edge length from server.")
-        length_response = self._edges_stub.GetLength(self._grpc_id)
-        return Quantity(length_response.length, DEFAULT_UNITS.SERVER_LENGTH)
+        return self.shape.length
 
     @property
     def curve_type(self) -> CurveType:

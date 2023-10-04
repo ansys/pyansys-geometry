@@ -21,19 +21,19 @@
 # SOFTWARE.
 
 """Trimmed curve class."""
-from beartype.typing import TYPE_CHECKING
+from ansys.api.geometry.v0.commands_pb2 import IntersectCurvesRequest
+from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
+from beartype.typing import List
 from pint import Quantity
 
+from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.conversions import trimmed_curve_to_grpc_trimmed_curve
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.geometry.curves.curve import Curve
 from ansys.geometry.core.geometry.curves.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.geometry.parameterization import Interval
 from ansys.geometry.core.math import Point3D
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.typing import Real
-
-if TYPE_CHECKING:
-    from ansys.geometry.core.designer.edge import Edge
 
 
 class TrimmedCurve:
@@ -44,26 +44,38 @@ class TrimmedCurve:
 
     Parameters
     ----------
-    edge : Edge
-        Edge that the TrimmedCurve belongs to.
     geometry : Curve
         The underlying mathematical representation of the curve.
+    start : Point3D
+        The start point of the curve.
+    end : Point3D
+        The end point of the curve.
+    interval : Interval
+        The parametric interval that bounds the curve.
+    length : Quantity
+        The length of the curve.
+    grpc_client : GrpcClient, default: None
+        Optional gRPC client that is required for advanced functions such as `intersect_curve()`.
     """
 
-    def __init__(self, edge: "Edge", geometry: Curve):
+    def __init__(
+        self,
+        geometry: Curve,
+        start: Point3D,
+        end: Point3D,
+        interval: Interval,
+        length: Quantity,
+        grpc_client: GrpcClient = None,
+    ):
         """Initialize ``TrimmedCurve`` class."""
-        self._edge = edge
         self._geometry = geometry
-
-        self.edge._grpc_client.log.debug("Requesting edge points from server.")
-        response = self.edge._edges_stub.GetStartAndEndPoints(self._grpc_id)
-        self._start = Point3D([response.start.x, response.start.y, response.start.z])
-        self._end = Point3D([response.end.x, response.end.y, response.end.z])
-
-    @property
-    def edge(self) -> "Edge":
-        """The edge this TrimmedCurve belongs to."""
-        return self._edge
+        self._start = start
+        self._end = end
+        self._interval = interval
+        self._length = length
+        self._grpc_client = grpc_client
+        if grpc_client is not None:
+            self._commands_stub = CommandsStub(self._grpc_client.channel)
 
     @property
     def geometry(self) -> Curve:
@@ -84,17 +96,13 @@ class TrimmedCurve:
     @protect_grpc
     def length(self) -> Quantity:
         """Calculated length of the edge."""
-        self.edge._grpc_client.log.debug("Requesting edge length from server.")
-        length_response = self.edge._edges_stub.GetLength(self._grpc_id)
-        return Quantity(length_response.length, DEFAULT_UNITS.SERVER_LENGTH)
+        return self._length
 
     @property
     @protect_grpc
     def interval(self) -> Interval:
         """Interval of the curve that provides its boundary."""
-        self.edge._grpc_client.log.debug("Requesting edge interval from server.")
-        interval = self.edge._edges_stub.GetInterval(self.edge._grpc_id)
-        return Interval(interval.start, interval.end)
+        return self._interval
 
     def evaluate_proportion(self, param: Real) -> CurveEvaluation:
         """
@@ -116,6 +124,43 @@ class TrimmedCurve:
         bounds = self.interval
         return self.geometry.evaluate(bounds.start + bounds.get_span() * param)
 
+    def intersect_curve(self, other: "TrimmedCurve") -> List[Point3D]:
+        """
+        Intersect this trimmed curve with another to receive the points of intersection.
+
+        If the curves do not intersect, an empty list is returned.
+
+        Parameters
+        ----------
+        other : TrimmedCurve
+            The trimmed curve to intersect with.
+
+        Returns
+        -------
+        List[Point3D]
+            All points of intersection between the curves.
+        """
+        if self._grpc_client is None:
+            raise ValueError(
+                """This TrimmedCurve was not initialized with a grpc client,
+                so this method cannot be called."""
+            )
+        first = trimmed_curve_to_grpc_trimmed_curve(self)
+        second = trimmed_curve_to_grpc_trimmed_curve(other)
+        res = self._commands_stub.IntersectCurves(
+            IntersectCurvesRequest(first=first, second=second)
+        )
+        if res.intersect is False:
+            return []
+        return [Point3D([point.x, point.y, point.z]) for point in res.points]
+
+    def __repr__(self) -> str:
+        """Represent the trimmed curve as a string."""
+        return (
+            f"TrimmedCurve(geometry: {type(self.geometry)}, start: {self.start}, end: {self.end}, "
+            f"interval: {self.interval}, length: {self.length})"
+        )
+
 
 class ReversedTrimmedCurve(TrimmedCurve):
     """
@@ -129,15 +174,31 @@ class ReversedTrimmedCurve(TrimmedCurve):
 
     Parameters
     ----------
-    edge : Edge
-        Edge that the TrimmedCurve belongs to.
     geometry : Curve
         The underlying mathematical representation of the curve.
+    start : Point3D
+        The original start point of the curve.
+    end : Point3D
+        The original end point of the curve.
+    interval : Interval
+        The parametric interval that bounds the curve.
+    length : Quantity
+        The length of the curve.
+    grpc_client : GrpcClient, default: None
+        Optional gRPC client that is required for advanced functions such as `intersect_curve()`.
     """
 
-    def __init__(self, edge: "Edge", geometry: Curve):
+    def __init__(
+        self,
+        geometry: Curve,
+        start: Point3D,
+        end: Point3D,
+        interval: Interval,
+        length: Quantity,
+        grpc_client: GrpcClient = None,
+    ):
         """Initialize ``ReversedTrimmedCurve`` class."""
-        super().__init__(edge, geometry)
+        super().__init__(geometry, start, end, interval, length, grpc_client)
 
         # Swap start and end points
         temp = self._start
@@ -145,4 +206,5 @@ class ReversedTrimmedCurve(TrimmedCurve):
         self._end = temp
 
     def evaluate_proportion(self, param: Real) -> CurveEvaluation:  # noqa: D102
+        # Evaluate starting from the end
         return self.geometry.evaluate(self.interval.end - self.interval.get_span() * param)

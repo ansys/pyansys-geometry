@@ -31,8 +31,10 @@ from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
 from beartype.typing import TYPE_CHECKING, List
 from pint import Quantity
 
-from ansys.geometry.core.connection import GrpcClient, grpc_surface_to_surface
+from ansys.geometry.core.connection import GrpcClient, grpc_curve_to_curve, grpc_surface_to_surface
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.geometry.curves.trimmed_curve import TrimmedCurve
+from ansys.geometry.core.geometry.parameterization import Interval
 from ansys.geometry.core.geometry.surfaces.trimmed_surface import (
     ReversedTrimmedSurface,
     TrimmedSurface,
@@ -350,9 +352,14 @@ class Face:
             )
         return edges
 
-    def create_isoparametric_curve(self, use_u_param: bool, parameter: float):
+    def create_isoparametric_curves(
+        self, use_u_param: bool, parameter: float
+    ) -> List[TrimmedCurve]:
         """
-        Create an isoparametic curve at the given proportional parameter.
+        Create isoparametic curves at the given proportional parameter.
+
+        Typically, only one curve will be created, but if the face has a hole, it is possible to
+        create more than one curve.
 
         Parameters
         ----------
@@ -360,8 +367,27 @@ class Face:
             Define whether the parameter is the u coordinate or v coordinate. If True,
             then u parameter is used. If False, then v parameter is used.
         parameter : float
-            The proportional [0-1] parameter to create the curve at.
+            The proportional [0-1] parameter to create the curvse at.
+
+        Returns
+        -------
+        List[TrimmedCurve]
+            The list of curves that were created.
         """
-        self._faces_stub.CreateIsoParamCurves(
+        curves = self._faces_stub.CreateIsoParamCurves(
             CreateIsoParamCurvesRequest(id=self.id, u_dir_curve=use_u_param, proportion=parameter)
-        )
+        ).curves
+
+        trimmed_curves = []
+        for c in curves:
+            geometry = grpc_curve_to_curve(c.curve)
+            start = Point3D([c.start.x, c.start.y, c.start.z])
+            end = Point3D([c.end.x, c.end.y, c.end.z])
+            interval = Interval(c.interval_start, c.interval_end)
+            length = Quantity(c.length, DEFAULT_UNITS.SERVER_LENGTH)
+
+            trimmed_curves.append(
+                TrimmedCurve(geometry, start, end, interval, length, self._grpc_client)
+            )
+
+        return trimmed_curves

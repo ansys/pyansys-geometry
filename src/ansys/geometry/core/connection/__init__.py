@@ -24,6 +24,7 @@
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
+    curve_to_grpc_curve,
     frame_to_grpc_frame,
     grpc_curve_to_curve,
     grpc_frame_to_frame,
@@ -33,6 +34,7 @@ from ansys.geometry.core.connection.conversions import (
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
     tess_to_pd,
+    trimmed_curve_to_grpc_trimmed_curve,
     unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.connection.defaults import (
