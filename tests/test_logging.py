@@ -51,7 +51,7 @@ def test_only_logger(caplog: pytest.LogCaptureFixture):
 
 
 def test_global_logger_exist():
-    """Test for checking the accurrate naming of the general Logger instance."""
+    """Test for checking the accurate naming of the general Logger instance."""
 
     assert isinstance(LOG.logger, deflogging.Logger)
     assert LOG.logger.name == "PyAnsys_Geometry_global"
