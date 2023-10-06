@@ -22,24 +22,11 @@ def pytest_addoption(parser):
         choices=("yes", "no"),
     )
 
-    parser.addoption(
-        "--service-os",
-        action="store",
-        default="windows",
-        help="Geometry service OS running. Options: 'windows' or 'linux'. By default, 'windows'.",
-        choices=("windows", "linux"),
-    )
-
 
 @pytest.fixture(scope="session")
 def use_existing_service(request):
     value: str = request.config.getoption("--use-existing-service")
     return True if value.lower() == "yes" else False
-
-
-@pytest.fixture(scope="session")
-def service_os(request):
-    return request.config.getoption("--service-os")
 
 
 @pytest.fixture
