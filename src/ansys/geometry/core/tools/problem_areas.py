@@ -145,11 +145,6 @@ class MissingFaceProblemAreas(ProblemArea):
         self._edges = edges
 
     @property
-    def id(self) -> str:
-        """The id of the problem area."""
-        return self._id
-
-    @property
     def edges(self) -> List[str]:
         """The list of the ids of the edges connected to this problem area."""
         return self._edges
@@ -193,11 +188,6 @@ class InexactEdgeProblemAreas(ProblemArea):
         """Initialize a new instance of the inexact edge problem area class."""
         super().__init__(id, grpc_client)
         self._edges = edges
-
-    @property
-    def id(self):
-        """The id of the problem area."""
-        return self._id
 
     @property
     def edges(self) -> List[str]:
@@ -245,11 +235,6 @@ class ExtraEdgeProblemAreas(ProblemArea):
         self._edges = edges
 
     @property
-    def id(self) -> str:
-        """The id of the problem area."""
-        return self._id
-
-    @property
     def edges(self) -> List[str]:
         """The list of the ids of the edges connected to this problem area."""
         return self._edges
@@ -293,11 +278,6 @@ class ShortEdgeProblemAreas(ProblemArea):
         """Initialize a new instance of the short edge problem area class."""
         super().__init__(id, grpc_client)
         self._edges = edges
-
-    @property
-    def id(self) -> str:
-        """The id of the problem area."""
-        return self._id
 
     @property
     def design_edges(self) -> List[str]:
@@ -345,11 +325,6 @@ class SmallFaceProblemAreas(ProblemArea):
         self._faces = faces
 
     @property
-    def id(self) -> str:
-        """The id of the problem area."""
-        return self._id
-
-    @property
     def faces(self) -> List[str]:
         """The list of the ids of the edges connected to this problem area."""
         return self._faces
@@ -395,11 +370,6 @@ class SplitEdgeProblemAreas(ProblemArea):
         self._edges = edges
 
     @property
-    def id(self) -> str:
-        """The id of the problem area."""
-        return self._id
-
-    @property
     def edges(self) -> List[str]:
         """The list of the ids of the edges connected to this problem area."""
         return self._edges
@@ -443,11 +413,6 @@ class StitchFaceProblemAreas(ProblemArea):
         """Initialize a new instance of the stitch face problem area class."""
         super().__init__(id, grpc_client)
         self._faces = faces
-
-    @property
-    def id(self) -> str:
-        """The id of the problem area."""
-        return self._id
 
     @property
     def faces(self) -> List[str]:
