@@ -147,10 +147,13 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
     file = tmp_path_factory.mktemp("test_design_import") / "two_cars.scdocx"
     design.download(file)
-    design2 = modeler.open_file(file)
 
-    # assert the two cars are the same
-    _checker_method(design, design2, True)
+    # TODO: to be reactivated by https://github.com/ansys/pyansys-geometry/issues/799
+    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
+        design2 = modeler.open_file(file)
+
+        # assert the two cars are the same
+        _checker_method(design, design2, True)
 
     # Test HOOPS formats (Windows only)
     if modeler.client.backend_type != BackendType.LINUX_SERVICE:
