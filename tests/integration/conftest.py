@@ -117,6 +117,7 @@ def clean_plot_result_images():
     for file in files:
         os.remove(Path(results_dir, file))
 
+
 @pytest.fixture(scope="session")
 def skip_not_on_linux_service(modeler: Modeler):
     if modeler.client.backend_type == BackendType.LINUX_SERVICE:
