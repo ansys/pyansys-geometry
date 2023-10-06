@@ -400,6 +400,12 @@ jobs:
       labels: [self-hosted, Windows, signtool]
 
     steps:
+      - name: Checkout repository pyansys-geometry-binaries
+        uses: actions/checkout@v4
+        with:
+          repository: 'ansys/pyansys-geometry-binaries'
+          token: ${{ env.BINARIES_TOKEN }}
+
       - name: Download binaries
         run: |
           curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerWindows.zip --output windows-binaries.zip
@@ -410,14 +416,28 @@ jobs:
         with:
           name: windows-binaries.zip
           path: windows-binaries.zip
-          retention-days: 7
+          retention-days: 1
 
       - name: Upload Linux binaries as workflow artifacts
         uses: actions/upload-artifact@v3
         with:
           name: linux-binaries.zip
           path: linux-binaries.zip
-          retention-days: 7
+          retention-days: 1
+
+      - name: Publish the binaries to private repo
+        env:
+          VERSION_WITH_PREFIX: ${{ github.ref_name }}
+        run: |
+          $env:VERSION=$env:VERSION_WITH_PREFIX.substring(1)
+          mkdir $env:VERSION
+          mv windows-binaries.zip .\$env:VERSION\
+          mv linux-binaries.zip .\$env:VERSION\
+          git config user.email ${{ env.BINARIES_EMAIL }}
+          git config user.name ${{ env.BINARIES_USERNAME }}
+          git add *
+          git commit -m "adding binaries for ${{ github.ref_name }}"
+          git push origin main
 
   build-windows-container:
     name: Building Geometry Service - Windows
@@ -599,7 +619,7 @@ jobs:
         uses: ansys/actions/release-github@v4
         with:
           library-name: ${{ env.PACKAGE_NAME }}
-          additional-artifacts: windows-binaries.zip windows-dockerfile.zip linux-binaries.zip linux-dockerfile.zip
+          additional-artifacts: windows-dockerfile.zip linux-dockerfile.zip
 
   upload_dev_docs:
     name: Upload dev documentation
