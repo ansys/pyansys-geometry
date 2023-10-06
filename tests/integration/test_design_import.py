@@ -5,6 +5,7 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core import Modeler
+from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.designer.design import DesignFileFormat
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
@@ -101,7 +102,7 @@ def test_design_import_simple_case(modeler: Modeler):
     _checker_method(read_design, design)
 
 
-def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, service_os: str):
+def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test creation of a component, saving it to a file, and loading it again to a
     second component and make sure they have the same properties."""
 
@@ -152,7 +153,7 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, s
     _checker_method(design, design2, True)
 
     # Test HOOPS formats (Windows only)
-    if service_os == "windows":
+    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
         # STEP
         file = tmp_path_factory.mktemp("test_design_import") / "two_cars.step"
         design.download(file, DesignFileFormat.STEP)

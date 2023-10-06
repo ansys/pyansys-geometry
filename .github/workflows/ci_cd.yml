@@ -348,7 +348,6 @@ jobs:
       #     ALLOW_PLOTTING: true
       #   with:
       #     python-version: ${{ env.MAIN_PYTHON_VERSION }}
-      #     pytest-extra-args: "--service-os=linux"
       #     checkout: false
 
       - name: Upload integration test logs
@@ -559,7 +558,7 @@ jobs:
           ALLOW_PLOTTING: true
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          pytest-extra-args: "--service-os=linux --use-existing-service=yes"
+          pytest-extra-args: "--use-existing-service=yes"
           checkout: false
           requires-xvfb: true
 
