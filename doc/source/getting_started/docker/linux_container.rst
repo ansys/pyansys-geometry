@@ -132,9 +132,7 @@ Prerequisites
 
 .. note::
 
-   These binaries are only available for download to users with access to
-   https://github.com/ansys/pyansys-geometry-binaries
-
+   Only users with access to https://github.com/ansys/pyansys-geometry-binaries can download these binaries.
 
 * Move this ZIP file to the location of the Linux Dockerfile previously downloaded.
 
