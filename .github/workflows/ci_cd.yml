@@ -400,7 +400,7 @@ jobs:
       labels: [self-hosted, Windows, signtool]
 
     steps:
-      - name: Checkout repository pyansys-geometry-binaries
+      - name: Check out repository pyansys-geometry-binaries
         uses: actions/checkout@v4
         with:
           repository: 'ansys/pyansys-geometry-binaries'
