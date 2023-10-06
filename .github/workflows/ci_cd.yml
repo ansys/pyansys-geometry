@@ -341,15 +341,15 @@ jobs:
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
 
-      # - name: Run pytest
-      #   if: env.SKIP_UNSTABLE == 'false'
-      #   uses: ansys/actions/tests-pytest@v4
-      #   env:
-      #     ALLOW_PLOTTING: true
-      #   with:
-      #     python-version: ${{ env.MAIN_PYTHON_VERSION }}
-      #     pytest-extra-args: "--service-os=linux"
-      #     checkout: false
+      - name: Run pytest
+        if: env.SKIP_UNSTABLE == 'false'
+        uses: ansys/actions/tests-pytest@v4
+        env:
+          ALLOW_PLOTTING: true
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          pytest-extra-args: "--service-os=linux"
+          checkout: false
 
       - name: Upload integration test logs
         if: always()
