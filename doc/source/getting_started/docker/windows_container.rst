@@ -115,7 +115,13 @@ Prerequisites
 * Download the `latest Windows Dockerfile <https://github.com/ansys/pyansys-geometry/blob/main/docker/Dockerfile.windows>`_.
 
 * Download the `latest release artifacts for the Windows
-  Docker container (ZIP file) <https://github.com/ansys/pyansys-geometry/releases/latest/download/windows-binaries.zip>`_.
+  Docker container (ZIP file) according to your version <https://github.com/ansys/pyansys-geometry-binaries/`_.
+
+.. note::
+
+   These binaries are only available for download to users with access to
+   https://github.com/ansys/pyansys-geometry-binaries
+
 
 * Move this ZIP file to the location of the Windows Dockerfile previously downloaded.
 

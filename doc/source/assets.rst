@@ -63,11 +63,21 @@ meaning that certain operations are not available or fail.
 Windows container
 ^^^^^^^^^^^^^^^^^
 
-* `Latest Geometry service binaries for Windows containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/windows-binaries.zip>`_
+.. note::
+
+   These binaries are only available for download to users with access to
+   https://github.com/ansys/pyansys-geometry-binaries
+
+* `Latest Geometry service binaries for Windows containers <https://github.com/ansys/pyansys-geometry-binaries>`_
 * `Latest Geometry service Dockerfile for Windows containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/windows-dockerfile.zip>`_
 
 Linux container
 ^^^^^^^^^^^^^^^
 
-* `Latest Geometry service binaries for Linux containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/linux-binaries.zip>`_
+.. note::
+
+   These binaries are only available for download to users with access to
+   https://github.com/ansys/pyansys-geometry-binaries
+
+* `Latest Geometry service binaries for Linux containers <https://github.com/ansys/pyansys-geometry-binaries>`_
 * `Latest Geometry service Dockerfile for Linux containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/linux-dockerfile.zip>`_
