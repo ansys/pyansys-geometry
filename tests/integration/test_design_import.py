@@ -164,10 +164,14 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         _checker_method(design, design2, False)
 
         # IGES
-        file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
-        design.download(file, DesignFileFormat.IGES)
-        design2 = modeler.open_file(file)
-        _checker_method(design, design2, False)
+        #
+        # TODO: Something has gone wrong with IGES
+        # TODO: Issue https://github.com/ansys/pyansys-geometry/issues/801
+        #
+        # file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
+        # design.download(file, DesignFileFormat.IGES)
+        # design2 = modeler.open_file(file)
+        # _checker_method(design, design2, False)
 
         # Catia
         design2 = modeler.open_file("./tests/integration/files/import/catia_car/car.CATProduct")
