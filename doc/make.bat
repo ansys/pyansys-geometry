@@ -17,7 +17,7 @@ REM TODO: these lines of code should be removed once the feature branch is merge
 for /f %%i in ('pip freeze ^| findstr /c:"sphinx-autoapi @ git+https://github.com/ansys/sphinx-autoapi"') do set is_custom_sphinx_autoapi_installed=%%i
 if NOT "%is_custom_sphinx_autoapi_installed%" == "sphinx-autoapi" (
 	pip uninstall --yes sphinx-autoapi
-	pip install "sphinx-autoapi @ git+https://github.com/ansys/sphinx-autoapi@feat/single-page-option")
+	pip install "sphinx-autoapi @ git+https://github.com/ansys/sphinx-autoapi@feat/single-page-stable")
 REM TODO: these lines of code should be removed once the feature branch is merged
 
 if "%1" == "" goto help

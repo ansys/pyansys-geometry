@@ -1,5 +1,6 @@
 """Sphinx documentation configuration file."""
 from datetime import datetime
+import json
 import os
 from pathlib import Path
 
@@ -13,11 +14,38 @@ from ansys_sphinx_theme import (
     pyansys_logo_black,
     watermark,
 )
+import requests
 from sphinx.builders.latex import LaTeXBuilder
 
 from ansys.geometry.core import __version__
 
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
+
+
+def get_wheelhouse_assets_dictionary():
+    """Auxiliary method to build the wheelhouse assets dictionary."""
+    assets_context_os = ["Linux", "Windows", "MacOS"]
+    assets_context_runners = ["ubuntu-latest", "windows-latest", "macos-latest"]
+    assets_context_python_versions = ["3.9", "3.10", "3.11"]
+    assets_context_version = json.loads(
+        requests.get("https://api.github.com/repos/ansys/pyansys-geometry/releases/latest").content
+    )["name"]
+
+    assets = {}
+    for assets_os, assets_runner in zip(assets_context_os, assets_context_runners):
+        download_links = []
+        for assets_py_ver in assets_context_python_versions:
+            temp_dict = {
+                "os": assets_os,
+                "runner": assets_runner,
+                "python_versions": assets_py_ver,
+                "latest_released_version": assets_context_version,
+                "prefix_url": f"https://github.com/ansys/pyansys-geometry/releases/download/{assets_context_version}",  # noqa: E501
+            }
+            download_links.append(temp_dict)
+
+        assets[assets_os] = download_links
+    return assets
 
 
 # Project information
@@ -60,7 +88,18 @@ html_theme_options = {
             "url": "https://github.com/ansys/pyansys-geometry/discussions",
             "icon": "fa fa-comment fa-fw",
         },
+        {
+            "name": "Download documentation in PDF",
+            "url": f"https://{cname}/version/{switcher_version}/_static/assets/download/ansys-geometry-core.pdf",  # noqa: E501
+            "icon": "fa fa-file-pdf fa-fw",
+        },
     ],
+    "use_meilisearch": {
+        "api_key": os.getenv("MEILISEARCH_PUBLIC_API_KEY", ""),
+        "index_uids": {
+            f"pyansys-geometry-v{get_version_match(__version__).replace('.', '-')}": "PyAnsys-Geometry",  # noqa: E501
+        },
+    },
 }
 
 # Sphinx extensions
@@ -78,7 +117,7 @@ extensions = [
 
 # Intersphinx mapping
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/3", None),
+    "python": ("https://docs.python.org/3.11", None),
     "numpy": ("https://numpy.org/doc/stable", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/", None),
     "pyvista": ("https://docs.pyvista.org/version/stable", None),
@@ -209,7 +248,8 @@ latex_additional_files = [watermark, ansys_logo_white, ansys_logo_white_cropped]
 # variables are the title of pdf, watermark
 latex_elements = {"preamble": latex.generate_preamble(html_title)}
 
-linkcheck_exclude_documents = ["index", "getting_started/local/index"]
+linkcheck_exclude_documents = ["index", "getting_started/local/index", "assets"]
+linkcheck_ignore = [r"https://github.com/ansys/pyansys-geometry-binaries/.*"]
 
 # -- Declare the Jinja context -----------------------------------------------
 exclude_patterns = []
@@ -233,6 +273,7 @@ jinja_contexts = {
     "windows_containers": {
         "add_windows_warnings": True,
     },
+    "wheelhouse-assets": {"assets": get_wheelhouse_assets_dictionary()},
 }
 
 

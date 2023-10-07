@@ -25,6 +25,7 @@ from beartype.typing import TYPE_CHECKING, Union
 
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.misc.checks import check_type
+from ansys.geometry.core.misc.units import UNITS
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.component import Component
@@ -86,3 +87,13 @@ class DesignPoint:
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Design Point         : {self.value}")
         return "\n".join(lines)
+
+    def _to_polydata(self) -> "pv.PolyData":
+        """Get polydata from DesignPoint object."""
+        import pyvista as pv
+
+        # get units to plot proportionally
+        # 0.3 is the size for the sphere representation
+        # determined empirically for proper representation
+        unit = 0.3 * self.value.unit
+        return pv.Sphere(center=self.value.flat, radius=unit.to(UNITS.m).magnitude)
