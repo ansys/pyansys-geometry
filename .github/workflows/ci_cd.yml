@@ -404,7 +404,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: 'ansys/pyansys-geometry-binaries'
-          token: ${{ env.BINARIES_TOKEN }}
+          token: ${{ secrets.BINARIES_TOKEN }}
 
       - name: Download binaries
         run: |
@@ -433,8 +433,8 @@ jobs:
           mkdir $env:VERSION
           mv windows-binaries.zip .\$env:VERSION\
           mv linux-binaries.zip .\$env:VERSION\
-          git config user.email ${{ env.BINARIES_EMAIL }}
-          git config user.name ${{ env.BINARIES_USERNAME }}
+          git config user.email ${{ secrets.BINARIES_EMAIL }}
+          git config user.name ${{ secrets.BINARIES_USERNAME }}
           git add *
           git commit -m "adding binaries for ${{ github.ref_name }}"
           git push origin main
