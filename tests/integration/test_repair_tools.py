@@ -156,4 +156,4 @@ def test_find_stitch_face_faces(modeler: Modeler):
     for body in design.bodies:
         faceIds.append(body.id)
     problem_areas = modeler.repair_tools.find_stitch_faces(faceIds)
-    assert problem_areas[0].faces > 0
+    assert len(problem_areas[0].faces) > 0
