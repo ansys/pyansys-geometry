@@ -29,6 +29,7 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FixMissingFacesRequest,
     FixShortEdgesRequest,
     FixSmallFacesRequest,
+    FixSplitEdgesRequest,
     FixStitchFacesRequest,
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
@@ -158,7 +159,7 @@ class MissingFaceProblemAreas(ProblemArea):
         message: RepairToolMessage
             a message containing created and/or modified bodies.
         """
-        id_value = self._id
+        id_value = Int32Value(value=int(self._id))
         response = self._repair_stub.FixMissingFaces(
             FixMissingFacesRequest(missing_face_problem_area_id=id_value)
         )
