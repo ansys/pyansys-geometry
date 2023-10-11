@@ -11,6 +11,7 @@ Geometry
 geometry
 Geometry service
 Geometry models
+github
 GitHub
 GitHub Container Registry
 namespace
