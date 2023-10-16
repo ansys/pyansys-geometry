@@ -117,7 +117,7 @@ extensions = [
 
 # Intersphinx mapping
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/3", None),
+    "python": ("https://docs.python.org/3.11", None),
     "numpy": ("https://numpy.org/doc/stable", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/", None),
     "pyvista": ("https://docs.pyvista.org/version/stable", None),
@@ -249,6 +249,7 @@ latex_additional_files = [watermark, ansys_logo_white, ansys_logo_white_cropped]
 latex_elements = {"preamble": latex.generate_preamble(html_title)}
 
 linkcheck_exclude_documents = ["index", "getting_started/local/index", "assets"]
+linkcheck_ignore = [r"https://github.com/ansys/pyansys-geometry-binaries/.*"]
 
 # -- Declare the Jinja context -----------------------------------------------
 exclude_patterns = []

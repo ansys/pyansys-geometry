@@ -128,7 +128,6 @@ jobs:
           ALLOW_PLOTTING: true
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          pytest-extra-args: "--service-os=linux"
           requires-xvfb: true
 
       - name: Stop the Geometry service

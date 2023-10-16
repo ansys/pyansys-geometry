@@ -341,15 +341,14 @@ jobs:
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
 
-      # - name: Run pytest
-      #   if: env.SKIP_UNSTABLE == 'false'
-      #   uses: ansys/actions/tests-pytest@v4
-      #   env:
-      #     ALLOW_PLOTTING: true
-      #   with:
-      #     python-version: ${{ env.MAIN_PYTHON_VERSION }}
-      #     pytest-extra-args: "--service-os=linux"
-      #     checkout: false
+      - name: Run pytest
+        if: env.SKIP_UNSTABLE == 'false'
+        uses: ansys/actions/tests-pytest@v4
+        env:
+          ALLOW_PLOTTING: true
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          checkout: false
 
       - name: Upload integration test logs
         if: always()
@@ -401,6 +400,12 @@ jobs:
       labels: [self-hosted, Windows, signtool]
 
     steps:
+      - name: Check out repository pyansys-geometry-binaries
+        uses: actions/checkout@v4
+        with:
+          repository: 'ansys/pyansys-geometry-binaries'
+          token: ${{ secrets.BINARIES_TOKEN }}
+
       - name: Download binaries
         run: |
           curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerWindows.zip --output windows-binaries.zip
@@ -411,14 +416,28 @@ jobs:
         with:
           name: windows-binaries.zip
           path: windows-binaries.zip
-          retention-days: 7
+          retention-days: 1
 
       - name: Upload Linux binaries as workflow artifacts
         uses: actions/upload-artifact@v3
         with:
           name: linux-binaries.zip
           path: linux-binaries.zip
-          retention-days: 7
+          retention-days: 1
+
+      - name: Publish the binaries to private repo
+        env:
+          VERSION_WITH_PREFIX: ${{ github.ref_name }}
+        run: |
+          $env:VERSION=$env:VERSION_WITH_PREFIX.substring(1)
+          mkdir $env:VERSION
+          mv windows-binaries.zip .\$env:VERSION\
+          mv linux-binaries.zip .\$env:VERSION\
+          git config user.email ${{ secrets.BINARIES_EMAIL }}
+          git config user.name ${{ secrets.BINARIES_USERNAME }}
+          git add *
+          git commit -m "adding binaries for ${{ github.ref_name }}"
+          git push origin main
 
   build-windows-container:
     name: Building Geometry Service - Windows
@@ -559,7 +578,7 @@ jobs:
           ALLOW_PLOTTING: true
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          pytest-extra-args: "--service-os=linux --use-existing-service=yes"
+          pytest-extra-args: "--use-existing-service=yes"
           checkout: false
           requires-xvfb: true
 
@@ -600,7 +619,7 @@ jobs:
         uses: ansys/actions/release-github@v4
         with:
           library-name: ${{ env.PACKAGE_NAME }}
-          additional-artifacts: windows-binaries.zip windows-dockerfile.zip linux-binaries.zip linux-dockerfile.zip
+          additional-artifacts: windows-dockerfile.zip linux-dockerfile.zip
 
   upload_dev_docs:
     name: Upload dev documentation
