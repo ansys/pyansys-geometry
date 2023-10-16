@@ -1,6 +1,7 @@
 """"Testing of repair tools."""
 
 from ansys.geometry.core.modeler import Modeler
+from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 
 
 def test_find_split_edges(modeler: Modeler):
@@ -25,6 +26,7 @@ def test_find_split_edge_edges(modeler: Modeler):
 def test_fix_split_edge(modeler: Modeler):
     modeler.open_file("./tests/integration/files/SplitEdgeDesignTest.scdocx")
     problem_areas = modeler.repair_tools.find_split_edges(["0:39"], 25, 150)
+
     assert problem_areas[0].fix().success
 
 
@@ -36,14 +38,14 @@ def test_find_extra_edges(modeler: Modeler):
 
 
 def test_find_extra_edge_id(modeler: Modeler):
-    """Test to read geometry and find it's extra edge problem areas."""
+    """Test to read geometry and find it's extra edge problem area ids."""
     modeler.open_file("./tests/integration/files/ExtraEdgesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_extra_edges(["0:22"])
     assert problem_areas[0].id > 0
 
 
 def test_find_extra_edge_edges(modeler: Modeler):
-    """Test to read geometry and find it's extra edge problem areas."""
+    """Test to read geometry and find it's extra edge problem area edges."""
     modeler.open_file("./tests/integration/files/ExtraEdgesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_extra_edges(["0:22"])
     assert len(problem_areas[0].edges) > 0
@@ -203,3 +205,23 @@ def test_fix_stitch_face(modeler: Modeler):
         faceIds.append(body.id)
     problem_areas = modeler.repair_tools.find_stitch_faces(faceIds)
     assert problem_areas[0].fix().success
+
+
+def test_create_repair_tool_message():
+    message = RepairToolMessage(True, ["foo"], ["bar"])
+    assert message.success
+
+
+def test_initiate_repair_tool_message():
+    message = RepairToolMessage(True, ["foo"], ["bar"])
+    assert message.success
+
+
+def test_repair_tool_message_created_bodies():
+    message = RepairToolMessage(True, ["foo"], ["bar"])
+    assert message.created_bodies == ["foo"]
+
+
+def test_repair_tool_message_modified_bodies():
+    message = RepairToolMessage(True, ["foo"], ["bar"])
+    assert message.modified_bodies == ["bar"]
