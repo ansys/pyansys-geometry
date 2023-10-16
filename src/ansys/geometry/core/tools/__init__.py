@@ -25,7 +25,6 @@ from ansys.geometry.core.tools.problem_areas import (
     DuplicateFaceProblemAreas,
     ExtraEdgeProblemAreas,
     InexactEdgeProblemAreas,
-    ShortEdgeProblemAreas,
 )
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 from ansys.geometry.core.tools.repair_tools import RepairTools
