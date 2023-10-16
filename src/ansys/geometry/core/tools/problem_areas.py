@@ -27,7 +27,6 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FixExtraEdgesRequest,
     FixInexactEdgesRequest,
     FixMissingFacesRequest,
-    FixShortEdgesRequest,
     FixSmallFacesRequest,
     FixSplitEdgesRequest,
     FixStitchFacesRequest,
@@ -252,51 +251,6 @@ class ExtraEdgeProblemAreas(ProblemArea):
         id_value = Int32Value(value=int(self._id))
         response = self._repair_stub.FixExtraEdges(
             FixExtraEdgesRequest(extra_edge_problem_area_id=id_value)
-        )
-        message = RepairToolMessage(
-            response.result.success,
-            response.result.created_bodies_monikers,
-            response.result.modified_bodies_monikers,
-        )
-        return message
-
-
-class ShortEdgeProblemAreas(ProblemArea):
-    """
-    Represents a short edge problem area with unique identifier and associated edges.
-
-    Parameters
-    ----------
-    id : str
-        Server-defined ID for the body.
-    grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
-    edges : List[str]
-        A list of edges associated with the design.
-    """
-
-    def __init__(self, id: str, edges: List[str], grpc_client: GrpcClient):
-        """Initialize a new instance of the short edge problem area class."""
-        super().__init__(id, grpc_client)
-        self._edges = edges
-
-    @property
-    def design_edges(self) -> List[str]:
-        """The list of the ids of the edges connected to this problem area."""
-        return self._design_edges
-
-    def fix(self):
-        """
-        Fix the problem area.
-
-        Returns
-        -------
-        message: RepairToolMessage
-            a message containing created and/or modified bodies.
-        """
-        id_value = Int32Value(value=int(self._id))
-        response = self._repair_stub.FixShortEdges(
-            FixShortEdgesRequest(short_edge_problem_area_id=id_value)
         )
         message = RepairToolMessage(
             response.result.success,

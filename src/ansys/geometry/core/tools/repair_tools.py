@@ -26,7 +26,6 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FindExtraEdgesRequest,
     FindInexactEdgesRequest,
     FindMissingFacesRequest,
-    FindShortEdgesRequest,
     FindSmallFacesRequest,
     FindSplitEdgesRequest,
     FindStitchFacesRequest,
@@ -41,7 +40,6 @@ from ansys.geometry.core.tools.problem_areas import (
     ExtraEdgeProblemAreas,
     InexactEdgeProblemAreas,
     MissingFaceProblemAreas,
-    ShortEdgeProblemAreas,
     SmallFaceProblemAreas,
     SplitEdgeProblemAreas,
     StitchFaceProblemAreas,
@@ -154,35 +152,6 @@ class RepairTools:
             problem_areas.append(problem_area)
 
         return problem_areas
-
-    def find_short_edges(self, ids) -> List[ShortEdgeProblemAreas]:
-        """
-        Find the short edge problem areas.
-
-        This method finds the short edge problem areas and returns a list of problem areas ids.
-
-        Parameters
-        ----------
-        ids : string
-            Server-defined ID for the edges.
-
-        Returns
-        -------
-        List[ShortEdgeProblemArea]
-            List of objects representing short edge problem areas.
-        """
-        problemAreasResponse = self._repair_stub.FindShortEdges(
-            FindShortEdgesRequest(selection=ids)
-        )
-        problemAreas = []
-        for res in problemAreasResponse.result:
-            connected_edges = []
-            for edge_moniker in res.edge_monikers:
-                connected_edges.append(edge_moniker)
-            problem_area = ShortEdgeProblemAreas(res.id, connected_edges, self._grpc_client)
-            problemAreas.append(problem_area)
-
-        return problemAreas
 
     def find_duplicate_faces(self, ids) -> List[DuplicateFaceProblemAreas]:
         """
