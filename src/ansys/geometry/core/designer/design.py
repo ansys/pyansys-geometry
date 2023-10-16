@@ -587,7 +587,7 @@ class Design(Component):
         if not design:
             raise RuntimeError("No existing design available at service level.")
         else:
-            self._id = design.main_part.id
+            self._id = design.id
             # Here we may take the design's name instead of the main part's name.
             # Since they're the same in the backend.
             self._name = design.name
@@ -597,11 +597,11 @@ class Design(Component):
         # Store created objects
         created_parts = {p.id: Part(p.id, p.name, [], []) for p in response.parts}
         created_tps = {}
-        created_components = {self.id: self}
+        created_components = {design.main_part.id: self}
         created_bodies = {}
 
         # Make dummy master for design since server doesn't have one
-        self._master_component = MasterComponent("1", "master_design", created_parts[self.id])
+        self._master_component = MasterComponent("1", "master_design", created_parts["0:2"])
 
         # Create MasterComponents
         for master in response.transformed_parts:
