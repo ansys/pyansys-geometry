@@ -97,7 +97,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
         """
         return self._faces
 
-    def fix(self):
+    def fix(self) -> RepairToolMessage:
         """
         Fix the problem area.
 
@@ -149,7 +149,7 @@ class MissingFaceProblemAreas(ProblemArea):
         """The list of the ids of the edges connected to this problem area."""
         return self._edges
 
-    def fix(self):
+    def fix(self) -> RepairToolMessage:
         """
         Fix the problem area.
 
@@ -194,7 +194,7 @@ class InexactEdgeProblemAreas(ProblemArea):
         """The list of the ids of the edges connected to this problem area."""
         return self._edges
 
-    def fix(self):
+    def fix(self) -> RepairToolMessage:
         """
         Fix the problem area.
 
@@ -239,7 +239,7 @@ class ExtraEdgeProblemAreas(ProblemArea):
         """The list of the ids of the edges connected to this problem area."""
         return self._edges
 
-    def fix(self):
+    def fix(self) -> RepairToolMessage:
         """
         Fix the problem area.
 
@@ -284,7 +284,7 @@ class SmallFaceProblemAreas(ProblemArea):
         """The list of the ids of the edges connected to this problem area."""
         return self._faces
 
-    def fix(self):
+    def fix(self) -> RepairToolMessage:
         """
         Fix the problem area.
 
@@ -329,7 +329,7 @@ class SplitEdgeProblemAreas(ProblemArea):
         """The list of the ids of the edges connected to this problem area."""
         return self._edges
 
-    def fix(self):
+    def fix(self) -> RepairToolMessage:
         """
         Fix the problem area.
 
@@ -374,7 +374,7 @@ class StitchFaceProblemAreas(ProblemArea):
         """The list of the ids of the faces connected to this problem area."""
         return self._faces
 
-    def fix(self):
+    def fix(self) -> RepairToolMessage:
         """
         Fix the problem area.
 
