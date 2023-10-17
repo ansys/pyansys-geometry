@@ -31,8 +31,9 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FindStitchFacesRequest,
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
-from beartype.typing import List
+from beartype.typing import List, Union
 from google.protobuf.wrappers_pb2 import DoubleValue
+import numpy as np
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.tools.problem_areas import (
@@ -45,6 +46,9 @@ from ansys.geometry.core.tools.problem_areas import (
     StitchFaceProblemAreas,
 )
 
+Real = Union[int, float, np.integer, np.floating]
+"""Type used to refer to both integers and floats as possible values."""
+
 
 class RepairTools:
     """Repair tools for the pygeometry."""
@@ -55,7 +59,7 @@ class RepairTools:
         self._repair_stub = RepairToolsStub(self._grpc_client.channel)
 
     def find_split_edges(
-        self, ids: list[str], angle: float = 0.0, length: float = 0.0
+        self, ids: List[str], angle: Real = 0.0, length: Real = 0.0
     ) -> List[SplitEdgeProblemAreas]:
         """
         Find split edges in the given list of bodies.
@@ -67,9 +71,9 @@ class RepairTools:
         ----------
         ids : List[str]
             Server-defined ID for the edges.
-        angle : float
+        angle : Real
             The maximum angle between edges.
-        length : float
+        length : Real
             The maximum length of the edges.
 
         Returns
@@ -162,12 +166,12 @@ class RepairTools:
 
         Parameters
         ----------
-        ids (list): a list of face ids.
+        ids (List): a List of face ids.
             Server-defined ID for the edges.
 
         Returns
         -------
-        list[DuplicateFaceProblemAreas]
+        List[DuplicateFaceProblemAreas]
             List of objects representing duplicate face problem areas.
         """
         problemAreasResponse = self._repair_stub.FindDuplicateFaces(

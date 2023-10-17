@@ -22,17 +22,24 @@
 """Module for repair tool message."""
 
 
+from beartype.typing import List
+
+
 class RepairToolMessage:
     """Provides return message for the repair tool methods."""
 
-    def __init__(self, success: bool, created_bodies: list[str], modified_bodies: list[str]):
+    def __init__(self, success: bool, created_bodies: List[str], modified_bodies: list[str]):
         """
         Initialize a new instance of the extra edge problem area class.
 
-        :param id: A unique identifier for the design.
-        :type id: str
-        :param design_edges: A list of edges associated with the design.
-        :type design_edges: list[str]
+        Parameters
+        ----------
+        success: bool
+            True if the repair operation was effective, false if it is not.
+        created_bodies: List[str]
+            List of bodies created after the repair operation.
+        modified_bodies: List[str]
+            List of bodies modified after the repair operation.
         """
         self._success = success
         self._created_bodies = created_bodies
@@ -44,11 +51,11 @@ class RepairToolMessage:
         return self._success
 
     @property
-    def created_bodies(self) -> list[str]:
-        """The success of the repair operation."""
+    def created_bodies(self) -> List[str]:
+        """The list of the created bodies after the repair operation."""
         return self._created_bodies
 
     @property
-    def modified_bodies(self) -> list[str]:
-        """The success of the repair operation."""
+    def modified_bodies(self) -> List[str]:
+        """The list of the modified bodies after the repair operation."""
         return self._modified_bodies
