@@ -601,7 +601,9 @@ class Design(Component):
         created_bodies = {}
 
         # Make dummy master for design since server doesn't have one
-        self._master_component = MasterComponent("1", "master_design", created_parts[design.main_part.id])
+        self._master_component = MasterComponent(
+            "1", "master_design", created_parts[design.main_part.id]
+        )
 
         # Create MasterComponents
         for master in response.transformed_parts:
