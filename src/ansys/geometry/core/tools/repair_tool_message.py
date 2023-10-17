@@ -28,7 +28,7 @@ from beartype.typing import List
 class RepairToolMessage:
     """Provides return message for the repair tool methods."""
 
-    def __init__(self, success: bool, created_bodies: List[str], modified_bodies: list[str]):
+    def __init__(self, success: bool, created_bodies: List[str], modified_bodies: List[str]):
         """
         Initialize a new instance of the extra edge problem area class.
 
