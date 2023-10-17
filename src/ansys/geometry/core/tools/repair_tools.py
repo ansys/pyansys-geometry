@@ -70,7 +70,7 @@ class RepairTools:
         Parameters
         ----------
         ids : List[str]
-            Server-defined ID for the edges.
+            Server-defined ID for the bodies.
         angle : Real
             The maximum angle between edges.
         length : Real
@@ -107,7 +107,7 @@ class RepairTools:
         Parameters
         ----------
         ids : List[str]
-            Server-defined ID for the edges.
+            Server-defined ID for the bodies.
 
         Returns
         ----------
@@ -136,8 +136,8 @@ class RepairTools:
 
         Parameters
         ----------
-        ids : ids
-            Server-defined ID for the edges.
+        ids : List[str]
+            Server-defined ID for the bodies.
 
         Returns
         -------
@@ -166,8 +166,8 @@ class RepairTools:
 
         Parameters
         ----------
-        ids (List): a List of face ids.
-            Server-defined ID for the edges.
+        ids : List[str]
+            Server-defined ID for the bodies.
 
         Returns
         -------
@@ -196,8 +196,8 @@ class RepairTools:
 
         Parameters
         ----------
-        ids : string
-            Server-defined ID for the edges.
+        ids : List[str]
+            Server-defined ID for the bodies.
 
         Returns
         -------
@@ -226,8 +226,8 @@ class RepairTools:
 
         Parameters
         ----------
-        ids : string
-            Server-defined ID for the edges.
+        ids : List[str]
+            Server-defined ID for the bodies.
 
         Returns
         -------
@@ -256,8 +256,8 @@ class RepairTools:
 
         Parameters
         ----------
-        ids : string
-            Server-defined ID for the edges.
+        ids : List[str]
+            Server-defined ID for the bodies.
 
         Returns
         -------
