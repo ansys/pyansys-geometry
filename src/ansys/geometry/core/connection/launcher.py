@@ -456,6 +456,7 @@ def launch_modeler_with_discovery(
         log_level=log_level,
         api_version=api_version,
         timeout=timeout,
+        manifest_path=manifest_path,
     )
 
 
@@ -555,6 +556,7 @@ def launch_modeler_with_spaceclaim(
         log_level=log_level,
         api_version=api_version,
         timeout=timeout,
+        manifest_path=manifest_path,
     )
 
 
