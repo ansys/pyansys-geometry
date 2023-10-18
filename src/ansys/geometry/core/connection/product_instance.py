@@ -138,6 +138,7 @@ def prepare_and_start_backend(
     log_level: int = 2,
     api_version: ApiVersions = ApiVersions.LATEST,
     timeout: int = 150,
+    manifest_path: str = None,
 ) -> "Modeler":
     """
     Start the requested service locally using the ``ProductInstance`` class.
@@ -176,6 +177,10 @@ def prepare_and_start_backend(
         the latest. Default is ``ApiVersions.LATEST``.
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 150.
+    manifest_path : str, optional
+        Used to specify a manifest file path for the ApiServerAddin. This way,
+        it is possible to run an ApiServerAddin from a version an older product
+        version.
 
     Raises
     ------
@@ -209,14 +214,14 @@ def prepare_and_start_backend(
         args.append(BACKEND_SPACECLAIM_OPTIONS)
         args.append(
             BACKEND_ADDIN_MANIFEST_ARGUMENT
-            + _manifest_path_provider(product_version, installations)
+            + _manifest_path_provider(product_version, installations, manifest_path)
         )
         env_copy[BACKEND_API_VERSION_VARIABLE] = str(api_version)
     elif backend_type == BackendType.SPACECLAIM:
         args.append(os.path.join(installations[product_version], SPACECLAIM_FOLDER, SPACECLAIM_EXE))
         args.append(
             BACKEND_ADDIN_MANIFEST_ARGUMENT
-            + _manifest_path_provider(product_version, installations)
+            + _manifest_path_provider(product_version, installations, manifest_path)
         )
         env_copy[BACKEND_API_VERSION_VARIABLE] = str(api_version)
     elif backend_type == BackendType.WINDOWS_SERVICE:
@@ -267,11 +272,16 @@ def _is_port_available(port: int, host: str = "localhost") -> bool:
                 return False
 
 
-def _manifest_path_provider(version: int, available_installations: Dict) -> str:
+def _manifest_path_provider(version: int, available_installations: Dict, manifest_path: str = None
+) -> str:
     """Return the ApiServer's addin manifest file path."""
-    return os.path.join(
-        available_installations[version], ADDINS_SUBFOLDER, BACKEND_SUBFOLDER, MANIFEST_FILENAME
-    )
+    if manifest_path != None and os.path.exists(manifest_path):
+        return manifest_path
+    elif manifest_path != None and os.path.exists(manifest_path) == False:
+        print("specified manifest file's path does not exists. Taking install default path.")
+        return os.path.join(
+            available_installations[version], ADDINS_SUBFOLDER, BACKEND_SUBFOLDER, MANIFEST_FILENAME
+        )
 
 
 def _start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Popen:

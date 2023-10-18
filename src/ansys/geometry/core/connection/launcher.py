@@ -364,6 +364,7 @@ def launch_modeler_with_discovery(
     log_level: int = 2,
     api_version: ApiVersions = ApiVersions.LATEST,
     timeout: int = 150,
+    manifest_path: str = None,
 ):
     """
     Start Ansys Discovery locally using the ``ProductInstance`` class.
@@ -408,6 +409,10 @@ def launch_modeler_with_discovery(
         the latest. Default is ``ApiVersions.LATEST``.
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 150.
+    manifest_path : str, optional
+        Used to specify a manifest file path for the ApiServerAddin. This way,
+        it is possible to run an ApiServerAddin from a version an older product
+        version.
 
     Raises
     ------
@@ -461,6 +466,7 @@ def launch_modeler_with_spaceclaim(
     log_level: int = 2,
     api_version: ApiVersions = ApiVersions.LATEST,
     timeout: int = 150,
+    manifest_path: str = None,
 ):
     """
     Start Ansys SpaceClaim locally using the ``ProductInstance`` class.
@@ -502,6 +508,10 @@ def launch_modeler_with_spaceclaim(
         the latest. Default is ``ApiVersions.LATEST``.
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 150.
+    manifest_path : str, optional
+        Used to specify a manifest file path for the ApiServerAddin. This way,
+        it is possible to run an ApiServerAddin from a version an older product
+        version.
 
     Raises
     ------
