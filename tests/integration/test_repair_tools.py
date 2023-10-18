@@ -1,7 +1,6 @@
 """"Testing of repair tools."""
 
 from ansys.geometry.core.modeler import Modeler
-from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 
 
 def test_find_split_edges(modeler: Modeler):
@@ -29,7 +28,6 @@ def test_fix_split_edge(modeler: Modeler):
     """Test to find and fix split edge problem areas."""
     modeler.open_file("./tests/integration/files/SplitEdgeDesignTest.scdocx")
     problem_areas = modeler.repair_tools.find_split_edges(["0:39"], 25, 150)
-
     assert problem_areas[0].fix().success
 
 
@@ -216,21 +214,15 @@ def test_fix_stitch_face(modeler: Modeler):
     assert problem_areas[0].fix().success
 
 
-def test_create_repair_tool_message():
-    message = RepairToolMessage(True, ["foo"], ["bar"])
-    assert message.success
-
-
-def test_initiate_repair_tool_message():
-    message = RepairToolMessage(True, ["foo"], ["bar"])
-    assert message.success
-
-
-def test_repair_tool_message_created_bodies():
-    message = RepairToolMessage(True, ["foo"], ["bar"])
-    assert message.created_bodies == ["foo"]
-
-
-def test_repair_tool_message_modified_bodies():
-    message = RepairToolMessage(True, ["foo"], ["bar"])
-    assert message.modified_bodies == ["bar"]
+def test_initiate_repair_tool_message(modeler: Modeler):
+    """Test to get the repair message and check its content."""
+    modeler.open_file("./tests/integration/files/stitch_before.scdocx")
+    design = modeler.read_existing_design()
+    faceIds = []
+    for body in design.bodies:
+        faceIds.append(body.id)
+    problem_areas = modeler.repair_tools.find_stitch_faces(faceIds)
+    message = problem_areas[0].fix()
+    assert message.success == True
+    assert len(message.created_bodies) == 0
+    assert len(message.modified_bodies) > 0
