@@ -272,7 +272,8 @@ def _is_port_available(port: int, host: str = "localhost") -> bool:
                 return False
 
 
-def _manifest_path_provider(version: int, available_installations: Dict, manifest_path: str = None
+def _manifest_path_provider(
+    version: int, available_installations: Dict, manifest_path: str = None
 ) -> str:
     """Return the ApiServer's addin manifest file path."""
     if manifest_path != None and os.path.exists(manifest_path):
