@@ -215,7 +215,7 @@ def test_fix_stitch_face(modeler: Modeler):
 
 
 def test_initiate_repair_tool_message(modeler: Modeler):
-    """Test to get the repair message and check its content."""
+    """Test to get the repair message and check its properties."""
     modeler.open_file("./tests/integration/files/stitch_before.scdocx")
     design = modeler.read_existing_design()
     faceIds = []
