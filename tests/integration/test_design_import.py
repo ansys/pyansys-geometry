@@ -13,8 +13,7 @@ from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 
 
-def _checker_method(
-    comp: Component, comp_ref: Component, precise_check: bool = True) -> None:
+def _checker_method(comp: Component, comp_ref: Component, precise_check: bool = True) -> None:
     # Check component features
     if precise_check:
         assert comp.id == comp_ref.id
