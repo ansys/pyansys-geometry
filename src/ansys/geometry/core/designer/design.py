@@ -138,6 +138,7 @@ class Design(Component):
             self._design_id = new_design.id
             self._id = new_design.main_part.id
             self._grpc_client.log.debug("Design object instantiated successfully.")
+
     @property
     def design_id(self) -> str:
         """The design's unique id."""
