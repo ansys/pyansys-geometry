@@ -47,6 +47,7 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
     design_name = "ExtrudeProfile"
     design = modeler.create_design(design_name)
     assert design.name == design_name
+    assert design.design_id is not None
     assert design.id is not None
     assert design.parent_component is None
     assert len(design.components) == 0
@@ -175,6 +176,7 @@ def test_component_body(modeler: Modeler):
     design_name = "ComponentBody_Test"
     design = modeler.create_design(design_name)
     assert design.name == design_name
+    assert design.design_id is not None
     assert design.id is not None
     assert design.parent_component is None
     assert len(design.components) == 0

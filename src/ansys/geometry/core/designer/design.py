@@ -127,6 +127,7 @@ class Design(Component):
         self._materials = []
         self._named_selections = {}
         self._beam_profiles = {}
+        self._design_id = ""
 
         # Check whether we want to process an existing design or create a new one.
         if read_existing_design:
@@ -134,8 +135,13 @@ class Design(Component):
             self.__read_existing_design()
         else:
             new_design = self._design_stub.New(NewRequest(name=name))
-            self._id = new_design.id
+            self._design_id = new_design.id
+            self._id = new_design.main_part.id
             self._grpc_client.log.debug("Design object instantiated successfully.")
+    @property
+    def design_id(self) -> str:
+        """The design's unique id."""
+        return self._design_id
 
     @property
     def materials(self) -> List[Material]:
@@ -587,7 +593,8 @@ class Design(Component):
         if not design:
             raise RuntimeError("No existing design available at service level.")
         else:
-            self._id = design.id
+            self._design_id = design.id
+            self._id = design.main_part.id
             # Here we may take the design's name instead of the main part's name.
             # Since they're the same in the backend.
             self._name = design.name

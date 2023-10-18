@@ -19,7 +19,8 @@ def _checker_method(
     # Check component features
     if precise_check:
         if design_id_check:
-            assert comp.id == comp_ref.id
+            assert comp.design_id == comp_ref.design_id
+        assert comp.id == comp_ref.id
         assert comp.name == comp_ref.name
     assert len(comp.bodies) == len(comp_ref.bodies)
     assert len(comp.components) == len(comp_ref.components)
