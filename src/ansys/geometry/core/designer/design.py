@@ -141,7 +141,7 @@ class Design(Component):
 
     @property
     def design_id(self) -> str:
-        """The design's unique id."""
+        """The design's object unique id."""
         return self._design_id
 
     @property
