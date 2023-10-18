@@ -35,7 +35,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
 
 
-WINDOWS_GEOMETRY_SERVICE_FOLDER = "GeometryServices"
+WINDOWS_GEOMETRY_SERVICE_FOLDER = "GeometryService"
 """Default Geometry Service's folder name into the unified installer."""
 
 DISCOVERY_FOLDER = "Discovery"
