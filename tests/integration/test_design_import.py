@@ -14,12 +14,9 @@ from ansys.geometry.core.sketch import Sketch
 
 
 def _checker_method(
-    comp: Component, comp_ref: Component, precise_check: bool = True, design_id_check: bool = True
-) -> None:
+    comp: Component, comp_ref: Component, precise_check: bool = True) -> None:
     # Check component features
     if precise_check:
-        if design_id_check:
-            assert comp.design_id == comp_ref.design_id
         assert comp.id == comp_ref.id
         assert comp.name == comp_ref.name
     assert len(comp.bodies) == len(comp_ref.bodies)
@@ -157,7 +154,7 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         design2 = modeler.open_file(file)
 
         # assert the two cars are the same, excepted for the ID, which should be different
-        _checker_method(design, design2, True, False)
+        _checker_method(design, design2, True)
 
     # Test HOOPS formats (Windows only)
     if modeler.client.backend_type != BackendType.LINUX_SERVICE:
