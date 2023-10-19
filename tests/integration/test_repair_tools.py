@@ -204,7 +204,7 @@ def test_find_stitch_face_faces(modeler: Modeler):
 
 
 def test_fix_stitch_face(modeler: Modeler):
-    """Test to read geometry find the split edge problem areas and to fix them."""
+    """Test to read geometry, find the split edge problem areas and to fix them."""
     modeler.open_file("./tests/integration/files/stitch_before.scdocx")
     design = modeler.read_existing_design()
     faceIds = []
