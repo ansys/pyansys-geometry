@@ -152,7 +152,7 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     if modeler.client.backend_type != BackendType.LINUX_SERVICE:
         design2 = modeler.open_file(file)
 
-        # assert the two cars are the same
+        # assert the two cars are the same, excepted for the ID, which should be different
         _checker_method(design, design2, True)
 
     # Test HOOPS formats (Windows only)
