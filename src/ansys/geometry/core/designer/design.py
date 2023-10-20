@@ -231,6 +231,11 @@ class Design(Component):
         if isinstance(file_location, Path):
             file_location = str(file_location)
 
+        # Check if the folder for the file location exists
+        if not Path(file_location).parent.exists():
+            # Create the parent directory
+            Path(file_location).parent.mkdir(parents=True, exist_ok=True)
+
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
         received_bytes = bytes()

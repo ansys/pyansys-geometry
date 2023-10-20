@@ -791,7 +791,7 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     design.extrude_sketch(name="MyCylinder", sketch=sketch, distance=Quantity(50, UNITS.mm))
 
     # Download the design
-    file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.scdocx"
+    file = tmp_path_factory.mktemp("scdoc_files_download") / "dummy_folder" / "cylinder.scdocx"
     design.download(file)
 
     # Check that the file exists
