@@ -115,8 +115,8 @@ class Modeler:
             backend_type=backend_type,
         )
 
-        # Design[] maintaining references to all designs within the modeler workspace
-        self._designs = []
+        # Maintaining references to all designs within the modeler workspace
+        self._designs = {}
 
     @property
     def client(self) -> GrpcClient:
@@ -141,13 +141,13 @@ class Modeler:
 
         check_type(name, str)
         design = Design(name, self._client)
-        self._designs.append(design)
+        self._designs[design.id] = design
         if len(self._designs) > 1:
             logger.warning(
-                "Most backends only support one design. "
+                "Some backends only support one design. "
                 + "Previous designs may be deleted (on the service) when creating a new one."
             )
-        return self._designs[-1]
+        return self._designs[design.id]
 
     def read_existing_design(self) -> "Design":
         """
@@ -161,13 +161,13 @@ class Modeler:
         from ansys.geometry.core.designer.design import Design
 
         design = Design("", self._client, read_existing_design=True)
-        self._designs.append(design)
+        self._designs[design.id] = design
         if len(self._designs) > 1:
             logger.warning(
-                "Most backends only support one design. "
+                "Some backends only support one design. "
                 + "Previous designs may be deleted (on the service) when reading a new one."
             )
-        return self._designs[-1]
+        return self._designs[design.id]
 
     def close(self) -> None:
         """``Modeler`` method for easily accessing the client's close method."""
