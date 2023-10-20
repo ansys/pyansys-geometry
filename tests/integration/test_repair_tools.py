@@ -211,17 +211,6 @@ def test_fix_stitch_face(modeler: Modeler):
     for body in design.bodies:
         faceIds.append(body.id)
     problem_areas = modeler.repair_tools.find_stitch_faces(faceIds)
-    assert problem_areas[0].fix().success
-
-
-def test_initiate_repair_tool_message(modeler: Modeler):
-    """Test to check the repair message after the fix and check its properties."""
-    modeler.open_file("./tests/integration/files/stitch_before.scdocx")
-    design = modeler.read_existing_design()
-    faceIds = []
-    for body in design.bodies:
-        faceIds.append(body.id)
-    problem_areas = modeler.repair_tools.find_stitch_faces(faceIds)
     message = problem_areas[0].fix()
     assert message.success == True
     assert len(message.created_bodies) == 0
