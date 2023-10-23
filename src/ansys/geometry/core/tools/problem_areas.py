@@ -337,9 +337,8 @@ class SplitEdgeProblemAreas(ProblemArea):
         message: RepairToolMessage
             a message containing created and/or modified bodies.
         """
-        id_value = Int32Value(value=int(self._id))
         response = self._repair_stub.FixSplitEdges(
-            FixSplitEdgesRequest(split_edge_problem_area_id=id_value)
+            FixSplitEdgesRequest(split_edge_problem_area_id=int(self._id))
         )
         message = RepairToolMessage(
             response.result.success,
