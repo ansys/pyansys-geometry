@@ -51,7 +51,7 @@ Real = Union[int, float, np.integer, np.floating]
 
 
 class RepairTools:
-    """Repair tools for the pygeometry."""
+    """Repair tools for PyAnsys Geometry."""
 
     def __init__(self, grpc_client: GrpcClient):
         """Initialize Repair Tools class."""
