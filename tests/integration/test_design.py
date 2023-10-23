@@ -1720,8 +1720,7 @@ def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
     # Extrude the sketch to create a body
     design2.extrude_sketch("MyRectangle", sketch2, Quantity(10, UNITS.mm))
 
-    # Asking for the plotting of the first design should lead to an error
-    # since the tessellation of the first design has not been computed yet
+    # Initiate expected output images
     scshot_dir = tmp_path_factory.mktemp("test_multiple_designs")
     scshot_1 = scshot_dir / "design1.png"
     scshot_2 = scshot_dir / "design2.png"
