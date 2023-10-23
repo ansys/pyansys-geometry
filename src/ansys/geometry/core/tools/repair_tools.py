@@ -31,9 +31,8 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FindStitchFacesRequest,
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
-from beartype.typing import List, Union
+from beartype.typing import List
 from google.protobuf.wrappers_pb2 import DoubleValue
-import numpy as np
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.tools.problem_areas import (
@@ -45,9 +44,7 @@ from ansys.geometry.core.tools.problem_areas import (
     SplitEdgeProblemAreas,
     StitchFaceProblemAreas,
 )
-
-Real = Union[int, float, np.integer, np.floating]
-"""Type used to refer to both integers and floats as possible values."""
+from ansys.geometry.core.typing import Real
 
 
 class RepairTools:
