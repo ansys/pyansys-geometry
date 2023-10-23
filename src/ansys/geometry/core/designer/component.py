@@ -66,7 +66,7 @@ from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.checks import check_pint_unit_compatibility
+from ansys.geometry.core.misc.checks import check_pint_unit_compatibility, ensure_design_is_active
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
@@ -280,6 +280,7 @@ class Component:
         return self.parent_component.get_world_transform() * self._master_component.transform
 
     @protect_grpc
+    @ensure_design_is_active
     def modify_placement(
         self,
         translation: Optional[Vector3D] = None,
@@ -339,6 +340,7 @@ class Component:
         self.modify_placement()
 
     @check_input_types
+    @ensure_design_is_active
     def add_component(self, name: str, template: Optional["Component"] = None) -> "Component":
         """
         Add a new component under this component within the design assembly.
@@ -379,6 +381,7 @@ class Component:
 
     @protect_grpc
     @check_input_types
+    @ensure_design_is_active
     def set_shared_topology(self, share_type: SharedTopologyType) -> None:
         """
         Set the shared topology to apply to the component.
@@ -401,6 +404,7 @@ class Component:
 
     @protect_grpc
     @check_input_types
+    @ensure_design_is_active
     def extrude_sketch(
         self, name: str, sketch: Sketch, distance: Union[Quantity, Distance, Real]
     ) -> Body:
@@ -445,6 +449,7 @@ class Component:
 
     @protect_grpc
     @check_input_types
+    @ensure_design_is_active
     def extrude_face(self, name: str, face: Face, distance: Union[Quantity, Distance]) -> Body:
         """
         Extrude the face profile by a given distance to create a solid body.
@@ -492,6 +497,7 @@ class Component:
 
     @protect_grpc
     @check_input_types
+    @ensure_design_is_active
     def create_surface(self, name: str, sketch: Sketch) -> Body:
         """
         Create a surface body with a sketch profile.
@@ -529,6 +535,7 @@ class Component:
 
     @protect_grpc
     @check_input_types
+    @ensure_design_is_active
     def create_surface_from_face(self, name: str, face: Face) -> Body:
         """
         Create a surface body based on a face.
@@ -568,6 +575,7 @@ class Component:
         return Body(response.id, response.name, self, tb)
 
     @check_input_types
+    @ensure_design_is_active
     def create_coordinate_system(self, name: str, frame: Frame) -> CoordinateSystem:
         """
         Create a coordinate system.
@@ -591,6 +599,7 @@ class Component:
 
     @protect_grpc
     @check_input_types
+    @ensure_design_is_active
     def translate_bodies(
         self, bodies: List[Body], direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
     ) -> None:
@@ -643,6 +652,7 @@ class Component:
 
     @protect_grpc
     @check_input_types
+    @ensure_design_is_active
     def create_beams(
         self, segments: List[Tuple[Point3D, Point3D]], profile: BeamProfile
     ) -> List[Beam]:
@@ -705,6 +715,7 @@ class Component:
 
     @protect_grpc
     @check_input_types
+    @ensure_design_is_active
     def delete_component(self, component: Union["Component", str]) -> None:
         """
         Delete a component (itself or its children).
@@ -740,6 +751,7 @@ class Component:
 
     @protect_grpc
     @check_input_types
+    @ensure_design_is_active
     def delete_body(self, body: Union[Body, str]) -> None:
         """
         Delete a body belonging to this component (or its children).
@@ -792,6 +804,7 @@ class Component:
 
     @protect_grpc
     @check_input_types
+    @ensure_design_is_active
     def add_design_points(
         self,
         name: str,
@@ -828,6 +841,7 @@ class Component:
 
     @protect_grpc
     @check_input_types
+    @ensure_design_is_active
     def delete_beam(self, beam: Union[Beam, str]) -> None:
         """
         Delete an existing beam belonging to this component (or its children).
@@ -1119,7 +1133,11 @@ class Component:
         from ansys.geometry.core.plotting import PlotterHelper
 
         PlotterHelper(use_trame=use_trame).plot(
-            self, merge_bodies=merge_bodies, merge_component=merge_component, **plotting_options
+            self,
+            merge_bodies=merge_bodies,
+            merge_component=merge_component,
+            screenshot=screenshot,
+            **plotting_options,
         )
 
     def __repr__(self) -> str:

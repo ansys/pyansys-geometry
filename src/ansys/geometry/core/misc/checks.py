@@ -20,9 +20,60 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides functions for performing common checks."""
-from beartype.typing import Any, Optional, Tuple, Union
+from beartype.typing import TYPE_CHECKING, Any, Optional, Tuple, Union
 import numpy as np
 from pint import Unit
+
+if TYPE_CHECKING:
+    from ansys.geometry.core.designer import Design
+
+
+def ensure_design_is_active(method):
+    """
+    Make sure that the design is active before executing a method.
+
+    This function is necessary to be called whenever we do any operation on the design.
+    If we are just accessing information of the class, it is not necessary to call this.
+    """
+
+    def wrapper(self, *args, **kwargs):
+        # Check if the current design is active... otherwise activate it
+        def get_design_ref(obj) -> "Design":
+            if hasattr(obj, "_modeler"):  # In case of a Design object
+                return obj
+            elif hasattr(
+                obj, "_parent_component"
+            ):  # In case of a Body, Component, DesignPoint, Beam
+                return get_design_ref(obj._parent_component)
+            elif hasattr(obj, "_body"):  # In case of a Face, Edge
+                return get_design_ref(obj._body._parent_component)
+            else:
+                raise ValueError("Unable to find the design reference.")
+
+        # Get the design reference
+        design = get_design_ref(self)
+
+        # Activate the design if it is not active
+        if not design.is_active:
+            # First, check the backend... multiple documents are only allowed
+            # on DMS (Geometry Service) and SpaceClaim
+            from ansys.geometry.core.connection.backend import BackendType
+            from ansys.geometry.core.errors import GeometryRuntimeError
+
+            if design._grpc_client.backend_type in (
+                BackendType.SPACECLAIM,
+                BackendType.WINDOWS_SERVICE,
+            ):
+                design._activate()
+            else:
+                raise GeometryRuntimeError(
+                    f"Multiple documents are not allowed on: {design._grpc_client.backend_type}."
+                )
+
+        # Finally, call method
+        return method(self, *args, **kwargs)
+
+    return wrapper
 
 
 def check_is_float_int(param: object, param_name: Optional[Union[str, None]] = None) -> None:

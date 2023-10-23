@@ -31,6 +31,7 @@ from pint import Quantity
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.misc.checks import ensure_design_is_active
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -88,6 +89,7 @@ class Edge:
 
     @property
     @protect_grpc
+    @ensure_design_is_active
     def length(self) -> Quantity:
         """Calculated length of the edge."""
         self._grpc_client.log.debug("Requesting edge length from server.")
@@ -101,6 +103,7 @@ class Edge:
 
     @property
     @protect_grpc
+    @ensure_design_is_active
     def faces(self) -> List["Face"]:
         """Faces that contain the edge."""
         from ansys.geometry.core.designer.face import Face, SurfaceType
@@ -114,6 +117,7 @@ class Edge:
 
     @property
     @protect_grpc
+    @ensure_design_is_active
     def start_point(self) -> Point3D:
         """Edge start point."""
         self._grpc_client.log.debug("Requesting edge points from server.")
@@ -122,6 +126,7 @@ class Edge:
 
     @property
     @protect_grpc
+    @ensure_design_is_active
     def end_point(self) -> Point3D:
         """Edge end point."""
         self._grpc_client.log.debug("Requesting edge points from server.")
