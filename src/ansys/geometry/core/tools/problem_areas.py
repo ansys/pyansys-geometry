@@ -293,9 +293,8 @@ class SmallFaceProblemAreas(ProblemArea):
         message: RepairToolMessage
             a message containing created and/or modified bodies.
         """
-        id_value = Int32Value(value=int(self._id))
         response = self._repair_stub.FixSmallFaces(
-            FixSmallFacesRequest(small_face_problem_area_id=id_value)
+            FixSmallFacesRequest(small_face_problem_area_id=int(self._id))
         )
         message = RepairToolMessage(
             response.result.success,
