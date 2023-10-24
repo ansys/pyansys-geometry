@@ -6,7 +6,7 @@ from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.modeler import Modeler
 
 
-# TODO: reenable when Linux service is able to use repair tools
+# TODO: re-enable when Linux service is able to use repair tools
 def skip_if_linux(modeler: Modeler):
     """Skip test if running on Linux."""
     if modeler.client.backend_type == BackendType.LINUX_SERVICE:

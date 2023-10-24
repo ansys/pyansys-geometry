@@ -120,7 +120,7 @@ class Modeler:
         # TODO: delete "if" when Linux service is able to use repair tools
         if self.client.backend_type == BackendType.LINUX_SERVICE:
             self._repair_tools = None
-            logger.warning("Linux backend does not suppport repair tools.")
+            logger.warning("Linux backend does not support repair tools.")
         else:
             self._repair_tools = RepairTools(self._client)
 
