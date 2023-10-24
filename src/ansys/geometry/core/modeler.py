@@ -40,6 +40,7 @@ from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.misc.checks import check_type
 from ansys.geometry.core.misc.options import ImportOptions
+from ansys.geometry.core.tools.repair_tools import RepairTools
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -117,6 +118,15 @@ class Modeler:
 
         # Maintaining references to all designs within the modeler workspace
         self._designs: Dict[str, "Design"] = {}
+
+        # Initialize the RepairTools - Not available on Linux
+        # TODO: delete "if" when Linux service is able to use repair tools
+        if self.client.backend_type == BackendType.LINUX_SERVICE:
+            self._repair_tools = None
+            logger.warning("Linux backend does not support repair tools.")
+        else:
+            self._repair_tools = RepairTools(self._client)
+
 
     @property
     def client(self) -> GrpcClient:
@@ -341,3 +351,8 @@ class Modeler:
             return (response.values, self.read_existing_design())
         else:
             return response.values
+
+    @property
+    def repair_tools(self) -> RepairTools:
+        """Access to repair tools."""
+        return self._repair_tools
