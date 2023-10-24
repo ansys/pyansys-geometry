@@ -24,7 +24,6 @@ from abc import abstractmethod
 
 from ansys.api.geometry.v0.repairtools_pb2 import (
     FixDuplicateFacesRequest,
-    FixExtraEdgesRequest,
     FixInexactEdgesRequest,
     FixMissingFacesRequest,
     FixSmallFacesRequest,
@@ -229,25 +228,6 @@ class ExtraEdgeProblemAreas(ProblemArea):
     def edges(self) -> List[str]:
         """The list of the ids of the edges connected to this problem area."""
         return self._edges
-
-    def fix(self) -> RepairToolMessage:
-        """
-        Fix the problem area.
-
-        Returns
-        -------
-        message: RepairToolMessage
-            Message containing created and/or modified bodies.
-        """
-        response = self._repair_stub.FixExtraEdges(
-            FixExtraEdgesRequest(extra_edge_problem_area_id=self._id_grpc)
-        )
-        message = RepairToolMessage(
-            response.result.success,
-            response.result.created_bodies_monikers,
-            response.result.modified_bodies_monikers,
-        )
-        return message
 
 
 class SmallFaceProblemAreas(ProblemArea):
