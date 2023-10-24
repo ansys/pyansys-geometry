@@ -17,3 +17,12 @@
 .sd-card .sd-card-footer .sd-card-text {
   max-width: 220px;
 }
+/* meilisearch.css make the code-block and the result too narrow, here we
+ * override the problematic element. There might be a better way to restrict
+ * this. */
+.container 
+{
+  display: block !important;
+  justify-content: unset !important;
+  align-items: unset !important;
+}
