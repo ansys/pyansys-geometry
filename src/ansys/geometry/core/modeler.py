@@ -116,6 +116,7 @@ class Modeler:
             backend_type=backend_type,
         )
 
+        # Initialize the RepairTools
         self._repair_tools = RepairTools(self._client)
         # Design[] maintaining references to all designs within the modeler workspace
         self._designs = []
@@ -346,5 +347,5 @@ class Modeler:
 
     @property
     def repair_tools(self) -> RepairTools:
-        """Modeler instance repair tools."""
+        """Access to repair tools."""
         return self._repair_tools
