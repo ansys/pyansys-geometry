@@ -127,7 +127,6 @@ class Modeler:
         else:
             self._repair_tools = RepairTools(self._client)
 
-
     @property
     def client(self) -> GrpcClient:
         """``Modeler`` instance client."""
