@@ -141,11 +141,11 @@ class RepairTools:
         List[InExactEdgeProblemArea]
             List of objects representing inexact edge problem areas.
         """
-        problemAreasResponse = self._repair_stub.FindInexactEdges(
+        problem_areas_response = self._repair_stub.FindInexactEdges(
             FindInexactEdgesRequest(selection=ids)
         )
         problem_areas = []
-        for res in problemAreasResponse.result:
+        for res in problem_areas_response.result:
             connected_edges = []
             for edge_moniker in res.edge_monikers:
                 connected_edges.append(edge_moniker)
@@ -171,11 +171,11 @@ class RepairTools:
         List[DuplicateFaceProblemAreas]
             List of objects representing duplicate face problem areas.
         """
-        problemAreasResponse = self._repair_stub.FindDuplicateFaces(
+        problem_areas_response = self._repair_stub.FindDuplicateFaces(
             FindDuplicateFacesRequest(faces=ids)
         )
         problem_areas = []
-        for res in problemAreasResponse.result:
+        for res in problem_areas_response.result:
             connected_edges = []
             for face_moniker in res.face_monikers:
                 connected_edges.append(face_moniker)
@@ -201,11 +201,11 @@ class RepairTools:
         List[MissingFaceProblemAreas]
             List of objects representing missing face problem areas.
         """
-        problemAreasResponse = self._repair_stub.FindMissingFaces(
+        problem_areas_response = self._repair_stub.FindMissingFaces(
             FindMissingFacesRequest(faces=ids)
         )
         problem_areas = []
-        for res in problemAreasResponse.result:
+        for res in problem_areas_response.result:
             connected_edges = []
             for edge_moniker in res.edge_monikers:
                 connected_edges.append(edge_moniker)
@@ -231,11 +231,11 @@ class RepairTools:
         List[SmallFaceProblemAreas]
             List of objects representing small face problem areas.
         """
-        problemAreasResponse = self._repair_stub.FindSmallFaces(
+        problem_areas_response = self._repair_stub.FindSmallFaces(
             FindSmallFacesRequest(selection=ids)
         )
         problem_areas = []
-        for res in problemAreasResponse.result:
+        for res in problem_areas_response.result:
             connected_edges = []
             for face_moniker in res.face_monikers:
                 connected_edges.append(face_moniker)
@@ -261,9 +261,11 @@ class RepairTools:
         List[StitchFaceProblemAreas]
             List of objects representing stitch face problem areas.
         """
-        problemAreasResponse = self._repair_stub.FindStitchFaces(FindStitchFacesRequest(faces=ids))
+        problem_areas_response = self._repair_stub.FindStitchFaces(
+            FindStitchFacesRequest(faces=ids)
+        )
         problem_areas = []
-        for res in problemAreasResponse.result:
+        for res in problem_areas_response.result:
             connected_edges = []
             for face_moniker in res.body_monikers:
                 connected_edges.append(face_moniker)

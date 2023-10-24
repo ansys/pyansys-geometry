@@ -54,6 +54,7 @@ class ProblemArea:
     def __init__(self, id: str, grpc_client: GrpcClient):
         """Initialize a new instance of a problem area class."""
         self._id = id
+        self._id_grpc = Int32Value(value=int(id))
         self._repair_stub = RepairToolsStub(grpc_client.channel)
 
     @property
@@ -106,9 +107,8 @@ class DuplicateFaceProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
-        id_value = Int32Value(value=int(self._id))
         response = self._repair_stub.FixDuplicateFaces(
-            FixDuplicateFacesRequest(duplicate_face_problem_area_id=id_value)
+            FixDuplicateFacesRequest(duplicate_face_problem_area_id=self._id_grpc)
         )
         message = RepairToolMessage(
             response.result.success,
@@ -133,14 +133,7 @@ class MissingFaceProblemAreas(ProblemArea):
     """
 
     def __init__(self, id: str, edges: List[str], grpc_client: GrpcClient):
-        """
-        Initialize a new instance of the missing face problem area class.
-
-        :param id: A unique identifier for the design.
-        :type id: str
-        :param edges: A list of edges associated with the design.
-        :type edges: List[str]
-        """
+        """Initialize a new instance of the missing face problem area class."""
         super().__init__(id, grpc_client)
         self._edges = edges
 
@@ -158,9 +151,8 @@ class MissingFaceProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
-        id_value = Int32Value(value=int(self._id))
         response = self._repair_stub.FixMissingFaces(
-            FixMissingFacesRequest(missing_face_problem_area_id=id_value)
+            FixMissingFacesRequest(missing_face_problem_area_id=self._id_grpc)
         )
         message = RepairToolMessage(
             response.result.success,
@@ -203,9 +195,8 @@ class InexactEdgeProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
-        id_value = Int32Value(value=int(self._id))
         response = self._repair_stub.FixInexactEdges(
-            FixInexactEdgesRequest(inexact_edge_problem_area_id=id_value)
+            FixInexactEdgesRequest(inexact_edge_problem_area_id=self._id_grpc)
         )
         message = RepairToolMessage(
             response.result.success,
@@ -248,9 +239,8 @@ class ExtraEdgeProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
-        id_value = Int32Value(value=int(self._id))
         response = self._repair_stub.FixExtraEdges(
-            FixExtraEdgesRequest(extra_edge_problem_area_id=id_value)
+            FixExtraEdgesRequest(extra_edge_problem_area_id=self._id_grpc)
         )
         message = RepairToolMessage(
             response.result.success,
@@ -294,7 +284,7 @@ class SmallFaceProblemAreas(ProblemArea):
             Message containing created and/or modified bodies.
         """
         response = self._repair_stub.FixSmallFaces(
-            FixSmallFacesRequest(small_face_problem_area_id=int(self._id))
+            FixSmallFacesRequest(small_face_problem_area_id=self._id_grpc)
         )
         message = RepairToolMessage(
             response.result.success,
@@ -338,7 +328,7 @@ class SplitEdgeProblemAreas(ProblemArea):
             Message containing created and/or modified bodies.
         """
         response = self._repair_stub.FixSplitEdges(
-            FixSplitEdgesRequest(split_edge_problem_area_id=int(self._id))
+            FixSplitEdgesRequest(split_edge_problem_area_id=self._id_grpc)
         )
         message = RepairToolMessage(
             response.result.success,
@@ -382,7 +372,7 @@ class StitchFaceProblemAreas(ProblemArea):
             Message containing created and/or modified bodies.
         """
         response = self._repair_stub.FixStitchFaces(
-            FixStitchFacesRequest(stitch_face_problem_area_id=int(self._id))
+            FixStitchFacesRequest(stitch_face_problem_area_id=self._id_grpc)
         )
         message = RepairToolMessage(
             response.result.success,
