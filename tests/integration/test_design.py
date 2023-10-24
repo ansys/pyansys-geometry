@@ -811,7 +811,6 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
 
         # Windows-only HOOPS exports for now
-
         step_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.stp"
         design.download(step_file, format=DesignFileFormat.STEP)
         assert step_file.exists()
@@ -821,11 +820,9 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
         assert iges_file.exists()
 
         # PMDB addin is Windows-only
-        # TODO: Requires resolution of https://github.com/ansys/pyansys-geometry/issues/710
-        #
-        # pmdb_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.pmdb"
-        # design.download(pmdb_file, DesignFileFormat.PMDB)
-        # assert pmdb_file.exists()
+        pmdb_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.pmdb"
+        design.download(pmdb_file, DesignFileFormat.PMDB)
+        assert pmdb_file.exists()
 
     # Linux backend...
     else:
