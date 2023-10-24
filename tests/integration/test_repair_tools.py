@@ -1,6 +1,21 @@
 """"Testing of repair tools."""
 
+import pytest
+
+from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.modeler import Modeler
+
+
+# TODO: reenable when Linux service is able to use repair tools
+def skip_if_linux(modeler: Modeler):
+    """Skip test if running on Linux."""
+    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
+        return True
+    else:
+        return False
+
+
+pytest.mark.skipif(condition=skip_if_linux(), reason="Repair tools not available on Linux service.")
 
 
 def test_find_split_edges(modeler: Modeler):

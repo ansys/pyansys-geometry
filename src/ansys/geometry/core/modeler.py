@@ -116,8 +116,14 @@ class Modeler:
             backend_type=backend_type,
         )
 
-        # Initialize the RepairTools
-        self._repair_tools = RepairTools(self._client)
+        # Initialize the RepairTools - Not available on Linux
+        # TODO: delete "if" when Linux service is able to use repair tools
+        if self.client.backend_type == BackendType.LINUX_SERVICE:
+            self._repair_tools = None
+            logger.warning("Linux backend does not suppport repair tools.")
+        else:
+            self._repair_tools = RepairTools(self._client)
+
         # Design[] maintaining references to all designs within the modeler workspace
         self._designs = []
 
