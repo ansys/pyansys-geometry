@@ -37,7 +37,7 @@ def ensure_design_is_active(method):
     """
 
     def wrapper(self, *args, **kwargs):
-        # Check if the current design is active... otherwise activate it
+        # Check if the current design is active, otherwise activate it
         def get_design_ref(obj) -> "Design":
             if hasattr(obj, "_modeler"):  # In case of a Design object
                 return obj
