@@ -24,6 +24,8 @@ from beartype.typing import TYPE_CHECKING, Any, Optional, Tuple, Union
 import numpy as np
 from pint import Unit
 
+from ansys.geometry.core.errors import GeometryRuntimeError
+
 if TYPE_CHECKING:
     from ansys.geometry.core.designer import Design
 
@@ -37,6 +39,12 @@ def ensure_design_is_active(method):
     """
 
     def wrapper(self, *args, **kwargs):
+        import ansys.geometry.core as pyansys_geometry
+
+        if pyansys_geometry.DISABLE_MULTIPLE_DESIGN_CHECK:
+            # If the user has disabled the check, then we can skip it
+            return method(self, *args, **kwargs)
+
         # Check if the current design is active... otherwise activate it
         def get_design_ref(obj) -> "Design":
             if hasattr(obj, "_modeler"):  # In case of a Design object
@@ -44,8 +52,10 @@ def ensure_design_is_active(method):
             elif hasattr(
                 obj, "_parent_component"
             ):  # In case of a Body, Component, DesignPoint, Beam
+                # Recursive call
                 return get_design_ref(obj._parent_component)
             elif hasattr(obj, "_body"):  # In case of a Face, Edge
+                # Recursive call
                 return get_design_ref(obj._body._parent_component)
             else:
                 raise ValueError("Unable to find the design reference.")
@@ -55,20 +65,14 @@ def ensure_design_is_active(method):
 
         # Activate the design if it is not active
         if not design.is_active:
-            # First, check the backend... multiple documents are only allowed
-            # on DMS (Geometry Service) and SpaceClaim
-            from ansys.geometry.core.connection.backend import BackendType
-            from ansys.geometry.core.errors import GeometryRuntimeError
-
-            if design._grpc_client.backend_type in (
-                BackendType.SPACECLAIM,
-                BackendType.WINDOWS_SERVICE,
-            ):
-                design._activate()
-            else:
+            # First, check the backend allows for multiple documents
+            if not design._grpc_client.multiple_designs_allowed:
                 raise GeometryRuntimeError(
-                    f"Multiple documents are not allowed on: {design._grpc_client.backend_type}."
+                    "The design is not active and multiple designs are "
+                    "not allowed with the current backend."
                 )
+            else:
+                design._activate()
 
         # Finally, call method
         return method(self, *args, **kwargs)

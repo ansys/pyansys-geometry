@@ -125,6 +125,13 @@ class Modeler:
             self._repair_tools = RepairTools(self._client)
 
         # Maintaining references to all designs within the modeler workspace
+        if not self.client.multiple_designs_allowed:
+            logger.warning(
+                "Linux and Ansys Discovery backends do not support multiple "
+                "designs open in the same session. Only the last design created "
+                "will be available to perform modeling operations."
+            )
+
         self._designs: Dict[str, "Design"] = {}
 
     @property

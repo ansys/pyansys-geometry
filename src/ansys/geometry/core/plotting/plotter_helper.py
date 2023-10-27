@@ -68,9 +68,9 @@ class PlotterHelper:
         """Initialize ``use_trame`` and save current ``pv.OFF_SCREEN`` value."""
         # Check if the use of trame was requested
         if use_trame is None:
-            import ansys.geometry.core as pygeom
+            import ansys.geometry.core as pyansys_geometry
 
-            use_trame = pygeom.USE_TRAME
+            use_trame = pyansys_geometry.USE_TRAME
 
         self._use_trame = use_trame
         self._allow_picking = allow_picking

@@ -183,6 +183,9 @@ class GrpcClient:
 
         # Store the backend type
         self._backend_type = backend_type
+        self._multiple_designs_allowed = (
+            False if backend_type in (BackendType.DISCOVERY, BackendType.LINUX_SERVICE) else True
+        )
 
     @property
     def backend_type(self) -> BackendType:
@@ -198,6 +201,18 @@ class GrpcClient:
         not straightforward.
         """
         return self._backend_type
+
+    @property
+    def multiple_designs_allowed(self) -> bool:
+        """
+        Flag indicating whether multiple designs are allowed.
+
+        Notes
+        -----
+        This method will return ``False`` if the backend type is ``Discovery`` or
+        ``Linux Service``. Otherwise, it will return ``True``.
+        """
+        return self._multiple_designs_allowed
 
     @property
     def channel(self) -> grpc.Channel:
