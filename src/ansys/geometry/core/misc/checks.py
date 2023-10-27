@@ -24,8 +24,6 @@ from beartype.typing import TYPE_CHECKING, Any, Optional, Tuple, Union
 import numpy as np
 from pint import Unit
 
-from ansys.geometry.core.errors import GeometryRuntimeError
-
 if TYPE_CHECKING:
     from ansys.geometry.core.designer import Design
 
@@ -67,6 +65,8 @@ def ensure_design_is_active(method):
         if not design.is_active:
             # First, check the backend allows for multiple documents
             if not design._grpc_client.multiple_designs_allowed:
+                from ansys.geometry.core.errors import GeometryRuntimeError
+
                 raise GeometryRuntimeError(
                     "The design is not active and multiple designs are "
                     "not allowed with the current backend."
