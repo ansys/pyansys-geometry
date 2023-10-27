@@ -180,7 +180,7 @@ def prepare_and_start_backend(
         the latest. Default is ``ApiVersions.LATEST``.
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 150.
-    logs_folder : sets the backend's logs folder path. If nothing is defined, 
+    logs_folder : sets the backend's logs folder path. If nothing is defined,
         the backend will use its default path.
 
     Raises
@@ -208,8 +208,13 @@ def prepare_and_start_backend(
         _check_minimal_versions(product_version)
 
     args = []
-    env_copy = _get_common_env(host=host, port=port, enable_trace=enable_trace, log_level=log_level
-        , logs_folder= logs_folder)
+    env_copy = _get_common_env(
+        host=host,
+        port=port,
+        enable_trace=enable_trace,
+        log_level=log_level,
+        logs_folder=logs_folder,
+    )
 
     if backend_type == BackendType.DISCOVERY:
         args.append(os.path.join(installations[product_version], DISCOVERY_FOLDER, DISCOVERY_EXE))
@@ -351,12 +356,12 @@ def _check_port_or_get_one(port: int) -> int:
 
 
 def _get_common_env(
-    host: str, 
-    port: int, 
-    enable_trace: bool, 
+    host: str,
+    port: int,
+    enable_trace: bool,
     log_level: int,
     logs_folder: str = None,
-    ) -> Dict[str, str]:
+) -> Dict[str, str]:
     """
     Make a copy of the actual system's environment.
 
