@@ -116,8 +116,6 @@ class Modeler:
             backend_type=backend_type,
         )
 
-
-
         # Initialize the RepairTools - Not available on Linux
         # TODO: delete "if" when Linux service is able to use repair tools
         if self.client.backend_type == BackendType.LINUX_SERVICE:
