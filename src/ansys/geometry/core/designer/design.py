@@ -127,6 +127,7 @@ class Design(Component):
         self._materials = []
         self._named_selections = {}
         self._beam_profiles = {}
+        self._design_id = ""
 
         # Check whether we want to process an existing design or create a new one.
         if read_existing_design:
@@ -134,8 +135,14 @@ class Design(Component):
             self.__read_existing_design()
         else:
             new_design = self._design_stub.New(NewRequest(name=name))
-            self._id = new_design.id
+            self._design_id = new_design.id
+            self._id = new_design.main_part.id
             self._grpc_client.log.debug("Design object instantiated successfully.")
+
+    @property
+    def design_id(self) -> str:
+        """The design's object unique id."""
+        return self._design_id
 
     @property
     def materials(self) -> List[Material]:
@@ -223,6 +230,11 @@ class Design(Component):
         # Sanity checks on inputs
         if isinstance(file_location, Path):
             file_location = str(file_location)
+
+        # Check if the folder for the file location exists
+        if not Path(file_location).parent.exists():
+            # Create the parent directory
+            Path(file_location).parent.mkdir(parents=True, exist_ok=True)
 
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
@@ -587,6 +599,7 @@ class Design(Component):
         if not design:
             raise RuntimeError("No existing design available at service level.")
         else:
+            self._design_id = design.id
             self._id = design.main_part.id
             # Here we may take the design's name instead of the main part's name.
             # Since they're the same in the backend.
@@ -597,11 +610,13 @@ class Design(Component):
         # Store created objects
         created_parts = {p.id: Part(p.id, p.name, [], []) for p in response.parts}
         created_tps = {}
-        created_components = {self.id: self}
+        created_components = {design.main_part.id: self}
         created_bodies = {}
 
         # Make dummy master for design since server doesn't have one
-        self._master_component = MasterComponent("1", "master_design", created_parts[self.id])
+        self._master_component = MasterComponent(
+            "1", "master_design", created_parts[design.main_part.id]
+        )
 
         # Create MasterComponents
         for master in response.transformed_parts:

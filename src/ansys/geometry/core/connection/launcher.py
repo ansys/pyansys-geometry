@@ -282,6 +282,7 @@ def launch_modeler_with_geometry_service(
     enable_trace: bool = False,
     log_level: int = 2,
     timeout: int = 60,
+    logs_folder: str = None,
 ) -> "Modeler":
     """
     Start the Geometry service locally using the ``ProductInstance`` class.
@@ -313,6 +314,8 @@ def launch_modeler_with_geometry_service(
         The default is ``2`` (Warning).
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 60.
+    logs_folder : sets the backend's logs folder path. If nothing is defined,
+        the backend will use its default path.
 
     Raises
     ------
@@ -354,6 +357,7 @@ def launch_modeler_with_geometry_service(
         log_level=log_level,
         api_version=ApiVersions.LATEST,
         timeout=timeout,
+        logs_folder=logs_folder,
     )
 
 
@@ -364,6 +368,7 @@ def launch_modeler_with_discovery(
     log_level: int = 2,
     api_version: ApiVersions = ApiVersions.LATEST,
     timeout: int = 150,
+    logs_folder: str = None,
 ):
     """
     Start Ansys Discovery locally using the ``ProductInstance`` class.
@@ -408,6 +413,8 @@ def launch_modeler_with_discovery(
         the latest. Default is ``ApiVersions.LATEST``.
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 150.
+    logs_folder : sets the backend's logs folder path. If nothing is defined,
+        the backend will use its default path.
 
     Raises
     ------
@@ -451,6 +458,7 @@ def launch_modeler_with_discovery(
         log_level=log_level,
         api_version=api_version,
         timeout=timeout,
+        logs_folder=logs_folder,
     )
 
 
@@ -461,6 +469,7 @@ def launch_modeler_with_spaceclaim(
     log_level: int = 2,
     api_version: ApiVersions = ApiVersions.LATEST,
     timeout: int = 150,
+    logs_folder: str = None,
 ):
     """
     Start Ansys SpaceClaim locally using the ``ProductInstance`` class.
@@ -502,6 +511,8 @@ def launch_modeler_with_spaceclaim(
         the latest. Default is ``ApiVersions.LATEST``.
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 150.
+    logs_folder : sets the backend's logs folder path. If nothing is defined,
+        the backend will use its default path.
 
     Raises
     ------
@@ -545,6 +556,7 @@ def launch_modeler_with_spaceclaim(
         log_level=log_level,
         api_version=api_version,
         timeout=timeout,
+        logs_folder=logs_folder,
     )
 
 
