@@ -278,7 +278,7 @@ def _manifest_path_provider(
     """Return the ApiServer's addin manifest file path."""
     if manifest_path != None and os.path.exists(manifest_path):
         return manifest_path
-    elif manifest_path != None and os.path.exists(manifest_path) == False:
+    elif manifest_path != None and not os.path.exists(manifest_path):
         print("specified manifest file's path does not exists. Taking install default path.")
         return os.path.join(
             available_installations[version], ADDINS_SUBFOLDER, BACKEND_SUBFOLDER, MANIFEST_FILENAME
