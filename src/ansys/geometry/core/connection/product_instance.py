@@ -78,6 +78,9 @@ BACKEND_HOST_VARIABLE = "API_ADDRESS"
 BACKEND_PORT_VARIABLE = "API_PORT"
 """The backend's port number environment variable for local start."""
 
+BACKEND_LOGS_FOLDER_VARIABLE = "ANS_DSCO_REMOTE_LOGS_FOLDER"
+"""The backend's logs folder path to be used."""
+
 BACKEND_API_VERSION_VARIABLE = "API_VERSION"
 """
 The backend's api version environment variable for local start.
@@ -139,6 +142,7 @@ def prepare_and_start_backend(
     api_version: ApiVersions = ApiVersions.LATEST,
     timeout: int = 150,
     manifest_path: str = None,
+    logs_folder: str = None,
 ) -> "Modeler":
     """
     Start the requested service locally using the ``ProductInstance`` class.
@@ -181,6 +185,8 @@ def prepare_and_start_backend(
         Used to specify a manifest file path for the ApiServerAddin. This way,
         it is possible to run an ApiServerAddin from a version an older product
         version.
+    logs_folder : sets the backend's logs folder path. If nothing is defined,
+        the backend will use its default path.
 
     Raises
     ------
@@ -207,7 +213,13 @@ def prepare_and_start_backend(
         _check_minimal_versions(product_version)
 
     args = []
-    env_copy = _get_common_env(host=host, port=port, enable_trace=enable_trace, log_level=log_level)
+    env_copy = _get_common_env(
+        host=host,
+        port=port,
+        enable_trace=enable_trace,
+        log_level=log_level,
+        logs_folder=logs_folder,
+    )
 
     if backend_type == BackendType.DISCOVERY:
         args.append(os.path.join(installations[product_version], DISCOVERY_FOLDER, DISCOVERY_EXE))
@@ -354,7 +366,13 @@ def _check_port_or_get_one(port: int) -> int:
         return get_available_port()
 
 
-def _get_common_env(host: str, port: int, enable_trace: bool, log_level: int) -> Dict[str, str]:
+def _get_common_env(
+    host: str,
+    port: int,
+    enable_trace: bool,
+    log_level: int,
+    logs_folder: str = None,
+) -> Dict[str, str]:
     """
     Make a copy of the actual system's environment.
 
@@ -366,5 +384,7 @@ def _get_common_env(host: str, port: int, enable_trace: bool, log_level: int) ->
     env_copy[BACKEND_PORT_VARIABLE] = f"{port}"
     env_copy[BACKEND_TRACE_VARIABLE] = f"{enable_trace:d}"
     env_copy[BACKEND_LOG_LEVEL_VARIABLE] = f"{log_level}"
+    if logs_folder is not None:
+        env_copy[BACKEND_LOGS_FOLDER_VARIABLE] = f"{logs_folder}"
 
     return env_copy

@@ -6,6 +6,7 @@ import numpy as np
 from pint import Quantity
 import pytest
 import pyvista as pv
+from pyvista.plotting.utilities.regression import compare_images as pv_compare_images
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection import BackendType
@@ -791,7 +792,7 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     design.extrude_sketch(name="MyCylinder", sketch=sketch, distance=Quantity(50, UNITS.mm))
 
     # Download the design
-    file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.scdocx"
+    file = tmp_path_factory.mktemp("scdoc_files_download") / "dummy_folder" / "cylinder.scdocx"
     design.download(file)
 
     # Check that the file exists
@@ -811,7 +812,6 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
 
         # Windows-only HOOPS exports for now
-
         step_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.stp"
         design.download(step_file, format=DesignFileFormat.STEP)
         assert step_file.exists()
@@ -821,11 +821,9 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
         assert iges_file.exists()
 
         # PMDB addin is Windows-only
-        # TODO: Requires resolution of https://github.com/ansys/pyansys-geometry/issues/710
-        #
-        # pmdb_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.pmdb"
-        # design.download(pmdb_file, DesignFileFormat.PMDB)
-        # assert pmdb_file.exists()
+        pmdb_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.pmdb"
+        design.download(pmdb_file, DesignFileFormat.PMDB)
+        assert pmdb_file.exists()
 
     # Linux backend...
     else:
@@ -1684,3 +1682,60 @@ def test_child_component_instances(modeler: Modeler):
     assert len(comp1.components) == 2
     assert len(base2.components[0].components) == 2
     assert len(comp1.components) == len(base2.components[0].components)
+
+
+def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Generate multiple designs, make sure they are all separate, and activate them
+    when needed."""
+    # Check backend first
+    if modeler.client.backend_type in (
+        BackendType.SPACECLAIM,
+        BackendType.WINDOWS_SERVICE,
+    ):
+        pass
+    else:
+        # Test is only available for DMS and SpaceClaim
+        pytest.skip("Test only available on DMS and SpaceClaim")
+
+    # Create your design on the server side
+    design1 = modeler.create_design("Design1")
+
+    # Create a Sketch object and draw a slot
+    sketch1 = Sketch()
+    sketch1.slot(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm))
+
+    # Extrude the sketch to create a body
+    design1.extrude_sketch("MySlot", sketch1, Quantity(10, UNITS.mm))
+
+    # Create a second design
+    design2 = modeler.create_design("Design2")
+
+    # Create a Sketch object and draw a rectangle
+    sketch2 = Sketch()
+    sketch2.box(Point2D([-30, -30], UNITS.mm), 5 * UNITS.mm, 8 * UNITS.mm)
+
+    # Extrude the sketch to create a body
+    design2.extrude_sketch("MyRectangle", sketch2, Quantity(10, UNITS.mm))
+
+    # Initiate expected output images
+    scshot_dir = tmp_path_factory.mktemp("test_multiple_designs")
+    scshot_1 = scshot_dir / "design1.png"
+    scshot_2 = scshot_dir / "design2.png"
+
+    # Request plotting and store images
+    design2.plot(screenshot=scshot_1)
+    design1.plot(screenshot=scshot_2)
+
+    # Check that the images are different
+    assert scshot_1.exists()
+    assert scshot_2.exists()
+    err = pv_compare_images(str(scshot_1), str(scshot_2))
+    assert not err < 0.1
+
+    # Check that design2 is not active
+    assert not design2.is_active
+    assert design1.is_active
+
+    # Check the same thing inside the modeler
+    assert not modeler._designs[design2.design_id].is_active
+    assert modeler._designs[design1.design_id].is_active
