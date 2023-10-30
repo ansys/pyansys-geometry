@@ -184,7 +184,7 @@ def prepare_and_start_backend(
     manifest_path : str, optional
         Used to specify a manifest file path for the ApiServerAddin. This way,
         it is possible to run an ApiServerAddin from a version an older product
-        version.
+        version. Only applicable for Ansys Discovery and Ansys SpaceClaim.
     logs_folder : sets the backend's logs folder path. If nothing is defined,
         the backend will use its default path.
 
@@ -288,13 +288,16 @@ def _manifest_path_provider(
     version: int, available_installations: Dict, manifest_path: str = None
 ) -> str:
     """Return the ApiServer's addin manifest file path."""
-    if manifest_path is not None and os.path.exists(manifest_path):
-        return manifest_path
-    elif manifest_path is not None and not os.path.exists(manifest_path):
-        LOG.info("Specified manifest file's path does not exists. Taking install default path.")
-        return os.path.join(
-            available_installations[version], ADDINS_SUBFOLDER, BACKEND_SUBFOLDER, MANIFEST_FILENAME
-        )
+    if manifest_path:
+        if os.path.exists(manifest_path):
+            return manifest_path
+        else:
+            LOG.warning("Specified manifest file's path does not exist. Taking install default path.")
+
+    # Default manifest path
+    return os.path.join(
+        available_installations[version], ADDINS_SUBFOLDER, BACKEND_SUBFOLDER, MANIFEST_FILENAME
+    )
 
 
 def _start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Popen:
