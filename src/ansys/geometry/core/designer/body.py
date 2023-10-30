@@ -56,7 +56,7 @@ from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.vector import UnitVector3D
-from ansys.geometry.core.misc.checks import check_type
+from ansys.geometry.core.misc.checks import check_type, ensure_design_is_active
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
@@ -799,11 +799,9 @@ class MasterBody(IBody):
         use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ) -> None:  # noqa: D102
-        # lazy import here to improve initial module load time
-
-        from ansys.geometry.core.plotting import PlotterHelper
-
-        PlotterHelper(use_trame=use_trame).plot(self, merge_bodies=merge)
+        raise NotImplementedError(
+            "MasterBody does not implement plot methods. Call this method on a body instead."
+        )
 
     def intersect(self, other: "Body") -> None:  # noqa: D102
         raise NotImplementedError(
@@ -846,17 +844,17 @@ class Body(IBody):
         Server-defined ID for the body.
     name : str
         User-defined label for the body.
-    parent : Component
+    parent_component : Component
         Parent component to place the new component under within the design assembly.
     template : MasterBody
         Master body that this body is an occurrence of.
     """
 
-    def __init__(self, id, name, parent: "Component", template: MasterBody) -> None:
+    def __init__(self, id, name, parent_component: "Component", template: MasterBody) -> None:
         """Initialize the ``Body`` class."""
         self._id = id
         self._name = name
-        self._parent = parent
+        self._parent_component = parent_component
         self._template = template
 
     def reset_tessellation_cache(func):
@@ -890,11 +888,12 @@ class Body(IBody):
         return self._template.name
 
     @property
-    def parent(self) -> "Component":  # noqa: D102
-        return self._parent
+    def parent_component(self) -> "Component":  # noqa: D102
+        return self._parent_component
 
     @property
     @protect_grpc
+    @ensure_design_is_active
     def faces(self) -> List[Face]:  # noqa: D102
         self._template._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
         grpc_faces = self._template._bodies_stub.GetFaces(EntityIdentifier(id=self.id))
@@ -910,6 +909,7 @@ class Body(IBody):
 
     @property
     @protect_grpc
+    @ensure_design_is_active
     def edges(self) -> List[Edge]:  # noqa: D102
         self._template._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
         grpc_edges = self._template._bodies_stub.GetEdges(EntityIdentifier(id=self.id))
@@ -959,18 +959,24 @@ class Body(IBody):
         return self._surface_offset
 
     @property
+    @ensure_design_is_active
     def volume(self) -> Quantity:  # noqa: D102
         return self._template.volume
 
+    @ensure_design_is_active
     def assign_material(self, material: Material) -> None:  # noqa: D102
         self._template.assign_material(material)
 
+    @ensure_design_is_active
     def add_midsurface_thickness(self, thickness: Quantity) -> None:  # noqa: D102
         self._template.add_midsurface_thickness(thickness)
 
+    @ensure_design_is_active
     def add_midsurface_offset(self, offset: "MidSurfaceOffsetType") -> None:  # noqa: D102
         self._template.add_midsurface_offset(offset)
 
+    @protect_grpc
+    @ensure_design_is_active
     def imprint_curves(
         self, faces: List[Face], sketch: Sketch
     ) -> Tuple[List[Edge], List[Face]]:  # noqa: D102
@@ -1010,6 +1016,8 @@ class Body(IBody):
 
         return (new_edges, new_faces)
 
+    @protect_grpc
+    @ensure_design_is_active
     def project_curves(
         self,
         direction: UnitVector3D,
@@ -1040,6 +1048,7 @@ class Body(IBody):
 
     @check_input_types
     @protect_grpc
+    @ensure_design_is_active
     def imprint_projected_curves(
         self,
         direction: UnitVector3D,
@@ -1068,18 +1077,21 @@ class Body(IBody):
 
         return imprinted_faces
 
+    @ensure_design_is_active
     def translate(
         self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
     ) -> None:  # noqa: D102
         return self._template.translate(direction, distance)
 
+    @ensure_design_is_active
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
         return self._template.copy(parent, name)
 
+    @ensure_design_is_active
     def tessellate(
         self, merge: Optional[bool] = False
     ) -> Union["PolyData", "MultiBlock"]:  # noqa: D102
-        return self._template.tessellate(merge, self.parent.get_world_transform())
+        return self._template.tessellate(merge, self.parent_component.get_world_transform())
 
     def plot(
         self,
@@ -1088,10 +1100,17 @@ class Body(IBody):
         use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ) -> None:  # noqa: D102
-        return self._template.plot(merge, screenshot, use_trame, **plotting_options)
+        # lazy import here to improve initial module load time
+
+        from ansys.geometry.core.plotting import PlotterHelper
+
+        PlotterHelper(use_trame=use_trame).plot(
+            self, merge_bodies=merge, screenshot=screenshot, **plotting_options
+        )
 
     @protect_grpc
     @reset_tessellation_cache
+    @ensure_design_is_active
     def intersect(self, other: "Body") -> None:  # noqa: D102
         response = self._template._bodies_stub.Boolean(
             BooleanRequest(body1=self.id, body2=other.id, method="intersect")
@@ -1100,10 +1119,11 @@ class Body(IBody):
         if response == 1:
             raise ValueError("Bodies do not intersect.")
 
-        other.parent.delete_body(other)
+        other.parent_component.delete_body(other)
 
     @protect_grpc
     @reset_tessellation_cache
+    @ensure_design_is_active
     def subtract(self, other: "Body") -> None:  # noqa: D102
         response = self._template._bodies_stub.Boolean(
             BooleanRequest(body1=self.id, body2=other.id, method="subtract")
@@ -1112,22 +1132,23 @@ class Body(IBody):
         if response == 1:
             raise ValueError("Subtraction of bodies results in an empty (complete) subtraction.")
 
-        other.parent.delete_body(other)
+        other.parent_component.delete_body(other)
 
     @protect_grpc
     @reset_tessellation_cache
+    @ensure_design_is_active
     def unite(self, other: "Body") -> None:  # noqa: D102
         self._template._bodies_stub.Boolean(
             BooleanRequest(body1=self.id, body2=other.id, method="unite")
         )
-        other.parent.delete_body(other)
+        other.parent_component.delete_body(other)
 
     def __repr__(self) -> str:
         """Represent the ``Body`` as a string."""
         lines = [f"ansys.geometry.core.designer.Body {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Exists               : {self.is_alive}")
-        lines.append(f"  Parent component     : {self._parent.name}")
+        lines.append(f"  Parent component     : {self._parent_component.name}")
         lines.append(f"  MasterBody           : {self._template.id}")
         lines.append(f"  Surface body         : {self.is_surface}")
         if self.is_surface:

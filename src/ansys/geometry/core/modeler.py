@@ -124,8 +124,16 @@ class Modeler:
         else:
             self._repair_tools = RepairTools(self._client)
 
-        # Design[] maintaining references to all designs within the modeler workspace
-        self._designs = []
+        # Maintaining references to all designs within the modeler workspace
+        self._designs: Dict[str, "Design"] = {}
+
+        # Check if the backend allows for multiple designs and throw warning if needed
+        if not self.client.multiple_designs_allowed:
+            logger.warning(
+                "Linux and Ansys Discovery backends do not support multiple "
+                "designs open in the same session. Only the last design created "
+                "will be available to perform modeling operations."
+            )
 
     @property
     def client(self) -> GrpcClient:
@@ -149,14 +157,14 @@ class Modeler:
         from ansys.geometry.core.designer.design import Design
 
         check_type(name, str)
-        design = Design(name, self._client)
-        self._designs.append(design)
+        design = Design(name, self)
+        self._designs[design.design_id] = design
         if len(self._designs) > 1:
             logger.warning(
-                "Most backends only support one design. "
+                "Some backends only support one design. "
                 + "Previous designs may be deleted (on the service) when creating a new one."
             )
-        return self._designs[-1]
+        return self._designs[design.design_id]
 
     def read_existing_design(self) -> "Design":
         """
@@ -169,14 +177,14 @@ class Modeler:
         """
         from ansys.geometry.core.designer.design import Design
 
-        design = Design("", self._client, read_existing_design=True)
-        self._designs.append(design)
+        design = Design("", self, read_existing_design=True)
+        self._designs[design.design_id] = design
         if len(self._designs) > 1:
             logger.warning(
-                "Most backends only support one design. "
+                "Some backends only support one design. "
                 + "Previous designs may be deleted (on the service) when reading a new one."
             )
-        return self._designs[-1]
+        return self._designs[design.design_id]
 
     def close(self) -> None:
         """``Modeler`` method for easily accessing the client's close method."""

@@ -368,6 +368,7 @@ def launch_modeler_with_discovery(
     log_level: int = 2,
     api_version: ApiVersions = ApiVersions.LATEST,
     timeout: int = 150,
+    manifest_path: str = None,
     logs_folder: str = None,
 ):
     """
@@ -413,6 +414,10 @@ def launch_modeler_with_discovery(
         the latest. Default is ``ApiVersions.LATEST``.
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 150.
+    manifest_path : str, optional
+        Used to specify a manifest file path for the ApiServerAddin. This way,
+        it is possible to run an ApiServerAddin from a version an older product
+        version.
     logs_folder : sets the backend's logs folder path. If nothing is defined,
         the backend will use its default path.
 
@@ -458,6 +463,7 @@ def launch_modeler_with_discovery(
         log_level=log_level,
         api_version=api_version,
         timeout=timeout,
+        manifest_path=manifest_path,
         logs_folder=logs_folder,
     )
 
@@ -469,6 +475,7 @@ def launch_modeler_with_spaceclaim(
     log_level: int = 2,
     api_version: ApiVersions = ApiVersions.LATEST,
     timeout: int = 150,
+    manifest_path: str = None,
     logs_folder: str = None,
 ):
     """
@@ -511,6 +518,10 @@ def launch_modeler_with_spaceclaim(
         the latest. Default is ``ApiVersions.LATEST``.
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 150.
+    manifest_path : str, optional
+        Used to specify a manifest file path for the ApiServerAddin. This way,
+        it is possible to run an ApiServerAddin from a version an older product
+        version.
     logs_folder : sets the backend's logs folder path. If nothing is defined,
         the backend will use its default path.
 
@@ -556,6 +567,7 @@ def launch_modeler_with_spaceclaim(
         log_level=log_level,
         api_version=api_version,
         timeout=timeout,
+        manifest_path=manifest_path,
         logs_folder=logs_folder,
     )
 

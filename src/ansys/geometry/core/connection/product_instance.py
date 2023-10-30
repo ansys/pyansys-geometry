@@ -35,7 +35,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
 
 
-WINDOWS_GEOMETRY_SERVICE_FOLDER = "GeometryServices"
+WINDOWS_GEOMETRY_SERVICE_FOLDER = "GeometryService"
 """Default Geometry Service's folder name into the unified installer."""
 
 DISCOVERY_FOLDER = "Discovery"
@@ -141,6 +141,7 @@ def prepare_and_start_backend(
     log_level: int = 2,
     api_version: ApiVersions = ApiVersions.LATEST,
     timeout: int = 150,
+    manifest_path: str = None,
     logs_folder: str = None,
 ) -> "Modeler":
     """
@@ -180,6 +181,10 @@ def prepare_and_start_backend(
         the latest. Default is ``ApiVersions.LATEST``.
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 150.
+    manifest_path : str, optional
+        Used to specify a manifest file path for the ApiServerAddin. This way,
+        it is possible to run an ApiServerAddin from a version an older product
+        version. Only applicable for Ansys Discovery and Ansys SpaceClaim.
     logs_folder : sets the backend's logs folder path. If nothing is defined,
         the backend will use its default path.
 
@@ -221,14 +226,14 @@ def prepare_and_start_backend(
         args.append(BACKEND_SPACECLAIM_OPTIONS)
         args.append(
             BACKEND_ADDIN_MANIFEST_ARGUMENT
-            + _manifest_path_provider(product_version, installations)
+            + _manifest_path_provider(product_version, installations, manifest_path)
         )
         env_copy[BACKEND_API_VERSION_VARIABLE] = str(api_version)
     elif backend_type == BackendType.SPACECLAIM:
         args.append(os.path.join(installations[product_version], SPACECLAIM_FOLDER, SPACECLAIM_EXE))
         args.append(
             BACKEND_ADDIN_MANIFEST_ARGUMENT
-            + _manifest_path_provider(product_version, installations)
+            + _manifest_path_provider(product_version, installations, manifest_path)
         )
         env_copy[BACKEND_API_VERSION_VARIABLE] = str(api_version)
     elif backend_type == BackendType.WINDOWS_SERVICE:
@@ -279,8 +284,19 @@ def _is_port_available(port: int, host: str = "localhost") -> bool:
                 return False
 
 
-def _manifest_path_provider(version: int, available_installations: Dict) -> str:
+def _manifest_path_provider(
+    version: int, available_installations: Dict, manifest_path: str = None
+) -> str:
     """Return the ApiServer's addin manifest file path."""
+    if manifest_path:
+        if os.path.exists(manifest_path):
+            return manifest_path
+        else:
+            LOG.warning(
+                "Specified manifest file's path does not exist. Taking install default path."
+            )
+
+    # Default manifest path
     return os.path.join(
         available_installations[version], ADDINS_SUBFOLDER, BACKEND_SUBFOLDER, MANIFEST_FILENAME
     )
