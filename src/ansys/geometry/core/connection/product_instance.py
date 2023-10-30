@@ -292,7 +292,9 @@ def _manifest_path_provider(
         if os.path.exists(manifest_path):
             return manifest_path
         else:
-            LOG.warning("Specified manifest file's path does not exist. Taking install default path.")
+            LOG.warning(
+                "Specified manifest file's path does not exist. Taking install default path."
+            )
 
     # Default manifest path
     return os.path.join(
