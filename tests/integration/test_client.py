@@ -1,3 +1,5 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+
 """Test basic client connection."""
 from grpc import insecure_channel
 import pytest

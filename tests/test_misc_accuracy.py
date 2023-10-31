@@ -1,3 +1,5 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+
 import math
 
 from ansys.geometry.core.misc.accuracy import Accuracy

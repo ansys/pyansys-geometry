@@ -1,3 +1,5 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+
 """"Testing of log module."""
 import logging as deflogging  # Default logging
 import re

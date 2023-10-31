@@ -1,3 +1,5 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+
 """
 This testing module automatically connects to the Geometry service running at
 localhost:50051.

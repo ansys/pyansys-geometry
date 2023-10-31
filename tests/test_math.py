@@ -1,3 +1,5 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+
 from io import UnsupportedOperation
 
 from beartype.roar import BeartypeCallHintParamViolation
