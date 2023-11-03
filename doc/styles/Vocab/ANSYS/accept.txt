@@ -5,6 +5,8 @@ API
 api
 Direct API
 Dockerfile
+docker
+Docker
 dockerized
 Fluent API
 Geometry
@@ -29,3 +31,4 @@ subpackage
 launch_modeler_with_discovery
 launch_modeler_with_spaceclaim
 launch_modeler_with_geometry_service
+check-circle-fill
