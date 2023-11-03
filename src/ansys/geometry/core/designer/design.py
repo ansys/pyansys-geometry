@@ -58,7 +58,7 @@ from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
-from ansys.geometry.core.designer.face import Face
+from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.errors import protect_grpc
@@ -676,10 +676,12 @@ class Design(Component):
             parent.components.append(c)
 
         # Create Bodies
-        # TODO: is_surface?
         for body in response.bodies:
             part = created_parts.get(body.parent_id)
             tb = MasterBody(body.id, body.name, self._grpc_client)
+            if len(tb.faces) < 2:
+                if tb.faces[0].surface_type == SurfaceType.SURFACETYPE_PLANE:
+                    tb = MasterBody(body.id, body.name, self._grpc_client, is_surface=True)
             part.bodies.append(tb)
             created_bodies[body.id] = tb
 
