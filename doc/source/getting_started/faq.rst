@@ -12,7 +12,7 @@ Design Language (APDL), Ansys Fluent, and other Ansys products.
 You can use PyAnsys libraries within a Python environment of your choice
 in conjunction with external Python libraries.
 
-What Ansys license do I need to run the Geometry service?
+What Ansys license is needed to run the Geometry service?
 ---------------------------------------------------------
 
 .. note::
