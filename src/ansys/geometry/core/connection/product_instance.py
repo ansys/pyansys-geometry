@@ -35,7 +35,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
 
 
-WINDOWS_GEOMETRY_SERVICE_FOLDER = "GeometryServices"
+WINDOWS_GEOMETRY_SERVICE_FOLDER = "GeometryService"
 """Default Geometry Service's folder name into the unified installer."""
 
 DISCOVERY_FOLDER = "Discovery"
@@ -77,6 +77,9 @@ BACKEND_HOST_VARIABLE = "API_ADDRESS"
 
 BACKEND_PORT_VARIABLE = "API_PORT"
 """The backend's port number environment variable for local start."""
+
+BACKEND_LOGS_FOLDER_VARIABLE = "ANS_DSCO_REMOTE_LOGS_FOLDER"
+"""The backend's logs folder path to be used."""
 
 BACKEND_API_VERSION_VARIABLE = "API_VERSION"
 """
@@ -138,6 +141,8 @@ def prepare_and_start_backend(
     log_level: int = 2,
     api_version: ApiVersions = ApiVersions.LATEST,
     timeout: int = 150,
+    manifest_path: str = None,
+    logs_folder: str = None,
 ) -> "Modeler":
     """
     Start the requested service locally using the ``ProductInstance`` class.
@@ -176,6 +181,12 @@ def prepare_and_start_backend(
         the latest. Default is ``ApiVersions.LATEST``.
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 150.
+    manifest_path : str, optional
+        Used to specify a manifest file path for the ApiServerAddin. This way,
+        it is possible to run an ApiServerAddin from a version an older product
+        version. Only applicable for Ansys Discovery and Ansys SpaceClaim.
+    logs_folder : sets the backend's logs folder path. If nothing is defined,
+        the backend will use its default path.
 
     Raises
     ------
@@ -202,21 +213,27 @@ def prepare_and_start_backend(
         _check_minimal_versions(product_version)
 
     args = []
-    env_copy = _get_common_env(host=host, port=port, enable_trace=enable_trace, log_level=log_level)
+    env_copy = _get_common_env(
+        host=host,
+        port=port,
+        enable_trace=enable_trace,
+        log_level=log_level,
+        logs_folder=logs_folder,
+    )
 
     if backend_type == BackendType.DISCOVERY:
         args.append(os.path.join(installations[product_version], DISCOVERY_FOLDER, DISCOVERY_EXE))
         args.append(BACKEND_SPACECLAIM_OPTIONS)
         args.append(
             BACKEND_ADDIN_MANIFEST_ARGUMENT
-            + _manifest_path_provider(product_version, installations)
+            + _manifest_path_provider(product_version, installations, manifest_path)
         )
         env_copy[BACKEND_API_VERSION_VARIABLE] = str(api_version)
     elif backend_type == BackendType.SPACECLAIM:
         args.append(os.path.join(installations[product_version], SPACECLAIM_FOLDER, SPACECLAIM_EXE))
         args.append(
             BACKEND_ADDIN_MANIFEST_ARGUMENT
-            + _manifest_path_provider(product_version, installations)
+            + _manifest_path_provider(product_version, installations, manifest_path)
         )
         env_copy[BACKEND_API_VERSION_VARIABLE] = str(api_version)
     elif backend_type == BackendType.WINDOWS_SERVICE:
@@ -267,8 +284,19 @@ def _is_port_available(port: int, host: str = "localhost") -> bool:
                 return False
 
 
-def _manifest_path_provider(version: int, available_installations: Dict) -> str:
+def _manifest_path_provider(
+    version: int, available_installations: Dict, manifest_path: str = None
+) -> str:
     """Return the ApiServer's addin manifest file path."""
+    if manifest_path:
+        if os.path.exists(manifest_path):
+            return manifest_path
+        else:
+            LOG.warning(
+                "Specified manifest file's path does not exist. Taking install default path."
+            )
+
+    # Default manifest path
     return os.path.join(
         available_installations[version], ADDINS_SUBFOLDER, BACKEND_SUBFOLDER, MANIFEST_FILENAME
     )
@@ -343,7 +371,13 @@ def _check_port_or_get_one(port: int) -> int:
         return get_available_port()
 
 
-def _get_common_env(host: str, port: int, enable_trace: bool, log_level: int) -> Dict[str, str]:
+def _get_common_env(
+    host: str,
+    port: int,
+    enable_trace: bool,
+    log_level: int,
+    logs_folder: str = None,
+) -> Dict[str, str]:
     """
     Make a copy of the actual system's environment.
 
@@ -355,5 +389,7 @@ def _get_common_env(host: str, port: int, enable_trace: bool, log_level: int) ->
     env_copy[BACKEND_PORT_VARIABLE] = f"{port}"
     env_copy[BACKEND_TRACE_VARIABLE] = f"{enable_trace:d}"
     env_copy[BACKEND_LOG_LEVEL_VARIABLE] = f"{log_level}"
+    if logs_folder is not None:
+        env_copy[BACKEND_LOGS_FOLDER_VARIABLE] = f"{logs_folder}"
 
     return env_copy
