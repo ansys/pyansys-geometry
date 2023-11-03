@@ -1,27 +1,21 @@
-ANSYS
-Ansys
-ansys
-API
-api
+(?i)ansys
+(?i)api
+(?i)check
 Direct API
 Dockerfile
-docker
-Docker
+(?i)docker
 dockerized
 Fluent API
-Geometry
-geometry
+(?i)geometry
 Geometry service
 Geometry models
-github
-GitHub
+(?i)github
 GitHub Container Registry
 namespace
 Polydata
 PROTO
 Protobuf
-PyAnsys
-pyansys
+(?i)pyansys
 pyansys-geometry
 PyAnsys Geometry
 PyPI
