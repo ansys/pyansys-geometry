@@ -6,7 +6,7 @@ In this section, users are able to download a set of assets related to PyAnsys G
 Documentation
 -------------
 
-The following links will provide users with downloadable documentation in various formats
+The following links provide users with downloadable documentation in various formats
 
 * `Documentation in HTML format <_static/assets/download/documentation-html.zip>`_
 * `Documentation in PDF format <_static/assets/download/ansys-geometry-core.pdf>`_
