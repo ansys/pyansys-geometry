@@ -35,13 +35,10 @@ jobs:
     name: Documentation Style Check
     runs-on: ubuntu-latest
     steps:
-      # TODO - Fix codestyle issues
-      # - name: PyAnsys documentation style checks
-      #   uses: ansys/actions/doc-style@v4
-      #   with:
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      - name : TODO - Reactivate code style
-        run : sleep 1
+      - name: PyAnsys documentation style checks
+        uses: ansys/actions/doc-style@v4
+        with:
+         token: ${{ secrets.GITHUB_TOKEN }}
 
   smoke-tests:
     name: Build and Smoke tests
