@@ -37,7 +37,7 @@ dependencies = [
     "pyvista>=0.37.0",
     "scipy>=1.7.3",
     "six>=1.16.0",
-    "vtk>=9.dev0",
+    "vtk>=9",
 ]
 
 [project.optional-dependencies]
