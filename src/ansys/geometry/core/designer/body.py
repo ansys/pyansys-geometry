@@ -40,7 +40,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype import beartype as check_input_types
-from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
+from beartype.typing import TYPE_CHECKING, Iterable, List, Optional, Tuple, Union
 from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
@@ -446,9 +446,9 @@ class IBody(ABC):
         """
         return
 
-    def intersect(self, other: "Body") -> None:
+    def intersect(self, other: Union["Body", Iterable["Body"]]) -> None:
         """
-        Intersect two bodies.
+        Intersect two (or more) bodies.
 
         Notes
         -----
@@ -469,9 +469,9 @@ class IBody(ABC):
         return
 
     @protect_grpc
-    def subtract(self, other: "Body") -> None:
+    def subtract(self, other: Union["Body", Iterable["Body"]]) -> None:
         """
-        Subtract two bodies.
+        Subtract two (or more) bodies.
 
         Notes
         -----
@@ -492,9 +492,9 @@ class IBody(ABC):
         return
 
     @protect_grpc
-    def unite(self, other: "Body") -> None:
+    def unite(self, other: Union["Body", Iterable["Body"]]) -> None:
         """
-        Unite two bodies.
+        Unite two (or more) bodies.
 
         Notes
         -----
@@ -803,17 +803,17 @@ class MasterBody(IBody):
             "MasterBody does not implement plot methods. Call this method on a body instead."
         )
 
-    def intersect(self, other: "Body") -> None:  # noqa: D102
+    def intersect(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
         raise NotImplementedError(
             "MasterBody does not implement Boolean methods. Call this method on a body instead."
         )
 
-    def subtract(self, other: "Body") -> None:  # noqa: D102
+    def subtract(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
         raise NotImplementedError(
             "MasterBody does not implement Boolean methods. Call this method on a body instead."
         )
 
-    def unite(self, other: "Body") -> None:
+    def unite(self, other: Union["Body", Iterable["Body"]]) -> None:
         # noqa: D102
         raise NotImplementedError(
             "MasterBody does not implement Boolean methods. Call this method on a body instead."
@@ -1108,40 +1108,37 @@ class Body(IBody):
             self, merge_bodies=merge, screenshot=screenshot, **plotting_options
         )
 
+    def intersect(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
+        self.__generic_boolean_op(other, "intersect", "bodies do not intersect")
+
+    def subtract(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
+        self.__generic_boolean_op(other, "subtract", "empty (complete) subtraction")
+
+    def unite(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
+        self.__generic_boolean_op(other, "unite", "union operation failed")
+
     @protect_grpc
     @reset_tessellation_cache
     @ensure_design_is_active
-    def intersect(self, other: "Body") -> None:  # noqa: D102
+    @check_input_types
+    def __generic_boolean_op(
+        self, other: Union["Body", Iterable["Body"]], type_bool_op: str, err_bool_op: str
+    ) -> None:
+        grpc_other = other if isinstance(other, Iterable) else [other]
         response = self._template._bodies_stub.Boolean(
-            BooleanRequest(body1=self.id, body2=other.id, method="intersect")
+            BooleanRequest(
+                body1=self.id, tool_bodies=[b.id for b in grpc_other], method=type_bool_op
+            )
         ).empty_result
 
         if response == 1:
-            raise ValueError("Bodies do not intersect.")
+            raise ValueError(
+                f"Boolean operation of type '{type_bool_op}' failed: {err_bool_op}.\n"
+                f"Involving bodies:{self}, {grpc_other}"
+            )
 
-        other.parent_component.delete_body(other)
-
-    @protect_grpc
-    @reset_tessellation_cache
-    @ensure_design_is_active
-    def subtract(self, other: "Body") -> None:  # noqa: D102
-        response = self._template._bodies_stub.Boolean(
-            BooleanRequest(body1=self.id, body2=other.id, method="subtract")
-        ).empty_result
-
-        if response == 1:
-            raise ValueError("Subtraction of bodies results in an empty (complete) subtraction.")
-
-        other.parent_component.delete_body(other)
-
-    @protect_grpc
-    @reset_tessellation_cache
-    @ensure_design_is_active
-    def unite(self, other: "Body") -> None:  # noqa: D102
-        self._template._bodies_stub.Boolean(
-            BooleanRequest(body1=self.id, body2=other.id, method="unite")
-        )
-        other.parent_component.delete_body(other)
+        for b in grpc_other:
+            b.parent_component.delete_body(b)
 
     def __repr__(self) -> str:
         """Represent the ``Body`` as a string."""
