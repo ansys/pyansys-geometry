@@ -22,7 +22,7 @@
 """Provides plotting for various PyAnsys Geometry objects."""
 import re
 
-from beartype.typing import Any, Dict, List, Optional
+from beartype.typing import Any, Dict, List, Optional, Union
 import numpy as np
 import pyvista as pv
 from pyvista.plotting.plotter import Plotter as PyVistaPlotter
