@@ -1644,7 +1644,7 @@ def test_boolean_body_operations(modeler: Modeler, skip_not_on_linux_service):
     assert Accuracy.length_is_equal(copy1.volume.m, 1)
 
 
-def test_multiple_bodies_boolean_operations(modeler: Modeler):
+def test_multiple_bodies_boolean_operations(modeler: Modeler, skip_not_on_linux_service):
     """Test boolean operations with multiple bodies."""
 
     design = modeler.create_design("TestBooleanOperationsMultipleBodies")
