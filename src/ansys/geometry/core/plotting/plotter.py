@@ -376,17 +376,17 @@ class Plotter:
 
     def clip(
         self,
-        mesh: Union[pv.PolyData | pv.MultiBlock],
+        mesh: Union[pv.PolyData, pv.MultiBlock],
         normal: str = "x",
         origin: tuple = None,
         **plotting_options,
-    ) -> Union[pv.PolyData | pv.MultiBlock]:
+    ) -> Union[pv.PolyData, pv.MultiBlock]:
         """
         Clip the passed mesh with a plane.
 
         Parameters
         ----------
-        mesh : Union[pv.PolyData|pv.MultiBlock]
+        mesh : Union[pv.PolyData, pv.MultiBlock]
             Mesh you want to clip.
         normal : str, optional
             Plane you want to use for clipping, by default "x".
@@ -396,7 +396,7 @@ class Plotter:
 
         Returns
         -------
-        Union[pv.PolyData|pv.MultiBlock]
+        Union[pv.PolyData,pv.MultiBlock]
             The clipped mesh.
         """
         return mesh.clip(normal=normal, origin=origin)
