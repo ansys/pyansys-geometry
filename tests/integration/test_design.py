@@ -777,6 +777,22 @@ def test_bodies_translation(modeler: Modeler):
     )
 
 
+def test_body_rotation(modeler: Modeler):
+    """Test for verifying the correct rotation of a ``Body``."""
+
+    # Create your design on the server side
+    design = modeler.create_design("BodyRotation_Test")
+
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    copy = body.copy(design, "copy")
+    body.rotate(Point3D([0, 0, 0]), UnitVector3D([0, 0, 1]), np.pi / 4)
+
+    # If rotated, uniting body and its copy should now result in a volume > 1
+    body.unite(copy)
+
+    assert body.volume.m > 1
+
+
 def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test for downloading a design in multiple modes and verifying the correct
     download."""

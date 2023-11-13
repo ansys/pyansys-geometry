@@ -28,6 +28,7 @@ from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
     BooleanRequest,
     CopyRequest,
+    RotateRequest,
     SetAssignedMaterialRequest,
     TranslateRequest,
 )
@@ -45,6 +46,7 @@ from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
+    point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
     tess_to_pd,
     unit_vector_to_grpc_direction,
@@ -55,9 +57,10 @@ from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
 from ansys.geometry.core.math.matrix import Matrix44
+from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.checks import check_type, ensure_design_is_active
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -313,6 +316,30 @@ class IBody(ABC):
         distance: Union[~pint.Quantity, Distance, Real]
             Distance (magnitude) of the translation.
 
+        Returns
+        -------
+        None
+        """
+        return
+
+    @abstractmethod
+    def rotate(
+        self,
+        axis_origin: Point3D,
+        axis_direction: UnitVector3D,
+        angle: Union[Quantity, Angle, Real],
+    ) -> None:
+        """
+        Rotate the geometry body around the specified axis by a given angle.
+
+        Parameters
+        ----------
+        axis_origin: Point3D
+            Origin of the rotational axis.
+        axis_direction: UnitVector3D
+            The axis of rotation.
+        angle: Union[~pint.Quantity, Angle, Real]
+            Angle (magnitude) of the rotation.
         Returns
         -------
         None
@@ -741,6 +768,27 @@ class MasterBody(IBody):
         )
 
     @protect_grpc
+    @check_input_types
+    @reset_tessellation_cache
+    def rotate(
+        self,
+        axis_origin: Point3D,
+        axis_direction: UnitVector3D,
+        angle: Union[Quantity, Angle, Real],
+    ) -> None:  # noqa: D102
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+        rotation_magnitude = angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
+        self._grpc_client.log.debug(f"Rotating body {self.id}.")
+        self._bodies_stub.Rotate(
+            RotateRequest(
+                id=self.id,
+                axis_origin=point3d_to_grpc_point(axis_origin),
+                axis_direction=unit_vector_to_grpc_direction(axis_direction),
+                angle=rotation_magnitude,
+            )
+        )
+
+    @protect_grpc
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
         from ansys.geometry.core.designer.component import Component
 
@@ -1082,6 +1130,15 @@ class Body(IBody):
         self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
     ) -> None:  # noqa: D102
         return self._template.translate(direction, distance)
+
+    @ensure_design_is_active
+    def rotate(
+        self,
+        axis_origin: Point3D,
+        axis_direction: UnitVector3D,
+        angle: Union[Quantity, Angle, Real],
+    ) -> None:  # noqa: D102
+        return self._template.rotate(axis_origin, axis_direction, angle)
 
     @ensure_design_is_active
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
