@@ -71,11 +71,11 @@ This code shows how to import PyAnsys Geometry and use some basic capabilities:
    from ansys.geometry.core.math import Plane, Point3D, Point2D
    from ansys.geometry.core.misc import UNITS
    from ansys.geometry.core.sketch import Sketch
-   
+
    # Define a sketch
    origin = Point3D([0, 0, 10])
    plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
-   
+
    # Create a sketch
    sketch = Sketch(plane)
    sketch.circle(Point2D([1, 1]), 30 * UNITS.m)
@@ -86,12 +86,12 @@ This code shows how to import PyAnsys Geometry and use some basic capabilities:
 
    # Create a design
    design = modeler.create_design("ModelingDemo")
-   
+
    # Create a body directly on the design by extruding the sketch
    body = design.extrude_sketch(
        name="CylinderBody", sketch=sketch, distance=Distance(80, unit=UNITS.m)
    )
-   
+
    # Plot the body
    design.plot()
 
