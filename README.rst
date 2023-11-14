@@ -69,7 +69,7 @@ This code shows how to import PyAnsys Geometry and use some basic capabilities:
 
    from ansys.geometry.core import launch_modeler
    from ansys.geometry.core.math import Plane, Point3D, Point2D
-   from ansys.geometry.core.misc import UNITS
+   from ansys.geometry.core.misc import UNITS, Distance
    from ansys.geometry.core.sketch import Sketch
 
    # Define a sketch
