@@ -34,13 +34,10 @@ PyAnsys Geometry
    :target: https://results.pre-commit.ci/latest/github/ansys/pyansys-geometry/main
    :alt: pre-commit.ci
 
-.. contents::
-
-Overview
-========
-
 PyAnsys Geometry is a Python client library for the Ansys Geometry service, as well as other CAD Ansys products
 such as Ansys Discovery and Ansys SpaceClaim.
+
+.. contents::
 
 Installation
 ============
