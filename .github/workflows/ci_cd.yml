@@ -14,7 +14,7 @@ env:
   PACKAGE_NAME: 'ansys-geometry-core'
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
   ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
-  ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/ansys/geometry:windows-latest
+  ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/ansys/geometry:24.1
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo
@@ -76,10 +76,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - docker-image: "windows-latest"
+          - docker-image: "24.1"
             experimental: false
-          - docker-image: "windows-latest-unstable"
-            experimental: true
 
     steps:
       - uses: actions/checkout@v4
