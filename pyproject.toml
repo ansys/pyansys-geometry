@@ -65,7 +65,7 @@ tests = [
     "requests==2.31.0",
     "scipy==1.11.3",
     "six==1.16.0",
-    "vtk==9.2.6",
+    "vtk==9.3.0",
 ]
 doc = [
     "ansys-sphinx-theme==0.12.5",
@@ -87,7 +87,7 @@ doc = [
     "sphinx-copybutton==0.5.2",
     "sphinx_design==0.5.0",
     "sphinx-jinja==2.0.2",
-    "vtk==9.2.6",
+    "vtk==9.3.0",
 ]
 
 [project.urls]
