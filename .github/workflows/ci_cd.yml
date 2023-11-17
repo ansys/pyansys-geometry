@@ -38,7 +38,7 @@ jobs:
       - name: PyAnsys documentation style checks
         uses: ansys/actions/doc-style@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+         token: ${{ secrets.GITHUB_TOKEN }}
 
   smoke-tests:
     name: Build and Smoke tests
@@ -47,7 +47,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.9', '3.10', '3.11']
+        python-version: ['3.9', '3.10', '3.11', '3.12']
         should-release:
           - ${{ github.event_name == 'push' && contains(github.ref, 'refs/tags') }}
         exclude:

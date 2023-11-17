@@ -40,6 +40,7 @@ from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.misc.checks import check_type
 from ansys.geometry.core.misc.options import ImportOptions
+from ansys.geometry.core.tools.repair_tools import RepairTools
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -115,8 +116,24 @@ class Modeler:
             backend_type=backend_type,
         )
 
-        # Design[] maintaining references to all designs within the modeler workspace
-        self._designs = []
+        # Initialize the RepairTools - Not available on Linux
+        # TODO: delete "if" when Linux service is able to use repair tools
+        if self.client.backend_type == BackendType.LINUX_SERVICE:
+            self._repair_tools = None
+            logger.warning("Linux backend does not support repair tools.")
+        else:
+            self._repair_tools = RepairTools(self._client)
+
+        # Maintaining references to all designs within the modeler workspace
+        self._designs: Dict[str, "Design"] = {}
+
+        # Check if the backend allows for multiple designs and throw warning if needed
+        if not self.client.multiple_designs_allowed:
+            logger.warning(
+                "Linux and Ansys Discovery backends do not support multiple "
+                "designs open in the same session. Only the last design created "
+                "will be available to perform modeling operations."
+            )
 
     @property
     def client(self) -> GrpcClient:
@@ -140,14 +157,14 @@ class Modeler:
         from ansys.geometry.core.designer.design import Design
 
         check_type(name, str)
-        design = Design(name, self._client)
-        self._designs.append(design)
+        design = Design(name, self)
+        self._designs[design.design_id] = design
         if len(self._designs) > 1:
             logger.warning(
-                "Most backends only support one design. "
+                "Some backends only support one design. "
                 + "Previous designs may be deleted (on the service) when creating a new one."
             )
-        return self._designs[-1]
+        return self._designs[design.design_id]
 
     def read_existing_design(self) -> "Design":
         """
@@ -160,14 +177,14 @@ class Modeler:
         """
         from ansys.geometry.core.designer.design import Design
 
-        design = Design("", self._client, read_existing_design=True)
-        self._designs.append(design)
+        design = Design("", self, read_existing_design=True)
+        self._designs[design.design_id] = design
         if len(self._designs) > 1:
             logger.warning(
-                "Most backends only support one design. "
+                "Some backends only support one design. "
                 + "Previous designs may be deleted (on the service) when reading a new one."
             )
-        return self._designs[-1]
+        return self._designs[design.design_id]
 
     def close(self) -> None:
         """``Modeler`` method for easily accessing the client's close method."""
@@ -341,3 +358,8 @@ class Modeler:
             return (response.values, self.read_existing_design())
         else:
             return response.values
+
+    @property
+    def repair_tools(self) -> RepairTools:
+        """Access to repair tools."""
+        return self._repair_tools

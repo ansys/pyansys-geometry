@@ -6,7 +6,7 @@ In this section, users are able to download a set of assets related to PyAnsys G
 Documentation
 -------------
 
-The following links will provide users with downloadable documentation in various formats
+The following links provide users with downloadable documentation in various formats
 
 * `Documentation in HTML format <_static/assets/download/documentation-html.zip>`_
 * `Documentation in PDF format <_static/assets/download/ansys-geometry-core.pdf>`_
@@ -18,7 +18,7 @@ If you lack an internet connection on your installation machine, you should inst
 by downloading the wheelhouse archive.
 
 Each wheelhouse archive contains all the Python wheels necessary to install PyAnsys Geometry from scratch on Windows,
-Linux, and MacOS from Python 3.9 to 3.11. You can install this on an isolated system with a fresh Python
+Linux, and MacOS from Python 3.9 to 3.12. You can install this on an isolated system with a fresh Python
 installation or on a virtual environment.
 
 For example, on Linux with Python 3.9, unzip the wheelhouse archive and install it with:
