@@ -19,7 +19,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
 """Provides the PyAnsys Geometry miscellaneous subpackage."""
 
 from ansys.geometry.core.misc.accuracy import ANGLE_ACCURACY, LENGTH_ACCURACY, Accuracy
