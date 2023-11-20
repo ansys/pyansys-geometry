@@ -1,3 +1,25 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 from io import UnsupportedOperation
 
 from beartype.roar import BeartypeCallHintParamViolation
@@ -622,7 +644,7 @@ def test_matrix():
     m_1_copy = Matrix([[2, 5], [0, 8]])
     m_2 = Matrix([[3, 2, 0], [1, 3, 0], [0, 6, 4]])
 
-    # Intiate a test matrix using numpy.ndarray
+    # Initiate a test matrix using numpy.ndarray
     test_matrix = np.array([[2, 5], [0, 8]])
 
     # Check inverse of matrix
@@ -685,7 +707,7 @@ def test_matrix_33():
     # Create a null matrix, which is 3x3 identity matrix
     m_null = Matrix33()
 
-    # Intiate a test matrix using numpy.ndarray
+    # Initiate a test matrix using numpy.ndarray
     test_matrix = np.array([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
     assert np.array_equal(test_matrix, m_1)
 
@@ -718,7 +740,7 @@ def test_matrix_44():
     # Create a null matrix, which is 4x4 identity matrix
     m_null = Matrix44()
 
-    # Intiate a test matrix using numpy.ndarray
+    # Initiate a test matrix using numpy.ndarray
     test_matrix = np.array([[2, 0, 0, 0], [0, 3, 0, 0], [0, 0, 4, 0], [0, 0, 0, 1]])
     assert np.array_equal(test_matrix, m_1)
 

@@ -24,10 +24,7 @@
 # Version
 # ------------------------------------------------------------------------------
 
-try:
-    import importlib.metadata as importlib_metadata
-except ModuleNotFoundError:  # pragma: no cover
-    import importlib_metadata  # type: ignore
+import importlib.metadata as importlib_metadata
 
 __version__ = importlib_metadata.version(__name__.replace(".", "-"))
 """PyAnsys Geometry version."""
@@ -52,6 +49,14 @@ from ansys.geometry.core.modeler import Modeler
 # Global config constants
 # ------------------------------------------------------------------------------
 
-USE_TRAME = False
+USE_TRAME: bool = False
 """Global constant for checking whether to use `trame <https://kitware.github.io/trame/>`_
 for visualization."""
+
+DISABLE_MULTIPLE_DESIGN_CHECK: bool = False
+"""
+Global constant for disabling the ``ensure_design_is_active`` check.
+
+Only set this to false if you are sure you want to disable this check and you will ONLY
+be working with one design.
+"""

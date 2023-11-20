@@ -1,3 +1,25 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 from pathlib import Path
 
 import numpy as np
@@ -7,7 +29,7 @@ import pyvista as pv
 from pyvista.plotting import system_supports_plotting
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core.math import UNITVECTOR3D_Y, UNITVECTOR3D_Z, Plane, Point2D
+from ansys.geometry.core.math import UNITVECTOR3D_Y, UNITVECTOR3D_Z, Plane, Point2D, Point3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
 from ansys.geometry.core.plotting import Plotter, PlotterHelper
 from ansys.geometry.core.sketch import (
@@ -638,6 +660,7 @@ def test_visualization_polydata():
 
 
 def test_name_filter(modeler: Modeler, verify_image_cache):
+    """Test the plotter name filter."""
     # init modeler
     design = modeler.create_design("Multiplot")
 
@@ -656,4 +679,29 @@ def test_name_filter(modeler: Modeler, verify_image_cache):
         [cyl_body, box_body],
         filter="Cyl",
         screenshot=Path(IMAGE_RESULTS_DIR, "test_name_filter.png"),
+    )
+
+
+def test_plot_design_point(modeler: Modeler, verify_image_cache):
+    """Test the plotting of DesignPoint objects."""
+    design = modeler.create_design("Multiplot")
+    plot_list = []
+
+    # add body to check compatibility
+    body_sketch = Sketch()
+    body_sketch.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+    box_body = design.extrude_sketch("JustABox", body_sketch, Quantity(10, UNITS.m))
+    plot_list.append(box_body)
+
+    # add single point
+    point_set_2 = [Point3D([10, 10, 10], UNITS.m), Point3D([20, 20, 20], UNITS.m)]
+
+    # add list of points
+    design_points_2 = design.add_design_points("SecondPointSet", point_set_2)
+    plot_list.extend(design_points_2)
+
+    # plot
+    PlotterHelper().plot(
+        plot_list,
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_design_point.png"),
     )

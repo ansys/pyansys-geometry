@@ -327,7 +327,7 @@ class EllipseEvaluation(CurveEvaluation):
     """
 
     def __init__(self, ellipse: Ellipse, parameter: Real) -> None:
-        """``Intialize the ``EllipseEvaluation`` class."""
+        """``Initialize the ``EllipseEvaluation`` class."""
         self._ellipse = ellipse
         self._parameter = parameter
 
