@@ -790,10 +790,9 @@ def test_body_rotation(modeler: Modeler):
     # Make sure no vertices are in the same position as in before rotation
     body_vertices = []
     copy_vertices = []
-    for edge in body.edges:
-        body_vertices.extend([edge.start_point, edge.end_point])
-    for edge in copy.edges:
-        copy_vertices.extend([edge.start_point, edge.end_point])
+    for b_edge, c_edge in zip(body.edges, copy.edges):
+        body_vertices.extend([b_edge.start_point, b_edge.end_point])
+        copy_vertices.extend([c_edge.start_point, c_edge.end_point])
 
     for c_vertex in copy_vertices:
         for b_vertex in body_vertices:
