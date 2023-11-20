@@ -103,7 +103,9 @@ def test_design_import_simple_case(modeler: Modeler):
 
 
 def test_design_import_with_surfaces_issue834(modeler: Modeler):
-    """Import a Design which is expected to contain surfaces."""
+    """Import a Design which is expected to contain surfaces.
+    
+    For more info see https://github.com/ansys/pyansys-geometry/issues/834"""
 
     design = modeler.open_file("./tests/integration/files/DuplicateFacesDesignBefore.scdocx")
 
