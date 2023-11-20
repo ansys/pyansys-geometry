@@ -123,6 +123,25 @@ def test_design_import_simple_case(modeler: Modeler):
     _checker_method(read_design, design)
 
 
+def test_design_import_with_surfaces_issue834(modeler: Modeler):
+    """
+    Import a Design which is expected to contain surfaces.
+
+    For more info see https://github.com/ansys/pyansys-geometry/issues/834
+    """
+
+    design = modeler.open_file("./tests/integration/files/DuplicateFacesDesignBefore.scdocx")
+
+    # Check that there are two bodies
+    assert len(design.bodies) == 2
+
+    # Check some basic properties - whether they are surfaces or not!
+    assert design.bodies[0].name == "BoxBody"
+    assert design.bodies[0].is_surface == False
+    assert design.bodies[1].name == "DuplicatesSurface"
+    assert design.bodies[1].is_surface == True
+
+
 def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test creation of a component, saving it to a file, and loading it again to a
     second component and make sure they have the same properties."""

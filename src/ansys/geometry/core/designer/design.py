@@ -676,10 +676,9 @@ class Design(Component):
             parent.components.append(c)
 
         # Create Bodies
-        # TODO: is_surface?
         for body in response.bodies:
             part = created_parts.get(body.parent_id)
-            tb = MasterBody(body.id, body.name, self._grpc_client)
+            tb = MasterBody(body.id, body.name, self._grpc_client, is_surface=body.is_surface)
             part.bodies.append(tb)
             created_bodies[body.id] = tb
 
