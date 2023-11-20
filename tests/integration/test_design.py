@@ -798,6 +798,29 @@ def test_bodies_translation(modeler: Modeler):
     )
 
 
+def test_body_rotation(modeler: Modeler):
+    """Test for verifying the correct rotation of a ``Body``."""
+
+    # Create your design on the server side
+    design = modeler.create_design("BodyRotation_Test")
+
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    original_vertices = []
+    for edge in body.edges:
+        original_vertices.extend([edge.start_point, edge.end_point])
+
+    body.rotate(Point3D([0, 0, 0]), UnitVector3D([0, 0, 1]), np.pi / 4)
+
+    new_vertices = []
+    for edge in body.edges:
+        new_vertices.extend([edge.start_point, edge.end_point])
+
+    # Make sure no vertices are in the same position as in before rotation
+    for old_vertex, new_vertex in zip(original_vertices, new_vertices):
+        assert not np.allclose(old_vertex, new_vertex)
+
+
 def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test for downloading a design in multiple modes and verifying the correct
     download."""
