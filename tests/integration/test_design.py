@@ -787,11 +787,17 @@ def test_body_rotation(modeler: Modeler):
     copy = body.copy(design, "copy")
     body.rotate(Point3D([0, 0, 0]), UnitVector3D([0, 0, 1]), np.pi / 4)
 
-    # If rotated, uniting body and its copy should now result in a volume > 1
-    # boolean operations not on linux?
-    if modeler.client.backend_type is not BackendType.LINUX_SERVICE:
-        body.unite(copy)
-        assert body.volume.m > 1
+    # Make sure no vertices are in the same position as in before rotation
+    body_vertices = []
+    copy_vertices = []
+    for edge in body.edges:
+        body_vertices.extend([edge.start_point, edge.end_point])
+    for edge in copy.edges:
+        copy_vertices.extend([edge.start_point, edge.end_point])
+
+    for c_vertex in copy_vertices:
+        for b_vertex in body_vertices:
+            assert not np.allclose(c_vertex, b_vertex)
 
 
 def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
