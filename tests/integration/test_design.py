@@ -1,3 +1,24 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 """Test design interaction."""
 
 import os
@@ -777,6 +798,29 @@ def test_bodies_translation(modeler: Modeler):
     )
 
 
+def test_body_rotation(modeler: Modeler):
+    """Test for verifying the correct rotation of a ``Body``."""
+
+    # Create your design on the server side
+    design = modeler.create_design("BodyRotation_Test")
+
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    original_vertices = []
+    for edge in body.edges:
+        original_vertices.extend([edge.start_point, edge.end_point])
+
+    body.rotate(Point3D([0, 0, 0]), UnitVector3D([0, 0, 1]), np.pi / 4)
+
+    new_vertices = []
+    for edge in body.edges:
+        new_vertices.extend([edge.start_point, edge.end_point])
+
+    # Make sure no vertices are in the same position as in before rotation
+    for old_vertex, new_vertex in zip(original_vertices, new_vertices):
+        assert not np.allclose(old_vertex, new_vertex)
+
+
 def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test for downloading a design in multiple modes and verifying the correct
     download."""
@@ -1465,7 +1509,7 @@ def test_boolean_body_operations(modeler: Modeler, skip_not_on_linux_service):
     # 1.a.ii
     copy1 = body1.copy(comp1, "Copy1")
     copy3 = body3.copy(comp3, "Copy3")
-    with pytest.raises(ValueError, match="Bodies do not intersect."):
+    with pytest.raises(ValueError, match="bodies do not intersect"):
         copy1.intersect(copy3)
 
     assert copy1.is_alive
@@ -1574,7 +1618,7 @@ def test_boolean_body_operations(modeler: Modeler, skip_not_on_linux_service):
     # 2.a.ii
     copy1 = body1.copy(comp1_i, "Copy1")
     copy3 = body3.copy(comp3_i, "Copy3")
-    with pytest.raises(ValueError, match="Bodies do not intersect."):
+    with pytest.raises(ValueError, match="bodies do not intersect"):
         copy1.intersect(copy3)
 
     assert copy1.is_alive
@@ -1642,6 +1686,76 @@ def test_boolean_body_operations(modeler: Modeler, skip_not_on_linux_service):
     assert not copy3.is_alive
     assert body3.is_alive
     assert Accuracy.length_is_equal(copy1.volume.m, 1)
+
+
+def test_multiple_bodies_boolean_operations(modeler: Modeler, skip_not_on_linux_service):
+    """Test boolean operations with multiple bodies."""
+
+    design = modeler.create_design("TestBooleanOperationsMultipleBodies")
+
+    comp1 = design.add_component("Comp1")
+    comp2 = design.add_component("Comp2")
+    comp3 = design.add_component("Comp3")
+
+    body1 = comp1.extrude_sketch("Body1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    body2 = comp2.extrude_sketch("Body2", Sketch().box(Point2D([0.5, 0]), 1, 1), 1)
+    body3 = comp3.extrude_sketch("Body3", Sketch().box(Point2D([5, 0]), 1, 1), 1)
+
+    ################# Check subtract operation #################
+    copy1_sub = body1.copy(comp1, "Copy1_subtract")
+    copy2_sub = body2.copy(comp2, "Copy2_subtract")
+    copy3_sub = body3.copy(comp3, "Copy3_subtract")
+    copy1_sub.subtract([copy2_sub, copy3_sub])
+
+    assert not copy2_sub.is_alive
+    assert not copy3_sub.is_alive
+    assert body2.is_alive
+    assert body3.is_alive
+    assert len(comp1.bodies) == 2
+    assert len(comp2.bodies) == 1
+    assert len(comp3.bodies) == 1
+
+    # Cleanup previous subtest
+    comp1.delete_body(copy1_sub)
+    assert len(comp1.bodies) == 1
+
+    ################# Check unite operation #################
+    copy1_uni = body1.copy(comp1, "Copy1_unite")
+    copy2_uni = body2.copy(comp2, "Copy2_unite")
+    copy3_uni = body3.copy(comp3, "Copy3_unite")
+    copy1_uni.unite([copy2_uni, copy3_uni])
+
+    assert not copy2_uni.is_alive
+    assert not copy3_uni.is_alive
+    assert body2.is_alive
+    assert body3.is_alive
+    assert len(comp1.bodies) == 2
+    assert len(comp2.bodies) == 1
+    assert len(comp3.bodies) == 1
+
+    # Cleanup previous subtest
+    comp1.delete_body(copy1_uni)
+    assert len(comp1.bodies) == 1
+
+    ################# Check intersect operation #################
+    copy1_int = body1.copy(comp1, "Copy1_intersect")
+    copy2_int = body2.copy(comp2, "Copy2_intersect")
+    copy3_int = body3.copy(comp3, "Copy3_intersect")  # Body 3 does not intersect them
+    copy1_int.intersect([copy2_int])
+
+    assert not copy2_int.is_alive
+    assert copy3_int.is_alive
+    assert body2.is_alive
+    assert body3.is_alive
+    assert len(comp1.bodies) == 2
+    assert len(comp2.bodies) == 1
+    assert len(comp3.bodies) == 2
+
+    # Cleanup previous subtest
+    comp1.delete_body(copy1_int)
+    comp3.delete_body(copy3_int)
+    assert len(comp1.bodies) == 1
+    assert len(comp3.bodies) == 1
 
 
 def test_child_component_instances(modeler: Modeler):

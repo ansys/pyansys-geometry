@@ -1,3 +1,24 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 """Test design import."""
 
 import numpy as np
@@ -100,6 +121,27 @@ def test_design_import_simple_case(modeler: Modeler):
 
     # Check the design
     _checker_method(read_design, design)
+
+
+def test_design_import_with_surfaces_issue834(modeler: Modeler):
+    """
+    Import a Design which is expected to contain surfaces.
+
+    For more info see https://github.com/ansys/pyansys-geometry/issues/834
+    """
+    # TODO: to be reactivated by https://github.com/ansys/pyansys-geometry/issues/799
+    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
+        # Open the design
+        design = modeler.open_file("./tests/integration/files/DuplicateFacesDesignBefore.scdocx")
+
+        # Check that there are two bodies
+        assert len(design.bodies) == 2
+
+        # Check some basic properties - whether they are surfaces or not!
+        assert design.bodies[0].name == "BoxBody"
+        assert design.bodies[0].is_surface == False
+        assert design.bodies[1].name == "DuplicatesSurface"
+        assert design.bodies[1].is_surface == True
 
 
 def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
