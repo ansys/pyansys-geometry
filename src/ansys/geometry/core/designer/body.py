@@ -1125,11 +1125,30 @@ class Body(IBody):
         self, other: Union["Body", Iterable["Body"]], type_bool_op: str, err_bool_op: str
     ) -> None:
         grpc_other = other if isinstance(other, Iterable) else [other]
-        response = self._template._bodies_stub.Boolean(
-            BooleanRequest(
-                body1=self.id, tool_bodies=[b.id for b in grpc_other], method=type_bool_op
-            )
-        ).empty_result
+        try:
+            response = self._template._bodies_stub.Boolean(
+                BooleanRequest(
+                    body1=self.id, tool_bodies=[b.id for b in grpc_other], method=type_bool_op
+                )
+            ).empty_result
+        except Exception as err:
+            # TODO: to be deleted - old versions did not have "tool_bodies" in the request
+            # This is a temporary fix to support old versions of the server - should be deleted
+            # once the server is no longer supported.
+            if not isinstance(other, Iterable):
+                response = self._template._bodies_stub.Boolean(
+                    BooleanRequest(body1=self.id, body2=other.id, method=type_bool_op)
+                ).empty_result
+            else:
+                all_response = []
+                for body2 in other:
+                    response = self._template._bodies_stub.Boolean(
+                        BooleanRequest(body1=self.id, body2=body2.id, method=type_bool_op)
+                    ).empty_result
+                    all_response.append(response)
+
+                if all_response.count(1) > 0:
+                    response = 1
 
         if response == 1:
             raise ValueError(
