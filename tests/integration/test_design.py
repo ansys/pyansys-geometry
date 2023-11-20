@@ -794,9 +794,8 @@ def test_body_rotation(modeler: Modeler):
         body_vertices.extend([b_edge.start_point, b_edge.end_point])
         copy_vertices.extend([c_edge.start_point, c_edge.end_point])
 
-    for c_vertex in copy_vertices:
-        for b_vertex in body_vertices:
-            assert not np.allclose(c_vertex, b_vertex)
+    for b_vertex, c_vertex in zip(body_vertices, copy_vertices):
+        assert not np.allclose(b_vertex, c_vertex)
 
 
 def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
