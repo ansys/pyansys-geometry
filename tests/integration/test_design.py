@@ -805,18 +805,20 @@ def test_body_rotation(modeler: Modeler):
     design = modeler.create_design("BodyRotation_Test")
 
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-    copy = body.copy(design, "copy")
+
+    original_vertices = []
+    for edge in body.edges:
+        original_vertices.extend([edge.start_point, edge.end_point])
+
     body.rotate(Point3D([0, 0, 0]), UnitVector3D([0, 0, 1]), np.pi / 4)
 
-    # Make sure no vertices are in the same position as in before rotation
-    body_vertices = []
-    copy_vertices = []
-    for b_edge, c_edge in zip(body.edges, copy.edges):
-        body_vertices.extend([b_edge.start_point, b_edge.end_point])
-        copy_vertices.extend([c_edge.start_point, c_edge.end_point])
+    new_vertices = []
+    for edge in body.edges:
+        new_vertices.extend([edge.start_point, edge.end_point])
 
-    for b_vertex, c_vertex in zip(body_vertices, copy_vertices):
-        assert not np.allclose(b_vertex, c_vertex)
+    # Make sure no vertices are in the same position as in before rotation
+    for old_vertex, new_vertex in zip(original_vertices, new_vertices):
+        assert not np.allclose(old_vertex, new_vertex)
 
 
 def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
