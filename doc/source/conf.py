@@ -26,10 +26,16 @@ def get_wheelhouse_assets_dictionary():
     """Auxiliary method to build the wheelhouse assets dictionary."""
     assets_context_os = ["Linux", "Windows", "MacOS"]
     assets_context_runners = ["ubuntu-latest", "windows-latest", "macos-latest"]
-    assets_context_python_versions = ["3.9", "3.10", "3.11"]
-    assets_context_version = json.loads(
-        requests.get("https://api.github.com/repos/ansys/pyansys-geometry/releases/latest").content
-    )["name"]
+    assets_context_python_versions = ["3.9", "3.10", "3.11", "3.12"]
+    if get_version_match(__version__) == "dev":
+        # Just point to the latest version
+        assets_context_version = json.loads(
+            requests.get(
+                "https://api.github.com/repos/ansys/pyansys-geometry/releases/latest"
+            ).content
+        )["name"]
+    else:
+        assets_context_version = f"v{__version__}"
 
     assets = {}
     for assets_os, assets_runner in zip(assets_context_os, assets_context_runners):
