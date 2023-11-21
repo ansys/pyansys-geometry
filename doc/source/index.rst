@@ -122,7 +122,7 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
          :outline:
          :click-parent:
 
-      Assets
+         Assets
 
 .. jinja:: main_toctree
 
