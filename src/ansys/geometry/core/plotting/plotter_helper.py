@@ -24,6 +24,8 @@ from beartype.typing import Any, Dict, List, Optional, Union
 import numpy as np
 import pyvista as pv
 
+from ansys.geometry.core.designer.body import Body, MasterBody
+from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.plotting.plotter import (
     DEFAULT_COLOR,
@@ -40,6 +42,7 @@ from ansys.geometry.core.plotting.widgets import (
     MeasureWidget,
     PlotterWidget,
     Ruler,
+    ShowDesignPoints,
     ViewButton,
     ViewDirection,
 )
@@ -65,9 +68,9 @@ class PlotterHelper:
         """Initialize ``use_trame`` and save current ``pv.OFF_SCREEN`` value."""
         # Check if the use of trame was requested
         if use_trame is None:
-            import ansys.geometry.core as pygeom
+            import ansys.geometry.core as pyansys_geometry
 
-            use_trame = pygeom.USE_TRAME
+            use_trame = pyansys_geometry.USE_TRAME
 
         self._use_trame = use_trame
         self._allow_picking = allow_picking
@@ -110,6 +113,7 @@ class PlotterHelper:
                 for dir in ViewDirection
             ]
             self._widgets.append(MeasureWidget(self))
+            self._widgets.append(ShowDesignPoints((self)))
 
     def select_object(self, geom_object: Union[GeomObjectPlot, EdgePlot], pt: np.ndarray) -> None:
         """
@@ -224,8 +228,14 @@ class PlotterHelper:
             Mapping between plotter actors and EdgePlot objects.
         """
         for object in self._geom_object_actors_map.values():
-            for edge in object.edges:
-                self._edge_actors_map[edge.actor] = edge
+            # get edges only from bodies
+            if (
+                isinstance(object, Body)
+                or isinstance(object, MasterBody)
+                or isinstance(object, Face)
+            ):
+                for edge in object.edges:
+                    self._edge_actors_map[edge.actor] = edge
 
     def enable_picking(self):
         """Enable picking capabilities in the plotter."""

@@ -302,11 +302,7 @@ class PyGeometryFormatter(logging.Formatter):
         defaults=None,
     ):
         """Initialize the ``PyGeometryFormatter`` class."""
-        if sys.version_info[1] < 8:
-            super().__init__(fmt, datefmt, style)
-        else:
-            # 3.8: The validate parameter was added
-            super().__init__(fmt, datefmt, style, validate)
+        super().__init__(fmt, datefmt, style, validate)
         self._style = PyGeometryPercentStyle(fmt, defaults=defaults)  # overwriting
 
 

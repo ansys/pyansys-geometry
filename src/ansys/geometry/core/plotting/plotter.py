@@ -31,6 +31,7 @@ from pyvista.plotting.tools import create_axes_marker
 from ansys.geometry.core.designer.body import Body, MasterBody
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.design import Design
+from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
@@ -346,6 +347,21 @@ class Plotter:
         for polydata in polydata_entries:
             self.scene.add_mesh(polydata, color=EDGE_COLOR, **plotting_options)
 
+    def add_design_point(self, design_point: DesignPoint, **plotting_options) -> None:
+        """
+        Add a DesignPoint object to the plotter.
+
+        Parameters
+        ----------
+        design_point : DesignPoint
+            DesignPoint to add.
+        """
+        # get the actor for the DesignPoint
+        actor = self.scene.add_mesh(design_point._to_polydata(), **plotting_options)
+
+        # save the actor to the object/actor map
+        self._geom_object_actors_map[actor] = design_point
+
     def add(
         self,
         object: Any,
@@ -403,6 +419,8 @@ class Plotter:
             self.add_body(object, merge_bodies, **plotting_options)
         elif isinstance(object, Design) or isinstance(object, Component):
             self.add_component(object, merge_components, merge_bodies, **plotting_options)
+        elif isinstance(object, DesignPoint):
+            self.add_design_point(object, **plotting_options)
         else:
             logger.warning(f"Object type {type(object)} can not be plotted.")
         return self._geom_object_actors_map
@@ -491,7 +509,8 @@ class Plotter:
         # Conditionally set the Jupyter backend as not all users will be within
         # a notebook environment to avoid a pyvista warning
         if self.scene.notebook and jupyter_backend is None:
-            jupyter_backend = "panel"
+            # TODO revert this once the dynamic plotters in documentation are back.
+            jupyter_backend = "static"
 
         # Enabling anti-aliasing by default on scene
         self.scene.enable_anti_aliasing("ssaa")

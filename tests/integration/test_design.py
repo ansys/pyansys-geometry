@@ -1,3 +1,24 @@
+# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 """Test design interaction."""
 
 import os
@@ -5,6 +26,8 @@ import os
 import numpy as np
 from pint import Quantity
 import pytest
+import pyvista as pv
+from pyvista.plotting.utilities.regression import compare_images as pv_compare_images
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection import BackendType
@@ -46,6 +69,7 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
     design_name = "ExtrudeProfile"
     design = modeler.create_design(design_name)
     assert design.name == design_name
+    assert design.design_id is not None
     assert design.id is not None
     assert design.parent_component is None
     assert len(design.components) == 0
@@ -174,6 +198,7 @@ def test_component_body(modeler: Modeler):
     design_name = "ComponentBody_Test"
     design = modeler.create_design(design_name)
     assert design.name == design_name
+    assert design.design_id is not None
     assert design.id is not None
     assert design.parent_component is None
     assert len(design.components) == 0
@@ -773,7 +798,30 @@ def test_bodies_translation(modeler: Modeler):
     )
 
 
-def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, service_os: str):
+def test_body_rotation(modeler: Modeler):
+    """Test for verifying the correct rotation of a ``Body``."""
+
+    # Create your design on the server side
+    design = modeler.create_design("BodyRotation_Test")
+
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    original_vertices = []
+    for edge in body.edges:
+        original_vertices.extend([edge.start_point, edge.end_point])
+
+    body.rotate(Point3D([0, 0, 0]), UnitVector3D([0, 0, 1]), np.pi / 4)
+
+    new_vertices = []
+    for edge in body.edges:
+        new_vertices.extend([edge.start_point, edge.end_point])
+
+    # Make sure no vertices are in the same position as in before rotation
+    for old_vertex, new_vertex in zip(original_vertices, new_vertices):
+        assert not np.allclose(old_vertex, new_vertex)
+
+
+def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test for downloading a design in multiple modes and verifying the correct
     download."""
 
@@ -788,7 +836,7 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     design.extrude_sketch(name="MyCylinder", sketch=sketch, distance=Quantity(50, UNITS.mm))
 
     # Download the design
-    file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.scdocx"
+    file = tmp_path_factory.mktemp("scdoc_files_download") / "dummy_folder" / "cylinder.scdocx"
     design.download(file)
 
     # Check that the file exists
@@ -802,13 +850,12 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
 
     design.save(file_location=file_save)
 
-    # Check for other exports
-    if service_os == "windows":
+    # Check for other exports - Windows backend...
+    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
 
         # Windows-only HOOPS exports for now
-
         step_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.stp"
         design.download(step_file, format=DesignFileFormat.STEP)
         assert step_file.exists()
@@ -818,17 +865,14 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
         assert iges_file.exists()
 
         # PMDB addin is Windows-only
-        # TODO: Requires resolution of https://github.com/ansys/pyansys-geometry/issues/710
-        #
-        # pmdb_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.pmdb"
-        # design.download(pmdb_file, DesignFileFormat.PMDB)
-        # assert pmdb_file.exists()
+        pmdb_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.pmdb"
+        design.download(pmdb_file, DesignFileFormat.PMDB)
+        assert pmdb_file.exists()
 
-    elif service_os == "linux":
+    # Linux backend...
+    else:
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_bin"
         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_txt"
-    else:
-        raise Exception("Unable to determine the service operating system.")
 
     fmd_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.fmd"
 
@@ -1277,6 +1321,10 @@ def test_design_points(modeler: Modeler):
     assert "  Name                 : SecondPointSet" in design_point_2_str
     assert "  Design Point         : [20. 20. 20.]" in design_point_2_str
 
+    # make sure it can create polydata
+    pd = design_points_1._to_polydata()
+    assert isinstance(pd, pv.PolyData)
+
 
 def test_named_selections_beams(modeler: Modeler, skip_not_on_linux_service):
     """Test for verifying the correct creation of ``NamedSelection`` with beams."""
@@ -1461,7 +1509,7 @@ def test_boolean_body_operations(modeler: Modeler, skip_not_on_linux_service):
     # 1.a.ii
     copy1 = body1.copy(comp1, "Copy1")
     copy3 = body3.copy(comp3, "Copy3")
-    with pytest.raises(ValueError, match="Bodies do not intersect."):
+    with pytest.raises(ValueError, match="bodies do not intersect"):
         copy1.intersect(copy3)
 
     assert copy1.is_alive
@@ -1570,7 +1618,7 @@ def test_boolean_body_operations(modeler: Modeler, skip_not_on_linux_service):
     # 2.a.ii
     copy1 = body1.copy(comp1_i, "Copy1")
     copy3 = body3.copy(comp3_i, "Copy3")
-    with pytest.raises(ValueError, match="Bodies do not intersect."):
+    with pytest.raises(ValueError, match="bodies do not intersect"):
         copy1.intersect(copy3)
 
     assert copy1.is_alive
@@ -1640,6 +1688,76 @@ def test_boolean_body_operations(modeler: Modeler, skip_not_on_linux_service):
     assert Accuracy.length_is_equal(copy1.volume.m, 1)
 
 
+def test_multiple_bodies_boolean_operations(modeler: Modeler, skip_not_on_linux_service):
+    """Test boolean operations with multiple bodies."""
+
+    design = modeler.create_design("TestBooleanOperationsMultipleBodies")
+
+    comp1 = design.add_component("Comp1")
+    comp2 = design.add_component("Comp2")
+    comp3 = design.add_component("Comp3")
+
+    body1 = comp1.extrude_sketch("Body1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    body2 = comp2.extrude_sketch("Body2", Sketch().box(Point2D([0.5, 0]), 1, 1), 1)
+    body3 = comp3.extrude_sketch("Body3", Sketch().box(Point2D([5, 0]), 1, 1), 1)
+
+    ################# Check subtract operation #################
+    copy1_sub = body1.copy(comp1, "Copy1_subtract")
+    copy2_sub = body2.copy(comp2, "Copy2_subtract")
+    copy3_sub = body3.copy(comp3, "Copy3_subtract")
+    copy1_sub.subtract([copy2_sub, copy3_sub])
+
+    assert not copy2_sub.is_alive
+    assert not copy3_sub.is_alive
+    assert body2.is_alive
+    assert body3.is_alive
+    assert len(comp1.bodies) == 2
+    assert len(comp2.bodies) == 1
+    assert len(comp3.bodies) == 1
+
+    # Cleanup previous subtest
+    comp1.delete_body(copy1_sub)
+    assert len(comp1.bodies) == 1
+
+    ################# Check unite operation #################
+    copy1_uni = body1.copy(comp1, "Copy1_unite")
+    copy2_uni = body2.copy(comp2, "Copy2_unite")
+    copy3_uni = body3.copy(comp3, "Copy3_unite")
+    copy1_uni.unite([copy2_uni, copy3_uni])
+
+    assert not copy2_uni.is_alive
+    assert not copy3_uni.is_alive
+    assert body2.is_alive
+    assert body3.is_alive
+    assert len(comp1.bodies) == 2
+    assert len(comp2.bodies) == 1
+    assert len(comp3.bodies) == 1
+
+    # Cleanup previous subtest
+    comp1.delete_body(copy1_uni)
+    assert len(comp1.bodies) == 1
+
+    ################# Check intersect operation #################
+    copy1_int = body1.copy(comp1, "Copy1_intersect")
+    copy2_int = body2.copy(comp2, "Copy2_intersect")
+    copy3_int = body3.copy(comp3, "Copy3_intersect")  # Body 3 does not intersect them
+    copy1_int.intersect([copy2_int])
+
+    assert not copy2_int.is_alive
+    assert copy3_int.is_alive
+    assert body2.is_alive
+    assert body3.is_alive
+    assert len(comp1.bodies) == 2
+    assert len(comp2.bodies) == 1
+    assert len(comp3.bodies) == 2
+
+    # Cleanup previous subtest
+    comp1.delete_body(copy1_int)
+    comp3.delete_body(copy3_int)
+    assert len(comp1.bodies) == 1
+    assert len(comp3.bodies) == 1
+
+
 def test_child_component_instances(modeler: Modeler):
     """Test creation of child ``Component`` instances and check the data model reflects
     that."""
@@ -1678,3 +1796,60 @@ def test_child_component_instances(modeler: Modeler):
     assert len(comp1.components) == 2
     assert len(base2.components[0].components) == 2
     assert len(comp1.components) == len(base2.components[0].components)
+
+
+def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Generate multiple designs, make sure they are all separate, and activate them
+    when needed."""
+    # Check backend first
+    if modeler.client.backend_type in (
+        BackendType.SPACECLAIM,
+        BackendType.WINDOWS_SERVICE,
+    ):
+        pass
+    else:
+        # Test is only available for DMS and SpaceClaim
+        pytest.skip("Test only available on DMS and SpaceClaim")
+
+    # Create your design on the server side
+    design1 = modeler.create_design("Design1")
+
+    # Create a Sketch object and draw a slot
+    sketch1 = Sketch()
+    sketch1.slot(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm))
+
+    # Extrude the sketch to create a body
+    design1.extrude_sketch("MySlot", sketch1, Quantity(10, UNITS.mm))
+
+    # Create a second design
+    design2 = modeler.create_design("Design2")
+
+    # Create a Sketch object and draw a rectangle
+    sketch2 = Sketch()
+    sketch2.box(Point2D([-30, -30], UNITS.mm), 5 * UNITS.mm, 8 * UNITS.mm)
+
+    # Extrude the sketch to create a body
+    design2.extrude_sketch("MyRectangle", sketch2, Quantity(10, UNITS.mm))
+
+    # Initiate expected output images
+    scshot_dir = tmp_path_factory.mktemp("test_multiple_designs")
+    scshot_1 = scshot_dir / "design1.png"
+    scshot_2 = scshot_dir / "design2.png"
+
+    # Request plotting and store images
+    design2.plot(screenshot=scshot_1)
+    design1.plot(screenshot=scshot_2)
+
+    # Check that the images are different
+    assert scshot_1.exists()
+    assert scshot_2.exists()
+    err = pv_compare_images(str(scshot_1), str(scshot_2))
+    assert not err < 0.1
+
+    # Check that design2 is not active
+    assert not design2.is_active
+    assert design1.is_active
+
+    # Check the same thing inside the modeler
+    assert not modeler._designs[design2.design_id].is_active
+    assert modeler._designs[design1.design_id].is_active

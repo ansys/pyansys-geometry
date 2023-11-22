@@ -46,7 +46,6 @@ from google.protobuf.empty_pb2 import Empty
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     grpc_frame_to_frame,
     grpc_matrix_to_matrix,
@@ -69,7 +68,9 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, Z
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.checks import ensure_design_is_active
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
+from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.typing import RealSequence
 
 
@@ -112,9 +113,9 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
-    def __init__(self, name: str, grpc_client: GrpcClient, read_existing_design: bool = False):
+    def __init__(self, name: str, modeler: Modeler, read_existing_design: bool = False):
         """Initialize the ``Design`` class."""
-        super().__init__(name, None, grpc_client)
+        super().__init__(name, None, modeler.client)
 
         # Initialize the stubs needed
         self._design_stub = DesignsStub(self._grpc_client.channel)
@@ -127,6 +128,9 @@ class Design(Component):
         self._materials = []
         self._named_selections = {}
         self._beam_profiles = {}
+        self._design_id = ""
+        self._is_active = False
+        self._modeler = modeler
 
         # Check whether we want to process an existing design or create a new one.
         if read_existing_design:
@@ -134,8 +138,15 @@ class Design(Component):
             self.__read_existing_design()
         else:
             new_design = self._design_stub.New(NewRequest(name=name))
-            self._id = new_design.id
+            self._design_id = new_design.id
+            self._id = new_design.main_part.id
+            self._activate(called_after_design_creation=True)
             self._grpc_client.log.debug("Design object instantiated successfully.")
+
+    @property
+    def design_id(self) -> str:
+        """The design's object unique id."""
+        return self._design_id
 
     @property
     def materials(self) -> List[Material]:
@@ -152,9 +163,28 @@ class Design(Component):
         """List of beam profile available for the design."""
         return list(self._beam_profiles.values())
 
+    @property
+    def is_active(self) -> bool:
+        """Whether the design is currently active."""
+        return self._is_active
+
+    @protect_grpc
+    def _activate(self, called_after_design_creation: bool = False) -> None:
+        """Activate the design."""
+        # Deactivate all designs first
+        for design in self._modeler._designs.values():
+            design._is_active = False
+
+        # Activate the current design
+        if not called_after_design_creation:
+            self._design_stub.PutActive(EntityIdentifier(id=self._design_id))
+        self._is_active = True
+        self._grpc_client.log.debug(f"Design {self.name} is activated.")
+
     # TODO: allow for list of materials
     @protect_grpc
     @check_input_types
+    @ensure_design_is_active
     def add_material(self, material: Material) -> None:
         """
         Add a material to the design.
@@ -187,6 +217,7 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
+    @ensure_design_is_active
     def save(self, file_location: Union[Path, str]) -> None:
         """
         Save a design to disk on the active Geometry server instance.
@@ -205,6 +236,7 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
+    @ensure_design_is_active
     def download(
         self,
         file_location: Union[Path, str],
@@ -223,6 +255,11 @@ class Design(Component):
         # Sanity checks on inputs
         if isinstance(file_location, Path):
             file_location = str(file_location)
+
+        # Check if the folder for the file location exists
+        if not Path(file_location).parent.exists():
+            # Create the parent directory
+            Path(file_location).parent.mkdir(parents=True, exist_ok=True)
 
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
@@ -256,6 +293,7 @@ class Design(Component):
         )
 
     @check_input_types
+    @ensure_design_is_active
     def create_named_selection(
         self,
         name: str,
@@ -307,6 +345,7 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
+    @ensure_design_is_active
     def delete_named_selection(self, named_selection: Union[NamedSelection, str]) -> None:
         """
         Delete a named selection on the active Geometry server instance.
@@ -338,6 +377,7 @@ class Design(Component):
             pass
 
     @check_input_types
+    @ensure_design_is_active
     def delete_component(self, component: Union["Component", str]) -> None:
         """
         Delete a component (itself or its children).
@@ -381,6 +421,7 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
+    @ensure_design_is_active
     def add_beam_circular_profile(
         self,
         name: str,
@@ -436,6 +477,7 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
+    @ensure_design_is_active
     def add_midsurface_thickness(self, thickness: Quantity, bodies: List[Body]) -> None:
         """
         Add a mid-surface thickness to a list of bodies.
@@ -476,6 +518,7 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
+    @ensure_design_is_active
     def add_midsurface_offset(self, offset_type: MidSurfaceOffsetType, bodies: List[Body]) -> None:
         """
         Add a mid-surface offset type to a list of bodies.
@@ -514,6 +557,7 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
+    @ensure_design_is_active
     def delete_beam_profile(self, beam_profile: Union[BeamProfile, str]) -> None:
         """
         Remove a beam profile on the active geometry server instance.
@@ -543,6 +587,7 @@ class Design(Component):
         alive_comps = [1 if comp.is_alive else 0 for comp in self.components]
         lines = [f"ansys.geometry.core.designer.Design {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
+        lines.append(f"  Is active?           : {self._is_active}")
         lines.append(f"  N Bodies             : {sum(alive_bodies)}")
         lines.append(f"  N Components         : {sum(alive_comps)}")
         lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
@@ -587,7 +632,9 @@ class Design(Component):
         if not design:
             raise RuntimeError("No existing design available at service level.")
         else:
+            self._design_id = design.id
             self._id = design.main_part.id
+            self._activate(called_after_design_creation=True)
             # Here we may take the design's name instead of the main part's name.
             # Since they're the same in the backend.
             self._name = design.name
@@ -597,11 +644,13 @@ class Design(Component):
         # Store created objects
         created_parts = {p.id: Part(p.id, p.name, [], []) for p in response.parts}
         created_tps = {}
-        created_components = {self.id: self}
+        created_components = {design.main_part.id: self}
         created_bodies = {}
 
         # Make dummy master for design since server doesn't have one
-        self._master_component = MasterComponent("1", "master_design", created_parts[self.id])
+        self._master_component = MasterComponent(
+            "1", "master_design", created_parts[design.main_part.id]
+        )
 
         # Create MasterComponents
         for master in response.transformed_parts:
@@ -627,10 +676,9 @@ class Design(Component):
             parent.components.append(c)
 
         # Create Bodies
-        # TODO: is_surface?
         for body in response.bodies:
             part = created_parts.get(body.parent_id)
-            tb = MasterBody(body.id, body.name, self._grpc_client)
+            tb = MasterBody(body.id, body.name, self._grpc_client, is_surface=body.is_surface)
             part.bodies.append(tb)
             created_bodies[body.id] = tb
 
