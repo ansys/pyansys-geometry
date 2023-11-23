@@ -720,8 +720,10 @@ def test_plot_clipping(modeler: Modeler, verify_image_cache):
     origin = Point3D([10.0, 10.0, 5.0], UNITS.m)
     plane = Plane(origin=origin, direction_x=[0, 0, 1], direction_y=[0, 1, 0])
     ph.add(cylinder_body, clipping_plane=plane)
-    plot_list.append(cylinder_body)
 
+    origin = Point3D([10.0, 10.0, 5.0], UNITS.m)
+    plane = Plane(origin=origin, direction_x=[0, 0, 1], direction_y=[0, 0, 1])
+    ph.add(cylinder, clipping_plane=plane)
     # Create a Body box
     box2 = Sketch()
     box2.box(Point2D([-10, 20], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
@@ -730,5 +732,11 @@ def test_plot_clipping(modeler: Modeler, verify_image_cache):
     origin = Point3D([-10.0, 20.0, 5.0], UNITS.m)
     plane = Plane(origin=origin, direction_x=[1, 1, 1], direction_y=[-1, 0, 1])
     ph.add(box_body2, clipping_plane=plane)
+
+    sphere = pv.Sphere()
+    ph.add(sphere, clipping_plane=plane)
+
+    sphere = pv.Sphere(center=(5, -10, -10))
+    ph.add(sphere, clipping_plane=plane)
 
     ph.plot()

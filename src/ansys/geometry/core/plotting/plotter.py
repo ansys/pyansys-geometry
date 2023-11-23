@@ -361,10 +361,8 @@ class Plotter:
             mb.append(polydata)
 
         if "clip" in plotting_options:
-            plotting_options.pop("clip")
             dataset = self.clip(dataset, **plotting_options)
-            plotting_options.pop("normal", None)
-            plotting_options.pop("origin", None)
+            plotting_options.pop("clipping_plane", None)
 
         self.scene.add_mesh(mb, color=EDGE_COLOR, **plotting_options)
 
