@@ -333,7 +333,7 @@ class Plotter:
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
 
         if "clipping_plane" in plotting_options:
-            dataset = self.clip(dataset, plotting_options["clippling_plane"])
+            dataset = self.clip(dataset, plotting_options["clipping_plane"])
             plotting_options.pop("clipping_plane", None)
 
         if isinstance(dataset, pv.MultiBlock):
@@ -452,7 +452,7 @@ class Plotter:
                 plotting_options.pop("clipping_plane", None)
             self.scene.add_mesh(object, **plotting_options)
         elif isinstance(object, pv.MultiBlock):
-            if "clip" in plotting_options:
+            if "clipping_plane" in plotting_options:
                 object = self.clip(object, plotting_options["clipping_plane"])
                 plotting_options.pop("clipping_plane", None)
             self.scene.add_composite(object, **plotting_options)

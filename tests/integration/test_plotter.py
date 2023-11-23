@@ -733,10 +733,14 @@ def test_plot_clipping(modeler: Modeler, verify_image_cache):
     plane = Plane(origin=origin, direction_x=[1, 1, 1], direction_y=[-1, 0, 1])
     ph.add(box_body2, clipping_plane=plane)
 
+    origin = Point3D([0, 0, 0], UNITS.m)
+    plane = Plane(origin=origin, direction_x=[1, 1, 1], direction_y=[-1, 0, 1])
     sphere = pv.Sphere()
     ph.add(sphere, clipping_plane=plane)
 
+    origin = Point3D([5, -10, 10], UNITS.m)
+    plane = Plane(origin=origin, direction_x=[1, 1, 1], direction_y=[-1, 0, 1])
     sphere = pv.Sphere(center=(5, -10, -10))
-    ph.add(sphere, clipping_plane=plane)
+    ph.add(pv.MultiBlock([sphere]), clipping_plane=plane)
 
     ph.plot()
