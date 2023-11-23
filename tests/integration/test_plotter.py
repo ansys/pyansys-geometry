@@ -722,7 +722,7 @@ def test_plot_clipping(modeler: Modeler, verify_image_cache):
     ph.add(cylinder_body, clipping_plane=plane)
 
     origin = Point3D([10.0, 10.0, 5.0], UNITS.m)
-    plane = Plane(origin=origin, direction_x=[0, 0, 1], direction_y=[0, 0, 1])
+    plane = Plane(origin=origin, direction_x=[0, 0, 1], direction_y=[0, 1, 0])
     ph.add(cylinder, clipping_plane=plane)
     # Create a Body box
     box2 = Sketch()
