@@ -705,3 +705,25 @@ def test_plot_design_point(modeler: Modeler, verify_image_cache):
         plot_list,
         screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_design_point.png"),
     )
+
+
+def test_plot_clipping(modeler: Modeler, verify_image_cache):
+    design = modeler.create_design("Clipping")
+    ph = PlotterHelper()
+
+    plot_list = []
+    # Create a Body cylinder
+    cylinder = Sketch()
+    cylinder.circle(Point2D([10, 10], UNITS.m), 1.0)
+    cylinder_body = design.extrude_sketch("JustACyl", cylinder, Quantity(10, UNITS.m))
+
+    ph.add(cylinder_body, clip=True, normal="x", origin=[10, 10, 0])
+    plot_list.append(cylinder_body)
+
+    # Create a Body box
+    box2 = Sketch()
+    box2.box(Point2D([-10, 20], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+    box_body2 = design.extrude_sketch("JustABox", box2, Quantity(10, UNITS.m))
+    ph.add(box_body2, clip=True, normal="z", origin=[-10, 20, 5])
+
+    ph.plot()
