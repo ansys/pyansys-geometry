@@ -231,11 +231,9 @@ class Plotter:
         if show_frame:
             self.plot_frame(sketch._plane)
 
-        if "clip" in plotting_options:
+        if "clipping_plane" in plotting_options:
             logger.warning("Clipping is not available in Sketch objects.")
-            plotting_options.pop("clip")
-            plotting_options.pop("normal", None)
-            plotting_options.pop("origin", None)
+            plotting_options.pop("clipping_plane")
 
         self.add_sketch_polydata(sketch.sketch_polydata_faces(), opacity=0.7, **plotting_options)
         self.add_sketch_polydata(sketch.sketch_polydata_edges(), **plotting_options)
@@ -287,11 +285,9 @@ class Plotter:
         # Use the default PyAnsys Geometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
         dataset = body.tessellate(merge=merge)
-        if "clip" in plotting_options:
-            plotting_options.pop("clip")
-            dataset = self.clip(dataset, **plotting_options)
-            plotting_options.pop("normal", None)
-            plotting_options.pop("origin", None)
+        if "clipping_plane" in plotting_options:
+            dataset = self.clip(dataset, plotting_options.get("clipping_plane"))
+            plotting_options.pop("clipping_plane", None)
         if isinstance(dataset, pv.MultiBlock):
             actor, _ = self.scene.add_composite(dataset, **plotting_options)
         else:
@@ -336,11 +332,9 @@ class Plotter:
         self.__set_add_mesh_defaults(plotting_options)
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
 
-        if "clip" in plotting_options:
-            plotting_options.pop("clip")
-            dataset = self.clip(dataset, **plotting_options)
-            plotting_options.pop("normal", None)
-            plotting_options.pop("origin", None)
+        if "clipping_plane" in plotting_options:
+            dataset = self.clip(dataset, plotting_options["clippling_plane"])
+            plotting_options.pop("clipping_plane", None)
 
         if isinstance(dataset, pv.MultiBlock):
             actor, _ = self.scene.add_composite(dataset, **plotting_options)
@@ -375,11 +369,7 @@ class Plotter:
         self.scene.add_mesh(mb, color=EDGE_COLOR, **plotting_options)
 
     def clip(
-        self,
-        mesh: Union[pv.PolyData, pv.MultiBlock],
-        normal: str = "x",
-        origin: tuple = None,
-        **plotting_options,
+        self, mesh: Union[pv.PolyData, pv.MultiBlock], plane: Plane = None
     ) -> Union[pv.PolyData, pv.MultiBlock]:
         """
         Clip the passed mesh with a plane.
@@ -399,7 +389,7 @@ class Plotter:
         Union[pv.PolyData,pv.MultiBlock]
             The clipped mesh.
         """
-        return mesh.clip(normal=normal, origin=origin)
+        return mesh.clip(normal=plane.normal, origin=plane.origin)
 
     def add_design_point(self, design_point: DesignPoint, **plotting_options) -> None:
         """
@@ -459,18 +449,14 @@ class Plotter:
         if isinstance(object, List) and isinstance(object[0], pv.PolyData):
             self.add_sketch_polydata(object, **plotting_options)
         elif isinstance(object, pv.PolyData):
-            if "clip" in plotting_options:
-                plotting_options.pop("clip")
-                object = self.clip(object, **plotting_options)
-                plotting_options.pop("normal", None)
-                plotting_options.pop("origin", None)
+            if "clipping_plane" in plotting_options:
+                object = self.clip(object, plotting_options["clipping_plane"])
+                plotting_options.pop("clipping_plane", None)
             self.scene.add_mesh(object, **plotting_options)
         elif isinstance(object, pv.MultiBlock):
             if "clip" in plotting_options:
-                plotting_options.pop("clip")
-                object = self.clip(object, **plotting_options)
-                plotting_options.pop("normal", None)
-                plotting_options.pop("origin", None)
+                object = self.clip(object, plotting_options["clipping_plane"])
+                plotting_options.pop("clipping_plane", None)
             self.scene.add_composite(object, **plotting_options)
         elif isinstance(object, Sketch):
             self.plot_sketch(object, **plotting_options)

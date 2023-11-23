@@ -717,13 +717,18 @@ def test_plot_clipping(modeler: Modeler, verify_image_cache):
     cylinder.circle(Point2D([10, 10], UNITS.m), 1.0)
     cylinder_body = design.extrude_sketch("JustACyl", cylinder, Quantity(10, UNITS.m))
 
-    ph.add(cylinder_body, clip=True, normal="x", origin=[10, 10, 0])
+    origin = Point3D([10.0, 10.0, 5.0], UNITS.m)
+    plane = Plane(origin=origin, direction_x=[0, 0, 1], direction_y=[0, 1, 0])
+    ph.add(cylinder_body, clipping_plane=plane)
     plot_list.append(cylinder_body)
 
     # Create a Body box
     box2 = Sketch()
     box2.box(Point2D([-10, 20], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
     box_body2 = design.extrude_sketch("JustABox", box2, Quantity(10, UNITS.m))
-    ph.add(box_body2, clip=True, normal="z", origin=[-10, 20, 5])
+
+    origin = Point3D([-10.0, 20.0, 5.0], UNITS.m)
+    plane = Plane(origin=origin, direction_x=[1, 1, 1], direction_y=[-1, 0, 1])
+    ph.add(box_body2, clipping_plane=plane)
 
     ph.plot()
