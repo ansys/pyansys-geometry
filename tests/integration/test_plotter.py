@@ -743,4 +743,8 @@ def test_plot_clipping(modeler: Modeler, verify_image_cache):
     sphere = pv.Sphere(center=(5, -10, -10))
     ph.add(pv.MultiBlock([sphere]), clipping_plane=plane)
 
+    sphere1 = pv.Sphere(center=(-5, -10, -10))
+    sphere2 = pv.Sphere(center=(-10, -10, -10))
+    ph.add([sphere1, sphere2])
+
     ph.plot()

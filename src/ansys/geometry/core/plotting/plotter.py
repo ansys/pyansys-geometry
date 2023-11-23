@@ -360,7 +360,7 @@ class Plotter:
         for polydata in polydata_entries:
             mb.append(polydata)
 
-        if "clip" in plotting_options:
+        if "clipping_plane" in plotting_options:
             dataset = self.clip(dataset, **plotting_options)
             plotting_options.pop("clipping_plane", None)
 
