@@ -220,7 +220,7 @@ class PlotterHelper:
 
     def compute_edge_object_map(self) -> Dict[pv.Actor, EdgePlot]:
         """
-        Compute the mapping between plotter actors and EdgePlot objects.
+        Compute the mapping between plotter actors and ``EdgePlot`` objects.
 
         Returns
         -------
@@ -247,9 +247,20 @@ class PlotterHelper:
         """Disable picking capabilities in the plotter."""
         self._pl.scene.disable_picking()
 
+    def add(self, object: Any, **plotting_options):
+        """
+        Add a ``pyansys-geometry`` or ``PyVista`` object to the plotter.
+
+        Parameters
+        ----------
+        object : Any
+            Object you want to show.
+        """
+        self._pl.add(object=object, **plotting_options)
+
     def plot(
         self,
-        object: Any,
+        object: Any = None,
         screenshot: Optional[str] = None,
         merge_bodies: bool = False,
         merge_component: bool = False,
@@ -265,7 +276,7 @@ class PlotterHelper:
 
         Parameters
         ----------
-        object : Any
+        object : Any, default: None
             Any object or list of objects that you want to plot.
         screenshot : str, default: None
             Path for saving a screenshot of the image that is being represented.
@@ -292,13 +303,13 @@ class PlotterHelper:
         """
         if isinstance(object, List) and not isinstance(object[0], pv.PolyData):
             logger.debug("Plotting objects in list...")
-            self._geom_object_actors_map = self._pl.add_list(
-                object, merge_bodies, merge_component, filter, **plotting_options
-            )
+            self._pl.add_list(object, merge_bodies, merge_component, filter, **plotting_options)
         else:
-            self._geom_object_actors_map = self._pl.add(
-                object, merge_bodies, merge_component, filter, **plotting_options
-            )
+            self._pl.add(object, merge_bodies, merge_component, filter, **plotting_options)
+        if self._pl.geom_object_actors_map:
+            self._geom_object_actors_map = self._pl.geom_object_actors_map
+        else:
+            logger.warning("No actors added to the plotter.")
 
         self.compute_edge_object_map()
         # Compute mapping between the objects and its edges.
