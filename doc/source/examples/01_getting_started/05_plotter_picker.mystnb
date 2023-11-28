@@ -189,7 +189,7 @@ intersects the target object.
 from ansys.geometry.core.math import Plane, Point3D
 ph = PlotterHelper()
 
-# Define pyansys-geometry box
+# Define PyAnsys Geometry box
 box2 = Sketch()
 box2.box(Point2D([-10, 20], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
 box_body2 = design.extrude_sketch("JustABox", box2, Quantity(10, UNITS.m))
