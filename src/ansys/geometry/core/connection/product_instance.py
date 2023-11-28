@@ -102,6 +102,26 @@ The argument to specify the backend's addin manifest file's path.
 To be used only with Ansys Discovery and Ansys SpaceClaim.
 """
 
+BACKEND_SPACECLAIM_HIDDEN = "/Headless=True"
+"""
+The argument to hide SpaceClaim's UI on the backend.
+
+To be used only with Ansys SpaceClaim.
+"""
+
+BACKEND_DISCOVERY_HIDDEN = "--hidden"
+"""
+The argument to hide Discovery's UI on the backend.
+
+To be used only with Ansys Discovery.
+"""
+
+BACKEND_SPLASH_OFF = '/Splash=False'
+"""
+The argument to specify the backend's addin manifest file's path.
+
+To be used only with Ansys Discovery and Ansys SpaceClaim.
+"""
 
 class ProductInstance:
     """
@@ -143,6 +163,7 @@ def prepare_and_start_backend(
     timeout: int = 150,
     manifest_path: str = None,
     logs_folder: str = None,
+    hidden: bool = False,
 ) -> "Modeler":
     """
     Start the requested service locally using the ``ProductInstance`` class.
@@ -187,6 +208,7 @@ def prepare_and_start_backend(
         version. Only applicable for Ansys Discovery and Ansys SpaceClaim.
     logs_folder : sets the backend's logs folder path. If nothing is defined,
         the backend will use its default path.
+    hidden : starts the product hiding its UI. Default is ``False``.
 
     Raises
     ------
@@ -223,6 +245,10 @@ def prepare_and_start_backend(
 
     if backend_type == BackendType.DISCOVERY:
         args.append(os.path.join(installations[product_version], DISCOVERY_FOLDER, DISCOVERY_EXE))
+        if hidden is True:
+            args.append(BACKEND_DISCOVERY_HIDDEN)
+
+        # Here begins the spaceclaim arguments.
         args.append(BACKEND_SPACECLAIM_OPTIONS)
         args.append(
             BACKEND_ADDIN_MANIFEST_ARGUMENT
@@ -231,6 +257,9 @@ def prepare_and_start_backend(
         env_copy[BACKEND_API_VERSION_VARIABLE] = str(api_version)
     elif backend_type == BackendType.SPACECLAIM:
         args.append(os.path.join(installations[product_version], SPACECLAIM_FOLDER, SPACECLAIM_EXE))
+        if hidden is True:
+            args.append(BACKEND_SPACECLAIM_HIDDEN)
+            args.append(BACKEND_SPLASH_OFF)
         args.append(
             BACKEND_ADDIN_MANIFEST_ARGUMENT
             + _manifest_path_provider(product_version, installations, manifest_path)

@@ -370,6 +370,7 @@ def launch_modeler_with_discovery(
     timeout: int = 150,
     manifest_path: str = None,
     logs_folder: str = None,
+    hidden: bool = False,
 ):
     """
     Start Ansys Discovery locally using the ``ProductInstance`` class.
@@ -420,6 +421,7 @@ def launch_modeler_with_discovery(
         version.
     logs_folder : sets the backend's logs folder path. If nothing is defined,
         the backend will use its default path.
+    hidden : starts the product hiding its UI. Default is ``False``.
 
     Raises
     ------
@@ -465,6 +467,7 @@ def launch_modeler_with_discovery(
         timeout=timeout,
         manifest_path=manifest_path,
         logs_folder=logs_folder,
+        hidden = hidden,
     )
 
 
@@ -477,6 +480,7 @@ def launch_modeler_with_spaceclaim(
     timeout: int = 150,
     manifest_path: str = None,
     logs_folder: str = None,
+    hidden: bool = False,
 ):
     """
     Start Ansys SpaceClaim locally using the ``ProductInstance`` class.
@@ -524,6 +528,7 @@ def launch_modeler_with_spaceclaim(
         version.
     logs_folder : sets the backend's logs folder path. If nothing is defined,
         the backend will use its default path.
+    hidden : starts the product hiding its UI. Default is ``False``.
 
     Raises
     ------
@@ -569,6 +574,7 @@ def launch_modeler_with_spaceclaim(
         timeout=timeout,
         manifest_path=manifest_path,
         logs_folder=logs_folder,
+        hidden = hidden,
     )
 
 
