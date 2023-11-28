@@ -467,7 +467,7 @@ def launch_modeler_with_discovery(
         timeout=timeout,
         manifest_path=manifest_path,
         logs_folder=logs_folder,
-        hidden = hidden,
+        hidden=hidden,
     )
 
 
@@ -574,7 +574,7 @@ def launch_modeler_with_spaceclaim(
         timeout=timeout,
         manifest_path=manifest_path,
         logs_folder=logs_folder,
-        hidden = hidden,
+        hidden=hidden,
     )
 
 

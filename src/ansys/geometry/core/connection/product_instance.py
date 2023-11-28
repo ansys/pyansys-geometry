@@ -116,12 +116,13 @@ The argument to hide Discovery's UI on the backend.
 To be used only with Ansys Discovery.
 """
 
-BACKEND_SPLASH_OFF = '/Splash=False'
+BACKEND_SPLASH_OFF = "/Splash=False"
 """
 The argument to specify the backend's addin manifest file's path.
 
 To be used only with Ansys Discovery and Ansys SpaceClaim.
 """
+
 
 class ProductInstance:
     """
