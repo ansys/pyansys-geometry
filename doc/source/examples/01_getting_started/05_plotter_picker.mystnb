@@ -179,7 +179,7 @@ plotter = PlotterHelper(use_trame=True)
 plotter.plot(plot_list)
 ```
 
-## Clipping objects
+## Clip objects
 
 You can clip any object represented in the plotter by defining a ``Plane`` object that
 intersects the target object.
