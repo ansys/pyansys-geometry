@@ -21,6 +21,8 @@ from ansys.geometry.core import __version__
 
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
 
+# Set backend to 'html' to get interactive plots
+os.environ["PYVISTA_JUPYTER_BACKEND"] = 'html'
 
 def get_wheelhouse_assets_dictionary():
     """Auxiliary method to build the wheelhouse assets dictionary."""
