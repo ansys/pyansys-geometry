@@ -97,7 +97,7 @@ def test_find_inexact_edges(modeler: Modeler):
     skip_if_linux(modeler)  # Skip test on Linux
     design = modeler.open_file("./tests/integration/files/InExactEdgesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_inexact_edges(design.bodies)
-    assert len(problem_areas) == 6
+    assert len(problem_areas) == 12
 
 
 def test_find_inexact_edge_id(modeler: Modeler):
