@@ -91,6 +91,7 @@ def test_product_launch_with_parameters():
         log_level=random.randint(0, 3),
         api_version=apiVersions[random.randint(0, len(apiVersions) - 1)].value,
         timeout=180,
+        hidden=True,
     )
 
     modeler_spaceclaim = launch_modeler_with_spaceclaim(
@@ -99,6 +100,7 @@ def test_product_launch_with_parameters():
         log_level=random.randint(0, 3),
         api_version=apiVersions[random.randint(0, len(apiVersions) - 1)].value,
         timeout=180,
+        hidden=True,
     )
 
     assert modeler_geo_service != None
