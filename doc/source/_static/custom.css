@@ -20,7 +20,7 @@
 /* meilisearch.css make the code-block and the result too narrow, here we
  * override the problematic element. There might be a better way to restrict
  * this. */
-.container 
+.container
 {
   display: block !important;
   justify-content: unset !important;
