@@ -1,0 +1,14 @@
+coverage:
+  range: 85..100
+  round: down
+  precision: 2
+  status:
+    project:
+      default:
+        target: 90%
+    patch: off
+
+
+codecov:
+  notify:
+    wait_for_ci: yes
