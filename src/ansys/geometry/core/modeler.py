@@ -304,7 +304,7 @@ class Modeler:
 
     @protect_grpc
     def run_discovery_script_file(
-        self, file_path: str, script_args: Dict[str, str], import_design=False
+        self, file_path: str, script_args: Dict[str, str] = {}, import_design=False
     ) -> Tuple[Dict[str, str], Optional["Design"]]:
         """
         Run a Discovery script file.
