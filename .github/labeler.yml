@@ -1,8 +1,11 @@
 documentation:
-- doc/source/**/*
+- changed-files:
+  - any-glob-to-any-file: 'docs/source/**/*'
 maintenance:
-- .github/**/*
-- .flake8
-- pyproject.toml
+- changed-files:
+  - any-glob-to-any-file: '.github/**/*'
+  - any-glob-to-any-file: '.flake8'
+  - any-glob-to-any-file: 'pyproject.toml'
 testing:
-- tests/*
+- changed-files:
+  - any-glob-to-any-file:  'tests/*'
