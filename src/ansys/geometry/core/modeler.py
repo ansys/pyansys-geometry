@@ -324,7 +324,7 @@ class Modeler:
             Whether to refresh the current design from the service. When the script
             is expected to modify the existing design, set this to ``True`` to retrieve
             up-to-date design data. When this is set to ``False`` (default) and the
-            script modifies the current design, the design may be out-of-sync. By default, `False`
+            script modifies the current design, the design may be out-of-sync. By default, ``False``.
 
         Returns
         -------
