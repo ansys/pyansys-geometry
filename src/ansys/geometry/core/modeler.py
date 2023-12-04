@@ -319,7 +319,7 @@ class Modeler:
         file_path : str
             Path of the file. The extension of the file must be included.
         script_args : dict[str, str], optional.
-            Arguments to pass to the script. By default, `None`
+            Arguments to pass to the script. By default, ``None``
         import_design : bool, optional.
             Whether to refresh the current design from the service. When the script
             is expected to modify the existing design, set this to ``True`` to retrieve
