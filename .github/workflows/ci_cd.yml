@@ -149,7 +149,7 @@ jobs:
 
       - name: Upload integration test logs
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: integration-test-logs-${{ matrix.docker-image }}
           path: tests/integration/logs
@@ -157,7 +157,7 @@ jobs:
 
       - name: Upload PyVista generated images (cache and results)
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pytest-pyvista-images-${{ matrix.docker-image }}
           path: tests/integration/image_cache
@@ -165,7 +165,7 @@ jobs:
 
       - name: Upload Coverage Results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-html
           path: .cov/html
@@ -265,14 +265,14 @@ jobs:
           cp doc/_build/latex/ansys-geometry-core.pdf .\doc\_build\html\_static\assets\download\
 
       - name: Upload HTML documentation
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: documentation-html
           path: doc/_build/html
           retention-days: 7
 
       - name: Upload PDF documentation
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: documentation-pdf
           path: doc/_build/latex/ansys-geometry-core*.pdf
@@ -352,7 +352,7 @@ jobs:
 
       - name: Upload integration test logs
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: integration-test-logs-${{ matrix.docker-image }}
           path: tests/integration/logs
@@ -360,7 +360,7 @@ jobs:
 
       - name: Upload PyVista generated images (cache and results)
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pytest-pyvista-images-${{ matrix.docker-image }}
           path: tests/integration/image_cache
@@ -412,14 +412,14 @@ jobs:
           curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerLinux.zip --output linux-binaries.zip
 
       - name: Upload Windows binaries as workflow artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-binaries.zip
           path: windows-binaries.zip
           retention-days: 1
 
       - name: Upload Linux binaries as workflow artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-binaries.zip
           path: linux-binaries.zip
@@ -453,7 +453,7 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
 
       - name: Download Windows binaries
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: windows-binaries.zip
           path: docker/windows-binaries.zip
@@ -499,7 +499,7 @@ jobs:
           dest: windows-dockerfile.zip
 
       - name: Upload Windows Dockerfile
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-dockerfile.zip
           path: windows-dockerfile.zip
@@ -545,7 +545,7 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Download Linux binaries
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: linux-binaries.zip
           path: docker/linux-binaries.zip
@@ -589,7 +589,7 @@ jobs:
           dest: linux-dockerfile.zip
 
       - name: Upload Linux Dockerfile
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-dockerfile.zip
           path: linux-dockerfile.zip
