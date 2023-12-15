@@ -1,8 +1,20 @@
 Designer
 ********
 
-The PyAnsys Geometry :class:`designer <ansys.geometry.core.designer>` subpackage organizes geometry assemblies
+The PyAnsys Geometry :class:`designer <ansys.geometry.core.design>` subpackage organizes geometry assemblies
 and synchronizes to a supporting Geometry service instance.
+
+Create the model
+----------------
+This code create the :class:`Modeler() <ansys.geometry.core.modeler>` object which owns the whole designs 
+tools and data.
+
+.. code:: python
+    from ansys.geometry.core import Modeler
+
+    # Create the modeler object itself
+    modeler = Modeler()
+
 
 Define the model
 ----------------
@@ -11,7 +23,6 @@ It then creates the model on the server.
 
 .. code:: python
 
-    from ansys.geometry.core import Modeler
     from ansys.geometry.core.sketch import Sketch
     from ansys.geometry.core.math import Point2D
     from ansys.geometry.core.misc import UNITS
@@ -20,9 +31,6 @@ It then creates the model on the server.
     # Create a sketch and draw a circle on the client
     sketch = Sketch()
     sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
-
-    # Create the modeler object
-    modeler = Modeler()
 
     # Create your design on the server
     design_name = "ExtrudeProfile"
@@ -34,6 +42,9 @@ Add materials to model
 This code adds the data structure and properties for individual materials:
 
 .. code:: python
+
+    from ansys.geometry.core.materials.material import Material
+    from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
 
     density = Quantity(125, 1000 * UNITS.kg / (UNITS.m * UNITS.m * UNITS.m))
     poisson_ratio = Quantity(0.33, UNITS.dimensionless)
@@ -80,7 +91,7 @@ The following code shows how to download and save the design.
 
 .. code:: python
 
-    file = "path/to/download"
-    design.download(file, as_stream=False)
+    file = "path/to/download.scdocx"
+    design.download(file)
 
 For more information, see the :class:`Design <ansys.geometry.core.designer.design>` submodule.
