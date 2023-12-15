@@ -6,7 +6,7 @@ and synchronizes to a supporting Geometry service instance.
 
 Create the model
 ----------------
-This code create the :class:`Modeler() <ansys.geometry.core.modeler>` object which owns the whole designs 
+This code create the :class:`Modeler() <ansys.geometry.core.modeler>` object which owns the whole designs
 tools and data.
 
 .. code:: python
@@ -44,7 +44,10 @@ This code adds the data structure and properties for individual materials:
 .. code:: python
 
     from ansys.geometry.core.materials.material import Material
-    from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
+    from ansys.geometry.core.materials.property import (
+        MaterialProperty,
+        MaterialPropertyType,
+    )
 
     density = Quantity(125, 1000 * UNITS.kg / (UNITS.m * UNITS.m * UNITS.m))
     poisson_ratio = Quantity(0.33, UNITS.dimensionless)
