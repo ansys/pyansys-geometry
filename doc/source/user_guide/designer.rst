@@ -11,9 +11,18 @@ It then creates the model on the server.
 
 .. code:: python
 
+    from ansys.geometry.core import Modeler
+    from ansys.geometry.core.sketch import Sketch
+    from ansys.geometry.core.math import Point2D
+    from ansys.geometry.core.misc import UNITS
+    from pint import Quantity
+
     # Create a sketch and draw a circle on the client
     sketch = Sketch()
-    sketch.circle(Point3D([10, 10, 0], UNITS.mm), Quantity(10, UNITS.mm))
+    sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
+
+    # Create the modeler object
+    modeler = Modeler()
 
     # Create your design on the server
     design_name = "ExtrudeProfile"
