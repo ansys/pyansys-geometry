@@ -10,6 +10,7 @@ This code create the :class:`Modeler() <ansys.geometry.core.modeler>` object whi
 tools and data.
 
 .. code:: python
+
     from ansys.geometry.core import Modeler
 
     # Create the modeler object itself
