@@ -167,7 +167,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-html
+          name: coverage-html-${{ matrix.docker-image }}
           path: .cov/html
           retention-days: 7
 
