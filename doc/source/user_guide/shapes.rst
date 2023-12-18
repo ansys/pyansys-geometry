@@ -37,6 +37,8 @@ which take as a starting point the last point of the previous edge.
 
 .. code:: python
 
+    from ansys.geometry.core.math import Point2D
+
     sketch.segment_to_point(Point2D([3, 3]), "Segment2").segment_to_point(
         Point2D([3, 2]), "Segment3"
     )
@@ -48,7 +50,7 @@ of user-defined labels:
 
 .. code:: python
 
-    sketch.get("<tag>")
+    sketch.get("Segment2")
 
 .. jupyter-execute::
     :hide-code:
