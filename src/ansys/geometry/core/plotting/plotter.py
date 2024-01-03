@@ -545,8 +545,7 @@ class Plotter:
         # Conditionally set the Jupyter backend as not all users will be within
         # a notebook environment to avoid a pyvista warning
         if self.scene.notebook and jupyter_backend is None:
-            # TODO revert this once the dynamic plotters in documentation are back.
-            jupyter_backend = "static"
+            jupyter_backend = "trame"
 
         # Enabling anti-aliasing by default on scene
         self.scene.enable_anti_aliasing("ssaa")
