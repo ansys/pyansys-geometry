@@ -229,10 +229,11 @@ class PlotterHelper:
         """
         for object in self._geom_object_actors_map.values():
             # get edges only from bodies
+            geomObj = object.object
             if (
-                isinstance(object, Body)
-                or isinstance(object, MasterBody)
-                or isinstance(object, Face)
+                isinstance(geomObj, Body)
+                or isinstance(geomObj, MasterBody)
+                or isinstance(geomObj, Face)
             ):
                 for edge in object.edges:
                     self._edge_actors_map[edge.actor] = edge
