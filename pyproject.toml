@@ -80,6 +80,7 @@ doc = [
     "notebook==7.0.6",
     "numpydoc==1.6.0",
     "panel==1.3.6",
+    "trame==3.5.0",
     "pyvista[trame]==0.43.1",
     "requests==2.31.0",
     "sphinx==7.2.5",
