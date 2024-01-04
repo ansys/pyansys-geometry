@@ -28,6 +28,7 @@ import pyvista as pv
 from pyvista.plotting.plotter import Plotter as PyVistaPlotter
 from pyvista.plotting.tools import create_axes_marker
 
+from ansys.geometry.core import DOCUMENTATION_BUILD
 from ansys.geometry.core.designer.body import Body, MasterBody
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.design import Design
@@ -546,6 +547,10 @@ class Plotter:
         # a notebook environment to avoid a pyvista warning
         if self.scene.notebook and jupyter_backend is None:
             jupyter_backend = "trame"
+
+        # Override jupyter backend in case we are building docs
+        if DOCUMENTATION_BUILD:
+            jupyter_backend = "html"
 
         # Enabling anti-aliasing by default on scene
         self.scene.enable_anti_aliasing("ssaa")
