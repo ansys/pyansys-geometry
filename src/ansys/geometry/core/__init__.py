@@ -63,6 +63,6 @@ Only set this to false if you are sure you want to disable this check and you wi
 be working with one design.
 """
 
-DOCUMENTATION_BUILD: bool = os.environ.get("PYGEOMETRY_DOC_BUILD", "false").lower() == "true"
+DOCUMENTATION_BUILD: bool = os.environ.get("PYANSYS_GEOMETRY_DOC_BUILD", "false").lower() == "true"
 """Global flag to set when building the documentation to use the proper PyVista Jupyter
 backend."""
