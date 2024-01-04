@@ -46,6 +46,8 @@ from ansys.geometry.core.plotting.widgets import (
     ViewButton,
     ViewDirection,
 )
+from ansys.geometry.core.sketch.face import SketchFace
+from ansys.geometry.core.sketch.sketch import Sketch
 
 
 class PlotterHelper:
@@ -229,10 +231,13 @@ class PlotterHelper:
         """
         for object in self._geom_object_actors_map.values():
             # get edges only from bodies
+            geom_obj = object.object
             if (
-                isinstance(object, Body)
-                or isinstance(object, MasterBody)
-                or isinstance(object, Face)
+                isinstance(geom_obj, Body)
+                or isinstance(geom_obj, MasterBody)
+                or isinstance(geom_obj, Face)
+                or isinstance(geom_obj, SketchFace)
+                or isinstance(geom_obj, Sketch)
             ):
                 for edge in object.edges:
                     self._edge_actors_map[edge.actor] = edge
