@@ -402,6 +402,8 @@ class Plotter:
         actor = self.scene.add_mesh(design_point._to_polydata(), **plotting_options)
 
         # save the actor to the object/actor map
+        design_point = GeomObjectPlot(actor=actor, object=design_point, add_body_edges=False)
+
         self._geom_object_actors_map[actor] = design_point
 
     def add(
