@@ -552,7 +552,7 @@ class Plotter:
 
         # Override jupyter backend in case we are building docs
         if DOCUMENTATION_BUILD:
-            jupyter_backend = "html"
+            jupyter_backend = "static"
 
         # Enabling anti-aliasing by default on scene
         self.scene.enable_anti_aliasing("ssaa")
