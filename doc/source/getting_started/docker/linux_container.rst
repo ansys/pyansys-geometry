@@ -18,7 +18,7 @@ these steps when installing Docker:
 
     .. tab-item:: Linux machines
 
-       If you are on a Linux machine, install `Docker for your distribution <https://docs.docker.com/engine/install/#server>`_
+       If you are on a Linux machine, install `Docker for your distribution <https://docs.docker.com/engine/install>`_
 
     .. tab-item:: Windows/MacOS machines
 
