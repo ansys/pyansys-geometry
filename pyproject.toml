@@ -8,9 +8,9 @@ version = "0.4.dev0"
 description = "A python wrapper for Ansys Geometry service"
 readme = "README.rst"
 requires-python = ">=3.9,<4"
-license = {file = "LICENSE"}
-authors = [{name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}]
-maintainers = [{name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}]
+license = { file = "LICENSE" }
+authors = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
+maintainers = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
@@ -33,7 +33,7 @@ dependencies = [
     "grpcio-health-checking>=1.45.0",
     "numpy>=1.20.3",
     "Pint>=0.18",
-    "protobuf~=3.20.2",
+    "protobuf>=3.20.2",
     "pyvista>=0.37.0",
     "scipy>=1.7.3",
     "six>=1.16.0",
@@ -53,11 +53,11 @@ tests = [
     "docker==7.0.0",
     "google-api-python-client==2.112.0",
     "googleapis-common-protos==1.62.0",
-    "grpcio==1.50.0",
-    "grpcio-health-checking==1.48.2",
+    "grpcio==1.60.0",
+    "grpcio-health-checking==1.60.0",
     "numpy==1.26.3",
     "Pint==0.23",
-    "protobuf==3.20.3",
+    "protobuf==4.25.1",
     "pytest==7.4.4",
     "pytest-cov==4.1.0",
     "pytest-pyvista==0.1.9",
@@ -83,7 +83,7 @@ doc = [
     "pyvista[trame]==0.43.1",
     "requests==2.31.0",
     "sphinx==7.2.5",
-    "sphinx-autoapi==3.0.0", # "sphinx-autoapi @ git+https://github.com/jorgepiloto/sphinx-autoapi@feat/single-page-option", ---> Installed directly in workflow
+    "sphinx-autoapi==3.0.0",            # "sphinx-autoapi @ git+https://github.com/jorgepiloto/sphinx-autoapi@feat/single-page-option", ---> Installed directly in workflow
     "sphinx-autodoc-typehints==1.24.0",
     "sphinx-copybutton==0.5.2",
     "sphinx_design==0.5.0",
@@ -126,6 +126,4 @@ show_missing = true
 [tool.pytest.ini_options]
 minversion = "7.1"
 addopts = "-ra --cov=ansys.geometry --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term -vv --image_cache_dir tests/integration/image_cache --add_missing_images"
-testpaths = [
-    "tests",
-]
+testpaths = ["tests"]
