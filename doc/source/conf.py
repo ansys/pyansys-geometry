@@ -19,6 +19,8 @@ from sphinx.builders.latex import LaTeXBuilder
 
 from ansys.geometry.core import __version__
 
+os.environ["PYANSYS_GEOMETRY_DOC_BUILD"] = "true"
+
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
 
 

@@ -78,7 +78,7 @@ class RepairTools:
             The maximum length of the edges.
 
         Returns
-        ----------
+        -------
         List[SplitEdgeProblemAreas]
             List of objects representing split edge problem areas.
         """
@@ -111,7 +111,7 @@ class RepairTools:
             List of bodies that extra edges are investigated on.
 
         Returns
-        ----------
+        -------
         List[ExtraEdgeProblemArea]
             List of objects representing extra edge problem areas.
         """
