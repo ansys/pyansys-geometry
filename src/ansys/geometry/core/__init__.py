@@ -32,6 +32,8 @@ __version__ = importlib_metadata.version(__name__.replace(".", "-"))
 # Ease import statements
 # ------------------------------------------------------------------------------
 
+import os
+
 from ansys.geometry.core.connection.launcher import (
     launch_local_modeler,
     launch_modeler,
@@ -60,3 +62,7 @@ Global constant for disabling the ``ensure_design_is_active`` check.
 Only set this to false if you are sure you want to disable this check and you will ONLY
 be working with one design.
 """
+
+DOCUMENTATION_BUILD: bool = os.environ.get("PYANSYS_GEOMETRY_DOC_BUILD", "false").lower() == "true"
+"""Global flag to set when building the documentation to use the proper PyVista Jupyter
+backend."""
