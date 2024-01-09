@@ -51,7 +51,7 @@ tests = [
     "ansys-tools-path==0.4.1",
     "beartype==0.16.4",
     "docker==7.0.0",
-    "google-api-python-client==2.112.0",
+    "google-api-python-client==2.113.0",
     "googleapis-common-protos==1.62.0",
     "grpcio==1.60.0",
     "grpcio-health-checking==1.60.0",
