@@ -1855,9 +1855,7 @@ def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
     assert modeler._designs[design1.design_id].is_active
 
 
-def test_get_active_design(
-    modeler: Modeler,
-):
+def test_get_active_design(modeler: Modeler):
     """Return the active design from the designs dictionary of the modeler."""
     design1 = modeler.create_design("Design1")
     assert modeler.get_active_design().is_active
