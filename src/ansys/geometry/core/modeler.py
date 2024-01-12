@@ -179,6 +179,8 @@ class Modeler:
             if self._designs[key]._is_active:
                 return self._designs[key]
 
+        return None
+
     def read_existing_design(self) -> "Design":
         """
         Read the existing design on the service with the connected client.
