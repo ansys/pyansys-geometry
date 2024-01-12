@@ -166,6 +166,19 @@ class Modeler:
             )
         return self._designs[design.design_id]
 
+    def get_active_design(self) -> "Design":
+        """
+        Get the active design on the modeler object.
+
+        Returns
+        -------
+        Design
+            Design object already existing on the modeler.
+        """
+        for key, _ in self._designs.items():
+            if self._designs[key]._is_active:
+                return self._designs[key]
+
     def read_existing_design(self) -> "Design":
         """
         Read the existing design on the service with the connected client.
