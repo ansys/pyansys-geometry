@@ -25,25 +25,25 @@ classifiers = [
 
 dependencies = [
     "ansys-api-geometry==0.3.5",
-    "ansys-tools-path>=0.3",
-    "beartype>=0.11.0",
-    "google-api-python-client>=1.7.11",
-    "googleapis-common-protos>=1.52.0",
-    "grpcio>=1.35.0",
-    "grpcio-health-checking>=1.45.0",
-    "numpy>=1.20.3",
-    "Pint>=0.18",
-    "protobuf>=3.20.2",
-    "pyvista>=0.37.0",
-    "scipy>=1.7.3",
-    "six>=1.16.0",
-    "vtk>=9",
+    "ansys-tools-path>=0.3,<1",
+    "beartype>=0.11.0,<1",
+    "google-api-python-client>=1.7.11,<2",
+    "googleapis-common-protos>=1.52.0,<2",
+    "grpcio>=1.35.0,<2",
+    "grpcio-health-checking>=1.45.0,<2",
+    "numpy>=1.20.3,<2",
+    "Pint>=0.18,<1",
+    "protobuf>=3.20.2,<5",
+    "pyvista>=0.37.0,<1",
+    "scipy>=1.7.3,<2",
+    "six>=1.16.0,<2",
+    "vtk>=9,<10",
 ]
 
 [project.optional-dependencies]
 all = [
-    "ansys-platform-instancemanagement>=1.0.3",
-    "docker>=6.0.1",
+    "ansys-platform-instancemanagement>=1.0.3,<2",
+    "docker>=6.0.1,<8",
     "pyvista[trame]>=0.38.1,<0.42",
 ]
 tests = [
