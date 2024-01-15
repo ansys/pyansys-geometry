@@ -175,9 +175,9 @@ class Modeler:
         Design
             Design object already existing on the modeler.
         """
-        for key, _ in self._designs.items():
-            if self._designs[key]._is_active:
-                return self._designs[key]
+        for _ , design in self._designs.items():
+            if design._is_active:
+                return design
 
         return None
 
