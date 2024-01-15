@@ -27,7 +27,7 @@ dependencies = [
     "ansys-api-geometry==0.3.5",
     "ansys-tools-path>=0.3,<1",
     "beartype>=0.11.0,<1",
-    "google-api-python-client>=1.7.11,<2",
+    "google-api-python-client>=1.7.11,<3",
     "googleapis-common-protos>=1.52.0,<2",
     "grpcio>=1.35.0,<2",
     "grpcio-health-checking>=1.45.0,<2",
