@@ -44,7 +44,7 @@ dependencies = [
 all = [
     "ansys-platform-instancemanagement>=1.0.3,<2",
     "docker>=6.0.1,<8",
-    "pyvista[trame]>=0.38.1,<0.42",
+    "pyvista[jupyter]>=0.38.1,<0.42",
 ]
 tests = [
     "ansys-platform-instancemanagement==1.1.2",
@@ -62,7 +62,7 @@ tests = [
     "pytest-cov==4.1.0",
     "pytest-pyvista==0.1.9",
     "pytest-xvfb==3.0.0",
-    "pyvista[trame]==0.43.2",
+    "pyvista[jupyter]==0.43.2",
     "requests==2.31.0",
     "scipy==1.11.4",
     "six==1.16.0",
