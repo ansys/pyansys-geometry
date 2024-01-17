@@ -119,7 +119,6 @@ class DuplicateFaceProblemAreas(ProblemArea):
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
-            response.result.deleted_bodies_monikers,
         )
         self._modeler.read_existing_design()
         return message
@@ -168,7 +167,6 @@ class MissingFaceProblemAreas(ProblemArea):
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
-            response.result.deleted_bodies_monikers,
         )
         self._modeler.read_existing_design()
         return message
@@ -217,7 +215,6 @@ class InexactEdgeProblemAreas(ProblemArea):
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
-            response.result.deleted_bodies_monikers,
         )
 
         self._modeler.read_existing_design()
@@ -292,7 +289,6 @@ class SmallFaceProblemAreas(ProblemArea):
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
-            response.result.deleted_bodies_monikers,
         )
         self._modeler.read_existing_design()
         return message
@@ -341,7 +337,6 @@ class SplitEdgeProblemAreas(ProblemArea):
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
-            response.result.deleted_bodies_monikers,
         )
         self._modeler.read_existing_design()
         return message
@@ -396,7 +391,6 @@ class StitchFaceProblemAreas(ProblemArea):
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
-            response.result.deleted_bodies_monikers,
         )
         self._modeler.read_existing_design()
         return message
