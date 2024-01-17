@@ -36,6 +36,17 @@ from beartype.typing import TYPE_CHECKING, List
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
 
+from beartype.typing import TYPE_CHECKING, List
+
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.designer import Design
+
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.modeler import Modeler
+
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.designer.body import Body
+
 from google.protobuf.wrappers_pb2 import DoubleValue
 
 from ansys.geometry.core.connection import GrpcClient
@@ -233,7 +244,9 @@ class RepairTools:
         ]
         return problem_areas
 
-    def find_stitch_faces(self, bodies: List["Body"]) -> List[StitchFaceProblemAreas]:
+    def find_stitch_faces(
+        self, bodies: List["Body"], modeler: "Modeler", design: "Design"
+    ) -> List[StitchFaceProblemAreas]:
         """
         Return the list of stitch face problem areas.
 
@@ -256,6 +269,12 @@ class RepairTools:
         )
         problem_areas = [
             StitchFaceProblemAreas(res.id, list(res.body_monikers), self._grpc_client)
+            for res in problem_areas_response.result
+        ]
+        problem_areas = [
+            StitchFaceProblemAreas(
+                res.id, list(res.body_monikers), self._grpc_client, modeler, design
+            )
             for res in problem_areas_response.result
         ]
         return problem_areas
