@@ -25,7 +25,7 @@ from enum import Enum, unique
 from pathlib import Path
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier, PartExportFormat
-from ansys.api.dbu.v0.designs_pb2 import NewRequest, SaveAsRequest
+from ansys.api.dbu.v0.designs_pb2 import InsertRequest, NewRequest, SaveAsRequest
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
@@ -580,6 +580,41 @@ class Design(Component):
                 f"Attempted beam profile deletion failed, with name {removal_name}."
                 + " Ignoring request."
             )
+
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    def insert_file(self, file_location: Union[Path, str]) -> None:
+        """
+        Insert a file into the design.
+
+        Parameters
+        ----------
+        file_location : Union[~pathlib.Path, str]
+            Location on disk to save the file to.
+        """
+        # Upload the file to the server
+        filepath_server = self._modeler._upload_file(file_location)
+
+        # Insert the file into the design
+        self._design_stub.Insert(InsertRequest(filepath=filepath_server))
+        self._grpc_client.log.debug(f"File {file_location} successfully inserted into design.")
+
+        # Get a temporal design object to update the current one
+        tmp_design = Design("", self, read_existing_design=True)
+
+        # Update the design's components - add the new one
+        #
+        # Insert operation adds the inserted file as a component to the design.
+        for tmp_component in tmp_design.components:
+            for component in self._components:
+                if component.id == tmp_component.id:
+                    break
+
+                # Otherwise, add the component - since it has not been found
+                self._components.append(tmp_component)
+
+        self._grpc_client.log.debug(f"Design {self.name} is successfully updated.")
 
     def __repr__(self) -> str:
         """Represent the ``Design`` as a string."""

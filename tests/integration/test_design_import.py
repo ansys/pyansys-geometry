@@ -239,3 +239,23 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         # .prt
         design2 = modeler.open_file("./tests/integration/files/import/disk1.prt")
         assert len(design2.bodies) == 1
+
+
+def test_design_insert(modeler: Modeler):
+    """Test creation of a design, sketching a circle, extruding it and then inserting a
+    different file into the design."""
+
+    # Create a design and sketch a circle
+    design = modeler.create_design("Insert")
+    sketch = Sketch()
+    sketch.circle(Point2D([0, 0]), 10)
+    comp = design.add_component("Component_Cylinder")
+    comp.extrude_sketch("Body_Cylinder", sketch, 5)
+
+    # Insert a different file
+    design.insert_file("./tests/integration/files/DuplicateFacesDesignBefore.scdocx")
+
+    # Check that there are two components
+    assert len(design.components) == 2
+    assert design.components[0].name == "Component_Cylinder"
+    assert design.components[1].name == "DuplicateFacesDesignBefore"
