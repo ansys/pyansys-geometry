@@ -37,9 +37,9 @@ class RepairToolMessage:
         success: bool
             True if the repair operation was effective, false if it is not.
         created_bodies: List[str]
-            List of bodies that are created after the repair operation.
+            List of bodies created after the repair operation.
         modified_bodies: List[str]
-            List of bodies that are modified after the repair operation.
+            List of bodies modified after the repair operation.
         """
         self._success = success
         self._created_bodies = created_bodies
