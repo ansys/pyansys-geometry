@@ -21,8 +21,8 @@ Select your Docker container
 Currently, the Geometry service backend is mainly delivered as a **Windows** Docker container.
 However, these containers require a Windows machine to run them.
 
-A Linux version of the Geometry service is also available but with limited capabilities,
-meaning that certain operations are not available or fail.
+.. A Linux version of the Geometry service is also available but with limited capabilities,
+.. meaning that certain operations are not available or fail.
 
 Select the kind of Docker container you want to build:
 
@@ -37,12 +37,12 @@ Select the kind of Docker container you want to build:
             and use it from PyAnsys Geometry. Explore the full potential
             of the Geometry service.
 
-   .. grid-item-card:: Linux Docker container
-            :link: linux_container
-            :link-type: doc
+..    .. grid-item-card:: Linux Docker container
+..             :link: linux_container
+..             :link-type: doc
 
-            Test out the Linux Docker container for the Geometry service,
-            which has limited functionalities.
+..             Test out the Linux Docker container for the Geometry service,
+..             which has limited functionalities.
 
 .. button-ref:: ../index
     :ref-type: doc
@@ -57,4 +57,4 @@ Select the kind of Docker container you want to build:
    :maxdepth: 2
 
    windows_container
-   linux_container
+..    linux_container
