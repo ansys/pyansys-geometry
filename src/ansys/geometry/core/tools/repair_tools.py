@@ -39,9 +39,6 @@ if TYPE_CHECKING:  # pragma: no cover
 from beartype.typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:  # pragma: no cover
-    from ansys.geometry.core.designer import Design
-
-if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -65,10 +62,11 @@ from ansys.geometry.core.typing import Real
 class RepairTools:
     """Repair tools for PyAnsys Geometry."""
 
-    def __init__(self, grpc_client: GrpcClient):
+    def __init__(self, grpc_client: GrpcClient, modeler: "Modeler"):
         """Initialize Repair Tools class."""
         self._grpc_client = grpc_client
         self._repair_stub = RepairToolsStub(self._grpc_client.channel)
+        self._modeler = modeler
 
     def find_split_edges(
         self, bodies: List["Body"], angle: Real = 0.0, length: Real = 0.0
@@ -104,7 +102,7 @@ class RepairTools:
         )
 
         problem_areas = [
-            SplitEdgeProblemAreas(res.id, list(res.edge_monikers), self._grpc_client)
+            SplitEdgeProblemAreas(res.id, list(res.edge_monikers), self._grpc_client, self._modeler)
             for res in problem_areas_response.result
         ]
         return problem_areas
@@ -131,7 +129,7 @@ class RepairTools:
             FindExtraEdgesRequest(selection=body_ids)
         )
         problem_areas = [
-            ExtraEdgeProblemAreas(res.id, list(res.edge_monikers), self._grpc_client)
+            ExtraEdgeProblemAreas(res.id, list(res.edge_monikers), self._grpc_client, self._modeler)
             for res in problem_areas_response.result
         ]
         return problem_areas
@@ -158,14 +156,14 @@ class RepairTools:
             FindInexactEdgesRequest(selection=body_ids)
         )
         problem_areas = [
-            InexactEdgeProblemAreas(res.id, list(res.edge_monikers), self._grpc_client)
+            InexactEdgeProblemAreas(
+                res.id, list(res.edge_monikers), self._grpc_client, self._modeler
+            )
             for res in problem_areas_response.result
         ]
         return problem_areas
 
-    def find_duplicate_faces(
-        self, bodies: List["Body"], modeler: "Modeler", design: "Design"
-    ) -> List[DuplicateFaceProblemAreas]:
+    def find_duplicate_faces(self, bodies: List["Body"]) -> List[DuplicateFaceProblemAreas]:
         """
         Find the duplicate face problem areas.
 
@@ -188,7 +186,7 @@ class RepairTools:
         )
         problem_areas = [
             DuplicateFaceProblemAreas(
-                res.id, list(res.face_monikers), self._grpc_client, modeler, design
+                res.id, list(res.face_monikers), self._grpc_client, self._modeler
             )
             for res in problem_areas_response.result
         ]
@@ -216,7 +214,9 @@ class RepairTools:
             FindMissingFacesRequest(faces=body_ids)
         )
         problem_areas = [
-            MissingFaceProblemAreas(res.id, list(res.edge_monikers), self._grpc_client)
+            MissingFaceProblemAreas(
+                res.id, list(res.edge_monikers), self._grpc_client, self._modeler
+            )
             for res in problem_areas_response.result
         ]
         return problem_areas
@@ -243,14 +243,12 @@ class RepairTools:
             FindSmallFacesRequest(selection=body_ids)
         )
         problem_areas = [
-            SmallFaceProblemAreas(res.id, list(res.face_monikers), self._grpc_client)
+            SmallFaceProblemAreas(res.id, list(res.face_monikers), self._grpc_client, self._modeler)
             for res in problem_areas_response.result
         ]
         return problem_areas
 
-    def find_stitch_faces(
-        self, bodies: List["Body"], modeler: "Modeler", design: "Design"
-    ) -> List[StitchFaceProblemAreas]:
+    def find_stitch_faces(self, bodies: List["Body"]) -> List[StitchFaceProblemAreas]:
         """
         Return the list of stitch face problem areas.
 
@@ -273,7 +271,7 @@ class RepairTools:
         )
         problem_areas = [
             StitchFaceProblemAreas(
-                res.id, list(res.body_monikers), self._grpc_client, modeler, design
+                res.id, list(res.body_monikers), self._grpc_client, self._modeler
             )
             for res in problem_areas_response.result
         ]

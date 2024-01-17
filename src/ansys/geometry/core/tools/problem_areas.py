@@ -38,9 +38,6 @@ from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 
 if TYPE_CHECKING:  # pragma: no cover
-    from ansys.geometry.core.designer import Design
-
-if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
 
 
@@ -87,16 +84,11 @@ class DuplicateFaceProblemAreas(ProblemArea):
         Active supporting geometry service instance for design modeling.
     faces : List[str]
         List of faces associated with the design.
+    modeler : Modeler
+        modeler object
     """
 
-    def __init__(
-        self,
-        id: str,
-        faces: List[str],
-        grpc_client: GrpcClient,
-        modeler: "Modeler",
-        design: "Design",
-    ):
+    def __init__(self, id: str, faces: List[str], grpc_client: GrpcClient, modeler: "Modeler"):
         """Initialize a new instance of the duplicate face problem area class."""
         super().__init__(id, grpc_client)
         self._faces = faces
@@ -111,7 +103,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
         """
         return self._faces
 
-    def fix(self, Design: "Design") -> RepairToolMessage:
+    def fix(self) -> RepairToolMessage:
         """
         Fix the problem area.
 
@@ -129,8 +121,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
             response.result.modified_bodies_monikers,
             response.result.deleted_bodies_monikers,
         )
-
-        Design = self._modeler.read_existing_design()
+        self._modeler.read_existing_design()
         return message
 
 
@@ -146,12 +137,15 @@ class MissingFaceProblemAreas(ProblemArea):
         Active supporting geometry service instance for design modeling.
     edges : List[str]
         List of edges associated with the design.
+    modeler : Modeler
+        modeler object
     """
 
-    def __init__(self, id: str, edges: List[str], grpc_client: GrpcClient):
+    def __init__(self, id: str, edges: List[str], grpc_client: GrpcClient, modeler: "Modeler"):
         """Initialize a new instance of the missing face problem area class."""
         super().__init__(id, grpc_client)
         self._edges = edges
+        self._modeler = modeler
 
     @property
     def edges(self) -> List[str]:
@@ -176,6 +170,7 @@ class MissingFaceProblemAreas(ProblemArea):
             response.result.modified_bodies_monikers,
             response.result.deleted_bodies_monikers,
         )
+        self._modeler.read_existing_design()
         return message
 
 
@@ -191,12 +186,15 @@ class InexactEdgeProblemAreas(ProblemArea):
         Active supporting geometry service instance for design modeling.
     edges : List[str]
         List of edges associated with the design.
+    modeler : Modeler
+        modeler object
     """
 
-    def __init__(self, id: str, edges: List[str], grpc_client: GrpcClient):
+    def __init__(self, id: str, edges: List[str], grpc_client: GrpcClient, modeler: "Modeler"):
         """Initialize a new instance of the inexact edge problem area class."""
         super().__init__(id, grpc_client)
         self._edges = edges
+        self._modeler = modeler
 
     @property
     def edges(self) -> List[str]:
@@ -221,6 +219,8 @@ class InexactEdgeProblemAreas(ProblemArea):
             response.result.modified_bodies_monikers,
             response.result.deleted_bodies_monikers,
         )
+
+        self._modeler.read_existing_design()
         return message
 
 
@@ -261,12 +261,15 @@ class SmallFaceProblemAreas(ProblemArea):
         Active supporting geometry service instance for design modeling.
     faces : List[str]
         List of edges associated with the design.
+    modeler : Modeler
+        modeler object
     """
 
-    def __init__(self, id: str, faces: List[str], grpc_client: GrpcClient):
+    def __init__(self, id: str, faces: List[str], grpc_client: GrpcClient, modeler: "Modeler"):
         """Initialize a new instance of the small face problem area class."""
         super().__init__(id, grpc_client)
         self._faces = faces
+        self._modeler = modeler
 
     @property
     def faces(self) -> List[str]:
@@ -291,6 +294,7 @@ class SmallFaceProblemAreas(ProblemArea):
             response.result.modified_bodies_monikers,
             response.result.deleted_bodies_monikers,
         )
+        self._modeler.read_existing_design()
         return message
 
 
@@ -302,16 +306,19 @@ class SplitEdgeProblemAreas(ProblemArea):
     ----------
     id : str
         Server-defined ID for the body.
-    grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
     edges : List[str]
         List of edges associated with the design.
+    grpc_client : GrpcClient
+        Active supporting geometry service instance for design modeling.
+    modeler : Modeler
+        modeler object
     """
 
-    def __init__(self, id: str, edges: List[str], grpc_client: GrpcClient):
+    def __init__(self, id: str, edges: List[str], grpc_client: GrpcClient, modeler: "Modeler"):
         """Initialize a new instance of the split edge problem area class."""
         super().__init__(id, grpc_client)
         self._edges = edges
+        self._modeler = modeler
 
     @property
     def edges(self) -> List[str]:
@@ -336,6 +343,7 @@ class SplitEdgeProblemAreas(ProblemArea):
             response.result.modified_bodies_monikers,
             response.result.deleted_bodies_monikers,
         )
+        self._modeler.read_existing_design()
         return message
 
 
@@ -351,6 +359,8 @@ class StitchFaceProblemAreas(ProblemArea):
         Active supporting geometry service instance for design modeling.
     faces : List[str]
         List of faces associated with the design.
+    modeler : Modeler
+        modeler object
     """
 
     def __init__(
@@ -370,7 +380,7 @@ class StitchFaceProblemAreas(ProblemArea):
         """The list of the ids of the faces connected to this problem area."""
         return self._faces
 
-    def fix(self, design: "Design") -> RepairToolMessage:
+    def fix(self) -> RepairToolMessage:
         """
         Fix the problem area.
 
@@ -388,5 +398,5 @@ class StitchFaceProblemAreas(ProblemArea):
             response.result.modified_bodies_monikers,
             response.result.deleted_bodies_monikers,
         )
-        design = self._modeler.read_existing_design()
+        self._modeler.read_existing_design()
         return message

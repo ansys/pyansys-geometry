@@ -122,7 +122,7 @@ class Modeler:
             self._repair_tools = None
             logger.warning("Linux backend does not support repair tools.")
         else:
-            self._repair_tools = RepairTools(self._client)
+            self._repair_tools = RepairTools(self._client, self)
 
         # Maintaining references to all designs within the modeler workspace
         self._designs: Dict[str, "Design"] = {}
