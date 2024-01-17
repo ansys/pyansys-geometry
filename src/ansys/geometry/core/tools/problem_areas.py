@@ -31,11 +31,17 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FixStitchFacesRequest,
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
-from beartype.typing import List
+from beartype.typing import TYPE_CHECKING, List
 from google.protobuf.wrappers_pb2 import Int32Value
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
+
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.designer import Design
+
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.modeler import Modeler
 
 
 class ProblemArea:
@@ -113,6 +119,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
+            response.result.deleted_bodies_monikers,
         )
         return message
 
@@ -157,6 +164,7 @@ class MissingFaceProblemAreas(ProblemArea):
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
+            response.result.deleted_bodies_monikers,
         )
         return message
 
@@ -201,6 +209,7 @@ class InexactEdgeProblemAreas(ProblemArea):
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
+            response.result.deleted_bodies_monikers,
         )
         return message
 
@@ -270,6 +279,7 @@ class SmallFaceProblemAreas(ProblemArea):
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
+            response.result.deleted_bodies_monikers,
         )
         return message
 
@@ -314,6 +324,7 @@ class SplitEdgeProblemAreas(ProblemArea):
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
+            response.result.deleted_bodies_monikers,
         )
         return message
 
@@ -332,17 +343,26 @@ class StitchFaceProblemAreas(ProblemArea):
         List of faces associated with the design.
     """
 
-    def __init__(self, id: str, faces: List[str], grpc_client: GrpcClient):
+    def __init__(
+        self,
+        id: str,
+        faces: List[str],
+        grpc_client: GrpcClient,
+        modeler: "Modeler",
+        design: "Design",
+    ):
         """Initialize a new instance of the stitch face problem area class."""
         super().__init__(id, grpc_client)
         self._faces = faces
+        # self._design = design
+        self._modeler = modeler
 
     @property
     def faces(self) -> List[str]:
         """The list of the ids of the faces connected to this problem area."""
         return self._faces
 
-    def fix(self) -> RepairToolMessage:
+    def fix(self, Design: "Design") -> RepairToolMessage:
         """
         Fix the problem area.
 
@@ -358,5 +378,10 @@ class StitchFaceProblemAreas(ProblemArea):
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
+            response.result.deleted_bodies_monikers,
         )
+        print("update design")
+        Design = self._modeler.read_existing_design()
+        print("number of bodies", len(Design.bodies))
+        print("design is updated")
         return message
