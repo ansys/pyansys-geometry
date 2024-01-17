@@ -28,13 +28,7 @@ from beartype.typing import List
 class RepairToolMessage:
     """Provides return message for the repair tool methods."""
 
-    def __init__(
-        self,
-        success: bool,
-        created_bodies: List[str],
-        modified_bodies: List[str],
-        deleted_bodies: List[str],
-    ):
+    def __init__(self, success: bool, created_bodies: List[str], modified_bodies: List[str]):
         """
         Initialize a new instance of the extra edge problem area class.
 
@@ -46,13 +40,10 @@ class RepairToolMessage:
             List of bodies that are created after the repair operation.
         modified_bodies: List[str]
             List of bodies that are modified after the repair operation.
-        deleted_bodies: List[str]
-            List of bodies that are deleted after the repair operation.
         """
         self._success = success
         self._created_bodies = created_bodies
         self._modified_bodies = modified_bodies
-        self._deleted_bodies = deleted_bodies
 
     @property
     def success(self) -> bool:
@@ -68,8 +59,3 @@ class RepairToolMessage:
     def modified_bodies(self) -> List[str]:
         """The list of the modified bodies after the repair operation."""
         return self._modified_bodies
-
-    @property
-    def deleted_bodies(self) -> List[str]:
-        """The list of the deleted bodies after the repair operation."""
-        return self._deleted_bodies
