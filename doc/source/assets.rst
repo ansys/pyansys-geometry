@@ -57,8 +57,8 @@ on how to build the containers are found at `Docker containers <getting_started/
 Currently, the Geometry service backend is mainly delivered as a **Windows** Docker container.
 However, these containers require a Windows machine to run them.
 
-A Linux version of the Geometry service is also available but with limited capabilities,
-meaning that certain operations are not available or fail.
+.. A Linux version of the Geometry service is also available but with limited capabilities,
+.. meaning that certain operations are not available or fail.
 
 
 Windows container
@@ -71,12 +71,12 @@ Windows container
 * `Latest Geometry service binaries for Windows containers <https://github.com/ansys/pyansys-geometry-binaries>`_
 * `Latest Geometry service Dockerfile for Windows containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/windows-dockerfile.zip>`_
 
-Linux container
-^^^^^^^^^^^^^^^
+.. Linux container
+.. ^^^^^^^^^^^^^^^
 
-.. note::
+.. .. note::
 
-   Only users with access to https://github.com/ansys/pyansys-geometry-binaries can download these binaries.
+..    Only users with access to https://github.com/ansys/pyansys-geometry-binaries can download these binaries.
 
-* `Latest Geometry service binaries for Linux containers <https://github.com/ansys/pyansys-geometry-binaries>`_
-* `Latest Geometry service Dockerfile for Linux containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/linux-dockerfile.zip>`_
+.. * `Latest Geometry service binaries for Linux containers <https://github.com/ansys/pyansys-geometry-binaries>`_
+.. * `Latest Geometry service Dockerfile for Linux containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/linux-dockerfile.zip>`_
