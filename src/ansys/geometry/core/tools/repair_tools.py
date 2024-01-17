@@ -163,7 +163,9 @@ class RepairTools:
         ]
         return problem_areas
 
-    def find_duplicate_faces(self, bodies: List["Body"]) -> List[DuplicateFaceProblemAreas]:
+    def find_duplicate_faces(
+        self, bodies: List["Body"], modeler: "Modeler", design: "Design"
+    ) -> List[DuplicateFaceProblemAreas]:
         """
         Find the duplicate face problem areas.
 
@@ -185,7 +187,9 @@ class RepairTools:
             FindDuplicateFacesRequest(faces=body_ids)
         )
         problem_areas = [
-            DuplicateFaceProblemAreas(res.id, list(res.face_monikers), self._grpc_client)
+            DuplicateFaceProblemAreas(
+                res.id, list(res.face_monikers), self._grpc_client, modeler, design
+            )
             for res in problem_areas_response.result
         ]
         return problem_areas
@@ -267,10 +271,6 @@ class RepairTools:
         problem_areas_response = self._repair_stub.FindStitchFaces(
             FindStitchFacesRequest(faces=body_ids)
         )
-        problem_areas = [
-            StitchFaceProblemAreas(res.id, list(res.body_monikers), self._grpc_client)
-            for res in problem_areas_response.result
-        ]
         problem_areas = [
             StitchFaceProblemAreas(
                 res.id, list(res.body_monikers), self._grpc_client, modeler, design

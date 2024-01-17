@@ -89,10 +89,18 @@ class DuplicateFaceProblemAreas(ProblemArea):
         List of faces associated with the design.
     """
 
-    def __init__(self, id: str, faces: List[str], grpc_client: GrpcClient):
+    def __init__(
+        self,
+        id: str,
+        faces: List[str],
+        grpc_client: GrpcClient,
+        modeler: "Modeler",
+        design: "Design",
+    ):
         """Initialize a new instance of the duplicate face problem area class."""
         super().__init__(id, grpc_client)
         self._faces = faces
+        self._modeler = modeler
 
     @property
     def faces(self) -> List[str]:
@@ -103,7 +111,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
         """
         return self._faces
 
-    def fix(self) -> RepairToolMessage:
+    def fix(self, Design: "Design") -> RepairToolMessage:
         """
         Fix the problem area.
 
@@ -121,6 +129,8 @@ class DuplicateFaceProblemAreas(ProblemArea):
             response.result.modified_bodies_monikers,
             response.result.deleted_bodies_monikers,
         )
+
+        Design = self._modeler.read_existing_design()
         return message
 
 
@@ -349,12 +359,10 @@ class StitchFaceProblemAreas(ProblemArea):
         faces: List[str],
         grpc_client: GrpcClient,
         modeler: "Modeler",
-        design: "Design",
     ):
         """Initialize a new instance of the stitch face problem area class."""
         super().__init__(id, grpc_client)
         self._faces = faces
-        # self._design = design
         self._modeler = modeler
 
     @property
@@ -362,7 +370,7 @@ class StitchFaceProblemAreas(ProblemArea):
         """The list of the ids of the faces connected to this problem area."""
         return self._faces
 
-    def fix(self, Design: "Design") -> RepairToolMessage:
+    def fix(self, design: "Design") -> RepairToolMessage:
         """
         Fix the problem area.
 
@@ -380,8 +388,5 @@ class StitchFaceProblemAreas(ProblemArea):
             response.result.modified_bodies_monikers,
             response.result.deleted_bodies_monikers,
         )
-        print("update design")
-        Design = self._modeler.read_existing_design()
-        print("number of bodies", len(Design.bodies))
-        print("design is updated")
+        design = self._modeler.read_existing_design()
         return message
