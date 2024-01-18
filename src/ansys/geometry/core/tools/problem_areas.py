@@ -259,7 +259,7 @@ class SmallFaceProblemAreas(ProblemArea):
     faces : List[str]
         List of edges associated with the design.
     modeler : Modeler
-        modeler object
+        Modeler object.
     """
 
     def __init__(self, id: str, faces: List[str], grpc_client: GrpcClient, modeler: "Modeler"):
