@@ -355,7 +355,7 @@ class StitchFaceProblemAreas(ProblemArea):
     faces : List[str]
         List of faces associated with the design.
     modeler : Modeler
-        modeler object
+        Modeler object.
     """
 
     def __init__(
