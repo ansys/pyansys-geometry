@@ -340,6 +340,8 @@ class SplitEdgeProblemAreas(ProblemArea):
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
         )
+
+        # After repair operation we need to sync the active design on the server
         self._modeler.read_existing_design()
         return message
 
