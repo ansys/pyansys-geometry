@@ -34,14 +34,7 @@ from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
 from beartype.typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:  # pragma: no cover
-    from ansys.geometry.core.designer.body import Body
-
-from beartype.typing import TYPE_CHECKING, List
-
-if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
-
-if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
 
 from google.protobuf.wrappers_pb2 import DoubleValue
