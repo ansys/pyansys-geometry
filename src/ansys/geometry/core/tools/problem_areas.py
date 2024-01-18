@@ -307,7 +307,7 @@ class SplitEdgeProblemAreas(ProblemArea):
     grpc_client : GrpcClient
         Active supporting geometry service instance for design modeling.
     modeler : Modeler
-        modeler object
+        Modeler object.
     """
 
     def __init__(self, id: str, edges: List[str], grpc_client: GrpcClient, modeler: "Modeler"):
