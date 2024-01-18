@@ -307,7 +307,7 @@ class SplitEdgeProblemAreas(ProblemArea):
     edges : List[str]
         List of edges associated with the design.
     grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
+        Active supporting Geometry Service instance for design modeling.
     modeler : Modeler
         Modeler object.
     """
