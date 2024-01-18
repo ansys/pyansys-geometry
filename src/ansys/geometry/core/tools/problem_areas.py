@@ -185,7 +185,7 @@ class InexactEdgeProblemAreas(ProblemArea):
     edges : List[str]
         List of edges associated with the design.
     modeler : Modeler
-        modeler object
+        Modeler object.
     """
 
     def __init__(self, id: str, edges: List[str], grpc_client: GrpcClient, modeler: "Modeler"):
