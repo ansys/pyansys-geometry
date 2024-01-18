@@ -50,7 +50,7 @@ class ProblemArea:
     id : str
         Server-defined ID for the problem area.
     grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
+        Active supporting Geometry service instance for design modeling.
     """
 
     def __init__(self, id: str, grpc_client: GrpcClient):
@@ -81,7 +81,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
     id : str
         Server-defined ID for the body.
     grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
+        Active supporting Geometry service instance for design modeling.
     faces : List[str]
         List of faces associated with the design.
     modeler : Modeler
@@ -120,6 +120,8 @@ class DuplicateFaceProblemAreas(ProblemArea):
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
         )
+
+        # After repair operation we need to sync the active design on the server
         self._modeler.read_existing_design()
         return message
 
@@ -133,11 +135,11 @@ class MissingFaceProblemAreas(ProblemArea):
     id : str
         Server-defined ID for the body.
     grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
+        Active supporting Geometry service instance for design modeling.
     edges : List[str]
         List of edges associated with the design.
     modeler : Modeler
-        modeler object
+        Modeler object.
     """
 
     def __init__(self, id: str, edges: List[str], grpc_client: GrpcClient, modeler: "Modeler"):
@@ -168,6 +170,8 @@ class MissingFaceProblemAreas(ProblemArea):
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
         )
+
+        # After repair operation we need to sync the active design on the server
         self._modeler.read_existing_design()
         return message
 
@@ -181,7 +185,7 @@ class InexactEdgeProblemAreas(ProblemArea):
     id : str
         Server-defined ID for the body.
     grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
+        Active supporting Geometry service instance for design modeling.
     edges : List[str]
         List of edges associated with the design.
     modeler : Modeler
@@ -217,6 +221,7 @@ class InexactEdgeProblemAreas(ProblemArea):
             response.result.modified_bodies_monikers,
         )
 
+        # After repair operation we need to sync the active design on the server
         self._modeler.read_existing_design()
         return message
 
@@ -230,7 +235,7 @@ class ExtraEdgeProblemAreas(ProblemArea):
     id : str
         Server-defined ID for the body.
     grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
+        Active supporting Geometry service instance for design modeling.
     edges : List[str]
         List of edges associated with the design.
     """
@@ -255,7 +260,7 @@ class SmallFaceProblemAreas(ProblemArea):
     id : str
         Server-defined ID for the body.
     grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
+        Active supporting Geometry service instance for design modeling.
     faces : List[str]
         List of edges associated with the design.
     modeler : Modeler
@@ -355,7 +360,7 @@ class StitchFaceProblemAreas(ProblemArea):
     id : str
         Server-defined ID for the body.
     grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
+        Active supporting Geometry service instance for design modeling.
     faces : List[str]
         List of faces associated with the design.
     modeler : Modeler
