@@ -294,8 +294,15 @@ def prepare_and_start_backend(
     )
 
 
-def get_available_port():
-    """Return an available port to be used."""
+def get_available_port() -> int:
+    """
+    Return an available port to be used.
+
+    Returns
+    -------
+    int
+        The available port.
+    """
     sock = socket.socket()
     sock.bind((socket.gethostname(), 0))
     port = sock.getsockname()[1]
@@ -304,7 +311,18 @@ def get_available_port():
 
 
 def _wait_for_backend(host: str, port: int, timeout: int):
-    """Check if the backend is ready to accept connections."""
+    """
+    Check if the backend is ready to accept connections.
+
+    Parameters
+    ----------
+    host : str
+        The backend's ip address.
+    port : int
+        The backend's port number.
+    timeout : int
+        The timeout in seconds.
+    """
     import time
 
     start_time = time.time()
