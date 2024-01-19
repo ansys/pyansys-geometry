@@ -15,7 +15,7 @@ From Python, establish a connection to the existing client session by creating a
 
     from ansys.geometry.core import Modeler
 
-    modeler = Modeler(host="localhost", port=5001)
+    modeler = Modeler(host="localhost", port=50051)
 
 If no error messages are received, your connection is established successfully.
 Note that your local port number might differ from the one shown in the preceding code.
@@ -29,7 +29,7 @@ connection inside your ``Modeler`` object:
 
    >>> modeler.client
    Ansys Geometry Modeler Client (...)
-   Target:     localhost:5001
+   Target:     localhost:50051
    Connection: Healthy
 
 .. button-ref:: ../index
