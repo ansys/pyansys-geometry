@@ -311,6 +311,7 @@ def _wait_for_backend(host: str, port: int, timeout: int):
     while time.time() - start_time < timeout:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             if s.connect_ex((host, port)) == 0:
+                LOG.debug("Backend is ready to accept connections.")
                 return
             else:
                 LOG.debug("Still waiting for backend to be ready... Retrying in 5 seconds.")
