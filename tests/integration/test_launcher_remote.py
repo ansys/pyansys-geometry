@@ -23,6 +23,7 @@
 from unittest.mock import create_autospec
 
 import ansys.platform.instancemanagement as pypim
+import ansys.tools.path.path as atpp
 from grpc import insecure_channel
 import pytest
 
@@ -97,8 +98,11 @@ def test_launch_remote_instance_error(monkeypatch):
     """Check that when PyPIM is not configured, launch_modeler raises an error."""
     mock_is_installed = create_autospec(LocalDockerInstance.is_docker_installed, return_value=False)
     monkeypatch.setattr(LocalDockerInstance, "is_docker_installed", mock_is_installed)
+    mock_available_ansys = create_autospec(atpp.get_available_ansys_installations, return_value={})
+    monkeypatch.setattr(atpp, "get_available_ansys_installations", mock_available_ansys)
 
     with pytest.raises(NotImplementedError, match="Geometry service cannot be initialized."):
         launch_modeler()
 
     assert mock_is_installed.called
+    assert mock_available_ansys.called
