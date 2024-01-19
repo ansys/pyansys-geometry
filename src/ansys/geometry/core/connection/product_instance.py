@@ -405,7 +405,7 @@ def _check_minimal_versions(latest_installed_version: int) -> None:
 
     Check that at least V232 is installed.
     """
-    if latest_installed_version < 232:
+    if abs(latest_installed_version) < 232:
         msg = (
             "PyAnsys Geometry is compatible with Ansys Products from version 23.2.1. "
             + "Please install Ansys products 23.2.1 or later."
