@@ -30,8 +30,8 @@ import pytest
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
+from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.launcher import launch_modeler
-from ansys.geometry.core.connection.local_instance import LocalDockerInstance
 
 
 def test_launch_remote_instance(monkeypatch, modeler: Modeler):

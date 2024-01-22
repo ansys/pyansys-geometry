@@ -35,7 +35,7 @@ __version__ = importlib_metadata.version(__name__.replace(".", "-"))
 import os
 
 from ansys.geometry.core.connection.launcher import (
-    launch_local_modeler,
+    launch_docker_modeler,
     launch_modeler,
     launch_modeler_with_discovery,
     launch_modeler_with_discovery_and_pimlight,

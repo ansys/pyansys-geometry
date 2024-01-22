@@ -27,7 +27,7 @@ from beartype.typing import TYPE_CHECKING, Dict, Optional
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
 from ansys.geometry.core.connection.defaults import DEFAULT_PIM_CONFIG, DEFAULT_PORT
-from ansys.geometry.core.connection.local_instance import (
+from ansys.geometry.core.connection.docker_instance import (
     _HAS_DOCKER,
     GeometryContainers,
     LocalDockerInstance,
@@ -68,7 +68,7 @@ def launch_modeler(mode: str = None, **kwargs: Optional[Dict]) -> "Modeler":
 
     **kwargs : dict, default: None
         Keyword arguments for the launching methods. For allowable keyword arguments, see the
-        :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of these
+        :func:`launch_remote_modeler` and :func:`launch_docker_modeler` methods. Some of these
         keywords might be unused.
 
     Returns
@@ -107,7 +107,7 @@ def _launch_with_launchmode(mode: str, **kwargs: Optional[Dict]) -> "Modeler":
 
     **kwargs : dict, default: None
         Keyword arguments for the launching methods. For allowable keyword arguments, see the
-        :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of these
+        :func:`launch_remote_modeler` and :func:`launch_docker_modeler` methods. Some of these
         keywords might be unused.
 
     Returns
@@ -125,7 +125,7 @@ def _launch_with_launchmode(mode: str, **kwargs: Optional[Dict]) -> "Modeler":
     if mode == "pypim":
         return launch_remote_modeler(**kwargs)
     elif mode == "docker":
-        return launch_local_modeler(**kwargs)
+        return launch_docker_modeler(**kwargs)
     elif mode == "geometry_service":
         return launch_modeler_with_geometry_service(**kwargs)
     elif mode == "spaceclaim":
@@ -147,7 +147,7 @@ def _launch_with_automatic_detection(**kwargs: Optional[Dict]) -> "Modeler":
     ----------
     **kwargs : dict, default: None
         Keyword arguments for the launching methods. For allowable keyword arguments, see the
-        :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of these
+        :func:`launch_remote_modeler` and :func:`launch_docker_modeler` methods. Some of these
         keywords might be unused.
 
     Returns
@@ -177,7 +177,7 @@ def _launch_with_automatic_detection(**kwargs: Optional[Dict]) -> "Modeler":
     try:
         if _HAS_DOCKER and LocalDockerInstance.is_docker_installed():
             logger.info("Starting Geometry service locally from Docker container.")
-            return launch_local_modeler(**kwargs)
+            return launch_docker_modeler(**kwargs)
     except Exception:
         logger.warning(
             "The local Docker container could not be started."
@@ -233,7 +233,7 @@ def launch_remote_modeler(version: Optional[str] = None, **kwargs: Optional[Dict
         chooses the version.
     **kwargs : dict, default: None
         Keyword arguments for the launching methods. For allowable keyword arguments, see the
-        :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of these
+        :func:`launch_remote_modeler` and :func:`launch_docker_modeler` methods. Some of these
         keywords might be unused.
 
     Returns
@@ -249,7 +249,7 @@ def launch_remote_modeler(version: Optional[str] = None, **kwargs: Optional[Dict
     )
 
 
-def launch_local_modeler(
+def launch_docker_modeler(
     port: int = DEFAULT_PORT,
     connect_to_existing_service: bool = True,
     restart_if_existing_service: bool = False,
@@ -287,7 +287,7 @@ def launch_local_modeler(
         that OS.
     **kwargs : dict, default: None
         Keyword arguments for the launching methods. For allowable keyword arguments, see the
-        :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of these
+        :func:`launch_remote_modeler` and :func:`launch_docker_modeler` methods. Some of these
         keywords might be unused.
 
     Returns
@@ -301,7 +301,7 @@ def launch_local_modeler(
         raise ModuleNotFoundError("The package 'docker' is required to use this function.")
 
     # Call the LocalDockerInstance ctor.
-    local_instance = LocalDockerInstance(
+    docker_instance = LocalDockerInstance(
         port=port,
         connect_to_existing_service=connect_to_existing_service,
         restart_if_existing_service=restart_if_existing_service,
@@ -309,8 +309,8 @@ def launch_local_modeler(
         image=image,
     )
 
-    # Once the local instance is ready... return the Modeler
-    return Modeler(host="localhost", port=port, local_instance=local_instance)
+    # Once the local Docker instance is ready... return the Modeler
+    return Modeler(host="localhost", port=port, docker_instance=docker_instance)
 
 
 def launch_modeler_with_discovery_and_pimlight(version: Optional[str] = None) -> "Modeler":
