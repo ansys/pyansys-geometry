@@ -48,13 +48,13 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
 
 
-def launch_modeler(launch_mode: str = None, **kwargs: Optional[Dict]) -> "Modeler":
+def launch_modeler(mode: str = None, **kwargs: Optional[Dict]) -> "Modeler":
     """
     Start the ``Modeler`` interface for PyAnsys Geometry.
 
     Parameters
     ----------
-    launch_mode : str, default: None
+    mode : str, default: None
         Mode in which to launch the ``Modeler`` service. The default is ``None``,
         in which case the method tries to determine the mode automatically. The
         possible values are:
@@ -83,19 +83,19 @@ def launch_modeler(launch_mode: str = None, **kwargs: Optional[Dict]) -> "Modele
     >>> from ansys.geometry.core import launch_modeler
     >>> modeler = launch_modeler()
     """
-    if launch_mode:
-        return _launch_with_launchmode(launch_mode, **kwargs)
+    if mode:
+        return _launch_with_launchmode(mode, **kwargs)
     else:
         return _launch_with_automatic_detection(**kwargs)
 
 
-def _launch_with_launchmode(launch_mode: str, **kwargs: Optional[Dict]) -> "Modeler":
+def _launch_with_launchmode(mode: str, **kwargs: Optional[Dict]) -> "Modeler":
     """
     Start the ``Modeler`` interface for PyAnsys Geometry.
 
     Parameters
     ----------
-    launch_mode : str
+    mode : str
         Mode in which to launch the ``Modeler`` service. The possible values are:
 
         * ``"pypim"``: Launches the ``Modeler`` service remotely using the PIM API.
@@ -116,14 +116,14 @@ def _launch_with_launchmode(launch_mode: str, **kwargs: Optional[Dict]) -> "Mode
         Pythonic interface for geometry modeling.
     """
     # Ensure that the launch mode is a string
-    if not isinstance(launch_mode, str):
+    if not isinstance(mode, str):
         raise TypeError("The launch mode must be a string.")
 
     # Ensure that the launch mode is lowercase
-    launch_mode = launch_mode.lower()
+    mode = mode.lower()
 
     # Check if the launch mode is valid
-    if launch_mode not in [
+    if mode not in [
         "pypim",
         "docker",
         "geometry_service",
@@ -131,23 +131,23 @@ def _launch_with_launchmode(launch_mode: str, **kwargs: Optional[Dict]) -> "Mode
         "discovery",
     ]:
         raise ValueError(
-            f"Invalid launch mode '{launch_mode}'. The valid modes are: "
+            f"Invalid launch mode '{mode}'. The valid modes are: "
             "'pypim', 'docker', 'geometry_service', 'spaceclaim', 'discovery'."
         )
 
-    if launch_mode == "pypim":
+    if mode == "pypim":
         return launch_remote_modeler(**kwargs)
-    elif launch_mode == "docker":
+    elif mode == "docker":
         return launch_local_modeler(**kwargs)
-    elif launch_mode == "geometry_service":
+    elif mode == "geometry_service":
         return launch_modeler_with_geometry_service(**kwargs)
-    elif launch_mode == "spaceclaim":
+    elif mode == "spaceclaim":
         return launch_modeler_with_spaceclaim(**kwargs)
-    elif launch_mode == "discovery":
+    elif mode == "discovery":
         return launch_modeler_with_discovery(**kwargs)
     else:  # pragma: no cover
         # We should never reach this point
-        raise ValueError(f"Invalid launch mode '{launch_mode}'.")
+        raise ValueError(f"Invalid launch mode '{mode}'.")
 
 
 def _launch_with_automatic_detection(**kwargs: Optional[Dict]) -> "Modeler":
