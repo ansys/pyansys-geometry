@@ -33,7 +33,7 @@ import pyvista as pv
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.defaults import GEOMETRY_SERVICE_DOCKER_IMAGE
-from ansys.geometry.core.connection.local_instance import LocalDockerInstance
+from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.plotting import PlotterHelper
@@ -61,13 +61,13 @@ for image in available_images:
             is_image_available_cont = geom_cont
             break
 
-local_instance = LocalDockerInstance(
+docker_instance = LocalDockerInstance(
     connect_to_existing_service=True,
     restart_if_existing_service=True,
     image=is_image_available_cont,
 )
 
-modeler = Modeler(local_instance=local_instance)
+modeler = Modeler(docker_instance=docker_instance)
 ```
 
 +++
