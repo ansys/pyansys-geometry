@@ -45,7 +45,8 @@ for env_key, env_val in os.environ.items():
 
 if len(awp_root) == 0:
     # There are no Ansys installations
-    print("XXXXXXX No Ansys installations found.. exiting process. XXXXXXX")
+    print("XXXXXXX No Ansys compatible installations found.. exiting process. XXXXXXX")
+    print("XXXXXXX Please install Ansys 2023R2 or newer.                      XXXXXXX")
     exit(0)
 
 # Request the user to select the version of Ansys to use
