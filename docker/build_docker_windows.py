@@ -24,6 +24,7 @@
 import os
 import shutil
 import subprocess
+import tempfile
 import urllib.request
 
 # First, get all environment variables that start with AWP_ROOT
@@ -74,15 +75,12 @@ if not os.path.exists(os.path.join(ANSYS_PATH, "GeometryService")):
 
 # Create a temporary directory to copy the Geometry Service files to
 print(">>> Creating temporary directory for building docker image")
-TMP_DIR = os.path.join(os.getcwd(), "docker_geometry_service")
-if os.path.exists(TMP_DIR):
-    # Remove the directory if it already exists
-    shutil.rmtree(TMP_DIR)
-os.mkdir(TMP_DIR)
+TMP_DIR = tempfile.mkdtemp(prefix="docker_geometry_service_")
 
 # Copy the Geometry Service files to the temporary directory
-print(">>> Copying Geometry Service files to temporary directory")
+print(f">>> Copying Geometry Service files to temporary directory to {TMP_DIR}")
 BIN_DIR = os.path.join(TMP_DIR, "bins", "DockerWindows", "bin", "x64", "Release_Headless", "net472")
+
 # Create the directory structure
 shutil.copytree(
     os.path.join(ANSYS_PATH, "GeometryService"),
