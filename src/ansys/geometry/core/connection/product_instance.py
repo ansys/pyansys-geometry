@@ -284,18 +284,58 @@ def prepare_and_start_backend(
 
     instance = ProductInstance(_start_program(args, env_copy).pid)
 
+    # Verify that the backend is ready to accept connections
+    # before returning the Modeler instance.
+    LOG.info("Waiting for backend to be ready...")
+    _wait_for_backend(host, port, timeout)
+
     return Modeler(
         host=host, port=port, timeout=timeout, product_instance=instance, backend_type=backend_type
     )
 
 
-def get_available_port():
-    """Return an available port to be used."""
+def get_available_port() -> int:
+    """
+    Return an available port to be used.
+
+    Returns
+    -------
+    int
+        The available port.
+    """
     sock = socket.socket()
     sock.bind((socket.gethostname(), 0))
     port = sock.getsockname()[1]
     sock.close()
     return port
+
+
+def _wait_for_backend(host: str, port: int, timeout: int):
+    """
+    Check if the backend is ready to accept connections.
+
+    Parameters
+    ----------
+    host : str
+        The backend's ip address.
+    port : int
+        The backend's port number.
+    timeout : int
+        The timeout in seconds.
+    """
+    import time
+
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            if s.connect_ex((host, port)) == 0:
+                LOG.debug("Backend is ready to accept connections.")
+                return
+            else:
+                LOG.debug("Still waiting for backend to be ready... Retrying in 5 seconds.")
+                time.sleep(5)
+
+    raise ConnectionError("Timeout while waiting for backend to be ready.")
 
 
 def _is_port_available(port: int, host: str = "localhost") -> bool:
@@ -365,7 +405,7 @@ def _check_minimal_versions(latest_installed_version: int) -> None:
 
     Check that at least V232 is installed.
     """
-    if latest_installed_version < 232:
+    if abs(latest_installed_version) < 232:
         msg = (
             "PyAnsys Geometry is compatible with Ansys Products from version 23.2.1. "
             + "Please install Ansys products 23.2.1 or later."
