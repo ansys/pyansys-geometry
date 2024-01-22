@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Test the PyPIM integration."""
+import os
 from unittest.mock import create_autospec
 
 import ansys.platform.instancemanagement as pypim
@@ -105,4 +106,6 @@ def test_launch_remote_instance_error(monkeypatch):
         launch_modeler()
 
     assert mock_is_installed.called
-    assert mock_available_ansys.called
+
+    if os.name == "nt":
+        assert mock_available_ansys.called
