@@ -122,19 +122,6 @@ def _launch_with_launchmode(mode: str, **kwargs: Optional[Dict]) -> "Modeler":
     # Ensure that the launch mode is lowercase
     mode = mode.lower()
 
-    # Check if the launch mode is valid
-    if mode not in [
-        "pypim",
-        "docker",
-        "geometry_service",
-        "spaceclaim",
-        "discovery",
-    ]:
-        raise ValueError(
-            f"Invalid launch mode '{mode}'. The valid modes are: "
-            "'pypim', 'docker', 'geometry_service', 'spaceclaim', 'discovery'."
-        )
-
     if mode == "pypim":
         return launch_remote_modeler(**kwargs)
     elif mode == "docker":
@@ -146,8 +133,10 @@ def _launch_with_launchmode(mode: str, **kwargs: Optional[Dict]) -> "Modeler":
     elif mode == "discovery":
         return launch_modeler_with_discovery(**kwargs)
     else:  # pragma: no cover
-        # We should never reach this point
-        raise ValueError(f"Invalid launch mode '{mode}'.")
+        raise ValueError(
+            f"Invalid launch mode '{mode}'. The valid modes are: "
+            "'pypim', 'docker', 'geometry_service', 'spaceclaim', 'discovery'."
+        )
 
 
 def _launch_with_automatic_detection(**kwargs: Optional[Dict]) -> "Modeler":
