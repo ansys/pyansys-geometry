@@ -136,6 +136,19 @@ To build your own image based on your own Ansys installation, follow these instr
 
      python build_docker_windows.py
 
+
+Check that the image has been created successfully. You should see output similar
+to this:
+
+.. code:: bash
+
+   docker images
+
+   >>> REPOSITORY                                               TAG                                IMAGE ID       CREATED          SIZE
+   >>> ghcr.io/ansys/geometry                                   windows-******                     ............   X seconds ago    Y.ZZGB
+   >>> ......                                                   ......                             ............   ..............   ......
+
+
 Build the Docker image from available binaries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
