@@ -60,7 +60,7 @@ if selection == "":
     selection = len(awp_root)
 else:
     selection = int(selection)
-ANSYS_VER = list(awp_root.keys())[selection-1]
+ANSYS_VER = list(awp_root.keys())[selection - 1]
 print(f">>> Using {ANSYS_VER}")
 
 # Get the path to the Ansys installation
