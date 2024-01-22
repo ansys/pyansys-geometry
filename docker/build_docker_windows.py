@@ -60,11 +60,11 @@ if selection == "":
     selection = len(awp_root)
 else:
     selection = int(selection)
-print(f">>> Using {list(awp_root.keys())[selection-1]}")
+ANSYS_VER = list(awp_root.keys())[selection-1]
+print(f">>> Using {ANSYS_VER}")
 
 # Get the path to the Ansys installation
-ANSYS_VER = list(awp_root.keys())[selection - 1]
-ANSYS_PATH = list(awp_root.values())[selection - 1]
+ANSYS_PATH = awp_root[ANSYS_VER]
 
 # Verify that the Geometry Service is installed
 if not os.path.exists(os.path.join(ANSYS_PATH, "GeometryService")):
@@ -131,7 +131,7 @@ if line != -1:
         env_var,
     )
 else:
-    print("XXXXXXX No AWP_ROOT environment variable found.. exiting process. XXXXXXX")
+    print("XXXXXXX No AWP_ROOT environment variable found in Dockerfile.. exiting process. XXXXXXX")
     exit(0)
 
 # Check if Docker is installed on the system
