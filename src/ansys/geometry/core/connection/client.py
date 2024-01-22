@@ -36,7 +36,7 @@ from grpc_health.v1 import health_pb2, health_pb2_grpc
 
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
-from ansys.geometry.core.connection.local_instance import LocalDockerInstance
+from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.product_instance import ProductInstance
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.logger import PyGeometryCustomAdapter
@@ -100,9 +100,9 @@ class GrpcClient:
         This instance is deleted when calling the
         :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
         method.
-    local_instance : LocalDockerInstance, default: None
-        Corresponding local instance when the Geometry service is launched using
-        the ``launch_local_modeler()`` method. This local instance is deleted
+    docker_instance : LocalDockerInstance, default: None
+        Corresponding local Docker instance when the Geometry service is launched using
+        the ``launch_docker_modeler()`` method. This local Docker instance is deleted
         when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
         method is called.
     product_instance : ProductInstance, default: None
@@ -130,7 +130,7 @@ class GrpcClient:
         port: Union[str, int] = DEFAULT_PORT,
         channel: Optional[grpc.Channel] = None,
         remote_instance: Optional["Instance"] = None,
-        local_instance: Optional[LocalDockerInstance] = None,
+        docker_instance: Optional[LocalDockerInstance] = None,
         product_instance: Optional[ProductInstance] = None,
         timeout: Optional[Real] = 120,
         logging_level: Optional[int] = logging.INFO,
@@ -140,7 +140,7 @@ class GrpcClient:
         """Initialize the ``GrpcClient`` object."""
         self._closed = False
         self._remote_instance = remote_instance
-        self._local_instance = local_instance
+        self._docker_instance = docker_instance
         self._product_instance = product_instance
         if channel:
             # Used for PyPIM when directly providing a channel
@@ -263,14 +263,14 @@ class GrpcClient:
         -----
         If an instance of the Geometry service was started using
         `PyPIM <https://github.com/ansys/pypim>`_, this instance is
-        deleted. Furthermore, if a local instance
+        deleted. Furthermore, if a local Docker instance
         of the Geometry service was started, it is stopped.
         """
         if self._remote_instance:
             self._remote_instance.delete()  # pragma: no cover
-        elif self._local_instance:
-            if not self._local_instance.existed_previously:
-                self._local_instance.container.stop()
+        elif self._docker_instance:
+            if not self._docker_instance.existed_previously:
+                self._docker_instance.container.stop()
             else:
                 self.log.warning(
                     "Geometry service was not shut down because it was already running..."

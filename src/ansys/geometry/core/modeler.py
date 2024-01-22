@@ -46,7 +46,7 @@ from ansys.geometry.core.typing import Real
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.platform.instancemanagement import Instance
 
-    from ansys.geometry.core.connection.local_instance import LocalDockerInstance
+    from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
     from ansys.geometry.core.connection.product_instance import ProductInstance
     from ansys.geometry.core.designer.design import Design
 
@@ -68,9 +68,9 @@ class Modeler:
         is launched using `PyPIM <https://github.com/ansys/pypim>`_. This instance
         is deleted when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close>`
         method is called.
-    local_instance : LocalDockerInstance, default: None
-        Corresponding local instance when the Geometry service is launched using the
-        :func:`launch_local_modeler<ansys.geometry.core.connection.launcher.launch_local_modeler>`
+    docker_instance : LocalDockerInstance, default: None
+        Corresponding local Docker instance when the Geometry service is launched using the
+        :func:`launch_docker_modeler<ansys.geometry.core.connection.launcher.launch_docker_modeler>`
         method. This instance is deleted when the
         :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close>`
         method is called.
@@ -95,7 +95,7 @@ class Modeler:
         port: Union[str, int] = DEFAULT_PORT,
         channel: Optional[Channel] = None,
         remote_instance: Optional["Instance"] = None,
-        local_instance: Optional["LocalDockerInstance"] = None,
+        docker_instance: Optional["LocalDockerInstance"] = None,
         product_instance: Optional["ProductInstance"] = None,
         timeout: Optional[Real] = 120,
         logging_level: Optional[int] = logging.INFO,
@@ -108,7 +108,7 @@ class Modeler:
             port=port,
             channel=channel,
             remote_instance=remote_instance,
-            local_instance=local_instance,
+            docker_instance=docker_instance,
             product_instance=product_instance,
             timeout=timeout,
             logging_level=logging_level,
