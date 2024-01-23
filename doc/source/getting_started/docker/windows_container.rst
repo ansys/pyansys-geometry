@@ -128,7 +128,7 @@ Build from available Ansys installation
 
 To build your own image based on your own Ansys installation, follow these instructions:
 
-* Download the `Python Docker build script <https://github.com/ansys/pyansys-geometry/blob/main/docker/build_docker_windows.py>`.
+* Download the `Python Docker build script <https://github.com/ansys/pyansys-geometry/blob/main/docker/build_docker_windows.py>`_.
 
 * Execute the script with the following command (no specific location needed):
 
