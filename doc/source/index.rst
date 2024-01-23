@@ -4,7 +4,7 @@ PyAnsys Geometry documentation |version|
 PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
 .. grid:: 2
-   
+
 
     .. grid-item-card:: Getting started :fa:`person-running`
         :padding: 2 2 2 2
