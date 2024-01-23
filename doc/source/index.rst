@@ -28,7 +28,7 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
       :class-container: sd-text-center
 
        {% if build_api %}
-      .. grid-item-card:: :material-regular:`code_blocks` API reference
+      .. grid-item-card:: :material-regular:`frame_source` API reference
 
 
          Understand PyAnsys Geometry API endpoints, their capabilities,
