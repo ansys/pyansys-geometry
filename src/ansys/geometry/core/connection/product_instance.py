@@ -367,9 +367,20 @@ def _manifest_path_provider(
             )
 
     # Default manifest path
-    return os.path.join(
+    def_manifest_path = os.path.join(
         available_installations[version], ADDINS_SUBFOLDER, BACKEND_SUBFOLDER, MANIFEST_FILENAME
     )
+
+    if os.path.exists(def_manifest_path):
+        return def_manifest_path
+    else:
+        msg = (
+            "Default manifest file's path does not exist."
+            " Please specify a valid manifest."
+            f" The ApiServer Add-In seems to be missing in {os.path.dirname(def_manifest_path)}"
+        )
+        LOG.error(msg)
+        raise RuntimeError(msg)
 
 
 def _start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Popen:
