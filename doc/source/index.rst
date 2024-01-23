@@ -3,63 +3,57 @@ PyAnsys Geometry documentation |version|
 
 PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
-.. grid:: 1 2 2 2
-   :gutter: 4
-   :padding: 2 2 0 0
-   :class-container: sd-text-center
-
-   .. grid-item-card:: :material-regular:`directions_run` Getting started
-
-      Learn how to run the Windows Docker container, install the
-      PyAnsys Geometry image, and launch and connect to the Geometry
-      service.
-
-   .. grid-item-card:: :material-regular:`book` User guide
-
-      Understand key concepts and approaches for primitives,
-      sketches, and model designs.
+.. grid:: 2
 
 
-.. jinja:: main_toctree
+    .. grid-item-card:: Getting started :fa:`person-running`
+        :padding: 2 2 2 2
+        :link: getting_started/index
+        :link-type: doc
 
-   .. grid:: 1 2 2 2
-      :gutter: 4
-      :padding: 2 2 0 0
-      :class-container: sd-text-center
+        Learn how to run the Windows Docker container, install the
+        PyAnsys Geometry image, and launch and connect to the Geometry
+        service.
 
-       {% if build_api %}
-      .. grid-item-card:: :material-regular:`code` API reference
+    .. grid-item-card:: User guide :fa:`book-open-reader`
+        :padding: 2 2 2 2
+        :link: user_guide/index
+        :link-type: doc
 
+        Understand key concepts and approaches for primitives,
+        sketches, and model designs.
 
-         Understand PyAnsys Geometry API endpoints, their capabilities,
-         and how to interact with them programmatically.
+    .. grid-item-card:: API reference :fa:`book-bookmark`
+        :padding: 2 2 2 2
+        :link: api/index
+        :link-type: doc
 
-       {% endif %}
+        Understand PyAnsys Geometry API endpoints, their capabilities,
+        and how to interact with them programmatically.
 
-       {% if build_examples %}
-      .. grid-item-card:: :material-regular:`terminal` Examples
-         :class-card: intro-card
+    .. grid-item-card:: Examples :fa:`scroll`
+        :padding: 2 2 2 2
+        :link: examples
+        :link-type: doc
 
-         Explore examples that show how to use PyAnsys Geometry to
-         perform many different types of operations.
+        Explore examples that show how to use PyAnsys Geometry to
+        perform many different types of operations.
 
-       {% endif %}
+    .. grid-item-card:: Contribute :fa:`people-group`
+        :padding: 2 2 2 2
+        :link: contributing
+        :link-type: doc
 
-.. grid:: 1 2 2 2
-   :gutter: 4
-   :padding: 2 2 0 0
-   :class-container: sd-text-center
+        Learn how to contribute to the PyAnsys Geometry codebase
+        or documentation.
 
-   .. grid-item-card:: :material-regular:`diversity_3` Contribute
+    .. grid-item-card:: Download :fa:`download`
+        :padding: 2 2 2 2
+        :link: assets
+        :link-type: doc
 
-      Learn how to contribute to the PyAnsys Geometry codebase
-      or documentation.
-
-   .. grid-item-card:: :material-regular:`download` Assets
-
-      Download different assets related to PyAnsys Geometry,
-      such as documentation, package wheelhouse, and related files.
-
+        Download different assets related to PyAnsys Geometry,
+        such as documentation, package wheelhouse, and related files.
 
 .. jinja:: main_toctree
 
