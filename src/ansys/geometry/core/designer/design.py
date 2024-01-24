@@ -698,7 +698,7 @@ class Design(Component):
                         f"Material property {property.display_name} of type {property.id} is not supported."  # noqa : E501
                         " Storing as string."
                     )
-                    self._grpc_client.log.warning(f"Error: {err}")
+                    self._grpc_client.log.warning(f"Root cause: {err}")
                     mp_type = property.id
 
                 try:
@@ -711,7 +711,7 @@ class Design(Component):
                         f"Material property {property.display_name} with units {property.units} is not fully supported."  # noqa : E501
                         " Storing value only as float."
                     )
-                    self._grpc_client.log.warning(f"Error: {err}")
+                    self._grpc_client.log.warning(f"Root cause: {err}")
                     mp_quantity = property.value
 
                 mp = MaterialProperty(mp_type, property.display_name, mp_quantity)
