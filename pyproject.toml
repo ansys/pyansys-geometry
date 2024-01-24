@@ -82,7 +82,7 @@ doc = [
     "panel==1.3.7",
     "pyvista[jupyter]==0.43.2",
     "requests==2.31.0",
-    "sphinx==7.2.5",
+    "sphinx==7.2.6",
     "sphinx-autoapi==3.0.0",            # "sphinx-autoapi @ git+https://github.com/jorgepiloto/sphinx-autoapi@feat/single-page-option", ---> Installed directly in workflow
     "sphinx-autodoc-typehints==1.24.0",
     "sphinx-copybutton==0.5.2",
