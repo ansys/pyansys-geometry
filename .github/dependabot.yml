@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     labels:
       - "maintenance"
       - "dependencies"
@@ -31,7 +31,7 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     labels:
       - "maintenance"
     assignees:
