@@ -836,7 +836,9 @@ class Sketch:
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         # Show the plot requested - i.e. all polydata in sketch
-        from ansys.geometry.core.plotting import PlotterHelper
+        from ansys.visualizer import MeshObjectPlot
+
+        from ansys.geometry.core.plotting import GeomPlotter
 
         if view_2d:
             vector = self.plane.direction_z.tolist()
@@ -846,7 +848,7 @@ class Sketch:
             view_2d_dict = None
 
         if selected_pd_objects is not None:
-            pl_helper = PlotterHelper(use_trame=use_trame).plot(
+            _ = GeomPlotter(use_trame=use_trame).plot(
                 selected_pd_objects,
                 screenshot=screenshot,
                 view_2d=view_2d_dict,
@@ -854,12 +856,10 @@ class Sketch:
                 **plotting_options,
             )
         else:
-            pl_helper = PlotterHelper(use_trame=use_trame).plot(
-                self,
-                screenshot=screenshot,
-                view_2d=view_2d_dict,
-                **plotting_options,
-            )
+            pl = GeomPlotter(use_trame=use_trame)
+            pl.add(self.sketch_polydata_faces(), opacity=0.7, **plotting_options)
+            pl.add(self.sketch_polydata_edges(), **plotting_options)
+            pl.plot(screenshot=screenshot, view_2d=view_2d_dict)
 
     def plot_selection(
         self,

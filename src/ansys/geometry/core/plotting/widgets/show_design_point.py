@@ -23,10 +23,11 @@
 
 import os
 
+from ansys.visualizer import Plotter
+from ansys.visualizer.widgets import PlotterWidget
 from vtk import vtkButtonWidget, vtkPNGReader
 
 from ansys.geometry.core.designer.designpoint import DesignPoint
-from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
 
 
 class ShowDesignPoints(PlotterWidget):
@@ -39,14 +40,14 @@ class ShowDesignPoints(PlotterWidget):
         Provides the plotter to add the button to.
     """
 
-    def __init__(self, plotter_helper: "PlotterHelper") -> None:
+    def __init__(self, plotter_helper: "Plotter") -> None:
         """Initialize the ``ShowDesignPoints`` class."""
         # Call PlotterWidget ctor
         super().__init__(plotter_helper._pl.scene)
         self.plotter_helper = plotter_helper
 
         # Initialize variables
-        self._geom_object_actors_map = self.plotter_helper._pl._geom_object_actors_map
+        self._geom_object_actors_map = self.plotter_helper._pl._object_to_actors_map
         self._button: vtkButtonWidget = self.plotter_helper._pl.scene.add_checkbox_button_widget(
             self.callback, position=(5, 438), size=30, border_size=3
         )

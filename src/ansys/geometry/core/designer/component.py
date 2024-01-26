@@ -1130,12 +1130,14 @@ class Component:
             N Coordinate Systems : 0
         >>> mycomp.plot(pbr=True, metallic=1.0)
         """
-        from ansys.geometry.core.plotting import PlotterHelper
+        from ansys.visualizer import MeshObjectPlot
 
-        PlotterHelper(use_trame=use_trame).plot(
-            self,
-            merge_bodies=merge_bodies,
-            merge_component=merge_component,
+        from ansys.geometry.core.plotting import GeomPlotter
+
+        mesh_object = MeshObjectPlot(self.tessellate(merge_component, merge_bodies))
+
+        GeomPlotter(use_trame=use_trame).plot(
+            mesh_object,
             screenshot=screenshot,
             **plotting_options,
         )
