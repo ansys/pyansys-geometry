@@ -810,13 +810,13 @@ def test_body_rotation(modeler: Modeler):
 
     original_vertices = []
     for edge in body.edges:
-        original_vertices.extend([edge.start_point, edge.end_point])
+        original_vertices.extend([edge.shape.start, edge.shape.end])
 
     body.rotate(Point3D([0, 0, 0]), UnitVector3D([0, 0, 1]), np.pi / 4)
 
     new_vertices = []
     for edge in body.edges:
-        new_vertices.extend([edge.start_point, edge.end_point])
+        new_vertices.extend([edge.shape.start, edge.shape.end])
 
     # Make sure no vertices are in the same position as in before rotation
     for old_vertex, new_vertex in zip(original_vertices, new_vertices):

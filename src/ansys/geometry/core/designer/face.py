@@ -227,7 +227,7 @@ class Face:
     @property
     @protect_grpc
     @ensure_design_is_active
-    def edges(self) -> List[Edge]:
+    def edges(self) -> List["Edge"]:
         """List of all edges of the face."""
         self._grpc_client.log.debug("Requesting face edges from server.")
         edges_response = self._faces_stub.GetEdges(self._grpc_id)
