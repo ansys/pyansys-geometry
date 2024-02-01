@@ -14,7 +14,7 @@ PyAnsys Geometry
    :target: https://pypi.org/project/ansys-geometry-core
    :alt: PyPI
 
-.. |downloads| image: https://img.shields.io/pypi/dm/ansys-geometry-core.svg
+.. |downloads| image:: https://img.shields.io/pypi/dm/ansys-geometry-core.svg
    :target: https://pypi.org/project/ansys-geometry-core/
    :alt: PyPI Downloads
 
