@@ -759,3 +759,6 @@ class Design(Component):
         self._grpc_client.log.debug(f"SharedTopologyTypes set: {num_created_shared_topologies}")
 
         self._grpc_client.log.debug(f"\nSuccessfully read design in: {end - start} s")
+
+    def _read_existing_design(self) -> None:
+        self.__read_existing_design()

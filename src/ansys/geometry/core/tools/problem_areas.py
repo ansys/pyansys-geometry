@@ -31,11 +31,14 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FixStitchFacesRequest,
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
-from beartype.typing import List
+from beartype.typing import TYPE_CHECKING, List
 from google.protobuf.wrappers_pb2 import Int32Value
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
+
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.designer.face import Face
 
 
 class ProblemArea:
@@ -83,13 +86,13 @@ class DuplicateFaceProblemAreas(ProblemArea):
         List of faces associated with the design.
     """
 
-    def __init__(self, id: str, faces: List[str], grpc_client: GrpcClient):
+    def __init__(self, id: str, faces: List["Face"], grpc_client: GrpcClient):
         """Initialize a new instance of the duplicate face problem area class."""
         super().__init__(id, grpc_client)
         self._faces = faces
 
     @property
-    def faces(self) -> List[str]:
+    def faces(self) -> List["Face"]:
         """
         The list of the problem area ids.
 
@@ -109,11 +112,14 @@ class DuplicateFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixDuplicateFaces(
             FixDuplicateFacesRequest(duplicate_face_problem_area_id=self._id_grpc)
         )
+        parentdesign = self.faces[0].body.parent_component
+        parentdesign._read_existing_design()
         message = RepairToolMessage(
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
         )
+
         return message
 
 
