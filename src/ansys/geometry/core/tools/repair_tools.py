@@ -173,24 +173,14 @@ class RepairTools:
         problem_areas_response = self._repair_stub.FindDuplicateFaces(
             FindDuplicateFacesRequest(faces=body_ids)
         )
-
-        parcomp = bodies[0].parent_component
-        if parcomp is None:
-            print("this is design")
-        else:
-
-            print("still search for the design")
-            print(parcomp)
+        parentcomp = bodies[0].parent_component
         faces = []
-        for body in parcomp.bodies:
+        for body in parentcomp.bodies:
             for face in body.faces:
-                print(face.id)
-                print("res faces", problem_areas_response.result[0].face_monikers)
-                if str(face.id) in problem_areas_response.result[0].face_monikers:
-                    print("YESS")
-                    faces.append(face)
+                for res in problem_areas_response.result:
+                    if str(face.id) in res.face_monikers:
+                        faces.append(face)
 
-        print("these are the faces correspondent to the problem areas:", faces)
         problem_areas = [
             DuplicateFaceProblemAreas(res.id, faces, self._grpc_client)
             for res in problem_areas_response.result
