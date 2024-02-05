@@ -53,7 +53,7 @@ tests = [
     "docker==7.0.0",
     "google-api-python-client==2.116.0",
     "googleapis-common-protos==1.62.0",
-    "grpcio==1.60.0",
+    "grpcio==1.60.1",
     "grpcio-health-checking==1.60.0",
     "numpy==1.26.3",
     "Pint==0.23",
