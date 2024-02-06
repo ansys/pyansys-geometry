@@ -364,15 +364,15 @@ class StitchFaceProblemAreas(ProblemArea):
         List of faces associated with the design.
     """
 
-    def __init__(self, id: str, faces: List["Face"], grpc_client: GrpcClient):
+    def __init__(self, id: str, bodies: List["Body"], grpc_client: GrpcClient):
         """Initialize a new instance of the stitch face problem area class."""
         super().__init__(id, grpc_client)
-        self._faces = faces
+        self._bodies = bodies
 
     @property
-    def faces(self) -> List["Face"]:
-        """The list of the faces connected to this problem area."""
-        return self._faces
+    def bodies(self) -> List["Body"]:
+        """The list of the bodies connected to this problem area."""
+        return self._bodies
 
     def fix(self) -> RepairToolMessage:
         """
@@ -383,7 +383,7 @@ class StitchFaceProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
-        parent_design = ProblemArea.get_root_component(self.faces[0].body)
+        parent_design = ProblemArea.get_root_component(self.bodies[0])
         response = self._repair_stub.FixStitchFaces(
             FixStitchFacesRequest(stitch_face_problem_area_id=self._id_grpc)
         )

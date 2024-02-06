@@ -228,9 +228,6 @@ def test_find_stitch_faces(modeler: Modeler):
     """Test to read geometry and find it's stitch face problem areas."""
     skip_if_linux(modeler)  # Skip test on Linux
     design = modeler.open_file("./tests/integration/files/stitch_before.scdocx")
-    face_ids = []
-    for body in design.bodies:
-        face_ids.append(body.id)
     problem_areas = modeler.repair_tools.find_stitch_faces(design.bodies)
     assert len(problem_areas) == 1
 
@@ -239,23 +236,17 @@ def test_find_stitch_face_id(modeler: Modeler):
     """Test whether problem area has the id."""
     skip_if_linux(modeler)  # Skip test on Linux
     design = modeler.open_file("./tests/integration/files/stitch_before.scdocx")
-    face_ids = []
-    for body in design.bodies:
-        face_ids.append(body.id)
     problem_areas = modeler.repair_tools.find_stitch_faces(design.bodies)
     assert problem_areas[0].id > 0
 
 
-def test_find_stitch_face_faces(modeler: Modeler):
+def test_find_stitch_face_bodies(modeler: Modeler):
     """Test to read geometry and find it's stitch face problem area and return the
     connected faces."""
     skip_if_linux(modeler)  # Skip test on Linux
     design = modeler.open_file("./tests/integration/files/stitch_before.scdocx")
-    face_ids = []
-    for body in design.bodies:
-        face_ids.append(body.id)
     problem_areas = modeler.repair_tools.find_stitch_faces(design.bodies)
-    assert len(problem_areas[0].faces) > 0
+    assert len(problem_areas[0].bodies) > 0
 
 
 def test_fix_stitch_face(modeler: Modeler):
