@@ -281,7 +281,7 @@ class RepairTools:
             for res in problem_areas_response.result
         ]
 
-    def get_faces_from_ids(self, design: "Design", face_ids):
+    def get_faces_from_ids(self, design: "Design", face_ids: List[str]):
         """
         Find the face object from its id.
 
@@ -307,7 +307,7 @@ class RepairTools:
             if str(face.id) in set(map(str, face_ids))
         ]
 
-    def get_edges_from_ids(self, design: "Design", edge_ids: List(str)):
+    def get_edges_from_ids(self, design: "Design", edge_ids: List[str]):
         """
         Find the face object from its id.
 
@@ -318,7 +318,7 @@ class RepairTools:
         design : Design
             Parent design for the faces.
 
-        face_ids : List[str]
+        edge_ids : List[str]
             List of face ids corresponding to the problem area.
 
         Returns
