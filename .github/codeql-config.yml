@@ -3,4 +3,4 @@ paths:
   - src
   - tests
 paths-ignore:
-  - tests/integration/files
+  - '**/failing_script.py'
