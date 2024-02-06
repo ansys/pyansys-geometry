@@ -276,11 +276,32 @@ class RepairTools:
         return [
             StitchFaceProblemAreas(
                 res.id,
-                self.get_faces_from_ids(parent_design, res.body_monikers),
+                self.get_bodies_from_ids(parent_design, res.body_monikers),
                 self._grpc_client,
             )
             for res in problem_areas_response.result
         ]
+
+    def get_bodies_from_ids(self, design: "Design", body_ids: List[str]):
+        """
+        Find the body object from its id.
+
+        This method takes a design and body ids and gets their corresponding face object.
+
+        Parameters
+        ----------
+        design : Design
+            Parent design for the faces.
+
+        body_ids : List[str]
+            List of body ids corresponding to the problem area.
+
+        Returns
+        -------
+        List[Body]
+            List of face objects representing duplicate face problem areas.
+        """
+        return [body for body in design.bodies if str(body.id) in set(map(str, body_ids))]
 
     def get_faces_from_ids(self, design: "Design", face_ids: List[str]):
         """
@@ -310,9 +331,9 @@ class RepairTools:
 
     def get_edges_from_ids(self, design: "Design", edge_ids: List[str]):
         """
-        Find the face object from its id.
+        Find the edge object from its id.
 
-        This method takes a design and face ids and gets their corresponding face object.
+        This method takes a design and edge ids and gets their corresponding face object.
 
         Parameters
         ----------
@@ -320,7 +341,7 @@ class RepairTools:
             Parent design for the faces.
 
         edge_ids : List[str]
-            List of face ids corresponding to the problem area.
+            List of edge ids corresponding to the problem area.
 
         Returns
         -------
