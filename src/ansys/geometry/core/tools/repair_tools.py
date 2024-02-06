@@ -120,7 +120,7 @@ class RepairTools:
         problem_areas_response = self._repair_stub.FindExtraEdges(
             FindExtraEdgesRequest(selection=body_ids)
         )
-        parent_design = self.get_root_component(bodies[0])
+        parent_design = RepairTools.get_root_component(bodies[0])
 
         return [
             ExtraEdgeProblemAreas(
@@ -151,7 +151,7 @@ class RepairTools:
             FindInexactEdgesRequest(selection=body_ids)
         )
 
-        parent_design = self.get_root_component(bodies[0])
+        parent_design = RepairTools.get_root_component(bodies[0])
 
         return [
             InexactEdgeProblemAreas(
@@ -182,7 +182,7 @@ class RepairTools:
             FindDuplicateFacesRequest(faces=body_ids)
         )
 
-        parent_design = self.get_root_component(bodies[0])
+        parent_design = RepairTools.get_root_component(bodies[0])
         return [
             DuplicateFaceProblemAreas(
                 res.id, self.get_faces_from_ids(parent_design, res.face_monikers), self._grpc_client
@@ -211,7 +211,7 @@ class RepairTools:
         problem_areas_response = self._repair_stub.FindMissingFaces(
             FindMissingFacesRequest(faces=body_ids)
         )
-        parent_design = self.get_root_component(bodies[0])
+        parent_design = RepairTools.get_root_component(bodies[0])
 
         return [
             MissingFaceProblemAreas(
@@ -241,7 +241,7 @@ class RepairTools:
         problem_areas_response = self._repair_stub.FindSmallFaces(
             FindSmallFacesRequest(selection=body_ids)
         )
-        parent_design = self.get_root_component(bodies[0])
+        parent_design = RepairTools.get_root_component(bodies[0])
 
         return [
             SmallFaceProblemAreas(
@@ -271,11 +271,11 @@ class RepairTools:
         problem_areas_response = self._repair_stub.FindStitchFaces(
             FindStitchFacesRequest(faces=body_ids)
         )
-        parent_design = self.get_root_component(bodies[0])
+        parent_design = RepairTools.get_root_component(bodies[0])
         return [
             StitchFaceProblemAreas(
                 res.id,
-                self.get_faces_from_idslist(parent_design, res.body_monikers),
+                self.get_faces_from_ids(parent_design, res.body_monikers),
                 self._grpc_client,
             )
             for res in problem_areas_response.result
@@ -335,7 +335,7 @@ class RepairTools:
         ]
 
     @staticmethod
-    def get_root_component(self, body: "Body"):
+    def get_root_component(body: "Body"):
         """
         Get the root component (design) of the given body object.
 

@@ -40,7 +40,6 @@ from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
-    from ansys.geometry.core.tools.repair_tools import RepairTools
 
 
 class ProblemArea:
@@ -70,6 +69,26 @@ class ProblemArea:
     def fix(self):
         """Fix problem area."""
         raise NotImplementedError("Fix method is not implemented in the base class.")
+
+    @staticmethod
+    def get_root_component(body: "Body"):
+        """
+        Get the root component (design) of the given body object.
+
+        Parameters
+        ----------
+        body : Body
+            The body object for which to find the root component.
+
+        Returns
+        -------
+        Component
+            The root component of the provided body object.
+        """
+        component = body.parent_component
+        while component.parent_component is not None:
+            component = component.parent_component
+        return component
 
 
 class DuplicateFaceProblemAreas(ProblemArea):
@@ -110,7 +129,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixDuplicateFaces(
             FixDuplicateFacesRequest(duplicate_face_problem_area_id=self._id_grpc)
         )
-        parent_design = RepairTools.get_root_component(self.faces[0].body)
+        parent_design = ProblemArea.get_root_component(self.faces[0].body)
         parent_design._read_existing_design()
         message = RepairToolMessage(
             response.result.success,
@@ -157,7 +176,7 @@ class MissingFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixMissingFaces(
             FixMissingFacesRequest(missing_face_problem_area_id=self._id_grpc)
         )
-        parent_design = RepairTools.get_root_component(self.edges[0].faces[0].body)
+        parent_design = ProblemArea.get_root_component(self.edges[0].faces[0].body)
         parent_design._read_existing_design()
         message = RepairToolMessage(
             response.result.success,
@@ -203,7 +222,7 @@ class InexactEdgeProblemAreas(ProblemArea):
         response = self._repair_stub.FixInexactEdges(
             FixInexactEdgesRequest(inexact_edge_problem_area_id=self._id_grpc)
         )
-        parent_design = RepairTools.get_root_component(self.edges[0].faces[0].body)
+        parent_design = ProblemArea.get_root_component(self.edges[0].faces[0].body)
         parent_design._read_existing_design()
         message = RepairToolMessage(
             response.result.success,
@@ -274,7 +293,7 @@ class SmallFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixSmallFaces(
             FixSmallFacesRequest(small_face_problem_area_id=self._id_grpc)
         )
-        parent_design = RepairTools.get_root_component(self.faces[0].body)
+        parent_design = ProblemArea.get_root_component(self.faces[0].body)
         parent_design._read_existing_design()
         message = RepairToolMessage(
             response.result.success,
@@ -320,7 +339,7 @@ class SplitEdgeProblemAreas(ProblemArea):
         response = self._repair_stub.FixSplitEdges(
             FixSplitEdgesRequest(split_edge_problem_area_id=self._id_grpc)
         )
-        parent_design = RepairTools.get_root_component(self.edges[0].faces[0].body)
+        parent_design = ProblemArea.get_root_component(self.edges[0].faces[0].body)
         parent_design._read_existing_design()
         message = RepairToolMessage(
             response.result.success,
@@ -366,7 +385,7 @@ class StitchFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixStitchFaces(
             FixStitchFacesRequest(stitch_face_problem_area_id=self._id_grpc)
         )
-        parent_design = RepairTools.get_root_component(self.faces[0].body)
+        parent_design = ProblemArea.get_root_component(self.faces[0].body)
         parent_design._read_existing_design()
         message = RepairToolMessage(
             response.result.success,
