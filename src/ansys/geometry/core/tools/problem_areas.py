@@ -127,10 +127,10 @@ class DuplicateFaceProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
+        parent_design = ProblemArea.get_root_component(self.faces[0].body)
         response = self._repair_stub.FixDuplicateFaces(
             FixDuplicateFacesRequest(duplicate_face_problem_area_id=self._id_grpc)
         )
-        parent_design = ProblemArea.get_root_component(self.faces[0].body)
         parent_design._read_existing_design()
         message = RepairToolMessage(
             response.result.success,
@@ -174,10 +174,10 @@ class MissingFaceProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
+        parent_design = ProblemArea.get_root_component(self.edges[0].faces[0].body)
         response = self._repair_stub.FixMissingFaces(
             FixMissingFacesRequest(missing_face_problem_area_id=self._id_grpc)
         )
-        parent_design = ProblemArea.get_root_component(self.edges[0].faces[0].body)
         parent_design._read_existing_design()
         message = RepairToolMessage(
             response.result.success,
@@ -220,10 +220,10 @@ class InexactEdgeProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
+        parent_design = ProblemArea.get_root_component(self.edges[0].faces[0].body)
         response = self._repair_stub.FixInexactEdges(
             FixInexactEdgesRequest(inexact_edge_problem_area_id=self._id_grpc)
         )
-        parent_design = ProblemArea.get_root_component(self.edges[0].faces[0].body)
         parent_design._read_existing_design()
         message = RepairToolMessage(
             response.result.success,
@@ -291,10 +291,10 @@ class SmallFaceProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
+        parent_design = ProblemArea.get_root_component(self.faces[0].body)
         response = self._repair_stub.FixSmallFaces(
             FixSmallFacesRequest(small_face_problem_area_id=self._id_grpc)
         )
-        parent_design = ProblemArea.get_root_component(self.faces[0].body)
         parent_design._read_existing_design()
         message = RepairToolMessage(
             response.result.success,
@@ -337,10 +337,10 @@ class SplitEdgeProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
+        parent_design = ProblemArea.get_root_component(self.edges[0].faces[0].body)
         response = self._repair_stub.FixSplitEdges(
             FixSplitEdgesRequest(split_edge_problem_area_id=self._id_grpc)
         )
-        parent_design = ProblemArea.get_root_component(self.edges[0].faces[0].body)
         parent_design._read_existing_design()
         message = RepairToolMessage(
             response.result.success,
@@ -383,10 +383,10 @@ class StitchFaceProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
+        parent_design = ProblemArea.get_root_component(self.faces[0].body)
         response = self._repair_stub.FixStitchFaces(
             FixStitchFacesRequest(stitch_face_problem_area_id=self._id_grpc)
         )
-        parent_design = ProblemArea.get_root_component(self.faces[0].body)
         parent_design._read_existing_design()
         message = RepairToolMessage(
             response.result.success,
