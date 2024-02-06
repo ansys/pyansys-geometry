@@ -83,6 +83,9 @@ class RepairTools:
         List[SplitEdgeProblemAreas]
             List of objects representing split edge problem areas.
         """
+        if not bodies:
+            return []
+
         angle_value = DoubleValue(value=float(angle))
         length_value = DoubleValue(value=float(length))
         body_ids = [body.id for body in bodies]
@@ -117,6 +120,9 @@ class RepairTools:
         List[ExtraEdgeProblemArea]
             List of objects representing extra edge problem areas.
         """
+        if not bodies:
+            return []
+
         body_ids = [body.id for body in bodies]
         problem_areas_response = self._repair_stub.FindExtraEdges(
             FindExtraEdgesRequest(selection=body_ids)
@@ -147,6 +153,9 @@ class RepairTools:
         List[InExactEdgeProblemArea]
             List of objects representing inexact edge problem areas.
         """
+        if not bodies:
+            return []
+
         body_ids = [body.id for body in bodies]
         problem_areas_response = self._repair_stub.FindInexactEdges(
             FindInexactEdgesRequest(selection=body_ids)
@@ -178,6 +187,9 @@ class RepairTools:
         List[DuplicateFaceProblemAreas]
             List of objects representing duplicate face problem areas.
         """
+        if not bodies:
+            return []
+
         body_ids = [body.id for body in bodies]
         problem_areas_response = self._repair_stub.FindDuplicateFaces(
             FindDuplicateFacesRequest(faces=body_ids)
@@ -208,6 +220,8 @@ class RepairTools:
         List[MissingFaceProblemAreas]
             List of objects representing missing face problem areas.
         """
+        if not bodies:
+            return []
         body_ids = [body.id for body in bodies]
         problem_areas_response = self._repair_stub.FindMissingFaces(
             FindMissingFacesRequest(faces=body_ids)
@@ -238,6 +252,9 @@ class RepairTools:
         List[SmallFaceProblemAreas]
             List of objects representing small face problem areas.
         """
+        if not bodies:
+            return []
+
         body_ids = [body.id for body in bodies]
         problem_areas_response = self._repair_stub.FindSmallFaces(
             FindSmallFacesRequest(selection=body_ids)

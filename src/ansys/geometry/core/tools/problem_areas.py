@@ -127,6 +127,9 @@ class DuplicateFaceProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
+        if not self.faces or not self.faces[0].body:
+            return RepairToolMessage(False, [], [])
+
         parent_design = ProblemArea.get_root_component(self.faces[0].body)
         response = self._repair_stub.FixDuplicateFaces(
             FixDuplicateFacesRequest(duplicate_face_problem_area_id=self._id_grpc)
@@ -174,6 +177,9 @@ class MissingFaceProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
+        if not self.edges or not self.edges[0].faces or not self.edges[0].faces[0].body:
+            return RepairToolMessage(False, [], [])
+
         parent_design = ProblemArea.get_root_component(self.edges[0].faces[0].body)
         response = self._repair_stub.FixMissingFaces(
             FixMissingFacesRequest(missing_face_problem_area_id=self._id_grpc)
@@ -220,6 +226,9 @@ class InexactEdgeProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
+        if not self.edges or not self.edges[0].faces or not self.edges[0].faces[0].body:
+            return RepairToolMessage(False, [], [])
+
         parent_design = ProblemArea.get_root_component(self.edges[0].faces[0].body)
         response = self._repair_stub.FixInexactEdges(
             FixInexactEdgesRequest(inexact_edge_problem_area_id=self._id_grpc)
@@ -291,6 +300,9 @@ class SmallFaceProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
+        if not self.faces or not self.faces[0].body:
+            return RepairToolMessage(False, [], [])
+
         parent_design = ProblemArea.get_root_component(self.faces[0].body)
         response = self._repair_stub.FixSmallFaces(
             FixSmallFacesRequest(small_face_problem_area_id=self._id_grpc)
@@ -337,6 +349,9 @@ class SplitEdgeProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
+        if not self.edges or not self.edges[0].faces or not self.edges[0].faces[0].body:
+            return RepairToolMessage(False, [], [])
+
         parent_design = ProblemArea.get_root_component(self.edges[0].faces[0].body)
         response = self._repair_stub.FixSplitEdges(
             FixSplitEdgesRequest(split_edge_problem_area_id=self._id_grpc)
@@ -383,6 +398,9 @@ class StitchFaceProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
+        if not self.bodies:
+            return RepairToolMessage(False, [], [])
+
         parent_design = ProblemArea.get_root_component(self.bodies[0])
         response = self._repair_stub.FixStitchFaces(
             FixStitchFacesRequest(stitch_face_problem_area_id=self._id_grpc)
