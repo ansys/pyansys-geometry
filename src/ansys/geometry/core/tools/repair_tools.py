@@ -35,6 +35,7 @@ from beartype.typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
+    from ansys.geometry.core.designer.design import Design
 
 from google.protobuf.wrappers_pb2 import DoubleValue
 
@@ -173,19 +174,38 @@ class RepairTools:
         problem_areas_response = self._repair_stub.FindDuplicateFaces(
             FindDuplicateFacesRequest(faces=body_ids)
         )
-        parentcomp = bodies[0].parent_component
-        faces = []
-        for body in parentcomp.bodies:
-            for face in body.faces:
-                for res in problem_areas_response.result:
-                    if str(face.id) in res.face_monikers:
-                        faces.append(face)
 
-        problem_areas = [
-            DuplicateFaceProblemAreas(res.id, faces, self._grpc_client)
+        parent_design = bodies[0].parent_component
+        return [
+            DuplicateFaceProblemAreas(
+                res.id, self.get_faces_from_ids(parent_design, res.face_monikers), self._grpc_client
+            )
             for res in problem_areas_response.result
         ]
-        return problem_areas
+
+    def get_faces_from_ids(self, design: "Design", face_ids):
+        """
+        Find the face object from its id.
+
+        This method takes a design and face ids and gets their corresponding face object.
+
+        Parameters
+        ----------
+        design : Design
+            Parent design for the faces.
+
+        face_ids : List[str]
+            List of face ids corresponding to the problem area.
+
+        Returns
+        -------
+        List[Face]
+            List of face objects representing duplicate face problem areas.
+        """
+        face_id_set = set(map(str, face_ids))
+        return [
+            face for body in design.bodies for face in body.faces if str(face.id) in face_id_set
+        ]
 
     def find_missing_faces(self, bodies: List["Body"]) -> List[MissingFaceProblemAreas]:
         """
