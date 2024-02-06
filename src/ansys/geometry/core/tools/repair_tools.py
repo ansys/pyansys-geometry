@@ -92,12 +92,13 @@ class RepairTools:
                 bodies_or_faces=body_ids, angle=angle_value, distance=length_value
             )
         )
-
-        problem_areas = [
-            SplitEdgeProblemAreas(res.id, list(res.edge_monikers), self._grpc_client)
+        parent_design = RepairTools.get_root_component(bodies[0])
+        return [
+            SplitEdgeProblemAreas(
+                res.id, self.get_edges_from_ids(parent_design, res.edge_monikers), self._grpc_client
+            )
             for res in problem_areas_response.result
         ]
-        return problem_areas
 
     def find_extra_edges(self, bodies: List["Body"]) -> List[ExtraEdgeProblemAreas]:
         """
