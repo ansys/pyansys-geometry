@@ -120,11 +120,14 @@ class RepairTools:
         problem_areas_response = self._repair_stub.FindExtraEdges(
             FindExtraEdgesRequest(selection=body_ids)
         )
-        problem_areas = [
-            ExtraEdgeProblemAreas(res.id, list(res.edge_monikers), self._grpc_client)
+        parent_design = self.get_root_component(bodies[0])
+
+        return [
+            ExtraEdgeProblemAreas(
+                res.id, self.get_edges_from_ids(parent_design, res.edge_monikers), self._grpc_client
+            )
             for res in problem_areas_response.result
         ]
-        return problem_areas
 
     def find_inexact_edges(self, bodies: List["Body"]) -> List[InexactEdgeProblemAreas]:
         """
@@ -147,11 +150,15 @@ class RepairTools:
         problem_areas_response = self._repair_stub.FindInexactEdges(
             FindInexactEdgesRequest(selection=body_ids)
         )
-        problem_areas = [
-            InexactEdgeProblemAreas(res.id, list(res.edge_monikers), self._grpc_client)
+
+        parent_design = self.get_root_component(bodies[0])
+
+        return [
+            InexactEdgeProblemAreas(
+                res.id, self.get_edges_from_ids(parent_design, res.edge_monikers), self._grpc_client
+            )
             for res in problem_areas_response.result
         ]
-        return problem_areas
 
     def find_duplicate_faces(self, bodies: List["Body"]) -> List[DuplicateFaceProblemAreas]:
         """
@@ -175,36 +182,12 @@ class RepairTools:
             FindDuplicateFacesRequest(faces=body_ids)
         )
 
-        parent_design = bodies[0].parent_component
+        parent_design = self.get_root_component(bodies[0])
         return [
             DuplicateFaceProblemAreas(
                 res.id, self.get_faces_from_ids(parent_design, res.face_monikers), self._grpc_client
             )
             for res in problem_areas_response.result
-        ]
-
-    def get_faces_from_ids(self, design: "Design", face_ids):
-        """
-        Find the face object from its id.
-
-        This method takes a design and face ids and gets their corresponding face object.
-
-        Parameters
-        ----------
-        design : Design
-            Parent design for the faces.
-
-        face_ids : List[str]
-            List of face ids corresponding to the problem area.
-
-        Returns
-        -------
-        List[Face]
-            List of face objects representing duplicate face problem areas.
-        """
-        face_id_set = set(map(str, face_ids))
-        return [
-            face for body in design.bodies for face in body.faces if str(face.id) in face_id_set
         ]
 
     def find_missing_faces(self, bodies: List["Body"]) -> List[MissingFaceProblemAreas]:
@@ -228,11 +211,14 @@ class RepairTools:
         problem_areas_response = self._repair_stub.FindMissingFaces(
             FindMissingFacesRequest(faces=body_ids)
         )
-        problem_areas = [
-            MissingFaceProblemAreas(res.id, list(res.edge_monikers), self._grpc_client)
+        parent_design = self.get_root_component(bodies[0])
+
+        return [
+            MissingFaceProblemAreas(
+                res.id, self.get_edges_from_ids(parent_design, res.edge_monikers), self._grpc_client
+            )
             for res in problem_areas_response.result
         ]
-        return problem_areas
 
     def find_small_faces(self, bodies: List["Body"]) -> List[SmallFaceProblemAreas]:
         """
@@ -255,11 +241,14 @@ class RepairTools:
         problem_areas_response = self._repair_stub.FindSmallFaces(
             FindSmallFacesRequest(selection=body_ids)
         )
-        problem_areas = [
-            SmallFaceProblemAreas(res.id, list(res.face_monikers), self._grpc_client)
+        parent_design = self.get_root_component(bodies[0])
+
+        return [
+            SmallFaceProblemAreas(
+                res.id, self.get_faces_from_ids(parent_design, res.face_monikers), self._grpc_client
+            )
             for res in problem_areas_response.result
         ]
-        return problem_areas
 
     def find_stitch_faces(self, bodies: List["Body"]) -> List[StitchFaceProblemAreas]:
         """
@@ -282,8 +271,85 @@ class RepairTools:
         problem_areas_response = self._repair_stub.FindStitchFaces(
             FindStitchFacesRequest(faces=body_ids)
         )
-        problem_areas = [
-            StitchFaceProblemAreas(res.id, list(res.body_monikers), self._grpc_client)
+        parent_design = self.get_root_component(bodies[0])
+        return [
+            StitchFaceProblemAreas(
+                res.id,
+                self.get_faces_from_idslist(parent_design, res.body_monikers),
+                self._grpc_client,
+            )
             for res in problem_areas_response.result
         ]
-        return problem_areas
+
+    def get_faces_from_ids(self, design: "Design", face_ids):
+        """
+        Find the face object from its id.
+
+        This method takes a design and face ids and gets their corresponding face object.
+
+        Parameters
+        ----------
+        design : Design
+            Parent design for the faces.
+
+        face_ids : List[str]
+            List of face ids corresponding to the problem area.
+
+        Returns
+        -------
+        List[Face]
+            List of face objects representing duplicate face problem areas.
+        """
+        return [
+            face
+            for body in design.bodies
+            for face in body.faces
+            if str(face.id) in set(map(str, face_ids))
+        ]
+
+    def get_edges_from_ids(self, design: "Design", edge_ids: List(str)):
+        """
+        Find the face object from its id.
+
+        This method takes a design and face ids and gets their corresponding face object.
+
+        Parameters
+        ----------
+        design : Design
+            Parent design for the faces.
+
+        face_ids : List[str]
+            List of face ids corresponding to the problem area.
+
+        Returns
+        -------
+        List[Edge]
+            List of edge objects representing duplicate face problem areas.
+        """
+        return [
+            edge
+            for body in design.bodies
+            for face in body.faces
+            for edge in face.edges
+            if str(edge.id) in set(map(str, edge_ids))
+        ]
+
+    @staticmethod
+    def get_root_component(self, body: "Body"):
+        """
+        Get the root component (design) of the given body object.
+
+        Parameters
+        ----------
+        body : Body
+            The body object for which to find the root component.
+
+        Returns
+        -------
+        Component
+            The root component of the provided body object.
+        """
+        component = body.parent_component
+        while component.parent_component is not None:
+            component = component.parent_component
+        return component
