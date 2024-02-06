@@ -36,11 +36,11 @@ from google.protobuf.wrappers_pb2 import Int32Value
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
-from ansys.geometry.core.tools.repair_tools import RepairTools
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
+    from ansys.geometry.core.tools.repair_tools import RepairTools
 
 
 class ProblemArea:
