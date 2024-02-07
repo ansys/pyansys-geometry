@@ -600,7 +600,7 @@ class Design(Component):
     def __read_existing_design(self) -> None:
         """Read an existing ``Design`` located on the server."""
         #
-        # TODO: This might go out of sync with the _update_design_in_repair_tools method.
+        # TODO: This might go out of sync with the _update_design_inplace method.
         #       Ensure that the two methods are in sync. Especially regarding cleanup.
         #
         # TODO: Not all features implemented yet. Status is as follows
@@ -763,7 +763,7 @@ class Design(Component):
 
         self._grpc_client.log.debug(f"\nSuccessfully read design in: {end - start} s")
 
-    def _update_design_in_repair_tools(self) -> None:
+    def _update_design_inplace(self) -> None:
         """
         Update the design to align with the server side.
 

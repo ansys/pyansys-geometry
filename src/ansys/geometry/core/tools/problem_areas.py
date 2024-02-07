@@ -126,7 +126,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixDuplicateFaces(
             FixDuplicateFacesRequest(duplicate_face_problem_area_id=self._id_grpc)
         )
-        parent_design._update_design_in_repair_tools()
+        parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.result.success,
             response.result.created_bodies_monikers,
@@ -182,7 +182,7 @@ class MissingFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixMissingFaces(
             FixMissingFacesRequest(missing_face_problem_area_id=self._id_grpc)
         )
-        parent_design._update_design_in_repair_tools()
+        parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.result.success,
             response.result.created_bodies_monikers,
@@ -237,7 +237,7 @@ class InexactEdgeProblemAreas(ProblemArea):
         response = self._repair_stub.FixInexactEdges(
             FixInexactEdgesRequest(inexact_edge_problem_area_id=self._id_grpc)
         )
-        parent_design._update_design_in_repair_tools()
+        parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.result.success,
             response.result.created_bodies_monikers,
@@ -323,7 +323,7 @@ class SmallFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixSmallFaces(
             FixSmallFacesRequest(small_face_problem_area_id=self._id_grpc)
         )
-        parent_design._update_design_in_repair_tools()
+        parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.result.success,
             response.result.created_bodies_monikers,
@@ -378,7 +378,7 @@ class SplitEdgeProblemAreas(ProblemArea):
         response = self._repair_stub.FixSplitEdges(
             FixSplitEdgesRequest(split_edge_problem_area_id=self._id_grpc)
         )
-        parent_design._update_design_in_repair_tools()
+        parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.result.success,
             response.result.created_bodies_monikers,
@@ -433,7 +433,7 @@ class StitchFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixStitchFaces(
             FixStitchFacesRequest(stitch_face_problem_area_id=self._id_grpc)
         )
-        parent_design._update_design_in_repair_tools()
+        parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.result.success,
             response.result.created_bodies_monikers,
