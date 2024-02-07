@@ -31,11 +31,12 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FixStitchFacesRequest,
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
+from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List
 from google.protobuf.wrappers_pb2 import Int32Value
 
 from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.misc.auxiliary import (
+from ansys.geometry.core.misc import (
     get_design_from_body,
     get_design_from_edge,
     get_design_from_face,
@@ -93,7 +94,8 @@ class DuplicateFaceProblemAreas(ProblemArea):
         List of faces associated with the design.
     """
 
-    def __init__(self, id: str, faces: List["Face"], grpc_client: GrpcClient):
+    @check_input_types
+    def __init__(self, id: str, grpc_client: GrpcClient, faces: List["Face"]):
         """Initialize a new instance of the duplicate face problem area class."""
         super().__init__(id, grpc_client)
         self._faces = faces
@@ -112,7 +114,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
-        if not self.faces or not self.faces[0].body:
+        if not self.faces:
             return RepairToolMessage(False, [], [])
 
         parent_design = get_design_from_face(self.faces[0])
@@ -143,7 +145,8 @@ class MissingFaceProblemAreas(ProblemArea):
         List of edges associated with the design.
     """
 
-    def __init__(self, id: str, edges: List["Edge"], grpc_client: GrpcClient):
+    @check_input_types
+    def __init__(self, id: str, grpc_client: GrpcClient, edges: List["Edge"]):
         """Initialize a new instance of the missing face problem area class."""
         super().__init__(id, grpc_client)
         self._edges = edges
@@ -162,7 +165,7 @@ class MissingFaceProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
-        if not self.edges or not self.edges[0].faces or not self.edges[0].faces[0].body:
+        if not self.edges:
             return RepairToolMessage(False, [], [])
 
         parent_design = get_design_from_edge(self.edges[0])
@@ -192,7 +195,8 @@ class InexactEdgeProblemAreas(ProblemArea):
         List of edges associated with the design.
     """
 
-    def __init__(self, id: str, edges: List["Edge"], grpc_client: GrpcClient):
+    @check_input_types
+    def __init__(self, id: str, grpc_client: GrpcClient, edges: List["Edge"]):
         """Initialize a new instance of the inexact edge problem area class."""
         super().__init__(id, grpc_client)
         self._edges = edges
@@ -211,7 +215,7 @@ class InexactEdgeProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
-        if not self.edges or not self.edges[0].faces or not self.edges[0].faces[0].body:
+        if not self.edges:
             return RepairToolMessage(False, [], [])
 
         parent_design = get_design_from_edge(self.edges[0])
@@ -241,7 +245,8 @@ class ExtraEdgeProblemAreas(ProblemArea):
         List of edges associated with the design.
     """
 
-    def __init__(self, id: str, edges: List["Edge"], grpc_client: GrpcClient):
+    @check_input_types
+    def __init__(self, id: str, grpc_client: GrpcClient, edges: List["Edge"]):
         """Initialize a new instance of the extra edge problem area class."""
         super().__init__(id, grpc_client)
         self._edges = edges
@@ -266,7 +271,8 @@ class SmallFaceProblemAreas(ProblemArea):
         List of edges associated with the design.
     """
 
-    def __init__(self, id: str, faces: List["Face"], grpc_client: GrpcClient):
+    @check_input_types
+    def __init__(self, id: str, grpc_client: GrpcClient, faces: List["Face"]):
         """Initialize a new instance of the small face problem area class."""
         super().__init__(id, grpc_client)
         self._faces = faces
@@ -285,7 +291,7 @@ class SmallFaceProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
-        if not self.faces or not self.faces[0].body:
+        if not self.faces:
             return RepairToolMessage(False, [], [])
 
         parent_design = get_design_from_face(self.faces[0])
@@ -315,7 +321,8 @@ class SplitEdgeProblemAreas(ProblemArea):
         List of edges associated with the design.
     """
 
-    def __init__(self, id: str, edges: List["Edge"], grpc_client: GrpcClient):
+    @check_input_types
+    def __init__(self, id: str, grpc_client: GrpcClient, edges: List["Edge"]):
         """Initialize a new instance of the split edge problem area class."""
         super().__init__(id, grpc_client)
         self._edges = edges
@@ -334,7 +341,7 @@ class SplitEdgeProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
-        if not self.edges or not self.edges[0].faces or not self.edges[0].faces[0].body:
+        if not self.edges:
             return RepairToolMessage(False, [], [])
 
         parent_design = get_design_from_edge(self.edges[0])
@@ -360,11 +367,12 @@ class StitchFaceProblemAreas(ProblemArea):
         Server-defined ID for the body.
     grpc_client : GrpcClient
         Active supporting geometry service instance for design modeling.
-    faces : List[Face]
-        List of faces associated with the design.
+    bodies : List[Body]
+        List of bodies associated with the design.
     """
 
-    def __init__(self, id: str, bodies: List["Body"], grpc_client: GrpcClient):
+    @check_input_types
+    def __init__(self, id: str, grpc_client: GrpcClient, bodies: List["Body"]):
         """Initialize a new instance of the stitch face problem area class."""
         super().__init__(id, grpc_client)
         self._bodies = bodies

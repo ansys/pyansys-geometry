@@ -22,7 +22,7 @@
 
 """Auxiliary functions for the PyAnsys Geometry library."""
 
-from beartype.typing import TYPE_CHECKING
+from beartype.typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
     from ansys.geometry.core.designer.body import Body
@@ -115,3 +115,72 @@ def get_design_from_edge(edge: "Edge") -> "Design":
 
     # Get the design of the body
     return get_design_from_body(body)
+
+
+def get_bodies_from_ids(design: "Design", body_ids: List[str]) -> List["Body"]:
+    """
+    Find the ``Body`` objects inside a ``Design`` from its ids.
+
+    Notes
+    -----
+    This method takes a design and body ids, and gets their corresponding ``Body`` object.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the faces.
+    body_ids : List[str]
+        List of body ids.
+
+    Returns
+    -------
+    List[Body]
+        List of Body objects.
+    """
+    return [body for body in design.bodies if body.id in body_ids]
+
+
+def get_faces_from_ids(design: "Design", face_ids: List[str]) -> List["Face"]:
+    """
+    Find the ``Face`` objects inside a ``Design`` from its ids.
+
+    Notes
+    -----
+    This method takes a design and face ids, and gets their corresponding ``Face`` object.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the faces.
+    face_ids : List[str]
+        List of face ids.
+
+    Returns
+    -------
+    List[Face]
+        List of Face objects.
+    """
+    return [face for body in design.bodies for face in body.faces if face.id in face_ids]
+
+
+def get_edges_from_ids(design: "Design", edge_ids: List[str]) -> List["Edge"]:
+    """
+    Find the ``Edge`` objects inside a ``Design`` from its ids.
+
+    Notes
+    -----
+    This method takes a design and edge ids, and gets their corresponding ``Edge`` objects.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the edges.
+    edge_ids : List[str]
+        List of edge ids.
+
+    Returns
+    -------
+    List[Edge]
+        List of Edge objects.
+    """
+    return [edge for body in design.bodies for edge in body.edges if edge.id in edge_ids]
