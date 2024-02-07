@@ -35,6 +35,11 @@ from beartype.typing import TYPE_CHECKING, List
 from google.protobuf.wrappers_pb2 import Int32Value
 
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.misc.auxiliary import (
+    get_design_from_body,
+    get_design_from_edge,
+    get_design_from_face,
+)
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -70,26 +75,6 @@ class ProblemArea:
     def fix(self):
         """Fix problem area."""
         raise NotImplementedError("Fix method is not implemented in the base class.")
-
-    @staticmethod
-    def get_root_component(body: "Body"):
-        """
-        Get the root component (design) of the given body object.
-
-        Parameters
-        ----------
-        body : Body
-            The body object for which to find the root component.
-
-        Returns
-        -------
-        Component
-            The root component of the provided body object.
-        """
-        component = body.parent_component
-        while component.parent_component is not None:
-            component = component.parent_component
-        return component
 
 
 class DuplicateFaceProblemAreas(ProblemArea):
@@ -130,7 +115,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
         if not self.faces or not self.faces[0].body:
             return RepairToolMessage(False, [], [])
 
-        parent_design = ProblemArea.get_root_component(self.faces[0].body)
+        parent_design = get_design_from_face(self.faces[0])
         response = self._repair_stub.FixDuplicateFaces(
             FixDuplicateFacesRequest(duplicate_face_problem_area_id=self._id_grpc)
         )
@@ -180,7 +165,7 @@ class MissingFaceProblemAreas(ProblemArea):
         if not self.edges or not self.edges[0].faces or not self.edges[0].faces[0].body:
             return RepairToolMessage(False, [], [])
 
-        parent_design = ProblemArea.get_root_component(self.edges[0].faces[0].body)
+        parent_design = get_design_from_edge(self.edges[0])
         response = self._repair_stub.FixMissingFaces(
             FixMissingFacesRequest(missing_face_problem_area_id=self._id_grpc)
         )
@@ -229,7 +214,7 @@ class InexactEdgeProblemAreas(ProblemArea):
         if not self.edges or not self.edges[0].faces or not self.edges[0].faces[0].body:
             return RepairToolMessage(False, [], [])
 
-        parent_design = ProblemArea.get_root_component(self.edges[0].faces[0].body)
+        parent_design = get_design_from_edge(self.edges[0])
         response = self._repair_stub.FixInexactEdges(
             FixInexactEdgesRequest(inexact_edge_problem_area_id=self._id_grpc)
         )
@@ -303,7 +288,7 @@ class SmallFaceProblemAreas(ProblemArea):
         if not self.faces or not self.faces[0].body:
             return RepairToolMessage(False, [], [])
 
-        parent_design = ProblemArea.get_root_component(self.faces[0].body)
+        parent_design = get_design_from_face(self.faces[0])
         response = self._repair_stub.FixSmallFaces(
             FixSmallFacesRequest(small_face_problem_area_id=self._id_grpc)
         )
@@ -352,7 +337,7 @@ class SplitEdgeProblemAreas(ProblemArea):
         if not self.edges or not self.edges[0].faces or not self.edges[0].faces[0].body:
             return RepairToolMessage(False, [], [])
 
-        parent_design = ProblemArea.get_root_component(self.edges[0].faces[0].body)
+        parent_design = get_design_from_edge(self.edges[0])
         response = self._repair_stub.FixSplitEdges(
             FixSplitEdgesRequest(split_edge_problem_area_id=self._id_grpc)
         )
@@ -401,7 +386,7 @@ class StitchFaceProblemAreas(ProblemArea):
         if not self.bodies:
             return RepairToolMessage(False, [], [])
 
-        parent_design = ProblemArea.get_root_component(self.bodies[0])
+        parent_design = get_design_from_body(self.bodies[0])
         response = self._repair_stub.FixStitchFaces(
             FixStitchFacesRequest(stitch_face_problem_area_id=self._id_grpc)
         )
