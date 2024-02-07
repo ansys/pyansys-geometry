@@ -39,6 +39,7 @@ from ansys.geometry.core.misc.checks import (
     check_ndarray_is_not_none,
     check_pint_unit_compatibility,
     check_type,
+    check_type_all_elements_in_iterable,
     check_type_equivalence,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance

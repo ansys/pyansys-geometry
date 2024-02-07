@@ -31,7 +31,6 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FindStitchFacesRequest,
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
-from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List
 from google.protobuf.wrappers_pb2 import DoubleValue
 
@@ -65,7 +64,6 @@ class RepairTools:
         self._grpc_client = grpc_client
         self._repair_stub = RepairToolsStub(self._grpc_client.channel)
 
-    @check_input_types
     def find_split_edges(
         self, bodies: List["Body"], angle: Real = 0.0, length: Real = 0.0
     ) -> List[SplitEdgeProblemAreas]:
@@ -104,14 +102,13 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         return [
             SplitEdgeProblemAreas(
-                res.id,
+                str(res.id),
                 self._grpc_client,
                 get_edges_from_ids(parent_design, res.edge_monikers),
             )
             for res in problem_areas_response.result
         ]
 
-    @check_input_types
     def find_extra_edges(self, bodies: List["Body"]) -> List[ExtraEdgeProblemAreas]:
         """
         Find the extra edges in the given list of bodies.
@@ -140,14 +137,13 @@ class RepairTools:
 
         return [
             ExtraEdgeProblemAreas(
-                res.id,
+                str(res.id),
                 self._grpc_client,
                 get_edges_from_ids(parent_design, res.edge_monikers),
             )
             for res in problem_areas_response.result
         ]
 
-    @check_input_types
     def find_inexact_edges(self, bodies: List["Body"]) -> List[InexactEdgeProblemAreas]:
         """
         Find inexact edges in the given list of bodies.
@@ -177,14 +173,13 @@ class RepairTools:
 
         return [
             InexactEdgeProblemAreas(
-                res.id,
+                str(res.id),
                 self._grpc_client,
                 get_edges_from_ids(parent_design, res.edge_monikers),
             )
             for res in problem_areas_response.result
         ]
 
-    @check_input_types
     def find_duplicate_faces(self, bodies: List["Body"]) -> List[DuplicateFaceProblemAreas]:
         """
         Find the duplicate face problem areas.
@@ -213,14 +208,13 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         return [
             DuplicateFaceProblemAreas(
-                res.id,
+                str(res.id),
                 self._grpc_client,
                 get_faces_from_ids(parent_design, res.face_monikers),
             )
             for res in problem_areas_response.result
         ]
 
-    @check_input_types
     def find_missing_faces(self, bodies: List["Body"]) -> List[MissingFaceProblemAreas]:
         """
         Find the missing faces.
@@ -248,14 +242,13 @@ class RepairTools:
 
         return [
             MissingFaceProblemAreas(
-                res.id,
+                str(res.id),
                 self._grpc_client,
                 get_edges_from_ids(parent_design, res.edge_monikers),
             )
             for res in problem_areas_response.result
         ]
 
-    @check_input_types
     def find_small_faces(self, bodies: List["Body"]) -> List[SmallFaceProblemAreas]:
         """
         Find the small face problem areas.
@@ -284,14 +277,13 @@ class RepairTools:
 
         return [
             SmallFaceProblemAreas(
-                res.id,
+                str(res.id),
                 self._grpc_client,
                 get_faces_from_ids(parent_design, res.face_monikers),
             )
             for res in problem_areas_response.result
         ]
 
-    @check_input_types
     def find_stitch_faces(self, bodies: List["Body"]) -> List[StitchFaceProblemAreas]:
         """
         Return the list of stitch face problem areas.
@@ -316,7 +308,7 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         return [
             StitchFaceProblemAreas(
-                res.id,
+                str(res.id),
                 self._grpc_client,
                 get_bodies_from_ids(parent_design, res.body_monikers),
             )

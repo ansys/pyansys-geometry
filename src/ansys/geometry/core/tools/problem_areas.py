@@ -31,12 +31,12 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FixStitchFacesRequest,
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
-from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List
 from google.protobuf.wrappers_pb2 import Int32Value
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.misc import (
+    check_type_all_elements_in_iterable,
     get_design_from_body,
     get_design_from_edge,
     get_design_from_face,
@@ -94,10 +94,15 @@ class DuplicateFaceProblemAreas(ProblemArea):
         List of faces associated with the design.
     """
 
-    @check_input_types
     def __init__(self, id: str, grpc_client: GrpcClient, faces: List["Face"]):
         """Initialize a new instance of the duplicate face problem area class."""
         super().__init__(id, grpc_client)
+
+        from ansys.geometry.core.designer.face import Face
+
+        # Verify that all elements in the list are of type Face
+        check_type_all_elements_in_iterable(faces, Face)
+
         self._faces = faces
 
     @property
@@ -145,10 +150,15 @@ class MissingFaceProblemAreas(ProblemArea):
         List of edges associated with the design.
     """
 
-    @check_input_types
     def __init__(self, id: str, grpc_client: GrpcClient, edges: List["Edge"]):
         """Initialize a new instance of the missing face problem area class."""
         super().__init__(id, grpc_client)
+
+        from ansys.geometry.core.designer.edge import Edge
+
+        # Verify that all elements in the list are of type Edge
+        check_type_all_elements_in_iterable(edges, Edge)
+
         self._edges = edges
 
     @property
@@ -195,10 +205,15 @@ class InexactEdgeProblemAreas(ProblemArea):
         List of edges associated with the design.
     """
 
-    @check_input_types
     def __init__(self, id: str, grpc_client: GrpcClient, edges: List["Edge"]):
         """Initialize a new instance of the inexact edge problem area class."""
         super().__init__(id, grpc_client)
+
+        from ansys.geometry.core.designer.edge import Edge
+
+        # Verify that all elements in the list are of type Edge
+        check_type_all_elements_in_iterable(edges, Edge)
+
         self._edges = edges
 
     @property
@@ -245,10 +260,15 @@ class ExtraEdgeProblemAreas(ProblemArea):
         List of edges associated with the design.
     """
 
-    @check_input_types
     def __init__(self, id: str, grpc_client: GrpcClient, edges: List["Edge"]):
         """Initialize a new instance of the extra edge problem area class."""
         super().__init__(id, grpc_client)
+
+        from ansys.geometry.core.designer.edge import Edge
+
+        # Verify that all elements in the list are of type Edge
+        check_type_all_elements_in_iterable(edges, Edge)
+
         self._edges = edges
 
     @property
@@ -271,10 +291,15 @@ class SmallFaceProblemAreas(ProblemArea):
         List of edges associated with the design.
     """
 
-    @check_input_types
     def __init__(self, id: str, grpc_client: GrpcClient, faces: List["Face"]):
         """Initialize a new instance of the small face problem area class."""
         super().__init__(id, grpc_client)
+
+        from ansys.geometry.core.designer.face import Face
+
+        # Verify that all elements in the list are of type Face
+        check_type_all_elements_in_iterable(faces, Face)
+
         self._faces = faces
 
     @property
@@ -321,10 +346,15 @@ class SplitEdgeProblemAreas(ProblemArea):
         List of edges associated with the design.
     """
 
-    @check_input_types
     def __init__(self, id: str, grpc_client: GrpcClient, edges: List["Edge"]):
         """Initialize a new instance of the split edge problem area class."""
         super().__init__(id, grpc_client)
+
+        from ansys.geometry.core.designer.edge import Edge
+
+        # Verify that all elements in the list are of type Edge
+        check_type_all_elements_in_iterable(edges, Edge)
+
         self._edges = edges
 
     @property
@@ -371,10 +401,15 @@ class StitchFaceProblemAreas(ProblemArea):
         List of bodies associated with the design.
     """
 
-    @check_input_types
     def __init__(self, id: str, grpc_client: GrpcClient, bodies: List["Body"]):
         """Initialize a new instance of the stitch face problem area class."""
         super().__init__(id, grpc_client)
+
+        from ansys.geometry.core.designer.body import Body
+
+        # Verify that all elements in the list are of type Body
+        check_type_all_elements_in_iterable(bodies, Body)
+
         self._bodies = bodies
 
     @property
