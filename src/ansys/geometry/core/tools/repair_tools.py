@@ -32,13 +32,15 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
 from beartype.typing import TYPE_CHECKING, List
-
-if TYPE_CHECKING:  # pragma: no cover
-    from ansys.geometry.core.designer.body import Body
-
 from google.protobuf.wrappers_pb2 import DoubleValue
 
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.misc import (
+    get_bodies_from_ids,
+    get_design_from_body,
+    get_edges_from_ids,
+    get_faces_from_ids,
+)
 from ansys.geometry.core.tools.problem_areas import (
     DuplicateFaceProblemAreas,
     ExtraEdgeProblemAreas,
@@ -49,6 +51,9 @@ from ansys.geometry.core.tools.problem_areas import (
     StitchFaceProblemAreas,
 )
 from ansys.geometry.core.typing import Real
+
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.designer.body import Body
 
 
 class RepairTools:
@@ -82,6 +87,9 @@ class RepairTools:
         List[SplitEdgeProblemAreas]
             List of objects representing split edge problem areas.
         """
+        if not bodies:
+            return []
+
         angle_value = DoubleValue(value=float(angle))
         length_value = DoubleValue(value=float(length))
         body_ids = [body.id for body in bodies]
@@ -91,12 +99,15 @@ class RepairTools:
                 bodies_or_faces=body_ids, angle=angle_value, distance=length_value
             )
         )
-
-        problem_areas = [
-            SplitEdgeProblemAreas(res.id, list(res.edge_monikers), self._grpc_client)
+        parent_design = get_design_from_body(bodies[0])
+        return [
+            SplitEdgeProblemAreas(
+                str(res.id),
+                self._grpc_client,
+                get_edges_from_ids(parent_design, res.edge_monikers),
+            )
             for res in problem_areas_response.result
         ]
-        return problem_areas
 
     def find_extra_edges(self, bodies: List["Body"]) -> List[ExtraEdgeProblemAreas]:
         """
@@ -115,15 +126,23 @@ class RepairTools:
         List[ExtraEdgeProblemArea]
             List of objects representing extra edge problem areas.
         """
+        if not bodies:
+            return []
+
         body_ids = [body.id for body in bodies]
         problem_areas_response = self._repair_stub.FindExtraEdges(
             FindExtraEdgesRequest(selection=body_ids)
         )
-        problem_areas = [
-            ExtraEdgeProblemAreas(res.id, list(res.edge_monikers), self._grpc_client)
+        parent_design = get_design_from_body(bodies[0])
+
+        return [
+            ExtraEdgeProblemAreas(
+                str(res.id),
+                self._grpc_client,
+                get_edges_from_ids(parent_design, res.edge_monikers),
+            )
             for res in problem_areas_response.result
         ]
-        return problem_areas
 
     def find_inexact_edges(self, bodies: List["Body"]) -> List[InexactEdgeProblemAreas]:
         """
@@ -142,15 +161,24 @@ class RepairTools:
         List[InExactEdgeProblemArea]
             List of objects representing inexact edge problem areas.
         """
+        if not bodies:
+            return []
+
         body_ids = [body.id for body in bodies]
         problem_areas_response = self._repair_stub.FindInexactEdges(
             FindInexactEdgesRequest(selection=body_ids)
         )
-        problem_areas = [
-            InexactEdgeProblemAreas(res.id, list(res.edge_monikers), self._grpc_client)
+
+        parent_design = get_design_from_body(bodies[0])
+
+        return [
+            InexactEdgeProblemAreas(
+                str(res.id),
+                self._grpc_client,
+                get_edges_from_ids(parent_design, res.edge_monikers),
+            )
             for res in problem_areas_response.result
         ]
-        return problem_areas
 
     def find_duplicate_faces(self, bodies: List["Body"]) -> List[DuplicateFaceProblemAreas]:
         """
@@ -169,15 +197,23 @@ class RepairTools:
         List[DuplicateFaceProblemAreas]
             List of objects representing duplicate face problem areas.
         """
+        if not bodies:
+            return []
+
         body_ids = [body.id for body in bodies]
         problem_areas_response = self._repair_stub.FindDuplicateFaces(
             FindDuplicateFacesRequest(faces=body_ids)
         )
-        problem_areas = [
-            DuplicateFaceProblemAreas(res.id, list(res.face_monikers), self._grpc_client)
+
+        parent_design = get_design_from_body(bodies[0])
+        return [
+            DuplicateFaceProblemAreas(
+                str(res.id),
+                self._grpc_client,
+                get_faces_from_ids(parent_design, res.face_monikers),
+            )
             for res in problem_areas_response.result
         ]
-        return problem_areas
 
     def find_missing_faces(self, bodies: List["Body"]) -> List[MissingFaceProblemAreas]:
         """
@@ -196,15 +232,22 @@ class RepairTools:
         List[MissingFaceProblemAreas]
             List of objects representing missing face problem areas.
         """
+        if not bodies:
+            return []
         body_ids = [body.id for body in bodies]
         problem_areas_response = self._repair_stub.FindMissingFaces(
             FindMissingFacesRequest(faces=body_ids)
         )
-        problem_areas = [
-            MissingFaceProblemAreas(res.id, list(res.edge_monikers), self._grpc_client)
+        parent_design = get_design_from_body(bodies[0])
+
+        return [
+            MissingFaceProblemAreas(
+                str(res.id),
+                self._grpc_client,
+                get_edges_from_ids(parent_design, res.edge_monikers),
+            )
             for res in problem_areas_response.result
         ]
-        return problem_areas
 
     def find_small_faces(self, bodies: List["Body"]) -> List[SmallFaceProblemAreas]:
         """
@@ -223,15 +266,23 @@ class RepairTools:
         List[SmallFaceProblemAreas]
             List of objects representing small face problem areas.
         """
+        if not bodies:
+            return []
+
         body_ids = [body.id for body in bodies]
         problem_areas_response = self._repair_stub.FindSmallFaces(
             FindSmallFacesRequest(selection=body_ids)
         )
-        problem_areas = [
-            SmallFaceProblemAreas(res.id, list(res.face_monikers), self._grpc_client)
+        parent_design = get_design_from_body(bodies[0])
+
+        return [
+            SmallFaceProblemAreas(
+                str(res.id),
+                self._grpc_client,
+                get_faces_from_ids(parent_design, res.face_monikers),
+            )
             for res in problem_areas_response.result
         ]
-        return problem_areas
 
     def find_stitch_faces(self, bodies: List["Body"]) -> List[StitchFaceProblemAreas]:
         """
@@ -254,8 +305,12 @@ class RepairTools:
         problem_areas_response = self._repair_stub.FindStitchFaces(
             FindStitchFacesRequest(faces=body_ids)
         )
-        problem_areas = [
-            StitchFaceProblemAreas(res.id, list(res.body_monikers), self._grpc_client)
+        parent_design = get_design_from_body(bodies[0])
+        return [
+            StitchFaceProblemAreas(
+                str(res.id),
+                self._grpc_client,
+                get_bodies_from_ids(parent_design, res.body_monikers),
+            )
             for res in problem_areas_response.result
         ]
-        return problem_areas
