@@ -326,20 +326,23 @@ class Modeler:
 
         .. note::
 
-            If arguments are passed to the script, they must be in the form of a dictionary. On the server
-            side, the script will receive the arguments as a dictionary of strings, under the variable name
-            ``argsDict``. For example, if the script is called with the arguments
-            ``run_discovery_script_file(..., script_args = {"length": "20"}, ...)``, the script
-            will receive the dictionary ``argsDict`` with the key-value pair ``{"length": "20"}``.
+            If arguments are passed to the script, they must be in the form of a dictionary.
+            On the server side, the script will receive the arguments as a dictionary of strings,
+            under the variable name ``argsDict``. For example, if the script is called with the
+            arguments ``run_discovery_script_file(..., script_args = {"length": "20"}, ...)``,
+            the script will receive the dictionary ``argsDict`` with the key-value pair
+            ``{"length": "20"}``.
 
         .. note::
 
-            If an output is expected from the script, it will be returned as a dictionary of strings. The keys
-            and values of the dictionary are the variables and their values that the script returns. However, it
-            is necessary that the script creates a dictionary called ``result`` with the variables and their values
-            that are expected to be returned. For example, if the script is expected to return the number of bodies
-            in the design, the script should create a dictionary called ``result`` with the key-value pair
-            ``{"numBodies": numBodies}``, where ``numBodies`` is the number of bodies in the design.
+            If an output is expected from the script, it will be returned as a dictionary of
+            strings. The keys and values of the dictionary are the variables and their values
+            that the script returns. However, it is necessary that the script creates a
+            dictionary called ``result`` with the variables and their values that are expected
+            to be returned. For example, if the script is expected to return the number of bodies
+            in the design, the script should create a dictionary called ``result`` with the
+            key-value pair ``{"numBodies": numBodies}``, where ``numBodies`` is the number of
+            bodies in the design.
 
         The implied API version of the script should match the API version of the running
         Geometry Service. DMS API versions 23.2.1 and later are supported. DMS is a
