@@ -22,6 +22,15 @@
 """Provides the PyAnsys Geometry miscellaneous subpackage."""
 
 from ansys.geometry.core.misc.accuracy import ANGLE_ACCURACY, LENGTH_ACCURACY, Accuracy
+from ansys.geometry.core.misc.auxiliary import (
+    get_bodies_from_ids,
+    get_design_from_body,
+    get_design_from_component,
+    get_design_from_edge,
+    get_design_from_face,
+    get_edges_from_ids,
+    get_faces_from_ids,
+)
 from ansys.geometry.core.misc.checks import (
     check_is_float_int,
     check_ndarray_is_all_nan,
@@ -30,6 +39,7 @@ from ansys.geometry.core.misc.checks import (
     check_ndarray_is_not_none,
     check_pint_unit_compatibility,
     check_type,
+    check_type_all_elements_in_iterable,
     check_type_equivalence,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
