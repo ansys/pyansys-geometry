@@ -90,13 +90,13 @@ Build the documentation
 
 .. note::
 
-  In order to build the documentation, you must have the Geometry Service
-  installed and running on your machine. The documentation is built using
-  the Geometry Service to generate examples. It is also recommended that the
+To build the documentation, you must have the Geometry Service
+  installed and running on your machine because it is used to generate the
+  examples in the documentation. It is also recommended that the
   service is running as a Docker container.
 
   If you do not have the Geometry Service installed, you can still build the
-  documentation, but the examples are not generated. In order to build the
+  documentation, but the examples are not generated. To build the
   documentation without the examples, define the following environment variable::
 
       # On Linux or macOS
@@ -108,8 +108,8 @@ Build the documentation
       # On Windows PowerShell
       $env:BUILD_EXAMPLES="false"
 
-To build the documentation locally, it is necessary to install the
-documentation dependencies. Run this command::
+To build the documentation locally, you must run this command to install the
+documentation dependencies::
 
   pip install -e .[doc]
 
@@ -136,10 +136,10 @@ Run tests
 
 PyAnsys Geometry uses `pytest <https://docs.pytest.org/en/stable/>`_ for testing.
 
-Pre-requisites
-^^^^^^^^^^^^^^
+Prerequisites
+^^^^^^^^^^^^^
 
-Prior to running the tests, you must install the test dependencies. Run this command::
+Prior to running the tests, you must run this command to install the test dependencies::
 
   pip install -e .[tests]
 
