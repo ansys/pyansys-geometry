@@ -96,7 +96,7 @@ Build the documentation
   service is running as a Docker container.
 
   If you do not have the Geometry Service installed, you can still build the
-  documentation, but the examples will not be generated. In order to build the
+  documentation, but the examples are not generated. In order to build the
   documentation without the examples, define the following environment variable::
 
       # On Linux or macOS
@@ -121,7 +121,7 @@ Then, navigate to the ``docs`` directory and run this command::
   # On Windows
   ./make.bat html
 
-The documentation will be built in the ``docs/_build/html`` directory.
+The documentation is built in the ``docs/_build/html`` directory.
 
 You can clean the documentation build by running this command::
 
@@ -167,7 +167,7 @@ To run the tests, navigate to the root directory of the repository and run this 
 .. note::
 
   The tests require the Geometry Service to be installed and running on your machine.
-  The tests will fail if the service is not running. It is expected for the Geometry
+  The tests fail if the service is not running. It is expected for the Geometry
   Service to be running as a Docker container.
 
   If you do not have the Geometry Service running as a Docker container, but you have it

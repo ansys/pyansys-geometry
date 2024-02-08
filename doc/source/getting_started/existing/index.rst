@@ -8,9 +8,9 @@ running, PyAnsys Geometry can be used to connect to it.
 
 .. warning::
 
-   Running a SpaceClaim or Discovery normal session will not suffice to be
+   Running a SpaceClaim or Discovery normal session does not suffice to be
    able to use it with PyAnsys Geometry. Both products need the ApiServer extension to be
-   running. In this case, we recommend users to launch the products directly from the PyAnsys
+   running. In this case, users are recommended to launch the products directly from the PyAnsys
    Geometry library as shown in :ref:`ref_creating_local_session` to ease the process.
 
 Establish the connection
