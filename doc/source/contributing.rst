@@ -90,7 +90,7 @@ Build the documentation
 
 .. note::
 
-To build the documentation, you must have the Geometry Service
+  To build the documentation, you must have the Geometry Service
   installed and running on your machine because it is used to generate the
   examples in the documentation. It is also recommended that the
   service is running as a Docker container.
