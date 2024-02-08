@@ -84,3 +84,93 @@ This way, it's not possible for you to push code that fails the style checks::
   trim trailing whitespace.................................................Passed
   Add License Headers......................................................Passed
   Validate GitHub Workflows................................................Passed
+
+Build the documentation
+-----------------------
+
+.. note::
+
+  In order to build the documentation, you must have the Geometry Service
+  installed and running on your machine. The documentation is built using
+  the Geometry Service to generate examples. It is also recommended that the
+  service is running as a Docker container.
+
+  If you do not have the Geometry Service installed, you can still build the
+  documentation, but the examples will not be generated. In order to build the
+  documentation without the examples, define the following environment variable::
+
+      # On Linux or macOS
+      export BUILD_EXAMPLES=false
+
+      # On Windows CMD
+      set BUILD_EXAMPLES=false
+
+      # On Windows PowerShell
+      $env:BUILD_EXAMPLES="false"
+
+To build the documentation locally, it is necessary to install the
+documentation dependencies. Run this command::
+
+  pip install -e .[doc]
+
+Then, navigate to the ``docs`` directory and run this command::
+
+  # On Linux or macOS
+  make html
+
+  # On Windows
+  ./make.bat html
+
+The documentation will be built in the ``docs/_build/html`` directory.
+
+You can clean the documentation build by running this command::
+
+  # On Linux or macOS
+  make clean
+
+  # On Windows
+  ./make.bat clean
+
+Run tests
+---------
+
+PyAnsys Geometry uses `pytest <https://docs.pytest.org/en/stable/>`_ for testing.
+
+Pre-requisites
+^^^^^^^^^^^^^^
+
+Prior to running the tests, you must install the test dependencies. Run this command::
+
+  pip install -e .[tests]
+
+Make sure to define the port and host of the service using the following environment variables::
+
+  # On Linux or macOS
+  export ANSRV_GEO_PORT=5000
+  export ANSRV_GEO_HOST=localhost
+
+  # On Windows CMD
+  set ANSRV_GEO_PORT=5000
+  set ANSRV_GEO_HOST=localhost
+
+  # On Windows PowerShell
+  $env:ANSRV_GEO_PORT=5000
+  $env:ANSRV_GEO_HOST="localhost"
+
+Running the tests
+^^^^^^^^^^^^^^^^^
+
+To run the tests, navigate to the root directory of the repository and run this command::
+
+  pytest
+
+.. note::
+
+  The tests require the Geometry Service to be installed and running on your machine.
+  The tests will fail if the service is not running. It is expected for the Geometry
+  Service to be running as a Docker container.
+
+  If you do not have the Geometry Service running as a Docker container, but you have it
+  running on your machine, you can still run the tests with the following argument::
+
+    pytest --use-existing-service=yes
