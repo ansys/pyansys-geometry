@@ -24,7 +24,7 @@ from beartype.typing import TYPE_CHECKING, Any, Iterable, Optional, Tuple, Union
 import numpy as np
 from pint import Unit
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer import Design
 
 

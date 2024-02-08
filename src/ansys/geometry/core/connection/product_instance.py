@@ -109,6 +109,20 @@ The argument to hide SpaceClaim's UI on the backend.
 To be used only with Ansys SpaceClaim.
 """
 
+BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY = "SPACECLAIM_MODE"
+"""
+SpaceClaim hidden backend's environment variable key.
+
+To be used only with Ansys SpaceClaim.
+"""
+
+BACKEND_SPACECLAIM_HIDDEN_ENVVAR_VALUE = "2"
+"""
+SpaceClaim hidden backend's environment variable value.
+
+To be used only with Ansys SpaceClaim.
+"""
+
 BACKEND_DISCOVERY_HIDDEN = "--hidden"
 """
 The argument to hide Discovery's UI on the backend.
@@ -256,6 +270,7 @@ def prepare_and_start_backend(
             + _manifest_path_provider(product_version, installations, manifest_path)
         )
         env_copy[BACKEND_API_VERSION_VARIABLE] = str(api_version)
+
     elif backend_type == BackendType.SPACECLAIM:
         args.append(os.path.join(installations[product_version], SPACECLAIM_FOLDER, SPACECLAIM_EXE))
         if hidden is True:
@@ -266,6 +281,8 @@ def prepare_and_start_backend(
             + _manifest_path_provider(product_version, installations, manifest_path)
         )
         env_copy[BACKEND_API_VERSION_VARIABLE] = str(api_version)
+        env_copy[BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY] = BACKEND_SPACECLAIM_HIDDEN_ENVVAR_VALUE
+
     elif backend_type == BackendType.WINDOWS_SERVICE:
         latest_version = get_latest_ansys_installation()[0]
         args.append(
