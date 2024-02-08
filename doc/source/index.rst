@@ -23,21 +23,27 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
         Understand key concepts and approaches for primitives,
         sketches, and model designs.
 
-    .. grid-item-card:: API reference :fa:`book-bookmark`
-        :padding: 2 2 2 2
-        :link: api/index
-        :link-type: doc
+    .. jinja:: main_toctree
 
-        Understand PyAnsys Geometry API endpoints, their capabilities,
-        and how to interact with them programmatically.
+        {% if build_api %}
+        .. grid-item-card:: API reference :fa:`book-bookmark`
+            :padding: 2 2 2 2
+            :link: api/index
+            :link-type: doc
 
-    .. grid-item-card:: Examples :fa:`scroll`
-        :padding: 2 2 2 2
-        :link: examples
-        :link-type: doc
+            Understand PyAnsys Geometry API endpoints, their capabilities,
+            and how to interact with them programmatically.
+        {% endif %}
 
-        Explore examples that show how to use PyAnsys Geometry to
-        perform many different types of operations.
+        {% if build_examples %}
+        .. grid-item-card:: Examples :fa:`scroll`
+            :padding: 2 2 2 2
+            :link: examples
+            :link-type: doc
+
+            Explore examples that show how to use PyAnsys Geometry to
+            perform many different types of operations.
+        {% endif %}
 
     .. grid-item-card:: Contribute :fa:`people-group`
         :padding: 2 2 2 2
