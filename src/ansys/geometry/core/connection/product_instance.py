@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -102,6 +102,41 @@ The argument to specify the backend's addin manifest file's path.
 To be used only with Ansys Discovery and Ansys SpaceClaim.
 """
 
+BACKEND_SPACECLAIM_HIDDEN = "/Headless=True"
+"""
+The argument to hide SpaceClaim's UI on the backend.
+
+To be used only with Ansys SpaceClaim.
+"""
+
+BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY = "SPACECLAIM_MODE"
+"""
+SpaceClaim hidden backend's environment variable key.
+
+To be used only with Ansys SpaceClaim.
+"""
+
+BACKEND_SPACECLAIM_HIDDEN_ENVVAR_VALUE = "2"
+"""
+SpaceClaim hidden backend's environment variable value.
+
+To be used only with Ansys SpaceClaim.
+"""
+
+BACKEND_DISCOVERY_HIDDEN = "--hidden"
+"""
+The argument to hide Discovery's UI on the backend.
+
+To be used only with Ansys Discovery.
+"""
+
+BACKEND_SPLASH_OFF = "/Splash=False"
+"""
+The argument to specify the backend's addin manifest file's path.
+
+To be used only with Ansys Discovery and Ansys SpaceClaim.
+"""
+
 
 class ProductInstance:
     """
@@ -143,6 +178,7 @@ def prepare_and_start_backend(
     timeout: int = 150,
     manifest_path: str = None,
     logs_folder: str = None,
+    hidden: bool = False,
 ) -> "Modeler":
     """
     Start the requested service locally using the ``ProductInstance`` class.
@@ -187,6 +223,7 @@ def prepare_and_start_backend(
         version. Only applicable for Ansys Discovery and Ansys SpaceClaim.
     logs_folder : sets the backend's logs folder path. If nothing is defined,
         the backend will use its default path.
+    hidden : starts the product hiding its UI. Default is ``False``.
 
     Raises
     ------
@@ -223,19 +260,29 @@ def prepare_and_start_backend(
 
     if backend_type == BackendType.DISCOVERY:
         args.append(os.path.join(installations[product_version], DISCOVERY_FOLDER, DISCOVERY_EXE))
+        if hidden is True:
+            args.append(BACKEND_DISCOVERY_HIDDEN)
+
+        # Here begins the spaceclaim arguments.
         args.append(BACKEND_SPACECLAIM_OPTIONS)
         args.append(
             BACKEND_ADDIN_MANIFEST_ARGUMENT
             + _manifest_path_provider(product_version, installations, manifest_path)
         )
         env_copy[BACKEND_API_VERSION_VARIABLE] = str(api_version)
+
     elif backend_type == BackendType.SPACECLAIM:
         args.append(os.path.join(installations[product_version], SPACECLAIM_FOLDER, SPACECLAIM_EXE))
+        if hidden is True:
+            args.append(BACKEND_SPACECLAIM_HIDDEN)
+            args.append(BACKEND_SPLASH_OFF)
         args.append(
             BACKEND_ADDIN_MANIFEST_ARGUMENT
             + _manifest_path_provider(product_version, installations, manifest_path)
         )
         env_copy[BACKEND_API_VERSION_VARIABLE] = str(api_version)
+        env_copy[BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY] = BACKEND_SPACECLAIM_HIDDEN_ENVVAR_VALUE
+
     elif backend_type == BackendType.WINDOWS_SERVICE:
         latest_version = get_latest_ansys_installation()[0]
         args.append(
@@ -254,18 +301,58 @@ def prepare_and_start_backend(
 
     instance = ProductInstance(_start_program(args, env_copy).pid)
 
+    # Verify that the backend is ready to accept connections
+    # before returning the Modeler instance.
+    LOG.info("Waiting for backend to be ready...")
+    _wait_for_backend(host, port, timeout)
+
     return Modeler(
         host=host, port=port, timeout=timeout, product_instance=instance, backend_type=backend_type
     )
 
 
-def get_available_port():
-    """Return an available port to be used."""
+def get_available_port() -> int:
+    """
+    Return an available port to be used.
+
+    Returns
+    -------
+    int
+        The available port.
+    """
     sock = socket.socket()
     sock.bind((socket.gethostname(), 0))
     port = sock.getsockname()[1]
     sock.close()
     return port
+
+
+def _wait_for_backend(host: str, port: int, timeout: int):
+    """
+    Check if the backend is ready to accept connections.
+
+    Parameters
+    ----------
+    host : str
+        The backend's ip address.
+    port : int
+        The backend's port number.
+    timeout : int
+        The timeout in seconds.
+    """
+    import time
+
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            if s.connect_ex((host, port)) == 0:
+                LOG.debug("Backend is ready to accept connections.")
+                return
+            else:
+                LOG.debug("Still waiting for backend to be ready... Retrying in 5 seconds.")
+                time.sleep(5)
+
+    raise ConnectionError("Timeout while waiting for backend to be ready.")
 
 
 def _is_port_available(port: int, host: str = "localhost") -> bool:
@@ -297,9 +384,20 @@ def _manifest_path_provider(
             )
 
     # Default manifest path
-    return os.path.join(
+    def_manifest_path = os.path.join(
         available_installations[version], ADDINS_SUBFOLDER, BACKEND_SUBFOLDER, MANIFEST_FILENAME
     )
+
+    if os.path.exists(def_manifest_path):
+        return def_manifest_path
+    else:
+        msg = (
+            "Default manifest file's path does not exist."
+            " Please specify a valid manifest."
+            f" The ApiServer Add-In seems to be missing in {os.path.dirname(def_manifest_path)}"
+        )
+        LOG.error(msg)
+        raise RuntimeError(msg)
 
 
 def _start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Popen:
@@ -335,7 +433,7 @@ def _check_minimal_versions(latest_installed_version: int) -> None:
 
     Check that at least V232 is installed.
     """
-    if latest_installed_version < 232:
+    if abs(latest_installed_version) < 232:
         msg = (
             "PyAnsys Geometry is compatible with Ansys Products from version 23.2.1. "
             + "Please install Ansys products 23.2.1 or later."

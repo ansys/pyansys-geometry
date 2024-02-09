@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -705,3 +705,46 @@ def test_plot_design_point(modeler: Modeler, verify_image_cache):
         plot_list,
         screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_design_point.png"),
     )
+
+
+def test_plot_clipping(modeler: Modeler, verify_image_cache):
+    design = modeler.create_design("Clipping")
+    ph = PlotterHelper()
+
+    plot_list = []
+    # Create a Body cylinder
+    cylinder = Sketch()
+    cylinder.circle(Point2D([10, 10], UNITS.m), 1.0)
+    cylinder_body = design.extrude_sketch("JustACyl", cylinder, Quantity(10, UNITS.m))
+
+    origin = Point3D([10.0, 10.0, 5.0], UNITS.m)
+    plane = Plane(origin=origin, direction_x=[0, 0, 1], direction_y=[0, 1, 0])
+    ph.add(cylinder_body, clipping_plane=plane)
+
+    origin = Point3D([10.0, 10.0, 5.0], UNITS.m)
+    plane = Plane(origin=origin, direction_x=[0, 0, 1], direction_y=[0, 1, 0])
+    ph.add(cylinder, clipping_plane=plane)
+    # Create a Body box
+    box2 = Sketch()
+    box2.box(Point2D([-10, 20], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+    box_body2 = design.extrude_sketch("JustABox", box2, Quantity(10, UNITS.m))
+
+    origin = Point3D([-10.0, 20.0, 5.0], UNITS.m)
+    plane = Plane(origin=origin, direction_x=[1, 1, 1], direction_y=[-1, 0, 1])
+    ph.add(box_body2, clipping_plane=plane)
+
+    origin = Point3D([0, 0, 0], UNITS.m)
+    plane = Plane(origin=origin, direction_x=[1, 1, 1], direction_y=[-1, 0, 1])
+    sphere = pv.Sphere()
+    ph.add(sphere, clipping_plane=plane)
+
+    origin = Point3D([5, -10, 10], UNITS.m)
+    plane = Plane(origin=origin, direction_x=[1, 1, 1], direction_y=[-1, 0, 1])
+    sphere = pv.Sphere(center=(5, -10, -10))
+    ph.add(pv.MultiBlock([sphere]), clipping_plane=plane)
+
+    sphere1 = pv.Sphere(center=(-5, -10, -10))
+    sphere2 = pv.Sphere(center=(-10, -10, -10))
+    ph.add([sphere1, sphere2], clipping_plane=plane)
+
+    ph.plot()

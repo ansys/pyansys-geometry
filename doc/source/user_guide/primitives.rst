@@ -41,5 +41,7 @@ the 2D feature executes as expected:
 
 .. code:: python
 
+    from ansys.geometry.core.math import Plane, Point3D, UnitVector3D
+
     origin = Point3D([42, 99, 13])
     plane = Plane(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))

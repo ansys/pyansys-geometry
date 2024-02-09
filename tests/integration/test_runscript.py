@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -33,9 +33,8 @@ from ansys.geometry.core.sketch import Sketch
 
 # Python (.py)
 def test_python_simple_script(modeler: Modeler, skip_not_on_linux_service):
-    args = {}
     result = modeler.run_discovery_script_file(
-        "./tests/integration/files/disco_scripts/simple_script.py", args
+        "./tests/integration/files/disco_scripts/simple_script.py"
     )
     pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)
     pattern_doc = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.Document", re.IGNORECASE)
@@ -45,10 +44,9 @@ def test_python_simple_script(modeler: Modeler, skip_not_on_linux_service):
 
 
 def test_python_failing_script(modeler: Modeler, skip_not_on_linux_service):
-    args = {}
     with pytest.raises(GeometryRuntimeError):
         modeler.run_discovery_script_file(
-            "./tests/integration/files/disco_scripts/failing_script.py", args
+            "./tests/integration/files/disco_scripts/failing_script.py"
         )
 
 
@@ -73,9 +71,8 @@ def test_python_integrated_script(modeler: Modeler, skip_not_on_linux_service):
 
 # SpaceClaim (.scscript)
 def test_scscript_simple_script(modeler: Modeler, skip_not_on_linux_service):
-    args = {}
     result = modeler.run_discovery_script_file(
-        "./tests/integration/files/disco_scripts/simple_script.scscript", args
+        "./tests/integration/files/disco_scripts/simple_script.scscript"
     )
     assert len(result) == 2
     pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)
@@ -87,9 +84,8 @@ def test_scscript_simple_script(modeler: Modeler, skip_not_on_linux_service):
 
 # Discovery (.dscript)
 def test_dscript_simple_script(modeler: Modeler, skip_not_on_linux_service):
-    args = {}
     result = modeler.run_discovery_script_file(
-        "./tests/integration/files/disco_scripts/simple_script.dscript", args
+        "./tests/integration/files/disco_scripts/simple_script.dscript"
     )
     assert len(result) == 2
     pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)
