@@ -65,6 +65,9 @@ jobs:
     name: Docker Style Check
     runs-on: ubuntu-latest
     steps:
+      - name: "Install Git and clone project"
+        uses: actions/checkout@v4
+
       - name: PyAnsys documentation style checks
         uses: ansys/actions/docker-style@main
         with:
