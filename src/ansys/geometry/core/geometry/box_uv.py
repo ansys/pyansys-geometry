@@ -148,13 +148,6 @@ class BoxUV:
             raise Exception("Invalid Method On Empty Object Exception" + type(self).__name__)
         return BoxUV(self.interval_u.inflate(delta_u), self.interval_v.inflate(delta_v))
 
-    def inflate(self, delta: Real) -> "BoxUV":
-        """Enlarge the BoxUV by a given delta."""
-        if self.is_empty():
-            # throw Error.InvalidMethodOnEmptyObjectException(GetType())
-            raise Exception("Invalid Method On Empty Object Exception" + type(self).__name__)
-        return BoxUV(self.interval_u.inflate(delta), self.interval_v.inflate(delta))
-
     def get_corner(self, location: LocationUV) -> ParamUV:
         """Return the corner location of the BoxUV."""
         u = 0

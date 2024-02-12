@@ -24,7 +24,7 @@ from ansys.api.geometry.v0.commands_pb2 import CreateSketchLineRequest
 import numpy as np
 import pytest
 
-from ansys.geometry.core.connection.conversions import point3d_to_grpc_point
+from ansys.geometry.core.connection import BackendType, point3d_to_grpc_point
 from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.designer.face import SurfaceType
 from ansys.geometry.core.geometry import Circle, Line
@@ -80,13 +80,14 @@ def create_hedgehog(modeler: Modeler):
                 p2 = design.add_design_point("hair", p1 + normal / 800).value
                 create_sketch_line(design, p1, p2)
                 current_gap += 1
-    # Add isoparametric curves
-    param = 0.20
-    while param <= 1:
-        for face in body.faces:
-            face.create_isoparametric_curves(True, param)  # u
-            face.create_isoparametric_curves(False, param)  # v
-        param += 0.20
+    # Add isoparametric curves, not on linux
+    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
+        param = 0.20
+        while param <= 1:
+            for face in body.faces:
+                face.create_isoparametric_curves(True, param)  # u
+                face.create_isoparametric_curves(False, param)  # v
+            param += 0.20
     return design
 
 
