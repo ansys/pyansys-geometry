@@ -338,7 +338,7 @@ def test_faces_edges(modeler: Modeler):
     # Build independent components and bodies
     polygon_comp = design.add_component("PolygonComponent")
     body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch, Quantity(30, UNITS.mm))
-    design.download(r"D:\Work\Projects\PyGeometry\test104.scdocx")
+
     # Get all its faces
     faces = body_polygon_comp.faces
     assert len(faces) == 7  # top + bottom + sides
