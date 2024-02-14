@@ -52,7 +52,7 @@ class GeomPlotter(PlotterInterface):
     """
 
     def __init__(self, use_trame: bool | None = None, allow_picking: bool | None = False) -> None:
-        """Initialize GeomPlotter class."""
+        """Initialize the GeomPlotter class."""
         super().__init__(use_trame, allow_picking, plot_picked_names=True, show_plane=True)
         self.add_widget(ShowDesignPoints(self))
 

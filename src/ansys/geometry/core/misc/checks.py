@@ -20,11 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides functions for performing common checks."""
-from beartype.typing import TYPE_CHECKING, Any, Optional, Tuple, Union
+from beartype.typing import TYPE_CHECKING, Any, Iterable, Optional, Tuple, Union
 import numpy as np
 from pint import Unit
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer import Design
 
 
@@ -280,3 +280,25 @@ def check_type(input: object, expected_type: Union[type, Tuple[type, Any]]) -> N
         raise TypeError(
             f"Provided type {type(input)} is invalid. Type {expected_type} is expected."
         )
+
+
+def check_type_all_elements_in_iterable(
+    input: Iterable, expected_type: Union[type, Tuple[type, Any]]
+) -> None:
+    """
+    Check if all elements in an iterable are of the same type as expected types.
+
+    Parameters
+    ----------
+    input : Iterable
+        Input iterable.
+    expected_type : Union[type, Tuple[type, ...]]
+        One or more types to compare the input object against.
+
+    Raises
+    ------
+    TypeError
+        If one of the elements in the iterable does not match the one or more expected types.
+    """
+    for elem in input:
+        check_type(elem, expected_type)
