@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides plotting for various PyAnsys Geometry objects."""
-from ansys.visualizer import Colors, EdgePlot, MeshObjectPlot, Plotter
+from ansys.visualizer import Colors, EdgePlot, MeshObjectPlot, PlotterInterface
 from beartype.typing import Any, Dict, List, Optional, Union
 import numpy as np
 import pyvista as pv
@@ -37,9 +37,18 @@ from ansys.geometry.core.plotting.widgets import ShowDesignPoints
 from ansys.geometry.core.sketch import Sketch
 
 
-class GeomPlotter(Plotter):
+class GeomPlotter(PlotterInterface):
     def __init__(self, use_trame: bool | None = None, allow_picking: bool | None = False) -> None:
-        super().__init__(use_trame, allow_picking)
+        """Plotter for PyAnsys Geometry objects. This class is an implementation of the PlotterInterface class.
+        
+        Parameters
+        ----------
+        use_trame : bool | None, optional
+            Whether to use trame visualizer or not, by default None.
+        allow_picking : bool | None, optional
+            Whether to allow picking or not, by default False.
+        """
+        super().__init__(use_trame, allow_picking, plot_picked_names=True, show_plane=True)
         self.add_widget(ShowDesignPoints(self))
 
     def add_frame(self, frame: Frame, plotting_options: Optional[Dict] = None) -> None:
@@ -70,7 +79,7 @@ class GeomPlotter(Plotter):
         axes.SetUserMatrix(pv.vtkmatrix_from_array(arr))
 
         # Render the actor in the scene
-        self._pl.scene.add_actor(axes)
+        self.pv_interface.scene.add_actor(axes)
 
     def add_plane(
         self,
@@ -101,12 +110,12 @@ class GeomPlotter(Plotter):
         plane_mesh = pv.Plane(
             center=plane.origin.tolist(), direction=plane.direction_z.tolist(), **plane_options
         )
-
+        plane_meshobj = MeshObjectPlot(custom_object=plane, mesh=plane_mesh)
         # Impose default plotting options if none provided
         if plotting_options is None:
             plotting_options = dict(color="blue", opacity=0.1)
 
-        self._pl.scene.add_mesh(plane_mesh, **plotting_options)
+        self.pv_interface.add(plane_meshobj, **plotting_options)
 
     def add_sketch(
         self,
@@ -142,8 +151,10 @@ class GeomPlotter(Plotter):
             logger.warning("Clipping is not available in Sketch objects.")
             plotting_options.pop("clipping_plane")
 
-        self.add_sketch_polydata(sketch.sketch_polydata_faces(), opacity=0.7, **plotting_options)
-        self.add_sketch_polydata(sketch.sketch_polydata_edges(), **plotting_options)
+        self.add_sketch_polydata(
+            sketch.sketch_polydata_faces(), sketch, opacity=0.7, **plotting_options
+        )
+        self.add_sketch_polydata(sketch.sketch_polydata_edges(), sketch, **plotting_options)
 
     def add_body_edges(self, body_plot: MeshObjectPlot, **plotting_options: Optional[dict]) -> None:
         """
@@ -192,17 +203,9 @@ class GeomPlotter(Plotter):
         # Use the default PyAnsys Geometry add_mesh arguments
         self._pl.set_add_mesh_defaults(plotting_options)
         dataset = body.tessellate(merge=merge)
-        if "clipping_plane" in plotting_options:
-            dataset = self.clip(dataset, plotting_options.get("clipping_plane"))
-            plotting_options.pop("clipping_plane", None)
-        if isinstance(dataset, pv.MultiBlock):
-            actor, _ = self._pl.scene.add_composite(dataset, **plotting_options)
-        else:
-            actor = self._pl.scene.add_mesh(dataset, **plotting_options)
-
-        body_plot = MeshObjectPlot(custom_object=body, mesh=dataset, actor=actor)
+        body_plot = MeshObjectPlot(custom_object=body, mesh=dataset)
+        self.pv_interface.add(body_plot, **plotting_options)
         self.add_body_edges(body_plot)
-        self._object_to_actors_map[actor] = body_plot
 
     def add_component(
         self,
@@ -210,7 +213,7 @@ class GeomPlotter(Plotter):
         merge_component: bool = False,
         merge_bodies: bool = False,
         **plotting_options,
-    ) -> str:
+    ) -> None:
         """
         Add a component to the scene.
 
@@ -229,28 +232,16 @@ class GeomPlotter(Plotter):
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
-
-        Returns
-        -------
-        str
-            Name of the added PyVista actor.
         """
         # Use the default PyAnsys Geometry add_mesh arguments
         self.__set_add_mesh_defaults(plotting_options)
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
+        component_polydata = MeshObjectPlot(component, dataset)
+        self.pv_interface.add(component_polydata, **plotting_options)
 
-        if "clipping_plane" in plotting_options:
-            dataset = self.clip(dataset, plotting_options["clipping_plane"])
-            plotting_options.pop("clipping_plane", None)
-
-        if isinstance(dataset, pv.MultiBlock):
-            actor, _ = self._pl.scene.add_composite(dataset, **plotting_options)
-        else:
-            actor = self._pl.scene.add_mesh(dataset, **plotting_options)
-
-        return actor.name
-
-    def add_sketch_polydata(self, polydata_entries: List[pv.PolyData], **plotting_options) -> None:
+    def add_sketch_polydata(
+        self, polydata_entries: List[pv.PolyData], sketch: Sketch, **plotting_options
+    ) -> None:
         """
         Add sketches to the scene from PyVista polydata.
 
@@ -267,11 +258,8 @@ class GeomPlotter(Plotter):
         for polydata in polydata_entries:
             mb.append(polydata)
 
-        if "clipping_plane" in plotting_options:
-            mb = self.clip(mb, plane=plotting_options["clipping_plane"])
-            plotting_options.pop("clipping_plane", None)
-
-        self._pl.scene.add_mesh(mb, color=Colors.EDGE_COLOR.value, **plotting_options)
+        sk_polydata = MeshObjectPlot(custom_object=sketch, mesh=mb)
+        self.add(sk_polydata, color=Colors.EDGE_COLOR.value, **plotting_options)
 
     def add_design_point(self, design_point: DesignPoint, **plotting_options) -> None:
         """
@@ -282,16 +270,46 @@ class GeomPlotter(Plotter):
         design_point : DesignPoint
             DesignPoint to add.
         """
+        design_point = MeshObjectPlot(object=design_point, add_body_edges=False)
+
         # get the actor for the DesignPoint
-        actor = self._pl.scene.add_mesh(design_point._to_polydata(), **plotting_options)
+        self.pv_interface.add(design_point, **plotting_options)
 
-        # save the actor to the object/actor map
-        design_point = MeshObjectPlot(actor=actor, object=design_point, add_body_edges=False)
+    def add_list(
+        self,
+        plotting_list: List[Any],
+        filter: str = None,
+        **plotting_options,
+    ) -> None:
+        """
+        Add a list of any type of object to the scene.
 
-        self._geom_object_actors_map[actor] = design_point
+        These types of objects are supported: ``Body``, ``Component``, ``List[pv.PolyData]``,
+        ``pv.MultiBlock``, and ``Sketch``.
 
-    # Override add_custom to add custom meshes
-    def add_custom(self, object: Any, **plotting_options) -> None:
+        Parameters
+        ----------
+        plotting_list : List[Any]
+            List of objects you want to plot.
+        merge_component : bool, default: False
+            Whether to merge the component into a single dataset. When
+            ``True``, all the individual bodies are effectively combined
+            into a single dataset without any hierarchy.
+        merge_bodies : bool, default: False
+            Whether to merge each body into a single dataset. When ``True``,
+            all the faces of each individual body are effectively combined
+            into a single dataset without separating faces.
+        filter : str, default: None
+            Regular expression with the desired name or names you want to include in the plotter.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+        """
+        for object in plotting_list:
+            _ = self.add(object, filter, **plotting_options)
+
+    # Override add function from plotter
+    def add(self, object: Any, filter: str = None, **plotting_options) -> None:
         """
         Add a custom mesh to the plotter.
 
@@ -317,12 +335,14 @@ class GeomPlotter(Plotter):
         if isinstance(object, DesignPoint):
             self.add_design_point(object, **plotting_options)
         elif isinstance(object, Sketch):
-            self.plot_sketch(object, **plotting_options)
+            self.add_sketch(object, **plotting_options)
         elif isinstance(object, Body) or isinstance(object, MasterBody):
             self.add_body(object, merge_bodies, **plotting_options)
         elif isinstance(object, Design) or isinstance(object, Component):
             self.add_component(object, merge_components, merge_bodies, **plotting_options)
         elif isinstance(object, List) and isinstance(object[0], pv.PolyData):
             self.add_sketch_polydata(object, **plotting_options)
+        elif isinstance(object, List):
+            self.add_list(object, filter, **plotting_options)
         else:
-            self.add(object, **plotting_options)
+            self.pv_interface.add(object, filter, **plotting_options)
