@@ -25,10 +25,7 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: 'python'
-        config: |
-          paths:
-            - src
-        # For more details on CodeQL's query packs, refer to: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
+        config-file: ./.github/codeql-config.yml
 
     - name: Autobuild
       uses: github/codeql-action/autobuild@v3
