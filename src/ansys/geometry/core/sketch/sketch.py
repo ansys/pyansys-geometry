@@ -836,8 +836,6 @@ class Sketch:
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         # Show the plot requested - i.e. all polydata in sketch
-        from ansys.visualizer import MeshObjectPlot
-
         from ansys.geometry.core.plotting import GeomPlotter
 
         if view_2d:

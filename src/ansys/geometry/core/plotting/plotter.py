@@ -21,7 +21,7 @@
 # SOFTWARE.
 """Provides plotting for various PyAnsys Geometry objects."""
 from ansys.visualizer import Colors, EdgePlot, MeshObjectPlot, PlotterInterface
-from beartype.typing import Any, Dict, List, Optional, Union
+from beartype.typing import Any, Dict, List, Optional
 import numpy as np
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
@@ -38,16 +38,21 @@ from ansys.geometry.core.sketch import Sketch
 
 
 class GeomPlotter(PlotterInterface):
+    """
+    Plotter for PyAnsys Geometry objects.
+
+    This class is an implementation of the PlotterInterface class.
+
+    Parameters
+    ----------
+    use_trame : bool | None, optional
+        Whether to use trame visualizer or not, by default None.
+    allow_picking : bool | None, optional
+        Whether to allow picking or not, by default False.
+    """
+
     def __init__(self, use_trame: bool | None = None, allow_picking: bool | None = False) -> None:
-        """Plotter for PyAnsys Geometry objects. This class is an implementation of the PlotterInterface class.
-        
-        Parameters
-        ----------
-        use_trame : bool | None, optional
-            Whether to use trame visualizer or not, by default None.
-        allow_picking : bool | None, optional
-            Whether to allow picking or not, by default False.
-        """
+        """Initialize GeomPlotter class."""
         super().__init__(use_trame, allow_picking, plot_picked_names=True, show_plane=True)
         self.add_widget(ShowDesignPoints(self))
 
