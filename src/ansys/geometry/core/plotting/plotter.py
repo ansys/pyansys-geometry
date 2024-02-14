@@ -206,7 +206,7 @@ class GeomPlotter(PlotterInterface):
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         # Use the default PyAnsys Geometry add_mesh arguments
-        self._pl.set_add_mesh_defaults(plotting_options)
+        self.pv_interface.set_add_mesh_defaults(plotting_options)
         dataset = body.tessellate(merge=merge)
         body_plot = MeshObjectPlot(custom_object=body, mesh=dataset)
         self.pv_interface.add(body_plot, **plotting_options)
@@ -239,13 +239,13 @@ class GeomPlotter(PlotterInterface):
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         # Use the default PyAnsys Geometry add_mesh arguments
-        self.__set_add_mesh_defaults(plotting_options)
+        self.pv_interface.set_add_mesh_defaults(plotting_options)
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
         component_polydata = MeshObjectPlot(component, dataset)
-        self.pv_interface.add(component_polydata, **plotting_options)
+        self.add(component_polydata, **plotting_options)
 
     def add_sketch_polydata(
-        self, polydata_entries: List[pv.PolyData], sketch: Sketch, **plotting_options
+        self, polydata_entries: List[pv.PolyData], sketch: Sketch = None, **plotting_options
     ) -> None:
         """
         Add sketches to the scene from PyVista polydata.
@@ -263,8 +263,11 @@ class GeomPlotter(PlotterInterface):
         for polydata in polydata_entries:
             mb.append(polydata)
 
-        sk_polydata = MeshObjectPlot(custom_object=sketch, mesh=mb)
-        self.add(sk_polydata, color=Colors.EDGE_COLOR.value, **plotting_options)
+        if sketch is None:
+            self.add(mb, color=Colors.EDGE_COLOR.value, **plotting_options)
+        else:
+            sk_polydata = MeshObjectPlot(custom_object=sketch, mesh=mb)
+            self.add(sk_polydata, color=Colors.EDGE_COLOR.value, **plotting_options)
 
     def add_design_point(self, design_point: DesignPoint, **plotting_options) -> None:
         """
@@ -275,12 +278,12 @@ class GeomPlotter(PlotterInterface):
         design_point : DesignPoint
             DesignPoint to add.
         """
-        design_point = MeshObjectPlot(object=design_point, add_body_edges=False)
+        design_point = MeshObjectPlot(custom_object=design_point, mesh=design_point._to_polydata())
 
         # get the actor for the DesignPoint
         self.pv_interface.add(design_point, **plotting_options)
 
-    def add_list(
+    def add_iter(
         self,
         plotting_list: List[Any],
         filter: str = None,
@@ -335,7 +338,6 @@ class GeomPlotter(PlotterInterface):
             plotting_options.pop("merge_components", None)
         else:
             merge_components = None
-
         # Add the custom object to the plotter
         if isinstance(object, DesignPoint):
             self.add_design_point(object, **plotting_options)
@@ -348,6 +350,10 @@ class GeomPlotter(PlotterInterface):
         elif isinstance(object, List) and isinstance(object[0], pv.PolyData):
             self.add_sketch_polydata(object, **plotting_options)
         elif isinstance(object, List):
-            self.add_list(object, filter, **plotting_options)
+            self.add_iter(object, filter, **plotting_options)
+        elif isinstance(object, MeshObjectPlot):
+            self.pv_interface.set_add_mesh_defaults(plotting_options)
+            self.pv_interface.add(object, filter, **plotting_options)
         else:
+            # any left type should be a PyVista object
             self.pv_interface.add(object, filter, **plotting_options)

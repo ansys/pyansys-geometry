@@ -1163,7 +1163,9 @@ class Body(IBody):
         from ansys.geometry.core.plotting import GeomPlotter
 
         meshobject = MeshObjectPlot(self, self.tessellate(merge=merge))
-        GeomPlotter(use_trame=use_trame).plot(meshobject, screenshot=screenshot, **plotting_options)
+        pl = GeomPlotter(use_trame=use_trame)
+        pl.add(meshobject, **plotting_options)
+        pl.plot(screenshot=screenshot)
 
     def intersect(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
         self.__generic_boolean_op(other, "intersect", "bodies do not intersect")

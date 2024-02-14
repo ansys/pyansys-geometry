@@ -35,7 +35,7 @@ dependencies = [
     "Pint>=0.18,<1",
     "protobuf>=3.20.2,<5",
     "pyvista>=0.37.0,<1",
-    "pyansys-visualizer@ git+https://github.com/ansys-internal/pyansys-visualizer/",
+    "pyansys-visualizer@git+https://github.com/ansys-internal/pyansys-visualizer/",
     "scipy>=1.7.3,<2",
     "six>=1.16.0,<2",
     "vtk>=9,<10",

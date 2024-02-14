@@ -1134,13 +1134,12 @@ class Component:
 
         from ansys.geometry.core.plotting import GeomPlotter
 
-        mesh_object = MeshObjectPlot(self.tessellate(merge_component, merge_bodies))
-
-        GeomPlotter(use_trame=use_trame).plot(
-            mesh_object,
-            screenshot=screenshot,
-            **plotting_options,
+        mesh_object = MeshObjectPlot(
+            custom_object=self, mesh=self.tessellate(merge_component, merge_bodies)
         )
+        pl = GeomPlotter(use_trame=use_trame)
+        pl.add(mesh_object, **plotting_options)
+        pl.plot(screenshot=screenshot)
 
     def __repr__(self) -> str:
         """Represent the ``Component`` as a string."""
