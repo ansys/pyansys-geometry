@@ -39,8 +39,10 @@ from ansys.geometry.core.sketch import Sketch
 
 class GeomPlotter(PlotterInterface):
     def __init__(self, use_trame: bool | None = None, allow_picking: bool | None = False) -> None:
-        """Plotter for PyAnsys Geometry objects. This class is an implementation of the PlotterInterface class.
-        
+        """
+        Plotter for PyAnsys Geometry objects. This class is an implementation of the
+        PlotterInterface class.
+
         Parameters
         ----------
         use_trame : bool | None, optional
