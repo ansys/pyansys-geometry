@@ -46,7 +46,7 @@ from ansys.geometry.core.typing import Real
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.platform.instancemanagement import Instance
 
-    from ansys.geometry.core.connection.local_instance import LocalDockerInstance
+    from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
     from ansys.geometry.core.connection.product_instance import ProductInstance
     from ansys.geometry.core.designer.design import Design
 
@@ -68,9 +68,9 @@ class Modeler:
         is launched using `PyPIM <https://github.com/ansys/pypim>`_. This instance
         is deleted when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close>`
         method is called.
-    local_instance : LocalDockerInstance, default: None
-        Corresponding local instance when the Geometry service is launched using the
-        :func:`launch_local_modeler<ansys.geometry.core.connection.launcher.launch_local_modeler>`
+    docker_instance : LocalDockerInstance, default: None
+        Corresponding local Docker instance when the Geometry service is launched using the
+        :func:`launch_docker_modeler<ansys.geometry.core.connection.launcher.launch_docker_modeler>`
         method. This instance is deleted when the
         :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close>`
         method is called.
@@ -95,7 +95,7 @@ class Modeler:
         port: Union[str, int] = DEFAULT_PORT,
         channel: Optional[Channel] = None,
         remote_instance: Optional["Instance"] = None,
-        local_instance: Optional["LocalDockerInstance"] = None,
+        docker_instance: Optional["LocalDockerInstance"] = None,
         product_instance: Optional["ProductInstance"] = None,
         timeout: Optional[Real] = 120,
         logging_level: Optional[int] = logging.INFO,
@@ -108,7 +108,7 @@ class Modeler:
             port=port,
             channel=channel,
             remote_instance=remote_instance,
-            local_instance=local_instance,
+            docker_instance=docker_instance,
             product_instance=product_instance,
             timeout=timeout,
             logging_level=logging_level,
@@ -323,6 +323,26 @@ class Modeler:
     ) -> Tuple[Dict[str, str], Optional["Design"]]:
         """
         Run a Discovery script file.
+
+        .. note::
+
+            If arguments are passed to the script, they must be in the form of a dictionary.
+            On the server side, the script will receive the arguments as a dictionary of strings,
+            under the variable name ``argsDict``. For example, if the script is called with the
+            arguments ``run_discovery_script_file(..., script_args = {"length": "20"}, ...)``,
+            the script will receive the dictionary ``argsDict`` with the key-value pair
+            ``{"length": "20"}``.
+
+        .. note::
+
+            If an output is expected from the script, it will be returned as a dictionary of
+            strings. The keys and values of the dictionary are the variables and their values
+            that the script returns. However, it is necessary that the script creates a
+            dictionary called ``result`` with the variables and their values that are expected
+            to be returned. For example, if the script is expected to return the number of bodies
+            in the design, the script should create a dictionary called ``result`` with the
+            key-value pair ``{"numBodies": numBodies}``, where ``numBodies`` is the number of
+            bodies in the design.
 
         The implied API version of the script should match the API version of the running
         Geometry Service. DMS API versions 23.2.1 and later are supported. DMS is a
