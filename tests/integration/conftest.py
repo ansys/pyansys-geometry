@@ -1,3 +1,24 @@
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 """
 This testing module automatically connects to the Geometry service running at
 localhost:50051.
@@ -17,7 +38,7 @@ import pyvista as pv
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.defaults import GEOMETRY_SERVICE_DOCKER_IMAGE
-from ansys.geometry.core.connection.local_instance import GeometryContainers, LocalDockerInstance
+from ansys.geometry.core.connection.docker_instance import GeometryContainers, LocalDockerInstance
 
 pv.OFF_SCREEN = True
 
@@ -31,13 +52,13 @@ def docker_instance(use_existing_service):
     # 2) At least one of the Geometry service images for your OS is downloaded
     #    on the machine
     #
-    local_instance = None
+    docker_instance = None
 
     # Check 0)
     # If it is requested the connection to an existing service
-    # just return the local instance as None
+    # just return the local Docker instance as None
     if use_existing_service:
-        return local_instance
+        return docker_instance
 
     # Check 1)
     if LocalDockerInstance.is_docker_installed():
@@ -71,13 +92,13 @@ def docker_instance(use_existing_service):
 
         # Declare a LocalDockerInstance object if all checks went through
         if is_image_available:
-            local_instance = LocalDockerInstance(
+            docker_instance = LocalDockerInstance(
                 connect_to_existing_service=True,
                 restart_if_existing_service=True,
                 image=is_image_available_cont,
             )
 
-    return local_instance
+    return docker_instance
 
 
 @pytest.fixture(scope="session")
@@ -91,7 +112,7 @@ def modeler(docker_instance):
         pass
 
     modeler = Modeler(
-        local_instance=docker_instance, logging_level=logging.DEBUG, logging_file=log_file_path
+        docker_instance=docker_instance, logging_level=logging.DEBUG, logging_file=log_file_path
     )
 
     yield modeler

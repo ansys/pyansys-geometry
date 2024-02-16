@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -36,6 +36,7 @@ from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc.checks import ensure_design_is_active
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -172,6 +173,7 @@ class Face:
 
     @property
     @protect_grpc
+    @ensure_design_is_active
     def area(self) -> Quantity:
         """Calculated area of the face."""
         self._grpc_client.log.debug("Requesting face area from server.")
@@ -185,6 +187,7 @@ class Face:
 
     @property
     @protect_grpc
+    @ensure_design_is_active
     def edges(self) -> List[Edge]:
         """List of all edges of the face."""
         self._grpc_client.log.debug("Requesting face edges from server.")
@@ -193,6 +196,7 @@ class Face:
 
     @property
     @protect_grpc
+    @ensure_design_is_active
     def loops(self) -> List[FaceLoop]:
         """List of all loops of the face."""
         self._grpc_client.log.debug("Requesting face loops from server.")
@@ -228,6 +232,7 @@ class Face:
         return loops
 
     @protect_grpc
+    @ensure_design_is_active
     def face_normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:
         """
         Get the normal direction to the face evaluated at certain UV coordinates.
@@ -259,6 +264,7 @@ class Face:
         return UnitVector3D([response.x, response.y, response.z])
 
     @protect_grpc
+    @ensure_design_is_active
     def face_point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
         """
         Get a point of the face evaluated at certain UV coordinates.

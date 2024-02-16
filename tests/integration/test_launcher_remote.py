@@ -1,14 +1,37 @@
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 """Test the PyPIM integration."""
+import os
 from unittest.mock import create_autospec
 
 import ansys.platform.instancemanagement as pypim
+import ansys.tools.path.path as atpp
 from grpc import insecure_channel
 import pytest
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
+from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.launcher import launch_modeler
-from ansys.geometry.core.connection.local_instance import LocalDockerInstance
 
 
 def test_launch_remote_instance(monkeypatch, modeler: Modeler):
@@ -76,8 +99,13 @@ def test_launch_remote_instance_error(monkeypatch):
     """Check that when PyPIM is not configured, launch_modeler raises an error."""
     mock_is_installed = create_autospec(LocalDockerInstance.is_docker_installed, return_value=False)
     monkeypatch.setattr(LocalDockerInstance, "is_docker_installed", mock_is_installed)
+    mock_available_ansys = create_autospec(atpp.get_available_ansys_installations, return_value={})
+    monkeypatch.setattr(atpp, "get_available_ansys_installations", mock_available_ansys)
 
     with pytest.raises(NotImplementedError, match="Geometry service cannot be initialized."):
         launch_modeler()
 
     assert mock_is_installed.called
+
+    if os.name == "nt":
+        assert mock_available_ansys.called

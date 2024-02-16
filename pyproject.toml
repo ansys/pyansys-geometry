@@ -8,9 +8,9 @@ version = "0.4.dev0"
 description = "A python wrapper for Ansys Geometry service"
 readme = "README.rst"
 requires-python = ">=3.9,<4"
-license = {file = "LICENSE"}
-authors = [{name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}]
-maintainers = [{name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}]
+license = { file = "LICENSE" }
+authors = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
+maintainers = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
@@ -20,74 +20,75 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 
 dependencies = [
-    "ansys-api-geometry==0.3.2",
-    "ansys-tools-path>=0.3",
-    "beartype>=0.11.0",
-    "google-api-python-client>=1.7.11",
-    "googleapis-common-protos>=1.52.0",
-    "grpcio>=1.35.0",
-    "grpcio-health-checking>=1.45.0",
-    "numpy>=1.20.3",
-    "Pint>=0.18",
-    "protobuf~=3.20.2",
-    "pyvista>=0.37.0",
-    "scipy>=1.7.3",
-    "six>=1.16.0",
-    "vtk>=9",
+    "ansys-api-geometry==0.3.6",
+    "ansys-tools-path>=0.3,<1",
+    "beartype>=0.11.0,<1",
+    "google-api-python-client>=1.7.11,<3",
+    "googleapis-common-protos>=1.52.0,<2",
+    "grpcio>=1.35.0,<2",
+    "grpcio-health-checking>=1.45.0,<2",
+    "numpy>=1.20.3,<2",
+    "Pint>=0.18,<1",
+    "protobuf>=3.20.2,<5",
+    "pyvista>=0.37.0,<1",
+    "scipy>=1.7.3,<2",
+    "six>=1.16.0,<2",
+    "vtk>=9,<10",
 ]
 
 [project.optional-dependencies]
 all = [
-    "ansys-platform-instancemanagement>=1.0.3",
-    "docker>=6.0.1",
-    "pyvista[trame]>=0.38.1,<0.42",
+    "ansys-platform-instancemanagement>=1.0.3,<2",
+    "docker>=6.0.1,<8",
+    "pyvista[jupyter]>=0.38.1,<0.42",
 ]
 tests = [
     "ansys-platform-instancemanagement==1.1.2",
-    "ansys-tools-path==0.3.1",
-    "beartype==0.16.3",
-    "docker==6.1.3",
-    "google-api-python-client==2.104.0",
-    "googleapis-common-protos==1.61.0",
-    "grpcio==1.50.0",
-    "grpcio-health-checking==1.48.2",
-    "numpy==1.26.1",
-    "Pint==0.22",
-    "protobuf==3.20.3",
-    "pytest==7.4.2",
+    "ansys-tools-path==0.4.1",
+    "beartype==0.17.1",
+    "docker==7.0.0",
+    "google-api-python-client==2.117.0",
+    "googleapis-common-protos==1.62.0",
+    "grpcio==1.60.1",
+    "grpcio-health-checking==1.60.0",
+    "numpy==1.26.4",
+    "Pint==0.23",
+    "protobuf==4.25.1",
+    "pytest==8.0.0",
     "pytest-cov==4.1.0",
     "pytest-pyvista==0.1.9",
     "pytest-xvfb==3.0.0",
-    "pyvista[trame]==0.41.1",
+    "pyvista[jupyter]==0.43.3",
     "requests==2.31.0",
-    "scipy==1.11.3",
+    "scipy==1.12.0",
     "six==1.16.0",
-    "vtk==9.2.6",
+    "vtk==9.3.0",
 ]
 doc = [
-    "ansys-sphinx-theme==0.12.3",
-    "docker==6.1.3",
+    "ansys-sphinx-theme==0.13.4",
+    "docker==7.0.0",
     "ipyvtklink==0.2.3",
-    "jupyter_sphinx==0.4.0",
-    "jupytext==1.15.2",
+    "jupyter_sphinx==0.5.3",
+    "jupytext==1.16.1",
     "myst-parser==2.0.0",
-    "nbconvert==7.9.2",
+    "nbconvert==7.16.0",
     "nbsphinx==0.9.3",
-    "notebook==7.0.6",
+    "notebook==7.0.8",
     "numpydoc==1.6.0",
-    "panel==1.2.3",
-    "pyvista[trame]==0.41.1",
+    "panel==1.3.8",
+    "pyvista[jupyter]==0.43.3",
     "requests==2.31.0",
-    "sphinx==7.2.5",
-    "sphinx-autoapi==3.0.0", # "sphinx-autoapi @ git+https://github.com/jorgepiloto/sphinx-autoapi@feat/single-page-option", ---> Installed directly in workflow
+    "sphinx==7.2.6",
+    "sphinx-autoapi==3.0.0",            # "sphinx-autoapi @ git+https://github.com/jorgepiloto/sphinx-autoapi@feat/single-page-option", ---> Installed directly in workflow
     "sphinx-autodoc-typehints==1.24.0",
     "sphinx-copybutton==0.5.2",
     "sphinx_design==0.5.0",
     "sphinx-jinja==2.0.2",
-    "vtk==9.2.6",
+    "vtk==9.3.0",
 ]
 
 [project.urls]
@@ -125,6 +126,4 @@ show_missing = true
 [tool.pytest.ini_options]
 minversion = "7.1"
 addopts = "-ra --cov=ansys.geometry --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term -vv --image_cache_dir tests/integration/image_cache --add_missing_images"
-testpaths = [
-    "tests",
-]
+testpaths = ["tests"]

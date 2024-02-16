@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -40,12 +40,13 @@ from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.misc.checks import check_type
 from ansys.geometry.core.misc.options import ImportOptions
+from ansys.geometry.core.tools.repair_tools import RepairTools
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.platform.instancemanagement import Instance
 
-    from ansys.geometry.core.connection.local_instance import LocalDockerInstance
+    from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
     from ansys.geometry.core.connection.product_instance import ProductInstance
     from ansys.geometry.core.designer.design import Design
 
@@ -67,9 +68,9 @@ class Modeler:
         is launched using `PyPIM <https://github.com/ansys/pypim>`_. This instance
         is deleted when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close>`
         method is called.
-    local_instance : LocalDockerInstance, default: None
-        Corresponding local instance when the Geometry service is launched using the
-        :func:`launch_local_modeler<ansys.geometry.core.connection.launcher.launch_local_modeler>`
+    docker_instance : LocalDockerInstance, default: None
+        Corresponding local Docker instance when the Geometry service is launched using the
+        :func:`launch_docker_modeler<ansys.geometry.core.connection.launcher.launch_docker_modeler>`
         method. This instance is deleted when the
         :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close>`
         method is called.
@@ -94,7 +95,7 @@ class Modeler:
         port: Union[str, int] = DEFAULT_PORT,
         channel: Optional[Channel] = None,
         remote_instance: Optional["Instance"] = None,
-        local_instance: Optional["LocalDockerInstance"] = None,
+        docker_instance: Optional["LocalDockerInstance"] = None,
         product_instance: Optional["ProductInstance"] = None,
         timeout: Optional[Real] = 120,
         logging_level: Optional[int] = logging.INFO,
@@ -107,7 +108,7 @@ class Modeler:
             port=port,
             channel=channel,
             remote_instance=remote_instance,
-            local_instance=local_instance,
+            docker_instance=docker_instance,
             product_instance=product_instance,
             timeout=timeout,
             logging_level=logging_level,
@@ -115,8 +116,24 @@ class Modeler:
             backend_type=backend_type,
         )
 
-        # Design[] maintaining references to all designs within the modeler workspace
-        self._designs = []
+        # Initialize the RepairTools - Not available on Linux
+        # TODO: delete "if" when Linux service is able to use repair tools
+        if self.client.backend_type == BackendType.LINUX_SERVICE:
+            self._repair_tools = None
+            logger.warning("Linux backend does not support repair tools.")
+        else:
+            self._repair_tools = RepairTools(self._client)
+
+        # Maintaining references to all designs within the modeler workspace
+        self._designs: Dict[str, "Design"] = {}
+
+        # Check if the backend allows for multiple designs and throw warning if needed
+        if not self.client.multiple_designs_allowed:
+            logger.warning(
+                "Linux and Ansys Discovery backends do not support multiple "
+                "designs open in the same session. Only the last design created "
+                "will be available to perform modeling operations."
+            )
 
     @property
     def client(self) -> GrpcClient:
@@ -140,14 +157,29 @@ class Modeler:
         from ansys.geometry.core.designer.design import Design
 
         check_type(name, str)
-        design = Design(name, self._client)
-        self._designs.append(design)
+        design = Design(name, self)
+        self._designs[design.design_id] = design
         if len(self._designs) > 1:
             logger.warning(
-                "Most backends only support one design. "
+                "Some backends only support one design. "
                 + "Previous designs may be deleted (on the service) when creating a new one."
             )
-        return self._designs[-1]
+        return self._designs[design.design_id]
+
+    def get_active_design(self) -> "Design":
+        """
+        Get the active design on the modeler object.
+
+        Returns
+        -------
+        Design
+            Design object already existing on the modeler.
+        """
+        for _, design in self._designs.items():
+            if design._is_active:
+                return design
+
+        return None
 
     def read_existing_design(self) -> "Design":
         """
@@ -160,14 +192,14 @@ class Modeler:
         """
         from ansys.geometry.core.designer.design import Design
 
-        design = Design("", self._client, read_existing_design=True)
-        self._designs.append(design)
+        design = Design("", self, read_existing_design=True)
+        self._designs[design.design_id] = design
         if len(self._designs) > 1:
             logger.warning(
-                "Most backends only support one design. "
+                "Some backends only support one design. "
                 + "Previous designs may be deleted (on the service) when reading a new one."
             )
-        return self._designs[-1]
+        return self._designs[design.design_id]
 
     def close(self) -> None:
         """``Modeler`` method for easily accessing the client's close method."""
@@ -287,10 +319,30 @@ class Modeler:
 
     @protect_grpc
     def run_discovery_script_file(
-        self, file_path: str, script_args: Dict[str, str], import_design=False
+        self, file_path: str, script_args: Optional[Dict[str, str]] = None, import_design=False
     ) -> Tuple[Dict[str, str], Optional["Design"]]:
         """
         Run a Discovery script file.
+
+        .. note::
+
+            If arguments are passed to the script, they must be in the form of a dictionary.
+            On the server side, the script will receive the arguments as a dictionary of strings,
+            under the variable name ``argsDict``. For example, if the script is called with the
+            arguments ``run_discovery_script_file(..., script_args = {"length": "20"}, ...)``,
+            the script will receive the dictionary ``argsDict`` with the key-value pair
+            ``{"length": "20"}``.
+
+        .. note::
+
+            If an output is expected from the script, it will be returned as a dictionary of
+            strings. The keys and values of the dictionary are the variables and their values
+            that the script returns. However, it is necessary that the script creates a
+            dictionary called ``result`` with the variables and their values that are expected
+            to be returned. For example, if the script is expected to return the number of bodies
+            in the design, the script should create a dictionary called ``result`` with the
+            key-value pair ``{"numBodies": numBodies}``, where ``numBodies`` is the number of
+            bodies in the design.
 
         The implied API version of the script should match the API version of the running
         Geometry Service. DMS API versions 23.2.1 and later are supported. DMS is a
@@ -301,13 +353,14 @@ class Modeler:
         ----------
         file_path : str
             Path of the file. The extension of the file must be included.
-        script_args : dict[str, str]
-            Arguments to pass to the script.
-        import_design : bool, default: False
+        script_args : Optional[Dict[str, str]], optional.
+            Arguments to pass to the script. By default, ``None``.
+        import_design : bool, optional.
             Whether to refresh the current design from the service. When the script
             is expected to modify the existing design, set this to ``True`` to retrieve
             up-to-date design data. When this is set to ``False`` (default) and the
-            script modifies the current design, the design may be out-of-sync.
+            script modifies the current design, the design may be out-of-sync. By default,
+            ``False``.
 
         Returns
         -------
@@ -341,3 +394,8 @@ class Modeler:
             return (response.values, self.read_existing_design())
         else:
             return response.values
+
+    @property
+    def repair_tools(self) -> RepairTools:
+        """Access to repair tools."""
+        return self._repair_tools

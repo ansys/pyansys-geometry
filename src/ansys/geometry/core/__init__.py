@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -32,8 +32,10 @@ __version__ = importlib_metadata.version(__name__.replace(".", "-"))
 # Ease import statements
 # ------------------------------------------------------------------------------
 
+import os
+
 from ansys.geometry.core.connection.launcher import (
-    launch_local_modeler,
+    launch_docker_modeler,
     launch_modeler,
     launch_modeler_with_discovery,
     launch_modeler_with_discovery_and_pimlight,
@@ -49,6 +51,18 @@ from ansys.geometry.core.modeler import Modeler
 # Global config constants
 # ------------------------------------------------------------------------------
 
-USE_TRAME = False
+USE_TRAME: bool = False
 """Global constant for checking whether to use `trame <https://kitware.github.io/trame/>`_
 for visualization."""
+
+DISABLE_MULTIPLE_DESIGN_CHECK: bool = False
+"""
+Global constant for disabling the ``ensure_design_is_active`` check.
+
+Only set this to false if you are sure you want to disable this check and you will ONLY
+be working with one design.
+"""
+
+DOCUMENTATION_BUILD: bool = os.environ.get("PYANSYS_GEOMETRY_DOC_BUILD", "false").lower() == "true"
+"""Global flag to set when building the documentation to use the proper PyVista Jupyter
+backend."""

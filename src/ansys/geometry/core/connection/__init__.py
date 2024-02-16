@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -38,8 +38,13 @@ from ansys.geometry.core.connection.defaults import (
     DEFAULT_PORT,
     GEOMETRY_SERVICE_DOCKER_IMAGE,
 )
+from ansys.geometry.core.connection.docker_instance import (
+    GeometryContainers,
+    LocalDockerInstance,
+    get_geometry_container_type,
+)
 from ansys.geometry.core.connection.launcher import (
-    launch_local_modeler,
+    launch_docker_modeler,
     launch_modeler,
     launch_modeler_with_discovery,
     launch_modeler_with_discovery_and_pimlight,
@@ -48,10 +53,5 @@ from ansys.geometry.core.connection.launcher import (
     launch_modeler_with_spaceclaim,
     launch_modeler_with_spaceclaim_and_pimlight,
     launch_remote_modeler,
-)
-from ansys.geometry.core.connection.local_instance import (
-    GeometryContainers,
-    LocalDockerInstance,
-    get_geometry_container_type,
 )
 from ansys.geometry.core.connection.product_instance import ProductInstance

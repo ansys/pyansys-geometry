@@ -1,3 +1,25 @@
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 import re
 
 import pytest
@@ -11,9 +33,8 @@ from ansys.geometry.core.sketch import Sketch
 
 # Python (.py)
 def test_python_simple_script(modeler: Modeler, skip_not_on_linux_service):
-    args = {}
     result = modeler.run_discovery_script_file(
-        "./tests/integration/files/disco_scripts/simple_script.py", args
+        "./tests/integration/files/disco_scripts/simple_script.py"
     )
     pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)
     pattern_doc = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.Document", re.IGNORECASE)
@@ -23,10 +44,9 @@ def test_python_simple_script(modeler: Modeler, skip_not_on_linux_service):
 
 
 def test_python_failing_script(modeler: Modeler, skip_not_on_linux_service):
-    args = {}
     with pytest.raises(GeometryRuntimeError):
         modeler.run_discovery_script_file(
-            "./tests/integration/files/disco_scripts/failing_script.py", args
+            "./tests/integration/files/disco_scripts/failing_script.py"
         )
 
 
@@ -51,9 +71,8 @@ def test_python_integrated_script(modeler: Modeler, skip_not_on_linux_service):
 
 # SpaceClaim (.scscript)
 def test_scscript_simple_script(modeler: Modeler, skip_not_on_linux_service):
-    args = {}
     result = modeler.run_discovery_script_file(
-        "./tests/integration/files/disco_scripts/simple_script.scscript", args
+        "./tests/integration/files/disco_scripts/simple_script.scscript"
     )
     assert len(result) == 2
     pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)
@@ -65,9 +84,8 @@ def test_scscript_simple_script(modeler: Modeler, skip_not_on_linux_service):
 
 # Discovery (.dscript)
 def test_dscript_simple_script(modeler: Modeler, skip_not_on_linux_service):
-    args = {}
     result = modeler.run_discovery_script_file(
-        "./tests/integration/files/disco_scripts/simple_script.dscript", args
+        "./tests/integration/files/disco_scripts/simple_script.dscript"
     )
     assert len(result) == 2
     pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)

@@ -6,7 +6,7 @@ In this section, users are able to download a set of assets related to PyAnsys G
 Documentation
 -------------
 
-The following links will provide users with downloadable documentation in various formats
+The following links provide users with downloadable documentation in various formats
 
 * `Documentation in HTML format <_static/assets/download/documentation-html.zip>`_
 * `Documentation in PDF format <_static/assets/download/ansys-geometry-core.pdf>`_
@@ -18,7 +18,7 @@ If you lack an internet connection on your installation machine, you should inst
 by downloading the wheelhouse archive.
 
 Each wheelhouse archive contains all the Python wheels necessary to install PyAnsys Geometry from scratch on Windows,
-Linux, and MacOS from Python 3.9 to 3.11. You can install this on an isolated system with a fresh Python
+Linux, and MacOS from Python 3.9 to 3.12. You can install this on an isolated system with a fresh Python
 installation or on a virtual environment.
 
 For example, on Linux with Python 3.9, unzip the wheelhouse archive and install it with:
@@ -28,7 +28,8 @@ For example, on Linux with Python 3.9, unzip the wheelhouse archive and install 
     unzip ansys-geometry-core-v0.4.dev0-wheelhouse-ubuntu-latest3.9.zip wheelhouse
     pip install ansys-geometry-core -f wheelhouse --no-index --upgrade --ignore-installed
 
-If you are on Windows with Python 3.9, unzip to a wheelhouse directory and install using the preceding command.
+If you are on Windows with Python 3.9, unzip to a wheelhouse directory by running ``-d wheelhouse``
+(this is required for unzipping to a directory on Windows) and install using the preceding command.
 
 Consider installing using a `virtual environment <https://docs.python.org/3/library/venv.html>`_.
 
@@ -56,8 +57,8 @@ on how to build the containers are found at `Docker containers <getting_started/
 Currently, the Geometry service backend is mainly delivered as a **Windows** Docker container.
 However, these containers require a Windows machine to run them.
 
-A Linux version of the Geometry service is also available but with limited capabilities,
-meaning that certain operations are not available or fail.
+.. A Linux version of the Geometry service is also available but with limited capabilities,
+.. meaning that certain operations are not available or fail.
 
 
 Windows container
@@ -70,12 +71,12 @@ Windows container
 * `Latest Geometry service binaries for Windows containers <https://github.com/ansys/pyansys-geometry-binaries>`_
 * `Latest Geometry service Dockerfile for Windows containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/windows-dockerfile.zip>`_
 
-Linux container
-^^^^^^^^^^^^^^^
+.. Linux container
+.. ^^^^^^^^^^^^^^^
 
-.. note::
+.. .. note::
 
-   Only users with access to https://github.com/ansys/pyansys-geometry-binaries can download these binaries.
+..    Only users with access to https://github.com/ansys/pyansys-geometry-binaries can download these binaries.
 
-* `Latest Geometry service binaries for Linux containers <https://github.com/ansys/pyansys-geometry-binaries>`_
-* `Latest Geometry service Dockerfile for Linux containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/linux-dockerfile.zip>`_
+.. * `Latest Geometry service binaries for Linux containers <https://github.com/ansys/pyansys-geometry-binaries>`_
+.. * `Latest Geometry service Dockerfile for Linux containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/linux-dockerfile.zip>`_
