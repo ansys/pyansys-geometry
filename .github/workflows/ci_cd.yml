@@ -61,6 +61,16 @@ jobs:
           operating-system: ${{ matrix.os }}
           python-version: ${{ matrix.python-version }}
 
+  docker-style:
+    name: Docker Style Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: PyAnsys documentation style checks
+        uses: ansys/actions/docker-style@v5
+        with:
+          directory: docker
+          recursive: true
+
 # =================================================================================================
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 # =================================================================================================

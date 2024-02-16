@@ -18,4 +18,5 @@
 * [Maxime Rey](https://github.com/MaxJPRey)
 * [Revathy Venugopal](https://github.com/Revathyvenugopal162)
 * [Riccardo Manno](https://github.com/rmanno91)
+* [Sebastien Morais](https://github.com/SMoraisAnsys)
 * [Umut Soysal](https://github.com/umutsoysal)
