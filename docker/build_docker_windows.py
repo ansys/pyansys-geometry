@@ -106,7 +106,7 @@ shutil.rmtree(os.path.join(TMP_DIR, "bins"))
 # Download the Dockerfile from the repository
 print(">>> Downloading Dockerfile")
 urllib.request.urlretrieve(
-    "https://raw.githubusercontent.com/ansys/pyansys-geometry/main/docker/Dockerfile.windows",
+    "https://raw.githubusercontent.com/ansys/pyansys-geometry/main/docker/windows/Dockerfile",
     os.path.join(TMP_DIR, "Dockerfile"),
 )
 
