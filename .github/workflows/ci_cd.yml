@@ -503,7 +503,7 @@ jobs:
           pytest -v --use-existing-service=yes
 
       - name: "Compressing Dockerfile.windows"
-        uses: vimtor/action-zip@v1.1
+        uses: vimtor/action-zip@v1.2
         with:
           files: docker/Dockerfile.windows
           dest: windows-dockerfile.zip
@@ -593,7 +593,7 @@ jobs:
           requires-xvfb: true
 
       - name: "Compressing Dockerfile.linux"
-        uses: vimtor/action-zip@v1.1
+        uses: vimtor/action-zip@v1.2
         with:
           files: docker/Dockerfile.linux
           dest: linux-dockerfile.zip
