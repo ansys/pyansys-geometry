@@ -28,7 +28,7 @@ from beartype.typing import TYPE_CHECKING, List
 from ansys.geometry.core.connection import GrpcClient
 
 if TYPE_CHECKING:  # pragma: no cover
-    from ansys.geometry.core.designer.body import Body, Face
+    from ansys.geometry.core.designer.body import Body
 
 
 class MeasureTools:
@@ -39,11 +39,10 @@ class MeasureTools:
         self._grpc_client = grpc_client
         self._measure_stub = MeasureToolsStub(self._grpc_client.channel)
 
-    def min_distance_between_objects(self, bodies: List["Body"], faces: List["Face"]):
+    def min_distance_between_objects(self, bodies: List["Body"]):
         """Find the gap between objects."""
         body_ids = [body.id for body in bodies]
-        face_ids = [face.id for face in faces]
         gap = self._measure_stub.MinDistanceBetweenObjects(
-            MinDistanceBetweenObjectsRequest(body_monikers=body_ids, face_monikers=face_ids)
+            MinDistanceBetweenObjectsRequest(bodies=body_ids)
         )
         return gap

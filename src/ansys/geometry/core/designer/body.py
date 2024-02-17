@@ -28,6 +28,7 @@ from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
     BooleanRequest,
     CopyRequest,
+    GetCollisionRequest,
     RotateRequest,
     SetAssignedMaterialRequest,
     TranslateRequest,
@@ -79,6 +80,17 @@ class MidSurfaceOffsetType(Enum):
     BOTTOM = 2
     VARIABLE = 3
     CUSTOM = 4
+
+
+@unique
+class CollisionType(Enum):
+    """Provides values for collision types between bodies."""
+
+    NONE = 0
+    TOUCH = 1
+    INTERSECT = 2
+    CONTAINED = 3
+    CONTAINEDTOUCH = 4
 
 
 class IBody(ABC):
@@ -331,6 +343,25 @@ class IBody(ABC):
     ) -> None:
         """
         Rotate the geometry body around the specified axis by a given angle.
+
+        Parameters
+        ----------
+        axis_origin: Point3D
+            Origin of the rotational axis.
+        axis_direction: UnitVector3D
+            The axis of rotation.
+        angle: Union[~pint.Quantity, Angle, Real]
+            Angle (magnitude) of the rotation.
+        Returns
+        -------
+        None
+        """
+        return
+
+    @abstractmethod
+    def getCollision(self, body: "Body") -> CollisionType:
+        """
+        Get the collision between bodies.
 
         Parameters
         ----------
@@ -789,6 +820,20 @@ class MasterBody(IBody):
         )
 
     @protect_grpc
+    @check_input_types
+    @reset_tessellation_cache
+    def getCollision(self, body: "Body") -> CollisionType:
+        """Get the collision state between two bodies."""
+        self._grpc_client.log.debug(f"Get collision on body {self.id} and body {body.id}.")
+        response = self._bodies_stub.GetCollision(
+            GetCollisionRequest(
+                body_1_id=self.id,
+                body_2_id=body.id,
+            )
+        )
+        return CollisionType(response.collision)
+
+    @protect_grpc
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
         from ansys.geometry.core.designer.component import Component
 
@@ -1139,6 +1184,11 @@ class Body(IBody):
         angle: Union[Quantity, Angle, Real],
     ) -> None:  # noqa: D102
         return self._template.rotate(axis_origin, axis_direction, angle)
+
+    @ensure_design_is_active
+    def getCollision(self, body: "Body") -> CollisionType:
+        """Get the collision state between two bodies."""
+        return CollisionType(self._template.getCollision(body))
 
     @ensure_design_is_active
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
