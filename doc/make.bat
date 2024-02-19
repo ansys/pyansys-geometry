@@ -11,6 +11,7 @@ if "%SPHINXOPTS%" == "" (
 	set SPHINXOPTS=-j auto -W --color
 )
 set SOURCEDIR=source
+set APIDIR=api
 set BUILDDIR=_build
 
 if "%1" == "" goto help
@@ -41,7 +42,7 @@ goto build-examples-py
 
 :clean
 rmdir /s /q %BUILDDIR% > /NUL 2>&1
-for /d /r %SOURCEDIR% %%d in (api) do @if exist "%%d" rmdir /s /q "%%d"
+for /d /r %SOURCEDIR% %%d in (%APIDIR) do @if exist "%%d" rmdir /s /q "%%d"
 goto end
 
 :help
