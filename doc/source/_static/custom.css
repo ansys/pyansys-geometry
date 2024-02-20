@@ -1,5 +1,17 @@
 @import "../ansys-sphinx-theme.css";
 
+/* Do not show number cells in notebooks */
+.nbinput .prompt,
+.nboutput .prompt {
+    display: none !important;
+}
+
+/* Center images in notebook output cells */
+.nboutput img {
+    display: block !important;
+    margin: 0 auto !important;
+}
+
 
 .sd-card .sd-card-img-top {
     height: 100px;
