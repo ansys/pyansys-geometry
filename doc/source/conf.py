@@ -317,7 +317,8 @@ nitpick_ignore_regex = [
 
 
 def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception: Exception):
-    """Convert notebooks to scripts.
+    """
+    Convert notebooks to scripts.
 
     Parameters
     ----------
@@ -325,12 +326,13 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception: Exce
         Sphinx application instance containing the all the doc build configuration.
     exception : Exception
         Exception encountered during the building of the documentation.
-
     """
     import jupytext
+
     EXAMPLES_DIRECTORY = Path(app.outdir) / "examples"
     for notebook in EXAMPLES_DIRECTORY.glob("**/*.ipynb"):
         jupytext.write(notebook, str(notebook.with_suffix(".py")))
+
 
 def setup(app: sphinx.application.Sphinx):
     """
@@ -340,7 +342,6 @@ def setup(app: sphinx.application.Sphinx):
     ----------
     app : sphinx.application.Sphinx
         Sphinx application instance containing the all the doc build configuration.
-
     """
     # Convert notebooks into Python scripts and include them in the output files
     if BUILD_EXAMPLES:
