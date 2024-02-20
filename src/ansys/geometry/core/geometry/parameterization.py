@@ -268,7 +268,7 @@ class Interval:
             first (Interval): First Interval
             second (Interval): Second Interval
 
-        Returns:
+        Returns
         -------
         Interval
             The union of the two intervals
@@ -308,7 +308,7 @@ class Interval:
             t (Real): The value of interest
             accuracy (Real): The accepted range of error since we could be working with floats
 
-        Returns:
+        Returns
         -------
         bool
             True if the interval contains the value, false otherwise
