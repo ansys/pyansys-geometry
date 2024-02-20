@@ -59,17 +59,5 @@ if NOT EXIST ansys-geometry-core.pdf (
 Echo "pdf generated!"
 goto end
 
-:build-examples-py
-cd "%BUILDDIR%\html\examples"
-for /d %%D in (*) do (
-Echo Processing examples folder... %%D
-cd %%D
-for %%f in (*.ipynb) do (
-	jupytext --to py "%%f"
-)
-cd ../
-)
-goto end
-
 :end
 popd

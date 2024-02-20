@@ -34,12 +34,3 @@ pdf:
 html:
 	@$(SPHINXBUILD) -M linkcheck "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	@$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-	# TODO: migrate this logic as a sphinx-hook declared in the conf.py file
-	cd $(BUILDDIR)/html/examples
-	for d in */ ; do
-		cd $d
-		for f in ./*.ipynb; do
-			jupytext --to py $f
-		done
-		cd -
-	done
