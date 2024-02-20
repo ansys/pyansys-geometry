@@ -210,8 +210,9 @@ class Interval:
         """
         If the current interval is empty return true, else return false.
 
-        Returns:
-        Bool
+        Returns
+        -------
+        bool
             The value that indicates whether the interval is empty or not.
         """
         return not self.not_empty
@@ -237,8 +238,10 @@ class Interval:
         Args:
             t (Real): The offset that the interval gets evaluated at.
 
-        Returns:
-            Real: The actual value according to the offset
+        Returns
+        -------
+        Real
+            The actual value according to the offset
         """
         return self.start + t * self.get_span()
 
@@ -249,8 +252,10 @@ class Interval:
         Args:
             tolerance (Real): The accepted range since we could be working with doubles
 
-        Returns:
-            bool: True if negative False otherwise
+        Returns
+        -------
+        bool
+            True if negative False otherwise
         """
         return Accuracy.compare_with_tolerance(self.get_span(), 0, tolerance, tolerance)
 
@@ -264,7 +269,9 @@ class Interval:
             second (Interval): Second Interval
 
         Returns:
-            Interval: The union of the two intervals
+        -------
+        Interval
+            The union of the two intervals
         """
         if first.is_empty():
             return second
@@ -281,8 +288,10 @@ class Interval:
             first (Interval): First Interval
             second (Interval): Second Interval
 
-        Returns:
-            Interval: The intersection of the two intervals
+        Returns
+        -------
+        Interval
+            The intersection of the two intervals
         """
         if first.is_empty() or second.is_empty():
             return None  # supposed to be empty
@@ -300,7 +309,9 @@ class Interval:
             accuracy (Real): The accepted range of error since we could be working with floats
 
         Returns:
-            bool: True if the interval contains the value, false otherwise
+        -------
+        bool
+            True if the interval contains the value, false otherwise
         """
         if self.is_empty():
             return False
@@ -326,8 +337,10 @@ class Interval:
         Args:
             t (Real): The value of interest
 
-        Returns:
-            bool: True if the interval contains the value, false otherwise
+        Returns
+        -------
+        bool
+            True if the interval contains the value, false otherwise
         """
         return self.contains(t, Accuracy.length_accuracy)
 
