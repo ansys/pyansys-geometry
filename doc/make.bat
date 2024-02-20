@@ -38,7 +38,7 @@ goto end
 :html
 %SPHINXBUILD% -M html %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 %SPHINXBUILD% -M linkcheck %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
-goto build-examples-py
+goto end
 
 :clean
 rmdir /s /q %BUILDDIR% > /NUL 2>&1
