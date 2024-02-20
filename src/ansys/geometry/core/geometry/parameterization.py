@@ -310,9 +310,9 @@ class Interval:
             return intersection
         return None  # supposed to be empty
 
-    def contains(self, t: Real, accuracy: Real) -> bool:
+    def contains_value(self, t: Real, accuracy: Real) -> bool:
         """
-        Check whether the current interval contains a value (t).
+        Check if the current interval contains value t given the accuracy range.
 
         Parameters
         ----------
@@ -355,7 +355,7 @@ class Interval:
         bool
             True if the interval contains the value, false otherwise
         """
-        return self.contains(t, Accuracy.length_accuracy)
+        return self.contains_value(t, Accuracy.length_accuracy)
 
     def inflate(self, delta: Real) -> "Interval":
         """Enlarge the current interval by the given delta value."""
