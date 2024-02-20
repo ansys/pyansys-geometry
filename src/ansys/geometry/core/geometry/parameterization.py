@@ -235,8 +235,10 @@ class Interval:
         """
         Return an evaluation property of the interval, used in BoxUV.
 
-        Args:
-            t (Real): The offset that the interval gets evaluated at.
+        Parameters
+        ----------
+        t : Real
+            The offset that the interval gets evaluated at.
 
         Returns
         -------
@@ -249,8 +251,10 @@ class Interval:
         """
         Boolean value that indicates whether the current interval is negative.
 
-        Args:
-            tolerance (Real): The accepted range since we could be working with doubles
+        Parameters
+        ----------
+        tolerance : Real
+            The accepted range since we could be working with doubles
 
         Returns
         -------
@@ -264,9 +268,12 @@ class Interval:
         """
         Return the union of two intervals.
 
-        Args:
-            first (Interval): First Interval
-            second (Interval): Second Interval
+        Parameters
+        ----------
+        first : Interval
+            First interval
+        second : Interval
+            Second interval
 
         Returns
         -------
@@ -284,9 +291,12 @@ class Interval:
         """
         Return the intersection of two intervals.
 
-        Args:
-            first (Interval): First Interval
-            second (Interval): Second Interval
+        Parameters
+        ----------
+        first : Interval
+            First interval
+        second : Interval
+            Second interval
 
         Returns
         -------
@@ -304,9 +314,12 @@ class Interval:
         """
         Check whether the current interval contains a value (t).
 
-        Args:
-            t (Real): The value of interest
-            accuracy (Real): The accepted range of error since we could be working with floats
+        Parameters
+        ----------
+        t : Real
+            The value of interest
+        accuracy: Real
+            The accepted range of error since we could be working with floats
 
         Returns
         -------
@@ -330,12 +343,12 @@ class Interval:
 
     def contains(self, t: Real) -> bool:
         """
-        Check whether the current interval contains a value (t) using the default.
+        Check if interval contains t using the default length_accuracy constant.
 
-        length_accuracy constant.
-
-        Args:
-            t (Real): The value of interest
+        Parameters
+        ----------
+        t : Real
+            The value of interest
 
         Returns
         -------
