@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""The plane surface class."""
+"""Provides for creating and managing a cylinder."""
 from functools import cached_property
 
 from beartype import beartype as check_input_types
@@ -48,7 +48,7 @@ from ansys.geometry.core.typing import Real, RealSequence
 
 class Plane(Surface):
     """
-    Provides 3D ``Plane`` representation.
+    Provides 3D plane representation.
 
     Parameters
     ----------
@@ -145,14 +145,14 @@ class Plane(Surface):
 
 class PlaneEvaluation(SurfaceEvaluation):
     """
-    Provides ``Plane`` evaluation at certain parameters.
+    Provides evaluation of a plane at given parameters.
 
     Parameters
     ----------
     plane: ~ansys.geometry.core.primitives.plane.Plane
-        The ``Plane`` object to be evaluated.
+        Plane to evaluated.
     parameter: ParamUV
-        The parameters (u, v) at which the ``Plane`` evaluation is requested.
+        Parameters (u, v) to evaluate the plane at.
     """
 
     def __init__(self, plane: Plane, parameter: ParamUV) -> None:
