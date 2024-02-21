@@ -1193,7 +1193,6 @@ class Body(IBody):
 
     @ensure_design_is_active
     def get_collision(self, body: "Body") -> CollisionType:
-        """Get the collision state between two bodies."""
         return CollisionType(self._template.get_collision(body))
 
     @ensure_design_is_active
