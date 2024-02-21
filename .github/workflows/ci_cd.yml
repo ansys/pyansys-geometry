@@ -69,6 +69,16 @@ jobs:
           operating-system: ${{ matrix.os }}
           python-version: ${{ matrix.python-version }}
 
+  docker-style:
+    name: Docker Style Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: PyAnsys documentation style checks
+        uses: ansys/actions/docker-style@v5
+        with:
+          directory: docker
+          recursive: true
+
 # =================================================================================================
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 # =================================================================================================
@@ -180,7 +190,7 @@ jobs:
           retention-days: 7
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         if: matrix.docker-image == 'windows-latest'
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -469,7 +479,7 @@ jobs:
       - name: Build Docker image
         working-directory: docker
         run: |
-          docker build -f Dockerfile.windows -t ghcr.io/ansys/geometry:windows-latest-tmp .
+          docker build -f windows/Dockerfile -t ghcr.io/ansys/geometry:windows-latest-tmp .
 
       - name: Check location of self-hosted runner and define license server accordingly
         if: runner.name == 'pygeometry-ci-1' || runner.name == 'pygeometry-ci-2'
@@ -500,10 +510,10 @@ jobs:
           .\.venv\Scripts\Activate.ps1
           pytest -v --use-existing-service=yes
 
-      - name: "Compressing Dockerfile.windows"
-        uses: vimtor/action-zip@v1.1
+      - name: "Compressing Windows Dockerfile"
+        uses: vimtor/action-zip@v1.2
         with:
-          files: docker/Dockerfile.windows
+          files: docker/windows/Dockerfile
           dest: windows-dockerfile.zip
 
       - name: Upload Windows Dockerfile
@@ -561,7 +571,7 @@ jobs:
       - name: Build Docker image
         working-directory: docker
         run: |
-          docker build -f Dockerfile.linux -t ghcr.io/ansys/geometry:linux-latest-tmp .
+          docker build -f linux/Dockerfile -t ghcr.io/ansys/geometry:linux-latest-tmp .
 
       - name: Launch Geometry service
         run: |
@@ -590,10 +600,10 @@ jobs:
           checkout: false
           requires-xvfb: true
 
-      - name: "Compressing Dockerfile.linux"
-        uses: vimtor/action-zip@v1.1
+      - name: "Compressing Linux Dockerfile"
+        uses: vimtor/action-zip@v1.2
         with:
-          files: docker/Dockerfile.linux
+          files: docker/linux/Dockerfile
           dest: linux-dockerfile.zip
 
       - name: Upload Linux Dockerfile
@@ -663,7 +673,9 @@ jobs:
     needs: [release]
     steps:
       - name: Deploy the stable documentation
-        uses: ansys/actions/doc-deploy-stable@v5
+        # TODO: testing SEO improvements. This branch avoids creating a
+        # sitemap.xml pages in opposite to v5.
+        uses: ansys/actions/doc-deploy-stable@feat/seo-improvements
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}

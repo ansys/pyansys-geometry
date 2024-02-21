@@ -600,6 +600,9 @@ class Design(Component):
     def __read_existing_design(self) -> None:
         """Read an existing ``Design`` located on the server."""
         #
+        # TODO: This might go out of sync with the _update_design_inplace method.
+        #       Ensure that the two methods are in sync. Especially regarding cleanup.
+        #
         # TODO: Not all features implemented yet. Status is as follows
         #
         # Windows:
@@ -759,3 +762,35 @@ class Design(Component):
         self._grpc_client.log.debug(f"SharedTopologyTypes set: {num_created_shared_topologies}")
 
         self._grpc_client.log.debug(f"\nSuccessfully read design in: {end - start} s")
+
+    def _update_design_inplace(self) -> None:
+        """
+        Update the design to align with the server side.
+
+        Notes
+        -----
+        This method is used to update the design inside repair tools.
+        Its usage is not recommended for other purposes.
+        """
+        # Clear all the existing information
+        #
+        # TODO: This might go out of sync with the __read_existing_design method
+        #       if the latter is updated and this method is not. Ensure that
+        #       the two methods are in sync.
+        #
+        self._components = []
+        self._bodies = []
+        self._materials = []
+        self._named_selections = {}
+        self._coordinate_systems = {}
+
+        # Get the previous design id
+        previous_design_id = self._design_id
+
+        # Read the existing design
+        self.__read_existing_design()
+
+        # If the design id has changed, update the design id in the Modeler
+        if previous_design_id != self._design_id:
+            self._modeler._designs[self._design_id] = self
+            self._modeler._designs.pop(previous_design_id)
