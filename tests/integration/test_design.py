@@ -38,6 +38,7 @@ from ansys.geometry.core.designer import (
     SharedTopologyType,
     SurfaceType,
 )
+from ansys.geometry.core.designer.body import CollisionType
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.errors import GeometryExitedError
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
@@ -55,6 +56,13 @@ from ansys.geometry.core.math import (
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Distance
 from ansys.geometry.core.sketch import Sketch
+
+
+# TODO: re-enable when Linux service is able to use measure tools
+def skip_if_linux(modeler: Modeler):
+    """Skip test if running on Linux."""
+    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
+        pytest.skip("Measure tools not available on Linux service.")
 
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):
@@ -1859,3 +1867,15 @@ def test_get_active_design(modeler: Modeler):
     design1 = modeler.create_design("Design1")
     active_design = modeler.get_active_design()
     assert active_design.design_id == design1.design_id
+
+
+def test_get_collision(modeler: Modeler):
+    """Test the get_collision method of the bodies."""
+    skip_if_linux(modeler)  # Skip test on Linux
+    design = modeler.open_file("./tests/integration/files/MixingTank.scdocx")
+    body1 = design.bodies[0]
+    body2 = design.bodies[1]
+    body3 = design.bodies[2]
+
+    assert body1.get_collision(body2) == CollisionType.TOUCH
+    assert body2.get_collision(body3) == CollisionType.NONE
