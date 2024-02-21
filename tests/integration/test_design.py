@@ -38,6 +38,7 @@ from ansys.geometry.core.designer import (
     SharedTopologyType,
     SurfaceType,
 )
+from ansys.geometry.core.designer.body import CollisionType
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.errors import GeometryExitedError
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
@@ -1859,3 +1860,14 @@ def test_get_active_design(modeler: Modeler):
     design1 = modeler.create_design("Design1")
     active_design = modeler.get_active_design()
     assert active_design.design_id == design1.design_id
+
+
+def test_get_collision(modeler: Modeler):
+    """Test the get_collision method of the bodies."""
+    design = modeler.open_file("./tests/integration/files/MixingTank.scdocx")
+    body1 = design.bodies[0]
+    body2 = design.bodies[1]
+    body3 = design.bodies[2]
+
+    assert body1.get_collision(body2) == CollisionType.TOUCH
+    assert body2.get_collision(body3) == CollisionType.NONE

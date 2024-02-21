@@ -58,6 +58,7 @@ class Gap:
         return self._distance
 
     @classmethod
+    @protect_grpc
     def from_distance_response(
         cls, grpc_client: GrpcClient, response: MinDistanceBetweenObjectsResponse
     ) -> None:
