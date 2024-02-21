@@ -1,4 +1,5 @@
 """Sphinx documentation configuration file."""
+
 from datetime import datetime
 import json
 import os
@@ -193,10 +194,10 @@ autoapi_options = [
     "special-members",
 ]
 autoapi_template_dir = get_autoapi_templates_dir_relative_path(Path(__file__))
-suppress_warnings = ["autoapi.python_import_resolution"]
+suppress_warnings = ["autoapi.python_import_resolution", "design.grid"]
 autoapi_python_use_implicit_namespaces = True
 autoapi_keep_files = True
-autoapi_render_in_single_page = ["class", "enum", "exception"]
+autoapi_own_page_level = "class"
 
 # Examples gallery customization
 nbsphinx_execute = "always"
