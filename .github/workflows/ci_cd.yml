@@ -31,6 +31,14 @@ concurrency:
 
 jobs:
 
+  branch-name:
+    if: github.event_name == 'pull_request'
+    name: Check the name of the branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch name
+        uses: ansys/actions/branch-name-style@v5
+
   docs-style:
     name: Documentation Style Check
     runs-on: ubuntu-latest
