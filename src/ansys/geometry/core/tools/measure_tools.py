@@ -46,6 +46,7 @@ class Gap:
         The distance between two sides of the gap.
     """
 
+    @protect_grpc
     def __init__(self, grpc_client: GrpcClient, distance: Distance = None):
         """Initialize Gap class."""
         self._grpc_client = grpc_client
@@ -70,6 +71,7 @@ class Gap:
 class MeasureTools:
     """Measure Tools for PyAnsys Geometry."""
 
+    @protect_grpc
     def __init__(self, grpc_client: GrpcClient):
         """Initialize Measure Tools class."""
         self._grpc_client = grpc_client
