@@ -38,8 +38,9 @@ def skip_if_linux(modeler: Modeler):
         pytest.skip("Repair tools not available on Linux service.")
 
 
-def test_distance_property():
+def test_distance_property(modeler: Modeler):
     """Test if the gap object is being constructed properly."""
+    skip_if_linux(modeler)  # Skip test on Linux
     grpc_client_mock = Mock(spec=GrpcClient)
     gap = Gap(grpc_client_mock, distance=10.0)
     assert gap.distance == 10.0
