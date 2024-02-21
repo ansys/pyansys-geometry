@@ -31,11 +31,11 @@ from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.tools.measure_tools import Gap
 
 
-# TODO: re-enable when Linux service is able to use repair tools
+# TODO: re-enable when Linux service is able to use measure tools
 def skip_if_linux(modeler: Modeler):
     """Skip test if running on Linux."""
     if modeler.client.backend_type == BackendType.LINUX_SERVICE:
-        pytest.skip("Repair tools not available on Linux service.")
+        pytest.skip("Measure tools not available on Linux service.")
 
 
 def test_distance_property(modeler: Modeler):
