@@ -27,6 +27,7 @@ import pytest
 
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.tools.measure_tools import Gap
 
@@ -42,8 +43,8 @@ def test_distance_property(modeler: Modeler):
     """Test if the gap object is being constructed properly."""
     skip_if_linux(modeler)  # Skip test on Linux
     grpc_client_mock = Mock(spec=GrpcClient)
-    gap = Gap(grpc_client_mock, distance=10.0)
-    assert gap.distance == 10.0
+    gap = Gap(grpc_client_mock, distance=Distance(10))
+    assert gap.distance._value == 10.0
 
 
 def test_min_distance_between_objects(modeler: Modeler):
@@ -51,4 +52,4 @@ def test_min_distance_between_objects(modeler: Modeler):
     skip_if_linux(modeler)  # Skip test on Linux
     design = modeler.open_file("./tests/integration/files/MixingTank.scdocx")
     gap = modeler.measure_tools.min_distance_between_objects(design.bodies[2], design.bodies[1])
-    assert round(gap.distance, 4) == 0.0892
+    assert abs(gap.distance._value - 0.0892) <= 0.01
