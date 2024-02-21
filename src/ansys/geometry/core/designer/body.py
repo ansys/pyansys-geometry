@@ -817,8 +817,6 @@ class MasterBody(IBody):
         )
 
     @protect_grpc
-    @check_input_types
-    @reset_tessellation_cache
     def get_collision(self, body: "Body") -> CollisionType:
         """
         Get the collision state between bodies.
