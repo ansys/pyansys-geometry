@@ -65,7 +65,7 @@ class Gap:
     ) -> None:
         """Construct Gap object from distance response."""
         distance = Distance(response.gap.distance, unit=DEFAULT_UNITS.LENGTH)
-        return cls(grpc_client, response.gap.distance)
+        return cls(grpc_client, distance)
 
 
 class MeasureTools:
