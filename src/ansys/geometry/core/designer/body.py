@@ -361,19 +361,16 @@ class IBody(ABC):
     @abstractmethod
     def get_collision(self, body: "Body") -> CollisionType:
         """
-        Get the collision between bodies.
+        Get the collision state between bodies.
 
         Parameters
         ----------
-        axis_origin: Point3D
-            Origin of the rotational axis.
-        axis_direction: UnitVector3D
-            The axis of rotation.
-        angle: Union[~pint.Quantity, Angle, Real]
-            Angle (magnitude) of the rotation.
+        body: Body
+            The body object that collision state is checked with.
         Returns
         -------
-        None
+        Collision Type
+            Enum that defines collision state between bodies.
         """
         return
 
@@ -823,8 +820,19 @@ class MasterBody(IBody):
     @check_input_types
     @reset_tessellation_cache
     def get_collision(self, body: "Body") -> CollisionType:
-        """Get the collision state between two bodies."""
-        self._grpc_client.log.debug(f"Get collision on body {self.id} and body {body.id}.")
+        """
+        Get the collision state between bodies.
+
+        Parameters
+        ----------
+        body: Body
+            The body object that collision state is checked with.
+        Returns
+        -------
+        Collision Type
+            Enum that defines collision state between bodies.
+        """
+        self._grpc_client.log.debug(f"Get collision between body {self.id} and body {body.id}.")
         response = self._bodies_stub.GetCollision(
             GetCollisionRequest(
                 body_1_id=self.id,
