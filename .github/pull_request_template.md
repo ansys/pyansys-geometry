@@ -1,5 +1,3 @@
-**IMPORTANT**: Add the author of the PR to the assignees list. This will help us to track the PRs and assign the correct reviewer.
-
 ## Description
 **Please provide a brief description of the changes made in this pull request.**
 
@@ -14,3 +12,4 @@
 - [ ] I have reviewed my changes before submitting this pull request.
 - [ ] I have linked the issue or issues that are solved to the PR if any.
 - [ ] I have assigned this PR to myself.
+- [ ] I have made sure that the title of my PR follows (Conventional commits style)[https://www.conventionalcommits.org/en/v1.0.0/#summary] (e.g. ``feat: extrude circle to cylinder``)
