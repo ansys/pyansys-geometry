@@ -1,4 +1,4 @@
-**IMPORTANT**: Add the author of the PR to the asignees list. This will help us to track the PRs and assign the correct reviewer.
+**IMPORTANT**: Add the author of the PR to the assignees list. This will help us to track the PRs and assign the correct reviewer.
 
 ## Description
 **Please provide a brief description of the changes made in this pull request.**
