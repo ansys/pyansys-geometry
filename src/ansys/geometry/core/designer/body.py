@@ -359,7 +359,7 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def getCollision(self, body: "Body") -> CollisionType:
+    def get_collision(self, body: "Body") -> CollisionType:
         """
         Get the collision between bodies.
 
@@ -822,7 +822,7 @@ class MasterBody(IBody):
     @protect_grpc
     @check_input_types
     @reset_tessellation_cache
-    def getCollision(self, body: "Body") -> CollisionType:
+    def get_collision(self, body: "Body") -> CollisionType:
         """Get the collision state between two bodies."""
         self._grpc_client.log.debug(f"Get collision on body {self.id} and body {body.id}.")
         response = self._bodies_stub.GetCollision(
@@ -1186,9 +1186,9 @@ class Body(IBody):
         return self._template.rotate(axis_origin, axis_direction, angle)
 
     @ensure_design_is_active
-    def getCollision(self, body: "Body") -> CollisionType:
+    def get_collision(self, body: "Body") -> CollisionType:
         """Get the collision state between two bodies."""
-        return CollisionType(self._template.getCollision(body))
+        return CollisionType(self._template.get_collision(body))
 
     @ensure_design_is_active
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102

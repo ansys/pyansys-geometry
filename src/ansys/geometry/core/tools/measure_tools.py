@@ -21,14 +21,39 @@
 # SOFTWARE.
 """Provides tools for measuring."""
 
-from ansys.api.geometry.v0.measuretools_pb2 import MinDistanceBetweenObjectsRequest
+from ansys.api.geometry.v0.measuretools_pb2 import (
+    MinDistanceBetweenObjectsRequest,
+    MinDistanceBetweenObjectsResponse,
+)
 from ansys.api.geometry.v0.measuretools_pb2_grpc import MeasureToolsStub
-from beartype.typing import TYPE_CHECKING, List
+from beartype.typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection import GrpcClient
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
+
+
+class Gap:
+    """Gap between two bodies."""
+
+    def __init__(self, grpc_client: GrpcClient, distance: float = None):
+        """Initialize Gap class."""
+        self._grpc_client = grpc_client
+        self._measure_stub = MeasureToolsStub(self._grpc_client.channel)
+        self._distance = distance
+
+    @property
+    def distance(self):
+        """Get the calculated distance."""
+        return self._distance
+
+    @classmethod
+    def from_distance_response(
+        cls, grpc_client: GrpcClient, response: MinDistanceBetweenObjectsResponse
+    ):
+        """Construct Gap object from distance response."""
+        return cls(grpc_client, response.gap.distance)
 
 
 class MeasureTools:
@@ -39,10 +64,11 @@ class MeasureTools:
         self._grpc_client = grpc_client
         self._measure_stub = MeasureToolsStub(self._grpc_client.channel)
 
-    def min_distance_between_objects(self, bodies: List["Body"]):
+    def min_distance_between_objects(self, body1: "Body", body2: "Body"):
         """Find the gap between objects."""
-        body_ids = [body.id for body in bodies]
-        gap = self._measure_stub.MinDistanceBetweenObjects(
+        body_ids = [body1.id, body2.id]
+        response = self._measure_stub.MinDistanceBetweenObjects(
             MinDistanceBetweenObjectsRequest(bodies=body_ids)
         )
+        gap = Gap.from_distance_response(self._grpc_client, response)
         return gap
