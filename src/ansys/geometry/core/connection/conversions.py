@@ -38,9 +38,18 @@ from ansys.api.geometry.v0.models_pb2 import Tessellation
 from ansys.api.geometry.v0.models_pb2 import TrimmedCurve as GRPCTrimmedCurve
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple
 
-from ansys.geometry.core.geometry import Circle, Cone, Curve, Cylinder, Ellipse, Line
-from ansys.geometry.core.geometry import Plane as SurfacePlane
-from ansys.geometry.core.geometry import Sphere, Surface, Torus
+from ansys.geometry.core.geometry import (
+    Circle,
+    Cone,
+    Curve,
+    Cylinder,
+    Ellipse,
+    Line,
+    PlaneSurface,
+    Sphere,
+    Surface,
+    Torus,
+)
 from ansys.geometry.core.math import Frame, Matrix44, Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS
 from ansys.geometry.core.sketch import (
@@ -471,7 +480,7 @@ def grpc_surface_to_surface(surface: GRPCSurface, surface_type: "SurfaceType") -
     elif surface_type == SurfaceType.SURFACETYPE_TORUS:
         result = Torus(origin, surface.major_radius, surface.minor_radius, reference, axis)
     elif surface_type == SurfaceType.SURFACETYPE_PLANE:
-        result = SurfacePlane(origin, reference, axis)
+        result = PlaneSurface(origin, reference, axis)
     else:
         result = None
     return result

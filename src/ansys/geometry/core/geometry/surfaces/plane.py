@@ -46,9 +46,9 @@ from ansys.geometry.core.math import (
 from ansys.geometry.core.typing import Real, RealSequence
 
 
-class Plane(Surface):
+class PlaneSurface(Surface):
     """
-    Provides 3D plane representation.
+    Provides 3D plane surface representation.
 
     Parameters
     ----------
@@ -66,7 +66,7 @@ class Plane(Surface):
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
-        """Initialize ``Plane`` class."""
+        """Initialize ``PlaneSurface`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
 
         self._reference = (
@@ -97,7 +97,7 @@ class Plane(Surface):
         return self._axis
 
     @check_input_types
-    def __eq__(self, other: "Plane") -> bool:
+    def __eq__(self, other: "PlaneSurface") -> bool:
         """Check whether two planes are equal."""
         return (
             self._origin == other._origin
@@ -132,7 +132,7 @@ class Plane(Surface):
         new_point = self.origin.transform(matrix)
         new_reference = self._reference.transform(matrix)
         new_axis = self._axis.transform(matrix)
-        return Plane(
+        return PlaneSurface(
             new_point,
             UnitVector3D(new_reference[0:3]),
             UnitVector3D(new_axis[0:3]),
@@ -155,13 +155,13 @@ class PlaneEvaluation(SurfaceEvaluation):
         Parameters (u, v) to evaluate the plane at.
     """
 
-    def __init__(self, plane: Plane, parameter: ParamUV) -> None:
+    def __init__(self, plane: PlaneSurface, parameter: ParamUV) -> None:
         """``SphereEvaluation`` class constructor."""
         self._plane = plane
         self._parameter = parameter
 
     @property
-    def plane(self) -> Plane:
+    def plane(self) -> PlaneSurface:
         """The plane being evaluated."""
         return self._plane
 
