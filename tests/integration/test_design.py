@@ -66,8 +66,8 @@ def skip_if_linux(modeler: Modeler):
 
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):
-    """Test in charge of validating the extrusion of a simple circle as a cylinder and
-    assigning materials to it."""
+    """Test to validate the extrusion of a simple circle as a cylinder and the
+    assignment of materials to it."""
 
     # Create a Sketch and draw a circle (all client side)
     sketch = Sketch()
