@@ -38,7 +38,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 class Gap:
     """
-    Gap between two bodies.
+    Represents a gap between two bodies.
 
     Parameters
     ----------
