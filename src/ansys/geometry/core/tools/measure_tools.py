@@ -43,7 +43,7 @@ class Gap:
     Parameters
     ----------
     distance : Distance
-        The distance between two sides of the gap.
+        Distance between two sides of the gap.
     """
 
     @protect_grpc
