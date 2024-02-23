@@ -55,7 +55,7 @@ class Gap:
 
     @property
     def distance(self) -> Distance:
-        """Get the calculated distance."""
+        """Returns the closest distance between two bodies."""
         return self._distance
 
     @classmethod
@@ -63,7 +63,7 @@ class Gap:
     def from_distance_response(
         cls, grpc_client: GrpcClient, response: MinDistanceBetweenObjectsResponse
     ) -> None:
-        """Construct Gap object from distance response."""
+        """Construct `Gap` object from distance response."""
         distance = Distance(response.gap.distance, unit=DEFAULT_UNITS.LENGTH)
         return cls(grpc_client, distance)
 
