@@ -79,7 +79,7 @@ class MeasureTools:
 
     @protect_grpc
     def min_distance_between_objects(self, body1: "Body", body2: "Body"):
-        """Find the gap between objects."""
+        """Find the gap between two bodies."""
         body_ids = [body1.id, body2.id]
         response = self._measure_stub.MinDistanceBetweenObjects(
             MinDistanceBetweenObjectsRequest(bodies=body_ids)
