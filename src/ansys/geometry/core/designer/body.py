@@ -824,7 +824,7 @@ class MasterBody(IBody):
         Parameters
         ----------
         body: Body
-            The body object that collision state is checked with.
+            Object that the collision state is checked with.
         Returns
         -------
         Collision Type
