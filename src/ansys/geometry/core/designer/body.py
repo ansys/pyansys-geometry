@@ -828,7 +828,7 @@ class MasterBody(IBody):
         Returns
         -------
         Collision Type
-            Enum that defines collision state between bodies.
+            Enum that defines the collision state between bodies.
         """
         self._grpc_client.log.debug(f"Get collision between body {self.id} and body {body.id}.")
         response = self._bodies_stub.GetCollision(
