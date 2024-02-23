@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Provides tools for measuring."""
+"""Provides tools for measurement."""
 
 from ansys.api.geometry.v0.measuretools_pb2 import (
     MinDistanceBetweenObjectsRequest,
@@ -48,7 +48,7 @@ class Gap:
 
     @protect_grpc
     def __init__(self, grpc_client: GrpcClient, distance: Distance = None):
-        """Initialize Gap class."""
+        """Initialize `Gap` class."""
         self._grpc_client = grpc_client
         self._measure_stub = MeasureToolsStub(self._grpc_client.channel)
         self._distance = distance
@@ -68,12 +68,12 @@ class Gap:
         return cls(grpc_client, distance)
 
 
-class MeasureTools:
-    """Measure Tools for PyAnsys Geometry."""
+class MeasurementTools:
+    """Measurement Tools for PyAnsys Geometry."""
 
     @protect_grpc
     def __init__(self, grpc_client: GrpcClient):
-        """Initialize Measure Tools class."""
+        """Initialize Measurement Tools class."""
         self._grpc_client = grpc_client
         self._measure_stub = MeasureToolsStub(self._grpc_client.channel)
 

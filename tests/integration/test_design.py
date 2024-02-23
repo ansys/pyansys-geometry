@@ -58,11 +58,11 @@ from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Distance
 from ansys.geometry.core.sketch import Sketch
 
 
-# TODO: re-enable when Linux service is able to use measure tools
+# TODO: re-enable when Linux service is able to use measurement tools
 def skip_if_linux(modeler: Modeler):
     """Skip test if running on Linux."""
     if modeler.client.backend_type == BackendType.LINUX_SERVICE:
-        pytest.skip("Measure tools not available on Linux service.")
+        pytest.skip("Measurement tools not available on Linux service.")
 
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):

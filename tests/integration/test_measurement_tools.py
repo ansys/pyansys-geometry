@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-""""Testing of measure tools."""
+""""Testing of measurement tools."""
 
 from unittest.mock import Mock
 
@@ -29,14 +29,14 @@ from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.modeler import Modeler
-from ansys.geometry.core.tools.measure_tools import Gap
+from ansys.geometry.core.tools.measurement_tools import Gap
 
 
-# TODO: re-enable when Linux service is able to use measure tools
+# TODO: re-enable when Linux service is able to use measurement tools
 def skip_if_linux(modeler: Modeler):
     """Skip test if running on Linux."""
     if modeler.client.backend_type == BackendType.LINUX_SERVICE:
-        pytest.skip("Measure tools not available on Linux service.")
+        pytest.skip("Measurement tools not available on Linux service.")
 
 
 def test_distance_property(modeler: Modeler):
