@@ -370,7 +370,7 @@ class IBody(ABC):
         Returns
         -------
         Collision Type
-            Enum that defines collision state between bodies.
+            Enum that defines the collision state between bodies.
         """
         return
 
