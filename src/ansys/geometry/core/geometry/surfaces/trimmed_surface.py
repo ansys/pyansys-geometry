@@ -57,17 +57,17 @@ class TrimmedSurface:
 
     @property
     def face(self) -> "Face":
-        """The face this TrimmedSurface belongs to."""
+        """Face the trimmed surface belongs to."""
         return self._face
 
     @property
     def geometry(self) -> Surface:
-        """The underlying mathematical surface."""
+        """Underlying mathematical surface."""
         return self._geometry
 
     @property
     def box_uv(self) -> BoxUV:
-        """The bounding BoxUV of the surface."""
+        """Bounding BoxUV of the surface."""
         self._face._grpc_client.log.debug("Requesting box UV from server.")
         box = self._face._faces_stub.GetBoxUV(self.face._grpc_id)
         return BoxUV(Interval(box.start_u, box.end_u), Interval(box.start_v, box.end_v))
