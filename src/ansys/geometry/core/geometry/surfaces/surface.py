@@ -69,7 +69,7 @@ class Surface(ABC):
         """
         Project a point to the surface.
 
-        This returns the evaluation at the closest point.
+        This method returns the evaluation at the closest point.
         """
         return
 
