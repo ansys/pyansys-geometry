@@ -34,7 +34,7 @@ class Surface(ABC):
 
     @abstractmethod
     def parameterization(self) -> tuple[Parameterization, Parameterization]:
-        """Parameterization of the surface as a tuple (U and V respectively)."""
+        """Parameterize the surface as a tuple (U and V respectively)."""
         return
 
     @abstractmethod
