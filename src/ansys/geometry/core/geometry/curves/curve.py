@@ -29,9 +29,7 @@ from ansys.geometry.core.typing import Real
 
 
 class Curve(ABC):
-    """
-    Provides the abstract base class representing a 3D curve.
-    """
+    """Provides the abstract base class representing a 3D curve."""
 
     @abstractmethod
     def parameterization(self) -> Parameterization:

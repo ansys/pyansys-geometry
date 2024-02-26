@@ -220,7 +220,7 @@ class Interval:
     def get_span(self) -> Real:
         """
         Get the quantity contained by the interval.
-        
+
         The Interval must be closed.
 
         Returns
