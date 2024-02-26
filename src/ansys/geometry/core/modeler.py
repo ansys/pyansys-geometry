@@ -166,13 +166,13 @@ class Modeler:
             )
         return self._designs[design.design_id]
 
-    def get_active_design(self, sync_with_remote: bool = True) -> "Design":
+    def get_active_design(self, sync_with_backend: bool = True) -> "Design":
         """
         Get the active design on the modeler object.
         
         Parameters
         ----------
-        sync_with_remote : bool, default: True
+        sync_with_backend : bool, default: True
             Whether to sync the active design with the remote service. If set to False,
             the active design may be out-of-sync with the remote service. This is useful
             when the active design is known to be up-to-date.
@@ -185,8 +185,8 @@ class Modeler:
         for _, design in self._designs.items():
             if design._is_active:
 
-                # Check if sync_with_remote is requested
-                if sync_with_remote:
+                # Check if sync_with_backend is requested
+                if sync_with_backend:
                     design._update_design_inplace()
 
                 # Return the active design
