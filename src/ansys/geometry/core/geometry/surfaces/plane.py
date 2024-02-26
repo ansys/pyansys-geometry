@@ -128,7 +128,7 @@ class PlaneSurface(Surface):
         return PlaneEvaluation(self, ParamUV(u, v))
 
     def transformed_copy(self, matrix: Matrix44) -> Surface:
-        """Return transformed version of the plane given the transform matrix."""
+        """Get a transformed version of the plane given the transform matrix."""
         new_point = self.origin.transform(matrix)
         new_reference = self._reference.transform(matrix)
         new_axis = self._axis.transform(matrix)
