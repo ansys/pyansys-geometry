@@ -41,7 +41,7 @@ class Accuracy:
 
     @property
     def length_accuracy() -> Real:
-        """Return the LENGTH_ACCURACY constant."""
+        """Return the ``LENGTH_ACCURACY`` constant."""
         return LENGTH_ACCURACY
 
     def length_is_equal(comparison_length: Real, reference_length: Real) -> bool:
