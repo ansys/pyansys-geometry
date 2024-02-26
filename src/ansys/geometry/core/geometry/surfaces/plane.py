@@ -114,7 +114,7 @@ class PlaneSurface(Surface):
         raise NotImplementedError("contains_point() is not implemented.")
 
     def parameterization(self) -> tuple[Parameterization, Parameterization]:
-        """Return plane parametrization."""
+        """Parametrize the plane."""
         u = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(np.NINF, np.inf))
         v = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(np.NINF, np.inf))
 
