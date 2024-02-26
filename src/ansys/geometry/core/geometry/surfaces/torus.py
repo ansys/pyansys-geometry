@@ -201,7 +201,7 @@ class Torus(Surface):
 
     def parameterization(self) -> tuple[Parameterization, Parameterization]:
         """
-        Parameterization of the torus surface as a tuple (U and V respectively).
+        Parameterize the torus surface as a tuple (U and V respectively).
 
         The U parameter specifies the longitude angle, increasing clockwise (east) about
         the axis (right-hand corkscrew law). It has a zero parameter at
