@@ -343,7 +343,8 @@ class Interval:
 
     def contains(self, t: Real) -> bool:
         """
-        Check if the interval contains value ``t`` using the default ``length_accuracy`` constant.
+        Check if the interval contains value ``t`` using the default ``length_accuracy``
+        constant.
 
         Parameters
         ----------
