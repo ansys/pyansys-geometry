@@ -159,17 +159,17 @@ class TrimmedSurface:
 
 class ReversedTrimmedSurface(TrimmedSurface):
     """
-    Represents a reversed TrimmedSurface.
+    Represents a reversed trimmed surface.
 
-    When a surface is reversed, its normal vector is negated in order to provide the proper
+    When a surface is reversed, its normal vector is negated to provide the proper
     outward facing vector.
 
     Parameters
     ----------
     face : Face
-        Face that the TrimmedSurface belongs to.
+        Face that the trimmed surface belongs to.
     geometry : Surface
-        The underlying mathematical representation of the surface.
+        Underlying mathematical representation of the surface.
     """
 
     def __init__(self, face: "Face", geometry: Surface):
