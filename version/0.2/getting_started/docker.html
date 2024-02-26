@@ -1,0 +1,842 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Geometry service using Docker &#8212; PyGeometry</title>
+    
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css\ansys_sphinx_theme.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    
+        <link href="../_static/css/breadcrumbs.css" rel="stylesheet">
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="../_static/js\table.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="../_static/design-tabs.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/docker';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://geometry.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
+        </script>
+    <link rel="icon" href="../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="Getting started" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+  <!-- If there is no MiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+</div>
+  </div>
+  
+    
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  <div class="navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/pyansys-logo-black-cropped.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../_static/pyansys-logo-black-cropped.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../autoapi/index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.2  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pygeometry" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pygeometry/discussions" title="Support" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa fa-comment fa-fw"></i></span>
+            <label class="sr-only">Support</label></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+  
+
+    
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(text => document.getElementById("announcement_msg").innerHTML = text)
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+    
+
+    
+    <div class="container-xl">
+    <div class="row">
+        <div class="col-12 col-md-3" id="breadcrumbs-spacer"></div>
+        <div class="col-12 col-md-11 col-xl-9" id="breadcrumbs">
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+    
+        <li class="nav-item nav-item-additional-breadcrumb"><a href="https://docs.pyansys.com/">PyAnsys</a> » </li>
+    
+    
+        <li class="nav-item nav-item-0"><a href="../index.html">PyGeometry</a> » </li>
+    
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Getting started</a> » </li>
+        <li class="nav-item nav-item-this"><a href="">Geometry service using Docker</a></li> 
+      </ul>
+    </div>
+        </div>
+  </div>
+</div>
+    
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../autoapi/index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.2  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pygeometry" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pygeometry/discussions" title="Support" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa fa-comment fa-fw"></i></span>
+            <label class="sr-only">Support</label></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Geometry service using Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="geometry-service-using-docker">
+<span id="ref-docker"></span><h1>Geometry service using Docker<a class="headerlink" href="#geometry-service-using-docker" title="Permalink to this heading">#</a></h1>
+<section id="docker">
+<h2>Docker<a class="headerlink" href="#docker" title="Permalink to this heading">#</a></h2>
+<p>Ensure that the machine in which the Geometry service should run has Docker installed. Otherwise,
+please install <a class="reference external" href="https://docs.docker.com/engine/install/">Docker Engine</a> from the previous link.</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>At the moment, the Geometry service backend is only delivered as a Windows Docker container.
+As such, this container only runs on a Windows machine. Furthermore, it has also been observed
+that certain Docker Desktop versions for Windows are not properly configured for running Windows
+Docker containers. Refer to
+<a class="reference internal" href="#ref-docker-windows"><span class="std std-ref">Running the Geometry service Windows Docker container</span></a> for further details.</p>
+</div>
+</section>
+<section id="running-the-geometry-service-windows-docker-container">
+<span id="ref-docker-windows"></span><h2>Running the Geometry service Windows Docker container<a class="headerlink" href="#running-the-geometry-service-windows-docker-container" title="Permalink to this heading">#</a></h2>
+<p>For running the Windows Docker container of the Geometry service, please ensure that
+you follow the upcoming steps when installing Docker:</p>
+<ol class="arabic simple">
+<li><p>Install <a class="reference external" href="https://docs.docker.com/desktop/release-notes/#4131">Docker Desktop 4.13.1</a> <strong>or below</strong>.
+It has been observed that newer versions present problems when running Windows Docker containers.</p></li>
+<li><p>When prompted for <code class="docutils literal notranslate"><span class="pre">Use</span> <span class="pre">WSL2</span> <span class="pre">instead</span> <span class="pre">of</span> <span class="pre">Hyper-V</span> <span class="pre">(recommended)</span></code>, <strong>deselect this option</strong>.</p></li>
+<li><p>Once the installation process finishes, open up Docker Desktop.</p></li>
+<li><p>On <code class="docutils literal notranslate"><span class="pre">Settings</span> <span class="pre">&gt;&gt;</span> <span class="pre">Software</span> <span class="pre">updates</span></code>, deselect <code class="docutils literal notranslate"><span class="pre">Automatically</span> <span class="pre">check</span> <span class="pre">for</span> <span class="pre">updates</span></code>. Then, <code class="docutils literal notranslate"><span class="pre">Apply</span> <span class="pre">&amp;</span> <span class="pre">restart</span></code>.</p></li>
+<li><p>On the Windows taskbar, go to the <code class="docutils literal notranslate"><span class="pre">Show</span> <span class="pre">hidden</span> <span class="pre">icons</span></code> section, right click in the Docker Desktop app and
+select <code class="docutils literal notranslate"><span class="pre">Switch</span> <span class="pre">to</span> <span class="pre">Windows</span> <span class="pre">containers...</span></code>.</p></li>
+</ol>
+<p>At this point, your Docker engine supports running Windows Docker containers. Next step involves downloading
+the Geometry service Windows Docker image.</p>
+</section>
+<section id="install-the-pygeometry-image">
+<h2>Install the PyGeometry image<a class="headerlink" href="#install-the-pygeometry-image" title="Permalink to this heading">#</a></h2>
+<p>Once you have Docker installed on your machine, the next steps involve pulling down the Geometry service
+Docker container.</p>
+<ol class="arabic">
+<li><p>Using your GitHub credentials, download the Docker image from the <a class="reference external" href="https://github.com/ansys/pygeometry">pygeometry</a> repository.</p></li>
+<li><p>If you have Docker installed, use a GitHub personal access token (PAT) with packages read permission to authorize Docker
+to access this repository. For more information,
+see <a class="reference external" href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens">creating a personal access token</a>.</p></li>
+<li><p>Save the token to a file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">echo</span><span class="w"> </span>XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX<span class="w"> </span>&gt;<span class="w"> </span>GH_TOKEN.txt
+</pre></div>
+</div>
+</li>
+<li><p>Authorize Docker to access the repository:</p></li>
+</ol>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-0">
+Linux/Mac</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">GH_USERNAME</span><span class="o">=</span>&lt;my-github-username&gt;
+cat<span class="w"> </span>GH_TOKEN.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>docker<span class="w"> </span>login<span class="w"> </span>ghcr.io<span class="w"> </span>-u<span class="w"> </span><span class="nv">$GH_USERNAME</span><span class="w"> </span>--password-stdin
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-1">
+Powershell</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">$env</span>:GH_USERNAME<span class="o">=</span>&lt;my-github-username&gt;
+cat<span class="w"> </span>GH_TOKEN.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>docker<span class="w"> </span>login<span class="w"> </span>ghcr.io<span class="w"> </span>-u<span class="w"> </span><span class="nv">$env</span>:GH_USERNAME<span class="w"> </span>--password-stdin
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-2">
+Windows CMD</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>SET<span class="w"> </span><span class="nv">GH_USERNAME</span><span class="o">=</span>&lt;my-github-username&gt;
+<span class="nb">type</span><span class="w"> </span>GH_TOKEN.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>docker<span class="w"> </span>login<span class="w"> </span>ghcr.io<span class="w"> </span>-u<span class="w"> </span>%GH_USERNAME%<span class="w"> </span>--password-stdin
+</pre></div>
+</div>
+</div>
+</div>
+<ol class="arabic">
+<li><p>Pull the Geometry service locally using Docker with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/ansys/geometry:&lt;tag&gt;
+</pre></div>
+</div>
+<p>The following OS-dependent tags are available:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">windows-latest</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">windows-latest-unstable</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">linux-latest</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">linux-latest-unstable</span></code></p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="launching-the-geometry-service">
+<h2>Launching the Geometry service<a class="headerlink" href="#launching-the-geometry-service" title="Permalink to this heading">#</a></h2>
+<p>In this section there are two mechanisms for launching the Geometry service: either <strong>using the PyGeometry launcher</strong>
+or <strong>manually launching the service</strong>.</p>
+<section id="environment-variables">
+<h3>Environment variables<a class="headerlink" href="#environment-variables" title="Permalink to this heading">#</a></h3>
+<p>The Geometry service has a set of environment variables that are <strong>mandatory</strong> for its use:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">LICENSE_SERVER</span></code>: the license server (IP, DNS) to which the Geometry service shall connect. For example, <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code>.</p></li>
+</ul>
+<p>Other optional environment variables are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ENABLE_TRACE</span></code>: whether to set up the trace level for debugging purposes. Expects either <code class="docutils literal notranslate"><span class="pre">1</span></code> or <code class="docutils literal notranslate"><span class="pre">0</span></code>.
+By default, <code class="docutils literal notranslate"><span class="pre">0</span></code> (which means it is not activated).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LOG_LEVEL</span></code>: sets the Geometry service logging level. By default, <code class="docutils literal notranslate"><span class="pre">2</span></code>.</p></li>
+</ul>
+<p>Depending on the mechanism chosen to launch the Geometry service, you can set them as follows:</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-3" name="sd-tab-set-1" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-3">
+Using PyGeometry launcher</label><div class="sd-tab-content docutils">
+<p>In this case, users will have to define the following general environment variables prior
+to launching it. Bare in mind that the naming of the variables is not the same:</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-5" name="sd-tab-set-2" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-5">
+Linux/Mac</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">ANSRV_GEO_LICENSE_SERVER</span><span class="o">=</span><span class="m">127</span>.0.0.1
+<span class="nb">export</span><span class="w"> </span><span class="nv">ANSRV_GEO_ENABLE_TRACE</span><span class="o">=</span><span class="m">0</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">ANSRV_GEO_LOG_LEVEL</span><span class="o">=</span><span class="m">2</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-6" name="sd-tab-set-2" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-6">
+Powershell</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">$env</span>:ANSRV_GEO_LICENSE_SERVER<span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span>
+<span class="nv">$env</span>:ANSRV_GEO_ENABLE_TRACE<span class="o">=</span><span class="m">0</span>
+<span class="nv">$env</span>:ANSRV_GEO_LOG_LEVEL<span class="o">=</span><span class="m">2</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-7" name="sd-tab-set-2" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-7">
+Windows CMD</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>SET<span class="w"> </span><span class="nv">ANSRV_GEO_LICENSE_SERVER</span><span class="o">=</span><span class="m">127</span>.0.0.1
+SET<span class="w"> </span><span class="nv">ANSRV_GEO_ENABLE_TRACE</span><span class="o">=</span><span class="m">0</span>
+SET<span class="w"> </span><span class="nv">ANSRV_GEO_LOG_LEVEL</span><span class="o">=</span><span class="m">2</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<input id="sd-tab-item-4" name="sd-tab-set-1" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-4">
+Manual Geometry service launch</label><div class="sd-tab-content docutils">
+<p>In this case, there is no prior environment variable definition needed. They can
+directly be passed to the Docker container itself.</p>
+</div>
+</div>
+</section>
+<section id="geometry-service-launcher">
+<h3>Geometry service launcher<a class="headerlink" href="#geometry-service-launcher" title="Permalink to this heading">#</a></h3>
+<p>The Geometry service can be launched locally in two different ways:</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-8" name="sd-tab-set-3" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-8">
+Using PyGeometry launcher</label><div class="sd-tab-content docutils">
+<p>This method will directly launch for you the Geometry service and it
+will provide a <code class="docutils literal notranslate"><span class="pre">Modeler</span></code> object.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ansys.geometry.core.connection</span> <span class="kn">import</span> <span class="n">launch_modeler</span>
+
+<span class="n">modeler</span> <span class="o">=</span> <span class="n">launch_modeler</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The previous <code class="docutils literal notranslate"><span class="pre">launch_modeler()</span></code> method will launch the Geometry service under the default
+conditions. For more configurability, please use <code class="docutils literal notranslate"><span class="pre">launch_local_modeler()</span></code>.</p>
+</div>
+<input id="sd-tab-item-9" name="sd-tab-set-3" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-9">
+Manual Geometry service launch</label><div class="sd-tab-content docutils">
+<p>This method will involve the user manually launching the Geometry service. Remember to pass
+in the different environment variables needed. Afterwards, please refer to the next section in
+order to understand how to connect to it from PyGeometry.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>--name<span class="w"> </span>ans_geo<span class="w"> </span>-e<span class="w"> </span><span class="nv">LICENSE_SERVER</span><span class="o">=</span>&lt;LICENSE_SERVER&gt;<span class="w"> </span>-p<span class="w"> </span><span class="m">50051</span>:50051<span class="w"> </span>ghcr.io/ansys/geometry:&lt;TAG&gt;
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="connect-to-the-geometry-service">
+<h2>Connect to the Geometry service<a class="headerlink" href="#connect-to-the-geometry-service" title="Permalink to this heading">#</a></h2>
+<p>After the service is launched, connect to it with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ansys.geometry.core</span> <span class="kn">import</span> <span class="n">Modeler</span>
+
+<span class="n">modeler</span> <span class="o">=</span> <span class="n">Modeler</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>By default <code class="docutils literal notranslate"><span class="pre">Modeler</span></code> connects to <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code> (<code class="docutils literal notranslate"><span class="pre">'localhost'</span></code>) on
+port <code class="docutils literal notranslate"><span class="pre">50051</span></code>. You can change this by modifying the <code class="docutils literal notranslate"><span class="pre">host</span></code> and <code class="docutils literal notranslate"><span class="pre">port</span></code>
+parameters of <code class="docutils literal notranslate"><span class="pre">Modeler</span></code>, but note that you must also modify
+your <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span></code> command by changing <code class="docutils literal notranslate"><span class="pre">&lt;HOST-PORT&gt;-50051</span></code>.</p>
+<p>If you want to change the defaults, modify environment variables and the
+<code class="docutils literal notranslate"><span class="pre">Modeler</span></code> function:</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-10" name="sd-tab-set-4" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-10">
+Environment variables</label><div class="sd-tab-content docutils">
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-12" name="sd-tab-set-5" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-12">
+Linux/Mac</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">ANSRV_GEO_HOST</span><span class="o">=</span><span class="m">127</span>.0.0.1
+<span class="nb">export</span><span class="w"> </span><span class="nv">ANSRV_GEO_PORT</span><span class="o">=</span><span class="m">50051</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-13" name="sd-tab-set-5" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-13">
+Powershell</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">$env</span>:ANSRV_GEO_HOST<span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span>
+<span class="nv">$env</span>:ANSRV_GEO_PORT<span class="o">=</span><span class="m">50051</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-14" name="sd-tab-set-5" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-14">
+Windows CMD</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>SET<span class="w"> </span><span class="nv">ANSRV_GEO_HOST</span><span class="o">=</span><span class="m">127</span>.0.0.1
+SET<span class="w"> </span><span class="nv">ANSRV_GEO_PORT</span><span class="o">=</span><span class="m">50051</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<input id="sd-tab-item-11" name="sd-tab-set-4" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-11">
+Modeler function</label><div class="sd-tab-content docutils">
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.geometry.core</span> <span class="kn">import</span> <span class="n">Modeler</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">modeler</span> <span class="o">=</span> <span class="n">Modeler</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">50051</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker">Docker</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-the-geometry-service-windows-docker-container">Running the Geometry service Windows Docker container</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-the-pygeometry-image">Install the PyGeometry image</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#launching-the-geometry-service">Launching the Geometry service</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-variables">Environment variables</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-service-launcher">Geometry service launcher</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#connect-to-the-geometry-service">Connect to the Geometry service</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/pyansys/pygeometry/edit/main/doc/source/getting_started/docker.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="../_sources/getting_started/docker.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright (c) 2023 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+    Built with the <a href="https://sphinxdocs.ansys.com/version/stable/index.html">Ansys Sphinx Theme</a> 0.9.9.
+    <br>Last updated on <span id="date"></span></br>
+</p>
+<script>
+  var options = { day: 'numeric', month: 'long', year: 'numeric' };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString('en-US', options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

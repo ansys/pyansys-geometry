@@ -1,0 +1,1430 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Modeling: Single body with material assignment &#8212; PyAnsys Geometry</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css\ansys_sphinx_theme.css?v=62c9ccaa" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=bea80f78" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+ 
+<link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script src="../../_static/documentation_options.js?v=78d8237d"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/js\table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="../../_static/design-tabs.js?v=36754332"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/03_modeling/add_design_material';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://geometry.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.3';
+        </script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Modeling: Rectangular plate with multiple bodies" href="plate_with_hole.html" />
+    <link rel="prev" title="Sketching: Parametric sketching for gears" href="../02_sketching/advanced_sketching_gears.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+<!-- If there is no MiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+   
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  <div class="navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys-logo-black-cropped.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../../_static/pyansys-logo-black-cropped.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../api/index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.3  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa fa-comment fa-fw"></i></span>
+            <label class="sr-only">Support</label></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>   <div class="container-xl">
+  <div class="row">
+    <div class="col-12 col-md-3" id="breadcrumbs-spacer"></div>
+    <div class="col-12 col-md-11 col-xl-9" id="breadcrumbs">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul> 
+<li class="nav-item nav-item-additional-breadcrumb">
+  <a href="https://docs.pyansys.com/">PyAnsys</a> » 
+</li>
+ 
+<li class="nav-item nav-item-0">
+  <a href="../../index.html">PyAnsys Geometry</a> » 
+</li>
+ 
+          <li class="nav-item nav-item-1"><a href="../../examples.html" accesskey="U">Examples</a> » </li>
+        <li class="nav-item nav-item-this"><a href="">Modeling: Single body with material assignment</a></li> 
+      </ul>
+    </div></div>
+  </div>
+</div>
+ 
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../api/index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.3  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa fa-comment fa-fw"></i></span>
+            <label class="sr-only">Support</label></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/01_math.html">PyAnsys Geometry 101: Math</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/02_units.html">PyAnsys Geometry 101: Units</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/03_sketching.html">PyAnsys Geometry 101: Sketching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/04_modeling.html">PyAnsys Geometry 101: Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/05_plotter_picker.html">PyAnsys Geometry 101: Plotter</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02_sketching/basic_usage.html">Sketching: Basic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_sketching/dynamic_sketch_plane.html">Sketching: Dynamic sketch plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_sketching/advanced_sketching_gears.html">Sketching: Parametric sketching for gears</a></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Modeling: Single body with material assignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plate_with_hole.html">Modeling: Rectangular plate with multiple bodies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tessellation_usage.html">Modeling: Tessellation of two bodies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_organization.html">Modeling: Design organization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean_operations.html">Modeling: Boolean operations</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <div class="admonition-download-this-example admonition">
+<p class="admonition-title">Download this example</p>
+<p>Download this example as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/0.3/examples/03_modeling/add_design_material.ipynb">Jupyter Notebook</a>
+or as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/0.3/examples/03_modeling/add_design_material.py">Python script</a>.</p>
+</div>
+<hr class="docutils" />
+<section id="Modeling:-Single-body-with-material-assignment">
+<h1>Modeling: Single body with material assignment<a class="headerlink" href="#Modeling:-Single-body-with-material-assignment" title="Link to this heading">#</a></h1>
+<p>In PyAnsys Geometry, a <em>body</em> represents solids or surfaces organized within the <code class="docutils literal notranslate"><span class="pre">Design</span></code> assembly. The current state of sketch, which is a client-side execution, can be used for the operations of the geometric design assembly.</p>
+<p>The Geometry service provides data structures to create individual materials and their properties. These data structures are exposed through PyAnsys Geometry.</p>
+<p>This example shows how to create a single body from a sketch by requesting its extrusion. It then shows how to assign a material to this body.</p>
+<section id="Perform-required-imports">
+<h2>Perform required imports<a class="headerlink" href="#Perform-required-imports" title="Link to this heading">#</a></h2>
+<p>Perform the required imports.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pint</span> <span class="kn">import</span> <span class="n">Quantity</span>
+
+<span class="kn">from</span> <span class="nn">ansys.geometry.core</span> <span class="kn">import</span> <span class="n">Modeler</span>
+<span class="kn">from</span> <span class="nn">ansys.geometry.core.materials</span> <span class="kn">import</span> <span class="n">Material</span><span class="p">,</span> <span class="n">MaterialProperty</span><span class="p">,</span> <span class="n">MaterialPropertyType</span>
+<span class="kn">from</span> <span class="nn">ansys.geometry.core.math</span> <span class="kn">import</span> <span class="n">UNITVECTOR3D_Z</span><span class="p">,</span> <span class="n">Frame</span><span class="p">,</span> <span class="n">Plane</span><span class="p">,</span> <span class="n">Point2D</span><span class="p">,</span> <span class="n">Point3D</span><span class="p">,</span> <span class="n">UnitVector3D</span>
+<span class="kn">from</span> <span class="nn">ansys.geometry.core.misc</span> <span class="kn">import</span> <span class="n">UNITS</span>
+<span class="kn">from</span> <span class="nn">ansys.geometry.core.sketch</span> <span class="kn">import</span> <span class="n">Sketch</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Create-sketch">
+<h2>Create sketch<a class="headerlink" href="#Create-sketch" title="Link to this heading">#</a></h2>
+<p>Create a <code class="docutils literal notranslate"><span class="pre">Sketch</span></code> instance and insert a circle with a radius of 10 millimeters in the default plane.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sketch</span> <span class="o">=</span> <span class="n">Sketch</span><span class="p">()</span>
+<span class="n">sketch</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">),</span> <span class="n">Quantity</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;ansys.geometry.core.sketch.sketch.Sketch at 0x2996d60ee50&gt;
+</pre></div></div>
+</div>
+</section>
+<section id="Initiate-design-on-server">
+<h2>Initiate design on server<a class="headerlink" href="#Initiate-design-on-server" title="Link to this heading">#</a></h2>
+<p>Establish a server connection and initiate a design on the server.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modeler</span> <span class="o">=</span> <span class="n">Modeler</span><span class="p">()</span>
+<span class="n">design_name</span> <span class="o">=</span> <span class="s2">&quot;ExtrudeProfile&quot;</span>
+<span class="n">design</span> <span class="o">=</span> <span class="n">modeler</span><span class="o">.</span><span class="n">create_design</span><span class="p">(</span><span class="n">design_name</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Add-materials-to-design">
+<h2>Add materials to design<a class="headerlink" href="#Add-materials-to-design" title="Link to this heading">#</a></h2>
+<p>Add materials and their properties to the design. Material properties can be added when creating the <code class="docutils literal notranslate"><span class="pre">Material</span></code> object or after its creation. This code adds material properties after creating the <code class="docutils literal notranslate"><span class="pre">Material</span></code> object.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">density</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span><span class="mi">125</span><span class="p">,</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">kg</span> <span class="o">/</span> <span class="p">(</span><span class="n">UNITS</span><span class="o">.</span><span class="n">m</span> <span class="o">*</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span> <span class="o">*</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">))</span>
+<span class="n">poisson_ratio</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span><span class="mf">0.33</span><span class="p">,</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">dimensionless</span><span class="p">)</span>
+<span class="n">tensile_strength</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span><span class="mi">45</span><span class="p">)</span>
+<span class="n">material</span> <span class="o">=</span> <span class="n">Material</span><span class="p">(</span>
+    <span class="s2">&quot;steel&quot;</span><span class="p">,</span>
+    <span class="n">density</span><span class="p">,</span>
+    <span class="p">[</span><span class="n">MaterialProperty</span><span class="p">(</span><span class="n">MaterialPropertyType</span><span class="o">.</span><span class="n">POISSON_RATIO</span><span class="p">,</span> <span class="s2">&quot;PoissonRatio&quot;</span><span class="p">,</span> <span class="n">poisson_ratio</span><span class="p">)],</span>
+<span class="p">)</span>
+<span class="n">material</span><span class="o">.</span><span class="n">add_property</span><span class="p">(</span><span class="n">MaterialPropertyType</span><span class="o">.</span><span class="n">TENSILE_STRENGTH</span><span class="p">,</span> <span class="s2">&quot;TensileProp&quot;</span><span class="p">,</span> <span class="n">Quantity</span><span class="p">(</span><span class="mi">45</span><span class="p">))</span>
+<span class="n">design</span><span class="o">.</span><span class="n">add_material</span><span class="p">(</span><span class="n">material</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Extrude-sketch-to-create-body">
+<h2>Extrude sketch to create body<a class="headerlink" href="#Extrude-sketch-to-create-body" title="Link to this heading">#</a></h2>
+<p>Extrude the sketch to create the body and then assign a material to it.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Extrude the sketch to create the body</span>
+<span class="n">body</span> <span class="o">=</span> <span class="n">design</span><span class="o">.</span><span class="n">extrude_sketch</span><span class="p">(</span><span class="s2">&quot;SingleBody&quot;</span><span class="p">,</span> <span class="n">sketch</span><span class="p">,</span> <span class="n">Quantity</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">))</span>
+
+<span class="c1"># Assign a material to the body</span>
+<span class="n">body</span><span class="o">.</span><span class="n">assign_material</span><span class="p">(</span><span class="n">material</span><span class="p">)</span>
+
+<span class="n">body</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="output_javascript"></div>
+<script type="text/javascript">
+var element = document.currentScript.previousSibling.previousSibling;
+(function(root) {
+  function now() {
+    return new Date();
+  }
+
+  var force = true;
+  var py_version = '3.2.2'.replace('rc', '-rc.').replace('.dev', '-dev.');
+  var is_dev = py_version.indexOf("+") !== -1 || py_version.indexOf("-") !== -1;
+  var reloading = false;
+  var Bokeh = root.Bokeh;
+  var bokeh_loaded = Bokeh != null && (Bokeh.version === py_version || (Bokeh.versions !== undefined && Bokeh.versions.has(py_version)));
+
+  if (typeof (root._bokeh_timeout) === "undefined" || force) {
+    root._bokeh_timeout = Date.now() + 5000;
+    root._bokeh_failed_load = false;
+  }
+
+  function run_callbacks() {
+    try {
+      root._bokeh_onload_callbacks.forEach(function(callback) {
+        if (callback != null)
+          callback();
+      });
+    } finally {
+      delete root._bokeh_onload_callbacks;
+    }
+    console.debug("Bokeh: all callbacks have finished");
+  }
+
+  function load_libs(css_urls, js_urls, js_modules, js_exports, callback) {
+    if (css_urls == null) css_urls = [];
+    if (js_urls == null) js_urls = [];
+    if (js_modules == null) js_modules = [];
+    if (js_exports == null) js_exports = {};
+
+    root._bokeh_onload_callbacks.push(callback);
+
+    if (root._bokeh_is_loading > 0) {
+      console.debug("Bokeh: BokehJS is being loaded, scheduling callback at", now());
+      return null;
+    }
+    if (js_urls.length === 0 && js_modules.length === 0 && Object.keys(js_exports).length === 0) {
+      run_callbacks();
+      return null;
+    }
+    if (!reloading) {
+      console.debug("Bokeh: BokehJS not loaded, scheduling load and callback at", now());
+    }
+
+    function on_load() {
+      root._bokeh_is_loading--;
+      if (root._bokeh_is_loading === 0) {
+        console.debug("Bokeh: all BokehJS libraries/stylesheets loaded");
+        run_callbacks()
+      }
+    }
+    window._bokeh_on_load = on_load
+
+    function on_error() {
+      console.error("failed to load " + url);
+    }
+
+    var skip = [];
+    if (window.requirejs) {
+      window.requirejs.config({'packages': {}, 'paths': {'vtk': 'https://cdn.jsdelivr.net/npm/vtk.js@20.0.1/vtk', 'jspanel': 'https://cdn.jsdelivr.net/npm/jspanel4@4.12.0/dist/jspanel', 'jspanel-modal': 'https://cdn.jsdelivr.net/npm/jspanel4@4.12.0/dist/extensions/modal/jspanel.modal', 'jspanel-tooltip': 'https://cdn.jsdelivr.net/npm/jspanel4@4.12.0/dist/extensions/tooltip/jspanel.tooltip', 'jspanel-hint': 'https://cdn.jsdelivr.net/npm/jspanel4@4.12.0/dist/extensions/hint/jspanel.hint', 'jspanel-layout': 'https://cdn.jsdelivr.net/npm/jspanel4@4.12.0/dist/extensions/layout/jspanel.layout', 'jspanel-contextmenu': 'https://cdn.jsdelivr.net/npm/jspanel4@4.12.0/dist/extensions/contextmenu/jspanel.contextmenu', 'jspanel-dock': 'https://cdn.jsdelivr.net/npm/jspanel4@4.12.0/dist/extensions/dock/jspanel.dock', 'gridstack': 'https://cdn.jsdelivr.net/npm/gridstack@7.2.3/dist/gridstack-all', 'notyf': 'https://cdn.jsdelivr.net/npm/notyf@3/notyf.min'}, 'shim': {'vtk': {'exports': 'vtk'}, 'jspanel': {'exports': 'jsPanel'}, 'gridstack': {'exports': 'GridStack'}}});
+      require(["vtk"], function() {
+    on_load()
+      })
+      require(["jspanel"], function(jsPanel) {
+    window.jsPanel = jsPanel
+    on_load()
+      })
+      require(["jspanel-modal"], function() {
+    on_load()
+      })
+      require(["jspanel-tooltip"], function() {
+    on_load()
+      })
+      require(["jspanel-hint"], function() {
+    on_load()
+      })
+      require(["jspanel-layout"], function() {
+    on_load()
+      })
+      require(["jspanel-contextmenu"], function() {
+    on_load()
+      })
+      require(["jspanel-dock"], function() {
+    on_load()
+      })
+      require(["gridstack"], function(GridStack) {
+    window.GridStack = GridStack
+    on_load()
+      })
+      require(["notyf"], function() {
+    on_load()
+      })
+      root._bokeh_is_loading = css_urls.length + 10;
+    } else {
+      root._bokeh_is_loading = css_urls.length + js_urls.length + js_modules.length + Object.keys(js_exports).length;
+    }
+
+    var existing_stylesheets = []
+    var links = document.getElementsByTagName('link')
+    for (var i = 0; i < links.length; i++) {
+      var link = links[i]
+      if (link.href != null) {
+    existing_stylesheets.push(link.href)
+      }
+    }
+    for (var i = 0; i < css_urls.length; i++) {
+      var url = css_urls[i];
+      if (existing_stylesheets.indexOf(url) !== -1) {
+    on_load()
+    continue;
+      }
+      const element = document.createElement("link");
+      element.onload = on_load;
+      element.onerror = on_error;
+      element.rel = "stylesheet";
+      element.type = "text/css";
+      element.href = url;
+      console.debug("Bokeh: injecting link tag for BokehJS stylesheet: ", url);
+      document.body.appendChild(element);
+    }    if (((window['vtk'] !== undefined) && (!(window['vtk'] instanceof HTMLElement))) || window.requirejs) {
+      var urls = ['https://cdn.holoviz.org/panel/1.2.3/dist/bundled/abstractvtkplot/vtk.js@20.0.1/vtk.js'];
+      for (var i = 0; i < urls.length; i++) {
+        skip.push(urls[i])
+      }
+    }    if (((window['jsPanel'] !== undefined) && (!(window['jsPanel'] instanceof HTMLElement))) || window.requirejs) {
+      var urls = ['https://cdn.holoviz.org/panel/1.2.3/dist/bundled/floatpanel/jspanel4@4.12.0/dist/jspanel.js', 'https://cdn.holoviz.org/panel/1.2.3/dist/bundled/floatpanel/jspanel4@4.12.0/dist/extensions/modal/jspanel.modal.js', 'https://cdn.holoviz.org/panel/1.2.3/dist/bundled/floatpanel/jspanel4@4.12.0/dist/extensions/tooltip/jspanel.tooltip.js', 'https://cdn.holoviz.org/panel/1.2.3/dist/bundled/floatpanel/jspanel4@4.12.0/dist/extensions/hint/jspanel.hint.js', 'https://cdn.holoviz.org/panel/1.2.3/dist/bundled/floatpanel/jspanel4@4.12.0/dist/extensions/layout/jspanel.layout.js', 'https://cdn.holoviz.org/panel/1.2.3/dist/bundled/floatpanel/jspanel4@4.12.0/dist/extensions/contextmenu/jspanel.contextmenu.js', 'https://cdn.holoviz.org/panel/1.2.3/dist/bundled/floatpanel/jspanel4@4.12.0/dist/extensions/dock/jspanel.dock.js'];
+      for (var i = 0; i < urls.length; i++) {
+        skip.push(urls[i])
+      }
+    }    if (((window['GridStack'] !== undefined) && (!(window['GridStack'] instanceof HTMLElement))) || window.requirejs) {
+      var urls = ['https://cdn.holoviz.org/panel/1.2.3/dist/bundled/gridstack/gridstack@7.2.3/dist/gridstack-all.js'];
+      for (var i = 0; i < urls.length; i++) {
+        skip.push(urls[i])
+      }
+    }    if (((window['Notyf'] !== undefined) && (!(window['Notyf'] instanceof HTMLElement))) || window.requirejs) {
+      var urls = ['https://cdn.holoviz.org/panel/1.2.3/dist/bundled/notificationarea/notyf@3/notyf.min.js'];
+      for (var i = 0; i < urls.length; i++) {
+        skip.push(urls[i])
+      }
+    }    var existing_scripts = []
+    var scripts = document.getElementsByTagName('script')
+    for (var i = 0; i < scripts.length; i++) {
+      var script = scripts[i]
+      if (script.src != null) {
+    existing_scripts.push(script.src)
+      }
+    }
+    for (var i = 0; i < js_urls.length; i++) {
+      var url = js_urls[i];
+      if (skip.indexOf(url) !== -1 || existing_scripts.indexOf(url) !== -1) {
+    if (!window.requirejs) {
+      on_load();
+    }
+    continue;
+      }
+      var element = document.createElement('script');
+      element.onload = on_load;
+      element.onerror = on_error;
+      element.async = false;
+      element.src = url;
+      console.debug("Bokeh: injecting script tag for BokehJS library: ", url);
+      document.head.appendChild(element);
+    }
+    for (var i = 0; i < js_modules.length; i++) {
+      var url = js_modules[i];
+      if (skip.indexOf(url) !== -1 || existing_scripts.indexOf(url) !== -1) {
+    if (!window.requirejs) {
+      on_load();
+    }
+    continue;
+      }
+      var element = document.createElement('script');
+      element.onload = on_load;
+      element.onerror = on_error;
+      element.async = false;
+      element.src = url;
+      element.type = "module";
+      console.debug("Bokeh: injecting script tag for BokehJS library: ", url);
+      document.head.appendChild(element);
+    }
+    for (const name in js_exports) {
+      var url = js_exports[name];
+      if (skip.indexOf(url) >= 0 || root[name] != null) {
+    if (!window.requirejs) {
+      on_load();
+    }
+    continue;
+      }
+      var element = document.createElement('script');
+      element.onerror = on_error;
+      element.async = false;
+      element.type = "module";
+      console.debug("Bokeh: injecting script tag for BokehJS library: ", url);
+      element.textContent = `
+      import ${name} from "${url}"
+      window.${name} = ${name}
+      window._bokeh_on_load()
+      `
+      document.head.appendChild(element);
+    }
+    if (!js_urls.length && !js_modules.length) {
+      on_load()
+    }
+  };
+
+  function inject_raw_css(css) {
+    const element = document.createElement("style");
+    element.appendChild(document.createTextNode(css));
+    document.body.appendChild(element);
+  }
+
+  var js_urls = ["https://cdn.holoviz.org/panel/1.2.3/dist/bundled/abstractvtkplot/vtk.js@20.0.1/vtk.js", "https://cdn.bokeh.org/bokeh/release/bokeh-3.2.2.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.2.2.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.2.2.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.2.2.min.js", "https://cdn.holoviz.org/panel/1.2.3/dist/panel.min.js"];
+  var js_modules = [];
+  var js_exports = {};
+  var css_urls = [];
+  var inline_js = [    function(Bokeh) {
+      Bokeh.set_log_level("info");
+    },
+function(Bokeh) {} // ensure no trailing comma for IE
+  ];
+
+  function run_inline_js() {
+    if ((root.Bokeh !== undefined) || (force === true)) {
+      for (var i = 0; i < inline_js.length; i++) {
+        inline_js[i].call(root, root.Bokeh);
+      }
+      // Cache old bokeh versions
+      if (Bokeh != undefined && !reloading) {
+    var NewBokeh = root.Bokeh;
+    if (Bokeh.versions === undefined) {
+      Bokeh.versions = new Map();
+    }
+    if (NewBokeh.version !== Bokeh.version) {
+      Bokeh.versions.set(NewBokeh.version, NewBokeh)
+    }
+    root.Bokeh = Bokeh;
+      }} else if (Date.now() < root._bokeh_timeout) {
+      setTimeout(run_inline_js, 100);
+    } else if (!root._bokeh_failed_load) {
+      console.log("Bokeh: BokehJS failed to load within specified timeout.");
+      root._bokeh_failed_load = true;
+    }
+    root._bokeh_is_initializing = false
+  }
+
+  function load_or_wait() {
+    // Implement a backoff loop that tries to ensure we do not load multiple
+    // versions of Bokeh and its dependencies at the same time.
+    // In recent versions we use the root._bokeh_is_initializing flag
+    // to determine whether there is an ongoing attempt to initialize
+    // bokeh, however for backward compatibility we also try to ensure
+    // that we do not start loading a newer (Panel>=1.0 and Bokeh>3) version
+    // before older versions are fully initialized.
+    if (root._bokeh_is_initializing && Date.now() > root._bokeh_timeout) {
+      root._bokeh_is_initializing = false;
+      root._bokeh_onload_callbacks = undefined;
+      console.log("Bokeh: BokehJS was loaded multiple times but one version failed to initialize.");
+      load_or_wait();
+    } else if (root._bokeh_is_initializing || (typeof root._bokeh_is_initializing === "undefined" && root._bokeh_onload_callbacks !== undefined)) {
+      setTimeout(load_or_wait, 100);
+    } else {
+      Bokeh = root.Bokeh;
+      bokeh_loaded = Bokeh != null && (Bokeh.version === py_version || (Bokeh.versions !== undefined && Bokeh.versions.has(py_version)));
+      root._bokeh_is_initializing = true
+      root._bokeh_onload_callbacks = []
+      if (!reloading && (!bokeh_loaded || is_dev)) {
+    root.Bokeh = undefined;
+      }
+      load_libs(css_urls, js_urls, js_modules, js_exports, function() {
+    console.debug("Bokeh: BokehJS plotting callback run at", now());
+    run_inline_js();
+      });
+    }
+  }
+  // Give older versions of the autoload script a head-start to ensure
+  // they initialize before we start loading newer version.
+  setTimeout(load_or_wait, 100)
+}(window));
+</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="output_javascript"></div>
+<script type="text/javascript">
+var element = document.currentScript.previousSibling.previousSibling;
+
+if ((window.PyViz === undefined) || (window.PyViz instanceof HTMLElement)) {
+  window.PyViz = {comms: {}, comm_status:{}, kernels:{}, receivers: {}, plot_index: []}
+}
+
+
+    function JupyterCommManager() {
+    }
+
+    JupyterCommManager.prototype.register_target = function(plot_id, comm_id, msg_handler) {
+      if (window.comm_manager || ((window.Jupyter !== undefined) && (Jupyter.notebook.kernel != null))) {
+        var comm_manager = window.comm_manager || Jupyter.notebook.kernel.comm_manager;
+        comm_manager.register_target(comm_id, function(comm) {
+          comm.on_msg(msg_handler);
+        });
+      } else if ((plot_id in window.PyViz.kernels) && (window.PyViz.kernels[plot_id])) {
+        window.PyViz.kernels[plot_id].registerCommTarget(comm_id, function(comm) {
+          comm.onMsg = msg_handler;
+        });
+      } else if (typeof google != 'undefined' && google.colab.kernel != null) {
+        google.colab.kernel.comms.registerTarget(comm_id, (comm) => {
+          var messages = comm.messages[Symbol.asyncIterator]();
+          function processIteratorResult(result) {
+            var message = result.value;
+            console.log(message)
+            var content = {data: message.data, comm_id};
+            var buffers = []
+            for (var buffer of message.buffers || []) {
+              buffers.push(new DataView(buffer))
+            }
+            var metadata = message.metadata || {};
+            var msg = {content, buffers, metadata}
+            msg_handler(msg);
+            return messages.next().then(processIteratorResult);
+          }
+          return messages.next().then(processIteratorResult);
+        })
+      }
+    }
+
+    JupyterCommManager.prototype.get_client_comm = function(plot_id, comm_id, msg_handler) {
+      if (comm_id in window.PyViz.comms) {
+        return window.PyViz.comms[comm_id];
+      } else if (window.comm_manager || ((window.Jupyter !== undefined) && (Jupyter.notebook.kernel != null))) {
+        var comm_manager = window.comm_manager || Jupyter.notebook.kernel.comm_manager;
+        var comm = comm_manager.new_comm(comm_id, {}, {}, {}, comm_id);
+        if (msg_handler) {
+          comm.on_msg(msg_handler);
+        }
+      } else if ((plot_id in window.PyViz.kernels) && (window.PyViz.kernels[plot_id])) {
+        var comm = window.PyViz.kernels[plot_id].connectToComm(comm_id);
+        comm.open();
+        if (msg_handler) {
+          comm.onMsg = msg_handler;
+        }
+      } else if (typeof google != 'undefined' && google.colab.kernel != null) {
+        var comm_promise = google.colab.kernel.comms.open(comm_id)
+        comm_promise.then((comm) => {
+          window.PyViz.comms[comm_id] = comm;
+          if (msg_handler) {
+            var messages = comm.messages[Symbol.asyncIterator]();
+            function processIteratorResult(result) {
+              var message = result.value;
+              var content = {data: message.data};
+              var metadata = message.metadata || {comm_id};
+              var msg = {content, metadata}
+              msg_handler(msg);
+              return messages.next().then(processIteratorResult);
+            }
+            return messages.next().then(processIteratorResult);
+          }
+        })
+        var sendClosure = (data, metadata, buffers, disposeOnDone) => {
+          return comm_promise.then((comm) => {
+            comm.send(data, metadata, buffers, disposeOnDone);
+          });
+        };
+        var comm = {
+          send: sendClosure
+        };
+      }
+      window.PyViz.comms[comm_id] = comm;
+      return comm;
+    }
+    window.PyViz.comm_manager = new JupyterCommManager();
+
+
+
+var JS_MIME_TYPE = 'application/javascript';
+var HTML_MIME_TYPE = 'text/html';
+var EXEC_MIME_TYPE = 'application/vnd.holoviews_exec.v0+json';
+var CLASS_NAME = 'output';
+
+/**
+ * Render data to the DOM node
+ */
+function render(props, node) {
+  var div = document.createElement("div");
+  var script = document.createElement("script");
+  node.appendChild(div);
+  node.appendChild(script);
+}
+
+/**
+ * Handle when a new output is added
+ */
+function handle_add_output(event, handle) {
+  var output_area = handle.output_area;
+  var output = handle.output;
+  if ((output.data == undefined) || (!output.data.hasOwnProperty(EXEC_MIME_TYPE))) {
+    return
+  }
+  var id = output.metadata[EXEC_MIME_TYPE]["id"];
+  var toinsert = output_area.element.find("." + CLASS_NAME.split(' ')[0]);
+  if (id !== undefined) {
+    var nchildren = toinsert.length;
+    var html_node = toinsert[nchildren-1].children[0];
+    html_node.innerHTML = output.data[HTML_MIME_TYPE];
+    var scripts = [];
+    var nodelist = html_node.querySelectorAll("script");
+    for (var i in nodelist) {
+      if (nodelist.hasOwnProperty(i)) {
+        scripts.push(nodelist[i])
+      }
+    }
+
+    scripts.forEach( function (oldScript) {
+      var newScript = document.createElement("script");
+      var attrs = [];
+      var nodemap = oldScript.attributes;
+      for (var j in nodemap) {
+        if (nodemap.hasOwnProperty(j)) {
+          attrs.push(nodemap[j])
+        }
+      }
+      attrs.forEach(function(attr) { newScript.setAttribute(attr.name, attr.value) });
+      newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+      oldScript.parentNode.replaceChild(newScript, oldScript);
+    });
+    if (JS_MIME_TYPE in output.data) {
+      toinsert[nchildren-1].children[1].textContent = output.data[JS_MIME_TYPE];
+    }
+    output_area._hv_plot_id = id;
+    if ((window.Bokeh !== undefined) && (id in Bokeh.index)) {
+      window.PyViz.plot_index[id] = Bokeh.index[id];
+    } else {
+      window.PyViz.plot_index[id] = null;
+    }
+  } else if (output.metadata[EXEC_MIME_TYPE]["server_id"] !== undefined) {
+    var bk_div = document.createElement("div");
+    bk_div.innerHTML = output.data[HTML_MIME_TYPE];
+    var script_attrs = bk_div.children[0].attributes;
+    for (var i = 0; i < script_attrs.length; i++) {
+      toinsert[toinsert.length - 1].childNodes[1].setAttribute(script_attrs[i].name, script_attrs[i].value);
+    }
+    // store reference to server id on output_area
+    output_area._bokeh_server_id = output.metadata[EXEC_MIME_TYPE]["server_id"];
+  }
+}
+
+/**
+ * Handle when an output is cleared or removed
+ */
+function handle_clear_output(event, handle) {
+  var id = handle.cell.output_area._hv_plot_id;
+  var server_id = handle.cell.output_area._bokeh_server_id;
+  if (((id === undefined) || !(id in PyViz.plot_index)) && (server_id !== undefined)) { return; }
+  var comm = window.PyViz.comm_manager.get_client_comm("hv-extension-comm", "hv-extension-comm", function () {});
+  if (server_id !== null) {
+    comm.send({event_type: 'server_delete', 'id': server_id});
+    return;
+  } else if (comm !== null) {
+    comm.send({event_type: 'delete', 'id': id});
+  }
+  delete PyViz.plot_index[id];
+  if ((window.Bokeh !== undefined) & (id in window.Bokeh.index)) {
+    var doc = window.Bokeh.index[id].model.document
+    doc.clear();
+    const i = window.Bokeh.documents.indexOf(doc);
+    if (i > -1) {
+      window.Bokeh.documents.splice(i, 1);
+    }
+  }
+}
+
+/**
+ * Handle kernel restart event
+ */
+function handle_kernel_cleanup(event, handle) {
+  delete PyViz.comms["hv-extension-comm"];
+  window.PyViz.plot_index = {}
+}
+
+/**
+ * Handle update_display_data messages
+ */
+function handle_update_output(event, handle) {
+  handle_clear_output(event, {cell: {output_area: handle.output_area}})
+  handle_add_output(event, handle)
+}
+
+function register_renderer(events, OutputArea) {
+  function append_mime(data, metadata, element) {
+    // create a DOM node to render to
+    var toinsert = this.create_output_subarea(
+    metadata,
+    CLASS_NAME,
+    EXEC_MIME_TYPE
+    );
+    this.keyboard_manager.register_events(toinsert);
+    // Render to node
+    var props = {data: data, metadata: metadata[EXEC_MIME_TYPE]};
+    render(props, toinsert[0]);
+    element.append(toinsert);
+    return toinsert
+  }
+
+  events.on('output_added.OutputArea', handle_add_output);
+  events.on('output_updated.OutputArea', handle_update_output);
+  events.on('clear_output.CodeCell', handle_clear_output);
+  events.on('delete.Cell', handle_clear_output);
+  events.on('kernel_ready.Kernel', handle_kernel_cleanup);
+
+  OutputArea.prototype.register_mime_type(EXEC_MIME_TYPE, append_mime, {
+    safe: true,
+    index: 0
+  });
+}
+
+if (window.Jupyter !== undefined) {
+  try {
+    var events = require('base/js/events');
+    var OutputArea = require('notebook/js/outputarea').OutputArea;
+    if (OutputArea.prototype.mime_types().indexOf(EXEC_MIME_TYPE) == -1) {
+      register_renderer(events, OutputArea);
+    }
+  } catch(err) {
+  }
+}
+
+</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<style>*[data-root-id],
+*[data-root-id] > * {
+  box-sizing: border-box;
+  font-family: var(--jp-ui-font-family);
+  font-size: var(--jp-ui-font-size1);
+  color: var(--vscode-editor-foreground, var(--jp-ui-font-color1));
+}
+
+/* Override VSCode background color */
+.cell-output-ipywidget-background:has(
+    > .cell-output-ipywidget-background > .lm-Widget > *[data-root-id]
+  ),
+.cell-output-ipywidget-background:has(> .lm-Widget > *[data-root-id]) {
+  background-color: transparent !important;
+}
+</style></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div id='1241a8a2-5b6f-4d4d-8caa-72757ed1608e'>
+  <div id="def687e8-0831-47ca-9581-cf06ca9a336a" data-root-id="1241a8a2-5b6f-4d4d-8caa-72757ed1608e" style="display: contents;"></div>
+</div>
+<script type="application/javascript">(function(root) {
+  var docs_json = {"1481feb8-2c33-40e8-8e44-a5fb7d59c077":{"version":"3.2.2","title":"Bokeh Application","roots":[{"type":"object","name":"panel.models.browser.BrowserInfo","id":"1241a8a2-5b6f-4d4d-8caa-72757ed1608e"},{"type":"object","name":"panel.models.comm_manager.CommManager","id":"f7487093-46f7-409e-b9e0-6b739fd64324","attributes":{"plot_id":"1241a8a2-5b6f-4d4d-8caa-72757ed1608e","comm_id":"58aa69a86be74fd5a4c734e21f862a46","client_comm_id":"77f49481a1524c72af7c6345ff83f67c"}}],"defs":[{"type":"model","name":"ReactiveHTML1"},{"type":"model","name":"FlexBox1","properties":[{"name":"align_content","kind":"Any","default":"flex-start"},{"name":"align_items","kind":"Any","default":"flex-start"},{"name":"flex_direction","kind":"Any","default":"row"},{"name":"flex_wrap","kind":"Any","default":"wrap"},{"name":"justify_content","kind":"Any","default":"flex-start"}]},{"type":"model","name":"FloatPanel1","properties":[{"name":"config","kind":"Any","default":{"type":"map"}},{"name":"contained","kind":"Any","default":true},{"name":"position","kind":"Any","default":"right-top"},{"name":"offsetx","kind":"Any","default":null},{"name":"offsety","kind":"Any","default":null},{"name":"theme","kind":"Any","default":"primary"},{"name":"status","kind":"Any","default":"normalized"}]},{"type":"model","name":"GridStack1","properties":[{"name":"mode","kind":"Any","default":"warn"},{"name":"ncols","kind":"Any","default":null},{"name":"nrows","kind":"Any","default":null},{"name":"allow_resize","kind":"Any","default":true},{"name":"allow_drag","kind":"Any","default":true},{"name":"state","kind":"Any","default":[]}]},{"type":"model","name":"drag1","properties":[{"name":"slider_width","kind":"Any","default":5},{"name":"slider_color","kind":"Any","default":"black"},{"name":"value","kind":"Any","default":50}]},{"type":"model","name":"click1","properties":[{"name":"terminal_output","kind":"Any","default":""},{"name":"debug_name","kind":"Any","default":""},{"name":"clears","kind":"Any","default":0}]},{"type":"model","name":"FastWrapper1","properties":[{"name":"object","kind":"Any","default":null},{"name":"style","kind":"Any","default":null}]},{"type":"model","name":"NotificationAreaBase1","properties":[{"name":"js_events","kind":"Any","default":{"type":"map"}},{"name":"position","kind":"Any","default":"bottom-right"},{"name":"_clear","kind":"Any","default":0}]},{"type":"model","name":"NotificationArea1","properties":[{"name":"js_events","kind":"Any","default":{"type":"map"}},{"name":"notifications","kind":"Any","default":[]},{"name":"position","kind":"Any","default":"bottom-right"},{"name":"_clear","kind":"Any","default":0},{"name":"types","kind":"Any","default":[{"type":"map","entries":[["type","warning"],["background","#ffc107"],["icon",{"type":"map","entries":[["className","fas fa-exclamation-triangle"],["tagName","i"],["color","white"]]}]]},{"type":"map","entries":[["type","info"],["background","#007bff"],["icon",{"type":"map","entries":[["className","fas fa-info-circle"],["tagName","i"],["color","white"]]}]]}]}]},{"type":"model","name":"Notification","properties":[{"name":"background","kind":"Any","default":null},{"name":"duration","kind":"Any","default":3000},{"name":"icon","kind":"Any","default":null},{"name":"message","kind":"Any","default":""},{"name":"notification_type","kind":"Any","default":null},{"name":"_destroyed","kind":"Any","default":false}]},{"type":"model","name":"TemplateActions1","properties":[{"name":"open_modal","kind":"Any","default":0},{"name":"close_modal","kind":"Any","default":0}]},{"type":"model","name":"BootstrapTemplateActions1","properties":[{"name":"open_modal","kind":"Any","default":0},{"name":"close_modal","kind":"Any","default":0}]},{"type":"model","name":"MaterialTemplateActions1","properties":[{"name":"open_modal","kind":"Any","default":0},{"name":"close_modal","kind":"Any","default":0}]}]}};
+  var render_items = [{"docid":"1481feb8-2c33-40e8-8e44-a5fb7d59c077","roots":{"1241a8a2-5b6f-4d4d-8caa-72757ed1608e":"def687e8-0831-47ca-9581-cf06ca9a336a"},"root_ids":["1241a8a2-5b6f-4d4d-8caa-72757ed1608e"]}];
+  var docs = Object.values(docs_json)
+  if (!docs) {
+    return
+  }
+  const py_version = docs[0].version.replace('rc', '-rc.').replace('.dev', '-dev.')
+  const is_dev = py_version.indexOf("+") !== -1 || py_version.indexOf("-") !== -1
+  function embed_document(root) {
+    var Bokeh = get_bokeh(root)
+    Bokeh.embed.embed_items_notebook(docs_json, render_items);
+    for (const render_item of render_items) {
+      for (const root_id of render_item.root_ids) {
+    const id_el = document.getElementById(root_id)
+    if (id_el.children.length && (id_el.children[0].className === 'bk-root')) {
+      const root_el = id_el.children[0]
+      root_el.id = root_el.id + '-rendered'
+    }
+      }
+    }
+  }
+  function get_bokeh(root) {
+    if (root.Bokeh === undefined) {
+      return null
+    } else if (root.Bokeh.version !== py_version && !is_dev) {
+      if (root.Bokeh.versions === undefined || !root.Bokeh.versions.has(py_version)) {
+    return null
+      }
+      return root.Bokeh.versions.get(py_version);
+    } else if (root.Bokeh.version === py_version) {
+      return root.Bokeh
+    }
+    return null
+  }
+  function is_loaded(root) {
+    var Bokeh = get_bokeh(root)
+    return (Bokeh != null && Bokeh.Panel !== undefined && ( root['vtk'] !== undefined) && ( root['vtk'] !== undefined))
+  }
+  if (is_loaded(root)) {
+    embed_document(root);
+  } else {
+    var attempts = 0;
+    var timer = setInterval(function(root) {
+      if (is_loaded(root)) {
+        clearInterval(timer);
+        embed_document(root);
+      } else if (document.readyState == "complete") {
+        attempts++;
+        if (attempts > 200) {
+          clearInterval(timer);
+      var Bokeh = get_bokeh(root)
+      if (Bokeh == null || Bokeh.Panel == null) {
+            console.warn("Panel: ERROR: Unable to run Panel code because Bokeh or Panel library is missing");
+      } else {
+        console.warn("Panel: WARNING: Attempting to render but not all required libraries could be resolved.")
+        embed_document(root)
+      }
+        }
+      }
+    }, 25, root)
+  }
+})(window);</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div id='a952d450-b802-40af-9503-df61a2137a41'>
+  <div id="bb0bd87b-faef-4935-a74f-2ab7ac985c81" data-root-id="a952d450-b802-40af-9503-df61a2137a41" style="display: contents;"></div>
+</div>
+<script type="application/javascript">(function(root) {
+  var docs_json = {"52b5d532-15a6-41ef-b741-7bb1c19dfb42":{"version":"3.2.2","title":"Bokeh Application","roots":[{"type":"object","name":"panel.models.vtk.VTKSynchronizedPlot","id":"a952d450-b802-40af-9503-df61a2137a41","attributes":{"stylesheets":["\n:host(.pn-loading.pn-arc):before, .pn-loading.pn-arc:before {\n  background-image: url(\"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJtYXJnaW46IGF1dG87IGJhY2tncm91bmQ6IG5vbmU7IGRpc3BsYXk6IGJsb2NrOyBzaGFwZS1yZW5kZXJpbmc6IGF1dG87IiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQiPiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYzNjM2MzIiBzdHJva2Utd2lkdGg9IjEwIiByPSIzNSIgc3Ryb2tlLWRhc2hhcnJheT0iMTY0LjkzMzYxNDMxMzQ2NDE1IDU2Ljk3Nzg3MTQzNzgyMTM4Ij4gICAgPGFuaW1hdGVUcmFuc2Zvcm0gYXR0cmlidXRlTmFtZT0idHJhbnNmb3JtIiB0eXBlPSJyb3RhdGUiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiBkdXI9IjFzIiB2YWx1ZXM9IjAgNTAgNTA7MzYwIDUwIDUwIiBrZXlUaW1lcz0iMDsxIj48L2FuaW1hdGVUcmFuc2Zvcm0+ICA8L2NpcmNsZT48L3N2Zz4=\");\n  background-size: auto calc(min(50%, 400px));\n}",{"type":"object","name":"ImportedStyleSheet","id":"775e281d-0bb8-4602-bf80-8bcaec76151b","attributes":{"url":"https://cdn.holoviz.org/panel/1.2.3/dist/css/loading.css"}},{"type":"object","name":"ImportedStyleSheet","id":"538c3abd-5c26-468b-b737-e8624883d541","attributes":{"url":"https://cdn.holoviz.org/panel/1.2.3/dist/bundled/theme/default.css"}},{"type":"object","name":"ImportedStyleSheet","id":"b3e4a62b-4f67-49e5-87a1-336a289ceb90","attributes":{"url":"https://cdn.holoviz.org/panel/1.2.3/dist/bundled/theme/native.css"}}],"margin":[5,10],"sizing_mode":"stretch_width","align":"start","axes":{"type":"object","name":"panel.models.vtk.VTKAxes","id":"f6f6d3c2-616b-49b5-892c-3133e192a2f8"},"orientation_widget":true,"arrays":{"type":"map","entries":[["b26c7ada24d3e22592c137abaedecb14",{"type":"bytes","data":"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"}],["ce3a7483a8afcce16a1544e7cb5d0810",{"type":"bytes","data":"AwAAAAAAAAABAAAAAgAAAAMAAAABAAAAAwAAAAIAAAADAAAAAgAAAAMAAAAEAAAAAwAAAAUAAAAGAAAAAgAAAAMAAAAGAAAABwAAAAIAAAADAAAAAgAAAAcAAAAAAAAAAwAAAAgAAAAJAAAAAgAAAAMAAAAJAAAACgAAAAIAAAADAAAAAgAAAAoAAAAFAAAAAwAAAAsAAAAMAAAAAgAAAAMAAAAMAAAADQAAAAIAAAADAAAAAgAAAA0AAAAIAAAAAwAAAA4AAAAPAAAAAgAAAAMAAAAPAAAAEAAAAAIAAAADAAAAAgAAABAAAAALAAAAAwAAAAQAAAARAAAAAgAAAAMAAAARAAAAEgAAAAIAAAADAAAAAgAAABIAAAAOAAAAAwAAABMAAAAUAAAAFQAAAAMAAAATAAAAFQAAABYAAAADAAAAFQAAABcAAAAWAAAAAwAAABYAAAAXAAAAGAAAAAMAAAAXAAAAGQAAABgAAAADAAAAGAAAABkAAAAaAAAAAwAAABkAAAAbAAAAGgAAAAMAAAAaAAAAGwAAABwAAAADAAAAGwAAAB0AAAAcAAAAAwAAABwAAAAdAAAAHgAAAAMAAAAdAAAAHwAAAB4AAAADAAAAHgAAAB8AAAAgAAAAAwAAAB8AAAAhAAAAIAAAAAMAAAAgAAAAIQAAACIAAAADAAAAIQAAACMAAAAiAAAAAwAAACIAAAAjAAAAJAAAAAMAAAAjAAAAJQAAACQAAAADAAAAJAAAACUAAAAmAAAAAwAAACUAAAAnAAAAJgAAAAMAAAAmAAAAJwAAACgAAAADAAAAJwAAACkAAAAoAAAAAwAAACgAAAApAAAAKgAAAAMAAAApAAAAKwAAACoAAAADAAAAKgAAACsAAAAsAAAAAwAAACsAAAAtAAAALAAAAAMAAAAsAAAALQAAAC4AAAADAAAALQAAAC8AAAAuAAAAAwAAAC4AAAAvAAAAMAAAAAMAAAAvAAAAMQAAADAAAAADAAAAMAAAADEAAAAyAAAAAwAAADEAAAAzAAAAMgAAAAMAAAAyAAAAMwAAADQAAAADAAAAMwAAADUAAAA0AAAAAwAAADQAAAA1AAAANgAAAAMAAAA1AAAANwAAADYAAAADAAAANgAAADcAAAA4AAAAAwAAADkAAAA6AAAAOwAAAAMAAAA6AAAAPAAAADsAAAADAAAAOwAAADwAAAA9AAAAAwAAAD4AAAA/AAAAOwAAAAMAAAA/AAAAQAAAADsAAAADAAAAOwAAAEAAAAA5AAAAAwAAAEEAAABCAAAAOwAAAAMAAABCAAAAQwAAADsAAAADAAAAOwAAAEMAAAA+AAAAAwAAAEQAAABFAAAAOwAAAAMAAABFAAAARgAAADsAAAADAAAAOwAAAEYAAABBAAAAAwAAAEcAAABIAAAAOwAAAAMAAABIAAAASQAAADsAAAADAAAAOwAAAEkAAABEAAAAAwAAAD0AAABKAAAAOwAAAAMAAABKAAAASwAAADsAAAADAAAAOwAAAEsAAABHAAAA"}],["97f3833ad3beb8864d0276b56ac8b598",{"type":"bytes","data":"AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/XRx8P9XQMT4n64qjXRx8P9XQMT4n6wqkw0h1P0KVkj4SwjujbwJrP80Kyz4AAAAAsmxNP37DGD8AAAAASx06P8/GLz8AAAAAqskMP2vPVT8AAAAA3orlPrTUZD8AAAAA361sPnEReT8AAAAA363sPeVIfj8AAAAA363sveVIfj8AAAAA361svnEReT8AAAAA3orlvrTUZD8AAAAAqskMv2vPVT8AAAAASx06v8/GLz8AAAAAsmxNv37DGD8AAAAAbwJrv84Kyz4AAAAAw0h1v0KVkj4AAAAAF49/v5FUcD0AAAAAF49/v5FUcL0AAAAAw0h1v0KVkr4AAAAAbwJrv80Ky74AAAAAsmxNv37DGL8AAAAASx06v8/GL78AAAAAqskMv2vPVb8AAAAA3orlvrTUZL8AAAAA361svnEReb8AAAAA363sveVIfr8AAAAA363sPeVIfr8AAAAA361sPnEReb8AAAAA3orlPrTUZL8AAAAAqskMP2vPVb8AAAAASx06P8/GL78AAAAAsmxNP37DGL8AAAAAbwJrP84Ky74AAAAAw0h1P0KVkr4SwjsjXRx8P9XQMb4n64ojXRx8P9XQMb4n6wokAAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/"}],["2ebda7d3c6c3627ba233a85b7027cd58",{"type":"bytes","data":"/wAA//8AAP//AAD//wEA//8CAP//AwD//wUA//8HAP//CQD//wwA//8PAP//EgD//xUA//8ZAP//HQD//yEA//8lAP//KgD//y4A//8zAP//OQD//z4A//9DAP//SQD//08A//9VAP//WwD//2EA//9nAP//bQD//3MA//96AP//gAD//4YA//+MAP//kwD//5kA//+fAP//pQD//6sA//+xAP//tgD//7wA///BAP//xwD//8wA///RAP//1QD//9oA///eAP//4gD//+YA///qAP//7QD///AA///zAP//9QD///gA///5AP//+wD///wA///9AP///gD///4A//7/AP/+/wD//v8A//3/AP/8/wD/+v8A//j/AP/2/wD/9P8A//H/AP/v/wD/6/8A/+j/AP/k/wD/4P8A/9z/AP/Y/wD/0/8A/87/AP/J/wD/xP8A/7//AP+5/wD/tP8A/67/AP+o/wD/ov8A/5z/AP+W/wD/j/8A/4n/AP+D/wD/ff8A/3b/AP9w/wD/av8A/2T/AP9e/wD/WP8A/1L/AP9M/wD/Rv8A/0H/AP87/wD/Nv8A/zH/AP8s/wD/J/8A/yP/AP8f/wD/G/8A/xf/AP8T/wD/EP8A/w3/AP8L/wD/CP8A/wb/AP8E/wD/A/8A/wH/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wH/AP8D/wD/BP8A/wb/AP8I/wD/C/8A/w3/AP8Q/wD/E/8A/xf/AP8b/wD/H/8A/yP/AP8n/wD/LP8A/zH/AP82/wD/O/8A/0H/AP9G/wD/TP8A/1L/AP9Y/wD/Xv8A/2T/AP9q/wD/cP8A/3b/AP99/wD/g/8A/4n/AP+P/wD/lv8A/5z/AP+i/wD/qP8A/67/AP+0/wD/uf8A/7//AP/E/wD/yf8A/87/AP/T/wD/2P8A/9z/AP/g/wD/5P8A/+j/AP/r/wD/7/8A//H/AP/0/wD/9v8A//n/AP/6/wD//P8A//3/AP/+/wD//v8A//7/AP7//wD+//8A/f//APz//wD7//8A+f//APj//wD1//8A8///APD//wDt//8A6v//AOb//wDi//8A3v//ANr//wDV//8A0f//AMz//wDH//8Awf//ALz//wC2//8Asf//AKv//wCl//8An///AJn//wCT//8AjP//AIb//wCA//8Aef//AHP//wBt//8AZ///AGH//wBb//8AVf//AE///wBJ//8AQ///AD7//wA5//8AM///AC7//wAq//8AJf//ACH//wAd//8AGf//ABX//wAS//8AD///AAz//wAJ//8AB///AAX//wAD//8AAv//AAH//wAA//8AAP//AAD//w=="}],["1a06ab9c788dbe50f9778086177b3f8c",{"type":"bytes","data":"CtejPArXIzwK1yM8CtejPArXIzwK1yM8"}],["f0156444d7069a5861574f84db207ffd",{"type":"bytes","data":"AgAAAAAAAAABAAAA"}],["4ae71336e44bf9bf79d2752e234818a5",{"type":"bytes","data":"AAAAAAAAAAAAAAAAAAAAAA=="}],["1e05d4e417dc6366f25a59828d93b943",{"type":"bytes","data":"CtejPArXIzwAAAAACtejPArXIzwAAAAA"}],["35fc434432ff67971ce2834365132b75",{"type":"bytes","data":"9P1UPPT9VLz0/dShw2QqPPT9VLzDZKqhJZf/O/T9VLwll3+hw2SqO/T9VLzDZCqhw2QqO/T9VLzDZKqgAAAAAPT9VLwAAAAAw2Qqu/T9VLzDZKogw2Squ/T9VLzDZCohJZf/u/T9VLwll38hw2QqvPT9VLzDZKoh9P1UvPT9VLz0/dQh9P1UPMNkKrz0/dShw2QqPMNkKrzDZKqhJZf/O8NkKrwll3+hw2SqO8NkKrzDZCqhw2QqO8NkKrzDZKqgAAAAAMNkKrwAAAAAw2Qqu8NkKrzDZKogw2Squ8NkKrzDZCohJZf/u8NkKrwll38hw2QqvMNkKrzDZKoh9P1UvMNkKrz0/dQh9P1UPCWX/7v0/dShw2QqPCWX/7vDZKqhJZf/OyWX/7sll3+hw2SqOyWX/7vDZCqhw2QqOyWX/7vDZKqgAAAAACWX/7sAAAAAw2QquyWX/7vDZKogw2SquyWX/7vDZCohJZf/uyWX/7sll38hw2QqvCWX/7vDZKoh9P1UvCWX/7v0/dQh9P1UPMNkqrv0/dShw2QqPMNkqrvDZKqhJZf/O8Nkqrsll3+hw2SqO8NkqrvDZCqhw2QqO8NkqrvDZKqgAAAAAMNkqrsAAAAAw2Qqu8NkqrvDZKogw2Squ8NkqrvDZCohJZf/u8Nkqrsll38hw2QqvMNkqrvDZKoh9P1UvMNkqrv0/dQh9P1UPMNkKrv0/dShw2QqPMNkKrvDZKqhJZf/O8NkKrsll3+hw2SqO8NkKrvDZCqhw2QqO8NkKrvDZKqgAAAAAMNkKrsAAAAAw2Qqu8NkKrvDZKogw2Squ8NkKrvDZCohJZf/u8NkKrsll38hw2QqvMNkKrvDZKoh9P1UvMNkKrv0/dQh9P1UPAAAAAD0/dShw2QqPAAAAADDZKqhJZf/OwAAAAAll3+hw2SqOwAAAADDZCqhw2QqOwAAAADDZKqgAAAAAAAAAAAAAAAAw2QquwAAAADDZKogw2SquwAAAADDZCohJZf/uwAAAAAll38hw2QqvAAAAADDZKoh9P1UvAAAAAD0/dQh9P1UPMNkKjv0/dShw2QqPMNkKjvDZKqhJZf/O8NkKjsll3+hw2SqO8NkKjvDZCqhw2QqO8NkKjvDZKqgAAAAAMNkKjsAAAAAw2Qqu8NkKjvDZKogw2Squ8NkKjvDZCohJZf/u8NkKjsll38hw2QqvMNkKjvDZKoh9P1UvMNkKjv0/dQh9P1UPMNkqjv0/dShw2QqPMNkqjvDZKqhJZf/O8Nkqjsll3+hw2SqO8NkqjvDZCqhw2QqO8NkqjvDZKqgAAAAAMNkqjsAAAAAw2Qqu8NkqjvDZKogw2Squ8NkqjvDZCohJZf/u8Nkqjsll38hw2QqvMNkqjvDZKoh9P1UvMNkqjv0/dQh9P1UPCWX/zv0/dShw2QqPCWX/zvDZKqhJZf/OyWX/zsll3+hw2SqOyWX/zvDZCqhw2QqOyWX/zvDZKqgAAAAACWX/zsAAAAAw2QquyWX/zvDZKogw2SquyWX/zvDZCohJZf/uyWX/zsll38hw2QqvCWX/zvDZKoh9P1UvCWX/zv0/dQh9P1UPMNkKjz0/dShw2QqPMNkKjzDZKqhJZf/O8NkKjwll3+hw2SqO8NkKjzDZCqhw2QqO8NkKjzDZKqgAAAAAMNkKjwAAAAAw2Qqu8NkKjzDZKogw2Squ8NkKjzDZCohJZf/u8NkKjwll38hw2QqvMNkKjzDZKoh9P1UvMNkKjz0/dQh9P1UPPT9VDz0/dShw2QqPPT9VDzDZKqhJZf/O/T9VDwll3+hw2SqO/T9VDzDZCqhw2QqO/T9VDzDZKqgAAAAAPT9VDwAAAAAw2Qqu/T9VDzDZKogw2Squ/T9VDzDZCohJZf/u/T9VDwll38hw2QqvPT9VDzDZKoh9P1UvPT9VDz0/dQh"}],["06e8100113814db8aa5e5bb4fb9ea196",{"type":"bytes","data":"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"}],["159fc7c7848a8827368ddf02d90ccfe2",{"type":"bytes","data":"AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/AAAApQAAAAAAAIC/"}],["e4f0fd6e7c3ba82b10c4d4595fb118dd",{"type":"bytes","data":"AAAAAAAAAADNzMw9AAAAAM3MTD4AAAAAmpmZPgAAAADNzMw+AAAAAAAAAD8AAAAAmpkZPwAAAAAzMzM/AAAAAM3MTD8AAAAAZmZmPwAAAAAAAIA/AAAAAAAAAADNzMw9zczMPc3MzD3NzEw+zczMPZqZmT7NzMw9zczMPs3MzD0AAAA/zczMPZqZGT/NzMw9MzMzP83MzD3NzEw/zczMPWZmZj/NzMw9AACAP83MzD0AAAAAzcxMPs3MzD3NzEw+zcxMPs3MTD6amZk+zcxMPs3MzD7NzEw+AAAAP83MTD6amRk/zcxMPjMzMz/NzEw+zcxMP83MTD5mZmY/zcxMPgAAgD/NzEw+AAAAAJqZmT7NzMw9mpmZPs3MTD6amZk+mpmZPpqZmT7NzMw+mpmZPgAAAD+amZk+mpkZP5qZmT4zMzM/mpmZPs3MTD+amZk+ZmZmP5qZmT4AAIA/mpmZPgAAAADNzMw+zczMPc3MzD7NzEw+zczMPpqZmT7NzMw+zczMPs3MzD4AAAA/zczMPpqZGT/NzMw+MzMzP83MzD7NzEw/zczMPmZmZj/NzMw+AACAP83MzD4AAAAAAAAAP83MzD0AAAA/zcxMPgAAAD+amZk+AAAAP83MzD4AAAA/AAAAPwAAAD+amRk/AAAAPzMzMz8AAAA/zcxMPwAAAD9mZmY/AAAAPwAAgD8AAAA/AAAAAJqZGT/NzMw9mpkZP83MTD6amRk/mpmZPpqZGT/NzMw+mpkZPwAAAD+amRk/mpkZP5qZGT8zMzM/mpkZP83MTD+amRk/ZmZmP5qZGT8AAIA/mpkZPwAAAAAzMzM/zczMPTMzMz/NzEw+MzMzP5qZmT4zMzM/zczMPjMzMz8AAAA/MzMzP5qZGT8zMzM/MzMzPzMzMz/NzEw/MzMzP2ZmZj8zMzM/AACAPzMzMz8AAAAAzcxMP83MzD3NzEw/zcxMPs3MTD+amZk+zcxMP83MzD7NzEw/AAAAP83MTD+amRk/zcxMPzMzMz/NzEw/zcxMP83MTD9mZmY/zcxMPwAAgD/NzEw/AAAAAGZmZj/NzMw9ZmZmP83MTD5mZmY/mpmZPmZmZj/NzMw+ZmZmPwAAAD9mZmY/mpkZP2ZmZj8zMzM/ZmZmP83MTD9mZmY/ZmZmP2ZmZj8AAIA/ZmZmPwAAAAAAAIA/zczMPQAAgD/NzEw+AACAP5qZmT4AAIA/zczMPgAAgD8AAAA/AACAP5qZGT8AAIA/MzMzPwAAgD/NzEw/AACAP2ZmZj8AAIA/AACAPwAAgD8="}]]},"scene":{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600x0"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907b63160"],["type","vtkWin32OpenGLRenderWindow"],["properties",{"type":"map","entries":[["numberOfLayers",2]]}],["dependencies",[{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907b63160"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907e20890"],["type","vtkOpenGLRenderer"],["properties",{"type":"map","entries":[["background",[1.0,1.0,1.0]],["background2",[0.2,0.2,0.2]],["viewport",[0.0,0.0,1.0,1.0]],["twoSidedLighting",1],["lightFollowCamera",1],["layer",0],["preserveColorBuffer",0],["preserveDepthBuffer",0],["nearClippingPlaneTolerance",0.001],["clippingRangeExpansion",0.5],["useShadows",0],["useDepthPeeling",0],["occlusionRatio",0.0],["maximumNumberOfPeels",4],["interactive",1]]}],["dependencies",[{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907e20890"],["id","0000029907fbd140"],["type","vtkOpenGLCamera"],["properties",{"type":"map","entries":[["focalPoint",[0.0034999998658895495,0.003424038630950591,0.004999999999999999]],["position",[0.05661709432706557,0.05654113309212659,0.058117094461176]],["viewUp",[0.0,0.0,1.0]],["clippingRange",[0.04750953754582015,0.14822964158483126]]]}]]},{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907e20890"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc860000002990809f190"],["type","vtkOpenGLActor"],["properties",{"type":"map","entries":[["visibility",1],["pickable",1],["dragable",1],["useBounds",true],["origin",[0.0,0.0,0.0]],["position",[0.0,0.0,0.0]],["scale",[1.0,1.0,1.0]],["orientation",[0.0,-0.0,0.0]],["forceOpaque",false],["forceTranslucent",false]]}],["calls",[["setMapper",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907a8fb10}"]],["setProperty",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc860000002990809fa50}"]]]],["dependencies",[{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc860000002990809f190"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907a8fb10"],["properties",{"type":"map","entries":[["resolveCoincidentTopology",0],["renderTime",0.0],["arrayAccessMode",1],["scalarRange",[0.0,1.0]],["useLookupTableScalarRange",0],["scalarVisibility",0],["colorByArrayName",null],["colorMode",0],["scalarMode",0],["interpolateScalarsBeforeMapping",1]]}],["calls",[["setInputData",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907a8fb10-dataset-0}",0]],["setLookupTable",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299081c2070}"]]]],["dependencies",[{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907a8fb10"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907a8fb10-dataset-0"],["type","vtkPolyData"],["properties",{"type":"map","entries":[["points",{"type":"map","entries":[["hash","b26c7ada24d3e22592c137abaedecb14"],["vtkClass","vtkPoints"],["name","Points"],["dataType","Float64Array"],["numberOfComponents",3],["size",228],["ranges",[{"type":"map","entries":[["min",0.0],["max",0.02],["component",null]]},{"type":"map","entries":[["min",0.00015192246987791834],["max",0.019848077530122084],["component",null]]},{"type":"map","entries":[["min",0.0],["max",0.01],["component",null]]},{"type":"map","entries":[["min",0.004270080729786798],["max",0.02611065703043689],["component",null]]}]]]}],["polys",{"type":"map","entries":[["hash","ce3a7483a8afcce16a1544e7cb5d0810"],["vtkClass","vtkCellArray"],["name",null],["dataType","Uint32Array"],["numberOfComponents",1],["size",288],["ranges",[{"type":"map","entries":[["min",0.0],["max",75.0],["component",null]]}]]]}],["fields",[{"type":"map","entries":[["hash","97f3833ad3beb8864d0276b56ac8b598"],["vtkClass","vtkDataArray"],["name","Normals"],["dataType","Float32Array"],["numberOfComponents",3],["size",228],["ranges",[{"type":"map","entries":[["min",-0.9982771277427673],["max",0.9848077893257141],["component",null]]},{"type":"map","entries":[["min",-0.9932997822761536],["max",0.9932997822761536],["component",null]]},{"type":"map","entries":[["min",-1.0],["max",1.0],["component",null]]},{"type":"map","entries":[["min",0.9999999325879556],["max",1.0000000385074872],["component",null]]}]],["location","pointData"],["registration","setNormals"]]}]]]}]]},{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907a8fb10"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299081c2070"],["type","vtkLookupTable"],["properties",{"type":"map","entries":[["numberOfColors",256],["valueRange",[0.0,1.0]],["range",[0.0,1.0]],["hueRange",[0.5,0]],["saturationRange",[1.0,1.0]],["nanColor",[0.5,0.0,0.0,1.0]],["belowRangeColor",[0.0,0.0,0.0,1.0]],["aboveRangeColor",[1.0,1.0,1.0,1.0]],["useAboveRangeColor",false],["useBelowRangeColor",false],["alpha",1.0],["vectorSize",-1],["vectorComponent",0],["vectorMode",1],["indexedLookup",0]]}],["arrays",[{"type":"map","entries":[["hash","2ebda7d3c6c3627ba233a85b7027cd58"],["vtkClass","vtkDataArray"],["name",null],["dataType","Uint8Array"],["numberOfComponents",4],["size",1024],["ranges",[{"type":"map","entries":[["min",0.0],["max",255.0],["component",null]]},{"type":"map","entries":[["min",0.0],["max",255.0],["component",null]]},{"type":"map","entries":[["min",0.0],["max",255.0],["component",null]]},{"type":"map","entries":[["min",255.0],["max",255.0],["component",null]]},{"type":"map","entries":[["min",360.62445840513925],["max",441.0963613542964],["component",null]]}]],["registration","setTable"]]}]]]}]],["type","vtkCompositePolyDataMapper2"]]},{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc860000002990809f190"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc860000002990809fa50"],["type","vtkOpenGLProperty"],["properties",{"type":"map","entries":[["representation",2],["diffuseColor",[0.8392156862745098,0.9686274509803922,0.8196078431372549]],["color",[0.8392156862745098,0.9686274509803922,0.8196078431372549]],["ambientColor",[0.8392156862745098,0.9686274509803922,0.8196078431372549]],["specularColor",[0.8392156862745098,0.9686274509803922,0.8196078431372549]],["edgeColor",[0.0,0.0,0.0]],["ambient",0.0],["diffuse",1.0],["specular",0.0],["specularPower",100.0],["opacity",1.0],["interpolation",2],["edgeVisibility",0],["backfaceCulling",0],["frontfaceCulling",0],["pointSize",5.0],["lineWidth",1.0],["lighting",1]]}]]}]]]},{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907e20890"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299080a0e00"],["type","vtkOpenGLActor"],["properties",{"type":"map","entries":[["visibility",0],["pickable",1],["dragable",1],["useBounds",true],["origin",[0.0,0.0,0.0]],["position",[0.0,0.0,0.0]],["scale",[1.0,1.0,1.0]],["orientation",[0.0,-0.0,0.0]],["forceOpaque",false],["forceTranslucent",false]]}],["calls",[["setMapper",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299081c12e0}"]],["setProperty",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299080a39c0}"]]]],["dependencies",[{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299080a0e00"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299081c12e0"],["properties",{"type":"map","entries":[["resolveCoincidentTopology",0],["renderTime",0.0],["arrayAccessMode",1],["scalarRange",[0.0,1.0]],["useLookupTableScalarRange",0],["scalarVisibility",0],["colorByArrayName",null],["colorMode",0],["scalarMode",0],["interpolateScalarsBeforeMapping",1]]}],["calls",[["setInputData",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299081c12e0-dataset-0}",0]],["setLookupTable",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299081c18b0}"]]]],["dependencies",[{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299081c12e0"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299081c12e0-dataset-0"],["type","vtkPolyData"],["properties",{"type":"map","entries":[["points",{"type":"map","entries":[["hash","1a06ab9c788dbe50f9778086177b3f8c"],["vtkClass","vtkPoints"],["name","Points"],["dataType","Float32Array"],["numberOfComponents",3],["size",6],["ranges",[{"type":"map","entries":[["min",0.019999999552965164],["max",0.019999999552965164],["component",null]]},{"type":"map","entries":[["min",0.009999999776482582],["max",0.009999999776482582],["component",null]]},{"type":"map","entries":[["min",0.009999999776482582],["max",0.009999999776482582],["component",null]]},{"type":"map","entries":[["min",0.02449489688032816],["max",0.02449489688032816],["component",null]]}]]]}],["lines",{"type":"map","entries":[["hash","f0156444d7069a5861574f84db207ffd"],["vtkClass","vtkCellArray"],["name",null],["dataType","Uint32Array"],["numberOfComponents",1],["size",3],["ranges",[{"type":"map","entries":[["min",0.0],["max",2.0],["component",null]]}]]]}],["fields",[{"type":"map","entries":[["hash","4ae71336e44bf9bf79d2752e234818a5"],["vtkClass","vtkDataArray"],["name","Texture Coordinates"],["dataType","Float32Array"],["numberOfComponents",2],["size",4],["ranges",[{"type":"map","entries":[["min",0.0],["max",0.0],["component",null]]},{"type":"map","entries":[["min",0.0],["max",0.0],["component",null]]},{"type":"map","entries":[["min",0.0],["max",0.0],["component",null]]}]],["location","pointData"],["registration","setTCoords"]]}]]]}]]},{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299081c12e0"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299081c18b0"],["type","vtkLookupTable"],["properties",{"type":"map","entries":[["numberOfColors",256],["valueRange",[0.0,1.0]],["range",[0.0,1.0]],["hueRange",[0.5,0]],["saturationRange",[1.0,1.0]],["nanColor",[0.5,0.0,0.0,1.0]],["belowRangeColor",[0.0,0.0,0.0,1.0]],["aboveRangeColor",[1.0,1.0,1.0,1.0]],["useAboveRangeColor",false],["useBelowRangeColor",false],["alpha",1.0],["vectorSize",-1],["vectorComponent",0],["vectorMode",1],["indexedLookup",0]]}],["arrays",[{"type":"map","entries":[["hash","2ebda7d3c6c3627ba233a85b7027cd58"],["vtkClass","vtkDataArray"],["name",null],["dataType","Uint8Array"],["numberOfComponents",4],["size",1024],["ranges",[{"type":"map","entries":[["min",0.0],["max",255.0],["component",null]]},{"type":"map","entries":[["min",0.0],["max",255.0],["component",null]]},{"type":"map","entries":[["min",0.0],["max",255.0],["component",null]]},{"type":"map","entries":[["min",255.0],["max",255.0],["component",null]]},{"type":"map","entries":[["min",360.62445840513925],["max",441.0963613542964],["component",null]]}]],["registration","setTable"]]}]]]}]],["type","vtkDataSetMapper"]]},{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299080a0e00"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299080a39c0"],["type","vtkOpenGLProperty"],["properties",{"type":"map","entries":[["representation",2],["diffuseColor",[0.0,0.0,0.0]],["color",[0.0,0.0,0.0]],["ambientColor",[0.0,0.0,0.0]],["specularColor",[0.0,0.0,0.0]],["edgeColor",[0.0,0.0,0.0]],["ambient",0.0],["diffuse",1.0],["specular",0.0],["specularPower",100.0],["opacity",1.0],["interpolation",0],["edgeVisibility",0],["backfaceCulling",0],["frontfaceCulling",0],["pointSize",5.0],["lineWidth",10.0],["lighting",1]]}]]}]]]},{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907e20890"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299080a1d50"],["type","vtkOpenGLActor"],["properties",{"type":"map","entries":[["visibility",0],["pickable",1],["dragable",1],["useBounds",true],["origin",[0.0,0.0,0.0]],["position",[0.0,0.0,0.0]],["scale",[1.0,1.0,1.0]],["orientation",[0.0,-0.0,0.0]],["forceOpaque",false],["forceTranslucent",false]]}],["calls",[["setMapper",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299081c16c0}"]],["setProperty",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299080a23e0}"]]]],["dependencies",[{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299080a1d50"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299081c16c0"],["properties",{"type":"map","entries":[["resolveCoincidentTopology",0],["renderTime",0.0],["arrayAccessMode",1],["scalarRange",[0.0,1.0]],["useLookupTableScalarRange",0],["scalarVisibility",0],["colorByArrayName",null],["colorMode",0],["scalarMode",0],["interpolateScalarsBeforeMapping",1]]}],["calls",[["setInputData",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299081c16c0-dataset-0}",0]],["setLookupTable",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299081c1e80}"]]]],["dependencies",[{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299081c16c0"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299081c16c0-dataset-0"],["type","vtkPolyData"],["properties",{"type":"map","entries":[["points",{"type":"map","entries":[["hash","1e05d4e417dc6366f25a59828d93b943"],["vtkClass","vtkPoints"],["name","Points"],["dataType","Float32Array"],["numberOfComponents",3],["size",6],["ranges",[{"type":"map","entries":[["min",0.019999999552965164],["max",0.019999999552965164],["component",null]]},{"type":"map","entries":[["min",0.009999999776482582],["max",0.009999999776482582],["component",null]]},{"type":"map","entries":[["min",0.0],["max",0.0],["component",null]]},{"type":"map","entries":[["min",0.022360679275197755],["max",0.022360679275197755],["component",null]]}]]]}],["lines",{"type":"map","entries":[["hash","f0156444d7069a5861574f84db207ffd"],["vtkClass","vtkCellArray"],["name",null],["dataType","Uint32Array"],["numberOfComponents",1],["size",3],["ranges",[{"type":"map","entries":[["min",0.0],["max",2.0],["component",null]]}]]]}],["fields",[{"type":"map","entries":[["hash","4ae71336e44bf9bf79d2752e234818a5"],["vtkClass","vtkDataArray"],["name","Texture Coordinates"],["dataType","Float32Array"],["numberOfComponents",2],["size",4],["ranges",[{"type":"map","entries":[["min",0.0],["max",0.0],["component",null]]},{"type":"map","entries":[["min",0.0],["max",0.0],["component",null]]},{"type":"map","entries":[["min",0.0],["max",0.0],["component",null]]}]],["location","pointData"],["registration","setTCoords"]]}]]]}]]},{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299081c16c0"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299081c1e80"],["type","vtkLookupTable"],["properties",{"type":"map","entries":[["numberOfColors",256],["valueRange",[0.0,1.0]],["range",[0.0,1.0]],["hueRange",[0.5,0]],["saturationRange",[1.0,1.0]],["nanColor",[0.5,0.0,0.0,1.0]],["belowRangeColor",[0.0,0.0,0.0,1.0]],["aboveRangeColor",[1.0,1.0,1.0,1.0]],["useAboveRangeColor",false],["useBelowRangeColor",false],["alpha",1.0],["vectorSize",-1],["vectorComponent",0],["vectorMode",1],["indexedLookup",0]]}],["arrays",[{"type":"map","entries":[["hash","2ebda7d3c6c3627ba233a85b7027cd58"],["vtkClass","vtkDataArray"],["name",null],["dataType","Uint8Array"],["numberOfComponents",4],["size",1024],["ranges",[{"type":"map","entries":[["min",0.0],["max",255.0],["component",null]]},{"type":"map","entries":[["min",0.0],["max",255.0],["component",null]]},{"type":"map","entries":[["min",0.0],["max",255.0],["component",null]]},{"type":"map","entries":[["min",255.0],["max",255.0],["component",null]]},{"type":"map","entries":[["min",360.62445840513925],["max",441.0963613542964],["component",null]]}]],["registration","setTable"]]}]]]}]],["type","vtkDataSetMapper"]]},{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299080a1d50"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299080a23e0"],["type","vtkOpenGLProperty"],["properties",{"type":"map","entries":[["representation",2],["diffuseColor",[0.0,0.0,0.0]],["color",[0.0,0.0,0.0]],["ambientColor",[0.0,0.0,0.0]],["specularColor",[0.0,0.0,0.0]],["edgeColor",[0.0,0.0,0.0]],["ambient",0.0],["diffuse",1.0],["specular",0.0],["specularPower",100.0],["opacity",1.0],["interpolation",0],["edgeVisibility",0],["backfaceCulling",0],["frontfaceCulling",0],["pointSize",5.0],["lineWidth",10.0],["lighting",1]]}]]}]]]},{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907e20890"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299080a3100"],["type","vtkOpenGLActor"],["properties",{"type":"map","entries":[["visibility",1],["pickable",1],["dragable",1],["useBounds",true],["origin",[0.0,0.0,0.0]],["position",[0.0,0.0,0.0]],["scale",[1.0,1.0,1.0]],["orientation",[0.0,-0.0,0.0]],["forceOpaque",false],["forceTranslucent",false]]}],["calls",[["setMapper",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299082e55f0}"]],["setProperty",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299080a1030}"]]]],["dependencies",[{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299080a3100"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299082e55f0"],["properties",{"type":"map","entries":[["resolveCoincidentTopology",0],["renderTime",0.0],["arrayAccessMode",1],["scalarRange",[0.0,1.0]],["useLookupTableScalarRange",0],["scalarVisibility",0],["colorByArrayName",null],["colorMode",0],["scalarMode",0],["interpolateScalarsBeforeMapping",1]]}],["calls",[["setInputData",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299082e55f0-dataset-0}",0]],["setLookupTable",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299082e57e0}"]]]],["dependencies",[{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299082e55f0"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299082e55f0-dataset-0"],["type","vtkPolyData"],["properties",{"type":"map","entries":[["points",{"type":"map","entries":[["hash","35fc434432ff67971ce2834365132b75"],["vtkClass","vtkPoints"],["name","Points"],["dataType","Float32Array"],["numberOfComponents",3],["size",363],["ranges",[{"type":"map","entries":[["min",-0.013000000268220901],["max",0.013000000268220901],["component",null]]},{"type":"map","entries":[["min",-0.013000000268220901],["max",0.013000000268220901],["component",null]]},{"type":"map","entries":[["min",-1.4432899617912056e-18],["max",1.4432899617912056e-18],["component",null]]},{"type":"map","entries":[["min",0.0],["max",0.018384776690171873],["component",null]]}]]]}],["polys",{"type":"map","entries":[["hash","06e8100113814db8aa5e5bb4fb9ea196"],["vtkClass","vtkCellArray"],["name",null],["dataType","Uint32Array"],["numberOfComponents",1],["size",500],["ranges",[{"type":"map","entries":[["min",0.0],["max",120.0],["component",null]]}]]]}],["fields",[{"type":"map","entries":[["hash","159fc7c7848a8827368ddf02d90ccfe2"],["vtkClass","vtkDataArray"],["name","Normals"],["dataType","Float32Array"],["numberOfComponents",3],["size",363],["ranges",[{"type":"map","entries":[["min",-1.1102230246251565e-16],["max",-1.1102230246251565e-16],["component",null]]},{"type":"map","entries":[["min",0.0],["max",0.0],["component",null]]},{"type":"map","entries":[["min",-1.0],["max",-1.0],["component",null]]},{"type":"map","entries":[["min",1.0],["max",1.0],["component",null]]}]],["location","pointData"],["registration","setNormals"]]},{"type":"map","entries":[["hash","e4f0fd6e7c3ba82b10c4d4595fb118dd"],["vtkClass","vtkDataArray"],["name","TextureCoordinates"],["dataType","Float32Array"],["numberOfComponents",2],["size",242],["ranges",[{"type":"map","entries":[["min",0.0],["max",1.0],["component",null]]},{"type":"map","entries":[["min",0.0],["max",1.0],["component",null]]},{"type":"map","entries":[["min",0.0],["max",1.4142135623730951],["component",null]]}]],["location","pointData"],["registration","setTCoords"]]}]]]}]]},{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299082e55f0"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299082e57e0"],["type","vtkLookupTable"],["properties",{"type":"map","entries":[["numberOfColors",256],["valueRange",[0.0,1.0]],["range",[0.0,1.0]],["hueRange",[0.5,0]],["saturationRange",[1.0,1.0]],["nanColor",[0.5,0.0,0.0,1.0]],["belowRangeColor",[0.0,0.0,0.0,1.0]],["aboveRangeColor",[1.0,1.0,1.0,1.0]],["useAboveRangeColor",false],["useBelowRangeColor",false],["alpha",1.0],["vectorSize",-1],["vectorComponent",0],["vectorMode",1],["indexedLookup",0]]}],["arrays",[{"type":"map","entries":[["hash","2ebda7d3c6c3627ba233a85b7027cd58"],["vtkClass","vtkDataArray"],["name",null],["dataType","Uint8Array"],["numberOfComponents",4],["size",1024],["ranges",[{"type":"map","entries":[["min",0.0],["max",255.0],["component",null]]},{"type":"map","entries":[["min",0.0],["max",255.0],["component",null]]},{"type":"map","entries":[["min",0.0],["max",255.0],["component",null]]},{"type":"map","entries":[["min",255.0],["max",255.0],["component",null]]},{"type":"map","entries":[["min",360.62445840513925],["max",441.0963613542964],["component",null]]}]],["registration","setTable"]]}]]]}]],["type","vtkDataSetMapper"]]},{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299080a3100"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299080a1030"],["type","vtkOpenGLProperty"],["properties",{"type":"map","entries":[["representation",2],["diffuseColor",[1.0,1.0,1.0]],["color",[1.0,1.0,1.0]],["ambientColor",[1.0,1.0,1.0]],["specularColor",[1.0,1.0,1.0]],["edgeColor",[0.0,0.0,0.0]],["ambient",0.0],["diffuse",1.0],["specular",0.0],["specularPower",100.0],["opacity",0.1],["interpolation",0],["edgeVisibility",1],["backfaceCulling",0],["frontfaceCulling",0],["pointSize",5.0],["lineWidth",1.0],["lighting",1]]}]]}]]]}]],["calls",[["setActiveCamera",["instance:${0000029907fbd140}"]],["addViewProp",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc860000002990809f190}"]],["addViewProp",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299080a0e00}"]],["addViewProp",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299080a1d50}"]],["addViewProp",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc86000000299080a3100}"]]]]]},{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907b63160"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907e221d0"],["type","vtkOpenGLRenderer"],["properties",{"type":"map","entries":[["background",[1.0,1.0,1.0]],["background2",[0.2,0.2,0.2]],["viewport",[0.0,0.0,1.0,1.0]],["twoSidedLighting",1],["lightFollowCamera",1],["layer",1],["preserveColorBuffer",1],["preserveDepthBuffer",0],["nearClippingPlaneTolerance",0.0],["clippingRangeExpansion",0.5],["useShadows",0],["useDepthPeeling",0],["occlusionRatio",0.0],["maximumNumberOfPeels",4],["interactive",0]]}],["dependencies",[{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907e221d0"],["id","0000029907fc35e0"],["type","vtkOpenGLCamera"],["properties",{"type":"map","entries":[["focalPoint",[0.0,0.0,0.0]],["position",[0.0,0.0,1.0]],["viewUp",[0.0,1.0,0.0]],["clippingRange",[0.01,1000.01]]]}]]}]],["calls",[["setActiveCamera",["instance:${0000029907fc35e0}"]]]]]},{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907b63160"],["id","6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907e20ee0"],["type","vtkOpenGLRenderer"],["properties",{"type":"map","entries":[["background",[0.0,0.0,0.0]],["background2",[0.2,0.2,0.2]],["viewport",[0.0,0.0,0.2,0.2]],["twoSidedLighting",1],["lightFollowCamera",1],["layer",1],["preserveColorBuffer",1],["preserveDepthBuffer",0],["nearClippingPlaneTolerance",0.001],["clippingRangeExpansion",0.5],["useShadows",0],["useDepthPeeling",0],["occlusionRatio",0.0],["maximumNumberOfPeels",4],["interactive",0]]}],["dependencies",[{"type":"map","entries":[["parent","6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907e20ee0"],["id","0000029907fbc5c0"],["type","vtkOpenGLCamera"],["properties",{"type":"map","entries":[["focalPoint",[0.0,0.0,0.0]],["position",[3.8637033051562755,3.8637033051562746,3.8637033051562746]],["viewUp",[0.0,0.0,1.0]],["clippingRange",[3.1784280185413745,11.131299659311043]]]}]]}]],["calls",[["setActiveCamera",["instance:${0000029907fbc5c0}"]]]]]}]],["calls",[["addRenderer",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907e20890}"]],["addRenderer",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907e221d0}"]],["addRenderer",["instance:${6304e1e1-9b72-4bcf-a3a7-4a50de2fc8600000029907e20ee0}"]]]],["mtime",31550]]}}},{"type":"object","name":"panel.models.comm_manager.CommManager","id":"98c00605-10c1-4b19-9f47-3553aacc02c5","attributes":{"plot_id":"a952d450-b802-40af-9503-df61a2137a41","comm_id":"fe41577f734b48328815144243dfa9d1","client_comm_id":"0dd1e3d2b88c4b1f9e4b55c3541e5cd2"}}],"defs":[{"type":"model","name":"ReactiveHTML1"},{"type":"model","name":"FlexBox1","properties":[{"name":"align_content","kind":"Any","default":"flex-start"},{"name":"align_items","kind":"Any","default":"flex-start"},{"name":"flex_direction","kind":"Any","default":"row"},{"name":"flex_wrap","kind":"Any","default":"wrap"},{"name":"justify_content","kind":"Any","default":"flex-start"}]},{"type":"model","name":"FloatPanel1","properties":[{"name":"config","kind":"Any","default":{"type":"map"}},{"name":"contained","kind":"Any","default":true},{"name":"position","kind":"Any","default":"right-top"},{"name":"offsetx","kind":"Any","default":null},{"name":"offsety","kind":"Any","default":null},{"name":"theme","kind":"Any","default":"primary"},{"name":"status","kind":"Any","default":"normalized"}]},{"type":"model","name":"GridStack1","properties":[{"name":"mode","kind":"Any","default":"warn"},{"name":"ncols","kind":"Any","default":null},{"name":"nrows","kind":"Any","default":null},{"name":"allow_resize","kind":"Any","default":true},{"name":"allow_drag","kind":"Any","default":true},{"name":"state","kind":"Any","default":[]}]},{"type":"model","name":"drag1","properties":[{"name":"slider_width","kind":"Any","default":5},{"name":"slider_color","kind":"Any","default":"black"},{"name":"value","kind":"Any","default":50}]},{"type":"model","name":"click1","properties":[{"name":"terminal_output","kind":"Any","default":""},{"name":"debug_name","kind":"Any","default":""},{"name":"clears","kind":"Any","default":0}]},{"type":"model","name":"FastWrapper1","properties":[{"name":"object","kind":"Any","default":null},{"name":"style","kind":"Any","default":null}]},{"type":"model","name":"NotificationAreaBase1","properties":[{"name":"js_events","kind":"Any","default":{"type":"map"}},{"name":"position","kind":"Any","default":"bottom-right"},{"name":"_clear","kind":"Any","default":0}]},{"type":"model","name":"NotificationArea1","properties":[{"name":"js_events","kind":"Any","default":{"type":"map"}},{"name":"notifications","kind":"Any","default":[]},{"name":"position","kind":"Any","default":"bottom-right"},{"name":"_clear","kind":"Any","default":0},{"name":"types","kind":"Any","default":[{"type":"map","entries":[["type","warning"],["background","#ffc107"],["icon",{"type":"map","entries":[["className","fas fa-exclamation-triangle"],["tagName","i"],["color","white"]]}]]},{"type":"map","entries":[["type","info"],["background","#007bff"],["icon",{"type":"map","entries":[["className","fas fa-info-circle"],["tagName","i"],["color","white"]]}]]}]}]},{"type":"model","name":"Notification","properties":[{"name":"background","kind":"Any","default":null},{"name":"duration","kind":"Any","default":3000},{"name":"icon","kind":"Any","default":null},{"name":"message","kind":"Any","default":""},{"name":"notification_type","kind":"Any","default":null},{"name":"_destroyed","kind":"Any","default":false}]},{"type":"model","name":"TemplateActions1","properties":[{"name":"open_modal","kind":"Any","default":0},{"name":"close_modal","kind":"Any","default":0}]},{"type":"model","name":"BootstrapTemplateActions1","properties":[{"name":"open_modal","kind":"Any","default":0},{"name":"close_modal","kind":"Any","default":0}]},{"type":"model","name":"MaterialTemplateActions1","properties":[{"name":"open_modal","kind":"Any","default":0},{"name":"close_modal","kind":"Any","default":0}]}]}};
+  var render_items = [{"docid":"52b5d532-15a6-41ef-b741-7bb1c19dfb42","roots":{"a952d450-b802-40af-9503-df61a2137a41":"bb0bd87b-faef-4935-a74f-2ab7ac985c81"},"root_ids":["a952d450-b802-40af-9503-df61a2137a41"]}];
+  var docs = Object.values(docs_json)
+  if (!docs) {
+    return
+  }
+  const py_version = docs[0].version.replace('rc', '-rc.').replace('.dev', '-dev.')
+  const is_dev = py_version.indexOf("+") !== -1 || py_version.indexOf("-") !== -1
+  function embed_document(root) {
+    var Bokeh = get_bokeh(root)
+    Bokeh.embed.embed_items_notebook(docs_json, render_items);
+    for (const render_item of render_items) {
+      for (const root_id of render_item.root_ids) {
+    const id_el = document.getElementById(root_id)
+    if (id_el.children.length && (id_el.children[0].className === 'bk-root')) {
+      const root_el = id_el.children[0]
+      root_el.id = root_el.id + '-rendered'
+    }
+      }
+    }
+  }
+  function get_bokeh(root) {
+    if (root.Bokeh === undefined) {
+      return null
+    } else if (root.Bokeh.version !== py_version && !is_dev) {
+      if (root.Bokeh.versions === undefined || !root.Bokeh.versions.has(py_version)) {
+    return null
+      }
+      return root.Bokeh.versions.get(py_version);
+    } else if (root.Bokeh.version === py_version) {
+      return root.Bokeh
+    }
+    return null
+  }
+  function is_loaded(root) {
+    var Bokeh = get_bokeh(root)
+    return (Bokeh != null && Bokeh.Panel !== undefined && ( root['vtk'] !== undefined) && ( root['vtk'] !== undefined))
+  }
+  if (is_loaded(root)) {
+    embed_document(root);
+  } else {
+    var attempts = 0;
+    var timer = setInterval(function(root) {
+      if (is_loaded(root)) {
+        clearInterval(timer);
+        embed_document(root);
+      } else if (document.readyState == "complete") {
+        attempts++;
+        if (attempts > 200) {
+          clearInterval(timer);
+      var Bokeh = get_bokeh(root)
+      if (Bokeh == null || Bokeh.Panel == null) {
+            console.warn("Panel: ERROR: Unable to run Panel code because Bokeh or Panel library is missing");
+      } else {
+        console.warn("Panel: WARNING: Attempting to render but not all required libraries could be resolved.")
+        embed_document(root)
+      }
+        }
+      }
+    }, 25, root)
+  }
+})(window);</script></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<div class="admonition-download-this-example admonition">
+<p class="admonition-title">Download this example</p>
+<p>Download this example as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/0.3/examples/03_modeling/add_design_material.ipynb">Jupyter Notebook</a>
+or as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/0.3/examples/03_modeling/add_design_material.py">Python script</a>.</p>
+</div>
+
+
+                </article>
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Perform-required-imports">Perform required imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Create-sketch">Create sketch</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Initiate-design-on-server">Initiate design on server</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Add-materials-to-design">Add materials to design</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Extrude-sketch-to-create-body">Extrude sketch to create body</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item"> 
+<div class="tocsection editthispage">
+  <a href="https://github.com/ansys/pyansys-geometry/edit/main/doc/source/examples/03_modeling/add_design_material.mystnb">
+    <i class="fa-solid fa-pencil"></i>
+       Edit
+    on GitHub  
+  </a>
+</div>
+
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/examples/03_modeling/add_design_material.mystnb.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright (c) 2023 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  0.11.2. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,941 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Vector3D &#8212; PyAnsys Geometry</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../../../../../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../../../../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/css\ansys_sphinx_theme.css?v=62c9ccaa" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=bea80f78" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+ 
+<link href="../../../../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script src="../../../../../../_static/documentation_options.js?v=78d8237d"></script>
+    <script src="../../../../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../../../_static/thebelab-helper.js"></script>
+    <script src="../../../../../../_static/js\table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="../../../../../../_static/design-tabs.js?v=36754332"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/ansys/geometry/core/math/vector/Vector3D';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://geometry.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.3';
+        </script>
+    <link rel="icon" href="../../../../../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+    <link rel="next" title="Vector2D" href="Vector2D.html" />
+    <link rel="prev" title="The vector.py module" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+<!-- If there is no MiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+   
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  <div class="navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../../../../../../index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../../_static/pyansys-logo-black-cropped.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../../../../../../_static/pyansys-logo-black-cropped.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../../../../../index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.3  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa fa-comment fa-fw"></i></span>
+            <label class="sr-only">Support</label></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>   <div class="container-xl">
+  <div class="row">
+    <div class="col-12 col-md-3" id="breadcrumbs-spacer"></div>
+    <div class="col-12 col-md-11 col-xl-9" id="breadcrumbs">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul> 
+<li class="nav-item nav-item-additional-breadcrumb">
+  <a href="https://docs.pyansys.com/">PyAnsys</a> » 
+</li>
+ 
+<li class="nav-item nav-item-0">
+  <a href="../../../../../../index.html">PyAnsys Geometry</a> » 
+</li>
+ 
+          <li class="nav-item nav-item-1"><a href="../../../../../index.html" >API reference</a> » </li>
+          <li class="nav-item nav-item-2"><a href="../../index.html" >The <code class="docutils literal notranslate"><span class="pre">ansys.geometry.core</span></code> library</a> » </li>
+          <li class="nav-item nav-item-3"><a href="../index.html" >The <code class="docutils literal notranslate"><span class="pre">math</span></code> package</a> » </li>
+          <li class="nav-item nav-item-4"><a href="index.html" accesskey="U">The <code class="docutils literal notranslate"><span class="pre">vector.py</span></code> module</a> » </li>
+        <li class="nav-item nav-item-this"><a href="">Vector3D</a></li> 
+      </ul>
+    </div></div>
+  </div>
+</div>
+ 
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../../../../../index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.3  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa fa-comment fa-fw"></i></span>
+            <label class="sr-only">Support</label></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../index.html">🖿 ansys.geometry.core</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../connection/index.html"> 🖿 connection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../designer/index.html"> 🖿 designer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../materials/index.html"> 🖿 materials</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../index.html"> 🖿 math</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../bbox/index.html"> 🗎 bbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../constants/index.html"> 🗎 constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../frame/index.html"> 🗎 frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../matrix/index.html"> 🗎 matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../plane/index.html"> 🗎 plane</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../point/index.html"> 🗎 point</a></li>
+<li class="toctree-l3 current active has-children"><a class="reference internal" href="index.html"> 🗎 vector</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l4 current active"><a class="current reference internal" href="#"> 🝆 Vector3D</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Vector2D.html"> 🝆 Vector2D</a></li>
+<li class="toctree-l4"><a class="reference internal" href="UnitVector3D.html"> 🝆 UnitVector3D</a></li>
+<li class="toctree-l4"><a class="reference internal" href="UnitVector2D.html"> 🝆 UnitVector2D</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../misc/index.html"> 🖿 misc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../plotting/index.html"> 🖿 plotting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../primitives/index.html"> 🖿 primitives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sketch/index.html"> 🖿 sketch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../errors/index.html"> 🗎 errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../logger/index.html"> 🗎 logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modeler/index.html"> 🗎 modeler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../typing/index.html"> 🗎 typing</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="vector3d">
+<h1>Vector3D<a class="headerlink" href="#vector3d" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="Vector3D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Vector3D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strides</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Vector3D" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<p>Bases: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+<p>Provides for managing and creating a 3D vector.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-0">
+Constructors</label><div class="sd-tab-content docutils">
+<table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Vector3D.from_points" title="Vector3D.from_points"><code class="xref py py-attr docutils literal notranslate"><span class="pre">from_points</span></code></a></p></td>
+<td><p>Create a 3D vector from two distinct 3D points.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-1">
+Methods</label><div class="sd-tab-content docutils">
+<table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Vector3D.is_perpendicular_to" title="Vector3D.is_perpendicular_to"><code class="xref py py-attr docutils literal notranslate"><span class="pre">is_perpendicular_to</span></code></a></p></td>
+<td><p>Check if this vector and another vector are perpendicular.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Vector3D.is_parallel_to" title="Vector3D.is_parallel_to"><code class="xref py py-attr docutils literal notranslate"><span class="pre">is_parallel_to</span></code></a></p></td>
+<td><p>Check if this vector and another vector are parallel.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Vector3D.is_opposite" title="Vector3D.is_opposite"><code class="xref py py-attr docutils literal notranslate"><span class="pre">is_opposite</span></code></a></p></td>
+<td><p>Check if this vector and another vector are opposite.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Vector3D.normalize" title="Vector3D.normalize"><code class="xref py py-attr docutils literal notranslate"><span class="pre">normalize</span></code></a></p></td>
+<td><p>Return a normalized version of the 3D vector.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Vector3D.transform" title="Vector3D.transform"><code class="xref py py-attr docutils literal notranslate"><span class="pre">transform</span></code></a></p></td>
+<td><p>Transform the 3D vector3D with a transformation matrix.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Vector3D.get_angle_between" title="Vector3D.get_angle_between"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_angle_between</span></code></a></p></td>
+<td><p>Get the angle between this 3D vector and another 3D vector.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Vector3D.cross" title="Vector3D.cross"><code class="xref py py-attr docutils literal notranslate"><span class="pre">cross</span></code></a></p></td>
+<td><p>Get the cross product of <code class="docutils literal notranslate"><span class="pre">Vector3D</span></code> objects.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-2">
+Properties</label><div class="sd-tab-content docutils">
+<table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Vector3D.x" title="Vector3D.x"><code class="xref py py-attr docutils literal notranslate"><span class="pre">x</span></code></a></p></td>
+<td><p>X coordinate of the <code class="docutils literal notranslate"><span class="pre">Vector3D</span></code> class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Vector3D.y" title="Vector3D.y"><code class="xref py py-attr docutils literal notranslate"><span class="pre">y</span></code></a></p></td>
+<td><p>Y coordinate of the <code class="docutils literal notranslate"><span class="pre">Vector3D</span></code> class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Vector3D.z" title="Vector3D.z"><code class="xref py py-attr docutils literal notranslate"><span class="pre">z</span></code></a></p></td>
+<td><p>Z coordinate of the <code class="docutils literal notranslate"><span class="pre">Vector3D</span></code> class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Vector3D.norm" title="Vector3D.norm"><code class="xref py py-attr docutils literal notranslate"><span class="pre">norm</span></code></a></p></td>
+<td><p>Norm of the vector.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Vector3D.magnitude" title="Vector3D.magnitude"><code class="xref py py-attr docutils literal notranslate"><span class="pre">magnitude</span></code></a></p></td>
+<td><p>Norm of the vector.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Vector3D.is_zero" title="Vector3D.is_zero"><code class="xref py py-attr docutils literal notranslate"><span class="pre">is_zero</span></code></a></p></td>
+<td><p>Check if all components of the 3D vector are zero.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<input id="sd-tab-item-3" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-3">
+Special methods</label><div class="sd-tab-content docutils">
+<table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Vector3D.__eq__" title="Vector3D.__eq__"><code class="xref py py-attr docutils literal notranslate"><span class="pre">__eq__</span></code></a></p></td>
+<td><p>Equals operator for the <code class="docutils literal notranslate"><span class="pre">Vector3D</span></code> class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Vector3D.__ne__" title="Vector3D.__ne__"><code class="xref py py-attr docutils literal notranslate"><span class="pre">__ne__</span></code></a></p></td>
+<td><p>Not equals operator for the <code class="docutils literal notranslate"><span class="pre">Vector3D</span></code> class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Vector3D.__mul__" title="Vector3D.__mul__"><code class="xref py py-attr docutils literal notranslate"><span class="pre">__mul__</span></code></a></p></td>
+<td><p>Overload * operator with dot product.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Vector3D.__mod__" title="Vector3D.__mod__"><code class="xref py py-attr docutils literal notranslate"><span class="pre">__mod__</span></code></a></p></td>
+<td><p>Overload % operator with cross product.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Vector3D.__add__" title="Vector3D.__add__"><code class="xref py py-attr docutils literal notranslate"><span class="pre">__add__</span></code></a></p></td>
+<td><p>Addition operation overload for 3D vectors.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Vector3D.__sub__" title="Vector3D.__sub__"><code class="xref py py-attr docutils literal notranslate"><span class="pre">__sub__</span></code></a></p></td>
+<td><p>Subtraction operation overload for 3D vectors.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="import-detail">
+<h2>Import detail<a class="headerlink" href="#import-detail" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ansys.geometry.core.math.vector</span> <span class="kn">import</span> <span class="n">Vector3D</span>
+</pre></div>
+</div>
+</section>
+<section id="property-detail">
+<h2>Property detail<a class="headerlink" href="#property-detail" title="Link to this heading">#</a></h2>
+<dl class="py property">
+<dt class="sig sig-object py" id="Vector3D.x">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">x</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Real</span></em><a class="headerlink" href="#Vector3D.x" title="Link to this definition">#</a></dt>
+<dd><p>X coordinate of the <code class="docutils literal notranslate"><span class="pre">Vector3D</span></code> class.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Vector3D.y">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">y</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Real</span></em><a class="headerlink" href="#Vector3D.y" title="Link to this definition">#</a></dt>
+<dd><p>Y coordinate of the <code class="docutils literal notranslate"><span class="pre">Vector3D</span></code> class.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Vector3D.z">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">z</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Real</span></em><a class="headerlink" href="#Vector3D.z" title="Link to this definition">#</a></dt>
+<dd><p>Z coordinate of the <code class="docutils literal notranslate"><span class="pre">Vector3D</span></code> class.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Vector3D.norm">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">norm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></em><a class="headerlink" href="#Vector3D.norm" title="Link to this definition">#</a></dt>
+<dd><p>Norm of the vector.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Vector3D.magnitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">magnitude</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></em><a class="headerlink" href="#Vector3D.magnitude" title="Link to this definition">#</a></dt>
+<dd><p>Norm of the vector.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Vector3D.is_zero">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">is_zero</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#Vector3D.is_zero" title="Link to this definition">#</a></dt>
+<dd><p>Check if all components of the 3D vector are zero.</p>
+</dd></dl>
+
+</section>
+<section id="method-detail">
+<h2>Method detail<a class="headerlink" href="#method-detail" title="Link to this heading">#</a></h2>
+<dl class="py method">
+<dt class="sig sig-object py" id="Vector3D.is_perpendicular_to">
+<span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">is_perpendicular_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other_vector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Vector3D" title="Vector3D"><span class="pre">Vector3D</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#Vector3D.is_perpendicular_to" title="Link to this definition">#</a></dt>
+<dd><p>Check if this vector and another vector are perpendicular.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Vector3D.is_parallel_to">
+<span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">is_parallel_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other_vector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Vector3D" title="Vector3D"><span class="pre">Vector3D</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#Vector3D.is_parallel_to" title="Link to this definition">#</a></dt>
+<dd><p>Check if this vector and another vector are parallel.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Vector3D.is_opposite">
+<span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">is_opposite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other_vector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Vector3D" title="Vector3D"><span class="pre">Vector3D</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#Vector3D.is_opposite" title="Link to this definition">#</a></dt>
+<dd><p>Check if this vector and another vector are opposite.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Vector3D.normalize">
+<span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Vector3D" title="Vector3D"><span class="pre">Vector3D</span></a></span></span><a class="headerlink" href="#Vector3D.normalize" title="Link to this definition">#</a></dt>
+<dd><p>Return a normalized version of the 3D vector.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Vector3D.transform">
+<span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../matrix/Matrix44.html#Matrix44" title="ansys.geometry.core.math.matrix.Matrix44"><span class="pre">ansys.geometry.core.math.matrix.Matrix44</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Vector3D" title="Vector3D"><span class="pre">Vector3D</span></a></span></span><a class="headerlink" href="#Vector3D.transform" title="Link to this definition">#</a></dt>
+<dd><p>Transform the 3D vector3D with a transformation matrix.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>matrix</strong><span class="classifier"><a class="reference internal" href="../matrix/Matrix44.html#Matrix44" title="Matrix44"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matrix44</span></code></a></span></dt><dd><p>4x4 transformation matrix to apply to the vector.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="#Vector3D" title="Vector3D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vector3D</span></code></a></dt><dd><p>A new 3D vector that is the transformed copy of the original 3D vector after applying
+the transformation matrix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Transform the <code class="docutils literal notranslate"><span class="pre">Vector3D</span></code> object by applying the specified 4x4
+transformation matrix and return a new <code class="docutils literal notranslate"><span class="pre">Vector3D</span></code> object representing the
+transformed vector.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Vector3D.get_angle_between">
+<span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">get_angle_between</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Vector3D" title="Vector3D"><span class="pre">Vector3D</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pint.readthedocs.io/en/stable/api/base.html#pint.Quantity" title="(in pint v0.22)"><span class="pre">pint.Quantity</span></a></span></span><a class="headerlink" href="#Vector3D.get_angle_between" title="Link to this definition">#</a></dt>
+<dd><p>Get the angle between this 3D vector and another 3D vector.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>v</strong><span class="classifier"><a class="reference internal" href="#Vector3D" title="Vector3D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vector3D</span></code></a></span></dt><dd><p>Other 3D vector for computing the angle.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://pint.readthedocs.io/en/stable/api/base.html#pint.Quantity" title="(in pint v0.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Quantity</span></code></a></dt><dd><p>Angle between these two 3D vectors.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Vector3D.cross">
+<span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">cross</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Vector3D" title="Vector3D"><span class="pre">Vector3D</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Vector3D" title="Vector3D"><span class="pre">Vector3D</span></a></span></span><a class="headerlink" href="#Vector3D.cross" title="Link to this definition">#</a></dt>
+<dd><p>Get the cross product of <code class="docutils literal notranslate"><span class="pre">Vector3D</span></code> objects.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Vector3D.__eq__">
+<span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">__eq__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Vector3D" title="Vector3D"><span class="pre">Vector3D</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#Vector3D.__eq__" title="Link to this definition">#</a></dt>
+<dd><p>Equals operator for the <code class="docutils literal notranslate"><span class="pre">Vector3D</span></code> class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Vector3D.__ne__">
+<span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">__ne__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Vector3D" title="Vector3D"><span class="pre">Vector3D</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#Vector3D.__ne__" title="Link to this definition">#</a></dt>
+<dd><p>Not equals operator for the <code class="docutils literal notranslate"><span class="pre">Vector3D</span></code> class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Vector3D.__mul__">
+<span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">__mul__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#Vector3D" title="Vector3D"><span class="pre">Vector3D</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ansys.geometry.core.typing.Real</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#Vector3D" title="Vector3D"><span class="pre">Vector3D</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ansys.geometry.core.typing.Real</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Vector3D.__mul__" title="Link to this definition">#</a></dt>
+<dd><p>Overload * operator with dot product.</p>
+<p class="rubric">Notes</p>
+<p>This method also admits scalar multiplication.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Vector3D.__mod__">
+<span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">__mod__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Vector3D" title="Vector3D"><span class="pre">Vector3D</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Vector3D" title="Vector3D"><span class="pre">Vector3D</span></a></span></span><a class="headerlink" href="#Vector3D.__mod__" title="Link to this definition">#</a></dt>
+<dd><p>Overload % operator with cross product.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Vector3D.__add__">
+<span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">__add__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#Vector3D" title="Vector3D"><span class="pre">Vector3D</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../point/Point3D.html#Point3D" title="ansys.geometry.core.math.point.Point3D"><span class="pre">ansys.geometry.core.math.point.Point3D</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#Vector3D" title="Vector3D"><span class="pre">Vector3D</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../point/Point3D.html#Point3D" title="ansys.geometry.core.math.point.Point3D"><span class="pre">ansys.geometry.core.math.point.Point3D</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Vector3D.__add__" title="Link to this definition">#</a></dt>
+<dd><p>Addition operation overload for 3D vectors.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Vector3D.__sub__">
+<span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">__sub__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Vector3D" title="Vector3D"><span class="pre">Vector3D</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#Vector3D" title="Vector3D"><span class="pre">Vector3D</span></a></span></span><a class="headerlink" href="#Vector3D.__sub__" title="Link to this definition">#</a></dt>
+<dd><p>Subtraction operation overload for 3D vectors.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Vector3D.from_points">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Vector3D.</span></span><span class="sig-name descname"><span class="pre">from_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point_a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><span class="pre">numpy.ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ansys.geometry.core.typing.RealSequence</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../point/Point3D.html#Point3D" title="ansys.geometry.core.math.point.Point3D"><span class="pre">ansys.geometry.core.math.point.Point3D</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><span class="pre">numpy.ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ansys.geometry.core.typing.RealSequence</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../point/Point3D.html#Point3D" title="ansys.geometry.core.math.point.Point3D"><span class="pre">ansys.geometry.core.math.point.Point3D</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Vector3D.from_points" title="Link to this definition">#</a></dt>
+<dd><p>Create a 3D vector from two distinct 3D points.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>point_a</strong><span class="classifier"><a class="reference internal" href="../point/Point3D.html#Point3D" title="Point3D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Point3D</span></code></a></span></dt><dd><p><a class="reference internal" href="../point/Point3D.html#Point3D" title="ansys.geometry.core.math.point.Point3D"><code class="xref py py-class docutils literal notranslate"><span class="pre">Point3D</span></code></a>
+class representing the first point.</p>
+</dd>
+<dt><strong>point_b</strong><span class="classifier"><a class="reference internal" href="../point/Point3D.html#Point3D" title="Point3D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Point3D</span></code></a></span></dt><dd><p><a class="reference internal" href="../point/Point3D.html#Point3D" title="ansys.geometry.core.math.point.Point3D"><code class="xref py py-class docutils literal notranslate"><span class="pre">Point3D</span></code></a>
+class representing the second point.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="#Vector3D" title="Vector3D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vector3D</span></code></a></dt><dd><p>3D vector from <code class="docutils literal notranslate"><span class="pre">point_a</span></code> to <code class="docutils literal notranslate"><span class="pre">point_b</span></code>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The resulting 3D vector is always expressed in <code class="docutils literal notranslate"><span class="pre">Point3D</span></code>
+base units.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D"><code class="docutils literal notranslate"><span class="pre">Vector3D</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-detail">Import detail</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#property-detail">Property detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.x"><code class="docutils literal notranslate"><span class="pre">x</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.y"><code class="docutils literal notranslate"><span class="pre">y</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.z"><code class="docutils literal notranslate"><span class="pre">z</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.norm"><code class="docutils literal notranslate"><span class="pre">norm</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.magnitude"><code class="docutils literal notranslate"><span class="pre">magnitude</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.is_zero"><code class="docutils literal notranslate"><span class="pre">is_zero</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-detail">Method detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.is_perpendicular_to"><code class="docutils literal notranslate"><span class="pre">is_perpendicular_to()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.is_parallel_to"><code class="docutils literal notranslate"><span class="pre">is_parallel_to()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.is_opposite"><code class="docutils literal notranslate"><span class="pre">is_opposite()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.normalize"><code class="docutils literal notranslate"><span class="pre">normalize()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.transform"><code class="docutils literal notranslate"><span class="pre">transform()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.get_angle_between"><code class="docutils literal notranslate"><span class="pre">get_angle_between()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.cross"><code class="docutils literal notranslate"><span class="pre">cross()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.__eq__"><code class="docutils literal notranslate"><span class="pre">__eq__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.__ne__"><code class="docutils literal notranslate"><span class="pre">__ne__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.__mul__"><code class="docutils literal notranslate"><span class="pre">__mul__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.__mod__"><code class="docutils literal notranslate"><span class="pre">__mod__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.__add__"><code class="docutils literal notranslate"><span class="pre">__add__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.__sub__"><code class="docutils literal notranslate"><span class="pre">__sub__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Vector3D.from_points"><code class="docutils literal notranslate"><span class="pre">from_points()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item"> 
+<div class="tocsection editthispage">
+  <a href="https://github.com/ansys/pyansys-geometry/edit/main/doc/source/api/ansys/geometry/core/math/vector/Vector3D.rst">
+    <i class="fa-solid fa-pencil"></i>
+       Edit
+    on GitHub  
+  </a>
+</div>
+
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="../../../../../../_sources/api/ansys/geometry/core/math/vector/Vector3D.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright (c) 2023 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  0.11.2. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

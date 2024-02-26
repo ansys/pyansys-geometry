@@ -1,0 +1,3702 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index &#8212; PyAnsys Geometry</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="_static/css\ansys_sphinx_theme.css?v=62c9ccaa" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=bea80f78" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+ 
+<link href="_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script src="_static/documentation_options.js?v=78d8237d"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/thebelab-helper.js"></script>
+    <script src="_static/js\table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="_static/design-tabs.js?v=36754332"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://geometry.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.3';
+        </script>
+    <link rel="icon" href="_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+<!-- If there is no MiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+   
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  <div class="navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/pyansys-logo-black-cropped.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/pyansys-logo-black-cropped.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="api/index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.3  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa fa-comment fa-fw"></i></span>
+            <label class="sr-only">Support</label></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>   <div class="container-xl">
+  <div class="row">
+    <div class="col-12 col-md-3" id="breadcrumbs-spacer"></div>
+    <div class="col-12 col-md-11 col-xl-9" id="breadcrumbs">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul> 
+<li class="nav-item nav-item-additional-breadcrumb">
+  <a href="https://docs.pyansys.com/">PyAnsys</a> » 
+</li>
+ 
+<li class="nav-item nav-item-0">
+  <a href="index.html">PyAnsys Geometry</a> » 
+</li>
+ 
+        <li class="nav-item nav-item-this"><a href="">Index</a></li> 
+      </ul>
+    </div></div>
+  </div>
+</div>
+ 
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="api/index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.3  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa fa-comment fa-fw"></i></span>
+            <label class="sr-only">Support</label></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ <a href="#_"><strong>_</strong></a>
+ | <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#Q"><strong>Q</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
+ | <a href="#W"><strong>W</strong></a>
+ | <a href="#X"><strong>X</strong></a>
+ | <a href="#Y"><strong>Y</strong></a>
+ | <a href="#Z"><strong>Z</strong></a>
+ 
+</div>
+<h2 id="_">_</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/ParamUV.html#ParamUV.__add__">__add__() (in module ParamUV)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/point/Point2D.html#Point2D.__add__">(in module Point2D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/point/Point3D.html#Point3D.__add__">(in module Point3D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector2D.html#Vector2D.__add__">(in module Vector2D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.__add__">(in module Vector3D)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/misc/measurements/SingletonMeta.html#SingletonMeta.__call__">__call__() (in module SingletonMeta)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/local_instance/LocalDockerInstance.html#LocalDockerInstance.__DOCKER_CLIENT__">__DOCKER_CLIENT__ (in module LocalDockerInstance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/arc/Arc.html#Arc.__eq__">__eq__() (in module Arc)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/bbox/BoundingBox2D.html#BoundingBox2D.__eq__">(in module BoundingBox2D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/circle/Circle.html#Circle.__eq__">(in module Circle)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/cone/Cone.html#Cone.__eq__">(in module Cone)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/Cylinder.html#Cylinder.__eq__">(in module Cylinder)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/Ellipse.html#Ellipse.__eq__">(in module Ellipse)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/frame/Frame.html#Frame.__eq__">(in module Frame)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/line/Line.html#Line.__eq__">(in module Line)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/matrix/Matrix.html#Matrix.__eq__">(in module Matrix)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/misc/measurements/Measurement.html#Measurement.__eq__">(in module Measurement)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/plane/Plane.html#Plane.__eq__">(in module Plane)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/point/Point2D.html#Point2D.__eq__">(in module Point2D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/point/Point3D.html#Point3D.__eq__">(in module Point3D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/segment/SketchSegment.html#SketchSegment.__eq__">(in module SketchSegment)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/Sphere.html#Sphere.__eq__">(in module Sphere)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/Torus.html#Torus.__eq__">(in module Torus)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector2D.html#Vector2D.__eq__">(in module Vector2D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.__eq__">(in module Vector3D)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/logger/Logger.html#Logger.__getitem__">__getitem__() (in module Logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/vector/Vector2D.html#Vector2D.__mod__">__mod__() (in module Vector2D)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.__mod__">(in module Vector3D)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/math/matrix/Matrix.html#Matrix.__mul__">__mul__() (in module Matrix)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/parameterization/ParamUV.html#ParamUV.__mul__">(in module ParamUV)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector2D.html#Vector2D.__mul__">(in module Vector2D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.__mul__">(in module Vector3D)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/sketch/arc/Arc.html#Arc.__ne__">__ne__() (in module Arc)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/bbox/BoundingBox2D.html#BoundingBox2D.__ne__">(in module BoundingBox2D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/frame/Frame.html#Frame.__ne__">(in module Frame)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/matrix/Matrix.html#Matrix.__ne__">(in module Matrix)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/plane/Plane.html#Plane.__ne__">(in module Plane)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/point/Point2D.html#Point2D.__ne__">(in module Point2D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/point/Point3D.html#Point3D.__ne__">(in module Point3D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/segment/SketchSegment.html#SketchSegment.__ne__">(in module SketchSegment)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector2D.html#Vector2D.__ne__">(in module Vector2D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.__ne__">(in module Vector3D)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/beam/Beam.html#Beam.__repr__">__repr__() (in module Beam)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/beam/BeamCircularProfile.html#BeamCircularProfile.__repr__">(in module BeamCircularProfile)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.__repr__">(in module Body)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.__repr__">(in module Component)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/coordinate_system/CoordinateSystem.html#CoordinateSystem.__repr__">(in module CoordinateSystem)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/design/Design.html#Design.__repr__">(in module Design)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/designpoint/DesignPoint.html#DesignPoint.__repr__">(in module DesignPoint)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/connection/client/GrpcClient.html#GrpcClient.__repr__">(in module GrpcClient)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/parameterization/Interval.html#Interval.__repr__">(in module Interval)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.__repr__">(in module MasterBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/part/MasterComponent.html#MasterComponent.__repr__">(in module MasterComponent)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/modeler/Modeler.html#Modeler.__repr__">(in module Modeler)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/parameterization/Parameterization.html#Parameterization.__repr__">(in module Parameterization)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/parameterization/ParamUV.html#ParamUV.__repr__">(in module ParamUV)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/part/Part.html#Part.__repr__">(in module Part)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/ParamUV.html#ParamUV.__sub__">__sub__() (in module ParamUV)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/point/Point2D.html#Point2D.__sub__">(in module Point2D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/point/Point3D.html#Point3D.__sub__">(in module Point3D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector2D.html#Vector2D.__sub__">(in module Vector2D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.__sub__">(in module Vector3D)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/ParamUV.html#ParamUV.__truediv__">__truediv__() (in module ParamUV)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/index.html#core.__version__">__version__ (in module core)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/misc/accuracy/Accuracy.html#Accuracy">Accuracy (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotting_types/EdgePlot.html#EdgePlot.actor">actor (in module EdgePlot)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/plotting/plotting_types/GeomObjectPlot.html#GeomObjectPlot.actor">(in module GeomObjectPlot)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/Plotter.html#Plotter.add">add() (in module Plotter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/design/Design.html#Design.add_beam_circular_profile">add_beam_circular_profile() (in module Design)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/Plotter.html#Plotter.add_body">add_body() (in module Plotter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotting_types/GeomObjectPlot.html#GeomObjectPlot.add_body_edges">add_body_edges (in module GeomObjectPlot)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/Plotter.html#Plotter.add_body_edges">add_body_edges() (in module Plotter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/Logger.html#Logger.add_child_logger">add_child_logger() (in module Logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.add_component">add_component() (in module Component)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/plotting/plotter/Plotter.html#Plotter.add_component">(in module Plotter)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.add_design_point">add_design_point() (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.add_design_points">add_design_points() (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/Logger.html#Logger.add_handling_uncaught_expections">add_handling_uncaught_expections() (in module Logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/Logger.html#Logger.add_instance_logger">add_instance_logger() (in module Logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/Plotter.html#Plotter.add_list">add_list() (in module Plotter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/design/Design.html#Design.add_material">add_material() (in module Design)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.add_midsurface_offset">add_midsurface_offset() (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/design/Design.html#Design.add_midsurface_offset">(in module Design)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.add_midsurface_offset">(in module IBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.add_midsurface_offset">(in module MasterBody)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.add_midsurface_thickness">add_midsurface_thickness() (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/design/Design.html#Design.add_midsurface_thickness">(in module Design)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.add_midsurface_thickness">(in module IBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.add_midsurface_thickness">(in module MasterBody)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/math/bbox/BoundingBox2D.html#BoundingBox2D.add_point">add_point() (in module BoundingBox2D)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/bbox/BoundingBox2D.html#BoundingBox2D.add_point_components">add_point_components() (in module BoundingBox2D)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/bbox/BoundingBox2D.html#BoundingBox2D.add_points">add_points() (in module BoundingBox2D)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/materials/material/Material.html#Material.add_property">add_property() (in module Material)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/Plotter.html#Plotter.add_sketch_polydata">add_sketch_polydata() (in module Plotter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/index.html#logger.add_stdout_handler">add_stdout_handler() (in module logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/gears/SpurGear.html#SpurGear.addendum">addendum (in module SpurGear)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/index.html#logger.addfile_handler">addfile_handler() (in module logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/product_instance/index.html#product_instance.ADDINS_SUBFOLDER">ADDINS_SUBFOLDER (in module product_instance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/measurements/Angle.html#Angle">Angle (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/arc/Arc.html#Arc.angle">angle (in module Arc)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/measurements/DefaultUnitsClass.html#DefaultUnitsClass.ANGLE">ANGLE (in module DefaultUnitsClass)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/polygon/Polygon.html#Polygon.angle">angle (in module Polygon)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/sketch/ellipse/SketchEllipse.html#SketchEllipse.angle">(in module SketchEllipse)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/misc/accuracy/index.html#accuracy.ANGLE_ACCURACY">ANGLE_ACCURACY (in module accuracy)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/accuracy/Accuracy.html#Accuracy.angle_is_negative">angle_is_negative() (in module Accuracy)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/accuracy/Accuracy.html#Accuracy.angle_is_positive">angle_is_positive() (in module Accuracy)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/accuracy/Accuracy.html#Accuracy.angle_is_zero">angle_is_zero() (in module Accuracy)</a>
+</li>
+      <li>
+    ansys.geometry.core
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/index.html#module-ansys.geometry.core">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.connection
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/connection/index.html#module-ansys.geometry.core.connection">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.connection.backend
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/connection/backend/index.html#module-ansys.geometry.core.connection.backend">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.connection.client
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/connection/client/index.html#module-ansys.geometry.core.connection.client">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.connection.conversions
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/connection/conversions/index.html#module-ansys.geometry.core.connection.conversions">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.connection.defaults
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/connection/defaults/index.html#module-ansys.geometry.core.connection.defaults">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.connection.launcher
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/connection/launcher/index.html#module-ansys.geometry.core.connection.launcher">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.connection.local_instance
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/connection/local_instance/index.html#module-ansys.geometry.core.connection.local_instance">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.connection.product_instance
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/connection/product_instance/index.html#module-ansys.geometry.core.connection.product_instance">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.connection.validate
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/connection/validate/index.html#module-ansys.geometry.core.connection.validate">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.designer
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/index.html#module-ansys.geometry.core.designer">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.designer.beam
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/beam/index.html#module-ansys.geometry.core.designer.beam">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.designer.body
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/body/index.html#module-ansys.geometry.core.designer.body">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.designer.component
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/component/index.html#module-ansys.geometry.core.designer.component">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.designer.coordinate_system
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/coordinate_system/index.html#module-ansys.geometry.core.designer.coordinate_system">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.designer.design
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/design/index.html#module-ansys.geometry.core.designer.design">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.designer.designpoint
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/designpoint/index.html#module-ansys.geometry.core.designer.designpoint">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.designer.edge
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/edge/index.html#module-ansys.geometry.core.designer.edge">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.designer.face
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/face/index.html#module-ansys.geometry.core.designer.face">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.designer.part
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/part/index.html#module-ansys.geometry.core.designer.part">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.designer.selection
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/selection/index.html#module-ansys.geometry.core.designer.selection">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.errors
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/errors/index.html#module-ansys.geometry.core.errors">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.logger
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/logger/index.html#module-ansys.geometry.core.logger">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.materials
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/materials/index.html#module-ansys.geometry.core.materials">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.materials.material
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/materials/material/index.html#module-ansys.geometry.core.materials.material">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.materials.property
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/materials/property/index.html#module-ansys.geometry.core.materials.property">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.math
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/index.html#module-ansys.geometry.core.math">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.math.bbox
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/bbox/index.html#module-ansys.geometry.core.math.bbox">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.math.constants
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/constants/index.html#module-ansys.geometry.core.math.constants">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.math.frame
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/frame/index.html#module-ansys.geometry.core.math.frame">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.math.matrix
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/matrix/index.html#module-ansys.geometry.core.math.matrix">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.math.plane
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/plane/index.html#module-ansys.geometry.core.math.plane">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.math.point
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/point/index.html#module-ansys.geometry.core.math.point">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    ansys.geometry.core.math.vector
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/vector/index.html#module-ansys.geometry.core.math.vector">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.misc
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/misc/index.html#module-ansys.geometry.core.misc">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.misc.accuracy
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/misc/accuracy/index.html#module-ansys.geometry.core.misc.accuracy">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.misc.checks
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/misc/checks/index.html#module-ansys.geometry.core.misc.checks">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.misc.measurements
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/misc/measurements/index.html#module-ansys.geometry.core.misc.measurements">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.misc.options
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/misc/options/index.html#module-ansys.geometry.core.misc.options">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.misc.units
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/misc/units/index.html#module-ansys.geometry.core.misc.units">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.modeler
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/modeler/index.html#module-ansys.geometry.core.modeler">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.plotting
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/plotting/index.html#module-ansys.geometry.core.plotting">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.plotting.plotter
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/plotting/plotter/index.html#module-ansys.geometry.core.plotting.plotter">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.plotting.plotter_helper
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/plotting/plotter_helper/index.html#module-ansys.geometry.core.plotting.plotter_helper">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.plotting.plotting_types
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/plotting/plotting_types/index.html#module-ansys.geometry.core.plotting.plotting_types">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.plotting.trame_gui
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/plotting/trame_gui/index.html#module-ansys.geometry.core.plotting.trame_gui">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.plotting.widgets
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/index.html#module-ansys.geometry.core.plotting.widgets">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.plotting.widgets.button
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/button/index.html#module-ansys.geometry.core.plotting.widgets.button">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.plotting.widgets.displace_arrows
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/displace_arrows/index.html#module-ansys.geometry.core.plotting.widgets.displace_arrows">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.plotting.widgets.measure
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/measure/index.html#module-ansys.geometry.core.plotting.widgets.measure">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.plotting.widgets.ruler
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/ruler/index.html#module-ansys.geometry.core.plotting.widgets.ruler">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.plotting.widgets.view_button
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/view_button/index.html#module-ansys.geometry.core.plotting.widgets.view_button">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.plotting.widgets.widget
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/widget/index.html#module-ansys.geometry.core.plotting.widgets.widget">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.primitives
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/index.html#module-ansys.geometry.core.primitives">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.primitives.circle
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/circle/index.html#module-ansys.geometry.core.primitives.circle">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.primitives.cone
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cone/index.html#module-ansys.geometry.core.primitives.cone">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.primitives.curve_evaluation
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/curve_evaluation/index.html#module-ansys.geometry.core.primitives.curve_evaluation">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.primitives.cylinder
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/index.html#module-ansys.geometry.core.primitives.cylinder">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.primitives.ellipse
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/index.html#module-ansys.geometry.core.primitives.ellipse">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.primitives.line
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/line/index.html#module-ansys.geometry.core.primitives.line">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.primitives.parameterization
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/parameterization/index.html#module-ansys.geometry.core.primitives.parameterization">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.primitives.sphere
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/index.html#module-ansys.geometry.core.primitives.sphere">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.primitives.surface_evaluation
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/surface_evaluation/index.html#module-ansys.geometry.core.primitives.surface_evaluation">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.primitives.torus
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/torus/index.html#module-ansys.geometry.core.primitives.torus">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.sketch
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/sketch/index.html#module-ansys.geometry.core.sketch">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.sketch.arc
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/sketch/arc/index.html#module-ansys.geometry.core.sketch.arc">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.sketch.box
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/sketch/box/index.html#module-ansys.geometry.core.sketch.box">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.sketch.circle
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/sketch/circle/index.html#module-ansys.geometry.core.sketch.circle">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.sketch.edge
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/sketch/edge/index.html#module-ansys.geometry.core.sketch.edge">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.sketch.ellipse
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/sketch/ellipse/index.html#module-ansys.geometry.core.sketch.ellipse">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.sketch.face
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/sketch/face/index.html#module-ansys.geometry.core.sketch.face">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.sketch.gears
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/sketch/gears/index.html#module-ansys.geometry.core.sketch.gears">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.sketch.polygon
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/sketch/polygon/index.html#module-ansys.geometry.core.sketch.polygon">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.sketch.segment
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/sketch/segment/index.html#module-ansys.geometry.core.sketch.segment">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.sketch.sketch
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/sketch/sketch/index.html#module-ansys.geometry.core.sketch.sketch">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.sketch.slot
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/sketch/slot/index.html#module-ansys.geometry.core.sketch.slot">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.sketch.trapezoid
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/sketch/trapezoid/index.html#module-ansys.geometry.core.sketch.trapezoid">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.sketch.triangle
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/sketch/triangle/index.html#module-ansys.geometry.core.sketch.triangle">module</a>
+</li>
+      </ul></li>
+      <li>
+    ansys.geometry.core.typing
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/typing/index.html#module-ansys.geometry.core.typing">module</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/cone/Cone.html#Cone.apex">apex (in module Cone)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/cone/Cone.html#Cone.apex_param">apex_param (in module Cone)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/backend/ApiVersions.html#ApiVersions">ApiVersions (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/arc/Arc.html#Arc">Arc (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.arc">arc() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.arc_from_three_points">arc_from_three_points() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.arc_to_point">arc_to_point() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/box/Box.html#Box.area">area (in module Box)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/circle/Circle.html#Circle.area">(in module Circle)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/Ellipse.html#Ellipse.area">(in module Ellipse)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/face/Face.html#Face.area">(in module Face)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/polygon/Polygon.html#Polygon.area">(in module Polygon)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/slot/Slot.html#Slot.area">(in module Slot)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.assign_material">assign_material() (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.assign_material">(in module IBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.assign_material">(in module MasterBody)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/connection/product_instance/index.html#product_instance.BACKEND_ADDIN_MANIFEST_ARGUMENT">BACKEND_ADDIN_MANIFEST_ARGUMENT (in module product_instance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/product_instance/index.html#product_instance.BACKEND_API_VERSION_VARIABLE">BACKEND_API_VERSION_VARIABLE (in module product_instance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/product_instance/index.html#product_instance.BACKEND_HOST_VARIABLE">BACKEND_HOST_VARIABLE (in module product_instance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/product_instance/index.html#product_instance.BACKEND_LOG_LEVEL_VARIABLE">BACKEND_LOG_LEVEL_VARIABLE (in module product_instance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/product_instance/index.html#product_instance.BACKEND_PORT_VARIABLE">BACKEND_PORT_VARIABLE (in module product_instance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/product_instance/index.html#product_instance.BACKEND_SPACECLAIM_OPTIONS">BACKEND_SPACECLAIM_OPTIONS (in module product_instance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/product_instance/index.html#product_instance.BACKEND_SUBFOLDER">BACKEND_SUBFOLDER (in module product_instance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/product_instance/index.html#product_instance.BACKEND_TRACE_VARIABLE">BACKEND_TRACE_VARIABLE (in module product_instance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/client/GrpcClient.html#GrpcClient.backend_type">backend_type (in module GrpcClient)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/backend/BackendType.html#BackendType">BackendType (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/gears/SpurGear.html#SpurGear.base_diameter">base_diameter (in module SpurGear)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/units/PhysicalQuantity.html#PhysicalQuantity.base_unit">base_unit (in module PhysicalQuantity)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/point/Point2D.html#Point2D.base_unit">base_unit() (in module Point2D)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/point/Point3D.html#Point3D.base_unit">(in module Point3D)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/math/point/index.html#point.BASE_UNIT_LENGTH">BASE_UNIT_LENGTH (in module point)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/beam/Beam.html#Beam">Beam (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/design/Design.html#Design.beam_profiles">beam_profiles (in module Design)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/beam/BeamCircularProfile.html#BeamCircularProfile">BeamCircularProfile (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/beam/BeamProfile.html#BeamProfile">BeamProfile (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.beams">beams (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.bodies">bodies (in module Component)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/part/Part.html#Part.bodies">(in module Part)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body">Body (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/Face.html#Face.body">body (in module Face)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/MidSurfaceOffsetType.html#MidSurfaceOffsetType.BOTTOM">BOTTOM (in module MidSurfaceOffsetType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/bbox/BoundingBox2D.html#BoundingBox2D">BoundingBox2D (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/box/Box.html#Box">Box (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.box">box() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/button/Button.html#Button">Button (built-in class)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/button/Button.html#Button.callback">callback() (in module Button)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/displace_arrows/DisplacementArrow.html#DisplacementArrow.callback">(in module DisplacementArrow)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/measure/MeasureWidget.html#MeasureWidget.callback">(in module MeasureWidget)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/widget/PlotterWidget.html#PlotterWidget.callback">(in module PlotterWidget)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/ruler/Ruler.html#Ruler.callback">(in module Ruler)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/view_button/ViewButton.html#ViewButton.callback">(in module ViewButton)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/displace_arrows/CameraPanDirection.html#CameraPanDirection">CameraPanDirection (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/arc/Arc.html#Arc.center">center (in module Arc)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/beam/BeamCircularProfile.html#BeamCircularProfile.center">(in module BeamCircularProfile)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/box/Box.html#Box.center">(in module Box)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/polygon/Polygon.html#Polygon.center">(in module Polygon)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/circle/SketchCircle.html#SketchCircle.center">(in module SketchCircle)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/ellipse/SketchEllipse.html#SketchEllipse.center">(in module SketchEllipse)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/slot/Slot.html#Slot.center">(in module Slot)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/trapezoid/Trapezoid.html#Trapezoid.center">(in module Trapezoid)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/connection/client/GrpcClient.html#GrpcClient.channel">channel (in module GrpcClient)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/checks/index.html#checks.check_is_float_int">check_is_float_int() (in module checks)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/checks/index.html#checks.check_ndarray_is_all_nan">check_ndarray_is_all_nan() (in module checks)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/checks/index.html#checks.check_ndarray_is_float_int">check_ndarray_is_float_int() (in module checks)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/checks/index.html#checks.check_ndarray_is_non_zero">check_ndarray_is_non_zero() (in module checks)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/checks/index.html#checks.check_ndarray_is_not_none">check_ndarray_is_not_none() (in module checks)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/checks/index.html#checks.check_pint_unit_compatibility">check_pint_unit_compatibility() (in module checks)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/checks/index.html#checks.check_type">check_type() (in module checks)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/checks/index.html#checks.check_type_equivalence">check_type_equivalence() (in module checks)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/circle/Circle.html#Circle">Circle (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/circle/CircleEvaluation.html#CircleEvaluation.circle">circle (in module CircleEvaluation)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.circle">circle() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/circle/CircleEvaluation.html#CircleEvaluation">CircleEvaluation (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/ParamType.html#ParamType.CIRCULAR">CIRCULAR (in module ParamType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/options/ImportOptions.html#ImportOptions.cleanup_bodies">cleanup_bodies (in module ImportOptions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/modeler/Modeler.html#Modeler.client">client (in module Modeler)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/client/GrpcClient.html#GrpcClient.close">close() (in module GrpcClient)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/modeler/Modeler.html#Modeler.close">(in module Modeler)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/connection/product_instance/ProductInstance.html#ProductInstance.close">(in module ProductInstance)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/ParamForm.html#ParamForm.CLOSED">CLOSED (in module ParamForm)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component">Component (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.components">components (in module Component)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/part/Part.html#Part.components">(in module Part)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter_helper/PlotterHelper.html#PlotterHelper.compute_edge_object_map">compute_edge_object_map() (in module PlotterHelper)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/primitives/cone/Cone.html#Cone">Cone (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/cone/ConeEvaluation.html#ConeEvaluation.cone">cone (in module ConeEvaluation)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/cone/ConeEvaluation.html#ConeEvaluation">ConeEvaluation (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/local_instance/LocalDockerInstance.html#LocalDockerInstance.container">container (in module LocalDockerInstance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/bbox/BoundingBox2D.html#BoundingBox2D.contains_point">contains_point() (in module BoundingBox2D)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/bbox/BoundingBox2D.html#BoundingBox2D.contains_point_components">contains_point_components() (in module BoundingBox2D)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.coordinate_systems">coordinate_systems (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/coordinate_system/CoordinateSystem.html#CoordinateSystem">CoordinateSystem (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.copy">copy() (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.copy">(in module IBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.copy">(in module MasterBody)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.create_beam">create_beam() (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.create_beams">create_beams() (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.create_coordinate_system">create_coordinate_system() (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/modeler/Modeler.html#Modeler.create_design">create_design() (in module Modeler)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/design/Design.html#Design.create_named_selection">create_named_selection() (in module Design)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.create_surface">create_surface() (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.create_surface_from_face">create_surface_from_face() (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/index.html#logger.CRITICAL">CRITICAL (in module logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/vector/Vector2D.html#Vector2D.cross">cross() (in module Vector2D)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.cross">(in module Vector3D)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/circle/CircleEvaluation.html#CircleEvaluation.curvature">curvature() (in module CircleEvaluation)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/curve_evaluation/CurveEvaluation.html#CurveEvaluation.curvature">(in module CurveEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/EllipseEvaluation.html#EllipseEvaluation.curvature">(in module EllipseEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/line/LineEvaluation.html#LineEvaluation.curvature">(in module LineEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/TorusEvaluation.html#TorusEvaluation.curvature">(in module TorusEvaluation)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/edge/Edge.html#Edge.curve_type">curve_type (in module Edge)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/curve_evaluation/CurveEvaluation.html#CurveEvaluation">CurveEvaluation (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/edge/CurveType.html#CurveType">CurveType (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/edge/CurveType.html#CurveType.CURVETYPE_CIRCLE">CURVETYPE_CIRCLE (in module CurveType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/edge/CurveType.html#CurveType.CURVETYPE_ELLIPSE">CURVETYPE_ELLIPSE (in module CurveType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/edge/CurveType.html#CurveType.CURVETYPE_LINE">CURVETYPE_LINE (in module CurveType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/edge/CurveType.html#CurveType.CURVETYPE_NURBS">CURVETYPE_NURBS (in module CurveType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/edge/CurveType.html#CurveType.CURVETYPE_PROCEDURAL">CURVETYPE_PROCEDURAL (in module CurveType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/edge/CurveType.html#CurveType.CURVETYPE_UNKNOWN">CURVETYPE_UNKNOWN (in module CurveType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/MidSurfaceOffsetType.html#MidSurfaceOffsetType.CUSTOM">CUSTOM (in module MidSurfaceOffsetType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/cylinder/Cylinder.html#Cylinder">Cylinder (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/cylinder/CylinderEvaluation.html#CylinderEvaluation.cylinder">cylinder (in module CylinderEvaluation)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/cylinder/CylinderEvaluation.html#CylinderEvaluation">CylinderEvaluation (built-in class)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/logger/index.html#logger.DEBUG">DEBUG (in module logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/gears/SpurGear.html#SpurGear.dedendum">dedendum (in module SpurGear)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/index.html#plotter.DEFAULT_COLOR">DEFAULT_COLOR (in module plotter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/index.html#logger.DEFAULT_FILE_HEADER">DEFAULT_FILE_HEADER (in module logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/defaults/index.html#defaults.DEFAULT_HOST">DEFAULT_HOST (in module defaults)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/matrix/index.html#matrix.DEFAULT_MATRIX33">DEFAULT_MATRIX33 (in module matrix)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/matrix/index.html#matrix.DEFAULT_MATRIX44">DEFAULT_MATRIX44 (in module matrix)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/defaults/index.html#defaults.DEFAULT_PIM_CONFIG">DEFAULT_PIM_CONFIG (in module defaults)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/constants/index.html#constants.DEFAULT_POINT2D">DEFAULT_POINT2D (in module constants)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/point/index.html#point.DEFAULT_POINT2D_VALUES">DEFAULT_POINT2D_VALUES (in module point)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/constants/index.html#constants.DEFAULT_POINT3D">DEFAULT_POINT3D (in module constants)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/point/index.html#point.DEFAULT_POINT3D_VALUES">DEFAULT_POINT3D_VALUES (in module point)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/defaults/index.html#defaults.DEFAULT_PORT">DEFAULT_PORT (in module defaults)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/index.html#logger.DEFAULT_STDOUT_HEADER">DEFAULT_STDOUT_HEADER (in module logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/measurements/index.html#measurements.DEFAULT_UNITS">DEFAULT_UNITS (in module measurements)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/measurements/DefaultUnitsClass.html#DefaultUnitsClass">DefaultUnitsClass (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.delete_beam">delete_beam() (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/design/Design.html#Design.delete_beam_profile">delete_beam_profile() (in module Design)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.delete_body">delete_body() (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.delete_component">delete_component() (in module Component)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/design/Design.html#Design.delete_component">(in module Design)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/design/Design.html#Design.delete_named_selection">delete_named_selection() (in module Design)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/materials/property/MaterialPropertyType.html#MaterialPropertyType.DENSITY">DENSITY (in module MaterialPropertyType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/design/Design.html#Design">Design (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.design_points">design_points (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/design/DesignFileFormat.html#DesignFileFormat">DesignFileFormat (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/designpoint/DesignPoint.html#DesignPoint">DesignPoint (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/matrix/Matrix.html#Matrix.determinant">determinant() (in module Matrix)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/circle/Circle.html#Circle.diameter">diameter (in module Circle)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/circle/Circle.html#Circle.dir_x">dir_x (in module Circle)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cone/Cone.html#Cone.dir_x">(in module Cone)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/Cylinder.html#Cylinder.dir_x">(in module Cylinder)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/Ellipse.html#Ellipse.dir_x">(in module Ellipse)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/Sphere.html#Sphere.dir_x">(in module Sphere)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/Torus.html#Torus.dir_x">(in module Torus)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/primitives/circle/Circle.html#Circle.dir_y">dir_y (in module Circle)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cone/Cone.html#Cone.dir_y">(in module Cone)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/Cylinder.html#Cylinder.dir_y">(in module Cylinder)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/Ellipse.html#Ellipse.dir_y">(in module Ellipse)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/Sphere.html#Sphere.dir_y">(in module Sphere)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/Torus.html#Torus.dir_y">(in module Torus)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/circle/Circle.html#Circle.dir_z">dir_z (in module Circle)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cone/Cone.html#Cone.dir_z">(in module Cone)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/Cylinder.html#Cylinder.dir_z">(in module Cylinder)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/Ellipse.html#Ellipse.dir_z">(in module Ellipse)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/Sphere.html#Sphere.dir_z">(in module Sphere)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/Torus.html#Torus.dir_z">(in module Torus)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/line/Line.html#Line.direction">direction (in module Line)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/beam/BeamCircularProfile.html#BeamCircularProfile.direction_x">direction_x (in module BeamCircularProfile)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/frame/Frame.html#Frame.direction_x">(in module Frame)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/beam/BeamCircularProfile.html#BeamCircularProfile.direction_y">direction_y (in module BeamCircularProfile)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/frame/Frame.html#Frame.direction_y">(in module Frame)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/math/frame/Frame.html#Frame.direction_z">direction_z (in module Frame)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter_helper/PlotterHelper.html#PlotterHelper.disable_picking">disable_picking() (in module PlotterHelper)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/backend/BackendType.html#BackendType.DISCOVERY">DISCOVERY (in module BackendType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/product_instance/index.html#product_instance.DISCOVERY_EXE">DISCOVERY_EXE (in module product_instance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/product_instance/index.html#product_instance.DISCOVERY_FOLDER">DISCOVERY_FOLDER (in module product_instance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/displace_arrows/DisplacementArrow.html#DisplacementArrow">DisplacementArrow (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/measurements/Distance.html#Distance">Distance (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/local_instance/LocalDockerInstance.html#LocalDockerInstance.docker_client">docker_client() (in module LocalDockerInstance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/design/Design.html#Design.download">download() (in module Design)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.dummy_gear">dummy_gear() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/gears/DummyGear.html#DummyGear">DummyGear (built-in class)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/primitives/ellipse/Ellipse.html#Ellipse.eccentricity">eccentricity (in module Ellipse)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/edge/Edge.html#Edge">Edge (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.edge">edge() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/index.html#plotter.EDGE_COLOR">EDGE_COLOR (in module plotter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotting_types/EdgePlot.html#EdgePlot.edge_object">edge_object (in module EdgePlot)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotting_types/EdgePlot.html#EdgePlot">EdgePlot (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.edges">edges (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/face/Face.html#Face.edges">(in module Face)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/face/FaceLoop.html#FaceLoop.edges">(in module FaceLoop)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/plotting_types/GeomObjectPlot.html#GeomObjectPlot.edges">(in module GeomObjectPlot)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.edges">(in module MasterBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.edges">(in module Sketch)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/face/SketchFace.html#SketchFace.edges">(in module SketchFace)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.edges">edges() (in module IBody)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/materials/property/MaterialPropertyType.html#MaterialPropertyType.ELASTIC_MODULUS">ELASTIC_MODULUS (in module MaterialPropertyType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/ellipse/Ellipse.html#Ellipse">Ellipse (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/ellipse/EllipseEvaluation.html#EllipseEvaluation.ellipse">ellipse (in module EllipseEvaluation)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.ellipse">ellipse() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/ellipse/EllipseEvaluation.html#EllipseEvaluation">EllipseEvaluation (built-in class)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/plotting/plotter_helper/PlotterHelper.html#PlotterHelper.enable_picking">enable_picking() (in module PlotterHelper)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter_helper/PlotterHelper.html#PlotterHelper.enable_widgets">enable_widgets() (in module PlotterHelper)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/arc/Arc.html#Arc.end">end (in module Arc)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/beam/Beam.html#Beam.end">(in module Beam)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/parameterization/Interval.html#Interval.end">(in module Interval)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/edge/SketchEdge.html#SketchEdge.end">(in module SketchEdge)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/segment/SketchSegment.html#SketchSegment.end">(in module SketchSegment)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/edge/Edge.html#Edge.end_point">end_point (in module Edge)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/index.html#logger.ERROR">ERROR (in module logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/circle/Circle.html#Circle.evaluate">evaluate() (in module Circle)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cone/Cone.html#Cone.evaluate">(in module Cone)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/Cylinder.html#Cylinder.evaluate">(in module Cylinder)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/Ellipse.html#Ellipse.evaluate">(in module Ellipse)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/line/Line.html#Line.evaluate">(in module Line)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/Sphere.html#Sphere.evaluate">(in module Sphere)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/Torus.html#Torus.evaluate">(in module Torus)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/connection/local_instance/LocalDockerInstance.html#LocalDockerInstance.existed_previously">existed_previously (in module LocalDockerInstance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.extrude_face">extrude_face() (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.extrude_sketch">extrude_sketch() (in module Component)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/designer/face/Face.html#Face">Face (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.face">face() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/Face.html#Face.face_normal">face_normal() (in module Face)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/Face.html#Face.face_point">face_point() (in module Face)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/FaceLoop.html#FaceLoop">FaceLoop (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/FaceLoopType.html#FaceLoopType">FaceLoopType (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.faces">faces (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/edge/Edge.html#Edge.faces">(in module Edge)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.faces">(in module MasterBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.faces">(in module Sketch)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.faces">faces() (in module IBody)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/Logger.html#Logger.file_handler">file_handler (in module Logger)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/logger/PyGeometryCustomAdapter.html#PyGeometryCustomAdapter.file_handler">(in module PyGeometryCustomAdapter)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/logger/index.html#logger.FILE_MSG_FORMAT">FILE_MSG_FORMAT (in module logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/index.html#logger.FILE_NAME">FILE_NAME (in module logger)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/logger/InstanceFilter.html#InstanceFilter.filter">filter() (in module InstanceFilter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/circle/CircleEvaluation.html#CircleEvaluation.first_derivative">first_derivative() (in module CircleEvaluation)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/curve_evaluation/CurveEvaluation.html#CurveEvaluation.first_derivative">(in module CurveEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/EllipseEvaluation.html#EllipseEvaluation.first_derivative">(in module EllipseEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/line/LineEvaluation.html#LineEvaluation.first_derivative">(in module LineEvaluation)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/design/DesignFileFormat.html#DesignFileFormat.FMD">FMD (in module DesignFileFormat)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/Parameterization.html#Parameterization.form">form (in module Parameterization)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/frame/Frame.html#Frame">Frame (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/coordinate_system/CoordinateSystem.html#CoordinateSystem.frame">frame (in module CoordinateSystem)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/conversions/index.html#conversions.frame_to_grpc_frame">frame_to_grpc_frame() (in module conversions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/materials/property/MaterialPropertyType.html#MaterialPropertyType.from_id">from_id() (in module MaterialPropertyType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/vector/UnitVector2D.html#UnitVector2D.from_points">from_points() (in module UnitVector2D)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/vector/UnitVector3D.html#UnitVector3D.from_points">(in module UnitVector3D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector2D.html#Vector2D.from_points">(in module Vector2D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.from_points">(in module Vector3D)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/sketch/arc/Arc.html#Arc.from_three_points">from_three_points() (in module Arc)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/sketch/gears/Gear.html#Gear">Gear (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/defaults/index.html#defaults.GEOMETRY_SERVICE_DOCKER_IMAGE">GEOMETRY_SERVICE_DOCKER_IMAGE (in module defaults)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/product_instance/index.html#product_instance.GEOMETRY_SERVICE_EXE">GEOMETRY_SERVICE_EXE (in module product_instance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/local_instance/GeometryContainers.html#GeometryContainers">GeometryContainers (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/errors/GeometryExitedError.html#GeometryExitedError">GeometryExitedError</a>
+</li>
+      <li><a href="api/ansys/geometry/core/errors/GeometryRuntimeError.html#GeometryRuntimeError">GeometryRuntimeError</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotting_types/GeomObjectPlot.html#GeomObjectPlot">GeomObjectPlot (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.get">get() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/vector/Vector2D.html#Vector2D.get_angle_between">get_angle_between() (in module Vector2D)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.get_angle_between">(in module Vector3D)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/connection/client/GrpcClient.html#GrpcClient.get_name">get_name() (in module GrpcClient)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/circle/Circle.html#Circle.get_parameterization">get_parameterization() (in module Circle)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/Ellipse.html#Ellipse.get_parameterization">(in module Ellipse)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/line/Line.html#Line.get_parameterization">(in module Line)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/Interval.html#Interval.get_span">get_span() (in module Interval)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/cone/Cone.html#Cone.get_u_parameterization">get_u_parameterization() (in module Cone)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/Cylinder.html#Cylinder.get_u_parameterization">(in module Cylinder)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/Sphere.html#Sphere.get_u_parameterization">(in module Sphere)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/Torus.html#Torus.get_u_parameterization">(in module Torus)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/cone/Cone.html#Cone.get_v_parameterization">get_v_parameterization() (in module Cone)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/Cylinder.html#Cylinder.get_v_parameterization">(in module Cylinder)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/Sphere.html#Sphere.get_v_parameterization">(in module Sphere)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/Torus.html#Torus.get_v_parameterization">(in module Torus)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.get_world_transform">get_world_transform() (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/frame/Frame.html#Frame.global_to_local_rotation">global_to_local_rotation (in module Frame)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/conversions/index.html#conversions.grpc_frame_to_frame">grpc_frame_to_frame() (in module conversions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/conversions/index.html#conversions.grpc_matrix_to_matrix">grpc_matrix_to_matrix() (in module conversions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/client/GrpcClient.html#GrpcClient">GrpcClient (built-in class)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/primitives/cone/Cone.html#Cone.half_angle">half_angle (in module Cone)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/errors/index.html#errors.handler">handler() (in module errors)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/client/GrpcClient.html#GrpcClient.healthy">healthy (in module GrpcClient)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/sketch/box/Box.html#Box.height">height (in module Box)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cone/Cone.html#Cone.height">(in module Cone)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/slot/Slot.html#Slot.height">(in module Slot)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/trapezoid/Trapezoid.html#Trapezoid.height">(in module Trapezoid)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody">IBody (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/beam/Beam.html#Beam.id">id (in module Beam)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/beam/BeamProfile.html#BeamProfile.id">(in module BeamProfile)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.id">(in module Body)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.id">(in module Component)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/coordinate_system/CoordinateSystem.html#CoordinateSystem.id">(in module CoordinateSystem)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/designpoint/DesignPoint.html#DesignPoint.id">(in module DesignPoint)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/edge/Edge.html#Edge.id">(in module Edge)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/face/Face.html#Face.id">(in module Face)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.id">(in module MasterBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/part/MasterComponent.html#MasterComponent.id">(in module MasterComponent)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/selection/NamedSelection.html#NamedSelection.id">(in module NamedSelection)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/part/Part.html#Part.id">(in module Part)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.id">id() (in module IBody)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/constants/index.html#constants.IDENTITY_MATRIX33">IDENTITY_MATRIX33 (in module constants)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/constants/index.html#constants.IDENTITY_MATRIX44">IDENTITY_MATRIX44 (in module constants)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/design/DesignFileFormat.html#DesignFileFormat.IGES">IGES (in module DesignFileFormat)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/options/ImportOptions.html#ImportOptions.import_coordinate_systems">import_coordinate_systems (in module ImportOptions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/options/ImportOptions.html#ImportOptions.import_curves">import_curves (in module ImportOptions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/options/ImportOptions.html#ImportOptions.import_hidden_components_and_geometry">import_hidden_components_and_geometry (in module ImportOptions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/options/ImportOptions.html#ImportOptions.import_names">import_names (in module ImportOptions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/options/ImportOptions.html#ImportOptions.import_planes">import_planes (in module ImportOptions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/options/ImportOptions.html#ImportOptions.import_points">import_points (in module ImportOptions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/options/ImportOptions.html#ImportOptions">ImportOptions (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.imprint_curves">imprint_curves() (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.imprint_curves">(in module IBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.imprint_curves">(in module MasterBody)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.imprint_projected_curves">imprint_projected_curves() (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.imprint_projected_curves">(in module IBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.imprint_projected_curves">(in module MasterBody)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/logger/index.html#logger.INFO">INFO (in module logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/FaceLoopType.html#FaceLoopType.INNER_LOOP">INNER_LOOP (in module FaceLoopType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/polygon/Polygon.html#Polygon.inner_radius">inner_radius (in module Polygon)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/InstanceFilter.html#InstanceFilter">InstanceFilter (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.intersect">intersect() (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.intersect">(in module IBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.intersect">(in module MasterBody)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/Interval.html#Interval">Interval (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/Parameterization.html#Parameterization.interval">interval (in module Parameterization)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/design/DesignFileFormat.html#DesignFileFormat.INVALID">INVALID (in module DesignFileFormat)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/matrix/Matrix.html#Matrix.inverse">inverse() (in module Matrix)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/beam/Beam.html#Beam.is_alive">is_alive (in module Beam)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.is_alive">(in module Body)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.is_alive">(in module Component)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/coordinate_system/CoordinateSystem.html#CoordinateSystem.is_alive">(in module CoordinateSystem)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.is_alive">(in module MasterBody)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.is_alive">is_alive() (in module IBody)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/arc/Arc.html#Arc.is_clockwise">is_clockwise (in module Arc)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/client/GrpcClient.html#GrpcClient.is_closed">is_closed (in module GrpcClient)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/Interval.html#Interval.is_closed">is_closed() (in module Interval)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/circle/Circle.html#Circle.is_coincident_circle">is_coincident_circle() (in module Circle)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/ellipse/Ellipse.html#Ellipse.is_coincident_ellipse">is_coincident_ellipse() (in module Ellipse)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/line/Line.html#Line.is_coincident_line">is_coincident_line() (in module Line)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/local_instance/LocalDockerInstance.html#LocalDockerInstance.is_docker_installed">is_docker_installed() (in module LocalDockerInstance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/Interval.html#Interval.is_open">is_open() (in module Interval)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/vector/Vector2D.html#Vector2D.is_opposite">is_opposite() (in module Vector2D)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.is_opposite">(in module Vector3D)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/line/Line.html#Line.is_opposite_line">is_opposite_line() (in module Line)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/vector/Vector2D.html#Vector2D.is_parallel_to">is_parallel_to() (in module Vector2D)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.is_parallel_to">(in module Vector3D)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/math/vector/Vector2D.html#Vector2D.is_perpendicular_to">is_perpendicular_to() (in module Vector2D)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.is_perpendicular_to">(in module Vector3D)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/math/plane/Plane.html#Plane.is_point_contained">is_point_contained() (in module Plane)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/curve_evaluation/CurveEvaluation.html#CurveEvaluation.is_set">is_set() (in module CurveEvaluation)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.is_surface">is_surface (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.is_surface">(in module MasterBody)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.is_surface">is_surface() (in module IBody)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/accuracy/Accuracy.html#Accuracy.is_within_tolerance">is_within_tolerance() (in module Accuracy)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/vector/Vector2D.html#Vector2D.is_zero">is_zero (in module Vector2D)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.is_zero">(in module Vector3D)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/view_button/ViewDirection.html#ViewDirection.ISOMETRIC">ISOMETRIC (in module ViewDirection)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/connection/launcher/index.html#launcher.launch_local_modeler">launch_local_modeler() (in module launcher)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/launcher/index.html#launcher.launch_modeler">launch_modeler() (in module launcher)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/launcher/index.html#launcher.launch_modeler_with_discovery">launch_modeler_with_discovery() (in module launcher)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/launcher/index.html#launcher.launch_modeler_with_discovery_and_pimlight">launch_modeler_with_discovery_and_pimlight() (in module launcher)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/launcher/index.html#launcher.launch_modeler_with_geometry_service">launch_modeler_with_geometry_service() (in module launcher)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/launcher/index.html#launcher.launch_modeler_with_geometry_service_and_pimlight">launch_modeler_with_geometry_service_and_pimlight() (in module launcher)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/launcher/index.html#launcher.launch_modeler_with_spaceclaim">launch_modeler_with_spaceclaim() (in module launcher)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/launcher/index.html#launcher.launch_modeler_with_spaceclaim_and_pimlight">launch_modeler_with_spaceclaim_and_pimlight() (in module launcher)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/launcher/index.html#launcher.launch_remote_modeler">launch_remote_modeler() (in module launcher)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/arc/Arc.html#Arc.length">length (in module Arc)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/measurements/DefaultUnitsClass.html#DefaultUnitsClass.LENGTH">LENGTH (in module DefaultUnitsClass)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/edge/Edge.html#Edge.length">length (in module Edge)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/face/FaceLoop.html#FaceLoop.length">(in module FaceLoop)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/polygon/Polygon.html#Polygon.length">(in module Polygon)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/edge/SketchEdge.html#SketchEdge.length">(in module SketchEdge)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/segment/SketchSegment.html#SketchSegment.length">(in module SketchSegment)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/misc/accuracy/index.html#accuracy.LENGTH_ACCURACY">LENGTH_ACCURACY (in module accuracy)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/accuracy/Accuracy.html#Accuracy.length_is_equal">length_is_equal() (in module Accuracy)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/accuracy/Accuracy.html#Accuracy.length_is_greater_than_or_equal">length_is_greater_than_or_equal() (in module Accuracy)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/accuracy/Accuracy.html#Accuracy.length_is_less_than_or_equal">length_is_less_than_or_equal() (in module Accuracy)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/accuracy/Accuracy.html#Accuracy.length_is_negative">length_is_negative() (in module Accuracy)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/misc/accuracy/Accuracy.html#Accuracy.length_is_positive">length_is_positive() (in module Accuracy)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/accuracy/Accuracy.html#Accuracy.length_is_zero">length_is_zero() (in module Accuracy)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/PyGeometryCustomAdapter.html#PyGeometryCustomAdapter.level">level (in module PyGeometryCustomAdapter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/line/Line.html#Line">Line (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/line/LineEvaluation.html#LineEvaluation.line">line (in module LineEvaluation)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/ParamType.html#ParamType.LINEAR">LINEAR (in module ParamType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/ellipse/Ellipse.html#Ellipse.linear_eccentricity">linear_eccentricity (in module Ellipse)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/line/LineEvaluation.html#LineEvaluation">LineEvaluation (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/local_instance/GeometryContainers.html#GeometryContainers.LINUX_LATEST">LINUX_LATEST (in module GeometryContainers)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/local_instance/GeometryContainers.html#GeometryContainers.LINUX_LATEST_UNSTABLE">LINUX_LATEST_UNSTABLE (in module GeometryContainers)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/backend/BackendType.html#BackendType.LINUX_SERVICE">LINUX_SERVICE (in module BackendType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/frame/Frame.html#Frame.local_to_global_rotation">local_to_global_rotation (in module Frame)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/local_instance/LocalDockerInstance.html#LocalDockerInstance">LocalDockerInstance (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/client/GrpcClient.html#GrpcClient.log">log (in module GrpcClient)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/index.html#logger.LOG">LOG (in module logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/index.html#logger.LOG_LEVEL">LOG_LEVEL (in module logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/Logger.html#Logger.log_to_file">log_to_file() (in module Logger)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/logger/PyGeometryCustomAdapter.html#PyGeometryCustomAdapter.log_to_file">(in module PyGeometryCustomAdapter)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/logger/Logger.html#Logger.log_to_stdout">log_to_stdout() (in module Logger)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/logger/PyGeometryCustomAdapter.html#PyGeometryCustomAdapter.log_to_stdout">(in module PyGeometryCustomAdapter)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/logger/Logger.html#Logger">Logger (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/Face.html#Face.loops">loops (in module Face)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/math/vector/Vector2D.html#Vector2D.magnitude">magnitude (in module Vector2D)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.magnitude">(in module Vector3D)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/ellipse/Ellipse.html#Ellipse.major_radius">major_radius (in module Ellipse)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/torus/Torus.html#Torus.major_radius">(in module Torus)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/connection/product_instance/index.html#product_instance.MANIFEST_FILENAME">MANIFEST_FILENAME (in module product_instance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody">MasterBody (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/part/MasterComponent.html#MasterComponent">MasterComponent (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/materials/material/Material.html#Material">Material (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/materials/property/MaterialProperty.html#MaterialProperty">MaterialProperty (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/materials/property/MaterialPropertyType.html#MaterialPropertyType">MaterialPropertyType (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/design/Design.html#Design.materials">materials (in module Design)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/matrix/Matrix.html#Matrix">Matrix (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/matrix/Matrix33.html#Matrix33">Matrix33 (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/matrix/Matrix44.html#Matrix44">Matrix44 (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/FaceLoop.html#FaceLoop.max_bbox">max_bbox (in module FaceLoop)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/cone/ConeEvaluation.html#ConeEvaluation.max_curvature">max_curvature() (in module ConeEvaluation)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/CylinderEvaluation.html#CylinderEvaluation.max_curvature">(in module CylinderEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/SphereEvaluation.html#SphereEvaluation.max_curvature">(in module SphereEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/surface_evaluation/SurfaceEvaluation.html#SurfaceEvaluation.max_curvature">(in module SurfaceEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/TorusEvaluation.html#TorusEvaluation.max_curvature">(in module TorusEvaluation)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/cone/ConeEvaluation.html#ConeEvaluation.max_curvature_direction">max_curvature_direction() (in module ConeEvaluation)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/CylinderEvaluation.html#CylinderEvaluation.max_curvature_direction">(in module CylinderEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/SphereEvaluation.html#SphereEvaluation.max_curvature_direction">(in module SphereEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/surface_evaluation/SurfaceEvaluation.html#SurfaceEvaluation.max_curvature_direction">(in module SurfaceEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/TorusEvaluation.html#TorusEvaluation.max_curvature_direction">(in module TorusEvaluation)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/connection/defaults/index.html#defaults.MAX_MESSAGE_LENGTH">MAX_MESSAGE_LENGTH (in module defaults)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/measurements/Measurement.html#Measurement">Measurement (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/measure/MeasureWidget.html#MeasureWidget">MeasureWidget (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/MidSurfaceOffsetType.html#MidSurfaceOffsetType.MIDDLE">MIDDLE (in module MidSurfaceOffsetType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/MidSurfaceOffsetType.html#MidSurfaceOffsetType">MidSurfaceOffsetType (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/FaceLoop.html#FaceLoop.min_bbox">min_bbox (in module FaceLoop)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/cone/ConeEvaluation.html#ConeEvaluation.min_curvature">min_curvature() (in module ConeEvaluation)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/CylinderEvaluation.html#CylinderEvaluation.min_curvature">(in module CylinderEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/SphereEvaluation.html#SphereEvaluation.min_curvature">(in module SphereEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/surface_evaluation/SurfaceEvaluation.html#SurfaceEvaluation.min_curvature">(in module SurfaceEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/TorusEvaluation.html#TorusEvaluation.min_curvature">(in module TorusEvaluation)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/cone/ConeEvaluation.html#ConeEvaluation.min_curvature_direction">min_curvature_direction() (in module ConeEvaluation)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/CylinderEvaluation.html#CylinderEvaluation.min_curvature_direction">(in module CylinderEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/SphereEvaluation.html#SphereEvaluation.min_curvature_direction">(in module SphereEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/surface_evaluation/SurfaceEvaluation.html#SurfaceEvaluation.min_curvature_direction">(in module SurfaceEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/TorusEvaluation.html#TorusEvaluation.min_curvature_direction">(in module TorusEvaluation)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/ellipse/Ellipse.html#Ellipse.minor_radius">minor_radius (in module Ellipse)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/torus/Torus.html#Torus.minor_radius">(in module Torus)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/circle/Circle.html#Circle.mirrored_copy">mirrored_copy() (in module Circle)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cone/Cone.html#Cone.mirrored_copy">(in module Cone)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/Cylinder.html#Cylinder.mirrored_copy">(in module Cylinder)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/Ellipse.html#Ellipse.mirrored_copy">(in module Ellipse)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/Sphere.html#Sphere.mirrored_copy">(in module Sphere)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/Torus.html#Torus.mirrored_copy">(in module Torus)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/modeler/Modeler.html#Modeler">Modeler (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.modify_placement">modify_placement() (in module Component)</a>
+</li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/index.html#module-ansys.geometry.core">ansys.geometry.core</a>
+</li>
+        <li><a href="api/ansys/geometry/core/connection/index.html#module-ansys.geometry.core.connection">ansys.geometry.core.connection</a>
+</li>
+        <li><a href="api/ansys/geometry/core/connection/backend/index.html#module-ansys.geometry.core.connection.backend">ansys.geometry.core.connection.backend</a>
+</li>
+        <li><a href="api/ansys/geometry/core/connection/client/index.html#module-ansys.geometry.core.connection.client">ansys.geometry.core.connection.client</a>
+</li>
+        <li><a href="api/ansys/geometry/core/connection/conversions/index.html#module-ansys.geometry.core.connection.conversions">ansys.geometry.core.connection.conversions</a>
+</li>
+        <li><a href="api/ansys/geometry/core/connection/defaults/index.html#module-ansys.geometry.core.connection.defaults">ansys.geometry.core.connection.defaults</a>
+</li>
+        <li><a href="api/ansys/geometry/core/connection/launcher/index.html#module-ansys.geometry.core.connection.launcher">ansys.geometry.core.connection.launcher</a>
+</li>
+        <li><a href="api/ansys/geometry/core/connection/local_instance/index.html#module-ansys.geometry.core.connection.local_instance">ansys.geometry.core.connection.local_instance</a>
+</li>
+        <li><a href="api/ansys/geometry/core/connection/product_instance/index.html#module-ansys.geometry.core.connection.product_instance">ansys.geometry.core.connection.product_instance</a>
+</li>
+        <li><a href="api/ansys/geometry/core/connection/validate/index.html#module-ansys.geometry.core.connection.validate">ansys.geometry.core.connection.validate</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/index.html#module-ansys.geometry.core.designer">ansys.geometry.core.designer</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/beam/index.html#module-ansys.geometry.core.designer.beam">ansys.geometry.core.designer.beam</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/index.html#module-ansys.geometry.core.designer.body">ansys.geometry.core.designer.body</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/component/index.html#module-ansys.geometry.core.designer.component">ansys.geometry.core.designer.component</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/coordinate_system/index.html#module-ansys.geometry.core.designer.coordinate_system">ansys.geometry.core.designer.coordinate_system</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/design/index.html#module-ansys.geometry.core.designer.design">ansys.geometry.core.designer.design</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/designpoint/index.html#module-ansys.geometry.core.designer.designpoint">ansys.geometry.core.designer.designpoint</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/edge/index.html#module-ansys.geometry.core.designer.edge">ansys.geometry.core.designer.edge</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/face/index.html#module-ansys.geometry.core.designer.face">ansys.geometry.core.designer.face</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/part/index.html#module-ansys.geometry.core.designer.part">ansys.geometry.core.designer.part</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/selection/index.html#module-ansys.geometry.core.designer.selection">ansys.geometry.core.designer.selection</a>
+</li>
+        <li><a href="api/ansys/geometry/core/errors/index.html#module-ansys.geometry.core.errors">ansys.geometry.core.errors</a>
+</li>
+        <li><a href="api/ansys/geometry/core/logger/index.html#module-ansys.geometry.core.logger">ansys.geometry.core.logger</a>
+</li>
+        <li><a href="api/ansys/geometry/core/materials/index.html#module-ansys.geometry.core.materials">ansys.geometry.core.materials</a>
+</li>
+        <li><a href="api/ansys/geometry/core/materials/material/index.html#module-ansys.geometry.core.materials.material">ansys.geometry.core.materials.material</a>
+</li>
+        <li><a href="api/ansys/geometry/core/materials/property/index.html#module-ansys.geometry.core.materials.property">ansys.geometry.core.materials.property</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/index.html#module-ansys.geometry.core.math">ansys.geometry.core.math</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/bbox/index.html#module-ansys.geometry.core.math.bbox">ansys.geometry.core.math.bbox</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/constants/index.html#module-ansys.geometry.core.math.constants">ansys.geometry.core.math.constants</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/frame/index.html#module-ansys.geometry.core.math.frame">ansys.geometry.core.math.frame</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/matrix/index.html#module-ansys.geometry.core.math.matrix">ansys.geometry.core.math.matrix</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/plane/index.html#module-ansys.geometry.core.math.plane">ansys.geometry.core.math.plane</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/point/index.html#module-ansys.geometry.core.math.point">ansys.geometry.core.math.point</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/vector/index.html#module-ansys.geometry.core.math.vector">ansys.geometry.core.math.vector</a>
+</li>
+        <li><a href="api/ansys/geometry/core/misc/index.html#module-ansys.geometry.core.misc">ansys.geometry.core.misc</a>
+</li>
+        <li><a href="api/ansys/geometry/core/misc/accuracy/index.html#module-ansys.geometry.core.misc.accuracy">ansys.geometry.core.misc.accuracy</a>
+</li>
+        <li><a href="api/ansys/geometry/core/misc/checks/index.html#module-ansys.geometry.core.misc.checks">ansys.geometry.core.misc.checks</a>
+</li>
+        <li><a href="api/ansys/geometry/core/misc/measurements/index.html#module-ansys.geometry.core.misc.measurements">ansys.geometry.core.misc.measurements</a>
+</li>
+        <li><a href="api/ansys/geometry/core/misc/options/index.html#module-ansys.geometry.core.misc.options">ansys.geometry.core.misc.options</a>
+</li>
+        <li><a href="api/ansys/geometry/core/misc/units/index.html#module-ansys.geometry.core.misc.units">ansys.geometry.core.misc.units</a>
+</li>
+        <li><a href="api/ansys/geometry/core/modeler/index.html#module-ansys.geometry.core.modeler">ansys.geometry.core.modeler</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/index.html#module-ansys.geometry.core.plotting">ansys.geometry.core.plotting</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/plotter/index.html#module-ansys.geometry.core.plotting.plotter">ansys.geometry.core.plotting.plotter</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/plotter_helper/index.html#module-ansys.geometry.core.plotting.plotter_helper">ansys.geometry.core.plotting.plotter_helper</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/plotting_types/index.html#module-ansys.geometry.core.plotting.plotting_types">ansys.geometry.core.plotting.plotting_types</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/trame_gui/index.html#module-ansys.geometry.core.plotting.trame_gui">ansys.geometry.core.plotting.trame_gui</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/index.html#module-ansys.geometry.core.plotting.widgets">ansys.geometry.core.plotting.widgets</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/button/index.html#module-ansys.geometry.core.plotting.widgets.button">ansys.geometry.core.plotting.widgets.button</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/displace_arrows/index.html#module-ansys.geometry.core.plotting.widgets.displace_arrows">ansys.geometry.core.plotting.widgets.displace_arrows</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/measure/index.html#module-ansys.geometry.core.plotting.widgets.measure">ansys.geometry.core.plotting.widgets.measure</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/ruler/index.html#module-ansys.geometry.core.plotting.widgets.ruler">ansys.geometry.core.plotting.widgets.ruler</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/view_button/index.html#module-ansys.geometry.core.plotting.widgets.view_button">ansys.geometry.core.plotting.widgets.view_button</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/widget/index.html#module-ansys.geometry.core.plotting.widgets.widget">ansys.geometry.core.plotting.widgets.widget</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/index.html#module-ansys.geometry.core.primitives">ansys.geometry.core.primitives</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/circle/index.html#module-ansys.geometry.core.primitives.circle">ansys.geometry.core.primitives.circle</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/cone/index.html#module-ansys.geometry.core.primitives.cone">ansys.geometry.core.primitives.cone</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/curve_evaluation/index.html#module-ansys.geometry.core.primitives.curve_evaluation">ansys.geometry.core.primitives.curve_evaluation</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/index.html#module-ansys.geometry.core.primitives.cylinder">ansys.geometry.core.primitives.cylinder</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/index.html#module-ansys.geometry.core.primitives.ellipse">ansys.geometry.core.primitives.ellipse</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/line/index.html#module-ansys.geometry.core.primitives.line">ansys.geometry.core.primitives.line</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/parameterization/index.html#module-ansys.geometry.core.primitives.parameterization">ansys.geometry.core.primitives.parameterization</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/index.html#module-ansys.geometry.core.primitives.sphere">ansys.geometry.core.primitives.sphere</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/surface_evaluation/index.html#module-ansys.geometry.core.primitives.surface_evaluation">ansys.geometry.core.primitives.surface_evaluation</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/index.html#module-ansys.geometry.core.primitives.torus">ansys.geometry.core.primitives.torus</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/index.html#module-ansys.geometry.core.sketch">ansys.geometry.core.sketch</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/arc/index.html#module-ansys.geometry.core.sketch.arc">ansys.geometry.core.sketch.arc</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/box/index.html#module-ansys.geometry.core.sketch.box">ansys.geometry.core.sketch.box</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/circle/index.html#module-ansys.geometry.core.sketch.circle">ansys.geometry.core.sketch.circle</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/edge/index.html#module-ansys.geometry.core.sketch.edge">ansys.geometry.core.sketch.edge</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/ellipse/index.html#module-ansys.geometry.core.sketch.ellipse">ansys.geometry.core.sketch.ellipse</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/face/index.html#module-ansys.geometry.core.sketch.face">ansys.geometry.core.sketch.face</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/gears/index.html#module-ansys.geometry.core.sketch.gears">ansys.geometry.core.sketch.gears</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/polygon/index.html#module-ansys.geometry.core.sketch.polygon">ansys.geometry.core.sketch.polygon</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/segment/index.html#module-ansys.geometry.core.sketch.segment">ansys.geometry.core.sketch.segment</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/sketch/index.html#module-ansys.geometry.core.sketch.sketch">ansys.geometry.core.sketch.sketch</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/slot/index.html#module-ansys.geometry.core.sketch.slot">ansys.geometry.core.sketch.slot</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/trapezoid/index.html#module-ansys.geometry.core.sketch.trapezoid">ansys.geometry.core.sketch.trapezoid</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/triangle/index.html#module-ansys.geometry.core.sketch.triangle">ansys.geometry.core.sketch.triangle</a>
+</li>
+        <li><a href="api/ansys/geometry/core/typing/index.html#module-ansys.geometry.core.typing">ansys.geometry.core.typing</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/sketch/gears/SpurGear.html#SpurGear.module">module (in module SpurGear)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/sketch/polygon/Polygon.html#Polygon.n_sides">n_sides (in module Polygon)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/gears/SpurGear.html#SpurGear.n_teeth">n_teeth (in module SpurGear)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/beam/BeamProfile.html#BeamProfile.name">name (in module BeamProfile)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.name">(in module Body)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.name">(in module Component)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/coordinate_system/CoordinateSystem.html#CoordinateSystem.name">(in module CoordinateSystem)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/designpoint/DesignPoint.html#DesignPoint.name">(in module DesignPoint)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/plotting_types/EdgePlot.html#EdgePlot.name">(in module EdgePlot)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/plotting_types/GeomObjectPlot.html#GeomObjectPlot.name">(in module GeomObjectPlot)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.name">(in module MasterBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/part/MasterComponent.html#MasterComponent.name">(in module MasterComponent)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/materials/material/Material.html#Material.name">(in module Material)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/materials/property/MaterialProperty.html#MaterialProperty.name">(in module MaterialProperty)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/selection/NamedSelection.html#NamedSelection.name">(in module NamedSelection)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/part/Part.html#Part.name">(in module Part)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.name">name() (in module IBody)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/design/Design.html#Design.named_selections">named_selections (in module Design)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/selection/NamedSelection.html#NamedSelection">NamedSelection (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/index.html#logger.NEW_SESSION_HEADER">NEW_SESSION_HEADER (in module logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/vector/Vector2D.html#Vector2D.norm">norm (in module Vector2D)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.norm">(in module Vector3D)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/circle/CircleEvaluation.html#CircleEvaluation.normal">normal() (in module CircleEvaluation)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cone/ConeEvaluation.html#ConeEvaluation.normal">(in module ConeEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/CylinderEvaluation.html#CylinderEvaluation.normal">(in module CylinderEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/EllipseEvaluation.html#EllipseEvaluation.normal">(in module EllipseEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/SphereEvaluation.html#SphereEvaluation.normal">(in module SphereEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/surface_evaluation/SurfaceEvaluation.html#SurfaceEvaluation.normal">(in module SurfaceEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/TorusEvaluation.html#TorusEvaluation.normal">(in module TorusEvaluation)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/math/vector/Vector2D.html#Vector2D.normalize">normalize() (in module Vector2D)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.normalize">(in module Vector3D)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/plotting/plotting_types/GeomObjectPlot.html#GeomObjectPlot.object">object (in module GeomObjectPlot)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/part/MasterComponent.html#MasterComponent.occurrences">occurrences (in module MasterComponent)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/ParamForm.html#ParamForm.OPEN">OPEN (in module ParamForm)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/modeler/Modeler.html#Modeler.open_file">open_file() (in module Modeler)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/circle/Circle.html#Circle.origin">origin (in module Circle)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cone/Cone.html#Cone.origin">(in module Cone)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/Cylinder.html#Cylinder.origin">(in module Cylinder)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/Ellipse.html#Ellipse.origin">(in module Ellipse)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/frame/Frame.html#Frame.origin">(in module Frame)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/line/Line.html#Line.origin">(in module Line)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/Sphere.html#Sphere.origin">(in module Sphere)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/gears/SpurGear.html#SpurGear.origin">(in module SpurGear)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/Torus.html#Torus.origin">(in module Torus)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/ParamForm.html#ParamForm.OTHER">OTHER (in module ParamForm)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/parameterization/ParamType.html#ParamType.OTHER">(in module ParamType)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/face/FaceLoopType.html#FaceLoopType.OUTER_LOOP">OUTER_LOOP (in module FaceLoopType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/polygon/Polygon.html#Polygon.outer_radius">outer_radius (in module Polygon)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/primitives/circle/CircleEvaluation.html#CircleEvaluation.parameter">parameter (in module CircleEvaluation)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cone/ConeEvaluation.html#ConeEvaluation.parameter">(in module ConeEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/curve_evaluation/CurveEvaluation.html#CurveEvaluation.parameter">(in module CurveEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/CylinderEvaluation.html#CylinderEvaluation.parameter">(in module CylinderEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/EllipseEvaluation.html#EllipseEvaluation.parameter">(in module EllipseEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/line/LineEvaluation.html#LineEvaluation.parameter">(in module LineEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/SphereEvaluation.html#SphereEvaluation.parameter">(in module SphereEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/surface_evaluation/SurfaceEvaluation.html#SurfaceEvaluation.parameter">(in module SurfaceEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/TorusEvaluation.html#TorusEvaluation.parameter">(in module TorusEvaluation)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/Parameterization.html#Parameterization">Parameterization (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/ParamForm.html#ParamForm">ParamForm (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/ParamType.html#ParamType">ParamType (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/ParamUV.html#ParamUV">ParamUV (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/design/DesignFileFormat.html#DesignFileFormat.PARASOLID_BIN">PARASOLID_BIN (in module DesignFileFormat)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/design/DesignFileFormat.html#DesignFileFormat.PARASOLID_TEXT">PARASOLID_TEXT (in module DesignFileFormat)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.parent">parent (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/plotting/plotting_types/EdgePlot.html#EdgePlot.parent">(in module EdgePlot)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/beam/Beam.html#Beam.parent_component">parent_component (in module Beam)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.parent_component">(in module Component)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/coordinate_system/CoordinateSystem.html#CoordinateSystem.parent_component">(in module CoordinateSystem)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/designpoint/DesignPoint.html#DesignPoint.parent_component">(in module DesignPoint)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/part/Part.html#Part">Part (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/part/MasterComponent.html#MasterComponent.part">part (in module MasterComponent)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/box/Box.html#Box.perimeter">perimeter (in module Box)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/circle/Circle.html#Circle.perimeter">(in module Circle)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/Ellipse.html#Ellipse.perimeter">(in module Ellipse)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/polygon/Polygon.html#Polygon.perimeter">(in module Polygon)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/circle/SketchCircle.html#SketchCircle.perimeter">(in module SketchCircle)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/ellipse/SketchEllipse.html#SketchEllipse.perimeter">(in module SketchEllipse)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/face/SketchFace.html#SketchFace.perimeter">(in module SketchFace)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/slot/Slot.html#Slot.perimeter">(in module Slot)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/ParamForm.html#ParamForm.PERIODIC">PERIODIC (in module ParamForm)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/units/PhysicalQuantity.html#PhysicalQuantity">PhysicalQuantity (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/index.html#plotter.PICKED_COLOR">PICKED_COLOR (in module plotter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/index.html#plotter.PICKED_EDGE_COLOR">PICKED_EDGE_COLOR (in module plotter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter_helper/PlotterHelper.html#PlotterHelper.picker_callback">picker_callback() (in module PlotterHelper)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/plane/Plane.html#Plane">Plane (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.plane">plane (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/circle/SketchCircle.html#SketchCircle.plane_change">plane_change() (in module SketchCircle)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/sketch/edge/SketchEdge.html#SketchEdge.plane_change">(in module SketchEdge)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/ellipse/SketchEllipse.html#SketchEllipse.plane_change">(in module SketchEllipse)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/face/SketchFace.html#SketchFace.plane_change">(in module SketchFace)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/segment/SketchSegment.html#SketchSegment.plane_change">(in module SketchSegment)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/connection/conversions/index.html#conversions.plane_to_grpc_plane">plane_to_grpc_plane() (in module conversions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.plot">plot() (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.plot">(in module Component)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.plot">(in module IBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.plot">(in module MasterBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/plotter_helper/PlotterHelper.html#PlotterHelper.plot">(in module PlotterHelper)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.plot">(in module Sketch)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/Plotter.html#Plotter.plot_frame">plot_frame() (in module Plotter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/Plotter.html#Plotter.plot_plane">plot_plane() (in module Plotter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.plot_selection">plot_selection() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/Plotter.html#Plotter.plot_sketch">plot_sketch() (in module Plotter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/Plotter.html#Plotter">Plotter (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/widget/PlotterWidget.html#PlotterWidget.plotter">plotter (in module PlotterWidget)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter_helper/PlotterHelper.html#PlotterHelper">PlotterHelper (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/widget/PlotterWidget.html#PlotterWidget">PlotterWidget (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/design/DesignFileFormat.html#DesignFileFormat.PMDB">PMDB (in module DesignFileFormat)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/triangle/Triangle.html#Triangle.point1">point1 (in module Triangle)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/triangle/Triangle.html#Triangle.point2">point2 (in module Triangle)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/point/Point2D.html#Point2D">Point2D (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/conversions/index.html#conversions.point2d_to_grpc_point">point2d_to_grpc_point() (in module conversions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/triangle/Triangle.html#Triangle.point3">point3 (in module Triangle)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/point/Point3D.html#Point3D">Point3D (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/conversions/index.html#conversions.point3d_to_grpc_point">point3d_to_grpc_point() (in module conversions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/materials/property/MaterialPropertyType.html#MaterialPropertyType.POISSON_RATIO">POISSON_RATIO (in module MaterialPropertyType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/polygon/Polygon.html#Polygon">Polygon (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.polygon">polygon() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/circle/CircleEvaluation.html#CircleEvaluation.position">position() (in module CircleEvaluation)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cone/ConeEvaluation.html#ConeEvaluation.position">(in module ConeEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/curve_evaluation/CurveEvaluation.html#CurveEvaluation.position">(in module CurveEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/CylinderEvaluation.html#CylinderEvaluation.position">(in module CylinderEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/EllipseEvaluation.html#EllipseEvaluation.position">(in module EllipseEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/line/LineEvaluation.html#LineEvaluation.position">(in module LineEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/SphereEvaluation.html#SphereEvaluation.position">(in module SphereEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/surface_evaluation/SurfaceEvaluation.html#SurfaceEvaluation.position">(in module SurfaceEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/TorusEvaluation.html#TorusEvaluation.position">(in module TorusEvaluation)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/connection/product_instance/index.html#product_instance.prepare_and_start_backend">prepare_and_start_backend() (in module product_instance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/gears/SpurGear.html#SpurGear.pressure_angle">pressure_angle (in module SpurGear)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/PyGeometryCustomAdapter.html#PyGeometryCustomAdapter.process">process() (in module PyGeometryCustomAdapter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/product_instance/ProductInstance.html#ProductInstance">ProductInstance (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/beam/Beam.html#Beam.profile">profile (in module Beam)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.project_curves">project_curves() (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.project_curves">(in module IBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.project_curves">(in module MasterBody)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/circle/Circle.html#Circle.project_point">project_point() (in module Circle)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cone/Cone.html#Cone.project_point">(in module Cone)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/Cylinder.html#Cylinder.project_point">(in module Cylinder)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/Ellipse.html#Ellipse.project_point">(in module Ellipse)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/line/Line.html#Line.project_point">(in module Line)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/Sphere.html#Sphere.project_point">(in module Sphere)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/Torus.html#Torus.project_point">(in module Torus)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/materials/material/Material.html#Material.properties">properties (in module Material)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/errors/index.html#errors.protect_grpc">protect_grpc() (in module errors)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/PyGeometryCustomAdapter.html#PyGeometryCustomAdapter">PyGeometryCustomAdapter (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/PyGeometryFormatter.html#PyGeometryFormatter">PyGeometryFormatter (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/PyGeometryPercentStyle.html#PyGeometryPercentStyle">PyGeometryPercentStyle (built-in class)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Q">Q</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/materials/property/MaterialProperty.html#MaterialProperty.quantity">quantity (in module MaterialProperty)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/sketch/arc/Arc.html#Arc.radius">radius (in module Arc)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/beam/BeamCircularProfile.html#BeamCircularProfile.radius">(in module BeamCircularProfile)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/circle/Circle.html#Circle.radius">(in module Circle)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/cone/Cone.html#Cone.radius">(in module Cone)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/Cylinder.html#Cylinder.radius">(in module Cylinder)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/Sphere.html#Sphere.radius">(in module Sphere)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/modeler/Modeler.html#Modeler.read_existing_design">read_existing_design() (in module Modeler)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/typing/index.html#typing.Real">Real (in module typing)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/typing/index.html#typing.RealSequence">RealSequence (in module typing)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/gears/SpurGear.html#SpurGear.ref_diameter">ref_diameter (in module SpurGear)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.reset_placement">reset_placement() (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.reset_tessellation_cache">reset_tessellation_cache() (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.reset_tessellation_cache">(in module MasterBody)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/sketch/gears/SpurGear.html#SpurGear.root_diameter">root_diameter (in module SpurGear)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/ruler/Ruler.html#Ruler">Ruler (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/modeler/Modeler.html#Modeler.run_discovery_script_file">run_discovery_script_file() (in module Modeler)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/designer/design/Design.html#Design.save">save() (in module Design)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/design/DesignFileFormat.html#DesignFileFormat.SCDOCX">SCDOCX (in module DesignFileFormat)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/Plotter.html#Plotter.scene">scene (in module Plotter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.search_beam">search_beam() (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.search_body">search_body() (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.search_component">search_component() (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/circle/CircleEvaluation.html#CircleEvaluation.second_derivative">second_derivative() (in module CircleEvaluation)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/curve_evaluation/CurveEvaluation.html#CurveEvaluation.second_derivative">(in module CurveEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/EllipseEvaluation.html#EllipseEvaluation.second_derivative">(in module EllipseEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/line/LineEvaluation.html#LineEvaluation.second_derivative">(in module LineEvaluation)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/sketch/arc/Arc.html#Arc.sector_area">sector_area (in module Arc)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.segment">segment() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.segment_from_point_and_vector">segment_from_point_and_vector() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.segment_from_vector">segment_from_vector() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.segment_to_point">segment_to_point() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.select">select() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter_helper/PlotterHelper.html#PlotterHelper.select_object">select_object() (in module PlotterHelper)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/ellipse/Ellipse.html#Ellipse.semi_latus_rectum">semi_latus_rectum (in module Ellipse)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/measurements/DefaultUnitsClass.html#DefaultUnitsClass.SERVER_ANGLE">SERVER_ANGLE (in module DefaultUnitsClass)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/measurements/DefaultUnitsClass.html#DefaultUnitsClass.SERVER_AREA">SERVER_AREA (in module DefaultUnitsClass)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/measurements/DefaultUnitsClass.html#DefaultUnitsClass.SERVER_LENGTH">SERVER_LENGTH (in module DefaultUnitsClass)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/measurements/DefaultUnitsClass.html#DefaultUnitsClass.SERVER_VOLUME">SERVER_VOLUME (in module DefaultUnitsClass)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/trame_gui/TrameVisualizer.html#TrameVisualizer.set_scene">set_scene() (in module TrameVisualizer)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.set_shared_topology">set_shared_topology() (in module Component)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/design/Design.html#Design.set_shared_topology">(in module Design)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/logger/Logger.html#Logger.setLevel">setLevel() (in module Logger)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/logger/PyGeometryCustomAdapter.html#PyGeometryCustomAdapter.setLevel">(in module PyGeometryCustomAdapter)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.shared_topology">shared_topology (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/SharedTopologyType.html#SharedTopologyType">SharedTopologyType (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/SharedTopologyType.html#SharedTopologyType.SHARETYPE_GROUPS">SHARETYPE_GROUPS (in module SharedTopologyType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/SharedTopologyType.html#SharedTopologyType.SHARETYPE_MERGE">SHARETYPE_MERGE (in module SharedTopologyType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/SharedTopologyType.html#SharedTopologyType.SHARETYPE_NONE">SHARETYPE_NONE (in module SharedTopologyType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/component/SharedTopologyType.html#SharedTopologyType.SHARETYPE_SHARE">SHARETYPE_SHARE (in module SharedTopologyType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/materials/property/MaterialPropertyType.html#MaterialPropertyType.SHEAR_MODULUS">SHEAR_MODULUS (in module MaterialPropertyType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/Plotter.html#Plotter.show">show() (in module Plotter)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/plotting/trame_gui/TrameVisualizer.html#TrameVisualizer.show">(in module TrameVisualizer)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter_helper/PlotterHelper.html#PlotterHelper.show_plotter">show_plotter() (in module PlotterHelper)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/errors/index.html#errors.SIGINT_TRACKER">SIGINT_TRACKER (in module errors)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/measurements/SingletonMeta.html#SingletonMeta">SingletonMeta (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch">Sketch (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/conversions/index.html#conversions.sketch_arc_to_grpc_arc">sketch_arc_to_grpc_arc() (in module conversions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/conversions/index.html#conversions.sketch_circle_to_grpc_circle">sketch_circle_to_grpc_circle() (in module conversions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/conversions/index.html#conversions.sketch_edges_to_grpc_geometries">sketch_edges_to_grpc_geometries() (in module conversions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/conversions/index.html#conversions.sketch_ellipse_to_grpc_ellipse">sketch_ellipse_to_grpc_ellipse() (in module conversions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.sketch_polydata">sketch_polydata() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.sketch_polydata_edges">sketch_polydata_edges() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.sketch_polydata_faces">sketch_polydata_faces() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/conversions/index.html#conversions.sketch_polygon_to_grpc_polygon">sketch_polygon_to_grpc_polygon() (in module conversions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/conversions/index.html#conversions.sketch_segment_to_grpc_line">sketch_segment_to_grpc_line() (in module conversions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/conversions/index.html#conversions.sketch_shapes_to_grpc_geometries">sketch_shapes_to_grpc_geometries() (in module conversions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/circle/SketchCircle.html#SketchCircle">SketchCircle (built-in class)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/sketch/edge/SketchEdge.html#SketchEdge">SketchEdge (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/ellipse/SketchEllipse.html#SketchEllipse">SketchEllipse (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/face/SketchFace.html#SketchFace">SketchFace (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/index.html#sketch.SketchObject">SketchObject (in module sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/segment/SketchSegment.html#SketchSegment">SketchSegment (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/slot/Slot.html#Slot">Slot (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.slot">slot() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/backend/BackendType.html#BackendType.SPACECLAIM">SPACECLAIM (in module BackendType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/product_instance/index.html#product_instance.SPACECLAIM_EXE">SPACECLAIM_EXE (in module product_instance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/product_instance/index.html#product_instance.SPACECLAIM_FOLDER">SPACECLAIM_FOLDER (in module product_instance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/materials/property/MaterialPropertyType.html#MaterialPropertyType.SPECIFIC_HEAT">SPECIFIC_HEAT (in module MaterialPropertyType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/sphere/Sphere.html#Sphere">Sphere (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/sphere/SphereEvaluation.html#SphereEvaluation.sphere">sphere (in module SphereEvaluation)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/sphere/SphereEvaluation.html#SphereEvaluation">SphereEvaluation (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.spur_gear">spur_gear() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/gears/SpurGear.html#SpurGear">SpurGear (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/arc/Arc.html#Arc.start">start (in module Arc)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/beam/Beam.html#Beam.start">(in module Beam)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/parameterization/Interval.html#Interval.start">(in module Interval)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/edge/SketchEdge.html#SketchEdge.start">(in module SketchEdge)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/segment/SketchSegment.html#SketchSegment.start">(in module SketchSegment)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/edge/Edge.html#Edge.start_point">start_point (in module Edge)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/Logger.html#Logger.std_out_handler">std_out_handler (in module Logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/PyGeometryCustomAdapter.html#PyGeometryCustomAdapter.stdout_handler">stdout_handler (in module PyGeometryCustomAdapter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/index.html#logger.STDOUT_MSG_FORMAT">STDOUT_MSG_FORMAT (in module logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/design/DesignFileFormat.html#DesignFileFormat.STEP">STEP (in module DesignFileFormat)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/index.html#logger.string_to_loglevel">string_to_loglevel (in module logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.subtract">subtract() (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.subtract">(in module IBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.subtract">(in module MasterBody)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/cone/Cone.html#Cone.surface_area">surface_area (in module Cone)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/Sphere.html#Sphere.surface_area">(in module Sphere)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/Torus.html#Torus.surface_area">(in module Torus)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/cylinder/Cylinder.html#Cylinder.surface_area">surface_area() (in module Cylinder)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.surface_offset">surface_offset (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.surface_offset">(in module MasterBody)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.surface_offset">surface_offset() (in module IBody)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.surface_thickness">surface_thickness (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.surface_thickness">(in module MasterBody)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.surface_thickness">surface_thickness() (in module IBody)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/Face.html#Face.surface_type">surface_type (in module Face)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/surface_evaluation/SurfaceEvaluation.html#SurfaceEvaluation">SurfaceEvaluation (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/SurfaceType.html#SurfaceType">SurfaceType (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/SurfaceType.html#SurfaceType.SURFACETYPE_CONE">SURFACETYPE_CONE (in module SurfaceType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/SurfaceType.html#SurfaceType.SURFACETYPE_CYLINDER">SURFACETYPE_CYLINDER (in module SurfaceType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/SurfaceType.html#SurfaceType.SURFACETYPE_NURBS">SURFACETYPE_NURBS (in module SurfaceType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/SurfaceType.html#SurfaceType.SURFACETYPE_PLANE">SURFACETYPE_PLANE (in module SurfaceType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/SurfaceType.html#SurfaceType.SURFACETYPE_PROCEDURAL">SURFACETYPE_PROCEDURAL (in module SurfaceType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/SurfaceType.html#SurfaceType.SURFACETYPE_SPHERE">SURFACETYPE_SPHERE (in module SurfaceType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/SurfaceType.html#SurfaceType.SURFACETYPE_TORUS">SURFACETYPE_TORUS (in module SurfaceType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/SurfaceType.html#SurfaceType.SURFACETYPE_UNKNOWN">SURFACETYPE_UNKNOWN (in module SurfaceType)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.tag">tag() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/circle/CircleEvaluation.html#CircleEvaluation.tangent">tangent() (in module CircleEvaluation)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/EllipseEvaluation.html#EllipseEvaluation.tangent">(in module EllipseEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/line/LineEvaluation.html#LineEvaluation.tangent">(in module LineEvaluation)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/connection/client/GrpcClient.html#GrpcClient.target">target() (in module GrpcClient)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/materials/property/MaterialPropertyType.html#MaterialPropertyType.TENSILE_STRENGTH">TENSILE_STRENGTH (in module MaterialPropertyType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/conversions/index.html#conversions.tess_to_pd">tess_to_pd() (in module conversions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.tessellate">tessellate() (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.tessellate">(in module Component)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.tessellate">(in module IBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.tessellate">(in module MasterBody)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/materials/property/MaterialPropertyType.html#MaterialPropertyType.THERMAL_CONDUCTIVITY">THERMAL_CONDUCTIVITY (in module MaterialPropertyType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/gears/SpurGear.html#SpurGear.tip_diameter">tip_diameter (in module SpurGear)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/misc/options/ImportOptions.html#ImportOptions.to_dict">to_dict() (in module ImportOptions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/MidSurfaceOffsetType.html#MidSurfaceOffsetType.TOP">TOP (in module MidSurfaceOffsetType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/torus/Torus.html#Torus">Torus (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/torus/TorusEvaluation.html#TorusEvaluation.torus">torus (in module TorusEvaluation)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/torus/TorusEvaluation.html#TorusEvaluation">TorusEvaluation (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/trame_gui/TrameVisualizer.html#TrameVisualizer">TrameVisualizer (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/part/MasterComponent.html#MasterComponent.transform">transform (in module MasterComponent)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/point/Point3D.html#Point3D.transform">transform() (in module Point3D)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.transform">(in module Vector3D)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/math/frame/Frame.html#Frame.transform_point2d_local_to_global">transform_point2d_local_to_global() (in module Frame)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/frame/Frame.html#Frame.transformation_matrix">transformation_matrix (in module Frame)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/circle/Circle.html#Circle.transformed_copy">transformed_copy() (in module Circle)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cone/Cone.html#Cone.transformed_copy">(in module Cone)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/Cylinder.html#Cylinder.transformed_copy">(in module Cylinder)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/ellipse/Ellipse.html#Ellipse.transformed_copy">(in module Ellipse)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/line/Line.html#Line.transformed_copy">(in module Line)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/Sphere.html#Sphere.transformed_copy">(in module Sphere)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/Torus.html#Torus.transformed_copy">(in module Torus)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.translate">translate() (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.translate">(in module IBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.translate">(in module MasterBody)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/component/Component.html#Component.translate_bodies">translate_bodies() (in module Component)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.translate_sketch_plane">translate_sketch_plane() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.translate_sketch_plane_by_distance">translate_sketch_plane_by_distance() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.translate_sketch_plane_by_offset">translate_sketch_plane_by_offset() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/trapezoid/Trapezoid.html#Trapezoid">Trapezoid (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.trapezoid">trapezoid() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/triangle/Triangle.html#Triangle">Triangle (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.triangle">triangle() (in module Sketch)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/face/FaceLoop.html#FaceLoop.type">type (in module FaceLoop)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/materials/property/MaterialProperty.html#MaterialProperty.type">(in module MaterialProperty)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/parameterization/Parameterization.html#Parameterization.type">(in module Parameterization)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/ParamUV.html#ParamUV.u">u (in module ParamUV)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/cone/ConeEvaluation.html#ConeEvaluation.u_derivative">u_derivative() (in module ConeEvaluation)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/CylinderEvaluation.html#CylinderEvaluation.u_derivative">(in module CylinderEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/SphereEvaluation.html#SphereEvaluation.u_derivative">(in module SphereEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/surface_evaluation/SurfaceEvaluation.html#SurfaceEvaluation.u_derivative">(in module SurfaceEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/TorusEvaluation.html#TorusEvaluation.u_derivative">(in module TorusEvaluation)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/misc/units/PhysicalQuantity.html#PhysicalQuantity.unit">unit (in module PhysicalQuantity)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/point/Point2D.html#Point2D.unit">unit() (in module Point2D)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/point/Point3D.html#Point3D.unit">(in module Point3D)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/connection/conversions/index.html#conversions.unit_vector_to_grpc_direction">unit_vector_to_grpc_direction() (in module conversions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.unite">unite() (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.unite">(in module IBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.unite">(in module MasterBody)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/misc/units/index.html#units.UNITS">UNITS (in module units)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/vector/UnitVector2D.html#UnitVector2D">UnitVector2D (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/constants/index.html#constants.UNITVECTOR2D_X">UNITVECTOR2D_X (in module constants)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/constants/index.html#constants.UNITVECTOR2D_Y">UNITVECTOR2D_Y (in module constants)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/vector/UnitVector3D.html#UnitVector3D">UnitVector3D (built-in class)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/math/constants/index.html#constants.UNITVECTOR3D_X">UNITVECTOR3D_X (in module constants)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/constants/index.html#constants.UNITVECTOR3D_Y">UNITVECTOR3D_Y (in module constants)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/constants/index.html#constants.UNITVECTOR3D_Z">UNITVECTOR3D_Z (in module constants)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter_helper/PlotterHelper.html#PlotterHelper.unselect_object">unselect_object() (in module PlotterHelper)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/button/Button.html#Button.update">update() (in module Button)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/measure/MeasureWidget.html#MeasureWidget.update">(in module MeasureWidget)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/widget/PlotterWidget.html#PlotterWidget.update">(in module PlotterWidget)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/plotting/widgets/ruler/Ruler.html#Ruler.update">(in module Ruler)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/index.html#core.USE_TRAME">USE_TRAME (in module core)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/cone/ConeEvaluation.html#ConeEvaluation.uu_derivative">uu_derivative() (in module ConeEvaluation)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/CylinderEvaluation.html#CylinderEvaluation.uu_derivative">(in module CylinderEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/SphereEvaluation.html#SphereEvaluation.uu_derivative">(in module SphereEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/surface_evaluation/SurfaceEvaluation.html#SurfaceEvaluation.uu_derivative">(in module SurfaceEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/TorusEvaluation.html#TorusEvaluation.uu_derivative">(in module TorusEvaluation)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/cone/ConeEvaluation.html#ConeEvaluation.uv_derivative">uv_derivative() (in module ConeEvaluation)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/CylinderEvaluation.html#CylinderEvaluation.uv_derivative">(in module CylinderEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/SphereEvaluation.html#SphereEvaluation.uv_derivative">(in module SphereEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/surface_evaluation/SurfaceEvaluation.html#SurfaceEvaluation.uv_derivative">(in module SurfaceEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/TorusEvaluation.html#TorusEvaluation.uv_derivative">(in module TorusEvaluation)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/primitives/parameterization/ParamUV.html#ParamUV.v">v (in module ParamUV)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/backend/ApiVersions.html#ApiVersions.V_21">V_21 (in module ApiVersions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/backend/ApiVersions.html#ApiVersions.V_22">V_22 (in module ApiVersions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/backend/ApiVersions.html#ApiVersions.V_231">V_231 (in module ApiVersions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/backend/ApiVersions.html#ApiVersions.V_232">V_232 (in module ApiVersions)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/primitives/cone/ConeEvaluation.html#ConeEvaluation.v_derivative">v_derivative() (in module ConeEvaluation)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/CylinderEvaluation.html#CylinderEvaluation.v_derivative">(in module CylinderEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/SphereEvaluation.html#SphereEvaluation.v_derivative">(in module SphereEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/surface_evaluation/SurfaceEvaluation.html#SurfaceEvaluation.v_derivative">(in module SurfaceEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/TorusEvaluation.html#TorusEvaluation.v_derivative">(in module TorusEvaluation)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/connection/validate/index.html#validate.validate">validate() (in module validate)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/designer/designpoint/DesignPoint.html#DesignPoint.value">value (in module DesignPoint)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/misc/measurements/Measurement.html#Measurement.value">(in module Measurement)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/body/MidSurfaceOffsetType.html#MidSurfaceOffsetType.VARIABLE">VARIABLE (in module MidSurfaceOffsetType)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/vector/Vector2D.html#Vector2D">Vector2D (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D">Vector3D (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/Plotter.html#Plotter.view_xy">view_xy() (in module Plotter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/Plotter.html#Plotter.view_xz">view_xz() (in module Plotter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/Plotter.html#Plotter.view_yx">view_yx() (in module Plotter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/Plotter.html#Plotter.view_yz">view_yz() (in module Plotter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/Plotter.html#Plotter.view_zx">view_zx() (in module Plotter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/plotter/Plotter.html#Plotter.view_zy">view_zy() (in module Plotter)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/view_button/ViewButton.html#ViewButton">ViewButton (built-in class)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/view_button/ViewDirection.html#ViewDirection">ViewDirection (built-in class)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/sketch/arc/Arc.html#Arc.visualization_polydata">visualization_polydata (in module Arc)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/sketch/box/Box.html#Box.visualization_polydata">(in module Box)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/gears/Gear.html#Gear.visualization_polydata">(in module Gear)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/polygon/Polygon.html#Polygon.visualization_polydata">(in module Polygon)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/circle/SketchCircle.html#SketchCircle.visualization_polydata">(in module SketchCircle)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/edge/SketchEdge.html#SketchEdge.visualization_polydata">(in module SketchEdge)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/ellipse/SketchEllipse.html#SketchEllipse.visualization_polydata">(in module SketchEllipse)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/face/SketchFace.html#SketchFace.visualization_polydata">(in module SketchFace)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/segment/SketchSegment.html#SketchSegment.visualization_polydata">(in module SketchSegment)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/slot/Slot.html#Slot.visualization_polydata">(in module Slot)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/trapezoid/Trapezoid.html#Trapezoid.visualization_polydata">(in module Trapezoid)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/triangle/Triangle.html#Triangle.visualization_polydata">(in module Triangle)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/designer/body/Body.html#Body.volume">volume (in module Body)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cone/Cone.html#Cone.volume">(in module Cone)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/designer/body/MasterBody.html#MasterBody.volume">(in module MasterBody)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/Sphere.html#Sphere.volume">(in module Sphere)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/Torus.html#Torus.volume">(in module Torus)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/cylinder/Cylinder.html#Cylinder.volume">volume() (in module Cylinder)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/designer/body/IBody.html#IBody.volume">(in module IBody)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/primitives/cone/ConeEvaluation.html#ConeEvaluation.vv_derivative">vv_derivative() (in module ConeEvaluation)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/primitives/cylinder/CylinderEvaluation.html#CylinderEvaluation.vv_derivative">(in module CylinderEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/sphere/SphereEvaluation.html#SphereEvaluation.vv_derivative">(in module SphereEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/surface_evaluation/SurfaceEvaluation.html#SurfaceEvaluation.vv_derivative">(in module SurfaceEvaluation)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/primitives/torus/TorusEvaluation.html#TorusEvaluation.vv_derivative">(in module TorusEvaluation)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/connection/client/index.html#client.wait_until_healthy">wait_until_healthy() (in module client)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/logger/index.html#logger.WARN">WARN (in module logger)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/sketch/box/Box.html#Box.width">width (in module Box)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/sketch/slot/Slot.html#Slot.width">(in module Slot)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/sketch/trapezoid/Trapezoid.html#Trapezoid.width">(in module Trapezoid)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/connection/product_instance/index.html#product_instance.WINDOWS_GEOMETRY_SERVICE_FOLDER">WINDOWS_GEOMETRY_SERVICE_FOLDER (in module product_instance)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/local_instance/GeometryContainers.html#GeometryContainers.WINDOWS_LATEST">WINDOWS_LATEST (in module GeometryContainers)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/local_instance/GeometryContainers.html#GeometryContainers.WINDOWS_LATEST_UNSTABLE">WINDOWS_LATEST_UNSTABLE (in module GeometryContainers)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/connection/backend/BackendType.html#BackendType.WINDOWS_SERVICE">WINDOWS_SERVICE (in module BackendType)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="X">X</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/math/point/Point2D.html#Point2D.x">x (in module Point2D)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/point/Point3D.html#Point3D.x">(in module Point3D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector2D.html#Vector2D.x">(in module Vector2D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.x">(in module Vector3D)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/math/bbox/BoundingBox2D.html#BoundingBox2D.x_max">x_max (in module BoundingBox2D)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/bbox/BoundingBox2D.html#BoundingBox2D.x_min">x_min (in module BoundingBox2D)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/displace_arrows/CameraPanDirection.html#CameraPanDirection.XDOWN">XDOWN (in module CameraPanDirection)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/displace_arrows/CameraPanDirection.html#CameraPanDirection.XUP">XUP (in module CameraPanDirection)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/view_button/ViewDirection.html#ViewDirection.XYMINUS">XYMINUS (in module ViewDirection)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/view_button/ViewDirection.html#ViewDirection.XYPLUS">XYPLUS (in module ViewDirection)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/view_button/ViewDirection.html#ViewDirection.XZMINUS">XZMINUS (in module ViewDirection)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/view_button/ViewDirection.html#ViewDirection.XZPLUS">XZPLUS (in module ViewDirection)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Y">Y</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/math/point/Point2D.html#Point2D.y">y (in module Point2D)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/point/Point3D.html#Point3D.y">(in module Point3D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector2D.html#Vector2D.y">(in module Vector2D)</a>
+</li>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.y">(in module Vector3D)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/math/bbox/BoundingBox2D.html#BoundingBox2D.y_max">y_max (in module BoundingBox2D)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/math/bbox/BoundingBox2D.html#BoundingBox2D.y_min">y_min (in module BoundingBox2D)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/displace_arrows/CameraPanDirection.html#CameraPanDirection.YDOWN">YDOWN (in module CameraPanDirection)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/displace_arrows/CameraPanDirection.html#CameraPanDirection.YUP">YUP (in module CameraPanDirection)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/view_button/ViewDirection.html#ViewDirection.YZMINUS">YZMINUS (in module ViewDirection)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/view_button/ViewDirection.html#ViewDirection.YZPLUS">YZPLUS (in module ViewDirection)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Z">Z</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/math/point/Point3D.html#Point3D.z">z (in module Point3D)</a>
+
+      <ul>
+        <li><a href="api/ansys/geometry/core/math/vector/Vector3D.html#Vector3D.z">(in module Vector3D)</a>
+</li>
+      </ul></li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/displace_arrows/CameraPanDirection.html#CameraPanDirection.ZDOWN">ZDOWN (in module CameraPanDirection)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/constants/index.html#constants.ZERO_POINT2D">ZERO_POINT2D (in module constants)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/ansys/geometry/core/math/constants/index.html#constants.ZERO_POINT3D">ZERO_POINT3D (in module constants)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/constants/index.html#constants.ZERO_VECTOR2D">ZERO_VECTOR2D (in module constants)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/math/constants/index.html#constants.ZERO_VECTOR3D">ZERO_VECTOR3D (in module constants)</a>
+</li>
+      <li><a href="api/ansys/geometry/core/plotting/widgets/displace_arrows/CameraPanDirection.html#CameraPanDirection.ZUP">ZUP (in module CameraPanDirection)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+
+
+                </article>
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button--></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright (c) 2023 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  0.11.2. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

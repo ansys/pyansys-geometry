@@ -1,0 +1,43 @@
+:py:mod:`ansys.geometry.core.connection`
+========================================
+
+.. py:module:: ansys.geometry.core.connection
+
+.. autoapi-nested-parse::
+
+   
+   PyGeometry connection subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   client/index.rst
+   conversions/index.rst
+   defaults/index.rst
+   launcher/index.rst
+   local_instance/index.rst
+   validate/index.rst
+
+

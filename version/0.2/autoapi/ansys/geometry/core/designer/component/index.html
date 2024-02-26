@@ -1,0 +1,1361 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>ansys.geometry.core.designer.component &#8212; PyGeometry</title>
+    
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../../../../../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../../../../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/css\ansys_sphinx_theme.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    
+        <link href="../../../../../../_static/css/breadcrumbs.css" rel="stylesheet">
+    
+    <script data-url_root="../../../../../../" id="documentation_options" src="../../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../../_static/doctools.js"></script>
+    <script src="../../../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../../../_static/clipboard.min.js"></script>
+    <script src="../../../../../../_static/copybutton.js"></script>
+    <script src="../../../../../../_static/thebelab-helper.js"></script>
+    <script src="../../../../../../_static/js\table.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="../../../../../../_static/design-tabs.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'autoapi/ansys/geometry/core/designer/component/index';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://geometry.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
+        </script>
+    <link rel="icon" href="../../../../../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+    <link rel="next" title="ansys.geometry.core.designer.coordinate_system" href="../coordinate_system/index.html" />
+    <link rel="prev" title="ansys.geometry.core.designer.body" href="../body/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+  <!-- If there is no MiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+</div>
+  </div>
+  
+    
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  <div class="navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../../../../../../index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../../_static/pyansys-logo-black-cropped.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../../../../../../_static/pyansys-logo-black-cropped.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../../../../../index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.2  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pygeometry" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pygeometry/discussions" title="Support" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa fa-comment fa-fw"></i></span>
+            <label class="sr-only">Support</label></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+  
+
+    
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(text => document.getElementById("announcement_msg").innerHTML = text)
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+    
+
+    
+    <div class="container-xl">
+    <div class="row">
+        <div class="col-12 col-md-3" id="breadcrumbs-spacer"></div>
+        <div class="col-12 col-md-11 col-xl-9" id="breadcrumbs">
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+    
+        <li class="nav-item nav-item-additional-breadcrumb"><a href="https://docs.pyansys.com/">PyAnsys</a> » </li>
+    
+    
+        <li class="nav-item nav-item-0"><a href="../../../../../../index.html">PyGeometry</a> » </li>
+    
+
+          <li class="nav-item nav-item-1"><a href="../../../../../index.html" >API reference</a> » </li>
+          <li class="nav-item nav-item-2"><a href="../../index.html" ><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core</span></code></a> » </li>
+          <li class="nav-item nav-item-3"><a href="../index.html" accesskey="U"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.designer</span></code></a> » </li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.designer.component</span></code></a></li> 
+      </ul>
+    </div>
+        </div>
+  </div>
+</div>
+    
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../../../../../index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.2  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pygeometry" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pygeometry/discussions" title="Support" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa fa-comment fa-fw"></i></span>
+            <label class="sr-only">Support</label></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core</span></code></a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../connection/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.connection</span></code></a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.designer</span></code></a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../beam/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.designer.beam</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../body/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.designer.body</span></code></a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.designer.component</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../coordinate_system/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.designer.coordinate_system</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.designer.design</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../designpoint/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.designer.designpoint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../edge/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.designer.edge</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../face/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.designer.face</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../part/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.designer.part</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../selection/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.designer.selection</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../materials/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.materials</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../math/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.math</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../misc/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.misc</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../plotting/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.plotting</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../primitives/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.primitives</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sketch/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.sketch</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../errors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.errors</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../logger/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.logger</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modeler/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.modeler</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../typing/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.typing</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="module-ansys.geometry.core.designer.component">
+<span id="ansys-geometry-core-designer-component"></span><h1><a class="reference internal" href="#module-ansys.geometry.core.designer.component" title="ansys.geometry.core.designer.component"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.geometry.core.designer.component</span></code></a><a class="headerlink" href="#module-ansys.geometry.core.designer.component" title="Permalink to this heading">#</a></h1>
+<p>Provides the <code class="docutils literal notranslate"><span class="pre">Component</span></code> class module.</p>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">#</a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading">#</a></h3>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ansys.geometry.core.designer.component.SharedTopologyType" title="ansys.geometry.core.designer.component.SharedTopologyType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SharedTopologyType</span></code></a></p></td>
+<td><p>Enum for the component shared topologies available in the Geometry service.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ansys.geometry.core.designer.component.Component" title="ansys.geometry.core.designer.component.Component"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code></a></p></td>
+<td><p>Provides the <code class="docutils literal notranslate"><span class="pre">Component</span></code> class for organizing design bodies.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.SharedTopologyType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.geometry.core.designer.component.</span></span><span class="sig-name descname"><span class="pre">SharedTopologyType</span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.SharedTopologyType" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></a></p>
+<p>Enum for the component shared topologies available in the Geometry service.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.SharedTopologyType.SHARETYPE_NONE">
+<span class="sig-name descname"><span class="pre">SHARETYPE_NONE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#ansys.geometry.core.designer.component.SharedTopologyType.SHARETYPE_NONE" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.SharedTopologyType.SHARETYPE_SHARE">
+<span class="sig-name descname"><span class="pre">SHARETYPE_SHARE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#ansys.geometry.core.designer.component.SharedTopologyType.SHARETYPE_SHARE" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.SharedTopologyType.SHARETYPE_MERGE">
+<span class="sig-name descname"><span class="pre">SHARETYPE_MERGE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#ansys.geometry.core.designer.component.SharedTopologyType.SHARETYPE_MERGE" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.SharedTopologyType.SHARETYPE_GROUPS">
+<span class="sig-name descname"><span class="pre">SHARETYPE_GROUPS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#ansys.geometry.core.designer.component.SharedTopologyType.SHARETYPE_GROUPS" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.geometry.core.designer.component.</span></span><span class="sig-name descname"><span class="pre">Component</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_component</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.geometry.core.designer.component.Component" title="ansys.geometry.core.designer.component.Component"><span class="pre">Component</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grpc_client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ansys.geometry.core.connection.GrpcClient</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.geometry.core.designer.component.Component" title="ansys.geometry.core.designer.component.Component"><span class="pre">Component</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preexisting_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">master_component</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../part/index.html#ansys.geometry.core.designer.part.MasterComponent" title="ansys.geometry.core.designer.part.MasterComponent"><span class="pre">ansys.geometry.core.designer.part.MasterComponent</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_existing_comp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component" title="Permalink to this definition">#</a></dt>
+<dd><p>Provides the <code class="docutils literal notranslate"><span class="pre">Component</span></code> class for organizing design bodies.</p>
+<p>This class synchronizes to a design within a supporting Geometry service instance.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>User-defined label for the component.</p>
+</dd>
+<dt><strong>parent_component</strong><span class="classifier"><a class="reference internal" href="#ansys.geometry.core.designer.component.Component" title="ansys.geometry.core.designer.component.Component"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Parent component to nest the new component under within the design assembly. Only
+<code class="docutils literal notranslate"><span class="pre">None</span></code> when dealing with a Design object.</p>
+</dd>
+<dt><strong>grpc_client</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GrpcClient</span></code></span></dt><dd><p>Active supporting Geometry service instance for design modeling.</p>
+</dd>
+<dt><strong>template</strong><span class="classifier"><a class="reference internal" href="#ansys.geometry.core.designer.component.Component" title="ansys.geometry.core.designer.component.Component"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>The template component that this component will be created from. This creates an instance.</p>
+</dd>
+<dt><strong>preexisting_id</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>If a component already exists on the server, you can pass in its ID to create it on the
+client-side data model. If this is argument is present, a new Component will not be created
+on the server.</p>
+</dd>
+<dt><strong>master_component</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MasterComponent</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>This argument should be present when creating a nested instance component. It will use the
+given master_component instead of creating a new one.</p>
+</dd>
+<dt><strong>read_existing_comp</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.11)"><span class="xref std std-ref">bool</span></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Indicates whether an existing component on the service should be read
+or not. By default, <code class="docutils literal notranslate"><span class="pre">False</span></code>. This is only valid when connecting
+to an existing service session. Otherwise, avoid using this optional
+argument.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.id" title="Permalink to this definition">#</a></dt>
+<dd><p>ID of the component.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.name" title="Permalink to this definition">#</a></dt>
+<dd><p>Name of the component.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.components">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">components</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">beartype.typing.List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.geometry.core.designer.component.Component" title="ansys.geometry.core.designer.component.Component"><span class="pre">Component</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.components" title="Permalink to this definition">#</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">Component</span></code> objects inside of the component.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.bodies">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bodies</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">beartype.typing.List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../body/index.html#ansys.geometry.core.designer.body.Body" title="ansys.geometry.core.designer.body.Body"><span class="pre">ansys.geometry.core.designer.body.Body</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.bodies" title="Permalink to this definition">#</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">Body</span></code> objects inside of the component.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.beams">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">beams</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">beartype.typing.List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../beam/index.html#ansys.geometry.core.designer.beam.Beam" title="ansys.geometry.core.designer.beam.Beam"><span class="pre">ansys.geometry.core.designer.beam.Beam</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.beams" title="Permalink to this definition">#</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">Beam</span></code> objects inside of the component.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.design_points">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">design_points</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">beartype.typing.List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../designpoint/index.html#ansys.geometry.core.designer.designpoint.DesignPoint" title="ansys.geometry.core.designer.designpoint.DesignPoint"><span class="pre">ansys.geometry.core.designer.designpoint.DesignPoint</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.design_points" title="Permalink to this definition">#</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">DesignPoint</span></code> objects inside of the component.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.coordinate_systems">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coordinate_systems</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">beartype.typing.List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../coordinate_system/index.html#ansys.geometry.core.designer.coordinate_system.CoordinateSystem" title="ansys.geometry.core.designer.coordinate_system.CoordinateSystem"><span class="pre">ansys.geometry.core.designer.coordinate_system.CoordinateSystem</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.coordinate_systems" title="Permalink to this definition">#</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">CoordinateSystem</span></code> objects inside of the component.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.parent_component">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parent_component</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.geometry.core.designer.component.Component" title="ansys.geometry.core.designer.component.Component"><span class="pre">Component</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.parent_component" title="Permalink to this definition">#</a></dt>
+<dd><p>Parent of the component.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.is_alive">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_alive</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.is_alive" title="Permalink to this definition">#</a></dt>
+<dd><p>Whether the component is still alive on the server side.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.shared_topology">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shared_topology</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.geometry.core.designer.component.SharedTopologyType" title="ansys.geometry.core.designer.component.SharedTopologyType"><span class="pre">SharedTopologyType</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.shared_topology" title="Permalink to this definition">#</a></dt>
+<dd><p>Indicates the <code class="docutils literal notranslate"><span class="pre">SharedTopologyType</span></code> of the component (if any).</p>
+<p class="rubric">Notes</p>
+<p>If no shared topology has been set, <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.get_world_transform">
+<span class="sig-name descname"><span class="pre">get_world_transform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ansys.geometry.core.math.Matrix44</span></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.get_world_transform" title="Permalink to this definition">#</a></dt>
+<dd><p>Get the full transformation matrix of this Component in world space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Matrix44</span></code></dt><dd><p>The 4x4 transformation matrix of this component in world space.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.modify_placement">
+<span class="sig-name descname"><span class="pre">modify_placement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">translation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ansys.geometry.core.math.Vector3D</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation_origin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ansys.geometry.core.math.Point3D</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation_direction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ansys.geometry.core.math.UnitVector3D</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation_angle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pint.readthedocs.io/en/stable/api/base.html#pint.Quantity" title="(in pint v0.22)"><span class="pre">pint.Quantity</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ansys.geometry.core.misc.Angle</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ansys.geometry.core.typing.Real</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.modify_placement" title="Permalink to this definition">#</a></dt>
+<dd><p>Apply a translation and/or rotation to the existing placement matrix.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>translation</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vector3D</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>The vector that defines the desired translation to the component.</p>
+</dd>
+<dt><strong>rotation_origin</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Point3D</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>The origin that defines the axis to rotate the component about.</p>
+</dd>
+<dt><strong>rotation_direction</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnitVector3D</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>The direction of the axis to rotate the component about.</p>
+</dd>
+<dt><strong>rotation_angle</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Quantity</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Angle</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Real</span></code>], default=0</span></dt><dd><p>The angle to rotate the component around the axis.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>To reset a component’s placement to an identity matrix, see
+<code class="docutils literal notranslate"><span class="pre">reset_placement()</span></code> or call this method with no arguments.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.reset_placement">
+<span class="sig-name descname"><span class="pre">reset_placement</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.reset_placement" title="Permalink to this definition">#</a></dt>
+<dd><p>Reset a component’s placement matrix to an identity matrix.</p>
+<p>See <code class="docutils literal notranslate"><span class="pre">modify_placement()</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.add_component">
+<span class="sig-name descname"><span class="pre">add_component</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.geometry.core.designer.component.Component" title="ansys.geometry.core.designer.component.Component"><span class="pre">Component</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ansys.geometry.core.designer.component.Component" title="ansys.geometry.core.designer.component.Component"><span class="pre">Component</span></a></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.add_component" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a new component nested under this component within the design assembly.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>User-defined label for the new component.</p>
+</dd>
+<dt><strong>template</strong><span class="classifier"><a class="reference internal" href="#ansys.geometry.core.designer.component.Component" title="ansys.geometry.core.designer.component.Component"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>The template component that this component will be created from. This will create an
+instance component that shares a master with the template component.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="#ansys.geometry.core.designer.component.Component" title="ansys.geometry.core.designer.component.Component"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code></a></dt><dd><p>New component with no children in the design assembly.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.set_shared_topology">
+<span class="sig-name descname"><span class="pre">set_shared_topology</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">share_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.geometry.core.designer.component.SharedTopologyType" title="ansys.geometry.core.designer.component.SharedTopologyType"><span class="pre">SharedTopologyType</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.set_shared_topology" title="Permalink to this definition">#</a></dt>
+<dd><p>Set the shared topology to apply to the component.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>share_type</strong><span class="classifier"><a class="reference internal" href="#ansys.geometry.core.designer.component.SharedTopologyType" title="ansys.geometry.core.designer.component.SharedTopologyType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SharedTopologyType</span></code></a></span></dt><dd><p>Shared topology type to assign to the component.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.extrude_sketch">
+<span class="sig-name descname"><span class="pre">extrude_sketch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sketch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ansys.geometry.core.sketch.Sketch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pint.readthedocs.io/en/stable/api/base.html#pint.Quantity" title="(in pint v0.22)"><span class="pre">pint.Quantity</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ansys.geometry.core.misc.Distance</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ansys.geometry.core.typing.Real</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../body/index.html#ansys.geometry.core.designer.body.Body" title="ansys.geometry.core.designer.body.Body"><span class="pre">ansys.geometry.core.designer.body.Body</span></a></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.extrude_sketch" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a solid body by extruding the sketch profile up by a given distance.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>User-defined label for the new solid body.</p>
+</dd>
+<dt><strong>sketch</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Sketch</span></code></span></dt><dd><p>Two-dimensional sketch source for the extrusion.</p>
+</dd>
+<dt><strong>distance</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Quantity</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Distance</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Real</span></code>]</span></dt><dd><p>Distance to extrude the solid body.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Body</span></code></dt><dd><p>Extruded body from the given sketch.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The newly created body is nested under this component within the design assembly.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.extrude_face">
+<span class="sig-name descname"><span class="pre">extrude_face</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">face</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../face/index.html#ansys.geometry.core.designer.face.Face" title="ansys.geometry.core.designer.face.Face"><span class="pre">ansys.geometry.core.designer.face.Face</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pint.readthedocs.io/en/stable/api/base.html#pint.Quantity" title="(in pint v0.22)"><span class="pre">pint.Quantity</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ansys.geometry.core.misc.Distance</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../body/index.html#ansys.geometry.core.designer.body.Body" title="ansys.geometry.core.designer.body.Body"><span class="pre">ansys.geometry.core.designer.body.Body</span></a></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.extrude_face" title="Permalink to this definition">#</a></dt>
+<dd><p>Extrude the face profile by a given distance to create a solid body.</p>
+<p>There are no modifications against the body containing the source face.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>User-defined label for the new solid body.</p>
+</dd>
+<dt><strong>face</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Face</span></code></span></dt><dd><p>Target face to use as the source for the new surface.</p>
+</dd>
+<dt><strong>distance</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Quantity</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Distance</span></code>]</span></dt><dd><p>Distance to extrude the solid body.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Body</span></code></dt><dd><p>Extruded solid body.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The source face can be anywhere within the design component hierarchy.
+Therefore, there is no validation requiring that the face is nested under the
+target component where the body is to be created.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.create_surface">
+<span class="sig-name descname"><span class="pre">create_surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sketch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ansys.geometry.core.sketch.Sketch</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../body/index.html#ansys.geometry.core.designer.body.Body" title="ansys.geometry.core.designer.body.Body"><span class="pre">ansys.geometry.core.designer.body.Body</span></a></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.create_surface" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a surface body with a sketch profile.</p>
+<p>The newly created body is nested under this component within the design assembly.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>User-defined label for the new surface body.</p>
+</dd>
+<dt><strong>sketch</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Sketch</span></code></span></dt><dd><p>Two-dimensional sketch source for the surface definition.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Body</span></code></dt><dd><p>Body (as a planar surface) from the given sketch.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.create_surface_from_face">
+<span class="sig-name descname"><span class="pre">create_surface_from_face</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">face</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../face/index.html#ansys.geometry.core.designer.face.Face" title="ansys.geometry.core.designer.face.Face"><span class="pre">ansys.geometry.core.designer.face.Face</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../body/index.html#ansys.geometry.core.designer.body.Body" title="ansys.geometry.core.designer.body.Body"><span class="pre">ansys.geometry.core.designer.body.Body</span></a></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.create_surface_from_face" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a surface body based on a face.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>User-defined label for the new surface body.</p>
+</dd>
+<dt><strong>face</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Face</span></code></span></dt><dd><p>Target face to use as the source for the new surface.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Body</span></code></dt><dd><p>Surface body.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The source face can be anywhere within the design component hierarchy.
+Therefore, there is no validation requiring that the face is nested under the
+target component where the body is to be created.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.create_coordinate_system">
+<span class="sig-name descname"><span class="pre">create_coordinate_system</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ansys.geometry.core.math.Frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../coordinate_system/index.html#ansys.geometry.core.designer.coordinate_system.CoordinateSystem" title="ansys.geometry.core.designer.coordinate_system.CoordinateSystem"><span class="pre">ansys.geometry.core.designer.coordinate_system.CoordinateSystem</span></a></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.create_coordinate_system" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a coordinate system.</p>
+<p>The newly created coordinate system is nested under this component
+within the design assembly.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>User-defined label for the new coordinate system.</p>
+</dd>
+<dt><strong>frame</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Frame</span></code></span></dt><dd><p>Frame defining the coordinate system bounds.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateSystem</span></code></dt><dd><p><code class="docutils literal notranslate"><span class="pre">CoordinateSystem</span></code> object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.translate_bodies">
+<span class="sig-name descname"><span class="pre">translate_bodies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bodies</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../body/index.html#ansys.geometry.core.designer.body.Body" title="ansys.geometry.core.designer.body.Body"><span class="pre">ansys.geometry.core.designer.body.Body</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ansys.geometry.core.math.UnitVector3D</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pint.readthedocs.io/en/stable/api/base.html#pint.Quantity" title="(in pint v0.22)"><span class="pre">pint.Quantity</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ansys.geometry.core.misc.Distance</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ansys.geometry.core.typing.Real</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.translate_bodies" title="Permalink to this definition">#</a></dt>
+<dd><p>Translate the geometry bodies in a specified direction by a given distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>bodies: List[Body]</strong></dt><dd><p>List of bodies to translate by the same distance.</p>
+</dd>
+<dt><strong>direction: UnitVector3D</strong></dt><dd><p>Direction of the translation.</p>
+</dd>
+<dt><strong>distance: Union[Quantity, Distance, Real]</strong></dt><dd><p>Magnitude of the translation.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If the body does not belong to this component (or its children), it
+is not translated.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.create_beams">
+<span class="sig-name descname"><span class="pre">create_beams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.List</span><span class="p"><span class="pre">[</span></span><span class="pre">beartype.typing.Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ansys.geometry.core.math.Point3D</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ansys.geometry.core.math.Point3D</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../beam/index.html#ansys.geometry.core.designer.beam.BeamProfile" title="ansys.geometry.core.designer.beam.BeamProfile"><span class="pre">ansys.geometry.core.designer.beam.BeamProfile</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">beartype.typing.List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../beam/index.html#ansys.geometry.core.designer.beam.Beam" title="ansys.geometry.core.designer.beam.Beam"><span class="pre">ansys.geometry.core.designer.beam.Beam</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.create_beams" title="Permalink to this definition">#</a></dt>
+<dd><p>Create beams under the component.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>segments</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Point3D</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Point3D</span></code>]]</span></dt><dd><p>List of start and end pairs, each specifying a single line segment.</p>
+</dd>
+<dt><strong>profile</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BeamProfile</span></code></span></dt><dd><p>Beam profile to use to create the beams.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The newly created beams synchronize to a design within a supporting
+Geometry service instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.create_beam">
+<span class="sig-name descname"><span class="pre">create_beam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ansys.geometry.core.math.Point3D</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ansys.geometry.core.math.Point3D</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../beam/index.html#ansys.geometry.core.designer.beam.BeamProfile" title="ansys.geometry.core.designer.beam.BeamProfile"><span class="pre">ansys.geometry.core.designer.beam.BeamProfile</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../beam/index.html#ansys.geometry.core.designer.beam.Beam" title="ansys.geometry.core.designer.beam.Beam"><span class="pre">ansys.geometry.core.designer.beam.Beam</span></a></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.create_beam" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a beam under the component.</p>
+<p>The newly created beam synchronizes to a design within a supporting
+Geometry service instance.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>start</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Point3D</span></code></span></dt><dd><p>Starting point of the beam line segment.</p>
+</dd>
+<dt><strong>end</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Point3D</span></code></span></dt><dd><p>Ending point of the beam line segment.</p>
+</dd>
+<dt><strong>profile</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BeamProfile</span></code></span></dt><dd><p>Beam profile to use to create the beam.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.delete_component">
+<span class="sig-name descname"><span class="pre">delete_component</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">component</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.geometry.core.designer.component.Component" title="ansys.geometry.core.designer.component.Component"><span class="pre">Component</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.delete_component" title="Permalink to this definition">#</a></dt>
+<dd><p>Delete a component (itself or its children).</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>component</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="#ansys.geometry.core.designer.component.Component" title="ansys.geometry.core.designer.component.Component"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>]</span></dt><dd><p>ID of the component or instance to delete.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If the component is not this component (or its children), it
+is not deleted.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.delete_body">
+<span class="sig-name descname"><span class="pre">delete_body</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../body/index.html#ansys.geometry.core.designer.body.Body" title="ansys.geometry.core.designer.body.Body"><span class="pre">ansys.geometry.core.designer.body.Body</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.delete_body" title="Permalink to this definition">#</a></dt>
+<dd><p>Delete a body belonging to this component (or its children).</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>body</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Body</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>]</span></dt><dd><p>ID of the body or instance to delete.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If the body does not belong to this component (or its children), it
+is not deleted.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.add_design_point">
+<span class="sig-name descname"><span class="pre">add_design_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ansys.geometry.core.math.Point3D</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../designpoint/index.html#ansys.geometry.core.designer.designpoint.DesignPoint" title="ansys.geometry.core.designer.designpoint.DesignPoint"><span class="pre">ansys.geometry.core.designer.designpoint.DesignPoint</span></a></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.add_design_point" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a single design point.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>User-defined label for the design points.</p>
+</dd>
+<dt><strong>points</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Point3D</span></code></span></dt><dd><p>3D point constituting the design point.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.add_design_points">
+<span class="sig-name descname"><span class="pre">add_design_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.List</span><span class="p"><span class="pre">[</span></span><span class="pre">ansys.geometry.core.math.Point3D</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">beartype.typing.List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../designpoint/index.html#ansys.geometry.core.designer.designpoint.DesignPoint" title="ansys.geometry.core.designer.designpoint.DesignPoint"><span class="pre">ansys.geometry.core.designer.designpoint.DesignPoint</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.add_design_points" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a list of design points.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>User-defined label for the design points.</p>
+</dd>
+<dt><strong>points</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Point3D</span></code>]</span></dt><dd><p>List of 3D points constituting the design points.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.delete_beam">
+<span class="sig-name descname"><span class="pre">delete_beam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../beam/index.html#ansys.geometry.core.designer.beam.Beam" title="ansys.geometry.core.designer.beam.Beam"><span class="pre">ansys.geometry.core.designer.beam.Beam</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.delete_beam" title="Permalink to this definition">#</a></dt>
+<dd><p>Delete an existing beam belonging to this component (or its children).</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>beam</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Beam</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>]</span></dt><dd><p>ID of the beam or instance to delete.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If the beam does not belong to this component (or its children), it
+will not be deleted.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.search_component">
+<span class="sig-name descname"><span class="pre">search_component</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.geometry.core.designer.component.Component" title="ansys.geometry.core.designer.component.Component"><span class="pre">Component</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.search_component" title="Permalink to this definition">#</a></dt>
+<dd><p>Search nested components recursively for a component.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>id</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>ID of the component to search for.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="#ansys.geometry.core.designer.component.Component" title="ansys.geometry.core.designer.component.Component"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Component</span></code></a></dt><dd><p>Component with the requested ID. If it is not found, <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.search_body">
+<span class="sig-name descname"><span class="pre">search_body</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../body/index.html#ansys.geometry.core.designer.body.Body" title="ansys.geometry.core.designer.body.Body"><span class="pre">ansys.geometry.core.designer.body.Body</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.search_body" title="Permalink to this definition">#</a></dt>
+<dd><p>Search bodies in component and nested components recursively for a body.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>id</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>ID of the body to search for.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Body</span></code></dt><dd><p>Body with the requested ID. If it is not found, <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.search_beam">
+<span class="sig-name descname"><span class="pre">search_beam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../beam/index.html#ansys.geometry.core.designer.beam.Beam" title="ansys.geometry.core.designer.beam.Beam"><span class="pre">ansys.geometry.core.designer.beam.Beam</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.search_beam" title="Permalink to this definition">#</a></dt>
+<dd><p>Search beams in component and nested components recursively for a beam.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>id</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The <code class="docutils literal notranslate"><span class="pre">Beam</span></code> ID we are searching for.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Beam</span></code>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a>]</dt><dd><p>The <code class="docutils literal notranslate"><span class="pre">Beam</span></code> with the requested ID. If not found, it will return <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.tessellate">
+<span class="sig-name descname"><span class="pre">tessellate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">merge_component</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">merge_bodies</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">beartype.typing.Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.pyvista.org/api/core/_autosummary/pyvista.PolyData.html#pyvista.PolyData" title="(in PyVista v0.38.5)"><span class="pre">pyvista.PolyData</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pyvista.org/api/core/_autosummary/pyvista.MultiBlock.html#pyvista.MultiBlock" title="(in PyVista v0.38.5)"><span class="pre">pyvista.MultiBlock</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.tessellate" title="Permalink to this definition">#</a></dt>
+<dd><p>Tessellate this component.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>merge_component</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.11)"><span class="xref std std-ref">bool</span></a>, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">False</span></code></a></span></dt><dd><p>Whether to merge this component into a single dataset. If <code class="docutils literal notranslate"><span class="pre">True</span></code>,
+all the individual bodies are effectively combined into a single
+dataset without any hierarchy.</p>
+</dd>
+<dt><strong>merge_bodies</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.11)"><span class="xref std std-ref">bool</span></a>, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">False</span></code></a></span></dt><dd><p>Whether to merge each body into a single dataset. If <code class="docutils literal notranslate"><span class="pre">True</span></code>,
+all the faces of each individual body are effectively
+merged into a single dataset without separating faces.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.pyvista.org/api/core/_autosummary/pyvista.PolyData.html#pyvista.PolyData" title="(in PyVista v0.38.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolyData</span></code></a>, <a class="reference external" href="https://docs.pyvista.org/api/core/_autosummary/pyvista.MultiBlock.html#pyvista.MultiBlock" title="(in PyVista v0.38.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MultiBlock</span></code></a></dt><dd><p>Merged <a class="reference external" href="https://docs.pyvista.org/api/core/_autosummary/pyvista.PolyData.html#pyvista.PolyData" title="(in PyVista v0.38.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvista.PolyData</span></code></a> if <code class="docutils literal notranslate"><span class="pre">merge_component=True</span></code> or a
+composite dataset.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Create two stacked bodies and return the tessellation as two merged bodies:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.geometry.core.sketch</span> <span class="kn">import</span> <span class="n">Sketch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.geometry.core</span> <span class="kn">import</span> <span class="n">Modeler</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.geometry.core.math</span> <span class="kn">import</span> <span class="n">Point2D</span><span class="p">,</span> <span class="n">Point3D</span><span class="p">,</span> <span class="n">Plane</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.geometry.core.misc</span> <span class="kn">import</span> <span class="n">UNITS</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.geometry.core.plotting</span> <span class="kn">import</span> <span class="n">Plotter</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">modeler</span> <span class="o">=</span> <span class="n">Modeler</span><span class="p">(</span><span class="s2">&quot;10.54.0.72&quot;</span><span class="p">,</span> <span class="s2">&quot;50051&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sketch_1</span> <span class="o">=</span> <span class="n">Sketch</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">box</span> <span class="o">=</span> <span class="n">sketch_1</span><span class="o">.</span><span class="n">box</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">Point2D</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">),</span> <span class="n">Quantity</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">),</span> <span class="n">Quantity</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sketch_1</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">),</span> <span class="n">Quantity</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">design</span> <span class="o">=</span> <span class="n">modeler</span><span class="o">.</span><span class="n">create_design</span><span class="p">(</span><span class="s2">&quot;MyDesign&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">comp</span> <span class="o">=</span> <span class="n">design</span><span class="o">.</span><span class="n">add_component</span><span class="p">(</span><span class="s2">&quot;MyComponent&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">distance</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">body</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">extrude_sketch</span><span class="p">(</span><span class="s2">&quot;Body&quot;</span><span class="p">,</span> <span class="n">sketch</span><span class="o">=</span><span class="n">sketch_1</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="n">distance</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sketch_2</span> <span class="o">=</span> <span class="n">Sketch</span><span class="p">(</span><span class="n">Plane</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">box</span> <span class="o">=</span> <span class="n">sketch_2</span><span class="o">.</span><span class="n">box</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">Point2D</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">),</span> <span class="n">Quantity</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">),</span> <span class="n">Quantity</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">circle</span> <span class="o">=</span> <span class="n">sketch_2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">),</span> <span class="n">Quantity</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">body</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">extrude_sketch</span><span class="p">(</span><span class="s2">&quot;Body&quot;</span><span class="p">,</span> <span class="n">sketch</span><span class="o">=</span><span class="n">sketch_2</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="n">distance</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">tessellate</span><span class="p">(</span><span class="n">merge_bodies</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span>
+<span class="go">MultiBlock (0x7ff6bcb511e0)</span>
+<span class="go">  N Blocks:     2</span>
+<span class="go">  X Bounds:     -25.000, 25.000</span>
+<span class="go">  Y Bounds:     -24.991, 24.991</span>
+<span class="go">  Z Bounds:     0.000, 20.000</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">merge_component</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">merge_bodies</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screenshot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_trame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">plotting_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">beartype.typing.Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.plot" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot this component.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>merge_component</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.11)"><span class="xref std std-ref">bool</span></a>, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">False</span></code></a></span></dt><dd><p>Whether to merge this component into a single dataset. When <code class="docutils literal notranslate"><span class="pre">True</span></code>,
+all the individual bodies are effectively merged into a single
+dataset without any hierarchy.</p>
+</dd>
+<dt><strong>merge_bodies</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.11)"><span class="xref std std-ref">bool</span></a>, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">False</span></code></a></span></dt><dd><p>Whether to merge each body into a single dataset. When <code class="docutils literal notranslate"><span class="pre">True</span></code>,
+all the faces of each individual body are effectively merged
+into a single dataset without separating faces.</p>
+</dd>
+<dt><strong>screenshot</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Save a screenshot of the image being represented. The image is
+stored in the path provided as an argument.</p>
+</dd>
+<dt><strong>use_trame</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.11)"><span class="xref std std-ref">bool</span></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Enables/disables the usage of the trame web visualizer. Defaults to the
+global setting <code class="docutils literal notranslate"><span class="pre">USE_TRAME</span></code>.</p>
+</dd>
+<dt><strong>**plotting_options</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Keyword arguments. For allowable keyword arguments, see the
+<code class="xref py py-func docutils literal notranslate"><span class="pre">pyvista.Plotter.add_mesh()</span></code> method.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Create 25 small cylinders in a grid-like pattern on the XY plane and
+plot them. Make the cylinders look metallic by enabling physically
+based rendering with <code class="docutils literal notranslate"><span class="pre">pbr=True</span></code>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.geometry.core.misc.units</span> <span class="kn">import</span> <span class="n">UNITS</span> <span class="k">as</span> <span class="n">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.geometry.core.sketch</span> <span class="kn">import</span> <span class="n">Sketch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.geometry.core.math</span> <span class="kn">import</span> <span class="n">Plane</span><span class="p">,</span> <span class="n">Point2D</span><span class="p">,</span> <span class="n">Point3D</span><span class="p">,</span> <span class="n">UnitVector3D</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.geometry.core</span> <span class="kn">import</span> <span class="n">Modeler</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">modeler</span> <span class="o">=</span> <span class="n">Modeler</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">origin</span> <span class="o">=</span> <span class="n">Point3D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plane</span> <span class="o">=</span> <span class="n">Plane</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">direction_x</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">direction_y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">design</span> <span class="o">=</span> <span class="n">modeler</span><span class="o">.</span><span class="n">create_design</span><span class="p">(</span><span class="s2">&quot;my-design&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mycomp</span> <span class="o">=</span> <span class="n">design</span><span class="o">.</span><span class="n">add_component</span><span class="p">(</span><span class="s2">&quot;my-comp&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">xx</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">yy</span><span class="o">.</span><span class="n">ravel</span><span class="p">()):</span>
+<span class="gp">... </span>    <span class="n">sketch</span> <span class="o">=</span> <span class="n">Sketch</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">sketch</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]),</span> <span class="mf">0.2</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">mycomp</span><span class="o">.</span><span class="n">extrude_sketch</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;body-</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sketch</span><span class="p">,</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mycomp</span>
+<span class="go">ansys.geometry.core.designer.Component 0x2203cc9ec50</span>
+<span class="go">    Name                 : my-comp</span>
+<span class="go">    Exists               : True</span>
+<span class="go">    Parent component     : my-design</span>
+<span class="go">    N Bodies             : 25</span>
+<span class="go">    N Components         : 0</span>
+<span class="go">    N Coordinate Systems : 0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mycomp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pbr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">metallic</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.component.Component.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.geometry.core.designer.component.Component.__repr__" title="Permalink to this definition">#</a></dt>
+<dd><p>Represent the <code class="docutils literal notranslate"><span class="pre">Component</span></code> as a string.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classes">Classes</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.SharedTopologyType"><code class="docutils literal notranslate"><span class="pre">SharedTopologyType</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.SharedTopologyType.SHARETYPE_NONE"><code class="docutils literal notranslate"><span class="pre">SharedTopologyType.SHARETYPE_NONE</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.SharedTopologyType.SHARETYPE_SHARE"><code class="docutils literal notranslate"><span class="pre">SharedTopologyType.SHARETYPE_SHARE</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.SharedTopologyType.SHARETYPE_MERGE"><code class="docutils literal notranslate"><span class="pre">SharedTopologyType.SHARETYPE_MERGE</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.SharedTopologyType.SHARETYPE_GROUPS"><code class="docutils literal notranslate"><span class="pre">SharedTopologyType.SHARETYPE_GROUPS</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component"><code class="docutils literal notranslate"><span class="pre">Component</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.id"><code class="docutils literal notranslate"><span class="pre">Component.id</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.name"><code class="docutils literal notranslate"><span class="pre">Component.name</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.components"><code class="docutils literal notranslate"><span class="pre">Component.components</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.bodies"><code class="docutils literal notranslate"><span class="pre">Component.bodies</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.beams"><code class="docutils literal notranslate"><span class="pre">Component.beams</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.design_points"><code class="docutils literal notranslate"><span class="pre">Component.design_points</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.coordinate_systems"><code class="docutils literal notranslate"><span class="pre">Component.coordinate_systems</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.parent_component"><code class="docutils literal notranslate"><span class="pre">Component.parent_component</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.is_alive"><code class="docutils literal notranslate"><span class="pre">Component.is_alive</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.shared_topology"><code class="docutils literal notranslate"><span class="pre">Component.shared_topology</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.get_world_transform"><code class="docutils literal notranslate"><span class="pre">Component.get_world_transform()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.modify_placement"><code class="docutils literal notranslate"><span class="pre">Component.modify_placement()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.reset_placement"><code class="docutils literal notranslate"><span class="pre">Component.reset_placement()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.add_component"><code class="docutils literal notranslate"><span class="pre">Component.add_component()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.set_shared_topology"><code class="docutils literal notranslate"><span class="pre">Component.set_shared_topology()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.extrude_sketch"><code class="docutils literal notranslate"><span class="pre">Component.extrude_sketch()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.extrude_face"><code class="docutils literal notranslate"><span class="pre">Component.extrude_face()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.create_surface"><code class="docutils literal notranslate"><span class="pre">Component.create_surface()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.create_surface_from_face"><code class="docutils literal notranslate"><span class="pre">Component.create_surface_from_face()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.create_coordinate_system"><code class="docutils literal notranslate"><span class="pre">Component.create_coordinate_system()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.translate_bodies"><code class="docutils literal notranslate"><span class="pre">Component.translate_bodies()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.create_beams"><code class="docutils literal notranslate"><span class="pre">Component.create_beams()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.create_beam"><code class="docutils literal notranslate"><span class="pre">Component.create_beam()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.delete_component"><code class="docutils literal notranslate"><span class="pre">Component.delete_component()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.delete_body"><code class="docutils literal notranslate"><span class="pre">Component.delete_body()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.add_design_point"><code class="docutils literal notranslate"><span class="pre">Component.add_design_point()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.add_design_points"><code class="docutils literal notranslate"><span class="pre">Component.add_design_points()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.delete_beam"><code class="docutils literal notranslate"><span class="pre">Component.delete_beam()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.search_component"><code class="docutils literal notranslate"><span class="pre">Component.search_component()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.search_body"><code class="docutils literal notranslate"><span class="pre">Component.search_body()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.search_beam"><code class="docutils literal notranslate"><span class="pre">Component.search_beam()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.tessellate"><code class="docutils literal notranslate"><span class="pre">Component.tessellate()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.plot"><code class="docutils literal notranslate"><span class="pre">Component.plot()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.component.Component.__repr__"><code class="docutils literal notranslate"><span class="pre">Component.__repr__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/pyansys/pygeometry/edit/main/doc/source/autoapi/ansys/geometry/core/designer/component/index.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="../../../../../../_sources/autoapi/ansys/geometry/core/designer/component/index.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright (c) 2023 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+    Built with the <a href="https://sphinxdocs.ansys.com/version/stable/index.html">Ansys Sphinx Theme</a> 0.9.9.
+    <br>Last updated on <span id="date"></span></br>
+</p>
+<script>
+  var options = { day: 'numeric', month: 'long', year: 'numeric' };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString('en-US', options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

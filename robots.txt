@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /
+Allow: /version/stable/
+Allow: /sitemap.xml
+
+Sitemap: https://geometry.docs.pyansys.com/sitemap.xml

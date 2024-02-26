@@ -1,0 +1,288 @@
+
+
+
+
+LineEvaluation
+==============
+
+.. py:class:: LineEvaluation(line: Line, parameter: float = None)
+   :canonical: ansys.geometry.core.primitives.line.LineEvaluation
+
+
+
+Bases: :py:obj:`ansys.geometry.core.primitives.curve_evaluation.CurveEvaluation`
+
+Evaluate a line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: LineEvaluation
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~position`
+            - Position of the evaluation.
+          * - :py:attr:`~tangent`
+            - Tangent of the evaluation, which is always equal to the direction of the line.
+          * - :py:attr:`~first_derivative`
+            - First derivative of the evaluation.
+          * - :py:attr:`~second_derivative`
+            - Second derivative of the evaluation.
+          * - :py:attr:`~curvature`
+            - Curvature of the line, which is always ``0``.
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~line`
+            - Line being evaluated.
+          * - :py:attr:`~parameter`
+            - Parameter that the evaluation is based upon.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.primitives.line import LineEvaluation
+
+
+Property detail
+---------------
+.. py:property:: line
+   :canonical: ansys.geometry.core.primitives.line.LineEvaluation.line
+   :type: Line
+
+
+   
+   Line being evaluated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: parameter
+   :canonical: ansys.geometry.core.primitives.line.LineEvaluation.parameter
+   :type: float
+
+
+   
+   Parameter that the evaluation is based upon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: position() -> ansys.geometry.core.math.point.Point3D
+
+   
+   Position of the evaluation.
+
+
+
+   :Returns:
+
+       :obj:`Point3D`
+           Point that lies on the line at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: tangent() -> ansys.geometry.core.math.vector.UnitVector3D
+
+   
+   Tangent of the evaluation, which is always equal to the direction of the line.
+
+
+
+   :Returns:
+
+       :obj:`UnitVector3D`
+           Tangent unit vector to the line at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: first_derivative() -> ansys.geometry.core.math.vector.Vector3D
+
+   
+   First derivative of the evaluation.
+
+   The first derivative is always equal to the direction of the line.
+
+
+   :Returns:
+
+       :obj:`Vector3D`
+           First derivative of the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: second_derivative() -> ansys.geometry.core.math.vector.Vector3D
+
+   
+   Second derivative of the evaluation.
+
+   The second derivative is always equal to a zero vector ``Vector3D([0, 0, 0])``.
+
+
+   :Returns:
+
+       :obj:`Vector3D`
+           Second derivative of the evaluation, which is always ``Vector3D([0, 0, 0])``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: curvature() -> float
+
+   
+   Curvature of the line, which is always ``0``.
+
+
+
+   :Returns:
+
+       :obj:`Real`
+           Curvature of the line, which is always ``0``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
