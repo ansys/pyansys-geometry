@@ -30,8 +30,6 @@ from ansys.geometry.core.math import Matrix44, Point3D
 class Surface(ABC):
     """
     Surface abstract base class.
-
-    Represents a 3D surface.
     """
 
     @abstractmethod
