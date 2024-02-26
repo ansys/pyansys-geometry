@@ -173,7 +173,7 @@ class ReversedTrimmedSurface(TrimmedSurface):
     """
 
     def __init__(self, face: "Face", geometry: Surface):
-        """Initialize ``ReversedTrimmedSurface`` class."""
+        """Initialize an instance of a reversed trimmed surface."""
         super().__init__(face, geometry)
 
     def normal(self, u: Real, v: Real) -> UnitVector3D:  # noqa: D102
