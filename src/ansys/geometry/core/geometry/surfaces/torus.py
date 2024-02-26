@@ -207,7 +207,7 @@ class Torus(Surface):
         the axis (right-hand corkscrew law). It has a zero parameter at
         ``Geometry.Frame.DirX`` and a period of ``2*pi``.
 
-        The V parameter specifies the latitude, increasing North, with a zero parameter
+        The V parameter specifies the latitude, increasing north, with a zero parameter
         at the equator. For the donut, where the major radius is greater
         than the minor radius, the range is [-pi, pi] and the
         parameterization is periodic. For a degenerate torus, the range is restricted
