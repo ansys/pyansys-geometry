@@ -535,7 +535,7 @@ def curve_to_grpc_curve(curve: Curve) -> GRPCCurve:
     Parameters
     ----------
     curve : Curve
-        The curve to convert.
+        Curve to convert.
 
     Returns
     -------
