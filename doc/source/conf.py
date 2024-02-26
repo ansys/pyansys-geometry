@@ -69,6 +69,7 @@ switcher_version = get_version_match(__version__)
 html_logo = pyansys_logo_black
 html_theme = "ansys_sphinx_theme"
 html_short_title = html_title = "PyAnsys Geometry"
+html_baseurl = f"https://{cname}/version/stable"
 
 # specify the location of your github repo
 html_context = {
