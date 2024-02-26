@@ -323,7 +323,7 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception: Exce
     Parameters
     ----------
     app : sphinx.application.Sphinx
-        Sphinx application instance containing the all the doc build configuration.
+        Sphinx application instance containing all the doc build configuration.
     exception : Exception
         Exception encountered during the building of the documentation.
     """
