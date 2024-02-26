@@ -51,7 +51,7 @@ class TrimmedSurface:
     """
 
     def __init__(self, face: "Face", geometry: Surface):
-        """Initialize ``TrimmedSurface`` class."""
+        """Initialize an instance of a trimmed surface."""
         self._face = face
         self._geometry = geometry
 
