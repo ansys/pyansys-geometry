@@ -143,7 +143,7 @@ class TrimmedSurface:
         Returns
         -------
         SurfaceEvaluation
-            The resulting surface evaluation.
+            Resulting surface evaluation.
         """
         boundsU = self.box_uv.interval_u
         boundsV = self.box_uv.interval_v
