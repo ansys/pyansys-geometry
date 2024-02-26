@@ -575,7 +575,7 @@ def trimmed_curve_to_grpc_trimmed_curve(curve: "TrimmedCurve") -> GRPCTrimmedCur
     Parameters
     ----------
     curve : TrimmedCurve
-        The curve to convert.
+        Curve to convert.
 
     Returns
     -------
