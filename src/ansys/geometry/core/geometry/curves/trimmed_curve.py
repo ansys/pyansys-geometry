@@ -39,22 +39,22 @@ class TrimmedCurve:
     """
     Represents a trimmed curve.
 
-    A trimmed curve is a curve that has a boundary. This boundary comes in the form of an Interval.
+    A trimmed curve is a curve that has a boundary. This boundary comes in the form of an interval.
 
     Parameters
     ----------
     geometry : Curve
-        The underlying mathematical representation of the curve.
+        Underlying mathematical representation of the curve.
     start : Point3D
-        The start point of the curve.
+        Start point of the curve.
     end : Point3D
-        The end point of the curve.
+        End point of the curve.
     interval : Interval
-        The parametric interval that bounds the curve.
+        Parametric interval that bounds the curve.
     length : Quantity
-        The length of the curve.
+        Length of the curve.
     grpc_client : GrpcClient, default: None
-        Optional gRPC client that is required for advanced functions such as `intersect_curve()`.
+        gRPC client that is required for advanced functions such as ``intersect_curve()``.
     """
 
     def __init__(
@@ -78,17 +78,17 @@ class TrimmedCurve:
 
     @property
     def geometry(self) -> Curve:
-        """The underlying mathematical curve."""
+        """Underlying mathematical curve."""
         return self._geometry
 
     @property
     def start(self) -> Point3D:
-        """The start point of the curve."""
+        """Start point of the curve."""
         return self._start
 
     @property
     def end(self) -> Point3D:
-        """The end point of the curve."""
+        """End point of the curve."""
         return self._end
 
     @property
@@ -107,8 +107,8 @@ class TrimmedCurve:
         """
         Evaluate the curve at a proportional value.
 
-        A parameter of 0 would correspond to the start of the curve, while a parameter of 1 would
-        correspond to the end of the curve.
+        A parameter of ``0`` corresponds to the start of the curve, while a parameter of ``1``
+        corresponds to the end of the curve.
 
         Parameters
         ----------
@@ -118,7 +118,7 @@ class TrimmedCurve:
         Returns
         -------
         CurveEvaluation
-            The resulting curve evaluation.
+            Resulting curve evaluation.
         """
         bounds = self.interval
         return self.geometry.evaluate(bounds.start + bounds.get_span() * param)
@@ -127,12 +127,12 @@ class TrimmedCurve:
         """
         Intersect this trimmed curve with another to receive the points of intersection.
 
-        If the curves do not intersect, an empty list is returned.
+        If the two trimmed curves do not intersect, an empty list is returned.
 
         Parameters
         ----------
         other : TrimmedCurve
-            The trimmed curve to intersect with.
+            Trimmed curve to intersect with.
 
         Returns
         -------
@@ -141,8 +141,8 @@ class TrimmedCurve:
         """
         if self._grpc_client is None:
             raise ValueError(
-                """This TrimmedCurve was not initialized with a grpc client,
-                so this method cannot be called."""
+                """Because this trimmed curve was not initialized with a gRPC client,
+                the method cannot be called."""
             )
         first = trimmed_curve_to_grpc_trimmed_curve(self)
         second = trimmed_curve_to_grpc_trimmed_curve(other)
@@ -163,28 +163,28 @@ class TrimmedCurve:
 
 class ReversedTrimmedCurve(TrimmedCurve):
     """
-    Represents a reversed TrimmedCurve.
+    Represents a reversed trimmed curve.
 
     When a curve is reversed, its start and end points are swapped, and parameters for evaluations
     are handled to provide expected results conforming to the direction of the curve. For example,
-    evaluating a TrimmedCurve proportionally at 0 would evaluate at the start point of the curve,
-    but evaluating a ReversedTrimmedCurve proportionally at 0 will evaluate at what was previously
+    evaluating a trimmed curve proportionally at 0 evaluates at the start point of the curve,
+    but evaluating a reversed trimmed curve proportionally at 0 evaluates at what was previously
     the end point of the curve but is now the start point.
 
     Parameters
     ----------
     geometry : Curve
-        The underlying mathematical representation of the curve.
+        Underlying mathematical representation of the curve.
     start : Point3D
-        The original start point of the curve.
+        Original start point of the curve.
     end : Point3D
-        The original end point of the curve.
+        Original end point of the curve.
     interval : Interval
-        The parametric interval that bounds the curve.
+        Parametric interval that bounds the curve.
     length : Quantity
-        The length of the curve.
+        Length of the curve.
     grpc_client : GrpcClient, default: None
-        Optional gRPC client that is required for advanced functions such as `intersect_curve()`.
+        gRPC client that is required for advanced functions such as `intersect_curve()`.
     """
 
     def __init__(
@@ -196,7 +196,7 @@ class ReversedTrimmedCurve(TrimmedCurve):
         length: Quantity,
         grpc_client: GrpcClient = None,
     ):
-        """Initialize ``ReversedTrimmedCurve`` class."""
+        """Initialize an instance of a reversed trimmed curve."""
         super().__init__(geometry, start, end, interval, length, grpc_client)
 
         # Swap start and end points

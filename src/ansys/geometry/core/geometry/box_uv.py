@@ -27,7 +27,7 @@ from ansys.geometry.core.typing import Real
 
 
 class LocationUV(Enum):
-    """Provides the ``LocationUV`` class to indicate locations for BoxUV."""
+    """Provides the enumeration for indicating locations for BoxUV."""
 
     TopLeft = 1
     TopCenter = 2
@@ -65,12 +65,12 @@ class BoxUV:
 
     @property
     def interval_u(self) -> Interval:
-        """Return the u interval."""
+        """``u`` interval."""
         return self._interval_u
 
     @property
     def interval_v(self) -> Interval:
-        """Return the v interval."""
+        """``v`` interval."""
         return self._interval_v
 
     def __eq__(self, other: object) -> bool:
@@ -90,7 +90,7 @@ class BoxUV:
         )
 
     def is_empty(self):
-        """Return whether this BoxUV is empty."""
+        """Check if this BoxUV is empty."""
         return self.interval_u.is_empty() or self.interval_v.is_empty()
 
     def proportion(self, prop_u: Real, prop_v: Real) -> ParamUV:
@@ -111,7 +111,7 @@ class BoxUV:
 
     @staticmethod
     def unite(first: "BoxUV", second: "BoxUV") -> "BoxUV":
-        """Return the union of two BoxUV instances."""
+        """Unite of two BoxUV instances."""
         if first.is_empty():
             return second
         if second.is_empty():
@@ -123,7 +123,7 @@ class BoxUV:
 
     @staticmethod
     def intersect(first: "BoxUV", second: "BoxUV", tolerance_u: Real, tolerance_v: Real) -> "BoxUV":
-        """Return the intersection of two BoxUV instances."""
+        """Get the intersection of two BoxUV instances."""
         if first.is_empty() or second.is_empty():
             return None  # supposed to be empty
         intersection = BoxUV(
@@ -149,7 +149,7 @@ class BoxUV:
         return BoxUV(self.interval_u.inflate(delta_u), self.interval_v.inflate(delta_v))
 
     def get_corner(self, location: LocationUV) -> ParamUV:
-        """Return the corner location of the BoxUV."""
+        """Get the corner location of the BoxUV."""
         u = 0
         v = 0
         if (

@@ -79,7 +79,7 @@ class Edge:
         grpc_client: GrpcClient,
         is_reversed: bool = False,
     ):
-        """Initialize ``Edge`` class."""
+        """Initialize the ``Edge`` class."""
         self._id = id
         self._curve_type = curve_type
         self._body = body
@@ -100,7 +100,7 @@ class Edge:
 
     @property
     def is_reversed(self) -> bool:
-        """Edge is reversed."""
+        """Flag indicating if the edge is reversed."""
         return self._is_reversed
 
     @property
@@ -108,7 +108,7 @@ class Edge:
         """
         Underlying trimmed curve of the edge.
 
-        If the edge is reversed, its shape will be a `ReversedTrimmedCurve`, which swaps the
+        If the edge is reversed, its shape is the ``ReversedTrimmedCurve`` type, which swaps the
         start and end points of the curve and handles parameters to allow evaluation as if the
         curve is not reversed.
         """

@@ -30,14 +30,12 @@ from ansys.geometry.core.typing import Real
 
 class Curve(ABC):
     """
-    Curve abstract base class.
-
-    Represents a 3D curve.
+    Provides the abstract base class representing a 3D curve.
     """
 
     @abstractmethod
     def parameterization(self) -> Parameterization:
-        """Parameterization of the curve."""
+        """Parameterize the curve."""
         return
 
     @abstractmethod
@@ -50,7 +48,7 @@ class Curve(ABC):
         """
         Test whether the point is contained by the curve.
 
-        The point can either lie within it, or on its boundary.
+        The point can either lie within the curve or on its boundary.
         """
         return
 
@@ -74,7 +72,7 @@ class Curve(ABC):
         """
         Project a point to the curve.
 
-        This returns the evaluation at the closest point.
+        This method returns the evaluation at the closest point.
         """
         return
 

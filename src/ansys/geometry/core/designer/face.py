@@ -160,7 +160,7 @@ class Face:
         grpc_client: GrpcClient,
         is_reversed: bool = False,
     ):
-        """Initialize ``Face`` class."""
+        """Initialize the ``Face`` class."""
         self._id = id
         self._surface_type = surface_type
         self._body = body
@@ -184,7 +184,7 @@ class Face:
 
     @property
     def is_reversed(self) -> bool:
-        """Face is reversed."""
+        """Flag indicating if the face is reversed."""
         return self._is_reversed
 
     @property
@@ -197,7 +197,7 @@ class Face:
         """
         Underlying trimmed surface of the face.
 
-        If the face is reversed, its shape will be a `ReversedTrimmedSurface`, which handles the
+        If the face is reversed, its shape is a ``ReversedTrimmedSurface`` type, which handles the
         direction of the normal vector to ensure it is always facing outward.
         """
         if self._shape is None:
@@ -362,21 +362,21 @@ class Face:
         """
         Create isoparametic curves at the given proportional parameter.
 
-        Typically, only one curve will be created, but if the face has a hole, it is possible to
-        create more than one curve.
+        Typically, only one curve is created, but if the face has a hole, it is possible that
+        more than one curve is created.
 
         Parameters
         ----------
         use_u_param : bool
-            Define whether the parameter is the u coordinate or v coordinate. If True,
-            then u parameter is used. If False, then v parameter is used.
+            Whether the parameter is the ``u`` coordinate or ``v`` coordinate. If ``True``,
+            it is the ``u`` coordinate. If ``False``, it is the ``v`` coordinate.
         parameter : float
-            The proportional [0-1] parameter to create the curvse at.
+            Proportional [0-1] parameter to create the one or more curves at.
 
         Returns
         -------
         List[TrimmedCurve]
-            The list of curves that were created.
+            List of curves that were created.
         """
         curves = self._faces_stub.CreateIsoParamCurves(
             CreateIsoParamCurvesRequest(id=self.id, u_dir_curve=use_u_param, proportion=parameter)

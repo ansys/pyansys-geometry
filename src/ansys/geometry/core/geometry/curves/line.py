@@ -200,7 +200,7 @@ class Line(Curve):
 
 
 class LineEvaluation(CurveEvaluation):
-    """Evaluate a line."""
+    """Provides for evaluating a line."""
 
     def __init__(self, line: Line, parameter: float = None) -> None:
         """Initialize the ``LineEvaluation`` class."""
