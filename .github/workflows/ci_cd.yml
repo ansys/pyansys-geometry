@@ -656,7 +656,9 @@ jobs:
     needs: [package]
     steps:
       - name: Deploy the latest documentation
-        uses: ansys/actions/doc-deploy-dev@v5
+        # TODO: testing SEO improvements. This branch avoids creating a
+        # sitemap.xml pages in opposite to v5.
+        uses: ansys/actions/doc-deploy-dev@feat/seo-improvements
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
