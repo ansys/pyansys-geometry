@@ -253,7 +253,7 @@ class Cylinder(Surface):
 
     def parameterization(self) -> tuple[Parameterization, Parameterization]:
         """
-        Parameterization of the cylinder surface as a tuple (U and V respectively).
+        Parameterize the cylinder surface as a tuple (U and V respectively).
 
         The U parameter specifies the clockwise angle around the axis (right-hand
         corkscrew law), with a zero parameter at ``dir_x`` and a period of 2*pi.
