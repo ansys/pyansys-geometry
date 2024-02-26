@@ -45,9 +45,9 @@ class TrimmedSurface:
     Parameters
     ----------
     face : Face
-        Face that the TrimmedSurface belongs to.
+        Face that the trimmed surface belongs to.
     geometry : Surface
-        The underlying mathematical representation of the surface.
+        Underlying mathematical representation of the surface.
     """
 
     def __init__(self, face: "Face", geometry: Surface):
