@@ -47,7 +47,7 @@ class Surface(ABC):
         """
         Test whether the point is contained by the surface.
 
-        The point can either lie within it, or on its boundary.
+        The point can either lie within the surface or on its boundary.
         """
         return
 
