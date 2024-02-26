@@ -162,17 +162,17 @@ class PlaneEvaluation(SurfaceEvaluation):
 
     @property
     def plane(self) -> PlaneSurface:
-        """The plane being evaluated."""
+        """Plane being evaluated."""
         return self._plane
 
     @property
     def parameter(self) -> ParamUV:
-        """The parameter that the evaluation is based upon."""
+        """Parameter that the evaluation is based upon."""
         return self._parameter
 
     @cached_property
     def position(self) -> Point3D:
-        """The point on the surface, based on the evaluation."""
+        """Point on the surface, based on the evaluation."""
         return (
             self.plane.origin
             + self.parameter.u * self.plane.dir_x
@@ -181,50 +181,50 @@ class PlaneEvaluation(SurfaceEvaluation):
 
     @cached_property
     def normal(self) -> UnitVector3D:
-        """The normal to the surface."""
+        """Normal to the surface."""
         return self.plane.dir_z
 
     @cached_property
     def u_derivative(self) -> Vector3D:
-        """The first derivative with respect to u."""
+        """First derivative with respect to u."""
         return self.plane.dir_z
 
     @cached_property
     def v_derivative(self) -> Vector3D:
-        """The first derivative with respect to v."""
+        """First derivative with respect to v."""
         return self.plane.dir_y
 
     @cached_property
     def uu_derivative(self) -> Vector3D:
-        """The second derivative with respect to u."""
+        """Second derivative with respect to u."""
         return Vector3D([0, 0, 0])
 
     @cached_property
     def uv_derivative(self) -> Vector3D:
-        """The second derivative with respect to u and v."""
+        """Second derivative with respect to u and v."""
         return Vector3D([0, 0, 0])
 
     @cached_property
     def vv_derivative(self) -> Vector3D:
-        """The second derivative with respect to v."""
+        """Second derivative with respect to v."""
         return Vector3D([0, 0, 0])
 
     @cached_property
     def min_curvature(self) -> Real:
-        """The minimum curvature."""
+        """Minimum curvature."""
         return 0
 
     @cached_property
     def min_curvature_direction(self) -> UnitVector3D:
-        """The minimum curvature direction."""
+        """Minimum curvature direction."""
         return self.plane.dir_x
 
     @cached_property
     def max_curvature(self) -> Real:
-        """The maximum curvature."""
+        """Maximum curvature."""
         return 0
 
     @cached_property
     def max_curvature_direction(self) -> UnitVector3D:
-        """The maximum curvature direction."""
+        """Maximum curvature direction."""
         return self.plane.dir_y
