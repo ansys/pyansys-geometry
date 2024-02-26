@@ -169,7 +169,7 @@ class Modeler:
     def get_active_design(self, sync_with_remote: bool = True) -> "Design":
         """
         Get the active design on the modeler object.
-        
+
         Parameters
         ----------
         sync_with_remote : bool, default: True
