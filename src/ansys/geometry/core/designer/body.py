@@ -1193,7 +1193,7 @@ class Body(IBody):
 
     @ensure_design_is_active
     def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
-        return CollisionType(self._template.get_collision(body))
+        return self._template.get_collision(body)
 
     @ensure_design_is_active
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
