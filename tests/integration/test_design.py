@@ -1880,4 +1880,3 @@ def test_get_collision(modeler: Modeler):
 
     assert body1.get_collision(body2) == CollisionType.TOUCH
     assert body2.get_collision(body3) == CollisionType.NONE
-
