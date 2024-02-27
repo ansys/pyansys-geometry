@@ -1,0 +1,287 @@
+:py:mod:`ansys.geometry.core.sketch.polygon`
+============================================
+
+.. py:module:: ansys.geometry.core.sketch.polygon
+
+.. autoapi-nested-parse::
+
+   Provides the ``polygon`` class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.sketch.polygon.Polygon
+
+
+
+
+.. py:class:: Polygon(center: ansys.geometry.core.math.Point2D, inner_radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], sides: int, angle: beartype.typing.Optional[beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Angle, ansys.geometry.core.typing.Real]] = 0)
+
+
+   Bases: :py:obj:`ansys.geometry.core.sketch.face.SketchFace`
+
+   
+   Provides for modeling regular polygons.
+
+
+   :Parameters:
+
+       **center: Point2D**
+           2D pint representing the center of the circle.
+
+       **inner_radius** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+           Inner radius (apothem) of the polygon.
+
+       **sides** : :class:`python:int`
+           Number of sides of the polygon.
+
+       **angle** : :obj:`Union`\[:obj:`Quantity`, :obj:`Angle`, :obj:`Real`], default: 0
+           Placement angle for orientation alignment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: center
+      :type: ansys.geometry.core.math.Point2D
+
+      
+      Point that is the center of the polygon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: inner_radius
+      :type: pint.Quantity
+
+      
+      Inner radius(apothem) of the polygon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: n_sides
+      :type: int
+
+      
+      Number of sides of the polygon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: angle
+      :type: pint.Quantity
+
+      
+      Orientation angle of the polygon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: length
+      :type: pint.Quantity
+
+      
+      Side length of the polygon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: outer_radius
+      :type: pint.Quantity
+
+      
+      Outer radius of the polygon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: perimeter
+      :type: pint.Quantity
+
+      
+      Perimeter of the polygon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: area
+      :type: pint.Quantity
+
+      
+      Area of the polygon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: visualization_polydata
+      :type: pyvista.PolyData
+
+      
+      VTK polydata representation for PyVista visualization.
+
+      The representation lies in the X/Y plane within
+      the standard global Cartesian coordinate system.
+
+
+      :Returns:
+
+          :obj:`pyvista.PolyData`
+              VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
