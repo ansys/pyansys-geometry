@@ -418,5 +418,5 @@ class Modeler:
 
     @property
     def measurement_tools(self) -> MeasurementTools:
-        """Measurement tools."""
+        """Access to measurement tools."""
         return self._measurement_tools
