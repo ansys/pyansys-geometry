@@ -367,6 +367,7 @@ class IBody(ABC):
         ----------
         body: Body
             Object that the collision state is checked with.
+
         Returns
         -------
         Collision Type
@@ -817,19 +818,7 @@ class MasterBody(IBody):
         )
 
     @protect_grpc
-    def get_collision(self, body: "Body") -> CollisionType:
-        """
-        Get the collision state between bodies.
-
-        Parameters
-        ----------
-        body: Body
-            Object that the collision state is checked with.
-        Returns
-        -------
-        Collision Type
-            Enum that defines the collision state between bodies.
-        """
+    def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
         self._grpc_client.log.debug(f"Get collision between body {self.id} and body {body.id}.")
         response = self._bodies_stub.GetCollision(
             GetCollisionRequest(
