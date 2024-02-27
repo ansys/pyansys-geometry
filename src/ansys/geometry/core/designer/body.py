@@ -1192,7 +1192,7 @@ class Body(IBody):
         return self._template.rotate(axis_origin, axis_direction, angle)
 
     @ensure_design_is_active
-    def get_collision(self, body: "Body") -> CollisionType:
+    def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
         return CollisionType(self._template.get_collision(body))
 
     @ensure_design_is_active
