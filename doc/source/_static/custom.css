@@ -15,6 +15,10 @@
     font-size: 1em;
 }
 
+div.nbinput.container div.input_area, div.nboutput.container div.output_area {
+    justify-content: flex-start;
+}
+
 /* Center images in notebook output cells */
 .nboutput img {
     display: block !important;
