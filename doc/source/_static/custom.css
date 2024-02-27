@@ -16,7 +16,7 @@
 }
 
 div.nbinput.container div.input_area, div.nboutput.container div.output_area {
-    justify-content: flex-start;
+    display: block;
 }
 
 /* Center images in notebook output cells */
