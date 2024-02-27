@@ -47,10 +47,8 @@ class Gap:
     """
 
     @protect_grpc
-    def __init__(self, grpc_client: GrpcClient, distance: Distance = None):
-        """Initialize `Gap` class."""
-        self._grpc_client = grpc_client
-        self._measure_stub = MeasureToolsStub(self._grpc_client.channel)
+    def __init__(self, distance: Distance):
+        """Initialize ``Gap`` class."""
         self._distance = distance
 
     @property
@@ -60,12 +58,10 @@ class Gap:
 
     @classmethod
     @protect_grpc
-    def from_distance_response(
-        cls, grpc_client: GrpcClient, response: MinDistanceBetweenObjectsResponse
-    ) -> None:
-        """Construct `Gap` object from distance response."""
+    def from_distance_response(cls, response: MinDistanceBetweenObjectsResponse) -> None:
+        """Construct ``Gap`` object from distance response."""
         distance = Distance(response.gap.distance, unit=DEFAULT_UNITS.LENGTH)
-        return cls(grpc_client, distance)
+        return cls(distance)
 
 
 class MeasurementTools:
@@ -73,16 +69,15 @@ class MeasurementTools:
 
     @protect_grpc
     def __init__(self, grpc_client: GrpcClient):
-        """Initialize Measurement Tools class."""
+        """Initialize measurement tools class."""
         self._grpc_client = grpc_client
         self._measure_stub = MeasureToolsStub(self._grpc_client.channel)
 
     @protect_grpc
     def min_distance_between_objects(self, body1: "Body", body2: "Body"):
         """Find the gap between two bodies."""
-        body_ids = [body1.id, body2.id]
         response = self._measure_stub.MinDistanceBetweenObjects(
-            MinDistanceBetweenObjectsRequest(bodies=body_ids)
+            MinDistanceBetweenObjectsRequest(bodies=[body1.id, body2.id])
         )
         gap = Gap.from_distance_response(self._grpc_client, response)
         return gap
