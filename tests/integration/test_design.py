@@ -1865,8 +1865,9 @@ def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
 def test_get_active_design(modeler: Modeler):
     """Return the active design from the designs dictionary of the modeler."""
     design1 = modeler.create_design("Design1")
+    d1_id = design1.design_id
     active_design = modeler.get_active_design()
-    assert active_design.design_id == design1.design_id
+    assert active_design.design_id == d1_id
 
 
 def test_get_collision(modeler: Modeler):
@@ -1879,3 +1880,4 @@ def test_get_collision(modeler: Modeler):
 
     assert body1.get_collision(body2) == CollisionType.TOUCH
     assert body2.get_collision(body3) == CollisionType.NONE
+
