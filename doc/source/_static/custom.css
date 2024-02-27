@@ -6,12 +6,20 @@
     display: none !important;
 }
 
+/* Ensure proper font size for notebook cells */
+.nboutput {
+    font-size: 1.1em;
+}
+
+.nbinput {
+    font-size: 1em;
+}
+
 /* Center images in notebook output cells */
 .nboutput img {
     display: block !important;
     margin: 0 auto !important;
 }
-
 
 .sd-card .sd-card-img-top {
     height: 100px;
