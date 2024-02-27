@@ -31,6 +31,24 @@ concurrency:
 
 jobs:
 
+  branch-name:
+    if: github.event_name == 'pull_request'
+    name: Check the name of the branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch name
+        uses: ansys/actions/branch-name-style@v5
+
+  commit-name:
+    if: github.event_name == 'pull_request'
+    name: Check the name of the commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check commit name
+        uses: ansys/actions/commit-style@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
   docs-style:
     name: Documentation Style Check
     runs-on: ubuntu-latest
@@ -638,7 +656,8 @@ jobs:
     needs: [package]
     steps:
       - name: Deploy the latest documentation
-        uses: ansys/actions/doc-deploy-dev@v5
+        # TODO: testing SEO improvements. This branch reuses the "index.html" from the stable version
+        uses: ansys/actions/doc-deploy-dev@feat/seo-improvements
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}

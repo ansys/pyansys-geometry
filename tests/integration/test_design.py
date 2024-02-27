@@ -38,6 +38,7 @@ from ansys.geometry.core.designer import (
     SharedTopologyType,
     SurfaceType,
 )
+from ansys.geometry.core.designer.body import CollisionType
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.errors import GeometryExitedError
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
@@ -57,9 +58,16 @@ from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Distance
 from ansys.geometry.core.sketch import Sketch
 
 
+# TODO: re-enable when Linux service is able to use measurement tools
+def skip_if_linux(modeler: Modeler):
+    """Skip test if running on Linux."""
+    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
+        pytest.skip("Measurement tools not available on Linux service.")
+
+
 def test_design_extrusion_and_material_assignment(modeler: Modeler):
-    """Test in charge of validating the extrusion of a simple circle as a cylinder and
-    assigning materials to it."""
+    """Test to validate the extrusion of a simple circle as a cylinder and the
+    assignment of materials to it."""
 
     # Create a Sketch and draw a circle (all client side)
     sketch = Sketch()
@@ -1856,5 +1864,18 @@ def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
 def test_get_active_design(modeler: Modeler):
     """Return the active design from the designs dictionary of the modeler."""
     design1 = modeler.create_design("Design1")
+    d1_id = design1.design_id
     active_design = modeler.get_active_design()
-    assert active_design.design_id == design1.design_id
+    assert active_design.design_id == d1_id
+
+
+def test_get_collision(modeler: Modeler):
+    """Test the collision state between two bodies."""
+    skip_if_linux(modeler)  # Skip test on Linux
+    design = modeler.open_file("./tests/integration/files/MixingTank.scdocx")
+    body1 = design.bodies[0]
+    body2 = design.bodies[1]
+    body3 = design.bodies[2]
+
+    assert body1.get_collision(body2) == CollisionType.TOUCH
+    assert body2.get_collision(body3) == CollisionType.NONE
