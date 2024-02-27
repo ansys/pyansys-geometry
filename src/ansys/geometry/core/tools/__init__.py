@@ -21,6 +21,7 @@
 # SOFTWARE.
 """PyAnsys Geometry tools subpackage."""
 
+from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.problem_areas import (
     DuplicateFaceProblemAreas,
     ExtraEdgeProblemAreas,
