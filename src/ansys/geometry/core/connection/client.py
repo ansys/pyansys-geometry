@@ -214,12 +214,12 @@ class GrpcClient:
     @property
     def backend_version(self) -> VersionIdentifier:
         """
-        Backend version.
+        Get the current backend version.
 
-        Notes
-        -----
-        This method might return ``None`` because determining the backend version is
-        not straightforward.
+        Returns
+        -------
+        VersionIdentifier
+            Backend version.
         """
         return self._backend_version
 
