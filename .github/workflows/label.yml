@@ -1,6 +1,10 @@
 name: Labeler
 on:
   pull_request:
+    # opened, reopened, and synchronize are default for pull_request
+    # edited - when PR title or body is changed
+    # labeled - when labels are added to PR
+    types: [opened, reopened, synchronize, edited, labeled]
   push:
     branches: [ main ]
     paths:
@@ -83,3 +87,15 @@ jobs:
           - [good first issue](https://github.com/ansys/pyansys-geometry/pulls?q=label%3Agood+first+issue)
           - [maintenance](https://github.com/ansys/pyansys-geometry/pulls?q=label%3Amaintenance+)
           - [release](https://github.com/ansys/pyansys-geometry/pulls?q=label%3Arelease+)
+
+  changelog-fragment:
+    name: "Create changelog fragment"
+    needs: [labeler]
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+    - uses: ansys/actions/doc-changelog@feat/changelog-action
+      with:
+        token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
