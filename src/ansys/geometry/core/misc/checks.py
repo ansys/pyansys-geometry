@@ -23,6 +23,7 @@
 from beartype.typing import TYPE_CHECKING, Any, Iterable, Optional, Tuple, Union
 import numpy as np
 from pint import Unit
+import semver
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer import Design
@@ -302,3 +303,44 @@ def check_type_all_elements_in_iterable(
     """
     for elem in input:
         check_type(elem, expected_type)
+
+
+def min_backend_version(method_version: str):
+    """
+    Compare the min version required by a method to the current backend version.
+
+    Parameters
+    ----------
+    method_version : str
+        The minimum version required by the method.
+
+    Raises
+    ------
+    GeometryRuntimeError
+        If the method version is higher than the backend version.
+    GeometryRuntimeError
+        If the client is not available.
+    """
+    # Lazy import to avoid circular imports
+    from ansys.geometry.core.errors import GeometryRuntimeError
+
+    def backend_version_decorator(method):
+        def wrapper(self, *args, **kwargs):
+            if self._grpc_client is None:
+                raise GeometryRuntimeError(
+                    "The client is not available. Please initialize the client first."
+                )
+            elif self._grpc_client.backend_version is not None:
+                comp = semver.compare(method_version, self._grpc_client.backend_version)
+                # if comp is 1, method version is higher than backend version.
+                if comp == 1:
+                    raise GeometryRuntimeError(
+                        f"The method '{method.__name__}' is not available for the "
+                        + "current backend version {self._grpc_client.backend_version}."
+                    )
+                else:
+                    method(self, *args, **kwargs)
+
+        return wrapper
+
+    return backend_version_decorator

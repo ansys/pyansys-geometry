@@ -27,6 +27,7 @@ import time
 
 from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
 from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
+from ansys.api.dbu.v0.dbumodels_pb2 import VersionIdentifier
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
 from google.protobuf.empty_pb2 import Empty
@@ -170,8 +171,9 @@ class GrpcClient:
         self._admin_stub = AdminStub(self._channel)
 
         # if no backend type has been specified, ask the backend which type it is
+        grpc_backend_response = self._admin_stub.GetBackend(Empty())
         if backend_type == None:
-            grpc_backend_type = self._admin_stub.GetBackend(Empty()).type
+            grpc_backend_type = grpc_backend_response.type
             if grpc_backend_type == GRPCBackendType.DISCOVERY:
                 backend_type = BackendType.DISCOVERY
             elif grpc_backend_type == GRPCBackendType.SPACECLAIM:
@@ -181,6 +183,13 @@ class GrpcClient:
             elif grpc_backend_type == GRPCBackendType.LINUX_DMS:
                 backend_type = BackendType.LINUX_SERVICE
 
+        # backend version
+        if hasattr(grpc_backend_response, "version"):
+            ver = grpc_backend_response.version
+            self._backend_version = f"{ver.major_release}.{ver.minor_release}.{ver.service_pack}"
+        else:
+            logger.warning("The backend version is only available after 24.1 version.")
+            self._backend_version = "24.1.0"
         # Store the backend type
         self._backend_type = backend_type
         self._multiple_designs_allowed = (
@@ -201,6 +210,18 @@ class GrpcClient:
         not straightforward.
         """
         return self._backend_type
+
+    @property
+    def backend_version(self) -> VersionIdentifier:
+        """
+        Backend version.
+
+        Notes
+        -----
+        This method might return ``None`` because determining the backend version is
+        not straightforward.
+        """
+        return self._backend_version
 
     @property
     def multiple_designs_allowed(self) -> bool:
