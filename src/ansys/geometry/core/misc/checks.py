@@ -336,7 +336,7 @@ def min_backend_version(method_version: str):
                 if comp == 1:
                     raise GeometryRuntimeError(
                         f"The method '{method.__name__}' is not available for the "
-                        + "current backend version {self._grpc_client.backend_version}."
+                        + f"current backend version {self._grpc_client.backend_version}."
                     )
                 else:
                     method(self, *args, **kwargs)
