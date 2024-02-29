@@ -260,7 +260,10 @@ latex_elements = {"preamble": latex.generate_preamble(html_title)}
 sd_fontawesome_latex = True
 
 linkcheck_exclude_documents = ["index", "getting_started/local/index", "assets"]
-linkcheck_ignore = [r"https://github.com/ansys/pyansys-geometry-binaries/.*"]
+linkcheck_ignore = [
+    r"https://github.com/ansys/pyansys-geometry-binaries/.*",
+    r"https://download.ansys.com/",
+]
 
 # -- Declare the Jinja context -----------------------------------------------
 exclude_patterns = []
