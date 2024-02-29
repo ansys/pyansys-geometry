@@ -40,13 +40,17 @@ goto end
 %SPHINXBUILD% -M linkcheck %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 goto build-examples-py
 
-:clean
-rmdir /s /q %BUILDDIR% > /NUL 2>&1
-for /d /r %SOURCEDIR% %%d in (%APIDIR) do @if exist "%%d" rmdir /s /q "%%d"
+:build-examples-py
+cd "%BUILDDIR%\html\examples"
+for /d %%D in (*) do (
+Echo Processing examples folder... %%D
+cd %%D
+for %%f in (*.ipynb) do (
+	jupytext --to py "%%f"
+)
+cd ../
+)
 goto end
-
-:help
-%SPHINXBUILD% -M help %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 
 :pdf
 %SPHINXBUILD% -M latex %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
@@ -59,16 +63,13 @@ if NOT EXIST ansys-geometry-core.pdf (
 Echo "pdf generated!"
 goto end
 
-:build-examples-py
-cd "%BUILDDIR%\html\examples"
-for /d %%D in (*) do (
-Echo Processing examples folder... %%D
-cd %%D
-for %%f in (*.ipynb) do (
-	jupytext --to py "%%f"
-)
-cd ../
-)
+:clean
+rmdir /s /q %BUILDDIR% > /NUL 2>&1
+for /d /r %SOURCEDIR% %%d in (%APIDIR) do @if exist "%%d" rmdir /s /q "%%d"
+goto end
+
+:help
+%SPHINXBUILD% -M help %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 goto end
 
 :end

@@ -123,6 +123,8 @@ Prerequisites
   If you do not have Docker available, see
   :ref:`Docker for Windows containers <ref_running_windows_containers>`.
 
+.. _ref_build_windows_docker_image_from_ansys_installation:
+
 Build from available Ansys installation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

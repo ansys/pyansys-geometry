@@ -69,6 +69,7 @@ switcher_version = get_version_match(__version__)
 html_logo = pyansys_logo_black
 html_theme = "ansys_sphinx_theme"
 html_short_title = html_title = "PyAnsys Geometry"
+html_baseurl = f"https://{cname}/version/stable"
 
 # specify the location of your github repo
 html_context = {
@@ -259,7 +260,10 @@ latex_elements = {"preamble": latex.generate_preamble(html_title)}
 sd_fontawesome_latex = True
 
 linkcheck_exclude_documents = ["index", "getting_started/local/index", "assets"]
-linkcheck_ignore = [r"https://github.com/ansys/pyansys-geometry-binaries/.*"]
+linkcheck_ignore = [
+    r"https://github.com/ansys/pyansys-geometry-binaries/.*",
+    r"https://download.ansys.com/",
+]
 
 # -- Declare the Jinja context -----------------------------------------------
 exclude_patterns = []

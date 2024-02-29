@@ -40,6 +40,7 @@ from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.misc.checks import check_type
 from ansys.geometry.core.misc.options import ImportOptions
+from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.repair_tools import RepairTools
 from ansys.geometry.core.typing import Real
 
@@ -120,9 +121,11 @@ class Modeler:
         # TODO: delete "if" when Linux service is able to use repair tools
         if self.client.backend_type == BackendType.LINUX_SERVICE:
             self._repair_tools = None
+            self._measurement_tools = None
             logger.warning("Linux backend does not support repair tools.")
         else:
             self._repair_tools = RepairTools(self._client)
+            self._measurement_tools = MeasurementTools(self._client)
 
         # Maintaining references to all designs within the modeler workspace
         self._designs: Dict[str, "Design"] = {}
@@ -166,9 +169,16 @@ class Modeler:
             )
         return self._designs[design.design_id]
 
-    def get_active_design(self) -> "Design":
+    def get_active_design(self, sync_with_backend: bool = True) -> "Design":
         """
         Get the active design on the modeler object.
+
+        Parameters
+        ----------
+        sync_with_backend : bool, default: True
+            Whether to sync the active design with the remote service. If set to False,
+            the active design may be out-of-sync with the remote service. This is useful
+            when the active design is known to be up-to-date.
 
         Returns
         -------
@@ -177,6 +187,12 @@ class Modeler:
         """
         for _, design in self._designs.items():
             if design._is_active:
+
+                # Check if sync_with_backend is requested
+                if sync_with_backend:
+                    design._update_design_inplace()
+
+                # Return the active design
                 return design
 
         return None
@@ -399,3 +415,8 @@ class Modeler:
     def repair_tools(self) -> RepairTools:
         """Access to repair tools."""
         return self._repair_tools
+
+    @property
+    def measurement_tools(self) -> MeasurementTools:
+        """Access to measurement tools."""
+        return self._measurement_tools
