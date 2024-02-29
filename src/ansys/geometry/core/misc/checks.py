@@ -305,14 +305,18 @@ def check_type_all_elements_in_iterable(
         check_type(elem, expected_type)
 
 
-def min_backend_version(method_version: str):
+def min_backend_version(major: int, minor: int, service_pack: int):
     """
     Compare a method's minimum required version to the current backend version.
 
     Parameters
     ----------
-    method_version : str
-        Minimum version required by the method.
+    major : int
+        Minimum major version required by the method.
+    minor : int
+        Minimum minor version required by the method.
+    service_pack : int
+        Minimum service pack version required by the method.
 
     Raises
     ------
@@ -327,6 +331,7 @@ def min_backend_version(method_version: str):
 
     def backend_version_decorator(method):
         def wrapper(self, *args, **kwargs):
+            method_version = f"{major}.{minor}.{service_pack}"
             if hasattr(self, "_grpc_client"):
                 if self._grpc_client is None:
                     raise GeometryRuntimeError(
@@ -337,8 +342,9 @@ def min_backend_version(method_version: str):
                     # if comp is 1, method version is higher than backend version.
                     if comp == 1:
                         raise GeometryRuntimeError(
-                            f"The method '{method.__name__}' is not available for the "
-                            + f"current backend version {self._grpc_client.backend_version}."
+                            f"The method '{method.__name__}' requires minimum backend version"
+                            + f"{method_version}, current backend version "
+                            + f"{self._grpc_client.backend_version}."
                         )
                     else:
                         return method(self, *args, **kwargs)

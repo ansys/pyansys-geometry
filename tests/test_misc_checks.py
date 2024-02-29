@@ -204,6 +204,7 @@ def test_check_ndarray_is_not_none():
 
 
 def test_min_version_backend():
+    """Test the minimum backend version checker decorator."""
 
     class MockClient:
         def __init__(self):

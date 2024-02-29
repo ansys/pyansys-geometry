@@ -799,7 +799,7 @@ class MasterBody(IBody):
     @protect_grpc
     @check_input_types
     @reset_tessellation_cache
-    @min_backend_version("24.2.0")
+    @min_backend_version(24, 2, 0)
     def rotate(
         self,
         axis_origin: Point3D,
