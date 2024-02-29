@@ -217,20 +217,20 @@ def test_min_version_backend():
     mock_object = MockObject()
 
     # Ensure that lower and matching versions do not raise an error
-    @min_backend_version("24.0.0")
+    @min_backend_version(24, 0, 0)
     def case_lower(mock_object):
         return True
 
     assert case_lower(mock_object)
 
-    @min_backend_version("24.1.0")
+    @min_backend_version(24, 1, 0)
     def case_match(mock_object):
         return True
 
     assert case_match(mock_object)
 
     # Higher version than backend should raise an error
-    @min_backend_version("24.2.0")
+    @min_backend_version(24, 2, 0)
     def case_higher(mock_object):
         return True
 
@@ -243,7 +243,7 @@ def test_min_version_backend():
     # If client is not initialized, an error should be raised
     mock_object._grpc_client = None
 
-    @min_backend_version("24.1.0")
+    @min_backend_version(24, 1, 0)
     def case_no_client(mock_object):
         return True
 
