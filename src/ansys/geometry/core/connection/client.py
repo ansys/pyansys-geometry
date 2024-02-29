@@ -27,7 +27,6 @@ import time
 
 from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
 from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
-from ansys.api.dbu.v0.dbumodels_pb2 import VersionIdentifier
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
 from google.protobuf.empty_pb2 import Empty
@@ -185,6 +184,12 @@ class GrpcClient:
             elif grpc_backend_type == GRPCBackendType.LINUX_DMS:
                 backend_type = BackendType.LINUX_SERVICE
 
+        # Store the backend type
+        self._backend_type = backend_type
+        self._multiple_designs_allowed = (
+            False if backend_type in (BackendType.DISCOVERY, BackendType.LINUX_SERVICE) else True
+        )
+
         # retrieve the backend version
         if hasattr(grpc_backend_response, "version"):
             ver = grpc_backend_response.version
@@ -192,12 +197,6 @@ class GrpcClient:
         else:
             logger.warning("The backend version is only available after 24.1 version.")
             self._backend_version = "24.1.0"
-
-        # Store the backend type
-        self._backend_type = backend_type
-        self._multiple_designs_allowed = (
-            False if backend_type in (BackendType.DISCOVERY, BackendType.LINUX_SERVICE) else True
-        )
 
     @property
     def backend_type(self) -> BackendType:
@@ -222,7 +221,8 @@ class GrpcClient:
         Returns
         -------
         str
-            Backend version in semantic versioning format (that is, Ansys 24R1 SP2 would be ``24.1.2``).
+            Backend version in semantic versioning format (that is, Ansys 24R1 SP2
+            would be ``24.1.2``).
         """
         return self._backend_version
 
