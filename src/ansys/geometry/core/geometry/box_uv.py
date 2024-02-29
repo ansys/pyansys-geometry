@@ -50,19 +50,6 @@ class BoxUV:
         if range_v is not None:
             self._interval_v = range_v
 
-    @classmethod
-    def from_param(cls, param: ParamUV):
-        """Secondary Constructor for ``BoxUV`` using a ``ParamUV`` object type."""
-        return cls(Interval(param.u, param.u), Interval(param.v, param.v))
-
-    @classmethod
-    def from_two_params(cls, param1: ParamUV, param2: ParamUV):
-        """Secondary Constructor for ``BoxUV`` using two ``ParamUV`` object types."""
-        return cls(
-            Interval(min(param1.u, param2.u), max(param1.u, param2.u)),
-            Interval(min(param1.v, param2.v), max(param1.v, param2.v)),
-        )
-
     @property
     def interval_u(self) -> Interval:
         """``u`` interval."""
@@ -108,31 +95,6 @@ class BoxUV:
         if self.is_empty():
             return False
         return self.interval_u.is_negative(tolerance_u) or self.interval_v.is_negative(tolerance_v)
-
-    @staticmethod
-    def unite(first: "BoxUV", second: "BoxUV") -> "BoxUV":
-        """Unite of two BoxUV instances."""
-        if first.is_empty():
-            return second
-        if second.is_empty():
-            return first
-        return BoxUV(
-            Interval.unite(first.interval_u, second.interval_u),
-            Interval.unite(first.interval_v, second.interval_v),
-        )
-
-    @staticmethod
-    def intersect(first: "BoxUV", second: "BoxUV", tolerance_u: Real, tolerance_v: Real) -> "BoxUV":
-        """Get the intersection of two BoxUV instances."""
-        if first.is_empty() or second.is_empty():
-            return None  # supposed to be empty
-        intersection = BoxUV(
-            Interval.intersect(first.interval_u, second.interval_u, tolerance_u),
-            Interval.intersect(first.interval_v, second.interval_v, tolerance_v),
-        )
-        if not intersection.is_negative(tolerance_u, tolerance_v):
-            return intersection
-        return None  # supposed to be empty
 
     def contains(self, param: ParamUV) -> bool:
         """Check whether the BoxUV contains a given u and v pair parameter."""
