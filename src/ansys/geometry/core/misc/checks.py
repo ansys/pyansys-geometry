@@ -25,6 +25,8 @@ import numpy as np
 from pint import Unit
 import semver
 
+from ansys.geometry.core.logger import LOG as logger
+
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer import Design
 
@@ -341,6 +343,8 @@ def min_backend_version(method_version: str):
                         )
                     else:
                         method(self, *args, **kwargs)
+            else:
+                logger.warning("This object does not have a connection with the backend.")
 
         return wrapper
 
