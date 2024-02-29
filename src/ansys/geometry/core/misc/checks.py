@@ -25,8 +25,6 @@ import numpy as np
 from pint import Unit
 import semver
 
-from ansys.geometry.core.logger import LOG as logger
-
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer import Design
 
@@ -325,6 +323,7 @@ def min_backend_version(method_version: str):
     """
     # Lazy import to avoid circular imports
     from ansys.geometry.core.errors import GeometryRuntimeError
+    from ansys.geometry.core.logger import LOG as logger
 
     def backend_version_decorator(method):
         def wrapper(self, *args, **kwargs):
@@ -334,7 +333,7 @@ def min_backend_version(method_version: str):
                         "The client is not available. You must initialize the client first."
                     )
                 elif self._grpc_client.backend_version is not None:
-                    comp = semver.compare(method_version, self._grpc_client.backend_version)
+                    comp = semver.Version.compare(method_version, self._grpc_client.backend_version)
                     # if comp is 1, method version is higher than backend version.
                     if comp == 1:
                         raise GeometryRuntimeError(
