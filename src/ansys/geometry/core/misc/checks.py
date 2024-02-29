@@ -307,12 +307,12 @@ def check_type_all_elements_in_iterable(
 
 def min_backend_version(method_version: str):
     """
-    Compare the min version required by a method to the current backend version.
+    Compare a method's minimum required version to the current backend version.
 
     Parameters
     ----------
     method_version : str
-        The minimum version required by the method.
+        Minimum version required by the method.
 
     Raises
     ------
@@ -328,7 +328,7 @@ def min_backend_version(method_version: str):
         def wrapper(self, *args, **kwargs):
             if self._grpc_client is None:
                 raise GeometryRuntimeError(
-                    "The client is not available. Please initialize the client first."
+                    "The client is not available. You must initialize the client first."
                 )
             elif self._grpc_client.backend_version is not None:
                 comp = semver.compare(method_version, self._grpc_client.backend_version)

@@ -38,7 +38,7 @@ dependencies = [
     "scipy>=1.7.3,<2",
     "six>=1.16.0,<2",
     "vtk>=9,<10",
-    "semver>=3.0.2",
+    "semver>=3,<4",
 ]
 
 [project.optional-dependencies]
