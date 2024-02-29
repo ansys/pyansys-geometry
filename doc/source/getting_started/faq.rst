@@ -37,7 +37,7 @@ Overall, the command to install the Ansys Geometry service with the unified inst
 
 You can verify that the installation was successful by checking whether the
 product has been installed on your file directory. If you are using the default
-installation directory, the product will be installed in the following directory:
+installation directory, the product is installed in the following directory:
 
 .. code-block:: bash
 
@@ -67,8 +67,8 @@ such as the Ansys Mechanical Enterprise license, that also allow users to run
 these Ansys products. However, the Geometry service is only compatible with
 the **Discovery Modeling** license.
 
-How can I build my own Docker image for the Ansys Geometry service?
--------------------------------------------------------------------
+How to build the Docker image for the Ansys Geometry service?
+-------------------------------------------------------------
 
 .. note::
 
@@ -76,7 +76,7 @@ How can I build my own Docker image for the Ansys Geometry service?
 
 To build your own Docker image for the Ansys Geometry service, users should follow
 the instructions provided in :ref:`ref_build_windows_docker_image_from_ansys_installation`. The
-resulting image will be a Windows-based Docker image that contains the Ansys Geometry
+resulting image is a Windows-based Docker image that contains the Ansys Geometry
 service.
 
 .. button-ref:: index
