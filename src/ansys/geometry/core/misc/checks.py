@@ -333,7 +333,7 @@ def min_backend_version(method_version: str):
                         "The client is not available. You must initialize the client first."
                     )
                 elif self._grpc_client.backend_version is not None:
-                    comp = semver.Version.compare(method_version, self._grpc_client.backend_version)
+                    comp = semver.compare(method_version, self._grpc_client.backend_version)
                     # if comp is 1, method version is higher than backend version.
                     if comp == 1:
                         raise GeometryRuntimeError(
@@ -341,7 +341,7 @@ def min_backend_version(method_version: str):
                             + f"current backend version {self._grpc_client.backend_version}."
                         )
                     else:
-                        method(self, *args, **kwargs)
+                        return method(self, *args, **kwargs)
             else:
                 logger.warning("This object does not have a connection with the backend.")
 
