@@ -41,7 +41,7 @@ class LocationUV(Enum):
 
 
 class BoxUV:
-    """BoxUV class."""
+    """Provides the implementation for ``BoxUV`` class."""
 
     def __init__(self, range_u: Interval = None, range_v: Interval = None) -> None:
         """Root constructor for BoxUV."""
@@ -52,12 +52,12 @@ class BoxUV:
 
     @classmethod
     def from_param(cls, param: ParamUV):
-        """Secondary constructor for BoxUV using a ParamUV object type."""
+        """Secondary Constructor for ``BoxUV`` using a ``ParamUV`` object type."""
         return cls(Interval(param.u, param.u), Interval(param.v, param.v))
 
     @classmethod
     def from_two_params(cls, param1: ParamUV, param2: ParamUV):
-        """Secondary constructor for BoxUV using two ParamUV object types."""
+        """Secondary Constructor for ``BoxUV`` using two ``ParamUV`` object types."""
         return cls(
             Interval(min(param1.u, param2.u), max(param1.u, param2.u)),
             Interval(min(param1.v, param2.v), max(param1.v, param2.v)),
@@ -100,7 +100,7 @@ class BoxUV:
         )
 
     def get_center(self) -> ParamUV:
-        """Evaluate the BoxUV in the middle."""
+        """Evaluate the this ``BoxUV`` in the center."""
         return self.proportion(0.5, 0.5)
 
     def is_negative(self, tolerance_u: Real, tolerance_v: Real) -> bool:

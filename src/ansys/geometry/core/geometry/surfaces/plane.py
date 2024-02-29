@@ -53,7 +53,7 @@ class PlaneSurface(Surface):
     Parameters
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D],
-        Centered origin of the torus.
+        Centered origin of the plane.
     reference : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         X-axis direction.
     axis : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
@@ -106,7 +106,7 @@ class PlaneSurface(Surface):
         )
 
     def contains_param(self, param_uv: ParamUV) -> bool:
-        """Check whether the plane contains a u and v pair point."""
+        """Test whether a ``ParamUV`` is within the parametric range of the surface."""
         raise NotImplementedError("contains_param() is not implemented.")
 
     def contains_point(self, point: Point3D) -> bool:

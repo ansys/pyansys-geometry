@@ -28,7 +28,7 @@ from ansys.geometry.core.math import Matrix44, Point3D
 
 
 class Surface(ABC):
-    """Surface abstract base class."""
+    """Provides the abstract base class for a 3D surface."""
 
     @abstractmethod
     def parameterization(self) -> tuple[Parameterization, Parameterization]:

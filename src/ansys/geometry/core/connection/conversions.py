@@ -540,7 +540,7 @@ def curve_to_grpc_curve(curve: Curve) -> GRPCCurve:
     Returns
     -------
     GRPCCurve
-        Geometry service gRPC CurveGeometry message.
+        Return the ``Curve`` as a ``ansys.api.geometry.CurveGeometry`` message.
     """
     grpc_curve = None
     origin = point3d_to_grpc_point(curve.origin)

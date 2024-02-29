@@ -251,7 +251,7 @@ class Interval:
 
     def is_negative(self, tolerance: Real) -> bool:
         """
-        Whether the current interval is negative.
+        Boolean value that indicates whether the current interval is negative.
 
         Parameters
         ----------
@@ -268,7 +268,7 @@ class Interval:
     @staticmethod
     def unite(first: "Interval", second: "Interval") -> "Interval":
         """
-        Unite two intervals.
+        Get the union of two intervals.
 
         Parameters
         ----------
@@ -345,8 +345,7 @@ class Interval:
 
     def contains(self, t: Real) -> bool:
         """
-        Check if the interval contains value ``t`` using the default ``length_accuracy``
-        constant.
+        Check if interval contains value ``t`` using default ``length_accuracy``.
 
         Parameters
         ----------

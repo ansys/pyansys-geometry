@@ -131,7 +131,7 @@ class TrimmedSurface:
 
     def evaluate_proportion(self, u: Real, v: Real) -> SurfaceEvaluation:
         """
-        Evaluate the surface at proportional u and v values.
+        Evaluate the surface at proportional u and v parameters.
 
         Parameters
         ----------
