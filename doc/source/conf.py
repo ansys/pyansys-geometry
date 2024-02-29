@@ -69,6 +69,7 @@ switcher_version = get_version_match(__version__)
 html_logo = pyansys_logo_black
 html_theme = "ansys_sphinx_theme"
 html_short_title = html_title = "PyAnsys Geometry"
+html_baseurl = f"https://{cname}/version/stable"
 
 # specify the location of your github repo
 html_context = {
@@ -197,7 +198,7 @@ autoapi_template_dir = get_autoapi_templates_dir_relative_path(Path(__file__))
 suppress_warnings = ["autoapi.python_import_resolution", "design.grid"]
 autoapi_python_use_implicit_namespaces = True
 autoapi_keep_files = True
-autoapi_render_in_single_page = ["class", "enum", "exception"]
+autoapi_own_page_level = "class"
 
 # Examples gallery customization
 nbsphinx_execute = "always"

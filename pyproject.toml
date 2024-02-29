@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "ansys-api-geometry==0.3.6",
+    "ansys-api-geometry==0.3.8",
     "ansys-tools-path>=0.3,<1",
     "beartype>=0.11.0,<1",
     "google-api-python-client>=1.7.11,<3",
@@ -49,16 +49,16 @@ all = [
 tests = [
     "ansys-platform-instancemanagement==1.1.2",
     "ansys-tools-path==0.4.1",
-    "beartype==0.17.1",
+    "beartype==0.17.2",
     "docker==7.0.0",
-    "google-api-python-client==2.117.0",
+    "google-api-python-client==2.119.0",
     "googleapis-common-protos==1.62.0",
-    "grpcio==1.60.1",
+    "grpcio==1.62.0",
     "grpcio-health-checking==1.60.0",
     "numpy==1.26.4",
     "Pint==0.23",
     "protobuf==4.25.1",
-    "pytest==8.0.0",
+    "pytest==8.0.2",
     "pytest-cov==4.1.0",
     "pytest-pyvista==0.1.9",
     "pytest-xvfb==3.0.0",
@@ -69,7 +69,7 @@ tests = [
     "vtk==9.3.0",
 ]
 doc = [
-    "ansys-sphinx-theme==0.13.4",
+    "ansys-sphinx-theme==0.14.0",
     "docker==7.0.0",
     "ipyvtklink==0.2.3",
     "jupyter_sphinx==0.5.3",
@@ -83,7 +83,7 @@ doc = [
     "pyvista[jupyter]==0.43.3",
     "requests==2.31.0",
     "sphinx==7.2.6",
-    "sphinx-autoapi==3.0.0",            # "sphinx-autoapi @ git+https://github.com/jorgepiloto/sphinx-autoapi@feat/single-page-option", ---> Installed directly in workflow
+    "sphinx-autoapi==3.1.a2",
     "sphinx-autodoc-typehints==1.24.0",
     "sphinx-copybutton==0.5.2",
     "sphinx_design==0.5.0",

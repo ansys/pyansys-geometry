@@ -1,3 +1,5 @@
+# hadolint shell = cmd.exe
+#
 # Geometry service Windows-based Dockerfile
 #
 # Based on mcr.microsoft.com/dotnet/framework/runtime:4.7.2-windowsservercore-ltsc2019
@@ -15,10 +17,12 @@ WORKDIR /app
 
 # Add the binary files from the latest release
 COPY windows-binaries.zip .
-RUN mkdir tmp_folder && tar -xf windows-binaries.zip -C tmp_folder
-RUN xcopy "tmp_folder\DockerWindows\bin\x64\Release_Headless\net472\*" ".\" /s /e /i /h
-RUN xcopy "tmp_folder\DockerWindows\*" ".\"
-RUN del windows-binaries.zip && rmdir /s /q tmp_folder
+RUN mkdir tmp_folder && \
+    tar -xf windows-binaries.zip -C tmp_folder && \
+    xcopy tmp_folder\DockerWindows\bin\x64\Release_Headless\net472\* . /e /i /h && \
+    xcopy tmp_folder\DockerWindows\* . && \
+    del windows-binaries.zip && \
+    rmdir /s /q tmp_folder
 
 # Defining environment variables
 ENV LICENSE_SERVER=""

@@ -10,7 +10,7 @@ updates:
     assignees:
       - "pyansys-ci-bot"
     commit-message:
-      prefix: "MAINT"
+      prefix: "build"
     groups:
        grpc-deps:
           patterns:
