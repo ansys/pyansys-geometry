@@ -342,8 +342,8 @@ def min_backend_version(major: int, minor: int, service_pack: int):
                     # if comp is 1, method version is higher than backend version.
                     if comp == 1:
                         raise GeometryRuntimeError(
-                            f"The method '{method.__name__}' requires minimum backend version"
-                            + f"{method_version}, current backend version "
+                            f"The method '{method.__name__}' requires a minimum backend version of "
+                            + f"{method_version}, and the current backend version is "
                             + f"{self._grpc_client.backend_version}."
                         )
                     else:

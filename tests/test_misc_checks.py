@@ -236,7 +236,7 @@ def test_min_version_backend():
 
     with pytest.raises(
         GeometryRuntimeError,
-        match="The method 'case_higher' is not available for the current backend version 24.1.0.",
+        match="The method 'case_higher' requires a minimum backend version of 24.2.0, and the current backend version is 24.1.0.",  # noqa: E501
     ):
         case_higher(mock_object)
 
