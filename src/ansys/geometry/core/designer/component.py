@@ -30,6 +30,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     CreateExtrudedBodyFromFaceProfileRequest,
     CreateExtrudedBodyRequest,
     CreatePlanarBodyRequest,
+    CreateSphereBodyRequest,
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
@@ -491,6 +492,40 @@ class Component:
         self._grpc_client.log.debug(f"Extruding from face provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBodyFromFaceProfile(request)
 
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
+        self._master_component.part.bodies.append(tb)
+        return Body(response.id, response.name, self, tb)
+
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    def create_sphere_body(self, name: str, center: Point3D, radius: float) -> Body:
+        """
+        Create a sphere body defined by the center point and the radius.
+
+        Parameters:
+            name (str): The name of the sphere body.
+            center (Point3D): The center point of the sphere.
+            radius (float): The radius of the sphere in meters.
+
+        Returns:
+            Body: The created sphere body object.
+
+        Example:
+            # Assuming 'design' is an instance of a Design object
+            from ansys.geometry import Point3D
+
+            center_point = Point3D(0, 0, 0)
+            sphere_body = design.create_sphere_body(name="my_sphere",
+                center=center_point,
+                radius=10.0)
+        """
+        request = CreateSphereBodyRequest(
+            name=name, parent=self.id, center=point3d_to_grpc_point(center), radius=radius
+        )
+
+        self._grpc_client.log.debug(f"Creating a sphere body on {self.id} .")
+        response = self._bodies_stub.CreateSphereBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
