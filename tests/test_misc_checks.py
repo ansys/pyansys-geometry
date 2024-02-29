@@ -23,6 +23,7 @@
 import numpy as np
 import pytest
 
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math import Point3D
 from ansys.geometry.core.misc import (
     UNITS,
@@ -33,6 +34,7 @@ from ansys.geometry.core.misc import (
     check_pint_unit_compatibility,
     check_type,
     check_type_equivalence,
+    min_backend_version,
 )
 
 
@@ -199,3 +201,53 @@ def test_check_ndarray_is_not_none():
     # This raises no error
     check_ndarray_is_not_none(arr_num)
     check_ndarray_is_not_none(arr_strs)
+
+
+def test_min_version_backend():
+
+    class MockClient:
+        def __init__(self):
+            self.backend_version = "24.1.0"
+
+    class MockObject:
+        def __init__(self):
+            self._grpc_client = MockClient()
+
+    mock_object = MockObject()
+
+    # Ensure that lower and matching versions do not raise an error
+    @min_backend_version("24.0.0")
+    def case_lower(mock_object):
+        return True
+
+    assert case_lower(mock_object)
+
+    @min_backend_version("24.1.0")
+    def case_match(mock_object):
+        return True
+
+    assert case_match(mock_object)
+
+    # Higher version than backend should raise an error
+    @min_backend_version("24.2.0")
+    def case_higher(mock_object):
+        return True
+
+    with pytest.raises(
+        GeometryRuntimeError,
+        match="The method 'case_higher' is not available for the current backend version 24.1.0.",
+    ):
+        case_higher(mock_object)
+
+    # If client is not initialized, an error should be raised
+    mock_object._grpc_client = None
+
+    @min_backend_version("24.1.0")
+    def case_no_client(mock_object):
+        return True
+
+    with pytest.raises(
+        GeometryRuntimeError,
+        match="The client is not available. You must initialize the client first.",
+    ):
+        case_no_client(mock_object)
