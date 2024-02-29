@@ -326,20 +326,21 @@ def min_backend_version(method_version: str):
 
     def backend_version_decorator(method):
         def wrapper(self, *args, **kwargs):
-            if self._grpc_client is None:
-                raise GeometryRuntimeError(
-                    "The client is not available. You must initialize the client first."
-                )
-            elif self._grpc_client.backend_version is not None:
-                comp = semver.compare(method_version, self._grpc_client.backend_version)
-                # if comp is 1, method version is higher than backend version.
-                if comp == 1:
+            if hasattr(self, "_grpc_client"):
+                if self._grpc_client is None:
                     raise GeometryRuntimeError(
-                        f"The method '{method.__name__}' is not available for the "
-                        + f"current backend version {self._grpc_client.backend_version}."
+                        "The client is not available. You must initialize the client first."
                     )
-                else:
-                    method(self, *args, **kwargs)
+                elif self._grpc_client.backend_version is not None:
+                    comp = semver.compare(method_version, self._grpc_client.backend_version)
+                    # if comp is 1, method version is higher than backend version.
+                    if comp == 1:
+                        raise GeometryRuntimeError(
+                            f"The method '{method.__name__}' is not available for the "
+                            + f"current backend version {self._grpc_client.backend_version}."
+                        )
+                    else:
+                        method(self, *args, **kwargs)
 
         return wrapper
 
