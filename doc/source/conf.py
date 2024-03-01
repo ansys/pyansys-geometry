@@ -111,6 +111,7 @@ html_theme_options = {
             f"pyansys-geometry-v{get_version_match(__version__).replace('.', '-')}": "PyAnsys-Geometry",  # noqa: E501
         },
     },
+    "pygment_dark_style": "monokai",
 }
 
 # Sphinx extensions
