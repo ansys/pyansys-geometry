@@ -328,8 +328,10 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, doctree, docnam
     ----------
     app : sphinx.application.Sphinx
         Sphinx application instance containing all the doc build configuration.
-    exception : Exception
-        Exception encountered during the building of the documentation.
+    doctree : sphinx.util.nodes.Node
+        The document tree.
+    docname : str
+        The document name.
     """
     import jupytext
 
