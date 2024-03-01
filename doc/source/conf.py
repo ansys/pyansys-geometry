@@ -111,7 +111,6 @@ html_theme_options = {
             f"pyansys-geometry-v{get_version_match(__version__).replace('.', '-')}": "PyAnsys-Geometry",  # noqa: E501
         },
     },
-    "pygment_dark_style": "monokai",
 }
 
 # Sphinx extensions
@@ -321,7 +320,7 @@ nitpick_ignore_regex = [
 ]
 
 
-def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception: Exception):
+def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, doctree, docname):
     """
     Convert notebooks to scripts.
 
@@ -350,4 +349,4 @@ def setup(app: sphinx.application.Sphinx):
     """
     # Convert notebooks into Python scripts and include them in the output files
     if BUILD_EXAMPLES:
-        app.connect("build-finished", convert_notebooks_to_scripts)
+        app.connect("doctree-resolved", convert_notebooks_to_scripts)
