@@ -15,6 +15,7 @@
     font-size: 1em;
 }
 
+/* Expand cell content output to the width of the notebook */
 div.nbinput.container div.input_area, div.nboutput.container div.output_area {
     display: block;
 }
