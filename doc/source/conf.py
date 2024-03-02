@@ -347,7 +347,7 @@ def setup(app: sphinx.application.Sphinx):
     Parameters
     ----------
     app : sphinx.application.Sphinx
-        Sphinx application instance containing all the doc build configuration.
+        Sphinx instance containing all the configuration for the documentation build.
     """
     # Convert notebooks into Python scripts and include them in the output files
     if BUILD_EXAMPLES:
