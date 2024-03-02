@@ -38,18 +38,6 @@ goto end
 :html
 %SPHINXBUILD% -M html %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 %SPHINXBUILD% -M linkcheck %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
-goto build-examples-py
-
-:build-examples-py
-cd "%BUILDDIR%\html\examples"
-for /d %%D in (*) do (
-Echo Processing examples folder... %%D
-cd %%D
-for %%f in (*.ipynb) do (
-	jupytext --to py "%%f"
-)
-cd ../
-)
 goto end
 
 :pdf
