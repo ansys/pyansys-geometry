@@ -327,11 +327,11 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, doctree, docnam
     Parameters
     ----------
     app : sphinx.application.Sphinx
-        Sphinx application instance containing all the doc build configuration.
+        Sphinx instance containing all the configuration for the documentation build.
     doctree : sphinx.util.nodes.Node
-        The document tree.
+        Sphinx document tree.
     docname : str
-        The document name.
+        Sphinx document name.
     """
     import jupytext
 
