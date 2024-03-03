@@ -12,6 +12,39 @@ Design Language (APDL), Ansys Fluent, and other Ansys products.
 You can use PyAnsys libraries within a Python environment of your choice
 in conjunction with external Python libraries.
 
+How is the Ansys Geometry Service installed?
+--------------------------------------------
+
+.. note::
+
+   This question is answered in https://github.com/ansys/pyansys-geometry/issues/1022 and
+   https://github.com/ansys/pyansys-geometry/discussions/883
+
+The Ansys Geometry service is available as a standalone service and it is installed
+through the Ansys unified installer or the automated installer. Both are available
+for download from the `Ansys Customer Portal <https://download.ansys.com/>`_.
+
+When using the automated installer, the Ansys Geometry service is installed by default.
+
+However, when using the unified installer, it is necessary to pass in the ``-geometryservice``
+flag to install it.
+
+Overall, the command to install the Ansys Geometry service with the unified installer is:
+
+.. code-block:: bash
+
+   setup.exe -silent -geometryservice
+
+You can verify that the installation was successful by checking whether the
+product has been installed on your file directory. If you are using the default
+installation directory, the product is installed in the following directory:
+
+.. code-block:: bash
+
+   C:\Program Files\ANSYS Inc\vXXX\GeometryService
+
+Where ``vXXX`` is the Ansys version that you have installed.
+
 What Ansys license is needed to run the Geometry service?
 ---------------------------------------------------------
 
@@ -33,6 +66,18 @@ The **Discovery Modeling** license is one of these licenses, but there are other
 such as the Ansys Mechanical Enterprise license, that also allow users to run
 these Ansys products. However, the Geometry service is only compatible with
 the **Discovery Modeling** license.
+
+How to build the Docker image for the Ansys Geometry service?
+-------------------------------------------------------------
+
+.. note::
+
+   This question is answered in https://github.com/ansys/pyansys-geometry/discussions/883
+
+To build your own Docker image for the Ansys Geometry service, users should follow
+the instructions provided in :ref:`ref_build_windows_docker_image_from_ansys_installation`. The
+resulting image is a Windows-based Docker image that contains the Ansys Geometry
+service.
 
 .. button-ref:: index
     :ref-type: doc

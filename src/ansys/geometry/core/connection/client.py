@@ -169,9 +169,12 @@ class GrpcClient:
 
         self._admin_stub = AdminStub(self._channel)
 
+        # retrieve the backend information
+        grpc_backend_response = self._admin_stub.GetBackend(Empty())
+
         # if no backend type has been specified, ask the backend which type it is
         if backend_type == None:
-            grpc_backend_type = self._admin_stub.GetBackend(Empty()).type
+            grpc_backend_type = grpc_backend_response.type
             if grpc_backend_type == GRPCBackendType.DISCOVERY:
                 backend_type = BackendType.DISCOVERY
             elif grpc_backend_type == GRPCBackendType.SPACECLAIM:
@@ -187,6 +190,14 @@ class GrpcClient:
             False if backend_type in (BackendType.DISCOVERY, BackendType.LINUX_SERVICE) else True
         )
 
+        # retrieve the backend version
+        if hasattr(grpc_backend_response, "version"):
+            ver = grpc_backend_response.version
+            self._backend_version = f"{ver.major_release}.{ver.minor_release}.{ver.service_pack}"
+        else:
+            logger.warning("The backend version is only available after 24.1 version.")
+            self._backend_version = "24.1.0"
+
     @property
     def backend_type(self) -> BackendType:
         """
@@ -201,6 +212,19 @@ class GrpcClient:
         not straightforward.
         """
         return self._backend_type
+
+    @property
+    def backend_version(self) -> str:
+        """
+        Get the current backend version.
+
+        Returns
+        -------
+        str
+            Backend version in semantic versioning format (that is, Ansys 24R1 SP2
+            would be ``24.1.2``).
+        """
+        return self._backend_version
 
     @property
     def multiple_designs_allowed(self) -> bool:
