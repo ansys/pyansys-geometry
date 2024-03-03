@@ -28,9 +28,9 @@ from pint import Quantity
 import pyvista as pv
 from scipy.spatial.transform import Rotation as spatial_rotation
 
-from ansys.geometry.core.geometry import Ellipse
 from ansys.geometry.core.math import Matrix33, Matrix44, Plane, Point2D, Point3D, Vector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
+from ansys.geometry.core.shapes import Ellipse
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
 

@@ -38,18 +38,18 @@ from ansys.api.geometry.v0.models_pb2 import Tessellation
 from ansys.api.geometry.v0.models_pb2 import TrimmedCurve as GRPCTrimmedCurve
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple
 
-from ansys.geometry.core.geometry.curves.circle import Circle
-from ansys.geometry.core.geometry.curves.curve import Curve
-from ansys.geometry.core.geometry.curves.ellipse import Ellipse
-from ansys.geometry.core.geometry.curves.line import Line
-from ansys.geometry.core.geometry.surfaces.cone import Cone
-from ansys.geometry.core.geometry.surfaces.cylinder import Cylinder
-from ansys.geometry.core.geometry.surfaces.plane import PlaneSurface
-from ansys.geometry.core.geometry.surfaces.sphere import Sphere
-from ansys.geometry.core.geometry.surfaces.surface import Surface
-from ansys.geometry.core.geometry.surfaces.torus import Torus
 from ansys.geometry.core.math import Frame, Matrix44, Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS
+from ansys.geometry.core.shapes.curves.circle import Circle
+from ansys.geometry.core.shapes.curves.curve import Curve
+from ansys.geometry.core.shapes.curves.ellipse import Ellipse
+from ansys.geometry.core.shapes.curves.line import Line
+from ansys.geometry.core.shapes.surfaces.cone import Cone
+from ansys.geometry.core.shapes.surfaces.cylinder import Cylinder
+from ansys.geometry.core.shapes.surfaces.plane import PlaneSurface
+from ansys.geometry.core.shapes.surfaces.sphere import Sphere
+from ansys.geometry.core.shapes.surfaces.surface import Surface
+from ansys.geometry.core.shapes.surfaces.torus import Torus
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.circle import SketchCircle
 from ansys.geometry.core.sketch.edge import SketchEdge
@@ -62,7 +62,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from pyvista import PolyData
 
     from ansys.geometry.core.designer import SurfaceType
-    from ansys.geometry.core.geometry.curves.trimmed_curve import TrimmedCurve
+    from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 
 
 def unit_vector_to_grpc_direction(unit_vector: UnitVector3D) -> GRPCDirection:

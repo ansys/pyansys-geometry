@@ -41,7 +41,6 @@ from ansys.geometry.core.designer import (
 from ansys.geometry.core.designer.body import CollisionType
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.errors import GeometryExitedError
-from ansys.geometry.core.geometry.parameterization import ParamUV
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import (
     IDENTITY_MATRIX44,
@@ -56,6 +55,7 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Distance
+from ansys.geometry.core.shapes.parameterization import ParamUV
 from ansys.geometry.core.sketch import Sketch
 
 

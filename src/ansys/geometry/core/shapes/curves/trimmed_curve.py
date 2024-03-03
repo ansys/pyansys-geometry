@@ -28,10 +28,10 @@ from pint import Quantity
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import trimmed_curve_to_grpc_trimmed_curve
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.geometry.curves.curve import Curve
-from ansys.geometry.core.geometry.curves.curve_evaluation import CurveEvaluation
-from ansys.geometry.core.geometry.parameterization import Interval
 from ansys.geometry.core.math import Point3D
+from ansys.geometry.core.shapes.curves.curve import Curve
+from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
+from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.typing import Real
 
 

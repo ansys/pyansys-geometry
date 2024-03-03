@@ -26,9 +26,9 @@ import numpy as np
 from pint import Quantity
 import pyvista as pv
 
-from ansys.geometry.core.geometry import Line
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, check_ndarray_is_all_nan
+from ansys.geometry.core.shapes import Line
 from ansys.geometry.core.sketch.edge import SketchEdge
 
 

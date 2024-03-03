@@ -19,11 +19,23 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Provides the PyAnsys Geometry ``surface`` subpackage."""
-from ansys.geometry.core.geometry.surfaces.cone import Cone, ConeEvaluation
-from ansys.geometry.core.geometry.surfaces.cylinder import Cylinder, CylinderEvaluation
-from ansys.geometry.core.geometry.surfaces.plane import PlaneEvaluation, PlaneSurface
-from ansys.geometry.core.geometry.surfaces.sphere import Sphere, SphereEvaluation
-from ansys.geometry.core.geometry.surfaces.surface import Surface
-from ansys.geometry.core.geometry.surfaces.surface_evaluation import SurfaceEvaluation
-from ansys.geometry.core.geometry.surfaces.torus import Torus
+"""Provides the PyAnsys Geometry ``geometry`` subpackage."""
+
+from ansys.geometry.core.shapes.curves.circle import Circle, CircleEvaluation
+from ansys.geometry.core.shapes.curves.curve import Curve
+from ansys.geometry.core.shapes.curves.ellipse import Ellipse, EllipseEvaluation
+from ansys.geometry.core.shapes.curves.line import Line, LineEvaluation
+from ansys.geometry.core.shapes.parameterization import (
+    Interval,
+    Parameterization,
+    ParamForm,
+    ParamType,
+    ParamUV,
+)
+from ansys.geometry.core.shapes.surfaces.cone import Cone, ConeEvaluation
+from ansys.geometry.core.shapes.surfaces.cylinder import Cylinder, CylinderEvaluation
+from ansys.geometry.core.shapes.surfaces.plane import PlaneEvaluation, PlaneSurface
+from ansys.geometry.core.shapes.surfaces.sphere import Sphere, SphereEvaluation
+from ansys.geometry.core.shapes.surfaces.surface import Surface
+from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
+from ansys.geometry.core.shapes.surfaces.torus import Torus

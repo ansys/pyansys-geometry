@@ -22,7 +22,7 @@
 """Provides the ``BoxUV`` class."""
 from enum import Enum
 
-from ansys.geometry.core.geometry.parameterization import Interval, ParamUV
+from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.typing import Real
 
 

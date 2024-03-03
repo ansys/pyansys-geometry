@@ -27,17 +27,17 @@ import pytest
 from ansys.geometry.core.connection import BackendType, point3d_to_grpc_point
 from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.designer.face import SurfaceType
-from ansys.geometry.core.geometry import Circle, Line
-from ansys.geometry.core.geometry.box_uv import LocationUV
-from ansys.geometry.core.geometry.curves.trimmed_curve import ReversedTrimmedCurve, TrimmedCurve
-from ansys.geometry.core.geometry.parameterization import Interval
-from ansys.geometry.core.geometry.surfaces.trimmed_surface import (
-    ReversedTrimmedSurface,
-    TrimmedSurface,
-)
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.modeler import Modeler
+from ansys.geometry.core.shapes import Circle, Line
+from ansys.geometry.core.shapes.box_uv import LocationUV
+from ansys.geometry.core.shapes.curves.trimmed_curve import ReversedTrimmedCurve, TrimmedCurve
+from ansys.geometry.core.shapes.parameterization import Interval
+from ansys.geometry.core.shapes.surfaces.trimmed_surface import (
+    ReversedTrimmedSurface,
+    TrimmedSurface,
+)
 from ansys.geometry.core.sketch.sketch import Sketch
 
 """A Helper function to create a sktech line given two points and a ``Design``."""

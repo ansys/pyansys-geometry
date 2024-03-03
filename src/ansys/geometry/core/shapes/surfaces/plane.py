@@ -26,15 +26,6 @@ from beartype import beartype as check_input_types
 from beartype.typing import Tuple, Union
 import numpy as np
 
-from ansys.geometry.core.geometry.parameterization import (
-    Interval,
-    Parameterization,
-    ParamForm,
-    ParamType,
-    ParamUV,
-)
-from ansys.geometry.core.geometry.surfaces.surface import Surface
-from ansys.geometry.core.geometry.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
     UNITVECTOR3D_Z,
@@ -43,6 +34,15 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector3D,
 )
+from ansys.geometry.core.shapes.parameterization import (
+    Interval,
+    Parameterization,
+    ParamForm,
+    ParamType,
+    ParamUV,
+)
+from ansys.geometry.core.shapes.surfaces.surface import Surface
+from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.typing import Real, RealSequence
 
 

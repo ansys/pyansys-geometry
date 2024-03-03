@@ -23,12 +23,12 @@
 
 from beartype.typing import TYPE_CHECKING
 
-from ansys.geometry.core.geometry.box_uv import BoxUV
-from ansys.geometry.core.geometry.parameterization import Interval, ParamUV
-from ansys.geometry.core.geometry.surfaces.surface import Surface
-from ansys.geometry.core.geometry.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.math import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.shapes.box_uv import BoxUV
+from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
+from ansys.geometry.core.shapes.surfaces.surface import Surface
+from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:

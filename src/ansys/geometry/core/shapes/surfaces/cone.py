@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Provides for creating and managing a cylinder."""
+"""Provides for creating and managing a cone."""
 
 from functools import cached_property
 
@@ -28,17 +28,6 @@ from beartype.typing import Tuple, Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.geometry.curves.circle import Circle
-from ansys.geometry.core.geometry.curves.line import Line
-from ansys.geometry.core.geometry.parameterization import (
-    Interval,
-    Parameterization,
-    ParamForm,
-    ParamType,
-    ParamUV,
-)
-from ansys.geometry.core.geometry.surfaces.surface import Surface
-from ansys.geometry.core.geometry.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
     UNITVECTOR3D_Z,
@@ -47,20 +36,32 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector3D,
 )
-from ansys.geometry.core.misc import Distance
+from ansys.geometry.core.misc import Angle, Distance
+from ansys.geometry.core.shapes.curves.line import Line
+from ansys.geometry.core.shapes.parameterization import (
+    Interval,
+    Parameterization,
+    ParamForm,
+    ParamType,
+    ParamUV,
+)
+from ansys.geometry.core.shapes.surfaces.surface import Surface
+from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.typing import Real, RealSequence
 
 
-class Cylinder(Surface):
+class Cone(Surface):
     """
-    Provides 3D cylinder representation.
+    Provides 3D cone representation.
 
     Parameters
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D]
-        Origin of the cylinder.
+        Origin of the cone.
     radius : Union[Quantity, Distance, Real]
-        Radius of the cylinder.
+        Radius of the cone.
+    half_angle : Union[Quantity, Angle, Real]
+        Half angle of the apex, determining the upward angle.
     reference : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         X-axis direction.
     axis : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
@@ -72,202 +73,194 @@ class Cylinder(Surface):
         self,
         origin: Union[np.ndarray, RealSequence, Point3D],
         radius: Union[Quantity, Distance, Real],
+        half_angle: Union[Quantity, Angle, Real],
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
-        """Initialize the ``Cylinder`` class."""
+        """Initialize the ``Cone`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
         self._reference = (
             UnitVector3D(reference) if not isinstance(reference, UnitVector3D) else reference
         )
         self._axis = UnitVector3D(axis) if not isinstance(axis, UnitVector3D) else axis
-        self._axis = UnitVector3D(axis) if not isinstance(axis, UnitVector3D) else axis
         if not self._reference.is_perpendicular_to(self._axis):
-            raise ValueError("Cylinder reference (dir_x) and axis (dir_z) must be perpendicular.")
+            raise ValueError("Cone reference (dir_x) and axis (dir_z) must be perpendicular.")
 
         self._radius = radius if isinstance(radius, Distance) else Distance(radius)
         if self._radius.value <= 0:
             raise ValueError("Radius must be a real positive value.")
 
+        self._half_angle = half_angle if isinstance(half_angle, Angle) else Angle(half_angle)
+
     @property
     def origin(self) -> Point3D:
-        """Origin of the cylinder."""
+        """Origin of the cone."""
         return self._origin
 
     @property
     def radius(self) -> Quantity:
-        """Radius of the cylinder."""
+        """Radius of the cone."""
         return self._radius.value
 
     @property
+    def half_angle(self) -> Quantity:
+        """Half angle of the apex."""
+        return self._half_angle.value
+
+    @property
     def dir_x(self) -> UnitVector3D:
-        """X-direction of the cylinder."""
+        """X-direction of the cone."""
         return self._reference
 
     @property
     def dir_y(self) -> UnitVector3D:
-        """Y-direction of the cylinder."""
+        """Y-direction of the cone."""
         return self.dir_z.cross(self.dir_x)
 
     @property
     def dir_z(self) -> UnitVector3D:
-        """Z-direction of the cylinder."""
+        """Z-direction of the cone."""
         return self._axis
 
-    def surface_area(self, height: Union[Quantity, Distance, Real]) -> Quantity:
+    @property
+    def height(self) -> Quantity:
+        """Height of the cone."""
+        return np.abs(self.radius / np.tan(self.half_angle))
+
+    @property
+    def surface_area(self) -> Quantity:
+        """Surface area of the cone."""
+        return np.pi * self.radius * (self.radius + np.sqrt(self.height**2 + self.radius**2))
+
+    @property
+    def volume(self) -> Quantity:
+        """Volume of the cone."""
+        return np.pi * self.radius**2 * self.height / 3
+
+    def transformed_copy(self, matrix: Matrix44) -> "Cone":
         """
-        Get the surface area of the cylinder.
-
-        Notes
-        -----
-           By nature, a cylinder is infinite. If you want to get the surface area,
-           you must bound it by a height. Normally a cylinder surface is not closed
-           (does not have "caps" on the ends). This method assumes that the cylinder
-           is closed for the purpose of getting the surface area.
-
-        Parameters
-        ----------
-        height : Union[Quantity, Distance, Real]
-            Height to bound the cylinder at.
-
-        Returns
-        -------
-        Quantity
-            Surface area of the temporarily bounded cylinder.
-        """
-        height = height if isinstance(height, Distance) else Distance(height)
-        if height.value <= 0:
-            raise ValueError("Height must be a real positive value.")
-
-        return 2 * np.pi * self.radius * height.value + 2 * np.pi * self.radius**2
-
-    def volume(self, height: Union[Quantity, Distance, Real]) -> Quantity:
-        """
-        Get the volume of the cylinder.
-
-        Notes
-        -----
-           By nature, a cylinder is infinite. If you want to get the surface area,
-           you must bound it by a height. Normally a cylinder surface is not closed
-           (does not have "caps" on the ends). This method assumes that the cylinder
-           is closed for the purpose of getting the surface area.
-
-        Parameters
-        ----------
-        height : Union[Quantity, Distance, Real]
-            Height to bound the cylinder at.
-
-        Returns
-        -------
-        Quantity
-            Volume of the temporarily bounded cylinder.
-        """
-        height = height if isinstance(height, Distance) else Distance(height)
-        if height.value <= 0:
-            raise ValueError("Height must be a real positive value.")
-
-        return np.pi * self.radius**2 * height.value
-
-    def transformed_copy(self, matrix: Matrix44) -> "Cylinder":
-        """
-        Create a transformed copy of the cylinder based on a transformation matrix.
+        Create a transformed copy of the cone based on a transformation matrix.
 
         Parameters
         ----------
         matrix : Matrix44
-            4X4 transformation matrix to apply to the cylinder.
+            4x4 transformation matrix to apply to the cone.
 
         Returns
         -------
-        Cylinder
-            New cylinder that is the transformed copy of the original cylinder.
+        Cone
+            New cone that is the transformed copy of the original cone.
         """
         new_point = self.origin.transform(matrix)
         new_reference = self._reference.transform(matrix)
         new_axis = self._axis.transform(matrix)
-        return Cylinder(
+        return Cone(
             new_point,
             self.radius,
+            self.half_angle,
             UnitVector3D(new_reference[0:3]),
             UnitVector3D(new_axis[0:3]),
         )
 
-    def mirrored_copy(self) -> "Cylinder":
+    def mirrored_copy(self) -> "Cone":
         """
-        Create a mirrored copy of the cylinder along the y-axis.
+        Create a mirrored copy of the cone along the y-axis.
 
         Returns
         -------
-        Cylinder
-            New cylinder that is a mirrored copy of the original cylinder.
+        Cone
+            New cone that is a mirrored copy of the original cone.
         """
-        return Cylinder(self.origin, self.radius, -self._reference, -self._axis)
+        return Cone(self.origin, self.radius, self.half_angle, -self._reference, -self._axis)
+
+    @property
+    def apex(self) -> Point3D:
+        """Apex point of the cone."""
+        return self.origin + self.apex_param * self.dir_z
+
+    @property
+    def apex_param(self) -> Real:
+        """Apex parameter of the cone."""
+        return -np.abs(self.radius.m) / np.tan(self.half_angle.m)
 
     @check_input_types
-    def __eq__(self, other: "Cylinder") -> bool:
-        """Equals operator for the ``Cylinder`` class."""
+    def __eq__(self, other: "Cone") -> bool:
+        """Equals operator for the ``Cone`` class."""
         return (
             self._origin == other._origin
             and self._radius == other._radius
+            and self._half_angle == other._half_angle
             and self._reference == other._reference
             and self._axis == other._axis
         )
 
-    def evaluate(self, parameter: ParamUV) -> "CylinderEvaluation":
+    def evaluate(self, parameter: ParamUV) -> "ConeEvaluation":
         """
-        Evaluate the cylinder at the given parameters.
+        Evaluate the cone at given parameters.
 
         Parameters
         ----------
         parameter : ParamUV
-            Parameters (u,v) to evaluate the cylinder at.
+            Parameters (u,v) to evaluate the cone at.
 
         Returns
         -------
-        CylinderEvaluation
+        ConeEvaluation
             Resulting evaluation.
         """
-        return CylinderEvaluation(self, parameter)
+        return ConeEvaluation(self, parameter)
 
-    def project_point(self, point: Point3D) -> "CylinderEvaluation":
+    def project_point(self, point: Point3D) -> "ConeEvaluation":
         """
-        Project a point onto the cylinder and evaluate the cylinder.
+        Project a point onto the cone and evaluate the cone.
 
         Parameters
         ----------
         point : Point3D
-            Point to project onto the cylinder.
+            Point to project onto the cone.
 
         Returns
         -------
-        CylinderEvaluation
+        ConeEvaluation
             Resulting evaluation.
         """
-        circle = Circle(self.origin, self.radius, self.dir_x, self.dir_z)
-        u = circle.project_point(point).parameter
+        u = np.arctan2(self.dir_y.dot(point - self.origin), self.dir_x.dot(point - self.origin))
+        while u < 0:
+            u += 2 * np.pi
+        while u > 2 * np.pi:
+            u -= 2 * np.pi
+        axis = Line(self.origin, self.dir_z)
+        line_eval = axis.project_point(point)
+        v = line_eval.parameter
 
-        line = Line(self.origin, self.dir_z)
-        v = line.project_point(point).parameter
+        cone_radius = self.radius.m + v * np.tan(self.half_angle.m)
+        point_radius = np.linalg.norm(point - line_eval.position)
+        dist_to_cone = (point_radius - cone_radius) * np.cos(self.half_angle.m)
+        v += dist_to_cone * np.sin(self.half_angle.m)
 
-        return CylinderEvaluation(self, ParamUV(u, v))
+        return ConeEvaluation(self, ParamUV(u, v))
 
     def parameterization(self) -> Tuple[Parameterization, Parameterization]:
         """
-        Parameterize the cylinder surface as a tuple (U and V respectively).
+        Parameterize the cone surface as a tuple (U and V respectively).
 
         The U parameter specifies the clockwise angle around the axis (right-hand
         corkscrew law), with a zero parameter at ``dir_x`` and a period of 2*pi.
 
         The V parameter specifies the distance along the axis, with a zero parameter at
-        the XY plane of the cylinder.
+        the XY plane of the cone.
 
         Returns
         -------
         Tuple[Parameterization, Parameterization]
-            Information about how a cylinder's u and v parameters are parameterized, respectively.
+            Information about how a cone's u and v parameters are parameterized, respectively.
         """
         u = Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
-        v = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(np.NINF, np.inf))
+
+        start, end = (
+            (self.apex_param, np.inf) if self.apex_param < 0 else (np.NINF, self.apex_param)
+        )
+        v = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(start, end))
 
         return (u, v)
 
@@ -278,27 +271,27 @@ class Cylinder(Surface):
         raise NotImplementedError("contains_point() is not implemented.")
 
 
-class CylinderEvaluation(SurfaceEvaluation):
+class ConeEvaluation(SurfaceEvaluation):
     """
-    Provides evaluation of a cylinder at given parameters.
+    Evaluate the cone at given parameters.
 
     Parameters
     ----------
-    cylinder: ~ansys.geometry.core.primitives.cylinder.Cylinder
-        Cylinder to evaluate.
+    cone: ~ansys.geometry.core.primitives.cone.Cone
+        Cone to evaluate.
     parameter: ParamUV
-        Parameters (u, v) to evaluate the cylinder at.
+        Pparameters (u, v) to evaluate the cone at.
     """
 
-    def __init__(self, cylinder: Cylinder, parameter: ParamUV) -> None:
-        """Initialize the ``CylinderEvaluation`` class."""
-        self._cylinder = cylinder
+    def __init__(self, cone: Cone, parameter: ParamUV) -> None:
+        """Initialize the ``ConeEvaluation`` class."""
+        self._cone = cone
         self._parameter = parameter
 
     @property
-    def cylinder(self) -> Cylinder:
-        """Cylinder being evaluated."""
-        return self._cylinder
+    def cone(self) -> Cone:
+        """Cone being evaluated."""
+        return self._cone
 
     @property
     def parameter(self) -> ParamUV:
@@ -313,12 +306,12 @@ class CylinderEvaluation(SurfaceEvaluation):
         Returns
         -------
         Point3D
-            Point that lies on the cylinder at this evaluation.
+            Point that lies on the cone at this evaluation.
         """
         return (
-            self.cylinder.origin
-            + self.cylinder.radius.m * self.__cylinder_normal
-            + self.parameter.v * self.cylinder.dir_z
+            self.cone.origin
+            + self.parameter.v * self.cone.dir_z
+            + self.__radius_v * self.__cone_normal
         )
 
     @cached_property
@@ -329,31 +322,30 @@ class CylinderEvaluation(SurfaceEvaluation):
         Returns
         -------
         UnitVector3D
-            Normal unit vector to the cylinder at this evaluation.
+            Normal unit vector to the cone at this evaluation.
         """
-        return UnitVector3D(self.__cylinder_normal)
-
-    @cached_property
-    def __cylinder_normal(self) -> Vector3D:
-        """
-        Normal to the surface.
-
-        Returns
-        -------
-        UnitVector3D
-            Normal unit vector to the cylinder at this evaluation.
-        """
-        return (
-            np.cos(self.parameter.u) * self.cylinder.dir_x
-            + np.sin(self.parameter.u) * self.cylinder.dir_y
+        return UnitVector3D(
+            self.__cone_normal * np.cos(self.cone.half_angle.m)
+            - self.cone.dir_z * np.sin(self.cone.half_angle.m)
         )
 
     @cached_property
-    def __cylinder_tangent(self) -> Vector3D:
+    def __radius_v(self) -> Real:
+        """Private radius helper method."""
+        return self.cone.radius.m + self.parameter.v * np.tan(self.cone.half_angle.m)
+
+    @cached_property
+    def __cone_normal(self) -> Vector3D:
+        """Private normal helper method."""
+        return (
+            np.cos(self.parameter.u) * self.cone.dir_x + np.sin(self.parameter.u) * self.cone.dir_y
+        )
+
+    @cached_property
+    def __cone_tangent(self) -> Vector3D:
         """Private tangent helper method."""
         return (
-            -np.sin(self.parameter.u) * self.cylinder.dir_x
-            + np.cos(self.parameter.u) * self.cylinder.dir_y
+            -np.sin(self.parameter.u) * self.cone.dir_x + np.cos(self.parameter.u) * self.cone.dir_y
         )
 
     @cached_property
@@ -366,7 +358,7 @@ class CylinderEvaluation(SurfaceEvaluation):
         Vector3D
             First derivative with respect to the U parameter.
         """
-        return self.cylinder.radius.m * self.__cylinder_tangent
+        return self.__radius_v * self.__cone_tangent
 
     @cached_property
     def v_derivative(self) -> Vector3D:
@@ -378,7 +370,7 @@ class CylinderEvaluation(SurfaceEvaluation):
         Vector3D
             First derivative with respect to the V parameter.
         """
-        return self.cylinder.dir_z
+        return self.cone.dir_z + np.tan(self.cone.half_angle.m) * self.__cone_normal
 
     @cached_property
     def uu_derivative(self) -> Vector3D:
@@ -390,7 +382,7 @@ class CylinderEvaluation(SurfaceEvaluation):
         Vector3D
             Second derivative with respect to the U parameter.
         """
-        return -self.cylinder.radius.m * self.__cylinder_normal
+        return -self.__radius_v * self.__cone_normal
 
     @cached_property
     def uv_derivative(self) -> Vector3D:
@@ -400,9 +392,9 @@ class CylinderEvaluation(SurfaceEvaluation):
         Returns
         -------
         Vector3D
-            Second derivative with respect to the U and v parameters.
+            Second derivative with respect to U and V parameters.
         """
-        return Vector3D([0, 0, 0])
+        return np.tan(self.cone.half_angle.m) * self.__cone_tangent
 
     @cached_property
     def vv_derivative(self) -> Vector3D:
@@ -419,12 +411,12 @@ class CylinderEvaluation(SurfaceEvaluation):
     @cached_property
     def min_curvature(self) -> Real:
         """
-        Minimum curvature of the cylinder.
+        Minimum curvature of the cone.
 
         Returns
         -------
         Real
-            Minimum curvature of the cylinder.
+            Minimum curvature of the cone.
         """
         return 0
 
@@ -436,21 +428,21 @@ class CylinderEvaluation(SurfaceEvaluation):
         Returns
         -------
         UnitVector3D
-            Mminimum curvature direction.
+            Minimum curvature direction.
         """
-        return UnitVector3D(self.cylinder.dir_z)
+        return UnitVector3D(self.v_derivative)
 
     @cached_property
     def max_curvature(self) -> Real:
         """
-        Maximum curvature of the cylinder.
+        Maximum curvature of the cone.
 
         Returns
         -------
         Real
-            Maximum curvature of the cylinder.
+            Maximum curvature of the cone.
         """
-        return 1.0 / self.cylinder.radius.m
+        return 1.0 / self.__radius_v
 
     @cached_property
     def max_curvature_direction(self) -> UnitVector3D:

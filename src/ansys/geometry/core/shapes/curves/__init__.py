@@ -20,8 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides the PyAnsys Geometry ``curve`` subpackage."""
-from ansys.geometry.core.geometry.curves.circle import Circle, CircleEvaluation
-from ansys.geometry.core.geometry.curves.curve import Curve
-from ansys.geometry.core.geometry.curves.curve_evaluation import CurveEvaluation
-from ansys.geometry.core.geometry.curves.ellipse import Ellipse, EllipseEvaluation
-from ansys.geometry.core.geometry.curves.line import Line, LineEvaluation
+from ansys.geometry.core.shapes.curves.circle import Circle, CircleEvaluation
+from ansys.geometry.core.shapes.curves.curve import Curve
+from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
+from ansys.geometry.core.shapes.curves.ellipse import Ellipse, EllipseEvaluation
+from ansys.geometry.core.shapes.curves.line import Line, LineEvaluation

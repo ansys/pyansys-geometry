@@ -33,15 +33,15 @@ from pint import Quantity
 
 from ansys.geometry.core.connection import GrpcClient, grpc_curve_to_curve, grpc_surface_to_surface
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.geometry.curves.trimmed_curve import TrimmedCurve
-from ansys.geometry.core.geometry.parameterization import Interval
-from ansys.geometry.core.geometry.surfaces.trimmed_surface import (
-    ReversedTrimmedSurface,
-    TrimmedSurface,
-)
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
+from ansys.geometry.core.shapes.parameterization import Interval
+from ansys.geometry.core.shapes.surfaces.trimmed_surface import (
+    ReversedTrimmedSurface,
+    TrimmedSurface,
+)
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body

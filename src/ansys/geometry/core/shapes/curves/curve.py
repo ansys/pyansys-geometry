@@ -22,9 +22,9 @@
 """Provides the ``Curve`` class."""
 from abc import ABC, abstractmethod
 
-from ansys.geometry.core.geometry.curves.curve_evaluation import CurveEvaluation
-from ansys.geometry.core.geometry.parameterization import Parameterization
 from ansys.geometry.core.math import Matrix44, Point3D
+from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
+from ansys.geometry.core.shapes.parameterization import Parameterization
 from ansys.geometry.core.typing import Real
 
 

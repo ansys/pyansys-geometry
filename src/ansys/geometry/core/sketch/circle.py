@@ -26,9 +26,9 @@ from beartype.typing import Optional, Union
 from pint import Quantity
 import pyvista as pv
 
-from ansys.geometry.core.geometry.curves.circle import Circle
 from ansys.geometry.core.math import Plane, Point2D, Point3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, Distance
+from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
 
