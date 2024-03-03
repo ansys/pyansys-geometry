@@ -23,7 +23,7 @@
 from functools import cached_property
 
 from beartype import beartype as check_input_types
-from beartype.typing import Union
+from beartype.typing import Tuple, Union
 import numpy as np
 
 from ansys.geometry.core.geometry.parameterization import (
@@ -113,7 +113,7 @@ class PlaneSurface(Surface):
         """Check whether the plane contains a 3D point."""
         raise NotImplementedError("contains_point() is not implemented.")
 
-    def parameterization(self) -> tuple[Parameterization, Parameterization]:
+    def parameterization(self) -> Tuple[Parameterization, Parameterization]:
         """Parametrize the plane."""
         u = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(np.NINF, np.inf))
         v = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(np.NINF, np.inf))

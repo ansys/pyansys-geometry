@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Provides the PyGeometry ``surface`` subpackage."""
+"""Provides the PyAnsys Geometry ``surface`` subpackage."""
 from ansys.geometry.core.geometry.surfaces.cone import Cone, ConeEvaluation
 from ansys.geometry.core.geometry.surfaces.cylinder import Cylinder, CylinderEvaluation
 from ansys.geometry.core.geometry.surfaces.plane import PlaneEvaluation, PlaneSurface

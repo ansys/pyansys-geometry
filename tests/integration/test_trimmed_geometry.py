@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
+"""Tests trimmed geometry."""
 from ansys.api.geometry.v0.commands_pb2 import CreateSketchLineRequest
 import numpy as np
 import pytest
@@ -40,11 +40,16 @@ from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch.sketch import Sketch
 
+"""A Helper function to create a sktech line given two points and a ``Design``."""
+
 
 def create_sketch_line(design: Design, p1: Point3D, p2: Point3D):
     point1 = point3d_to_grpc_point(p1)
     point2 = point3d_to_grpc_point(p2)
     design._commands_stub.CreateSketchLine(CreateSketchLineRequest(point1=point1, point2=point2))
+
+
+"""A Helper function that creates the Hedgehog model."""
 
 
 def create_hedgehog(modeler: Modeler):
@@ -91,10 +96,16 @@ def create_hedgehog(modeler: Modeler):
     return design
 
 
+"""A fixture of the hedgehog design to test the surface and curve properties individually."""
+
+
 @pytest.fixture
 def hedgehog_design(modeler: Modeler):
     h = create_hedgehog(modeler)
     yield h
+
+
+"""Tests the surface properties for hedgehog"""
 
 
 def test_trimmed_surface_properties(hedgehog_design):
@@ -147,6 +158,9 @@ def test_trimmed_surface_properties(hedgehog_design):
         assert isinstance(faces[i].shape, shape_type)
         assert faces[i].shape.box_uv.interval_u == Interval(start=interval_u[0], end=interval_u[1])
         assert faces[i].shape.box_uv.interval_v == Interval(start=interval_v[0], end=interval_v[1])
+
+
+"""Tests the normal vectors for hedgehog by using the ``BoxUV`` coordinates."""
 
 
 def test_trimmed_surface_normals(hedgehog_design):
@@ -202,6 +216,9 @@ def test_trimmed_surface_normals(hedgehog_design):
         assert np.allclose(faces[i].shape.normal(corner_param.u, corner_param.v), top_right)
         corner_param = faces[i].shape.box_uv.get_corner(corners[3])
         assert np.allclose(faces[i].shape.normal(corner_param.u, corner_param.v), bottom_right)
+
+
+"""Tests the curve properties for hedgehog"""
 
 
 def test_trimmed_curve_properties(hedgehog_design):

@@ -69,6 +69,8 @@ class Edge:
         Parent body that the edge constructs.
     grpc_client : GrpcClient
         Active supporting Geometry service instance for design modeling.
+    is_reversed : bool
+        Direction of the edge.
     """
 
     def __init__(

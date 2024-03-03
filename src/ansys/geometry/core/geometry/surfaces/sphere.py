@@ -24,7 +24,7 @@
 from functools import cached_property
 
 from beartype import beartype as check_input_types
-from beartype.typing import Union
+from beartype.typing import Tuple, Union
 import numpy as np
 from pint import Quantity
 
@@ -208,7 +208,7 @@ class Sphere(Surface):
         v = np.arctan2(z, np.sqrt(x * x + y * y))
         return SphereEvaluation(self, ParamUV(u, v))
 
-    def parameterization(self) -> tuple[Parameterization, Parameterization]:
+    def parameterization(self) -> Tuple[Parameterization, Parameterization]:
         """
         Parameterization of the sphere surface as a tuple (U and V respectively).
 
@@ -221,7 +221,7 @@ class Sphere(Surface):
 
         Returns
         -------
-        tuple[Parameterization, Parameterization]
+        Tuple[Parameterization, Parameterization]
             Information about how a sphere's u and v parameters are parameterized, respectively.
         """
         u = Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))

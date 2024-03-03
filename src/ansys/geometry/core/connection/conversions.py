@@ -38,29 +38,25 @@ from ansys.api.geometry.v0.models_pb2 import Tessellation
 from ansys.api.geometry.v0.models_pb2 import TrimmedCurve as GRPCTrimmedCurve
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple
 
-from ansys.geometry.core.geometry import (
-    Circle,
-    Cone,
-    Curve,
-    Cylinder,
-    Ellipse,
-    Line,
-    PlaneSurface,
-    Sphere,
-    Surface,
-    Torus,
-)
+from ansys.geometry.core.geometry.curves.circle import Circle
+from ansys.geometry.core.geometry.curves.curve import Curve
+from ansys.geometry.core.geometry.curves.ellipse import Ellipse
+from ansys.geometry.core.geometry.curves.line import Line
+from ansys.geometry.core.geometry.surfaces.cone import Cone
+from ansys.geometry.core.geometry.surfaces.cylinder import Cylinder
+from ansys.geometry.core.geometry.surfaces.plane import PlaneSurface
+from ansys.geometry.core.geometry.surfaces.sphere import Sphere
+from ansys.geometry.core.geometry.surfaces.surface import Surface
+from ansys.geometry.core.geometry.surfaces.torus import Torus
 from ansys.geometry.core.math import Frame, Matrix44, Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS
-from ansys.geometry.core.sketch import (
-    Arc,
-    Polygon,
-    SketchCircle,
-    SketchEdge,
-    SketchEllipse,
-    SketchFace,
-    SketchSegment,
-)
+from ansys.geometry.core.sketch.arc import Arc
+from ansys.geometry.core.sketch.circle import SketchCircle
+from ansys.geometry.core.sketch.edge import SketchEdge
+from ansys.geometry.core.sketch.ellipse import SketchEllipse
+from ansys.geometry.core.sketch.face import SketchFace
+from ansys.geometry.core.sketch.polygon import Polygon
+from ansys.geometry.core.sketch.segment import SketchSegment
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import PolyData
@@ -540,7 +536,7 @@ def curve_to_grpc_curve(curve: Curve) -> GRPCCurve:
     Returns
     -------
     GRPCCurve
-        Return the ``Curve`` as a ``ansys.api.geometry.CurveGeometry`` message.
+        Return ``Curve`` as a ``ansys.api.geometry.CurveGeometry`` message.
     """
     grpc_curve = None
     origin = point3d_to_grpc_point(curve.origin)

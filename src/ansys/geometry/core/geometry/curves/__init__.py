@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Provides the PyGeometry ``curve`` subpackage."""
+"""Provides the PyAnsys Geometry ``curve`` subpackage."""
 from ansys.geometry.core.geometry.curves.circle import Circle, CircleEvaluation
 from ansys.geometry.core.geometry.curves.curve import Curve
 from ansys.geometry.core.geometry.curves.curve_evaluation import CurveEvaluation

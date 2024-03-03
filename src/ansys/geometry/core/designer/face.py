@@ -40,8 +40,8 @@ from ansys.geometry.core.geometry.surfaces.trimmed_surface import (
     TrimmedSurface,
 )
 from ansys.geometry.core.math import Point3D, UnitVector3D
-from ansys.geometry.core.misc import DEFAULT_UNITS
 from ansys.geometry.core.misc.checks import ensure_design_is_active
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
