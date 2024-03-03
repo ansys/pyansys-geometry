@@ -831,6 +831,7 @@ class MasterBody(IBody):
         )
 
     @protect_grpc
+    @min_backend_version(24, 2, 0)
     def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
         self._grpc_client.log.debug(f"Get collision between body {self.id} and body {body.id}.")
         response = self._bodies_stub.GetCollision(
