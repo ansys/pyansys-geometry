@@ -332,7 +332,7 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
         Exception raised during the build process.
     """
     if exception is None:
-        # Get the examples output directory and retrive all the notebooks
+        # Get the examples output directory and retrieve all the notebooks
         import subprocess
 
         examples_output_dir = Path(app.outdir) / "examples"
