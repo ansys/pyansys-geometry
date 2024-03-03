@@ -72,10 +72,8 @@ class Accuracy:
         """Compare two doubles given the relative and absolute tolerances."""
         if Accuracy.is_within_tolerance(a, b, relative_tolerance, absolute_tolerance):
             return 0
-        if a < b:
+        elif a < b:
             return -1
-        elif a == b:
-            return 0
         else:
             return 1
 
