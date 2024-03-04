@@ -1880,3 +1880,14 @@ def test_get_collision(modeler: Modeler):
 
     assert body1.get_collision(body2) == CollisionType.TOUCH
     assert body2.get_collision(body3) == CollisionType.NONE
+
+
+def test_sphere_creation(modeler: Modeler):
+    """Test the spherebody creation with given radius and check the diameter in
+    different unit."""
+    skip_if_linux(modeler)
+    design = modeler.create_design("Spheretest")
+    center_point = Point3D([10, 10, 10], UNITS.m)
+    radius = Distance(15, UNITS.mm)
+    spherebody = design.create_sphere_body("testspherebody", center_point, radius)
+    assert spherebody.name == "testspherebody"

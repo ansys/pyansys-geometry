@@ -69,6 +69,7 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.checks import check_pint_unit_compatibility, ensure_design_is_active
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -499,7 +500,7 @@ class Component:
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
-    def create_sphere_body(self, name: str, center: Point3D, radius: float) -> Body:
+    def create_sphere_body(self, name: str, center: Point3D, radius: Distance) -> Body:
         """
         Create a sphere body defined by the center point and the radius.
 
@@ -520,10 +521,10 @@ class Component:
                 center=center_point,
                 radius=10.0)
         """
+        grpc_radius = radius.value = UNITS.m
         request = CreateSphereBodyRequest(
-            name=name, parent=self.id, center=point3d_to_grpc_point(center), radius=radius
+            name=name, parent=self.id, center=point3d_to_grpc_point(center), radius=grpc_radius
         )
-
         self._grpc_client.log.debug(f"Creating a sphere body on {self.id} .")
         response = self._bodies_stub.CreateSphereBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
