@@ -507,7 +507,7 @@ class Component:
         Parameters:
             name (str): The name of the sphere body.
             center (Point3D): The center point of the sphere.
-            radius (float): The radius of the sphere in meters.
+            radius (Distance): The radius of the sphere.
 
         Returns:
             Body: The created sphere body object.
@@ -519,7 +519,7 @@ class Component:
             center_point = Point3D(0, 0, 0)
             sphere_body = design.create_sphere_body(name="my_sphere",
                 center=center_point,
-                radius=10.0)
+                radius= Point3D([10, 10, 10], UNITS.cm))
         """
         grpc_radius = radius.value = UNITS.m
         request = CreateSphereBodyRequest(
