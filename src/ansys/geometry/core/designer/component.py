@@ -1130,15 +1130,16 @@ class Component:
             N Coordinate Systems : 0
         >>> mycomp.plot(pbr=True, metallic=1.0)
         """
-        from ansys.geometry.core.plotting import PlotterHelper
+        from ansys.visualizer import MeshObjectPlot
 
-        PlotterHelper(use_trame=use_trame).plot(
-            self,
-            merge_bodies=merge_bodies,
-            merge_component=merge_component,
-            screenshot=screenshot,
-            **plotting_options,
+        from ansys.geometry.core.plotting import GeomPlotter
+
+        mesh_object = MeshObjectPlot(
+            custom_object=self, mesh=self.tessellate(merge_component, merge_bodies)
         )
+        pl = GeomPlotter(use_trame=use_trame)
+        pl.add(mesh_object, **plotting_options)
+        pl.plot(screenshot=screenshot)
 
     def __repr__(self) -> str:
         """Represent the ``Component`` as a string."""
