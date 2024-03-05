@@ -521,9 +521,13 @@ class Component:
                 center=center_point,
                 radius= Point3D([10, 10, 10], UNITS.cm))
         """
-        grpc_radius = radius.value = UNITS.m
+        radius.unit = UNITS.m
+
         request = CreateSphereBodyRequest(
-            name=name, parent=self.id, center=point3d_to_grpc_point(center), radius=grpc_radius
+            name=name,
+            parent=self.id,
+            center=point3d_to_grpc_point(center),
+            radius=radius.value.magnitude,
         )
         self._grpc_client.log.debug(f"Creating a sphere body on {self.id} .")
         response = self._bodies_stub.CreateSphereBody(request)

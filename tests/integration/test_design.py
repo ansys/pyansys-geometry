@@ -1883,11 +1883,21 @@ def test_get_collision(modeler: Modeler):
 
 
 def test_sphere_creation(modeler: Modeler):
-    """Test the spherebody creation with given radius and check the diameter in
-    different unit."""
+    """
+    Test the creation of a sphere body with a given radius.
+
+    This test verifies the creation of a sphere body in the 3D modeling environment.
+    It checks the following:
+    1. The name of the created sphere body.
+    2. The number of faces in the sphere body (expected to be 1 for a perfect sphere).
+    3. The volume of the sphere body, ensuring it matches the expected volume for a sphere
+       with a radius of 1 meter.
+    """
     skip_if_linux(modeler)
     design = modeler.create_design("Spheretest")
     center_point = Point3D([10, 10, 10], UNITS.m)
-    radius = Distance(15, UNITS.mm)
+    radius = Distance(1, UNITS.m)
     spherebody = design.create_sphere_body("testspherebody", center_point, radius)
     assert spherebody.name == "testspherebody"
+    assert len(spherebody.faces) == 1
+    assert round(spherebody.volume._magnitude, 3) == round(4.1887902, 3)
