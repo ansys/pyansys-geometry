@@ -209,11 +209,8 @@ def test_extrude_negative_sketch(modeler: Modeler):
     assert np.isclose(invalid_neg.faces[0].face_normal().dot(pos.faces[0].face_normal()), 1.0)
 
 
-def test_extrude_negative_sketch_face():
+def test_extrude_negative_sketch_face(modeler: Modeler):
     """Test to check the extrusion of a face in the negative direction."""
-    from ansys.geometry.core import launch_modeler_with_spaceclaim
-
-    modeler = launch_modeler_with_spaceclaim(hidden=True)
     # Create a sketch of a rectangle
     sk = Sketch()
     sk.box(Point2D([0, 0]), 10, 20)
