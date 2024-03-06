@@ -506,11 +506,11 @@ class Component:
 
         Parameters
         ----------
-        name: str
+        name : str
             Body name.
-        center: Point3D
+        center : Point3D
             Center point of the sphere.
-        radius: Distance
+        radius : Distance
             Radius of the sphere.
 
         Returns
