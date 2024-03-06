@@ -212,6 +212,7 @@ def test_extrude_negative_sketch(modeler: Modeler):
 def test_extrude_negative_sketch_face():
     """Test to check the extrusion of a face in the negative direction."""
     from ansys.geometry.core import launch_modeler_with_spaceclaim
+
     modeler = launch_modeler_with_spaceclaim(hidden=True)
     # Create a sketch of a rectangle
     sk = Sketch()
