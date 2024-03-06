@@ -69,7 +69,6 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.checks import check_pint_unit_compatibility, ensure_design_is_active
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
-from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -519,13 +518,11 @@ class Component:
         Body
             Sphere body object.
         """
-        radius.unit = UNITS.m
-
         request = CreateSphereBodyRequest(
             name=name,
             parent=self.id,
             center=point3d_to_grpc_point(center),
-            radius=radius.value.magnitude,
+            radius=radius.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
         )
         self._grpc_client.log.debug(f"Creating a sphere body on {self.id} .")
         response = self._bodies_stub.CreateSphereBody(request)
