@@ -186,6 +186,53 @@ def test_face_to_body_creation(modeler: Modeler):
     )
 
 
+def test_extrude_negative_sketch(modeler: Modeler):
+    """Test to check the extrusion of a sketch in the negative direction."""
+    # Create a sketch of a rectangle
+    sk = Sketch()
+    sk.box(Point2D([0, 0]), 10, 20)
+
+    # Create a design
+    design = modeler.create_design("mydes")
+
+    # Create a positive extrusion and a negative one
+    pos = design.extrude_sketch("positive", sk, 10)
+    neg = design.extrude_sketch("negative", sk, 10, direction="-z")
+
+    # Verify that the negative extrusion is in the negative direction
+    assert neg.faces[0].face_normal() != pos.faces[0].face_normal()
+    assert np.isclose(neg.faces[0].face_normal().dot(pos.faces[0].face_normal()), -1.0)
+
+    # If an invalid direction is given, it should just default to the positive direction
+    invalid_neg = design.extrude_sketch("invalid", sk, 10, direction="z")
+    assert invalid_neg.faces[0].face_normal() == pos.faces[0].face_normal()
+    assert np.isclose(invalid_neg.faces[0].face_normal().dot(pos.faces[0].face_normal()), 1.0)
+
+
+def test_extrude_negative_sketch_face(modeler: Modeler):
+    """Test to check the extrusion of a face in the negative direction."""
+    # Create a sketch of a rectangle
+    sk = Sketch()
+    sk.box(Point2D([0, 0]), 10, 20)
+
+    # Create a design
+    design = modeler.create_design("mydes")
+
+    # Create a positive extrusion and a negative one
+    body = design.extrude_sketch("positive", sk, 10)
+    pos = design.extrude_face("positive_face", body.faces[0], 10)
+    neg = design.extrude_face("negative_face", body.faces[0], 10, direction="-z")
+
+    # Verify that the negative extrusion is in the negative direction
+    assert neg.faces[0].face_normal() != pos.faces[0].face_normal()
+    assert np.isclose(neg.faces[0].face_normal().dot(pos.faces[0].face_normal()), -1.0)
+
+    # If an invalid direction is given, it should just default to the positive direction
+    invalid_neg = design.extrude_sketch("invalid_negative_face", sk, 10, direction="z")
+    assert invalid_neg.faces[0].face_normal() == pos.faces[0].face_normal()
+    assert np.isclose(invalid_neg.faces[0].face_normal().dot(pos.faces[0].face_normal()), 1.0)
+
+
 def test_modeler(modeler: Modeler):
     """Test the ``Modeler`` methods."""
 

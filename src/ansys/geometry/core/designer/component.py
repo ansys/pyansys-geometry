@@ -66,7 +66,7 @@ from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.checks import check_pint_unit_compatibility, ensure_design_is_active
+from ansys.geometry.core.misc.checks import ensure_design_is_active
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
@@ -406,7 +406,11 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     def extrude_sketch(
-        self, name: str, sketch: Sketch, distance: Union[Quantity, Distance, Real]
+        self,
+        name: str,
+        sketch: Sketch,
+        distance: Union[Quantity, Distance, Real],
+        direction: str = "+z",
     ) -> Body:
         """
         Create a solid body by extruding the sketch profile up by a given distance.
@@ -423,6 +427,10 @@ class Component:
             Two-dimensional sketch source for the extrusion.
         distance : Union[~pint.Quantity, Distance, Real]
             Distance to extrude the solid body.
+        direction : str, default: "+z"
+            Direction to extrude the solid body.
+            The default is to extrude in the positive z direction.
+            Options are "+z" or "-z".
 
         Returns
         -------
@@ -431,6 +439,9 @@ class Component:
         """
         # Sanity checks on inputs
         distance = distance if isinstance(distance, Distance) else Distance(distance)
+        if direction not in ("+z", "-z"):
+            self._grpc_client.log.warning("Invalid direction. Defaulting to +z.")
+            direction = "+z"
 
         # Perform extrusion request
         request = CreateExtrudedBodyRequest(
@@ -441,6 +452,10 @@ class Component:
             name=name,
         )
 
+        # Check the direction - if it is -z, flip the distance
+        if direction == "-z":
+            request.distance = -request.distance
+
         self._grpc_client.log.debug(f"Extruding sketch provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
@@ -450,7 +465,13 @@ class Component:
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
-    def extrude_face(self, name: str, face: Face, distance: Union[Quantity, Distance]) -> Body:
+    def extrude_face(
+        self,
+        name: str,
+        face: Face,
+        distance: Union[Quantity, Distance],
+        direction: str = "+z",
+    ) -> Body:
         """
         Extrude the face profile by a given distance to create a solid body.
 
@@ -468,8 +489,12 @@ class Component:
             User-defined label for the new solid body.
         face : Face
             Target face to use as the source for the new surface.
-        distance : Union[~pint.Quantity, Distance]
+        distance : Union[~pint.Quantity, Distance, Real]
             Distance to extrude the solid body.
+        direction : str, default: "+z"
+            Direction to extrude the solid body's face.
+            The default is to extrude in the positive normal direction of the face.
+            Options are "+z" or "-z".
 
         Returns
         -------
@@ -477,16 +502,22 @@ class Component:
             Extruded solid body.
         """
         # Sanity checks on inputs
-        extrude_distance = distance if isinstance(distance, Quantity) else distance.value
-        check_pint_unit_compatibility(extrude_distance.units, DEFAULT_UNITS.SERVER_LENGTH)
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+        if direction not in ("+z", "-z"):
+            self._grpc_client.log.warning("Invalid direction. Defaulting to +z.")
+            direction = "+z"
 
         # Take the face source directly. No need to verify the source of the face.
         request = CreateExtrudedBodyFromFaceProfileRequest(
-            distance=extrude_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+            distance=distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
             parent=self.id,
             face=face.id,
             name=name,
         )
+
+        # Check the direction - if it is -z, flip the distance
+        if direction == "-z":
+            request.distance = -request.distance
 
         self._grpc_client.log.debug(f"Extruding from face provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBodyFromFaceProfile(request)
