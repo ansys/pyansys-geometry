@@ -506,13 +506,17 @@ class Component:
 
         Parameters
         ----------
-            name (str): The name of the sphere body.
-            center (Point3D): The center point of the sphere.
-            radius (Distance): The radius of the sphere.
+        name: str
+            Body name.
+        center: Point3D
+            Center point of the sphere.
+        radius: Distance
+            Radius of the sphere.
 
         Returns
         -------
-            Body: The created sphere body object.
+        Body: 
+            Sphere body object.
         """
         radius.unit = UNITS.m
 
