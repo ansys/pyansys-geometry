@@ -515,7 +515,7 @@ class Component:
 
         Returns
         -------
-        Body: 
+        Body:
             Sphere body object.
         """
         radius.unit = UNITS.m
