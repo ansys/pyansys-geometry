@@ -505,21 +505,14 @@ class Component:
         Create a sphere body defined by the center point and the radius.
 
         Parameters:
+        ----------
             name (str): The name of the sphere body.
             center (Point3D): The center point of the sphere.
             radius (Distance): The radius of the sphere.
 
         Returns:
+        -------
             Body: The created sphere body object.
-
-        Example:
-            # Assuming 'design' is an instance of a Design object
-            from ansys.geometry import Point3D
-
-            center_point = Point3D(0, 0, 0)
-            sphere_body = design.create_sphere_body(name="my_sphere",
-                center=center_point,
-                radius= Point3D([10, 10, 10], UNITS.cm))
         """
         radius.unit = UNITS.m
 
