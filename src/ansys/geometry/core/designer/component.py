@@ -428,9 +428,9 @@ class Component:
         distance : Union[~pint.Quantity, Distance, Real]
             Distance to extrude the solid body.
         direction : str, default: "+z"
-            Direction to extrude the solid body.
+            Direction for extruding the solid body.
             The default is to extrude in the positive z direction.
-            Options are "+z" or "-z".
+            Options are "+z" and "-z".
 
         Returns
         -------
@@ -492,9 +492,9 @@ class Component:
         distance : Union[~pint.Quantity, Distance, Real]
             Distance to extrude the solid body.
         direction : str, default: "+z"
-            Direction to extrude the solid body's face.
+            Direction for extruding the solid body's face.
             The default is to extrude in the positive normal direction of the face.
-            Options are "+z" or "-z".
+            Options are "+z" and "-z".
 
         Returns
         -------
@@ -504,7 +504,7 @@ class Component:
         # Sanity checks on inputs
         distance = distance if isinstance(distance, Distance) else Distance(distance)
         if direction not in ("+z", "-z"):
-            self._grpc_client.log.warning("Invalid direction. Defaulting to +z.")
+            self._grpc_client.log.warning("Direction is invalid. Defaulting to +z.")
             direction = "+z"
 
         # Take the face source directly. No need to verify the source of the face.
