@@ -504,13 +504,13 @@ class Component:
         """
         Create a sphere body defined by the center point and the radius.
 
-        Parameters:
+        Parameters
         ----------
             name (str): The name of the sphere body.
             center (Point3D): The center point of the sphere.
             radius (Distance): The radius of the sphere.
 
-        Returns:
+        Returns
         -------
             Body: The created sphere body object.
         """
