@@ -100,6 +100,9 @@ class ExtrusionDirection(Enum):
         elif string == "-":
             return cls.NEGATIVE
         elif use_default_if_error:
+            from ansys.geometry.core.logger import LOG
+
+            LOG.warning("Invalid extrusion direction. Using default value (+).")
             return cls.POSITIVE
         else:  # pragma: no cover
             raise ValueError(f"Invalid extrusion direction: {string}.")
