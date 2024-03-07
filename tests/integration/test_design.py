@@ -197,7 +197,7 @@ def test_extrude_negative_sketch(modeler: Modeler):
 
     # Create a positive extrusion and a negative one
     pos = design.extrude_sketch("positive", sk, 10)
-    neg = design.extrude_sketch("negative", sk, 10, direction="-z")
+    neg = design.extrude_sketch("negative", sk, 10, direction="-")
 
     # Verify that the negative extrusion is in the negative direction
     assert neg.faces[0].face_normal() != pos.faces[0].face_normal()
@@ -221,7 +221,7 @@ def test_extrude_negative_sketch_face(modeler: Modeler):
     # Create a positive extrusion and a negative one
     body = design.extrude_sketch("positive", sk, 10)
     pos = design.extrude_face("positive_face", body.faces[0], 10)
-    neg = design.extrude_face("negative_face", body.faces[0], 10, direction="-z")
+    neg = design.extrude_face("negative_face", body.faces[0], 10, direction="-")
 
     # Verify that the negative extrusion is in the negative direction
     assert neg.faces[0].face_normal() != pos.faces[0].face_normal()
