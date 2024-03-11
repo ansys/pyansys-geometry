@@ -371,9 +371,6 @@ class IBody(ABC):
         ----------
         value: Real
             Value to scale the body by.
-        Returns
-        -------
-        None
         """
         return
 
