@@ -29,7 +29,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     BooleanRequest,
     CopyRequest,
     GetCollisionRequest,
-    MirrorRequest,
+    MapRequest,
     RotateRequest,
     ScaleRequest,
     SetAssignedMaterialRequest,
@@ -860,7 +860,7 @@ class MasterBody(IBody):
     @min_backend_version(24, 2, 0)
     def map(self, frame: Frame) -> None:  # noqa: D102
         self._grpc_client.log.debug(f"Mapping body {self.id}.")
-        self._bodies_stub.Mirror(MirrorRequest(id=self.id, frame=frame_to_grpc_frame(frame)))
+        self._bodies_stub.Map(MapRequest(id=self.id, frame=frame_to_grpc_frame(frame)))
 
     @protect_grpc
     @min_backend_version(24, 2, 0)
