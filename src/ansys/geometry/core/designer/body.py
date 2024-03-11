@@ -383,9 +383,6 @@ class IBody(ABC):
         ----------
         frame: Frame
             Structure defining the mirroring/mapping of the body.
-        Returns
-        -------
-        None
         """
         return
 
