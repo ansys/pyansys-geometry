@@ -10,11 +10,11 @@ with PyAnsys Geometry.
 
 .. nbgallery::
 
-    examples/01_getting_started/01_math.mystnb
-    examples/01_getting_started/02_units.mystnb
-    examples/01_getting_started/03_sketching.mystnb
-    examples/01_getting_started/04_modeling.mystnb
-    examples/01_getting_started/05_plotter_picker.mystnb
+    examples/01-getting-started/01-math.mystnb
+    examples/01-getting-started/02-units.mystnb
+    examples/01-getting-started/03-sketching.mystnb
+    examples/01-getting-started/04-modeling.mystnb
+    examples/01-getting-started/05-plotter-picker.mystnb
 
 Sketching examples
 ------------------
@@ -23,9 +23,9 @@ and sketching capabilities, combined with server-based operations.
 
 .. nbgallery::
 
-    examples/02_sketching/basic_usage.mystnb
-    examples/02_sketching/dynamic_sketch_plane.mystnb
-    examples/02_sketching/advanced_sketching_gears.mystnb
+    examples/02-sketching/basic-usage.mystnb
+    examples/02-sketching/dynamic-sketch-plane.mystnb
+    examples/02-sketching/advanced-sketching-gears.mystnb
 
 Modeling examples
 -----------------
@@ -33,8 +33,8 @@ These examples demonstrate service-based modeling operations.
 
 .. nbgallery::
 
-    examples/03_modeling/add_design_material.mystnb
-    examples/03_modeling/plate_with_hole.mystnb
-    examples/03_modeling/tessellation_usage.mystnb
-    examples/03_modeling/design_organization.mystnb
-    examples/03_modeling/boolean_operations.mystnb
+    examples/03-modeling/add-design-material.mystnb
+    examples/03-modeling/plate-with-hole.mystnb
+    examples/03-modeling/tessellation-usage.mystnb
+    examples/03-modeling/design-organization.mystnb
+    examples/03-modeling/boolean-operations.mystnb

@@ -30,7 +30,7 @@ Select the kind of Docker container you want to build:
    :gutter: 3 3 4 4
 
    .. grid-item-card:: Windows Docker container
-            :link: windows_container
+            :link: windows-container
             :link-type: doc
 
             Build a Windows Docker container for the Geometry service
@@ -56,5 +56,5 @@ Select the kind of Docker container you want to build:
    :hidden:
    :maxdepth: 2
 
-   windows_container
+   windows-container
 ..    linux_container

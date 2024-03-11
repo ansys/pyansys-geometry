@@ -8,7 +8,7 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
     .. grid-item-card:: Getting started :fa:`person-running`
         :padding: 2 2 2 2
-        :link: getting_started/index
+        :link: getting-started/index
         :link-type: doc
 
         Learn how to run the Windows Docker container, install the
@@ -17,7 +17,7 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
     .. grid-item-card:: User guide :fa:`book-open-reader`
         :padding: 2 2 2 2
-        :link: user_guide/index
+        :link: user-guide/index
         :link-type: doc
 
         Understand key concepts and approaches for primitives,
@@ -67,8 +67,8 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
        :hidden:
        :maxdepth: 3
 
-       getting_started/index
-       user_guide/index
+       getting-started/index
+       user-guide/index
        {% if build_api %}
        api/index
        {% endif %}

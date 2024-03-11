@@ -6,7 +6,7 @@ Windows Docker container
 .. contents::
    :backlinks: none
 
-.. _ref_running_windows_containers:
+.. _ref_running_windows-containers:
 
 Docker for Windows containers
 -----------------------------
@@ -121,7 +121,7 @@ Prerequisites
 
 * Ensure that Docker is installed in your machine.
   If you do not have Docker available, see
-  :ref:`Docker for Windows containers <ref_running_windows_containers>`.
+  :ref:`Docker for Windows containers <ref_running_windows-containers>`.
 
 .. _ref_build_windows_docker_image_from_ansys_installation:
 
@@ -190,8 +190,8 @@ To build your image, follow these instructions:
 
 .. START - Include the common text for launching the service from a Docker container
 
-.. jinja:: windows_containers
-   :file: getting_started/docker/common_docker.jinja
+.. jinja:: windows-containers
+   :file: getting-started/docker/common-docker.jinja
    :header_update_levels:
 
 .. END - Include the common text for launching the service from a Docker container

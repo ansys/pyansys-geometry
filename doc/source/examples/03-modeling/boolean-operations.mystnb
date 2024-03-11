@@ -34,7 +34,7 @@ from ansys.geometry.core.sketch import Sketch
 
 Launch the local modeler. If you are not familiar with how to launch the local
 modeler, see the "Launch a modeling service" section in the
-[PyAnsys Geometry 101: Modeling](../01_getting_started/04_modeling.mystnb) example.
+[PyAnsys Geometry 101: Modeling](../01-getting-started/04-modeling.mystnb) example.
 
 ```{code-cell} ipython3
 modeler = launch_docker_modeler()
@@ -82,7 +82,7 @@ that performed the call to the method.
 ## Select bodies
 
 You can optionally select bodies in the plotter as described in the "Select objects
-interactively" section in the [PyAnsys Geometry 101: Plotter](../01_getting_started/05_plotter_picker.mystnb)
+interactively" section in the [PyAnsys Geometry 101: Plotter](../01-getting-started/05-plotter-picker.mystnb)
 example. As shown in this example, the plotter preserves the picking order, meaning that the
 output list is sorted according to the picking order.
 

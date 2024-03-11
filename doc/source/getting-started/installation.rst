@@ -104,7 +104,7 @@ Verify the :class:`Modeler() <ansys.geometry.core.modeler()>` connection with th
     Connection: Healthy
 
 If you see a response from the server, you can start using PyAnsys Geometry as a service.
-For more information on PyAnsys Geometry usage, see :ref:`User guide <ref_user_guide>`.
+For more information on PyAnsys Geometry usage, see :ref:`User guide <ref_user-guide>`.
 
 .. button-ref:: index
     :ref-type: doc

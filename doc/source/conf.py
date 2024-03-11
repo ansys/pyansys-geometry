@@ -207,19 +207,19 @@ nbsphinx_custom_formats = {
     ".mystnb": ["jupytext.reads", {"fmt": "mystnb"}],
 }
 nbsphinx_thumbnails = {
-    "examples/01_getting_started/01_math": "_static/thumbnails/101_getting_started.png",
-    "examples/01_getting_started/02_units": "_static/thumbnails/101_getting_started.png",
-    "examples/01_getting_started/03_sketching": "_static/thumbnails/101_getting_started.png",
-    "examples/01_getting_started/04_modeling": "_static/thumbnails/101_getting_started.png",
-    "examples/01_getting_started/05_plotter_picker": "_static/thumbnails/101_getting_started.png",  # noqa: E501
-    "examples/02_sketching/basic_usage": "_static/thumbnails/basic_usage.png",
-    "examples/02_sketching/dynamic_sketch_plane": "_static/thumbnails/dynamic_sketch_plane.png",
-    "examples/02_sketching/advanced_sketching_gears": "_static/thumbnails/advanced_sketching_gears.png",  # noqa: E501
-    "examples/03_modeling/add_design_material": "_static/thumbnails/add_design_material.png",
-    "examples/03_modeling/plate_with_hole": "_static/thumbnails/plate_with_hole.png",
-    "examples/03_modeling/tessellation_usage": "_static/thumbnails/tessellation_usage.png",
-    "examples/03_modeling/design_organization": "_static/thumbnails/design_organization.png",
-    "examples/03_modeling/boolean_operations": "_static/thumbnails/boolean_operations.png",
+    "examples/01-getting-started/01-math": "_static/thumbnails/101-getting-started.png",
+    "examples/01-getting-started/02-units": "_static/thumbnails/101-getting-started.png",
+    "examples/01-getting-started/03-sketching": "_static/thumbnails/101-getting-started.png",
+    "examples/01-getting-started/04-modeling": "_static/thumbnails/101-getting-started.png",
+    "examples/01-getting-started/05-plotter-picker": "_static/thumbnails/101-getting-started.png",  # noqa: E501
+    "examples/02-sketching/basic-usage": "_static/thumbnails/basic-usage.png",
+    "examples/02-sketching/dynamic-sketch-plane": "_static/thumbnails/dynamic-sketch-plane.png",
+    "examples/02-sketching/advanced-sketching-gears": "_static/thumbnails/advanced-sketching-gears.png",  # noqa: E501
+    "examples/03-modeling/add-design-material": "_static/thumbnails/add-design-material.png",
+    "examples/03-modeling/plate-with-hole": "_static/thumbnails/plate-with-hole.png",
+    "examples/03-modeling/tessellation-usage": "_static/thumbnails/tessellation-usage.png",
+    "examples/03-modeling/design-organization": "_static/thumbnails/design-organization.png",
+    "examples/03-modeling/boolean-operations": "_static/thumbnails/boolean-operations.png",
 }
 nbsphinx_epilog = """
 ----
@@ -260,7 +260,7 @@ latex_additional_files = [watermark, ansys_logo_white, ansys_logo_white_cropped]
 latex_elements = {"preamble": latex.generate_preamble(html_title)}
 sd_fontawesome_latex = True
 
-linkcheck_exclude_documents = ["index", "getting_started/local/index", "assets"]
+linkcheck_exclude_documents = ["index", "getting-started/local/index", "assets"]
 linkcheck_ignore = [
     r"https://github.com/ansys/pyansys-geometry-binaries/.*",
     r"https://download.ansys.com/",
@@ -285,7 +285,7 @@ jinja_contexts = {
     "linux_containers": {
         "add_windows_warnings": False,
     },
-    "windows_containers": {
+    "windows-containers": {
         "add_windows_warnings": True,
     },
     "wheelhouse-assets": {"assets": get_wheelhouse_assets_dictionary()},
