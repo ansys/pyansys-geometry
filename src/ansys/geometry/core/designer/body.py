@@ -858,10 +858,7 @@ class MasterBody(IBody):
     @check_input_types
     @reset_tessellation_cache
     @min_backend_version(24, 1, 0)
-    def mirror(
-        self,
-        frame: Frame,
-    ) -> None:  # noqa: D102
+    def mirror(self, frame: Frame) -> None:  # noqa: D102
         self._grpc_client.log.debug(f"Mirroring body {self.id}.")
         self._bodies_stub.Mirror(MirrorRequest(id=self.id, frame=frame_to_grpc_frame(frame)))
 
