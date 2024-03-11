@@ -375,14 +375,14 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def mirror(self, frame: Frame) -> None:
+    def map(self, frame: Frame) -> None:
         """
-        Mirror the geometry body across the specified frame.
+        Map the geometry body to the new specified frame.
 
         Parameters
         ----------
         frame: Frame
-            Structure defining the mirroring/mapping of the body.
+            Structure defining the orientation of the body.
         """
         return
 
@@ -849,6 +849,7 @@ class MasterBody(IBody):
     @protect_grpc
     @check_input_types
     @reset_tessellation_cache
+    @min_backend_version(24, 2, 0)
     def scale(self, value: Real) -> None:  # noqa: D102
         self._grpc_client.log.debug(f"Scaling body {self.id}.")
         self._bodies_stub.Scale(ScaleRequest(id=self.id, scale=value))
@@ -856,8 +857,9 @@ class MasterBody(IBody):
     @protect_grpc
     @check_input_types
     @reset_tessellation_cache
-    def mirror(self, frame: Frame) -> None:  # noqa: D102
-        self._grpc_client.log.debug(f"Mirroring body {self.id}.")
+    @min_backend_version(24, 2, 0)
+    def map(self, frame: Frame) -> None:  # noqa: D102
+        self._grpc_client.log.debug(f"Mapping body {self.id}.")
         self._bodies_stub.Mirror(MirrorRequest(id=self.id, frame=frame_to_grpc_frame(frame)))
 
     @protect_grpc
@@ -1229,8 +1231,8 @@ class Body(IBody):
         return self._template.scale(value)
 
     @ensure_design_is_active
-    def mirror(self, frame: Frame) -> None:  # noqa: D102
-        return self._template.mirror(frame)
+    def map(self, frame: Frame) -> None:  # noqa: D102
+        return self._template.map(frame)
 
     @ensure_design_is_active
     def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
