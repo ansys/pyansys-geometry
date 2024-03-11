@@ -363,10 +363,7 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def scale(
-        self,
-        value: Real,
-    ) -> None:
+    def scale(self, value: Real) -> None:
         """
         Scale the geometry body by the given value.
 
