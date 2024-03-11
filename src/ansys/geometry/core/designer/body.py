@@ -849,7 +849,6 @@ class MasterBody(IBody):
     @protect_grpc
     @check_input_types
     @reset_tessellation_cache
-    @min_backend_version(24, 1, 0)
     def scale(self, value: Real) -> None:  # noqa: D102
         self._grpc_client.log.debug(f"Scaling body {self.id}.")
         self._bodies_stub.Scale(ScaleRequest(id=self.id, scale=value))
