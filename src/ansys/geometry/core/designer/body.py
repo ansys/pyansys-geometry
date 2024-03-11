@@ -375,10 +375,7 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def mirror(
-        self,
-        frame: Frame,
-    ) -> None:
+    def mirror(self, frame: Frame) -> None:
         """
         Mirror the geometry body across the specified frame.
 
