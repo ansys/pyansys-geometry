@@ -59,7 +59,7 @@ tests = [
     "numpy==1.26.4",
     "Pint==0.23",
     "protobuf==4.25.1",
-    "pytest==8.0.2",
+    "pytest==8.1.1",
     "pytest-cov==4.1.0",
     "pytest-pyvista==0.1.9",
     "pytest-xvfb==3.0.0",
