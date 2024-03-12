@@ -35,8 +35,9 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.accuracy import Accuracy
 from ansys.geometry.core.misc.measurements import Distance
-from ansys.geometry.core.primitives.curve_evaluation import CurveEvaluation
-from ansys.geometry.core.primitives.parameterization import (
+from ansys.geometry.core.shapes.curves.curve import Curve
+from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
+from ansys.geometry.core.shapes.parameterization import (
     Interval,
     Parameterization,
     ParamForm,
@@ -45,7 +46,7 @@ from ansys.geometry.core.primitives.parameterization import (
 from ansys.geometry.core.typing import Real, RealSequence
 
 
-class Ellipse:
+class Ellipse(Curve):
     """
     Provides 3D ellipse representation.
 
@@ -289,7 +290,7 @@ class Ellipse:
             UnitVector3D(new_axis[0:3]),
         )
 
-    def get_parameterization(self) -> Parameterization:
+    def parameterization(self) -> Parameterization:
         """
         Get the parametrization of the ellipse.
 
@@ -303,6 +304,12 @@ class Ellipse:
         """
         return Parameterization(ParamForm.PERIODIC, ParamType.OTHER, Interval(0, 2 * np.pi))
 
+    def contains_param(self, param: Real) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_param() is not implemented.")
+
+    def contains_point(self, point: Point3D) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_point() is not implemented.")
+
 
 class EllipseEvaluation(CurveEvaluation):
     """
@@ -310,7 +317,7 @@ class EllipseEvaluation(CurveEvaluation):
 
     Parameters
     ----------
-    ellipse: Ellipse
+    ellipse: ~ansys.geometry.core.shapes.curves.ellipse.Ellipse
         Ellipse to evaluate.
     parameter: float, int
         Parameter to evaluate the ellipse at.

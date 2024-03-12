@@ -55,6 +55,7 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Distance
+from ansys.geometry.core.shapes.parameterization import ParamUV
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -184,6 +185,53 @@ def test_face_to_body_creation(modeler: Modeler):
     assert surface_body.faces[0].area.m == pytest.approx(
         Quantity(2e-4, UNITS.m**2).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_extrude_negative_sketch(modeler: Modeler):
+    """Test to check the extrusion of a sketch in the negative direction."""
+    # Create a sketch of a rectangle
+    sk = Sketch()
+    sk.box(Point2D([0, 0]), 10, 20)
+
+    # Create a design
+    design = modeler.create_design("mydes")
+
+    # Create a positive extrusion and a negative one
+    pos = design.extrude_sketch("positive", sk, 10)
+    neg = design.extrude_sketch("negative", sk, 10, direction="-")
+
+    # Verify that the negative extrusion is in the negative direction
+    assert neg.faces[0].normal() != pos.faces[0].normal()
+    assert np.isclose(neg.faces[0].normal().dot(pos.faces[0].normal()), -1.0)
+
+    # If an invalid direction is given, it should default to the positive direction
+    invalid_neg = design.extrude_sketch("invalid", sk, 10, direction="z")
+    assert invalid_neg.faces[0].normal() == pos.faces[0].normal()
+    assert np.isclose(invalid_neg.faces[0].normal().dot(pos.faces[0].normal()), 1.0)
+
+
+def test_extrude_negative_sketch_face(modeler: Modeler):
+    """Test to check the extrusion of a face in the negative direction."""
+    # Create a sketch of a rectangle
+    sk = Sketch()
+    sk.box(Point2D([0, 0]), 10, 20)
+
+    # Create a design
+    design = modeler.create_design("mydes")
+
+    # Create a positive extrusion and a negative one
+    body = design.extrude_sketch("positive", sk, 10)
+    pos = design.extrude_face("positive_face", body.faces[0], 10)
+    neg = design.extrude_face("negative_face", body.faces[0], 10, direction="-")
+
+    # Verify that the negative extrusion is in the negative direction
+    assert neg.faces[0].normal() != pos.faces[0].normal()
+    assert np.isclose(neg.faces[0].normal().dot(pos.faces[0].normal()), -1.0)
+
+    # If an invalid direction is given, it should default to the positive direction
+    invalid_neg = design.extrude_face("invalid_negative_face", body.faces[0], 10, direction="z")
+    assert invalid_neg.faces[0].normal() == pos.faces[0].normal()
+    assert np.isclose(invalid_neg.faces[0].normal().dot(pos.faces[0].normal()), 1.0)
 
 
 def test_modeler(modeler: Modeler):
@@ -356,12 +404,13 @@ def test_faces_edges(modeler: Modeler):
     assert all(face.body.id == body_polygon_comp.id for face in faces)
 
     # Get the normal to some of the faces
-    assert faces[0].face_normal() == UnitVector3D(-UNITVECTOR3D_Z)  # Bottom
-    assert faces[1].face_normal() == UNITVECTOR3D_Z  # Top
+    assert faces[0].normal() == UnitVector3D(-UNITVECTOR3D_Z)  # Bottom
+    assert faces[1].normal() == UNITVECTOR3D_Z  # Top
 
     # Get the central point of some of the surfaces
-    assert faces[0].face_point(u=-0.03, v=-0.03) == Point3D([-30, -30, 0], UNITS.mm)
-    assert faces[1].face_point(u=-0.03, v=-0.03) == Point3D([-30, -30, 30], UNITS.mm)
+    assert faces[0].point(0.4472135954999579, 0.5) == Point3D([-30, -30, 0], UNITS.mm)
+    u, v = faces[1].shape.get_proportional_parameters(ParamUV(-0.03, -0.03))
+    assert faces[1].point(u, v) == Point3D([-30, -30, 30], UNITS.mm)
 
     loops = faces[0].loops
     assert len(loops) == 1
@@ -814,13 +863,13 @@ def test_body_rotation(modeler: Modeler):
 
     original_vertices = []
     for edge in body.edges:
-        original_vertices.extend([edge.start_point, edge.end_point])
+        original_vertices.extend([edge.shape.start, edge.shape.end])
 
     body.rotate(Point3D([0, 0, 0]), UnitVector3D([0, 0, 1]), np.pi / 4)
 
     new_vertices = []
     for edge in body.edges:
-        new_vertices.extend([edge.start_point, edge.end_point])
+        new_vertices.extend([edge.shape.start, edge.shape.end])
 
     # Make sure no vertices are in the same position as in before rotation
     for old_vertex, new_vertex in zip(original_vertices, new_vertices):

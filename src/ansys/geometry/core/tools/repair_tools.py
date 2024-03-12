@@ -35,7 +35,7 @@ from beartype.typing import TYPE_CHECKING, List
 from google.protobuf.wrappers_pb2 import DoubleValue
 
 from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.misc import (
+from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
     get_design_from_body,
     get_edges_from_ids,

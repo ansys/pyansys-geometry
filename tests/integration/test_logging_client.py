@@ -48,7 +48,7 @@ def test_instance_logger_format(modeler: Modeler, fake_record: Callable):
     # into the code.
 
     log = fake_record(
-        modeler._client.log.logger,
+        modeler._grpc_client.log.logger,
         msg="This is a message",
         level=deflogging.DEBUG,
         extra={"instance_name": "172.1.1.1"},

@@ -16,6 +16,7 @@ from ansys_sphinx_theme import (
     watermark,
 )
 import requests
+import sphinx
 from sphinx.builders.latex import LaTeXBuilder
 
 from ansys.geometry.core import __version__
@@ -260,7 +261,10 @@ latex_elements = {"preamble": latex.generate_preamble(html_title)}
 sd_fontawesome_latex = True
 
 linkcheck_exclude_documents = ["index", "getting_started/local/index", "assets"]
-linkcheck_ignore = [r"https://github.com/ansys/pyansys-geometry-binaries/.*"]
+linkcheck_ignore = [
+    r"https://github.com/ansys/pyansys-geometry-binaries/.*",
+    r"https://download.ansys.com/",
+]
 
 # -- Declare the Jinja context -----------------------------------------------
 exclude_patterns = []
@@ -314,3 +318,55 @@ nitpick_ignore_regex = [
     # Python std lib errors
     (r"py:obj", r"logging.PercentStyle"),
 ]
+
+
+def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
+    """
+    Convert notebooks to scripts.
+
+    Parameters
+    ----------
+    app : sphinx.application.Sphinx
+        Sphinx instance containing all the configuration for the documentation build.
+    exception : Exception
+        Exception raised during the build process.
+    """
+    if exception is None:
+        # Get the examples output directory and retrieve all the notebooks
+        import subprocess
+
+        examples_output_dir = Path(app.outdir) / "examples"
+        notebooks = examples_output_dir.glob("**/*.ipynb")
+        for notebook in notebooks:
+            print(f"Converting {notebook}")  # using jupytext
+            output = subprocess.run(
+                [
+                    "jupytext",
+                    "--to",
+                    "py",
+                    str(notebook),
+                    "--output",
+                    str(notebook.with_suffix(".py")),
+                ],
+                env=os.environ,
+                capture_output=True,
+            )
+
+            if output.returncode != 0:
+                print(f"Error converting {notebook} to script")
+                print(output.stderr)
+
+
+def setup(app: sphinx.application.Sphinx):
+    """
+    Run different hook functions during the documentation build.
+
+    Parameters
+    ----------
+    app : sphinx.application.Sphinx
+        Sphinx instance containing all the configuration for the documentation build.
+    """
+    # Convert notebooks into Python scripts and include them in the output files
+    if BUILD_EXAMPLES:
+        # Run at the end of the build process
+        app.connect("build-finished", convert_notebooks_to_scripts)
