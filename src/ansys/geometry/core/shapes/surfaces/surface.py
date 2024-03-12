@@ -75,11 +75,3 @@ class Surface(ABC):
         This method returns the evaluation at the closest point.
         """
         return
-
-    # TODO: Implement more surface methods
-    # is_ruled
-    # is_singular
-    # get_length
-    # intersect_curve
-    # intersect_surface
-    # is_coincident
