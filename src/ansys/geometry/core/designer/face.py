@@ -32,6 +32,7 @@ from beartype.typing import TYPE_CHECKING, List
 from pint import Quantity
 
 from ansys.geometry.core.connection import GrpcClient, grpc_curve_to_curve, grpc_surface_to_surface
+from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active
@@ -45,7 +46,6 @@ from ansys.geometry.core.shapes.surfaces.trimmed_surface import (
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
-    from ansys.geometry.core.designer.edge import Edge
 
 
 @unique
