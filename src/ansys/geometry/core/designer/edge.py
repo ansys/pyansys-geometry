@@ -97,7 +97,7 @@ class Edge:
 
     @property
     def _grpc_id(self) -> EntityIdentifier:
-        """Entity identifier of this edge on the server side."""
+        """Entity ID of this edge on the server side."""
         return EntityIdentifier(id=self._id)
 
     @property
