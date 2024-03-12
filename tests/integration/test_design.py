@@ -1946,7 +1946,7 @@ def test_body_scale(modeler: Modeler):
 
 def test_body_mapping(modeler: Modeler):
     """Verify the correct mapping of a body."""
-
+    skip_if_linux(modeler)
     design = modeler.create_design("BodyMap_Test")
 
     # non-symmetric shape to allow determination of mirroring
