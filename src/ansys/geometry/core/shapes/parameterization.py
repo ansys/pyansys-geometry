@@ -357,7 +357,7 @@ class Interval:
         bool
             ``True`` if the interval contains the value, ``False`` otherwise.
         """
-        return self.contains_value(t, Accuracy.length_accuracy)
+        return self.contains_value(t, Accuracy.length_accuracy())
 
     def inflate(self, delta: Real) -> "Interval":
         """Enlarge the current interval by the given delta value."""
