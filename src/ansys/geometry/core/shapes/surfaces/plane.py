@@ -110,7 +110,7 @@ class PlaneSurface(Surface):
         raise NotImplementedError("contains_param() is not implemented.")
 
     def contains_point(self, point: Point3D) -> bool:
-        """Check whether the plane contains a 3D point."""
+        """Check whether a 3D point is in the domain of the plane."""
         raise NotImplementedError("contains_point() is not implemented.")
 
     def parameterization(self) -> Tuple[Parameterization, Parameterization]:
