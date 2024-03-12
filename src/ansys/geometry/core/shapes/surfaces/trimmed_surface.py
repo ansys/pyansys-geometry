@@ -23,7 +23,7 @@
 
 from beartype.typing import TYPE_CHECKING
 
-from ansys.geometry.core.math import Point3D
+from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.shapes.parameterization import Interval, ParamUV

@@ -31,10 +31,12 @@ from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
 from beartype.typing import TYPE_CHECKING, List
 from pint import Quantity
 
-from ansys.geometry.core.connection import GrpcClient, grpc_curve_to_curve, grpc_surface_to_surface
+from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.conversions import grpc_curve_to_curve, grpc_surface_to_surface
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.math import Point3D, UnitVector3D
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve

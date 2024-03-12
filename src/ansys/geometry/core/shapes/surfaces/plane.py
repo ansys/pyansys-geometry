@@ -26,14 +26,10 @@ from beartype import beartype as check_input_types
 from beartype.typing import Tuple, Union
 import numpy as np
 
-from ansys.geometry.core.math import (
-    UNITVECTOR3D_X,
-    UNITVECTOR3D_Z,
-    Matrix44,
-    Point3D,
-    UnitVector3D,
-    Vector3D,
-)
+from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
+from ansys.geometry.core.math.matrix import Matrix44
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.shapes.parameterization import (
     Interval,
     Parameterization,

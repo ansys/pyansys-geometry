@@ -28,15 +28,11 @@ from beartype.typing import Tuple, Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math import (
-    UNITVECTOR3D_X,
-    UNITVECTOR3D_Z,
-    Matrix44,
-    Point3D,
-    UnitVector3D,
-    Vector3D,
-)
-from ansys.geometry.core.misc import Angle, Distance
+from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
+from ansys.geometry.core.math.matrix import Matrix44
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.shapes.parameterization import (
     Interval,

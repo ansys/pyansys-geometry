@@ -28,7 +28,9 @@ from beartype import beartype as check_input_types
 from beartype.typing import Union
 import numpy as np
 
-from ansys.geometry.core.math import Matrix44, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.math.matrix import Matrix44
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.accuracy import LENGTH_ACCURACY
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation

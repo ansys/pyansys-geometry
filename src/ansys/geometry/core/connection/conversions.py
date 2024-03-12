@@ -38,8 +38,12 @@ from ansys.api.geometry.v0.models_pb2 import Tessellation
 from ansys.api.geometry.v0.models_pb2 import TrimmedCurve as GRPCTrimmedCurve
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple
 
-from ansys.geometry.core.math import Frame, Matrix44, Plane, Point2D, Point3D, UnitVector3D
-from ansys.geometry.core.misc import DEFAULT_UNITS
+from ansys.geometry.core.math.frame import Frame
+from ansys.geometry.core.math.matrix import Matrix44
+from ansys.geometry.core.math.plane import Plane
+from ansys.geometry.core.math.point import Point2D, Point3D
+from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.ellipse import Ellipse
@@ -61,7 +65,7 @@ from ansys.geometry.core.sketch.segment import SketchSegment
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import PolyData
 
-    from ansys.geometry.core.designer import SurfaceType
+    from ansys.geometry.core.designer.face import SurfaceType
     from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 
 
@@ -459,7 +463,7 @@ def grpc_surface_to_surface(surface: GRPCSurface, surface_type: "SurfaceType") -
     Surface
         Resulting converted surface.
     """
-    from ansys.geometry.core.designer import SurfaceType
+    from ansys.geometry.core.designer.face import SurfaceType
 
     origin = Point3D(
         [surface.origin.x, surface.origin.y, surface.origin.z], DEFAULT_UNITS.SERVER_LENGTH

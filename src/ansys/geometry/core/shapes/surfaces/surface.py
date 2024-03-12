@@ -24,7 +24,8 @@ from abc import ABC, abstractmethod
 
 from beartype.typing import Tuple
 
-from ansys.geometry.core.math import Matrix44, Point3D
+from ansys.geometry.core.math.matrix import Matrix44
+from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.shapes.parameterization import Parameterization, ParamUV
 from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
 

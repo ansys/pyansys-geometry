@@ -27,15 +27,12 @@ from beartype.typing import Union
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math import (
-    UNITVECTOR3D_X,
-    UNITVECTOR3D_Z,
-    Matrix44,
-    Point3D,
-    UnitVector3D,
-    Vector3D,
-)
-from ansys.geometry.core.misc import Accuracy, Distance
+from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
+from ansys.geometry.core.math.matrix import Matrix44
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.accuracy import Accuracy
+from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.shapes.parameterization import (
