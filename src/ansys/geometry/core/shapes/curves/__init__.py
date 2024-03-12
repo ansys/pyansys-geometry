@@ -19,22 +19,9 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""
-Module to perform a connection validation check.
-
-The method in this module is only used for testing the default Docker service on
-GitHub and can safely be skipped within testing.
-
-This command shows how this method is typically used:
-
-.. code:: bash
-
-   python -c "from ansys.geometry.core.connection import validate; validate()"
-"""
-from ansys.geometry.core.connection.client import GrpcClient
-
-
-def validate(*args, **kwargs):  # pragma: no cover
-    """Create a client using the default settings and validate it."""
-    print(GrpcClient(*args, **kwargs))
-    # TODO: consider adding additional server stat reporting
+"""Provides the PyAnsys Geometry ``curves`` subpackage."""
+from ansys.geometry.core.shapes.curves.circle import Circle, CircleEvaluation
+from ansys.geometry.core.shapes.curves.curve import Curve
+from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
+from ansys.geometry.core.shapes.curves.ellipse import Ellipse, EllipseEvaluation
+from ansys.geometry.core.shapes.curves.line import Line, LineEvaluation

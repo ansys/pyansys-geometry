@@ -36,7 +36,7 @@ def test_edges_startend_prism(modeler: Modeler):
     body_sketch.box(Point2D([10, 10], UNITS.m), Quantity(5, UNITS.m), Quantity(3, UNITS.m))
     prism_body = design.extrude_sketch("JustAPrism", body_sketch, Quantity(13, UNITS.m))
     for edge in prism_body.edges:
-        vec = Vector3D.from_points(edge.start_point, edge.end_point)
+        vec = Vector3D.from_points(edge.shape.start, edge.shape.end)
         assert vec.magnitude == edge.length.magnitude
 
 
@@ -49,4 +49,4 @@ def test_edges_startend_cylinder(modeler: Modeler):
     cylinder.circle(Point2D([10, 10], UNITS.m), 1.0)
     cylinder_body = design.extrude_sketch("JustACyl", cylinder, Quantity(10, UNITS.m))
     for edge in cylinder_body.edges:
-        assert edge.start_point == edge.end_point
+        assert edge.shape.start == edge.shape.end
