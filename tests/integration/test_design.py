@@ -201,13 +201,13 @@ def test_extrude_negative_sketch(modeler: Modeler):
     neg = design.extrude_sketch("negative", sk, 10, direction="-")
 
     # Verify that the negative extrusion is in the negative direction
-    assert neg.faces[0].face_normal() != pos.faces[0].face_normal()
-    assert np.isclose(neg.faces[0].face_normal().dot(pos.faces[0].face_normal()), -1.0)
+    assert neg.faces[0].normal() != pos.faces[0].normal()
+    assert np.isclose(neg.faces[0].normal().dot(pos.faces[0].normal()), -1.0)
 
     # If an invalid direction is given, it should default to the positive direction
     invalid_neg = design.extrude_sketch("invalid", sk, 10, direction="z")
-    assert invalid_neg.faces[0].face_normal() == pos.faces[0].face_normal()
-    assert np.isclose(invalid_neg.faces[0].face_normal().dot(pos.faces[0].face_normal()), 1.0)
+    assert invalid_neg.faces[0].normal() == pos.faces[0].normal()
+    assert np.isclose(invalid_neg.faces[0].normal().dot(pos.faces[0].normal()), 1.0)
 
 
 def test_extrude_negative_sketch_face(modeler: Modeler):
@@ -225,13 +225,13 @@ def test_extrude_negative_sketch_face(modeler: Modeler):
     neg = design.extrude_face("negative_face", body.faces[0], 10, direction="-")
 
     # Verify that the negative extrusion is in the negative direction
-    assert neg.faces[0].face_normal() != pos.faces[0].face_normal()
-    assert np.isclose(neg.faces[0].face_normal().dot(pos.faces[0].face_normal()), -1.0)
+    assert neg.faces[0].normal() != pos.faces[0].normal()
+    assert np.isclose(neg.faces[0].normal().dot(pos.faces[0].normal()), -1.0)
 
     # If an invalid direction is given, it should default to the positive direction
     invalid_neg = design.extrude_face("invalid_negative_face", body.faces[0], 10, direction="z")
-    assert invalid_neg.faces[0].face_normal() == pos.faces[0].face_normal()
-    assert np.isclose(invalid_neg.faces[0].face_normal().dot(pos.faces[0].face_normal()), 1.0)
+    assert invalid_neg.faces[0].normal() == pos.faces[0].normal()
+    assert np.isclose(invalid_neg.faces[0].normal().dot(pos.faces[0].normal()), 1.0)
 
 
 def test_modeler(modeler: Modeler):
