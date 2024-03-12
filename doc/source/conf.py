@@ -320,7 +320,7 @@ nitpick_ignore_regex = [
 ]
 
 
-def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, doctree, docname):
+def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
     """
     Convert notebooks to scripts.
 
@@ -328,16 +328,33 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, doctree, docnam
     ----------
     app : sphinx.application.Sphinx
         Sphinx instance containing all the configuration for the documentation build.
-    doctree : sphinx.util.nodes.Node
-        Sphinx document tree.
-    docname : str
-        Sphinx document name.
+    exception : Exception
+        Exception raised during the build process.
     """
-    import jupytext
+    if exception is None:
+        # Get the examples output directory and retrieve all the notebooks
+        import subprocess
 
-    EXAMPLES_DIRECTORY = Path(app.outdir) / "examples"
-    for notebook in EXAMPLES_DIRECTORY.glob("**/*.ipynb"):
-        jupytext.write(notebook, str(notebook.with_suffix(".py")))
+        examples_output_dir = Path(app.outdir) / "examples"
+        notebooks = examples_output_dir.glob("**/*.ipynb")
+        for notebook in notebooks:
+            print(f"Converting {notebook}")  # using jupytext
+            output = subprocess.run(
+                [
+                    "jupytext",
+                    "--to",
+                    "py",
+                    str(notebook),
+                    "--output",
+                    str(notebook.with_suffix(".py")),
+                ],
+                env=os.environ,
+                capture_output=True,
+            )
+
+            if output.returncode != 0:
+                print(f"Error converting {notebook} to script")
+                print(output.stderr)
 
 
 def setup(app: sphinx.application.Sphinx):
@@ -351,4 +368,5 @@ def setup(app: sphinx.application.Sphinx):
     """
     # Convert notebooks into Python scripts and include them in the output files
     if BUILD_EXAMPLES:
-        app.connect("doctree-resolved", convert_notebooks_to_scripts)
+        # Run at the end of the build process
+        app.connect("build-finished", convert_notebooks_to_scripts)
