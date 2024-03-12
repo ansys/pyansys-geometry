@@ -1930,7 +1930,7 @@ def test_get_collision(modeler: Modeler):
 
 
 def test_body_scale(modeler: Modeler):
-    """Test for verifying the correct scaling of a ``Body``."""
+    """Verify the correct scaling of a body."""
 
     design = modeler.create_design("BodyScale_Test")
 
@@ -1945,7 +1945,7 @@ def test_body_scale(modeler: Modeler):
 
 
 def test_body_mapping(modeler: Modeler):
-    """Test for verifying the correct mapping of a ``Body``."""
+    """Verify the correct mapping of a body."""
 
     design = modeler.create_design("BodyMap_Test")
 
