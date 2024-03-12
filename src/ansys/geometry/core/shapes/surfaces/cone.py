@@ -273,7 +273,7 @@ class ConeEvaluation(SurfaceEvaluation):
 
     Parameters
     ----------
-    cone: ~ansys.geometry.core.primitives.cone.Cone
+    cone: ~ansys.geometry.core.shapes.surfaces.cone.Cone
         Cone to evaluate.
     parameter: ParamUV
         Pparameters (u, v) to evaluate the cone at.

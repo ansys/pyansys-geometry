@@ -256,7 +256,7 @@ class CircleEvaluation(CurveEvaluation):
 
     Parameters
     ----------
-    circle: ~ansys.geometry.core.primitives.circle.Circle
+    circle: ~ansys.geometry.core.shapes.curves.circle.Circle
         Circle to evaluate.
     parameter: Real
         Parameter to evaluate the circle at.

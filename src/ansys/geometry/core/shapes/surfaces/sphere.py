@@ -238,7 +238,7 @@ class SphereEvaluation(SurfaceEvaluation):
 
     Parameters
     ----------
-    sphere: ~ansys.geometry.core.primitives.sphere.Sphere
+    sphere: ~ansys.geometry.core.shapes.surfaces.sphere.Sphere
         Sphere to evaluate.
     parameter: ParamUV
         Parameters (u, v) to evaluate the sphere at.

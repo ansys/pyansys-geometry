@@ -268,7 +268,7 @@ class TorusEvaluation(SurfaceEvaluation):
 
     Parameters
     ----------
-    Torus: ~ansys.geometry.core.primitives.torus.Torus
+    Torus: ~ansys.geometry.core.shapes.surfaces.torus.Torus
         Torust to evaluate.
     parameter: ParamUV
         Parameters (u, v) to evaluate the torus at.

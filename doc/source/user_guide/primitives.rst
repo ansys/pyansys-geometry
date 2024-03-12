@@ -3,11 +3,13 @@
 Primitives
 **********
 
-The PyAnsys Geometry :class:`primitives <ansys.geometry.core.primitives>` subpackage consists
+The PyAnsys Geometry :class:`math <ansys.geometry.core.math>` subpackage consists
 of primitive representations of basic geometric objects, such as a point, vector, and
 matrix. To operate and manipulate physical quantities, this subpackage uses
 `Pint <https://github.com/hgrecco/pint>`_, a third-party open source software
-that other PyAnsys libraries also use.
+that other PyAnsys libraries also use. It also uses its :class:`shapes <ansys.geometry.core.shapes>`
+subpackage to evaluate and represent geometric shapes (both curves and surfaces),
+such as lines, circles, cones, spheres and torus.
 
 This table shows PyAnsys Geometry names and base values for the physical quantities:
 

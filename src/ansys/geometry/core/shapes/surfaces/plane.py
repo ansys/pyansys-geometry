@@ -145,7 +145,7 @@ class PlaneEvaluation(SurfaceEvaluation):
 
     Parameters
     ----------
-    plane: ~ansys.geometry.core.primitives.plane.Plane
+    plane: ~ansys.geometry.core.shapes.surfaces.plane.PlaneSurface
         Plane to evaluate.
     parameter: ParamUV
         Parameters (u, v) to evaluate the plane at.

@@ -317,7 +317,7 @@ class EllipseEvaluation(CurveEvaluation):
 
     Parameters
     ----------
-    ellipse: ~ansys.geometry.core.primitives.ellipse.Ellipse
+    ellipse: ~ansys.geometry.core.shapes.curves.ellipse.Ellipse
         Ellipse to evaluate.
     parameter: float, int
         Parameter to evaluate the ellipse at.
