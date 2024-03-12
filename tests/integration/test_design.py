@@ -1969,11 +1969,11 @@ def test_body_mapping(modeler: Modeler):
 
     vertices = []
     for edge in body.edges:
-        vertices.extend([edge.start_point, edge.end_point])
+        vertices.extend([edge.shape.start, edge.shape.end])
 
     copy_vertices = []
     for edge in copy.edges:
-        copy_vertices.extend([edge.start_point, edge.end_point])
+        copy_vertices.extend([edge.shape.start, edge.shape.end])
 
     assert np.allclose(vertices, copy_vertices)
 
@@ -1983,7 +1983,7 @@ def test_body_mapping(modeler: Modeler):
 
     copy_vertices = []
     for edge in copy.edges:
-        copy_vertices.extend([edge.start_point, edge.end_point])
+        copy_vertices.extend([edge.shape.start, edge.shape.end])
 
     # expected vertices from confirmed mirror
     expected_vertices = [
@@ -2030,10 +2030,10 @@ def test_body_mapping(modeler: Modeler):
 
     map_vertices = []
     for edge in map_copy.edges:
-        map_vertices.extend([edge.start_point, edge.end_point])
+        map_vertices.extend([edge.shape.start, edge.shape.end])
 
     rotate_vertices = []
     for edge in rotate_copy.edges:
-        rotate_vertices.extend([edge.start_point, edge.end_point])
+        rotate_vertices.extend([edge.shape.start, edge.shape.end])
 
     assert np.allclose(map_vertices, rotate_vertices)
