@@ -1929,3 +1929,111 @@ def test_get_collision(modeler: Modeler):
 
     assert body1.get_collision(body2) == CollisionType.TOUCH
     assert body2.get_collision(body3) == CollisionType.NONE
+
+
+def test_body_scale(modeler: Modeler):
+    """Verify the correct scaling of a body."""
+
+    design = modeler.create_design("BodyScale_Test")
+
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert Accuracy.length_is_equal(body.volume.m, 1)
+
+    body.scale(2)
+    assert Accuracy.length_is_equal(body.volume.m, 8)
+
+    body.scale(0.25)
+    assert Accuracy.length_is_equal(body.volume.m, 1 / 8)
+
+
+def test_body_mapping(modeler: Modeler):
+    """Verify the correct mapping of a body."""
+    skip_if_linux(modeler)
+    design = modeler.create_design("BodyMap_Test")
+
+    # non-symmetric shape to allow determination of mirroring
+    body = design.extrude_sketch(
+        "box",
+        Sketch()
+        .segment(Point2D([1, 1]), Point2D([-1, 1]))
+        .segment_to_point(Point2D([0, 0.5]))
+        .segment_to_point(Point2D([-1, -1]))
+        .segment_to_point(Point2D([1, -1]))
+        .segment_to_point(Point2D([1, 1])),
+        1,
+    )
+
+    # Test 1: identity mapping - everything should be the same
+    copy = body.copy(body.parent_component, "copy")
+    copy.map(Frame(Point3D([0, 0, 0]), UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0])))
+
+    vertices = []
+    for edge in body.edges:
+        vertices.extend([edge.shape.start, edge.shape.end])
+
+    copy_vertices = []
+    for edge in copy.edges:
+        copy_vertices.extend([edge.shape.start, edge.shape.end])
+
+    assert np.allclose(vertices, copy_vertices)
+
+    # Test 2: mirror the body - flips only the x direction
+    copy = body.copy(body.parent_component, "copy")
+    copy.map(Frame(Point3D([-4, 0, 1]), UnitVector3D([-1, 0, 0]), UnitVector3D([0, 1, 0])))
+
+    copy_vertices = []
+    for edge in copy.edges:
+        copy_vertices.extend([edge.shape.start, edge.shape.end])
+
+    # expected vertices from confirmed mirror
+    expected_vertices = [
+        Point3D([-5.0, -1.0, 0.0]),
+        Point3D([-5.0, 1.0, 0.0]),
+        Point3D([-5.0, -1.0, 1.0]),
+        Point3D([-5.0, -1.0, 0.0]),
+        Point3D([-3.0, -1.0, 0.0]),
+        Point3D([-5.0, -1.0, 0.0]),
+        Point3D([-3.0, -1.0, 1.0]),
+        Point3D([-3.0, -1.0, 0.0]),
+        Point3D([-4.0, 0.5, 0.0]),
+        Point3D([-3.0, -1.0, 0.0]),
+        Point3D([-4.0, 0.5, 1.0]),
+        Point3D([-4.0, 0.5, 0.0]),
+        Point3D([-3.0, 1.0, 0.0]),
+        Point3D([-4.0, 0.5, 0.0]),
+        Point3D([-3.0, 1.0, 1.0]),
+        Point3D([-3.0, 1.0, 0.0]),
+        Point3D([-5.0, 1.0, 0.0]),
+        Point3D([-3.0, 1.0, 0.0]),
+        Point3D([-5.0, 1.0, 1.0]),
+        Point3D([-5.0, 1.0, 0.0]),
+        Point3D([-5.0, -1.0, 1.0]),
+        Point3D([-5.0, 1.0, 1.0]),
+        Point3D([-3.0, -1.0, 1.0]),
+        Point3D([-5.0, -1.0, 1.0]),
+        Point3D([-4.0, 0.5, 1.0]),
+        Point3D([-3.0, -1.0, 1.0]),
+        Point3D([-3.0, 1.0, 1.0]),
+        Point3D([-4.0, 0.5, 1.0]),
+        Point3D([-5.0, 1.0, 1.0]),
+        Point3D([-3.0, 1.0, 1.0]),
+    ]
+
+    assert np.allclose(expected_vertices, copy_vertices)
+
+    # Test 3: rotate body 180 degrees - flip x and y direction
+    map_copy = body.copy(body.parent_component, "copy")
+    map_copy.map(Frame(Point3D([0, 0, 0]), UnitVector3D([-1, 0, 0]), UnitVector3D([0, -1, 0])))
+
+    rotate_copy = body.copy(body.parent_component, "copy")
+    rotate_copy.rotate(Point3D([0, 0, 0]), UnitVector3D([0, 0, 1]), np.pi)
+
+    map_vertices = []
+    for edge in map_copy.edges:
+        map_vertices.extend([edge.shape.start, edge.shape.end])
+
+    rotate_vertices = []
+    for edge in rotate_copy.edges:
+        rotate_vertices.extend([edge.shape.start, edge.shape.end])
+
+    assert np.allclose(map_vertices, rotate_vertices)
