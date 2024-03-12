@@ -74,10 +74,3 @@ class Curve(ABC):
         This method returns the evaluation at the closest point.
         """
         return
-
-    # TODO: Implement more curve methods
-    # as_spline
-    # get_length
-    # get_polyline
-    # intersect_curve
-    # is_coincident
