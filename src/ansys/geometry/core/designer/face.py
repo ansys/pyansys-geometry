@@ -101,7 +101,7 @@ class FaceLoop:
         length: Quantity,
         min_bbox: Point3D,
         max_bbox: Point3D,
-        edges: List["Edge"],
+        edges: List[Edge],
     ):
         """Initialize ``FaceLoop`` class."""
         self._type = type
@@ -131,7 +131,7 @@ class FaceLoop:
         return self._max_bbox
 
     @property
-    def edges(self) -> List["Edge"]:
+    def edges(self) -> List[Edge]:
         """Edges contained in the loop."""
         return self._edges
 
@@ -229,7 +229,7 @@ class Face:
     @property
     @protect_grpc
     @ensure_design_is_active
-    def edges(self) -> List["Edge"]:
+    def edges(self) -> List[Edge]:
         """List of all edges of the face."""
         self._grpc_client.log.debug("Requesting face edges from server.")
         edges_response = self._faces_stub.GetEdges(self._grpc_id)
@@ -329,7 +329,7 @@ class Face:
         """
         return self.shape.evaluate_proportion(u, v).position
 
-    def __grpc_edges_to_edges(self, edges_grpc: List[GRPCEdge]) -> List["Edge"]:
+    def __grpc_edges_to_edges(self, edges_grpc: List[GRPCEdge]) -> List[Edge]:
         """
         Transform a list of gRPC edge messages into actual ``Edge`` objects.
 
