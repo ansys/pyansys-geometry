@@ -665,7 +665,13 @@ class MasterBody(IBody):
         self._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
         grpc_faces = self._bodies_stub.GetFaces(self._grpc_id)
         return [
-            Face(grpc_face.id, SurfaceType(grpc_face.surface_type), self, self._grpc_client)
+            Face(
+                grpc_face.id,
+                SurfaceType(grpc_face.surface_type),
+                self,
+                self._grpc_client,
+                grpc_face.is_reversed,
+            )
             for grpc_face in grpc_faces.faces
         ]
 
@@ -675,7 +681,13 @@ class MasterBody(IBody):
         self._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
         grpc_edges = self._bodies_stub.GetEdges(self._grpc_id)
         return [
-            Edge(grpc_edge.id, CurveType(grpc_edge.curve_type), self, self._grpc_client)
+            Edge(
+                grpc_edge.id,
+                CurveType(grpc_edge.curve_type),
+                self,
+                self._grpc_client,
+                grpc_edge.is_reversed,
+            )
             for grpc_edge in grpc_edges.edges
         ]
 
@@ -993,6 +1005,7 @@ class Body(IBody):
                 SurfaceType(grpc_face.surface_type),
                 self,
                 self._template._grpc_client,
+                grpc_face.is_reversed,
             )
             for grpc_face in grpc_faces.faces
         ]
@@ -1004,7 +1017,13 @@ class Body(IBody):
         self._template._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
         grpc_edges = self._template._bodies_stub.GetEdges(EntityIdentifier(id=self.id))
         return [
-            Edge(grpc_edge.id, CurveType(grpc_edge.curve_type), self, self._template._grpc_client)
+            Edge(
+                grpc_edge.id,
+                CurveType(grpc_edge.curve_type),
+                self,
+                self._template._grpc_client,
+                grpc_edge.is_reversed,
+            )
             for grpc_edge in grpc_edges.edges
         ]
 

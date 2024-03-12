@@ -25,7 +25,7 @@ from functools import cached_property
 from typing import Tuple
 
 from beartype import beartype as check_input_types
-from beartype.typing import Union
+from beartype.typing import Tuple, Union
 import numpy as np
 from pint import Quantity
 
@@ -34,18 +34,19 @@ from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.measurements import Distance
-from ansys.geometry.core.primitives.parameterization import (
+from ansys.geometry.core.shapes.parameterization import (
     Interval,
     Parameterization,
     ParamForm,
     ParamType,
     ParamUV,
 )
-from ansys.geometry.core.primitives.surface_evaluation import SurfaceEvaluation
+from ansys.geometry.core.shapes.surfaces.surface import Surface
+from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.typing import Real, RealSequence
 
 
-class Torus:
+class Torus(Surface):
     """
     Provides 3D torus representation.
 
@@ -194,39 +195,31 @@ class Torus:
         """
         return TorusEvaluation(self, parameter)
 
-    def get_u_parameterization(self):
+    def parameterization(self) -> Tuple[Parameterization, Parameterization]:
         """
-        Get the parametrization conditions for the U parameter.
+        Parameterize the torus surface as a tuple (U and V respectively).
 
         The U parameter specifies the longitude angle, increasing clockwise (east) about
         the axis (right-hand corkscrew law). It has a zero parameter at
         ``Geometry.Frame.DirX`` and a period of ``2*pi``.
 
-        Returns
-        -------
-        Parameterization
-            Information about how a sphere's U parameter is parameterized.
-        """
-        return Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
-
-    def get_v_parameterization(self) -> Parameterization:
-        """
-        Get the parametrization conditions of the V parameter.
-
         The V parameter specifies the latitude, increasing north, with a zero parameter
-        at the equator. For the donut, where the ``Geometry.Torus.MajorRadius`` is greater
-        than the ``Geometry.Torus.MinorRadius``, the range is ``[-pi, pi]`` and the
+        at the equator. For the donut, where the major radius is greater
+        than the minor radius, the range is [-pi, pi] and the
         parameterization is periodic. For a degenerate torus, the range is restricted
         accordingly and the parameterization is non-periodic.
 
         Returns
         -------
-        Parameterization
-            Information about how a torus's V parameter is parameterized.
+        Tuple[Parameterization, Parameterization]
+            Information about how a torus's u and v parameters are parameterized, respectively.
         """
-        return Parameterization(
+        u = Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
+        v = Parameterization(
             ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(-np.pi / 2, np.pi / 2)
         )
+
+        return (u, v)
 
     def project_point(self, point: Point3D) -> "TorusEvaluation":
         """
@@ -262,6 +255,12 @@ class Torus:
         else:
             return TorusEvaluation(self, ParamUV(u + np.pi, v2))
 
+    def contains_param(self, param_uv: ParamUV) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_param() is not implemented.")
+
+    def contains_point(self, point: Point3D) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_point() is not implemented.")
+
 
 class TorusEvaluation(SurfaceEvaluation):
     """
@@ -269,7 +268,7 @@ class TorusEvaluation(SurfaceEvaluation):
 
     Parameters
     ----------
-    Torus: ~ansys.geometry.core.primitives.torus.Torus
+    Torus: ~ansys.geometry.core.shapes.surfaces.torus.Torus
         Torust to evaluate.
     parameter: ParamUV
         Parameters (u, v) to evaluate the torus at.
