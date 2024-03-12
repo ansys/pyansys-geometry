@@ -288,6 +288,17 @@ class Interval:
             return first
         return Interval(min(first.start, second.start), max(first.end, second.end))
 
+    def self_unite(self, other: "Interval") -> None:
+        """
+        Get the union of two intervals and update the current interval.
+
+        Parameters
+        ----------
+        other : Interval
+            Interval to unite with.
+        """
+        self = Interval.unite(self, other)
+
     @staticmethod
     def intersect(first: "Interval", second: "Interval", tolerance: Real) -> "Interval":
         """
@@ -312,6 +323,19 @@ class Interval:
             return intersection
         return None  # supposed to be empty
 
+    def self_intersect(self, other: "Interval", tolerance: Real) -> None:
+        """
+        Get the intersection of two intervals and update the current interval.
+
+        Parameters
+        ----------
+        other : Interval
+            Interval to intersect with.
+        tolerance : Real
+            Accepted range of error given that the interval could be in float values.
+        """
+        self = Interval.intersect(self, other, tolerance)
+
     def contains_value(self, t: Real, accuracy: Real) -> bool:
         """
         Check if the current interval contains the value ``t`` given the accuracy range.
@@ -319,8 +343,8 @@ class Interval:
         Parameters
         ----------
         t : Real
-            Value of interest
-        accuracy: Real
+            Value of interest.
+        accuracy : Real
             Accepted range of error given that the interval could be in float values.
 
         Returns
