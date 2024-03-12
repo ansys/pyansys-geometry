@@ -40,7 +40,7 @@ from ansys.geometry.core.shapes.surfaces.trimmed_surface import (
 )
 from ansys.geometry.core.sketch.sketch import Sketch
 
-"""A Helper function to create a sktech line given two points and a ``Design``."""
+"""A helper function to create a sketch line given two points and a design."""
 
 
 def create_sketch_line(design: Design, p1: Point3D, p2: Point3D):
@@ -49,7 +49,7 @@ def create_sketch_line(design: Design, p1: Point3D, p2: Point3D):
     design._commands_stub.CreateSketchLine(CreateSketchLineRequest(point1=point1, point2=point2))
 
 
-"""A Helper function that creates the Hedgehog model."""
+"""A helper function that creates the Hedgehog model."""
 
 
 def create_hedgehog(modeler: Modeler):
@@ -105,7 +105,7 @@ def hedgehog_design(modeler: Modeler):
     yield h
 
 
-"""Tests the surface properties for hedgehog"""
+"""Tests the surface properties for the hedgehog design."""
 
 
 def test_trimmed_surface_properties(hedgehog_design):
@@ -160,7 +160,7 @@ def test_trimmed_surface_properties(hedgehog_design):
         assert faces[i].shape.box_uv.interval_v == Interval(start=interval_v[0], end=interval_v[1])
 
 
-"""Tests the normal vectors for hedgehog by using the ``BoxUV`` coordinates."""
+"""Tests the normal vectors for the hedgehog design using the BoxUV coordinates."""
 
 
 def test_trimmed_surface_normals(hedgehog_design):
@@ -218,7 +218,7 @@ def test_trimmed_surface_normals(hedgehog_design):
         assert np.allclose(faces[i].shape.normal(corner_param.u, corner_param.v), bottom_right)
 
 
-"""Tests the curve properties for hedgehog"""
+"""Tests the curve properties for the hedgehog design."""
 
 
 def test_trimmed_curve_properties(hedgehog_design):

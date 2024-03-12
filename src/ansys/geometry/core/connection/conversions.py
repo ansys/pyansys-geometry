@@ -526,7 +526,7 @@ def grpc_curve_to_curve(curve: GRPCCurve) -> Curve:
 
 def curve_to_grpc_curve(curve: Curve) -> GRPCCurve:
     """
-    Convert a ``Curve``to an ``ansys.api.geometry.CurveGeometry`` gRPC message.
+    Convert a ``Curve`` to an ``ansys.api.geometry.CurveGeometry`` gRPC message.
 
     Parameters
     ----------
@@ -576,7 +576,7 @@ def trimmed_curve_to_grpc_trimmed_curve(curve: "TrimmedCurve") -> GRPCTrimmedCur
     Returns
     -------
     GRPCTrimmedCurve
-        Geometry service gRPC TrimmedCurve message.
+        Geometry service gRPC ``TrimmedCurve`` message.
     """
     curve_geometry = curve_to_grpc_curve(curve.geometry)
     start = point3d_to_grpc_point(curve.start)

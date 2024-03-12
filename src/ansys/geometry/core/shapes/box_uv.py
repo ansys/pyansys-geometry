@@ -87,7 +87,7 @@ class BoxUV:
         )
 
     def get_center(self) -> ParamUV:
-        """Evaluate the this ``BoxUV`` in the center."""
+        """Evaluate the this BoxUV in the center."""
         return self.proportion(0.5, 0.5)
 
     def is_negative(self, tolerance_u: Real, tolerance_v: Real) -> bool:

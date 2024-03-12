@@ -221,7 +221,7 @@ class Interval:
         """
         Get the quantity contained by the interval.
 
-        The Interval must be closed.
+        The interval must be closed.
 
         Returns
         -------

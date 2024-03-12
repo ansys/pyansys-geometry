@@ -109,7 +109,7 @@ class TrimmedSurface:
         Returns
         -------
         UnitVector3D
-            This unit vector is normal to the surface at the given UV coordinates.
+            Unit vector is normal to the surface at the given UV coordinates.
         """
         return self.evaluate_proportion(u, v).normal
 

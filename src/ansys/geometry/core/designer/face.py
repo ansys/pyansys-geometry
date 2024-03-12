@@ -179,7 +179,7 @@ class Face:
 
     @property
     def _grpc_id(self) -> EntityIdentifier:
-        """Entity identifier of this face on the server side."""
+        """Entity ID of this face on the server side."""
         return EntityIdentifier(id=self._id)
 
     @property
