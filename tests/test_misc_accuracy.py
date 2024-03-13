@@ -132,3 +132,44 @@ def test_length_reference_equality():
     assert Accuracy.length_is_greater_than_or_equal(-5 - 1e-10, -5)
     assert Accuracy.length_is_greater_than_or_equal(-5 - 1e-9, -5)
     assert Accuracy.length_is_greater_than_or_equal(-5 + 1e-9, -5)
+
+
+def test_properties_accuracy_class():
+    """Test properties of the accuracy class."""
+
+    import ansys.geometry.core.misc.accuracy as accuracy_module
+
+    # Initialize the accuracy class
+    accuracy_class = Accuracy()
+
+    # Check the properties
+    assert accuracy_class.length_accuracy() == accuracy_module.LENGTH_ACCURACY
+    assert accuracy_class.angle_accuracy() == accuracy_module.ANGLE_ACCURACY
+    assert accuracy_class.double_accuracy() == accuracy_module.DOUBLE_ACCURACY
+
+
+def test_double_comps():
+    """Test double comparisons."""
+
+    # Test equal doubles
+    assert Accuracy.equal_doubles(5, 5)
+    assert Accuracy.equal_doubles(5 + 1e-13, 5)
+    assert Accuracy.equal_doubles(5 - 1e-13, 5)
+    assert not Accuracy.equal_doubles(5, 10)
+    assert not Accuracy.equal_doubles(5 + 1e-12, 5)
+    assert not Accuracy.equal_doubles(5 - 1e-12, 5)
+
+    # Test compare with tolerance
+    assert Accuracy.compare_with_tolerance(5, 5, 1e-13, 1e-13) == 0
+    assert Accuracy.compare_with_tolerance(5 + 1e-13, 5, 1e-13, 1e-13) == 0
+    assert Accuracy.compare_with_tolerance(5 - 1e-13, 5, 1e-13, 1e-13) == 0
+    assert Accuracy.compare_with_tolerance(5, 10, 1e-13, 1e-13) == -1
+    assert Accuracy.compare_with_tolerance(5 + 1e-12, 5, 1e-13, 1e-13) == 1
+    assert Accuracy.compare_with_tolerance(5 - 1e-12, 5, 1e-13, 1e-13) == -1
+    assert Accuracy.compare_with_tolerance(5, 5, 1e-12, 1e-12) == 0
+    assert Accuracy.compare_with_tolerance(5 + 1e-12, 5, 1e-12, 1e-12) == 0
+    assert Accuracy.compare_with_tolerance(5 - 1e-12, 5, 1e-12, 1e-12) == 0
+    assert Accuracy.compare_with_tolerance(5, 10, 1e-12, 1e-12) == -1
+    assert Accuracy.compare_with_tolerance(5 + 1e-11, 5, 1e-12, 1e-12) == 1
+    assert Accuracy.compare_with_tolerance(5 - 1e-11, 5, 1e-12, 1e-12) == -1
+    assert Accuracy.compare_with_tolerance(5, 5, 1e-11, 1e-11) == 0
