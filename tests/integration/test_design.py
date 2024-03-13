@@ -1927,3 +1927,226 @@ def test_get_collision(modeler: Modeler):
 
     assert body1.get_collision(body2) == CollisionType.TOUCH
     assert body2.get_collision(body3) == CollisionType.NONE
+
+
+def test_body_mirror(modeler: Modeler):
+    """Test the mirroring of a body."""
+    skip_if_linux(modeler)
+    design = modeler.create_design("Design1")
+
+    # Create shape with no lines of symmetry in any axis
+    body = design.extrude_sketch(
+        "box",
+        Sketch()
+        .segment(Point2D([1, 1]), Point2D([-1, 1]))
+        .segment_to_point(Point2D([0, 0.5]))
+        .segment_to_point(Point2D([-1, -1]))
+        .segment_to_point(Point2D([1, -1]))
+        .segment_to_point(Point2D([1, 1])),
+        1,
+    )
+    top = design.extrude_sketch(
+        "top", Sketch(Plane(Point3D([0, 0, 1]))).box(Point2D([0.5, 0.5]), 0.1, 0.1), 0.1
+    )
+    body.unite(top)
+
+    # Mirror across YZ plane
+    copy1 = body.copy(body.parent_component, "box2")
+    copy1.mirror(Plane(Point3D([2, 0, 0]), UnitVector3D([0, 0, 1]), UnitVector3D([0, 1, 0])))
+
+    expected_vertices = [
+        Point3D([3.0, -1.0, 1.0]),
+        Point3D([3.0, 1.0, 1.0]),
+        Point3D([3.0, -1.0, 0.0]),
+        Point3D([3.0, -1.0, 1.0]),
+        Point3D([5.0, -1.0, 1.0]),
+        Point3D([3.0, -1.0, 1.0]),
+        Point3D([5.0, -1.0, 0.0]),
+        Point3D([5.0, -1.0, 1.0]),
+        Point3D([4.0, 0.5, 1.0]),
+        Point3D([5.0, -1.0, 1.0]),
+        Point3D([4.0, 0.5, 0.0]),
+        Point3D([4.0, 0.5, 1.0]),
+        Point3D([5.0, 1.0, 1.0]),
+        Point3D([4.0, 0.5, 1.0]),
+        Point3D([5.0, 1.0, 0.0]),
+        Point3D([5.0, 1.0, 1.0]),
+        Point3D([3.0, 1.0, 1.0]),
+        Point3D([5.0, 1.0, 1.0]),
+        Point3D([3.0, 1.0, 0.0]),
+        Point3D([3.0, 1.0, 1.0]),
+        Point3D([3.0, -1.0, 0.0]),
+        Point3D([3.0, 1.0, 0.0]),
+        Point3D([5.0, -1.0, 0.0]),
+        Point3D([3.0, -1.0, 0.0]),
+        Point3D([4.0, 0.5, 0.0]),
+        Point3D([5.0, -1.0, 0.0]),
+        Point3D([5.0, 1.0, 0.0]),
+        Point3D([4.0, 0.5, 0.0]),
+        Point3D([3.0, 1.0, 0.0]),
+        Point3D([5.0, 1.0, 0.0]),
+        Point3D([3.55, 0.45, 1.1]),
+        Point3D([3.55, 0.55, 1.1]),
+        Point3D([3.55, 0.55, 1.0]),
+        Point3D([3.55, 0.55, 1.1]),
+        Point3D([3.55, 0.55, 1.1]),
+        Point3D([3.45, 0.55, 1.1]),
+        Point3D([3.45, 0.55, 1.0]),
+        Point3D([3.45, 0.55, 1.1]),
+        Point3D([3.45, 0.55, 1.1]),
+        Point3D([3.45, 0.45, 1.1]),
+        Point3D([3.45, 0.45, 1.0]),
+        Point3D([3.45, 0.45, 1.1]),
+        Point3D([3.45, 0.45, 1.1]),
+        Point3D([3.55, 0.45, 1.1]),
+        Point3D([3.55, 0.45, 1.0]),
+        Point3D([3.55, 0.45, 1.1]),
+        Point3D([3.55, 0.45, 1.0]),
+        Point3D([3.55, 0.55, 1.0]),
+        Point3D([3.55, 0.55, 1.0]),
+        Point3D([3.45, 0.55, 1.0]),
+        Point3D([3.45, 0.55, 1.0]),
+        Point3D([3.45, 0.45, 1.0]),
+        Point3D([3.45, 0.45, 1.0]),
+        Point3D([3.55, 0.45, 1.0]),
+    ]
+
+    copy_vertices = []
+    for edge in copy1.edges:
+        copy_vertices.extend([edge.shape.start, edge.shape.end])
+
+    assert np.allclose(expected_vertices, copy_vertices)
+
+    # Mirror across XY plane
+    copy2 = body.copy(body.parent_component, "box3")
+    copy2.mirror(Plane(Point3D([0, 0, -5]), UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0])))
+
+    expected_vertices = [
+        Point3D([1.0, -1.0, -11.0]),
+        Point3D([1.0, 1.0, -11.0]),
+        Point3D([1.0, -1.0, -10.0]),
+        Point3D([1.0, -1.0, -11.0]),
+        Point3D([-1.0, -1.0, -11.0]),
+        Point3D([1.0, -1.0, -11.0]),
+        Point3D([-1.0, -1.0, -10.0]),
+        Point3D([-1.0, -1.0, -11.0]),
+        Point3D([0.0, 0.5, -11.0]),
+        Point3D([-1.0, -1.0, -11.0]),
+        Point3D([0.0, 0.5, -10.0]),
+        Point3D([0.0, 0.5, -11.0]),
+        Point3D([-1.0, 1.0, -11.0]),
+        Point3D([0.0, 0.5, -11.0]),
+        Point3D([-1.0, 1.0, -10.0]),
+        Point3D([-1.0, 1.0, -11.0]),
+        Point3D([1.0, 1.0, -11.0]),
+        Point3D([-1.0, 1.0, -11.0]),
+        Point3D([1.0, 1.0, -10.0]),
+        Point3D([1.0, 1.0, -11.0]),
+        Point3D([1.0, -1.0, -10.0]),
+        Point3D([1.0, 1.0, -10.0]),
+        Point3D([-1.0, -1.0, -10.0]),
+        Point3D([1.0, -1.0, -10.0]),
+        Point3D([0.0, 0.5, -10.0]),
+        Point3D([-1.0, -1.0, -10.0]),
+        Point3D([-1.0, 1.0, -10.0]),
+        Point3D([0.0, 0.5, -10.0]),
+        Point3D([1.0, 1.0, -10.0]),
+        Point3D([-1.0, 1.0, -10.0]),
+        Point3D([0.45, 0.45, -11.1]),
+        Point3D([0.45, 0.55, -11.1]),
+        Point3D([0.45, 0.55, -11.0]),
+        Point3D([0.45, 0.55, -11.1]),
+        Point3D([0.45, 0.55, -11.1]),
+        Point3D([0.55, 0.55, -11.1]),
+        Point3D([0.55, 0.55, -11.0]),
+        Point3D([0.55, 0.55, -11.1]),
+        Point3D([0.55, 0.55, -11.1]),
+        Point3D([0.55, 0.45, -11.1]),
+        Point3D([0.55, 0.45, -11.0]),
+        Point3D([0.55, 0.45, -11.1]),
+        Point3D([0.55, 0.45, -11.1]),
+        Point3D([0.45, 0.45, -11.1]),
+        Point3D([0.45, 0.45, -11.0]),
+        Point3D([0.45, 0.45, -11.1]),
+        Point3D([0.45, 0.45, -11.0]),
+        Point3D([0.45, 0.55, -11.0]),
+        Point3D([0.45, 0.55, -11.0]),
+        Point3D([0.55, 0.55, -11.0]),
+        Point3D([0.55, 0.55, -11.0]),
+        Point3D([0.55, 0.45, -11.0]),
+        Point3D([0.55, 0.45, -11.0]),
+        Point3D([0.45, 0.45, -11.0]),
+    ]
+
+    copy_vertices = []
+    for edge in copy2.edges:
+        copy_vertices.extend([edge.shape.start, edge.shape.end])
+
+    assert np.allclose(expected_vertices, copy_vertices)
+
+    # Mirror across XZ plane
+    copy3 = body.copy(body.parent_component, "box4")
+    copy3.mirror(Plane(Point3D([0, 3, 0]), UnitVector3D([1, 0, 0]), UnitVector3D([0, 0, 1])))
+
+    expected_vertices = [
+        Point3D([1.0, 7.0, 1.0]),
+        Point3D([1.0, 5.0, 1.0]),
+        Point3D([1.0, 7.0, 0.0]),
+        Point3D([1.0, 7.0, 1.0]),
+        Point3D([-1.0, 7.0, 1.0]),
+        Point3D([1.0, 7.0, 1.0]),
+        Point3D([-1.0, 7.0, 0.0]),
+        Point3D([-1.0, 7.0, 1.0]),
+        Point3D([0.0, 5.5, 1.0]),
+        Point3D([-1.0, 7.0, 1.0]),
+        Point3D([0.0, 5.5, 0.0]),
+        Point3D([0.0, 5.5, 1.0]),
+        Point3D([-1.0, 5.0, 1.0]),
+        Point3D([0.0, 5.5, 1.0]),
+        Point3D([-1.0, 5.0, 0.0]),
+        Point3D([-1.0, 5.0, 1.0]),
+        Point3D([1.0, 5.0, 1.0]),
+        Point3D([-1.0, 5.0, 1.0]),
+        Point3D([1.0, 5.0, 0.0]),
+        Point3D([1.0, 5.0, 1.0]),
+        Point3D([1.0, 7.0, 0.0]),
+        Point3D([1.0, 5.0, 0.0]),
+        Point3D([-1.0, 7.0, 0.0]),
+        Point3D([1.0, 7.0, 0.0]),
+        Point3D([0.0, 5.5, 0.0]),
+        Point3D([-1.0, 7.0, 0.0]),
+        Point3D([-1.0, 5.0, 0.0]),
+        Point3D([0.0, 5.5, 0.0]),
+        Point3D([1.0, 5.0, 0.0]),
+        Point3D([-1.0, 5.0, 0.0]),
+        Point3D([0.45, 5.55, 1.1]),
+        Point3D([0.45, 5.45, 1.1]),
+        Point3D([0.45, 5.45, 1.0]),
+        Point3D([0.45, 5.45, 1.1]),
+        Point3D([0.45, 5.45, 1.1]),
+        Point3D([0.55, 5.45, 1.1]),
+        Point3D([0.55, 5.45, 1.0]),
+        Point3D([0.55, 5.45, 1.1]),
+        Point3D([0.55, 5.45, 1.1]),
+        Point3D([0.55, 5.55, 1.1]),
+        Point3D([0.55, 5.55, 1.0]),
+        Point3D([0.55, 5.55, 1.1]),
+        Point3D([0.55, 5.55, 1.1]),
+        Point3D([0.45, 5.55, 1.1]),
+        Point3D([0.45, 5.55, 1.0]),
+        Point3D([0.45, 5.55, 1.1]),
+        Point3D([0.45, 5.55, 1.0]),
+        Point3D([0.45, 5.45, 1.0]),
+        Point3D([0.45, 5.45, 1.0]),
+        Point3D([0.55, 5.45, 1.0]),
+        Point3D([0.55, 5.45, 1.0]),
+        Point3D([0.55, 5.55, 1.0]),
+        Point3D([0.55, 5.55, 1.0]),
+        Point3D([0.45, 5.55, 1.0]),
+    ]
+
+    copy_vertices = []
+    for edge in copy3.edges:
+        copy_vertices.extend([edge.shape.start, edge.shape.end])
+
+    assert np.allclose(expected_vertices, copy_vertices)

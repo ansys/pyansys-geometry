@@ -29,6 +29,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     BooleanRequest,
     CopyRequest,
     GetCollisionRequest,
+    MirrorRequest,
     RotateRequest,
     SetAssignedMaterialRequest,
     TranslateRequest,
@@ -47,6 +48,7 @@ from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
+    plane_to_grpc_plane,
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
     tess_to_pd,
@@ -58,6 +60,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
 from ansys.geometry.core.math.matrix import Matrix44
+from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.checks import check_type, ensure_design_is_active, min_backend_version
@@ -355,6 +358,18 @@ class IBody(ABC):
         Returns
         -------
         None
+        """
+        return
+
+    @abstractmethod
+    def mirror(self, plane: Plane) -> None:
+        """
+        Mirror the geometry body across the specified plane.
+
+        Parameters
+        ----------
+        plane: Plane
+            Represents the mirror.
         """
         return
 
@@ -819,6 +834,14 @@ class MasterBody(IBody):
         )
 
     @protect_grpc
+    @check_input_types
+    @reset_tessellation_cache
+    @min_backend_version(24, 2, 0)
+    def mirror(self, plane: Plane) -> None:  # noqa: D102
+        self._grpc_client.log.debug(f"Mirroring body {self.id}.")
+        self._bodies_stub.Mirror(MirrorRequest(id=self.id, plane=plane_to_grpc_plane(plane)))
+
+    @protect_grpc
     @min_backend_version(24, 2, 0)
     def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
         self._grpc_client.log.debug(f"Get collision between body {self.id} and body {body.id}.")
@@ -1181,6 +1204,10 @@ class Body(IBody):
         angle: Union[Quantity, Angle, Real],
     ) -> None:  # noqa: D102
         return self._template.rotate(axis_origin, axis_direction, angle)
+
+    @ensure_design_is_active
+    def mirror(self, plane: Plane) -> None:  # noqa: D102
+        return self._template.mirror(plane)
 
     @ensure_design_is_active
     def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
