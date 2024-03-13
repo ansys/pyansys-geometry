@@ -42,6 +42,8 @@ from ansys.geometry.core.shapes.parameterization import Interval
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.face import Face
+    from ansys.geometry.core.shapes.curves.circle import Circle
+    from ansys.geometry.core.shapes.curves.ellipse import Ellipse
 
 
 @unique
@@ -171,24 +173,6 @@ class Edge:
             for grpc_face in grpc_faces
         ]
 
-    @property
-    @protect_grpc
-    @ensure_design_is_active
-    def start_point(self) -> Point3D:
-        """Edge start point."""
-        self._grpc_client.log.debug("Requesting edge points from server.")
-        point = self._edges_stub.GetStartAndEndPoints(self._grpc_id).start
-        return Point3D([point.x, point.y, point.z])
-
-    @property
-    @protect_grpc
-    @ensure_design_is_active
-    def end_point(self) -> Point3D:
-        """Edge end point."""
-        self._grpc_client.log.debug("Requesting edge points from server.")
-        point = self._edges_stub.GetStartAndEndPoints(self._grpc_id).end
-        return Point3D([point.x, point.y, point.z])
-
     def _to_polydata(self) -> Union[pv.PolyData, None]:
         """
         Return the edge as polydata.
@@ -202,7 +186,27 @@ class Edge:
         """
         if self._curve_type == CurveType.CURVETYPE_UNKNOWN or CurveType.CURVETYPE_LINE:
             return pv.Line(pointa=self.start_point, pointb=self.end_point)
+        elif self._curve_type == CurveType.CURVETYPE_CIRCLE:
+            self.shape.geometry: Circle
+            point_a = self.shape.geometry.evaluate(0)
+            point_b = self.shape.geometry.evaluate(1)
+            half_a = pv.CircularArc(
+                center=self.shape.geometry.center,
+                pointa=point_a,
+                pointb=point_b,
+            )
+            half_b = pv.CircularArc(
+                center=self.shape.geometry.center,
+                pointa=point_a,
+                pointb=point_b,
+                negative=True,
+            )
+            pv_circle = pv.MultiBlock([half_a, half_b])
+            return pv_circle
+
+        elif self._curve_type == CurveType.CURVETYPE_ELLIPSE:
+            self.shape.geometry: Ellipse
+
         else:
             LOG.warning("Non linear edges not supported.")
             return None
-
