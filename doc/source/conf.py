@@ -1,4 +1,5 @@
 """Sphinx documentation configuration file."""
+
 from datetime import datetime
 import json
 import os
@@ -15,9 +16,12 @@ from ansys_sphinx_theme import (
     watermark,
 )
 import requests
+import sphinx
 from sphinx.builders.latex import LaTeXBuilder
 
 from ansys.geometry.core import __version__
+
+os.environ["PYANSYS_GEOMETRY_DOC_BUILD"] = "true"
 
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
 
@@ -66,6 +70,7 @@ switcher_version = get_version_match(__version__)
 html_logo = pyansys_logo_black
 html_theme = "ansys_sphinx_theme"
 html_short_title = html_title = "PyAnsys Geometry"
+html_baseurl = f"https://{cname}/version/stable"
 
 # specify the location of your github repo
 html_context = {
@@ -79,7 +84,6 @@ html_theme_options = {
         "json_url": f"https://{cname}/versions.json",
         "version_match": switcher_version,
     },
-    "check_switcher": False,
     "github_url": "https://github.com/ansys/pyansys-geometry",
     "show_prev_next": False,
     "show_breadcrumbs": True,
@@ -191,10 +195,10 @@ autoapi_options = [
     "special-members",
 ]
 autoapi_template_dir = get_autoapi_templates_dir_relative_path(Path(__file__))
-suppress_warnings = ["autoapi.python_import_resolution"]
+suppress_warnings = ["autoapi.python_import_resolution", "design.grid"]
 autoapi_python_use_implicit_namespaces = True
 autoapi_keep_files = True
-autoapi_render_in_single_page = ["class", "enum", "exception"]
+autoapi_own_page_level = "class"
 
 # Examples gallery customization
 nbsphinx_execute = "always"
@@ -253,9 +257,13 @@ latex_additional_files = [watermark, ansys_logo_white, ansys_logo_white_cropped]
 # change the preamble of latex with customized title page
 # variables are the title of pdf, watermark
 latex_elements = {"preamble": latex.generate_preamble(html_title)}
+sd_fontawesome_latex = True
 
 linkcheck_exclude_documents = ["index", "getting_started/local/index", "assets"]
-linkcheck_ignore = [r"https://github.com/ansys/pyansys-geometry-binaries/.*"]
+linkcheck_ignore = [
+    r"https://github.com/ansys/pyansys-geometry-binaries/.*",
+    r"https://download.ansys.com/",
+]
 
 # -- Declare the Jinja context -----------------------------------------------
 exclude_patterns = []
@@ -309,3 +317,55 @@ nitpick_ignore_regex = [
     # Python std lib errors
     (r"py:obj", r"logging.PercentStyle"),
 ]
+
+
+def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
+    """
+    Convert notebooks to scripts.
+
+    Parameters
+    ----------
+    app : sphinx.application.Sphinx
+        Sphinx instance containing all the configuration for the documentation build.
+    exception : Exception
+        Exception raised during the build process.
+    """
+    if exception is None:
+        # Get the examples output directory and retrieve all the notebooks
+        import subprocess
+
+        examples_output_dir = Path(app.outdir) / "examples"
+        notebooks = examples_output_dir.glob("**/*.ipynb")
+        for notebook in notebooks:
+            print(f"Converting {notebook}")  # using jupytext
+            output = subprocess.run(
+                [
+                    "jupytext",
+                    "--to",
+                    "py",
+                    str(notebook),
+                    "--output",
+                    str(notebook.with_suffix(".py")),
+                ],
+                env=os.environ,
+                capture_output=True,
+            )
+
+            if output.returncode != 0:
+                print(f"Error converting {notebook} to script")
+                print(output.stderr)
+
+
+def setup(app: sphinx.application.Sphinx):
+    """
+    Run different hook functions during the documentation build.
+
+    Parameters
+    ----------
+    app : sphinx.application.Sphinx
+        Sphinx instance containing all the configuration for the documentation build.
+    """
+    # Convert notebooks into Python scripts and include them in the output files
+    if BUILD_EXAMPLES:
+        # Run at the end of the build process
+        app.connect("build-finished", convert_notebooks_to_scripts)

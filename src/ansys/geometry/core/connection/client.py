@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -36,7 +36,7 @@ from grpc_health.v1 import health_pb2, health_pb2_grpc
 
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
-from ansys.geometry.core.connection.local_instance import LocalDockerInstance
+from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.product_instance import ProductInstance
 from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.logger import PyGeometryCustomAdapter
@@ -100,9 +100,9 @@ class GrpcClient:
         This instance is deleted when calling the
         :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
         method.
-    local_instance : LocalDockerInstance, default: None
-        Corresponding local instance when the Geometry service is launched using
-        the ``launch_local_modeler()`` method. This local instance is deleted
+    docker_instance : LocalDockerInstance, default: None
+        Corresponding local Docker instance when the Geometry service is launched using
+        the ``launch_docker_modeler()`` method. This local Docker instance is deleted
         when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
         method is called.
     product_instance : ProductInstance, default: None
@@ -130,7 +130,7 @@ class GrpcClient:
         port: Union[str, int] = DEFAULT_PORT,
         channel: Optional[grpc.Channel] = None,
         remote_instance: Optional["Instance"] = None,
-        local_instance: Optional[LocalDockerInstance] = None,
+        docker_instance: Optional[LocalDockerInstance] = None,
         product_instance: Optional[ProductInstance] = None,
         timeout: Optional[Real] = 120,
         logging_level: Optional[int] = logging.INFO,
@@ -140,7 +140,7 @@ class GrpcClient:
         """Initialize the ``GrpcClient`` object."""
         self._closed = False
         self._remote_instance = remote_instance
-        self._local_instance = local_instance
+        self._docker_instance = docker_instance
         self._product_instance = product_instance
         if channel:
             # Used for PyPIM when directly providing a channel
@@ -169,9 +169,12 @@ class GrpcClient:
 
         self._admin_stub = AdminStub(self._channel)
 
+        # retrieve the backend information
+        grpc_backend_response = self._admin_stub.GetBackend(Empty())
+
         # if no backend type has been specified, ask the backend which type it is
         if backend_type == None:
-            grpc_backend_type = self._admin_stub.GetBackend(Empty()).type
+            grpc_backend_type = grpc_backend_response.type
             if grpc_backend_type == GRPCBackendType.DISCOVERY:
                 backend_type = BackendType.DISCOVERY
             elif grpc_backend_type == GRPCBackendType.SPACECLAIM:
@@ -187,6 +190,14 @@ class GrpcClient:
             False if backend_type in (BackendType.DISCOVERY, BackendType.LINUX_SERVICE) else True
         )
 
+        # retrieve the backend version
+        if hasattr(grpc_backend_response, "version"):
+            ver = grpc_backend_response.version
+            self._backend_version = f"{ver.major_release}.{ver.minor_release}.{ver.service_pack}"
+        else:
+            logger.warning("The backend version is only available after 24.1 version.")
+            self._backend_version = "24.1.0"
+
     @property
     def backend_type(self) -> BackendType:
         """
@@ -201,6 +212,19 @@ class GrpcClient:
         not straightforward.
         """
         return self._backend_type
+
+    @property
+    def backend_version(self) -> str:
+        """
+        Get the current backend version.
+
+        Returns
+        -------
+        str
+            Backend version in semantic versioning format (that is, Ansys 24R1 SP2
+            would be ``24.1.2``).
+        """
+        return self._backend_version
 
     @property
     def multiple_designs_allowed(self) -> bool:
@@ -263,14 +287,14 @@ class GrpcClient:
         -----
         If an instance of the Geometry service was started using
         `PyPIM <https://github.com/ansys/pypim>`_, this instance is
-        deleted. Furthermore, if a local instance
+        deleted. Furthermore, if a local Docker instance
         of the Geometry service was started, it is stopped.
         """
         if self._remote_instance:
             self._remote_instance.delete()  # pragma: no cover
-        elif self._local_instance:
-            if not self._local_instance.existed_previously:
-                self._local_instance.container.stop()
+        elif self._docker_instance:
+            if not self._docker_instance.existed_previously:
+                self._docker_instance.container.stop()
             else:
                 self.log.warning(
                     "Geometry service was not shut down because it was already running..."

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -27,7 +27,7 @@ from beartype.typing import TYPE_CHECKING, Dict, Optional
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
 from ansys.geometry.core.connection.defaults import DEFAULT_PIM_CONFIG, DEFAULT_PORT
-from ansys.geometry.core.connection.local_instance import (
+from ansys.geometry.core.connection.docker_instance import (
     _HAS_DOCKER,
     GeometryContainers,
     LocalDockerInstance,
@@ -48,15 +48,27 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
 
 
-def launch_modeler(**kwargs: Optional[Dict]) -> "Modeler":
+def launch_modeler(mode: str = None, **kwargs: Optional[Dict]) -> "Modeler":
     """
     Start the ``Modeler`` interface for PyAnsys Geometry.
 
     Parameters
     ----------
+    mode : str, default: None
+        Mode in which to launch the ``Modeler`` service. The default is ``None``,
+        in which case the method tries to determine the mode automatically. The
+        possible values are:
+
+        * ``"pypim"``: Launches the ``Modeler`` service remotely using the PIM API.
+        * ``"docker"``: Launches the ``Modeler`` service locally using Docker.
+        * ``"geometry_service"``: Launches the ``Modeler`` service locally using the
+          Ansys Geometry Service.
+        * ``"spaceclaim"``: Launches the ``Modeler`` service locally using Ansys SpaceClaim.
+        * ``"discovery"``: Launches the ``Modeler`` service locally using Ansys Discovery.
+
     **kwargs : dict, default: None
         Keyword arguments for the launching methods. For allowable keyword arguments, see the
-        :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of these
+        :func:`launch_remote_modeler` and :func:`launch_docker_modeler` methods. Some of these
         keywords might be unused.
 
     Returns
@@ -71,21 +83,133 @@ def launch_modeler(**kwargs: Optional[Dict]) -> "Modeler":
     >>> from ansys.geometry.core import launch_modeler
     >>> modeler = launch_modeler()
     """
-    # A local Docker container of the Geometry service or `PyPIM <https://github.com/ansys/pypim>`_
-    # is required for this to work. Neither is integrated, but they could possibly be added later.
+    if mode:
+        return _launch_with_launchmode(mode, **kwargs)
+    else:
+        return _launch_with_automatic_detection(**kwargs)
 
-    # Another alternative is to use this method to run Docker locally.
 
-    # Start PyAnsys Geometry with PyPIM if the environment is configured for it
+def _launch_with_launchmode(mode: str, **kwargs: Optional[Dict]) -> "Modeler":
+    """
+    Start the ``Modeler`` interface for PyAnsys Geometry.
+
+    Parameters
+    ----------
+    mode : str
+        Mode in which to launch the ``Modeler`` service. The possible values are:
+
+        * ``"pypim"``: Launches the ``Modeler`` service remotely using the PIM API.
+        * ``"docker"``: Launches the ``Modeler`` service locally using Docker.
+        * ``"geometry_service"``: Launches the ``Modeler`` service locally using the
+          Ansys Geometry Service.
+        * ``"spaceclaim"``: Launches the ``Modeler`` service locally using Ansys SpaceClaim.
+        * ``"discovery"``: Launches the ``Modeler`` service locally using Ansys Discovery.
+
+    **kwargs : dict, default: None
+        Keyword arguments for the launching methods. For allowable keyword arguments, see the
+        :func:`launch_remote_modeler` and :func:`launch_docker_modeler` methods. Some of these
+        keywords might be unused.
+
+    Returns
+    -------
+    ansys.geometry.core.modeler.Modeler
+        Pythonic interface for geometry modeling.
+    """
+    # Ensure that the launch mode is a string
+    if not isinstance(mode, str):
+        raise TypeError("The launch mode must be a string.")
+
+    # Ensure that the launch mode is lowercase
+    mode = mode.lower()
+
+    if mode == "pypim":
+        return launch_remote_modeler(**kwargs)
+    elif mode == "docker":
+        return launch_docker_modeler(**kwargs)
+    elif mode == "geometry_service":
+        return launch_modeler_with_geometry_service(**kwargs)
+    elif mode == "spaceclaim":
+        return launch_modeler_with_spaceclaim(**kwargs)
+    elif mode == "discovery":
+        return launch_modeler_with_discovery(**kwargs)
+    else:  # pragma: no cover
+        raise ValueError(
+            f"Invalid launch mode '{mode}'. The valid modes are: "
+            "'pypim', 'docker', 'geometry_service', 'spaceclaim', 'discovery'."
+        )
+
+
+def _launch_with_automatic_detection(**kwargs: Optional[Dict]) -> "Modeler":
+    """
+    Start the ``Modeler`` interface for PyAnsys Geometry based on automatic detection.
+
+    Parameters
+    ----------
+    **kwargs : dict, default: None
+        Keyword arguments for the launching methods. For allowable keyword arguments, see the
+        :func:`launch_remote_modeler` and :func:`launch_docker_modeler` methods. Some of these
+        keywords might be unused.
+
+    Returns
+    -------
+    ansys.geometry.core.modeler.Modeler
+        Pythonic interface for geometry modeling.
+    """
+    # This method is a wrapper for the other launching methods. It is used to
+    # determine which method to call based on the environment.
+    #
+    # The order of the checks is as follows:
+    #
+    # 1. Check if PyPIM is configured and if the environment is configured for it.
+    # 2. Check if Docker is installed and if the environment is configured for it.
+    # 3. If you are on a Windows machine:
+    #     - check if the Ansys Geometry service is installed.
+    #     - check if Ansys SpaceClaim is installed.
+    #     - check if Ansys Discovery is installed.
+
+    # 1.Start PyAnsys Geometry with PyPIM if the environment is configured for it
     # and a directive on how to launch it was not passed.
     if _HAS_PIM and pypim.is_configured():
         logger.info("Starting Geometry service remotely. The startup configuration is ignored.")
         return launch_remote_modeler(**kwargs)
 
     # Otherwise, we are in the "local Docker Container" scenario
-    if _HAS_DOCKER and LocalDockerInstance.is_docker_installed():
-        logger.info("Starting Geometry service locally from Docker container.")
-        return launch_local_modeler(**kwargs)
+    try:
+        if _HAS_DOCKER and LocalDockerInstance.is_docker_installed():
+            logger.info("Starting Geometry service locally from Docker container.")
+            return launch_docker_modeler(**kwargs)
+    except Exception:
+        logger.warning(
+            "The local Docker container could not be started."
+            " Trying to start the Geometry service locally."
+        )
+
+    # If we are on a Windows machine, we can try to start the Geometry service locally,
+    # through various methods: Geometry service, SpaceClaim, Discovery.
+    if os.name == "nt":
+        try:
+            logger.info("Starting Geometry service locally.")
+            return launch_modeler_with_geometry_service(**kwargs)
+        except Exception as err:
+            logger.warning(
+                "The Geometry service could not be started locally."
+                " Trying to start Ansys SpaceClaim locally."
+            )
+
+        try:
+            logger.info("Starting Ansys SpaceClaim with Geometry Service locally.")
+            return launch_modeler_with_spaceclaim(**kwargs)
+        except Exception as err:
+            logger.warning(
+                "Ansys SpaceClaim could not be started locally."
+                " Trying to start Ansys Discovery locally."
+            )
+
+        try:
+            logger.info("Starting Ansys Discovery with Geometry Service locally.")
+            return launch_modeler_with_discovery(**kwargs)
+        except Exception as err:
+            logger.warning("Ansys Discovery could not be started locally.")
 
     # If we reached this point...
     raise NotImplementedError("Geometry service cannot be initialized.")
@@ -109,7 +233,7 @@ def launch_remote_modeler(version: Optional[str] = None, **kwargs: Optional[Dict
         chooses the version.
     **kwargs : dict, default: None
         Keyword arguments for the launching methods. For allowable keyword arguments, see the
-        :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of these
+        :func:`launch_remote_modeler` and :func:`launch_docker_modeler` methods. Some of these
         keywords might be unused.
 
     Returns
@@ -125,7 +249,7 @@ def launch_remote_modeler(version: Optional[str] = None, **kwargs: Optional[Dict
     )
 
 
-def launch_local_modeler(
+def launch_docker_modeler(
     port: int = DEFAULT_PORT,
     connect_to_existing_service: bool = True,
     restart_if_existing_service: bool = False,
@@ -163,7 +287,7 @@ def launch_local_modeler(
         that OS.
     **kwargs : dict, default: None
         Keyword arguments for the launching methods. For allowable keyword arguments, see the
-        :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of these
+        :func:`launch_remote_modeler` and :func:`launch_docker_modeler` methods. Some of these
         keywords might be unused.
 
     Returns
@@ -177,7 +301,7 @@ def launch_local_modeler(
         raise ModuleNotFoundError("The package 'docker' is required to use this function.")
 
     # Call the LocalDockerInstance ctor.
-    local_instance = LocalDockerInstance(
+    docker_instance = LocalDockerInstance(
         port=port,
         connect_to_existing_service=connect_to_existing_service,
         restart_if_existing_service=restart_if_existing_service,
@@ -185,8 +309,8 @@ def launch_local_modeler(
         image=image,
     )
 
-    # Once the local instance is ready... return the Modeler
-    return Modeler(host="localhost", port=port, local_instance=local_instance)
+    # Once the local Docker instance is ready... return the Modeler
+    return Modeler(host="localhost", port=port, docker_instance=docker_instance)
 
 
 def launch_modeler_with_discovery_and_pimlight(version: Optional[str] = None) -> "Modeler":
@@ -370,6 +494,7 @@ def launch_modeler_with_discovery(
     timeout: int = 150,
     manifest_path: str = None,
     logs_folder: str = None,
+    hidden: bool = False,
 ):
     """
     Start Ansys Discovery locally using the ``ProductInstance`` class.
@@ -420,6 +545,7 @@ def launch_modeler_with_discovery(
         version.
     logs_folder : sets the backend's logs folder path. If nothing is defined,
         the backend will use its default path.
+    hidden : starts the product hiding its UI. Default is ``False``.
 
     Raises
     ------
@@ -465,6 +591,7 @@ def launch_modeler_with_discovery(
         timeout=timeout,
         manifest_path=manifest_path,
         logs_folder=logs_folder,
+        hidden=hidden,
     )
 
 
@@ -477,6 +604,7 @@ def launch_modeler_with_spaceclaim(
     timeout: int = 150,
     manifest_path: str = None,
     logs_folder: str = None,
+    hidden: bool = False,
 ):
     """
     Start Ansys SpaceClaim locally using the ``ProductInstance`` class.
@@ -524,6 +652,7 @@ def launch_modeler_with_spaceclaim(
         version.
     logs_folder : sets the backend's logs folder path. If nothing is defined,
         the backend will use its default path.
+    hidden : starts the product hiding its UI. Default is ``False``.
 
     Raises
     ------
@@ -569,6 +698,7 @@ def launch_modeler_with_spaceclaim(
         timeout=timeout,
         manifest_path=manifest_path,
         logs_folder=logs_folder,
+        hidden=hidden,
     )
 
 

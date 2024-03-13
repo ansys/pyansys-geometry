@@ -1,0 +1,46 @@
+name: Upload Windows latest to Ansys Lab
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  packages: read
+
+env:
+  WINDOWS_STABLE_GHCR: ghcr.io/ansys/geometry:windows-latest
+  WINDOWS_STABLE_FUJI: azwepsifujiaksacr.azurecr.io/ansys/discovery/geometry:windows-latest
+
+jobs:
+  windows-ansyslab:
+    name: Publish Windows latest image on AnsysLab
+    runs-on:
+      group: ansys-network
+      labels: [Windows, pygeometry]
+    steps:
+      - name: Login in Github Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull Windows latest unstable container
+        run: docker pull ${{ env.WINDOWS_STABLE_GHCR }}
+
+      - name: Login in AnsysLab registry
+        uses: docker/login-action@v3
+        with:
+          registry: azwepsifujiaksacr.azurecr.io
+          username: ${{ secrets.FUJI_USER }}
+          password: ${{ secrets.FUJI_TOKEN }}
+
+      - name: Tag container as latest (stable) for AnsysLab registry
+        run: docker tag ${{ env.WINDOWS_STABLE_GHCR }} ${{ env.WINDOWS_STABLE_FUJI }}
+
+      - name: Publish latest stable container in AnsysLab registry
+        run: docker push ${{ env.WINDOWS_STABLE_FUJI }}

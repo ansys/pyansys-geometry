@@ -20,7 +20,7 @@ env:
   GEO_CONT_NAME: ans_geo
   RESET_IMAGE_CACHE: 6
   IS_WORKFLOW_RUNNING: True
-  ARTIFACTORY_VERSION: v241
+  ARTIFACTORY_VERSION: v242
   MEILISEARCH_API_KEY: ${{ secrets.MEILISEARCH_API_KEY }}
   MEILISEARCH_HOST_URL: ${{ vars.MEILISEARCH_HOST_URL }}
   MEILISEARCH_PUBLIC_API_KEY: ${{ secrets.MEILISEARCH_PUBLIC_API_KEY }}
@@ -31,12 +31,30 @@ concurrency:
 
 jobs:
 
+  branch-name:
+    if: github.event_name == 'pull_request'
+    name: Check the name of the branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch name
+        uses: ansys/actions/branch-name-style@v5
+
+  commit-name:
+    if: github.event_name == 'pull_request'
+    name: Check the name of the commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check commit name
+        uses: ansys/actions/commit-style@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
   docs-style:
     name: Documentation Style Check
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/doc-style@v4
+        uses: ansys/actions/doc-style@v5
         with:
          token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -55,11 +73,21 @@ jobs:
             os: macos-latest
     steps:
       - name: Build wheelhouse and perform smoke test
-        uses: ansys/actions/build-wheelhouse@v4
+        uses: ansys/actions/build-wheelhouse@v5
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
           python-version: ${{ matrix.python-version }}
+
+  docker-style:
+    name: Docker Style Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: PyAnsys documentation style checks
+        uses: ansys/actions/docker-style@v5
+        with:
+          directory: docker
+          recursive: true
 
 # =================================================================================================
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
@@ -87,7 +115,7 @@ jobs:
 
       - name: Set up Python
         if: env.SKIP_UNSTABLE == 'false'
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
 
@@ -135,7 +163,7 @@ jobs:
 
       - name: Restore images cache
         if: env.SKIP_UNSTABLE == 'false'
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.name }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
@@ -149,7 +177,7 @@ jobs:
 
       - name: Upload integration test logs
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: integration-test-logs-${{ matrix.docker-image }}
           path: tests/integration/logs
@@ -157,7 +185,7 @@ jobs:
 
       - name: Upload PyVista generated images (cache and results)
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pytest-pyvista-images-${{ matrix.docker-image }}
           path: tests/integration/image_cache
@@ -165,14 +193,14 @@ jobs:
 
       - name: Upload Coverage Results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: coverage-html
+          name: coverage-html-${{ matrix.docker-image }}
           path: .cov/html
           retention-days: 7
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         if: matrix.docker-image == 'windows-latest'
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -206,7 +234,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
 
@@ -265,14 +293,14 @@ jobs:
           cp doc/_build/latex/ansys-geometry-core.pdf .\doc\_build\html\_static\assets\download\
 
       - name: Upload HTML documentation
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: documentation-html
           path: doc/_build/html
           retention-days: 7
 
       - name: Upload PDF documentation
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: documentation-pdf
           path: doc/_build/latex/ansys-geometry-core*.pdf
@@ -335,7 +363,7 @@ jobs:
 
       - name: Restore images cache
         if: env.SKIP_UNSTABLE == 'false'
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: tests/integration/image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
@@ -343,7 +371,7 @@ jobs:
 
       - name: Run pytest
         if: env.SKIP_UNSTABLE == 'false'
-        uses: ansys/actions/tests-pytest@v4
+        uses: ansys/actions/tests-pytest@v5
         env:
           ALLOW_PLOTTING: true
         with:
@@ -352,7 +380,7 @@ jobs:
 
       - name: Upload integration test logs
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: integration-test-logs-${{ matrix.docker-image }}
           path: tests/integration/logs
@@ -360,7 +388,7 @@ jobs:
 
       - name: Upload PyVista generated images (cache and results)
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pytest-pyvista-images-${{ matrix.docker-image }}
           path: tests/integration/image_cache
@@ -382,7 +410,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Build library source and wheel artifacts
-        uses: ansys/actions/build-library@v4
+        uses: ansys/actions/build-library@v5
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -412,14 +440,14 @@ jobs:
           curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerLinux.zip --output linux-binaries.zip
 
       - name: Upload Windows binaries as workflow artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-binaries.zip
           path: windows-binaries.zip
           retention-days: 1
 
       - name: Upload Linux binaries as workflow artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-binaries.zip
           path: linux-binaries.zip
@@ -448,12 +476,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
 
       - name: Download Windows binaries
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: windows-binaries.zip
           path: docker/windows-binaries.zip
@@ -461,7 +489,7 @@ jobs:
       - name: Build Docker image
         working-directory: docker
         run: |
-          docker build -f Dockerfile.windows -t ghcr.io/ansys/geometry:windows-latest-tmp .
+          docker build -f windows/Dockerfile -t ghcr.io/ansys/geometry:windows-latest-tmp .
 
       - name: Check location of self-hosted runner and define license server accordingly
         if: runner.name == 'pygeometry-ci-1' || runner.name == 'pygeometry-ci-2'
@@ -481,7 +509,7 @@ jobs:
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Restore images cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
@@ -492,14 +520,14 @@ jobs:
           .\.venv\Scripts\Activate.ps1
           pytest -v --use-existing-service=yes
 
-      - name: "Compressing Dockerfile.windows"
-        uses: vimtor/action-zip@v1.1
+      - name: "Compressing Windows Dockerfile"
+        uses: vimtor/action-zip@v1.2
         with:
-          files: docker/Dockerfile.windows
+          files: docker/windows/Dockerfile
           dest: windows-dockerfile.zip
 
       - name: Upload Windows Dockerfile
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-dockerfile.zip
           path: windows-dockerfile.zip
@@ -540,12 +568,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Download Linux binaries
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: linux-binaries.zip
           path: docker/linux-binaries.zip
@@ -553,7 +581,7 @@ jobs:
       - name: Build Docker image
         working-directory: docker
         run: |
-          docker build -f Dockerfile.linux -t ghcr.io/ansys/geometry:linux-latest-tmp .
+          docker build -f linux/Dockerfile -t ghcr.io/ansys/geometry:linux-latest-tmp .
 
       - name: Launch Geometry service
         run: |
@@ -566,14 +594,14 @@ jobs:
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Restore images cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@v4
+        uses: ansys/actions/tests-pytest@v5
         env:
           ALLOW_PLOTTING: true
         with:
@@ -582,14 +610,14 @@ jobs:
           checkout: false
           requires-xvfb: true
 
-      - name: "Compressing Dockerfile.linux"
-        uses: vimtor/action-zip@v1.1
+      - name: "Compressing Linux Dockerfile"
+        uses: vimtor/action-zip@v1.2
         with:
-          files: docker/Dockerfile.linux
+          files: docker/linux/Dockerfile
           dest: linux-dockerfile.zip
 
       - name: Upload Linux Dockerfile
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-dockerfile.zip
           path: linux-dockerfile.zip
@@ -609,14 +637,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Release to the public PyPI repository
-        uses: ansys/actions/release-pypi-public@v4
+        uses: ansys/actions/release-pypi-public@v5
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           twine-username: "__token__"
           twine-token: ${{ secrets.PYPI_TOKEN }}
 
       - name: Release to GitHub
-        uses: ansys/actions/release-github@v4
+        uses: ansys/actions/release-github@v5
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           additional-artifacts: windows-dockerfile.zip linux-dockerfile.zip
@@ -628,7 +656,8 @@ jobs:
     needs: [package]
     steps:
       - name: Deploy the latest documentation
-        uses: ansys/actions/doc-deploy-dev@v4
+        # TODO: testing SEO improvements. This branch reuses the "index.html" from the stable version
+        uses: ansys/actions/doc-deploy-dev@feat/seo-improvements
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -640,7 +669,7 @@ jobs:
     needs: upload_dev_docs
     steps:
       - name: "Deploy the latest documentation index"
-        uses: ansys/actions/doc-deploy-index@v4
+        uses: ansys/actions/doc-deploy-index@v5
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}/version/dev
           index-name: pyansys-geometry-vdev
@@ -655,7 +684,9 @@ jobs:
     needs: [release]
     steps:
       - name: Deploy the stable documentation
-        uses: ansys/actions/doc-deploy-stable@v4
+        # TODO: testing SEO improvements. This branch avoids creating a
+        # sitemap.xml pages in opposite to v5.
+        uses: ansys/actions/doc-deploy-stable@feat/seo-improvements
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -681,7 +712,7 @@ jobs:
           echo "VERSION_MEILI=$VERSION_MEILI" >> $GITHUB_ENV
 
       - name: "Deploy the latest documentation index"
-        uses: ansys/actions/doc-deploy-index@v4
+        uses: ansys/actions/doc-deploy-index@v5
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}/version/${{ env.VERSION }}
           index-name: pyansys-geometry-v${{ env.VERSION_MEILI }}

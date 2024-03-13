@@ -3,11 +3,13 @@
 Primitives
 **********
 
-The PyAnsys Geometry :class:`primitives <ansys.geometry.core.primitives>` subpackage consists
+The PyAnsys Geometry :class:`math <ansys.geometry.core.math>` subpackage consists
 of primitive representations of basic geometric objects, such as a point, vector, and
 matrix. To operate and manipulate physical quantities, this subpackage uses
 `Pint <https://github.com/hgrecco/pint>`_, a third-party open source software
-that other PyAnsys libraries also use.
+that other PyAnsys libraries also use. It also uses its :class:`shapes <ansys.geometry.core.shapes>`
+subpackage to evaluate and represent geometric shapes (both curves and surfaces),
+such as lines, circles, cones, spheres and torus.
 
 This table shows PyAnsys Geometry names and base values for the physical quantities:
 
@@ -40,6 +42,8 @@ If you create a 2D object in the plane, PyAnsys Geometry converts it to the glob
 the 2D feature executes as expected:
 
 .. code:: python
+
+    from ansys.geometry.core.math import Plane, Point3D, UnitVector3D
 
     origin = Point3D([42, 99, 13])
     plane = Plane(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -30,7 +30,7 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection import (
     LocalDockerInstance,
     get_geometry_container_type,
-    launch_local_modeler,
+    launch_docker_modeler,
 )
 
 SKIP_DOCKER_TESTS_CONDITION = (
@@ -52,7 +52,7 @@ def _check_no_shutdown_warning(port: int, log: str) -> bool:
 
 def _check_service_already_running(port: int, log: str) -> bool:
     msg = (
-        r"WARNING  PyAnsys_Geometry_global:local_instance\.py:[0-9]+ Service is already running at port "  # noqa : E501
+        r"WARNING  PyAnsys_Geometry_global:docker_instance\.py:[0-9]+ Service is already running at port "  # noqa : E501
         + str(port)
         + r"\.\.\."
     )
@@ -62,7 +62,7 @@ def _check_service_already_running(port: int, log: str) -> bool:
 
 def _check_restarting_service(port: int, log: str) -> bool:
     msg = (
-        r"WARNING  PyAnsys_Geometry_global:local_instance\.py:[0-9]+ Restarting service already running at port "  # noqa : E501
+        r"WARNING  PyAnsys_Geometry_global:docker_instance\.py:[0-9]+ Restarting service already running at port "  # noqa : E501
         + str(port)
         + r"\.\.\."
     )
@@ -90,10 +90,10 @@ def test_local_launcher_connect(
 
     # Trying to deploy a service there will lead to an error...
     with pytest.raises(RuntimeError, match=f"Geometry service cannot be deployed on port {port}"):
-        launch_local_modeler(port=port, connect_to_existing_service=False)
+        launch_docker_modeler(port=port, connect_to_existing_service=False)
 
     # Connect to the existing target... this will throw a warning
-    local_modeler = launch_local_modeler(
+    local_modeler = launch_docker_modeler(
         port=port, connect_to_existing_service=True, restart_if_existing_service=False
     )
     assert _check_service_already_running(port, caplog.text) is True
@@ -123,7 +123,7 @@ def test_local_launcher_connect_with_restart(
     new_port = port + 1
 
     # Launch a new modeler...
-    new_modeler = launch_local_modeler(
+    new_modeler = launch_docker_modeler(
         port=new_port,
         connect_to_existing_service=True,
         restart_if_existing_service=False,
@@ -135,7 +135,7 @@ def test_local_launcher_connect_with_restart(
     caplog.clear()
 
     # Connect to the previous modeler and restart it
-    new_modeler_restarted = launch_local_modeler(
+    new_modeler_restarted = launch_docker_modeler(
         port=new_port,
         connect_to_existing_service=True,
         restart_if_existing_service=True,
@@ -180,7 +180,7 @@ def test_try_deploying_container_with_same_name(
 
     # Launch a new modeler...
     container_name = "MY_CONTAINER"
-    new_modeler = launch_local_modeler(
+    new_modeler = launch_docker_modeler(
         port=new_port,
         connect_to_existing_service=True,
         restart_if_existing_service=False,
@@ -197,7 +197,7 @@ def test_try_deploying_container_with_same_name(
     with pytest.raises(
         RuntimeError, match="Geometry service Docker image error when initialized. Error:"
     ):
-        launch_local_modeler(
+        launch_docker_modeler(
             port=new_port_2,
             connect_to_existing_service=True,
             restart_if_existing_service=False,

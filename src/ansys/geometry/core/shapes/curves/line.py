@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -32,17 +32,18 @@ from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.accuracy import LENGTH_ACCURACY
-from ansys.geometry.core.primitives.curve_evaluation import CurveEvaluation
-from ansys.geometry.core.primitives.parameterization import (
+from ansys.geometry.core.shapes.curves.curve import Curve
+from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
+from ansys.geometry.core.shapes.parameterization import (
     Interval,
     Parameterization,
     ParamForm,
     ParamType,
 )
-from ansys.geometry.core.typing import RealSequence
+from ansys.geometry.core.typing import Real, RealSequence
 
 
-class Line:
+class Line(Curve):
     """
     Provides 3D line representation.
 
@@ -179,7 +180,7 @@ class Line:
             return self.direction.is_opposite(other.direction)
         return False
 
-    def get_parameterization(self) -> Parameterization:
+    def parameterization(self) -> Parameterization:
         """
         Get the parametrization of the line.
 
@@ -193,9 +194,15 @@ class Line:
         """
         return Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(np.NINF, np.inf))
 
+    def contains_param(self, param: Real) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_param() is not implemented.")
+
+    def contains_point(self, point: Point3D) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_point() is not implemented.")
+
 
 class LineEvaluation(CurveEvaluation):
-    """Evaluate a line."""
+    """Provides for evaluating a line."""
 
     def __init__(self, line: Line, parameter: float = None) -> None:
         """Initialize the ``LineEvaluation`` class."""

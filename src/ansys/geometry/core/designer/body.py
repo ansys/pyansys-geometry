@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -28,7 +28,10 @@ from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
     BooleanRequest,
     CopyRequest,
+    GetCollisionRequest,
+    MapRequest,
     RotateRequest,
+    ScaleRequest,
     SetAssignedMaterialRequest,
     TranslateRequest,
 )
@@ -46,6 +49,7 @@ from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
+    frame_to_grpc_frame,
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
     tess_to_pd,
@@ -56,10 +60,11 @@ from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
+from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
-from ansys.geometry.core.misc.checks import check_type, ensure_design_is_active
+from ansys.geometry.core.misc.checks import check_type, ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
@@ -79,6 +84,17 @@ class MidSurfaceOffsetType(Enum):
     BOTTOM = 2
     VARIABLE = 3
     CUSTOM = 4
+
+
+@unique
+class CollisionType(Enum):
+    """Provides values for collision types between bodies."""
+
+    NONE = 0
+    TOUCH = 1
+    INTERSECT = 2
+    CONTAINED = 3
+    CONTAINEDTOUCH = 4
 
 
 class IBody(ABC):
@@ -343,6 +359,47 @@ class IBody(ABC):
         Returns
         -------
         None
+        """
+        return
+
+    @abstractmethod
+    def scale(self, value: Real) -> None:
+        """
+        Scale the geometry body by the given value.
+
+        Parameters
+        ----------
+        value: Real
+            Value to scale the body by.
+        """
+        return
+
+    @abstractmethod
+    def map(self, frame: Frame) -> None:
+        """
+        Map the geometry body to the new specified frame.
+
+        Parameters
+        ----------
+        frame: Frame
+            Structure defining the orientation of the body.
+        """
+        return
+
+    @abstractmethod
+    def get_collision(self, body: "Body") -> CollisionType:
+        """
+        Get the collision state between bodies.
+
+        Parameters
+        ----------
+        body: Body
+            Object that the collision state is checked with.
+
+        Returns
+        -------
+        CollisionType
+            Enum that defines the collision state between bodies.
         """
         return
 
@@ -636,7 +693,13 @@ class MasterBody(IBody):
         self._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
         grpc_faces = self._bodies_stub.GetFaces(self._grpc_id)
         return [
-            Face(grpc_face.id, SurfaceType(grpc_face.surface_type), self, self._grpc_client)
+            Face(
+                grpc_face.id,
+                SurfaceType(grpc_face.surface_type),
+                self,
+                self._grpc_client,
+                grpc_face.is_reversed,
+            )
             for grpc_face in grpc_faces.faces
         ]
 
@@ -646,7 +709,13 @@ class MasterBody(IBody):
         self._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
         grpc_edges = self._bodies_stub.GetEdges(self._grpc_id)
         return [
-            Edge(grpc_edge.id, CurveType(grpc_edge.curve_type), self, self._grpc_client)
+            Edge(
+                grpc_edge.id,
+                CurveType(grpc_edge.curve_type),
+                self,
+                self._grpc_client,
+                grpc_edge.is_reversed,
+            )
             for grpc_edge in grpc_edges.edges
         ]
 
@@ -770,6 +839,7 @@ class MasterBody(IBody):
     @protect_grpc
     @check_input_types
     @reset_tessellation_cache
+    @min_backend_version(24, 2, 0)
     def rotate(
         self,
         axis_origin: Point3D,
@@ -787,6 +857,34 @@ class MasterBody(IBody):
                 angle=rotation_magnitude,
             )
         )
+
+    @protect_grpc
+    @check_input_types
+    @reset_tessellation_cache
+    @min_backend_version(24, 2, 0)
+    def scale(self, value: Real) -> None:  # noqa: D102
+        self._grpc_client.log.debug(f"Scaling body {self.id}.")
+        self._bodies_stub.Scale(ScaleRequest(id=self.id, scale=value))
+
+    @protect_grpc
+    @check_input_types
+    @reset_tessellation_cache
+    @min_backend_version(24, 2, 0)
+    def map(self, frame: Frame) -> None:  # noqa: D102
+        self._grpc_client.log.debug(f"Mapping body {self.id}.")
+        self._bodies_stub.Map(MapRequest(id=self.id, frame=frame_to_grpc_frame(frame)))
+
+    @protect_grpc
+    @min_backend_version(24, 2, 0)
+    def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
+        self._grpc_client.log.debug(f"Get collision between body {self.id} and body {body.id}.")
+        response = self._bodies_stub.GetCollision(
+            GetCollisionRequest(
+                body_1_id=self.id,
+                body_2_id=body.id,
+            )
+        )
+        return CollisionType(response.collision)
 
     @protect_grpc
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
@@ -951,6 +1049,7 @@ class Body(IBody):
                 SurfaceType(grpc_face.surface_type),
                 self,
                 self._template._grpc_client,
+                grpc_face.is_reversed,
             )
             for grpc_face in grpc_faces.faces
         ]
@@ -962,7 +1061,13 @@ class Body(IBody):
         self._template._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
         grpc_edges = self._template._bodies_stub.GetEdges(EntityIdentifier(id=self.id))
         return [
-            Edge(grpc_edge.id, CurveType(grpc_edge.curve_type), self, self._template._grpc_client)
+            Edge(
+                grpc_edge.id,
+                CurveType(grpc_edge.curve_type),
+                self,
+                self._template._grpc_client,
+                grpc_edge.is_reversed,
+            )
             for grpc_edge in grpc_edges.edges
         ]
 
@@ -1139,6 +1244,18 @@ class Body(IBody):
         angle: Union[Quantity, Angle, Real],
     ) -> None:  # noqa: D102
         return self._template.rotate(axis_origin, axis_direction, angle)
+
+    @ensure_design_is_active
+    def scale(self, value: Real) -> None:  # noqa: D102
+        return self._template.scale(value)
+
+    @ensure_design_is_active
+    def map(self, frame: Frame) -> None:  # noqa: D102
+        return self._template.map(frame)
+
+    @ensure_design_is_active
+    def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
+        return self._template.get_collision(body)
 
     @ensure_design_is_active
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102

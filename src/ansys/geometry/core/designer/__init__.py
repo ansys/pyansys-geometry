@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -22,7 +22,7 @@
 """PyAnsys Geometry designer subpackage."""
 
 from ansys.geometry.core.designer.body import Body, MasterBody, MidSurfaceOffsetType
-from ansys.geometry.core.designer.component import Component, SharedTopologyType
+from ansys.geometry.core.designer.component import Component, ExtrusionDirection, SharedTopologyType
 from ansys.geometry.core.designer.design import Design, DesignFileFormat
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import CurveType, Edge

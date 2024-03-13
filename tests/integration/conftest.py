@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -38,7 +38,7 @@ import pyvista as pv
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.defaults import GEOMETRY_SERVICE_DOCKER_IMAGE
-from ansys.geometry.core.connection.local_instance import GeometryContainers, LocalDockerInstance
+from ansys.geometry.core.connection.docker_instance import GeometryContainers, LocalDockerInstance
 
 pv.OFF_SCREEN = True
 
@@ -52,13 +52,13 @@ def docker_instance(use_existing_service):
     # 2) At least one of the Geometry service images for your OS is downloaded
     #    on the machine
     #
-    local_instance = None
+    docker_instance = None
 
     # Check 0)
     # If it is requested the connection to an existing service
-    # just return the local instance as None
+    # just return the local Docker instance as None
     if use_existing_service:
-        return local_instance
+        return docker_instance
 
     # Check 1)
     if LocalDockerInstance.is_docker_installed():
@@ -92,13 +92,13 @@ def docker_instance(use_existing_service):
 
         # Declare a LocalDockerInstance object if all checks went through
         if is_image_available:
-            local_instance = LocalDockerInstance(
+            docker_instance = LocalDockerInstance(
                 connect_to_existing_service=True,
                 restart_if_existing_service=True,
                 image=is_image_available_cont,
             )
 
-    return local_instance
+    return docker_instance
 
 
 @pytest.fixture(scope="session")
@@ -112,7 +112,7 @@ def modeler(docker_instance):
         pass
 
     modeler = Modeler(
-        local_instance=docker_instance, logging_level=logging.DEBUG, logging_file=log_file_path
+        docker_instance=docker_instance, logging_level=logging.DEBUG, logging_file=log_file_path
     )
 
     yield modeler

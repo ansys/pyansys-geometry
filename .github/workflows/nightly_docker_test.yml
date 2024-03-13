@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
           cache: 'pip'
@@ -123,7 +123,7 @@ jobs:
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@v4
+        uses: ansys/actions/tests-pytest@v5
         env:
           ALLOW_PLOTTING: true
         with:

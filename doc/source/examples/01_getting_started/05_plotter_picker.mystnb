@@ -33,7 +33,7 @@ import pyvista as pv
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.defaults import GEOMETRY_SERVICE_DOCKER_IMAGE
-from ansys.geometry.core.connection.local_instance import LocalDockerInstance
+from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.plotting import PlotterHelper
@@ -61,13 +61,13 @@ for image in available_images:
             is_image_available_cont = geom_cont
             break
 
-local_instance = LocalDockerInstance(
+docker_instance = LocalDockerInstance(
     connect_to_existing_service=True,
     restart_if_existing_service=True,
     image=is_image_available_cont,
 )
 
-modeler = Modeler(local_instance=local_instance)
+modeler = Modeler(docker_instance=docker_instance)
 ```
 
 +++
@@ -177,6 +177,30 @@ The Python visualizer is used by default. However, you can also use
 
 plotter = PlotterHelper(use_trame=True)
 plotter.plot(plot_list)
+```
+
+## Clip objects
+
+You can clip any object represented in the plotter by defining a ``Plane`` object that
+intersects the target object.
+
+```{code-cell} ipython
+
+from ansys.geometry.core.math import Plane, Point3D
+ph = PlotterHelper()
+
+# Define PyAnsys Geometry box
+box2 = Sketch()
+box2.box(Point2D([-10, 20], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+box_body2 = design.extrude_sketch("JustABox", box2, Quantity(10, UNITS.m))
+
+# Define plane to clip the box
+origin = Point3D([-10., 20., 5.], UNITS.m)
+plane = Plane(origin=origin, direction_x=[1, 1, 1], direction_y=[-1, 0, 1])
+
+# Add the object with the clipping plane
+ph.add(box_body2, clipping_plane=plane)
+ph.plot()
 ```
 
 ## Select objects interactively

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -24,7 +24,10 @@
 from enum import Enum, unique
 
 from beartype import beartype as check_input_types
+from beartype.typing import Union
 from pint import Quantity
+
+from ansys.geometry.core.typing import Real
 
 
 @unique
@@ -71,20 +74,23 @@ class MaterialProperty:
 
     Parameters
     ----------
-    type : MaterialPropertyType
-        Type of the material property.
+    type : Union[MaterialPropertyType, str]
+        Type of the material property. If the type is a string, it must be a valid
+        material property type - though it might not be supported by the MaterialPropertyType
+        enum.
     name: str
         Material property name.
-    quantity: ~pint.Quantity
-        Value and unit.
+    quantity: Union[~pint.Quantity, Real]
+        Value and unit in case of a supported Quantity. If the type is not supported, it
+        must be a Real value (float or integer).
     """
 
     @check_input_types
     def __init__(
         self,
-        type: MaterialPropertyType,
+        type: Union[MaterialPropertyType, str],
         name: str,
-        quantity: Quantity,
+        quantity: Union[Quantity, Real],
     ):
         """Initialize ``MaterialProperty`` class."""
         self._type = type
@@ -92,8 +98,12 @@ class MaterialProperty:
         self._quantity = quantity
 
     @property
-    def type(self) -> MaterialPropertyType:
-        """Material property ID."""
+    def type(self) -> Union[MaterialPropertyType, str]:
+        """
+        Material property ID.
+
+        If the type is not supported, it will be a string.
+        """
         return self._type
 
     @property
@@ -102,6 +112,10 @@ class MaterialProperty:
         return self._name
 
     @property
-    def quantity(self) -> Quantity:
-        """Material property quantity and unit."""
+    def quantity(self) -> Union[Quantity, Real]:
+        """
+        Material property quantity and unit.
+
+        If the type is not supported, it will be a Real value (float or integer).
+        """
         return self._quantity

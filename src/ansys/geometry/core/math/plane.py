@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -80,6 +80,18 @@ class Plane(Frame):
 
         # If plane equation is equal to 0, your point is contained
         return True if np.isclose(plane_eq, 0.0) else False
+
+    @property
+    def normal(self) -> UnitVector3D:
+        """
+        Calculate the normal vector of the plane.
+
+        Returns
+        -------
+        UnitVector3D
+            Normal vector of the plane.
+        """
+        return self.direction_z
 
     @check_input_types
     def __eq__(self, other: "Plane") -> bool:

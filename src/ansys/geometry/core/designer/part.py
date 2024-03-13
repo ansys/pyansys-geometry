@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -26,7 +26,7 @@ from ansys.geometry.core.designer.body import MasterBody
 from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
 from ansys.geometry.core.math.matrix import Matrix44
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.component import Component
 
 

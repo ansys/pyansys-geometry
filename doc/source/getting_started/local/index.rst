@@ -17,7 +17,7 @@ either Discovery, SpaceClaim, or the Geometry service.
 
           from ansys.geometry.core import launch_modeler_with_discovery
 
-          modeler_discovery = launch_modeler_with_discovery()
+          modeler = launch_modeler_with_discovery()
 
     .. tab-item:: SpaceClaim
 
@@ -25,7 +25,7 @@ either Discovery, SpaceClaim, or the Geometry service.
 
           from ansys.geometry.core import launch_modeler_with_spaceclaim
 
-          modeler_discovery = launch_modeler_with_spaceclaim()
+          modeler = launch_modeler_with_spaceclaim()
 
     .. tab-item:: Geometry service
 
@@ -33,7 +33,7 @@ either Discovery, SpaceClaim, or the Geometry service.
 
           from ansys.geometry.core import launch_modeler_with_geometry_service
 
-          modeler_discovery = launch_modeler_with_geometry_service()
+          modeler = launch_modeler_with_geometry_service()
 
 
 For more information on the arguments accepted by the launcher methods, see

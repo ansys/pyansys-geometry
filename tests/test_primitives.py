@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -35,16 +35,7 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Distance
-from ansys.geometry.core.primitives import (
-    Circle,
-    Cone,
-    Cylinder,
-    Ellipse,
-    Line,
-    ParamUV,
-    Sphere,
-    Torus,
-)
+from ansys.geometry.core.shapes import Circle, Cone, Cylinder, Ellipse, Line, ParamUV, Sphere, Torus
 
 
 def test_cylinder():

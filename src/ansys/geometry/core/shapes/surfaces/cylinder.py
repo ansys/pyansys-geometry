@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -24,29 +24,30 @@
 from functools import cached_property
 
 from beartype import beartype as check_input_types
-from beartype.typing import Union
+from beartype.typing import Tuple, Union
 import numpy as np
-import pint
+from pint import Quantity
 
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.measurements import Distance
-from ansys.geometry.core.primitives.circle import Circle
-from ansys.geometry.core.primitives.line import Line
-from ansys.geometry.core.primitives.parameterization import (
+from ansys.geometry.core.shapes.curves.circle import Circle
+from ansys.geometry.core.shapes.curves.line import Line
+from ansys.geometry.core.shapes.parameterization import (
     Interval,
     Parameterization,
     ParamForm,
     ParamType,
     ParamUV,
 )
-from ansys.geometry.core.primitives.surface_evaluation import SurfaceEvaluation
+from ansys.geometry.core.shapes.surfaces.surface import Surface
+from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.typing import Real, RealSequence
 
 
-class Cylinder:
+class Cylinder(Surface):
     """
     Provides 3D cylinder representation.
 
@@ -54,7 +55,7 @@ class Cylinder:
     ----------
     origin : Union[~numpy.ndarray, RealSequence, Point3D]
         Origin of the cylinder.
-    radius : Union[~pint.Quantity, Distance, Real]
+    radius : Union[Quantity, Distance, Real]
         Radius of the cylinder.
     reference : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
         X-axis direction.
@@ -66,7 +67,7 @@ class Cylinder:
     def __init__(
         self,
         origin: Union[np.ndarray, RealSequence, Point3D],
-        radius: Union[pint.Quantity, Distance, Real],
+        radius: Union[Quantity, Distance, Real],
         reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
     ):
@@ -90,7 +91,7 @@ class Cylinder:
         return self._origin
 
     @property
-    def radius(self) -> pint.Quantity:
+    def radius(self) -> Quantity:
         """Radius of the cylinder."""
         return self._radius.value
 
@@ -109,7 +110,7 @@ class Cylinder:
         """Z-direction of the cylinder."""
         return self._axis
 
-    def surface_area(self, height: Union[pint.Quantity, Distance, Real]) -> pint.Quantity:
+    def surface_area(self, height: Union[Quantity, Distance, Real]) -> Quantity:
         """
         Get the surface area of the cylinder.
 
@@ -122,12 +123,12 @@ class Cylinder:
 
         Parameters
         ----------
-        height : Union[~pint.Quantity, Distance, Real]
+        height : Union[Quantity, Distance, Real]
             Height to bound the cylinder at.
 
         Returns
         -------
-        ~pint.Quantity
+        Quantity
             Surface area of the temporarily bounded cylinder.
         """
         height = height if isinstance(height, Distance) else Distance(height)
@@ -136,7 +137,7 @@ class Cylinder:
 
         return 2 * np.pi * self.radius * height.value + 2 * np.pi * self.radius**2
 
-    def volume(self, height: Union[pint.Quantity, Distance, Real]) -> pint.Quantity:
+    def volume(self, height: Union[Quantity, Distance, Real]) -> Quantity:
         """
         Get the volume of the cylinder.
 
@@ -149,12 +150,12 @@ class Cylinder:
 
         Parameters
         ----------
-        height : Union[~pint.Quantity, Distance, Real]
+        height : Union[Quantity, Distance, Real]
             Height to bound the cylinder at.
 
         Returns
         -------
-        ~pint.Quantity
+        Quantity
             Volume of the temporarily bounded cylinder.
         """
         height = height if isinstance(height, Distance) else Distance(height)
@@ -246,33 +247,31 @@ class Cylinder:
 
         return CylinderEvaluation(self, ParamUV(u, v))
 
-    def get_u_parameterization(self) -> Parameterization:
+    def parameterization(self) -> Tuple[Parameterization, Parameterization]:
         """
-        Get the parametrization conditions for the U parameter.
+        Parameterize the cylinder surface as a tuple (U and V respectively).
 
         The U parameter specifies the clockwise angle around the axis (right-hand
         corkscrew law), with a zero parameter at ``dir_x`` and a period of 2*pi.
-
-        Returns
-        -------
-        Parameterization
-            Information about how the cylinder's U parameter is parameterized.
-        """
-        return Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
-
-    def get_v_parameterization(self) -> Parameterization:
-        """
-        Get the parametrization conditions for the V parameter.
 
         The V parameter specifies the distance along the axis, with a zero parameter at
         the XY plane of the cylinder.
 
         Returns
         -------
-        Parameterization
-            Information about how the cylinders's V parameter is parameterized.
+        Tuple[Parameterization, Parameterization]
+            Information about how a cylinder's u and v parameters are parameterized, respectively.
         """
-        return Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(np.NINF, np.inf))
+        u = Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
+        v = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(np.NINF, np.inf))
+
+        return (u, v)
+
+    def contains_param(self, param_uv: ParamUV) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_param() is not implemented.")
+
+    def contains_point(self, point: Point3D) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_point() is not implemented.")
 
 
 class CylinderEvaluation(SurfaceEvaluation):
@@ -281,7 +280,7 @@ class CylinderEvaluation(SurfaceEvaluation):
 
     Parameters
     ----------
-    cylinder: Cylinder
+    cylinder: ~ansys.geometry.core.shapes.surfaces.cylinder.Cylinder
         Cylinder to evaluate.
     parameter: ParamUV
         Parameters (u, v) to evaluate the cylinder at.

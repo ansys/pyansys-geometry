@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -24,7 +24,7 @@
 from functools import cached_property
 
 from beartype import beartype as check_input_types
-from beartype.typing import Union
+from beartype.typing import Tuple, Union
 import numpy as np
 from pint import Quantity
 
@@ -33,19 +33,20 @@ from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.measurements import Angle, Distance
-from ansys.geometry.core.primitives.line import Line
-from ansys.geometry.core.primitives.parameterization import (
+from ansys.geometry.core.shapes.curves.line import Line
+from ansys.geometry.core.shapes.parameterization import (
     Interval,
     Parameterization,
     ParamForm,
     ParamType,
     ParamUV,
 )
-from ansys.geometry.core.primitives.surface_evaluation import SurfaceEvaluation
+from ansys.geometry.core.shapes.surfaces.surface import Surface
+from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.typing import Real, RealSequence
 
 
-class Cone:
+class Cone(Surface):
     """
     Provides 3D cone representation.
 
@@ -235,37 +236,35 @@ class Cone:
 
         return ConeEvaluation(self, ParamUV(u, v))
 
-    def get_u_parameterization(self) -> Parameterization:
+    def parameterization(self) -> Tuple[Parameterization, Parameterization]:
         """
-        Get the parametrization conditions for the U parameter.
+        Parameterize the cone surface as a tuple (U and V respectively).
 
         The U parameter specifies the clockwise angle around the axis (right-hand
         corkscrew law), with a zero parameter at ``dir_x`` and a period of 2*pi.
-
-        Returns
-        -------
-        Parameterization
-            Information about how a cone's U parameter is parameterized.
-        """
-        return Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
-
-    def get_v_parameterization(self) -> Parameterization:
-        """
-        Get the parametrization conditions for the V parameter.
 
         The V parameter specifies the distance along the axis, with a zero parameter at
         the XY plane of the cone.
 
         Returns
         -------
-        Parameterization
-            Information about how a cone's V parameter is parameterized.
+        Tuple[Parameterization, Parameterization]
+            Information about how a cone's u and v parameters are parameterized, respectively.
         """
-        # V parameter interval depends on which way the cone opens
+        u = Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
+
         start, end = (
             (self.apex_param, np.inf) if self.apex_param < 0 else (np.NINF, self.apex_param)
         )
-        return Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(start, end))
+        v = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(start, end))
+
+        return (u, v)
+
+    def contains_param(self, param_uv: ParamUV) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_param() is not implemented.")
+
+    def contains_point(self, point: Point3D) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_point() is not implemented.")
 
 
 class ConeEvaluation(SurfaceEvaluation):
@@ -274,7 +273,7 @@ class ConeEvaluation(SurfaceEvaluation):
 
     Parameters
     ----------
-    cone: ~ansys.geometry.core.primitives.cone.Cone
+    cone: ~ansys.geometry.core.shapes.surfaces.cone.Cone
         Cone to evaluate.
     parameter: ParamUV
         Pparameters (u, v) to evaluate the cone at.

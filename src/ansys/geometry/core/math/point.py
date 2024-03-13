@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -78,9 +78,11 @@ class Point2D(np.ndarray, PhysicalQuantity):
         super().__init__(unit, expected_dimensions=DEFAULT_UNITS.LENGTH)
 
         # Check the inputs
-        check_ndarray_is_float_int(input, "input") if isinstance(
-            input, np.ndarray
-        ) else check_ndarray_is_float_int(np.asarray(input), "input")
+        (
+            check_ndarray_is_float_int(input, "input")
+            if isinstance(input, np.ndarray)
+            else check_ndarray_is_float_int(np.asarray(input), "input")
+        )
 
         # Check dimensions
         if len(input) != 2:
@@ -203,9 +205,11 @@ class Point3D(np.ndarray, PhysicalQuantity):
         super().__init__(unit, expected_dimensions=DEFAULT_UNITS.LENGTH)
 
         # Check the inputs
-        check_ndarray_is_float_int(input, "input") if isinstance(
-            input, np.ndarray
-        ) else check_ndarray_is_float_int(np.asarray(input), "input")
+        (
+            check_ndarray_is_float_int(input, "input")
+            if isinstance(input, np.ndarray)
+            else check_ndarray_is_float_int(np.asarray(input), "input")
+        )
 
         # Check dimensions
         if len(input) != 3:

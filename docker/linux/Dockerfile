@@ -7,11 +7,17 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
 
 # Install unzip
-RUN apt-get update && apt-get install -y unzip
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends unzip=6.0-26+deb11u1 && \
+    rm -rf /var/lib/apt/lists/*
 
 # Add the binary files from the latest release
 COPY linux-binaries.zip .
-RUN unzip -qq linux-binaries.zip -d . && rm linux-binaries.zip && chmod -R 0755 DockerLinux && mv DockerLinux/bin/x64/Release_Linux/net6.0/* . && rm -rf DockerLinux
+RUN unzip -qq linux-binaries.zip -d . && \
+    rm linux-binaries.zip && \
+    chmod -R 0755 DockerLinux && \
+    mv DockerLinux/bin/x64/Release_Linux/net6.0/* . && \
+    rm -rf DockerLinux
 
 # Let the dynamic link loader where to search for shared libraries
 ENV LD_LIBRARY_PATH="/app"

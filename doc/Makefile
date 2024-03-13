@@ -4,6 +4,7 @@
 # You can set these variables from the command line.
 SPHINXOPTS    = -j auto -W --color
 SPHINXBUILD   = sphinx-build
+APIDIR        = api
 SOURCEDIR     = source
 BUILDDIR      = _build
 
@@ -18,11 +19,10 @@ help:
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-
 # Customized clean due to examples gallery
 clean:
 	rm -rf $(BUILDDIR)/*
-	find . -type d -name "api" -exec rm -rf {} +
+	find . -type d -name $(APIDIR) -exec rm -rf {} +
 
 # Create PDF
 pdf:
@@ -34,11 +34,3 @@ pdf:
 html:
 	@$(SPHINXBUILD) -M linkcheck "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	@$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-	cd $(BUILDDIR)/html/examples
-	for d in */ ; do
-		cd $d
-		for f in ./*.ipynb; do
-			jupytext --to py $f
-		done
-		cd -
-	done

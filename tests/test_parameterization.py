@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -25,13 +25,7 @@ import numpy as np
 import pytest
 
 from ansys.geometry.core.misc.accuracy import Accuracy
-from ansys.geometry.core.primitives.parameterization import (
-    Interval,
-    Parameterization,
-    ParamForm,
-    ParamType,
-    ParamUV,
-)
+from ansys.geometry.core.shapes import Interval, Parameterization, ParamForm, ParamType, ParamUV
 
 
 def test_param_uv():

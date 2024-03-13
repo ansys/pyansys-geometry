@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -66,7 +66,7 @@ from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.checks import check_pint_unit_compatibility, ensure_design_is_active
+from ansys.geometry.core.misc.checks import ensure_design_is_active
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
@@ -83,6 +83,29 @@ class SharedTopologyType(Enum):
     SHARETYPE_SHARE = 1
     SHARETYPE_MERGE = 2
     SHARETYPE_GROUPS = 3
+
+
+@unique
+class ExtrusionDirection(Enum):
+    """Enum for extrusion direction definition."""
+
+    POSITIVE = "+"
+    NEGATIVE = "-"
+
+    @classmethod
+    def from_string(cls, string: str, use_default_if_error: bool = False) -> "ExtrusionDirection":
+        """Convert a string to an ``ExtrusionDirection`` enum."""
+        if string == "+":
+            return cls.POSITIVE
+        elif string == "-":
+            return cls.NEGATIVE
+        elif use_default_if_error:
+            from ansys.geometry.core.logger import LOG
+
+            LOG.warning("Invalid extrusion direction. Using default value (+).")
+            return cls.POSITIVE
+        else:  # pragma: no cover
+            raise ValueError(f"Invalid extrusion direction: {string}.")
 
 
 class Component:
@@ -406,7 +429,11 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     def extrude_sketch(
-        self, name: str, sketch: Sketch, distance: Union[Quantity, Distance, Real]
+        self,
+        name: str,
+        sketch: Sketch,
+        distance: Union[Quantity, Distance, Real],
+        direction: Union[ExtrusionDirection, str] = ExtrusionDirection.POSITIVE,
     ) -> Body:
         """
         Create a solid body by extruding the sketch profile up by a given distance.
@@ -423,6 +450,10 @@ class Component:
             Two-dimensional sketch source for the extrusion.
         distance : Union[~pint.Quantity, Distance, Real]
             Distance to extrude the solid body.
+        direction : Union[ExtrusionDirection, str], default: "+"
+            Direction for extruding the solid body.
+            The default is to extrude in the positive normal direction of the sketch.
+            Options are "+" and "-" as a string, or the enum values.
 
         Returns
         -------
@@ -431,6 +462,8 @@ class Component:
         """
         # Sanity checks on inputs
         distance = distance if isinstance(distance, Distance) else Distance(distance)
+        if isinstance(direction, str):
+            direction = ExtrusionDirection.from_string(direction, use_default_if_error=True)
 
         # Perform extrusion request
         request = CreateExtrudedBodyRequest(
@@ -441,6 +474,10 @@ class Component:
             name=name,
         )
 
+        # Check the direction - if it is -, flip the distance
+        if direction is ExtrusionDirection.NEGATIVE:
+            request.distance = -request.distance
+
         self._grpc_client.log.debug(f"Extruding sketch provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
@@ -450,7 +487,13 @@ class Component:
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
-    def extrude_face(self, name: str, face: Face, distance: Union[Quantity, Distance]) -> Body:
+    def extrude_face(
+        self,
+        name: str,
+        face: Face,
+        distance: Union[Quantity, Distance],
+        direction: Union[ExtrusionDirection, str] = ExtrusionDirection.POSITIVE,
+    ) -> Body:
         """
         Extrude the face profile by a given distance to create a solid body.
 
@@ -468,8 +511,12 @@ class Component:
             User-defined label for the new solid body.
         face : Face
             Target face to use as the source for the new surface.
-        distance : Union[~pint.Quantity, Distance]
+        distance : Union[~pint.Quantity, Distance, Real]
             Distance to extrude the solid body.
+        direction : Union[ExtrusionDirection, str], default: "+"
+            Direction for extruding the solid body's face.
+            The default is to extrude in the positive normal direction of the face.
+            Options are "+" and "-" as a string, or the enum values.
 
         Returns
         -------
@@ -477,16 +524,21 @@ class Component:
             Extruded solid body.
         """
         # Sanity checks on inputs
-        extrude_distance = distance if isinstance(distance, Quantity) else distance.value
-        check_pint_unit_compatibility(extrude_distance.units, DEFAULT_UNITS.SERVER_LENGTH)
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+        if isinstance(direction, str):
+            direction = ExtrusionDirection.from_string(direction, use_default_if_error=True)
 
         # Take the face source directly. No need to verify the source of the face.
         request = CreateExtrudedBodyFromFaceProfileRequest(
-            distance=extrude_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+            distance=distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
             parent=self.id,
             face=face.id,
             name=name,
         )
+
+        # Check the direction - if it is -, flip the distance
+        if direction is ExtrusionDirection.NEGATIVE:
+            request.distance = -request.distance
 
         self._grpc_client.log.debug(f"Extruding from face provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBodyFromFaceProfile(request)

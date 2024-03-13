@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -44,7 +44,7 @@ from beartype import beartype as check_input_types
 from beartype.typing import Dict, List, Optional, Union
 from google.protobuf.empty_pb2 import Empty
 import numpy as np
-from pint import Quantity
+from pint import Quantity, UndefinedUnitError
 
 from ansys.geometry.core.connection.conversions import (
     grpc_frame_to_frame,
@@ -600,6 +600,9 @@ class Design(Component):
     def __read_existing_design(self) -> None:
         """Read an existing ``Design`` located on the server."""
         #
+        # TODO: This might go out of sync with the _update_design_inplace method.
+        #       Ensure that the two methods are in sync. Especially regarding cleanup.
+        #
         # TODO: Not all features implemented yet. Status is as follows
         #
         # Windows:
@@ -687,11 +690,34 @@ class Design(Component):
             properties = []
             density = Quantity(0)
             for property in material.material_properties:
-                mp = MaterialProperty(
-                    MaterialPropertyType.from_id(property.id),
-                    property.display_name,
-                    Quantity(property.value, property.units),
-                )
+                # TODO: Add support for more material properties...
+                #      - Need to add support for more MaterialPropertyTypes
+                #      - Need to add support for more Quantity units
+                try:
+                    mp_type = MaterialPropertyType.from_id(property.id)
+                except ValueError as err:  # TODO: Errors coming from MaterialPropertyType.from_id
+                    # because of unsupported MaterialPropertyType entries...
+                    self._grpc_client.log.warning(
+                        f"Material property {property.display_name} of type {property.id} is not supported."  # noqa : E501
+                        " Storing as string."
+                    )
+                    self._grpc_client.log.warning(f"Root cause: {err}")
+                    mp_type = property.id
+
+                try:
+                    mp_quantity = Quantity(property.value, property.units)
+                except (
+                    UndefinedUnitError,
+                    TypeError,
+                ) as err:  # TODO: Errors coming from Quantity ctor because of unsupported units...
+                    self._grpc_client.log.warning(
+                        f"Material property {property.display_name} with units {property.units} is not fully supported."  # noqa : E501
+                        " Storing value only as float."
+                    )
+                    self._grpc_client.log.warning(f"Root cause: {err}")
+                    mp_quantity = property.value
+
+                mp = MaterialProperty(mp_type, property.display_name, mp_quantity)
                 properties.append(mp)
                 if mp.type == MaterialPropertyType.DENSITY:
                     density = mp.quantity
@@ -736,3 +762,35 @@ class Design(Component):
         self._grpc_client.log.debug(f"SharedTopologyTypes set: {num_created_shared_topologies}")
 
         self._grpc_client.log.debug(f"\nSuccessfully read design in: {end - start} s")
+
+    def _update_design_inplace(self) -> None:
+        """
+        Update the design to align with the server side.
+
+        Notes
+        -----
+        This method is used to update the design inside repair tools.
+        Its usage is not recommended for other purposes.
+        """
+        # Clear all the existing information
+        #
+        # TODO: This might go out of sync with the __read_existing_design method
+        #       if the latter is updated and this method is not. Ensure that
+        #       the two methods are in sync.
+        #
+        self._components = []
+        self._bodies = []
+        self._materials = []
+        self._named_selections = {}
+        self._coordinate_systems = {}
+
+        # Get the previous design id
+        previous_design_id = self._design_id
+
+        # Read the existing design
+        self.__read_existing_design()
+
+        # If the design id has changed, update the design id in the Modeler
+        if previous_design_id != self._design_id:
+            self._modeler._designs[self._design_id] = self
+            self._modeler._designs.pop(previous_design_id)

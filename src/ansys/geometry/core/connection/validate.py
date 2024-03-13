@@ -1,4 +1,4 @@
-# Copyright (C) 2023 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -34,7 +34,7 @@ This command shows how this method is typically used:
 from ansys.geometry.core.connection.client import GrpcClient
 
 
-def validate():  # pragma: no cover
+def validate(*args, **kwargs):  # pragma: no cover
     """Create a client using the default settings and validate it."""
-    print(GrpcClient())
+    print(GrpcClient(*args, **kwargs))
     # TODO: consider adding additional server stat reporting

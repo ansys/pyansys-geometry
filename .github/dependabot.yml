@@ -3,16 +3,14 @@ updates:
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     labels:
       - "maintenance"
       - "dependencies"
-    ignore:
-      - dependency-name: "grpcio"
     assignees:
       - "pyansys-ci-bot"
     commit-message:
-      prefix: "MAINT"
+      prefix: "build"
     groups:
        grpc-deps:
           patterns:
@@ -33,7 +31,7 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     labels:
       - "maintenance"
     assignees:

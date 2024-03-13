@@ -1,6 +1,6 @@
 PyAnsys Geometry
 ================
-|pyansys| |python| |pypi| |GH-CI| |codecov| |MIT| |black| |pre-commit|
+|pyansys| |python| |pypi| |downloads| |GH-CI| |codecov| |MIT| |black| |pre-commit|
 
 .. |pyansys| image:: https://img.shields.io/badge/Py-Ansys-ffc107.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAABDklEQVQ4jWNgoDfg5mD8vE7q/3bpVyskbW0sMRUwofHD7Dh5OBkZGBgW7/3W2tZpa2tLQEOyOzeEsfumlK2tbVpaGj4N6jIs1lpsDAwMJ278sveMY2BgCA0NFRISwqkhyQ1q/Nyd3zg4OBgYGNjZ2ePi4rB5loGBhZnhxTLJ/9ulv26Q4uVk1NXV/f///////69du4Zdg78lx//t0v+3S88rFISInD59GqIH2esIJ8G9O2/XVwhjzpw5EAam1xkkBJn/bJX+v1365hxxuCAfH9+3b9/+////48cPuNehNsS7cDEzMTAwMMzb+Q2u4dOnT2vWrMHu9ZtzxP9vl/69RVpCkBlZ3N7enoDXBwEAAA+YYitOilMVAAAAAElFTkSuQmCC
    :target: https://docs.pyansys.com/
@@ -14,6 +14,10 @@ PyAnsys Geometry
    :target: https://pypi.org/project/ansys-geometry-core
    :alt: PyPI
 
+.. |downloads| image:: https://img.shields.io/pypi/dm/ansys-geometry-core.svg
+   :target: https://pypi.org/project/ansys-geometry-core/
+   :alt: PyPI Downloads
+
 .. |codecov| image:: https://codecov.io/gh/ansys/pyansys-geometry/graph/badge.svg?token=UZIC7XT5WE
    :target: https://codecov.io/gh/ansys/pyansys-geometry
    :alt: Codecov
@@ -23,7 +27,7 @@ PyAnsys Geometry
    :alt: GH-CI
 
 .. |MIT| image:: https://img.shields.io/badge/License-MIT-yellow.svg
-   :target: https://opensource.org/licenses/MIT
+   :target: https://opensource.org/blog/license/mit
    :alt: MIT
 
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg?style=flat
@@ -68,6 +72,7 @@ This code shows how to import PyAnsys Geometry and use some basic capabilities:
 .. code:: python
 
    from ansys.geometry.core import launch_modeler
+   from ansys.geometry.core.designer import DesignFileFormat
    from ansys.geometry.core.math import Plane, Point3D, Point2D
    from ansys.geometry.core.misc import UNITS, Distance
    from ansys.geometry.core.sketch import Sketch
@@ -94,6 +99,9 @@ This code shows how to import PyAnsys Geometry and use some basic capabilities:
 
    # Plot the body
    design.plot()
+
+   # Download the model
+   design.download(file_location="file.scdocx", format=DesignFileFormat.SCDOCX)
 
 For comprehensive usage information, see `Examples`_ in the `PyAnsys Geometry documentation`_.
 

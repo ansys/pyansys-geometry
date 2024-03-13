@@ -150,7 +150,7 @@ PyAnsys Geometry implements parametric evaluations for some curves and surfaces.
 Evaluate a sphere.
 
 ```{code-cell} ipython3
-from ansys.geometry.core.primitives.sphere import Sphere, SphereEvaluation
+from ansys.geometry.core.shapes import Sphere, SphereEvaluation
 from ansys.geometry.core.math import Point3D
 from ansys.geometry.core.misc import Distance
 

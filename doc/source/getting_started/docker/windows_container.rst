@@ -97,13 +97,24 @@ these steps.
 
 Inside the repository's ``docker`` folder, there are two ``Dockerfile`` files:
 
-* ``Dockerfile.linux``: Builds the Linux-based Docker image.
-* ``Dockerfile.windows``: Builds the Windows-based Docker image.
+* ``linux/Dockerfile``: Builds the Linux-based Docker image.
+* ``windows/Dockerfile``: Builds the Windows-based Docker image.
 
 Depending on the characteristics of the Docker engine installed on your
 machine, either one or the other has to be built.
 
-This guide focuses on building the ``Dockerfile.windows`` image.
+This guide focuses on building the ``windows/Dockerfile`` image.
+
+There are two build modes:
+
+* **Build from available Ansys installation**: This mode builds the Docker image
+  using the Ansys installation available in the machine where the Docker image
+  is being built.
+
+* **Build from available binaries**: This mode builds the Docker image using
+  the binaries available in the ``ansys/pyansys-geometry-binaries`` repository.
+  If you do not have access to this repository, you can only use the first mode.
+  Link to the binaries repository: https://github.com/ansys/pyansys-geometry-binaries/
 
 Prerequisites
 ~~~~~~~~~~~~~
@@ -112,7 +123,40 @@ Prerequisites
   If you do not have Docker available, see
   :ref:`Docker for Windows containers <ref_running_windows_containers>`.
 
-* Download the `latest Windows Dockerfile <https://github.com/ansys/pyansys-geometry/blob/main/docker/Dockerfile.windows>`_.
+.. _ref_build_windows_docker_image_from_ansys_installation:
+
+Build from available Ansys installation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To build your own image based on your own Ansys installation, follow these instructions:
+
+* Download the `Python Docker build script <https://github.com/ansys/pyansys-geometry/blob/main/docker/build_docker_windows.py>`_.
+
+* Execute the script with the following command (no specific location needed):
+
+  .. code:: bash
+
+     python build_docker_windows.py
+
+
+Check that the image has been created successfully. You should see output similar
+to this:
+
+.. code:: bash
+
+   docker images
+
+   >>> REPOSITORY                                               TAG                                IMAGE ID       CREATED          SIZE
+   >>> ghcr.io/ansys/geometry                                   windows-******                     ............   X seconds ago    Y.ZZGB
+   >>> ......                                                   ......                             ............   ..............   ......
+
+
+Build the Docker image from available binaries
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Prior to building your image, follow these steps:
+
+* Download the `latest Windows Dockerfile <https://github.com/ansys/pyansys-geometry/blob/main/docker/windows/Dockerfile>`_.
 
 * Download the `latest release artifacts for the Windows
   Docker container (ZIP file) for your version <https://github.com/ansys/pyansys-geometry-binaries/>`_.
@@ -123,9 +167,6 @@ Prerequisites
 
 * Move this ZIP file to the location of the Windows Dockerfile previously downloaded.
 
-Build the Docker image
-~~~~~~~~~~~~~~~~~~~~~~
-
 To build your image, follow these instructions:
 
 #. Navigate to the folder where the ZIP file and Dockerfile are located.
@@ -133,7 +174,7 @@ To build your image, follow these instructions:
 
    .. code:: bash
 
-      docker build -t ghcr.io/ansys/geometry:windows-latest -f Dockerfile.windows .
+      docker build -t ghcr.io/ansys/geometry:windows-latest -f windows/Dockerfile .
 
 #. Check that the image has been created successfully. You should see output similar
    to this:

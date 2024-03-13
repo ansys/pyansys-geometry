@@ -19,6 +19,7 @@ Protobuf
 (?i)pyansys-geometry
 PyPI
 PyVista
+pytest
 SciPy
 subpackage
 launch_modeler_with_.*
