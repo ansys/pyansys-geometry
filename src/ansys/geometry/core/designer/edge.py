@@ -205,4 +205,3 @@ class Edge:
         else:
             LOG.warning("Non linear edges not supported.")
             return None
-
