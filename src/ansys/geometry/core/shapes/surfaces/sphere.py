@@ -24,7 +24,7 @@
 from functools import cached_property
 
 from beartype import beartype as check_input_types
-from beartype.typing import Union
+from beartype.typing import Tuple, Union
 import numpy as np
 from pint import Quantity
 
@@ -33,18 +33,19 @@ from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.measurements import Distance
-from ansys.geometry.core.primitives.parameterization import (
+from ansys.geometry.core.shapes.parameterization import (
     Interval,
     Parameterization,
     ParamForm,
     ParamType,
     ParamUV,
 )
-from ansys.geometry.core.primitives.surface_evaluation import SurfaceEvaluation
+from ansys.geometry.core.shapes.surfaces.surface import Surface
+from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.typing import Real, RealSequence
 
 
-class Sphere:
+class Sphere(Surface):
     """
     Provides 3D sphere representation.
 
@@ -203,34 +204,32 @@ class Sphere:
         v = np.arctan2(z, np.sqrt(x * x + y * y))
         return SphereEvaluation(self, ParamUV(u, v))
 
-    def get_u_parameterization(self) -> Parameterization:
+    def parameterization(self) -> Tuple[Parameterization, Parameterization]:
         """
-        Get the parametrization conditions for the U parameter.
+        Parameterization of the sphere surface as a tuple (U and V respectively).
 
         The U parameter specifies the longitude angle, increasing clockwise (east) about
         ``dir_z`` (right-hand corkscrew law). It has a zero parameter at ``dir_x`` and a
         period of ``2*pi``.
 
-        Returns
-        -------
-        Parameterization
-            Information about how a sphere's U parameter is parameterized.
-        """
-        return Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
-
-    def get_v_parameterization(self) -> Parameterization:
-        """
-        Get the parametrization conditions for the V parameter.
-
         The V parameter specifies the latitude, increasing north, with a zero parameter
-        at the equator and a range of ``[-pi/2, pi/2]``.
+        at the equator and a range of [-pi/2, pi/2].
 
         Returns
         -------
-        Parameterization
-            Information about how a sphere's V parameter is parameterized.
+        Tuple[Parameterization, Parameterization]
+            Information about how a sphere's u and v parameters are parameterized, respectively.
         """
-        return Parameterization(ParamForm.CLOSED, ParamType.OTHER, Interval(-np.pi / 2, np.pi / 2))
+        u = Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
+        v = Parameterization(ParamForm.CLOSED, ParamType.OTHER, Interval(-np.pi / 2, np.pi / 2))
+
+        return (u, v)
+
+    def contains_param(self, param_uv: ParamUV) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_param() is not implemented.")
+
+    def contains_point(self, point: Point3D) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_point() is not implemented.")
 
 
 class SphereEvaluation(SurfaceEvaluation):
@@ -239,7 +238,7 @@ class SphereEvaluation(SurfaceEvaluation):
 
     Parameters
     ----------
-    sphere: ~ansys.geometry.core.primitives.sphere.Sphere
+    sphere: ~ansys.geometry.core.shapes.surfaces.sphere.Sphere
         Sphere to evaluate.
     parameter: ParamUV
         Parameters (u, v) to evaluate the sphere at.

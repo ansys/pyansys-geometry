@@ -31,7 +31,7 @@ from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.checks import check_ndarray_is_all_nan
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
-from ansys.geometry.core.primitives.line import Line
+from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.sketch.edge import SketchEdge
 
 

@@ -26,16 +26,35 @@ import math
 
 from ansys.geometry.core.typing import Real
 
-LENGTH_ACCURACY = 1e-8
+LENGTH_ACCURACY: Real = 1e-8
 """Constant for decimal accuracy in length comparisons."""
 
-ANGLE_ACCURACY = 1e-6
+ANGLE_ACCURACY: Real = 1e-6
 """Constant for decimal accuracy in angle comparisons."""
+
+DOUBLE_ACCURACY: Real = 1e-13
+"""Constant for double accuracy."""
 
 
 class Accuracy:
     """Provides decimal precision evaluations for actions such as equivalency."""
 
+    @staticmethod
+    def length_accuracy() -> Real:
+        """Return the ``LENGTH_ACCURACY`` constant."""
+        return LENGTH_ACCURACY
+
+    @staticmethod
+    def angle_accuracy() -> Real:
+        """Return the ``ANGLE_ACCURACY`` constant."""
+        return ANGLE_ACCURACY
+
+    @staticmethod
+    def double_accuracy() -> Real:
+        """Return the ``DOUBLE_ACCURACY`` constant."""
+        return DOUBLE_ACCURACY
+
+    @staticmethod
     def length_is_equal(comparison_length: Real, reference_length: Real) -> bool:
         """
         Check if the comparison length is equal to the reference length.
@@ -54,6 +73,24 @@ class Accuracy:
             comparison_length, reference_length, LENGTH_ACCURACY, LENGTH_ACCURACY
         )
 
+    @staticmethod
+    def equal_doubles(a: Real, b: Real):
+        """Compare two double values."""
+        return Accuracy.is_within_tolerance(a, b, DOUBLE_ACCURACY, DOUBLE_ACCURACY)
+
+    @staticmethod
+    def compare_with_tolerance(
+        a: Real, b: Real, relative_tolerance: Real, absolute_tolerance: Real
+    ) -> Real:
+        """Compare two doubles given the relative and absolute tolerances."""
+        if Accuracy.is_within_tolerance(a, b, relative_tolerance, absolute_tolerance):
+            return 0
+        elif a < b:
+            return -1
+        else:
+            return 1
+
+    @staticmethod
     def length_is_greater_than_or_equal(comparison_length: Real, reference_length: Real) -> bool:
         """
         Check if the comparison length is greater than the reference length.
@@ -73,6 +110,7 @@ class Accuracy:
             or Accuracy.length_is_equal(comparison_length, reference_length)
         )
 
+    @staticmethod
     def length_is_less_than_or_equal(comparison_length: Real, reference_length: Real) -> bool:
         """
         Check if the comparison length is less than or equal to the reference length.
@@ -92,6 +130,7 @@ class Accuracy:
             or Accuracy.length_is_equal(comparison_length, reference_length)
         )
 
+    @staticmethod
     def length_is_zero(length: Real) -> bool:
         """
         Check if the length is within the length accuracy of exact zero.
@@ -104,6 +143,7 @@ class Accuracy:
         """
         return bool(length <= LENGTH_ACCURACY and length >= -LENGTH_ACCURACY)
 
+    @staticmethod
     def length_is_negative(length: Real) -> bool:
         """
         Check if the length is below a negative length accuracy.
@@ -116,6 +156,7 @@ class Accuracy:
         """
         return bool(length < -LENGTH_ACCURACY)
 
+    @staticmethod
     def length_is_positive(length: Real) -> bool:
         """
         Check if the length is above a positive length accuracy.
@@ -128,6 +169,7 @@ class Accuracy:
         """
         return bool(length > LENGTH_ACCURACY)
 
+    @staticmethod
     def angle_is_zero(angle: Real) -> bool:
         """
         Check if the length is within the angle accuracy of exact zero.
@@ -140,6 +182,7 @@ class Accuracy:
         """
         return bool(abs(angle) < ANGLE_ACCURACY)
 
+    @staticmethod
     def angle_is_negative(angle: Real) -> bool:
         """
         Check if the angle is below a negative angle accuracy.
@@ -152,6 +195,7 @@ class Accuracy:
         """
         return bool(angle <= -ANGLE_ACCURACY)
 
+    @staticmethod
     def angle_is_positive(angle: Real) -> bool:
         """
         Check if the angle is above a positive angle accuracy.
@@ -164,6 +208,7 @@ class Accuracy:
         """
         return bool(angle >= ANGLE_ACCURACY)
 
+    @staticmethod
     def is_within_tolerance(
         a: Real, b: Real, relative_tolerance: Real, absolute_tolerance: Real
     ) -> bool:
