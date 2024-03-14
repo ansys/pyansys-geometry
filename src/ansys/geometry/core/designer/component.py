@@ -584,7 +584,7 @@ class Component:
 
         self._grpc_client.log.debug(f"Creating a sweeping chain on {self.id}. Creating body...")
         response = self._bodies_stub.CreateSweepingChain(request)
-        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
