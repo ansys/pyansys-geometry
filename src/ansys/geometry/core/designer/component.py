@@ -30,6 +30,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     CreateExtrudedBodyFromFaceProfileRequest,
     CreateExtrudedBodyRequest,
     CreatePlanarBodyRequest,
+    CreateSphereBodyRequest,
     CreateSweepingChainRequest,
     CreateSweepingProfileRequest,
     TranslateRequest,
@@ -647,6 +648,40 @@ class Component:
         self._grpc_client.log.debug(f"Extruding from face provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBodyFromFaceProfile(request)
 
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
+        self._master_component.part.bodies.append(tb)
+        return Body(response.id, response.name, self, tb)
+
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(24, 2, 0)
+    def create_sphere(self, name: str, center: Point3D, radius: Distance) -> Body:
+        """
+        Create a sphere body defined by the center point and the radius.
+
+        Parameters
+        ----------
+        name : str
+            Body name.
+        center : Point3D
+            Center point of the sphere.
+        radius : Distance
+            Radius of the sphere.
+
+        Returns
+        -------
+        Body
+            Sphere body object.
+        """
+        request = CreateSphereBodyRequest(
+            name=name,
+            parent=self.id,
+            center=point3d_to_grpc_point(center),
+            radius=radius.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        )
+        self._grpc_client.log.debug(f"Creating a sphere body on {self.id} .")
+        response = self._bodies_stub.CreateSphereBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
