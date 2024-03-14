@@ -876,7 +876,6 @@ def test_body_rotation(modeler: Modeler):
         assert not np.allclose(old_vertex, new_vertex)
 
 
-@pytest.mark.skip(reason="Get the OpenSSL GeometryService through before fixing hoops")
 def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test for downloading a design in multiple modes and verifying the correct
     download."""
