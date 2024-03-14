@@ -2050,7 +2050,7 @@ def test_sphere_creation(modeler: Modeler):
     assert len(spherebody.faces) == 1
     assert round(spherebody.volume._magnitude, 3) == round(4.1887902, 3)
 
-    
+
 def test_body_mirror(modeler: Modeler):
     """Test the mirroring of a body."""
     skip_if_linux(modeler)
