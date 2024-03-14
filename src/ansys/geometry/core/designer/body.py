@@ -373,7 +373,7 @@ class IBody(ABC):
 
         Notes
         -----
-        The calling object is directly modified with the result.
+        The calling object is directly modified when this method is called.
         Thus, it is important to make copies if needed.
 
         Parameters
@@ -390,7 +390,7 @@ class IBody(ABC):
 
         Notes
         -----
-        The calling object is directly modified with the result.
+        The calling object is directly modified when this method is called.
         Thus, it is important to make copies if needed.
 
         Parameters
@@ -407,7 +407,7 @@ class IBody(ABC):
 
         Notes
         -----
-        The calling object is directly modified with the result.
+        The calling object is directly modified when this method is called.
         Thus, it is important to make copies if needed.
 
         Parameters
