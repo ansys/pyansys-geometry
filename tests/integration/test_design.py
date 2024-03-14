@@ -2045,7 +2045,7 @@ def test_sphere_creation(modeler: Modeler):
     design = modeler.create_design("Spheretest")
     center_point = Point3D([10, 10, 10], UNITS.m)
     radius = Distance(1, UNITS.m)
-    spherebody = design.create_sphere_body("testspherebody", center_point, radius)
+    spherebody = design.create_sphere("testspherebody", center_point, radius)
     assert spherebody.name == "testspherebody"
     assert len(spherebody.faces) == 1
     assert round(spherebody.volume._magnitude, 3) == round(4.1887902, 3)
