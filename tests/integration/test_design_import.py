@@ -144,7 +144,6 @@ def test_design_import_with_surfaces_issue834(modeler: Modeler):
         assert design.bodies[1].is_surface == True
 
 
-
 def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test creation of a component, saving it to a file, and loading it again to a
     second component and make sure they have the same properties."""
@@ -208,10 +207,10 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         _checker_method(design2, design3, False)
 
         # IGES
-        
+
         # TODO: Something has gone wrong with IGES
         # TODO: Issue https://github.com/ansys/pyansys-geometry/issues/801
-        
+
         file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
         design.download(file, DesignFileFormat.IGES)
         design2 = modeler.open_file(file)
