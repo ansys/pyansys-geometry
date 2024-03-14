@@ -30,6 +30,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     CreateExtrudedBodyFromFaceProfileRequest,
     CreateExtrudedBodyRequest,
     CreatePlanarBodyRequest,
+    CreateSweepingChainRequest,
     CreateSweepingProfileRequest,
     TranslateRequest,
 )
@@ -68,7 +69,7 @@ from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.checks import ensure_design_is_active
+from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.sketch.sketch import Sketch
@@ -487,10 +488,11 @@ class Component:
         self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
+    @min_backend_version(24, 2, 0)
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
-    def create_sweeping_profile(
+    def sweep_sketch(
         self,
         name: str,
         sketch: Sketch,
@@ -510,7 +512,7 @@ class Component:
         sketch : Sketch
             Two-dimensional sketch source for the extrusion.
         path : List[TrimmedCurve]
-            A sweep path.
+            The path to sweep the profile along.
 
         Returns
         -------
@@ -532,17 +534,17 @@ class Component:
 
         self._grpc_client.log.debug(f"Creating a sweeping profile on {self.id}. Creating body...")
         response = self._bodies_stub.CreateSweepingProfile(request)
-        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
+    @min_backend_version(24, 2, 0)
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
-    def create_sweeping_chain(
+    def sweep_chain(
         self,
         name: str,
-        sketch: Sketch,
         path: List[TrimmedCurve],
         chain: List[TrimmedCurve],
     ) -> Body:
@@ -560,7 +562,7 @@ class Component:
         sketch : Sketch
             Two-dimensional sketch source for the extrusion.
         path : List[TrimmedCurve]
-            A sweep path.
+            The path to sweep the chain along.
         chain : List[TrimmedCurve]
             A chain of trimmed curves.
 
@@ -573,11 +575,9 @@ class Component:
         path_grpc = [trimmed_curve_to_grpc_trimmed_curve(tc) for tc in path]
         chain_grpc = [trimmed_curve_to_grpc_trimmed_curve(tc) for tc in chain]
 
-        request = CreateSweepingProfileRequest(
+        request = CreateSweepingChainRequest(
             name=name,
             parent=self.id,
-            plane=plane_to_grpc_plane(sketch._plane),
-            geometries=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
             path=path_grpc,
             chain=chain_grpc,
         )
