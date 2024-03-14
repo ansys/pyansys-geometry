@@ -2037,3 +2037,121 @@ def test_body_mapping(modeler: Modeler):
         rotate_vertices.extend([edge.shape.start, edge.shape.end])
 
     assert np.allclose(map_vertices, rotate_vertices)
+
+
+def test_body_mirror(modeler: Modeler):
+    """Test the mirroring of a body."""
+    skip_if_linux(modeler)
+    design = modeler.create_design("Design1")
+
+    # Create shape with no lines of symmetry in any axis
+    body = design.extrude_sketch(
+        "box",
+        Sketch()
+        .segment(Point2D([1, 1]), Point2D([-1, 1]))
+        .segment_to_point(Point2D([0, 0.5]))
+        .segment_to_point(Point2D([-1, -1]))
+        .segment_to_point(Point2D([1, -1]))
+        .segment_to_point(Point2D([1, 1])),
+        1,
+    )
+    top = design.extrude_sketch(
+        "top", Sketch(Plane(Point3D([0, 0, 1]))).box(Point2D([0.5, 0.5]), 0.1, 0.1), 0.1
+    )
+    body.unite(top)
+
+    # Mirror across YZ plane
+    copy1 = body.copy(body.parent_component, "box2")
+    copy1.mirror(Plane(Point3D([2, 0, 0]), UnitVector3D([0, 0, 1]), UnitVector3D([0, 1, 0])))
+
+    # results from SpaceClaim
+    expected_vertices = [
+        Point3D([3, -1, 1]),
+        Point3D([3, -1, 0]),
+        Point3D([5, -1, 1]),
+        Point3D([5, -1, 0]),
+        Point3D([4, 0.5, 1]),
+        Point3D([4, 0.5, 0]),
+        Point3D([5, 1, 1]),
+        Point3D([5, 1, 0]),
+        Point3D([3, 1, 1]),
+        Point3D([3, 1, 0]),
+        Point3D([3.55, 0.55, 1.1]),
+        Point3D([3.55, 0.55, 1]),
+        Point3D([3.45, 0.55, 1.1]),
+        Point3D([3.45, 0.55, 1]),
+        Point3D([3.45, 0.45, 1.1]),
+        Point3D([3.45, 0.45, 1]),
+        Point3D([3.55, 0.45, 1.1]),
+        Point3D([3.55, 0.45, 1]),
+    ]
+
+    copy_vertices = []
+    for edge in copy1.edges:
+        if edge.shape.start not in copy_vertices:
+            copy_vertices.append(edge.shape.start)
+    assert np.allclose(expected_vertices, copy_vertices)
+
+    # Mirror across XY plane
+    copy2 = body.copy(body.parent_component, "box3")
+    copy2.mirror(Plane(Point3D([0, 0, -5]), UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0])))
+
+    # results from SpaceClaim
+    expected_vertices = [
+        Point3D([1, -1, -11]),
+        Point3D([1, -1, -10]),
+        Point3D([-1, -1, -11]),
+        Point3D([-1, -1, -10]),
+        Point3D([0, 0.5, -11]),
+        Point3D([0, 0.5, -10]),
+        Point3D([-1, 1, -11]),
+        Point3D([-1, 1, -10]),
+        Point3D([1, 1, -11]),
+        Point3D([1, 1, -10]),
+        Point3D([0.45, 0.55, -11.1]),
+        Point3D([0.45, 0.55, -11]),
+        Point3D([0.55, 0.55, -11.1]),
+        Point3D([0.55, 0.55, -11]),
+        Point3D([0.55, 0.45, -11.1]),
+        Point3D([0.55, 0.45, -11]),
+        Point3D([0.45, 0.45, -11.1]),
+        Point3D([0.45, 0.45, -11]),
+    ]
+
+    copy_vertices = []
+    for edge in copy2.edges:
+        if edge.shape.start not in copy_vertices:
+            copy_vertices.append(edge.shape.start)
+    assert np.allclose(expected_vertices, copy_vertices)
+
+    # Mirror across XZ plane
+    copy3 = body.copy(body.parent_component, "box4")
+    copy3.mirror(Plane(Point3D([0, 3, 0]), UnitVector3D([1, 0, 0]), UnitVector3D([0, 0, 1])))
+
+    # results from SpaceClaim
+    expected_vertices = [
+        Point3D([1, 7, 1]),
+        Point3D([1, 7, 0]),
+        Point3D([-1, 7, 1]),
+        Point3D([-1, 7, 0]),
+        Point3D([0, 5.5, 1]),
+        Point3D([0, 5.5, 0]),
+        Point3D([-1, 5, 1]),
+        Point3D([-1, 5, 0]),
+        Point3D([1, 5, 1]),
+        Point3D([1, 5, 0]),
+        Point3D([0.45, 5.45, 1.1]),
+        Point3D([0.45, 5.45, 1]),
+        Point3D([0.55, 5.45, 1.1]),
+        Point3D([0.55, 5.45, 1]),
+        Point3D([0.55, 5.55, 1.1]),
+        Point3D([0.55, 5.55, 1]),
+        Point3D([0.45, 5.55, 1.1]),
+        Point3D([0.45, 5.55, 1]),
+    ]
+
+    copy_vertices = []
+    for edge in copy3.edges:
+        if edge.shape.start not in copy_vertices:
+            copy_vertices.append(edge.shape.start)
+    assert np.allclose(expected_vertices, copy_vertices)
