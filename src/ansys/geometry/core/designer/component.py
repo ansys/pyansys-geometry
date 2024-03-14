@@ -510,7 +510,7 @@ class Component:
         sketch : Sketch
             Two-dimensional sketch source for the extrusion.
         path : List[TrimmedCurve]
-            A sweep path.
+            The path to sweep the profile along.
 
         Returns
         -------
