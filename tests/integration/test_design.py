@@ -2039,6 +2039,18 @@ def test_body_mapping(modeler: Modeler):
     assert np.allclose(map_vertices, rotate_vertices)
 
 
+def test_sphere_creation(modeler: Modeler):
+    """Test the creation of a sphere body with a given radius."""
+    skip_if_linux(modeler)
+    design = modeler.create_design("Spheretest")
+    center_point = Point3D([10, 10, 10], UNITS.m)
+    radius = Distance(1, UNITS.m)
+    spherebody = design.create_sphere("testspherebody", center_point, radius)
+    assert spherebody.name == "testspherebody"
+    assert len(spherebody.faces) == 1
+    assert round(spherebody.volume._magnitude, 3) == round(4.1887902, 3)
+
+
 def test_body_mirror(modeler: Modeler):
     """Test the mirroring of a body."""
     skip_if_linux(modeler)
