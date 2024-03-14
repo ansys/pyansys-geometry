@@ -39,6 +39,7 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.shapes.surfaces.trimmed_surface import (
@@ -203,12 +204,17 @@ class Face:
         direction of the normal vector to ensure it is always facing outward.
         """
         if self._shape is None:
+            self._grpc_client.log.debug("Requesting face properties from server.")
+
             surface_response = self._faces_stub.GetSurface(self._grpc_id)
             geometry = grpc_surface_to_surface(surface_response, self._surface_type)
+            box = self._faces_stub.GetBoxUV(self._grpc_id)
+            box_uv = BoxUV(Interval(box.start_u, box.end_u), Interval(box.start_v, box.end_v))
+
             self._shape = (
-                ReversedTrimmedSurface(self, geometry)
+                ReversedTrimmedSurface(geometry, box_uv)
                 if self.is_reversed
-                else TrimmedSurface(self, geometry)
+                else TrimmedSurface(geometry, box_uv)
             )
         return self._shape
 
