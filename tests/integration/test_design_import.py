@@ -144,7 +144,7 @@ def test_design_import_with_surfaces_issue834(modeler: Modeler):
         assert design.bodies[1].is_surface == True
 
 
-@pytest.mark.skip(reason="Get the OpenSSL GeometryService through before fixing hoops")
+
 def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test creation of a component, saving it to a file, and loading it again to a
     second component and make sure they have the same properties."""
@@ -204,17 +204,19 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         file = tmp_path_factory.mktemp("test_design_import") / "two_cars.step"
         design.download(file, DesignFileFormat.STEP)
         design2 = modeler.open_file(file)
-        _checker_method(design, design2, False)
+        design3 = modeler.open_file("./tests/integration/files/import/twoCars.stp")
+        _checker_method(design2, design3, False)
 
         # IGES
-        #
+        
         # TODO: Something has gone wrong with IGES
         # TODO: Issue https://github.com/ansys/pyansys-geometry/issues/801
-        #
-        # file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
-        # design.download(file, DesignFileFormat.IGES)
-        # design2 = modeler.open_file(file)
-        # _checker_method(design, design2, False)
+        
+        file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
+        design.download(file, DesignFileFormat.IGES)
+        design2 = modeler.open_file(file)
+        design3 = modeler.open_file("./tests/integration/files/import/twoCars.igs")
+        _checker_method(design2, design3, False)
 
         # Catia
         design2 = modeler.open_file("./tests/integration/files/import/catia_car/car.CATProduct")
