@@ -359,6 +359,7 @@ class IBody(ABC):
             The axis of rotation.
         angle: Union[~pint.Quantity, Angle, Real]
             Angle (magnitude) of the rotation.
+
         Returns
         -------
         None
@@ -369,6 +370,11 @@ class IBody(ABC):
     def scale(self, value: Real) -> None:
         """
         Scale the geometry body by the given value.
+
+        Notes
+        -----
+        The calling object is directly modified with the result.
+        Thus, it is important to make copies if needed.
 
         Parameters
         ----------
@@ -382,6 +388,11 @@ class IBody(ABC):
         """
         Map the geometry body to the new specified frame.
 
+        Notes
+        -----
+        The calling object is directly modified with the result.
+        Thus, it is important to make copies if needed.
+
         Parameters
         ----------
         frame: Frame
@@ -393,6 +404,11 @@ class IBody(ABC):
     def mirror(self, plane: Plane) -> None:
         """
         Mirror the geometry body across the specified plane.
+
+        Notes
+        -----
+        The calling object is directly modified with the result.
+        Thus, it is important to make copies if needed.
 
         Parameters
         ----------
