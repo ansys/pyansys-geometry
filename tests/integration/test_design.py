@@ -55,6 +55,7 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Distance
+from ansys.geometry.core.shapes.parameterization import ParamUV
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -184,6 +185,53 @@ def test_face_to_body_creation(modeler: Modeler):
     assert surface_body.faces[0].area.m == pytest.approx(
         Quantity(2e-4, UNITS.m**2).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_extrude_negative_sketch(modeler: Modeler):
+    """Test to check the extrusion of a sketch in the negative direction."""
+    # Create a sketch of a rectangle
+    sk = Sketch()
+    sk.box(Point2D([0, 0]), 10, 20)
+
+    # Create a design
+    design = modeler.create_design("mydes")
+
+    # Create a positive extrusion and a negative one
+    pos = design.extrude_sketch("positive", sk, 10)
+    neg = design.extrude_sketch("negative", sk, 10, direction="-")
+
+    # Verify that the negative extrusion is in the negative direction
+    assert neg.faces[0].normal() != pos.faces[0].normal()
+    assert np.isclose(neg.faces[0].normal().dot(pos.faces[0].normal()), -1.0)
+
+    # If an invalid direction is given, it should default to the positive direction
+    invalid_neg = design.extrude_sketch("invalid", sk, 10, direction="z")
+    assert invalid_neg.faces[0].normal() == pos.faces[0].normal()
+    assert np.isclose(invalid_neg.faces[0].normal().dot(pos.faces[0].normal()), 1.0)
+
+
+def test_extrude_negative_sketch_face(modeler: Modeler):
+    """Test to check the extrusion of a face in the negative direction."""
+    # Create a sketch of a rectangle
+    sk = Sketch()
+    sk.box(Point2D([0, 0]), 10, 20)
+
+    # Create a design
+    design = modeler.create_design("mydes")
+
+    # Create a positive extrusion and a negative one
+    body = design.extrude_sketch("positive", sk, 10)
+    pos = design.extrude_face("positive_face", body.faces[0], 10)
+    neg = design.extrude_face("negative_face", body.faces[0], 10, direction="-")
+
+    # Verify that the negative extrusion is in the negative direction
+    assert neg.faces[0].normal() != pos.faces[0].normal()
+    assert np.isclose(neg.faces[0].normal().dot(pos.faces[0].normal()), -1.0)
+
+    # If an invalid direction is given, it should default to the positive direction
+    invalid_neg = design.extrude_face("invalid_negative_face", body.faces[0], 10, direction="z")
+    assert invalid_neg.faces[0].normal() == pos.faces[0].normal()
+    assert np.isclose(invalid_neg.faces[0].normal().dot(pos.faces[0].normal()), 1.0)
 
 
 def test_modeler(modeler: Modeler):
@@ -356,12 +404,13 @@ def test_faces_edges(modeler: Modeler):
     assert all(face.body.id == body_polygon_comp.id for face in faces)
 
     # Get the normal to some of the faces
-    assert faces[0].face_normal() == UnitVector3D(-UNITVECTOR3D_Z)  # Bottom
-    assert faces[1].face_normal() == UNITVECTOR3D_Z  # Top
+    assert faces[0].normal() == UnitVector3D(-UNITVECTOR3D_Z)  # Bottom
+    assert faces[1].normal() == UNITVECTOR3D_Z  # Top
 
     # Get the central point of some of the surfaces
-    assert faces[0].face_point(u=-0.03, v=-0.03) == Point3D([-30, -30, 0], UNITS.mm)
-    assert faces[1].face_point(u=-0.03, v=-0.03) == Point3D([-30, -30, 30], UNITS.mm)
+    assert faces[0].point(0.4472135954999579, 0.5) == Point3D([-30, -30, 0], UNITS.mm)
+    u, v = faces[1].shape.get_proportional_parameters(ParamUV(-0.03, -0.03))
+    assert faces[1].point(u, v) == Point3D([-30, -30, 30], UNITS.mm)
 
     loops = faces[0].loops
     assert len(loops) == 1
@@ -814,13 +863,13 @@ def test_body_rotation(modeler: Modeler):
 
     original_vertices = []
     for edge in body.edges:
-        original_vertices.extend([edge.start_point, edge.end_point])
+        original_vertices.extend([edge.shape.start, edge.shape.end])
 
     body.rotate(Point3D([0, 0, 0]), UnitVector3D([0, 0, 1]), np.pi / 4)
 
     new_vertices = []
     for edge in body.edges:
-        new_vertices.extend([edge.start_point, edge.end_point])
+        new_vertices.extend([edge.shape.start, edge.shape.end])
 
     # Make sure no vertices are in the same position as in before rotation
     for old_vertex, new_vertex in zip(original_vertices, new_vertices):
@@ -1880,3 +1929,241 @@ def test_get_collision(modeler: Modeler):
 
     assert body1.get_collision(body2) == CollisionType.TOUCH
     assert body2.get_collision(body3) == CollisionType.NONE
+
+
+def test_body_scale(modeler: Modeler):
+    """Verify the correct scaling of a body."""
+
+    design = modeler.create_design("BodyScale_Test")
+
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert Accuracy.length_is_equal(body.volume.m, 1)
+
+    body.scale(2)
+    assert Accuracy.length_is_equal(body.volume.m, 8)
+
+    body.scale(0.25)
+    assert Accuracy.length_is_equal(body.volume.m, 1 / 8)
+
+
+def test_body_mapping(modeler: Modeler):
+    """Verify the correct mapping of a body."""
+    skip_if_linux(modeler)
+    design = modeler.create_design("BodyMap_Test")
+
+    # non-symmetric shape to allow determination of mirroring
+    body = design.extrude_sketch(
+        "box",
+        Sketch()
+        .segment(Point2D([1, 1]), Point2D([-1, 1]))
+        .segment_to_point(Point2D([0, 0.5]))
+        .segment_to_point(Point2D([-1, -1]))
+        .segment_to_point(Point2D([1, -1]))
+        .segment_to_point(Point2D([1, 1])),
+        1,
+    )
+
+    # Test 1: identity mapping - everything should be the same
+    copy = body.copy(body.parent_component, "copy")
+    copy.map(Frame(Point3D([0, 0, 0]), UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0])))
+
+    vertices = []
+    for edge in body.edges:
+        vertices.extend([edge.shape.start, edge.shape.end])
+
+    copy_vertices = []
+    for edge in copy.edges:
+        copy_vertices.extend([edge.shape.start, edge.shape.end])
+
+    assert np.allclose(vertices, copy_vertices)
+
+    # Test 2: mirror the body - flips only the x direction
+    copy = body.copy(body.parent_component, "copy")
+    copy.map(Frame(Point3D([-4, 0, 1]), UnitVector3D([-1, 0, 0]), UnitVector3D([0, 1, 0])))
+
+    copy_vertices = []
+    for edge in copy.edges:
+        copy_vertices.extend([edge.shape.start, edge.shape.end])
+
+    # expected vertices from confirmed mirror
+    expected_vertices = [
+        Point3D([-5.0, -1.0, 0.0]),
+        Point3D([-5.0, 1.0, 0.0]),
+        Point3D([-5.0, -1.0, 1.0]),
+        Point3D([-5.0, -1.0, 0.0]),
+        Point3D([-3.0, -1.0, 0.0]),
+        Point3D([-5.0, -1.0, 0.0]),
+        Point3D([-3.0, -1.0, 1.0]),
+        Point3D([-3.0, -1.0, 0.0]),
+        Point3D([-4.0, 0.5, 0.0]),
+        Point3D([-3.0, -1.0, 0.0]),
+        Point3D([-4.0, 0.5, 1.0]),
+        Point3D([-4.0, 0.5, 0.0]),
+        Point3D([-3.0, 1.0, 0.0]),
+        Point3D([-4.0, 0.5, 0.0]),
+        Point3D([-3.0, 1.0, 1.0]),
+        Point3D([-3.0, 1.0, 0.0]),
+        Point3D([-5.0, 1.0, 0.0]),
+        Point3D([-3.0, 1.0, 0.0]),
+        Point3D([-5.0, 1.0, 1.0]),
+        Point3D([-5.0, 1.0, 0.0]),
+        Point3D([-5.0, -1.0, 1.0]),
+        Point3D([-5.0, 1.0, 1.0]),
+        Point3D([-3.0, -1.0, 1.0]),
+        Point3D([-5.0, -1.0, 1.0]),
+        Point3D([-4.0, 0.5, 1.0]),
+        Point3D([-3.0, -1.0, 1.0]),
+        Point3D([-3.0, 1.0, 1.0]),
+        Point3D([-4.0, 0.5, 1.0]),
+        Point3D([-5.0, 1.0, 1.0]),
+        Point3D([-3.0, 1.0, 1.0]),
+    ]
+
+    assert np.allclose(expected_vertices, copy_vertices)
+
+    # Test 3: rotate body 180 degrees - flip x and y direction
+    map_copy = body.copy(body.parent_component, "copy")
+    map_copy.map(Frame(Point3D([0, 0, 0]), UnitVector3D([-1, 0, 0]), UnitVector3D([0, -1, 0])))
+
+    rotate_copy = body.copy(body.parent_component, "copy")
+    rotate_copy.rotate(Point3D([0, 0, 0]), UnitVector3D([0, 0, 1]), np.pi)
+
+    map_vertices = []
+    for edge in map_copy.edges:
+        map_vertices.extend([edge.shape.start, edge.shape.end])
+
+    rotate_vertices = []
+    for edge in rotate_copy.edges:
+        rotate_vertices.extend([edge.shape.start, edge.shape.end])
+
+    assert np.allclose(map_vertices, rotate_vertices)
+
+
+def test_sphere_creation(modeler: Modeler):
+    """Test the creation of a sphere body with a given radius."""
+    skip_if_linux(modeler)
+    design = modeler.create_design("Spheretest")
+    center_point = Point3D([10, 10, 10], UNITS.m)
+    radius = Distance(1, UNITS.m)
+    spherebody = design.create_sphere("testspherebody", center_point, radius)
+    assert spherebody.name == "testspherebody"
+    assert len(spherebody.faces) == 1
+    assert round(spherebody.volume._magnitude, 3) == round(4.1887902, 3)
+
+
+def test_body_mirror(modeler: Modeler):
+    """Test the mirroring of a body."""
+    skip_if_linux(modeler)
+    design = modeler.create_design("Design1")
+
+    # Create shape with no lines of symmetry in any axis
+    body = design.extrude_sketch(
+        "box",
+        Sketch()
+        .segment(Point2D([1, 1]), Point2D([-1, 1]))
+        .segment_to_point(Point2D([0, 0.5]))
+        .segment_to_point(Point2D([-1, -1]))
+        .segment_to_point(Point2D([1, -1]))
+        .segment_to_point(Point2D([1, 1])),
+        1,
+    )
+    top = design.extrude_sketch(
+        "top", Sketch(Plane(Point3D([0, 0, 1]))).box(Point2D([0.5, 0.5]), 0.1, 0.1), 0.1
+    )
+    body.unite(top)
+
+    # Mirror across YZ plane
+    copy1 = body.copy(body.parent_component, "box2")
+    copy1.mirror(Plane(Point3D([2, 0, 0]), UnitVector3D([0, 0, 1]), UnitVector3D([0, 1, 0])))
+
+    # results from SpaceClaim
+    expected_vertices = [
+        Point3D([3, -1, 1]),
+        Point3D([3, -1, 0]),
+        Point3D([5, -1, 1]),
+        Point3D([5, -1, 0]),
+        Point3D([4, 0.5, 1]),
+        Point3D([4, 0.5, 0]),
+        Point3D([5, 1, 1]),
+        Point3D([5, 1, 0]),
+        Point3D([3, 1, 1]),
+        Point3D([3, 1, 0]),
+        Point3D([3.55, 0.55, 1.1]),
+        Point3D([3.55, 0.55, 1]),
+        Point3D([3.45, 0.55, 1.1]),
+        Point3D([3.45, 0.55, 1]),
+        Point3D([3.45, 0.45, 1.1]),
+        Point3D([3.45, 0.45, 1]),
+        Point3D([3.55, 0.45, 1.1]),
+        Point3D([3.55, 0.45, 1]),
+    ]
+
+    copy_vertices = []
+    for edge in copy1.edges:
+        if edge.shape.start not in copy_vertices:
+            copy_vertices.append(edge.shape.start)
+    assert np.allclose(expected_vertices, copy_vertices)
+
+    # Mirror across XY plane
+    copy2 = body.copy(body.parent_component, "box3")
+    copy2.mirror(Plane(Point3D([0, 0, -5]), UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0])))
+
+    # results from SpaceClaim
+    expected_vertices = [
+        Point3D([1, -1, -11]),
+        Point3D([1, -1, -10]),
+        Point3D([-1, -1, -11]),
+        Point3D([-1, -1, -10]),
+        Point3D([0, 0.5, -11]),
+        Point3D([0, 0.5, -10]),
+        Point3D([-1, 1, -11]),
+        Point3D([-1, 1, -10]),
+        Point3D([1, 1, -11]),
+        Point3D([1, 1, -10]),
+        Point3D([0.45, 0.55, -11.1]),
+        Point3D([0.45, 0.55, -11]),
+        Point3D([0.55, 0.55, -11.1]),
+        Point3D([0.55, 0.55, -11]),
+        Point3D([0.55, 0.45, -11.1]),
+        Point3D([0.55, 0.45, -11]),
+        Point3D([0.45, 0.45, -11.1]),
+        Point3D([0.45, 0.45, -11]),
+    ]
+
+    copy_vertices = []
+    for edge in copy2.edges:
+        if edge.shape.start not in copy_vertices:
+            copy_vertices.append(edge.shape.start)
+    assert np.allclose(expected_vertices, copy_vertices)
+
+    # Mirror across XZ plane
+    copy3 = body.copy(body.parent_component, "box4")
+    copy3.mirror(Plane(Point3D([0, 3, 0]), UnitVector3D([1, 0, 0]), UnitVector3D([0, 0, 1])))
+
+    # results from SpaceClaim
+    expected_vertices = [
+        Point3D([1, 7, 1]),
+        Point3D([1, 7, 0]),
+        Point3D([-1, 7, 1]),
+        Point3D([-1, 7, 0]),
+        Point3D([0, 5.5, 1]),
+        Point3D([0, 5.5, 0]),
+        Point3D([-1, 5, 1]),
+        Point3D([-1, 5, 0]),
+        Point3D([1, 5, 1]),
+        Point3D([1, 5, 0]),
+        Point3D([0.45, 5.45, 1.1]),
+        Point3D([0.45, 5.45, 1]),
+        Point3D([0.55, 5.45, 1.1]),
+        Point3D([0.55, 5.45, 1]),
+        Point3D([0.55, 5.55, 1.1]),
+        Point3D([0.55, 5.55, 1]),
+        Point3D([0.45, 5.55, 1.1]),
+        Point3D([0.45, 5.55, 1]),
+    ]
+
+    copy_vertices = []
+    for edge in copy3.edges:
+        if edge.shape.start not in copy_vertices:
+            copy_vertices.append(edge.shape.start)
+    assert np.allclose(expected_vertices, copy_vertices)

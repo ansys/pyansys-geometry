@@ -38,7 +38,7 @@ from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.logger import LOG as logger
-from ansys.geometry.core.misc.checks import check_type
+from ansys.geometry.core.misc.checks import check_type, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.repair_tools import RepairTools
@@ -104,7 +104,7 @@ class Modeler:
         backend_type: Optional[BackendType] = None,
     ):
         """Initialize the ``Modeler`` class."""
-        self._client = GrpcClient(
+        self._grpc_client = GrpcClient(
             host=host,
             port=port,
             channel=channel,
@@ -124,8 +124,8 @@ class Modeler:
             self._measurement_tools = None
             logger.warning("Linux backend does not support repair tools.")
         else:
-            self._repair_tools = RepairTools(self._client)
-            self._measurement_tools = MeasurementTools(self._client)
+            self._repair_tools = RepairTools(self._grpc_client)
+            self._measurement_tools = MeasurementTools(self._grpc_client)
 
         # Maintaining references to all designs within the modeler workspace
         self._designs: Dict[str, "Design"] = {}
@@ -141,7 +141,7 @@ class Modeler:
     @property
     def client(self) -> GrpcClient:
         """``Modeler`` instance client."""
-        return self._client
+        return self._grpc_client
 
     def create_design(self, name: str) -> "Design":
         """
@@ -261,7 +261,7 @@ class Modeler:
         with open(file_path, "rb") as file:
             data = file.read()
 
-        c_stub = CommandsStub(self._client.channel)
+        c_stub = CommandsStub(self._grpc_client.channel)
 
         response = c_stub.UploadFile(
             UploadFileRequest(
@@ -319,7 +319,7 @@ class Modeler:
                         self._upload_file(full_path)
             self._upload_file(file_path, True, import_options)
         else:
-            DesignsStub(self._client.channel).Open(
+            DesignsStub(self._grpc_client.channel).Open(
                 OpenRequest(filepath=file_path, import_options=import_options.to_dict())
             )
 
@@ -330,7 +330,7 @@ class Modeler:
         lines = []
         lines.append(f"Ansys Geometry Modeler ({hex(id(self))})")
         lines.append("")
-        lines.append(str(self._client))
+        lines.append(str(self._grpc_client))
         return "\n".join(lines)
 
     @protect_grpc
@@ -392,7 +392,7 @@ class Modeler:
             ran successfully.
         """
         serv_path = self._upload_file(file_path)
-        ga_stub = DbuApplicationStub(self._client.channel)
+        ga_stub = DbuApplicationStub(self._grpc_client.channel)
         request = RunScriptFileRequest(
             script_path=serv_path,
             script_args=script_args,
@@ -417,6 +417,7 @@ class Modeler:
         return self._repair_tools
 
     @property
+    @min_backend_version(24, 2, 0)
     def measurement_tools(self) -> MeasurementTools:
         """Access to measurement tools."""
         return self._measurement_tools

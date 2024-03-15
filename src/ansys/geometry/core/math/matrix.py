@@ -24,7 +24,7 @@ from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
 import numpy as np
 
-from ansys.geometry.core.misc import check_ndarray_is_float_int
+from ansys.geometry.core.misc.checks import check_ndarray_is_float_int
 from ansys.geometry.core.typing import Real, RealSequence
 
 DEFAULT_MATRIX33 = np.identity(3)

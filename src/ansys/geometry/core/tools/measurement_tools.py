@@ -30,6 +30,7 @@ from beartype.typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.misc.checks import min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -91,6 +92,7 @@ class MeasurementTools:
         self._measure_stub = MeasureToolsStub(self._grpc_client.channel)
 
     @protect_grpc
+    @min_backend_version(24, 2, 0)
     def min_distance_between_objects(self, body1: "Body", body2: "Body") -> Gap:
         """
         Find the gap between two bodies.

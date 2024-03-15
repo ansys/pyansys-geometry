@@ -33,8 +33,9 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.accuracy import Accuracy
 from ansys.geometry.core.misc.measurements import Distance
-from ansys.geometry.core.primitives.curve_evaluation import CurveEvaluation
-from ansys.geometry.core.primitives.parameterization import (
+from ansys.geometry.core.shapes.curves.curve import Curve
+from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
+from ansys.geometry.core.shapes.parameterization import (
     Interval,
     Parameterization,
     ParamForm,
@@ -43,7 +44,7 @@ from ansys.geometry.core.primitives.parameterization import (
 from ansys.geometry.core.typing import Real, RealSequence
 
 
-class Circle:
+class Circle(Curve):
     """
     Provides 3D circle representation.
 
@@ -227,7 +228,7 @@ class Circle:
             and self.dir_z == other.dir_z
         )
 
-    def get_parameterization(self) -> Parameterization:
+    def parameterization(self) -> Parameterization:
         """
         Get the parametrization of the circle.
 
@@ -242,6 +243,12 @@ class Circle:
         """
         return Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
 
+    def contains_param(self, param: Real) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_param() is not implemented.")
+
+    def contains_point(self, point: Point3D) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_point() is not implemented.")
+
 
 class CircleEvaluation(CurveEvaluation):
     """
@@ -249,7 +256,7 @@ class CircleEvaluation(CurveEvaluation):
 
     Parameters
     ----------
-    circle: ~ansys.geometry.core.primitives.circle.Circle
+    circle: ~ansys.geometry.core.shapes.curves.circle.Circle
         Circle to evaluate.
     parameter: Real
         Parameter to evaluate the circle at.
