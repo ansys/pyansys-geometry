@@ -256,9 +256,10 @@ class Plotter:
         """
         edge_plot_list = []
         for edge in body_plot.object.edges:
-            line = pv.Line(edge.shape.start, edge.shape.start)
+            edge_polydata = edge.to_polydata()
+
             edge_actor = self.scene.add_mesh(
-                line, line_width=10, color=EDGE_COLOR, **plotting_options
+                edge_polydata, line_width=10, color=EDGE_COLOR, **plotting_options
             )
             edge_actor.SetVisibility(False)
             edge_plot = EdgePlot(edge_actor, edge, body_plot)

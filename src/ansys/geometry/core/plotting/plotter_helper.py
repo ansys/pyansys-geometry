@@ -232,15 +232,14 @@ class PlotterHelper:
         for object in self._geom_object_actors_map.values():
             # get edges only from bodies
             geom_obj = object.object
-            if (
-                isinstance(geom_obj, Body)
-                or isinstance(geom_obj, MasterBody)
-                or isinstance(geom_obj, Face)
-                or isinstance(geom_obj, SketchFace)
-                or isinstance(geom_obj, Sketch)
-            ):
-                for edge in object.edges:
-                    self._edge_actors_map[edge.actor] = edge
+            """
+            If ( isinstance(geom_obj, Body) or isinstance(geom_obj, MasterBody) or
+            isinstance(geom_obj, Face) or isinstance(geom_obj, SketchFace)
+
+            or isinstance(geom_obj, Sketch) ):
+            """
+            for edge in object.edges:
+                self._edge_actors_map[edge.actor] = edge
 
     def enable_picking(self):
         """Enable picking capabilities in the plotter."""
