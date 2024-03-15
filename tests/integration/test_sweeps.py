@@ -68,7 +68,7 @@ def test_sweep_sketch(modeler: Modeler):
 
     # check volume of face
     # expected is 0 since it has 0 thickness
-    assert body.faces[0].volume.m == 0
+    assert body.volume.m == 0
 
 
 def test_sweep_chain(modeler: Modeler):
@@ -116,4 +116,4 @@ def test_sweep_chain(modeler: Modeler):
 
     # check volume of face
     # expected is 0 since it's not a closed surface
-    assert body.faces[0].volume.m == 0
+    assert body.volume.m == 0
