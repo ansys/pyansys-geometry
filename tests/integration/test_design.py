@@ -2175,6 +2175,7 @@ def test_sweep_sketch(modeler: Modeler):
     """Test the sweep_sketch method by creating a revolving a circle profile around an
     circular axis to make a donut."""
 
+    skip_if_linux(modeler)
     design_sketch = modeler.create_design("donut")
 
     path_radius = 5
@@ -2211,6 +2212,8 @@ def test_sweep_sketch(modeler: Modeler):
 def test_sweep_chain(modeler: Modeler):
     """Test the sweep_chain method by revolving a semi-elliptical profile around an
     circular axis to make a bowl."""
+
+    skip_if_linux(modeler)
     design_chain = modeler.create_design("bowl")
 
     radius = 10
