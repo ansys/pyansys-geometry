@@ -243,8 +243,7 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
 
 def test_design_insert(modeler: Modeler):
-    """Test creation of a design, sketching a circle, extruding it and then inserting a
-    different file into the design."""
+    """Test inserting a file into the design."""
 
     # Create a design and sketch a circle
     design = modeler.create_design("Insert")
