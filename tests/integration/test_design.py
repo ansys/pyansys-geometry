@@ -2209,7 +2209,8 @@ def test_sweep_sketch(modeler: Modeler):
 
 
 def test_sweep_chain(modeler: Modeler):
-    """Test revolving a semi-elliptical profile around a circular axis to make a bowl."""
+    """Test revolving a semi-elliptical profile around a circular axis to make a
+    bowl."""
 
     skip_if_linux(modeler)
     design_chain = modeler.create_design("bowl")
