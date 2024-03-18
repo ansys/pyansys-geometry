@@ -2172,8 +2172,7 @@ def test_body_mirror(modeler: Modeler):
 
 
 def test_sweep_sketch(modeler: Modeler):
-    """Test the sweep_sketch method by creating a revolving a circle profile around an
-    circular axis to make a donut."""
+    """Test revolving a circle profile around a circular axis to make a donut."""
 
     skip_if_linux(modeler)
     design_sketch = modeler.create_design("donut")
