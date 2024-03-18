@@ -21,18 +21,13 @@
 # SOFTWARE.
 """Provides the ``TrimmedSurface`` class."""
 
-from beartype.typing import TYPE_CHECKING
-
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.shapes.box_uv import BoxUV
-from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
+from ansys.geometry.core.shapes.parameterization import ParamUV
 from ansys.geometry.core.shapes.surfaces.surface import Surface
 from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.typing import Real
-
-if TYPE_CHECKING:
-    from ansys.geometry.core.designer.face import Face
 
 
 class TrimmedSurface:
@@ -50,15 +45,10 @@ class TrimmedSurface:
         Underlying mathematical representation of the surface.
     """
 
-    def __init__(self, face: "Face", geometry: Surface):
+    def __init__(self, geometry: Surface, box_uv: BoxUV):
         """Initialize an instance of a trimmed surface."""
-        self._face = face
         self._geometry = geometry
-
-    @property
-    def face(self) -> "Face":
-        """Face the trimmed surface belongs to."""
-        return self._face
+        self._box_uv = box_uv
 
     @property
     def geometry(self) -> Surface:
@@ -68,9 +58,7 @@ class TrimmedSurface:
     @property
     def box_uv(self) -> BoxUV:
         """Bounding BoxUV of the surface."""
-        self._face._grpc_client.log.debug("Requesting box UV from server.")
-        box = self._face._faces_stub.GetBoxUV(self.face._grpc_id)
-        return BoxUV(Interval(box.start_u, box.end_u), Interval(box.start_v, box.end_v))
+        return self._box_uv
 
     def get_proportional_parameters(self, param_uv: ParamUV) -> ParamUV:
         """
@@ -154,7 +142,7 @@ class TrimmedSurface:
             )
         )
 
-    # TODO: perimeter
+    # TODO: perimeter, area?
 
 
 class ReversedTrimmedSurface(TrimmedSurface):
@@ -172,9 +160,9 @@ class ReversedTrimmedSurface(TrimmedSurface):
         Underlying mathematical representation of the surface.
     """
 
-    def __init__(self, face: "Face", geometry: Surface):
+    def __init__(self, geometry: Surface, box_uv: BoxUV):
         """Initialize an instance of a reversed trimmed surface."""
-        super().__init__(face, geometry)
+        super().__init__(geometry, box_uv)
 
     def normal(self, u: Real, v: Real) -> UnitVector3D:  # noqa: D102
         return -self.evaluate_proportion(u, v).normal
