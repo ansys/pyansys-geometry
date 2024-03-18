@@ -82,7 +82,7 @@ class Surface(ABC):
 
     def trim(self, box_uv: BoxUV) -> "TrimmedSurface":
         """
-        Trim this curve by bounding it with a BoxUV.
+        Trim this surface by bounding it with a BoxUV.
 
         Returns
         -------
