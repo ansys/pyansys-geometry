@@ -257,13 +257,17 @@ class Plotter:
         edge_plot_list = []
         for edge in body_plot.object.edges:
             edge_polydata = edge.to_polydata()
-
-            edge_actor = self.scene.add_mesh(
-                edge_polydata, line_width=10, color=EDGE_COLOR, **plotting_options
-            )
-            edge_actor.SetVisibility(False)
-            edge_plot = EdgePlot(edge_actor, edge, body_plot)
-            edge_plot_list.append(edge_plot)
+            if edge_polydata is not None:
+                edge_actor = self.scene.add_mesh(
+                    edge_polydata,
+                    line_width=10,
+                    color=EDGE_COLOR,
+                    style="wireframe",
+                    **plotting_options,
+                )
+                edge_actor.SetVisibility(False)
+                edge_plot = EdgePlot(edge_actor, edge, body_plot)
+                edge_plot_list.append(edge_plot)
         body_plot.edges = edge_plot_list
 
     def add_body(

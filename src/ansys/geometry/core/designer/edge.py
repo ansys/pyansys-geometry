@@ -28,17 +28,14 @@ from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from beartype.typing import TYPE_CHECKING, List, Union
 from pint import Quantity
 import pyvista as pv
-from scipy.spatial.transform import Rotation as spatial_rotation
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import grpc_curve_to_curve
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.logger import LOG
-from ansys.geometry.core.math.matrix import Matrix33, Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
-from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.shapes.curves.trimmed_curve import ReversedTrimmedCurve, TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
 
@@ -176,39 +173,6 @@ class Edge:
             for grpc_face in grpc_faces
         ]
 
-
-    def _get_rotation_matrix_ellipse(self, ellipse) -> Matrix44:
-        """Return the rotation matrix for the edge."""
-        rotation = Matrix33(
-            spatial_rotation.from_euler(
-                "xyz", [0, 0, self.shape.geometry.angle_offset.value.m_as(UNITS.radian)], degrees=False
-            ).as_matrix()
-        )
-        transformation_matrix = Matrix44(
-            [
-                [
-                    rotation[0, 0],
-                    rotation[0, 1],
-                    rotation[0, 2],
-                    self.shape.geometry.origin,
-                ],
-                [
-                    rotation[1, 0],
-                    rotation[1, 1],
-                    rotation[1, 2],
-                    self.center.y.m_as(DEFAULT_UNITS.LENGTH),
-                ],
-                [
-                    rotation[2, 0],
-                    rotation[2, 1],
-                    rotation[2, 2],
-                    0,
-                ],
-                [0, 0, 0, 1],
-            ]
-        )
-        return transformation_matrix
-
     @property
     @protect_grpc
     def start_point(self) -> Point3D:
@@ -236,8 +200,10 @@ class Edge:
         Union[pv.PolyData, None]
             Edge as polydata
         """
-
-        if self._curve_type == CurveType.CURVETYPE_UNKNOWN or self._curve_type == CurveType.CURVETYPE_LINE:
+        if (
+            self._curve_type == CurveType.CURVETYPE_UNKNOWN
+            or self._curve_type == CurveType.CURVETYPE_LINE
+        ):
             return pv.Line(pointa=self.start_point, pointb=self.end_point)
         elif self._curve_type == CurveType.CURVETYPE_CIRCLE:
             self.shape.geometry: Circle
@@ -246,18 +212,18 @@ class Edge:
                 center=list(self.shape.geometry.origin),
                 pointa=list(point_a.position),
                 pointb=list(point_a.position),
-                negative=True
+                negative=True,
             )
             return circle
 
         elif self._curve_type == CurveType.CURVETYPE_ELLIPSE:
             self.shape.geometry: Ellipse
-
-            pv.Ellipse(
-                semi_major_axis=float(self.shape.geometry.major_radius)
-                semi_minor_axis=float(self.shape.geometry.minor_radius)
-            ).transform(self._get_rotation_matrix(self.shape.geometry))
-            return None
+            ellipse = pv.Ellipse(
+                semi_major_axis=self.shape.geometry.major_radius.magnitude,
+                semi_minor_axis=self.shape.geometry.minor_radius.magnitude,
+            )
+            ellipse = ellipse.translate(list(self.shape.geometry.origin))
+            return ellipse
         else:
             LOG.warning("Non linear edges not supported.")
             return None
