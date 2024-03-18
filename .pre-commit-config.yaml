@@ -2,7 +2,7 @@ exclude: "tests/integration/files"
 repos:
 
 - repo: https://github.com/psf/black
-  rev: 24.2.0  # IF VERSION CHANGES --> MODIFY "blacken-docs" MANUALLY AS WELL!!
+  rev: 24.3.0  # IF VERSION CHANGES --> MODIFY "blacken-docs" MANUALLY AS WELL!!
   hooks:
   - id: black
 
