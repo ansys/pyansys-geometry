@@ -560,8 +560,6 @@ class Component:
         ----------
         name : str
             User-defined label for the new solid body.
-        sketch : Sketch
-            Two-dimensional sketch source for the extrusion.
         path : List[TrimmedCurve]
             The path to sweep the chain along.
         chain : List[TrimmedCurve]
