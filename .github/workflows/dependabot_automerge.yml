@@ -8,7 +8,8 @@ permissions:
 jobs:
   dependabot:
     runs-on: ubuntu-latest
-    if: github.actor == 'dependabot[bot]'
+    # Only run this workflow for branches starting with "dependabot/"
+    if: startsWith(github.head_ref, 'dependabot/')
     steps:
       - name: Dependabot metadata
         id: metadata
