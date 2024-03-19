@@ -225,5 +225,5 @@ class Edge:
             ellipse = ellipse.translate(list(self.shape.geometry.origin))
             return ellipse
         else:
-            LOG.warning("Non linear edges not supported.")
+            LOG.warning("NURBS and procedural edges not supported.")
             return None

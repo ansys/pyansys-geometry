@@ -371,10 +371,7 @@ class Face:
         Union[pv.PolyData, None]
             Face as polydata
         """
-        if self.surface_type != SurfaceType.SURFACETYPE_PLANE:
-            LOG.warning("Only planes surfaces are supported")
-            return None
-        else:
+        if self.surface_type == SurfaceType.SURFACETYPE_PLANE:
             # get vertices from edges
             vertices = [
                 vertice
@@ -387,6 +384,47 @@ class Face:
             vertices_order.extend(range(len(vertices)))
 
             return pv.PolyData(vertices, faces=vertices_order, n_faces=1)
+        elif self.surface_type == SurfaceType.SURFACETYPE_CYLINDER:
+            cyl_pl = pv.Cylinder(
+                center=list(self.shape.geometry.origin),
+                direction=[
+                    self.shape.geometry.dir_x,
+                    self.shape.geometry.dir_y,
+                    self.shape.geometry.dir_z,
+                ],
+                radius=self.shape.geometry.radius.magnitude,
+            )
+            return cyl_pl
+        elif self.surface_type == SurfaceType.SURFACETYPE_CONE:
+            cone_pl = pv.Cone(
+                center=list(self.shape.geometry.origin),
+                direction=[
+                    self.shape.geometry.dir_x,
+                    self.shape.geometry.dir_y,
+                    self.shape.geometry.dir_z,
+                ],
+                height=self.shape.geometry.height.magnitude,
+                radius=self.shape.geometry.radius.magnitude,
+                angle=self.shape.geometry.half_angle.magnitude,
+            )
+            return cone_pl
+        elif self.surface_type == SurfaceType.SURFACETYPE_TORUS:
+            torus_pl = pv.ParametricTorus(
+                ringradius=self.shape.geometry.major_radius.magnitude,
+                crosssectionradius=self.shape.geometry.minor_radius.magnitude,
+            )
+            torus_pl.translate(self.shape.geometry.origin)
+            return torus_pl
+
+        elif self.surface_type == SurfaceType.SURFACETYPE_SPHERE:
+            sphere_pl = pv.Sphere(
+                center=list(self.shape.geometry.origin),
+                radius=self.shape.geometry.radius.magnitude,
+            )
+            return sphere_pl
+        else:
+            LOG.warning("Cannot convert non-planar faces to polydata.")
+            return None
 
     def create_isoparametric_curves(
         self, use_u_param: bool, parameter: float
