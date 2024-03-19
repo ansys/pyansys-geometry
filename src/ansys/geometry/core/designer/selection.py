@@ -105,11 +105,21 @@ class NamedSelection:
         [ids.add(beam.id) for beam in beams]
         [ids.add(dp.id) for dp in design_points]
 
+        self._selections = [bodies, faces, edges, beams, design_points]
+
+        # flatten list
+        self._selections = [item for sublist in self._selections for item in sublist]
+
         named_selection_request = CreateRequest(name=name, members=ids)
         self._grpc_client.log.debug("Requesting creation of named selection.")
         new_named_selection = self._named_selections_stub.Create(named_selection_request)
         self._id = new_named_selection.id
         self._name = new_named_selection.name
+
+    @property
+    def selections(self):
+        """Return all the selected elements."""
+        return self._selections
 
     @property
     def id(self) -> str:

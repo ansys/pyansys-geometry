@@ -28,13 +28,15 @@ from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.api.geometry.v0.faces_pb2 import CreateIsoParamCurvesRequest
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
-from beartype.typing import TYPE_CHECKING, List
+from beartype.typing import TYPE_CHECKING, List, Union
 from pint import Quantity
+import pyvista as pv
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import grpc_curve_to_curve, grpc_surface_to_surface
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active
@@ -363,6 +365,72 @@ class Face:
                 )
             )
         return edges
+
+    def _to_polydata(self) -> Union[pv.PolyData, None]:
+        """
+        Return the face as polydata.
+
+        This is useful to represent the face in a PyVista plotter.
+
+        Returns
+        -------
+        Union[pv.PolyData, None]
+            Face as polydata
+        """
+        if self.surface_type == SurfaceType.SURFACETYPE_PLANE:
+            # get vertices from edges
+            vertices = [
+                vertice
+                for edge in self.edges
+                for vertice in [edge.start_point.flat, edge.end_point.flat]
+            ]
+            # TODO remove duplicate vertices
+            # build the PyVista face
+            vertices_order = [len(vertices)]
+            vertices_order.extend(range(len(vertices)))
+
+            return pv.PolyData(vertices, faces=vertices_order, n_faces=1)
+        elif self.surface_type == SurfaceType.SURFACETYPE_CYLINDER:
+            cyl_pl = pv.Cylinder(
+                center=list(self.shape.geometry.origin),
+                direction=[
+                    self.shape.geometry.dir_x,
+                    self.shape.geometry.dir_y,
+                    self.shape.geometry.dir_z,
+                ],
+                radius=self.shape.geometry.radius.magnitude,
+            )
+            return cyl_pl
+        elif self.surface_type == SurfaceType.SURFACETYPE_CONE:
+            cone_pl = pv.Cone(
+                center=list(self.shape.geometry.origin),
+                direction=[
+                    self.shape.geometry.dir_x,
+                    self.shape.geometry.dir_y,
+                    self.shape.geometry.dir_z,
+                ],
+                height=self.shape.geometry.height.magnitude,
+                radius=self.shape.geometry.radius.magnitude,
+                angle=self.shape.geometry.half_angle.magnitude,
+            )
+            return cone_pl
+        elif self.surface_type == SurfaceType.SURFACETYPE_TORUS:
+            torus_pl = pv.ParametricTorus(
+                ringradius=self.shape.geometry.major_radius.magnitude,
+                crosssectionradius=self.shape.geometry.minor_radius.magnitude,
+            )
+            torus_pl.translate(self.shape.geometry.origin)
+            return torus_pl
+
+        elif self.surface_type == SurfaceType.SURFACETYPE_SPHERE:
+            sphere_pl = pv.Sphere(
+                center=list(self.shape.geometry.origin),
+                radius=self.shape.geometry.radius.magnitude,
+            )
+            return sphere_pl
+        else:
+            LOG.warning("Cannot convert non-planar faces to polydata.")
+            return None
 
     def create_isoparametric_curves(
         self, use_u_param: bool, parameter: float
