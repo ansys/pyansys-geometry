@@ -1,6 +1,7 @@
 (?i)ansys
 (?i)api
 (?i)check
+(?i)dependabot
 Direct API
 Dockerfile
 (?i)docker
