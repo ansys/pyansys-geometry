@@ -231,27 +231,6 @@ jobs:
     needs: [docs-style]
     runs-on: [self-hosted, Windows, pygeometry]
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
-
-      - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@v2
-
-      - name: Create Python venv
-        run: |
-          python -m venv .venv
-          .\.venv\Scripts\Activate.ps1
-
-      - name: Install packages for documentation build
-        run: |
-          .\.venv\Scripts\Activate.ps1
-          python -m pip install --upgrade pip
-          pip install --upgrade build wheel
-          pip install .[doc]
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -272,39 +251,18 @@ jobs:
         run: |
           .\.venv\Scripts\Activate.ps1
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }}
-          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
-      - name: Build the documentation (HTML)
-        run: |
-          .\.venv\Scripts\Activate.ps1
-          cd doc
-          .\make.bat html
-
-      - name: Build the documentation (PDF)
-        run: |
-          .\.venv\Scripts\Activate.ps1
-          cd doc
-          .\make.bat pdf
-
-      - name: Add assets to HTML docs
-        run: |
-          zip -r documentation-html.zip .\doc\_build\html
-          mv documentation-html.zip .\doc\_build\html\_static\assets\download\
-          cp doc/_build/latex/ansys-geometry-core.pdf .\doc\_build\html\_static\assets\download\
-
-      - name: Upload HTML documentation
-        uses: actions/upload-artifact@v4
+      - name: Run doc build action
+        uses: SMoraisAnsys/actions/doc-build@feat/doc-build-os-compatible
         with:
-          name: documentation-html
-          path: doc/_build/html
-          retention-days: 7
+          python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }}
+          os: "windows"
 
-      - name: Upload PDF documentation
-        uses: actions/upload-artifact@v4
-        with:
-          name: documentation-pdf
-          path: doc/_build/latex/ansys-geometry-core*.pdf
-          retention-days: 7
+      # - name: Add assets to HTML docs
+      #   run: |
+      #     zip -r documentation-html.zip .\doc\_build\html
+      #     mv documentation-html.zip .\doc\_build\html\_static\assets\download\
+      #     cp doc/_build/latex/ansys-geometry-core.pdf .\doc\_build\html\_static\assets\download\
 
       - name: Stop the Geometry service
         if: always()
