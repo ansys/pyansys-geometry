@@ -34,6 +34,8 @@ jobs:
   vulnerabilities:
     name: Vulnerabilities
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
     steps:
       - name: PyAnsys Vulnerability check
         uses: ansys/actions/check-vulnerabilities@feat/upload-pyansys-dashboard
