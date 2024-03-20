@@ -690,7 +690,11 @@ class Component:
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
     def loft_profiles(
-        self, name: str, profiles: List[List[TrimmedCurve]], periodic: bool, ruled: bool
+        self,
+        name: str,
+        profiles: List[List[TrimmedCurve]],
+        periodic: bool = False,
+        ruled: bool = False,
     ) -> Body:
         """
         Create a lofted body from a collection of trimmed curves.
@@ -710,6 +714,29 @@ class Component:
         -------
         Body
             Created lofted body object.
+
+        Notes
+        -----
+        Surfaces produced have a U parameter in the direction of the profile curves,
+        and a V parameter in the direction of lofting.
+        Profiles can have different numbers of segments. A minimum twist solution is
+        produced.
+        Profiles should be all closed or all open. Closed profiles cannot contain inner
+        loops. If closed profiles are supplied, a closed (solid) body is produced, if
+        possible; otherwise an open (sheet) body is produced.
+        The periodic argument applies when the profiles are closed. It is ignored if
+        the profiles are open.
+
+        If periodic is true, at least three profiles must be supplied. The loft continues
+        from the last profile back to the first profile to produce surfaces that are
+        periodic in V.
+
+        If periodic is false, at least two profiles must be supplied. If the first
+        and last profiles are planar, end capping faces are created; otherwise an open
+        (sheet) body is produced.
+        If ruled is true, separate ruled surfaces are produced between each pair of profiles.
+        If periodic is true, the loft continues from the last profile back to the first
+        profile, but the surfaces are not periodic.
         """
         profiles_grpc = [
             TrimmedCurveList(curves=[trimmed_curve_to_grpc_trimmed_curve(tc) for tc in profile])
