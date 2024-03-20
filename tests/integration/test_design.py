@@ -55,7 +55,9 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Distance
-from ansys.geometry.core.shapes.parameterization import ParamUV
+from ansys.geometry.core.shapes.curves.circle import Circle
+from ansys.geometry.core.shapes.curves.ellipse import Ellipse
+from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -2167,3 +2169,90 @@ def test_body_mirror(modeler: Modeler):
         if edge.shape.start not in copy_vertices:
             copy_vertices.append(edge.shape.start)
     assert np.allclose(expected_vertices, copy_vertices)
+
+
+def test_sweep_sketch(modeler: Modeler):
+    """Test revolving a circle profile around a circular axis to make a donut."""
+
+    skip_if_linux(modeler)
+    design_sketch = modeler.create_design("donut")
+
+    path_radius = 5
+    profile_radius = 2
+
+    # create a circle on the XZ-plane centered at (5, 0, 0) with radius 2
+    profile = Sketch(plane=Plane(direction_x=[1, 0, 0], direction_y=[0, 0, 1])).circle(
+        Point2D([path_radius, 0]), profile_radius
+    )
+
+    # create a circle on the XY-plane centered at (0, 0, 0) with radius 5
+    path = [Circle(Point3D([0, 0, 0]), path_radius).trim(Interval(0, 2 * np.pi))]
+
+    body = design_sketch.sweep_sketch("donutsweep", profile, path)
+
+    assert body.is_surface == False
+
+    # check edges
+    assert len(body.edges) == 0
+
+    # check faces
+    assert len(body.faces) == 1
+
+    # check area of face
+    # compute expected area (torus with r < R) where r2 is inner radius and r1 is outer radius
+    r1 = path_radius + profile_radius
+    r2 = path_radius - profile_radius
+    expected_face_area = (np.pi**2) * (r1**2 - r2**2)
+    assert body.faces[0].area.m == pytest.approx(expected_face_area)
+
+    assert Accuracy.length_is_equal(body.volume.m, 394.7841760435743)
+
+
+def test_sweep_chain(modeler: Modeler):
+    """Test revolving a semi-elliptical profile around a circular axis to make a
+    bowl."""
+
+    skip_if_linux(modeler)
+    design_chain = modeler.create_design("bowl")
+
+    radius = 10
+
+    # create quarter-ellipse profile with major radius = 10, minor radius = 5
+    profile = [
+        Ellipse(
+            Point3D([0, 0, radius / 2]), radius, radius / 2, reference=[1, 0, 0], axis=[0, 1, 0]
+        ).trim(Interval(0, np.pi / 2))
+    ]
+
+    # create circle on the plane parallel to the XY-plane but moved up by 5 units with radius 10
+    path = [Circle(Point3D([0, 0, radius / 2]), radius).trim(Interval(0, 2 * np.pi))]
+
+    # create the bowl body
+    body = design_chain.sweep_chain("bowlsweep", path, profile)
+
+    assert body.is_surface == True
+
+    # check edges
+    assert len(body.edges) == 1
+
+    # check length of edge
+    # compute expected circumference (circle with radius 10)
+    expected_edge_cirumference = 2 * np.pi * 10
+    assert body.edges[0].length.m == pytest.approx(expected_edge_cirumference)
+
+    # check faces
+    assert len(body.faces) == 1
+
+    # check area of face
+    # compute expected area (half a spheroid)
+    minor_rad = radius / 2
+    e_squared = 1 - (minor_rad**2 / radius**2)
+    e = np.sqrt(e_squared)
+    expected_face_area = (
+        2 * np.pi * radius**2 + (minor_rad**2 / e) * np.pi * np.log((1 + e) / (1 - e))
+    ) / 2
+    assert body.faces[0].area.m == pytest.approx(expected_face_area)
+
+    # check volume of body
+    # expected is 0 since it's not a closed surface
+    assert body.volume.m == 0

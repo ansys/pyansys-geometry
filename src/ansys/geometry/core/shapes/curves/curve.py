@@ -22,11 +22,16 @@
 """Provides the ``Curve`` class."""
 from abc import ABC, abstractmethod
 
+from beartype.typing import TYPE_CHECKING
+
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
-from ansys.geometry.core.shapes.parameterization import Parameterization
+from ansys.geometry.core.shapes.parameterization import Interval, Parameterization
 from ansys.geometry.core.typing import Real
+
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 
 
 class Curve(ABC):
@@ -74,3 +79,22 @@ class Curve(ABC):
         This method returns the evaluation at the closest point.
         """
         return
+
+    def trim(self, interval: Interval) -> "TrimmedCurve":
+        """
+        Trim this curve by bounding it with an interval.
+
+        Returns
+        -------
+        TrimmedCurve
+            The resulting bounded curve.
+        """
+        from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
+
+        return TrimmedCurve(
+            self,
+            self.evaluate(interval.start).position,
+            self.evaluate(interval.end).position,
+            interval,
+            None,  # TODO: calculate length on client?
+        )

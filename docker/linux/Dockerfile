@@ -1,7 +1,7 @@
 # Geometry service Linux-based Dockerfile
 #
-# Based on mcr.microsoft.com/dotnet/aspnet:6.0
-FROM mcr.microsoft.com/dotnet/aspnet:6.0
+# Based on mcr.microsoft.com/dotnet/aspnet:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
 # Define the working directory - /app
 WORKDIR /app
@@ -16,7 +16,7 @@ COPY linux-binaries.zip .
 RUN unzip -qq linux-binaries.zip -d . && \
     rm linux-binaries.zip && \
     chmod -R 0755 DockerLinux && \
-    mv DockerLinux/bin/x64/Release_Linux/net6.0/* . && \
+    mv DockerLinux/bin/x64/Release_Linux/net8.0/* . && \
     rm -rf DockerLinux
 
 # Let the dynamic link loader where to search for shared libraries
