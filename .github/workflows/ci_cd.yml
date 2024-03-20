@@ -34,15 +34,13 @@ jobs:
   vulnerabilities:
     name: Vulnerabilities
     runs-on: ubuntu-latest
-    permissions:
-      security-events: write
     steps:
       - name: PyAnsys Vulnerability check
         uses: ansys/actions/check-vulnerabilities@feat/upload-pyansys-dashboard
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           hide-log: false
           pyansys-dashboard-upload: true
           pyansys-dashboard-token: ${{ secrets.PYANSYS_DASHBOARD_TOKEN }}
