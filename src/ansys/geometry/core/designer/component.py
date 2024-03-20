@@ -699,8 +699,8 @@ class Component:
         ----------
         name : str
             Name of the created lofted body.
-        profiles : List[TrimmedCurve]
-            Collection of trimmed curves defining the lofted body's shape.
+        profiles : List[List[TrimmedCurve]]
+            Collection of lists of trimmed curves (profiles) defining the lofted body's shape.
         periodic : bool
             Determines whether the lofted body should have periodic continuity.
         ruled : bool
@@ -710,19 +710,6 @@ class Component:
         -------
         Body
             Created lofted body object.
-
-        Raises
-        ------
-        GrpcError
-            If an error occurs while communicating with the backend via gRPC.
-        DesignInactiveError
-            If the design is not active.
-        UnsupportedBackendVersionError
-            If the backend version does not support this operation.
-
-        Notes
-        -----
-        The design must be active to create a lofted body.
         """
         profiles_grpc = [
             TrimmedCurveList(curves=[trimmed_curve_to_grpc_trimmed_curve(tc) for tc in profile])
