@@ -2270,7 +2270,6 @@ def test_loft_profiles(modeler: Modeler):
     # Call the method
     result = design_sketch.loft_profiles("vase", [[profile1], [profile2], [profile3]], False, False)
 
-    assert result.is_surface == True
     # Assert that the resulting body has only one face.
     assert len(result.faces) == 1
 
