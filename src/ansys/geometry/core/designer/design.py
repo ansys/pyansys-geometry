@@ -591,7 +591,7 @@ class Design(Component):
         Parameters
         ----------
         file_location : Union[~pathlib.Path, str]
-            Location on disk to save the file to.
+            Location on disk where the file is located.
         """
         # Upload the file to the server
         filepath_server = self._modeler._upload_file(file_location)
