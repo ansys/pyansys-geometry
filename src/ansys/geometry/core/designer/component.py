@@ -45,7 +45,7 @@ from ansys.api.geometry.v0.components_pb2 import (
     SetSharedTopologyRequest,
 )
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
-from ansys.api.geometry.v0.models_pb2 import Direction, Line
+from ansys.api.geometry.v0.models_pb2 import Direction, Line, TrimmedCurveList
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
@@ -690,7 +690,7 @@ class Component:
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
     def loft_profiles(
-        self, name: str, profiles: List[TrimmedCurve], periodic: bool, ruled: bool
+        self, name: str, profiles: List[List[TrimmedCurve]], periodic: bool, ruled: bool
     ) -> Body:
         """
         Create a lofted body from a collection of trimmed curves.
@@ -724,7 +724,10 @@ class Component:
         -----
         The design must be active to create a lofted body.
         """
-        profiles_grpc = [trimmed_curve_to_grpc_trimmed_curve(tc) for tc in profiles]
+        profiles_grpc = [
+            TrimmedCurveList(curves=[trimmed_curve_to_grpc_trimmed_curve(tc) for tc in profile])
+            for profile in profiles
+        ]
 
         request = LoftProfilesRequest(
             name=name, parent=self.id, profiles=profiles_grpc, periodic=periodic, ruled=ruled
