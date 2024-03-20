@@ -724,8 +724,10 @@ class Component:
         -----
         The design must be active to create a lofted body.
         """
+        profiles_grpc = [trimmed_curve_to_grpc_trimmed_curve(tc) for tc in profiles]
+
         request = LoftProfilesRequest(
-            name=name, parent=self.id, profiles=profiles, periodic=periodic, ruled=ruled
+            name=name, parent=self.id, profiles=profiles_grpc, periodic=periodic, ruled=ruled
         )
         self._grpc_client.log.debug(f"Creating a loft profile body on {self.id} .")
         response = self._bodies_stub.LoftProfiles(request)
