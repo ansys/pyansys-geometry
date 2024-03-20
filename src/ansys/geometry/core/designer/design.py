@@ -584,7 +584,7 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
-    def insert_file(self, file_location: Union[Path, str]) -> None:
+    def insert_file(self, file_location: Union[Path, str]) -> Component:
         """
         Insert a file into the design.
 
@@ -592,6 +592,11 @@ class Design(Component):
         ----------
         file_location : Union[~pathlib.Path, str]
             Location on disk where the file is located.
+
+        Returns
+        -------
+        Component
+            The newly inserted component.
         """
         # Upload the file to the server
         filepath_server = self._modeler._upload_file(file_location)
@@ -602,6 +607,10 @@ class Design(Component):
 
         # Get a temporal design object to update the current one
         tmp_design = Design("", self._modeler, read_existing_design=True)
+
+        # Update the reference to the design
+        for component in tmp_design.components:
+            component._parent_component = self
 
         # Update the design's components - add the new one
         #
@@ -619,6 +628,9 @@ class Design(Component):
                     self._components.append(tmp_component)
 
         self._grpc_client.log.debug(f"Design {self.name} is successfully updated.")
+
+        # Return the newly inserted component
+        return self._components[-1]
 
     def __repr__(self) -> str:
         """Represent the ``Design`` as a string."""
