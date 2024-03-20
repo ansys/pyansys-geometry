@@ -33,6 +33,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     CreateSphereBodyRequest,
     CreateSweepingChainRequest,
     CreateSweepingProfileRequest,
+    LoftProfilesRequest,
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
@@ -680,6 +681,54 @@ class Component:
         )
         self._grpc_client.log.debug(f"Creating a sphere body on {self.id} .")
         response = self._bodies_stub.CreateSphereBody(request)
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
+        self._master_component.part.bodies.append(tb)
+        return Body(response.id, response.name, self, tb)
+
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(24, 2, 0)
+    def loft_profiles(
+        self, name: str, profiles: List[TrimmedCurve], periodic: bool, ruled: bool
+    ) -> Body:
+        """
+        Create a lofted body from a collection of trimmed curves.
+
+        Parameters
+        ----------
+        name : str
+            Name of the created lofted body.
+        profiles : List[TrimmedCurve]
+            Collection of trimmed curves defining the lofted body's shape.
+        periodic : bool
+            Determines whether the lofted body should have periodic continuity.
+        ruled : bool
+            Determines whether the lofted body should be ruled.
+
+        Returns
+        -------
+        Body
+            Created lofted body object.
+
+        Raises
+        ------
+        GrpcError
+            If an error occurs while communicating with the backend via gRPC.
+        DesignInactiveError
+            If the design is not active.
+        UnsupportedBackendVersionError
+            If the backend version does not support this operation.
+
+        Notes
+        -----
+        The design must be active to create a lofted body.
+        """
+        request = LoftProfilesRequest(
+            name=name, parent=self.id, profiles=profiles, periodic=periodic, ruled=ruled
+        )
+        self._grpc_client.log.debug(f"Creating a loft profile body on {self.id} .")
+        response = self._bodies_stub.LoftProfiles(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
