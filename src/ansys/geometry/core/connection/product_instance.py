@@ -241,6 +241,9 @@ def prepare_and_start_backend(
     """
     from ansys.geometry.core.modeler import Modeler
 
+    if os.name != "nt":  # pragma: no cover
+        raise RuntimeError("Method 'prepare_and_start_backend' is only available on Windows.")
+
     port = _check_port_or_get_one(port)
     installations = get_available_ansys_installations()
     if product_version != None:
@@ -419,7 +422,6 @@ def _start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Pop
     """
     return subprocess.Popen(
         args,
-        shell=os.name != "nt",
         stdin=subprocess.DEVNULL,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
