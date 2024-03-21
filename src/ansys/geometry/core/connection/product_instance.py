@@ -241,7 +241,7 @@ def prepare_and_start_backend(
     """
     from ansys.geometry.core.modeler import Modeler
 
-    if os.name != "nt": # pragma: no cover
+    if os.name != "nt":  # pragma: no cover
         raise RuntimeError("Method 'prepare_and_start_backend' is only available on Windows.")
 
     port = _check_port_or_get_one(port)
