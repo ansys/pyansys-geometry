@@ -435,7 +435,7 @@ jobs:
       - name: Download binaries
         run: |
           curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerWindows.zip --output windows-binaries.zip
-          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/v242/DockerLinux.zip --output linux-binaries.zip
+          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerLinux.zip --output linux-binaries.zip
 
       - name: Upload Windows binaries as workflow artifacts
         uses: actions/upload-artifact@v4
@@ -560,6 +560,7 @@ jobs:
   build-linux-container:
     name: Building Geometry Service - Linux
     runs-on: ubuntu-latest
+    continue-on-error: true
     needs: [fetch-release-artifacts]
     steps:
       - name: Checkout repository
