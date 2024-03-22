@@ -1,0 +1,1 @@
+feat: accept bandit advisories in-line for subprocess
