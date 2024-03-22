@@ -611,12 +611,14 @@ jobs:
 
       - name: "Compressing Linux Dockerfile"
         uses: vimtor/action-zip@v1.2
+        if: always()
         with:
           files: docker/linux/Dockerfile
           dest: linux-dockerfile.zip
 
       - name: Upload Linux Dockerfile
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: linux-dockerfile.zip
           path: linux-dockerfile.zip
