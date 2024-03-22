@@ -23,7 +23,10 @@
 import os
 import signal
 import socket
-import subprocess
+
+# Subprocess is needed to start the backend. But
+# the input is controlled by the library. Excluding bandit check.
+import subprocess  # nosec B404
 
 from ansys.tools.path import get_available_ansys_installations, get_latest_ansys_installation
 from beartype.typing import TYPE_CHECKING, Dict, List
@@ -238,7 +241,7 @@ def prepare_and_start_backend(
     LOG.debug(f"Args: {args}")
     LOG.debug(f"Environment variables: {env_copy}")
 
-    instance = ProductInstance(_start_program(args, env_copy).pid)
+    instance = ProductInstance(__start_program(args, env_copy).pid)
 
     return Modeler(
         host=host, port=port, timeout=timeout, product_instance=instance, backend_type=backend_type
@@ -278,7 +281,7 @@ def _manifest_path_provider(version: int, available_installations: Dict) -> str:
     )
 
 
-def _start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Popen:
+def __start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Popen:
     """
     Start the program where the path is the first item of the ``args`` array argument.
 
@@ -295,7 +298,8 @@ def _start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Pop
     subprocess.Popen
         The subprocess object.
     """
-    return subprocess.Popen(
+    # private method and controlled input by library - excluding bandit check.
+    return subprocess.Popen(  # nosec B603
         args,
         stdin=subprocess.DEVNULL,
         stdout=subprocess.DEVNULL,
