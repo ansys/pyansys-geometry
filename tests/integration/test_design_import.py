@@ -260,8 +260,10 @@ def test_design_insert(modeler: Modeler):
     assert design.components[0].name == "Component_Cylinder"
     assert design.components[1].name == "DuplicatesDesign"
 
+
 def test_design_insert_with_import(modeler: Modeler):
-    """Test inserting a file into the design through the external format import process."""
+    """Test inserting a file into the design through the external format import
+    process."""
     # Create a design and sketch a circle
     design = modeler.create_design("Insert")
     sketch = Sketch()
