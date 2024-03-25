@@ -1,0 +1,86 @@
+
+
+
+
+
+The ``trimmed_curve.py`` module
+===============================
+
+.. py:module:: ansys.geometry.core.shapes.curves.trimmed_curve
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: trimmed_curve
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~TrimmedCurve`
+            - Represents a trimmed curve.
+
+
+          * - :py:attr:`~ReversedTrimmedCurve`
+            - Represents a reversed trimmed curve.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 TrimmedCurve<TrimmedCurve>
+    🝆 ReversedTrimmedCurve<ReversedTrimmedCurve>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Trimmed curve class.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+
