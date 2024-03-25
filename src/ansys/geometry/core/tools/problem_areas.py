@@ -35,12 +35,12 @@ from beartype.typing import TYPE_CHECKING, List
 from google.protobuf.wrappers_pb2 import Int32Value
 
 from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.misc import (
-    check_type_all_elements_in_iterable,
+from ansys.geometry.core.misc.auxiliary import (
     get_design_from_body,
     get_design_from_edge,
     get_design_from_face,
 )
+from ansys.geometry.core.misc.checks import check_type_all_elements_in_iterable
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 
 if TYPE_CHECKING:  # pragma: no cover

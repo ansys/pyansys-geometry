@@ -26,7 +26,7 @@ from pint import Unit
 import semver
 
 if TYPE_CHECKING:  # pragma: no cover
-    from ansys.geometry.core.designer import Design
+    from ansys.geometry.core.designer.design import Design
 
 
 def ensure_design_is_active(method):

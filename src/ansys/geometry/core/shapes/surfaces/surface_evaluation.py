@@ -25,7 +25,7 @@ from functools import cached_property
 
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.primitives.parameterization import ParamUV
+from ansys.geometry.core.shapes.parameterization import ParamUV
 from ansys.geometry.core.typing import Real
 
 
@@ -37,7 +37,7 @@ class SurfaceEvaluation:
         self._parameter = parameter
 
     @property
-    def parameter(self) -> Real:
+    def parameter(self) -> ParamUV:
         """Parameter that the evaluation is based upon."""
         raise NotImplementedError("Each evaluation must provide the parameter definition.")
 

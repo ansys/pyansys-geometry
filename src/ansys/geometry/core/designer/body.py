@@ -29,7 +29,10 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     BooleanRequest,
     CopyRequest,
     GetCollisionRequest,
+    MapRequest,
+    MirrorRequest,
     RotateRequest,
+    ScaleRequest,
     SetAssignedMaterialRequest,
     TranslateRequest,
 )
@@ -47,6 +50,8 @@ from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
+    frame_to_grpc_frame,
+    plane_to_grpc_plane,
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
     tess_to_pd,
@@ -57,7 +62,9 @@ from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
+from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
+from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.checks import check_type, ensure_design_is_active, min_backend_version
@@ -352,9 +359,61 @@ class IBody(ABC):
             The axis of rotation.
         angle: Union[~pint.Quantity, Angle, Real]
             Angle (magnitude) of the rotation.
+
         Returns
         -------
         None
+        """
+        return
+
+    @abstractmethod
+    def scale(self, value: Real) -> None:
+        """
+        Scale the geometry body by the given value.
+
+        Notes
+        -----
+        The calling object is directly modified when this method is called.
+        Thus, it is important to make copies if needed.
+
+        Parameters
+        ----------
+        value: Real
+            Value to scale the body by.
+        """
+        return
+
+    @abstractmethod
+    def map(self, frame: Frame) -> None:
+        """
+        Map the geometry body to the new specified frame.
+
+        Notes
+        -----
+        The calling object is directly modified when this method is called.
+        Thus, it is important to make copies if needed.
+
+        Parameters
+        ----------
+        frame: Frame
+            Structure defining the orientation of the body.
+        """
+        return
+
+    @abstractmethod
+    def mirror(self, plane: Plane) -> None:
+        """
+        Mirror the geometry body across the specified plane.
+
+        Notes
+        -----
+        The calling object is directly modified when this method is called.
+        Thus, it is important to make copies if needed.
+
+        Parameters
+        ----------
+        plane: Plane
+            Represents the mirror.
         """
         return
 
@@ -665,7 +724,13 @@ class MasterBody(IBody):
         self._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
         grpc_faces = self._bodies_stub.GetFaces(self._grpc_id)
         return [
-            Face(grpc_face.id, SurfaceType(grpc_face.surface_type), self, self._grpc_client)
+            Face(
+                grpc_face.id,
+                SurfaceType(grpc_face.surface_type),
+                self,
+                self._grpc_client,
+                grpc_face.is_reversed,
+            )
             for grpc_face in grpc_faces.faces
         ]
 
@@ -675,7 +740,13 @@ class MasterBody(IBody):
         self._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
         grpc_edges = self._bodies_stub.GetEdges(self._grpc_id)
         return [
-            Edge(grpc_edge.id, CurveType(grpc_edge.curve_type), self, self._grpc_client)
+            Edge(
+                grpc_edge.id,
+                CurveType(grpc_edge.curve_type),
+                self,
+                self._grpc_client,
+                grpc_edge.is_reversed,
+            )
             for grpc_edge in grpc_edges.edges
         ]
 
@@ -817,6 +888,30 @@ class MasterBody(IBody):
                 angle=rotation_magnitude,
             )
         )
+
+    @protect_grpc
+    @check_input_types
+    @reset_tessellation_cache
+    @min_backend_version(24, 2, 0)
+    def scale(self, value: Real) -> None:  # noqa: D102
+        self._grpc_client.log.debug(f"Scaling body {self.id}.")
+        self._bodies_stub.Scale(ScaleRequest(id=self.id, scale=value))
+
+    @protect_grpc
+    @check_input_types
+    @reset_tessellation_cache
+    @min_backend_version(24, 2, 0)
+    def map(self, frame: Frame) -> None:  # noqa: D102
+        self._grpc_client.log.debug(f"Mapping body {self.id}.")
+        self._bodies_stub.Map(MapRequest(id=self.id, frame=frame_to_grpc_frame(frame)))
+
+    @protect_grpc
+    @check_input_types
+    @reset_tessellation_cache
+    @min_backend_version(24, 2, 0)
+    def mirror(self, plane: Plane) -> None:  # noqa: D102
+        self._grpc_client.log.debug(f"Mirroring body {self.id}.")
+        self._bodies_stub.Mirror(MirrorRequest(id=self.id, plane=plane_to_grpc_plane(plane)))
 
     @protect_grpc
     @min_backend_version(24, 2, 0)
@@ -993,6 +1088,7 @@ class Body(IBody):
                 SurfaceType(grpc_face.surface_type),
                 self,
                 self._template._grpc_client,
+                grpc_face.is_reversed,
             )
             for grpc_face in grpc_faces.faces
         ]
@@ -1004,7 +1100,13 @@ class Body(IBody):
         self._template._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
         grpc_edges = self._template._bodies_stub.GetEdges(EntityIdentifier(id=self.id))
         return [
-            Edge(grpc_edge.id, CurveType(grpc_edge.curve_type), self, self._template._grpc_client)
+            Edge(
+                grpc_edge.id,
+                CurveType(grpc_edge.curve_type),
+                self,
+                self._template._grpc_client,
+                grpc_edge.is_reversed,
+            )
             for grpc_edge in grpc_edges.edges
         ]
 
@@ -1181,6 +1283,18 @@ class Body(IBody):
         angle: Union[Quantity, Angle, Real],
     ) -> None:  # noqa: D102
         return self._template.rotate(axis_origin, axis_direction, angle)
+
+    @ensure_design_is_active
+    def scale(self, value: Real) -> None:  # noqa: D102
+        return self._template.scale(value)
+
+    @ensure_design_is_active
+    def map(self, frame: Frame) -> None:  # noqa: D102
+        return self._template.map(frame)
+
+    @ensure_design_is_active
+    def mirror(self, plane: Plane) -> None:  # noqa: D102
+        return self._template.mirror(plane)
 
     @ensure_design_is_active
     def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102

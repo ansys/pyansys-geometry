@@ -30,6 +30,9 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     CreateExtrudedBodyFromFaceProfileRequest,
     CreateExtrudedBodyRequest,
     CreatePlanarBodyRequest,
+    CreateSphereBodyRequest,
+    CreateSweepingChainRequest,
+    CreateSweepingProfileRequest,
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
@@ -52,6 +55,7 @@ from ansys.geometry.core.connection.conversions import (
     plane_to_grpc_plane,
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
+    trimmed_curve_to_grpc_trimmed_curve,
     unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.designer.beam import Beam, BeamProfile
@@ -66,8 +70,9 @@ from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.checks import check_pint_unit_compatibility, ensure_design_is_active
+from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -83,6 +88,29 @@ class SharedTopologyType(Enum):
     SHARETYPE_SHARE = 1
     SHARETYPE_MERGE = 2
     SHARETYPE_GROUPS = 3
+
+
+@unique
+class ExtrusionDirection(Enum):
+    """Enum for extrusion direction definition."""
+
+    POSITIVE = "+"
+    NEGATIVE = "-"
+
+    @classmethod
+    def from_string(cls, string: str, use_default_if_error: bool = False) -> "ExtrusionDirection":
+        """Convert a string to an ``ExtrusionDirection`` enum."""
+        if string == "+":
+            return cls.POSITIVE
+        elif string == "-":
+            return cls.NEGATIVE
+        elif use_default_if_error:
+            from ansys.geometry.core.logger import LOG
+
+            LOG.warning("Invalid extrusion direction. Using default value (+).")
+            return cls.POSITIVE
+        else:  # pragma: no cover
+            raise ValueError(f"Invalid extrusion direction: {string}.")
 
 
 class Component:
@@ -406,7 +434,11 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     def extrude_sketch(
-        self, name: str, sketch: Sketch, distance: Union[Quantity, Distance, Real]
+        self,
+        name: str,
+        sketch: Sketch,
+        distance: Union[Quantity, Distance, Real],
+        direction: Union[ExtrusionDirection, str] = ExtrusionDirection.POSITIVE,
     ) -> Body:
         """
         Create a solid body by extruding the sketch profile up by a given distance.
@@ -423,6 +455,10 @@ class Component:
             Two-dimensional sketch source for the extrusion.
         distance : Union[~pint.Quantity, Distance, Real]
             Distance to extrude the solid body.
+        direction : Union[ExtrusionDirection, str], default: "+"
+            Direction for extruding the solid body.
+            The default is to extrude in the positive normal direction of the sketch.
+            Options are "+" and "-" as a string, or the enum values.
 
         Returns
         -------
@@ -431,6 +467,8 @@ class Component:
         """
         # Sanity checks on inputs
         distance = distance if isinstance(distance, Distance) else Distance(distance)
+        if isinstance(direction, str):
+            direction = ExtrusionDirection.from_string(direction, use_default_if_error=True)
 
         # Perform extrusion request
         request = CreateExtrudedBodyRequest(
@@ -441,16 +479,124 @@ class Component:
             name=name,
         )
 
+        # Check the direction - if it is -, flip the distance
+        if direction is ExtrusionDirection.NEGATIVE:
+            request.distance = -request.distance
+
         self._grpc_client.log.debug(f"Extruding sketch provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
+    @min_backend_version(24, 2, 0)
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
-    def extrude_face(self, name: str, face: Face, distance: Union[Quantity, Distance]) -> Body:
+    def sweep_sketch(
+        self,
+        name: str,
+        sketch: Sketch,
+        path: List[TrimmedCurve],
+    ) -> Body:
+        """
+        Create a body by sweeping a planar profile along a path.
+
+        Notes
+        -----
+        The newly created body is placed under this component within the design assembly.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the new solid body.
+        sketch : Sketch
+            Two-dimensional sketch source for the extrusion.
+        path : List[TrimmedCurve]
+            The path to sweep the profile along.
+
+        Returns
+        -------
+        Body
+            Created body from the given sketch.
+        """
+        # Convert each ``TrimmedCurve`` in path to equivalent gRPC type
+        path_grpc = []
+        for tc in path:
+            path_grpc.append(trimmed_curve_to_grpc_trimmed_curve(tc))
+
+        request = CreateSweepingProfileRequest(
+            name=name,
+            parent=self.id,
+            plane=plane_to_grpc_plane(sketch._plane),
+            geometries=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
+            path=path_grpc,
+        )
+
+        self._grpc_client.log.debug(f"Creating a sweeping profile on {self.id}. Creating body...")
+        response = self._bodies_stub.CreateSweepingProfile(request)
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
+        self._master_component.part.bodies.append(tb)
+        return Body(response.id, response.name, self, tb)
+
+    @min_backend_version(24, 2, 0)
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    def sweep_chain(
+        self,
+        name: str,
+        path: List[TrimmedCurve],
+        chain: List[TrimmedCurve],
+    ) -> Body:
+        """
+        Create a body by sweeping a chain of curves along a path.
+
+        Notes
+        -----
+        The newly created body is placed under this component within the design assembly.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the new solid body.
+        path : List[TrimmedCurve]
+            The path to sweep the chain along.
+        chain : List[TrimmedCurve]
+            A chain of trimmed curves.
+
+        Returns
+        -------
+        Body
+            Created body from the given sketch.
+        """
+        # Convert each ``TrimmedCurve`` in path and chain to equivalent gRPC types
+        path_grpc = [trimmed_curve_to_grpc_trimmed_curve(tc) for tc in path]
+        chain_grpc = [trimmed_curve_to_grpc_trimmed_curve(tc) for tc in chain]
+
+        request = CreateSweepingChainRequest(
+            name=name,
+            parent=self.id,
+            path=path_grpc,
+            chain=chain_grpc,
+        )
+
+        self._grpc_client.log.debug(f"Creating a sweeping chain on {self.id}. Creating body...")
+        response = self._bodies_stub.CreateSweepingChain(request)
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
+        self._master_component.part.bodies.append(tb)
+        return Body(response.id, response.name, self, tb)
+
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    def extrude_face(
+        self,
+        name: str,
+        face: Face,
+        distance: Union[Quantity, Distance],
+        direction: Union[ExtrusionDirection, str] = ExtrusionDirection.POSITIVE,
+    ) -> Body:
         """
         Extrude the face profile by a given distance to create a solid body.
 
@@ -468,8 +614,12 @@ class Component:
             User-defined label for the new solid body.
         face : Face
             Target face to use as the source for the new surface.
-        distance : Union[~pint.Quantity, Distance]
+        distance : Union[~pint.Quantity, Distance, Real]
             Distance to extrude the solid body.
+        direction : Union[ExtrusionDirection, str], default: "+"
+            Direction for extruding the solid body's face.
+            The default is to extrude in the positive normal direction of the face.
+            Options are "+" and "-" as a string, or the enum values.
 
         Returns
         -------
@@ -477,20 +627,59 @@ class Component:
             Extruded solid body.
         """
         # Sanity checks on inputs
-        extrude_distance = distance if isinstance(distance, Quantity) else distance.value
-        check_pint_unit_compatibility(extrude_distance.units, DEFAULT_UNITS.SERVER_LENGTH)
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+        if isinstance(direction, str):
+            direction = ExtrusionDirection.from_string(direction, use_default_if_error=True)
 
         # Take the face source directly. No need to verify the source of the face.
         request = CreateExtrudedBodyFromFaceProfileRequest(
-            distance=extrude_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+            distance=distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
             parent=self.id,
             face=face.id,
             name=name,
         )
 
+        # Check the direction - if it is -, flip the distance
+        if direction is ExtrusionDirection.NEGATIVE:
+            request.distance = -request.distance
+
         self._grpc_client.log.debug(f"Extruding from face provided on {self.id}. Creating body...")
         response = self._bodies_stub.CreateExtrudedBodyFromFaceProfile(request)
 
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
+        self._master_component.part.bodies.append(tb)
+        return Body(response.id, response.name, self, tb)
+
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(24, 2, 0)
+    def create_sphere(self, name: str, center: Point3D, radius: Distance) -> Body:
+        """
+        Create a sphere body defined by the center point and the radius.
+
+        Parameters
+        ----------
+        name : str
+            Body name.
+        center : Point3D
+            Center point of the sphere.
+        radius : Distance
+            Radius of the sphere.
+
+        Returns
+        -------
+        Body
+            Sphere body object.
+        """
+        request = CreateSphereBodyRequest(
+            name=name,
+            parent=self.id,
+            center=point3d_to_grpc_point(center),
+            radius=radius.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        )
+        self._grpc_client.log.debug(f"Creating a sphere body on {self.id} .")
+        response = self._bodies_stub.CreateSphereBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
