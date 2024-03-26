@@ -28,12 +28,12 @@ from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
     CreateBodyFromFaceRequest,
     CreateExtrudedBodyFromFaceProfileRequest,
+    CreateExtrudedBodyFromLoftProfilesRequest,
     CreateExtrudedBodyRequest,
     CreatePlanarBodyRequest,
     CreateSphereBodyRequest,
     CreateSweepingChainRequest,
     CreateSweepingProfileRequest,
-    LoftProfilesRequest,
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
@@ -689,7 +689,7 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
-    def loft_profiles(
+    def create_body_from_loft_profile(
         self,
         name: str,
         profiles: List[List[TrimmedCurve]],
@@ -743,7 +743,7 @@ class Component:
             for profile in profiles
         ]
 
-        request = LoftProfilesRequest(
+        request = CreateExtrudedBodyFromLoftProfilesRequest(
             name=name, parent=self.id, profiles=profiles_grpc, periodic=periodic, ruled=ruled
         )
         self._grpc_client.log.debug(f"Creating a loft profile body on {self.id} .")

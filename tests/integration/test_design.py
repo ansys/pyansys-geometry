@@ -2258,8 +2258,8 @@ def test_sweep_chain(modeler: Modeler):
     assert body.volume.m == 0
 
 
-def test_loft_profiles(modeler: Modeler):
-    """Test the loft_profiles method to create a vase shape."""
+def test_create_body_from_loft_profile(modeler: Modeler):
+    """Test the create_body_from_loft_profile method to create a vase shape."""
     skip_if_linux(modeler)
     design_sketch = modeler.create_design("loftprofile")
 
@@ -2268,7 +2268,9 @@ def test_loft_profiles(modeler: Modeler):
     profile3 = Circle(origin=[0, 0, 20], radius=5).trim(Interval(0, 2 * np.pi))
 
     # Call the method
-    result = design_sketch.loft_profiles("vase", [[profile1], [profile2], [profile3]], False, False)
+    result = design_sketch.create_body_from_loft_profile(
+        "vase", [[profile1], [profile2], [profile3]], False, False
+    )
 
     # Assert that the resulting body has only one face.
     assert len(result.faces) == 1
