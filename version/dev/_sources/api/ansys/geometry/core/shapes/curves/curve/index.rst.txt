@@ -1,0 +1,79 @@
+
+
+
+
+
+The ``curve.py`` module
+=======================
+
+.. py:module:: ansys.geometry.core.shapes.curves.curve
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: curve
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~Curve`
+            - Provides the abstract base class representing a 3D curve.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 Curve<Curve>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides the ``Curve`` class.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

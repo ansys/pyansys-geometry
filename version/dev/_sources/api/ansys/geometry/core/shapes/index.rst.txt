@@ -1,0 +1,119 @@
+
+
+
+
+
+The ``shapes`` package 
+==========================
+
+.. py:module:: ansys.geometry.core.shapes
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: shapes
+.. tab-set::
+
+    .. tab-item:: Subpackages
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~ansys.geometry.core.shapes.curves`
+            - Provides the PyAnsys Geometry ``curves`` subpackage.
+
+
+          * - :py:attr:`~ansys.geometry.core.shapes.surfaces`
+            - Provides the PyAnsys Geometry ``surface`` subpackage.
+
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~ansys.geometry.core.shapes.box_uv`
+            - Provides the ``BoxUV`` class.
+
+
+          * - :py:attr:`~ansys.geometry.core.shapes.parameterization`
+            - Provides the parametrization-related classes.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🖿 curves<curves/index.rst>
+    🖿 surfaces<surfaces/index.rst>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🗎 box_uv<box_uv/index.rst>
+    🗎 parameterization<parameterization/index.rst>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+Provides the PyAnsys Geometry ``geometry`` subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+

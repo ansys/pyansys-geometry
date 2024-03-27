@@ -1,0 +1,6 @@
+User-agent: *
+
+Disallow: /version/0.3
+Disallow: /version/0.2
+
+Sitemap: https://geometry.docs.pyansys.com/sitemap.xml

@@ -1,0 +1,568 @@
+:py:mod:`ansys.geometry.core.plotting.plotter`
+==============================================
+
+.. py:module:: ansys.geometry.core.plotting.plotter
+
+.. autoapi-nested-parse::
+
+   Provides for plotting various PyGeometry objects.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.plotting.plotter.Plotter
+   ansys.geometry.core.plotting.plotter.PlotterHelper
+
+
+
+
+.. py:class:: Plotter(scene: beartype.typing.Optional[pyvista.Plotter] = None, color_opts: beartype.typing.Optional[beartype.typing.Dict] = None, num_points: int = 100, enable_widgets: bool = True)
+
+
+   
+   Provides for plotting sketches and bodies.
+
+
+   :Parameters:
+
+       **scene** : :obj:`~pyvista.Plotter`, default: :data:`python:None`
+           Scene instance for rendering the objects.
+
+       **color_opts** : :class:`python:dict`, default: :data:`python:None`
+           Dictionary containing the background and top colors.
+
+       **num_points** : :class:`python:int`, default: 100
+           Number of points to use to render the shapes.
+
+       **enable_widgets: bool, default: True**
+           Enables/disables widget buttons in the plotter window.
+           They must be disabled for trame viewer.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: scene
+      :type: pyvista.Plotter
+
+      
+      Rendered scene object.
+
+
+
+      :Returns:
+
+          :obj:`~pvyista.Plotter`
+              Rendered scene object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: view_xy() -> None
+
+      
+      View the scene from the XY plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: view_xz() -> None
+
+      
+      View the scene from the XZ plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: view_yx() -> None
+
+      
+      View the scene from the YX plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: view_yz() -> None
+
+      
+      View the scene from the YZ plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: view_zx() -> None
+
+      
+      View the scene from the ZX plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: view_zy() -> None
+
+      
+      View the scene from the ZY plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: plot_frame(frame: ansys.geometry.core.math.Frame, plotting_options: beartype.typing.Optional[beartype.typing.Dict] = None) -> None
+
+      
+      Plot a frame in the scene.
+
+
+      :Parameters:
+
+          **frame** : :obj:`Frame`
+              ``Frame`` instance to render in the scene.
+
+          **plotting_options** : :class:`python:dict`, default: :data:`python:None`
+              Dictionary containing parameters accepted by the
+              :class:`pyvista.plotting.tools.create_axes_marker` class for customizing
+              the frame rendering in the scene.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: plot_plane(plane: ansys.geometry.core.math.Plane, plane_options: beartype.typing.Optional[beartype.typing.Dict] = None, plotting_options: beartype.typing.Optional[beartype.typing.Dict] = None) -> None
+
+      
+      Plot a plane in the scene.
+
+
+      :Parameters:
+
+          **plane** : :obj:`Plane`
+              ``Plane`` instance to render in the scene.
+
+          **plane_options** : :class:`python:dict`, default: :data:`python:None`
+              Dictionary containing parameters accepted by the
+              :class:`pyvista.Plane` for customizing the mesh representing the
+              plane.
+
+          **plotting_options** : :class:`python:dict`, default: :data:`python:None`
+              Dictionary containing parameters accepted by the
+              :class:`pyvista.Plotter.add_mesh` for customizing the mesh
+              rendering of the plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: plot_sketch(sketch: ansys.geometry.core.sketch.Sketch, show_plane: bool = False, show_frame: bool = False, **plotting_options: beartype.typing.Optional[beartype.typing.Dict]) -> None
+
+      
+      Plot a sketch in the scene.
+
+
+      :Parameters:
+
+          **sketch** : :obj:`Sketch`
+              ``Sketch`` instance to render in the scene.
+
+          **show_plane** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+              Whether to render the sketch plane in the scene.
+
+          **show_frame** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+              If ``Frame``, whether to render the sketch plane in the scene.
+
+          **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+              Keyword arguments. For allowable keyword arguments, see the
+              :func:`pyvista.Plotter.add_mesh` method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: add_body(body: ansys.geometry.core.designer.Body, merge: beartype.typing.Optional[bool] = False, **plotting_options: beartype.typing.Optional[beartype.typing.Dict]) -> None
+
+      
+      Add a body to the scene.
+
+
+      :Parameters:
+
+          **body** : :obj:`ansys.geometry.core.designer.Body`
+              Body to add.
+
+          **merge** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+              Whether to merge the body into a single mesh. If ``True``, the
+              individual faces of the tessellation are merged. This
+              preserves the number of triangles and only merges the topology.
+
+          **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+              Keyword arguments. For allowable keyword arguments,
+              see the :func:`pyvista.Plotter.add_mesh` method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: add_component(component: ansys.geometry.core.designer.Component, merge_component: bool = False, merge_bodies: bool = False, **plotting_options) -> None
+
+      
+      Add a component to the scene.
+
+
+      :Parameters:
+
+          **component** : :obj:`ansys.geometry.core.designer.Component`
+              Component to add.
+
+          **merge_component** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+              Whether to merge the component into a single dataset. When
+              ``True``, all the individual bodies are effectively combined
+              into a single dataset without any hierarchy.
+
+          **merge_bodies** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+              Whether to merge each body into a single dataset. When ``True``,
+              all the faces of each individual body are effectively combineed
+              into a single dataset without.
+
+          **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+              Keyword arguments. For allowable keyword arguments, see the
+              :func:`pyvista.Plotter.add_mesh` method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: add_sketch_polydata(polydata_entries: beartype.typing.List[pyvista.PolyData], **plotting_options) -> None
+
+      
+      Add sketches to the scene from PyVista polydata.
+
+
+      :Parameters:
+
+          **polydata** : :obj:`pyvista.PolyData`
+              Polydata to add.
+
+          **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+              Keyword arguments. For allowable keyword arguments, see the
+              :func:`pyvista.Plotter.add_mesh` method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: show(show_axes_at_origin: bool = True, show_plane: bool = True, jupyter_backend: beartype.typing.Optional[str] = None, **kwargs: beartype.typing.Optional[beartype.typing.Dict]) -> None
+
+      
+      Show the rendered scene on the screen.
+
+
+      :Parameters:
+
+          **jupyter_backend** : :class:`python:str`, default: :data:`python:None`
+              PyVista Jupyter backend.
+
+          **\*\*kwargs** : :class:`python:dict`, default: :data:`python:None`
+              Plotting keyword arguments. For allowable keyword arguments, see the
+              :func:`pyvista.Plotter.show` method.
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      For more information on supported Jupyter backends, see
+      `Jupyter Notebook Plotting <https://docs.pyvista.org/user-guide/jupyter/index.html>`_
+      in the PyVista documentation.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: PlotterHelper(use_trame: beartype.typing.Optional[bool] = None)
+
+
+   
+   This class simplifies the selection of Trame visualizer in plot() functions.
+
+
+   :Parameters:
+
+       **use_trame: bool, optional**
+           Enables/disables the usage of the trame web visualizer. Defaults to the
+           global setting ``USE_TRAME``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: init_plotter()
+
+      
+      Initialize the plotter with or without trame visualizer.
+
+
+
+      :Returns:
+
+          :obj:`Plotter`
+              PyGeometry plotter initialized.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: show_plotter(plotter: Plotter, screenshot: beartype.typing.Optional[str] = None)
+
+      
+      Show the plotter or start the Trame service.
+
+
+      :Parameters:
+
+          **plotter** : :obj:`Plotter`
+              PyGeometry plotter with the meshes added.
+
+          **screenshot** : :class:`python:str`, default: :data:`python:None`
+              Save a screenshot of the image being represented. The image is
+              stored in the path provided as an argument.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

@@ -1,0 +1,86 @@
+
+
+
+
+
+The ``plane.py`` module
+=======================
+
+.. py:module:: ansys.geometry.core.shapes.surfaces.plane
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: plane
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~PlaneSurface`
+            - Provides 3D plane surface representation.
+
+
+          * - :py:attr:`~PlaneEvaluation`
+            - Provides evaluation of a plane at given parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 PlaneSurface<PlaneSurface>
+    🝆 PlaneEvaluation<PlaneEvaluation>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a cylinder.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

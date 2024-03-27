@@ -1,0 +1,111 @@
+
+
+
+
+Gap
+===
+
+.. py:class:: Gap(distance: ansys.geometry.core.misc.measurements.Distance)
+   :canonical: ansys.geometry.core.tools.measurement_tools.Gap
+
+
+
+
+
+   Represents a gap between two bodies.
+
+
+   :Parameters:
+
+       **distance** : :obj:`Distance`
+           Distance between two sides of the gap.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Gap
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~distance`
+            - Returns the closest distance between two bodies.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.measurement_tools import Gap
+
+
+Property detail
+---------------
+.. py:property:: distance
+   :canonical: ansys.geometry.core.tools.measurement_tools.Gap.distance
+   :type: Distance
+
+
+   
+   Returns the closest distance between two bodies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+

@@ -1,0 +1,126 @@
+
+
+
+
+
+The ``surfaces`` package 
+============================
+
+.. py:module:: ansys.geometry.core.shapes.surfaces
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: surfaces
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~ansys.geometry.core.shapes.surfaces.cone`
+            - Provides for creating and managing a cone.
+
+
+          * - :py:attr:`~ansys.geometry.core.shapes.surfaces.cylinder`
+            - Provides for creating and managing a cylinder.
+
+
+          * - :py:attr:`~ansys.geometry.core.shapes.surfaces.plane`
+            - Provides for creating and managing a cylinder.
+
+
+          * - :py:attr:`~ansys.geometry.core.shapes.surfaces.sphere`
+            - Provides for creating and managing a sphere.
+
+
+          * - :py:attr:`~ansys.geometry.core.shapes.surfaces.surface`
+            - Provides the ``Surface`` class.
+
+
+          * - :py:attr:`~ansys.geometry.core.shapes.surfaces.surface_evaluation`
+            - Provides for evaluating a surface.
+
+
+          * - :py:attr:`~ansys.geometry.core.shapes.surfaces.torus`
+            - Provides for creating and managing a torus.
+
+
+          * - :py:attr:`~ansys.geometry.core.shapes.surfaces.trimmed_surface`
+            - Provides the ``TrimmedSurface`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🗎 cone<cone/index.rst>
+    🗎 cylinder<cylinder/index.rst>
+    🗎 plane<plane/index.rst>
+    🗎 sphere<sphere/index.rst>
+    🗎 surface<surface/index.rst>
+    🗎 surface_evaluation<surface_evaluation/index.rst>
+    🗎 torus<torus/index.rst>
+    🗎 trimmed_surface<trimmed_surface/index.rst>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+Provides the PyAnsys Geometry ``surface`` subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
