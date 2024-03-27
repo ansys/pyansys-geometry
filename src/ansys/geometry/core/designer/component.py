@@ -747,7 +747,7 @@ class Component:
             name=name, parent=self.id, profiles=profiles_grpc, periodic=periodic, ruled=ruled
         )
         self._grpc_client.log.debug(f"Creating a loft profile body on {self.id} .")
-        response = self._bodies_stub.LoftProfiles(request)
+        response = self._bodies_stub.CreateExtrudedBodyFromLoftProfiles(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
