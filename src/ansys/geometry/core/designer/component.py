@@ -33,6 +33,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     CreateSphereBodyRequest,
     CreateSweepingChainRequest,
     CreateSweepingProfileRequest,
+    CreateSweepingWithGuideRequest,
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
@@ -51,6 +52,7 @@ from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
+    curve_to_grpc_curve,
     grpc_matrix_to_matrix,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
@@ -72,7 +74,7 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
-from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
+from ansys.geometry.core.shapes.curves.trimmed_curve import Curve, TrimmedCurve
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -583,6 +585,53 @@ class Component:
 
         self._grpc_client.log.debug(f"Creating a sweeping chain on {self.id}. Creating body...")
         response = self._bodies_stub.CreateSweepingChain(request)
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
+        self._master_component.part.bodies.append(tb)
+        return Body(response.id, response.name, self, tb)
+
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    def sweep_with_guide(
+        self, name: str, profile: List[Curve], guide: Curve, path: Curve, tight_tolerance: bool
+    ) -> Body:
+        """
+        Create a body by sweeping a chain of curves along a path.
+
+        Notes
+        -----
+        The newly created body is placed under this component within the design assembly.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the new solid body.
+        path : List[TrimmedCurve]
+            The path to sweep the chain along.
+        chain : List[TrimmedCurve]
+            A chain of trimmed curves.
+
+        Returns
+        -------
+        Body
+            Created body from the given sketch.
+        """
+        # Convert each ``TrimmedCurve`` in path and chain to equivalent gRPC types
+        profile_grpc = [curve_to_grpc_curve(tc) for tc in profile]
+        guide_grpc = curve_to_grpc_curve(guide)
+        path_grpc = curve_to_grpc_curve(path)
+
+        request = CreateSweepingWithGuideRequest(
+            name=name,
+            parent=self.id,
+            profile=profile_grpc,
+            guide=guide_grpc,
+            path=path_grpc,
+            tight_tolerance=tight_tolerance,
+        )
+
+        self._grpc_client.log.debug(f"Creating a sweeping chain on {self.id}. Creating body...")
+        response = self._bodies_stub.CreateSweepingWithGuide(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)

@@ -28,6 +28,7 @@ from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
     BooleanRequest,
     CopyRequest,
+    CreateSeparatePiecesRequest,
     GetCollisionRequest,
     MapRequest,
     MirrorRequest,
@@ -926,6 +927,15 @@ class MasterBody(IBody):
         return CollisionType(response.collision)
 
     @protect_grpc
+    @min_backend_version(24, 2, 0)
+    def create_separate_pieces(self) -> List["Body"]:  # noqa: D102
+        self._grpc_client.log.debug(f"Create separate pieces from body {self.id}.")
+        response = self._bodies_stub.CreateSeparatePieces(
+            CreateSeparatePiecesRequest(moniker=self.id, parent="", name="Asd")
+        )
+        return CollisionType(response.collision)
+
+    @protect_grpc
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
         from ansys.geometry.core.designer.component import Component
 
@@ -1299,6 +1309,10 @@ class Body(IBody):
     @ensure_design_is_active
     def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
         return self._template.get_collision(body)
+
+    @ensure_design_is_active
+    def create_separate_pieces(self) -> List["Body"]:  # noqa: D102
+        return self._template.create_separate_pieces()
 
     @ensure_design_is_active
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
