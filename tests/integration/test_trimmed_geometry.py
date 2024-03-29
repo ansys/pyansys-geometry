@@ -149,7 +149,7 @@ def test_trimmed_surface_properties(hedgehog_design):
             ReversedTrimmedSurface,
             (2.746801533890032, 6.677976426879348),
             (0.0, 0.02),
-        ),    
+        ),
     ]
 
     for i, (surface_type, is_reversed, shape_type, interval_u, interval_v) in enumerate(
@@ -200,7 +200,7 @@ def test_trimmed_surface_normals(hedgehog_design):
             UnitVector3D([0.90268536, 0.43030122, 0.0]),
             UnitVector3D([-0.62968173, -0.77685322, -0.0]),
             UnitVector3D([-0.62968173, -0.77685322, -0.0]),
-        ),        
+        ),
         (
             UnitVector3D([-0.55819453, -0.82971011, -0.0]),
             UnitVector3D([-0.55819453, -0.82971011, -0.0]),
@@ -231,7 +231,7 @@ def test_trimmed_curve_properties(hedgehog_design):
         (False, TrimmedCurve, Circle, [0.01, 0.01, 0.02], [-0.01, 0.01, 0.02]),
         (False, TrimmedCurve, Line, [0.01, 0.01, 0.0], [0.01, 0.01, 0.02]),
         (True, ReversedTrimmedCurve, Circle, [-0.01, 0.01, 0.02], [0.01, 0.01, 0.02]),
-        (False, TrimmedCurve, Line, [-0.01, 0.01, 0.0], [-0.01, 0.01, 0.02]),        
+        (False, TrimmedCurve, Line, [-0.01, 0.01, 0.0], [-0.01, 0.01, 0.02]),
         (False, TrimmedCurve, Circle, [0.01, 0.01, 0.0], [-0.01, 0.01, 0.0]),
         (True, ReversedTrimmedCurve, Circle, [-0.01, 0.01, 0.0], [0.01, 0.01, 0.0]),
         (False, TrimmedCurve, Circle, [0.02, 0.0, 0.02], [0.02, 0.0, 0.02]),
