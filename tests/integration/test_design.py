@@ -2080,30 +2080,30 @@ def test_body_mirror(modeler: Modeler):
 
     # results from SpaceClaim
     expected_vertices = [
-        Point3D([3, -1, 1]),
-        Point3D([3, -1, 0]),
-        Point3D([5, -1, 1]),
-        Point3D([5, -1, 0]),
-        Point3D([4, 0.5, 1]),
-        Point3D([4, 0.5, 0]),
-        Point3D([5, 1, 1]),
-        Point3D([5, 1, 0]),
-        Point3D([3, 1, 1]),
-        Point3D([3, 1, 0]),
-        Point3D([3.55, 0.55, 1.1]),
-        Point3D([3.55, 0.55, 1]),
-        Point3D([3.45, 0.55, 1.1]),
-        Point3D([3.45, 0.55, 1]),
-        Point3D([3.45, 0.45, 1.1]),
-        Point3D([3.45, 0.45, 1]),
+        Point3D([5.,   -1.,  1. ]),
+        Point3D([5.,   -1.,  0. ]),
+        Point3D([4.,   0.5,  1. ]),
+        Point3D([4.,   0.5,  0. ]),
+        Point3D([5.,   1.,   1. ]),
+        Point3D([5.,   1.,   0. ]),
+        Point3D([3.,   1.,   1. ]),
+        Point3D([3.,   1.,   0. ]),
+        Point3D([3.,   -1.,  1. ]),
+        Point3D([3.,   -1.,  0. ]),
         Point3D([3.55, 0.45, 1.1]),
-        Point3D([3.55, 0.45, 1]),
+        Point3D([3.55, 0.45, 1. ]),
+        Point3D([3.55, 0.55, 1.1]),
+        Point3D([3.55, 0.55, 1. ]),
+        Point3D([3.45, 0.55, 1.1]),
+        Point3D([3.45, 0.55, 1. ]),
+        Point3D([3.45, 0.45, 1.1]),
+        Point3D([3.45, 0.45, 1. ]),
     ]
 
     copy_vertices = []
     for edge in copy1.edges:
         if edge.shape.start not in copy_vertices:
-            copy_vertices.append(edge.shape.start)
+            copy_vertices.append(edge.shape.start)            
     assert np.allclose(expected_vertices, copy_vertices)
 
     # Mirror across XY plane
@@ -2112,24 +2112,24 @@ def test_body_mirror(modeler: Modeler):
 
     # results from SpaceClaim
     expected_vertices = [
-        Point3D([1, -1, -11]),
-        Point3D([1, -1, -10]),
-        Point3D([-1, -1, -11]),
-        Point3D([-1, -1, -10]),
-        Point3D([0, 0.5, -11]),
-        Point3D([0, 0.5, -10]),
-        Point3D([-1, 1, -11]),
-        Point3D([-1, 1, -10]),
-        Point3D([1, 1, -11]),
-        Point3D([1, 1, -10]),
-        Point3D([0.45, 0.55, -11.1]),
-        Point3D([0.45, 0.55, -11]),
-        Point3D([0.55, 0.55, -11.1]),
-        Point3D([0.55, 0.55, -11]),
-        Point3D([0.55, 0.45, -11.1]),
-        Point3D([0.55, 0.45, -11]),
-        Point3D([0.45, 0.45, -11.1]),
-        Point3D([0.45, 0.45, -11]),
+        Point3D([ -1.,     -1., -11. ]),
+        Point3D([ -1.,     -1., -10. ]),
+        Point3D([  0.,     0.5, -11. ]),
+        Point3D([  0.,     0.5, -10. ]),
+        Point3D([ -1.,      1., -11. ]),
+        Point3D([ -1.,      1., -10. ]),
+        Point3D([  1.,      1., -11. ]),
+        Point3D([  1.,      1., -10. ]),
+        Point3D([  1.,     -1., -11. ]),
+        Point3D([  1.,     -1., -10. ]),
+        Point3D([  0.45,  0.45, -11.1]),
+        Point3D([  0.45,  0.45, -11. ]),
+        Point3D([  0.45,  0.55, -11.1]),
+        Point3D([  0.45,  0.55, -11. ]),
+        Point3D([  0.55,  0.55, -11.1]),
+        Point3D([  0.55,  0.55, -11. ]),
+        Point3D([  0.55,  0.45, -11.1]),
+        Point3D([  0.55,  0.45, -11. ]),
     ]
 
     copy_vertices = []
@@ -2144,30 +2144,31 @@ def test_body_mirror(modeler: Modeler):
 
     # results from SpaceClaim
     expected_vertices = [
-        Point3D([1, 7, 1]),
-        Point3D([1, 7, 0]),
-        Point3D([-1, 7, 1]),
-        Point3D([-1, 7, 0]),
-        Point3D([0, 5.5, 1]),
-        Point3D([0, 5.5, 0]),
-        Point3D([-1, 5, 1]),
-        Point3D([-1, 5, 0]),
-        Point3D([1, 5, 1]),
-        Point3D([1, 5, 0]),
-        Point3D([0.45, 5.45, 1.1]),
-        Point3D([0.45, 5.45, 1]),
-        Point3D([0.55, 5.45, 1.1]),
-        Point3D([0.55, 5.45, 1]),
-        Point3D([0.55, 5.55, 1.1]),
-        Point3D([0.55, 5.55, 1]),
-        Point3D([0.45, 5.55, 1.1]),
-        Point3D([0.45, 5.55, 1]),
+        Point3D([-1.,   7.  , 1. ]),
+        Point3D([-1.,   7.  , 0. ]),
+        Point3D([0. ,   5.5 , 1. ]),
+        Point3D([0. ,   5.5 , 0. ]),
+        Point3D([-1.,   5.  , 1. ]),
+        Point3D([-1.,   5.  , 0. ]),
+        Point3D([1. ,   5.  , 1. ]),
+        Point3D([1. ,   5.  , 0. ]),
+        Point3D([1. ,   7.  , 1. ]),
+        Point3D([1. ,   7.  , 0. ]),
+        Point3D([0.45,  5.55, 1.1]),
+        Point3D([0.45,  5.55, 1. ]),
+        Point3D([0.45,  5.45, 1.1]),
+        Point3D([0.45,  5.45, 1. ]),
+        Point3D([0.55,  5.45, 1.1]),
+        Point3D([0.55,  5.45, 1. ]),
+        Point3D([0.55,  5.55, 1.1]),
+        Point3D([0.55,  5.55, 1. ]),
     ]
 
     copy_vertices = []
     for edge in copy3.edges:
         if edge.shape.start not in copy_vertices:
             copy_vertices.append(edge.shape.start)
+            print(edge.shape.start)
     assert np.allclose(expected_vertices, copy_vertices)
 
 
