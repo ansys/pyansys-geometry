@@ -52,7 +52,9 @@ def create_sketch_line(design: Design, p1: Point3D, p2: Point3D):
 """A helper function that creates the Hedgehog model."""
 
 
-def create_hedgehog(modeler: Modeler):
+def create_hedgehog(local_instance: Modeler):
+
+    modeler = local_instance
     design = modeler.create_design("Hedgehog")
     sketch = Sketch().arc_from_three_points(
         Point2D([0.01, 0.01]), Point2D([0, -0.005]), Point2D([-0.01, 0.01])
@@ -136,18 +138,18 @@ def test_trimmed_surface_properties(hedgehog_design):
         ),
         (
             SurfaceType.SURFACETYPE_CYLINDER,
-            True,
-            ReversedTrimmedSurface,
-            (2.746801533890032, 6.677976426879348),
-            (0.0, 0.02),
-        ),
-        (
-            SurfaceType.SURFACETYPE_CYLINDER,
             False,
             TrimmedSurface,
             (3.141592653589793, 6.283185307179586),
             (0.0, 0.02),
         ),
+        (
+            SurfaceType.SURFACETYPE_CYLINDER,
+            True,
+            ReversedTrimmedSurface,
+            (2.746801533890032, 6.677976426879348),
+            (0.0, 0.02),
+        ),    
     ]
 
     for i, (surface_type, is_reversed, shape_type, interval_u, interval_v) in enumerate(
@@ -194,16 +196,16 @@ def test_trimmed_surface_normals(hedgehog_design):
             UnitVector3D([0.0, 0.0, 1.0]),
         ),
         (
-            UnitVector3D([-0.55819453, -0.82971011, -0.0]),
-            UnitVector3D([-0.55819453, -0.82971011, -0.0]),
-            UnitVector3D([0.74865795, 0.66295647, 0.0]),
-            UnitVector3D([0.74865795, 0.66295647, 0.0]),
-        ),
+            UnitVector3D([0.90268536, 0.43030122, 0.0]),
+            UnitVector3D([0.90268536, 0.43030122, 0.0]),
+            UnitVector3D([-0.62968173, -0.77685322, -0.0]),
+            UnitVector3D([-0.62968173, -0.77685322, -0.0]),
+        ),        
         (
-            UnitVector3D([0.90268536, 0.43030122, 0.0]),
-            UnitVector3D([0.90268536, 0.43030122, 0.0]),
-            UnitVector3D([-0.62968173, -0.77685322, -0.0]),
-            UnitVector3D([-0.62968173, -0.77685322, -0.0]),
+            UnitVector3D([-0.55819453, -0.82971011, -0.0]),
+            UnitVector3D([-0.55819453, -0.82971011, -0.0]),
+            UnitVector3D([0.74865795, 0.66295647, 0.0]),
+            UnitVector3D([0.74865795, 0.66295647, 0.0]),
         ),
     ]
 
@@ -226,12 +228,12 @@ def test_trimmed_curve_properties(hedgehog_design):
     edges = hedgehog_body.edges
 
     expected_curve_properties = [
-        (True, ReversedTrimmedCurve, Circle, [-0.01, 0.01, 0.02], [0.01, 0.01, 0.02]),
-        (False, TrimmedCurve, Line, [-0.01, 0.01, 0.0], [-0.01, 0.01, 0.02]),
         (False, TrimmedCurve, Circle, [0.01, 0.01, 0.02], [-0.01, 0.01, 0.02]),
         (False, TrimmedCurve, Line, [0.01, 0.01, 0.0], [0.01, 0.01, 0.02]),
-        (True, ReversedTrimmedCurve, Circle, [-0.01, 0.01, 0.0], [0.01, 0.01, 0.0]),
+        (True, ReversedTrimmedCurve, Circle, [-0.01, 0.01, 0.02], [0.01, 0.01, 0.02]),
+        (False, TrimmedCurve, Line, [-0.01, 0.01, 0.0], [-0.01, 0.01, 0.02]),        
         (False, TrimmedCurve, Circle, [0.01, 0.01, 0.0], [-0.01, 0.01, 0.0]),
+        (True, ReversedTrimmedCurve, Circle, [-0.01, 0.01, 0.0], [0.01, 0.01, 0.0]),
         (False, TrimmedCurve, Circle, [0.02, 0.0, 0.02], [0.02, 0.0, 0.02]),
         (False, TrimmedCurve, Circle, [0.02, 0.0, 0.0], [0.02, 0.0, 0.0]),
     ]
