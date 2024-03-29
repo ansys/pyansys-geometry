@@ -2168,7 +2168,6 @@ def test_body_mirror(modeler: Modeler):
     for edge in copy3.edges:
         if edge.shape.start not in copy_vertices:
             copy_vertices.append(edge.shape.start)
-            print(edge.shape.start)
     assert np.allclose(expected_vertices, copy_vertices)
 
 
