@@ -23,6 +23,7 @@ from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.math.plane import Plane
 ```
 
 ```{code-cell} ipython3
@@ -69,35 +70,47 @@ box_sketch = Sketch().box(Point2D([0, 0]), side_length, side_length)
 ```
 
 4. **Create Cube Body:**
-   - `extrude_sktech` on the `box_sketch`, as the base sktech, creates the 3D cube with `distance` being `side_length`.
+   - `extrude_sketch` on the `box_sketch`, as the base sketch, creates the 3D cube with `distance` being `side_length`.
 
 ```{code-cell} ipython3
+# Extrude the cube profile by a distance of side_length
 cube = design.extrude_sketch("box", box_sketch, side_length)
+
 design.plot()
 ```
 
-4. **Making the cube twice as large:**
-   - Using `scale`, with value of 2, will double the side lengths of the cube inturn making it twice as large.
+5. **Making the cube twice as large:**
+   - Copy the original cube. Using `scale` with a value of 2, we will double the side lengths of the cube, thereby making the body twice as large, and offset it to view the difference.
 
 ```{code-cell} ipython3
-# Double the original length
-cube.scale(2)
+# Copy the original cube
+doubled = cube.copy(cube.parent_component, "doubled_box")
+# Double the size
+doubled.scale(2)
+# Translate the copied cube in the x direction
+doubled.translate(UnitVector3D([1, 0, 0]), 30)
+
 design.plot()
 ```
 
-4. **Halfing the size of the *original* cube:**
-   - Using `scale`, with value of 0.25, will give us half the side length of the original cube, which is 5.
+6. **Halfing the size of the *original* cube:**
+   - Copy the original cube. By using `scale` with a value of 0.5, we will effectively halve the side lengths of the cube, and then offset it to view the difference.
    - Note: Since we doubled the size of the cube in the previous cell, we need to use the 0.25 factor which in turn will translate to half the size of the original cube.
 
 ```{code-cell} ipython3
-# Half the original length
-cube.scale(0.25)
+# Copy the original cube
+halved = cube.copy(cube.parent_component, "halved_box")
+# Half the size
+halved.scale(0.5)
+# Translate the copied cube in the x direction
+halved.translate(UnitVector3D([1, 0, 0]), -25)
+
 design.plot()
 ```
 
 ## Map Function
 
-The `map` function enables the reorientation of 3D bodies by mapping them onto a new specified frame. This function is used for adjusting the orientation of geometric bodies within 3D space to match specific reference frames.
+The `map` function enables the reorientation of 3D bodies by mapping them onto a new specified frame. This function is used for adjusting the orientation of geometric bodies within 3D space to match specific reference frames. Through this, the user is able to effectively perform translation and rotation operations in a single method by specifying a new frame.
 
 ### Usage
 
@@ -127,20 +140,94 @@ asymmetric_profile = Sketch().segment(Point2D([1, 1]), Point2D([-1, 1])).segment
     [0, 0.5])).segment_to_point(Point2D([-1, -1])).segment_to_point(Point2D([1, -1])).segment_to_point(Point2D([1, 1]))
 ```
 
-4. **Create Asymmetric Body:**
-   - `extrude_sktech` on the `asymmetric_profile`, as the base sktech, creating the 3D cube, with a cutout, with `distance` being 1.
+3. **Create Asymmetric Body:**
+   - `extrude_sketch` on the `asymmetric_profile`, as the base sketch, creating the 3D cube, with a cutout, with `distance` being 1.
 
 ```{code-cell} ipython3
 # Extrude the asymmetric profile by distance of 1 unit
 body = design.extrude_sketch("box", asymmetric_profile, 1)
+
 design.plot()
 ```
 
-3. **Apply Map Reframing:**
-   - The below map uses the default x direction, but the y direction is swapped with the z direction, effectively rotating the original shape so that it is standing vertically.
+4. **Apply Map Reframing:**
+   - We will first make a copy of the shape and translate it in 3D space so that we can view them side by side, then we will apply the reframing to the copied shape.
+   - Note: The below map uses the default x direction, but the y direction is swapped with the z direction, effectively rotating the original shape so that it is standing vertically.
 
 ```{code-cell} ipython3
+copied_body = body.copy(body.parent_component, "copied_body")
 # Apply the reframing
-body.map(Frame(Point3D([0, 0, 0]), UnitVector3D([1, 0, 0]), UnitVector3D([0, 0, 1])))
+copied_body.map(Frame(Point3D([0, 0, 0]), UnitVector3D([1, 0, 0]), UnitVector3D([0, 0, 1])))
+# Shift the new modified body in the plane in the negative y direction by 2 units
+copied_body.translate(UnitVector3D([0, 1, 0]), -2)
+
+design.plot()
+```
+
+## Mirror Body
+
+The `mirror` function is designed to mirror the geometry of a body across a specified plane. This function plays a role in geometric transformations, enabling the reflection of bodies to create symmetrical designs.
+
+### Usage
+
+To use the `mirror` function, you call it on an instance of a geometry body, passing a single argument: the plane across which the body will be mirrored. This plane is represented by a `Plane` object, defining the axis of symmetry for the mirroring operation.
+
+```python
+body.mirror(plane)
+```
+
++++
+
+## Example: Traignular Body
+The code snippets below demonstrates how to reframe a cube body using `mirror` function in `body.py`. The process involves initializing a sketch design for the body profile, extruding the profile by a distance, and then performing the mirroring operation to reflect the shape over the specified axis.
+1. **Initialize the Shape Sketch Design:**
+   - A new design sketch named "traignle" is created.
+
+```{code-cell} ipython3
+# Initialize the sketch design
+design = m.create_design("triangle")
+```
+
+2. **Define Parameters:**
+   - `point1` the first vertex of the triangle.
+   - `point2` the second vertex of the triangle.
+   - `point3` the third vertex of the triangle.
+
+```{code-cell} ipython3
+point1 = Point2D([5, 0])
+point2 = Point2D([2.5, 2.5])
+point3 = Point2D([2.5, -2.5])
+```
+
+3. **Create Triangle Sketch Profile:**
+   - Using the `point1`, `point2`, and `point3`, we will define the vertices of the triangle profile using those three points and create line segments connecting them.
+
+```{code-cell} ipython3
+# Draw the triangle sketch profile
+sketch = Sketch()
+sketch.segment(start=point1, end=point2)
+sketch.segment(start=point2, end=point3)
+sketch.segment(start=point3, end=point1)
+```
+
+4. **Create Triangular Body:**
+   - Using the sketch profile created in the previous step, we will use `extrude_sketch` to create a solid body with depth 1.
+
+```{code-cell} ipython3
+# Extrude the triangular body by a distance of 1
+triangle = design.extrude_sketch("triangle_body", sketch, 1)
+
+design.plot()
+```
+
+5. **Mirror the Triangular Body:**
+   - We will first make a copy of the triangular body, then using `mirror`, we will mirror the copied body over the ZY plane.
+
+```{code-cell} ipython3
+# Copy triangular body
+mirrored_triangle = triangle.copy(triangle.parent_component, "mirrored_triangle")
+# Mirror the copied body over the ZY plane (specified by the (0, 1, ) and (0, 0, 1) unit vectors)
+mirrored_triangle.mirror(Plane(direction_x=UnitVector3D([0, 1, 0]), direction_y= UnitVector3D([0, 0, 1])))
+
 design.plot()
 ```

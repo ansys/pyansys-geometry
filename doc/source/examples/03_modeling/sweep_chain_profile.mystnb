@@ -12,7 +12,7 @@ kernelspec:
 ---
 
 # Design: Sweep Chain and Sweep Sketch
-The purpose of this notebook is to demonstrate the `sweep_sktech` and `sweep_chain` functions and their usage for creating more complex extrusion profiles.
+The purpose of this notebook is to demonstrate the `sweep_sketch` and `sweep_chain` functions and their usage for creating more complex extrusion profiles. `sweep_sketch()` is to be used with a closed sketch profile, while `sweep_chain()` is designed for an open profile.
 
 ```{code-cell} ipython3
 # Imports
@@ -60,6 +60,7 @@ profile_radius = 2
 profile = Sketch(plane=Plane(direction_x=[1, 0, 0], direction_y=[0, 0, 1])).circle(
     Point2D([path_radius, 0]), profile_radius
 )
+profile.plot()
 ```
 
 4. **Create the Path Circle:**
