@@ -52,9 +52,8 @@ def create_sketch_line(design: Design, p1: Point3D, p2: Point3D):
 """A helper function that creates the Hedgehog model."""
 
 
-def create_hedgehog(local_instance: Modeler):
+def create_hedgehog(modeler: Modeler):
 
-    modeler = local_instance
     design = modeler.create_design("Hedgehog")
     sketch = Sketch().arc_from_three_points(
         Point2D([0.01, 0.01]), Point2D([0, -0.005]), Point2D([-0.01, 0.01])
