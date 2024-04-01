@@ -71,7 +71,7 @@ tests = [
     "vtk==9.3.0",
 ]
 doc = [
-    "ansys-sphinx-theme==0.14.1",
+    "ansys-sphinx-theme==0.15.0",
     "docker==7.0.0",
     "ipyvtklink==0.2.3",
     "jupyter_sphinx==0.5.3",
