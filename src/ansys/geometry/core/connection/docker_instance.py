@@ -71,6 +71,7 @@ class GeometryContainers(Enum):
     WINDOWS_24_2 = 6, "windows", "windows-24.2"
     LINUX_24_2 = 7, "linux", "linux-24.2"
 
+
 class LocalDockerInstance:
     """
     Instantiates a Geometry service as a local Docker container.
