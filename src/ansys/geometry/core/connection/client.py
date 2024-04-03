@@ -43,7 +43,7 @@ from ansys.geometry.core.logger import PyGeometryCustomAdapter
 from ansys.geometry.core.typing import Real
 
 try:
-    import ansys.platform.instancemanagement as pim
+    from ansys.platform.instancemanagement import Instance
 except ModuleNotFoundError:  # pragma: no cover
     pass
 
@@ -129,7 +129,7 @@ class GrpcClient:
         host: Optional[str] = DEFAULT_HOST,
         port: Union[str, int] = DEFAULT_PORT,
         channel: Optional[grpc.Channel] = None,
-        remote_instance: Optional["pim.Instance"] = None,
+        remote_instance: Optional["Instance"] = None,
         docker_instance: Optional[LocalDockerInstance] = None,
         product_instance: Optional[ProductInstance] = None,
         timeout: Optional[Real] = 120,
