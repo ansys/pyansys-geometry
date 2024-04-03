@@ -71,7 +71,7 @@ tests = [
     "vtk==9.3.0",
 ]
 doc = [
-    "ansys-sphinx-theme==0.15.0",
+    "ansys-sphinx-theme[autoapi]==0.15.1",
     "beartype==0.17.2",
     "docker==7.0.0",
     "ipyvtklink==0.2.3",
@@ -86,10 +86,8 @@ doc = [
     "pyvista[jupyter]==0.43.4",
     "requests==2.31.0",
     "sphinx==7.2.6",
-    "sphinx-autoapi==3.0.0a4",
     "sphinx-autodoc-typehints==1.24.0",
     "sphinx-copybutton==0.5.2",
-    "sphinx_design==0.5.0",
     "sphinx-jinja==2.0.2",
     "vtk==9.3.0",
 ]
