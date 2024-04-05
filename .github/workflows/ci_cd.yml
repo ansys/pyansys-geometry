@@ -42,9 +42,6 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
-          pyansys-dashboard-upload: true
-          pyansys-dashboard-token: ${{ secrets.PYANSYS_DASHBOARD_TOKEN }}
-          pyansys-dashboard-credentials: ${{ secrets.PYANSYS_DASHBOARD_DB_CREDENTIALS }}
 
       - name: PyAnsys Vulnerability check (on dev mode)
         if: github.ref != 'refs/heads/main'
