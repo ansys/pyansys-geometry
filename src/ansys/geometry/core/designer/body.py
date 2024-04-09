@@ -1197,12 +1197,14 @@ class Body(IBody):
         )
 
         new_edges = [
-            Edge(grpc_edge.id, grpc_edge.curve_type, self, self._template._grpc_client)
+            Edge(grpc_edge.id, CurveType(grpc_edge.curve_type), self, self._template._grpc_client)
             for grpc_edge in imprint_response.edges
         ]
 
         new_faces = [
-            Face(grpc_face.id, grpc_face.surface_type, self, self._template._grpc_client)
+            Face(
+                grpc_face.id, SurfaceType(grpc_face.surface_type), self, self._template._grpc_client
+            )
             for grpc_face in imprint_response.faces
         ]
 
@@ -1232,7 +1234,9 @@ class Body(IBody):
         )
 
         projected_faces = [
-            Face(grpc_face.id, grpc_face.surface_type, self, self._template._grpc_client)
+            Face(
+                grpc_face.id, SurfaceType(grpc_face.surface_type), self, self._template._grpc_client
+            )
             for grpc_face in project_response.faces
         ]
 
@@ -1263,7 +1267,9 @@ class Body(IBody):
         )
 
         imprinted_faces = [
-            Face(grpc_face.id, grpc_face.surface_type, self, self._template._grpc_client)
+            Face(
+                grpc_face.id, SurfaceType(grpc_face.surface_type), self, self._template._grpc_client
+            )
             for grpc_face in response.faces
         ]
 
