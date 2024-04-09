@@ -53,7 +53,8 @@ jobs:
           dev-mode: true
 
   branch-name:
-    if: github.event_name == 'pull_request'
+    # Only if the event is a pull request and the branch name is not from the pre-commit-ci bot
+    if: github.event_name == 'pull_request' && github.head_ref != 'pre-commit-ci-update-config'
     name: Check the name of the branch
     runs-on: ubuntu-latest
     steps:
