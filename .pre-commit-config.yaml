@@ -47,7 +47,7 @@ repos:
     exclude: "tests/"
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.5.0
+  rev: v4.6.0
   hooks:
   - id: check-merge-conflict
   - id: debug-statements
@@ -67,3 +67,9 @@ repos:
   rev: 0.28.1
   hooks:
     - id: check-github-workflows
+
+# this validates our pre-commit.ci configuration
+- repo: https://github.com/pre-commit-ci/pre-commit-ci-config
+  rev: v1.6.1
+  hooks:
+  -   id: check-pre-commit-ci-config
