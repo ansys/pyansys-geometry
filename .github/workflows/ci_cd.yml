@@ -31,8 +31,30 @@ concurrency:
 
 jobs:
 
+  vulnerabilities:
+    name: Vulnerabilities
+    runs-on: ubuntu-latest
+    steps:
+      - name: PyAnsys Vulnerability check (on main)
+        if: github.ref == 'refs/heads/main'
+        uses: ansys/actions/check-vulnerabilities@main
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          python-package-name: ${{ env.PACKAGE_NAME }}
+          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+
+      - name: PyAnsys Vulnerability check (on dev mode)
+        if: github.ref != 'refs/heads/main'
+        uses: ansys/actions/check-vulnerabilities@main
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          python-package-name: ${{ env.PACKAGE_NAME }}
+          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+          dev-mode: true
+
   branch-name:
-    if: github.event_name == 'pull_request'
+    # Only if the event is a pull request and the branch name is not from the pre-commit-ci bot
+    if: github.event_name == 'pull_request' && github.head_ref != 'pre-commit-ci-update-config'
     name: Check the name of the branch
     runs-on: ubuntu-latest
     steps:
