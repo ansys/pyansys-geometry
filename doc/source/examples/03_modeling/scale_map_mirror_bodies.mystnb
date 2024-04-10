@@ -182,7 +182,7 @@ asymmetric_profile = Sketch()
    .segment_to_point(Point2D([1, 1]))
 )
 
-sketch.plot()
+asymmetric_profile.plot()
 ```
 
 3. **Create the asymmetric body:**
