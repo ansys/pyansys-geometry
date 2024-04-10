@@ -6,7 +6,7 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.14.1
 kernelspec:
-  display_name: .venv
+  display_name: Python 3 (ipykernel)
   language: python
   name: python3
 ---
@@ -22,13 +22,13 @@ import numpy as np
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.math import (
-   Frame,
-   Plane,
-   Point2D,
-   Point3D,
-   UNITVECTOR3D_X,
-   UNITVECTOR3D_Y,
-   UNITVECTOR3D_Z,
+  Frame,
+  Plane,
+  Point2D,
+  Point3D,
+  UNITVECTOR3D_X,
+  UNITVECTOR3D_Y,
+  UNITVECTOR3D_Z,
 )
 from ansys.geometry.core.sketch import Sketch
 ```
@@ -63,24 +63,27 @@ function in ``Body`` objects. The process involves initializing a sketch design 
 cube, defining the shape parameters, and then performing a rescaling operation to generate
 the new shape.
 
-1. **Initialize the cube sketch design:**
-   - A new design sketch named "cube" is created.
+#### Initialize the cube sketch design
+
+A new design sketch named "cube" is created.
 
 ```{code-cell} ipython3
 design = m.create_design("cube")
 ```
 
-2. **Define cube parameters:**
-   - ``side_length`` is set to 10 units, representing the side length of the cube.
+#### Define cube parameters
+
+``side_length`` is set to 10 units, representing the side length of the cube.
 
 ```{code-cell} ipython3
 # Cube parameters
 side_length = 10
 ```
 
-3. **Create the profile cube:**
-   - A square box is created centered on the origin using ``side_length`` as the side length
-     of the square.
+#### Create the profile cube
+
+A square box is created centered on the origin using ``side_length`` as the side length
+of the square.
 
 ```{code-cell} ipython3
 # Square with side length 10
@@ -89,9 +92,10 @@ box_sketch = Sketch().box(Point2D([0, 0]), side_length, side_length)
 box_sketch.plot()
 ```
 
-4. **Create cube body:**
-   - ``extrude_sketch`` on the ``box_sketch`` as the base sketch and create the 3D cube with
-     ``distance`` being the ``side_length``.
+#### Create cube body
+
+``extrude_sketch`` on the ``box_sketch`` as the base sketch and create the 3D cube with
+``distance`` being the ``side_length``.
 
 ```{code-cell} ipython3
 # Extrude the cube profile by a distance of side_length
@@ -100,9 +104,10 @@ cube = design.extrude_sketch("box", box_sketch, side_length)
 design.plot()
 ```
 
-5. **Making the cube twice as large:**
-   - Copy the original cube. Using ``scale()`` with a value of 2, double the side lengths of
-     the cube, thereby making the body twice as large, and then offset it to view the difference.
+#### Making the cube twice as large
+
+  - Copy the original cube. Using ``scale()`` with a value of 2, double the side lengths of
+    the cube, thereby making the body twice as large, and then offset it to view the difference.
 
 ```{code-cell} ipython3
 # Copy the original cube
@@ -115,11 +120,13 @@ doubled.translate(UNITVECTOR3D_X, 30)
 design.plot()
 ```
 
-6. **Halfing the size of the *original* cube:**
-   - Copy the original cube. Using ``scale()`` with a value of 0.5 effectively halves the
-     side lengths of the cube. Then, offset the new cube to view the difference.
-   - Note: Because the size of the cube in the previous cell was doubled, using the 0.25 factor
-     translates it to half the size of the original cube.
+#### Halfing the size of the *original* cube
+
+Copy the original cube. Using ``scale()`` with a value of 0.5 effectively halves the
+side lengths of the cube. Then, offset the new cube to view the difference.
+
+Note: Because the size of the cube in the previous cell was doubled, using the 0.25 factor
+translates it to half the size of the original cube.
 
 ```{code-cell} ipython3
 # Copy the original cube
@@ -159,17 +166,19 @@ the ``Body`` object. The process involves initializing a sketch design for the c
 extruding the profile by a distance, and then performing the mapping operation to rotate the
 shape.
 
-1. **Initialize the shape sketch design:**
-   - A new design sketch named "asymmetric_cube" is created.
+#### Initialize the shape sketch design
+
+A new design sketch named "asymmetric_cube" is created.
 
 ```{code-cell} ipython3
 # Initialize the sketch design
 design = m.create_design("asymmetric_cube")
 ```
 
-2. **Create an asymmetric sketch profile:**
-   - Make a sketch profile that is basically a cube centered on the origin with a side length
-     of 2 with a cutout.
+#### Create an asymmetric sketch profile
+  
+Make a sketch profile that is basically a cube centered on the origin with a side length
+of 2 with a cutout.
 
 ```{code-cell} ipython3
 # Create the cube profile with a cut through it
@@ -185,9 +194,10 @@ asymmetric_profile = Sketch()
 asymmetric_profile.plot()
 ```
 
-3. **Create the asymmetric body:**
-   - ``extrude_sketch`` on the ``asymmetric_profile`` as the base sketch, creating the
-     3D cube with a cutout, with the ``distance`` being 1.
+#### Create the asymmetric body
+  
+``extrude_sketch`` on the ``asymmetric_profile`` as the base sketch, creating the
+3D cube with a cutout, with the ``distance`` being 1.
 
 ```{code-cell} ipython3
 # Extrude the asymmetric profile by a distance of 1 unit
@@ -196,12 +206,14 @@ body = design.extrude_sketch("box", asymmetric_profile, 1)
 design.plot()
 ```
 
-4. **Apply map reframing:**
-   - First make a copy of the shape and translate it in 3D space so that you can view them
-     side by side. Then, apply the reframing to the copied shape.
-   - Note: The following map uses the default x direction, but the y direction is swapped
-     with the z direction, effectively rotating the original shape so that it is standing
-     vertically.
+#### Apply map reframing
+  
+First make a copy of the shape and translate it in 3D space so that you can view them
+side by side. Then, apply the reframing to the copied shape.
+
+Note: The following map uses the default x direction, but the y direction is swapped
+with the z direction, effectively rotating the original shape so that it is standing
+vertically.
 
 ```{code-cell} ipython3
 # Copy the body
@@ -239,18 +251,20 @@ in the ``Body`` object. The process involves initializing a sketch design for th
 extruding the profile by a distance, and then performing the mirroring operation to reflect the
 shape over the specified axis.
 
-1. **Initialize the shape sketch design:**
-   - A new design sketch named "triangle" is created.
+#### Initialize the shape sketch design
+
+A new design sketch named "triangle" is created.
 
 ```{code-cell} ipython3
 # Initialize the sketch design
 design = m.create_design("triangle")
 ```
 
-2. **Define parameters:**
-   - `point1`: First vertex of the triangle.
-   - `point2`: Second vertex of the triangle.
-   - `point3`: Third vertex of the triangle.
+#### Define parameters
+
+`point1`: First vertex of the triangle.
+`point2`: Second vertex of the triangle.
+`point3`: Third vertex of the triangle.
 
 ```{code-cell} ipython3
 point1 = Point2D([5, 0])
@@ -258,9 +272,10 @@ point2 = Point2D([2.5, 2.5])
 point3 = Point2D([2.5, -2.5])
 ```
 
-3. **Create triangle sketch profile:**
-   - Using ``point1``, ``point2``, and ``point3``, define the vertices of the triangle profile
-     using those three points and then create line segments connecting them.
+#### Create triangle sketch profile
+  
+Using ``point1``, ``point2``, and ``point3``, define the vertices of the triangle profile
+using those three points and then create line segments connecting them.
 
 ```{code-cell} ipython3
 # Draw the triangle sketch profile
@@ -272,9 +287,10 @@ sketch.segment(start=point3, end=point1)
 sketch.plot()
 ```
 
-4. **Create triangular body:**
-   - Using the sketch profile created in the previous step, use the ``extrude_sketch`` method to
-     create a solid body with a depth of 1.
+#### Create triangular body
+
+Using the sketch profile created in the previous step, use the ``extrude_sketch`` method to
+create a solid body with a depth of 1.
 
 ```{code-cell} ipython3
 # Extrude the triangular body by a distance of 1
@@ -283,9 +299,10 @@ triangle = design.extrude_sketch("triangle_body", sketch, 1)
 design.plot()
 ```
 
-5. **Mirror the triangular body:**
-   - We will first make a copy of the triangular body, then using ``mirror()``, we will mirror the
-     copied body over the ZY plane.
+#### Mirror the triangular body
+
+We will first make a copy of the triangular body, then using ``mirror()``, we will mirror the
+copied body over the ZY plane.
 
 ```{code-cell} ipython3
 # Copy triangular body
