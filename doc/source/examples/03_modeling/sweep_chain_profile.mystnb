@@ -4,7 +4,7 @@ jupytext:
     extension: .mystnb
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.16.1
+    jupytext_version: 1.14.1
 kernelspec:
   display_name: .venv
   language: python
@@ -145,7 +145,7 @@ profile = [
 4. **Create the path:**
    - A circular path is created, positioned parallel to the XY-plane but shifted upwards
      by 5 units (half the major radius). The circle has a radius of 10 units and is trimmed
-     to form a complete loop with an interval from 0 to 2π radians. This path defines the
+     to form a complete loop with an interval from 0 to 2pi radians. This path defines the
      sweeping trajectory for the profile to create the bowl.
 
 ```{code-cell} ipython3
