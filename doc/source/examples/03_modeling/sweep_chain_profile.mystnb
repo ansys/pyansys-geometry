@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-# Design: Sweep chain and sweep sketch
+# Modeling: Sweep chain and sweep sketch
 
 This example shows how use the ``sweep_sketch()`` and ``sweep_chain()``
 functions to create more complex extrusion profiles. You use the ``sweep_sketch()``
