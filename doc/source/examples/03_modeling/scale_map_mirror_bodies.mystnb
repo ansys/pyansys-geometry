@@ -290,7 +290,8 @@ design.plot()
 ```{code-cell} ipython3
 # Copy triangular body
 mirrored_triangle = triangle.copy(triangle.parent_component, "mirrored_triangle")
-# Mirror the copied body over the ZY plane (specified by the (0, 1, 0) and (0, 0, 1) unit vectors)
+# Mirror the copied body over the ZY plane (specified by the (0, 1, 0) and
+# (0, 0, 1) unit vectors)
 
 mirrored_triangle.mirror(Plane(direction_x=UNITVECTOR3D_Y, direction_y=UNITVECTOR3D_Z))
 

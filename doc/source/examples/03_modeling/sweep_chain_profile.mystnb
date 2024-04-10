@@ -31,6 +31,7 @@ from ansys.geometry.core.math import (
    UNITVECTOR3D_Z,
 )
 from ansys.geometry.core.shapes import Circle, Ellipse, Interval
+from ansys.geometry.core.sketch import Sketch
 ```
 
 ```{code-cell} ipython3
@@ -71,10 +72,12 @@ profile_radius = 2
      shape of the donut.
 
 ```{code-cell} ipython3
-# Create the circlular profile on the XZ-plane centered at (5, 0, 0) with a radius of 2
-profile = Sketch(plane=Plane(direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z)).circle(
-    Point2D([path_radius, 0]), profile_radius
-)
+# Create the circlular profile on the XZ-plane centered at (5, 0, 0)
+# with a radius of 2
+plane_profile = Plane(direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z)
+profile = Sketch(plane=plane_profile)
+profile.circle(Point2D([path_radius, 0]), profile_radius)
+
 profile.plot()
 ```
 
@@ -146,7 +149,8 @@ profile = [
      sweeping trajectory for the profile to create the bowl.
 
 ```{code-cell} ipython3
-# Create circle on the plane parallel to the XY-plane but moved up by 5 units with radius 10
+# Create circle on the plane parallel to the XY-plane but moved up
+# by 5 units with radius 10
 path = [Circle(Point3D([0, 0, radius / 2]), radius).trim(Interval(0, 2 * np.pi))]
 ```
 
