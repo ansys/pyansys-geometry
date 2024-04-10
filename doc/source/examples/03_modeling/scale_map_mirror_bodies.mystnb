@@ -176,7 +176,7 @@ design = m.create_design("asymmetric_cube")
 ```
 
 #### Create an asymmetric sketch profile
-  
+
 Make a sketch profile that is basically a cube centered on the origin with a side length
 of 2 with a cutout.
 
@@ -195,7 +195,7 @@ asymmetric_profile.plot()
 ```
 
 #### Create the asymmetric body
-  
+
 ``extrude_sketch`` on the ``asymmetric_profile`` as the base sketch, creating the
 3D cube with a cutout, with the ``distance`` being 1.
 
@@ -207,7 +207,7 @@ design.plot()
 ```
 
 #### Apply map reframing
-  
+
 First make a copy of the shape and translate it in 3D space so that you can view them
 side by side. Then, apply the reframing to the copied shape.
 
@@ -273,7 +273,7 @@ point3 = Point2D([2.5, -2.5])
 ```
 
 #### Create triangle sketch profile
-  
+
 Using ``point1``, ``point2``, and ``point3``, define the vertices of the triangle profile
 using those three points and then create line segments connecting them.
 
