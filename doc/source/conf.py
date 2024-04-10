@@ -219,6 +219,8 @@ nbsphinx_thumbnails = {
     "examples/03_modeling/tessellation_usage": "_static/thumbnails/tessellation_usage.png",
     "examples/03_modeling/design_organization": "_static/thumbnails/design_organization.png",
     "examples/03_modeling/boolean_operations": "_static/thumbnails/boolean_operations.png",
+    "examples/03_modeling/scale_map_mirror_bodies": "_static/thumbnails/scale_map_mirror_bodies.png",  # noqa: E501
+    "examples/03_modeling/sweep_chain_profile": "_static/thumbnails/sweep_chain_profile.png",
 }
 nbsphinx_epilog = """
 ----
@@ -263,6 +265,8 @@ linkcheck_exclude_documents = ["index", "getting_started/local/index", "assets"]
 linkcheck_ignore = [
     r"https://github.com/ansys/pyansys-geometry-binaries/.*",
     r"https://download.ansys.com/",
+    r".*/examples/.*.py",
+    r".*/examples/.*.ipynb",
 ]
 
 # -- Declare the Jinja context -----------------------------------------------
