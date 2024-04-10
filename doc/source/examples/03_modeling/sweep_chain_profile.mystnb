@@ -12,18 +12,25 @@ kernelspec:
 ---
 
 # Design: Sweep chain and sweep sketch
-This notebook shows how use the `sweep_sketch()` and `sweep_chain()` functions to create more complex extrusion profiles. You use the `sweep_sketch()` function with a closed sketch profile and the `sweep_chain()` function for an open profile.
+
+This example shows how use the ``sweep_sketch()`` and ``sweep_chain()``
+functions to create more complex extrusion profiles. You use the ``sweep_sketch()``
+function with a closed sketch profile and the ``sweep_chain()`` function for an open profile.
 
 ```{code-cell} ipython3
 # Imports
 import numpy as np
+
 from ansys.geometry.core import Modeler
-from ansys.geometry.core.math.point import Point2D, Point3D
-from ansys.geometry.core.shapes.curves.circle import Circle
-from ansys.geometry.core.shapes.parameterization import Interval
-from ansys.geometry.core.sketch.sketch import Sketch
-from ansys.geometry.core.math.plane import Plane
-from ansys.geometry.core.shapes.curves.ellipse import Ellipse
+from ansys.geometry.core.math import (
+   Plane,
+   Point2D,
+   Point3D,
+   UNITVECTOR3D_X,
+   UNITVECTOR3D_Y,
+   UNITVECTOR3D_Z,
+)
+from ansys.geometry.core.shapes import Circle, Ellipse, Interval
 ```
 
 ```{code-cell} ipython3
@@ -33,7 +40,11 @@ m = Modeler()
 
 ## Example: Creating a donut
 
-The following code snippets show how to use the `sweep_sketch()` function to create a 3D donut shape in the `design.py` file. The process involves initializing a sketch design for the donut, defining two circles for the profile and path, and then performing a sweep operation to generate the donut shape.
+The following code snippets show how to use the `sweep_sketch()` function to create a 3D donut
+shape in the ``Design`` object. The process involves initializing a sketch design for the donut,
+defining two circles for the profile and path, and then performing a sweep operation to generate
+the donut shape.
+
 1. **Initialize the donut sketch design:**
    - A new design sketch named "donut" is created.
 
@@ -43,8 +54,10 @@ design_sketch = m.create_design("donut")
 ```
 
 2. **Define circle parameters:**
-   - `path_radius` is set to 5 units, representing the radius of the circular path that the profile circle sweeps along.
-   - `profile_radius` is set to 2 units, representing the radius of the profile circle that sweeps along the path to create the donut body.
+   - ``path_radius`` is set to 5 units, representing the radius of the circular path that the profile
+     circle sweeps along.
+   - ``profile_radius`` is set to 2 units, representing the radius of the profile circle that sweeps
+     along the path to create the donut body.
 
 ```{code-cell} ipython3
 # Donut parameters
@@ -53,18 +66,21 @@ profile_radius = 2
 ```
 
 3. **Create the profile circle:**
-   - A circle is created on the XZ-plane centered at the coordinates (5, 0, 0) with a radius defined by `profile_radius`. This circle serves as the profile or cross-sectional shape of the donut.
+   - A circle is created on the XZ-plane centered at the coordinates (5, 0, 0) with a radius
+     defined by ``profile_radius``. This circle serves as the profile or cross-sectional
+     shape of the donut.
 
 ```{code-cell} ipython3
 # Create the circlular profile on the XZ-plane centered at (5, 0, 0) with a radius of 2
-profile = Sketch(plane=Plane(direction_x=[1, 0, 0], direction_y=[0, 0, 1])).circle(
+profile = Sketch(plane=Plane(direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z)).circle(
     Point2D([path_radius, 0]), profile_radius
 )
 profile.plot()
 ```
 
 4. **Create the path circle:**
-   - Another circle, representing the path along which the profile circle is swept, is created on the XY-plane centered at (0, 0, 0). The radius of this circle is defined by `path_radius`.
+   - Another circle, representing the path along which the profile circle is swept, is created on
+     the XY-plane centered at (0, 0, 0). The radius of this circle is defined by ``path_radius``.
 
 ```{code-cell} ipython3
 # Create the circlular path on the XY-plane centered at (0, 0, 0) with radius 5
@@ -72,17 +88,21 @@ path = [Circle(Point3D([0, 0, 0]), path_radius).trim(Interval(0, 2 * np.pi))]
 ```
 
 5. **Perform the sweep operation:**
-   - The sweep operation uses the profile circle and sweeps it along the path circle to create the 3D body of the donut. The result is stored in the variable `body`.
+   - The sweep operation uses the profile circle and sweeps it along the path circle to create the
+     3D body of the donut. The result is stored in the variable ``body``.
 
 ```{code-cell} ipython3
 # Perform the sweep and examine the final body created
 body = design_sketch.sweep_sketch("donutsweep", profile, path)
+
 design_sketch.plot()
 ```
 
-## Example: Creating a Bowl
+## Example: Creating a bowl
 
-This code demonstrates the process of using the `sweep_chain()` function to create a 3D model of a stretched bowl in the `design.py` file. The model is generated by defining a quarter-ellipse as a profile and sweeping it along a circular path, creating a bowl shape with a stretched profile.
+This code demonstrates the process of using the ``sweep_chain()`` function to create a 3D model
+of a stretched bowl in the ``Design`` object. The model is generated by defining a quarter-ellipse
+as a profile and sweeping it along a circular path, creating a bowl shape with a stretched profile.
 
 1. **Initialize the bowl design:**
    - A design chain named "bowl" is created to initiate the bowl design process.
@@ -93,7 +113,7 @@ design_chain = m.create_design("bowl")
 ```
 
 2. **Define parameters:**
-   - `radius` is set to 10 units, used for both the profile and path definitions.
+   - ``radius`` is set to 10 units, used for both the profile and path definitions.
 
 ```{code-cell} ipython3
 # Define the radius parameter
@@ -101,19 +121,29 @@ radius = 10
 ```
 
 3. **Create the profile shape:**
-   - A quarter-ellipse profile is created with a major radius equal to 10 units and a minor radius equal to 5 units. The ellipse is defined in a 3D space with a specific orientation and then trimmed to a quarter using an interval from 0 to π/2 radians. This profile shapes the bowl's side.
+   - A quarter-ellipse profile is created with a major radius equal to 10 units and a
+     minor radius equal to 5 units. The ellipse is defined in a 3D space with a specific
+     orientation and then trimmed to a quarter using an interval from 0 to pi/2 radians.
+     This profile shapes the bowl's side.
 
 ```{code-cell} ipython3
 # Create quarter-ellipse profile with major radius = 10, minor radius = 5
 profile = [
-    Ellipse(
-        Point3D([0, 0, radius / 2]), radius, radius / 2, reference=[1, 0, 0], axis=[0, 1, 0]
-    ).trim(Interval(0, np.pi / 2))
+   Ellipse(
+       Point3D([0, 0, radius / 2]),
+       radius,
+       radius / 2,
+       reference=UNITVECTOR3D_X,
+       axis=UNITVECTOR3D_Y,
+   ).trim(Interval(0, np.pi / 2))
 ]
 ```
 
 4. **Create the path:**
-   - A circular path is created, positioned parallel to the XY-plane but shifted upwards by 5 units (half the major radius). The circle has a radius of 10 units and is trimmed to form a complete loop with an interval from 0 to 2π radians. This path defines the sweeping trajectory for the profile to create the bowl.
+   - A circular path is created, positioned parallel to the XY-plane but shifted upwards
+     by 5 units (half the major radius). The circle has a radius of 10 units and is trimmed
+     to form a complete loop with an interval from 0 to 2π radians. This path defines the
+     sweeping trajectory for the profile to create the bowl.
 
 ```{code-cell} ipython3
 # Create circle on the plane parallel to the XY-plane but moved up by 5 units with radius 10
@@ -121,14 +151,13 @@ path = [Circle(Point3D([0, 0, radius / 2]), radius).trim(Interval(0, 2 * np.pi))
 ```
 
 5. **Perform the sweep operation:**
-   - The bowl body is generated by sweeping the quarter-ellipse profile along the circular path. The sweep operation molds the profile shape along the path to form the stretched bowl. The result of this operation is stored in the variable `body`.
+   - The bowl body is generated by sweeping the quarter-ellipse profile along the circular path.
+     The sweep operation molds the profile shape along the path to form the stretched bowl. The
+     result of this operation is stored in the variable ``body``.
 
 ```{code-cell} ipython3
 # Create the bowl body
 body = design_chain.sweep_chain("bowlsweep", path, profile)
+
 design_chain.plot()
-```
-
-```{code-cell} ipython3
-
 ```
