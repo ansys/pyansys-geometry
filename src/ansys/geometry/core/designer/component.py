@@ -702,13 +702,13 @@ class Component:
         Parameters
         ----------
         name : str
-            Name of the created lofted body.
+            Name of the lofted body.
         profiles : List[List[TrimmedCurve]]
             Collection of lists of trimmed curves (profiles) defining the lofted body's shape.
-        periodic : bool
-            Determines whether the lofted body should have periodic continuity.
+        periodic : bool, default: False
+            Whether the lofted body should have periodic continuity.
         ruled : bool
-            Determines whether the lofted body should be ruled.
+            Whether the lofted body should be ruled.
 
         Returns
         -------
@@ -723,19 +723,19 @@ class Component:
         produced.
         Profiles should be all closed or all open. Closed profiles cannot contain inner
         loops. If closed profiles are supplied, a closed (solid) body is produced, if
-        possible; otherwise an open (sheet) body is produced.
+        possible. Otherwise, an open (sheet) body is produced.
         The periodic argument applies when the profiles are closed. It is ignored if
         the profiles are open.
 
-        If periodic is true, at least three profiles must be supplied. The loft continues
+        If ``periodic=True``, at least three profiles must be supplied. The loft continues
         from the last profile back to the first profile to produce surfaces that are
         periodic in V.
 
-        If periodic is false, at least two profiles must be supplied. If the first
-        and last profiles are planar, end capping faces are created; otherwise an open
+        If ``periodic=False``, at least two profiles must be supplied. If the first
+        and last profiles are planar, end capping faces are created. Otherwise, an open
         (sheet) body is produced.
-        If ruled is true, separate ruled surfaces are produced between each pair of profiles.
-        If periodic is true, the loft continues from the last profile back to the first
+        If ``ruled=True``, separate ruled surfaces are produced between each pair of profiles.
+        If ``periodic=True``, the loft continues from the last profile back to the first
         profile, but the surfaces are not periodic.
         """
         profiles_grpc = [

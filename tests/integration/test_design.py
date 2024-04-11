@@ -2268,7 +2268,7 @@ def test_sweep_chain(modeler: Modeler):
 
 
 def test_create_body_from_loft_profile(modeler: Modeler):
-    """Test the create_body_from_loft_profile method to create a vase shape."""
+    """Test the ``create_body_from_loft_profile()`` method to create a vase shape."""
     skip_if_linux(modeler)
     design_sketch = modeler.create_design("loftprofile")
 
