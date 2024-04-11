@@ -66,6 +66,10 @@ class GeometryContainers(Enum):
     LINUX_LATEST = 1, "linux", "linux-latest"
     WINDOWS_LATEST_UNSTABLE = 2, "windows", "windows-latest-unstable"
     LINUX_LATEST_UNSTABLE = 3, "linux", "linux-latest-unstable"
+    WINDOWS_24_1 = 4, "windows", "windows-24.1"
+    LINUX_24_1 = 5, "linux", "linux-24.1"
+    WINDOWS_24_2 = 6, "windows", "windows-24.2"
+    LINUX_24_2 = 7, "linux", "linux-24.2"
 
 
 class LocalDockerInstance:

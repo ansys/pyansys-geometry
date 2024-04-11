@@ -1027,13 +1027,22 @@ def test_project_and_imprint_curves(modeler: Modeler, skip_not_on_linux_service)
     # top face (closest one), i.e. the first one.
     assert faces[0].id == body_faces[1].id
 
+    # Verify that the surface and curve types are of the correct type - related to PR
+    # https://github.com/ansys/pyansys-geometry/pull/1096
+    assert isinstance(faces[0].surface_type, SurfaceType)
+
     # Now once the previous curves have been projected, let's try imprinting our sketch
     #
     # It should generate two additional faces to our box = 6 + 2
-    _, new_faces = body.imprint_curves(faces=faces, sketch=imprint_sketch_2)
+    new_edges, new_faces = body.imprint_curves(faces=faces, sketch=imprint_sketch_2)
 
     assert len(new_faces) == 2
     assert len(body.faces) == 8
+
+    # Verify that the surface and curve types are of the correct type - related to PR
+    # https://github.com/ansys/pyansys-geometry/pull/1096
+    assert isinstance(new_faces[0].surface_type, SurfaceType)
+    assert isinstance(new_edges[0].curve_type, CurveType)
 
     # Make sure we have occurrence faces, not master
     assert faces[0].id not in [face.id for face in body._template.faces]
