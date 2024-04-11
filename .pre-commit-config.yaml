@@ -1,17 +1,13 @@
 ci:
-    autofix_commit_msg: |
-        chore: auto fixes from pre-commit.com hooks
-
-        for more information, see https://pre-commit.ci
-    autofix_prs: true
-    autoupdate_branch: 'maint/pre-commit-autoupdate'
+    autofix_commit_msg: 'chore: auto fixes from pre-commit hooks'
     autoupdate_commit_msg: 'chore: pre-commit automatic update'
     autoupdate_schedule: weekly
+
 exclude: "tests/integration/files"
 repos:
 
 - repo: https://github.com/psf/black
-  rev: 24.2.0  # IF VERSION CHANGES --> MODIFY "blacken-docs" MANUALLY AS WELL!!
+  rev: 24.3.0  # IF VERSION CHANGES --> MODIFY "blacken-docs" MANUALLY AS WELL!!
   hooks:
   - id: black
 
@@ -19,7 +15,7 @@ repos:
   rev: 1.16.0
   hooks:
   - id: blacken-docs
-    additional_dependencies: [black==24.2.0]
+    additional_dependencies: [black==24.3.0]
 
 - repo: https://github.com/pycqa/isort
   rev: 5.13.2
@@ -51,7 +47,7 @@ repos:
     exclude: "tests/"
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.5.0
+  rev: v4.6.0
   hooks:
   - id: check-merge-conflict
   - id: debug-statements
@@ -68,6 +64,12 @@ repos:
 
 # this validates our github workflow files
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.28.0
+  rev: 0.28.1
   hooks:
     - id: check-github-workflows
+
+# this validates our pre-commit.ci configuration
+- repo: https://github.com/pre-commit-ci/pre-commit-ci-config
+  rev: v1.6.1
+  hooks:
+  -   id: check-pre-commit-ci-config
