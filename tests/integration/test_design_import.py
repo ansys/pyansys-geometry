@@ -208,7 +208,6 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
         # IGES
 
-
         file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
         design.download(file, DesignFileFormat.IGES)
         design2 = modeler.open_file(file)
