@@ -201,19 +201,18 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     if modeler.client.backend_type != BackendType.LINUX_SERVICE:
         # IGES
 
-        #file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
-        #design.download(file, DesignFileFormat.IGES)
-        #design2 = modeler.open_file(file)
-        #design3 = modeler.open_file("./tests/integration/files/import/twoCars.igs")
-        #_checker_method(design2, design3, False)        
-        
+        # file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
+        # design.download(file, DesignFileFormat.IGES)
+        # design2 = modeler.open_file(file)
+        # design3 = modeler.open_file("./tests/integration/files/import/twoCars.igs")
+        # _checker_method(design2, design3, False)
+
         # STEP
         file = tmp_path_factory.mktemp("test_design_import") / "two_cars.step"
         design.download(file, DesignFileFormat.STEP)
         design2 = modeler.open_file(file)
         design3 = modeler.open_file("./tests/integration/files/import/twoCars.stp")
         _checker_method(design2, design3, False)
-
 
         # Catia
         design2 = modeler.open_file("./tests/integration/files/import/catia_car/car.CATProduct")
