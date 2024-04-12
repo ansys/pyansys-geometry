@@ -407,9 +407,9 @@ class Modeler:
         self.client.log.debug(f"Script result message: {response.message}")
 
         if import_design:
-            return (response.values, self.read_existing_design())
+            return (dict(response.values), self.read_existing_design())
         else:
-            return response.values
+            return dict(response.values)
 
     @property
     def repair_tools(self) -> RepairTools:

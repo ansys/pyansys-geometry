@@ -22,12 +22,16 @@
 """Provides the ``Surface`` class."""
 from abc import ABC, abstractmethod
 
-from beartype.typing import Tuple
+from beartype.typing import TYPE_CHECKING, Tuple
 
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.shapes.parameterization import Parameterization, ParamUV
 from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
+
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.shapes.surfaces.trimmed_surface import TrimmedSurface
 
 
 class Surface(ABC):
@@ -75,3 +79,16 @@ class Surface(ABC):
         This method returns the evaluation at the closest point.
         """
         return
+
+    def trim(self, box_uv: BoxUV) -> "TrimmedSurface":
+        """
+        Trim this surface by bounding it with a BoxUV.
+
+        Returns
+        -------
+        TrimmedSurface
+            The resulting bounded surface.
+        """
+        from ansys.geometry.core.shapes.surfaces.trimmed_surface import TrimmedSurface
+
+        return TrimmedSurface(self, box_uv)

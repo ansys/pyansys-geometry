@@ -583,16 +583,11 @@ def trimmed_curve_to_grpc_trimmed_curve(curve: "TrimmedCurve") -> GRPCTrimmedCur
         Geometry service gRPC ``TrimmedCurve`` message.
     """
     curve_geometry = curve_to_grpc_curve(curve.geometry)
-    start = point3d_to_grpc_point(curve.start)
-    end = point3d_to_grpc_point(curve.end)
     i_start = curve.interval.start
     i_end = curve.interval.end
 
     return GRPCTrimmedCurve(
         curve=curve_geometry,
-        start=start,
-        end=end,
         interval_start=i_start,
         interval_end=i_end,
-        length=curve.length.m,
     )

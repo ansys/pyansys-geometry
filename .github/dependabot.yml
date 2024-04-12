@@ -37,7 +37,7 @@ updates:
     assignees:
       - "pyansys-ci-bot"
     commit-message:
-      prefix: "MAINT"
+      prefix: "ci"
     groups:
        actions:
           patterns:

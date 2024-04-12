@@ -28,9 +28,12 @@ from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
     CreateBodyFromFaceRequest,
     CreateExtrudedBodyFromFaceProfileRequest,
+    CreateExtrudedBodyFromLoftProfilesRequest,
     CreateExtrudedBodyRequest,
     CreatePlanarBodyRequest,
     CreateSphereBodyRequest,
+    CreateSweepingChainRequest,
+    CreateSweepingProfileRequest,
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
@@ -42,7 +45,7 @@ from ansys.api.geometry.v0.components_pb2 import (
     SetSharedTopologyRequest,
 )
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
-from ansys.api.geometry.v0.models_pb2 import Direction, Line
+from ansys.api.geometry.v0.models_pb2 import Direction, Line, TrimmedCurveList
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
@@ -53,6 +56,7 @@ from ansys.geometry.core.connection.conversions import (
     plane_to_grpc_plane,
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
+    trimmed_curve_to_grpc_trimmed_curve,
     unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.designer.beam import Beam, BeamProfile
@@ -69,6 +73,7 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -485,6 +490,104 @@ class Component:
         self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
+    @min_backend_version(24, 2, 0)
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    def sweep_sketch(
+        self,
+        name: str,
+        sketch: Sketch,
+        path: List[TrimmedCurve],
+    ) -> Body:
+        """
+        Create a body by sweeping a planar profile along a path.
+
+        Notes
+        -----
+        The newly created body is placed under this component within the design assembly.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the new solid body.
+        sketch : Sketch
+            Two-dimensional sketch source for the extrusion.
+        path : List[TrimmedCurve]
+            The path to sweep the profile along.
+
+        Returns
+        -------
+        Body
+            Created body from the given sketch.
+        """
+        # Convert each ``TrimmedCurve`` in path to equivalent gRPC type
+        path_grpc = []
+        for tc in path:
+            path_grpc.append(trimmed_curve_to_grpc_trimmed_curve(tc))
+
+        request = CreateSweepingProfileRequest(
+            name=name,
+            parent=self.id,
+            plane=plane_to_grpc_plane(sketch._plane),
+            geometries=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
+            path=path_grpc,
+        )
+
+        self._grpc_client.log.debug(f"Creating a sweeping profile on {self.id}. Creating body...")
+        response = self._bodies_stub.CreateSweepingProfile(request)
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
+        self._master_component.part.bodies.append(tb)
+        return Body(response.id, response.name, self, tb)
+
+    @min_backend_version(24, 2, 0)
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    def sweep_chain(
+        self,
+        name: str,
+        path: List[TrimmedCurve],
+        chain: List[TrimmedCurve],
+    ) -> Body:
+        """
+        Create a body by sweeping a chain of curves along a path.
+
+        Notes
+        -----
+        The newly created body is placed under this component within the design assembly.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the new solid body.
+        path : List[TrimmedCurve]
+            The path to sweep the chain along.
+        chain : List[TrimmedCurve]
+            A chain of trimmed curves.
+
+        Returns
+        -------
+        Body
+            Created body from the given sketch.
+        """
+        # Convert each ``TrimmedCurve`` in path and chain to equivalent gRPC types
+        path_grpc = [trimmed_curve_to_grpc_trimmed_curve(tc) for tc in path]
+        chain_grpc = [trimmed_curve_to_grpc_trimmed_curve(tc) for tc in chain]
+
+        request = CreateSweepingChainRequest(
+            name=name,
+            parent=self.id,
+            path=path_grpc,
+            chain=chain_grpc,
+        )
+
+        self._grpc_client.log.debug(f"Creating a sweeping chain on {self.id}. Creating body...")
+        response = self._bodies_stub.CreateSweepingChain(request)
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
+        self._master_component.part.bodies.append(tb)
+        return Body(response.id, response.name, self, tb)
+
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
@@ -578,6 +681,73 @@ class Component:
         )
         self._grpc_client.log.debug(f"Creating a sphere body on {self.id} .")
         response = self._bodies_stub.CreateSphereBody(request)
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
+        self._master_component.part.bodies.append(tb)
+        return Body(response.id, response.name, self, tb)
+
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(24, 2, 0)
+    def create_body_from_loft_profile(
+        self,
+        name: str,
+        profiles: List[List[TrimmedCurve]],
+        periodic: bool = False,
+        ruled: bool = False,
+    ) -> Body:
+        """
+        Create a lofted body from a collection of trimmed curves.
+
+        Parameters
+        ----------
+        name : str
+            Name of the lofted body.
+        profiles : List[List[TrimmedCurve]]
+            Collection of lists of trimmed curves (profiles) defining the lofted body's shape.
+        periodic : bool, default: False
+            Whether the lofted body should have periodic continuity.
+        ruled : bool
+            Whether the lofted body should be ruled.
+
+        Returns
+        -------
+        Body
+            Created lofted body object.
+
+        Notes
+        -----
+        Surfaces produced have a U parameter in the direction of the profile curves,
+        and a V parameter in the direction of lofting.
+        Profiles can have different numbers of segments. A minimum twist solution is
+        produced.
+        Profiles should be all closed or all open. Closed profiles cannot contain inner
+        loops. If closed profiles are supplied, a closed (solid) body is produced, if
+        possible. Otherwise, an open (sheet) body is produced.
+        The periodic argument applies when the profiles are closed. It is ignored if
+        the profiles are open.
+
+        If ``periodic=True``, at least three profiles must be supplied. The loft continues
+        from the last profile back to the first profile to produce surfaces that are
+        periodic in V.
+
+        If ``periodic=False``, at least two profiles must be supplied. If the first
+        and last profiles are planar, end capping faces are created. Otherwise, an open
+        (sheet) body is produced.
+        If ``ruled=True``, separate ruled surfaces are produced between each pair of profiles.
+        If ``periodic=True``, the loft continues from the last profile back to the first
+        profile, but the surfaces are not periodic.
+        """
+        profiles_grpc = [
+            TrimmedCurveList(curves=[trimmed_curve_to_grpc_trimmed_curve(tc) for tc in profile])
+            for profile in profiles
+        ]
+
+        request = CreateExtrudedBodyFromLoftProfilesRequest(
+            name=name, parent=self.id, profiles=profiles_grpc, periodic=periodic, ruled=ruled
+        )
+        self._grpc_client.log.debug(f"Creating a loft profile body on {self.id} .")
+        response = self._bodies_stub.CreateExtrudedBodyFromLoftProfiles(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)

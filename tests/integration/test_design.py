@@ -55,7 +55,9 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Distance
-from ansys.geometry.core.shapes.parameterization import ParamUV
+from ansys.geometry.core.shapes.curves.circle import Circle
+from ansys.geometry.core.shapes.curves.ellipse import Ellipse
+from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.sketch import Sketch
 
 
@@ -1024,13 +1026,22 @@ def test_project_and_imprint_curves(modeler: Modeler, skip_not_on_linux_service)
     # top face (closest one), i.e. the first one.
     assert faces[0].id == body_faces[1].id
 
+    # Verify that the surface and curve types are of the correct type - related to PR
+    # https://github.com/ansys/pyansys-geometry/pull/1096
+    assert isinstance(faces[0].surface_type, SurfaceType)
+
     # Now once the previous curves have been projected, let's try imprinting our sketch
     #
     # It should generate two additional faces to our box = 6 + 2
-    _, new_faces = body.imprint_curves(faces=faces, sketch=imprint_sketch_2)
+    new_edges, new_faces = body.imprint_curves(faces=faces, sketch=imprint_sketch_2)
 
     assert len(new_faces) == 2
     assert len(body.faces) == 8
+
+    # Verify that the surface and curve types are of the correct type - related to PR
+    # https://github.com/ansys/pyansys-geometry/pull/1096
+    assert isinstance(new_faces[0].surface_type, SurfaceType)
+    assert isinstance(new_edges[0].curve_type, CurveType)
 
     # Make sure we have occurrence faces, not master
     assert faces[0].id not in [face.id for face in body._template.faces]
@@ -1986,10 +1997,6 @@ def test_body_mapping(modeler: Modeler):
 
     # expected vertices from confirmed mirror
     expected_vertices = [
-        Point3D([-5.0, -1.0, 0.0]),
-        Point3D([-5.0, 1.0, 0.0]),
-        Point3D([-5.0, -1.0, 1.0]),
-        Point3D([-5.0, -1.0, 0.0]),
         Point3D([-3.0, -1.0, 0.0]),
         Point3D([-5.0, -1.0, 0.0]),
         Point3D([-3.0, -1.0, 1.0]),
@@ -2006,8 +2013,10 @@ def test_body_mapping(modeler: Modeler):
         Point3D([-3.0, 1.0, 0.0]),
         Point3D([-5.0, 1.0, 1.0]),
         Point3D([-5.0, 1.0, 0.0]),
+        Point3D([-5.0, -1.0, 0.0]),
+        Point3D([-5.0, 1.0, 0.0]),
         Point3D([-5.0, -1.0, 1.0]),
-        Point3D([-5.0, 1.0, 1.0]),
+        Point3D([-5.0, -1.0, 0.0]),
         Point3D([-3.0, -1.0, 1.0]),
         Point3D([-5.0, -1.0, 1.0]),
         Point3D([-4.0, 0.5, 1.0]),
@@ -2016,6 +2025,8 @@ def test_body_mapping(modeler: Modeler):
         Point3D([-4.0, 0.5, 1.0]),
         Point3D([-5.0, 1.0, 1.0]),
         Point3D([-3.0, 1.0, 1.0]),
+        Point3D([-5.0, -1.0, 1.0]),
+        Point3D([-5.0, 1.0, 1.0]),
     ]
 
     assert np.allclose(expected_vertices, copy_vertices)
@@ -2077,24 +2088,24 @@ def test_body_mirror(modeler: Modeler):
 
     # results from SpaceClaim
     expected_vertices = [
-        Point3D([3, -1, 1]),
-        Point3D([3, -1, 0]),
-        Point3D([5, -1, 1]),
-        Point3D([5, -1, 0]),
-        Point3D([4, 0.5, 1]),
-        Point3D([4, 0.5, 0]),
-        Point3D([5, 1, 1]),
-        Point3D([5, 1, 0]),
-        Point3D([3, 1, 1]),
-        Point3D([3, 1, 0]),
-        Point3D([3.55, 0.55, 1.1]),
-        Point3D([3.55, 0.55, 1]),
-        Point3D([3.45, 0.55, 1.1]),
-        Point3D([3.45, 0.55, 1]),
-        Point3D([3.45, 0.45, 1.1]),
-        Point3D([3.45, 0.45, 1]),
+        Point3D([5.0, -1.0, 1.0]),
+        Point3D([5.0, -1.0, 0.0]),
+        Point3D([4.0, 0.5, 1.0]),
+        Point3D([4.0, 0.5, 0.0]),
+        Point3D([5.0, 1.0, 1.0]),
+        Point3D([5.0, 1.0, 0.0]),
+        Point3D([3.0, 1.0, 1.0]),
+        Point3D([3.0, 1.0, 0.0]),
+        Point3D([3.0, -1.0, 1.0]),
+        Point3D([3.0, -1.0, 0.0]),
         Point3D([3.55, 0.45, 1.1]),
-        Point3D([3.55, 0.45, 1]),
+        Point3D([3.55, 0.45, 1.0]),
+        Point3D([3.55, 0.55, 1.1]),
+        Point3D([3.55, 0.55, 1.0]),
+        Point3D([3.45, 0.55, 1.1]),
+        Point3D([3.45, 0.55, 1.0]),
+        Point3D([3.45, 0.45, 1.1]),
+        Point3D([3.45, 0.45, 1.0]),
     ]
 
     copy_vertices = []
@@ -2109,24 +2120,24 @@ def test_body_mirror(modeler: Modeler):
 
     # results from SpaceClaim
     expected_vertices = [
-        Point3D([1, -1, -11]),
-        Point3D([1, -1, -10]),
-        Point3D([-1, -1, -11]),
-        Point3D([-1, -1, -10]),
-        Point3D([0, 0.5, -11]),
-        Point3D([0, 0.5, -10]),
-        Point3D([-1, 1, -11]),
-        Point3D([-1, 1, -10]),
-        Point3D([1, 1, -11]),
-        Point3D([1, 1, -10]),
-        Point3D([0.45, 0.55, -11.1]),
-        Point3D([0.45, 0.55, -11]),
-        Point3D([0.55, 0.55, -11.1]),
-        Point3D([0.55, 0.55, -11]),
-        Point3D([0.55, 0.45, -11.1]),
-        Point3D([0.55, 0.45, -11]),
+        Point3D([-1.0, -1.0, -11.0]),
+        Point3D([-1.0, -1.0, -10.0]),
+        Point3D([0.0, 0.5, -11.0]),
+        Point3D([0.0, 0.5, -10.0]),
+        Point3D([-1.0, 1.0, -11.0]),
+        Point3D([-1.0, 1.0, -10.0]),
+        Point3D([1.0, 1.0, -11.0]),
+        Point3D([1.0, 1.0, -10.0]),
+        Point3D([1.0, -1.0, -11.0]),
+        Point3D([1.0, -1.0, -10.0]),
         Point3D([0.45, 0.45, -11.1]),
-        Point3D([0.45, 0.45, -11]),
+        Point3D([0.45, 0.45, -11.0]),
+        Point3D([0.45, 0.55, -11.1]),
+        Point3D([0.45, 0.55, -11.0]),
+        Point3D([0.55, 0.55, -11.1]),
+        Point3D([0.55, 0.55, -11.0]),
+        Point3D([0.55, 0.45, -11.1]),
+        Point3D([0.55, 0.45, -11.0]),
     ]
 
     copy_vertices = []
@@ -2141,24 +2152,24 @@ def test_body_mirror(modeler: Modeler):
 
     # results from SpaceClaim
     expected_vertices = [
-        Point3D([1, 7, 1]),
-        Point3D([1, 7, 0]),
-        Point3D([-1, 7, 1]),
-        Point3D([-1, 7, 0]),
-        Point3D([0, 5.5, 1]),
-        Point3D([0, 5.5, 0]),
-        Point3D([-1, 5, 1]),
-        Point3D([-1, 5, 0]),
-        Point3D([1, 5, 1]),
-        Point3D([1, 5, 0]),
-        Point3D([0.45, 5.45, 1.1]),
-        Point3D([0.45, 5.45, 1]),
-        Point3D([0.55, 5.45, 1.1]),
-        Point3D([0.55, 5.45, 1]),
-        Point3D([0.55, 5.55, 1.1]),
-        Point3D([0.55, 5.55, 1]),
+        Point3D([-1.0, 7.0, 1.0]),
+        Point3D([-1.0, 7.0, 0.0]),
+        Point3D([0.0, 5.5, 1.0]),
+        Point3D([0.0, 5.5, 0.0]),
+        Point3D([-1.0, 5.0, 1.0]),
+        Point3D([-1.0, 5.0, 0.0]),
+        Point3D([1.0, 5.0, 1.0]),
+        Point3D([1.0, 5.0, 0.0]),
+        Point3D([1.0, 7.0, 1.0]),
+        Point3D([1.0, 7.0, 0.0]),
         Point3D([0.45, 5.55, 1.1]),
-        Point3D([0.45, 5.55, 1]),
+        Point3D([0.45, 5.55, 1.0]),
+        Point3D([0.45, 5.45, 1.1]),
+        Point3D([0.45, 5.45, 1.0]),
+        Point3D([0.55, 5.45, 1.1]),
+        Point3D([0.55, 5.45, 1.0]),
+        Point3D([0.55, 5.55, 1.1]),
+        Point3D([0.55, 5.55, 1.0]),
     ]
 
     copy_vertices = []
@@ -2166,3 +2177,112 @@ def test_body_mirror(modeler: Modeler):
         if edge.shape.start not in copy_vertices:
             copy_vertices.append(edge.shape.start)
     assert np.allclose(expected_vertices, copy_vertices)
+
+
+def test_sweep_sketch(modeler: Modeler):
+    """Test revolving a circle profile around a circular axis to make a donut."""
+
+    skip_if_linux(modeler)
+    design_sketch = modeler.create_design("donut")
+
+    path_radius = 5
+    profile_radius = 2
+
+    # create a circle on the XZ-plane centered at (5, 0, 0) with radius 2
+    profile = Sketch(plane=Plane(direction_x=[1, 0, 0], direction_y=[0, 0, 1])).circle(
+        Point2D([path_radius, 0]), profile_radius
+    )
+
+    # create a circle on the XY-plane centered at (0, 0, 0) with radius 5
+    path = [Circle(Point3D([0, 0, 0]), path_radius).trim(Interval(0, 2 * np.pi))]
+
+    body = design_sketch.sweep_sketch("donutsweep", profile, path)
+
+    assert body.is_surface == False
+
+    # check edges
+    assert len(body.edges) == 0
+
+    # check faces
+    assert len(body.faces) == 1
+
+    # check area of face
+    # compute expected area (torus with r < R) where r2 is inner radius and r1 is outer radius
+    r1 = path_radius + profile_radius
+    r2 = path_radius - profile_radius
+    expected_face_area = (np.pi**2) * (r1**2 - r2**2)
+    assert body.faces[0].area.m == pytest.approx(expected_face_area)
+
+    assert Accuracy.length_is_equal(body.volume.m, 394.7841760435743)
+
+
+def test_sweep_chain(modeler: Modeler):
+    """Test revolving a semi-elliptical profile around a circular axis to make a
+    bowl."""
+
+    skip_if_linux(modeler)
+    design_chain = modeler.create_design("bowl")
+
+    radius = 10
+
+    # create quarter-ellipse profile with major radius = 10, minor radius = 5
+    profile = [
+        Ellipse(
+            Point3D([0, 0, radius / 2]), radius, radius / 2, reference=[1, 0, 0], axis=[0, 1, 0]
+        ).trim(Interval(0, np.pi / 2))
+    ]
+
+    # create circle on the plane parallel to the XY-plane but moved up by 5 units with radius 10
+    path = [Circle(Point3D([0, 0, radius / 2]), radius).trim(Interval(0, 2 * np.pi))]
+
+    # create the bowl body
+    body = design_chain.sweep_chain("bowlsweep", path, profile)
+
+    assert body.is_surface == True
+
+    # check edges
+    assert len(body.edges) == 1
+
+    # check length of edge
+    # compute expected circumference (circle with radius 10)
+    expected_edge_cirumference = 2 * np.pi * 10
+    assert body.edges[0].length.m == pytest.approx(expected_edge_cirumference)
+
+    # check faces
+    assert len(body.faces) == 1
+
+    # check area of face
+    # compute expected area (half a spheroid)
+    minor_rad = radius / 2
+    e_squared = 1 - (minor_rad**2 / radius**2)
+    e = np.sqrt(e_squared)
+    expected_face_area = (
+        2 * np.pi * radius**2 + (minor_rad**2 / e) * np.pi * np.log((1 + e) / (1 - e))
+    ) / 2
+    assert body.faces[0].area.m == pytest.approx(expected_face_area)
+
+    # check volume of body
+    # expected is 0 since it's not a closed surface
+    assert body.volume.m == 0
+
+
+def test_create_body_from_loft_profile(modeler: Modeler):
+    """Test the ``create_body_from_loft_profile()`` method to create a vase shape."""
+    skip_if_linux(modeler)
+    design_sketch = modeler.create_design("loftprofile")
+
+    profile1 = Circle(origin=[0, 0, 0], radius=8).trim(Interval(0, 2 * np.pi))
+    profile2 = Circle(origin=[0, 0, 10], radius=10).trim(Interval(0, 2 * np.pi))
+    profile3 = Circle(origin=[0, 0, 20], radius=5).trim(Interval(0, 2 * np.pi))
+
+    # Call the method
+    result = design_sketch.create_body_from_loft_profile(
+        "vase", [[profile1], [profile2], [profile3]], False, False
+    )
+
+    # Assert that the resulting body has only one face.
+    assert len(result.faces) == 1
+
+    # check volume of body
+    # expected is 0 since it's not a closed surface
+    assert result.volume.m == 0
