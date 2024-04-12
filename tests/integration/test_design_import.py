@@ -200,7 +200,9 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     # Test HOOPS formats (Windows only)
     if modeler.client.backend_type != BackendType.LINUX_SERVICE:
         # IGES
-
+        #
+        # TODO: Something has gone wrong with IGES
+        # TODO: Issue https://github.com/ansys/pyansys-geometry/issues/801
         # file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
         # design.download(file, DesignFileFormat.IGES)
         # design2 = modeler.open_file(file)
