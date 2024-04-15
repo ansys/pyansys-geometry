@@ -2264,7 +2264,7 @@ def test_sweep_chain(modeler: Modeler):
 
 def test_create_body_from_loft_profile(modeler: Modeler):
     """Test the ``create_body_from_loft_profile()`` method to create a vase shape."""
-    skip_if_linux(modeler)
+    skip_if_linux(modeler, "'create_body_from_loft_profile'")
     design_sketch = modeler.create_design("loftprofile")
 
     profile1 = Circle(origin=[0, 0, 0], radius=8).trim(Interval(0, 2 * np.pi))
