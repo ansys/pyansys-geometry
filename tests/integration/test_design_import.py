@@ -33,6 +33,8 @@ from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vect
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 
+from .conftest import skip_if_linux
+
 
 def _checker_method(comp: Component, comp_ref: Component, precise_check: bool = True) -> None:
     # Check component features
@@ -245,6 +247,9 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 def test_design_insert(modeler: Modeler):
     """Test inserting a file into the design."""
 
+    # Skip for Linux service
+    skip_if_linux(modeler, "'insert_file'")
+
     # Create a design and sketch a circle
     design = modeler.create_design("Insert")
     sketch = Sketch()
@@ -264,6 +269,10 @@ def test_design_insert(modeler: Modeler):
 def test_design_insert_with_import(modeler: Modeler):
     """Test inserting a file into the design through the external format import
     process."""
+
+    # Skip for Linux service
+    skip_if_linux(modeler, "'insert_file'")
+
     # Create a design and sketch a circle
     design = modeler.create_design("Insert")
     sketch = Sketch()

@@ -21,19 +21,11 @@
 # SOFTWARE.
 """"Testing of measurement tools."""
 
-import pytest
-
-from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.tools.measurement_tools import Gap
 
-
-# TODO: re-enable when Linux service is able to use measurement tools
-def skip_if_linux(modeler: Modeler):
-    """Skip test if running on Linux."""
-    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
-        pytest.skip("Measurement tools not available on Linux service.")
+from .conftest import skip_if_linux
 
 
 def test_distance_property(modeler: Modeler):
@@ -44,7 +36,7 @@ def test_distance_property(modeler: Modeler):
 
 def test_min_distance_between_objects(modeler: Modeler):
     """Test if split edge problem areas are detectable."""
-    skip_if_linux(modeler)  # Skip test on Linux
+    skip_if_linux(modeler, "'measurement_tools'")  # Skip test on Linux
     design = modeler.open_file("./tests/integration/files/MixingTank.scdocx")
     gap = modeler.measurement_tools.min_distance_between_objects(design.bodies[2], design.bodies[1])
     assert abs(gap.distance._value - 0.0892) <= 0.01

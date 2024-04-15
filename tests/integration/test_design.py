@@ -60,12 +60,7 @@ from ansys.geometry.core.shapes.curves.ellipse import Ellipse
 from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.sketch import Sketch
 
-
-# TODO: re-enable when Linux service is able to use measurement tools
-def skip_if_linux(modeler: Modeler):
-    """Skip test if running on Linux."""
-    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
-        pytest.skip("Measurement tools not available on Linux service.")
+from .conftest import skip_if_linux
 
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):
@@ -1932,7 +1927,7 @@ def test_get_active_design(modeler: Modeler):
 
 def test_get_collision(modeler: Modeler):
     """Test the collision state between two bodies."""
-    skip_if_linux(modeler)  # Skip test on Linux
+    skip_if_linux(modeler, "'get_collision'")  # Skip test on Linux
     design = modeler.open_file("./tests/integration/files/MixingTank.scdocx")
     body1 = design.bodies[0]
     body2 = design.bodies[1]
@@ -1959,7 +1954,7 @@ def test_body_scale(modeler: Modeler):
 
 def test_body_mapping(modeler: Modeler):
     """Verify the correct mapping of a body."""
-    skip_if_linux(modeler)
+    skip_if_linux(modeler, "'map'")
     design = modeler.create_design("BodyMap_Test")
 
     # non-symmetric shape to allow determination of mirroring
@@ -2052,7 +2047,7 @@ def test_body_mapping(modeler: Modeler):
 
 def test_sphere_creation(modeler: Modeler):
     """Test the creation of a sphere body with a given radius."""
-    skip_if_linux(modeler)
+    skip_if_linux(modeler, "'create_sphere'")
     design = modeler.create_design("Spheretest")
     center_point = Point3D([10, 10, 10], UNITS.m)
     radius = Distance(1, UNITS.m)
@@ -2064,7 +2059,7 @@ def test_sphere_creation(modeler: Modeler):
 
 def test_body_mirror(modeler: Modeler):
     """Test the mirroring of a body."""
-    skip_if_linux(modeler)
+    skip_if_linux(modeler, "'mirror'")
     design = modeler.create_design("Design1")
 
     # Create shape with no lines of symmetry in any axis
@@ -2183,7 +2178,7 @@ def test_body_mirror(modeler: Modeler):
 def test_sweep_sketch(modeler: Modeler):
     """Test revolving a circle profile around a circular axis to make a donut."""
 
-    skip_if_linux(modeler)
+    skip_if_linux(modeler, "'sweep_sketch'")
     design_sketch = modeler.create_design("donut")
 
     path_radius = 5
@@ -2221,7 +2216,7 @@ def test_sweep_chain(modeler: Modeler):
     """Test revolving a semi-elliptical profile around a circular axis to make a
     bowl."""
 
-    skip_if_linux(modeler)
+    skip_if_linux(modeler, "'sweep_chain'")
     design_chain = modeler.create_design("bowl")
 
     radius = 10
