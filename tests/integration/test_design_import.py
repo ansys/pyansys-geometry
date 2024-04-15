@@ -132,18 +132,19 @@ def test_design_import_with_surfaces_issue834(modeler: Modeler):
     For more info see https://github.com/ansys/pyansys-geometry/issues/834
     """
     # TODO: to be reactivated by https://github.com/ansys/pyansys-geometry/issues/799
-    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
-        # Open the design
-        design = modeler.open_file("./tests/integration/files/DuplicateFacesDesignBefore.scdocx")
+    skip_if_linux(modeler, "'open_file'")
 
-        # Check that there are two bodies
-        assert len(design.bodies) == 2
+    # Open the design
+    design = modeler.open_file("./tests/integration/files/DuplicateFacesDesignBefore.scdocx")
 
-        # Check some basic properties - whether they are surfaces or not!
-        assert design.bodies[0].name == "BoxBody"
-        assert design.bodies[0].is_surface == False
-        assert design.bodies[1].name == "DuplicatesSurface"
-        assert design.bodies[1].is_surface == True
+    # Check that there are two bodies
+    assert len(design.bodies) == 2
+
+    # Check some basic properties - whether they are surfaces or not!
+    assert design.bodies[0].name == "BoxBody"
+    assert design.bodies[0].is_surface == False
+    assert design.bodies[1].name == "DuplicatesSurface"
+    assert design.bodies[1].is_surface == True
 
 
 @pytest.mark.skip(reason="Get the OpenSSL GeometryService through before fixing hoops")
