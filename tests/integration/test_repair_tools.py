@@ -45,7 +45,9 @@ def test_find_split_edge_id(modeler: Modeler):
 
 def test_find_split_edge_edges(modeler: Modeler):
     """Test to find split edge problem areas with the connected edges."""
-    skip_if_linux(modeler, test_find_split_edge_edges.__name__, "repair_tools")  # Skip test on Linux
+    skip_if_linux(
+        modeler, test_find_split_edge_edges.__name__, "repair_tools"
+    )  # Skip test on Linux
     design = modeler.open_file("./tests/integration/files/SplitEdgeDesignTest.scdocx")
     problem_areas = modeler.repair_tools.find_split_edges(design.bodies, 25, 150)
     assert len(problem_areas[0].edges) > 0
@@ -79,7 +81,9 @@ def test_find_extra_edge_id(modeler: Modeler):
 def test_find_extra_edge_edges(modeler: Modeler):
     """Test to read geometry and find it's extra edge problem area with connected
     edges."""
-    skip_if_linux(modeler, test_find_extra_edge_edges.__name__, "repair_tools")  # Skip test on Linux
+    skip_if_linux(
+        modeler, test_find_extra_edge_edges.__name__, "repair_tools"
+    )  # Skip test on Linux
     design = modeler.open_file("./tests/integration/files/ExtraEdgesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_extra_edges(design.bodies)
     assert len(problem_areas[0].edges) > 0
@@ -104,7 +108,9 @@ def test_find_inexact_edge_id(modeler: Modeler):
 def test_find_inexact_edge_edges(modeler: Modeler):
     """Test to read geometry and find it's inexact edge problem areas with connected
     edges."""
-    skip_if_linux(modeler, test_find_inexact_edge_edges.__name__, "repair_tools")  # Skip test on Linux
+    skip_if_linux(
+        modeler, test_find_inexact_edge_edges.__name__, "repair_tools"
+    )  # Skip test on Linux
     design = modeler.open_file("./tests/integration/files/InExactEdgesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_inexact_edges(design.bodies)
     assert len(problem_areas[0].edges) > 0
@@ -137,7 +143,9 @@ def test_find_missing_face_id(modeler: Modeler):
 def test_find_missing_face_faces(modeler: Modeler):
     """Test to read geometry and find it's missing face problem area with connected
     edges."""
-    skip_if_linux(modeler, test_find_missing_face_faces.__name__, "repair_tools")  # Skip test on Linux
+    skip_if_linux(
+        modeler, test_find_missing_face_faces.__name__, "repair_tools"
+    )  # Skip test on Linux
     design = modeler.open_file("./tests/integration/files/MissingFacesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_missing_faces(design.bodies)
     assert len(problem_areas[0].edges) > 0
@@ -203,7 +211,9 @@ def test_find_small_face_id(modeler: Modeler):
 def test_find_small_face_faces(modeler: Modeler):
     """Test to read geometry, find it's small face problem area and return connected
     faces."""
-    skip_if_linux(modeler, test_find_small_face_faces.__name__, "repair_tools")  # Skip test on Linux
+    skip_if_linux(
+        modeler, test_find_small_face_faces.__name__, "repair_tools"
+    )  # Skip test on Linux
     design = modeler.open_file("./tests/integration/files/SmallFacesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
     assert len(problem_areas[0].faces) > 0
@@ -236,7 +246,9 @@ def test_find_stitch_face_id(modeler: Modeler):
 def test_find_stitch_face_bodies(modeler: Modeler):
     """Test to read geometry and find it's stitch face problem area and return the
     connected faces."""
-    skip_if_linux(modeler, test_find_stitch_face_bodies.__name__, "repair_tools")  # Skip test on Linux
+    skip_if_linux(
+        modeler, test_find_stitch_face_bodies.__name__, "repair_tools"
+    )  # Skip test on Linux
     design = modeler.open_file("./tests/integration/files/stitch_before.scdocx")
     problem_areas = modeler.repair_tools.find_stitch_faces(design.bodies)
     assert len(problem_areas[0].bodies) > 0
