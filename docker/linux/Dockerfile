@@ -8,8 +8,9 @@ WORKDIR /app
 
 # Install unzip
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends unzip=6.0-26+deb11u1 && \
-    apt-get install -y gcc mono-mcs && \
+    apt-get install -y --no-install-recommends unzip=6.* && \
+    apt-get install -y --no-install-recommends gcc=4:12.2.* && \
+    apt-get install -y --no-install-recommends mono-mcs=6.8.0.* && \
     rm -rf /var/lib/apt/lists/*
 
 # Add the binary files from the latest release
