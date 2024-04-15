@@ -106,11 +106,7 @@ def test_component_tessellate(modeler: Modeler):
     """Test the component tessellation."""
 
     # Skip on Linux
-    skip_if_linux(
-        modeler,
-        test_body_tessellate.__name__,
-        "tessellate",
-    )
+    skip_if_linux(modeler, test_body_tessellate.__name__, "tessellate")
 
     # Create a sketch
     sketch_1 = Sketch()
