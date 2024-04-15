@@ -9,6 +9,7 @@ WORKDIR /app
 # Install unzip
 RUN apt-get update && \
     apt-get install -y --no-install-recommends unzip=6.0-26+deb11u1 && \
+    apt-get install -y gcc mono-mcs && \
     rm -rf /var/lib/apt/lists/*
 
 # Add the binary files from the latest release
@@ -20,7 +21,7 @@ RUN unzip -qq linux-binaries.zip -d . && \
     rm -rf DockerLinux
 
 # Let the dynamic link loader where to search for shared libraries
-ENV LD_LIBRARY_PATH="/app"
+ENV LD_LIBRARY_PATH="/app:/app/CI_Linux/bin"
 
 # Define env variables
 ENV ANS_DSCO_REMOTE_PORT=50051
@@ -29,6 +30,8 @@ ENV ANS_DSCO_REMOTE_LOGS_CONFIG="linux"
 ENV LOG_LEVEL=2
 ENV ENABLE_TRACE=0
 ENV ANSYSLMD_LICENSE_FILE=""
+ENV ANSYS_CI_INSTALL=/app/CI_Linux
+ENV P_SCHEMA=/app/Schema/
 
 # Add container labels
 LABEL org.opencontainers.image.authors="ANSYS Inc."
