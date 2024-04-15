@@ -25,7 +25,7 @@ from enum import Enum, unique
 from pathlib import Path
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier, PartExportFormat
-from ansys.api.dbu.v0.designs_pb2 import NewRequest, SaveAsRequest
+from ansys.api.dbu.v0.designs_pb2 import InsertRequest, NewRequest, SaveAsRequest
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
@@ -68,7 +68,7 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, Z
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.checks import ensure_design_is_active
+from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.typing import RealSequence
@@ -580,6 +580,58 @@ class Design(Component):
                 f"Attempted beam profile deletion failed, with name {removal_name}."
                 + " Ignoring request."
             )
+
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(24, 2, 0)
+    def insert_file(self, file_location: Union[Path, str]) -> Component:
+        """
+        Insert a file into the design.
+
+        Parameters
+        ----------
+        file_location : Union[~pathlib.Path, str]
+            Location on disk where the file is located.
+
+        Returns
+        -------
+        Component
+            The newly inserted component.
+        """
+        # Upload the file to the server
+        filepath_server = self._modeler._upload_file(file_location)
+
+        # Insert the file into the design
+        self._design_stub.Insert(InsertRequest(filepath=filepath_server))
+        self._grpc_client.log.debug(f"File {file_location} successfully inserted into design.")
+
+        # Get a temporal design object to update the current one
+        tmp_design = Design("", self._modeler, read_existing_design=True)
+
+        # Update the reference to the design
+        for component in tmp_design.components:
+            component._parent_component = self
+
+        # Update the design's components - add the new one
+        #
+        # If the list is empty, add the components from the new design
+        if not self._components:
+            self._components.extend(tmp_design.components)
+        else:
+            # Insert operation adds the inserted file as a component to the design.
+            for tmp_component in tmp_design.components:
+                # Otherwise, check which is the new component added
+                for component in self._components:
+                    if component.id == tmp_component.id:
+                        break
+                    # If not equal, add the component - since it has not been found
+                    self._components.append(tmp_component)
+
+        self._grpc_client.log.debug(f"Design {self.name} is successfully updated.")
+
+        # Return the newly inserted component
+        return self._components[-1]
 
     def __repr__(self) -> str:
         """Represent the ``Design`` as a string."""
