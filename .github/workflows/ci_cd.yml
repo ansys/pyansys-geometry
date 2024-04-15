@@ -9,8 +9,7 @@ on:
       - main
 
 env:
-  MAIN_PYTHON_VERSION: '3.11'
-  MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED: '3.9'
+  MAIN_PYTHON_VERSION: '3.12'
   PACKAGE_NAME: 'ansys-geometry-core'
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
   ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
@@ -139,7 +138,7 @@ jobs:
         if: env.SKIP_UNSTABLE == 'false'
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Set up headless display
         if: env.SKIP_UNSTABLE == 'false'
@@ -258,7 +257,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Set up headless display
         uses: pyvista/setup-headless-display-action@v2
@@ -500,7 +499,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Download Windows binaries
         uses: actions/download-artifact@v4
