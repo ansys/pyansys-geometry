@@ -44,10 +44,10 @@ pv.OFF_SCREEN = True
 
 
 # TODO: re-enable when Linux service is able to use measurement tools
-def skip_if_linux(modeler: Modeler, element_not_available: str):
+def skip_if_linux(modeler: Modeler, test_name:str, element_not_available: str):
     """Skip test if running on Linux."""
     if modeler.client.backend_type == BackendType.LINUX_SERVICE:
-        pytest.skip(f"{element_not_available} not available on Linux service.")  # skip!
+        pytest.skip(f"Skipping '{test_name}'. '{element_not_available}' not available on Linux service.")  # skip!
 
 
 @pytest.fixture(scope="session")

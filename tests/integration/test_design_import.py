@@ -132,7 +132,7 @@ def test_design_import_with_surfaces_issue834(modeler: Modeler):
     For more info see https://github.com/ansys/pyansys-geometry/issues/834
     """
     # TODO: to be reactivated by https://github.com/ansys/pyansys-geometry/issues/799
-    skip_if_linux(modeler, "'open_file'")
+    skip_if_linux(modeler, test_design_import_with_surfaces_issue834.__name__, "open_file")
 
     # Open the design
     design = modeler.open_file("./tests/integration/files/DuplicateFacesDesignBefore.scdocx")
@@ -249,7 +249,7 @@ def test_design_insert(modeler: Modeler):
     """Test inserting a file into the design."""
 
     # Skip for Linux service
-    skip_if_linux(modeler, "'insert_file'")
+    skip_if_linux(modeler, test_design_insert.__name__, "insert_file")
 
     # Create a design and sketch a circle
     design = modeler.create_design("Insert")
@@ -272,7 +272,7 @@ def test_design_insert_with_import(modeler: Modeler):
     process."""
 
     # Skip for Linux service
-    skip_if_linux(modeler, "'insert_file'")
+    skip_if_linux(modeler, test_design_insert_with_import.__name__, "insert_file")
 
     # Create a design and sketch a circle
     design = modeler.create_design("Insert")
