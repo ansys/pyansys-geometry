@@ -68,7 +68,7 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, Z
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.checks import ensure_design_is_active
+from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.typing import RealSequence
@@ -584,6 +584,7 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
+    @min_backend_version(24, 2, 0)
     def insert_file(self, file_location: Union[Path, str]) -> Component:
         """
         Insert a file into the design.
