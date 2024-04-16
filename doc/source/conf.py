@@ -64,8 +64,8 @@ def intersphinx_pyansys_geometry(switcher_version: str):
 
     Notes
     -----
-    If the object.inv file is not found whenever it is a release, the method
-    will default to the "dev" version. If the object.inv file is not found
+    If the objects.inv file is not found whenever it is a release, the method
+    will default to the "dev" version. If the objects.inv file is not found
     for the "dev" version, the method will return an empty string.
 
     Parameters
