@@ -28,6 +28,7 @@ from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
     CreateBodyFromFaceRequest,
     CreateExtrudedBodyFromFaceProfileRequest,
+    CreateExtrudedBodyFromLoftProfilesRequest,
     CreateExtrudedBodyRequest,
     CreatePlanarBodyRequest,
     CreateSphereBodyRequest,
@@ -45,7 +46,7 @@ from ansys.api.geometry.v0.components_pb2 import (
     SetSharedTopologyRequest,
 )
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
-from ansys.api.geometry.v0.models_pb2 import Direction, Line
+from ansys.api.geometry.v0.models_pb2 import Direction, Line, TrimmedCurveList
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
 from pint import Quantity
@@ -729,6 +730,73 @@ class Component:
         )
         self._grpc_client.log.debug(f"Creating a sphere body on {self.id} .")
         response = self._bodies_stub.CreateSphereBody(request)
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
+        self._master_component.part.bodies.append(tb)
+        return Body(response.id, response.name, self, tb)
+
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(24, 2, 0)
+    def create_body_from_loft_profile(
+        self,
+        name: str,
+        profiles: List[List[TrimmedCurve]],
+        periodic: bool = False,
+        ruled: bool = False,
+    ) -> Body:
+        """
+        Create a lofted body from a collection of trimmed curves.
+
+        Parameters
+        ----------
+        name : str
+            Name of the lofted body.
+        profiles : List[List[TrimmedCurve]]
+            Collection of lists of trimmed curves (profiles) defining the lofted body's shape.
+        periodic : bool, default: False
+            Whether the lofted body should have periodic continuity.
+        ruled : bool
+            Whether the lofted body should be ruled.
+
+        Returns
+        -------
+        Body
+            Created lofted body object.
+
+        Notes
+        -----
+        Surfaces produced have a U parameter in the direction of the profile curves,
+        and a V parameter in the direction of lofting.
+        Profiles can have different numbers of segments. A minimum twist solution is
+        produced.
+        Profiles should be all closed or all open. Closed profiles cannot contain inner
+        loops. If closed profiles are supplied, a closed (solid) body is produced, if
+        possible. Otherwise, an open (sheet) body is produced.
+        The periodic argument applies when the profiles are closed. It is ignored if
+        the profiles are open.
+
+        If ``periodic=True``, at least three profiles must be supplied. The loft continues
+        from the last profile back to the first profile to produce surfaces that are
+        periodic in V.
+
+        If ``periodic=False``, at least two profiles must be supplied. If the first
+        and last profiles are planar, end capping faces are created. Otherwise, an open
+        (sheet) body is produced.
+        If ``ruled=True``, separate ruled surfaces are produced between each pair of profiles.
+        If ``periodic=True``, the loft continues from the last profile back to the first
+        profile, but the surfaces are not periodic.
+        """
+        profiles_grpc = [
+            TrimmedCurveList(curves=[trimmed_curve_to_grpc_trimmed_curve(tc) for tc in profile])
+            for profile in profiles
+        ]
+
+        request = CreateExtrudedBodyFromLoftProfilesRequest(
+            name=name, parent=self.id, profiles=profiles_grpc, periodic=periodic, ruled=ruled
+        )
+        self._grpc_client.log.debug(f"Creating a loft profile body on {self.id} .")
+        response = self._bodies_stub.CreateExtrudedBodyFromLoftProfiles(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
