@@ -971,8 +971,14 @@ def test_slot_extrusion(modeler: Modeler):
     assert len(body.edges) == 12
 
 
-def test_project_and_imprint_curves(modeler: Modeler, skip_not_on_linux_service):
+def test_project_and_imprint_curves(modeler: Modeler):
     """Test the projection of a set of curves on a body."""
+
+    # Skip on Linux
+    skip_if_linux(
+        modeler, test_project_and_imprint_curves.__name__, "project_curves, imprint_curves"
+    )
+
     # Create your design on the server side
     design = modeler.create_design("ExtrudeSlot")
     comp = design.add_component("Comp1")
@@ -1050,8 +1056,11 @@ def test_project_and_imprint_curves(modeler: Modeler, skip_not_on_linux_service)
     assert len(body_copy.faces) == 8
 
 
-def test_copy_body(modeler: Modeler, skip_not_on_linux_service):
+def test_copy_body(modeler: Modeler):
     """Test copying a body."""
+
+    # Skip on Linux
+    skip_if_linux(modeler, test_copy_body.__name__, "copy")
 
     # Create your design on the server side
     design = modeler.create_design("Design")
@@ -1094,8 +1103,12 @@ def test_copy_body(modeler: Modeler, skip_not_on_linux_service):
     assert copy.is_alive
 
 
-def test_beams(modeler: Modeler, skip_not_on_linux_service):
+def test_beams(modeler: Modeler):
     """Test beam creation."""
+
+    # Skip on Linux
+    skip_if_linux(modeler, test_beams.__name__, "create_beam")
+
     # Create your design on the server side
     design = modeler.create_design("BeamCreation")
 
@@ -1388,8 +1401,11 @@ def test_design_points(modeler: Modeler):
     assert isinstance(pd, pv.PolyData)
 
 
-def test_named_selections_beams(modeler: Modeler, skip_not_on_linux_service):
+def test_named_selections_beams(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection`` with beams."""
+
+    # Skip on Linux
+    skip_if_linux(modeler, test_named_selections_beams.__name__, "create_beam")
 
     # Create your design on the server side
     design = modeler.create_design("NamedSelectionBeams_Test")
@@ -1502,7 +1518,7 @@ def test_component_instances(modeler: Modeler):
     assert len(car2.components[1].components[1].bodies[0].faces) > 0
 
 
-def test_boolean_body_operations(modeler: Modeler, skip_not_on_linux_service):
+def test_boolean_body_operations(modeler: Modeler):
     """
     Test cases:
 
@@ -1539,6 +1555,12 @@ def test_boolean_body_operations(modeler: Modeler, skip_not_on_linux_service):
                 x) identity
                 y) transform
     """
+    # Skip on Linux
+    skip_if_linux(
+        modeler,
+        test_boolean_body_operations.__name__,
+        "copy, translate, intersect, subtract, unite",
+    )
 
     design = modeler.create_design("TestBooleanOperations")
 
@@ -1750,8 +1772,15 @@ def test_boolean_body_operations(modeler: Modeler, skip_not_on_linux_service):
     assert Accuracy.length_is_equal(copy1.volume.m, 1)
 
 
-def test_multiple_bodies_boolean_operations(modeler: Modeler, skip_not_on_linux_service):
+def test_multiple_bodies_boolean_operations(modeler: Modeler):
     """Test boolean operations with multiple bodies."""
+
+    # Skip on Linux
+    skip_if_linux(
+        modeler,
+        test_multiple_bodies_boolean_operations.__name__,
+        "copy, translate, intersect, subtract, unite",
+    )
 
     design = modeler.create_design("TestBooleanOperationsMultipleBodies")
 

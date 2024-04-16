@@ -146,9 +146,3 @@ def clean_plot_result_images():
     files = os.listdir(results_dir)
     for file in files:
         os.remove(Path(results_dir, file))
-
-
-@pytest.fixture(scope="session")
-def skip_not_on_linux_service(modeler: Modeler):
-    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
-        return pytest.skip("Implementation not available on Linux service.")  # skip!
