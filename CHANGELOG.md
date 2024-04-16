@@ -1,6 +1,6 @@
 # CHANGELOG
 
-This project uses [towncrier](https://towncrier.readthedocs.io/) to generate changelogs. You can see the changes for the upcoming release in the [changelog framgent directory](https://github.com/ansys/pyansys-geometry/tree/main/doc/changelog.d).
+This project uses [towncrier](https://towncrier.readthedocs.io/) to generate changelogs. You can see the changes for the upcoming release in the [changelog fragment directory](https://github.com/ansys/pyansys-geometry/tree/main/doc/changelog.d).
 
 <!-- towncrier release notes start -->
 
