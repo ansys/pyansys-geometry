@@ -34,7 +34,7 @@ from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.math.vector import Vector3D
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.misc.units import UNITS
-from ansys.geometry.core.primitives.ellipse import Ellipse
+from ansys.geometry.core.shapes.curves.ellipse import Ellipse
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
 

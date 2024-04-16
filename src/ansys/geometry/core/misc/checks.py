@@ -23,9 +23,10 @@
 from beartype.typing import TYPE_CHECKING, Any, Iterable, Optional, Tuple, Union
 import numpy as np
 from pint import Unit
+import semver
 
 if TYPE_CHECKING:  # pragma: no cover
-    from ansys.geometry.core.designer import Design
+    from ansys.geometry.core.designer.design import Design
 
 
 def ensure_design_is_active(method):
@@ -302,3 +303,54 @@ def check_type_all_elements_in_iterable(
     """
     for elem in input:
         check_type(elem, expected_type)
+
+
+def min_backend_version(major: int, minor: int, service_pack: int):
+    """
+    Compare a method's minimum required version to the current backend version.
+
+    Parameters
+    ----------
+    major : int
+        Minimum major version required by the method.
+    minor : int
+        Minimum minor version required by the method.
+    service_pack : int
+        Minimum service pack version required by the method.
+
+    Raises
+    ------
+    GeometryRuntimeError
+        If the method version is higher than the backend version.
+    GeometryRuntimeError
+        If the client is not available.
+    """
+    # Lazy import to avoid circular imports
+    from ansys.geometry.core.errors import GeometryRuntimeError
+    from ansys.geometry.core.logger import LOG as logger
+
+    def backend_version_decorator(method):
+        def wrapper(self, *args, **kwargs):
+            method_version = f"{major}.{minor}.{service_pack}"
+            if hasattr(self, "_grpc_client"):
+                if self._grpc_client is None:
+                    raise GeometryRuntimeError(
+                        "The client is not available. You must initialize the client first."
+                    )
+                elif self._grpc_client.backend_version is not None:
+                    comp = semver.compare(method_version, self._grpc_client.backend_version)
+                    # if comp is 1, method version is higher than backend version.
+                    if comp == 1:
+                        raise GeometryRuntimeError(
+                            f"The method '{method.__name__}' requires a minimum backend version of "
+                            + f"{method_version}, and the current backend version is "
+                            + f"{self._grpc_client.backend_version}."
+                        )
+                    else:
+                        return method(self, *args, **kwargs)
+            else:
+                logger.warning("This object does not have a connection with the backend.")
+
+        return wrapper
+
+    return backend_version_decorator

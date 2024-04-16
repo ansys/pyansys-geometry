@@ -9,8 +9,7 @@ on:
       - main
 
 env:
-  MAIN_PYTHON_VERSION: '3.11'
-  MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED: '3.9'
+  MAIN_PYTHON_VERSION: '3.12'
   PACKAGE_NAME: 'ansys-geometry-core'
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
   ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
@@ -18,7 +17,7 @@ env:
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo
-  RESET_IMAGE_CACHE: 6
+  RESET_IMAGE_CACHE: 0
   IS_WORKFLOW_RUNNING: True
   ARTIFACTORY_VERSION: v242
   MEILISEARCH_API_KEY: ${{ secrets.MEILISEARCH_API_KEY }}
@@ -30,6 +29,46 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+
+  vulnerabilities:
+    name: Vulnerabilities
+    runs-on: ubuntu-latest
+    steps:
+      - name: PyAnsys Vulnerability check (on main)
+        if: github.ref == 'refs/heads/main'
+        uses: ansys/actions/check-vulnerabilities@main
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          python-package-name: ${{ env.PACKAGE_NAME }}
+          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+
+      - name: PyAnsys Vulnerability check (on dev mode)
+        if: github.ref != 'refs/heads/main'
+        uses: ansys/actions/check-vulnerabilities@main
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          python-package-name: ${{ env.PACKAGE_NAME }}
+          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+          dev-mode: true
+
+  branch-name:
+    # Only if the event is a pull request and the branch name is not from the pre-commit-ci bot
+    if: github.event_name == 'pull_request' && github.head_ref != 'pre-commit-ci-update-config'
+    name: Check the name of the branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch name
+        uses: ansys/actions/branch-name-style@v5
+
+  commit-name:
+    if: github.event_name == 'pull_request'
+    name: Check the name of the commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check commit name
+        uses: ansys/actions/commit-style@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   docs-style:
     name: Documentation Style Check
@@ -61,6 +100,16 @@ jobs:
           operating-system: ${{ matrix.os }}
           python-version: ${{ matrix.python-version }}
 
+  docker-style:
+    name: Docker Style Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: PyAnsys documentation style checks
+        uses: ansys/actions/docker-style@v5
+        with:
+          directory: docker
+          recursive: true
+
 # =================================================================================================
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 # =================================================================================================
@@ -89,7 +138,7 @@ jobs:
         if: env.SKIP_UNSTABLE == 'false'
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Set up headless display
         if: env.SKIP_UNSTABLE == 'false'
@@ -208,7 +257,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Set up headless display
         uses: pyvista/setup-headless-display-action@v2
@@ -450,7 +499,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Download Windows binaries
         uses: actions/download-artifact@v4
@@ -461,7 +510,7 @@ jobs:
       - name: Build Docker image
         working-directory: docker
         run: |
-          docker build -f Dockerfile.windows -t ghcr.io/ansys/geometry:windows-latest-tmp .
+          docker build -f windows/Dockerfile -t ghcr.io/ansys/geometry:windows-latest-tmp .
 
       - name: Check location of self-hosted runner and define license server accordingly
         if: runner.name == 'pygeometry-ci-1' || runner.name == 'pygeometry-ci-2'
@@ -492,10 +541,10 @@ jobs:
           .\.venv\Scripts\Activate.ps1
           pytest -v --use-existing-service=yes
 
-      - name: "Compressing Dockerfile.windows"
+      - name: "Compressing Windows Dockerfile"
         uses: vimtor/action-zip@v1.2
         with:
-          files: docker/Dockerfile.windows
+          files: docker/windows/Dockerfile
           dest: windows-dockerfile.zip
 
       - name: Upload Windows Dockerfile
@@ -553,7 +602,7 @@ jobs:
       - name: Build Docker image
         working-directory: docker
         run: |
-          docker build -f Dockerfile.linux -t ghcr.io/ansys/geometry:linux-latest-tmp .
+          docker build -f linux/Dockerfile -t ghcr.io/ansys/geometry:linux-latest-tmp .
 
       - name: Launch Geometry service
         run: |
@@ -582,10 +631,10 @@ jobs:
           checkout: false
           requires-xvfb: true
 
-      - name: "Compressing Dockerfile.linux"
+      - name: "Compressing Linux Dockerfile"
         uses: vimtor/action-zip@v1.2
         with:
-          files: docker/Dockerfile.linux
+          files: docker/linux/Dockerfile
           dest: linux-dockerfile.zip
 
       - name: Upload Linux Dockerfile
@@ -628,7 +677,8 @@ jobs:
     needs: [package]
     steps:
       - name: Deploy the latest documentation
-        uses: ansys/actions/doc-deploy-dev@v5
+        # TODO: testing SEO improvements. This branch reuses the "index.html" from the stable version
+        uses: ansys/actions/doc-deploy-dev@feat/seo-improvements
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}

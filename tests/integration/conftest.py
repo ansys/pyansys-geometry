@@ -43,6 +43,15 @@ from ansys.geometry.core.connection.docker_instance import GeometryContainers, L
 pv.OFF_SCREEN = True
 
 
+# TODO: re-enable when Linux service is able to use measurement tools
+def skip_if_linux(modeler: Modeler, test_name: str, element_not_available: str):
+    """Skip test if running on Linux."""
+    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
+        pytest.skip(
+            f"Skipping '{test_name}'. '{element_not_available}' not available on Linux service."
+        )  # skip!
+
+
 @pytest.fixture(scope="session")
 def docker_instance(use_existing_service):
     # This will only have a value in case that:
@@ -137,9 +146,3 @@ def clean_plot_result_images():
     files = os.listdir(results_dir)
     for file in files:
         os.remove(Path(results_dir, file))
-
-
-@pytest.fixture(scope="session")
-def skip_not_on_linux_service(modeler: Modeler):
-    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
-        return pytest.skip("Implementation not available on Linux service.")  # skip!

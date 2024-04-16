@@ -23,6 +23,7 @@
 
 from ansys.api.geometry.v0.models_pb2 import Arc as GRPCArc
 from ansys.api.geometry.v0.models_pb2 import Circle as GRPCCircle
+from ansys.api.geometry.v0.models_pb2 import CurveGeometry as GRPCCurve
 from ansys.api.geometry.v0.models_pb2 import Direction as GRPCDirection
 from ansys.api.geometry.v0.models_pb2 import Ellipse as GRPCEllipse
 from ansys.api.geometry.v0.models_pb2 import Frame as GRPCFrame
@@ -32,7 +33,9 @@ from ansys.api.geometry.v0.models_pb2 import Matrix as GRPCMatrix
 from ansys.api.geometry.v0.models_pb2 import Plane as GRPCPlane
 from ansys.api.geometry.v0.models_pb2 import Point as GRPCPoint
 from ansys.api.geometry.v0.models_pb2 import Polygon as GRPCPolygon
+from ansys.api.geometry.v0.models_pb2 import Surface as GRPCSurface
 from ansys.api.geometry.v0.models_pb2 import Tessellation
+from ansys.api.geometry.v0.models_pb2 import TrimmedCurve as GRPCTrimmedCurve
 from beartype.typing import TYPE_CHECKING, List, Optional, Tuple
 
 from ansys.geometry.core.math.frame import Frame
@@ -41,6 +44,16 @@ from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+from ansys.geometry.core.shapes.curves.circle import Circle
+from ansys.geometry.core.shapes.curves.curve import Curve
+from ansys.geometry.core.shapes.curves.ellipse import Ellipse
+from ansys.geometry.core.shapes.curves.line import Line
+from ansys.geometry.core.shapes.surfaces.cone import Cone
+from ansys.geometry.core.shapes.surfaces.cylinder import Cylinder
+from ansys.geometry.core.shapes.surfaces.plane import PlaneSurface
+from ansys.geometry.core.shapes.surfaces.sphere import Sphere
+from ansys.geometry.core.shapes.surfaces.surface import Surface
+from ansys.geometry.core.shapes.surfaces.torus import Torus
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.circle import SketchCircle
 from ansys.geometry.core.sketch.edge import SketchEdge
@@ -51,6 +64,9 @@ from ansys.geometry.core.sketch.segment import SketchSegment
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import PolyData
+
+    from ansys.geometry.core.designer.face import SurfaceType
+    from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 
 
 def unit_vector_to_grpc_direction(unit_vector: UnitVector3D) -> GRPCDirection:
@@ -430,4 +446,148 @@ def grpc_frame_to_frame(frame: GRPCFrame) -> Frame:
                 frame.dir_y.z,
             ]
         ),
+    )
+
+
+def grpc_surface_to_surface(surface: GRPCSurface, surface_type: "SurfaceType") -> Surface:
+    """
+    Convert an ``ansys.api.geometry.Surface`` gRPC message to a ``Surface`` class.
+
+    Parameters
+    ----------
+    surface : GRPCSurface
+        Geometry service gRPC surface message.
+
+    Returns
+    -------
+    Surface
+        Resulting converted surface.
+    """
+    from ansys.geometry.core.designer.face import SurfaceType
+
+    origin = Point3D(
+        [surface.origin.x, surface.origin.y, surface.origin.z], DEFAULT_UNITS.SERVER_LENGTH
+    )
+    axis = UnitVector3D([surface.axis.x, surface.axis.y, surface.axis.z])
+    reference = UnitVector3D([surface.reference.x, surface.reference.y, surface.reference.z])
+
+    if surface_type == SurfaceType.SURFACETYPE_CONE:
+        result = Cone(origin, surface.radius, surface.half_angle, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_CYLINDER:
+        result = Cylinder(origin, surface.radius, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_SPHERE:
+        result = Sphere(origin, surface.radius, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_TORUS:
+        result = Torus(origin, surface.major_radius, surface.minor_radius, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_PLANE:
+        result = PlaneSurface(origin, reference, axis)
+    else:
+        result = None
+    return result
+
+
+def grpc_curve_to_curve(curve: GRPCCurve) -> Curve:
+    """
+    Convert an ``ansys.api.geometry.CurveGeometry`` gRPC message to a ``Curve``.
+
+    Parameters
+    ----------
+    curve : GRPCCurve
+        Geometry service gRPC curve message.
+
+    Returns
+    -------
+    Curve
+        Resulting converted curve.
+    """
+    origin = Point3D([curve.origin.x, curve.origin.y, curve.origin.z])
+    try:
+        reference = UnitVector3D([curve.reference.x, curve.reference.y, curve.reference.z])
+        axis = UnitVector3D([curve.axis.x, curve.axis.y, curve.axis.z])
+    except ValueError:
+        # curve will be a line
+        pass
+    if curve.radius != 0:
+        result = Circle(origin, curve.radius, reference, axis)
+    elif curve.major_radius != 0 and curve.minor_radius != 0:
+        result = Ellipse(origin, curve.major_radius, curve.minor_radius, reference, axis)
+    elif curve.direction is not None:
+        result = Line(
+            origin,
+            UnitVector3D(
+                [
+                    curve.direction.x,
+                    curve.direction.y,
+                    curve.direction.z,
+                ]
+            ),
+        )
+    else:
+        result = None
+
+    return result
+
+
+def curve_to_grpc_curve(curve: Curve) -> GRPCCurve:
+    """
+    Convert a ``Curve`` to an ``ansys.api.geometry.CurveGeometry`` gRPC message.
+
+    Parameters
+    ----------
+    curve : Curve
+        Curve to convert.
+
+    Returns
+    -------
+    GRPCCurve
+        Return ``Curve`` as a ``ansys.api.geometry.CurveGeometry`` message.
+    """
+    grpc_curve = None
+    origin = point3d_to_grpc_point(curve.origin)
+
+    if isinstance(curve, Line):
+        direction = unit_vector_to_grpc_direction(curve.direction)
+        grpc_curve = GRPCCurve(origin=origin, direction=direction)
+    else:
+        reference = unit_vector_to_grpc_direction(curve.dir_x)
+        axis = unit_vector_to_grpc_direction(curve.dir_z)
+
+        if isinstance(curve, Circle):
+            grpc_curve = GRPCCurve(
+                origin=origin, reference=reference, axis=axis, radius=curve.radius.m
+            )
+        elif isinstance(curve, Ellipse):
+            grpc_curve = GRPCCurve(
+                origin=origin,
+                reference=reference,
+                axis=axis,
+                major_radius=curve.major_radius.m,
+                minor_radius=curve.minor_radius.m,
+            )
+
+    return grpc_curve
+
+
+def trimmed_curve_to_grpc_trimmed_curve(curve: "TrimmedCurve") -> GRPCTrimmedCurve:
+    """
+    Convert a ``TrimmedCurve``to an ``ansys.api.geometry.TrimmedCurve`` gRPC message.
+
+    Parameters
+    ----------
+    curve : TrimmedCurve
+        Curve to convert.
+
+    Returns
+    -------
+    GRPCTrimmedCurve
+        Geometry service gRPC ``TrimmedCurve`` message.
+    """
+    curve_geometry = curve_to_grpc_curve(curve.geometry)
+    i_start = curve.interval.start
+    i_end = curve.interval.end
+
+    return GRPCTrimmedCurve(
+        curve=curve_geometry,
+        interval_start=i_start,
+        interval_end=i_end,
     )

@@ -33,6 +33,8 @@ from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vect
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 
+from .conftest import skip_if_linux
+
 
 def _checker_method(comp: Component, comp_ref: Component, precise_check: bool = True) -> None:
     # Check component features
@@ -130,21 +132,21 @@ def test_design_import_with_surfaces_issue834(modeler: Modeler):
     For more info see https://github.com/ansys/pyansys-geometry/issues/834
     """
     # TODO: to be reactivated by https://github.com/ansys/pyansys-geometry/issues/799
-    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
-        # Open the design
-        design = modeler.open_file("./tests/integration/files/DuplicateFacesDesignBefore.scdocx")
+    skip_if_linux(modeler, test_design_import_with_surfaces_issue834.__name__, "open_file")
 
-        # Check that there are two bodies
-        assert len(design.bodies) == 2
+    # Open the design
+    design = modeler.open_file("./tests/integration/files/DuplicateFacesDesignBefore.scdocx")
 
-        # Check some basic properties - whether they are surfaces or not!
-        assert design.bodies[0].name == "BoxBody"
-        assert design.bodies[0].is_surface == False
-        assert design.bodies[1].name == "DuplicatesSurface"
-        assert design.bodies[1].is_surface == True
+    # Check that there are two bodies
+    assert len(design.bodies) == 2
+
+    # Check some basic properties - whether they are surfaces or not!
+    assert design.bodies[0].name == "BoxBody"
+    assert design.bodies[0].is_surface == False
+    assert design.bodies[1].name == "DuplicatesSurface"
+    assert design.bodies[1].is_surface == True
 
 
-@pytest.mark.skip(reason="Get the OpenSSL GeometryService through before fixing hoops")
 def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test creation of a component, saving it to a file, and loading it again to a
     second component and make sure they have the same properties."""
@@ -198,21 +200,22 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
     # Test HOOPS formats (Windows only)
     if modeler.client.backend_type != BackendType.LINUX_SERVICE:
-        # STEP
-        file = tmp_path_factory.mktemp("test_design_import") / "two_cars.step"
-        design.download(file, DesignFileFormat.STEP)
-        design2 = modeler.open_file(file)
-        _checker_method(design, design2, False)
-
         # IGES
         #
         # TODO: Something has gone wrong with IGES
         # TODO: Issue https://github.com/ansys/pyansys-geometry/issues/801
-        #
         # file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
         # design.download(file, DesignFileFormat.IGES)
         # design2 = modeler.open_file(file)
-        # _checker_method(design, design2, False)
+        # design3 = modeler.open_file("./tests/integration/files/import/twoCars.igs")
+        # _checker_method(design2, design3, False)
+
+        # STEP
+        file = tmp_path_factory.mktemp("test_design_import") / "two_cars.step"
+        design.download(file, DesignFileFormat.STEP)
+        design2 = modeler.open_file(file)
+        design3 = modeler.open_file("./tests/integration/files/import/twoCars.stp")
+        _checker_method(design2, design3, False)
 
         # Catia
         design2 = modeler.open_file("./tests/integration/files/import/catia_car/car.CATProduct")
@@ -238,3 +241,48 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         # .prt
         design2 = modeler.open_file("./tests/integration/files/import/disk1.prt")
         assert len(design2.bodies) == 1
+
+
+def test_design_insert(modeler: Modeler):
+    """Test inserting a file into the design."""
+
+    # Skip for Linux service
+    skip_if_linux(modeler, test_design_insert.__name__, "insert_file")
+
+    # Create a design and sketch a circle
+    design = modeler.create_design("Insert")
+    sketch = Sketch()
+    sketch.circle(Point2D([0, 0]), 10)
+    comp = design.add_component("Component_Cylinder")
+    comp.extrude_sketch("Body_Cylinder", sketch, 5)
+
+    # Insert a different file
+    design.insert_file("./tests/integration/files/DuplicateFacesDesignBefore.scdocx")
+
+    # Check that there are two components
+    assert len(design.components) == 2
+    assert design.components[0].name == "Component_Cylinder"
+    assert design.components[1].name == "DuplicatesDesign"
+
+
+def test_design_insert_with_import(modeler: Modeler):
+    """Test inserting a file into the design through the external format import
+    process."""
+
+    # Skip for Linux service
+    skip_if_linux(modeler, test_design_insert_with_import.__name__, "insert_file")
+
+    # Create a design and sketch a circle
+    design = modeler.create_design("Insert")
+    sketch = Sketch()
+    sketch.circle(Point2D([0, 0]), 10)
+    comp = design.add_component("Component_Cylinder")
+    comp.extrude_sketch("Body_Cylinder", sketch, 5)
+
+    # Import and insert a different file
+    design.insert_file("./tests/integration/files/import/catia_car/Wheel1.CATPart")
+
+    # Check that there are two components
+    assert len(design.components) == 2
+    assert design.components[0].name == "Component_Cylinder"
+    assert design.components[1].name == "Wheel1"
