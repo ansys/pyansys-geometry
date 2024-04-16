@@ -37,7 +37,7 @@ This project uses [towncrier](https://towncrier.readthedocs.io/) to generate cha
 - ci: main Python version update to 3.12 [#1112](https://github.com/ansys/pyansys-geometry/pull/1112)
 - ci: skip Linux tests with common approach [#1113](https://github.com/ansys/pyansys-geometry/pull/1113)
 - ci: build changelog on release [#1118](https://github.com/ansys/pyansys-geometry/pull/1118)
-
+- chore: update CHANGELOG for v0.5.0 [#1119](https://github.com/ansys/pyansys-geometry/pull/1119)
 
 ### Fixed
 
@@ -50,7 +50,7 @@ This project uses [towncrier](https://towncrier.readthedocs.io/) to generate cha
 - build: beartype upper limit on v0.18 [#1095](https://github.com/ansys/pyansys-geometry/pull/1095)
 - fix: improper types being passed for Face and Edge ctor. [#1096](https://github.com/ansys/pyansys-geometry/pull/1096)
 - fix: return type should be dict and not ``ScalarMapContainer`` (grpc type) [#1103](https://github.com/ansys/pyansys-geometry/pull/1103)
-
+- fix: env version for Dockerfile Windows [#1120](https://github.com/ansys/pyansys-geometry/pull/1120)
 
 ### Dependencies
 
