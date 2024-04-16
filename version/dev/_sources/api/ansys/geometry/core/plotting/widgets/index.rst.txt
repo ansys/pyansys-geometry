@@ -1,0 +1,122 @@
+
+
+
+
+
+
+The ``widgets`` package 
+===========================
+
+.. py:module:: ansys.geometry.core.plotting.widgets
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: widgets
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.widgets.button`
+            - Provides for implementing buttons in PyAnsys Geometry.
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.widgets.displace_arrows`
+            - Provides the displacement arrows widget for the PyVista plotter.
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.widgets.measure`
+            - Provides the ruler widget for the PyAnsys Geometry plotter.
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.widgets.ruler`
+            - Provides the ruler widget for the PyAnsys Geometry plotter.
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.widgets.show_design_point`
+            - Provides the ruler widget for the PyAnsys Geometry plotter.
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.widgets.view_button`
+            - Provides the view button widget for changing the camera view.
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.widgets.widget`
+            - Provides the abstract implementation of plotter widgets.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🗎 button</api/ansys/geometry/core/plotting/widgets/button/index>
+    🗎 displace_arrows</api/ansys/geometry/core/plotting/widgets/displace_arrows/index>
+    🗎 measure</api/ansys/geometry/core/plotting/widgets/measure/index>
+    🗎 ruler</api/ansys/geometry/core/plotting/widgets/ruler/index>
+    🗎 show_design_point</api/ansys/geometry/core/plotting/widgets/show_design_point/index>
+    🗎 view_button</api/ansys/geometry/core/plotting/widgets/view_button/index>
+    🗎 widget</api/ansys/geometry/core/plotting/widgets/widget/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+Submodule providing widgets for the PyAnsys Geometry plotter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+

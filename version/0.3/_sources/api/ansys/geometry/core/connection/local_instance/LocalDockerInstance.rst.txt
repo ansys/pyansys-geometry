@@ -1,0 +1,237 @@
+
+
+
+
+LocalDockerInstance
+===================
+
+.. py:class:: LocalDockerInstance(port: int = DEFAULT_PORT, connect_to_existing_service: bool = True, restart_if_existing_service: bool = False, name: beartype.typing.Optional[str] = None, image: beartype.typing.Optional[GeometryContainers] = None)
+   :canonical: ansys.geometry.core.connection.local_instance.LocalDockerInstance
+
+
+
+
+Instantiates a Geometry service as a local Docker container.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: LocalDockerInstance
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~container`
+            - Docker container object that hosts the deployed Geometry service.
+          * - :py:attr:`~existed_previously`
+            - Flag indicating whether the container previously existed.
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__DOCKER_CLIENT__`
+            - Docker client class variable. The default is ``None``, in which case lazy
+      
+
+    .. tab-item:: Static methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~docker_client`
+            - Get the initialized ``__DOCKER_CLIENT__`` object.
+          * - :py:attr:`~is_docker_installed`
+            - Check whether a local installation of Docker engine is available and running.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.connection.local_instance import LocalDockerInstance
+
+
+Property detail
+---------------
+.. py:property:: container
+   :canonical: ansys.geometry.core.connection.local_instance.LocalDockerInstance.container
+   :type: docker.models.containers.Container
+
+
+   
+   Docker container object that hosts the deployed Geometry service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: existed_previously
+   :canonical: ansys.geometry.core.connection.local_instance.LocalDockerInstance.existed_previously
+   :type: bool
+
+
+   
+   Flag indicating whether the container previously existed.
+
+   Returns ``False`` if the Geometry service was effectively
+   deployed by this class or ``True`` if it already existed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: __DOCKER_CLIENT__
+   :type: docker.client.DockerClient
+
+   
+   Docker client class variable. The default is ``None``, in which case lazy
+   initialization is used.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   ``__DOCKER_CLIENT__`` is a class variable, meaning that it is
+   the same variable for all instances of this class.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+Method detail
+-------------
+
+
+.. py:method:: docker_client() -> docker.client.DockerClient
+   :staticmethod:
+
+   
+   Get the initialized ``__DOCKER_CLIENT__`` object.
+
+
+
+   :Returns:
+
+       :obj:`~docker.client.DockerClient`
+           Initialized Docker client.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The ``LocalDockerInstance`` class performs a lazy initialization of the
+   ``__DOCKER_CLIENT__`` class variable.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: is_docker_installed() -> bool
+   :staticmethod:
+
+   
+   Check whether a local installation of Docker engine is available and running.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if Docker engine is available and running, ``False`` otherwise.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

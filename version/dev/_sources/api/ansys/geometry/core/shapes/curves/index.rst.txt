@@ -1,0 +1,117 @@
+
+
+
+
+
+
+The ``curves`` package 
+==========================
+
+.. py:module:: ansys.geometry.core.shapes.curves
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: curves
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.curves.circle`
+            - Provides for creating and managing a circle.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.curves.curve`
+            - Provides the ``Curve`` class.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.curves.curve_evaluation`
+            - Provides for creating and managing a curve.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.curves.ellipse`
+            - Provides for creating and managing an ellipse.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.curves.line`
+            - Provides for creating and managing a line.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.curves.trimmed_curve`
+            - Trimmed curve class.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🗎 circle</api/ansys/geometry/core/shapes/curves/circle/index>
+    🗎 curve</api/ansys/geometry/core/shapes/curves/curve/index>
+    🗎 curve_evaluation</api/ansys/geometry/core/shapes/curves/curve_evaluation/index>
+    🗎 ellipse</api/ansys/geometry/core/shapes/curves/ellipse/index>
+    🗎 line</api/ansys/geometry/core/shapes/curves/line/index>
+    🗎 trimmed_curve</api/ansys/geometry/core/shapes/curves/trimmed_curve/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+Provides the PyAnsys Geometry ``curves`` subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+

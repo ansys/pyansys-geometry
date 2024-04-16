@@ -1,0 +1,121 @@
+
+
+
+
+MeasureWidget
+=============
+
+.. py:class:: MeasureWidget(plotter_helper: PlotterHelper)
+   :canonical: ansys.geometry.core.plotting.widgets.measure.MeasureWidget
+
+
+
+Bases: :py:obj:`ansys.geometry.core.plotting.widgets.widget.PlotterWidget`
+
+Provides the ruler widget for the PyAnsys Geometry ``Plotter`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: MeasureWidget
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~callback`
+            - Remove or add the measurement widget actor upon click.
+          * - :py:attr:`~update`
+            - Define the measurement widget button params.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.plotting.widgets.measure import MeasureWidget
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: callback(state: bool) -> None
+
+   
+   Remove or add the measurement widget actor upon click.
+
+
+   :Parameters:
+
+       **state** : :ref:`bool <python:bltin-boolean-values>`
+           State of the button, which is inherited from PyVista. The value is ``True``
+           if the button is active.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: update() -> None
+
+   
+   Define the measurement widget button params.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
