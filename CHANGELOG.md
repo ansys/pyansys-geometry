@@ -19,7 +19,7 @@ This project uses [towncrier](https://towncrier.readthedocs.io/) to generate cha
 - feat: accept bandit advisories in-line for subprocess [#1077](https://github.com/ansys/pyansys-geometry/pull/1077)
 - feat: adding containers to automatic launcher [#1090](https://github.com/ansys/pyansys-geometry/pull/1090)
 - feat: minor changes to Linux Dockerfile [#1111](https://github.com/ansys/pyansys-geometry/pull/1111)
-
+- feat: avoid error if folder exists [#1125](https://github.com/ansys/pyansys-geometry/pull/1125)
 
 ### Changed
 
