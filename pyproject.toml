@@ -71,7 +71,7 @@ tests = [
     "vtk==9.3.0",
 ]
 doc = [
-    "ansys-sphinx-theme[autoapi]==0.15.1",
+    "ansys-sphinx-theme[autoapi] @ git+https://github.com/ansys/ansys-sphinx-theme.git@feat/add-nerd-fonts",
     "beartype==0.17.2",
     "docker==7.0.0",
     "ipyvtklink==0.2.3",

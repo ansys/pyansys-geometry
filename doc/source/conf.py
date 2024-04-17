@@ -110,6 +110,11 @@ html_theme_options = {
             f"pyansys-geometry-v{get_version_match(__version__).replace('.', '-')}": "PyAnsys-Geometry",  # noqa: E501
         },
     },
+    "autoapi": {
+        "project": project,
+        "directory": "../../src/ansys",
+        "own_page_level": "class",
+    },
 }
 
 # Sphinx extensions
@@ -184,21 +189,21 @@ source_suffix = {
 master_doc = "index"
 
 # Configuration for Sphinx autoapi
-autoapi_type = "python"
-autoapi_dirs = ["../../src/ansys"]
-autoapi_root = "api"
-autoapi_options = [
-    "members",
-    "undoc-members",
-    "show-inheritance",
-    "show-module-summary",
-    "special-members",
-]
-autoapi_template_dir = get_autoapi_templates_dir_relative_path(Path(__file__))
+# autoapi_type = "python"
+# autoapi_dirs = ["../../src/ansys"]
+# autoapi_root = "api"
+# autoapi_options = [
+#     "members",
+#     "undoc-members",
+#     "show-inheritance",
+#     "show-module-summary",
+#     "special-members",
+# ]
+# autoapi_template_dir = get_autoapi_templates_dir_relative_path(Path(__file__))
 suppress_warnings = ["autoapi.python_import_resolution", "design.grid"]
-autoapi_python_use_implicit_namespaces = True
-autoapi_keep_files = True
-autoapi_own_page_level = "class"
+# autoapi_python_use_implicit_namespaces = True
+# autoapi_keep_files = True
+# autoapi_own_page_level = "class"
 
 # Examples gallery customization
 nbsphinx_execute = "always"
@@ -290,19 +295,6 @@ jinja_contexts = {
     "wheelhouse-assets": {"assets": get_wheelhouse_assets_dictionary()},
 }
 
-
-def prepare_jinja_env(jinja_env) -> None:
-    """
-    Customize the jinja env.
-
-    Notes
-    -----
-    See https://jinja.palletsprojects.com/en/3.0.x/api/#jinja2.Environment
-    """
-    jinja_env.globals["project_name"] = project
-
-
-autoapi_prepare_jinja_env = prepare_jinja_env
 nitpick_ignore_regex = [
     # Ignore typing
     (r"py:.*", r"optional"),
