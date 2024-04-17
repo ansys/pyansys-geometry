@@ -261,7 +261,7 @@ design.plot()
 
 Once modeling operations are finalized, you can export files
 in different formats. For the formats supported by DMS, see the
-[DesignFileFormat](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/design/DesignFileFormat.html#DesignFileFormat)
+[DesignFileFormat](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/design/DesignFileFormat.html)
 class in the ``Design`` module documentation.
 
 Export files in SCDOCX and FMD formats.
