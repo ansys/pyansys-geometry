@@ -4,7 +4,7 @@ This project uses [towncrier](https://towncrier.readthedocs.io/) to generate cha
 
 <!-- towncrier release notes start -->
 
-## [0.5.0](https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.0) - 2024-04-16
+## [0.5.0](https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.0) - 2024-04-17
 
 
 ### Added
@@ -51,6 +51,8 @@ This project uses [towncrier](https://towncrier.readthedocs.io/) to generate cha
 - fix: improper types being passed for Face and Edge ctor. [#1096](https://github.com/ansys/pyansys-geometry/pull/1096)
 - fix: return type should be dict and not ``ScalarMapContainer`` (grpc type) [#1103](https://github.com/ansys/pyansys-geometry/pull/1103)
 - fix: env version for Dockerfile Windows [#1120](https://github.com/ansys/pyansys-geometry/pull/1120)
+- fix: changelog description ill-formatted [#1121](https://github.com/ansys/pyansys-geometry/pull/1121)
+- fix: solve issues with intersphinx when releasing [#1123](https://github.com/ansys/pyansys-geometry/pull/1123)
 
 ### Dependencies
 
