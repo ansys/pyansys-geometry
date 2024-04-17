@@ -38,7 +38,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: ansys/actions/doc-deploy-changelog@main
+      - uses: ansys/actions/doc-deploy-changelog@v6
         with:
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
 
@@ -48,7 +48,7 @@ jobs:
     steps:
       - name: PyAnsys Vulnerability check (on main)
         if: github.ref == 'refs/heads/main'
-        uses: ansys/actions/check-vulnerabilities@main
+        uses: ansys/actions/check-vulnerabilities@v6
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
@@ -56,7 +56,7 @@ jobs:
 
       - name: PyAnsys Vulnerability check (on dev mode)
         if: github.ref != 'refs/heads/main'
-        uses: ansys/actions/check-vulnerabilities@main
+        uses: ansys/actions/check-vulnerabilities@v6
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
@@ -690,8 +690,7 @@ jobs:
     needs: [package]
     steps:
       - name: Deploy the latest documentation
-        # TODO: testing SEO improvements. This branch reuses the "index.html" from the stable version
-        uses: ansys/actions/doc-deploy-dev@feat/seo-improvements
+        uses: ansys/actions/doc-deploy-dev@v6
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -718,9 +717,7 @@ jobs:
     needs: [release]
     steps:
       - name: Deploy the stable documentation
-        # TODO: testing SEO improvements. This branch avoids creating a
-        # sitemap.xml pages in opposite to v5.
-        uses: ansys/actions/doc-deploy-stable@feat/seo-improvements
+        uses: ansys/actions/doc-deploy-stable@v6
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
