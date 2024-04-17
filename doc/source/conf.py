@@ -58,6 +58,40 @@ def get_wheelhouse_assets_dictionary():
     return assets
 
 
+def intersphinx_pyansys_geometry(switcher_version: str):
+    """
+    Auxiliary method to build the intersphinx mapping for PyAnsys Geometry.
+
+    Notes
+    -----
+    If the objects.inv file is not found whenever it is a release, the method
+    will default to the "dev" version. If the objects.inv file is not found
+    for the "dev" version, the method will return an empty string.
+
+    Parameters
+    ----------
+    switcher_version : str
+        Version of the PyAnsys Geometry package.
+
+    Returns
+    -------
+    str
+        The intersphinx mapping for PyAnsys Geometry.
+    """
+    prefix = "https://geometry.docs.pyansys.com/version"
+
+    # Check if the object.inv file exists
+    response = requests.get(f"{prefix}/{switcher_version}/objects.inv")
+
+    if response.status_code == 404:
+        if switcher_version == "dev":
+            return ""
+        else:
+            return intersphinx_pyansys_geometry("dev")
+    else:
+        return f"{prefix}/{switcher_version}"
+
+
 # Project information
 project = "ansys-geometry-core"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
@@ -136,8 +170,14 @@ intersphinx_mapping = {
     "beartype": ("https://beartype.readthedocs.io/en/stable/", None),
     "docker": ("https://docker-py.readthedocs.io/en/stable/", None),
     "pypim": ("https://pypim.docs.pyansys.com/version/stable", None),
-    "ansys.geometry.core": (f"https://geometry.docs.pyansys.com/version/{switcher_version}", None),
 }
+
+# Conditional intersphinx mapping
+if intersphinx_pyansys_geometry(switcher_version):
+    intersphinx_mapping["ansys.geometry.core"] = (
+        intersphinx_pyansys_geometry(switcher_version),
+        None,
+    )
 
 # numpydoc configuration
 numpydoc_show_class_members = False
