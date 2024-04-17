@@ -60,12 +60,7 @@ from ansys.geometry.core.shapes.curves.ellipse import Ellipse
 from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.sketch import Sketch
 
-
-# TODO: re-enable when Linux service is able to use measurement tools
-def skip_if_linux(modeler: Modeler):
-    """Skip test if running on Linux."""
-    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
-        pytest.skip("Measurement tools not available on Linux service.")
+from .conftest import skip_if_linux
 
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):
@@ -878,7 +873,6 @@ def test_body_rotation(modeler: Modeler):
         assert not np.allclose(old_vertex, new_vertex)
 
 
-@pytest.mark.skip(reason="Get the OpenSSL GeometryService through before fixing hoops")
 def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test for downloading a design in multiple modes and verifying the correct
     download."""
@@ -922,25 +916,26 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
         design.download(iges_file, format=DesignFileFormat.IGES)
         assert iges_file.exists()
 
-        # PMDB addin is Windows-only
-        pmdb_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.pmdb"
-        design.download(pmdb_file, DesignFileFormat.PMDB)
-        assert pmdb_file.exists()
-
     # Linux backend...
     else:
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_bin"
         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_txt"
 
+    # PMDB
+    pmdb_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.pmdb"
+
+    # FMD
     fmd_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.fmd"
 
     design.download(binary_parasolid_file, format=DesignFileFormat.PARASOLID_BIN)
     design.download(text_parasolid_file, format=DesignFileFormat.PARASOLID_TEXT)
     design.download(fmd_file, format=DesignFileFormat.FMD)
+    design.download(pmdb_file, format=DesignFileFormat.PMDB)
 
     assert binary_parasolid_file.exists()
     assert text_parasolid_file.exists()
     assert fmd_file.exists()
+    assert pmdb_file.exists()
 
 
 def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
@@ -976,8 +971,14 @@ def test_slot_extrusion(modeler: Modeler):
     assert len(body.edges) == 12
 
 
-def test_project_and_imprint_curves(modeler: Modeler, skip_not_on_linux_service):
+def test_project_and_imprint_curves(modeler: Modeler):
     """Test the projection of a set of curves on a body."""
+
+    # Skip on Linux
+    skip_if_linux(
+        modeler, test_project_and_imprint_curves.__name__, "project_curves, imprint_curves"
+    )
+
     # Create your design on the server side
     design = modeler.create_design("ExtrudeSlot")
     comp = design.add_component("Comp1")
@@ -1055,8 +1056,11 @@ def test_project_and_imprint_curves(modeler: Modeler, skip_not_on_linux_service)
     assert len(body_copy.faces) == 8
 
 
-def test_copy_body(modeler: Modeler, skip_not_on_linux_service):
+def test_copy_body(modeler: Modeler):
     """Test copying a body."""
+
+    # Skip on Linux
+    skip_if_linux(modeler, test_copy_body.__name__, "copy")
 
     # Create your design on the server side
     design = modeler.create_design("Design")
@@ -1099,8 +1103,12 @@ def test_copy_body(modeler: Modeler, skip_not_on_linux_service):
     assert copy.is_alive
 
 
-def test_beams(modeler: Modeler, skip_not_on_linux_service):
+def test_beams(modeler: Modeler):
     """Test beam creation."""
+
+    # Skip on Linux
+    skip_if_linux(modeler, test_beams.__name__, "create_beam")
+
     # Create your design on the server side
     design = modeler.create_design("BeamCreation")
 
@@ -1393,8 +1401,11 @@ def test_design_points(modeler: Modeler):
     assert isinstance(pd, pv.PolyData)
 
 
-def test_named_selections_beams(modeler: Modeler, skip_not_on_linux_service):
+def test_named_selections_beams(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection`` with beams."""
+
+    # Skip on Linux
+    skip_if_linux(modeler, test_named_selections_beams.__name__, "create_beam")
 
     # Create your design on the server side
     design = modeler.create_design("NamedSelectionBeams_Test")
@@ -1507,7 +1518,7 @@ def test_component_instances(modeler: Modeler):
     assert len(car2.components[1].components[1].bodies[0].faces) > 0
 
 
-def test_boolean_body_operations(modeler: Modeler, skip_not_on_linux_service):
+def test_boolean_body_operations(modeler: Modeler):
     """
     Test cases:
 
@@ -1544,6 +1555,12 @@ def test_boolean_body_operations(modeler: Modeler, skip_not_on_linux_service):
                 x) identity
                 y) transform
     """
+    # Skip on Linux
+    skip_if_linux(
+        modeler,
+        test_boolean_body_operations.__name__,
+        "copy, translate, intersect, subtract, unite",
+    )
 
     design = modeler.create_design("TestBooleanOperations")
 
@@ -1755,8 +1772,15 @@ def test_boolean_body_operations(modeler: Modeler, skip_not_on_linux_service):
     assert Accuracy.length_is_equal(copy1.volume.m, 1)
 
 
-def test_multiple_bodies_boolean_operations(modeler: Modeler, skip_not_on_linux_service):
+def test_multiple_bodies_boolean_operations(modeler: Modeler):
     """Test boolean operations with multiple bodies."""
+
+    # Skip on Linux
+    skip_if_linux(
+        modeler,
+        test_multiple_bodies_boolean_operations.__name__,
+        "copy, translate, intersect, subtract, unite",
+    )
 
     design = modeler.create_design("TestBooleanOperationsMultipleBodies")
 
@@ -1932,7 +1956,7 @@ def test_get_active_design(modeler: Modeler):
 
 def test_get_collision(modeler: Modeler):
     """Test the collision state between two bodies."""
-    skip_if_linux(modeler)  # Skip test on Linux
+    skip_if_linux(modeler, test_get_collision.__name__, "get_collision")  # Skip test on Linux
     design = modeler.open_file("./tests/integration/files/MixingTank.scdocx")
     body1 = design.bodies[0]
     body2 = design.bodies[1]
@@ -1959,7 +1983,7 @@ def test_body_scale(modeler: Modeler):
 
 def test_body_mapping(modeler: Modeler):
     """Verify the correct mapping of a body."""
-    skip_if_linux(modeler)
+    skip_if_linux(modeler, test_body_mapping.__name__, "map")
     design = modeler.create_design("BodyMap_Test")
 
     # non-symmetric shape to allow determination of mirroring
@@ -1998,10 +2022,6 @@ def test_body_mapping(modeler: Modeler):
 
     # expected vertices from confirmed mirror
     expected_vertices = [
-        Point3D([-5.0, -1.0, 0.0]),
-        Point3D([-5.0, 1.0, 0.0]),
-        Point3D([-5.0, -1.0, 1.0]),
-        Point3D([-5.0, -1.0, 0.0]),
         Point3D([-3.0, -1.0, 0.0]),
         Point3D([-5.0, -1.0, 0.0]),
         Point3D([-3.0, -1.0, 1.0]),
@@ -2018,8 +2038,10 @@ def test_body_mapping(modeler: Modeler):
         Point3D([-3.0, 1.0, 0.0]),
         Point3D([-5.0, 1.0, 1.0]),
         Point3D([-5.0, 1.0, 0.0]),
+        Point3D([-5.0, -1.0, 0.0]),
+        Point3D([-5.0, 1.0, 0.0]),
         Point3D([-5.0, -1.0, 1.0]),
-        Point3D([-5.0, 1.0, 1.0]),
+        Point3D([-5.0, -1.0, 0.0]),
         Point3D([-3.0, -1.0, 1.0]),
         Point3D([-5.0, -1.0, 1.0]),
         Point3D([-4.0, 0.5, 1.0]),
@@ -2028,6 +2050,8 @@ def test_body_mapping(modeler: Modeler):
         Point3D([-4.0, 0.5, 1.0]),
         Point3D([-5.0, 1.0, 1.0]),
         Point3D([-3.0, 1.0, 1.0]),
+        Point3D([-5.0, -1.0, 1.0]),
+        Point3D([-5.0, 1.0, 1.0]),
     ]
 
     assert np.allclose(expected_vertices, copy_vertices)
@@ -2052,7 +2076,7 @@ def test_body_mapping(modeler: Modeler):
 
 def test_sphere_creation(modeler: Modeler):
     """Test the creation of a sphere body with a given radius."""
-    skip_if_linux(modeler)
+    skip_if_linux(modeler, test_sphere_creation.__name__, "create_sphere")
     design = modeler.create_design("Spheretest")
     center_point = Point3D([10, 10, 10], UNITS.m)
     radius = Distance(1, UNITS.m)
@@ -2064,7 +2088,7 @@ def test_sphere_creation(modeler: Modeler):
 
 def test_body_mirror(modeler: Modeler):
     """Test the mirroring of a body."""
-    skip_if_linux(modeler)
+    skip_if_linux(modeler, test_body_mirror.__name__, "mirror")
     design = modeler.create_design("Design1")
 
     # Create shape with no lines of symmetry in any axis
@@ -2089,24 +2113,24 @@ def test_body_mirror(modeler: Modeler):
 
     # results from SpaceClaim
     expected_vertices = [
-        Point3D([3, -1, 1]),
-        Point3D([3, -1, 0]),
-        Point3D([5, -1, 1]),
-        Point3D([5, -1, 0]),
-        Point3D([4, 0.5, 1]),
-        Point3D([4, 0.5, 0]),
-        Point3D([5, 1, 1]),
-        Point3D([5, 1, 0]),
-        Point3D([3, 1, 1]),
-        Point3D([3, 1, 0]),
-        Point3D([3.55, 0.55, 1.1]),
-        Point3D([3.55, 0.55, 1]),
-        Point3D([3.45, 0.55, 1.1]),
-        Point3D([3.45, 0.55, 1]),
-        Point3D([3.45, 0.45, 1.1]),
-        Point3D([3.45, 0.45, 1]),
+        Point3D([5.0, -1.0, 1.0]),
+        Point3D([5.0, -1.0, 0.0]),
+        Point3D([4.0, 0.5, 1.0]),
+        Point3D([4.0, 0.5, 0.0]),
+        Point3D([5.0, 1.0, 1.0]),
+        Point3D([5.0, 1.0, 0.0]),
+        Point3D([3.0, 1.0, 1.0]),
+        Point3D([3.0, 1.0, 0.0]),
+        Point3D([3.0, -1.0, 1.0]),
+        Point3D([3.0, -1.0, 0.0]),
         Point3D([3.55, 0.45, 1.1]),
-        Point3D([3.55, 0.45, 1]),
+        Point3D([3.55, 0.45, 1.0]),
+        Point3D([3.55, 0.55, 1.1]),
+        Point3D([3.55, 0.55, 1.0]),
+        Point3D([3.45, 0.55, 1.1]),
+        Point3D([3.45, 0.55, 1.0]),
+        Point3D([3.45, 0.45, 1.1]),
+        Point3D([3.45, 0.45, 1.0]),
     ]
 
     copy_vertices = []
@@ -2121,24 +2145,24 @@ def test_body_mirror(modeler: Modeler):
 
     # results from SpaceClaim
     expected_vertices = [
-        Point3D([1, -1, -11]),
-        Point3D([1, -1, -10]),
-        Point3D([-1, -1, -11]),
-        Point3D([-1, -1, -10]),
-        Point3D([0, 0.5, -11]),
-        Point3D([0, 0.5, -10]),
-        Point3D([-1, 1, -11]),
-        Point3D([-1, 1, -10]),
-        Point3D([1, 1, -11]),
-        Point3D([1, 1, -10]),
-        Point3D([0.45, 0.55, -11.1]),
-        Point3D([0.45, 0.55, -11]),
-        Point3D([0.55, 0.55, -11.1]),
-        Point3D([0.55, 0.55, -11]),
-        Point3D([0.55, 0.45, -11.1]),
-        Point3D([0.55, 0.45, -11]),
+        Point3D([-1.0, -1.0, -11.0]),
+        Point3D([-1.0, -1.0, -10.0]),
+        Point3D([0.0, 0.5, -11.0]),
+        Point3D([0.0, 0.5, -10.0]),
+        Point3D([-1.0, 1.0, -11.0]),
+        Point3D([-1.0, 1.0, -10.0]),
+        Point3D([1.0, 1.0, -11.0]),
+        Point3D([1.0, 1.0, -10.0]),
+        Point3D([1.0, -1.0, -11.0]),
+        Point3D([1.0, -1.0, -10.0]),
         Point3D([0.45, 0.45, -11.1]),
-        Point3D([0.45, 0.45, -11]),
+        Point3D([0.45, 0.45, -11.0]),
+        Point3D([0.45, 0.55, -11.1]),
+        Point3D([0.45, 0.55, -11.0]),
+        Point3D([0.55, 0.55, -11.1]),
+        Point3D([0.55, 0.55, -11.0]),
+        Point3D([0.55, 0.45, -11.1]),
+        Point3D([0.55, 0.45, -11.0]),
     ]
 
     copy_vertices = []
@@ -2153,24 +2177,24 @@ def test_body_mirror(modeler: Modeler):
 
     # results from SpaceClaim
     expected_vertices = [
-        Point3D([1, 7, 1]),
-        Point3D([1, 7, 0]),
-        Point3D([-1, 7, 1]),
-        Point3D([-1, 7, 0]),
-        Point3D([0, 5.5, 1]),
-        Point3D([0, 5.5, 0]),
-        Point3D([-1, 5, 1]),
-        Point3D([-1, 5, 0]),
-        Point3D([1, 5, 1]),
-        Point3D([1, 5, 0]),
-        Point3D([0.45, 5.45, 1.1]),
-        Point3D([0.45, 5.45, 1]),
-        Point3D([0.55, 5.45, 1.1]),
-        Point3D([0.55, 5.45, 1]),
-        Point3D([0.55, 5.55, 1.1]),
-        Point3D([0.55, 5.55, 1]),
+        Point3D([-1.0, 7.0, 1.0]),
+        Point3D([-1.0, 7.0, 0.0]),
+        Point3D([0.0, 5.5, 1.0]),
+        Point3D([0.0, 5.5, 0.0]),
+        Point3D([-1.0, 5.0, 1.0]),
+        Point3D([-1.0, 5.0, 0.0]),
+        Point3D([1.0, 5.0, 1.0]),
+        Point3D([1.0, 5.0, 0.0]),
+        Point3D([1.0, 7.0, 1.0]),
+        Point3D([1.0, 7.0, 0.0]),
         Point3D([0.45, 5.55, 1.1]),
-        Point3D([0.45, 5.55, 1]),
+        Point3D([0.45, 5.55, 1.0]),
+        Point3D([0.45, 5.45, 1.1]),
+        Point3D([0.45, 5.45, 1.0]),
+        Point3D([0.55, 5.45, 1.1]),
+        Point3D([0.55, 5.45, 1.0]),
+        Point3D([0.55, 5.55, 1.1]),
+        Point3D([0.55, 5.55, 1.0]),
     ]
 
     copy_vertices = []
@@ -2183,7 +2207,7 @@ def test_body_mirror(modeler: Modeler):
 def test_sweep_sketch(modeler: Modeler):
     """Test revolving a circle profile around a circular axis to make a donut."""
 
-    skip_if_linux(modeler)
+    skip_if_linux(modeler, test_sweep_sketch.__name__, "sweep_sketch")
     design_sketch = modeler.create_design("donut")
 
     path_radius = 5
@@ -2221,7 +2245,7 @@ def test_sweep_chain(modeler: Modeler):
     """Test revolving a semi-elliptical profile around a circular axis to make a
     bowl."""
 
-    skip_if_linux(modeler)
+    skip_if_linux(modeler, test_sweep_chain.__name__, "sweep_chain")
     design_chain = modeler.create_design("bowl")
 
     radius = 10
@@ -2265,3 +2289,27 @@ def test_sweep_chain(modeler: Modeler):
     # check volume of body
     # expected is 0 since it's not a closed surface
     assert body.volume.m == 0
+
+
+def test_create_body_from_loft_profile(modeler: Modeler):
+    """Test the ``create_body_from_loft_profile()`` method to create a vase shape."""
+    skip_if_linux(
+        modeler, test_create_body_from_loft_profile.__name__, "'create_body_from_loft_profile'"
+    )
+    design_sketch = modeler.create_design("loftprofile")
+
+    profile1 = Circle(origin=[0, 0, 0], radius=8).trim(Interval(0, 2 * np.pi))
+    profile2 = Circle(origin=[0, 0, 10], radius=10).trim(Interval(0, 2 * np.pi))
+    profile3 = Circle(origin=[0, 0, 20], radius=5).trim(Interval(0, 2 * np.pi))
+
+    # Call the method
+    result = design_sketch.create_body_from_loft_profile(
+        "vase", [[profile1], [profile2], [profile3]], False, False
+    )
+
+    # Assert that the resulting body has only one face.
+    assert len(result.faces) == 1
+
+    # check volume of body
+    # expected is 0 since it's not a closed surface
+    assert result.volume.m == 0

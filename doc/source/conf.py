@@ -58,6 +58,40 @@ def get_wheelhouse_assets_dictionary():
     return assets
 
 
+def intersphinx_pyansys_geometry(switcher_version: str):
+    """
+    Auxiliary method to build the intersphinx mapping for PyAnsys Geometry.
+
+    Notes
+    -----
+    If the objects.inv file is not found whenever it is a release, the method
+    will default to the "dev" version. If the objects.inv file is not found
+    for the "dev" version, the method will return an empty string.
+
+    Parameters
+    ----------
+    switcher_version : str
+        Version of the PyAnsys Geometry package.
+
+    Returns
+    -------
+    str
+        The intersphinx mapping for PyAnsys Geometry.
+    """
+    prefix = "https://geometry.docs.pyansys.com/version"
+
+    # Check if the object.inv file exists
+    response = requests.get(f"{prefix}/{switcher_version}/objects.inv")
+
+    if response.status_code == 404:
+        if switcher_version == "dev":
+            return ""
+        else:
+            return intersphinx_pyansys_geometry("dev")
+    else:
+        return f"{prefix}/{switcher_version}"
+
+
 # Project information
 project = "ansys-geometry-core"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
@@ -141,8 +175,14 @@ intersphinx_mapping = {
     "beartype": ("https://beartype.readthedocs.io/en/stable/", None),
     "docker": ("https://docker-py.readthedocs.io/en/stable/", None),
     "pypim": ("https://pypim.docs.pyansys.com/version/stable", None),
-    "ansys.geometry.core": (f"https://geometry.docs.pyansys.com/version/{switcher_version}", None),
 }
+
+# Conditional intersphinx mapping
+if intersphinx_pyansys_geometry(switcher_version):
+    intersphinx_mapping["ansys.geometry.core"] = (
+        intersphinx_pyansys_geometry(switcher_version),
+        None,
+    )
 
 # numpydoc configuration
 numpydoc_show_class_members = False
@@ -224,6 +264,8 @@ nbsphinx_thumbnails = {
     "examples/03_modeling/tessellation_usage": "_static/thumbnails/tessellation_usage.png",
     "examples/03_modeling/design_organization": "_static/thumbnails/design_organization.png",
     "examples/03_modeling/boolean_operations": "_static/thumbnails/boolean_operations.png",
+    "examples/03_modeling/scale_map_mirror_bodies": "_static/thumbnails/scale_map_mirror_bodies.png",  # noqa: E501
+    "examples/03_modeling/sweep_chain_profile": "_static/thumbnails/sweep_chain_profile.png",
 }
 nbsphinx_epilog = """
 ----
@@ -268,6 +310,8 @@ linkcheck_exclude_documents = ["index", "getting_started/local/index", "assets"]
 linkcheck_ignore = [
     r"https://github.com/ansys/pyansys-geometry-binaries/.*",
     r"https://download.ansys.com/",
+    r".*/examples/.*.py",
+    r".*/examples/.*.ipynb",
 ]
 
 # -- Declare the Jinja context -----------------------------------------------

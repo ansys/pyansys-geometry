@@ -312,7 +312,7 @@ class Interval:
             Second interval.
 
         Returns
-        --------
+        -------
         Interval
             Intersection of the two intervals.
         """

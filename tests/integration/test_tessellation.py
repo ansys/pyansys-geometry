@@ -27,9 +27,15 @@ from ansys.geometry.core.math import Plane, Point2D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc.units import UNITS, Quantity
 from ansys.geometry.core.sketch import Sketch
 
+from .conftest import skip_if_linux
 
-def test_body_tessellate(modeler: Modeler, skip_not_on_linux_service):
+
+def test_body_tessellate(modeler: Modeler):
     """Test the body tessellation."""
+
+    # Skip on Linux
+    skip_if_linux(modeler, test_body_tessellate.__name__, "tessellate")
+
     sketch_1 = Sketch()
     sketch_1.box(Point2D([2, 0], UNITS.m), Quantity(4, UNITS.m), Quantity(4, UNITS.m))
     design = modeler.create_design("Design")
@@ -96,8 +102,11 @@ def test_body_tessellate(modeler: Modeler, skip_not_on_linux_service):
     assert comp_1.bodies[0]._template._tessellation is None
 
 
-def test_component_tessellate(modeler: Modeler, skip_not_on_linux_service):
+def test_component_tessellate(modeler: Modeler):
     """Test the component tessellation."""
+
+    # Skip on Linux
+    skip_if_linux(modeler, test_body_tessellate.__name__, "tessellate")
 
     # Create a sketch
     sketch_1 = Sketch()
