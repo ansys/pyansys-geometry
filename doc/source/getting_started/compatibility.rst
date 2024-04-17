@@ -21,7 +21,7 @@ and the Ansys product versions.
 
 .. tip:: Forth- and back-compatibility mechanism
 
-    Starting on version ``0.5.X`` and onwards, PyAnsys Geometry has implemented a forth- and back-compatibility mechanism to
+    Starting on version ``0.5.X`` and onward, PyAnsys Geometry has implemented a forth- and back-compatibility mechanism to
     ensure that the Python library can be used with different versions of the Ansys products.
 
     Methods are now decorated with the ``@min_backend_version`` decorator to indicate the compatibility with the Ansys product versions.
