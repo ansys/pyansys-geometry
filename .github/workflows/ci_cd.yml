@@ -491,7 +491,7 @@ jobs:
           VERSION_WITH_PREFIX: ${{ github.ref_name }}
         run: |
           $env:VERSION=$env:VERSION_WITH_PREFIX.substring(1)
-          mkdir $env:VERSION
+          mkdir $env:VERSION -ErrorAction SilentlyContinue
           mv windows-binaries.zip .\$env:VERSION\
           mv linux-binaries.zip .\$env:VERSION\
           git config user.email ${{ secrets.BINARIES_EMAIL }}
