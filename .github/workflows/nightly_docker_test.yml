@@ -5,8 +5,7 @@ on:
     - cron: "0 3 * * *"
 
 env:
-  MAIN_PYTHON_VERSION: '3.11'
-  MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED: '3.9'
+  MAIN_PYTHON_VERSION: '3.12'
   ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/ansys/geometry:windows-latest-unstable
   ANSRV_GEO_IMAGE_LINUX_TAG: ghcr.io/ansys/geometry:linux-latest-unstable
   ANSRV_GEO_PORT: 710
@@ -34,7 +33,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
           cache: 'pip'
           cache-dependency-path: 'pyproject.toml'
 
@@ -123,7 +122,7 @@ jobs:
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@v5
+        uses: ansys/actions/tests-pytest@v6
         env:
           ALLOW_PLOTTING: true
         with:

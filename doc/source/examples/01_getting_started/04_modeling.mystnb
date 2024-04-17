@@ -51,7 +51,7 @@ print(modeler)
 
 You can also launch your own services and connect to them. For information on
 connecting to an existing service, see the
-[Modeler API](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/modeler/Modeler.html#Modeler)
+[Modeler API](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/modeler/Modeler.html)
 documentation.
 
 +++
@@ -61,16 +61,16 @@ Here is how the class architecture is implemented:
 * ``Modeler``: Handler object for the active service session. This object allows you
   to connect to an existing service by passing in a host and a port. It also
   allows you to create ``Design`` objects, which is where the modeling takes
-  place. For more information, see the [Modeler API](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/modeler/Modeler.html#Modeler)
+  place. For more information, see the [Modeler API](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/modeler/Modeler.html)
   documentation.
 * ``Design``: Root object of your assembly (tree). While a ``Design`` object is also a
   ``Component`` object, it has enhanced capabilities, including creating named selections,
   adding materials, and handling beam profiles. For more information, see the
-  [Design API](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/design/Design.html#Design)
+  [Design API](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/design/Design.html)
   documentation.
 * ``Component``: One of the main objects for modeling purposes. ``Component`` objects
   allow you to create bodies, subcomponents, beams, design points, planar surfaces, and more.
-  For more information, see the [Component API](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/component/Component.html#Component)
+  For more information, see the [Component API](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/component/Component.html)
   documentation.
 
 The following code examples show how you use these objects.
@@ -261,7 +261,7 @@ design.plot()
 
 Once modeling operations are finalized, you can export files
 in different formats. For the formats supported by DMS, see the
-[DesignFileFormat](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/design/DesignFileFormat.html#DesignFileFormat)
+[DesignFileFormat](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/design/DesignFileFormat.html)
 class in the ``Design`` module documentation.
 
 Export files in SCDOCX and FMD formats.
