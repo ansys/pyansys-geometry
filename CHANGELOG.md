@@ -2,7 +2,6 @@
 
 This project uses [towncrier](https://towncrier.readthedocs.io/) to generate changelogs.
 
-Refer to the [release notes](doc/source/changelog.rst)for more information.
-You can also check the latest release notes in the PyAnsys Geometry documentation.
+Refer to the [raw release notes](doc/source/changelog.rst) for more information.
 
-https://docs.pyansys.com/version/stable/changelog.html
+[Published release notes](https://docs.pyansys.com/version/stable/changelog.html) can be found in the online documentation.
