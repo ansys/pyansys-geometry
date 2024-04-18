@@ -320,6 +320,9 @@ if switcher_version != "dev":
         f"https://github.com/ansys/pyansys-geometry/releases/tag/v{__version__}"
     )  # noqa: E501
 
+# User agent
+user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.2420.81"  # noqa: E501
+
 
 # -- Declare the Jinja context -----------------------------------------------
 exclude_patterns = []
