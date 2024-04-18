@@ -52,7 +52,7 @@ Geometry service Docker container assets
 ----------------------------------------
 
 Build the latest Geometry service Docker container using the following assets. Instructions
-on how to build the containers are found at `Docker containers <getting_started/docker/index.html>`_.
+on how to build the containers are found at :ref:`Docker containers <ref_docker>`.
 
 Currently, the Geometry service backend is mainly delivered as a **Windows** Docker container.
 However, these containers require a Windows machine to run them.

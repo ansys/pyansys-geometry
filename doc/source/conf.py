@@ -301,13 +301,21 @@ latex_additional_files = [watermark, ansys_logo_white, ansys_logo_white_cropped]
 latex_elements = {"preamble": latex.generate_preamble(html_title)}
 sd_fontawesome_latex = True
 
-linkcheck_exclude_documents = ["index", "getting_started/local/index", "assets"]
+linkcheck_exclude_documents = ["index", "getting_started/local/index"]
 linkcheck_ignore = [
-    r"https://github.com/ansys/pyansys-geometry-binaries/.*",
+    r"https://github.com/ansys/pyansys-geometry-binaries",
     r"https://download.ansys.com/",
     r".*/examples/.*.py",
     r".*/examples/.*.ipynb",
+    r"_static/assets/.*",
 ]
+
+# If we are on a release, we have to ignore the "release" URLs, since it is not
+# available until the release is published.
+if switcher_version != "dev":
+    linkcheck_ignore.append(rf"https://github.com/ansys/pyansys-geometry/releases/download/v{__version__}/.*")  # noqa: E501
+    linkcheck_ignore.append(f"https://github.com/ansys/pyansys-geometry/releases/tag/v{__version__}")  # noqa: E501
+
 
 # -- Declare the Jinja context -----------------------------------------------
 exclude_patterns = []

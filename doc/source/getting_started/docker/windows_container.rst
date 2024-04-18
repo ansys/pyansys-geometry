@@ -114,7 +114,7 @@ There are two build modes:
 * **Build from available binaries**: This mode builds the Docker image using
   the binaries available in the ``ansys/pyansys-geometry-binaries`` repository.
   If you do not have access to this repository, you can only use the first mode.
-  Link to the binaries repository: https://github.com/ansys/pyansys-geometry-binaries/
+  Link to the binaries repository: https://github.com/ansys/pyansys-geometry-binaries
 
 Prerequisites
 ~~~~~~~~~~~~~
@@ -159,7 +159,7 @@ Prior to building your image, follow these steps:
 * Download the `latest Windows Dockerfile <https://github.com/ansys/pyansys-geometry/blob/main/docker/windows/Dockerfile>`_.
 
 * Download the `latest release artifacts for the Windows
-  Docker container (ZIP file) for your version <https://github.com/ansys/pyansys-geometry-binaries/>`_.
+  Docker container (ZIP file) for your version <https://github.com/ansys/pyansys-geometry-binaries>`_.
 
 .. note::
 
