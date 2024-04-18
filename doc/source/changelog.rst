@@ -5,6 +5,8 @@ Release notes
 
 This document contains the release notes for the ``ansys-geometry-core`` project.
 
+.. vale off
+
 .. towncrier release notes start
 
 `0.5.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.0>`_ - 2024-04-17
@@ -81,3 +83,5 @@ Miscellaneous
 - [pre-commit.ci] pre-commit autoupdate `#1063 <https://github.com/ansys/pyansys-geometry/pull/1063>`_
 - docs: add examples on new methods `#1089 <https://github.com/ansys/pyansys-geometry/pull/1089>`_
 - chore: pre-commit automatic update `#1116 <https://github.com/ansys/pyansys-geometry/pull/1116>`_
+
+.. vale on
