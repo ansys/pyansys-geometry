@@ -74,9 +74,6 @@ class TrameVisualizer:
         plotter : Union[~pyvista.Plotter, ~Plotter, ~PlotterHelper]
             PyVista plotter or PyAnsys plotter to render.
         """
-        if isinstance(plotter, Plotter):
-            plotter = plotter.scene
-
         from ansys.geometry.core.plotting.plotter_helper import PlotterHelper
 
         if isinstance(plotter, PlotterHelper):
