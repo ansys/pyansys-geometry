@@ -296,7 +296,7 @@ class Design(Component):
     def __build_export_file_location(self, location: Union[Path, str, None], ext: str) -> Path:
         """
         Build the file location for export functions.
-        
+
         Parameters
         ----------
         location : Union[~pathlib.Path, str, None]
@@ -304,7 +304,7 @@ class Design(Component):
             in the current working directory.
         ext : str
             Extension to use for the file.
-        
+
         Returns
         -------
         ~pathlib.Path
