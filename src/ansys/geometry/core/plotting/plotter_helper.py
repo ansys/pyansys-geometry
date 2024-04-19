@@ -263,6 +263,17 @@ class PlotterHelper:
         """
         self._pl.add(object=object, **plotting_options)
 
+    def add_list(self, object_list: List[Any], **plotting_options):
+        """
+        Add a ``pyansys-geometry`` or ``PyVista`` object list to the plotter.
+
+        Parameters
+        ----------
+        object_list: Any
+            Object list you want to show.
+        """
+        self._pl.add_list(plotting_list=object_list, **plotting_options)
+
     def plot(
         self,
         object: Any = None,

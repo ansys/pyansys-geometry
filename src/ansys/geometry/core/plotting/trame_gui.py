@@ -24,10 +24,11 @@ from beartype.typing import TYPE_CHECKING, Union
 
 from ansys.geometry.core import LOG as logger
 from ansys.geometry.core.plotting.plotter import Plotter
-from ansys.geometry.core.plotting.plotter_helper import PlotterHelper
 
 if TYPE_CHECKING:
     import pyvista as pv
+
+    from ansys.geometry.core.plotting.plotter_helper import PlotterHelper
 
 try:
     from pyvista.trame.ui import plotter_ui
@@ -65,7 +66,7 @@ class TrameVisualizer:
         self.server = get_server(client_type=client_type)
         self.state, self.ctrl = self.server.state, self.server.controller
 
-    def set_scene(self, plotter: Union["pv.Plotter", Plotter, PlotterHelper]):
+    def set_scene(self, plotter: Union["pv.Plotter", Plotter, "PlotterHelper"]):
         """
         Set the trame layout view and the mesh to show through the PyVista plotter.
 
@@ -76,6 +77,8 @@ class TrameVisualizer:
         """
         if isinstance(plotter, Plotter):
             plotter = plotter.scene
+
+        from ansys.geometry.core.plotting.plotter_helper import PlotterHelper
 
         if isinstance(plotter, PlotterHelper):
             plotter = plotter._pl.scene
