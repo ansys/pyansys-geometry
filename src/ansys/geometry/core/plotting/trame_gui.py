@@ -20,10 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Module for using `trame <https://kitware.github.io/trame/index.html>`_ for visualization."""
+from ansys.geometry.core import LOG as logger
+
 try:
     from pyvista.trame.ui import plotter_ui
     from trame.app import get_server
-    from trame.ui.vuetify import SinglePageLayout
+    from trame.ui import vuetify, vuetify3
 
     _HAS_TRAME = True
 
@@ -32,16 +34,28 @@ except ModuleNotFoundError:  # pragma: no cover
 
 
 class TrameVisualizer:
-    """Defines the trame layout view."""
+    """
+    Defines the trame layout view.
 
-    def __init__(self) -> None:
+    Parameters
+    ----------
+    client_type : str, optional
+        Client type to use for the trame server. Options are 'vue2' and 'vue3'.
+        Default is 'vue3'.
+    """
+
+    def __init__(self, client_type: str = "vue3") -> None:
         """Initialize the trame server and server-related variables."""
         if not _HAS_TRAME:  # pragma: no cover
             raise ModuleNotFoundError(
                 "The package 'pyvista[trame]' is required to use this function."
             )
+        self._client_type = client_type
+        if client_type not in ["vue2", "vue3"]:
+            self._client_type = "vue3"
+            logger.warning("Invalid client type {}. Defaulting to 'vue3'.", client_type)
 
-        self.server = get_server()
+        self.server = get_server(client_type=client_type)
         self.state, self.ctrl = self.server.state, self.server.controller
 
     def set_scene(self, plotter):
@@ -54,8 +68,12 @@ class TrameVisualizer:
             PyVista plotter with the rendered mesh.
         """
         self.state.trame__title = "PyAnsys Geometry Viewer"
+        if self._client_type == "vue3":
+            page_layout = vuetify3.SinglePageLayout(self.server)
+        else:
+            page_layout = vuetify.SinglePageLayout(self.server)
 
-        with SinglePageLayout(self.server) as layout:
+        with page_layout as layout:
             layout.icon.click = self.ctrl.view_reset_camera
             layout.title.set_text("PyAnsys Geometry")
 
