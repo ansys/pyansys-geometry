@@ -21,13 +21,12 @@
 # SOFTWARE.
 """Module for using `trame <https://kitware.github.io/trame/index.html>`_ for visualization."""
 from beartype.typing import TYPE_CHECKING, Union
+import pyvista as pv
 
 from ansys.geometry.core import LOG as logger
 from ansys.geometry.core.plotting.plotter import Plotter
 
 if TYPE_CHECKING:
-    import pyvista as pv
-
     from ansys.geometry.core.plotting.plotter_helper import PlotterHelper
 
 try:
@@ -84,8 +83,10 @@ class TrameVisualizer:
             pv_plotter = plotter._pl.scene
         elif isinstance(plotter, Plotter):
             pv_plotter = plotter.scene
-        else:
+        elif isinstance(plotter, pv.Plotter):
             pv_plotter = plotter
+        else:
+            logger.warning("Invalid plotter type. Expected PyVista plotter or PyAnsys plotter.")
 
         self.state.trame__title = "PyAnsys Geometry Viewer"
         if self._client_type == "vue3":
