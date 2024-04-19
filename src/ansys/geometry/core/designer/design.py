@@ -293,6 +293,10 @@ class Design(Component):
             f"Design is successfully downloaded at location {file_location}."
         )
 
+    def __build_export_file_location(self, location: Union[Path, str, None], ext: str) -> Path:
+        """Build the file location for export functions."""
+        return (Path(location) if location else Path.cwd()) / f"{self.name}.{ext}"
+
     def export_to_scdocx(self, location: Union[Path, str] = None) -> str:
         """
         Export the design to an scdocx file.
@@ -309,7 +313,7 @@ class Design(Component):
             The path to the saved file.
         """
         # Define the file location
-        file_location = (Path(location) if location else Path.cwd()) / f"{self.name}.scdocx"
+        file_location = self.__build_export_file_location(location, "scdocx")
 
         # Export the design to an scdocx file
         self.download(file_location, DesignFileFormat.SCDOCX)
@@ -336,7 +340,7 @@ class Design(Component):
         ext = "x_t" if self._grpc_client.backend_type == BackendType.LINUX_SERVICE else "xmt_txt"
 
         # Define the file location
-        file_location = (Path(location) if location else Path.cwd()) / f"{self.name}.{ext}"
+        file_location = self.__build_export_file_location(location, ext)
 
         # Export the design to a Parasolid text file
         self.download(file_location, DesignFileFormat.PARASOLID_TEXT)
@@ -363,7 +367,7 @@ class Design(Component):
         ext = "x_b" if self._grpc_client.backend_type == BackendType.LINUX_SERVICE else "xmt_bin"
 
         # Define the file location
-        file_location = (Path(location) if location else Path.cwd()) / f"{self.name}.{ext}"
+        file_location = self.__build_export_file_location(location, ext)
 
         # Export the design to a Parasolid binary file
         self.download(file_location, DesignFileFormat.PARASOLID_BIN)
@@ -387,7 +391,7 @@ class Design(Component):
             The path to the saved file.
         """
         # Define the file location
-        file_location = (Path(location) if location else Path.cwd()) / f"{self.name}.fmd"
+        file_location = self.__build_export_file_location(location, "fmd")
 
         # Export the design to an FMD file
         self.download(file_location, DesignFileFormat.FMD)
@@ -411,7 +415,7 @@ class Design(Component):
             The path to the saved file.
         """
         # Define the file location
-        file_location = (Path(location) if location else Path.cwd()) / f"{self.name}.stp"
+        file_location = self.__build_export_file_location(location, "stp")
 
         # Export the design to a STEP file
         self.download(file_location, DesignFileFormat.STEP)
@@ -435,7 +439,7 @@ class Design(Component):
             The path to the saved file.
         """
         # Define the file location
-        file_location = (Path(location) if location else Path.cwd()) / f"{self.name}.igs"
+        file_location = self.__build_export_file_location(location, "igs")
 
         # Export the design to an IGES file
         self.download(file_location, DesignFileFormat.IGES)
@@ -459,7 +463,7 @@ class Design(Component):
             The path to the saved file.
         """
         # Define the file location
-        file_location = (Path(location) if location else Path.cwd()) / f"{self.name}.pmdb"
+        file_location = self.__build_export_file_location(location, "pmdb")
 
         # Export the design to a PMDB file
         self.download(file_location, DesignFileFormat.PMDB)
