@@ -37,7 +37,9 @@ def get_wheelhouse_assets_dictionary():
         # Try to retrieve the content three times before failing
         content = None
         for _ in range(3):
-            response = requests.get("https://api.github.com/repos/ansys/pyansys-geometry/releases/latest")
+            response = requests.get(
+                "https://api.github.com/repos/ansys/pyansys-geometry/releases/latest"
+            )
             if response.status_code == 200:
                 content = response.content
                 break
