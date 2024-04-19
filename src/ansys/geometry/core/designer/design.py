@@ -294,7 +294,22 @@ class Design(Component):
         )
 
     def __build_export_file_location(self, location: Union[Path, str, None], ext: str) -> Path:
-        """Build the file location for export functions."""
+        """
+        Build the file location for export functions.
+        
+        Parameters
+        ----------
+        location : Union[~pathlib.Path, str, None]
+            Location on disk to save the file to. If None, the file will be saved
+            in the current working directory.
+        ext : str
+            Extension to use for the file.
+        
+        Returns
+        -------
+        ~pathlib.Path
+            The file location for the export function.
+        """
         return (Path(location) if location else Path.cwd()) / f"{self.name}.{ext}"
 
     def export_to_scdocx(self, location: Union[Path, str] = None) -> str:
