@@ -4,6 +4,7 @@ from datetime import datetime
 import json
 import os
 from pathlib import Path
+import time
 
 from ansys_sphinx_theme import (
     ansys_favicon,
@@ -32,12 +33,29 @@ def get_wheelhouse_assets_dictionary():
     assets_context_runners = ["ubuntu-latest", "windows-latest", "macos-latest"]
     assets_context_python_versions = ["3.9", "3.10", "3.11", "3.12"]
     if get_version_match(__version__) == "dev":
+
+        # Try to retrieve the content three times before failing
+        content = None
+        for _ in range(3):
+            response = requests.get(
+                "https://api.github.com/repos/ansys/pyansys-geometry/releases/latest",
+                headers={
+                    "Accept": "application/vnd.github+json",
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.2420.81",  # noqa: E501
+                },
+            )
+            if response.status_code == 200:
+                content = response.content
+                break
+            else:
+                print(f"Failed to retrieve the latest release. Retrying...")
+                time.sleep(2)
+
+        if content is None:
+            raise requests.exceptions.RequestException("Failed to retrieve the latest release")
+
         # Just point to the latest version
-        assets_context_version = json.loads(
-            requests.get(
-                "https://api.github.com/repos/ansys/pyansys-geometry/releases/latest"
-            ).content
-        )["name"]
+        assets_context_version = json.loads(content)["name"]
     else:
         assets_context_version = f"v{__version__}"
 
