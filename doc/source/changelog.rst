@@ -3,7 +3,7 @@
 Release notes
 #############
 
-This document contains the release notes for the ``ansys-geometry-core`` project.
+This document contains the release notes for the PyAnsys Geometry project.
 
 .. vale off
 
