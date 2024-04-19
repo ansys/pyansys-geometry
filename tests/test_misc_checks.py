@@ -236,7 +236,7 @@ def test_min_version_backend():
 
     with pytest.raises(
         GeometryRuntimeError,
-        match="The method 'case_higher' requires a minimum backend version of 24.2.0, and the current backend version is 24.1.0.",  # noqa: E501
+        match="The method 'case_higher' requires a minimum Ansys release version of 24.2.0, but the current version used is 24.1.0.",  # noqa: E501
     ):
         case_higher(mock_object)
 
@@ -252,3 +252,17 @@ def test_min_version_backend():
         match="The client is not available. You must initialize the client first.",
     ):
         case_no_client(mock_object)
+
+    # If the client has no backend version, an error should be raised
+    mock_object._grpc_client = MockClient()
+    mock_object._grpc_client.backend_version = "0.0.0"
+
+    @min_backend_version(24, 2, 0)
+    def case_no_version(mock_object):
+        return True
+
+    with pytest.raises(
+        GeometryRuntimeError,
+        match="The method 'case_no_version' requires a minimum Ansys release version of 24.2.0, but the current version used is 24.1.0 or lower.",  # noqa: E501
+    ):
+        case_no_version(mock_object)
