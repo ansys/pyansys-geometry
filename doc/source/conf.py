@@ -261,6 +261,7 @@ nbsphinx_thumbnails = {
     "examples/03_modeling/boolean_operations": "_static/thumbnails/boolean_operations.png",
     "examples/03_modeling/scale_map_mirror_bodies": "_static/thumbnails/scale_map_mirror_bodies.png",  # noqa: E501
     "examples/03_modeling/sweep_chain_profile": "_static/thumbnails/sweep_chain_profile.png",
+    "examples/03_modeling/export_design": "_static/thumbnails/export_design.png",
 }
 nbsphinx_epilog = """
 ----
