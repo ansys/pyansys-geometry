@@ -46,6 +46,7 @@ from google.protobuf.empty_pb2 import Empty
 import numpy as np
 from pint import Quantity, UndefinedUnitError
 
+from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.conversions import (
     grpc_frame_to_frame,
     grpc_matrix_to_matrix,
@@ -253,13 +254,13 @@ class Design(Component):
             Format for the file to save to.
         """
         # Sanity checks on inputs
-        if isinstance(file_location, Path):
-            file_location = str(file_location)
+        if isinstance(file_location, str):
+            file_location = Path(file_location)
 
         # Check if the folder for the file location exists
-        if not Path(file_location).parent.exists():
+        if not file_location.parent.exists():
             # Create the parent directory
-            Path(file_location).parent.mkdir(parents=True, exist_ok=True)
+            file_location.parent.mkdir(parents=True, exist_ok=True)
 
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
@@ -291,6 +292,180 @@ class Design(Component):
         self._grpc_client.log.debug(
             f"Design is successfully downloaded at location {file_location}."
         )
+
+    def export_to_scdocx(self, location: Union[Path, str] = None) -> str:
+        """
+        Export the design to an scdocx file.
+
+        Parameters
+        ----------
+        location : Union[~pathlib.Path, str], optional
+            Location on disk to save the file to. If None, the file will be saved
+            in the current working directory.
+
+        Returns
+        -------
+        str
+            The path to the saved file.
+        """
+        # Define the file location
+        file_location = (Path(location) if location else Path.cwd()) / f"{self.name}.scdocx"
+
+        # Export the design to an scdocx file
+        self.download(file_location, DesignFileFormat.SCDOCX)
+
+        # Return the file location
+        return file_location
+
+    def export_to_parasolid_text(self, location: Union[Path, str] = None) -> str:
+        """
+        Export the design to a Parasolid text file.
+
+        Parameters
+        ----------
+        location : Union[~pathlib.Path, str], optional
+            Location on disk to save the file to. If None, the file will be saved
+            in the current working directory.
+
+        Returns
+        -------
+        str
+            The path to the saved file.
+        """
+        # Determine the extension based on the backend type
+        ext = "x_t" if self._grpc_client.backend_type == BackendType.LINUX_SERVICE else "xmt_txt"
+
+        # Define the file location
+        file_location = (Path(location) if location else Path.cwd()) / f"{self.name}.{ext}"
+
+        # Export the design to a Parasolid text file
+        self.download(file_location, DesignFileFormat.PARASOLID_TEXT)
+
+        # Return the file location
+        return file_location
+
+    def export_to_parasolid_bin(self, location: Union[Path, str] = None) -> str:
+        """
+        Export the design to a Parasolid binary file.
+
+        Parameters
+        ----------
+        location : Union[~pathlib.Path, str], optional
+            Location on disk to save the file to. If None, the file will be saved
+            in the current working directory.
+
+        Returns
+        -------
+        str
+            The path to the saved file.
+        """
+        # Determine the extension based on the backend type
+        ext = "x_b" if self._grpc_client.backend_type == BackendType.LINUX_SERVICE else "xmt_bin"
+
+        # Define the file location
+        file_location = (Path(location) if location else Path.cwd()) / f"{self.name}.{ext}"
+
+        # Export the design to a Parasolid binary file
+        self.download(file_location, DesignFileFormat.PARASOLID_BIN)
+
+        # Return the file location
+        return file_location
+
+    def export_to_fmd(self, location: Union[Path, str] = None) -> str:
+        """
+        Export the design to an FMD file.
+
+        Parameters
+        ----------
+        location : Union[~pathlib.Path, str], optional
+            Location on disk to save the file to. If None, the file will be saved
+            in the current working directory.
+
+        Returns
+        -------
+        str
+            The path to the saved file.
+        """
+        # Define the file location
+        file_location = (Path(location) if location else Path.cwd()) / f"{self.name}.fmd"
+
+        # Export the design to an FMD file
+        self.download(file_location, DesignFileFormat.FMD)
+
+        # Return the file location
+        return file_location
+
+    def export_to_step(self, location: Union[Path, str] = None) -> str:
+        """
+        Export the design to a STEP file.
+
+        Parameters
+        ----------
+        location : Union[~pathlib.Path, str], optional
+            Location on disk to save the file to. If None, the file will be saved
+            in the current working directory.
+
+        Returns
+        -------
+        str
+            The path to the saved file.
+        """
+        # Define the file location
+        file_location = (Path(location) if location else Path.cwd()) / f"{self.name}.stp"
+
+        # Export the design to a STEP file
+        self.download(file_location, DesignFileFormat.STEP)
+
+        # Return the file location
+        return file_location
+
+    def export_to_iges(self, location: Union[Path, str] = None) -> str:
+        """
+        Export the design to an IGES file.
+
+        Parameters
+        ----------
+        location : Union[~pathlib.Path, str], optional
+            Location on disk to save the file to. If None, the file will be saved
+            in the current working directory.
+
+        Returns
+        -------
+        str
+            The path to the saved file.
+        """
+        # Define the file location
+        file_location = (Path(location) if location else Path.cwd()) / f"{self.name}.igs"
+
+        # Export the design to an IGES file
+        self.download(file_location, DesignFileFormat.IGES)
+
+        # Return the file location
+        return file_location
+
+    def export_to_pmdb(self, location: Union[Path, str] = None) -> str:
+        """
+        Export the design to a PMDB file.
+
+        Parameters
+        ----------
+        location : Union[~pathlib.Path, str], optional
+            Location on disk to save the file to. If None, the file will be saved
+            in the current working directory.
+
+        Returns
+        -------
+        str
+            The path to the saved file.
+        """
+        # Define the file location
+        file_location = (Path(location) if location else Path.cwd()) / f"{self.name}.pmdb"
+
+        # Export the design to a PMDB file
+        self.download(file_location, DesignFileFormat.PMDB)
+
+        # Return the file location
+        return file_location
 
     @check_input_types
     @ensure_design_is_active
@@ -694,7 +869,7 @@ class Design(Component):
             # Since they're the same in the backend.
             self._name = design.name
 
-        response = self._commands_stub.GetAssembly(EntityIdentifier(id=""))
+        response = self._commands_stub.GetAssembly(EntityIdentifier(id=self._design_id))
 
         # Store created objects
         created_parts = {p.id: Part(p.id, p.name, [], []) for p in response.parts}
