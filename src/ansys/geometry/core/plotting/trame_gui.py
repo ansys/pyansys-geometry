@@ -81,7 +81,11 @@ class TrameVisualizer:
         from ansys.geometry.core.plotting.plotter_helper import PlotterHelper
 
         if isinstance(plotter, PlotterHelper):
-            plotter = plotter._pl.scene
+            pv_plotter = plotter._pl.scene
+        elif isinstance(plotter, Plotter):
+            pv_plotter = plotter.scene
+        else:
+            pv_plotter = plotter
 
         self.state.trame__title = "PyAnsys Geometry Viewer"
         if self._client_type == "vue3":
@@ -95,7 +99,7 @@ class TrameVisualizer:
 
             with layout.content:
                 # Use PyVista UI template for Plotters
-                view = plotter_ui(plotter)
+                view = plotter_ui(pv_plotter)
                 self.ctrl.view_update = view.update
 
             # hide footer with trame watermark
