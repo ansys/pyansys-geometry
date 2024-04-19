@@ -20,7 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Module for using `trame <https://kitware.github.io/trame/index.html>`_ for visualization."""
+from beartype.typing import TYPE_CHECKING, Union
+
 from ansys.geometry.core import LOG as logger
+from ansys.geometry.core.plotting.plotter import Plotter
+from ansys.geometry.core.plotting.plotter_helper import PlotterHelper
+
+if TYPE_CHECKING:
+    import pyvista as pv
 
 try:
     from pyvista.trame.ui import plotter_ui
@@ -58,15 +65,21 @@ class TrameVisualizer:
         self.server = get_server(client_type=client_type)
         self.state, self.ctrl = self.server.state, self.server.controller
 
-    def set_scene(self, plotter):
+    def set_scene(self, plotter: Union["pv.Plotter", Plotter, PlotterHelper]):
         """
         Set the trame layout view and the mesh to show through the PyVista plotter.
 
         Parameters
         ----------
-        plotter : ~pyvista.Plotter
-            PyVista plotter with the rendered mesh.
+        plotter : ~pyvista.Plotter | ~Plotter | ~PlotterHelper
+            PyVista plotter or PyAnsys plotter to render.
         """
+        if isinstance(plotter, Plotter):
+            plotter = plotter.scene
+
+        if isinstance(plotter, PlotterHelper):
+            plotter = plotter._pl.scene
+
         self.state.trame__title = "PyAnsys Geometry Viewer"
         if self._client_type == "vue3":
             page_layout = vuetify3.SinglePageLayout(self.server)
@@ -79,7 +92,7 @@ class TrameVisualizer:
 
             with layout.content:
                 # Use PyVista UI template for Plotters
-                view = plotter_ui(plotter.scene)
+                view = plotter_ui(plotter)
                 self.ctrl.view_update = view.update
 
             # hide footer with trame watermark
