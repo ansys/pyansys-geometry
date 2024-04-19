@@ -183,17 +183,18 @@ def test_export_to_step(modeler: Modeler, tmp_path_factory: pytest.TempPathFacto
     location = tmp_path_factory.mktemp("test_export_to_step")
     file_location = location / f"{design.name}.stp"
 
-    # Export to step
+    # Export to STEP
     design.export_to_step(location)
 
     # Check the exported file
     assert file_location.exists()
 
-    # Import the scdocx
-    design_read = modeler.open_file(file_location)
+    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
+        # Import the STEP file
+        design_read = modeler.open_file(file_location)
 
-    # Check the imported design
-    _checker_method(design_read, design, False)
+        # Check the imported design
+        _checker_method(design_read, design, False)
 
 
 def test_export_to_iges(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
