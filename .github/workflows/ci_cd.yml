@@ -441,6 +441,8 @@ jobs:
     name: Testing with minimum requirements
     needs: [smoke-tests]
     runs-on: ubuntu-latest
+    env:
+      ANSRV_GEO_IMAGE_MINREQS: 'ghcr.io/ansys/geometry:linux-latest'
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@v3
@@ -451,8 +453,8 @@ jobs:
 
       - name: Pull and launch geometry service
         run: |
-          docker pull ${{ env.ANSRV_GEO_IMAGE }}:linux-latest
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
+          docker pull ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
 
       - name: Checkout repository
         uses: actions/checkout@v4
