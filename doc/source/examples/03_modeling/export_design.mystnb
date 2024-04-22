@@ -13,9 +13,9 @@ kernelspec:
 
 # Modeling: Exporting designs
 
-After a design has been created, users are typically interested in bringing
-the design into a CAD tool for further development. This notebook demonstrates
-how to export a design to the various supported CAD formats.
+After creating a design, you typically want to bring it into a CAD tool for further
+development. This notebook demonstrates how to export a design to the various supported
+CAD formats.
 
 ## Create a design
 
@@ -56,13 +56,13 @@ design.plot()
 
 ## Export the design
 
-The design can be exported to various CAD formats. The supported formats are
-listed in the [DesignFileFormat](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/design/DesignFileFormat.html)
+You can export the design to various CAD formats. For the formats supported
+see the [DesignFileFormat](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/design/DesignFileFormat.html)
 class, which is part of the the ``design`` module documentation.
 
-Nonetheless, there are a set of convenience methods that can be used to export
+Nonetheless, there are a set of convenience methods that you can use to export
 the design to the supported formats. The following code snippets demonstrate how
-to do it. Users can decide whether they want to export the design to a file in
+to do it. You can decide whether to export the design to a file in
 a certain directory or in the current working directory.
 
 ### Export to a file in the current working directory
