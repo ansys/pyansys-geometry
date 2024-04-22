@@ -481,11 +481,9 @@ jobs:
       - name: Stop the Geometry service
         if: always()
         run: |
-          then
-            docker stop ${{ env.GEO_CONT_NAME }}
-            docker logs ${{ env.GEO_CONT_NAME }}
-            docker rm ${{ env.GEO_CONT_NAME }}
-          fi
+          docker stop ${{ env.GEO_CONT_NAME }}
+          docker logs ${{ env.GEO_CONT_NAME }}
+          docker rm ${{ env.GEO_CONT_NAME }}
 
 
   package:
