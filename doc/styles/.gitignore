@@ -1,4 +1,6 @@
-/*
-!**/ANSYS/accept.txt
-!**/ANSYS/reject.txt
+*
+!config
+!config/vocabularies
+!config/vocabularies/ANSYS
+!config/vocabularies/ANSYS/**
 !.gitignore
