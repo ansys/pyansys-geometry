@@ -45,7 +45,6 @@ from ansys.geometry.core.sketch import (
     Triangle,
 )
 
-
 skip_no_xserver = pytest.mark.skipif(
     not system_supports_plotting(), reason="Requires active X Server"
 )
