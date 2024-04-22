@@ -45,7 +45,6 @@ from ansys.geometry.core.sketch import (
     Triangle,
 )
 
-from .conftest import skip_if_linux
 
 skip_no_xserver = pytest.mark.skipif(
     not system_supports_plotting(), reason="Requires active X Server"
@@ -459,10 +458,6 @@ def test_plot_dummy_gear(verify_image_cache):
 @skip_no_xserver
 def test_extrude_dummy_gear(modeler: Modeler, verify_image_cache):
     """Test plotting and extrusion of a dummy gear."""
-
-    # Skip on Linux
-    skip_if_linux(modeler, test_extrude_dummy_gear.__name__, "unknown")
-
     # Create a sketch instance
     sketch = Sketch()
 
@@ -506,10 +501,6 @@ def test_plot_spur_gear(verify_image_cache):
 @skip_no_xserver
 def test_extrude_spur_gear(modeler: Modeler, verify_image_cache):
     """Test plotting and extrusion of a spur gear."""
-
-    # Skip on Linux
-    skip_if_linux(modeler, test_extrude_spur_gear.__name__, "unknown")
-
     # Create a sketch instance
     sketch = Sketch()
 
