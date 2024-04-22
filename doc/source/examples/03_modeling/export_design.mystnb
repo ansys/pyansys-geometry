@@ -13,7 +13,7 @@ kernelspec:
 
 # Modeling: Exporting designs
 
-After a design has been created, users are typically interested in using bringing
+After a design has been created, users are typically interested in bringing
 the design into a CAD tool for further development. This notebook demonstrates
 how to export a design to the various supported CAD formats.
 
