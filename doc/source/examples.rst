@@ -40,3 +40,4 @@ These examples demonstrate service-based modeling operations.
     examples/03_modeling/boolean_operations.mystnb
     examples/03_modeling/scale_map_mirror_bodies.mystnb
     examples/03_modeling/sweep_chain_profile.mystnb
+    examples/03_modeling/export_design.mystnb

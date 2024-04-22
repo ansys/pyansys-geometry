@@ -4,6 +4,7 @@ from datetime import datetime
 import json
 import os
 from pathlib import Path
+import time
 
 from ansys_sphinx_theme import (
     ansys_favicon,
@@ -31,12 +32,25 @@ def get_wheelhouse_assets_dictionary():
     assets_context_runners = ["ubuntu-latest", "windows-latest", "macos-latest"]
     assets_context_python_versions = ["3.9", "3.10", "3.11", "3.12"]
     if get_version_match(__version__) == "dev":
-        # Just point to the latest version
-        assets_context_version = json.loads(
-            requests.get(
+
+        # Try to retrieve the content three times before failing
+        content = None
+        for _ in range(3):
+            response = requests.get(
                 "https://api.github.com/repos/ansys/pyansys-geometry/releases/latest"
-            ).content
-        )["name"]
+            )
+            if response.status_code == 200:
+                content = response.content
+                break
+            else:
+                print(f"Failed to retrieve the latest release. Retrying...")
+                time.sleep(2)
+
+        if content is None:
+            raise requests.exceptions.RequestException("Failed to retrieve the latest release.")
+
+        # Just point to the latest version
+        assets_context_version = json.loads(content)["name"]
     else:
         assets_context_version = f"v{__version__}"
 
@@ -265,6 +279,7 @@ nbsphinx_thumbnails = {
     "examples/03_modeling/boolean_operations": "_static/thumbnails/boolean_operations.png",
     "examples/03_modeling/scale_map_mirror_bodies": "_static/thumbnails/scale_map_mirror_bodies.png",  # noqa: E501
     "examples/03_modeling/sweep_chain_profile": "_static/thumbnails/sweep_chain_profile.png",
+    "examples/03_modeling/export_design": "_static/thumbnails/export_design.png",
 }
 nbsphinx_epilog = """
 ----
