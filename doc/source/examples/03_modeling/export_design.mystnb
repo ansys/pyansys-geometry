@@ -17,9 +17,9 @@ After a design has been created, users are typically interested in using bringin
 the design into a CAD tool for further development. This notebook demonstrates
 how to export a design to the various supported CAD formats.
 
-## Creating a design
+## Create a design
 
-A simple design is created for demonstration purposes. This design consists of
+The code creates a simple design for demonstration purposes. The design consists of
 a set of rectangular pads with a circular hole in the center.
 
 ```{code-cell} ipython3
@@ -27,20 +27,20 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Y, Point2D
 from ansys.geometry.core.sketch import Sketch
 
-# Instantiate the modeler - this will connect to the service
+# Instantiate the modeler - this connects to the service
 modeler = Modeler()
 
-# Create a new design
+# Create a design
 design = modeler.create_design("ExportDesignExample")
 
-# Create a new sketch
+# Create a sketch
 sketch = Sketch()
 
-# A simple rectangle will be created
+# Create a simple rectangle
 sketch.box(Point2D([0, 0]), 10, 5)
 
-# The sketch will be extruded and the resulting body will be displaced
-# in order to make a plane of rectangles
+# Extrude the sketch and displace the resulting body
+# to make a plane of rectangles
 for x_step in [-60, -45, -30, -15, 0, 15, 30, 45, 60]:
     for y_step in [-40, -30, -20, -10, 0, 10, 20, 30, 40]:
         # Extrude the sketch
@@ -54,7 +54,7 @@ for x_step in [-60, -45, -30, -15, 0, 15, 30, 45, 60]:
 design.plot()
 ```
 
-## Exporting the design
+## Export the design
 
 The design can be exported to various CAD formats. The supported formats are
 listed in the [DesignFileFormat](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/design/DesignFileFormat.html)
@@ -65,7 +65,7 @@ the design to the supported formats. The following code snippets demonstrate how
 to do it. Users can decide whether they want to export the design to a file in
 a certain directory or in the current working directory.
 
-### Exporting to a file in the current working directory
+### Export to a file in the current working directory
 
 ```{code-cell} ipython3
 # Export the design to a file in the current working directory
@@ -73,7 +73,7 @@ file_location = design.export_to_scdocx()
 print(f"Design exported to {file_location}")
 ```
 
-### Exporting to a file in a certain directory
+### Export to a file in a certain directory
 
 ```{code-cell} ipython3
 from pathlib import Path
@@ -86,7 +86,7 @@ file_location = design.export_to_scdocx(download_dir)
 print(f"Design exported to {file_location}")
 ```
 
-### Exporting to SCDOCX format
+### Export to SCDOCX format
 
 ```{code-cell} ipython3
 # Export the design to a file in the requested directory
@@ -97,7 +97,7 @@ print(f"Design exported to {file_location}")
 print(f"Does the file exist? {Path(file_location).exists()}")
 ```
 
-### Exporting to Parasolid text format
+### Export to Parasolid text format
 
 ```{code-cell} ipython3
 # Export the design to a file in the requested directory
@@ -108,7 +108,7 @@ print(f"Design exported to {file_location}")
 print(f"Does the file exist? {Path(file_location).exists()}")
 ```
 
-### Exporting to Parasolid binary format
+### Export to Parasolid binary format
 
 ```{code-cell} ipython3
 # Export the design to a file in the requested directory
@@ -119,7 +119,7 @@ print(f"Design exported to {file_location}")
 print(f"Does the file exist? {Path(file_location).exists()}")
 ```
 
-### Exporting to STEP format
+### Export to STEP format
 
 ```{code-cell} ipython3
 # Export the design to a file in the requested directory
@@ -130,7 +130,7 @@ print(f"Design exported to {file_location}")
 print(f"Does the file exist? {Path(file_location).exists()}")
 ```
 
-### Exporting to IGES format
+### Export to IGES format
 
 ```{code-cell} ipython3
 # Export the design to a file in the requested directory
@@ -141,7 +141,7 @@ print(f"Design exported to {file_location}")
 print(f"Does the file exist? {Path(file_location).exists()}")
 ```
 
-### Exporting to FMD format
+### Export to FMD format
 
 ```{code-cell} ipython3
 # Export the design to a file in the requested directory
@@ -152,7 +152,7 @@ print(f"Design exported to {file_location}")
 print(f"Does the file exist? {Path(file_location).exists()}")
 ```
 
-### Exporting to PMDB format
+### Export to PMDB format
 
 ```{code-cell} ipython3
 # Export the design to a file in the requested directory

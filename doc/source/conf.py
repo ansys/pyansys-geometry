@@ -48,7 +48,7 @@ def get_wheelhouse_assets_dictionary():
                 time.sleep(2)
 
         if content is None:
-            raise requests.exceptions.RequestException("Failed to retrieve the latest release")
+            raise requests.exceptions.RequestException("Failed to retrieve the latest release.")
 
         # Just point to the latest version
         assets_context_version = json.loads(content)["name"]
