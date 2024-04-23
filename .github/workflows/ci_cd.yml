@@ -732,7 +732,7 @@ jobs:
 
   upload_dev_docs:
     name: Upload dev documentation
-    if: github.ref == 'refs/heads/main'
+    # if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs: [package]
     steps:
