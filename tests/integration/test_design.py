@@ -974,11 +974,6 @@ def test_slot_extrusion(modeler: Modeler):
 def test_project_and_imprint_curves(modeler: Modeler):
     """Test the projection of a set of curves on a body."""
 
-    # Skip on Linux
-    skip_if_linux(
-        modeler, test_project_and_imprint_curves.__name__, "project_curves, imprint_curves"
-    )
-
     # Create your design on the server side
     design = modeler.create_design("ExtrudeSlot")
     comp = design.add_component("Comp1")
@@ -1058,9 +1053,6 @@ def test_project_and_imprint_curves(modeler: Modeler):
 
 def test_copy_body(modeler: Modeler):
     """Test copying a body."""
-
-    # Skip on Linux
-    skip_if_linux(modeler, test_copy_body.__name__, "copy")
 
     # Create your design on the server side
     design = modeler.create_design("Design")
@@ -1555,13 +1547,6 @@ def test_boolean_body_operations(modeler: Modeler):
                 x) identity
                 y) transform
     """
-    # Skip on Linux
-    skip_if_linux(
-        modeler,
-        test_boolean_body_operations.__name__,
-        "copy, translate, intersect, subtract, unite",
-    )
-
     design = modeler.create_design("TestBooleanOperations")
 
     comp1 = design.add_component("Comp1")
@@ -1775,13 +1760,6 @@ def test_boolean_body_operations(modeler: Modeler):
 def test_multiple_bodies_boolean_operations(modeler: Modeler):
     """Test boolean operations with multiple bodies."""
 
-    # Skip on Linux
-    skip_if_linux(
-        modeler,
-        test_multiple_bodies_boolean_operations.__name__,
-        "copy, translate, intersect, subtract, unite",
-    )
-
     design = modeler.create_design("TestBooleanOperationsMultipleBodies")
 
     comp1 = design.add_component("Comp1")
@@ -1983,7 +1961,6 @@ def test_body_scale(modeler: Modeler):
 
 def test_body_mapping(modeler: Modeler):
     """Verify the correct mapping of a body."""
-    skip_if_linux(modeler, test_body_mapping.__name__, "map")
     design = modeler.create_design("BodyMap_Test")
 
     # non-symmetric shape to allow determination of mirroring
@@ -2206,8 +2183,6 @@ def test_body_mirror(modeler: Modeler):
 
 def test_sweep_sketch(modeler: Modeler):
     """Test revolving a circle profile around a circular axis to make a donut."""
-
-    skip_if_linux(modeler, test_sweep_sketch.__name__, "sweep_sketch")
     design_sketch = modeler.create_design("donut")
 
     path_radius = 5
@@ -2244,8 +2219,6 @@ def test_sweep_sketch(modeler: Modeler):
 def test_sweep_chain(modeler: Modeler):
     """Test revolving a semi-elliptical profile around a circular axis to make a
     bowl."""
-
-    skip_if_linux(modeler, test_sweep_chain.__name__, "sweep_chain")
     design_chain = modeler.create_design("bowl")
 
     radius = 10
