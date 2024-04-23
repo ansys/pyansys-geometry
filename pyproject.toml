@@ -90,7 +90,7 @@ doc = [
     "notebook==7.1.3",
     "numpydoc==1.7.0",
     "panel==1.4.1",
-    "pyvista@git+https://github.com/pyvista/pyvista",
+    "pyvista[jupyter]==0.43.5",
     "requests==2.31.0",
     "sphinx==7.2.6",
     "sphinx-autodoc-typehints==1.24.0",
