@@ -173,7 +173,7 @@ extensions = [
     "jupyter_sphinx",
     "sphinx_design",
     "sphinx_jinja",
-    #"autoapi.extension",
+    # "autoapi.extension",
     "numpydoc",
 ]
 
