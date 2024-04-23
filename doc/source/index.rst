@@ -77,3 +77,4 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
        {% endif %}
        contributing
        assets
+       changelog
