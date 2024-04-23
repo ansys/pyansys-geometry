@@ -37,7 +37,6 @@ goto end
 
 :html
 %SPHINXBUILD% -M html %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
-%SPHINXBUILD% -M %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 goto end
 
 :pdf
