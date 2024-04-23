@@ -145,7 +145,7 @@ html_theme_options = {
     },
     "autoapi": {
         "project": project,
-        "directory": "../../src/ansys",
+        "directory": "src/ansys",
         "own_page_level": "class",
     },
 }
@@ -159,7 +159,7 @@ extensions = [
     "jupyter_sphinx",
     "sphinx_design",
     "sphinx_jinja",
-    "autoapi.extension",
+    #"autoapi.extension",
     "numpydoc",
 ]
 
