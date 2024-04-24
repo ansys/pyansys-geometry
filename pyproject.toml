@@ -27,38 +27,35 @@ dependencies = [
     "ansys-api-geometry==0.4.1",
     "ansys-tools-path>=0.3,<1",
     "beartype>=0.11.0,<0.19",
-    "google-api-python-client>=1.7.11,<3",
-    "googleapis-common-protos>=1.52.0,<2",
     "grpcio>=1.35.0,<2",
     "grpcio-health-checking>=1.45.0,<2",
     "numpy>=1.20.3,<2",
     "Pint>=0.18,<1",
-    "protobuf>=3.20.2,<5",
+    "protobuf>=3.20.2,<6",
     "pyvista>=0.37.0,<1",
+    "requests>=2,<3",
     "scipy>=1.7.3,<2",
+    "semver>=3,<4",
     "six>=1.16.0,<2",
     "vtk>=9,<10",
-    "semver>=3,<4",
 ]
 
 [project.optional-dependencies]
 all = [
     "ansys-platform-instancemanagement>=1.0.3,<2",
     "docker>=6.0.1,<8",
-    "pyvista[jupyter]>=0.38.1,<0.42",
+    "pyvista[jupyter]>=0.38.1,<1",
 ]
 tests = [
     "ansys-platform-instancemanagement==1.1.2",
-    "ansys-tools-path==0.5.1",
-    "beartype==0.18.2",
+    "ansys-tools-path==0.5.2",
+    "beartype==0.18.5",
     "docker==7.0.0",
-    "google-api-python-client==2.122.0",
-    "googleapis-common-protos==1.63.0",
-    "grpcio==1.62.1",
+    "grpcio==1.62.2",
     "grpcio-health-checking==1.60.0",
     "numpy==1.26.4",
     "Pint==0.23",
-    "protobuf==4.25.1",
+    "protobuf==5.26.1",
     "pytest==8.1.1",
     "pytest-cov==5.0.0",
     "pytest-pyvista==0.1.9",
@@ -70,9 +67,15 @@ tests = [
     "six==1.16.0",
     "vtk==9.3.0",
 ]
+tests-minimal = [
+    "pytest==8.1.1",
+    "pytest-cov==5.0.0",
+    "pytest-pyvista==0.1.9",
+    "pytest-xvfb==3.0.0",
+]
 doc = [
     "ansys-sphinx-theme[autoapi]==0.15.2",
-    "beartype==0.18.2",
+    "beartype==0.18.5",
     "docker==7.0.0",
     "ipyvtklink==0.2.3",
     "jupyter_sphinx==0.5.3",
@@ -80,7 +83,7 @@ doc = [
     "myst-parser==2.0.0",
     "nbconvert==7.16.3",
     "nbsphinx==0.9.3",
-    "notebook==7.1.2",
+    "notebook==7.1.3",
     "numpydoc==1.7.0",
     "panel==1.4.1",
     "pyvista[jupyter]==0.43.5",
@@ -89,6 +92,7 @@ doc = [
     "sphinx-autodoc-typehints==1.24.0",
     "sphinx-copybutton==0.5.2",
     "sphinx-jinja==2.0.2",
+    "trame-vtk==2.8.6",
     "vtk==9.3.0",
 ]
 
@@ -131,12 +135,11 @@ testpaths = ["tests"]
 
 [tool.towncrier]
 directory = "doc/changelog.d"
-filename = "CHANGELOG.md"
-start_string = "<!-- towncrier release notes start -->\n"
-underlines = ["", "", ""]
+filename = "doc/source/changelog.rst"
 template = "doc/changelog.d/changelog_template.jinja"
-title_format = "## [{version}](https://github.com/ansys/pyansys-geometry/releases/tag/v{version}) - {project_date}"
-issue_format = "[#{issue}](https://github.com/ansys/pyansys-geometry/pull/{issue})"
+start_string = ".. towncrier release notes start\n"
+title_format = "`{version} <https://github.com/ansys/pyansys-geometry/releases/tag/v{version}>`_ - {project_date}"
+issue_format = "`#{issue} <https://github.com/ansys/pyansys-geometry/pull/{issue}>`_"
 
 [[tool.towncrier.type]]
 directory = "added"

@@ -252,16 +252,38 @@ class PlotterHelper:
         """Disable picking capabilities in the plotter."""
         self._pl.scene.disable_picking()
 
-    def add(self, object: Any, **plotting_options):
+    def add(
+        self,
+        object: Any,
+        merge_bodies: bool = False,
+        merge_component: bool = False,
+        filter: str = None,
+        **plotting_options,
+    ):
         """
         Add a ``pyansys-geometry`` or ``PyVista`` object to the plotter.
 
         Parameters
         ----------
         object : Any
-            Object you want to show.
+            Object or list of objects you want to show.
+        merge_bodies : bool, default: False
+            Whether to merge each body into a single dataset. When ``True``,
+            all the faces of each individual body are effectively combined
+            into a single dataset without separating faces.
+        merge_component : bool, default: False
+            Whether to merge this component into a single dataset. When ``True``,
+            all the individual bodies are effectively combined into a single
+            dataset without any hierarchy.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
-        self._pl.add(object=object, **plotting_options)
+        if isinstance(object, List) and not isinstance(object[0], pv.PolyData):
+            logger.debug("Plotting objects in list...")
+            self._pl.add_list(object, merge_bodies, merge_component, filter, **plotting_options)
+        else:
+            self._pl.add(object, merge_bodies, merge_component, filter, **plotting_options)
 
     def plot(
         self,
@@ -306,11 +328,14 @@ class PlotterHelper:
         List[Any]
             List with the picked bodies in the picked order.
         """
-        if isinstance(object, List) and not isinstance(object[0], pv.PolyData):
-            logger.debug("Plotting objects in list...")
-            self._pl.add_list(object, merge_bodies, merge_component, filter, **plotting_options)
-        else:
-            self._pl.add(object, merge_bodies, merge_component, filter, **plotting_options)
+        self.add(
+            object=object,
+            merge_bodies=merge_bodies,
+            merge_component=merge_component,
+            filter=filter,
+            **plotting_options,
+        )
+
         if self._pl.geom_object_actors_map:
             self._geom_object_actors_map = self._pl.geom_object_actors_map
         else:

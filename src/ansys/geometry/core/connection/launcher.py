@@ -501,7 +501,7 @@ def launch_modeler_with_discovery(
 
     .. note::
 
-       Support for Ansys Discovery is restricted to Ansys 24.1 onwards.
+       Support for Ansys Discovery is restricted to Ansys 24.1 onward.
 
     When calling this method, a standalone Discovery session is started.
     By default, if an endpoint is specified (by defining `host` and `port` parameters)
