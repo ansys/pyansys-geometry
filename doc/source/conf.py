@@ -323,7 +323,7 @@ linkcheck_ignore = [
     r"https://download.ansys.com/",
     r".*/examples/.*.py",
     r".*/examples/.*.ipynb",
-    # r"_static/assets/.*",
+    r"_static/assets/.*",
 ]
 
 # If we are on a release, we have to ignore the "release" URLs, since it is not
