@@ -87,7 +87,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/doc-style@v6
+        uses: ansys/actions/doc-style@fix/vale-layout
         with:
          token: ${{ secrets.GITHUB_TOKEN }}
 
