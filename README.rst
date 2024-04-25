@@ -72,7 +72,6 @@ This code shows how to import PyAnsys Geometry and use some basic capabilities:
 .. code:: python
 
    from ansys.geometry.core import launch_modeler
-   from ansys.geometry.core.designer import DesignFileFormat
    from ansys.geometry.core.math import Plane, Point3D, Point2D
    from ansys.geometry.core.misc import UNITS, Distance
    from ansys.geometry.core.sketch import Sketch
@@ -100,8 +99,8 @@ This code shows how to import PyAnsys Geometry and use some basic capabilities:
    # Plot the body
    design.plot()
 
-   # Download the model
-   design.download(file_location="file.scdocx", format=DesignFileFormat.SCDOCX)
+   # Export the model to SCDOCX format
+   file_path = design.export_to_scdocx()
 
 For comprehensive usage information, see `Examples`_ in the `PyAnsys Geometry documentation`_.
 
