@@ -90,6 +90,7 @@ jobs:
         uses: ansys/actions/doc-style@fix/vale-layout
         with:
          token: ${{ secrets.GITHUB_TOKEN }}
+         vale-version: "2.30.0"
 
   smoke-tests:
     name: Build and Smoke tests
