@@ -276,7 +276,7 @@ nbsphinx_thumbnails = {
     "examples/03_modeling/scale_map_mirror_bodies": "_static/thumbnails/scale_map_mirror_bodies.png",  # noqa: E501
     "examples/03_modeling/sweep_chain_profile": "_static/thumbnails/sweep_chain_profile.png",
     "examples/03_modeling/export_design": "_static/thumbnails/export_design.png",
-    "examples/04_applied/01_naca_airfoils.mystnb": "_static/thumbnails/naca_airfoils.png",
+    "examples/04_applied/01_naca_airfoils": "_static/thumbnails/naca_airfoils.png",
 }
 nbsphinx_epilog = """
 ----
@@ -323,7 +323,7 @@ linkcheck_ignore = [
     r"https://download.ansys.com/",
     r".*/examples/.*.py",
     r".*/examples/.*.ipynb",
-    r"_static/assets/.*",
+    # r"_static/assets/.*",
 ]
 
 # If we are on a release, we have to ignore the "release" URLs, since it is not
