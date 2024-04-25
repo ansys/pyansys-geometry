@@ -93,10 +93,10 @@ def naca_airfoil_4digits(number: Union[int, str], n_points: int = 200) -> List[P
                 dyc_dx = 2 * m / (1 - p) ** 2 * (p - x)
 
         # Compute the thickness
-        yt = 5 * t * (0.2969 * x**0.5 
-                      - 0.1260 * x 
-                      - 0.3516 * x**2 
-                      + 0.2843 * x**3 
+        yt = 5 * t * (0.2969 * x**0.5
+                      - 0.1260 * x
+                      - 0.3516 * x**2
+                      + 0.2843 * x**3
                       - 0.1015 * x**4)
 
         # Compute the angle
