@@ -9,6 +9,28 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.5.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.2>`_ - 2024-04-26
+=====================================================================================
+
+Changed
+^^^^^^^
+
+- chore: update CHANGELOG for v0.5.1 `#1165 <https://github.com/ansys/pyansys-geometry/pull/1165>`_
+- chore: bump version to v0.6.dev0 `#1166 <https://github.com/ansys/pyansys-geometry/pull/1166>`_
+
+
+Fixed
+^^^^^
+
+- fix: GetSurface and GetCurve not available prior to 24R2 `#1171 <https://github.com/ansys/pyansys-geometry/pull/1171>`_
+
+
+Miscellaneous
+^^^^^^^^^^^^^
+
+- docs: creating a NACA airfoil example `#1167 <https://github.com/ansys/pyansys-geometry/pull/1167>`_
+- docs: simplify README example `#1169 <https://github.com/ansys/pyansys-geometry/pull/1169>`_
+
 `0.5.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.1>`_ - 2024-04-24
 =====================================================================================
 
