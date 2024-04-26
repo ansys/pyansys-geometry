@@ -102,6 +102,7 @@ Issues = "https://github.com/ansys/pyansys-geometry/issues"
 Discussions = "https://github.com/ansys/pyansys-geometry/discussions"
 Documentation = "https://geometry.docs.pyansys.com"
 Releases = "https://github.com/ansys/pyansys-geometry/releases"
+Changelog =  "https://github.com/ansys/pyansys-geometry/blob/main/doc/source/changelog.rst"
 
 [tool.flit.module]
 name = "ansys.geometry.core"
