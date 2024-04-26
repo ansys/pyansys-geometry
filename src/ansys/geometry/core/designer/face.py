@@ -27,8 +27,8 @@ from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.api.geometry.v0.faces_pb2 import (
     CreateIsoParamCurvesRequest,
-    GetNormalRequest,
     EvaluateRequest,
+    GetNormalRequest,
 )
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
@@ -312,7 +312,7 @@ class Face:
         """
         try:
             return self.shape.normal(u, v)
-        except GeometryRuntimeError: # pragma: no cover
+        except GeometryRuntimeError:  # pragma: no cover
             # Only for versions < 24.2.0 (i.e. before the introduction of the shape property)
             self._grpc_client.log.debug(f"Requesting face normal from server with (u,v)=({u},{v}).")
             response = self._faces_stub.GetNormal(GetNormalRequest(id=self.id, u=u, v=v)).direction
@@ -346,7 +346,7 @@ class Face:
         """
         try:
             return self.shape.evaluate_proportion(u, v).position
-        except GeometryRuntimeError: # pragma: no cover
+        except GeometryRuntimeError:  # pragma: no cover
             # Only for versions < 24.2.0 (i.e. before the introduction of the shape property)
             self._grpc_client.log.debug(f"Requesting face point from server with (u,v)=({u},{v}).")
             response = self._faces_stub.Evaluate(EvaluateRequest(id=self.id, u=u, v=v)).point
