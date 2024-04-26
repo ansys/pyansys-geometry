@@ -146,7 +146,7 @@ class Edge:
         try:
             return self.shape.length
         except GeometryRuntimeError:  # pragma: no cover
-            # Only for versions < 24.2.0 (i.e. before the introduction of the shape property)
+            # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
             self._grpc_client.log.debug("Requesting edge length from server.")
             length_response = self._edges_stub.GetLength(self._grpc_id)
             return Quantity(length_response.length, DEFAULT_UNITS.SERVER_LENGTH)

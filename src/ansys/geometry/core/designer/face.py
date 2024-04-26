@@ -313,7 +313,7 @@ class Face:
         try:
             return self.shape.normal(u, v)
         except GeometryRuntimeError:  # pragma: no cover
-            # Only for versions < 24.2.0 (i.e. before the introduction of the shape property)
+            # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
             self._grpc_client.log.debug(f"Requesting face normal from server with (u,v)=({u},{v}).")
             response = self._faces_stub.GetNormal(GetNormalRequest(id=self.id, u=u, v=v)).direction
             return UnitVector3D([response.x, response.y, response.z])
@@ -347,7 +347,7 @@ class Face:
         try:
             return self.shape.evaluate_proportion(u, v).position
         except GeometryRuntimeError:  # pragma: no cover
-            # Only for versions < 24.2.0 (i.e. before the introduction of the shape property)
+            # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
             self._grpc_client.log.debug(f"Requesting face point from server with (u,v)=({u},{v}).")
             response = self._faces_stub.Evaluate(EvaluateRequest(id=self.id, u=u, v=v)).point
             return Point3D([response.x, response.y, response.z], DEFAULT_UNITS.SERVER_LENGTH)
