@@ -107,7 +107,7 @@ class Edge:
         return self._is_reversed
 
     @property
-    @min_backend_version(24,2,0)
+    @min_backend_version(24, 2, 0)
     def shape(self) -> TrimmedCurve:
         """
         Underlying trimmed curve of the edge.
@@ -145,7 +145,7 @@ class Edge:
         """Calculated length of the edge."""
         try:
             return self.shape.length
-        except GeometryRuntimeError: # pragma: no cover
+        except GeometryRuntimeError:  # pragma: no cover
             # Only for versions < 24.2.0 (i.e. before the introduction of the shape property)
             self._grpc_client.log.debug("Requesting edge length from server.")
             length_response = self._edges_stub.GetLength(self._grpc_id)
