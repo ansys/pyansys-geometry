@@ -338,7 +338,7 @@ def min_backend_version(major: int, minor: int, service_pack: int):
                         "The client is not available. You must initialize the client first."
                     )
                 elif self._grpc_client.backend_version is not None:
-                    comp = semver.compare(method_version, self._grpc_client.backend_version)
+                    comp = semver.Version.compare(method_version, self._grpc_client.backend_version)
                     # if comp is 1, method version is higher than backend version.
                     if comp == 1:
 
