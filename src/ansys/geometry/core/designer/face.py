@@ -25,7 +25,11 @@ from enum import Enum, unique
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
-from ansys.api.geometry.v0.faces_pb2 import CreateIsoParamCurvesRequest
+from ansys.api.geometry.v0.faces_pb2 import (
+    CreateIsoParamCurvesRequest,
+    EvaluateRequest,
+    GetNormalRequest,
+)
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
 from beartype.typing import TYPE_CHECKING, List
@@ -34,10 +38,10 @@ from pint import Quantity
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import grpc_curve_to_curve, grpc_surface_to_surface
 from ansys.geometry.core.designer.edge import Edge
-from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
-from ansys.geometry.core.misc.checks import ensure_design_is_active
+from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
@@ -196,6 +200,7 @@ class Face:
         return self._body
 
     @property
+    @min_backend_version(24, 2, 0)
     def shape(self) -> TrimmedSurface:
         """
         Underlying trimmed surface of the face.
@@ -305,7 +310,13 @@ class Face:
             This :class:`UnitVector3D` object is perpendicular to the surface at the
             given UV coordinates.
         """
-        return self.shape.normal(u, v)
+        try:
+            return self.shape.normal(u, v)
+        except GeometryRuntimeError:  # pragma: no cover
+            # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
+            self._grpc_client.log.debug(f"Requesting face normal from server with (u,v)=({u},{v}).")
+            response = self._faces_stub.GetNormal(GetNormalRequest(id=self.id, u=u, v=v)).direction
+            return UnitVector3D([response.x, response.y, response.z])
 
     @protect_grpc
     def point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
@@ -333,7 +344,13 @@ class Face:
             :class:`Point3D`
             object evaluated at the given UV coordinates.
         """
-        return self.shape.evaluate_proportion(u, v).position
+        try:
+            return self.shape.evaluate_proportion(u, v).position
+        except GeometryRuntimeError:  # pragma: no cover
+            # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
+            self._grpc_client.log.debug(f"Requesting face point from server with (u,v)=({u},{v}).")
+            response = self._faces_stub.Evaluate(EvaluateRequest(id=self.id, u=u, v=v)).point
+            return Point3D([response.x, response.y, response.z], DEFAULT_UNITS.SERVER_LENGTH)
 
     def __grpc_edges_to_edges(self, edges_grpc: List[GRPCEdge]) -> List[Edge]:
         """
