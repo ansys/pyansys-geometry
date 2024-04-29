@@ -184,6 +184,7 @@ intersphinx_mapping = {
     "beartype": ("https://beartype.readthedocs.io/en/stable/", None),
     "docker": ("https://docker-py.readthedocs.io/en/stable/", None),
     "pypim": ("https://pypim.docs.pyansys.com/version/stable", None),
+    "semver": ("https://python-semver.readthedocs.io/en/latest/", None),
 }
 
 # Conditional intersphinx mapping

@@ -507,6 +507,8 @@ jobs:
     runs-on:
       group: ansys-network
       labels: [self-hosted, Windows, signtool]
+    env:
+      REUSE_LAST_ARTIFACTS: ${{ vars.REUSE_LAST_ARTIFACTS == 1 }}
 
     steps:
       - name: Check out repository pyansys-geometry-binaries
@@ -515,10 +517,27 @@ jobs:
           repository: 'ansys/pyansys-geometry-binaries'
           token: ${{ secrets.BINARIES_TOKEN }}
 
-      - name: Download binaries
+      - name: Download binaries (if conditions met)
+        if: env.REUSE_LAST_ARTIFACTS == 'false'
         run: |
           curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerWindows.zip --output windows-binaries.zip
           curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerLinux.zip --output linux-binaries.zip
+
+      - name: Reuse last binaries (if conditions met)
+        if: env.REUSE_LAST_ARTIFACTS == 'true'
+        env:
+          VERSION_WITH_PREFIX: ${{ github.ref_name }}
+        run: |
+          # We are on a Windows machine. We need to copy the binaries from the previous tag,
+          # based on the current tag. We will also remove the trailing "v" from the tag. This will give
+          # us the folder from where we need to copy the binaries.
+          $env:VERSION=$env:VERSION_WITH_PREFIX.substring(1)
+          $env:PREVIOUS_VERSION=$env:VERSION.substring(0, $env:VERSION.Length - 1)
+          $env:PREVIOUS_PATCH_VERSION_NUMBER=$env:VERSION.substring($env:VERSION.Length - 1)
+          $env:PREVIOUS_PATCH_VERSION_NUMBER=[int]$env:PREVIOUS_PATCH_VERSION_NUMBER - 1
+          $env:PREVIOUS_VERSION=$env:PREVIOUS_VERSION + $env:PREVIOUS_PATCH_VERSION_NUMBER
+          cp ./$env:PREVIOUS_VERSION/windows-binaries.zip windows-binaries.zip
+          cp ./$env:PREVIOUS_VERSION/linux-binaries.zip linux-binaries.zip
 
       - name: Upload Windows binaries as workflow artifacts
         uses: actions/upload-artifact@v4
