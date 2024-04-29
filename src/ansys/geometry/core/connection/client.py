@@ -217,13 +217,13 @@ class GrpcClient:
         return self._backend_type
 
     @property
-    def backend_version(self) -> semver.Version:
+    def backend_version(self) -> semver.version.Version:
         """
         Get the current backend version.
 
         Returns
         -------
-        ~semver.Version
+        ~semver.version.Version
             Backend version.
         """
         return self._backend_version
