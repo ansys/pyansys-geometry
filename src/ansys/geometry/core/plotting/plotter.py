@@ -256,7 +256,7 @@ class Plotter:
         """
         edge_plot_list = []
         for edge in body_plot.object.edges:
-            line = pv.Line(edge.shape.start, edge.shape.start)
+            line = pv.Line(edge.start, edge.end)
             edge_actor = self.scene.add_mesh(
                 line, line_width=10, color=EDGE_COLOR, **plotting_options
             )
