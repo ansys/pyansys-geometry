@@ -107,6 +107,8 @@ class Edge:
         return self._is_reversed
 
     @property
+    @protect_grpc
+    @ensure_design_is_active
     @min_backend_version(24, 2, 0)
     def shape(self) -> TrimmedCurve:
         """
@@ -175,3 +177,29 @@ class Edge:
             )
             for grpc_face in grpc_faces
         ]
+
+    @property
+    @protect_grpc
+    @ensure_design_is_active
+    def start(self) -> Point3D:
+        """Start point of the edge."""
+        try:
+            return self.shape.start
+        except GeometryRuntimeError:  # pragma: no cover
+            # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
+            self._grpc_client.log.debug("Requesting edge start point from server.")
+            response = self._edges_stub.GetStartAndEndPoints(self._grpc_id)
+            return Point3D([response.start.x, response.start.y, response.start.z])
+
+    @property
+    @protect_grpc
+    @ensure_design_is_active
+    def end(self) -> Point3D:
+        """End point of the edge."""
+        try:
+            return self.shape.end
+        except GeometryRuntimeError:  # pragma: no cover
+            # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
+            self._grpc_client.log.debug("Requesting edge end point from server.")
+            response = self._edges_stub.GetStartAndEndPoints(self._grpc_id)
+            return Point3D([response.end.x, response.end.y, response.end.z])

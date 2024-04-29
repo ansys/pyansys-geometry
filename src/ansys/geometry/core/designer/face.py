@@ -200,6 +200,8 @@ class Face:
         return self._body
 
     @property
+    @protect_grpc
+    @ensure_design_is_active
     @min_backend_version(24, 2, 0)
     def shape(self) -> TrimmedSurface:
         """
@@ -284,6 +286,7 @@ class Face:
         return loops
 
     @protect_grpc
+    @ensure_design_is_active
     def normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:
         """
         Get the normal direction to the face at certain proportional UV coordinates.
@@ -319,6 +322,7 @@ class Face:
             return UnitVector3D([response.x, response.y, response.z])
 
     @protect_grpc
+    @ensure_design_is_active
     def point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
         """
         Get a point of the face evaluated at certain proportional UV coordinates.
@@ -381,6 +385,8 @@ class Face:
             )
         return edges
 
+    @protect_grpc
+    @ensure_design_is_active
     def create_isoparametric_curves(
         self, use_u_param: bool, parameter: float
     ) -> List[TrimmedCurve]:
