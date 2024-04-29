@@ -529,7 +529,7 @@ jobs:
           VERSION_WITH_PREFIX: ${{ github.ref_name }}
         run: |
           # We are on a Windows machine. We need to copy the binaries from the previous tag,
-          # based on the current tag. We will then remove the trailing "v" from the tag. This will give
+          # based on the current tag. We will also remove the trailing "v" from the tag. This will give
           # us the folder from where we need to copy the binaries.
           $env:VERSION=$env:VERSION_WITH_PREFIX.substring(1)
           $env:PREVIOUS_VERSION=$env:VERSION.substring(0, $env:VERSION.Length - 1)
