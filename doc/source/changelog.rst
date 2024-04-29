@@ -9,14 +9,22 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
-`0.5.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.2>`_ - 2024-04-26
+`0.5.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.2>`_ - 2024-04-29
 =====================================================================================
+
+Added
+^^^^^
+
+- feat: add semver to intersphinx `#1173 <https://github.com/ansys/pyansys-geometry/pull/1173>`_
+
 
 Changed
 ^^^^^^^
 
 - chore: update CHANGELOG for v0.5.1 `#1165 <https://github.com/ansys/pyansys-geometry/pull/1165>`_
 - chore: bump version to v0.6.dev0 `#1166 <https://github.com/ansys/pyansys-geometry/pull/1166>`_
+- chore: update CHANGELOG for v0.5.2 `#1172 <https://github.com/ansys/pyansys-geometry/pull/1172>`_
+- fix: allow to reuse last release binaries (if requested) `#1174 <https://github.com/ansys/pyansys-geometry/pull/1174>`_
 
 
 Fixed
