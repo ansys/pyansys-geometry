@@ -9,6 +9,15 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.5.3 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.3>`_ - 2024-04-29
+=====================================================================================
+
+Fixed
+^^^^^
+
+- fix: semver intersphinx mapping not resolved properly `#1175 <https://github.com/ansys/pyansys-geometry/pull/1175>`_
+- fix: start and end points for edge `#1176 <https://github.com/ansys/pyansys-geometry/pull/1176>`_
+
 `0.5.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.2>`_ - 2024-04-29
 =====================================================================================
 
