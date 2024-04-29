@@ -223,7 +223,7 @@ class GrpcClient:
 
         Returns
         -------
-        semver.Version
+        ~semver.Version
             Backend version.
         """
         return self._backend_version
