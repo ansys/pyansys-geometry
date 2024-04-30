@@ -72,7 +72,8 @@ def launch_modeler(mode: str = None, **kwargs: Optional[Dict]) -> "Modeler":
 
         * For ``"pypim"`` mode, see the :func:`launch_remote_modeler` method.
         * For ``"docker"`` mode, see the :func:`launch_docker_modeler` method.
-        * For ``"geometry_service"`` mode, see the :func:`launch_modeler_with_geometry_service` method.
+        * For ``"geometry_service"`` mode, see the
+          :func:`launch_modeler_with_geometry_service` method.
         * For ``"spaceclaim"`` mode, see the :func:`launch_modeler_with_spaceclaim` method.
         * For ``"discovery"`` mode, see the :func:`launch_modeler_with_discovery` method.
 
