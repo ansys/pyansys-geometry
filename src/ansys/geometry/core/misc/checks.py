@@ -331,19 +331,19 @@ def min_backend_version(major: int, minor: int, service_pack: int):
 
     def backend_version_decorator(method):
         def wrapper(self, *args, **kwargs):
-            method_version = f"{major}.{minor}.{service_pack}"
+            method_version = semver.Version(major, minor, service_pack)
             if hasattr(self, "_grpc_client"):
                 if self._grpc_client is None:
                     raise GeometryRuntimeError(
                         "The client is not available. You must initialize the client first."
                     )
                 elif self._grpc_client.backend_version is not None:
-                    comp = semver.compare(method_version, self._grpc_client.backend_version)
+                    comp = method_version.compare(self._grpc_client.backend_version)
                     # if comp is 1, method version is higher than backend version.
                     if comp == 1:
 
                         # Check if the version is "0.0.0" (i.e., the version is not available)
-                        if self._grpc_client.backend_version == "0.0.0":
+                        if str(self._grpc_client.backend_version) == "0.0.0":
                             raise GeometryRuntimeError(
                                 f"The method '{method.__name__}' requires a minimum Ansys release version of "  # noqa: E501
                                 + f"{method_version}, but the current version used is 24.1.0 or lower."  # noqa: E501

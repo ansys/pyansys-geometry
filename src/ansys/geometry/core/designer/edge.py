@@ -30,9 +30,9 @@ from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import grpc_curve_to_curve
-from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.misc.checks import ensure_design_is_active
+from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.shapes.curves.trimmed_curve import ReversedTrimmedCurve, TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
@@ -107,6 +107,9 @@ class Edge:
         return self._is_reversed
 
     @property
+    @protect_grpc
+    @ensure_design_is_active
+    @min_backend_version(24, 2, 0)
     def shape(self) -> TrimmedCurve:
         """
         Underlying trimmed curve of the edge.
@@ -142,7 +145,13 @@ class Edge:
     @ensure_design_is_active
     def length(self) -> Quantity:
         """Calculated length of the edge."""
-        return self.shape.length
+        try:
+            return self.shape.length
+        except GeometryRuntimeError:  # pragma: no cover
+            # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
+            self._grpc_client.log.debug("Requesting edge length from server.")
+            length_response = self._edges_stub.GetLength(self._grpc_id)
+            return Quantity(length_response.length, DEFAULT_UNITS.SERVER_LENGTH)
 
     @property
     def curve_type(self) -> CurveType:
@@ -168,3 +177,29 @@ class Edge:
             )
             for grpc_face in grpc_faces
         ]
+
+    @property
+    @protect_grpc
+    @ensure_design_is_active
+    def start(self) -> Point3D:
+        """Start point of the edge."""
+        try:
+            return self.shape.start
+        except GeometryRuntimeError:  # pragma: no cover
+            # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
+            self._grpc_client.log.debug("Requesting edge start point from server.")
+            response = self._edges_stub.GetStartAndEndPoints(self._grpc_id)
+            return Point3D([response.start.x, response.start.y, response.start.z])
+
+    @property
+    @protect_grpc
+    @ensure_design_is_active
+    def end(self) -> Point3D:
+        """End point of the edge."""
+        try:
+            return self.shape.end
+        except GeometryRuntimeError:  # pragma: no cover
+            # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
+            self._grpc_client.log.debug("Requesting edge end point from server.")
+            response = self._edges_stub.GetStartAndEndPoints(self._grpc_id)
+            return Point3D([response.end.x, response.end.y, response.end.z])

@@ -74,6 +74,7 @@ material = Material(
 material.add_property(MaterialPropertyType.TENSILE_STRENGTH, "TensileProp", Quantity(45))
 design.add_material(material)
 ```
+
 ## Extrude sketch to create body
 
 Extrude the sketch to create the body and then assign a material to it.

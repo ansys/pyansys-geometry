@@ -33,6 +33,7 @@ from google.protobuf.empty_pb2 import Empty
 import grpc
 from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
+import semver
 
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
@@ -193,10 +194,12 @@ class GrpcClient:
         # retrieve the backend version
         if hasattr(grpc_backend_response, "version"):
             ver = grpc_backend_response.version
-            self._backend_version = f"{ver.major_release}.{ver.minor_release}.{ver.service_pack}"
+            self._backend_version = semver.Version(
+                ver.major_release, ver.minor_release, ver.service_pack
+            )
         else:
             logger.warning("The backend version is only available after 24.1 version.")
-            self._backend_version = "24.1.0"
+            self._backend_version = semver.Version(24, 1, 0)
 
     @property
     def backend_type(self) -> BackendType:
@@ -214,15 +217,14 @@ class GrpcClient:
         return self._backend_type
 
     @property
-    def backend_version(self) -> str:
+    def backend_version(self) -> semver.version.Version:
         """
         Get the current backend version.
 
         Returns
         -------
-        str
-            Backend version in semantic versioning format (that is, Ansys 24R1 SP2
-            would be ``24.1.2``).
+        ~semver.version.Version
+            Backend version.
         """
         return self._backend_version
 
