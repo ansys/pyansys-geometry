@@ -498,7 +498,7 @@ def launch_modeler_with_geometry_service(
     # if api_version is passed, throw a warning saying that it is not used
     if "api_version" in kwargs:
         logger.warning(
-            "The 'api_version' parameter is not used in ``launch_modeler_with_geometry_service``. "
+            "The 'api_version' parameter is not used in 'launch_modeler_with_geometry_service'. "
             "Please remove it from the arguments."
         )
 
