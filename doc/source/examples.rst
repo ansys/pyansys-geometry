@@ -51,3 +51,4 @@ applications.
 .. nbgallery::
 
     examples/04_applied/01_naca_airfoils.mystnb
+    examples/04_applied/02_naca_fluent.mystnb
