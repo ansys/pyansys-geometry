@@ -91,7 +91,7 @@ inlet, outlet, and walls of the fluid domain. The airfoil is also assigned a nam
 The airfoil is aligned with the X-axis. The inlet is located at the left side of the airfoil, the outlet is located at the
 right side of the airfoil, and the walls are located at the top and bottom of the airfoil. The inlet face has therefore
 a negative X-axis normal vector, and the outlet face has a positive X-axis normal vector. The rest of the faces, therefore,
-consitute the walls.
+constitute the walls.
 
 ```{code-cell} ipython3
 # Create named selections in the fluid domain - inlet, outlet, and surrounding faces
