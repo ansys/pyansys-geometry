@@ -68,8 +68,13 @@ def launch_modeler(mode: str = None, **kwargs: Optional[Dict]) -> "Modeler":
 
     **kwargs : dict, default: None
         Keyword arguments for the launching methods. For allowable keyword arguments, see the
-        :func:`launch_remote_modeler` and :func:`launch_docker_modeler` methods. Some of these
-        keywords might be unused.
+        corresponding methods for each mode:
+
+        * For ``"pypim"`` mode, see the :func:`launch_remote_modeler` method.
+        * For ``"docker"`` mode, see the :func:`launch_docker_modeler` method.
+        * For ``"geometry_service"`` mode, see the :func:`launch_modeler_with_geometry_service` method.
+        * For ``"spaceclaim"`` mode, see the :func:`launch_modeler_with_spaceclaim` method.
+        * For ``"discovery"`` mode, see the :func:`launch_modeler_with_discovery` method.
 
     Returns
     -------
