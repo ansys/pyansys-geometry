@@ -27,15 +27,9 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.misc import UNITS
 
-from .conftest import skip_if_linux
-
 
 def test_material_creation(modeler: Modeler):
     """Test the creation of a material on a design."""
-
-    # Skip on Linux
-    skip_if_linux(modeler, test_material_creation.__name__, "material.add_property, add_material")
-
     design = modeler.create_design("my_design")
 
     mat_name = "mat_1"

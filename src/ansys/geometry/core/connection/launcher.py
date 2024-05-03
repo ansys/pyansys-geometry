@@ -68,8 +68,14 @@ def launch_modeler(mode: str = None, **kwargs: Optional[Dict]) -> "Modeler":
 
     **kwargs : dict, default: None
         Keyword arguments for the launching methods. For allowable keyword arguments, see the
-        :func:`launch_remote_modeler` and :func:`launch_docker_modeler` methods. Some of these
-        keywords might be unused.
+        corresponding methods for each mode:
+
+        * For ``"pypim"`` mode, see the :func:`launch_remote_modeler` method.
+        * For ``"docker"`` mode, see the :func:`launch_docker_modeler` method.
+        * For ``"geometry_service"`` mode, see the
+          :func:`launch_modeler_with_geometry_service` method.
+        * For ``"spaceclaim"`` mode, see the :func:`launch_modeler_with_spaceclaim` method.
+        * For ``"discovery"`` mode, see the :func:`launch_modeler_with_discovery` method.
 
     Returns
     -------
@@ -232,9 +238,8 @@ def launch_remote_modeler(version: Optional[str] = None, **kwargs: Optional[Dict
         For example, "232". If you do not specify the version, the server
         chooses the version.
     **kwargs : dict, default: None
-        Keyword arguments for the launching methods. For allowable keyword arguments, see the
-        :func:`launch_remote_modeler` and :func:`launch_docker_modeler` methods. Some of these
-        keywords might be unused.
+        Placeholder to prevent errors when passing additional arguments that
+        are not compatible with this method.
 
     Returns
     -------
@@ -286,9 +291,8 @@ def launch_docker_modeler(
         Docker engine and deploys the latest version of the Geometry service for
         that OS.
     **kwargs : dict, default: None
-        Keyword arguments for the launching methods. For allowable keyword arguments, see the
-        :func:`launch_remote_modeler` and :func:`launch_docker_modeler` methods. Some of these
-        keywords might be unused.
+        Placeholder to prevent errors when passing additional arguments that
+        are not compatible with this method.
 
     Returns
     -------
@@ -313,7 +317,9 @@ def launch_docker_modeler(
     return Modeler(host="localhost", port=port, docker_instance=docker_instance)
 
 
-def launch_modeler_with_discovery_and_pimlight(version: Optional[str] = None) -> "Modeler":
+def launch_modeler_with_discovery_and_pimlight(
+    version: Optional[str] = None, **kwargs: Optional[Dict]
+) -> "Modeler":
     """
     Start Ansys Discovery remotely using the PIM API.
 
@@ -328,6 +334,9 @@ def launch_modeler_with_discovery_and_pimlight(version: Optional[str] = None) ->
         Version of Discovery to run in the three-digit format.
         For example, "232". If you do not specify the version, the server
         chooses the version.
+    **kwargs : dict, default: None
+        Placeholder to prevent errors when passing additional arguments that
+        are not compatible with this method.
 
     Returns
     -------
@@ -342,7 +351,9 @@ def launch_modeler_with_discovery_and_pimlight(version: Optional[str] = None) ->
     )
 
 
-def launch_modeler_with_geometry_service_and_pimlight(version: Optional[str] = None) -> "Modeler":
+def launch_modeler_with_geometry_service_and_pimlight(
+    version: Optional[str] = None, **kwargs: Optional[Dict]
+) -> "Modeler":
     """
     Start the Geometry service remotely using the PIM API.
 
@@ -357,6 +368,9 @@ def launch_modeler_with_geometry_service_and_pimlight(version: Optional[str] = N
         Version of the Geometry service to run in the three-digit format.
         For example, "232". If you do not specify the version, the server
         chooses the version.
+    **kwargs : dict, default: None
+        Placeholder to prevent errors when passing additional arguments that
+        are not compatible with this method.
 
     Returns
     -------
@@ -401,12 +415,14 @@ def launch_modeler_with_spaceclaim_and_pimlight(version: Optional[str] = None) -
 
 
 def launch_modeler_with_geometry_service(
+    product_version: int = None,
     host: str = "localhost",
     port: int = None,
     enable_trace: bool = False,
     log_level: int = 2,
     timeout: int = 60,
     logs_folder: str = None,
+    **kwargs: Optional[Dict],
 ) -> "Modeler":
     """
     Start the Geometry service locally using the ``ProductInstance`` class.
@@ -418,6 +434,15 @@ def launch_modeler_with_geometry_service(
 
     Parameters
     ----------
+    product_version: int, optional
+        The product version to be started. Goes from v23.2.1 to
+        the latest. Default is ``None``.
+        If a specific product version is requested but not installed locally,
+        a SystemError will be raised.
+
+        **Ansys products versions and their corresponding int values:**
+
+        * ``241`` : Ansys 24R1
     host: str, optional
         IP address at which the Geometry service will be deployed. By default,
         its value will be ``localhost``.
@@ -440,6 +465,9 @@ def launch_modeler_with_geometry_service(
         Timeout for starting the backend startup process. The default is 60.
     logs_folder : sets the backend's logs folder path. If nothing is defined,
         the backend will use its default path.
+    **kwargs : dict, default: None
+        Placeholder to prevent errors when passing additional arguments that
+        are not compatible with this method.
 
     Raises
     ------
@@ -473,8 +501,16 @@ def launch_modeler_with_geometry_service(
         enable_trace= True,
         timeout=300)
     """
+    # if api_version is passed, throw a warning saying that it is not used
+    if "api_version" in kwargs:
+        logger.warning(
+            "The 'api_version' parameter is not used in 'launch_modeler_with_geometry_service'. "
+            "Please remove it from the arguments."
+        )
+
     return prepare_and_start_backend(
         BackendType.WINDOWS_SERVICE,
+        product_version=product_version,
         host=host,
         port=port,
         enable_trace=enable_trace,
@@ -495,6 +531,7 @@ def launch_modeler_with_discovery(
     manifest_path: str = None,
     logs_folder: str = None,
     hidden: bool = False,
+    **kwargs: Optional[Dict],
 ):
     """
     Start Ansys Discovery locally using the ``ProductInstance`` class.
@@ -546,6 +583,9 @@ def launch_modeler_with_discovery(
     logs_folder : sets the backend's logs folder path. If nothing is defined,
         the backend will use its default path.
     hidden : starts the product hiding its UI. Default is ``False``.
+    **kwargs : dict, default: None
+        Placeholder to prevent errors when passing additional arguments that
+        are not compatible with this method.
 
     Raises
     ------
@@ -605,6 +645,7 @@ def launch_modeler_with_spaceclaim(
     manifest_path: str = None,
     logs_folder: str = None,
     hidden: bool = False,
+    **kwargs: Optional[Dict],
 ):
     """
     Start Ansys SpaceClaim locally using the ``ProductInstance`` class.
@@ -653,6 +694,9 @@ def launch_modeler_with_spaceclaim(
     logs_folder : sets the backend's logs folder path. If nothing is defined,
         the backend will use its default path.
     hidden : starts the product hiding its UI. Default is ``False``.
+    **kwargs : dict, default: None
+        Placeholder to prevent errors when passing additional arguments that
+        are not compatible with this method.
 
     Raises
     ------

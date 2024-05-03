@@ -7,7 +7,7 @@ exclude: "tests/integration/files"
 repos:
 
 - repo: https://github.com/psf/black
-  rev: 24.4.0  # IF VERSION CHANGES --> MODIFY "blacken-docs" MANUALLY AS WELL!!
+  rev: 24.4.2  # IF VERSION CHANGES --> MODIFY "blacken-docs" MANUALLY AS WELL!!
   hooks:
   - id: black
 
@@ -15,7 +15,7 @@ repos:
   rev: 1.16.0
   hooks:
   - id: blacken-docs
-    additional_dependencies: [black==24.4.0]
+    additional_dependencies: [black==24.4.2]
 
 - repo: https://github.com/pycqa/isort
   rev: 5.13.2
@@ -55,7 +55,7 @@ repos:
   - id: trailing-whitespace
 
 - repo: https://github.com/ansys/pre-commit-hooks
-  rev: v0.3.0
+  rev: v0.3.1
   hooks:
     - id: add-license-headers
       files: '(src|examples|tests|docker)/.*\.(py)|\.(proto)'

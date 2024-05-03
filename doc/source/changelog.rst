@@ -9,6 +9,93 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.5.3 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.3>`_ - 2024-04-29
+=====================================================================================
+
+Fixed
+^^^^^
+
+- fix: semver intersphinx mapping not resolved properly `#1175 <https://github.com/ansys/pyansys-geometry/pull/1175>`_
+- fix: start and end points for edge `#1176 <https://github.com/ansys/pyansys-geometry/pull/1176>`_
+
+`0.5.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.2>`_ - 2024-04-29
+=====================================================================================
+
+Added
+^^^^^
+
+- feat: add semver to intersphinx `#1173 <https://github.com/ansys/pyansys-geometry/pull/1173>`_
+
+
+Changed
+^^^^^^^
+
+- chore: update CHANGELOG for v0.5.1 `#1165 <https://github.com/ansys/pyansys-geometry/pull/1165>`_
+- chore: bump version to v0.6.dev0 `#1166 <https://github.com/ansys/pyansys-geometry/pull/1166>`_
+- chore: update CHANGELOG for v0.5.2 `#1172 <https://github.com/ansys/pyansys-geometry/pull/1172>`_
+- fix: allow to reuse last release binaries (if requested) `#1174 <https://github.com/ansys/pyansys-geometry/pull/1174>`_
+
+
+Fixed
+^^^^^
+
+- fix: GetSurface and GetCurve not available prior to 24R2 `#1171 <https://github.com/ansys/pyansys-geometry/pull/1171>`_
+
+
+Miscellaneous
+^^^^^^^^^^^^^
+
+- docs: creating a NACA airfoil example `#1167 <https://github.com/ansys/pyansys-geometry/pull/1167>`_
+- docs: simplify README example `#1169 <https://github.com/ansys/pyansys-geometry/pull/1169>`_
+
+`0.5.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.1>`_ - 2024-04-24
+=====================================================================================
+
+Added
+^^^^^
+
+- feat: security updates dropped for v0.3 or earlier `#1126 <https://github.com/ansys/pyansys-geometry/pull/1126>`_
+- feat: add ``export_to`` functions `#1147 <https://github.com/ansys/pyansys-geometry/pull/1147>`_
+
+
+Changed
+^^^^^^^
+
+- ci: adapt to vale ``v3`` `#1129 <https://github.com/ansys/pyansys-geometry/pull/1129>`_
+- ci: bump ansys/actions from 5 to 6 in the actions group `#1133 <https://github.com/ansys/pyansys-geometry/pull/1133>`_
+- docs: add release notes in our documentation `#1138 <https://github.com/ansys/pyansys-geometry/pull/1138>`_
+- chore: bump ansys pre-commit hook to ``v0.3.0`` `#1139 <https://github.com/ansys/pyansys-geometry/pull/1139>`_
+- chore: use default vale version `#1140 <https://github.com/ansys/pyansys-geometry/pull/1140>`_
+- docs: add ``user_agent`` to Sphinx build `#1142 <https://github.com/ansys/pyansys-geometry/pull/1142>`_
+- ci: enabling Linux tests missing `#1152 <https://github.com/ansys/pyansys-geometry/pull/1152>`_
+- ci: perform minimal requirements tests `#1153 <https://github.com/ansys/pyansys-geometry/pull/1153>`_
+
+
+Fixed
+^^^^^
+
+- fix: docs link in example `#1137 <https://github.com/ansys/pyansys-geometry/pull/1137>`_
+- fix: update backend version message `#1145 <https://github.com/ansys/pyansys-geometry/pull/1145>`_
+- fix: Trame issues `#1148 <https://github.com/ansys/pyansys-geometry/pull/1148>`_
+- fix: Interactive documentation `#1160 <https://github.com/ansys/pyansys-geometry/pull/1160>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- build: bump ansys-tools-path from 0.5.1 to 0.5.2 `#1131 <https://github.com/ansys/pyansys-geometry/pull/1131>`_
+- build: bump the grpc-deps group across 1 directory with 3 updates `#1156 <https://github.com/ansys/pyansys-geometry/pull/1156>`_
+- build: bump notebook from 7.1.2 to 7.1.3 in the docs-deps group `#1157 <https://github.com/ansys/pyansys-geometry/pull/1157>`_
+- build: bump beartype from 0.18.2 to 0.18.5 `#1158 <https://github.com/ansys/pyansys-geometry/pull/1158>`_
+
+
+Miscellaneous
+^^^^^^^^^^^^^
+
+- docs: add example on exporting designs `#1149 <https://github.com/ansys/pyansys-geometry/pull/1149>`_
+- docs: fix link in `CHANGELOG.md` `#1154 <https://github.com/ansys/pyansys-geometry/pull/1154>`_
+- chore: pre-commit automatic update `#1159 <https://github.com/ansys/pyansys-geometry/pull/1159>`_
+
 `0.5.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.0>`_ - 2024-04-17
 =====================================================================================
 

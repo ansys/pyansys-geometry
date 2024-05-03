@@ -437,9 +437,57 @@ jobs:
             docker rm ${{ env.GEO_CONT_NAME }}
           fi
 
+  testing-min-reqs:
+    name: Testing with minimum requirements
+    needs: [smoke-tests]
+    runs-on: ubuntu-latest
+    env:
+      ANSRV_GEO_IMAGE_MINREQS: 'ghcr.io/ansys/geometry:linux-latest'
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+    steps:
+      - name: Login in Github Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull and launch geometry service
+        run: |
+          docker pull ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install minimum requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[all,tests-minimal]
+          pip install pytest
+
+      - name: Run pytest
+        run: |
+          pytest -v
+
+      - name: Stop the Geometry service
+        if: always()
+        run: |
+          docker stop ${{ env.GEO_CONT_NAME }}
+          docker logs ${{ env.GEO_CONT_NAME }}
+          docker rm ${{ env.GEO_CONT_NAME }}
+
   package:
     name: Package library
-    needs: [testing-windows, testing-linux, docs]
+    needs: [testing-windows, testing-linux, testing-min-reqs, docs]
     runs-on: ubuntu-latest
     steps:
       - name: Build library source and wheel artifacts
@@ -459,6 +507,8 @@ jobs:
     runs-on:
       group: ansys-network
       labels: [self-hosted, Windows, signtool]
+    env:
+      REUSE_LAST_ARTIFACTS: ${{ vars.REUSE_LAST_ARTIFACTS == 1 }}
 
     steps:
       - name: Check out repository pyansys-geometry-binaries
@@ -467,10 +517,27 @@ jobs:
           repository: 'ansys/pyansys-geometry-binaries'
           token: ${{ secrets.BINARIES_TOKEN }}
 
-      - name: Download binaries
+      - name: Download binaries (if conditions met)
+        if: env.REUSE_LAST_ARTIFACTS == 'false'
         run: |
           curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerWindows.zip --output windows-binaries.zip
           curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerLinux.zip --output linux-binaries.zip
+
+      - name: Reuse last binaries (if conditions met)
+        if: env.REUSE_LAST_ARTIFACTS == 'true'
+        env:
+          VERSION_WITH_PREFIX: ${{ github.ref_name }}
+        run: |
+          # We are on a Windows machine. We need to copy the binaries from the previous tag,
+          # based on the current tag. We will also remove the trailing "v" from the tag. This will give
+          # us the folder from where we need to copy the binaries.
+          $env:VERSION=$env:VERSION_WITH_PREFIX.substring(1)
+          $env:PREVIOUS_VERSION=$env:VERSION.substring(0, $env:VERSION.Length - 1)
+          $env:PREVIOUS_PATCH_VERSION_NUMBER=$env:VERSION.substring($env:VERSION.Length - 1)
+          $env:PREVIOUS_PATCH_VERSION_NUMBER=[int]$env:PREVIOUS_PATCH_VERSION_NUMBER - 1
+          $env:PREVIOUS_VERSION=$env:PREVIOUS_VERSION + $env:PREVIOUS_PATCH_VERSION_NUMBER
+          cp ./$env:PREVIOUS_VERSION/windows-binaries.zip windows-binaries.zip
+          cp ./$env:PREVIOUS_VERSION/linux-binaries.zip linux-binaries.zip
 
       - name: Upload Windows binaries as workflow artifacts
         uses: actions/upload-artifact@v4
@@ -492,6 +559,7 @@ jobs:
         run: |
           $env:VERSION=$env:VERSION_WITH_PREFIX.substring(1)
           mkdir $env:VERSION -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force .\$env:VERSION\*
           mv windows-binaries.zip .\$env:VERSION\
           mv linux-binaries.zip .\$env:VERSION\
           git config user.email ${{ secrets.BINARIES_EMAIL }}
