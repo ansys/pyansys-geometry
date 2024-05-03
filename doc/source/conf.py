@@ -7,10 +7,10 @@ from pathlib import Path
 import time
 
 from ansys_sphinx_theme import (
-    add_autoapi_theme_option,
     ansys_favicon,
     ansys_logo_white,
     ansys_logo_white_cropped,
+    get_autoapi_templates_dir_relative_path,
     get_version_match,
     latex,
     pyansys_logo_black,
@@ -160,7 +160,6 @@ html_theme_options = {
     },
     "autoapi": {
         "project": project,
-        "directory": "src/ansys",
         "own_page_level": "class",
     },
 }
@@ -244,7 +243,7 @@ master_doc = "index"
 
 # Configuration for Sphinx autoapi
 # autoapi_type = "python"
-# autoapi_dirs = ["../../src/ansys"]
+autoapi_dirs = ["../../src/ansys"]
 # autoapi_root = "api"
 # autoapi_options = [
 #     "members",
@@ -253,7 +252,6 @@ master_doc = "index"
 #     "show-module-summary",
 #     "special-members",
 # ]
-# autoapi_template_dir = get_autoapi_templates_dir_relative_path(Path(__file__))
 suppress_warnings = ["autoapi.python_import_resolution", "design.grid"]
 # autoapi_python_use_implicit_namespaces = True
 # autoapi_keep_files = True
@@ -433,7 +431,6 @@ def setup(app: sphinx.application.Sphinx):
         Sphinx instance containing all the configuration for the documentation build.
     """
     # Convert notebooks into Python scripts and include them in the output files
-    app.connect("builder-inited", add_autoapi_theme_option, priority=400)
     if BUILD_EXAMPLES:
         # Run at the end of the build process
         app.connect("build-finished", convert_notebooks_to_scripts)
