@@ -14,6 +14,7 @@ from ansys_sphinx_theme import (
     latex,
     pyansys_logo_black,
     watermark,
+    add_autoapi_theme_option,
 )
 import requests
 import sphinx
@@ -163,7 +164,6 @@ html_theme_options = {
         "own_page_level": "class",
     },
 }
-
 # Sphinx extensions
 extensions = [
     "sphinx.ext.intersphinx",
@@ -173,7 +173,7 @@ extensions = [
     "jupyter_sphinx",
     "sphinx_design",
     "sphinx_jinja",
-    #"autoapi.extension",
+    "autoapi.extension",
     "numpydoc",
 ]
 
@@ -431,6 +431,8 @@ def setup(app: sphinx.application.Sphinx):
         Sphinx instance containing all the configuration for the documentation build.
     """
     # Convert notebooks into Python scripts and include them in the output files
+    app.connect("builder-inited", add_autoapi_theme_option, priority=400)
     if BUILD_EXAMPLES:
         # Run at the end of the build process
         app.connect("build-finished", convert_notebooks_to_scripts)
+        
