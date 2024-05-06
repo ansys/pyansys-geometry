@@ -44,22 +44,22 @@ design.plot()
 
 ## Prepare the geometry for the simulation
 
-The current design is only composed of the airfoil. To prepare the geometry for the simulation, it
-is necessary that you define the domain around the airfoil. The following code creates a rectangular
+The current design is only composed of the airfoil. To prepare the geometry for the simulation,
+you must define the domain around the airfoil. The following code creates a rectangular
 fluid domain around the airfoil.
 
 The airfoil has the following dimensions:
 
 * Chord length: 1 (X-axis)
-* Thickness: depends on NACA value (Y-axis)
+* Thickness: Depends on NACA value (Y-axis)
 
-The fluid domain will be a large box with the following dimensions:
+Define the fluid domain as a large box with these dimensions:
 
 * Length (X-axis) - 10 times the chord length
 * Width (Z-axis) - 5 times the chord length
 * Height (Y-axis) - 4 times the chord length
 
-The airfoil will be placed at the center of the fluid domain.
+Place the airfoil at the center of the fluid domain.
 
 ```{code-cell} ipython3
 from ansys.geometry.core.math import Point2D, Plane, Point3D
@@ -83,18 +83,18 @@ fluid_sketch.box(
 fluid = design.extrude_sketch("Fluid", fluid_sketch, BOX_WIDTH)
 ```
 
-## Creating named selections
+## Create named selections
 
 Named selections are used to define boundary conditions in Fluent. The following code creates named selections for the
 inlet, outlet, and walls of the fluid domain. The airfoil is also assigned a named selection.
 
-The airfoil is aligned with the X-axis. The inlet is located at the left side of the airfoil, the outlet is located at the
+The airfoil is aligned with the X axis. The inlet is located at the left side of the airfoil, the outlet is located at the
 right side of the airfoil, and the walls are located at the top and bottom of the airfoil. The inlet face has therefore
 a negative X-axis normal vector, and the outlet face has a positive X-axis normal vector. The rest of the faces, therefore,
 constitute the walls.
 
 ```{code-cell} ipython3
-# Create named selections in the fluid domain - inlet, outlet, and surrounding faces
+# Create named selections in the fluid domain (inlet, outlet, and surrounding faces)
 # Add also the airfoil as a named selection
 fluid_faces = fluid.faces
 surrounding_faces = []
@@ -117,8 +117,8 @@ design.create_named_selection("Airfoil Faces", faces=airfoil.faces)
 ## Display the geometry
 
 The geometry is now ready for the simulation. The following code displays the geometry in the notebook.
-This example uses the ``PlotterHelper`` class to display the geometry with different opacity levels for
-the airfoil and fluid domain, as well as different colors.
+This example uses the ``PlotterHelper`` class to display the geometry for
+the airfoil and fluid domain in different colors with a specified opacity level.
 
 The airfoil is displayed in blue, and the fluid domain is displayed in green with an opacity of 0.25.
 
@@ -133,18 +133,17 @@ plotter_helper.show_plotter()
 
 ## Export the geometry
 
-The geometry is now exported into a Fluent-compatible format. The following code exports the geometry
+Export the geometry into a Fluent-compatible format. The following code exports the geometry
 into a PMDB file, which retains the named selections.
 
 ```{code-cell} ipython3
 # Save the design
 file = design.export_to_pmdb()
-print(f"Design saved to {file}")
+print(f"Design saved to {file}.")
 ```
 
-The exported PMDB file can now be imported into Fluent to set up the mesh and perform the simulation.
-An example of how to set up the mesh and boundary conditions in Fluent is provided in the following
-PyFluent notebook: [Modeling External Compressible Flow](https://fluent.docs.pyansys.com/version/stable/examples/00-fluent/external_compressible_flow.html).
+You can import the exported PMDB file into Fluent to set up the mesh and perform the simulation.
+For an example of how to set up the mesh and boundary conditions in Fluent, see the [Modeling External Compressible Flow](https://fluent.docs.pyansys.com/version/stable/examples/00-fluent/external_compressible_flow.html) example in the Fluent documentation.
 
 The main difference between the Fluent example and this geometry is the coordinate system. The Fluent example
 defines the airfoil in the XY plane, while this geometry defines the airfoil in the XZ plane.
