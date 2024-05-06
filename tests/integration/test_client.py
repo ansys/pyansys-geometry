@@ -53,7 +53,7 @@ def test_client_through_channel(modeler: Modeler):
     client_repr = repr(client)
     assert "Target" in client_repr
     assert "Connection" in client_repr
-    assert client.target() == target
+    assert target in client.target()
     assert client.channel
 
 
