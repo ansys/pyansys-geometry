@@ -120,14 +120,14 @@ The geometry is now ready for the simulation. The following code displays the ge
 This example uses the ``PlotterHelper`` class to display the geometry for
 the airfoil and fluid domain in different colors with a specified opacity level.
 
-The airfoil is displayed in blue, and the fluid domain is displayed in green with an opacity of 0.25.
+The airfoil is displayed in green, and the fluid domain is displayed in blue with an opacity of 0.25.
 
 ```{code-cell} ipython3
 from ansys.geometry.core.plotting import PlotterHelper
 
 plotter_helper = PlotterHelper()
-plotter_helper.add(airfoil, color="blue")
-plotter_helper.add(fluid, color="green", opacity=0.25)
+plotter_helper.add(airfoil, color="green")
+plotter_helper.add(fluid, color="blue", opacity=0.15)
 plotter_helper.show_plotter()
 ```
 
