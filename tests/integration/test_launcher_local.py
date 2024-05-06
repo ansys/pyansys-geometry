@@ -85,7 +85,7 @@ def test_local_launcher_connect(
         pytest.skip("Docker local launcher tests are not runnable.")
 
     # Get the existing target
-    target = modeler.client.target().split(":")
+    target = modeler.client.target().lstrip("dns:///").split(":")
     port = int(target[1])
 
     # Trying to deploy a service there will lead to an error...
@@ -118,7 +118,7 @@ def test_local_launcher_connect_with_restart(
         image = get_geometry_container_type(docker_instance)
 
     # Get the existing target
-    target = modeler.client.target().split(":")
+    target = modeler.client.target().lstrip("dns:///").split(":")
     port = int(target[1])
     new_port = port + 1
 
@@ -173,7 +173,7 @@ def test_try_deploying_container_with_same_name(
         image = get_geometry_container_type(docker_instance)
 
     # Get the existing target
-    target = modeler.client.target().split(":")
+    target = modeler.client.target().lstrip("dns:///").split(":")
     port = int(target[1])
     new_port = port + 1
     new_port_2 = port + 2
