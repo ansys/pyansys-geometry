@@ -10,7 +10,6 @@ from ansys_sphinx_theme import (
     ansys_favicon,
     ansys_logo_white,
     ansys_logo_white_cropped,
-    get_autoapi_templates_dir_relative_path,
     get_version_match,
     latex,
     pyansys_logo_black,
@@ -161,6 +160,7 @@ html_theme_options = {
     "autoapi": {
         "project": project,
         "own_page_level": "class",
+        "directory": "src/ansys",
     },
 }
 # Sphinx extensions
@@ -172,7 +172,7 @@ extensions = [
     "jupyter_sphinx",
     "sphinx_design",
     "sphinx_jinja",
-    "autoapi.extension",
+    "ansys_sphinx_theme.extension.autoapi",
     "numpydoc",
 ]
 
@@ -242,20 +242,7 @@ source_suffix = {
 master_doc = "index"
 
 # Configuration for Sphinx autoapi
-# autoapi_type = "python"
-autoapi_dirs = ["../../src/ansys"]
-# autoapi_root = "api"
-# autoapi_options = [
-#     "members",
-#     "undoc-members",
-#     "show-inheritance",
-#     "show-module-summary",
-#     "special-members",
-# ]
-suppress_warnings = ["autoapi.python_import_resolution", "design.grid"]
-# autoapi_python_use_implicit_namespaces = True
-# autoapi_keep_files = True
-# autoapi_own_page_level = "class"
+suppress_warnings = ["autoapi.python_import_resolution", "design.grid", "config.cache"]
 
 # Examples gallery customization
 nbsphinx_execute = "always"
