@@ -245,8 +245,10 @@ design.plot()
 
 ### Save the design
 
+In this case, the design is saved as an SCDOCX file.
+
 ```{code-cell} ipython3
 # Save the design
-file = design.export_to_fmd()
+file = design.export_to_scdocx()
 print(f"Design saved to {file}")
 ```
