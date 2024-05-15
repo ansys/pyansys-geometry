@@ -157,10 +157,8 @@ html_theme_options = {
             f"pyansys-geometry-v{get_version_match(__version__).replace('.', '-')}": "PyAnsys-Geometry",  # noqa: E501
         },
     },
-    "autoapi": {
+    "ansys_sphinx_theme_autoapi": {
         "project": project,
-        "own_page_level": "class",
-        "directory": "src/ansys",
     },
 }
 # Sphinx extensions
