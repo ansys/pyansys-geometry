@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "ansys-geometry-core"
-version = "0.5.3"
+version = "0.5.4"
 description = "A python wrapper for Ansys Geometry service"
 readme = "README.rst"
 requires-python = ">=3.9,<4"
@@ -102,7 +102,7 @@ Issues = "https://github.com/ansys/pyansys-geometry/issues"
 Discussions = "https://github.com/ansys/pyansys-geometry/discussions"
 Documentation = "https://geometry.docs.pyansys.com"
 Releases = "https://github.com/ansys/pyansys-geometry/releases"
-Changelog =  "https://github.com/ansys/pyansys-geometry/blob/main/doc/source/changelog.rst"
+Changelog = "https://github.com/ansys/pyansys-geometry/blob/main/doc/source/changelog.rst"
 
 [tool.flit.module]
 name = "ansys.geometry.core"
