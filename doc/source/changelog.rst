@@ -9,6 +9,39 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.5.4 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.4>`_ - 2024-05-15
+=====================================================================================
+
+Added
+^^^^^
+
+- feat: allow for ``product_version`` on geometry service launcher function `#1182 <https://github.com/ansys/pyansys-geometry/pull/1182>`_
+
+
+Changed
+^^^^^^^
+
+- chore: update CHANGELOG for v0.5.3 `#1177 <https://github.com/ansys/pyansys-geometry/pull/1177>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- build: bump the docs-deps group with 4 updates `#1178 <https://github.com/ansys/pyansys-geometry/pull/1178>`_
+- build: bump pytest from 8.1.1 to 8.2.0 `#1179 <https://github.com/ansys/pyansys-geometry/pull/1179>`_
+- build: bump grpcio from 1.62.2 to 1.63.0 in the grpc-deps group `#1186 <https://github.com/ansys/pyansys-geometry/pull/1186>`_
+- build: bump the docs-deps group with 2 updates `#1187 <https://github.com/ansys/pyansys-geometry/pull/1187>`_
+- build: bump trame-vtk from 2.8.6 to 2.8.7 `#1188 <https://github.com/ansys/pyansys-geometry/pull/1188>`_
+- build: bump nbsphinx from 0.9.3 to 0.9.4 in the docs-deps group `#1189 <https://github.com/ansys/pyansys-geometry/pull/1189>`_
+- build: bump trame-vtk from 2.8.7 to 2.8.8 `#1190 <https://github.com/ansys/pyansys-geometry/pull/1190>`_
+
+
+Miscellaneous
+^^^^^^^^^^^^^
+
+- chore: pre-commit automatic update `#1180 <https://github.com/ansys/pyansys-geometry/pull/1180>`_, `#1193 <https://github.com/ansys/pyansys-geometry/pull/1193>`_
+- docs: add geometry preparation for Fluent simulation `#1183 <https://github.com/ansys/pyansys-geometry/pull/1183>`_
+
 `0.5.3 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.3>`_ - 2024-04-29
 =====================================================================================
 
