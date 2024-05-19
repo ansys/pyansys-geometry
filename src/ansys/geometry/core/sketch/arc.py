@@ -40,12 +40,12 @@ class Arc(SketchEdge):
 
     Parameters
     ----------
-    center : Point2D
-        Center point of the arc.
     start : Point2D
         Starting point of the arc.
     end : Point2D
         Ending point of the arc.
+    center : Point2D
+        Center point of the arc.
     clockwise : bool, default: False
         Whether the arc spans the clockwise angle between the start and end points.
         When ``False`` (default), the arc spans the counter-clockwise angle. When
@@ -55,9 +55,9 @@ class Arc(SketchEdge):
     @check_input_types
     def __init__(
         self,
-        center: Point2D,
         start: Point2D,
         end: Point2D,
+        center: Point2D,
         clockwise: Optional[bool] = False,
     ):
         """Initialize the arc shape."""
@@ -78,7 +78,7 @@ class Arc(SketchEdge):
             )
 
         # Store the main three points of the arc
-        self._center, self._start, self._end = center, start, end
+        self._start, self._end, self._center = center, start, end
 
         # Compute the vectors from the center to the start and end points
         to_start_vector = Vector2D.from_points(start, center)
@@ -108,6 +108,11 @@ class Arc(SketchEdge):
         return self._end
 
     @property
+    def center(self) -> Point2D:
+        """Center point of the arc."""
+        return self._center
+
+    @property
     def length(self) -> Quantity:
         """Length of the arc."""
         return 2 * np.pi * self.radius * (self.angle.m / (2 * np.pi))
@@ -116,11 +121,6 @@ class Arc(SketchEdge):
     def radius(self) -> Quantity:
         """Radius of the arc."""
         return self._radius
-
-    @property
-    def center(self) -> Point2D:
-        """Center point of the arc."""
-        return self._center
 
     @property
     def angle(self) -> Quantity:
@@ -341,4 +341,4 @@ class Arc(SketchEdge):
         is_clockwise = False if angle_s_i < angle_s_e else True
 
         # Finally... you can create the arc
-        return Arc(center=center, start=start, end=end, clockwise=is_clockwise)
+        return Arc(start=start, end=end, center=center, clockwise=is_clockwise)
