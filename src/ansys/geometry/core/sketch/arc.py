@@ -78,7 +78,7 @@ class Arc(SketchEdge):
             )
 
         # Store the main three points of the arc
-        self._start, self._end, self._center = center, start, end
+        self._start, self._end, self._center = start, end, center
 
         # Compute the vectors from the center to the start and end points
         to_start_vector = Vector2D.from_points(start, center)
