@@ -563,7 +563,7 @@ def test_visualization_polydata():
     assert polygon.visualization_polydata.n_open_edges == 5
 
     # Test for arc visualization polydata
-    arc = Arc(Point2D([10, 0]), Point2D([10, 10]), Point2D([10, -10]))
+    arc = Arc(Point2D([10, 10]), Point2D([10, -10]), Point2D([10, 0]))
     assert arc.visualization_polydata.center == ([5.0, 0.0, 0.0])
     assert arc.visualization_polydata.bounds == pytest.approx([0.0, 10.0, -10.0, 10.0, 0.0, 0.0])
     assert arc.visualization_polydata.n_faces == 2
