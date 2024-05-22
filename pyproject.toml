@@ -27,7 +27,7 @@ dependencies = [
     "setuptools",
     "ansys-api-geometry==0.4.1",
     "ansys-tools-path>=0.3,<1",
-    "ansys-tools-visualization-interface>=0.1.0,<1",
+    "pyansys-visualizer@ git+https://github.com/ansys-internal/pyansys-visualizer/",
     "beartype>=0.11.0,<0.19",
     "grpcio>=1.35.0,<2",
     "grpcio-health-checking>=1.45.0,<2",
@@ -51,7 +51,7 @@ all = [
 tests = [
     "ansys-platform-instancemanagement==1.1.2",
     "ansys-tools-path==0.5.2",
-    "ansys-tools-visualization-interface==0.1.0",
+    "pyansys-visualizer@ git+https://github.com/ansys-internal/pyansys-visualizer/",
     "beartype==0.18.5",
     "docker==7.0.0",
     "grpcio==1.64.0",
@@ -78,7 +78,7 @@ tests-minimal = [
 ]
 doc = [
     "ansys-sphinx-theme[autoapi]==0.16.0",
-    "ansys-tools-visualization-interface==0.1.0",
+    "pyansys-visualizer@ git+https://github.com/ansys-internal/pyansys-visualizer/",
     "beartype==0.18.5",
     "docker==7.0.0",
     "ipyvtklink==0.2.3",

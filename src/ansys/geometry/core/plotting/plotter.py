@@ -21,6 +21,7 @@
 # SOFTWARE.
 """Provides plotting for various PyAnsys Geometry objects."""
 from ansys.tools.visualization_interface import Color, EdgePlot, MeshObjectPlot, Plotter
+from ansys.tools.visualization_interface.backends.pyvista import PyVistaBackend
 from beartype.typing import Any, Dict, List, Optional, Union
 import numpy as np
 import pyvista as pv
@@ -55,7 +56,9 @@ class GeomPlotter(Plotter):
         self, use_trame: Union[bool, None] = None, allow_picking: Union[bool, None] = False
     ) -> None:
         """Initialize the GeomPlotter class."""
+        self._backend = PyVistaBackend(use_trame=use_trame, allow_picking=allow_picking)
         super().__init__()
+
         self._backend._allow_picking = allow_picking
         self._backend._use_trame = use_trame
         self._backend.add_widget(ShowDesignPoints(self))
@@ -243,7 +246,7 @@ class GeomPlotter(Plotter):
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         # Use the default PyAnsys Geometry add_mesh arguments
-        self.pv_interface.set_add_mesh_defaults(plotting_options)
+        self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
         component_polydata = MeshObjectPlot(component, dataset)
         self.plot(component_polydata, **plotting_options)
