@@ -125,8 +125,8 @@ def test_plot_plotterhelper_sketch_pyvista(verify_image_cache):
 
     # plot together
     pl = GeomPlotter()
-    pl.add([sketch, cyl, blocks])
-    pl.plot(
+    pl.plot([sketch, cyl, blocks])
+    pl.show(
         screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_plotterhelper_sketch_pyvista.png"),
     )
 
@@ -147,8 +147,8 @@ def test_plot_plotterhelper_sketch_body(modeler: Modeler, verify_image_cache):
 
     # plot together
     pl = GeomPlotter()
-    pl.add([sketch, box_body])
-    pl.plot(
+    pl.plot([sketch, box_body])
+    pl.show(
         screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_plotterhelper_sketch_body.png"),
     )
 
@@ -185,8 +185,8 @@ def test_plot_plotterhelper_sketch_several_bodies(modeler: Modeler, verify_image
 
     # plot together
     pl = GeomPlotter()
-    pl.add([sketch, box_body, gear_body, cyl_body])
-    pl.plot(
+    pl.plot([sketch, box_body, gear_body, cyl_body])
+    pl.show(
         screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_plotterhelper_sketch_several_bodies.png"),
     )
 
@@ -207,8 +207,8 @@ def test_plot_plotterhelper_sketch_design(modeler: Modeler, verify_image_cache):
 
     # plot together
     pl = GeomPlotter()
-    pl.add([sketch, design])
-    pl.plot(
+    pl.plot([sketch, design])
+    pl.show(
         screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_plotterhelper_sketch_design.png"),
     )
 
@@ -265,8 +265,8 @@ def test_plot_plotterhelper_all_types(modeler: Modeler, verify_image_cache):
     plot_list.append(box_body2)
 
     pl = GeomPlotter()
-    pl.add(plot_list)
-    pl.plot(
+    pl.plot(plot_list)
+    pl.show(
         screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_plotterhelper_all_types.png"),
     )
 
@@ -684,7 +684,7 @@ def test_plot_design_point(modeler: Modeler, verify_image_cache):
 
     # plot
     pl = GeomPlotter()
-    pl.add(plot_list)
-    pl.plot(
+    pl.plot(plot_list)
+    pl.show(
         screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_design_point.png"),
     )

@@ -1387,7 +1387,7 @@ class Component:
             N Coordinate Systems : 0
         >>> mycomp.plot(pbr=True, metallic=1.0)
         """
-        from ansys.visualizer import MeshObjectPlot
+        from ansys.tools.visualization_interface.types.mesh_object_plot import MeshObjectPlot
 
         from ansys.geometry.core.plotting import GeomPlotter
 
@@ -1395,8 +1395,8 @@ class Component:
             custom_object=self, mesh=self.tessellate(merge_component, merge_bodies)
         )
         pl = GeomPlotter(use_trame=use_trame)
-        pl.add(mesh_object, **plotting_options)
-        pl.plot(screenshot=screenshot)
+        pl.plot(mesh_object, **plotting_options)
+        pl.show(screenshot=screenshot)
 
     def __repr__(self) -> str:
         """Represent the ``Component`` as a string."""

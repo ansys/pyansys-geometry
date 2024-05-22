@@ -1324,14 +1324,14 @@ class Body(IBody):
         **plotting_options: Optional[dict],
     ) -> None:  # noqa: D102
         # lazy import here to improve initial module load time
-        from ansys.visualizer import MeshObjectPlot
+        from ansys.tools.visualization_interface.types.mesh_object_plot import MeshObjectPlot
 
         from ansys.geometry.core.plotting import GeomPlotter
 
         meshobject = MeshObjectPlot(self, self.tessellate(merge=merge))
         pl = GeomPlotter(use_trame=use_trame)
-        pl.add(meshobject, **plotting_options)
-        pl.plot(screenshot=screenshot)
+        pl.plot(meshobject, **plotting_options)
+        pl.show(screenshot=screenshot)
 
     def intersect(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
         self.__generic_boolean_op(other, "intersect", "bodies do not intersect")

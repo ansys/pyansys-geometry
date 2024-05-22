@@ -846,8 +846,11 @@ class Sketch:
             view_2d_dict = None
 
         if selected_pd_objects is not None:
-            _ = GeomPlotter(use_trame=use_trame).plot(
+            pl = GeomPlotter(use_trame=use_trame)
+            pl.plot(
                 selected_pd_objects,
+            )
+            pl.show(
                 screenshot=screenshot,
                 view_2d=view_2d_dict,
                 opacity=0.7,  # We are passing PD objects directly... apply opacity to all of them
@@ -855,9 +858,9 @@ class Sketch:
             )
         else:
             pl = GeomPlotter(use_trame=use_trame)
-            pl.add(self.sketch_polydata_faces(), opacity=0.7, **plotting_options)
-            pl.add(self.sketch_polydata_edges(), **plotting_options)
-            pl.plot(screenshot=screenshot, view_2d=view_2d_dict)
+            pl.plot(self.sketch_polydata_faces(), opacity=0.7, **plotting_options)
+            pl.plot(self.sketch_polydata_edges(), **plotting_options)
+            pl.show(screenshot=screenshot, view_2d=view_2d_dict)
 
     def plot_selection(
         self,
