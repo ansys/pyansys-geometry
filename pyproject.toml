@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "pkg_resources",
+    "setuptools",
     "ansys-api-geometry==0.4.1",
     "ansys-tools-path>=0.3,<1",
     "ansys-tools-visualization-interface>=0.1.0,<1",
