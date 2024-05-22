@@ -21,7 +21,7 @@
 # SOFTWARE.
 """Provides plotting for various PyAnsys Geometry objects."""
 from ansys.tools.visualization_interface import Color, EdgePlot, MeshObjectPlot, Plotter
-from beartype.typing import Any, Dict, List, Optional
+from beartype.typing import Any, Dict, List, Optional, Union
 import numpy as np
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
@@ -45,13 +45,15 @@ class GeomPlotter(Plotter):
 
     Parameters
     ----------
-    use_trame : bool | None, optional
+    use_trame : Union[bool, None], optional
         Whether to use trame visualizer or not, by default None.
-    allow_picking : bool | None, optional
+    allow_picking : Union[bool, None], optional
         Whether to allow picking or not, by default False.
     """
 
-    def __init__(self, use_trame: bool | None = None, allow_picking: bool | None = False) -> None:
+    def __init__(
+        self, use_trame: Union[bool, None] = None, allow_picking: Union[bool, None] = False
+    ) -> None:
         """Initialize the GeomPlotter class."""
         super().__init__()
         self._backend._allow_picking = allow_picking
