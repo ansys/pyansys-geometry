@@ -39,6 +39,7 @@ from ansys.geometry.core.math.constants import (
 )
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix, Matrix33, Matrix44
+from ansys.geometry.core.math.misc import get_two_circle_intersections
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.math.vector import UnitVector2D, UnitVector3D, Vector2D, Vector3D

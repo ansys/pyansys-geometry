@@ -485,6 +485,88 @@ class Sketch:
         arc = Arc.from_three_points(start, inter, end)
         return self.edge(arc, tag)
 
+    def arc_from_start_end_and_radius(
+        self,
+        start: Point2D,
+        end: Point2D,
+        radius: Union[Quantity, Distance, Real],
+        convex_arc: Optional[bool] = False,
+        clockwise: Optional[bool] = False,
+        tag: Optional[str] = None,
+    ) -> "Sketch":
+        """
+        Add an arc to the sketch plane from the start and end points and a given radius.
+
+        Parameters
+        ----------
+        start : Point2D
+            Starting point of the arc.
+        end : Point2D
+            Ending point of the arc.
+        radius : Union[~pint.Quantity, Distance, Real]
+            Radius of the arc.
+        convex_arc : bool, default: False
+            Whether the arc is convex. The default is ``False``.
+        clockwise : bool, default: False
+            Whether the arc spans the angle clockwise between the start
+            and end points. When ``False`` (default), the arc spans the angle
+            counter-clockwise. When ``True``, the arc spans the angle
+            clockwise.
+        tag : str, default: None
+            User-defined label for identifying the edge.
+
+        Returns
+        -------
+        Sketch
+            Revised sketch state ready for further sketch actions.
+        """
+        arc = Arc.from_start_end_and_radius(
+            start,
+            end,
+            radius,
+            convex_arc=convex_arc,
+            clockwise=clockwise,
+        )
+        return self.edge(arc, tag)
+
+    def arc_from_center_start_and_angle(
+        self,
+        start: Point2D,
+        center: Point2D,
+        angle: Union[Quantity, Angle, Real],
+        clockwise: Optional[bool] = False,
+        tag: Optional[str] = None,
+    ) -> "Sketch":
+        """
+        Add an arc to the sketch plane from the center, start point, and angle.
+
+        Parameters
+        ----------
+        start : Point2D
+            Starting point of the arc.
+        center : Point2D
+            Center point of the arc.
+        angle : Union[~pint.Quantity, Angle, Real]
+            Angle of the arc.
+        clockwise : bool, default: False
+            Whether the arc spans the angle clockwise or not.
+            When ``False`` (default), the arc spans the angle
+            counter-clockwise. When ``True``, the arc spans the angle
+            clockwise.
+
+        Returns
+        -------
+        Sketch
+            Revised sketch state ready for further sketch actions.
+        """
+        arc = Arc.from_start_center_and_angle(
+            start,
+            center,
+            angle,
+            clockwise=clockwise,
+        )
+        return self.edge(arc, tag)
+
     def triangle(
         self,
         point1: Point2D,

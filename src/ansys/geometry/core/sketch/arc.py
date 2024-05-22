@@ -21,17 +21,21 @@
 # SOFTWARE.
 """Provides for creating and managing an arc."""
 
+from typing import Union
+
 from beartype import beartype as check_input_types
 from beartype.typing import Optional
 import numpy as np
 from pint import Quantity
 import pyvista as pv
 
+from ansys.geometry.core.math.matrix import Matrix
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.math.vector import Vector2D
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.sketch.edge import SketchEdge
+from ansys.geometry.core.typing import Real
 
 
 class Arc(SketchEdge):
@@ -270,6 +274,7 @@ class Arc(SketchEdge):
         return arc_sub1 + arc_sub2
 
     @classmethod
+    @check_input_types
     def from_three_points(cls, start: Point2D, inter: Point2D, end: Point2D):
         """
         Create an arc from three given points.
@@ -342,3 +347,122 @@ class Arc(SketchEdge):
 
         # Finally... you can create the arc
         return Arc(start=start, end=end, center=center, clockwise=is_clockwise)
+
+    @classmethod
+    @check_input_types
+    def from_start_end_and_radius(
+        cls,
+        start: Point2D,
+        end: Point2D,
+        radius: Union[Quantity, Distance, Real],
+        convex_arc: Optional[bool] = False,
+        clockwise: Optional[bool] = False,
+    ):
+        """
+        Create an arc from a starting point, an ending point, and a radius.
+
+        Parameters
+        ----------
+        start : Point2D
+            Starting point of the arc.
+        end : Point2D
+            Ending point of the arc.
+        radius : Union[Quantity, Distance, Real]
+            Radius of the arc.
+        convex_arc : bool, default: False
+            Whether the arc is convex or not. When ``True``, the arc is convex.
+            When ``False`` (default), the arc is concave.
+        clockwise : bool, default: False
+            Whether the arc spans the clockwise angle between the start and end points.
+            When ``False`` (default), the arc spans the counter-clockwise angle. When
+            ``True``, the arc spands the clockwise angle.
+
+        Returns
+        -------
+        Arc
+            Arc generated from the three points.
+        """
+        # Let's compute the potential centers of the circle
+        # that could generate the arc
+        from ansys.geometry.core.math.misc import get_two_circle_intersections
+
+        # Sanitize the radius
+        radius = radius if isinstance(radius, Distance) else Distance(radius)
+        if radius.value <= 0:
+            raise ValueError("Radius must be a real positive value.")
+
+        # Unpack the points into its coordinates (in DEFAULT_UNITS.LENGTH)
+        x_s, y_s = start.tolist()
+        x_e, y_e = end.tolist()
+        r0 = r1 = radius.value.m_as(DEFAULT_UNITS.LENGTH)
+
+        # Compute the potential centers of the circle
+        centers = get_two_circle_intersections(x0=x_s, y0=y_s, r0=r0, x1=x_e, y1=y_e, r1=r1)
+        if centers is None:
+            raise ValueError("The provided points do not yield a valid arc.")
+
+        # Choose the center depending on if the arc is convex
+        center = centers[1] if convex_arc else centers[0]
+
+        # Finally... you can create the arc
+        return Arc(start=start, end=end, center=center, clockwise=clockwise)
+
+    @classmethod
+    @check_input_types
+    def from_start_center_and_angle(
+        cls,
+        start: Point2D,
+        center: Point2D,
+        angle: Union[Angle, Quantity, Real],
+        clockwise: Optional[bool] = False,
+    ):
+        """
+        Create an arc from a starting point, a center point, and an angle.
+
+        Parameters
+        ----------
+        start : Point2D
+            Starting point of the arc.
+        center : Point2D
+            Center point of the arc.
+        angle : Union[Angle, Quantity, Real]
+            Angle of the arc.
+        clockwise : bool, default: False
+            Whether the provided angle should be considered clockwise.
+            When ``False`` (default), the angle is considered counter-clockwise.
+            When ``True``, the angle is considered clockwise.
+
+        Returns
+        -------
+        Arc
+            Arc generated from the three points.
+        """
+        # Define a 2D Vector from the center to the start point
+        to_start_vector = Vector2D.from_points(start, center)
+
+        # Sanity check for the angle
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+        rad_angle = angle.value.m_as(UNITS.radian)
+        cang = np.cos(rad_angle)
+        sang = np.sin(rad_angle)
+
+        # Rotate the vector by the angle
+        if clockwise:
+            rot_matrix = Matrix([[cang, sang], [-sang, cang]])
+        else:
+            rot_matrix = Matrix([[cang, -sang], [sang, cang]])
+
+        # Compute the end vector
+        to_end_vector = rot_matrix @ to_start_vector
+
+        # Define the end point
+        end = Point2D(
+            [
+                to_end_vector[0] + center.x.to_base_units().m,
+                to_end_vector[1] + center.y.to_base_units().m,
+            ],
+            center.base_unit,
+        )
+
+        # Finally... you can create the arc
+        return Arc(start=start, end=end, center=center, clockwise=clockwise)
