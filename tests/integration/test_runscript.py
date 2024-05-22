@@ -30,9 +30,15 @@ from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.sketch import Sketch
 
+from .conftest import skip_if_linux
+
 
 # Python (.py)
-def test_python_simple_script(modeler: Modeler, skip_not_on_linux_service):
+def test_python_simple_script(modeler: Modeler):
+
+    # Skip on Linux
+    skip_if_linux(modeler, test_python_simple_script.__name__, "run_discovery_script_file")
+
     result = modeler.run_discovery_script_file(
         "./tests/integration/files/disco_scripts/simple_script.py"
     )
@@ -43,14 +49,21 @@ def test_python_simple_script(modeler: Modeler, skip_not_on_linux_service):
     assert pattern_doc.match(result["design"])
 
 
-def test_python_failing_script(modeler: Modeler, skip_not_on_linux_service):
+def test_python_failing_script(modeler: Modeler):
+
+    # Skip on Linux
+    skip_if_linux(modeler, test_python_failing_script.__name__, "run_discovery_script_file")
     with pytest.raises(GeometryRuntimeError):
         modeler.run_discovery_script_file(
             "./tests/integration/files/disco_scripts/failing_script.py"
         )
 
 
-def test_python_integrated_script(modeler: Modeler, skip_not_on_linux_service):
+def test_python_integrated_script(modeler: Modeler):
+
+    # Skip on Linux
+    skip_if_linux(modeler, test_python_integrated_script.__name__, "run_discovery_script_file")
+
     # Tests the workflow of creating a design in PyAnsys Geometry, modifying it with a script,
     # and continuing to use it in PyAnsys Geometry
 
@@ -70,7 +83,11 @@ def test_python_integrated_script(modeler: Modeler, skip_not_on_linux_service):
 
 
 # SpaceClaim (.scscript)
-def test_scscript_simple_script(modeler: Modeler, skip_not_on_linux_service):
+def test_scscript_simple_script(modeler: Modeler):
+
+    # Skip on Linux
+    skip_if_linux(modeler, test_scscript_simple_script.__name__, "run_discovery_script_file")
+
     result = modeler.run_discovery_script_file(
         "./tests/integration/files/disco_scripts/simple_script.scscript"
     )
@@ -83,7 +100,11 @@ def test_scscript_simple_script(modeler: Modeler, skip_not_on_linux_service):
 
 
 # Discovery (.dscript)
-def test_dscript_simple_script(modeler: Modeler, skip_not_on_linux_service):
+def test_dscript_simple_script(modeler: Modeler):
+
+    # Skip on Linux
+    skip_if_linux(modeler, test_dscript_simple_script.__name__, "run_discovery_script_file")
+
     result = modeler.run_discovery_script_file(
         "./tests/integration/files/disco_scripts/simple_script.dscript"
     )

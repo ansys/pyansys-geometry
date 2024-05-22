@@ -9,8 +9,7 @@ on:
       - main
 
 env:
-  MAIN_PYTHON_VERSION: '3.11'
-  MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED: '3.9'
+  MAIN_PYTHON_VERSION: '3.12'
   PACKAGE_NAME: 'ansys-geometry-core'
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
   ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
@@ -18,7 +17,7 @@ env:
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo
-  RESET_IMAGE_CACHE: 6
+  RESET_IMAGE_CACHE: 0
   IS_WORKFLOW_RUNNING: True
   ARTIFACTORY_VERSION: v242
   MEILISEARCH_API_KEY: ${{ secrets.MEILISEARCH_API_KEY }}
@@ -31,12 +30,64 @@ concurrency:
 
 jobs:
 
+  update-changelog:
+    name: "Update CHANGELOG (on release)"
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: ansys/actions/doc-deploy-changelog@v6
+        with:
+          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+
+  vulnerabilities:
+    name: Vulnerabilities
+    runs-on: ubuntu-latest
+    steps:
+      - name: PyAnsys Vulnerability check (on main)
+        if: github.ref == 'refs/heads/main'
+        uses: ansys/actions/check-vulnerabilities@v6
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          python-package-name: ${{ env.PACKAGE_NAME }}
+          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+
+      - name: PyAnsys Vulnerability check (on dev mode)
+        if: github.ref != 'refs/heads/main'
+        uses: ansys/actions/check-vulnerabilities@v6
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          python-package-name: ${{ env.PACKAGE_NAME }}
+          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+          dev-mode: true
+
+  branch-name:
+    # Only if the event is a pull request and the branch name is not from the pre-commit-ci bot
+    if: github.event_name == 'pull_request' && github.head_ref != 'pre-commit-ci-update-config'
+    name: Check the name of the branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch name
+        uses: ansys/actions/branch-name-style@v6
+
+  commit-name:
+    if: github.event_name == 'pull_request'
+    name: Check the name of the commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check commit name
+        uses: ansys/actions/commit-style@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
   docs-style:
     name: Documentation Style Check
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/doc-style@v5
+        uses: ansys/actions/doc-style@v6
         with:
          token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -55,11 +106,21 @@ jobs:
             os: macos-latest
     steps:
       - name: Build wheelhouse and perform smoke test
-        uses: ansys/actions/build-wheelhouse@v5
+        uses: ansys/actions/build-wheelhouse@v6
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
           python-version: ${{ matrix.python-version }}
+
+  docker-style:
+    name: Docker Style Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: PyAnsys documentation style checks
+        uses: ansys/actions/docker-style@v6
+        with:
+          directory: docker
+          recursive: true
 
 # =================================================================================================
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
@@ -89,7 +150,7 @@ jobs:
         if: env.SKIP_UNSTABLE == 'false'
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Set up headless display
         if: env.SKIP_UNSTABLE == 'false'
@@ -208,7 +269,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Set up headless display
         uses: pyvista/setup-headless-display-action@v2
@@ -343,7 +404,7 @@ jobs:
 
       - name: Run pytest
         if: env.SKIP_UNSTABLE == 'false'
-        uses: ansys/actions/tests-pytest@v5
+        uses: ansys/actions/tests-pytest@v6
         env:
           ALLOW_PLOTTING: true
         with:
@@ -376,13 +437,61 @@ jobs:
             docker rm ${{ env.GEO_CONT_NAME }}
           fi
 
+  testing-min-reqs:
+    name: Testing with minimum requirements
+    needs: [smoke-tests]
+    runs-on: ubuntu-latest
+    env:
+      ANSRV_GEO_IMAGE_MINREQS: 'ghcr.io/ansys/geometry:linux-latest'
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+    steps:
+      - name: Login in Github Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull and launch geometry service
+        run: |
+          docker pull ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install minimum requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[all,tests-minimal]
+          pip install pytest
+
+      - name: Run pytest
+        run: |
+          pytest -v
+
+      - name: Stop the Geometry service
+        if: always()
+        run: |
+          docker stop ${{ env.GEO_CONT_NAME }}
+          docker logs ${{ env.GEO_CONT_NAME }}
+          docker rm ${{ env.GEO_CONT_NAME }}
+
   package:
     name: Package library
-    needs: [testing-windows, testing-linux, docs]
+    needs: [testing-windows, testing-linux, testing-min-reqs, docs]
     runs-on: ubuntu-latest
     steps:
       - name: Build library source and wheel artifacts
-        uses: ansys/actions/build-library@v5
+        uses: ansys/actions/build-library@v6
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -398,6 +507,8 @@ jobs:
     runs-on:
       group: ansys-network
       labels: [self-hosted, Windows, signtool]
+    env:
+      REUSE_LAST_ARTIFACTS: ${{ vars.REUSE_LAST_ARTIFACTS == 1 }}
 
     steps:
       - name: Check out repository pyansys-geometry-binaries
@@ -406,10 +517,27 @@ jobs:
           repository: 'ansys/pyansys-geometry-binaries'
           token: ${{ secrets.BINARIES_TOKEN }}
 
-      - name: Download binaries
+      - name: Download binaries (if conditions met)
+        if: env.REUSE_LAST_ARTIFACTS == 'false'
         run: |
           curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerWindows.zip --output windows-binaries.zip
           curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerLinux.zip --output linux-binaries.zip
+
+      - name: Reuse last binaries (if conditions met)
+        if: env.REUSE_LAST_ARTIFACTS == 'true'
+        env:
+          VERSION_WITH_PREFIX: ${{ github.ref_name }}
+        run: |
+          # We are on a Windows machine. We need to copy the binaries from the previous tag,
+          # based on the current tag. We will also remove the trailing "v" from the tag. This will give
+          # us the folder from where we need to copy the binaries.
+          $env:VERSION=$env:VERSION_WITH_PREFIX.substring(1)
+          $env:PREVIOUS_VERSION=$env:VERSION.substring(0, $env:VERSION.Length - 1)
+          $env:PREVIOUS_PATCH_VERSION_NUMBER=$env:VERSION.substring($env:VERSION.Length - 1)
+          $env:PREVIOUS_PATCH_VERSION_NUMBER=[int]$env:PREVIOUS_PATCH_VERSION_NUMBER - 1
+          $env:PREVIOUS_VERSION=$env:PREVIOUS_VERSION + $env:PREVIOUS_PATCH_VERSION_NUMBER
+          cp ./$env:PREVIOUS_VERSION/windows-binaries.zip windows-binaries.zip
+          cp ./$env:PREVIOUS_VERSION/linux-binaries.zip linux-binaries.zip
 
       - name: Upload Windows binaries as workflow artifacts
         uses: actions/upload-artifact@v4
@@ -430,7 +558,8 @@ jobs:
           VERSION_WITH_PREFIX: ${{ github.ref_name }}
         run: |
           $env:VERSION=$env:VERSION_WITH_PREFIX.substring(1)
-          mkdir $env:VERSION
+          mkdir $env:VERSION -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force .\$env:VERSION\*
           mv windows-binaries.zip .\$env:VERSION\
           mv linux-binaries.zip .\$env:VERSION\
           git config user.email ${{ secrets.BINARIES_EMAIL }}
@@ -450,7 +579,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Download Windows binaries
         uses: actions/download-artifact@v4
@@ -461,7 +590,7 @@ jobs:
       - name: Build Docker image
         working-directory: docker
         run: |
-          docker build -f Dockerfile.windows -t ghcr.io/ansys/geometry:windows-latest-tmp .
+          docker build -f windows/Dockerfile -t ghcr.io/ansys/geometry:windows-latest-tmp .
 
       - name: Check location of self-hosted runner and define license server accordingly
         if: runner.name == 'pygeometry-ci-1' || runner.name == 'pygeometry-ci-2'
@@ -492,10 +621,10 @@ jobs:
           .\.venv\Scripts\Activate.ps1
           pytest -v --use-existing-service=yes
 
-      - name: "Compressing Dockerfile.windows"
+      - name: "Compressing Windows Dockerfile"
         uses: vimtor/action-zip@v1.2
         with:
-          files: docker/Dockerfile.windows
+          files: docker/windows/Dockerfile
           dest: windows-dockerfile.zip
 
       - name: Upload Windows Dockerfile
@@ -553,7 +682,7 @@ jobs:
       - name: Build Docker image
         working-directory: docker
         run: |
-          docker build -f Dockerfile.linux -t ghcr.io/ansys/geometry:linux-latest-tmp .
+          docker build -f linux/Dockerfile -t ghcr.io/ansys/geometry:linux-latest-tmp .
 
       - name: Launch Geometry service
         run: |
@@ -573,7 +702,7 @@ jobs:
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@v5
+        uses: ansys/actions/tests-pytest@v6
         env:
           ALLOW_PLOTTING: true
         with:
@@ -582,10 +711,10 @@ jobs:
           checkout: false
           requires-xvfb: true
 
-      - name: "Compressing Dockerfile.linux"
+      - name: "Compressing Linux Dockerfile"
         uses: vimtor/action-zip@v1.2
         with:
-          files: docker/Dockerfile.linux
+          files: docker/linux/Dockerfile
           dest: linux-dockerfile.zip
 
       - name: Upload Linux Dockerfile
@@ -605,18 +734,18 @@ jobs:
   release:
     name: Release project
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    needs: [package, build-windows-container, build-linux-container]
+    needs: [package, build-windows-container, build-linux-container, update-changelog]
     runs-on: ubuntu-latest
     steps:
       - name: Release to the public PyPI repository
-        uses: ansys/actions/release-pypi-public@v5
+        uses: ansys/actions/release-pypi-public@v6
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           twine-username: "__token__"
           twine-token: ${{ secrets.PYPI_TOKEN }}
 
       - name: Release to GitHub
-        uses: ansys/actions/release-github@v5
+        uses: ansys/actions/release-github@v6
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           additional-artifacts: windows-dockerfile.zip linux-dockerfile.zip
@@ -628,7 +757,7 @@ jobs:
     needs: [package]
     steps:
       - name: Deploy the latest documentation
-        uses: ansys/actions/doc-deploy-dev@v5
+        uses: ansys/actions/doc-deploy-dev@v6
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -640,7 +769,7 @@ jobs:
     needs: upload_dev_docs
     steps:
       - name: "Deploy the latest documentation index"
-        uses: ansys/actions/doc-deploy-index@v5
+        uses: ansys/actions/doc-deploy-index@v6
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}/version/dev
           index-name: pyansys-geometry-vdev
@@ -655,9 +784,7 @@ jobs:
     needs: [release]
     steps:
       - name: Deploy the stable documentation
-        # TODO: testing SEO improvements. This branch avoids creating a
-        # sitemap.xml pages in opposite to v5.
-        uses: ansys/actions/doc-deploy-stable@feat/seo-improvements
+        uses: ansys/actions/doc-deploy-stable@v6
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -683,7 +810,7 @@ jobs:
           echo "VERSION_MEILI=$VERSION_MEILI" >> $GITHUB_ENV
 
       - name: "Deploy the latest documentation index"
-        uses: ansys/actions/doc-deploy-index@v5
+        uses: ansys/actions/doc-deploy-index@v6
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}/version/${{ env.VERSION }}
           index-name: pyansys-geometry-v${{ env.VERSION_MEILI }}

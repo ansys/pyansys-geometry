@@ -209,9 +209,9 @@ def test_arc_message_conversion():
     """Test conversion between :class:`Arc <ansys.geometry.core.sketch.arc.Arc>` and
     expected gRPC message type."""
     arc = Arc(
-        Point2D([500, 600], UNITS.mm),
         Point2D([100, 400], UNITS.mm),
         Point2D([900, 800], UNITS.mm),
+        Point2D([500, 600], UNITS.mm),
     )
     grpc_arc_message = sketch_arc_to_grpc_arc(arc, Plane(Point3D([10, 100, 1000], UNITS.mm)))
 
@@ -232,9 +232,9 @@ def test_arc_message_conversion():
     assert grpc_arc_message.axis.z == 1
 
     arc2 = Arc(
-        Point2D([600, 700], UNITS.mm),
         Point2D([200, 500], UNITS.mm),
         Point2D([1000, 900], UNITS.mm),
+        Point2D([600, 700], UNITS.mm),
         True,
     )
     grpc_arc_message2 = sketch_arc_to_grpc_arc(arc2, Plane(Point3D([10, 100, 1000], UNITS.mm)))

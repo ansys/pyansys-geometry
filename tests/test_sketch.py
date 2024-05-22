@@ -700,20 +700,20 @@ def test_arc():
     point_0_m5 = Point2D([0, -5])
 
     with pytest.raises(ValueError, match="Start and end points must be different."):
-        Arc(point_0_0, point_0_5, point_0_5)
+        Arc(point_0_5, point_0_5, point_0_0)
 
     with pytest.raises(ValueError, match="Center and start points must be different."):
-        Arc(point_0_0, point_0_0, point_5_0)
+        Arc(point_0_0, point_5_0, point_0_0)
 
     with pytest.raises(ValueError, match="Center and end points must be different."):
-        Arc(point_0_0, point_0_5, point_0_0)
+        Arc(point_0_5, point_0_0, point_0_0)
 
     with pytest.raises(ValueError, match="The start and end points of the arc are not"):
-        Arc(point_0_0, point_0_5, point_6_0)
+        Arc(point_0_5, point_6_0, point_0_0)
 
     # Let's create a simple arc
-    arc = Arc(point_0_0, point_0_5, point_5_0)
-    arc_2 = Arc(point_0_0, point_0_5, point_5_0)
+    arc = Arc(point_0_5, point_5_0, point_0_0)
+    arc_2 = Arc(point_0_5, point_5_0, point_0_0)
     assert arc == arc_2
     assert not (arc != arc_2)
 
@@ -734,7 +734,7 @@ def test_arc():
     # Validate the PyVista hack for generating the PolyData
     #
     # Needed : 180º arc, counterclockwise
-    arc_180 = Arc(point_0_0, point_0_5, point_0_m5, clockwise=False)
+    arc_180 = Arc(point_0_5, point_0_m5, point_0_0, clockwise=False)
     pd = arc_180.visualization_polydata
 
     # Since the arc is counterclockwise, all X values should be <=0
@@ -744,7 +744,7 @@ def test_arc():
     # Validate the PyVista hack for generating the PolyData
     #
     # Needed : 180º arc, clockwise
-    arc_180 = Arc(point_0_0, point_0_5, point_0_m5, clockwise=True)
+    arc_180 = Arc(point_0_5, point_0_m5, point_0_0, clockwise=True)
     pd = arc_180.visualization_polydata
 
     # Since the arc is clockwise, all X values should be >=0
@@ -792,3 +792,16 @@ def test_polydata_methods():
     assert len(pd) == 2
     assert len(pd_edges) == 1
     assert len(pd_faces) == 1
+
+
+def test_sketch_pyconus2024_voglster_issue1195():
+    """Test sketching unexpected behavior observed in PyConUS 2024 by @voglster."""
+
+    sketch = Sketch()
+    p_start, p_end, p_center = Point2D([1, 0]), Point2D([-1, 0]), Point2D([0, 0])
+    sketch.arc(p_start, p_end, p_center)
+
+    # Check that the arc is correctly defined
+    assert sketch.edges[0].start == p_start
+    assert sketch.edges[0].end == p_end
+    assert sketch.edges[0].center == p_center

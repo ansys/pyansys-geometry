@@ -178,7 +178,7 @@ class GeomPlotter(PlotterInterface):
         """
         edge_plot_list = []
         for edge in body_plot.custom_object.edges:
-            line = pv.Line(edge.start_point, edge.end_point)
+            line = pv.Line(edge.start, edge.end)
             edge_actor = self._pl.scene.add_mesh(
                 line, line_width=10, color=Colors.EDGE_COLOR.value, **plotting_options
             )

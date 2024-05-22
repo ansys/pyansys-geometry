@@ -414,7 +414,7 @@ class Sketch:
         Sketch
             Revised sketch state ready for further sketch actions.
         """
-        arc = Arc(center, start, end, clockwise)
+        arc = Arc(start, end, center, clockwise)
         return self.edge(arc, tag)
 
     @check_input_types
@@ -453,7 +453,7 @@ class Sketch:
         of the sketch, such as the end point of a previously added edge.
         """
         start = self._single_point_context_reference()
-        arc = Arc(center, start, end, clockwise)
+        arc = Arc(start, end, center, clockwise)
         return self.edge(arc, tag)
 
     def arc_from_three_points(

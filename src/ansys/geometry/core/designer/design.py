@@ -25,7 +25,7 @@ from enum import Enum, unique
 from pathlib import Path
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier, PartExportFormat
-from ansys.api.dbu.v0.designs_pb2 import NewRequest, SaveAsRequest
+from ansys.api.dbu.v0.designs_pb2 import InsertRequest, NewRequest, SaveAsRequest
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
@@ -46,6 +46,7 @@ from google.protobuf.empty_pb2 import Empty
 import numpy as np
 from pint import Quantity, UndefinedUnitError
 
+from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.conversions import (
     grpc_frame_to_frame,
     grpc_matrix_to_matrix,
@@ -68,7 +69,7 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, Z
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.checks import ensure_design_is_active
+from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.typing import RealSequence
@@ -253,13 +254,13 @@ class Design(Component):
             Format for the file to save to.
         """
         # Sanity checks on inputs
-        if isinstance(file_location, Path):
-            file_location = str(file_location)
+        if isinstance(file_location, str):
+            file_location = Path(file_location)
 
         # Check if the folder for the file location exists
-        if not Path(file_location).parent.exists():
+        if not file_location.parent.exists():
             # Create the parent directory
-            Path(file_location).parent.mkdir(parents=True, exist_ok=True)
+            file_location.parent.mkdir(parents=True, exist_ok=True)
 
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
@@ -291,6 +292,199 @@ class Design(Component):
         self._grpc_client.log.debug(
             f"Design is successfully downloaded at location {file_location}."
         )
+
+    def __build_export_file_location(self, location: Union[Path, str, None], ext: str) -> Path:
+        """
+        Build the file location for export functions.
+
+        Parameters
+        ----------
+        location : Union[~pathlib.Path, str, None]
+            Location on disk to save the file to. If None, the file will be saved
+            in the current working directory.
+        ext : str
+            Extension to use for the file.
+
+        Returns
+        -------
+        ~pathlib.Path
+            The file location for the export function.
+        """
+        return (Path(location) if location else Path.cwd()) / f"{self.name}.{ext}"
+
+    def export_to_scdocx(self, location: Union[Path, str] = None) -> str:
+        """
+        Export the design to an scdocx file.
+
+        Parameters
+        ----------
+        location : Union[~pathlib.Path, str], optional
+            Location on disk to save the file to. If None, the file will be saved
+            in the current working directory.
+
+        Returns
+        -------
+        str
+            The path to the saved file.
+        """
+        # Define the file location
+        file_location = self.__build_export_file_location(location, "scdocx")
+
+        # Export the design to an scdocx file
+        self.download(file_location, DesignFileFormat.SCDOCX)
+
+        # Return the file location
+        return file_location
+
+    def export_to_parasolid_text(self, location: Union[Path, str] = None) -> str:
+        """
+        Export the design to a Parasolid text file.
+
+        Parameters
+        ----------
+        location : Union[~pathlib.Path, str], optional
+            Location on disk to save the file to. If None, the file will be saved
+            in the current working directory.
+
+        Returns
+        -------
+        str
+            The path to the saved file.
+        """
+        # Determine the extension based on the backend type
+        ext = "x_t" if self._grpc_client.backend_type == BackendType.LINUX_SERVICE else "xmt_txt"
+
+        # Define the file location
+        file_location = self.__build_export_file_location(location, ext)
+
+        # Export the design to a Parasolid text file
+        self.download(file_location, DesignFileFormat.PARASOLID_TEXT)
+
+        # Return the file location
+        return file_location
+
+    def export_to_parasolid_bin(self, location: Union[Path, str] = None) -> str:
+        """
+        Export the design to a Parasolid binary file.
+
+        Parameters
+        ----------
+        location : Union[~pathlib.Path, str], optional
+            Location on disk to save the file to. If None, the file will be saved
+            in the current working directory.
+
+        Returns
+        -------
+        str
+            The path to the saved file.
+        """
+        # Determine the extension based on the backend type
+        ext = "x_b" if self._grpc_client.backend_type == BackendType.LINUX_SERVICE else "xmt_bin"
+
+        # Define the file location
+        file_location = self.__build_export_file_location(location, ext)
+
+        # Export the design to a Parasolid binary file
+        self.download(file_location, DesignFileFormat.PARASOLID_BIN)
+
+        # Return the file location
+        return file_location
+
+    def export_to_fmd(self, location: Union[Path, str] = None) -> str:
+        """
+        Export the design to an FMD file.
+
+        Parameters
+        ----------
+        location : Union[~pathlib.Path, str], optional
+            Location on disk to save the file to. If None, the file will be saved
+            in the current working directory.
+
+        Returns
+        -------
+        str
+            The path to the saved file.
+        """
+        # Define the file location
+        file_location = self.__build_export_file_location(location, "fmd")
+
+        # Export the design to an FMD file
+        self.download(file_location, DesignFileFormat.FMD)
+
+        # Return the file location
+        return file_location
+
+    def export_to_step(self, location: Union[Path, str] = None) -> str:
+        """
+        Export the design to a STEP file.
+
+        Parameters
+        ----------
+        location : Union[~pathlib.Path, str], optional
+            Location on disk to save the file to. If None, the file will be saved
+            in the current working directory.
+
+        Returns
+        -------
+        str
+            The path to the saved file.
+        """
+        # Define the file location
+        file_location = self.__build_export_file_location(location, "stp")
+
+        # Export the design to a STEP file
+        self.download(file_location, DesignFileFormat.STEP)
+
+        # Return the file location
+        return file_location
+
+    def export_to_iges(self, location: Union[Path, str] = None) -> str:
+        """
+        Export the design to an IGES file.
+
+        Parameters
+        ----------
+        location : Union[~pathlib.Path, str], optional
+            Location on disk to save the file to. If None, the file will be saved
+            in the current working directory.
+
+        Returns
+        -------
+        str
+            The path to the saved file.
+        """
+        # Define the file location
+        file_location = self.__build_export_file_location(location, "igs")
+
+        # Export the design to an IGES file
+        self.download(file_location, DesignFileFormat.IGES)
+
+        # Return the file location
+        return file_location
+
+    def export_to_pmdb(self, location: Union[Path, str] = None) -> str:
+        """
+        Export the design to a PMDB file.
+
+        Parameters
+        ----------
+        location : Union[~pathlib.Path, str], optional
+            Location on disk to save the file to. If None, the file will be saved
+            in the current working directory.
+
+        Returns
+        -------
+        str
+            The path to the saved file.
+        """
+        # Define the file location
+        file_location = self.__build_export_file_location(location, "pmdb")
+
+        # Export the design to a PMDB file
+        self.download(file_location, DesignFileFormat.PMDB)
+
+        # Return the file location
+        return file_location
 
     @check_input_types
     @ensure_design_is_active
@@ -581,6 +775,58 @@ class Design(Component):
                 + " Ignoring request."
             )
 
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(24, 2, 0)
+    def insert_file(self, file_location: Union[Path, str]) -> Component:
+        """
+        Insert a file into the design.
+
+        Parameters
+        ----------
+        file_location : Union[~pathlib.Path, str]
+            Location on disk where the file is located.
+
+        Returns
+        -------
+        Component
+            The newly inserted component.
+        """
+        # Upload the file to the server
+        filepath_server = self._modeler._upload_file(file_location)
+
+        # Insert the file into the design
+        self._design_stub.Insert(InsertRequest(filepath=filepath_server))
+        self._grpc_client.log.debug(f"File {file_location} successfully inserted into design.")
+
+        # Get a temporal design object to update the current one
+        tmp_design = Design("", self._modeler, read_existing_design=True)
+
+        # Update the reference to the design
+        for component in tmp_design.components:
+            component._parent_component = self
+
+        # Update the design's components - add the new one
+        #
+        # If the list is empty, add the components from the new design
+        if not self._components:
+            self._components.extend(tmp_design.components)
+        else:
+            # Insert operation adds the inserted file as a component to the design.
+            for tmp_component in tmp_design.components:
+                # Otherwise, check which is the new component added
+                for component in self._components:
+                    if component.id == tmp_component.id:
+                        break
+                    # If not equal, add the component - since it has not been found
+                    self._components.append(tmp_component)
+
+        self._grpc_client.log.debug(f"Design {self.name} is successfully updated.")
+
+        # Return the newly inserted component
+        return self._components[-1]
+
     def __repr__(self) -> str:
         """Represent the ``Design`` as a string."""
         alive_bodies = [1 if body.is_alive else 0 for body in self.bodies]
@@ -642,7 +888,7 @@ class Design(Component):
             # Since they're the same in the backend.
             self._name = design.name
 
-        response = self._commands_stub.GetAssembly(EntityIdentifier(id=""))
+        response = self._commands_stub.GetAssembly(EntityIdentifier(id=self._design_id))
 
         # Store created objects
         created_parts = {p.id: Part(p.id, p.name, [], []) for p in response.parts}

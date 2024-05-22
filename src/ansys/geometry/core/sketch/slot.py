@@ -120,9 +120,9 @@ class Slot(SketchFace):
         )
 
         # TODO: add plane to SketchSegment when available
-        self._arc1 = Arc(self._arc_1_center, self._slot_corner_1, self._slot_corner_2)
+        self._arc1 = Arc(self._slot_corner_1, self._slot_corner_2, self._arc_1_center)
         self._segment1 = SketchSegment(self._slot_corner_2, self._slot_corner_3)
-        self._arc2 = Arc(self._arc_2_center, self._slot_corner_3, self._slot_corner_4)
+        self._arc2 = Arc(self._slot_corner_3, self._slot_corner_4, self._arc_2_center)
         self._segment2 = SketchSegment(self._slot_corner_4, self._slot_corner_1)
 
         self._edges.append(self._arc1)

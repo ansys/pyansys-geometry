@@ -38,3 +38,17 @@ These examples demonstrate service-based modeling operations.
     examples/03_modeling/tessellation_usage.mystnb
     examples/03_modeling/design_organization.mystnb
     examples/03_modeling/boolean_operations.mystnb
+    examples/03_modeling/scale_map_mirror_bodies.mystnb
+    examples/03_modeling/sweep_chain_profile.mystnb
+    examples/03_modeling/export_design.mystnb
+
+Applied examples
+----------------
+
+These examples demonstrate the usage of PyAnsys Geometry for real-world
+applications.
+
+.. nbgallery::
+
+    examples/04_applied/01_naca_airfoils.mystnb
+    examples/04_applied/02_naca_fluent.mystnb

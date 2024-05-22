@@ -461,9 +461,8 @@ def test_plot_dummy_gear(verify_image_cache):
 
 
 @skip_no_xserver
-def test_extrude_dummy_gear(modeler: Modeler, verify_image_cache, skip_not_on_linux_service):
+def test_extrude_dummy_gear(modeler: Modeler, verify_image_cache):
     """Test plotting and extrusion of a dummy gear."""
-
     # Create a sketch instance
     sketch = Sketch()
 
@@ -505,9 +504,8 @@ def test_plot_spur_gear(verify_image_cache):
 
 
 @skip_no_xserver
-def test_extrude_spur_gear(modeler: Modeler, verify_image_cache, skip_not_on_linux_service):
+def test_extrude_spur_gear(modeler: Modeler, verify_image_cache):
     """Test plotting and extrusion of a spur gear."""
-
     # Create a sketch instance
     sketch = Sketch()
 
@@ -572,7 +570,7 @@ def test_visualization_polydata():
     assert polygon.visualization_polydata.n_open_edges == 5
 
     # Test for arc visualization polydata
-    arc = Arc(Point2D([10, 0]), Point2D([10, 10]), Point2D([10, -10]))
+    arc = Arc(Point2D([10, 10]), Point2D([10, -10]), Point2D([10, 0]))
     assert arc.visualization_polydata.center == ([5.0, 0.0, 0.0])
     assert arc.visualization_polydata.bounds == pytest.approx([0.0, 10.0, -10.0, 10.0, 0.0, 0.0])
     assert arc.visualization_polydata.n_faces == 2

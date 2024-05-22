@@ -142,13 +142,13 @@ class DummyGear(Gear):
             # Now, proceed to draw the arcs and segments
             # TODO: add plane to SketchSegment when available
             self._edges.append(
-                Arc(center=origin, start=outer_arc_start + origin, end=outer_arc_end + origin)
+                Arc(start=outer_arc_start + origin, end=outer_arc_end + origin, center=origin)
             )
             self._edges.append(
                 SketchSegment(start=outer_arc_end + origin, end=inner_arc_start + origin)
             )
             self._edges.append(
-                Arc(center=origin, start=inner_arc_start + origin, end=inner_arc_end + origin)
+                Arc(start=inner_arc_start + origin, end=inner_arc_end + origin, center=origin)
             )
             self._edges.append(
                 SketchSegment(start=inner_arc_end + origin, end=next_outer_arc_start + origin)
@@ -513,9 +513,9 @@ class SpurGear(Gear):
                 # needed values from the preliminary arc
                 arcs.append(
                     Arc(
-                        center=preliminary_arc.center,
                         start=points[idx],
                         end=points[idx + 1],
+                        center=preliminary_arc.center,
                         clockwise=preliminary_arc.is_clockwise,
                     )
                 )
@@ -523,9 +523,9 @@ class SpurGear(Gear):
             # Once the loop has finished... extend the last arc
             arcs.append(
                 Arc(
-                    center=preliminary_arc.center,
                     start=points[-2],
                     end=points[-1],
+                    center=preliminary_arc.center,
                     clockwise=preliminary_arc.is_clockwise,
                 )
             )
@@ -537,9 +537,9 @@ class SpurGear(Gear):
             # Just in case, let us only take the first and last elements of the given list
             arcs.append(
                 Arc(
-                    center=self.origin,
                     start=points[0],
                     end=points[-1],
+                    center=self.origin,
                 )
             )
 

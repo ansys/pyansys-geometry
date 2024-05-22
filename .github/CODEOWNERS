@@ -8,5 +8,4 @@
 
 # Documentation review required from Docs team (as well) on the following set of files:
 *.rst      @PipKat @ansys/pyansys-geometry-maintainers
-*.md       @PipKat @ansys/pyansys-geometry-maintainers
 *.mystnb   @PipKat @ansys/pyansys-geometry-maintainers

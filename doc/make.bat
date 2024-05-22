@@ -11,14 +11,8 @@ if "%SPHINXOPTS%" == "" (
 	set SPHINXOPTS=-j auto -W --color
 )
 set SOURCEDIR=source
+set APIDIR=api
 set BUILDDIR=_build
-
-REM TODO: these lines of code should be removed once the feature branch is merged
-for /f %%i in ('pip freeze ^| findstr /c:"sphinx-autoapi @ git+https://github.com/ansys/sphinx-autoapi"') do set is_custom_sphinx_autoapi_installed=%%i
-if NOT "%is_custom_sphinx_autoapi_installed%" == "sphinx-autoapi" (
-	pip uninstall --yes sphinx-autoapi
-	pip install "sphinx-autoapi @ git+https://github.com/ansys/sphinx-autoapi@feat/single-page-stable")
-REM TODO: these lines of code should be removed once the feature branch is merged
 
 if "%1" == "" goto help
 if "%1" == "clean" goto clean
@@ -44,15 +38,7 @@ goto end
 :html
 %SPHINXBUILD% -M html %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 %SPHINXBUILD% -M linkcheck %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
-goto build-examples-py
-
-:clean
-rmdir /s /q %BUILDDIR% > /NUL 2>&1
-for /d /r %SOURCEDIR% %%d in (api) do @if exist "%%d" rmdir /s /q "%%d"
 goto end
-
-:help
-%SPHINXBUILD% -M help %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 
 :pdf
 %SPHINXBUILD% -M latex %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
@@ -65,16 +51,13 @@ if NOT EXIST ansys-geometry-core.pdf (
 Echo "pdf generated!"
 goto end
 
-:build-examples-py
-cd "%BUILDDIR%\html\examples"
-for /d %%D in (*) do (
-Echo Processing examples folder... %%D
-cd %%D
-for %%f in (*.ipynb) do (
-	jupytext --to py "%%f"
-)
-cd ../
-)
+:clean
+rmdir /s /q %BUILDDIR% > /NUL 2>&1
+for /d /r %SOURCEDIR% %%d in (%APIDIR) do @if exist "%%d" rmdir /s /q "%%d"
+goto end
+
+:help
+%SPHINXBUILD% -M help %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 goto end
 
 :end
