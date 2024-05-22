@@ -9,6 +9,36 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.5.5 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.5>`_ - 2024-05-21
+=====================================================================================
+
+Changed
+^^^^^^^
+
+- docs: adapt ``ansys_sphinx_theme_autoapi`` extension for ``autoapi`` `#1135 <https://github.com/ansys/pyansys-geometry/pull/1135>`_
+- chore: update CHANGELOG for v0.5.4 `#1194 <https://github.com/ansys/pyansys-geometry/pull/1194>`_
+
+
+Fixed
+^^^^^
+
+- fix: adapting ``Arc`` class constructor order to (start, end, center) `#1196 <https://github.com/ansys/pyansys-geometry/pull/1196>`_
+- chore: limit requests library version under 2.32 `#1203 <https://github.com/ansys/pyansys-geometry/pull/1203>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- build: bump grpcio from 1.63.0 to 1.64.0 in the grpc-deps group `#1198 <https://github.com/ansys/pyansys-geometry/pull/1198>`_
+- build: bump the docs-deps group with 2 updates `#1199 <https://github.com/ansys/pyansys-geometry/pull/1199>`_
+- build: bump pytest from 8.2.0 to 8.2.1 `#1200 <https://github.com/ansys/pyansys-geometry/pull/1200>`_
+
+
+Miscellaneous
+^^^^^^^^^^^^^
+
+- chore: pre-commit automatic update `#1202 <https://github.com/ansys/pyansys-geometry/pull/1202>`_
+
 `0.5.4 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.4>`_ - 2024-05-15
 =====================================================================================
 
