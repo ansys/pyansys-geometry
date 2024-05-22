@@ -125,6 +125,7 @@ jobs:
         uses: ansys/actions/tests-pytest@v6
         env:
           ALLOW_PLOTTING: true
+          PYANSYS_VISUALIZER_TESTMODE: true
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           requires-xvfb: true
