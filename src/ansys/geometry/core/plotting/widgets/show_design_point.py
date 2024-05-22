@@ -23,8 +23,8 @@
 
 import os
 
-from ansys.visualizer import Plotter
-from ansys.visualizer.widgets import PlotterWidget
+from ansys.tools.visualization_interface.backends.pyvista import PyVistaBackend
+from ansys.tools.visualization_interface.backends.pyvista.widgets import PlotterWidget
 from vtk import vtkButtonWidget, vtkPNGReader
 
 from ansys.geometry.core.designer.designpoint import DesignPoint
@@ -40,16 +40,18 @@ class ShowDesignPoints(PlotterWidget):
         Provides the plotter to add the button to.
     """
 
-    def __init__(self, plotter_helper: "Plotter") -> None:
+    def __init__(self, plotter_helper: "PyVistaBackend") -> None:
         """Initialize the ``ShowDesignPoints`` class."""
         # Call PlotterWidget ctor
-        super().__init__(plotter_helper.pv_interface.scene)
+        super().__init__(plotter_helper._backend.pv_interface.scene)
         self.plotter_helper = plotter_helper
 
         # Initialize variables
-        self._object_to_actors_map = self.plotter_helper.pv_interface.object_to_actors_map
-        self._button: vtkButtonWidget = self.plotter_helper._pl.scene.add_checkbox_button_widget(
-            self.callback, position=(5, 438), size=30, border_size=3
+        self._object_to_actors_map = self.plotter_helper._backend.pv_interface.object_to_actors_map
+        self._button: vtkButtonWidget = (
+            self.plotter_helper._backend._pl.scene.add_checkbox_button_widget(
+                self.callback, position=(5, 438), size=30, border_size=3
+            )
         )
 
     def callback(self, state: bool) -> None:
@@ -65,11 +67,11 @@ class ShowDesignPoints(PlotterWidget):
         if not state:
             for actor, object in self._object_to_actors_map.items():
                 if isinstance(object, DesignPoint):
-                    self.plotter_helper._pl.scene.add_actor(actor)
+                    self.plotter_helper._backend._pl.scene.add_actor(actor)
         else:
             for actor, object in self._object_to_actors_map.items():
                 if isinstance(object, DesignPoint):
-                    self.plotter_helper._pl.scene.remove_actor(actor)
+                    self.plotter_helper._backend._pl.scene.remove_actor(actor)
 
     def update(self) -> None:
         """Define the configuration and representation of the button widget button."""

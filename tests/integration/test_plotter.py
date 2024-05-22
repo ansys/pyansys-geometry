@@ -539,7 +539,7 @@ pl = GeomPlotter()
 
 # Showing the plane of the sketch and its frame.
 pl.add_sketch(sketch=sketch, show_frame=True, show_plane=True)
-pl.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_sketch_scene.png"))
+pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_sketch_scene.png"))
 
 
 def test_visualization_polydata():

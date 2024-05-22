@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides plotting for various PyAnsys Geometry objects."""
-from ansys.visualizer import Colors, EdgePlot, MeshObjectPlot, PlotterInterface
+from ansys.tools.visualization_interface import Color, EdgePlot, MeshObjectPlot, Plotter
 from beartype.typing import Any, Dict, List, Optional
 import numpy as np
 import pyvista as pv
@@ -37,7 +37,7 @@ from ansys.geometry.core.plotting.widgets import ShowDesignPoints
 from ansys.geometry.core.sketch import Sketch
 
 
-class GeomPlotter(PlotterInterface):
+class GeomPlotter(Plotter):
     """
     Plotter for PyAnsys Geometry objects.
 
@@ -53,8 +53,10 @@ class GeomPlotter(PlotterInterface):
 
     def __init__(self, use_trame: bool | None = None, allow_picking: bool | None = False) -> None:
         """Initialize the GeomPlotter class."""
-        super().__init__(use_trame, allow_picking, plot_picked_names=True, show_plane=True)
-        self.add_widget(ShowDesignPoints(self))
+        super().__init__()
+        self._backend._allow_picking = allow_picking
+        self._backend._use_trame = use_trame
+        self._backend.add_widget(ShowDesignPoints(self))
 
     def add_frame(self, frame: Frame, plotting_options: Optional[Dict] = None) -> None:
         """
@@ -84,7 +86,7 @@ class GeomPlotter(PlotterInterface):
         axes.SetUserMatrix(pv.vtkmatrix_from_array(arr))
 
         # Render the actor in the scene
-        self.pv_interface.scene.add_actor(axes)
+        self._backend.pv_interface.scene.add_actor(axes)
 
     def add_plane(
         self,
@@ -120,7 +122,7 @@ class GeomPlotter(PlotterInterface):
         if plotting_options is None:
             plotting_options = dict(color="blue", opacity=0.1)
 
-        self.pv_interface.add(plane_meshobj, **plotting_options)
+        self._backend.pv_interface.plot(plane_meshobj, **plotting_options)
 
     def add_sketch(
         self,
@@ -180,7 +182,7 @@ class GeomPlotter(PlotterInterface):
         for edge in body_plot.custom_object.edges:
             line = pv.Line(edge.start, edge.end)
             edge_actor = self._pl.scene.add_mesh(
-                line, line_width=10, color=Colors.EDGE_COLOR.value, **plotting_options
+                line, line_width=10, color=Color.EDGE.value, **plotting_options
             )
             edge_actor.SetVisibility(False)
             edge_plot = EdgePlot(edge_actor, edge, body_plot)
@@ -209,7 +211,7 @@ class GeomPlotter(PlotterInterface):
         self.pv_interface.set_add_mesh_defaults(plotting_options)
         dataset = body.tessellate(merge=merge)
         body_plot = MeshObjectPlot(custom_object=body, mesh=dataset)
-        self.pv_interface.add(body_plot, **plotting_options)
+        self._backend.pv_interface.add(body_plot, **plotting_options)
         self.add_body_edges(body_plot)
 
     def add_component(
@@ -242,7 +244,7 @@ class GeomPlotter(PlotterInterface):
         self.pv_interface.set_add_mesh_defaults(plotting_options)
         dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
         component_polydata = MeshObjectPlot(component, dataset)
-        self.add(component_polydata, **plotting_options)
+        self.plot(component_polydata, **plotting_options)
 
     def add_sketch_polydata(
         self, polydata_entries: List[pv.PolyData], sketch: Sketch = None, **plotting_options
@@ -264,10 +266,10 @@ class GeomPlotter(PlotterInterface):
             mb.append(polydata)
 
         if sketch is None:
-            self.add(mb, color=Colors.EDGE_COLOR.value, **plotting_options)
+            self.add(mb, color=Color.EDGE.value, **plotting_options)
         else:
             sk_polydata = MeshObjectPlot(custom_object=sketch, mesh=mb)
-            self.add(sk_polydata, color=Colors.EDGE_COLOR.value, **plotting_options)
+            self.plot(sk_polydata, color=Color.EDGE.value, **plotting_options)
 
     def add_design_point(self, design_point: DesignPoint, **plotting_options) -> None:
         """
@@ -283,7 +285,7 @@ class GeomPlotter(PlotterInterface):
         # get the actor for the DesignPoint
         self.pv_interface.add(design_point, **plotting_options)
 
-    def add_iter(
+    def plot_iter(
         self,
         plotting_list: List[Any],
         filter: str = None,
@@ -314,10 +316,10 @@ class GeomPlotter(PlotterInterface):
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         for object in plotting_list:
-            _ = self.add(object, filter, **plotting_options)
+            _ = self.plot(object, filter, **plotting_options)
 
     # Override add function from plotter
-    def add(self, object: Any, filter: str = None, **plotting_options) -> None:
+    def plot(self, object: Any, filter: str = None, **plotting_options) -> None:
         """
         Add a custom mesh to the plotter.
 
@@ -352,8 +354,12 @@ class GeomPlotter(PlotterInterface):
         elif isinstance(object, List):
             self.add_iter(object, filter, **plotting_options)
         elif isinstance(object, MeshObjectPlot):
-            self.pv_interface.set_add_mesh_defaults(plotting_options)
-            self.pv_interface.add(object, filter, **plotting_options)
+            self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
+            self._backend.pv_interface.plot(object, filter, **plotting_options)
         else:
             # any left type should be a PyVista object
-            self.pv_interface.add(object, filter, **plotting_options)
+            self._backend.pv_interface.plot(object, filter, **plotting_options)
+
+    def show(self, screenshot: Optional[str] = None) -> None:
+        """Show the plotter."""
+        self._backend.pv_interface.show(screenshot=screenshot)
