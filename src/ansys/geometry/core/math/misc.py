@@ -32,7 +32,7 @@ from ansys.geometry.core.typing import Real
 @check_input_types
 def get_two_circle_intersections(
     x0: Real, y0: Real, r0: Real, x1: Real, y1: Real, r1: Real
-) -> Union[Tuple[Real, Real, Real, Real], None]:
+) -> Union[Tuple[Tuple[Real, Real], Tuple[Real, Real]], None]:
     """
     Get the intersection points of two circles.
 
@@ -62,14 +62,13 @@ def get_two_circle_intersections(
     Returns
     -------
     Union[Tuple[Tuple[Real, Real], Tuple[Real, Real]], None]
-       Intersection points of the two circles if they intersect.
+        Intersection points of the two circles if they intersect.
         The points are returned as ``((x3, y3), (x4, y4))``, where ``(x3, y3)`` and ``(x4, y4)``
         are the intersection points of the two circles. If the circles do not
         intersect, then ``None`` is returned.
     """
     # circle 1: (x0, y0), radius r0
     # circle 2: (x1, y1), radius r1
-
     d = np.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2)
 
     # non-intersecting

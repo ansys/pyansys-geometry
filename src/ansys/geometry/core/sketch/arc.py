@@ -400,10 +400,10 @@ class Arc(SketchEdge):
         # Compute the potential centers of the circle
         centers = get_two_circle_intersections(x0=x_s, y0=y_s, r0=r0, x1=x_e, y1=y_e, r1=r1)
         if centers is None:
-            raise ValueError("The provided points do not yield a valid arc.")
+            raise ValueError("The provided points and radius do not yield a valid arc.")
 
         # Choose the center depending on if the arc is convex
-        center = centers[1] if convex_arc else centers[0]
+        center = Point2D(centers[1] if convex_arc else centers[0])
 
         # Create the arc
         return Arc(start=start, end=end, center=center, clockwise=clockwise)
