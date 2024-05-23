@@ -844,16 +844,17 @@ class Sketch:
             view_2d_dict = {"vector": vector, "viewup": viewup}
         else:
             view_2d_dict = None
-
+        plotting_options.pop("view_2d", None)
         if selected_pd_objects is not None:
             pl = GeomPlotter(use_trame=use_trame)
             pl.plot(
                 selected_pd_objects,
+                opacity=0.7,  # We are passing PD objects directly... apply opacity to all of them
+                **plotting_options,
             )
             pl.show(
                 screenshot=screenshot,
                 view_2d=view_2d_dict,
-                opacity=0.7,  # We are passing PD objects directly... apply opacity to all of them
                 **plotting_options,
             )
         else:
