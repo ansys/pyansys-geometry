@@ -9,6 +9,29 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.5.6 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.6>`_ - 2024-05-23
+=====================================================================================
+
+Added
+^^^^^
+
+- feat: add new arc constructors `#1208 <https://github.com/ansys/pyansys-geometry/pull/1208>`_
+
+
+Changed
+^^^^^^^
+
+- chore: update CHANGELOG for v0.5.5 `#1205 <https://github.com/ansys/pyansys-geometry/pull/1205>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- build: bump requests from 2.31.0 to 2.32.2 `#1204 <https://github.com/ansys/pyansys-geometry/pull/1204>`_
+- build: bump ansys-sphinx-theme[autoapi] from 0.16.0 to 0.16.2 in the docs-deps group `#1210 <https://github.com/ansys/pyansys-geometry/pull/1210>`_
+- build: bump docker from 7.0.0 to 7.1.0 `#1211 <https://github.com/ansys/pyansys-geometry/pull/1211>`_
+- build: bump scipy from 1.13.0 to 1.13.1 `#1212 <https://github.com/ansys/pyansys-geometry/pull/1212>`_
+
 `0.5.5 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.5>`_ - 2024-05-21
 =====================================================================================
 
