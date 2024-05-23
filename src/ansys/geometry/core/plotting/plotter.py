@@ -358,7 +358,7 @@ class GeomPlotter(Plotter):
             self.add_body(object, merge_bodies, **plotting_options)
         elif isinstance(object, Design) or isinstance(object, Component):
             self.add_component(object, merge_components, merge_bodies, **plotting_options)
-        elif isinstance(object, List) and isinstance(object[0], pv.PolyData):
+        elif isinstance(object, List) and object != [] and isinstance(object[0], pv.PolyData):
             self.add_sketch_polydata(object, **plotting_options)
         elif isinstance(object, List):
             self.plot_iter(object, filter, **plotting_options)
