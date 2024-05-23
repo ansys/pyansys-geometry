@@ -511,7 +511,7 @@ class Sketch:
             When ``True``, the arc spans the convex version of the arc.
         clockwise : bool, default: False
             Whether the arc spans the angle clockwise between the start
-            and end points. When ``False`` (default), the arc spans the angle
+            and end points. When ``False``, the arc spans the angle
             counter-clockwise. When ``True``, the arc spans the angle
             clockwise.
         tag : str, default: None

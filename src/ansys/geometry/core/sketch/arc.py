@@ -381,7 +381,7 @@ class Arc(SketchEdge):
         Arc
             Arc generated from the three points.
         """
-        # Let's compute the potential centers of the circle
+        # Compute the potential centers of the circle
         # that could generate the arc
         from ansys.geometry.core.math.misc import get_two_circle_intersections
 

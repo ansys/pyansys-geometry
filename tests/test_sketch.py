@@ -942,7 +942,7 @@ def test_arc_start_end_radius_through_sketch_ctor():
     # be exactly (5, 5) due to floating point errors
     assert np.allclose(arc.center, Point2D([5, 5]))
 
-    # Verify the arc is a 90 degree arc --> CLOCKWISE requested
+    # Verify the arc is a 90-degree arc --> CLOCKWISE requested
     # For the convex arc, the angle is 90 degrees
     assert np.isclose(arc.angle.m_as(UNITS.radian), 2 * np.pi * (3 / 4))
 
@@ -1036,7 +1036,7 @@ def test_start_center_and_angle_clockwise():
     assert np.isclose(arc_ctor.angle.m_as(UNITS.radian), angle)
     assert arc_ctor.radius.m_as(DEFAULT_UNITS.LENGTH) == radius
 
-    # Verify the arc is a 270 degree arc
+    # Verify the arc is a 270-degree arc
     assert np.isclose(arc_ctor.length.m_as(DEFAULT_UNITS.LENGTH), radius * angle)
 
     # Verify the final point of the arc assuming a clockwise arc
