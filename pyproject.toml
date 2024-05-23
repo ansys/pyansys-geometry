@@ -62,7 +62,7 @@ tests = [
     "pytest-xvfb==3.0.0",
     "pyvista[jupyter]==0.43.8",
     "requests==2.31.0",
-    "scipy==1.13.0",
+    "scipy==1.13.1",
     "semver==3.0.2",
     "six==1.16.0",
     "vtk==9.3.0",
