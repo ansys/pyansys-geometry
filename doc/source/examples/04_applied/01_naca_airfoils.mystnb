@@ -78,7 +78,7 @@ def naca_airfoil_4digits(number: Union[int, str], n_points: int = 200) -> List[P
         # near the leading edge
         x = (1 - np.cos(i / (n_points - 1) * np.pi)) / 2
 
-        # Check if it is a symmetric airfoil or not
+        # Check if it is a symmetric airfoil
         if p == 0 and m == 0:
             # Camber line is zero in this case
             yc = 0

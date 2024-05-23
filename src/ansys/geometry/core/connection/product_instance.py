@@ -363,7 +363,7 @@ def _wait_for_backend(host: str, port: int, timeout: int):
 
 def _is_port_available(port: int, host: str = "localhost") -> bool:
     """
-    Check whether the argument port is available or not.
+    Check whether the argument port is available.
 
     The optional argument is the ip address where to check port availability.
     Its default is ``localhost``.
