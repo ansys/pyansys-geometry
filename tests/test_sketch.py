@@ -805,3 +805,173 @@ def test_sketch_pyconus2024_voglster_issue1195():
     assert sketch.edges[0].start == p_start
     assert sketch.edges[0].end == p_end
     assert sketch.edges[0].center == p_center
+
+
+def test_arc_start_end_radius_default():
+    """
+    Test arc generation from a start and an end point with a certain radius.
+
+    The arc is created with the default values for the convex_arc and clockwise
+    parameters.
+    """
+    start = Point2D([0, 5])
+    end = Point2D([5, 0])
+    radius = 5
+
+    # Verify the arc is created correctly
+    arc_ctor = Arc.from_start_end_and_radius(start, end, radius)
+    assert arc_ctor.start == start
+    assert arc_ctor.end == end
+    assert arc_ctor.radius.m_as(DEFAULT_UNITS.LENGTH) == radius
+
+    # Center of the arc should be at (0, 0)... but it won't
+    # be exactly (0, 0) due to floating point errors
+    assert np.allclose(arc_ctor.center, Point2D([0, 0]))
+
+    # Verify the arc is a 270 degree arc --> COUNTERCLOCKWISE IS DEFAULT
+    assert np.isclose(arc_ctor.angle.m_as(UNITS.radian), 2 * np.pi * (3 / 4))
+
+    # Verify the arc length --> COUNTERCLOCKWISE IS DEFAULT
+    assert np.isclose(arc_ctor.length.m_as(DEFAULT_UNITS.LENGTH), 2 * np.pi * radius * (3 / 4))
+
+
+def test_arc_start_end_radius_clockwise():
+    """
+    Test arc generation from a start and an end point with a certain radius.
+
+    The arc is requested to be clockwise.
+    """
+    start = Point2D([0, 5])
+    end = Point2D([5, 0])
+    radius = 5
+
+    # Verify the arc is created correctly
+    arc_ctor = Arc.from_start_end_and_radius(start, end, radius, clockwise=True)
+    assert arc_ctor.start == start
+    assert arc_ctor.end == end
+    assert arc_ctor.radius.m_as(DEFAULT_UNITS.LENGTH) == radius
+
+    # Center of the arc should be at (0, 0)... but it won't
+    # be exactly (0, 0) due to floating point errors
+    assert np.allclose(arc_ctor.center, Point2D([0, 0]))
+
+    # Verify the arc is a 90 degree arc --> CLOCKWISE requested
+    assert np.isclose(arc_ctor.angle.m_as(UNITS.radian), 2 * np.pi * (1 / 4))
+
+    # Verify the arc length --> CLOCKWISE requested
+    assert np.isclose(arc_ctor.length.m_as(DEFAULT_UNITS.LENGTH), 2 * np.pi * radius * (1 / 4))
+
+
+def test_arc_start_end_radius_convex():
+    """
+    Test arc generation from a start and an end point with a certain radius.
+
+    This test is for a convex arc.
+    """
+    start = Point2D([0, 5])
+    end = Point2D([5, 0])
+    radius = 5
+
+    # Verify the arc is created correctly
+    arc_ctor = Arc.from_start_end_and_radius(start, end, radius, convex_arc=True)
+    assert arc_ctor.start == start
+    assert arc_ctor.end == end
+    assert arc_ctor.radius.m_as(DEFAULT_UNITS.LENGTH) == radius
+
+    # Center of the arc should be at (5, 5)... but it won't
+    # be exactly (5, 5) due to floating point errors
+    assert np.allclose(arc_ctor.center, Point2D([5, 5]))
+
+    # Verify the arc is a 90 degree arc --> COUNTERCLOCKWISE IS DEFAULT
+    # For the convex arc, the angle is 90 degrees
+    assert np.isclose(arc_ctor.angle.m_as(UNITS.radian), 2 * np.pi * (1 / 4))
+
+    # Verify the arc length --> COUNTERCLOCKWISE IS DEFAULT
+    assert np.isclose(arc_ctor.length.m_as(DEFAULT_UNITS.LENGTH), 2 * np.pi * radius * (1 / 4))
+
+
+def test_arc_start_end_radius_convex_and_clockwise():
+    """
+    Test arc generation from a start and an end point with a certain radius.
+
+    This test is for a convex arc that is requested to be clockwise.
+    """
+    start = Point2D([0, 5])
+    end = Point2D([5, 0])
+    radius = 5
+
+    # Verify the arc is created correctly
+    arc_ctor = Arc.from_start_end_and_radius(start, end, radius, convex_arc=True, clockwise=True)
+    assert arc_ctor.start == start
+    assert arc_ctor.end == end
+    assert arc_ctor.radius.m_as(DEFAULT_UNITS.LENGTH) == radius
+
+    # Center of the arc should be at (5, 5)... but it won't
+    # be exactly (5, 5) due to floating point errors
+    assert np.allclose(arc_ctor.center, Point2D([5, 5]))
+
+    # Verify the arc is a 90 degree arc --> CLOCKWISE requested
+    # For the convex arc, the angle is 90 degrees
+    assert np.isclose(arc_ctor.angle.m_as(UNITS.radian), 2 * np.pi * (3 / 4))
+
+    # Verify the arc length --> CLOCKWISE requested
+    assert np.isclose(arc_ctor.length.m_as(DEFAULT_UNITS.LENGTH), 2 * np.pi * radius * (3 / 4))
+
+
+def test_arc_start_end_radius_through_sketch_ctor():
+    """
+    Test arc generation from a start and an end point with a certain radius.
+
+    This test is for the Sketch class convenience constructor.
+    """
+    start = Point2D([0, 5])
+    end = Point2D([5, 0])
+    radius = 5
+
+    # Create the arc through the Sketch convenience constructor
+    sketch = Sketch()
+    sketch.arc_from_start_end_and_radius(start, end, radius, convex_arc=True, clockwise=True)
+
+    # Verify the arc is created correctly
+    arc = sketch.edges[0]
+    assert arc.start == start
+    assert arc.end == end
+    assert arc.radius.m_as(DEFAULT_UNITS.LENGTH) == radius
+
+    # Center of the arc should be at (5, 5)... but it won't
+    # be exactly (5, 5) due to floating point errors
+    assert np.allclose(arc.center, Point2D([5, 5]))
+
+    # Verify the arc is a 90 degree arc --> CLOCKWISE requested
+    # For the convex arc, the angle is 90 degrees
+    assert np.isclose(arc.angle.m_as(UNITS.radian), 2 * np.pi * (3 / 4))
+
+    # Verify the arc length --> CLOCKWISE requested
+    assert np.isclose(arc.length.m_as(DEFAULT_UNITS.LENGTH), 2 * np.pi * radius * (3 / 4))
+
+
+def test_start_end_radius_error_cases():
+    """
+    Test arc generation from a start and an end point with a certain radius.
+
+    This test is for cases where the inputs are invalid.
+    """
+    # Invalid start and end points - same point
+    with pytest.raises(
+        ValueError, match="The provided points and radius do not yield a valid arc."
+    ):
+        Arc.from_start_end_and_radius(Point2D([0, 5]), Point2D([0, 5]), 5)
+
+    # Invalid radius - negative radius
+    with pytest.raises(ValueError, match="Radius must be a real positive value."):
+        Arc.from_start_end_and_radius(Point2D([0, 5]), Point2D([5, 0]), -5)
+
+    # Invalid radius - zero radius
+    with pytest.raises(ValueError, match="Radius must be a real positive value."):
+        Arc.from_start_end_and_radius(Point2D([0, 5]), Point2D([5, 0]), 0)
+
+    # Invalid radius - radius too small
+    with pytest.raises(
+        ValueError, match="The provided points and radius do not yield a valid arc."
+    ):
+        Arc.from_start_end_and_radius(Point2D([0, 5]), Point2D([5, 0]), 1)
