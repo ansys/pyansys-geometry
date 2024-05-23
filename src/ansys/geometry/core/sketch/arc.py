@@ -21,10 +21,8 @@
 # SOFTWARE.
 """Provides for creating and managing an arc."""
 
-from typing import Union
-
 from beartype import beartype as check_input_types
-from beartype.typing import Optional
+from beartype.typing import Optional, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
@@ -439,7 +437,7 @@ class Arc(SketchEdge):
             Arc generated from the three points.
         """
         # Define a 2D vector from the center to the start point
-        to_start_vector = Vector2D.from_points(start, center)
+        to_start_vector = Vector2D.from_points(center, start)
 
         # Perform sanity check for the angle
         angle = angle if isinstance(angle, Angle) else Angle(angle)

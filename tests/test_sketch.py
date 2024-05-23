@@ -975,3 +975,104 @@ def test_start_end_radius_error_cases():
         ValueError, match="The provided points and radius do not yield a valid arc."
     ):
         Arc.from_start_end_and_radius(Point2D([0, 5]), Point2D([5, 0]), 1)
+
+
+def test_start_center_and_angle_default():
+    """
+    Test arc generation from a start point, center point, and angle.
+
+    The arc is created with the default values for the clockwise parameter.
+    """
+    # Inputs
+    start = Point2D([0, 5])
+    center = Point2D([0, 0])
+    angle = 3 * np.pi / 2
+
+    # Expected radius
+    radius = 5
+
+    # Expected end point
+    end = Point2D([5, 0])
+
+    # Create the arc
+    arc_ctor = Arc.from_start_center_and_angle(start, center, angle)
+
+    # Verify the arc is created correctly
+    assert arc_ctor.start == start
+    assert arc_ctor.center == center
+    assert np.isclose(arc_ctor.angle.m_as(UNITS.radian), angle)
+    assert arc_ctor.radius.m_as(DEFAULT_UNITS.LENGTH) == radius
+
+    # Verify the arc is a 270 degree arc
+    assert np.isclose(arc_ctor.length.m_as(DEFAULT_UNITS.LENGTH), radius * angle)
+
+    # Verify the final point of the arc assuming a counterclockwise arc
+    assert np.allclose(arc_ctor.end, end)
+
+
+def test_start_center_and_angle_clockwise():
+    """
+    Test arc generation from a start point, center point, and angle.
+
+    The arc is requested to be clockwise.
+    """
+    # Inputs
+    start = Point2D([0, 5])
+    center = Point2D([0, 0])
+    angle = 3 * np.pi / 2
+
+    # Expected radius
+    radius = 5
+
+    # Expected end point
+    end = Point2D([-5, 0])
+
+    # Create the arc
+    arc_ctor = Arc.from_start_center_and_angle(start, center, angle, clockwise=True)
+
+    # Verify the arc is created correctly
+    assert arc_ctor.start == start
+    assert arc_ctor.center == center
+    assert np.isclose(arc_ctor.angle.m_as(UNITS.radian), angle)
+    assert arc_ctor.radius.m_as(DEFAULT_UNITS.LENGTH) == radius
+
+    # Verify the arc is a 270 degree arc
+    assert np.isclose(arc_ctor.length.m_as(DEFAULT_UNITS.LENGTH), radius * angle)
+
+    # Verify the final point of the arc assuming a clockwise arc
+    assert np.allclose(arc_ctor.end, end)
+
+
+def test_start_center_and_angle_clockwise_from_sketch():
+    """
+    Test arc generation from a start point, center point, and angle.
+
+    This test is for the Sketch class convenience constructor.
+    """
+    # Inputs
+    start = Point2D([0, 5])
+    center = Point2D([0, 0])
+    angle = 3 * np.pi / 2
+
+    # Expected radius
+    radius = 5
+
+    # Expected end point
+    end = Point2D([-5, 0])
+
+    # Create the arc
+    sketch = Sketch()
+    sketch.arc_from_start_center_and_angle(start, center, angle, clockwise=True)
+
+    # Verify the arc is created correctly
+    arc = sketch.edges[0]
+    assert arc.start == start
+    assert arc.center == center
+    assert np.isclose(arc.angle.m_as(UNITS.radian), angle)
+    assert arc.radius.m_as(DEFAULT_UNITS.LENGTH) == radius
+
+    # Verify the arc is a 270 degree arc
+    assert np.isclose(arc.length.m_as(DEFAULT_UNITS.LENGTH), radius * angle)
+
+    # Verify the final point of the arc assuming a clockwise arc
+    assert np.allclose(arc.end, end)

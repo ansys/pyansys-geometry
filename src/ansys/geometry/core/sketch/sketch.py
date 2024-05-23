@@ -531,7 +531,7 @@ class Sketch:
         )
         return self.edge(arc, tag)
 
-    def arc_from_center_start_and_angle(
+    def arc_from_start_center_and_angle(
         self,
         start: Point2D,
         center: Point2D,
@@ -540,7 +540,7 @@ class Sketch:
         tag: Optional[str] = None,
     ) -> "Sketch":
         """
-        Add an arc to the sketch plane from the center, start point, and angle.
+        Add an arc to the sketch plane from the start, center point, and angle.
 
         Parameters
         ----------
