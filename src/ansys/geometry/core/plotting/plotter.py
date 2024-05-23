@@ -53,7 +53,10 @@ class GeomPlotter(Plotter):
     """
 
     def __init__(
-        self, use_trame: Union[bool, None] = None, allow_picking: Union[bool, None] = False
+        self,
+        use_trame: Union[bool, None] = None,
+        allow_picking: Union[bool, None] = False,
+        show_plane: bool = True,
     ) -> None:
         """Initialize the GeomPlotter class."""
         self._backend = PyVistaBackend(use_trame=use_trame, allow_picking=allow_picking)
@@ -62,6 +65,7 @@ class GeomPlotter(Plotter):
         self._backend._allow_picking = allow_picking
         self._backend._use_trame = use_trame
         self._backend.add_widget(ShowDesignPoints(self))
+        self._backend._pl._show_plane = show_plane
 
     def add_frame(self, frame: Frame, plotting_options: Optional[Dict] = None) -> None:
         """
