@@ -105,6 +105,31 @@ sketch.select("Arc")
 sketch.plot_selection()
 ```
 
+There are also additional ways to draw arcs, such as by specifying the start, center point, and angle.
+
+```{code-cell} ipython3
+start_point = Point2D([2, 1], unit=u.m)
+center_point = Point2D([1, 1], unit=u.m)
+angle = 90
+sketch.arc_from_start_center_and_angle(
+    start_point, center_point, angle=90, tag="Arc_from_start_center_angle"
+)
+sketch.select("Arc_from_start_center_angle")
+sketch.plot_selection()
+```
+
+Or by specifying the start, end point, and radius.
+
+```{code-cell} ipython3
+start_point, end_point = Point2D([2, 1], unit=u.m), Point2D([0, 1], unit=u.meter)
+radius = 1 * u.m
+sketch.arc_from_start_end_and_radius(
+    start_point, end_point, radius, tag="Arc_from_start_end_radius"
+)
+sketch.select("Arc_from_start_end_radius")
+sketch.plot_selection()
+```
+
 ### Draw a slot
 
 You draw a slot by specifying the center, width, and height.
