@@ -370,7 +370,7 @@ class Arc(SketchEdge):
         radius : Union[Quantity, Distance, Real]
             Radius of the arc.
         convex_arc : bool, default: False
-            Whether the arc is convex or not. When ``True``, the arc is convex.
+            Whether the arc is convex. When ``True``, the arc is convex.
             When ``False`` (default), the arc is concave.
         clockwise : bool, default: False
             Whether the arc spans the clockwise angle between the start and end points.
@@ -404,7 +404,7 @@ class Arc(SketchEdge):
         # Choose the center depending on if the arc is convex
         center = centers[1] if convex_arc else centers[0]
 
-        # Finally... you can create the arc
+        # Create the arc
         return Arc(start=start, end=end, center=center, clockwise=clockwise)
 
     @classmethod
@@ -437,10 +437,10 @@ class Arc(SketchEdge):
         Arc
             Arc generated from the three points.
         """
-        # Define a 2D Vector from the center to the start point
+        # Define a 2D vector from the center to the start point
         to_start_vector = Vector2D.from_points(start, center)
 
-        # Sanity check for the angle
+        # Perform sanity check for the angle
         angle = angle if isinstance(angle, Angle) else Angle(angle)
         rad_angle = angle.value.m_as(UNITS.radian)
         cang = np.cos(rad_angle)
@@ -464,5 +464,5 @@ class Arc(SketchEdge):
             center.base_unit,
         )
 
-        # Finally... you can create the arc
+        # Create the arc
         return Arc(start=start, end=end, center=center, clockwise=clockwise)

@@ -39,15 +39,15 @@ def get_two_circle_intersections(
     Parameters
     ----------
     x0 : Real
-        x-coordinate of the first circle.
+        x coordinate of the first circle.
     y0 : Real
-        y-coordinate of the first circle.
+        y coordinate of the first circle.
     r0 : Real
         Radius of the first circle.
     x1 : Real
-        x-coordinate of the second circle.
+        x coordinate of the second circle.
     y1 : Real
-        y-coordinate of the second circle.
+        y coordinate of the second circle.
     r1 : Real
         Radius of the second circle.
 
@@ -56,26 +56,26 @@ def get_two_circle_intersections(
     This function is based on the following StackOverflow post:
     https://stackoverflow.com/questions/55816902/finding-the-intersection-of-two-circles
 
-    Which is also based on the following implementation:
+    That post is based on the following implementation:
     https://paulbourke.net/geometry/circlesphere/
 
     Returns
     -------
     Union[Tuple[Tuple[Real, Real], Tuple[Real, Real]], None]
-        The intersection points of the two circles if they intersect.
-        The points are returned as ((x3, y3), (x4, y4)) where (x3, y3) and (x4, y4)
+       Intersection points of the two circles if they intersect.
+        The points are returned as ``((x3, y3), (x4, y4))``, where ``(x3, y3)`` and ``(x4, y4)``
         are the intersection points of the two circles. If the circles do not
-        intersect, then None is returned.
+        intersect, then ``None`` is returned.
     """
     # circle 1: (x0, y0), radius r0
     # circle 2: (x1, y1), radius r1
 
     d = np.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2)
 
-    # non intersecting
+    # non-intersecting
     if d > r0 + r1:
         return None
-    # One circle within other
+    # one circle within other
     if d < abs(r0 - r1):
         return None
     # coincident circles
