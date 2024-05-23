@@ -1099,7 +1099,7 @@ def test_div_operator_point(a, b_ref):
 
 
 def test_circle_intersections():
-    """Test circle intersections using the get_circle_intersections method."""
+    """Test circle intersections using the get_two_circle_intersections method."""
 
     # Circle 1 - a point and its radius
     x0, y0, r0 = 5, 0, 5
@@ -1117,7 +1117,7 @@ def test_circle_intersections():
 
 def test_circle_intersections_non_intersecting():
     """
-    Test circle intersections using the get_circle_intersections method.
+    Test circle intersections using the get_two_circle_intersections method.
 
     This test checks the case where the circles do not intersect.
     """
@@ -1135,7 +1135,7 @@ def test_circle_intersections_non_intersecting():
 
 def test_circle_intersections_non_intersecting_inside():
     """
-    Test circle intersections using the get_circle_intersections method.
+    Test circle intersections using the get_two_circle_intersections method.
 
     This test checks the case where the circles are one inside the other.
     """
@@ -1153,7 +1153,7 @@ def test_circle_intersections_non_intersecting_inside():
 
 def test_circle_intersections_coincident():
     """
-    Test circle intersections using the get_circle_intersections method.
+    Test circle intersections using the get_two_circle_intersections method.
 
     This test checks the case where the circles are coincident.
     """
