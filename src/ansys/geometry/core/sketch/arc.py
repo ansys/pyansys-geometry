@@ -368,9 +368,8 @@ class Arc(SketchEdge):
         radius : Union[Quantity, Distance, Real]
             Radius of the arc.
         convex_arc : bool, default: False
-            Whether the arc is convex or not. The default is ``False``.
-            When ``False``, the arc is concave.
-            When ``True``, the arc is convex.
+            Whether the arc is convex. The default is ``False``.
+            When ``False``, the arc is concave. When ``True``, the arc is convex.
         clockwise : bool, default: False
             Whether the arc spans the clockwise angle between the start and end points.
             When ``False``, the arc spans the counter-clockwise angle.
