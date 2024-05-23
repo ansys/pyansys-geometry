@@ -370,12 +370,13 @@ class Arc(SketchEdge):
         radius : Union[Quantity, Distance, Real]
             Radius of the arc.
         convex_arc : bool, default: False
-            Whether the arc is convex. When ``True``, the arc is convex.
-            When ``False`` (default), the arc is concave.
+            Whether the arc is convex or not. The default is ``False``.
+            When ``False``, the arc is concave.
+            When ``True``, the arc is convex.
         clockwise : bool, default: False
             Whether the arc spans the clockwise angle between the start and end points.
-            When ``False`` (default), the arc spans the counter-clockwise angle. When
-            ``True``, the arc spands the clockwise angle.
+            When ``False``, the arc spans the counter-clockwise angle.
+            When ``True``, the arc spands the clockwise angle.
 
         Returns
         -------
@@ -429,7 +430,7 @@ class Arc(SketchEdge):
             Angle of the arc.
         clockwise : bool, default: False
             Whether the provided angle should be considered clockwise.
-            When ``False`` (default), the angle is considered counter-clockwise.
+            When ``False``, the angle is considered counter-clockwise.
             When ``True``, the angle is considered clockwise.
 
         Returns

@@ -506,7 +506,9 @@ class Sketch:
         radius : Union[~pint.Quantity, Distance, Real]
             Radius of the arc.
         convex_arc : bool, default: False
-            Whether the arc is convex. The default is ``False``.
+            Whether the arc is convex or not. The default is ``False``.
+            When ``False`` , the arc spans the concave version of the arc.
+            When ``True``, the arc spans the convex version of the arc.
         clockwise : bool, default: False
             Whether the arc spans the angle clockwise between the start
             and end points. When ``False`` (default), the arc spans the angle
@@ -549,10 +551,9 @@ class Sketch:
         angle : Union[~pint.Quantity, Angle, Real]
             Angle of the arc.
         clockwise : bool, default: False
-            Whether the arc spans the angle clockwise or not.
-            When ``False`` (default), the arc spans the angle
-            counter-clockwise. When ``True``, the arc spans the angle
-            clockwise.
+            Whether the arc spans the angle clockwise or not. The default is ``False``.
+            When ``False`` , the arc spans the angle counter-clockwise.
+            When ``True``, the arc spans the angle clockwise.
 
         Returns
         -------
