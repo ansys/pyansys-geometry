@@ -67,9 +67,7 @@ def test_plot_body(modeler: Modeler, verify_image_cache):
     box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.mm))
 
     # Test the plotting of the body
-    box_body.plot(
-        screenshot=Path(IMAGE_RESULTS_DIR, "plot_body.png"),
-    )
+    box_body.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_body.png"))
 
 
 @skip_no_xserver

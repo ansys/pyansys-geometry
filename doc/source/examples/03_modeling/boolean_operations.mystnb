@@ -152,7 +152,7 @@ Perform the union and plot the results.
 
 ```{code-cell} ipython3
 prism.unite(cylin)
-_ = GeomPlotter().plot(design.bodies)
+_ = GeomPlotter().show(design.bodies)
 ```
 
 The final remaining body is the ``prism`` body because
@@ -180,7 +180,7 @@ Perform the subtraction and plot the results.
 
 ```{code-cell} ipython3
 prism.subtract(cylin)
-_ = GeomPlotter().plot(design.bodies)
+_ = GeomPlotter().show(design.bodies)
 ```
 
 The final remaining body is the ``prism`` body because
@@ -204,7 +204,7 @@ cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
 
 # Invert subtraction
 cylin.subtract(prism)
-_ = GeomPlotter().plot(design.bodies)
+_ = GeomPlotter().show(design.bodies)
 ```
 
 In this case, the final remaining body is the ``cylin`` body because

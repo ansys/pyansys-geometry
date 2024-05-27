@@ -181,7 +181,7 @@ class GeomPlotter(Plotter):
 
         Parameters
         ----------
-        body : GeomObjectPlot
+        body_plot : MeshObjectPlot
             Body of which to add the edges.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
@@ -263,8 +263,10 @@ class GeomPlotter(Plotter):
 
         Parameters
         ----------
-        polydata : pyvista.PolyData
+        polydata_entries : List[pyvista.PolyData]
             Polydata to add.
+        sketch : Sketch, default: None
+            Sketch to add.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
@@ -310,14 +312,6 @@ class GeomPlotter(Plotter):
         ----------
         plotting_list : List[Any]
             List of objects you want to plot.
-        merge_component : bool, default: False
-            Whether to merge the component into a single dataset. When
-            ``True``, all the individual bodies are effectively combined
-            into a single dataset without any hierarchy.
-        merge_bodies : bool, default: False
-            Whether to merge each body into a single dataset. When ``True``,
-            all the faces of each individual body are effectively combined
-            into a single dataset without separating faces.
         filter : str, default: None
             Regular expression with the desired name or names you want to include in the plotter.
         **plotting_options : dict, default: None
@@ -336,6 +330,11 @@ class GeomPlotter(Plotter):
         ----------
         object : Any
             Object to add.
+        filter : str, default: None
+            Regular expression with the desired name or names you want to include in the plotter.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, depend of the backend implementation
+            you are using.
         """
         # Check for custom parameters in plotting_options
         if "merge_bodies" in plotting_options:
@@ -375,5 +374,17 @@ class GeomPlotter(Plotter):
         screenshot: Optional[str] = None,
         **plotting_options,
     ) -> None:
-        """Show the plotter."""
+        """
+        Show the plotter.
+
+        Parameters
+        ----------
+        plotting_object : Any, default: None
+            Object you can add to the plotter.
+        screenshot : str, default: None
+            Path to save a screenshot of the plotter.
+        **plotting_options : dict, default: None
+            Keyword arguments for the plotter. Arguments depend of the backend implementation
+            you are using.
+        """
         self._backend.show(object=plotting_object, screenshot=screenshot, **plotting_options)

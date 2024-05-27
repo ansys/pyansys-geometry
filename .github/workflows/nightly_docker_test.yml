@@ -11,6 +11,7 @@ env:
   ANSRV_GEO_PORT: 710
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo_nightly
+  PYANSYS_VISUALIZER_TESTMODE: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -125,7 +126,6 @@ jobs:
         uses: ansys/actions/tests-pytest@v6
         env:
           ALLOW_PLOTTING: true
-          PYANSYS_VISUALIZER_TESTMODE: true
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           requires-xvfb: true
