@@ -262,7 +262,10 @@ jobs:
   docs:
     name: Documentation
     needs: [docs-style]
-    runs-on: [self-hosted, Windows, pygeometry]
+    # Doc build performed on self-hosted runners outside the Ansys network only
+    runs-on:
+      group: pyansys-self-hosted
+      labels: [Windows, pygeometry]
     steps:
       - uses: actions/checkout@v4
 
