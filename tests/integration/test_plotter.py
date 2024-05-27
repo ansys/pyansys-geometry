@@ -531,18 +531,17 @@ def test_extrude_spur_gear(modeler: Modeler, verify_image_cache):
 def test_plot_sketch_scene(verify_image_cache):
     """Test plotting a sketch in the scene."""
 
+    # Create a sketch
+    sketch = Sketch()
+    sketch.polygon(Point2D([0, 0], UNITS.m), Quantity(2, UNITS.m), sides=5)
+    sketch.segment(Point2D([0, 2]), Point2D([2, 0]), "Segment")
 
-# Create a sketch
-sketch = Sketch()
-sketch.polygon(Point2D([0, 0], UNITS.m), Quantity(2, UNITS.m), sides=5)
-sketch.segment(Point2D([0, 2]), Point2D([2, 0]), "Segment")
+    # Initialize the ``Plotter`` class
+    pl = GeomPlotter()
 
-# Initialize the ``Plotter`` class
-pl = GeomPlotter()
-
-# Showing the plane of the sketch and its frame.
-pl.add_sketch(sketch=sketch, show_frame=True, show_plane=True)
-pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_sketch_scene.png"))
+    # Showing the plane of the sketch and its frame.
+    pl.add_sketch(sketch=sketch, show_frame=True, show_plane=True)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_sketch_scene.png"))
 
 
 def test_visualization_polydata():
