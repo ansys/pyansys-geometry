@@ -114,7 +114,7 @@ def test_plot_sketch(verify_image_cache):
 
 
 @skip_no_xserver
-def test_plot_plotterhelper_sketch_pyvista(verify_image_cache):
+def test_plot_geomplotter_sketch_pyvista(verify_image_cache):
     # define sketch
     sketch = Sketch()
     sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon1")
@@ -129,12 +129,12 @@ def test_plot_plotterhelper_sketch_pyvista(verify_image_cache):
     pl = GeomPlotter()
     pl.plot([sketch, cyl, blocks])
     pl.show(
-        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_plotterhelper_sketch_pyvista.png"),
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geomplotter_sketch_pyvista.png"),
     )
 
 
 @skip_no_xserver
-def test_plot_plotterhelper_sketch_body(modeler: Modeler, verify_image_cache):
+def test_plot_geomplotter_sketch_body(modeler: Modeler, verify_image_cache):
     # init modeler
     design = modeler.create_design("Multiplot")
 
@@ -151,12 +151,12 @@ def test_plot_plotterhelper_sketch_body(modeler: Modeler, verify_image_cache):
     pl = GeomPlotter()
     pl.plot([sketch, box_body])
     pl.show(
-        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_plotterhelper_sketch_body.png"),
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geomplotter_sketch_body.png"),
     )
 
 
 @skip_no_xserver
-def test_plot_plotterhelper_sketch_several_bodies(modeler: Modeler, verify_image_cache):
+def test_plot_geomplotter_sketch_several_bodies(modeler: Modeler, verify_image_cache):
     # init modeler
     design = modeler.create_design("Multiplot")
 
@@ -189,12 +189,12 @@ def test_plot_plotterhelper_sketch_several_bodies(modeler: Modeler, verify_image
     pl = GeomPlotter()
     pl.plot([sketch, box_body, gear_body, cyl_body])
     pl.show(
-        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_plotterhelper_sketch_several_bodies.png"),
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geomplotter_sketch_several_bodies.png"),
     )
 
 
 @skip_no_xserver
-def test_plot_plotterhelper_sketch_design(modeler: Modeler, verify_image_cache):
+def test_plot_geomplotter_sketch_design(modeler: Modeler, verify_image_cache):
     # init modeler
     design = modeler.create_design("Multiplot")
 
@@ -211,12 +211,12 @@ def test_plot_plotterhelper_sketch_design(modeler: Modeler, verify_image_cache):
     pl = GeomPlotter()
     pl.plot([sketch, design])
     pl.show(
-        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_plotterhelper_sketch_design.png"),
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geomplotter_sketch_design.png"),
     )
 
 
 @skip_no_xserver
-def test_plot_plotterhelper_all_types(modeler: Modeler, verify_image_cache):
+def test_plot_geomplotter_all_types(modeler: Modeler, verify_image_cache):
     """Test plotting a list of PyAnsys Geometry objects."""
     plot_list = []
 
@@ -269,7 +269,7 @@ def test_plot_plotterhelper_all_types(modeler: Modeler, verify_image_cache):
     pl = GeomPlotter()
     pl.plot(plot_list)
     pl.show(
-        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_plotterhelper_all_types.png"),
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geomplotter_all_types.png"),
     )
 
 
