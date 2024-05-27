@@ -262,7 +262,9 @@ jobs:
   docs:
     name: Documentation
     needs: [docs-style]
-    runs-on: [self-hosted, Windows, pygeometry]
+    runs-on:
+      group: pyansys-self-hosted
+      labels: [Windows, pygeometry]
     steps:
       - uses: actions/checkout@v4
 
