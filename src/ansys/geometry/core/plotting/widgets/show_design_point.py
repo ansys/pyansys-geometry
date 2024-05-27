@@ -36,7 +36,7 @@ class ShowDesignPoints(PlotterWidget):
 
     Parameters
     ----------
-    plotter_helper : PlotterHelper
+    plotter_helper : GeomPlotter
         Provides the plotter to add the button to.
     """
 

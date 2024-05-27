@@ -369,6 +369,11 @@ class GeomPlotter(Plotter):
             # any left type should be a PyVista object
             self._backend.pv_interface.plot(object, filter, **plotting_options)
 
-    def show(self, screenshot: Optional[str] = None, **plotting_options) -> None:
+    def show(
+        self,
+        plotting_object: Optional[Any] = None,
+        screenshot: Optional[str] = None,
+        **plotting_options,
+    ) -> None:
         """Show the plotter."""
-        self._backend.show(screenshot=screenshot, **plotting_options)
+        self._backend.show(object=plotting_object, screenshot=screenshot, **plotting_options)
