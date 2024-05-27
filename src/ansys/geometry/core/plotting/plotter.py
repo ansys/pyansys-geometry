@@ -50,6 +50,8 @@ class GeomPlotter(Plotter):
         Whether to use trame visualizer or not, by default None.
     allow_picking : Union[bool, None], optional
         Whether to allow picking or not, by default False.
+    show_plane : bool, optional
+        Whether to show the plane in the scene, by default True.
     """
 
     def __init__(
