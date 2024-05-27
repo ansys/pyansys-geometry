@@ -329,7 +329,6 @@ def test_plot_arc_from_three_points_clockwise(verify_image_cache):
     sketch.plot_selection(
         view_2d=True,
         screenshot=Path(IMAGE_RESULTS_DIR, "plot_arc_from_three_points_clockwise.png"),
-        window_size=(800, 800),
     )
 
 
