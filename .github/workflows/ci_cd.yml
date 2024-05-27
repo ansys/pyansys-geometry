@@ -129,7 +129,7 @@ jobs:
 
   testing-windows:
     name: Testing and coverage (Windows)
-    needs: [smoke-tests]
+    # needs: [smoke-tests]
     runs-on: [self-hosted, Windows, pygeometry]
     continue-on-error: ${{ matrix.experimental }}
     env:
