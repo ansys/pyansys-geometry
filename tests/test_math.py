@@ -46,6 +46,7 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector2D,
     Vector3D,
+    get_two_circle_intersections,
 )
 from ansys.geometry.core.misc import UNITS
 
@@ -1095,3 +1096,74 @@ def test_div_operator_point(a, b_ref):
     assert b.unit
     assert a.unit.is_compatible_with(b.unit)
     assert a.unit.dimensionality == b.unit.dimensionality
+
+
+def test_circle_intersections():
+    """Test circle intersections using the get_two_circle_intersections method."""
+
+    # Circle 1 - a point and its radius
+    x0, y0, r0 = 5, 0, 5
+    # Circle 2 - a point and its radius
+    x1, y1, r1 = 0, 0, 5
+
+    # Check the intersection points
+    intersections = get_two_circle_intersections(x0, y0, r0, x1, y1, r1)
+
+    assert intersections is not None
+    assert len(intersections) == 2
+    assert np.allclose(intersections[0], [2.5, +4.3301270189])
+    assert np.allclose(intersections[1], [2.5, -4.3301270189])
+
+
+def test_circle_intersections_non_intersecting():
+    """
+    Test circle intersections using the get_two_circle_intersections method.
+
+    This test checks the case where the circles do not intersect.
+    """
+
+    # Circle 1 - a point and its radius
+    x0, y0, r0 = 5, 0, 2
+    # Circle 2 - a point and its radius
+    x1, y1, r1 = 0, 0, 2
+
+    # Check the intersection points
+    intersections = get_two_circle_intersections(x0, y0, r0, x1, y1, r1)
+
+    assert intersections is None
+
+
+def test_circle_intersections_non_intersecting_inside():
+    """
+    Test circle intersections using the get_two_circle_intersections method.
+
+    This test checks the case where the circles are one inside the other.
+    """
+
+    # Circle 1 - a point and its radius
+    x0, y0, r0 = 6, 0, 1
+    # Circle 2 - a point and its radius
+    x1, y1, r1 = 10, 0, 8
+
+    # Check the intersection points
+    intersections = get_two_circle_intersections(x0, y0, r0, x1, y1, r1)
+
+    assert intersections is None
+
+
+def test_circle_intersections_coincident():
+    """
+    Test circle intersections using the get_two_circle_intersections method.
+
+    This test checks the case where the circles are coincident.
+    """
+
+    # Circle 1 - a point and its radius
+    x0, y0, r0 = 5, 0, 5
+    # Circle 2 - a point and its radius
+    x1, y1, r1 = 5, 0, 5
+
+    # Check the intersection points
+    intersections = get_two_circle_intersections(x0, y0, r0, x1, y1, r1)
+
+    assert intersections is None

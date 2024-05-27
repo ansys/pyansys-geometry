@@ -22,7 +22,6 @@
 """Provides for creating and managing a torus."""
 
 from functools import cached_property
-from typing import Tuple
 
 from beartype import beartype as check_input_types
 from beartype.typing import Tuple, Union
