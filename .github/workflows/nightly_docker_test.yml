@@ -65,7 +65,7 @@ jobs:
           docker pull $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
 
       - name: Check location of self-hosted runner and define license server accordingly
-        if: runner.name == 'pygeometry-ci-1' || runner.name == 'pygeometry-ci-2'
+        if: runner.name == 'pygeometry-ci-2'
         run:
           echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
