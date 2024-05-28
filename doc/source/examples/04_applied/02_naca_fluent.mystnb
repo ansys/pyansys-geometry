@@ -125,10 +125,10 @@ The airfoil is displayed in green, and the fluid domain is displayed in blue wit
 ```{code-cell} ipython3
 from ansys.geometry.core.plotting import GeomPlotter
 
-plotter_helper = GeomPlotter()
-plotter_helper.plot(airfoil, color="green")
-plotter_helper.plot(fluid, color="blue", opacity=0.15)
-plotter_helper.show()
+plotter = GeomPlotter()
+plotter.plot(airfoil, color="green")
+plotter.plot(fluid, color="blue", opacity=0.15)
+plotter.show()
 ```
 
 ## Export the geometry

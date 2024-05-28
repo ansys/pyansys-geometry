@@ -944,7 +944,7 @@ class Sketch:
             pl = GeomPlotter(use_trame=use_trame)
             pl.plot(self.sketch_polydata_faces(), opacity=0.7, **plotting_options)
             pl.plot(self.sketch_polydata_edges(), **plotting_options)
-            pl.show(screenshot=screenshot, view_2d=view_2d_dict)
+            pl.show(screenshot=screenshot, view_2d=view_2d_dict, **plotting_options)
 
     def plot_selection(
         self,

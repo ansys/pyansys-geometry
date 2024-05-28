@@ -1395,7 +1395,7 @@ class Component:
         )
         pl = GeomPlotter(use_trame=use_trame)
         pl.plot(mesh_object, **plotting_options)
-        pl.show(screenshot=screenshot)
+        pl.show(screenshot=screenshot, **plotting_options)
 
     def __repr__(self) -> str:
         """Represent the ``Component`` as a string."""
