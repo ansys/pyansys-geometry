@@ -1321,6 +1321,7 @@ class Body(IBody):
         merge: bool = False,
         screenshot: Optional[str] = None,
         use_trame: Optional[bool] = None,
+        show_options: Optional[dict] = None,
         **plotting_options: Optional[dict],
     ) -> None:  # noqa: D102
         # lazy import here to improve initial module load time
@@ -1331,7 +1332,7 @@ class Body(IBody):
         meshobject = MeshObjectPlot(self, self.tessellate(merge=merge))
         pl = GeomPlotter(use_trame=use_trame)
         pl.plot(meshobject, **plotting_options)
-        pl.show(screenshot=screenshot)
+        pl.show(screenshot=screenshot, **plotting_options)
 
     def intersect(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
         self.__generic_boolean_op(other, "intersect", "bodies do not intersect")
