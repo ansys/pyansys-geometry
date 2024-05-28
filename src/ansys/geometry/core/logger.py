@@ -442,14 +442,14 @@ class Logger:
             each_handler.setLevel(level)
         self._level = level
 
-    def _make_child_logger(self, sufix, level):
+    def _make_child_logger(self, suffix, level):
         """
         Create a child logger.
 
         This method uses the ``getChild()`` method or copies attributes between the
         ``PyAnsys_Geometry_global`` logger and the new one.
         """
-        logger = logging.getLogger(sufix)
+        logger = logging.getLogger(suffix)
         logger.std_out_handler = None
         logger.file_handler = None
 
@@ -487,7 +487,7 @@ class Logger:
         logger.propagate = True
         return logger
 
-    def add_child_logger(self, sufix: str, level: Optional[str] = None):
+    def add_child_logger(self, suffix: str, level: Optional[str] = None):
         """
         Add a child logger to the main logger.
 
@@ -499,7 +499,7 @@ class Logger:
 
         Parameters
         ----------
-        sufix : str
+        suffix : str
             Name of the child logger.
         level : str, default: None
             Level of logging.
@@ -509,7 +509,7 @@ class Logger:
         logging.Logger
             Logger class.
         """
-        name = self.logger.name + "." + sufix
+        name = self.logger.name + "." + suffix
         self._instances[name] = self._make_child_logger(self, name, level)
         return self._instances[name]
 

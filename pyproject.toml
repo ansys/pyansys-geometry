@@ -105,7 +105,7 @@ Issues = "https://github.com/ansys/pyansys-geometry/issues"
 Discussions = "https://github.com/ansys/pyansys-geometry/discussions"
 Documentation = "https://geometry.docs.pyansys.com"
 Releases = "https://github.com/ansys/pyansys-geometry/releases"
-Changelog =  "https://github.com/ansys/pyansys-geometry/blob/main/doc/source/changelog.rst"
+Changelog = "https://github.com/ansys/pyansys-geometry/blob/main/doc/source/changelog.rst"
 
 [tool.flit.module]
 name = "ansys.geometry.core"
@@ -117,7 +117,6 @@ line-length = 100
 profile = "black"
 force_sort_within_sections = true
 line_length = 100
-default_section = "THIRDPARTY"
 src_paths = ["doc", "src", "tests"]
 
 [tool.docformatter]
