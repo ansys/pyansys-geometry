@@ -55,7 +55,7 @@ BACKEND_SUBFOLDER = "ApiServer"
 
 MANIFEST_FILENAME = "Presentation.ApiServerAddIn.Manifest.xml"
 """
-Default backend's addin filename.
+Default backend's add-in filename.
 
 To be used only for local start of Ansys Discovery or Ansys SpaceClaim.
 """
@@ -100,7 +100,7 @@ To be used only with Ansys Discovery.
 
 BACKEND_ADDIN_MANIFEST_ARGUMENT = "/ADDINMANIFESTFILE="
 """
-The argument to specify the backend's addin manifest file's path.
+The argument to specify the backend's add-in manifest file's path.
 
 To be used only with Ansys Discovery and Ansys SpaceClaim.
 """
@@ -135,7 +135,7 @@ To be used only with Ansys Discovery.
 
 BACKEND_SPLASH_OFF = "/Splash=False"
 """
-The argument to specify the backend's addin manifest file's path.
+The argument to specify the backend's add-in manifest file's path.
 
 To be used only with Ansys Discovery and Ansys SpaceClaim.
 """
@@ -380,7 +380,7 @@ def _is_port_available(port: int, host: str = "localhost") -> bool:
 def _manifest_path_provider(
     version: int, available_installations: Dict, manifest_path: str = None
 ) -> str:
-    """Return the ApiServer's addin manifest file path."""
+    """Return the ApiServer's add-in manifest file path."""
     if manifest_path:
         if os.path.exists(manifest_path):
             return manifest_path
