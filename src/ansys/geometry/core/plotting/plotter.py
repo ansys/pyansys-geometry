@@ -62,7 +62,7 @@ class GeomPlotter(Plotter):
     ) -> None:
         """Initialize the GeomPlotter class."""
         self._backend = PyVistaBackend(use_trame=use_trame, allow_picking=allow_picking)
-        super().__init__()
+        super().__init__(backend=self._backend)
 
         self._backend._allow_picking = allow_picking
         self._backend._use_trame = use_trame
