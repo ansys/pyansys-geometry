@@ -36,7 +36,7 @@ from ansys.geometry.core.connection.defaults import GEOMETRY_SERVICE_DOCKER_IMAG
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import UNITS
-from ansys.geometry.core.plotting import PlotterHelper
+from ansys.geometry.core.plotting import GeomPlotter
 from ansys.geometry.core.sketch import Sketch
 ```
 
@@ -158,16 +158,16 @@ You can simply plot one of the created objects.
 
 ```{code-cell} ipython3
 
-plotter = PlotterHelper()
-plotter.plot(box_body2)
+plotter = GeomPlotter()
+plotter.show(box_body2)
 ```
 
 You can plot the whole list of objects.
 
 ```{code-cell} ipython3
 
-plotter = PlotterHelper()
-plotter.plot(plot_list)
+plotter = GeomPlotter()
+plotter.show(plot_list)
 ```
 
 The Python visualizer is used by default. However, you can also use
@@ -175,8 +175,9 @@ The Python visualizer is used by default. However, you can also use
 
 ```python
 
-plotter = PlotterHelper(use_trame=True)
-plotter.plot(plot_list)
+plotter = GeomPlotter
+(use_trame=True)
+plotter.show(plot_list)
 ```
 
 ## Clip objects
@@ -187,7 +188,7 @@ intersects the target object.
 ```{code-cell} ipython
 
 from ansys.geometry.core.math import Plane, Point3D
-ph = PlotterHelper()
+pl = GeomPlotter()
 
 # Define PyAnsys Geometry box
 box2 = Sketch()
@@ -199,8 +200,8 @@ origin = Point3D([-10., 20., 5.], UNITS.m)
 plane = Plane(origin=origin, direction_x=[1, 1, 1], direction_y=[-1, 0, 1])
 
 # Add the object with the clipping plane
-ph.add(box_body2, clipping_plane=plane)
-ph.plot()
+pl.plot(box_body2, clipping_plane=plane)
+pl.show()
 ```
 
 ## Select objects interactively
@@ -210,10 +211,10 @@ This enables you to pick objects for subsequent script manipulation.
 
 ```{code-cell} ipython3
 
-plotter = PlotterHelper(allow_picking=True)
+plotter = GeomPlotter(allow_picking=True)
 
 # Plotter returns picked bodies
-picked_list = plotter.plot(plot_list)
+picked_list = plotter.show(plot_list)
 print(picked_list)
 ```
 

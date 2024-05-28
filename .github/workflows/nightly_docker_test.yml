@@ -11,6 +11,7 @@ env:
   ANSRV_GEO_PORT: 710
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo_nightly
+  PYANSYS_VISUALIZER_TESTMODE: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

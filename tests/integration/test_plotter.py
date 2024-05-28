@@ -31,7 +31,7 @@ from pyvista.plotting import system_supports_plotting
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.math import UNITVECTOR3D_Y, UNITVECTOR3D_Z, Plane, Point2D, Point3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
-from ansys.geometry.core.plotting import Plotter, PlotterHelper
+from ansys.geometry.core.plotting import GeomPlotter
 from ansys.geometry.core.sketch import (
     Arc,
     Box,
@@ -112,7 +112,7 @@ def test_plot_sketch(verify_image_cache):
 
 
 @skip_no_xserver
-def test_plot_plotterhelper_sketch_pyvista(verify_image_cache):
+def test_plot_geomplotter_sketch_pyvista(verify_image_cache):
     # define sketch
     sketch = Sketch()
     sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon1")
@@ -124,14 +124,15 @@ def test_plot_plotterhelper_sketch_pyvista(verify_image_cache):
     blocks = pv.MultiBlock([pv.Sphere(center=(20, 10, -10), radius=4), pv.Cube()])
 
     # plot together
-    PlotterHelper().plot(
-        [sketch, cyl, blocks],
-        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_plotterhelper_sketch_pyvista.png"),
+    pl = GeomPlotter()
+    pl.plot([sketch, cyl, blocks])
+    pl.show(
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geomplotter_sketch_pyvista.png"),
     )
 
 
 @skip_no_xserver
-def test_plot_plotterhelper_sketch_body(modeler: Modeler, verify_image_cache):
+def test_plot_geomplotter_sketch_body(modeler: Modeler, verify_image_cache):
     # init modeler
     design = modeler.create_design("Multiplot")
 
@@ -145,14 +146,15 @@ def test_plot_plotterhelper_sketch_body(modeler: Modeler, verify_image_cache):
     box_body = design.extrude_sketch("JustABox", body_sketch, Quantity(10, UNITS.m))
 
     # plot together
-    PlotterHelper().plot(
-        [sketch, box_body],
-        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_plotterhelper_sketch_body.png"),
+    pl = GeomPlotter()
+    pl.plot([sketch, box_body])
+    pl.show(
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geomplotter_sketch_body.png"),
     )
 
 
 @skip_no_xserver
-def test_plot_plotterhelper_sketch_several_bodies(modeler: Modeler, verify_image_cache):
+def test_plot_geomplotter_sketch_several_bodies(modeler: Modeler, verify_image_cache):
     # init modeler
     design = modeler.create_design("Multiplot")
 
@@ -182,14 +184,15 @@ def test_plot_plotterhelper_sketch_several_bodies(modeler: Modeler, verify_image
     gear_body = design.extrude_sketch("GearExtruded", sketch_gear, Quantity(1, UNITS.m))
 
     # plot together
-    PlotterHelper().plot(
-        [sketch, box_body, gear_body, cyl_body],
-        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_plotterhelper_sketch_several_bodies.png"),
+    pl = GeomPlotter()
+    pl.plot([sketch, box_body, gear_body, cyl_body])
+    pl.show(
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geomplotter_sketch_several_bodies.png"),
     )
 
 
 @skip_no_xserver
-def test_plot_plotterhelper_sketch_design(modeler: Modeler, verify_image_cache):
+def test_plot_geomplotter_sketch_design(modeler: Modeler, verify_image_cache):
     # init modeler
     design = modeler.create_design("Multiplot")
 
@@ -203,14 +206,15 @@ def test_plot_plotterhelper_sketch_design(modeler: Modeler, verify_image_cache):
     design.extrude_sketch("JustABox", box_sketch, Quantity(10, UNITS.m))
 
     # plot together
-    PlotterHelper().plot(
-        [sketch, design],
-        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_plotterhelper_sketch_design.png"),
+    pl = GeomPlotter()
+    pl.plot([sketch, design])
+    pl.show(
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geomplotter_sketch_design.png"),
     )
 
 
 @skip_no_xserver
-def test_plot_plotterhelper_all_types(modeler: Modeler, verify_image_cache):
+def test_plot_geomplotter_all_types(modeler: Modeler, verify_image_cache):
     """Test plotting a list of PyAnsys Geometry objects."""
     plot_list = []
 
@@ -260,8 +264,10 @@ def test_plot_plotterhelper_all_types(modeler: Modeler, verify_image_cache):
     box_body2 = design.extrude_sketch("JustABox", box2, Quantity(10, UNITS.m))
     plot_list.append(box_body2)
 
-    PlotterHelper().plot(
-        plot_list, screenshot=Path(IMAGE_RESULTS_DIR, "plot_plotterhelper_all_types.png")
+    pl = GeomPlotter()
+    pl.plot(plot_list)
+    pl.show(
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geomplotter_all_types.png"),
     )
 
 
@@ -319,7 +325,8 @@ def test_plot_arc_from_three_points_clockwise(verify_image_cache):
     sketch.arc_from_three_points(start, inter, end, tag="Arc_clockwise")
     sketch.select("Arc_clockwise")
     sketch.plot_selection(
-        view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_arc_from_three_points_clockwise.png")
+        view_2d=True,
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_arc_from_three_points_clockwise.png"),
     )
 
 
@@ -528,11 +535,11 @@ def test_plot_sketch_scene(verify_image_cache):
     sketch.segment(Point2D([0, 2]), Point2D([2, 0]), "Segment")
 
     # Initialize the ``Plotter`` class
-    pl = Plotter()
+    pl = GeomPlotter()
 
     # Showing the plane of the sketch and its frame.
-    pl.plot_sketch(sketch=sketch, show_frame=True, show_plane=True)
-    pl.scene.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_sketch_scene.png"))
+    pl.add_sketch(sketch=sketch, show_frame=True, show_plane=True)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_sketch_scene.png"))
 
 
 def test_visualization_polydata():
@@ -657,29 +664,6 @@ def test_visualization_polydata():
     assert box.visualization_polydata.n_open_edges == 4
 
 
-def test_name_filter(modeler: Modeler, verify_image_cache):
-    """Test the plotter name filter."""
-    # init modeler
-    design = modeler.create_design("Multiplot")
-
-    # define cylinder
-    cyl_sketch = Sketch()
-    cyl_sketch.circle(Point2D([-20, 5], UNITS.m), Quantity(10, UNITS.m))
-    cyl_body = design.extrude_sketch("JustACyl", cyl_sketch, Quantity(10, UNITS.m))
-
-    # define box
-    body_sketch = Sketch()
-    body_sketch.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
-    box_body = design.extrude_sketch("JustABox", body_sketch, Quantity(10, UNITS.m))
-
-    # plot together
-    PlotterHelper().plot(
-        [cyl_body, box_body],
-        filter="Cyl",
-        screenshot=Path(IMAGE_RESULTS_DIR, "test_name_filter.png"),
-    )
-
-
 def test_plot_design_point(modeler: Modeler, verify_image_cache):
     """Test the plotting of DesignPoint objects."""
     design = modeler.create_design("Multiplot")
@@ -699,50 +683,8 @@ def test_plot_design_point(modeler: Modeler, verify_image_cache):
     plot_list.extend(design_points_2)
 
     # plot
-    PlotterHelper().plot(
-        plot_list,
+    pl = GeomPlotter()
+    pl.plot(plot_list)
+    pl.show(
         screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_design_point.png"),
     )
-
-
-def test_plot_clipping(modeler: Modeler, verify_image_cache):
-    design = modeler.create_design("Clipping")
-    ph = PlotterHelper()
-
-    plot_list = []
-    # Create a Body cylinder
-    cylinder = Sketch()
-    cylinder.circle(Point2D([10, 10], UNITS.m), 1.0)
-    cylinder_body = design.extrude_sketch("JustACyl", cylinder, Quantity(10, UNITS.m))
-
-    origin = Point3D([10.0, 10.0, 5.0], UNITS.m)
-    plane = Plane(origin=origin, direction_x=[0, 0, 1], direction_y=[0, 1, 0])
-    ph.add(cylinder_body, clipping_plane=plane)
-
-    origin = Point3D([10.0, 10.0, 5.0], UNITS.m)
-    plane = Plane(origin=origin, direction_x=[0, 0, 1], direction_y=[0, 1, 0])
-    ph.add(cylinder, clipping_plane=plane)
-    # Create a Body box
-    box2 = Sketch()
-    box2.box(Point2D([-10, 20], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
-    box_body2 = design.extrude_sketch("JustABox", box2, Quantity(10, UNITS.m))
-
-    origin = Point3D([-10.0, 20.0, 5.0], UNITS.m)
-    plane = Plane(origin=origin, direction_x=[1, 1, 1], direction_y=[-1, 0, 1])
-    ph.add(box_body2, clipping_plane=plane)
-
-    origin = Point3D([0, 0, 0], UNITS.m)
-    plane = Plane(origin=origin, direction_x=[1, 1, 1], direction_y=[-1, 0, 1])
-    sphere = pv.Sphere()
-    ph.add(sphere, clipping_plane=plane)
-
-    origin = Point3D([5, -10, 10], UNITS.m)
-    plane = Plane(origin=origin, direction_x=[1, 1, 1], direction_y=[-1, 0, 1])
-    sphere = pv.Sphere(center=(5, -10, -10))
-    ph.add(pv.MultiBlock([sphere]), clipping_plane=plane)
-
-    sphere1 = pv.Sphere(center=(-5, -10, -10))
-    sphere2 = pv.Sphere(center=(-10, -10, -10))
-    ph.add([sphere1, sphere2], clipping_plane=plane)
-
-    ph.plot()

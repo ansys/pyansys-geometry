@@ -24,7 +24,6 @@ Perform the required imports.
 ```{code-cell} ipython3
 from ansys.geometry.core.misc.units import UNITS as u
 from ansys.geometry.core.sketch import Sketch
-from ansys.geometry.core.plotting import Plotter
 ```
 
 ## Create a sketch
@@ -172,7 +171,9 @@ showing the plane of the sketch and its frame.
 
 ```{code-cell} ipython3
 # Plot the sketch in the whole scene
-pl = Plotter()
-pl.plot_sketch(sketch, show_plane=True, show_frame=True)
-pl.scene.show(jupyter_backend="panel")
+from ansys.geometry.core.plotting import GeomPlotter
+
+pl = GeomPlotter()
+pl.add_sketch(sketch, show_plane=True, show_frame=True)
+pl.show()
 ```

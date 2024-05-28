@@ -41,6 +41,7 @@ from ansys.geometry.core.connection.defaults import GEOMETRY_SERVICE_DOCKER_IMAG
 from ansys.geometry.core.connection.docker_instance import GeometryContainers, LocalDockerInstance
 
 pv.OFF_SCREEN = True
+pv.global_theme.window_size = [600, 600]
 
 
 # TODO: re-enable when Linux service is able to use measurement tools

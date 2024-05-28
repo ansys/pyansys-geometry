@@ -1276,7 +1276,6 @@ class Component:
         >>> from ansys.geometry.core import Modeler
         >>> from ansys.geometry.core.math import Point2D, Point3D, Plane
         >>> from ansys.geometry.core.misc import UNITS
-        >>> from ansys.geometry.core.plotting import Plotter
         >>> modeler = Modeler("10.54.0.72", "50051")
         >>> sketch_1 = Sketch()
         >>> box = sketch_1.box(
@@ -1387,15 +1386,16 @@ class Component:
             N Coordinate Systems : 0
         >>> mycomp.plot(pbr=True, metallic=1.0)
         """
-        from ansys.geometry.core.plotting import PlotterHelper
+        from ansys.tools.visualization_interface.types.mesh_object_plot import MeshObjectPlot
 
-        PlotterHelper(use_trame=use_trame).plot(
-            self,
-            merge_bodies=merge_bodies,
-            merge_component=merge_component,
-            screenshot=screenshot,
-            **plotting_options,
+        from ansys.geometry.core.plotting import GeomPlotter
+
+        mesh_object = MeshObjectPlot(
+            custom_object=self, mesh=self.tessellate(merge_component, merge_bodies)
         )
+        pl = GeomPlotter(use_trame=use_trame)
+        pl.plot(mesh_object, **plotting_options)
+        pl.show(screenshot=screenshot, **plotting_options)
 
     def __repr__(self) -> str:
         """Represent the ``Component`` as a string."""
