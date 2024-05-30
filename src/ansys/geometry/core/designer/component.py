@@ -1388,12 +1388,12 @@ class Component:
         """
         from ansys.tools.visualization_interface.types.mesh_object_plot import MeshObjectPlot
 
-        from ansys.geometry.core.plotting import GeomPlotter
+        from ansys.geometry.core.plotting import GeometryPlotter
 
         mesh_object = MeshObjectPlot(
             custom_object=self, mesh=self.tessellate(merge_component, merge_bodies)
         )
-        pl = GeomPlotter(use_trame=use_trame)
+        pl = GeometryPlotter(use_trame=use_trame)
         pl.plot(mesh_object, **plotting_options)
         pl.show(screenshot=screenshot, **plotting_options)
 

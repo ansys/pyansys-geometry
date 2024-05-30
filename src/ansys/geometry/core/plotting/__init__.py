@@ -21,4 +21,4 @@
 # SOFTWARE.
 """Provides the PyAnsys Geometry plotting subpackage."""
 
-from ansys.geometry.core.plotting.plotter import GeomPlotter
+from ansys.geometry.core.plotting.plotter import GeometryPlotter

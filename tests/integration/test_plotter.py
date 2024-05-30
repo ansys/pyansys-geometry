@@ -31,7 +31,7 @@ from pyvista.plotting import system_supports_plotting
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.math import UNITVECTOR3D_Y, UNITVECTOR3D_Z, Plane, Point2D, Point3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
-from ansys.geometry.core.plotting import GeomPlotter
+from ansys.geometry.core.plotting import GeometryPlotter
 from ansys.geometry.core.sketch import (
     Arc,
     Box,
@@ -112,7 +112,7 @@ def test_plot_sketch(verify_image_cache):
 
 
 @skip_no_xserver
-def test_plot_geomplotter_sketch_pyvista(verify_image_cache):
+def test_plot_geometryplotter_sketch_pyvista(verify_image_cache):
     # define sketch
     sketch = Sketch()
     sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon1")
@@ -124,15 +124,15 @@ def test_plot_geomplotter_sketch_pyvista(verify_image_cache):
     blocks = pv.MultiBlock([pv.Sphere(center=(20, 10, -10), radius=4), pv.Cube()])
 
     # plot together
-    pl = GeomPlotter()
+    pl = GeometryPlotter()
     pl.plot([sketch, cyl, blocks])
     pl.show(
-        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geomplotter_sketch_pyvista.png"),
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geometryplotter_sketch_pyvista.png"),
     )
 
 
 @skip_no_xserver
-def test_plot_geomplotter_sketch_body(modeler: Modeler, verify_image_cache):
+def test_plot_geometryplotter_sketch_body(modeler: Modeler, verify_image_cache):
     # init modeler
     design = modeler.create_design("Multiplot")
 
@@ -146,15 +146,15 @@ def test_plot_geomplotter_sketch_body(modeler: Modeler, verify_image_cache):
     box_body = design.extrude_sketch("JustABox", body_sketch, Quantity(10, UNITS.m))
 
     # plot together
-    pl = GeomPlotter()
+    pl = GeometryPlotter()
     pl.plot([sketch, box_body])
     pl.show(
-        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geomplotter_sketch_body.png"),
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geometryplotter_sketch_body.png"),
     )
 
 
 @skip_no_xserver
-def test_plot_geomplotter_sketch_several_bodies(modeler: Modeler, verify_image_cache):
+def test_plot_geometryplotter_sketch_several_bodies(modeler: Modeler, verify_image_cache):
     # init modeler
     design = modeler.create_design("Multiplot")
 
@@ -184,15 +184,15 @@ def test_plot_geomplotter_sketch_several_bodies(modeler: Modeler, verify_image_c
     gear_body = design.extrude_sketch("GearExtruded", sketch_gear, Quantity(1, UNITS.m))
 
     # plot together
-    pl = GeomPlotter()
+    pl = GeometryPlotter()
     pl.plot([sketch, box_body, gear_body, cyl_body])
     pl.show(
-        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geomplotter_sketch_several_bodies.png"),
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geometryplotter_sketch_several_bodies.png"),
     )
 
 
 @skip_no_xserver
-def test_plot_geomplotter_sketch_design(modeler: Modeler, verify_image_cache):
+def test_plot_geometryplotter_sketch_design(modeler: Modeler, verify_image_cache):
     # init modeler
     design = modeler.create_design("Multiplot")
 
@@ -206,15 +206,15 @@ def test_plot_geomplotter_sketch_design(modeler: Modeler, verify_image_cache):
     design.extrude_sketch("JustABox", box_sketch, Quantity(10, UNITS.m))
 
     # plot together
-    pl = GeomPlotter()
+    pl = GeometryPlotter()
     pl.plot([sketch, design])
     pl.show(
-        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geomplotter_sketch_design.png"),
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geometryplotter_sketch_design.png"),
     )
 
 
 @skip_no_xserver
-def test_plot_geomplotter_all_types(modeler: Modeler, verify_image_cache):
+def test_plot_geometryplotter_all_types(modeler: Modeler, verify_image_cache):
     """Test plotting a list of PyAnsys Geometry objects."""
     plot_list = []
 
@@ -264,10 +264,10 @@ def test_plot_geomplotter_all_types(modeler: Modeler, verify_image_cache):
     box_body2 = design.extrude_sketch("JustABox", box2, Quantity(10, UNITS.m))
     plot_list.append(box_body2)
 
-    pl = GeomPlotter()
+    pl = GeometryPlotter()
     pl.plot(plot_list)
     pl.show(
-        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geomplotter_all_types.png"),
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_geometryplotter_all_types.png"),
     )
 
 
@@ -535,7 +535,7 @@ def test_plot_sketch_scene(verify_image_cache):
     sketch.segment(Point2D([0, 2]), Point2D([2, 0]), "Segment")
 
     # Initialize the ``Plotter`` class
-    pl = GeomPlotter()
+    pl = GeometryPlotter()
 
     # Showing the plane of the sketch and its frame.
     pl.add_sketch(sketch=sketch, show_frame=True, show_plane=True)
@@ -683,7 +683,7 @@ def test_plot_design_point(modeler: Modeler, verify_image_cache):
     plot_list.extend(design_points_2)
 
     # plot
-    pl = GeomPlotter()
+    pl = GeometryPlotter()
     pl.plot(plot_list)
     pl.show(
         screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_design_point.png"),

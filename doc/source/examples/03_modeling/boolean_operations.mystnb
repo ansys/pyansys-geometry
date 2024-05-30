@@ -25,7 +25,7 @@ from ansys.geometry.core import launch_docker_modeler
 from ansys.geometry.core.designer import Body
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import UNITS
-from ansys.geometry.core.plotting import GeomPlotter
+from ansys.geometry.core.plotting import GeometryPlotter
 from ansys.geometry.core.sketch import Sketch
 ```
 +++
@@ -87,10 +87,10 @@ example. As shown in this example, the plotter preserves the picking order, mean
 output list is sorted according to the picking order.
 
 ```python
-pl = GeomPlotter(allow_picking=True)
+pl = GeometryPlotter(allow_picking=True)
 pl.plot(design.bodies)
 pl.show()
-bodies: List[Body] = GeomPlotter(allow_picking=True).show(design.bodies)
+bodies: List[Body] = GeometryPlotter(allow_picking=True).show(design.bodies)
 ```
 
 Otherwise, you can select bodies from the design directly.
@@ -124,7 +124,7 @@ Perform the intersection and plot the results.
 
 ```{code-cell} ipython3
 prism.intersect(cylin)
-_ = GeomPlotter().show(design.bodies)
+_ = GeometryPlotter().show(design.bodies)
 ```
 
 The final remaining body is the ``prism`` body because
@@ -152,7 +152,7 @@ Perform the union and plot the results.
 
 ```{code-cell} ipython3
 prism.unite(cylin)
-_ = GeomPlotter().show(design.bodies)
+_ = GeometryPlotter().show(design.bodies)
 ```
 
 The final remaining body is the ``prism`` body because
@@ -180,7 +180,7 @@ Perform the subtraction and plot the results.
 
 ```{code-cell} ipython3
 prism.subtract(cylin)
-_ = GeomPlotter().show(design.bodies)
+_ = GeometryPlotter().show(design.bodies)
 ```
 
 The final remaining body is the ``prism`` body because
@@ -204,7 +204,7 @@ cylin = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
 
 # Invert subtraction
 cylin.subtract(prism)
-_ = GeomPlotter().show(design.bodies)
+_ = GeometryPlotter().show(design.bodies)
 ```
 
 In this case, the final remaining body is the ``cylin`` body because

@@ -171,9 +171,9 @@ showing the plane of the sketch and its frame.
 
 ```{code-cell} ipython3
 # Plot the sketch in the whole scene
-from ansys.geometry.core.plotting import GeomPlotter
+from ansys.geometry.core.plotting import GeometryPlotter
 
-pl = GeomPlotter()
+pl = GeometryPlotter()
 pl.add_sketch(sketch, show_plane=True, show_frame=True)
 pl.show()
 ```

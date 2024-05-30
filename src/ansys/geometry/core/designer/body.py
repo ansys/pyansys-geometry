@@ -1327,10 +1327,10 @@ class Body(IBody):
         # lazy import here to improve initial module load time
         from ansys.tools.visualization_interface.types.mesh_object_plot import MeshObjectPlot
 
-        from ansys.geometry.core.plotting import GeomPlotter
+        from ansys.geometry.core.plotting import GeometryPlotter
 
         meshobject = MeshObjectPlot(self, self.tessellate(merge=merge))
-        pl = GeomPlotter(use_trame=use_trame)
+        pl = GeometryPlotter(use_trame=use_trame)
         pl.plot(meshobject, **plotting_options)
         pl.show(screenshot=screenshot, **plotting_options)
 
