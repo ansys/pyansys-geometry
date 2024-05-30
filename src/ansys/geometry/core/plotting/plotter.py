@@ -38,7 +38,7 @@ from ansys.geometry.core.plotting.widgets import ShowDesignPoints
 from ansys.geometry.core.sketch import Sketch
 
 
-class GeomPlotter(Plotter):
+class GeometryPlotter(Plotter):
     """
     Plotter for PyAnsys Geometry objects.
 
@@ -60,7 +60,7 @@ class GeomPlotter(Plotter):
         allow_picking: Union[bool, None] = False,
         show_plane: bool = True,
     ) -> None:
-        """Initialize the GeomPlotter class."""
+        """Initialize the GeometryPlotter class."""
         self._backend = PyVistaBackend(use_trame=use_trame, allow_picking=allow_picking)
         super().__init__(backend=self._backend)
 

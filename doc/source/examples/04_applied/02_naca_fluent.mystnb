@@ -117,15 +117,15 @@ design.create_named_selection("Airfoil Faces", faces=airfoil.faces)
 ## Display the geometry
 
 The geometry is now ready for the simulation. The following code displays the geometry in the notebook.
-This example uses the ``GeomPlotter`` class to display the geometry for
+This example uses the ``GeometryPlotter`` class to display the geometry for
 the airfoil and fluid domain in different colors with a specified opacity level.
 
 The airfoil is displayed in green, and the fluid domain is displayed in blue with an opacity of 0.25.
 
 ```{code-cell} ipython3
-from ansys.geometry.core.plotting import GeomPlotter
+from ansys.geometry.core.plotting import GeometryPlotter
 
-plotter = GeomPlotter()
+plotter = GeometryPlotter()
 plotter.plot(airfoil, color="green")
 plotter.plot(fluid, color="blue", opacity=0.15)
 plotter.show()
