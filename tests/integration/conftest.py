@@ -32,6 +32,7 @@ import logging
 import os
 from pathlib import Path
 
+import ansys.tools.visualization_interface as viz_interface
 import pytest
 import pyvista as pv
 
@@ -41,6 +42,7 @@ from ansys.geometry.core.connection.defaults import GEOMETRY_SERVICE_DOCKER_IMAG
 from ansys.geometry.core.connection.docker_instance import GeometryContainers, LocalDockerInstance
 
 pv.OFF_SCREEN = True
+viz_interface.TESTING_MODE = True
 pv.global_theme.window_size = [600, 600]
 
 

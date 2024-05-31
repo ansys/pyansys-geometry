@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import time
 
+import ansys.tools.visualization_interface as viz_interface
 from ansys_sphinx_theme import (
     ansys_favicon,
     ansys_logo_white,
@@ -21,7 +22,7 @@ from sphinx.builders.latex import LaTeXBuilder
 
 from ansys.geometry.core import __version__
 
-os.environ["PYANSYS_VISUALIZER_DOC_MODE"] = "true"
+viz_interface.DOCUMENTATION_BUILD = True
 
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
 
