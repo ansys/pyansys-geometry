@@ -99,6 +99,12 @@ jobs:
         if: always()
         run: docker image prune -f
 
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@master
+        if: always()
+        with:
+          webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
+
 # =================================================================================================
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # =================================================================================================
@@ -135,3 +141,9 @@ jobs:
           docker stop ${{ env.GEO_CONT_NAME }}
           docker logs ${{ env.GEO_CONT_NAME }}
           docker rm ${{ env.GEO_CONT_NAME }}
+
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@master
+        if: always()
+        with:
+          webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
