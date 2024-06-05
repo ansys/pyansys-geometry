@@ -41,4 +41,5 @@ class ApiVersions(Enum):
     V_231 = 231
     V_232 = 232
     V_241 = 241
-    V_242 = LATEST = 242
+    V_242 = 242
+    V_251 = LATEST = 251
