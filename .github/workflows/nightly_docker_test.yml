@@ -108,9 +108,27 @@ jobs:
         if: failure()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
-          needs: ${{ toJson(needs) }}
-          job: ${{ toJson(job) }}
-          steps: ${{ toJson(steps) }}
+          # Message to send to Teams as a webhook notification in JSON Payload format
+          raw: >-
+            {
+              "@type": "MessageCard",
+              "@context": "http://schema.org/extensions",
+              "summary": "Nightly Tests for Windows failing",
+              "themeColor": "0078D7",
+              "title": "PyAnsys Geometry Nightly Tests - Windows failing",
+              "sections": [
+                {
+                  "activityTitle": "Windows nightly tests are failing",
+                  "activitySubtitle": "Check the run for more details: https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }}",
+                  "facts": [
+                    {
+                      "name": "Status",
+                      "value": "Failed"
+                    }
+                  ]
+                }
+              ]
+            }
 
 # =================================================================================================
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -151,7 +169,7 @@ jobs:
 
       - name: Microsoft Teams Notification
         uses: skitionek/notify-microsoft-teams@master
-        if: always()
+        if: failure()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
           # Message to send to Teams as a webhook notification in JSON Payload format
