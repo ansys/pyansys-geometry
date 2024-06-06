@@ -114,7 +114,7 @@ jobs:
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
               "summary": "Nightly Tests for Windows failing",
-              "themeColor": "0078D7",
+              "themeColor": "f44336",
               "title": "PyAnsys Geometry Nightly Tests - Windows failing",
               "sections": [
                 {
@@ -178,7 +178,7 @@ jobs:
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
               "summary": "Nightly Tests for Linux failing",
-              "themeColor": "0078D7",
+              "themeColor": "f44336",
               "title": "PyAnsys Geometry Nightly Tests - Linux failing",
               "sections": [
                 {
