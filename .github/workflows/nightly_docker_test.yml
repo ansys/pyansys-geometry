@@ -168,7 +168,7 @@ jobs:
                   "facts": [
                     {
                       "name": "Status",
-                      "value": "Failed",
+                      "value": "Failed"
                     }
                   ]
                 }
