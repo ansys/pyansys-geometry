@@ -159,6 +159,7 @@ jobs:
             {
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
+              "summary": "Nightly Tests for Linux failing",
               "themeColor": "0078D7",
               "title": "PyAnsys Geometry Nightly Tests - Linux failing",
               "sections": [
