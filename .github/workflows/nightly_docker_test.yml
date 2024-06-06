@@ -159,17 +159,16 @@ jobs:
             {
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
-              "summary": "Nightly Tests for Linux failing",
               "themeColor": "0078D7",
               "title": "PyAnsys Geometry Nightly Tests - Linux failing",
               "sections": [
                 {
-                  "activityTitle": "PyAnsys Geometry Nightly Tests - Linux failing",
-                  "activitySubtitle": "PyAnsys Geometry Nightly Tests - Linux failing",
+                  "activityTitle": "Linux nightly tests are failing",
+                  "activitySubtitle": "Check the run for more details: https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }}",
                   "facts": [
                     {
                       "name": "Status",
-                      "value": "Failed"
+                      "value": "Failed",
                     }
                   ]
                 }
