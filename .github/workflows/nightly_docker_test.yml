@@ -3,6 +3,10 @@ on:
   workflow_dispatch:
   schedule: # UTC at 0300
     - cron: "0 3 * * *"
+  # Trigger workflow when file is modified
+  push:
+    paths:
+      - '.github/workflows/nightly_docker_test.yml'
 
 env:
   MAIN_PYTHON_VERSION: '3.12'
@@ -104,9 +108,27 @@ jobs:
         if: failure()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
-          needs: ${{ toJson(needs) }}
-          job: ${{ toJson(job) }}
-          steps: ${{ toJson(steps) }}
+          # Message to send to Teams as a webhook notification in JSON Payload format
+          raw: >-
+            {
+              "@type": "MessageCard",
+              "@context": "http://schema.org/extensions",
+              "summary": "Nightly Tests for Windows failing",
+              "themeColor": "f44336",
+              "title": "PyAnsys Geometry Nightly Tests - Windows failing",
+              "sections": [
+                {
+                  "activityTitle": "Windows nightly tests are failing",
+                  "activitySubtitle": "Check the run for more details: https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }}",
+                  "facts": [
+                    {
+                      "name": "Status",
+                      "value": "Failed"
+                    }
+                  ]
+                }
+              ]
+            }
 
 # =================================================================================================
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -150,6 +172,24 @@ jobs:
         if: failure()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
-          needs: ${{ toJson(needs) }}
-          job: ${{ toJson(job) }}
-          steps: ${{ toJson(steps) }}
+          # Message to send to Teams as a webhook notification in JSON Payload format
+          raw: >-
+            {
+              "@type": "MessageCard",
+              "@context": "http://schema.org/extensions",
+              "summary": "Nightly Tests for Linux failing",
+              "themeColor": "f44336",
+              "title": "PyAnsys Geometry Nightly Tests - Linux failing",
+              "sections": [
+                {
+                  "activityTitle": "Linux nightly tests are failing",
+                  "activitySubtitle": "Check the run for more details: https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }}",
+                  "facts": [
+                    {
+                      "name": "Status",
+                      "value": "Failed"
+                    }
+                  ]
+                }
+              ]
+            }
