@@ -3,6 +3,10 @@ on:
   workflow_dispatch:
   schedule: # UTC at 0300
     - cron: "0 3 * * *"
+  # Trigger workflow when file is modified
+  push:
+    paths:
+      - '.github/workflows/nightly_docker_test.yml'
 
 env:
   MAIN_PYTHON_VERSION: '3.12'
@@ -150,26 +154,24 @@ jobs:
         if: always()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
+          # Message to send to Teams as a webhook notification in JSON Payload format
           raw: >-
             {
-              "type": "message",
-              "attachments": [
+              "@type": "MessageCard",
+              "@context": "http://schema.org/extensions",
+              "summary": "Nightly Tests for Linux failing",
+              "themeColor": "0078D7",
+              "title": "PyAnsys Geometry Nightly Tests - Linux failing",
+              "sections": [
                 {
-                  "contentType": "application/vnd.microsoft.card.adaptive",
-                  "content"": {
-                    "type": "AdaptiveCard",
-                    "body": [
-                      {
-                        "type": "TextBlock",
-                        "text": "Message Text"
-                      }
-                    ],
-                    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-                    "version": "1.0"
-                  }
+                  "activityTitle": "PyAnsys Geometry Nightly Tests - Linux failing",
+                  "activitySubtitle": "PyAnsys Geometry Nightly Tests - Linux failing",
+                  "facts": [
+                    {
+                      "name": "Status",
+                      "value": "Failed"
+                    }
+                  ]
                 }
               ]
             }
-          needs: ${{ toJson(needs) }}
-          job: ${{ toJson(job) }}
-          steps: ${{ toJson(steps) }}
