@@ -1,6 +1,7 @@
 (?i)ansys
 (?i)api
 (?i)check
+[Cc]onda
 (?i)dependabot
 Direct API
 Dockerfile
