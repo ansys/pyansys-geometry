@@ -2318,4 +2318,4 @@ def test_revolve_sketch(modeler: Modeler):
 
     assert body.is_surface == False
     assert body.name == "donut-body"
-    assert np.isclose(body.volume.m, np.pi**2 * 2 * 5, rtol=1e-3) #quarter of a torus volume
+    assert np.isclose(body.volume.m, np.pi**2 * 2 * 5, rtol=1e-3)  # quarter of a torus volume
