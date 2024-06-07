@@ -7,6 +7,12 @@ on:
   push:
     paths:
       - '.github/workflows/nightly_docker_test.yml'
+    # Sequence of patterns matched against refs/heads
+    branches-ignore:    
+      - 'release/**'
+    # Sequence of patterns matched against refs/tags
+    tags-ignore:        
+      - v*
 
 env:
   MAIN_PYTHON_VERSION: '3.12'
