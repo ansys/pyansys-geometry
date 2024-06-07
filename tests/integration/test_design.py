@@ -60,7 +60,7 @@ from ansys.geometry.core.shapes.curves.ellipse import Ellipse
 from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.sketch import Sketch
 
-from .conftest import skip_if_linux
+from .conftest import FILES_DIR, skip_if_linux
 
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):
@@ -1935,7 +1935,7 @@ def test_get_active_design(modeler: Modeler):
 def test_get_collision(modeler: Modeler):
     """Test the collision state between two bodies."""
     skip_if_linux(modeler, test_get_collision.__name__, "get_collision")  # Skip test on Linux
-    design = modeler.open_file("./tests/integration/files/MixingTank.scdocx")
+    design = modeler.open_file(FILES_DIR / "MixingTank.scdocx")
     body1 = design.bodies[0]
     body2 = design.bodies[1]
     body3 = design.bodies[2]

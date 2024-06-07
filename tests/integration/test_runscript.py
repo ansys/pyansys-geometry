@@ -30,7 +30,7 @@ from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.sketch import Sketch
 
-from .conftest import skip_if_linux
+from .conftest import DSCOSCRIPTS_FILES_DIR, skip_if_linux
 
 
 # Python (.py)
@@ -39,9 +39,7 @@ def test_python_simple_script(modeler: Modeler):
     # Skip on Linux
     skip_if_linux(modeler, test_python_simple_script.__name__, "run_discovery_script_file")
 
-    result = modeler.run_discovery_script_file(
-        "./tests/integration/files/disco_scripts/simple_script.py"
-    )
+    result = modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "simple_script.py")
     pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)
     pattern_doc = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.Document", re.IGNORECASE)
     assert len(result) == 2
@@ -54,9 +52,7 @@ def test_python_failing_script(modeler: Modeler):
     # Skip on Linux
     skip_if_linux(modeler, test_python_failing_script.__name__, "run_discovery_script_file")
     with pytest.raises(GeometryRuntimeError):
-        modeler.run_discovery_script_file(
-            "./tests/integration/files/disco_scripts/failing_script.py"
-        )
+        modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "failing_script.py")
 
 
 def test_python_integrated_script(modeler: Modeler):
@@ -75,7 +71,7 @@ def test_python_integrated_script(modeler: Modeler):
     design = modeler.create_design("Integrated_Example")
     design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     values, design = modeler.run_discovery_script_file(
-        "./tests/integration/files/disco_scripts/integrated_script.py", {"radius": "1"}, True
+        DSCOSCRIPTS_FILES_DIR / "integrated_script.py", {"radius": "1"}, True
     )
     # Script creates a 2nd body
     assert len(design.bodies) == 2
@@ -88,9 +84,7 @@ def test_scscript_simple_script(modeler: Modeler):
     # Skip on Linux
     skip_if_linux(modeler, test_scscript_simple_script.__name__, "run_discovery_script_file")
 
-    result = modeler.run_discovery_script_file(
-        "./tests/integration/files/disco_scripts/simple_script.scscript"
-    )
+    result = modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "simple_script.scscript")
     assert len(result) == 2
     pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)
     pattern_doc = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.Document", re.IGNORECASE)
@@ -105,9 +99,7 @@ def test_dscript_simple_script(modeler: Modeler):
     # Skip on Linux
     skip_if_linux(modeler, test_dscript_simple_script.__name__, "run_discovery_script_file")
 
-    result = modeler.run_discovery_script_file(
-        "./tests/integration/files/disco_scripts/simple_script.dscript"
-    )
+    result = modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "simple_script.dscript")
     assert len(result) == 2
     pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)
     pattern_doc = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.Document", re.IGNORECASE)

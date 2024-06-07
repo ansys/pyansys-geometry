@@ -45,6 +45,10 @@ pv.OFF_SCREEN = True
 viz_interface.TESTING_MODE = True
 pv.global_theme.window_size = [600, 600]
 
+IMPORT_FILES_DIR = Path(Path(__file__).parent, "files", "import")
+DSCOSCRIPTS_FILES_DIR = Path(Path(__file__).parent, "files", "disco_scripts")
+FILES_DIR = Path(Path(__file__).parent, "files")
+
 
 # TODO: re-enable when Linux service is able to use measurement tools
 def skip_if_linux(modeler: Modeler, test_name: str, element_not_available: str):
