@@ -22,7 +22,11 @@ from sphinx.builders.latex import LaTeXBuilder
 
 from ansys.geometry.core import __version__
 
-viz_interface.DOCUMENTATION_BUILD = True
+# For some reason the global var is not working on doc build...
+# viz_interface.DOCUMENTATION_BUILD = True
+#
+# Using env var instead
+os.environ["PYANSYS_VISUALIZER_DOC_MODE"] = "true"
 
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
 
