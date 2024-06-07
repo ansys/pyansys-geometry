@@ -73,7 +73,9 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
+from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -587,6 +589,65 @@ class Component:
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
+
+    def revolve_sketch(
+        self,
+        name: str,
+        sketch: Sketch,
+        axis: Vector3D,
+        angle: Union[Quantity, Angle, Real],
+        rotation_origin: Point3D,
+    ) -> Body:
+        """
+        Create a solid body by revolving a sketch profile around an axis.
+
+        Notes
+        -----
+        The newly created body is placed under this component within the design assembly.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the new solid body.
+        sketch : Sketch
+            Two-dimensional sketch source for the revolve.
+        axis : Vector3D
+            Axis of rotation for the revolve.
+        angle : Union[~pint.Quantity, Angle, Real]
+            Angle to revolve the solid body around the axis. Can be both positive and negative.
+        rotation_origin : Point3D
+            Origin of the axis of rotation.
+
+        Returns
+        -------
+        Body
+            Revolved body from the given sketch.
+        """
+        # Compute the distance between the rotation origin and the sketch plane
+        rotation_origin_to_sketch = sketch.plane.origin - rotation_origin
+        rotation_origin_to_sketch_as_vector = Vector3D(rotation_origin_to_sketch)
+        distance = Distance(
+            rotation_origin_to_sketch_as_vector.norm,
+            unit=rotation_origin_to_sketch.base_unit,
+        )
+
+        # Define the revolve path
+        circle = Circle(
+            rotation_origin,
+            radius=distance,
+            reference=rotation_origin_to_sketch_as_vector,
+            axis=axis,
+        )
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+        interval = (
+            Interval(0, angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE))
+            if angle.value.m >= 0
+            else Interval(angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE), 0)
+        )
+        path = circle.trim(interval)
+
+        # Create the revolved body by delegating to the sweep method
+        return self.sweep_sketch(name, sketch, [path])
 
     @protect_grpc
     @check_input_types
