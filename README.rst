@@ -12,11 +12,11 @@ PyAnsys Geometry
    :target: https://pypi.org/project/ansys-geometry-core/
    :alt: Python
 
-.. |pypi| image:: https://img.shields.io/pypi/v/ansys-geometry-core.svg?logo=python&logoColor=white
+.. |pypi| image:: https://img.shields.io/pypi/v/ansys-geometry-core.svg?logo=python&logoColor=white&label=PyPI
    :target: https://pypi.org/project/ansys-geometry-core
    :alt: PyPI
 
-.. |conda| image:: https://img.shields.io/conda/vn/conda-forge/ansys-geometry-core
+.. |conda| image:: https://img.shields.io/conda/vn/conda-forge/ansys-geometry-core?label=Conda&logo=anaconda&logoColor=white
    :target: https://anaconda.org/conda-forge/ansys-geometry-core
    :alt: Conda
 
