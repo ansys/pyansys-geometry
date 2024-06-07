@@ -9,6 +9,61 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.6.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.6.0>`_ - 2024-06-07
+=====================================================================================
+
+Added
+^^^^^
+
+- feat: Adapt to ansys-visualizer `#959 <https://github.com/ansys/pyansys-geometry/pull/959>`_
+- fix: rename ``GeomPlotter`` to ``GeometryPlotter`` `#1227 <https://github.com/ansys/pyansys-geometry/pull/1227>`_
+- refactor: use ansys-tools-visualization-interface global vars rather than env vars `#1230 <https://github.com/ansys/pyansys-geometry/pull/1230>`_
+- feat: bump to use v251 as default `#1242 <https://github.com/ansys/pyansys-geometry/pull/1242>`_
+
+
+Changed
+^^^^^^^
+
+- chore: update CHANGELOG for v0.5.6 `#1213 <https://github.com/ansys/pyansys-geometry/pull/1213>`_
+- chore: update SECURITY.md `#1214 <https://github.com/ansys/pyansys-geometry/pull/1214>`_
+- ci: use Trusted Publisher for releasing package `#1216 <https://github.com/ansys/pyansys-geometry/pull/1216>`_
+- ci: remove pygeometry-ci-1 specific logic `#1221 <https://github.com/ansys/pyansys-geometry/pull/1221>`_
+- ci: only run doc build on runners outside the ansys network `#1223 <https://github.com/ansys/pyansys-geometry/pull/1223>`_
+- chore: pre-commit automatic update `#1224 <https://github.com/ansys/pyansys-geometry/pull/1224>`_
+- ci: announce nightly workflows failing `#1237 <https://github.com/ansys/pyansys-geometry/pull/1237>`_
+- ci: failing notifications improvement `#1243 <https://github.com/ansys/pyansys-geometry/pull/1243>`_
+- fix: broken interactive docs and improved tests paths `#1244 <https://github.com/ansys/pyansys-geometry/pull/1244>`_
+
+
+Fixed
+^^^^^
+
+- fix: Interactive documentation `#1226 <https://github.com/ansys/pyansys-geometry/pull/1226>`_
+- fix: only notify on failure and fill with data `#1238 <https://github.com/ansys/pyansys-geometry/pull/1238>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- build: bump protobuf from 5.26.1 to 5.27.0 in the grpc-deps group `#1217 <https://github.com/ansys/pyansys-geometry/pull/1217>`_
+- build: bump panel from 1.4.2 to 1.4.3 in the docs-deps group `#1218 <https://github.com/ansys/pyansys-geometry/pull/1218>`_
+- build: bump ansys-api-geometry from 0.4.1 to 0.4.2 `#1219 <https://github.com/ansys/pyansys-geometry/pull/1219>`_
+- build: bump ansys-sphinx-theme[autoapi] from 0.16.2 to 0.16.5 in the docs-deps group `#1231 <https://github.com/ansys/pyansys-geometry/pull/1231>`_
+- build: bump requests from 2.32.2 to 2.32.3 `#1232 <https://github.com/ansys/pyansys-geometry/pull/1232>`_
+- build: bump ansys-api-geometry from 0.4.2 to 0.4.3 `#1233 <https://github.com/ansys/pyansys-geometry/pull/1233>`_
+- build: bump ansys-tools-visualization-interface from 0.2.1 to 0.2.2 `#1234 <https://github.com/ansys/pyansys-geometry/pull/1234>`_
+- build: bump panel from 1.4.3 to 1.4.4 in the docs-deps group `#1235 <https://github.com/ansys/pyansys-geometry/pull/1235>`_
+- build: bump ansys-tools-path from 0.5.2 to 0.6.0 `#1236 <https://github.com/ansys/pyansys-geometry/pull/1236>`_
+- build: bump grpcio from 1.64.0 to 1.64.1 in the grpc-deps group `#1239 <https://github.com/ansys/pyansys-geometry/pull/1239>`_
+- build: bump ansys-api-geometry from 0.4.3 to 0.4.4 `#1240 <https://github.com/ansys/pyansys-geometry/pull/1240>`_
+- build: bump pytest from 8.2.1 to 8.2.2 `#1241 <https://github.com/ansys/pyansys-geometry/pull/1241>`_
+
+
+Miscellaneous
+^^^^^^^^^^^^^
+
+- docs: update AUTHORS `#1222 <https://github.com/ansys/pyansys-geometry/pull/1222>`_
+
 `0.5.6 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.6>`_ - 2024-05-23
 =====================================================================================
 
