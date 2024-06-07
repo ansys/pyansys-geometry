@@ -30,7 +30,7 @@ from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.sketch import Sketch
 
-from .conftest import skip_if_linux, DSCOSCRIPTS_FILES_DIR
+from .conftest import DSCOSCRIPTS_FILES_DIR, skip_if_linux
 
 
 # Python (.py)

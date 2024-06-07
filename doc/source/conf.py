@@ -6,7 +6,6 @@ import os
 from pathlib import Path
 import time
 
-import ansys.tools.visualization_interface as viz_interface
 from ansys_sphinx_theme import (
     ansys_favicon,
     ansys_logo_white,
@@ -23,6 +22,8 @@ from sphinx.builders.latex import LaTeXBuilder
 from ansys.geometry.core import __version__
 
 # For some reason the global var is not working on doc build...
+# import ansys.tools.visualization_interface as viz_interface
+#
 # viz_interface.DOCUMENTATION_BUILD = True
 #
 # Using env var instead

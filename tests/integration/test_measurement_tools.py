@@ -25,7 +25,7 @@ from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.tools.measurement_tools import Gap
 
-from .conftest import skip_if_linux, FILES_DIR
+from .conftest import FILES_DIR, skip_if_linux
 
 
 def test_distance_property(modeler: Modeler):

@@ -60,7 +60,7 @@ from ansys.geometry.core.shapes.curves.ellipse import Ellipse
 from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.sketch import Sketch
 
-from .conftest import skip_if_linux, FILES_DIR
+from .conftest import FILES_DIR, skip_if_linux
 
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):

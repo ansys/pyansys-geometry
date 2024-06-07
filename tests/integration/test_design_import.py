@@ -22,6 +22,7 @@
 """Test design import."""
 
 from pathlib import Path
+
 import numpy as np
 from pint import Quantity
 import pytest
@@ -34,7 +35,7 @@ from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vect
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 
-from .conftest import skip_if_linux, IMPORT_FILES_DIR, FILES_DIR
+from .conftest import FILES_DIR, IMPORT_FILES_DIR, skip_if_linux
 
 
 def _checker_method(comp: Component, comp_ref: Component, precise_check: bool = True) -> None:
