@@ -590,6 +590,8 @@ class Component:
         self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
+    @min_backend_version(24, 2, 0)
+    @check_input_types
     def revolve_sketch(
         self,
         name: str,

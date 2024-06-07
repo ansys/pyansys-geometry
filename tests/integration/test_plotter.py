@@ -30,7 +30,9 @@ from pyvista.plotting import system_supports_plotting
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.math import UNITVECTOR3D_Y, UNITVECTOR3D_Z, Plane, Point2D, Point3D
+from ansys.geometry.core.math.constants import UNITVECTOR3D_X
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
+from ansys.geometry.core.misc.measurements import Angle
 from ansys.geometry.core.plotting import GeometryPlotter
 from ansys.geometry.core.sketch import (
     Arc,
@@ -687,4 +689,74 @@ def test_plot_design_point(modeler: Modeler, verify_image_cache):
     pl.plot(plot_list)
     pl.show(
         screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_design_point.png"),
+    )
+
+
+def test_plot_revolve_sketch_normal(modeler: Modeler):
+    """Test plotting of a sketch revolved around an axis."""
+    # Initialize the donut sketch design
+    design = modeler.create_design("quarter-donut")
+
+    # Donut parameters
+    path_radius = 5
+    profile_radius = 2
+
+    # Create the circlular profile on the XZ-plane centered at (5, 0, 0)
+    # with a radius of 2
+    plane_profile = Plane(
+        origin=Point3D([path_radius, 0, 0]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z
+    )
+    profile = Sketch(plane=plane_profile)
+    profile.circle(Point2D([0, 0]), profile_radius)
+
+    # Revolver the profile around the Z-axis and centered in the absolute origin
+    # for an angle of 90 degrees
+    design.revolve_sketch(
+        "donut-body",
+        sketch=profile,
+        axis=UNITVECTOR3D_Z,
+        angle=Angle(90, unit=UNITS.degrees),
+        rotation_origin=Point3D([0, 0, 0]),
+    )
+
+    # plot
+    pl = GeometryPlotter()
+    pl.plot(design)
+    pl.show(
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_revolve_sketch_normal.png"),
+    )
+
+
+def test_plot_revolve_sketch_negative_angle(modeler: Modeler):
+    """Test plotting of a sketch revolved around an axis with a negative angle."""
+    # Initialize the donut sketch design
+    design = modeler.create_design("quarter-donut")
+
+    # Donut parameters
+    path_radius = 5
+    profile_radius = 2
+
+    # Create the circlular profile on the XZ-plane centered at (5, 0, 0)
+    # with a radius of 2
+    plane_profile = Plane(
+        origin=Point3D([path_radius, 0, 0]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z
+    )
+    profile = Sketch(plane=plane_profile)
+    profile.circle(Point2D([0, 0]), profile_radius)
+
+    # Revolver the profile around the Z-axis and centered in the absolute origin
+    # for an angle of 90 degrees
+    design.revolve_sketch(
+        "donut-body-negative",
+        sketch=profile,
+        axis=UNITVECTOR3D_Z,
+        angle=Angle(-90, unit=UNITS.degrees),
+        rotation_origin=Point3D([0, 0, 0]),
+    )
+
+    # plot
+    pl = GeometryPlotter()
+    pl.plot(design)
+    pl.show(
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_revolve_sketch_negative_angle.png"),
     )

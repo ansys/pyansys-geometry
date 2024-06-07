@@ -55,6 +55,7 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Distance
+from ansys.geometry.core.misc.measurements import Angle
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.ellipse import Ellipse
 from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
@@ -2286,3 +2287,35 @@ def test_create_body_from_loft_profile(modeler: Modeler):
     # check volume of body
     # expected is 0 since it's not a closed surface
     assert result.volume.m == 0
+
+
+def test_revolve_sketch(modeler: Modeler):
+    """Test revolving a circular profile for a quarter donut."""
+    # Initialize the donut sketch design
+    design = modeler.create_design("quarter-donut")
+
+    # Donut parameters
+    path_radius = 5
+    profile_radius = 2
+
+    # Create the circlular profile on the XZ-plane centered at (5, 0, 0)
+    # with a radius of 2
+    plane_profile = Plane(
+        origin=Point3D([path_radius, 0, 0]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z
+    )
+    profile = Sketch(plane=plane_profile)
+    profile.circle(Point2D([0, 0]), profile_radius)
+
+    # Revolver the profile around the Z-axis and centered in the absolute origin
+    # for an angle of 90 degrees
+    body = design.revolve_sketch(
+        "donut-body",
+        sketch=profile,
+        axis=UNITVECTOR3D_Z,
+        angle=Angle(90, unit=UNITS.degrees),
+        rotation_origin=Point3D([0, 0, 0]),
+    )
+
+    assert body.is_surface == False
+    assert body.name == "donut-body"
+    assert np.isclose(body.volume.m, np.pi**2 * 2 * 5, rtol=1e-3) #quarter of a torus volume
