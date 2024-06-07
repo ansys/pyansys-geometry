@@ -21,6 +21,7 @@
 # SOFTWARE.
 """Test design import."""
 
+from pathlib import Path
 import numpy as np
 from pint import Quantity
 import pytest
@@ -33,7 +34,7 @@ from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vect
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 
-from .conftest import skip_if_linux
+from .conftest import skip_if_linux, IMPORT_FILES_DIR, FILES_DIR
 
 
 def _checker_method(comp: Component, comp_ref: Component, precise_check: bool = True) -> None:
@@ -135,7 +136,7 @@ def test_design_import_with_surfaces_issue834(modeler: Modeler):
     skip_if_linux(modeler, test_design_import_with_surfaces_issue834.__name__, "open_file")
 
     # Open the design
-    design = modeler.open_file("./tests/integration/files/DuplicateFacesDesignBefore.scdocx")
+    design = modeler.open_file(Path(FILES_DIR, "DuplicateFacesDesignBefore.scdocx"))
 
     # Check that there are two bodies
     assert len(design.bodies) == 2
@@ -207,39 +208,39 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         # file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
         # design.download(file, DesignFileFormat.IGES)
         # design2 = modeler.open_file(file)
-        # design3 = modeler.open_file("./tests/integration/files/import/twoCars.igs")
+        # design3 = modeler.open_file(Path(IMPORT_FILES_DIR, "twoCars.igs")
         # _checker_method(design2, design3, False)
 
         # STEP
         file = tmp_path_factory.mktemp("test_design_import") / "two_cars.step"
         design.download(file, DesignFileFormat.STEP)
         design2 = modeler.open_file(file)
-        design3 = modeler.open_file("./tests/integration/files/import/twoCars.stp")
+        design3 = modeler.open_file(Path(IMPORT_FILES_DIR, "twoCars.stp"))
         _checker_method(design2, design3, False)
 
         # Catia
-        design2 = modeler.open_file("./tests/integration/files/import/catia_car/car.CATProduct")
+        design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "catia_car/car.CATProduct"))
         _checker_method(design, design2, False)
 
         # Rhino
-        design2 = modeler.open_file("./tests/integration/files/import/box.3dm")
+        design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "box.3dm"))
         assert len(design2.components) == 1
         assert len(design2.components[0].bodies) == 1
 
         # Stride
-        design2 = modeler.open_file("./tests/integration/files/import/sample_box.project")
+        design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "sample_box.project"))
         assert len(design2.bodies) == 1
 
         # SolidWorks
-        design2 = modeler.open_file("./tests/integration/files/import/partColor.SLDPRT")
+        design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "partColor.SLDPRT"))
         assert len(design2.components[0].bodies) == 1
 
         # .par
-        design2 = modeler.open_file("./tests/integration/files/import/Tank_Bottom.par")
+        design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "Tank_Bottom.par"))
         assert len(design2.bodies) == 1
 
         # .prt
-        design2 = modeler.open_file("./tests/integration/files/import/disk1.prt")
+        design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "disk1.prt"))
         assert len(design2.bodies) == 1
 
 
@@ -257,7 +258,7 @@ def test_design_insert(modeler: Modeler):
     comp.extrude_sketch("Body_Cylinder", sketch, 5)
 
     # Insert a different file
-    design.insert_file("./tests/integration/files/DuplicateFacesDesignBefore.scdocx")
+    design.insert_file(Path(FILES_DIR, "DuplicateFacesDesignBefore.scdocx"))
 
     # Check that there are two components
     assert len(design.components) == 2
@@ -280,7 +281,7 @@ def test_design_insert_with_import(modeler: Modeler):
     comp.extrude_sketch("Body_Cylinder", sketch, 5)
 
     # Import and insert a different file
-    design.insert_file("./tests/integration/files/import/catia_car/Wheel1.CATPart")
+    design.insert_file(Path(IMPORT_FILES_DIR, "catia_car/Wheel1.CATPart"))
 
     # Check that there are two components
     assert len(design.components) == 2
