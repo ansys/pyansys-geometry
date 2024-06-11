@@ -605,7 +605,9 @@ class Component:
 
         Notes
         -----
-        The newly created body is placed under this component within the design assembly.
+        It is important that the sketch plane origin is not coincident with the rotation
+        origin. If the sketch plane origin is coincident with the rotation origin, the
+        distance between the two points is zero, and the revolve operation will fail.
 
         Parameters
         ----------
@@ -625,6 +627,13 @@ class Component:
         Body
             Revolved body from the given sketch.
         """
+        # Check that the sketch plane origin is not coincident with the rotation origin
+        if sketch.plane.origin == rotation_origin:
+            raise ValueError(
+                "The sketch plane origin is coincident with the rotation origin. "
+                + "The distance between the two points is zero, and the revolve operation will fail."
+            )
+
         # Compute the distance between the rotation origin and the sketch plane
         rotation_origin_to_sketch = sketch.plane.origin - rotation_origin
         rotation_origin_to_sketch_as_vector = Vector3D(rotation_origin_to_sketch)

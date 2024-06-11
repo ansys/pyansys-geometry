@@ -2319,3 +2319,27 @@ def test_revolve_sketch(modeler: Modeler):
     assert body.is_surface == False
     assert body.name == "donut-body"
     assert np.isclose(body.volume.m, np.pi**2 * 2 * 5, rtol=1e-3)  # quarter of a torus volume
+
+
+def test_revolve_sketch_fail(modeler: Modeler):
+    """Test demonstrating the failure of revolving a sketch when they are located in the same origin."""
+    # Initialize the donut sketch design
+    design = modeler.create_design("revolve-fail")
+
+    # Create an XZ-plane centered at (0, 0, 0)
+    plane_profile = Plane(
+        origin=Point3D([0, 0, 0]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z
+    )
+    profile = Sketch(plane=plane_profile)
+
+    # Try revolving the profile...
+    with pytest.raises(
+        ValueError, match="The sketch plane origin is coincident with the rotation origin."
+    ):
+        design.revolve_sketch(
+            "donut-body",
+            sketch=profile,
+            axis=UNITVECTOR3D_Z,
+            angle=Angle(90, unit=UNITS.degrees),
+            rotation_origin=Point3D([0, 0, 0]),
+        )
