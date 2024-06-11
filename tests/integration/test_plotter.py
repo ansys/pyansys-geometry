@@ -701,7 +701,7 @@ def test_plot_revolve_sketch_normal(modeler: Modeler):
     path_radius = 5
     profile_radius = 2
 
-    # Create the circlular profile on the XZ-plane centered at (5, 0, 0)
+    # Create the circular profile on the XZ-plane centered at (5, 0, 0)
     # with a radius of 2
     plane_profile = Plane(
         origin=Point3D([path_radius, 0, 0]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z
@@ -736,7 +736,7 @@ def test_plot_revolve_sketch_negative_angle(modeler: Modeler):
     path_radius = 5
     profile_radius = 2
 
-    # Create the circlular profile on the XZ-plane centered at (5, 0, 0)
+    # Create the circular profile on the XZ-plane centered at (5, 0, 0)
     # with a radius of 2
     plane_profile = Plane(
         origin=Point3D([path_radius, 0, 0]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z

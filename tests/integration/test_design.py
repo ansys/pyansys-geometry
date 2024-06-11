@@ -54,11 +54,8 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector3D,
 )
-from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Distance
-from ansys.geometry.core.misc.measurements import Angle
-from ansys.geometry.core.shapes.curves.circle import Circle
-from ansys.geometry.core.shapes.curves.ellipse import Ellipse
-from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance
+from ansys.geometry.core.shapes import Circle, Ellipse, Interval, ParamUV
 from ansys.geometry.core.sketch import Sketch
 
 from .conftest import FILES_DIR, skip_if_linux
@@ -2298,7 +2295,7 @@ def test_revolve_sketch(modeler: Modeler):
     path_radius = 5
     profile_radius = 2
 
-    # Create the circlular profile on the XZ-plane centered at (5, 0, 0)
+    # Create the circular profile on the XZ-plane centered at (5, 0, 0)
     # with a radius of 2
     plane_profile = Plane(
         origin=Point3D([path_radius, 0, 0]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z
