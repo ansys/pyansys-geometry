@@ -104,7 +104,7 @@ design.revolve_sketch(
 design.plot()
 ```
 
-### Performing a negative angle of revolution
+### Performing a revolve operation with a negative angle of revolution
 
 A negative angle of revolution can be used to create a quarter of a donut in the opposite direction. The following code snippet shows how to create a quarter of a donut in the clockwise direction. The same profile circle is used, but the angle of revolution is set to -90 degrees.
 
