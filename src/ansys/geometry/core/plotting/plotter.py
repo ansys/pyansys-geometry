@@ -389,4 +389,6 @@ class GeometryPlotter(Plotter):
             Keyword arguments for the plotter. Arguments depend of the backend implementation
             you are using.
         """
-        self._backend.show(object=plotting_object, screenshot=screenshot, **plotting_options)
+        if plotting_object is not None:
+            self.plot(plotting_object, **plotting_options)
+        self._backend.show(screenshot=screenshot, **plotting_options)
