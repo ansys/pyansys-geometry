@@ -631,7 +631,7 @@ class Component:
         if sketch.plane.origin == rotation_origin:
             raise ValueError(
                 "The sketch plane origin is coincident with the rotation origin. "
-                + "The distance between the two points is zero, and the revolve operation will fail."
+                + "The distance between the points is zero, and the revolve operation will fail."
             )
 
         # Compute the distance between the rotation origin and the sketch plane

@@ -2322,7 +2322,8 @@ def test_revolve_sketch(modeler: Modeler):
 
 
 def test_revolve_sketch_fail(modeler: Modeler):
-    """Test demonstrating the failure of revolving a sketch when they are located in the same origin."""
+    """Test demonstrating the failure of revolving a sketch when they are located in the
+    same origin."""
     # Initialize the donut sketch design
     design = modeler.create_design("revolve-fail")
 
