@@ -44,8 +44,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
 
       - name: Set up headless display
         uses: pyvista/setup-headless-display-action@v2
