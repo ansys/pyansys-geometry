@@ -2306,7 +2306,7 @@ def test_revolve_sketch(modeler: Modeler):
     profile = Sketch(plane=plane_profile)
     profile.circle(Point2D([0, 0]), profile_radius)
 
-    # Revolver the profile around the Z-axis and centered in the absolute origin
+    # Revolve the profile around the Z-axis and centered in the absolute origin
     # for an angle of 90 degrees
     body = design.revolve_sketch(
         "donut-body",

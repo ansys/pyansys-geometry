@@ -709,7 +709,7 @@ def test_plot_revolve_sketch_normal(modeler: Modeler):
     profile = Sketch(plane=plane_profile)
     profile.circle(Point2D([0, 0]), profile_radius)
 
-    # Revolver the profile around the Z-axis and centered in the absolute origin
+    # Revolve the profile around the Z-axis and centered in the absolute origin
     # for an angle of 90 degrees
     design.revolve_sketch(
         "donut-body",
@@ -744,7 +744,7 @@ def test_plot_revolve_sketch_negative_angle(modeler: Modeler):
     profile = Sketch(plane=plane_profile)
     profile.circle(Point2D([0, 0]), profile_radius)
 
-    # Revolver the profile around the Z-axis and centered in the absolute origin
+    # Revolve the profile around the Z-axis and centered in the absolute origin
     # for an angle of 90 degrees
     design.revolve_sketch(
         "donut-body-negative",
