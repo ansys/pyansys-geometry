@@ -45,7 +45,7 @@ and then revolving it around the Z-axis to create a 3D body.
 
 ### Initialize the sketch design
 
-A new design sketch named "donut" is created.
+A new design sketch named "quarter-donut" is created.
 
 ```{code-cell} ipython3
 # Initialize the donut sketch design
