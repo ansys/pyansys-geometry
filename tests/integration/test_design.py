@@ -2341,3 +2341,48 @@ def test_revolve_sketch_fail(modeler: Modeler):
             angle=Angle(90, unit=UNITS.degrees),
             rotation_origin=Point3D([0, 0, 0]),
         )
+
+
+def test_temp_body_on_empty_intersect_issue1192(modeler: Modeler):
+    """Test demonstrating the issue when intersecting two bodies that do not intersect
+    and the empty temporal body that gets created."""
+    # When attempting to intersect two bodies that do not intersect, no body should be
+    # created. However, in the past, a temporary body was created and added to the
+    # component. This test checks if this issue has been resolved.
+    design = modeler.create_design("temp-body-intersect-issue")
+
+    # Create two bodies that do not intersect
+    plane = Plane(
+        Point3D([1 / 2, 1 / 2, 0.0]),
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
+    )
+    matrix_plane = Sketch(plane)
+    matrix_plane.box(Point2D([0.0, 0.0]), width=1, height=1)
+    matrix = design.extrude_sketch("Matrix", matrix_plane, 1)
+
+    p = Point3D([1.0, 1.0, 1.5])
+    plane = Plane(p, UNITVECTOR3D_X, UNITVECTOR3D_Y)
+    sketch_fibres = Sketch(plane)
+    sketch_fibres.circle(Point2D([0.0, 0.0]), radius=0.5)
+    fibre = design.extrude_sketch("fibre", sketch_fibres, 1)
+
+    # Attempt intersection - which fails and thus deletes copy
+    matrix_copy = matrix.copy(design)
+    try:
+        fibre.intersect(matrix_copy)
+    except:
+        design.delete_body(matrix_copy)
+
+    # No intersection took place... so no body should be created
+    # Let's read the design and check that only the two bodies are present
+    read_design = modeler.read_existing_design()
+
+    # Verify the design
+    assert len(read_design.bodies) == 2
+    assert len(read_design.bodies) == 2
+    assert len(read_design.bodies[0].faces) == 6
+    assert len(read_design.bodies[1].faces) == 3
+    assert read_design.bodies[0].name == "Matrix"
+    assert read_design.bodies[1].name == "fibre"
+    assert len(read_design.components) == 0
