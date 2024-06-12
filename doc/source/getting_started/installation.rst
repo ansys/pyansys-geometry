@@ -4,7 +4,7 @@ Install package in development mode
 ###################################
 
 This topic assumes that you want to install PyAnsys Geometry in developer mode so that
-you can modify the source and enhance it. You can install PyAnsys Geometry from PyPI
+you can modify the source and enhance it. You can install PyAnsys Geometry from PyPI, Conda,
 or from the `PyAnsys Geometry repository <https://github.com/ansys/pyansys-geometry>`_ on GitHub.
 
 .. contents::
@@ -43,6 +43,23 @@ Then, to install PyAnsys Geometry, run this command:
 
    python -m pip install ansys-geometry-core
 
+
+Conda
+-----
+
+You can also install PyAnsys Geometry using `conda`_. First, ensure that you have the latest version:
+
+.. code:: bash
+
+   conda update -n base -c defaults conda
+
+Then, to install PyAnsys Geometry, run this command:
+
+.. code:: bash
+
+   conda install -c conda-forge ansys-geometry-core
+
+
 GitHub
 ------
 
@@ -77,7 +94,7 @@ For example, on Linux with Python 3.9, unzip the wheelhouse archive and install 
 
 .. code:: bash
 
-    unzip ansys-geometry-core-v0.6.0-wheelhouse-Linux-3.9.zip wheelhouse
+    unzip ansys-geometry-core-v0.6.0-wheelhouse-ubuntu-3.9.zip wheelhouse
     pip install ansys-geometry-core -f wheelhouse --no-index --upgrade --ignore-installed
 
 If you are on Windows with Python 3.9, unzip the wheelhouse archive to a wheelhouse directory
@@ -116,3 +133,4 @@ For more information on PyAnsys Geometry usage, see :ref:`User guide <ref_user_g
 
 .. LINKS AND REFERENCES
 .. _pip: https://pypi.org/project/pip/
+.. _conda: https://conda.io/projects/conda/en/latest/user-guide/getting-started.html

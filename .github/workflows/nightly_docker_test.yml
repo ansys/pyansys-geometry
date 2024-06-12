@@ -7,9 +7,15 @@ on:
   push:
     paths:
       - '.github/workflows/nightly_docker_test.yml'
+    # Sequence of patterns matched against refs/heads
+    branches-ignore:
+      - 'release/**'
+    # Sequence of patterns matched against refs/tags
+    tags-ignore:
+      - v*
 
 env:
-  MAIN_PYTHON_VERSION: '3.12'
+  MAIN_PYTHON_VERSION: '3.11'
   ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/ansys/geometry:windows-latest-unstable
   ANSRV_GEO_IMAGE_LINUX_TAG: ghcr.io/ansys/geometry:linux-latest-unstable
   ANSRV_GEO_PORT: 710
@@ -38,8 +44,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          cache: 'pip'
-          cache-dependency-path: 'pyproject.toml'
 
       - name: Set up headless display
         uses: pyvista/setup-headless-display-action@v2
