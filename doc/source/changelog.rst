@@ -9,6 +9,43 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.6.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.6.1>`_ - 2024-06-12
+=====================================================================================
+
+Added
+^^^^^
+
+- feat: revolve a sketch given an axis and an origin `#1248 <https://github.com/ansys/pyansys-geometry/pull/1248>`_
+
+
+Changed
+^^^^^^^
+
+- chore: update CHANGELOG for v0.6.0 `#1245 <https://github.com/ansys/pyansys-geometry/pull/1245>`_
+- chore: update dev version to 0.7.dev0 `#1246 <https://github.com/ansys/pyansys-geometry/pull/1246>`_
+
+
+Fixed
+^^^^^
+
+- fix: Bug in `show` function `#1255 <https://github.com/ansys/pyansys-geometry/pull/1255>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- build: bump protobuf from 5.27.0 to 5.27.1 in the grpc-deps group `#1250 <https://github.com/ansys/pyansys-geometry/pull/1250>`_
+- build: bump the docs-deps group with 2 updates `#1251 <https://github.com/ansys/pyansys-geometry/pull/1251>`_
+- build: bump trame-vtk from 2.8.8 to 2.8.9 `#1252 <https://github.com/ansys/pyansys-geometry/pull/1252>`_
+- build: bump pint from 0.23 to 0.24 `#1253 <https://github.com/ansys/pyansys-geometry/pull/1253>`_
+- build: bump ansys-tools-visualization-interface from 0.2.2 to 0.2.3 `#1254 <https://github.com/ansys/pyansys-geometry/pull/1254>`_
+
+
+Miscellaneous
+^^^^^^^^^^^^^
+
+- docs: add conda information for package `#1247 <https://github.com/ansys/pyansys-geometry/pull/1247>`_
+
 `0.6.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.6.0>`_ - 2024-06-07
 =====================================================================================
 
