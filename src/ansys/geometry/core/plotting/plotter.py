@@ -330,8 +330,6 @@ class GeometryPlotter(Plotter):
 
         Parameters
         ----------
-        object : Any
-            Object to add.
         plottable_object : str, default: None
             Regular expression with the desired name or names you want to include in the plotter.
         name_filter: str, default: None
