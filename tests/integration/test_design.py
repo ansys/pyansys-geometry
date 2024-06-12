@@ -2295,7 +2295,7 @@ def test_revolve_sketch(modeler: Modeler):
     path_radius = 5
     profile_radius = 2
 
-    # Create the circular profile on the XZ-plane centered at (5, 0, 0)
+    # Create the circular profile on the XZ plane centered at (5, 0, 0)
     # with a radius of 2
     plane_profile = Plane(
         origin=Point3D([path_radius, 0, 0]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z
@@ -2303,7 +2303,7 @@ def test_revolve_sketch(modeler: Modeler):
     profile = Sketch(plane=plane_profile)
     profile.circle(Point2D([0, 0]), profile_radius)
 
-    # Revolve the profile around the Z-axis and centered in the absolute origin
+    # Revolve the profile around the Z axis and center in the absolute origin
     # for an angle of 90 degrees
     body = design.revolve_sketch(
         "donut-body",
@@ -2319,12 +2319,12 @@ def test_revolve_sketch(modeler: Modeler):
 
 
 def test_revolve_sketch_fail(modeler: Modeler):
-    """Test demonstrating the failure of revolving a sketch when they are located in the
+    """Test demonstrating the failure of revolving a sketch when it is located in the
     same origin."""
     # Initialize the donut sketch design
     design = modeler.create_design("revolve-fail")
 
-    # Create an XZ-plane centered at (0, 0, 0)
+    # Create an XZ plane centered at (0, 0, 0)
     plane_profile = Plane(
         origin=Point3D([0, 0, 0]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z
     )

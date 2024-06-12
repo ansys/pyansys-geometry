@@ -607,7 +607,7 @@ class Component:
         -----
         It is important that the sketch plane origin is not coincident with the rotation
         origin. If the sketch plane origin is coincident with the rotation origin, the
-        distance between the two points is zero, and the revolve operation will fail.
+        distance between the two points is zero, and the revolve operation fails.
 
         Parameters
         ----------
@@ -618,7 +618,7 @@ class Component:
         axis : Vector3D
             Axis of rotation for the revolve.
         angle : Union[~pint.Quantity, Angle, Real]
-            Angle to revolve the solid body around the axis. Can be both positive and negative.
+            Angle to revolve the solid body around the axis. The angle can be positive or negative.
         rotation_origin : Point3D
             Origin of the axis of rotation.
 

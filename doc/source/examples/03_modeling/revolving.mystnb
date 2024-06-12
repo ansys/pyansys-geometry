@@ -13,8 +13,8 @@ kernelspec:
 
 # Modeling: Revolving a sketch
 
-This example shows how use the ``revolve_sketch()`` method to
-revolve a sketch around an axis to create a 3D body. Users can also
+This example shows how to use the ``revolve_sketch()`` method to
+revolve a sketch around an axis to create a 3D body. You can also
 specify the angle of revolution to create a partial body.
 
 ```{code-cell} ipython3
@@ -39,13 +39,13 @@ m = Modeler()
 
 ## Example: Creating a quarter of a donut
 
-The following code snippets show how to use the `revolve_sketch()` function to create a
+The following code snippets show how to use the ``revolve_sketch()`` function to create a
 quarter of a 3D donut. The process involves defining a quarter of a circle as a profile
 and then revolving it around the Z-axis to create a 3D body.
 
 ### Initialize the sketch design
 
-A new design sketch named "quarter-donut" is created.
+Create a design sketch named ``quarter-donut``.
 
 ```{code-cell} ipython3
 # Initialize the donut sketch design
@@ -54,10 +54,10 @@ design = m.create_design("quarter-donut")
 
 ### Define circle parameters
 
-``path_radius`` is set to 5 units, representing the radius of the circular path that the profile
-circle sweeps along.
-``profile_radius`` is set to 2 units, representing the radius of the profile circle that sweeps
-along the path to create the donut body.
+Set ``path_radius``, which represents the radius of the circular path that the profile
+circle sweeps along, to ``5`` units.
+Set ``profile_radius``, which represents the radius of the profile circle that sweeps
+along the path to create the donut body, to ``2`` units.
 
 ```{code-cell} ipython3
 # Donut parameters
@@ -67,9 +67,9 @@ profile_radius = 2
 
 ### Create the profile circle
 
-A circle is created on the XZ-plane centered at the coordinates (5, 0, 0) with a radius
-defined by ``profile_radius``. This circle serves as the profile or cross-sectional
-shape of the donut.
+Create a circle on the XZ plane centered at the coordinates ``(5, 0, 0)``
+and use``profile_radius`` to define the radius. This circle serves as the
+profile or cross-sectional shape of the donut.
 
 ```{code-cell} ipython3
 # Create the circular profile on the XZ-plane centered at (5, 0, 0)
@@ -87,11 +87,11 @@ profile.plot()
 
 ### Perform the revolve operation
 
-The profile circle is revolved around the Z-axis to create a quarter of a donut body.
-The angle of revolution is set to 90 degrees in the default direction, which is counterclockwise.
+Revolve the profile circle around the Z axis to create a quarter of a donut body.
+Set the angle of revolution to 90 degrees in the default direction, which is counterclockwise.
 
 ```{code-cell} ipython3
-# Revolve the profile around the Z-axis and centered in the absolute origin
+# Revolve the profile around the Z axis and center in the absolute origin
 # for an angle of 90 degrees
 design.revolve_sketch(
     "quarter-donut-body",
@@ -104,15 +104,15 @@ design.revolve_sketch(
 design.plot()
 ```
 
-### Performing a revolve operation with a negative angle of revolution
+### Perform a revolve operation with a negative angle of revolution
 
-A negative angle of revolution can be used to create a quarter of a donut in the opposite direction. The following code snippet shows how to create a quarter of a donut in the clockwise direction. The same profile circle is used, but the angle of revolution is set to -90 degrees.
+You can use a negative angle of revolution to create a quarter of a donut in the opposite direction. The following code snippet shows how to create a quarter of a donut in the clockwise direction. The same profile circle is used, but the angle of revolution is set to -90 degrees.
 
 ```{code-cell} ipython3
 # Initialize the donut sketch design
 design = m.create_design("quarter-donut-negative")
 
-# Revolve the profile around the Z-axis and centered in the absolute origin
+# Revolve the profile around the Z axis and center in the absolute origin
 # for an angle of -90 degrees (clockwise)
 design.revolve_sketch(
     "quarter-donut-body-negative",

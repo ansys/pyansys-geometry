@@ -701,7 +701,7 @@ def test_plot_revolve_sketch_normal(modeler: Modeler):
     path_radius = 5
     profile_radius = 2
 
-    # Create the circular profile on the XZ-plane centered at (5, 0, 0)
+    # Create the circular profile on the XZ plane centered at (5, 0, 0)
     # with a radius of 2
     plane_profile = Plane(
         origin=Point3D([path_radius, 0, 0]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z
@@ -709,7 +709,7 @@ def test_plot_revolve_sketch_normal(modeler: Modeler):
     profile = Sketch(plane=plane_profile)
     profile.circle(Point2D([0, 0]), profile_radius)
 
-    # Revolve the profile around the Z-axis and centered in the absolute origin
+    # Revolve the profile around the Z axis and center in the absolute origin
     # for an angle of 90 degrees
     design.revolve_sketch(
         "donut-body",
@@ -732,11 +732,11 @@ def test_plot_revolve_sketch_negative_angle(modeler: Modeler):
     # Initialize the donut sketch design
     design = modeler.create_design("quarter-donut")
 
-    # Donut parameters
+    # Specify donut parameters
     path_radius = 5
     profile_radius = 2
 
-    # Create the circular profile on the XZ-plane centered at (5, 0, 0)
+    # Create the circular profile on the XZ plane centered at (5, 0, 0)
     # with a radius of 2
     plane_profile = Plane(
         origin=Point3D([path_radius, 0, 0]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z
@@ -744,7 +744,7 @@ def test_plot_revolve_sketch_negative_angle(modeler: Modeler):
     profile = Sketch(plane=plane_profile)
     profile.circle(Point2D([0, 0]), profile_radius)
 
-    # Revolve the profile around the Z-axis and centered in the absolute origin
+    # Revolve the profile around the Z axis and centered in the absolute origin
     # for an angle of 90 degrees
     design.revolve_sketch(
         "donut-body-negative",
