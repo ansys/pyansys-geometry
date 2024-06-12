@@ -75,7 +75,7 @@ defined by ``profile_radius``. This circle serves as the profile or cross-sectio
 shape of the donut.
 
 ```{code-cell} ipython3
-# Create the circlular profile on the XZ-plane centered at (5, 0, 0)
+# Create the circular profile on the XZ plane centered at (5, 0, 0)
 # with a radius of 2
 plane_profile = Plane(direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z)
 profile = Sketch(plane=plane_profile)
@@ -90,7 +90,7 @@ Another circle, representing the path along which the profile circle is swept, i
 the XY-plane centered at (0, 0, 0). The radius of this circle is defined by ``path_radius``.
 
 ```{code-cell} ipython3
-# Create the circlular path on the XY-plane centered at (0, 0, 0) with radius 5
+# Create the circular path on the XY plane centered at (0, 0, 0) with radius 5
 path = [Circle(Point3D([0, 0, 0]), path_radius).trim(Interval(0, 2 * np.pi))]
 ```
 
