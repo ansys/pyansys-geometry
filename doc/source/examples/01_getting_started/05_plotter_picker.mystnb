@@ -175,8 +175,7 @@ The Python visualizer is used by default. However, you can also use
 
 ```python
 
-plotter = GeometryPlotter
-(use_trame=True)
+plotter = GeometryPlotter(use_trame=True)
 plotter.show(plot_list)
 ```
 
