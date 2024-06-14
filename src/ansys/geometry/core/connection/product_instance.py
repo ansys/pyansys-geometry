@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Module containing the ``ProductInstance`` class."""
+import logging
 import os
 import signal
 import socket
@@ -176,12 +177,16 @@ def prepare_and_start_backend(
     host: str = "localhost",
     port: int = None,
     enable_trace: bool = False,
-    log_level: int = 2,
     api_version: ApiVersions = ApiVersions.LATEST,
     timeout: int = 150,
     manifest_path: str = None,
-    logs_folder: str = None,
     hidden: bool = False,
+    server_log_level: int = 2,
+    client_log_level: int = logging.INFO,
+    server_logs_folder: str = None,
+    client_log_file: str = None,
+    log_level: int = None,  # DEPRECATED
+    logs_folder: str = None,  # DEPRECATED
 ) -> "Modeler":
     """
     Start the requested service locally using the ``ProductInstance`` class.
@@ -207,14 +212,6 @@ def prepare_and_start_backend(
     enable_trace : bool, optional
         Boolean enabling the logs trace on the Geometry service console window.
         By default its value is ``False``.
-    log_level : int, optional
-        Backend's log level from 0 to 3:
-            0: Chatterbox
-            1: Debug
-            2: Warning
-            3: Error
-
-        The default is ``2`` (Warning).
     api_version: ``ApiVersions``, optional
         The backend's API version to be used at runtime. Goes from API v21 to
         the latest. Default is ``ApiVersions.LATEST``.
@@ -224,9 +221,28 @@ def prepare_and_start_backend(
         Used to specify a manifest file path for the ApiServerAddin. This way,
         it is possible to run an ApiServerAddin from a version an older product
         version. Only applicable for Ansys Discovery and Ansys SpaceClaim.
-    logs_folder : sets the backend's logs folder path. If nothing is defined,
-        the backend will use its default path.
     hidden : starts the product hiding its UI. Default is ``False``.
+    server_log_level : int, optional
+        Backend's log level from 0 to 3:
+            0: Chatterbox
+            1: Debug
+            2: Warning
+            3: Error
+
+        The default is ``2`` (Warning).
+    client_log_level : int, optional
+        Logging level to apply to the client. By default, INFO level is used.
+        Use the logging module's levels: DEBUG, INFO, WARNING, ERROR, CRITICAL.
+    server_logs_folder : str, optional
+        Sets the backend's logs folder path. If nothing is defined,
+        the backend will use its default path.
+    client_log_file : str, optional
+        Sets the client's log file path. If nothing is defined,
+        the client will log to the console.
+    log_level : int, optional
+        DEPRECATED. Use ``server_log_level`` instead.
+    logs_folder : str, optional
+        DEPRECATED. Use ``server_logs_folder`` instead.
 
     Raises
     ------
@@ -247,6 +263,23 @@ def prepare_and_start_backend(
     if os.name != "nt":  # pragma: no cover
         raise RuntimeError("Method 'prepare_and_start_backend' is only available on Windows.")
 
+    # Deprecation warnings... To be removed in release 0.7
+    if log_level is not None:  # pragma: no cover
+        LOG.warning(
+            "The 'log_level' parameter is deprecated. Please use 'server_log_level' instead."
+            " The 'log_level' parameter will be removed in the next minor release."
+            " Overriding 'server_log_level' with 'log_level' value for now..."
+        )
+        server_log_level = log_level
+
+    if logs_folder is not None:  # pragma: no cover
+        LOG.warning(
+            "The 'logs_folder' parameter is deprecated. Please use 'server_logs_folder' instead."
+            " The 'logs_folder' parameter will be removed in the next minor release."
+            " Overriding 'server_logs_folder' with 'logs_folder' value for now..."
+        )
+        server_logs_folder = logs_folder
+
     port = _check_port_or_get_one(port)
     installations = get_available_ansys_installations()
     if product_version != None:
@@ -260,8 +293,8 @@ def prepare_and_start_backend(
         host=host,
         port=port,
         enable_trace=enable_trace,
-        log_level=log_level,
-        logs_folder=logs_folder,
+        server_log_level=server_log_level,
+        server_logs_folder=server_logs_folder,
     )
 
     if backend_type == BackendType.DISCOVERY:
@@ -313,7 +346,13 @@ def prepare_and_start_backend(
     _wait_for_backend(host, port, timeout)
 
     return Modeler(
-        host=host, port=port, timeout=timeout, product_instance=instance, backend_type=backend_type
+        host=host,
+        port=port,
+        timeout=timeout,
+        product_instance=instance,
+        backend_type=backend_type,
+        logging_level=client_log_level,
+        logging_file=client_log_file,
     )
 
 
@@ -479,8 +518,8 @@ def _get_common_env(
     host: str,
     port: int,
     enable_trace: bool,
-    log_level: int,
-    logs_folder: str = None,
+    server_log_level: int,
+    server_logs_folder: str = None,
 ) -> Dict[str, str]:
     """
     Make a copy of the actual system's environment.
@@ -492,8 +531,8 @@ def _get_common_env(
     env_copy[BACKEND_HOST_VARIABLE] = host
     env_copy[BACKEND_PORT_VARIABLE] = f"{port}"
     env_copy[BACKEND_TRACE_VARIABLE] = f"{enable_trace:d}"
-    env_copy[BACKEND_LOG_LEVEL_VARIABLE] = f"{log_level}"
-    if logs_folder is not None:
-        env_copy[BACKEND_LOGS_FOLDER_VARIABLE] = f"{logs_folder}"
+    env_copy[BACKEND_LOG_LEVEL_VARIABLE] = f"{server_log_level}"
+    if server_logs_folder is not None:
+        env_copy[BACKEND_LOGS_FOLDER_VARIABLE] = f"{server_logs_folder}"
 
     return env_copy
