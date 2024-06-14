@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides functions for performing common checks."""
+import warnings
+
 from beartype.typing import TYPE_CHECKING, Any, Iterable, Optional, Tuple, Union
 import numpy as np
 from pint import Unit
@@ -376,18 +378,16 @@ def deprecated_method(alternative: Optional[str] = None, info: Optional[str] = N
     info : str, default: None
         Additional information to include in the warning message.
     """
-    # Lazy import to avoid circular imports
-    from ansys.geometry.core.logger import LOG as logger
 
     def deprecated_decorator(method):
-        WARNING_MSG = f"The method '{method.__name__}' is deprecated."
-        if alternative:
-            WARNING_MSG += f" Use '{alternative}' instead."
-        if info:
-            WARNING_MSG += f" {info}"
 
         def wrapper(*args, **kwargs):
-            logger.warning(WARNING_MSG)
+            msg = f"The method '{method.__name__}' is deprecated."
+            if alternative:
+                msg += f" Use '{alternative}' instead."
+            if info:
+                msg += f" {info}"
+            warnings.warn(msg, DeprecationWarning)
             return method(*args, **kwargs)
 
         return wrapper
@@ -409,19 +409,17 @@ def deprecated_argument(arg: str, alternative: Optional[str] = None, info: Optio
     info : str, default: None
         Additional information to include in the warning message.
     """
-    # Lazy import to avoid circular imports
-    from ansys.geometry.core.logger import LOG as logger
 
     def deprecated_decorator(method):
-        def wrapper(*args, **kwargs):
 
+        def wrapper(*args, **kwargs):
             if arg in kwargs and kwargs[arg] is not None:
-                WARNING_MSG = f"The argument '{arg}' in {method.__name__} is deprecated."
+                msg = f"The argument '{arg}' in '{method.__name__}' is deprecated."
                 if alternative:
-                    WARNING_MSG += f" Use '{alternative}' instead."
+                    msg += f" Use '{alternative}' instead."
                 if info:
-                    WARNING_MSG += f" {info}"
-            logger.warning(WARNING_MSG)
+                    msg += f" {info}"
+                warnings.warn(msg, DeprecationWarning)
 
             return method(*args, **kwargs)
 
