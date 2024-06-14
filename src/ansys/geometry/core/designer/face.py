@@ -41,7 +41,11 @@ from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
-from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
+from ansys.geometry.core.misc.checks import (
+    deprecated_method,
+    ensure_design_is_active,
+    min_backend_version,
+)
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
@@ -321,6 +325,33 @@ class Face:
             response = self._faces_stub.GetNormal(GetNormalRequest(id=self.id, u=u, v=v)).direction
             return UnitVector3D([response.x, response.y, response.z])
 
+    @deprecated_method(alternative="normal")
+    def face_normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:  # [deprecated-method]
+        """
+        Get the normal direction to the face at certain proportional UV coordinates.
+
+        Notes
+        -----
+        This method is deprecated. Use the ``normal`` method instead.
+
+        Parameters
+        ----------
+        u : float, default: 0.5
+            First coordinate of the 2D representation of a surface in UV space.
+            The default is ``0.5``, which is the center of the surface.
+        v : float, default: 0.5
+            Second coordinate of the 2D representation of a surface in UV space.
+            The default is ``0.5``, which is the center of the surface.
+
+        Returns
+        -------
+        UnitVector3D
+            :class:`UnitVector3D` object evaluated at the given U and V coordinates.
+            This :class:`UnitVector3D` object is perpendicular to the surface at the
+            given UV coordinates.
+        """
+        return self.normal(u, v)
+
     @protect_grpc
     @ensure_design_is_active
     def point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
@@ -345,8 +376,7 @@ class Face:
         Returns
         -------
         Point3D
-            :class:`Point3D`
-            object evaluated at the given UV coordinates.
+            :class:`Point3D` object evaluated at the given UV coordinates.
         """
         try:
             return self.shape.evaluate_proportion(u, v).position
@@ -355,6 +385,31 @@ class Face:
             self._grpc_client.log.debug(f"Requesting face point from server with (u,v)=({u},{v}).")
             response = self._faces_stub.Evaluate(EvaluateRequest(id=self.id, u=u, v=v)).point
             return Point3D([response.x, response.y, response.z], DEFAULT_UNITS.SERVER_LENGTH)
+
+    @deprecated_method(alternative="point")
+    def face_point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
+        """
+        Get a point of the face evaluated at certain proportional UV coordinates.
+
+        Notes
+        -----
+        This method is deprecated. Use the ``point`` method instead.
+
+        Parameters
+        ----------
+        u : float, default: 0.5
+            First coordinate of the 2D representation of a surface in UV space.
+            The default is ``0.5``, which is the center of the surface.
+        v : float, default: 0.5
+            Second coordinate of the 2D representation of a surface in UV space.
+            The default is ``0.5``, which is the center of the surface.
+
+        Returns
+        -------
+        Point3D
+            :class:`Point3D` object evaluated at the given UV coordinates.
+        """
+        return self.point(u, v)
 
     def __grpc_edges_to_edges(self, edges_grpc: List[GRPCEdge]) -> List[Edge]:
         """

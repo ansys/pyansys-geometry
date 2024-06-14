@@ -41,6 +41,8 @@ from ansys.geometry.core.misc.checks import (
     check_type,
     check_type_all_elements_in_iterable,
     check_type_equivalence,
+    deprecated_argument,
+    deprecated_method,
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance

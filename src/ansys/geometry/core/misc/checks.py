@@ -362,3 +362,69 @@ def min_backend_version(major: int, minor: int, service_pack: int):
         return wrapper
 
     return backend_version_decorator
+
+
+def deprecated_method(alternative: Optional[str] = None, info: Optional[str] = None):
+    """
+    Decorate a method as deprecated.
+
+    Parameters
+    ----------
+    alternative : str, default: None
+        Alternative method to use. If provided, the warning message will
+        include the alternative method.
+    info : str, default: None
+        Additional information to include in the warning message.
+    """
+    # Lazy import to avoid circular imports
+    from ansys.geometry.core.logger import LOG as logger
+
+    def deprecated_decorator(method):
+        WARNING_MSG = f"The method '{method.__name__}' is deprecated."
+        if alternative:
+            WARNING_MSG += f" Use '{alternative}' instead."
+        if info:
+            WARNING_MSG += f" {info}"
+
+        def wrapper(*args, **kwargs):
+            logger.warning(WARNING_MSG)
+            return method(*args, **kwargs)
+
+        return wrapper
+
+    return deprecated_decorator
+
+
+def deprecated_argument(arg: str, alternative: Optional[str] = None, info: Optional[str] = None):
+    """
+    Decorate a method argument as deprecated.
+
+    Parameters
+    ----------
+    arg : str
+        Argument to mark as deprecated.
+    alternative : str, default: None
+        Alternative argument to use. If provided, the warning message will
+        include the alternative argument.
+    info : str, default: None
+        Additional information to include in the warning message.
+    """
+    # Lazy import to avoid circular imports
+    from ansys.geometry.core.logger import LOG as logger
+
+    def deprecated_decorator(method):
+        def wrapper(*args, **kwargs):
+
+            if arg in kwargs and kwargs[arg] is not None:
+                WARNING_MSG = f"The argument '{arg}' in {method.__name__} is deprecated."
+                if alternative:
+                    WARNING_MSG += f" Use '{alternative}' instead."
+                if info:
+                    WARNING_MSG += f" {info}"
+            logger.warning(WARNING_MSG)
+
+            return method(*args, **kwargs)
+
+        return wrapper
+
+    return deprecated_decorator

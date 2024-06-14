@@ -263,21 +263,13 @@ def prepare_and_start_backend(
     if os.name != "nt":  # pragma: no cover
         raise RuntimeError("Method 'prepare_and_start_backend' is only available on Windows.")
 
-    # Deprecation warnings... To be removed in release 0.7
+    # Deprecation behavior... To be removed in release 0.7
     if log_level is not None:  # pragma: no cover
-        LOG.warning(
-            "The 'log_level' parameter is deprecated. Please use 'server_log_level' instead."
-            " The 'log_level' parameter will be removed in the next minor release."
-            " Overriding 'server_log_level' with 'log_level' value for now..."
-        )
+        LOG.warning("Overriding 'server_log_level' with 'log_level' value for now...")
         server_log_level = log_level
 
     if logs_folder is not None:  # pragma: no cover
-        LOG.warning(
-            "The 'logs_folder' parameter is deprecated. Please use 'server_logs_folder' instead."
-            " The 'logs_folder' parameter will be removed in the next minor release."
-            " Overriding 'server_logs_folder' with 'logs_folder' value for now..."
-        )
+        LOG.warning("Overriding 'server_logs_folder' with 'logs_folder' value for now...")
         server_logs_folder = logs_folder
 
     port = _check_port_or_get_one(port)

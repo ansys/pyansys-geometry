@@ -20,7 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides plotting for various PyAnsys Geometry objects."""
-from ansys.tools.visualization_interface import Color, EdgePlot, MeshObjectPlot, Plotter
+from ansys.tools.visualization_interface import Color, EdgePlot, MeshObjectPlot
+from ansys.tools.visualization_interface import Plotter as PlotterInterface
 from ansys.tools.visualization_interface.backends.pyvista import PyVistaBackend
 from beartype.typing import Any, Dict, List, Optional, Union
 import numpy as np
@@ -35,10 +36,10 @@ from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
-from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.sketch.sketch import Sketch
 
 
-class GeometryPlotter(Plotter):
+class GeometryPlotter(PlotterInterface):
     """
     Plotter for PyAnsys Geometry objects.
 

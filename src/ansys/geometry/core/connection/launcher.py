@@ -35,7 +35,7 @@ from ansys.geometry.core.connection.docker_instance import (
 )
 from ansys.geometry.core.connection.product_instance import prepare_and_start_backend
 from ansys.geometry.core.logger import LOG as logger
-from ansys.geometry.core.misc.checks import check_type
+from ansys.geometry.core.misc.checks import check_type, deprecated_argument
 
 try:
     import ansys.platform.instancemanagement as pypim
@@ -475,6 +475,8 @@ def launch_modeler_with_spaceclaim_and_pimlight(
     )
 
 
+@deprecated_argument(arg="log_level", alternative="server_log_level")
+@deprecated_argument(arg="logs_folder", alternative="server_logs_folder")
 def launch_modeler_with_geometry_service(
     product_version: int = None,
     host: str = "localhost",
@@ -600,6 +602,8 @@ def launch_modeler_with_geometry_service(
     )
 
 
+@deprecated_argument(arg="log_level", alternative="server_log_level")
+@deprecated_argument(arg="logs_folder", alternative="server_logs_folder")
 def launch_modeler_with_discovery(
     product_version: int = None,
     host: str = "localhost",
@@ -732,6 +736,8 @@ def launch_modeler_with_discovery(
     )
 
 
+@deprecated_argument(arg="log_level", alternative="server_log_level")
+@deprecated_argument(arg="logs_folder", alternative="server_logs_folder")
 def launch_modeler_with_spaceclaim(
     product_version: int = None,
     host: str = "localhost",
