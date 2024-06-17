@@ -197,7 +197,7 @@ class Sphere(Surface):
         x = origin_to_point.dot(self.dir_x)
         y = origin_to_point.dot(self.dir_y)
         z = origin_to_point.dot(self.dir_z)
-        if np.allclose((x * x + y * y + z * z), 0):
+        if np.allclose(x * x + y * y + z * z, 0):
             return SphereEvaluation(self, ParamUV(0, np.pi / 2))
 
         u = np.arctan2(y, x)
