@@ -9,6 +9,28 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.6.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.6.2>`_ - 2024-06-17
+=====================================================================================
+
+Added
+^^^^^
+
+- feat: deprecating log_level and logs_folder + adding client log control `#1260 <https://github.com/ansys/pyansys-geometry/pull/1260>`_
+- feat: adding deprecation support for args and methods `#1261 <https://github.com/ansys/pyansys-geometry/pull/1261>`_
+
+
+Changed
+^^^^^^^
+
+- chore: update CHANGELOG for v0.6.1 `#1256 <https://github.com/ansys/pyansys-geometry/pull/1256>`_
+- ci: simplify doc build using ansys/actions `#1262 <https://github.com/ansys/pyansys-geometry/pull/1262>`_
+
+
+Fixed
+^^^^^
+
+- fix: Rename built in shadowing variables `#1257 <https://github.com/ansys/pyansys-geometry/pull/1257>`_
+
 `0.6.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.6.1>`_ - 2024-06-12
 =====================================================================================
 
