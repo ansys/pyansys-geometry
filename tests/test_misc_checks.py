@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import warnings
+
 import numpy as np
 import pytest
 
@@ -34,6 +36,8 @@ from ansys.geometry.core.misc import (
     check_pint_unit_compatibility,
     check_type,
     check_type_equivalence,
+    deprecated_argument,
+    deprecated_method,
     min_backend_version,
 )
 
@@ -266,3 +270,91 @@ def test_min_version_backend():
         match="The method 'case_no_version' requires a minimum Ansys release version of 24.2.0, but the current version used is 24.1.0 or lower.",  # noqa: E501
     ):
         case_no_version(mock_object)
+
+
+def test_deprecated_method_decorator():
+    """Test the deprecated method decorator."""
+
+    class MockObject:
+        def __init__(self):
+            self._grpc_client = None
+
+        @staticmethod
+        @deprecated_method()
+        def deprecated_method_no_input():
+            return True
+
+        @staticmethod
+        @deprecated_method(info="This is some extra info.")
+        def deprecated_method_with_info():
+            return True
+
+        @staticmethod
+        @deprecated_method(info="This is some extra info.", alternative="new_method")
+        def deprecated_method_with_info_and_alternate():
+            return True
+
+    mock_object = MockObject()
+
+    # Ensure that the method is deprecated
+    with pytest.deprecated_call(match="The method 'deprecated_method_no_input' is deprecated."):
+        mock_object.deprecated_method_no_input()
+
+    with pytest.deprecated_call(
+        match="The method 'deprecated_method_with_info' is deprecated. This is some extra info."
+    ):
+        mock_object.deprecated_method_with_info()
+
+    with pytest.deprecated_call(
+        match="The method 'deprecated_method_with_info_and_alternate' is deprecated."
+        " Use 'new_method' instead. This is some extra info."
+    ):
+        mock_object.deprecated_method_with_info_and_alternate()
+
+
+def test_deprecated_argument_decorator():
+    """Test the deprecated argument decorator."""
+
+    class MockObject:
+        def __init__(self):
+            self._grpc_client = None
+
+        @staticmethod
+        @deprecated_argument("dep_arg")
+        def deprecated_argument_no_input(dep_arg: str = None):
+            return True
+
+        @staticmethod
+        @deprecated_argument("dep_arg", info="This is some extra info.")
+        def deprecated_argument_with_info(dep_arg: str = None):
+            return True
+
+        @staticmethod
+        @deprecated_argument("dep_arg", info="This is some extra info.", alternative="alt_arg")
+        def deprecated_argument_with_info_and_alternate(dep_arg: str = None, alt_arg: str = None):
+            return True
+
+    mock_object = MockObject()
+
+    # Ensure that the argument is deprecated
+    with pytest.deprecated_call(
+        match="The argument 'dep_arg' in 'deprecated_argument_no_input' is deprecated."
+    ):
+        mock_object.deprecated_argument_no_input(dep_arg="test")
+
+    with pytest.deprecated_call(
+        match="The argument 'dep_arg' in 'deprecated_argument_with_info' is deprecated."
+        " This is some extra info."
+    ):
+        mock_object.deprecated_argument_with_info(dep_arg="test")
+
+    with pytest.deprecated_call(
+        match="The argument 'dep_arg' in 'deprecated_argument_with_info_and_alternate'"
+        " is deprecated. Use 'alt_arg' instead. This is some extra info."
+    ):
+        mock_object.deprecated_argument_with_info_and_alternate(dep_arg="test")
+
+    # Check that if we use the alternative argument, no warning is raised
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        mock_object.deprecated_argument_with_info_and_alternate(alt_arg="test")
