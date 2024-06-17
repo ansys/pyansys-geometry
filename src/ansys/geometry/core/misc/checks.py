@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides functions for performing common checks."""
+import warnings
+
 from beartype.typing import TYPE_CHECKING, Any, Iterable, Optional, Tuple, Union
 import numpy as np
 from pint import Unit
@@ -362,3 +364,65 @@ def min_backend_version(major: int, minor: int, service_pack: int):
         return wrapper
 
     return backend_version_decorator
+
+
+def deprecated_method(alternative: Optional[str] = None, info: Optional[str] = None):
+    """
+    Decorate a method as deprecated.
+
+    Parameters
+    ----------
+    alternative : str, default: None
+        Alternative method to use. If provided, the warning message will
+        include the alternative method.
+    info : str, default: None
+        Additional information to include in the warning message.
+    """
+
+    def deprecated_decorator(method):
+
+        def wrapper(*args, **kwargs):
+            msg = f"The method '{method.__name__}' is deprecated."
+            if alternative:
+                msg += f" Use '{alternative}' instead."
+            if info:
+                msg += f" {info}"
+            warnings.warn(msg, DeprecationWarning)
+            return method(*args, **kwargs)
+
+        return wrapper
+
+    return deprecated_decorator
+
+
+def deprecated_argument(arg: str, alternative: Optional[str] = None, info: Optional[str] = None):
+    """
+    Decorate a method argument as deprecated.
+
+    Parameters
+    ----------
+    arg : str
+        Argument to mark as deprecated.
+    alternative : str, default: None
+        Alternative argument to use. If provided, the warning message will
+        include the alternative argument.
+    info : str, default: None
+        Additional information to include in the warning message.
+    """
+
+    def deprecated_decorator(method):
+
+        def wrapper(*args, **kwargs):
+            if arg in kwargs and kwargs[arg] is not None:
+                msg = f"The argument '{arg}' in '{method.__name__}' is deprecated."
+                if alternative:
+                    msg += f" Use '{alternative}' instead."
+                if info:
+                    msg += f" {info}"
+                warnings.warn(msg, DeprecationWarning)
+
+            return method(*args, **kwargs)
+
+        return wrapper
+
+    return deprecated_decorator
