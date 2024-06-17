@@ -55,7 +55,7 @@ tests = [
     "docker==7.1.0",
     "grpcio==1.64.1",
     "grpcio-health-checking==1.60.0",
-    "numpy==1.26.4",
+    "numpy==2.0.0",
     "Pint==0.24",
     "protobuf==5.27.1",
     "pytest==8.2.2",
