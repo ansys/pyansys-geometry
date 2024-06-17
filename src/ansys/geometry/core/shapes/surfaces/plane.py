@@ -111,8 +111,8 @@ class PlaneSurface(Surface):
 
     def parameterization(self) -> Tuple[Parameterization, Parameterization]:
         """Parametrize the plane."""
-        u = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(np.NINF, np.inf))
-        v = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(np.NINF, np.inf))
+        u = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(-np.inf, np.inf))
+        v = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(-np.inf, np.inf))
 
         return (u, v)
 

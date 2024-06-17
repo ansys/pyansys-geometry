@@ -145,11 +145,15 @@ class SketchSegment(SketchEdge, Line):
                     self.start.y.m_as(DEFAULT_UNITS.LENGTH),
                     0,
                 ],
-                dtype=np.float_,
+                dtype=np.float64,
             ),
             np.array(
-                [self.end.x.m_as(DEFAULT_UNITS.LENGTH), self.end.y.m_as(DEFAULT_UNITS.LENGTH), 0],
-                dtype=np.float_,
+                [
+                    self.end.x.m_as(DEFAULT_UNITS.LENGTH),
+                    self.end.y.m_as(DEFAULT_UNITS.LENGTH),
+                    0,
+                ],
+                dtype=np.float64,
             ),
         )
 

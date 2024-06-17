@@ -171,6 +171,6 @@ class Box(SketchFace):
                         0,
                     ],
                 ],
-                dtype=np.float_,
+                dtype=np.float64,
             )
         )
