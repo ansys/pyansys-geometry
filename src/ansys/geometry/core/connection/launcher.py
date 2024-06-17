@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Module for connecting to instances of the Geometry service."""
+import logging
 import os
 
 from beartype.typing import TYPE_CHECKING, Dict, Optional
@@ -34,7 +35,7 @@ from ansys.geometry.core.connection.docker_instance import (
 )
 from ansys.geometry.core.connection.product_instance import prepare_and_start_backend
 from ansys.geometry.core.logger import LOG as logger
-from ansys.geometry.core.misc.checks import check_type
+from ansys.geometry.core.misc.checks import check_type, deprecated_argument
 
 try:
     import ansys.platform.instancemanagement as pypim
@@ -221,7 +222,12 @@ def _launch_with_automatic_detection(**kwargs: Optional[Dict]) -> "Modeler":
     raise NotImplementedError("Geometry service cannot be initialized.")
 
 
-def launch_remote_modeler(version: Optional[str] = None, **kwargs: Optional[Dict]) -> "Modeler":
+def launch_remote_modeler(
+    version: Optional[str] = None,
+    client_log_level: Optional[int] = logging.INFO,
+    client_log_file: Optional[str] = None,
+    **kwargs: Optional[Dict],
+) -> "Modeler":
     """
     Start the Geometry service remotely using the PIM API.
 
@@ -237,6 +243,11 @@ def launch_remote_modeler(version: Optional[str] = None, **kwargs: Optional[Dict
         Version of the Geometry service to run in the three-digit format.
         For example, "232". If you do not specify the version, the server
         chooses the version.
+    client_log_level : int, default: logging.INFO
+        Log level for the client. The default is ``logging.INFO``.
+    client_log_file : str, default: None
+        Path to the log file for the client. The default is ``None``,
+        in which case the client logs to the console.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -251,6 +262,8 @@ def launch_remote_modeler(version: Optional[str] = None, **kwargs: Optional[Dict
         product_name="geometry",
         product_version=version,
         backend_type=None,
+        client_log_level=client_log_level,
+        client_log_file=client_log_file,
     )
 
 
@@ -260,6 +273,8 @@ def launch_docker_modeler(
     restart_if_existing_service: bool = False,
     name: Optional[str] = None,
     image: Optional[GeometryContainers] = None,
+    client_log_level: Optional[int] = logging.INFO,
+    client_log_file: Optional[str] = None,
     **kwargs: Optional[Dict],
 ) -> "Modeler":
     """
@@ -290,6 +305,11 @@ def launch_docker_modeler(
         in which case the ``LocalDockerInstance`` class identifies the OS of your
         Docker engine and deploys the latest version of the Geometry service for
         that OS.
+    client_log_level : int, default: logging.INFO
+        Log level for the client. The default is ``logging.INFO``.
+    client_log_file : str, default: None
+        Path to the log file for the client. The default is ``None``,
+        in which case the client logs to the console.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -314,11 +334,20 @@ def launch_docker_modeler(
     )
 
     # Once the local Docker instance is ready... return the Modeler
-    return Modeler(host="localhost", port=port, docker_instance=docker_instance)
+    return Modeler(
+        host="localhost",
+        port=port,
+        docker_instance=docker_instance,
+        logging_level=client_log_level,
+        logging_file=client_log_file,
+    )
 
 
 def launch_modeler_with_discovery_and_pimlight(
-    version: Optional[str] = None, **kwargs: Optional[Dict]
+    version: Optional[str] = None,
+    client_log_level: Optional[int] = logging.INFO,
+    client_log_file: Optional[str] = None,
+    **kwargs: Optional[Dict],
 ) -> "Modeler":
     """
     Start Ansys Discovery remotely using the PIM API.
@@ -334,6 +363,11 @@ def launch_modeler_with_discovery_and_pimlight(
         Version of Discovery to run in the three-digit format.
         For example, "232". If you do not specify the version, the server
         chooses the version.
+    client_log_level : int, default: logging.INFO
+        Log level for the client. The default is ``logging.INFO``.
+    client_log_file : str, default: None
+        Path to the log file for the client. The default is ``None``,
+        in which case the client logs to the console.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -348,11 +382,16 @@ def launch_modeler_with_discovery_and_pimlight(
         product_name="discovery",
         product_version=version,
         backend_type=BackendType.DISCOVERY,
+        client_log_level=client_log_level,
+        client_log_file=client_log_file,
     )
 
 
 def launch_modeler_with_geometry_service_and_pimlight(
-    version: Optional[str] = None, **kwargs: Optional[Dict]
+    version: Optional[str] = None,
+    client_log_level: Optional[int] = logging.INFO,
+    client_log_file: Optional[str] = None,
+    **kwargs: Optional[Dict],
 ) -> "Modeler":
     """
     Start the Geometry service remotely using the PIM API.
@@ -368,6 +407,11 @@ def launch_modeler_with_geometry_service_and_pimlight(
         Version of the Geometry service to run in the three-digit format.
         For example, "232". If you do not specify the version, the server
         chooses the version.
+    client_log_level : int, default: logging.INFO
+        Log level for the client. The default is ``logging.INFO``.
+    client_log_file : str, default: None
+        Path to the log file for the client. The default is ``None``,
+        in which case the client logs to the console.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -382,10 +426,17 @@ def launch_modeler_with_geometry_service_and_pimlight(
         product_name="geometryservice",
         product_version=version,
         backend_type=BackendType.WINDOWS_SERVICE,
+        client_log_level=client_log_level,
+        client_log_file=client_log_file,
     )
 
 
-def launch_modeler_with_spaceclaim_and_pimlight(version: Optional[str] = None) -> "Modeler":
+def launch_modeler_with_spaceclaim_and_pimlight(
+    version: Optional[str] = None,
+    client_log_level: Optional[int] = logging.INFO,
+    client_log_file: Optional[str] = None,
+    **kwargs: Optional[Dict],
+) -> "Modeler":
     """
     Start Ansys SpaceClaim remotely using the PIM API.
 
@@ -400,6 +451,14 @@ def launch_modeler_with_spaceclaim_and_pimlight(version: Optional[str] = None) -
         Version of SpaceClaim to run in the three-digit format.
         For example, "232". If you do not specify the version, the server
         chooses the version.
+    client_log_level : int, default: logging.INFO
+        Log level for the client. The default is ``logging.INFO``.
+    client_log_file : str, default: None
+        Path to the log file for the client. The default is ``None``,
+        in which case the client logs to the console.
+    **kwargs : dict, default: None
+        Placeholder to prevent errors when passing additional arguments that
+        are not compatible with this method.
 
     Returns
     -------
@@ -411,17 +470,25 @@ def launch_modeler_with_spaceclaim_and_pimlight(version: Optional[str] = None) -
         product_name="scdm",
         product_version=version,
         backend_type=BackendType.SPACECLAIM,
+        client_log_level=client_log_level,
+        client_log_file=client_log_file,
     )
 
 
+@deprecated_argument(arg="log_level", alternative="server_log_level")
+@deprecated_argument(arg="logs_folder", alternative="server_logs_folder")
 def launch_modeler_with_geometry_service(
     product_version: int = None,
     host: str = "localhost",
     port: int = None,
     enable_trace: bool = False,
-    log_level: int = 2,
     timeout: int = 60,
-    logs_folder: str = None,
+    server_log_level: int = 2,
+    client_log_level: int = logging.INFO,
+    server_logs_folder: str = None,
+    client_log_file: str = None,
+    log_level: int = None,  # DEPRECATED
+    logs_folder: str = None,  # DEPRECATED
     **kwargs: Optional[Dict],
 ) -> "Modeler":
     """
@@ -452,19 +519,29 @@ def launch_modeler_with_geometry_service(
     enable_trace : bool, optional
         Boolean enabling the logs trace on the Geometry service console window.
         By default its value is ``False``.
-    log_level : int, optional
-        Backend's log level from 0 to 3:
-
-        * ``0``: Chatterbox
-        * ``1``: Debug
-        * ``2``: Warning
-        * ``3``: Error
-
-        The default is ``2`` (Warning).
     timeout : int, optional
         Timeout for starting the backend startup process. The default is 60.
-    logs_folder : sets the backend's logs folder path. If nothing is defined,
+    server_log_level : int, optional
+        Backend's log level from 0 to 3:
+            0: Chatterbox
+            1: Debug
+            2: Warning
+            3: Error
+
+        The default is ``2`` (Warning).
+    client_log_level : int, optional
+        Logging level to apply to the client. By default, INFO level is used.
+        Use the logging module's levels: DEBUG, INFO, WARNING, ERROR, CRITICAL.
+    server_logs_folder : str, optional
+        Sets the backend's logs folder path. If nothing is defined,
         the backend will use its default path.
+    client_log_file : str, optional
+        Sets the client's log file path. If nothing is defined,
+        the client will log to the console.
+    log_level : int, optional
+        DEPRECATED. Use ``server_log_level`` instead.
+    logs_folder : str, optional
+        DEPRECATED. Use ``server_logs_folder`` instead.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -497,9 +574,9 @@ def launch_modeler_with_geometry_service(
     >>> from ansys.geometry.core import launch_modeler_with_geometry_service
     >>> modeler = launch_modeler_with_geometry_service(host="10.171.22.44",
         port=5001,
-        log_level=0,
         enable_trace= True,
-        timeout=300)
+        timeout=300,
+        server_log_level=0)
     """
     # if api_version is passed, throw a warning saying that it is not used
     if "api_version" in kwargs:
@@ -514,23 +591,33 @@ def launch_modeler_with_geometry_service(
         host=host,
         port=port,
         enable_trace=enable_trace,
-        log_level=log_level,
         api_version=ApiVersions.LATEST,
         timeout=timeout,
+        server_log_level=server_log_level,
+        client_log_level=client_log_level,
+        server_logs_folder=server_logs_folder,
+        client_log_file=client_log_file,
+        log_level=log_level,
         logs_folder=logs_folder,
     )
 
 
+@deprecated_argument(arg="log_level", alternative="server_log_level")
+@deprecated_argument(arg="logs_folder", alternative="server_logs_folder")
 def launch_modeler_with_discovery(
     product_version: int = None,
     host: str = "localhost",
     port: int = None,
-    log_level: int = 2,
     api_version: ApiVersions = ApiVersions.LATEST,
     timeout: int = 150,
     manifest_path: str = None,
-    logs_folder: str = None,
     hidden: bool = False,
+    server_log_level: int = 2,
+    client_log_level: int = logging.INFO,
+    server_logs_folder: str = None,
+    client_log_file: str = None,
+    log_level: int = None,  # DEPRECATED
+    logs_folder: str = None,  # DEPRECATED
     **kwargs: Optional[Dict],
 ):
     """
@@ -562,15 +649,6 @@ def launch_modeler_with_discovery(
     port : int, optional
         Port at which the Geometry service will be deployed. By default, its
         value will be ``None``.
-    log_level : int, optional
-        Backend's log level from 0 to 3:
-
-        * ``0``: Chatterbox
-        * ``1``: Debug
-        * ``2``: Warning
-        * ``3``: Error
-
-        The default is ``2`` (Warning).
     api_version: ApiVersions, optional
         The backend's API version to be used at runtime. Goes from API v21 to
         the latest. Default is ``ApiVersions.LATEST``.
@@ -580,9 +658,28 @@ def launch_modeler_with_discovery(
         Used to specify a manifest file path for the ApiServerAddin. This way,
         it is possible to run an ApiServerAddin from a version an older product
         version.
-    logs_folder : sets the backend's logs folder path. If nothing is defined,
-        the backend will use its default path.
     hidden : starts the product hiding its UI. Default is ``False``.
+    server_log_level : int, optional
+        Backend's log level from 0 to 3:
+            0: Chatterbox
+            1: Debug
+            2: Warning
+            3: Error
+
+        The default is ``2`` (Warning).
+    client_log_level : int, optional
+        Logging level to apply to the client. By default, INFO level is used.
+        Use the logging module's levels: DEBUG, INFO, WARNING, ERROR, CRITICAL.
+    server_logs_folder : str, optional
+        Sets the backend's logs folder path. If nothing is defined,
+        the backend will use its default path.
+    client_log_file : str, optional
+        Sets the client's log file path. If nothing is defined,
+        the client will log to the console.
+    log_level : int, optional
+        DEPRECATED. Use ``server_log_level`` instead.
+    logs_folder : str, optional
+        DEPRECATED. Use ``server_logs_folder`` instead.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -616,9 +713,9 @@ def launch_modeler_with_discovery(
     >>> modeler = launch_modeler_with_discovery(product_version = 232,
         host="10.171.22.44",
         port=5001,
-        log_level=0,
         api_version= 231,
-        timeout=300)
+        timeout=300,
+        server_log_level=0)
     """
     return prepare_and_start_backend(
         BackendType.DISCOVERY,
@@ -626,25 +723,35 @@ def launch_modeler_with_discovery(
         host=host,
         port=port,
         enable_trace=False,
-        log_level=log_level,
         api_version=api_version,
         timeout=timeout,
         manifest_path=manifest_path,
-        logs_folder=logs_folder,
         hidden=hidden,
+        server_log_level=server_log_level,
+        client_log_level=client_log_level,
+        server_logs_folder=server_logs_folder,
+        client_log_file=client_log_file,
+        log_level=log_level,
+        logs_folder=logs_folder,
     )
 
 
+@deprecated_argument(arg="log_level", alternative="server_log_level")
+@deprecated_argument(arg="logs_folder", alternative="server_logs_folder")
 def launch_modeler_with_spaceclaim(
     product_version: int = None,
     host: str = "localhost",
     port: int = None,
-    log_level: int = 2,
     api_version: ApiVersions = ApiVersions.LATEST,
     timeout: int = 150,
     manifest_path: str = None,
-    logs_folder: str = None,
     hidden: bool = False,
+    server_log_level: int = 2,
+    client_log_level: int = logging.INFO,
+    server_logs_folder: str = None,
+    client_log_file: str = None,
+    log_level: int = None,  # DEPRECATED
+    logs_folder: str = None,  # DEPRECATED
     **kwargs: Optional[Dict],
 ):
     """
@@ -673,15 +780,6 @@ def launch_modeler_with_spaceclaim(
     port : int, optional
         Port at which the Geometry service will be deployed. By default, its
         value will be ``None``.
-    log_level : int, optional
-        Backend's log level from 0 to 3:
-
-        *  ``0``: Chatterbox
-        *  ``1``: Debug
-        *  ``2``: Warning
-        *  ``3``: Error
-
-        The default is ``2`` (Warning).
     api_version: ApiVersions, optional
         The backend's API version to be used at runtime. Goes from API v21 to
         the latest. Default is ``ApiVersions.LATEST``.
@@ -691,9 +789,28 @@ def launch_modeler_with_spaceclaim(
         Used to specify a manifest file path for the ApiServerAddin. This way,
         it is possible to run an ApiServerAddin from a version an older product
         version.
-    logs_folder : sets the backend's logs folder path. If nothing is defined,
-        the backend will use its default path.
     hidden : starts the product hiding its UI. Default is ``False``.
+    server_log_level : int, optional
+        Backend's log level from 0 to 3:
+            0: Chatterbox
+            1: Debug
+            2: Warning
+            3: Error
+
+        The default is ``2`` (Warning).
+    client_log_level : int, optional
+        Logging level to apply to the client. By default, INFO level is used.
+        Use the logging module's levels: DEBUG, INFO, WARNING, ERROR, CRITICAL.
+    server_logs_folder : str, optional
+        Sets the backend's logs folder path. If nothing is defined,
+        the backend will use its default path.
+    client_log_file : str, optional
+        Sets the client's log file path. If nothing is defined,
+        the client will log to the console.
+    log_level : int, optional
+        DEPRECATED. Use ``server_log_level`` instead.
+    logs_folder : str, optional
+        DEPRECATED. Use ``server_logs_folder`` instead.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -727,9 +844,9 @@ def launch_modeler_with_spaceclaim(
     >>> modeler = launch_modeler_with_spaceclaim(product_version = 232,
         host="10.171.22.44",
         port=5001,
-        log_level=0,
         api_version= 231,
-        timeout=300)
+        timeout=300,
+        server_log_level=0)
     """
     return prepare_and_start_backend(
         BackendType.SPACECLAIM,
@@ -737,12 +854,16 @@ def launch_modeler_with_spaceclaim(
         host=host,
         port=port,
         enable_trace=False,
-        log_level=log_level,
         api_version=api_version,
         timeout=timeout,
         manifest_path=manifest_path,
-        logs_folder=logs_folder,
         hidden=hidden,
+        server_log_level=server_log_level,
+        client_log_level=client_log_level,
+        server_logs_folder=server_logs_folder,
+        client_log_file=client_log_file,
+        log_level=log_level,
+        logs_folder=logs_folder,
     )
 
 
@@ -751,6 +872,8 @@ def _launch_pim_instance(
     product_name: str,
     product_version: Optional[str] = None,
     backend_type: Optional[BackendType] = None,
+    client_log_level: int = logging.INFO,
+    client_log_file: Optional[str] = None,
 ):
     """
     Start `PyPIM <https://github.com/ansys/pypim>`_ using the PIM API.
@@ -772,6 +895,11 @@ def _launch_pim_instance(
     backend_type : BackendType, default: None
         Type of backend that PyAnsys Geometry is communicating with. By default, this
         value is unknown, which results in ``None`` being the default value.
+    client_log_level : int, default: logging.INFO
+        Log level for the client. The default is ``logging.INFO``.
+    client_log_file : str, default: None
+        Path to the log file for the client. The default is ``None``,
+        in which case the client logs to the console.
 
     Returns
     -------
@@ -808,4 +936,10 @@ def _launch_pim_instance(
     if pop_out:
         os.environ.pop("ANSYS_PLATFORM_INSTANCEMANAGEMENT_CONFIG")
 
-    return Modeler(channel=channel, remote_instance=instance, backend_type=backend_type)
+    return Modeler(
+        channel=channel,
+        remote_instance=instance,
+        backend_type=backend_type,
+        logging_level=client_log_level,
+        logging_file=client_log_file,
+    )

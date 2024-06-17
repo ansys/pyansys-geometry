@@ -20,7 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides plotting for various PyAnsys Geometry objects."""
-from ansys.tools.visualization_interface import Color, EdgePlot, MeshObjectPlot, Plotter
+from ansys.tools.visualization_interface import Color, EdgePlot, MeshObjectPlot
+from ansys.tools.visualization_interface import Plotter as PlotterInterface
 from ansys.tools.visualization_interface.backends.pyvista import PyVistaBackend
 from beartype.typing import Any, Dict, List, Optional, Union
 import numpy as np
@@ -35,10 +36,10 @@ from ansys.geometry.core.logger import LOG as logger
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
-from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.sketch.sketch import Sketch
 
 
-class GeometryPlotter(Plotter):
+class GeometryPlotter(PlotterInterface):
     """
     Plotter for PyAnsys Geometry objects.
 
@@ -301,7 +302,7 @@ class GeometryPlotter(Plotter):
     def plot_iter(
         self,
         plotting_list: List[Any],
-        filter: str = None,
+        name_filter: str = None,
         **plotting_options,
     ) -> None:
         """
@@ -314,25 +315,25 @@ class GeometryPlotter(Plotter):
         ----------
         plotting_list : List[Any]
             List of objects you want to plot.
-        filter : str, default: None
+        name_filter : str, default: None
             Regular expression with the desired name or names you want to include in the plotter.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         for object in plotting_list:
-            _ = self.plot(object, filter, **plotting_options)
+            _ = self.plot(object, name_filter, **plotting_options)
 
     # Override add function from plotter
-    def plot(self, object: Any, filter: str = None, **plotting_options) -> None:
+    def plot(self, plottable_object: Any, name_filter: str = None, **plotting_options) -> None:
         """
         Add a custom mesh to the plotter.
 
         Parameters
         ----------
-        object : Any
-            Object to add.
-        filter : str, default: None
+        plottable_object : str, default: None
+            Regular expression with the desired name or names you want to include in the plotter.
+        name_filter: str, default: None
             Regular expression with the desired name or names you want to include in the plotter.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, depend of the backend implementation
@@ -351,24 +352,28 @@ class GeometryPlotter(Plotter):
         else:
             merge_components = None
         # Add the custom object to the plotter
-        if isinstance(object, DesignPoint):
-            self.add_design_point(object, **plotting_options)
-        elif isinstance(object, Sketch):
-            self.add_sketch(object, **plotting_options)
-        elif isinstance(object, Body) or isinstance(object, MasterBody):
-            self.add_body(object, merge_bodies, **plotting_options)
-        elif isinstance(object, Design) or isinstance(object, Component):
-            self.add_component(object, merge_components, merge_bodies, **plotting_options)
-        elif isinstance(object, List) and object != [] and isinstance(object[0], pv.PolyData):
-            self.add_sketch_polydata(object, **plotting_options)
-        elif isinstance(object, List):
-            self.plot_iter(object, filter, **plotting_options)
-        elif isinstance(object, MeshObjectPlot):
+        if isinstance(plottable_object, DesignPoint):
+            self.add_design_point(plottable_object, **plotting_options)
+        elif isinstance(plottable_object, Sketch):
+            self.add_sketch(plottable_object, **plotting_options)
+        elif isinstance(plottable_object, Body) or isinstance(object, MasterBody):
+            self.add_body(plottable_object, merge_bodies, **plotting_options)
+        elif isinstance(plottable_object, Design) or isinstance(object, Component):
+            self.add_component(plottable_object, merge_components, merge_bodies, **plotting_options)
+        elif (
+            isinstance(plottable_object, List)
+            and plottable_object != []
+            and isinstance(plottable_object[0], pv.PolyData)
+        ):
+            self.add_sketch_polydata(plottable_object, **plotting_options)
+        elif isinstance(plottable_object, List):
+            self.plot_iter(plottable_object, name_filter, **plotting_options)
+        elif isinstance(plottable_object, MeshObjectPlot):
             self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
-            self._backend.pv_interface.plot(object, filter, **plotting_options)
+            self._backend.pv_interface.plot(plottable_object, name_filter, **plotting_options)
         else:
             # any left type should be a PyVista object
-            self._backend.pv_interface.plot(object, filter, **plotting_options)
+            self._backend.pv_interface.plot(plottable_object, name_filter, **plotting_options)
 
     def show(
         self,
