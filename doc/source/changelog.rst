@@ -9,6 +9,37 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.6.3 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.6.3>`_ - 2024-06-18
+=====================================================================================
+
+Changed
+^^^^^^^
+
+- chore: update CHANGELOG for v0.6.2 `#1263 <https://github.com/ansys/pyansys-geometry/pull/1263>`_
+- build: adapting to numpy 2.x `#1265 <https://github.com/ansys/pyansys-geometry/pull/1265>`_
+- docs: using ansys actions (again) to build docs `#1270 <https://github.com/ansys/pyansys-geometry/pull/1270>`_
+
+
+Fixed
+^^^^^
+
+- fix: unnecessary Point3D comparison `#1264 <https://github.com/ansys/pyansys-geometry/pull/1264>`_
+- docs: examples are not being uploaded as assets (.py/.ipynb) `#1268 <https://github.com/ansys/pyansys-geometry/pull/1268>`_
+- fix: change action order `#1269 <https://github.com/ansys/pyansys-geometry/pull/1269>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- build: bump numpy from 1.26.4 to 2.0.0 `#1266 <https://github.com/ansys/pyansys-geometry/pull/1266>`_
+- build: bump the docs-deps group with 2 updates `#1271 <https://github.com/ansys/pyansys-geometry/pull/1271>`_
+
+
+Miscellaneous
+^^^^^^^^^^^^^
+
+- chore: pre-commit automatic update `#1267 <https://github.com/ansys/pyansys-geometry/pull/1267>`_
+
 `0.6.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.6.2>`_ - 2024-06-17
 =====================================================================================
 
