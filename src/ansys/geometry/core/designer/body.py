@@ -426,8 +426,7 @@ class IBody(ABC):
 
     @abstractmethod
     def copy(self, parent: "Component", name: str = None) -> "Body":
-        """Create a copy of the body and place it under the specified parent
-        component.
+        """Create a copy of the body and place it under the specified parent component.
 
         Parameters
         ----------
