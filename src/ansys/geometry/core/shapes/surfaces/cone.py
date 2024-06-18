@@ -254,7 +254,7 @@ class Cone(Surface):
         u = Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
 
         start, end = (
-            (self.apex_param, np.inf) if self.apex_param < 0 else (np.NINF, self.apex_param)
+            (self.apex_param, np.inf) if self.apex_param < 0 else (-np.inf, self.apex_param)
         )
         v = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(start, end))
 
