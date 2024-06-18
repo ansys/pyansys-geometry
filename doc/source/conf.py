@@ -399,7 +399,7 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
 
         examples_output_dir = Path(app.outdir) / "examples"
         if not examples_output_dir.exists():
-            logger.warning("No examples directory found")
+            logger.info("No examples directory found, skipping conversion...")
             return
 
         notebooks = examples_output_dir.glob("**/*.ipynb")
@@ -442,5 +442,5 @@ def setup(app: sphinx.application.Sphinx):
     logger.info(f"Configuring Sphinx hooks...")
     if BUILD_EXAMPLES:
         # Run at the end of the build process
-        logger.info("Connecting build-finished hook for converting examples...")
+        logger.info("Connecting build-finished hook for converting notebooks to scripts...")
         app.connect("build-finished", convert_notebooks_to_scripts)
