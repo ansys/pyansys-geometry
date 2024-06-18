@@ -204,7 +204,7 @@ class Interval:
         bool
             True if neither bound of the interval is infinite.
         """
-        return self.start > np.NINF and self.end < np.inf
+        return self.start > -np.inf and self.end < np.inf
 
     def is_empty(self) -> bool:
         """
