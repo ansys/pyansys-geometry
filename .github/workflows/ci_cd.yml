@@ -287,7 +287,7 @@ jobs:
 
       - name: Start Geometry service and verify start
         run: docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }}
-      
+
       - name: Run Ansys documentation building action
         uses: ansys/actions/doc-build@v6
         with:
