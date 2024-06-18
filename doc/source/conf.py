@@ -18,8 +18,13 @@ from ansys_sphinx_theme import (
 import requests
 import sphinx
 from sphinx.builders.latex import LaTeXBuilder
+from sphinx.util import logging
 
 from ansys.geometry.core import __version__
+
+# Convert notebooks into Python scripts and include them in the output files
+logger = logging.getLogger(__name__)
+
 
 # For some reason the global var is not working on doc build...
 # import ansys.tools.visualization_interface as viz_interface
@@ -376,11 +381,6 @@ nitpick_ignore_regex = [
     (r"py:obj", r"logging.PercentStyle"),
 ]
 
-from sphinx.util import logging
-
-# Convert notebooks into Python scripts and include them in the output files
-logger = logging.getLogger(__name__)
-
 
 def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
     """
@@ -398,7 +398,15 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
         import subprocess
 
         examples_output_dir = Path(app.outdir) / "examples"
+        if not examples_output_dir.exists():
+            logger.warning("No examples directory found")
+            return
+
         notebooks = examples_output_dir.glob("**/*.ipynb")
+        if len(notebooks) == 0:
+            logger.warning("No notebooks found in examples directory... potential error.")
+            return
+
         for notebook in notebooks:
             logger.info(f"Converting {notebook}")  # using jupytext
             output = subprocess.run(
@@ -431,5 +439,5 @@ def setup(app: sphinx.application.Sphinx):
     logger.info(f"Configuring Sphinx hooks...")
     if BUILD_EXAMPLES:
         # Run at the end of the build process
-        logger.info("Connecting build-finished hook... for examples")
+        logger.info("Connecting build-finished hook for converting examples...")
         app.connect("build-finished", convert_notebooks_to_scripts)
