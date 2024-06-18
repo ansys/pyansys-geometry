@@ -290,6 +290,8 @@ jobs:
 
       - name: Run Ansys documentation building action
         uses: ansys/actions/doc-build@v6
+        env:
+          BUILD_EXAMPLES: true
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           add-pdf-html-docs-as-assets: true

@@ -376,6 +376,11 @@ nitpick_ignore_regex = [
     (r"py:obj", r"logging.PercentStyle"),
 ]
 
+from sphinx.util import logging
+
+# Convert notebooks into Python scripts and include them in the output files
+logger = logging.getLogger(__name__)
+
 
 def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
     """
@@ -395,7 +400,7 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
         examples_output_dir = Path(app.outdir) / "examples"
         notebooks = examples_output_dir.glob("**/*.ipynb")
         for notebook in notebooks:
-            print(f"Converting {notebook}")  # using jupytext
+            logger.info(f"Converting {notebook}")  # using jupytext
             output = subprocess.run(
                 [
                     "jupytext",
@@ -410,8 +415,8 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
             )
 
             if output.returncode != 0:
-                print(f"Error converting {notebook} to script")
-                print(output.stderr)
+                logger.error(f"Error converting {notebook} to script")
+                logger.error(output.stderr)
 
 
 def setup(app: sphinx.application.Sphinx):
@@ -423,7 +428,8 @@ def setup(app: sphinx.application.Sphinx):
     app : sphinx.application.Sphinx
         Sphinx instance containing all the configuration for the documentation build.
     """
-    # Convert notebooks into Python scripts and include them in the output files
+    logger.info(f"Configuring Sphinx hooks...")
     if BUILD_EXAMPLES:
         # Run at the end of the build process
+        logger.info("Connecting build-finished hook... for examples")
         app.connect("build-finished", convert_notebooks_to_scripts)
