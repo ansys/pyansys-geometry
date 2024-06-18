@@ -267,8 +267,27 @@ jobs:
       group: pyansys-self-hosted
       labels: [Windows, pygeometry]
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
       - name: Set up headless display
         uses: pyvista/setup-headless-display-action@v2
+
+      - name: Create Python venv
+        run: |
+          python -m venv .venv
+          .\.venv\Scripts\Activate.ps1
+
+      - name: Install packages for documentation build
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          python -m pip install --upgrade pip
+          pip install --upgrade build wheel
+          pip install .[doc]
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -285,14 +304,49 @@ jobs:
         run:
           echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-      - name: Start Geometry service
-        run: docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }}
+      - name: Start Geometry service and verify start
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }}
+          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
-      - name: Run Ansys documentation building action
-        uses: ansys/actions/doc-build@v6
+      - name: Check links
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          cd doc
+          .\make.bat linkcheck
+
+      - name: Build the documentation (HTML)
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          cd doc
+          .\make.bat html
+
+      - name: Build the documentation (PDF)
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          cd doc
+          .\make.bat pdf
+
+      - name: Add assets to HTML docs
+        run: |
+          zip -r documentation-html.zip .\doc\_build\html
+          mv documentation-html.zip .\doc\_build\html\_static\assets\download\
+          cp doc/_build/latex/ansys-geometry-core.pdf .\doc\_build\html\_static\assets\download\
+
+      - name: Upload HTML documentation
+        uses: actions/upload-artifact@v4
         with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          add-pdf-html-docs-as-assets: true
+          name: documentation-html
+          path: doc/_build/html
+          retention-days: 7
+
+      - name: Upload PDF documentation
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation-pdf
+          path: doc/_build/latex/ansys-geometry-core*.pdf
+          retention-days: 7
 
       - name: Stop the Geometry service
         if: always()
@@ -309,6 +363,7 @@ jobs:
               docker stop $dockerContainers
               docker rm $dockerContainers
           }
+
 
 # =================================================================================================
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

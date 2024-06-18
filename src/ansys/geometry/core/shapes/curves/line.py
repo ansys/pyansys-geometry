@@ -192,7 +192,7 @@ class Line(Curve):
         Parameterization
             Information about how the line is parameterized.
         """
-        return Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(np.NINF, np.inf))
+        return Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(-np.inf, np.inf))
 
     def contains_param(self, param: Real) -> bool:  # noqa: D102
         raise NotImplementedError("contains_param() is not implemented.")
