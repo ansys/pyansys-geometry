@@ -18,8 +18,13 @@ from ansys_sphinx_theme import (
 import requests
 import sphinx
 from sphinx.builders.latex import LaTeXBuilder
+from sphinx.util import logging
 
 from ansys.geometry.core import __version__
+
+# Convert notebooks into Python scripts and include them in the output files
+logger = logging.getLogger(__name__)
+
 
 # For some reason the global var is not working on doc build...
 # import ansys.tools.visualization_interface as viz_interface
@@ -393,9 +398,15 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
         import subprocess
 
         examples_output_dir = Path(app.outdir) / "examples"
+        if not examples_output_dir.exists():
+            logger.info("No examples directory found, skipping conversion...")
+            return
+
         notebooks = examples_output_dir.glob("**/*.ipynb")
+        count = 0
         for notebook in notebooks:
-            print(f"Converting {notebook}")  # using jupytext
+            count += 1
+            logger.info(f"Converting {notebook}")  # using jupytext
             output = subprocess.run(
                 [
                     "jupytext",
@@ -410,8 +421,13 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
             )
 
             if output.returncode != 0:
-                print(f"Error converting {notebook} to script")
-                print(output.stderr)
+                logger.error(f"Error converting {notebook} to script")
+                logger.error(output.stderr)
+
+        if count == 0:
+            logger.warning("No notebooks found to convert to scripts")
+        else:
+            logger.info(f"Converted {count} notebooks to scripts")
 
 
 def setup(app: sphinx.application.Sphinx):
@@ -423,7 +439,8 @@ def setup(app: sphinx.application.Sphinx):
     app : sphinx.application.Sphinx
         Sphinx instance containing all the configuration for the documentation build.
     """
-    # Convert notebooks into Python scripts and include them in the output files
+    logger.info(f"Configuring Sphinx hooks...")
     if BUILD_EXAMPLES:
         # Run at the end of the build process
+        logger.info("Connecting build-finished hook for converting notebooks to scripts...")
         app.connect("build-finished", convert_notebooks_to_scripts)
