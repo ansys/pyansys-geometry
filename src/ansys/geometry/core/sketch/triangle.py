@@ -108,6 +108,6 @@ class Triangle(SketchFace):
                         0,
                     ],
                 ],
-                dtype=np.float_,
+                dtype=np.float64,
             )
         )
