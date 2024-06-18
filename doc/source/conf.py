@@ -403,11 +403,9 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
             return
 
         notebooks = examples_output_dir.glob("**/*.ipynb")
-        if len(notebooks) == 0:
-            logger.warning("No notebooks found in examples directory... potential error.")
-            return
-
+        count = 0
         for notebook in notebooks:
+            count += 1
             logger.info(f"Converting {notebook}")  # using jupytext
             output = subprocess.run(
                 [
@@ -425,6 +423,11 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
             if output.returncode != 0:
                 logger.error(f"Error converting {notebook} to script")
                 logger.error(output.stderr)
+
+        if count == 0:
+            logger.warning("No notebooks found to convert to scripts")
+        else:
+            logger.info(f"Converted {count} notebooks to scripts")
 
 
 def setup(app: sphinx.application.Sphinx):
