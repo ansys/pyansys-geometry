@@ -53,9 +53,9 @@ def test_param_uv():
 
 
 def test_interval():
-    open_interval = Interval(np.NINF, np.inf)
+    open_interval = Interval(-np.inf, np.inf)
     closed_interval = Interval(-1, 1)
-    open_start = Interval(np.NINF, 1)
+    open_start = Interval(-np.inf, 1)
     open_end = Interval(-1, np.inf)
 
     assert np.isneginf(open_interval.start)
