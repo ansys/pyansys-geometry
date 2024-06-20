@@ -135,7 +135,7 @@ def sketch_shapes_to_grpc_geometries(
     faces: List[SketchFace],
     only_one_curve: Optional[bool] = False,
 ) -> GRPCGeometries:
-    """Convert lists of ``SketchEdge``/``SketchFace`` to a gRPC message.
+    """Convert lists of ``SketchEdge`` and ``SketchFace`` to a gRPC message.
 
     Parameters
     ----------
@@ -555,7 +555,7 @@ def curve_to_grpc_curve(curve: Curve) -> GRPCCurve:
 
 
 def trimmed_curve_to_grpc_trimmed_curve(curve: "TrimmedCurve") -> GRPCTrimmedCurve:
-    """Convert a ``TrimmedCurve``to a trimmed curve gRPC message.
+    """Convert a ``TrimmedCurve`` to a trimmed curve gRPC message.
 
     Parameters
     ----------
