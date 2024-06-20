@@ -240,7 +240,7 @@ class Interval:
         return self.start + t * self.get_span()
 
     def is_negative(self, tolerance: Real) -> bool:
-        """Indicates whether the current interval is negative.
+        """Indicate whether the current interval is negative.
 
         Parameters
         ----------

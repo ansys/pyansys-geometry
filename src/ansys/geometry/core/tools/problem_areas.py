@@ -93,9 +93,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
     """
 
     def __init__(self, id: str, grpc_client: GrpcClient, faces: List["Face"]):
-        """Initialize a new instance of the duplicate face problem area
-        class.
-        """
+        """Initialize a new instance of the duplicate face problem areaclass."""
         super().__init__(id, grpc_client)
 
         from ansys.geometry.core.designer.face import Face
@@ -189,8 +187,7 @@ class MissingFaceProblemAreas(ProblemArea):
 
 
 class InexactEdgeProblemAreas(ProblemArea):
-    """Represents an inexact edge problem area with unique identifier and
-    associated edges.
+    """Represents an inexact edge problem area with unique identifier and associated edges.
 
     Parameters
     ----------
@@ -243,8 +240,7 @@ class InexactEdgeProblemAreas(ProblemArea):
 
 
 class ExtraEdgeProblemAreas(ProblemArea):
-    """Represents a extra edge problem area with unique identifier and
-    associated edges.
+    """Represents a extra edge problem area with unique identifier and associated edges.
 
     Parameters
     ----------
@@ -274,8 +270,7 @@ class ExtraEdgeProblemAreas(ProblemArea):
 
 
 class SmallFaceProblemAreas(ProblemArea):
-    """Represents a small face problem area with unique identifier and
-    associated faces.
+    """Represents a small face problem area with unique identifier and associated faces.
 
     Parameters
     ----------
@@ -328,8 +323,7 @@ class SmallFaceProblemAreas(ProblemArea):
 
 
 class SplitEdgeProblemAreas(ProblemArea):
-    """Represents a split edge problem area with unique identifier and
-    associated edges.
+    """Represents a split edge problem area with unique identifier and associated edges.
 
     Parameters
     ----------
@@ -382,8 +376,7 @@ class SplitEdgeProblemAreas(ProblemArea):
 
 
 class StitchFaceProblemAreas(ProblemArea):
-    """Represents a stitch face problem area with unique identifier and
-    associated faces.
+    """Represents a stitch face problem area with unique identifier and associated faces.
 
     Parameters
     ----------

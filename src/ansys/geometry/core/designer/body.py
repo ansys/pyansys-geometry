@@ -105,8 +105,7 @@ class CollisionType(Enum):
 
 
 class IBody(ABC):
-    """Defines the common methods for a body, providing the abstract body
-    interface.
+    """Defines the common methods for a body, providing the abstract body interface.
 
     Both the ``MasterBody`` class and ``Body`` class both inherit from the ``IBody``
     class. All child classes must implement all abstract methods.

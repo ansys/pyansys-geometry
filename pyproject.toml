@@ -124,10 +124,10 @@ select = [
     # "N", # pep8-naming, see https://docs.astral.sh/ruff/rules/#pep8-naming-n
     #    "PTH",  # flake8-use-pathlib, https://docs.astral.sh/ruff/rules/#flake8-use-pathlib-pth
 ]
-ignore = [
-    #    "E501",  # Line too long. Ignoring this so "ruff.formatter" manages line length.
-    "D212", # Multi-line docstring summary should start at the first line
-]
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore `D` rules everywhere except for the `src/` directory.
+"!src/**.py" = ["D"]
 
 [tool.ruff.format]
 quote-style = "double"

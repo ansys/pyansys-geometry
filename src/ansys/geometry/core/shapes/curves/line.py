@@ -225,7 +225,7 @@ class LineEvaluation(CurveEvaluation):
 
     @cached_property
     def tangent(self) -> UnitVector3D:
-        """Tangent of the evaluation
+        """Tangent of the evaluation.
 
         Notes
         -----
