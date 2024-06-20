@@ -25,13 +25,13 @@ repos:
   - id: check-yaml
   - id: trailing-whitespace
 
-# - repo: https://github.com/ansys/pre-commit-hooks
-#   rev: v0.3.1
-#   hooks:
-#     - id: add-license-headers
-#       files: '(src|examples|tests|docker)/.*\.(py)|\.(proto)'
-#       args:
-#       - --start_year=2023
+- repo: https://github.com/ansys/pre-commit-hooks
+  rev: v0.3.1
+  hooks:
+    - id: add-license-headers
+      files: '(src|examples|tests|docker)/.*\.(py)|\.(proto)'
+      args:
+      - --start_year=2023
 
 # this validates our github workflow files
 - repo: https://github.com/python-jsonschema/check-jsonschema
