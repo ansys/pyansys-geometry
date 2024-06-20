@@ -75,7 +75,8 @@ def test_global_logger_exist():
 
 def test_global_logger_has_handlers():
     """Test for checking that the general Logger has file_handlers and sdtout
-    file_handlers implemented."""
+    file_handlers implemented.
+    """
     assert hasattr(LOG, "file_handler")
     assert hasattr(LOG, "std_out_handler")
     assert LOG.logger.hasHandlers
@@ -107,7 +108,8 @@ def test_global_logger_logging(caplog: pytest.LogCaptureFixture):
 
 def test_global_logger_level_mode():
     """Checking that the Logger levels are stored as integer values and that
-    the default value (unless changed) is ERROR."""
+    the default value (unless changed) is ERROR.
+    """
     assert isinstance(LOG.logger.level, int)
     assert LOG.logger.level == logger.ERROR
 

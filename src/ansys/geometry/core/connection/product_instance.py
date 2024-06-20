@@ -425,7 +425,7 @@ def _manifest_path_provider(
 
 def __start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Popen:
     """Start the program.
-    
+
     Notes
     -----
     The path is the first item of the ``args`` array argument.

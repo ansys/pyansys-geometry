@@ -957,6 +957,7 @@ class Sketch:
 
     def sketch_polydata(self) -> List["PolyData"]:
         """Get polydata configuration for all objects of the sketch.
+
         Returns
         -------
         List[~pyvista.PolyData]

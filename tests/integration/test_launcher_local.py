@@ -110,7 +110,8 @@ def test_local_launcher_connect_with_restart(
     modeler: Modeler, caplog: pytest.LogCaptureFixture, docker_instance: LocalDockerInstance
 ):
     """Checking connection to existing service using launch modeler and
-    restarting existing service."""
+    restarting existing service.
+    """
     if not docker_instance:
         pytest.skip("Docker local launcher tests are not runnable.")
     else:
@@ -165,7 +166,8 @@ def test_try_deploying_container_with_same_name(
     modeler: Modeler, caplog: pytest.LogCaptureFixture, docker_instance: LocalDockerInstance
 ):
     """Checks that an error is raised when trying to deploy a container with a
-    name that already exists."""
+    name that already exists.
+    """
     if not docker_instance:
         pytest.skip("Docker local launcher tests are not runnable.")
     else:

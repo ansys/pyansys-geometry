@@ -375,7 +375,8 @@ def sketch_segment_to_grpc_line(segment: SketchSegment, plane: Plane) -> GRPCLin
 
 def tess_to_pd(tess: Tessellation) -> "PolyData":
     """Convert an ``ansys.api.geometry.Tessellation`` to
-    ``pyvista.PolyData``."""
+    ``pyvista.PolyData``.
+    """
     # lazy imports here to improve initial load
     import numpy as np
     import pyvista as pv

@@ -80,7 +80,8 @@ def test_find_extra_edge_id(modeler: Modeler):
 
 def test_find_extra_edge_edges(modeler: Modeler):
     """Test to read geometry and find it's extra edge problem area with
-    connected edges."""
+    connected edges.
+    """
     skip_if_linux(
         modeler, test_find_extra_edge_edges.__name__, "repair_tools"
     )  # Skip test on Linux
@@ -107,7 +108,8 @@ def test_find_inexact_edge_id(modeler: Modeler):
 
 def test_find_inexact_edge_edges(modeler: Modeler):
     """Test to read geometry and find it's inexact edge problem areas with
-    connected edges."""
+    connected edges.
+    """
     skip_if_linux(
         modeler, test_find_inexact_edge_edges.__name__, "repair_tools"
     )  # Skip test on Linux
@@ -118,7 +120,8 @@ def test_find_inexact_edge_edges(modeler: Modeler):
 
 def test_fix_inexact_edge(modeler: Modeler):
     """Test to read geometry and find and fix it's inexact edge problem
-    areas."""
+    areas.
+    """
     skip_if_linux(modeler, test_fix_inexact_edge.__name__, "repair_tools")  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "InExactEdgesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_inexact_edges(design.bodies)
@@ -143,7 +146,8 @@ def test_find_missing_face_id(modeler: Modeler):
 
 def test_find_missing_face_faces(modeler: Modeler):
     """Test to read geometry and find it's missing face problem area with
-    connected edges."""
+    connected edges.
+    """
     skip_if_linux(
         modeler, test_find_missing_face_faces.__name__, "repair_tools"
     )  # Skip test on Linux
@@ -154,7 +158,8 @@ def test_find_missing_face_faces(modeler: Modeler):
 
 def test_fix_missing_face(modeler: Modeler):
     """Test to read geometry and find and fix it's missing face problem
-    areas."""
+    areas.
+    """
     skip_if_linux(modeler, test_fix_missing_face.__name__, "repair_tools")  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "MissingFacesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_missing_faces(design.bodies)
@@ -179,7 +184,8 @@ def test_duplicate_face_id(modeler: Modeler):
 
 def test_duplicate_face_faces(modeler: Modeler):
     """Test to read geometry and find it's duplicate face problem area and its
-    connected faces."""
+    connected faces.
+    """
     skip_if_linux(modeler, test_duplicate_face_faces.__name__, "repair_tools")  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "DuplicateFacesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_duplicate_faces(design.bodies)
@@ -188,7 +194,8 @@ def test_duplicate_face_faces(modeler: Modeler):
 
 def test_fix_duplicate_face(modeler: Modeler):
     """Test to read geometry and find and fix it's duplicate face problem
-    areas."""
+    areas.
+    """
     skip_if_linux(modeler, test_fix_duplicate_face.__name__, "repair_tools")  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "DuplicateFacesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_duplicate_faces(design.bodies)
@@ -213,7 +220,8 @@ def test_find_small_face_id(modeler: Modeler):
 
 def test_find_small_face_faces(modeler: Modeler):
     """Test to read geometry, find it's small face problem area and return
-    connected faces."""
+    connected faces.
+    """
     skip_if_linux(
         modeler, test_find_small_face_faces.__name__, "repair_tools"
     )  # Skip test on Linux
@@ -248,7 +256,8 @@ def test_find_stitch_face_id(modeler: Modeler):
 
 def test_find_stitch_face_bodies(modeler: Modeler):
     """Test to read geometry and find it's stitch face problem area and return
-    the connected faces."""
+    the connected faces.
+    """
     skip_if_linux(
         modeler, test_find_stitch_face_bodies.__name__, "repair_tools"
     )  # Skip test on Linux
@@ -259,7 +268,8 @@ def test_find_stitch_face_bodies(modeler: Modeler):
 
 def test_fix_stitch_face(modeler: Modeler):
     """Test to read geometry, find the split edge problem areas and to fix
-    them."""
+    them.
+    """
     skip_if_linux(modeler, test_fix_stitch_face.__name__, "repair_tools")  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "stitch_before.scdocx")
     problem_areas = modeler.repair_tools.find_stitch_faces(design.bodies)

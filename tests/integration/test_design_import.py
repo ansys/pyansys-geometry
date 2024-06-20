@@ -151,7 +151,8 @@ def test_design_import_with_surfaces_issue834(modeler: Modeler):
 
 def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test creation of a component, saving it to a file, and loading it again
-    to a second component and make sure they have the same properties."""
+    to a second component and make sure they have the same properties.
+    """
     design_name = "two_cars"
     design = modeler.create_design(design_name)
 
@@ -267,7 +268,8 @@ def test_design_insert(modeler: Modeler):
 
 def test_design_insert_with_import(modeler: Modeler):
     """Test inserting a file into the design through the external format import
-    process."""
+    process.
+    """
     # Skip for Linux service
     skip_if_linux(modeler, test_design_insert_with_import.__name__, "insert_file")
 

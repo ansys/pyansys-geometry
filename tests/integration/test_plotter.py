@@ -714,7 +714,8 @@ def test_plot_revolve_sketch_normal(modeler: Modeler):
 
 def test_plot_revolve_sketch_negative_angle(modeler: Modeler):
     """Test plotting of a sketch revolved around an axis with a negative
-    angle."""
+    angle.
+    """
     # Initialize the donut sketch design
     design = modeler.create_design("quarter-donut")
 

@@ -28,7 +28,8 @@ from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
 
 def test_distance():
     """Simple test function to check the correct functioning of
-    ``Distance``."""
+    ``Distance``.
+    """
     # Create a Distance object and test it
     d_value = 10 * UNITS.cm
     d = Distance(d_value.m, unit=d_value.u)

@@ -94,7 +94,8 @@ class DuplicateFaceProblemAreas(ProblemArea):
 
     def __init__(self, id: str, grpc_client: GrpcClient, faces: List["Face"]):
         """Initialize a new instance of the duplicate face problem area
-        class."""
+        class.
+        """
         super().__init__(id, grpc_client)
 
         from ansys.geometry.core.designer.face import Face

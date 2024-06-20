@@ -226,7 +226,7 @@ class LineEvaluation(CurveEvaluation):
     @cached_property
     def tangent(self) -> UnitVector3D:
         """Tangent of the evaluation
-        
+
         Notes
         -----
         This is always equal to the direction of the line.

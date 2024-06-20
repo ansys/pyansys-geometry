@@ -35,7 +35,8 @@ from ansys.geometry.core.connection import ApiVersions, ProductInstance
 @pytest.mark.skip(reason="CI/CD machines need the Ansys products available.")
 def test_default_product_launch():
     """Test the creation of a Modeler object based on the local Ansys Geometry
-    Service installation."""
+    Service installation.
+    """
     modeler_geo_service = launch_modeler_with_geometry_service()
     modeler_discovery = launch_modeler_with_discovery()
     modeler_spaceclaim = launch_modeler_with_spaceclaim()
@@ -53,7 +54,8 @@ def test_default_product_launch():
 @pytest.mark.skip(reason="CI/CD machines need the Ansys products available.")
 def test_default_product_launch():
     """Test the creation of a Modeler object based on the local Ansys Geometry
-    Service installation."""
+    Service installation.
+    """
     modeler_geo_service = launch_modeler_with_geometry_service()
     modeler_discovery = launch_modeler_with_discovery()
     modeler_spaceclaim = launch_modeler_with_spaceclaim()

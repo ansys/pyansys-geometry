@@ -63,7 +63,8 @@ from .conftest import FILES_DIR, skip_if_linux
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):
     """Test to validate the extrusion of a simple circle as a cylinder and the
-    assignment of materials to it."""
+    assignment of materials to it.
+    """
     # Create a Sketch and draw a circle (all client side)
     sketch = Sketch()
     sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
@@ -371,7 +372,8 @@ def test_named_selections(modeler: Modeler):
 
 def test_faces_edges(modeler: Modeler):
     """Test for verifying the correct creation and usage of ``Face`` and
-    ``Edge`` objects."""
+    ``Edge`` objects.
+    """
     # Create your design on the server side
     design = modeler.create_design("FacesEdges_Test")
 
@@ -858,7 +860,8 @@ def test_body_rotation(modeler: Modeler):
 
 def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test for downloading a design in multiple modes and verifying the
-    correct download."""
+    correct download.
+    """
     # Create your design on the server side
     design = modeler.create_design("MultipleBodyTranslation_Test")
 
@@ -1372,7 +1375,8 @@ def test_design_points(modeler: Modeler):
 
 def test_named_selections_beams(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection`` with
-    beams."""
+    beams.
+    """
     # Skip on Linux
     skip_if_linux(modeler, test_named_selections_beams.__name__, "create_beam")
 
@@ -1397,7 +1401,8 @@ def test_named_selections_beams(modeler: Modeler):
 
 def test_named_selections_design_points(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection`` with
-    design points."""
+    design points.
+    """
     # Create your design on the server side
     design = modeler.create_design("NamedSelectionBeams_Test")
 
@@ -1803,7 +1808,8 @@ def test_multiple_bodies_boolean_operations(modeler: Modeler):
 
 def test_child_component_instances(modeler: Modeler):
     """Test creation of child ``Component`` instances and check the data model
-    reflects that."""
+    reflects that.
+    """
     design_name = "ChildComponentInstances_Test"
     design = modeler.create_design(design_name)
     # Create a base component
@@ -1842,7 +1848,8 @@ def test_child_component_instances(modeler: Modeler):
 
 def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Generate multiple designs, make sure they are all separate, and activate
-    them when needed."""
+    them when needed.
+    """
     # Check backend first
     if modeler.client.backend_type in (
         BackendType.SPACECLAIM,
@@ -2155,7 +2162,8 @@ def test_body_mirror(modeler: Modeler):
 
 def test_sweep_sketch(modeler: Modeler):
     """Test revolving a circle profile around a circular axis to make a
-    donut."""
+    donut.
+    """
     design_sketch = modeler.create_design("donut")
 
     path_radius = 5
@@ -2191,7 +2199,8 @@ def test_sweep_sketch(modeler: Modeler):
 
 def test_sweep_chain(modeler: Modeler):
     """Test revolving a semi-elliptical profile around a circular axis to make
-    a bowl."""
+    a bowl.
+    """
     design_chain = modeler.create_design("bowl")
 
     radius = 10
@@ -2239,7 +2248,8 @@ def test_sweep_chain(modeler: Modeler):
 
 def test_create_body_from_loft_profile(modeler: Modeler):
     """Test the ``create_body_from_loft_profile()`` method to create a vase
-    shape."""
+    shape.
+    """
     skip_if_linux(
         modeler, test_create_body_from_loft_profile.__name__, "'create_body_from_loft_profile'"
     )
@@ -2296,7 +2306,8 @@ def test_revolve_sketch(modeler: Modeler):
 
 def test_revolve_sketch_fail(modeler: Modeler):
     """Test demonstrating the failure of revolving a sketch when it is located
-    in the same origin."""
+    in the same origin.
+    """
     # Initialize the donut sketch design
     design = modeler.create_design("revolve-fail")
 

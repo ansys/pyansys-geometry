@@ -781,7 +781,8 @@ def test_polydata_methods():
 
 def test_sketch_pyconus2024_voglster_issue1195():
     """Test sketching unexpected behavior observed in PyConUS 2024 by
-    @voglster."""
+    @voglster.
+    """
     sketch = Sketch()
     p_start, p_end, p_center = Point2D([1, 0]), Point2D([-1, 0]), Point2D([0, 0])
     sketch.arc(p_start, p_end, p_center)

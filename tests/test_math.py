@@ -1081,7 +1081,8 @@ def test_div_operator_point(a, b_ref):
 
 def test_circle_intersections():
     """Test circle intersections using the get_two_circle_intersections
-    method."""
+    method.
+    """
     # Circle 1 - a point and its radius
     x0, y0, r0 = 5, 0, 5
     # Circle 2 - a point and its radius
