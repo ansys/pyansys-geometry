@@ -36,7 +36,7 @@ from ansys.geometry.core.designer.body import Body, MasterBody
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.designer.designpoint import DesignPoint
-from ansys.geometry.core.logger import LOG as logger
+from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
@@ -167,7 +167,7 @@ class GeometryPlotter(PlotterInterface):
             self.add_frame(sketch._plane)
 
         if "clipping_plane" in plotting_options:
-            logger.warning("Clipping is not available in Sketch objects.")
+            LOG.warning("Clipping is not available in Sketch objects.")
             plotting_options.pop("clipping_plane")
 
         self.add_sketch_polydata(

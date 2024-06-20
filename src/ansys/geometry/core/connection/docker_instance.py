@@ -37,7 +37,7 @@ except ModuleNotFoundError:  # pragma: no cover
     _HAS_DOCKER = False
 
 from ansys.geometry.core.connection.defaults import DEFAULT_PORT, GEOMETRY_SERVICE_DOCKER_IMAGE
-from ansys.geometry.core.logger import LOG as logger
+from ansys.geometry.core.logger import LOG
 
 
 def _docker_python_available(func):
@@ -169,7 +169,7 @@ class LocalDockerInstance:
         if cont and connect_to_existing_service and self._is_cont_geom_service(cont):
             # Now, check if a restart of the service is required
             if restart_if_existing_service:
-                logger.warning(f"Restarting service already running at port {port}...")
+                LOG.warning(f"Restarting service already running at port {port}...")
                 cont.restart()
 
             # Finally, store the container
@@ -204,7 +204,7 @@ class LocalDockerInstance:
                 # Check shared ports otherwise
                 for port_shared in ports_shared:
                     if int(port_shared["HostPort"]) == port:
-                        logger.warning(f"Service is already running at port {port}...")
+                        LOG.warning(f"Service is already running at port {port}...")
                         return (False, cont)
 
         # If you reached here, just return default values

@@ -656,7 +656,7 @@ class MasterBody(IBody):
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._tessellation = None
 
-    def reset_tessellation_cache(func):
+    def reset_tessellation_cache(self, func):
         """Decorate ``MasterBody`` methods that need tessellation cache update.
 
         Parameters
@@ -1037,7 +1037,7 @@ class Body(IBody):
         self._parent_component = parent_component
         self._template = template
 
-    def reset_tessellation_cache(func):
+    def reset_tessellation_cache(self, func):
         """Decorate ``Body`` methods that require a tessellation cache update.
 
         Parameters

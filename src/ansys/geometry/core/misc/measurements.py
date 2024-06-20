@@ -78,29 +78,29 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
         self._server_angle: Unit = UNITS.radian
 
     @property
-    def LENGTH(self) -> Unit:
+    def LENGTH(self) -> Unit: # noqa: N802
         """Default length unit for PyAnsys Geometry."""
         return self._length
 
     @LENGTH.setter
     @check_input_types
-    def LENGTH(self, value: Unit) -> None:
+    def LENGTH(self, value: Unit) -> None: # noqa: N802
         check_pint_unit_compatibility(value, self._length)
         self._length = value
 
     @property
-    def ANGLE(self) -> Unit:
+    def ANGLE(self) -> Unit: # noqa: N802
         """Default angle unit for PyAnsys Geometry."""
         return self._angle
 
     @ANGLE.setter
     @check_input_types
-    def ANGLE(self, value: Unit) -> None:
+    def ANGLE(self, value: Unit) -> None: # noqa: N802
         check_pint_unit_compatibility(value, self._angle)
         self._angle = value
 
     @property
-    def SERVER_LENGTH(self) -> Unit:
+    def SERVER_LENGTH(self) -> Unit: # noqa: N802
         """Default length unit for gRPC messages.
 
         Notes
@@ -110,7 +110,7 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
         return self._server_length
 
     @property
-    def SERVER_AREA(self) -> Unit:
+    def SERVER_AREA(self) -> Unit: # noqa: N802
         """Default area unit for gRPC messages.
 
         Notes
@@ -120,7 +120,7 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
         return self._server_length * self._server_length
 
     @property
-    def SERVER_VOLUME(self) -> Unit:
+    def SERVER_VOLUME(self) -> Unit: # noqa: N802
         """Default volume unit for gRPC messages.
 
         Notes
@@ -130,7 +130,7 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
         return self._server_length * self._server_length * self._server_length
 
     @property
-    def SERVER_ANGLE(self) -> Unit:
+    def SERVER_ANGLE(self) -> Unit: # noqa: N802
         """Default angle unit for gRPC messages.
 
         Notes

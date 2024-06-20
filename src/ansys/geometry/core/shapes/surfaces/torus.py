@@ -230,15 +230,15 @@ class Torus(Surface):
         """
         vector1 = UnitVector3D.from_points(self.origin, point)
         u = np.arctan2(vector1.dot(self.dir_y), vector1.dot(self.dir_x))
-        localX = np.cos(u) * self.dir_x + np.sin(u) * self.dir_y
-        delta = self.major_radius.m * localX
+        local_x = np.cos(u) * self.dir_x + np.sin(u) * self.dir_y
+        delta = self.major_radius.m * local_x
         vector2 = vector1 - delta
         if self.major_radius.m >= self.minor_radius.m:
-            v = np.arctan2(vector2.dot(self.dir_z), vector2.dot(localX))
+            v = np.arctan2(vector2.dot(self.dir_z), vector2.dot(local_x))
             return TorusEvaluation(self, ParamUV(u, v))
         vector3 = vector1 + delta
-        v1 = np.arctan2(vector2.dot(self.dir_z), vector2.dot(localX)), -np.pi
-        v2 = np.arctan2(vector3.dot(self.dir_z), vector3.dot(localX)), -np.pi
+        v1 = np.arctan2(vector2.dot(self.dir_z), vector2.dot(local_x)), -np.pi
+        v2 = np.arctan2(vector3.dot(self.dir_z), vector3.dot(local_x)), -np.pi
         if np.power(
             np.linalg.norm((TorusEvaluation(self, ParamUV(u, v1)).position() - point)), 2
         ) < np.power(

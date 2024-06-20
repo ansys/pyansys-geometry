@@ -319,7 +319,7 @@ def min_backend_version(major: int, minor: int, service_pack: int):
     """
     # Lazy import to avoid circular imports
     from ansys.geometry.core.errors import GeometryRuntimeError
-    from ansys.geometry.core.logger import LOG as logger
+    from ansys.geometry.core.logger import LOG
 
     def backend_version_decorator(method):
         def wrapper(self, *args, **kwargs):
@@ -349,7 +349,7 @@ def min_backend_version(major: int, minor: int, service_pack: int):
                     else:
                         return method(self, *args, **kwargs)
             else:
-                logger.warning("This object does not have a connection with the backend.")
+                LOG.warning("This object does not have a connection with the backend.")
 
         return wrapper
 

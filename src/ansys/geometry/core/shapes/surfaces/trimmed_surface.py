@@ -128,12 +128,12 @@ class TrimmedSurface:
         SurfaceEvaluation
             Resulting surface evaluation.
         """
-        boundsU = self.box_uv.interval_u
-        boundsV = self.box_uv.interval_v
+        bounds_u = self.box_uv.interval_u
+        bounds_v = self.box_uv.interval_v
         return self.geometry.evaluate(
             ParamUV(
-                boundsU.start + boundsU.get_span() * u,
-                boundsV.start + boundsV.get_span() * v,
+                bounds_u.start + bounds_u.get_span() * u,
+                bounds_v.start + bounds_v.get_span() * v,
             )
         )
 

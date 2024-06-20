@@ -37,7 +37,7 @@ from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
-from ansys.geometry.core.logger import LOG as logger
+from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.checks import check_type, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
@@ -121,7 +121,7 @@ class Modeler:
         if self.client.backend_type == BackendType.LINUX_SERVICE:
             self._repair_tools = None
             self._measurement_tools = None
-            logger.warning("Linux backend does not support repair tools.")
+            LOG.warning("Linux backend does not support repair tools.")
         else:
             self._repair_tools = RepairTools(self._grpc_client)
             self._measurement_tools = MeasurementTools(self._grpc_client)
@@ -131,7 +131,7 @@ class Modeler:
 
         # Check if the backend allows for multiple designs and throw warning if needed
         if not self.client.multiple_designs_allowed:
-            logger.warning(
+            LOG.warning(
                 "Linux and Ansys Discovery backends do not support multiple "
                 "designs open in the same session. Only the last design created "
                 "will be available to perform modeling operations."
@@ -161,7 +161,7 @@ class Modeler:
         design = Design(name, self)
         self._designs[design.design_id] = design
         if len(self._designs) > 1:
-            logger.warning(
+            LOG.warning(
                 "Some backends only support one design. "
                 + "Previous designs may be deleted (on the service) when creating a new one."
             )
@@ -207,7 +207,7 @@ class Modeler:
         design = Design("", self, read_existing_design=True)
         self._designs[design.design_id] = design
         if len(self._designs) > 1:
-            logger.warning(
+            LOG.warning(
                 "Some backends only support one design. "
                 + "Previous designs may be deleted (on the service) when reading a new one."
             )

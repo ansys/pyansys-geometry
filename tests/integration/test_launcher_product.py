@@ -58,7 +58,7 @@ def test_product_launch_with_parameters():
 
     And passing specific parameters to be tested.
     """
-    apiVersions = list(ApiVersions)
+    api_versions = list(ApiVersions)
 
     modeler_geo_service = launch_modeler_with_geometry_service(
         host="127.0.0.1",
@@ -72,7 +72,7 @@ def test_product_launch_with_parameters():
         host="127.0.0.1",
         port=ProductInstance.get_available_port(),
         log_level=random.randint(0, 3),
-        api_version=apiVersions[random.randint(0, len(apiVersions) - 1)].value,
+        api_version=api_versions[random.randint(0, len(api_versions) - 1)].value,
         timeout=180,
         hidden=True,
     )
@@ -81,7 +81,7 @@ def test_product_launch_with_parameters():
         host="127.0.0.1",
         port=ProductInstance.get_available_port(),
         log_level=random.randint(0, 3),
-        api_version=apiVersions[random.randint(0, len(apiVersions) - 1)].value,
+        api_version=api_versions[random.randint(0, len(api_versions) - 1)].value,
         timeout=180,
         hidden=True,
     )

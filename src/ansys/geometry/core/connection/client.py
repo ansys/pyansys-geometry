@@ -39,7 +39,7 @@ from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.product_instance import ProductInstance
-from ansys.geometry.core.logger import LOG as logger, PyGeometryCustomAdapter
+from ansys.geometry.core.logger import LOG, PyGeometryCustomAdapter
 from ansys.geometry.core.typing import Real
 
 try:
@@ -157,7 +157,7 @@ class GrpcClient:
         wait_until_healthy(self._channel, timeout)
 
         # once connection with the client is established, create a logger
-        self._log = logger.add_instance_logger(
+        self._log = LOG.add_instance_logger(
             name=self._target, client_instance=self, level=logging_level
         )
         if logging_file:
@@ -195,7 +195,7 @@ class GrpcClient:
                 ver.major_release, ver.minor_release, ver.service_pack
             )
         else:
-            logger.warning("The backend version is only available after 24.1 version.")
+            LOG.warning("The backend version is only available after 24.1 version.")
             self._backend_version = semver.Version(24, 1, 0)
 
     @property

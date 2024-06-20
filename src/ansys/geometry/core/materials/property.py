@@ -42,6 +42,7 @@ class MaterialPropertyType(Enum):
     TENSILE_STRENGTH = "TensileStrength"
     THERMAL_CONDUCTIVITY = "ThermalConductivity"
 
+    @staticmethod
     def from_id(id: str) -> "MaterialPropertyType":
         """Return the ``MaterialPropertyType`` value from the service.
 

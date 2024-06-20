@@ -26,7 +26,7 @@ from beartype.typing import Optional, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
-from scipy.spatial.transform import Rotation as spatial_rotation
+from scipy.spatial.transform import Rotation as SpatialRotation
 
 from ansys.geometry.core.math.matrix import Matrix33, Matrix44
 from ansys.geometry.core.math.plane import Plane
@@ -164,7 +164,7 @@ class SketchEllipse(SketchFace, Ellipse):
             VTK pyvista.Polydata configuration.
         """
         rotation = Matrix33(
-            spatial_rotation.from_euler(
+            SpatialRotation.from_euler(
                 "xyz", [0, 0, self._angle_offset.value.m_as(UNITS.radian)], degrees=False
             ).as_matrix()
         )

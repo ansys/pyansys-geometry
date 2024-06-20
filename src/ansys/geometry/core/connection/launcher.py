@@ -34,7 +34,7 @@ from ansys.geometry.core.connection.docker_instance import (
     LocalDockerInstance,
 )
 from ansys.geometry.core.connection.product_instance import prepare_and_start_backend
-from ansys.geometry.core.logger import LOG as logger
+from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.checks import check_type, deprecated_argument
 
 try:
@@ -174,16 +174,16 @@ def _launch_with_automatic_detection(**kwargs: Optional[Dict]) -> "Modeler":
     # 1.Start PyAnsys Geometry with PyPIM if the environment is configured for it
     # and a directive on how to launch it was not passed.
     if _HAS_PIM and pypim.is_configured():
-        logger.info("Starting Geometry service remotely. The startup configuration is ignored.")
+        LOG.info("Starting Geometry service remotely. The startup configuration is ignored.")
         return launch_remote_modeler(**kwargs)
 
     # Otherwise, we are in the "local Docker Container" scenario
     try:
         if _HAS_DOCKER and LocalDockerInstance.is_docker_installed():
-            logger.info("Starting Geometry service locally from Docker container.")
+            LOG.info("Starting Geometry service locally from Docker container.")
             return launch_docker_modeler(**kwargs)
     except Exception:
-        logger.warning(
+        LOG.warning(
             "The local Docker container could not be started."
             " Trying to start the Geometry service locally."
         )
@@ -192,28 +192,28 @@ def _launch_with_automatic_detection(**kwargs: Optional[Dict]) -> "Modeler":
     # through various methods: Geometry service, SpaceClaim, Discovery.
     if os.name == "nt":
         try:
-            logger.info("Starting Geometry service locally.")
+            LOG.info("Starting Geometry service locally.")
             return launch_modeler_with_geometry_service(**kwargs)
         except Exception:
-            logger.warning(
+            LOG.warning(
                 "The Geometry service could not be started locally."
                 " Trying to start Ansys SpaceClaim locally."
             )
 
         try:
-            logger.info("Starting Ansys SpaceClaim with Geometry Service locally.")
+            LOG.info("Starting Ansys SpaceClaim with Geometry Service locally.")
             return launch_modeler_with_spaceclaim(**kwargs)
         except Exception:
-            logger.warning(
+            LOG.warning(
                 "Ansys SpaceClaim could not be started locally."
                 " Trying to start Ansys Discovery locally."
             )
 
         try:
-            logger.info("Starting Ansys Discovery with Geometry Service locally.")
+            LOG.info("Starting Ansys Discovery with Geometry Service locally.")
             return launch_modeler_with_discovery(**kwargs)
         except Exception:
-            logger.warning("Ansys Discovery could not be started locally.")
+            LOG.warning("Ansys Discovery could not be started locally.")
 
     # If we reached this point...
     raise NotImplementedError("Geometry service cannot be initialized.")
@@ -571,7 +571,7 @@ def launch_modeler_with_geometry_service(
     """
     # if api_version is passed, throw a warning saying that it is not used
     if "api_version" in kwargs:
-        logger.warning(
+        LOG.warning(
             "The 'api_version' parameter is not used in 'launch_modeler_with_geometry_service'. "
             "Please remove it from the arguments."
         )

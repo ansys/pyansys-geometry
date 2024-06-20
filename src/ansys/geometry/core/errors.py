@@ -27,7 +27,7 @@ import threading
 
 from grpc._channel import _InactiveRpcError, _MultiThreadedRendezvous
 
-from ansys.geometry.core.logger import LOG as logger
+from ansys.geometry.core.logger import LOG
 
 SIGINT_TRACKER = []
 
@@ -55,7 +55,7 @@ class GeometryExitedError(RuntimeError):
 # handler for protect_grpc
 def handler(sig, frame):  # pragma: no cover
     """Pass signal to the custom interrupt handler."""
-    logger.info("KeyboardInterrupt received. Waiting until Geometry service execution finishes.")
+    LOG.info("KeyboardInterrupt received. Waiting until Geometry service execution finishes.")
     SIGINT_TRACKER.append(True)
 
 

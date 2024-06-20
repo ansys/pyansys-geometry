@@ -155,37 +155,37 @@ def test_point_errors():
         Point2D(["a", "b", "c"])
 
     # Create a Point3D
-    point3D = Point3D([1, 4, 4])
+    point_3d = Point3D([1, 4, 4])
 
     # Test setter error checks
     with pytest.raises(BeartypeCallHintParamViolation):
-        point3D.x = "a"
+        point_3d.x = "a"
 
     with pytest.raises(BeartypeCallHintParamViolation):
-        point3D.y = "a"
+        point_3d.y = "a"
 
     with pytest.raises(BeartypeCallHintParamViolation):
-        point3D.z = "a"
+        point_3d.z = "a"
 
     with pytest.raises(
         TypeError, match=r"The pint.Unit provided as an input should be a \[length\] quantity."
     ):
-        point3D.z = 10 * UNITS.degrees
+        point_3d.z = 10 * UNITS.degrees
 
     # Create a Point2D
-    point2D = Point2D([1, 4])
+    point_2d = Point2D([1, 4])
 
     # Test setter error checks
     with pytest.raises(BeartypeCallHintParamViolation):
-        point2D.x = "a"
+        point_2d.x = "a"
 
     with pytest.raises(BeartypeCallHintParamViolation):
-        point2D.y = "a"
+        point_2d.y = "a"
 
     with pytest.raises(
         TypeError, match=r"The pint.Unit provided as an input should be a \[length\] quantity."
     ):
-        point2D.y = 10 * UNITS.degrees
+        point_2d.y = 10 * UNITS.degrees
 
 
 def test_point2d_units():
@@ -275,7 +275,7 @@ def test_point3d_units():
     assert raw_z == p_cm_to_mm[2] * 10
 
 
-def test_vector3D():
+def test_vector3d():
     """Simple test to create ``Vector3D``."""
     # Create two Vector3D objects
     v1 = Vector3D([0, 1, 3])
@@ -391,7 +391,7 @@ def test_vector3D():
     assert not UNITVECTOR3D_X.is_opposite(UNITVECTOR3D_X)
 
 
-def test_vector2D():
+def test_vector2d():
     """Simple test to create ``Vector2D``."""
     # Create two Vector2D objects
     v1 = Vector2D([0, 1])
@@ -477,7 +477,7 @@ def test_vector2D():
     assert not UNITVECTOR2D_X.is_opposite(UNITVECTOR2D_X)
 
 
-def test_unitvector3D():
+def test_unitvector3d():
     """Simple test to create a ``UnitVector3D``."""
     # Create UnitVector objects from Vector
     v1 = Vector3D([0, 1, 3])
@@ -513,7 +513,7 @@ def test_unitvector3D():
     assert vector_from_points.z == -1
 
 
-def test_unitvector2D():
+def test_unitvector2d():
     """Simple test to create a ``UnitVector2D``."""
     # Create UnitVector2D objects from Vector
     v1 = Vector2D([0, 1])
@@ -544,7 +544,7 @@ def test_unitvector2D():
     assert vector_from_points.y == 1
 
 
-def test_vector3D_errors():
+def test_vector3d_errors():
     """Testing multiple ``Vector3D`` errors."""
     with pytest.raises(
         ValueError,
@@ -587,7 +587,7 @@ def test_vector3D_errors():
         v1.get_angle_between(v2)
 
 
-def test_vector2D_errors():
+def test_vector2d_errors():
     """Testing multiple ``Vector2D`` errors."""
     with pytest.raises(
         ValueError,
@@ -993,34 +993,34 @@ def test_add_sub_point():
 
 def test_bounding_box_expands_and_evaluates_bounds_comparisons():
     bounding_box = BoundingBox2D()
-    point1X = 1
-    point1Y = 5
-    point2X = -4
-    point2Y = -2
-    point3X = 7
-    point3Y = 8
-    point4X = -100
-    point4Y = 100
+    point1x = 1
+    point1y = 5
+    point2x = -4
+    point2y = -2
+    point3x = 7
+    point3y = 8
+    point4x = -100
+    point4y = 100
 
-    bounding_box.add_point_components(point1X, point1Y)
+    bounding_box.add_point_components(point1x, point1y)
     assert 1 == bounding_box.x_min
     assert 1 == bounding_box.x_max
     assert 5 == bounding_box.y_min
     assert 5 == bounding_box.y_max
 
-    bounding_box.add_point_components(point2X, point2Y)
+    bounding_box.add_point_components(point2x, point2y)
     assert -4 == bounding_box.x_min
     assert 1 == bounding_box.x_max
     assert -2 == bounding_box.y_min
     assert 5 == bounding_box.y_max
 
-    bounding_box.add_point_components(point3X, point3Y)
+    bounding_box.add_point_components(point3x, point3y)
     assert -4 == bounding_box.x_min
     assert 7 == bounding_box.x_max
     assert -2 == bounding_box.y_min
     assert 8 == bounding_box.y_max
 
-    bounding_box.add_point(Point2D([point4X, point4Y]))
+    bounding_box.add_point(Point2D([point4x, point4y]))
     assert -100 == bounding_box.x_min
     assert 7 == bounding_box.x_max
     assert -2 == bounding_box.y_min

@@ -26,7 +26,7 @@ from beartype.typing import Optional, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
-from scipy.spatial.transform import Rotation as spatial_rotation
+from scipy.spatial.transform import Rotation as SpatialRotation
 
 from ansys.geometry.core.math.matrix import Matrix33, Matrix44
 from ansys.geometry.core.math.point import Point2D
@@ -135,7 +135,7 @@ class Polygon(SketchFace):
         #        reason. Anyway, it's a regular polygon, everything will look the same.
         #
         rotation = Matrix33(
-            spatial_rotation.from_euler(
+            SpatialRotation.from_euler(
                 "xyz",
                 [0, 0, -np.pi / 2 + self.angle.m_as(UNITS.radian)],
                 degrees=False,
