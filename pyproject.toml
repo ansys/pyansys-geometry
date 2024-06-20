@@ -117,7 +117,7 @@ fix = true
 
 [tool.ruff.lint]
 select = [
-    #    "E",    # pycodestyle, see https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
+    "E",    # pycodestyle, see https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
     "D", # pydocstyle, see https://docs.astral.sh/ruff/rules/#pydocstyle-d
     "F",    # pyflakes, see https://docs.astral.sh/ruff/rules/#pyflakes-f
     "I", # isort, see https://docs.astral.sh/ruff/rules/#isort-i
@@ -128,6 +128,8 @@ select = [
 [tool.ruff.lint.per-file-ignores]
 # Ignore `F401` (import violations) in all `__init__.py` files.
 "__init__.py" = ["F401"]
+# Ignore `E402` (module level import not at top of file) in `src/ansys/geometry/core/__init__.py`.
+"src/ansys/geometry/core/__init__.py" = ["E402"]
 # Ignore `D` rules everywhere except for the `src/` directory.
 "!src/**.py" = ["D"]
 

@@ -144,9 +144,9 @@ def test_design_import_with_surfaces_issue834(modeler: Modeler):
 
     # Check some basic properties - whether they are surfaces or not!
     assert design.bodies[0].name == "BoxBody"
-    assert design.bodies[0].is_surface == False
+    assert design.bodies[0].is_surface is False
     assert design.bodies[1].name == "DuplicatesSurface"
-    assert design.bodies[1].is_surface == True
+    assert design.bodies[1].is_surface is True
 
 
 def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):

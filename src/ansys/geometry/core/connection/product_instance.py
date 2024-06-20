@@ -263,7 +263,7 @@ def prepare_and_start_backend(
 
     port = _check_port_or_get_one(port)
     installations = get_available_ansys_installations()
-    if product_version != None:
+    if product_version is not None:
         _check_version_is_available(product_version, installations)
     else:
         product_version = get_latest_ansys_installation()[0]
@@ -390,7 +390,7 @@ def _is_port_available(port: int, host: str = "localhost") -> bool:
             try:
                 sock.bind((host, port))
                 return True
-            except:
+            except socket.error:
                 return False
 
 

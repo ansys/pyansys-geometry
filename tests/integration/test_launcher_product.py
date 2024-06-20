@@ -40,11 +40,11 @@ def test_default_product_launch():
     modeler_geo_service = launch_modeler_with_geometry_service()
     modeler_discovery = launch_modeler_with_discovery()
     modeler_spaceclaim = launch_modeler_with_spaceclaim()
-    assert modeler_geo_service != None
+    assert modeler_geo_service is not None
     assert modeler_geo_service.client.healthy
-    assert modeler_discovery != None
+    assert modeler_discovery is not None
     assert modeler_discovery.client.healthy
-    assert modeler_spaceclaim != None
+    assert modeler_spaceclaim is not None
     assert modeler_spaceclaim.client.healthy
     modeler_geo_service.close()
     modeler_discovery.close()
@@ -86,11 +86,11 @@ def test_product_launch_with_parameters():
         hidden=True,
     )
 
-    assert modeler_geo_service != None
+    assert modeler_geo_service is not None
     assert modeler_geo_service.client.healthy
-    assert modeler_discovery != None
+    assert modeler_discovery is not None
     assert modeler_discovery.client.healthy
-    assert modeler_spaceclaim != None
+    assert modeler_spaceclaim is not None
     assert modeler_spaceclaim.client.healthy
 
     modeler_geo_service.close()

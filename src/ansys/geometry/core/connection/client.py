@@ -171,7 +171,7 @@ class GrpcClient:
         grpc_backend_response = self._admin_stub.GetBackend(Empty())
 
         # if no backend type has been specified, ask the backend which type it is
-        if backend_type == None:
+        if backend_type is None:
             grpc_backend_type = grpc_backend_response.type
             if grpc_backend_type == GRPCBackendType.DISCOVERY:
                 backend_type = BackendType.DISCOVERY

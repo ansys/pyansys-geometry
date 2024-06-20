@@ -2179,7 +2179,7 @@ def test_sweep_sketch(modeler: Modeler):
 
     body = design_sketch.sweep_sketch("donutsweep", profile, path)
 
-    assert body.is_surface == False
+    assert body.is_surface is False
 
     # check edges
     assert len(body.edges) == 0
@@ -2218,7 +2218,7 @@ def test_sweep_chain(modeler: Modeler):
     # create the bowl body
     body = design_chain.sweep_chain("bowlsweep", path, profile)
 
-    assert body.is_surface == True
+    assert body.is_surface is True
 
     # check edges
     assert len(body.edges) == 1
@@ -2299,7 +2299,7 @@ def test_revolve_sketch(modeler: Modeler):
         rotation_origin=Point3D([0, 0, 0]),
     )
 
-    assert body.is_surface == False
+    assert body.is_surface is False
     assert body.name == "donut-body"
     assert np.isclose(body.volume.m, np.pi**2 * 2 * 5, rtol=1e-3)  # quarter of a torus volume
 

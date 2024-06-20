@@ -251,8 +251,8 @@ class Ellipse(Curve):
         def integrand(theta, ecc):
             return np.sqrt(1 - (ecc * np.sin(theta)) ** 2)
 
-        I, _ = quad(integrand, 0, np.pi / 2, args=(self.eccentricity,))
-        return 4 * self.major_radius * I
+        integral, _ = quad(integrand, 0, np.pi / 2, args=(self.eccentricity,))
+        return 4 * self.major_radius * integral
 
     @property
     def area(self) -> Quantity:
