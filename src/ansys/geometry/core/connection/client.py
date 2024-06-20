@@ -268,11 +268,11 @@ class GrpcClient:
         lines.append(f"Ansys Geometry Modeler Client ({hex(id(self))})")
         lines.append(f"  Target:     {self._target}")
         if self._closed:
-            lines.append(f"  Connection: Closed")
+            lines.append("  Connection: Closed")
         elif self.healthy:
-            lines.append(f"  Connection: Healthy")
+            lines.append("  Connection: Healthy")
         else:
-            lines.append(f"  Connection: Unhealthy")  # pragma: no cover
+            lines.append("  Connection: Unhealthy")  # pragma: no cover
         return "\n".join(lines)
 
     def close(self):

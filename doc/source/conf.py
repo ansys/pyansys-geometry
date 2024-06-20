@@ -54,7 +54,7 @@ def get_wheelhouse_assets_dictionary():
                 content = response.content
                 break
             else:
-                print(f"Failed to retrieve the latest release. Retrying...")
+                print("Failed to retrieve the latest release. Retrying...")
                 time.sleep(2)
 
         if content is None:
@@ -436,7 +436,7 @@ def setup(app: sphinx.application.Sphinx):
     app : sphinx.application.Sphinx
         Sphinx instance containing all the configuration for the documentation build.
     """
-    logger.info(f"Configuring Sphinx hooks...")
+    logger.info("Configuring Sphinx hooks...")
     if BUILD_EXAMPLES:
         # Run at the end of the build process
         logger.info("Connecting build-finished hook for converting notebooks to scripts...")

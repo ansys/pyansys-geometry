@@ -990,7 +990,7 @@ class Component:
 
         self._grpc_client.log.debug(f"Creating beams on {self.id}...")
         response = self._commands_stub.CreateBeamSegments(request)
-        self._grpc_client.log.debug(f"Beams successfully created.")
+        self._grpc_client.log.debug("Beams successfully created.")
 
         # Note: The current gRPC API simply returns a list of IDs. There is no additional
         # information to correlate/merge against, so it is fully assumed that the list is

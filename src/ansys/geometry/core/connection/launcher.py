@@ -194,7 +194,7 @@ def _launch_with_automatic_detection(**kwargs: Optional[Dict]) -> "Modeler":
         try:
             logger.info("Starting Geometry service locally.")
             return launch_modeler_with_geometry_service(**kwargs)
-        except Exception as err:
+        except Exception:
             logger.warning(
                 "The Geometry service could not be started locally."
                 " Trying to start Ansys SpaceClaim locally."
@@ -203,7 +203,7 @@ def _launch_with_automatic_detection(**kwargs: Optional[Dict]) -> "Modeler":
         try:
             logger.info("Starting Ansys SpaceClaim with Geometry Service locally.")
             return launch_modeler_with_spaceclaim(**kwargs)
-        except Exception as err:
+        except Exception:
             logger.warning(
                 "Ansys SpaceClaim could not be started locally."
                 " Trying to start Ansys Discovery locally."
@@ -212,7 +212,7 @@ def _launch_with_automatic_detection(**kwargs: Optional[Dict]) -> "Modeler":
         try:
             logger.info("Starting Ansys Discovery with Geometry Service locally.")
             return launch_modeler_with_discovery(**kwargs)
-        except Exception as err:
+        except Exception:
             logger.warning("Ansys Discovery could not be started locally.")
 
     # If we reached this point...

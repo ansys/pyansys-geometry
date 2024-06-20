@@ -547,14 +547,14 @@ def test_delete_body_component(modeler: Modeler):
     nested_1_comp_1 = comp_1.add_component("Nested_1_Component_1")
     nested_1_nested_1_comp_1 = nested_1_comp_1.add_component("Nested_1_Nested_1_Component_1")
     nested_2_comp_1 = comp_1.add_component("Nested_2_Component_1")
-    nested_1_comp_2 = comp_2.add_component("Nested_1_Component_2")
+    _ = comp_2.add_component("Nested_1_Component_2")
 
     # Create the bodies
     body_1 = comp_3.extrude_sketch(name="comp_3_circle", sketch=sketch, distance=distance)
     body_2 = nested_2_comp_1.extrude_sketch(
         name="nested_2_comp_1_circle", sketch=sketch, distance=distance
     )
-    body_3 = nested_1_nested_1_comp_1.extrude_sketch(
+    _ = nested_1_nested_1_comp_1.extrude_sketch(
         name="nested_1_nested_1_comp_1_circle", sketch=sketch, distance=distance
     )
 

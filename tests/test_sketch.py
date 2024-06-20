@@ -391,7 +391,7 @@ def test_ellipse_instance_errors():
             3 * UNITS.m,
         )
 
-    ellipse = SketchEllipse(
+    _ = SketchEllipse(
         Point2D([10, 20]),
         3 * UNITS.m,
         100 * UNITS.cm,

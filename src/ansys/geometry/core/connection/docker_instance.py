@@ -279,7 +279,7 @@ class LocalDockerInstance:
         license_server = os.getenv("ANSRV_GEO_LICENSE_SERVER", None)
         if not license_server:  # pragma: no cover
             raise RuntimeError(
-                f"No license server provided... Store its value under the following env variable: ANSRV_GEO_LICENSE_SERVER."  # noqa: E501
+                "No license server provided... Store its value under the following env variable: ANSRV_GEO_LICENSE_SERVER."  # noqa: E501
             )
 
         # Try to deploy it
@@ -297,7 +297,7 @@ class LocalDockerInstance:
                     "USE_DEBUG_MODE": os.getenv("ANSRV_GEO_USE_DEBUG_MODE", 0),
                 },
             )
-        except ImageNotFound as err:  # pragma: no cover
+        except ImageNotFound:  # pragma: no cover
             raise RuntimeError(
                 f"Geometry service Docker image {image.value[1]} not found. Download it first to your machine."  # noqa: E501
             )

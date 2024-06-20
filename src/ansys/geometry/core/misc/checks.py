@@ -100,7 +100,7 @@ def check_is_float_int(param: object, param_name: Optional[Union[str, None]] = N
     """
     if not isinstance(param, (int, float)):
         raise TypeError(
-            f"The parameter should have a float or integer value."
+            "The parameter should have a float or integer value."
             if param_name is None
             else f"The parameter '{param_name}' should have a float or integer value."
         )
@@ -130,7 +130,7 @@ def check_ndarray_is_float_int(
         isinstance(data, (int, float)) for data in param_data.data
     ):
         raise TypeError(
-            f"The numpy.ndarray should contain float or integer values."
+            "The numpy.ndarray should contain float or integer values."
             if param_name is None
             else f"The numpy.ndarray '{param_name}' should contain float or integer values."
         )
@@ -157,7 +157,7 @@ def check_ndarray_is_not_none(
     param_data = np.ravel(param)
     if all(value is None for value in param_data):
         raise ValueError(
-            f"The numpy.ndarray should not have 'None' for all parameter values."
+            "The numpy.ndarray should not have 'None' for all parameter values."
             if param_name is None
             else f"The numpy.ndarray '{param_name}' should not have 'None' for all parameter values."  # noqa: E501
         )
@@ -182,7 +182,7 @@ def check_ndarray_is_all_nan(
     """
     if np.isnan(param).all():
         raise ValueError(
-            f"The numpy.ndarray should not be a nan numpy.ndarray."
+            "The numpy.ndarray should not be a nan numpy.ndarray."
             if param_name is None
             else f"The numpy.ndarray '{param_name}' should not be a nan numpy.ndarray."
         )
@@ -208,7 +208,7 @@ def check_ndarray_is_non_zero(
     param_data = np.ravel(param)
     if all(value == 0 for value in param_data):
         raise ValueError(
-            f"The numpy.ndarray should not be a numpy.ndarray of zeros."
+            "The numpy.ndarray should not be a numpy.ndarray of zeros."
             if param_name is None
             else f"The numpy.ndarray '{param_name}' should not be a numpy.ndarray of zeros."
         )

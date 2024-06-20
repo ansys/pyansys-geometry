@@ -52,22 +52,6 @@ def test_default_product_launch():
 
 
 @pytest.mark.skip(reason="CI/CD machines need the Ansys products available.")
-def test_default_product_launch():
-    """Test the creation of a Modeler object based on the local Ansys Geometry
-    Service installation.
-    """
-    modeler_geo_service = launch_modeler_with_geometry_service()
-    modeler_discovery = launch_modeler_with_discovery()
-    modeler_spaceclaim = launch_modeler_with_spaceclaim()
-    assert modeler_geo_service != None
-    assert modeler_geo_service.client.healthy
-    assert modeler_discovery != None
-    assert modeler_discovery.client.healthy
-    assert modeler_spaceclaim != None
-    assert modeler_spaceclaim.client.healthy
-
-
-@pytest.mark.skip(reason="CI/CD machines need the Ansys products available.")
 def test_product_launch_with_parameters():
     """Test the creation of a Modeler object based on the local Ansys Geometry
     Service installation.

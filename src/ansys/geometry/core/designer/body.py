@@ -1388,7 +1388,7 @@ class Body(IBody):
                     method=type_bool_op,
                 )
             ).empty_result
-        except Exception as err:
+        except Exception:
             # TODO: to be deleted - old versions did not have "tool_bodies" in the request
             # This is a temporary fix to support old versions of the server - should be deleted
             # once the server is no longer supported.

@@ -469,7 +469,7 @@ def test_torus():
     t_with_array_definitions = Torus([5, 8, 9], 88, 76, [55, 16, 73], [73, 0, -55])
 
     rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
-    t_3 = t_1.transformed_copy(rotation_matrix)
+    _ = t_1.transformed_copy(rotation_matrix)
 
     # Check that the equals operator works
     assert t_1 == t_1_duplicate
@@ -700,7 +700,7 @@ def test_circle():
 
     # Test expected errors
     with pytest.raises(ValueError):
-        invalid_axis_circle = Circle(
+        _ = Circle(
             origin, radius, reference=UNITVECTOR3D_X, axis=UnitVector3D([1, 1, 1])
         )
 
@@ -854,7 +854,7 @@ def test_ellipse():
 
     # Test expected errors
     with pytest.raises(ValueError):
-        invalid_axis = Ellipse(
+        _ = Ellipse(
             origin,
             major_radius,
             minor_radius,
