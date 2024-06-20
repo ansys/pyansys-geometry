@@ -84,7 +84,7 @@ BIN_DIR = TMP_DIR / "bins" / "DockerWindows" /"bin" /"x64"/"Release_Headless" /"
 
 # Create the directory structure
 shutil.copytree(
-    ANSYS_PATH/ "GeometryService",
+    ANSYS_PATH / "GeometryService",
     BIN_DIR,
 )
 
@@ -93,7 +93,7 @@ print(">>> Zipping temporary directory. This might take some time...")
 zip_file = shutil.make_archive(
     "windows-binaries",
     "zip",
-    root_dir=TMP_DIR/ "bins",
+    root_dir=TMP_DIR / "bins",
 )
 
 # Move the ZIP file to the docker directory
@@ -102,19 +102,19 @@ shutil.move(zip_file, TMP_DIR)
 
 # Remove the temporary directory
 print(">>> Removing Geometry Service files")
-shutil.rmtree(TMP_DIR/ "bins")
+shutil.rmtree(TMP_DIR / "bins")
 
 # Download the Dockerfile from the repository
 print(">>> Downloading Dockerfile")
 urllib.request.urlretrieve(
     "https://raw.githubusercontent.com/ansys/pyansys-geometry/main/docker/windows/Dockerfile",
-    TMP_DIR/ "Dockerfile",
+    TMP_DIR / "Dockerfile",
 )
 
 # Search for the AWP_ROOT* env variables and replace them with the correct
 # value
 print(">>> Updating Dockerfile")
-with Path.open(TMP_DIR/ "Dockerfile", "r") as f:
+with Path.open(TMP_DIR / "Dockerfile", "r") as f:
     dockerfile = f.read()
 
 # Find environment variables that start with AWP_ROOT
