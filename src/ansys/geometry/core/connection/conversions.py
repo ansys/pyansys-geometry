@@ -555,7 +555,7 @@ def curve_to_grpc_curve(curve: Curve) -> GRPCCurve:
 
 
 def trimmed_curve_to_grpc_trimmed_curve(curve: "TrimmedCurve") -> GRPCTrimmedCurve:
-    """Convert a ``TrimmedCurve``to a trimmed curve gRPC message.
+    """Convert a ``TrimmedCurve`` to a trimmed curve gRPC message.
 
     Parameters
     ----------
