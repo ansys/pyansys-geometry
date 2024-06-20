@@ -135,7 +135,7 @@ def sketch_shapes_to_grpc_geometries(
     faces: List[SketchFace],
     only_one_curve: Optional[bool] = False,
 ) -> GRPCGeometries:
-    """Convert lists of ``SketchEdge``/``SketchFace`` to a gRPC message.
+    """Convert lists of ``SketchEdge`` and ``SketchFace`` to a gRPC message.
 
     Parameters
     ----------
