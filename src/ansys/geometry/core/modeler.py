@@ -21,7 +21,6 @@
 # SOFTWARE.
 """Provides for interacting with the Geometry service."""
 import logging
-import os
 from pathlib import Path
 
 from ansys.api.dbu.v0.dbuapplication_pb2 import RunScriptFileRequest
@@ -244,16 +243,18 @@ class Modeler:
         file_path : str
             Full path of the file uploaded to the server.
         """
-        import os
+        from pathlib import Path
 
-        if not os.path.exists(file_path):
+        fp_path = Path(file_path).resolve()
+
+        if not fp_path.exists():
             raise ValueError(f"Could not find file: {file_path}")
-        if os.path.isdir(file_path):
+        if fp_path.is_dir():
             raise ValueError("File path must lead to a file, not a directory.")
 
-        file_name = os.path.split(file_path)[1]
+        file_name = fp_path.name
 
-        with open(file_path, "rb") as file:
+        with fp_path.open(mode="rb") as file:
             data = file.read()
 
         c_stub = CommandsStub(self._grpc_client.channel)
@@ -305,11 +306,11 @@ class Modeler:
             if any(
                 ext in str(file_path) for ext in [".CATProduct", ".asm", ".solution", ".sldasm"]
             ):
-                dir = os.path.dirname(file_path)
-                files = os.listdir(dir)
-                for file in files:
-                    full_path = os.path.join(dir, file)
-                    if full_path != file_path:
+                fp_path = Path(file_path)
+                dir = fp_path.parent
+                for file in dir.iterdir():
+                    full_path = file.resolve()
+                    if full_path != fp_path:
                         self._upload_file(full_path)
             self._upload_file(file_path, True, import_options)
         else:

@@ -21,7 +21,7 @@
 # SOFTWARE.
 """Provides the ruler widget for the PyAnsys Geometry plotter."""
 
-import os
+from pathlib import Path
 
 from ansys.tools.visualization_interface.backends.pyvista import PyVistaBackend
 from ansys.tools.visualization_interface.backends.pyvista.widgets import PlotterWidget
@@ -74,7 +74,7 @@ class ShowDesignPoints(PlotterWidget):
     def update(self) -> None:
         """Define the configuration and representation of the button widget."""
         vr = self._button.GetRepresentation()
-        icon_file = os.path.join(os.path.dirname(__file__), "_images", "designpoint.png")
+        icon_file = Path(__file__).parent / "_images" / "designpoint.png"
         representation = vtkPNGReader()
         representation.SetFileName(icon_file)
         representation.Update()

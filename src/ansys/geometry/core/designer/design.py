@@ -283,7 +283,7 @@ class Design(Component):
             return
 
         # Write to file
-        downloaded_file = open(file_location, "wb")
+        downloaded_file = Path(file_location).open(mode="wb")
         downloaded_file.write(received_bytes)
         downloaded_file.close()
 

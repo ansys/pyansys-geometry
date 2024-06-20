@@ -22,6 +22,7 @@
 """Module providing default connection parameters."""
 
 import os
+from pathlib import Path
 
 DEFAULT_HOST = os.environ.get("ANSRV_GEO_HOST", "127.0.0.1")
 """Default for the HOST name.
@@ -51,7 +52,7 @@ GEOMETRY_SERVICE_DOCKER_IMAGE = "ghcr.io/ansys/geometry"
 Tag is dependent on what OS service is requested.
 """
 
-DEFAULT_PIM_CONFIG = os.path.join(os.path.dirname(__file__), "pim_configuration.json")
+DEFAULT_PIM_CONFIG = Path(__file__).parent / "pim_configuration.json"
 """Default for the PIM configuration when running PIM Light.
 
 This parameter is only to be used when PIM Light is being run.

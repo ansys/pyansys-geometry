@@ -929,7 +929,7 @@ def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory)
     file_size = 1024
 
     # Write random bytes
-    with open(file, "wb") as fout:
+    with file.open(mode="wb") as fout:
         fout.write(os.urandom(file_size))
 
     assert file.exists()

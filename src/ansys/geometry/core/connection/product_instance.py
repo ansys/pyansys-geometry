@@ -22,6 +22,7 @@
 """Module containing the ``ProductInstance`` class."""
 import logging
 import os
+from pathlib import Path
 import signal
 import socket
 
@@ -279,7 +280,7 @@ def prepare_and_start_backend(
     )
 
     if backend_type == BackendType.DISCOVERY:
-        args.append(os.path.join(installations[product_version], DISCOVERY_FOLDER, DISCOVERY_EXE))
+        args.append(Path(installations[product_version], DISCOVERY_FOLDER, DISCOVERY_EXE))
         if hidden is True:
             args.append(BACKEND_DISCOVERY_HIDDEN)
 
@@ -292,7 +293,7 @@ def prepare_and_start_backend(
         env_copy[BACKEND_API_VERSION_VARIABLE] = str(api_version)
 
     elif backend_type == BackendType.SPACECLAIM:
-        args.append(os.path.join(installations[product_version], SPACECLAIM_FOLDER, SPACECLAIM_EXE))
+        args.append(Path(installations[product_version], SPACECLAIM_FOLDER, SPACECLAIM_EXE))
         if hidden is True:
             args.append(BACKEND_SPACECLAIM_HIDDEN)
             args.append(BACKEND_SPLASH_OFF)
@@ -306,7 +307,7 @@ def prepare_and_start_backend(
     elif backend_type == BackendType.WINDOWS_SERVICE:
         latest_version = get_latest_ansys_installation()[0]
         args.append(
-            os.path.join(
+            Path(
                 installations[latest_version], WINDOWS_GEOMETRY_SERVICE_FOLDER, GEOMETRY_SERVICE_EXE
             )
         )
@@ -399,7 +400,7 @@ def _manifest_path_provider(
 ) -> str:
     """Return the ApiServer's add-in manifest file path."""
     if manifest_path:
-        if os.path.exists(manifest_path):
+        if Path(manifest_path).exists():
             return manifest_path
         else:
             LOG.warning(
@@ -407,17 +408,17 @@ def _manifest_path_provider(
             )
 
     # Default manifest path
-    def_manifest_path = os.path.join(
+    def_manifest_path = Path(
         available_installations[version], ADDINS_SUBFOLDER, BACKEND_SUBFOLDER, MANIFEST_FILENAME
     )
 
-    if os.path.exists(def_manifest_path):
-        return def_manifest_path
+    if def_manifest_path.exists():
+        return def_manifest_path.as_uri()
     else:
         msg = (
             "Default manifest file's path does not exist."
             " Please specify a valid manifest."
-            f" The ApiServer Add-In seems to be missing in {os.path.dirname(def_manifest_path)}"
+            f" The ApiServer Add-In seems to be missing in {def_manifest_path.parent}"
         )
         LOG.error(msg)
         raise RuntimeError(msg)

@@ -271,7 +271,7 @@ def test_log_to_file(tmp_path_factory: pytest.TempPathFactory):
     LOG.error(file_msg_error)
     LOG.debug(file_msg_debug)
 
-    with open(file_path, "r") as fid:
+    with file_path.open(mode="r") as fid:
         text = "".join(fid.readlines())
 
     assert file_msg_error in text
@@ -286,7 +286,7 @@ def test_log_to_file(tmp_path_factory: pytest.TempPathFactory):
     file_msg_debug = "This debug message should be recorded."
     LOG.debug(file_msg_debug)
 
-    with open(file_path, "r") as fid:
+    with file_path.open(mode="r") as fid:
         text = "".join(fid.readlines())
 
     assert file_msg_debug in text
