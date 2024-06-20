@@ -27,7 +27,6 @@ from ansys.geometry.core.misc.accuracy import Accuracy
 
 def test_length():
     """Determine effective length accuracy comparisons."""
-
     assert not Accuracy.length_is_zero(5)
     assert not Accuracy.length_is_zero(1e-7)
     assert Accuracy.length_is_zero(0)
@@ -54,7 +53,6 @@ def test_length():
 
 def test_angle():
     """Determine effective angle accuracy comparisons."""
-
     assert not Accuracy.angle_is_zero(5)
     assert not Accuracy.angle_is_zero(1e-6)
     assert Accuracy.angle_is_zero(0)
@@ -79,7 +77,6 @@ def test_angle():
 
 def test_within_tolerance():
     """Determine effective tolerance comparison."""
-
     # due to relative tolerance
     assert Accuracy.is_within_tolerance(5, 7, 0.4, 1.0)
     assert Accuracy.is_within_tolerance(5, 7, 1 / 3, 1.0)
@@ -102,7 +99,6 @@ def test_within_tolerance():
 
 def test_length_reference_equality():
     """Determine effective length accuracy comparisons."""
-
     assert not Accuracy.length_is_equal(5, 10)
     assert not Accuracy.length_is_equal(5 + 1e-7, 5)
     assert not Accuracy.length_is_equal(5 - 1e-7, 5)
@@ -136,7 +132,6 @@ def test_length_reference_equality():
 
 def test_properties_accuracy_class():
     """Test properties of the accuracy class."""
-
     import ansys.geometry.core.misc.accuracy as accuracy_module
 
     # Initialize the accuracy class
@@ -150,7 +145,6 @@ def test_properties_accuracy_class():
 
 def test_double_comps():
     """Test double comparisons."""
-
     # Test equal doubles
     assert Accuracy.equal_doubles(5, 5)
     assert Accuracy.equal_doubles(5 + 1e-13, 5)

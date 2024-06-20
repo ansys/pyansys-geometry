@@ -44,8 +44,7 @@ from ansys.geometry.core.typing import Real, RealSequence
 
 
 class Line(Curve):
-    """
-    Provides 3D line representation.
+    """Provides 3D line representation.
 
     Parameters
     ----------
@@ -84,8 +83,7 @@ class Line(Curve):
         return False
 
     def evaluate(self, parameter: float) -> "LineEvaluation":
-        """
-        Evaluate the line at a given parameter.
+        """Evaluate the line at a given parameter.
 
         Parameters
         ----------
@@ -100,8 +98,7 @@ class Line(Curve):
         return LineEvaluation(self, parameter)
 
     def transformed_copy(self, matrix: Matrix44) -> "Line":
-        """
-        Create a transformed copy of the line based on a transformation matrix.
+        """Create a transformed copy of the line from a transformation matrix.
 
         Parameters
         ----------
@@ -120,8 +117,7 @@ class Line(Curve):
         return Line(new_point, UnitVector3D(new_axis[0:3]))
 
     def project_point(self, point: Point3D) -> "LineEvaluation":
-        """
-        Project a point onto the line and evaluate the line.
+        """Project a point onto the line and evaluate the line.
 
         Parameters
         ----------
@@ -138,8 +134,7 @@ class Line(Curve):
         return LineEvaluation(self, t)
 
     def is_coincident_line(self, other: "Line") -> bool:
-        """
-        Determine if the line is coincident with another line.
+        """Determine if the line is coincident with another line.
 
         Parameters
         ----------
@@ -163,8 +158,7 @@ class Line(Curve):
         ) and math.pow((self.direction % between).magnitude, 2) <= math.pow(LENGTH_ACCURACY, 2)
 
     def is_opposite_line(self, other: "Line") -> bool:
-        """
-        Determine if the line is opposite another line.
+        """Determine if the line is opposite another line.
 
         Parameters
         ----------
@@ -181,8 +175,7 @@ class Line(Curve):
         return False
 
     def parameterization(self) -> Parameterization:
-        """
-        Get the parametrization of the line.
+        """Get the parametrization of the line.
 
         The parameter of a line specifies the distance from the `origin` in the
         direction of `direction`.
@@ -221,8 +214,7 @@ class LineEvaluation(CurveEvaluation):
 
     @cached_property
     def position(self) -> Point3D:
-        """
-        Position of the evaluation.
+        """Position of the evaluation.
 
         Returns
         -------
@@ -233,8 +225,11 @@ class LineEvaluation(CurveEvaluation):
 
     @cached_property
     def tangent(self) -> UnitVector3D:
-        """
-        Tangent of the evaluation, which is always equal to the direction of the line.
+        """Tangent of the evaluation
+        
+        Notes
+        -----
+        This is always equal to the direction of the line.
 
         Returns
         -------
@@ -245,8 +240,7 @@ class LineEvaluation(CurveEvaluation):
 
     @cached_property
     def first_derivative(self) -> Vector3D:
-        """
-        First derivative of the evaluation.
+        """First derivative of the evaluation.
 
         The first derivative is always equal to the direction of the line.
 
@@ -259,8 +253,7 @@ class LineEvaluation(CurveEvaluation):
 
     @cached_property
     def second_derivative(self) -> Vector3D:
-        """
-        Second derivative of the evaluation.
+        """Second derivative of the evaluation.
 
         The second derivative is always equal to a zero vector ``Vector3D([0, 0, 0])``.
 
@@ -273,8 +266,7 @@ class LineEvaluation(CurveEvaluation):
 
     @cached_property
     def curvature(self) -> float:
-        """
-        Curvature of the line, which is always ``0``.
+        """Curvature of the line, which is always ``0``.
 
         Returns
         -------

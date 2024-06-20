@@ -32,11 +32,11 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 def ensure_design_is_active(method):
-    """
-    Make sure that the design is active before executing a method.
+    """Make sure that the design is active before executing a method.
 
-    This function is necessary to be called whenever we do any operation on the design.
-    If we are just accessing information of the class, it is not necessary to call this.
+    This function is necessary to be called whenever we do any operation
+    on the design. If we are just accessing information of the class, it
+    is not necessary to call this.
     """
 
     def wrapper(self, *args, **kwargs):
@@ -84,8 +84,7 @@ def ensure_design_is_active(method):
 
 
 def check_is_float_int(param: object, param_name: Optional[Union[str, None]] = None) -> None:
-    """
-    Check if a parameter has a float or integer value.
+    """Check if a parameter has a float or integer value.
 
     Parameters
     ----------
@@ -110,8 +109,7 @@ def check_is_float_int(param: object, param_name: Optional[Union[str, None]] = N
 def check_ndarray_is_float_int(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
-    """
-    Check if a :class:`numpy.ndarray <numpy.ndarray>` has float or integer values.
+    """Check if a :class:`numpy.ndarray <numpy.ndarray>` has float/integer types.
 
     Parameters
     ----------
@@ -141,8 +139,7 @@ def check_ndarray_is_float_int(
 def check_ndarray_is_not_none(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
-    """
-    Check if a :class:`numpy.ndarray <numpy.ndarray>` has all ``None`` values.
+    """Check if a :class:`numpy.ndarray <numpy.ndarray>` is all ``None``.
 
     Parameters
     ----------
@@ -169,8 +166,7 @@ def check_ndarray_is_not_none(
 def check_ndarray_is_all_nan(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
-    """
-    Check if a :class:`numpy.ndarray <numpy.ndarray>` is all nan-valued.
+    """Check if a :class:`numpy.ndarray <numpy.ndarray>` is all nan-valued.
 
     Parameters
     ----------
@@ -195,8 +191,7 @@ def check_ndarray_is_all_nan(
 def check_ndarray_is_non_zero(
     param: np.ndarray, param_name: Optional[Union[str, None]] = None
 ) -> None:
-    """
-    Check if a :class:`numpy.ndarray <numpy.ndarray>` is zero-valued.
+    """Check if a :class:`numpy.ndarray <numpy.ndarray>` is zero-valued.
 
     Parameters
     ----------
@@ -220,8 +215,7 @@ def check_ndarray_is_non_zero(
 
 
 def check_pint_unit_compatibility(input: Unit, expected: Unit) -> None:
-    """
-    Check if input for :class:`pint.Unit` is compatible with the expected input.
+    """Check if input :class:`pint.Unit` is compatible with the expected input.
 
     Parameters
     ----------
@@ -242,8 +236,7 @@ def check_pint_unit_compatibility(input: Unit, expected: Unit) -> None:
 
 
 def check_type_equivalence(input: object, expected: object) -> None:
-    """
-    Check if an input object is of the same class as an expected object.
+    """Check if an input object is of the same class as an expected object.
 
     Parameters
     ----------
@@ -264,8 +257,7 @@ def check_type_equivalence(input: object, expected: object) -> None:
 
 
 def check_type(input: object, expected_type: Union[type, Tuple[type, Any]]) -> None:
-    """
-    Check if an input object is of the same type as expected types.
+    """Check if an input object is of the same type as expected types.
 
     Parameters
     ----------
@@ -288,8 +280,7 @@ def check_type(input: object, expected_type: Union[type, Tuple[type, Any]]) -> N
 def check_type_all_elements_in_iterable(
     input: Iterable, expected_type: Union[type, Tuple[type, Any]]
 ) -> None:
-    """
-    Check if all elements in an iterable are of the same type as expected types.
+    """Check if all elements in an iterable are of the same type as expected.
 
     Parameters
     ----------
@@ -308,8 +299,7 @@ def check_type_all_elements_in_iterable(
 
 
 def min_backend_version(major: int, minor: int, service_pack: int):
-    """
-    Compare a method's minimum required version to the current backend version.
+    """Compare a minimum required version to the current backend version.
 
     Parameters
     ----------
@@ -367,8 +357,7 @@ def min_backend_version(major: int, minor: int, service_pack: int):
 
 
 def deprecated_method(alternative: Optional[str] = None, info: Optional[str] = None):
-    """
-    Decorate a method as deprecated.
+    """Decorate a method as deprecated.
 
     Parameters
     ----------
@@ -396,8 +385,7 @@ def deprecated_method(alternative: Optional[str] = None, info: Optional[str] = N
 
 
 def deprecated_argument(arg: str, alternative: Optional[str] = None, info: Optional[str] = None):
-    """
-    Decorate a method argument as deprecated.
+    """Decorate a method argument as deprecated.
 
     Parameters
     ----------

@@ -48,7 +48,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from pyvista import PolyData
 
 SketchObject = Union[SketchEdge, SketchFace]
-"""Type used to refer to both ``SketchEdge`` and ``SketchFace`` as possible values."""
+"""Type to refer to both ``SketchEdge`` and ``SketchFace``."""
 
 
 class Sketch:
@@ -84,8 +84,7 @@ class Sketch:
 
     @property
     def edges(self) -> List[SketchEdge]:
-        """
-        List of all independently sketched edges.
+        """List of all independently sketched edges.
 
         Notes
         -----
@@ -102,8 +101,7 @@ class Sketch:
     @plane.setter
     @check_input_types
     def plane(self, plane: Plane) -> None:
-        """
-        Set the sketch plane configuration.
+        """Set the sketch plane configuration.
 
         Parameters
         ----------
@@ -116,8 +114,7 @@ class Sketch:
 
     @check_input_types
     def translate_sketch_plane(self, translation: Vector3D) -> "Sketch":
-        """
-        Translate the origin location of the active sketch plane.
+        """Translate the origin location of the active sketch plane.
 
         Parameters
         ----------
@@ -141,8 +138,7 @@ class Sketch:
         y: Union[Quantity, Distance] = Quantity(0, DEFAULT_UNITS.LENGTH),
         z: Union[Quantity, Distance] = Quantity(0, DEFAULT_UNITS.LENGTH),
     ) -> "Sketch":
-        """
-        Translate the origin location of the active sketch plane by offsets.
+        """Translate the origin location of the active sketch plane by offsets.
 
         Parameters
         ----------
@@ -182,8 +178,7 @@ class Sketch:
     def translate_sketch_plane_by_distance(
         self, direction: UnitVector3D, distance: Union[Quantity, Distance]
     ) -> "Sketch":
-        """
-        Translate the origin location active sketch plane by distance.
+        """Translate the origin location active sketch plane by distance.
 
         Parameters
         ----------
@@ -209,8 +204,7 @@ class Sketch:
 
     @check_input_types
     def get(self, tag: str) -> List[SketchObject]:
-        """
-        Get a list of shapes with a given tag.
+        """Get a list of shapes with a given tag.
 
         Parameters
         ----------
@@ -221,8 +215,7 @@ class Sketch:
 
     @check_input_types
     def face(self, face: SketchFace, tag: Optional[str] = None) -> "Sketch":
-        """
-        Add a sketch face to the sketch.
+        """Add a sketch face to the sketch.
 
         Parameters
         ----------
@@ -244,8 +237,7 @@ class Sketch:
 
     @check_input_types
     def edge(self, edge: SketchEdge, tag: Optional[str] = None) -> "Sketch":
-        """
-        Add a sketch edge to the sketch.
+        """Add a sketch edge to the sketch.
 
         Parameters
         ----------
@@ -276,8 +268,7 @@ class Sketch:
         return self
 
     def segment(self, start: Point2D, end: Point2D, tag: Optional[str] = None) -> "Sketch":
-        """
-        Add a segment sketch object to the sketch plane.
+        """Add a segment sketch object to the sketch plane.
 
         Parameters
         ----------
@@ -297,8 +288,7 @@ class Sketch:
         return self.edge(segment, tag)
 
     def segment_to_point(self, end: Point2D, tag: Optional[str] = None) -> "Sketch":
-        """
-        Add a segment to the sketch plane starting from the previous edge end point.
+        """Add a segment to the sketch plane starting from the previous end point.
 
         Parameters
         ----------
@@ -324,8 +314,7 @@ class Sketch:
     def segment_from_point_and_vector(
         self, start: Point2D, vector: Vector2D, tag: Optional[str] = None
     ):
-        """
-        Add a segment to the sketch starting from a given starting point.
+        """Add a segment to the sketch starting from a given starting point.
 
         Notes
         -----
@@ -355,8 +344,7 @@ class Sketch:
 
     @check_input_types
     def segment_from_vector(self, vector: Vector2D, tag: Optional[str] = None):
-        """
-        Add a segment to the sketch starting from the end point of the previous edge.
+        """Add a segment to the sketch starting from the previous end point.
 
         Parameters
         ----------
@@ -390,8 +378,7 @@ class Sketch:
         clockwise: Optional[bool] = False,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """
-        Add an arc to the sketch plane.
+        """Add an arc to the sketch plane.
 
         Parameters
         ----------
@@ -425,8 +412,7 @@ class Sketch:
         clockwise: Optional[bool] = False,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """
-        Add an arc to the sketch starting from the end point of the previous edge.
+        """Add an arc to the sketch starting from the previous end point.
 
         Parameters
         ----------
@@ -463,8 +449,7 @@ class Sketch:
         end: Point2D,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """
-        Add an arc to the sketch plane from three given points.
+        """Add an arc to the sketch plane from three given points.
 
         Parameters
         ----------
@@ -494,8 +479,7 @@ class Sketch:
         clockwise: Optional[bool] = False,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """
-        Add an arc to the sketch plane from the start and end points and a given radius.
+        """Add an arc from the start, end points and a radius.
 
         Parameters
         ----------
@@ -539,8 +523,7 @@ class Sketch:
         clockwise: Optional[bool] = False,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """
-        Add an arc to the sketch plane from the start, center point, and angle.
+        """Add an arc from the start, center point, and angle.
 
         Parameters
         ----------
@@ -575,8 +558,7 @@ class Sketch:
         point3: Point2D,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """
-        Add a triangle to the sketch using given vertex points.
+        """Add a triangle to the sketch using given vertex points.
 
         Parameters
         ----------
@@ -607,8 +589,7 @@ class Sketch:
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """
-        Add a triangle to the sketch using given vertex points.
+        """Add a triangle to the sketch using given vertex points.
 
         Parameters
         ----------
@@ -642,8 +623,7 @@ class Sketch:
         radius: Union[Quantity, Distance, Real],
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """
-        Add a circle to the plane at a given center.
+        """Add a circle to the plane at a given center.
 
         Parameters
         ----------
@@ -670,8 +650,7 @@ class Sketch:
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """
-        Create a box on the sketch.
+        """Create a box on the sketch.
 
         Parameters
         ----------
@@ -702,8 +681,7 @@ class Sketch:
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """
-        Create a slot on the sketch.
+        """Create a slot on the sketch.
 
         Parameters
         ----------
@@ -734,8 +712,7 @@ class Sketch:
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """
-        Create an ellipse on the sketch.
+        """Create an ellipse on the sketch.
 
         Parameters
         ----------
@@ -766,8 +743,7 @@ class Sketch:
         angle: Optional[Union[Quantity, Angle, Real]] = 0,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """
-        Create a polygon on the sketch.
+        """Create a polygon on the sketch.
 
         Parameters
         ----------
@@ -798,8 +774,7 @@ class Sketch:
         n_teeth: int,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """
-        Create a dummy gear on the sketch.
+        """Create a dummy gear on the sketch.
 
         Parameters
         ----------
@@ -830,8 +805,7 @@ class Sketch:
         n_teeth: int,
         tag: Optional[str] = None,
     ) -> "Sketch":
-        """
-        Create a spur gear on the sketch.
+        """Create a spur gear on the sketch.
 
         Parameters
         ----------
@@ -857,8 +831,7 @@ class Sketch:
 
     @check_input_types
     def tag(self, tag: str) -> None:
-        """
-        Add a tag to the active selection of sketch objects.
+        """Add a tag to the active selection of sketch objects.
 
         Parameters
         ----------
@@ -868,8 +841,7 @@ class Sketch:
         self._tags[tag] = self._current_sketch_context
 
     def _single_point_context_reference(self) -> Point2D:
-        """
-        Get the last reference point from historical context.
+        """Get the last reference point from historical context.
 
         Notes
         -----
@@ -881,8 +853,7 @@ class Sketch:
         return self._edges[-1].end
 
     def _tag(self, sketch_collection: List[SketchObject], tag: str) -> None:
-        """
-        Add a tag for a collection of sketch objects.
+        """Add a tag for a collection of sketch objects.
 
         Parameters
         ----------
@@ -901,8 +872,7 @@ class Sketch:
         selected_pd_objects: List["PolyData"] = None,
         **plotting_options: Optional[dict],
     ):
-        """
-        Plot all objects of the sketch to the scene.
+        """Plot all objects of the sketch to the scene.
 
         Parameters
         ----------
@@ -953,8 +923,7 @@ class Sketch:
         use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ):
-        """
-        Plot the current selection to the scene.
+        """Plot the current selection to the scene.
 
         Parameters
         ----------
@@ -987,9 +956,7 @@ class Sketch:
         )
 
     def sketch_polydata(self) -> List["PolyData"]:
-        """
-        Get polydata configuration for all objects of the sketch to the scene.
-
+        """Get polydata configuration for all objects of the sketch.
         Returns
         -------
         List[~pyvista.PolyData]
@@ -1001,8 +968,7 @@ class Sketch:
         return sketches_polydata
 
     def sketch_polydata_faces(self) -> List["PolyData"]:
-        """
-        Get polydata configuration for all faces of the sketch to the scene.
+        """Get polydata configuration for all faces of the sketch to the scene.
 
         Returns
         -------
@@ -1016,8 +982,7 @@ class Sketch:
         return sketches_polydata_faces
 
     def sketch_polydata_edges(self) -> List["PolyData"]:
-        """
-        Get polydata configuration for all edges of the sketch to the scene.
+        """Get polydata configuration for all edges of the sketch to the scene.
 
         Returns
         -------

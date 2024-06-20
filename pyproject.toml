@@ -133,7 +133,7 @@ ignore = [
 quote-style = "double"
 indent-style = "space"
 docstring-code-format = true
-docstring-code-line-length = 20
+docstring-code-line-length = "dynamic"
 
 [tool.ruff.lint.pycodestyle]
 max-doc-length = 100

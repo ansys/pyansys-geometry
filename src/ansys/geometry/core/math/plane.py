@@ -33,8 +33,7 @@ from ansys.geometry.core.typing import RealSequence
 
 
 class Plane(Frame):
-    """
-    Provides primitive representation of a 2D plane in 3D space.
+    """Provides primitive representation of a 2D plane in 3D space.
 
     Parameters
     ----------
@@ -58,8 +57,7 @@ class Plane(Frame):
 
     @check_input_types
     def is_point_contained(self, point: Point3D) -> bool:
-        """
-        Check if a 3D point is contained in the plane.
+        """Check if a 3D point is contained in the plane.
 
         Parameters
         ----------
@@ -83,8 +81,7 @@ class Plane(Frame):
 
     @property
     def normal(self) -> UnitVector3D:
-        """
-        Calculate the normal vector of the plane.
+        """Calculate the normal vector of the plane.
 
         Returns
         -------

@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module for connecting to a local Docker container with the Geometry service."""
+"""Module for connecting to a local Geometry Service Docker container."""
 from enum import Enum
 from functools import wraps
 import os
@@ -41,8 +41,7 @@ from ansys.geometry.core.logger import LOG as logger
 
 
 def _docker_python_available(func):
-    """
-    Check whether Docker is installed as a Python package.
+    """Check whether Docker is installed as a Python package.
 
     This function works as a decorator.
     """
@@ -73,8 +72,7 @@ class GeometryContainers(Enum):
 
 
 class LocalDockerInstance:
-    """
-    Instantiates a Geometry service as a local Docker container.
+    """Instantiates a Geometry service as a local Docker container.
 
     By default, if a container with the Geometry service already exists at the given port,
     PyAnsys Geometry connects to it. Otherwise, PyAnsys Geometry tries to launch its own service.
@@ -102,12 +100,11 @@ class LocalDockerInstance:
     """
 
     __DOCKER_CLIENT__: "DockerClient" = None
-    """
-    Docker client class variable. The default is ``None``, in which case lazy
-    initialization is used.
+    """Docker client class variable.
 
     Notes
     -----
+    The default is ``None``, in which case lazy initialization is used.
     ``__DOCKER_CLIENT__`` is a class variable, meaning that it is
     the same variable for all instances of this class.
     """
@@ -115,8 +112,7 @@ class LocalDockerInstance:
     @staticmethod
     @_docker_python_available
     def docker_client() -> "DockerClient":
-        """
-        Get the initialized ``__DOCKER_CLIENT__`` object.
+        """Get the initialized ``__DOCKER_CLIENT__`` object.
 
         Notes
         -----
@@ -136,8 +132,7 @@ class LocalDockerInstance:
     @staticmethod
     @_docker_python_available
     def is_docker_installed() -> bool:
-        """
-        Check whether a local installation of Docker engine is available and running.
+        """Check a local installation of Docker engine is available and running.
 
         Returns
         -------
@@ -191,8 +186,7 @@ class LocalDockerInstance:
             raise RuntimeError(f"Geometry service cannot be deployed on port {port}")
 
     def _check_port_availability(self, port: int) -> Tuple[bool, Optional["Container"]]:
-        """
-        Check whether the requested port is available for deployment.
+        """Check whether the requested port is available for deployment.
 
         Returns
         -------
@@ -217,8 +211,7 @@ class LocalDockerInstance:
         return (True, None)
 
     def _is_cont_geom_service(self, cont: "Container") -> bool:
-        """
-        Check whether a provided ``Container`` object is a Geometry service container.
+        """Check a provided ``Container`` object is a Geometry service container.
 
         Parameters
         ----------
@@ -243,8 +236,7 @@ class LocalDockerInstance:
     def _deploy_container(
         self, port: int, name: Union[str, None], image: Union[GeometryContainers, None]
     ):
-        """
-        Handle the deployment of a Geometry service according to the arguments.
+        """Handle the deployment of a Geometry service.
 
         Parameters
         ----------
@@ -325,8 +317,7 @@ class LocalDockerInstance:
 
     @property
     def existed_previously(self) -> bool:
-        """
-        Flag indicating whether the container previously existed.
+        """Flag indicating whether the container previously existed.
 
         Returns ``False`` if the Geometry service was effectively
         deployed by this class or ``True`` if it already existed.
@@ -335,8 +326,7 @@ class LocalDockerInstance:
 
 
 def get_geometry_container_type(instance: LocalDockerInstance) -> Union[GeometryContainers, None]:
-    """
-    Given a ``LocalDockerInstance``, provide back the ``GeometryContainers`` value.
+    """Provide back the ``GeometryContainers`` value.
 
     Notes
     -----

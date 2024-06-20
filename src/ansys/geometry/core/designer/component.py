@@ -85,7 +85,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @unique
 class SharedTopologyType(Enum):
-    """Enum for the component shared topologies available in the Geometry service."""
+    """Shared topologies available."""
 
     SHARETYPE_NONE = 0
     SHARETYPE_SHARE = 1
@@ -117,8 +117,7 @@ class ExtrusionDirection(Enum):
 
 
 class Component:
-    """
-    Provides for creating and managing a component.
+    """Provides for creating and managing a component.
 
     This class synchronizes to a design within a supporting Geometry service instance.
 
@@ -274,8 +273,7 @@ class Component:
 
     @property
     def shared_topology(self) -> Union[SharedTopologyType, None]:
-        """
-        Shared topology type of the component (if any).
+        """Shared topology type of the component (if any).
 
         Notes
         -----
@@ -284,7 +282,7 @@ class Component:
         return self._shared_topology
 
     def __create_children(self, template: "Component") -> None:
-        """Create new component and child bodies in ``self`` from ``template``."""
+        """Create new component and child bodies from ``template``."""
         for template_comp in template.components:
             new_id = self.id + "/" + template_comp.id.split("/")[-1]
             new = Component(
@@ -298,8 +296,7 @@ class Component:
             self.components.append(new)
 
     def get_world_transform(self) -> Matrix44:
-        """
-        Get the full transformation matrix of the component in world space.
+        """Get the full transformation matrix of the component in world space.
 
         Returns
         -------
@@ -319,8 +316,7 @@ class Component:
         rotation_direction: Optional[UnitVector3D] = None,
         rotation_angle: Union[Quantity, Angle, Real] = 0,
     ):
-        """
-        Apply a translation and/or rotation to the existing placement matrix.
+        """Apply a translation and/or rotation to the placement matrix.
 
         Notes
         -----
@@ -363,8 +359,7 @@ class Component:
         self._master_component.transform = grpc_matrix_to_matrix(response.matrix)
 
     def reset_placement(self):
-        """
-        Reset a component's placement matrix to an identity matrix.
+        """Reset a component's placement matrix to an identity matrix.
 
         See :func:`modify_placement()`.
         """
@@ -373,8 +368,7 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     def add_component(self, name: str, template: Optional["Component"] = None) -> "Component":
-        """
-        Add a new component under this component within the design assembly.
+        """Add a new component under this component within the design assembly.
 
         Parameters
         ----------
@@ -414,8 +408,7 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     def set_shared_topology(self, share_type: SharedTopologyType) -> None:
-        """
-        Set the shared topology to apply to the component.
+        """Set the shared topology to apply to the component.
 
         Parameters
         ----------
@@ -443,8 +436,7 @@ class Component:
         distance: Union[Quantity, Distance, Real],
         direction: Union[ExtrusionDirection, str] = ExtrusionDirection.POSITIVE,
     ) -> Body:
-        """
-        Create a solid body by extruding the sketch profile up by a given distance.
+        """Create a solid body by extruding the sketch profile a distance.
 
         Notes
         -----
@@ -502,8 +494,7 @@ class Component:
         sketch: Sketch,
         path: List[TrimmedCurve],
     ) -> Body:
-        """
-        Create a body by sweeping a planar profile along a path.
+        """Create a body by sweeping a planar profile along a path.
 
         Notes
         -----
@@ -552,8 +543,7 @@ class Component:
         path: List[TrimmedCurve],
         chain: List[TrimmedCurve],
     ) -> Body:
-        """
-        Create a body by sweeping a chain of curves along a path.
+        """Create a body by sweeping a chain of curves along a path.
 
         Notes
         -----
@@ -600,8 +590,7 @@ class Component:
         angle: Union[Quantity, Angle, Real],
         rotation_origin: Point3D,
     ) -> Body:
-        """
-        Create a solid body by revolving a sketch profile around an axis.
+        """Create a solid body by revolving a sketch profile around an axis.
 
         Notes
         -----
@@ -670,8 +659,7 @@ class Component:
         distance: Union[Quantity, Distance],
         direction: Union[ExtrusionDirection, str] = ExtrusionDirection.POSITIVE,
     ) -> Body:
-        """
-        Extrude the face profile by a given distance to create a solid body.
+        """Extrude the face profile by a given distance to create a solid body.
 
         There are no modifications against the body containing the source face.
 
@@ -728,8 +716,7 @@ class Component:
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
     def create_sphere(self, name: str, center: Point3D, radius: Distance) -> Body:
-        """
-        Create a sphere body defined by the center point and the radius.
+        """Create a sphere body defined by the center point and the radius.
 
         Parameters
         ----------
@@ -768,8 +755,7 @@ class Component:
         periodic: bool = False,
         ruled: bool = False,
     ) -> Body:
-        """
-        Create a lofted body from a collection of trimmed curves.
+        """Create a lofted body from a collection of trimmed curves.
 
         Parameters
         ----------
@@ -828,8 +814,7 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     def create_surface(self, name: str, sketch: Sketch) -> Body:
-        """
-        Create a surface body with a sketch profile.
+        """Create a surface body with a sketch profile.
 
         The newly created body is placed under this component within the design assembly.
 
@@ -866,8 +851,7 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     def create_surface_from_face(self, name: str, face: Face) -> Body:
-        """
-        Create a surface body based on a face.
+        """Create a surface body based on a face.
 
         Notes
         -----
@@ -906,8 +890,7 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     def create_coordinate_system(self, name: str, frame: Frame) -> CoordinateSystem:
-        """
-        Create a coordinate system.
+        """Create a coordinate system.
 
         The newly created coordinate system is place under this component
         within the design assembly.
@@ -932,8 +915,7 @@ class Component:
     def translate_bodies(
         self, bodies: List[Body], direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
     ) -> None:
-        """
-        Translate the geometry bodies in a specified direction by a given distance.
+        """Translate the bodies in a specified direction by a distance.
 
         Notes
         -----
@@ -985,8 +967,7 @@ class Component:
     def create_beams(
         self, segments: List[Tuple[Point3D, Point3D]], profile: BeamProfile
     ) -> List[Beam]:
-        """
-        Create beams under the component.
+        """Create beams under the component.
 
         Notes
         -----
@@ -1025,8 +1006,7 @@ class Component:
         return self._beams[-n_beams:]
 
     def create_beam(self, start: Point3D, end: Point3D, profile: BeamProfile) -> Beam:
-        """
-        Create a beam under the component.
+        """Create a beam under the component.
 
         The newly created beam synchronizes to a design within a supporting
         Geometry service instance.
@@ -1046,8 +1026,7 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     def delete_component(self, component: Union["Component", str]) -> None:
-        """
-        Delete a component (itself or its children).
+        """Delete a component (itself or its children).
 
         Notes
         -----
@@ -1082,8 +1061,7 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     def delete_body(self, body: Union[Body, str]) -> None:
-        """
-        Delete a body belonging to this component (or its children).
+        """Delete a body belonging to this component (or its children).
 
         Notes
         -----
@@ -1119,8 +1097,7 @@ class Component:
         name: str,
         point: Point3D,
     ) -> DesignPoint:
-        """
-        Create a single design point.
+        """Create a single design point.
 
         Parameters
         ----------
@@ -1139,8 +1116,7 @@ class Component:
         name: str,
         points: List[Point3D],
     ) -> List[DesignPoint]:
-        """
-        Create a list of design points.
+        """Create a list of design points.
 
         Parameters
         ----------
@@ -1172,11 +1148,11 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     def delete_beam(self, beam: Union[Beam, str]) -> None:
-        """
-        Delete an existing beam belonging to this component (or its children).
+        """Delete an existing beam belonging to this component's scope.
 
         Notes
         -----
+        If the beam belongs to this component's children, it is deleted.
         If the beam does not belong to this component (or its children), it
         is not deleted.
 
@@ -1210,8 +1186,7 @@ class Component:
 
     @check_input_types
     def search_component(self, id: str) -> Union["Component", None]:
-        """
-        Search nested components recursively for a component.
+        """Search nested components recursively for a component.
 
         Parameters
         ----------
@@ -1239,8 +1214,12 @@ class Component:
 
     @check_input_types
     def search_body(self, id: str) -> Union[Body, None]:
-        """
-        Search bodies in the component and nested components recursively for a body.
+        """Search bodies in the component's scope.
+
+        Notes
+        -----
+        This method searches for bodies in the component and nested components
+        recursively.
 
         Parameters
         ----------
@@ -1269,8 +1248,12 @@ class Component:
 
     @check_input_types
     def search_beam(self, id: str) -> Union[Beam, None]:
-        """
-        Search beams in the component and nested components recursively for a beam.
+        """Search beams in the component's scope.
+
+        Notes
+        -----
+        This method searches for beams in the component and nested components
+        recursively.
 
         Parameters
         ----------
@@ -1298,8 +1281,7 @@ class Component:
         return None
 
     def _kill_component_on_client(self) -> None:
-        """
-        Set the ``is_alive`` property of nested objects to ``False``.
+        """Set the ``is_alive`` property of nested objects to ``False``.
 
         Notes
         -----
@@ -1320,8 +1302,7 @@ class Component:
     def tessellate(
         self, merge_component: bool = False, merge_bodies: bool = False
     ) -> Union["PolyData", "MultiBlock"]:
-        """
-        Tessellate the component.
+        """Tessellate the component.
 
         Parameters
         ----------
@@ -1401,8 +1382,7 @@ class Component:
         use_trame: Optional[bool] = None,
         **plotting_options: Optional[dict],
     ) -> None:
-        """
-        Plot the component.
+        """Plot the component.
 
         Parameters
         ----------

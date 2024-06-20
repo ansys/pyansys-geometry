@@ -53,8 +53,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 class Modeler:
-    """
-    Provides for interacting with an open session of the Geometry service.
+    """Provides for interacting with an open session of the Geometry service.
 
     Parameters
     ----------
@@ -144,8 +143,7 @@ class Modeler:
         return self._grpc_client
 
     def create_design(self, name: str) -> "Design":
-        """
-        Initialize a new design with the connected client.
+        """Initialize a new design with the connected client.
 
         Parameters
         ----------
@@ -170,8 +168,7 @@ class Modeler:
         return self._designs[design.design_id]
 
     def get_active_design(self, sync_with_backend: bool = True) -> "Design":
-        """
-        Get the active design on the modeler object.
+        """Get the active design on the modeler object.
 
         Parameters
         ----------
@@ -198,8 +195,7 @@ class Modeler:
         return None
 
     def read_existing_design(self) -> "Design":
-        """
-        Read the existing design on the service with the connected client.
+        """Read the existing design on the service with the connected client.
 
         Returns
         -------
@@ -218,7 +214,7 @@ class Modeler:
         return self._designs[design.design_id]
 
     def close(self) -> None:
-        """``Modeler`` method for easily accessing the client's close method."""
+        """Access the client's close method."""
         return self.client.close()
 
     def _upload_file(
@@ -227,8 +223,7 @@ class Modeler:
         open_file: bool = False,
         import_options: ImportOptions = ImportOptions(),
     ) -> str:
-        """
-        Upload a file from the client to the server.
+        """Upload a file from the client to the server.
 
         Notes
         -----
@@ -280,8 +275,7 @@ class Modeler:
         upload_to_server: bool = True,
         import_options: ImportOptions = ImportOptions(),
     ) -> "Design":
-        """
-        Open a file.
+        """Open a file.
 
         This method imports a design into the service. On Windows, ``.scdocx``
         and HOOPS Exchange formats are supported. On Linux, only the ``.scdocx``
@@ -337,8 +331,7 @@ class Modeler:
     def run_discovery_script_file(
         self, file_path: str, script_args: Optional[Dict[str, str]] = None, import_design=False
     ) -> Tuple[Dict[str, str], Optional["Design"]]:
-        """
-        Run a Discovery script file.
+        """Run a Discovery script file.
 
         .. note::
 

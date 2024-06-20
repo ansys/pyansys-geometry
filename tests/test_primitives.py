@@ -40,7 +40,6 @@ from ansys.geometry.core.shapes import Circle, Cone, Cylinder, Ellipse, Line, Pa
 
 def test_cylinder():
     """``Cylinder`` construction and equivalency."""
-
     # Create two Cylinder objects
     origin = Point3D([0, 0, 0])
     radius = 1
@@ -105,7 +104,6 @@ def test_cylinder():
 
 def test_cylinder_units():
     """``Cylinder`` units validation."""
-
     origin = Point3D([42, 99, 13])
     radius = 100
     unit = UNITS.mm
@@ -176,7 +174,6 @@ def test_cylinder_evaluation():
 
 def test_sphere():
     """``Sphere`` construction and equivalency."""
-
     # Create two Sphere objects
     origin = Point3D([42, 99, 13])
     radius = Distance(100)
@@ -225,7 +222,6 @@ def test_sphere():
 
 def test_sphere_units():
     """``Sphere`` units validation."""
-
     origin = Point3D([42, 99, 13])
     radius = 100
     unit = UNITS.mm
@@ -364,7 +360,6 @@ def test_cone():
 
 def test_cone_units():
     """``Cone`` units validation."""
-
     origin = Point3D([42, 99, 13])
     radius = 100
     radius_unit = UNITS.mm
@@ -452,7 +447,6 @@ def test_cone_evaluation():
 
 def test_torus():
     """``Torus`` construction and equivalency."""
-
     # Create two Torus objects
     origin = Point3D([42, 99, 13])
     major_radius = 200
@@ -549,7 +543,6 @@ def test_torus():
 
 def test_torus_units():
     """``Torus`` units validation."""
-
     origin = Point3D([42, 99, 13])
     major_radius = 200
     minor_radius = 100
@@ -764,7 +757,6 @@ def test_circle_evaluation():
 
 def test_line():
     """``Line`` construction and equivalency."""
-
     origin = Point3D([0, 0, 0])
     direction = UnitVector3D([0.5, 0.5, 0])
 

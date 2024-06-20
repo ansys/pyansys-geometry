@@ -37,8 +37,7 @@ from ansys.geometry.core.typing import Real
 
 
 class Box(SketchFace):
-    """
-    Provides for modeling a box.
+    """Provides for modeling a box.
 
     Parameters
     ----------
@@ -134,8 +133,7 @@ class Box(SketchFace):
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
-        """
-        VTK polydata representation for PyVista visualization.
+        """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
         the standard global cartesian coordinate system.

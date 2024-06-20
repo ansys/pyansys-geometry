@@ -47,8 +47,7 @@ from ansys.geometry.core.typing import Real, RealSequence
 
 
 class Cone(Surface):
-    """
-    Provides 3D cone representation.
+    """Provides 3D cone representation.
 
     Parameters
     ----------
@@ -134,8 +133,7 @@ class Cone(Surface):
         return np.pi * self.radius**2 * self.height / 3
 
     def transformed_copy(self, matrix: Matrix44) -> "Cone":
-        """
-        Create a transformed copy of the cone based on a transformation matrix.
+        """Create a transformed copy of the cone from a transformation matrix.
 
         Parameters
         ----------
@@ -159,8 +157,7 @@ class Cone(Surface):
         )
 
     def mirrored_copy(self) -> "Cone":
-        """
-        Create a mirrored copy of the cone along the y-axis.
+        """Create a mirrored copy of the cone along the y-axis.
 
         Returns
         -------
@@ -191,8 +188,7 @@ class Cone(Surface):
         )
 
     def evaluate(self, parameter: ParamUV) -> "ConeEvaluation":
-        """
-        Evaluate the cone at given parameters.
+        """Evaluate the cone at given parameters.
 
         Parameters
         ----------
@@ -207,8 +203,7 @@ class Cone(Surface):
         return ConeEvaluation(self, parameter)
 
     def project_point(self, point: Point3D) -> "ConeEvaluation":
-        """
-        Project a point onto the cone and evaluate the cone.
+        """Project a point onto the cone and evaluate the cone.
 
         Parameters
         ----------
@@ -237,8 +232,7 @@ class Cone(Surface):
         return ConeEvaluation(self, ParamUV(u, v))
 
     def parameterization(self) -> Tuple[Parameterization, Parameterization]:
-        """
-        Parameterize the cone surface as a tuple (U and V respectively).
+        """Parameterize the cone surface as a tuple (U and V respectively).
 
         The U parameter specifies the clockwise angle around the axis (right-hand
         corkscrew law), with a zero parameter at ``dir_x`` and a period of 2*pi.
@@ -268,8 +262,7 @@ class Cone(Surface):
 
 
 class ConeEvaluation(SurfaceEvaluation):
-    """
-    Evaluate the cone at given parameters.
+    """Evaluate the cone at given parameters.
 
     Parameters
     ----------
@@ -296,8 +289,7 @@ class ConeEvaluation(SurfaceEvaluation):
 
     @cached_property
     def position(self) -> Point3D:
-        """
-        Position of the evaluation.
+        """Position of the evaluation.
 
         Returns
         -------
@@ -312,8 +304,7 @@ class ConeEvaluation(SurfaceEvaluation):
 
     @cached_property
     def normal(self) -> UnitVector3D:
-        """
-        Normal to the surface.
+        """Normal to the surface.
 
         Returns
         -------
@@ -346,8 +337,7 @@ class ConeEvaluation(SurfaceEvaluation):
 
     @cached_property
     def u_derivative(self) -> Vector3D:
-        """
-        First derivative with respect to the U parameter.
+        """First derivative with respect to the U parameter.
 
         Returns
         -------
@@ -358,8 +348,7 @@ class ConeEvaluation(SurfaceEvaluation):
 
     @cached_property
     def v_derivative(self) -> Vector3D:
-        """
-        First derivative with respect to the V parameter.
+        """First derivative with respect to the V parameter.
 
         Returns
         -------
@@ -370,8 +359,7 @@ class ConeEvaluation(SurfaceEvaluation):
 
     @cached_property
     def uu_derivative(self) -> Vector3D:
-        """
-        Second derivative with respect to the U parameter.
+        """Second derivative with respect to the U parameter.
 
         Returns
         -------
@@ -382,8 +370,7 @@ class ConeEvaluation(SurfaceEvaluation):
 
     @cached_property
     def uv_derivative(self) -> Vector3D:
-        """
-        Second derivative with respect to the U and V parameters.
+        """Second derivative with respect to the U and V parameters.
 
         Returns
         -------
@@ -394,8 +381,7 @@ class ConeEvaluation(SurfaceEvaluation):
 
     @cached_property
     def vv_derivative(self) -> Vector3D:
-        """
-        Second derivative with respect to the V parameter.
+        """Second derivative with respect to the V parameter.
 
         Returns
         -------
@@ -406,8 +392,7 @@ class ConeEvaluation(SurfaceEvaluation):
 
     @cached_property
     def min_curvature(self) -> Real:
-        """
-        Minimum curvature of the cone.
+        """Minimum curvature of the cone.
 
         Returns
         -------
@@ -418,8 +403,7 @@ class ConeEvaluation(SurfaceEvaluation):
 
     @cached_property
     def min_curvature_direction(self) -> UnitVector3D:
-        """
-        Minimum curvature direction.
+        """Minimum curvature direction.
 
         Returns
         -------
@@ -430,8 +414,7 @@ class ConeEvaluation(SurfaceEvaluation):
 
     @cached_property
     def max_curvature(self) -> Real:
-        """
-        Maximum curvature of the cone.
+        """Maximum curvature of the cone.
 
         Returns
         -------
@@ -442,8 +425,7 @@ class ConeEvaluation(SurfaceEvaluation):
 
     @cached_property
     def max_curvature_direction(self) -> UnitVector3D:
-        """
-        Maximum curvature direction.
+        """Maximum curvature direction.
 
         Returns
         -------

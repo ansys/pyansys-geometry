@@ -44,7 +44,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @unique
 class CurveType(Enum):
-    """Provides values for the curve types supported by the Geometry service."""
+    """Provides values for the curve types supported."""
 
     CURVETYPE_UNKNOWN = 0
     CURVETYPE_LINE = 1
@@ -55,8 +55,7 @@ class CurveType(Enum):
 
 
 class Edge:
-    """
-    Represents a single edge of a body within the design assembly.
+    """Represents a single edge of a body within the design assembly.
 
     This class synchronizes to a design within a supporting Geometry service instance.
 
@@ -111,8 +110,7 @@ class Edge:
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
     def shape(self) -> TrimmedCurve:
-        """
-        Underlying trimmed curve of the edge.
+        """Underlying trimmed curve of the edge.
 
         If the edge is reversed, its shape is the ``ReversedTrimmedCurve`` type, which swaps the
         start and end points of the curve and handles parameters to allow evaluation as if the

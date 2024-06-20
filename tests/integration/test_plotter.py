@@ -57,7 +57,6 @@ IMAGE_RESULTS_DIR = Path(Path(__file__).parent, "image_cache", "results")
 @skip_no_xserver
 def test_plot_body(modeler: Modeler, verify_image_cache):
     """Test plotting of the body."""
-
     # Create a Sketch
     sketch = Sketch()
     sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
@@ -75,7 +74,6 @@ def test_plot_body(modeler: Modeler, verify_image_cache):
 @skip_no_xserver
 def test_plot_component(modeler: Modeler, verify_image_cache):
     """Test plotting of the component."""
-
     # Create a Sketch
     sketch = Sketch()
     sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
@@ -97,7 +95,6 @@ def test_plot_component(modeler: Modeler, verify_image_cache):
 @skip_no_xserver
 def test_plot_sketch(verify_image_cache):
     """Test plotting the sketch instance."""
-
     # Create a sketch instance
     sketch = Sketch()
     sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon1")
@@ -276,7 +273,6 @@ def test_plot_geometryplotter_all_types(modeler: Modeler, verify_image_cache):
 @skip_no_xserver
 def test_plot_polygon(verify_image_cache):
     """Test plotting of a polygon."""
-
     # Create a sketch instance
     sketch = Sketch()
 
@@ -289,7 +285,6 @@ def test_plot_polygon(verify_image_cache):
 @skip_no_xserver
 def test_plot_segment(verify_image_cache):
     """Test plotting of a segment."""
-
     # Create a sketch instance
     sketch = Sketch()
 
@@ -302,7 +297,6 @@ def test_plot_segment(verify_image_cache):
 @skip_no_xserver
 def test_plot_arc(verify_image_cache):
     """Test plotting of an arc."""
-
     # Create a sketch instance
     sketch = Sketch()
 
@@ -355,7 +349,6 @@ def test_plot_arc_from_three_points_counterclockwise(verify_image_cache):
 @skip_no_xserver
 def test_plot_triangle(verify_image_cache):
     """Test plotting of a triangle."""
-
     # Create a sketch instance
     sketch = Sketch()
 
@@ -368,7 +361,6 @@ def test_plot_triangle(verify_image_cache):
 @skip_no_xserver
 def test_plot_trapezoid(verify_image_cache):
     """Test plotting of a trapezoid."""
-
     # Create a sketch instance
     sketch = Sketch()
 
@@ -381,7 +373,6 @@ def test_plot_trapezoid(verify_image_cache):
 @skip_no_xserver
 def test_plot_circle(verify_image_cache):
     """Test plotting of a circle."""
-
     # Create a sketch instance
     sketch = Sketch()
 
@@ -396,7 +387,6 @@ def test_plot_circle(verify_image_cache):
 @skip_no_xserver
 def test_plot_ellipse(verify_image_cache):
     """Test plotting of an ellipse."""
-
     # Create a sketch instance
     sketch = Sketch()
 
@@ -411,7 +401,6 @@ def test_plot_ellipse(verify_image_cache):
 @skip_no_xserver
 def test_plot_slot(verify_image_cache):
     """Test plotting of a slot."""
-
     # Create a sketch instance
     sketch = Sketch()
 
@@ -429,7 +418,6 @@ def test_plot_slot(verify_image_cache):
 @skip_no_xserver
 def test_plot_box(verify_image_cache):
     """Test plotting of a box."""
-
     # Create a sketch instance
     sketch = Sketch()
 
@@ -447,7 +435,6 @@ def test_plot_box(verify_image_cache):
 @skip_no_xserver
 def test_plot_dummy_gear(verify_image_cache):
     """Test plotting of a dummy gear."""
-
     # Create a sketch instance
     sketch = Sketch()
 
@@ -530,7 +517,6 @@ def test_extrude_spur_gear(modeler: Modeler, verify_image_cache):
 @skip_no_xserver
 def test_plot_sketch_scene(verify_image_cache):
     """Test plotting a sketch in the scene."""
-
     # Create a sketch
     sketch = Sketch()
     sketch.polygon(Point2D([0, 0], UNITS.m), Quantity(2, UNITS.m), sides=5)
@@ -546,7 +532,6 @@ def test_plot_sketch_scene(verify_image_cache):
 
 def test_visualization_polydata():
     """Test the VTK polydata representation for PyVista visualization."""
-
     # Test for polygon visualization polydata
     polygon = Polygon(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
     assert polygon.visualization_polydata.center == pytest.approx(
@@ -728,7 +713,8 @@ def test_plot_revolve_sketch_normal(modeler: Modeler):
 
 
 def test_plot_revolve_sketch_negative_angle(modeler: Modeler):
-    """Test plotting of a sketch revolved around an axis with a negative angle."""
+    """Test plotting of a sketch revolved around an axis with a negative
+    angle."""
     # Initialize the donut sketch design
     design = modeler.create_design("quarter-donut")
 

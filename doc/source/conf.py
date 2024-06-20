@@ -83,8 +83,7 @@ def get_wheelhouse_assets_dictionary():
 
 
 def intersphinx_pyansys_geometry(switcher_version: str):
-    """
-    Auxiliary method to build the intersphinx mapping for PyAnsys Geometry.
+    """Auxiliary method to build the intersphinx mapping for PyAnsys Geometry.
 
     Notes
     -----
@@ -383,8 +382,7 @@ nitpick_ignore_regex = [
 
 
 def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
-    """
-    Convert notebooks to scripts.
+    """Convert notebooks to scripts.
 
     Parameters
     ----------
@@ -431,8 +429,7 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
 
 
 def setup(app: sphinx.application.Sphinx):
-    """
-    Run different hook functions during the documentation build.
+    """Run different hook functions during the documentation build.
 
     Parameters
     ----------

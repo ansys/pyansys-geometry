@@ -35,8 +35,7 @@ DEFAULT_MATRIX44 = np.identity(4)
 
 
 class Matrix(np.ndarray):
-    """
-    Provides matrix primitive representation.
+    """Provides matrix representation.
 
     Parameters
     ----------
@@ -89,8 +88,7 @@ class Matrix(np.ndarray):
 
 
 class Matrix33(Matrix):
-    """
-    Provides 3x3 matrix primitive representation.
+    """Provides 3x3 matrix representation.
 
     Parameters
     ----------
@@ -111,8 +109,7 @@ class Matrix33(Matrix):
 
 
 class Matrix44(Matrix):
-    """
-    Provides 4x4 matrix primitive representation.
+    """Provides 4x4 matrix representation.
 
     Parameters
     ----------

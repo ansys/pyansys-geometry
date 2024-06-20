@@ -84,7 +84,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @unique
 class MidSurfaceOffsetType(Enum):
-    """Provides values for mid-surface offsets supported by the Geometry service."""
+    """Provides values for mid-surface offsets supported."""
 
     MIDDLE = 0
     TOP = 1
@@ -105,7 +105,8 @@ class CollisionType(Enum):
 
 
 class IBody(ABC):
-    """Defines the common methods for a body, providing the abstract body interface.
+    """Defines the common methods for a body, providing the abstract body
+    interface.
 
     Both the ``MasterBody`` class and ``Body`` class both inherit from the ``IBody``
     class. All child classes must implement all abstract methods.
@@ -183,7 +184,7 @@ class IBody(ABC):
 
     @abstractmethod
     def assign_material(self, material: Material) -> None:
-        """Assign a material against the design in the active Geometry service instance.
+        """Assign a material against the active design.
 
         Parameters
         ----------
@@ -321,7 +322,7 @@ class IBody(ABC):
     def translate(
         self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
     ) -> None:
-        """Translate the geometry body in the specified direction by a given distance.
+        """Translate the body in a specified direction and distance.
 
         Parameters
         ----------
@@ -426,7 +427,7 @@ class IBody(ABC):
 
     @abstractmethod
     def copy(self, parent: "Component", name: str = None) -> "Body":
-        """Create a copy of the body and place it under the specified parent component.
+        """Create a copy of the body under the specified parent.
 
         Parameters
         ----------
@@ -657,7 +658,7 @@ class MasterBody(IBody):
         self._tessellation = None
 
     def reset_tessellation_cache(func):
-        """Decorate ``MasterBody`` methods that require a tessellation cache update.
+        """Decorate ``MasterBody`` methods that need tessellation cache update.
 
         Parameters
         ----------

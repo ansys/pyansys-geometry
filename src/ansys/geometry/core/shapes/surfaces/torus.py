@@ -46,8 +46,7 @@ from ansys.geometry.core.typing import Real, RealSequence
 
 
 class Torus(Surface):
-    """
-    Provides 3D torus representation.
+    """Provides 3D torus representation.
 
     Parameters
     ----------
@@ -141,8 +140,7 @@ class Torus(Surface):
         )
 
     def transformed_copy(self, matrix: Matrix44) -> "Torus":
-        """
-        Create a transformed copy of the torus based on a transformation matrix.
+        """Create a transformed copy of the torus from a transformation matrix.
 
         Parameters
         ----------
@@ -166,8 +164,7 @@ class Torus(Surface):
         )
 
     def mirrored_copy(self) -> "Torus":
-        """
-        Create a mirrored copy of the torus along the y-axis.
+        """Create a mirrored copy of the torus along the y-axis.
 
         Returns
         -------
@@ -179,8 +176,7 @@ class Torus(Surface):
         )
 
     def evaluate(self, parameter: ParamUV) -> "TorusEvaluation":
-        """
-        Evaluate the torus at the given parameters.
+        """Evaluate the torus at the given parameters.
 
         Parameters
         ----------
@@ -195,8 +191,7 @@ class Torus(Surface):
         return TorusEvaluation(self, parameter)
 
     def parameterization(self) -> Tuple[Parameterization, Parameterization]:
-        """
-        Parameterize the torus surface as a tuple (U and V respectively).
+        """Parameterize the torus surface as a tuple (U and V respectively).
 
         The U parameter specifies the longitude angle, increasing clockwise (east) about
         the axis (right-hand corkscrew law). It has a zero parameter at
@@ -221,8 +216,7 @@ class Torus(Surface):
         return (u, v)
 
     def project_point(self, point: Point3D) -> "TorusEvaluation":
-        """
-        Project a point onto the torus and evaluate the torus.
+        """Project a point onto the torus and evaluate the torus.
 
         Parameters
         ----------
@@ -262,8 +256,7 @@ class Torus(Surface):
 
 
 class TorusEvaluation(SurfaceEvaluation):
-    """
-    Evaluate the torus`` at given parameters.
+    """Evaluate the torus`` at given parameters.
 
     Parameters
     ----------
@@ -291,8 +284,7 @@ class TorusEvaluation(SurfaceEvaluation):
 
     @cached_property
     def position(self) -> Point3D:
-        """
-        Position of the evaluation.
+        """Position of the evaluation.
 
         Returns
         -------
@@ -308,8 +300,7 @@ class TorusEvaluation(SurfaceEvaluation):
 
     @cached_property
     def normal(self) -> UnitVector3D:
-        """
-        Normal to the surface.
+        """Normal to the surface.
 
         Returns
         -------
@@ -323,8 +314,7 @@ class TorusEvaluation(SurfaceEvaluation):
 
     @cached_property
     def __cylinder_normal(self) -> Vector3D:
-        """
-        Normal to the surface.
+        """Normal to the surface.
 
         Returns
         -------
@@ -346,8 +336,7 @@ class TorusEvaluation(SurfaceEvaluation):
 
     @cached_property
     def u_derivative(self) -> Vector3D:
-        """
-        First derivative with respect to the U parameter.
+        """First derivative with respect to the U parameter.
 
         Returns
         -------
@@ -360,8 +349,7 @@ class TorusEvaluation(SurfaceEvaluation):
 
     @cached_property
     def v_derivative(self) -> Vector3D:
-        """
-        First derivative with respect to the V parameter.
+        """First derivative with respect to the V parameter.
 
         Returns
         -------
@@ -375,8 +363,7 @@ class TorusEvaluation(SurfaceEvaluation):
 
     @cached_property
     def uu_derivative(self) -> Vector3D:
-        """
-        Second derivative with respect to the U parameter.
+        """Second derivative with respect to the U parameter.
 
         Returns
         -------
@@ -391,8 +378,7 @@ class TorusEvaluation(SurfaceEvaluation):
 
     @cached_property
     def uv_derivative(self) -> Vector3D:
-        """
-        Second derivative with respect to the U and V parameters.
+        """Second derivative with respect to the U and V parameters.
 
         Returns
         -------
@@ -403,8 +389,7 @@ class TorusEvaluation(SurfaceEvaluation):
 
     @cached_property
     def vv_derivative(self) -> Vector3D:
-        """
-        Second derivative with respect to the V parameter.
+        """Second derivative with respect to the V parameter.
 
         Returns
         -------
@@ -418,8 +403,7 @@ class TorusEvaluation(SurfaceEvaluation):
 
     @cached_property
     def curvature(self) -> Tuple[Real, Vector3D, Real, Vector3D]:
-        """
-        Curvature of the torus.
+        """Curvature of the torus.
 
         Returns
         -------
@@ -439,8 +423,7 @@ class TorusEvaluation(SurfaceEvaluation):
 
     @cached_property
     def min_curvature(self) -> Real:
-        """
-        Minimum curvature of the torus.
+        """Minimum curvature of the torus.
 
         Returns
         -------
@@ -451,8 +434,7 @@ class TorusEvaluation(SurfaceEvaluation):
 
     @cached_property
     def min_curvature_direction(self) -> UnitVector3D:
-        """
-        Minimum curvature direction.
+        """Minimum curvature direction.
 
         Returns
         -------
@@ -463,8 +445,7 @@ class TorusEvaluation(SurfaceEvaluation):
 
     @cached_property
     def max_curvature(self) -> Real:
-        """
-        Maximum curvature of the torus.
+        """Maximum curvature of the torus.
 
         Returns
         -------
@@ -475,8 +456,7 @@ class TorusEvaluation(SurfaceEvaluation):
 
     @cached_property
     def max_curvature_direction(self) -> UnitVector3D:
-        """
-        Maximum curvature direction.
+        """Maximum curvature direction.
 
         Returns
         -------

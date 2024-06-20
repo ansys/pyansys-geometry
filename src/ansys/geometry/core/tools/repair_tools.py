@@ -67,8 +67,7 @@ class RepairTools:
     def find_split_edges(
         self, bodies: List["Body"], angle: Real = 0.0, length: Real = 0.0
     ) -> List[SplitEdgeProblemAreas]:
-        """
-        Find split edges in the given list of bodies.
+        """Find split edges in the given list of bodies.
 
         This method finds the split edge problem areas and returns a list of split edge
         problem areas objects.
@@ -110,8 +109,7 @@ class RepairTools:
         ]
 
     def find_extra_edges(self, bodies: List["Body"]) -> List[ExtraEdgeProblemAreas]:
-        """
-        Find the extra edges in the given list of bodies.
+        """Find the extra edges in the given list of bodies.
 
         This method find the extra edge problem areas and returns a list of extra edge
         problem areas objects.
@@ -145,8 +143,7 @@ class RepairTools:
         ]
 
     def find_inexact_edges(self, bodies: List["Body"]) -> List[InexactEdgeProblemAreas]:
-        """
-        Find inexact edges in the given list of bodies.
+        """Find inexact edges in the given list of bodies.
 
         This method find the inexact edge problem areas and returns a list of inexact
         edge problem areas objects.
@@ -181,8 +178,7 @@ class RepairTools:
         ]
 
     def find_duplicate_faces(self, bodies: List["Body"]) -> List[DuplicateFaceProblemAreas]:
-        """
-        Find the duplicate face problem areas.
+        """Find the duplicate face problem areas.
 
         This method finds the duplicate face problem areas and returns a list of
         duplicate face problem areas objects.
@@ -216,8 +212,7 @@ class RepairTools:
         ]
 
     def find_missing_faces(self, bodies: List["Body"]) -> List[MissingFaceProblemAreas]:
-        """
-        Find the missing faces.
+        """Find the missing faces.
 
         This method find the missing face problem areas and returns a list of missing
         face problem areas objects.
@@ -250,8 +245,7 @@ class RepairTools:
         ]
 
     def find_small_faces(self, bodies: List["Body"]) -> List[SmallFaceProblemAreas]:
-        """
-        Find the small face problem areas.
+        """Find the small face problem areas.
 
         This method finds and returns a list of ids of small face problem areas
         objects.
@@ -285,8 +279,7 @@ class RepairTools:
         ]
 
     def find_stitch_faces(self, bodies: List["Body"]) -> List[StitchFaceProblemAreas]:
-        """
-        Return the list of stitch face problem areas.
+        """Return the list of stitch face problem areas.
 
         This method find the stitch face problem areas and returns a list of ids of stitch face
         problem areas objects.

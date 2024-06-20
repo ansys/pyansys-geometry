@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module providing a wrapped abstraction of the gRPC PROTO API definition and stubs."""
+"""Module providing a wrapped abstraction of the gRPC stubs."""
 
 import logging
 from pathlib import Path
@@ -39,8 +39,7 @@ from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.product_instance import ProductInstance
-from ansys.geometry.core.logger import LOG as logger
-from ansys.geometry.core.logger import PyGeometryCustomAdapter
+from ansys.geometry.core.logger import LOG as logger, PyGeometryCustomAdapter
 from ansys.geometry.core.typing import Real
 
 try:
@@ -50,8 +49,7 @@ except ModuleNotFoundError:  # pragma: no cover
 
 
 def wait_until_healthy(channel: grpc.Channel, timeout: float):
-    """
-    Wait until a channel is healthy before returning.
+    """Wait until a channel is healthy before returning.
 
     Parameters
     ----------
@@ -84,8 +82,7 @@ def wait_until_healthy(channel: grpc.Channel, timeout: float):
 
 
 class GrpcClient:
-    """
-    Wraps the gRPC connection for the Geometry service.
+    """Wraps the gRPC connection for the Geometry service.
 
     Parameters
     ----------
@@ -203,8 +200,7 @@ class GrpcClient:
 
     @property
     def backend_type(self) -> BackendType:
-        """
-        Backend type.
+        """Backend type.
 
         Options are ``Windows Service``, ``Linux Service``, ``Discovery``,
         and ``SpaceClaim``.
@@ -218,8 +214,7 @@ class GrpcClient:
 
     @property
     def backend_version(self) -> semver.version.Version:
-        """
-        Get the current backend version.
+        """Get the current backend version.
 
         Returns
         -------
@@ -230,8 +225,7 @@ class GrpcClient:
 
     @property
     def multiple_designs_allowed(self) -> bool:
-        """
-        Flag indicating whether multiple designs are allowed.
+        """Flag indicating whether multiple designs are allowed.
 
         Notes
         -----
@@ -282,8 +276,7 @@ class GrpcClient:
         return "\n".join(lines)
 
     def close(self):
-        """
-        Close the channel.
+        """Close the channel.
 
         Notes
         -----

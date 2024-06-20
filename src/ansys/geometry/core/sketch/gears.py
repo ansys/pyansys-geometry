@@ -45,8 +45,7 @@ class Gear(SketchFace):
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
-        """
-        VTK polydata representation for PyVista visualization.
+        """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
         the standard global Cartesian coordinate system.
@@ -60,8 +59,7 @@ class Gear(SketchFace):
 
 
 class DummyGear(Gear):
-    """
-    Provides the dummy class for sketching gears.
+    """Provides the dummy class for sketching gears.
 
     Parameters
     ----------
@@ -156,8 +154,7 @@ class DummyGear(Gear):
 
 
 class SpurGear(Gear):
-    """
-    Provides the class for sketching spur gears.
+    """Provides the class for sketching spur gears.
 
     Parameters
     ----------
@@ -300,8 +297,7 @@ class SpurGear(Gear):
     def _sketch_single_tooth_spur_gear(
         self,
     ) -> Tuple[List[Real], List[Real], List[Real], List[Real]]:
-        """
-        Sketch a single tooth using this private method.
+        """Sketch a single tooth using this private method.
 
         Returns
         -------
@@ -334,8 +330,7 @@ class SpurGear(Gear):
     def _involute(
         self, radius: Real, max_radius: Real, max_theta: Real, steps: int = 30
     ) -> Tuple[List[Real], List[Real]]:
-        """
-        Generate the involute points discretization of a curve.
+        """Generate the involute points discretization of a curve.
 
         Parameters
         ----------
@@ -391,8 +386,7 @@ class SpurGear(Gear):
     def _align_involute(
         self, x_p: List[Real], y_p: List[Real], t_p: List[Real]
     ) -> Tuple[List[Real], List[Real]]:
-        """
-        Align the discretized values of the involute curve.
+        """Align the discretized values of the involute curve.
 
         Parameters
         ----------
@@ -437,8 +431,7 @@ class SpurGear(Gear):
     def _rotate_curve(
         self, angle: Real, x_p: List[Real], y_p: List[Real]
     ) -> Tuple[List[Real], List[Real]]:
-        """
-        Private method used for rotating X,Y elements defining a curve by a given angle.
+        """Rotate X,Y elements defining a curve by a given angle.
 
         Parameters
         ----------
@@ -470,8 +463,7 @@ class SpurGear(Gear):
     def _generate_arcs(
         self, x_p: List[Real], y_p: List[Real], closing_involute: bool = False
     ) -> List[Arc]:
-        """
-        Generate the arcs of involute curves when sketching spur gears.
+        """Generate the arcs of involute curves when sketching spur gears.
 
         Parameters
         ----------

@@ -31,8 +31,7 @@ from ansys.geometry.core.designer.designpoint import DesignPoint
 
 
 class ShowDesignPoints(PlotterWidget):
-    """
-    Provides the a button to hide/show DesignPoint objects in the plotter.
+    """Provides the a button to hide/show DesignPoint objects in the plotter.
 
     Parameters
     ----------
@@ -55,8 +54,7 @@ class ShowDesignPoints(PlotterWidget):
         )
 
     def callback(self, state: bool) -> None:
-        """
-        Remove or add the DesignPoint actors upon click.
+        """Remove or add the DesignPoint actors upon click.
 
         Parameters
         ----------
@@ -74,7 +72,7 @@ class ShowDesignPoints(PlotterWidget):
                     self.plotter_helper._backend._pl.scene.remove_actor(actor)
 
     def update(self) -> None:
-        """Define the configuration and representation of the button widget button."""
+        """Define the configuration and representation of the button widget."""
         vr = self._button.GetRepresentation()
         icon_file = os.path.join(os.path.dirname(__file__), "_images", "designpoint.png")
         representation = vtkPNGReader()

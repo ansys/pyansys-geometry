@@ -46,8 +46,7 @@ BASE_UNIT_LENGTH = UNITS.get_base_units(DEFAULT_UNITS.LENGTH)[1]
 
 
 class Point2D(np.ndarray, PhysicalQuantity):
-    """
-    Provides geometry primitive representation for a 2D point.
+    """Provides geometry primitive representation for a 2D point.
 
     Parameters
     ----------
@@ -173,8 +172,7 @@ class Point2D(np.ndarray, PhysicalQuantity):
 
 
 class Point3D(np.ndarray, PhysicalQuantity):
-    """
-    Provides geometry primitive representation for a 3D point.
+    """Provides geometry primitive representation for a 3D point.
 
     Parameters
     ----------
@@ -311,8 +309,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
             return self._base_unit
 
     def transform(self, matrix: "Matrix44") -> "Point3D":
-        """
-        Transform the 3D point with a transformation matrix.
+        """Transform the 3D point with a transformation matrix.
 
         Notes
         -----

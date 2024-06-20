@@ -128,10 +128,10 @@ def test_design_import_simple_case(modeler: Modeler):
 
 
 def test_design_import_with_surfaces_issue834(modeler: Modeler):
-    """
-    Import a Design which is expected to contain surfaces.
+    """Import a Design which is expected to contain surfaces.
 
-    For more info see https://github.com/ansys/pyansys-geometry/issues/834
+    For more info see
+    https://github.com/ansys/pyansys-geometry/issues/834
     """
     # TODO: to be reactivated by https://github.com/ansys/pyansys-geometry/issues/799
     skip_if_linux(modeler, test_design_import_with_surfaces_issue834.__name__, "open_file")
@@ -150,9 +150,8 @@ def test_design_import_with_surfaces_issue834(modeler: Modeler):
 
 
 def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
-    """Test creation of a component, saving it to a file, and loading it again to a
-    second component and make sure they have the same properties."""
-
+    """Test creation of a component, saving it to a file, and loading it again
+    to a second component and make sure they have the same properties."""
     design_name = "two_cars"
     design = modeler.create_design(design_name)
 
@@ -247,7 +246,6 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
 def test_design_insert(modeler: Modeler):
     """Test inserting a file into the design."""
-
     # Skip for Linux service
     skip_if_linux(modeler, test_design_insert.__name__, "insert_file")
 
@@ -270,7 +268,6 @@ def test_design_insert(modeler: Modeler):
 def test_design_insert_with_import(modeler: Modeler):
     """Test inserting a file into the design through the external format import
     process."""
-
     # Skip for Linux service
     skip_if_linux(modeler, test_design_insert_with_import.__name__, "insert_file")
 

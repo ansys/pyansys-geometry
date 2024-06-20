@@ -39,8 +39,7 @@ from ansys.geometry.core.typing import Real
 
 
 class Trapezoid(SketchFace):
-    """
-    Provides for modeling a 2D trapezoid.
+    """Provides for modeling a 2D trapezoid.
 
     Parameters
     ----------
@@ -166,8 +165,7 @@ class Trapezoid(SketchFace):
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
-        """
-        VTK polydata representation for PyVista visualization.
+        """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
         the standard global Cartesian coordinate system.

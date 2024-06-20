@@ -36,8 +36,7 @@ from ansys.geometry.core.typing import Real
 
 
 class TrimmedCurve:
-    """
-    Represents a trimmed curve.
+    """Represents a trimmed curve.
 
     A trimmed curve is a curve that has a boundary. This boundary comes in the form of an interval.
 
@@ -104,8 +103,7 @@ class TrimmedCurve:
         return self._interval
 
     def evaluate_proportion(self, param: Real) -> CurveEvaluation:
-        """
-        Evaluate the curve at a proportional value.
+        """Evaluate the curve at a proportional value.
 
         A parameter of ``0`` corresponds to the start of the curve, while a parameter of ``1``
         corresponds to the end of the curve.
@@ -124,8 +122,7 @@ class TrimmedCurve:
         return self.geometry.evaluate(bounds.start + bounds.get_span() * param)
 
     def intersect_curve(self, other: "TrimmedCurve") -> List[Point3D]:
-        """
-        Intersect this trimmed curve with another to receive the points of intersection.
+        """Get the intersect points of this trimmed curve with another one.
 
         If the two trimmed curves do not intersect, an empty list is returned.
 
@@ -162,8 +159,7 @@ class TrimmedCurve:
 
 
 class ReversedTrimmedCurve(TrimmedCurve):
-    """
-    Represents a reversed trimmed curve.
+    """Represents a reversed trimmed curve.
 
     When a curve is reversed, its start and end points are swapped, and parameters for evaluations
     are handled to provide expected results conforming to the direction of the curve. For example,

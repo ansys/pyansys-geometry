@@ -72,7 +72,6 @@ def test_errors_sketch_segment():
 
 def test_sketch_segment_edge():
     """Test SketchSegment SketchEdge sketching."""
-
     # Create a Sketch instance
     sketch = Sketch()
 
@@ -144,7 +143,6 @@ def test_sketch_segment_edge():
 
 def test_sketch_arc_edge():
     """Test Arc SketchEdge sketching."""
-
     # Create a Sketch instance
     sketch = Sketch()
 
@@ -208,7 +206,6 @@ def test_sketch_arc_edge():
 
 def test_sketch_triangle_face():
     """Test Triangle SketchFace sketching."""
-
     # Create a Sketch instance
     sketch = Sketch()
 
@@ -236,7 +233,6 @@ def test_sketch_triangle_face():
 
 def test_sketch_trapezoidal_face():
     """Test Trapezoidal Sketchface sketching."""
-
     # Create a Sketch instance
     sketch = Sketch()
 
@@ -306,7 +302,6 @@ def test_sketch_circle_instance():
 
 def test_sketch_circle_instance_errors():
     """Test various circle instantiation errors."""
-
     with pytest.raises(
         TypeError, match=r"The pint.Unit provided as an input should be a \[length\] quantity."
     ):
@@ -318,7 +313,6 @@ def test_sketch_circle_instance_errors():
 
 def test_sketch_circle_face():
     """Test circle shape creation in a sketch."""
-
     # Create a Sketch instance
     sketch = Sketch()
 
@@ -346,7 +340,6 @@ def test_sketch_circle_face():
 
 def test_ellipse_instance():
     """Test ellipse instance."""
-
     semi_major, semi_minor, origin = 2 * UNITS.m, 1 * UNITS.m, Point2D([0, 0], UNITS.m)
     ecc = np.sqrt(1 - (semi_minor / semi_major) ** 2)
     ellipse = SketchEllipse(origin, semi_major, semi_minor)
@@ -407,7 +400,6 @@ def test_ellipse_instance_errors():
 
 def test_sketch_ellipse_face():
     """Test ellipse shape creation in a sketch."""
-
     # Create a Sketch instance
     sketch = Sketch()
 
@@ -435,7 +427,6 @@ def test_sketch_ellipse_face():
 
 def test_polygon_instance():
     """Test polygon instance."""
-
     radius, sides, center = (1 * UNITS.m), 5, Point2D([0, 0], UNITS.m)
     pentagon = Polygon(center, radius, sides)
 
@@ -472,7 +463,6 @@ def test_polygon_instance():
 
 def test_slot_instance():
     """Test slot instance."""
-
     center = Point2D([2, 3], unit=UNITS.meter)
     width = Distance(4, unit=UNITS.meter)
     height = Distance(2, unit=UNITS.meter)
@@ -503,7 +493,6 @@ def test_slot_instance():
 
 def test_box_instance():
     """Test box instance."""
-
     center = Point2D([3, 1], unit=UNITS.meter)
     width = Distance(4, unit=UNITS.meter)
     height = Distance(2, unit=UNITS.meter)
@@ -528,7 +517,6 @@ def test_box_instance():
 
 def test_sketch_plane_translation():
     """Test all methods for sketch plane translation."""
-
     sketch = Sketch(Plane(Point3D([0, 0, 0], UNITS.mm)))
 
     sketch.translate_sketch_plane(Vector3D([10, 20, 30]))
@@ -579,8 +567,7 @@ def test_sketch_plane_translation():
 
 
 def test_validate_arc():
-    """
-    Test for performing Arc rotation-sense validation when using PyVista.
+    """Test for performing Arc rotation-sense validation when using PyVista.
 
     Server-side validation will be done with the body tessellation.
     """
@@ -691,7 +678,6 @@ def test_validate_arc():
 
 def test_arc():
     """Test arc generation and errors."""
-
     # Test errors first
     point_0_0 = Point2D([0, 0])
     point_5_0 = Point2D([5, 0])
@@ -754,7 +740,6 @@ def test_arc():
 
 def test_arc_from_three_points():
     """Test arc generation from three points."""
-
     # Fixing start and end points
     start = Point2D([0, 5])
     end = Point2D([5, 0])
@@ -795,8 +780,8 @@ def test_polydata_methods():
 
 
 def test_sketch_pyconus2024_voglster_issue1195():
-    """Test sketching unexpected behavior observed in PyConUS 2024 by @voglster."""
-
+    """Test sketching unexpected behavior observed in PyConUS 2024 by
+    @voglster."""
     sketch = Sketch()
     p_start, p_end, p_center = Point2D([1, 0]), Point2D([-1, 0]), Point2D([0, 0])
     sketch.arc(p_start, p_end, p_center)
@@ -808,11 +793,10 @@ def test_sketch_pyconus2024_voglster_issue1195():
 
 
 def test_arc_start_end_radius_default():
-    """
-    Test arc generation from a start and an end point with a certain radius.
+    """Test arc generation from a start and an end point with a certain radius.
 
-    The arc is created with the default values for the convex_arc and clockwise
-    parameters.
+    The arc is created with the default values for the convex_arc and
+    clockwise parameters.
     """
     start = Point2D([0, 5])
     end = Point2D([5, 0])
@@ -836,8 +820,7 @@ def test_arc_start_end_radius_default():
 
 
 def test_arc_start_end_radius_clockwise():
-    """
-    Test arc generation from a start and an end point with a certain radius.
+    """Test arc generation from a start and an end point with a certain radius.
 
     The arc is requested to be clockwise.
     """
@@ -863,8 +846,7 @@ def test_arc_start_end_radius_clockwise():
 
 
 def test_arc_start_end_radius_convex():
-    """
-    Test arc generation from a start and an end point with a certain radius.
+    """Test arc generation from a start and an end point with a certain radius.
 
     This test is for a convex arc.
     """
@@ -891,8 +873,7 @@ def test_arc_start_end_radius_convex():
 
 
 def test_arc_start_end_radius_convex_and_clockwise():
-    """
-    Test arc generation from a start and an end point with a certain radius.
+    """Test arc generation from a start and an end point with a certain radius.
 
     This test is for a convex arc that is requested to be clockwise.
     """
@@ -919,8 +900,7 @@ def test_arc_start_end_radius_convex_and_clockwise():
 
 
 def test_arc_start_end_radius_through_sketch_ctor():
-    """
-    Test arc generation from a start and an end point with a certain radius.
+    """Test arc generation from a start and an end point with a certain radius.
 
     This test is for the Sketch class convenience constructor.
     """
@@ -951,8 +931,7 @@ def test_arc_start_end_radius_through_sketch_ctor():
 
 
 def test_start_end_radius_error_cases():
-    """
-    Test arc generation from a start and an end point with a certain radius.
+    """Test arc generation from a start and an end point with a certain radius.
 
     This test is for cases where the inputs are invalid.
     """
@@ -978,10 +957,10 @@ def test_start_end_radius_error_cases():
 
 
 def test_start_center_and_angle_default():
-    """
-    Test arc generation from a start point, center point, and angle.
+    """Test arc generation from a start point, center point, and angle.
 
-    The arc is created with the default values for the clockwise parameter.
+    The arc is created with the default values for the clockwise
+    parameter.
     """
     # Inputs
     start = Point2D([0, 5])
@@ -1011,8 +990,7 @@ def test_start_center_and_angle_default():
 
 
 def test_start_center_and_angle_clockwise():
-    """
-    Test arc generation from a start point, center point, and angle.
+    """Test arc generation from a start point, center point, and angle.
 
     The arc is requested to be clockwise.
     """
@@ -1044,8 +1022,7 @@ def test_start_center_and_angle_clockwise():
 
 
 def test_start_center_and_angle_clockwise_from_sketch():
-    """
-    Test arc generation from a start point, center point, and angle.
+    """Test arc generation from a start point, center point, and angle.
 
     This test is for the Sketch class convenience constructor.
     """

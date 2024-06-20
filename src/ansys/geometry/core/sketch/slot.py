@@ -39,8 +39,7 @@ from ansys.geometry.core.typing import Real
 
 
 class Slot(SketchFace):
-    """
-    Provides for modeling a 2D slot.
+    """Provides for modeling a 2D slot.
 
     Parameters
     ----------
@@ -160,8 +159,7 @@ class Slot(SketchFace):
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
-        """
-        VTK polydata representation for PyVista visualization.
+        """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
         the standard global Cartesian coordinate system.

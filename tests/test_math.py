@@ -55,7 +55,6 @@ DOUBLE_EPS = np.finfo(float).eps
 
 def test_point():
     """Simple test to create ``Point2D`` and ``Point3D``."""
-
     # Test the default Point3D
     p_default = Point3D()
     assert len(p_default) == 3
@@ -133,7 +132,6 @@ def test_point():
 
 def test_point_errors():
     """Testing multiple ``Point3D`` and ``Point2D`` errors."""
-
     with pytest.raises(
         ValueError,
         match="Point3D class must receive 3 arguments.",
@@ -192,7 +190,6 @@ def test_point_errors():
 
 def test_point2d_units():
     """``Point2D`` units testing."""
-
     # Create a Point2D with some units
     p_cm_to_mm = Point2D([10, 20], UNITS.cm)
 
@@ -232,7 +229,6 @@ def test_point2d_units():
 
 def test_point3d_units():
     """``Point3D`` units testing."""
-
     # Create a Point with some units
     p_cm_to_mm = Point3D([10, 20, 30], UNITS.cm)
 
@@ -281,7 +277,6 @@ def test_point3d_units():
 
 def test_vector3D():
     """Simple test to create ``Vector3D``."""
-
     # Create two Vector3D objects
     v1 = Vector3D([0, 1, 3])
     v1_copy = Vector3D([0, 1, 3])
@@ -398,7 +393,6 @@ def test_vector3D():
 
 def test_vector2D():
     """Simple test to create ``Vector2D``."""
-
     # Create two Vector2D objects
     v1 = Vector2D([0, 1])
     v1_copy = Vector2D([0, 1])
@@ -485,7 +479,6 @@ def test_vector2D():
 
 def test_unitvector3D():
     """Simple test to create a ``UnitVector3D``."""
-
     # Create UnitVector objects from Vector
     v1 = Vector3D([0, 1, 3])
     v2 = UnitVector3D(v1)
@@ -522,7 +515,6 @@ def test_unitvector3D():
 
 def test_unitvector2D():
     """Simple test to create a ``UnitVector2D``."""
-
     # Create UnitVector2D objects from Vector
     v1 = Vector2D([0, 1])
     v2 = UnitVector2D(v1)
@@ -554,7 +546,6 @@ def test_unitvector2D():
 
 def test_vector3D_errors():
     """Testing multiple ``Vector3D`` errors."""
-
     with pytest.raises(
         ValueError,
         match="Vector3D class must receive 3 arguments.",  # noqa: E501
@@ -598,7 +589,6 @@ def test_vector3D_errors():
 
 def test_vector2D_errors():
     """Testing multiple ``Vector2D`` errors."""
-
     with pytest.raises(
         ValueError,
         match="Vector2D class must receive 2 arguments.",  # noqa: E501
@@ -639,7 +629,6 @@ def test_vector2D_errors():
 
 def test_matrix():
     """Simple test to create a ``Matrix``."""
-
     # Create two matrix objects
     m_1 = Matrix([[2, 5], [0, 8]])
     m_1_copy = Matrix([[2, 5], [0, 8]])
@@ -673,7 +662,6 @@ def test_matrix():
 
 def test_matrix_errors():
     """Testing multiple ``Matrix`` errors."""
-
     with pytest.raises(
         TypeError, match="The numpy.ndarray should contain float or integer values."
     ):
@@ -701,7 +689,6 @@ def test_matrix_errors():
 
 def test_matrix_33():
     """Simple test to create a ``Matrix33``."""
-
     # Create a Matrix33 objects
     m_1 = Matrix33([[2, 0, 0], [0, 3, 0], [0, 0, 4]])
 
@@ -734,7 +721,6 @@ def test_matrix_33():
 
 def test_matrix_44():
     """Simple test to create a ``Matrix44``."""
-
     # Create two Matrix44 objects
     m_1 = Matrix44([[2, 0, 0, 0], [0, 3, 0, 0], [0, 0, 4, 0], [0, 0, 0, 1]])
 
@@ -768,7 +754,6 @@ def test_matrix_44():
 
 def test_frame():
     """``Frame`` construction and equivalency."""
-
     origin = Point3D([42, 99, 13])
     f_1 = Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
     f_1_duplicate = Frame(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
@@ -856,7 +841,6 @@ def test_frame_local_to_global_point_transformation():
 
 def test_plane():
     """``Plane`` construction and equivalency."""
-
     origin = Point3D([42, 99, 13])
     p_1 = Plane(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
     p_1_duplicate = Plane(origin, UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
@@ -897,7 +881,6 @@ def test_plane():
 
 def test_add_sub_point():
     """Test for adding/subtracting Point3D/2D objects."""
-
     # Point3D (and Vector3D)
     # =======================================================================
 
@@ -1067,7 +1050,6 @@ def test_bounding_box_expands_and_evaluates_bounds_comparisons():
 )
 def test_mult_operator_point(a, b_ref):
     """Testing the multiplication operator for Point objects."""
-
     b = 3 * a
     assert np.allclose(b, b_ref)
     assert b.unit
@@ -1090,7 +1072,6 @@ def test_mult_operator_point(a, b_ref):
 )
 def test_div_operator_point(a, b_ref):
     """Testing the division operator for Point objects."""
-
     b = a / 3
     assert np.allclose(b, b_ref)
     assert b.unit
@@ -1099,8 +1080,8 @@ def test_div_operator_point(a, b_ref):
 
 
 def test_circle_intersections():
-    """Test circle intersections using the get_two_circle_intersections method."""
-
+    """Test circle intersections using the get_two_circle_intersections
+    method."""
     # Circle 1 - a point and its radius
     x0, y0, r0 = 5, 0, 5
     # Circle 2 - a point and its radius
@@ -1116,12 +1097,10 @@ def test_circle_intersections():
 
 
 def test_circle_intersections_non_intersecting():
-    """
-    Test circle intersections using the get_two_circle_intersections method.
+    """Test circle intersections using the get_two_circle_intersections method.
 
     This test checks the case where the circles do not intersect.
     """
-
     # Circle 1 - a point and its radius
     x0, y0, r0 = 5, 0, 2
     # Circle 2 - a point and its radius
@@ -1134,12 +1113,11 @@ def test_circle_intersections_non_intersecting():
 
 
 def test_circle_intersections_non_intersecting_inside():
-    """
-    Test circle intersections using the get_two_circle_intersections method.
+    """Test circle intersections using the get_two_circle_intersections method.
 
-    This test checks the case where the circles are one inside the other.
+    This test checks the case where the circles are one inside the
+    other.
     """
-
     # Circle 1 - a point and its radius
     x0, y0, r0 = 6, 0, 1
     # Circle 2 - a point and its radius
@@ -1152,12 +1130,10 @@ def test_circle_intersections_non_intersecting_inside():
 
 
 def test_circle_intersections_coincident():
-    """
-    Test circle intersections using the get_two_circle_intersections method.
+    """Test circle intersections using the get_two_circle_intersections method.
 
     This test checks the case where the circles are coincident.
     """
-
     # Circle 1 - a point and its radius
     x0, y0, r0 = 5, 0, 5
     # Circle 2 - a point and its radius

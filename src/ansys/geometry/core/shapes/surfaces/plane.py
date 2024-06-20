@@ -43,8 +43,7 @@ from ansys.geometry.core.typing import Real, RealSequence
 
 
 class PlaneSurface(Surface):
-    """
-    Provides 3D plane surface representation.
+    """Provides 3D plane surface representation.
 
     Parameters
     ----------
@@ -102,7 +101,7 @@ class PlaneSurface(Surface):
         )
 
     def contains_param(self, param_uv: ParamUV) -> bool:
-        """Test whether a ``ParamUV`` is within the parametric range of the surface."""
+        """Check a ``ParamUV`` is within the parametric range of the surface."""
         raise NotImplementedError("contains_param() is not implemented.")
 
     def contains_point(self, point: Point3D) -> bool:
@@ -124,7 +123,7 @@ class PlaneSurface(Surface):
         return PlaneEvaluation(self, ParamUV(u, v))
 
     def transformed_copy(self, matrix: Matrix44) -> Surface:
-        """Get a transformed version of the plane given the transform matrix."""
+        """Get a transformed version of the plane given the transform."""
         new_point = self.origin.transform(matrix)
         new_reference = self._reference.transform(matrix)
         new_axis = self._axis.transform(matrix)
@@ -140,8 +139,7 @@ class PlaneSurface(Surface):
 
 
 class PlaneEvaluation(SurfaceEvaluation):
-    """
-    Provides evaluation of a plane at given parameters.
+    """Provides evaluation of a plane at given parameters.
 
     Parameters
     ----------

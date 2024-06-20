@@ -45,8 +45,7 @@ from ansys.geometry.core.typing import Real, RealSequence
 
 
 class Circle(Curve):
-    """
-    Provides 3D circle representation.
+    """Provides 3D circle representation.
 
     Parameters
     ----------
@@ -134,8 +133,7 @@ class Circle(Curve):
         )
 
     def evaluate(self, parameter: Real) -> "CircleEvaluation":
-        """
-        Evaluate the circle at a given parameter.
+        """Evaluate the circle at a given parameter.
 
         Parameters
         ----------
@@ -150,8 +148,7 @@ class Circle(Curve):
         return CircleEvaluation(self, parameter)
 
     def transformed_copy(self, matrix: Matrix44) -> "Circle":
-        """
-        Create a transformed copy of the circle based on a transformation matrix.
+        """Create a transformed copy of the circle from a transformation matrix.
 
         Parameters
         ----------
@@ -174,8 +171,7 @@ class Circle(Curve):
         )
 
     def mirrored_copy(self) -> "Circle":
-        """
-        Create a mirrored copy of the circle along the y-axis.
+        """Create a mirrored copy of the circle along the y-axis.
 
         Returns
         -------
@@ -185,8 +181,7 @@ class Circle(Curve):
         return Circle(self.origin, self.radius, -self._reference, -self._axis)
 
     def project_point(self, point: Point3D) -> "CircleEvaluation":
-        """
-        Project a point onto the circle and evauate the circle.
+        """Project a point onto the circle and evauate the circle.
 
         Parameters
         ----------
@@ -209,8 +204,7 @@ class Circle(Curve):
         return CircleEvaluation(self, t)
 
     def is_coincident_circle(self, other: "Circle") -> bool:
-        """
-        Determine if the circle is coincident with another.
+        """Determine if the circle is coincident with another.
 
         Parameters
         ----------
@@ -229,8 +223,7 @@ class Circle(Curve):
         )
 
     def parameterization(self) -> Parameterization:
-        """
-        Get the parametrization of the circle.
+        """Get the parametrization of the circle.
 
         The parameter of a circle specifies the clockwise angle around the axis
         (right-hand corkscrew law), with a zero parameter at ``dir_x`` and a
@@ -251,8 +244,7 @@ class Circle(Curve):
 
 
 class CircleEvaluation(CurveEvaluation):
-    """
-    Provides evaluation of a circle at a given parameter.
+    """Provides evaluation of a circle at a given parameter.
 
     Parameters
     ----------
@@ -279,8 +271,7 @@ class CircleEvaluation(CurveEvaluation):
 
     @cached_property
     def position(self) -> Point3D:
-        """
-        Position of the evaluation.
+        """Position of the evaluation.
 
         Returns
         -------
@@ -295,8 +286,7 @@ class CircleEvaluation(CurveEvaluation):
 
     @cached_property
     def tangent(self) -> UnitVector3D:
-        """
-        Tangent of the evaluation.
+        """Tangent of the evaluation.
 
         Returns
         -------
@@ -309,8 +299,7 @@ class CircleEvaluation(CurveEvaluation):
 
     @cached_property
     def normal(self) -> UnitVector3D:
-        """
-        Normal to the circle.
+        """Normal to the circle.
 
         Returns
         -------
@@ -323,8 +312,7 @@ class CircleEvaluation(CurveEvaluation):
 
     @cached_property
     def first_derivative(self) -> Vector3D:
-        """
-        First derivative of the evaluation.
+        """First derivative of the evaluation.
 
         The first derivative is in the direction of the tangent and has a
         magnitude equal to the velocity (rate of change of position) at that
@@ -341,8 +329,7 @@ class CircleEvaluation(CurveEvaluation):
 
     @cached_property
     def second_derivative(self) -> Vector3D:
-        """
-        Second derivative of the evaluation.
+        """Second derivative of the evaluation.
 
         Returns
         -------
@@ -355,8 +342,7 @@ class CircleEvaluation(CurveEvaluation):
 
     @cached_property
     def curvature(self) -> Real:
-        """
-        Curvature of the circle.
+        """Curvature of the circle.
 
         Returns
         -------

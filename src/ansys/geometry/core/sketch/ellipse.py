@@ -40,8 +40,7 @@ from ansys.geometry.core.typing import Real
 
 
 class SketchEllipse(SketchFace, Ellipse):
-    """
-    Provides for modeling an ellipse.
+    """Provides for modeling an ellipse.
 
     Parameters
     ----------
@@ -95,8 +94,7 @@ class SketchEllipse(SketchFace, Ellipse):
         minor_radius: Optional[Distance] = None,
         angle: Optional[Angle] = None,
     ) -> None:
-        """
-        Initialize correctly the underlying primitive ``Ellipse`` class.
+        """Initialize correctly the underlying primitive ``Ellipse`` class.
 
         Parameters
         ----------
@@ -144,8 +142,7 @@ class SketchEllipse(SketchFace, Ellipse):
 
     @property
     def perimeter(self) -> Quantity:
-        """
-        Perimeter of the circle.
+        """Perimeter of the circle.
 
         Notes
         -----
@@ -156,8 +153,7 @@ class SketchEllipse(SketchFace, Ellipse):
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
-        """
-        VTK polydata representation for PyVista visualization.
+        """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
         the standard global Cartesian coordinate system.
@@ -203,8 +199,7 @@ class SketchEllipse(SketchFace, Ellipse):
         ).transform(transformation_matrix)
 
     def plane_change(self, plane: Plane) -> None:
-        """
-        Redefine the plane containing ``SketchEllipse`` objects.
+        """Redefine the plane containing ``SketchEllipse`` objects.
 
         Notes
         -----

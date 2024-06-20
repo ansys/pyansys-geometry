@@ -40,13 +40,12 @@ class SingletonMeta(type):
 
     _instances = {}
 
+    # We now have a lock object that will be used to synchronize threads
+    # during first access to the Singleton.
     _lock: Lock = Lock()
-    """We now have a lock object that will be used to synchronize threads during first
-    access to the Singleton."""
 
     def __call__(cls, *args, **kwargs):
-        """
-        Return a single instance of the class.
+        """Return a single instance of the class.
 
         Possible changes to the value of the ``__init__`` argument do not affect the
         returned instance.
@@ -69,7 +68,7 @@ class SingletonMeta(type):
 
 
 class DefaultUnitsClass(metaclass=SingletonMeta):
-    """Provides default units for the PyAnsys Geometry singleton design pattern."""
+    """Provides default units for PyAnsys Geometry."""
 
     def __init__(self) -> None:
         """Initialize the ``DefaultUnitsClass`` class."""
@@ -102,8 +101,7 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
 
     @property
     def SERVER_LENGTH(self) -> Unit:
-        """
-        Default length unit for supporting Geometry services for gRPC messages.
+        """Default length unit for gRPC messages.
 
         Notes
         -----
@@ -113,8 +111,7 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
 
     @property
     def SERVER_AREA(self) -> Unit:
-        """
-        Default area unit for supporting Geometry services for gRPC messages.
+        """Default area unit for gRPC messages.
 
         Notes
         -----
@@ -124,8 +121,7 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
 
     @property
     def SERVER_VOLUME(self) -> Unit:
-        """
-        Default volume unit for supporting Geometry services for gRPC messages.
+        """Default volume unit for gRPC messages.
 
         Notes
         -----
@@ -135,8 +131,7 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
 
     @property
     def SERVER_ANGLE(self) -> Unit:
-        """
-        Default angle unit for supporting Geometry services for gRPC messages.
+        """Default angle unit for gRPC messages.
 
         Notes
         -----
@@ -150,8 +145,7 @@ DEFAULT_UNITS = DefaultUnitsClass()
 
 
 class Measurement(PhysicalQuantity):
-    """
-    Provides the ``PhysicalQuantity`` subclass for holding a measurement.
+    """Provides the ``PhysicalQuantity`` subclass for holding a measurement.
 
     Parameters
     ----------
@@ -197,8 +191,7 @@ class Measurement(PhysicalQuantity):
 
 
 class Distance(Measurement):
-    """
-    Provides the ``Measurement`` subclass for holding a distance.
+    """Provides the ``Measurement`` subclass for holding a distance.
 
     Parameters
     ----------
@@ -216,8 +209,7 @@ class Distance(Measurement):
 
 
 class Angle(Measurement):
-    """
-    Provides the ``Measurement`` subclass for holding an angle.
+    """Provides the ``Measurement`` subclass for holding an angle.
 
     Parameters
     ----------

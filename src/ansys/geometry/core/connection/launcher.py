@@ -50,8 +50,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 def launch_modeler(mode: str = None, **kwargs: Optional[Dict]) -> "Modeler":
-    """
-    Start the ``Modeler`` interface for PyAnsys Geometry.
+    """Start the ``Modeler`` interface for PyAnsys Geometry.
 
     Parameters
     ----------
@@ -97,8 +96,7 @@ def launch_modeler(mode: str = None, **kwargs: Optional[Dict]) -> "Modeler":
 
 
 def _launch_with_launchmode(mode: str, **kwargs: Optional[Dict]) -> "Modeler":
-    """
-    Start the ``Modeler`` interface for PyAnsys Geometry.
+    """Start the ``Modeler`` interface for PyAnsys Geometry.
 
     Parameters
     ----------
@@ -147,8 +145,7 @@ def _launch_with_launchmode(mode: str, **kwargs: Optional[Dict]) -> "Modeler":
 
 
 def _launch_with_automatic_detection(**kwargs: Optional[Dict]) -> "Modeler":
-    """
-    Start the ``Modeler`` interface for PyAnsys Geometry based on automatic detection.
+    """Start the ``Modeler`` interface based on automatic detection.
 
     Parameters
     ----------
@@ -228,8 +225,7 @@ def launch_remote_modeler(
     client_log_file: Optional[str] = None,
     **kwargs: Optional[Dict],
 ) -> "Modeler":
-    """
-    Start the Geometry service remotely using the PIM API.
+    """Start the Geometry service remotely using the PIM API.
 
     When calling this method, you must ensure that you are in an
     environment where `PyPIM <https://github.com/ansys/pypim>`_ is
@@ -277,8 +273,7 @@ def launch_docker_modeler(
     client_log_file: Optional[str] = None,
     **kwargs: Optional[Dict],
 ) -> "Modeler":
-    """
-    Start the Geometry service locally using the ``LocalDockerInstance`` class.
+    """Start the Geometry service locally using Docker.
 
     When calling this method, a Geometry service (as a local Docker container)
     is started. By default, if a container with the Geometry service already exists
@@ -349,8 +344,7 @@ def launch_modeler_with_discovery_and_pimlight(
     client_log_file: Optional[str] = None,
     **kwargs: Optional[Dict],
 ) -> "Modeler":
-    """
-    Start Ansys Discovery remotely using the PIM API.
+    """Start Ansys Discovery remotely using the PIM API.
 
     When calling this method, you must ensure that you are in an
     environment where `PyPIM <https://github.com/ansys/pypim>`_ is configured.
@@ -393,8 +387,7 @@ def launch_modeler_with_geometry_service_and_pimlight(
     client_log_file: Optional[str] = None,
     **kwargs: Optional[Dict],
 ) -> "Modeler":
-    """
-    Start the Geometry service remotely using the PIM API.
+    """Start the Geometry service remotely using the PIM API.
 
     When calling this method, you must ensure that you are in an
     environment where `PyPIM <https://github.com/ansys/pypim>`_ is configured.
@@ -437,8 +430,7 @@ def launch_modeler_with_spaceclaim_and_pimlight(
     client_log_file: Optional[str] = None,
     **kwargs: Optional[Dict],
 ) -> "Modeler":
-    """
-    Start Ansys SpaceClaim remotely using the PIM API.
+    """Start Ansys SpaceClaim remotely using the PIM API.
 
     When calling this method, you must ensure that you are in an
     environment where `PyPIM <https://github.com/ansys/pypim>`_ is configured.
@@ -491,8 +483,7 @@ def launch_modeler_with_geometry_service(
     logs_folder: str = None,  # DEPRECATED
     **kwargs: Optional[Dict],
 ) -> "Modeler":
-    """
-    Start the Geometry service locally using the ``ProductInstance`` class.
+    """Start the Geometry service locally using the ``ProductInstance`` class.
 
     When calling this method, a standalone Geometry service is started.
     By default, if an endpoint is specified (by defining `host` and `port` parameters)
@@ -620,8 +611,7 @@ def launch_modeler_with_discovery(
     logs_folder: str = None,  # DEPRECATED
     **kwargs: Optional[Dict],
 ):
-    """
-    Start Ansys Discovery locally using the ``ProductInstance`` class.
+    """Start Ansys Discovery locally using the ``ProductInstance`` class.
 
     .. note::
 
@@ -754,8 +744,7 @@ def launch_modeler_with_spaceclaim(
     logs_folder: str = None,  # DEPRECATED
     **kwargs: Optional[Dict],
 ):
-    """
-    Start Ansys SpaceClaim locally using the ``ProductInstance`` class.
+    """Start Ansys SpaceClaim locally using the ``ProductInstance`` class.
 
     When calling this method, a standalone SpaceClaim session is started.
     By default, if an endpoint is specified (by defining `host` and `port` parameters)

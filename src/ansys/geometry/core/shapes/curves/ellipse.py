@@ -47,8 +47,7 @@ from ansys.geometry.core.typing import Real, RealSequence
 
 
 class Ellipse(Curve):
-    """
-    Provides 3D ellipse representation.
+    """Provides 3D ellipse representation.
 
     Parameters
     ----------
@@ -148,8 +147,7 @@ class Ellipse(Curve):
         )
 
     def mirrored_copy(self) -> "Ellipse":
-        """
-        Create a mirrored copy of the ellipse along the y-axis.
+        """Create a mirrored copy of the ellipse along the y-axis.
 
         Returns
         -------
@@ -161,8 +159,7 @@ class Ellipse(Curve):
         )
 
     def evaluate(self, parameter: Real) -> "EllipseEvaluation":
-        """
-        Evaluate the ellipse at the given parameter.
+        """Evaluate the ellipse at the given parameter.
 
         Parameters
         ----------
@@ -177,8 +174,7 @@ class Ellipse(Curve):
         return EllipseEvaluation(self, parameter)
 
     def project_point(self, point: Point3D) -> "EllipseEvaluation":
-        """
-        Project a point onto the ellipse and evaluate the ellipse.
+        """Project a point onto the ellipse and evaluate the ellipse.
 
         Parameters
         ----------
@@ -204,8 +200,7 @@ class Ellipse(Curve):
         return EllipseEvaluation(self, t)
 
     def is_coincident_ellipse(self, other: "Ellipse") -> bool:
-        """
-        Determine if this ellipse is coincident with another.
+        """Determine if this ellipse is coincident with another.
 
         Parameters
         ----------
@@ -236,8 +231,7 @@ class Ellipse(Curve):
 
     @property
     def linear_eccentricity(self) -> Quantity:
-        """
-        Linear eccentricity of the ellipse.
+        """Linear eccentricity of the ellipse.
 
         Notes
         -----
@@ -266,8 +260,7 @@ class Ellipse(Curve):
         return np.pi * self.major_radius * self.minor_radius
 
     def transformed_copy(self, matrix: Matrix44) -> "Ellipse":
-        """
-        Create a transformed copy of the ellipse based on a transformation matrix.
+        """Create a transformed copy of the ellipse from a transformation matrix.
 
         Parameters
         ----------
@@ -291,8 +284,7 @@ class Ellipse(Curve):
         )
 
     def parameterization(self) -> Parameterization:
-        """
-        Get the parametrization of the ellipse.
+        """Get the parametrization of the ellipse.
 
         The parameter of an ellipse specifies the clockwise angle around the axis
         (right-hand corkscrew law), with a zero parameter at ``dir_x`` and a period of 2*pi.
@@ -312,8 +304,7 @@ class Ellipse(Curve):
 
 
 class EllipseEvaluation(CurveEvaluation):
-    """
-    Evaluate an ellipse at a given parameter.
+    """Evaluate an ellipse at a given parameter.
 
     Parameters
     ----------
@@ -340,8 +331,7 @@ class EllipseEvaluation(CurveEvaluation):
 
     @cached_property
     def position(self) -> Point3D:
-        """
-        Position of the evaluation.
+        """Position of the evaluation.
 
         Returns
         -------
@@ -356,8 +346,7 @@ class EllipseEvaluation(CurveEvaluation):
 
     @cached_property
     def tangent(self) -> UnitVector3D:
-        """
-        Tangent of the evaluation.
+        """Tangent of the evaluation.
 
         Returns
         -------
@@ -371,8 +360,7 @@ class EllipseEvaluation(CurveEvaluation):
 
     @cached_property
     def normal(self) -> UnitVector3D:
-        """
-        Normal of the evaluation.
+        """Normal of the evaluation.
 
         Returns
         -------
@@ -383,8 +371,7 @@ class EllipseEvaluation(CurveEvaluation):
 
     @cached_property
     def first_derivative(self) -> Vector3D:
-        """
-        Girst derivative of the evaluation.
+        """Girst derivative of the evaluation.
 
         The first derivative is in the direction of the tangent and has a magnitude
         equal to the velocity (rate of change of position) at that point.
@@ -400,8 +387,7 @@ class EllipseEvaluation(CurveEvaluation):
 
     @cached_property
     def second_derivative(self) -> Vector3D:
-        """
-        Second derivative of the evaluation.
+        """Second derivative of the evaluation.
 
         Returns
         -------
@@ -415,8 +401,7 @@ class EllipseEvaluation(CurveEvaluation):
 
     @cached_property
     def curvature(self) -> Real:
-        """
-        Curvature of the ellipse.
+        """Curvature of the ellipse.
 
         Returns
         -------

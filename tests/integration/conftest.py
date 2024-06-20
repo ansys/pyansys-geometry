@@ -19,9 +19,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""
-This testing module automatically connects to the Geometry service running at
-localhost:50051.
+"""This testing module automatically connects to the Geometry service running
+at localhost:50051.
 
 If you want to override these defaults, set the following environment variables.
 
@@ -140,8 +139,7 @@ def modeler(docker_instance):
 
 @pytest.fixture(scope="session", autouse=True)
 def clean_plot_result_images():
-    """
-    Method cleaning up the image results path.
+    """Method cleaning up the image results path.
 
     Runs before each session once.
     """

@@ -38,15 +38,13 @@ LOG_LEVELS = {"CRITICAL": 50, "ERROR": 40, "WARNING": 30, "INFO": 20, "DEBUG": 1
 
 
 def test_stdout_reading(capfd: pytest.CaptureFixture):
-    """
-    Test for checking simple standard output reading by pytest.
+    """Test for checking simple standard output reading by pytest.
 
     Parameters
     ----------
     capfd : pytest.CaptureFixture
         Fixture for capturing console stdout and stderr.
     """
-
     print("This is a test")
 
     out, _ = capfd.readouterr()
@@ -54,16 +52,14 @@ def test_stdout_reading(capfd: pytest.CaptureFixture):
 
 
 def test_only_logger(caplog: pytest.LogCaptureFixture):
-    """
-    Test for checking that the logging capabilities are working fine in the Python
-    version installed.
+    """Test for checking that the logging capabilities are working fine in the
+    Python version installed.
 
     Parameters
     ----------
     caplog : pytest.LogCaptureFixture
         Fixture for capturing logs.
     """
-
     log_a = deflogging.getLogger("test")
     log_a.setLevel("DEBUG")
 
@@ -73,7 +69,6 @@ def test_only_logger(caplog: pytest.LogCaptureFixture):
 
 def test_global_logger_exist():
     """Test for checking the accurate naming of the general Logger instance."""
-
     assert isinstance(LOG.logger, deflogging.Logger)
     assert LOG.logger.name == "PyAnsys_Geometry_global"
 
@@ -81,7 +76,6 @@ def test_global_logger_exist():
 def test_global_logger_has_handlers():
     """Test for checking that the general Logger has file_handlers and sdtout
     file_handlers implemented."""
-
     assert hasattr(LOG, "file_handler")
     assert hasattr(LOG, "std_out_handler")
     assert LOG.logger.hasHandlers
@@ -89,10 +83,9 @@ def test_global_logger_has_handlers():
 
 
 def test_global_logger_logging(caplog: pytest.LogCaptureFixture):
-    """
-    Testing the global PyDiscovery logger capabilities. Forcing minimum logging level to
-    Debug, adding a message with different logging levels, checking the output and
-    restoring to original level.
+    """Testing the global PyDiscovery logger capabilities. Forcing minimum
+    logging level to Debug, adding a message with different logging levels,
+    checking the output and restoring to original level.
 
     Parameters
     ----------
@@ -113,15 +106,15 @@ def test_global_logger_logging(caplog: pytest.LogCaptureFixture):
 
 
 def test_global_logger_level_mode():
-    """Checking that the Logger levels are stored as integer values and that the default
-    value (unless changed) is ERROR."""
+    """Checking that the Logger levels are stored as integer values and that
+    the default value (unless changed) is ERROR."""
     assert isinstance(LOG.logger.level, int)
     assert LOG.logger.level == logger.ERROR
 
 
 def test_global_logger_exception_handling(caplog: pytest.LogCaptureFixture):
-    """
-    Test for checking that Errors are also raised in the logger as ERROR type.
+    """Test for checking that Errors are also raised in the logger as ERROR
+    type.
 
     Parameters
     ----------
@@ -152,9 +145,8 @@ def test_global_logger_exception_handling(caplog: pytest.LogCaptureFixture):
     ],
 )
 def test_global_logger_debug_levels(level: int, caplog: pytest.LogCaptureFixture):
-    """
-    Testing for all the possible logging level that the output is recorded properly for
-    each type of msg.
+    """Testing for all the possible logging level that the output is recorded
+    properly for each type of msg.
 
     Parameters
     ----------
@@ -163,7 +155,6 @@ def test_global_logger_debug_levels(level: int, caplog: pytest.LogCaptureFixture
     caplog : pytest.LogCaptureFixture
         Fixture for capturing logs.
     """
-
     with caplog.at_level(level, LOG.logger.name):  # changing root logger level:
         for each_log_name, each_log_number in LOG_LEVELS.items():
             msg = f"This is a message of type {each_log_name}."
@@ -184,8 +175,7 @@ def test_global_logger_debug_levels(level: int, caplog: pytest.LogCaptureFixture
 
 
 def test_global_logger_format(fake_record: Callable):
-    """
-    Test for checking the global logger formatter aspect.
+    """Test for checking the global logger formatter aspect.
 
     Parameters
     ----------
@@ -214,9 +204,8 @@ def test_global_logger_format(fake_record: Callable):
 
 
 def test_global_methods(caplog: pytest.LogCaptureFixture):
-    """
-    Testing global logger methods for printing out different log messages, from DEBUG to
-    CRITICAL.
+    """Testing global logger methods for printing out different log messages,
+    from DEBUG to CRITICAL.
 
     Parameters
     ----------
@@ -256,8 +245,7 @@ def test_global_methods(caplog: pytest.LogCaptureFixture):
 
 
 def test_log_to_file(tmp_path_factory: pytest.TempPathFactory):
-    """
-    Testing writing to log file.
+    """Testing writing to log file.
 
     Since the default loglevel of LOG is error, debug are not normally recorded to it.
 
