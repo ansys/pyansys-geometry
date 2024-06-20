@@ -25,7 +25,7 @@ from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
 from pint import Quantity
 import pyvista as pv
-from scipy.spatial.transform import Rotation as spatial_rotation
+from scipy.spatial.transform import Rotation as SpatialRotation
 
 from ansys.geometry.core.math.matrix import Matrix33
 from ansys.geometry.core.math.point import Point2D
@@ -37,8 +37,7 @@ from ansys.geometry.core.typing import Real
 
 
 class Box(SketchFace):
-    """
-    Provides for modeling a box.
+    """Provides for modeling a box.
 
     Parameters
     ----------
@@ -69,7 +68,7 @@ class Box(SketchFace):
         angle = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
 
         rotation = Matrix33(
-            spatial_rotation.from_euler(
+            SpatialRotation.from_euler(
                 "xyz", [0, 0, angle.value.m_as(UNITS.radian)], degrees=False
             ).as_matrix()
         )
@@ -134,8 +133,7 @@ class Box(SketchFace):
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
-        """
-        VTK polydata representation for PyVista visualization.
+        """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
         the standard global cartesian coordinate system.

@@ -22,6 +22,7 @@
 """Module containing the ``ProductInstance`` class."""
 import logging
 import os
+from pathlib import Path
 import signal
 import socket
 
@@ -55,8 +56,7 @@ BACKEND_SUBFOLDER = "ApiServer"
 """Default backend's folder name into the ``ADDINS_SUBFOLDER`` folder."""
 
 MANIFEST_FILENAME = "Presentation.ApiServerAddIn.Manifest.xml"
-"""
-Default backend's add-in filename.
+"""Default backend's add-in filename.
 
 To be used only for local start of Ansys Discovery or Ansys SpaceClaim.
 """
@@ -86,65 +86,56 @@ BACKEND_LOGS_FOLDER_VARIABLE = "ANS_DSCO_REMOTE_LOGS_FOLDER"
 """The backend's logs folder path to be used."""
 
 BACKEND_API_VERSION_VARIABLE = "API_VERSION"
-"""
-The backend's api version environment variable for local start.
+"""The backend's api version environment variable for local start.
 
 To be used only with Ansys Discovery and Ansys SpaceClaim.
 """
 
 BACKEND_SPACECLAIM_OPTIONS = "--spaceclaim-options"
-"""
-The additional argument for local Ansys Discovery start.
+"""The additional argument for local Ansys Discovery start.
 
 To be used only with Ansys Discovery.
 """
 
 BACKEND_ADDIN_MANIFEST_ARGUMENT = "/ADDINMANIFESTFILE="
-"""
-The argument to specify the backend's add-in manifest file's path.
+"""The argument to specify the backend's add-in manifest file's path.
 
 To be used only with Ansys Discovery and Ansys SpaceClaim.
 """
 
 BACKEND_SPACECLAIM_HIDDEN = "/Headless=True"
-"""
-The argument to hide SpaceClaim's UI on the backend.
+"""The argument to hide SpaceClaim's UI on the backend.
 
 To be used only with Ansys SpaceClaim.
 """
 
 BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY = "SPACECLAIM_MODE"
-"""
-SpaceClaim hidden backend's environment variable key.
+"""SpaceClaim hidden backend's environment variable key.
 
 To be used only with Ansys SpaceClaim.
 """
 
 BACKEND_SPACECLAIM_HIDDEN_ENVVAR_VALUE = "2"
-"""
-SpaceClaim hidden backend's environment variable value.
+"""SpaceClaim hidden backend's environment variable value.
 
 To be used only with Ansys SpaceClaim.
 """
 
 BACKEND_DISCOVERY_HIDDEN = "--hidden"
-"""
-The argument to hide Discovery's UI on the backend.
+"""The argument to hide Discovery's UI on the backend.
 
 To be used only with Ansys Discovery.
 """
 
 BACKEND_SPLASH_OFF = "/Splash=False"
-"""
-The argument to specify the backend's add-in manifest file's path.
+"""The argument to specify the backend's add-in manifest file's path.
 
 To be used only with Ansys Discovery and Ansys SpaceClaim.
 """
 
 
 class ProductInstance:
-    """
-    ``ProductInstance`` class.
+    """``ProductInstance`` class.
 
     This class is used as a handle for a local session of Ansys Product's backend: Discovery,
     Windows Geometry Service or SpaceClaim.
@@ -188,8 +179,7 @@ def prepare_and_start_backend(
     log_level: int = None,  # DEPRECATED
     logs_folder: str = None,  # DEPRECATED
 ) -> "Modeler":
-    """
-    Start the requested service locally using the ``ProductInstance`` class.
+    """Start the requested service locally using the ``ProductInstance`` class.
 
     When calling this method, a standalone service or product session is started.
     By default, if an endpoint is specified (by defining `host` and `port` parameters)
@@ -274,7 +264,7 @@ def prepare_and_start_backend(
 
     port = _check_port_or_get_one(port)
     installations = get_available_ansys_installations()
-    if product_version != None:
+    if product_version is not None:
         _check_version_is_available(product_version, installations)
     else:
         product_version = get_latest_ansys_installation()[0]
@@ -290,7 +280,7 @@ def prepare_and_start_backend(
     )
 
     if backend_type == BackendType.DISCOVERY:
-        args.append(os.path.join(installations[product_version], DISCOVERY_FOLDER, DISCOVERY_EXE))
+        args.append(Path(installations[product_version], DISCOVERY_FOLDER, DISCOVERY_EXE))
         if hidden is True:
             args.append(BACKEND_DISCOVERY_HIDDEN)
 
@@ -303,7 +293,7 @@ def prepare_and_start_backend(
         env_copy[BACKEND_API_VERSION_VARIABLE] = str(api_version)
 
     elif backend_type == BackendType.SPACECLAIM:
-        args.append(os.path.join(installations[product_version], SPACECLAIM_FOLDER, SPACECLAIM_EXE))
+        args.append(Path(installations[product_version], SPACECLAIM_FOLDER, SPACECLAIM_EXE))
         if hidden is True:
             args.append(BACKEND_SPACECLAIM_HIDDEN)
             args.append(BACKEND_SPLASH_OFF)
@@ -317,7 +307,7 @@ def prepare_and_start_backend(
     elif backend_type == BackendType.WINDOWS_SERVICE:
         latest_version = get_latest_ansys_installation()[0]
         args.append(
-            os.path.join(
+            Path(
                 installations[latest_version], WINDOWS_GEOMETRY_SERVICE_FOLDER, GEOMETRY_SERVICE_EXE
             )
         )
@@ -349,8 +339,7 @@ def prepare_and_start_backend(
 
 
 def get_available_port() -> int:
-    """
-    Return an available port to be used.
+    """Return an available port to be used.
 
     Returns
     -------
@@ -365,8 +354,7 @@ def get_available_port() -> int:
 
 
 def _wait_for_backend(host: str, port: int, timeout: int):
-    """
-    Check if the backend is ready to accept connections.
+    """Check if the backend is ready to accept connections.
 
     Parameters
     ----------
@@ -393,8 +381,7 @@ def _wait_for_backend(host: str, port: int, timeout: int):
 
 
 def _is_port_available(port: int, host: str = "localhost") -> bool:
-    """
-    Check whether the argument port is available.
+    """Check whether the argument port is available.
 
     The optional argument is the ip address where to check port availability.
     Its default is ``localhost``.
@@ -404,7 +391,7 @@ def _is_port_available(port: int, host: str = "localhost") -> bool:
             try:
                 sock.bind((host, port))
                 return True
-            except:
+            except socket.error:
                 return False
 
 
@@ -413,7 +400,7 @@ def _manifest_path_provider(
 ) -> str:
     """Return the ApiServer's add-in manifest file path."""
     if manifest_path:
-        if os.path.exists(manifest_path):
+        if Path(manifest_path).exists():
             return manifest_path
         else:
             LOG.warning(
@@ -421,25 +408,28 @@ def _manifest_path_provider(
             )
 
     # Default manifest path
-    def_manifest_path = os.path.join(
+    def_manifest_path = Path(
         available_installations[version], ADDINS_SUBFOLDER, BACKEND_SUBFOLDER, MANIFEST_FILENAME
     )
 
-    if os.path.exists(def_manifest_path):
-        return def_manifest_path
+    if def_manifest_path.exists():
+        return def_manifest_path.as_uri()
     else:
         msg = (
             "Default manifest file's path does not exist."
             " Please specify a valid manifest."
-            f" The ApiServer Add-In seems to be missing in {os.path.dirname(def_manifest_path)}"
+            f" The ApiServer Add-In seems to be missing in {def_manifest_path.parent}"
         )
         LOG.error(msg)
         raise RuntimeError(msg)
 
 
 def __start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Popen:
-    """
-    Start the program where the path is the first item of the ``args`` array argument.
+    """Start the program.
+
+    Notes
+    -----
+    The path is the first item of the ``args`` array argument.
 
     Parameters
     ----------
@@ -465,8 +455,7 @@ def __start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Po
 
 
 def _check_minimal_versions(latest_installed_version: int) -> None:
-    """
-    Check client is compatible with Ansys Products starting from 2023.2.1 version.
+    """Check client is compatible with Ansys Products.
 
     Check that at least V232 is installed.
     """
@@ -479,7 +468,7 @@ def _check_minimal_versions(latest_installed_version: int) -> None:
 
 
 def _check_version_is_available(version: int, installations: Dict[int, str]) -> None:
-    """Check that the requested version for launcher is installed on the system."""
+    """Check that the requested version for launcher is installed."""
     if version not in installations:
         msg = (
             f"The requested Ansys product's version {version} is not available, "
@@ -489,8 +478,7 @@ def _check_version_is_available(version: int, installations: Dict[int, str]) -> 
 
 
 def _check_port_or_get_one(port: int) -> int:
-    """
-    If a ``port`` argument is specified, check that it's free.
+    """If a ``port`` argument is specified, check that it's free.
 
     If not, raise an error.
 
@@ -513,10 +501,10 @@ def _get_common_env(
     server_log_level: int,
     server_logs_folder: str = None,
 ) -> Dict[str, str]:
-    """
-    Make a copy of the actual system's environment.
+    """Make a copy of the actual system's environment.
 
-    Then update or create some environment variables with the provided arguments.
+    Then update or create some environment variables with the provided
+    arguments.
     """
     env_copy = os.environ.copy()
 

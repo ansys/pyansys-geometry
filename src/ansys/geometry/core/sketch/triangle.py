@@ -31,8 +31,7 @@ from ansys.geometry.core.sketch.segment import SketchSegment
 
 
 class Triangle(SketchFace):
-    """
-    Provides for modeling 2D triangles.
+    """Provides for modeling 2D triangles.
 
     Parameters
     ----------
@@ -76,8 +75,7 @@ class Triangle(SketchFace):
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
-        """
-        VTK polydata representation for PyVista visualization.
+        """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
         the standard global Cartesian coordinate system.

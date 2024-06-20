@@ -38,8 +38,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 class Gap:
-    """
-    Represents a gap between two bodies.
+    """Represents a gap between two bodies.
 
     Parameters
     ----------
@@ -58,8 +57,7 @@ class Gap:
 
     @classmethod
     def _from_distance_response(cls, response: MinDistanceBetweenObjectsResponse) -> "Gap":
-        """
-        Construct ``Gap`` object from distance response.
+        """Construct ``Gap`` object from distance response.
 
         Notes
         -----
@@ -76,8 +74,7 @@ class Gap:
 
 
 class MeasurementTools:
-    """
-    Measurement tools for PyAnsys Geometry.
+    """Measurement tools for PyAnsys Geometry.
 
     Parameters
     ----------
@@ -94,8 +91,7 @@ class MeasurementTools:
     @protect_grpc
     @min_backend_version(24, 2, 0)
     def min_distance_between_objects(self, body1: "Body", body2: "Body") -> Gap:
-        """
-        Find the gap between two bodies.
+        """Find the gap between two bodies.
 
         Parameters
         ----------

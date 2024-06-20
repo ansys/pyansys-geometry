@@ -19,8 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""
-Module to perform a connection validation check.
+"""Module to perform a connection validation check.
 
 The method in this module is only used for testing the default Docker service on
 GitHub and can safely be skipped within testing.

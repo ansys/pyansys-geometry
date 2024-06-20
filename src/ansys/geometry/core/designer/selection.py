@@ -36,8 +36,7 @@ from ansys.geometry.core.errors import protect_grpc
 
 
 class NamedSelection:
-    """
-    Represents a single named selection within the design assembly.
+    """Represents a single named selection within the design assembly.
 
     This class synchronizes to a design within a supporting Geometry service instance.
 

@@ -48,8 +48,7 @@ from ansys.geometry.core.typing import Real, RealSequence
 
 
 class Cylinder(Surface):
-    """
-    Provides 3D cylinder representation.
+    """Provides 3D cylinder representation.
 
     Parameters
     ----------
@@ -111,8 +110,7 @@ class Cylinder(Surface):
         return self._axis
 
     def surface_area(self, height: Union[Quantity, Distance, Real]) -> Quantity:
-        """
-        Get the surface area of the cylinder.
+        """Get the surface area of the cylinder.
 
         Notes
         -----
@@ -138,8 +136,7 @@ class Cylinder(Surface):
         return 2 * np.pi * self.radius * height.value + 2 * np.pi * self.radius**2
 
     def volume(self, height: Union[Quantity, Distance, Real]) -> Quantity:
-        """
-        Get the volume of the cylinder.
+        """Get the volume of the cylinder.
 
         Notes
         -----
@@ -165,8 +162,7 @@ class Cylinder(Surface):
         return np.pi * self.radius**2 * height.value
 
     def transformed_copy(self, matrix: Matrix44) -> "Cylinder":
-        """
-        Create a transformed copy of the cylinder based on a transformation matrix.
+        """Create a transformed copy of the cylinder from a transformation matrix.
 
         Parameters
         ----------
@@ -189,8 +185,7 @@ class Cylinder(Surface):
         )
 
     def mirrored_copy(self) -> "Cylinder":
-        """
-        Create a mirrored copy of the cylinder along the y-axis.
+        """Create a mirrored copy of the cylinder along the y-axis.
 
         Returns
         -------
@@ -210,8 +205,7 @@ class Cylinder(Surface):
         )
 
     def evaluate(self, parameter: ParamUV) -> "CylinderEvaluation":
-        """
-        Evaluate the cylinder at the given parameters.
+        """Evaluate the cylinder at the given parameters.
 
         Parameters
         ----------
@@ -226,8 +220,7 @@ class Cylinder(Surface):
         return CylinderEvaluation(self, parameter)
 
     def project_point(self, point: Point3D) -> "CylinderEvaluation":
-        """
-        Project a point onto the cylinder and evaluate the cylinder.
+        """Project a point onto the cylinder and evaluate the cylinder.
 
         Parameters
         ----------
@@ -248,8 +241,7 @@ class Cylinder(Surface):
         return CylinderEvaluation(self, ParamUV(u, v))
 
     def parameterization(self) -> Tuple[Parameterization, Parameterization]:
-        """
-        Parameterize the cylinder surface as a tuple (U and V respectively).
+        """Parameterize the cylinder surface as a tuple (U and V respectively).
 
         The U parameter specifies the clockwise angle around the axis (right-hand
         corkscrew law), with a zero parameter at ``dir_x`` and a period of 2*pi.
@@ -275,8 +267,7 @@ class Cylinder(Surface):
 
 
 class CylinderEvaluation(SurfaceEvaluation):
-    """
-    Provides evaluation of a cylinder at given parameters.
+    """Provides evaluation of a cylinder at given parameters.
 
     Parameters
     ----------
@@ -303,8 +294,7 @@ class CylinderEvaluation(SurfaceEvaluation):
 
     @cached_property
     def position(self) -> Point3D:
-        """
-        Position of the evaluation.
+        """Position of the evaluation.
 
         Returns
         -------
@@ -319,8 +309,7 @@ class CylinderEvaluation(SurfaceEvaluation):
 
     @cached_property
     def normal(self) -> UnitVector3D:
-        """
-        Normal to the surface.
+        """Normal to the surface.
 
         Returns
         -------
@@ -331,8 +320,7 @@ class CylinderEvaluation(SurfaceEvaluation):
 
     @cached_property
     def __cylinder_normal(self) -> Vector3D:
-        """
-        Normal to the surface.
+        """Normal to the surface.
 
         Returns
         -------
@@ -354,8 +342,7 @@ class CylinderEvaluation(SurfaceEvaluation):
 
     @cached_property
     def u_derivative(self) -> Vector3D:
-        """
-        First derivative with respect to the U parameter.
+        """First derivative with respect to the U parameter.
 
         Returns
         -------
@@ -366,8 +353,7 @@ class CylinderEvaluation(SurfaceEvaluation):
 
     @cached_property
     def v_derivative(self) -> Vector3D:
-        """
-        First derivative with respect to the V parameter.
+        """First derivative with respect to the V parameter.
 
         Returns
         -------
@@ -378,8 +364,7 @@ class CylinderEvaluation(SurfaceEvaluation):
 
     @cached_property
     def uu_derivative(self) -> Vector3D:
-        """
-        Second derivative with respect to the U parameter.
+        """Second derivative with respect to the U parameter.
 
         Returns
         -------
@@ -390,8 +375,7 @@ class CylinderEvaluation(SurfaceEvaluation):
 
     @cached_property
     def uv_derivative(self) -> Vector3D:
-        """
-        Second derivative with respect to the U and V parameters.
+        """Second derivative with respect to the U and V parameters.
 
         Returns
         -------
@@ -402,8 +386,7 @@ class CylinderEvaluation(SurfaceEvaluation):
 
     @cached_property
     def vv_derivative(self) -> Vector3D:
-        """
-        Second derivative with respect to the V parameter.
+        """Second derivative with respect to the V parameter.
 
         Returns
         -------
@@ -414,8 +397,7 @@ class CylinderEvaluation(SurfaceEvaluation):
 
     @cached_property
     def min_curvature(self) -> Real:
-        """
-        Minimum curvature of the cylinder.
+        """Minimum curvature of the cylinder.
 
         Returns
         -------
@@ -426,8 +408,7 @@ class CylinderEvaluation(SurfaceEvaluation):
 
     @cached_property
     def min_curvature_direction(self) -> UnitVector3D:
-        """
-        Minimum curvature direction.
+        """Minimum curvature direction.
 
         Returns
         -------
@@ -438,8 +419,7 @@ class CylinderEvaluation(SurfaceEvaluation):
 
     @cached_property
     def max_curvature(self) -> Real:
-        """
-        Maximum curvature of the cylinder.
+        """Maximum curvature of the cylinder.
 
         Returns
         -------
@@ -450,8 +430,7 @@ class CylinderEvaluation(SurfaceEvaluation):
 
     @cached_property
     def max_curvature_direction(self) -> UnitVector3D:
-        """
-        Maximum curvature direction.
+        """Maximum curvature direction.
 
         Returns
         -------

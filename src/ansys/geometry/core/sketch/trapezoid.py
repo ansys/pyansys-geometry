@@ -26,7 +26,7 @@ from beartype.typing import Optional, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
-from scipy.spatial.transform import Rotation as spatial_rotation
+from scipy.spatial.transform import Rotation as SpatialRotation
 
 from ansys.geometry.core.math.constants import ZERO_POINT2D
 from ansys.geometry.core.math.matrix import Matrix33
@@ -39,8 +39,7 @@ from ansys.geometry.core.typing import Real
 
 
 class Trapezoid(SketchFace):
-    """
-    Provides for modeling a 2D trapezoid.
+    """Provides for modeling a 2D trapezoid.
 
     Parameters
     ----------
@@ -99,7 +98,7 @@ class Trapezoid(SketchFace):
             slant_angle if isinstance(slant_angle, Angle) else Angle(slant_angle, slant_angle.units)
         )
 
-        if nonsymmetrical_slant_angle == None:
+        if nonsymmetrical_slant_angle is None:
             nonsymmetrical_slant_angle = slant_angle
         else:
             if isinstance(nonsymmetrical_slant_angle, (int, float)):
@@ -111,7 +110,7 @@ class Trapezoid(SketchFace):
             )
 
         rotation = Matrix33(
-            spatial_rotation.from_euler(
+            SpatialRotation.from_euler(
                 "xyz", [0, 0, angle.value.m_as(UNITS.radian)], degrees=False
             ).as_matrix()
         )
@@ -166,8 +165,7 @@ class Trapezoid(SketchFace):
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
-        """
-        VTK polydata representation for PyVista visualization.
+        """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
         the standard global Cartesian coordinate system.

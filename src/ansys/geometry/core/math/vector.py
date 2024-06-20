@@ -36,8 +36,7 @@ from ansys.geometry.core.typing import Real, RealSequence
 
 
 class Vector3D(np.ndarray):
-    """
-    Provides for managing and creating a 3D vector.
+    """Provides for managing and creating a 3D vector.
 
     Parameters
     ----------
@@ -136,8 +135,7 @@ class Vector3D(np.ndarray):
             raise ValueError("The norm of the 3D vector is not valid.")
 
     def transform(self, matrix: "Matrix44") -> "Vector3D":
-        """
-        Transform the 3D vector3D with a transformation matrix.
+        """Transform the 3D vector3D with a transformation matrix.
 
         Notes
         -----
@@ -163,8 +161,7 @@ class Vector3D(np.ndarray):
 
     @check_input_types
     def get_angle_between(self, v: "Vector3D") -> Quantity:
-        """
-        Get the angle between this 3D vector and another 3D vector.
+        """Get the angle between this 3D vector and another 3D vector.
 
         Parameters
         ----------
@@ -206,8 +203,7 @@ class Vector3D(np.ndarray):
 
     @check_input_types
     def __mul__(self, other: Union["Vector3D", Real]) -> Union["Vector3D", Real]:
-        """
-        Overload * operator with dot product.
+        """Overload * operator with dot product.
 
         Notes
         -----
@@ -242,8 +238,7 @@ class Vector3D(np.ndarray):
         point_a: Union[np.ndarray, RealSequence, Point3D],
         point_b: Union[np.ndarray, RealSequence, Point3D],
     ):
-        """
-        Create a 3D vector from two distinct 3D points.
+        """Create a 3D vector from two distinct 3D points.
 
         Parameters
         ----------
@@ -268,8 +263,7 @@ class Vector3D(np.ndarray):
 
 
 class Vector2D(np.ndarray):
-    """
-    Provides for creating and managing a 2D vector.
+    """Provides for creating and managing a 2D vector.
 
     Parameters
     ----------
@@ -363,8 +357,7 @@ class Vector2D(np.ndarray):
 
     @check_input_types
     def get_angle_between(self, v: "Vector2D") -> Quantity:
-        """
-        Get the angle between this 2D vector and another 2D vector.
+        """Get the angle between this 2D vector and another 2D vector.
 
         Parameters
         ----------
@@ -397,8 +390,7 @@ class Vector2D(np.ndarray):
 
     @check_input_types
     def __mul__(self, other: Union["Vector2D", Real]) -> Union["Vector2D", Real]:
-        """
-        Overload * operator with dot product.
+        """Overload * operator with dot product.
 
         Notes
         -----
@@ -433,8 +425,7 @@ class Vector2D(np.ndarray):
         point_a: Union[np.ndarray, RealSequence, Point2D],
         point_b: Union[np.ndarray, RealSequence, Point2D],
     ):
-        """
-        Create a 2D vector from two distinct 2D points.
+        """Create a 2D vector from two distinct 2D points.
 
         Parameters
         ----------
@@ -459,8 +450,7 @@ class Vector2D(np.ndarray):
 
 
 class UnitVector3D(Vector3D):
-    """
-    Provides for creating and managing a 3D unit vector.
+    """Provides for creating and managing a 3D unit vector.
 
     Parameters
     ----------
@@ -494,8 +484,7 @@ class UnitVector3D(Vector3D):
         point_a: Union[np.ndarray, RealSequence, Point3D],
         point_b: Union[np.ndarray, RealSequence, Point3D],
     ):
-        """
-        Create a 3D unit vector from two distinct 3D points.
+        """Create a 3D unit vector from two distinct 3D points.
 
         Parameters
         ----------
@@ -515,8 +504,7 @@ class UnitVector3D(Vector3D):
 
 
 class UnitVector2D(Vector2D):
-    """
-    Provides for creating and managing a 3D unit vector.
+    """Provides for creating and managing a 3D unit vector.
 
     Parameters
     ----------
@@ -546,8 +534,7 @@ class UnitVector2D(Vector2D):
         point_a: Union[np.ndarray, RealSequence, Point2D],
         point_b: Union[np.ndarray, RealSequence, Point2D],
     ):
-        """
-        Create a 2D unit vector from two distinct 2D points.
+        """Create a 2D unit vector from two distinct 2D points.
 
         Parameters
         ----------

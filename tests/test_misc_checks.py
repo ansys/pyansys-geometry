@@ -43,8 +43,7 @@ from ansys.geometry.core.misc import (
 
 
 def test_check_type():
-    """
-    Test that the __eq__ check is working properly.
+    """Test that the __eq__ check is working properly.
 
     Both objects must be of the same type to be compared.
     """
@@ -60,8 +59,7 @@ def test_check_type():
 
 
 def test_check_type_equivalence():
-    """
-    Test that the __eq__ check is working properly.
+    """Test that the __eq__ check is working properly.
 
     Both objects must be of the same type to be compared.
     """
@@ -76,8 +74,8 @@ def test_check_type_equivalence():
 
 
 def test_check_pint_unit_compatibility():
-    """
-    Test that the :class:`pint.Unit` compatibility check is working properly.
+    """Test that the :class:`pint.Unit` compatibility check is working
+    properly.
 
     Both objects must be of the same dimensionality to be compared.
     """
@@ -94,13 +92,12 @@ def test_check_pint_unit_compatibility():
 
 
 def test_check_ndarray_is_float_int():
-    """
-    Test that :class:`numpy.ndarray <numpy.ndarray>` object contains ``float`` or
-    ``int`` values only.
+    """Test that :class:`numpy.ndarray <numpy.ndarray>` object contains
+    ``float`` or ``int`` values only.
 
-    The object provided must be a :class:`numpy.ndarray <numpy.ndarray>`.
+    The object provided must be a :class:`numpy.ndarray
+    <numpy.ndarray>`.
     """
-
     # Create several arrays
     arr_strs = np.asarray(["a", "b", "c"])
     arr_num = np.asarray([1, 2, 3])
@@ -127,7 +124,6 @@ def test_check_ndarray_is_float_int():
 
 def test_check_is_float_int():
     """Test that the input object is a ``float`` or ``int``."""
-
     # Create several inputs
     str = "a"
     num_int = 1
