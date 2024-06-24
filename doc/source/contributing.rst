@@ -71,19 +71,14 @@ This way, it's not possible for you to push code that fails the style checks::
 
   $ pre-commit install
   $ git commit -am "added my cool feature"
-  black....................................................................Passed
-  blacken-docs.............................................................Passed
-  isort....................................................................Passed
-  flake8...................................................................Passed
-  docformatter.............................................................Passed
+  ruff.....................................................................Passed
   codespell................................................................Passed
-  pydocstyle...............................................................Passed
   check for merge conflicts................................................Passed
   debug statements (python)................................................Passed
   check yaml...............................................................Passed
   trim trailing whitespace.................................................Passed
-  Add License Headers......................................................Passed
   Validate GitHub Workflows................................................Passed
+  check pre-commit.ci config...............................................Passed
 
 Build the documentation
 -----------------------

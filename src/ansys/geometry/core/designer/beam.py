@@ -33,8 +33,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 class BeamProfile:
-    """
-    Represents a single beam profile organized within the design assembly.
+    """Represents a single beam profile organized within the design assembly.
 
     This profile synchronizes to a design within a supporting Geometry service instance.
 
@@ -69,8 +68,7 @@ class BeamProfile:
 
 
 class BeamCircularProfile(BeamProfile):
-    """
-    Represents a single circular beam profile organized within the design assembly.
+    """Represents a single circular beam profile.
 
     This profile synchronizes to a design within a supporting Geometry service instance.
 
@@ -148,8 +146,7 @@ class BeamCircularProfile(BeamProfile):
 
 
 class Beam:
-    """
-    Represents a simplified solid body with an assigned 2D cross-section.
+    """Represents a simplified solid body with an assigned 2D cross-section.
 
     This body synchronizes to a design within a supporting Geometry service instance.
 
@@ -220,7 +217,7 @@ class Beam:
 
     @property
     def is_alive(self) -> bool:
-        """Flag indicating whether the beam is still alive on the server side."""
+        """Flag indicating whether the beam is still alive on the server."""
         return self._is_alive
 
     def __repr__(self) -> str:

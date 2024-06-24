@@ -44,13 +44,12 @@ class Surface(ABC):
 
     @abstractmethod
     def contains_param(self, param_uv: ParamUV) -> bool:
-        """Test whether a parameter is within the parametric range of the surface."""
+        """Check a parameter is within the parametric range of the surface."""
         return
 
     @abstractmethod
     def contains_point(self, point: Point3D) -> bool:
-        """
-        Test whether the point is contained by the surface.
+        """Check a point is contained by the surface.
 
         The point can either lie within the surface or on its boundary.
         """
@@ -73,16 +72,14 @@ class Surface(ABC):
 
     @abstractmethod
     def project_point(self, point: Point3D) -> SurfaceEvaluation:
-        """
-        Project a point to the surface.
+        """Project a point to the surface.
 
         This method returns the evaluation at the closest point.
         """
         return
 
     def trim(self, box_uv: BoxUV) -> "TrimmedSurface":
-        """
-        Trim this surface by bounding it with a BoxUV.
+        """Trim this surface by bounding it with a BoxUV.
 
         Returns
         -------

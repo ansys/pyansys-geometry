@@ -19,9 +19,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""
-This testing module automatically connects to the Geometry service running at
-localhost:50051.
+"""This testing module automatically connects to the Geometry service running
+at localhost:50051.
 
 If you want to override these defaults, set the following environment variables.
 
@@ -29,7 +28,6 @@ If you want to override these defaults, set the following environment variables.
 - export ANSRV_GEO_PORT=50051
 """
 import logging
-import os
 from pathlib import Path
 
 import ansys.tools.visualization_interface as viz_interface
@@ -123,7 +121,7 @@ def modeler(docker_instance):
     log_file_path = Path(__file__).absolute().parent / "logs" / "integration_tests_logs.txt"
 
     try:
-        os.remove(log_file_path)
+        log_file_path.unlink()
     except OSError:
         pass
 
@@ -140,8 +138,7 @@ def modeler(docker_instance):
 
 @pytest.fixture(scope="session", autouse=True)
 def clean_plot_result_images():
-    """
-    Method cleaning up the image results path.
+    """Method cleaning up the image results path.
 
     Runs before each session once.
     """
@@ -150,6 +147,5 @@ def clean_plot_result_images():
     results_dir.mkdir(parents=True, exist_ok=True)
 
     # Clean up the directory
-    files = os.listdir(results_dir)
-    for file in files:
-        os.remove(Path(results_dir, file))
+    for file in results_dir.iterdir():
+        file.unlink()

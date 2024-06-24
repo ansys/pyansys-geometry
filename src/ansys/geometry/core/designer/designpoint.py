@@ -34,8 +34,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 class DesignPoint:
-    """
-    Provides for creating design points in components.
+    """Provides for creating design points in components.
 
     Parameters
     ----------

@@ -21,7 +21,6 @@
 # SOFTWARE.
 """Provides for interacting with the Geometry service."""
 import logging
-import os
 from pathlib import Path
 
 from ansys.api.dbu.v0.dbuapplication_pb2 import RunScriptFileRequest
@@ -37,7 +36,7 @@ from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
-from ansys.geometry.core.logger import LOG as logger
+from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.checks import check_type, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
@@ -53,8 +52,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 class Modeler:
-    """
-    Provides for interacting with an open session of the Geometry service.
+    """Provides for interacting with an open session of the Geometry service.
 
     Parameters
     ----------
@@ -122,7 +120,7 @@ class Modeler:
         if self.client.backend_type == BackendType.LINUX_SERVICE:
             self._repair_tools = None
             self._measurement_tools = None
-            logger.warning("Linux backend does not support repair tools.")
+            LOG.warning("Linux backend does not support repair tools.")
         else:
             self._repair_tools = RepairTools(self._grpc_client)
             self._measurement_tools = MeasurementTools(self._grpc_client)
@@ -132,7 +130,7 @@ class Modeler:
 
         # Check if the backend allows for multiple designs and throw warning if needed
         if not self.client.multiple_designs_allowed:
-            logger.warning(
+            LOG.warning(
                 "Linux and Ansys Discovery backends do not support multiple "
                 "designs open in the same session. Only the last design created "
                 "will be available to perform modeling operations."
@@ -144,8 +142,7 @@ class Modeler:
         return self._grpc_client
 
     def create_design(self, name: str) -> "Design":
-        """
-        Initialize a new design with the connected client.
+        """Initialize a new design with the connected client.
 
         Parameters
         ----------
@@ -163,15 +160,14 @@ class Modeler:
         design = Design(name, self)
         self._designs[design.design_id] = design
         if len(self._designs) > 1:
-            logger.warning(
+            LOG.warning(
                 "Some backends only support one design. "
                 + "Previous designs may be deleted (on the service) when creating a new one."
             )
         return self._designs[design.design_id]
 
     def get_active_design(self, sync_with_backend: bool = True) -> "Design":
-        """
-        Get the active design on the modeler object.
+        """Get the active design on the modeler object.
 
         Parameters
         ----------
@@ -198,8 +194,7 @@ class Modeler:
         return None
 
     def read_existing_design(self) -> "Design":
-        """
-        Read the existing design on the service with the connected client.
+        """Read the existing design on the service with the connected client.
 
         Returns
         -------
@@ -211,14 +206,14 @@ class Modeler:
         design = Design("", self, read_existing_design=True)
         self._designs[design.design_id] = design
         if len(self._designs) > 1:
-            logger.warning(
+            LOG.warning(
                 "Some backends only support one design. "
                 + "Previous designs may be deleted (on the service) when reading a new one."
             )
         return self._designs[design.design_id]
 
     def close(self) -> None:
-        """``Modeler`` method for easily accessing the client's close method."""
+        """Access the client's close method."""
         return self.client.close()
 
     def _upload_file(
@@ -227,8 +222,7 @@ class Modeler:
         open_file: bool = False,
         import_options: ImportOptions = ImportOptions(),
     ) -> str:
-        """
-        Upload a file from the client to the server.
+        """Upload a file from the client to the server.
 
         Notes
         -----
@@ -249,16 +243,18 @@ class Modeler:
         file_path : str
             Full path of the file uploaded to the server.
         """
-        import os
+        from pathlib import Path
 
-        if not os.path.exists(file_path):
+        fp_path = Path(file_path).resolve()
+
+        if not fp_path.exists():
             raise ValueError(f"Could not find file: {file_path}")
-        if os.path.isdir(file_path):
+        if fp_path.is_dir():
             raise ValueError("File path must lead to a file, not a directory.")
 
-        file_name = os.path.split(file_path)[1]
+        file_name = fp_path.name
 
-        with open(file_path, "rb") as file:
+        with fp_path.open(mode="rb") as file:
             data = file.read()
 
         c_stub = CommandsStub(self._grpc_client.channel)
@@ -280,8 +276,7 @@ class Modeler:
         upload_to_server: bool = True,
         import_options: ImportOptions = ImportOptions(),
     ) -> "Design":
-        """
-        Open a file.
+        """Open a file.
 
         This method imports a design into the service. On Windows, ``.scdocx``
         and HOOPS Exchange formats are supported. On Linux, only the ``.scdocx``
@@ -311,11 +306,11 @@ class Modeler:
             if any(
                 ext in str(file_path) for ext in [".CATProduct", ".asm", ".solution", ".sldasm"]
             ):
-                dir = os.path.dirname(file_path)
-                files = os.listdir(dir)
-                for file in files:
-                    full_path = os.path.join(dir, file)
-                    if full_path != file_path:
+                fp_path = Path(file_path)
+                dir = fp_path.parent
+                for file in dir.iterdir():
+                    full_path = file.resolve()
+                    if full_path != fp_path:
                         self._upload_file(full_path)
             self._upload_file(file_path, True, import_options)
         else:
@@ -337,8 +332,7 @@ class Modeler:
     def run_discovery_script_file(
         self, file_path: str, script_args: Optional[Dict[str, str]] = None, import_design=False
     ) -> Tuple[Dict[str, str], Optional["Design"]]:
-        """
-        Run a Discovery script file.
+        """Run a Discovery script file.
 
         .. note::
 

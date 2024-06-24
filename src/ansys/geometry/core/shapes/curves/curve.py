@@ -44,13 +44,12 @@ class Curve(ABC):
 
     @abstractmethod
     def contains_param(self, param: Real) -> bool:
-        """Test whether a parameter is within the parametric range of the curve."""
+        """Check a parameter is within the parametric range of the curve."""
         return
 
     @abstractmethod
     def contains_point(self, point: Point3D) -> bool:
-        """
-        Test whether the point is contained by the curve.
+        """Check a point is contained by the curve.
 
         The point can either lie within the curve or on its boundary.
         """
@@ -73,16 +72,14 @@ class Curve(ABC):
 
     @abstractmethod
     def project_point(self, point: Point3D) -> CurveEvaluation:
-        """
-        Project a point to the curve.
+        """Project a point to the curve.
 
         This method returns the evaluation at the closest point.
         """
         return
 
     def trim(self, interval: Interval) -> "TrimmedCurve":
-        """
-        Trim this curve by bounding it with an interval.
+        """Trim this curve by bounding it with an interval.
 
         Returns
         -------

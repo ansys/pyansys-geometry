@@ -32,7 +32,7 @@ from ansys.geometry.core.typing import Real
 
 @unique
 class MaterialPropertyType(Enum):
-    """Provides an enum holding the possible values for ``MaterialProperty`` objects."""
+    """Enum holding the possible values for ``MaterialProperty`` objects."""
 
     DENSITY = "Density"
     ELASTIC_MODULUS = "ElasticModulus"
@@ -42,9 +42,9 @@ class MaterialPropertyType(Enum):
     TENSILE_STRENGTH = "TensileStrength"
     THERMAL_CONDUCTIVITY = "ThermalConductivity"
 
+    @staticmethod
     def from_id(id: str) -> "MaterialPropertyType":
-        """
-        Return the ``MaterialPropertyType`` value from the service representation.
+        """Return the ``MaterialPropertyType`` value from the service.
 
         Parameters
         ----------
@@ -69,8 +69,7 @@ class MaterialPropertyType(Enum):
 
 
 class MaterialProperty:
-    """
-    Provides the data structure for a material property.
+    """Provides the data structure for a material property.
 
     Parameters
     ----------
@@ -99,8 +98,7 @@ class MaterialProperty:
 
     @property
     def type(self) -> Union[MaterialPropertyType, str]:
-        """
-        Material property ID.
+        """Material property ID.
 
         If the type is not supported, it will be a string.
         """
@@ -113,9 +111,9 @@ class MaterialProperty:
 
     @property
     def quantity(self) -> Union[Quantity, Real]:
-        """
-        Material property quantity and unit.
+        """Material property quantity and unit.
 
-        If the type is not supported, it will be a Real value (float or integer).
+        If the type is not supported, it will be a Real value (float or
+        integer).
         """
         return self._quantity

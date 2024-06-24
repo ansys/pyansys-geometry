@@ -31,8 +31,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 class Part:
-    """
-    Represents a part master.
+    """Represents a part master.
 
     This class should not be accessed by users. The ``Part`` class holds fundamental
     data of an assembly.
@@ -79,8 +78,7 @@ class Part:
 
     @property
     def bodies(self) -> List[MasterBody]:
-        """
-        ``MasterBody`` children that the part contains.
+        """``MasterBody`` children that the part contains.
 
         These are master bodies.
         """
@@ -101,8 +99,7 @@ class Part:
 
 
 class MasterComponent:
-    """
-    Represents a part occurrence.
+    """Represents a part occurrence.
 
     Notes
     -----

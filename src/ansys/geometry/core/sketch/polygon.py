@@ -26,7 +26,7 @@ from beartype.typing import Optional, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
-from scipy.spatial.transform import Rotation as spatial_rotation
+from scipy.spatial.transform import Rotation as SpatialRotation
 
 from ansys.geometry.core.math.matrix import Matrix33, Matrix44
 from ansys.geometry.core.math.point import Point2D
@@ -37,8 +37,7 @@ from ansys.geometry.core.typing import Real
 
 
 class Polygon(SketchFace):
-    """
-    Provides for modeling regular polygons.
+    """Provides for modeling regular polygons.
 
     Parameters
     ----------
@@ -120,8 +119,7 @@ class Polygon(SketchFace):
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
-        """
-        VTK polydata representation for PyVista visualization.
+        """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
         the standard global Cartesian coordinate system.
@@ -137,7 +135,7 @@ class Polygon(SketchFace):
         #        reason. Anyway, it's a regular polygon, everything will look the same.
         #
         rotation = Matrix33(
-            spatial_rotation.from_euler(
+            SpatialRotation.from_euler(
                 "xyz",
                 [0, 0, -np.pi / 2 + self.angle.m_as(UNITS.radian)],
                 degrees=False,

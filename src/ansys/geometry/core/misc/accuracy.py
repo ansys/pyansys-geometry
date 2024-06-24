@@ -37,7 +37,7 @@ DOUBLE_ACCURACY: Real = 1e-13
 
 
 class Accuracy:
-    """Provides decimal precision evaluations for actions such as equivalency."""
+    """Decimal precision evaluations for math operations."""
 
     @staticmethod
     def length_accuracy() -> Real:
@@ -56,8 +56,7 @@ class Accuracy:
 
     @staticmethod
     def length_is_equal(comparison_length: Real, reference_length: Real) -> bool:
-        """
-        Check if the comparison length is equal to the reference length.
+        """Check if the comparison length is equal to the reference length.
 
         Notes
         -----
@@ -92,8 +91,7 @@ class Accuracy:
 
     @staticmethod
     def length_is_greater_than_or_equal(comparison_length: Real, reference_length: Real) -> bool:
-        """
-        Check if the comparison length is greater than the reference length.
+        """Check if the length is greater than the reference length.
 
         Notes
         -----
@@ -112,8 +110,7 @@ class Accuracy:
 
     @staticmethod
     def length_is_less_than_or_equal(comparison_length: Real, reference_length: Real) -> bool:
-        """
-        Check if the comparison length is less than or equal to the reference length.
+        """Check if the length is less than or equal to the reference length.
 
         Notes
         -----
@@ -132,8 +129,7 @@ class Accuracy:
 
     @staticmethod
     def length_is_zero(length: Real) -> bool:
-        """
-        Check if the length is within the length accuracy of exact zero.
+        """Check if the length is within the length accuracy of exact zero.
 
         Returns
         -------
@@ -145,8 +141,7 @@ class Accuracy:
 
     @staticmethod
     def length_is_negative(length: Real) -> bool:
-        """
-        Check if the length is below a negative length accuracy.
+        """Check if the length is below a negative length accuracy.
 
         Returns
         -------
@@ -158,8 +153,7 @@ class Accuracy:
 
     @staticmethod
     def length_is_positive(length: Real) -> bool:
-        """
-        Check if the length is above a positive length accuracy.
+        """Check if the length is above a positive length accuracy.
 
         Returns
         -------
@@ -171,8 +165,7 @@ class Accuracy:
 
     @staticmethod
     def angle_is_zero(angle: Real) -> bool:
-        """
-        Check if the length is within the angle accuracy of exact zero.
+        """Check if the length is within the angle accuracy of exact zero.
 
         Returns
         -------
@@ -184,8 +177,7 @@ class Accuracy:
 
     @staticmethod
     def angle_is_negative(angle: Real) -> bool:
-        """
-        Check if the angle is below a negative angle accuracy.
+        """Check if the angle is below a negative angle accuracy.
 
         Returns
         -------
@@ -197,8 +189,7 @@ class Accuracy:
 
     @staticmethod
     def angle_is_positive(angle: Real) -> bool:
-        """
-        Check if the angle is above a positive angle accuracy.
+        """Check if the angle is above a positive angle accuracy.
 
         Returns
         -------
@@ -212,8 +203,7 @@ class Accuracy:
     def is_within_tolerance(
         a: Real, b: Real, relative_tolerance: Real, absolute_tolerance: Real
     ) -> bool:
-        """
-        Check if two values (a and b) are inside a relative and absolute tolerance.
+        """Check if two values are inside a relative and absolute tolerance.
 
         Parameters
         ----------

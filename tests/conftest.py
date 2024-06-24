@@ -65,8 +65,7 @@ def fake_record():
         exc_info=None,
         extra={},
     ):
-        """
-        Function to fake log records using the format from the logger handler.
+        """Function to fake log records using the format from the logger.
 
         Parameters
         ----------

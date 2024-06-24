@@ -61,7 +61,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 @unique
 class SurfaceType(Enum):
-    """Provides values for the surface types supported by the Geometry service."""
+    """Provides values for the surface types supported."""
 
     SURFACETYPE_UNKNOWN = 0
     SURFACETYPE_PLANE = 1
@@ -75,15 +75,14 @@ class SurfaceType(Enum):
 
 @unique
 class FaceLoopType(Enum):
-    """Provides values for the face loop types supported by the Geometry service."""
+    """Provides values for the face loop types supported."""
 
     INNER_LOOP = "INNER"
     OUTER_LOOP = "OUTER"
 
 
 class FaceLoop:
-    """
-    Provides an internal class holding the face loops defined on the server side.
+    """Provides an internal class holding the face loops defined.
 
     Notes
     -----
@@ -146,8 +145,7 @@ class FaceLoop:
 
 
 class Face:
-    """
-    Represents a single face of a body within the design assembly.
+    """Represents a single face of a body within the design assembly.
 
     This class synchronizes to a design within a supporting Geometry service instance.
 
@@ -208,8 +206,7 @@ class Face:
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
     def shape(self) -> TrimmedSurface:
-        """
-        Underlying trimmed surface of the face.
+        """Underlying trimmed surface of the face.
 
         If the face is reversed, its shape is a ``ReversedTrimmedSurface`` type, which handles the
         direction of the normal vector to ensure it is always facing outward.
@@ -292,8 +289,7 @@ class Face:
     @protect_grpc
     @ensure_design_is_active
     def normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:
-        """
-        Get the normal direction to the face at certain proportional UV coordinates.
+        """Get the normal direction to the face at certain UV coordinates.
 
         Notes
         -----
@@ -327,8 +323,7 @@ class Face:
 
     @deprecated_method(alternative="normal")
     def face_normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:  # [deprecated-method]
-        """
-        Get the normal direction to the face at certain proportional UV coordinates.
+        """Get the normal direction to the face at certain UV coordinates.
 
         Notes
         -----
@@ -355,8 +350,7 @@ class Face:
     @protect_grpc
     @ensure_design_is_active
     def point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
-        """
-        Get a point of the face evaluated at certain proportional UV coordinates.
+        """Get a point of the face evaluated at certain UV coordinates.
 
         Notes
         -----
@@ -388,8 +382,7 @@ class Face:
 
     @deprecated_method(alternative="point")
     def face_point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
-        """
-        Get a point of the face evaluated at certain proportional UV coordinates.
+        """Get a point of the face evaluated at certain UV coordinates.
 
         Notes
         -----
@@ -412,8 +405,7 @@ class Face:
         return self.point(u, v)
 
     def __grpc_edges_to_edges(self, edges_grpc: List[GRPCEdge]) -> List[Edge]:
-        """
-        Transform a list of gRPC edge messages into actual ``Edge`` objects.
+        """Transform a list of gRPC edge messages into actual ``Edge`` objects.
 
         Parameters
         ----------
@@ -445,8 +437,7 @@ class Face:
     def create_isoparametric_curves(
         self, use_u_param: bool, parameter: float
     ) -> List[TrimmedCurve]:
-        """
-        Create isoparametic curves at the given proportional parameter.
+        """Create isoparametic curves at the given proportional parameter.
 
         Typically, only one curve is created, but if the face has a hole, it is possible that
         more than one curve is created.

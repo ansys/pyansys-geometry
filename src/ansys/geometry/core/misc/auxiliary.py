@@ -32,8 +32,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 def get_design_from_component(component: "Component") -> "Design":
-    """
-    Get the ``Design`` of the given ``Component`` object.
+    """Get the ``Design`` of the given ``Component`` object.
 
     Parameters
     ----------
@@ -54,8 +53,7 @@ def get_design_from_component(component: "Component") -> "Design":
 
 
 def get_design_from_body(body: "Body") -> "Design":
-    """
-    Get the ``Design`` of the given ``Body`` object.
+    """Get the ``Design`` of the given ``Body`` object.
 
     Parameters
     ----------
@@ -75,8 +73,7 @@ def get_design_from_body(body: "Body") -> "Design":
 
 
 def get_design_from_face(face: "Face") -> "Design":
-    """
-    Get the ``Design`` of the given ``Face`` object.
+    """Get the ``Design`` of the given ``Face`` object.
 
     Parameters
     ----------
@@ -96,8 +93,7 @@ def get_design_from_face(face: "Face") -> "Design":
 
 
 def get_design_from_edge(edge: "Edge") -> "Design":
-    """
-    Get the ``Design`` of the given ``Edge`` object.
+    """Get the ``Design`` of the given ``Edge`` object.
 
     Parameters
     ----------
@@ -117,8 +113,7 @@ def get_design_from_edge(edge: "Edge") -> "Design":
 
 
 def get_bodies_from_ids(design: "Design", body_ids: List[str]) -> List["Body"]:
-    """
-    Find the ``Body`` objects inside a ``Design`` from its ids.
+    """Find the ``Body`` objects inside a ``Design`` from its ids.
 
     Notes
     -----
@@ -140,8 +135,7 @@ def get_bodies_from_ids(design: "Design", body_ids: List[str]) -> List["Body"]:
 
 
 def get_faces_from_ids(design: "Design", face_ids: List[str]) -> List["Face"]:
-    """
-    Find the ``Face`` objects inside a ``Design`` from its ids.
+    """Find the ``Face`` objects inside a ``Design`` from its ids.
 
     Notes
     -----
@@ -163,8 +157,7 @@ def get_faces_from_ids(design: "Design", face_ids: List[str]) -> List["Face"]:
 
 
 def get_edges_from_ids(design: "Design", edge_ids: List[str]) -> List["Edge"]:
-    """
-    Find the ``Edge`` objects inside a ``Design`` from its ids.
+    """Find the ``Edge`` objects inside a ``Design`` from its ids.
 
     Notes
     -----

@@ -28,8 +28,7 @@ Real = Union[int, float, np.integer, np.floating]
 """Type used to refer to both integers and floats as possible values."""
 
 RealSequence = Union[np.ndarray, Sequence[Real]]
-"""
-Type used to refer to ``Real`` types as a ``Sequence`` type.
+"""Type used to refer to ``Real`` types as a ``Sequence`` type.
 
 Notes
 -----
