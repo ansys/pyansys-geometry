@@ -9,6 +9,33 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.6.4 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.6.4>`_ - 2024-06-24
+=====================================================================================
+
+Added
+^^^^^
+
+- feat: using ruff as the main linter/formatter `#1274 <https://github.com/ansys/pyansys-geometry/pull/1274>`_
+
+
+Changed
+^^^^^^^
+
+- chore: update CHANGELOG for v0.6.3 `#1273 <https://github.com/ansys/pyansys-geometry/pull/1273>`_
+- chore: bump pre-commit-hook version `#1276 <https://github.com/ansys/pyansys-geometry/pull/1276>`_
+
+
+Fixed
+^^^^^
+
+- fix: backticks breaking doc build after ruff linter `#1275 <https://github.com/ansys/pyansys-geometry/pull/1275>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- build: bump pint from 0.24 to 0.24.1 `#1277 <https://github.com/ansys/pyansys-geometry/pull/1277>`_
+
 `0.6.3 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.6.3>`_ - 2024-06-18
 =====================================================================================
 
