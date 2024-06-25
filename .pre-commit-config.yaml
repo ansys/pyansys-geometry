@@ -7,7 +7,7 @@ exclude: "tests/integration/files"
 repos:
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.4.9
+  rev: v0.4.10
   hooks:
     - id: ruff
 
@@ -26,7 +26,7 @@ repos:
   - id: trailing-whitespace
 
 - repo: https://github.com/ansys/pre-commit-hooks
-  rev: v0.3.2
+  rev: v0.3.1
   hooks:
     - id: add-license-headers
       files: '(src|examples|tests|docker)/.*\.(py)|\.(proto)'
@@ -35,7 +35,7 @@ repos:
 
 # this validates our github workflow files
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.28.5
+  rev: 0.28.6
   hooks:
     - id: check-github-workflows
 
