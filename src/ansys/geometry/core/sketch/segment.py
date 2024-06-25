@@ -36,8 +36,7 @@ from ansys.geometry.core.sketch.edge import SketchEdge
 
 
 class SketchSegment(SketchEdge, Line):
-    """
-    Provides segment representation of a line.
+    """Provides segment representation of a line.
 
     Parameters
     ----------
@@ -82,8 +81,7 @@ class SketchSegment(SketchEdge, Line):
         self._init_primitive_line_from_plane(plane)
 
     def _init_primitive_line_from_plane(self, plane: Plane) -> None:
-        """
-        Initialize correctly the underlying primitive ``Line`` class.
+        """Initialize correctly the underlying primitive ``Line`` class.
 
         Parameters
         ----------
@@ -125,8 +123,7 @@ class SketchSegment(SketchEdge, Line):
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
-        """
-        VTK polydata representation for PyVista visualization.
+        """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
         the standard global Cartesian coordinate system.
@@ -167,8 +164,7 @@ class SketchSegment(SketchEdge, Line):
         return not self == other
 
     def plane_change(self, plane: "Plane") -> None:
-        """
-        Redefine the plane containing ``SketchSegment`` objects.
+        """Redefine the plane containing ``SketchSegment`` objects.
 
         Notes
         -----

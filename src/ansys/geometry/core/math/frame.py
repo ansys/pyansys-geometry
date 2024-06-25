@@ -33,8 +33,7 @@ from ansys.geometry.core.typing import RealSequence
 
 
 class Frame:
-    """
-    Primitive representation of a frame (an origin and three fundamental directions).
+    """Representation of a frame.
 
     Parameters
     ----------
@@ -127,8 +126,7 @@ class Frame:
 
     @property
     def global_to_local_rotation(self) -> Matrix33:
-        """
-        Global to local space transformation matrix.
+        """Global to local space transformation matrix.
 
         Returns
         -------
@@ -140,8 +138,7 @@ class Frame:
 
     @property
     def local_to_global_rotation(self) -> Matrix33:
-        """
-        Local to global space transformation matrix.
+        """Local to global space transformation matrix.
 
         Returns
         -------
@@ -153,8 +150,7 @@ class Frame:
 
     @property
     def transformation_matrix(self) -> Matrix44:
-        """
-        Full 4x4 transformation matrix.
+        """Full 4x4 transformation matrix.
 
         Returns
         -------
@@ -166,8 +162,7 @@ class Frame:
 
     @check_input_types
     def transform_point2d_local_to_global(self, point: Point2D) -> Point3D:
-        """
-        Transform a 2D point to a global 3D point.
+        """Transform a 2D point to a global 3D point.
 
         This method transforms a local, plane-contained ``Point2D`` object in the global
         coordinate system, thus representing it as a ``Point3D`` object.

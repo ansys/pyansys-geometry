@@ -54,7 +54,7 @@ def get_wheelhouse_assets_dictionary():
                 content = response.content
                 break
             else:
-                print(f"Failed to retrieve the latest release. Retrying...")
+                print("Failed to retrieve the latest release. Retrying...")
                 time.sleep(2)
 
         if content is None:
@@ -83,8 +83,7 @@ def get_wheelhouse_assets_dictionary():
 
 
 def intersphinx_pyansys_geometry(switcher_version: str):
-    """
-    Auxiliary method to build the intersphinx mapping for PyAnsys Geometry.
+    """Auxiliary method to build the intersphinx mapping for PyAnsys Geometry.
 
     Notes
     -----
@@ -383,8 +382,7 @@ nitpick_ignore_regex = [
 
 
 def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
-    """
-    Convert notebooks to scripts.
+    """Convert notebooks to scripts.
 
     Parameters
     ----------
@@ -431,15 +429,14 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
 
 
 def setup(app: sphinx.application.Sphinx):
-    """
-    Run different hook functions during the documentation build.
+    """Run different hook functions during the documentation build.
 
     Parameters
     ----------
     app : sphinx.application.Sphinx
         Sphinx instance containing all the configuration for the documentation build.
     """
-    logger.info(f"Configuring Sphinx hooks...")
+    logger.info("Configuring Sphinx hooks...")
     if BUILD_EXAMPLES:
         # Run at the end of the build process
         logger.info("Connecting build-finished hook for converting notebooks to scripts...")

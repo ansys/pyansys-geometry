@@ -25,8 +25,7 @@ from dataclasses import asdict, dataclass
 
 @dataclass
 class ImportOptions:
-    """
-    Import options when opening a file.
+    """Import options when opening a file.
 
     Parameters
     ----------

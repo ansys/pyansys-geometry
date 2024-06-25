@@ -30,7 +30,6 @@ from ansys.geometry.core.sketch import Sketch
 
 def test_body_tessellate(modeler: Modeler):
     """Test the body tessellation."""
-
     sketch_1 = Sketch()
     sketch_1.box(Point2D([2, 0], UNITS.m), Quantity(4, UNITS.m), Quantity(4, UNITS.m))
     design = modeler.create_design("Design")
@@ -99,7 +98,6 @@ def test_body_tessellate(modeler: Modeler):
 
 def test_component_tessellate(modeler: Modeler):
     """Test the component tessellation."""
-
     # Create a sketch
     sketch_1 = Sketch()
     sketch_1.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(5, UNITS.m))

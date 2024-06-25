@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module providing a wrapped abstraction of the gRPC PROTO API definition and stubs."""
+"""Module providing a wrapped abstraction of the gRPC stubs."""
 
 import logging
 from pathlib import Path
@@ -39,8 +39,7 @@ from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.product_instance import ProductInstance
-from ansys.geometry.core.logger import LOG as logger
-from ansys.geometry.core.logger import PyGeometryCustomAdapter
+from ansys.geometry.core.logger import LOG, PyGeometryCustomAdapter
 from ansys.geometry.core.typing import Real
 
 try:
@@ -50,8 +49,7 @@ except ModuleNotFoundError:  # pragma: no cover
 
 
 def wait_until_healthy(channel: grpc.Channel, timeout: float):
-    """
-    Wait until a channel is healthy before returning.
+    """Wait until a channel is healthy before returning.
 
     Parameters
     ----------
@@ -84,8 +82,7 @@ def wait_until_healthy(channel: grpc.Channel, timeout: float):
 
 
 class GrpcClient:
-    """
-    Wraps the gRPC connection for the Geometry service.
+    """Wraps the gRPC connection for the Geometry service.
 
     Parameters
     ----------
@@ -160,7 +157,7 @@ class GrpcClient:
         wait_until_healthy(self._channel, timeout)
 
         # once connection with the client is established, create a logger
-        self._log = logger.add_instance_logger(
+        self._log = LOG.add_instance_logger(
             name=self._target, client_instance=self, level=logging_level
         )
         if logging_file:
@@ -174,7 +171,7 @@ class GrpcClient:
         grpc_backend_response = self._admin_stub.GetBackend(Empty())
 
         # if no backend type has been specified, ask the backend which type it is
-        if backend_type == None:
+        if backend_type is None:
             grpc_backend_type = grpc_backend_response.type
             if grpc_backend_type == GRPCBackendType.DISCOVERY:
                 backend_type = BackendType.DISCOVERY
@@ -198,13 +195,12 @@ class GrpcClient:
                 ver.major_release, ver.minor_release, ver.service_pack
             )
         else:
-            logger.warning("The backend version is only available after 24.1 version.")
+            LOG.warning("The backend version is only available after 24.1 version.")
             self._backend_version = semver.Version(24, 1, 0)
 
     @property
     def backend_type(self) -> BackendType:
-        """
-        Backend type.
+        """Backend type.
 
         Options are ``Windows Service``, ``Linux Service``, ``Discovery``,
         and ``SpaceClaim``.
@@ -218,8 +214,7 @@ class GrpcClient:
 
     @property
     def backend_version(self) -> semver.version.Version:
-        """
-        Get the current backend version.
+        """Get the current backend version.
 
         Returns
         -------
@@ -230,8 +225,7 @@ class GrpcClient:
 
     @property
     def multiple_designs_allowed(self) -> bool:
-        """
-        Flag indicating whether multiple designs are allowed.
+        """Flag indicating whether multiple designs are allowed.
 
         Notes
         -----
@@ -274,16 +268,15 @@ class GrpcClient:
         lines.append(f"Ansys Geometry Modeler Client ({hex(id(self))})")
         lines.append(f"  Target:     {self._target}")
         if self._closed:
-            lines.append(f"  Connection: Closed")
+            lines.append("  Connection: Closed")
         elif self.healthy:
-            lines.append(f"  Connection: Healthy")
+            lines.append("  Connection: Healthy")
         else:
-            lines.append(f"  Connection: Unhealthy")  # pragma: no cover
+            lines.append("  Connection: Unhealthy")  # pragma: no cover
         return "\n".join(lines)
 
     def close(self):
-        """
-        Close the channel.
+        """Close the channel.
 
         Notes
         -----

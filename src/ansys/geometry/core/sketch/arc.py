@@ -37,8 +37,7 @@ from ansys.geometry.core.typing import Real
 
 
 class Arc(SketchEdge):
-    """
-    Provides for modeling an arc.
+    """Provides for modeling an arc.
 
     Parameters
     ----------
@@ -131,8 +130,7 @@ class Arc(SketchEdge):
 
     @property
     def is_clockwise(self) -> bool:
-        """
-        Flag indicating whether the rotation of the angle is clockwise.
+        """Flag indicating whether the rotation of the angle is clockwise.
 
         Returns
         -------
@@ -149,8 +147,7 @@ class Arc(SketchEdge):
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
-        """
-        VTK polydata representation for PyVista visualization.
+        """VTK polydata representation for PyVista visualization.
 
         Notes
         -----
@@ -203,8 +200,7 @@ class Arc(SketchEdge):
         return not self == other
 
     def __arc_pyvista_hack(self):
-        """
-        Hack for close to PI arcs.
+        """Hack for close to PI arcs.
 
         Notes
         -----
@@ -274,8 +270,7 @@ class Arc(SketchEdge):
     @classmethod
     @check_input_types
     def from_three_points(cls, start: Point2D, inter: Point2D, end: Point2D):
-        """
-        Create an arc from three given points.
+        """Create an arc from three given points.
 
         Parameters
         ----------
@@ -356,8 +351,7 @@ class Arc(SketchEdge):
         convex_arc: Optional[bool] = False,
         clockwise: Optional[bool] = False,
     ):
-        """
-        Create an arc from a starting point, an ending point, and a radius.
+        """Create an arc from a starting point, an ending point, and a radius.
 
         Parameters
         ----------
@@ -414,8 +408,7 @@ class Arc(SketchEdge):
         angle: Union[Angle, Quantity, Real],
         clockwise: Optional[bool] = False,
     ):
-        """
-        Create an arc from a starting point, a center point, and an angle.
+        """Create an arc from a starting point, a center point, and an angle.
 
         Parameters
         ----------

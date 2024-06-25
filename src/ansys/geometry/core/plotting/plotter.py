@@ -20,8 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides plotting for various PyAnsys Geometry objects."""
-from ansys.tools.visualization_interface import Color, EdgePlot, MeshObjectPlot
-from ansys.tools.visualization_interface import Plotter as PlotterInterface
+from ansys.tools.visualization_interface import (
+    Color,
+    EdgePlot,
+    MeshObjectPlot,
+    Plotter as PlotterInterface,
+)
 from ansys.tools.visualization_interface.backends.pyvista import PyVistaBackend
 from beartype.typing import Any, Dict, List, Optional, Union
 import numpy as np
@@ -32,7 +36,7 @@ from ansys.geometry.core.designer.body import Body, MasterBody
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.designer.designpoint import DesignPoint
-from ansys.geometry.core.logger import LOG as logger
+from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
@@ -40,8 +44,7 @@ from ansys.geometry.core.sketch.sketch import Sketch
 
 
 class GeometryPlotter(PlotterInterface):
-    """
-    Plotter for PyAnsys Geometry objects.
+    """Plotter for PyAnsys Geometry objects.
 
     This class is an implementation of the PlotterInterface class.
 
@@ -71,8 +74,7 @@ class GeometryPlotter(PlotterInterface):
         self._backend._pl._show_plane = show_plane
 
     def add_frame(self, frame: Frame, plotting_options: Optional[Dict] = None) -> None:
-        """
-        Plot a frame in the scene.
+        """Plot a frame in the scene.
 
         Parameters
         ----------
@@ -106,8 +108,7 @@ class GeometryPlotter(PlotterInterface):
         plane_options: Optional[Dict] = None,
         plotting_options: Optional[Dict] = None,
     ) -> None:
-        """
-        Plot a plane in the scene.
+        """Plot a plane in the scene.
 
         Parameters
         ----------
@@ -143,8 +144,7 @@ class GeometryPlotter(PlotterInterface):
         show_frame: bool = False,
         **plotting_options: Optional[Dict],
     ) -> None:
-        """
-        Plot a sketch in the scene.
+        """Plot a sketch in the scene.
 
         Parameters
         ----------
@@ -167,7 +167,7 @@ class GeometryPlotter(PlotterInterface):
             self.add_frame(sketch._plane)
 
         if "clipping_plane" in plotting_options:
-            logger.warning("Clipping is not available in Sketch objects.")
+            LOG.warning("Clipping is not available in Sketch objects.")
             plotting_options.pop("clipping_plane")
 
         self.add_sketch_polydata(
@@ -176,8 +176,7 @@ class GeometryPlotter(PlotterInterface):
         self.add_sketch_polydata(sketch.sketch_polydata_edges(), sketch, **plotting_options)
 
     def add_body_edges(self, body_plot: MeshObjectPlot, **plotting_options: Optional[dict]) -> None:
-        """
-        Add the outer edges of a body to the plot.
+        """Add the outer edges of a body to the plot.
 
         This method has the side effect of adding the edges to the GeomObject that
         you pass through the parameters.
@@ -204,8 +203,7 @@ class GeometryPlotter(PlotterInterface):
     def add_body(
         self, body: Body, merge: Optional[bool] = False, **plotting_options: Optional[Dict]
     ) -> None:
-        """
-        Add a body to the scene.
+        """Add a body to the scene.
 
         Parameters
         ----------
@@ -233,8 +231,7 @@ class GeometryPlotter(PlotterInterface):
         merge_bodies: bool = False,
         **plotting_options,
     ) -> None:
-        """
-        Add a component to the scene.
+        """Add a component to the scene.
 
         Parameters
         ----------
@@ -261,8 +258,7 @@ class GeometryPlotter(PlotterInterface):
     def add_sketch_polydata(
         self, polydata_entries: List[pv.PolyData], sketch: Sketch = None, **plotting_options
     ) -> None:
-        """
-        Add sketches to the scene from PyVista polydata.
+        """Add sketches to the scene from PyVista polydata.
 
         Parameters
         ----------
@@ -286,8 +282,7 @@ class GeometryPlotter(PlotterInterface):
             self.plot(sk_polydata, color=Color.EDGE.value, **plotting_options)
 
     def add_design_point(self, design_point: DesignPoint, **plotting_options) -> None:
-        """
-        Add a DesignPoint object to the plotter.
+        """Add a DesignPoint object to the plotter.
 
         Parameters
         ----------
@@ -305,8 +300,7 @@ class GeometryPlotter(PlotterInterface):
         name_filter: str = None,
         **plotting_options,
     ) -> None:
-        """
-        Add a list of any type of object to the scene.
+        """Add a list of any type of object to the scene.
 
         These types of objects are supported: ``Body``, ``Component``, ``List[pv.PolyData]``,
         ``pv.MultiBlock``, and ``Sketch``.
@@ -326,8 +320,7 @@ class GeometryPlotter(PlotterInterface):
 
     # Override add function from plotter
     def plot(self, plottable_object: Any, name_filter: str = None, **plotting_options) -> None:
-        """
-        Add a custom mesh to the plotter.
+        """Add a custom mesh to the plotter.
 
         Parameters
         ----------
@@ -381,8 +374,7 @@ class GeometryPlotter(PlotterInterface):
         screenshot: Optional[str] = None,
         **plotting_options,
     ) -> None:
-        """
-        Show the plotter.
+        """Show the plotter.
 
         Parameters
         ----------

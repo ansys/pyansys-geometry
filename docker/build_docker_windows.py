@@ -22,6 +22,7 @@
 """Script to build docker image for the project."""
 
 import os
+from pathlib import Path
 import shutil
 import subprocess
 import tempfile
@@ -66,24 +67,24 @@ ANSYS_VER = list(awp_root.keys())[selection - 1]
 print(f">>> Using {ANSYS_VER}")
 
 # Get the path to the Ansys installation
-ANSYS_PATH = awp_root[ANSYS_VER]
+ANSYS_PATH = Path(awp_root[ANSYS_VER])
 
 # Verify that the Geometry Service is installed
-if not os.path.exists(os.path.join(ANSYS_PATH, "GeometryService")):
+if not Path.exists(ANSYS_PATH / "GeometryService"):
     print("XXXXXXX Geometry Service not installed.. exiting process. XXXXXXX")
     exit(0)
 
 # Create a temporary directory to copy the Geometry Service files to
 print(">>> Creating temporary directory for building docker image")
-TMP_DIR = tempfile.mkdtemp(prefix="docker_geometry_service_")
+TMP_DIR = Path(tempfile.mkdtemp(prefix="docker_geometry_service_"))
 
 # Copy the Geometry Service files to the temporary directory
 print(f">>> Copying Geometry Service files to temporary directory to {TMP_DIR}")
-BIN_DIR = os.path.join(TMP_DIR, "bins", "DockerWindows", "bin", "x64", "Release_Headless", "net472")
+BIN_DIR = TMP_DIR / "bins" / "DockerWindows" /"bin" /"x64"/"Release_Headless" /"net472"
 
 # Create the directory structure
 shutil.copytree(
-    os.path.join(ANSYS_PATH, "GeometryService"),
+    ANSYS_PATH / "GeometryService",
     BIN_DIR,
 )
 
@@ -92,7 +93,7 @@ print(">>> Zipping temporary directory. This might take some time...")
 zip_file = shutil.make_archive(
     "windows-binaries",
     "zip",
-    root_dir=os.path.join(TMP_DIR, "bins"),
+    root_dir=TMP_DIR / "bins",
 )
 
 # Move the ZIP file to the docker directory
@@ -101,19 +102,19 @@ shutil.move(zip_file, TMP_DIR)
 
 # Remove the temporary directory
 print(">>> Removing Geometry Service files")
-shutil.rmtree(os.path.join(TMP_DIR, "bins"))
+shutil.rmtree(TMP_DIR / "bins")
 
 # Download the Dockerfile from the repository
 print(">>> Downloading Dockerfile")
 urllib.request.urlretrieve(
     "https://raw.githubusercontent.com/ansys/pyansys-geometry/main/docker/windows/Dockerfile",
-    os.path.join(TMP_DIR, "Dockerfile"),
+    TMP_DIR / "Dockerfile",
 )
 
 # Search for the AWP_ROOT* env variables and replace them with the correct
 # value
 print(">>> Updating Dockerfile")
-with open(os.path.join(TMP_DIR, "Dockerfile"), "r") as f:
+with Path.open(TMP_DIR / "Dockerfile", "r") as f:
     dockerfile = f.read()
 
 # Find environment variables that start with AWP_ROOT

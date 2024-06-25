@@ -100,7 +100,7 @@ def test_param_form():
     assert other.value == 4
 
 
-def test_param_TYPE():
+def test_param_type():
     linear = ParamType.LINEAR
     circular = ParamType.CIRCULAR
     other = ParamType.OTHER

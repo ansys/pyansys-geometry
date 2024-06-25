@@ -104,7 +104,7 @@ class BoxUV:
         return self.interval_u.contains(param.u) and self.interval_v.contains(param.v)
 
     def inflate(self, delta_u: Real, delta_v: Real) -> "BoxUV":
-        """Enlarge the BoxUV u and v intervals by delta_u and delta_v respectively."""
+        """Enlarge the BoxUV u and v intervals by deltas."""
         if self.is_empty():
             # Cannot inflate an empty box uv.
             raise RuntimeError("Cannot inflate an empty box uv.")

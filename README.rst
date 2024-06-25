@@ -1,6 +1,6 @@
 PyAnsys Geometry
 ================
-|pyansys| |python| |MIT| |black|
+|pyansys| |python| |MIT| |ruff|
 |codecov| |GH-CI| |pre-commit|
 |pypi| |pypi-downloads| |conda| |conda-downloads|
 
@@ -40,9 +40,9 @@ PyAnsys Geometry
    :target: https://opensource.org/blog/license/mit
    :alt: MIT
 
-.. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg?style=flat
-   :target: https://github.com/psf/black
-   :alt: Black
+.. |ruff| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
+   :target: https://github.com/astral-sh/ruff
+   :alt: Ruff
 
 .. |pre-commit| image:: https://results.pre-commit.ci/badge/github/ansys/pyansys-geometry/main.svg
    :target: https://results.pre-commit.ci/latest/github/ansys/pyansys-geometry/main

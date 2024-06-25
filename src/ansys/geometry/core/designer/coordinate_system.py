@@ -38,8 +38,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 class CoordinateSystem:
-    """
-    Represents a user-defined coordinate system within the design assembly.
+    """Represents a user-defined coordinate system within the design assembly.
 
     This class synchronizes to a design within a supporting Geometry
     service instance.
@@ -136,7 +135,7 @@ class CoordinateSystem:
 
     @property
     def is_alive(self) -> bool:
-        """Flag indicating if coordinate system is still alive on the server side."""
+        """Flag indicating if coordinate system is still alive on the server."""
         return self._is_alive
 
     def __repr__(self) -> str:

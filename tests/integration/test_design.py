@@ -63,8 +63,8 @@ from .conftest import FILES_DIR, skip_if_linux
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):
     """Test to validate the extrusion of a simple circle as a cylinder and the
-    assignment of materials to it."""
-
+    assignment of materials to it.
+    """
     # Create a Sketch and draw a circle (all client side)
     sketch = Sketch()
     sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
@@ -136,7 +136,6 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
 
 def test_face_to_body_creation(modeler: Modeler):
     """Test in charge of validating the extrusion of an existing face."""
-
     # Create a Sketch and draw a circle (all client side)
     sketch = Sketch()
     sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
@@ -231,7 +230,6 @@ def test_extrude_negative_sketch_face(modeler: Modeler):
 
 def test_modeler(modeler: Modeler):
     """Test the ``Modeler`` methods."""
-
     # Get the modeler's string representation and check it
     repr = str(modeler)
     assert "Ansys Geometry Modeler (" in repr
@@ -242,7 +240,6 @@ def test_modeler(modeler: Modeler):
 
 def test_component_body(modeler: Modeler):
     """Test the different ``Component`` and ``Body`` creation methods."""
-
     # Create your design on the server side
     design_name = "ComponentBody_Test"
     design = modeler.create_design(design_name)
@@ -318,7 +315,6 @@ def test_component_body(modeler: Modeler):
 
 def test_named_selections(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection``."""
-
     # Create your design on the server side
     design = modeler.create_design("NamedSelection_Test")
 
@@ -375,9 +371,9 @@ def test_named_selections(modeler: Modeler):
 
 
 def test_faces_edges(modeler: Modeler):
-    """Test for verifying the correct creation and usage of ``Face`` and ``Edge``
-    objects."""
-
+    """Test for verifying the correct creation and usage of ``Face`` and
+    ``Edge`` objects.
+    """
     # Create your design on the server side
     design = modeler.create_design("FacesEdges_Test")
 
@@ -435,7 +431,6 @@ def test_faces_edges(modeler: Modeler):
 
 def test_coordinate_system_creation(modeler: Modeler):
     """Test for verifying the correct creation of ``CoordinateSystem``."""
-
     # Create your design on the server side
     design = modeler.create_design("CoordinateSystem_Test")
 
@@ -514,14 +509,12 @@ def test_coordinate_system_creation(modeler: Modeler):
 
 
 def test_delete_body_component(modeler: Modeler):
-    """
-    Test for verifying the deletion of ``Component`` and ``Body`` objects.
+    """Test for verifying the deletion of ``Component`` and ``Body`` objects.
 
     Notes
     -----
     Requires storing scdocx file and checking manually (for now).
     """
-
     # Create your design on the server side
     design = modeler.create_design("Deletion_Test")
 
@@ -554,14 +547,14 @@ def test_delete_body_component(modeler: Modeler):
     nested_1_comp_1 = comp_1.add_component("Nested_1_Component_1")
     nested_1_nested_1_comp_1 = nested_1_comp_1.add_component("Nested_1_Nested_1_Component_1")
     nested_2_comp_1 = comp_1.add_component("Nested_2_Component_1")
-    nested_1_comp_2 = comp_2.add_component("Nested_1_Component_2")
+    _ = comp_2.add_component("Nested_1_Component_2")
 
     # Create the bodies
     body_1 = comp_3.extrude_sketch(name="comp_3_circle", sketch=sketch, distance=distance)
     body_2 = nested_2_comp_1.extrude_sketch(
         name="nested_2_comp_1_circle", sketch=sketch, distance=distance
     )
-    body_3 = nested_1_nested_1_comp_1.extrude_sketch(
+    _ = nested_1_nested_1_comp_1.extrude_sketch(
         name="nested_1_nested_1_comp_1_circle", sketch=sketch, distance=distance
     )
 
@@ -748,8 +741,7 @@ def test_delete_body_component(modeler: Modeler):
 
 
 def test_shared_topology(modeler: Modeler):
-    """
-    Test for checking the correct setting of shared topology on the server.
+    """Test for checking the correct setting of shared topology on the server.
 
     Notes
     -----
@@ -781,14 +773,12 @@ def test_shared_topology(modeler: Modeler):
 
 
 def test_single_body_translation(modeler: Modeler):
-    """
-    Test for verifying the correct translation of a ``Body``.
+    """Test for verifying the correct translation of a ``Body``.
 
     Notes
     -----
     Requires storing scdocx file and checking manually (for now).
     """
-
     # Create your design on the server side
     design = modeler.create_design("SingleBodyTranslation_Test")
 
@@ -810,14 +800,12 @@ def test_single_body_translation(modeler: Modeler):
 
 
 def test_bodies_translation(modeler: Modeler):
-    """
-    Test for verifying the correct translation of list of ``Body``.
+    """Test for verifying the correct translation of list of ``Body``.
 
     Notes
     -----
     Requires storing scdocx file and checking manually (for now).
     """
-
     # Create your design on the server side
     design = modeler.create_design("MultipleBodyTranslation_Test")
 
@@ -850,7 +838,6 @@ def test_bodies_translation(modeler: Modeler):
 
 def test_body_rotation(modeler: Modeler):
     """Test for verifying the correct rotation of a ``Body``."""
-
     # Create your design on the server side
     design = modeler.create_design("BodyRotation_Test")
 
@@ -872,9 +859,9 @@ def test_body_rotation(modeler: Modeler):
 
 
 def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
-    """Test for downloading a design in multiple modes and verifying the correct
-    download."""
-
+    """Test for downloading a design in multiple modes and verifying the
+    correct download.
+    """
     # Create your design on the server side
     design = modeler.create_design("MultipleBodyTranslation_Test")
 
@@ -942,7 +929,7 @@ def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory)
     file_size = 1024
 
     # Write random bytes
-    with open(file, "wb") as fout:
+    with file.open(mode="wb") as fout:
         fout.write(os.urandom(file_size))
 
     assert file.exists()
@@ -971,7 +958,6 @@ def test_slot_extrusion(modeler: Modeler):
 
 def test_project_and_imprint_curves(modeler: Modeler):
     """Test the projection of a set of curves on a body."""
-
     # Create your design on the server side
     design = modeler.create_design("ExtrudeSlot")
     comp = design.add_component("Comp1")
@@ -1051,7 +1037,6 @@ def test_project_and_imprint_curves(modeler: Modeler):
 
 def test_copy_body(modeler: Modeler):
     """Test copying a body."""
-
     # Create your design on the server side
     design = modeler.create_design("Design")
 
@@ -1095,7 +1080,6 @@ def test_copy_body(modeler: Modeler):
 
 def test_beams(modeler: Modeler):
     """Test beam creation."""
-
     # Skip on Linux
     skip_if_linux(modeler, test_beams.__name__, "create_beam")
 
@@ -1242,7 +1226,6 @@ def test_beams(modeler: Modeler):
 
 def test_midsurface_properties(modeler: Modeler):
     """Test mid-surface properties assignment."""
-
     # Create your design on the server side
     design = modeler.create_design("MidSurfaceProperties")
 
@@ -1346,7 +1329,6 @@ def test_midsurface_properties(modeler: Modeler):
 
 def test_design_points(modeler: Modeler):
     """Test for verifying the ``DesignPoints``"""
-
     # Create your design on the server side
     design = modeler.create_design("DesignPoints")
     point = Point3D([6, 66, 666], UNITS.mm)
@@ -1392,8 +1374,9 @@ def test_design_points(modeler: Modeler):
 
 
 def test_named_selections_beams(modeler: Modeler):
-    """Test for verifying the correct creation of ``NamedSelection`` with beams."""
-
+    """Test for verifying the correct creation of ``NamedSelection`` with
+    beams.
+    """
     # Skip on Linux
     skip_if_linux(modeler, test_named_selections_beams.__name__, "create_beam")
 
@@ -1417,9 +1400,9 @@ def test_named_selections_beams(modeler: Modeler):
 
 
 def test_named_selections_design_points(modeler: Modeler):
-    """Test for verifying the correct creation of ``NamedSelection`` with design
-    points."""
-
+    """Test for verifying the correct creation of ``NamedSelection`` with
+    design points.
+    """
     # Create your design on the server side
     design = modeler.create_design("NamedSelectionBeams_Test")
 
@@ -1437,7 +1420,6 @@ def test_named_selections_design_points(modeler: Modeler):
 
 def test_component_instances(modeler: Modeler):
     """Test creation of ``Component`` instances and the effects this has."""
-
     design_name = "ComponentInstance_Test"
     design = modeler.create_design(design_name)
 
@@ -1757,7 +1739,6 @@ def test_boolean_body_operations(modeler: Modeler):
 
 def test_multiple_bodies_boolean_operations(modeler: Modeler):
     """Test boolean operations with multiple bodies."""
-
     design = modeler.create_design("TestBooleanOperationsMultipleBodies")
 
     comp1 = design.add_component("Comp1")
@@ -1826,9 +1807,9 @@ def test_multiple_bodies_boolean_operations(modeler: Modeler):
 
 
 def test_child_component_instances(modeler: Modeler):
-    """Test creation of child ``Component`` instances and check the data model reflects
-    that."""
-
+    """Test creation of child ``Component`` instances and check the data model
+    reflects that.
+    """
     design_name = "ChildComponentInstances_Test"
     design = modeler.create_design(design_name)
     # Create a base component
@@ -1866,8 +1847,9 @@ def test_child_component_instances(modeler: Modeler):
 
 
 def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
-    """Generate multiple designs, make sure they are all separate, and activate them
-    when needed."""
+    """Generate multiple designs, make sure they are all separate, and activate
+    them when needed.
+    """
     # Check backend first
     if modeler.client.backend_type in (
         BackendType.SPACECLAIM,
@@ -1944,7 +1926,6 @@ def test_get_collision(modeler: Modeler):
 
 def test_body_scale(modeler: Modeler):
     """Verify the correct scaling of a body."""
-
     design = modeler.create_design("BodyScale_Test")
 
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
@@ -2180,7 +2161,9 @@ def test_body_mirror(modeler: Modeler):
 
 
 def test_sweep_sketch(modeler: Modeler):
-    """Test revolving a circle profile around a circular axis to make a donut."""
+    """Test revolving a circle profile around a circular axis to make a
+    donut.
+    """
     design_sketch = modeler.create_design("donut")
 
     path_radius = 5
@@ -2196,7 +2179,7 @@ def test_sweep_sketch(modeler: Modeler):
 
     body = design_sketch.sweep_sketch("donutsweep", profile, path)
 
-    assert body.is_surface == False
+    assert body.is_surface is False
 
     # check edges
     assert len(body.edges) == 0
@@ -2215,8 +2198,9 @@ def test_sweep_sketch(modeler: Modeler):
 
 
 def test_sweep_chain(modeler: Modeler):
-    """Test revolving a semi-elliptical profile around a circular axis to make a
-    bowl."""
+    """Test revolving a semi-elliptical profile around a circular axis to make
+    a bowl.
+    """
     design_chain = modeler.create_design("bowl")
 
     radius = 10
@@ -2234,7 +2218,7 @@ def test_sweep_chain(modeler: Modeler):
     # create the bowl body
     body = design_chain.sweep_chain("bowlsweep", path, profile)
 
-    assert body.is_surface == True
+    assert body.is_surface is True
 
     # check edges
     assert len(body.edges) == 1
@@ -2263,7 +2247,9 @@ def test_sweep_chain(modeler: Modeler):
 
 
 def test_create_body_from_loft_profile(modeler: Modeler):
-    """Test the ``create_body_from_loft_profile()`` method to create a vase shape."""
+    """Test the ``create_body_from_loft_profile()`` method to create a vase
+    shape.
+    """
     skip_if_linux(
         modeler, test_create_body_from_loft_profile.__name__, "'create_body_from_loft_profile'"
     )
@@ -2313,14 +2299,15 @@ def test_revolve_sketch(modeler: Modeler):
         rotation_origin=Point3D([0, 0, 0]),
     )
 
-    assert body.is_surface == False
+    assert body.is_surface is False
     assert body.name == "donut-body"
     assert np.isclose(body.volume.m, np.pi**2 * 2 * 5, rtol=1e-3)  # quarter of a torus volume
 
 
 def test_revolve_sketch_fail(modeler: Modeler):
-    """Test demonstrating the failure of revolving a sketch when it is located in the
-    same origin."""
+    """Test demonstrating the failure of revolving a sketch when it is located
+    in the same origin.
+    """
     # Initialize the donut sketch design
     design = modeler.create_design("revolve-fail")
 

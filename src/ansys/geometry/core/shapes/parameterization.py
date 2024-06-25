@@ -65,8 +65,7 @@ class ParamUV:
 
     @check_input_types
     def __add__(self, other: "ParamUV") -> "ParamUV":
-        """
-        Add the u and v components of the other ParamUV to this ParamUV.
+        """Add the u and v components of the other ParamUV to this ParamUV.
 
         Parameters
         ----------
@@ -82,8 +81,7 @@ class ParamUV:
 
     @check_input_types
     def __sub__(self, other: "ParamUV") -> "ParamUV":
-        """
-        Subtract the u and v components of the other ParamUV from this ParamUV.
+        """Subtract the u and v components of a ParamUV from this ParamUV.
 
         Parameters
         ----------
@@ -99,8 +97,7 @@ class ParamUV:
 
     @check_input_types
     def __mul__(self, other: "ParamUV") -> "ParamUV":
-        """
-        Multiplies the u and v components of this ParamUV by the other ParamUV.
+        """Multiplies the u and v components of this ParamUV by a ParamUV.
 
         Parameters
         ----------
@@ -116,8 +113,7 @@ class ParamUV:
 
     @check_input_types
     def __truediv__(self, other: "ParamUV") -> "ParamUV":
-        """
-        Divides the u and v components of this ParamUV by the other ParamUV.
+        """Divides the u and v components of this ParamUV by a ParamUV.
 
         Parameters
         ----------
@@ -141,8 +137,7 @@ class ParamUV:
 
 
 class Interval:
-    """
-    Interval class that defines a range of values.
+    """Interval class that defines a range of values.
 
     Parameters
     ----------
@@ -185,8 +180,7 @@ class Interval:
         )
 
     def is_open(self) -> bool:
-        """
-        If the interval is open (-inf, inf).
+        """If the interval is open (-inf, inf).
 
         Returns
         -------
@@ -196,8 +190,7 @@ class Interval:
         return np.isneginf(self.start) and np.isinf(self.end)
 
     def is_closed(self) -> bool:
-        """
-        If the interval is closed. Neither value is inf or -inf.
+        """If the interval is closed. Neither value is inf or -inf.
 
         Returns
         -------
@@ -207,8 +200,7 @@ class Interval:
         return self.start > -np.inf and self.end < np.inf
 
     def is_empty(self) -> bool:
-        """
-        Check if the current interval is empty.
+        """Check if the current interval is empty.
 
         Returns
         -------
@@ -218,8 +210,7 @@ class Interval:
         return not self.not_empty
 
     def get_span(self) -> Real:
-        """
-        Get the quantity contained by the interval.
+        """Get the quantity contained by the interval.
 
         The interval must be closed.
 
@@ -234,8 +225,7 @@ class Interval:
         return self.end - self.start
 
     def get_relative_val(self, t: Real) -> Real:
-        """
-        Get an evaluation property of the interval, used in BoxUV.
+        """Get an evaluation property of the interval, used in BoxUV.
 
         Parameters
         ----------
@@ -250,8 +240,7 @@ class Interval:
         return self.start + t * self.get_span()
 
     def is_negative(self, tolerance: Real) -> bool:
-        """
-        Boolean value that indicates whether the current interval is negative.
+        """Indicate whether the current interval is negative.
 
         Parameters
         ----------
@@ -267,8 +256,7 @@ class Interval:
 
     @staticmethod
     def unite(first: "Interval", second: "Interval") -> "Interval":
-        """
-        Get the union of two intervals.
+        """Get the union of two intervals.
 
         Parameters
         ----------
@@ -289,8 +277,7 @@ class Interval:
         return Interval(min(first.start, second.start), max(first.end, second.end))
 
     def self_unite(self, other: "Interval") -> None:
-        """
-        Get the union of two intervals and update the current interval.
+        """Get the union of two intervals and update the current interval.
 
         Parameters
         ----------
@@ -301,8 +288,7 @@ class Interval:
 
     @staticmethod
     def intersect(first: "Interval", second: "Interval", tolerance: Real) -> "Interval":
-        """
-        Get the intersection of two intervals.
+        """Get the intersection of two intervals.
 
         Parameters
         ----------
@@ -324,8 +310,7 @@ class Interval:
         return None  # supposed to be empty
 
     def self_intersect(self, other: "Interval", tolerance: Real) -> None:
-        """
-        Get the intersection of two intervals and update the current interval.
+        """Get the intersection of two intervals and update the current one.
 
         Parameters
         ----------
@@ -337,8 +322,7 @@ class Interval:
         self = Interval.intersect(self, other, tolerance)
 
     def contains_value(self, t: Real, accuracy: Real) -> bool:
-        """
-        Check if the current interval contains the value ``t`` given the accuracy range.
+        """Check if the current interval contains the value ``t``.
 
         Parameters
         ----------
@@ -368,8 +352,7 @@ class Interval:
         return True
 
     def contains(self, t: Real) -> bool:
-        """
-        Check if interval contains value ``t`` using default ``length_accuracy``.
+        """Check if interval contains value ``t`` using default accuracy.
 
         Parameters
         ----------
@@ -415,8 +398,7 @@ class ParamType(Enum):
 
 
 class Parameterization:
-    """
-    Parameterization class describes the parameters of a specific geometry.
+    """Parameterization class describes the parameters of a specific geometry.
 
     Parameters
     ----------

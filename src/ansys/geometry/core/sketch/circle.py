@@ -35,8 +35,7 @@ from ansys.geometry.core.typing import Real
 
 
 class SketchCircle(SketchFace, Circle):
-    """
-    Provides for modeling a circle.
+    """Provides for modeling a circle.
 
     Parameters
     ----------
@@ -70,8 +69,7 @@ class SketchCircle(SketchFace, Circle):
     def _init_primitive_circle_from_plane(
         self, plane: Plane, radius: Optional[Union[Quantity, Distance]] = None
     ) -> None:
-        """
-        Initialize correctly the underlying primitive ``Circle`` class.
+        """Initialize correctly the underlying primitive ``Circle`` class.
 
         Parameters
         ----------
@@ -97,8 +95,7 @@ class SketchCircle(SketchFace, Circle):
 
     @property
     def perimeter(self) -> Quantity:
-        """
-        Perimeter of the circle.
+        """Perimeter of the circle.
 
         Notes
         -----
@@ -109,8 +106,7 @@ class SketchCircle(SketchFace, Circle):
 
     @property
     def visualization_polydata(self) -> pv.PolyData:
-        """
-        VTK polydata representation for PyVista visualization.
+        """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
         the standard global Cartesian coordinate system.
@@ -131,8 +127,7 @@ class SketchCircle(SketchFace, Circle):
         )
 
     def plane_change(self, plane: Plane) -> None:
-        """
-        Redefine the plane containing the ``SketchCircle`` objects.
+        """Redefine the plane containing the ``SketchCircle`` objects.
 
         Notes
         -----

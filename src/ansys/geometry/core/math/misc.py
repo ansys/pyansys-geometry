@@ -33,8 +33,7 @@ from ansys.geometry.core.typing import Real
 def get_two_circle_intersections(
     x0: Real, y0: Real, r0: Real, x1: Real, y1: Real, r1: Real
 ) -> Union[Tuple[Tuple[Real, Real], Tuple[Real, Real]], None]:
-    """
-    Get the intersection points of two circles.
+    """Get the intersection points of two circles.
 
     Parameters
     ----------

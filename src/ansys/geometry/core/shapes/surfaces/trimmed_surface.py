@@ -31,8 +31,7 @@ from ansys.geometry.core.typing import Real
 
 
 class TrimmedSurface:
-    """
-    Represents a trimmed surface.
+    """Represents a trimmed surface.
 
     A trimmed surface is a surface that has a boundary. This boundary comes in the form of a
     bounding BoxUV.
@@ -61,8 +60,7 @@ class TrimmedSurface:
         return self._box_uv
 
     def get_proportional_parameters(self, param_uv: ParamUV) -> ParamUV:
-        """
-        Convert non-proportional parameters into proportional parameters.
+        """Convert non-proportional parameters into proportional parameters.
 
         Parameters
         ----------
@@ -84,8 +82,7 @@ class TrimmedSurface:
         )
 
     def normal(self, u: Real, v: Real) -> UnitVector3D:
-        """
-        Provide the normal to the surface.
+        """Provide the normal to the surface.
 
         Parameters
         ----------
@@ -102,8 +99,7 @@ class TrimmedSurface:
         return self.evaluate_proportion(u, v).normal
 
     def project_point(self, point: Point3D) -> SurfaceEvaluation:
-        """
-        Project a point onto the surface and evaluate it at that location.
+        """Project a point onto the surface and evaluate it at that location.
 
         Parameters
         ----------
@@ -118,8 +114,7 @@ class TrimmedSurface:
         return self.geometry.project_point(point)
 
     def evaluate_proportion(self, u: Real, v: Real) -> SurfaceEvaluation:
-        """
-        Evaluate the surface at proportional u and v parameters.
+        """Evaluate the surface at proportional u and v parameters.
 
         Parameters
         ----------
@@ -133,12 +128,12 @@ class TrimmedSurface:
         SurfaceEvaluation
             Resulting surface evaluation.
         """
-        boundsU = self.box_uv.interval_u
-        boundsV = self.box_uv.interval_v
+        bounds_u = self.box_uv.interval_u
+        bounds_v = self.box_uv.interval_v
         return self.geometry.evaluate(
             ParamUV(
-                boundsU.start + boundsU.get_span() * u,
-                boundsV.start + boundsV.get_span() * v,
+                bounds_u.start + bounds_u.get_span() * u,
+                bounds_v.start + bounds_v.get_span() * v,
             )
         )
 
@@ -146,8 +141,7 @@ class TrimmedSurface:
 
 
 class ReversedTrimmedSurface(TrimmedSurface):
-    """
-    Represents a reversed trimmed surface.
+    """Represents a reversed trimmed surface.
 
     When a surface is reversed, its normal vector is negated to provide the proper
     outward facing vector.

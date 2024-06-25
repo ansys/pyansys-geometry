@@ -27,20 +27,19 @@ import threading
 
 from grpc._channel import _InactiveRpcError, _MultiThreadedRendezvous
 
-from ansys.geometry.core.logger import LOG as logger
+from ansys.geometry.core.logger import LOG
 
 SIGINT_TRACKER = []
 
 
 class GeometryRuntimeError(RuntimeError):
-    """Provides error message to raise when Geometry service passes a runtime error."""
+    """Provides error message when Geometry service passes a runtime error."""
 
     pass
 
 
 class GeometryExitedError(RuntimeError):
-    """
-    Provides error message to raise when Geometry service has exited.
+    """Provides error message to raise when Geometry service has exited.
 
     Parameters
     ----------
@@ -56,13 +55,12 @@ class GeometryExitedError(RuntimeError):
 # handler for protect_grpc
 def handler(sig, frame):  # pragma: no cover
     """Pass signal to the custom interrupt handler."""
-    logger.info("KeyboardInterrupt received. Waiting until Geometry service execution finishes.")
+    LOG.info("KeyboardInterrupt received. Waiting until Geometry service execution finishes.")
     SIGINT_TRACKER.append(True)
 
 
 def protect_grpc(func):
-    """
-    Capture gRPC exceptions and raise a more succinct error message.
+    """Capture gRPC exceptions and raise a more succinct error message.
 
     This method captures the ``KeyboardInterrupt`` exception to avoid
     segfaulting the Geometry service.
@@ -73,8 +71,7 @@ def protect_grpc(func):
 
     @wraps(func)
     def wrapper(*args, **kwargs):
-        """
-        Capture gRPC exceptions and KeyboardInterrupt errors.
+        """Capture gRPC exceptions and KeyboardInterrupt errors.
 
         Returns
         -------

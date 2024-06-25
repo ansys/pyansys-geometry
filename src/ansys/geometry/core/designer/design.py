@@ -35,8 +35,10 @@ from ansys.api.geometry.v0.commands_pb2 import (
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.materials_pb2 import AddToDocumentRequest
 from ansys.api.geometry.v0.materials_pb2_grpc import MaterialsStub
-from ansys.api.geometry.v0.models_pb2 import Material as GRPCMaterial
-from ansys.api.geometry.v0.models_pb2 import MaterialProperty as GRPCMaterialProperty
+from ansys.api.geometry.v0.models_pb2 import (
+    Material as GRPCMaterial,
+    MaterialProperty as GRPCMaterialProperty,
+)
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from ansys.api.geometry.v0.parts_pb2 import ExportRequest
 from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
@@ -90,8 +92,7 @@ class DesignFileFormat(Enum):
 
 
 class Design(Component):
-    """
-    Provides for organizing geometry assemblies.
+    """Provides for organizing geometry assemblies.
 
     This class synchronizes to a supporting Geometry service instance.
 
@@ -187,8 +188,7 @@ class Design(Component):
     @check_input_types
     @ensure_design_is_active
     def add_material(self, material: Material) -> None:
-        """
-        Add a material to the design.
+        """Add a material to the design.
 
         Parameters
         ----------
@@ -220,8 +220,7 @@ class Design(Component):
     @check_input_types
     @ensure_design_is_active
     def save(self, file_location: Union[Path, str]) -> None:
-        """
-        Save a design to disk on the active Geometry server instance.
+        """Save a design to disk on the active Geometry server instance.
 
         Parameters
         ----------
@@ -243,8 +242,7 @@ class Design(Component):
         file_location: Union[Path, str],
         format: Optional[DesignFileFormat] = DesignFileFormat.SCDOCX,
     ) -> None:
-        """
-        Export and download the design from the active Geometry server instance.
+        """Export and download the design from the server.
 
         Parameters
         ----------
@@ -285,7 +283,7 @@ class Design(Component):
             return
 
         # Write to file
-        downloaded_file = open(file_location, "wb")
+        downloaded_file = Path(file_location).open(mode="wb")
         downloaded_file.write(received_bytes)
         downloaded_file.close()
 
@@ -294,8 +292,7 @@ class Design(Component):
         )
 
     def __build_export_file_location(self, location: Union[Path, str, None], ext: str) -> Path:
-        """
-        Build the file location for export functions.
+        """Build the file location for export functions.
 
         Parameters
         ----------
@@ -313,8 +310,7 @@ class Design(Component):
         return (Path(location) if location else Path.cwd()) / f"{self.name}.{ext}"
 
     def export_to_scdocx(self, location: Union[Path, str] = None) -> str:
-        """
-        Export the design to an scdocx file.
+        """Export the design to an scdocx file.
 
         Parameters
         ----------
@@ -337,8 +333,7 @@ class Design(Component):
         return file_location
 
     def export_to_parasolid_text(self, location: Union[Path, str] = None) -> str:
-        """
-        Export the design to a Parasolid text file.
+        """Export the design to a Parasolid text file.
 
         Parameters
         ----------
@@ -364,8 +359,7 @@ class Design(Component):
         return file_location
 
     def export_to_parasolid_bin(self, location: Union[Path, str] = None) -> str:
-        """
-        Export the design to a Parasolid binary file.
+        """Export the design to a Parasolid binary file.
 
         Parameters
         ----------
@@ -391,8 +385,7 @@ class Design(Component):
         return file_location
 
     def export_to_fmd(self, location: Union[Path, str] = None) -> str:
-        """
-        Export the design to an FMD file.
+        """Export the design to an FMD file.
 
         Parameters
         ----------
@@ -415,8 +408,7 @@ class Design(Component):
         return file_location
 
     def export_to_step(self, location: Union[Path, str] = None) -> str:
-        """
-        Export the design to a STEP file.
+        """Export the design to a STEP file.
 
         Parameters
         ----------
@@ -439,8 +431,7 @@ class Design(Component):
         return file_location
 
     def export_to_iges(self, location: Union[Path, str] = None) -> str:
-        """
-        Export the design to an IGES file.
+        """Export the design to an IGES file.
 
         Parameters
         ----------
@@ -463,8 +454,7 @@ class Design(Component):
         return file_location
 
     def export_to_pmdb(self, location: Union[Path, str] = None) -> str:
-        """
-        Export the design to a PMDB file.
+        """Export the design to a PMDB file.
 
         Parameters
         ----------
@@ -497,8 +487,7 @@ class Design(Component):
         beams: Optional[List[Beam]] = None,
         design_points: Optional[List[DesignPoint]] = None,
     ) -> NamedSelection:
-        """
-        Create a named selection on the active Geometry server instance.
+        """Create a named selection on the active Geometry server instance.
 
         Parameters
         ----------
@@ -541,8 +530,7 @@ class Design(Component):
     @check_input_types
     @ensure_design_is_active
     def delete_named_selection(self, named_selection: Union[NamedSelection, str]) -> None:
-        """
-        Delete a named selection on the active Geometry server instance.
+        """Delete a named selection on the active Geometry server instance.
 
         Parameters
         ----------
@@ -573,8 +561,7 @@ class Design(Component):
     @check_input_types
     @ensure_design_is_active
     def delete_component(self, component: Union["Component", str]) -> None:
-        """
-        Delete a component (itself or its children).
+        """Delete a component (itself or its children).
 
         Notes
         -----
@@ -598,8 +585,7 @@ class Design(Component):
             return super().delete_component(component)
 
     def set_shared_topology(self, share_type: SharedTopologyType) -> None:
-        """
-        Set the shared topology to apply to the component.
+        """Set the shared topology to apply to the component.
 
         Parameters
         ----------
@@ -624,8 +610,7 @@ class Design(Component):
         direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
         direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Y,
     ) -> BeamCircularProfile:
-        """
-        Add a new beam circular profile under the design for the creating beams.
+        """Add a new beam circular profile under the design for creating beams.
 
         Parameters
         ----------
@@ -673,8 +658,7 @@ class Design(Component):
     @check_input_types
     @ensure_design_is_active
     def add_midsurface_thickness(self, thickness: Quantity, bodies: List[Body]) -> None:
-        """
-        Add a mid-surface thickness to a list of bodies.
+        """Add a mid-surface thickness to a list of bodies.
 
         Parameters
         ----------
@@ -714,8 +698,7 @@ class Design(Component):
     @check_input_types
     @ensure_design_is_active
     def add_midsurface_offset(self, offset_type: MidSurfaceOffsetType, bodies: List[Body]) -> None:
-        """
-        Add a mid-surface offset type to a list of bodies.
+        """Add a mid-surface offset type to a list of bodies.
 
         Parameters
         ----------
@@ -753,8 +736,7 @@ class Design(Component):
     @check_input_types
     @ensure_design_is_active
     def delete_beam_profile(self, beam_profile: Union[BeamProfile, str]) -> None:
-        """
-        Remove a beam profile on the active geometry server instance.
+        """Remove a beam profile on the active geometry server instance.
 
         Parameters
         ----------
@@ -780,8 +762,7 @@ class Design(Component):
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
     def insert_file(self, file_location: Union[Path, str]) -> Component:
-        """
-        Insert a file into the design.
+        """Insert a file into the design.
 
         Parameters
         ----------
@@ -1010,8 +991,7 @@ class Design(Component):
         self._grpc_client.log.debug(f"\nSuccessfully read design in: {end - start} s")
 
     def _update_design_inplace(self) -> None:
-        """
-        Update the design to align with the server side.
+        """Update the design to align with the server side.
 
         Notes
         -----

@@ -21,6 +21,7 @@
 # SOFTWARE.
 """"Testing of log module with client connection."""
 import logging as deflogging  # Default logging
+from pathlib import Path
 import re
 
 from beartype.typing import Callable
@@ -30,8 +31,7 @@ from ansys.geometry.core import LOG, Modeler  # Global logger
 
 
 def test_instance_logger_format(modeler: Modeler, fake_record: Callable):
-    """
-    Test for checking the instance logger formatter aspect.
+    """Test for checking the instance logger formatter aspect.
 
     Parameters
     ----------
@@ -59,8 +59,8 @@ def test_instance_logger_format(modeler: Modeler, fake_record: Callable):
 
 
 def test_log_instance_name(modeler: Modeler):
-    """
-    Test for verifying access to specific logging instance by providing the client name.
+    """Test for verifying access to specific logging instance by providing the
+    client name.
 
     Parameters
     ----------
@@ -72,8 +72,7 @@ def test_log_instance_name(modeler: Modeler):
 
 
 def test_instance_log_to_file(tmp_path_factory: pytest.TempPathFactory, modeler: Modeler):
-    """
-    Testing writing to log file.
+    """Testing writing to log file.
 
     Since the default loglevel of LOG is error, debug are not normally recorded to it.
 
@@ -99,7 +98,7 @@ def test_instance_log_to_file(tmp_path_factory: pytest.TempPathFactory, modeler:
     modeler.client.log.error(file_msg_error)
     modeler.client.log.debug(file_msg_debug)
 
-    with open(file_path, "r") as fid:
+    with Path(file_path).open(mode="r") as fid:
         text = "".join(fid.readlines())
 
     assert file_msg_error in text
@@ -117,7 +116,7 @@ def test_instance_log_to_file(tmp_path_factory: pytest.TempPathFactory, modeler:
     # Set back to info level
     modeler.client.log.logger.setLevel("INFO")
 
-    with open(file_path, "r") as fid:
+    with Path(file_path).open(mode="r") as fid:
         text = "".join(fid.readlines())
 
     assert file_msg_debug in text

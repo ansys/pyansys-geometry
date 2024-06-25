@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Provides the data structure for material and for adding a material property."""
+"""Provides the data structure for material and material properties."""
 
 from beartype import beartype as check_input_types
 from beartype.typing import Dict, Optional, Sequence
@@ -29,8 +29,7 @@ from ansys.geometry.core.materials.property import MaterialProperty, MaterialPro
 
 
 class Material:
-    """
-    Provides the data structure for a material.
+    """Provides the data structure for a material.
 
     Parameters
     ----------
@@ -73,8 +72,7 @@ class Material:
 
     @check_input_types
     def add_property(self, type: MaterialPropertyType, name: str, quantity: Quantity) -> None:
-        """
-        Add a material property to the ``Material`` class.
+        """Add a material property to the ``Material`` class.
 
         Parameters
         ----------
