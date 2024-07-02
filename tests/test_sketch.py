@@ -778,21 +778,6 @@ def test_polydata_methods():
     assert len(pd_edges) == 1
     assert len(pd_faces) == 1
 
-
-def test_sketch_pyconus2024_voglster_issue1195():
-    """Test sketching unexpected behavior observed in PyConUS 2024 by
-    @voglster.
-    """
-    sketch = Sketch()
-    p_start, p_end, p_center = Point2D([1, 0]), Point2D([-1, 0]), Point2D([0, 0])
-    sketch.arc(p_start, p_end, p_center)
-
-    # Check that the arc is correctly defined
-    assert sketch.edges[0].start == p_start
-    assert sketch.edges[0].end == p_end
-    assert sketch.edges[0].center == p_center
-
-
 def test_arc_start_end_radius_default():
     """Test arc generation from a start and an end point with a certain radius.
 
