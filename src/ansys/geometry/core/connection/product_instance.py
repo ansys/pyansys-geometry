@@ -413,7 +413,7 @@ def _manifest_path_provider(
     )
 
     if def_manifest_path.exists():
-        return def_manifest_path.as_uri()
+        return def_manifest_path.as_posix()
     else:
         msg = (
             "Default manifest file's path does not exist."
