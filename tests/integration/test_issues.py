@@ -77,7 +77,10 @@ def test_issue_1184_sphere_creation_crashes(modeler: Modeler):
     For more info see
     https://github.com/ansys/pyansys-geometry/issues/1184
     """
-    design = modeler.create_design("RVE")
+    # Skip this test on Linux since it is not implemented yet
+    skip_if_linux(modeler, test_issue_1184_sphere_creation_crashes.__name__, "create_sphere")
+    
+    design = modeler.create_design("SphereCreationIssue")
 
     plane = Plane(
         Point3D([1 / 2, 1 / 2, 0.0]),
