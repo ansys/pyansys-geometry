@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``circle.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.sketch.circle
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: circle
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.circle.SketchCircle`
+            - Provides for modeling a circle.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> SketchCircle</api/ansys/geometry/core/sketch/circle/SketchCircle>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a circle.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

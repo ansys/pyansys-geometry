@@ -1,0 +1,164 @@
+:py:mod:`ansys.geometry.core.sketch.triangle`
+=============================================
+
+.. py:module:: ansys.geometry.core.sketch.triangle
+
+.. autoapi-nested-parse::
+
+   Provides the ``Triangle`` class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.sketch.triangle.Triangle
+
+
+
+
+.. py:class:: Triangle(point1: ansys.geometry.core.math.Point2D, point2: ansys.geometry.core.math.Point2D, point3: ansys.geometry.core.math.Point2D)
+
+
+   Bases: :py:obj:`ansys.geometry.core.sketch.face.SketchFace`
+
+   
+   Provides for modeling 2D triangles.
+
+
+   :Parameters:
+
+       **point1: Point2D**
+           Point that represents a triangle vertex.
+
+       **point2: Point2D**
+           Point that represents a triangle vertex.
+
+       **point3: Point2D**
+           Point that represents a triangle vertex.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: point1
+      :type: ansys.geometry.core.math.Point2D
+
+      
+      Triangle vertex 1.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: point2
+      :type: ansys.geometry.core.math.Point2D
+
+      
+      Triangle vertex 2.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: point3
+      :type: ansys.geometry.core.math.Point2D
+
+      
+      Triangle vertex 3.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: visualization_polydata
+      :type: pyvista.PolyData
+
+      
+      VTK polydata representation for PyVista visualization.
+
+      The representation lies in the X/Y plane within
+      the standard global Cartesian coordinate system.
+
+
+      :Returns:
+
+          :obj:`pyvista.PolyData`
+              VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
