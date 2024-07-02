@@ -9,6 +9,36 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.6.5 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.6.5>`_ - 2024-07-02
+=====================================================================================
+
+Changed
+^^^^^^^
+
+- chore: update CHANGELOG for v0.6.4 `#1278 <https://github.com/ansys/pyansys-geometry/pull/1278>`_
+- build: update sphinx-autodoc-typehints version `#1280 <https://github.com/ansys/pyansys-geometry/pull/1280>`_
+- chore: update SECURITY.md `#1286 <https://github.com/ansys/pyansys-geometry/pull/1286>`_
+
+
+Fixed
+^^^^^
+
+- fix: manifest path should render as posix rather than uri `#1289 <https://github.com/ansys/pyansys-geometry/pull/1289>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- build: bump protobuf from 5.27.1 to 5.27.2 in the grpc-deps group `#1283 <https://github.com/ansys/pyansys-geometry/pull/1283>`_
+- build: bump scipy from 1.13.1 to 1.14.0 `#1284 <https://github.com/ansys/pyansys-geometry/pull/1284>`_
+- build: bump vtk from 9.3.0 to 9.3.1 `#1287 <https://github.com/ansys/pyansys-geometry/pull/1287>`_
+
+
+Miscellaneous
+^^^^^^^^^^^^^
+
+- chore: pre-commit automatic update `#1281 <https://github.com/ansys/pyansys-geometry/pull/1281>`_, `#1288 <https://github.com/ansys/pyansys-geometry/pull/1288>`_
+
 `0.6.4 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.6.4>`_ - 2024-06-24
 =====================================================================================
 
