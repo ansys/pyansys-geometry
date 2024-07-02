@@ -79,7 +79,7 @@ def test_issue_1184_sphere_creation_crashes(modeler: Modeler):
     """
     # Skip this test on Linux since it is not implemented yet
     skip_if_linux(modeler, test_issue_1184_sphere_creation_crashes.__name__, "create_sphere")
-    
+
     design = modeler.create_design("SphereCreationIssue")
 
     plane = Plane(
