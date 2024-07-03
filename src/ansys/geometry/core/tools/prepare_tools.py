@@ -60,7 +60,19 @@ class PrepareTools:
     def share_topology(self, bodies: List["Body"], tol: Real = 0.0, p_instances: bool = False) -> bool:
         """Apply ShareTopology to the chosen bodies.
         
-        
+        Parameters
+        ----------
+        bodies : List[Body]
+            List of bodies to apply ShareTopology to.
+        tol : Real
+            The maximum distance between bodies.
+        p_instances : bool
+            Controls whether instances are preserved.
+
+        Returns
+        -------
+        bool
+            Indicates success/failure of ShareTopology operation.
         """
         if not bodies:
             return False
