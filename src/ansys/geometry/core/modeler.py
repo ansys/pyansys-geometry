@@ -40,6 +40,7 @@ from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.checks import check_type, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
+from ansys.geometry.core.tools.prepare_tools import PrepareTools
 from ansys.geometry.core.tools.repair_tools import RepairTools
 from ansys.geometry.core.typing import Real
 
@@ -120,10 +121,12 @@ class Modeler:
         if self.client.backend_type == BackendType.LINUX_SERVICE:
             self._repair_tools = None
             self._measurement_tools = None
+            self._prepare_tools = None
             LOG.warning("Linux backend does not support repair tools.")
         else:
             self._repair_tools = RepairTools(self._grpc_client)
             self._measurement_tools = MeasurementTools(self._grpc_client)
+            self._prepare_tools = PrepareTools(self._grpc_client)
 
         # Maintaining references to all designs within the modeler workspace
         self._designs: Dict[str, "Design"] = {}
@@ -415,3 +418,9 @@ class Modeler:
     def measurement_tools(self) -> MeasurementTools:
         """Access to measurement tools."""
         return self._measurement_tools
+
+
+    @property
+    def prepare_tools(self) -> PrepareTools:
+        """Access to prepare tools."""
+        return self._prepare_tools
