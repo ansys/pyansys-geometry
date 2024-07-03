@@ -21,15 +21,10 @@
 # SOFTWARE.
 """Provides tools for preparing bodies."""
 
-from ansys.api.geometry.v0.preparetools_pb2 import (
-    ShareTopologyRequest,
-    ShareTopologyResponse,
-)
 from ansys.api.geometry.v0.bodies_pb2 import (
     GetRequest,
     GetType,
 )
-from ansys.api.geometry.v0.preparetools_pb2_grpc import PrepareToolsStub
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.preparetools_pb2 import (
     ShareTopologyRequest,
@@ -56,7 +51,7 @@ class PrepareTools:
 
     def share_topology(self, bodies: List["Body"], tol: Real = 0.0, p_instances: bool = False) -> bool:
         """Apply ShareTopology to the chosen bodies.
-        
+
         Parameters
         ----------
         bodies : List[Body]
