@@ -26,22 +26,19 @@ from ansys.api.geometry.v0.preparetools_pb2 import (
     ShareTopologyResponse,
 )
 from ansys.api.geometry.v0.bodies_pb2 import (
-    GetType,
     GetRequest,
+    GetType,
 )
 from ansys.api.geometry.v0.preparetools_pb2_grpc import PrepareToolsStub
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
-from beartype.typing import TYPE_CHECKING, List
-from google.protobuf.wrappers_pb2 import DoubleValue, BoolValue
-from ansys.api.geometry.v0.models_pb2 import Body as GRPCBody
-from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.misc.auxiliary import (
-    get_bodies_from_ids,
-    get_design_from_body,
-    get_edges_from_ids,
-    get_faces_from_ids,
+from ansys.api.geometry.v0.preparetools_pb2 import (
+    ShareTopologyRequest,
 )
+from ansys.api.geometry.v0.preparetools_pb2_grpc import PrepareToolsStub
+from beartype.typing import TYPE_CHECKING, List
+from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 
+from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -56,7 +53,7 @@ class PrepareTools:
         self._grpc_client = grpc_client
         self._prepare_stub = PrepareToolsStub(self._grpc_client.channel)
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
-    
+
     def share_topology(self, bodies: List["Body"], tol: Real = 0.0, p_instances: bool = False) -> bool:
         """Apply ShareTopology to the chosen bodies.
         
@@ -82,11 +79,10 @@ class PrepareTools:
         bodies_value = [
             self._bodies_stub.Get(GetRequest(id=body.id, body_type=GetType.ORIGINAL)) for body in bodies
         ]
-        
+
         share_topo_response = self._prepare_stub.ShareTopology(
             ShareTopologyRequest(
                 selection=bodies_value, tolerance=tolerance_value, preserve_instances=preserve_instances_value
             )
         )
         return share_topo_response.result
-        
