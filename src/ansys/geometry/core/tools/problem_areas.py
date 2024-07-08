@@ -296,7 +296,7 @@ class ExtraEdgeProblemAreas(ProblemArea):
         return message
 
 class ShortEdgeProblemAreas(ProblemArea):
-    """Represents a short edge problem area with unique identifier and associated edges.
+    """Represents a short edge problem area with a unique identifier and associated edges.
 
     Parameters
     ----------
@@ -309,12 +309,12 @@ class ShortEdgeProblemAreas(ProblemArea):
     """
 
     def __init__(self, id: str, grpc_client: GrpcClient, edges: List["Edge"]):
-        """Initialize a new instance of the short edge problem area class."""
+        """Initialize a new instance of the ``ShortEdgeProblemAreas`` class."""
         super().__init__(id, grpc_client)
 
         from ansys.geometry.core.designer.edge import Edge
 
-        # Verify that all elements in the list are of type Edge
+        # Verify that all elements in the list are edges
         check_type_all_elements_in_iterable(edges, Edge)
 
         self._edges = edges
@@ -349,7 +349,7 @@ class ShortEdgeProblemAreas(ProblemArea):
         return message
 
 class SmallFaceProblemAreas(ProblemArea):
-    """Represents a small face problem area with unique identifier and associated faces.
+    """Represents a small face problem area with a unique identifier and associated faces.
 
     Parameters
     ----------

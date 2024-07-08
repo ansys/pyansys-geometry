@@ -44,7 +44,7 @@ class PrepareTools:
     """Prepare tools for PyAnsys Geometry."""
 
     def __init__(self, grpc_client: GrpcClient):
-        """Initialize Prepare Tools class."""
+        """Initialize ``PrepareTools`` class."""
         self._grpc_client = grpc_client
         self._prepare_stub = PrepareToolsStub(self._grpc_client.channel)
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
@@ -57,14 +57,14 @@ class PrepareTools:
         bodies : List[Body]
             List of bodies to apply ShareTopology to.
         tol : Real
-            The maximum distance between bodies.
+            Maximum distance between bodies.
         p_instances : bool
-            Controls whether instances are preserved.
+            Whether instances are preserved.
 
         Returns
         -------
         bool
-            Indicates success/failure of ShareTopology operation.
+            ``True`` if successful, ``False`` if failed.
         """
         if not bodies:
             return False

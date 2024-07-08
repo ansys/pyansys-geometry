@@ -63,7 +63,7 @@ class RepairTools:
     """Repair tools for PyAnsys Geometry."""
 
     def __init__(self, grpc_client: GrpcClient):
-        """Initialize Repair Tools class."""
+        """Initialize a new instance of the ``RepairTools`` class."""
         self._grpc_client = grpc_client
         self._repair_stub = RepairToolsStub(self._grpc_client.channel)
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
@@ -187,12 +187,12 @@ class RepairTools:
         """Find the short edge problem areas.
 
         This method finds the short edge problem areas and returns a list of
-        short edge problem areas objects.
+        these objects.
 
         Parameters
         ----------
         bodies : List[Body]
-            List of bodies that short edge are investigated on.
+            List of bodies that short edges are investigated on.
 
         Returns
         -------
