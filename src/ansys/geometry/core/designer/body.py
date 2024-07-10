@@ -115,7 +115,6 @@ class FillStyle(Enum):
     TRANSPARENT = 2
 
 
-
 class IBody(ABC):
     """Defines the common methods for a body, providing the abstract body interface.
 
@@ -667,7 +666,7 @@ class MasterBody(IBody):
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._tessellation = None
-        self._fill_type = FillStyle.DEFAULT
+        self._fill_style = FillStyle.DEFAULT
 
     def reset_tessellation_cache(func): # noqa: N805
         """Decorate ``MasterBody`` methods that need tessellation cache update.
@@ -704,8 +703,8 @@ class MasterBody(IBody):
         return self._name
 
     @property
-    def fill_type(self) -> str:  # noqa: D102
-        return self._fill_type
+    def fill_style(self) -> str:  # noqa: D102
+        return self._fill_style
 
     @name.setter
     def name(self, value: str):
@@ -888,14 +887,13 @@ class MasterBody(IBody):
         self, name: str
     ) -> None:
         self._grpc_client.log.debug(f"Translating body {self.id}.")
-
+        self.name = name
         self._bodies_stub.SetName(
             SetNameRequest(
                 body_id=self.id,
                 name=name,
             )
     )
-
 
     @protect_grpc
     @check_input_types
@@ -1129,8 +1127,8 @@ class Body(IBody):
         self._template.name = value
 
     @property
-    def fill_type(self) -> str:  # noqa: D102
-        return self._template.fill_type
+    def fill_style(self) -> str:  # noqa: D102
+        return self._template.fill_style
 
     @property
     def parent_component(self) -> "Component":  # noqa: D102
@@ -1368,8 +1366,8 @@ class Body(IBody):
         return self._template.set_name(name)
 
     @ensure_design_is_active
-    def set_fill_type(self, fill_type: FillStyle) -> None: # noqa: D102
-        return self._template.set_fill_type(fill_type)
+    def set_fill_style(self, fill_style: FillStyle) -> None: # noqa: D102
+        return self._template.set_fill_style(fill_style)
 
     @ensure_design_is_active
     def translate(  # noqa: D102
