@@ -667,7 +667,7 @@ class MasterBody(IBody):
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._tessellation = None
-        self._fill_type = FillStyle.OPAQUE
+        self._fill_type = FillStyle.DEFAULT
 
     def reset_tessellation_cache(func): # noqa: N805
         """Decorate ``MasterBody`` methods that need tessellation cache update.
@@ -1397,9 +1397,6 @@ class Body(IBody):
     @ensure_design_is_active
     def mirror(self, plane: Plane) -> None:  # noqa: D102
         return self._template.mirror(plane)
-
-    @ensure_design_is_active
-    # A get setter for fill style enum
 
     @ensure_design_is_active
     def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
