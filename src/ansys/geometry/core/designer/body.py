@@ -34,6 +34,8 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     RotateRequest,
     ScaleRequest,
     SetAssignedMaterialRequest,
+    SetFillStyleRequest,
+    SetNameRequest,
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
@@ -102,6 +104,16 @@ class CollisionType(Enum):
     INTERSECT = 2
     CONTAINED = 3
     CONTAINEDTOUCH = 4
+
+
+@unique
+class FillStyle(Enum):
+    """Provides values for fill styles supported."""
+
+    DEFAULT = 0
+    OPAQUE = 1
+    TRANSPARENT = 2
+
 
 
 class IBody(ABC):
@@ -655,6 +667,7 @@ class MasterBody(IBody):
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._tessellation = None
+        self._fill_type = FillStyle.OPAQUE
 
     def reset_tessellation_cache(func): # noqa: N805
         """Decorate ``MasterBody`` methods that need tessellation cache update.
@@ -689,6 +702,16 @@ class MasterBody(IBody):
     @property
     def name(self) -> str:  # noqa: D102
         return self._name
+
+    @property
+    def fill_type(self) -> str:  # noqa: D102
+        return self._fill_type
+
+    @name.setter
+    def name(self, value: str):
+        if not isinstance(value, str):
+            raise ValueError("name must be a string")
+        self._name = value
 
     @property
     def is_surface(self) -> bool:  # noqa: D102
@@ -857,6 +880,39 @@ class MasterBody(IBody):
                 distance=translation_magnitude,
             )
         )
+
+    @protect_grpc
+    @check_input_types
+    @reset_tessellation_cache
+    def set_name(  # noqa: D102
+        self, name: str
+    ) -> None:
+        self._grpc_client.log.debug(f"Translating body {self.id}.")
+
+        self._bodies_stub.SetName(
+            SetNameRequest(
+                body_id=self.id,
+                name=name,
+            )
+    )
+
+
+    @protect_grpc
+    @check_input_types
+    @reset_tessellation_cache
+    def set_fill_style(  # noqa: D102
+        self, fill_style: FillStyle
+    ) -> None:
+
+        self._grpc_client.log.debug(f"Set body fill style{self.id}.")
+
+        self._bodies_stub.SetFillStyle(
+            SetFillStyleRequest(
+                id=self.id,
+                fill_style=fill_style.value,
+            )
+        )
+
 
     @protect_grpc
     @check_input_types
@@ -1065,6 +1121,16 @@ class Body(IBody):
     @property
     def name(self) -> str:  # noqa: D102
         return self._template.name
+
+    @name.setter
+    def name(self, value: str):
+        if not isinstance(value, str):
+            raise ValueError("name must be a string")
+        self._template.name = value
+
+    @property
+    def fill_type(self) -> str:  # noqa: D102
+        return self._template.fill_type
 
     @property
     def parent_component(self) -> "Component":  # noqa: D102
@@ -1298,6 +1364,14 @@ class Body(IBody):
         return imprinted_faces
 
     @ensure_design_is_active
+    def set_name(self, name: str) -> None:  # noqa: D102
+        return self._template.set_name(name)
+
+    @ensure_design_is_active
+    def set_fill_type(self, fill_type: FillStyle) -> None: # noqa: D102
+        return self._template.set_fill_type(fill_type)
+
+    @ensure_design_is_active
     def translate(  # noqa: D102
         self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
     ) -> None:
@@ -1323,6 +1397,9 @@ class Body(IBody):
     @ensure_design_is_active
     def mirror(self, plane: Plane) -> None:  # noqa: D102
         return self._template.mirror(plane)
+
+    @ensure_design_is_active
+    # A get setter for fill style enum
 
     @ensure_design_is_active
     def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
