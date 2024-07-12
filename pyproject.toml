@@ -83,7 +83,7 @@ doc = [
     "docker==7.1.0",
     "ipyvtklink==0.2.3",
     "jupyter_sphinx==0.5.3",
-    "jupytext==1.16.2",
+    "jupytext==1.16.3",
     "myst-parser==3.0.1",
     "nbconvert==7.16.4",
     "nbsphinx==0.9.4",
