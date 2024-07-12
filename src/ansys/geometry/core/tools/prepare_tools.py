@@ -21,25 +21,19 @@
 # SOFTWARE.
 """Provides tools for preparing geometry for use with simulationjj."""
 
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.preparetools_pb2 import (
-    ExtractVolumeFromFacesRequest,
     ExtractVolumeFromEdgeLoopsRequest,
+    ExtractVolumeFromFacesRequest,
 )
-
 from ansys.api.geometry.v0.preparetools_pb2_grpc import PrepareToolsStub
 from beartype.typing import TYPE_CHECKING, List
-from google.protobuf.wrappers_pb2 import DoubleValue
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
     get_design_from_body,
-    get_edges_from_ids,
-    get_faces_from_ids,
 )
-
-from ansys.geometry.core.typing import Real
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier, PartExportFormat
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -56,7 +50,7 @@ class PrepareTools:
         self._prepare_stub = PrepareToolsStub(self._grpc_client.channel)
 
     def extract_volume_from_faces(
-        self, sealing_faces: List["Face"],  inside_faces: List["Face"] 
+        self, sealing_faces: List["Face"],  inside_faces: List["Face"]
     ) -> List["Body"]:
         """Extracts a volume from input faces.
 
@@ -83,7 +77,7 @@ class PrepareTools:
 
         sealing_faces_ids = [EntityIdentifier(id = face.id) for face in sealing_faces]
         inside_faces_ids = [EntityIdentifier(id = face.id) for face in inside_faces]
-        
+
 
         volume_extract_response = self._prepare_stub.ExtractVolumeFromFaces(ExtractVolumeFromFacesRequest(
                 sealing_faces=sealing_faces_ids, inside_faces=inside_faces_ids)
@@ -93,7 +87,7 @@ class PrepareTools:
         return get_bodies_from_ids(parent_design, bodies_ids)
 
     def extract_volume_from_edge_loops(
-        self, sealing_edges: List["Edge"],  inside_faces: List["Face"] 
+        self, sealing_edges: List["Edge"],  inside_faces: List["Face"]
     ) -> List["Body"]:
         """Extracts a volume from input edge loops.
 
@@ -120,13 +114,13 @@ class PrepareTools:
 
         sealing_edges_ids = [EntityIdentifier(id = face.id) for face in sealing_edges]
         inside_faces_ids = [EntityIdentifier(id = face.id) for face in inside_faces]
-        
+
 
         volume_extract_response = self._prepare_stub.ExtractVolumeFromEdgeLoops(ExtractVolumeFromEdgeLoopsRequest(
                 sealing_edges=sealing_edges_ids, inside_faces=inside_faces_ids)
             )
 
         bodies_ids = [created_body.id for created_body in volume_extract_response.created_bodies]
-        return get_bodies_from_ids(parent_design, bodies_ids)        
+        return get_bodies_from_ids(parent_design, bodies_ids)
 
 
