@@ -37,8 +37,8 @@ from ansys.geometry.core.misc.auxiliary import (
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
+    from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
-
 
 class PrepareTools:
     """Prepare tools for PyAnsys Geometry."""
@@ -46,15 +46,14 @@ class PrepareTools:
     def __init__(self, grpc_client: GrpcClient):
         """Initialize Prepare Tools class."""
         self._grpc_client = grpc_client
-        #self._repair_stub = RepairToolsStub(self._grpc_client.channel)
         self._prepare_stub = PrepareToolsStub(self._grpc_client.channel)
 
     def extract_volume_from_faces(
         self, sealing_faces: List["Face"],  inside_faces: List["Face"]
     ) -> List["Body"]:
-        """Extracts a volume from input faces.
+        """Extract a volume from input faces.
 
-        This method creates a volume (typically a flow volume) from a list of faces that seal the volume
+        Creates a volume (typically a flow volume) from a list of faces that seal the volume
         and one or more faces that define the "wetted surface" (inside faces of the solid).
 
         Parameters
@@ -79,9 +78,11 @@ class PrepareTools:
         inside_faces_ids = [EntityIdentifier(id = face.id) for face in inside_faces]
 
 
-        volume_extract_response = self._prepare_stub.ExtractVolumeFromFaces(ExtractVolumeFromFacesRequest(
-                sealing_faces=sealing_faces_ids, inside_faces=inside_faces_ids)
-            )
+        volume_extract_response = self._prepare_stub.ExtractVolumeFromFaces
+        (ExtractVolumeFromFacesRequest(
+            sealing_faces=sealing_faces_ids,
+            inside_faces=inside_faces_ids)
+        )
 
         bodies_ids = [created_body.id for created_body in volume_extract_response.created_bodies]
         return get_bodies_from_ids(parent_design, bodies_ids)
@@ -89,9 +90,9 @@ class PrepareTools:
     def extract_volume_from_edge_loops(
         self, sealing_edges: List["Edge"],  inside_faces: List["Face"]
     ) -> List["Body"]:
-        """Extracts a volume from input edge loops.
+        """Extract a volume from input edge loops.
 
-        This method creates a volume (typically a flow volume) from a list of edge loops that seal the volume.
+        Creates a volume (typically a flow volume) from a list of edge loops that seal the volume.
         and one or more faces that define the "wetted surface" (inside faces of the solid).
 
         Parameters
@@ -116,9 +117,11 @@ class PrepareTools:
         inside_faces_ids = [EntityIdentifier(id = face.id) for face in inside_faces]
 
 
-        volume_extract_response = self._prepare_stub.ExtractVolumeFromEdgeLoops(ExtractVolumeFromEdgeLoopsRequest(
-                sealing_edges=sealing_edges_ids, inside_faces=inside_faces_ids)
-            )
+        volume_extract_response = self._prepare_stub.ExtractVolumeFromEdgeLoops
+        (ExtractVolumeFromEdgeLoopsRequest(
+            sealing_edges=sealing_edges_ids,
+            inside_faces=inside_faces_ids)
+        )
 
         bodies_ids = [created_body.id for created_body in volume_extract_response.created_bodies]
         return get_bodies_from_ids(parent_design, bodies_ids)
