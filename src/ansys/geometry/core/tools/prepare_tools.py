@@ -85,6 +85,8 @@ class PrepareTools:
         )
 
         bodies_ids = [created_body.id for created_body in volume_extract_response.created_bodies]
+        if (len (bodies_ids) > 0):
+            parent_design._update_design_inplace()
         return get_bodies_from_ids(parent_design, bodies_ids)
 
     def extract_volume_from_edge_loops(
@@ -124,6 +126,8 @@ class PrepareTools:
         )
 
         bodies_ids = [created_body.id for created_body in volume_extract_response.created_bodies]
+        if (len (bodies_ids) > 0):
+            parent_design._update_design_inplace()
         return get_bodies_from_ids(parent_design, bodies_ids)
 
 
