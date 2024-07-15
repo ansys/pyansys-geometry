@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Provides tools for preparing geometry for use with simulationjj."""
+"""Provides tools for preparing geometry for use with simulation."""
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.preparetools_pb2 import (
@@ -54,7 +54,7 @@ class PrepareTools:
         """Extract a volume from input faces.
 
         Creates a volume (typically a flow volume) from a list of faces that seal the volume
-        and one or more faces that define the "wetted surface" (inside faces of the solid).
+        and one or more faces that define the wetted surface (inside faces of the solid).
 
         Parameters
         ----------
@@ -93,7 +93,7 @@ class PrepareTools:
         """Extract a volume from input edge loops.
 
         Creates a volume (typically a flow volume) from a list of edge loops that seal the volume.
-        and one or more faces that define the "wetted surface" (inside faces of the solid).
+        and one or more faces that define the wetted surface (inside faces of the solid).
 
         Parameters
         ----------
