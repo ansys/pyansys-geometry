@@ -326,7 +326,8 @@ class Arc(SketchEdge):
         k2 = (x_s**2 + y_s**2) - (x_e**2 + y_e**2)
 
         x_c, y_c = np.linalg.solve([[k11, k12], [k21, k22]], [k1, k2])
-        center = Point2D([x_c, y_c], unit=DEFAULT_UNITS.LENGTH)
+        center = Point2D([x_c, y_c], unit=UNITS.meter)
+        center.unit = DEFAULT_UNITS.LENGTH
 
         # Now, you should try to figure out if the rotation has to be clockwise or
         # counter-clockwise...
@@ -384,9 +385,9 @@ class Arc(SketchEdge):
             raise ValueError("Radius must be a real positive value.")
 
         # Unpack the points into its coordinates (in DEFAULT_UNITS.LENGTH)
-        x_s, y_s = start.tolist()
-        x_e, y_e = end.tolist()
-        r0 = r1 = radius.value.m_as(DEFAULT_UNITS.LENGTH)
+        x_s, y_s = start.tolist() # Always in meters
+        x_e, y_e = end.tolist() # Always in meters
+        r0 = r1 = radius.value.m_as(UNITS.meter) # Convert to meters as well
 
         # Compute the potential centers of the circle
         centers = get_two_circle_intersections(x0=x_s, y0=y_s, r0=r0, x1=x_e, y1=y_e, r1=r1)
@@ -394,7 +395,8 @@ class Arc(SketchEdge):
             raise ValueError("The provided points and radius do not yield a valid arc.")
 
         # Choose the center depending on if the arc is convex
-        center = Point2D(centers[1] if convex_arc else centers[0])
+        center = Point2D(centers[1] if convex_arc else centers[0], unit=UNITS.meter)
+        center.unit = DEFAULT_UNITS.LENGTH
 
         # Create the arc
         return Arc(start=start, end=end, center=center, clockwise=clockwise)
