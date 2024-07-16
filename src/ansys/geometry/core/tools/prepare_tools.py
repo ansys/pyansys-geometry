@@ -21,11 +21,7 @@
 # SOFTWARE.
 """Provides tools for preparing bodies."""
 
-from ansys.api.geometry.v0.bodies_pb2 import (
-    GetRequest,
-    GetType,
-)
-from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
+from ansys.api.geometry.v0.models_pb2 import Body as GRPCBody
 from ansys.api.geometry.v0.preparetools_pb2 import (
     ShareTopologyRequest,
 )
@@ -47,7 +43,6 @@ class PrepareTools:
         """Initialize ``PrepareTools`` class."""
         self._grpc_client = grpc_client
         self._prepare_stub = PrepareToolsStub(self._grpc_client.channel)
-        self._bodies_stub = BodiesStub(self._grpc_client.channel)
 
     def share_topology(
         self, bodies: List["Body"], tol: Real = 0.0, preserve_instances: bool = False
@@ -71,18 +66,11 @@ class PrepareTools:
         if not bodies:
             return False
 
-        tolerance_value = DoubleValue(value=float(tol))
-        preserve_instances_value = BoolValue(value=preserve_instances)
-        bodies_value = [
-            self._bodies_stub.Get(
-                GetRequest(id=body.id, body_type=GetType.ORIGINAL)
-            ) for body in bodies
-        ]
-
         share_topo_response = self._prepare_stub.ShareTopology(
             ShareTopologyRequest(
-                selection=bodies_value, tolerance=tolerance_value,
-                preserve_instances=preserve_instances_value
+                selection=[GRPCBody(id=body.id) for body in bodies],
+                tolerance=DoubleValue(value=tol),
+                preserve_instances=BoolValue(value=preserve_instances),
             )
         )
         return share_topo_response.result
