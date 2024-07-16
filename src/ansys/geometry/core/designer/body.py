@@ -733,7 +733,7 @@ class MasterBody(IBody):
     @name.setter
     def name(self, value: str):
         if not isinstance(value, str):
-            raise ValueError("name must be a string")
+            raise ValueError("Name must be a string.")
         self._name = value
 
     @property
