@@ -561,19 +561,22 @@ class IBody(ABC):
         """
         return
 
-    def intersect(self, other: Union["Body", Iterable["Body"]]) -> None:
+    def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:
         """Intersect two (or more) bodies.
 
         Notes
         -----
         The ``self`` parameter is directly modified with the result, and
         the ``other`` parameter is consumed. Thus, it is important to make
-        copies if needed.
+        copies if needed. If the ``keep_other`` parameter is set to ``True``,
+        the intersected body is retained.
 
         Parameters
         ----------
         other : Body
             Body to intersect with.
+        keep_other : bool, default: False
+            Whether to retain the intersected body or not.
 
         Raises
         ------
@@ -583,19 +586,22 @@ class IBody(ABC):
         return
 
     @protect_grpc
-    def subtract(self, other: Union["Body", Iterable["Body"]]) -> None:
+    def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:
         """Subtract two (or more) bodies.
 
         Notes
         -----
         The ``self`` parameter is directly modified with the result, and
         the ``other`` parameter is consumed. Thus, it is important to make
-        copies if needed.
+        copies if needed. If the ``keep_other`` parameter is set to ``True``,
+        the subtracted body is retained.
 
         Parameters
         ----------
         other : Body
             Body to subtract from the ``self`` parameter.
+        keep_other : bool, default: False
+            Whether to retain the subtracted body or not.
 
         Raises
         ------
@@ -605,19 +611,22 @@ class IBody(ABC):
         return
 
     @protect_grpc
-    def unite(self, other: Union["Body", Iterable["Body"]]) -> None:
+    def unite(self, other: Union["Body", Iterable["Body"]], keep_other : bool = False) -> None:
         """Unite two (or more) bodies.
 
         Notes
         -----
         The ``self`` parameter is directly modified with the result, and
         the ``other`` parameter is consumed. Thus, it is important to make
-        copies if needed.
+        copies if needed. If the ``keep_other`` parameter is set to ``True``,
+        the united body is retained.
 
         Parameters
         ----------
         other : Body
             Body to unite with the ``self`` parameter.
+        keep_other : bool, default: False
+            Whether to retain the united body or not.
         """
         return
 
@@ -1037,17 +1046,17 @@ class MasterBody(IBody):
             "MasterBody does not implement plot methods. Call this method on a body instead."
         )
 
-    def intersect(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
+    def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         raise NotImplementedError(
             "MasterBody does not implement Boolean methods. Call this method on a body instead."
         )
 
-    def subtract(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
+    def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         raise NotImplementedError(
             "MasterBody does not implement Boolean methods. Call this method on a body instead."
         )
 
-    def unite(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
+    def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         raise NotImplementedError(
             "MasterBody does not implement Boolean methods. Call this method on a body instead."
         )
@@ -1432,14 +1441,14 @@ class Body(IBody):
         pl.plot(meshobject, **plotting_options)
         pl.show(screenshot=screenshot, **plotting_options)
 
-    def intersect(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
-        self.__generic_boolean_op(other, "intersect", "bodies do not intersect")
+    def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
+        self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
 
-    def subtract(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
-        self.__generic_boolean_op(other, "subtract", "empty (complete) subtraction")
+    def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
+        self.__generic_boolean_op(other, keep_other,"subtract", "empty (complete) subtraction")
 
-    def unite(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
-        self.__generic_boolean_op(other, "unite", "union operation failed")
+    def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
+        self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
 
     @protect_grpc
     @reset_tessellation_cache
@@ -1448,10 +1457,16 @@ class Body(IBody):
     def __generic_boolean_op(
         self,
         other: Union["Body", Iterable["Body"]],
+        keep_other: bool,
         type_bool_op: str,
         err_bool_op: str,
     ) -> None:
         grpc_other = other if isinstance(other, Iterable) else [other]
+        if keep_other:
+            # Make a copy of the other body to keep it...
+            # stored temporarily in the parent component - since it will be deleted
+            grpc_other = [b.copy(self.parent_component, f"BoolOpCopy_{b.name}") for b in grpc_other]
+
         try:
             response = self._template._bodies_stub.Boolean(
                 BooleanRequest(
