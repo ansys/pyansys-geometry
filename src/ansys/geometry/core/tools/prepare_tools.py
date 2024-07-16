@@ -27,14 +27,17 @@ from ansys.api.geometry.v0.preparetools_pb2 import (
     ExtractVolumeFromFacesRequest,
 )
 from ansys.api.geometry.v0.preparetools_pb2_grpc import PrepareToolsStub
+from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List
 
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
     get_design_from_edge,
     get_design_from_face,
 )
+from ansys.geometry.core.misc.checks import min_backend_version
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -47,7 +50,7 @@ class PrepareTools:
     Parameters
     ----------
     grpc_client : GrpcClient
-        The gRPC client to use for the connection.
+        Active supporting geometry service instance for design modeling.
     """
 
     def __init__(self, grpc_client: GrpcClient):
@@ -55,6 +58,9 @@ class PrepareTools:
         self._grpc_client = grpc_client
         self._prepare_stub = PrepareToolsStub(self._grpc_client.channel)
 
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 1, 0)
     def extract_volume_from_faces(
         self, sealing_faces: List["Face"], inside_faces: List["Face"]
     ) -> List["Body"]:
@@ -97,6 +103,9 @@ class PrepareTools:
             self._grpc_client.log.info("Failed to extract volume from faces...")
             return []
 
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 1, 0)
     def extract_volume_from_edge_loops(
         self, sealing_edges: List["Edge"], inside_faces: List["Face"]
     ) -> List["Body"]:
