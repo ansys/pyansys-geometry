@@ -27,13 +27,17 @@ from ansys.api.geometry.v0.preparetools_pb2 import (
     ExtractVolumeFromFacesRequest,
 )
 from ansys.api.geometry.v0.preparetools_pb2_grpc import PrepareToolsStub
+from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List
 
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
-    get_design_from_body,
+    get_design_from_edge,
+    get_design_from_face,
 )
+from ansys.geometry.core.misc.checks import min_backend_version
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -41,13 +45,22 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.face import Face
 
 class PrepareTools:
-    """Prepare tools for PyAnsys Geometry."""
+    """Prepare tools for PyAnsys Geometry.
+
+    Parameters
+    ----------
+    grpc_client : GrpcClient
+        Active supporting geometry service instance for design modeling.
+    """
 
     def __init__(self, grpc_client: GrpcClient):
         """Initialize Prepare Tools class."""
         self._grpc_client = grpc_client
         self._prepare_stub = PrepareToolsStub(self._grpc_client.channel)
 
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 1, 0)
     def extract_volume_from_faces(
         self, sealing_faces: List["Face"],  inside_faces: List["Face"]
     ) -> List["Body"]:
@@ -71,8 +84,7 @@ class PrepareTools:
         if not sealing_faces or not inside_faces:
             return []
 
-        parent_body = sealing_faces[0].body
-        parent_design = get_design_from_body(parent_body)
+        parent_design = get_design_from_face(sealing_faces[0])
 
         sealing_faces_ids = [EntityIdentifier(id = face.id) for face in sealing_faces]
         inside_faces_ids = [EntityIdentifier(id = face.id) for face in inside_faces]
@@ -89,6 +101,9 @@ class PrepareTools:
             parent_design._update_design_inplace()
         return get_bodies_from_ids(parent_design, bodies_ids)
 
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 1, 0)
     def extract_volume_from_edge_loops(
         self, sealing_edges: List["Edge"],  inside_faces: List["Face"]
     ) -> List["Body"]:
@@ -112,8 +127,7 @@ class PrepareTools:
         if not sealing_edges:
             return []
 
-        parent_body = sealing_edges[0].faces[0].body
-        parent_design = get_design_from_body(parent_body)
+        parent_design = get_design_from_edge(sealing_edges[0])
 
         sealing_edges_ids = [EntityIdentifier(id = face.id) for face in sealing_edges]
         inside_faces_ids = [EntityIdentifier(id = face.id) for face in inside_faces]
@@ -129,5 +143,4 @@ class PrepareTools:
         if (len (bodies_ids) > 0):
             parent_design._update_design_inplace()
         return get_bodies_from_ids(parent_design, bodies_ids)
-
 
