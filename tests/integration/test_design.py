@@ -1805,6 +1805,44 @@ def test_multiple_bodies_boolean_operations(modeler: Modeler):
     assert len(comp1.bodies) == 1
     assert len(comp3.bodies) == 1
 
+def test_bool_operations_with_keep_other(modeler: Modeler):
+    """Test boolean operations with keep other option."""
+    # Create the design and bodies
+    design = modeler.create_design("TestBooleanOperationsWithKeepOther")
+
+    comp1 = design.add_component("Comp1")
+    comp2 = design.add_component("Comp2")
+    comp3 = design.add_component("Comp3")
+
+    body1 = comp1.extrude_sketch("Body1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    body2 = comp2.extrude_sketch("Body2", Sketch().box(Point2D([0.5, 0]), 1, 1), 1)
+    body3 = comp3.extrude_sketch("Body3", Sketch().box(Point2D([5, 0]), 1, 1), 1)
+    
+    # ---- Verify subtract operation ----
+    body1.subtract([body2, body3], keep_other=True)
+
+    assert body2.is_alive
+    assert body3.is_alive
+    assert len(comp1.bodies) == 1
+    assert len(comp2.bodies) == 1
+    assert len(comp3.bodies) == 1
+
+    # ---- Verify unite operation ----
+    body1.unite([body2, body3], keep_other=True)
+
+    assert body2.is_alive
+    assert body3.is_alive
+    assert len(comp1.bodies) == 1
+    assert len(comp2.bodies) == 1
+    assert len(comp3.bodies) == 1
+
+    # ---- Verify intersect operation ----
+    body1.intersect(body2, keep_other=True)
+
+    assert body2.is_alive
+    assert len(comp1.bodies) == 1
+    assert len(comp2.bodies) == 1
+    assert len(comp3.bodies) == 1
 
 def test_child_component_instances(modeler: Modeler):
     """Test creation of child ``Component`` instances and check the data model
