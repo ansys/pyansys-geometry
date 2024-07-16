@@ -23,8 +23,10 @@
 
 from pathlib import Path
 
+import numpy as np
+
 from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Y, Plane, Point2D, Point3D
-from ansys.geometry.core.misc import Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
 
@@ -96,3 +98,29 @@ def test_issue_1184_sphere_creation_crashes(modeler: Modeler):
     assert len(design.bodies) == 2
     assert design.bodies[0].name == box.name
     assert design.bodies[1].name == sphere_body.name
+
+def test_issue_1304_arc_sketch_creation():
+    """Test that creating an arc sketch does not crash the program.
+
+    For more info see
+    https://github.com/ansys/pyansys-geometry/issues/1304
+    """
+
+    try:
+        # Change the default units to mm
+        DEFAULT_UNITS.LENGTH = UNITS.mm
+
+        # Draw the sketch
+        sketch = Sketch()
+        p_start, p_end, p_radius = Point2D([0, 0]), Point2D([4.7, 4.7]), Distance(4.7)
+        sketch.arc_from_start_end_and_radius(start=p_start, end=p_end, radius=p_radius, clockwise=False)
+
+        # Perform some assertions
+        assert len(sketch.edges) == 1
+        assert sketch.edges[0].start == p_start
+        assert sketch.edges[0].end == p_end
+        # 3/4 * 2piR --> piR 3 / 2 (3/4 of the circumference)
+        assert np.isclose(sketch.edges[0].length, (np.pi * p_radius.value * 1.5))
+    finally:
+        # Reverse the default units to meter
+        DEFAULT_UNITS.LENGTH = UNITS.meter
