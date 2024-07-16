@@ -160,7 +160,7 @@ def test_issue_1192_temp_body_on_empty_intersect(modeler: Modeler):
     matrix_copy = matrix.copy(design)
     try:
         fibre.intersect(matrix_copy)
-    except:
+    except Exception:
         design.delete_body(matrix_copy)
 
     # No intersection took place... so no body should be created
