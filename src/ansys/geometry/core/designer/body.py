@@ -133,6 +133,21 @@ class IBody(ABC):
         return
 
     @abstractmethod
+    def set_name(self, str) -> None:
+        """Set the name of the body."""
+        return
+
+    @abstractmethod
+    def fill_style(self) -> FillStyle:
+        """Get the fill style of the body."""
+        return
+
+    @abstractmethod
+    def set_fill_style(self, fill_style: FillStyle) -> None:
+        """Set the fill style of the body."""
+        return
+
+    @abstractmethod
     def faces(self) -> List[Face]:
         """Get a list of all faces within the body.
 
