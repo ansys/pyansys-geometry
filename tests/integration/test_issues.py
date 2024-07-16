@@ -113,7 +113,12 @@ def test_issue_1304_arc_sketch_creation():
         # Draw the sketch
         sketch = Sketch()
         p_start, p_end, p_radius = Point2D([0, 0]), Point2D([4.7, 4.7]), Distance(4.7)
-        sketch.arc_from_start_end_and_radius(start=p_start, end=p_end, radius=p_radius, clockwise=False)
+        sketch.arc_from_start_end_and_radius(
+            start=p_start,
+            end=p_end,
+            radius=p_radius,
+            clockwise=False,
+        )
 
         # Perform some assertions
         assert len(sketch.edges) == 1
