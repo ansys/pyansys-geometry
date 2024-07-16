@@ -71,8 +71,7 @@ class PrepareTools:
         if not sealing_faces or not inside_faces:
             return []
 
-        parent_body = sealing_faces[0].body
-        parent_design = get_design_from_body(parent_body)
+        parent_design = get_design_from_body(sealing_faces[0].body)
 
         sealing_faces_ids = [EntityIdentifier(id = face.id) for face in sealing_faces]
         inside_faces_ids = [EntityIdentifier(id = face.id) for face in inside_faces]
