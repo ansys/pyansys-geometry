@@ -912,10 +912,10 @@ class MasterBody(IBody):
     ) -> None:
 
         self._grpc_client.log.debug(f"Set body fill style{self.id}.")
-
+        self._fill_style = fill_style
         self._bodies_stub.SetFillStyle(
             SetFillStyleRequest(
-                id=self.id,
+                body_id=self.id,
                 fill_style=fill_style.value,
             )
         )
