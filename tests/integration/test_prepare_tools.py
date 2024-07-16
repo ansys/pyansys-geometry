@@ -32,12 +32,12 @@ def test_volume_extract_from_faces(modeler: Modeler):
     skip_if_linux(
         modeler, test_volume_extract_from_faces.__name__, "prepare_tools")  #Skip test on Linux
     design = modeler.open_file(FILES_DIR / "hollowCylinder.scdocx")
+
     body = design.bodies[0]
     inside_faces = [body.faces[0]]
     sealing_faces = [body.faces[1], body.faces[2]]
-    created_bodies = modeler.prepare_tools.extract_volume_from_faces(
-        sealing_faces, inside_faces
-        )
+    created_bodies = modeler.prepare_tools.extract_volume_from_faces(sealing_faces, inside_faces)
+
     assert len(created_bodies) == 1
 
 def test_volume_extract_from_edge_loops(modeler: Modeler):
@@ -45,10 +45,13 @@ def test_volume_extract_from_edge_loops(modeler: Modeler):
     skip_if_linux(
         modeler, test_volume_extract_from_edge_loops.__name__, "prepare_tools")  #Skip test on Linux
     design = modeler.open_file(FILES_DIR / "hollowCylinder.scdocx")
+
     body = design.bodies[0]
     inside_faces = []
     sealing_edges = [body.edges[2], body.edges[3]]
     created_bodies = modeler.prepare_tools.extract_volume_from_edge_loops(
-        sealing_edges, inside_faces
-        )
+        sealing_edges,
+        inside_faces,
+    )
+
     assert len(created_bodies) == 1

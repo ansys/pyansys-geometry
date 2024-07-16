@@ -32,7 +32,8 @@ from beartype.typing import TYPE_CHECKING, List
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
-    get_design_from_body,
+    get_design_from_edge,
+    get_design_from_face,
 )
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -41,7 +42,13 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.face import Face
 
 class PrepareTools:
-    """Prepare tools for PyAnsys Geometry."""
+    """Prepare tools for PyAnsys Geometry.
+
+    Parameters
+    ----------
+    grpc_client : GrpcClient
+        The gRPC client to use for the connection.
+    """
 
     def __init__(self, grpc_client: GrpcClient):
         """Initialize Prepare Tools class."""
@@ -49,7 +56,7 @@ class PrepareTools:
         self._prepare_stub = PrepareToolsStub(self._grpc_client.channel)
 
     def extract_volume_from_faces(
-        self, sealing_faces: List["Face"],  inside_faces: List["Face"]
+        self, sealing_faces: List["Face"], inside_faces: List["Face"]
     ) -> List["Body"]:
         """Extract a volume from input faces.
 
@@ -69,27 +76,29 @@ class PrepareTools:
             List of created bodies.
         """
         if not sealing_faces or not inside_faces:
+            self._grpc_client.log.info("No sealing faces or inside faces provided...")
             return []
 
-        parent_design = get_design_from_body(sealing_faces[0].body)
+        parent_design = get_design_from_face(sealing_faces[0])
 
-        sealing_faces_ids = [EntityIdentifier(id = face.id) for face in sealing_faces]
-        inside_faces_ids = [EntityIdentifier(id = face.id) for face in inside_faces]
-
-
-        volume_extract_response = self._prepare_stub.ExtractVolumeFromFaces
-        (ExtractVolumeFromFacesRequest(
-            sealing_faces=sealing_faces_ids,
-            inside_faces=inside_faces_ids)
+        response = self._prepare_stub.ExtractVolumeFromFaces(
+            ExtractVolumeFromFacesRequest(
+                sealing_faces=[EntityIdentifier(id = face.id) for face in sealing_faces],
+                inside_faces=[EntityIdentifier(id = face.id) for face in inside_faces],
+            )
         )
 
-        bodies_ids = [created_body.id for created_body in volume_extract_response.created_bodies]
-        if (len (bodies_ids) > 0):
-            parent_design._update_design_inplace()
-        return get_bodies_from_ids(parent_design, bodies_ids)
+        if response.success:
+            bodies_ids = [created_body.id for created_body in response.created_bodies]
+            if (len(bodies_ids) > 0):
+                parent_design._update_design_inplace()
+            return get_bodies_from_ids(parent_design, bodies_ids)
+        else:
+            self._grpc_client.log.info("Failed to extract volume from faces...")
+            return []
 
     def extract_volume_from_edge_loops(
-        self, sealing_edges: List["Edge"],  inside_faces: List["Face"]
+        self, sealing_edges: List["Edge"], inside_faces: List["Face"]
     ) -> List["Body"]:
         """Extract a volume from input edge loops.
 
@@ -109,23 +118,25 @@ class PrepareTools:
             List of created bodies.
         """
         if not sealing_edges:
+            self._grpc_client.log.info("No sealing edges provided...")
             return []
 
-        parent_design = get_design_from_body(sealing_edges[0].faces[0].body)
+        parent_design = get_design_from_edge(sealing_edges[0])
 
-        sealing_edges_ids = [EntityIdentifier(id = face.id) for face in sealing_edges]
-        inside_faces_ids = [EntityIdentifier(id = face.id) for face in inside_faces]
-
-
-        volume_extract_response = self._prepare_stub.ExtractVolumeFromEdgeLoops
-        (ExtractVolumeFromEdgeLoopsRequest(
-            sealing_edges=sealing_edges_ids,
-            inside_faces=inside_faces_ids)
+        response = self._prepare_stub.ExtractVolumeFromEdgeLoops(
+            ExtractVolumeFromEdgeLoopsRequest(
+                sealing_edges=[EntityIdentifier(id = face.id) for face in sealing_edges],
+                inside_faces=[EntityIdentifier(id = face.id) for face in inside_faces],
+            )
         )
 
-        bodies_ids = [created_body.id for created_body in volume_extract_response.created_bodies]
-        if (len (bodies_ids) > 0):
-            parent_design._update_design_inplace()
-        return get_bodies_from_ids(parent_design, bodies_ids)
+        if response.success:
+            bodies_ids = [created_body.id for created_body in response.created_bodies]
+            if (len(bodies_ids) > 0):
+                parent_design._update_design_inplace()
+            return get_bodies_from_ids(parent_design, bodies_ids)
+        else:
+            self._grpc_client.log.info("Failed to extract volume from edge loops...")
+            return []
 
 
