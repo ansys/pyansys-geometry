@@ -1817,7 +1817,7 @@ def test_bool_operations_with_keep_other(modeler: Modeler):
     body1 = comp1.extrude_sketch("Body1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     body2 = comp2.extrude_sketch("Body2", Sketch().box(Point2D([0.5, 0]), 1, 1), 1)
     body3 = comp3.extrude_sketch("Body3", Sketch().box(Point2D([5, 0]), 1, 1), 1)
-    
+
     # ---- Verify subtract operation ----
     body1.subtract([body2, body3], keep_other=True)
 
