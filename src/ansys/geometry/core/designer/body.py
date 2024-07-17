@@ -906,7 +906,7 @@ class MasterBody(IBody):
                 body_id=self.id,
                 name=name,
             )
-    )
+        )
 
     @protect_grpc
     @check_input_types
@@ -914,7 +914,6 @@ class MasterBody(IBody):
     def set_fill_style(  # noqa: D102
         self, fill_style: FillStyle
     ) -> None:
-
         self._grpc_client.log.debug(f"Set body fill style{self.id}.")
         self._fill_style = fill_style
         self._bodies_stub.SetFillStyle(
@@ -923,7 +922,6 @@ class MasterBody(IBody):
                 fill_style=fill_style.value,
             )
         )
-
 
     @protect_grpc
     @check_input_types
@@ -1361,7 +1359,7 @@ class Body(IBody):
         return self._template.set_name(name)
 
     @ensure_design_is_active
-    def set_fill_style(self, fill_style: FillStyle) -> None: # noqa: D102
+    def set_fill_style(self, fill_style: FillStyle) -> None:  # noqa: D102
         return self._template.set_fill_style(fill_style)
 
     @ensure_design_is_active

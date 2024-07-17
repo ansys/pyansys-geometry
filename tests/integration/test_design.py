@@ -1971,9 +1971,9 @@ def test_set_body_name(modeler: Modeler):
     design = modeler.create_design("simple_cube")
     unit = DEFAULT_UNITS.LENGTH
     plane = Plane(
-    Point3D([1 / 2, 1 / 2, 0.0], unit=unit),
-    UNITVECTOR3D_X,
-    UNITVECTOR3D_Y,
+        Point3D([1 / 2, 1 / 2, 0.0], unit=unit),
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
     )
     box_plane = Sketch(plane)
     box_plane.box(Point2D([0.0, 0.0]), width=1 * unit, height=1 * unit)
@@ -1981,6 +1981,7 @@ def test_set_body_name(modeler: Modeler):
     assert box.name == "first_name"
     box.set_name("updated_name")
     assert box.name == "updated_name"
+
 
 def test_set_fill_style(modeler: Modeler):
     """Test the setting the fill style of a body."""
@@ -1990,9 +1991,9 @@ def test_set_fill_style(modeler: Modeler):
     unit = DEFAULT_UNITS.LENGTH
 
     plane = Plane(
-    Point3D([1 / 2, 1 / 2, 0.0], unit=unit),
-    UNITVECTOR3D_X,
-    UNITVECTOR3D_Y,
+        Point3D([1 / 2, 1 / 2, 0.0], unit=unit),
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
     )
 
     box_plane = Sketch(plane)
@@ -2001,7 +2002,8 @@ def test_set_fill_style(modeler: Modeler):
 
     assert box.fill_style == FillStyle.DEFAULT
     box.set_fill_style(FillStyle.TRANSPARENT)
-    #assert box.fill_style == FillStyle.TRANSPARENT
+    # assert box.fill_style == FillStyle.TRANSPARENT
+
 
 def test_body_scale(modeler: Modeler):
     """Verify the correct scaling of a body."""
