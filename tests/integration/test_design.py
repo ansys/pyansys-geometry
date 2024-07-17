@@ -2002,7 +2002,7 @@ def test_set_fill_style(modeler: Modeler):
 
     assert box.fill_style == FillStyle.DEFAULT
     box.set_fill_style(FillStyle.TRANSPARENT)
-    # assert box.fill_style == FillStyle.TRANSPARENT
+    assert box.fill_style == FillStyle.TRANSPARENT
 
 
 def test_body_scale(modeler: Modeler):

@@ -895,7 +895,7 @@ class MasterBody(IBody):
 
     @protect_grpc
     @check_input_types
-    @reset_tessellation_cache
+    @min_backend_version(25, 1, 0)
     def set_name(  # noqa: D102
         self, name: str
     ) -> None:
@@ -910,7 +910,7 @@ class MasterBody(IBody):
 
     @protect_grpc
     @check_input_types
-    @reset_tessellation_cache
+    @min_backend_version(25, 1, 0)
     def set_fill_style(  # noqa: D102
         self, fill_style: FillStyle
     ) -> None:
