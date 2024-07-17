@@ -14,19 +14,21 @@ updates:
     groups:
        grpc-deps:
           patterns:
-            - "google*"
             - "grpc*"
             - "protobuf"
        docs-deps:
           patterns:
-            - "*sphinx*"
-            - "*jupy*"
-            - "ipyvtklink"
-            - "myst-parser"
-            - "nbconvert"
-            - "notebook"
-            - "numpydoc"
-            - "panel"
+          - "ansys-sphinx-theme*"
+          - "ipyvtklink"
+          - "jupyter_sphinx"
+          - "jupytext"
+          - "myst-parser"
+          - "nbconvert"
+          - "nbsphinx"
+          - "notebook"
+          - "numpydoc"
+          - "sphinx"
+          - "sphinx*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
