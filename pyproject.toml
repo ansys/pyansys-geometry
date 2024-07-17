@@ -92,7 +92,7 @@ doc = [
     "panel==1.4.4",
     "pyvista[jupyter]==0.44.0",
     "requests==2.32.3",
-    "sphinx==7.3.7",
+    "sphinx==7.4.5",
     "sphinx-autodoc-typehints==2.1.1",
     "sphinx-copybutton==0.5.2",
     "sphinx-jinja==2.0.2",
