@@ -1426,7 +1426,7 @@ class Component:
         ... )
         >>> for x, y in zip(xx.ravel(), yy.ravel()):
         ...     sketch = Sketch(plane)
-        ...     sketch.circle(Point2D([x, y]), 0.2*u.m)
+        ...     sketch.circle(Point2D([x, y]), 0.2 * u.m)
         ...     mycomp.extrude_sketch(f"body-{x}-{y}", sketch, 1 * u.m)
         >>> mycomp
         ansys.geometry.core.designer.Component 0x2203cc9ec50

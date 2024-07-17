@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides for interacting with the Geometry service."""
+
 import logging
 from pathlib import Path
 
@@ -187,7 +188,6 @@ class Modeler:
         """
         for _, design in self._designs.items():
             if design._is_active:
-
                 # Check if sync_with_backend is requested
                 if sync_with_backend:
                     design._update_design_inplace()

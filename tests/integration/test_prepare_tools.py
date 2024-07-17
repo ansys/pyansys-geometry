@@ -21,7 +21,6 @@
 # SOFTWARE.
 """Testing of prepare tools."""
 
-
 from ansys.geometry.core.modeler import Modeler
 
 from .conftest import FILES_DIR, skip_if_linux
@@ -30,7 +29,8 @@ from .conftest import FILES_DIR, skip_if_linux
 def test_volume_extract_from_faces(modeler: Modeler):
     """Test a volume is created from the provided faces."""
     skip_if_linux(
-        modeler, test_volume_extract_from_faces.__name__, "prepare_tools")  #Skip test on Linux
+        modeler, test_volume_extract_from_faces.__name__, "prepare_tools"
+    )  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "hollowCylinder.scdocx")
 
     body = design.bodies[0]
@@ -40,10 +40,12 @@ def test_volume_extract_from_faces(modeler: Modeler):
 
     assert len(created_bodies) == 1
 
+
 def test_volume_extract_from_edge_loops(modeler: Modeler):
     """Test a volume is created from the provided edges."""
     skip_if_linux(
-        modeler, test_volume_extract_from_edge_loops.__name__, "prepare_tools")  #Skip test on Linux
+        modeler, test_volume_extract_from_edge_loops.__name__, "prepare_tools"
+    )  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "hollowCylinder.scdocx")
 
     body = design.bodies[0]

@@ -48,6 +48,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
 
+
 class PrepareTools:
     """Prepare tools for PyAnsys Geometry.
 
@@ -93,14 +94,14 @@ class PrepareTools:
 
         response = self._prepare_stub.ExtractVolumeFromFaces(
             ExtractVolumeFromFacesRequest(
-                sealing_faces=[EntityIdentifier(id = face.id) for face in sealing_faces],
-                inside_faces=[EntityIdentifier(id = face.id) for face in inside_faces],
+                sealing_faces=[EntityIdentifier(id=face.id) for face in sealing_faces],
+                inside_faces=[EntityIdentifier(id=face.id) for face in inside_faces],
             )
         )
 
         if response.success:
             bodies_ids = [created_body.id for created_body in response.created_bodies]
-            if (len(bodies_ids) > 0):
+            if len(bodies_ids) > 0:
                 parent_design._update_design_inplace()
             return get_bodies_from_ids(parent_design, bodies_ids)
         else:
@@ -138,14 +139,14 @@ class PrepareTools:
 
         response = self._prepare_stub.ExtractVolumeFromEdgeLoops(
             ExtractVolumeFromEdgeLoopsRequest(
-                sealing_edges=[EntityIdentifier(id = face.id) for face in sealing_edges],
-                inside_faces=[EntityIdentifier(id = face.id) for face in inside_faces],
+                sealing_edges=[EntityIdentifier(id=face.id) for face in sealing_edges],
+                inside_faces=[EntityIdentifier(id=face.id) for face in inside_faces],
             )
         )
 
         if response.success:
             bodies_ids = [created_body.id for created_body in response.created_bodies]
-            if (len(bodies_ids) > 0):
+            if len(bodies_ids) > 0:
                 parent_design._update_design_inplace()
             return get_bodies_from_ids(parent_design, bodies_ids)
         else:

@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides functions for performing common checks."""
+
 import warnings
 
 from beartype.typing import TYPE_CHECKING, Any, Iterable, Optional, Tuple, Union
@@ -333,7 +334,6 @@ def min_backend_version(major: int, minor: int, service_pack: int):
                     comp = method_version.compare(self._grpc_client.backend_version)
                     # if comp is 1, method version is higher than backend version.
                     if comp == 1:
-
                         # Check if the version is "0.0.0" (i.e., the version is not available)
                         if str(self._grpc_client.backend_version) == "0.0.0":
                             raise GeometryRuntimeError(
@@ -369,7 +369,6 @@ def deprecated_method(alternative: Optional[str] = None, info: Optional[str] = N
     """
 
     def deprecated_decorator(method):
-
         def wrapper(*args, **kwargs):
             msg = f"The method '{method.__name__}' is deprecated."
             if alternative:
@@ -399,7 +398,6 @@ def deprecated_argument(arg: str, alternative: Optional[str] = None, info: Optio
     """
 
     def deprecated_decorator(method):
-
         def wrapper(*args, **kwargs):
             if arg in kwargs and kwargs[arg] is not None:
                 msg = f"The argument '{arg}' in '{method.__name__}' is deprecated."

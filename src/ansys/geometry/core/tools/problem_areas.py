@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """The problem area definition."""
+
 from abc import abstractmethod
 
 from ansys.api.geometry.v0.repairtools_pb2 import (

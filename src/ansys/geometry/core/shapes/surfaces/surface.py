@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides the ``Surface`` class."""
+
 from abc import ABC, abstractmethod
 
 from beartype.typing import TYPE_CHECKING, Tuple
