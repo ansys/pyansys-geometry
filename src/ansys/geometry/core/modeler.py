@@ -120,11 +120,12 @@ class Modeler:
         # TODO: delete "if" when Linux service is able to use repair tools
         if self.client.backend_type == BackendType.LINUX_SERVICE:
             self._repair_tools = None
-            self._measurement_tools = None
             self._prepare_tools = None
-            LOG.warning("Linux backend does not support repair tools.")
+            self._measurement_tools = None
+            LOG.warning("Linux backend does not support repair or prepare tools.")
         else:
             self._repair_tools = RepairTools(self._grpc_client)
+            self._prepare_tools = PrepareTools(self._grpc_client)
             self._measurement_tools = MeasurementTools(self._grpc_client)
             self._prepare_tools = PrepareTools(self._grpc_client)
 
@@ -414,13 +415,12 @@ class Modeler:
         return self._repair_tools
 
     @property
+    def prepare_tools(self) -> PrepareTools:
+        """Access to prepare tools."""
+        return self._prepare_tools
+
+    @property
     @min_backend_version(24, 2, 0)
     def measurement_tools(self) -> MeasurementTools:
         """Access to measurement tools."""
         return self._measurement_tools
-
-
-    @property
-    def prepare_tools(self) -> PrepareTools:
-        """Access to prepare tools."""
-        return self._prepare_tools
