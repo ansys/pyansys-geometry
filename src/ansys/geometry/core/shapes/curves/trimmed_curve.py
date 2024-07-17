@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Trimmed curve class."""
+
 from ansys.api.geometry.v0.commands_pb2 import IntersectCurvesRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype.typing import List

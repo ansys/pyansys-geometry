@@ -205,9 +205,9 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
     def process(self, msg, kwargs):  # noqa: D102
         kwargs["extra"] = {}
         # This are the extra parameters sent to log
-        kwargs["extra"][
-            "instance_name"
-        ] = self.extra.get_name()  # here self.extra is the argument passed to the log records.
+        kwargs["extra"]["instance_name"] = (
+            self.extra.get_name()
+        )  # here self.extra is the argument passed to the log records.
         return msg, kwargs
 
     def log_to_file(self, filename: str = FILE_NAME, level: int = LOG_LEVEL):
@@ -241,7 +241,7 @@ class PyGeometryCustomAdapter(logging.LoggerAdapter):
         self.logger = add_stdout_handler(self.logger, level=level)
         self.std_out_handler = self.logger.std_out_handler
 
-    def setLevel(self, level="DEBUG"): # noqa: N802
+    def setLevel(self, level="DEBUG"):  # noqa: N802
         """Change the log level of the object and the attached handlers.
 
         Parameters
@@ -337,15 +337,15 @@ class Logger:
     created when a Geometry service instance is created.
 
     >>> from ansys.geometry.core import Modeler
-    >>> modeler = Modeler(loglevel='DEBUG')
-    >>> modeler._log.info('This is a useful message')
+    >>> modeler = Modeler(loglevel="DEBUG")
+    >>> modeler._log.info("This is a useful message")
     INFO -  -  <ipython-input-24-80df150fe31f> - <module> - This is LOG debug message.
 
     Import the global PyAnsys Geometry logger and add a file output handler.
 
     >>> import os
     >>> from ansys.geometry.core import LOG
-    >>> file_path = os.path.join(os.getcwd(), 'pyansys-geometry.log')
+    >>> file_path = os.path.join(os.getcwd(), "pyansys-geometry.log")
     >>> LOG.log_to_file(file_path)
     """
 
@@ -411,7 +411,7 @@ class Logger:
 
         >>> from ansys.geometry.core import LOG
         >>> import os
-        >>> file_path = os.path.join(os.getcwd(), 'pyansys-geometry.log')
+        >>> file_path = os.path.join(os.getcwd(), "pyansys-geometry.log")
         >>> LOG.log_to_file(file_path)
         """
         self = addfile_handler(self, filename=filename, level=level, write_headers=True)
@@ -427,7 +427,7 @@ class Logger:
         """
         self = add_stdout_handler(self, level=level)
 
-    def setLevel(self, level="DEBUG"): # noqa: N802
+    def setLevel(self, level="DEBUG"):  # noqa: N802
         """Change the log level of the object and the attached handlers."""
         self.logger.setLevel(level)
         for each_handler in self.logger.handlers:

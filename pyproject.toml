@@ -114,6 +114,7 @@ name = "ansys.geometry.core"
 [tool.ruff]
 line-length = 100
 fix = true
+extend-exclude = ["tests/integration/files"]
 
 [tool.ruff.format]
 quote-style = "double"

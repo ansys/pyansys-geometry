@@ -55,7 +55,6 @@ def test_issue_834_design_import_with_surfaces(modeler: Modeler):
     assert design.bodies[1].is_surface is True
 
 
-
 def test_issue_1195_sketch_pyconus2024_voglster():
     """Test sketching unexpected behavior observed in PyConUS 2024 by
     @voglster.
@@ -93,11 +92,12 @@ def test_issue_1184_sphere_creation_crashes(modeler: Modeler):
     box_plane.box(Point2D([0.0, 0.0]), width=1, height=1)
 
     box = design.extrude_sketch("Matrix", box_plane, 1)
-    sphere_body = design.create_sphere("particle", Point3D([0.0,0.0,0.0]), Distance(0.5))
+    sphere_body = design.create_sphere("particle", Point3D([0.0, 0.0, 0.0]), Distance(0.5))
 
     assert len(design.bodies) == 2
     assert design.bodies[0].name == box.name
     assert design.bodies[1].name == sphere_body.name
+
 
 def test_issue_1304_arc_sketch_creation():
     """Test that creating an arc sketch does not crash the program.

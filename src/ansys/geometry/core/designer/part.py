@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Module providing fundamental data of an assembly."""
+
 from beartype.typing import TYPE_CHECKING, List
 
 from ansys.geometry.core.designer.body import MasterBody
