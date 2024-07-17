@@ -182,7 +182,7 @@ class RepairTools:
         ]
 
     def find_short_edges(
-            self, bodies: List["Body"], length: Real = 0.0
+        self, bodies: List["Body"], length: Real = 0.0
     ) -> List[ShortEdgeProblemAreas]:
         """Find the short edge problem areas.
 
@@ -218,7 +218,6 @@ class RepairTools:
             )
             for res in problem_areas_response.result
         ]
-
 
     def find_duplicate_faces(self, bodies: List["Body"]) -> List[DuplicateFaceProblemAreas]:
         """Find the duplicate face problem areas.

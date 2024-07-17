@@ -284,9 +284,7 @@ class ExtraEdgeProblemAreas(ProblemArea):
 
         parent_design = get_design_from_edge(self.edges[0])
         request = FixExtraEdgesRequest(extra_edge_problem_area_id=self._id_grpc)
-        response = self._repair_stub.FixExtraEdges(
-            request
-        )
+        response = self._repair_stub.FixExtraEdges(request)
         parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.result.success,
@@ -295,6 +293,7 @@ class ExtraEdgeProblemAreas(ProblemArea):
         )
 
         return message
+
 
 class ShortEdgeProblemAreas(ProblemArea):
     """Represents a short edge problem area with a unique identifier and associated edges.
@@ -348,6 +347,7 @@ class ShortEdgeProblemAreas(ProblemArea):
         )
 
         return message
+
 
 class SmallFaceProblemAreas(ProblemArea):
     """Represents a small face problem area with a unique identifier and associated faces.
