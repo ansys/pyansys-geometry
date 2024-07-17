@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides for creating and managing a curve."""
+
 from functools import cached_property
 
 from ansys.geometry.core.math.point import Point3D

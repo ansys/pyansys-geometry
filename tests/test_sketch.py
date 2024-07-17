@@ -778,6 +778,7 @@ def test_polydata_methods():
     assert len(pd_edges) == 1
     assert len(pd_faces) == 1
 
+
 def test_arc_start_end_radius_default():
     """Test arc generation from a start and an end point with a certain radius.
 

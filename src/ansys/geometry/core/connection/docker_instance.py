@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Module for connecting to a local Geometry Service Docker container."""
+
 from enum import Enum
 from functools import wraps
 import os

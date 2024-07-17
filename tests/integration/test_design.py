@@ -1805,6 +1805,7 @@ def test_multiple_bodies_boolean_operations(modeler: Modeler):
     assert len(comp1.bodies) == 1
     assert len(comp3.bodies) == 1
 
+
 def test_bool_operations_with_keep_other(modeler: Modeler):
     """Test boolean operations with keep other option."""
     # Create the design and bodies
@@ -1843,6 +1844,7 @@ def test_bool_operations_with_keep_other(modeler: Modeler):
     assert len(comp1.bodies) == 1
     assert len(comp2.bodies) == 1
     assert len(comp3.bodies) == 1
+
 
 def test_child_component_instances(modeler: Modeler):
     """Test creation of child ``Component`` instances and check the data model

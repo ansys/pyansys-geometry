@@ -30,6 +30,7 @@ This command shows how this method is typically used:
 
    python -c "from ansys.geometry.core.connection import validate; validate()"
 """
+
 from ansys.geometry.core.connection.client import GrpcClient
 
 

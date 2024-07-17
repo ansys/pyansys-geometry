@@ -111,6 +111,7 @@ def get_design_from_edge(edge: "Edge") -> "Design":
     # Get the design of the body
     return get_design_from_body(body)
 
+
 def __traverse_all_bodies(comp: Union["Design", "Component"]) -> List["Body"]:
     """Traverse all bodies in a design and all its subcomponents.
 
@@ -137,6 +138,7 @@ def __traverse_all_bodies(comp: Union["Design", "Component"]) -> List["Body"]:
         bodies.extend(__traverse_all_bodies(component))
 
     return bodies
+
 
 def get_bodies_from_ids(design: "Design", body_ids: List[str]) -> List["Body"]:
     """Find the ``Body`` objects inside a ``Design`` from its ids.
@@ -179,7 +181,9 @@ def get_faces_from_ids(design: "Design", face_ids: List[str]) -> List["Face"]:
     List[Face]
         List of Face objects.
     """
-    return [face for body in __traverse_all_bodies(design) for face in body.faces if face.id in face_ids] # noqa: E501
+    return [
+        face for body in __traverse_all_bodies(design) for face in body.faces if face.id in face_ids
+    ]  # noqa: E501
 
 
 def get_edges_from_ids(design: "Design", edge_ids: List[str]) -> List["Edge"]:
@@ -201,4 +205,6 @@ def get_edges_from_ids(design: "Design", edge_ids: List[str]) -> List["Edge"]:
     List[Edge]
         List of Edge objects.
     """
-    return [edge for body in __traverse_all_bodies(design) for edge in body.edges if edge.id in edge_ids] # noqa: E501
+    return [
+        edge for body in __traverse_all_bodies(design) for edge in body.edges if edge.id in edge_ids
+    ]  # noqa: E501
