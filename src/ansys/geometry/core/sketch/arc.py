@@ -385,9 +385,9 @@ class Arc(SketchEdge):
             raise ValueError("Radius must be a real positive value.")
 
         # Unpack the points into its coordinates (in DEFAULT_UNITS.LENGTH)
-        x_s, y_s = start.tolist() # Always in meters
-        x_e, y_e = end.tolist() # Always in meters
-        r0 = r1 = radius.value.m_as(UNITS.meter) # Convert to meters as well
+        x_s, y_s = start.tolist()  # Always in meters
+        x_e, y_e = end.tolist()  # Always in meters
+        r0 = r1 = radius.value.m_as(UNITS.meter)  # Convert to meters as well
 
         # Compute the potential centers of the circle
         centers = get_two_circle_intersections(x0=x_s, y0=y_s, r0=r0, x1=x_e, y1=y_e, r1=r1)

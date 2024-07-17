@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides matrix primitive representations."""
+
 from beartype import beartype as check_input_types
 from beartype.typing import Optional, Union
 import numpy as np

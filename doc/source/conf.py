@@ -43,7 +43,6 @@ def get_wheelhouse_assets_dictionary():
     assets_context_runners = ["ubuntu-latest", "windows-latest", "macos-latest"]
     assets_context_python_versions = ["3.9", "3.10", "3.11", "3.12"]
     if get_version_match(__version__) == "dev":
-
         # Try to retrieve the content three times before failing
         content = None
         for _ in range(3):

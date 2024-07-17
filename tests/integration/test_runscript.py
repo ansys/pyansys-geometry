@@ -35,7 +35,6 @@ from .conftest import DSCOSCRIPTS_FILES_DIR, skip_if_linux
 
 # Python (.py)
 def test_python_simple_script(modeler: Modeler):
-
     # Skip on Linux
     skip_if_linux(modeler, test_python_simple_script.__name__, "run_discovery_script_file")
 
@@ -48,7 +47,6 @@ def test_python_simple_script(modeler: Modeler):
 
 
 def test_python_failing_script(modeler: Modeler):
-
     # Skip on Linux
     skip_if_linux(modeler, test_python_failing_script.__name__, "run_discovery_script_file")
     with pytest.raises(GeometryRuntimeError):
@@ -56,7 +54,6 @@ def test_python_failing_script(modeler: Modeler):
 
 
 def test_python_integrated_script(modeler: Modeler):
-
     # Skip on Linux
     skip_if_linux(modeler, test_python_integrated_script.__name__, "run_discovery_script_file")
 
@@ -80,7 +77,6 @@ def test_python_integrated_script(modeler: Modeler):
 
 # SpaceClaim (.scscript)
 def test_scscript_simple_script(modeler: Modeler):
-
     # Skip on Linux
     skip_if_linux(modeler, test_scscript_simple_script.__name__, "run_discovery_script_file")
 
@@ -95,7 +91,6 @@ def test_scscript_simple_script(modeler: Modeler):
 
 # Discovery (.dscript)
 def test_dscript_simple_script(modeler: Modeler):
-
     # Skip on Linux
     skip_if_linux(modeler, test_dscript_simple_script.__name__, "run_discovery_script_file")
 

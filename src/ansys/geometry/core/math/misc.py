@@ -21,7 +21,6 @@
 # SOFTWARE.
 """Provides auxiliary math functions for PyAnsys Geometry."""
 
-
 from beartype import beartype as check_input_types
 from beartype.typing import Tuple, Union
 import numpy as np

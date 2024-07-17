@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides for creating and managing a cylinder."""
+
 from functools import cached_property
 
 from beartype import beartype as check_input_types
