@@ -700,9 +700,7 @@ def test_circle():
 
     # Test expected errors
     with pytest.raises(ValueError):
-        _ = Circle(
-            origin, radius, reference=UNITVECTOR3D_X, axis=UnitVector3D([1, 1, 1])
-        )
+        _ = Circle(origin, radius, reference=UNITVECTOR3D_X, axis=UnitVector3D([1, 1, 1]))
 
     origin = Point3D([42, 99, 13])
     radius = 200

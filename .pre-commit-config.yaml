@@ -10,6 +10,7 @@ repos:
   rev: v0.5.2
   hooks:
     - id: ruff
+    - id: ruff-format
 
 - repo: https://github.com/codespell-project/codespell
   rev: v2.3.0
@@ -25,13 +26,12 @@ repos:
   - id: check-yaml
   - id: trailing-whitespace
 
-- repo: https://github.com/ansys/pre-commit-hooks
-  rev: v0.3.1
-  hooks:
-    - id: add-license-headers
-      files: '(src|examples|tests|docker)/.*\.(py)|\.(proto)'
-      args:
-      - --start_year=2023
+# - repo: https://github.com/ansys/pre-commit-hooks
+#   rev: v0.3.1
+#   hooks:
+#     - id: add-license-headers
+#       args:
+#       - --start_year=2023
 
 # this validates our github workflow files
 - repo: https://github.com/python-jsonschema/check-jsonschema

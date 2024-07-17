@@ -21,7 +21,6 @@
 # SOFTWARE.
 """Provides for evaluating decimal precision."""
 
-
 import math
 
 from ansys.geometry.core.typing import Real

@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides for managing a body."""
+
 from abc import ABC, abstractmethod
 from enum import Enum, unique
 from functools import wraps
@@ -223,9 +224,7 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def imprint_curves(
-        self, faces: List[Face], sketch: Sketch
-    ) -> Tuple[List[Edge], List[Face]]:
+    def imprint_curves(self, faces: List[Face], sketch: Sketch) -> Tuple[List[Edge], List[Face]]:
         """Imprint all specified geometries onto specified faces of the body.
 
         Parameters
@@ -318,9 +317,7 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def translate(
-        self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
-    ) -> None:
+    def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]) -> None:
         """Translate the body in a specified direction and distance.
 
         Parameters
@@ -443,9 +440,7 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def tessellate(
-        self, merge: Optional[bool] = False
-    ) -> Union["PolyData", "MultiBlock"]:
+    def tessellate(self, merge: Optional[bool] = False) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
         Parameters
@@ -479,7 +474,7 @@ class IBody(ABC):
         >>> body = my_comp.extrude_sketch("my-sketch", sketch, 1 * u.m)
         >>> blocks = body.tessellate()
         >>> blocks
-        >>> MultiBlock (0x7f94ec757460)
+        >>> MultiBlock(0x7F94EC757460)
              N Blocks:	6
              X Bounds:	0.000, 4.000
              Y Bounds:	-1.000, 0.000
@@ -600,7 +595,7 @@ class IBody(ABC):
         return
 
     @protect_grpc
-    def unite(self, other: Union["Body", Iterable["Body"]], keep_other : bool = False) -> None:
+    def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:
         """Unite two (or more) bodies.
 
         Notes
@@ -665,7 +660,7 @@ class MasterBody(IBody):
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._tessellation = None
 
-    def reset_tessellation_cache(func): # noqa: N805
+    def reset_tessellation_cache(func):  # noqa: N805
         """Decorate ``MasterBody`` methods that need tessellation cache update.
 
         Parameters
@@ -751,23 +746,17 @@ class MasterBody(IBody):
     @protect_grpc
     def volume(self) -> Quantity:  # noqa: D102
         if self.is_surface:
-            self._grpc_client.log.debug(
-                "Dealing with planar surface. Returning 0 as the volume."
-            )
+            self._grpc_client.log.debug("Dealing with planar surface. Returning 0 as the volume.")
             return Quantity(0, DEFAULT_UNITS.SERVER_VOLUME)
         else:
-            self._grpc_client.log.debug(
-                f"Retrieving volume for body {self.id} from server."
-            )
+            self._grpc_client.log.debug(f"Retrieving volume for body {self.id} from server.")
             volume_response = self._bodies_stub.GetVolume(self._grpc_id)
             return Quantity(volume_response.volume, DEFAULT_UNITS.SERVER_VOLUME)
 
     @protect_grpc
     @check_input_types
     def assign_material(self, material: Material) -> None:  # noqa: D102
-        self._grpc_client.log.debug(
-            f"Assigning body {self.id} material {material.name}."
-        )
+        self._grpc_client.log.debug(f"Assigning body {self.id} material {material.name}.")
         self._bodies_stub.SetAssignedMaterial(
             SetAssignedMaterialRequest(id=self._id, material=material.name)
         )
@@ -911,16 +900,12 @@ class MasterBody(IBody):
     @min_backend_version(24, 2, 0)
     def mirror(self, plane: Plane) -> None:  # noqa: D102
         self._grpc_client.log.debug(f"Mirroring body {self.id}.")
-        self._bodies_stub.Mirror(
-            MirrorRequest(id=self.id, plane=plane_to_grpc_plane(plane))
-        )
+        self._bodies_stub.Mirror(MirrorRequest(id=self.id, plane=plane_to_grpc_plane(plane)))
 
     @protect_grpc
     @min_backend_version(24, 2, 0)
     def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
-        self._grpc_client.log.debug(
-            f"Get collision between body {self.id} and body {body.id}."
-        )
+        self._grpc_client.log.debug(f"Get collision between body {self.id} and body {body.id}.")
         response = self._bodies_stub.GetCollision(
             GetCollisionRequest(
                 body_1_id=self.id,
@@ -1037,16 +1022,14 @@ class Body(IBody):
         Master body that this body is an occurrence of.
     """
 
-    def __init__(
-        self, id, name, parent_component: "Component", template: MasterBody
-    ) -> None:
+    def __init__(self, id, name, parent_component: "Component", template: MasterBody) -> None:
         """Initialize the ``Body`` class."""
         self._id = id
         self._name = name
         self._parent_component = parent_component
         self._template = template
 
-    def reset_tessellation_cache(func): # noqa: N805
+    def reset_tessellation_cache(func):  # noqa: N805
         """Decorate ``Body`` methods that require a tessellation cache update.
 
         Parameters
@@ -1083,9 +1066,7 @@ class Body(IBody):
     @protect_grpc
     @ensure_design_is_active
     def faces(self) -> List[Face]:  # noqa: D102
-        self._template._grpc_client.log.debug(
-            f"Retrieving faces for body {self.id} from server."
-        )
+        self._template._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
         grpc_faces = self._template._bodies_stub.GetFaces(EntityIdentifier(id=self.id))
         return [
             Face(
@@ -1102,9 +1083,7 @@ class Body(IBody):
     @protect_grpc
     @ensure_design_is_active
     def edges(self) -> List[Edge]:  # noqa: D102
-        self._template._grpc_client.log.debug(
-            f"Retrieving edges for body {self.id} from server."
-        )
+        self._template._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
         grpc_edges = self._template._bodies_stub.GetEdges(EntityIdentifier(id=self.id))
         return [
             Edge(
@@ -1190,9 +1169,7 @@ class Body(IBody):
                     is_found = True
                     break
             if not is_found:
-                raise ValueError(
-                    f"Face with ID {provided_face.id} is not part of this body."
-                )
+                raise ValueError(f"Face with ID {provided_face.id} is not part of this body.")
 
         self._template._grpc_client.log.debug(
             f"Imprinting curves provided on {self.id} "
@@ -1202,9 +1179,7 @@ class Body(IBody):
         imprint_response = self._template._commands_stub.ImprintCurves(
             ImprintCurvesRequest(
                 body=self._id,
-                curves=sketch_shapes_to_grpc_geometries(
-                    sketch._plane, sketch.edges, sketch.faces
-                ),
+                curves=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
                 faces=[face._id for face in faces],
             )
         )
@@ -1243,9 +1218,7 @@ class Body(IBody):
         curves = sketch_shapes_to_grpc_geometries(
             sketch._plane, sketch.edges, sketch.faces, only_one_curve=only_one_curve
         )
-        self._template._grpc_client.log.debug(
-            f"Projecting provided curves on {self.id}."
-        )
+        self._template._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 
         project_response = self._template._commands_stub.ProjectCurves(
             ProjectCurvesRequest(
@@ -1281,9 +1254,7 @@ class Body(IBody):
         curves = sketch_shapes_to_grpc_geometries(
             sketch._plane, sketch.edges, sketch.faces, only_one_curve=only_one_curve
         )
-        self._template._grpc_client.log.debug(
-            f"Projecting provided curves on {self.id}."
-        )
+        self._template._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 
         response = self._template._commands_stub.ImprintProjectedCurves(
             ProjectCurvesRequest(
@@ -1345,9 +1316,7 @@ class Body(IBody):
     def tessellate(  # noqa: D102
         self, merge: Optional[bool] = False
     ) -> Union["PolyData", "MultiBlock"]:
-        return self._template.tessellate(
-            merge, self.parent_component.get_world_transform()
-        )
+        return self._template.tessellate(merge, self.parent_component.get_world_transform())
 
     def plot(  # noqa: D102
         self,
@@ -1373,7 +1342,7 @@ class Body(IBody):
         self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
 
     def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        self.__generic_boolean_op(other, keep_other,"subtract", "empty (complete) subtraction")
+        self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
 
     def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
@@ -1415,9 +1384,7 @@ class Body(IBody):
                 all_response = []
                 for body2 in other:
                     response = self._template._bodies_stub.Boolean(
-                        BooleanRequest(
-                            body1=self.id, body2=body2.id, method=type_bool_op
-                        )
+                        BooleanRequest(body1=self.id, body2=body2.id, method=type_bool_op)
                     ).empty_result
                     all_response.append(response)
 

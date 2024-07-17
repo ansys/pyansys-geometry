@@ -21,7 +21,6 @@
 # SOFTWARE.
 """Module for repair tool message."""
 
-
 from beartype.typing import List
 
 

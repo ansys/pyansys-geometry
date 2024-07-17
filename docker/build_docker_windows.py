@@ -80,7 +80,7 @@ TMP_DIR = Path(tempfile.mkdtemp(prefix="docker_geometry_service_"))
 
 # Copy the Geometry Service files to the temporary directory
 print(f">>> Copying Geometry Service files to temporary directory to {TMP_DIR}")
-BIN_DIR = TMP_DIR / "bins" / "DockerWindows" /"bin" /"x64"/"Release_Headless" /"net472"
+BIN_DIR = TMP_DIR / "bins" / "DockerWindows" / "bin" / "x64" / "Release_Headless" / "net472"
 
 # Create the directory structure
 shutil.copytree(
