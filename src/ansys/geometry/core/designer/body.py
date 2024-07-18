@@ -721,15 +721,17 @@ class MasterBody(IBody):
     def name(self) -> str:  # noqa: D102
         return self._name
 
+    @name.setter
+    def name(self, value: str):  # noqa: D102
+        self.set_name(value)
+
     @property
     def fill_style(self) -> str:  # noqa: D102
         return self._fill_style
 
-    @name.setter
-    def name(self, value: str):
-        if not isinstance(value, str):
-            raise ValueError("Name must be a string.")
-        self._name = value
+    @fill_style.setter
+    def fill_style(self, value: FillStyle):  # noqa: D102
+        self.set_fill_style(value)
 
     @property
     def is_surface(self) -> bool:  # noqa: D102
@@ -899,14 +901,14 @@ class MasterBody(IBody):
     def set_name(  # noqa: D102
         self, name: str
     ) -> None:
-        self._grpc_client.log.debug(f"Translating body {self.id}.")
-        self.name = name
+        self._grpc_client.log.debug(f"Renaming body {self.id} from '{self.name}' to '{name}'.")
         self._bodies_stub.SetName(
             SetNameRequest(
                 body_id=self.id,
                 name=name,
             )
         )
+        self._name = name
 
     @protect_grpc
     @check_input_types
@@ -914,14 +916,14 @@ class MasterBody(IBody):
     def set_fill_style(  # noqa: D102
         self, fill_style: FillStyle
     ) -> None:
-        self._grpc_client.log.debug(f"Set body fill style{self.id}.")
-        self._fill_style = fill_style
+        self._grpc_client.log.debug(f"Setting body fill style {self.id}.")
         self._bodies_stub.SetFillStyle(
             SetFillStyleRequest(
                 body_id=self.id,
                 fill_style=fill_style.value,
             )
         )
+        self._fill_style = fill_style
 
     @protect_grpc
     @check_input_types
@@ -1126,14 +1128,16 @@ class Body(IBody):
         return self._template.name
 
     @name.setter
-    def name(self, value: str):
-        if not isinstance(value, str):
-            raise ValueError("name must be a string")
+    def name(self, value: str):  # noqa: D102
         self._template.name = value
 
     @property
     def fill_style(self) -> str:  # noqa: D102
         return self._template.fill_style
+
+    @fill_style.setter
+    def fill_style(self, fill_style: FillStyle) -> str:  # noqa: D102
+        self._template.fill_style = fill_style
 
     @property
     def parent_component(self) -> "Component":  # noqa: D102

@@ -1981,6 +1981,8 @@ def test_set_body_name(modeler: Modeler):
     assert box.name == "first_name"
     box.set_name("updated_name")
     assert box.name == "updated_name"
+    box.name = "updated_name2"
+    assert box.name == "updated_name2"
 
 
 def test_set_fill_style(modeler: Modeler):
@@ -2003,6 +2005,8 @@ def test_set_fill_style(modeler: Modeler):
     assert box.fill_style == FillStyle.DEFAULT
     box.set_fill_style(FillStyle.TRANSPARENT)
     assert box.fill_style == FillStyle.TRANSPARENT
+    box.fill_style = FillStyle.OPAQUE
+    assert box.fill_style == FillStyle.OPAQUE
 
 
 def test_body_scale(modeler: Modeler):
