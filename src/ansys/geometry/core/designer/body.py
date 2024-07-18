@@ -35,6 +35,8 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     RotateRequest,
     ScaleRequest,
     SetAssignedMaterialRequest,
+    SetFillStyleRequest,
+    SetNameRequest,
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
@@ -105,6 +107,15 @@ class CollisionType(Enum):
     CONTAINEDTOUCH = 4
 
 
+@unique
+class FillStyle(Enum):
+    """Provides values for fill styles supported."""
+
+    DEFAULT = 0
+    OPAQUE = 1
+    TRANSPARENT = 2
+
+
 class IBody(ABC):
     """Defines the common methods for a body, providing the abstract body interface.
 
@@ -120,6 +131,21 @@ class IBody(ABC):
     @abstractmethod
     def name(self) -> str:
         """Get the name of the body."""
+        return
+
+    @abstractmethod
+    def set_name(self, str) -> None:
+        """Set the name of the body."""
+        return
+
+    @abstractmethod
+    def fill_style(self) -> FillStyle:
+        """Get the fill style of the body."""
+        return
+
+    @abstractmethod
+    def set_fill_style(self, fill_style: FillStyle) -> None:
+        """Set the fill style of the body."""
         return
 
     @abstractmethod
@@ -659,6 +685,7 @@ class MasterBody(IBody):
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._tessellation = None
+        self._fill_style = FillStyle.DEFAULT
 
     def reset_tessellation_cache(func):  # noqa: N805
         """Decorate ``MasterBody`` methods that need tessellation cache update.
@@ -693,6 +720,18 @@ class MasterBody(IBody):
     @property
     def name(self) -> str:  # noqa: D102
         return self._name
+
+    @name.setter
+    def name(self, value: str):  # noqa: D102
+        self.set_name(value)
+
+    @property
+    def fill_style(self) -> str:  # noqa: D102
+        return self._fill_style
+
+    @fill_style.setter
+    def fill_style(self, value: FillStyle):  # noqa: D102
+        self.set_fill_style(value)
 
     @property
     def is_surface(self) -> bool:  # noqa: D102
@@ -855,6 +894,36 @@ class MasterBody(IBody):
                 distance=translation_magnitude,
             )
         )
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 1, 0)
+    def set_name(  # noqa: D102
+        self, name: str
+    ) -> None:
+        self._grpc_client.log.debug(f"Renaming body {self.id} from '{self.name}' to '{name}'.")
+        self._bodies_stub.SetName(
+            SetNameRequest(
+                body_id=self.id,
+                name=name,
+            )
+        )
+        self._name = name
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 1, 0)
+    def set_fill_style(  # noqa: D102
+        self, fill_style: FillStyle
+    ) -> None:
+        self._grpc_client.log.debug(f"Setting body fill style {self.id}.")
+        self._bodies_stub.SetFillStyle(
+            SetFillStyleRequest(
+                body_id=self.id,
+                fill_style=fill_style.value,
+            )
+        )
+        self._fill_style = fill_style
 
     @protect_grpc
     @check_input_types
@@ -1057,6 +1126,18 @@ class Body(IBody):
     @property
     def name(self) -> str:  # noqa: D102
         return self._template.name
+
+    @name.setter
+    def name(self, value: str):  # noqa: D102
+        self._template.name = value
+
+    @property
+    def fill_style(self) -> str:  # noqa: D102
+        return self._template.fill_style
+
+    @fill_style.setter
+    def fill_style(self, fill_style: FillStyle) -> str:  # noqa: D102
+        self._template.fill_style = fill_style
 
     @property
     def parent_component(self) -> "Component":  # noqa: D102
@@ -1276,6 +1357,14 @@ class Body(IBody):
         ]
 
         return imprinted_faces
+
+    @ensure_design_is_active
+    def set_name(self, name: str) -> None:  # noqa: D102
+        return self._template.set_name(name)
+
+    @ensure_design_is_active
+    def set_fill_style(self, fill_style: FillStyle) -> None:  # noqa: D102
+        return self._template.set_fill_style(fill_style)
 
     @ensure_design_is_active
     def translate(  # noqa: D102

@@ -38,7 +38,7 @@ from ansys.geometry.core.designer import (
     SharedTopologyType,
     SurfaceType,
 )
-from ansys.geometry.core.designer.body import CollisionType
+from ansys.geometry.core.designer.body import CollisionType, FillStyle
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.errors import GeometryExitedError
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
@@ -1962,6 +1962,51 @@ def test_get_collision(modeler: Modeler):
 
     assert body1.get_collision(body2) == CollisionType.TOUCH
     assert body2.get_collision(body3) == CollisionType.NONE
+
+
+def test_set_body_name(modeler: Modeler):
+    """Test the setting the name of a body."""
+    skip_if_linux(modeler, test_set_body_name.__name__, "set_name")  # Skip test on Linux
+
+    design = modeler.create_design("simple_cube")
+    unit = DEFAULT_UNITS.LENGTH
+    plane = Plane(
+        Point3D([1 / 2, 1 / 2, 0.0], unit=unit),
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
+    )
+    box_plane = Sketch(plane)
+    box_plane.box(Point2D([0.0, 0.0]), width=1 * unit, height=1 * unit)
+    box = design.extrude_sketch("first_name", box_plane, 1 * unit)
+    assert box.name == "first_name"
+    box.set_name("updated_name")
+    assert box.name == "updated_name"
+    box.name = "updated_name2"
+    assert box.name == "updated_name2"
+
+
+def test_set_fill_style(modeler: Modeler):
+    """Test the setting the fill style of a body."""
+    skip_if_linux(modeler, test_set_fill_style.__name__, "set_fill_style")  # Skip test on Linux
+
+    design = modeler.create_design("RVE")
+    unit = DEFAULT_UNITS.LENGTH
+
+    plane = Plane(
+        Point3D([1 / 2, 1 / 2, 0.0], unit=unit),
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
+    )
+
+    box_plane = Sketch(plane)
+    box_plane.box(Point2D([0.0, 0.0]), width=1 * unit, height=1 * unit)
+    box = design.extrude_sketch("Matrix", box_plane, 1 * unit)
+
+    assert box.fill_style == FillStyle.DEFAULT
+    box.set_fill_style(FillStyle.TRANSPARENT)
+    assert box.fill_style == FillStyle.TRANSPARENT
+    box.fill_style = FillStyle.OPAQUE
+    assert box.fill_style == FillStyle.OPAQUE
 
 
 def test_body_scale(modeler: Modeler):
