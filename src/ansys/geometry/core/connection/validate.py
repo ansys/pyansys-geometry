@@ -38,3 +38,4 @@ def validate(*args, **kwargs):  # pragma: no cover
     """Create a client using the default settings and validate it."""
     print(GrpcClient(*args, **kwargs))
     # TODO: consider adding additional server stat reporting
+    # https://github.com/ansys/pyansys-geometry/issues/1319

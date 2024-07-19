@@ -1465,6 +1465,7 @@ class Body(IBody):
             # TODO: to be deleted - old versions did not have "tool_bodies" in the request
             # This is a temporary fix to support old versions of the server - should be deleted
             # once the server is no longer supported.
+            # https://github.com/ansys/pyansys-geometry/issues/1319
             if not isinstance(other, Iterable):
                 response = self._template._bodies_stub.Boolean(
                     BooleanRequest(body1=self.id, body2=other.id, method=type_bool_op)

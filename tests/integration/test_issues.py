@@ -39,7 +39,8 @@ def test_issue_834_design_import_with_surfaces(modeler: Modeler):
     For more info see
     https://github.com/ansys/pyansys-geometry/issues/834
     """
-    # TODO: to be reactivated by https://github.com/ansys/pyansys-geometry/issues/799
+    # TODO: to be reactivated
+    # https://github.com/ansys/pyansys-geometry/issues/799
     skip_if_linux(modeler, test_issue_834_design_import_with_surfaces.__name__, "open_file")
 
     # Open the design

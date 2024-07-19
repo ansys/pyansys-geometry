@@ -374,7 +374,7 @@ class Logger:
         self.logger.addFilter(InstanceFilter())
         self.logger.setLevel(level)
         self.logger.propagate = True
-        self.level = self.logger.level  # TODO: TO REMOVE
+        self.level = self.logger.level
 
         # Writing logging methods.
         self.debug = self.logger.debug

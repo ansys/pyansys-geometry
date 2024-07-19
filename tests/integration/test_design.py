@@ -128,8 +128,8 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
     # Assign a material to a Body
     body.assign_material(material)
 
-    # TODO: Not possible to save to file from a container (CI/CD)
-    #       Use download approach when available.
+    # Not possible to save to file from a container (CI/CD)
+    # Use download approach when available.
     #
     # design.save(r"C:\temp\shared_volume\MyFile2.scdocx")
 
@@ -406,10 +406,10 @@ def test_faces_edges(modeler: Modeler):
     loops = faces[0].loops
     assert len(loops) == 1
     assert loops[0].type == FaceLoopType.OUTER_LOOP
-    assert loops[0].length is not None  # TODO : To be tested properly at some point
-    assert loops[0].min_bbox is not None  # TODO : To be tested properly at some point
-    assert loops[0].max_bbox is not None  # TODO : To be tested properly at some point
-    assert len(loops[0].edges) == 5  # TODO : To be tested properly at some point
+    assert loops[0].length is not None
+    assert loops[0].min_bbox is not None
+    assert loops[0].max_bbox is not None
+    assert len(loops[0].edges) == 5
 
     # Now, from one of the lids (i.e. 0 - bottom) get all edges
     edges = faces[0].edges
@@ -1295,7 +1295,8 @@ def test_midsurface_properties(modeler: Modeler):
     assert slot_body.surface_offset is None
 
     # Let's try reassigning values directly to slot_surf - this should work
-    # TODO : at the moment the server does not allow to reassign - put in try/catch block
+    # TODO :  at the moment the server does not allow to reassign - put in try/catch block
+    # https://github.com/ansys/pyansys-geometry/issues/1146
     try:
         slot_surf.add_midsurface_thickness(Quantity(30, UNITS.mm))
         slot_surf.add_midsurface_offset(MidSurfaceOffsetType.BOTTOM)
