@@ -130,6 +130,10 @@ select = [
     "I",    # isort, see https://docs.astral.sh/ruff/rules/#isort-i
     "N",    # pep8-naming, see https://docs.astral.sh/ruff/rules/#pep8-naming-n
     "PTH",  # flake8-use-pathlib, https://docs.astral.sh/ruff/rules/#flake8-use-pathlib-pth
+    "TD",   # flake8-todos, https://docs.astral.sh/ruff/rules/#flake8-todos-td
+]
+ignore = [
+    "TD002", # Missing author in TODOs comment
 ]
 
 [tool.ruff.lint.per-file-ignores]

@@ -138,6 +138,7 @@ class Trapezoid(SketchFace):
         self._point4 = Point2D([rotated_point_4[0], rotated_point_4[1]], center.unit)
 
         # TODO: add plane to SketchSegment when available
+        # https://github.com/ansys/pyansys-geometry/issues/1319
         self._segment1 = SketchSegment(self._point1, self._point2)
         self._segment2 = SketchSegment(self._point2, self._point3)
         self._segment3 = SketchSegment(self._point3, self._point4)

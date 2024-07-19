@@ -22,7 +22,7 @@
 """Provides for managing components."""
 
 from enum import Enum, unique
-import uuid  # TODO: Is ID even needed? Maybe use from SC?
+import uuid
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (

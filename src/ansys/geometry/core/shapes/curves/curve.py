@@ -94,5 +94,5 @@ class Curve(ABC):
             self.evaluate(interval.start).position,
             self.evaluate(interval.end).position,
             interval,
-            None,  # TODO: calculate length on client?
+            None,
         )

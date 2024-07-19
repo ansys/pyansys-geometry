@@ -40,7 +40,6 @@ from ansys.geometry.core.designer import (
 )
 from ansys.geometry.core.designer.body import CollisionType, FillStyle
 from ansys.geometry.core.designer.face import FaceLoopType
-from ansys.geometry.core.errors import GeometryExitedError
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import (
     IDENTITY_MATRIX44,
@@ -128,8 +127,8 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
     # Assign a material to a Body
     body.assign_material(material)
 
-    # TODO: Not possible to save to file from a container (CI/CD)
-    #       Use download approach when available.
+    # Not possible to save to file from a container (CI/CD)
+    # Use download approach when available.
     #
     # design.save(r"C:\temp\shared_volume\MyFile2.scdocx")
 
@@ -406,10 +405,10 @@ def test_faces_edges(modeler: Modeler):
     loops = faces[0].loops
     assert len(loops) == 1
     assert loops[0].type == FaceLoopType.OUTER_LOOP
-    assert loops[0].length is not None  # TODO : To be tested properly at some point
-    assert loops[0].min_bbox is not None  # TODO : To be tested properly at some point
-    assert loops[0].max_bbox is not None  # TODO : To be tested properly at some point
-    assert len(loops[0].edges) == 5  # TODO : To be tested properly at some point
+    assert loops[0].length is not None
+    assert loops[0].min_bbox is not None
+    assert loops[0].max_bbox is not None
+    assert len(loops[0].edges) == 5
 
     # Now, from one of the lids (i.e. 0 - bottom) get all edges
     edges = faces[0].edges
@@ -1295,21 +1294,17 @@ def test_midsurface_properties(modeler: Modeler):
     assert slot_body.surface_offset is None
 
     # Let's try reassigning values directly to slot_surf - this should work
-    # TODO : at the moment the server does not allow to reassign - put in try/catch block
-    try:
-        slot_surf.add_midsurface_thickness(Quantity(30, UNITS.mm))
-        slot_surf.add_midsurface_offset(MidSurfaceOffsetType.BOTTOM)
+    slot_surf.add_midsurface_thickness(Quantity(30, UNITS.mm))
+    slot_surf.add_midsurface_offset(MidSurfaceOffsetType.BOTTOM)
 
-        surf_repr = str(slot_surf)
-        assert "ansys.geometry.core.designer.Body" in surf_repr
-        assert "Name                 : MySlotSurface" in surf_repr
-        assert "Exists               : True" in surf_repr
-        assert "Parent component     : MidSurfaceProperties" in surf_repr
-        assert "Surface body         : True" in surf_repr
-        assert "Surface thickness    : 30 millimeter" in surf_repr
-        assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
-    except GeometryExitedError:
-        pass
+    surf_repr = str(slot_surf)
+    assert "ansys.geometry.core.designer.Body" in surf_repr
+    assert "Name                 : MySlotSurface" in surf_repr
+    assert "Exists               : True" in surf_repr
+    assert "Parent component     : MidSurfaceProperties" in surf_repr
+    assert "Surface body         : True" in surf_repr
+    assert "Surface thickness    : 30 millimeter" in surf_repr
+    assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
 
     # Let's create a new surface body and assign them from body methods directly
     slot_surf2 = design.create_surface("MySlotSurface2", sketch)

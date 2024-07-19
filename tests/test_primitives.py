@@ -809,9 +809,6 @@ def test_line_evaluation():
     # Test evaluation at (.707) by projecting a point
     eval2 = line.project_point(Point3D([1, 0, 0]))
 
-    # TODO: enforce Accuracy in Point3D __eq__ ? want to be able to say:
-    # assert eval2.position() == Point3D([.5,.5,0])
-
     diff = Vector3D.from_points(eval2.position, Point3D([0.5, 0.5, 0]))
     assert Accuracy.length_is_zero(diff.x)
     assert Accuracy.length_is_zero(diff.y)
