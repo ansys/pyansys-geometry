@@ -89,6 +89,14 @@ def test_find_extra_edge_edges(modeler: Modeler):
     assert len(problem_areas[0].edges) > 0
 
 
+def test_fix_extra_edge(modeler: Modeler):
+    """Test to find and fix extra edge problem areas."""
+    skip_if_linux(modeler, test_fix_extra_edge.__name__, "repair_tools")  # Skip test on Linux
+    design = modeler.open_file(FILES_DIR / "ExtraEdgesDesignBefore.scdocx")
+    problem_areas = modeler.repair_tools.find_extra_edges(design.bodies)
+    assert problem_areas[0].fix().success is True
+
+
 def test_find_inexact_edges(modeler: Modeler):
     """Test to read geometry and find it's inexact edge problem areas."""
     skip_if_linux(modeler, test_find_inexact_edges.__name__, "repair_tools")  # Skip test on Linux
@@ -276,3 +284,19 @@ def test_fix_stitch_face(modeler: Modeler):
     assert message.success is True
     assert len(message.created_bodies) == 0
     assert len(message.modified_bodies) > 0
+
+
+def test_find_short_edges(modeler: Modeler):
+    """Test to read geometry and find it's short edge problem areas."""
+    skip_if_linux(modeler, test_find_short_edges.__name__, "repair_tools")  # Skip test on Linux
+    design = modeler.open_file(FILES_DIR / "ShortEdgesBefore.scdocx")
+    problem_areas = modeler.repair_tools.find_short_edges(design.bodies, 10)
+    assert len(problem_areas) == 12
+
+
+def test_fix_short_edges(modeler: Modeler):
+    """Test to read geometry and find and fix it's short edge problem areas."""
+    skip_if_linux(modeler, test_fix_short_edges.__name__, "repair_tools")  # Skip test on Linux
+    design = modeler.open_file(FILES_DIR / "ShortEdgesBefore.scdocx")
+    problem_areas = modeler.repair_tools.find_short_edges(design.bodies, 10)
+    assert problem_areas[0].fix().success is True
