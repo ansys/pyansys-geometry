@@ -163,6 +163,7 @@ class Measurement(PhysicalQuantity):
         # Check the input
         if isinstance(value, Quantity):
             # TODO: inform that if Quantity is given, we will ignore provided unit value
+            # https://github.com/ansys/pyansys-geometry/issues/1319
             unit = value.units
         else:
             check_is_float_int(value, "value")

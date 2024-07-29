@@ -184,6 +184,7 @@ class Design(Component):
         self._grpc_client.log.debug(f"Design {self.name} is activated.")
 
     # TODO: allow for list of materials
+    # https://github.com/ansys/pyansys-geometry/issues/1319
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
@@ -196,6 +197,7 @@ class Design(Component):
             Material to add.
         """
         # TODO: Add design id to the request
+        # https://github.com/ansys/pyansys-geometry/issues/1319
         self._materials_stub.AddToDocument(
             AddToDocumentRequest(
                 material=GRPCMaterial(
@@ -827,8 +829,8 @@ class Design(Component):
     def __read_existing_design(self) -> None:
         """Read an existing ``Design`` located on the server."""
         #
-        # TODO: This might go out of sync with the _update_design_inplace method.
-        #       Ensure that the two methods are in sync. Especially regarding cleanup.
+        # This might go out of sync with the _update_design_inplace method.
+        # Ensure that the two methods are in sync. Especially regarding cleanup.
         #
         # TODO: Not all features implemented yet. Status is as follows
         #
@@ -854,6 +856,7 @@ class Design(Component):
         # - [X] CoordinateSystems
         # - [ ] SharedTopology
         #
+        # https://github.com/ansys/pyansys-geometry/issues/1319
         import time
 
         start = time.time()
@@ -920,10 +923,13 @@ class Design(Component):
                 # TODO: Add support for more material properties...
                 #      - Need to add support for more MaterialPropertyTypes
                 #      - Need to add support for more Quantity units
+                # https://github.com/ansys/pyansys-geometry/issues/1319
                 try:
                     mp_type = MaterialPropertyType.from_id(property.id)
-                except ValueError as err:  # TODO: Errors coming from MaterialPropertyType.from_id
+                except ValueError as err:
+                    # TODO: Errors coming from MaterialPropertyType.from_id
                     # because of unsupported MaterialPropertyType entries...
+                    # https://github.com/ansys/pyansys-geometry/issues/1319
                     self._grpc_client.log.warning(
                         f"Material property {property.display_name} of type {property.id} is not supported."  # noqa : E501
                         " Storing as string."
@@ -937,6 +943,7 @@ class Design(Component):
                     UndefinedUnitError,
                     TypeError,
                 ) as err:  # TODO: Errors coming from Quantity ctor because of unsupported units...
+                    # https://github.com/ansys/pyansys-geometry/issues/1319
                     self._grpc_client.log.warning(
                         f"Material property {property.display_name} with units {property.units} is not fully supported."  # noqa : E501
                         " Storing value only as float."
@@ -971,8 +978,9 @@ class Design(Component):
 
         # Set SharedTopology
         # TODO: Maybe just add it to Component or Part message
-        #          - we're starting to iterate through all the Components too much
-        # TODO: Make sure design doesn't need edge case attention
+        # we're starting to iterate through all the Components too much.
+        # Make sure design doesn't need edge case attention
+        # https://github.com/ansys/pyansys-geometry/issues/1319
         num_created_shared_topologies = 0
         for component_id, shared_topology_type in response.component_shared_topologies.items():
             component = created_components.get(component_id)
@@ -1001,8 +1009,9 @@ class Design(Component):
         # Clear all the existing information
         #
         # TODO: This might go out of sync with the __read_existing_design method
-        #       if the latter is updated and this method is not. Ensure that
-        #       the two methods are in sync.
+        # if the latter is updated and this method is not. Ensure that
+        # the two methods are in sync.
+        # https://github.com/ansys/pyansys-geometry/issues/1319
         #
         self._components = []
         self._bodies = []

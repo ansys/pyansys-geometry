@@ -139,6 +139,7 @@ class DummyGear(Gear):
 
             # Now, proceed to draw the arcs and segments
             # TODO: add plane to SketchSegment when available
+            # https://github.com/ansys/pyansys-geometry/issues/1319
             self._edges.append(
                 Arc(start=outer_arc_start + origin, end=outer_arc_end + origin, center=origin)
             )
@@ -200,7 +201,7 @@ class SpurGear(Gear):
         self._tip_diameter = self.ref_diameter + 2 * self.module
         self._root_diameter = self.ref_diameter - 2.5 * self.module
 
-        # TODO: To be properly implemented (sketching)...
+        # Sketch the gear
         self._sketch_spur_gear()
 
     @property

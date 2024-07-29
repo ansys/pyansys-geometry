@@ -119,6 +119,7 @@ class Slot(SketchFace):
         )
 
         # TODO: add plane to SketchSegment when available
+        # https://github.com/ansys/pyansys-geometry/issues/1319
         self._arc1 = Arc(self._slot_corner_1, self._slot_corner_2, self._arc_1_center)
         self._segment1 = SketchSegment(self._slot_corner_2, self._slot_corner_3)
         self._arc2 = Arc(self._slot_corner_3, self._slot_corner_4, self._arc_2_center)

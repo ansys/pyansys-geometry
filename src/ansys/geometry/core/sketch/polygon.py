@@ -130,10 +130,6 @@ class Polygon(SketchFace):
             VTK pyvista.Polydata configuration.
         """
         # Compensate z orientation by -np.pi / 2 to match Geometry service polygon processing
-        # TODO : are we sure that the specific vertex we are targeting is the one matching the
-        #        previous compensation angle? We could be rotating a different vertex for some
-        #        reason. Anyway, it's a regular polygon, everything will look the same.
-        #
         rotation = Matrix33(
             SpatialRotation.from_euler(
                 "xyz",

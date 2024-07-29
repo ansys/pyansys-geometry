@@ -138,6 +138,7 @@ class TrimmedSurface:
         )
 
     # TODO: perimeter, area?
+    # https://github.com/ansys/pyansys-geometry/issues/1319
 
 
 class ReversedTrimmedSurface(TrimmedSurface):

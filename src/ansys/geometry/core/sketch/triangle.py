@@ -53,7 +53,7 @@ class Triangle(SketchFace):
         self._point3 = point3
 
         # TODO: add plane to SketchSegment when available
-
+        # https://github.com/ansys/pyansys-geometry/issues/1319
         self._edges.append(SketchSegment(self._point1, self._point2))
         self._edges.append(SketchSegment(self._point2, self._point3))
         self._edges.append(SketchSegment(self._point3, self._point1))
