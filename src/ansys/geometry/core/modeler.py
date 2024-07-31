@@ -129,7 +129,6 @@ class Modeler:
             self._repair_tools = RepairTools(self._grpc_client)
             self._prepare_tools = PrepareTools(self._grpc_client)
             self._measurement_tools = MeasurementTools(self._grpc_client)
-            self._prepare_tools = PrepareTools(self._grpc_client)
 
         # Maintaining references to all designs within the modeler workspace
         self._designs: Dict[str, "Design"] = {}
