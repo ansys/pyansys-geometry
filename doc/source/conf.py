@@ -181,6 +181,7 @@ extensions = [
     "sphinx_jinja",
     "ansys_sphinx_theme.extension.autoapi",
     "numpydoc",
+    "pyvista.ext.viewer_directive",
 ]
 
 # Intersphinx mapping
