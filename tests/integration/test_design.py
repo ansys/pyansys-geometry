@@ -2390,10 +2390,43 @@ def test_revolve_sketch(modeler: Modeler):
     assert np.isclose(body.volume.m, np.pi**2 * 2 * 5, rtol=1e-3)  # quarter of a torus volume
 
 
-def test_revolve_sketch_fail(modeler: Modeler):
-    """Test demonstrating the failure of revolving a sketch when it is located
-    in the same origin.
+def test_revolve_sketch_coincident_origins(modeler: Modeler):
+    """Test demonstrating revolving a sketch when it is located
+    in the same origin does not fail.
     """
+    # Initialize a sphere sketch design given a semicircle profile
+    design = modeler.create_design("revolve-coincident-origins")
+
+    # Create an XZ plane centered at (0, 0, 0)
+    plane_profile = Plane(
+        origin=Point3D([0, 0, 0]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z
+    )
+    profile = Sketch(plane=plane_profile)
+    (
+        profile.segment_to_point(Point2D([1, 0]))
+        .arc_to_point(Point2D([-1, 0]), Point2D([0, 0]))
+        .segment_to_point(Point2D([0, 0]))
+    )
+
+    # Try revolving the profile... coincident origins is not a problem anymore
+    body = design.revolve_sketch(
+        "cross-section-sphere",
+        sketch=profile,
+        axis=UNITVECTOR3D_X,
+        angle=Angle(90, unit=UNITS.degrees),
+        rotation_origin=Point3D([0, 0, 0]),
+    )
+
+    assert body.is_surface is False
+    assert body.name == "cross-section-sphere"
+    assert np.isclose(
+        body.volume.m, np.pi / 3, rtol=1e-3
+    )  # quarter of a sphere volume (4/3 * pi * r^3) / 4
+    # 1/3 * pi * r^3 --> r = 1 --> 1/3 * pi
+
+
+def test_revolve_sketch_fail_invalid_path(modeler: Modeler):
+    """Test demonstrating the failure of revolving a sketch when an invalid path is provided."""
     # Initialize the donut sketch design
     design = modeler.create_design("revolve-fail")
 
@@ -2402,13 +2435,14 @@ def test_revolve_sketch_fail(modeler: Modeler):
         origin=Point3D([0, 0, 0]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z
     )
     profile = Sketch(plane=plane_profile)
+    profile.circle(Point2D([0, 0]), 1)
 
     # Try revolving the profile...
     with pytest.raises(
-        ValueError, match="The sketch plane origin is coincident with the rotation origin."
+        GeometryExitedError, match="The path is invalid, or it is unsuitable for the profile."
     ):
         design.revolve_sketch(
-            "donut-body",
+            "cross-section-sphere",
             sketch=profile,
             axis=UNITVECTOR3D_Z,
             angle=Angle(90, unit=UNITS.degrees),
