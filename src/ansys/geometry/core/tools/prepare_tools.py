@@ -22,13 +22,16 @@
 """Provides tools for preparing geometry for use with simulation."""
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+from ansys.api.geometry.v0.models_pb2 import Body as GRPCBody
 from ansys.api.geometry.v0.preparetools_pb2 import (
     ExtractVolumeFromEdgeLoopsRequest,
     ExtractVolumeFromFacesRequest,
+    ShareTopologyRequest,
 )
 from ansys.api.geometry.v0.preparetools_pb2_grpc import PrepareToolsStub
 from beartype import beartype as check_input_types
 from beartype.typing import TYPE_CHECKING, List
+from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
@@ -38,6 +41,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_face,
 )
 from ansys.geometry.core.misc.checks import min_backend_version
+from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -148,3 +152,37 @@ class PrepareTools:
         else:
             self._grpc_client.log.info("Failed to extract volume from edge loops...")
             return []
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 1, 0)
+    def share_topology(
+        self, bodies: List["Body"], tol: Real = 0.0, preserve_instances: bool = False
+    ) -> bool:
+        """Share topology between the chosen bodies.
+
+        Parameters
+        ----------
+        bodies : List[Body]
+            List of bodies to share topology between.
+        tol : Real
+            Maximum distance between bodies.
+        preserve_instances : bool
+            Whether instances are preserved.
+
+        Returns
+        -------
+        bool
+            ``True`` if successful, ``False`` if failed.
+        """
+        if not bodies:
+            return False
+
+        share_topo_response = self._prepare_stub.ShareTopology(
+            ShareTopologyRequest(
+                selection=[GRPCBody(id=body.id) for body in bodies],
+                tolerance=DoubleValue(value=tol),
+                preserve_instances=BoolValue(value=preserve_instances),
+            )
+        )
+        return share_topo_response.result

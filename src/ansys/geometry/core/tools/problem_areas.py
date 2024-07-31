@@ -25,8 +25,10 @@ from abc import abstractmethod
 
 from ansys.api.geometry.v0.repairtools_pb2 import (
     FixDuplicateFacesRequest,
+    FixExtraEdgesRequest,
     FixInexactEdgesRequest,
     FixMissingFacesRequest,
+    FixShortEdgesRequest,
     FixSmallFacesRequest,
     FixSplitEdgesRequest,
     FixStitchFacesRequest,
@@ -269,9 +271,86 @@ class ExtraEdgeProblemAreas(ProblemArea):
         """The list of the ids of the edges connected to this problem area."""
         return self._edges
 
+    def fix(self) -> RepairToolMessage:
+        """Fix the problem area.
+
+        Returns
+        -------
+        message: RepairToolMessage
+            Message containing created and/or modified bodies.
+        """
+        if not self.edges:
+            return RepairToolMessage(False, [], [])
+
+        parent_design = get_design_from_edge(self.edges[0])
+        request = FixExtraEdgesRequest(extra_edge_problem_area_id=self._id_grpc)
+        response = self._repair_stub.FixExtraEdges(request)
+        parent_design._update_design_inplace()
+        message = RepairToolMessage(
+            response.result.success,
+            response.result.created_bodies_monikers,
+            response.result.modified_bodies_monikers,
+        )
+
+        return message
+
+
+class ShortEdgeProblemAreas(ProblemArea):
+    """Represents a short edge problem area with a unique identifier and associated edges.
+
+    Parameters
+    ----------
+    id : str
+        Server-defined ID for the body.
+    grpc_client : GrpcClient
+        Active supporting geometry service instance for design modeling.
+    edges : List[Edge]
+        List of edges associated with the design.
+    """
+
+    def __init__(self, id: str, grpc_client: GrpcClient, edges: List["Edge"]):
+        """Initialize a new instance of the ``ShortEdgeProblemAreas`` class."""
+        super().__init__(id, grpc_client)
+
+        from ansys.geometry.core.designer.edge import Edge
+
+        # Verify that all elements in the list are edges
+        check_type_all_elements_in_iterable(edges, Edge)
+
+        self._edges = edges
+
+    @property
+    def edges(self) -> List["Edge"]:
+        """The list of the ids of the edges connected to this problem area."""
+        return self._edges
+
+    def fix(self) -> RepairToolMessage:
+        """Fix the problem area.
+
+        Returns
+        -------
+        message: RepairToolMessage
+            Message containing created and/or modified bodies.
+        """
+        if not self.edges:
+            return RepairToolMessage(False, [], [])
+
+        parent_design = get_design_from_edge(self.edges[0])
+        response = self._repair_stub.FixShortEdges(
+            FixShortEdgesRequest(short_edge_problem_area_id=self._id_grpc)
+        )
+        parent_design._update_design_inplace()
+        message = RepairToolMessage(
+            response.result.success,
+            response.result.created_bodies_monikers,
+            response.result.modified_bodies_monikers,
+        )
+
+        return message
+
 
 class SmallFaceProblemAreas(ProblemArea):
-    """Represents a small face problem area with unique identifier and associated faces.
+    """Represents a small face problem area with a unique identifier and associated faces.
 
     Parameters
     ----------
