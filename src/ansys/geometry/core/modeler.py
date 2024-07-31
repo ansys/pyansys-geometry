@@ -40,6 +40,7 @@ from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.checks import check_type, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions
+from ansys.geometry.core.parameters import DrivingDimensions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.prepare_tools import PrepareTools
 from ansys.geometry.core.tools.repair_tools import RepairTools
@@ -124,11 +125,13 @@ class Modeler:
             self._repair_tools = None
             self._prepare_tools = None
             self._measurement_tools = None
+            self._driving_dimensions = None
             LOG.warning("Linux backend does not support repair or prepare tools.")
         else:
             self._repair_tools = RepairTools(self._grpc_client)
             self._prepare_tools = PrepareTools(self._grpc_client)
             self._measurement_tools = MeasurementTools(self._grpc_client)
+            self._driving_dimensions = DrivingDimensions(self._grpc_client)
 
         # Maintaining references to all designs within the modeler workspace
         self._designs: Dict[str, "Design"] = {}
@@ -418,6 +421,11 @@ class Modeler:
     def prepare_tools(self) -> PrepareTools:
         """Access to prepare tools."""
         return self._prepare_tools
+
+    @property
+    def driving_dimensions(self) -> DrivingDimensions:
+        """Access to parameters."""
+        return self._driving_dimensions
 
     @property
     @min_backend_version(24, 2, 0)
