@@ -154,15 +154,18 @@ def test_issue_1309_revolve_operation_with_coincident_origins(modeler: Modeler):
     # Create Base
     sketch = Sketch(sketch_plane)
 
-    sketch.arc(
-        start=Point2D([0, 0]),
-        end=Point2D([4.7, 4.7]),
-        center=Point2D([0, 4.7]),
-        clockwise=False,
-    ).segment_to_point(Point2D([4.7, 12])).segment_to_point(Point2D([-25.3, 12])).segment_to_point(
-        Point2D([-25.3, 0])
-    ).segment_to_point(Point2D([0, 0]))
-    sketch.plot()
+    (
+        sketch.arc(
+            start=Point2D([0, 0]),
+            end=Point2D([4.7, 4.7]),
+            center=Point2D([0, 4.7]),
+            clockwise=False,
+        )
+        .segment_to_point(Point2D([4.7, 12]))
+        .segment_to_point(Point2D([-25.3, 12]))
+        .segment_to_point(Point2D([-25.3, 0]))
+        .segment_to_point(Point2D([0, 0]))
+    )
 
     # Create Component (Revolve sketch)
     design = modeler.create_design("cylinder")
