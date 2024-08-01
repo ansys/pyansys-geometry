@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides for managing a body."""
+
 from abc import ABC, abstractmethod
 from enum import Enum, unique
 from functools import wraps
@@ -34,6 +35,8 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     RotateRequest,
     ScaleRequest,
     SetAssignedMaterialRequest,
+    SetFillStyleRequest,
+    SetNameRequest,
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
@@ -104,6 +107,15 @@ class CollisionType(Enum):
     CONTAINEDTOUCH = 4
 
 
+@unique
+class FillStyle(Enum):
+    """Provides values for fill styles supported."""
+
+    DEFAULT = 0
+    OPAQUE = 1
+    TRANSPARENT = 2
+
+
 class IBody(ABC):
     """Defines the common methods for a body, providing the abstract body interface.
 
@@ -119,6 +131,21 @@ class IBody(ABC):
     @abstractmethod
     def name(self) -> str:
         """Get the name of the body."""
+        return
+
+    @abstractmethod
+    def set_name(self, str) -> None:
+        """Set the name of the body."""
+        return
+
+    @abstractmethod
+    def fill_style(self) -> FillStyle:
+        """Get the fill style of the body."""
+        return
+
+    @abstractmethod
+    def set_fill_style(self, fill_style: FillStyle) -> None:
+        """Set the fill style of the body."""
         return
 
     @abstractmethod
@@ -223,9 +250,7 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def imprint_curves(
-        self, faces: List[Face], sketch: Sketch
-    ) -> Tuple[List[Edge], List[Face]]:
+    def imprint_curves(self, faces: List[Face], sketch: Sketch) -> Tuple[List[Edge], List[Face]]:
         """Imprint all specified geometries onto specified faces of the body.
 
         Parameters
@@ -318,9 +343,7 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def translate(
-        self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
-    ) -> None:
+    def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]) -> None:
         """Translate the body in a specified direction and distance.
 
         Parameters
@@ -443,9 +466,7 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def tessellate(
-        self, merge: Optional[bool] = False
-    ) -> Union["PolyData", "MultiBlock"]:
+    def tessellate(self, merge: Optional[bool] = False) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
         Parameters
@@ -479,7 +500,7 @@ class IBody(ABC):
         >>> body = my_comp.extrude_sketch("my-sketch", sketch, 1 * u.m)
         >>> blocks = body.tessellate()
         >>> blocks
-        >>> MultiBlock (0x7f94ec757460)
+        >>> MultiBlock(0x7F94EC757460)
              N Blocks:	6
              X Bounds:	0.000, 4.000
              Y Bounds:	-1.000, 0.000
@@ -550,19 +571,22 @@ class IBody(ABC):
         """
         return
 
-    def intersect(self, other: Union["Body", Iterable["Body"]]) -> None:
+    def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:
         """Intersect two (or more) bodies.
 
         Notes
         -----
         The ``self`` parameter is directly modified with the result, and
         the ``other`` parameter is consumed. Thus, it is important to make
-        copies if needed.
+        copies if needed. If the ``keep_other`` parameter is set to ``True``,
+        the intersected body is retained.
 
         Parameters
         ----------
         other : Body
             Body to intersect with.
+        keep_other : bool, default: False
+            Whether to retain the intersected body or not.
 
         Raises
         ------
@@ -572,19 +596,22 @@ class IBody(ABC):
         return
 
     @protect_grpc
-    def subtract(self, other: Union["Body", Iterable["Body"]]) -> None:
+    def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:
         """Subtract two (or more) bodies.
 
         Notes
         -----
         The ``self`` parameter is directly modified with the result, and
         the ``other`` parameter is consumed. Thus, it is important to make
-        copies if needed.
+        copies if needed. If the ``keep_other`` parameter is set to ``True``,
+        the subtracted body is retained.
 
         Parameters
         ----------
         other : Body
             Body to subtract from the ``self`` parameter.
+        keep_other : bool, default: False
+            Whether to retain the subtracted body or not.
 
         Raises
         ------
@@ -594,19 +621,22 @@ class IBody(ABC):
         return
 
     @protect_grpc
-    def unite(self, other: Union["Body", Iterable["Body"]]) -> None:
+    def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:
         """Unite two (or more) bodies.
 
         Notes
         -----
         The ``self`` parameter is directly modified with the result, and
         the ``other`` parameter is consumed. Thus, it is important to make
-        copies if needed.
+        copies if needed. If the ``keep_other`` parameter is set to ``True``,
+        the united body is retained.
 
         Parameters
         ----------
         other : Body
             Body to unite with the ``self`` parameter.
+        keep_other : bool, default: False
+            Whether to retain the united body or not.
         """
         return
 
@@ -655,8 +685,9 @@ class MasterBody(IBody):
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._tessellation = None
+        self._fill_style = FillStyle.DEFAULT
 
-    def reset_tessellation_cache(func): # noqa: N805
+    def reset_tessellation_cache(func):  # noqa: N805
         """Decorate ``MasterBody`` methods that need tessellation cache update.
 
         Parameters
@@ -689,6 +720,18 @@ class MasterBody(IBody):
     @property
     def name(self) -> str:  # noqa: D102
         return self._name
+
+    @name.setter
+    def name(self, value: str):  # noqa: D102
+        self.set_name(value)
+
+    @property
+    def fill_style(self) -> str:  # noqa: D102
+        return self._fill_style
+
+    @fill_style.setter
+    def fill_style(self, value: FillStyle):  # noqa: D102
+        self.set_fill_style(value)
 
     @property
     def is_surface(self) -> bool:  # noqa: D102
@@ -742,23 +785,17 @@ class MasterBody(IBody):
     @protect_grpc
     def volume(self) -> Quantity:  # noqa: D102
         if self.is_surface:
-            self._grpc_client.log.debug(
-                "Dealing with planar surface. Returning 0 as the volume."
-            )
+            self._grpc_client.log.debug("Dealing with planar surface. Returning 0 as the volume.")
             return Quantity(0, DEFAULT_UNITS.SERVER_VOLUME)
         else:
-            self._grpc_client.log.debug(
-                f"Retrieving volume for body {self.id} from server."
-            )
+            self._grpc_client.log.debug(f"Retrieving volume for body {self.id} from server.")
             volume_response = self._bodies_stub.GetVolume(self._grpc_id)
             return Quantity(volume_response.volume, DEFAULT_UNITS.SERVER_VOLUME)
 
     @protect_grpc
     @check_input_types
     def assign_material(self, material: Material) -> None:  # noqa: D102
-        self._grpc_client.log.debug(
-            f"Assigning body {self.id} material {material.name}."
-        )
+        self._grpc_client.log.debug(f"Assigning body {self.id} material {material.name}.")
         self._bodies_stub.SetAssignedMaterial(
             SetAssignedMaterialRequest(id=self._id, material=material.name)
         )
@@ -860,6 +897,36 @@ class MasterBody(IBody):
 
     @protect_grpc
     @check_input_types
+    @min_backend_version(25, 1, 0)
+    def set_name(  # noqa: D102
+        self, name: str
+    ) -> None:
+        self._grpc_client.log.debug(f"Renaming body {self.id} from '{self.name}' to '{name}'.")
+        self._bodies_stub.SetName(
+            SetNameRequest(
+                body_id=self.id,
+                name=name,
+            )
+        )
+        self._name = name
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 1, 0)
+    def set_fill_style(  # noqa: D102
+        self, fill_style: FillStyle
+    ) -> None:
+        self._grpc_client.log.debug(f"Setting body fill style {self.id}.")
+        self._bodies_stub.SetFillStyle(
+            SetFillStyleRequest(
+                body_id=self.id,
+                fill_style=fill_style.value,
+            )
+        )
+        self._fill_style = fill_style
+
+    @protect_grpc
+    @check_input_types
     @reset_tessellation_cache
     @min_backend_version(24, 2, 0)
     def rotate(  # noqa: D102
@@ -902,16 +969,12 @@ class MasterBody(IBody):
     @min_backend_version(24, 2, 0)
     def mirror(self, plane: Plane) -> None:  # noqa: D102
         self._grpc_client.log.debug(f"Mirroring body {self.id}.")
-        self._bodies_stub.Mirror(
-            MirrorRequest(id=self.id, plane=plane_to_grpc_plane(plane))
-        )
+        self._bodies_stub.Mirror(MirrorRequest(id=self.id, plane=plane_to_grpc_plane(plane)))
 
     @protect_grpc
     @min_backend_version(24, 2, 0)
     def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
-        self._grpc_client.log.debug(
-            f"Get collision between body {self.id} and body {body.id}."
-        )
+        self._grpc_client.log.debug(f"Get collision between body {self.id} and body {body.id}.")
         response = self._bodies_stub.GetCollision(
             GetCollisionRequest(
                 body_1_id=self.id,
@@ -983,17 +1046,17 @@ class MasterBody(IBody):
             "MasterBody does not implement plot methods. Call this method on a body instead."
         )
 
-    def intersect(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
+    def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         raise NotImplementedError(
             "MasterBody does not implement Boolean methods. Call this method on a body instead."
         )
 
-    def subtract(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
+    def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         raise NotImplementedError(
             "MasterBody does not implement Boolean methods. Call this method on a body instead."
         )
 
-    def unite(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
+    def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         raise NotImplementedError(
             "MasterBody does not implement Boolean methods. Call this method on a body instead."
         )
@@ -1028,16 +1091,14 @@ class Body(IBody):
         Master body that this body is an occurrence of.
     """
 
-    def __init__(
-        self, id, name, parent_component: "Component", template: MasterBody
-    ) -> None:
+    def __init__(self, id, name, parent_component: "Component", template: MasterBody) -> None:
         """Initialize the ``Body`` class."""
         self._id = id
         self._name = name
         self._parent_component = parent_component
         self._template = template
 
-    def reset_tessellation_cache(func): # noqa: N805
+    def reset_tessellation_cache(func):  # noqa: N805
         """Decorate ``Body`` methods that require a tessellation cache update.
 
         Parameters
@@ -1066,6 +1127,18 @@ class Body(IBody):
     def name(self) -> str:  # noqa: D102
         return self._template.name
 
+    @name.setter
+    def name(self, value: str):  # noqa: D102
+        self._template.name = value
+
+    @property
+    def fill_style(self) -> str:  # noqa: D102
+        return self._template.fill_style
+
+    @fill_style.setter
+    def fill_style(self, fill_style: FillStyle) -> str:  # noqa: D102
+        self._template.fill_style = fill_style
+
     @property
     def parent_component(self) -> "Component":  # noqa: D102
         return self._parent_component
@@ -1074,9 +1147,7 @@ class Body(IBody):
     @protect_grpc
     @ensure_design_is_active
     def faces(self) -> List[Face]:  # noqa: D102
-        self._template._grpc_client.log.debug(
-            f"Retrieving faces for body {self.id} from server."
-        )
+        self._template._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
         grpc_faces = self._template._bodies_stub.GetFaces(EntityIdentifier(id=self.id))
         return [
             Face(
@@ -1093,9 +1164,7 @@ class Body(IBody):
     @protect_grpc
     @ensure_design_is_active
     def edges(self) -> List[Edge]:  # noqa: D102
-        self._template._grpc_client.log.debug(
-            f"Retrieving edges for body {self.id} from server."
-        )
+        self._template._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
         grpc_edges = self._template._bodies_stub.GetEdges(EntityIdentifier(id=self.id))
         return [
             Edge(
@@ -1181,9 +1250,7 @@ class Body(IBody):
                     is_found = True
                     break
             if not is_found:
-                raise ValueError(
-                    f"Face with ID {provided_face.id} is not part of this body."
-                )
+                raise ValueError(f"Face with ID {provided_face.id} is not part of this body.")
 
         self._template._grpc_client.log.debug(
             f"Imprinting curves provided on {self.id} "
@@ -1193,9 +1260,7 @@ class Body(IBody):
         imprint_response = self._template._commands_stub.ImprintCurves(
             ImprintCurvesRequest(
                 body=self._id,
-                curves=sketch_shapes_to_grpc_geometries(
-                    sketch._plane, sketch.edges, sketch.faces
-                ),
+                curves=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
                 faces=[face._id for face in faces],
             )
         )
@@ -1234,9 +1299,7 @@ class Body(IBody):
         curves = sketch_shapes_to_grpc_geometries(
             sketch._plane, sketch.edges, sketch.faces, only_one_curve=only_one_curve
         )
-        self._template._grpc_client.log.debug(
-            f"Projecting provided curves on {self.id}."
-        )
+        self._template._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 
         project_response = self._template._commands_stub.ProjectCurves(
             ProjectCurvesRequest(
@@ -1272,9 +1335,7 @@ class Body(IBody):
         curves = sketch_shapes_to_grpc_geometries(
             sketch._plane, sketch.edges, sketch.faces, only_one_curve=only_one_curve
         )
-        self._template._grpc_client.log.debug(
-            f"Projecting provided curves on {self.id}."
-        )
+        self._template._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 
         response = self._template._commands_stub.ImprintProjectedCurves(
             ProjectCurvesRequest(
@@ -1296,6 +1357,14 @@ class Body(IBody):
         ]
 
         return imprinted_faces
+
+    @ensure_design_is_active
+    def set_name(self, name: str) -> None:  # noqa: D102
+        return self._template.set_name(name)
+
+    @ensure_design_is_active
+    def set_fill_style(self, fill_style: FillStyle) -> None:  # noqa: D102
+        return self._template.set_fill_style(fill_style)
 
     @ensure_design_is_active
     def translate(  # noqa: D102
@@ -1336,9 +1405,7 @@ class Body(IBody):
     def tessellate(  # noqa: D102
         self, merge: Optional[bool] = False
     ) -> Union["PolyData", "MultiBlock"]:
-        return self._template.tessellate(
-            merge, self.parent_component.get_world_transform()
-        )
+        return self._template.tessellate(merge, self.parent_component.get_world_transform())
 
     def plot(  # noqa: D102
         self,
@@ -1360,14 +1427,14 @@ class Body(IBody):
         pl.plot(meshobject, **plotting_options)
         pl.show(screenshot=screenshot, **plotting_options)
 
-    def intersect(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
-        self.__generic_boolean_op(other, "intersect", "bodies do not intersect")
+    def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
+        self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
 
-    def subtract(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
-        self.__generic_boolean_op(other, "subtract", "empty (complete) subtraction")
+    def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
+        self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
 
-    def unite(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
-        self.__generic_boolean_op(other, "unite", "union operation failed")
+    def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
+        self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
 
     @protect_grpc
     @reset_tessellation_cache
@@ -1376,10 +1443,16 @@ class Body(IBody):
     def __generic_boolean_op(
         self,
         other: Union["Body", Iterable["Body"]],
+        keep_other: bool,
         type_bool_op: str,
         err_bool_op: str,
     ) -> None:
         grpc_other = other if isinstance(other, Iterable) else [other]
+        if keep_other:
+            # Make a copy of the other body to keep it...
+            # stored temporarily in the parent component - since it will be deleted
+            grpc_other = [b.copy(self.parent_component, f"BoolOpCopy_{b.name}") for b in grpc_other]
+
         try:
             response = self._template._bodies_stub.Boolean(
                 BooleanRequest(
@@ -1392,6 +1465,7 @@ class Body(IBody):
             # TODO: to be deleted - old versions did not have "tool_bodies" in the request
             # This is a temporary fix to support old versions of the server - should be deleted
             # once the server is no longer supported.
+            # https://github.com/ansys/pyansys-geometry/issues/1319
             if not isinstance(other, Iterable):
                 response = self._template._bodies_stub.Boolean(
                     BooleanRequest(body1=self.id, body2=other.id, method=type_bool_op)
@@ -1400,9 +1474,7 @@ class Body(IBody):
                 all_response = []
                 for body2 in other:
                     response = self._template._bodies_stub.Boolean(
-                        BooleanRequest(
-                            body1=self.id, body2=body2.id, method=type_bool_op
-                        )
+                        BooleanRequest(body1=self.id, body2=body2.id, method=type_bool_op)
                     ).empty_result
                     all_response.append(response)
 

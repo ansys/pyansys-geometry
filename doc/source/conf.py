@@ -33,6 +33,7 @@ logger = logging.getLogger(__name__)
 #
 # Using env var instead
 os.environ["PYANSYS_VISUALIZER_DOC_MODE"] = "true"
+os.environ["PYANSYS_VISUALIZER_HTML_BACKEND"] = "true"
 
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
 
@@ -43,7 +44,6 @@ def get_wheelhouse_assets_dictionary():
     assets_context_runners = ["ubuntu-latest", "windows-latest", "macos-latest"]
     assets_context_python_versions = ["3.9", "3.10", "3.11", "3.12"]
     if get_version_match(__version__) == "dev":
-
         # Try to retrieve the content three times before failing
         content = None
         for _ in range(3):

@@ -175,10 +175,36 @@ The Python visualizer is used by default. However, you can also use
 
 ```python
 
-plotter = GeometryPlotter
-(use_trame=True)
+plotter = GeometryPlotter(use_trame=True)
 plotter.show(plot_list)
 ```
+
+## Render in different colors
+
+You can render the objects in different colors automatically using PyVista's default
+color cycler. In order to do this, activate the ``multi_colors=True`` option when calling
+the ``plot()`` method.
+
+In the following cell we will create a new design and plot a prism and a cylinder in different colors.
+
+```python
+design = modeler.create_design("MultiColors")
+
+# Create a sketch of a box
+sketch_box = Sketch().box(Point2D([0, 0], unit=UNITS.m), width=30 * UNITS.m, height=40 * UNITS.m)
+
+# Create a sketch of a circle (overlapping the box slightly)
+sketch_circle = Sketch().circle(Point2D([20, 0], unit=UNITS.m), radius=3 * UNITS.m)
+
+# Extrude both sketches to get a prism and a cylinder
+design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
+design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
+
+# Design plotting
+design.plot(multi_colors=True)
+```
+
+![](../../_static/assets/multicolors.png)
 
 ## Clip objects
 

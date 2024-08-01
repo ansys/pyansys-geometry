@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Module containing the ``ProductInstance`` class."""
+
 import logging
 import os
 from pathlib import Path

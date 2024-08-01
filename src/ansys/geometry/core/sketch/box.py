@@ -96,6 +96,7 @@ class Box(SketchFace):
         self._corner_4 = Point2D([center.x.m + corner_4[0], center.y.m + corner_4[1]], center.unit)
 
         # TODO: add plane to SketchSegment when available
+        # https://github.com/ansys/pyansys-geometry/issues/1319
         self._width_segment1 = SketchSegment(self._corner_1, self._corner_2)
         self._height_segment1 = SketchSegment(self._corner_2, self._corner_3)
         self._width_segment2 = SketchSegment(self._corner_3, self._corner_4)

@@ -22,7 +22,7 @@
 """Provides for managing components."""
 
 from enum import Enum, unique
-import uuid  # TODO: Is ID even needed? Maybe use from SC?
+import uuid
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
@@ -592,12 +592,6 @@ class Component:
     ) -> Body:
         """Create a solid body by revolving a sketch profile around an axis.
 
-        Notes
-        -----
-        It is important that the sketch plane origin is not coincident with the rotation
-        origin. If the sketch plane origin is coincident with the rotation origin, the
-        distance between the two points is zero, and the revolve operation fails.
-
         Parameters
         ----------
         name : str
@@ -616,26 +610,16 @@ class Component:
         Body
             Revolved body from the given sketch.
         """
-        # Check that the sketch plane origin is not coincident with the rotation origin
-        if sketch.plane.origin == rotation_origin:
-            raise ValueError(
-                "The sketch plane origin is coincident with the rotation origin. "
-                + "The distance between the points is zero, and the revolve operation will fail."
-            )
-
-        # Compute the distance between the rotation origin and the sketch plane
-        rotation_origin_to_sketch = sketch.plane.origin - rotation_origin
-        rotation_origin_to_sketch_as_vector = Vector3D(rotation_origin_to_sketch)
-        distance = Distance(
-            rotation_origin_to_sketch_as_vector.norm,
-            unit=rotation_origin_to_sketch.base_unit,
-        )
+        # Based on the reference axis and the sketch plane's normal, retrieve the orthogonal
+        # vector (i.e. this is the reference vector for the Circle object). Assuming a distance of 1
+        # we revolve around the axis the angle given.
+        rotation_vector = sketch._plane.normal.cross(axis)
 
         # Define the revolve path
         circle = Circle(
             rotation_origin,
-            radius=distance,
-            reference=rotation_origin_to_sketch_as_vector,
+            radius=Distance(1),
+            reference=rotation_vector,
             axis=axis,
         )
         angle = angle if isinstance(angle, Angle) else Angle(angle)
@@ -1426,7 +1410,7 @@ class Component:
         ... )
         >>> for x, y in zip(xx.ravel(), yy.ravel()):
         ...     sketch = Sketch(plane)
-        ...     sketch.circle(Point2D([x, y]), 0.2*u.m)
+        ...     sketch.circle(Point2D([x, y]), 0.2 * u.m)
         ...     mycomp.extrude_sketch(f"body-{x}-{y}", sketch, 1 * u.m)
         >>> mycomp
         ansys.geometry.core.designer.Component 0x2203cc9ec50

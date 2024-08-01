@@ -37,6 +37,7 @@ class SketchFace:
     def __init__(self):
         """Initialize the face."""
         # TODO: What about the circular faces? Circle, Ellipse are not making use of this...
+        # https://github.com/ansys/pyansys-geometry/issues/1319
         self._edges = []
 
     @property
