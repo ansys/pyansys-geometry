@@ -33,6 +33,7 @@ logger = logging.getLogger(__name__)
 #
 # Using env var instead
 os.environ["PYANSYS_VISUALIZER_DOC_MODE"] = "true"
+os.environ["PYANSYS_VISUALIZER_HTML_BACKEND"] = "true"
 
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
 
