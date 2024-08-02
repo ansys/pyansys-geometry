@@ -21,11 +21,13 @@
 # SOFTWARE.
 """Provides tools for repairing bodies."""
 
+from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.repairtools_pb2 import (
     FindDuplicateFacesRequest,
     FindExtraEdgesRequest,
     FindInexactEdgesRequest,
     FindMissingFacesRequest,
+    FindShortEdgesRequest,
     FindSmallFacesRequest,
     FindSplitEdgesRequest,
     FindStitchFacesRequest,
@@ -46,6 +48,7 @@ from ansys.geometry.core.tools.problem_areas import (
     ExtraEdgeProblemAreas,
     InexactEdgeProblemAreas,
     MissingFaceProblemAreas,
+    ShortEdgeProblemAreas,
     SmallFaceProblemAreas,
     SplitEdgeProblemAreas,
     StitchFaceProblemAreas,
@@ -60,9 +63,10 @@ class RepairTools:
     """Repair tools for PyAnsys Geometry."""
 
     def __init__(self, grpc_client: GrpcClient):
-        """Initialize Repair Tools class."""
+        """Initialize a new instance of the ``RepairTools`` class."""
         self._grpc_client = grpc_client
         self._repair_stub = RepairToolsStub(self._grpc_client.channel)
+        self._bodies_stub = BodiesStub(self._grpc_client.channel)
 
     def find_split_edges(
         self, bodies: List["Body"], angle: Real = 0.0, length: Real = 0.0
@@ -101,7 +105,7 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         return [
             SplitEdgeProblemAreas(
-                str(res.id),
+                f"{res.id}",
                 self._grpc_client,
                 get_edges_from_ids(parent_design, res.edge_monikers),
             )
@@ -135,7 +139,7 @@ class RepairTools:
 
         return [
             ExtraEdgeProblemAreas(
-                str(res.id),
+                f"{res.id}",
                 self._grpc_client,
                 get_edges_from_ids(parent_design, res.edge_monikers),
             )
@@ -170,7 +174,45 @@ class RepairTools:
 
         return [
             InexactEdgeProblemAreas(
-                str(res.id),
+                f"{res.id}",
+                self._grpc_client,
+                get_edges_from_ids(parent_design, res.edge_monikers),
+            )
+            for res in problem_areas_response.result
+        ]
+
+    def find_short_edges(
+        self, bodies: List["Body"], length: Real = 0.0
+    ) -> List[ShortEdgeProblemAreas]:
+        """Find the short edge problem areas.
+
+        This method finds the short edge problem areas and returns a list of
+        these objects.
+
+        Parameters
+        ----------
+        bodies : List[Body]
+            List of bodies that short edges are investigated on.
+
+        Returns
+        -------
+        List[ShortEdgeProblemAreas]
+            List of objects representing short edge problem areas.
+        """
+        if not bodies:
+            return []
+
+        problem_areas_response = self._repair_stub.FindShortEdges(
+            FindShortEdgesRequest(
+                selection=[body.id for body in bodies],
+                max_edge_length=DoubleValue(value=length),
+            )
+        )
+
+        parent_design = get_design_from_body(bodies[0])
+        return [
+            ShortEdgeProblemAreas(
+                f"{res.id}",
                 self._grpc_client,
                 get_edges_from_ids(parent_design, res.edge_monikers),
             )
@@ -204,7 +246,7 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         return [
             DuplicateFaceProblemAreas(
-                str(res.id),
+                f"{res.id}",
                 self._grpc_client,
                 get_faces_from_ids(parent_design, res.face_monikers),
             )
@@ -237,7 +279,7 @@ class RepairTools:
 
         return [
             MissingFaceProblemAreas(
-                str(res.id),
+                f"{res.id}",
                 self._grpc_client,
                 get_edges_from_ids(parent_design, res.edge_monikers),
             )
@@ -271,7 +313,7 @@ class RepairTools:
 
         return [
             SmallFaceProblemAreas(
-                str(res.id),
+                f"{res.id}",
                 self._grpc_client,
                 get_faces_from_ids(parent_design, res.face_monikers),
             )
@@ -301,7 +343,7 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         return [
             StitchFaceProblemAreas(
-                str(res.id),
+                f"{res.id}",
                 self._grpc_client,
                 get_bodies_from_ids(parent_design, res.body_monikers),
             )
