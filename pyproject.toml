@@ -7,7 +7,7 @@ name = "ansys-geometry-core"
 version = "0.7.dev0"
 description = "A python wrapper for Ansys Geometry service"
 readme = "README.rst"
-requires-python = ">=3.9,<4"
+requires-python = ">=3.10,<4"
 license = { file = "LICENSE" }
 authors = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
 maintainers = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
@@ -17,7 +17,6 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -30,8 +29,7 @@ dependencies = [
     "beartype>=0.11.0,<0.19",
     "grpcio>=1.35.0,<2",
     "grpcio-health-checking>=1.45.0,<2",
-    "numpy>=1.20.3,<3; python_version>='3.10'",
-    "numpy>=1.20.3,<2; python_version=='3.9'",       # Remove when Python 3.9 support is dropped
+    "numpy>=1.20.3,<3",
     "Pint>=0.18,<1",
     "protobuf>=3.20.2,<6",
     "pyvista>=0.37.0,<1",
