@@ -22,7 +22,6 @@
 """Provides for managing a frame."""
 
 from beartype import beartype as check_input_types
-from beartype.typing import Union
 import numpy as np
 
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, ZERO_POINT3D
@@ -37,21 +36,21 @@ class Frame:
 
     Parameters
     ----------
-    origin : Union[~numpy.ndarray, RealSequence, Point3D], default: ZERO_POINT3D
+    origin : ~numpy.ndarray | RealSequence | Point3D, default: ZERO_POINT3D
         Centered origin of the`frame. The default is ``ZERO_POINT3D``, which is the
         Cartesian origin.
-    direction_x : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D], default: UNITVECTOR3D_X
+    direction_x : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D, default: UNITVECTOR3D_X
         X-axis direction.
-    direction_y : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D], default: UNITVECTOR3D_Y
+    direction_y : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D, default: UNITVECTOR3D_Y
         Y-axis direction.
     """  # noqa : E501
 
     @check_input_types
     def __init__(
         self,
-        origin: Union[np.ndarray, RealSequence, Point3D] = ZERO_POINT3D,
-        direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
-        direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Y,
+        origin: np.ndarray | RealSequence | Point3D = ZERO_POINT3D,
+        direction_x: np.ndarray | RealSequence | UnitVector3D | Vector3D = UNITVECTOR3D_X,
+        direction_y: np.ndarray | RealSequence | UnitVector3D | Vector3D = UNITVECTOR3D_Y,
     ):
         """Initialize the ``Frame`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin

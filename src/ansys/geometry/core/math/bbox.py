@@ -24,7 +24,6 @@
 import sys
 
 from beartype import beartype as check_input_types
-from beartype.typing import List
 
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc.accuracy import Accuracy
@@ -145,12 +144,12 @@ class BoundingBox2D:
         self._y_max = y if y > self._y_max else self._y_max
 
     @check_input_types
-    def add_points(self, points: List[Point2D]) -> None:
+    def add_points(self, points: list[Point2D]) -> None:
         """Extend the ranges of the bounding box to include given points.
 
         Parameters
         ----------
-        points : List[Point2D]
+        points : list[Point2D]
             List of points to include within the bounds.
         """
         for point in points:

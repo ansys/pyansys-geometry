@@ -21,14 +21,16 @@
 # SOFTWARE.
 """Module providing a wrapped abstraction of the gRPC stubs."""
 
+from __future__ import annotations
+
 import logging
 from pathlib import Path
 import time
+from typing import Optional
 
 from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
 from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
 from beartype import beartype as check_input_types
-from beartype.typing import Optional, Union
 from google.protobuf.empty_pb2 import Empty
 import grpc
 from grpc._channel import _InactiveRpcError
@@ -88,7 +90,7 @@ class GrpcClient:
     ----------
     host : str, default: DEFAULT_HOST
         Host where the server is running.
-    port : Union[str, int], default: DEFAULT_PORT
+    port : str or int, default: DEFAULT_PORT
         Port number where the server is running.
     channel : ~grpc.Channel, default: None
         gRPC channel for server communication.
@@ -124,16 +126,16 @@ class GrpcClient:
     @check_input_types
     def __init__(
         self,
-        host: Optional[str] = DEFAULT_HOST,
-        port: Union[str, int] = DEFAULT_PORT,
-        channel: Optional[grpc.Channel] = None,
+        host: str = DEFAULT_HOST,
+        port: str | int = DEFAULT_PORT,
+        channel: grpc.Channel | None = None,
         remote_instance: Optional["Instance"] = None,
-        docker_instance: Optional[LocalDockerInstance] = None,
-        product_instance: Optional[ProductInstance] = None,
-        timeout: Optional[Real] = 120,
-        logging_level: Optional[int] = logging.INFO,
-        logging_file: Optional[Union[Path, str]] = None,
-        backend_type: Optional[BackendType] = None,
+        docker_instance: LocalDockerInstance | None = None,
+        product_instance: ProductInstance | None = None,
+        timeout: Real = 120,
+        logging_level: int = logging.INFO,
+        logging_file: Path | str | None = None,
+        backend_type: BackendType | None = None,
     ):
         """Initialize the ``GrpcClient`` object."""
         self._closed = False
