@@ -87,7 +87,7 @@ doc = [
     "nbsphinx==0.9.4",
     "notebook==7.2.1",
     "numpydoc==1.7.0",
-    "panel==1.4.4",
+    "panel==1.4.5",
     "pyvista[jupyter]==0.44.1",
     "requests==2.32.3",
     "sphinx==7.4.7",
