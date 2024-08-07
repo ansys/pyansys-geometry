@@ -24,7 +24,6 @@
 from functools import cached_property
 
 from beartype import beartype as check_input_types
-from beartype.typing import Union
 import numpy as np
 from pint import Quantity
 from scipy.integrate import quad
@@ -51,26 +50,26 @@ class Ellipse(Curve):
 
     Parameters
     ----------
-    origin : Union[~numpy.ndarray, RealSequence, Point3D]
+    origin : ~numpy.ndarray | RealSequence | Point3D
         Origin of the ellipse.
-    major_radius : Union[Quantity, Distance, Real]
+    major_radius : ~pint.Quantity | Distance | Real
         Major radius of the ellipse.
-    minor_radius : Union[Quantity, Distance, Real]
+    minor_radius : ~pint.Quantity | Distance | Real
         Minor radius of the ellipse.
-    reference : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+    reference : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D
         X-axis direction.
-    axis : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+    axis : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D
         Z-axis direction.
     """
 
     @check_input_types
     def __init__(
         self,
-        origin: Union[np.ndarray, RealSequence, Point3D],
-        major_radius: Union[Quantity, Distance, Real],
-        minor_radius: Union[Quantity, Distance, Real],
-        reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
-        axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
+        origin: np.ndarray | RealSequence | Point3D,
+        major_radius: Quantity | Distance | Real,
+        minor_radius: Quantity | Distance | Real,
+        reference: np.ndarray | RealSequence | UnitVector3D | Vector3D = UNITVECTOR3D_X,
+        axis: np.ndarray | RealSequence | UnitVector3D | Vector3D = UNITVECTOR3D_Z,
     ):
         """Initialize the ``Ellipse`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin

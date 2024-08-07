@@ -24,7 +24,6 @@
 from threading import Lock
 
 from beartype import beartype as check_input_types
-from beartype.typing import Optional, Union
 from pint import Quantity, Unit
 
 from ansys.geometry.core.misc.checks import check_is_float_int, check_pint_unit_compatibility
@@ -149,7 +148,7 @@ class Measurement(PhysicalQuantity):
 
     Parameters
     ----------
-    value : Union[Real, Quantity]
+    value : Real | ~pint.Quantity
         Value of the measurement.
     unit : ~pint.Unit
         Units for the measurement.
@@ -158,7 +157,7 @@ class Measurement(PhysicalQuantity):
         If ``~pint.Unit.meter`` is given, the dimension extracted is ``[length]``.
     """
 
-    def __init__(self, value: Union[Real, Quantity], unit: Unit, dimensions: Unit):
+    def __init__(self, value: Real | Quantity, unit: Unit, dimensions: Unit):
         """Initialize the ``Measurement`` class."""
         # Check the input
         if isinstance(value, Quantity):
@@ -196,13 +195,13 @@ class Distance(Measurement):
 
     Parameters
     ----------
-    value : Union[Real, Quantity]
+    value : Real | ~pint.Quantity
         Value of the distance.
     unit : ~pint.Unit, default: DEFAULT_UNITS.LENGTH
         Units for the distance.
     """
 
-    def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = None):
+    def __init__(self, value: Real | Quantity, unit: Unit | None = None):
         """Initialize the ``Distance`` class."""
         # Delegates in Measurement ctor. forcing expected dimensions.
         unit = unit if unit else DEFAULT_UNITS.LENGTH
@@ -214,13 +213,13 @@ class Angle(Measurement):
 
     Parameters
     ----------
-    value : Union[Real, Quantity]
+    value : Real | ~pint.Quantity
         Value of the angle.
     unit : ~pint.Unit, default: DEFAULT_UNITS.ANGLE
         Units for the distance.
     """
 
-    def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = None):
+    def __init__(self, value: Real | Quantity, unit: Unit | None = None):
         """Initialize the ``Angle`` class."""
         # Delegates in Measurement ctor. forcing expected dimensions.
         unit = unit if unit else DEFAULT_UNITS.ANGLE

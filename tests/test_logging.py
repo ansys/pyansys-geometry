@@ -23,8 +23,8 @@
 
 import logging as deflogging  # Default logging
 import re
+from typing import Callable
 
-from beartype.typing import Callable
 import pytest
 
 from ansys.geometry.core import LOG  # Global logger

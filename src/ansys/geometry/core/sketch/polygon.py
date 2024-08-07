@@ -22,7 +22,6 @@
 """Provides for creating and managing a polygon."""
 
 from beartype import beartype as check_input_types
-from beartype.typing import Optional, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
@@ -43,11 +42,11 @@ class Polygon(SketchFace):
     ----------
     center: Point2D
         Center point of the circle.
-    inner_radius : Union[Quantity, Distance, Real]
+    inner_radius : ~pint.Quantity | Distance | Real
         Inner radius (apothem) of the polygon.
     sides : int
         Number of sides of the polygon.
-    angle : Union[Quantity, Angle, Real], default: 0
+    angle : ~pint.Quantity | Angle | Real, default: 0
         Placement angle for orientation alignment.
     """
 
@@ -55,9 +54,9 @@ class Polygon(SketchFace):
     def __init__(
         self,
         center: Point2D,
-        inner_radius: Union[Quantity, Distance, Real],
+        inner_radius: Quantity | Distance | Real,
         sides: int,
-        angle: Optional[Union[Quantity, Angle, Real]] = 0,
+        angle: Quantity | Angle | Real = 0,
     ):
         """Initialize the polygon."""
         super().__init__()

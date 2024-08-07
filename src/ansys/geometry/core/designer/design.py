@@ -23,6 +23,7 @@
 
 from enum import Enum, unique
 from pathlib import Path
+from typing import Union
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier, PartExportFormat
 from ansys.api.dbu.v0.designs_pb2 import InsertRequest, NewRequest, SaveAsRequest
@@ -43,7 +44,6 @@ from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from ansys.api.geometry.v0.parts_pb2 import ExportRequest
 from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
 from beartype import beartype as check_input_types
-from beartype.typing import Dict, List, Optional, Union
 from google.protobuf.empty_pb2 import Empty
 import numpy as np
 from pint import Quantity, UndefinedUnitError
@@ -109,9 +109,9 @@ class Design(Component):
     """
 
     # Types of the class instance private attributes
-    _materials: List[Material]
-    _named_selections: Dict[str, NamedSelection]
-    _beam_profiles: Dict[str, BeamProfile]
+    _materials: list[Material]
+    _named_selections: dict[str, NamedSelection]
+    _beam_profiles: dict[str, BeamProfile]
 
     @protect_grpc
     @check_input_types
@@ -151,17 +151,17 @@ class Design(Component):
         return self._design_id
 
     @property
-    def materials(self) -> List[Material]:
+    def materials(self) -> list[Material]:
         """List of materials available for the design."""
         return self._materials
 
     @property
-    def named_selections(self) -> List[NamedSelection]:
+    def named_selections(self) -> list[NamedSelection]:
         """List of named selections available for the design."""
         return list(self._named_selections.values())
 
     @property
-    def beam_profiles(self) -> List[BeamProfile]:
+    def beam_profiles(self) -> list[BeamProfile]:
         """List of beam profile available for the design."""
         return list(self._beam_profiles.values())
 
@@ -221,12 +221,12 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
-    def save(self, file_location: Union[Path, str]) -> None:
+    def save(self, file_location: Path | str) -> None:
         """Save a design to disk on the active Geometry server instance.
 
         Parameters
         ----------
-        file_location : Union[~pathlib.Path, str]
+        file_location : ~pathlib.Path | str
             Location on disk to save the file to.
         """
         # Sanity checks on inputs
@@ -241,16 +241,16 @@ class Design(Component):
     @ensure_design_is_active
     def download(
         self,
-        file_location: Union[Path, str],
-        format: Optional[DesignFileFormat] = DesignFileFormat.SCDOCX,
+        file_location: Path | str,
+        format: DesignFileFormat = DesignFileFormat.SCDOCX,
     ) -> None:
         """Export and download the design from the server.
 
         Parameters
         ----------
-        file_location : Union[~pathlib.Path, str]
+        file_location : ~pathlib.Path | str
             Location on disk to save the file to.
-        format :DesignFileFormat, default: DesignFileFormat.SCDOCX
+        format : DesignFileFormat, default: DesignFileFormat.SCDOCX
             Format for the file to save to.
         """
         # Sanity checks on inputs
@@ -293,12 +293,12 @@ class Design(Component):
             f"Design is successfully downloaded at location {file_location}."
         )
 
-    def __build_export_file_location(self, location: Union[Path, str, None], ext: str) -> Path:
+    def __build_export_file_location(self, location: Path | str | None, ext: str) -> Path:
         """Build the file location for export functions.
 
         Parameters
         ----------
-        location : Union[~pathlib.Path, str, None]
+        location : ~pathlib.Path | str
             Location on disk to save the file to. If None, the file will be saved
             in the current working directory.
         ext : str
@@ -311,12 +311,12 @@ class Design(Component):
         """
         return (Path(location) if location else Path.cwd()) / f"{self.name}.{ext}"
 
-    def export_to_scdocx(self, location: Union[Path, str] = None) -> str:
+    def export_to_scdocx(self, location: Path | str | None = None) -> str:
         """Export the design to an scdocx file.
 
         Parameters
         ----------
-        location : Union[~pathlib.Path, str], optional
+        location : ~pathlib.Path | str, optional
             Location on disk to save the file to. If None, the file will be saved
             in the current working directory.
 
@@ -334,12 +334,12 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_parasolid_text(self, location: Union[Path, str] = None) -> str:
+    def export_to_parasolid_text(self, location: Path | str | None = None) -> str:
         """Export the design to a Parasolid text file.
 
         Parameters
         ----------
-        location : Union[~pathlib.Path, str], optional
+        location : ~pathlib.Path | str, optional
             Location on disk to save the file to. If None, the file will be saved
             in the current working directory.
 
@@ -360,12 +360,12 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_parasolid_bin(self, location: Union[Path, str] = None) -> str:
+    def export_to_parasolid_bin(self, location: Path | str | None = None) -> str:
         """Export the design to a Parasolid binary file.
 
         Parameters
         ----------
-        location : Union[~pathlib.Path, str], optional
+        location : ~pathlib.Path | str, optional
             Location on disk to save the file to. If None, the file will be saved
             in the current working directory.
 
@@ -386,12 +386,12 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_fmd(self, location: Union[Path, str] = None) -> str:
+    def export_to_fmd(self, location: Path | str | None = None) -> str:
         """Export the design to an FMD file.
 
         Parameters
         ----------
-        location : Union[~pathlib.Path, str], optional
+        location : ~pathlib.Path | str, optional
             Location on disk to save the file to. If None, the file will be saved
             in the current working directory.
 
@@ -409,12 +409,12 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_step(self, location: Union[Path, str] = None) -> str:
+    def export_to_step(self, location: Path | str | None = None) -> str:
         """Export the design to a STEP file.
 
         Parameters
         ----------
-        location : Union[~pathlib.Path, str], optional
+        location : ~pathlib.Path | str, optional
             Location on disk to save the file to. If None, the file will be saved
             in the current working directory.
 
@@ -432,12 +432,12 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_iges(self, location: Union[Path, str] = None) -> str:
+    def export_to_iges(self, location: Path | str = None) -> str:
         """Export the design to an IGES file.
 
         Parameters
         ----------
-        location : Union[~pathlib.Path, str], optional
+        location : ~pathlib.Path | str, optional
             Location on disk to save the file to. If None, the file will be saved
             in the current working directory.
 
@@ -455,12 +455,12 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_pmdb(self, location: Union[Path, str] = None) -> str:
+    def export_to_pmdb(self, location: Path | str | None = None) -> str:
         """Export the design to a PMDB file.
 
         Parameters
         ----------
-        location : Union[~pathlib.Path, str], optional
+        location : ~pathlib.Path | str, optional
             Location on disk to save the file to. If None, the file will be saved
             in the current working directory.
 
@@ -483,11 +483,11 @@ class Design(Component):
     def create_named_selection(
         self,
         name: str,
-        bodies: Optional[List[Body]] = None,
-        faces: Optional[List[Face]] = None,
-        edges: Optional[List[Edge]] = None,
-        beams: Optional[List[Beam]] = None,
-        design_points: Optional[List[DesignPoint]] = None,
+        bodies: list[Body] | None = None,
+        faces: list[Face] | None = None,
+        edges: list[Edge] | None = None,
+        beams: list[Beam] | None = None,
+        design_points: list[DesignPoint] | None = None,
     ) -> NamedSelection:
         """Create a named selection on the active Geometry server instance.
 
@@ -495,15 +495,15 @@ class Design(Component):
         ----------
         name : str
             User-defined name for the named selection.
-        bodies : List[Body], default: None
+        bodies : list[Body], default: None
             All bodies to include in the named selection.
-        faces : List[Face], default: None
+        faces : list[Face], default: None
             All faces to include in the named selection.
-        edges : List[Edge], default: None
+        edges : list[Edge], default: None
             All edges to include in the named selection.
-        beams : List[Beam], default: None
+        beams : list[Beam], default: None
             All beams to include in the named selection.
-        design_points : List[DesignPoint], default: None
+        design_points : list[DesignPoint], default: None
             All design points to include in the named selection.
 
         Returns
@@ -531,12 +531,12 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
-    def delete_named_selection(self, named_selection: Union[NamedSelection, str]) -> None:
+    def delete_named_selection(self, named_selection: NamedSelection | str) -> None:
         """Delete a named selection on the active Geometry server instance.
 
         Parameters
         ----------
-        named_selection : Union[NamedSelection, str]
+        named_selection : NamedSelection | str
             Name of the named selection or instance.
         """
         if isinstance(named_selection, str):
@@ -607,10 +607,10 @@ class Design(Component):
     def add_beam_circular_profile(
         self,
         name: str,
-        radius: Union[Quantity, Distance],
-        center: Union[np.ndarray, RealSequence, Point3D] = ZERO_POINT3D,
-        direction_x: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
-        direction_y: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Y,
+        radius: Quantity | Distance,
+        center: np.ndarray | RealSequence | Point3D = ZERO_POINT3D,
+        direction_x: np.ndarray | RealSequence | UnitVector3D | Vector3D = UNITVECTOR3D_X,
+        direction_y: np.ndarray | RealSequence | UnitVector3D | Vector3D = UNITVECTOR3D_Y,
     ) -> BeamCircularProfile:
         """Add a new beam circular profile under the design for creating beams.
 
@@ -618,13 +618,13 @@ class Design(Component):
         ----------
         name : str
             User-defined label for the new beam circular profile.
-        radius : Real
+        radius : ~pint.Quantity | Distance
             Radius of the beam circular profile.
-        center : Union[~numpy.ndarray, RealSequence, Point3D]
+        center : ~numpy.ndarray | RealSequence | Point3D
             Center of the beam circular profile.
-        direction_x : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+        direction_x : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D
             X-plane direction.
-        direction_y : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+        direction_y : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D
             Y-plane direction.
         """
         dir_x = direction_x if isinstance(direction_x, UnitVector3D) else UnitVector3D(direction_x)
@@ -659,14 +659,14 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
-    def add_midsurface_thickness(self, thickness: Quantity, bodies: List[Body]) -> None:
+    def add_midsurface_thickness(self, thickness: Quantity, bodies: list[Body]) -> None:
         """Add a mid-surface thickness to a list of bodies.
 
         Parameters
         ----------
         thickness : ~pint.Quantity
             Thickness to be assigned.
-        bodies : List[Body]
+        bodies : list[Body]
             All bodies to include in the mid-surface thickness assignment.
 
         Notes
@@ -674,8 +674,8 @@ class Design(Component):
         Only surface bodies will be eligible for mid-surface thickness assignment.
         """
         # Store only assignable ids
-        ids: List[str] = []
-        ids_bodies: List[Body] = []
+        ids: list[str] = []
+        ids_bodies: list[Body] = []
         for body in bodies:
             if body.is_surface:
                 ids.append(body.id)
@@ -699,14 +699,14 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
-    def add_midsurface_offset(self, offset_type: MidSurfaceOffsetType, bodies: List[Body]) -> None:
+    def add_midsurface_offset(self, offset_type: MidSurfaceOffsetType, bodies: list[Body]) -> None:
         """Add a mid-surface offset type to a list of bodies.
 
         Parameters
         ----------
         offset_type : MidSurfaceOffsetType
             Surface offset to be assigned.
-        bodies : List[Body]
+        bodies : list[Body]
             All bodies to include in the mid-surface offset assignment.
 
         Notes
@@ -714,8 +714,8 @@ class Design(Component):
         Only surface bodies will be eligible for mid-surface offset assignment.
         """
         # Store only assignable ids
-        ids: List[str] = []
-        ids_bodies: List[Body] = []
+        ids: list[str] = []
+        ids_bodies: list[Body] = []
         for body in bodies:
             if body.is_surface:
                 ids.append(body.id)
@@ -737,12 +737,12 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
-    def delete_beam_profile(self, beam_profile: Union[BeamProfile, str]) -> None:
+    def delete_beam_profile(self, beam_profile: BeamProfile | str) -> None:
         """Remove a beam profile on the active geometry server instance.
 
         Parameters
         ----------
-        beam_profile : Union[BeamProfile, str]
+        beam_profile : BeamProfile | str
             A beam profile name or instance that should be deleted.
         """
         removal_name = beam_profile if isinstance(beam_profile, str) else beam_profile.name
@@ -763,12 +763,12 @@ class Design(Component):
     @check_input_types
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
-    def insert_file(self, file_location: Union[Path, str]) -> Component:
+    def insert_file(self, file_location: Path | str) -> Component:
         """Insert a file into the design.
 
         Parameters
         ----------
-        file_location : Union[~pathlib.Path, str]
+        file_location : ~pathlib.Path | str
             Location on disk where the file is located.
 
         Returns

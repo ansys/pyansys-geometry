@@ -130,9 +130,8 @@ from copy import copy
 from datetime import datetime
 import logging
 import sys
+from typing import TYPE_CHECKING
 import weakref
-
-from beartype.typing import TYPE_CHECKING, Optional
 
 from ansys.geometry.core.misc.checks import check_type
 
@@ -478,7 +477,7 @@ class Logger:
         logger.propagate = True
         return logger
 
-    def add_child_logger(self, suffix: str, level: Optional[str] = None):
+    def add_child_logger(self, suffix: str, level: str | None = None):
         """Add a child logger to the main logger.
 
         This logger is more general than an instance logger, which is designed to
@@ -504,7 +503,7 @@ class Logger:
         return self._instances[name]
 
     def add_instance_logger(
-        self, name: str, client_instance: "GrpcClient", level: Optional[int] = None
+        self, name: str, client_instance: "GrpcClient", level: int | None = None
     ) -> PyGeometryCustomAdapter:
         """Add a logger for a Geometry service instance.
 

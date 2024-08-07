@@ -22,8 +22,7 @@
 """Provides the ``Curve`` class."""
 
 from abc import ABC, abstractmethod
-
-from beartype.typing import TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D

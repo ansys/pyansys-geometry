@@ -368,7 +368,6 @@ jinja_contexts = {
 nitpick_ignore_regex = [
     # Ignore typing
     (r"py:.*", r"optional"),
-    (r"py:.*", r"beartype.typing.*"),
     (r"py:.*", r"ansys.geometry.core.typing.*"),
     (r"py:.*", r"Real.*"),
     (r"py:.*", r"SketchObject"),

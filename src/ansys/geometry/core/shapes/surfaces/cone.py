@@ -24,7 +24,6 @@
 from functools import cached_property
 
 from beartype import beartype as check_input_types
-from beartype.typing import Tuple, Union
 import numpy as np
 from pint import Quantity
 
@@ -51,26 +50,26 @@ class Cone(Surface):
 
     Parameters
     ----------
-    origin : Union[~numpy.ndarray, RealSequence, Point3D]
+    origin : ~numpy.ndarray | RealSequence | Point3D
         Origin of the cone.
-    radius : Union[Quantity, Distance, Real]
+    radius : ~pint.Quantity | Distance | Real
         Radius of the cone.
-    half_angle : Union[Quantity, Angle, Real]
+    half_angle : ~pint.Quantity | Angle | Real
         Half angle of the apex, determining the upward angle.
-    reference : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+    reference : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D
         X-axis direction.
-    axis : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+    axis : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D
         Z-axis direction.
     """
 
     @check_input_types
     def __init__(
         self,
-        origin: Union[np.ndarray, RealSequence, Point3D],
-        radius: Union[Quantity, Distance, Real],
-        half_angle: Union[Quantity, Angle, Real],
-        reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
-        axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
+        origin: np.ndarray | RealSequence | Point3D,
+        radius: Quantity | Distance | Real,
+        half_angle: Quantity | Angle | Real,
+        reference: np.ndarray | RealSequence | UnitVector3D | Vector3D = UNITVECTOR3D_X,
+        axis: np.ndarray | RealSequence | UnitVector3D | Vector3D = UNITVECTOR3D_Z,
     ):
         """Initialize the ``Cone`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
@@ -231,7 +230,7 @@ class Cone(Surface):
 
         return ConeEvaluation(self, ParamUV(u, v))
 
-    def parameterization(self) -> Tuple[Parameterization, Parameterization]:
+    def parameterization(self) -> tuple[Parameterization, Parameterization]:
         """Parameterize the cone surface as a tuple (U and V respectively).
 
         The U parameter specifies the clockwise angle around the axis (right-hand
@@ -242,7 +241,7 @@ class Cone(Surface):
 
         Returns
         -------
-        Tuple[Parameterization, Parameterization]
+        tuple[Parameterization, Parameterization]
             Information about how a cone's u and v parameters are parameterized, respectively.
         """
         u = Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))

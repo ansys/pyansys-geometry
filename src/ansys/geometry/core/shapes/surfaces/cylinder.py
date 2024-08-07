@@ -24,7 +24,6 @@
 from functools import cached_property
 
 from beartype import beartype as check_input_types
-from beartype.typing import Tuple, Union
 import numpy as np
 from pint import Quantity
 
@@ -52,23 +51,23 @@ class Cylinder(Surface):
 
     Parameters
     ----------
-    origin : Union[~numpy.ndarray, RealSequence, Point3D]
+    origin : ~numpy.ndarray | RealSequence | Point3D
         Origin of the cylinder.
-    radius : Union[Quantity, Distance, Real]
+    radius : ~pint.Quantity | Distance | Real
         Radius of the cylinder.
-    reference : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+    reference : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D
         X-axis direction.
-    axis : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+    axis : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D
         Z-axis direction.
     """
 
     @check_input_types
     def __init__(
         self,
-        origin: Union[np.ndarray, RealSequence, Point3D],
-        radius: Union[Quantity, Distance, Real],
-        reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
-        axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
+        origin: np.ndarray | RealSequence | Point3D,
+        radius: Quantity | Distance | Real,
+        reference: np.ndarray | RealSequence | UnitVector3D | Vector3D = UNITVECTOR3D_X,
+        axis: np.ndarray | RealSequence | UnitVector3D | Vector3D = UNITVECTOR3D_Z,
     ):
         """Initialize the ``Cylinder`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
@@ -109,7 +108,7 @@ class Cylinder(Surface):
         """Z-direction of the cylinder."""
         return self._axis
 
-    def surface_area(self, height: Union[Quantity, Distance, Real]) -> Quantity:
+    def surface_area(self, height: Quantity | Distance | Real) -> Quantity:
         """Get the surface area of the cylinder.
 
         Notes
@@ -121,12 +120,12 @@ class Cylinder(Surface):
 
         Parameters
         ----------
-        height : Union[Quantity, Distance, Real]
+        height : ~pint.Quantity | Distance | Real
             Height to bound the cylinder at.
 
         Returns
         -------
-        Quantity
+        ~pint.Quantity
             Surface area of the temporarily bounded cylinder.
         """
         height = height if isinstance(height, Distance) else Distance(height)
@@ -135,7 +134,7 @@ class Cylinder(Surface):
 
         return 2 * np.pi * self.radius * height.value + 2 * np.pi * self.radius**2
 
-    def volume(self, height: Union[Quantity, Distance, Real]) -> Quantity:
+    def volume(self, height: Quantity | Distance | Real) -> Quantity:
         """Get the volume of the cylinder.
 
         Notes
@@ -147,12 +146,12 @@ class Cylinder(Surface):
 
         Parameters
         ----------
-        height : Union[Quantity, Distance, Real]
+        height : ~pint.Quantity | Distance | Real
             Height to bound the cylinder at.
 
         Returns
         -------
-        Quantity
+        ~pint.Quantity
             Volume of the temporarily bounded cylinder.
         """
         height = height if isinstance(height, Distance) else Distance(height)
@@ -240,7 +239,7 @@ class Cylinder(Surface):
 
         return CylinderEvaluation(self, ParamUV(u, v))
 
-    def parameterization(self) -> Tuple[Parameterization, Parameterization]:
+    def parameterization(self) -> tuple[Parameterization, Parameterization]:
         """Parameterize the cylinder surface as a tuple (U and V respectively).
 
         The U parameter specifies the clockwise angle around the axis (right-hand
@@ -251,7 +250,7 @@ class Cylinder(Surface):
 
         Returns
         -------
-        Tuple[Parameterization, Parameterization]
+        tuple[Parameterization, Parameterization]
             Information about how a cylinder's u and v parameters are parameterized, respectively.
         """
         u = Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))

@@ -22,7 +22,6 @@
 """Provides for creating and managing a circle."""
 
 from beartype import beartype as check_input_types
-from beartype.typing import Optional, Union
 from pint import Quantity
 import pyvista as pv
 
@@ -41,7 +40,7 @@ class SketchCircle(SketchFace, Circle):
     ----------
     center: Point2D
         Center point of the circle.
-    radius : Union[Quantity, Distance, Real]
+    radius : ~pint.Quantity | Distance | Real
         Radius of the circle.
     plane : Plane, optional
         Plane containing the sketched circle, which is the global XY plane
@@ -49,9 +48,7 @@ class SketchCircle(SketchFace, Circle):
     """
 
     @check_input_types
-    def __init__(
-        self, center: Point2D, radius: Union[Quantity, Distance, Real], plane: Plane = Plane()
-    ):
+    def __init__(self, center: Point2D, radius: Quantity | Distance | Real, plane: Plane = Plane()):
         """Initialize the circle."""
         # Call SketchFace init method
         SketchFace.__init__(self)
@@ -67,7 +64,7 @@ class SketchCircle(SketchFace, Circle):
         self._init_primitive_circle_from_plane(plane, radius=radius)
 
     def _init_primitive_circle_from_plane(
-        self, plane: Plane, radius: Optional[Union[Quantity, Distance]] = None
+        self, plane: Plane, radius: Quantity | Distance | None = None
     ) -> None:
         """Initialize correctly the underlying primitive ``Circle`` class.
 
@@ -75,7 +72,7 @@ class SketchCircle(SketchFace, Circle):
         ----------
         plane : Plane
             Plane containing the sketched circle.
-        radius : [Union[Quantity, Distance]], default: None
+        radius : Quantity | Distance, default: None
             Radius of the circle (if any).
         """
         # Use the radius given (if any)

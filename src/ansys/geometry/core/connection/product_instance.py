@@ -30,9 +30,9 @@ import socket
 # Subprocess is needed to start the backend. But
 # the input is controlled by the library. Excluding bandit check.
 import subprocess  # nosec B404
+from typing import TYPE_CHECKING
 
 from ansys.tools.path import get_available_ansys_installations, get_latest_ansys_installation
-from beartype.typing import TYPE_CHECKING, Dict, List
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.logger import LOG
@@ -397,7 +397,7 @@ def _is_port_available(port: int, host: str = "localhost") -> bool:
 
 
 def _manifest_path_provider(
-    version: int, available_installations: Dict, manifest_path: str = None
+    version: int, available_installations: dict[str, str], manifest_path: str = None
 ) -> str:
     """Return the ApiServer's add-in manifest file path."""
     if manifest_path:
@@ -425,7 +425,7 @@ def _manifest_path_provider(
         raise RuntimeError(msg)
 
 
-def __start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Popen:
+def __start_program(args: list[str], local_env: dict[str, str]) -> subprocess.Popen:
     """Start the program.
 
     Notes
@@ -434,10 +434,10 @@ def __start_program(args: List[str], local_env: Dict[str, str]) -> subprocess.Po
 
     Parameters
     ----------
-    args : List[str]
+    args : list[str]
         List of arguments to be passed to the program. The first list's item shall
         be the program path.
-    local_env : Dict[str,str]
+    local_env : dict[str,str]
         Environment variables to be passed to the program.
 
     Returns
@@ -468,7 +468,7 @@ def _check_minimal_versions(latest_installed_version: int) -> None:
         raise SystemError(msg)
 
 
-def _check_version_is_available(version: int, installations: Dict[int, str]) -> None:
+def _check_version_is_available(version: int, installations: dict[int, str]) -> None:
     """Check that the requested version for launcher is installed."""
     if version not in installations:
         msg = (
@@ -501,7 +501,7 @@ def _get_common_env(
     enable_trace: bool,
     server_log_level: int,
     server_logs_folder: str = None,
-) -> Dict[str, str]:
+) -> dict[str, str]:
     """Make a copy of the actual system's environment.
 
     Then update or create some environment variables with the provided

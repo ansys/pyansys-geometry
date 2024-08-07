@@ -21,9 +21,10 @@
 # SOFTWARE.
 """Provides for managing a user-defined coordinate system."""
 
+from typing import TYPE_CHECKING
+
 from ansys.api.geometry.v0.coordinatesystems_pb2 import CreateRequest
 from ansys.api.geometry.v0.coordinatesystems_pb2_grpc import CoordinateSystemsStub
-from beartype.typing import TYPE_CHECKING, Optional
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import frame_to_grpc_frame
@@ -62,7 +63,7 @@ class CoordinateSystem:
         frame: Frame,
         parent_component: "Component",
         grpc_client: GrpcClient,
-        preexisting_id: Optional[str] = None,
+        preexisting_id: str | None = None,
     ):
         """Initialize the ``CoordinateSystem`` class."""
         self._parent_component = parent_component

@@ -22,7 +22,6 @@
 """Provides for creating and managing an ellipse."""
 
 from beartype import beartype as check_input_types
-from beartype.typing import Optional, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
@@ -46,11 +45,11 @@ class SketchEllipse(SketchFace, Ellipse):
     ----------
     center: Point2D
         Center point of the ellipse.
-    major_radius : Union[Quantity, Distance, Real]
+    major_radius : ~pint.Quantity | Distance | Real
         Major radius of the ellipse.
-    minor_radius : Union[Quantity, Distance, Real]
+    minor_radius : ~pint.Quantity | Distance | Real
         Minor radius of the ellipse.
-    angle : Union[Quantity, Angle, Real], default: 0
+    angle : ~pint.Quantity | Angle | Real, default: 0
         Placement angle for orientation alignment.
     plane : Plane, optional
         Plane containing the sketched ellipse, which is the global XY plane
@@ -61,9 +60,9 @@ class SketchEllipse(SketchFace, Ellipse):
     def __init__(
         self,
         center: Point2D,
-        major_radius: Union[Quantity, Distance, Real],
-        minor_radius: Union[Quantity, Distance, Real],
-        angle: Optional[Union[Quantity, Angle, Real]] = 0,
+        major_radius: Quantity | Distance | Real,
+        minor_radius: Quantity | Distance | Real,
+        angle: Quantity | Angle | Real = 0,
         plane: Plane = Plane(),
     ):
         """Initialize the ellipse."""
@@ -90,9 +89,9 @@ class SketchEllipse(SketchFace, Ellipse):
     def _init_primitive_ellipse_from_plane(
         self,
         plane: Plane,
-        major_radius: Optional[Distance] = None,
-        minor_radius: Optional[Distance] = None,
-        angle: Optional[Angle] = None,
+        major_radius: Distance | None = None,
+        minor_radius: Distance | None = None,
+        angle: Angle | None = None,
     ) -> None:
         """Initialize correctly the underlying primitive ``Ellipse`` class.
 
@@ -100,11 +99,11 @@ class SketchEllipse(SketchFace, Ellipse):
         ----------
         plane : Plane
             Plane containing the sketched ellipse.
-        major_radius : [Distance], default: None
+        major_radius : Distance, default: None
             Major radius of the ellipse (if any).
-        minor_radius : [Distance], default: None
+        minor_radius : Distance, default: None
             Minor radius of the ellipse (if any).
-        angle : [Angle], default: None
+        angle : Angle, default: None
             Placement angle for orientation alignment.
         """
         major_radius = major_radius if major_radius else self.major_radius
