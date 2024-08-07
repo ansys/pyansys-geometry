@@ -22,8 +22,7 @@
 """Provides the ``Surface`` class."""
 
 from abc import ABC, abstractmethod
-
-from beartype.typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING
 
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
@@ -39,7 +38,7 @@ class Surface(ABC):
     """Provides the abstract base class for a 3D surface."""
 
     @abstractmethod
-    def parameterization(self) -> Tuple[Parameterization, Parameterization]:
+    def parameterization(self) -> tuple[Parameterization, Parameterization]:
         """Parameterize the surface as a tuple (U and V respectively)."""
         return
 

@@ -22,7 +22,6 @@
 """Provides for creating and managing a slot."""
 
 from beartype import beartype as check_input_types
-from beartype.typing import Optional, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
@@ -45,11 +44,11 @@ class Slot(SketchFace):
     ----------
     center: :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
         Center point of the slot.
-    width : Union[Quantity, Distance, Real]
+    width : ~pint.Quantity | Distance | Real
         Width of the slot main body.
-    height : Union[Quantity, Distance, Real]
+    height : ~pint.Quantity | Distance | Real
         Height of the slot.
-    angle : Union[Quantity, Angle, Real], default: 0
+    angle : ~pint.Quantity | Angle | Real, default: 0
         Placement angle for orientation alignment.
     """
 
@@ -57,9 +56,9 @@ class Slot(SketchFace):
     def __init__(
         self,
         center: Point2D,
-        width: Union[Quantity, Distance, Real],
-        height: Union[Quantity, Distance, Real],
-        angle: Optional[Union[Quantity, Angle, Real]] = 0,
+        width: Quantity | Distance | Real,
+        height: Quantity | Distance | Real,
+        angle: Quantity | Angle | Real = 0,
     ):
         """Initialize the slot."""
         super().__init__()

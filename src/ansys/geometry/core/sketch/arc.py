@@ -22,7 +22,6 @@
 """Provides for creating and managing an arc."""
 
 from beartype import beartype as check_input_types
-from beartype.typing import Optional, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
@@ -59,7 +58,7 @@ class Arc(SketchEdge):
         start: Point2D,
         end: Point2D,
         center: Point2D,
-        clockwise: Optional[bool] = False,
+        clockwise: bool = False,
     ):
         """Initialize the arc shape."""
         super().__init__()
@@ -348,9 +347,9 @@ class Arc(SketchEdge):
         cls,
         start: Point2D,
         end: Point2D,
-        radius: Union[Quantity, Distance, Real],
-        convex_arc: Optional[bool] = False,
-        clockwise: Optional[bool] = False,
+        radius: Quantity | Distance | Real,
+        convex_arc: bool = False,
+        clockwise: bool = False,
     ):
         """Create an arc from a starting point, an ending point, and a radius.
 
@@ -360,7 +359,7 @@ class Arc(SketchEdge):
             Starting point of the arc.
         end : Point2D
             Ending point of the arc.
-        radius : Union[Quantity, Distance, Real]
+        radius : ~pint.Quantity | Distance | Real
             Radius of the arc.
         convex_arc : bool, default: False
             Whether the arc is convex. The default is ``False``.
@@ -407,8 +406,8 @@ class Arc(SketchEdge):
         cls,
         start: Point2D,
         center: Point2D,
-        angle: Union[Angle, Quantity, Real],
-        clockwise: Optional[bool] = False,
+        angle: Angle | Quantity | Real,
+        clockwise: bool = False,
     ):
         """Create an arc from a starting point, a center point, and an angle.
 
@@ -418,7 +417,7 @@ class Arc(SketchEdge):
             Starting point of the arc.
         center : Point2D
             Center point of the arc.
-        angle : Union[Angle, Quantity, Real]
+        angle : Angle | ~pint.Quantity | Real
             Angle of the arc.
         clockwise : bool, default: False
             Whether the provided angle should be considered clockwise.
