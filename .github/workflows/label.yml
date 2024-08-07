@@ -100,3 +100,4 @@ jobs:
       with:
         token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
         use-conventional-commits: true
+        use-default-towncrier-config: true
