@@ -21,8 +21,6 @@
 # SOFTWARE.
 """Module providing a wrapped abstraction of the gRPC stubs."""
 
-from __future__ import annotations
-
 import logging
 from pathlib import Path
 import time
