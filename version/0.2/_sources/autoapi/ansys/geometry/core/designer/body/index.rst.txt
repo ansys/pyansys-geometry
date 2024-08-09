@@ -1,0 +1,2424 @@
+:py:mod:`ansys.geometry.core.designer.body`
+===========================================
+
+.. py:module:: ansys.geometry.core.designer.body
+
+.. autoapi-nested-parse::
+
+   Provides the ``Body`` class module.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.designer.body.MidSurfaceOffsetType
+   ansys.geometry.core.designer.body.IBody
+   ansys.geometry.core.designer.body.MasterBody
+   ansys.geometry.core.designer.body.Body
+
+
+
+
+.. py:class:: MidSurfaceOffsetType
+
+
+   Bases: :py:obj:`enum.Enum`
+
+   
+   Enum holding the types of mid-surface offset for the Geometry service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:attribute:: MIDDLE
+      :value: 0
+
+      
+
+   .. py:attribute:: TOP
+      :value: 1
+
+      
+
+   .. py:attribute:: BOTTOM
+      :value: 2
+
+      
+
+   .. py:attribute:: VARIABLE
+      :value: 3
+
+      
+
+   .. py:attribute:: CUSTOM
+      :value: 4
+
+      
+
+
+.. py:class:: IBody
+
+
+   Bases: :py:obj:`abc.ABC`
+
+   
+   Abstract Body interface.
+
+   Defines the common methods for a body. MasterBody and Body both inherit from this.
+   All child classes must implement all abstract methods.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: id() -> str
+      :abstractmethod:
+
+      
+      ID of the body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: name() -> str
+      :abstractmethod:
+
+      
+      Name of the body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: faces() -> beartype.typing.List[ansys.geometry.core.designer.face.Face]
+      :abstractmethod:
+
+      
+      All faces within the body.
+
+
+
+      :Returns:
+
+          :obj:`List`\[:obj:`Face`]
+              ..
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: edges() -> beartype.typing.List[ansys.geometry.core.designer.edge.Edge]
+      :abstractmethod:
+
+      
+      All edges within the body.
+
+
+
+      :Returns:
+
+          :obj:`List`\[:obj:`Edge`]
+              ..
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: is_alive() -> bool
+      :abstractmethod:
+
+      
+      If the body is still alive and has not been deleted.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: is_surface() -> bool
+      :abstractmethod:
+
+      
+      Check if the body is a planar body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: surface_thickness() -> beartype.typing.Union[pint.Quantity, None]
+      :abstractmethod:
+
+      
+      Surface thickness of a surface body.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      Only for surface-type bodies which have been assigned a surface thickness.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: surface_offset() -> beartype.typing.Union[ansys.geometry.core.designer.design.MidSurfaceOffsetType, None]
+      :abstractmethod:
+
+      
+      Surface offset type of a surface body.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      Only for surface-type bodies which have been assigned a surface offset.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: volume() -> pint.Quantity
+      :abstractmethod:
+
+      
+      Calculate volume of the body.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      When dealing with a planar surface, a value of ``0`` is returned as a volume.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: assign_material(material: ansys.geometry.core.materials.Material) -> None
+      :abstractmethod:
+
+      
+      Assign a material against the design in the active Geometry service instance.
+
+
+      :Parameters:
+
+          **material** : :obj:`Material`
+              Source material data.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: add_midsurface_thickness(thickness: pint.Quantity) -> None
+      :abstractmethod:
+
+      
+      Add a mid-surface thickness to a surface body.
+
+
+      :Parameters:
+
+          **thickness** : :obj:`Quantity`
+              Thickness to be assigned.
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      Only surface bodies will be eligible for mid-surface thickness assignment.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: add_midsurface_offset(offset: ansys.geometry.core.designer.design.MidSurfaceOffsetType) -> None
+      :abstractmethod:
+
+      
+      Add a mid-surface offset to a surface body.
+
+
+      :Parameters:
+
+          **offset_type** : :obj:`MidSurfaceOffsetType`
+              Surface offset to be assigned.
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      Only surface bodies will be eligible for mid-surface offset assignment.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: imprint_curves(faces: beartype.typing.List[ansys.geometry.core.designer.face.Face], sketch: ansys.geometry.core.sketch.Sketch) -> beartype.typing.Tuple[beartype.typing.List[ansys.geometry.core.designer.edge.Edge], beartype.typing.List[ansys.geometry.core.designer.face.Face]]
+      :abstractmethod:
+
+      
+      Imprint all specified geometries onto the specified faces of the body.
+
+
+      :Parameters:
+
+          **faces: List[Face]**
+              List of faces to imprint the curves of the sketch.
+
+          **sketch: Sketch**
+              All curves to imprint on the faces.
+
+      :Returns:
+
+          :obj:`Tuple`\[:obj:`List`\[:obj:`Edge`], :obj:`List`\[:obj:`Face`]]
+              All impacted edges and faces from the imprint operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: project_curves(direction: ansys.geometry.core.math.UnitVector3D, sketch: ansys.geometry.core.sketch.Sketch, closest_face: bool, only_one_curve: beartype.typing.Optional[bool] = False) -> beartype.typing.List[ansys.geometry.core.designer.face.Face]
+      :abstractmethod:
+
+      
+      Project all specified geometries onto the body.
+
+
+      :Parameters:
+
+          **direction: UnitVector3D**
+              Establishes the direction of the projection.
+
+          **sketch: Sketch**
+              All curves to project on the body.
+
+          **closest_face: bool**
+              Whether to target the closest face with the projection.
+
+          **only_one_curve: bool, default: False**
+              Whether to project only one curve of the entire sketch. When
+              ``True``, only one curve is projected.
+
+      :Returns:
+
+          :obj:`List`\[:obj:`Face`]
+              All faces from the project curves operation.
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      The ``only_one_curve`` parameter allows you to optimize the server call because
+      projecting curves is an expensive operation. This reduces the workload on the
+      server side.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: translate(direction: ansys.geometry.core.math.UnitVector3D, distance: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real]) -> None
+      :abstractmethod:
+
+      
+      Translate the geometry body in the specified direction by a given distance.
+
+
+      :Parameters:
+
+          **direction: UnitVector3D**
+              Direction of the translation.
+
+          **distance: Union[Quantity, Distance, Real]**
+              Magnitude of the translation.
+
+      :Returns:
+
+          :data:`python:None`
+              ..
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: copy(parent: ansys.geometry.core.designer.component.Component, name: str = None) -> Body
+      :abstractmethod:
+
+      
+      Create a copy of the geometry body and places it under the specified parent.
+
+
+      :Parameters:
+
+          **parent: Component**
+              The parent component that the new body should live under.
+
+          **name: str**
+              The name to give the new body.
+
+      :Returns:
+
+          :obj:`Body`
+              Copy of the body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: tessellate(merge: beartype.typing.Optional[bool] = False) -> beartype.typing.Union[pyvista.PolyData, pyvista.MultiBlock]
+      :abstractmethod:
+
+      
+      Tessellate the body and return the geometry as triangles.
+
+
+      :Parameters:
+
+          **merge** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+              Whether to merge the body into a single mesh. By default, the
+              number of triangles are preserved and only the topology is merged.
+              When ``True``, the individual faces of the tessellation are merged.
+
+      :Returns:
+
+          :obj:`~pyvista.PolyData`, :obj:`~pyvista.MultiBlock`
+              Merged :class:`pyvista.PolyData` if ``merge=True`` or a composite dataset.
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Examples
+
+      Extrude a box centered at the origin to create a rectangular body and
+      tessellate it:
+
+      >>> from ansys.geometry.core.misc.units import UNITS as u
+      >>> from ansys.geometry.core.sketch import Sketch
+      >>> from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
+      >>> from ansys.geometry.core import Modeler
+      >>> modeler = Modeler()
+      >>> origin = Point3D([0, 0, 0])
+      >>> plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 0, 1])
+      >>> sketch = Sketch(plane)
+      >>> box = sketch.box(Point2D([2, 0]), 4, 4)
+      >>> design = modeler.create_design("my-design")
+      >>> my_comp = design.add_component("my-comp")
+      >>> body = my_comp.extrude_sketch("my-sketch", sketch, 1 * u.m)
+      >>> blocks = body.tessellate()
+      >>> blocks
+      >>> MultiBlock (0x7f94ec757460)
+           N Blocks:  6
+           X Bounds:  0.000, 4.000
+           Y Bounds:  -1.000, 0.000
+           Z Bounds:  -0.500, 4.500
+
+      Merge the body:
+
+      >>> mesh = body.tessellate(merge=True)
+      >>> mesh
+      PolyData (0x7f94ec75f3a0)
+        N Cells:      12
+        N Points:     24
+        X Bounds:     0.000e+00, 4.000e+00
+        Y Bounds:     -1.000e+00, 0.000e+00
+        Z Bounds:     -5.000e-01, 4.500e+00
+        N Arrays:     0
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: plot(merge: bool = False, screenshot: beartype.typing.Optional[str] = None, use_trame: beartype.typing.Optional[bool] = None, **plotting_options: beartype.typing.Optional[dict]) -> None
+      :abstractmethod:
+
+      
+      Plot the body.
+
+
+      :Parameters:
+
+          **merge** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+              Whether to merge the body into a single mesh. By default, the
+              number of triangles are preserved and only the topology is merged.
+              When ``True``, the individual faces of the tessellation are merged.
+
+          **screenshot** : :class:`python:str`, :obj:`optional`
+              Save a screenshot of the image being represented. The image is
+              stored in the path provided as an argument.
+
+          **use_trame** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+              Enables/disables the usage of the trame web visualizer. Defaults to the
+              global setting ``USE_TRAME``.
+
+          **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+              Keyword arguments. For allowable keyword arguments, see the
+              :func:`pyvista.Plotter.add_mesh` method.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Examples
+
+      Extrude a box centered at the origin to create rectangular body and
+      plot it:
+
+      >>> from ansys.geometry.core.misc.units import UNITS as u
+      >>> from ansys.geometry.core.sketch import Sketch
+      >>> from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
+      >>> from ansys.geometry.core import Modeler
+      >>> modeler = Modeler()
+      >>> origin = Point3D([0, 0, 0])
+      >>> plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 0, 1])
+      >>> sketch = Sketch(plane)
+      >>> box = sketch.box(Point2D([2, 0]), 4, 4)
+      >>> design = modeler.create_design("my-design")
+      >>> mycomp = design.add_component("my-comp")
+      >>> body = mycomp.extrude_sketch("my-sketch", sketch, 1 * u.m)
+      >>> body.plot()
+
+      Plot the body and color each face individually:
+
+      >>> body.plot(multi_colors=True)
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: intersect(other: Body) -> None
+
+      
+      Intersect two bodies.
+
+
+      :Parameters:
+
+          **other** : :obj:`Body`
+              The body to intersect with.
+
+
+
+
+
+      :Raises:
+
+          :obj:`ValueError`
+              If the bodies do not intersect.
+
+
+
+
+      .. rubric:: Notes
+
+      `self` will be directly modified with the result, and
+      `other` will be consumed, so it is important to make copies if needed.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: subtract(other: Body) -> None
+
+      
+      Subtract two bodies.
+
+
+      :Parameters:
+
+          **other** : :obj:`Body`
+              The body to subtract from self.
+
+
+
+
+
+      :Raises:
+
+          :obj:`ValueError`
+              If the subtraction results in an empty (complete) subtraction.
+
+
+
+
+      .. rubric:: Notes
+
+      `self` is the minuend, and `other` is the subtrahend
+      (`self` - `other`). `self` will be directly modified with the result, and
+      `other` will be consumed, so it is important to make copies if needed.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: unite(other: Body) -> None
+
+      
+      Unite two bodies.
+
+
+      :Parameters:
+
+          **other** : :obj:`Body`
+              The body to unite with self.
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      `self` will be directly modified with the resulting union, and
+      `other` will be consumed, so it is important to make copies if needed.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: MasterBody(id: str, name: str, grpc_client: ansys.geometry.core.connection.GrpcClient, is_surface: bool = False)
+
+
+   Bases: :py:obj:`IBody`
+
+   
+   Represents solids and surfaces organized within the design assembly.
+
+   Solids and surfaces synchronize to a design within a supporting Geometry service instance.
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the body.
+
+       **name** : :class:`python:str`
+           User-defined label for the body.
+
+       **parent_component** : :obj:`Component`
+           Parent component to nest the new component under within the design assembly.
+
+       **grpc_client** : :obj:`GrpcClient`
+           An active supporting geometry service instance for design modeling.
+
+       **is_surface** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Boolean indicating whether the ``MasterBody`` is in fact a surface or an actual
+           3D object (with volume).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: id
+      :type: str
+
+      
+      ID of the body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: name
+      :type: str
+
+      
+      Name of the body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: is_surface
+      :type: bool
+
+      
+      Check if the body is a planar body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: surface_thickness
+      :type: beartype.typing.Union[pint.Quantity, None]
+
+      
+      Surface thickness of a surface body.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      Only for surface-type bodies which have been assigned a surface thickness.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: surface_offset
+      :type: beartype.typing.Union[ansys.geometry.core.designer.design.MidSurfaceOffsetType, None]
+
+      
+      Surface offset type of a surface body.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      Only for surface-type bodies which have been assigned a surface offset.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: faces
+      :type: beartype.typing.List[ansys.geometry.core.designer.face.Face]
+
+      
+      All faces within the body.
+
+
+
+      :Returns:
+
+          :obj:`List`\[:obj:`Face`]
+              ..
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: edges
+      :type: beartype.typing.List[ansys.geometry.core.designer.edge.Edge]
+
+      
+      All edges within the body.
+
+
+
+      :Returns:
+
+          :obj:`List`\[:obj:`Edge`]
+              ..
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: is_alive
+      :type: bool
+
+      
+      If the body is still alive and has not been deleted.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: volume
+      :type: pint.Quantity
+
+      
+      Calculate volume of the body.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      When dealing with a planar surface, a value of ``0`` is returned as a volume.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: reset_tessellation_cache()
+
+      
+      Decorate ``MasterBody`` methods that require a tessellation cache update.
+
+
+      :Parameters:
+
+          **func** : :obj:`method`
+              The method being called.
+
+      :Returns:
+
+          :obj:`Any`
+              The output of the method, if any.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: assign_material(material: ansys.geometry.core.materials.Material) -> None
+
+      
+      Assign a material against the design in the active Geometry service instance.
+
+
+      :Parameters:
+
+          **material** : :obj:`Material`
+              Source material data.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: add_midsurface_thickness(thickness: pint.Quantity) -> None
+
+      
+      Add a mid-surface thickness to a surface body.
+
+
+      :Parameters:
+
+          **thickness** : :obj:`Quantity`
+              Thickness to be assigned.
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      Only surface bodies will be eligible for mid-surface thickness assignment.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: add_midsurface_offset(offset: ansys.geometry.core.designer.design.MidSurfaceOffsetType) -> None
+
+      
+      Add a mid-surface offset to a surface body.
+
+
+      :Parameters:
+
+          **offset_type** : :obj:`MidSurfaceOffsetType`
+              Surface offset to be assigned.
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      Only surface bodies will be eligible for mid-surface offset assignment.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: imprint_curves(faces: beartype.typing.List[ansys.geometry.core.designer.face.Face], sketch: ansys.geometry.core.sketch.Sketch) -> beartype.typing.Tuple[beartype.typing.List[ansys.geometry.core.designer.edge.Edge], beartype.typing.List[ansys.geometry.core.designer.face.Face]]
+      :abstractmethod:
+
+      
+      Imprint all specified geometries onto the specified faces of the body.
+
+
+      :Parameters:
+
+          **faces: List[Face]**
+              List of faces to imprint the curves of the sketch.
+
+          **sketch: Sketch**
+              All curves to imprint on the faces.
+
+      :Returns:
+
+          :obj:`Tuple`\[:obj:`List`\[:obj:`Edge`], :obj:`List`\[:obj:`Face`]]
+              All impacted edges and faces from the imprint operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: project_curves(direction: ansys.geometry.core.math.UnitVector3D, sketch: ansys.geometry.core.sketch.Sketch, closest_face: bool, only_one_curve: beartype.typing.Optional[bool] = False) -> beartype.typing.List[ansys.geometry.core.designer.face.Face]
+      :abstractmethod:
+
+      
+      Project all specified geometries onto the body.
+
+
+      :Parameters:
+
+          **direction: UnitVector3D**
+              Establishes the direction of the projection.
+
+          **sketch: Sketch**
+              All curves to project on the body.
+
+          **closest_face: bool**
+              Whether to target the closest face with the projection.
+
+          **only_one_curve: bool, default: False**
+              Whether to project only one curve of the entire sketch. When
+              ``True``, only one curve is projected.
+
+      :Returns:
+
+          :obj:`List`\[:obj:`Face`]
+              All faces from the project curves operation.
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      The ``only_one_curve`` parameter allows you to optimize the server call because
+      projecting curves is an expensive operation. This reduces the workload on the
+      server side.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: translate(direction: ansys.geometry.core.math.UnitVector3D, distance: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real]) -> None
+
+      
+      Translate the geometry body in the specified direction by a given distance.
+
+
+      :Parameters:
+
+          **direction: UnitVector3D**
+              Direction of the translation.
+
+          **distance: Union[Quantity, Distance, Real]**
+              Magnitude of the translation.
+
+      :Returns:
+
+          :data:`python:None`
+              ..
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: copy(parent: ansys.geometry.core.designer.component.Component, name: str = None) -> Body
+
+      
+      Create a copy of the geometry body and places it under the specified parent.
+
+
+      :Parameters:
+
+          **parent: Component**
+              The parent component that the new body should live under.
+
+          **name: str**
+              The name to give the new body.
+
+      :Returns:
+
+          :obj:`Body`
+              Copy of the body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: tessellate(merge: beartype.typing.Optional[bool] = False, transform: ansys.geometry.core.math.Matrix44 = IDENTITY_MATRIX44) -> beartype.typing.Union[pyvista.PolyData, pyvista.MultiBlock]
+
+      
+      Tessellate the body and return the geometry as triangles.
+
+
+      :Parameters:
+
+          **merge** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+              Whether to merge the body into a single mesh. By default, the
+              number of triangles are preserved and only the topology is merged.
+              When ``True``, the individual faces of the tessellation are merged.
+
+      :Returns:
+
+          :obj:`~pyvista.PolyData`, :obj:`~pyvista.MultiBlock`
+              Merged :class:`pyvista.PolyData` if ``merge=True`` or a composite dataset.
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Examples
+
+      Extrude a box centered at the origin to create a rectangular body and
+      tessellate it:
+
+      >>> from ansys.geometry.core.misc.units import UNITS as u
+      >>> from ansys.geometry.core.sketch import Sketch
+      >>> from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
+      >>> from ansys.geometry.core import Modeler
+      >>> modeler = Modeler()
+      >>> origin = Point3D([0, 0, 0])
+      >>> plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 0, 1])
+      >>> sketch = Sketch(plane)
+      >>> box = sketch.box(Point2D([2, 0]), 4, 4)
+      >>> design = modeler.create_design("my-design")
+      >>> my_comp = design.add_component("my-comp")
+      >>> body = my_comp.extrude_sketch("my-sketch", sketch, 1 * u.m)
+      >>> blocks = body.tessellate()
+      >>> blocks
+      >>> MultiBlock (0x7f94ec757460)
+           N Blocks:  6
+           X Bounds:  0.000, 4.000
+           Y Bounds:  -1.000, 0.000
+           Z Bounds:  -0.500, 4.500
+
+      Merge the body:
+
+      >>> mesh = body.tessellate(merge=True)
+      >>> mesh
+      PolyData (0x7f94ec75f3a0)
+        N Cells:      12
+        N Points:     24
+        X Bounds:     0.000e+00, 4.000e+00
+        Y Bounds:     -1.000e+00, 0.000e+00
+        Z Bounds:     -5.000e-01, 4.500e+00
+        N Arrays:     0
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: plot(merge: bool = False, screenshot: beartype.typing.Optional[str] = None, use_trame: beartype.typing.Optional[bool] = None, **plotting_options: beartype.typing.Optional[dict]) -> None
+
+      
+      Plot the body.
+
+
+      :Parameters:
+
+          **merge** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+              Whether to merge the body into a single mesh. By default, the
+              number of triangles are preserved and only the topology is merged.
+              When ``True``, the individual faces of the tessellation are merged.
+
+          **screenshot** : :class:`python:str`, :obj:`optional`
+              Save a screenshot of the image being represented. The image is
+              stored in the path provided as an argument.
+
+          **use_trame** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+              Enables/disables the usage of the trame web visualizer. Defaults to the
+              global setting ``USE_TRAME``.
+
+          **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+              Keyword arguments. For allowable keyword arguments, see the
+              :func:`pyvista.Plotter.add_mesh` method.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Examples
+
+      Extrude a box centered at the origin to create rectangular body and
+      plot it:
+
+      >>> from ansys.geometry.core.misc.units import UNITS as u
+      >>> from ansys.geometry.core.sketch import Sketch
+      >>> from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
+      >>> from ansys.geometry.core import Modeler
+      >>> modeler = Modeler()
+      >>> origin = Point3D([0, 0, 0])
+      >>> plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 0, 1])
+      >>> sketch = Sketch(plane)
+      >>> box = sketch.box(Point2D([2, 0]), 4, 4)
+      >>> design = modeler.create_design("my-design")
+      >>> mycomp = design.add_component("my-comp")
+      >>> body = mycomp.extrude_sketch("my-sketch", sketch, 1 * u.m)
+      >>> body.plot()
+
+      Plot the body and color each face individually:
+
+      >>> body.plot(multi_colors=True)
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: intersect(other: Body) -> None
+      :abstractmethod:
+
+      
+      Intersect two bodies.
+
+
+      :Parameters:
+
+          **other** : :obj:`Body`
+              The body to intersect with.
+
+
+
+
+
+      :Raises:
+
+          :obj:`ValueError`
+              If the bodies do not intersect.
+
+
+
+
+      .. rubric:: Notes
+
+      `self` will be directly modified with the result, and
+      `other` will be consumed, so it is important to make copies if needed.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: subtract(other: Body) -> None
+      :abstractmethod:
+
+      
+      Subtract two bodies.
+
+
+      :Parameters:
+
+          **other** : :obj:`Body`
+              The body to subtract from self.
+
+
+
+
+
+      :Raises:
+
+          :obj:`ValueError`
+              If the subtraction results in an empty (complete) subtraction.
+
+
+
+
+      .. rubric:: Notes
+
+      `self` is the minuend, and `other` is the subtrahend
+      (`self` - `other`). `self` will be directly modified with the result, and
+      `other` will be consumed, so it is important to make copies if needed.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: unite(other: Body) -> None
+      :abstractmethod:
+
+      
+      Unite two bodies.
+
+
+      :Parameters:
+
+          **other** : :obj:`Body`
+              The body to unite with self.
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      `self` will be directly modified with the resulting union, and
+      `other` will be consumed, so it is important to make copies if needed.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __repr__() -> str
+
+      
+      Represent the ``MasterBody`` as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: Body(id, name, parent: ansys.geometry.core.designer.component.Component, template: MasterBody)
+
+
+   Bases: :py:obj:`IBody`
+
+   
+   Represents solids and surfaces organized within the design assembly.
+
+   Solids and surfaces synchronize to a design within a supporting Geometry service instance.
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the body.
+
+       **name** : :class:`python:str`
+           User-defined label for the body.
+
+       **parent** : :obj:`Component`
+           Parent component to nest the new component under within the design assembly.
+
+       **template** : :obj:`MasterBody`
+           The master body that this body is an occurrence of.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: id
+      :type: str
+
+      
+      ID of the body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: name
+      :type: str
+
+      
+      Name of the body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: parent
+      :type: ansys.geometry.core.designer.component.Component
+
+
+   .. py:property:: faces
+      :type: beartype.typing.List[ansys.geometry.core.designer.face.Face]
+
+      
+      All faces within the body.
+
+
+
+      :Returns:
+
+          :obj:`List`\[:obj:`Face`]
+              ..
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: edges
+      :type: beartype.typing.List[ansys.geometry.core.designer.edge.Edge]
+
+      
+      All edges within the body.
+
+
+
+      :Returns:
+
+          :obj:`List`\[:obj:`Edge`]
+              ..
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: is_alive
+      :type: bool
+
+      
+      If the body is still alive and has not been deleted.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: is_surface
+      :type: bool
+
+      
+      Check if the body is a planar body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: surface_thickness
+      :type: beartype.typing.Union[pint.Quantity, None]
+
+      
+      Surface thickness of a surface body.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      Only for surface-type bodies which have been assigned a surface thickness.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: surface_offset
+      :type: beartype.typing.Union[ansys.geometry.core.designer.design.MidSurfaceOffsetType, None]
+
+      
+      Surface offset type of a surface body.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      Only for surface-type bodies which have been assigned a surface offset.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: volume
+      :type: pint.Quantity
+
+      
+      Calculate volume of the body.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      When dealing with a planar surface, a value of ``0`` is returned as a volume.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: reset_tessellation_cache()
+
+      
+      Decorate ``Body`` methods that require a tessellation cache update.
+
+
+      :Parameters:
+
+          **func** : :obj:`method`
+              The method being called.
+
+      :Returns:
+
+          :obj:`Any`
+              The output of the method, if any.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: assign_material(material: ansys.geometry.core.materials.Material) -> None
+
+      
+      Assign a material against the design in the active Geometry service instance.
+
+
+      :Parameters:
+
+          **material** : :obj:`Material`
+              Source material data.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: add_midsurface_thickness(thickness: pint.Quantity) -> None
+
+      
+      Add a mid-surface thickness to a surface body.
+
+
+      :Parameters:
+
+          **thickness** : :obj:`Quantity`
+              Thickness to be assigned.
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      Only surface bodies will be eligible for mid-surface thickness assignment.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: add_midsurface_offset(offset: ansys.geometry.core.designer.design.MidSurfaceOffsetType) -> None
+
+      
+      Add a mid-surface offset to a surface body.
+
+
+      :Parameters:
+
+          **offset_type** : :obj:`MidSurfaceOffsetType`
+              Surface offset to be assigned.
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      Only surface bodies will be eligible for mid-surface offset assignment.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: imprint_curves(faces: beartype.typing.List[ansys.geometry.core.designer.face.Face], sketch: ansys.geometry.core.sketch.Sketch) -> beartype.typing.Tuple[beartype.typing.List[ansys.geometry.core.designer.edge.Edge], beartype.typing.List[ansys.geometry.core.designer.face.Face]]
+
+      
+      Imprint all specified geometries onto the specified faces of the body.
+
+
+      :Parameters:
+
+          **faces: List[Face]**
+              List of faces to imprint the curves of the sketch.
+
+          **sketch: Sketch**
+              All curves to imprint on the faces.
+
+      :Returns:
+
+          :obj:`Tuple`\[:obj:`List`\[:obj:`Edge`], :obj:`List`\[:obj:`Face`]]
+              All impacted edges and faces from the imprint operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: project_curves(direction: ansys.geometry.core.math.UnitVector3D, sketch: ansys.geometry.core.sketch.Sketch, closest_face: bool, only_one_curve: beartype.typing.Optional[bool] = False) -> beartype.typing.List[ansys.geometry.core.designer.face.Face]
+
+      
+      Project all specified geometries onto the body.
+
+
+      :Parameters:
+
+          **direction: UnitVector3D**
+              Establishes the direction of the projection.
+
+          **sketch: Sketch**
+              All curves to project on the body.
+
+          **closest_face: bool**
+              Whether to target the closest face with the projection.
+
+          **only_one_curve: bool, default: False**
+              Whether to project only one curve of the entire sketch. When
+              ``True``, only one curve is projected.
+
+      :Returns:
+
+          :obj:`List`\[:obj:`Face`]
+              All faces from the project curves operation.
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      The ``only_one_curve`` parameter allows you to optimize the server call because
+      projecting curves is an expensive operation. This reduces the workload on the
+      server side.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: translate(direction: ansys.geometry.core.math.UnitVector3D, distance: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real]) -> None
+
+      
+      Translate the geometry body in the specified direction by a given distance.
+
+
+      :Parameters:
+
+          **direction: UnitVector3D**
+              Direction of the translation.
+
+          **distance: Union[Quantity, Distance, Real]**
+              Magnitude of the translation.
+
+      :Returns:
+
+          :data:`python:None`
+              ..
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: copy(parent: ansys.geometry.core.designer.component.Component, name: str = None) -> Body
+
+      
+      Create a copy of the geometry body and places it under the specified parent.
+
+
+      :Parameters:
+
+          **parent: Component**
+              The parent component that the new body should live under.
+
+          **name: str**
+              The name to give the new body.
+
+      :Returns:
+
+          :obj:`Body`
+              Copy of the body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: tessellate(merge: beartype.typing.Optional[bool] = False) -> beartype.typing.Union[pyvista.PolyData, pyvista.MultiBlock]
+
+      
+      Tessellate the body and return the geometry as triangles.
+
+
+      :Parameters:
+
+          **merge** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+              Whether to merge the body into a single mesh. By default, the
+              number of triangles are preserved and only the topology is merged.
+              When ``True``, the individual faces of the tessellation are merged.
+
+      :Returns:
+
+          :obj:`~pyvista.PolyData`, :obj:`~pyvista.MultiBlock`
+              Merged :class:`pyvista.PolyData` if ``merge=True`` or a composite dataset.
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Examples
+
+      Extrude a box centered at the origin to create a rectangular body and
+      tessellate it:
+
+      >>> from ansys.geometry.core.misc.units import UNITS as u
+      >>> from ansys.geometry.core.sketch import Sketch
+      >>> from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
+      >>> from ansys.geometry.core import Modeler
+      >>> modeler = Modeler()
+      >>> origin = Point3D([0, 0, 0])
+      >>> plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 0, 1])
+      >>> sketch = Sketch(plane)
+      >>> box = sketch.box(Point2D([2, 0]), 4, 4)
+      >>> design = modeler.create_design("my-design")
+      >>> my_comp = design.add_component("my-comp")
+      >>> body = my_comp.extrude_sketch("my-sketch", sketch, 1 * u.m)
+      >>> blocks = body.tessellate()
+      >>> blocks
+      >>> MultiBlock (0x7f94ec757460)
+           N Blocks:  6
+           X Bounds:  0.000, 4.000
+           Y Bounds:  -1.000, 0.000
+           Z Bounds:  -0.500, 4.500
+
+      Merge the body:
+
+      >>> mesh = body.tessellate(merge=True)
+      >>> mesh
+      PolyData (0x7f94ec75f3a0)
+        N Cells:      12
+        N Points:     24
+        X Bounds:     0.000e+00, 4.000e+00
+        Y Bounds:     -1.000e+00, 0.000e+00
+        Z Bounds:     -5.000e-01, 4.500e+00
+        N Arrays:     0
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: plot(merge: bool = False, screenshot: beartype.typing.Optional[str] = None, use_trame: beartype.typing.Optional[bool] = None, **plotting_options: beartype.typing.Optional[dict]) -> None
+
+      
+      Plot the body.
+
+
+      :Parameters:
+
+          **merge** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+              Whether to merge the body into a single mesh. By default, the
+              number of triangles are preserved and only the topology is merged.
+              When ``True``, the individual faces of the tessellation are merged.
+
+          **screenshot** : :class:`python:str`, :obj:`optional`
+              Save a screenshot of the image being represented. The image is
+              stored in the path provided as an argument.
+
+          **use_trame** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+              Enables/disables the usage of the trame web visualizer. Defaults to the
+              global setting ``USE_TRAME``.
+
+          **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+              Keyword arguments. For allowable keyword arguments, see the
+              :func:`pyvista.Plotter.add_mesh` method.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Examples
+
+      Extrude a box centered at the origin to create rectangular body and
+      plot it:
+
+      >>> from ansys.geometry.core.misc.units import UNITS as u
+      >>> from ansys.geometry.core.sketch import Sketch
+      >>> from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
+      >>> from ansys.geometry.core import Modeler
+      >>> modeler = Modeler()
+      >>> origin = Point3D([0, 0, 0])
+      >>> plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 0, 1])
+      >>> sketch = Sketch(plane)
+      >>> box = sketch.box(Point2D([2, 0]), 4, 4)
+      >>> design = modeler.create_design("my-design")
+      >>> mycomp = design.add_component("my-comp")
+      >>> body = mycomp.extrude_sketch("my-sketch", sketch, 1 * u.m)
+      >>> body.plot()
+
+      Plot the body and color each face individually:
+
+      >>> body.plot(multi_colors=True)
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: intersect(other: Body) -> None
+
+      
+      Intersect two bodies.
+
+
+      :Parameters:
+
+          **other** : :obj:`Body`
+              The body to intersect with.
+
+
+
+
+
+      :Raises:
+
+          :obj:`ValueError`
+              If the bodies do not intersect.
+
+
+
+
+      .. rubric:: Notes
+
+      `self` will be directly modified with the result, and
+      `other` will be consumed, so it is important to make copies if needed.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: subtract(other: Body) -> None
+
+      
+      Subtract two bodies.
+
+
+      :Parameters:
+
+          **other** : :obj:`Body`
+              The body to subtract from self.
+
+
+
+
+
+      :Raises:
+
+          :obj:`ValueError`
+              If the subtraction results in an empty (complete) subtraction.
+
+
+
+
+      .. rubric:: Notes
+
+      `self` is the minuend, and `other` is the subtrahend
+      (`self` - `other`). `self` will be directly modified with the result, and
+      `other` will be consumed, so it is important to make copies if needed.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: unite(other: Body) -> None
+
+      
+      Unite two bodies.
+
+
+      :Parameters:
+
+          **other** : :obj:`Body`
+              The body to unite with self.
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      `self` will be directly modified with the resulting union, and
+      `other` will be consumed, so it is important to make copies if needed.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __repr__() -> str
+
+      
+      Represent the ``Body`` as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
