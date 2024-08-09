@@ -21,6 +21,8 @@
 # SOFTWARE.
 """Provides tools for preparing geometry for use with simulation."""
 
+from typing import TYPE_CHECKING
+
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.models_pb2 import Body as GRPCBody
 from ansys.api.geometry.v0.preparetools_pb2 import (
@@ -30,7 +32,6 @@ from ansys.api.geometry.v0.preparetools_pb2 import (
 )
 from ansys.api.geometry.v0.preparetools_pb2_grpc import PrepareToolsStub
 from beartype import beartype as check_input_types
-from beartype.typing import TYPE_CHECKING, List
 from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 
 from ansys.geometry.core.connection import GrpcClient
@@ -67,8 +68,8 @@ class PrepareTools:
     @check_input_types
     @min_backend_version(25, 1, 0)
     def extract_volume_from_faces(
-        self, sealing_faces: List["Face"], inside_faces: List["Face"]
-    ) -> List["Body"]:
+        self, sealing_faces: list["Face"], inside_faces: list["Face"]
+    ) -> list["Body"]:
         """Extract a volume from input faces.
 
         Creates a volume (typically a flow volume) from a list of faces that seal the volume
@@ -76,14 +77,14 @@ class PrepareTools:
 
         Parameters
         ----------
-        sealing_faces : List[Face]
+        sealing_faces : list[Face]
             List of faces that seal the volume.
-        inside_faces : List[Face]
+        inside_faces : list[Face]
             List of faces that define the interior of the solid.
 
         Returns
         -------
-        List[Body]
+        list[Body]
             List of created bodies.
         """
         if not sealing_faces or not inside_faces:
@@ -112,8 +113,8 @@ class PrepareTools:
     @check_input_types
     @min_backend_version(25, 1, 0)
     def extract_volume_from_edge_loops(
-        self, sealing_edges: List["Edge"], inside_faces: List["Face"]
-    ) -> List["Body"]:
+        self, sealing_edges: list["Edge"], inside_faces: list["Face"]
+    ) -> list["Body"]:
         """Extract a volume from input edge loops.
 
         Creates a volume (typically a flow volume) from a list of edge loops that seal the volume.
@@ -121,14 +122,14 @@ class PrepareTools:
 
         Parameters
         ----------
-        sealing_edges : List[Edge]
+        sealing_edges : list[Edge]
             List of faces that seal the volume.
-        inside_faces : List[Face]
+        inside_faces : list[Face]
             List of faces that define the interior of the solid (Not always necessary).
 
         Returns
         -------
-        List[Body]
+        list[Body]
             List of created bodies.
         """
         if not sealing_edges:
@@ -157,13 +158,13 @@ class PrepareTools:
     @check_input_types
     @min_backend_version(25, 1, 0)
     def share_topology(
-        self, bodies: List["Body"], tol: Real = 0.0, preserve_instances: bool = False
+        self, bodies: list["Body"], tol: Real = 0.0, preserve_instances: bool = False
     ) -> bool:
         """Share topology between the chosen bodies.
 
         Parameters
         ----------
-        bodies : List[Body]
+        bodies : list[Body]
             List of bodies to share topology between.
         tol : Real
             Maximum distance between bodies.

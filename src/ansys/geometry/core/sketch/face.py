@@ -21,7 +21,8 @@
 # SOFTWARE.
 """Provides for creating and managing a face (closed 2D sketch)."""
 
-from beartype.typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
+
 from pint import Quantity
 import pyvista as pv
 
@@ -41,7 +42,7 @@ class SketchFace:
         self._edges = []
 
     @property
-    def edges(self) -> List[SketchEdge]:
+    def edges(self) -> list[SketchEdge]:
         """List of all component edges forming the face."""
         return self._edges
 

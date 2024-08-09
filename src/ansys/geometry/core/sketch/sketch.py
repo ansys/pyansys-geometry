@@ -21,8 +21,9 @@
 # SOFTWARE.
 """Provides for creating and managing a sketch."""
 
+from typing import TYPE_CHECKING
+
 from beartype import beartype as check_input_types
-from beartype.typing import TYPE_CHECKING, Dict, List, Optional, Union
 from pint import Quantity
 
 from ansys.geometry.core.math.constants import ZERO_POINT2D
@@ -47,7 +48,7 @@ from ansys.geometry.core.typing import Real
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import PolyData
 
-SketchObject = Union[SketchEdge, SketchFace]
+SketchObject = SketchEdge | SketchFace
 """Type to refer to both ``SketchEdge`` and ``SketchFace``."""
 
 
@@ -55,15 +56,15 @@ class Sketch:
     """Provides for building 2D sketch elements."""
 
     # Types of the class instance private attributes
-    _faces: List[SketchFace]
-    _edges: List[SketchEdge]
-    _current_sketch_context: List[SketchObject]
-    _tags: Dict[str, List[SketchObject]]
+    _faces: list[SketchFace]
+    _edges: list[SketchEdge]
+    _current_sketch_context: list[SketchObject]
+    _tags: dict[str, list[SketchObject]]
 
     @check_input_types
     def __init__(
         self,
-        plane: Optional[Plane] = Plane(),
+        plane: Plane = Plane(),
     ):
         """Initialize the ``Sketch`` class."""
         self._plane = plane
@@ -83,7 +84,7 @@ class Sketch:
         return self._plane
 
     @property
-    def edges(self) -> List[SketchEdge]:
+    def edges(self) -> list[SketchEdge]:
         """List of all independently sketched edges.
 
         Notes
@@ -94,7 +95,7 @@ class Sketch:
         return self._edges
 
     @property
-    def faces(self) -> List[SketchFace]:
+    def faces(self) -> list[SketchFace]:
         """List of all independently sketched faces."""
         return self._faces
 
@@ -134,19 +135,19 @@ class Sketch:
     @check_input_types
     def translate_sketch_plane_by_offset(
         self,
-        x: Union[Quantity, Distance] = Quantity(0, DEFAULT_UNITS.LENGTH),
-        y: Union[Quantity, Distance] = Quantity(0, DEFAULT_UNITS.LENGTH),
-        z: Union[Quantity, Distance] = Quantity(0, DEFAULT_UNITS.LENGTH),
+        x: Quantity | Distance = Quantity(0, DEFAULT_UNITS.LENGTH),
+        y: Quantity | Distance = Quantity(0, DEFAULT_UNITS.LENGTH),
+        z: Quantity | Distance = Quantity(0, DEFAULT_UNITS.LENGTH),
     ) -> "Sketch":
         """Translate the origin location of the active sketch plane by offsets.
 
         Parameters
         ----------
-        x : Union[~pint.Quantity, Distance], default: ~pint.Quantity(0, ``DEFAULT_UNITS.LENGTH``)
+        x : ~pint.Quantity | Distance, default: ~pint.Quantity(0, ``DEFAULT_UNITS.LENGTH``)
             Amount to translate the origin of the x-direction.
-        y : Union[~pint.Quantity, Distance], default: ~pint.Quantity(0, ``DEFAULT_UNITS.LENGTH``)
+        y : ~pint.Quantity | Distance, default: ~pint.Quantity(0, ``DEFAULT_UNITS.LENGTH``)
             Amount to translate the origin of the y-direction.
-        z : Union[~pint.Quantity, Distance], default: ~pint.Quantity(0, ``DEFAULT_UNITS.LENGTH``)
+        z : ~pint.Quantity | Distance, default: ~pint.Quantity(0, ``DEFAULT_UNITS.LENGTH``)
             Amount to translate the origin of the z-direction.
 
         Returns
@@ -176,7 +177,7 @@ class Sketch:
 
     @check_input_types
     def translate_sketch_plane_by_distance(
-        self, direction: UnitVector3D, distance: Union[Quantity, Distance]
+        self, direction: UnitVector3D, distance: Quantity | Distance
     ) -> "Sketch":
         """Translate the origin location active sketch plane by distance.
 
@@ -184,7 +185,7 @@ class Sketch:
         ----------
         direction : UnitVector3D
             Direction to translate the origin.
-        distance : Union[~pint.Quantity, Distance]
+        distance : ~pint.Quantity | Distance
             Distance to translate the origin.
 
         Returns
@@ -203,7 +204,7 @@ class Sketch:
         return self.translate_sketch_plane(translation)
 
     @check_input_types
-    def get(self, tag: str) -> List[SketchObject]:
+    def get(self, tag: str) -> list[SketchObject]:
         """Get a list of shapes with a given tag.
 
         Parameters
@@ -214,7 +215,7 @@ class Sketch:
         return self._tags[tag]
 
     @check_input_types
-    def face(self, face: SketchFace, tag: Optional[str] = None) -> "Sketch":
+    def face(self, face: SketchFace, tag: str | None = None) -> "Sketch":
         """Add a sketch face to the sketch.
 
         Parameters
@@ -236,7 +237,7 @@ class Sketch:
         return self
 
     @check_input_types
-    def edge(self, edge: SketchEdge, tag: Optional[str] = None) -> "Sketch":
+    def edge(self, edge: SketchEdge, tag: str | None = None) -> "Sketch":
         """Add a sketch edge to the sketch.
 
         Parameters
@@ -267,7 +268,7 @@ class Sketch:
 
         return self
 
-    def segment(self, start: Point2D, end: Point2D, tag: Optional[str] = None) -> "Sketch":
+    def segment(self, start: Point2D, end: Point2D, tag: str | None = None) -> "Sketch":
         """Add a segment sketch object to the sketch plane.
 
         Parameters
@@ -287,7 +288,7 @@ class Sketch:
         segment = SketchSegment(start, end)
         return self.edge(segment, tag)
 
-    def segment_to_point(self, end: Point2D, tag: Optional[str] = None) -> "Sketch":
+    def segment_to_point(self, end: Point2D, tag: str | None = None) -> "Sketch":
         """Add a segment to the sketch plane starting from the previous end point.
 
         Parameters
@@ -312,7 +313,7 @@ class Sketch:
 
     @check_input_types
     def segment_from_point_and_vector(
-        self, start: Point2D, vector: Vector2D, tag: Optional[str] = None
+        self, start: Point2D, vector: Vector2D, tag: str | None = None
     ):
         """Add a segment to the sketch starting from a given starting point.
 
@@ -343,7 +344,7 @@ class Sketch:
         return self.segment(start, end, tag)
 
     @check_input_types
-    def segment_from_vector(self, vector: Vector2D, tag: Optional[str] = None):
+    def segment_from_vector(self, vector: Vector2D, tag: str | None = None):
         """Add a segment to the sketch starting from the previous end point.
 
         Parameters
@@ -375,8 +376,8 @@ class Sketch:
         start: Point2D,
         end: Point2D,
         center: Point2D,
-        clockwise: Optional[bool] = False,
-        tag: Optional[str] = None,
+        clockwise: bool = False,
+        tag: str | None = None,
     ) -> "Sketch":
         """Add an arc to the sketch plane.
 
@@ -409,8 +410,8 @@ class Sketch:
         self,
         end: Point2D,
         center: Point2D,
-        clockwise: Optional[bool] = False,
-        tag: Optional[str] = None,
+        clockwise: bool = False,
+        tag: str | None = None,
     ) -> "Sketch":
         """Add an arc to the sketch starting from the previous end point.
 
@@ -447,7 +448,7 @@ class Sketch:
         start: Point2D,
         inter: Point2D,
         end: Point2D,
-        tag: Optional[str] = None,
+        tag: str | None = None,
     ) -> "Sketch":
         """Add an arc to the sketch plane from three given points.
 
@@ -474,10 +475,10 @@ class Sketch:
         self,
         start: Point2D,
         end: Point2D,
-        radius: Union[Quantity, Distance, Real],
-        convex_arc: Optional[bool] = False,
-        clockwise: Optional[bool] = False,
-        tag: Optional[str] = None,
+        radius: Quantity | Distance | Real,
+        convex_arc: bool = False,
+        clockwise: bool = False,
+        tag: str | None = None,
     ) -> "Sketch":
         """Add an arc from the start, end points and a radius.
 
@@ -487,7 +488,7 @@ class Sketch:
             Starting point of the arc.
         end : Point2D
             Ending point of the arc.
-        radius : Union[~pint.Quantity, Distance, Real]
+        radius : ~pint.Quantity | Distance | Real
             Radius of the arc.
         convex_arc : bool, default: False
             Whether the arc is convex. The default is ``False``.
@@ -519,9 +520,9 @@ class Sketch:
         self,
         start: Point2D,
         center: Point2D,
-        angle: Union[Quantity, Angle, Real],
-        clockwise: Optional[bool] = False,
-        tag: Optional[str] = None,
+        angle: Quantity | Angle | Real,
+        clockwise: bool = False,
+        tag: str | None = None,
     ) -> "Sketch":
         """Add an arc from the start, center point, and angle.
 
@@ -531,7 +532,7 @@ class Sketch:
             Starting point of the arc.
         center : Point2D
             Center point of the arc.
-        angle : Union[~pint.Quantity, Angle, Real]
+        angle : ~pint.Quantity | Angle | Real
             Angle of the arc.
         clockwise : bool, default: False
             Whether the arc spans the angle clockwise. The default is ``False``.
@@ -556,7 +557,7 @@ class Sketch:
         point1: Point2D,
         point2: Point2D,
         point3: Point2D,
-        tag: Optional[str] = None,
+        tag: str | None = None,
     ) -> "Sketch":
         """Add a triangle to the sketch using given vertex points.
 
@@ -581,30 +582,30 @@ class Sketch:
 
     def trapezoid(
         self,
-        width: Union[Quantity, Distance, Real],
-        height: Union[Quantity, Distance, Real],
-        slant_angle: Union[Quantity, Angle, Real],
-        nonsymmetrical_slant_angle: Optional[Union[Quantity, Angle, Real]] = None,
-        center: Optional[Point2D] = ZERO_POINT2D,
-        angle: Optional[Union[Quantity, Angle, Real]] = 0,
-        tag: Optional[str] = None,
+        width: Quantity | Distance | Real,
+        height: Quantity | Distance | Real,
+        slant_angle: Quantity | Angle | Real,
+        nonsymmetrical_slant_angle: Quantity | Angle | Real | None = None,
+        center: Point2D = ZERO_POINT2D,
+        angle: Quantity | Angle | Real = 0,
+        tag: str | None = None,
     ) -> "Sketch":
         """Add a triangle to the sketch using given vertex points.
 
         Parameters
         ----------
-        width : Union[~pint.Quantity, Distance, Real]
+        width : ~pint.Quantity | Distance | Real
             Width of the slot main body.
-        height : Union[~pint.Quantity, Distance, Real]
+        height : ~pint.Quantity | Distance | Real
             Height of the slot.
-        slant_angle : Union[~pint.Quantity, Angle, Real]
+        slant_angle : ~pint.Quantity | Distance | Real
             Angle for trapezoid generation.
-        nonsymmetrical_slant_angle : Union[~pint.Quantity, Angle, Real], default: None
+        nonsymmetrical_slant_angle : ~pint.Quantity | Angle | Real | None, default: None
             Asymmetrical slant angles on each side of the trapezoid.
             The default is ``None``, in which case the trapezoid is symmetrical.
         center : Point2D, default: (0, 0)
             Center point of the trapezoid.
-        angle : Optional[Union[~pint.Quantity, Angle, Real]], default: 0
+        angle : ~pint.Quantity | Angle | Real, default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
             User-defined label for identifying the face.
@@ -620,8 +621,8 @@ class Sketch:
     def circle(
         self,
         center: Point2D,
-        radius: Union[Quantity, Distance, Real],
-        tag: Optional[str] = None,
+        radius: Quantity | Distance | Real,
+        tag: str | None = None,
     ) -> "Sketch":
         """Add a circle to the plane at a given center.
 
@@ -629,7 +630,7 @@ class Sketch:
         ----------
         center: Point2D
             Center point of the circle.
-        radius : Union[~pint.Quantity, Distance, Real]
+        radius : ~pint.Quantity | Distance | Real
             Radius of the circle.
         tag : str, default: None
             User-defined label for identifying the face.
@@ -645,10 +646,10 @@ class Sketch:
     def box(
         self,
         center: Point2D,
-        width: Union[Quantity, Distance, Real],
-        height: Union[Quantity, Distance, Real],
-        angle: Optional[Union[Quantity, Angle, Real]] = 0,
-        tag: Optional[str] = None,
+        width: Quantity | Distance | Real,
+        height: Quantity | Distance | Real,
+        angle: Quantity | Angle | Real = 0,
+        tag: str | None = None,
     ) -> "Sketch":
         """Create a box on the sketch.
 
@@ -656,11 +657,11 @@ class Sketch:
         ----------
         center: Point2D
             Center point of the box.
-        width : Union[~pint.Quantity, Distance, Real]
+        width : ~pint.Quantity | Distance | Real
             Width of the box.
-        height : Union[~pint.Quantity, Distance, Real]
+        height : ~pint.Quantity | Distance | Real
             Height of the box.
-        angle : Union[~pint.Quantity, Real], default: 0
+        angle : ~pint.Quantity | Angle | Real, default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
             User-defined label for identifying the face.
@@ -676,10 +677,10 @@ class Sketch:
     def slot(
         self,
         center: Point2D,
-        width: Union[Quantity, Distance, Real],
-        height: Union[Quantity, Distance, Real],
-        angle: Optional[Union[Quantity, Angle, Real]] = 0,
-        tag: Optional[str] = None,
+        width: Quantity | Distance | Real,
+        height: Quantity | Distance | Real,
+        angle: Quantity | Angle | Real = 0,
+        tag: str | None = None,
     ) -> "Sketch":
         """Create a slot on the sketch.
 
@@ -687,11 +688,11 @@ class Sketch:
         ----------
         center: Point2D
             Center point of the slot.
-        width : Union[~pint.Quantity, Distance, Real]
+        width : ~pint.Quantity | Distance | Real
             Width of the slot.
-        height : Union[~pint.Quantity, Distance, Real]
+        height : ~pint.Quantity | Distance | Real
             Height of the slot.
-        angle : Union[~pint.Quantity, Angle, Real], default: 0
+        angle : ~pint.Quantity | Angle | Real, default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
             User-defined label for identifying the face.
@@ -707,10 +708,10 @@ class Sketch:
     def ellipse(
         self,
         center: Point2D,
-        major_radius: Union[Quantity, Distance, Real],
-        minor_radius: Union[Quantity, Distance, Real],
-        angle: Optional[Union[Quantity, Angle, Real]] = 0,
-        tag: Optional[str] = None,
+        major_radius: Quantity | Distance | Real,
+        minor_radius: Quantity | Distance | Real,
+        angle: Quantity | Angle | Real = 0,
+        tag: str | None = None,
     ) -> "Sketch":
         """Create an ellipse on the sketch.
 
@@ -718,11 +719,11 @@ class Sketch:
         ----------
         center: Point2D
             Center point of the ellipse.
-        major_radius : Union[~pint.Quantity, Distance, Real]
+        major_radius : ~pint.Quantity | Distance | Real
             Semi-major axis of the ellipse.
-        minor_radius : Union[~pint.Quantity, Distance, Real]
+        minor_radius : ~pint.Quantity | Distance | Real
             Semi-minor axis of the ellipse.
-        angle : Union[~pint.Quantity, Angle, Real], default: 0
+        angle : ~pint.Quantity | Angle | Real, default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
             User-defined label for identifying the face.
@@ -738,10 +739,10 @@ class Sketch:
     def polygon(
         self,
         center: Point2D,
-        inner_radius: Union[Quantity, Distance, Real],
+        inner_radius: Quantity | Distance | Real,
         sides: int,
-        angle: Optional[Union[Quantity, Angle, Real]] = 0,
-        tag: Optional[str] = None,
+        angle: Quantity | Angle | Real = 0,
+        tag: str | None = None,
     ) -> "Sketch":
         """Create a polygon on the sketch.
 
@@ -749,11 +750,11 @@ class Sketch:
         ----------
         center: Point2D
             Center point of the polygon.
-        inner_radius : Union[~pint.Quantity, Distance, Real]
+        inner_radius : ~pint.Quantity | Distance | Real
             Inner radius (apothem) of the polygon.
         sides : int
             Number of sides of the polygon.
-        angle : Union[~pint.Quantity, Angle, Real], default: 0
+        angle : ~pint.Quantity | Angle | Real, default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
             User-defined label for identifying the face.
@@ -769,10 +770,10 @@ class Sketch:
     def dummy_gear(
         self,
         origin: Point2D,
-        outer_radius: Union[Quantity, Distance, Real],
-        inner_radius: Union[Quantity, Distance, Real],
+        outer_radius: Quantity | Distance | Real,
+        inner_radius: Quantity | Distance | Real,
         n_teeth: int,
-        tag: Optional[str] = None,
+        tag: str | None = None,
     ) -> "Sketch":
         """Create a dummy gear on the sketch.
 
@@ -780,9 +781,9 @@ class Sketch:
         ----------
         origin : Point2D
             Origin of the gear.
-        outer_radius : Union[~pint.Quantity, Distance, Real]
+        outer_radius : ~pint.Quantity | Distance | Real
             Outer radius of the gear.
-        inner_radius : Union[~pint.Quantity, Distance, Real]
+        inner_radius : ~pint.Quantity | Distance | Real
             Inner radius of the gear.
         n_teeth : int
             Number of teeth of the gear.
@@ -801,9 +802,9 @@ class Sketch:
         self,
         origin: Point2D,
         module: Real,
-        pressure_angle: Union[Quantity, Angle, Real],
+        pressure_angle: Quantity | Angle | Real,
         n_teeth: int,
-        tag: Optional[str] = None,
+        tag: str | None = None,
     ) -> "Sketch":
         """Create a spur gear on the sketch.
 
@@ -814,7 +815,7 @@ class Sketch:
         module : Real
             Module of the spur gear. This is also the ratio between the pitch circle
             diameter in millimeters and the number of teeth.
-        pressure_angle : Union[~pint.Quantity, Angle, Real]
+        pressure_angle : ~pint.Quantity | Angle | Real
             Pressure angle of the spur gear.
         n_teeth : int
             Number of teeth of the spur gear.
@@ -852,12 +853,12 @@ class Sketch:
 
         return self._edges[-1].end
 
-    def _tag(self, sketch_collection: List[SketchObject], tag: str) -> None:
+    def _tag(self, sketch_collection: list[SketchObject], tag: str) -> None:
         """Add a tag for a collection of sketch objects.
 
         Parameters
         ----------
-        sketch_collection : List[SketchObject]
+        sketch_collection : list[SketchObject]
             Sketch objects to tag.
         tag : str, default: None
             Tag to assign to these sketch objects.
@@ -866,11 +867,11 @@ class Sketch:
 
     def plot(
         self,
-        view_2d: Optional[bool] = False,
-        screenshot: Optional[str] = None,
-        use_trame: Optional[bool] = None,
-        selected_pd_objects: List["PolyData"] = None,
-        **plotting_options: Optional[dict],
+        view_2d: bool = False,
+        screenshot: str | None = None,
+        use_trame: bool | None = None,
+        selected_pd_objects: list["PolyData"] = None,
+        **plotting_options: dict | None,
     ):
         """Plot all objects of the sketch to the scene.
 
@@ -918,10 +919,10 @@ class Sketch:
 
     def plot_selection(
         self,
-        view_2d: Optional[bool] = False,
-        screenshot: Optional[str] = None,
-        use_trame: Optional[bool] = None,
-        **plotting_options: Optional[dict],
+        view_2d: bool = False,
+        screenshot: str | None = None,
+        use_trame: bool | None = None,
+        **plotting_options: dict | None,
     ):
         """Plot the current selection to the scene.
 
@@ -955,12 +956,12 @@ class Sketch:
             **plotting_options,
         )
 
-    def sketch_polydata(self) -> List["PolyData"]:
+    def sketch_polydata(self) -> list["PolyData"]:
         """Get polydata configuration for all objects of the sketch.
 
         Returns
         -------
-        List[~pyvista.PolyData]
+        list[~pyvista.PolyData]
             List of the polydata configuration for all edges and faces in the sketch.
         """
         sketches_polydata = []
@@ -968,12 +969,12 @@ class Sketch:
         sketches_polydata.extend(self.sketch_polydata_faces())
         return sketches_polydata
 
-    def sketch_polydata_faces(self) -> List["PolyData"]:
+    def sketch_polydata_faces(self) -> list["PolyData"]:
         """Get polydata configuration for all faces of the sketch to the scene.
 
         Returns
         -------
-        List[~pyvista.PolyData]
+        list[~pyvista.PolyData]
             List of the polydata configuration for faces in the sketch.
         """
         sketches_polydata_faces = [
@@ -982,12 +983,12 @@ class Sketch:
         ]
         return sketches_polydata_faces
 
-    def sketch_polydata_edges(self) -> List["PolyData"]:
+    def sketch_polydata_edges(self) -> list["PolyData"]:
         """Get polydata configuration for all edges of the sketch to the scene.
 
         Returns
         -------
-        List[~pyvista.PolyData]
+        list[~pyvista.PolyData]
             List of the polydata configuration for edges in the sketch.
         """
         sketches_polydata_edges = [

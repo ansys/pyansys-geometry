@@ -21,12 +21,13 @@
 # SOFTWARE.
 """Provides tools for measurement."""
 
+from typing import TYPE_CHECKING
+
 from ansys.api.geometry.v0.measuretools_pb2 import (
     MinDistanceBetweenObjectsRequest,
     MinDistanceBetweenObjectsResponse,
 )
 from ansys.api.geometry.v0.measuretools_pb2_grpc import MeasureToolsStub
-from beartype.typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc

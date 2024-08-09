@@ -22,7 +22,6 @@
 """Provides for creating and managing a trapezoid."""
 
 from beartype import beartype as check_input_types
-from beartype.typing import Optional, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
@@ -43,18 +42,18 @@ class Trapezoid(SketchFace):
 
     Parameters
     ----------
-    width : Union[Quantity, Distance, Real]
+    width : ~pint.Quantity | Distance | Real
         Width of the trapezoid.
-    height : Union[Quantity, Distance, Real]
+    height : ~pint.Quantity | Distance | Real
         Height of the trapezoid.
-    slant_angle : Union[Quantity, Angle, Real]
+    slant_angle : ~pint.Quantity | Angle | Real
         Angle for trapezoid generation.
-    nonsymmetrical_slant_angle : Union[Quantity, Angle, Real], default: None
+    nonsymmetrical_slant_angle : ~pint.Quantity | Angle | Real | None, default: None
         Asymmetrical slant angles on each side of the trapezoid.
         The default is ``None``, in which case the trapezoid is symmetrical.
     center: Point2D, default: ZERO_POINT2D
         Center point of the trapezoid.
-    angle : Union[Quantity, Angle, Real], default: 0
+    angle : ~pint.Quantity | Angle | Real, default: 0
         Placement angle for orientation alignment.
 
     Notes
@@ -67,12 +66,12 @@ class Trapezoid(SketchFace):
     @check_input_types
     def __init__(
         self,
-        width: Union[Quantity, Distance, Real],
-        height: Union[Quantity, Distance, Real],
-        slant_angle: Union[Quantity, Angle, Real],
-        nonsymmetrical_slant_angle: Optional[Union[Quantity, Angle, Real]] = None,
-        center: Optional[Point2D] = ZERO_POINT2D,
-        angle: Optional[Union[Quantity, Angle, Real]] = 0,
+        width: Quantity | Distance | Real,
+        height: Quantity | Distance | Real,
+        slant_angle: Quantity | Angle | Real,
+        nonsymmetrical_slant_angle: Quantity | Angle | Real | None = None,
+        center: Point2D = ZERO_POINT2D,
+        angle: Quantity | Angle | Real = 0,
     ):
         """Initialize the trapezoid."""
         super().__init__()

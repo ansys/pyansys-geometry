@@ -21,7 +21,8 @@
 # SOFTWARE.
 """Provides for creating and managing an edge."""
 
-from beartype.typing import TYPE_CHECKING
+from typing import TYPE_CHECKING
+
 from pint import Quantity
 import pyvista as pv
 
