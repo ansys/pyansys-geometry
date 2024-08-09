@@ -12,7 +12,6 @@ from ansys_sphinx_theme import (
     ansys_logo_white_cropped,
     get_version_match,
     latex,
-    pyansys_logo_black,
     watermark,
 )
 import requests
@@ -124,7 +123,6 @@ cname = os.getenv("DOCUMENTATION_CNAME", default="geometry.docs.pyansys.com")
 switcher_version = get_version_match(__version__)
 
 # Select desired logo, theme, and declare the html title
-html_logo = pyansys_logo_black
 html_theme = "ansys_sphinx_theme"
 html_short_title = html_title = "PyAnsys Geometry"
 html_baseurl = f"https://{cname}/version/stable"
@@ -137,6 +135,7 @@ html_context = {
     "doc_path": "doc/source",
 }
 html_theme_options = {
+    "logo": "pyansys",
     "switcher": {
         "json_url": f"https://{cname}/versions.json",
         "version_match": switcher_version,
