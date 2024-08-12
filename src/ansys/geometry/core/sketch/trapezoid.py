@@ -46,10 +46,10 @@ class Trapezoid(SketchFace):
         Width of the trapezoid.
     height : ~pint.Quantity | Distance | Real
         Height of the trapezoid.
-    slant_angle : ~pint.Quantity | Angle | Real
-        Angle for trapezoid generation.
-    nonsymmetrical_slant_angle : ~pint.Quantity | Angle | Real | None, default: None
-        Asymmetrical slant angles on each side of the trapezoid.
+    left_bottom_corner_angle : ~pint.Quantity | Distance | Real
+        Angle for trapezoid generation. Represents the angle on the left, bottom corner.
+    right_bottom_corner_angle : ~pint.Quantity | Angle | Real | None, default: None
+        Asymmetrical angles on each side of the trapezoid.
         The default is ``None``, in which case the trapezoid is symmetrical.
     center: Point2D, default: ZERO_POINT2D
         Center point of the trapezoid.
@@ -68,8 +68,8 @@ class Trapezoid(SketchFace):
         self,
         width: Quantity | Distance | Real,
         height: Quantity | Distance | Real,
-        slant_angle: Quantity | Angle | Real,
-        nonsymmetrical_slant_angle: Quantity | Angle | Real | None = None,
+        left_bottom_corner_angle: Quantity | Angle | Real,
+        right_bottom_corner_angle: Quantity | Angle | Real | None = None,
         center: Point2D = ZERO_POINT2D,
         angle: Quantity | Angle | Real = 0,
     ):
@@ -91,22 +91,35 @@ class Trapezoid(SketchFace):
             angle = Angle(angle, DEFAULT_UNITS.ANGLE)
         angle = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
 
-        if isinstance(slant_angle, (int, float)):
-            slant_angle = Angle(slant_angle, DEFAULT_UNITS.ANGLE)
-        slant_angle = (
-            slant_angle if isinstance(slant_angle, Angle) else Angle(slant_angle, slant_angle.units)
+        if isinstance(left_bottom_corner_angle, (int, float)):
+            left_bottom_corner_angle = Angle(left_bottom_corner_angle, DEFAULT_UNITS.ANGLE)
+        left_bottom_corner_angle = (
+            left_bottom_corner_angle if isinstance(left_bottom_corner_angle, Angle) else Angle(left_bottom_corner_angle, left_bottom_corner_angle.units)
         )
 
-        if nonsymmetrical_slant_angle is None:
-            nonsymmetrical_slant_angle = slant_angle
+        if right_bottom_corner_angle is None:
+            right_bottom_corner_angle = left_bottom_corner_angle
         else:
-            if isinstance(nonsymmetrical_slant_angle, (int, float)):
-                nonsymmetrical_slant_angle = Angle(nonsymmetrical_slant_angle, DEFAULT_UNITS.ANGLE)
-            nonsymmetrical_slant_angle = (
-                nonsymmetrical_slant_angle
-                if isinstance(nonsymmetrical_slant_angle, Angle)
-                else Angle(nonsymmetrical_slant_angle, nonsymmetrical_slant_angle.units)
+            if isinstance(right_bottom_corner_angle, (int, float)):
+                right_bottom_corner_angle = Angle(right_bottom_corner_angle, DEFAULT_UNITS.ANGLE)
+            right_bottom_corner_angle = (
+                right_bottom_corner_angle
+                if isinstance(right_bottom_corner_angle, Angle)
+                else Angle(right_bottom_corner_angle, right_bottom_corner_angle.units)
             )
+
+        # SANITY CHECK: Ensure that the angles are valid (i.e. between 0 and 180 degrees)
+        for trapz_angle in [left_bottom_corner_angle, right_bottom_corner_angle]:
+            if trapz_angle.value.m_as(UNITS.radian) < 0 or trapz_angle.value.m_as(UNITS.radian) > np.pi:
+                raise ValueError("The trapezoid angles must be between 0 and 180 degrees.")
+
+        # Check that the sum of both angles is larger than 90 degrees
+        base_offset_right = height_magnitude / np.tan(right_bottom_corner_angle.value.m_as(UNITS.radian))
+        base_offset_left = height_magnitude / np.tan(left_bottom_corner_angle.value.m_as(UNITS.radian))
+
+        # SANITY CHECK: Ensure that the trapezoid is not degenerate
+        if base_offset_right + base_offset_left >= width_magnitude:
+            raise ValueError("The trapezoid is degenerate. The provided angles, width and height do not form a valid trapezoid.")
 
         rotation = Matrix33(
             SpatialRotation.from_euler(
@@ -119,14 +132,12 @@ class Trapezoid(SketchFace):
         rotated_point_1 = rotation @ [center.x.m - half_w, center.y.m - half_h, 0]
         rotated_point_2 = rotation @ [center.x.m + half_w, center.y.m - half_h, 0]
         rotated_point_3 = rotation @ [
-            center.x.m - half_w + height_magnitude / np.tan(slant_angle.value.m_as(UNITS.radian)),
+            center.x.m + half_w - base_offset_right,
             center.y.m + half_h,
             0,
         ]
         rotated_point_4 = rotation @ [
-            center.x.m
-            + half_w
-            - height_magnitude / np.tan(nonsymmetrical_slant_angle.value.m_as(UNITS.radian)),
+            center.x.m - half_w + base_offset_left,
             center.y.m + half_h,
             0,
         ]

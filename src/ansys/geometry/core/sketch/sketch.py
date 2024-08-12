@@ -584,13 +584,13 @@ class Sketch:
         self,
         width: Quantity | Distance | Real,
         height: Quantity | Distance | Real,
-        slant_angle: Quantity | Angle | Real,
-        nonsymmetrical_slant_angle: Quantity | Angle | Real | None = None,
+        left_bottom_corner_angle: Quantity | Angle | Real,
+        right_bottom_corner_angle: Quantity | Angle | Real | None = None,
         center: Point2D = ZERO_POINT2D,
         angle: Quantity | Angle | Real = 0,
         tag: str | None = None,
     ) -> "Sketch":
-        """Add a triangle to the sketch using given vertex points.
+        """Add a trapezoid to the sketch using given vertex points.
 
         Parameters
         ----------
@@ -598,10 +598,10 @@ class Sketch:
             Width of the slot main body.
         height : ~pint.Quantity | Distance | Real
             Height of the slot.
-        slant_angle : ~pint.Quantity | Distance | Real
-            Angle for trapezoid generation.
-        nonsymmetrical_slant_angle : ~pint.Quantity | Angle | Real | None, default: None
-            Asymmetrical slant angles on each side of the trapezoid.
+        left_bottom_corner_angle : ~pint.Quantity | Distance | Real
+            Angle for trapezoid generation. Represents the angle on the left, bottom corner.
+        right_bottom_corner_angle : ~pint.Quantity | Angle | Real | None, default: None
+            Asymmetrical angles on each side of the trapezoid.
             The default is ``None``, in which case the trapezoid is symmetrical.
         center : Point2D, default: (0, 0)
             Center point of the trapezoid.
@@ -615,7 +615,7 @@ class Sketch:
         Sketch
             Revised sketch state ready for further sketch actions.
         """
-        trapezoid = Trapezoid(width, height, slant_angle, nonsymmetrical_slant_angle, center, angle)
+        trapezoid = Trapezoid(width, height, left_bottom_corner_angle, right_bottom_corner_angle, center, angle)
         return self.face(trapezoid, tag)
 
     def circle(
