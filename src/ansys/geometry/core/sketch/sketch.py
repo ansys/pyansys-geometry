@@ -615,7 +615,9 @@ class Sketch:
         Sketch
             Revised sketch state ready for further sketch actions.
         """
-        trapezoid = Trapezoid(width, height, left_bottom_corner_angle, right_bottom_corner_angle, center, angle)
+        trapezoid = Trapezoid(
+            width, height, left_bottom_corner_angle, right_bottom_corner_angle, center, angle
+        )
         return self.face(trapezoid, tag)
 
     def circle(

@@ -94,7 +94,9 @@ class Trapezoid(SketchFace):
         if isinstance(left_bottom_corner_angle, (int, float)):
             left_bottom_corner_angle = Angle(left_bottom_corner_angle, DEFAULT_UNITS.ANGLE)
         left_bottom_corner_angle = (
-            left_bottom_corner_angle if isinstance(left_bottom_corner_angle, Angle) else Angle(left_bottom_corner_angle, left_bottom_corner_angle.units)
+            left_bottom_corner_angle
+            if isinstance(left_bottom_corner_angle, Angle)
+            else Angle(left_bottom_corner_angle, left_bottom_corner_angle.units)
         )
 
         if right_bottom_corner_angle is None:
@@ -110,16 +112,26 @@ class Trapezoid(SketchFace):
 
         # SANITY CHECK: Ensure that the angles are valid (i.e. between 0 and 180 degrees)
         for trapz_angle in [left_bottom_corner_angle, right_bottom_corner_angle]:
-            if trapz_angle.value.m_as(UNITS.radian) < 0 or trapz_angle.value.m_as(UNITS.radian) > np.pi:
+            if (
+                trapz_angle.value.m_as(UNITS.radian) < 0
+                or trapz_angle.value.m_as(UNITS.radian) > np.pi
+            ):
                 raise ValueError("The trapezoid angles must be between 0 and 180 degrees.")
 
         # Check that the sum of both angles is larger than 90 degrees
-        base_offset_right = height_magnitude / np.tan(right_bottom_corner_angle.value.m_as(UNITS.radian))
-        base_offset_left = height_magnitude / np.tan(left_bottom_corner_angle.value.m_as(UNITS.radian))
+        base_offset_right = height_magnitude / np.tan(
+            right_bottom_corner_angle.value.m_as(UNITS.radian)
+        )
+        base_offset_left = height_magnitude / np.tan(
+            left_bottom_corner_angle.value.m_as(UNITS.radian)
+        )
 
         # SANITY CHECK: Ensure that the trapezoid is not degenerate
         if base_offset_right + base_offset_left >= width_magnitude:
-            raise ValueError("The trapezoid is degenerate. The provided angles, width and height do not form a valid trapezoid.")
+            raise ValueError(
+                "The trapezoid is degenerate. "
+                "The provided angles, width and height do not form a valid trapezoid."
+            )
 
         rotation = Matrix33(
             SpatialRotation.from_euler(
