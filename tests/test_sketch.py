@@ -267,14 +267,17 @@ def test_sketch_trapezoidal_face():
         sketch.trapezoid(
             10, -10, np.pi / 8, np.pi / 16, Point2D([10, -10]), np.pi / 2, tag="trapezoid3"
         )
-    
+
     with pytest.raises(ValueError, match="The trapezoid angles must be between 0 and 180 degrees."):
         sketch.trapezoid(
             10, 10, -np.pi, np.pi / 16, Point2D([10, -10]), np.pi / 2, tag="trapezoid3"
         )
 
-    with pytest.raises(ValueError, match="The trapezoid is degenerate. "
-                "The provided angles, width and height do not form a valid trapezoid."):
+    with pytest.raises(
+        ValueError,
+        match="The trapezoid is degenerate. "
+        "The provided angles, width and height do not form a valid trapezoid.",
+    ):
         sketch.trapezoid(10, 10, np.pi / 4, np.pi / 8, Point2D([10, -10]), tag="trapezoid3")
 
 
