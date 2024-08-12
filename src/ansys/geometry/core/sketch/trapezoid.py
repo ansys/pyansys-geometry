@@ -42,15 +42,18 @@ class Trapezoid(SketchFace):
 
     Parameters
     ----------
-    width : ~pint.Quantity | Distance | Real
-        Width of the trapezoid.
+    base_width : ~pint.Quantity | Distance | Real
+        Width of the lower base of the trapezoid.
     height : ~pint.Quantity | Distance | Real
-        Height of the trapezoid.
-    left_bottom_corner_angle : ~pint.Quantity | Distance | Real
-        Angle for trapezoid generation. Represents the angle on the left, bottom corner.
-    right_bottom_corner_angle : ~pint.Quantity | Angle | Real | None, default: None
+        Height of the slot.
+    base_angle : ~pint.Quantity | Distance | Real
+        Angle for trapezoid generation. Represents the angle
+        on the base of the trapezoid.
+    base_asymmetric_angle : ~pint.Quantity | Angle | Real | None, default: None
         Asymmetrical angles on each side of the trapezoid.
-        The default is ``None``, in which case the trapezoid is symmetrical.
+        The default is ``None``, in which case the trapezoid is symmetrical. If
+        provided, the trapezoid is asymmetrical and the right corner angle
+        at the base of the trapezoid is set to the provided value.
     center: Point2D, default: ZERO_POINT2D
         Center point of the trapezoid.
     angle : ~pint.Quantity | Angle | Real, default: 0
@@ -58,18 +61,18 @@ class Trapezoid(SketchFace):
 
     Notes
     -----
-    If a nonsymmetrical slant angle is defined, the slant angle is
-    applied to the left-most angle, and the nonsymmetrical slant angle
+    If an asymmetric base angle is defined, the base angle is
+    applied to the left-most angle, and the asymmetric base angle
     is applied to the right-most angle.
     """
 
     @check_input_types
     def __init__(
         self,
-        width: Quantity | Distance | Real,
+        base_width: Quantity | Distance | Real,
         height: Quantity | Distance | Real,
-        left_bottom_corner_angle: Quantity | Angle | Real,
-        right_bottom_corner_angle: Quantity | Angle | Real | None = None,
+        base_angle: Quantity | Angle | Real,
+        base_asymmetric_angle: Quantity | Angle | Real | None = None,
         center: Point2D = ZERO_POINT2D,
         angle: Quantity | Angle | Real = 0,
     ):
@@ -77,10 +80,12 @@ class Trapezoid(SketchFace):
         super().__init__()
 
         self._center = center
-        self._width = width if isinstance(width, Distance) else Distance(width, center.unit)
-        if self._width.value <= 0:
+        self._base_width = (
+            base_width if isinstance(base_width, Distance) else Distance(base_width, center.unit)
+        )
+        if self._base_width.value <= 0:
             raise ValueError("Width must be a real positive value.")
-        width_magnitude = self._width.value.m_as(center.unit)
+        width_magnitude = self._base_width.value.m_as(center.unit)
 
         self._height = height if isinstance(height, Distance) else Distance(height, center.unit)
         if self._height.value <= 0:
@@ -91,27 +96,25 @@ class Trapezoid(SketchFace):
             angle = Angle(angle, DEFAULT_UNITS.ANGLE)
         angle = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
 
-        if isinstance(left_bottom_corner_angle, (int, float)):
-            left_bottom_corner_angle = Angle(left_bottom_corner_angle, DEFAULT_UNITS.ANGLE)
-        left_bottom_corner_angle = (
-            left_bottom_corner_angle
-            if isinstance(left_bottom_corner_angle, Angle)
-            else Angle(left_bottom_corner_angle, left_bottom_corner_angle.units)
+        if isinstance(base_angle, (int, float)):
+            base_angle = Angle(base_angle, DEFAULT_UNITS.ANGLE)
+        base_angle = (
+            base_angle if isinstance(base_angle, Angle) else Angle(base_angle, base_angle.units)
         )
 
-        if right_bottom_corner_angle is None:
-            right_bottom_corner_angle = left_bottom_corner_angle
+        if base_asymmetric_angle is None:
+            base_asymmetric_angle = base_angle
         else:
-            if isinstance(right_bottom_corner_angle, (int, float)):
-                right_bottom_corner_angle = Angle(right_bottom_corner_angle, DEFAULT_UNITS.ANGLE)
-            right_bottom_corner_angle = (
-                right_bottom_corner_angle
-                if isinstance(right_bottom_corner_angle, Angle)
-                else Angle(right_bottom_corner_angle, right_bottom_corner_angle.units)
+            if isinstance(base_asymmetric_angle, (int, float)):
+                base_asymmetric_angle = Angle(base_asymmetric_angle, DEFAULT_UNITS.ANGLE)
+            base_asymmetric_angle = (
+                base_asymmetric_angle
+                if isinstance(base_asymmetric_angle, Angle)
+                else Angle(base_asymmetric_angle, base_asymmetric_angle.units)
             )
 
         # SANITY CHECK: Ensure that the angles are valid (i.e. between 0 and 180 degrees)
-        for trapz_angle in [left_bottom_corner_angle, right_bottom_corner_angle]:
+        for trapz_angle in [base_angle, base_asymmetric_angle]:
             if (
                 trapz_angle.value.m_as(UNITS.radian) < 0
                 or trapz_angle.value.m_as(UNITS.radian) > np.pi
@@ -120,11 +123,9 @@ class Trapezoid(SketchFace):
 
         # Check that the sum of both angles is larger than 90 degrees
         base_offset_right = height_magnitude / np.tan(
-            right_bottom_corner_angle.value.m_as(UNITS.radian)
+            base_asymmetric_angle.value.m_as(UNITS.radian)
         )
-        base_offset_left = height_magnitude / np.tan(
-            left_bottom_corner_angle.value.m_as(UNITS.radian)
-        )
+        base_offset_left = height_magnitude / np.tan(base_angle.value.m_as(UNITS.radian))
 
         # SANITY CHECK: Ensure that the trapezoid is not degenerate
         if base_offset_right + base_offset_left >= width_magnitude:
@@ -177,9 +178,9 @@ class Trapezoid(SketchFace):
         return self._center
 
     @property
-    def width(self) -> Quantity:
+    def base_width(self) -> Quantity:
         """Width of the trapezoid."""
-        return self._width.value
+        return self._base_width.value
 
     @property
     def height(self) -> Quantity:

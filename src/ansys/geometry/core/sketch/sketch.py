@@ -582,10 +582,10 @@ class Sketch:
 
     def trapezoid(
         self,
-        width: Quantity | Distance | Real,
+        base_width: Quantity | Distance | Real,
         height: Quantity | Distance | Real,
-        left_bottom_corner_angle: Quantity | Angle | Real,
-        right_bottom_corner_angle: Quantity | Angle | Real | None = None,
+        base_angle: Quantity | Angle | Real,
+        base_asymmetric_angle: Quantity | Angle | Real | None = None,
         center: Point2D = ZERO_POINT2D,
         angle: Quantity | Angle | Real = 0,
         tag: str | None = None,
@@ -594,30 +594,37 @@ class Sketch:
 
         Parameters
         ----------
-        width : ~pint.Quantity | Distance | Real
-            Width of the slot main body.
+        base_width : ~pint.Quantity | Distance | Real
+            Width of the lower base of the trapezoid.
         height : ~pint.Quantity | Distance | Real
             Height of the slot.
-        left_bottom_corner_angle : ~pint.Quantity | Distance | Real
-            Angle for trapezoid generation. Represents the angle on the left, bottom corner.
-        right_bottom_corner_angle : ~pint.Quantity | Angle | Real | None, default: None
+        base_angle : ~pint.Quantity | Distance | Real
+            Angle for trapezoid generation. Represents the angle
+            on the base of the trapezoid.
+        base_asymmetric_angle : ~pint.Quantity | Angle | Real | None, default: None
             Asymmetrical angles on each side of the trapezoid.
-            The default is ``None``, in which case the trapezoid is symmetrical.
-        center : Point2D, default: (0, 0)
+            The default is ``None``, in which case the trapezoid is symmetrical. If
+            provided, the trapezoid is asymmetrical and the right corner angle
+            at the base of the trapezoid is set to the provided value.
+        center: Point2D, default: ZERO_POINT2D
             Center point of the trapezoid.
         angle : ~pint.Quantity | Angle | Real, default: 0
             Placement angle for orientation alignment.
         tag : str, default: None
             User-defined label for identifying the face.
 
+        Notes
+        -----
+        If an asymmetric base angle is defined, the base angle is
+        applied to the left-most angle, and the asymmetric base angle
+        is applied to the right-most angle.
+
         Returns
         -------
         Sketch
             Revised sketch state ready for further sketch actions.
         """
-        trapezoid = Trapezoid(
-            width, height, left_bottom_corner_angle, right_bottom_corner_angle, center, angle
-        )
+        trapezoid = Trapezoid(base_width, height, base_angle, base_asymmetric_angle, center, angle)
         return self.face(trapezoid, tag)
 
     def circle(
