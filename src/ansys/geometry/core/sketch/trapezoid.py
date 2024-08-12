@@ -84,7 +84,7 @@ class Trapezoid(SketchFace):
             base_width if isinstance(base_width, Distance) else Distance(base_width, center.unit)
         )
         if self._base_width.value <= 0:
-            raise ValueError("Width must be a real positive value.")
+            raise ValueError("Base width must be a real positive value.")
         width_magnitude = self._base_width.value.m_as(center.unit)
 
         self._height = height if isinstance(height, Distance) else Distance(height, center.unit)
