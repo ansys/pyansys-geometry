@@ -2011,7 +2011,7 @@ def test_set_fill_style(modeler: Modeler):
 
 
 def test_set_body_color(modeler: Modeler):
-    """Test the setting the color of a body."""
+    """Test the getting and setting of body color."""
     skip_if_linux(modeler, test_set_body_color.__name__, "set_color")  # Skip test on Linux
 
     design = modeler.create_design("RVE2")
@@ -2027,7 +2027,9 @@ def test_set_body_color(modeler: Modeler):
     box = design.extrude_sketch("Block", box_plane, 1 * unit)
 
     box.set_color("#0000FF")
-    assert box.color == "#00FF00"
+    assert box.color == "#0000FF"
+    box.set_color("#FFC000")
+    assert box.color == "#FFC000"
 
 
 def test_body_scale(modeler: Modeler):

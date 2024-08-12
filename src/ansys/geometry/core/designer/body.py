@@ -156,7 +156,7 @@ class IBody(ABC):
 
     @abstractmethod
     def set_color(self, color: str) -> None:
-        """Set the fill style of the body."""
+        """Set the color of the body."""
         return
 
     @abstractmethod
