@@ -35,6 +35,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     RotateRequest,
     ScaleRequest,
     SetAssignedMaterialRequest,
+    SetColorRequest,
     SetFillStyleRequest,
     SetNameRequest,
     TranslateRequest,
@@ -144,7 +145,17 @@ class IBody(ABC):
         return
 
     @abstractmethod
+    def color(self) -> str:
+        """Get the color of the body."""
+        return
+
+    @abstractmethod
     def set_fill_style(self, fill_style: FillStyle) -> None:
+        """Set the fill style of the body."""
+        return
+
+    @abstractmethod
+    def set_color(self, color: str) -> None:
         """Set the fill style of the body."""
         return
 
@@ -686,6 +697,7 @@ class MasterBody(IBody):
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._tessellation = None
         self._fill_style = FillStyle.DEFAULT
+        self._color = "#00FF00"
 
     def reset_tessellation_cache(func):  # noqa: N805
         """Decorate ``MasterBody`` methods that need tessellation cache update.
@@ -732,6 +744,14 @@ class MasterBody(IBody):
     @fill_style.setter
     def fill_style(self, value: FillStyle):  # noqa: D102
         self.set_fill_style(value)
+
+    @property
+    def color(self) -> str:  # noqa: D102
+        return self._color
+
+    @color.setter
+    def color(self, value: str):  # noqa: D102
+        self.set_color(value)
 
     @property
     def is_surface(self) -> bool:  # noqa: D102
@@ -924,6 +944,21 @@ class MasterBody(IBody):
             )
         )
         self._fill_style = fill_style
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 1, 0)
+    def set_color(  # noqa: D102
+        self, color: str
+    ) -> None:
+        self._grpc_client.log.debug(f"Setting body color {self.id}.")
+        self._bodies_stub.SetColor(
+            SetColorRequest(
+                body_id=self.id,
+                color=color,
+            )
+        )
+        self._color = color
 
     @protect_grpc
     @check_input_types
@@ -1138,6 +1173,10 @@ class Body(IBody):
     @fill_style.setter
     def fill_style(self, fill_style: FillStyle) -> str:  # noqa: D102
         self._template.fill_style = fill_style
+
+    @property
+    def color(self) -> str:  # noqa: D102
+        return self._template.color
 
     @property
     def parent_component(self) -> "Component":  # noqa: D102
@@ -1365,6 +1404,10 @@ class Body(IBody):
     @ensure_design_is_active
     def set_fill_style(self, fill_style: FillStyle) -> None:  # noqa: D102
         return self._template.set_fill_style(fill_style)
+
+    @ensure_design_is_active
+    def set_color(self, color: str) -> None:  # noqa: D102
+        return self._template.set_color(color)
 
     @ensure_design_is_active
     def translate(  # noqa: D102

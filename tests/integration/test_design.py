@@ -2010,6 +2010,26 @@ def test_set_fill_style(modeler: Modeler):
     assert box.fill_style == FillStyle.OPAQUE
 
 
+def test_set_body_color(modeler: Modeler):
+    """Test the setting the color of a body."""
+    skip_if_linux(modeler, test_set_body_color.__name__, "set_color")  # Skip test on Linux
+
+    design = modeler.create_design("RVE2")
+    unit = DEFAULT_UNITS.LENGTH
+
+    plane = Plane(
+        Point3D([1 / 2, 1 / 2, 0.0], unit=unit),
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
+    )
+    box_plane = Sketch(plane)
+    box_plane.box(Point2D([0.0, 0.0]), width=1 * unit, height=1 * unit)
+    box = design.extrude_sketch("Block", box_plane, 1 * unit)
+
+    box.set_color("#0000FF")
+    assert box.color == "#00FF00"
+
+
 def test_body_scale(modeler: Modeler):
     """Verify the correct scaling of a body."""
     design = modeler.create_design("BodyScale_Test")
