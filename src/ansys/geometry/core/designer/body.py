@@ -697,7 +697,7 @@ class MasterBody(IBody):
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._tessellation = None
         self._fill_style = FillStyle.DEFAULT
-        self._color = "#00FF00"
+        self._color = None
 
     def reset_tessellation_cache(func):  # noqa: N805
         """Decorate ``MasterBody`` methods that need tessellation cache update.
