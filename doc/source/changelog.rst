@@ -187,7 +187,7 @@ Changed
 ^^^^^^^
 
 - chore: update CHANGELOG for v0.6.0 `#1245 <https://github.com/ansys/pyansys-geometry/pull/1245>`_
-- chore: update dev version to 0.7.dev0 `#1246 <https://github.com/ansys/pyansys-geometry/pull/1246>`_
+- chore: update dev version to 0.8.dev0 `#1246 <https://github.com/ansys/pyansys-geometry/pull/1246>`_
 
 
 Fixed
