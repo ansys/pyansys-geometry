@@ -23,6 +23,7 @@
 
 import os
 
+import matplotlib.colors as mcolors
 import numpy as np
 from pint import Quantity
 import pytest
@@ -2047,6 +2048,11 @@ def test_set_body_color(modeler: Modeler):
     # Set the color of the body using RGB values between (0,255) as integers).
     box.set_color((0, 255, 0))
     box.color == "#00ff00"
+
+    # Assigning color object directly
+    blue_color = mcolors.to_rgba("#0000FF")
+    box.color = blue_color
+    assert box.color == "#0000ff"
 
 
 def test_body_scale(modeler: Modeler):
