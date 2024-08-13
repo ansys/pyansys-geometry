@@ -237,16 +237,16 @@ def test_sketch_trapezoidal_face():
     sketch = Sketch()
 
     # Create the sketch face with trapezoid
-    sketch.trapezoid(10, 8, np.pi / 4, np.pi / 8, Point2D([10, -10]), tag="trapezoid1")
+    sketch.trapezoid(10, 1, np.pi / 4, np.pi / 8, Point2D([10, -10]), tag="trapezoid1")
     assert len(sketch.faces) == 1
-    assert sketch.faces[0].width.m == 10
-    assert sketch.faces[0].height.m == 8
+    assert sketch.faces[0].base_width.m == 10
+    assert sketch.faces[0].height.m == 1
     assert sketch.faces[0].center == Point2D([10, -10])
 
-    sketch.trapezoid(20, 10, np.pi / 8, np.pi / 16, Point2D([10, -10]), np.pi / 2, tag="trapezoid2")
+    sketch.trapezoid(20, 2, np.pi / 8, np.pi / 16, Point2D([10, -10]), np.pi / 2, tag="trapezoid2")
     assert len(sketch.faces) == 2
-    assert sketch.faces[1].width.m == 20
-    assert sketch.faces[1].height.m == 10
+    assert sketch.faces[1].base_width.m == 20
+    assert sketch.faces[1].height.m == 2
     assert sketch.faces[1].center == Point2D([10, -10])
 
     trapezoid1_retrieved = sketch.get("trapezoid1")
@@ -258,7 +258,7 @@ def test_sketch_trapezoidal_face():
     assert trapezoid2_retrieved[0] == sketch.faces[1]
 
     # Test the trapezoid errors
-    with pytest.raises(ValueError, match="Width must be a real positive value."):
+    with pytest.raises(ValueError, match="Base width must be a real positive value."):
         sketch.trapezoid(
             0, 10, np.pi / 8, np.pi / 16, Point2D([10, -10]), np.pi / 2, tag="trapezoid3"
         )
@@ -267,6 +267,18 @@ def test_sketch_trapezoidal_face():
         sketch.trapezoid(
             10, -10, np.pi / 8, np.pi / 16, Point2D([10, -10]), np.pi / 2, tag="trapezoid3"
         )
+
+    with pytest.raises(ValueError, match="The trapezoid angles must be between 0 and 180 degrees."):
+        sketch.trapezoid(
+            10, 10, -np.pi, np.pi / 16, Point2D([10, -10]), np.pi / 2, tag="trapezoid3"
+        )
+
+    with pytest.raises(
+        ValueError,
+        match="The trapezoid is degenerate. "
+        "The provided angles, width and height do not form a valid trapezoid.",
+    ):
+        sketch.trapezoid(10, 10, np.pi / 4, np.pi / 8, Point2D([10, -10]), tag="trapezoid3")
 
 
 def test_sketch_circle_instance():
