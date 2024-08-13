@@ -12,7 +12,6 @@ from ansys_sphinx_theme import (
     ansys_logo_white_cropped,
     get_version_match,
     latex,
-    pyansys_logo_black,
     watermark,
 )
 import requests
@@ -42,7 +41,7 @@ def get_wheelhouse_assets_dictionary():
     """Auxiliary method to build the wheelhouse assets dictionary."""
     assets_context_os = ["Linux", "Windows", "MacOS"]
     assets_context_runners = ["ubuntu-latest", "windows-latest", "macos-latest"]
-    assets_context_python_versions = ["3.9", "3.10", "3.11", "3.12"]
+    assets_context_python_versions = ["3.10", "3.11", "3.12"]
     if get_version_match(__version__) == "dev":
         # Try to retrieve the content three times before failing
         content = None
@@ -124,7 +123,6 @@ cname = os.getenv("DOCUMENTATION_CNAME", default="geometry.docs.pyansys.com")
 switcher_version = get_version_match(__version__)
 
 # Select desired logo, theme, and declare the html title
-html_logo = pyansys_logo_black
 html_theme = "ansys_sphinx_theme"
 html_short_title = html_title = "PyAnsys Geometry"
 html_baseurl = f"https://{cname}/version/stable"
@@ -137,6 +135,7 @@ html_context = {
     "doc_path": "doc/source",
 }
 html_theme_options = {
+    "logo": "pyansys",
     "switcher": {
         "json_url": f"https://{cname}/versions.json",
         "version_match": switcher_version,
@@ -368,7 +367,6 @@ jinja_contexts = {
 nitpick_ignore_regex = [
     # Ignore typing
     (r"py:.*", r"optional"),
-    (r"py:.*", r"beartype.typing.*"),
     (r"py:.*", r"ansys.geometry.core.typing.*"),
     (r"py:.*", r"Real.*"),
     (r"py:.*", r"SketchObject"),

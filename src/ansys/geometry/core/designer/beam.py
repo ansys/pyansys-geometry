@@ -21,7 +21,7 @@
 # SOFTWARE.
 """Provides for creating and managing a beam."""
 
-from beartype.typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
@@ -211,7 +211,7 @@ class Beam:
         return self._profile
 
     @property
-    def parent_component(self) -> Union["Component", None]:
+    def parent_component(self) -> "Component":
         """Component node that the beam is under."""
         return self._parent_component
 

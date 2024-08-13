@@ -21,7 +21,7 @@
 # SOFTWARE.
 """Module for creating and managing design points."""
 
-from beartype.typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.misc.checks import check_type
@@ -78,7 +78,7 @@ class DesignPoint:
         return self._value
 
     @property
-    def parent_component(self) -> Union["Component", None]:
+    def parent_component(self) -> "Component":
         """Component node that the design point is under."""
         return self._parent_component
 

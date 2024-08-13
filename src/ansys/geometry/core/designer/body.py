@@ -24,6 +24,7 @@
 from abc import ABC, abstractmethod
 from enum import Enum, unique
 from functools import wraps
+from typing import TYPE_CHECKING, Iterable, Union
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
@@ -48,7 +49,6 @@ from ansys.api.geometry.v0.commands_pb2 import (
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype import beartype as check_input_types
-from beartype.typing import TYPE_CHECKING, Iterable, List, Optional, Tuple, Union
 from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
@@ -149,22 +149,22 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def faces(self) -> List[Face]:
+    def faces(self) -> list[Face]:
         """Get a list of all faces within the body.
 
         Returns
         -------
-        List[Face]
+        list[Face]
         """
         return
 
     @abstractmethod
-    def edges(self) -> List[Edge]:
+    def edges(self) -> list[Edge]:
         """Get a list of all edges within the body.
 
         Returns
         -------
-        List[Edge]
+        list[Edge]
         """
         return
 
@@ -179,7 +179,7 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def surface_thickness(self) -> Union[Quantity, None]:
+    def surface_thickness(self) -> Quantity | None:
         """Get the surface thickness of a surface body.
 
         Notes
@@ -250,19 +250,19 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def imprint_curves(self, faces: List[Face], sketch: Sketch) -> Tuple[List[Edge], List[Face]]:
+    def imprint_curves(self, faces: list[Face], sketch: Sketch) -> tuple[list[Edge], list[Face]]:
         """Imprint all specified geometries onto specified faces of the body.
 
         Parameters
         ----------
-        faces: List[Face]
-            List of faces to imprint the curves of the sketch onto.
+        faces: list[Face]
+            list of faces to imprint the curves of the sketch onto.
         sketch: Sketch
             All curves to imprint on the faces.
 
         Returns
         -------
-        Tuple[List[Edge], List[Face]]
+        tuple[list[Edge], list[Face]]
             All impacted edges and faces from the imprint operation.
         """
         return
@@ -273,8 +273,8 @@ class IBody(ABC):
         direction: UnitVector3D,
         sketch: Sketch,
         closest_face: bool,
-        only_one_curve: Optional[bool] = False,
-    ) -> List[Face]:
+        only_one_curve: bool = False,
+    ) -> list[Face]:
         """Project all specified geometries onto the body.
 
         Parameters
@@ -297,7 +297,7 @@ class IBody(ABC):
 
         Returns
         -------
-        List[Face]
+        list[Face]
             All faces from the project curves operation.
         """
         return
@@ -308,8 +308,8 @@ class IBody(ABC):
         direction: UnitVector3D,
         sketch: Sketch,
         closest_face: bool,
-        only_one_curve: Optional[bool] = False,
-    ) -> List[Face]:  # noqa: D102
+        only_one_curve: bool = False,
+    ) -> list[Face]:  # noqa: D102
         """Project and imprint specified geometries onto the body.
 
         This method combines the ``project_curves()`` and ``imprint_curves()`` method into
@@ -337,20 +337,20 @@ class IBody(ABC):
 
         Returns
         -------
-        List[Face]
+        list[Face]
             All imprinted faces from the operation.
         """
         return
 
     @abstractmethod
-    def translate(self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]) -> None:
+    def translate(self, direction: UnitVector3D, distance: Quantity | Distance | Real) -> None:
         """Translate the body in a specified direction and distance.
 
         Parameters
         ----------
         direction: UnitVector3D
             Direction of the translation.
-        distance: Union[~pint.Quantity, Distance, Real]
+        distance: ~pint.Quantity | Distance | Real
             Distance (magnitude) of the translation.
 
         Returns
@@ -364,7 +364,7 @@ class IBody(ABC):
         self,
         axis_origin: Point3D,
         axis_direction: UnitVector3D,
-        angle: Union[Quantity, Angle, Real],
+        angle: Quantity | Angle | Real,
     ) -> None:
         """Rotate the geometry body around the specified axis by a given angle.
 
@@ -374,7 +374,7 @@ class IBody(ABC):
             Origin of the rotational axis.
         axis_direction: UnitVector3D
             The axis of rotation.
-        angle: Union[~pint.Quantity, Angle, Real]
+        angle: ~pint.Quantity | Angle | Real
             Angle (magnitude) of the rotation.
 
         Returns
@@ -466,7 +466,7 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def tessellate(self, merge: Optional[bool] = False) -> Union["PolyData", "MultiBlock"]:
+    def tessellate(self, merge: bool = False) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
         Parameters
@@ -524,9 +524,9 @@ class IBody(ABC):
     def plot(
         self,
         merge: bool = False,
-        screenshot: Optional[str] = None,
-        use_trame: Optional[bool] = None,
-        **plotting_options: Optional[dict],
+        screenshot: str | None = None,
+        use_trame: bool | None = None,
+        **plotting_options: dict | None,
     ) -> None:
         """Plot the body.
 
@@ -738,7 +738,7 @@ class MasterBody(IBody):
         return self._is_surface
 
     @property
-    def surface_thickness(self) -> Union[Quantity, None]:  # noqa: D102
+    def surface_thickness(self) -> Quantity | None:  # noqa: D102
         return self._surface_thickness if self.is_surface else None
 
     @property
@@ -747,7 +747,7 @@ class MasterBody(IBody):
 
     @property
     @protect_grpc
-    def faces(self) -> List[Face]:  # noqa: D102
+    def faces(self) -> list[Face]:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
         grpc_faces = self._bodies_stub.GetFaces(self._grpc_id)
         return [
@@ -763,7 +763,7 @@ class MasterBody(IBody):
 
     @property
     @protect_grpc
-    def edges(self) -> List[Edge]:  # noqa: D102
+    def edges(self) -> list[Edge]:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
         grpc_edges = self._bodies_stub.GetEdges(self._grpc_id)
         return [
@@ -834,8 +834,8 @@ class MasterBody(IBody):
     @protect_grpc
     @check_input_types
     def imprint_curves(  # noqa: D102
-        self, faces: List[Face], sketch: Sketch
-    ) -> Tuple[List[Edge], List[Face]]:
+        self, faces: list[Face], sketch: Sketch
+    ) -> tuple[list[Edge], list[Face]]:
         raise NotImplementedError(
             """
             imprint_curves is not implemented at the MasterBody level.
@@ -850,8 +850,8 @@ class MasterBody(IBody):
         direction: UnitVector3D,
         sketch: Sketch,
         closest_face: bool,
-        only_one_curve: Optional[bool] = False,
-    ) -> List[Face]:
+        only_one_curve: bool = False,
+    ) -> list[Face]:
         raise NotImplementedError(
             """
             project_curves is not implemented at the MasterBody level.
@@ -866,8 +866,8 @@ class MasterBody(IBody):
         direction: UnitVector3D,
         sketch: Sketch,
         closest_face: bool,
-        only_one_curve: Optional[bool] = False,
-    ) -> List[Face]:
+        only_one_curve: bool = False,
+    ) -> list[Face]:
         raise NotImplementedError(
             """
             imprint_projected_curves is not implemented at the MasterBody level.
@@ -879,7 +879,7 @@ class MasterBody(IBody):
     @check_input_types
     @reset_tessellation_cache
     def translate(  # noqa: D102
-        self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
+        self, direction: UnitVector3D, distance: Quantity | Distance | Real
     ) -> None:
         distance = distance if isinstance(distance, Distance) else Distance(distance)
 
@@ -933,7 +933,7 @@ class MasterBody(IBody):
         self,
         axis_origin: Point3D,
         axis_direction: UnitVector3D,
-        angle: Union[Quantity, Angle, Real],
+        angle: Quantity | Angle | Real,
     ) -> None:
         angle = angle if isinstance(angle, Angle) else Angle(angle)
         rotation_magnitude = angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
@@ -1013,7 +1013,7 @@ class MasterBody(IBody):
 
     @protect_grpc
     def tessellate(  # noqa: D102
-        self, merge: Optional[bool] = False, transform: Matrix44 = IDENTITY_MATRIX44
+        self, merge: bool = False, transform: Matrix44 = IDENTITY_MATRIX44
     ) -> Union["PolyData", "MultiBlock"]:
         # lazy import here to improve initial module load time
         import pyvista as pv
@@ -1038,9 +1038,9 @@ class MasterBody(IBody):
     def plot(  # noqa: D102
         self,
         merge: bool = False,
-        screenshot: Optional[str] = None,
-        use_trame: Optional[bool] = None,
-        **plotting_options: Optional[dict],
+        screenshot: str | None = None,
+        use_trame: bool | None = None,
+        **plotting_options: dict | None,
     ) -> None:
         raise NotImplementedError(
             "MasterBody does not implement plot methods. Call this method on a body instead."
@@ -1146,7 +1146,7 @@ class Body(IBody):
     @property
     @protect_grpc
     @ensure_design_is_active
-    def faces(self) -> List[Face]:  # noqa: D102
+    def faces(self) -> list[Face]:  # noqa: D102
         self._template._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
         grpc_faces = self._template._bodies_stub.GetFaces(EntityIdentifier(id=self.id))
         return [
@@ -1163,7 +1163,7 @@ class Body(IBody):
     @property
     @protect_grpc
     @ensure_design_is_active
-    def edges(self) -> List[Edge]:  # noqa: D102
+    def edges(self) -> list[Edge]:  # noqa: D102
         self._template._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
         grpc_edges = self._template._bodies_stub.GetEdges(EntityIdentifier(id=self.id))
         return [
@@ -1194,7 +1194,7 @@ class Body(IBody):
         return self._template.is_surface
 
     @property
-    def _surface_thickness(self) -> Union[Quantity, None]:  # noqa: D102
+    def _surface_thickness(self) -> Quantity | None:  # noqa: D102
         return self._template.surface_thickness
 
     @_surface_thickness.setter
@@ -1202,7 +1202,7 @@ class Body(IBody):
         self._template._surface_thickness = value
 
     @property
-    def surface_thickness(self) -> Union[Quantity, None]:  # noqa: D102
+    def surface_thickness(self) -> Quantity | None:  # noqa: D102
         return self._surface_thickness
 
     @property
@@ -1239,8 +1239,8 @@ class Body(IBody):
     @protect_grpc
     @ensure_design_is_active
     def imprint_curves(  # noqa: D102
-        self, faces: List[Face], sketch: Sketch
-    ) -> Tuple[List[Edge], List[Face]]:
+        self, faces: list[Face], sketch: Sketch
+    ) -> tuple[list[Edge], list[Face]]:
         # Verify that each of the faces provided are part of this body
         body_faces = self.faces
         for provided_face in faces:
@@ -1294,8 +1294,8 @@ class Body(IBody):
         direction: UnitVector3D,
         sketch: Sketch,
         closest_face: bool,
-        only_one_curve: Optional[bool] = False,
-    ) -> List[Face]:
+        only_one_curve: bool = False,
+    ) -> list[Face]:
         curves = sketch_shapes_to_grpc_geometries(
             sketch._plane, sketch.edges, sketch.faces, only_one_curve=only_one_curve
         )
@@ -1330,8 +1330,8 @@ class Body(IBody):
         direction: UnitVector3D,
         sketch: Sketch,
         closest_face: bool,
-        only_one_curve: Optional[bool] = False,
-    ) -> List[Face]:
+        only_one_curve: bool = False,
+    ) -> list[Face]:
         curves = sketch_shapes_to_grpc_geometries(
             sketch._plane, sketch.edges, sketch.faces, only_one_curve=only_one_curve
         )
@@ -1368,7 +1368,7 @@ class Body(IBody):
 
     @ensure_design_is_active
     def translate(  # noqa: D102
-        self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
+        self, direction: UnitVector3D, distance: Quantity | Distance | Real
     ) -> None:
         return self._template.translate(direction, distance)
 
@@ -1377,7 +1377,7 @@ class Body(IBody):
         self,
         axis_origin: Point3D,
         axis_direction: UnitVector3D,
-        angle: Union[Quantity, Angle, Real],
+        angle: Quantity | Angle | Real,
     ) -> None:
         return self._template.rotate(axis_origin, axis_direction, angle)
 
@@ -1403,17 +1403,16 @@ class Body(IBody):
 
     @ensure_design_is_active
     def tessellate(  # noqa: D102
-        self, merge: Optional[bool] = False
+        self, merge: bool = False
     ) -> Union["PolyData", "MultiBlock"]:
         return self._template.tessellate(merge, self.parent_component.get_world_transform())
 
     def plot(  # noqa: D102
         self,
         merge: bool = False,
-        screenshot: Optional[str] = None,
-        use_trame: Optional[bool] = None,
-        show_options: Optional[dict] = None,
-        **plotting_options: Optional[dict],
+        screenshot: str | None = None,
+        use_trame: bool | None = None,
+        **plotting_options: dict | None,
     ) -> None:
         # lazy import here to improve initial module load time
         from ansys.tools.visualization_interface.types.mesh_object_plot import (

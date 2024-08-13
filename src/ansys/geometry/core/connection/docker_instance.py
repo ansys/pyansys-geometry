@@ -24,9 +24,9 @@
 from enum import Enum
 from functools import wraps
 import os
+from typing import Optional
 
 from beartype import beartype as check_input_types
-from beartype.typing import Optional, Tuple, Union
 
 try:
     from docker.client import DockerClient
@@ -90,10 +90,10 @@ class LocalDockerInstance:
     restart_if_existing_service : bool, default: False
         Whether the Geometry service (which is already running)
         should be restarted when attempting connection.
-    name : Optional[str], default: None
+    name : str or None, default: None
         Name of the Docker container to deploy. The default is ``None``,
         in which case Docker assigns it a random name.
-    image : Optional[GeometryContainers], default: None
+    image : GeometryContainers or None, default: None
         The Geometry service Docker image to deploy. The default is ``None``,
         in which case the ``LocalDockerInstance`` class identifies the OS of your
         Docker engine and deploys the latest version of the Geometry service for that
@@ -154,8 +154,8 @@ class LocalDockerInstance:
         port: int = DEFAULT_PORT,
         connect_to_existing_service: bool = True,
         restart_if_existing_service: bool = False,
-        name: Optional[str] = None,
-        image: Optional[GeometryContainers] = None,
+        name: str | None = None,
+        image: GeometryContainers | None = None,
     ) -> None:
         """``LocalDockerInstance`` constructor."""
         # Initialize instance variables
@@ -186,7 +186,7 @@ class LocalDockerInstance:
         else:
             raise RuntimeError(f"Geometry service cannot be deployed on port {port}")
 
-    def _check_port_availability(self, port: int) -> Tuple[bool, Optional["Container"]]:
+    def _check_port_availability(self, port: int) -> tuple[bool, Optional["Container"]]:
         """Check whether the requested port is available for deployment.
 
         Returns
@@ -234,19 +234,17 @@ class LocalDockerInstance:
         # If you have reached this point, the image is not a Geometry service
         return False  # pragma: no cover
 
-    def _deploy_container(
-        self, port: int, name: Union[str, None], image: Union[GeometryContainers, None]
-    ):
+    def _deploy_container(self, port: int, name: str | None, image: GeometryContainers | None):
         """Handle the deployment of a Geometry service.
 
         Parameters
         ----------
         port : int
             Port under which the service should be deployed.
-        name : Union[str, None], optional
+        name : str or None, optional
             Name given to the deployed container. If ``None``, Docker will provide
             an arbitrary name.
-        image : Union[GeometryContainers, None]
+        image : GeometryContainers or None
             Geometry service Docker container image to be used. If ``None``, the
             latest container version matching
 
@@ -326,7 +324,7 @@ class LocalDockerInstance:
         return self._existed_previously
 
 
-def get_geometry_container_type(instance: LocalDockerInstance) -> Union[GeometryContainers, None]:
+def get_geometry_container_type(instance: LocalDockerInstance) -> GeometryContainers | None:
     """Provide back the ``GeometryContainers`` value.
 
     Notes
@@ -340,7 +338,7 @@ def get_geometry_container_type(instance: LocalDockerInstance) -> Union[Geometry
 
     Returns
     -------
-    Union[GeometryContainers, None]
+    GeometryContainers or None
         The GeometryContainer value corresponding to the previous image or None
         if not match.
     """

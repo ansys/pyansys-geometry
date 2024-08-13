@@ -24,7 +24,6 @@
 from enum import Enum, unique
 
 from beartype import beartype as check_input_types
-from beartype.typing import Union
 from pint import Quantity
 
 from ansys.geometry.core.typing import Real
@@ -73,13 +72,13 @@ class MaterialProperty:
 
     Parameters
     ----------
-    type : Union[MaterialPropertyType, str]
+    type : MaterialPropertyType | str
         Type of the material property. If the type is a string, it must be a valid
         material property type - though it might not be supported by the MaterialPropertyType
         enum.
     name: str
         Material property name.
-    quantity: Union[~pint.Quantity, Real]
+    quantity: ~pint.Quantity | Real
         Value and unit in case of a supported Quantity. If the type is not supported, it
         must be a Real value (float or integer).
     """
@@ -87,9 +86,9 @@ class MaterialProperty:
     @check_input_types
     def __init__(
         self,
-        type: Union[MaterialPropertyType, str],
+        type: MaterialPropertyType | str,
         name: str,
-        quantity: Union[Quantity, Real],
+        quantity: Quantity | Real,
     ):
         """Initialize ``MaterialProperty`` class."""
         self._type = type
@@ -97,7 +96,7 @@ class MaterialProperty:
         self._quantity = quantity
 
     @property
-    def type(self) -> Union[MaterialPropertyType, str]:
+    def type(self) -> MaterialPropertyType | str:
         """Material property ID.
 
         If the type is not supported, it will be a string.
@@ -110,7 +109,7 @@ class MaterialProperty:
         return self._name
 
     @property
-    def quantity(self) -> Union[Quantity, Real]:
+    def quantity(self) -> Quantity | Real:
         """Material property quantity and unit.
 
         If the type is not supported, it will be a Real value (float or

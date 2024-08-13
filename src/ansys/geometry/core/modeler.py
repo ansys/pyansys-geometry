@@ -23,6 +23,7 @@
 
 import logging
 from pathlib import Path
+from typing import TYPE_CHECKING, Optional
 
 from ansys.api.dbu.v0.dbuapplication_pb2 import RunScriptFileRequest
 from ansys.api.dbu.v0.dbuapplication_pb2_grpc import DbuApplicationStub
@@ -30,7 +31,6 @@ from ansys.api.dbu.v0.designs_pb2 import OpenRequest
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from beartype.typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
 from grpc import Channel
 
 from ansys.geometry.core.connection.backend import BackendType
@@ -94,15 +94,15 @@ class Modeler:
     def __init__(
         self,
         host: str = DEFAULT_HOST,
-        port: Union[str, int] = DEFAULT_PORT,
-        channel: Optional[Channel] = None,
+        port: str | int = DEFAULT_PORT,
+        channel: Channel | None = None,
         remote_instance: Optional["Instance"] = None,
         docker_instance: Optional["LocalDockerInstance"] = None,
         product_instance: Optional["ProductInstance"] = None,
-        timeout: Optional[Real] = 120,
-        logging_level: Optional[int] = logging.INFO,
-        logging_file: Optional[Union[Path, str]] = None,
-        backend_type: Optional[BackendType] = None,
+        timeout: Real = 120,
+        logging_level: int = logging.INFO,
+        logging_file: Path | str | None = None,
+        backend_type: BackendType | None = None,
     ):
         """Initialize the ``Modeler`` class."""
         self._grpc_client = GrpcClient(
@@ -134,7 +134,7 @@ class Modeler:
             self._driving_dimensions = DrivingDimensions(self._grpc_client)
 
         # Maintaining references to all designs within the modeler workspace
-        self._designs: Dict[str, "Design"] = {}
+        self._designs: dict[str, "Design"] = {}
 
         # Check if the backend allows for multiple designs and throw warning if needed
         if not self.client.multiple_designs_allowed:
@@ -337,8 +337,8 @@ class Modeler:
 
     @protect_grpc
     def run_discovery_script_file(
-        self, file_path: str, script_args: Optional[Dict[str, str]] = None, import_design=False
-    ) -> Tuple[Dict[str, str], Optional["Design"]]:
+        self, file_path: str, script_args: dict[str, str] | None = None, import_design=False
+    ) -> tuple[dict[str, str], Optional["Design"]]:
         """Run a Discovery script file.
 
         .. note::
@@ -370,7 +370,7 @@ class Modeler:
         ----------
         file_path : str
             Path of the file. The extension of the file must be included.
-        script_args : Optional[Dict[str, str]], optional.
+        script_args : dict[str, str], optional.
             Arguments to pass to the script. By default, ``None``.
         import_design : bool, optional.
             Whether to refresh the current design from the service. When the script

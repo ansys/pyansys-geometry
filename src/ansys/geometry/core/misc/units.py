@@ -22,7 +22,6 @@
 """Provides for handling units homogeneously throughout PyAnsys Geometry."""
 
 from beartype import beartype as check_input_types
-from beartype.typing import Optional
 from pint import Quantity, Unit, UnitRegistry, set_application_registry
 
 from ansys.geometry.core.misc.checks import check_pint_unit_compatibility
@@ -47,7 +46,7 @@ class PhysicalQuantity:
     """
 
     @check_input_types
-    def __init__(self, unit: Unit, expected_dimensions: Optional[Unit] = None):
+    def __init__(self, unit: Unit, expected_dimensions: Unit | None = None):
         """Initialize the ``PhysicalQuantity`` class."""
         if expected_dimensions:
             check_pint_unit_compatibility(unit, expected_dimensions)
