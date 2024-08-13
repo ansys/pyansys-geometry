@@ -50,6 +50,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype import beartype as check_input_types
+import matplotlib.colors as mcolors
 from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
@@ -145,7 +146,7 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def color(self) -> str:
+    def color(self) -> mcolors.Colormap:
         """Get the color of the body."""
         return
 
@@ -155,7 +156,7 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def set_color(self, color: str) -> None:
+    def set_color(self, color: mcolors.Colormap) -> None:
         """Set the color of the body."""
         return
 
@@ -746,11 +747,11 @@ class MasterBody(IBody):
         self.set_fill_style(value)
 
     @property
-    def color(self) -> str:  # noqa: D102
+    def color(self) -> mcolors.Colormap:  # noqa: D102
         return self._color
 
     @color.setter
-    def color(self, value: str):  # noqa: D102
+    def color(self, value: mcolors.Colormap):  # noqa: D102
         self.set_color(value)
 
     @property
@@ -948,10 +949,25 @@ class MasterBody(IBody):
     @protect_grpc
     @check_input_types
     @min_backend_version(25, 1, 0)
-    def set_color(  # noqa: D102
-        self, color: str
-    ) -> None:
+    def set_color(self, color: Union[str, tuple, mcolors.Colormap]) -> None:
+        """Set the color of the body."""
         self._grpc_client.log.debug(f"Setting body color {self.id}.")
+
+        # Convert color to hex if it's not already a hex string
+        if isinstance(color, str):
+            try:
+                # Try to convert named color to hex
+                color = mcolors.to_hex(color)
+            except ValueError:
+                # If it's not a recognized named color, it might be a hex string already
+                pass
+        elif isinstance(color, tuple):
+            # Convert RGB tuple to hex
+            color = mcolors.to_hex(color)
+        elif isinstance(color, mcolors.Colormap):
+            # Convert Colormap to a hex string
+            color = mcolors.to_hex(color(0.5))
+
         self._bodies_stub.SetColor(
             SetColorRequest(
                 body_id=self.id,
@@ -1175,8 +1191,11 @@ class Body(IBody):
         self._template.fill_style = fill_style
 
     @property
-    def color(self) -> str:  # noqa: D102
+    def color(self) -> mcolors.Colormap:  # noqa: D102
         return self._template.color
+
+    def set_color(self, color: mcolors.Colormap) -> None:  # noqa: D102
+        return self._template.set_color(color)
 
     @property
     def parent_component(self) -> "Component":  # noqa: D102
@@ -1404,10 +1423,6 @@ class Body(IBody):
     @ensure_design_is_active
     def set_fill_style(self, fill_style: FillStyle) -> None:  # noqa: D102
         return self._template.set_fill_style(fill_style)
-
-    @ensure_design_is_active
-    def set_color(self, color: str) -> None:  # noqa: D102
-        return self._template.set_color(color)
 
     @ensure_design_is_active
     def translate(  # noqa: D102
