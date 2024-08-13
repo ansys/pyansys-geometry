@@ -24,7 +24,7 @@
 from abc import ABC, abstractmethod
 from enum import Enum, unique
 from functools import wraps
-from typing import TYPE_CHECKING, Iterable, Union
+from typing import TYPE_CHECKING, Iterable, Tuple, Union
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
@@ -949,24 +949,33 @@ class MasterBody(IBody):
     @protect_grpc
     @check_input_types
     @min_backend_version(25, 1, 0)
-    def set_color(self, color: Union[str, tuple, mcolors.Colormap]) -> None:
+    def set_color(self, color: Union[str, Tuple[float, float, float], mcolors.Colormap]) -> None:
         """Set the color of the body."""
         self._grpc_client.log.debug(f"Setting body color {self.id}.")
 
-        # Convert color to hex if it's not already a hex string
-        if isinstance(color, str):
-            try:
-                # Try to convert named color to hex
+        try:
+            if isinstance(color, tuple):
+                # Ensure that all elements are within 0-1 or 0-255 range
+                if all(0 <= c <= 1 for c in color):
+                    # Ensure they are floats if in 0-1 range
+                    if not all(isinstance(c, float) for c in color):
+                        raise ValueError("RGB values in the 0-1 range must be floats.")
+                elif all(0 <= c <= 255 for c in color):
+                    # Ensure they are integers if in 0-255 range
+                    if not all(isinstance(c, int) for c in color):
+                        raise ValueError("RGB values in the 0-255 range must be integers.")
+                    # Normalize the 0-255 range to 0-1
+                    color = tuple(c / 255.0 for c in color)
+                else:
+                    raise ValueError("RGB tuple contains mixed ranges or invalid values.")
+
                 color = mcolors.to_hex(color)
-            except ValueError:
-                # If it's not a recognized named color, it might be a hex string already
-                pass
-        elif isinstance(color, tuple):
-            # Convert RGB tuple to hex
-            color = mcolors.to_hex(color)
-        elif isinstance(color, mcolors.Colormap):
-            # Convert Colormap to a hex string
-            color = mcolors.to_hex(color(0.5))
+            elif isinstance(color, mcolors.Colormap):
+                color = mcolors.to_hex(color(0.5))
+            elif isinstance(color, str):
+                color = mcolors.to_hex(color)
+        except ValueError as e:
+            raise ValueError(f"Invalid color value: {e}")
 
         self._bodies_stub.SetColor(
             SetColorRequest(
