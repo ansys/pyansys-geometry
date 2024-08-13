@@ -747,7 +747,22 @@ class MasterBody(IBody):
         self.set_fill_style(value)
 
     @property
-    def color(self) -> mcolors.Colormap:  # noqa: D102
+    def color(self) -> Union[str, Tuple[float, float, float]]:  # noqa: D102
+        """Get the current color of the body."""
+        if self._color is None:
+            try:
+                # Fetch color from the server if it's not cached
+                color_response = self._bodies_stub.GetColor(EntityIdentifier(id=self._id))
+
+                if color_response.color:
+                    self._color = mcolors.to_hex(color_response.color)
+                else:
+                    # Handle the case where the server returns a null or empty value
+                    raise ValueError("Color not set on the server.")
+            except Exception as e:
+                # Handle the error gracefully and provide feedback
+                print(f"Error retrieving color from the server: {str(e)}")
+                return None  # or some default color value
         return self._color
 
     @color.setter
@@ -1203,6 +1218,7 @@ class Body(IBody):
     def color(self) -> mcolors.Colormap:  # noqa: D102
         return self._template.color
 
+    @color.setter
     def set_color(self, color: mcolors.Colormap) -> None:  # noqa: D102
         return self._template.set_color(color)
 
