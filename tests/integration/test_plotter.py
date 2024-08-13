@@ -370,6 +370,19 @@ def test_plot_trapezoid(verify_image_cache):
     sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_trapezoid.png"))
 
 
+def test_plot_trapezoid_symmetric(verify_image_cache):
+    """Test plotting of a trapezoid which is symmetric."""
+    # Create a sketch instance
+    sketch = Sketch()
+
+    # Create a trapezoid and plot
+    sketch.trapezoid(10, 2, np.pi / 4, tag="Trapezoid-symmetric")
+    sketch.select("Trapezoid-symmetric")
+    sketch.plot_selection(
+        view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_trapezoid_sym.png")
+    )
+
+
 @skip_no_xserver
 def test_plot_circle(verify_image_cache):
     """Test plotting of a circle."""
