@@ -146,13 +146,13 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def color(self) -> mcolors.Colormap:
-        """Get the color of the body."""
+    def set_fill_style(self, fill_style: FillStyle) -> None:
+        """Set the fill style of the body."""
         return
 
     @abstractmethod
-    def set_fill_style(self, fill_style: FillStyle) -> None:
-        """Set the fill style of the body."""
+    def color(self) -> mcolors.Colormap:
+        """Get the color of the body."""
         return
 
     @abstractmethod
@@ -757,12 +757,10 @@ class MasterBody(IBody):
                 if color_response.color:
                     self._color = mcolors.to_hex(color_response.color)
                 else:
-                    # Handle the case where the server returns a null or empty value
                     raise ValueError("Color not set on the server.")
             except Exception as e:
-                # Handle the error gracefully and provide feedback
                 print(f"Error retrieving color from the server: {str(e)}")
-                return None  # or some default color value
+                return None
         return self._color
 
     @color.setter
@@ -1219,7 +1217,7 @@ class Body(IBody):
         return self._template.color
 
     @color.setter
-    def set_color(self, color: mcolors.Colormap) -> None:  # noqa: D102
+    def color(self, color: mcolors.Colormap) -> None:  # noqa: D102
         return self._template.set_color(color)
 
     @property
@@ -1448,6 +1446,10 @@ class Body(IBody):
     @ensure_design_is_active
     def set_fill_style(self, fill_style: FillStyle) -> None:  # noqa: D102
         return self._template.set_fill_style(fill_style)
+
+    @ensure_design_is_active
+    def set_color(self, color: mcolors.Colormap) -> None:  # noqa: D102
+        return self._template.set_color(color)
 
     @ensure_design_is_active
     def translate(  # noqa: D102

@@ -2026,10 +2026,27 @@ def test_set_body_color(modeler: Modeler):
     box_plane.box(Point2D([0.0, 0.0]), width=1 * unit, height=1 * unit)
     box = design.extrude_sketch("Block", box_plane, 1 * unit)
 
-    box.set_color("#0000FF")
-    assert box.color == "#0000FF"
-    box.set_color("#FFC000")
-    assert box.color == "#FFC000"
+    # Default body color is if it is not set on server side.
+    assert box.color == "#000000"
+
+    # Set the color of the body using hex code.
+    box.color = "#0000ff"
+    assert box.color == "#0000ff"
+
+    box.color = "#ffc000"
+    assert box.color == "#ffc000"
+
+    # Set the color of the body using color name.
+    box.set_color("green")
+    box.color == "#008000"
+
+    # Set the color of the body using RGB values between (0,1) as floats.
+    box.set_color((1.0, 0.0, 0.0))
+    box.color == "#ff0000"
+
+    # Set the color of the body using RGB values between (0,255) as integers).
+    box.set_color((0, 255, 0))
+    box.color == "#00ff00"
 
 
 def test_body_scale(modeler: Modeler):
