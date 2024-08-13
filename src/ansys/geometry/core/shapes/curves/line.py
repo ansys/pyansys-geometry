@@ -25,7 +25,6 @@ from functools import cached_property
 import math
 
 from beartype import beartype as check_input_types
-from beartype.typing import Union
 import numpy as np
 
 from ansys.geometry.core.math.matrix import Matrix44
@@ -48,17 +47,17 @@ class Line(Curve):
 
     Parameters
     ----------
-    origin : Union[~numpy.ndarray, RealSequence, Point3D]
+    origin : ~numpy.ndarray | RealSequence | Point3D
         Origin of the line.
-    direction : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+    direction : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D
         Direction of the line.
     """
 
     @check_input_types
     def __init__(
         self,
-        origin: Union[np.ndarray, RealSequence, Point3D],
-        direction: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D],
+        origin: np.ndarray | RealSequence | Point3D,
+        direction: np.ndarray | RealSequence | UnitVector3D | Vector3D,
     ):
         """Initialize the ``Line`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin

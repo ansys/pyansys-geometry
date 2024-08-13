@@ -22,10 +22,10 @@
 """Module for managing an edge."""
 
 from enum import Enum, unique
+from typing import TYPE_CHECKING
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
-from beartype.typing import TYPE_CHECKING, List
 from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
@@ -159,7 +159,7 @@ class Edge:
     @property
     @protect_grpc
     @ensure_design_is_active
-    def faces(self) -> List["Face"]:
+    def faces(self) -> list["Face"]:
         """Faces that contain the edge."""
         from ansys.geometry.core.designer.face import Face, SurfaceType
 

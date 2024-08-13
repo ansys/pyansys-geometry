@@ -7,7 +7,7 @@ name = "ansys-geometry-core"
 version = "0.7.dev0"
 description = "A python wrapper for Ansys Geometry service"
 readme = "README.rst"
-requires-python = ">=3.9,<4"
+requires-python = ">=3.10,<4"
 license = { file = "LICENSE" }
 authors = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
 maintainers = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
@@ -17,21 +17,19 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
 ]
 
 dependencies = [
-    "ansys-api-geometry==0.4.6",
+    "ansys-api-geometry==0.4.7",
     "ansys-tools-path>=0.3,<1",
     "ansys-tools-visualization-interface>=0.2.6,<1",
     "beartype>=0.11.0,<0.19",
     "grpcio>=1.35.0,<2",
     "grpcio-health-checking>=1.45.0,<2",
-    "numpy>=1.20.3,<3; python_version>='3.10'",
-    "numpy>=1.20.3,<2; python_version=='3.9'",       # Remove when Python 3.9 support is dropped
+    "numpy>=1.20.3,<3",
     "Pint>=0.18,<1",
     "protobuf>=3.20.2,<6",
     "pyvista>=0.37.0,<1",
@@ -51,14 +49,14 @@ all = [
 tests = [
     "ansys-platform-instancemanagement==1.1.2",
     "ansys-tools-path==0.6.0",
-    "ansys-tools-visualization-interface==0.3.0",
+    "ansys-tools-visualization-interface==0.4.0",
     "beartype==0.18.5",
     "docker==7.1.0",
-    "grpcio==1.65.1",
-    "grpcio-health-checking==1.65.1",
+    "grpcio==1.65.4",
+    "grpcio-health-checking==1.65.4",
     "numpy==2.0.1",
     "Pint==0.24.3",
-    "protobuf==5.27.2",
+    "protobuf==5.27.3",
     "pytest==8.3.2",
     "pytest-cov==5.0.0",
     "pytest-pyvista==0.1.9",
@@ -77,26 +75,26 @@ tests-minimal = [
     "pytest-xvfb==3.0.0",
 ]
 doc = [
-    "ansys-sphinx-theme[autoapi]==0.16.6",
-    "ansys-tools-visualization-interface==0.3.0",
+    "ansys-sphinx-theme[autoapi]==1.0.3",
+    "ansys-tools-visualization-interface==0.4.0",
     "beartype==0.18.5",
     "docker==7.1.0",
     "ipyvtklink==0.2.3",
     "jupyter_sphinx==0.5.3",
-    "jupytext==1.16.3",
-    "myst-parser==3.0.1",
+    "jupytext==1.16.4",
+    "myst-parser==4.0.0",
     "nbconvert==7.16.4",
     "nbsphinx==0.9.4",
     "notebook==7.2.1",
-    "numpydoc==1.7.0",
-    "panel==1.4.4",
+    "numpydoc==1.8.0",
+    "panel==1.4.5",
     "pyvista[jupyter]==0.44.1",
     "requests==2.32.3",
-    "sphinx==7.4.7",
+    "sphinx==8.0.2",
     "sphinx-autodoc-typehints==2.2.3",
     "sphinx-copybutton==0.5.2",
     "sphinx-jinja==2.0.2",
-    "trame-vtk==2.8.9",
+    "trame-vtk==2.8.10",
     "vtk==9.3.1",
 ]
 
@@ -177,8 +175,13 @@ name = "Added"
 showcontent = true
 
 [[tool.towncrier.type]]
-directory = "changed"
-name = "Changed"
+directory = "dependencies"
+name = "Dependencies"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "documentation"
+name = "Documentation"
 showcontent = true
 
 [[tool.towncrier.type]]
@@ -187,11 +190,26 @@ name = "Fixed"
 showcontent = true
 
 [[tool.towncrier.type]]
-directory = "dependencies"
-name = "Dependencies"
+directory = "maintenance"
+name = "Maintenance"
 showcontent = true
 
 [[tool.towncrier.type]]
 directory = "miscellaneous"
 name = "Miscellaneous"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "documentation"
+name = "Documentation"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "maintenance"
+name = "Maintenance"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "test"
+name = "Test"
 showcontent = true
