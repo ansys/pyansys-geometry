@@ -23,7 +23,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "ansys-api-geometry==0.4.6",
+    "ansys-api-geometry==0.4.7",
     "ansys-tools-path>=0.3,<1",
     "ansys-tools-visualization-interface>=0.2.6,<1",
     "beartype>=0.11.0,<0.19",
@@ -94,7 +94,7 @@ doc = [
     "sphinx-autodoc-typehints==2.2.3",
     "sphinx-copybutton==0.5.2",
     "sphinx-jinja==2.0.2",
-    "trame-vtk==2.8.9",
+    "trame-vtk==2.8.10",
     "vtk==9.3.1",
 ]
 
