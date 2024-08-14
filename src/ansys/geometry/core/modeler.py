@@ -423,11 +423,6 @@ class Modeler:
         return self._prepare_tools
 
     @property
-    def driving_dimensions(self) -> DrivingDimensions:
-        """Access to parameters."""
-        return self._driving_dimensions
-
-    @property
     @min_backend_version(24, 2, 0)
     def measurement_tools(self) -> MeasurementTools:
         """Access to measurement tools."""

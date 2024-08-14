@@ -24,7 +24,7 @@
 from enum import Enum, unique
 
 from ansys.api.dbu.v0.dbumodels_pb2 import DrivingDimension as DrivingDimensionProto
-from ansys.api.dbu.v0.drivingdimensions_pb2 import GetAllRequest, UpdateRequest
+from ansys.api.dbu.v0.drivingdimensions_pb2 import UpdateRequest
 from ansys.api.dbu.v0.drivingdimensions_pb2_grpc import DrivingDimensionsStub
 from beartype import beartype as check_input_types
 
@@ -108,27 +108,6 @@ class DrivingDimensions:
         self._grpc_client = grpc_client
         self._driving_dimensions_stub = DrivingDimensionsStub(self._grpc_client.channel)
         self.id = None
-
-    @protect_grpc
-    @min_backend_version(25, 1, 0)
-    def get_all_driving_dimensions(self):
-        """Get driving dimensions for a body.
-
-        Parameters
-        ----------
-        body : Body
-            Body to get driving dimensions.
-
-        Returns
-        -------
-        List[DrivingDimension]
-            List of driving dimensions for the body.
-        """
-        response = self._driving_dimensions_stub.GetAll(GetAllRequest())
-        print(response)
-        return [
-            DrivingDimension._from_proto(dimension) for dimension in response.driving_dimensions
-        ]
 
     @protect_grpc
     @check_input_types
