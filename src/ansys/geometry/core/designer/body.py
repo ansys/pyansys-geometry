@@ -24,7 +24,7 @@
 from abc import ABC, abstractmethod
 from enum import Enum, unique
 from functools import wraps
-from typing import TYPE_CHECKING, Iterable, Tuple, Union
+from typing import TYPE_CHECKING, Iterable, Union
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
@@ -151,13 +151,20 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def color(self) -> mcolors.Colormap:
+    def color(self) -> str:
         """Get the color of the body."""
         return
 
     @abstractmethod
-    def set_color(self, color: mcolors.Colormap) -> None:
-        """Set the color of the body."""
+    def set_color(self, color: str | tuple[float, float, float]) -> None:
+        """Set the color of the body.
+
+        Parameters
+        ----------
+        color : str | tuple[float, float, float]
+            Color to set the body to. This can be a string representing a color name
+            or a tuple of RGB values in the range [0, 1] (RGBA) or [0, 255] (pure RGB).
+        """
         return
 
     @abstractmethod
@@ -747,24 +754,26 @@ class MasterBody(IBody):
         self.set_fill_style(value)
 
     @property
-    def color(self) -> Union[str, Tuple[float, float, float]]:  # noqa: D102
+    def color(self) -> str:  # noqa: D102
         """Get the current color of the body."""
         if self._color is None:
-            try:
+            if self._grpc_client.backend_version < (25, 1, 0):
+                # Server does not support color retrieval before version 25.1.0
+                self._grpc_client.log.warning(
+                    "Server does not support color retrieval. Returning None."
+                )
+            else:
                 # Fetch color from the server if it's not cached
                 color_response = self._bodies_stub.GetColor(EntityIdentifier(id=self._id))
 
                 if color_response.color:
                     self._color = mcolors.to_hex(color_response.color)
                 else:
-                    raise ValueError("Color not set on the server.")
-            except Exception as e:
-                print(f"Error retrieving color from the server: {str(e)}")
-                return None
+                    raise ValueError(f"Color could not be retrieved for body {self._id}.")
         return self._color
 
     @color.setter
-    def color(self, value: mcolors.Colormap):  # noqa: D102
+    def color(self, value: str | tuple[float, float, float]):  # noqa: D102
         self.set_color(value)
 
     @property
@@ -962,9 +971,9 @@ class MasterBody(IBody):
     @protect_grpc
     @check_input_types
     @min_backend_version(25, 1, 0)
-    def set_color(self, color: Union[str, Tuple[float, float, float], mcolors.Colormap]) -> None:
+    def set_color(self, color: str | tuple[float, float, float]) -> None:
         """Set the color of the body."""
-        self._grpc_client.log.debug(f"Setting body color {self.id}.")
+        self._grpc_client.log.debug(f"Setting body color of {self.id} to {color}.")
 
         try:
             if isinstance(color, tuple):
@@ -983,12 +992,10 @@ class MasterBody(IBody):
                     raise ValueError("RGB tuple contains mixed ranges or invalid values.")
 
                 color = mcolors.to_hex(color)
-            elif isinstance(color, mcolors.Colormap):
-                color = mcolors.to_hex(color(0.5))
             elif isinstance(color, str):
                 color = mcolors.to_hex(color)
-        except ValueError as e:
-            raise ValueError(f"Invalid color value: {e}")
+        except ValueError as err:
+            raise ValueError(f"Invalid color value: {err}")
 
         self._bodies_stub.SetColor(
             SetColorRequest(
@@ -1213,11 +1220,11 @@ class Body(IBody):
         self._template.fill_style = fill_style
 
     @property
-    def color(self) -> mcolors.Colormap:  # noqa: D102
+    def color(self) -> str:  # noqa: D102
         return self._template.color
 
     @color.setter
-    def color(self, color: mcolors.Colormap) -> None:  # noqa: D102
+    def color(self, color: str | tuple[float, float, float]) -> None:  # noqa: D102
         return self._template.set_color(color)
 
     @property
@@ -1448,7 +1455,7 @@ class Body(IBody):
         return self._template.set_fill_style(fill_style)
 
     @ensure_design_is_active
-    def set_color(self, color: mcolors.Colormap) -> None:  # noqa: D102
+    def set_color(self, color: str | tuple[float, float, float]) -> None:  # noqa: D102
         return self._template.set_color(color)
 
     @ensure_design_is_active
