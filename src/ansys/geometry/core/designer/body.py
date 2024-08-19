@@ -760,8 +760,9 @@ class MasterBody(IBody):
             if self._grpc_client.backend_version < (25, 1, 0):
                 # Server does not support color retrieval before version 25.1.0
                 self._grpc_client.log.warning(
-                    "Server does not support color retrieval. Returning None."
+                    "Server does not support color retrieval. Assigning default."
                 )
+                self._color = "#000000"  # Default color
             else:
                 # Fetch color from the server if it's not cached
                 color_response = self._bodies_stub.GetColor(EntityIdentifier(id=self._id))
@@ -769,7 +770,10 @@ class MasterBody(IBody):
                 if color_response.color:
                     self._color = mcolors.to_hex(color_response.color)
                 else:
-                    raise ValueError(f"Color could not be retrieved for body {self._id}.")
+                    self._grpc_client.log.warning(
+                        f"Color could not be retrieved for body {self._id}. Assigning default."
+                    )
+                    self._color = "#000000"  # Default color
         return self._color
 
     @color.setter
