@@ -21,10 +21,10 @@
 # SOFTWARE.
 """Tests trimmed geometry."""
 
-from ansys.api.geometry.v0.commands_pb2 import CreateSketchLineRequest
 import numpy as np
 import pytest
 
+from ansys.api.geometry.v0.commands_pb2 import CreateSketchLineRequest
 from ansys.geometry.core.connection import BackendType, point3d_to_grpc_point
 from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.designer.face import SurfaceType

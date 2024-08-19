@@ -25,6 +25,9 @@ from enum import Enum, unique
 from typing import TYPE_CHECKING, Optional, Union
 import uuid
 
+from beartype import beartype as check_input_types
+from pint import Quantity
+
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
     CreateBodyFromFaceRequest,
@@ -47,9 +50,6 @@ from ansys.api.geometry.v0.components_pb2 import (
 )
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
 from ansys.api.geometry.v0.models_pb2 import Direction, Line, TrimmedCurveList
-from beartype import beartype as check_input_types
-from pint import Quantity
-
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     grpc_matrix_to_matrix,
@@ -1422,9 +1422,8 @@ class Component:
             N Coordinate Systems : 0
         >>> mycomp.plot(pbr=True, metallic=1.0)
         """
-        from ansys.tools.visualization_interface.types.mesh_object_plot import MeshObjectPlot
-
         from ansys.geometry.core.plotting import GeometryPlotter
+        from ansys.tools.visualization_interface.types.mesh_object_plot import MeshObjectPlot
 
         mesh_object = MeshObjectPlot(
             custom_object=self, mesh=self.tessellate(merge_component, merge_bodies)

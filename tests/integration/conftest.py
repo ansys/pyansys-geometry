@@ -31,7 +31,6 @@ If you want to override these defaults, set the following environment variables.
 import logging
 from pathlib import Path
 
-import ansys.tools.visualization_interface as viz_interface
 import pytest
 import pyvista as pv
 
@@ -39,6 +38,7 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.defaults import GEOMETRY_SERVICE_DOCKER_IMAGE
 from ansys.geometry.core.connection.docker_instance import GeometryContainers, LocalDockerInstance
+import ansys.tools.visualization_interface as viz_interface
 
 pv.OFF_SCREEN = True
 viz_interface.TESTING_MODE = True
