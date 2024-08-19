@@ -757,7 +757,7 @@ class MasterBody(IBody):
     def color(self) -> str:  # noqa: D102
         """Get the current color of the body."""
         if self._color is None:
-            if self._grpc_client.backend_version < (25, 1, 0):
+            if self._grpc_client.backend_version < (25, 1, 0): # pragma: no cover
                 # Server does not support color retrieval before version 25.1.0
                 self._grpc_client.log.warning(
                     "Server does not support color retrieval. Assigning default."
@@ -769,7 +769,7 @@ class MasterBody(IBody):
 
                 if color_response.color:
                     self._color = mcolors.to_hex(color_response.color)
-                else:
+                else: # pragma: no cover
                     self._grpc_client.log.warning(
                         f"Color could not be retrieved for body {self._id}. Assigning default."
                     )
