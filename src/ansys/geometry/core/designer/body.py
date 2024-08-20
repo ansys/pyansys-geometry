@@ -26,6 +26,9 @@ from enum import Enum, unique
 from functools import wraps
 from typing import TYPE_CHECKING, Iterable, Union
 
+from beartype import beartype as check_input_types
+from pint import Quantity
+
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
     BooleanRequest,
@@ -48,9 +51,6 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ProjectCurvesRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from beartype import beartype as check_input_types
-from pint import Quantity
-
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
@@ -1415,11 +1415,10 @@ class Body(IBody):
         **plotting_options: dict | None,
     ) -> None:
         # lazy import here to improve initial module load time
+        from ansys.geometry.core.plotting import GeometryPlotter
         from ansys.tools.visualization_interface.types.mesh_object_plot import (
             MeshObjectPlot,
         )
-
-        from ansys.geometry.core.plotting import GeometryPlotter
 
         meshobject = MeshObjectPlot(self, self.tessellate(merge=merge))
         pl = GeometryPlotter(use_trame=use_trame)

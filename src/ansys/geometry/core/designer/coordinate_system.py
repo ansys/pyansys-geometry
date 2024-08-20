@@ -25,7 +25,6 @@ from typing import TYPE_CHECKING
 
 from ansys.api.geometry.v0.coordinatesystems_pb2 import CreateRequest
 from ansys.api.geometry.v0.coordinatesystems_pb2_grpc import CoordinateSystemsStub
-
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import frame_to_grpc_frame
 from ansys.geometry.core.errors import protect_grpc

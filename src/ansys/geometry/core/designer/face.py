@@ -24,6 +24,8 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING
 
+from pint import Quantity
+
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.api.geometry.v0.faces_pb2 import (
@@ -33,8 +35,6 @@ from ansys.api.geometry.v0.faces_pb2 import (
 )
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
-from pint import Quantity
-
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import grpc_curve_to_curve, grpc_surface_to_surface
 from ansys.geometry.core.designer.edge import Edge
