@@ -23,6 +23,8 @@
 
 from typing import TYPE_CHECKING
 
+from google.protobuf.wrappers_pb2 import DoubleValue
+
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.repairtools_pb2 import (
     FindDuplicateFacesRequest,
@@ -35,8 +37,6 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FindStitchFacesRequest,
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
-from google.protobuf.wrappers_pb2 import DoubleValue
-
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,

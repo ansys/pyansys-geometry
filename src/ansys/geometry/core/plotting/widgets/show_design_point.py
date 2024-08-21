@@ -23,11 +23,11 @@
 
 from pathlib import Path
 
-from ansys.tools.visualization_interface.backends.pyvista import PyVistaBackend
-from ansys.tools.visualization_interface.backends.pyvista.widgets import PlotterWidget
 from vtk import vtkButtonWidget, vtkPNGReader
 
 from ansys.geometry.core.designer.designpoint import DesignPoint
+from ansys.tools.visualization_interface.backends.pyvista import PyVistaBackend
+from ansys.tools.visualization_interface.backends.pyvista.widgets import PlotterWidget
 
 
 class ShowDesignPoints(PlotterWidget):

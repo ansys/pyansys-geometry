@@ -26,8 +26,6 @@ from pathlib import Path
 import time
 from typing import Optional
 
-from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
-from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
 from beartype import beartype as check_input_types
 from google.protobuf.empty_pb2 import Empty
 import grpc
@@ -35,6 +33,8 @@ from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
 import semver
 
+from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
+from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance

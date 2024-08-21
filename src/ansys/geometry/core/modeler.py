@@ -25,14 +25,14 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
+from grpc import Channel
+
 from ansys.api.dbu.v0.dbuapplication_pb2 import RunScriptFileRequest
 from ansys.api.dbu.v0.dbuapplication_pb2_grpc import DbuApplicationStub
 from ansys.api.dbu.v0.designs_pb2 import OpenRequest
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from grpc import Channel
-
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
@@ -46,11 +46,10 @@ from ansys.geometry.core.tools.repair_tools import RepairTools
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
-    from ansys.platform.instancemanagement import Instance
-
     from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
     from ansys.geometry.core.connection.product_instance import ProductInstance
     from ansys.geometry.core.designer.design import Design
+    from ansys.platform.instancemanagement import Instance
 
 
 class Modeler:
