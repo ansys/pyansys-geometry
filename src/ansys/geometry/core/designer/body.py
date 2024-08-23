@@ -22,9 +22,10 @@
 """Provides for managing a body."""
 
 from abc import ABC, abstractmethod
+from collections.abc import Iterable
 from enum import Enum, unique
 from functools import wraps
-from typing import TYPE_CHECKING, Iterable, Union
+from typing import TYPE_CHECKING, Union
 
 from beartype import beartype as check_input_types
 from pint import Quantity

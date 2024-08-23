@@ -21,7 +21,7 @@
 # SOFTWARE.
 """Provides the data structure for material and material properties."""
 
-from typing import Sequence
+from collections.abc import Sequence
 
 from beartype import beartype as check_input_types
 from pint import Quantity
