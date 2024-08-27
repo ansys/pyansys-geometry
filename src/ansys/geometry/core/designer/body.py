@@ -28,6 +28,7 @@ from functools import wraps
 from typing import TYPE_CHECKING, Union
 
 from beartype import beartype as check_input_types
+import matplotlib.colors as mcolors
 from pint import Quantity
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
@@ -40,6 +41,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     RotateRequest,
     ScaleRequest,
     SetAssignedMaterialRequest,
+    SetColorRequest,
     SetFillStyleRequest,
     SetNameRequest,
     TranslateRequest,
@@ -147,6 +149,23 @@ class IBody(ABC):
     @abstractmethod
     def set_fill_style(self, fill_style: FillStyle) -> None:
         """Set the fill style of the body."""
+        return
+
+    @abstractmethod
+    def color(self) -> str:
+        """Get the color of the body."""
+        return
+
+    @abstractmethod
+    def set_color(self, color: str | tuple[float, float, float]) -> None:
+        """Set the color of the body.
+
+        Parameters
+        ----------
+        color : str | tuple[float, float, float]
+            Color to set the body to. This can be a string representing a color name
+            or a tuple of RGB values in the range [0, 1] (RGBA) or [0, 255] (pure RGB).
+        """
         return
 
     @abstractmethod
@@ -687,6 +706,7 @@ class MasterBody(IBody):
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._tessellation = None
         self._fill_style = FillStyle.DEFAULT
+        self._color = None
 
     def reset_tessellation_cache(func):  # noqa: N805
         """Decorate ``MasterBody`` methods that need tessellation cache update.
@@ -733,6 +753,33 @@ class MasterBody(IBody):
     @fill_style.setter
     def fill_style(self, value: FillStyle):  # noqa: D102
         self.set_fill_style(value)
+
+    @property
+    def color(self) -> str:  # noqa: D102
+        """Get the current color of the body."""
+        if self._color is None:
+            if self._grpc_client.backend_version < (25, 1, 0):  # pragma: no cover
+                # Server does not support color retrieval before version 25.1.0
+                self._grpc_client.log.warning(
+                    "Server does not support color retrieval. Assigning default."
+                )
+                self._color = "#000000"  # Default color
+            else:
+                # Fetch color from the server if it's not cached
+                color_response = self._bodies_stub.GetColor(EntityIdentifier(id=self._id))
+
+                if color_response.color:
+                    self._color = mcolors.to_hex(color_response.color)
+                else:  # pragma: no cover
+                    self._grpc_client.log.warning(
+                        f"Color could not be retrieved for body {self._id}. Assigning default."
+                    )
+                    self._color = "#000000"  # Default color
+        return self._color
+
+    @color.setter
+    def color(self, value: str | tuple[float, float, float]):  # noqa: D102
+        self.set_color(value)
 
     @property
     def is_surface(self) -> bool:  # noqa: D102
@@ -925,6 +972,43 @@ class MasterBody(IBody):
             )
         )
         self._fill_style = fill_style
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 1, 0)
+    def set_color(self, color: str | tuple[float, float, float]) -> None:
+        """Set the color of the body."""
+        self._grpc_client.log.debug(f"Setting body color of {self.id} to {color}.")
+
+        try:
+            if isinstance(color, tuple):
+                # Ensure that all elements are within 0-1 or 0-255 range
+                if all(0 <= c <= 1 for c in color):
+                    # Ensure they are floats if in 0-1 range
+                    if not all(isinstance(c, float) for c in color):
+                        raise ValueError("RGB values in the 0-1 range must be floats.")
+                elif all(0 <= c <= 255 for c in color):
+                    # Ensure they are integers if in 0-255 range
+                    if not all(isinstance(c, int) for c in color):
+                        raise ValueError("RGB values in the 0-255 range must be integers.")
+                    # Normalize the 0-255 range to 0-1
+                    color = tuple(c / 255.0 for c in color)
+                else:
+                    raise ValueError("RGB tuple contains mixed ranges or invalid values.")
+
+                color = mcolors.to_hex(color)
+            elif isinstance(color, str):
+                color = mcolors.to_hex(color)
+        except ValueError as err:
+            raise ValueError(f"Invalid color value: {err}")
+
+        self._bodies_stub.SetColor(
+            SetColorRequest(
+                body_id=self.id,
+                color=color,
+            )
+        )
+        self._color = color
 
     @protect_grpc
     @check_input_types
@@ -1139,6 +1223,14 @@ class Body(IBody):
     @fill_style.setter
     def fill_style(self, fill_style: FillStyle) -> str:  # noqa: D102
         self._template.fill_style = fill_style
+
+    @property
+    def color(self) -> str:  # noqa: D102
+        return self._template.color
+
+    @color.setter
+    def color(self, color: str | tuple[float, float, float]) -> None:  # noqa: D102
+        return self._template.set_color(color)
 
     @property
     def parent_component(self) -> "Component":  # noqa: D102
@@ -1366,6 +1458,10 @@ class Body(IBody):
     @ensure_design_is_active
     def set_fill_style(self, fill_style: FillStyle) -> None:  # noqa: D102
         return self._template.set_fill_style(fill_style)
+
+    @ensure_design_is_active
+    def set_color(self, color: str | tuple[float, float, float]) -> None:  # noqa: D102
+        return self._template.set_color(color)
 
     @ensure_design_is_active
     def translate(  # noqa: D102

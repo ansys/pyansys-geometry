@@ -23,6 +23,7 @@
 
 import os
 
+import matplotlib.colors as mcolors
 import numpy as np
 from pint import Quantity
 import pytest
@@ -2008,6 +2009,50 @@ def test_set_fill_style(modeler: Modeler):
     assert box.fill_style == FillStyle.TRANSPARENT
     box.fill_style = FillStyle.OPAQUE
     assert box.fill_style == FillStyle.OPAQUE
+
+
+def test_set_body_color(modeler: Modeler):
+    """Test the getting and setting of body color."""
+    skip_if_linux(modeler, test_set_body_color.__name__, "set_color")  # Skip test on Linux
+
+    design = modeler.create_design("RVE2")
+    unit = DEFAULT_UNITS.LENGTH
+
+    plane = Plane(
+        Point3D([1 / 2, 1 / 2, 0.0], unit=unit),
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
+    )
+    box_plane = Sketch(plane)
+    box_plane.box(Point2D([0.0, 0.0]), width=1 * unit, height=1 * unit)
+    box = design.extrude_sketch("Block", box_plane, 1 * unit)
+
+    # Default body color is if it is not set on server side.
+    assert box.color == "#000000"
+
+    # Set the color of the body using hex code.
+    box.color = "#0000ff"
+    assert box.color == "#0000ff"
+
+    box.color = "#ffc000"
+    assert box.color == "#ffc000"
+
+    # Set the color of the body using color name.
+    box.set_color("green")
+    box.color == "#008000"
+
+    # Set the color of the body using RGB values between (0,1) as floats.
+    box.set_color((1.0, 0.0, 0.0))
+    box.color == "#ff0000"
+
+    # Set the color of the body using RGB values between (0,255) as integers).
+    box.set_color((0, 255, 0))
+    box.color == "#00ff00"
+
+    # Assigning color object directly
+    blue_color = mcolors.to_rgba("#0000FF")
+    box.color = blue_color
+    assert box.color == "#0000ff"
 
 
 def test_body_scale(modeler: Modeler):
