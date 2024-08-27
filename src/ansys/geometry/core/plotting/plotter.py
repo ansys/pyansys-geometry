@@ -276,7 +276,7 @@ class GeometryPlotter(PlotterInterface):
             self.plot(component_polydata, **plotting_options)
 
     def add_component_by_body(self, component: Component, **plotting_options: dict | None) -> None:
-        """Internal method to add a component on a per body basis.
+        """Add a component on a per body basis.
 
         Notes
         -----
