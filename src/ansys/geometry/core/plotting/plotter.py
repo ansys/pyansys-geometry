@@ -218,7 +218,7 @@ class GeometryPlotter(PlotterInterface):
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         import ansys.geometry.core as pygeom
-        
+
         if pygeom.USE_SERVICE_COLORS:
             plotting_options["color"] = body.color
 
@@ -255,11 +255,13 @@ class GeometryPlotter(PlotterInterface):
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         import ansys.geometry.core as pygeom
-        
+
         if pygeom.USE_SERVICE_COLORS:
             # We need to iterate over the bodies and subcomponents to set the color...
             # this leads to a different logic for setting the color
-            LOG.warning("Using service colors for plotting a component since USE_SERVICE_COLORS == True.")
+            LOG.warning(
+                "Using service colors for plotting a component since USE_SERVICE_COLORS == True."
+            )
             LOG.warning(">>> Iterating over the bodies and subcomponents to set the color...")
             LOG.warning(">>> Ignoring values for merge_component and merge_bodies.")
             LOG.warning(">>> This will be slow for large components.")
@@ -267,18 +269,20 @@ class GeometryPlotter(PlotterInterface):
         else:
             # Use the default PyAnsys Geometry add_mesh arguments
             self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
-            dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
+            dataset = component.tessellate(
+                merge_component=merge_component, merge_bodies=merge_bodies
+            )
             component_polydata = MeshObjectPlot(component, dataset)
             self.plot(component_polydata, **plotting_options)
 
     def add_component_by_body(self, component: Component, **plotting_options: dict | None) -> None:
         """Internal method to add a component on a per body basis.
-        
+
         Notes
         -----
         This will allow to make use of the service colors. At the same time, it will be
         slower than the add_component method.
-        
+
         Parameters
         ----------
         component : Component
