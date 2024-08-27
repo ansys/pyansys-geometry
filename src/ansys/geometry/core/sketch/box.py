@@ -22,7 +22,6 @@
 """Provides for creating and managing a box (quadrilateral)."""
 
 from beartype import beartype as check_input_types
-from beartype.typing import Optional, Union
 from pint import Quantity
 import pyvista as pv
 from scipy.spatial.transform import Rotation as SpatialRotation
@@ -43,11 +42,11 @@ class Box(SketchFace):
     ----------
     center: Point2D
         Center point of the box.
-    width : Union[Quantity, Distance, Real]
+    width : ~pint.Quantity | Distance | Real
         Width of the box.
-    height : Union[Quantity, Distance, Real]
+    height : ~pint.Quantity | Distance | Real
         Height of the box.
-    angle : Union[Quantity, Angle, Real], default: 0
+    angle : ~pint.Quantity | Angle | Real, default: 0
         Placement angle for orientation alignment.
     """
 
@@ -55,9 +54,9 @@ class Box(SketchFace):
     def __init__(
         self,
         center: Point2D,
-        width: Union[Quantity, Distance, Real],
-        height: Union[Quantity, Distance, Real],
-        angle: Optional[Union[Quantity, Angle, Real]] = 0,
+        width: Quantity | Distance | Real,
+        height: Quantity | Distance | Real,
+        angle: Quantity | Angle | Real = 0,
     ):
         """Initialize the box."""
         super().__init__()
@@ -96,6 +95,7 @@ class Box(SketchFace):
         self._corner_4 = Point2D([center.x.m + corner_4[0], center.y.m + corner_4[1]], center.unit)
 
         # TODO: add plane to SketchSegment when available
+        # https://github.com/ansys/pyansys-geometry/issues/1319
         self._width_segment1 = SketchSegment(self._corner_1, self._corner_2)
         self._height_segment1 = SketchSegment(self._corner_2, self._corner_3)
         self._width_segment2 = SketchSegment(self._corner_3, self._corner_4)

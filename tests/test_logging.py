@@ -19,11 +19,12 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-""""Testing of log module."""
+""" "Testing of log module."""
+
 import logging as deflogging  # Default logging
 import re
+from typing import Callable
 
-from beartype.typing import Callable
 import pytest
 
 from ansys.geometry.core import LOG  # Global logger

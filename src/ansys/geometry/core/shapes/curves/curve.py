@@ -20,9 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides the ``Curve`` class."""
-from abc import ABC, abstractmethod
 
-from beartype.typing import TYPE_CHECKING
+from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
@@ -93,5 +93,5 @@ class Curve(ABC):
             self.evaluate(interval.start).position,
             self.evaluate(interval.end).position,
             interval,
-            None,  # TODO: calculate length on client?
+            None,
         )

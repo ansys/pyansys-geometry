@@ -21,11 +21,10 @@
 # SOFTWARE.
 """Module for creating a named selection."""
 
+from beartype import beartype as check_input_types
+
 from ansys.api.geometry.v0.namedselections_pb2 import CreateRequest
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
-from beartype import beartype as check_input_types
-from beartype.typing import List, Optional
-
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.beam import Beam
 from ansys.geometry.core.designer.body import Body
@@ -49,15 +48,15 @@ class NamedSelection:
         User-defined name for the named selection.
     grpc_client : GrpcClient
         Active supporting Geometry service instance for design modeling.
-    bodies : List[Body], default: None
+    bodies : list[Body], default: None
         All bodies to include in the named selection.
-    faces : List[Face], default: None
+    faces : list[Face], default: None
         All faces to include in the named selection.
-    edges : List[Edge], default: None
+    edges : list[Edge], default: None
         All edges to include in the named selection.
-    beams : List[Beam], default: None
+    beams : list[Beam], default: None
         All beams to include in the named selection.
-    design_points : List[DesignPoints], default: None
+    design_points : list[DesignPoints], default: None
         All design points to include in the named selection.
     """
 
@@ -67,12 +66,12 @@ class NamedSelection:
         self,
         name: str,
         grpc_client: GrpcClient,
-        bodies: Optional[List[Body]] = None,
-        faces: Optional[List[Face]] = None,
-        edges: Optional[List[Edge]] = None,
-        beams: Optional[List[Beam]] = None,
-        design_points: Optional[List[DesignPoint]] = None,
-        preexisting_id: Optional[str] = None,
+        bodies: list[Body] | None = None,
+        faces: list[Face] | None = None,
+        edges: list[Edge] | None = None,
+        beams: list[Beam] | None = None,
+        design_points: list[DesignPoint] | None = None,
+        preexisting_id: str | None = None,
     ):
         """Initialize the ``NamedSelection`` class."""
         self._grpc_client = grpc_client

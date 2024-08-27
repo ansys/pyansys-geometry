@@ -24,7 +24,6 @@
 from functools import cached_property
 
 from beartype import beartype as check_input_types
-from beartype.typing import Tuple, Union
 import numpy as np
 from pint import Quantity
 
@@ -50,26 +49,26 @@ class Torus(Surface):
 
     Parameters
     ----------
-    origin : Union[~numpy.ndarray, RealSequence, Point3D],
+    origin : ~numpy.ndarray | RealSequence | Point3D
         Centered origin of the torus.
-    direction_x : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
-        X-axis direction.
-    direction_y : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
-        Y-axis direction.
-    major_radius : Union[Quantity, Distance, Real]
+    major_radius : ~pint.Quantity | Distance | Real
         Major radius of the torus.
-    minor_radius : Union[Quantity, Distance, Real]
+    minor_radius : ~pint.Quantity | Distance | Real
         Minor radius of the torus.
+    reference : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D
+        X-axis direction.
+    axis : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D
+        Z-axis direction.
     """
 
     @check_input_types
     def __init__(
         self,
-        origin: Union[np.ndarray, RealSequence, Point3D],
-        major_radius: Union[Quantity, Distance, Real],
-        minor_radius: Union[Quantity, Distance, Real],
-        reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
-        axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
+        origin: np.ndarray | RealSequence | Point3D,
+        major_radius: Quantity | Distance | Real,
+        minor_radius: Quantity | Distance | Real,
+        reference: np.ndarray | RealSequence | UnitVector3D | Vector3D = UNITVECTOR3D_X,
+        axis: np.ndarray | RealSequence | UnitVector3D | Vector3D = UNITVECTOR3D_Z,
     ):
         """Initialize the ``Torus`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
@@ -190,7 +189,7 @@ class Torus(Surface):
         """
         return TorusEvaluation(self, parameter)
 
-    def parameterization(self) -> Tuple[Parameterization, Parameterization]:
+    def parameterization(self) -> tuple[Parameterization, Parameterization]:
         """Parameterize the torus surface as a tuple (U and V respectively).
 
         The U parameter specifies the longitude angle, increasing clockwise (east) about
@@ -205,7 +204,7 @@ class Torus(Surface):
 
         Returns
         -------
-        Tuple[Parameterization, Parameterization]
+        tuple[Parameterization, Parameterization]
             Information about how a torus's u and v parameters are parameterized, respectively.
         """
         u = Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))
@@ -402,12 +401,12 @@ class TorusEvaluation(SurfaceEvaluation):
         )
 
     @cached_property
-    def curvature(self) -> Tuple[Real, Vector3D, Real, Vector3D]:
+    def curvature(self) -> tuple[Real, Vector3D, Real, Vector3D]:
         """Curvature of the torus.
 
         Returns
         -------
-        Tuple[Real, Vector3D, Real, Vector3D]
+        tuple[Real, Vector3D, Real, Vector3D]
             Minimum and maximum curvature value and direction, respectively.
         """
         min_cur = 1.0 / self._torus.minor_radius.m

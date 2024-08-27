@@ -20,20 +20,23 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """The problem area definition."""
+
 from abc import abstractmethod
+from typing import TYPE_CHECKING
+
+from google.protobuf.wrappers_pb2 import Int32Value
 
 from ansys.api.geometry.v0.repairtools_pb2 import (
     FixDuplicateFacesRequest,
+    FixExtraEdgesRequest,
     FixInexactEdgesRequest,
     FixMissingFacesRequest,
+    FixShortEdgesRequest,
     FixSmallFacesRequest,
     FixSplitEdgesRequest,
     FixStitchFacesRequest,
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
-from beartype.typing import TYPE_CHECKING, List
-from google.protobuf.wrappers_pb2 import Int32Value
-
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.misc.auxiliary import (
     get_design_from_body,
@@ -88,11 +91,11 @@ class DuplicateFaceProblemAreas(ProblemArea):
         Server-defined ID for the body.
     grpc_client : GrpcClient
         Active supporting geometry service instance for design modeling.
-    faces : List[Face]
+    faces : list[Face]
         List of faces associated with the design.
     """
 
-    def __init__(self, id: str, grpc_client: GrpcClient, faces: List["Face"]):
+    def __init__(self, id: str, grpc_client: GrpcClient, faces: list["Face"]):
         """Initialize a new instance of the duplicate face problem areaclass."""
         super().__init__(id, grpc_client)
 
@@ -104,7 +107,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
         self._faces = faces
 
     @property
-    def faces(self) -> List["Face"]:
+    def faces(self) -> list["Face"]:
         """The list of the edges connected to this problem area."""
         return self._faces
 
@@ -142,11 +145,11 @@ class MissingFaceProblemAreas(ProblemArea):
         Server-defined ID for the body.
     grpc_client : GrpcClient
         Active supporting geometry service instance for design modeling.
-    edges : List[Edge]
+    edges : list[Edge]
         List of edges associated with the design.
     """
 
-    def __init__(self, id: str, grpc_client: GrpcClient, edges: List["Edge"]):
+    def __init__(self, id: str, grpc_client: GrpcClient, edges: list["Edge"]):
         """Initialize a new instance of the missing face problem area class."""
         super().__init__(id, grpc_client)
 
@@ -158,7 +161,7 @@ class MissingFaceProblemAreas(ProblemArea):
         self._edges = edges
 
     @property
-    def edges(self) -> List["Edge"]:
+    def edges(self) -> list["Edge"]:
         """The list of the edges connected to this problem area."""
         return self._edges
 
@@ -195,11 +198,11 @@ class InexactEdgeProblemAreas(ProblemArea):
         Server-defined ID for the body.
     grpc_client : GrpcClient
         Active supporting geometry service instance for design modeling.
-    edges : List[Edge]
+    edges : list[Edge]
         List of edges associated with the design.
     """
 
-    def __init__(self, id: str, grpc_client: GrpcClient, edges: List["Edge"]):
+    def __init__(self, id: str, grpc_client: GrpcClient, edges: list["Edge"]):
         """Initialize a new instance of the inexact edge problem area class."""
         super().__init__(id, grpc_client)
 
@@ -211,7 +214,7 @@ class InexactEdgeProblemAreas(ProblemArea):
         self._edges = edges
 
     @property
-    def edges(self) -> List["Edge"]:
+    def edges(self) -> list["Edge"]:
         """The list of the edges connected to this problem area."""
         return self._edges
 
@@ -248,11 +251,11 @@ class ExtraEdgeProblemAreas(ProblemArea):
         Server-defined ID for the body.
     grpc_client : GrpcClient
         Active supporting geometry service instance for design modeling.
-    edges : List[Edge]
+    edges : list[Edge]
         List of edges associated with the design.
     """
 
-    def __init__(self, id: str, grpc_client: GrpcClient, edges: List["Edge"]):
+    def __init__(self, id: str, grpc_client: GrpcClient, edges: list["Edge"]):
         """Initialize a new instance of the extra edge problem area class."""
         super().__init__(id, grpc_client)
 
@@ -264,13 +267,36 @@ class ExtraEdgeProblemAreas(ProblemArea):
         self._edges = edges
 
     @property
-    def edges(self) -> List["Edge"]:
+    def edges(self) -> list["Edge"]:
         """The list of the ids of the edges connected to this problem area."""
         return self._edges
 
+    def fix(self) -> RepairToolMessage:
+        """Fix the problem area.
 
-class SmallFaceProblemAreas(ProblemArea):
-    """Represents a small face problem area with unique identifier and associated faces.
+        Returns
+        -------
+        message: RepairToolMessage
+            Message containing created and/or modified bodies.
+        """
+        if not self.edges:
+            return RepairToolMessage(False, [], [])
+
+        parent_design = get_design_from_edge(self.edges[0])
+        request = FixExtraEdgesRequest(extra_edge_problem_area_id=self._id_grpc)
+        response = self._repair_stub.FixExtraEdges(request)
+        parent_design._update_design_inplace()
+        message = RepairToolMessage(
+            response.result.success,
+            response.result.created_bodies_monikers,
+            response.result.modified_bodies_monikers,
+        )
+
+        return message
+
+
+class ShortEdgeProblemAreas(ProblemArea):
+    """Represents a short edge problem area with a unique identifier and associated edges.
 
     Parameters
     ----------
@@ -278,11 +304,65 @@ class SmallFaceProblemAreas(ProblemArea):
         Server-defined ID for the body.
     grpc_client : GrpcClient
         Active supporting geometry service instance for design modeling.
-    faces : List[Face]
+    edges : list[Edge]
         List of edges associated with the design.
     """
 
-    def __init__(self, id: str, grpc_client: GrpcClient, faces: List["Face"]):
+    def __init__(self, id: str, grpc_client: GrpcClient, edges: list["Edge"]):
+        """Initialize a new instance of the ``ShortEdgeProblemAreas`` class."""
+        super().__init__(id, grpc_client)
+
+        from ansys.geometry.core.designer.edge import Edge
+
+        # Verify that all elements in the list are edges
+        check_type_all_elements_in_iterable(edges, Edge)
+
+        self._edges = edges
+
+    @property
+    def edges(self) -> list["Edge"]:
+        """The list of the ids of the edges connected to this problem area."""
+        return self._edges
+
+    def fix(self) -> RepairToolMessage:
+        """Fix the problem area.
+
+        Returns
+        -------
+        message: RepairToolMessage
+            Message containing created and/or modified bodies.
+        """
+        if not self.edges:
+            return RepairToolMessage(False, [], [])
+
+        parent_design = get_design_from_edge(self.edges[0])
+        response = self._repair_stub.FixShortEdges(
+            FixShortEdgesRequest(short_edge_problem_area_id=self._id_grpc)
+        )
+        parent_design._update_design_inplace()
+        message = RepairToolMessage(
+            response.result.success,
+            response.result.created_bodies_monikers,
+            response.result.modified_bodies_monikers,
+        )
+
+        return message
+
+
+class SmallFaceProblemAreas(ProblemArea):
+    """Represents a small face problem area with a unique identifier and associated faces.
+
+    Parameters
+    ----------
+    id : str
+        Server-defined ID for the body.
+    grpc_client : GrpcClient
+        Active supporting geometry service instance for design modeling.
+    faces : list[Face]
+        List of edges associated with the design.
+    """
+
+    def __init__(self, id: str, grpc_client: GrpcClient, faces: list["Face"]):
         """Initialize a new instance of the small face problem area class."""
         super().__init__(id, grpc_client)
 
@@ -294,7 +374,7 @@ class SmallFaceProblemAreas(ProblemArea):
         self._faces = faces
 
     @property
-    def faces(self) -> List["Face"]:
+    def faces(self) -> list["Face"]:
         """The list of the ids of the edges connected to this problem area."""
         return self._faces
 
@@ -331,11 +411,11 @@ class SplitEdgeProblemAreas(ProblemArea):
         Server-defined ID for the body.
     grpc_client : GrpcClient
         Active supporting geometry service instance for design modeling.
-    edges : List[Edge]
+    edges : list[Edge]
         List of edges associated with the design.
     """
 
-    def __init__(self, id: str, grpc_client: GrpcClient, edges: List["Edge"]):
+    def __init__(self, id: str, grpc_client: GrpcClient, edges: list["Edge"]):
         """Initialize a new instance of the split edge problem area class."""
         super().__init__(id, grpc_client)
 
@@ -347,7 +427,7 @@ class SplitEdgeProblemAreas(ProblemArea):
         self._edges = edges
 
     @property
-    def edges(self) -> List["Edge"]:
+    def edges(self) -> list["Edge"]:
         """The list of edges connected to this problem area."""
         return self._edges
 
@@ -384,11 +464,11 @@ class StitchFaceProblemAreas(ProblemArea):
         Server-defined ID for the body.
     grpc_client : GrpcClient
         Active supporting geometry service instance for design modeling.
-    bodies : List[Body]
+    bodies : list[Body]
         List of bodies associated with the design.
     """
 
-    def __init__(self, id: str, grpc_client: GrpcClient, bodies: List["Body"]):
+    def __init__(self, id: str, grpc_client: GrpcClient, bodies: list["Body"]):
         """Initialize a new instance of the stitch face problem area class."""
         super().__init__(id, grpc_client)
 
@@ -400,7 +480,7 @@ class StitchFaceProblemAreas(ProblemArea):
         self._bodies = bodies
 
     @property
-    def bodies(self) -> List["Body"]:
+    def bodies(self) -> list["Body"]:
         """The list of the bodies connected to this problem area."""
         return self._bodies
 

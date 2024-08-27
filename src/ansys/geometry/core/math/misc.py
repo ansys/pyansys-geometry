@@ -21,9 +21,7 @@
 # SOFTWARE.
 """Provides auxiliary math functions for PyAnsys Geometry."""
 
-
 from beartype import beartype as check_input_types
-from beartype.typing import Tuple, Union
 import numpy as np
 
 from ansys.geometry.core.typing import Real
@@ -32,7 +30,7 @@ from ansys.geometry.core.typing import Real
 @check_input_types
 def get_two_circle_intersections(
     x0: Real, y0: Real, r0: Real, x1: Real, y1: Real, r1: Real
-) -> Union[Tuple[Tuple[Real, Real], Tuple[Real, Real]], None]:
+) -> tuple[tuple[Real, Real], tuple[Real, Real]] | None:
     """Get the intersection points of two circles.
 
     Parameters
@@ -60,7 +58,7 @@ def get_two_circle_intersections(
 
     Returns
     -------
-    Union[Tuple[Tuple[Real, Real], Tuple[Real, Real]], None]
+    tuple[tuple[Real, Real], tuple[Real, Real]] | None
         Intersection points of the two circles if they intersect.
         The points are returned as ``((x3, y3), (x4, y4))``, where ``(x3, y3)`` and ``(x4, y4)``
         are the intersection points of the two circles. If the circles do not

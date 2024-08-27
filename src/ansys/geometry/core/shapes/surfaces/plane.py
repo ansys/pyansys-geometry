@@ -20,10 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides for creating and managing a cylinder."""
+
 from functools import cached_property
 
 from beartype import beartype as check_input_types
-from beartype.typing import Tuple, Union
 import numpy as np
 
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
@@ -47,19 +47,19 @@ class PlaneSurface(Surface):
 
     Parameters
     ----------
-    origin : Union[~numpy.ndarray, RealSequence, Point3D],
+    origin : ~numpy.ndarray | RealSequence | Point3D
         Centered origin of the plane.
-    reference : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+    reference : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D
         X-axis direction.
-    axis : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+    axis : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D
         X-axis direction.
     """
 
     def __init__(
         self,
-        origin: Union[np.ndarray, RealSequence, Point3D],
-        reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
-        axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
+        origin: np.ndarray | RealSequence | Point3D,
+        reference: np.ndarray | RealSequence | UnitVector3D | Vector3D = UNITVECTOR3D_X,
+        axis: np.ndarray | RealSequence | UnitVector3D | Vector3D = UNITVECTOR3D_Z,
     ):
         """Initialize an instance of a plane surface."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
@@ -108,7 +108,7 @@ class PlaneSurface(Surface):
         """Check whether a 3D point is in the domain of the plane."""
         raise NotImplementedError("contains_point() is not implemented.")
 
-    def parameterization(self) -> Tuple[Parameterization, Parameterization]:
+    def parameterization(self) -> tuple[Parameterization, Parameterization]:
         """Parametrize the plane."""
         u = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(-np.inf, np.inf))
         v = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(-np.inf, np.inf))

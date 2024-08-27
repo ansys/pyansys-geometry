@@ -25,8 +25,15 @@ from pathlib import Path
 
 import numpy as np
 
-from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Y, Plane, Point2D, Point3D
-from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
+from ansys.geometry.core.math import (
+    UNITVECTOR3D_X,
+    UNITVECTOR3D_Y,
+    UNITVECTOR3D_Z,
+    Plane,
+    Point2D,
+    Point3D,
+)
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
 
@@ -39,7 +46,8 @@ def test_issue_834_design_import_with_surfaces(modeler: Modeler):
     For more info see
     https://github.com/ansys/pyansys-geometry/issues/834
     """
-    # TODO: to be reactivated by https://github.com/ansys/pyansys-geometry/issues/799
+    # TODO: to be reactivated
+    # https://github.com/ansys/pyansys-geometry/issues/799
     skip_if_linux(modeler, test_issue_834_design_import_with_surfaces.__name__, "open_file")
 
     # Open the design
@@ -53,7 +61,6 @@ def test_issue_834_design_import_with_surfaces(modeler: Modeler):
     assert design.bodies[0].is_surface is False
     assert design.bodies[1].name == "DuplicatesSurface"
     assert design.bodies[1].is_surface is True
-
 
 
 def test_issue_1195_sketch_pyconus2024_voglster():
@@ -93,11 +100,12 @@ def test_issue_1184_sphere_creation_crashes(modeler: Modeler):
     box_plane.box(Point2D([0.0, 0.0]), width=1, height=1)
 
     box = design.extrude_sketch("Matrix", box_plane, 1)
-    sphere_body = design.create_sphere("particle", Point3D([0.0,0.0,0.0]), Distance(0.5))
+    sphere_body = design.create_sphere("particle", Point3D([0.0, 0.0, 0.0]), Distance(0.5))
 
     assert len(design.bodies) == 2
     assert design.bodies[0].name == box.name
     assert design.bodies[1].name == sphere_body.name
+
 
 def test_issue_1304_arc_sketch_creation():
     """Test that creating an arc sketch does not crash the program.
@@ -129,7 +137,6 @@ def test_issue_1304_arc_sketch_creation():
     finally:
         # Reverse the default units to meter
         DEFAULT_UNITS.LENGTH = UNITS.meter
-
 
 
 def test_issue_1192_temp_body_on_empty_intersect(modeler: Modeler):
@@ -175,3 +182,45 @@ def test_issue_1192_temp_body_on_empty_intersect(modeler: Modeler):
     assert read_design.bodies[0].name == "Matrix"
     assert read_design.bodies[1].name == "fibre"
     assert len(read_design.components) == 0
+
+
+def test_issue_1309_revolve_operation_with_coincident_origins(modeler: Modeler):
+    """Test that revolving a sketch with coincident origins (sketch and rotation origin)
+    does not crash the program.
+
+    For more info see
+    https://github.com/ansys/pyansys-geometry/issues/1309
+    """
+    # Sketch Plane
+    sketch_plane = Plane(
+        origin=Point3D([0, 0, 5]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z
+    )
+
+    # Create Base
+    sketch = Sketch(sketch_plane)
+
+    (
+        sketch.arc(
+            start=Point2D([0, 0]),
+            end=Point2D([4.7, 4.7]),
+            center=Point2D([0, 4.7]),
+            clockwise=False,
+        )
+        .segment_to_point(Point2D([4.7, 12]))
+        .segment_to_point(Point2D([-25.3, 12]))
+        .segment_to_point(Point2D([-25.3, 0]))
+        .segment_to_point(Point2D([0, 0]))
+    )
+
+    # Create Component (Revolve sketch)
+    design = modeler.create_design("cylinder")
+    component = design.add_component("cylinder_toroid")
+    revolved_body = component.revolve_sketch(
+        "toroid",
+        sketch=sketch,
+        axis=UNITVECTOR3D_X,
+        angle=Angle(360, UNITS.degrees),
+        rotation_origin=Point3D([-10.3, 0, 0]),
+    )
+
+    assert revolved_body.name == "toroid"

@@ -21,7 +21,8 @@
 # SOFTWARE.
 """Provides for creating and managing a face (closed 2D sketch)."""
 
-from beartype.typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
+
 from pint import Quantity
 import pyvista as pv
 
@@ -37,10 +38,11 @@ class SketchFace:
     def __init__(self):
         """Initialize the face."""
         # TODO: What about the circular faces? Circle, Ellipse are not making use of this...
+        # https://github.com/ansys/pyansys-geometry/issues/1319
         self._edges = []
 
     @property
-    def edges(self) -> List[SketchEdge]:
+    def edges(self) -> list[SketchEdge]:
         """List of all component edges forming the face."""
         return self._edges
 

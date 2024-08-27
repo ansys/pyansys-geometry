@@ -21,6 +21,8 @@
 # SOFTWARE.
 """Module providing for conversions."""
 
+from typing import TYPE_CHECKING
+
 from ansys.api.geometry.v0.models_pb2 import (
     Arc as GRPCArc,
     Circle as GRPCCircle,
@@ -38,8 +40,6 @@ from ansys.api.geometry.v0.models_pb2 import (
     Tessellation,
     TrimmedCurve as GRPCTrimmedCurve,
 )
-from beartype.typing import TYPE_CHECKING, List, Optional, Tuple
-
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.plane import Plane
@@ -131,9 +131,9 @@ def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
 
 def sketch_shapes_to_grpc_geometries(
     plane: Plane,
-    edges: List[SketchEdge],
-    faces: List[SketchFace],
-    only_one_curve: Optional[bool] = False,
+    edges: list[SketchEdge],
+    faces: list[SketchFace],
+    only_one_curve: bool = False,
 ) -> GRPCGeometries:
     """Convert lists of ``SketchEdge`` and ``SketchFace`` to a gRPC message.
 
@@ -141,9 +141,9 @@ def sketch_shapes_to_grpc_geometries(
     ----------
     plane : Plane
         Plane for positioning the 2D sketches.
-    edges : List[SketchEdge]
+    edges : list[SketchEdge]
         Source edge data.
-    faces : List[SketchFace]
+    faces : list[SketchFace]
         Source face data.
     only_one_curve : bool, default: False
         Whether to project one curve of the whole set of geometries to
@@ -191,21 +191,21 @@ def sketch_shapes_to_grpc_geometries(
 
 
 def sketch_edges_to_grpc_geometries(
-    edges: List[SketchEdge],
+    edges: list[SketchEdge],
     plane: Plane,
-) -> Tuple[List[GRPCLine], List[GRPCArc]]:
+) -> tuple[list[GRPCLine], list[GRPCArc]]:
     """Convert a list of ``SketchEdge`` to a gRPC message.
 
     Parameters
     ----------
-    edges : List[SketchEdge]
+    edges : list[SketchEdge]
         Source edge data.
     plane : Plane
         Plane for positioning the 2D sketches.
 
     Returns
     -------
-    Tuple[List[GRPCLine], List[GRPCArc]]
+    tuple[list[GRPCLine], list[GRPCArc]]
         Geometry service gRPC line and arc messages. The unit is meters.
     """
     arcs = []

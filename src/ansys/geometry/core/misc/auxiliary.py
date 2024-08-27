@@ -21,7 +21,7 @@
 # SOFTWARE.
 """Auxiliary functions for the PyAnsys Geometry library."""
 
-from beartype.typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -112,7 +112,35 @@ def get_design_from_edge(edge: "Edge") -> "Design":
     return get_design_from_body(body)
 
 
-def get_bodies_from_ids(design: "Design", body_ids: List[str]) -> List["Body"]:
+def __traverse_all_bodies(comp: Union["Design", "Component"]) -> list["Body"]:
+    """Traverse all bodies in a design and all its subcomponents.
+
+    This is a private method. Do not use it directly.
+
+    Notes
+    -----
+    This method is a recursive helper function to traverse all bodies in a
+    design and all its subcomponents.
+
+    Parameters
+    ----------
+    design : Design
+        Design object to traverse.
+
+    Returns
+    -------
+    list[Body]
+        List of all bodies in the design or component.
+    """
+    bodies = []
+    bodies.extend(comp.bodies)
+    for component in comp.components:
+        bodies.extend(__traverse_all_bodies(component))
+
+    return bodies
+
+
+def get_bodies_from_ids(design: "Design", body_ids: list[str]) -> list["Body"]:
     """Find the ``Body`` objects inside a ``Design`` from its ids.
 
     Notes
@@ -123,18 +151,18 @@ def get_bodies_from_ids(design: "Design", body_ids: List[str]) -> List["Body"]:
     ----------
     design : Design
         Parent design for the faces.
-    body_ids : List[str]
+    body_ids : list[str]
         List of body ids.
 
     Returns
     -------
-    List[Body]
+    list[Body]
         List of Body objects.
     """
-    return [body for body in design.bodies if body.id in body_ids]
+    return [body for body in __traverse_all_bodies(design) if body.id in body_ids]
 
 
-def get_faces_from_ids(design: "Design", face_ids: List[str]) -> List["Face"]:
+def get_faces_from_ids(design: "Design", face_ids: list[str]) -> list["Face"]:
     """Find the ``Face`` objects inside a ``Design`` from its ids.
 
     Notes
@@ -145,18 +173,20 @@ def get_faces_from_ids(design: "Design", face_ids: List[str]) -> List["Face"]:
     ----------
     design : Design
         Parent design for the faces.
-    face_ids : List[str]
+    face_ids : list[str]
         List of face ids.
 
     Returns
     -------
-    List[Face]
+    list[Face]
         List of Face objects.
     """
-    return [face for body in design.bodies for face in body.faces if face.id in face_ids]
+    return [
+        face for body in __traverse_all_bodies(design) for face in body.faces if face.id in face_ids
+    ]  # noqa: E501
 
 
-def get_edges_from_ids(design: "Design", edge_ids: List[str]) -> List["Edge"]:
+def get_edges_from_ids(design: "Design", edge_ids: list[str]) -> list["Edge"]:
     """Find the ``Edge`` objects inside a ``Design`` from its ids.
 
     Notes
@@ -167,12 +197,14 @@ def get_edges_from_ids(design: "Design", edge_ids: List[str]) -> List["Edge"]:
     ----------
     design : Design
         Parent design for the edges.
-    edge_ids : List[str]
+    edge_ids : list[str]
         List of edge ids.
 
     Returns
     -------
-    List[Edge]
+    list[Edge]
         List of Edge objects.
     """
-    return [edge for body in design.bodies for edge in body.edges if edge.id in edge_ids]
+    return [
+        edge for body in __traverse_all_bodies(design) for edge in body.edges if edge.id in edge_ids
+    ]  # noqa: E501

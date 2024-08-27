@@ -24,7 +24,6 @@
 from functools import cached_property
 
 from beartype import beartype as check_input_types
-from beartype.typing import Tuple, Union
 import numpy as np
 from pint import Quantity
 
@@ -50,23 +49,23 @@ class Sphere(Surface):
 
     Parameters
     ----------
-    origin : Union[~numpy.ndarray, RealSequence, Point3D]
+    origin : ~numpy.ndarray | RealSequence | Point3D
         Origin of the sphere.
-    radius : Union[Quantity, Distance, Real]
+    radius : ~pint.Quantity | Distance | Real
         Radius of the sphere.
-    reference : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+    reference : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D
         X-axis direction.
-    axis : Union[~numpy.ndarray, RealSequence, UnitVector3D, Vector3D]
+    axis : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D
         Z-axis direction.
     """
 
     @check_input_types
     def __init__(
         self,
-        origin: Union[np.ndarray, RealSequence, Point3D],
-        radius: Union[Quantity, Distance, Real],
-        reference: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_X,
-        axis: Union[np.ndarray, RealSequence, UnitVector3D, Vector3D] = UNITVECTOR3D_Z,
+        origin: np.ndarray | RealSequence | Point3D,
+        radius: Quantity | Distance | Real,
+        reference: np.ndarray | RealSequence | UnitVector3D | Vector3D = UNITVECTOR3D_X,
+        axis: np.ndarray | RealSequence | UnitVector3D | Vector3D = UNITVECTOR3D_Z,
     ):
         """Initialize the ``Sphere`` class."""
         self._origin = Point3D(origin) if not isinstance(origin, Point3D) else origin
@@ -199,7 +198,7 @@ class Sphere(Surface):
         v = np.arctan2(z, np.sqrt(x * x + y * y))
         return SphereEvaluation(self, ParamUV(u, v))
 
-    def parameterization(self) -> Tuple[Parameterization, Parameterization]:
+    def parameterization(self) -> tuple[Parameterization, Parameterization]:
         """Parameterization of the sphere surface as a tuple (U, V).
 
         The U parameter specifies the longitude angle, increasing clockwise (east) about
@@ -211,7 +210,7 @@ class Sphere(Surface):
 
         Returns
         -------
-        Tuple[Parameterization, Parameterization]
+        tuple[Parameterization, Parameterization]
             Information about how a sphere's u and v parameters are parameterized, respectively.
         """
         u = Parameterization(ParamForm.PERIODIC, ParamType.CIRCULAR, Interval(0, 2 * np.pi))

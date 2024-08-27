@@ -20,10 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Module for connecting to instances of the Geometry service."""
+
 import logging
 import os
-
-from beartype.typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
@@ -49,7 +49,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
 
 
-def launch_modeler(mode: str = None, **kwargs: Optional[Dict]) -> "Modeler":
+def launch_modeler(mode: str = None, **kwargs: dict | None) -> "Modeler":
     """Start the ``Modeler`` interface for PyAnsys Geometry.
 
     Parameters
@@ -95,7 +95,7 @@ def launch_modeler(mode: str = None, **kwargs: Optional[Dict]) -> "Modeler":
         return _launch_with_automatic_detection(**kwargs)
 
 
-def _launch_with_launchmode(mode: str, **kwargs: Optional[Dict]) -> "Modeler":
+def _launch_with_launchmode(mode: str, **kwargs: dict | None) -> "Modeler":
     """Start the ``Modeler`` interface for PyAnsys Geometry.
 
     Parameters
@@ -144,7 +144,7 @@ def _launch_with_launchmode(mode: str, **kwargs: Optional[Dict]) -> "Modeler":
         )
 
 
-def _launch_with_automatic_detection(**kwargs: Optional[Dict]) -> "Modeler":
+def _launch_with_automatic_detection(**kwargs: dict | None) -> "Modeler":
     """Start the ``Modeler`` interface based on automatic detection.
 
     Parameters
@@ -220,10 +220,10 @@ def _launch_with_automatic_detection(**kwargs: Optional[Dict]) -> "Modeler":
 
 
 def launch_remote_modeler(
-    version: Optional[str] = None,
-    client_log_level: Optional[int] = logging.INFO,
-    client_log_file: Optional[str] = None,
-    **kwargs: Optional[Dict],
+    version: str | None = None,
+    client_log_level: int = logging.INFO,
+    client_log_file: str | None = None,
+    **kwargs: dict | None,
 ) -> "Modeler":
     """Start the Geometry service remotely using the PIM API.
 
@@ -267,11 +267,11 @@ def launch_docker_modeler(
     port: int = DEFAULT_PORT,
     connect_to_existing_service: bool = True,
     restart_if_existing_service: bool = False,
-    name: Optional[str] = None,
-    image: Optional[GeometryContainers] = None,
-    client_log_level: Optional[int] = logging.INFO,
-    client_log_file: Optional[str] = None,
-    **kwargs: Optional[Dict],
+    name: str | None = None,
+    image: GeometryContainers | None = None,
+    client_log_level: int = logging.INFO,
+    client_log_file: str | None = None,
+    **kwargs: dict | None,
 ) -> "Modeler":
     """Start the Geometry service locally using Docker.
 
@@ -292,10 +292,10 @@ def launch_docker_modeler(
     restart_if_existing_service : bool, default: False
         Whether the Geometry service (which is already running)
         should be restarted when attempting connection.
-    name : Optional[str], default: None
+    name : str, default: None
         Name of the Docker container to deploy. The default is ``None``,
         in which case Docker assigns it a random name.
-    image : Optional[GeometryContainers], default: None
+    image : GeometryContainers, default: None
         The Geometry service Docker image to deploy. The default is ``None``,
         in which case the ``LocalDockerInstance`` class identifies the OS of your
         Docker engine and deploys the latest version of the Geometry service for
@@ -339,10 +339,10 @@ def launch_docker_modeler(
 
 
 def launch_modeler_with_discovery_and_pimlight(
-    version: Optional[str] = None,
-    client_log_level: Optional[int] = logging.INFO,
-    client_log_file: Optional[str] = None,
-    **kwargs: Optional[Dict],
+    version: str | None = None,
+    client_log_level: int = logging.INFO,
+    client_log_file: str | None = None,
+    **kwargs: dict | None,
 ) -> "Modeler":
     """Start Ansys Discovery remotely using the PIM API.
 
@@ -382,10 +382,10 @@ def launch_modeler_with_discovery_and_pimlight(
 
 
 def launch_modeler_with_geometry_service_and_pimlight(
-    version: Optional[str] = None,
-    client_log_level: Optional[int] = logging.INFO,
-    client_log_file: Optional[str] = None,
-    **kwargs: Optional[Dict],
+    version: str | None = None,
+    client_log_level: int = logging.INFO,
+    client_log_file: str | None = None,
+    **kwargs: dict | None,
 ) -> "Modeler":
     """Start the Geometry service remotely using the PIM API.
 
@@ -425,10 +425,10 @@ def launch_modeler_with_geometry_service_and_pimlight(
 
 
 def launch_modeler_with_spaceclaim_and_pimlight(
-    version: Optional[str] = None,
-    client_log_level: Optional[int] = logging.INFO,
-    client_log_file: Optional[str] = None,
-    **kwargs: Optional[Dict],
+    version: str | None = None,
+    client_log_level: int = logging.INFO,
+    client_log_file: str | None = None,
+    **kwargs: dict | None,
 ) -> "Modeler":
     """Start Ansys SpaceClaim remotely using the PIM API.
 
@@ -481,7 +481,7 @@ def launch_modeler_with_geometry_service(
     client_log_file: str = None,
     log_level: int = None,  # DEPRECATED
     logs_folder: str = None,  # DEPRECATED
-    **kwargs: Optional[Dict],
+    **kwargs: dict | None,
 ) -> "Modeler":
     """Start the Geometry service locally using the ``ProductInstance`` class.
 
@@ -609,7 +609,7 @@ def launch_modeler_with_discovery(
     client_log_file: str = None,
     log_level: int = None,  # DEPRECATED
     logs_folder: str = None,  # DEPRECATED
-    **kwargs: Optional[Dict],
+    **kwargs: dict | None,
 ):
     """Start Ansys Discovery locally using the ``ProductInstance`` class.
 
@@ -742,7 +742,7 @@ def launch_modeler_with_spaceclaim(
     client_log_file: str = None,
     log_level: int = None,  # DEPRECATED
     logs_folder: str = None,  # DEPRECATED
-    **kwargs: Optional[Dict],
+    **kwargs: dict | None,
 ):
     """Start Ansys SpaceClaim locally using the ``ProductInstance`` class.
 
@@ -859,10 +859,10 @@ def launch_modeler_with_spaceclaim(
 def _launch_pim_instance(
     is_pim_light: bool,
     product_name: str,
-    product_version: Optional[str] = None,
-    backend_type: Optional[BackendType] = None,
+    product_version: str | None = None,
+    backend_type: BackendType | None = None,
     client_log_level: int = logging.INFO,
-    client_log_file: Optional[str] = None,
+    client_log_file: str | None = None,
 ):
     """
     Start `PyPIM <https://github.com/ansys/pypim>`_ using the PIM API.

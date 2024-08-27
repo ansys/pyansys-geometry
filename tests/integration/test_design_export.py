@@ -150,6 +150,7 @@ def test_export_to_parasolid_text(modeler: Modeler, tmp_path_factory: pytest.Tem
     assert file_location.exists()
 
     # TODO: Check the exported file content
+    # https://github.com/ansys/pyansys-geometry/issues/1146
 
 
 def test_export_to_parasolid_binary(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
@@ -172,6 +173,7 @@ def test_export_to_parasolid_binary(modeler: Modeler, tmp_path_factory: pytest.T
     assert file_location.exists()
 
     # TODO: Check the exported file content
+    # https://github.com/ansys/pyansys-geometry/issues/1146
 
 
 def test_export_to_step(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
@@ -213,6 +215,7 @@ def test_export_to_iges(modeler: Modeler, tmp_path_factory: pytest.TempPathFacto
     assert file_location.exists()
 
     # TODO: Check the exported file content
+    # https://github.com/ansys/pyansys-geometry/issues/1146
 
 
 def test_export_to_fmd(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
@@ -231,6 +234,7 @@ def test_export_to_fmd(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     assert file_location.exists()
 
     # TODO: Check the exported file content
+    # https://github.com/ansys/pyansys-geometry/issues/1146
 
 
 def test_export_to_pmdb(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
@@ -249,3 +253,4 @@ def test_export_to_pmdb(modeler: Modeler, tmp_path_factory: pytest.TempPathFacto
     assert file_location.exists()
 
     # TODO: Check the exported file content
+    # https://github.com/ansys/pyansys-geometry/issues/1146

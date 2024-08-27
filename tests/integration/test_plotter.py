@@ -365,9 +365,22 @@ def test_plot_trapezoid(verify_image_cache):
     sketch = Sketch()
 
     # Create a trapezoid and plot
-    sketch.trapezoid(10, 8, np.pi / 4, np.pi / 8, Point2D([10, -10]), tag="Trapezoid")
+    sketch.trapezoid(10, 2, np.pi / 4, np.pi / 8, Point2D([10, -10]), tag="Trapezoid")
     sketch.select("Trapezoid")
     sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_trapezoid.png"))
+
+
+def test_plot_trapezoid_symmetric(verify_image_cache):
+    """Test plotting of a trapezoid which is symmetric."""
+    # Create a sketch instance
+    sketch = Sketch()
+
+    # Create a trapezoid and plot
+    sketch.trapezoid(10, 2, np.pi / 4, tag="Trapezoid-symmetric")
+    sketch.select("Trapezoid-symmetric")
+    sketch.plot_selection(
+        view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_trapezoid_sym.png")
+    )
 
 
 @skip_no_xserver
@@ -601,14 +614,14 @@ def test_visualization_polydata():
     assert triangle.visualization_polydata.n_open_edges == 3
 
     # Test for trapezoid visualization polydata
-    trapezoid = Trapezoid(10, 8, np.pi / 4, np.pi / 8, Point2D([10, -10]))
+    trapezoid = Trapezoid(10, 2, np.pi / 4, np.pi / 8, Point2D([10, -10]))
     assert trapezoid.visualization_polydata.center == pytest.approx(
-        ([5.34314575050762, -10.0, 0.0]),
+        ([10.0, -10.0, 0.0]),
         rel=1e-6,
         abs=1e-8,
     )
     assert trapezoid.visualization_polydata.bounds == pytest.approx(
-        [-4.313708498984759, 15.0, -14.0, -6.0, 0.0, 0.0],
+        [5.0, 15.0, -11.0, -9.0, 0.0, 0.0],
         rel=1e-6,
         abs=1e-8,
     )

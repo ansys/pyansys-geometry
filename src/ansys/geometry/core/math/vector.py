@@ -20,10 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides for creating and managing 2D and 3D vectors."""
+
 from io import UnsupportedOperation
+from typing import Union
 
 from beartype import beartype as check_input_types
-from beartype.typing import Union
 import numpy as np
 from pint import Quantity
 
@@ -40,11 +41,11 @@ class Vector3D(np.ndarray):
 
     Parameters
     ----------
-    input : Union[~numpy.ndarray, RealSequence]
+    input : ~numpy.ndarray | RealSequence
         3D :class:`numpy.ndarray <numpy.ndarray>` class with shape(X,).
     """
 
-    def __new__(cls, input: Union[np.ndarray, RealSequence]):
+    def __new__(cls, input: np.ndarray | RealSequence):
         """Initialize the ``Vector3D`` class."""
         obj = np.asarray(input).view(cls)
 
@@ -235,17 +236,17 @@ class Vector3D(np.ndarray):
     @check_input_types
     def from_points(
         cls,
-        point_a: Union[np.ndarray, RealSequence, Point3D],
-        point_b: Union[np.ndarray, RealSequence, Point3D],
+        point_a: np.ndarray | RealSequence | Point3D,
+        point_b: np.ndarray | RealSequence | Point3D,
     ):
         """Create a 3D vector from two distinct 3D points.
 
         Parameters
         ----------
-        point_a : Point3D
+        point_a : ~numpy.ndarray | RealSequence | Point3D
             :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
             class representing the first point.
-        point_b : Point3D
+        point_b : ~numpy.ndarray | RealSequence | Point3D
             :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
             class representing the second point.
 
@@ -267,11 +268,11 @@ class Vector2D(np.ndarray):
 
     Parameters
     ----------
-    input : Union[~numpy.ndarray, RealSequence]
+    input : ~numpy.ndarray | RealSequence
         2D :class:`numpy.ndarray <numpy.ndarray>` class with shape(X,).
     """
 
-    def __new__(cls, input: Union[np.ndarray, RealSequence]):
+    def __new__(cls, input: np.ndarray | RealSequence):
         """Initialize the ``Vector2D`` class."""
         obj = np.asarray(input).view(cls)
 
@@ -422,17 +423,17 @@ class Vector2D(np.ndarray):
     @check_input_types
     def from_points(
         cls,
-        point_a: Union[np.ndarray, RealSequence, Point2D],
-        point_b: Union[np.ndarray, RealSequence, Point2D],
+        point_a: np.ndarray | RealSequence | Point2D,
+        point_b: np.ndarray | RealSequence | Point2D,
     ):
         """Create a 2D vector from two distinct 2D points.
 
         Parameters
         ----------
-        point_a : Point2D
+        point_a : ~numpy.ndarray | RealSequence | Point2D
             :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
             class representing the first point.
-        point_b : Point2D
+        point_b : ~numpy.ndarray | RealSequence | Point2D
             :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
             class representing the second point.
 
@@ -454,12 +455,12 @@ class UnitVector3D(Vector3D):
 
     Parameters
     ----------
-    input : ~numpy.ndarray, ``Vector3D``
+    input : ~numpy.ndarray | RealSequence | Vector3D
         * 1D :class:`numpy.ndarray <numpy.ndarray>` class with shape(X,)
         * Vector3D
     """
 
-    def __new__(cls, input: Union[np.ndarray, RealSequence, Vector3D]):
+    def __new__(cls, input: np.ndarray | RealSequence | Vector3D):
         """Initialize the ``UnitVector3D`` class."""
         obj = Vector3D(input) if not isinstance(input, Vector3D) else input
         obj = obj.normalize().view(cls)
@@ -481,17 +482,17 @@ class UnitVector3D(Vector3D):
     @classmethod
     def from_points(
         cls,
-        point_a: Union[np.ndarray, RealSequence, Point3D],
-        point_b: Union[np.ndarray, RealSequence, Point3D],
+        point_a: np.ndarray | RealSequence | Point3D,
+        point_b: np.ndarray | RealSequence | Point3D,
     ):
         """Create a 3D unit vector from two distinct 3D points.
 
         Parameters
         ----------
-        point_a : Point3D
+        point_a : ~numpy.ndarray | RealSequence | Point3D
             :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
             class representing the first point.
-        point_b : Point3D
+        point_b : ~numpy.ndarray | RealSequence | Point3D
             :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
             class representing the second point.
 
@@ -508,12 +509,12 @@ class UnitVector2D(Vector2D):
 
     Parameters
     ----------
-    input : ~numpy.ndarray, ``Vector2D``
+    input : ~numpy.ndarray | RealSequence | Vector2D
         * 1D :class:`numpy.ndarray <numpy.ndarray>` class with shape(X,)
         * Vector2D
     """
 
-    def __new__(cls, input: Union[np.ndarray, RealSequence, Vector2D]):
+    def __new__(cls, input: np.ndarray | RealSequence | Vector2D):
         """Initialize the ``UnitVector2D`` class."""
         obj = Vector2D(input) if not isinstance(input, Vector2D) else input
         obj = obj.normalize().view(cls)
@@ -531,17 +532,17 @@ class UnitVector2D(Vector2D):
     @classmethod
     def from_points(
         cls,
-        point_a: Union[np.ndarray, RealSequence, Point2D],
-        point_b: Union[np.ndarray, RealSequence, Point2D],
+        point_a: np.ndarray | RealSequence | Point2D,
+        point_b: np.ndarray | RealSequence | Point2D,
     ):
         """Create a 2D unit vector from two distinct 2D points.
 
         Parameters
         ----------
-        point_a : Point2D
+        point_a : ~numpy.ndarray | RealSequence | Point2D
             :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
             class representing the first point.
-        point_b : Point2D
+        point_b : ~numpy.ndarray | RealSequence | Point2D
             :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
             class representing the second point.
 

@@ -20,7 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Module providing fundamental data of an assembly."""
-from beartype.typing import TYPE_CHECKING, List
+
+from typing import TYPE_CHECKING
 
 from ansys.geometry.core.designer.body import MasterBody
 from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
@@ -42,20 +43,20 @@ class Part:
         Unique identifier for the part.
     name : str
         Name of the part.
-    components : List[MasterComponent]
-        List of ``MasterComponent`` children that the part contains.
-    bodies : List[MasterBody]
-        List of ``MasterBody`` children that the part contains. These are master bodies.
+    components : list[MasterComponent]
+        list of ``MasterComponent`` children that the part contains.
+    bodies : list[MasterBody]
+        list of ``MasterBody`` children that the part contains. These are master bodies.
     """
 
     def __init__(
-        self, id: str, name: str, components: List["MasterComponent"], bodies: List[MasterBody]
+        self, id: str, name: str, components: list["MasterComponent"], bodies: list[MasterBody]
     ) -> None:
         """Initialize the ``Part`` class."""
         self._id: str = id
         self._name: str = name
-        self._components: List["MasterComponent"] = components
-        self._bodies: List[MasterBody] = bodies
+        self._components: list["MasterComponent"] = components
+        self._bodies: list[MasterBody] = bodies
 
     @property
     def id(self) -> str:
@@ -68,16 +69,16 @@ class Part:
         return self._name
 
     @property
-    def components(self) -> List["MasterComponent"]:
+    def components(self) -> list["MasterComponent"]:
         """``MasterComponent`` children that the part contains."""
         return self._components
 
     @components.setter
-    def components(self, components: List["MasterComponent"]) -> None:
+    def components(self, components: list["MasterComponent"]) -> None:
         self._components = components
 
     @property
-    def bodies(self) -> List[MasterBody]:
+    def bodies(self) -> list[MasterBody]:
         """``MasterBody`` children that the part contains.
 
         These are master bodies.
@@ -85,7 +86,7 @@ class Part:
         return self._bodies
 
     @bodies.setter
-    def bodies(self, bodies: List["MasterBody"]) -> None:
+    def bodies(self, bodies: list["MasterBody"]) -> None:
         self._bodies = bodies
 
     def __repr__(self) -> str:
@@ -127,7 +128,7 @@ class MasterComponent:
         self._part: Part = part
         part.components.append(self)
         self._transform: Matrix44 = transform
-        self._occurrences: List["Component"] = []
+        self._occurrences: list["Component"] = []
 
     @property
     def id(self) -> str:
@@ -140,7 +141,7 @@ class MasterComponent:
         return self._name
 
     @property
-    def occurrences(self) -> List["Component"]:
+    def occurrences(self) -> list["Component"]:
         """List of all occurrences of the component."""
         return self._occurrences
 

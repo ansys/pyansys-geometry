@@ -20,14 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides plotting for various PyAnsys Geometry objects."""
-from ansys.tools.visualization_interface import (
-    Color,
-    EdgePlot,
-    MeshObjectPlot,
-    Plotter as PlotterInterface,
-)
-from ansys.tools.visualization_interface.backends.pyvista import PyVistaBackend
-from beartype.typing import Any, Dict, List, Optional, Union
+
+from typing import Any
+
 import numpy as np
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
@@ -41,6 +36,13 @@ from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
 from ansys.geometry.core.sketch.sketch import Sketch
+from ansys.tools.visualization_interface import (
+    Color,
+    EdgePlot,
+    MeshObjectPlot,
+    Plotter as PlotterInterface,
+)
+from ansys.tools.visualization_interface.backends.pyvista import PyVistaBackend
 
 
 class GeometryPlotter(PlotterInterface):
@@ -50,9 +52,9 @@ class GeometryPlotter(PlotterInterface):
 
     Parameters
     ----------
-    use_trame : Union[bool, None], optional
+    use_trame : bool, optional
         Whether to use trame visualizer or not, by default None.
-    allow_picking : Union[bool, None], optional
+    allow_picking : bool, optional
         Whether to allow picking or not, by default False.
     show_plane : bool, optional
         Whether to show the plane in the scene, by default True.
@@ -60,8 +62,8 @@ class GeometryPlotter(PlotterInterface):
 
     def __init__(
         self,
-        use_trame: Union[bool, None] = None,
-        allow_picking: Union[bool, None] = False,
+        use_trame: bool | None = None,
+        allow_picking: bool | None = False,
         show_plane: bool = True,
     ) -> None:
         """Initialize the GeometryPlotter class."""
@@ -73,7 +75,7 @@ class GeometryPlotter(PlotterInterface):
         self._backend.add_widget(ShowDesignPoints(self))
         self._backend._pl._show_plane = show_plane
 
-    def add_frame(self, frame: Frame, plotting_options: Optional[Dict] = None) -> None:
+    def add_frame(self, frame: Frame, plotting_options: dict | None = None) -> None:
         """Plot a frame in the scene.
 
         Parameters
@@ -81,7 +83,7 @@ class GeometryPlotter(PlotterInterface):
         frame : Frame
             Frame to render in the scene.
         plotting_options : dict, default: None
-            Dictionary containing parameters accepted by the
+            dictionary containing parameters accepted by the
             :func:`pyvista.create_axes_marker` class for customizing
             the frame rendering in the scene.
         """
@@ -105,8 +107,8 @@ class GeometryPlotter(PlotterInterface):
     def add_plane(
         self,
         plane: Plane,
-        plane_options: Optional[Dict] = None,
-        plotting_options: Optional[Dict] = None,
+        plane_options: dict | None = None,
+        plotting_options: dict | None = None,
     ) -> None:
         """Plot a plane in the scene.
 
@@ -115,11 +117,11 @@ class GeometryPlotter(PlotterInterface):
         plane : Plane
             Plane to render in the scene.
         plane_options : dict, default: None
-            Dictionary containing parameters accepted by the
+            dictionary containing parameters accepted by the
             :func:`pyvista.Plane  <pyvista.Plane>` function for customizing the mesh
             representing the plane.
         plotting_options : dict, default: None
-            Dictionary containing parameters accepted by the
+            dictionary containing parameters accepted by the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method for
             customizing the mesh rendering of the plane.
         """
@@ -142,7 +144,7 @@ class GeometryPlotter(PlotterInterface):
         sketch: Sketch,
         show_plane: bool = False,
         show_frame: bool = False,
-        **plotting_options: Optional[Dict],
+        **plotting_options: dict | None,
     ) -> None:
         """Plot a sketch in the scene.
 
@@ -175,7 +177,7 @@ class GeometryPlotter(PlotterInterface):
         )
         self.add_sketch_polydata(sketch.sketch_polydata_edges(), sketch, **plotting_options)
 
-    def add_body_edges(self, body_plot: MeshObjectPlot, **plotting_options: Optional[dict]) -> None:
+    def add_body_edges(self, body_plot: MeshObjectPlot, **plotting_options: dict | None) -> None:
         """Add the outer edges of a body to the plot.
 
         This method has the side effect of adding the edges to the GeomObject that
@@ -200,9 +202,7 @@ class GeometryPlotter(PlotterInterface):
             edge_plot_list.append(edge_plot)
         body_plot.edges = edge_plot_list
 
-    def add_body(
-        self, body: Body, merge: Optional[bool] = False, **plotting_options: Optional[Dict]
-    ) -> None:
+    def add_body(self, body: Body, merge: bool = False, **plotting_options: dict | None) -> None:
         """Add a body to the scene.
 
         Parameters
@@ -256,13 +256,13 @@ class GeometryPlotter(PlotterInterface):
         self.plot(component_polydata, **plotting_options)
 
     def add_sketch_polydata(
-        self, polydata_entries: List[pv.PolyData], sketch: Sketch = None, **plotting_options
+        self, polydata_entries: list[pv.PolyData], sketch: Sketch = None, **plotting_options
     ) -> None:
         """Add sketches to the scene from PyVista polydata.
 
         Parameters
         ----------
-        polydata_entries : List[pyvista.PolyData]
+        polydata_entries : list[pyvista.PolyData]
             Polydata to add.
         sketch : Sketch, default: None
             Sketch to add.
@@ -296,19 +296,19 @@ class GeometryPlotter(PlotterInterface):
 
     def plot_iter(
         self,
-        plotting_list: List[Any],
+        plotting_list: list[Any],
         name_filter: str = None,
         **plotting_options,
     ) -> None:
         """Add a list of any type of object to the scene.
 
-        These types of objects are supported: ``Body``, ``Component``, ``List[pv.PolyData]``,
+        These types of objects are supported: ``Body``, ``Component``, ``list[pv.PolyData]``,
         ``pv.MultiBlock``, and ``Sketch``.
 
         Parameters
         ----------
-        plotting_list : List[Any]
-            List of objects you want to plot.
+        plotting_list : list[Any]
+            list of objects you want to plot.
         name_filter : str, default: None
             Regular expression with the desired name or names you want to include in the plotter.
         **plotting_options : dict, default: None
@@ -354,12 +354,12 @@ class GeometryPlotter(PlotterInterface):
         elif isinstance(plottable_object, Design) or isinstance(object, Component):
             self.add_component(plottable_object, merge_components, merge_bodies, **plotting_options)
         elif (
-            isinstance(plottable_object, List)
+            isinstance(plottable_object, list)
             and plottable_object != []
             and isinstance(plottable_object[0], pv.PolyData)
         ):
             self.add_sketch_polydata(plottable_object, **plotting_options)
-        elif isinstance(plottable_object, List):
+        elif isinstance(plottable_object, list):
             self.plot_iter(plottable_object, name_filter, **plotting_options)
         elif isinstance(plottable_object, MeshObjectPlot):
             self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
@@ -370,8 +370,8 @@ class GeometryPlotter(PlotterInterface):
 
     def show(
         self,
-        plotting_object: Optional[Any] = None,
-        screenshot: Optional[str] = None,
+        plotting_object: Any = None,
+        screenshot: str | None = None,
         **plotting_options,
     ) -> None:
         """Show the plotter.

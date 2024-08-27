@@ -20,9 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides functions for performing common checks."""
+
+from collections.abc import Iterable
+from typing import TYPE_CHECKING
 import warnings
 
-from beartype.typing import TYPE_CHECKING, Any, Iterable, Optional, Tuple, Union
 import numpy as np
 from pint import Unit
 import semver
@@ -83,7 +85,7 @@ def ensure_design_is_active(method):
     return wrapper
 
 
-def check_is_float_int(param: object, param_name: Optional[Union[str, None]] = None) -> None:
+def check_is_float_int(param: object, param_name: str | None = None) -> None:
     """Check if a parameter has a float or integer value.
 
     Parameters
@@ -106,9 +108,7 @@ def check_is_float_int(param: object, param_name: Optional[Union[str, None]] = N
         )
 
 
-def check_ndarray_is_float_int(
-    param: np.ndarray, param_name: Optional[Union[str, None]] = None
-) -> None:
+def check_ndarray_is_float_int(param: np.ndarray, param_name: str | None = None) -> None:
     """Check if a :class:`numpy.ndarray <numpy.ndarray>` has float/integer types.
 
     Parameters
@@ -136,9 +136,7 @@ def check_ndarray_is_float_int(
         )
 
 
-def check_ndarray_is_not_none(
-    param: np.ndarray, param_name: Optional[Union[str, None]] = None
-) -> None:
+def check_ndarray_is_not_none(param: np.ndarray, param_name: str | None = None) -> None:
     """Check if a :class:`numpy.ndarray <numpy.ndarray>` is all ``None``.
 
     Parameters
@@ -163,9 +161,7 @@ def check_ndarray_is_not_none(
         )
 
 
-def check_ndarray_is_all_nan(
-    param: np.ndarray, param_name: Optional[Union[str, None]] = None
-) -> None:
+def check_ndarray_is_all_nan(param: np.ndarray, param_name: str | None = None) -> None:
     """Check if a :class:`numpy.ndarray <numpy.ndarray>` is all nan-valued.
 
     Parameters
@@ -188,9 +184,7 @@ def check_ndarray_is_all_nan(
         )
 
 
-def check_ndarray_is_non_zero(
-    param: np.ndarray, param_name: Optional[Union[str, None]] = None
-) -> None:
+def check_ndarray_is_non_zero(param: np.ndarray, param_name: str | None = None) -> None:
     """Check if a :class:`numpy.ndarray <numpy.ndarray>` is zero-valued.
 
     Parameters
@@ -256,14 +250,14 @@ def check_type_equivalence(input: object, expected: object) -> None:
         )
 
 
-def check_type(input: object, expected_type: Union[type, Tuple[type, Any]]) -> None:
+def check_type(input: object, expected_type: type | tuple[type, ...]) -> None:
     """Check if an input object is of the same type as expected types.
 
     Parameters
     ----------
     input : object
         Input object.
-    expected_type : Union[type, Tuple[type, ...]]
+    expected_type : type | tuple[type, ...]
         One or more types to compare the input object against.
 
     Raises
@@ -278,7 +272,7 @@ def check_type(input: object, expected_type: Union[type, Tuple[type, Any]]) -> N
 
 
 def check_type_all_elements_in_iterable(
-    input: Iterable, expected_type: Union[type, Tuple[type, Any]]
+    input: Iterable, expected_type: type | tuple[type, ...]
 ) -> None:
     """Check if all elements in an iterable are of the same type as expected.
 
@@ -286,7 +280,7 @@ def check_type_all_elements_in_iterable(
     ----------
     input : Iterable
         Input iterable.
-    expected_type : Union[type, Tuple[type, ...]]
+    expected_type : type | tuple[type, ...]
         One or more types to compare the input object against.
 
     Raises
@@ -333,7 +327,6 @@ def min_backend_version(major: int, minor: int, service_pack: int):
                     comp = method_version.compare(self._grpc_client.backend_version)
                     # if comp is 1, method version is higher than backend version.
                     if comp == 1:
-
                         # Check if the version is "0.0.0" (i.e., the version is not available)
                         if str(self._grpc_client.backend_version) == "0.0.0":
                             raise GeometryRuntimeError(
@@ -356,7 +349,7 @@ def min_backend_version(major: int, minor: int, service_pack: int):
     return backend_version_decorator
 
 
-def deprecated_method(alternative: Optional[str] = None, info: Optional[str] = None):
+def deprecated_method(alternative: str | None = None, info: str | None = None):
     """Decorate a method as deprecated.
 
     Parameters
@@ -369,7 +362,6 @@ def deprecated_method(alternative: Optional[str] = None, info: Optional[str] = N
     """
 
     def deprecated_decorator(method):
-
         def wrapper(*args, **kwargs):
             msg = f"The method '{method.__name__}' is deprecated."
             if alternative:
@@ -384,7 +376,7 @@ def deprecated_method(alternative: Optional[str] = None, info: Optional[str] = N
     return deprecated_decorator
 
 
-def deprecated_argument(arg: str, alternative: Optional[str] = None, info: Optional[str] = None):
+def deprecated_argument(arg: str, alternative: str | None = None, info: str | None = None):
     """Decorate a method argument as deprecated.
 
     Parameters
@@ -399,7 +391,6 @@ def deprecated_argument(arg: str, alternative: Optional[str] = None, info: Optio
     """
 
     def deprecated_decorator(method):
-
         def wrapper(*args, **kwargs):
             if arg in kwargs and kwargs[arg] is not None:
                 msg = f"The argument '{arg}' in '{method.__name__}' is deprecated."

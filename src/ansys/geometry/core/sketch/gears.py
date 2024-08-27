@@ -22,7 +22,6 @@
 """Module for creating and managing gears."""
 
 from beartype import beartype as check_input_types
-from beartype.typing import List, Tuple, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
@@ -65,9 +64,9 @@ class DummyGear(Gear):
     ----------
     origin : Point2D
         Origin of the gear.
-    outer_radius : Union[Quantity, Distance, Real]
+    outer_radius : ~pint.Quantity | Distance | Real
         Outer radius of the gear.
-    inner_radius : Union[Quantity, Distance, Real]
+    inner_radius : ~pint.Quantity | Distance | Real
         Inner radius of the gear.
     n_teeth : int
         Number of teeth of the gear.
@@ -77,8 +76,8 @@ class DummyGear(Gear):
     def __init__(
         self,
         origin: Point2D,
-        outer_radius: Union[Quantity, Distance, Real],
-        inner_radius: Union[Quantity, Distance, Real],
+        outer_radius: Quantity | Distance | Real,
+        inner_radius: Quantity | Distance | Real,
         n_teeth: int,
     ):
         """Initialize the ``DummyGear`` class."""
@@ -139,6 +138,7 @@ class DummyGear(Gear):
 
             # Now, proceed to draw the arcs and segments
             # TODO: add plane to SketchSegment when available
+            # https://github.com/ansys/pyansys-geometry/issues/1319
             self._edges.append(
                 Arc(start=outer_arc_start + origin, end=outer_arc_end + origin, center=origin)
             )
@@ -163,7 +163,7 @@ class SpurGear(Gear):
     module : Real
         Module of the spur gear. This is also the ratio between the pitch circle
         diameter in millimeters and the number of teeth.
-    pressure_angle : Union[Quantity, Angle, Real]
+    pressure_angle : ~pint.Quantity | Angle | Real
         Pressure angle of the spur gear.
     n_teeth : int
         Number of teeth of the spur gear.
@@ -174,7 +174,7 @@ class SpurGear(Gear):
         self,
         origin: Point2D,
         module: Real,
-        pressure_angle: Union[Quantity, Angle, Real],
+        pressure_angle: Quantity | Angle | Real,
         n_teeth: int,
     ):
         """Initialize spur gears."""
@@ -200,7 +200,7 @@ class SpurGear(Gear):
         self._tip_diameter = self.ref_diameter + 2 * self.module
         self._root_diameter = self.ref_diameter - 2.5 * self.module
 
-        # TODO: To be properly implemented (sketching)...
+        # Sketch the gear
         self._sketch_spur_gear()
 
     @property
@@ -296,12 +296,12 @@ class SpurGear(Gear):
 
     def _sketch_single_tooth_spur_gear(
         self,
-    ) -> Tuple[List[Real], List[Real], List[Real], List[Real]]:
+    ) -> tuple[list[Real], list[Real], list[Real], list[Real]]:
         """Sketch a single tooth using this private method.
 
         Returns
         -------
-        Tuple[List[Real], List[Real], List[Real], List[Real]]
+        tuple[list[Real], list[Real], list[Real], list[Real]]
             X and Y values for the tooth grouped together as follows: (x_i, x_m, y_i, y_m)
         """
         # Compute the involute with the smallest of both
@@ -329,7 +329,7 @@ class SpurGear(Gear):
 
     def _involute(
         self, radius: Real, max_radius: Real, max_theta: Real, steps: int = 30
-    ) -> Tuple[List[Real], List[Real]]:
+    ) -> tuple[list[Real], list[Real]]:
         """Generate the involute points discretization of a curve.
 
         Parameters
@@ -345,7 +345,7 @@ class SpurGear(Gear):
 
         Returns
         -------
-        Tuple[List[Real], List[Real], List[Real]]
+        tuple[list[Real], list[Real], list[Real]]
             Three-element tuple containing a list of X, Y, and theta values
             defining the involute.
         """
@@ -384,22 +384,22 @@ class SpurGear(Gear):
         return (x_p, y_p, t_p)
 
     def _align_involute(
-        self, x_p: List[Real], y_p: List[Real], t_p: List[Real]
-    ) -> Tuple[List[Real], List[Real]]:
+        self, x_p: list[Real], y_p: list[Real], t_p: list[Real]
+    ) -> tuple[list[Real], list[Real]]:
         """Align the discretized values of the involute curve.
 
         Parameters
         ----------
-        x_p : List[Real]
+        x_p : list[Real]
             X-elements defining the involute curve to align.
-        y_p : List[Real]
+        y_p : list[Real]
             Y-elements defining the involute curve to align.
-        t_p : List[Real]
+        t_p : list[Real]
             Angles defining the involute curve to align.
 
         Returns
         -------
-        Tuple[List[Real], List[Real]]
+        tuple[list[Real], list[Real]]
             Set of X and Y elements that have been aligned.
 
         Raises
@@ -429,22 +429,22 @@ class SpurGear(Gear):
         return self._rotate_curve(-theta_cross, x_p, y_p)
 
     def _rotate_curve(
-        self, angle: Real, x_p: List[Real], y_p: List[Real]
-    ) -> Tuple[List[Real], List[Real]]:
+        self, angle: Real, x_p: list[Real], y_p: list[Real]
+    ) -> tuple[list[Real], list[Real]]:
         """Rotate X,Y elements defining a curve by a given angle.
 
         Parameters
         ----------
         angle : Real
             Angle (in radians) to rotate the X,Y elements.
-        x_p : List[Real]
+        x_p : list[Real]
             X-elements of the curve to rotate.
-        y_p : List[Real]
+        y_p : list[Real]
             Y-elements of the curve to rotate.
 
         Returns
         -------
-        Tuple[List[Real], List[Real]]
+        tuple[list[Real], list[Real]]
             The X and Y elements of the rotated curve.
         """
         # Compute the sin and cos values of the angle
@@ -461,22 +461,22 @@ class SpurGear(Gear):
         return (x_r, y_r)
 
     def _generate_arcs(
-        self, x_p: List[Real], y_p: List[Real], closing_involute: bool = False
-    ) -> List[Arc]:
+        self, x_p: list[Real], y_p: list[Real], closing_involute: bool = False
+    ) -> list[Arc]:
         """Generate the arcs of involute curves when sketching spur gears.
 
         Parameters
         ----------
-        x_p : List[Real]
+        x_p : list[Real]
             X-elements defining the involute curve.
-        y_p : List[Real]
+        y_p : list[Real]
             Y-elements defining the involute curve.
         closing_involute : bool, optional
             Shortcut for joining involute curves, by default False.
 
         Returns
         -------
-        List[Arc]
+        list[Arc]
             The list of arcs defining the requested curve.
         """
         # Initialize results container

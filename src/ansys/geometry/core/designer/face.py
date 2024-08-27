@@ -22,6 +22,9 @@
 """Module for managing a face."""
 
 from enum import Enum, unique
+from typing import TYPE_CHECKING
+
+from pint import Quantity
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
@@ -32,9 +35,6 @@ from ansys.api.geometry.v0.faces_pb2 import (
 )
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
-from beartype.typing import TYPE_CHECKING, List
-from pint import Quantity
-
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import grpc_curve_to_curve, grpc_surface_to_surface
 from ansys.geometry.core.designer.edge import Edge
@@ -99,7 +99,7 @@ class FaceLoop:
         Minimum point of the bounding box containing the loop.
     max_bbox : Point3D
         Maximum point of the bounding box containing the loop.
-    edges : List[Edge]
+    edges : list[Edge]
         Edges contained in the loop.
     """
 
@@ -109,7 +109,7 @@ class FaceLoop:
         length: Quantity,
         min_bbox: Point3D,
         max_bbox: Point3D,
-        edges: List[Edge],
+        edges: list[Edge],
     ):
         """Initialize ``FaceLoop`` class."""
         self._type = type
@@ -139,7 +139,7 @@ class FaceLoop:
         return self._max_bbox
 
     @property
-    def edges(self) -> List[Edge]:
+    def edges(self) -> list[Edge]:
         """Edges contained in the loop."""
         return self._edges
 
@@ -243,7 +243,7 @@ class Face:
     @property
     @protect_grpc
     @ensure_design_is_active
-    def edges(self) -> List[Edge]:
+    def edges(self) -> list[Edge]:
         """List of all edges of the face."""
         self._grpc_client.log.debug("Requesting face edges from server.")
         edges_response = self._faces_stub.GetEdges(self._grpc_id)
@@ -252,7 +252,7 @@ class Face:
     @property
     @protect_grpc
     @ensure_design_is_active
-    def loops(self) -> List[FaceLoop]:
+    def loops(self) -> list[FaceLoop]:
         """List of all loops of the face."""
         self._grpc_client.log.debug("Requesting face loops from server.")
         grpc_loops = self._faces_stub.GetLoops(EntityIdentifier(id=self.id)).loops
@@ -404,17 +404,17 @@ class Face:
         """
         return self.point(u, v)
 
-    def __grpc_edges_to_edges(self, edges_grpc: List[GRPCEdge]) -> List[Edge]:
+    def __grpc_edges_to_edges(self, edges_grpc: list[GRPCEdge]) -> list[Edge]:
         """Transform a list of gRPC edge messages into actual ``Edge`` objects.
 
         Parameters
         ----------
-        edges_grpc : List[GRPCEdge]
-            List of gRPC messages of type ``Edge``.
+        edges_grpc : list[GRPCEdge]
+            list of gRPC messages of type ``Edge``.
 
         Returns
         -------
-        List[Edge]
+        list[Edge]
             ``Edge`` objects to obtain from gRPC messages.
         """
         from ansys.geometry.core.designer.edge import CurveType, Edge
@@ -436,7 +436,7 @@ class Face:
     @ensure_design_is_active
     def create_isoparametric_curves(
         self, use_u_param: bool, parameter: float
-    ) -> List[TrimmedCurve]:
+    ) -> list[TrimmedCurve]:
         """Create isoparametic curves at the given proportional parameter.
 
         Typically, only one curve is created, but if the face has a hole, it is possible that
@@ -452,8 +452,8 @@ class Face:
 
         Returns
         -------
-        List[TrimmedCurve]
-            List of curves that were created.
+        list[TrimmedCurve]
+            list of curves that were created.
         """
         curves = self._faces_stub.CreateIsoParamCurves(
             CreateIsoParamCurvesRequest(id=self.id, u_dir_curve=use_u_param, proportion=parameter)

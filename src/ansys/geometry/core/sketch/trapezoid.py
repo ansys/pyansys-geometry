@@ -22,12 +22,12 @@
 """Provides for creating and managing a trapezoid."""
 
 from beartype import beartype as check_input_types
-from beartype.typing import Optional, Union
 import numpy as np
 from pint import Quantity
 import pyvista as pv
 from scipy.spatial.transform import Rotation as SpatialRotation
 
+from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.constants import ZERO_POINT2D
 from ansys.geometry.core.math.matrix import Matrix33
 from ansys.geometry.core.math.point import Point2D
@@ -43,45 +43,57 @@ class Trapezoid(SketchFace):
 
     Parameters
     ----------
-    width : Union[Quantity, Distance, Real]
-        Width of the trapezoid.
-    height : Union[Quantity, Distance, Real]
-        Height of the trapezoid.
-    slant_angle : Union[Quantity, Angle, Real]
-        Angle for trapezoid generation.
-    nonsymmetrical_slant_angle : Union[Quantity, Angle, Real], default: None
-        Asymmetrical slant angles on each side of the trapezoid.
-        The default is ``None``, in which case the trapezoid is symmetrical.
+    base_width : ~pint.Quantity | Distance | Real
+        Width of the lower base of the trapezoid.
+    height : ~pint.Quantity | Distance | Real
+        Height of the slot.
+    base_angle : ~pint.Quantity | Distance | Real
+        Angle for trapezoid generation. Represents the angle
+        on the base of the trapezoid.
+    base_asymmetric_angle : ~pint.Quantity | Angle | Real | None, default: None
+        Asymmetrical angles on each side of the trapezoid.
+        The default is ``None``, in which case the trapezoid is symmetrical. If
+        provided, the trapezoid is asymmetrical and the right corner angle
+        at the base of the trapezoid is set to the provided value.
     center: Point2D, default: ZERO_POINT2D
         Center point of the trapezoid.
-    angle : Union[Quantity, Angle, Real], default: 0
+    angle : ~pint.Quantity | Angle | Real, default: 0
         Placement angle for orientation alignment.
 
     Notes
     -----
-    If a nonsymmetrical slant angle is defined, the slant angle is
-    applied to the left-most angle, and the nonsymmetrical slant angle
+    If an asymmetric base angle is defined, the base angle is
+    applied to the left-most angle, and the asymmetric base angle
     is applied to the right-most angle.
     """
 
     @check_input_types
     def __init__(
         self,
-        width: Union[Quantity, Distance, Real],
-        height: Union[Quantity, Distance, Real],
-        slant_angle: Union[Quantity, Angle, Real],
-        nonsymmetrical_slant_angle: Optional[Union[Quantity, Angle, Real]] = None,
-        center: Optional[Point2D] = ZERO_POINT2D,
-        angle: Optional[Union[Quantity, Angle, Real]] = 0,
+        base_width: Quantity | Distance | Real,
+        height: Quantity | Distance | Real,
+        base_angle: Quantity | Angle | Real,
+        base_asymmetric_angle: Quantity | Angle | Real | None = None,
+        center: Point2D = ZERO_POINT2D,
+        angle: Quantity | Angle | Real = 0,
     ):
         """Initialize the trapezoid."""
         super().__init__()
 
+        # TODO: Remove this warning in the next major release (v0.8.0)
+        # https://github.com/ansys/pyansys-geometry/issues/1359
+        LOG.warning(
+            "The signature of the Trapezoid class has changed starting on "
+            "version 0.7.X. Please refer to the documentation for more information."
+        )
+
         self._center = center
-        self._width = width if isinstance(width, Distance) else Distance(width, center.unit)
-        if self._width.value <= 0:
-            raise ValueError("Width must be a real positive value.")
-        width_magnitude = self._width.value.m_as(center.unit)
+        self._base_width = (
+            base_width if isinstance(base_width, Distance) else Distance(base_width, center.unit)
+        )
+        if self._base_width.value <= 0:
+            raise ValueError("Base width must be a real positive value.")
+        width_magnitude = self._base_width.value.m_as(center.unit)
 
         self._height = height if isinstance(height, Distance) else Distance(height, center.unit)
         if self._height.value <= 0:
@@ -92,21 +104,42 @@ class Trapezoid(SketchFace):
             angle = Angle(angle, DEFAULT_UNITS.ANGLE)
         angle = angle if isinstance(angle, Angle) else Angle(angle, angle.units)
 
-        if isinstance(slant_angle, (int, float)):
-            slant_angle = Angle(slant_angle, DEFAULT_UNITS.ANGLE)
-        slant_angle = (
-            slant_angle if isinstance(slant_angle, Angle) else Angle(slant_angle, slant_angle.units)
+        if isinstance(base_angle, (int, float)):
+            base_angle = Angle(base_angle, DEFAULT_UNITS.ANGLE)
+        base_angle = (
+            base_angle if isinstance(base_angle, Angle) else Angle(base_angle, base_angle.units)
         )
 
-        if nonsymmetrical_slant_angle is None:
-            nonsymmetrical_slant_angle = slant_angle
+        if base_asymmetric_angle is None:
+            base_asymmetric_angle = base_angle
         else:
-            if isinstance(nonsymmetrical_slant_angle, (int, float)):
-                nonsymmetrical_slant_angle = Angle(nonsymmetrical_slant_angle, DEFAULT_UNITS.ANGLE)
-            nonsymmetrical_slant_angle = (
-                nonsymmetrical_slant_angle
-                if isinstance(nonsymmetrical_slant_angle, Angle)
-                else Angle(nonsymmetrical_slant_angle, nonsymmetrical_slant_angle.units)
+            if isinstance(base_asymmetric_angle, (int, float)):
+                base_asymmetric_angle = Angle(base_asymmetric_angle, DEFAULT_UNITS.ANGLE)
+            base_asymmetric_angle = (
+                base_asymmetric_angle
+                if isinstance(base_asymmetric_angle, Angle)
+                else Angle(base_asymmetric_angle, base_asymmetric_angle.units)
+            )
+
+        # SANITY CHECK: Ensure that the angles are valid (i.e. between 0 and 180 degrees)
+        for trapz_angle in [base_angle, base_asymmetric_angle]:
+            if (
+                trapz_angle.value.m_as(UNITS.radian) < 0
+                or trapz_angle.value.m_as(UNITS.radian) > np.pi
+            ):
+                raise ValueError("The trapezoid angles must be between 0 and 180 degrees.")
+
+        # Check that the sum of both angles is larger than 90 degrees
+        base_offset_right = height_magnitude / np.tan(
+            base_asymmetric_angle.value.m_as(UNITS.radian)
+        )
+        base_offset_left = height_magnitude / np.tan(base_angle.value.m_as(UNITS.radian))
+
+        # SANITY CHECK: Ensure that the trapezoid is not degenerate
+        if base_offset_right + base_offset_left >= width_magnitude:
+            raise ValueError(
+                "The trapezoid is degenerate. "
+                "The provided angles, width and height do not form a valid trapezoid."
             )
 
         rotation = Matrix33(
@@ -120,14 +153,12 @@ class Trapezoid(SketchFace):
         rotated_point_1 = rotation @ [center.x.m - half_w, center.y.m - half_h, 0]
         rotated_point_2 = rotation @ [center.x.m + half_w, center.y.m - half_h, 0]
         rotated_point_3 = rotation @ [
-            center.x.m - half_w + height_magnitude / np.tan(slant_angle.value.m_as(UNITS.radian)),
+            center.x.m + half_w - base_offset_right,
             center.y.m + half_h,
             0,
         ]
         rotated_point_4 = rotation @ [
-            center.x.m
-            + half_w
-            - height_magnitude / np.tan(nonsymmetrical_slant_angle.value.m_as(UNITS.radian)),
+            center.x.m - half_w + base_offset_left,
             center.y.m + half_h,
             0,
         ]
@@ -138,6 +169,7 @@ class Trapezoid(SketchFace):
         self._point4 = Point2D([rotated_point_4[0], rotated_point_4[1]], center.unit)
 
         # TODO: add plane to SketchSegment when available
+        # https://github.com/ansys/pyansys-geometry/issues/1319
         self._segment1 = SketchSegment(self._point1, self._point2)
         self._segment2 = SketchSegment(self._point2, self._point3)
         self._segment3 = SketchSegment(self._point3, self._point4)
@@ -154,9 +186,9 @@ class Trapezoid(SketchFace):
         return self._center
 
     @property
-    def width(self) -> Quantity:
+    def base_width(self) -> Quantity:
         """Width of the trapezoid."""
-        return self._width.value
+        return self._base_width.value
 
     @property
     def height(self) -> Quantity:

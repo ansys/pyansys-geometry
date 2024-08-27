@@ -21,8 +21,9 @@
 # SOFTWARE.
 """Provides the data structure for material and material properties."""
 
+from collections.abc import Sequence
+
 from beartype import beartype as check_input_types
-from beartype.typing import Dict, Optional, Sequence
 from pint import Quantity
 
 from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
@@ -46,7 +47,7 @@ class Material:
         self,
         name: str,
         density: Quantity,
-        additional_properties: Optional[Sequence[MaterialProperty]] = None,
+        additional_properties: Sequence[MaterialProperty] | None = None,
     ):
         """Initialize the ``Material`` class."""
         self._name = name
@@ -61,7 +62,7 @@ class Material:
             self._properties[property.type] = property
 
     @property
-    def properties(self) -> Dict[MaterialPropertyType, MaterialProperty]:
+    def properties(self) -> dict[MaterialPropertyType, MaterialProperty]:
         """Dictionary of the material property type and material properties."""
         return self._properties
 

@@ -20,11 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Trimmed curve class."""
-from ansys.api.geometry.v0.commands_pb2 import IntersectCurvesRequest
-from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from beartype.typing import List
+
 from pint import Quantity
 
+from ansys.api.geometry.v0.commands_pb2 import IntersectCurvesRequest
+from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import trimmed_curve_to_grpc_trimmed_curve
 from ansys.geometry.core.errors import protect_grpc
@@ -121,7 +121,7 @@ class TrimmedCurve:
         bounds = self.interval
         return self.geometry.evaluate(bounds.start + bounds.get_span() * param)
 
-    def intersect_curve(self, other: "TrimmedCurve") -> List[Point3D]:
+    def intersect_curve(self, other: "TrimmedCurve") -> list[Point3D]:
         """Get the intersect points of this trimmed curve with another one.
 
         If the two trimmed curves do not intersect, an empty list is returned.
@@ -133,7 +133,7 @@ class TrimmedCurve:
 
         Returns
         -------
-        List[Point3D]
+        list[Point3D]
             All points of intersection between the curves.
         """
         if self._grpc_client is None:

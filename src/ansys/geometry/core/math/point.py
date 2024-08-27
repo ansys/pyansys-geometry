@@ -21,8 +21,9 @@
 # SOFTWARE.
 """Provides geometry primitive representation for 2D and 3D points."""
 
+from typing import TYPE_CHECKING, Union
+
 from beartype import beartype as check_input_types
-from beartype.typing import TYPE_CHECKING, Optional, Union
 import numpy as np
 from pint import Quantity, Unit
 
@@ -50,17 +51,18 @@ class Point2D(np.ndarray, PhysicalQuantity):
 
     Parameters
     ----------
-    input : Union[~numpy.ndarray, RealSequence], default: DEFAULT_POINT2D_VALUES
+    input : ~numpy.ndarray | RealSequence, default: DEFAULT_POINT2D_VALUES
         Direction arguments, either as a :class:`numpy.ndarray <numpy.ndarray>` class
         or as a ``RealSequence``.
-    unit : ~pint.Unit, default: DEFAULT_UNITS.LENGTH
-        Units for defining 2D point values.
+    unit : ~pint.Unit | None, default: DEFAULT_UNITS.LENGTH
+        Units for defining 2D point values. If not specified, the default unit is
+        ``DEFAULT_UNITS.LENGTH``.
     """
 
     def __new__(
         cls,
-        input: Optional[Union[np.ndarray, RealSequence]] = DEFAULT_POINT2D_VALUES,
-        unit: Optional[Unit] = None,
+        input: np.ndarray | RealSequence = DEFAULT_POINT2D_VALUES,
+        unit: Unit | None = None,
     ):
         """Initialize the ``Point2D`` class."""
         # Build an empty np.ndarray object
@@ -68,8 +70,8 @@ class Point2D(np.ndarray, PhysicalQuantity):
 
     def __init__(
         self,
-        input: Union[np.ndarray, RealSequence] = DEFAULT_POINT2D_VALUES,
-        unit: Optional[Unit] = None,
+        input: np.ndarray | RealSequence = DEFAULT_POINT2D_VALUES,
+        unit: Unit | None = None,
     ):
         """Initialize the ``Point2D`` class."""
         # Call the PhysicalQuantity ctor
@@ -176,17 +178,18 @@ class Point3D(np.ndarray, PhysicalQuantity):
 
     Parameters
     ----------
-    input : Union[~numpy.ndarray, RealSequence], default: DEFAULT_POINT3D_VALUES
+    input : ~numpy.ndarray | RealSequence, default: DEFAULT_POINT3D_VALUES
         Direction arguments, either as a :class:`numpy.ndarray <numpy.ndarray>` class
         or as a ``RealSequence``.
-    unit : ~pint.Unit, default: DEFAULT_UNITS.LENGTH
-        Units for defining 3D point values.
+    unit : ~pint.Unit | None, default: DEFAULT_UNITS.LENGTH
+        Units for defining 3D point values. If not specified, the default unit is
+        ``DEFAULT_UNITS.LENGTH``.
     """
 
     def __new__(
         cls,
-        input: Optional[Union[np.ndarray, RealSequence]] = DEFAULT_POINT3D_VALUES,
-        unit: Optional[Unit] = None,
+        input: np.ndarray | RealSequence = DEFAULT_POINT3D_VALUES,
+        unit: Unit | None = None,
     ):
         """Initialize ``Point3D`` class."""
         # Build an empty np.ndarray object
@@ -194,8 +197,8 @@ class Point3D(np.ndarray, PhysicalQuantity):
 
     def __init__(
         self,
-        input: Union[np.ndarray, RealSequence] = DEFAULT_POINT3D_VALUES,
-        unit: Optional[Unit] = None,
+        input: np.ndarray | RealSequence = DEFAULT_POINT3D_VALUES,
+        unit: Unit | None = None,
     ):
         """Initialize ``Point3D`` class."""
         # Call the PhysicalQuantity ctor

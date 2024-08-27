@@ -23,6 +23,7 @@
 
 import os
 
+import matplotlib.colors as mcolors
 import numpy as np
 from pint import Quantity
 import pytest
@@ -38,7 +39,7 @@ from ansys.geometry.core.designer import (
     SharedTopologyType,
     SurfaceType,
 )
-from ansys.geometry.core.designer.body import CollisionType
+from ansys.geometry.core.designer.body import CollisionType, FillStyle
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.errors import GeometryExitedError
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
@@ -128,8 +129,8 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
     # Assign a material to a Body
     body.assign_material(material)
 
-    # TODO: Not possible to save to file from a container (CI/CD)
-    #       Use download approach when available.
+    # Not possible to save to file from a container (CI/CD)
+    # Use download approach when available.
     #
     # design.save(r"C:\temp\shared_volume\MyFile2.scdocx")
 
@@ -406,10 +407,10 @@ def test_faces_edges(modeler: Modeler):
     loops = faces[0].loops
     assert len(loops) == 1
     assert loops[0].type == FaceLoopType.OUTER_LOOP
-    assert loops[0].length is not None  # TODO : To be tested properly at some point
-    assert loops[0].min_bbox is not None  # TODO : To be tested properly at some point
-    assert loops[0].max_bbox is not None  # TODO : To be tested properly at some point
-    assert len(loops[0].edges) == 5  # TODO : To be tested properly at some point
+    assert loops[0].length is not None
+    assert loops[0].min_bbox is not None
+    assert loops[0].max_bbox is not None
+    assert len(loops[0].edges) == 5
 
     # Now, from one of the lids (i.e. 0 - bottom) get all edges
     edges = faces[0].edges
@@ -1295,7 +1296,8 @@ def test_midsurface_properties(modeler: Modeler):
     assert slot_body.surface_offset is None
 
     # Let's try reassigning values directly to slot_surf - this should work
-    # TODO : at the moment the server does not allow to reassign - put in try/catch block
+    # TODO :  at the moment the server does not allow to reassign - put in try/catch block
+    # https://github.com/ansys/pyansys-geometry/issues/1146
     try:
         slot_surf.add_midsurface_thickness(Quantity(30, UNITS.mm))
         slot_surf.add_midsurface_offset(MidSurfaceOffsetType.BOTTOM)
@@ -1805,6 +1807,7 @@ def test_multiple_bodies_boolean_operations(modeler: Modeler):
     assert len(comp1.bodies) == 1
     assert len(comp3.bodies) == 1
 
+
 def test_bool_operations_with_keep_other(modeler: Modeler):
     """Test boolean operations with keep other option."""
     # Create the design and bodies
@@ -1843,6 +1846,7 @@ def test_bool_operations_with_keep_other(modeler: Modeler):
     assert len(comp1.bodies) == 1
     assert len(comp2.bodies) == 1
     assert len(comp3.bodies) == 1
+
 
 def test_child_component_instances(modeler: Modeler):
     """Test creation of child ``Component`` instances and check the data model
@@ -1960,6 +1964,95 @@ def test_get_collision(modeler: Modeler):
 
     assert body1.get_collision(body2) == CollisionType.TOUCH
     assert body2.get_collision(body3) == CollisionType.NONE
+
+
+def test_set_body_name(modeler: Modeler):
+    """Test the setting the name of a body."""
+    skip_if_linux(modeler, test_set_body_name.__name__, "set_name")  # Skip test on Linux
+
+    design = modeler.create_design("simple_cube")
+    unit = DEFAULT_UNITS.LENGTH
+    plane = Plane(
+        Point3D([1 / 2, 1 / 2, 0.0], unit=unit),
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
+    )
+    box_plane = Sketch(plane)
+    box_plane.box(Point2D([0.0, 0.0]), width=1 * unit, height=1 * unit)
+    box = design.extrude_sketch("first_name", box_plane, 1 * unit)
+    assert box.name == "first_name"
+    box.set_name("updated_name")
+    assert box.name == "updated_name"
+    box.name = "updated_name2"
+    assert box.name == "updated_name2"
+
+
+def test_set_fill_style(modeler: Modeler):
+    """Test the setting the fill style of a body."""
+    skip_if_linux(modeler, test_set_fill_style.__name__, "set_fill_style")  # Skip test on Linux
+
+    design = modeler.create_design("RVE")
+    unit = DEFAULT_UNITS.LENGTH
+
+    plane = Plane(
+        Point3D([1 / 2, 1 / 2, 0.0], unit=unit),
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
+    )
+
+    box_plane = Sketch(plane)
+    box_plane.box(Point2D([0.0, 0.0]), width=1 * unit, height=1 * unit)
+    box = design.extrude_sketch("Matrix", box_plane, 1 * unit)
+
+    assert box.fill_style == FillStyle.DEFAULT
+    box.set_fill_style(FillStyle.TRANSPARENT)
+    assert box.fill_style == FillStyle.TRANSPARENT
+    box.fill_style = FillStyle.OPAQUE
+    assert box.fill_style == FillStyle.OPAQUE
+
+
+def test_set_body_color(modeler: Modeler):
+    """Test the getting and setting of body color."""
+    skip_if_linux(modeler, test_set_body_color.__name__, "set_color")  # Skip test on Linux
+
+    design = modeler.create_design("RVE2")
+    unit = DEFAULT_UNITS.LENGTH
+
+    plane = Plane(
+        Point3D([1 / 2, 1 / 2, 0.0], unit=unit),
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
+    )
+    box_plane = Sketch(plane)
+    box_plane.box(Point2D([0.0, 0.0]), width=1 * unit, height=1 * unit)
+    box = design.extrude_sketch("Block", box_plane, 1 * unit)
+
+    # Default body color is if it is not set on server side.
+    assert box.color == "#000000"
+
+    # Set the color of the body using hex code.
+    box.color = "#0000ff"
+    assert box.color == "#0000ff"
+
+    box.color = "#ffc000"
+    assert box.color == "#ffc000"
+
+    # Set the color of the body using color name.
+    box.set_color("green")
+    box.color == "#008000"
+
+    # Set the color of the body using RGB values between (0,1) as floats.
+    box.set_color((1.0, 0.0, 0.0))
+    box.color == "#ff0000"
+
+    # Set the color of the body using RGB values between (0,255) as integers).
+    box.set_color((0, 255, 0))
+    box.color == "#00ff00"
+
+    # Assigning color object directly
+    blue_color = mcolors.to_rgba("#0000FF")
+    box.color = blue_color
+    assert box.color == "#0000ff"
 
 
 def test_body_scale(modeler: Modeler):
@@ -2342,10 +2435,43 @@ def test_revolve_sketch(modeler: Modeler):
     assert np.isclose(body.volume.m, np.pi**2 * 2 * 5, rtol=1e-3)  # quarter of a torus volume
 
 
-def test_revolve_sketch_fail(modeler: Modeler):
-    """Test demonstrating the failure of revolving a sketch when it is located
-    in the same origin.
+def test_revolve_sketch_coincident_origins(modeler: Modeler):
+    """Test demonstrating revolving a sketch when it is located
+    in the same origin does not fail.
     """
+    # Initialize a sphere sketch design given a semicircle profile
+    design = modeler.create_design("revolve-coincident-origins")
+
+    # Create an XZ plane centered at (0, 0, 0)
+    plane_profile = Plane(
+        origin=Point3D([0, 0, 0]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z
+    )
+    profile = Sketch(plane=plane_profile)
+    (
+        profile.segment_to_point(Point2D([1, 0]))
+        .arc_to_point(Point2D([-1, 0]), Point2D([0, 0]))
+        .segment_to_point(Point2D([0, 0]))
+    )
+
+    # Try revolving the profile... coincident origins is not a problem anymore
+    body = design.revolve_sketch(
+        "cross-section-sphere",
+        sketch=profile,
+        axis=UNITVECTOR3D_X,
+        angle=Angle(90, unit=UNITS.degrees),
+        rotation_origin=Point3D([0, 0, 0]),
+    )
+
+    assert body.is_surface is False
+    assert body.name == "cross-section-sphere"
+    assert np.isclose(
+        body.volume.m, np.pi / 3, rtol=1e-3
+    )  # quarter of a sphere volume (4/3 * pi * r^3) / 4
+    # 1/3 * pi * r^3 --> r = 1 --> 1/3 * pi
+
+
+def test_revolve_sketch_fail_invalid_path(modeler: Modeler):
+    """Test demonstrating the failure of revolving a sketch when an invalid path is provided."""
     # Initialize the donut sketch design
     design = modeler.create_design("revolve-fail")
 
@@ -2354,13 +2480,14 @@ def test_revolve_sketch_fail(modeler: Modeler):
         origin=Point3D([0, 0, 0]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Z
     )
     profile = Sketch(plane=plane_profile)
+    profile.circle(Point2D([0, 0]), 1)
 
     # Try revolving the profile...
     with pytest.raises(
-        ValueError, match="The sketch plane origin is coincident with the rotation origin."
+        GeometryExitedError, match="The path is invalid, or it is unsuitable for the profile."
     ):
         design.revolve_sketch(
-            "donut-body",
+            "cross-section-sphere",
             sketch=profile,
             axis=UNITVECTOR3D_Z,
             angle=Angle(90, unit=UNITS.degrees),

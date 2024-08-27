@@ -20,11 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Test the PyPIM integration."""
+
 import os
 from unittest.mock import create_autospec
 
-import ansys.platform.instancemanagement as pypim
-import ansys.tools.path.path as atpp
 from grpc import insecure_channel
 import pytest
 
@@ -32,6 +31,8 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.launcher import launch_modeler
+import ansys.platform.instancemanagement as pypim
+import ansys.tools.path.path as atpp
 
 
 def test_launch_remote_instance(monkeypatch, modeler: Modeler):

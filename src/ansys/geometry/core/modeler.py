@@ -20,8 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides for interacting with the Geometry service."""
+
 import logging
 from pathlib import Path
+from typing import TYPE_CHECKING, Optional
+
+from grpc import Channel
 
 from ansys.api.dbu.v0.dbuapplication_pb2 import RunScriptFileRequest
 from ansys.api.dbu.v0.dbuapplication_pb2_grpc import DbuApplicationStub
@@ -29,9 +33,6 @@ from ansys.api.dbu.v0.designs_pb2 import OpenRequest
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from beartype.typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
-from grpc import Channel
-
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
@@ -40,15 +41,15 @@ from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.checks import check_type, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
+from ansys.geometry.core.tools.prepare_tools import PrepareTools
 from ansys.geometry.core.tools.repair_tools import RepairTools
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
-    from ansys.platform.instancemanagement import Instance
-
     from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
     from ansys.geometry.core.connection.product_instance import ProductInstance
     from ansys.geometry.core.designer.design import Design
+    from ansys.platform.instancemanagement import Instance
 
 
 class Modeler:
@@ -91,15 +92,15 @@ class Modeler:
     def __init__(
         self,
         host: str = DEFAULT_HOST,
-        port: Union[str, int] = DEFAULT_PORT,
-        channel: Optional[Channel] = None,
+        port: str | int = DEFAULT_PORT,
+        channel: Channel | None = None,
         remote_instance: Optional["Instance"] = None,
         docker_instance: Optional["LocalDockerInstance"] = None,
         product_instance: Optional["ProductInstance"] = None,
-        timeout: Optional[Real] = 120,
-        logging_level: Optional[int] = logging.INFO,
-        logging_file: Optional[Union[Path, str]] = None,
-        backend_type: Optional[BackendType] = None,
+        timeout: Real = 120,
+        logging_level: int = logging.INFO,
+        logging_file: Path | str | None = None,
+        backend_type: BackendType | None = None,
     ):
         """Initialize the ``Modeler`` class."""
         self._grpc_client = GrpcClient(
@@ -117,16 +118,19 @@ class Modeler:
 
         # Initialize the RepairTools - Not available on Linux
         # TODO: delete "if" when Linux service is able to use repair tools
+        # https://github.com/ansys/pyansys-geometry/issues/1319
         if self.client.backend_type == BackendType.LINUX_SERVICE:
             self._repair_tools = None
+            self._prepare_tools = None
             self._measurement_tools = None
-            LOG.warning("Linux backend does not support repair tools.")
+            LOG.warning("Linux backend does not support repair or prepare tools.")
         else:
             self._repair_tools = RepairTools(self._grpc_client)
+            self._prepare_tools = PrepareTools(self._grpc_client)
             self._measurement_tools = MeasurementTools(self._grpc_client)
 
         # Maintaining references to all designs within the modeler workspace
-        self._designs: Dict[str, "Design"] = {}
+        self._designs: dict[str, "Design"] = {}
 
         # Check if the backend allows for multiple designs and throw warning if needed
         if not self.client.multiple_designs_allowed:
@@ -183,7 +187,6 @@ class Modeler:
         """
         for _, design in self._designs.items():
             if design._is_active:
-
                 # Check if sync_with_backend is requested
                 if sync_with_backend:
                     design._update_design_inplace()
@@ -330,8 +333,8 @@ class Modeler:
 
     @protect_grpc
     def run_discovery_script_file(
-        self, file_path: str, script_args: Optional[Dict[str, str]] = None, import_design=False
-    ) -> Tuple[Dict[str, str], Optional["Design"]]:
+        self, file_path: str, script_args: dict[str, str] | None = None, import_design=False
+    ) -> tuple[dict[str, str], Optional["Design"]]:
         """Run a Discovery script file.
 
         .. note::
@@ -363,7 +366,7 @@ class Modeler:
         ----------
         file_path : str
             Path of the file. The extension of the file must be included.
-        script_args : Optional[Dict[str, str]], optional.
+        script_args : dict[str, str], optional.
             Arguments to pass to the script. By default, ``None``.
         import_design : bool, optional.
             Whether to refresh the current design from the service. When the script
@@ -409,6 +412,11 @@ class Modeler:
     def repair_tools(self) -> RepairTools:
         """Access to repair tools."""
         return self._repair_tools
+
+    @property
+    def prepare_tools(self) -> PrepareTools:
+        """Access to prepare tools."""
+        return self._prepare_tools
 
     @property
     @min_backend_version(24, 2, 0)

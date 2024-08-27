@@ -20,9 +20,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides for managing a body."""
+
 from abc import ABC, abstractmethod
+from collections.abc import Iterable
 from enum import Enum, unique
 from functools import wraps
+from typing import TYPE_CHECKING, Union
+
+from beartype import beartype as check_input_types
+import matplotlib.colors as mcolors
+from pint import Quantity
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
@@ -34,6 +41,9 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     RotateRequest,
     ScaleRequest,
     SetAssignedMaterialRequest,
+    SetColorRequest,
+    SetFillStyleRequest,
+    SetNameRequest,
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
@@ -44,10 +54,6 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ProjectCurvesRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from beartype import beartype as check_input_types
-from beartype.typing import TYPE_CHECKING, Iterable, List, Optional, Tuple, Union
-from pint import Quantity
-
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
@@ -104,6 +110,15 @@ class CollisionType(Enum):
     CONTAINEDTOUCH = 4
 
 
+@unique
+class FillStyle(Enum):
+    """Provides values for fill styles supported."""
+
+    DEFAULT = 0
+    OPAQUE = 1
+    TRANSPARENT = 2
+
+
 class IBody(ABC):
     """Defines the common methods for a body, providing the abstract body interface.
 
@@ -122,22 +137,54 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def faces(self) -> List[Face]:
-        """Get a list of all faces within the body.
+    def set_name(self, str) -> None:
+        """Set the name of the body."""
+        return
 
-        Returns
-        -------
-        List[Face]
+    @abstractmethod
+    def fill_style(self) -> FillStyle:
+        """Get the fill style of the body."""
+        return
+
+    @abstractmethod
+    def set_fill_style(self, fill_style: FillStyle) -> None:
+        """Set the fill style of the body."""
+        return
+
+    @abstractmethod
+    def color(self) -> str:
+        """Get the color of the body."""
+        return
+
+    @abstractmethod
+    def set_color(self, color: str | tuple[float, float, float]) -> None:
+        """Set the color of the body.
+
+        Parameters
+        ----------
+        color : str | tuple[float, float, float]
+            Color to set the body to. This can be a string representing a color name
+            or a tuple of RGB values in the range [0, 1] (RGBA) or [0, 255] (pure RGB).
         """
         return
 
     @abstractmethod
-    def edges(self) -> List[Edge]:
+    def faces(self) -> list[Face]:
+        """Get a list of all faces within the body.
+
+        Returns
+        -------
+        list[Face]
+        """
+        return
+
+    @abstractmethod
+    def edges(self) -> list[Edge]:
         """Get a list of all edges within the body.
 
         Returns
         -------
-        List[Edge]
+        list[Edge]
         """
         return
 
@@ -152,7 +199,7 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def surface_thickness(self) -> Union[Quantity, None]:
+    def surface_thickness(self) -> Quantity | None:
         """Get the surface thickness of a surface body.
 
         Notes
@@ -223,21 +270,19 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def imprint_curves(
-        self, faces: List[Face], sketch: Sketch
-    ) -> Tuple[List[Edge], List[Face]]:
+    def imprint_curves(self, faces: list[Face], sketch: Sketch) -> tuple[list[Edge], list[Face]]:
         """Imprint all specified geometries onto specified faces of the body.
 
         Parameters
         ----------
-        faces: List[Face]
-            List of faces to imprint the curves of the sketch onto.
+        faces: list[Face]
+            list of faces to imprint the curves of the sketch onto.
         sketch: Sketch
             All curves to imprint on the faces.
 
         Returns
         -------
-        Tuple[List[Edge], List[Face]]
+        tuple[list[Edge], list[Face]]
             All impacted edges and faces from the imprint operation.
         """
         return
@@ -248,8 +293,8 @@ class IBody(ABC):
         direction: UnitVector3D,
         sketch: Sketch,
         closest_face: bool,
-        only_one_curve: Optional[bool] = False,
-    ) -> List[Face]:
+        only_one_curve: bool = False,
+    ) -> list[Face]:
         """Project all specified geometries onto the body.
 
         Parameters
@@ -272,7 +317,7 @@ class IBody(ABC):
 
         Returns
         -------
-        List[Face]
+        list[Face]
             All faces from the project curves operation.
         """
         return
@@ -283,8 +328,8 @@ class IBody(ABC):
         direction: UnitVector3D,
         sketch: Sketch,
         closest_face: bool,
-        only_one_curve: Optional[bool] = False,
-    ) -> List[Face]:  # noqa: D102
+        only_one_curve: bool = False,
+    ) -> list[Face]:  # noqa: D102
         """Project and imprint specified geometries onto the body.
 
         This method combines the ``project_curves()`` and ``imprint_curves()`` method into
@@ -312,22 +357,20 @@ class IBody(ABC):
 
         Returns
         -------
-        List[Face]
+        list[Face]
             All imprinted faces from the operation.
         """
         return
 
     @abstractmethod
-    def translate(
-        self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
-    ) -> None:
+    def translate(self, direction: UnitVector3D, distance: Quantity | Distance | Real) -> None:
         """Translate the body in a specified direction and distance.
 
         Parameters
         ----------
         direction: UnitVector3D
             Direction of the translation.
-        distance: Union[~pint.Quantity, Distance, Real]
+        distance: ~pint.Quantity | Distance | Real
             Distance (magnitude) of the translation.
 
         Returns
@@ -341,7 +384,7 @@ class IBody(ABC):
         self,
         axis_origin: Point3D,
         axis_direction: UnitVector3D,
-        angle: Union[Quantity, Angle, Real],
+        angle: Quantity | Angle | Real,
     ) -> None:
         """Rotate the geometry body around the specified axis by a given angle.
 
@@ -351,7 +394,7 @@ class IBody(ABC):
             Origin of the rotational axis.
         axis_direction: UnitVector3D
             The axis of rotation.
-        angle: Union[~pint.Quantity, Angle, Real]
+        angle: ~pint.Quantity | Angle | Real
             Angle (magnitude) of the rotation.
 
         Returns
@@ -443,9 +486,7 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def tessellate(
-        self, merge: Optional[bool] = False
-    ) -> Union["PolyData", "MultiBlock"]:
+    def tessellate(self, merge: bool = False) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
         Parameters
@@ -479,7 +520,7 @@ class IBody(ABC):
         >>> body = my_comp.extrude_sketch("my-sketch", sketch, 1 * u.m)
         >>> blocks = body.tessellate()
         >>> blocks
-        >>> MultiBlock (0x7f94ec757460)
+        >>> MultiBlock(0x7F94EC757460)
              N Blocks:	6
              X Bounds:	0.000, 4.000
              Y Bounds:	-1.000, 0.000
@@ -503,9 +544,9 @@ class IBody(ABC):
     def plot(
         self,
         merge: bool = False,
-        screenshot: Optional[str] = None,
-        use_trame: Optional[bool] = None,
-        **plotting_options: Optional[dict],
+        screenshot: str | None = None,
+        use_trame: bool | None = None,
+        **plotting_options: dict | None,
     ) -> None:
         """Plot the body.
 
@@ -600,7 +641,7 @@ class IBody(ABC):
         return
 
     @protect_grpc
-    def unite(self, other: Union["Body", Iterable["Body"]], keep_other : bool = False) -> None:
+    def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:
         """Unite two (or more) bodies.
 
         Notes
@@ -664,8 +705,10 @@ class MasterBody(IBody):
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._tessellation = None
+        self._fill_style = FillStyle.DEFAULT
+        self._color = None
 
-    def reset_tessellation_cache(func): # noqa: N805
+    def reset_tessellation_cache(func):  # noqa: N805
         """Decorate ``MasterBody`` methods that need tessellation cache update.
 
         Parameters
@@ -699,12 +742,51 @@ class MasterBody(IBody):
     def name(self) -> str:  # noqa: D102
         return self._name
 
+    @name.setter
+    def name(self, value: str):  # noqa: D102
+        self.set_name(value)
+
+    @property
+    def fill_style(self) -> str:  # noqa: D102
+        return self._fill_style
+
+    @fill_style.setter
+    def fill_style(self, value: FillStyle):  # noqa: D102
+        self.set_fill_style(value)
+
+    @property
+    def color(self) -> str:  # noqa: D102
+        """Get the current color of the body."""
+        if self._color is None:
+            if self._grpc_client.backend_version < (25, 1, 0):  # pragma: no cover
+                # Server does not support color retrieval before version 25.1.0
+                self._grpc_client.log.warning(
+                    "Server does not support color retrieval. Assigning default."
+                )
+                self._color = "#000000"  # Default color
+            else:
+                # Fetch color from the server if it's not cached
+                color_response = self._bodies_stub.GetColor(EntityIdentifier(id=self._id))
+
+                if color_response.color:
+                    self._color = mcolors.to_hex(color_response.color)
+                else:  # pragma: no cover
+                    self._grpc_client.log.warning(
+                        f"Color could not be retrieved for body {self._id}. Assigning default."
+                    )
+                    self._color = "#000000"  # Default color
+        return self._color
+
+    @color.setter
+    def color(self, value: str | tuple[float, float, float]):  # noqa: D102
+        self.set_color(value)
+
     @property
     def is_surface(self) -> bool:  # noqa: D102
         return self._is_surface
 
     @property
-    def surface_thickness(self) -> Union[Quantity, None]:  # noqa: D102
+    def surface_thickness(self) -> Quantity | None:  # noqa: D102
         return self._surface_thickness if self.is_surface else None
 
     @property
@@ -713,7 +795,7 @@ class MasterBody(IBody):
 
     @property
     @protect_grpc
-    def faces(self) -> List[Face]:  # noqa: D102
+    def faces(self) -> list[Face]:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
         grpc_faces = self._bodies_stub.GetFaces(self._grpc_id)
         return [
@@ -729,7 +811,7 @@ class MasterBody(IBody):
 
     @property
     @protect_grpc
-    def edges(self) -> List[Edge]:  # noqa: D102
+    def edges(self) -> list[Edge]:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
         grpc_edges = self._bodies_stub.GetEdges(self._grpc_id)
         return [
@@ -751,23 +833,17 @@ class MasterBody(IBody):
     @protect_grpc
     def volume(self) -> Quantity:  # noqa: D102
         if self.is_surface:
-            self._grpc_client.log.debug(
-                "Dealing with planar surface. Returning 0 as the volume."
-            )
+            self._grpc_client.log.debug("Dealing with planar surface. Returning 0 as the volume.")
             return Quantity(0, DEFAULT_UNITS.SERVER_VOLUME)
         else:
-            self._grpc_client.log.debug(
-                f"Retrieving volume for body {self.id} from server."
-            )
+            self._grpc_client.log.debug(f"Retrieving volume for body {self.id} from server.")
             volume_response = self._bodies_stub.GetVolume(self._grpc_id)
             return Quantity(volume_response.volume, DEFAULT_UNITS.SERVER_VOLUME)
 
     @protect_grpc
     @check_input_types
     def assign_material(self, material: Material) -> None:  # noqa: D102
-        self._grpc_client.log.debug(
-            f"Assigning body {self.id} material {material.name}."
-        )
+        self._grpc_client.log.debug(f"Assigning body {self.id} material {material.name}.")
         self._bodies_stub.SetAssignedMaterial(
             SetAssignedMaterialRequest(id=self._id, material=material.name)
         )
@@ -806,8 +882,8 @@ class MasterBody(IBody):
     @protect_grpc
     @check_input_types
     def imprint_curves(  # noqa: D102
-        self, faces: List[Face], sketch: Sketch
-    ) -> Tuple[List[Edge], List[Face]]:
+        self, faces: list[Face], sketch: Sketch
+    ) -> tuple[list[Edge], list[Face]]:
         raise NotImplementedError(
             """
             imprint_curves is not implemented at the MasterBody level.
@@ -822,8 +898,8 @@ class MasterBody(IBody):
         direction: UnitVector3D,
         sketch: Sketch,
         closest_face: bool,
-        only_one_curve: Optional[bool] = False,
-    ) -> List[Face]:
+        only_one_curve: bool = False,
+    ) -> list[Face]:
         raise NotImplementedError(
             """
             project_curves is not implemented at the MasterBody level.
@@ -838,8 +914,8 @@ class MasterBody(IBody):
         direction: UnitVector3D,
         sketch: Sketch,
         closest_face: bool,
-        only_one_curve: Optional[bool] = False,
-    ) -> List[Face]:
+        only_one_curve: bool = False,
+    ) -> list[Face]:
         raise NotImplementedError(
             """
             imprint_projected_curves is not implemented at the MasterBody level.
@@ -851,7 +927,7 @@ class MasterBody(IBody):
     @check_input_types
     @reset_tessellation_cache
     def translate(  # noqa: D102
-        self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
+        self, direction: UnitVector3D, distance: Quantity | Distance | Real
     ) -> None:
         distance = distance if isinstance(distance, Distance) else Distance(distance)
 
@@ -869,13 +945,80 @@ class MasterBody(IBody):
 
     @protect_grpc
     @check_input_types
+    @min_backend_version(25, 1, 0)
+    def set_name(  # noqa: D102
+        self, name: str
+    ) -> None:
+        self._grpc_client.log.debug(f"Renaming body {self.id} from '{self.name}' to '{name}'.")
+        self._bodies_stub.SetName(
+            SetNameRequest(
+                body_id=self.id,
+                name=name,
+            )
+        )
+        self._name = name
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 1, 0)
+    def set_fill_style(  # noqa: D102
+        self, fill_style: FillStyle
+    ) -> None:
+        self._grpc_client.log.debug(f"Setting body fill style {self.id}.")
+        self._bodies_stub.SetFillStyle(
+            SetFillStyleRequest(
+                body_id=self.id,
+                fill_style=fill_style.value,
+            )
+        )
+        self._fill_style = fill_style
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 1, 0)
+    def set_color(self, color: str | tuple[float, float, float]) -> None:
+        """Set the color of the body."""
+        self._grpc_client.log.debug(f"Setting body color of {self.id} to {color}.")
+
+        try:
+            if isinstance(color, tuple):
+                # Ensure that all elements are within 0-1 or 0-255 range
+                if all(0 <= c <= 1 for c in color):
+                    # Ensure they are floats if in 0-1 range
+                    if not all(isinstance(c, float) for c in color):
+                        raise ValueError("RGB values in the 0-1 range must be floats.")
+                elif all(0 <= c <= 255 for c in color):
+                    # Ensure they are integers if in 0-255 range
+                    if not all(isinstance(c, int) for c in color):
+                        raise ValueError("RGB values in the 0-255 range must be integers.")
+                    # Normalize the 0-255 range to 0-1
+                    color = tuple(c / 255.0 for c in color)
+                else:
+                    raise ValueError("RGB tuple contains mixed ranges or invalid values.")
+
+                color = mcolors.to_hex(color)
+            elif isinstance(color, str):
+                color = mcolors.to_hex(color)
+        except ValueError as err:
+            raise ValueError(f"Invalid color value: {err}")
+
+        self._bodies_stub.SetColor(
+            SetColorRequest(
+                body_id=self.id,
+                color=color,
+            )
+        )
+        self._color = color
+
+    @protect_grpc
+    @check_input_types
     @reset_tessellation_cache
     @min_backend_version(24, 2, 0)
     def rotate(  # noqa: D102
         self,
         axis_origin: Point3D,
         axis_direction: UnitVector3D,
-        angle: Union[Quantity, Angle, Real],
+        angle: Quantity | Angle | Real,
     ) -> None:
         angle = angle if isinstance(angle, Angle) else Angle(angle)
         rotation_magnitude = angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
@@ -911,16 +1054,12 @@ class MasterBody(IBody):
     @min_backend_version(24, 2, 0)
     def mirror(self, plane: Plane) -> None:  # noqa: D102
         self._grpc_client.log.debug(f"Mirroring body {self.id}.")
-        self._bodies_stub.Mirror(
-            MirrorRequest(id=self.id, plane=plane_to_grpc_plane(plane))
-        )
+        self._bodies_stub.Mirror(MirrorRequest(id=self.id, plane=plane_to_grpc_plane(plane)))
 
     @protect_grpc
     @min_backend_version(24, 2, 0)
     def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
-        self._grpc_client.log.debug(
-            f"Get collision between body {self.id} and body {body.id}."
-        )
+        self._grpc_client.log.debug(f"Get collision between body {self.id} and body {body.id}.")
         response = self._bodies_stub.GetCollision(
             GetCollisionRequest(
                 body_1_id=self.id,
@@ -959,7 +1098,7 @@ class MasterBody(IBody):
 
     @protect_grpc
     def tessellate(  # noqa: D102
-        self, merge: Optional[bool] = False, transform: Matrix44 = IDENTITY_MATRIX44
+        self, merge: bool = False, transform: Matrix44 = IDENTITY_MATRIX44
     ) -> Union["PolyData", "MultiBlock"]:
         # lazy import here to improve initial module load time
         import pyvista as pv
@@ -984,9 +1123,9 @@ class MasterBody(IBody):
     def plot(  # noqa: D102
         self,
         merge: bool = False,
-        screenshot: Optional[str] = None,
-        use_trame: Optional[bool] = None,
-        **plotting_options: Optional[dict],
+        screenshot: str | None = None,
+        use_trame: bool | None = None,
+        **plotting_options: dict | None,
     ) -> None:
         raise NotImplementedError(
             "MasterBody does not implement plot methods. Call this method on a body instead."
@@ -1037,16 +1176,14 @@ class Body(IBody):
         Master body that this body is an occurrence of.
     """
 
-    def __init__(
-        self, id, name, parent_component: "Component", template: MasterBody
-    ) -> None:
+    def __init__(self, id, name, parent_component: "Component", template: MasterBody) -> None:
         """Initialize the ``Body`` class."""
         self._id = id
         self._name = name
         self._parent_component = parent_component
         self._template = template
 
-    def reset_tessellation_cache(func): # noqa: N805
+    def reset_tessellation_cache(func):  # noqa: N805
         """Decorate ``Body`` methods that require a tessellation cache update.
 
         Parameters
@@ -1075,6 +1212,26 @@ class Body(IBody):
     def name(self) -> str:  # noqa: D102
         return self._template.name
 
+    @name.setter
+    def name(self, value: str):  # noqa: D102
+        self._template.name = value
+
+    @property
+    def fill_style(self) -> str:  # noqa: D102
+        return self._template.fill_style
+
+    @fill_style.setter
+    def fill_style(self, fill_style: FillStyle) -> str:  # noqa: D102
+        self._template.fill_style = fill_style
+
+    @property
+    def color(self) -> str:  # noqa: D102
+        return self._template.color
+
+    @color.setter
+    def color(self, color: str | tuple[float, float, float]) -> None:  # noqa: D102
+        return self._template.set_color(color)
+
     @property
     def parent_component(self) -> "Component":  # noqa: D102
         return self._parent_component
@@ -1082,10 +1239,8 @@ class Body(IBody):
     @property
     @protect_grpc
     @ensure_design_is_active
-    def faces(self) -> List[Face]:  # noqa: D102
-        self._template._grpc_client.log.debug(
-            f"Retrieving faces for body {self.id} from server."
-        )
+    def faces(self) -> list[Face]:  # noqa: D102
+        self._template._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
         grpc_faces = self._template._bodies_stub.GetFaces(EntityIdentifier(id=self.id))
         return [
             Face(
@@ -1101,10 +1256,8 @@ class Body(IBody):
     @property
     @protect_grpc
     @ensure_design_is_active
-    def edges(self) -> List[Edge]:  # noqa: D102
-        self._template._grpc_client.log.debug(
-            f"Retrieving edges for body {self.id} from server."
-        )
+    def edges(self) -> list[Edge]:  # noqa: D102
+        self._template._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
         grpc_edges = self._template._bodies_stub.GetEdges(EntityIdentifier(id=self.id))
         return [
             Edge(
@@ -1134,7 +1287,7 @@ class Body(IBody):
         return self._template.is_surface
 
     @property
-    def _surface_thickness(self) -> Union[Quantity, None]:  # noqa: D102
+    def _surface_thickness(self) -> Quantity | None:  # noqa: D102
         return self._template.surface_thickness
 
     @_surface_thickness.setter
@@ -1142,7 +1295,7 @@ class Body(IBody):
         self._template._surface_thickness = value
 
     @property
-    def surface_thickness(self) -> Union[Quantity, None]:  # noqa: D102
+    def surface_thickness(self) -> Quantity | None:  # noqa: D102
         return self._surface_thickness
 
     @property
@@ -1179,8 +1332,8 @@ class Body(IBody):
     @protect_grpc
     @ensure_design_is_active
     def imprint_curves(  # noqa: D102
-        self, faces: List[Face], sketch: Sketch
-    ) -> Tuple[List[Edge], List[Face]]:
+        self, faces: list[Face], sketch: Sketch
+    ) -> tuple[list[Edge], list[Face]]:
         # Verify that each of the faces provided are part of this body
         body_faces = self.faces
         for provided_face in faces:
@@ -1190,9 +1343,7 @@ class Body(IBody):
                     is_found = True
                     break
             if not is_found:
-                raise ValueError(
-                    f"Face with ID {provided_face.id} is not part of this body."
-                )
+                raise ValueError(f"Face with ID {provided_face.id} is not part of this body.")
 
         self._template._grpc_client.log.debug(
             f"Imprinting curves provided on {self.id} "
@@ -1202,9 +1353,7 @@ class Body(IBody):
         imprint_response = self._template._commands_stub.ImprintCurves(
             ImprintCurvesRequest(
                 body=self._id,
-                curves=sketch_shapes_to_grpc_geometries(
-                    sketch._plane, sketch.edges, sketch.faces
-                ),
+                curves=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
                 faces=[face._id for face in faces],
             )
         )
@@ -1238,14 +1387,12 @@ class Body(IBody):
         direction: UnitVector3D,
         sketch: Sketch,
         closest_face: bool,
-        only_one_curve: Optional[bool] = False,
-    ) -> List[Face]:
+        only_one_curve: bool = False,
+    ) -> list[Face]:
         curves = sketch_shapes_to_grpc_geometries(
             sketch._plane, sketch.edges, sketch.faces, only_one_curve=only_one_curve
         )
-        self._template._grpc_client.log.debug(
-            f"Projecting provided curves on {self.id}."
-        )
+        self._template._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 
         project_response = self._template._commands_stub.ProjectCurves(
             ProjectCurvesRequest(
@@ -1276,14 +1423,12 @@ class Body(IBody):
         direction: UnitVector3D,
         sketch: Sketch,
         closest_face: bool,
-        only_one_curve: Optional[bool] = False,
-    ) -> List[Face]:
+        only_one_curve: bool = False,
+    ) -> list[Face]:
         curves = sketch_shapes_to_grpc_geometries(
             sketch._plane, sketch.edges, sketch.faces, only_one_curve=only_one_curve
         )
-        self._template._grpc_client.log.debug(
-            f"Projecting provided curves on {self.id}."
-        )
+        self._template._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 
         response = self._template._commands_stub.ImprintProjectedCurves(
             ProjectCurvesRequest(
@@ -1307,8 +1452,20 @@ class Body(IBody):
         return imprinted_faces
 
     @ensure_design_is_active
+    def set_name(self, name: str) -> None:  # noqa: D102
+        return self._template.set_name(name)
+
+    @ensure_design_is_active
+    def set_fill_style(self, fill_style: FillStyle) -> None:  # noqa: D102
+        return self._template.set_fill_style(fill_style)
+
+    @ensure_design_is_active
+    def set_color(self, color: str | tuple[float, float, float]) -> None:  # noqa: D102
+        return self._template.set_color(color)
+
+    @ensure_design_is_active
     def translate(  # noqa: D102
-        self, direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
+        self, direction: UnitVector3D, distance: Quantity | Distance | Real
     ) -> None:
         return self._template.translate(direction, distance)
 
@@ -1317,7 +1474,7 @@ class Body(IBody):
         self,
         axis_origin: Point3D,
         axis_direction: UnitVector3D,
-        angle: Union[Quantity, Angle, Real],
+        angle: Quantity | Angle | Real,
     ) -> None:
         return self._template.rotate(axis_origin, axis_direction, angle)
 
@@ -1343,26 +1500,22 @@ class Body(IBody):
 
     @ensure_design_is_active
     def tessellate(  # noqa: D102
-        self, merge: Optional[bool] = False
+        self, merge: bool = False
     ) -> Union["PolyData", "MultiBlock"]:
-        return self._template.tessellate(
-            merge, self.parent_component.get_world_transform()
-        )
+        return self._template.tessellate(merge, self.parent_component.get_world_transform())
 
     def plot(  # noqa: D102
         self,
         merge: bool = False,
-        screenshot: Optional[str] = None,
-        use_trame: Optional[bool] = None,
-        show_options: Optional[dict] = None,
-        **plotting_options: Optional[dict],
+        screenshot: str | None = None,
+        use_trame: bool | None = None,
+        **plotting_options: dict | None,
     ) -> None:
         # lazy import here to improve initial module load time
+        from ansys.geometry.core.plotting import GeometryPlotter
         from ansys.tools.visualization_interface.types.mesh_object_plot import (
             MeshObjectPlot,
         )
-
-        from ansys.geometry.core.plotting import GeometryPlotter
 
         meshobject = MeshObjectPlot(self, self.tessellate(merge=merge))
         pl = GeometryPlotter(use_trame=use_trame)
@@ -1373,7 +1526,7 @@ class Body(IBody):
         self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
 
     def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        self.__generic_boolean_op(other, keep_other,"subtract", "empty (complete) subtraction")
+        self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
 
     def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
@@ -1407,6 +1560,7 @@ class Body(IBody):
             # TODO: to be deleted - old versions did not have "tool_bodies" in the request
             # This is a temporary fix to support old versions of the server - should be deleted
             # once the server is no longer supported.
+            # https://github.com/ansys/pyansys-geometry/issues/1319
             if not isinstance(other, Iterable):
                 response = self._template._bodies_stub.Boolean(
                     BooleanRequest(body1=self.id, body2=other.id, method=type_bool_op)
@@ -1415,9 +1569,7 @@ class Body(IBody):
                 all_response = []
                 for body2 in other:
                     response = self._template._bodies_stub.Boolean(
-                        BooleanRequest(
-                            body1=self.id, body2=body2.id, method=type_bool_op
-                        )
+                        BooleanRequest(body1=self.id, body2=body2.id, method=type_bool_op)
                     ).empty_result
                     all_response.append(response)
 

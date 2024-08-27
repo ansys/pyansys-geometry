@@ -22,7 +22,11 @@
 """Provides for managing components."""
 
 from enum import Enum, unique
-import uuid  # TODO: Is ID even needed? Maybe use from SC?
+from typing import TYPE_CHECKING, Optional, Union
+import uuid
+
+from beartype import beartype as check_input_types
+from pint import Quantity
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
@@ -46,10 +50,6 @@ from ansys.api.geometry.v0.components_pb2 import (
 )
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
 from ansys.api.geometry.v0.models_pb2 import Direction, Line, TrimmedCurveList
-from beartype import beartype as check_input_types
-from beartype.typing import TYPE_CHECKING, List, Optional, Tuple, Union
-from pint import Quantity
-
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     grpc_matrix_to_matrix,
@@ -147,10 +147,10 @@ class Component:
     """
 
     # Types of the class instance private attributes
-    _components: List["Component"]
-    _beams: List[Beam]
-    _coordinate_systems: List[CoordinateSystem]
-    _design_points: List[DesignPoint]
+    _components: list["Component"]
+    _beams: list[Beam]
+    _coordinate_systems: list[CoordinateSystem]
+    _design_points: list[DesignPoint]
 
     @protect_grpc
     @check_input_types
@@ -160,8 +160,8 @@ class Component:
         parent_component: Union["Component", None],
         grpc_client: GrpcClient,
         template: Optional["Component"] = None,
-        preexisting_id: Optional[str] = None,
-        master_component: Optional[MasterComponent] = None,
+        preexisting_id: str | None = None,
+        master_component: MasterComponent | None = None,
         read_existing_comp: bool = False,
     ):
         """Initialize the ``Component`` class."""
@@ -232,12 +232,12 @@ class Component:
         return self._name
 
     @property
-    def components(self) -> List["Component"]:
+    def components(self) -> list["Component"]:
         """List of ``Component`` objects inside of the component."""
         return self._components
 
     @property
-    def bodies(self) -> List[Body]:
+    def bodies(self) -> list[Body]:
         """List of ``Body`` objects inside of the component."""
         bodies = []
         for body in self._master_component.part.bodies:
@@ -247,22 +247,22 @@ class Component:
         return bodies
 
     @property
-    def beams(self) -> List[Beam]:
+    def beams(self) -> list[Beam]:
         """List of ``Beam`` objects inside of the component."""
         return self._beams
 
     @property
-    def design_points(self) -> List[DesignPoint]:
+    def design_points(self) -> list[DesignPoint]:
         """List of ``DesignPoint`` objects inside of the component."""
         return self._design_points
 
     @property
-    def coordinate_systems(self) -> List[CoordinateSystem]:
+    def coordinate_systems(self) -> list[CoordinateSystem]:
         """List of ``CoordinateSystem`` objects inside of the component."""
         return self._coordinate_systems
 
     @property
-    def parent_component(self) -> Union["Component", None]:
+    def parent_component(self) -> "Component":
         """Parent of the component."""
         return self._parent_component
 
@@ -272,7 +272,7 @@ class Component:
         return self._is_alive
 
     @property
-    def shared_topology(self) -> Union[SharedTopologyType, None]:
+    def shared_topology(self) -> SharedTopologyType | None:
         """Shared topology type of the component (if any).
 
         Notes
@@ -311,10 +311,10 @@ class Component:
     @ensure_design_is_active
     def modify_placement(
         self,
-        translation: Optional[Vector3D] = None,
-        rotation_origin: Optional[Point3D] = None,
-        rotation_direction: Optional[UnitVector3D] = None,
-        rotation_angle: Union[Quantity, Angle, Real] = 0,
+        translation: Vector3D | None = None,
+        rotation_origin: Point3D | None = None,
+        rotation_direction: UnitVector3D | None = None,
+        rotation_angle: Quantity | Angle | Real = 0,
     ):
         """Apply a translation and/or rotation to the placement matrix.
 
@@ -331,7 +331,7 @@ class Component:
             Origin that defines the axis to rotate the component about.
         rotation_direction : UnitVector3D, default: None
             Direction of the axis to rotate the component about.
-        rotation_angle : Union[~pint.Quantity, Angle, Real], default: 0
+        rotation_angle : ~pint.Quantity | Angle | Real, default: 0
             Angle to rotate the component around the axis.
         """
         t = (
@@ -433,8 +433,8 @@ class Component:
         self,
         name: str,
         sketch: Sketch,
-        distance: Union[Quantity, Distance, Real],
-        direction: Union[ExtrusionDirection, str] = ExtrusionDirection.POSITIVE,
+        distance: Quantity | Distance | Real,
+        direction: ExtrusionDirection | str = ExtrusionDirection.POSITIVE,
     ) -> Body:
         """Create a solid body by extruding the sketch profile a distance.
 
@@ -448,9 +448,9 @@ class Component:
             User-defined label for the new solid body.
         sketch : Sketch
             Two-dimensional sketch source for the extrusion.
-        distance : Union[~pint.Quantity, Distance, Real]
+        distance : ~pint.Quantity | Distance | Real
             Distance to extrude the solid body.
-        direction : Union[ExtrusionDirection, str], default: "+"
+        direction : ExtrusionDirection | str, default: "+"
             Direction for extruding the solid body.
             The default is to extrude in the positive normal direction of the sketch.
             Options are "+" and "-" as a string, or the enum values.
@@ -492,7 +492,7 @@ class Component:
         self,
         name: str,
         sketch: Sketch,
-        path: List[TrimmedCurve],
+        path: list[TrimmedCurve],
     ) -> Body:
         """Create a body by sweeping a planar profile along a path.
 
@@ -506,7 +506,7 @@ class Component:
             User-defined label for the new solid body.
         sketch : Sketch
             Two-dimensional sketch source for the extrusion.
-        path : List[TrimmedCurve]
+        path : list[TrimmedCurve]
             The path to sweep the profile along.
 
         Returns
@@ -540,8 +540,8 @@ class Component:
     def sweep_chain(
         self,
         name: str,
-        path: List[TrimmedCurve],
-        chain: List[TrimmedCurve],
+        path: list[TrimmedCurve],
+        chain: list[TrimmedCurve],
     ) -> Body:
         """Create a body by sweeping a chain of curves along a path.
 
@@ -553,9 +553,9 @@ class Component:
         ----------
         name : str
             User-defined label for the new solid body.
-        path : List[TrimmedCurve]
+        path : list[TrimmedCurve]
             The path to sweep the chain along.
-        chain : List[TrimmedCurve]
+        chain : list[TrimmedCurve]
             A chain of trimmed curves.
 
         Returns
@@ -587,16 +587,10 @@ class Component:
         name: str,
         sketch: Sketch,
         axis: Vector3D,
-        angle: Union[Quantity, Angle, Real],
+        angle: Quantity | Angle | Real,
         rotation_origin: Point3D,
     ) -> Body:
         """Create a solid body by revolving a sketch profile around an axis.
-
-        Notes
-        -----
-        It is important that the sketch plane origin is not coincident with the rotation
-        origin. If the sketch plane origin is coincident with the rotation origin, the
-        distance between the two points is zero, and the revolve operation fails.
 
         Parameters
         ----------
@@ -606,7 +600,7 @@ class Component:
             Two-dimensional sketch source for the revolve.
         axis : Vector3D
             Axis of rotation for the revolve.
-        angle : Union[~pint.Quantity, Angle, Real]
+        angle : ~pint.Quantity | Angle | Real
             Angle to revolve the solid body around the axis. The angle can be positive or negative.
         rotation_origin : Point3D
             Origin of the axis of rotation.
@@ -616,26 +610,16 @@ class Component:
         Body
             Revolved body from the given sketch.
         """
-        # Check that the sketch plane origin is not coincident with the rotation origin
-        if sketch.plane.origin == rotation_origin:
-            raise ValueError(
-                "The sketch plane origin is coincident with the rotation origin. "
-                + "The distance between the points is zero, and the revolve operation will fail."
-            )
-
-        # Compute the distance between the rotation origin and the sketch plane
-        rotation_origin_to_sketch = sketch.plane.origin - rotation_origin
-        rotation_origin_to_sketch_as_vector = Vector3D(rotation_origin_to_sketch)
-        distance = Distance(
-            rotation_origin_to_sketch_as_vector.norm,
-            unit=rotation_origin_to_sketch.base_unit,
-        )
+        # Based on the reference axis and the sketch plane's normal, retrieve the orthogonal
+        # vector (i.e. this is the reference vector for the Circle object). Assuming a distance of 1
+        # we revolve around the axis the angle given.
+        rotation_vector = sketch._plane.normal.cross(axis)
 
         # Define the revolve path
         circle = Circle(
             rotation_origin,
-            radius=distance,
-            reference=rotation_origin_to_sketch_as_vector,
+            radius=Distance(1),
+            reference=rotation_vector,
             axis=axis,
         )
         angle = angle if isinstance(angle, Angle) else Angle(angle)
@@ -656,8 +640,8 @@ class Component:
         self,
         name: str,
         face: Face,
-        distance: Union[Quantity, Distance],
-        direction: Union[ExtrusionDirection, str] = ExtrusionDirection.POSITIVE,
+        distance: Quantity | Distance,
+        direction: ExtrusionDirection | str = ExtrusionDirection.POSITIVE,
     ) -> Body:
         """Extrude the face profile by a given distance to create a solid body.
 
@@ -675,9 +659,9 @@ class Component:
             User-defined label for the new solid body.
         face : Face
             Target face to use as the source for the new surface.
-        distance : Union[~pint.Quantity, Distance, Real]
+        distance : ~pint.Quantity | Distance | Real
             Distance to extrude the solid body.
-        direction : Union[ExtrusionDirection, str], default: "+"
+        direction : ExtrusionDirection | str, default: "+"
             Direction for extruding the solid body's face.
             The default is to extrude in the positive normal direction of the face.
             Options are "+" and "-" as a string, or the enum values.
@@ -751,7 +735,7 @@ class Component:
     def create_body_from_loft_profile(
         self,
         name: str,
-        profiles: List[List[TrimmedCurve]],
+        profiles: list[list[TrimmedCurve]],
         periodic: bool = False,
         ruled: bool = False,
     ) -> Body:
@@ -761,7 +745,7 @@ class Component:
         ----------
         name : str
             Name of the lofted body.
-        profiles : List[List[TrimmedCurve]]
+        profiles : list[list[TrimmedCurve]]
             Collection of lists of trimmed curves (profiles) defining the lofted body's shape.
         periodic : bool, default: False
             Whether the lofted body should have periodic continuity.
@@ -913,7 +897,7 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     def translate_bodies(
-        self, bodies: List[Body], direction: UnitVector3D, distance: Union[Quantity, Distance, Real]
+        self, bodies: list[Body], direction: UnitVector3D, distance: Quantity | Distance | Real
     ) -> None:
         """Translate the bodies in a specified direction by a distance.
 
@@ -924,11 +908,11 @@ class Component:
 
         Parameters
         ----------
-        bodies: List[Body]
-            List of bodies to translate by the same distance.
+        bodies: list[Body]
+            list of bodies to translate by the same distance.
         direction: UnitVector3D
             Direction of the translation.
-        distance: Union[~pint.Quantity, Distance, Real]
+        distance: ~pint.Quantity | Distance | Real
             Magnitude of the translation.
 
         Returns
@@ -965,8 +949,8 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     def create_beams(
-        self, segments: List[Tuple[Point3D, Point3D]], profile: BeamProfile
-    ) -> List[Beam]:
+        self, segments: list[tuple[Point3D, Point3D]], profile: BeamProfile
+    ) -> list[Beam]:
         """Create beams under the component.
 
         Notes
@@ -976,8 +960,8 @@ class Component:
 
         Parameters
         ----------
-        segments : List[Tuple[Point3D, Point3D]]
-            List of start and end pairs, each specifying a single line segment.
+        segments : list[tuple[Point3D, Point3D]]
+            list of start and end pairs, each specifying a single line segment.
         profile : BeamProfile
             Beam profile to use to create the beams.
         """
@@ -1035,7 +1019,7 @@ class Component:
 
         Parameters
         ----------
-        component : Union[Component, str]
+        component : Component | str
             ID of the component or instance to delete.
         """
         id = component if isinstance(component, str) else component.id
@@ -1060,7 +1044,7 @@ class Component:
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
-    def delete_body(self, body: Union[Body, str]) -> None:
+    def delete_body(self, body: Body | str) -> None:
         """Delete a body belonging to this component (or its children).
 
         Notes
@@ -1070,7 +1054,7 @@ class Component:
 
         Parameters
         ----------
-        body : Union[Body, str]
+        body : Body | str
             ID of the body or instance to delete.
         """
         id = body if isinstance(body, str) else body.id
@@ -1114,16 +1098,16 @@ class Component:
     def add_design_points(
         self,
         name: str,
-        points: List[Point3D],
-    ) -> List[DesignPoint]:
+        points: list[Point3D],
+    ) -> list[DesignPoint]:
         """Create a list of design points.
 
         Parameters
         ----------
         name : str
             User-defined label for the list of design points.
-        points : List[Point3D]
-            List of the 3D points that constitute the list of design points.
+        points : list[Point3D]
+            list of the 3D points that constitute the list of design points.
         """
         # Create DesignPoint objects server-side
         self._grpc_client.log.debug(f"Creating design points on {self.id}...")
@@ -1147,7 +1131,7 @@ class Component:
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
-    def delete_beam(self, beam: Union[Beam, str]) -> None:
+    def delete_beam(self, beam: Beam | str) -> None:
         """Delete an existing beam belonging to this component's scope.
 
         Notes
@@ -1158,7 +1142,7 @@ class Component:
 
         Parameters
         ----------
-        beam : Union[Beam, str]
+        beam : Beam | str
             ID of the beam or instance to delete.
         """
         id = beam if isinstance(beam, str) else beam.id
@@ -1213,7 +1197,7 @@ class Component:
         return None
 
     @check_input_types
-    def search_body(self, id: str) -> Union[Body, None]:
+    def search_body(self, id: str) -> Body | None:
         """Search bodies in the component's scope.
 
         Notes
@@ -1228,7 +1212,7 @@ class Component:
 
         Returns
         -------
-        Body
+        Body | None
             Body with the requested ID. If the ID is not found, ``None`` is returned.
         """
         # Search in component's bodies
@@ -1247,7 +1231,7 @@ class Component:
         return None
 
     @check_input_types
-    def search_beam(self, id: str) -> Union[Beam, None]:
+    def search_beam(self, id: str) -> Beam | None:
         """Search beams in the component's scope.
 
         Notes
@@ -1262,7 +1246,7 @@ class Component:
 
         Returns
         -------
-        Union[Beam, None]
+        Beam | None
             Beam with the requested ID. If the ID is not found, ``None`` is returned.
         """
         # Search in component's beams
@@ -1378,9 +1362,9 @@ class Component:
         self,
         merge_component: bool = False,
         merge_bodies: bool = False,
-        screenshot: Optional[str] = None,
-        use_trame: Optional[bool] = None,
-        **plotting_options: Optional[dict],
+        screenshot: str | None = None,
+        use_trame: bool | None = None,
+        **plotting_options: dict | None,
     ) -> None:
         """Plot the component.
 
@@ -1426,7 +1410,7 @@ class Component:
         ... )
         >>> for x, y in zip(xx.ravel(), yy.ravel()):
         ...     sketch = Sketch(plane)
-        ...     sketch.circle(Point2D([x, y]), 0.2*u.m)
+        ...     sketch.circle(Point2D([x, y]), 0.2 * u.m)
         ...     mycomp.extrude_sketch(f"body-{x}-{y}", sketch, 1 * u.m)
         >>> mycomp
         ansys.geometry.core.designer.Component 0x2203cc9ec50
@@ -1438,9 +1422,8 @@ class Component:
             N Coordinate Systems : 0
         >>> mycomp.plot(pbr=True, metallic=1.0)
         """
-        from ansys.tools.visualization_interface.types.mesh_object_plot import MeshObjectPlot
-
         from ansys.geometry.core.plotting import GeometryPlotter
+        from ansys.tools.visualization_interface.types.mesh_object_plot import MeshObjectPlot
 
         mesh_object = MeshObjectPlot(
             custom_object=self, mesh=self.tessellate(merge_component, merge_bodies)

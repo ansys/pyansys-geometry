@@ -24,7 +24,6 @@
 from threading import Lock
 
 from beartype import beartype as check_input_types
-from beartype.typing import Optional, Union
 from pint import Quantity, Unit
 
 from ansys.geometry.core.misc.checks import check_is_float_int, check_pint_unit_compatibility
@@ -78,29 +77,29 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
         self._server_angle: Unit = UNITS.radian
 
     @property
-    def LENGTH(self) -> Unit: # noqa: N802
+    def LENGTH(self) -> Unit:  # noqa: N802
         """Default length unit for PyAnsys Geometry."""
         return self._length
 
     @LENGTH.setter
     @check_input_types
-    def LENGTH(self, value: Unit) -> None: # noqa: N802
+    def LENGTH(self, value: Unit) -> None:  # noqa: N802
         check_pint_unit_compatibility(value, self._length)
         self._length = value
 
     @property
-    def ANGLE(self) -> Unit: # noqa: N802
+    def ANGLE(self) -> Unit:  # noqa: N802
         """Default angle unit for PyAnsys Geometry."""
         return self._angle
 
     @ANGLE.setter
     @check_input_types
-    def ANGLE(self, value: Unit) -> None: # noqa: N802
+    def ANGLE(self, value: Unit) -> None:  # noqa: N802
         check_pint_unit_compatibility(value, self._angle)
         self._angle = value
 
     @property
-    def SERVER_LENGTH(self) -> Unit: # noqa: N802
+    def SERVER_LENGTH(self) -> Unit:  # noqa: N802
         """Default length unit for gRPC messages.
 
         Notes
@@ -110,7 +109,7 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
         return self._server_length
 
     @property
-    def SERVER_AREA(self) -> Unit: # noqa: N802
+    def SERVER_AREA(self) -> Unit:  # noqa: N802
         """Default area unit for gRPC messages.
 
         Notes
@@ -120,7 +119,7 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
         return self._server_length * self._server_length
 
     @property
-    def SERVER_VOLUME(self) -> Unit: # noqa: N802
+    def SERVER_VOLUME(self) -> Unit:  # noqa: N802
         """Default volume unit for gRPC messages.
 
         Notes
@@ -130,7 +129,7 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
         return self._server_length * self._server_length * self._server_length
 
     @property
-    def SERVER_ANGLE(self) -> Unit: # noqa: N802
+    def SERVER_ANGLE(self) -> Unit:  # noqa: N802
         """Default angle unit for gRPC messages.
 
         Notes
@@ -149,7 +148,7 @@ class Measurement(PhysicalQuantity):
 
     Parameters
     ----------
-    value : Union[Real, Quantity]
+    value : Real | ~pint.Quantity
         Value of the measurement.
     unit : ~pint.Unit
         Units for the measurement.
@@ -158,11 +157,12 @@ class Measurement(PhysicalQuantity):
         If ``~pint.Unit.meter`` is given, the dimension extracted is ``[length]``.
     """
 
-    def __init__(self, value: Union[Real, Quantity], unit: Unit, dimensions: Unit):
+    def __init__(self, value: Real | Quantity, unit: Unit, dimensions: Unit):
         """Initialize the ``Measurement`` class."""
         # Check the input
         if isinstance(value, Quantity):
             # TODO: inform that if Quantity is given, we will ignore provided unit value
+            # https://github.com/ansys/pyansys-geometry/issues/1319
             unit = value.units
         else:
             check_is_float_int(value, "value")
@@ -195,13 +195,13 @@ class Distance(Measurement):
 
     Parameters
     ----------
-    value : Union[Real, Quantity]
+    value : Real | ~pint.Quantity
         Value of the distance.
     unit : ~pint.Unit, default: DEFAULT_UNITS.LENGTH
         Units for the distance.
     """
 
-    def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = None):
+    def __init__(self, value: Real | Quantity, unit: Unit | None = None):
         """Initialize the ``Distance`` class."""
         # Delegates in Measurement ctor. forcing expected dimensions.
         unit = unit if unit else DEFAULT_UNITS.LENGTH
@@ -213,13 +213,13 @@ class Angle(Measurement):
 
     Parameters
     ----------
-    value : Union[Real, Quantity]
+    value : Real | ~pint.Quantity
         Value of the angle.
     unit : ~pint.Unit, default: DEFAULT_UNITS.ANGLE
         Units for the distance.
     """
 
-    def __init__(self, value: Union[Real, Quantity], unit: Optional[Unit] = None):
+    def __init__(self, value: Real | Quantity, unit: Unit | None = None):
         """Initialize the ``Angle`` class."""
         # Delegates in Measurement ctor. forcing expected dimensions.
         unit = unit if unit else DEFAULT_UNITS.ANGLE

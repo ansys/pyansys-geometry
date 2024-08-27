@@ -9,6 +9,106 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.7.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.7.0>`_ - 2024-08-13
+=====================================================================================
+
+Added
+^^^^^
+
+- build: drop support for Python 3.9 `#1341 <https://github.com/ansys/pyansys-geometry/pull/1341>`_
+- feat: adapting beartype typehints to +Python 3.10 standard `#1347 <https://github.com/ansys/pyansys-geometry/pull/1347>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- build: bump the grpc-deps group with 3 updates `#1342 <https://github.com/ansys/pyansys-geometry/pull/1342>`_
+- build: bump panel from 1.4.4 to 1.4.5 `#1344 <https://github.com/ansys/pyansys-geometry/pull/1344>`_
+- bump the docs-deps group across 1 directory with 4 updates `#1353 <https://github.com/ansys/pyansys-geometry/pull/1353>`_
+- bump trame-vtk from 2.8.9 to 2.8.10 `#1355 <https://github.com/ansys/pyansys-geometry/pull/1355>`_
+- bump ansys-api-geometry from 0.4.6 to 0.4.7 `#1356 <https://github.com/ansys/pyansys-geometry/pull/1356>`_
+
+
+Documentation
+^^^^^^^^^^^^^
+
+- feat: update conf for version 1.x of ansys-sphinx-theme `#1351 <https://github.com/ansys/pyansys-geometry/pull/1351>`_
+
+
+Fixed
+^^^^^
+
+- trapezoid signature change and internal checks `#1354 <https://github.com/ansys/pyansys-geometry/pull/1354>`_
+
+
+Maintenance
+^^^^^^^^^^^
+
+- updating Ansys actions to v7 - changelog related `#1348 <https://github.com/ansys/pyansys-geometry/pull/1348>`_
+- ci: bump ansys/actions from 6 to 7 in the actions group `#1352 <https://github.com/ansys/pyansys-geometry/pull/1352>`_
+- pre-commit automatic update `#1358 <https://github.com/ansys/pyansys-geometry/pull/1358>`_
+
+
+Miscellaneous
+^^^^^^^^^^^^^
+
+- chore: pre-commit automatic update `#1345 <https://github.com/ansys/pyansys-geometry/pull/1345>`_
+
+`0.6.6 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.6.6>`_ - 2024-08-01
+=====================================================================================
+
+Added
+^^^^^
+
+- feat: Add misc. repair and prepare tool methods `#1293 <https://github.com/ansys/pyansys-geometry/pull/1293>`_
+- feat: name setter and fill style getter setters `#1299 <https://github.com/ansys/pyansys-geometry/pull/1299>`_
+- feat: extract fluid volume from solid `#1306 <https://github.com/ansys/pyansys-geometry/pull/1306>`_
+- feat: keep "other" bodies when performing bool operations `#1311 <https://github.com/ansys/pyansys-geometry/pull/1311>`_
+- feat: ``revolve_sketch`` rotation definition enhancement `#1336 <https://github.com/ansys/pyansys-geometry/pull/1336>`_
+
+
+Changed
+^^^^^^^
+
+- chore: update CHANGELOG for v0.6.5 `#1290 <https://github.com/ansys/pyansys-geometry/pull/1290>`_
+- chore: enable ruff formatter on pre-commit `#1312 <https://github.com/ansys/pyansys-geometry/pull/1312>`_
+- chore: updating dependabot groups `#1313 <https://github.com/ansys/pyansys-geometry/pull/1313>`_
+- chore: adding issue links to TODOs `#1320 <https://github.com/ansys/pyansys-geometry/pull/1320>`_
+- feat: adapt to new ansys-tools-visualization-interface v0.4.0 `#1338 <https://github.com/ansys/pyansys-geometry/pull/1338>`_
+
+
+Fixed
+^^^^^
+
+- test: create sphere bug raised after box creation `#1291 <https://github.com/ansys/pyansys-geometry/pull/1291>`_
+- ci: docker cleanup `#1294 <https://github.com/ansys/pyansys-geometry/pull/1294>`_
+- fix: default length units not being used properly on arc creation `#1310 <https://github.com/ansys/pyansys-geometry/pull/1310>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- build: bump ansys-api-geometry from 0.4.4 to 0.4.5 `#1292 <https://github.com/ansys/pyansys-geometry/pull/1292>`_
+- build: bump pyvista[jupyter] from 0.43.10 to 0.44.0 in the docs-deps group `#1296 <https://github.com/ansys/pyansys-geometry/pull/1296>`_
+- build: bump jupytext from 1.16.2 to 1.16.3 in the docs-deps group `#1300 <https://github.com/ansys/pyansys-geometry/pull/1300>`_
+- build: bump ansys-api-geometry from 0.4.5 to 0.4.6 `#1301 <https://github.com/ansys/pyansys-geometry/pull/1301>`_
+- build: bump pint from 0.24.1 to 0.24.3 `#1307 <https://github.com/ansys/pyansys-geometry/pull/1307>`_
+- build: bump grpcio-health-checking from 1.60.0 to 1.64.1 in the grpc-deps group `#1315 <https://github.com/ansys/pyansys-geometry/pull/1315>`_
+- build: bump the docs-deps group across 1 directory with 2 updates `#1316 <https://github.com/ansys/pyansys-geometry/pull/1316>`_
+- build: bump the grpc-deps group with 2 updates `#1322 <https://github.com/ansys/pyansys-geometry/pull/1322>`_
+- build: bump the docs-deps group with 2 updates `#1323 <https://github.com/ansys/pyansys-geometry/pull/1323>`_
+- build: bump pyvista[jupyter] from 0.44.0 to 0.44.1 `#1324 <https://github.com/ansys/pyansys-geometry/pull/1324>`_
+- build: bump ansys-tools-visualization-interface from 0.2.6 to 0.3.0 `#1325 <https://github.com/ansys/pyansys-geometry/pull/1325>`_
+- build: bump pytest from 8.2.2 to 8.3.1 `#1326 <https://github.com/ansys/pyansys-geometry/pull/1326>`_
+- build: bump pytest from 8.3.1 to 8.3.2 `#1331 <https://github.com/ansys/pyansys-geometry/pull/1331>`_
+- build: bump numpy from 2.0.0 to 2.0.1 `#1332 <https://github.com/ansys/pyansys-geometry/pull/1332>`_
+
+
+Miscellaneous
+^^^^^^^^^^^^^
+
+- chore: pre-commit automatic update `#1327 <https://github.com/ansys/pyansys-geometry/pull/1327>`_, `#1333 <https://github.com/ansys/pyansys-geometry/pull/1333>`_
+
 `0.6.5 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.6.5>`_ - 2024-07-02
 =====================================================================================
 
@@ -132,7 +232,7 @@ Changed
 ^^^^^^^
 
 - chore: update CHANGELOG for v0.6.0 `#1245 <https://github.com/ansys/pyansys-geometry/pull/1245>`_
-- chore: update dev version to 0.7.dev0 `#1246 <https://github.com/ansys/pyansys-geometry/pull/1246>`_
+- chore: update dev version to 0.8.dev0 `#1246 <https://github.com/ansys/pyansys-geometry/pull/1246>`_
 
 
 Fixed

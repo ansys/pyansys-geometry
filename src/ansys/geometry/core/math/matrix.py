@@ -20,8 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Provides matrix primitive representations."""
+
+from typing import Union
+
 from beartype import beartype as check_input_types
-from beartype.typing import Optional, Union
 import numpy as np
 
 from ansys.geometry.core.misc.checks import check_ndarray_is_float_int
@@ -39,11 +41,11 @@ class Matrix(np.ndarray):
 
     Parameters
     ----------
-    input : Union[~numpy.ndarray, RealSequence]
+    input : ~numpy.ndarray | RealSequence
         Matrix arguments as a :class:`np.ndarray <numpy.ndarray>` class.
     """
 
-    def __new__(cls, input: Union[np.ndarray, RealSequence]):
+    def __new__(cls, input: np.ndarray | RealSequence):
         """Initialize ``Matrix`` class."""
         obj = np.asarray(input).view(cls)
         obj.setflags(write=False)
@@ -92,11 +94,11 @@ class Matrix33(Matrix):
 
     Parameters
     ----------
-    input : Union[~numpy.ndarray, RealSequence, Matrix], default: DEFAULT_MATRIX33
+    input : ~numpy.ndarray | RealSequence | Matrix, default: DEFAULT_MATRIX33
         Matrix arguments as a :class:`np.ndarray <numpy.ndarray>` class.
     """
 
-    def __new__(cls, input: Optional[Union[np.ndarray, RealSequence, Matrix]] = DEFAULT_MATRIX33):
+    def __new__(cls, input: np.ndarray | RealSequence | Matrix = DEFAULT_MATRIX33):
         """Initialize the ``Matrix33`` class."""
         obj = Matrix(input).view(cls)
         if input is DEFAULT_MATRIX33:
@@ -113,11 +115,11 @@ class Matrix44(Matrix):
 
     Parameters
     ----------
-    input : Union[~numpy.ndarray, RealSequence, Matrix], default: DEFAULT_MATRIX44
+    input : ~numpy.ndarray | RealSequence | Matrix, default: DEFAULT_MATRIX44
         Matrix arguments as a :class:`np.ndarray <numpy.ndarray>` class.
     """
 
-    def __new__(cls, input: Optional[Union[np.ndarray, RealSequence, Matrix]] = DEFAULT_MATRIX44):
+    def __new__(cls, input: np.ndarray | RealSequence | Matrix = DEFAULT_MATRIX44):
         """Initialize the ``Matrix44`` class."""
         obj = Matrix(input).view(cls)
         if input is DEFAULT_MATRIX44:
