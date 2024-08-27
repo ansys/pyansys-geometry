@@ -217,6 +217,11 @@ class GeometryPlotter(PlotterInterface):
             Keyword arguments. For allowable keyword arguments,
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
+        import ansys.geometry.core as pygeom
+        
+        if pygeom.USE_SERVICE_COLORS:
+            plotting_options["color"] = body.color
+
         # Use the default PyAnsys Geometry add_mesh arguments
         self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
         dataset = body.tessellate(merge=merge)
@@ -249,11 +254,44 @@ class GeometryPlotter(PlotterInterface):
             Keyword arguments. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
-        # Use the default PyAnsys Geometry add_mesh arguments
-        self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
-        dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
-        component_polydata = MeshObjectPlot(component, dataset)
-        self.plot(component_polydata, **plotting_options)
+        import ansys.geometry.core as pygeom
+        
+        if pygeom.USE_SERVICE_COLORS:
+            # We need to iterate over the bodies and subcomponents to set the color...
+            # this leads to a different logic for setting the color
+            LOG.warning("Using service colors for plotting a component since USE_SERVICE_COLORS == True.")
+            LOG.warning(">>> Iterating over the bodies and subcomponents to set the color...")
+            LOG.warning(">>> Ignoring values for merge_component and merge_bodies.")
+            LOG.warning(">>> This will be slow for large components.")
+            self.add_component_by_body(component, **plotting_options)
+        else:
+            # Use the default PyAnsys Geometry add_mesh arguments
+            self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
+            dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
+            component_polydata = MeshObjectPlot(component, dataset)
+            self.plot(component_polydata, **plotting_options)
+
+    def add_component_by_body(self, component: Component, **plotting_options: dict | None) -> None:
+        """Internal method to add a component on a per body basis.
+        
+        Notes
+        -----
+        This will allow to make use of the service colors. At the same time, it will be
+        slower than the add_component method.
+        
+        Parameters
+        ----------
+        component : Component
+            Component to add.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+        """
+        # Recursively add the bodies and components
+        for body in component.bodies:
+            self.add_body(body, **plotting_options)
+        for comp in component.components:
+            self.add_component_by_body(comp, **plotting_options)
 
     def add_sketch_polydata(
         self, polydata_entries: list[pv.PolyData], sketch: Sketch = None, **plotting_options
