@@ -219,6 +219,16 @@ class Modeler:
         """Access the client's close method."""
         return self.client.close()
 
+    def exit(self) -> None:
+        """Access the client's close method.
+        
+        Notes
+        -----
+        This method is calling the same method as
+        :func:`close() <ansys.geometry.core.modeler.Modeler.close>`.
+        """
+        return self.close()
+
     def _upload_file(
         self,
         file_path: str,
