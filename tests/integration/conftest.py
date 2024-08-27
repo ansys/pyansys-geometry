@@ -132,7 +132,7 @@ def modeler(docker_instance):
     yield modeler
 
     # Cleanup on exit
-    modeler.close()
+    modeler.exit()
     assert modeler.client.is_closed
 
 
