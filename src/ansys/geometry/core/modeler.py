@@ -221,7 +221,7 @@ class Modeler:
 
     def exit(self) -> None:
         """Access the client's close method.
-        
+
         Notes
         -----
         This method is calling the same method as
