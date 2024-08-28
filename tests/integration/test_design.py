@@ -740,7 +740,7 @@ def test_delete_body_component(modeler: Modeler):
     assert "Exists               : False" in body_1_str
     assert "Surface body         : False" in body_1_str
     assert "Parent component     : Component_3" in body_1_str
-    assert "Color                : #D6F7D1" in body_1_str
+    assert "Color                : None" in body_1_str
 
 
 def test_shared_topology(modeler: Modeler):
@@ -1251,6 +1251,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Surface body         : True" in surf_repr
     assert "Surface thickness    : None" in surf_repr
     assert "Surface offset       : None" in surf_repr
+    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
 
     # Let's assign a thickness to both bodies
     design.add_midsurface_thickness(
@@ -1283,6 +1284,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Surface body         : True" in surf_repr
     assert "Surface thickness    : 10 millimeter" in surf_repr
     assert "Surface offset       : MidSurfaceOffsetType.TOP" in surf_repr
+    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
 
     # Let's try reassigning values directly to slot_body - this shouldn't do anything
     slot_body.add_midsurface_thickness(Quantity(10, UNITS.mm))
@@ -1294,6 +1296,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Exists               : True" in body_repr
     assert "Parent component     : MidSurfaceProperties" in body_repr
     assert "Surface body         : False" in body_repr
+    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
     assert slot_body.surface_thickness is None
     assert slot_body.surface_offset is None
 
@@ -1312,6 +1315,7 @@ def test_midsurface_properties(modeler: Modeler):
         assert "Surface body         : True" in surf_repr
         assert "Surface thickness    : 30 millimeter" in surf_repr
         assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
+        assert f"Color                : {Color.DEFAULT.value}" in surf_repr
     except GeometryExitedError:
         pass
 
@@ -1329,6 +1333,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Surface body         : True" in surf_repr
     assert "Surface thickness    : 30 millimeter" in surf_repr
     assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
+    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
 
 
 def test_design_points(modeler: Modeler):

@@ -758,7 +758,7 @@ class MasterBody(IBody):
     @property
     def color(self) -> str:  # noqa: D102
         """Get the current color of the body."""
-        if self._color is None:
+        if self._color is None and self.is_alive:
             if self._grpc_client.backend_version < (25, 1, 0):  # pragma: no cover
                 # Server does not support color retrieval before version 25.1.0
                 self._grpc_client.log.warning(
