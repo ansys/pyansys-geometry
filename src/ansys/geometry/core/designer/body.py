@@ -81,6 +81,7 @@ from ansys.geometry.core.misc.checks import (
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
+from ansys.tools.visualization_interface.utils.color import Color
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
@@ -763,18 +764,14 @@ class MasterBody(IBody):
                 self._grpc_client.log.warning(
                     "Server does not support color retrieval. Assigning default."
                 )
-                self._color = "#000000"  # Default color
+                self._color = Color.DEFAULT.value
             else:
                 # Fetch color from the server if it's not cached
                 color_response = self._bodies_stub.GetColor(EntityIdentifier(id=self._id))
+                self._color = mcolors.to_hex(color_response.color)
+                if self._color == "#000000":  # Server default value
+                    self._color = Color.DEFAULT.value
 
-                if color_response.color:
-                    self._color = mcolors.to_hex(color_response.color)
-                else:  # pragma: no cover
-                    self._grpc_client.log.warning(
-                        f"Color could not be retrieved for body {self._id}. Assigning default."
-                    )
-                    self._color = "#000000"  # Default color
         return self._color
 
     @color.setter
@@ -1512,14 +1509,19 @@ class Body(IBody):
         **plotting_options: dict | None,
     ) -> None:
         # lazy import here to improve initial module load time
+        import ansys.geometry.core as pygeom
         from ansys.geometry.core.plotting import GeometryPlotter
         from ansys.tools.visualization_interface.types.mesh_object_plot import (
             MeshObjectPlot,
         )
 
-        meshobject = MeshObjectPlot(self, self.tessellate(merge=merge))
+        mesh_object = (
+            self
+            if pygeom.USE_SERVICE_COLORS
+            else MeshObjectPlot(self, self.tessellate(merge=merge))
+        )
         pl = GeometryPlotter(use_trame=use_trame)
-        pl.plot(meshobject, **plotting_options)
+        pl.plot(mesh_object, **plotting_options)
         pl.show(screenshot=screenshot, **plotting_options)
 
     def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
