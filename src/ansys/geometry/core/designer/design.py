@@ -25,6 +25,11 @@ from enum import Enum, unique
 from pathlib import Path
 from typing import Union
 
+from beartype import beartype as check_input_types
+from google.protobuf.empty_pb2 import Empty
+import numpy as np
+from pint import Quantity, UndefinedUnitError
+
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier, PartExportFormat
 from ansys.api.dbu.v0.designs_pb2 import InsertRequest, NewRequest, SaveAsRequest
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
@@ -43,11 +48,6 @@ from ansys.api.geometry.v0.models_pb2 import (
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from ansys.api.geometry.v0.parts_pb2 import ExportRequest
 from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
-from beartype import beartype as check_input_types
-from google.protobuf.empty_pb2 import Empty
-import numpy as np
-from pint import Quantity, UndefinedUnitError
-
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.conversions import (
     grpc_frame_to_frame,

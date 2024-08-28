@@ -24,10 +24,10 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from pint import Quantity
 
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import grpc_curve_to_curve
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
