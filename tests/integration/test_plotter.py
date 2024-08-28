@@ -782,15 +782,12 @@ def test_plot_server_colors_on_design(modeler: Modeler, use_service_colors: None
     sketch = Sketch()
     sketch.box(Point2D([0, 0]), 10, 10)
 
-    comp = None
+    comp = design
     for r_idx, row in enumerate(translate):
-        if r_idx == 0:
-            comp = design.add_component(f"Component{r_idx}")
-        else:
-            comp.add_component(f"Component{r_idx}")
 
+        comp = comp.add_component(f"Component{r_idx}")
         for b_idx, dist in enumerate(row):
-            body = design.extrude_sketch(f"Component{r_idx}_Body{b_idx}", sketch, distance=10)
+            body = comp.extrude_sketch(f"Component{r_idx}_Body{b_idx}", sketch, distance=10)
             body.translate(UNITVECTOR3D_Y, (r_idx + 1) * 30)
             body.translate(UNITVECTOR3D_X, dist)
 

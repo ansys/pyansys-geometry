@@ -563,7 +563,7 @@ class IBody(ABC):
         use_trame : bool, default: None
             Whether to enable the use of `trame <https://kitware.github.io/trame/index.html>`_.
             The default is ``None``, in which case the
-            ``ansys.tools.visualization_interface.USE_TRAME``global setting is used.
+            ``ansys.tools.visualization_interface.USE_TRAME`` global setting is used.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
