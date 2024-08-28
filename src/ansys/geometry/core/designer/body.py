@@ -54,6 +54,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ProjectCurvesRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
+from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
@@ -759,18 +760,25 @@ class MasterBody(IBody):
     def color(self) -> str:  # noqa: D102
         """Get the current color of the body."""
         if self._color is None and self.is_alive:
-            if self._grpc_client.backend_version < (25, 1, 0):  # pragma: no cover
+            # Assigning default value first
+            self._color = Color.DEFAULT.value
+
+            # TODO: Remove this check when the Linux service backend supports color setting
+            # https://github.com/ansys/pyansys-geometry/issues/1383
+            if self._grpc_client.backend_type == BackendType.LINUX_SERVICE:
+                self._grpc_client.log.warning(
+                    "Colors are not supported in the Linux backend. Default value assigned..."
+                )
+            elif self._grpc_client.backend_version < (25, 1, 0):  # pragma: no cover
                 # Server does not support color retrieval before version 25.1.0
                 self._grpc_client.log.warning(
-                    "Server does not support color retrieval. Assigning default."
+                    "Server does not support color retrieval. Default value assigned..."
                 )
-                self._color = Color.DEFAULT.value
             else:
                 # Fetch color from the server if it's not cached
                 color_response = self._bodies_stub.GetColor(EntityIdentifier(id=self._id))
-                self._color = mcolors.to_hex(color_response.color)
-                if self._color == "#000000":  # Server default value
-                    self._color = Color.DEFAULT.value
+                if color_response.color:
+                    self._color = mcolors.to_hex(color_response.color)
 
         return self._color
 
@@ -976,6 +984,15 @@ class MasterBody(IBody):
     def set_color(self, color: str | tuple[float, float, float]) -> None:
         """Set the color of the body."""
         self._grpc_client.log.debug(f"Setting body color of {self.id} to {color}.")
+
+        # TODO: Remove this check when the Linux service backend supports color setting
+        # https://github.com/ansys/pyansys-geometry/issues/1383
+        if self._grpc_client.backend_type == BackendType.LINUX_SERVICE:
+            self._grpc_client.log.warning(
+                "Setting color is not supported in the Linux service backend."
+            )
+            self._grpc_client.log.warning("Ignoring request...")
+            return
 
         try:
             if isinstance(color, tuple):
