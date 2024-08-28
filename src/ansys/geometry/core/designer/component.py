@@ -160,6 +160,7 @@ class Component:
         parent_component: Union["Component", None],
         grpc_client: GrpcClient,
         template: Optional["Component"] = None,
+        instance_name: str = None,
         preexisting_id: str | None = None,
         master_component: MasterComponent | None = None,
         read_existing_comp: bool = False,
@@ -177,8 +178,14 @@ class Component:
         else:
             if parent_component:
                 template_id = template.id if template else ""
+                instance_name = instance_name if instance_name else ""
                 new_component = self._component_stub.Create(
-                    CreateRequest(name=name, parent=parent_component.id, template=template_id)
+                    CreateRequest(
+                        name=name,
+                        parent=parent_component.id,
+                        template=template_id,
+                        instance_name=instance_name,
+                    )
                 )
                 # Remove this method call once we know Service sends correct ObjectPath id
                 self._id = new_component.component.id
