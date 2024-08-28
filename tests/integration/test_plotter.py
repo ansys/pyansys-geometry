@@ -784,7 +784,6 @@ def test_plot_server_colors_on_design(modeler: Modeler, use_service_colors: None
 
     comp = design
     for r_idx, row in enumerate(translate):
-
         comp = comp.add_component(f"Component{r_idx}")
         for b_idx, dist in enumerate(row):
             body = comp.extrude_sketch(f"Component{r_idx}_Body{b_idx}", sketch, distance=10)
