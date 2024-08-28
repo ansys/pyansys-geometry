@@ -1422,13 +1422,13 @@ class Component:
             N Coordinate Systems : 0
         >>> mycomp.plot(pbr=True, metallic=1.0)
         """
-        import ansys.geometry.core as pygeom
+        import ansys.geometry.core as pyansys_geometry
         from ansys.geometry.core.plotting import GeometryPlotter
         from ansys.tools.visualization_interface.types.mesh_object_plot import MeshObjectPlot
 
         mesh_object = (
             self
-            if pygeom.USE_SERVICE_COLORS
+            if pyansys_geometry.USE_SERVICE_COLORS
             else MeshObjectPlot(
                 custom_object=self, mesh=self.tessellate(merge_component, merge_bodies)
             )

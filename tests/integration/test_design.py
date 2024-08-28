@@ -58,6 +58,7 @@ from ansys.geometry.core.math import (
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance
 from ansys.geometry.core.shapes import Circle, Ellipse, Interval, ParamUV
 from ansys.geometry.core.sketch import Sketch
+from ansys.tools.visualization_interface.utils.color import Color
 
 from .conftest import FILES_DIR, skip_if_linux
 
@@ -739,6 +740,7 @@ def test_delete_body_component(modeler: Modeler):
     assert "Exists               : False" in body_1_str
     assert "Surface body         : False" in body_1_str
     assert "Parent component     : Component_3" in body_1_str
+    assert "Color                : #D6F7D1" in body_1_str
 
 
 def test_shared_topology(modeler: Modeler):
@@ -2028,7 +2030,7 @@ def test_set_body_color(modeler: Modeler):
     box = design.extrude_sketch("Block", box_plane, 1 * unit)
 
     # Default body color is if it is not set on server side.
-    assert box.color == "#000000"
+    assert box.color == Color.DEFAULT.value
 
     # Set the color of the body using hex code.
     box.color = "#0000ff"

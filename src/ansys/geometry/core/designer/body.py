@@ -1509,7 +1509,7 @@ class Body(IBody):
         **plotting_options: dict | None,
     ) -> None:
         # lazy import here to improve initial module load time
-        import ansys.geometry.core as pygeom
+        import ansys.geometry.core as pyansys_geometry
         from ansys.geometry.core.plotting import GeometryPlotter
         from ansys.tools.visualization_interface.types.mesh_object_plot import (
             MeshObjectPlot,
@@ -1517,7 +1517,7 @@ class Body(IBody):
 
         mesh_object = (
             self
-            if pygeom.USE_SERVICE_COLORS
+            if pyansys_geometry.USE_SERVICE_COLORS
             else MeshObjectPlot(self, self.tessellate(merge=merge))
         )
         pl = GeometryPlotter(use_trame=use_trame)
@@ -1598,6 +1598,7 @@ class Body(IBody):
         if self.is_surface:
             lines.append(f"  Surface thickness    : {self.surface_thickness}")
             lines.append(f"  Surface offset       : {self.surface_offset}")
+        lines.append(f"  Color                : {self.color}")
 
         nl = "\n"
         return f"{nl}{nl.join(lines)}{nl}"

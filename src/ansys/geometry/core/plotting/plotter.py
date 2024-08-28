@@ -217,9 +217,9 @@ class GeometryPlotter(PlotterInterface):
             Keyword arguments. For allowable keyword arguments,
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
-        import ansys.geometry.core as pygeom
+        import ansys.geometry.core as pyansys_geometry
 
-        if pygeom.USE_SERVICE_COLORS:
+        if pyansys_geometry.USE_SERVICE_COLORS:
             plotting_options["color"] = body.color
 
         # Use the default PyAnsys Geometry add_mesh arguments
@@ -254,9 +254,9 @@ class GeometryPlotter(PlotterInterface):
             Keyword arguments. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
-        import ansys.geometry.core as pygeom
+        import ansys.geometry.core as pyansys_geometry
 
-        if pygeom.USE_SERVICE_COLORS:
+        if pyansys_geometry.USE_SERVICE_COLORS:
             # We need to iterate over the bodies and subcomponents to set the color...
             # this leads to a different logic for setting the color
             LOG.warning(
