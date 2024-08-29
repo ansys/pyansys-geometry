@@ -23,6 +23,7 @@
 
 import logging
 import os
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
@@ -575,6 +576,19 @@ def launch_modeler_with_geometry_service(
             "The 'api_version' parameter is not used in 'launch_modeler_with_geometry_service'. "
             "Please remove it from the arguments."
         )
+
+    # If we are in a Windows environment, we are going to write down the server
+    # logs in the %APPDATA%/Ansys/v{product_version}/GeometryService folder.
+    if os.name == "nt" and server_logs_folder is None:
+        from ansys.tools.path import get_latest_ansys_installation
+
+        # Making lazy assumption on the product version...
+        product_version = product_version if product_version else get_latest_ansys_installation()[0]
+        server_logs_folder = Path(
+            os.getenv("APPDATA"), "Ansys", f"v{product_version}", "GeometryService"
+        )
+        server_logs_folder.mkdir(parents=True, exist_ok=True)
+        LOG.info(f"Writing server logs to the default folder at {server_logs_folder}.")
 
     return prepare_and_start_backend(
         BackendType.WINDOWS_SERVICE,
