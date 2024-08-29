@@ -162,7 +162,7 @@ class GrpcClient:
         )
         if logging_file:
             if isinstance(logging_file, Path):
-                logging_file = str(logging_file)
+                logging_file = logging_file.as_posix()
             self._log.log_to_file(filename=logging_file, level=logging_level)
 
         self._admin_stub = AdminStub(self._channel)

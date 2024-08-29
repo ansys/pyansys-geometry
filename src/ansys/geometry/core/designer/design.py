@@ -231,7 +231,7 @@ class Design(Component):
         """
         # Sanity checks on inputs
         if isinstance(file_location, Path):
-            file_location = str(file_location)
+            file_location = file_location.as_posix()
 
         self._design_stub.SaveAs(SaveAsRequest(filepath=file_location))
         self._grpc_client.log.debug(f"Design successfully saved at location {file_location}.")
@@ -311,7 +311,7 @@ class Design(Component):
         """
         return (Path(location) if location else Path.cwd()) / f"{self.name}.{ext}"
 
-    def export_to_scdocx(self, location: Path | str | None = None) -> str:
+    def export_to_scdocx(self, location: Path | str | None = None) -> Path:
         """Export the design to an scdocx file.
 
         Parameters
@@ -322,7 +322,7 @@ class Design(Component):
 
         Returns
         -------
-        str
+        ~pathlib.Path
             The path to the saved file.
         """
         # Define the file location
@@ -334,7 +334,7 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_parasolid_text(self, location: Path | str | None = None) -> str:
+    def export_to_parasolid_text(self, location: Path | str | None = None) -> Path:
         """Export the design to a Parasolid text file.
 
         Parameters
@@ -345,7 +345,7 @@ class Design(Component):
 
         Returns
         -------
-        str
+        ~pathlib.Path
             The path to the saved file.
         """
         # Determine the extension based on the backend type
@@ -360,7 +360,7 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_parasolid_bin(self, location: Path | str | None = None) -> str:
+    def export_to_parasolid_bin(self, location: Path | str | None = None) -> Path:
         """Export the design to a Parasolid binary file.
 
         Parameters
@@ -371,7 +371,7 @@ class Design(Component):
 
         Returns
         -------
-        str
+        ~pathlib.Path
             The path to the saved file.
         """
         # Determine the extension based on the backend type
@@ -386,7 +386,7 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_fmd(self, location: Path | str | None = None) -> str:
+    def export_to_fmd(self, location: Path | str | None = None) -> Path:
         """Export the design to an FMD file.
 
         Parameters
@@ -397,7 +397,7 @@ class Design(Component):
 
         Returns
         -------
-        str
+        ~pathlib.Path
             The path to the saved file.
         """
         # Define the file location
@@ -409,7 +409,7 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_step(self, location: Path | str | None = None) -> str:
+    def export_to_step(self, location: Path | str | None = None) -> Path:
         """Export the design to a STEP file.
 
         Parameters
@@ -420,7 +420,7 @@ class Design(Component):
 
         Returns
         -------
-        str
+        ~pathlib.Path
             The path to the saved file.
         """
         # Define the file location
@@ -432,7 +432,7 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_iges(self, location: Path | str = None) -> str:
+    def export_to_iges(self, location: Path | str = None) -> Path:
         """Export the design to an IGES file.
 
         Parameters
@@ -443,7 +443,7 @@ class Design(Component):
 
         Returns
         -------
-        str
+        ~pathlib.Path
             The path to the saved file.
         """
         # Define the file location
@@ -455,7 +455,7 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_pmdb(self, location: Path | str | None = None) -> str:
+    def export_to_pmdb(self, location: Path | str | None = None) -> Path:
         """Export the design to a PMDB file.
 
         Parameters
@@ -466,7 +466,7 @@ class Design(Component):
 
         Returns
         -------
-        str
+        ~pathlib.Path
             The path to the saved file.
         """
         # Define the file location
