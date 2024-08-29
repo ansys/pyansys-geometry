@@ -316,7 +316,7 @@ class Modeler:
         """
         # Use POSIX format of Path object here
         if isinstance(file_path, Path):
-            file_path = file_path.as_posix()
+            file_path = str(file_path)
 
         # Format-specific logic - upload the whole containing folder for assemblies
         if upload_to_server:
@@ -404,7 +404,7 @@ class Modeler:
         """
         # Use POSIX format of Path object here
         if isinstance(file_path, Path):
-            file_path = file_path.as_posix()
+            file_path = str(file_path)
 
         serv_path = self._upload_file(file_path)
         ga_stub = DbuApplicationStub(self._grpc_client.channel)

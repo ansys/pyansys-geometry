@@ -231,7 +231,7 @@ class Design(Component):
         """
         # Sanity checks on inputs
         if isinstance(file_location, Path):
-            file_location = file_location.as_posix()
+            file_location = str(file_location)
 
         self._design_stub.SaveAs(SaveAsRequest(filepath=file_location))
         self._grpc_client.log.debug(f"Design successfully saved at location {file_location}.")
