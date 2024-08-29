@@ -314,9 +314,8 @@ class Modeler:
         Design
             Newly imported design.
         """
-        # Use POSIX format of Path object here
-        if isinstance(file_path, Path):
-            file_path = str(file_path)
+        # Use str format of Path object here
+        file_path = str(file_path) if isinstance(file_path, Path) else file_path
 
         # Format-specific logic - upload the whole containing folder for assemblies
         if upload_to_server:
@@ -402,9 +401,8 @@ class Modeler:
             If the Discovery script fails to run. Otherwise, assume that the script
             ran successfully.
         """
-        # Use POSIX format of Path object here
-        if isinstance(file_path, Path):
-            file_path = str(file_path)
+        # Use str format of Path object here
+        file_path = str(file_path) if isinstance(file_path, Path) else file_path
 
         serv_path = self._upload_file(file_path)
         ga_stub = DbuApplicationStub(self._grpc_client.channel)
