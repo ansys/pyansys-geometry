@@ -285,7 +285,7 @@ class Modeler:
     @protect_grpc
     def open_file(
         self,
-        file_path: str,
+        file_path: str | Path,
         upload_to_server: bool = True,
         import_options: ImportOptions = ImportOptions(),
     ) -> "Design":
@@ -301,7 +301,7 @@ class Modeler:
 
         Parameters
         ----------
-        file_path : str
+        file_path : str, ~pathlib.Path
             Path of the file to open. The extension of the file must be included.
         upload_to_server : bool
             True if the service is running on a remote machine. If service is running on the local
@@ -314,6 +314,9 @@ class Modeler:
         Design
             Newly imported design.
         """
+        # Use str format of Path object here
+        file_path = str(file_path) if isinstance(file_path, Path) else file_path
+
         # Format-specific logic - upload the whole containing folder for assemblies
         if upload_to_server:
             if any(
@@ -343,7 +346,7 @@ class Modeler:
 
     @protect_grpc
     def run_discovery_script_file(
-        self, file_path: str, script_args: dict[str, str] | None = None, import_design=False
+        self, file_path: str | Path, script_args: dict[str, str] | None = None, import_design=False
     ) -> tuple[dict[str, str], Optional["Design"]]:
         """Run a Discovery script file.
 
@@ -374,7 +377,7 @@ class Modeler:
 
         Parameters
         ----------
-        file_path : str
+        file_path : str, ~pathlib.Path
             Path of the file. The extension of the file must be included.
         script_args : dict[str, str], optional.
             Arguments to pass to the script. By default, ``None``.
@@ -398,6 +401,9 @@ class Modeler:
             If the Discovery script fails to run. Otherwise, assume that the script
             ran successfully.
         """
+        # Use str format of Path object here
+        file_path = str(file_path) if isinstance(file_path, Path) else file_path
+
         serv_path = self._upload_file(file_path)
         ga_stub = DbuApplicationStub(self._grpc_client.channel)
         request = RunScriptFileRequest(
