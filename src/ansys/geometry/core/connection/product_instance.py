@@ -270,6 +270,18 @@ def prepare_and_start_backend(
         product_version = get_latest_ansys_installation()[0]
         _check_minimal_versions(product_version)
 
+    if server_logs_folder is not None:
+        # Verify that the user has write permissions to the folder and that it exists.
+        try:
+            # Make sure the folder exists...
+            Path(server_logs_folder).mkdir(parents=True, exist_ok=True)
+            # Create a file to test write permissions...
+            Path(server_logs_folder, ".verify").touch(exist_ok=True)
+        except PermissionError:
+            raise RuntimeError(
+                f"User does not have write permissions to the logs folder {server_logs_folder}"
+            )
+
     args = []
     env_copy = _get_common_env(
         host=host,
