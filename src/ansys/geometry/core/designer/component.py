@@ -160,7 +160,7 @@ class Component:
         parent_component: Union["Component", None],
         grpc_client: GrpcClient,
         template: Optional["Component"] = None,
-        instance_name: str = None,
+        instance_name: Optional[str] = None,
         preexisting_id: str | None = None,
         master_component: MasterComponent | None = None,
         read_existing_comp: bool = False,
@@ -175,10 +175,11 @@ class Component:
         if preexisting_id:
             self._name = name
             self._id = preexisting_id
+            self._intance_name = instance_name
         else:
             if parent_component:
                 template_id = template.id if template else ""
-                instance_name = instance_name if instance_name else ""
+                # instance_name = instance_name if instance_name else ""
                 new_component = self._component_stub.Create(
                     CreateRequest(
                         name=name,
@@ -190,6 +191,7 @@ class Component:
                 # Remove this method call once we know Service sends correct ObjectPath id
                 self._id = new_component.component.id
                 self._name = new_component.component.name
+                self._intance_name = new_component.component.instance_name
             else:
                 self._name = name
                 self._id = None
@@ -374,7 +376,9 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
-    def add_component(self, name: str, template: Optional["Component"] = None) -> "Component":
+    def add_component(
+        self, name: str, template: Optional["Component"] = None, instance_name=None
+    ) -> "Component":
         """Add a new component under this component within the design assembly.
 
         Parameters
@@ -390,10 +394,12 @@ class Component:
         Component
             New component with no children in the design assembly.
         """
-        new_comp = Component(name, self, self._grpc_client, template=template)
+        new_comp = Component(
+            name, self, self._grpc_client, template=template, instance_name=instance_name
+        )
         master = new_comp._master_component
         master_id = new_comp.id.split("/")[-1]
-
+        print(instance_name)
         for comp in self._master_component.occurrences:
             if comp.id != self.id:
                 comp.components.append(
@@ -402,6 +408,7 @@ class Component:
                         comp,
                         self._grpc_client,
                         template,
+                        instance_name,
                         preexisting_id=f"{comp.id}/{master_id}",
                         master_component=master,
                         read_existing_comp=True,
