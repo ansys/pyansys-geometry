@@ -279,7 +279,8 @@ def prepare_and_start_backend(
             Path(server_logs_folder, ".verify").touch(exist_ok=True)
         except PermissionError:
             raise RuntimeError(
-                f"User does not have write permissions to the logs folder {server_logs_folder}"
+                "User does not have write permissions to the logs folder "
+                f"{Path(server_logs_folder).resolve()}"
             )
 
     args = []
