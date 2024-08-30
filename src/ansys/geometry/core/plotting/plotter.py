@@ -406,7 +406,7 @@ class GeometryPlotter(PlotterInterface):
         elif isinstance(plottable_object, (Design, Component)):
             self.add_component(plottable_object, merge_components, merge_bodies, **plotting_options)
         elif (
-            isinstance(plottable_object, list) 
+            isinstance(plottable_object, list)
             and len(plottable_object) > 0
             and all([isinstance(entry, pv.PolyData) for entry in plottable_object])
         ):

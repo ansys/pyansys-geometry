@@ -809,6 +809,7 @@ def test_plot_server_color_on_single_body(modeler: Modeler, use_service_colors: 
 
     body.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_server_color_on_single_body.png"))
 
+
 def test_plot_server_colors_on_design_using_input(modeler: Modeler, use_service_colors: None):
     """Test plotting of a design with server colors (via argument)."""
     # The following design is created:
@@ -841,7 +842,10 @@ def test_plot_server_colors_on_design_using_input(modeler: Modeler, use_service_
             body.color = colors[r_idx][b_idx]
 
     # Test the plotting of the design
-    design.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_server_colors_on_design_using_input.png"), use_service_colors=True)
+    design.plot(
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_server_colors_on_design_using_input.png"),
+        use_service_colors=True,
+    )
 
 
 def test_plot_server_color_on_single_body_using_input(modeler: Modeler):
@@ -854,4 +858,7 @@ def test_plot_server_color_on_single_body_using_input(modeler: Modeler):
     body = design.extrude_sketch("BodyColored", sketch, distance=10)
     body.color = "red"
 
-    body.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_server_color_on_single_body_using_input.png"), use_service_colors=True)
+    body.plot(
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_server_color_on_single_body_using_input.png"),
+        use_service_colors=True,
+    )
