@@ -27,6 +27,7 @@ import numpy as np
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
 
+import ansys.geometry.core as pyansys_geometry
 from ansys.geometry.core.designer.body import Body, MasterBody
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.design import Design
@@ -54,6 +55,8 @@ class GeometryPlotter(PlotterInterface):
     ----------
     use_trame : bool, optional
         Whether to use trame visualizer or not, by default None.
+    use_service_colors : bool, optional
+        Whether to use service colors or not, by default None.
     allow_picking : bool, optional
         Whether to allow picking or not, by default False.
     show_plane : bool, optional
@@ -63,7 +66,8 @@ class GeometryPlotter(PlotterInterface):
     def __init__(
         self,
         use_trame: bool | None = None,
-        allow_picking: bool | None = False,
+        use_service_colors: bool | None = None,
+        allow_picking: bool = False,
         show_plane: bool = True,
     ) -> None:
         """Initialize the GeometryPlotter class."""
@@ -74,6 +78,18 @@ class GeometryPlotter(PlotterInterface):
         self._backend._use_trame = use_trame
         self._backend.add_widget(ShowDesignPoints(self))
         self._backend._pl._show_plane = show_plane
+
+        # Store the use_service_colors flag
+        self._use_service_colors = (
+            use_service_colors
+            if use_service_colors is not None
+            else pyansys_geometry.USE_SERVICE_COLORS
+        )
+
+    @property
+    def use_service_colors(self) -> bool:
+        """Indicates whether to use service colors for plotting purposes."""
+        return self._use_service_colors
 
     def add_frame(self, frame: Frame, plotting_options: dict | None = None) -> None:
         """Plot a frame in the scene.
@@ -217,9 +233,7 @@ class GeometryPlotter(PlotterInterface):
             Keyword arguments. For allowable keyword arguments,
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
-        import ansys.geometry.core as pyansys_geometry
-
-        if pyansys_geometry.USE_SERVICE_COLORS:
+        if self.use_service_colors:
             plotting_options["color"] = body.color
 
         # Use the default PyAnsys Geometry add_mesh arguments
@@ -254,14 +268,10 @@ class GeometryPlotter(PlotterInterface):
             Keyword arguments. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
-        import ansys.geometry.core as pyansys_geometry
-
-        if pyansys_geometry.USE_SERVICE_COLORS:
+        if self.use_service_colors:
             # We need to iterate over the bodies and subcomponents to set the color...
             # this leads to a different logic for setting the color
-            LOG.warning(
-                "Using service colors for plotting a component since USE_SERVICE_COLORS == True."
-            )
+            LOG.warning("Using service colors for plotting a component")
             LOG.warning(">>> Iterating over the bodies and subcomponents to set the color...")
             LOG.warning(">>> Ignoring values for merge_component and merge_bodies.")
             LOG.warning(">>> This will be slow for large components.")
@@ -391,14 +401,14 @@ class GeometryPlotter(PlotterInterface):
             self.add_design_point(plottable_object, **plotting_options)
         elif isinstance(plottable_object, Sketch):
             self.add_sketch(plottable_object, **plotting_options)
-        elif isinstance(plottable_object, Body) or isinstance(object, MasterBody):
+        elif isinstance(plottable_object, (Body, MasterBody)):
             self.add_body(plottable_object, merge_bodies, **plotting_options)
-        elif isinstance(plottable_object, Design) or isinstance(object, Component):
+        elif isinstance(plottable_object, (Design, Component)):
             self.add_component(plottable_object, merge_components, merge_bodies, **plotting_options)
         elif (
-            isinstance(plottable_object, list)
-            and plottable_object != []
-            and isinstance(plottable_object[0], pv.PolyData)
+            isinstance(plottable_object, list) 
+            and len(plottable_object) > 0
+            and all([isinstance(entry, pv.PolyData) for entry in plottable_object])
         ):
             self.add_sketch_polydata(plottable_object, **plotting_options)
         elif isinstance(plottable_object, list):

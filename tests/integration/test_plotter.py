@@ -808,3 +808,50 @@ def test_plot_server_color_on_single_body(modeler: Modeler, use_service_colors: 
     body.color = "red"
 
     body.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_server_color_on_single_body.png"))
+
+def test_plot_server_colors_on_design_using_input(modeler: Modeler, use_service_colors: None):
+    """Test plotting of a design with server colors (via argument)."""
+    # The following design is created:
+    #
+    #  - From our main design we have a component that contains 3 boxes
+    #  - This component has at the same time another subcomponent that contains 3 boxes
+    #  - Each box has a different color
+    #  - Boxes are 10x10x10 in size (meters by default) and the center of their
+    #    lower bases are placed at:
+    #      - Component (i.e. Component0): (0, 30, 0), (30, 30, 0) and (60, 30, 0)
+    #      - Subcomponent (i.e. Component1): (0, 60, 0), (30, 60, 0) and (60, 60, 0)
+    translate = [[0, 30, 60], [0, 30, 60]]
+    colors = [["red", "blue", "yellow"], ["orange", "green", "purple"]]
+
+    design = modeler.create_design("ServerColorsDesignUsingInput")
+
+    # Generic sketch for all boxes to be extruded with
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 10, 10)
+
+    comp = design
+    for r_idx, row in enumerate(translate):
+        comp = comp.add_component(f"Component{r_idx}")
+        for b_idx, dist in enumerate(row):
+            body = comp.extrude_sketch(f"Component{r_idx}_Body{b_idx}", sketch, distance=10)
+            body.translate(UNITVECTOR3D_Y, (r_idx + 1) * 30)
+            body.translate(UNITVECTOR3D_X, dist)
+
+            # Assign color to the body
+            body.color = colors[r_idx][b_idx]
+
+    # Test the plotting of the design
+    design.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_server_colors_on_design_using_input.png"), use_service_colors=True)
+
+
+def test_plot_server_color_on_single_body_using_input(modeler: Modeler):
+    """Test plotting of a single body with server colors (via argument)."""
+    design = modeler.create_design("ServerColorsBodyUsingInput")
+
+    # Generic sketch for all boxes to be extruded with
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 10, 10)
+    body = design.extrude_sketch("BodyColored", sketch, distance=10)
+    body.color = "red"
+
+    body.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_server_color_on_single_body_using_input.png"), use_service_colors=True)

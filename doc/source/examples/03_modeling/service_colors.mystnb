@@ -88,8 +88,12 @@ for c_idx, comp in enumerate(design.components):
 ## Plotting the design with colors
 
 By default, the plot method will **not** use the colors assigned to the bodies.
-To plot the design with the assigned colors, we need to specifically request it
-by setting the global parameter ``USE_SERVICE_COLORS`` to ``True``.
+To plot the design with the assigned colors, we need to specifically request it.
+
+Users have two options for plotting with the assigned colors:
+
+* Pass the parameter ``use_service_colors=True`` to the plot method.
+* Set the global parameter ``USE_SERVICE_COLORS`` to ``True``.
 
 It is important to note that the usage of colors when plotting might slow down the
 plotting process, as it requires additional information to be sent from the server
@@ -102,8 +106,15 @@ be displayed without the colors, as shown below.
 design.plot()
 ```
 
+As stated previously, if we pass the parameter ``use_service_colors=True`` to the plot
+method, the plot will be displayed with the assigned colors.
+
+```{code-cell} ipython3
+design.plot(use_service_colors=True)
+```
+
 However, if we set the global parameter to ``True``, the plot will be displayed
-with the assigned colors.
+with the assigned colors without the need to pass the parameter to the plot method.
 
 ```{code-cell} ipython3
 import ansys.geometry.core as pyansys_geometry
@@ -116,3 +127,32 @@ design.plot()
 pyansys_geometry.USE_SERVICE_COLORS = False
 ```
 
+This last method is useful when the user wants to plot all the designs with the
+assigned colors without the need to pass the parameter to the plot method in
+every call.
+
+
+## Plotting specific bodies or components with colors
+
+If the user wants to plot specific bodies with the assigned colors, the user can
+follow the same approach as before. The user can pass the parameter ``use_service_colors=True``
+to the plot method or set the global parameter ``USE_SERVICE_COLORS`` to ``True``.
+
+In the following examples, we will just demonstrate how to do this using the
+``use_service_colors=True`` parameter.
+
+Let's plot the first body of the first component with the assigned colors.
+
+```{code-cell} ipython3
+body = design.components[0].bodies[0]
+
+body.plot(use_service_colors=True)
+```
+
+Now, let's plot the second component with the assigned colors.
+
+```{code-cell} ipython3
+comp = design.components[1]
+
+comp.plot(use_service_colors=True)
+```

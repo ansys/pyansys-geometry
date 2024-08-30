@@ -1364,6 +1364,7 @@ class Component:
         merge_bodies: bool = False,
         screenshot: str | None = None,
         use_trame: bool | None = None,
+        use_service_colors: bool | None = None,
         **plotting_options: dict | None,
     ) -> None:
         """Plot the component.
@@ -1384,6 +1385,10 @@ class Component:
             Whether to enable the use of `trame <https://kitware.github.io/trame/index.html>`_.
             The default is ``None``, in which case the
             ``ansys.tools.visualization_interface.USE_TRAME`` global setting is used.
+        use_service_colors : bool, default: None
+            Whether to use the colors assigned to the body in the service. The default
+            is ``None``, in which case the ``ansys.geometry.core.USE_SERVICE_COLORS``
+            global setting is used.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
 
@@ -1426,14 +1431,21 @@ class Component:
         from ansys.geometry.core.plotting import GeometryPlotter
         from ansys.tools.visualization_interface.types.mesh_object_plot import MeshObjectPlot
 
+        use_service_colors = (
+            use_service_colors
+            if use_service_colors is not None
+            else pyansys_geometry.USE_SERVICE_COLORS
+        )
+
         mesh_object = (
             self
-            if pyansys_geometry.USE_SERVICE_COLORS
+            if use_service_colors
             else MeshObjectPlot(
-                custom_object=self, mesh=self.tessellate(merge_component, merge_bodies)
+                custom_object=self,
+                mesh=self.tessellate(merge_component=merge_component, merge_bodies=merge_bodies),
             )
         )
-        pl = GeometryPlotter(use_trame=use_trame)
+        pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
         pl.plot(mesh_object, **plotting_options)
         pl.show(screenshot=screenshot, **plotting_options)
 
