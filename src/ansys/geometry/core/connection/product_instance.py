@@ -83,7 +83,10 @@ BACKEND_PORT_VARIABLE = "API_PORT"
 """The backend's port number environment variable for local start."""
 
 BACKEND_LOGS_FOLDER_VARIABLE = "ANS_DSCO_REMOTE_LOGS_FOLDER"
-"""The backend's logs folder path to be used."""
+"""The backend's logs folder path to be used.
+
+Only applicable to the Ansys Geometry Service.
+"""
 
 BACKEND_API_VERSION_VARIABLE = "API_VERSION"
 """The backend's api version environment variable for local start.
