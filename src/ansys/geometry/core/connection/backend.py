@@ -44,3 +44,26 @@ class ApiVersions(Enum):
     V_241 = 241
     V_242 = 242
     V_251 = LATEST = 251
+
+    @staticmethod
+    def parse_input(version: int | str | "ApiVersions") -> "ApiVersions":
+        """Convert an input to an ApiVersions enum.
+
+        Parameters
+        ----------
+        version : int | str | ApiVersions
+            The version to convert to an ApiVersions enum.
+
+        Returns
+        -------
+        ApiVersions
+            The version as an ApiVersions enum.
+        """
+        if isinstance(version, ApiVersions):
+            return version
+        elif isinstance(version, str):
+            return ApiVersions(int(version))
+        elif isinstance(version, int):
+            return ApiVersions(version)
+        else:
+            raise ValueError("API version must be an integer, string or an ApiVersions enum.")
