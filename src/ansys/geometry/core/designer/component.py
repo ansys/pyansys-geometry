@@ -177,9 +177,9 @@ class Component:
             self._id = preexisting_id
             self._intance_name = instance_name
         else:
+            print("no preexisting_id")
             if parent_component:
                 template_id = template.id if template else ""
-                # instance_name = instance_name if instance_name else ""
                 new_component = self._component_stub.Create(
                     CreateRequest(
                         name=name,
@@ -188,10 +188,11 @@ class Component:
                         instance_name=instance_name,
                     )
                 )
+
                 # Remove this method call once we know Service sends correct ObjectPath id
                 self._id = new_component.component.id
                 self._name = new_component.component.name
-                self._intance_name = new_component.component.instance_name
+                self._intance_name = instance_name
             else:
                 self._name = name
                 self._id = None
@@ -239,6 +240,11 @@ class Component:
     def name(self) -> str:
         """Name of the component."""
         return self._name
+
+    @property
+    def instance_name(self) -> str:
+        """Name of the component instance."""
+        return self._instance_name
 
     @property
     def components(self) -> list["Component"]:
@@ -399,7 +405,6 @@ class Component:
         )
         master = new_comp._master_component
         master_id = new_comp.id.split("/")[-1]
-        print(instance_name)
         for comp in self._master_component.occurrences:
             if comp.id != self.id:
                 comp.components.append(
