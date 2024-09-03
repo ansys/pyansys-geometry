@@ -426,7 +426,8 @@ class Modeler:
         if api_version is not None:
             if self.client.backend_type == BackendType.WINDOWS_SERVICE:
                 self.client.log.warning(
-                    "The Ansys Geometry Service only supports scripts that are of its same API version."
+                    "The Ansys Geometry Service only supports "
+                    "scripts that are of its same API version."
                 )
                 self.client.log.warning("Ignoring specified API version.")
                 api_version = None
