@@ -27,6 +27,7 @@ from typing import Union
 _API_VERSIONS_ERR_MSG = "API version must be an integer, string or an ApiVersions enum."
 """Error message for invalid API versions."""
 
+
 @unique
 class BackendType(Enum):
     """Provides an enum holding the available backend types."""
@@ -62,7 +63,6 @@ class ApiVersions(Enum):
         ApiVersions
             The version as an ApiVersions enum.
         """
-
         if isinstance(version, ApiVersions):
             return version
         elif isinstance(version, str):
