@@ -175,7 +175,7 @@ class Component:
         if preexisting_id:
             self._name = name
             self._id = preexisting_id
-            self._intance_name = instance_name
+            self._instance_name = instance_name
         else:
             if parent_component:
                 template_id = template.id if template else ""
