@@ -65,11 +65,8 @@ class ApiVersions(Enum):
         """
         if isinstance(version, ApiVersions):
             return version
-        elif isinstance(version, str):
-            if version.isnumeric():
-                return ApiVersions(int(version))
-            else:
-                raise ValueError(_API_VERSIONS_ERR_MSG)
+        elif isinstance(version, str) and version.isnumeric():
+            return ApiVersions(int(version))
         elif isinstance(version, int):
             return ApiVersions(version)
         else:
