@@ -391,7 +391,7 @@ class Modeler:
             up-to-date design data. When this is set to ``False`` (default) and the
             script modifies the current design, the design may be out-of-sync. By default,
             ``False``.
-        api_versions : int | str | ApiVersions, optional
+        api_version : int | str | ApiVersions, optional
             The scripting API version to use. For example, version 23.2 can be passed as
             an integer 232, a string "232" or using the
             ``ansys.geometry.core.connection.backend.ApiVersions`` enum class.
@@ -402,9 +402,9 @@ class Modeler:
 
         Notes
         -----
-            The Ansys Geometry Service only supports scripts that are at least
-            of version V232. If the script is of an older version, the service will
-            raise an error.
+            The Ansys Geometry Service only supports scripts that are of the
+            same version as the running service. Any ``api_version`` input will
+            be ignored.
 
         Returns
         -------
