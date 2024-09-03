@@ -197,6 +197,7 @@ class Component:
             else:
                 self._name = name
                 self._id = None
+                self._instance_name = None
 
         # Initialize needed instance variables
         self._components = []
